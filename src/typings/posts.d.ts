@@ -1,5 +1,5 @@
 interface Post {
-  id: string;
-  userId: string;
+  id: number | string;
+  userId: number | string;
   body: string;
 }

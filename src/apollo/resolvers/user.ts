@@ -7,7 +7,7 @@ import { validateSignup, validateLogin } from "../../utils/validation";
 
 const userResolvers = {
   Query: {
-    user: async (_, { id }) => {
+    user: async (_: any, { id }) => {
       try {
         const user = await prisma.user.findFirst({
           where: {
@@ -20,7 +20,7 @@ const userResolvers = {
       }
     },
 
-    userByName: async (_, { name }) => {
+    userByName: async (_: any, { name }) => {
       try {
         const user = await prisma.user.findFirst({
           where: {
@@ -44,7 +44,7 @@ const userResolvers = {
   },
 
   Mutation: {
-    async signUp(_, { input }) {
+    async signUp(_: any, { input }) {
       const { email, name, password } = input;
       const { errors, isValid } = validateSignup(input);
 
@@ -89,9 +89,9 @@ const userResolvers = {
       }
     },
 
-    async signIn(_, args) {
-      const { errors, isValid } = validateLogin(args.input);
-      const { email, password } = args.input;
+    async signIn(_: any, { input }) {
+      const { errors, isValid } = validateLogin(input);
+      const { email, password } = input;
 
       if (!isValid) {
         throw new UserInputError(JSON.stringify(errors));
@@ -128,7 +128,7 @@ const userResolvers = {
       }
     },
 
-    async updateUser(_, { id, input }) {
+    async updateUser(_: any, { id, input }) {
       const { email, name } = input;
 
       try {
@@ -155,7 +155,7 @@ const userResolvers = {
       }
     },
 
-    async deleteUser(_, { id }) {
+    async deleteUser(_: any, { id }) {
       try {
         await prisma.user.delete({
           where: { id: parseInt(id) },

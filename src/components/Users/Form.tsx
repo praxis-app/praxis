@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import Router from "next/router";
-import { FormGroup, TextField, Button } from "@material-ui/core";
+import { FormGroup, Input, Button } from "@material-ui/core";
 
 import {
   SIGN_UP,
@@ -99,52 +99,64 @@ const UserForm = ({ user, isEditing }: Props) => {
   return (
     <form onSubmit={handleSubmit}>
       <FormGroup>
-        <TextField
+        <Input
           type="text"
           placeholder="Name"
           onChange={(e) => setUserName(e.target.value)}
           value={userName}
-          variant="outlined"
-          margin="normal"
-          label="Name"
+          style={{
+            marginBottom: "12px",
+            color: "rgb(170, 170, 170)",
+          }}
         />
-        <TextField
+        <Input
           type="text"
           placeholder="Email"
           onChange={(e) => setUserEmail(e.target.value)}
           value={userEmail}
-          variant="outlined"
-          margin="normal"
-          label="Email"
+          style={{
+            marginBottom: "12px",
+            color: "rgb(170, 170, 170)",
+          }}
         />
       </FormGroup>
 
       {!isEditing && (
         <>
-          <FormGroup>
-            <TextField
+          <FormGroup
+            style={{
+              marginBottom: "6px",
+            }}
+          >
+            <Input
               type="password"
               placeholder="Password"
               onChange={(e) => setUserPassword(e.target.value)}
               value={userPassword}
-              variant="outlined"
-              margin="normal"
-              label="Password"
+              style={{
+                marginBottom: "12px",
+                color: "rgb(170, 170, 170)",
+              }}
             />
-            <TextField
+            <Input
               type="password"
               placeholder="Confirm Password"
               onChange={(e) => setUserPasswordConfirm(e.target.value)}
               value={userPasswordConfirm}
-              variant="outlined"
-              margin="normal"
-              label="Confirm Password"
+              style={{
+                marginBottom: "12px",
+                color: "rgb(170, 170, 170)",
+              }}
             />
           </FormGroup>
         </>
       )}
 
-      <Button variant="outlined" color="default" size="large" type="submit">
+      <Button
+        variant="contained"
+        type="submit"
+        style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
+      >
         {isEditing ? "Save" : "Sign up"}
       </Button>
     </form>

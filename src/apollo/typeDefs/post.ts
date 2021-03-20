@@ -8,6 +8,11 @@ type Post {
   updatedAt: String!
 }
 
+input CreatePostInput {
+  body: String!
+  images: [FileUpload]
+}
+
 input UpdatePostInput {
   body: String!
 }

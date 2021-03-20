@@ -41,8 +41,8 @@ const Header = () => {
 
   return (
     <nav
-      className="navbar navbar-dark bg-dark navbar-expand-lg"
-      style={{ marginBottom: "50px" }}
+      className="navbar navbar-dark navbar-expand-lg"
+      style={{ marginBottom: "50px", background: "rgb(30, 30, 30)" }}
     >
       <Link href="/" passHref>
         <Nav.Link className="navbar-brand">Praxis</Nav.Link>

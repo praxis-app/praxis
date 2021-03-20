@@ -13,7 +13,7 @@ const Show = () => {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState(null);
   const userRes = useQuery(USER_BY_NAME, {
-    variables: { name: query.name },
+    variables: { name: query.name ? query.name : "" },
   });
   const postsRes = useQuery(POSTS);
   const [deleteUser] = useMutation(DELETE_USER);
@@ -27,7 +27,7 @@ const Show = () => {
     if (user && postsRes.data) {
       setPosts(
         postsRes.data.allPosts.filter(
-          (post) => post.userId === parseInt(user.id)
+          (post: Post) => post.userId === parseInt(user.id)
         )
       );
     }
@@ -44,7 +44,7 @@ const Show = () => {
     } catch {}
   };
 
-  const deletePostHandler = async (id) => {
+  const deletePostHandler = async (id: string) => {
     try {
       await deletePost({
         variables: {
@@ -52,7 +52,7 @@ const Show = () => {
         },
       });
       // Removes deleted post from state
-      setPosts(posts.filter((post) => post.id !== id));
+      setPosts(posts.filter((post: Post) => post.id !== id));
     } catch {}
   };
 

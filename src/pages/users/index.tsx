@@ -15,7 +15,7 @@ const Index = () => {
     setUsers(data ? data.allUsers : data);
   }, [data]);
 
-  const deleteUserHandler = async (userId) => {
+  const deleteUserHandler = async (userId: string) => {
     try {
       await deleteUser({
         variables: {
@@ -23,14 +23,14 @@ const Index = () => {
         },
       });
       // Removes deleted user from state
-      setUsers(users.filter((user) => user.id !== userId));
+      setUsers(users.filter((user: User) => user.id !== userId));
     } catch {}
   };
 
   return (
     <>
       {users ? (
-        users.map((user) => {
+        users.map((user: User) => {
           return (
             <User user={user} deleteUser={deleteUserHandler} key={user.id} />
           );

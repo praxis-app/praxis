@@ -76,7 +76,10 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setBody(e.target.value)
           }
-          style={{ marginBottom: "12px" }}
+          style={{
+            marginBottom: "12px",
+            color: "rgb(170, 170, 170)",
+          }}
         />
 
         <input
@@ -90,7 +93,11 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
         />
       </FormGroup>
 
-      <Button variant="outlined" color="default" size="large" type="submit">
+      <Button
+        variant="contained"
+        type="submit"
+        style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
+      >
         {isEditing ? "Save" : "Post"}
       </Button>
     </form>

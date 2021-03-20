@@ -35,7 +35,8 @@ const postResolvers = {
   },
 
   Mutation: {
-    async createPost(_: any, { body, images, userId }) {
+    async createPost(_: any, { userId, input }) {
+      const { body, images } = input;
       try {
         const newPost = await prisma.post.create({
           data: {

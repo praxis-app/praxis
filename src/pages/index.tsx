@@ -25,14 +25,14 @@ const Home = () => {
     );
   }, [currentUserRes.data]);
 
-  const deletePostHandler = async (id) => {
+  const deletePostHandler = async (id: string) => {
     try {
       await deletePost({
         variables: {
           id,
         },
       });
-      setPosts(posts.filter((post) => post.id !== id));
+      setPosts(posts.filter((post: Post) => post.id !== id));
     } catch {}
   };
 

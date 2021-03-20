@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Form, Button } from "react-bootstrap";
 import { useMutation } from "@apollo/client";
 import Router from "next/router";
+import { Input, Button, FormGroup } from "@material-ui/core";
 
 import { SIGN_IN, SET_CURRENT_USER } from "../../apollo/client/mutations";
 import { setAuthToken } from "../../utils/auth";
@@ -13,7 +13,7 @@ const Login = () => {
   const [signIn] = useMutation(SIGN_IN);
   const [setCurrentUser] = useMutation(SET_CURRENT_USER);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
@@ -46,31 +46,42 @@ const Login = () => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Form.Group>
-        <Form.Label>Email</Form.Label>
-        <Form.Control
+    <form onSubmit={handleSubmit}>
+      <FormGroup
+        style={{
+          marginBottom: "6px",
+        }}
+      >
+        <Input
           type="text"
           placeholder="Email"
           onChange={(e) => setUserEmail(e.target.value)}
           value={userEmail}
+          style={{
+            marginBottom: "12px",
+            color: "rgb(170, 170, 170)",
+          }}
         />
-      </Form.Group>
-
-      <Form.Group>
-        <Form.Label>Password</Form.Label>
-        <Form.Control
+        <Input
           type="password"
           placeholder="Password"
           onChange={(e) => setUserPassword(e.target.value)}
           value={userPassword}
+          style={{
+            marginBottom: "12px",
+            color: "rgb(170, 170, 170)",
+          }}
         />
-      </Form.Group>
+      </FormGroup>
 
-      <Button variant="primary" type="submit">
+      <Button
+        variant="contained"
+        type="submit"
+        style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
+      >
         Log in
       </Button>
-    </Form>
+    </form>
   );
 };
 

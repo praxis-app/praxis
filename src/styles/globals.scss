@@ -1,15 +1,27 @@
 $darkGray: rgb(50, 50, 50);
-$lightGray: rgb(175, 175, 175);
+$lightGray: rgb(200, 200, 200);
+
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/Inter.var.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Microgramma";
+  src: url("/fonts/Microgramma.ttf");
+}
 
 a {
-  color: $darkGray;
+  color: white;
 }
 
 a:hover {
-  color: $darkGray;
+  color: white;
   text-decoration: none;
 }
 
 body {
-  background: $lightGray;
+  background: $darkGray;
+  color: $lightGray;
+  font-family: "Inter";
 }
