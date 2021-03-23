@@ -2,6 +2,7 @@ import { gql } from "apollo-server-micro";
 import User from "./user";
 import Post from "./post";
 import Image from "./image";
+import Follow from "./follow";
 
 export const typeDefs = gql`
   scalar FileUpload
@@ -9,15 +10,23 @@ export const typeDefs = gql`
   ${User}
   ${Post}
   ${Image}
+  ${Follow}
 
   type Query {
     user(id: ID!): User!
     userByName(name: String!): User!
-    allUsers: [User]
+    allUsers: [User]!
+
+    userFollowers(userId: ID!): [Follow]!
+    userFollowersByName(name: String!): [Follow]!
+    userFollowing(userId: ID!): [Follow]!
+    userFollowingByName(name: String!): [Follow]!
+
     post(id: ID!): Post!
-    allPosts: [Post]
-    allImages: [Image]
-    imagesByPostId(postId: ID!): [Image]
+    allPosts: [Post]!
+
+    allImages: [Image]!
+    imagesByPostId(postId: ID!): [Image]!
   }
 
   type Mutation {
@@ -26,7 +35,10 @@ export const typeDefs = gql`
     updateUser(id: ID!, input: UpdateUserInput!): UserPayload!
     deleteUser(id: ID!): Boolean!
 
-    createPost(body: String!, images: [FileUpload], userId: ID!): PostPayload!
+    createFollow(userId: ID!, followerId: ID!): FollowPayload!
+    deleteFollow(id: ID!): Boolean!
+
+    createPost(userId: ID!, input: CreatePostInput!): PostPayload!
     updatePost(id: ID!, input: UpdatePostInput!): PostPayload!
     deletePost(id: ID!): Boolean!
 

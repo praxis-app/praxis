@@ -1,54 +1,104 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useQuery } from "@apollo/client";
+import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import {
   Card,
-  CardContent,
   CardActions,
-  Typography,
-  makeStyles,
+  CardHeader,
+  Avatar,
+  CardContent,
 } from "@material-ui/core";
-import { AccountCircle, Edit, Delete } from "@material-ui/icons";
+import { Edit, Delete } from "@material-ui/icons";
 
-const useStyles = makeStyles({
-  root: {
-    maxWidth: 300,
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 14,
-  },
-});
+import FollowButton from "../Follows/FollowButton";
 
-const Show = ({ user, deleteUser }) => {
+import { FOLLOWERS, FOLLOWING } from "../../apollo/client/queries";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      maxWidth: 330,
+      marginBottom: 12,
+      backgroundColor: "rgb(65, 65, 65)",
+    },
+    title: {
+      fontFamily: "Inter",
+    },
+    subheader: {
+      fontFamily: "Inter",
+      color: "rgb(195, 195, 195)",
+    },
+  })
+);
+
+interface Props {
+  user: User;
+  deleteUser: (id: string) => void;
+}
+
+const Show = ({ user, deleteUser }: Props) => {
   const { name, email, id, createdAt } = user;
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const followersRes = useQuery(FOLLOWERS, {
+    variables: { userId: id },
+  });
+  const followingRes = useQuery(FOLLOWING, {
+    variables: { userId: id },
+  });
+
+  const classes = useStyles();
   const date = new Date(parseInt(createdAt)).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
-  const classes = useStyles();
+
+  useEffect(() => {
+    setFollowers(followersRes.data ? followersRes.data.userFollowers : []);
+  }, [followersRes.data]);
+
+  useEffect(() => {
+    setFollowing(followingRes.data ? followingRes.data.userFollowing : []);
+  }, [followingRes.data]);
 
   return (
-    <Card className={classes.root} variant="outlined">
-      <CardContent>
-        <Typography
-          className={classes.title}
-          color="textSecondary"
-          gutterBottom
-        >
+    <Card className={classes.root}>
+      <CardHeader
+        avatar={
           <Link href={`/users/${name}`}>
             <a>
-              <AccountCircle /> {name}
+              <Avatar style={{ backgroundColor: "white", color: "black" }}>
+                {name[0].charAt(0).toUpperCase()}
+              </Avatar>
             </a>
           </Link>
-        </Typography>
-        <Typography variant="body2" component="p">
-          Joined {date}
-        </Typography>
-        <Typography variant="body2" component="p">
-          {email}
-        </Typography>
+        }
+        action={<FollowButton userId={id} />}
+        title={
+          <Link href={`/users/${name}`}>
+            <a>
+              {name} · {email}
+            </a>
+          </Link>
+        }
+        subheader={`Joined ${date}`}
+        classes={{ title: classes.title, subheader: classes.subheader }}
+      />
+
+      <CardContent>
+        <Link href={`/users/${name}/followers`}>
+          <a>{followers?.length} Followers</a>
+        </Link>
+
+        <span style={{ color: "white" }}> · </span>
+
+        <Link href={`/users/${name}/following`}>
+          <a>{following?.length} Following</a>
+        </Link>
       </CardContent>
+
       <CardActions>
         <Link href={`/users/edit/${name}`}>
           <a>

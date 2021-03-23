@@ -6,7 +6,7 @@ export const defaults = {
 
 export const resolvers = {
   Mutation: {
-    setCurrentUser: (_, { user }, { cache }) => {
+    setCurrentUser: (_: any, { user }, { cache }) => {
       const data = {
         user: { ...user, isAuthenticated: true, __typename: "CurrentUser" },
       };
@@ -14,7 +14,7 @@ export const resolvers = {
       return data;
     },
 
-    logoutUser: (_, variables, { cache }) => {
+    logoutUser: (_: any, variables: any, { cache }) => {
       const data = {
         user: {
           id: null,
