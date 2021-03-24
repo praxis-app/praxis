@@ -15,6 +15,7 @@ input CreatePostInput {
 
 input UpdatePostInput {
   body: String!
+  images: [FileUpload]
 }
 
 type PostPayload {

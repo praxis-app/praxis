@@ -7,11 +7,36 @@ import fs from "fs";
 import { promisify } from "util";
 const unlinkAsync = promisify(fs.unlink);
 
+const saveImages = async (post: any, images: any) => {
+  for (const image of images ? images : []) {
+    const { createReadStream, mimetype } = await image;
+    const extension = mimetype.split("/")[1];
+    const path = "public/uploads/" + Date.now() + "." + extension;
+    await saveImage(createReadStream, path);
+
+    await prisma.image.create({
+      data: {
+        user: {
+          connect: {
+            id: post.userId,
+          },
+        },
+        post: {
+          connect: {
+            id: post.id,
+          },
+        },
+        path: path.replace("public", ""),
+      },
+    });
+  }
+};
+
 const postResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
-    post: async (_, { id }) => {
+    post: async (_: any, { id }) => {
       try {
         const post = await prisma.post.findFirst({
           where: {
@@ -49,28 +74,7 @@ const postResolvers = {
           },
         });
 
-        for (const image of images ? images : []) {
-          const { createReadStream, mimetype } = await image;
-          const extension = mimetype.split("/")[1];
-          const path = "public/uploads/" + Date.now() + "." + extension;
-          await saveImage(createReadStream, path);
-
-          await prisma.image.create({
-            data: {
-              user: {
-                connect: {
-                  id: parseInt(userId),
-                },
-              },
-              post: {
-                connect: {
-                  id: newPost.id,
-                },
-              },
-              path: path.replace("public", ""),
-            },
-          });
-        }
+        await saveImages(newPost, images);
 
         return { post: newPost };
       } catch (err) {
@@ -78,14 +82,16 @@ const postResolvers = {
       }
     },
 
-    async updatePost(_, { id, input }) {
-      const { body } = input;
+    async updatePost(_: any, { id, input }) {
+      const { body, images } = input;
 
       try {
         const post = await prisma.post.update({
           where: { id: parseInt(id) },
           data: { body: body },
         });
+
+        await saveImages(post, images);
 
         if (!post) throw new Error("Post not found.");
 

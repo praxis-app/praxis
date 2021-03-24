@@ -11,7 +11,7 @@ const Edit = () => {
   const [user, setUser] = useState(null);
 
   const { data } = useQuery(USER_BY_NAME, {
-    variables: { name: query.name },
+    variables: { name: query.name ? query.name : "" },
   });
 
   useEffect(() => {

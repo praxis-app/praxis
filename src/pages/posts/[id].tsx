@@ -13,14 +13,14 @@ const Show = () => {
   const [deletePost] = useMutation(DELETE_POST);
 
   const { data } = useQuery(POST, {
-    variables: { id: query.id },
+    variables: { id: query.id ? query.id : 0 },
   });
 
   useEffect(() => {
     setPost(data ? data.post : data);
   }, [data]);
 
-  const deletePostHandler = async (id) => {
+  const deletePostHandler = async (id: string) => {
     try {
       await deletePost({
         variables: {
