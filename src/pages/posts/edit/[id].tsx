@@ -11,7 +11,7 @@ const Edit = () => {
   const [post, setPost] = useState(null);
 
   const { data } = useQuery(POST, {
-    variables: { id: query.id },
+    variables: { id: query.id ? query.id : 0 },
   });
 
   useEffect(() => {

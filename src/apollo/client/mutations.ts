@@ -75,8 +75,8 @@ export const CREATE_POST = gql`
 `;
 
 export const UPDATE_POST = gql`
-  mutation UpdatePostMutation($id: ID!, $body: String!) {
-    updatePost(id: $id, input: { body: $body }) {
+  mutation UpdatePostMutation($id: ID!, $body: String!, $images: [FileUpload]) {
+    updatePost(id: $id, input: { body: $body, images: $images }) {
       post {
         id
         body

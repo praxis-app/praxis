@@ -1,0 +1,16 @@
+.selectedImages {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.selectedImage {
+  width: 200px;
+  margin-right: -4px;
+}
+
+.removeSelectedImageButton {
+  position: relative;
+  right: 8px;
+  bottom: 14px;
+  cursor: pointer;
+}
