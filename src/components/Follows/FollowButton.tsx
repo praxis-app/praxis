@@ -14,6 +14,7 @@ const FollowButton = ({ userId }) => {
   const [deleteFollow] = useMutation(DELETE_FOLLOW);
   const followersRes = useQuery(FOLLOWERS, {
     variables: { userId: userId },
+    fetchPolicy: "no-cache",
   });
 
   useEffect(() => {

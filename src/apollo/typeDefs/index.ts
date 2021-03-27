@@ -1,6 +1,7 @@
 import { gql } from "apollo-server-micro";
 import User from "./user";
 import Post from "./post";
+import Comment from "./comment";
 import Image from "./image";
 import Follow from "./follow";
 
@@ -9,12 +10,13 @@ export const typeDefs = gql`
 
   ${User}
   ${Post}
+  ${Comment}
   ${Image}
   ${Follow}
 
   type Query {
     user(id: ID!): User!
-    userByName(name: String!): User!
+    userByName(name: String!): User
     allUsers: [User]!
 
     userFollowers(userId: ID!): [Follow]!
@@ -22,11 +24,16 @@ export const typeDefs = gql`
     userFollowing(userId: ID!): [Follow]!
     userFollowingByName(name: String!): [Follow]!
 
-    post(id: ID!): Post!
+    post(id: ID!): Post
     allPosts: [Post]!
+    postsByName(name: String!): [Post]!
+
+    comment(id: ID!): Comment
+    commentsByPostId(postId: ID!): [Comment]!
 
     allImages: [Image]!
     imagesByPostId(postId: ID!): [Image]!
+    imagesByCommentId(commentId: ID!): [Image]!
   }
 
   type Mutation {
@@ -41,6 +48,14 @@ export const typeDefs = gql`
     createPost(userId: ID!, input: CreatePostInput!): PostPayload!
     updatePost(id: ID!, input: UpdatePostInput!): PostPayload!
     deletePost(id: ID!): Boolean!
+
+    createComment(
+      userId: ID!
+      postId: ID!
+      input: CreateCommentInput!
+    ): CommentPayload!
+    updateComment(id: ID!, input: UpdateCommentInput!): CommentPayload!
+    deleteComment(id: ID!): Boolean!
 
     uploadImage(image: FileUpload!, userId: ID!): ImagePayload!
     deleteImage(id: ID!): Boolean!

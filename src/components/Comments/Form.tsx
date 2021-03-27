@@ -6,45 +6,55 @@ import Router from "next/router";
 import { RemoveCircle } from "@material-ui/icons";
 
 import baseUrl from "../../utils/baseUrl";
-import { CURRENT_USER, IMAGES_BY_POST_ID } from "../../apollo/client/queries";
 import {
-  CREATE_POST,
-  UPDATE_POST,
+  CURRENT_USER,
+  IMAGES_BY_COMMENT_ID,
+} from "../../apollo/client/queries";
+import {
+  CREATE_COMMENT,
+  UPDATE_COMMENT,
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
-import styles from "../../styles/PostsForm.module.scss";
+import styles from "../../styles/CommentsForm.module.scss";
 
 interface Props {
-  post?: Post;
-  posts?: [Post];
+  postId?: string | number;
+  comment?: Comment;
+  comments?: Comment[];
   isEditing?: boolean;
-  setPosts?: (posts: any) => void;
+  setComments?: (comments: any) => void;
 }
 
-const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
+const CommentsForm = ({
+  postId,
+  comment,
+  comments,
+  isEditing,
+  setComments,
+}: Props) => {
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
   const [savedImages, setSavedImages] = useState([]);
   const [images, setImages] = useState<File[]>([]);
   const [body, setBody] = useState<string>("");
 
-  const [createPost] = useMutation(CREATE_POST);
-  const [updatePost] = useMutation(UPDATE_POST);
+  const [createComment] = useMutation(CREATE_COMMENT);
+  const [updateComment] = useMutation(UPDATE_COMMENT);
   const [deleteImage] = useMutation(DELETE_IMAGE);
   const currentUserRes = useQuery(CURRENT_USER);
-  const savedImagesRes = useQuery(IMAGES_BY_POST_ID, {
-    variables: { postId: post ? post.id : 0 },
+  const savedImagesRes = useQuery(IMAGES_BY_COMMENT_ID, {
+    variables: { commentId: comment ? comment.id : 0 },
     fetchPolicy: "no-cache",
   });
 
   useEffect(() => {
     if (isEditing) {
-      setBody(post.body);
+      setBody(comment.body);
     }
-  }, [post, isEditing]);
+  }, [comment, isEditing]);
 
   useEffect(() => {
     setSavedImages(
-      savedImagesRes.data ? savedImagesRes.data.imagesByPostId : []
+      savedImagesRes.data ? savedImagesRes.data.imagesByCommentId : []
     );
   }, [savedImagesRes.data]);
 
@@ -54,31 +64,32 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
     if (currentUserRes.data) {
       if (isEditing) {
         try {
-          await updatePost({
+          await updateComment({
             variables: {
-              id: post.id,
+              id: comment.id,
               body: body,
               images: images,
             },
           });
           // Redirect to Show Post after update
-          Router.push(`/posts/${post.id}`);
+          Router.push(`/posts/${comment.postId}`);
         } catch (err) {
           alert(err);
         }
       } else {
         try {
-          const { data } = await createPost({
+          const { data } = await createComment({
             variables: {
+              userId: currentUserRes.data.user.id,
+              postId: postId,
               body: body,
               images: images,
-              userId: currentUserRes.data.user.id,
             },
           });
           setBody("");
           setImages([]);
           e.target.reset();
-          setPosts([...posts, data.createPost.post]);
+          setComments([...comments, data.createComment.comment]);
         } catch (err) {
           alert(err);
         }
@@ -108,14 +119,11 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
   };
 
   return (
-    <form
-      onSubmit={(e) => handleSubmit(e)}
-      style={{ marginBottom: "12px", width: "420px" }}
-    >
+    <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
       <FormGroup>
         <Input
           type="text"
-          placeholder="Post something awesome..."
+          placeholder="Leave a comment..."
           value={body}
           multiline
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -177,10 +185,10 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
         type="submit"
         style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
       >
-        {isEditing ? "Save" : "Post"}
+        {isEditing ? "Save" : "Comment"}
       </Button>
     </form>
   );
 };
 
-export default PostsForm;
+export default CommentsForm;
