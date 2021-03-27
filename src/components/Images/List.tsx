@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Spinner } from "react-bootstrap";
 import baseUrl from "../../utils/baseUrl";
 
 const List = ({ images }) => {
