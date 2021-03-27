@@ -34,6 +34,7 @@ const Post = ({ post: { id, userId, body }, deletePost }) => {
   const [images, setImages] = useState([]);
   const imagesRes = useQuery(IMAGES_BY_POST_ID, {
     variables: { postId: id },
+    fetchPolicy: "no-cache",
   });
   const userRes = useQuery(USER, {
     variables: { id: userId },

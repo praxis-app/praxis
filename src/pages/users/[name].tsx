@@ -15,7 +15,9 @@ const Show = () => {
   const userRes = useQuery(USER_BY_NAME, {
     variables: { name: query.name ? query.name : "" },
   });
-  const postsRes = useQuery(POSTS);
+  const postsRes = useQuery(POSTS, {
+    fetchPolicy: "no-cache",
+  });
   const [deleteUser] = useMutation(DELETE_USER);
   const [deletePost] = useMutation(DELETE_POST);
 

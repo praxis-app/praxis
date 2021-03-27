@@ -10,7 +10,9 @@ const Home = () => {
   const [posts, setPosts] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [deletePost] = useMutation(DELETE_POST);
-  const postsRes = useQuery(POSTS);
+  const postsRes = useQuery(POSTS, {
+    fetchPolicy: "no-cache",
+  });
   const currentUserRes = useQuery(CURRENT_USER);
 
   useEffect(() => {
