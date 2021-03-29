@@ -17,6 +17,7 @@
     "@prisma/cli": "^2.19.0",
     "@prisma/client": "^2.14.0",
     "apollo-cache-inmemory": "^1.6.6",
+    "apollo-link-error": "^1.1.13",
     "apollo-server-micro": "^2.19.2",
     "apollo-upload-client": "^14.1.3",
     "axios": "^0.21.1",
@@ -42,5 +43,8 @@
   },
   "prisma": {
     "schema": "src/prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "@types/apollo-upload-client": "^14.1.0"
   }
 }

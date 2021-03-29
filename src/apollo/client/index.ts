@@ -1,7 +1,9 @@
 import { useMemo } from "react";
-import { ApolloClient } from "@apollo/client";
+import { ApolloClient, ApolloLink } from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
+import { onError } from "apollo-link-error";
+
 import baseUrl from "../../utils/baseUrl";
 import { defaults, resolvers } from "./localState";
 
@@ -9,6 +11,15 @@ let apolloClient: any;
 
 const cache: any = new InMemoryCache();
 const uri = `${baseUrl}/api/graphql`;
+
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    console.log("graphQLErrors", graphQLErrors);
+  }
+  if (networkError) {
+    console.log("networkError", networkError);
+  }
+});
 
 const createIsomorphLink = () => {
   if (typeof window === "undefined") {
@@ -25,7 +36,7 @@ const createIsomorphLink = () => {
 const createApolloClient = () => {
   return new ApolloClient({
     ssrMode: typeof window === "undefined",
-    link: createIsomorphLink(),
+    link: ApolloLink.from([errorLink, createIsomorphLink()]),
     resolvers,
     cache,
   });
@@ -51,7 +62,7 @@ export const initializeApollo = (initialState = null) => {
   return _apolloClient;
 };
 
-export const useApollo = (initialState) => {
+export const useApollo = (initialState: any) => {
   const store = useMemo(() => initializeApollo(initialState), [initialState]);
   return store;
 };

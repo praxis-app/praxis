@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { useQuery } from "@apollo/client";
 import { Edit, Delete } from "@material-ui/icons";
 import Link from "next/link";
@@ -17,63 +16,67 @@ import {
 
 import ImagesList from "../Images/List";
 import {
-  IMAGES_BY_POST_ID,
+  IMAGES_BY_COMMENT_ID,
   USER,
   CURRENT_USER,
 } from "../../apollo/client/queries";
 
+import styles from "../../styles/Comment.module.scss";
+
 const useStyles = makeStyles({
   root: {
-    maxWidth: 330,
+    width: "100%",
     marginBottom: 12,
     backgroundColor: "rgb(65, 65, 65)",
   },
   title: {
     fontFamily: "Inter",
+    fontSize: 16,
   },
 });
 
-const Post = ({ post: { id, userId, body }, deletePost }) => {
+const Comment = ({ comment: { id, userId, body }, deleteComment }) => {
   const [user, setUser] = useState(null);
   const [images, setImages] = useState([]);
   const currentUserRes = useQuery(CURRENT_USER);
   const userRes = useQuery(USER, {
     variables: { id: userId },
   });
-  const imagesRes = useQuery(IMAGES_BY_POST_ID, {
-    variables: { postId: id },
+  const imagesRes = useQuery(IMAGES_BY_COMMENT_ID, {
+    variables: { commentId: id },
     fetchPolicy: "no-cache",
   });
   const classes = useStyles();
-  const router = useRouter();
 
   useEffect(() => {
     setUser(userRes.data ? userRes.data.user : null);
   }, [userRes.data]);
 
   useEffect(() => {
-    setImages(imagesRes.data ? imagesRes.data.imagesByPostId : []);
+    setImages(imagesRes.data ? imagesRes.data.imagesByCommentId : []);
   }, [imagesRes.data]);
 
-  const ownPost = (): boolean => {
+  const ownComment = (): boolean => {
     if (currentUserRes.data && user && currentUserRes.data.user.id == user.id)
       return true;
     return false;
   };
 
   return (
-    <div key={id}>
+    <div className={styles.comment} key={id}>
+      <Link href={`/users/${user?.name}`}>
+        <a>
+          <Avatar
+            style={{ backgroundColor: "white", color: "black" }}
+            className={styles.avatar}
+          >
+            {user?.name[0].charAt(0).toUpperCase()}
+          </Avatar>
+        </a>
+      </Link>
+
       <Card className={classes.root}>
         <CardHeader
-          avatar={
-            <Link href={`/users/${user?.name}`}>
-              <a>
-                <Avatar style={{ backgroundColor: "white", color: "black" }}>
-                  {user?.name[0].charAt(0).toUpperCase()}
-                </Avatar>
-              </a>
-            </Link>
-          }
           title={
             <Link href={`/users/${user?.name}`}>
               <a>{user?.name}</a>
@@ -85,7 +88,7 @@ const Post = ({ post: { id, userId, body }, deletePost }) => {
           <Typography
             style={{
               color: "rgb(190, 190, 190)",
-              marginTop: "-12px",
+              marginTop: "-24px",
               fontFamily: "Inter",
             }}
           >
@@ -97,25 +100,24 @@ const Post = ({ post: { id, userId, body }, deletePost }) => {
           <ImagesList images={images} />
         </CardMedia>
 
-        {ownPost() && (
+        {ownComment() && (
           <CardActions style={{ marginTop: "6px" }}>
-            <Link href={`/posts/${id}/edit`}>
+            <Link href={`/comments/${id}/edit`}>
               <a>
                 <Edit /> Edit
               </a>
             </Link>
 
-            <Link href={router.asPath}>
-              <a
-                onClick={() =>
-                  window.confirm(
-                    "Are you sure you want to delete this post?"
-                  ) && deletePost(id)
-                }
-              >
-                <Delete /> Delete
-              </a>
-            </Link>
+            <a
+              onClick={() =>
+                window.confirm(
+                  "Are you sure you want to delete this comment?"
+                ) && deleteComment(id)
+              }
+              style={{ cursor: "pointer", color: "white" }}
+            >
+              <Delete /> Delete
+            </a>
           </CardActions>
         )}
       </Card>
@@ -123,4 +125,4 @@ const Post = ({ post: { id, userId, body }, deletePost }) => {
   );
 };
 
-export default Post;
+export default Comment;

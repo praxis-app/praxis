@@ -2,8 +2,9 @@ export default `
 
 type Image {
   id: ID!
-  userId: Int
-  postId: Int
+  userId: ID
+  postId: ID
+  commentId: ID
   path: String!
   createdAt: String!
   updatedAt: String!

@@ -3,7 +3,7 @@ import baseUrl from "../../utils/baseUrl";
 
 const List = ({ images }) => {
   return (
-    <div style={{ marginBottom: "10px" }}>
+    <>
       {images
         .slice()
         .reverse()
@@ -23,7 +23,7 @@ const List = ({ images }) => {
             </Link>
           );
         })}
-    </div>
+    </>
   );
 };
 

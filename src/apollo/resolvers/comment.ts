@@ -5,9 +5,10 @@ import prisma from "../../utils/initPrisma";
 // fs, promisify, and unlink to delete img
 import fs from "fs";
 import { promisify } from "util";
+import comment from "../typeDefs/comment";
 const unlinkAsync = promisify(fs.unlink);
 
-const saveImages = async (post: any, images: any) => {
+const saveImages = async (comment: any, images: any) => {
   for (const image of images ? images : []) {
     const { createReadStream, mimetype } = await image;
     const extension = mimetype.split("/")[1];
@@ -18,12 +19,12 @@ const saveImages = async (post: any, images: any) => {
       data: {
         user: {
           connect: {
-            id: post.userId,
+            id: comment.userId,
           },
         },
-        post: {
+        comment: {
           connect: {
-            id: post.id,
+            id: comment.id,
           },
         },
         path: path.replace("public", ""),
@@ -32,43 +33,29 @@ const saveImages = async (post: any, images: any) => {
   }
 };
 
-const postResolvers = {
+const commentResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
-    post: async (_: any, { id }) => {
+    comment: async (_: any, { id }) => {
       try {
-        const post = await prisma.post.findFirst({
+        const comment = await prisma.comment.findFirst({
           where: {
             id: parseInt(id),
           },
         });
-        return post;
+        return comment;
       } catch (error) {
         throw error;
       }
     },
 
-    allPosts: async () => {
+    commentsByPostId: async (_: any, { postId }) => {
       try {
-        const posts = await prisma.post.findMany();
-        return posts;
-      } catch (error) {
-        throw error;
-      }
-    },
-
-    postsByName: async (_: any, { name }) => {
-      try {
-        const user = await prisma.user.findFirst({
-          where: {
-            name: name,
-          },
-          include: {
-            posts: true,
-          },
+        const comments = await prisma.comment.findMany({
+          where: { postId: parseInt(postId) },
         });
-        return user.posts;
+        return comments;
       } catch (error) {
         throw error;
       }
@@ -76,51 +63,56 @@ const postResolvers = {
   },
 
   Mutation: {
-    async createPost(_: any, { userId, input }) {
+    async createComment(_: any, { userId, postId, input }) {
       const { body, images } = input;
       try {
-        const newPost = await prisma.post.create({
+        const comment = await prisma.comment.create({
           data: {
             user: {
               connect: {
                 id: parseInt(userId),
               },
             },
+            post: {
+              connect: {
+                id: parseInt(postId),
+              },
+            },
             body: body,
           },
         });
 
-        await saveImages(newPost, images);
+        await saveImages(comment, images);
 
-        return { post: newPost };
+        return { comment };
       } catch (err) {
         throw new Error(err);
       }
     },
 
-    async updatePost(_: any, { id, input }) {
+    async updateComment(_: any, { id, input }) {
       const { body, images } = input;
 
       try {
-        const post = await prisma.post.update({
+        const comment = await prisma.comment.update({
           where: { id: parseInt(id) },
           data: { body: body },
         });
 
-        await saveImages(post, images);
+        await saveImages(comment, images);
 
-        if (!post) throw new Error("Post not found.");
+        if (!comment) throw new Error("Comment not found.");
 
-        return { post };
+        return { comment };
       } catch (err) {
         throw new Error(err);
       }
     },
 
-    async deletePost(_: any, { id }) {
+    async deleteComment(_: any, { id }) {
       try {
         const images = await prisma.image.findMany({
-          where: { postId: parseInt(id) },
+          where: { commentId: parseInt(id) },
         });
 
         for (const image of images) {
@@ -130,7 +122,7 @@ const postResolvers = {
           });
         }
 
-        await prisma.post.delete({
+        await prisma.comment.delete({
           where: { id: parseInt(id) },
         });
 
@@ -142,4 +134,4 @@ const postResolvers = {
   },
 };
 
-export default postResolvers;
+export default commentResolvers;

@@ -55,6 +55,42 @@ export const POSTS = gql`
   }
 `;
 
+export const POSTS_BY_NAME = gql`
+  query($name: String!) {
+    postsByName(name: $name) {
+      id
+      userId
+      body
+      createdAt
+    }
+  }
+`;
+
+export const COMMENT = gql`
+  query($id: ID!) {
+    comment(id: $id) {
+      id
+      userId
+      postId
+      body
+      createdAt
+    }
+  }
+`;
+
+export const COMMENTS_BY_POST_ID = gql`
+  query($postId: ID!) {
+    commentsByPostId(postId: $postId) {
+      id
+      userId
+      postId
+      body
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
 export const IMAGES = gql`
   {
     allImages {
@@ -69,6 +105,17 @@ export const IMAGES = gql`
 export const IMAGES_BY_POST_ID = gql`
   query($postId: ID!) {
     imagesByPostId(postId: $postId) {
+      id
+      userId
+      postId
+      path
+    }
+  }
+`;
+
+export const IMAGES_BY_COMMENT_ID = gql`
+  query($commentId: ID!) {
+    imagesByCommentId(commentId: $commentId) {
       id
       userId
       postId

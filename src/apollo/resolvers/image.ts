@@ -30,6 +30,17 @@ const imageResolvers = {
         throw error;
       }
     },
+
+    imagesByCommentId: async (_: any, { commentId }) => {
+      try {
+        const images = await prisma.image.findMany({
+          where: { commentId: parseInt(commentId) },
+        });
+        return images;
+      } catch (error) {
+        throw error;
+      }
+    },
   },
 
   Mutation: {

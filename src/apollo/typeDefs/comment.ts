@@ -1,25 +1,26 @@
 export default `
 
-type Post {
+type Comment {
   id: ID!
   userId: ID!
+  postId: ID!
   body: String!
   createdAt: String!
   updatedAt: String!
 }
 
-input CreatePostInput {
-  body: String!
+input CreateCommentInput {
+  body: String
   images: [FileUpload]
 }
 
-input UpdatePostInput {
-  body: String!
+input UpdateCommentInput {
+  body: String
   images: [FileUpload]
 }
 
-type PostPayload {
-  post: Post!
+type CommentPayload {
+  comment: Comment!
 }
 
 `;
