@@ -2,6 +2,7 @@ import { gql } from "apollo-server-micro";
 import User from "./user";
 import Post from "./post";
 import Comment from "./comment";
+import Like from "./like";
 import Image from "./image";
 import Follow from "./follow";
 
@@ -11,6 +12,7 @@ export const typeDefs = gql`
   ${User}
   ${Post}
   ${Comment}
+  ${Like}
   ${Image}
   ${Follow}
 
@@ -30,6 +32,9 @@ export const typeDefs = gql`
 
     comment(id: ID!): Comment
     commentsByPostId(postId: ID!): [Comment]!
+
+    likesByPostId(postId: ID!): [Like]!
+    likesByCommentId(commentId: ID!): [Like]!
 
     allImages: [Image]!
     imagesByPostId(postId: ID!): [Image]!
@@ -56,6 +61,9 @@ export const typeDefs = gql`
     ): CommentPayload!
     updateComment(id: ID!, input: UpdateCommentInput!): CommentPayload!
     deleteComment(id: ID!): Boolean!
+
+    createLike(userId: ID!, postId: ID, commentId: ID): LikePayload!
+    deleteLike(id: ID!): Boolean!
 
     uploadImage(image: FileUpload!, userId: ID!): ImagePayload!
     deleteImage(id: ID!): Boolean!
