@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { Card } from "@material-ui/core";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
@@ -20,10 +20,16 @@ const useStyles = makeStyles((theme: Theme) =>
 const Followers = () => {
   const { query } = useRouter();
   const [followers, setFollowers] = useState([]);
-  const followersRes = useQuery(FOLLOWERS_BY_NAME, {
-    variables: { name: query.name ? query.name : "" },
-  });
+  const [getFollowersRes, followersRes] = useLazyQuery(FOLLOWERS_BY_NAME);
   const classes = useStyles();
+
+  useEffect(() => {
+    if (query.name) {
+      getFollowersRes({
+        variables: { name: query.name },
+      });
+    }
+  }, [query.name]);
 
   useEffect(() => {
     setFollowers(

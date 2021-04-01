@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, useLazyQuery } from "@apollo/client";
 import { Spinner } from "react-bootstrap";
 import { useRouter } from "next/router";
 
@@ -9,14 +9,19 @@ import { USER_BY_NAME } from "../../../apollo/client/queries";
 const Edit = () => {
   const { query } = useRouter();
   const [user, setUser] = useState(null);
-
-  const { data } = useQuery(USER_BY_NAME, {
-    variables: { name: query.name ? query.name : "" },
-  });
+  const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME);
 
   useEffect(() => {
-    setUser(data ? data.userByName : data);
-  }, [data]);
+    if (query.name) {
+      getUserRes({
+        variables: { name: query.name },
+      });
+    }
+  }, [query.name]);
+
+  useEffect(() => {
+    setUser(userRes.data ? userRes.data.userByName : userRes.data);
+  }, [userRes.data]);
 
   return (
     <>

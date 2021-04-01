@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { Spinner } from "react-bootstrap";
 import { useRouter } from "next/router";
 
@@ -10,13 +10,18 @@ const Edit = () => {
   const { query } = useRouter();
   const [post, setPost] = useState(null);
 
-  const { data } = useQuery(POST, {
-    variables: { id: query.id ? query.id : 0 },
-  });
+  const [getPostRes, postRes] = useLazyQuery(POST);
 
   useEffect(() => {
-    setPost(data ? data.post : data);
-  }, [data]);
+    if (query.id)
+      getPostRes({
+        variables: { id: query.id },
+      });
+  }, [query.id]);
+
+  useEffect(() => {
+    setPost(postRes.data ? postRes.data.post : postRes.data);
+  }, [postRes.data]);
 
   if (post) return <PostForm post={post} isEditing={true} />;
   return <Spinner animation="border" />;

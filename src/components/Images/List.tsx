@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import baseUrl from "../../utils/baseUrl";
 
 const List = ({ images }) => {
+  const router = useRouter();
+
   return (
     <>
       {images
@@ -9,7 +12,7 @@ const List = ({ images }) => {
         .reverse()
         .map(({ id, postId, path }) => {
           return (
-            <Link href={`/posts/${postId}`} key={id}>
+            <Link href={postId ? `/posts/${postId}` : router.asPath} key={id}>
               <a>
                 <img
                   src={baseUrl + path}

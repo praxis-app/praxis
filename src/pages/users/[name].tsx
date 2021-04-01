@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import { Spinner } from "react-bootstrap";
 
@@ -12,27 +12,32 @@ const Show = () => {
   const { query } = useRouter();
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
-  const userRes = useQuery(USER_BY_NAME, {
-    variables: { name: query.name ? query.name : "" },
-  });
-  const postsRes = useQuery(POSTS_BY_NAME, {
-    variables: { name: query.name ? query.name : "" },
+  const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME);
+  const [getPostsRes, postsRes] = useLazyQuery(POSTS_BY_NAME, {
     fetchPolicy: "no-cache",
   });
   const [deleteUser] = useMutation(DELETE_USER);
   const [deletePost] = useMutation(DELETE_POST);
 
   useEffect(() => {
-    setUser(userRes.data ? userRes.data.userByName : userRes.data);
+    const vars = {
+      variables: { name: query.name },
+    };
+    if (query.name) {
+      getUserRes(vars);
+      getPostsRes(vars);
+    }
+  }, [query.name]);
+
+  useEffect(() => {
+    setUser(userRes.data ? userRes.data.userByName : null);
   }, [userRes.data]);
 
   useEffect(() => {
-    if (user && postsRes.data) {
-      setPosts(postsRes.data.postsByName);
-    }
-  }, [postsRes.data, user]);
+    setPosts(postsRes.data ? postsRes.data.postsByName : []);
+  }, [postsRes.data]);
 
-  const deleteUserHandler = async (userId) => {
+  const deleteUserHandler = async (userId: string) => {
     try {
       await deleteUser({
         variables: {

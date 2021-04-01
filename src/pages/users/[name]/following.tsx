@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import { Card } from "@material-ui/core";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
@@ -20,10 +20,18 @@ const useStyles = makeStyles((theme: Theme) =>
 const Following = () => {
   const { query } = useRouter();
   const [following, setFollowing] = useState([]);
-  const followingRes = useQuery(FOLLOWING_BY_NAME, {
+  const [getFollowingRes, followingRes] = useLazyQuery(FOLLOWING_BY_NAME, {
     variables: { name: query.name ? query.name : "" },
   });
   const classes = useStyles();
+
+  useEffect(() => {
+    if (query.name) {
+      getFollowingRes({
+        variables: { name: query.name },
+      });
+    }
+  }, [query.name]);
 
   useEffect(() => {
     setFollowing(
@@ -34,7 +42,6 @@ const Following = () => {
   return (
     <>
       <h1 style={{ color: "white" }}>{query.name}</h1>
-
       <h5 style={{ color: "white" }}>{following.length} Following</h5>
 
       <Card className={classes.root}>

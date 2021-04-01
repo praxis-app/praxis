@@ -36,6 +36,7 @@ const CommentsForm = ({
   const [savedImages, setSavedImages] = useState([]);
   const [images, setImages] = useState<File[]>([]);
   const [body, setBody] = useState<string>("");
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const [createComment] = useMutation(CREATE_COMMENT);
   const [updateComment] = useMutation(UPDATE_COMMENT);
@@ -62,8 +63,10 @@ const CommentsForm = ({
     e.preventDefault();
 
     if (currentUserRes.data) {
+      setSubmitLoading(true);
       if (isEditing) {
         try {
+          setBody("");
           await updateComment({
             variables: {
               id: comment.id,
@@ -94,6 +97,7 @@ const CommentsForm = ({
           alert(err);
         }
       }
+      setSubmitLoading(false);
     }
   };
 
@@ -123,7 +127,7 @@ const CommentsForm = ({
       <FormGroup>
         <Input
           type="text"
-          placeholder="Leave a comment..."
+          placeholder={submitLoading ? "Loading..." : "Leave a comment..."}
           value={body}
           multiline
           onChange={(e: ChangeEvent<HTMLInputElement>) =>

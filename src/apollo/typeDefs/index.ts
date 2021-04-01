@@ -18,7 +18,7 @@ export const typeDefs = gql`
 
   type Query {
     user(id: ID!): User!
-    userByName(name: String!): User
+    userByName(name: String!): User!
     allUsers: [User]!
 
     userFollowers(userId: ID!): [Follow]!
@@ -26,11 +26,11 @@ export const typeDefs = gql`
     userFollowing(userId: ID!): [Follow]!
     userFollowingByName(name: String!): [Follow]!
 
-    post(id: ID!): Post
+    post(id: ID!): Post!
     allPosts: [Post]!
     postsByName(name: String!): [Post]!
 
-    comment(id: ID!): Comment
+    comment(id: ID!): Comment!
     commentsByPostId(postId: ID!): [Comment]!
 
     likesByPostId(postId: ID!): [Like]!
