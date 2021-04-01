@@ -26,12 +26,12 @@ const FollowButton = ({ userId }) => {
   }, [followersRes.data]);
 
   const notThisUser = (): boolean => {
-    return currentUser && currentUser.id !== parseInt(userId);
+    return currentUser && currentUser.id !== userId;
   };
 
   const alreadyFollow = (): Follow => {
     const follow = followers?.find(
-      (follow) => parseInt(follow.followerId) === currentUser.id
+      (follow) => follow.followerId === currentUser.id
     );
 
     if (follow) return follow;
@@ -55,9 +55,7 @@ const FollowButton = ({ userId }) => {
       },
     });
     setFollowers(
-      followers.filter(
-        (follow) => parseInt(follow.followerId) !== currentUser.id
-      )
+      followers.filter((follow) => follow.followerId !== currentUser.id)
     );
   };
 

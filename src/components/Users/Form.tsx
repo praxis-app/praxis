@@ -49,7 +49,7 @@ const UserForm = ({ user, isEditing }: Props) => {
             },
           });
 
-          if (parseInt(currentUserRes.data.user.id) === parseInt(user.id)) {
+          if (currentUserRes.data.user.id === user.id) {
             localStorage.setItem("jwtToken", data.updateUser.token);
             setAuthToken(data.updateUser.token);
 
