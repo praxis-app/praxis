@@ -76,12 +76,7 @@ const LikeButton = ({ postId, commentId }: Props) => {
         id: alreadyLike().id,
       },
     });
-    setLikes(
-      likes.filter(
-        (like) =>
-          parseInt(like.userId) !== (parseInt(currentUser.id) || currentUser.id)
-      )
-    );
+    setLikes(likes.filter((like) => like.userId !== currentUser.id));
   };
 
   return (
