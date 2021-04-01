@@ -26,6 +26,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
   const [savedImages, setSavedImages] = useState([]);
   const [images, setImages] = useState<File[]>([]);
   const [body, setBody] = useState<string>("");
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const [createPost] = useMutation(CREATE_POST);
   const [updatePost] = useMutation(UPDATE_POST);
@@ -52,8 +53,10 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
     e.preventDefault();
 
     if (currentUserRes.data) {
+      setSubmitLoading(true);
       if (isEditing) {
         try {
+          setBody("");
           await updatePost({
             variables: {
               id: post.id,
@@ -83,6 +86,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
           alert(err);
         }
       }
+      setSubmitLoading(false);
     }
   };
 
@@ -115,7 +119,9 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
       <FormGroup>
         <Input
           type="text"
-          placeholder="Post something awesome..."
+          placeholder={
+            submitLoading ? "Loading..." : "Post something awesome..."
+          }
           value={body}
           multiline
           onChange={(e: ChangeEvent<HTMLInputElement>) =>

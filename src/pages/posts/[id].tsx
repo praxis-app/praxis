@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
 import { Spinner } from "react-bootstrap";
 import Router, { useRouter } from "next/router";
 
@@ -16,13 +16,21 @@ const Show = () => {
   const [deletePost] = useMutation(DELETE_POST);
   const [deleteComment] = useMutation(DELETE_COMMENT);
 
-  const postRes = useQuery(POST, {
-    variables: { id: query.id ? query.id : 0 },
-  });
-  const commentsRes = useQuery(COMMENTS_BY_POST_ID, {
-    variables: { postId: post ? post.id : 0 },
+  const [getPostRes, postRes] = useLazyQuery(POST);
+  const [getCommentsRes, commentsRes] = useLazyQuery(COMMENTS_BY_POST_ID, {
     fetchPolicy: "no-cache",
   });
+
+  useEffect(() => {
+    if (query.id)
+      getPostRes({
+        variables: { id: query.id },
+      });
+  }, [query.id]);
+
+  useEffect(() => {
+    if (post) getCommentsRes({ variables: { postId: post.id } });
+  }, [post]);
 
   useEffect(() => {
     setPost(postRes.data ? postRes.data.post : null);

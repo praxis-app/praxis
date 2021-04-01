@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, useLazyQuery } from "@apollo/client";
 import { Spinner } from "react-bootstrap";
 import { useRouter } from "next/router";
 
@@ -9,14 +9,18 @@ import { COMMENT } from "../../../apollo/client/queries";
 const Edit = () => {
   const { query } = useRouter();
   const [comment, setComment] = useState(null);
-
-  const { data } = useQuery(COMMENT, {
-    variables: { id: query.id ? query.id : 0 },
-  });
+  const [getCommentsRes, commentsRes] = useLazyQuery(COMMENT);
 
   useEffect(() => {
-    setComment(data ? data.comment : data);
-  }, [data]);
+    if (query.id)
+      getCommentsRes({
+        variables: { id: query.id },
+      });
+  }, [query.id]);
+
+  useEffect(() => {
+    setComment(commentsRes.data ? commentsRes.data.comment : commentsRes.data);
+  }, [commentsRes.data]);
 
   if (comment) return <CommentForm comment={comment} isEditing={true} />;
   return <Spinner animation="border" />;

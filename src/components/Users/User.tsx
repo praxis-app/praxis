@@ -114,7 +114,7 @@ const Show = ({ user, deleteUser }: Props) => {
 
       {ownUser() && (
         <CardActions>
-          <Link href={`/users/edit/${name}`}>
+          <Link href={`/users/${name}/edit`}>
             <a>
               <Edit /> Edit
             </a>
