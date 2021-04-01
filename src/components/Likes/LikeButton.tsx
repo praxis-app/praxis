@@ -51,7 +51,9 @@ const LikeButton = ({ postId, commentId }: Props) => {
   }, [likesByPostIdRes.data, likesByCommentIdRes.data]);
 
   const alreadyLike = (): Like => {
-    const like = likes.find((like) => parseInt(like.userId) === currentUser.id);
+    if (!currentUser) return null;
+
+    const like = likes.find((like) => like.userId === currentUser.id);
 
     if (like) return like;
     return null;
@@ -74,7 +76,12 @@ const LikeButton = ({ postId, commentId }: Props) => {
         id: alreadyLike().id,
       },
     });
-    setLikes(likes.filter((like) => parseInt(like.userId) !== currentUser.id));
+    setLikes(
+      likes.filter(
+        (like) =>
+          parseInt(like.userId) !== (parseInt(currentUser.id) || currentUser.id)
+      )
+    );
   };
 
   return (

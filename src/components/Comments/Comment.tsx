@@ -63,8 +63,7 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }) => {
   }, [imagesRes.data]);
 
   const ownComment = (): boolean => {
-    if (currentUserRes.data && user && currentUserRes.data.user.id == user.id)
-      return true;
+    if (currentUser && user && currentUser.id === user.id) return true;
     return false;
   };
 
