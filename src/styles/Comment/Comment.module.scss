@@ -1,6 +1,8 @@
+@import "../App/App.module.scss";
+
 .comment {
+  @extend .card;
   display: flex;
-  width: 330px;
 }
 
 .avatar {

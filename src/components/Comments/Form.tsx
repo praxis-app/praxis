@@ -3,7 +3,7 @@ import { useState, ChangeEvent, useEffect } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { FormGroup, Input, Button } from "@material-ui/core";
 import Router from "next/router";
-import { RemoveCircle } from "@material-ui/icons";
+import { RemoveCircle, Image } from "@material-ui/icons";
 
 import baseUrl from "../../utils/baseUrl";
 import {
@@ -15,7 +15,7 @@ import {
   UPDATE_COMMENT,
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
-import styles from "../../styles/CommentsForm.module.scss";
+import styles from "../../styles/Comment/CommentsForm.module.scss";
 
 interface Props {
   postId?: string | number;
@@ -37,6 +37,7 @@ const CommentsForm = ({
   const [images, setImages] = useState<File[]>([]);
   const [body, setBody] = useState<string>("");
   const [submitLoading, setSubmitLoading] = useState(false);
+  const imagesInput = React.useRef(null);
 
   const [createComment] = useMutation(CREATE_COMMENT);
   const [updateComment] = useMutation(UPDATE_COMMENT);
@@ -144,10 +145,16 @@ const CommentsForm = ({
           type="file"
           accept="image/*"
           key={imagesInputKey}
+          ref={imagesInput}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setImages([...e.target.files])
           }
-          style={{ fontSize: "10px", marginBottom: "12px" }}
+          className={styles.imageInput}
+        />
+        <Image
+          className={styles.imageInputIcon}
+          onClick={() => imagesInput.current.click()}
+          fontSize="large"
         />
       </FormGroup>
 

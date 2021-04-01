@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useState, ChangeEvent, useEffect } from "react";
 import { useMutation, useQuery } from "@apollo/client";
 import { FormGroup, Input, Button } from "@material-ui/core";
 import Router from "next/router";
-import { RemoveCircle } from "@material-ui/icons";
+import { RemoveCircle, Image } from "@material-ui/icons";
 
 import baseUrl from "../../utils/baseUrl";
 import { CURRENT_USER, IMAGES_BY_POST_ID } from "../../apollo/client/queries";
@@ -12,7 +12,7 @@ import {
   UPDATE_POST,
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
-import styles from "../../styles/PostsForm.module.scss";
+import styles from "../../styles/Post/PostsForm.module.scss";
 
 interface Props {
   post?: Post;
@@ -27,6 +27,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
   const [images, setImages] = useState<File[]>([]);
   const [body, setBody] = useState<string>("");
   const [submitLoading, setSubmitLoading] = useState(false);
+  const imagesInput = React.useRef(null);
 
   const [createPost] = useMutation(CREATE_POST);
   const [updatePost] = useMutation(UPDATE_POST);
@@ -112,10 +113,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
   };
 
   return (
-    <form
-      onSubmit={(e) => handleSubmit(e)}
-      style={{ marginBottom: "12px", width: "420px" }}
-    >
+    <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
       <FormGroup>
         <Input
           type="text"
@@ -138,10 +136,16 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
           type="file"
           accept="image/*"
           key={imagesInputKey}
+          ref={imagesInput}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setImages([...e.target.files])
           }
-          style={{ fontSize: "10px", marginBottom: "12px" }}
+          className={styles.imageInput}
+        />
+        <Image
+          className={styles.imageInputIcon}
+          onClick={() => imagesInput.current.click()}
+          fontSize="large"
         />
       </FormGroup>
 

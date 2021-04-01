@@ -1,17 +1,28 @@
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import jwtDecode from "jwt-decode";
-import { Nav } from "react-bootstrap";
 import { useQuery, useMutation } from "@apollo/client";
+import MenuIcon from "@material-ui/icons/Menu";
 
 import { setAuthToken } from "../../utils/auth";
 import { CURRENT_USER } from "../../apollo/client/queries";
 import { LOGOUT_USER, SET_CURRENT_USER } from "../../apollo/client/mutations";
 
+import styles from "../../styles/App/Header.module.scss";
+import classNames from "classnames/bind";
+const cx = classNames.bind(styles);
+
 const Header = () => {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
   const { data } = useQuery(CURRENT_USER);
   const [logoutUser] = useMutation(LOGOUT_USER);
   const [setCurrentUser] = useMutation(SET_CURRENT_USER);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [router.asPath]);
 
   useEffect(() => {
     if (localStorage.jwtToken) {
@@ -40,62 +51,74 @@ const Header = () => {
   };
 
   return (
-    <nav
-      className="navbar navbar-dark navbar-expand-lg"
-      style={{ marginBottom: "50px", background: "rgb(30, 30, 30)" }}
-    >
-      <Link href="/" passHref>
-        <Nav.Link className="navbar-brand">Praxis</Nav.Link>
-      </Link>
-
-      <div className="collpase navbar-collapse">
-        <ul className="navbar-nav mr-auto">
-          <li className="navbar-item">
-            <Link href="/users" passHref>
-              <Nav.Link className="nav-link">Users</Nav.Link>
+    <>
+      <nav className={styles.navbar}>
+        <div className={styles.navbarBrand}>
+          {router.asPath === "/" ? (
+            <span onClick={() => router.reload()}>praxis</span>
+          ) : (
+            <Link href="/" passHref>
+              praxis
             </Link>
-          </li>
+          )}
+        </div>
+        <div
+          className={cx(styles.navbarItems, {
+            navbarItemsShow: open,
+          })}
+        >
+          <div className={styles.navbarItem}>
+            <Link href="/users" passHref>
+              <a className={styles.navbarItemText}>Users</a>
+            </Link>
+          </div>
 
           {data && data.user.isAuthenticated ? (
             <>
-              <li className="navbar-item">
+              <div className={styles.navbarItem}>
                 <Link href={`/users/${data.user.name}`} passHref>
-                  <Nav.Link className="nav-link">{data.user.name}</Nav.Link>
+                  <a className={styles.navbarItemText}>{data.user.name}</a>
                 </Link>
-              </li>
-
-              <li className="navbar-item">
+              </div>
+              <div className={styles.navbarItem}>
                 <Link href="/users/login" passHref>
-                  <Nav.Link
+                  <a
                     onClick={() =>
                       window.confirm("Are you sure you want to log out?") &&
                       logoutUserMutate()
                     }
-                    className="nav-link"
                   >
-                    Log out
-                  </Nav.Link>
+                    <div className={styles.navbarItemText}>Log out</div>
+                  </a>
                 </Link>
-              </li>
+              </div>
             </>
           ) : (
             <>
-              <li className="navbar-item">
+              <div className={styles.navbarItem}>
                 <Link href="/users/login" passHref>
-                  <Nav.Link className="nav-link">Log in</Nav.Link>
+                  <a className={styles.navbarItemText}>Log in</a>
                 </Link>
-              </li>
-
-              <li className="navbar-item">
+              </div>
+              <div className={styles.navbarItem}>
                 <Link href="/users/signup" passHref>
-                  <Nav.Link className="nav-link">Sign up</Nav.Link>
+                  <a className={styles.navbarItemText}>Sign up</a>
                 </Link>
-              </li>
+              </div>
             </>
           )}
-        </ul>
-      </div>
-    </nav>
+        </div>
+      </nav>
+
+      <MenuIcon className={styles.menuButton} />
+      <div
+        className={styles.menuButtonTouchTarget}
+        onClick={() => {
+          setOpen(!open);
+          window.navigator.vibrate(1);
+        }}
+      ></div>
+    </>
   );
 };
 

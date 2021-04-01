@@ -7,11 +7,11 @@ import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { FOLLOWING_BY_NAME } from "../../../apollo/client/queries";
 import Follow from "../../../components/Follows/Follow";
 
+import styles from "../../../styles/Follow/Follow.module.scss";
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      maxWidth: 330,
-      marginBottom: 12,
       backgroundColor: "rgb(65, 65, 65)",
     },
   })
@@ -44,7 +44,7 @@ const Following = () => {
       <h1 style={{ color: "white" }}>{query.name}</h1>
       <h5 style={{ color: "white" }}>{following.length} Following</h5>
 
-      <Card className={classes.root}>
+      <Card className={classes.root + " " + styles.card}>
         {following.map(({ userId }) => {
           return <Follow userId={userId} key={userId} />;
         })}

@@ -10,7 +10,7 @@ import {
 } from "../../apollo/client/queries";
 import { CREATE_LIKE, DELETE_LIKE } from "../../apollo/client/mutations";
 
-import styles from "../../styles/LikeButton.module.scss";
+import styles from "../../styles/Like/LikeButton.module.scss";
 
 interface Props {
   postId?: string;

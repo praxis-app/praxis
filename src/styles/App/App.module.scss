@@ -1,0 +1,25 @@
+$responsiveBreakpoint: 600px;
+$desktopBreakpoint: 1100px;
+
+.card {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.imageInput {
+  visibility: hidden;
+}
+
+.imageInputIcon {
+  margin-top: -35px;
+  margin-left: -4px;
+  margin-bottom: 10px;
+  color: white;
+}
+
+// desktop
+@media only screen and (min-width: $desktopBreakpoint) {
+  .card {
+    width: 330px;
+  }
+}

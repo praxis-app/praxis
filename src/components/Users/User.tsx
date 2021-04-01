@@ -19,11 +19,11 @@ import {
   CURRENT_USER,
 } from "../../apollo/client/queries";
 
+import styles from "../../styles/User/User.module.scss";
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      maxWidth: 330,
-      marginBottom: 12,
       backgroundColor: "rgb(65, 65, 65)",
     },
     title: {
@@ -81,7 +81,7 @@ const Show = ({ user, deleteUser }: Props) => {
   };
 
   return (
-    <Card className={classes.root}>
+    <Card className={classes.root + " " + styles.card}>
       <CardHeader
         avatar={
           <Link href={`/users/${name}`}>
