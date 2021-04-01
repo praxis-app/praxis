@@ -47,9 +47,11 @@ const Show = ({ user, deleteUser }: Props) => {
   const [following, setFollowing] = useState([]);
   const followersRes = useQuery(FOLLOWERS, {
     variables: { userId: id },
+    fetchPolicy: "no-cache",
   });
   const followingRes = useQuery(FOLLOWING, {
     variables: { userId: id },
+    fetchPolicy: "no-cache",
   });
   const currentUserRes = useQuery(CURRENT_USER);
 

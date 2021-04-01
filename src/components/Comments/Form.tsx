@@ -78,6 +78,9 @@ const CommentsForm = ({
         }
       } else {
         try {
+          setBody("");
+          setImages([]);
+          e.target.reset();
           const { data } = await createComment({
             variables: {
               userId: currentUserRes.data.user.id,
@@ -86,9 +89,6 @@ const CommentsForm = ({
               images: images,
             },
           });
-          setBody("");
-          setImages([]);
-          e.target.reset();
           setComments([...comments, data.createComment.comment]);
         } catch (err) {
           alert(err);

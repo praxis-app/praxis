@@ -22,6 +22,7 @@ import {
 } from "../../apollo/client/queries";
 
 import styles from "../../styles/Comment.module.scss";
+import LikeButton from "../Likes/LikeButton";
 
 const useStyles = makeStyles({
   root: {
@@ -36,6 +37,7 @@ const useStyles = makeStyles({
 });
 
 const Comment = ({ comment: { id, userId, body }, deleteComment }) => {
+  const [currentUser, setCurrentUser] = useState(null);
   const [user, setUser] = useState(null);
   const [images, setImages] = useState([]);
   const currentUserRes = useQuery(CURRENT_USER);
@@ -47,6 +49,10 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }) => {
     fetchPolicy: "no-cache",
   });
   const classes = useStyles();
+
+  useEffect(() => {
+    setCurrentUser(currentUserRes.data ? currentUserRes.data.user : null);
+  }, [currentUserRes.data]);
 
   useEffect(() => {
     setUser(userRes.data ? userRes.data.user : null);
@@ -100,24 +106,30 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }) => {
           <ImagesList images={images} />
         </CardMedia>
 
-        {ownComment() && (
+        {currentUser && (
           <CardActions style={{ marginTop: "6px" }}>
-            <Link href={`/comments/${id}/edit`}>
-              <a>
-                <Edit /> Edit
-              </a>
-            </Link>
+            <LikeButton commentId={id} />
 
-            <a
-              onClick={() =>
-                window.confirm(
-                  "Are you sure you want to delete this comment?"
-                ) && deleteComment(id)
-              }
-              style={{ cursor: "pointer", color: "white" }}
-            >
-              <Delete /> Delete
-            </a>
+            {ownComment() && (
+              <>
+                <Link href={`/comments/${id}/edit`}>
+                  <a>
+                    <Edit /> Edit
+                  </a>
+                </Link>
+
+                <a
+                  onClick={() =>
+                    window.confirm(
+                      "Are you sure you want to delete this comment?"
+                    ) && deleteComment(id)
+                  }
+                  style={{ cursor: "pointer", color: "white" }}
+                >
+                  <Delete /> Delete
+                </a>
+              </>
+            )}
           </CardActions>
         )}
       </Card>

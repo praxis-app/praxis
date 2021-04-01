@@ -68,6 +68,9 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
         }
       } else {
         try {
+          setBody("");
+          setImages([]);
+          e.target.reset();
           const { data } = await createPost({
             variables: {
               body: body,
@@ -75,9 +78,6 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
               userId: currentUserRes.data.user.id,
             },
           });
-          setBody("");
-          setImages([]);
-          e.target.reset();
           setPosts([...posts, data.createPost.post]);
         } catch (err) {
           alert(err);

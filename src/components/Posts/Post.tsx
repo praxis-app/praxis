@@ -21,6 +21,7 @@ import {
   USER,
   CURRENT_USER,
 } from "../../apollo/client/queries";
+import LikeButton from "../Likes/LikeButton";
 
 const useStyles = makeStyles({
   root: {
@@ -34,6 +35,7 @@ const useStyles = makeStyles({
 });
 
 const Post = ({ post: { id, userId, body }, deletePost }) => {
+  const [currentUser, setCurrentUser] = useState(null);
   const [user, setUser] = useState(null);
   const [images, setImages] = useState([]);
   const currentUserRes = useQuery(CURRENT_USER);
@@ -46,6 +48,10 @@ const Post = ({ post: { id, userId, body }, deletePost }) => {
   });
   const classes = useStyles();
   const router = useRouter();
+
+  useEffect(() => {
+    setCurrentUser(currentUserRes.data ? currentUserRes.data.user : null);
+  }, [currentUserRes.data]);
 
   useEffect(() => {
     setUser(userRes.data ? userRes.data.user : null);
@@ -97,25 +103,31 @@ const Post = ({ post: { id, userId, body }, deletePost }) => {
           <ImagesList images={images} />
         </CardMedia>
 
-        {ownPost() && (
+        {currentUser && (
           <CardActions style={{ marginTop: "6px" }}>
-            <Link href={`/posts/${id}/edit`}>
-              <a>
-                <Edit /> Edit
-              </a>
-            </Link>
+            <LikeButton postId={id} />
 
-            <Link href={router.asPath}>
-              <a
-                onClick={() =>
-                  window.confirm(
-                    "Are you sure you want to delete this post?"
-                  ) && deletePost(id)
-                }
-              >
-                <Delete /> Delete
-              </a>
-            </Link>
+            {ownPost() && (
+              <>
+                <Link href={`/posts/${id}/edit`}>
+                  <a>
+                    <Edit /> Edit
+                  </a>
+                </Link>
+
+                <Link href={router.asPath}>
+                  <a
+                    onClick={() =>
+                      window.confirm(
+                        "Are you sure you want to delete this post?"
+                      ) && deletePost(id)
+                    }
+                  >
+                    <Delete /> Delete
+                  </a>
+                </Link>
+              </>
+            )}
           </CardActions>
         )}
       </Card>
