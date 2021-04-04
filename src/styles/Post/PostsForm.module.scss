@@ -1,7 +1,7 @@
+@import "../App/App.module.scss";
+
 .form {
-  width: 330px;
-  margin-top: 48px;
-  margin-bottom: 48px;
+  @extend .card;
 }
 
 .selectedImages {

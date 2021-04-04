@@ -1,7 +1,7 @@
 server {
     listen 80;
     listen [::]:80;
-    server_name socialmaya.com;
+    server_name p.raxis.xyz;
 
     location / {
         proxy_set_header Host $http_host;
@@ -19,14 +19,14 @@ server {
     ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
     listen 443 ssl;
-    ssl_certificate /etc/letsencrypt/live/socialmaya.com-0002/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/socialmaya.com-0002/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/p.raxis.xyz/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/p.raxis.xyz/privkey.pem;
 
     if ($scheme != "https") {
         return 301 https://$host$request_uri;
     }
 
     if ($host = $server_addr) {
-        return 301 https://socialmaya.com$request_uri;
+        return 301 https://p.raxis.xyz$request_uri;
     } # to fix redirection from IP
 }

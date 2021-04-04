@@ -23,10 +23,10 @@ import {
 } from "../../apollo/client/queries";
 import LikeButton from "../Likes/LikeButton";
 
+import styles from "../../styles/Post/Post.module.scss";
+
 const useStyles = makeStyles({
   root: {
-    maxWidth: 330,
-    marginBottom: 12,
     backgroundColor: "rgb(65, 65, 65)",
   },
   title: {
@@ -68,7 +68,7 @@ const Post = ({ post: { id, userId, body }, deletePost }) => {
 
   return (
     <div key={id}>
-      <Card className={classes.root}>
+      <Card className={classes.root + " " + styles.card}>
         <CardHeader
           avatar={
             <Link href={`/users/${user?.name}`}>
@@ -86,17 +86,20 @@ const Post = ({ post: { id, userId, body }, deletePost }) => {
           }
           classes={{ title: classes.title }}
         />
-        <CardContent>
-          <Typography
-            style={{
-              color: "rgb(190, 190, 190)",
-              marginTop: "-12px",
-              fontFamily: "Inter",
-            }}
-          >
-            {body}
-          </Typography>
-        </CardContent>
+
+        {body && (
+          <CardContent>
+            <Typography
+              style={{
+                color: "rgb(190, 190, 190)",
+                marginTop: "-12px",
+                fontFamily: "Inter",
+              }}
+            >
+              {body}
+            </Typography>
+          </CardContent>
+        )}
 
         <CardMedia>
           <ImagesList images={images} />

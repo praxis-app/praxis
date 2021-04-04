@@ -6,7 +6,7 @@ import { Avatar } from "@material-ui/core";
 import { USER } from "../../apollo/client/queries";
 
 import FollowButton from "./FollowButton";
-import styles from "../../styles/Follow.module.scss";
+import styles from "../../styles/Follow/Follow.module.scss";
 
 const Follow = ({ userId }) => {
   const [user, setUser] = useState(null);

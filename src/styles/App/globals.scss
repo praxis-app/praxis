@@ -1,9 +1,15 @@
 $darkGray: rgb(50, 50, 50);
 $lightGray: rgb(200, 200, 200);
+$gray: rgb(145, 145, 145);
 
 @font-face {
   font-family: "Inter";
   src: url("/fonts/Inter.var.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Inter Bold";
+  src: url("/fonts/Inter-ExtraBold.woff") format("woff");
 }
 
 @font-face {

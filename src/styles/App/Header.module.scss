@@ -1,0 +1,86 @@
+$responsiveBreakpoint: 600px;
+$desktopBreakpoint: 1100px;
+$gray: rgb(145, 145, 145);
+
+// top, right, bottom, left
+
+.navbar {
+  background: rgb(30, 30, 30);
+  padding: 20px 22px;
+  margin-bottom: 40px;
+  display: flex;
+}
+
+.navbarBrand {
+  font-size: 20px;
+  font-family: "Inter Bold";
+  letter-spacing: 0.6px;
+  color: white;
+  cursor: pointer;
+}
+
+.navbarItems {
+  display: flex;
+  margin-left: 40px;
+  margin-top: 2.5px;
+  visibility: hidden;
+  height: 0;
+}
+
+.navbarItemsShow {
+  visibility: visible;
+  height: initial;
+  display: initial;
+  margin-top: 70px;
+  margin-left: -57px;
+}
+
+.navbarItem {
+  margin-right: 16px;
+  margin-bottom: 5px;
+}
+
+.navbarItemText {
+  color: $gray;
+  font-size: 18px;
+}
+
+.menuButton {
+  visibility: visible;
+  position: absolute;
+  top: 22px;
+  right: 20px;
+  color: $gray;
+}
+
+.menuButtonTouchTarget {
+  cursor: pointer;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 70px;
+  height: 70px;
+}
+
+// desktop
+@media only screen and (min-width: $desktopBreakpoint) {
+  .navbar {
+    padding: 13px 32px;
+    margin-bottom: 75px;
+  }
+
+  .navbarItems {
+    display: flex;
+    margin-left: 40px;
+    margin-top: 2.5px;
+    visibility: visible;
+  }
+
+  .navbarItemText {
+    font-size: initial;
+  }
+
+  .menuButton {
+    visibility: hidden;
+  }
+}

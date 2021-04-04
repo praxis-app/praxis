@@ -21,7 +21,7 @@ import {
   CURRENT_USER,
 } from "../../apollo/client/queries";
 
-import styles from "../../styles/Comment.module.scss";
+import styles from "../../styles/Comment/Comment.module.scss";
 import LikeButton from "../Likes/LikeButton";
 
 const useStyles = makeStyles({
