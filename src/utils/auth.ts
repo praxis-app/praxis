@@ -8,4 +8,8 @@ const setAuthToken = (token: any) => {
   }
 };
 
-export { setAuthToken };
+const isLoggedIn = () => {
+  return localStorage.getItem("jwtToken") !== null;
+};
+
+export { setAuthToken, isLoggedIn };

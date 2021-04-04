@@ -27,7 +27,27 @@ export const IMAGES_BY_COMMENT_ID = gql`
     imagesByCommentId(commentId: $commentId) {
       id
       userId
-      postId
+      commentId
+      path
+    }
+  }
+`;
+
+export const CURRENT_PROFILE_PICTURE = gql`
+  query($userId: ID!) {
+    currentProfilePicture(userId: $userId) {
+      id
+      userId
+      path
+    }
+  }
+`;
+
+export const PROFILE_PICTURES = gql`
+  query($userId: ID!) {
+    profilePictures(userId: $userId) {
+      id
+      userId
       path
     }
   }

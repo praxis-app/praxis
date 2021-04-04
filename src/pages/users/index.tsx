@@ -9,7 +9,9 @@ import { DELETE_USER } from "../../apollo/client/mutations";
 const Index = () => {
   const [users, setUsers] = useState(null);
   const [deleteUser] = useMutation(DELETE_USER);
-  const { data } = useQuery(USERS);
+  const { data } = useQuery(USERS, {
+    fetchPolicy: "no-cache",
+  });
 
   useEffect(() => {
     setUsers(data ? data.allUsers : data);

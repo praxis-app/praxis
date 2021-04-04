@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import Router from "next/router";
 import { FormGroup, Input, Button } from "@material-ui/core";
+import { Image, RemoveCircle } from "@material-ui/icons";
 
 import {
   SIGN_UP,
@@ -11,6 +12,8 @@ import {
 import { CURRENT_USER } from "../../apollo/client/queries";
 import { setAuthToken } from "../../utils/auth";
 
+import styles from "../../styles/User/UserForm.module.scss";
+
 interface Props {
   user?: User;
   isEditing?: boolean;
@@ -19,8 +22,11 @@ interface Props {
 const UserForm = ({ user, isEditing }: Props) => {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
+  const [profilePicture, setProfilePicture] = useState<File>(null);
   const [userPassword, setUserPassword] = useState("");
   const [userPasswordConfirm, setUserPasswordConfirm] = useState("");
+  const [imageInputKey, setImageInputKey] = useState<string>("");
+  const imageInput = React.useRef(null);
 
   const [signUp] = useMutation(SIGN_UP);
   const [updateUser] = useMutation(UPDATE_USER);
@@ -34,7 +40,7 @@ const UserForm = ({ user, isEditing }: Props) => {
     }
   }, [user, isEditing]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     if (isEditing) {
@@ -46,6 +52,7 @@ const UserForm = ({ user, isEditing }: Props) => {
               id: user.id,
               name: userName,
               email: userEmail,
+              profilePicture,
             },
           });
 
@@ -75,6 +82,7 @@ const UserForm = ({ user, isEditing }: Props) => {
             email: userEmail,
             password: userPassword,
             passwordConfirm: userPasswordConfirm,
+            profilePicture,
           },
         });
 
@@ -94,6 +102,11 @@ const UserForm = ({ user, isEditing }: Props) => {
         alert(err);
       }
     }
+  };
+
+  const removeSelectedProfilePicture = () => {
+    setProfilePicture(null);
+    setImageInputKey(Math.random().toString(2));
   };
 
   return (
@@ -119,7 +132,38 @@ const UserForm = ({ user, isEditing }: Props) => {
             color: "rgb(170, 170, 170)",
           }}
         />
+
+        <input
+          type="file"
+          accept="image/*"
+          ref={imageInput}
+          key={imageInputKey}
+          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+            setProfilePicture(e.target.files[0])
+          }
+          className={styles.imageInput}
+        />
+        <Image
+          className={styles.imageInputIcon}
+          onClick={() => imageInput.current.click()}
+          fontSize="large"
+        />
       </FormGroup>
+
+      {profilePicture && (
+        <div className={styles.selectedImages}>
+          <img
+            className={styles.selectedImage}
+            src={URL.createObjectURL(profilePicture)}
+          />
+
+          <RemoveCircle
+            style={{ color: "white" }}
+            onClick={() => removeSelectedProfilePicture()}
+            className={styles.removeSelectedImageButton}
+          />
+        </div>
+      )}
 
       {!isEditing && (
         <>

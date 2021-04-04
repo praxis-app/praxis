@@ -12,16 +12,17 @@ import {
   makeStyles,
   CardHeader,
   CardMedia,
-  Avatar,
 } from "@material-ui/core";
 
+import { isLoggedIn } from "../../utils/auth";
 import ImagesList from "../Images/List";
 import {
-  IMAGES_BY_POST_ID,
   USER,
   CURRENT_USER,
+  IMAGES_BY_POST_ID,
 } from "../../apollo/client/queries";
 import LikeButton from "../Likes/LikeButton";
+import UserAvatar from "../Users/Avatar";
 
 import styles from "../../styles/Post/Post.module.scss";
 
@@ -72,11 +73,7 @@ const Post = ({ post: { id, userId, body }, deletePost }) => {
         <CardHeader
           avatar={
             <Link href={`/users/${user?.name}`}>
-              <a>
-                <Avatar style={{ backgroundColor: "white", color: "black" }}>
-                  {user?.name[0].charAt(0).toUpperCase()}
-                </Avatar>
-              </a>
+              <a>{user && <UserAvatar user={user} />}</a>
             </Link>
           }
           title={
@@ -105,7 +102,7 @@ const Post = ({ post: { id, userId, body }, deletePost }) => {
           <ImagesList images={images} />
         </CardMedia>
 
-        {currentUser && (
+        {isLoggedIn() && currentUser && (
           <CardActions style={{ marginTop: "6px" }}>
             <LikeButton postId={id} />
 
