@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import Link from "next/link";
-import { Avatar } from "@material-ui/core";
 
 import { USER } from "../../apollo/client/queries";
 
+import UserAvatar from "../Users/Avatar";
 import FollowButton from "./FollowButton";
 import styles from "../../styles/Follow/Follow.module.scss";
 
@@ -23,9 +23,7 @@ const Follow = ({ userId }) => {
       <div className={styles.follow}>
         <Link href={`/users/${user.name}`}>
           <a className={styles.link}>
-            <Avatar className={styles.avatar}>
-              {user.name[0].charAt(0).toUpperCase()}
-            </Avatar>
+            <UserAvatar user={user} />
             <div className={styles.userName}>{user.name}</div>
           </a>
         </Link>

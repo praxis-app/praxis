@@ -41,6 +41,31 @@ const imageResolvers = {
         throw error;
       }
     },
+
+    profilePictures: async (_: any, { userId }) => {
+      try {
+        const profilePictures = await prisma.image.findMany({
+          where: { userId: parseInt(userId), profilePicture: true },
+        });
+        return profilePictures;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    currentProfilePicture: async (_: any, { userId }) => {
+      try {
+        const profilePictures = await prisma.image.findMany({
+          where: { userId: parseInt(userId), profilePicture: true },
+        });
+        const currentProfilePicture = profilePictures.length
+          ? profilePictures[profilePictures.length - 1]
+          : null;
+        return currentProfilePicture;
+      } catch (error) {
+        throw error;
+      }
+    },
   },
 
   Mutation: {
@@ -68,7 +93,7 @@ const imageResolvers = {
       }
     },
 
-    async deleteImage(_, { id }) {
+    async deleteImage(_: any, { id }) {
       try {
         const image = await prisma.image.delete({
           where: { id: parseInt(id) },

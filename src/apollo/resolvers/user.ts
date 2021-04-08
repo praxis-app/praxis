@@ -1,11 +1,34 @@
 import { UserInputError } from "apollo-server-micro";
+import { GraphQLUpload } from "apollo-server-micro";
+import saveImage from "../../utils/saveImage";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import prisma from "../../utils/initPrisma";
 import { validateSignup, validateLogin } from "../../utils/validation";
 
+const saveProfilePicture = async (user: any, image: any) => {
+  const { createReadStream, mimetype } = await image;
+  const extension = mimetype.split("/")[1];
+  const path = "public/uploads/" + Date.now() + "." + extension;
+  await saveImage(createReadStream, path);
+
+  await prisma.image.create({
+    data: {
+      user: {
+        connect: {
+          id: user.id,
+        },
+      },
+      profilePicture: true,
+      path: path.replace("public", ""),
+    },
+  });
+};
+
 const userResolvers = {
+  FileUpload: GraphQLUpload,
+
   Query: {
     user: async (_: any, { id }) => {
       try {
@@ -45,7 +68,7 @@ const userResolvers = {
 
   Mutation: {
     async signUp(_: any, { input }) {
-      const { email, name, password } = input;
+      const { email, name, password, profilePicture } = input;
       const { errors, isValid } = validateSignup(input);
 
       if (!isValid) {
@@ -72,6 +95,8 @@ const userResolvers = {
             password: hash,
           },
         });
+
+        await saveProfilePicture(user, profilePicture);
 
         const jwtPayload = {
           id: user.id,
@@ -129,7 +154,7 @@ const userResolvers = {
     },
 
     async updateUser(_: any, { id, input }) {
-      const { email, name } = input;
+      const { email, name, profilePicture } = input;
 
       try {
         const user = await prisma.user.update({
@@ -138,6 +163,8 @@ const userResolvers = {
         });
 
         if (!user) throw new Error("User not found.");
+
+        await saveProfilePicture(user, profilePicture);
 
         const jwtPayload = {
           name: user.name,

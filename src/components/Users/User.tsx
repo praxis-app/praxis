@@ -2,16 +2,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@apollo/client";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
-import {
-  Card,
-  CardActions,
-  CardHeader,
-  Avatar,
-  CardContent,
-} from "@material-ui/core";
+import { Card, CardActions, CardHeader, CardContent } from "@material-ui/core";
 import { Edit, Delete } from "@material-ui/icons";
 
+import baseUrl from "../../utils/baseUrl";
 import FollowButton from "../Follows/FollowButton";
+import UserAvatar from "./Avatar";
 
 import {
   FOLLOWERS,
@@ -85,11 +81,7 @@ const Show = ({ user, deleteUser }: Props) => {
       <CardHeader
         avatar={
           <Link href={`/users/${name}`}>
-            <a>
-              <Avatar style={{ backgroundColor: "white", color: "black" }}>
-                {name[0].charAt(0).toUpperCase()}
-              </Avatar>
-            </a>
+            <a>{user && <UserAvatar user={user} />}</a>
           </Link>
         }
         action={<FollowButton userId={id} />}

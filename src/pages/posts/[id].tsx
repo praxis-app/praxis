@@ -3,6 +3,7 @@ import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
 import { Spinner } from "react-bootstrap";
 import Router, { useRouter } from "next/router";
 
+import { isLoggedIn } from "../../utils/auth";
 import { POST, COMMENTS_BY_POST_ID } from "../../apollo/client/queries";
 import { DELETE_POST, DELETE_COMMENT } from "../../apollo/client/mutations";
 import Post from "../../components/Posts/Post";
@@ -66,11 +67,13 @@ const Show = () => {
     return (
       <>
         <Post post={post} deletePost={deletePostHandler} />
-        <CommentsForm
-          postId={post.id}
-          comments={comments}
-          setComments={setComments}
-        />
+        {isLoggedIn() && (
+          <CommentsForm
+            postId={post.id}
+            comments={comments}
+            setComments={setComments}
+          />
+        )}
         <CommentsList
           comments={comments}
           deleteComment={deleteCommentHandler}

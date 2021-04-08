@@ -77,14 +77,15 @@ model Like {
 }
 
 model Image {
-  id        Int      @default(autoincrement()) @id
-  path      String
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    Int?
-  post      Post?    @relation(fields: [postId], references: [id])
-  postId    Int?
-  comment   Comment? @relation(fields: [commentId], references: [id])
-  commentId Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int      @default(autoincrement()) @id
+  path           String
+  user           User?    @relation(fields: [userId], references: [id])
+  userId         Int?
+  post           Post?    @relation(fields: [postId], references: [id])
+  postId         Int?
+  comment        Comment? @relation(fields: [commentId], references: [id])
+  commentId      Int?
+  profilePicture Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }

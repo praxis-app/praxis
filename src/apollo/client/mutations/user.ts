@@ -22,6 +22,7 @@ export const SIGN_UP = gql`
     $email: String!
     $password: String!
     $passwordConfirm: String!
+    $profilePicture: FileUpload
   ) {
     signUp(
       input: {
@@ -29,6 +30,7 @@ export const SIGN_UP = gql`
         email: $email
         password: $password
         passwordConfirm: $passwordConfirm
+        profilePicture: $profilePicture
       }
     ) {
       user {
@@ -55,8 +57,16 @@ export const SIGN_IN = gql`
 `;
 
 export const UPDATE_USER = gql`
-  mutation UpdateUserMutation($id: ID!, $name: String!, $email: String!) {
-    updateUser(id: $id, input: { name: $name, email: $email }) {
+  mutation UpdateUserMutation(
+    $id: ID!
+    $name: String!
+    $email: String!
+    $profilePicture: FileUpload
+  ) {
+    updateUser(
+      id: $id
+      input: { name: $name, email: $email, profilePicture: $profilePicture }
+    ) {
       user {
         id
         name

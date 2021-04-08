@@ -40,7 +40,6 @@ const Followers = () => {
   return (
     <>
       <h1 style={{ color: "white" }}>{query.name}</h1>
-
       <h5 style={{ color: "white" }}>{followers.length} Followers</h5>
 
       <Card className={classes.root + " " + styles.card}>

@@ -39,6 +39,8 @@ export const typeDefs = gql`
     allImages: [Image]!
     imagesByPostId(postId: ID!): [Image]!
     imagesByCommentId(commentId: ID!): [Image]!
+    currentProfilePicture(userId: ID!): Image!
+    profilePictures(userId: ID!): [Image]!
   }
 
   type Mutation {
