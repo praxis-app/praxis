@@ -12,7 +12,7 @@ import CommentsList from "../../components/Comments/List";
 
 const Show = () => {
   const { query } = useRouter();
-  const [post, setPost] = useState<Post>(null);
+  const [post, setPost] = useState<Post>();
   const [comments, setComments] = useState<Comment[]>([]);
   const [deletePost] = useMutation(DELETE_POST);
   const [deleteComment] = useMutation(DELETE_COMMENT);
@@ -34,7 +34,7 @@ const Show = () => {
   }, [post]);
 
   useEffect(() => {
-    setPost(postRes.data ? postRes.data.post : null);
+    if (postRes.data) setPost(postRes.data.post);
   }, [postRes.data]);
 
   useEffect(() => {

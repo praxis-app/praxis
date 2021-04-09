@@ -10,8 +10,8 @@ import { DELETE_USER, DELETE_POST } from "../../apollo/client/mutations";
 
 const Show = () => {
   const { query } = useRouter();
-  const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]);
+  const [user, setUser] = useState<User>();
+  const [posts, setPosts] = useState<Post[]>([]);
   const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME);
   const [getPostsRes, postsRes] = useLazyQuery(POSTS_BY_NAME, {
     fetchPolicy: "no-cache",
@@ -30,11 +30,11 @@ const Show = () => {
   }, [query.name]);
 
   useEffect(() => {
-    setUser(userRes.data ? userRes.data.userByName : null);
+    if (userRes.data) setUser(userRes.data.userByName);
   }, [userRes.data]);
 
   useEffect(() => {
-    setPosts(postsRes.data ? postsRes.data.postsByName : []);
+    if (postsRes.data) setPosts(postsRes.data.postsByName);
   }, [postsRes.data]);
 
   const deleteUserHandler = async (userId: string) => {

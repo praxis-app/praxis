@@ -8,7 +8,7 @@ import { USER_BY_NAME } from "../../../apollo/client/queries";
 
 const Edit = () => {
   const { query } = useRouter();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User>();
   const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME);
 
   useEffect(() => {

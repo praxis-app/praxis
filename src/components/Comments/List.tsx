@@ -1,7 +1,12 @@
 import { Spinner } from "react-bootstrap";
 import Comment from "./Comment";
 
-const List = ({ comments, deleteComment }) => {
+interface Props {
+  comments: Comment[];
+  deleteComment: (id: string) => void;
+}
+
+const List = ({ comments, deleteComment }: Props) => {
   if (comments)
     return (
       <div style={{ marginBottom: "200px" }}>

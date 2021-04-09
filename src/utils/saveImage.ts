@@ -1,14 +1,14 @@
-import { createWriteStream } from "fs";
+import { createWriteStream, PathLike } from "fs";
 
 const unlink = (path: any, a1: () => void) => {};
 
 // Saves image file within public/uploads/
-const saveImage = async (createReadStream, path) => {
+const saveImage = async (createReadStream: () => any, path: PathLike) => {
   await new Promise((resolve, reject) => {
     const stream = createReadStream();
 
     stream
-      .on("error", (error) => {
+      .on("error", (error: any) => {
         unlink(path, () => {
           reject(error);
         });

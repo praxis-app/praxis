@@ -39,7 +39,7 @@ interface Props {
 
 const Show = ({ user, deleteUser }: Props) => {
   const { name, email, id, createdAt } = user;
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const followersRes = useQuery(FOLLOWERS, {
@@ -60,15 +60,15 @@ const Show = ({ user, deleteUser }: Props) => {
   });
 
   useEffect(() => {
-    setCurrentUser(currentUserRes.data ? currentUserRes.data.user : null);
+    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
   }, [currentUserRes.data]);
 
   useEffect(() => {
-    setFollowers(followersRes.data ? followersRes.data.userFollowers : []);
+    if (followersRes.data) setFollowers(followersRes.data.userFollowers);
   }, [followersRes.data]);
 
   useEffect(() => {
-    setFollowing(followingRes.data ? followingRes.data.userFollowing : []);
+    if (followingRes.data) setFollowing(followingRes.data.userFollowing);
   }, [followingRes.data]);
 
   const ownUser = (): boolean => {

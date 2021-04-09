@@ -18,7 +18,7 @@ import {
 import styles from "../../styles/Comment/CommentsForm.module.scss";
 
 interface Props {
-  postId?: string | number;
+  postId?: string;
   comment?: Comment;
   comments?: Comment[];
   isEditing?: boolean;
@@ -33,11 +33,11 @@ const CommentsForm = ({
   setComments,
 }: Props) => {
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
-  const [savedImages, setSavedImages] = useState([]);
+  const [savedImages, setSavedImages] = useState<Image[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [body, setBody] = useState<string>("");
   const [submitLoading, setSubmitLoading] = useState(false);
-  const imagesInput = React.useRef(null);
+  const imagesInput = React.useRef<HTMLInputElement>(null);
 
   const [createComment] = useMutation(CREATE_COMMENT);
   const [updateComment] = useMutation(UPDATE_COMMENT);
@@ -49,7 +49,7 @@ const CommentsForm = ({
   });
 
   useEffect(() => {
-    if (isEditing) {
+    if (isEditing && comment) {
       setBody(comment.body);
     }
   }, [comment, isEditing]);
@@ -70,13 +70,13 @@ const CommentsForm = ({
           setBody("");
           await updateComment({
             variables: {
-              id: comment.id,
+              id: comment?.id,
               body: body,
               images: images,
             },
           });
           // Redirect to Show Post after update
-          Router.push(`/posts/${comment.postId}`);
+          Router.push(`/posts/${comment?.postId}`);
         } catch (err) {
           alert(err);
         }
@@ -93,7 +93,8 @@ const CommentsForm = ({
               images: images,
             },
           });
-          setComments([...comments, data.createComment.comment]);
+          if (comments && setComments)
+            setComments([...comments, data.createComment.comment]);
         } catch (err) {
           alert(err);
         }
@@ -147,13 +148,13 @@ const CommentsForm = ({
           key={imagesInputKey}
           ref={imagesInput}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setImages([...e.target.files])
+            e.target.files && setImages([...e.target.files])
           }
           className={styles.imageInput}
         />
         <Image
           className={styles.imageInputIcon}
-          onClick={() => imagesInput.current.click()}
+          onClick={() => imagesInput.current?.click()}
           fontSize="large"
         />
       </FormGroup>

@@ -5,8 +5,12 @@ import { Avatar } from "@material-ui/core";
 import baseUrl from "../../utils/baseUrl";
 import { CURRENT_PROFILE_PICTURE } from "../../apollo/client/queries";
 
-const UserAvatar = ({ user }) => {
-  const [profilePicture, setProfilePicture] = useState(null);
+interface Props {
+  user: User;
+}
+
+const UserAvatar = ({ user }: Props) => {
+  const [profilePicture, setProfilePicture] = useState<Image>();
 
   const profilePictureRes = useQuery(CURRENT_PROFILE_PICTURE, {
     variables: { userId: user.id },
@@ -14,11 +18,8 @@ const UserAvatar = ({ user }) => {
   });
 
   useEffect(() => {
-    setProfilePicture(
-      profilePictureRes.data
-        ? profilePictureRes.data.currentProfilePicture
-        : null
-    );
+    if (profilePictureRes.data)
+      setProfilePicture(profilePictureRes.data.currentProfilePicture);
   }, [profilePictureRes.data]);
 
   return (

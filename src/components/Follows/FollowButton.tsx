@@ -6,9 +6,13 @@ import { AddCircle, RemoveCircle } from "@material-ui/icons";
 import { CURRENT_USER, FOLLOWERS } from "../../apollo/client/queries";
 import { CREATE_FOLLOW, DELETE_FOLLOW } from "../../apollo/client/mutations";
 
-const FollowButton = ({ userId }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [followers, setFollowers] = useState([]);
+interface Props {
+  userId: string;
+}
+
+const FollowButton = ({ userId }: Props) => {
+  const [currentUser, setCurrentUser] = useState<CurrentUser>();
+  const [followers, setFollowers] = useState<Follow[]>([]);
   const currentUserRes = useQuery(CURRENT_USER);
   const [createFollow] = useMutation(CREATE_FOLLOW);
   const [deleteFollow] = useMutation(DELETE_FOLLOW);
@@ -26,23 +30,23 @@ const FollowButton = ({ userId }) => {
   }, [followersRes.data]);
 
   const notThisUser = (): boolean => {
-    return currentUser && currentUser.id !== userId;
+    if (currentUser) return currentUser.id !== userId;
+    return false;
   };
 
-  const alreadyFollow = (): Follow => {
+  const alreadyFollow = () => {
     const follow = followers?.find(
-      (follow) => follow.followerId === currentUser.id
+      (follow) => follow.followerId === currentUser?.id
     );
 
-    if (follow) return follow;
-    return null;
+    return follow;
   };
 
   const createFollowMutation = async () => {
     const { data } = await createFollow({
       variables: {
         userId: userId,
-        followerId: currentUser.id,
+        followerId: currentUser?.id,
       },
     });
     setFollowers([...followers, data.createFollow.follow]);
@@ -51,11 +55,11 @@ const FollowButton = ({ userId }) => {
   const deleteFollowMutation = async () => {
     await deleteFollow({
       variables: {
-        id: alreadyFollow().id,
+        id: alreadyFollow()?.id,
       },
     });
     setFollowers(
-      followers.filter((follow) => follow.followerId !== currentUser.id)
+      followers.filter((follow) => follow.followerId !== currentUser?.id)
     );
   };
 

@@ -7,14 +7,14 @@ import { USERS } from "../../apollo/client/queries";
 import { DELETE_USER } from "../../apollo/client/mutations";
 
 const Index = () => {
-  const [users, setUsers] = useState(null);
+  const [users, setUsers] = useState<User[]>();
   const [deleteUser] = useMutation(DELETE_USER);
   const { data } = useQuery(USERS, {
     fetchPolicy: "no-cache",
   });
 
   useEffect(() => {
-    setUsers(data ? data.allUsers : data);
+    if (data) setUsers(data.allUsers);
   }, [data]);
 
   const deleteUserHandler = async (userId: string) => {
@@ -25,7 +25,7 @@ const Index = () => {
         },
       });
       // Removes deleted user from state
-      setUsers(users.filter((user: User) => user.id !== userId));
+      if (users) setUsers(users.filter((user: User) => user.id !== userId));
     } catch {}
   };
 

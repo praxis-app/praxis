@@ -20,7 +20,7 @@ const imageResolvers = {
       }
     },
 
-    imagesByPostId: async (_: any, { postId }) => {
+    imagesByPostId: async (_: any, { postId }: { postId: string }) => {
       try {
         const images = await prisma.image.findMany({
           where: { postId: parseInt(postId) },
@@ -31,7 +31,7 @@ const imageResolvers = {
       }
     },
 
-    imagesByCommentId: async (_: any, { commentId }) => {
+    imagesByCommentId: async (_: any, { commentId }: { commentId: string }) => {
       try {
         const images = await prisma.image.findMany({
           where: { commentId: parseInt(commentId) },
@@ -42,7 +42,7 @@ const imageResolvers = {
       }
     },
 
-    profilePictures: async (_: any, { userId }) => {
+    profilePictures: async (_: any, { userId }: { userId: string }) => {
       try {
         const profilePictures = await prisma.image.findMany({
           where: { userId: parseInt(userId), profilePicture: true },
@@ -53,7 +53,7 @@ const imageResolvers = {
       }
     },
 
-    currentProfilePicture: async (_: any, { userId }) => {
+    currentProfilePicture: async (_: any, { userId }: { userId: string }) => {
       try {
         const profilePictures = await prisma.image.findMany({
           where: { userId: parseInt(userId), profilePicture: true },
@@ -69,7 +69,10 @@ const imageResolvers = {
   },
 
   Mutation: {
-    async uploadImage(_: any, { image, userId }) {
+    async uploadImage(
+      _: any,
+      { image, userId }: { image: any; userId: string }
+    ) {
       try {
         const { createReadStream, mimetype } = await image;
         const extension = mimetype.split("/")[1];
@@ -93,7 +96,7 @@ const imageResolvers = {
       }
     },
 
-    async deleteImage(_: any, { id }) {
+    async deleteImage(_: any, { id }: { id: string }) {
       try {
         const image = await prisma.image.delete({
           where: { id: parseInt(id) },
