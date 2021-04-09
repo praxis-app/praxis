@@ -8,22 +8,24 @@ import prisma from "../../utils/initPrisma";
 import { validateSignup, validateLogin } from "../../utils/validation";
 
 const saveProfilePicture = async (user: any, image: any) => {
-  const { createReadStream, mimetype } = await image;
-  const extension = mimetype.split("/")[1];
-  const path = "public/uploads/" + Date.now() + "." + extension;
-  await saveImage(createReadStream, path);
+  if (image) {
+    const { createReadStream, mimetype } = await image;
+    const extension = mimetype.split("/")[1];
+    const path = "public/uploads/" + Date.now() + "." + extension;
+    await saveImage(createReadStream, path);
 
-  await prisma.image.create({
-    data: {
-      user: {
-        connect: {
-          id: user.id,
+    await prisma.image.create({
+      data: {
+        user: {
+          connect: {
+            id: user.id,
+          },
         },
+        profilePicture: true,
+        path: path.replace("public", ""),
       },
-      profilePicture: true,
-      path: path.replace("public", ""),
-    },
-  });
+    });
+  }
 };
 
 const userResolvers = {

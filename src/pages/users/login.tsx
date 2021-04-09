@@ -6,6 +6,8 @@ import { Input, Button, FormGroup } from "@material-ui/core";
 import { SIGN_IN, SET_CURRENT_USER } from "../../apollo/client/mutations";
 import { setAuthToken } from "../../utils/auth";
 
+import styles from "../../styles/User/UserForm.module.scss";
+
 const Login = () => {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
@@ -46,7 +48,7 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={styles.card}>
       <FormGroup
         style={{
           marginBottom: "6px",

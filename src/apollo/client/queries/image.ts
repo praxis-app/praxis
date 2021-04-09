@@ -52,3 +52,13 @@ export const PROFILE_PICTURES = gql`
     }
   }
 `;
+
+export const CURRENT_COVER_PHOTO = gql`
+  query($groupId: ID!) {
+    currentCoverPhoto(groupId: $groupId) {
+      id
+      groupId
+      path
+    }
+  }
+`;

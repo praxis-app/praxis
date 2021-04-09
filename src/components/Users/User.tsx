@@ -5,7 +5,6 @@ import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { Card, CardActions, CardHeader, CardContent } from "@material-ui/core";
 import { Edit, Delete } from "@material-ui/icons";
 
-import baseUrl from "../../utils/baseUrl";
 import FollowButton from "../Follows/FollowButton";
 import UserAvatar from "./Avatar";
 
@@ -40,8 +39,8 @@ interface Props {
 const Show = ({ user, deleteUser }: Props) => {
   const { name, email, id, createdAt } = user;
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
-  const [followers, setFollowers] = useState([]);
-  const [following, setFollowing] = useState([]);
+  const [followers, setFollowers] = useState<Follow[]>([]);
+  const [following, setFollowing] = useState<Follow[]>([]);
   const followersRes = useQuery(FOLLOWERS, {
     variables: { userId: id },
     fetchPolicy: "no-cache",
@@ -79,12 +78,14 @@ const Show = ({ user, deleteUser }: Props) => {
   return (
     <Card className={classes.root + " " + styles.card}>
       <CardHeader
-        avatar={
-          <Link href={`/users/${name}`}>
-            <a>{user && <UserAvatar user={user} />}</a>
-          </Link>
+        avatar={user && <UserAvatar user={user} />}
+        action={
+          <FollowButton
+            userId={id}
+            followers={followers}
+            setFollowers={setFollowers}
+          />
         }
-        action={<FollowButton userId={id} />}
         title={
           <Link href={`/users/${name}`}>
             <a>

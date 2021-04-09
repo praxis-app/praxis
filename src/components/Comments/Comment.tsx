@@ -23,6 +23,7 @@ import {
 
 import styles from "../../styles/Comment/Comment.module.scss";
 import LikeButton from "../Likes/LikeButton";
+import UserAvatar from "../Users/Avatar";
 
 const useStyles = makeStyles({
   root: {
@@ -75,14 +76,7 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
   return (
     <div className={styles.comment} key={id}>
       <Link href={`/users/${user?.name}`}>
-        <a>
-          <Avatar
-            style={{ backgroundColor: "white", color: "black" }}
-            className={styles.avatar}
-          >
-            {user?.name[0].charAt(0).toUpperCase()}
-          </Avatar>
-        </a>
+        <a className={styles.avatar}>{user && <UserAvatar user={user} />}</a>
       </Link>
 
       <Card className={classes.root}>

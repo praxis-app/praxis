@@ -40,7 +40,7 @@ const LikeButton = ({ postId, commentId }: Props) => {
   }, []);
 
   useEffect(() => {
-    setCurrentUser(currentUserRes.data ? currentUserRes.data.user : null);
+    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
   }, [currentUserRes.data]);
 
   useEffect(() => {

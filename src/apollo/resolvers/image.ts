@@ -66,6 +66,20 @@ const imageResolvers = {
         throw error;
       }
     },
+
+    currentCoverPhoto: async (_: any, { groupId }: { groupId: string }) => {
+      try {
+        const coverPhotos = await prisma.image.findMany({
+          where: { groupId: parseInt(groupId), profilePicture: true },
+        });
+        const currentCoverPhoto = coverPhotos.length
+          ? coverPhotos[coverPhotos.length - 1]
+          : null;
+        return currentCoverPhoto;
+      } catch (error) {
+        throw error;
+      }
+    },
   },
 
   Mutation: {

@@ -8,8 +8,12 @@ const setAuthToken = (token: any) => {
   }
 };
 
-const isLoggedIn = () => {
-  return localStorage.getItem("jwtToken") !== null;
+const isLoggedIn = (currentUser: CurrentUser | undefined): boolean => {
+  return (
+    typeof currentUser !== "undefined" &&
+    typeof localStorage !== "undefined" &&
+    localStorage.getItem("jwtToken") !== null
+  );
 };
 
 export { setAuthToken, isLoggedIn };

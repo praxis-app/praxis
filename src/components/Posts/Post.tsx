@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useQuery } from "@apollo/client";
+import { useQuery, useLazyQuery } from "@apollo/client";
 import { Edit, Delete } from "@material-ui/icons";
 import Link from "next/link";
 
@@ -18,6 +18,7 @@ import { isLoggedIn } from "../../utils/auth";
 import ImagesList from "../Images/List";
 import {
   USER,
+  GROUP,
   CURRENT_USER,
   IMAGES_BY_POST_ID,
 } from "../../apollo/client/queries";
@@ -25,6 +26,7 @@ import LikeButton from "../Likes/LikeButton";
 import UserAvatar from "../Users/Avatar";
 
 import styles from "../../styles/Post/Post.module.scss";
+import GroupPostAvatars from "./GroupPostAvatars";
 
 const useStyles = makeStyles({
   root: {
@@ -32,6 +34,7 @@ const useStyles = makeStyles({
   },
   title: {
     fontFamily: "Inter",
+    marginLeft: "-5px",
   },
 });
 
@@ -40,14 +43,16 @@ interface Props {
   deletePost: (id: string) => void;
 }
 
-const Post = ({ post: { id, userId, body }, deletePost }: Props) => {
+const Post = ({ post: { id, userId, groupId, body }, deletePost }: Props) => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [user, setUser] = useState<User>();
+  const [group, setGroup] = useState<Group>();
   const [images, setImages] = useState([]);
   const currentUserRes = useQuery(CURRENT_USER);
   const userRes = useQuery(USER, {
     variables: { id: userId },
   });
+  const [getGroupRes, groupRes] = useLazyQuery(GROUP);
   const imagesRes = useQuery(IMAGES_BY_POST_ID, {
     variables: { postId: id },
     fetchPolicy: "no-cache",
@@ -67,9 +72,24 @@ const Post = ({ post: { id, userId, body }, deletePost }: Props) => {
     if (imagesRes.data) setImages(imagesRes.data.imagesByPostId);
   }, [imagesRes.data]);
 
+  useEffect(() => {
+    if (groupRes.data) setGroup(groupRes.data.group);
+  }, [groupRes.data]);
+
+  useEffect(() => {
+    if (groupId)
+      getGroupRes({
+        variables: { id: groupId },
+      });
+  }, [groupId]);
+
   const ownPost = (): boolean => {
     if (currentUser && user && currentUser.id === user.id) return true;
     return false;
+  };
+
+  const onGroupPage = (): boolean => {
+    return router.asPath.includes("/groups/");
   };
 
   return (
@@ -77,14 +97,16 @@ const Post = ({ post: { id, userId, body }, deletePost }: Props) => {
       <Card className={classes.root + " " + styles.card}>
         <CardHeader
           avatar={
-            <Link href={`/users/${user?.name}`}>
-              <a>{user && <UserAvatar user={user} />}</a>
-            </Link>
+            group && !onGroupPage()
+              ? user && <GroupPostAvatars user={user} group={group} />
+              : user && <UserAvatar user={user} />
           }
           title={
-            <Link href={`/users/${user?.name}`}>
-              <a>{user?.name}</a>
-            </Link>
+            (!group || onGroupPage()) && (
+              <Link href={`/users/${user?.name}`}>
+                <a>{user?.name}</a>
+              </Link>
+            )
           }
           classes={{ title: classes.title }}
         />
@@ -107,7 +129,7 @@ const Post = ({ post: { id, userId, body }, deletePost }: Props) => {
           <ImagesList images={images} />
         </CardMedia>
 
-        {isLoggedIn() && currentUser && (
+        {isLoggedIn(currentUser) && (
           <CardActions style={{ marginTop: "6px" }}>
             <LikeButton postId={id} />
 

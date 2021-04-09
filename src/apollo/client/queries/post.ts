@@ -5,6 +5,7 @@ export const POST = gql`
     post(id: $id) {
       id
       userId
+      groupId
       body
       createdAt
     }
@@ -16,17 +17,43 @@ export const POSTS = gql`
     allPosts {
       id
       userId
+      groupId
       body
       createdAt
     }
   }
 `;
 
-export const POSTS_BY_NAME = gql`
+export const POSTS_BY_USER_NAME = gql`
   query($name: String!) {
-    postsByName(name: $name) {
+    postsByUserName(name: $name) {
       id
       userId
+      groupId
+      body
+      createdAt
+    }
+  }
+`;
+
+export const POSTS_BY_GROUP_NAME = gql`
+  query($name: String!) {
+    postsByGroupName(name: $name) {
+      id
+      userId
+      groupId
+      body
+      createdAt
+    }
+  }
+`;
+
+export const FEED = gql`
+  query($userId: ID!) {
+    feed(userId: $userId) {
+      id
+      userId
+      groupId
       body
       createdAt
     }

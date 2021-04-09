@@ -12,16 +12,17 @@ import {
   UPDATE_POST,
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
-import styles from "../../styles/Post/PostsForm.module.scss";
+import styles from "../../styles/Post/PostForm.module.scss";
 
 interface Props {
   post?: Post;
   posts?: Post[];
   isEditing?: boolean;
   setPosts?: (posts: Post[]) => void;
+  group?: Group;
 }
 
-const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
+const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
   const [savedImages, setSavedImages] = useState([]);
   const [images, setImages] = useState<File[]>([]);
@@ -79,6 +80,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
             variables: {
               body: body,
               images: images,
+              groupId: group?.id,
               userId: currentUserRes.data.user.id,
             },
           });
@@ -113,7 +115,11 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
   };
 
   return (
-    <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
+    <form
+      onSubmit={(e) => handleSubmit(e)}
+      className={styles.form}
+      style={group && { marginTop: "48px" }}
+    >
       <FormGroup>
         <Input
           type="text"

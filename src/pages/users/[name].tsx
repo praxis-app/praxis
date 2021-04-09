@@ -5,7 +5,7 @@ import { Spinner } from "react-bootstrap";
 
 import User from "../../components/Users/User";
 import PostsList from "../../components/Posts/List";
-import { USER_BY_NAME, POSTS_BY_NAME } from "../../apollo/client/queries";
+import { USER_BY_NAME, POSTS_BY_USER_NAME } from "../../apollo/client/queries";
 import { DELETE_USER, DELETE_POST } from "../../apollo/client/mutations";
 
 const Show = () => {
@@ -13,7 +13,7 @@ const Show = () => {
   const [user, setUser] = useState<User>();
   const [posts, setPosts] = useState<Post[]>([]);
   const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME);
-  const [getPostsRes, postsRes] = useLazyQuery(POSTS_BY_NAME, {
+  const [getPostsRes, postsRes] = useLazyQuery(POSTS_BY_USER_NAME, {
     fetchPolicy: "no-cache",
   });
   const [deleteUser] = useMutation(DELETE_USER);
@@ -34,7 +34,7 @@ const Show = () => {
   }, [userRes.data]);
 
   useEffect(() => {
-    if (postsRes.data) setPosts(postsRes.data.postsByName);
+    if (postsRes.data) setPosts(postsRes.data.postsByUserName);
   }, [postsRes.data]);
 
   const deleteUserHandler = async (userId: string) => {
