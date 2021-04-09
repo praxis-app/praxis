@@ -1,7 +1,7 @@
-const validator = require("validator");
-const isEmpty = require("is-empty");
+import validator from "validator";
+import isEmpty from "is-empty";
 
-function validateLogin(data) {
+function validateLogin(data: SignInInput) {
   let errors: ValidationError = {};
 
   /* eslint-disable no-param-reassign */
@@ -31,7 +31,7 @@ function validateLogin(data) {
   };
 }
 
-function validateSignup(data) {
+function validateSignup(data: SignUpInput) {
   let errors: ValidationError = {};
 
   /* eslint-disable no-param-reassign */

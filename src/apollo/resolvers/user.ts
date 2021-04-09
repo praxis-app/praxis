@@ -30,7 +30,7 @@ const userResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
-    user: async (_: any, { id }) => {
+    user: async (_: any, { id }: { id: string }) => {
       try {
         const user = await prisma.user.findFirst({
           where: {
@@ -43,7 +43,7 @@ const userResolvers = {
       }
     },
 
-    userByName: async (_: any, { name }) => {
+    userByName: async (_: any, { name }: { name: string }) => {
       try {
         const user = await prisma.user.findFirst({
           where: {
@@ -67,7 +67,7 @@ const userResolvers = {
   },
 
   Mutation: {
-    async signUp(_: any, { input }) {
+    async signUp(_: any, { input }: { input: SignUpInput }) {
       const { email, name, password, profilePicture } = input;
       const { errors, isValid } = validateSignup(input);
 
@@ -104,7 +104,7 @@ const userResolvers = {
           email: user.email,
         };
 
-        const token = jwt.sign(jwtPayload, process.env.JWT_KEY, {
+        const token = jwt.sign(jwtPayload, process.env.JWT_KEY as string, {
           expiresIn: "90d",
         });
 
@@ -114,7 +114,7 @@ const userResolvers = {
       }
     },
 
-    async signIn(_: any, { input }) {
+    async signIn(_: any, { input }: { input: SignInInput }) {
       const { errors, isValid } = validateLogin(input);
       const { email, password } = input;
 
@@ -140,7 +140,7 @@ const userResolvers = {
             name: user.name,
             email: user.email,
           };
-          const token = jwt.sign(jwtPayload, process.env.JWT_KEY, {
+          const token = jwt.sign(jwtPayload, process.env.JWT_KEY as string, {
             expiresIn: "90d",
           });
 
@@ -153,7 +153,10 @@ const userResolvers = {
       }
     },
 
-    async updateUser(_: any, { id, input }) {
+    async updateUser(
+      _: any,
+      { id, input }: { id: string; input: SignUpInput }
+    ) {
       const { email, name, profilePicture } = input;
 
       try {
@@ -172,7 +175,7 @@ const userResolvers = {
           id: user.id,
         };
 
-        const token = jwt.sign(jwtPayload, process.env.JWT_KEY, {
+        const token = jwt.sign(jwtPayload, process.env.JWT_KEY as string, {
           expiresIn: "90d",
         });
 
@@ -182,7 +185,7 @@ const userResolvers = {
       }
     },
 
-    async deleteUser(_: any, { id }) {
+    async deleteUser(_: any, { id }: { id: string }) {
       try {
         await prisma.user.delete({
           where: { id: parseInt(id) },

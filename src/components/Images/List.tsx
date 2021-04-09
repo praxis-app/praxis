@@ -2,7 +2,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import baseUrl from "../../utils/baseUrl";
 
-const List = ({ images }) => {
+interface Props {
+  images: Image[];
+}
+
+const List = ({ images }: Props) => {
   const router = useRouter();
 
   return (

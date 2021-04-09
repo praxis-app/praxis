@@ -8,14 +8,18 @@ import UserAvatar from "../Users/Avatar";
 import FollowButton from "./FollowButton";
 import styles from "../../styles/Follow/Follow.module.scss";
 
-const Follow = ({ userId }) => {
-  const [user, setUser] = useState(null);
+interface Props {
+  userId: string;
+}
+
+const Follow = ({ userId }: Props) => {
+  const [user, setUser] = useState<User>();
   const userRes = useQuery(USER, {
     variables: { id: userId },
   });
 
   useEffect(() => {
-    setUser(userRes.data ? userRes.data.user : null);
+    if (userRes.data) setUser(userRes.data.user);
   }, [userRes.data]);
 
   if (user)

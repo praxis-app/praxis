@@ -18,8 +18,8 @@ interface Props {
 }
 
 const LikeButton = ({ postId, commentId }: Props) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [likes, setLikes] = useState([]);
+  const [currentUser, setCurrentUser] = useState<CurrentUser>();
+  const [likes, setLikes] = useState<Like[]>([]);
   const [createLike] = useMutation(CREATE_LIKE);
   const [deleteLike] = useMutation(DELETE_LIKE);
   const currentUserRes = useQuery(CURRENT_USER);
@@ -50,7 +50,7 @@ const LikeButton = ({ postId, commentId }: Props) => {
       setLikes(likesByCommentIdRes.data.likesByCommentId);
   }, [likesByPostIdRes.data, likesByCommentIdRes.data]);
 
-  const alreadyLike = (): Like => {
+  const alreadyLike = (): Like | null => {
     if (!currentUser) return null;
 
     const like = likes.find((like) => like.userId === currentUser.id);
@@ -63,7 +63,7 @@ const LikeButton = ({ postId, commentId }: Props) => {
     const likedItemId = postId ? { postId } : { commentId };
     const { data } = await createLike({
       variables: {
-        userId: currentUser.id,
+        userId: currentUser?.id,
         ...likedItemId,
       },
     });
@@ -73,10 +73,10 @@ const LikeButton = ({ postId, commentId }: Props) => {
   const deleteLikeMutation = async () => {
     await deleteLike({
       variables: {
-        id: alreadyLike().id,
+        id: alreadyLike()?.id,
       },
     });
-    setLikes(likes.filter((like) => like.userId !== currentUser.id));
+    setLikes(likes.filter((like) => like.userId !== currentUser?.id));
   };
 
   return (

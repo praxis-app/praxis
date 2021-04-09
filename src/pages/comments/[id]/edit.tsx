@@ -8,7 +8,7 @@ import { COMMENT } from "../../../apollo/client/queries";
 
 const Edit = () => {
   const { query } = useRouter();
-  const [comment, setComment] = useState(null);
+  const [comment, setComment] = useState<Comment>();
   const [getCommentsRes, commentsRes] = useLazyQuery(COMMENT);
 
   useEffect(() => {

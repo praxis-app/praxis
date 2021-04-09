@@ -22,11 +22,11 @@ interface Props {
 const UserForm = ({ user, isEditing }: Props) => {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
-  const [profilePicture, setProfilePicture] = useState<File>(null);
+  const [profilePicture, setProfilePicture] = useState<File>();
   const [userPassword, setUserPassword] = useState("");
   const [userPasswordConfirm, setUserPasswordConfirm] = useState("");
   const [imageInputKey, setImageInputKey] = useState<string>("");
-  const imageInput = React.useRef(null);
+  const imageInput = React.useRef<HTMLInputElement>(null);
 
   const [signUp] = useMutation(SIGN_UP);
   const [updateUser] = useMutation(UPDATE_USER);
@@ -34,7 +34,7 @@ const UserForm = ({ user, isEditing }: Props) => {
   const currentUserRes = useQuery(CURRENT_USER);
 
   useEffect(() => {
-    if (isEditing) {
+    if (isEditing && user) {
       setUserName(user.name);
       setUserEmail(user.email);
     }
@@ -43,7 +43,7 @@ const UserForm = ({ user, isEditing }: Props) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (isEditing) {
+    if (isEditing && user) {
       // Update a user
       try {
         if (currentUserRes.data) {
@@ -105,7 +105,7 @@ const UserForm = ({ user, isEditing }: Props) => {
   };
 
   const removeSelectedProfilePicture = () => {
-    setProfilePicture(null);
+    setProfilePicture(undefined);
     setImageInputKey(Math.random().toString(2));
   };
 
@@ -139,13 +139,13 @@ const UserForm = ({ user, isEditing }: Props) => {
           ref={imageInput}
           key={imageInputKey}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setProfilePicture(e.target.files[0])
+            e.target.files && setProfilePicture(e.target.files[0])
           }
           className={styles.imageInput}
         />
         <Image
           className={styles.imageInputIcon}
-          onClick={() => imageInput.current.click()}
+          onClick={() => imageInput.current?.click()}
           fontSize="large"
         />
       </FormGroup>

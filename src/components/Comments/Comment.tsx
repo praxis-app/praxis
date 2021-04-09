@@ -36,9 +36,14 @@ const useStyles = makeStyles({
   },
 });
 
-const Comment = ({ comment: { id, userId, body }, deleteComment }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [user, setUser] = useState(null);
+interface Props {
+  comment: Comment;
+  deleteComment: (id: string) => void;
+}
+
+const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
+  const [currentUser, setCurrentUser] = useState<CurrentUser>();
+  const [user, setUser] = useState<User>();
   const [images, setImages] = useState([]);
   const currentUserRes = useQuery(CURRENT_USER);
   const userRes = useQuery(USER, {

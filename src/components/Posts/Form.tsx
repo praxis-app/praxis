@@ -16,9 +16,9 @@ import styles from "../../styles/Post/PostsForm.module.scss";
 
 interface Props {
   post?: Post;
-  posts?: [Post];
+  posts?: Post[];
   isEditing?: boolean;
-  setPosts?: (posts: any) => void;
+  setPosts?: (posts: Post[]) => void;
 }
 
 const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
@@ -27,7 +27,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
   const [images, setImages] = useState<File[]>([]);
   const [body, setBody] = useState<string>("");
   const [submitLoading, setSubmitLoading] = useState(false);
-  const imagesInput = React.useRef(null);
+  const imagesInput = React.useRef<HTMLInputElement>(null);
 
   const [createPost] = useMutation(CREATE_POST);
   const [updatePost] = useMutation(UPDATE_POST);
@@ -39,7 +39,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
   });
 
   useEffect(() => {
-    if (isEditing) {
+    if (isEditing && post) {
       setBody(post.body);
     }
   }, [post, isEditing]);
@@ -55,7 +55,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
 
     if (currentUserRes.data) {
       setSubmitLoading(true);
-      if (isEditing) {
+      if (isEditing && post) {
         try {
           setBody("");
           await updatePost({
@@ -82,7 +82,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
               userId: currentUserRes.data.user.id,
             },
           });
-          setPosts([...posts, data.createPost.post]);
+          if (posts && setPosts) setPosts([...posts, data.createPost.post]);
         } catch (err) {
           alert(err);
         }
@@ -99,7 +99,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
         },
       });
       // Removes deleted image from state
-      setSavedImages(savedImages.filter((image) => image.id !== id));
+      setSavedImages(savedImages.filter((image: Image) => image.id !== id));
     } catch {}
   };
 
@@ -138,13 +138,13 @@ const PostsForm = ({ post, posts, isEditing, setPosts }: Props) => {
           key={imagesInputKey}
           ref={imagesInput}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setImages([...e.target.files])
+            e.target.files && setImages([...e.target.files])
           }
           className={styles.imageInput}
         />
         <Image
           className={styles.imageInputIcon}
-          onClick={() => imagesInput.current.click()}
+          onClick={() => imagesInput.current?.click()}
           fontSize="large"
         />
       </FormGroup>

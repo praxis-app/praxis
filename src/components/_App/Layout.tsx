@@ -4,7 +4,11 @@ import { Container } from "react-bootstrap";
 import Header from "./Header";
 import HeadContent from "./HeadContent";
 
-const Layout = ({ children }) => {
+interface Props {
+  children: React.ReactNode;
+}
+
+const Layout = ({ children }: Props) => {
   return (
     <>
       <Head>

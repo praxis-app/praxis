@@ -7,6 +7,11 @@ import fs from "fs";
 import { promisify } from "util";
 const unlinkAsync = promisify(fs.unlink);
 
+interface PostInput {
+  body: string;
+  images: any;
+}
+
 const saveImages = async (post: any, images: any) => {
   for (const image of images ? images : []) {
     const { createReadStream, mimetype } = await image;
@@ -36,7 +41,7 @@ const postResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
-    post: async (_: any, { id }) => {
+    post: async (_: any, { id }: { id: string }) => {
       try {
         const post = await prisma.post.findFirst({
           where: {
@@ -58,7 +63,7 @@ const postResolvers = {
       }
     },
 
-    postsByName: async (_: any, { name }) => {
+    postsByName: async (_: any, { name }: { name: string }) => {
       try {
         const user = await prisma.user.findFirst({
           where: {
@@ -68,7 +73,7 @@ const postResolvers = {
             posts: true,
           },
         });
-        return user.posts;
+        return user?.posts;
       } catch (error) {
         throw error;
       }
@@ -76,7 +81,10 @@ const postResolvers = {
   },
 
   Mutation: {
-    async createPost(_: any, { userId, input }) {
+    async createPost(
+      _: any,
+      { userId, input }: { userId: string; input: PostInput }
+    ) {
       const { body, images } = input;
       try {
         const newPost = await prisma.post.create({
@@ -98,7 +106,7 @@ const postResolvers = {
       }
     },
 
-    async updatePost(_: any, { id, input }) {
+    async updatePost(_: any, { id, input }: { id: string; input: PostInput }) {
       const { body, images } = input;
 
       try {
@@ -117,7 +125,7 @@ const postResolvers = {
       }
     },
 
-    async deletePost(_: any, { id }) {
+    async deletePost(_: any, { id }: { id: string }) {
       try {
         const images = await prisma.image.findMany({
           where: { postId: parseInt(id) },

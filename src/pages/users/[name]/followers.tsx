@@ -32,9 +32,7 @@ const Followers = () => {
   }, [query.name]);
 
   useEffect(() => {
-    setFollowers(
-      followersRes.data ? followersRes.data.userFollowersByName : []
-    );
+    if (followersRes.data) setFollowers(followersRes.data.userFollowersByName);
   }, [followersRes.data]);
 
   return (

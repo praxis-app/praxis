@@ -2,7 +2,7 @@ import prisma from "../../utils/initPrisma";
 
 const followResolvers = {
   Query: {
-    userFollowers: async (_: any, { userId }) => {
+    userFollowers: async (_: any, { userId }: { userId: string }) => {
       try {
         const user = await prisma.user.findFirst({
           where: {
@@ -12,13 +12,13 @@ const followResolvers = {
             followers: true,
           },
         });
-        return user.followers;
+        return user?.followers;
       } catch (error) {
         throw error;
       }
     },
 
-    userFollowersByName: async (_: any, { name }) => {
+    userFollowersByName: async (_: any, { name }: { name: string }) => {
       try {
         const user = await prisma.user.findFirst({
           where: {
@@ -28,13 +28,13 @@ const followResolvers = {
             followers: true,
           },
         });
-        return user.followers;
+        return user?.followers;
       } catch (error) {
         throw error;
       }
     },
 
-    userFollowing: async (_: any, { userId }) => {
+    userFollowing: async (_: any, { userId }: { userId: string }) => {
       try {
         const user = await prisma.user.findFirst({
           where: {
@@ -44,13 +44,13 @@ const followResolvers = {
             following: true,
           },
         });
-        return user.following;
+        return user?.following;
       } catch (error) {
         throw error;
       }
     },
 
-    userFollowingByName: async (_: any, { name }) => {
+    userFollowingByName: async (_: any, { name }: { name: string }) => {
       try {
         const user = await prisma.user.findFirst({
           where: {
@@ -60,7 +60,7 @@ const followResolvers = {
             following: true,
           },
         });
-        return user.following;
+        return user?.following;
       } catch (error) {
         throw error;
       }
@@ -68,7 +68,10 @@ const followResolvers = {
   },
 
   Mutation: {
-    async createFollow(_: any, { userId, followerId }) {
+    async createFollow(
+      _: any,
+      { userId, followerId }: { userId: string; followerId: string }
+    ) {
       try {
         const follow = await prisma.follow.create({
           data: {
@@ -91,7 +94,7 @@ const followResolvers = {
       }
     },
 
-    async deleteFollow(_: any, { id }) {
+    async deleteFollow(_: any, { id }: { id: string }) {
       try {
         await prisma.follow.delete({
           where: { id: parseInt(id) },

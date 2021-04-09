@@ -5,8 +5,12 @@ import prisma from "../../utils/initPrisma";
 // fs, promisify, and unlink to delete img
 import fs from "fs";
 import { promisify } from "util";
-import comment from "../typeDefs/comment";
 const unlinkAsync = promisify(fs.unlink);
+
+interface CommentInput {
+  body: string;
+  images: any;
+}
 
 const saveImages = async (comment: any, images: any) => {
   for (const image of images ? images : []) {
@@ -37,7 +41,7 @@ const commentResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
-    comment: async (_: any, { id }) => {
+    comment: async (_: any, { id }: { id: string }) => {
       try {
         const comment = await prisma.comment.findFirst({
           where: {
@@ -50,7 +54,7 @@ const commentResolvers = {
       }
     },
 
-    commentsByPostId: async (_: any, { postId }) => {
+    commentsByPostId: async (_: any, { postId }: { postId: string }) => {
       try {
         const comments = await prisma.comment.findMany({
           where: { postId: parseInt(postId) },
@@ -63,7 +67,18 @@ const commentResolvers = {
   },
 
   Mutation: {
-    async createComment(_: any, { userId, postId, input }) {
+    async createComment(
+      _: any,
+      {
+        userId,
+        postId,
+        input,
+      }: {
+        userId: string;
+        postId: string;
+        input: CommentInput;
+      }
+    ) {
       const { body, images } = input;
       try {
         const comment = await prisma.comment.create({
@@ -90,7 +105,10 @@ const commentResolvers = {
       }
     },
 
-    async updateComment(_: any, { id, input }) {
+    async updateComment(
+      _: any,
+      { id, input }: { id: string; input: CommentInput }
+    ) {
       const { body, images } = input;
 
       try {
@@ -109,7 +127,7 @@ const commentResolvers = {
       }
     },
 
-    async deleteComment(_: any, { id }) {
+    async deleteComment(_: any, { id }: { id: string }) {
       try {
         const images = await prisma.image.findMany({
           where: { commentId: parseInt(id) },

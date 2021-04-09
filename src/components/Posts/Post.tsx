@@ -35,9 +35,14 @@ const useStyles = makeStyles({
   },
 });
 
-const Post = ({ post: { id, userId, body }, deletePost }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [user, setUser] = useState(null);
+interface Props {
+  post: Post;
+  deletePost: (id: string) => void;
+}
+
+const Post = ({ post: { id, userId, body }, deletePost }: Props) => {
+  const [currentUser, setCurrentUser] = useState<CurrentUser>();
+  const [user, setUser] = useState<User>();
   const [images, setImages] = useState([]);
   const currentUserRes = useQuery(CURRENT_USER);
   const userRes = useQuery(USER, {
@@ -51,15 +56,15 @@ const Post = ({ post: { id, userId, body }, deletePost }) => {
   const router = useRouter();
 
   useEffect(() => {
-    setCurrentUser(currentUserRes.data ? currentUserRes.data.user : null);
+    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
   }, [currentUserRes.data]);
 
   useEffect(() => {
-    setUser(userRes.data ? userRes.data.user : null);
+    if (userRes.data) setUser(userRes.data.user);
   }, [userRes.data]);
 
   useEffect(() => {
-    setImages(imagesRes.data ? imagesRes.data.imagesByPostId : []);
+    if (imagesRes.data) setImages(imagesRes.data.imagesByPostId);
   }, [imagesRes.data]);
 
   const ownPost = (): boolean => {

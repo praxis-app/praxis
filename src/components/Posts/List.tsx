@@ -1,7 +1,12 @@
 import { Spinner } from "react-bootstrap";
 import Post from "./Post";
 
-const List = ({ posts, deletePost }) => {
+interface Props {
+  posts: Post[];
+  deletePost: (id: string) => void;
+}
+
+const List = ({ posts, deletePost }: Props) => {
   if (posts)
     return (
       <div style={{ marginBottom: "200px" }}>

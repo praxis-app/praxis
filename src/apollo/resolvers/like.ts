@@ -2,7 +2,7 @@ import prisma from "../../utils/initPrisma";
 
 const likeResolvers = {
   Query: {
-    likesByPostId: async (_: any, { postId }) => {
+    likesByPostId: async (_: any, { postId }: { postId: string }) => {
       try {
         const post = await prisma.post.findFirst({
           where: {
@@ -12,13 +12,13 @@ const likeResolvers = {
             likes: true,
           },
         });
-        return post.likes;
+        return post?.likes;
       } catch (error) {
         throw error;
       }
     },
 
-    likesByCommentId: async (_: any, { commentId }) => {
+    likesByCommentId: async (_: any, { commentId }: { commentId: string }) => {
       try {
         const comment = await prisma.comment.findFirst({
           where: {
@@ -28,7 +28,7 @@ const likeResolvers = {
             likes: true,
           },
         });
-        return comment.likes;
+        return comment?.likes;
       } catch (error) {
         throw error;
       }
@@ -36,7 +36,14 @@ const likeResolvers = {
   },
 
   Mutation: {
-    async createLike(_: any, { userId, postId, commentId }) {
+    async createLike(
+      _: any,
+      {
+        userId,
+        postId,
+        commentId,
+      }: { userId: string; postId: string; commentId: string }
+    ) {
       try {
         const likedItemConnect = postId
           ? {
@@ -71,7 +78,7 @@ const likeResolvers = {
       }
     },
 
-    async deleteLike(_: any, { id }) {
+    async deleteLike(_: any, { id }: { id: string }) {
       try {
         await prisma.like.delete({
           where: { id: parseInt(id) },

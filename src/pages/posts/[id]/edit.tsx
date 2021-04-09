@@ -8,7 +8,7 @@ import { POST } from "../../../apollo/client/queries";
 
 const Edit = () => {
   const { query } = useRouter();
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState<Post>();
 
   const [getPostRes, postRes] = useLazyQuery(POST);
 
