@@ -12,4 +12,4 @@
 - Groups with motions. Cast motions for other groups members to form consensus around, utilizing a wide variety of voting features.
 - No-admin groups. Create a group and set it to no-admin, allowing group members to democratically decide on settings, name, theme, etc.
 
-praxis is free and open source software, as specified above by the GNU General Public License.
+Praxis is free and open source software, as specified above by the GNU General Public License.
