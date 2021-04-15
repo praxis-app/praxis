@@ -1,11 +1,10 @@
-$responsiveBreakpoint: 600px;
-$desktopBreakpoint: 1100px;
-$gray: rgb(145, 145, 145);
+@import "../App/App.module.scss";
+@import "../App/colors.scss";
 
 // top, right, bottom, left
 
 .navbar {
-  background: rgb(30, 30, 30);
+  background: $navbarGray;
   padding: 20px 22px;
   margin-bottom: 40px;
   display: flex;

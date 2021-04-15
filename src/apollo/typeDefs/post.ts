@@ -3,6 +3,7 @@ export default `
 type Post {
   id: ID!
   userId: ID!
+  groupId: ID
   body: String!
   createdAt: String!
   updatedAt: String!

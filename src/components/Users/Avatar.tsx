@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { Avatar } from "@material-ui/core";
+import Link from "next/link";
 
 import baseUrl from "../../utils/baseUrl";
 import { CURRENT_PROFILE_PICTURE } from "../../apollo/client/queries";
@@ -23,24 +24,28 @@ const UserAvatar = ({ user }: Props) => {
   }, [profilePictureRes.data]);
 
   return (
-    <Avatar
-      style={{
-        backgroundColor: profilePicture ? "black" : "white",
-        color: "black",
-      }}
-    >
-      {profilePicture ? (
-        <img
-          src={baseUrl + profilePicture.path}
-          alt="Data could not render."
+    <Link href={`/users/${user.name}`}>
+      <a>
+        <Avatar
           style={{
-            width: "100%",
+            backgroundColor: profilePicture ? "black" : "white",
+            color: "black",
           }}
-        />
-      ) : (
-        <>{user.name[0].charAt(0).toUpperCase()}</>
-      )}
-    </Avatar>
+        >
+          {profilePicture ? (
+            <img
+              src={baseUrl + profilePicture.path}
+              alt="Data could not render."
+              style={{
+                width: "100%",
+              }}
+            />
+          ) : (
+            <>{user.name[0].charAt(0).toUpperCase()}</>
+          )}
+        </Avatar>
+      </a>
+    </Link>
   );
 };
 

@@ -1,0 +1,5 @@
+@import "../App/App.module.scss";
+
+.form {
+  @extend .card;
+}

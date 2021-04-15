@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useQuery, useLazyQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { Spinner } from "react-bootstrap";
 import { useRouter } from "next/router";
 

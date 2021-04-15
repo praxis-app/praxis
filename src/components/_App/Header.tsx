@@ -73,6 +73,12 @@ const Header = () => {
             </Link>
           </div>
 
+          <div className={styles.navbarItem}>
+            <Link href="/groups" passHref>
+              <a className={styles.navbarItemText}>Groups</a>
+            </Link>
+          </div>
+
           {data && data.user.isAuthenticated ? (
             <>
               <div className={styles.navbarItem}>

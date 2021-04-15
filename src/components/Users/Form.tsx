@@ -110,7 +110,7 @@ const UserForm = ({ user, isEditing }: Props) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={styles.card}>
       <FormGroup>
         <Input
           type="text"

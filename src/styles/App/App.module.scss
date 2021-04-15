@@ -1,5 +1,5 @@
 $responsiveBreakpoint: 600px;
-$desktopBreakpoint: 1100px;
+$desktopBreakpoint: 950px;
 
 .card {
   width: 100%;
@@ -37,6 +37,6 @@ $desktopBreakpoint: 1100px;
 // desktop
 @media only screen and (min-width: $desktopBreakpoint) {
   .card {
-    width: 330px;
+    width: 525px;
   }
 }

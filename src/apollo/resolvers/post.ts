@@ -41,6 +41,78 @@ const postResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
+    feed: async (_: any, { userId }: { userId: string }) => {
+      try {
+        let feed: BackendPost[] = [];
+
+        // Users own posts
+        const ownPosts = await prisma.post.findMany({
+          where: {
+            userId: parseInt(userId),
+          },
+        });
+        feed = [...feed, ...ownPosts];
+
+        // Followed posts
+        const userWithFollowing = await prisma.user.findFirst({
+          where: {
+            id: parseInt(userId),
+          },
+          include: {
+            following: true,
+          },
+        });
+        if (userWithFollowing)
+          for (const follow of userWithFollowing.following) {
+            let userWithPosts;
+            if (follow.userId)
+              userWithPosts = await prisma.user.findFirst({
+                where: {
+                  id: follow.userId,
+                },
+                include: {
+                  posts: true,
+                },
+              });
+            if (userWithPosts && userWithPosts.posts.length)
+              feed = [
+                ...feed,
+                ...userWithPosts.posts.filter((post) => post.groupId === null),
+              ];
+          }
+
+        // Group posts
+        const groupMembers = await prisma.groupMember.findMany({
+          where: {
+            userId: parseInt(userId),
+          },
+        });
+        for (const groupMember of groupMembers) {
+          const groupPosts = await prisma.post.findMany({
+            where: {
+              groupId: groupMember.groupId,
+            },
+          });
+
+          if (groupPosts.length) feed = [...feed, ...groupPosts];
+        }
+
+        const uniq: BackendPost[] = [];
+        for (const post of feed) {
+          if (!uniq.find((uniqPost) => post.id === uniqPost.id))
+            uniq.push(post);
+        }
+
+        feed = uniq.sort(
+          (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+        );
+
+        return feed;
+      } catch (error) {
+        throw error;
+      }
+    },
+
     post: async (_: any, { id }: { id: string }) => {
       try {
         const post = await prisma.post.findFirst({
@@ -63,7 +135,7 @@ const postResolvers = {
       }
     },
 
-    postsByName: async (_: any, { name }: { name: string }) => {
+    postsByUserName: async (_: any, { name }: { name: string }) => {
       try {
         const user = await prisma.user.findFirst({
           where: {
@@ -78,15 +150,42 @@ const postResolvers = {
         throw error;
       }
     },
+
+    postsByGroupName: async (_: any, { name }: { name: string }) => {
+      try {
+        const group = await prisma.group.findFirst({
+          where: {
+            name: name,
+          },
+          include: {
+            posts: true,
+          },
+        });
+        return group?.posts;
+      } catch (error) {
+        throw error;
+      }
+    },
   },
 
   Mutation: {
     async createPost(
       _: any,
-      { userId, input }: { userId: string; input: PostInput }
+      {
+        userId,
+        groupId,
+        input,
+      }: { userId: string; groupId: string; input: PostInput }
     ) {
       const { body, images } = input;
       try {
+        const groupData = {
+          group: {
+            connect: {
+              id: parseInt(groupId),
+            },
+          },
+        };
         const newPost = await prisma.post.create({
           data: {
             user: {
@@ -94,6 +193,7 @@ const postResolvers = {
                 id: parseInt(userId),
               },
             },
+            ...(groupId && groupData),
             body: body,
           },
         });

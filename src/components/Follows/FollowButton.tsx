@@ -3,31 +3,25 @@ import { useMutation, useQuery } from "@apollo/client";
 import { IconButton } from "@material-ui/core";
 import { AddCircle, RemoveCircle } from "@material-ui/icons";
 
-import { CURRENT_USER, FOLLOWERS } from "../../apollo/client/queries";
+import { CURRENT_USER } from "../../apollo/client/queries";
 import { CREATE_FOLLOW, DELETE_FOLLOW } from "../../apollo/client/mutations";
+import { isLoggedIn } from "../../utils/auth";
 
 interface Props {
   userId: string;
+  followers: Follow[];
+  setFollowers: (followers: Follow[]) => void;
 }
 
-const FollowButton = ({ userId }: Props) => {
+const FollowButton = ({ userId, followers, setFollowers }: Props) => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
-  const [followers, setFollowers] = useState<Follow[]>([]);
   const currentUserRes = useQuery(CURRENT_USER);
   const [createFollow] = useMutation(CREATE_FOLLOW);
   const [deleteFollow] = useMutation(DELETE_FOLLOW);
-  const followersRes = useQuery(FOLLOWERS, {
-    variables: { userId: userId },
-    fetchPolicy: "no-cache",
-  });
 
   useEffect(() => {
-    setCurrentUser(currentUserRes.data ? currentUserRes.data.user : null);
+    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
   }, [currentUserRes.data]);
-
-  useEffect(() => {
-    setFollowers(followersRes.data ? followersRes.data.userFollowers : []);
-  }, [followersRes.data]);
 
   const notThisUser = (): boolean => {
     if (currentUser) return currentUser.id !== userId;
@@ -65,7 +59,7 @@ const FollowButton = ({ userId }: Props) => {
 
   return (
     <>
-      {notThisUser() && (
+      {isLoggedIn(currentUser) && notThisUser() && (
         <>
           {alreadyFollow() ? (
             <IconButton onClick={() => deleteFollowMutation()}>

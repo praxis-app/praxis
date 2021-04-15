@@ -4,7 +4,11 @@ import { Spinner } from "react-bootstrap";
 import Router, { useRouter } from "next/router";
 
 import { isLoggedIn } from "../../utils/auth";
-import { POST, COMMENTS_BY_POST_ID } from "../../apollo/client/queries";
+import {
+  POST,
+  COMMENTS_BY_POST_ID,
+  CURRENT_USER,
+} from "../../apollo/client/queries";
 import { DELETE_POST, DELETE_COMMENT } from "../../apollo/client/mutations";
 import Post from "../../components/Posts/Post";
 import CommentsForm from "../../components/Comments/Form";
@@ -14,6 +18,7 @@ const Show = () => {
   const { query } = useRouter();
   const [post, setPost] = useState<Post>();
   const [comments, setComments] = useState<Comment[]>([]);
+  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [deletePost] = useMutation(DELETE_POST);
   const [deleteComment] = useMutation(DELETE_COMMENT);
 
@@ -21,6 +26,7 @@ const Show = () => {
   const [getCommentsRes, commentsRes] = useLazyQuery(COMMENTS_BY_POST_ID, {
     fetchPolicy: "no-cache",
   });
+  const currentUserRes = useQuery(CURRENT_USER);
 
   useEffect(() => {
     if (query.id)
@@ -38,8 +44,12 @@ const Show = () => {
   }, [postRes.data]);
 
   useEffect(() => {
-    setComments(commentsRes.data ? commentsRes.data.commentsByPostId : []);
+    if (commentsRes.data) setComments(commentsRes.data.commentsByPostId);
   }, [commentsRes.data]);
+
+  useEffect(() => {
+    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
+  }, [currentUserRes.data]);
 
   const deletePostHandler = async (id: string) => {
     try {
@@ -67,7 +77,7 @@ const Show = () => {
     return (
       <>
         <Post post={post} deletePost={deletePostHandler} />
-        {isLoggedIn() && (
+        {isLoggedIn(currentUser) && (
           <CommentsForm
             postId={post.id}
             comments={comments}

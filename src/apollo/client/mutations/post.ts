@@ -5,12 +5,18 @@ export const CREATE_POST = gql`
     $body: String!
     $images: [FileUpload]
     $userId: ID!
+    $groupId: ID
   ) {
-    createPost(userId: $userId, input: { body: $body, images: $images }) {
+    createPost(
+      userId: $userId
+      groupId: $groupId
+      input: { body: $body, images: $images }
+    ) {
       post {
         id
         body
         userId
+        groupId
         createdAt
       }
     }
