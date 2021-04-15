@@ -6,6 +6,7 @@ import PostList from "../components/Posts/List";
 import { POSTS, CURRENT_USER, FEED } from "../apollo/client/queries";
 import { DELETE_POST } from "../apollo/client/mutations";
 import { isLoggedIn } from "../utils/auth";
+import WelcomeCard from "../components/About/Welcome";
 
 const Home = () => {
   const [posts, setPosts] = useState<Post[]>();
@@ -55,7 +56,12 @@ const Home = () => {
 
   return (
     <>
-      {currentUser && <PostForm posts={posts} setPosts={setPosts} />}
+      <WelcomeCard isLoggedIn={isLoggedIn(currentUser)} />
+
+      {isLoggedIn(currentUser) && (
+        <PostForm posts={posts} setPosts={setPosts} />
+      )}
+
       {posts && <PostList posts={posts} deletePost={deletePostHandler} />}
     </>
   );
