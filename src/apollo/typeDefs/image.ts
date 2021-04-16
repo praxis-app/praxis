@@ -4,6 +4,7 @@ type Image {
   id: ID!
   userId: ID
   postId: ID
+  motionId: ID
   commentId: ID
   groupId: ID
   profilePicture: Boolean

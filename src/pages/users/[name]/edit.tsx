@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
-import { Spinner } from "react-bootstrap";
+import { CircularProgress } from "@material-ui/core";
 import { useRouter } from "next/router";
 
 import UserForm from "../../../components/Users/Form";
@@ -28,7 +28,7 @@ const Edit = () => {
       {user ? (
         <UserForm user={user} isEditing={true} />
       ) : (
-        <Spinner animation="border" />
+        <CircularProgress style={{ color: "white" }} />
       )}
     </>
   );

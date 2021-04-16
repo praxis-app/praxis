@@ -1,4 +1,4 @@
-import { Spinner } from "react-bootstrap";
+import { CircularProgress } from "@material-ui/core";
 import Comment from "./Comment";
 
 interface Props {
@@ -25,7 +25,7 @@ const List = ({ comments, deleteComment }: Props) => {
       </div>
     );
 
-  return <Spinner animation="border" />;
+  return <CircularProgress style={{ color: "white" }} />;
 };
 
 export default List;

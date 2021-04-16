@@ -24,6 +24,7 @@ import {
 import styles from "../../styles/Comment/Comment.module.scss";
 import LikeButton from "../Likes/LikeButton";
 import UserAvatar from "../Users/Avatar";
+import { isLoggedIn } from "../../utils/auth";
 
 const useStyles = makeStyles({
   root: {
@@ -75,9 +76,7 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
 
   return (
     <div className={styles.comment} key={id}>
-      <Link href={`/users/${user?.name}`}>
-        <a className={styles.avatar}>{user && <UserAvatar user={user} />}</a>
-      </Link>
+      <div className={styles.avatar}>{user && <UserAvatar user={user} />}</div>
 
       <Card className={classes.root}>
         <CardHeader
@@ -92,7 +91,7 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
           <Typography
             style={{
               color: "rgb(190, 190, 190)",
-              marginTop: "-24px",
+              marginTop: "-12px",
               fontFamily: "Inter",
             }}
           >
@@ -104,8 +103,8 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
           <ImagesList images={images} />
         </CardMedia>
 
-        {currentUser && (
-          <CardActions style={{ marginTop: "6px" }}>
+        {isLoggedIn(currentUser) && (
+          <CardActions>
             <LikeButton commentId={id} />
 
             {ownComment() && (

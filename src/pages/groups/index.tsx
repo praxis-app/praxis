@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { Spinner } from "react-bootstrap";
+import { CircularProgress } from "@material-ui/core";
 
 import Group from "../../components/Groups/Group";
 import { GROUPS } from "../../apollo/client/queries";
 import { DELETE_GROUP } from "../../apollo/client/mutations";
-import { isLoggedIn } from "../../utils/auth";
 import GroupForm from "../../components/Groups/Form";
 
 const Index = () => {
@@ -49,7 +48,7 @@ const Index = () => {
             );
           })
       ) : (
-        <Spinner animation="border" />
+        <CircularProgress style={{ color: "white" }} />
       )}
     </>
   );

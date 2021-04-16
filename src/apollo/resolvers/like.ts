@@ -18,6 +18,22 @@ const likeResolvers = {
       }
     },
 
+    likesByMotionId: async (_: any, { motionId }: { motionId: string }) => {
+      try {
+        const motion = await prisma.motion.findFirst({
+          where: {
+            id: parseInt(motionId),
+          },
+          include: {
+            likes: true,
+          },
+        });
+        return motion?.likes;
+      } catch (error) {
+        throw error;
+      }
+    },
+
     likesByCommentId: async (_: any, { commentId }: { commentId: string }) => {
       try {
         const comment = await prisma.comment.findFirst({
@@ -41,26 +57,21 @@ const likeResolvers = {
       {
         userId,
         postId,
+        motionId,
         commentId,
-      }: { userId: string; postId: string; commentId: string }
+      }: { userId: string; postId: string; motionId: string; commentId: string }
     ) {
       try {
-        const likedItemConnect = postId
-          ? {
-              post: {
-                connect: {
-                  id: parseInt(postId),
-                },
-              },
-            }
-          : {
-              comment: {
-                connect: {
-                  id: parseInt(commentId),
-                },
-              },
-            };
-
+        let likedItemType: string = "post",
+          likedItemId: string = postId;
+        if (motionId) {
+          likedItemType = "motion";
+          likedItemId = motionId;
+        }
+        if (commentId) {
+          likedItemType = "comment";
+          likedItemId = commentId;
+        }
         const like = await prisma.like.create({
           data: {
             user: {
@@ -68,10 +79,13 @@ const likeResolvers = {
                 id: parseInt(userId),
               },
             },
-            ...likedItemConnect,
+            [likedItemType]: {
+              connect: {
+                id: parseInt(likedItemId),
+              },
+            },
           },
         });
-
         return { like };
       } catch (err) {
         throw new Error(err);

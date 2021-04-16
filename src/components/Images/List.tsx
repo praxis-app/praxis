@@ -9,17 +9,23 @@ interface Props {
 const List = ({ images }: Props) => {
   const router = useRouter();
 
+  const imgLinkPath = (image: Image): string => {
+    if (image.postId) return `/posts/${image.postId}`;
+    if (image.motionId) return `/motions/${image.motionId}`;
+    return router.asPath;
+  };
+
   return (
     <>
       {images
         .slice()
         .reverse()
-        .map(({ id, postId, path }) => {
+        .map((image) => {
           return (
-            <Link href={postId ? `/posts/${postId}` : router.asPath} key={id}>
+            <Link href={imgLinkPath(image)} key={image.id}>
               <a>
                 <img
-                  src={baseUrl + path}
+                  src={baseUrl + image.path}
                   alt="Data could not render."
                   style={{
                     width: "100%",

@@ -38,6 +38,49 @@ const groupResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
+    groupFeed: async (_: any, { name }: { name: string }) => {
+      try {
+        let feed: BackendFeedItem[];
+
+        const whereGroupId = {
+          where: {
+            name,
+          },
+        };
+        const groupWithPosts = await prisma.group.findFirst({
+          ...whereGroupId,
+          include: {
+            posts: true,
+          },
+        });
+        const groupWithMotions = await prisma.group.findFirst({
+          ...whereGroupId,
+          include: {
+            motions: true,
+          },
+        });
+        const postsWithType = groupWithPosts?.posts.map((post) => ({
+          ...post,
+          __typename: "Post",
+        }));
+        const motionsWithType = groupWithMotions?.motions.map((motion) => ({
+          ...motion,
+          __typename: "Motion",
+        }));
+
+        feed = [
+          ...(postsWithType as BackendPost[]),
+          ...(motionsWithType as BackendMotion[]),
+        ];
+
+        return feed.sort(
+          (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+        );
+      } catch (error) {
+        throw error;
+      }
+    },
+
     group: async (_: any, { id }: { id: string }) => {
       try {
         const group = await prisma.group.findFirst({

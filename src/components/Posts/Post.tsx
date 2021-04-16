@@ -43,7 +43,10 @@ interface Props {
   deletePost: (id: string) => void;
 }
 
-const Post = ({ post: { id, userId, groupId, body }, deletePost }: Props) => {
+const Post = ({
+  post: { id, userId, groupId, postGroupId, body },
+  deletePost,
+}: Props) => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [user, setUser] = useState<User>();
   const [group, setGroup] = useState<Group>();
@@ -77,11 +80,12 @@ const Post = ({ post: { id, userId, groupId, body }, deletePost }: Props) => {
   }, [groupRes.data]);
 
   useEffect(() => {
-    if (groupId)
+    if (groupId || postGroupId) {
       getGroupRes({
-        variables: { id: groupId },
+        variables: { id: groupId ? groupId : postGroupId },
       });
-  }, [groupId]);
+    }
+  }, [groupId, postGroupId]);
 
   const ownPost = (): boolean => {
     if (currentUser && user && currentUser.id === user.id) return true;

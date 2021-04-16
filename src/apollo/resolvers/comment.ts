@@ -64,6 +64,17 @@ const commentResolvers = {
         throw error;
       }
     },
+
+    commentsByMotionId: async (_: any, { motionId }: { motionId: string }) => {
+      try {
+        const comments = await prisma.comment.findMany({
+          where: { motionId: parseInt(motionId) },
+        });
+        return comments;
+      } catch (error) {
+        throw error;
+      }
+    },
   },
 
   Mutation: {
@@ -72,15 +83,32 @@ const commentResolvers = {
       {
         userId,
         postId,
+        motionId,
         input,
       }: {
         userId: string;
         postId: string;
+        motionId: string;
         input: CommentInput;
       }
     ) {
       const { body, images } = input;
       try {
+        const commentedItemConnect = postId
+          ? {
+              post: {
+                connect: {
+                  id: parseInt(postId),
+                },
+              },
+            }
+          : {
+              motion: {
+                connect: {
+                  id: parseInt(motionId),
+                },
+              },
+            };
         const comment = await prisma.comment.create({
           data: {
             user: {
@@ -88,11 +116,7 @@ const commentResolvers = {
                 id: parseInt(userId),
               },
             },
-            post: {
-              connect: {
-                id: parseInt(postId),
-              },
-            },
+            ...commentedItemConnect,
             body: body,
           },
         });

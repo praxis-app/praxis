@@ -31,6 +31,17 @@ const imageResolvers = {
       }
     },
 
+    imagesByMotionId: async (_: any, { motionId }: { motionId: string }) => {
+      try {
+        const images = await prisma.image.findMany({
+          where: { motionId: parseInt(motionId) },
+        });
+        return images;
+      } catch (error) {
+        throw error;
+      }
+    },
+
     imagesByCommentId: async (_: any, { commentId }: { commentId: string }) => {
       try {
         const images = await prisma.image.findMany({

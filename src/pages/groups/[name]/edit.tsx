@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLazyQuery, useQuery } from "@apollo/client";
-import { Spinner } from "react-bootstrap";
 import { useRouter } from "next/router";
+import { CircularProgress } from "@material-ui/core";
 
 import GroupForm from "../../../components/Groups/Form";
 import { GROUP_BY_NAME, CURRENT_USER } from "../../../apollo/client/queries";
@@ -38,7 +38,7 @@ const Edit = () => {
       {group ? (
         <GroupForm group={group} isEditing={true} />
       ) : (
-        <Spinner animation="border" />
+        <CircularProgress style={{ color: "white" }} />
       )}
     </>
   );
