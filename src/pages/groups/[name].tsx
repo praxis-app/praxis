@@ -102,14 +102,11 @@ const Show = () => {
         <>
           <Group group={group} deleteGroup={deleteGroupHandler} />
 
-          {inThisGroup() && (
-            <>
-              {isLoggedIn(currentUser) && (
-                <PostForm posts={posts} setPosts={setPosts} group={group} />
-              )}
-              <PostsList posts={posts} deletePost={deletePostHandler} />
-            </>
+          {inThisGroup() && isLoggedIn(currentUser) && (
+            <PostForm posts={posts} setPosts={setPosts} group={group} />
           )}
+
+          <PostsList posts={posts} deletePost={deletePostHandler} />
         </>
       ) : (
         <Spinner animation="border" />
