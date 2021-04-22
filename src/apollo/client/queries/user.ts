@@ -59,6 +59,7 @@ export const HOME_FEED = gql`
         userId
         motionGroupId: groupId
         body
+        action
         createdAt
       }
     }
