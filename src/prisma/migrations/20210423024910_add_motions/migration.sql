@@ -29,11 +29,15 @@ CREATE TABLE "Vote" (
     "flipState" TEXT,
     "verified" BOOLEAN NOT NULL DEFAULT false,
     "userId" INTEGER,
+    "motionId" INTEGER,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Vote.userId_motionId_unique" ON "Vote"("userId", "motionId");
 
 -- AddForeignKey
 ALTER TABLE "Motion" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -43,6 +47,9 @@ ALTER TABLE "Motion" ADD FOREIGN KEY ("groupId") REFERENCES "Group"("id") ON DEL
 
 -- AddForeignKey
 ALTER TABLE "Vote" ADD FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Vote" ADD FOREIGN KEY ("motionId") REFERENCES "Motion"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD FOREIGN KEY ("motionId") REFERENCES "Motion"("id") ON DELETE SET NULL ON UPDATE CASCADE;

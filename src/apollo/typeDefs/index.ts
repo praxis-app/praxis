@@ -2,6 +2,7 @@ import { gql } from "apollo-server-micro";
 import User from "./user";
 import Post from "./post";
 import Motion from "./motion";
+import Vote from "./vote";
 import Comment from "./comment";
 import Like from "./like";
 import Follow from "./follow";
@@ -15,6 +16,7 @@ export const typeDefs = gql`
   ${User}
   ${Post}
   ${Motion}
+  ${Vote}
   ${Comment}
   ${Like}
   ${Follow}
@@ -43,6 +45,9 @@ export const typeDefs = gql`
     motion(id: ID!): Motion!
     motionsByUserName(name: String!): [Motion]
     motionsByGroupName(name: String!): [Motion]
+
+    vote(id: ID!): Vote!
+    votesByMotionId(motionId: ID!): [Vote]
 
     comment(id: ID!): Comment!
     commentsByPostId(postId: ID!): [Comment]
@@ -89,6 +94,11 @@ export const typeDefs = gql`
     ): MotionPayload!
     updateMotion(id: ID!, input: UpdateMotionInput!): MotionPayload!
     deleteMotion(id: ID!): Boolean!
+
+    createVote(userId: ID!, motionId: ID, input: CreateVoteInput!): VotePayload!
+    updateVote(id: ID!, input: UpdateVoteInput!): VotePayload!
+    verifyVote(id: ID!): VotePayload!
+    deleteVote(id: ID!): Boolean!
 
     createComment(
       userId: ID!

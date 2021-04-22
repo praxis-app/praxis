@@ -1,8 +1,7 @@
 import Link from "next/link";
-
 import UserAvatar from "../Users/Avatar";
-import GroupAvatar from "../Groups/Avatar";
-import styles from "../../styles/Post/GroupPostAvatars.module.scss";
+import GroupAvatar from "./Avatar";
+import styles from "../../styles/Group/ItemAvatars.module.scss";
 
 interface Props {
   user: User;
@@ -10,7 +9,7 @@ interface Props {
   motion?: boolean;
 }
 
-const GroupPostAvatars = ({ user, group, motion = false }: Props) => {
+const GroupItemAvatars = ({ user, group, motion = false }: Props) => {
   if (user && group)
     return (
       <div className={styles.avatars}>
@@ -37,4 +36,4 @@ const GroupPostAvatars = ({ user, group, motion = false }: Props) => {
   return <></>;
 };
 
-export default GroupPostAvatars;
+export default GroupItemAvatars;

@@ -55,9 +55,12 @@ const MotionsForm = ({
   const [updateMotion] = useMutation(UPDATE_MOTION);
   const [deleteImage] = useMutation(DELETE_IMAGE);
   const currentUserRes = useQuery(CURRENT_USER);
-  const [getSavedImageRes, savedImagesRes] = useLazyQuery(IMAGES_BY_MOTION_ID, {
-    fetchPolicy: "no-cache",
-  });
+  const [getSavedImagesRes, savedImagesRes] = useLazyQuery(
+    IMAGES_BY_MOTION_ID,
+    {
+      fetchPolicy: "no-cache",
+    }
+  );
   const classes = useStyles();
 
   useEffect(() => {
@@ -68,8 +71,7 @@ const MotionsForm = ({
   }, [motion, isEditing]);
 
   useEffect(() => {
-    if (motion)
-      getSavedImageRes({ variables: { motionId: motion ? motion.id : 0 } });
+    if (motion) getSavedImagesRes({ variables: { motionId: motion.id } });
   }, []);
 
   useEffect(() => {
@@ -186,10 +188,11 @@ const MotionsForm = ({
             }}
           >
             <option aria-label="None" value="" />
+            <option value={"plan-event"}>Plan event</option>
             <option value={"change-name"}>Change name</option>
             <option value={"change-description"}>Change description</option>
             <option value={"change-rules"}>Change group rules</option>
-            <option value={"plan-event"}>Plan event</option>
+            <option value={"test"}>Just a test</option>
           </NativeSelect>
         </FormControl>
 

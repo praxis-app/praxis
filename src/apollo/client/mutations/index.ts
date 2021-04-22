@@ -6,4 +6,5 @@ export * from "./follow";
 export * from "./like";
 export * from "./group";
 export * from "./motion";
+export * from "./vote";
 export * from "./member";

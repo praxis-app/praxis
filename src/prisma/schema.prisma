@@ -20,6 +20,7 @@ model Motion {
   userId    Int?
   group     Group?    @relation(fields: [groupId], references: [id])
   groupId   Int?
+  votes     Vote[]
   comments  Comment[]
   likes     Like[]
   images    Image[]
@@ -34,8 +35,12 @@ model Vote {
   verified  Boolean  @default(false)
   user      User?    @relation(fields: [userId], references: [id])
   userId    Int?
+  motion    Motion?    @relation(fields: [motionId], references: [id])
+  motionId  Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, motionId])
 }
 
 model User {
