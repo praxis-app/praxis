@@ -7,9 +7,10 @@ import styles from "../../styles/Post/GroupPostAvatars.module.scss";
 interface Props {
   user: User;
   group: Group;
+  motion?: boolean;
 }
 
-const GroupPostAvatars = ({ user, group }: Props) => {
+const GroupPostAvatars = ({ user, group, motion = false }: Props) => {
   if (user && group)
     return (
       <div className={styles.avatars}>
@@ -26,7 +27,9 @@ const GroupPostAvatars = ({ user, group }: Props) => {
             <a className={styles.groupNameLink}>{group.name}</a>
           </Link>
           <Link href={`/users/${user.name}`}>
-            <a className={styles.postByLink}>Group post by {user.name}</a>
+            <a className={styles.postByLink}>
+              Group {motion ? "motion" : "post"} by {user.name}
+            </a>
           </Link>
         </div>
       </div>

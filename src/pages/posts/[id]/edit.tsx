@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
-import { Spinner } from "react-bootstrap";
 import { useRouter } from "next/router";
+import { CircularProgress } from "@material-ui/core";
 
 import PostForm from "../../../components/Posts/Form";
 import { POST } from "../../../apollo/client/queries";
@@ -24,7 +24,8 @@ const Edit = () => {
   }, [postRes.data]);
 
   if (post) return <PostForm post={post} isEditing={true} />;
-  return <Spinner animation="border" />;
+
+  return <CircularProgress style={{ color: "white" }} />;
 };
 
 export default Edit;

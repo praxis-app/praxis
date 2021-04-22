@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useQuery, useLazyQuery } from "@apollo/client";
-import { Spinner } from "react-bootstrap";
+import { useLazyQuery } from "@apollo/client";
+import { CircularProgress } from "@material-ui/core";
 import { useRouter } from "next/router";
 
 import CommentForm from "../../../components/Comments/Form";
@@ -23,7 +23,7 @@ const Edit = () => {
   }, [commentsRes.data]);
 
   if (comment) return <CommentForm comment={comment} isEditing={true} />;
-  return <Spinner animation="border" />;
+  return <CircularProgress style={{ color: "white" }} />;
 };
 
 export default Edit;

@@ -5,4 +5,5 @@ export * from "./image";
 export * from "./follow";
 export * from "./like";
 export * from "./group";
+export * from "./motion";
 export * from "./member";

@@ -67,4 +67,4 @@ yarn-error.log*
 !.gitignore
 !.gitkeep
 !.env.local
-
+!.prettierrc

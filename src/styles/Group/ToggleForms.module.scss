@@ -1,0 +1,7 @@
+@import "../App/App.module.scss";
+
+.toggleContainer {
+  @extend .card;
+  display: flex;
+  justify-content: flex-end;
+}

@@ -6,6 +6,7 @@ import { ThumbUp } from "@material-ui/icons";
 import {
   CURRENT_USER,
   LIKES_BY_POST_ID,
+  LIKES_BY_MOTION_ID,
   LIKES_BY_COMMENT_ID,
 } from "../../apollo/client/queries";
 import { CREATE_LIKE, DELETE_LIKE } from "../../apollo/client/mutations";
@@ -14,28 +15,36 @@ import styles from "../../styles/Like/LikeButton.module.scss";
 
 interface Props {
   postId?: string;
+  motionId?: string;
   commentId?: string;
 }
 
-const LikeButton = ({ postId, commentId }: Props) => {
+const LikeButton = ({ postId, motionId, commentId }: Props) => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [likes, setLikes] = useState<Like[]>([]);
   const [createLike] = useMutation(CREATE_LIKE);
   const [deleteLike] = useMutation(DELETE_LIKE);
   const currentUserRes = useQuery(CURRENT_USER);
 
-  const [getLikesByPostId, likesByPostIdRes] = useLazyQuery(LIKES_BY_POST_ID, {
+  const noCache: {} = {
     fetchPolicy: "no-cache",
-  });
+  };
+  const [getLikesByPostId, likesByPostIdRes] = useLazyQuery(
+    LIKES_BY_POST_ID,
+    noCache
+  );
+  const [getLikesByMotionId, likesByMotionIdRes] = useLazyQuery(
+    LIKES_BY_MOTION_ID,
+    noCache
+  );
   const [getLikesByCommentId, likesByCommentIdRes] = useLazyQuery(
     LIKES_BY_COMMENT_ID,
-    {
-      fetchPolicy: "no-cache",
-    }
+    noCache
   );
 
   useEffect(() => {
     if (postId) getLikesByPostId({ variables: { postId } });
+    if (motionId) getLikesByMotionId({ variables: { motionId } });
     if (commentId) getLikesByCommentId({ variables: { commentId } });
   }, []);
 
@@ -46,9 +55,17 @@ const LikeButton = ({ postId, commentId }: Props) => {
   useEffect(() => {
     if (postId && likesByPostIdRes.data)
       setLikes(likesByPostIdRes.data.likesByPostId);
+
+    if (motionId && likesByMotionIdRes.data)
+      setLikes(likesByMotionIdRes.data.likesByMotionId);
+
     if (commentId && likesByCommentIdRes.data)
       setLikes(likesByCommentIdRes.data.likesByCommentId);
-  }, [likesByPostIdRes.data, likesByCommentIdRes.data]);
+  }, [
+    likesByPostIdRes.data,
+    likesByMotionIdRes.data,
+    likesByCommentIdRes.data,
+  ]);
 
   const alreadyLike = (): Like | null => {
     if (!currentUser) return null;
@@ -60,7 +77,10 @@ const LikeButton = ({ postId, commentId }: Props) => {
   };
 
   const createLikeMutation = async () => {
-    const likedItemId = postId ? { postId } : { commentId };
+    let likedItemId: {} = { postId };
+    if (commentId) likedItemId = { commentId };
+    if (motionId) likedItemId = { motionId };
+
     const { data } = await createLike({
       variables: {
         userId: currentUser?.id,

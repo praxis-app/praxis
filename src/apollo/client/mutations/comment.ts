@@ -3,13 +3,15 @@ import { gql } from "@apollo/client";
 export const CREATE_COMMENT = gql`
   mutation CreateCommentMutation(
     $userId: ID!
-    $postId: ID!
+    $postId: ID
+    $motionId: ID
     $body: String
     $images: [FileUpload]
   ) {
     createComment(
       userId: $userId
       postId: $postId
+      motionId: $motionId
       input: { body: $body, images: $images }
     ) {
       comment {
@@ -17,6 +19,7 @@ export const CREATE_COMMENT = gql`
         body
         userId
         postId
+        motionId
         createdAt
       }
     }
@@ -35,6 +38,7 @@ export const UPDATE_COMMENT = gql`
         body
         userId
         postId
+        motionId
         createdAt
       }
     }

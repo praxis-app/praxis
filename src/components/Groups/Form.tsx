@@ -75,8 +75,7 @@ const GroupForm = ({ group, groups, isEditing, setGroups }: Props) => {
             },
           });
 
-          if (groups && setGroups)
-            setGroups([...groups, data.createGroup.group]);
+          Router.push(`/groups/${data.createGroup.group.name}`);
         } catch (err) {
           alert(err);
         }

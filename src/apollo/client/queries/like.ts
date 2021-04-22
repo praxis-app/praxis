@@ -10,6 +10,16 @@ export const LIKES_BY_POST_ID = gql`
   }
 `;
 
+export const LIKES_BY_MOTION_ID = gql`
+  query($motionId: ID!) {
+    likesByMotionId(motionId: $motionId) {
+      id
+      userId
+      motionId
+    }
+  }
+`;
+
 export const LIKES_BY_COMMENT_ID = gql`
   query($commentId: ID!) {
     likesByCommentId(commentId: $commentId) {

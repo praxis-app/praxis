@@ -22,6 +22,17 @@ export const IMAGES_BY_POST_ID = gql`
   }
 `;
 
+export const IMAGES_BY_MOTION_ID = gql`
+  query($motionId: ID!) {
+    imagesByMotionId(motionId: $motionId) {
+      id
+      userId
+      motionId
+      path
+    }
+  }
+`;
+
 export const IMAGES_BY_COMMENT_ID = gql`
   query($commentId: ID!) {
     imagesByCommentId(commentId: $commentId) {

@@ -1,4 +1,4 @@
-import { Spinner } from "react-bootstrap";
+import { CircularProgress } from "@material-ui/core";
 import Post from "./Post";
 
 interface Props {
@@ -19,7 +19,7 @@ const List = ({ posts, deletePost }: Props) => {
       </div>
     );
 
-  return <Spinner animation="border" />;
+  return <CircularProgress style={{ color: "white" }} />;
 };
 
 export default List;

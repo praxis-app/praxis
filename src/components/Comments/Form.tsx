@@ -19,6 +19,7 @@ import styles from "../../styles/Comment/CommentsForm.module.scss";
 
 interface Props {
   postId?: string;
+  motionId?: string;
   comment?: Comment;
   comments?: Comment[];
   isEditing?: boolean;
@@ -27,6 +28,7 @@ interface Props {
 
 const CommentsForm = ({
   postId,
+  motionId,
   comment,
   comments,
   isEditing,
@@ -75,8 +77,9 @@ const CommentsForm = ({
               images: images,
             },
           });
-          // Redirect to Show Post after update
-          Router.push(`/posts/${comment?.postId}`);
+          // Redirect to Show Item after update
+          if (comment?.postId) Router.push(`/posts/${comment.postId}`);
+          if (comment?.motionId) Router.push(`/motions/${comment.motionId}`);
         } catch (err) {
           alert(err);
         }
@@ -85,12 +88,19 @@ const CommentsForm = ({
           setBody("");
           setImages([]);
           e.target.reset();
+          const commentedItemId = postId
+            ? {
+                postId,
+              }
+            : {
+                motionId,
+              };
           const { data } = await createComment({
             variables: {
               userId: currentUserRes.data.user.id,
-              postId: postId,
               body: body,
               images: images,
+              ...commentedItemId,
             },
           });
           if (comments && setComments)

@@ -32,6 +32,113 @@ const userResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
+    homeFeed: async (_: any, { userId }: { userId: string }) => {
+      try {
+        let feed: BackendFeedItem[] = [];
+
+        if (userId) {
+          // Users own posts
+          const ownPosts = await prisma.post.findMany({
+            where: {
+              userId: parseInt(userId),
+            },
+          });
+          feed = [...feed, ...ownPosts];
+
+          // Followed posts
+          const userWithFollowing = await prisma.user.findFirst({
+            where: {
+              id: parseInt(userId),
+            },
+            include: {
+              following: true,
+            },
+          });
+          if (userWithFollowing)
+            for (const follow of userWithFollowing.following) {
+              let userWithPosts;
+              if (follow.userId)
+                userWithPosts = await prisma.user.findFirst({
+                  where: {
+                    id: follow.userId,
+                  },
+                  include: {
+                    posts: true,
+                  },
+                });
+              if (userWithPosts && userWithPosts.posts.length)
+                feed = [
+                  ...feed,
+                  ...userWithPosts.posts.filter(
+                    (post) => post.groupId === null
+                  ),
+                ];
+            }
+
+          // Group feed items
+          const groupMembers = await prisma.groupMember.findMany({
+            where: {
+              userId: parseInt(userId),
+            },
+          });
+          for (const groupMember of groupMembers) {
+            const whereGroupId = {
+              where: {
+                groupId: groupMember.groupId,
+              },
+            };
+            const groupPosts = await prisma.post.findMany(whereGroupId);
+            const groupMotions = await prisma.motion.findMany(whereGroupId);
+
+            if (groupPosts.length) feed = [...feed, ...groupPosts];
+            if (groupMotions.length)
+              feed = [
+                ...feed,
+                ...groupMotions.map((motion) => ({
+                  ...motion,
+                  __typename: "Motion",
+                })),
+              ];
+          }
+
+          feed.forEach((item) => {
+            if (!item.__typename) item.__typename = "Post";
+          });
+
+          const uniq: BackendFeedItem[] = [];
+          for (const item of feed) {
+            if (
+              !uniq.find(
+                (uniqItem) =>
+                  item.id === uniqItem.id &&
+                  item.__typename === uniqItem.__typename
+              )
+            )
+              uniq.push(item);
+          }
+          feed = uniq;
+        } else {
+          // Logged out home feed
+          const posts: BackendPost[] = await prisma.post.findMany();
+          const motions: BackendMotion[] = await prisma.motion.findMany();
+          posts.forEach((item) => {
+            item.__typename = "Post";
+          });
+          motions.forEach((item) => {
+            item.__typename = "Motion";
+          });
+
+          feed = [...posts, ...motions];
+        }
+
+        return feed.sort(
+          (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+        );
+      } catch (error) {
+        throw error;
+      }
+    },
+
     user: async (_: any, { id }: { id: string }) => {
       try {
         const user = await prisma.user.findFirst({

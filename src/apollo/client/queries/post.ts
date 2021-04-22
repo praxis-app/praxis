@@ -47,15 +47,3 @@ export const POSTS_BY_GROUP_NAME = gql`
     }
   }
 `;
-
-export const FEED = gql`
-  query($userId: ID!) {
-    feed(userId: $userId) {
-      id
-      userId
-      groupId
-      body
-      createdAt
-    }
-  }
-`;

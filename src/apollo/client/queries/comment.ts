@@ -24,3 +24,16 @@ export const COMMENTS_BY_POST_ID = gql`
     }
   }
 `;
+
+export const COMMENTS_BY_MOTION_ID = gql`
+  query($motionId: ID!) {
+    commentsByMotionId(motionId: $motionId) {
+      id
+      userId
+      motionId
+      body
+      createdAt
+      updatedAt
+    }
+  }
+`;

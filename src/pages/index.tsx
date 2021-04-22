@@ -1,47 +1,41 @@
 import { useEffect, useState } from "react";
-import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
+import { useQuery, useMutation } from "@apollo/client";
 
 import PostForm from "../components/Posts/Form";
-import PostList from "../components/Posts/List";
-import { POSTS, CURRENT_USER, FEED } from "../apollo/client/queries";
-import { DELETE_POST } from "../apollo/client/mutations";
+import Feed from "../components/Shared/Feed";
+import { POSTS, CURRENT_USER, HOME_FEED } from "../apollo/client/queries";
+import { DELETE_POST, DELETE_MOTION } from "../apollo/client/mutations";
 import { isLoggedIn } from "../utils/auth";
 import WelcomeCard from "../components/About/Welcome";
 
 const Home = () => {
-  const [posts, setPosts] = useState<Post[]>();
+  const [feed, setFeed] = useState<FeedItem[]>();
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
+  const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deletePost] = useMutation(DELETE_POST);
   const postsRes = useQuery(POSTS, {
     fetchPolicy: "no-cache",
   });
-  const [getfeedRes, feedRes] = useLazyQuery(FEED, {
+  const feedRes = useQuery(HOME_FEED, {
+    variables: {
+      userId: currentUser?.id,
+    },
     fetchPolicy: "no-cache",
   });
   const currentUserRes = useQuery(CURRENT_USER);
 
   useEffect(() => {
     if (postsRes.data) {
-      setPosts(postsRes.data.allPosts);
+      setFeed(postsRes.data.allPosts);
     }
     if (feedRes.data) {
-      setPosts(feedRes.data.feed);
+      setFeed(feedRes.data.homeFeed);
     }
   }, [postsRes.data, feedRes.data]);
 
   useEffect(() => {
     if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
   }, [currentUserRes.data]);
-
-  useEffect(() => {
-    if (currentUser && isLoggedIn(currentUser)) {
-      getfeedRes({
-        variables: {
-          userId: currentUser.id,
-        },
-      });
-    }
-  }, [currentUser]);
 
   const deletePostHandler = async (id: string) => {
     try {
@@ -50,7 +44,29 @@ const Home = () => {
           id,
         },
       });
-      if (posts) setPosts(posts.filter((post: Post) => post.id !== id));
+      if (feed)
+        setFeed(
+          feed.filter(
+            (post: FeedItem) => post.id !== id || post.__typename !== "Post"
+          )
+        );
+    } catch {}
+  };
+
+  const deleteMotionHandler = async (id: string) => {
+    try {
+      await deleteMotion({
+        variables: {
+          id,
+        },
+      });
+      if (feed)
+        setFeed(
+          feed.filter(
+            (motion: FeedItem) =>
+              motion.id !== id || motion.__typename !== "Motion"
+          )
+        );
     } catch {}
   };
 
@@ -58,11 +74,15 @@ const Home = () => {
     <>
       <WelcomeCard isLoggedIn={isLoggedIn(currentUser)} />
 
-      {isLoggedIn(currentUser) && (
-        <PostForm posts={posts} setPosts={setPosts} />
-      )}
+      {isLoggedIn(currentUser) && <PostForm posts={feed} setPosts={setFeed} />}
 
-      {posts && <PostList posts={posts} deletePost={deletePostHandler} />}
+      {feed && (
+        <Feed
+          feed={feed}
+          deletePost={deletePostHandler}
+          deleteMotion={deleteMotionHandler}
+        />
+      )}
     </>
   );
 };

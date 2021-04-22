@@ -43,3 +43,24 @@ export const USERS = gql`
     }
   }
 `;
+
+export const HOME_FEED = gql`
+  query($userId: ID) {
+    homeFeed(userId: $userId) {
+      ... on Post {
+        id
+        userId
+        postGroupId: groupId
+        body
+        createdAt
+      }
+      ... on Motion {
+        id
+        userId
+        motionGroupId: groupId
+        body
+        createdAt
+      }
+    }
+  }
+`;

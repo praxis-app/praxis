@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { Spinner } from "react-bootstrap";
+import { CircularProgress } from "@material-ui/core";
 
 import User from "../../components/Users/User";
 import { USERS } from "../../apollo/client/queries";
@@ -38,7 +38,7 @@ const Index = () => {
           );
         })
       ) : (
-        <Spinner animation="border" />
+        <CircularProgress style={{ color: "white" }} />
       )}
     </>
   );

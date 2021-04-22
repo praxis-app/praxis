@@ -37,7 +37,7 @@ interface Props {
 }
 
 const Show = ({ user, deleteUser }: Props) => {
-  const { name, email, id, createdAt } = user;
+  const { name, id, createdAt } = user;
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [followers, setFollowers] = useState<Follow[]>([]);
   const [following, setFollowing] = useState<Follow[]>([]);
@@ -88,9 +88,7 @@ const Show = ({ user, deleteUser }: Props) => {
         }
         title={
           <Link href={`/users/${name}`}>
-            <a>
-              {name} · {email}
-            </a>
+            <a>{name}</a>
           </Link>
         }
         subheader={`Joined ${date}`}

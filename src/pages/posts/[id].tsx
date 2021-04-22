@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
-import { Spinner } from "react-bootstrap";
+import { CircularProgress } from "@material-ui/core";
 import Router, { useRouter } from "next/router";
 
 import { isLoggedIn } from "../../utils/auth";
@@ -90,7 +90,8 @@ const Show = () => {
         />
       </>
     );
-  return <Spinner animation="border" />;
+
+  return <CircularProgress style={{ color: "white" }} />;
 };
 
 export default Show;

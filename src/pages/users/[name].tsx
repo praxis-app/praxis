@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import Router, { useRouter } from "next/router";
-import { Spinner } from "react-bootstrap";
+import { CircularProgress } from "@material-ui/core";
 
 import User from "../../components/Users/User";
 import PostsList from "../../components/Posts/List";
@@ -68,7 +68,7 @@ const Show = () => {
           <PostsList posts={posts} deletePost={deletePostHandler} />
         </>
       ) : (
-        <Spinner animation="border" />
+        <CircularProgress style={{ color: "white" }} />
       )}
     </>
   );

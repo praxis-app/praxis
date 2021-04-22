@@ -3,7 +3,8 @@ export default `
 type Comment {
   id: ID!
   userId: ID!
-  postId: ID!
+  postId: ID
+  motionId: ID
   body: String!
   createdAt: String!
   updatedAt: String!
