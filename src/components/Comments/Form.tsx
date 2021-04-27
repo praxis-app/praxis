@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, ChangeEvent, useEffect } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { FormGroup, Input, Button } from "@material-ui/core";
 import Router from "next/router";
 import { RemoveCircle, Image } from "@material-ui/icons";
@@ -45,16 +45,22 @@ const CommentsForm = ({
   const [updateComment] = useMutation(UPDATE_COMMENT);
   const [deleteImage] = useMutation(DELETE_IMAGE);
   const currentUserRes = useQuery(CURRENT_USER);
-  const savedImagesRes = useQuery(IMAGES_BY_COMMENT_ID, {
-    variables: { commentId: comment ? comment.id : 0 },
-    fetchPolicy: "no-cache",
-  });
+  const [getSavedImagesRes, savedImagesRes] = useLazyQuery(
+    IMAGES_BY_COMMENT_ID,
+    {
+      fetchPolicy: "no-cache",
+    }
+  );
 
   useEffect(() => {
     if (isEditing && comment) {
       setBody(comment.body);
     }
   }, [comment, isEditing]);
+
+  useEffect(() => {
+    if (comment) getSavedImagesRes({ variables: { commentId: comment.id } });
+  }, []);
 
   useEffect(() => {
     setSavedImages(

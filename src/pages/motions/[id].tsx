@@ -1,38 +1,70 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
-import { CircularProgress } from "@material-ui/core";
+import {
+  Card,
+  CircularProgress,
+  makeStyles,
+  Tab,
+  Tabs,
+} from "@material-ui/core";
 import Router, { useRouter } from "next/router";
 
 import { isLoggedIn } from "../../utils/auth";
 import {
   MOTION,
   COMMENTS_BY_MOTION_ID,
+  VOTES_BY_MOTION_ID,
   CURRENT_USER,
 } from "../../apollo/client/queries";
 import { DELETE_MOTION, DELETE_COMMENT } from "../../apollo/client/mutations";
 import Motion from "../../components/Motions/Motion";
 import CommentsForm from "../../components/Comments/Form";
 import CommentsList from "../../components/Comments/List";
+import VotesList from "../../components/Votes/List";
+import styles from "../../styles/Motion/Motion.module.scss";
+
+const useStyles = makeStyles({
+  root: {
+    backgroundColor: "rgb(65, 65, 65)",
+  },
+  title: {
+    fontFamily: "Inter",
+  },
+  indicator: {
+    backgroundColor: "white",
+  },
+});
 
 const Show = () => {
   const { query } = useRouter();
   const [motion, setMotion] = useState<Motion>();
+  const [votes, setVotes] = useState<Vote[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
+  const [tab, setTab] = useState<number>(0);
   const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deleteComment] = useMutation(DELETE_COMMENT);
-
-  const [getMotionRes, motionRes] = useLazyQuery(MOTION);
-  const [getCommentsRes, commentsRes] = useLazyQuery(COMMENTS_BY_MOTION_ID, {
+  const noCache: {} = {
     fetchPolicy: "no-cache",
-  });
+  };
+  const [getMotionRes, motionRes] = useLazyQuery(MOTION, noCache);
+  const [getVotesRes, votesRes] = useLazyQuery(VOTES_BY_MOTION_ID, noCache);
+  const [getCommentsRes, commentsRes] = useLazyQuery(
+    COMMENTS_BY_MOTION_ID,
+    noCache
+  );
   const currentUserRes = useQuery(CURRENT_USER);
+  const classes = useStyles();
 
   useEffect(() => {
-    if (query.id)
+    if (query.id) {
       getMotionRes({
         variables: { id: query.id },
       });
+      getVotesRes({
+        variables: { motionId: query.id },
+      });
+    }
   }, [query.id]);
 
   useEffect(() => {
@@ -44,12 +76,21 @@ const Show = () => {
   }, [motionRes.data]);
 
   useEffect(() => {
+    if (votesRes.data) setVotes(votesRes.data.votesByMotionId);
+  }, [votesRes.data]);
+
+  useEffect(() => {
     if (commentsRes.data) setComments(commentsRes.data.commentsByMotionId);
   }, [commentsRes.data]);
 
   useEffect(() => {
     if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
   }, [currentUserRes.data]);
+
+  useEffect(() => {
+    if (!votes.find((vote) => vote.body)) setTab(1);
+    else setTab(0);
+  }, [votes]);
 
   const deleteMotionHandler = async (id: string) => {
     try {
@@ -76,18 +117,45 @@ const Show = () => {
   if (motion)
     return (
       <>
-        <Motion motion={motion} deleteMotion={deleteMotionHandler} />
-        {isLoggedIn(currentUser) && (
-          <CommentsForm
-            motionId={motion.id}
-            comments={comments}
-            setComments={setComments}
-          />
-        )}
-        <CommentsList
-          comments={comments}
-          deleteComment={deleteCommentHandler}
+        <Motion
+          motion={motion}
+          deleteMotion={deleteMotionHandler}
+          votesFromParent={votes}
+          setVotesFromParent={setVotes}
         />
+
+        <Card className={classes.root + " " + styles.card}>
+          <Tabs
+            textColor="inherit"
+            centered
+            value={tab}
+            onChange={(event: React.ChangeEvent<{}>, newValue: number) =>
+              setTab(newValue)
+            }
+            classes={{ indicator: classes.indicator }}
+          >
+            <Tab label="Votes" style={{ color: "white" }} />
+            <Tab label="Comments" style={{ color: "white" }} />
+          </Tabs>
+        </Card>
+
+        {tab === 0 && <VotesList votes={votes} setVotes={setVotes} />}
+
+        {tab === 1 && (
+          <>
+            {isLoggedIn(currentUser) && (
+              <CommentsForm
+                motionId={motion.id}
+                comments={comments}
+                setComments={setComments}
+              />
+            )}
+            <CommentsList
+              comments={comments}
+              deleteComment={deleteCommentHandler}
+            />
+          </>
+        )}
       </>
     );
 

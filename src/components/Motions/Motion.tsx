@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useQuery, useLazyQuery } from "@apollo/client";
-import { Edit, Delete } from "@material-ui/icons";
 import Link from "next/link";
 
 import {
@@ -21,12 +20,14 @@ import {
   GROUP,
   CURRENT_USER,
   IMAGES_BY_MOTION_ID,
+  VOTES_BY_MOTION_ID,
 } from "../../apollo/client/queries";
-import LikeButton from "../Likes/LikeButton";
+import VotesForm from "../Votes/Form";
 import UserAvatar from "../Users/Avatar";
-
+import ItemMenu from "../Shared/ItemMenu";
+import GroupItemAvatars from "../Groups/ItemAvatars";
+import VoteButtons from "../Votes/VoteButtons";
 import styles from "../../styles/Motion/Motion.module.scss";
-import GroupPostAvatars from "../Posts/GroupPostAvatars";
 
 const useStyles = makeStyles({
   root: {
@@ -41,19 +42,28 @@ const useStyles = makeStyles({
 interface Props {
   motion: Motion;
   deleteMotion: (id: string) => void;
+  votesFromParent?: Vote[];
+  setVotesFromParent?: (votes: Vote[]) => void;
 }
 
 const Motion = ({
   motion: { id, userId, groupId, motionGroupId, body, action },
   deleteMotion,
+  votesFromParent,
+  setVotesFromParent,
 }: Props) => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [user, setUser] = useState<User>();
   const [group, setGroup] = useState<Group>();
-  const [images, setImages] = useState([]);
+  const [votes, setVotes] = useState<Vote[]>([]);
+  const [images, setImages] = useState<Image[]>([]);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const currentUserRes = useQuery(CURRENT_USER);
   const userRes = useQuery(USER, {
     variables: { id: userId },
+  });
+  const [getVotesRes, votesRes] = useLazyQuery(VOTES_BY_MOTION_ID, {
+    fetchPolicy: "no-cache",
   });
   const [getGroupRes, groupRes] = useLazyQuery(GROUP);
   const imagesRes = useQuery(IMAGES_BY_MOTION_ID, {
@@ -62,6 +72,22 @@ const Motion = ({
   });
   const classes = useStyles();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!votesFromParent)
+      getVotesRes({
+        variables: { motionId: id },
+      });
+  }, []);
+
+  useEffect(() => {
+    if (votesFromParent) setVotes(votesFromParent);
+  }, [votesFromParent]);
+
+  useEffect(() => {
+    if (!votesFromParent && votesRes.data)
+      setVotes(votesRes.data.votesByMotionId);
+  }, [votesRes.data]);
 
   useEffect(() => {
     if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
@@ -95,6 +121,13 @@ const Motion = ({
     return router.asPath.includes("/groups/");
   };
 
+  const alreadyVote = (): Vote | null => {
+    if (!currentUser) return null;
+    const vote = votes.find((vote) => vote.userId === currentUser.id);
+    if (vote) return vote;
+    return null;
+  };
+
   return (
     <div key={id}>
       <Card className={classes.root + " " + styles.card}>
@@ -102,7 +135,7 @@ const Motion = ({
           avatar={
             group && !onGroupPage()
               ? user && (
-                  <GroupPostAvatars user={user} group={group} motion={true} />
+                  <GroupItemAvatars user={user} group={group} motion={true} />
                 )
               : user && <UserAvatar user={user} />
           }
@@ -112,6 +145,16 @@ const Motion = ({
                 <a>{user?.name}</a>
               </Link>
             )
+          }
+          action={
+            <ItemMenu
+              itemId={id}
+              itemType={"motion"}
+              anchorEl={menuAnchorEl}
+              setAnchorEl={setMenuAnchorEl}
+              deleteItem={deleteMotion}
+              ownItem={ownMotion}
+            />
           }
           classes={{ title: classes.title }}
         />
@@ -134,31 +177,21 @@ const Motion = ({
           <ImagesList images={images} />
         </CardMedia>
 
-        {isLoggedIn(currentUser) && (
+        {alreadyVote() && !alreadyVote()?.body && (
+          <VotesForm
+            votes={votes}
+            vote={alreadyVote() as Vote}
+            setVotes={setVotesFromParent ? setVotesFromParent : setVotes}
+          />
+        )}
+
+        {isLoggedIn(currentUser) && !ownMotion() && (
           <CardActions style={{ marginTop: "6px" }}>
-            <LikeButton motionId={id} />
-
-            {ownMotion() && (
-              <>
-                <Link href={`/motions/${id}/edit`}>
-                  <a>
-                    <Edit /> Edit
-                  </a>
-                </Link>
-
-                <Link href={router.asPath}>
-                  <a
-                    onClick={() =>
-                      window.confirm(
-                        "Are you sure you want to delete this motion?"
-                      ) && deleteMotion(id)
-                    }
-                  >
-                    <Delete /> Delete
-                  </a>
-                </Link>
-              </>
-            )}
+            <VoteButtons
+              motionId={id}
+              votes={votes}
+              setVotes={setVotesFromParent ? setVotesFromParent : setVotes}
+            />
           </CardActions>
         )}
       </Card>

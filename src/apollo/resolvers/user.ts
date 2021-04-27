@@ -45,7 +45,7 @@ const userResolvers = {
           });
           feed = [...feed, ...ownPosts];
 
-          // Followed posts
+          // Followed feed items
           const userWithFollowing = await prisma.user.findFirst({
             where: {
               id: parseInt(userId),
@@ -56,25 +56,29 @@ const userResolvers = {
           });
           if (userWithFollowing)
             for (const follow of userWithFollowing.following) {
-              let userWithPosts;
+              let userWithFeedItems;
               if (follow.userId)
-                userWithPosts = await prisma.user.findFirst({
+                userWithFeedItems = await prisma.user.findFirst({
                   where: {
                     id: follow.userId,
                   },
                   include: {
                     posts: true,
+                    motions: true,
                   },
                 });
-              if (userWithPosts && userWithPosts.posts.length)
+              if (userWithFeedItems)
                 feed = [
                   ...feed,
-                  ...userWithPosts.posts.filter(
+                  ...userWithFeedItems.posts.filter(
                     (post) => post.groupId === null
                   ),
+                  ...userWithFeedItems.motions.map((motion) => ({
+                    ...motion,
+                    __typename: "Motion",
+                  })),
                 ];
             }
-
           // Group feed items
           const groupMembers = await prisma.groupMember.findMany({
             where: {
@@ -89,7 +93,6 @@ const userResolvers = {
             };
             const groupPosts = await prisma.post.findMany(whereGroupId);
             const groupMotions = await prisma.motion.findMany(whereGroupId);
-
             if (groupPosts.length) feed = [...feed, ...groupPosts];
             if (groupMotions.length)
               feed = [
@@ -100,11 +103,9 @@ const userResolvers = {
                 })),
               ];
           }
-
           feed.forEach((item) => {
             if (!item.__typename) item.__typename = "Post";
           });
-
           const uniq: BackendFeedItem[] = [];
           for (const item of feed) {
             if (

@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, ChangeEvent, useEffect } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { FormGroup, Input, Button } from "@material-ui/core";
 import Router from "next/router";
 import { RemoveCircle, Image } from "@material-ui/icons";
@@ -34,8 +34,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   const [updatePost] = useMutation(UPDATE_POST);
   const [deleteImage] = useMutation(DELETE_IMAGE);
   const currentUserRes = useQuery(CURRENT_USER);
-  const savedImagesRes = useQuery(IMAGES_BY_POST_ID, {
-    variables: { postId: post ? post.id : 0 },
+  const [getSavedImagesRes, savedImagesRes] = useLazyQuery(IMAGES_BY_POST_ID, {
     fetchPolicy: "no-cache",
   });
 
@@ -44,6 +43,10 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
       setBody(post.body);
     }
   }, [post, isEditing]);
+
+  useEffect(() => {
+    if (post) getSavedImagesRes({ variables: { postId: post.id } });
+  }, []);
 
   useEffect(() => {
     setSavedImages(

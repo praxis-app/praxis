@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
-import { Edit, Delete } from "@material-ui/icons";
 import Link from "next/link";
-
 import {
   Card,
   CardContent,
@@ -11,7 +9,6 @@ import {
   makeStyles,
   CardHeader,
   CardMedia,
-  Avatar,
 } from "@material-ui/core";
 
 import ImagesList from "../Images/List";
@@ -20,11 +17,11 @@ import {
   USER,
   CURRENT_USER,
 } from "../../apollo/client/queries";
-
-import styles from "../../styles/Comment/Comment.module.scss";
 import LikeButton from "../Likes/LikeButton";
 import UserAvatar from "../Users/Avatar";
+import ItemMenu from "../Shared/ItemMenu";
 import { isLoggedIn } from "../../utils/auth";
+import styles from "../../styles/Comment/Comment.module.scss";
 
 const useStyles = makeStyles({
   root: {
@@ -47,6 +44,7 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [user, setUser] = useState<User>();
   const [images, setImages] = useState([]);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const currentUserRes = useQuery(CURRENT_USER);
   const userRes = useQuery(USER, {
     variables: { id: userId },
@@ -85,6 +83,16 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
               <a>{user?.name}</a>
             </Link>
           }
+          action={
+            <ItemMenu
+              itemId={id}
+              itemType={"comment"}
+              anchorEl={menuAnchorEl}
+              setAnchorEl={setMenuAnchorEl}
+              deleteItem={deleteComment}
+              ownItem={ownComment}
+            />
+          }
           classes={{ title: classes.title }}
         />
         <CardContent>
@@ -106,27 +114,6 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
         {isLoggedIn(currentUser) && (
           <CardActions>
             <LikeButton commentId={id} />
-
-            {ownComment() && (
-              <>
-                <Link href={`/comments/${id}/edit`}>
-                  <a>
-                    <Edit /> Edit
-                  </a>
-                </Link>
-
-                <a
-                  onClick={() =>
-                    window.confirm(
-                      "Are you sure you want to delete this comment?"
-                    ) && deleteComment(id)
-                  }
-                  style={{ cursor: "pointer", color: "white" }}
-                >
-                  <Delete /> Delete
-                </a>
-              </>
-            )}
           </CardActions>
         )}
       </Card>

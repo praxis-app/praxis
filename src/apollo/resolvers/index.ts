@@ -6,6 +6,7 @@ import commentResolvers from "./comment";
 import groupResolvers from "./group";
 import memberResolvers from "./member";
 import motionResolvers from "./motion";
+import voteResolvers from "./vote";
 import likeResolvers from "./like";
 
 export const resolvers = {
@@ -18,6 +19,7 @@ export const resolvers = {
     ...groupResolvers.Query,
     ...memberResolvers.Query,
     ...motionResolvers.Query,
+    ...voteResolvers.Query,
     ...imageResolvers.Query,
   },
   Mutation: {
@@ -29,6 +31,7 @@ export const resolvers = {
     ...groupResolvers.Mutation,
     ...memberResolvers.Mutation,
     ...motionResolvers.Mutation,
+    ...voteResolvers.Mutation,
     ...imageResolvers.Mutation,
   },
 };

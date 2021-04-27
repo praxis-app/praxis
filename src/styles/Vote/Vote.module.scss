@@ -1,0 +1,16 @@
+@import "../App/App.module.scss";
+@import "../App/colors.scss";
+
+.vote {
+  @extend .card;
+  display: flex;
+}
+
+.avatar {
+  margin-right: 12px;
+}
+
+.voteTypeText {
+  font-size: 13px;
+  color: $lightGray;
+}

@@ -1,0 +1,8 @@
+@import "../App/App.module.scss";
+
+.form {
+  @extend .card;
+  margin-top: 35px;
+  width: calc(100% - 40px);
+  margin-left: 20px;
+}

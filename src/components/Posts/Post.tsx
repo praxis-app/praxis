@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useQuery, useLazyQuery } from "@apollo/client";
-import { Edit, Delete } from "@material-ui/icons";
 import Link from "next/link";
-
 import {
   Card,
   CardContent,
@@ -24,9 +22,9 @@ import {
 } from "../../apollo/client/queries";
 import LikeButton from "../Likes/LikeButton";
 import UserAvatar from "../Users/Avatar";
-
+import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Post/Post.module.scss";
-import GroupPostAvatars from "./GroupPostAvatars";
+import GroupItemAvatars from "../Groups/ItemAvatars";
 
 const useStyles = makeStyles({
   root: {
@@ -51,6 +49,7 @@ const Post = ({
   const [user, setUser] = useState<User>();
   const [group, setGroup] = useState<Group>();
   const [images, setImages] = useState([]);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const currentUserRes = useQuery(CURRENT_USER);
   const userRes = useQuery(USER, {
     variables: { id: userId },
@@ -102,7 +101,7 @@ const Post = ({
         <CardHeader
           avatar={
             group && !onGroupPage()
-              ? user && <GroupPostAvatars user={user} group={group} />
+              ? user && <GroupItemAvatars user={user} group={group} />
               : user && <UserAvatar user={user} />
           }
           title={
@@ -111,6 +110,16 @@ const Post = ({
                 <a>{user?.name}</a>
               </Link>
             )
+          }
+          action={
+            <ItemMenu
+              itemId={id}
+              itemType={"post"}
+              anchorEl={menuAnchorEl}
+              setAnchorEl={setMenuAnchorEl}
+              deleteItem={deletePost}
+              ownItem={ownPost}
+            />
           }
           classes={{ title: classes.title }}
         />
@@ -136,28 +145,6 @@ const Post = ({
         {isLoggedIn(currentUser) && (
           <CardActions style={{ marginTop: "6px" }}>
             <LikeButton postId={id} />
-
-            {ownPost() && (
-              <>
-                <Link href={`/posts/${id}/edit`}>
-                  <a>
-                    <Edit /> Edit
-                  </a>
-                </Link>
-
-                <Link href={router.asPath}>
-                  <a
-                    onClick={() =>
-                      window.confirm(
-                        "Are you sure you want to delete this post?"
-                      ) && deletePost(id)
-                    }
-                  >
-                    <Delete /> Delete
-                  </a>
-                </Link>
-              </>
-            )}
           </CardActions>
         )}
       </Card>

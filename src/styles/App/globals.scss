@@ -15,6 +15,13 @@
   src: url("/fonts/Microgramma.ttf");
 }
 
+body {
+  background: $darkGray;
+  color: $lightGray;
+  font-family: "Inter";
+  overflow: overlay;
+}
+
 a {
   color: white;
 }
@@ -24,8 +31,15 @@ a:hover {
   text-decoration: none;
 }
 
-body {
-  background: $darkGray;
-  color: $lightGray;
-  font-family: "Inter";
+::-webkit-scrollbar {
+  display: none;
+}
+
+::-moz-selection {
+  background: black;
+  color: white;
+}
+::selection {
+  background: black;
+  color: white;
 }
