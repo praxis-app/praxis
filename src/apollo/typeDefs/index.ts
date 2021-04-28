@@ -9,9 +9,11 @@ import Follow from "./follow";
 import Group from "./group";
 import Member from "./member";
 import Image from "./image";
+import Setting from "./setting";
 
 export const typeDefs = gql`
   scalar FileUpload
+  scalar JSON
 
   ${User}
   ${Post}
@@ -23,6 +25,7 @@ export const typeDefs = gql`
   ${Group}
   ${Member}
   ${Image}
+  ${Setting}
 
   union FeedItem = Post | Motion
 
@@ -72,6 +75,9 @@ export const typeDefs = gql`
     currentProfilePicture(userId: ID!): Image
     profilePictures(userId: ID!): [Image]
     currentCoverPhoto(groupId: ID!): Image
+
+    settingsByUserId(userId: ID!): [Setting]!
+    settingsByGroupId(groupId: ID!): [Setting]!
   }
 
   type Mutation {
@@ -129,5 +135,7 @@ export const typeDefs = gql`
 
     uploadImage(image: FileUpload!, userId: ID!): ImagePayload!
     deleteImage(id: ID!): Boolean!
+
+    updateSettings(input: UpdateSettingsInput!): SettingsPayload!
   }
 `;

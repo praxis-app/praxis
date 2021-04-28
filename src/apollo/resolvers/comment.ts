@@ -14,10 +14,7 @@ interface CommentInput {
 
 const saveImages = async (comment: any, images: any) => {
   for (const image of images ? images : []) {
-    const { createReadStream, mimetype } = await image;
-    const extension = mimetype.split("/")[1];
-    const path = "public/uploads/" + Date.now() + "." + extension;
-    await saveImage(createReadStream, path);
+    const path = await saveImage(image);
 
     await prisma.image.create({
       data: {
@@ -31,7 +28,7 @@ const saveImages = async (comment: any, images: any) => {
             id: comment.id,
           },
         },
-        path: path.replace("public", ""),
+        path,
       },
     });
   }

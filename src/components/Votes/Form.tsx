@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, ChangeEvent, useEffect } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import Router from "next/router";
 import {
   FormGroup,
@@ -12,9 +12,11 @@ import {
   makeStyles,
 } from "@material-ui/core";
 
+import { motionVar } from "../../apollo/client/localState";
 import { CURRENT_USER } from "../../apollo/client/queries";
 import { UPDATE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/VotesForm.module.scss";
+import { Motions } from "../../constants";
 
 const color = { color: "rgb(170, 170, 170)" };
 const useStyles = makeStyles((theme) => ({
@@ -26,9 +28,11 @@ interface Props {
   vote: Vote;
   votes?: Vote[];
   setVotes?: (votes: Vote[]) => void;
+  onEditPage?: boolean;
 }
 
-const VotesForm = ({ vote, votes, setVotes }: Props) => {
+const VotesForm = ({ vote, votes, setVotes, onEditPage }: Props) => {
+  const motionFromGlobal = useReactiveVar(motionVar);
   const [body, setBody] = useState<string>("");
   const [flipState, setFlipState] = useState<string>();
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
@@ -57,7 +61,7 @@ const VotesForm = ({ vote, votes, setVotes }: Props) => {
             body,
           },
         });
-        if (setVotes && votes)
+        if (setVotes && votes) {
           setVotes(
             votes.map((vote) => {
               const newVote: Vote = data.updateVote.vote;
@@ -70,7 +74,13 @@ const VotesForm = ({ vote, votes, setVotes }: Props) => {
               return vote;
             })
           );
-        else Router.push(`/motions/${vote.motionId}`);
+
+          if (data.updateVote.motionRatified && motionFromGlobal) {
+            motionVar({ ...motionFromGlobal, stage: Motions.Stages.Ratified });
+          }
+        } else {
+          Router.push(`/motions/${vote.motionId}`);
+        }
       } catch (err) {
         alert(err);
       }
@@ -92,7 +102,10 @@ const VotesForm = ({ vote, votes, setVotes }: Props) => {
   };
 
   return (
-    <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
+    <form
+      onSubmit={(e) => handleSubmit(e)}
+      className={onEditPage ? styles.formOnEditPage : styles.form}
+    >
       <FormGroup>
         <Input
           type="text"

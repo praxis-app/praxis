@@ -3,11 +3,12 @@ import Motion from "./Motion";
 
 interface Props {
   motions: Motion[];
+  loading: boolean;
   deleteMotion: (id: string) => void;
 }
 
-const List = ({ motions, deleteMotion }: Props) => {
-  if (motions)
+const List = ({ motions, loading, deleteMotion }: Props) => {
+  if (!loading)
     return (
       <div style={{ marginBottom: "200px" }}>
         {motions

@@ -28,7 +28,9 @@ import {
   DELETE_MOTION,
 } from "../../apollo/client/mutations";
 import { isLoggedIn } from "../../utils/auth";
+import { feedItemsVar } from "../../apollo/client/localState";
 import styles from "../../styles/Group/ShowPage.module.scss";
+import { Common } from "../../constants";
 
 const useStyles = makeStyles({
   root: {
@@ -47,7 +49,7 @@ const Show = () => {
   const [group, setGroup] = useState<Group>();
   const [posts, setPosts] = useState<Post[]>([]);
   const [motions, setMotions] = useState<Motion[]>([]);
-  const [feed, setFeed] = useState<FeedItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const [tab, setTab] = useState<number>(0);
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
@@ -82,18 +84,22 @@ const Show = () => {
 
   useEffect(() => {
     if (feedRes.data) {
-      setFeed(feedRes.data.groupFeed);
+      feedItemsVar(feedRes.data.groupFeed);
       setPosts(
         feedRes.data.groupFeed.filter(
-          (item: FeedItem) => item.__typename === "Post"
+          (item: FeedItem) => item.__typename === Common.TypeNames.Post
         )
       );
       setMotions(
         feedRes.data.groupFeed.filter(
-          (item: FeedItem) => item.__typename === "Motion"
+          (item: FeedItem) => item.__typename === Common.TypeNames.Motion
         )
       );
+      setLoading(false);
     }
+    return () => {
+      feedItemsVar([]);
+    };
   }, [feedRes.data]);
 
   useEffect(() => {
@@ -106,7 +112,10 @@ const Show = () => {
   }, [groupMembersRes.data]);
 
   useEffect(() => {
-    setFeed([...posts, ...motions]);
+    feedItemsVar([...posts, ...motions]);
+    return () => {
+      feedItemsVar([]);
+    };
   }, [posts, motions]);
 
   useEffect(() => {
@@ -192,9 +201,9 @@ const Show = () => {
               />
             )}
             <Feed
-              feed={feed}
               deleteMotion={deleteMotionHandler}
               deletePost={deletePostHandler}
+              loading={loading}
             />
           </>
         )}
@@ -208,7 +217,11 @@ const Show = () => {
                 group={group}
               />
             )}
-            <MotionsList motions={motions} deleteMotion={deleteMotionHandler} />
+            <MotionsList
+              motions={motions}
+              loading={loading}
+              deleteMotion={deleteMotionHandler}
+            />
           </>
         )}
 
@@ -217,7 +230,11 @@ const Show = () => {
             {inThisGroup() && isLoggedIn(currentUser) && (
               <PostsForm posts={posts} setPosts={setPosts} group={group} />
             )}
-            <PostsList posts={posts} deletePost={deletePostHandler} />
+            <PostsList
+              posts={posts}
+              loading={loading}
+              deletePost={deletePostHandler}
+            />
           </>
         )}
       </>

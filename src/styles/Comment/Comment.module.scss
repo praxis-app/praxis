@@ -3,6 +3,7 @@
 .comment {
   @extend .card;
   display: flex;
+  margin-bottom: 0;
 }
 
 .avatar {

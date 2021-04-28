@@ -11,21 +11,22 @@ generator client {
 }
 
 model Motion {
-  id        Int      @default(autoincrement()) @id
-  body      String?
-  action    String?
-  stage     String   @default("voting")
-  version   Int      @default(1)
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    Int?
-  group     Group?    @relation(fields: [groupId], references: [id])
-  groupId   Int?
-  votes     Vote[]
-  comments  Comment[]
-  likes     Like[]
-  images    Image[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         Int      @default(autoincrement()) @id
+  body       String?
+  action     String?
+  actionData Json?
+  stage      String   @default("voting")
+  version    Int      @default(1)
+  user       User?    @relation(fields: [userId], references: [id])
+  userId     Int?
+  group      Group?    @relation(fields: [groupId], references: [id])
+  groupId    Int?
+  votes      Vote[]
+  comments   Comment[]
+  likes      Like[]
+  images     Image[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Vote {
@@ -58,6 +59,7 @@ model User {
   images           Image[]
   followers        Follow[] @relation("Followers")
   following        Follow[] @relation("Following")
+  settings         Setting[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
@@ -128,6 +130,7 @@ model Group {
   motions        Motion[]
   members        GroupMember[]
   memberRequests MemberRequest[]
+  settings       Setting[]
   creatorId      Int
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -174,4 +177,16 @@ model Image {
   profilePicture Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+}
+
+model Setting {
+  id        Int      @default(autoincrement()) @id
+  name      String
+  value     String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  group     Group?    @relation(fields: [groupId], references: [id])
+  groupId   Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

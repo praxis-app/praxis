@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useEffect, useRef, Fragment } from "react";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import {
   FormGroup,
@@ -20,10 +19,12 @@ import {
   UPDATE_MOTION,
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
+import { Motions } from "../../constants";
+import ActionFields from "./ActionFields";
 import styles from "../../styles/Motion/MotionForm.module.scss";
 
 const color = { color: "rgb(170, 170, 170)" };
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   select: { ...color },
   textInput: { ...color },
 }));
@@ -44,12 +45,13 @@ const MotionsForm = ({
   group,
 }: Props) => {
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
-  const [savedImages, setSavedImages] = useState([]);
+  const [savedImages, setSavedImages] = useState<Image[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [body, setBody] = useState<string>("");
   const [action, setAction] = useState<string>("");
-  const [submitLoading, setSubmitLoading] = useState(false);
-  const imagesInput = React.useRef<HTMLInputElement>(null);
+  const [actionData, setActionData] = useState<ActionData>({});
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+  const imagesInput = useRef<HTMLInputElement>(null);
 
   const [createMotion] = useMutation(CREATE_MOTION);
   const [updateMotion] = useMutation(UPDATE_MOTION);
@@ -93,6 +95,7 @@ const MotionsForm = ({
               id: motion.id,
               body,
               action,
+              actionData,
               images,
             },
           });
@@ -112,6 +115,7 @@ const MotionsForm = ({
               body,
               images,
               action,
+              actionData,
               groupId: group?.id,
               userId: currentUserRes.data.user.id,
             },
@@ -188,13 +192,22 @@ const MotionsForm = ({
             }}
           >
             <option aria-label="None" value="" />
-            <option value={"plan-event"}>Plan event</option>
-            <option value={"change-name"}>Change name</option>
-            <option value={"change-description"}>Change description</option>
-            <option value={"change-rules"}>Change group rules</option>
-            <option value={"test"}>Just a test</option>
+            <option value={Motions.ActionTypes.PlanEvent}>Plan event</option>
+            <option value={Motions.ActionTypes.ChangeName}>Change name</option>
+            <option value={Motions.ActionTypes.ChangeDescription}>
+              Change description
+            </option>
+            <option value={Motions.ActionTypes.ChangeImage}>
+              Change group image
+            </option>
+            <option value={Motions.ActionTypes.ChangeSettings}>
+              Change group settings
+            </option>
+            <option value={Motions.ActionTypes.Test}>Just a test</option>
           </NativeSelect>
         </FormControl>
+
+        <ActionFields actionType={action} setActionData={setActionData} />
 
         <input
           multiple
@@ -217,7 +230,7 @@ const MotionsForm = ({
       <div className={styles.selectedImages}>
         {[...images].map((image) => {
           return (
-            <React.Fragment key={image.name}>
+            <Fragment key={image.name}>
               <img
                 className={styles.selectedImage}
                 src={URL.createObjectURL(image)}
@@ -228,13 +241,13 @@ const MotionsForm = ({
                 onClick={() => removeSelectedImage(image.name)}
                 className={styles.removeSelectedImageButton}
               />
-            </React.Fragment>
+            </Fragment>
           );
         })}
 
         {savedImages.map(({ id, path }) => {
           return (
-            <React.Fragment key={id}>
+            <Fragment key={id}>
               <img className={styles.selectedImage} src={baseUrl + path} />
 
               <RemoveCircle
@@ -242,7 +255,7 @@ const MotionsForm = ({
                 onClick={() => deleteImageHandler(id)}
                 className={styles.removeSelectedImageButton}
               />
-            </React.Fragment>
+            </Fragment>
           );
         })}
       </div>

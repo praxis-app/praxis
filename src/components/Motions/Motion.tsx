@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useQuery, useLazyQuery } from "@apollo/client";
+import { useQuery, useLazyQuery, useReactiveVar } from "@apollo/client";
 import Link from "next/link";
 
 import {
@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 
 import { isLoggedIn } from "../../utils/auth";
-import ImagesList from "../Images/List";
+import { votesVar } from "../../apollo/client/localState";
 import {
   USER,
   GROUP,
@@ -23,11 +23,14 @@ import {
   VOTES_BY_MOTION_ID,
 } from "../../apollo/client/queries";
 import VotesForm from "../Votes/Form";
+import ImagesList from "../Images/List";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import GroupItemAvatars from "../Groups/ItemAvatars";
 import VoteButtons from "../Votes/VoteButtons";
+import ActionData from "./ActionData";
 import styles from "../../styles/Motion/Motion.module.scss";
+import { Motions } from "../../constants";
 
 const useStyles = makeStyles({
   root: {
@@ -42,20 +45,24 @@ const useStyles = makeStyles({
 interface Props {
   motion: Motion;
   deleteMotion: (id: string) => void;
-  votesFromParent?: Vote[];
-  setVotesFromParent?: (votes: Vote[]) => void;
 }
 
-const Motion = ({
-  motion: { id, userId, groupId, motionGroupId, body, action },
-  deleteMotion,
-  votesFromParent,
-  setVotesFromParent,
-}: Props) => {
+const Motion = ({ motion, deleteMotion }: Props) => {
+  const {
+    id,
+    userId,
+    groupId,
+    motionGroupId,
+    body,
+    action,
+    actionData,
+    stage,
+  } = motion;
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [user, setUser] = useState<User>();
   const [group, setGroup] = useState<Group>();
   const [votes, setVotes] = useState<Vote[]>([]);
+  const votesFromGlobal = useReactiveVar(votesVar);
   const [images, setImages] = useState<Image[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const currentUserRes = useQuery(CURRENT_USER);
@@ -74,18 +81,18 @@ const Motion = ({
   const router = useRouter();
 
   useEffect(() => {
-    if (!votesFromParent)
+    if (!onMotionPage())
       getVotesRes({
         variables: { motionId: id },
       });
   }, []);
 
   useEffect(() => {
-    if (votesFromParent) setVotes(votesFromParent);
-  }, [votesFromParent]);
+    if (onMotionPage()) setVotes(votesFromGlobal);
+  }, [votesFromGlobal]);
 
   useEffect(() => {
-    if (!votesFromParent && votesRes.data)
+    if (!onMotionPage() && votesRes.data)
       setVotes(votesRes.data.votesByMotionId);
   }, [votesRes.data]);
 
@@ -117,6 +124,10 @@ const Motion = ({
     return false;
   };
 
+  const onMotionPage = (): boolean => {
+    return router.asPath.includes("/motions/");
+  };
+
   const onGroupPage = (): boolean => {
     return router.asPath.includes("/groups/");
   };
@@ -128,6 +139,10 @@ const Motion = ({
     return null;
   };
 
+  const isRatified = (): boolean => {
+    return stage === Motions.Stages.Ratified;
+  };
+
   return (
     <div key={id}>
       <Card className={classes.root + " " + styles.card}>
@@ -135,15 +150,24 @@ const Motion = ({
           avatar={
             group && !onGroupPage()
               ? user && (
-                  <GroupItemAvatars user={user} group={group} motion={true} />
+                  <GroupItemAvatars user={user} group={group} motion={motion} />
                 )
               : user && <UserAvatar user={user} />
           }
           title={
             (!group || onGroupPage()) && (
-              <Link href={`/users/${user?.name}`}>
-                <a>{user?.name}</a>
-              </Link>
+              <>
+                <Link href={`/users/${user?.name}`}>
+                  <a>{user?.name}</a>
+                </Link>
+
+                <Link href={`/motions/${id}`}>
+                  <a className={styles.info}>
+                    {` · Motion to ${action.replace(/-/g, " ")}`}
+                    {isRatified() && " · Ratified ✓"}
+                  </a>
+                </Link>
+              </>
             )
           }
           action={
@@ -160,7 +184,7 @@ const Motion = ({
         />
 
         {body && (
-          <CardContent>
+          <CardContent style={{ paddingBottom: 12 }}>
             <Typography
               style={{
                 color: "rgb(190, 190, 190)",
@@ -168,8 +192,10 @@ const Motion = ({
                 fontFamily: "Inter",
               }}
             >
-              {body} ({action})
+              {body}
             </Typography>
+
+            <ActionData motion={motion} />
           </CardContent>
         )}
 
@@ -177,20 +203,20 @@ const Motion = ({
           <ImagesList images={images} />
         </CardMedia>
 
-        {alreadyVote() && !alreadyVote()?.body && (
+        {alreadyVote() && !alreadyVote()?.body && !isRatified() && (
           <VotesForm
             votes={votes}
             vote={alreadyVote() as Vote}
-            setVotes={setVotesFromParent ? setVotesFromParent : setVotes}
+            setVotes={onMotionPage() ? votesVar : setVotes}
           />
         )}
 
         {isLoggedIn(currentUser) && !ownMotion() && (
-          <CardActions style={{ marginTop: "6px" }}>
+          <CardActions>
             <VoteButtons
               motionId={id}
               votes={votes}
-              setVotes={setVotesFromParent ? setVotesFromParent : setVotes}
+              setVotes={onMotionPage() ? votesVar : setVotes}
             />
           </CardActions>
         )}

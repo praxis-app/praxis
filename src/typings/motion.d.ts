@@ -5,6 +5,7 @@ interface Motion {
   motionGroupId?: string;
   body: string;
   action: string;
+  actionData: ActionData;
   stage: string;
   createdAt: string;
   __typename: string;
@@ -16,7 +17,15 @@ interface BackendMotion {
   groupId: number | null;
   body: string | null;
   action: string | null;
+  actionData: JsonValue | null;
   stage: string | null;
   createdAt: Date;
   __typename?: string;
+}
+
+interface ActionData {
+  newGroupName?: string;
+  newGroupDescription?: string;
+  newGroupImagePath?: string;
+  newGroupImage?: File;
 }

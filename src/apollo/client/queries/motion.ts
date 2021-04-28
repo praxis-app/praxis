@@ -8,6 +8,8 @@ export const MOTION = gql`
       groupId
       body
       action
+      actionData
+      stage
       createdAt
     }
   }
@@ -21,6 +23,8 @@ export const MOTIONS_BY_USER_NAME = gql`
       groupId
       body
       action
+      actionData
+      stage
       createdAt
     }
   }
@@ -34,6 +38,8 @@ export const MOTIONS_BY_GROUP_NAME = gql`
       groupId
       body
       action
+      actionData
+      stage
       createdAt
     }
   }

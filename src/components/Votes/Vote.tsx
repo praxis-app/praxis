@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import {
   Card,
@@ -15,9 +15,15 @@ import { CheckCircle } from "@material-ui/icons";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import { isLoggedIn } from "../../utils/auth";
-import { USER, MOTION, CURRENT_USER } from "../../apollo/client/queries";
+import {
+  USER,
+  MOTION,
+  CURRENT_USER,
+  SETTINGS_BY_GROUP_ID,
+} from "../../apollo/client/queries";
 import { VERIFY_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/Vote.module.scss";
+import { Settings } from "../../constants";
 
 const useStyles = makeStyles({
   root: {
@@ -44,6 +50,7 @@ const Vote = ({
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
+  const [groupSettings, setGroupSettings] = useState<Setting[]>([]);
   const [motion, setMotion] = useState<Motion>();
   const [user, setUser] = useState<User>();
   const currentUserRes = useQuery(CURRENT_USER);
@@ -60,6 +67,10 @@ const Vote = ({
     },
     ...noCache,
   });
+  const [getGroupSettingsRes, groupSettingsRes] = useLazyQuery(
+    SETTINGS_BY_GROUP_ID,
+    noCache
+  );
   const [deleteVote] = useMutation(DELETE_VOTE);
   const [verifyVote] = useMutation(VERIFY_VOTE);
   const classes = useStyles();
@@ -76,6 +87,20 @@ const Vote = ({
     if (motionRes.data) setMotion(motionRes.data.motion);
   }, [motionRes.data]);
 
+  useEffect(() => {
+    if (groupSettingsRes.data)
+      setGroupSettings(groupSettingsRes.data.settingsByGroupId);
+  }, [groupSettingsRes.data]);
+
+  useEffect(() => {
+    if (motion)
+      getGroupSettingsRes({
+        variables: {
+          groupId: motion.groupId,
+        },
+      });
+  }, [motion]);
+
   const ownVote = (): boolean => {
     if (isLoggedIn(currentUser) && currentUser && user)
       return currentUser.id === user.id;
@@ -86,6 +111,11 @@ const Vote = ({
     if (isLoggedIn(currentUser) && currentUser && motion)
       return currentUser.id === motion.userId;
     return false;
+  };
+
+  const settingByName = (name: string): string => {
+    const setting = groupSettings.find((setting) => setting.name === name);
+    return setting?.value || "";
   };
 
   const deleteVoteHandler = async (id: string) => {
@@ -151,7 +181,7 @@ const Vote = ({
           <Typography
             style={{
               color: "rgb(190, 190, 190)",
-              marginTop: "-12px",
+              marginTop: "-20px",
               fontFamily: "Inter",
             }}
           >
@@ -159,17 +189,22 @@ const Vote = ({
           </Typography>
         </CardContent>
 
-        {isLoggedIn(currentUser) && !ownVote() && !ownMotion() && !verified && (
-          <CardActions style={{ marginTop: "6px" }}>
-            <Button
-              onClick={() => verifyVoteMutation()}
-              style={{ color: "white" }}
-            >
-              <CheckCircle style={{ marginRight: "5px" }} />
-              Verify
-            </Button>
-          </CardActions>
-        )}
+        {isLoggedIn(currentUser) &&
+          !verified &&
+          !ownVote() &&
+          !ownMotion() &&
+          settingByName(Settings.GroupSettings.VoteVerification) ===
+            Settings.States.On && (
+            <CardActions style={{ marginTop: "6px" }}>
+              <Button
+                onClick={() => verifyVoteMutation()}
+                style={{ color: "white" }}
+              >
+                <CheckCircle style={{ marginRight: "5px" }} />
+                Verify
+              </Button>
+            </CardActions>
+          )}
       </Card>
     </div>
   );

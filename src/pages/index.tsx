@@ -1,21 +1,20 @@
 import { useEffect, useState } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useQuery, useMutation, useReactiveVar } from "@apollo/client";
 
 import PostForm from "../components/Posts/Form";
 import Feed from "../components/Shared/Feed";
-import { POSTS, CURRENT_USER, HOME_FEED } from "../apollo/client/queries";
+import { CURRENT_USER, HOME_FEED } from "../apollo/client/queries";
 import { DELETE_POST, DELETE_MOTION } from "../apollo/client/mutations";
 import { isLoggedIn } from "../utils/auth";
 import WelcomeCard from "../components/About/Welcome";
+import { Common } from "../constants";
+import { feedItemsVar } from "../apollo/client/localState";
 
 const Home = () => {
-  const [feed, setFeed] = useState<FeedItem[]>();
+  const feed = useReactiveVar(feedItemsVar);
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deletePost] = useMutation(DELETE_POST);
-  const postsRes = useQuery(POSTS, {
-    fetchPolicy: "no-cache",
-  });
   const feedRes = useQuery(HOME_FEED, {
     variables: {
       userId: currentUser?.id,
@@ -25,13 +24,11 @@ const Home = () => {
   const currentUserRes = useQuery(CURRENT_USER);
 
   useEffect(() => {
-    if (postsRes.data) {
-      setFeed(postsRes.data.allPosts);
-    }
-    if (feedRes.data) {
-      setFeed(feedRes.data.homeFeed);
-    }
-  }, [postsRes.data, feedRes.data]);
+    if (feedRes.data) feedItemsVar(feedRes.data.homeFeed);
+    return () => {
+      feedItemsVar([]);
+    };
+  }, [feedRes.data]);
 
   useEffect(() => {
     if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
@@ -44,12 +41,12 @@ const Home = () => {
           id,
         },
       });
-      if (feed)
-        setFeed(
-          feed.filter(
-            (post: FeedItem) => post.id !== id || post.__typename !== "Post"
-          )
-        );
+      feedItemsVar(
+        feed.filter(
+          (post: FeedItem) =>
+            post.id !== id || post.__typename !== Common.TypeNames.Post
+        )
+      );
     } catch {}
   };
 
@@ -60,13 +57,12 @@ const Home = () => {
           id,
         },
       });
-      if (feed)
-        setFeed(
-          feed.filter(
-            (motion: FeedItem) =>
-              motion.id !== id || motion.__typename !== "Motion"
-          )
-        );
+      feedItemsVar(
+        feed.filter(
+          (motion: FeedItem) =>
+            motion.id !== id || motion.__typename !== Common.TypeNames.Motion
+        )
+      );
     } catch {}
   };
 
@@ -74,15 +70,15 @@ const Home = () => {
     <>
       <WelcomeCard isLoggedIn={isLoggedIn(currentUser)} />
 
-      {isLoggedIn(currentUser) && <PostForm posts={feed} setPosts={setFeed} />}
-
-      {feed && (
-        <Feed
-          feed={feed}
-          deletePost={deletePostHandler}
-          deleteMotion={deleteMotionHandler}
-        />
+      {isLoggedIn(currentUser) && (
+        <PostForm posts={feed} setPosts={feedItemsVar} />
       )}
+
+      <Feed
+        deletePost={deletePostHandler}
+        deleteMotion={deleteMotionHandler}
+        loading={feedRes.loading}
+      />
     </>
   );
 };

@@ -5,6 +5,7 @@ import { CircularProgress } from "@material-ui/core";
 import User from "../../components/Users/User";
 import { USERS } from "../../apollo/client/queries";
 import { DELETE_USER } from "../../apollo/client/mutations";
+import { Common } from "../../constants";
 
 const Index = () => {
   const [users, setUsers] = useState<User[]>();
@@ -32,11 +33,15 @@ const Index = () => {
   return (
     <>
       {users ? (
-        users.map((user: User) => {
-          return (
-            <User user={user} deleteUser={deleteUserHandler} key={user.id} />
-          );
-        })
+        users
+          .slice()
+          .reverse()
+          .slice(0, Common.PAGE_SIZE)
+          .map((user: User) => {
+            return (
+              <User user={user} deleteUser={deleteUserHandler} key={user.id} />
+            );
+          })
       ) : (
         <CircularProgress style={{ color: "white" }} />
       )}

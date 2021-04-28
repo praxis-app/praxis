@@ -1,1 +1,6 @@
 @import "../App/App.module.scss";
+@import "../App/colors.scss";
+
+.info {
+  color: $lightGray;
+}

@@ -6,14 +6,11 @@ import jwt from "jsonwebtoken";
 
 import prisma from "../../utils/initPrisma";
 import { validateSignup, validateLogin } from "../../utils/validation";
+import { Common } from "../../constants";
 
 const saveProfilePicture = async (user: any, image: any) => {
   if (image) {
-    const { createReadStream, mimetype } = await image;
-    const extension = mimetype.split("/")[1];
-    const path = "public/uploads/" + Date.now() + "." + extension;
-    await saveImage(createReadStream, path);
-
+    const path = await saveImage(image);
     await prisma.image.create({
       data: {
         user: {
@@ -22,7 +19,7 @@ const saveProfilePicture = async (user: any, image: any) => {
           },
         },
         profilePicture: true,
-        path: path.replace("public", ""),
+        path,
       },
     });
   }
@@ -75,7 +72,7 @@ const userResolvers = {
                   ),
                   ...userWithFeedItems.motions.map((motion) => ({
                     ...motion,
-                    __typename: "Motion",
+                    __typename: Common.TypeNames.Motion,
                   })),
                 ];
             }
@@ -99,12 +96,12 @@ const userResolvers = {
                 ...feed,
                 ...groupMotions.map((motion) => ({
                   ...motion,
-                  __typename: "Motion",
+                  __typename: Common.TypeNames.Motion,
                 })),
               ];
           }
           feed.forEach((item) => {
-            if (!item.__typename) item.__typename = "Post";
+            if (!item.__typename) item.__typename = Common.TypeNames.Post;
           });
           const uniq: BackendFeedItem[] = [];
           for (const item of feed) {
@@ -123,10 +120,10 @@ const userResolvers = {
           const posts: BackendPost[] = await prisma.post.findMany();
           const motions: BackendMotion[] = await prisma.motion.findMany();
           posts.forEach((item) => {
-            item.__typename = "Post";
+            item.__typename = Common.TypeNames.Post;
           });
           motions.forEach((item) => {
-            item.__typename = "Motion";
+            item.__typename = Common.TypeNames.Motion;
           });
 
           feed = [...posts, ...motions];

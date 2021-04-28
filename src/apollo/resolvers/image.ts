@@ -99,11 +99,7 @@ const imageResolvers = {
       { image, userId }: { image: any; userId: string }
     ) {
       try {
-        const { createReadStream, mimetype } = await image;
-        const extension = mimetype.split("/")[1];
-        const path = "public/uploads/" + Date.now() + "." + extension;
-        await saveImage(createReadStream, path);
-
+        const path = await saveImage(image);
         const newImage = await prisma.image.create({
           data: {
             user: {
@@ -111,7 +107,7 @@ const imageResolvers = {
                 id: parseInt(userId),
               },
             },
-            path: path.replace("public", ""),
+            path,
           },
         });
 

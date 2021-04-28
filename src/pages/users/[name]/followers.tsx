@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { Card } from "@material-ui/core";
 import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
 
@@ -37,7 +38,12 @@ const Followers = () => {
 
   return (
     <>
-      <h1 style={{ color: "white" }}>{query.name}</h1>
+      <Link href={`/users/${query.name}`}>
+        <a>
+          <h1 style={{ color: "white" }}>{query.name}</h1>
+        </a>
+      </Link>
+
       <h5 style={{ color: "white" }}>{followers.length} Followers</h5>
 
       <Card className={classes.root + " " + styles.card}>
