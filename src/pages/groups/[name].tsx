@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import {
+  LazyQueryHookOptions,
+  OperationVariables,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+} from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import {
   Tab,
@@ -53,7 +59,7 @@ const Show = () => {
   const [tab, setTab] = useState<number>(0);
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
-  const noCache: {} = {
+  const noCache: LazyQueryHookOptions<any, OperationVariables> = {
     fetchPolicy: "no-cache",
   };
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
@@ -178,7 +184,7 @@ const Show = () => {
             textColor="inherit"
             centered
             value={tab}
-            onChange={(event: React.ChangeEvent<{}>, newValue: number) =>
+            onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
               setTab(newValue)
             }
             classes={{ indicator: classes.indicator }}

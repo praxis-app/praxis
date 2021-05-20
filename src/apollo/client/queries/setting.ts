@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const SETTINGS_BY_USER_ID = gql`
-  query($userId: ID!) {
+  query ($userId: ID!) {
     settingsByUserId(userId: $userId) {
       id
       userId
@@ -13,7 +13,7 @@ export const SETTINGS_BY_USER_ID = gql`
 `;
 
 export const SETTINGS_BY_GROUP_ID = gql`
-  query($groupId: ID!) {
+  query ($groupId: ID!) {
     settingsByGroupId(groupId: $groupId) {
       id
       groupId

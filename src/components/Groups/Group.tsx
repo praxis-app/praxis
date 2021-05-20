@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
+import {
+  LazyQueryHookOptions,
+  OperationVariables,
+  useQuery,
+} from "@apollo/client";
 import Link from "next/link";
 import { Settings } from "@material-ui/icons";
 import {
@@ -46,10 +50,10 @@ const Group = ({ group, deleteGroup }: Props) => {
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
   const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const noCache: {} = {
+  const noCache: LazyQueryHookOptions<any, OperationVariables> = {
     fetchPolicy: "no-cache",
   };
-  const memberVariables: {} = {
+  const memberVariables = {
     variables: { groupId: group.id },
     ...noCache,
   };

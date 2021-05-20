@@ -10,29 +10,21 @@ const settingResolvers = {
 
   Query: {
     settingsByUserId: async (_: any, { userId }: { userId: string }) => {
-      try {
-        const settings = await prisma.setting.findMany({
-          where: {
-            userId: parseInt(userId),
-          },
-        });
-        return settings;
-      } catch (error) {
-        throw error;
-      }
+      const settings = await prisma.setting.findMany({
+        where: {
+          userId: parseInt(userId),
+        },
+      });
+      return settings;
     },
 
     settingsByGroupId: async (_: any, { groupId }: { groupId: string }) => {
-      try {
-        const settings = await prisma.setting.findMany({
-          where: {
-            groupId: parseInt(groupId),
-          },
-        });
-        return settings;
-      } catch (error) {
-        throw error;
-      }
+      const settings = await prisma.setting.findMany({
+        where: {
+          groupId: parseInt(groupId),
+        },
+      });
+      return settings;
     },
   },
 
@@ -43,18 +35,14 @@ const settingResolvers = {
 
       for (const setting of settings) {
         const { id, value } = setting;
-        try {
-          const updatedSetting = await prisma.setting.update({
-            where: { id: parseInt(id) },
-            data: { value },
-          });
+        const updatedSetting = await prisma.setting.update({
+          where: { id: parseInt(id) },
+          data: { value },
+        });
 
-          if (!updatedSetting) throw new Error("Setting not found.");
+        if (!updatedSetting) throw new Error("Setting not found.");
 
-          updatedSettings = [...updatedSettings, updatedSetting];
-        } catch (err) {
-          throw new Error(err);
-        }
+        updatedSettings = [...updatedSettings, updatedSetting];
       }
 
       return { settings: updatedSettings };

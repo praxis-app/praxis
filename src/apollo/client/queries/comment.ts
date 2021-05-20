@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const COMMENT = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     comment(id: $id) {
       id
       userId
@@ -13,7 +13,7 @@ export const COMMENT = gql`
 `;
 
 export const COMMENTS_BY_POST_ID = gql`
-  query($postId: ID!) {
+  query ($postId: ID!) {
     commentsByPostId(postId: $postId) {
       id
       userId
@@ -26,7 +26,7 @@ export const COMMENTS_BY_POST_ID = gql`
 `;
 
 export const COMMENTS_BY_MOTION_ID = gql`
-  query($motionId: ID!) {
+  query ($motionId: ID!) {
     commentsByMotionId(motionId: $motionId) {
       id
       userId

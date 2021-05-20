@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import {
+  LazyQueryHookOptions,
+  OperationVariables,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+} from "@apollo/client";
 import Link from "next/link";
 import {
   Card,
@@ -54,7 +60,7 @@ const Vote = ({
   const [motion, setMotion] = useState<Motion>();
   const [user, setUser] = useState<User>();
   const currentUserRes = useQuery(CURRENT_USER);
-  const noCache: {} = {
+  const noCache: LazyQueryHookOptions<any, OperationVariables> = {
     fetchPolicy: "no-cache",
   };
   const userRes = useQuery(USER, {

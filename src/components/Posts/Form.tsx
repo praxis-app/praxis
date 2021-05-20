@@ -163,6 +163,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
           return (
             <React.Fragment key={image.name}>
               <img
+                alt="Data could not render."
                 className={styles.selectedImage}
                 src={URL.createObjectURL(image)}
               />
@@ -179,7 +180,11 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
         {savedImages.map(({ id, path }) => {
           return (
             <React.Fragment key={id}>
-              <img className={styles.selectedImage} src={baseUrl + path} />
+              <img
+                alt="Data could not render."
+                className={styles.selectedImage}
+                src={baseUrl + path}
+              />
 
               <RemoveCircle
                 style={{ color: "white" }}

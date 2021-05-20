@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const GROUP = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     group(id: $id) {
       id
       name
@@ -25,7 +25,7 @@ export const GROUPS = gql`
 `;
 
 export const GROUP_BY_NAME = gql`
-  query($name: String!) {
+  query ($name: String!) {
     groupByName(name: $name) {
       id
       name
@@ -37,7 +37,7 @@ export const GROUP_BY_NAME = gql`
 `;
 
 export const GROUP_FEED = gql`
-  query($name: String!) {
+  query ($name: String!) {
     groupFeed(name: $name) {
       ... on Post {
         id

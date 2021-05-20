@@ -12,84 +12,56 @@ const imageResolvers = {
 
   Query: {
     allImages: async () => {
-      try {
-        const images = await prisma.image.findMany();
-        return images;
-      } catch (error) {
-        throw error;
-      }
+      const images = await prisma.image.findMany();
+      return images;
     },
 
     imagesByPostId: async (_: any, { postId }: { postId: string }) => {
-      try {
-        const images = await prisma.image.findMany({
-          where: { postId: parseInt(postId) },
-        });
-        return images;
-      } catch (error) {
-        throw error;
-      }
+      const images = await prisma.image.findMany({
+        where: { postId: parseInt(postId) },
+      });
+      return images;
     },
 
     imagesByMotionId: async (_: any, { motionId }: { motionId: string }) => {
-      try {
-        const images = await prisma.image.findMany({
-          where: { motionId: parseInt(motionId) },
-        });
-        return images;
-      } catch (error) {
-        throw error;
-      }
+      const images = await prisma.image.findMany({
+        where: { motionId: parseInt(motionId) },
+      });
+      return images;
     },
 
     imagesByCommentId: async (_: any, { commentId }: { commentId: string }) => {
-      try {
-        const images = await prisma.image.findMany({
-          where: { commentId: parseInt(commentId) },
-        });
-        return images;
-      } catch (error) {
-        throw error;
-      }
+      const images = await prisma.image.findMany({
+        where: { commentId: parseInt(commentId) },
+      });
+      return images;
     },
 
     profilePictures: async (_: any, { userId }: { userId: string }) => {
-      try {
-        const profilePictures = await prisma.image.findMany({
-          where: { userId: parseInt(userId), profilePicture: true },
-        });
-        return profilePictures;
-      } catch (error) {
-        throw error;
-      }
+      const profilePictures = await prisma.image.findMany({
+        where: { userId: parseInt(userId), profilePicture: true },
+      });
+      return profilePictures;
     },
 
     currentProfilePicture: async (_: any, { userId }: { userId: string }) => {
-      try {
-        const profilePictures = await prisma.image.findMany({
-          where: { userId: parseInt(userId), profilePicture: true },
-        });
-        const currentProfilePicture = profilePictures.length
-          ? profilePictures[profilePictures.length - 1]
-          : null;
-        return currentProfilePicture;
-      } catch (error) {
-        throw error;
-      }
+      const profilePictures = await prisma.image.findMany({
+        where: { userId: parseInt(userId), profilePicture: true },
+      });
+      const currentProfilePicture = profilePictures.length
+        ? profilePictures[profilePictures.length - 1]
+        : null;
+      return currentProfilePicture;
     },
 
     currentCoverPhoto: async (_: any, { groupId }: { groupId: string }) => {
-      try {
-        const coverPhotos = await prisma.image.findMany({
-          where: { groupId: parseInt(groupId), profilePicture: true },
-        });
-        const currentCoverPhoto = coverPhotos.length
-          ? coverPhotos[coverPhotos.length - 1]
-          : null;
-        return currentCoverPhoto;
-      } catch (error) {
-        throw error;
-      }
+      const coverPhotos = await prisma.image.findMany({
+        where: { groupId: parseInt(groupId), profilePicture: true },
+      });
+      const currentCoverPhoto = coverPhotos.length
+        ? coverPhotos[coverPhotos.length - 1]
+        : null;
+      return currentCoverPhoto;
     },
   },
 
@@ -98,35 +70,27 @@ const imageResolvers = {
       _: any,
       { image, userId }: { image: any; userId: string }
     ) {
-      try {
-        const path = await saveImage(image);
-        const newImage = await prisma.image.create({
-          data: {
-            user: {
-              connect: {
-                id: parseInt(userId),
-              },
+      const path = await saveImage(image);
+      const newImage = await prisma.image.create({
+        data: {
+          user: {
+            connect: {
+              id: parseInt(userId),
             },
-            path,
           },
-        });
+          path,
+        },
+      });
 
-        return { image: newImage };
-      } catch (err) {
-        throw new Error(err);
-      }
+      return { image: newImage };
     },
 
     async deleteImage(_: any, { id }: { id: string }) {
-      try {
-        const image = await prisma.image.delete({
-          where: { id: parseInt(id) },
-        });
-        await unlinkAsync("public" + image.path);
-        return true;
-      } catch (err) {
-        throw new Error(err);
-      }
+      const image = await prisma.image.delete({
+        where: { id: parseInt(id) },
+      });
+      await unlinkAsync("public" + image.path);
+      return true;
     },
   },
 };

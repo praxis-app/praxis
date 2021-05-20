@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const VOTE = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     vote(id: $id) {
       id
       userId
@@ -13,7 +13,7 @@ export const VOTE = gql`
 `;
 
 export const VOTES_BY_MOTION_ID = gql`
-  query($motionId: ID!) {
+  query ($motionId: ID!) {
     votesByMotionId(motionId: $motionId) {
       id
       userId

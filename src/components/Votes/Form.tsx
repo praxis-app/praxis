@@ -19,7 +19,7 @@ import styles from "../../styles/Vote/VotesForm.module.scss";
 import { Motions } from "../../constants";
 
 const color = { color: "rgb(170, 170, 170)" };
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   select: { ...color },
   textInput: { ...color },
 }));

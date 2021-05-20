@@ -35,84 +35,66 @@ const groupResolvers = {
 
   Query: {
     groupFeed: async (_: any, { name }: { name: string }) => {
-      try {
-        let feed: BackendFeedItem[];
+      const feed: BackendFeedItem[] = [];
 
-        const whereGroupId = {
-          where: {
-            name,
-          },
-        };
-        const groupWithPosts = await prisma.group.findFirst({
-          ...whereGroupId,
-          include: {
-            posts: true,
-          },
-        });
-        const groupWithMotions = await prisma.group.findFirst({
-          ...whereGroupId,
-          include: {
-            motions: true,
-          },
-        });
-        const postsWithType = groupWithPosts?.posts.map((post) => ({
-          ...post,
-          __typename: Common.TypeNames.Post,
-        }));
-        const motionsWithType = groupWithMotions?.motions.map((motion) => ({
-          ...motion,
-          __typename: Common.TypeNames.Motion,
-        }));
+      const whereGroupId = {
+        where: {
+          name,
+        },
+      };
+      const groupWithPosts = await prisma.group.findFirst({
+        ...whereGroupId,
+        include: {
+          posts: true,
+        },
+      });
+      const groupWithMotions = await prisma.group.findFirst({
+        ...whereGroupId,
+        include: {
+          motions: true,
+        },
+      });
+      const postsWithType = groupWithPosts?.posts.map((post) => ({
+        ...post,
+        __typename: Common.TypeNames.Post,
+      }));
+      const motionsWithType = groupWithMotions?.motions.map((motion) => ({
+        ...motion,
+        __typename: Common.TypeNames.Motion,
+      }));
 
-        feed = [
-          ...(postsWithType as BackendPost[]),
-          ...(motionsWithType as BackendMotion[]),
-        ];
+      feed.push(
+        ...(postsWithType as BackendPost[]),
+        ...(motionsWithType as BackendMotion[])
+      );
 
-        return feed.sort(
-          (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
-        );
-      } catch (error) {
-        throw error;
-      }
+      return feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
     },
 
     group: async (_: any, { id }: { id: string }) => {
-      try {
-        const group = await prisma.group.findFirst({
-          where: {
-            id: parseInt(id),
-          },
-        });
-        return group;
-      } catch (error) {
-        throw error;
-      }
+      const group = await prisma.group.findFirst({
+        where: {
+          id: parseInt(id),
+        },
+      });
+      return group;
     },
 
     groupByName: async (_: any, { name }: { name: string }) => {
-      try {
-        const group = await prisma.group.findFirst({
-          where: {
-            name,
-          },
-          include: {
-            settings: true,
-          },
-        });
-        return group;
-      } catch (error) {
-        throw error;
-      }
+      const group = await prisma.group.findFirst({
+        where: {
+          name,
+        },
+        include: {
+          settings: true,
+        },
+      });
+      return group;
     },
 
     allGroups: async () => {
-      try {
-        const groups = await prisma.group.findMany();
-        return groups;
-      } catch (error) {
-        throw error;
-      }
+      const groups = await prisma.group.findMany();
+      return groups;
     },
   },
 
@@ -122,25 +104,69 @@ const groupResolvers = {
       { creatorId, input }: { creatorId: string; input: GroupInput }
     ) {
       const { name, description, coverPhoto } = input;
-      try {
-        const group = await prisma.group.create({
-          data: {
-            creatorId: parseInt(creatorId),
-            description,
-            name,
-          },
-        });
+      const group = await prisma.group.create({
+        data: {
+          creatorId: parseInt(creatorId),
+          description,
+          name,
+        },
+      });
 
-        await saveCoverPhoto(group, coverPhoto);
+      await saveCoverPhoto(group, coverPhoto);
 
-        // Adds creator as member
-        await prisma.groupMember.create({
-          data: {
-            user: {
-              connect: {
-                id: parseInt(creatorId),
-              },
+      // Adds creator as member
+      await prisma.groupMember.create({
+        data: {
+          user: {
+            connect: {
+              id: parseInt(creatorId),
             },
+          },
+          group: {
+            connect: {
+              id: group.id,
+            },
+          },
+        },
+      });
+
+      const settingsStillInDev = inDev()
+        ? [
+            {
+              name: Settings.GroupSettings.VotingType,
+              value: Settings.GroupDefaults.VotingType,
+            },
+            {
+              name: Settings.GroupSettings.VoteVerification,
+              value: Settings.GroupDefaults.VoteVerification,
+            },
+          ]
+        : [];
+      const settings = [
+        {
+          name: Settings.GroupSettings.NoAdmin,
+          value: Settings.GroupDefaults.NoAdmin,
+        },
+        ...settingsStillInDev,
+        {
+          name: Settings.GroupSettings.RatificationThreshold,
+          value: Settings.GroupDefaults.RatificationThreshold,
+        },
+        {
+          name: Settings.GroupSettings.XToPass,
+          value: Settings.GroupDefaults.XToPass,
+        },
+        {
+          name: Settings.GroupSettings.XToBlock,
+          value: Settings.GroupDefaults.XToBlock,
+        },
+      ];
+      for (const setting of settings) {
+        const { name, value } = setting;
+        await prisma.setting.create({
+          data: {
+            name,
+            value,
             group: {
               connect: {
                 id: group.id,
@@ -148,57 +174,9 @@ const groupResolvers = {
             },
           },
         });
-
-        const settingsStillInDev = inDev()
-          ? [
-              {
-                name: Settings.GroupSettings.VotingType,
-                value: Settings.GroupDefaults.VotingType,
-              },
-              {
-                name: Settings.GroupSettings.VoteVerification,
-                value: Settings.GroupDefaults.VoteVerification,
-              },
-            ]
-          : [];
-        const settings = [
-          {
-            name: Settings.GroupSettings.NoAdmin,
-            value: Settings.GroupDefaults.NoAdmin,
-          },
-          ...settingsStillInDev,
-          {
-            name: Settings.GroupSettings.RatificationThreshold,
-            value: Settings.GroupDefaults.RatificationThreshold,
-          },
-          {
-            name: Settings.GroupSettings.XToPass,
-            value: Settings.GroupDefaults.XToPass,
-          },
-          {
-            name: Settings.GroupSettings.XToBlock,
-            value: Settings.GroupDefaults.XToBlock,
-          },
-        ];
-        for (const setting of settings) {
-          const { name, value } = setting;
-          await prisma.setting.create({
-            data: {
-              name,
-              value,
-              group: {
-                connect: {
-                  id: group.id,
-                },
-              },
-            },
-          });
-        }
-
-        return { group };
-      } catch (err) {
-        throw new Error(err);
       }
+
+      return { group };
     },
 
     async updateGroup(
@@ -206,48 +184,39 @@ const groupResolvers = {
       { id, input }: { id: string; input: GroupInput }
     ) {
       const { name, description, coverPhoto } = input;
+      const group = await prisma.group.update({
+        where: { id: parseInt(id) },
+        data: { name, description },
+      });
 
-      try {
-        const group = await prisma.group.update({
-          where: { id: parseInt(id) },
-          data: { name, description },
-        });
+      if (!group) throw new Error("Group not found.");
 
-        await saveCoverPhoto(group, coverPhoto);
+      await saveCoverPhoto(group, coverPhoto);
 
-        if (!group) throw new Error("Group not found.");
-
-        return { group };
-      } catch (err) {
-        throw new Error(err);
-      }
+      return { group };
     },
 
     async deleteGroup(_: any, { id }: { id: string }) {
       const unlinkAsync = promisify(fs.unlink);
-      try {
-        const whereGroupId = {
-          where: { groupId: parseInt(id) },
-        };
-        // Deletes dependents
-        await prisma.post.deleteMany(whereGroupId);
-        await prisma.motion.deleteMany(whereGroupId);
-        const images = await prisma.image.findMany(whereGroupId);
-        for (const image of images) {
-          await unlinkAsync("public" + image.path);
-          await prisma.image.delete({
-            where: { id: image.id },
-          });
-        }
-
-        await prisma.group.delete({
-          where: { id: parseInt(id) },
+      const whereGroupId = {
+        where: { groupId: parseInt(id) },
+      };
+      // Deletes dependents
+      await prisma.post.deleteMany(whereGroupId);
+      await prisma.motion.deleteMany(whereGroupId);
+      const images = await prisma.image.findMany(whereGroupId);
+      for (const image of images) {
+        await unlinkAsync("public" + image.path);
+        await prisma.image.delete({
+          where: { id: image.id },
         });
-
-        return true;
-      } catch (err) {
-        throw new Error(err);
       }
+
+      await prisma.group.delete({
+        where: { id: parseInt(id) },
+      });
+
+      return true;
     },
   },
 };

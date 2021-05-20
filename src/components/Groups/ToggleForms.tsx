@@ -41,7 +41,7 @@ const ToggleForms = ({
   const classes = useStyles();
 
   const handleToggle = (
-    event: React.MouseEvent<HTMLElement>,
+    _event: React.MouseEvent<HTMLElement>,
     newToggle: string
   ) => {
     if (newToggle) setToggle(newToggle);

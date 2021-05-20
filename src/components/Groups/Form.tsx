@@ -12,12 +12,10 @@ import { isLoggedIn } from "../../utils/auth";
 
 interface Props {
   group?: Group;
-  groups?: Group[];
   isEditing?: boolean;
-  setGroups?: (groups: Group[]) => void;
 }
 
-const GroupForm = ({ group, groups, isEditing, setGroups }: Props) => {
+const GroupForm = ({ group, isEditing }: Props) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [coverPhoto, setCoverPhoto] = useState<File>();
@@ -133,6 +131,7 @@ const GroupForm = ({ group, groups, isEditing, setGroups }: Props) => {
         {coverPhoto && (
           <div className={styles.selectedImages}>
             <img
+              alt="Data could not render."
               className={styles.selectedImage}
               src={URL.createObjectURL(coverPhoto)}
             />
