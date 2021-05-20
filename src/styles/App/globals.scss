@@ -2,17 +2,17 @@
 
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/Inter.var.woff2") format("woff2");
+  src: url("/fonts/Inter.ttf") format("woff");
 }
 
 @font-face {
   font-family: "Inter Bold";
-  src: url("/fonts/Inter-ExtraBold.woff") format("woff");
+  src: url("/fonts/Inter-SemiBold.woff2") format("woff");
 }
 
 @font-face {
-  font-family: "Microgramma";
-  src: url("/fonts/Microgramma.ttf");
+  font-family: "Inter Extra Bold";
+  src: url("/fonts/Inter-ExtraBold.woff") format("woff");
 }
 
 body {

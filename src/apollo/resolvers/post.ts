@@ -14,11 +14,7 @@ interface PostInput {
 
 const saveImages = async (post: any, images: any) => {
   for (const image of images ? images : []) {
-    const { createReadStream, mimetype } = await image;
-    const extension = mimetype.split("/")[1];
-    const path = "public/uploads/" + Date.now() + "." + extension;
-    await saveImage(createReadStream, path);
-
+    const path = await saveImage(image);
     await prisma.image.create({
       data: {
         user: {
@@ -31,7 +27,7 @@ const saveImages = async (post: any, images: any) => {
             id: post.id,
           },
         },
-        path: path.replace("public", ""),
+        path,
       },
     });
   }

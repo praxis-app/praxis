@@ -23,6 +23,7 @@ input UpdateVoteInput {
 
 type VotePayload {
   vote: Vote!
+  motionRatified: Boolean!
 }
 
 `;

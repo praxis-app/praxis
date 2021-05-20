@@ -1,0 +1,16 @@
+@import "../App/App.module.scss";
+
+.form {
+  @extend .card;
+  margin-top: 48px;
+}
+
+.setting {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.settingName {
+  white-space: nowrap;
+}

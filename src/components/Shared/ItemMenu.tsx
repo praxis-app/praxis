@@ -3,21 +3,25 @@ import { Menu, MenuItem, IconButton } from "@material-ui/core";
 import Link from "next/link";
 
 interface Props {
+  name?: string;
   itemId: string;
   itemType: string;
   anchorEl: null | HTMLElement;
   setAnchorEl: (el: null | HTMLElement) => void;
   deleteItem: (id: string) => void;
   ownItem: () => boolean;
+  children?: React.ReactNode;
 }
 
 const ItemMenu = ({
+  name,
   itemId,
   itemType,
   anchorEl,
   setAnchorEl,
   deleteItem,
   ownItem,
+  children,
 }: Props) => {
   const handleMenuButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -51,9 +55,9 @@ const ItemMenu = ({
             },
           }}
         >
-          <Link href={`/${itemType}s/${itemId}/edit`}>
-            <a>
-              <MenuItem>
+          <MenuItem>
+            <Link href={`/${itemType}s/${name ? name : itemId}/edit`}>
+              <a style={{ width: "100%" }}>
                 <Edit
                   fontSize="small"
                   style={{
@@ -62,9 +66,9 @@ const ItemMenu = ({
                   }}
                 />
                 Edit
-              </MenuItem>
-            </a>
-          </Link>
+              </a>
+            </Link>
+          </MenuItem>
           <MenuItem
             onClick={() =>
               window.confirm(
@@ -75,6 +79,8 @@ const ItemMenu = ({
             <Delete fontSize="small" style={{ marginRight: "5" }} />
             Delete
           </MenuItem>
+
+          {children}
         </Menu>
       </>
     );

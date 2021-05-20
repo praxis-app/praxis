@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
+import {
+  useQuery,
+  useMutation,
+  useLazyQuery,
+  useReactiveVar,
+} from "@apollo/client";
 import {
   Card,
   CircularProgress,
@@ -17,6 +22,7 @@ import {
   CURRENT_USER,
 } from "../../apollo/client/queries";
 import { DELETE_MOTION, DELETE_COMMENT } from "../../apollo/client/mutations";
+import { motionVar, votesVar } from "../../apollo/client/localState";
 import Motion from "../../components/Motions/Motion";
 import CommentsForm from "../../components/Comments/Form";
 import CommentsList from "../../components/Comments/List";
@@ -37,8 +43,8 @@ const useStyles = makeStyles({
 
 const Show = () => {
   const { query } = useRouter();
-  const [motion, setMotion] = useState<Motion>();
-  const [votes, setVotes] = useState<Vote[]>([]);
+  const votes = useReactiveVar(votesVar);
+  const motion = useReactiveVar(motionVar);
   const [comments, setComments] = useState<Comment[]>([]);
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [tab, setTab] = useState<number>(0);
@@ -72,11 +78,17 @@ const Show = () => {
   }, [motion]);
 
   useEffect(() => {
-    if (motionRes.data) setMotion(motionRes.data.motion);
+    if (motionRes.data) motionVar(motionRes.data.motion);
+    return () => {
+      motionVar(null);
+    };
   }, [motionRes.data]);
 
   useEffect(() => {
-    if (votesRes.data) setVotes(votesRes.data.votesByMotionId);
+    if (votesRes.data) votesVar(votesRes.data.votesByMotionId);
+    return () => {
+      votesVar([]);
+    };
   }, [votesRes.data]);
 
   useEffect(() => {
@@ -117,12 +129,7 @@ const Show = () => {
   if (motion)
     return (
       <>
-        <Motion
-          motion={motion}
-          deleteMotion={deleteMotionHandler}
-          votesFromParent={votes}
-          setVotesFromParent={setVotes}
-        />
+        <Motion motion={motion} deleteMotion={deleteMotionHandler} />
 
         <Card className={classes.root + " " + styles.card}>
           <Tabs
@@ -139,7 +146,7 @@ const Show = () => {
           </Tabs>
         </Card>
 
-        {tab === 0 && <VotesList votes={votes} setVotes={setVotes} />}
+        {tab === 0 && <VotesList votes={votes} setVotes={votesVar} />}
 
         {tab === 1 && (
           <>

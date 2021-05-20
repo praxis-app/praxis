@@ -52,6 +52,8 @@ export const GROUP_FEED = gql`
         motionGroupId: groupId
         body
         action
+        actionData
+        stage
         createdAt
       }
     }

@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import { IconButton } from "@material-ui/core";
 import { ThumbUp, ThumbDown } from "@material-ui/icons";
 
+import { Motions } from "../../constants";
+import { motionVar } from "../../apollo/client/localState";
 import { CURRENT_USER } from "../../apollo/client/queries";
 import { CREATE_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/VoteButtons.module.scss";
@@ -14,6 +16,7 @@ interface Props {
 }
 
 const VoteButtons = ({ motionId, votes, setVotes }: Props) => {
+  const motionFromGlobal = useReactiveVar(motionVar);
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [upVotes, setUpVotes] = useState<Vote[]>([]);
   const [downVotes, setDownVotes] = useState<Vote[]>([]);
@@ -57,14 +60,14 @@ const VoteButtons = ({ motionId, votes, setVotes }: Props) => {
   };
 
   const handleButtonClick = async (flipState: string) => {
-    let newVotes: Vote[] = [];
+    let newVotes: Vote[] = votes;
     if (alreadyVote()) {
       await deleteVote({
         variables: {
           id: alreadyVote()?.id,
         },
       });
-      newVotes = votes.filter((vote) => vote.userId !== currentUser?.id);
+      newVotes = newVotes.filter((vote) => vote.userId !== currentUser?.id);
     }
     if (
       (alreadyVote() && alreadyVote()?.flipState !== flipState) ||
@@ -78,6 +81,9 @@ const VoteButtons = ({ motionId, votes, setVotes }: Props) => {
         },
       });
       newVotes = [...newVotes, data.createVote.vote];
+      if (data.createVote.motionRatified && motionFromGlobal) {
+        motionVar({ ...motionFromGlobal, stage: Motions.Stages.Ratified });
+      }
     }
     setVotes(newVotes);
   };

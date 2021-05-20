@@ -8,6 +8,7 @@ import memberResolvers from "./member";
 import motionResolvers from "./motion";
 import voteResolvers from "./vote";
 import likeResolvers from "./like";
+import settingResolvers from "./setting";
 
 export const resolvers = {
   Query: {
@@ -21,6 +22,7 @@ export const resolvers = {
     ...motionResolvers.Query,
     ...voteResolvers.Query,
     ...imageResolvers.Query,
+    ...settingResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
@@ -33,5 +35,6 @@ export const resolvers = {
     ...motionResolvers.Mutation,
     ...voteResolvers.Mutation,
     ...imageResolvers.Mutation,
+    ...settingResolvers.Mutation,
   },
 };

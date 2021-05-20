@@ -1,11 +1,11 @@
 import { GraphQLUpload } from "apollo-server-micro";
-import saveImage from "../../utils/saveImage";
-import prisma from "../../utils/initPrisma";
-
-// fs, promisify, and unlink to delete img
-import fs from "fs";
 import { promisify } from "util";
-const unlinkAsync = promisify(fs.unlink);
+import fs from "fs";
+
+import prisma from "../../utils/initPrisma";
+import saveImage from "../../utils/saveImage";
+import { inDev } from "../../utils/environment";
+import { Settings, Common } from "../../constants";
 
 interface GroupInput {
   name: string;
@@ -15,11 +15,7 @@ interface GroupInput {
 
 const saveCoverPhoto = async (group: any, image: any) => {
   if (image) {
-    const { createReadStream, mimetype } = await image;
-    const extension = mimetype.split("/")[1];
-    const path = "public/uploads/" + Date.now() + "." + extension;
-    await saveImage(createReadStream, path);
-
+    const path = await saveImage(image);
     await prisma.image.create({
       data: {
         group: {
@@ -28,7 +24,7 @@ const saveCoverPhoto = async (group: any, image: any) => {
           },
         },
         profilePicture: true,
-        path: path.replace("public", ""),
+        path,
       },
     });
   }
@@ -61,11 +57,11 @@ const groupResolvers = {
         });
         const postsWithType = groupWithPosts?.posts.map((post) => ({
           ...post,
-          __typename: "Post",
+          __typename: Common.TypeNames.Post,
         }));
         const motionsWithType = groupWithMotions?.motions.map((motion) => ({
           ...motion,
-          __typename: "Motion",
+          __typename: Common.TypeNames.Motion,
         }));
 
         feed = [
@@ -100,6 +96,9 @@ const groupResolvers = {
           where: {
             name,
           },
+          include: {
+            settings: true,
+          },
         });
         return group;
       } catch (error) {
@@ -124,7 +123,7 @@ const groupResolvers = {
     ) {
       const { name, description, coverPhoto } = input;
       try {
-        const newGroup = await prisma.group.create({
+        const group = await prisma.group.create({
           data: {
             creatorId: parseInt(creatorId),
             description,
@@ -132,7 +131,7 @@ const groupResolvers = {
           },
         });
 
-        await saveCoverPhoto(newGroup, coverPhoto);
+        await saveCoverPhoto(group, coverPhoto);
 
         // Adds creator as member
         await prisma.groupMember.create({
@@ -144,13 +143,59 @@ const groupResolvers = {
             },
             group: {
               connect: {
-                id: newGroup.id,
+                id: group.id,
               },
             },
           },
         });
 
-        return { group: newGroup };
+        const settingsStillInDev = inDev()
+          ? [
+              {
+                name: Settings.GroupSettings.VotingType,
+                value: Settings.GroupDefaults.VotingType,
+              },
+              {
+                name: Settings.GroupSettings.VoteVerification,
+                value: Settings.GroupDefaults.VoteVerification,
+              },
+            ]
+          : [];
+        const settings = [
+          {
+            name: Settings.GroupSettings.NoAdmin,
+            value: Settings.GroupDefaults.NoAdmin,
+          },
+          ...settingsStillInDev,
+          {
+            name: Settings.GroupSettings.RatificationThreshold,
+            value: Settings.GroupDefaults.RatificationThreshold,
+          },
+          {
+            name: Settings.GroupSettings.XToPass,
+            value: Settings.GroupDefaults.XToPass,
+          },
+          {
+            name: Settings.GroupSettings.XToBlock,
+            value: Settings.GroupDefaults.XToBlock,
+          },
+        ];
+        for (const setting of settings) {
+          const { name, value } = setting;
+          await prisma.setting.create({
+            data: {
+              name,
+              value,
+              group: {
+                connect: {
+                  id: group.id,
+                },
+              },
+            },
+          });
+        }
+
+        return { group };
       } catch (err) {
         throw new Error(err);
       }
@@ -179,11 +224,15 @@ const groupResolvers = {
     },
 
     async deleteGroup(_: any, { id }: { id: string }) {
+      const unlinkAsync = promisify(fs.unlink);
       try {
-        const images = await prisma.image.findMany({
+        const whereGroupId = {
           where: { groupId: parseInt(id) },
-        });
-
+        };
+        // Deletes dependents
+        await prisma.post.deleteMany(whereGroupId);
+        await prisma.motion.deleteMany(whereGroupId);
+        const images = await prisma.image.findMany(whereGroupId);
         for (const image of images) {
           await unlinkAsync("public" + image.path);
           await prisma.image.delete({

@@ -60,6 +60,8 @@ export const HOME_FEED = gql`
         motionGroupId: groupId
         body
         action
+        actionData
+        stage
         createdAt
       }
     }

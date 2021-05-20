@@ -1,25 +1,21 @@
 import { GraphQLUpload } from "apollo-server-micro";
+import GraphQLJSON from "graphql-type-json";
+import { promisify } from "util";
+import fs from "fs";
+
 import saveImage from "../../utils/saveImage";
 import prisma from "../../utils/initPrisma";
-
-// fs, promisify, and unlink to delete img
-import fs from "fs";
-import { promisify } from "util";
-const unlinkAsync = promisify(fs.unlink);
 
 interface MotionInput {
   body: string;
   action: string;
+  actionData: any;
   images: any;
 }
 
 const saveImages = async (motion: any, images: any) => {
   for (const image of images ? images : []) {
-    const { createReadStream, mimetype } = await image;
-    const extension = mimetype.split("/")[1];
-    const path = "public/uploads/" + Date.now() + "." + extension;
-    await saveImage(createReadStream, path);
-
+    const path = await saveImage(image);
     await prisma.image.create({
       data: {
         user: {
@@ -32,7 +28,7 @@ const saveImages = async (motion: any, images: any) => {
             id: motion.id,
           },
         },
-        path: path.replace("public", ""),
+        path,
       },
     });
   }
@@ -40,6 +36,7 @@ const saveImages = async (motion: any, images: any) => {
 
 const motionResolvers = {
   FileUpload: GraphQLUpload,
+  JSON: GraphQLJSON,
 
   Query: {
     motion: async (_: any, { id }: { id: string }) => {
@@ -59,7 +56,7 @@ const motionResolvers = {
       try {
         const user = await prisma.user.findFirst({
           where: {
-            name: name,
+            name,
           },
           include: {
             motions: true,
@@ -75,7 +72,7 @@ const motionResolvers = {
       try {
         const group = await prisma.group.findFirst({
           where: {
-            name: name,
+            name,
           },
           include: {
             motions: true,
@@ -97,9 +94,13 @@ const motionResolvers = {
         input,
       }: { userId: string; groupId: string; input: MotionInput }
     ) {
-      const { body, action, images } = input;
+      let { body, action, actionData, images } = input;
       try {
-        const newMotion = await prisma.motion.create({
+        if (actionData.newGroupImage) {
+          const newGroupImagePath = await saveImage(actionData.newGroupImage);
+          actionData = { newGroupImagePath };
+        }
+        const motion = await prisma.motion.create({
           data: {
             user: {
               connect: {
@@ -113,12 +114,13 @@ const motionResolvers = {
             },
             body,
             action,
+            actionData,
           },
         });
 
-        await saveImages(newMotion, images);
+        await saveImages(motion, images);
 
-        return { motion: newMotion };
+        return { motion };
       } catch (err) {
         throw new Error(err);
       }
@@ -147,6 +149,8 @@ const motionResolvers = {
     },
 
     async deleteMotion(_: any, { id }: { id: string }) {
+      const unlinkAsync = promisify(fs.unlink);
+
       try {
         const images = await prisma.image.findMany({
           where: { motionId: parseInt(id) },

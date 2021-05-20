@@ -21,6 +21,7 @@ export const CREATE_VOTE = gql`
         motionId
         createdAt
       }
+      motionRatified
     }
   }
 `;
@@ -37,6 +38,7 @@ export const UPDATE_VOTE = gql`
         motionId
         createdAt
       }
+      motionRatified
     }
   }
 `;

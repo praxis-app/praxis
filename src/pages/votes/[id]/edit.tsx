@@ -22,7 +22,7 @@ const Edit = () => {
     if (votesRes.data) setVote(votesRes.data.vote);
   }, [votesRes.data]);
 
-  if (vote) return <VotesForm vote={vote} />;
+  if (vote) return <VotesForm vote={vote} onEditPage={true} />;
   return <CircularProgress style={{ color: "white" }} />;
 };
 

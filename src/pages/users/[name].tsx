@@ -12,6 +12,7 @@ const Show = () => {
   const { query } = useRouter();
   const [user, setUser] = useState<User>();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState<boolean>(true);
   const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME);
   const [getPostsRes, postsRes] = useLazyQuery(POSTS_BY_USER_NAME, {
     fetchPolicy: "no-cache",
@@ -34,7 +35,10 @@ const Show = () => {
   }, [userRes.data]);
 
   useEffect(() => {
-    if (postsRes.data) setPosts(postsRes.data.postsByUserName);
+    if (postsRes.data) {
+      setPosts(postsRes.data.postsByUserName);
+      setLoadingPosts(false);
+    }
   }, [postsRes.data]);
 
   const deleteUserHandler = async (userId: string) => {
@@ -65,7 +69,11 @@ const Show = () => {
       {user ? (
         <>
           <User user={user} deleteUser={deleteUserHandler} />
-          <PostsList posts={posts} deletePost={deletePostHandler} />
+          <PostsList
+            posts={posts}
+            loading={loadingPosts}
+            deletePost={deletePostHandler}
+          />
         </>
       ) : (
         <CircularProgress style={{ color: "white" }} />

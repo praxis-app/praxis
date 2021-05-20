@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { useQuery } from "@apollo/client";
-import { Edit, Delete } from "@material-ui/icons";
 import Link from "next/link";
-
+import { Settings } from "@material-ui/icons";
 import {
   Card,
   CardContent,
@@ -11,6 +9,7 @@ import {
   Typography,
   makeStyles,
   CardHeader,
+  MenuItem,
 } from "@material-ui/core";
 
 import { isLoggedIn } from "../../utils/auth";
@@ -18,10 +17,13 @@ import {
   CURRENT_USER,
   GROUP_MEMBERS,
   MEMBER_REUQESTS,
+  SETTINGS_BY_GROUP_ID,
 } from "../../apollo/client/queries";
 import styles from "../../styles/Group/Group.module.scss";
 import GroupAvatar from "./Avatar";
 import JoinButton from "./JoinButton";
+import ItemMenu from "../Shared/ItemMenu";
+import { Settings as SettingsConstants } from "../../constants";
 
 const useStyles = makeStyles({
   root: {
@@ -40,21 +42,25 @@ interface Props {
 const Group = ({ group, deleteGroup }: Props) => {
   const { id, name, description, creatorId } = group;
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
+  const [groupSettings, setGroupSettings] = useState<Setting[]>([]);
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
   const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
-
-  const memberVariables: {} = {
-    variables: {
-      groupId: group.id,
-    },
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const noCache: {} = {
     fetchPolicy: "no-cache",
+  };
+  const memberVariables: {} = {
+    variables: { groupId: group.id },
+    ...noCache,
   };
   const groupMembersRes = useQuery(GROUP_MEMBERS, memberVariables);
   const memberRequestsRes = useQuery(MEMBER_REUQESTS, memberVariables);
+  const groupSettingsRes = useQuery(SETTINGS_BY_GROUP_ID, {
+    variables: { groupId: id },
+    ...noCache,
+  });
   const currentUserRes = useQuery(CURRENT_USER);
-
   const classes = useStyles();
-  const router = useRouter();
 
   useEffect(() => {
     if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
@@ -70,8 +76,38 @@ const Group = ({ group, deleteGroup }: Props) => {
       setMemberRequests(memberRequestsRes.data.memberRequests);
   }, [memberRequestsRes.data]);
 
+  useEffect(() => {
+    if (groupSettingsRes.data)
+      setGroupSettings(groupSettingsRes.data.settingsByGroupId);
+  }, [groupSettingsRes.data]);
+
   const isCreator = (): boolean => {
     if (isLoggedIn(currentUser)) return currentUser?.id === creatorId;
+    return false;
+  };
+
+  const settingByName = (name: string): string => {
+    const setting = groupSettings.find((setting) => setting.name === name);
+    return setting?.value || "";
+  };
+
+  const isNoAdmin = (): boolean => {
+    return (
+      settingByName(SettingsConstants.GroupSettings.NoAdmin) ===
+      SettingsConstants.States.On
+    );
+  };
+
+  const isAMember = (): boolean => {
+    const member = groupMembers?.find(
+      (member: GroupMember) => member.userId === currentUser?.id
+    );
+    return !!member;
+  };
+
+  const canSeeRequests = (): boolean => {
+    if (isCreator()) return true;
+    if (isNoAdmin() && isAMember()) return true;
     return false;
   };
 
@@ -86,15 +122,31 @@ const Group = ({ group, deleteGroup }: Props) => {
             </Link>
           }
           action={
-            currentUser &&
-            group && (
-              <JoinButton
-                group={group}
-                memberRequests={memberRequests}
-                groupMembers={groupMembers}
-                setMemberRequests={setMemberRequests}
-                setGroupMembers={setGroupMembers}
-              />
+            isLoggedIn(currentUser) &&
+            !isNoAdmin() && (
+              <ItemMenu
+                itemId={id}
+                name={group.name}
+                itemType={"group"}
+                anchorEl={menuAnchorEl}
+                setAnchorEl={setMenuAnchorEl}
+                deleteItem={deleteGroup}
+                ownItem={() => isCreator()}
+              >
+                <Link href={`/groups/${group.name}/settings`}>
+                  <a>
+                    <MenuItem>
+                      <Settings
+                        fontSize="small"
+                        style={{
+                          marginRight: "5",
+                        }}
+                      />
+                      Settings
+                    </MenuItem>
+                  </a>
+                </Link>
+              </ItemMenu>
             )
           }
           classes={{ title: classes.title }}
@@ -117,7 +169,7 @@ const Group = ({ group, deleteGroup }: Props) => {
               <a>{groupMembers.length} Members</a>
             </Link>
 
-            {isCreator() && (
+            {canSeeRequests() && (
               <>
                 <span style={{ color: "white" }}> · </span>
 
@@ -129,25 +181,15 @@ const Group = ({ group, deleteGroup }: Props) => {
           </CardContent>
         )}
 
-        {isCreator() && (
+        {isLoggedIn(currentUser) && (
           <CardActions style={{ marginTop: "6px" }}>
-            <Link href={`/groups/${name}/edit`}>
-              <a>
-                <Edit /> Edit
-              </a>
-            </Link>
-
-            <Link href={router.asPath}>
-              <a
-                onClick={() =>
-                  window.confirm(
-                    "Are you sure you want to delete this group?"
-                  ) && deleteGroup(id)
-                }
-              >
-                <Delete /> Delete
-              </a>
-            </Link>
+            <JoinButton
+              group={group}
+              memberRequests={memberRequests}
+              groupMembers={groupMembers}
+              setMemberRequests={setMemberRequests}
+              setGroupMembers={setGroupMembers}
+            />
           </CardActions>
         )}
       </Card>

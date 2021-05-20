@@ -1,9 +1,12 @@
-import { createWriteStream, PathLike } from "fs";
+import { createWriteStream } from "fs";
 
 const unlink = (path: any, a1: () => void) => {};
 
-// Saves image file within public/uploads/
-const saveImage = async (createReadStream: () => any, path: PathLike) => {
+const saveImage = async (image: any): Promise<string> => {
+  const { createReadStream, mimetype } = await image;
+  const extension = mimetype.split("/")[1];
+  const path = "public/uploads/" + Date.now() + "." + extension;
+
   await new Promise((resolve, reject) => {
     const stream = createReadStream();
 
@@ -17,6 +20,8 @@ const saveImage = async (createReadStream: () => any, path: PathLike) => {
       .on("error", reject)
       .on("finish", resolve);
   });
+
+  return path.replace("public", "");
 };
 
 export default saveImage;
