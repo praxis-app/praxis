@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import {
+  LazyQueryHookOptions,
+  OperationVariables,
+  useLazyQuery,
+  useQuery,
+} from "@apollo/client";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { Card, createStyles, makeStyles, Theme } from "@material-ui/core";
+import { Card, createStyles, makeStyles } from "@material-ui/core";
 
 import {
   GROUP_BY_NAME,
@@ -16,7 +21,7 @@ import Request from "../../../components/Groups/Request";
 import { isLoggedIn } from "../../../utils/auth";
 import { Settings } from "../../../constants";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       backgroundColor: "rgb(65, 65, 65)",
@@ -33,7 +38,7 @@ const Requests = () => {
   const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
   const currentUserRes = useQuery(CURRENT_USER);
-  const noCache: {} = {
+  const noCache: LazyQueryHookOptions<any, OperationVariables> = {
     fetchPolicy: "no-cache",
   };
   const [getMemberRequestsRes, memberRequestsRes] = useLazyQuery(

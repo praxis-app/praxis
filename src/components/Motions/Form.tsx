@@ -232,6 +232,7 @@ const MotionsForm = ({
           return (
             <Fragment key={image.name}>
               <img
+                alt="Data could not render."
                 className={styles.selectedImage}
                 src={URL.createObjectURL(image)}
               />
@@ -248,7 +249,11 @@ const MotionsForm = ({
         {savedImages.map(({ id, path }) => {
           return (
             <Fragment key={id}>
-              <img className={styles.selectedImage} src={baseUrl + path} />
+              <img
+                alt="Data could not render."
+                className={styles.selectedImage}
+                src={baseUrl + path}
+              />
 
               <RemoveCircle
                 style={{ color: "white" }}

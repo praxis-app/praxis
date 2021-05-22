@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import {
+  LazyQueryHookOptions,
+  OperationVariables,
+  useLazyQuery,
+  useQuery,
+} from "@apollo/client";
 import { useRouter } from "next/router";
 import { CircularProgress } from "@material-ui/core";
 
@@ -18,7 +23,7 @@ const Edit = () => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [groupSettings, setGroupSettings] = useState<Setting[]>([]);
   const currentUserRes = useQuery(CURRENT_USER);
-  const noCache: {} = {
+  const noCache: LazyQueryHookOptions<any, OperationVariables> = {
     fetchPolicy: "no-cache",
   };
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);

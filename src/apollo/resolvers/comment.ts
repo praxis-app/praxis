@@ -39,38 +39,26 @@ const commentResolvers = {
 
   Query: {
     comment: async (_: any, { id }: { id: string }) => {
-      try {
-        const comment = await prisma.comment.findFirst({
-          where: {
-            id: parseInt(id),
-          },
-        });
-        return comment;
-      } catch (error) {
-        throw error;
-      }
+      const comment = await prisma.comment.findFirst({
+        where: {
+          id: parseInt(id),
+        },
+      });
+      return comment;
     },
 
     commentsByPostId: async (_: any, { postId }: { postId: string }) => {
-      try {
-        const comments = await prisma.comment.findMany({
-          where: { postId: parseInt(postId) },
-        });
-        return comments;
-      } catch (error) {
-        throw error;
-      }
+      const comments = await prisma.comment.findMany({
+        where: { postId: parseInt(postId) },
+      });
+      return comments;
     },
 
     commentsByMotionId: async (_: any, { motionId }: { motionId: string }) => {
-      try {
-        const comments = await prisma.comment.findMany({
-          where: { motionId: parseInt(motionId) },
-        });
-        return comments;
-      } catch (error) {
-        throw error;
-      }
+      const comments = await prisma.comment.findMany({
+        where: { motionId: parseInt(motionId) },
+      });
+      return comments;
     },
   },
 
@@ -90,40 +78,36 @@ const commentResolvers = {
       }
     ) {
       const { body, images } = input;
-      try {
-        const commentedItemConnect = postId
-          ? {
-              post: {
-                connect: {
-                  id: parseInt(postId),
-                },
-              },
-            }
-          : {
-              motion: {
-                connect: {
-                  id: parseInt(motionId),
-                },
-              },
-            };
-        const comment = await prisma.comment.create({
-          data: {
-            user: {
+      const commentedItemConnect = postId
+        ? {
+            post: {
               connect: {
-                id: parseInt(userId),
+                id: parseInt(postId),
               },
             },
-            ...commentedItemConnect,
-            body: body,
+          }
+        : {
+            motion: {
+              connect: {
+                id: parseInt(motionId),
+              },
+            },
+          };
+      const comment = await prisma.comment.create({
+        data: {
+          user: {
+            connect: {
+              id: parseInt(userId),
+            },
           },
-        });
+          ...commentedItemConnect,
+          body: body,
+        },
+      });
 
-        await saveImages(comment, images);
+      await saveImages(comment, images);
 
-        return { comment };
-      } catch (err) {
-        throw new Error(err);
-      }
+      return { comment };
     },
 
     async updateComment(
@@ -131,44 +115,35 @@ const commentResolvers = {
       { id, input }: { id: string; input: CommentInput }
     ) {
       const { body, images } = input;
+      const comment = await prisma.comment.update({
+        where: { id: parseInt(id) },
+        data: { body: body },
+      });
 
-      try {
-        const comment = await prisma.comment.update({
-          where: { id: parseInt(id) },
-          data: { body: body },
-        });
+      if (!comment) throw new Error("Comment not found.");
 
-        await saveImages(comment, images);
+      await saveImages(comment, images);
 
-        if (!comment) throw new Error("Comment not found.");
-
-        return { comment };
-      } catch (err) {
-        throw new Error(err);
-      }
+      return { comment };
     },
 
     async deleteComment(_: any, { id }: { id: string }) {
-      try {
-        const images = await prisma.image.findMany({
-          where: { commentId: parseInt(id) },
+      const images = await prisma.image.findMany({
+        where: { commentId: parseInt(id) },
+      });
+
+      for (const image of images) {
+        await unlinkAsync("public" + image.path);
+        await prisma.image.delete({
+          where: { id: image.id },
         });
-
-        for (const image of images) {
-          await unlinkAsync("public" + image.path);
-          await prisma.image.delete({
-            where: { id: image.id },
-          });
-        }
-
-        await prisma.comment.delete({
-          where: { id: parseInt(id) },
-        });
-
-        return true;
-      } catch (err) {
-        throw new Error(err);
       }
+
+      await prisma.comment.delete({
+        where: { id: parseInt(id) },
+      });
+
+      return true;
     },
   },
 };

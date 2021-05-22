@@ -3,67 +3,51 @@ import prisma from "../../utils/initPrisma";
 const followResolvers = {
   Query: {
     userFollowers: async (_: any, { userId }: { userId: string }) => {
-      try {
-        const user = await prisma.user.findFirst({
-          where: {
-            id: parseInt(userId),
-          },
-          include: {
-            followers: true,
-          },
-        });
-        return user?.followers;
-      } catch (error) {
-        throw error;
-      }
+      const user = await prisma.user.findFirst({
+        where: {
+          id: parseInt(userId),
+        },
+        include: {
+          followers: true,
+        },
+      });
+      return user?.followers;
     },
 
     userFollowersByName: async (_: any, { name }: { name: string }) => {
-      try {
-        const user = await prisma.user.findFirst({
-          where: {
-            name,
-          },
-          include: {
-            followers: true,
-          },
-        });
-        return user?.followers;
-      } catch (error) {
-        throw error;
-      }
+      const user = await prisma.user.findFirst({
+        where: {
+          name,
+        },
+        include: {
+          followers: true,
+        },
+      });
+      return user?.followers;
     },
 
     userFollowing: async (_: any, { userId }: { userId: string }) => {
-      try {
-        const user = await prisma.user.findFirst({
-          where: {
-            id: parseInt(userId),
-          },
-          include: {
-            following: true,
-          },
-        });
-        return user?.following;
-      } catch (error) {
-        throw error;
-      }
+      const user = await prisma.user.findFirst({
+        where: {
+          id: parseInt(userId),
+        },
+        include: {
+          following: true,
+        },
+      });
+      return user?.following;
     },
 
     userFollowingByName: async (_: any, { name }: { name: string }) => {
-      try {
-        const user = await prisma.user.findFirst({
-          where: {
-            name,
-          },
-          include: {
-            following: true,
-          },
-        });
-        return user?.following;
-      } catch (error) {
-        throw error;
-      }
+      const user = await prisma.user.findFirst({
+        where: {
+          name,
+        },
+        include: {
+          following: true,
+        },
+      });
+      return user?.following;
     },
   },
 
@@ -72,38 +56,29 @@ const followResolvers = {
       _: any,
       { userId, followerId }: { userId: string; followerId: string }
     ) {
-      try {
-        const follow = await prisma.follow.create({
-          data: {
-            user: {
-              connect: {
-                id: parseInt(userId),
-              },
-            },
-            follower: {
-              connect: {
-                id: parseInt(followerId),
-              },
+      const follow = await prisma.follow.create({
+        data: {
+          user: {
+            connect: {
+              id: parseInt(userId),
             },
           },
-        });
+          follower: {
+            connect: {
+              id: parseInt(followerId),
+            },
+          },
+        },
+      });
 
-        return { follow };
-      } catch (err) {
-        throw new Error(err);
-      }
+      return { follow };
     },
 
     async deleteFollow(_: any, { id }: { id: string }) {
-      try {
-        await prisma.follow.delete({
-          where: { id: parseInt(id) },
-        });
-
-        return true;
-      } catch (err) {
-        throw new Error(err);
-      }
+      await prisma.follow.delete({
+        where: { id: parseInt(id) },
+      });
+      return true;
     },
   },
 };

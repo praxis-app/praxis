@@ -125,27 +125,19 @@ const voteResolvers = {
 
   Query: {
     vote: async (_: any, { id }: { id: string }) => {
-      try {
-        const vote = await prisma.vote.findFirst({
-          where: {
-            id: parseInt(id),
-          },
-        });
-        return vote;
-      } catch (error) {
-        throw error;
-      }
+      const vote = await prisma.vote.findFirst({
+        where: {
+          id: parseInt(id),
+        },
+      });
+      return vote;
     },
 
     votesByMotionId: async (_: any, { motionId }: { motionId: string }) => {
-      try {
-        const votes = await prisma.vote.findMany({
-          where: { motionId: parseInt(motionId) },
-        });
-        return votes;
-      } catch (error) {
-        throw error;
-      }
+      const votes = await prisma.vote.findMany({
+        where: { motionId: parseInt(motionId) },
+      });
+      return votes;
     },
   },
 
@@ -163,76 +155,55 @@ const voteResolvers = {
       }
     ) {
       const { body, flipState } = input;
-      try {
-        const vote = await prisma.vote.create({
-          data: {
-            user: {
-              connect: {
-                id: parseInt(userId),
-              },
+      const vote = await prisma.vote.create({
+        data: {
+          user: {
+            connect: {
+              id: parseInt(userId),
             },
-            motion: {
-              connect: {
-                id: parseInt(motionId),
-              },
-            },
-            body,
-            flipState,
           },
-        });
+          motion: {
+            connect: {
+              id: parseInt(motionId),
+            },
+          },
+          body,
+          flipState,
+        },
+      });
 
-        const motionRatified = evaluateMotion(parseInt(motionId));
+      const motionRatified = evaluateMotion(parseInt(motionId));
 
-        return { vote, motionRatified };
-      } catch (err) {
-        throw new Error(err);
-      }
+      return { vote, motionRatified };
     },
 
     async updateVote(_: any, { id, input }: { id: string; input: VoteInput }) {
       const { body, flipState } = input;
+      const vote = await prisma.vote.update({
+        where: { id: parseInt(id) },
+        data: { body, flipState },
+      });
+      if (!vote) throw new Error("Vote not found.");
 
-      try {
-        const vote = await prisma.vote.update({
-          where: { id: parseInt(id) },
-          data: { body, flipState },
-        });
-
-        if (!vote) throw new Error("Vote not found.");
-
-        const motionRatified = evaluateMotion(vote.motionId as number);
-
-        return { vote, motionRatified };
-      } catch (err) {
-        throw new Error(err);
-      }
+      const motionRatified = evaluateMotion(vote.motionId as number);
+      return { vote, motionRatified };
     },
 
     async verifyVote(_: any, { id }: { id: string }) {
-      try {
-        const vote = await prisma.vote.update({
-          where: { id: parseInt(id) },
-          data: { verified: true },
-        });
+      const vote = await prisma.vote.update({
+        where: { id: parseInt(id) },
+        data: { verified: true },
+      });
+      if (!vote) throw new Error("Vote not found.");
 
-        if (!vote) throw new Error("Vote not found.");
-
-        return { vote };
-      } catch (err) {
-        throw new Error(err);
-      }
+      return { vote };
     },
 
     async deleteVote(_: any, { id }: { id: string }) {
-      try {
-        await prisma.vote.delete({
-          where: { id: parseInt(id) },
-        });
-
-        return true;
-      } catch (err) {
-        throw new Error(err);
-      }
+      await prisma.vote.delete({
+        where: { id: parseInt(id) },
+      });
+      return true;
     },
   },
 };

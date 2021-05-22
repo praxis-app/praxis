@@ -48,16 +48,7 @@ interface Props {
 }
 
 const Motion = ({ motion, deleteMotion }: Props) => {
-  const {
-    id,
-    userId,
-    groupId,
-    motionGroupId,
-    body,
-    action,
-    actionData,
-    stage,
-  } = motion;
+  const { id, userId, groupId, motionGroupId, body, action, stage } = motion;
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [user, setUser] = useState<User>();
   const [group, setGroup] = useState<Group>();

@@ -29,7 +29,7 @@ export const resolvers = {
       return data;
     },
 
-    logoutUser: (_: any, variables: any, { cache }: any) => {
+    logoutUser: (_: any, _variables: any, { cache }: any) => {
       const data = {
         user: {
           id: null,

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const LIKES_BY_POST_ID = gql`
-  query($postId: ID!) {
+  query ($postId: ID!) {
     likesByPostId(postId: $postId) {
       id
       userId
@@ -11,7 +11,7 @@ export const LIKES_BY_POST_ID = gql`
 `;
 
 export const LIKES_BY_MOTION_ID = gql`
-  query($motionId: ID!) {
+  query ($motionId: ID!) {
     likesByMotionId(motionId: $motionId) {
       id
       userId
@@ -21,7 +21,7 @@ export const LIKES_BY_MOTION_ID = gql`
 `;
 
 export const LIKES_BY_COMMENT_ID = gql`
-  query($commentId: ID!) {
+  query ($commentId: ID!) {
     likesByCommentId(commentId: $commentId) {
       id
       userId

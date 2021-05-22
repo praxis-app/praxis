@@ -12,7 +12,7 @@ export const CURRENT_USER = gql`
 `;
 
 export const USER = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     user(id: $id) {
       id
       name
@@ -23,7 +23,7 @@ export const USER = gql`
 `;
 
 export const USER_BY_NAME = gql`
-  query($name: String!) {
+  query ($name: String!) {
     userByName(name: $name) {
       id
       name
@@ -45,7 +45,7 @@ export const USERS = gql`
 `;
 
 export const HOME_FEED = gql`
-  query($userId: ID) {
+  query ($userId: ID) {
     homeFeed(userId: $userId) {
       ... on Post {
         id

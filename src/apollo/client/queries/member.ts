@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GROUP_MEMBERS = gql`
-  query($groupId: ID!) {
+  query ($groupId: ID!) {
     groupMembers(groupId: $groupId) {
       id
       userId
@@ -12,7 +12,7 @@ export const GROUP_MEMBERS = gql`
 `;
 
 export const MEMBER_REUQESTS = gql`
-  query($groupId: ID!) {
+  query ($groupId: ID!) {
     memberRequests(groupId: $groupId) {
       id
       userId

@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const MOTION = gql`
-  query($id: ID!) {
+  query ($id: ID!) {
     motion(id: $id) {
       id
       userId
@@ -16,7 +16,7 @@ export const MOTION = gql`
 `;
 
 export const MOTIONS_BY_USER_NAME = gql`
-  query($name: String!) {
+  query ($name: String!) {
     motionsByUserName(name: $name) {
       id
       userId
@@ -31,7 +31,7 @@ export const MOTIONS_BY_USER_NAME = gql`
 `;
 
 export const MOTIONS_BY_GROUP_NAME = gql`
-  query($name: String!) {
+  query ($name: String!) {
     motionsByGroupName(name: $name) {
       id
       userId

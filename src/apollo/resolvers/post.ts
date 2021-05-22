@@ -38,57 +38,41 @@ const postResolvers = {
 
   Query: {
     post: async (_: any, { id }: { id: string }) => {
-      try {
-        const post = await prisma.post.findFirst({
-          where: {
-            id: parseInt(id),
-          },
-        });
-        return post;
-      } catch (error) {
-        throw error;
-      }
+      const post = await prisma.post.findFirst({
+        where: {
+          id: parseInt(id),
+        },
+      });
+      return post;
     },
 
     allPosts: async () => {
-      try {
-        const posts = await prisma.post.findMany();
-        return posts;
-      } catch (error) {
-        throw error;
-      }
+      const posts = await prisma.post.findMany();
+      return posts;
     },
 
     postsByUserName: async (_: any, { name }: { name: string }) => {
-      try {
-        const user = await prisma.user.findFirst({
-          where: {
-            name: name,
-          },
-          include: {
-            posts: true,
-          },
-        });
-        return user?.posts;
-      } catch (error) {
-        throw error;
-      }
+      const user = await prisma.user.findFirst({
+        where: {
+          name: name,
+        },
+        include: {
+          posts: true,
+        },
+      });
+      return user?.posts;
     },
 
     postsByGroupName: async (_: any, { name }: { name: string }) => {
-      try {
-        const group = await prisma.group.findFirst({
-          where: {
-            name: name,
-          },
-          include: {
-            posts: true,
-          },
-        });
-        return group?.posts;
-      } catch (error) {
-        throw error;
-      }
+      const group = await prisma.group.findFirst({
+        where: {
+          name: name,
+        },
+        include: {
+          posts: true,
+        },
+      });
+      return group?.posts;
     },
   },
 
@@ -102,74 +86,61 @@ const postResolvers = {
       }: { userId: string; groupId: string; input: PostInput }
     ) {
       const { body, images } = input;
-      try {
-        const groupData = {
-          group: {
+      const groupData = {
+        group: {
+          connect: {
+            id: parseInt(groupId),
+          },
+        },
+      };
+      const newPost = await prisma.post.create({
+        data: {
+          user: {
             connect: {
-              id: parseInt(groupId),
+              id: parseInt(userId),
             },
           },
-        };
-        const newPost = await prisma.post.create({
-          data: {
-            user: {
-              connect: {
-                id: parseInt(userId),
-              },
-            },
-            ...(groupId && groupData),
-            body: body,
-          },
-        });
+          ...(groupId && groupData),
+          body: body,
+        },
+      });
 
-        await saveImages(newPost, images);
+      await saveImages(newPost, images);
 
-        return { post: newPost };
-      } catch (err) {
-        throw new Error(err);
-      }
+      return { post: newPost };
     },
 
     async updatePost(_: any, { id, input }: { id: string; input: PostInput }) {
       const { body, images } = input;
+      const post = await prisma.post.update({
+        where: { id: parseInt(id) },
+        data: { body: body },
+      });
 
-      try {
-        const post = await prisma.post.update({
-          where: { id: parseInt(id) },
-          data: { body: body },
-        });
+      if (!post) throw new Error("Post not found.");
 
-        await saveImages(post, images);
+      await saveImages(post, images);
 
-        if (!post) throw new Error("Post not found.");
-
-        return { post };
-      } catch (err) {
-        throw new Error(err);
-      }
+      return { post };
     },
 
     async deletePost(_: any, { id }: { id: string }) {
-      try {
-        const images = await prisma.image.findMany({
-          where: { postId: parseInt(id) },
+      const images = await prisma.image.findMany({
+        where: { postId: parseInt(id) },
+      });
+
+      for (const image of images) {
+        await unlinkAsync("public" + image.path);
+        await prisma.image.delete({
+          where: { id: image.id },
         });
-
-        for (const image of images) {
-          await unlinkAsync("public" + image.path);
-          await prisma.image.delete({
-            where: { id: image.id },
-          });
-        }
-
-        await prisma.post.delete({
-          where: { id: parseInt(id) },
-        });
-
-        return true;
-      } catch (err) {
-        throw new Error(err);
       }
+
+      await prisma.post.delete({
+        where: { id: parseInt(id) },
+      });
+
+      return true;
     },
   },
 };

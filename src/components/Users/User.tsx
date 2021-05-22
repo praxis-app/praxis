@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@apollo/client";
-import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 import { Card, CardActions, CardHeader, CardContent } from "@material-ui/core";
 import { Edit, Delete } from "@material-ui/icons";
 
@@ -16,7 +16,7 @@ import {
 
 import styles from "../../styles/User/User.module.scss";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       backgroundColor: "rgb(65, 65, 65)",

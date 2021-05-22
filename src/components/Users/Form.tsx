@@ -153,6 +153,7 @@ const UserForm = ({ user, isEditing }: Props) => {
       {profilePicture && (
         <div className={styles.selectedImages}>
           <img
+            alt="Data could not render."
             className={styles.selectedImage}
             src={URL.createObjectURL(profilePicture)}
           />

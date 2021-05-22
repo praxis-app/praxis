@@ -4,6 +4,8 @@ import {
   useMutation,
   useLazyQuery,
   useReactiveVar,
+  LazyQueryHookOptions,
+  OperationVariables,
 } from "@apollo/client";
 import {
   Card,
@@ -50,7 +52,7 @@ const Show = () => {
   const [tab, setTab] = useState<number>(0);
   const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deleteComment] = useMutation(DELETE_COMMENT);
-  const noCache: {} = {
+  const noCache: LazyQueryHookOptions<any, OperationVariables> = {
     fetchPolicy: "no-cache",
   };
   const [getMotionRes, motionRes] = useLazyQuery(MOTION, noCache);
@@ -136,7 +138,7 @@ const Show = () => {
             textColor="inherit"
             centered
             value={tab}
-            onChange={(event: React.ChangeEvent<{}>, newValue: number) =>
+            onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
               setTab(newValue)
             }
             classes={{ indicator: classes.indicator }}

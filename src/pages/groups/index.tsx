@@ -33,7 +33,7 @@ const Index = () => {
 
   return (
     <>
-      <GroupForm groups={groups} setGroups={setGroups} />
+      <GroupForm />
       {groups ? (
         groups
           .slice()

@@ -79,6 +79,7 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
       <>
         {image && (
           <img
+            alt="Data could not render."
             src={URL.createObjectURL(image)}
             style={{
               width: "50%",

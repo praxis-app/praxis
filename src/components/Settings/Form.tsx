@@ -95,7 +95,7 @@ const SettingsForm = ({
     setByName(name, value === "true" ? "false" : "true");
   };
 
-  const handleSliderChange = (event: any, newValue: number | number[]) => {
+  const handleSliderChange = (_event: any, newValue: number | number[]) => {
     setByName(
       Settings.GroupSettings.RatificationThreshold,
       newValue.toString()

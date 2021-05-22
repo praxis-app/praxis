@@ -1,6 +1,6 @@
 import { createWriteStream } from "fs";
 
-const unlink = (path: any, a1: () => void) => {};
+const unlink = (_path: any, _a1: () => void) => {};
 
 const saveImage = async (image: any): Promise<string> => {
   const { createReadStream, mimetype } = await image;

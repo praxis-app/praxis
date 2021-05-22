@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
 export const FOLLOWERS = gql`
-  query($userId: ID!) {
+  query ($userId: ID!) {
     userFollowers(userId: $userId) {
       id
       userId
@@ -12,7 +12,7 @@ export const FOLLOWERS = gql`
 `;
 
 export const FOLLOWING = gql`
-  query($userId: ID!) {
+  query ($userId: ID!) {
     userFollowing(userId: $userId) {
       id
       userId
@@ -23,7 +23,7 @@ export const FOLLOWING = gql`
 `;
 
 export const FOLLOWERS_BY_NAME = gql`
-  query($name: String!) {
+  query ($name: String!) {
     userFollowersByName(name: $name) {
       id
       userId
@@ -34,7 +34,7 @@ export const FOLLOWERS_BY_NAME = gql`
 `;
 
 export const FOLLOWING_BY_NAME = gql`
-  query($name: String!) {
+  query ($name: String!) {
     userFollowingByName(name: $name) {
       id
       userId
