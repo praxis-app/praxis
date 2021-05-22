@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  useMutation,
-  useQuery,
-  useLazyQuery,
-  LazyQueryHookOptions,
-  OperationVariables,
-} from "@apollo/client";
+import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
 import { IconButton } from "@material-ui/core";
 import { ThumbUp } from "@material-ui/icons";
 
@@ -18,6 +12,7 @@ import {
 import { CREATE_LIKE, DELETE_LIKE } from "../../apollo/client/mutations";
 
 import styles from "../../styles/Like/LikeButton.module.scss";
+import { noCache } from "../../utils/apollo";
 
 interface Props {
   postId?: string;
@@ -31,10 +26,6 @@ const LikeButton = ({ postId, motionId, commentId }: Props) => {
   const [createLike] = useMutation(CREATE_LIKE);
   const [deleteLike] = useMutation(DELETE_LIKE);
   const currentUserRes = useQuery(CURRENT_USER);
-
-  const noCache: LazyQueryHookOptions<any, OperationVariables> = {
-    fetchPolicy: "no-cache",
-  };
   const [getLikesByPostId, likesByPostIdRes] = useLazyQuery(
     LIKES_BY_POST_ID,
     noCache

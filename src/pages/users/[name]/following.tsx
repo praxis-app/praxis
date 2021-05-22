@@ -9,6 +9,7 @@ import { FOLLOWING_BY_NAME } from "../../../apollo/client/queries";
 import Follow from "../../../components/Follows/Follow";
 
 import styles from "../../../styles/Follow/Follow.module.scss";
+import Messages from "../../../utils/messages";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -48,7 +49,9 @@ const Following = () => {
         </a>
       </Link>
 
-      <h5 style={{ color: "white" }}>{following.length} Following</h5>
+      <h5 style={{ color: "white" }}>
+        {Messages.users.following(following.length)}
+      </h5>
 
       <Card className={classes.root + " " + styles.card}>
         {following.map(({ userId }) => {

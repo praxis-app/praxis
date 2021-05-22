@@ -1,19 +1,31 @@
-import React, { useState } from "react";
-import { useMutation } from "@apollo/client";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
 import Router from "next/router";
 import { Input, Button, FormGroup } from "@material-ui/core";
 
+import { CURRENT_USER } from "../../apollo/client/queries";
 import { SIGN_IN, SET_CURRENT_USER } from "../../apollo/client/mutations";
-import { setAuthToken } from "../../utils/auth";
+import { isLoggedIn, setAuthToken } from "../../utils/auth";
 
 import styles from "../../styles/User/UserForm.module.scss";
+import Messages from "../../utils/messages";
+import { Common } from "../../constants";
 
 const Login = () => {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
-
+  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [signIn] = useMutation(SIGN_IN);
-  const [setCurrentUser] = useMutation(SET_CURRENT_USER);
+  const [setCurrentUserCache] = useMutation(SET_CURRENT_USER);
+  const currentUserRes = useQuery(CURRENT_USER);
+
+  useEffect(() => {
+    if (currentUser?.isAuthenticated) Router.push("/");
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
+  }, [currentUserRes.data]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -31,7 +43,7 @@ const Login = () => {
         token,
       } = data.signIn;
 
-      await setCurrentUser({
+      await setCurrentUserCache({
         variables: {
           id,
           name,
@@ -39,13 +51,15 @@ const Login = () => {
         },
       });
 
-      localStorage.setItem("jwtToken", token);
+      localStorage.setItem(Common.LocalStorage.JwtToken, token);
       setAuthToken(token);
       Router.push("/");
     } catch (err) {
       alert(err);
     }
   };
+
+  if (isLoggedIn(currentUser)) return <>{Messages.users.alreadyLoggedIn()}</>;
 
   return (
     <form onSubmit={handleSubmit} className={styles.card}>
@@ -56,7 +70,7 @@ const Login = () => {
       >
         <Input
           type="text"
-          placeholder="Email"
+          placeholder={Messages.users.form.email()}
           onChange={(e) => setUserEmail(e.target.value)}
           value={userEmail}
           style={{
@@ -66,7 +80,7 @@ const Login = () => {
         />
         <Input
           type="password"
-          placeholder="Password"
+          placeholder={Messages.users.form.password()}
           onChange={(e) => setUserPassword(e.target.value)}
           value={userPassword}
           style={{
@@ -81,7 +95,7 @@ const Login = () => {
         type="submit"
         style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
       >
-        Log in
+        {Messages.users.actions.logIn()}
       </Button>
     </form>
   );

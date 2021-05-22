@@ -1,8 +1,7 @@
-import { createWriteStream } from "fs";
+import fs, { createWriteStream } from "fs";
+import { promisify } from "util";
 
-const unlink = (_path: any, _a1: () => void) => {};
-
-const saveImage = async (image: any): Promise<string> => {
+export const saveImage = async (image: any): Promise<string> => {
   const { createReadStream, mimetype } = await image;
   const extension = mimetype.split("/")[1];
   const path = "public/uploads/" + Date.now() + "." + extension;
@@ -12,7 +11,7 @@ const saveImage = async (image: any): Promise<string> => {
 
     stream
       .on("error", (error: any) => {
-        unlink(path, () => {
+        fs.unlink(path, () => {
           reject(error);
         });
       })
@@ -24,4 +23,7 @@ const saveImage = async (image: any): Promise<string> => {
   return path.replace("public", "");
 };
 
-export default saveImage;
+export const deleteImage = async (path: string) => {
+  const unlinkAsync = promisify(fs.unlink);
+  await unlinkAsync("public" + path);
+};

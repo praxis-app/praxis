@@ -1,8 +1,9 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Input, makeStyles } from "@material-ui/core";
 import { Image } from "@material-ui/icons";
-import { Motions } from "../../constants";
+import { Groups, Motions } from "../../constants";
 import styles from "../../styles/Motion/ActionFields.module.scss";
+import Messages from "../../utils/messages";
 
 const color = { color: "rgb(170, 170, 170)" };
 const useStyles = makeStyles(() => ({
@@ -62,13 +63,21 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
 
   if (actionType === Motions.ActionTypes.ChangeName)
     return (
-      <TextInput placeholder="New group name" value={text} setValue={setText} />
+      <TextInput
+        placeholder={Messages.motions.groups.actionFields.newAspect(
+          Groups.Aspects.Name
+        )}
+        value={text}
+        setValue={setText}
+      />
     );
 
   if (actionType === Motions.ActionTypes.ChangeDescription)
     return (
       <TextInput
-        placeholder="New group description"
+        placeholder={Messages.motions.groups.actionFields.newAspect(
+          Groups.Aspects.Description
+        )}
         value={text}
         setValue={setText}
       />
@@ -79,7 +88,7 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
       <>
         {image && (
           <img
-            alt="Data could not render."
+            alt={Messages.images.couldNotRender()}
             src={URL.createObjectURL(image)}
             style={{
               width: "50%",
@@ -103,7 +112,7 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
           onClick={() => imagesInput.current?.click()}
         >
           <Image className={styles.imageInputIcon} fontSize="small" />
-          Attach new group image
+          {Messages.motions.groups.actionFields.attachImage()}
         </span>
       </>
     );
@@ -111,7 +120,7 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
   if (actionType && actionType !== Motions.ActionTypes.Test)
     return (
       <span style={{ marginBottom: "12px" }}>
-        This action type is still in development...
+        {Messages.motions.groups.actionFields.inDev()}
       </span>
     );
 

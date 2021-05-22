@@ -13,6 +13,8 @@ import { CURRENT_USER } from "../../apollo/client/queries";
 import { setAuthToken } from "../../utils/auth";
 
 import styles from "../../styles/User/UserForm.module.scss";
+import Messages from "../../utils/messages";
+import { Common } from "../../constants";
 
 interface Props {
   user?: User;
@@ -57,7 +59,10 @@ const UserForm = ({ user, isEditing }: Props) => {
           });
 
           if (currentUserRes.data.user.id === user.id) {
-            localStorage.setItem("jwtToken", data.updateUser.token);
+            localStorage.setItem(
+              Common.LocalStorage.JwtToken,
+              data.updateUser.token
+            );
             setAuthToken(data.updateUser.token);
 
             const { id, name, email } = data.updateUser.user;
@@ -95,7 +100,7 @@ const UserForm = ({ user, isEditing }: Props) => {
           },
         });
 
-        localStorage.setItem("jwtToken", data.signUp.token);
+        localStorage.setItem(Common.LocalStorage.JwtToken, data.signUp.token);
         setAuthToken(data.signUp.token);
         Router.push("/");
       } catch (err) {
@@ -114,7 +119,7 @@ const UserForm = ({ user, isEditing }: Props) => {
       <FormGroup>
         <Input
           type="text"
-          placeholder="Name"
+          placeholder={Messages.users.form.name()}
           onChange={(e) => setUserName(e.target.value)}
           value={userName}
           style={{
@@ -124,7 +129,7 @@ const UserForm = ({ user, isEditing }: Props) => {
         />
         <Input
           type="text"
-          placeholder="Email"
+          placeholder={Messages.users.form.email()}
           onChange={(e) => setUserEmail(e.target.value)}
           value={userEmail}
           style={{
@@ -153,7 +158,7 @@ const UserForm = ({ user, isEditing }: Props) => {
       {profilePicture && (
         <div className={styles.selectedImages}>
           <img
-            alt="Data could not render."
+            alt={Messages.images.couldNotRender()}
             className={styles.selectedImage}
             src={URL.createObjectURL(profilePicture)}
           />
@@ -175,7 +180,7 @@ const UserForm = ({ user, isEditing }: Props) => {
           >
             <Input
               type="password"
-              placeholder="Password"
+              placeholder={Messages.users.form.password()}
               onChange={(e) => setUserPassword(e.target.value)}
               value={userPassword}
               style={{
@@ -185,7 +190,7 @@ const UserForm = ({ user, isEditing }: Props) => {
             />
             <Input
               type="password"
-              placeholder="Confirm Password"
+              placeholder={Messages.users.actions.passwordConfirm()}
               onChange={(e) => setUserPasswordConfirm(e.target.value)}
               value={userPasswordConfirm}
               style={{
@@ -202,7 +207,7 @@ const UserForm = ({ user, isEditing }: Props) => {
         type="submit"
         style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
       >
-        {isEditing ? "Save" : "Sign up"}
+        {isEditing ? Messages.actions.save() : Messages.users.actions.signUp()}
       </Button>
     </form>
   );

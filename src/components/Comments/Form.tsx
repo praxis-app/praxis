@@ -16,6 +16,8 @@ import {
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
 import styles from "../../styles/Comment/CommentsForm.module.scss";
+import Messages from "../../utils/messages";
+import { noCache } from "../../utils/apollo";
 
 interface Props {
   postId?: string;
@@ -47,9 +49,7 @@ const CommentsForm = ({
   const currentUserRes = useQuery(CURRENT_USER);
   const [getSavedImagesRes, savedImagesRes] = useLazyQuery(
     IMAGES_BY_COMMENT_ID,
-    {
-      fetchPolicy: "no-cache",
-    }
+    noCache
   );
 
   useEffect(() => {
@@ -145,7 +145,11 @@ const CommentsForm = ({
       <FormGroup>
         <Input
           type="text"
-          placeholder={submitLoading ? "Loading..." : "Leave a comment..."}
+          placeholder={
+            submitLoading
+              ? Messages.states.loading()
+              : Messages.comments.form.leaveAComment()
+          }
           value={body}
           multiline
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -180,7 +184,7 @@ const CommentsForm = ({
           return (
             <React.Fragment key={image.name}>
               <img
-                alt="Data could not render."
+                alt={Messages.images.couldNotRender()}
                 className={styles.selectedImage}
                 src={URL.createObjectURL(image)}
               />
@@ -198,7 +202,7 @@ const CommentsForm = ({
           return (
             <React.Fragment key={id}>
               <img
-                alt="Data could not render."
+                alt={Messages.images.couldNotRender()}
                 className={styles.selectedImage}
                 src={baseUrl + path}
               />
@@ -218,7 +222,9 @@ const CommentsForm = ({
         type="submit"
         style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
       >
-        {isEditing ? "Save" : "Comment"}
+        {isEditing
+          ? Messages.actions.save()
+          : Messages.comments.actions.comment()}
       </Button>
     </form>
   );

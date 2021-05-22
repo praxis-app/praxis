@@ -4,8 +4,6 @@ import {
   useMutation,
   useLazyQuery,
   useReactiveVar,
-  LazyQueryHookOptions,
-  OperationVariables,
 } from "@apollo/client";
 import {
   Card,
@@ -30,6 +28,8 @@ import CommentsForm from "../../components/Comments/Form";
 import CommentsList from "../../components/Comments/List";
 import VotesList from "../../components/Votes/List";
 import styles from "../../styles/Motion/Motion.module.scss";
+import Messages from "../../utils/messages";
+import { noCache } from "../../utils/apollo";
 
 const useStyles = makeStyles({
   root: {
@@ -52,9 +52,6 @@ const Show = () => {
   const [tab, setTab] = useState<number>(0);
   const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deleteComment] = useMutation(DELETE_COMMENT);
-  const noCache: LazyQueryHookOptions<any, OperationVariables> = {
-    fetchPolicy: "no-cache",
-  };
   const [getMotionRes, motionRes] = useLazyQuery(MOTION, noCache);
   const [getVotesRes, votesRes] = useLazyQuery(VOTES_BY_MOTION_ID, noCache);
   const [getCommentsRes, commentsRes] = useLazyQuery(
@@ -143,8 +140,14 @@ const Show = () => {
             }
             classes={{ indicator: classes.indicator }}
           >
-            <Tab label="Votes" style={{ color: "white" }} />
-            <Tab label="Comments" style={{ color: "white" }} />
+            <Tab
+              label={Messages.motions.tabs.votes()}
+              style={{ color: "white" }}
+            />
+            <Tab
+              label={Messages.motions.tabs.comments()}
+              style={{ color: "white" }}
+            />
           </Tabs>
         </Card>
 

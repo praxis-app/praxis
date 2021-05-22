@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import { GROUP_SUMMARY } from "../fragments";
 
 export const CREATE_GROUP = gql`
   mutation CreateGroupMutation(
@@ -12,14 +13,11 @@ export const CREATE_GROUP = gql`
       input: { name: $name, description: $description, coverPhoto: $coverPhoto }
     ) {
       group {
-        id
-        name
-        description
-        creatorId
-        createdAt
+        ...GroupSummary
       }
     }
   }
+  ${GROUP_SUMMARY}
 `;
 
 export const UPDATE_GROUP = gql`
@@ -34,14 +32,11 @@ export const UPDATE_GROUP = gql`
       input: { name: $name, description: $description, coverPhoto: $coverPhoto }
     ) {
       group {
-        id
-        name
-        description
-        creatorId
-        createdAt
+        ...GroupSummary
       }
     }
   }
+  ${GROUP_SUMMARY}
 `;
 
 export const DELETE_GROUP = gql`

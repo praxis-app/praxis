@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import jwtDecode from "jwt-decode";
 import { useQuery, useMutation } from "@apollo/client";
 import MenuIcon from "@material-ui/icons/Menu";
 
+import Messages from "../../utils/messages";
 import { setAuthToken } from "../../utils/auth";
 import { CURRENT_USER } from "../../apollo/client/queries";
 import { LOGOUT_USER, SET_CURRENT_USER } from "../../apollo/client/mutations";
@@ -48,6 +49,7 @@ const Header = () => {
 
   const logoutUserMutate = async () => {
     await logoutUser();
+    Router.push("/users/login");
   };
 
   return (
@@ -55,10 +57,10 @@ const Header = () => {
       <nav className={styles.navbar}>
         <div className={styles.navbarBrand}>
           {router.asPath === "/" ? (
-            <span onClick={() => router.reload()}>praxis</span>
+            <span onClick={() => router.reload()}>{Messages.brand()}</span>
           ) : (
             <Link href="/" passHref>
-              praxis
+              {Messages.brand()}
             </Link>
           )}
         </div>
@@ -69,13 +71,17 @@ const Header = () => {
         >
           <div className={styles.navbarItem}>
             <Link href="/users" passHref>
-              <a className={styles.navbarItemText}>Users</a>
+              <a className={styles.navbarItemText}>
+                {Messages.navigation.users()}
+              </a>
             </Link>
           </div>
 
           <div className={styles.navbarItem}>
             <Link href="/groups" passHref>
-              <a className={styles.navbarItemText}>Groups</a>
+              <a className={styles.navbarItemText}>
+                {Messages.navigation.groups()}
+              </a>
             </Link>
           </div>
 
@@ -87,28 +93,32 @@ const Header = () => {
                 </Link>
               </div>
               <div className={styles.navbarItem}>
-                <Link href="/users/login" passHref>
-                  <a
-                    onClick={() =>
-                      window.confirm("Are you sure you want to log out?") &&
-                      logoutUserMutate()
-                    }
-                  >
-                    <div className={styles.navbarItemText}>Log out</div>
+                <div
+                  onClick={() =>
+                    window.confirm(Messages.prompts.logOut()) &&
+                    logoutUserMutate()
+                  }
+                >
+                  <a className={styles.navbarItemText}>
+                    {Messages.users.actions.logOut()}
                   </a>
-                </Link>
+                </div>
               </div>
             </>
           ) : (
             <>
               <div className={styles.navbarItem}>
                 <Link href="/users/login" passHref>
-                  <a className={styles.navbarItemText}>Log in</a>
+                  <a className={styles.navbarItemText}>
+                    {Messages.users.actions.logIn()}
+                  </a>
                 </Link>
               </div>
               <div className={styles.navbarItem}>
                 <Link href="/users/signup" passHref>
-                  <a className={styles.navbarItemText}>Sign up</a>
+                  <a className={styles.navbarItemText}>
+                    {Messages.users.actions.signUp()}
+                  </a>
                 </Link>
               </div>
             </>
@@ -119,10 +129,7 @@ const Header = () => {
       <MenuIcon className={styles.menuButton} />
       <div
         className={styles.menuButtonTouchTarget}
-        onClick={() => {
-          setOpen(!open);
-          window.navigator.vibrate(1);
-        }}
+        onClick={() => setOpen(!open)}
       ></div>
     </>
   );

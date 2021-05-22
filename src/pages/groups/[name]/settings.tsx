@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLazyQuery, useQuery } from "@apollo/client";
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import Link from "next/link";
 
 import {
@@ -10,6 +10,8 @@ import {
 } from "../../../apollo/client/queries";
 import SettingsForm from "../../../components/Settings/Form";
 import { Settings as SettingsConstants } from "../../../constants";
+import Messages from "../../../utils/messages";
+import { isLoggedIn } from "../../../utils/auth";
 
 const Settings = () => {
   const { query } = useRouter();
@@ -49,6 +51,12 @@ const Settings = () => {
     if (settingsRes.data) setSettings(settingsRes.data.settingsByGroupId);
   }, [settingsRes.data]);
 
+  useEffect(() => {
+    if (currentUser && group && isLoggedIn(currentUser) && !ownGroup()) {
+      Router.push("/");
+    }
+  }, [currentUser, group]);
+
   const settingByName = (name: string): string => {
     const setting = settings.find((setting) => setting.name === name);
     return setting?.value || "";
@@ -69,15 +77,16 @@ const Settings = () => {
     );
   };
 
-  if (isNoAdmin())
-    return (
-      <>
-        This group has been irriversibly set to no-admin — All changes to
-        settings must now be made via motion ratification.
-      </>
-    );
+  const ownGroup = (): boolean => {
+    return group?.creatorId === currentUser?.id;
+  };
 
-  if (currentUser)
+  if (isLoggedIn(currentUser) && !ownGroup())
+    return <>{Messages.users.permissionDenied()}</>;
+
+  if (isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
+
+  if (isLoggedIn(currentUser))
     return (
       <>
         <Link href={`/groups/${query.name}`}>
@@ -86,7 +95,9 @@ const Settings = () => {
           </a>
         </Link>
 
-        <h5 style={{ color: "white" }}>Group Settings</h5>
+        <h5 style={{ color: "white" }}>
+          {Messages.groups.settings.nameWithGroup()}
+        </h5>
 
         <SettingsForm
           settings={settings}

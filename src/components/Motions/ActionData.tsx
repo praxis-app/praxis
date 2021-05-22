@@ -1,7 +1,8 @@
 import { Typography } from "@material-ui/core";
 import Link from "next/link";
-import { Motions } from "../../constants";
+import { Motions, Groups } from "../../constants";
 import baseUrl from "../../utils/baseUrl";
+import Messages from "../../utils/messages";
 
 interface TextProps {
   text: string;
@@ -20,7 +21,7 @@ const Text = ({ text, data }: TextProps) => {
           fontFamily: "Inter Bold",
         }}
       >
-        Proposed {text}:
+        {Messages.motions.groups.proposedAspect(text)}
       </span>
       {" " + data}
     </Typography>
@@ -30,10 +31,15 @@ const Text = ({ text, data }: TextProps) => {
 const ActionData = ({ motion }: { motion: Motion }) => {
   const { id, action, actionData } = motion;
   if (action === Motions.ActionTypes.ChangeName)
-    return <Text text="name" data={actionData.newGroupName} />;
+    return <Text text={Groups.Aspects.Name} data={actionData.newGroupName} />;
 
   if (action === Motions.ActionTypes.ChangeDescription)
-    return <Text text="description" data={actionData.newGroupDescription} />;
+    return (
+      <Text
+        text={Groups.Aspects.Description}
+        data={actionData.newGroupDescription}
+      />
+    );
 
   if (action === Motions.ActionTypes.ChangeImage)
     return (
@@ -45,13 +51,13 @@ const ActionData = ({ motion }: { motion: Motion }) => {
             marginBottom: 2,
           }}
         >
-          Proposed image:
+          {Messages.motions.groups.proposedAspect(Groups.Aspects.Image)}
         </div>
         <Link href={`/motions/${id}`}>
           <a>
             <img
               src={baseUrl + actionData.newGroupImagePath}
-              alt="Data could not render."
+              alt={Messages.images.couldNotRender()}
               style={{
                 width: "60%",
                 display: "block",

@@ -9,6 +9,7 @@ import { CURRENT_USER } from "../../apollo/client/queries";
 
 import styles from "../../styles/Group/GroupForm.module.scss";
 import { isLoggedIn } from "../../utils/auth";
+import Messages from "../../utils/messages";
 
 interface Props {
   group?: Group;
@@ -92,7 +93,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
         <FormGroup>
           <Input
             type="text"
-            placeholder="Name"
+            placeholder={Messages.groups.form.name()}
             onChange={(e) => setName(e.target.value)}
             value={name}
             style={{
@@ -102,7 +103,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
           />
           <Input
             type="text"
-            placeholder="Description"
+            placeholder={Messages.groups.form.description()}
             onChange={(e) => setDescription(e.target.value)}
             value={description}
             style={{
@@ -131,7 +132,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
         {coverPhoto && (
           <div className={styles.selectedImages}>
             <img
-              alt="Data could not render."
+              alt={Messages.images.couldNotRender()}
               className={styles.selectedImage}
               src={URL.createObjectURL(coverPhoto)}
             />
@@ -149,7 +150,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
           type="submit"
           style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
         >
-          {isEditing ? "Save" : "Create"}
+          {isEditing ? Messages.actions.save() : Messages.actions.create()}
         </Button>
       </form>
     );

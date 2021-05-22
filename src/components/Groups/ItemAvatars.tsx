@@ -2,7 +2,8 @@ import Link from "next/link";
 import UserAvatar from "../Users/Avatar";
 import GroupAvatar from "./Avatar";
 import styles from "../../styles/Group/ItemAvatars.module.scss";
-import { Motions } from "../../constants";
+import { Common, Motions } from "../../constants";
+import Messages from "../../utils/messages";
 
 interface Props {
   user: User;
@@ -28,8 +29,11 @@ const GroupItemAvatars = ({ user, group, motion }: Props) => {
           </Link>
           <Link href={motion ? `/motions/${motion.id}` : `/users/${user.name}`}>
             <a className={styles.postByLink}>
-              Group {motion ? "motion" : "post"} by {user.name}
-              {motion?.stage === Motions.Stages.Ratified && " · Ratified ✓"}
+              {Messages.groups.itemWithNameAndRatified(
+                motion ? Common.ModelNames.Motion : Common.ModelNames.Post,
+                user.name,
+                motion?.stage === Motions.Stages.Ratified
+              )}
             </a>
           </Link>
         </div>

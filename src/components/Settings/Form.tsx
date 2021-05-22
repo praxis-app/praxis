@@ -17,6 +17,7 @@ import { Votes, Settings } from "../../constants";
 import { CURRENT_USER } from "../../apollo/client/queries";
 import { UPDATE_SETTINGS } from "../../apollo/client/mutations";
 import styles from "../../styles/Setting/SettingsForm.module.scss";
+import Messages from "../../utils/messages";
 
 const useStyles = makeStyles(() => ({
   toggle: {
@@ -265,7 +266,7 @@ const SettingsForm = ({
               backgroundColor: "rgb(65, 65, 65)",
             }}
           >
-            {submitLoading ? "Saving..." : "Save"}
+            {submitLoading ? Messages.states.saving() : Messages.actions.save()}
           </Button>
         )}
       </form>

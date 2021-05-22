@@ -1,11 +1,8 @@
 import { GraphQLUpload } from "apollo-server-micro";
-import saveImage from "../../utils/saveImage";
+import { saveImage, deleteImage } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
-
-// fs, promisify, and unlink to delete img
-import fs from "fs";
-import { promisify } from "util";
-const unlinkAsync = promisify(fs.unlink);
+import Messages from "../../utils/messages";
+import { Common } from "../../constants";
 
 interface CommentInput {
   body: string;
@@ -120,7 +117,8 @@ const commentResolvers = {
         data: { body: body },
       });
 
-      if (!comment) throw new Error("Comment not found.");
+      if (!comment)
+        throw new Error(Messages.items.notFound(Common.TypeNames.Comment));
 
       await saveImages(comment, images);
 
@@ -133,7 +131,7 @@ const commentResolvers = {
       });
 
       for (const image of images) {
-        await unlinkAsync("public" + image.path);
+        await deleteImage(image.path);
         await prisma.image.delete({
           where: { id: image.id },
         });

@@ -6,6 +6,7 @@ import { USER } from "../../apollo/client/queries";
 
 import UserAvatar from "../Users/Avatar";
 import styles from "../../styles/Group/Member.module.scss";
+import Messages from "../../utils/messages";
 
 interface Props {
   userId: string;
@@ -32,7 +33,7 @@ const GroupMember = ({ userId }: Props) => {
         </div>
       </div>
     );
-  return <>Loading...</>;
+  return <>{Messages.states.loading()}</>;
 };
 
 export default GroupMember;

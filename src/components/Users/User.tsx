@@ -2,19 +2,19 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@apollo/client";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
-import { Card, CardActions, CardHeader, CardContent } from "@material-ui/core";
-import { Edit, Delete } from "@material-ui/icons";
+import { Card, CardHeader, CardContent } from "@material-ui/core";
 
 import FollowButton from "../Follows/FollowButton";
+import ItemMenu from "../Shared/ItemMenu";
 import UserAvatar from "./Avatar";
-
 import {
   FOLLOWERS,
   FOLLOWING,
   CURRENT_USER,
 } from "../../apollo/client/queries";
-
 import styles from "../../styles/User/User.module.scss";
+import Messages from "../../utils/messages";
+import { Common } from "../../constants";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -41,6 +41,7 @@ const Show = ({ user, deleteUser }: Props) => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [followers, setFollowers] = useState<Follow[]>([]);
   const [following, setFollowing] = useState<Follow[]>([]);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const followersRes = useQuery(FOLLOWERS, {
     variables: { userId: id },
     fetchPolicy: "no-cache",
@@ -50,7 +51,6 @@ const Show = ({ user, deleteUser }: Props) => {
     fetchPolicy: "no-cache",
   });
   const currentUserRes = useQuery(CURRENT_USER);
-
   const classes = useStyles();
   const date = new Date(parseInt(createdAt)).toLocaleDateString("en-US", {
     year: "numeric",
@@ -80,53 +80,43 @@ const Show = ({ user, deleteUser }: Props) => {
       <CardHeader
         avatar={user && <UserAvatar user={user} />}
         action={
-          <FollowButton
-            userId={id}
-            followers={followers}
-            setFollowers={setFollowers}
-          />
+          <>
+            <FollowButton
+              userId={id}
+              followers={followers}
+              setFollowers={setFollowers}
+            />
+            <ItemMenu
+              name={name}
+              itemId={id}
+              itemType={Common.ModelNames.User}
+              anchorEl={menuAnchorEl}
+              setAnchorEl={setMenuAnchorEl}
+              deleteItem={deleteUser}
+              ownItem={() => ownUser()}
+            />
+          </>
         }
         title={
           <Link href={`/users/${name}`}>
             <a>{name}</a>
           </Link>
         }
-        subheader={`Joined ${date}`}
+        subheader={Messages.users.joinedWithData(date)}
         classes={{ title: classes.title, subheader: classes.subheader }}
       />
 
       <CardContent>
         <Link href={`/users/${name}/followers`}>
-          <a>{followers?.length} Followers</a>
+          <a>{Messages.users.followers(followers.length)}</a>
         </Link>
 
         <span style={{ color: "white" }}> · </span>
 
         <Link href={`/users/${name}/following`}>
-          <a>{following?.length} Following</a>
+          <a>{Messages.users.following(following.length)}</a>
         </Link>
       </CardContent>
-
-      {ownUser() && (
-        <CardActions>
-          <Link href={`/users/${name}/edit`}>
-            <a>
-              <Edit /> Edit
-            </a>
-          </Link>
-
-          <Link href="/users">
-            <a
-              onClick={() =>
-                window.confirm("Are you sure you want to delete this user?") &&
-                deleteUser(id)
-              }
-            >
-              <Delete /> Delete
-            </a>
-          </Link>
-        </CardActions>
-      )}
     </Card>
   );
 };

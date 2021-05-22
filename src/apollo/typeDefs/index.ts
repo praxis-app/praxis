@@ -34,6 +34,7 @@ export const typeDefs = gql`
     userByName(name: String!): User!
     allUsers: [User]!
     homeFeed(userId: ID): [FeedItem]
+    profileFeed(name: String!): [FeedItem]
 
     userFollowers(userId: ID!): [Follow]!
     userFollowersByName(name: String!): [Follow]!
@@ -41,7 +42,6 @@ export const typeDefs = gql`
     userFollowingByName(name: String!): [Follow]!
 
     post(id: ID!): Post!
-    allPosts: [Post]!
     postsByUserName(name: String!): [Post]
     postsByGroupName(name: String!): [Post]
 
@@ -68,7 +68,6 @@ export const typeDefs = gql`
     groupMembers(groupId: ID!): [GroupMember]
     memberRequests(groupId: ID!): [MemberRequest]
 
-    allImages: [Image]!
     imagesByPostId(postId: ID!): [Image]
     imagesByMotionId(motionId: ID!): [Image]
     imagesByCommentId(commentId: ID!): [Image]
@@ -133,7 +132,6 @@ export const typeDefs = gql`
     approveMemberRequest(id: ID!): GroupMemberPayload!
     denyMemberRequest(id: ID!): MemberRequestPayload!
 
-    uploadImage(image: FileUpload!, userId: ID!): ImagePayload!
     deleteImage(id: ID!): Boolean!
 
     updateSettings(input: UpdateSettingsInput!): SettingsPayload!

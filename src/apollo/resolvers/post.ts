@@ -1,11 +1,8 @@
 import { GraphQLUpload } from "apollo-server-micro";
-import saveImage from "../../utils/saveImage";
+import { saveImage, deleteImage } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
-
-// fs, promisify, and unlink to delete img
-import fs from "fs";
-import { promisify } from "util";
-const unlinkAsync = promisify(fs.unlink);
+import Messages from "../../utils/messages";
+import { Common } from "../../constants";
 
 interface PostInput {
   body: string;
@@ -44,11 +41,6 @@ const postResolvers = {
         },
       });
       return post;
-    },
-
-    allPosts: async () => {
-      const posts = await prisma.post.findMany();
-      return posts;
     },
 
     postsByUserName: async (_: any, { name }: { name: string }) => {
@@ -117,7 +109,8 @@ const postResolvers = {
         data: { body: body },
       });
 
-      if (!post) throw new Error("Post not found.");
+      if (!post)
+        throw new Error(Messages.items.notFound(Common.TypeNames.Post));
 
       await saveImages(post, images);
 
@@ -130,7 +123,7 @@ const postResolvers = {
       });
 
       for (const image of images) {
-        await unlinkAsync("public" + image.path);
+        await deleteImage(image.path);
         await prisma.image.delete({
           where: { id: image.id },
         });

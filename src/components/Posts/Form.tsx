@@ -13,6 +13,7 @@ import {
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
 import styles from "../../styles/Post/PostForm.module.scss";
+import Messages from "../../utils/messages";
 
 interface Props {
   post?: Post;
@@ -127,7 +128,9 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
         <Input
           type="text"
           placeholder={
-            submitLoading ? "Loading..." : "Post something awesome..."
+            submitLoading
+              ? Messages.states.loading()
+              : Messages.posts.form.bodyPlaceholder()
           }
           value={body}
           multiline
@@ -163,7 +166,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
           return (
             <React.Fragment key={image.name}>
               <img
-                alt="Data could not render."
+                alt={Messages.images.couldNotRender()}
                 className={styles.selectedImage}
                 src={URL.createObjectURL(image)}
               />
@@ -181,7 +184,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
           return (
             <React.Fragment key={id}>
               <img
-                alt="Data could not render."
+                alt={Messages.images.couldNotRender()}
                 className={styles.selectedImage}
                 src={baseUrl + path}
               />
@@ -201,7 +204,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
         type="submit"
         style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
       >
-        {isEditing ? "Save" : "Post"}
+        {isEditing ? Messages.actions.save() : Messages.posts.actions.post()}
       </Button>
     </form>
   );

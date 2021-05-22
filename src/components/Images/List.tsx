@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import baseUrl from "../../utils/baseUrl";
+import Messages from "../../utils/messages";
 
 interface Props {
   images: Image[];
@@ -26,7 +27,7 @@ const List = ({ images }: Props) => {
               <a>
                 <img
                   src={baseUrl + image.path}
-                  alt="Data could not render."
+                  alt={Messages.images.couldNotRender()}
                   style={{
                     width: "100%",
                     display: "block",

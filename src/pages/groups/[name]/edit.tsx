@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  LazyQueryHookOptions,
-  OperationVariables,
-  useLazyQuery,
-  useQuery,
-} from "@apollo/client";
-import { useRouter } from "next/router";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import Router, { useRouter } from "next/router";
 import { CircularProgress } from "@material-ui/core";
 
 import {
@@ -16,6 +11,8 @@ import {
 import { isLoggedIn } from "../../../utils/auth";
 import GroupForm from "../../../components/Groups/Form";
 import { Settings } from "../../../constants";
+import { noCache } from "../../../utils/apollo";
+import Messages from "../../../utils/messages";
 
 const Edit = () => {
   const { query } = useRouter();
@@ -23,9 +20,6 @@ const Edit = () => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [groupSettings, setGroupSettings] = useState<Setting[]>([]);
   const currentUserRes = useQuery(CURRENT_USER);
-  const noCache: LazyQueryHookOptions<any, OperationVariables> = {
-    fetchPolicy: "no-cache",
-  };
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
   const [getGroupSettingsRes, groupSettingsRes] = useLazyQuery(
     SETTINGS_BY_GROUP_ID,
@@ -61,6 +55,12 @@ const Edit = () => {
     if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
   }, [currentUserRes.data]);
 
+  useEffect(() => {
+    if (currentUser && group && !ownGroup()) {
+      Router.push("/");
+    }
+  }, [currentUser, group]);
+
   const settingByName = (name: string): string => {
     const setting = groupSettings.find((setting) => setting.name === name);
     return setting?.value || "";
@@ -70,16 +70,14 @@ const Edit = () => {
     return settingByName(Settings.GroupSettings.NoAdmin) === Settings.States.On;
   };
 
-  if (isNoAdmin())
-    return (
-      <>
-        This group has been irriversibly set to no-admin — All changes to the
-        group must now be made via motion ratification.
-      </>
-    );
+  const ownGroup = (): boolean => {
+    return group?.creatorId === currentUser?.id;
+  };
 
-  if (isLoggedIn(currentUser) && group?.creatorId !== currentUser?.id)
-    return <></>;
+  if (isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
+
+  if (isLoggedIn(currentUser) && !ownGroup())
+    return <>{Messages.users.permissionDenied()}</>;
 
   return (
     <>

@@ -40,7 +40,7 @@ export const resolvers = {
         },
       };
       cache.writeData({ data });
-      localStorage.removeItem("jwtToken");
+      localStorage.removeItem(Common.LocalStorage.JwtToken);
       setAuthToken(false);
       return data;
     },

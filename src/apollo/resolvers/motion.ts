@@ -1,10 +1,10 @@
 import { GraphQLUpload } from "apollo-server-micro";
 import GraphQLJSON from "graphql-type-json";
-import { promisify } from "util";
-import fs from "fs";
 
-import saveImage from "../../utils/saveImage";
+import { saveImage, deleteImage } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
+import Messages from "../../utils/messages";
+import { Common } from "../../constants";
 
 interface MotionInput {
   body: string;
@@ -122,7 +122,8 @@ const motionResolvers = {
         data: { body, action },
       });
 
-      if (!motion) throw new Error("Motion not found.");
+      if (!motion)
+        throw new Error(Messages.items.notFound(Common.TypeNames.Motion));
 
       await saveImages(motion, images);
 
@@ -130,14 +131,12 @@ const motionResolvers = {
     },
 
     async deleteMotion(_: any, { id }: { id: string }) {
-      const unlinkAsync = promisify(fs.unlink);
-
       const images = await prisma.image.findMany({
         where: { motionId: parseInt(id) },
       });
 
       for (const image of images) {
-        await unlinkAsync("public" + image.path);
+        await deleteImage(image.path);
         await prisma.image.delete({
           where: { id: image.id },
         });

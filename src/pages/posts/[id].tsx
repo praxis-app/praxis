@@ -13,6 +13,7 @@ import { DELETE_POST, DELETE_COMMENT } from "../../apollo/client/mutations";
 import Post from "../../components/Posts/Post";
 import CommentsForm from "../../components/Comments/Form";
 import CommentsList from "../../components/Comments/List";
+import { noCache } from "../../utils/apollo";
 
 const Show = () => {
   const { query } = useRouter();
@@ -23,9 +24,10 @@ const Show = () => {
   const [deleteComment] = useMutation(DELETE_COMMENT);
 
   const [getPostRes, postRes] = useLazyQuery(POST);
-  const [getCommentsRes, commentsRes] = useLazyQuery(COMMENTS_BY_POST_ID, {
-    fetchPolicy: "no-cache",
-  });
+  const [getCommentsRes, commentsRes] = useLazyQuery(
+    COMMENTS_BY_POST_ID,
+    noCache
+  );
   const currentUserRes = useQuery(CURRENT_USER);
 
   useEffect(() => {

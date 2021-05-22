@@ -1,11 +1,9 @@
 import { GraphQLUpload } from "apollo-server-micro";
-import { promisify } from "util";
-import fs from "fs";
-
 import prisma from "../../utils/initPrisma";
-import saveImage from "../../utils/saveImage";
+import { saveImage, deleteImage } from "../../utils/image";
 import { inDev } from "../../utils/environment";
 import { Settings, Common } from "../../constants";
+import Messages from "../../utils/messages";
 
 interface GroupInput {
   name: string;
@@ -189,7 +187,8 @@ const groupResolvers = {
         data: { name, description },
       });
 
-      if (!group) throw new Error("Group not found.");
+      if (!group)
+        throw new Error(Messages.items.notFound(Common.TypeNames.Group));
 
       await saveCoverPhoto(group, coverPhoto);
 
@@ -197,7 +196,6 @@ const groupResolvers = {
     },
 
     async deleteGroup(_: any, { id }: { id: string }) {
-      const unlinkAsync = promisify(fs.unlink);
       const whereGroupId = {
         where: { groupId: parseInt(id) },
       };
@@ -206,7 +204,7 @@ const groupResolvers = {
       await prisma.motion.deleteMany(whereGroupId);
       const images = await prisma.image.findMany(whereGroupId);
       for (const image of images) {
-        await unlinkAsync("public" + image.path);
+        await deleteImage(image.path);
         await prisma.image.delete({
           where: { id: image.id },
         });

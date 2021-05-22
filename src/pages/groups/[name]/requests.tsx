@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  LazyQueryHookOptions,
-  OperationVariables,
-  useLazyQuery,
-  useQuery,
-} from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Card, createStyles, makeStyles } from "@material-ui/core";
@@ -20,6 +15,8 @@ import styles from "../../../styles/Group/Group.module.scss";
 import Request from "../../../components/Groups/Request";
 import { isLoggedIn } from "../../../utils/auth";
 import { Settings } from "../../../constants";
+import Messages from "../../../utils/messages";
+import { noCache } from "../../../utils/apollo";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -38,9 +35,6 @@ const Requests = () => {
   const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
   const currentUserRes = useQuery(CURRENT_USER);
-  const noCache: LazyQueryHookOptions<any, OperationVariables> = {
-    fetchPolicy: "no-cache",
-  };
   const [getMemberRequestsRes, memberRequestsRes] = useLazyQuery(
     MEMBER_REUQESTS,
     noCache
@@ -135,7 +129,7 @@ const Requests = () => {
         </Link>
 
         <h5 style={{ color: "white" }}>
-          {memberRequests.length} Member Requests
+          {Messages.groups.memberRequests(memberRequests.length)}
         </h5>
 
         <Card className={classes.root + " " + styles.card}>

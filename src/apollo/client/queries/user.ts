@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import { FEED_MOTION, FEED_POST, USER_SUMMARY } from "../fragments";
 
 export const CURRENT_USER = gql`
   {
@@ -14,56 +15,56 @@ export const CURRENT_USER = gql`
 export const USER = gql`
   query ($id: ID!) {
     user(id: $id) {
-      id
-      name
-      email
-      createdAt
+      ...UserSummary
     }
   }
+  ${USER_SUMMARY}
 `;
 
 export const USER_BY_NAME = gql`
   query ($name: String!) {
     userByName(name: $name) {
-      id
-      name
-      email
-      createdAt
+      ...UserSummary
     }
   }
+  ${USER_SUMMARY}
 `;
 
 export const USERS = gql`
   {
     allUsers {
-      id
-      name
-      email
-      createdAt
+      ...UserSummary
     }
   }
+  ${USER_SUMMARY}
 `;
 
 export const HOME_FEED = gql`
   query ($userId: ID) {
     homeFeed(userId: $userId) {
       ... on Post {
-        id
-        userId
-        postGroupId: groupId
-        body
-        createdAt
+        ...FeedPost
       }
       ... on Motion {
-        id
-        userId
-        motionGroupId: groupId
-        body
-        action
-        actionData
-        stage
-        createdAt
+        ...FeedMotion
       }
     }
   }
+  ${FEED_POST}
+  ${FEED_MOTION}
+`;
+
+export const PROFILE_FEED = gql`
+  query ($name: String!) {
+    profileFeed(name: $name) {
+      ... on Post {
+        ...FeedPost
+      }
+      ... on Motion {
+        ...FeedMotion
+      }
+    }
+  }
+  ${FEED_POST}
+  ${FEED_MOTION}
 `;

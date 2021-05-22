@@ -16,7 +16,8 @@ import { motionVar } from "../../apollo/client/localState";
 import { CURRENT_USER } from "../../apollo/client/queries";
 import { UPDATE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/VotesForm.module.scss";
-import { Motions } from "../../constants";
+import { Motions, Votes } from "../../constants";
+import Messages from "../../utils/messages";
 
 const color = { color: "rgb(170, 170, 170)" };
 const useStyles = makeStyles(() => ({
@@ -95,10 +96,10 @@ const VotesForm = ({ vote, votes, setVotes, onEditPage }: Props) => {
   };
 
   const placeholderText = () => {
-    if (submitLoading) return "Loading...";
-    return flipState === "up"
-      ? "Why do you support this motion? (optional)"
-      : "Why are you blocking this motion? (optional)";
+    if (submitLoading) return Messages.states.loading();
+    return flipState === Votes.FlipStates.Up
+      ? Messages.votes.form.bodyPlaceholder.support()
+      : Messages.votes.form.bodyPlaceholder.block();
   };
 
   return (
@@ -125,7 +126,7 @@ const VotesForm = ({ vote, votes, setVotes, onEditPage }: Props) => {
           <InputLabel
             style={{ color: "rgb(105, 105, 105)", fontFamily: "Inter" }}
           >
-            Motion type
+            {Messages.votes.form.supportOrBlock()}
           </InputLabel>
           <NativeSelect
             value={flipState}
@@ -135,8 +136,12 @@ const VotesForm = ({ vote, votes, setVotes, onEditPage }: Props) => {
             }}
           >
             <option aria-label="None" value="" />
-            <option value={"up"}>Support</option>
-            <option value={"down"}>Block</option>
+            <option value={Votes.FlipStates.Up}>
+              {Messages.votes.actions.support()}
+            </option>
+            <option value={Votes.FlipStates.Down}>
+              {Messages.votes.actions.block()}
+            </option>
           </NativeSelect>
         </FormControl>
       </FormGroup>
@@ -146,7 +151,7 @@ const VotesForm = ({ vote, votes, setVotes, onEditPage }: Props) => {
         type="submit"
         style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
       >
-        Update vote
+        {Messages.votes.actions.update()}
       </Button>
     </form>
   );
