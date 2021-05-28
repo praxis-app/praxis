@@ -1,12 +1,13 @@
 import { UserInputError } from "apollo-server-micro";
 import { GraphQLUpload } from "apollo-server-micro";
-import saveImage from "../../utils/saveImage";
+import { saveImage } from "../../utils/image";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import prisma from "../../utils/initPrisma";
 import { validateSignup, validateLogin } from "../../utils/validation";
 import { Common } from "../../constants";
+import Messages from "../../utils/messages";
 
 const saveProfilePicture = async (user: any, image: any) => {
   if (image) {
@@ -131,6 +132,29 @@ const userResolvers = {
       return feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
     },
 
+    profileFeed: async (_: any, { name }: { name: string }) => {
+      const feed: BackendFeedItem[] = [];
+      const userWithFeedItems = await prisma.user.findFirst({
+        where: {
+          name,
+        },
+        include: {
+          posts: true,
+          motions: true,
+        },
+      });
+      const posts = userWithFeedItems?.posts as BackendPost[];
+      const motions = userWithFeedItems?.motions as BackendMotion[];
+      posts.forEach((item) => {
+        item.__typename = Common.TypeNames.Post;
+      });
+      motions.forEach((item) => {
+        item.__typename = Common.TypeNames.Motion;
+      });
+      feed.push(...posts, ...motions);
+      return feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+    },
+
     user: async (_: any, { id }: { id: string }) => {
       const user = await prisma.user.findFirst({
         where: {
@@ -171,7 +195,7 @@ const userResolvers = {
       });
 
       if (userFound.length > 0) {
-        throw new UserInputError("Email already exists.");
+        throw new UserInputError(Messages.users.validation.emailExists());
       }
 
       const hash = await bcrypt.hash(password, 10);
@@ -193,7 +217,7 @@ const userResolvers = {
       };
 
       const token = jwt.sign(jwtPayload, process.env.JWT_KEY as string, {
-        expiresIn: "90d",
+        expiresIn: Common.EXPIRES_IN,
       });
 
       return { user, token };
@@ -213,7 +237,7 @@ const userResolvers = {
         },
       });
       if (!user) {
-        throw new UserInputError("No user exists with that email");
+        throw new UserInputError(Messages.users.validation.noUserWithEmail());
       }
 
       const passwordMatch = await bcrypt.compare(password, user.password);
@@ -225,12 +249,12 @@ const userResolvers = {
           email: user.email,
         };
         const token = jwt.sign(jwtPayload, process.env.JWT_KEY as string, {
-          expiresIn: "90d",
+          expiresIn: Common.EXPIRES_IN,
         });
 
         return { user, token };
       } else {
-        throw new UserInputError("Wrong password. Try again");
+        throw new UserInputError(Messages.users.validation.wrongPassword());
       }
     },
 
@@ -245,7 +269,8 @@ const userResolvers = {
         data: { email: email, name: name },
       });
 
-      if (!user) throw new Error("User not found.");
+      if (!user)
+        throw new Error(Messages.items.notFound(Common.TypeNames.User));
 
       await saveProfilePicture(user, profilePicture);
 
@@ -263,6 +288,30 @@ const userResolvers = {
     },
 
     async deleteUser(_: any, { id }: { id: string }) {
+      const whereUserId = {
+        where: {
+          userId: parseInt(id),
+        },
+      };
+      const models: any[] = [
+        prisma.motion,
+        prisma.vote,
+        prisma.post,
+        prisma.comment,
+        prisma.like,
+        prisma.follow,
+        prisma.memberRequest,
+        prisma.groupMember,
+        prisma.setting,
+      ];
+      for (const model of models) {
+        await model.deleteMany(whereUserId);
+      }
+      await prisma.follow.deleteMany({
+        where: {
+          followerId: parseInt(id),
+        },
+      });
       await prisma.user.delete({
         where: { id: parseInt(id) },
       });

@@ -7,6 +7,7 @@ import { Card, createStyles, makeStyles } from "@material-ui/core";
 import { GROUP_BY_NAME, GROUP_MEMBERS } from "../../../apollo/client/queries";
 import styles from "../../../styles/Group/Group.module.scss";
 import Member from "../../../components/Groups/Member";
+import Messages from "../../../utils/messages";
 const useStyles = makeStyles(() =>
   createStyles({
     root: {
@@ -58,7 +59,9 @@ const Members = () => {
         </a>
       </Link>
 
-      <h5 style={{ color: "white" }}>{groupMembers.length} Members</h5>
+      <h5 style={{ color: "white" }}>
+        {Messages.groups.members(groupMembers.length)}
+      </h5>
 
       <Card className={classes.root + " " + styles.card}>
         {groupMembers.map(({ userId }: GroupMember) => {

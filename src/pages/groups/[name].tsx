@@ -1,11 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  LazyQueryHookOptions,
-  OperationVariables,
-  useLazyQuery,
-  useMutation,
-  useQuery,
-} from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import {
   Tab,
@@ -37,6 +31,8 @@ import { isLoggedIn } from "../../utils/auth";
 import { feedItemsVar } from "../../apollo/client/localState";
 import styles from "../../styles/Group/ShowPage.module.scss";
 import { Common } from "../../constants";
+import Messages from "../../utils/messages";
+import { noCache } from "../../utils/apollo";
 
 const useStyles = makeStyles({
   root: {
@@ -59,9 +55,6 @@ const Show = () => {
   const [tab, setTab] = useState<number>(0);
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
-  const noCache: LazyQueryHookOptions<any, OperationVariables> = {
-    fetchPolicy: "no-cache",
-  };
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
   const [getFeedRes, feedRes] = useLazyQuery(GROUP_FEED, noCache);
   const currentUserRes = useQuery(CURRENT_USER);
@@ -189,9 +182,18 @@ const Show = () => {
             }
             classes={{ indicator: classes.indicator }}
           >
-            <Tab label="All" style={{ color: "white" }} />
-            <Tab label="Motions" style={{ color: "white" }} />
-            <Tab label="Posts" style={{ color: "white" }} />
+            <Tab
+              label={Messages.groups.tabs.all()}
+              style={{ color: "white" }}
+            />
+            <Tab
+              label={Messages.groups.tabs.motions()}
+              style={{ color: "white" }}
+            />
+            <Tab
+              label={Messages.groups.tabs.posts()}
+              style={{ color: "white" }}
+            />
           </Tabs>
         </Card>
 

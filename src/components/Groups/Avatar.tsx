@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import baseUrl from "../../utils/baseUrl";
 import { CURRENT_COVER_PHOTO } from "../../apollo/client/queries";
+import Messages from "../../utils/messages";
 
 interface Props {
   group: Group;
@@ -34,7 +35,7 @@ const GroupAvatar = ({ group }: Props) => {
           {coverPhoto ? (
             <img
               src={baseUrl + coverPhoto.path}
-              alt="Data could not render."
+              alt={Messages.images.couldNotRender()}
               style={{
                 width: "100%",
               }}

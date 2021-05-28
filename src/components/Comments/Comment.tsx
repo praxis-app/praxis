@@ -22,6 +22,8 @@ import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import { isLoggedIn } from "../../utils/auth";
 import styles from "../../styles/Comment/Comment.module.scss";
+import { Common } from "../../constants";
+import { noCache } from "../../utils/apollo";
 
 const useStyles = makeStyles({
   root: {
@@ -51,7 +53,7 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
   });
   const imagesRes = useQuery(IMAGES_BY_COMMENT_ID, {
     variables: { commentId: id },
-    fetchPolicy: "no-cache",
+    ...noCache,
   });
   const classes = useStyles();
 
@@ -86,7 +88,7 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
           action={
             <ItemMenu
               itemId={id}
-              itemType={"comment"}
+              itemType={Common.ModelNames.Comment}
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteComment}

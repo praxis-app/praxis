@@ -1,6 +1,7 @@
 import { GraphQLUpload } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
-import { Motions, Votes, Settings } from "../../constants";
+import { Motions, Votes, Settings, Common } from "../../constants";
+import Messages from "../../utils/messages";
 
 interface VoteInput {
   body: string;
@@ -183,7 +184,8 @@ const voteResolvers = {
         where: { id: parseInt(id) },
         data: { body, flipState },
       });
-      if (!vote) throw new Error("Vote not found.");
+      if (!vote)
+        throw new Error(Messages.items.notFound(Common.TypeNames.Vote));
 
       const motionRatified = evaluateMotion(vote.motionId as number);
       return { vote, motionRatified };
@@ -194,7 +196,8 @@ const voteResolvers = {
         where: { id: parseInt(id) },
         data: { verified: true },
       });
-      if (!vote) throw new Error("Vote not found.");
+      if (!vote)
+        throw new Error(Messages.items.notFound(Common.TypeNames.Vote));
 
       return { vote };
     },

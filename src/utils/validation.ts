@@ -1,5 +1,7 @@
 import validator from "validator";
 import isEmpty from "is-empty";
+import Messages from "./messages";
+import { Users } from "../constants/user";
 
 function validateLogin(data: SignInInput) {
   const errors: ValidationError = {};
@@ -10,19 +12,27 @@ function validateLogin(data: SignInInput) {
   /* eslint-enable no-param-reassign */
 
   if (!validator.isEmail(data.email)) {
-    errors.email = "Email is invalid";
+    errors.email = Messages.users.validation.invalidEmail();
   }
 
   if (validator.isEmpty(data.email)) {
-    errors.email = "Email is required";
+    errors.email = Messages.users.validation.emailRequired();
   }
 
-  if (!validator.isLength(data.password, { min: 4, max: 30 })) {
-    errors.password = "Password must have 4 and 30 chars";
+  if (
+    !validator.isLength(data.password, {
+      min: Users.PasswordValidation.Min,
+      max: Users.PasswordValidation.Max,
+    })
+  ) {
+    errors.password = Messages.users.validation.passwordLength(
+      Users.PasswordValidation.Min,
+      Users.PasswordValidation.Max
+    );
   }
 
   if (validator.isEmpty(data.password)) {
-    errors.password = "Password is required";
+    errors.password = Messages.users.validation.passwordRequired();
   }
 
   return {
@@ -43,40 +53,64 @@ function validateSignup(data: SignUpInput) {
     : "";
   /* eslint-enable no-param-reassign */
 
-  if (!validator.isLength(data.name, { min: 2, max: 30 })) {
-    errors.name = "Name must be between 2 and 30 chars";
+  if (
+    !validator.isLength(data.name, {
+      min: Users.NameValidation.Min,
+      max: Users.NameValidation.Max,
+    })
+  ) {
+    errors.name = Messages.users.validation.nameLength(
+      Users.NameValidation.Min,
+      Users.NameValidation.Max
+    );
   }
 
   if (validator.isEmpty(data.name)) {
-    errors.name = "Name field is required";
+    errors.name = Messages.users.validation.nameRequired();
   }
 
   if (!validator.isEmail(data.email)) {
-    errors.email = "Email is invalid";
+    errors.email = Messages.users.validation.invalidEmail();
   }
 
   if (validator.isEmpty(data.email)) {
-    errors.email = "Email is required";
+    errors.email = Messages.users.validation.emailRequired();
   }
 
-  if (!validator.isLength(data.password, { min: 4, max: 30 })) {
-    errors.password = "Password must have between 4 and 30 chars";
+  if (
+    !validator.isLength(data.password, {
+      min: Users.PasswordValidation.Min,
+      max: Users.PasswordValidation.Max,
+    })
+  ) {
+    errors.password = Messages.users.validation.passwordLength(
+      Users.PasswordValidation.Min,
+      Users.PasswordValidation.Max
+    );
   }
 
   if (validator.isEmpty(data.password)) {
-    errors.password = "Password is required";
+    errors.password = Messages.users.validation.passwordRequired();
   }
 
-  if (!validator.isLength(data.passwordConfirm, { min: 4, max: 30 })) {
-    errors.passwordConfirm = "Password must have between 4 and 30 chars";
+  if (
+    !validator.isLength(data.passwordConfirm, {
+      min: Users.PasswordValidation.Min,
+      max: Users.PasswordValidation.Max,
+    })
+  ) {
+    errors.passwordConfirm = Messages.users.validation.passwordLength(
+      Users.PasswordValidation.Min,
+      Users.PasswordValidation.Max
+    );
   }
 
   if (!validator.equals(data.password, data.passwordConfirm)) {
-    errors.passwordConfirm = "Password and Confirm Password must match";
+    errors.passwordConfirm = Messages.users.validation.passwordConfirmMatch();
   }
 
   if (validator.isEmpty(data.passwordConfirm)) {
-    errors.passwordConfirm = "Password is required";
+    errors.passwordConfirm = Messages.users.validation.passwordRequired();
   }
 
   return {

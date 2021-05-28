@@ -2,6 +2,7 @@
 // Prevents hot reloading in development from creating new instances of PrismaClient
 
 import { PrismaClient } from "@prisma/client";
+import { Common } from "../constants";
 
 declare global {
   namespace NodeJS {
@@ -13,7 +14,7 @@ declare global {
 
 let prisma: PrismaClient;
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === Common.Environments.Production) {
   prisma = new PrismaClient();
 } else {
   if (!global.prisma) {

@@ -1,16 +1,5 @@
 import gql from "graphql-tag";
 
-export const IMAGES = gql`
-  {
-    allImages {
-      id
-      userId
-      postId
-      path
-    }
-  }
-`;
-
 export const IMAGES_BY_POST_ID = gql`
   query ($postId: ID!) {
     imagesByPostId(postId: $postId) {

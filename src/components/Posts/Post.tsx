@@ -25,6 +25,7 @@ import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Post/Post.module.scss";
 import GroupItemAvatars from "../Groups/ItemAvatars";
+import { Common } from "../../constants";
 
 const useStyles = makeStyles({
   root: {
@@ -114,7 +115,7 @@ const Post = ({
           action={
             <ItemMenu
               itemId={id}
-              itemType={"post"}
+              itemType={Common.ModelNames.Post}
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deletePost}

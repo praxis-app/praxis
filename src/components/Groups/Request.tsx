@@ -8,6 +8,7 @@ import { APPROVE_MEMBER_REQUEST } from "../../apollo/client/mutations";
 
 import UserAvatar from "../Users/Avatar";
 import styles from "../../styles/Group/Member.module.scss";
+import Messages from "../../utils/messages";
 
 interface Props {
   memberRequest: MemberRequest;
@@ -58,7 +59,7 @@ const MemberRequest = ({
         </Button>
       </div>
     );
-  return <>Loading...</>;
+  return <>{Messages.states.loading()}</>;
 };
 
 export default MemberRequest;

@@ -30,7 +30,8 @@ import GroupItemAvatars from "../Groups/ItemAvatars";
 import VoteButtons from "../Votes/VoteButtons";
 import ActionData from "./ActionData";
 import styles from "../../styles/Motion/Motion.module.scss";
-import { Motions } from "../../constants";
+import { Common, Motions } from "../../constants";
+import { noCache } from "../../utils/apollo";
 
 const useStyles = makeStyles({
   root: {
@@ -60,13 +61,11 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   const userRes = useQuery(USER, {
     variables: { id: userId },
   });
-  const [getVotesRes, votesRes] = useLazyQuery(VOTES_BY_MOTION_ID, {
-    fetchPolicy: "no-cache",
-  });
+  const [getVotesRes, votesRes] = useLazyQuery(VOTES_BY_MOTION_ID, noCache);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP);
   const imagesRes = useQuery(IMAGES_BY_MOTION_ID, {
     variables: { motionId: id },
-    fetchPolicy: "no-cache",
+    ...noCache,
   });
   const classes = useStyles();
   const router = useRouter();
@@ -164,7 +163,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
           action={
             <ItemMenu
               itemId={id}
-              itemType={"motion"}
+              itemType={Common.ModelNames.Motion}
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteMotion}

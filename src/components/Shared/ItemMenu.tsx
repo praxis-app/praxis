@@ -1,6 +1,7 @@
 import { Edit, Delete, MoreVert } from "@material-ui/icons";
 import { Menu, MenuItem, IconButton } from "@material-ui/core";
 import Link from "next/link";
+import Messages from "../../utils/messages";
 
 interface Props {
   name?: string;
@@ -65,19 +66,18 @@ const ItemMenu = ({
                     transform: "rotateY(180deg)",
                   }}
                 />
-                Edit
+                {Messages.actions.edit()}
               </a>
             </Link>
           </MenuItem>
           <MenuItem
             onClick={() =>
-              window.confirm(
-                `Are you sure you want to delete this ${itemType}?`
-              ) && deleteItem(itemId)
+              window.confirm(Messages.prompts.deleteItem(itemType)) &&
+              deleteItem(itemId)
             }
           >
             <Delete fontSize="small" style={{ marginRight: "5" }} />
-            Delete
+            {Messages.actions.delete()}
           </MenuItem>
 
           {children}

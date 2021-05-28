@@ -3,13 +3,13 @@ import { useMutation, useQuery } from "@apollo/client";
 import { Button } from "@material-ui/core";
 
 import { CURRENT_USER } from "../../apollo/client/queries";
-
 import {
   CREATE_MEMBER_REQUEST,
   DELETE_MEMBER_REQUEST,
   DELETE_GROUP_MEMBER,
 } from "../../apollo/client/mutations";
 import { isLoggedIn } from "../../utils/auth";
+import Messages from "../../utils/messages";
 
 interface Props {
   group: Group;
@@ -94,7 +94,7 @@ const JoinButton = ({
         onClick={() => createMemberRequestMutation()}
         style={{ color: "white" }}
       >
-        Join
+        {Messages.groups.actions.join()}
       </Button>
     );
 
@@ -104,7 +104,7 @@ const JoinButton = ({
         onClick={() => deleteMemberRequestMutation()}
         style={{ color: "white" }}
       >
-        Cancel Request
+        {Messages.groups.actions.cancelRequest()}
       </Button>
     );
 
@@ -114,7 +114,7 @@ const JoinButton = ({
         onClick={() => deleteGroupMemberMutation()}
         style={{ color: "white" }}
       >
-        Leave
+        {Messages.groups.actions.leave()}
       </Button>
     );
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import baseUrl from "../../utils/baseUrl";
 import { CURRENT_PROFILE_PICTURE } from "../../apollo/client/queries";
+import Messages from "../../utils/messages";
 
 interface Props {
   user: User;
@@ -35,7 +36,7 @@ const UserAvatar = ({ user }: Props) => {
           {profilePicture ? (
             <img
               src={baseUrl + profilePicture.path}
-              alt="Data could not render."
+              alt={Messages.images.couldNotRender()}
               style={{
                 width: "100%",
               }}

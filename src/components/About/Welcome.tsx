@@ -13,6 +13,8 @@ import {
 import { Close } from "@material-ui/icons";
 
 import styles from "../../styles/Welcome/Welcome.module.scss";
+import Messages from "../../utils/messages";
+import { Common } from "../../constants";
 
 const useStyles = makeStyles({
   root: {
@@ -40,13 +42,13 @@ const WelcomeCard = ({ isLoggedIn }: Props) => {
 
   const onClose = () => {
     setClosed(true);
-    localStorage.setItem("welcomeCardClosed", "true");
+    localStorage.setItem(Common.LocalStorage.WelcomeCardClosed, "true");
   };
 
   const alreadyClosed = (): boolean => {
     return (
       typeof localStorage !== "undefined" &&
-      !!localStorage.getItem("welcomeCardClosed")
+      !!localStorage.getItem(Common.LocalStorage.WelcomeCardClosed)
     );
   };
 
@@ -55,7 +57,7 @@ const WelcomeCard = ({ isLoggedIn }: Props) => {
   return (
     <Card className={classes.root + " " + styles.card}>
       <CardHeader
-        title={"Welcome to Praxis"}
+        title={Messages.about.welcomeCard.welcome()}
         action={
           <IconButton onClick={() => onClose()}>
             <Close style={{ color: "white" }} fontSize="small" />
@@ -72,10 +74,7 @@ const WelcomeCard = ({ isLoggedIn }: Props) => {
             marginBottom: "12px",
           }}
         >
-          Praxis is an open source social networking site. Groups are the main
-          focus and come with a wide variety of voting features. Create a group
-          and set it to no-admin, allowing group members to create motions and
-          democratically decide on settings, name, theme, and more.
+          {Messages.about.welcomeCard.about()}
         </Typography>
 
         <Typography
@@ -84,7 +83,7 @@ const WelcomeCard = ({ isLoggedIn }: Props) => {
             fontFamily: "Inter",
           }}
         >
-          This project is still in development.
+          {Messages.about.welcomeCard.inDev()}
         </Typography>
       </CardContent>
 

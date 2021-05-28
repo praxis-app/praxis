@@ -6,6 +6,8 @@ import { USER, FOLLOWERS } from "../../apollo/client/queries";
 import UserAvatar from "../Users/Avatar";
 import FollowButton from "./FollowButton";
 import styles from "../../styles/Follow/Follow.module.scss";
+import Messages from "../../utils/messages";
+import { noCache } from "../../utils/apollo";
 
 interface Props {
   userId: string;
@@ -19,7 +21,7 @@ const Follow = ({ userId }: Props) => {
   });
   const followersRes = useQuery(FOLLOWERS, {
     variables: { userId: userId },
-    fetchPolicy: "no-cache",
+    ...noCache,
   });
 
   useEffect(() => {
@@ -44,7 +46,7 @@ const Follow = ({ userId }: Props) => {
         />
       </div>
     );
-  return <>Loading...</>;
+  return <>{Messages.states.loading()}</>;
 };
 
 export default Follow;

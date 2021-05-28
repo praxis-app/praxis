@@ -1,4 +1,5 @@
 import prisma from "../../utils/initPrisma";
+import Messages from "../../utils/messages";
 
 const memberResolvers = {
   Query: {
@@ -68,7 +69,7 @@ const memberResolvers = {
         where: { id: parseInt(id) },
       });
 
-      if (!request) throw new Error("Request not found.");
+      if (!request) throw new Error(Messages.groups.notFound.request());
 
       let groupMember;
       if (request.userId && request.groupId)
@@ -96,7 +97,7 @@ const memberResolvers = {
         data: { status: "denied" },
       });
 
-      if (!request) throw new Error("Request not found.");
+      if (!request) throw new Error(Messages.groups.notFound.request());
 
       return { request };
     },

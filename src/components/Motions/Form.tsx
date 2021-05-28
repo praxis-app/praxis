@@ -12,6 +12,7 @@ import {
 import Router from "next/router";
 import { RemoveCircle, Image } from "@material-ui/icons";
 
+import Messages from "../../utils/messages";
 import baseUrl from "../../utils/baseUrl";
 import { CURRENT_USER, IMAGES_BY_MOTION_ID } from "../../apollo/client/queries";
 import {
@@ -164,7 +165,11 @@ const MotionsForm = ({
       <FormGroup>
         <Input
           type="text"
-          placeholder={submitLoading ? "Loading..." : "Make a motion..."}
+          placeholder={
+            submitLoading
+              ? Messages.states.loading()
+              : Messages.motions.form.makeAMotion()
+          }
           value={body}
           multiline
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -182,7 +187,7 @@ const MotionsForm = ({
           <InputLabel
             style={{ color: "rgb(105, 105, 105)", fontFamily: "Inter" }}
           >
-            Motion type
+            {Messages.motions.form.motionType()}
           </InputLabel>
           <NativeSelect
             value={action}
@@ -192,18 +197,24 @@ const MotionsForm = ({
             }}
           >
             <option aria-label="None" value="" />
-            <option value={Motions.ActionTypes.PlanEvent}>Plan event</option>
-            <option value={Motions.ActionTypes.ChangeName}>Change name</option>
+            <option value={Motions.ActionTypes.PlanEvent}>
+              {Messages.motions.form.actionTypes.planEvent()}
+            </option>
+            <option value={Motions.ActionTypes.ChangeName}>
+              {Messages.motions.form.actionTypes.changeName()}
+            </option>
             <option value={Motions.ActionTypes.ChangeDescription}>
-              Change description
+              {Messages.motions.form.actionTypes.changeDescription()}
             </option>
             <option value={Motions.ActionTypes.ChangeImage}>
-              Change group image
+              {Messages.motions.form.actionTypes.changeImage()}
             </option>
             <option value={Motions.ActionTypes.ChangeSettings}>
-              Change group settings
+              {Messages.motions.form.actionTypes.changeSettings()}
             </option>
-            <option value={Motions.ActionTypes.Test}>Just a test</option>
+            <option value={Motions.ActionTypes.Test}>
+              {Messages.motions.form.actionTypes.test()}
+            </option>
           </NativeSelect>
         </FormControl>
 
@@ -232,7 +243,7 @@ const MotionsForm = ({
           return (
             <Fragment key={image.name}>
               <img
-                alt="Data could not render."
+                alt={Messages.images.couldNotRender()}
                 className={styles.selectedImage}
                 src={URL.createObjectURL(image)}
               />
@@ -250,7 +261,7 @@ const MotionsForm = ({
           return (
             <Fragment key={id}>
               <img
-                alt="Data could not render."
+                alt={Messages.images.couldNotRender()}
                 className={styles.selectedImage}
                 src={baseUrl + path}
               />
@@ -270,7 +281,9 @@ const MotionsForm = ({
         type="submit"
         style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
       >
-        {isEditing ? "Save" : "Motion"}
+        {isEditing
+          ? Messages.actions.save()
+          : Messages.motions.actions.motion()}
       </Button>
     </form>
   );

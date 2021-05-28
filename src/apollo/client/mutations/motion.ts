@@ -1,4 +1,5 @@
 import { gql } from "@apollo/client";
+import { MOTION_SUMMARY } from "../fragments";
 
 export const CREATE_MOTION = gql`
   mutation CreateMotionMutation(
@@ -20,17 +21,11 @@ export const CREATE_MOTION = gql`
       }
     ) {
       motion {
-        id
-        body
-        action
-        actionData
-        stage
-        userId
-        groupId
-        createdAt
+        ...MotionSummary
       }
     }
   }
+  ${MOTION_SUMMARY}
 `;
 
 export const UPDATE_MOTION = gql`
@@ -51,16 +46,11 @@ export const UPDATE_MOTION = gql`
       }
     ) {
       motion {
-        id
-        body
-        action
-        actionData
-        stage
-        userId
-        createdAt
+        ...MotionSummary
       }
     }
   }
+  ${MOTION_SUMMARY}
 `;
 
 export const DELETE_MOTION = gql`

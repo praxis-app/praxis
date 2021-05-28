@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  LazyQueryHookOptions,
-  OperationVariables,
-  useQuery,
-} from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import { Settings } from "@material-ui/icons";
 import {
@@ -27,7 +23,9 @@ import styles from "../../styles/Group/Group.module.scss";
 import GroupAvatar from "./Avatar";
 import JoinButton from "./JoinButton";
 import ItemMenu from "../Shared/ItemMenu";
-import { Settings as SettingsConstants } from "../../constants";
+import { Common, Settings as SettingsConstants } from "../../constants";
+import Messages from "../../utils/messages";
+import { noCache } from "../../utils/apollo";
 
 const useStyles = makeStyles({
   root: {
@@ -50,9 +48,6 @@ const Group = ({ group, deleteGroup }: Props) => {
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
   const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const noCache: LazyQueryHookOptions<any, OperationVariables> = {
-    fetchPolicy: "no-cache",
-  };
   const memberVariables = {
     variables: { groupId: group.id },
     ...noCache,
@@ -131,7 +126,7 @@ const Group = ({ group, deleteGroup }: Props) => {
               <ItemMenu
                 itemId={id}
                 name={group.name}
-                itemType={"group"}
+                itemType={Common.ModelNames.Group}
                 anchorEl={menuAnchorEl}
                 setAnchorEl={setMenuAnchorEl}
                 deleteItem={deleteGroup}
@@ -146,7 +141,7 @@ const Group = ({ group, deleteGroup }: Props) => {
                           marginRight: "5",
                         }}
                       />
-                      Settings
+                      {Messages.groups.settings.name()}
                     </MenuItem>
                   </a>
                 </Link>
@@ -170,7 +165,7 @@ const Group = ({ group, deleteGroup }: Props) => {
             </Typography>
 
             <Link href={`/groups/${name}/members`}>
-              <a>{groupMembers.length} Members</a>
+              <a>{Messages.groups.members(groupMembers.length)}</a>
             </Link>
 
             {canSeeRequests() && (
@@ -178,7 +173,7 @@ const Group = ({ group, deleteGroup }: Props) => {
                 <span style={{ color: "white" }}> · </span>
 
                 <Link href={`/groups/${name}/requests`}>
-                  <a>{memberRequests.length} Requests</a>
+                  <a>{Messages.groups.requests(memberRequests.length)}</a>
                 </Link>
               </>
             )}

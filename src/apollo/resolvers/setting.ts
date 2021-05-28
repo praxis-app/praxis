@@ -1,5 +1,7 @@
 import { GraphQLUpload } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
+import Messages from "../../utils/messages";
+import { Common } from "../../constants";
 
 interface SettingInput {
   settings: Setting[];
@@ -40,7 +42,8 @@ const settingResolvers = {
           data: { value },
         });
 
-        if (!updatedSetting) throw new Error("Setting not found.");
+        if (!updatedSetting)
+          throw new Error(Messages.items.notFound(Common.TypeNames.Setting));
 
         updatedSettings = [...updatedSettings, updatedSetting];
       }

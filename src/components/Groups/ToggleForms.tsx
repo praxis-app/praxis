@@ -7,6 +7,7 @@ import { makeStyles, withStyles } from "@material-ui/core";
 import PostsForm from "../../components/Posts/Form";
 import MotionsForm from "../../components/Motions/Form";
 import styles from "../../styles/Group/ToggleForms.module.scss";
+import { Common } from "../../constants";
 
 const useStyles = makeStyles({
   selected: {
@@ -37,7 +38,7 @@ const ToggleForms = ({
   setPosts,
   group,
 }: Props) => {
-  const [toggle, setToggle] = useState<string>("post");
+  const [toggle, setToggle] = useState<string>(Common.ModelNames.Post);
   const classes = useStyles();
 
   const handleToggle = (
@@ -57,21 +58,30 @@ const ToggleForms = ({
           onChange={handleToggle}
           style={{ background: "rgb(65, 65, 65)", float: "right" }}
         >
-          <ToggleButton value="post" color="secondary">
-            <PostAdd style={toggle === "post" ? { color: "white" } : {}} />
+          <ToggleButton value={Common.ModelNames.Post} color="secondary">
+            <PostAdd
+              style={
+                toggle === Common.ModelNames.Post ? { color: "white" } : {}
+              }
+            />
           </ToggleButton>
-          <ToggleButton value="motion" classes={{ selected: classes.selected }}>
+          <ToggleButton
+            value={Common.ModelNames.Motion}
+            classes={{ selected: classes.selected }}
+          >
             <EmojiPeople
-              style={toggle === "motion" ? { color: "white" } : {}}
+              style={
+                toggle === Common.ModelNames.Motion ? { color: "white" } : {}
+              }
             />
           </ToggleButton>
         </StyledToggleButtonGroup>
       </div>
 
-      {toggle === "post" && (
+      {toggle === Common.ModelNames.Post && (
         <PostsForm posts={posts} setPosts={setPosts} group={group} />
       )}
-      {toggle === "motion" && (
+      {toggle === Common.ModelNames.Motion && (
         <MotionsForm motions={motions} setMotions={setMotions} group={group} />
       )}
     </>

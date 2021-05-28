@@ -6,6 +6,7 @@ export const COMMENT = gql`
       id
       userId
       postId
+      motionId
       body
       createdAt
     }
