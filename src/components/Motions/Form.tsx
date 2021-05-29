@@ -100,7 +100,6 @@ const MotionsForm = ({
               images,
             },
           });
-          // Redirect to Show Motion after update
           Router.push(`/motions/${motion.id}`);
         } catch (err) {
           alert(err);
@@ -136,15 +135,12 @@ const MotionsForm = ({
   };
 
   const deleteImageHandler = async (id: string) => {
-    try {
-      await deleteImage({
-        variables: {
-          id,
-        },
-      });
-      // Removes deleted image from state
-      setSavedImages(savedImages.filter((image: Image) => image.id !== id));
-    } catch {}
+    await deleteImage({
+      variables: {
+        id,
+      },
+    });
+    setSavedImages(savedImages.filter((image: Image) => image.id !== id));
   };
 
   const removeSelectedImage = (imageName: string) => {

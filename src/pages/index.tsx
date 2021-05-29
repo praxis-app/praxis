@@ -35,35 +35,31 @@ const Home = () => {
   }, [currentUserRes.data]);
 
   const deletePostHandler = async (id: string) => {
-    try {
-      await deletePost({
-        variables: {
-          id,
-        },
-      });
-      feedItemsVar(
-        feed.filter(
-          (post: FeedItem) =>
-            post.id !== id || post.__typename !== Common.TypeNames.Post
-        )
-      );
-    } catch {}
+    await deletePost({
+      variables: {
+        id,
+      },
+    });
+    feedItemsVar(
+      feed.filter(
+        (post: FeedItem) =>
+          post.id !== id || post.__typename !== Common.TypeNames.Post
+      )
+    );
   };
 
   const deleteMotionHandler = async (id: string) => {
-    try {
-      await deleteMotion({
-        variables: {
-          id,
-        },
-      });
-      feedItemsVar(
-        feed.filter(
-          (motion: FeedItem) =>
-            motion.id !== id || motion.__typename !== Common.TypeNames.Motion
-        )
-      );
-    } catch {}
+    await deleteMotion({
+      variables: {
+        id,
+      },
+    });
+    feedItemsVar(
+      feed.filter(
+        (motion: FeedItem) =>
+          motion.id !== id || motion.__typename !== Common.TypeNames.Motion
+      )
+    );
   };
 
   return (

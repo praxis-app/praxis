@@ -18,6 +18,7 @@ import {
 import styles from "../../styles/Comment/CommentsForm.module.scss";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
+import { isLoggedIn } from "../../utils/auth";
 
 interface Props {
   postId?: string;
@@ -40,7 +41,8 @@ const CommentsForm = ({
   const [savedImages, setSavedImages] = useState<Image[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [body, setBody] = useState<string>("");
-  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const imagesInput = React.useRef<HTMLInputElement>(null);
 
   const [createComment] = useMutation(CREATE_COMMENT);
@@ -68,13 +70,17 @@ const CommentsForm = ({
     );
   }, [savedImagesRes.data]);
 
+  useEffect(() => {
+    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
+  }, [currentUserRes.data]);
+
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (currentUserRes.data) {
+    if (isLoggedIn(currentUser)) {
       setSubmitLoading(true);
-      if (isEditing) {
-        try {
+      try {
+        if (isEditing) {
           setBody("");
           await updateComment({
             variables: {
@@ -83,14 +89,9 @@ const CommentsForm = ({
               images: images,
             },
           });
-          // Redirect to Show Item after update
           if (comment?.postId) Router.push(`/posts/${comment.postId}`);
           if (comment?.motionId) Router.push(`/motions/${comment.motionId}`);
-        } catch (err) {
-          alert(err);
-        }
-      } else {
-        try {
+        } else {
           setBody("");
           setImages([]);
           e.target.reset();
@@ -111,24 +112,21 @@ const CommentsForm = ({
           });
           if (comments && setComments)
             setComments([...comments, data.createComment.comment]);
-        } catch (err) {
-          alert(err);
         }
+      } catch (err) {
+        alert(err);
       }
       setSubmitLoading(false);
     }
   };
 
   const deleteImageHandler = async (id: string) => {
-    try {
-      await deleteImage({
-        variables: {
-          id,
-        },
-      });
-      // Removes deleted image from state
-      setSavedImages(savedImages.filter((image) => image.id !== id));
-    } catch {}
+    await deleteImage({
+      variables: {
+        id,
+      },
+    });
+    setSavedImages(savedImages.filter((image) => image.id !== id));
   };
 
   const removeSelectedImage = (imageName: string) => {

@@ -117,14 +117,12 @@ const Vote = ({
   };
 
   const deleteVoteHandler = async (id: string) => {
-    try {
-      await deleteVote({
-        variables: {
-          id,
-        },
-      });
-      setVotes(votes.filter((vote: Vote) => vote.id !== id));
-    } catch {}
+    await deleteVote({
+      variables: {
+        id,
+      },
+    });
+    setVotes(votes.filter((vote: Vote) => vote.id !== id));
   };
 
   const verifyVoteMutation = async () => {

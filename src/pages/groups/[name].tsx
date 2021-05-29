@@ -128,38 +128,30 @@ const Show = () => {
   }, [group]);
 
   const deleteGroupHandler = async (groupId: string) => {
-    try {
-      await deleteGroup({
-        variables: {
-          id: groupId,
-        },
-      });
-      Router.push("/groups");
-    } catch {}
+    await deleteGroup({
+      variables: {
+        id: groupId,
+      },
+    });
+    Router.push("/groups");
   };
 
   const deletePostHandler = async (id: string) => {
-    try {
-      await deletePost({
-        variables: {
-          id: id,
-        },
-      });
-      // Removes deleted post from state
-      setPosts(posts.filter((post: Post) => post.id !== id));
-    } catch {}
+    await deletePost({
+      variables: {
+        id: id,
+      },
+    });
+    setPosts(posts.filter((post: Post) => post.id !== id));
   };
 
   const deleteMotionHandler = async (id: string) => {
-    try {
-      await deleteMotion({
-        variables: {
-          id: id,
-        },
-      });
-      // Removes deleted motion from state
-      setMotions(motions.filter((motion: Motion) => motion.id !== id));
-    } catch {}
+    await deleteMotion({
+      variables: {
+        id: id,
+      },
+    });
+    setMotions(motions.filter((motion: Motion) => motion.id !== id));
   };
 
   const inThisGroup = (): boolean => {

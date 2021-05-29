@@ -70,7 +70,6 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
               images: images,
             },
           });
-          // Redirect to Show Post after update
           Router.push(`/posts/${post.id}`);
         } catch (err) {
           alert(err);
@@ -98,15 +97,12 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   };
 
   const deleteImageHandler = async (id: string) => {
-    try {
-      await deleteImage({
-        variables: {
-          id,
-        },
-      });
-      // Removes deleted image from state
-      setSavedImages(savedImages.filter((image: Image) => image.id !== id));
-    } catch {}
+    await deleteImage({
+      variables: {
+        id,
+      },
+    });
+    setSavedImages(savedImages.filter((image: Image) => image.id !== id));
   };
 
   const removeSelectedImage = (imageName: string) => {
