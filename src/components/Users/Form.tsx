@@ -46,7 +46,6 @@ const UserForm = ({ user, isEditing }: Props) => {
     e.preventDefault();
 
     if (isEditing && user) {
-      // Update a user
       try {
         if (currentUserRes.data) {
           const { data } = await updateUser({
@@ -77,9 +76,10 @@ const UserForm = ({ user, isEditing }: Props) => {
 
           Router.push(`/users/${data.updateUser.user.name}`);
         }
-      } catch {}
+      } catch (err) {
+        alert(err);
+      }
     } else {
-      // Sign up new user
       try {
         const { data } = await signUp({
           variables: {

@@ -81,7 +81,9 @@ const SettingsForm = ({
       const newSettings = data.updateSettings.settings;
       if (setUnsavedSettings) setUnsavedSettings(newSettings);
       setSettings(newSettings);
-    } catch {}
+    } catch (err) {
+      alert(err);
+    }
     setSubmitLoading(false);
   };
 

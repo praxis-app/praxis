@@ -54,25 +54,21 @@ const Show = () => {
   }, [currentUserRes.data]);
 
   const deletePostHandler = async (id: string) => {
-    try {
-      await deletePost({
-        variables: {
-          id,
-        },
-      });
-      Router.push("/");
-    } catch {}
+    await deletePost({
+      variables: {
+        id,
+      },
+    });
+    Router.push("/");
   };
 
   const deleteCommentHandler = async (id: string) => {
-    try {
-      await deleteComment({
-        variables: {
-          id,
-        },
-      });
-      setComments(comments.filter((comment: Comment) => comment.id !== id));
-    } catch {}
+    await deleteComment({
+      variables: {
+        id,
+      },
+    });
+    setComments(comments.filter((comment: Comment) => comment.id !== id));
   };
 
   if (post)

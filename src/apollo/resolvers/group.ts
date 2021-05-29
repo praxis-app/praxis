@@ -109,10 +109,7 @@ const groupResolvers = {
           name,
         },
       });
-
       await saveCoverPhoto(group, coverPhoto);
-
-      // Adds creator as member
       await prisma.groupMember.create({
         data: {
           user: {
@@ -199,7 +196,6 @@ const groupResolvers = {
       const whereGroupId = {
         where: { groupId: parseInt(id) },
       };
-      // Deletes dependents
       await prisma.post.deleteMany(whereGroupId);
       await prisma.motion.deleteMany(whereGroupId);
       const images = await prisma.image.findMany(whereGroupId);

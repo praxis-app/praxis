@@ -43,9 +43,8 @@ const GroupForm = ({ group, isEditing }: Props) => {
     e.preventDefault();
 
     if (currentUser) {
-      if (isEditing && group) {
-        // Update a group
-        try {
+      try {
+        if (isEditing && group) {
           const { data } = await updateGroup({
             variables: {
               id: group.id,
@@ -56,10 +55,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
           });
 
           Router.push(`/groups/${data.updateGroup.group.name}`);
-        } catch {}
-      } else {
-        // Create a new group
-        try {
+        } else {
           e.target.reset();
           setName("");
           setDescription("");
@@ -75,9 +71,9 @@ const GroupForm = ({ group, isEditing }: Props) => {
           });
 
           Router.push(`/groups/${data.createGroup.group.name}`);
-        } catch (err) {
-          alert(err);
         }
+      } catch (err) {
+        alert(err);
       }
     }
   };

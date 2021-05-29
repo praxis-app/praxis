@@ -57,7 +57,9 @@ const Header = () => {
       <nav className={styles.navbar}>
         <div className={styles.navbarBrand}>
           {router.asPath === "/" ? (
-            <span onClick={() => router.reload()}>{Messages.brand()}</span>
+            <span onClick={() => router.reload()} role="button" tabIndex={0}>
+              {Messages.brand()}
+            </span>
           ) : (
             <Link href="/" passHref>
               {Messages.brand()}
@@ -98,6 +100,8 @@ const Header = () => {
                     window.confirm(Messages.prompts.logOut()) &&
                     logoutUserMutate()
                   }
+                  role="button"
+                  tabIndex={0}
                 >
                   <a className={styles.navbarItemText}>
                     {Messages.users.actions.logOut()}
@@ -130,6 +134,8 @@ const Header = () => {
       <div
         className={styles.menuButtonTouchTarget}
         onClick={() => setOpen(!open)}
+        role="button"
+        tabIndex={-1}
       ></div>
     </>
   );

@@ -19,16 +19,13 @@ const Index = () => {
   }, [data]);
 
   const deleteGroupHandler = async (groupId: string) => {
-    try {
-      await deleteGroup({
-        variables: {
-          id: groupId,
-        },
-      });
-      // Removes deleted group from state
-      if (groups)
-        setGroups(groups.filter((group: Group) => group.id !== groupId));
-    } catch {}
+    await deleteGroup({
+      variables: {
+        id: groupId,
+      },
+    });
+    if (groups)
+      setGroups(groups.filter((group: Group) => group.id !== groupId));
   };
 
   return (
