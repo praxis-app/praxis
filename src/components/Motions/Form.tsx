@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, useEffect, useRef, Fragment } from "react";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   FormGroup,
   Input,
@@ -14,7 +14,7 @@ import { RemoveCircle, Image } from "@material-ui/icons";
 
 import Messages from "../../utils/messages";
 import baseUrl from "../../utils/baseUrl";
-import { CURRENT_USER, IMAGES_BY_MOTION_ID } from "../../apollo/client/queries";
+import { IMAGES_BY_MOTION_ID } from "../../apollo/client/queries";
 import {
   CREATE_MOTION,
   UPDATE_MOTION,
@@ -23,6 +23,7 @@ import {
 import { Motions } from "../../constants";
 import ActionFields from "./ActionFields";
 import styles from "../../styles/Motion/MotionForm.module.scss";
+import { useCurrentUser } from "../../hooks";
 
 const color = { color: "rgb(170, 170, 170)" };
 const useStyles = makeStyles(() => ({
@@ -45,6 +46,7 @@ const MotionsForm = ({
   setMotions,
   group,
 }: Props) => {
+  const currentUser = useCurrentUser();
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
   const [savedImages, setSavedImages] = useState<Image[]>([]);
   const [images, setImages] = useState<File[]>([]);
@@ -57,7 +59,6 @@ const MotionsForm = ({
   const [createMotion] = useMutation(CREATE_MOTION);
   const [updateMotion] = useMutation(UPDATE_MOTION);
   const [deleteImage] = useMutation(DELETE_IMAGE);
-  const currentUserRes = useQuery(CURRENT_USER);
   const [getSavedImagesRes, savedImagesRes] = useLazyQuery(
     IMAGES_BY_MOTION_ID,
     {
@@ -86,7 +87,7 @@ const MotionsForm = ({
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (currentUserRes.data) {
+    if (currentUser) {
       setSubmitLoading(true);
       if (isEditing && motion) {
         try {
@@ -117,7 +118,7 @@ const MotionsForm = ({
               action,
               actionData,
               groupId: group?.id,
-              userId: currentUserRes.data.user.id,
+              userId: currentUser.id,
             },
           });
           if (motions && setMotions)

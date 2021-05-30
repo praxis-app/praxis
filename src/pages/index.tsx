@@ -1,18 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useQuery, useMutation, useReactiveVar } from "@apollo/client";
 
 import PostForm from "../components/Posts/Form";
 import Feed from "../components/Shared/Feed";
-import { CURRENT_USER, HOME_FEED } from "../apollo/client/queries";
+import { HOME_FEED } from "../apollo/client/queries";
 import { DELETE_POST, DELETE_MOTION } from "../apollo/client/mutations";
 import { isLoggedIn } from "../utils/auth";
 import WelcomeCard from "../components/About/Welcome";
 import { Common } from "../constants";
 import { feedItemsVar } from "../apollo/client/localState";
+import { useCurrentUser } from "../hooks";
 
 const Home = () => {
+  const currentUser = useCurrentUser();
   const feed = useReactiveVar(feedItemsVar);
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deletePost] = useMutation(DELETE_POST);
   const feedRes = useQuery(HOME_FEED, {
@@ -21,7 +22,6 @@ const Home = () => {
     },
     fetchPolicy: "no-cache",
   });
-  const currentUserRes = useQuery(CURRENT_USER);
 
   useEffect(() => {
     if (feedRes.data) feedItemsVar(feedRes.data.homeFeed);
@@ -29,10 +29,6 @@ const Home = () => {
       feedItemsVar([]);
     };
   }, [feedRes.data]);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   const deletePostHandler = async (id: string) => {
     await deletePost({

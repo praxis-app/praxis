@@ -1,26 +1,16 @@
-import { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
 import Link from "next/link";
-
-import { USER } from "../../apollo/client/queries";
 
 import UserAvatar from "../Users/Avatar";
 import styles from "../../styles/Group/Member.module.scss";
 import Messages from "../../utils/messages";
+import { useUserById } from "../../hooks";
 
 interface Props {
   userId: string;
 }
 
 const GroupMember = ({ userId }: Props) => {
-  const [user, setUser] = useState<User>();
-  const userRes = useQuery(USER, {
-    variables: { id: userId },
-  });
-
-  useEffect(() => {
-    if (userRes.data) setUser(userRes.data.user);
-  }, [userRes.data]);
+  const user = useUserById(userId);
 
   if (user)
     return (

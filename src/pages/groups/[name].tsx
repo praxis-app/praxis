@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import {
   Tab,
@@ -20,7 +20,6 @@ import {
   GROUP_BY_NAME,
   GROUP_FEED,
   GROUP_MEMBERS,
-  CURRENT_USER,
 } from "../../apollo/client/queries";
 import {
   DELETE_GROUP,
@@ -33,6 +32,7 @@ import styles from "../../styles/Group/ShowPage.module.scss";
 import { Common } from "../../constants";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
+import { useCurrentUser } from "../../hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -48,16 +48,15 @@ const useStyles = makeStyles({
 
 const Show = () => {
   const { query } = useRouter();
+  const currentUser = useCurrentUser();
   const [group, setGroup] = useState<Group>();
   const [posts, setPosts] = useState<Post[]>([]);
   const [motions, setMotions] = useState<Motion[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [tab, setTab] = useState<number>(0);
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
   const [getFeedRes, feedRes] = useLazyQuery(GROUP_FEED, noCache);
-  const currentUserRes = useQuery(CURRENT_USER);
   const [getGroupMembersRes, groupMembersRes] = useLazyQuery(
     GROUP_MEMBERS,
     noCache
@@ -100,10 +99,6 @@ const Show = () => {
       feedItemsVar([]);
     };
   }, [feedRes.data]);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   useEffect(() => {
     if (groupMembersRes.data)

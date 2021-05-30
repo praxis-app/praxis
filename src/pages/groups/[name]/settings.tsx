@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import Link from "next/link";
 
 import {
-  CURRENT_USER,
   GROUP_BY_NAME,
   SETTINGS_BY_GROUP_ID,
 } from "../../../apollo/client/queries";
@@ -12,14 +11,14 @@ import SettingsForm from "../../../components/Settings/Form";
 import { Settings as SettingsConstants } from "../../../constants";
 import Messages from "../../../utils/messages";
 import { isLoggedIn } from "../../../utils/auth";
+import { useCurrentUser } from "../../../hooks";
 
 const Settings = () => {
   const { query } = useRouter();
+  const currentUser = useCurrentUser();
   const [group, setGroup] = useState<Group>();
   const [settings, setSettings] = useState<Setting[]>([]);
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [unsavedSettings, setUnsavedSettings] = useState<Setting[]>([]);
-  const currentUserRes = useQuery(CURRENT_USER);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
   const [getSettingsRes, settingsRes] = useLazyQuery(SETTINGS_BY_GROUP_ID, {
     fetchPolicy: "no-cache",
@@ -42,10 +41,6 @@ const Settings = () => {
   useEffect(() => {
     if (groupRes.data) setGroup(groupRes.data.groupByName);
   }, [groupRes.data]);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   useEffect(() => {
     if (settingsRes.data) setSettings(settingsRes.data.settingsByGroupId);

@@ -15,16 +15,12 @@ import { CheckCircle } from "@material-ui/icons";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import { isLoggedIn } from "../../utils/auth";
-import {
-  USER,
-  MOTION,
-  CURRENT_USER,
-  SETTINGS_BY_GROUP_ID,
-} from "../../apollo/client/queries";
+import { MOTION, SETTINGS_BY_GROUP_ID } from "../../apollo/client/queries";
 import { VERIFY_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/Vote.module.scss";
 import { Settings } from "../../constants";
 import { noCache } from "../../utils/apollo";
+import { useCurrentUser, useUserById } from "../../hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -49,16 +45,11 @@ const Vote = ({
   votes,
   setVotes,
 }: Props) => {
+  const currentUser = useCurrentUser();
+  const user = useUserById(userId);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [groupSettings, setGroupSettings] = useState<Setting[]>([]);
   const [motion, setMotion] = useState<Motion>();
-  const [user, setUser] = useState<User>();
-  const currentUserRes = useQuery(CURRENT_USER);
-  const userRes = useQuery(USER, {
-    variables: { id: userId },
-    ...noCache,
-  });
   const motionRes = useQuery(MOTION, {
     variables: {
       id: motionId,
@@ -72,14 +63,6 @@ const Vote = ({
   const [deleteVote] = useMutation(DELETE_VOTE);
   const [verifyVote] = useMutation(VERIFY_VOTE);
   const classes = useStyles();
-
-  useEffect(() => {
-    setCurrentUser(currentUserRes.data ? currentUserRes.data.user : null);
-  }, [currentUserRes.data]);
-
-  useEffect(() => {
-    setUser(userRes.data ? userRes.data.user : null);
-  }, [userRes.data]);
 
   useEffect(() => {
     if (motionRes.data) setMotion(motionRes.data.motion);

@@ -1,15 +1,12 @@
 import React from "react";
 import { useState, ChangeEvent, useEffect } from "react";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { FormGroup, Input, Button } from "@material-ui/core";
 import Router from "next/router";
 import { RemoveCircle, Image } from "@material-ui/icons";
 
 import baseUrl from "../../utils/baseUrl";
-import {
-  CURRENT_USER,
-  IMAGES_BY_COMMENT_ID,
-} from "../../apollo/client/queries";
+import { IMAGES_BY_COMMENT_ID } from "../../apollo/client/queries";
 import {
   CREATE_COMMENT,
   UPDATE_COMMENT,
@@ -19,6 +16,7 @@ import styles from "../../styles/Comment/CommentsForm.module.scss";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { isLoggedIn } from "../../utils/auth";
+import { useCurrentUser } from "../../hooks";
 
 interface Props {
   postId?: string;
@@ -37,18 +35,17 @@ const CommentsForm = ({
   isEditing,
   setComments,
 }: Props) => {
+  const currentUser = useCurrentUser();
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
   const [savedImages, setSavedImages] = useState<Image[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [body, setBody] = useState<string>("");
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const imagesInput = React.useRef<HTMLInputElement>(null);
 
   const [createComment] = useMutation(CREATE_COMMENT);
   const [updateComment] = useMutation(UPDATE_COMMENT);
   const [deleteImage] = useMutation(DELETE_IMAGE);
-  const currentUserRes = useQuery(CURRENT_USER);
   const [getSavedImagesRes, savedImagesRes] = useLazyQuery(
     IMAGES_BY_COMMENT_ID,
     noCache
@@ -69,10 +66,6 @@ const CommentsForm = ({
       savedImagesRes.data ? savedImagesRes.data.imagesByCommentId : []
     );
   }, [savedImagesRes.data]);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -104,7 +97,7 @@ const CommentsForm = ({
               };
           const { data } = await createComment({
             variables: {
-              userId: currentUserRes.data.user.id,
+              userId: currentUser?.id,
               body: body,
               images: images,
               ...commentedItemId,

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
+import { useMutation, useLazyQuery } from "@apollo/client";
 import { IconButton } from "@material-ui/core";
 import { ThumbUp } from "@material-ui/icons";
 
 import {
-  CURRENT_USER,
   LIKES_BY_POST_ID,
   LIKES_BY_MOTION_ID,
   LIKES_BY_COMMENT_ID,
@@ -13,6 +12,7 @@ import { CREATE_LIKE, DELETE_LIKE } from "../../apollo/client/mutations";
 
 import styles from "../../styles/Like/LikeButton.module.scss";
 import { noCache } from "../../utils/apollo";
+import { useCurrentUser } from "../../hooks";
 
 interface Props {
   postId?: string;
@@ -21,11 +21,10 @@ interface Props {
 }
 
 const LikeButton = ({ postId, motionId, commentId }: Props) => {
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
+  const currentUser = useCurrentUser();
   const [likes, setLikes] = useState<Like[]>([]);
   const [createLike] = useMutation(CREATE_LIKE);
   const [deleteLike] = useMutation(DELETE_LIKE);
-  const currentUserRes = useQuery(CURRENT_USER);
   const [getLikesByPostId, likesByPostIdRes] = useLazyQuery(
     LIKES_BY_POST_ID,
     noCache
@@ -44,10 +43,6 @@ const LikeButton = ({ postId, motionId, commentId }: Props) => {
     if (motionId) getLikesByMotionId({ variables: { motionId } });
     if (commentId) getLikesByCommentId({ variables: { commentId } });
   }, []);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   useEffect(() => {
     if (postId && likesByPostIdRes.data)

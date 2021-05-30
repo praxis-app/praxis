@@ -14,7 +14,6 @@ import {
 
 import { isLoggedIn } from "../../utils/auth";
 import {
-  CURRENT_USER,
   GROUP_MEMBERS,
   MEMBER_REUQESTS,
   SETTINGS_BY_GROUP_ID,
@@ -26,6 +25,7 @@ import ItemMenu from "../Shared/ItemMenu";
 import { Common, Settings as SettingsConstants } from "../../constants";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
+import { useCurrentUser } from "../../hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -43,11 +43,11 @@ interface Props {
 
 const Group = ({ group, deleteGroup }: Props) => {
   const { id, name, description, creatorId } = group;
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [groupSettings, setGroupSettings] = useState<Setting[]>([]);
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
   const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const currentUser = useCurrentUser();
   const memberVariables = {
     variables: { groupId: group.id },
     ...noCache,
@@ -58,12 +58,7 @@ const Group = ({ group, deleteGroup }: Props) => {
     variables: { groupId: id },
     ...noCache,
   });
-  const currentUserRes = useQuery(CURRENT_USER);
   const classes = useStyles();
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   useEffect(() => {
     if (groupMembersRes.data)

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Card, createStyles, makeStyles } from "@material-ui/core";
@@ -9,7 +9,6 @@ import {
   MEMBER_REUQESTS,
   GROUP_MEMBERS,
   SETTINGS_BY_GROUP_ID,
-  CURRENT_USER,
 } from "../../../apollo/client/queries";
 import styles from "../../../styles/Group/Group.module.scss";
 import Request from "../../../components/Groups/Request";
@@ -17,6 +16,7 @@ import { isLoggedIn } from "../../../utils/auth";
 import { Settings } from "../../../constants";
 import Messages from "../../../utils/messages";
 import { noCache } from "../../../utils/apollo";
+import { useCurrentUser } from "../../../hooks";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -28,13 +28,12 @@ const useStyles = makeStyles(() =>
 
 const Requests = () => {
   const { query } = useRouter();
+  const currentUser = useCurrentUser();
   const [group, setGroup] = useState<Group>();
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [groupSettings, setGroupSettings] = useState<Setting[]>([]);
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
   const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
-  const currentUserRes = useQuery(CURRENT_USER);
   const [getMemberRequestsRes, memberRequestsRes] = useLazyQuery(
     MEMBER_REUQESTS,
     noCache
@@ -86,10 +85,6 @@ const Requests = () => {
     if (groupSettingsRes.data)
       setGroupSettings(groupSettingsRes.data.settingsByGroupId);
   }, [groupSettingsRes.data]);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   const isCreator = (): boolean => {
     if (isLoggedIn(currentUser) && group)

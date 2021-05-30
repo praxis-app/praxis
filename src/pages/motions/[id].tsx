@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  useQuery,
-  useMutation,
-  useLazyQuery,
-  useReactiveVar,
-} from "@apollo/client";
+import { useMutation, useLazyQuery, useReactiveVar } from "@apollo/client";
 import {
   Card,
   CircularProgress,
@@ -19,7 +14,6 @@ import {
   MOTION,
   COMMENTS_BY_MOTION_ID,
   VOTES_BY_MOTION_ID,
-  CURRENT_USER,
 } from "../../apollo/client/queries";
 import { DELETE_MOTION, DELETE_COMMENT } from "../../apollo/client/mutations";
 import { motionVar, votesVar } from "../../apollo/client/localState";
@@ -30,6 +24,7 @@ import VotesList from "../../components/Votes/List";
 import styles from "../../styles/Motion/Motion.module.scss";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
+import { useCurrentUser } from "../../hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -45,10 +40,10 @@ const useStyles = makeStyles({
 
 const Show = () => {
   const { query } = useRouter();
+  const currentUser = useCurrentUser();
   const votes = useReactiveVar(votesVar);
   const motion = useReactiveVar(motionVar);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [tab, setTab] = useState<number>(0);
   const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deleteComment] = useMutation(DELETE_COMMENT);
@@ -58,7 +53,6 @@ const Show = () => {
     COMMENTS_BY_MOTION_ID,
     noCache
   );
-  const currentUserRes = useQuery(CURRENT_USER);
   const classes = useStyles();
 
   useEffect(() => {
@@ -93,10 +87,6 @@ const Show = () => {
   useEffect(() => {
     if (commentsRes.data) setComments(commentsRes.data.commentsByMotionId);
   }, [commentsRes.data]);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   useEffect(() => {
     if (!votes.find((vote) => vote.body)) setTab(1);

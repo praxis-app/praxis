@@ -7,14 +7,11 @@ import { Card, CardHeader, CardContent } from "@material-ui/core";
 import FollowButton from "../Follows/FollowButton";
 import ItemMenu from "../Shared/ItemMenu";
 import UserAvatar from "./Avatar";
-import {
-  FOLLOWERS,
-  FOLLOWING,
-  CURRENT_USER,
-} from "../../apollo/client/queries";
+import { FOLLOWERS, FOLLOWING } from "../../apollo/client/queries";
 import styles from "../../styles/User/User.module.scss";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
+import { useCurrentUser } from "../../hooks";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -38,7 +35,7 @@ interface Props {
 
 const Show = ({ user, deleteUser }: Props) => {
   const { name, id, createdAt } = user;
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
+  const currentUser = useCurrentUser();
   const [followers, setFollowers] = useState<Follow[]>([]);
   const [following, setFollowing] = useState<Follow[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -50,17 +47,12 @@ const Show = ({ user, deleteUser }: Props) => {
     variables: { userId: id },
     fetchPolicy: "no-cache",
   });
-  const currentUserRes = useQuery(CURRENT_USER);
   const classes = useStyles();
   const date = new Date(parseInt(createdAt)).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   useEffect(() => {
     if (followersRes.data) setFollowers(followersRes.data.userFollowers);

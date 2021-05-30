@@ -16,9 +16,7 @@ import {
 import { isLoggedIn } from "../../utils/auth";
 import { votesVar } from "../../apollo/client/localState";
 import {
-  USER,
   GROUP,
-  CURRENT_USER,
   IMAGES_BY_MOTION_ID,
   VOTES_BY_MOTION_ID,
 } from "../../apollo/client/queries";
@@ -32,6 +30,8 @@ import ActionData from "./ActionData";
 import styles from "../../styles/Motion/Motion.module.scss";
 import { Common, Motions } from "../../constants";
 import { noCache } from "../../utils/apollo";
+import { useCurrentUser, useUserById } from "../../hooks";
+import Messages from "../../utils/messages";
 
 const useStyles = makeStyles({
   root: {
@@ -50,17 +50,13 @@ interface Props {
 
 const Motion = ({ motion, deleteMotion }: Props) => {
   const { id, userId, groupId, motionGroupId, body, action, stage } = motion;
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
-  const [user, setUser] = useState<User>();
+  const currentUser = useCurrentUser();
+  const user = useUserById(userId);
   const [group, setGroup] = useState<Group>();
   const [votes, setVotes] = useState<Vote[]>([]);
   const votesFromGlobal = useReactiveVar(votesVar);
   const [images, setImages] = useState<Image[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const currentUserRes = useQuery(CURRENT_USER);
-  const userRes = useQuery(USER, {
-    variables: { id: userId },
-  });
   const [getVotesRes, votesRes] = useLazyQuery(VOTES_BY_MOTION_ID, noCache);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP);
   const imagesRes = useQuery(IMAGES_BY_MOTION_ID, {
@@ -85,14 +81,6 @@ const Motion = ({ motion, deleteMotion }: Props) => {
     if (!onMotionPage() && votesRes.data)
       setVotes(votesRes.data.votesByMotionId);
   }, [votesRes.data]);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
-
-  useEffect(() => {
-    if (userRes.data) setUser(userRes.data.user);
-  }, [userRes.data]);
 
   useEffect(() => {
     if (imagesRes.data) setImages(imagesRes.data.imagesByMotionId);
@@ -153,8 +141,10 @@ const Motion = ({ motion, deleteMotion }: Props) => {
 
                 <Link href={`/motions/${id}`}>
                   <a className={styles.info}>
-                    {` · Motion to ${action.replace(/-/g, " ")}`}
-                    {isRatified() && " · Ratified ✓"}
+                    {Messages.motions.toActionWithRatified(
+                      action,
+                      isRatified()
+                    )}
                   </a>
                 </Link>
               </>

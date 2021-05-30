@@ -1,12 +1,12 @@
 import React from "react";
 import { useState, ChangeEvent, useEffect } from "react";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import { FormGroup, Input, Button } from "@material-ui/core";
 import Router from "next/router";
 import { RemoveCircle, Image } from "@material-ui/icons";
 
 import baseUrl from "../../utils/baseUrl";
-import { CURRENT_USER, IMAGES_BY_POST_ID } from "../../apollo/client/queries";
+import { IMAGES_BY_POST_ID } from "../../apollo/client/queries";
 import {
   CREATE_POST,
   UPDATE_POST,
@@ -14,6 +14,7 @@ import {
 } from "../../apollo/client/mutations";
 import styles from "../../styles/Post/PostForm.module.scss";
 import Messages from "../../utils/messages";
+import { useCurrentUser } from "../../hooks";
 
 interface Props {
   post?: Post;
@@ -28,13 +29,13 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   const [savedImages, setSavedImages] = useState([]);
   const [images, setImages] = useState<File[]>([]);
   const [body, setBody] = useState<string>("");
+  const currentUser = useCurrentUser();
   const [submitLoading, setSubmitLoading] = useState(false);
   const imagesInput = React.useRef<HTMLInputElement>(null);
 
   const [createPost] = useMutation(CREATE_POST);
   const [updatePost] = useMutation(UPDATE_POST);
   const [deleteImage] = useMutation(DELETE_IMAGE);
-  const currentUserRes = useQuery(CURRENT_USER);
   const [getSavedImagesRes, savedImagesRes] = useLazyQuery(IMAGES_BY_POST_ID, {
     fetchPolicy: "no-cache",
   });
@@ -58,7 +59,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (currentUserRes.data) {
+    if (currentUser) {
       setSubmitLoading(true);
       if (isEditing && post) {
         try {
@@ -84,7 +85,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
               body: body,
               images: images,
               groupId: group?.id,
-              userId: currentUserRes.data.user.id,
+              userId: currentUser.id,
             },
           });
           if (posts && setPosts) setPosts([...posts, data.createPost.post]);

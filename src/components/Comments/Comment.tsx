@@ -12,11 +12,7 @@ import {
 } from "@material-ui/core";
 
 import ImagesList from "../Images/List";
-import {
-  IMAGES_BY_COMMENT_ID,
-  USER,
-  CURRENT_USER,
-} from "../../apollo/client/queries";
+import { IMAGES_BY_COMMENT_ID } from "../../apollo/client/queries";
 import LikeButton from "../Likes/LikeButton";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
@@ -24,6 +20,7 @@ import { isLoggedIn } from "../../utils/auth";
 import styles from "../../styles/Comment/Comment.module.scss";
 import { Common } from "../../constants";
 import { noCache } from "../../utils/apollo";
+import { useCurrentUser, useUserById } from "../../hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -43,27 +40,15 @@ interface Props {
 }
 
 const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
-  const [user, setUser] = useState<User>();
-  const [images, setImages] = useState([]);
+  const currentUser = useCurrentUser();
+  const user = useUserById(userId);
+  const [images, setImages] = useState<Image[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const currentUserRes = useQuery(CURRENT_USER);
-  const userRes = useQuery(USER, {
-    variables: { id: userId },
-  });
   const imagesRes = useQuery(IMAGES_BY_COMMENT_ID, {
     variables: { commentId: id },
     ...noCache,
   });
   const classes = useStyles();
-
-  useEffect(() => {
-    setCurrentUser(currentUserRes.data ? currentUserRes.data.user : null);
-  }, [currentUserRes.data]);
-
-  useEffect(() => {
-    setUser(userRes.data ? userRes.data.user : null);
-  }, [userRes.data]);
 
   useEffect(() => {
     setImages(imagesRes.data ? imagesRes.data.imagesByCommentId : []);
