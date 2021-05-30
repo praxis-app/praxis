@@ -1,15 +1,15 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import Router from "next/router";
 import { FormGroup, Input, Button } from "@material-ui/core";
 import { Image, RemoveCircle } from "@material-ui/icons";
 
 import { CREATE_GROUP, UPDATE_GROUP } from "../../apollo/client/mutations";
-import { CURRENT_USER } from "../../apollo/client/queries";
 
 import styles from "../../styles/Group/GroupForm.module.scss";
 import { isLoggedIn } from "../../utils/auth";
 import Messages from "../../utils/messages";
+import { useCurrentUser } from "../../hooks";
 
 interface Props {
   group?: Group;
@@ -17,16 +17,15 @@ interface Props {
 }
 
 const GroupForm = ({ group, isEditing }: Props) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const currentUser = useCurrentUser();
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const [coverPhoto, setCoverPhoto] = useState<File>();
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [imageInputKey, setImageInputKey] = useState<string>("");
   const imageInput = React.useRef<HTMLInputElement>(null);
 
   const [createGroup] = useMutation(CREATE_GROUP);
   const [updateGroup] = useMutation(UPDATE_GROUP);
-  const currentUserRes = useQuery(CURRENT_USER);
 
   useEffect(() => {
     if (isEditing && group) {
@@ -34,10 +33,6 @@ const GroupForm = ({ group, isEditing }: Props) => {
       setDescription(group.description);
     }
   }, [group, isEditing]);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();

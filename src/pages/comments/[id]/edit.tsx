@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { CircularProgress } from "@material-ui/core";
 import Router, { useRouter } from "next/router";
 
 import CommentForm from "../../../components/Comments/Form";
-import { COMMENT, USER, CURRENT_USER } from "../../../apollo/client/queries";
+import { COMMENT, USER } from "../../../apollo/client/queries";
 import { noCache } from "../../../utils/apollo";
 import Messages from "../../../utils/messages";
+import { useCurrentUser } from "../../../hooks";
 
 const Edit = () => {
   const { query } = useRouter();
   const [comment, setComment] = useState<Comment>();
   const [user, setUser] = useState<User>();
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [getCommentsRes, commentsRes] = useLazyQuery(COMMENT);
   const [getUserRes, userRes] = useLazyQuery(USER, noCache);
-  const currentUserRes = useQuery(CURRENT_USER);
+  const currentUser = useCurrentUser();
 
   useEffect(() => {
     if (query.id)
@@ -40,10 +40,6 @@ const Edit = () => {
   useEffect(() => {
     if (userRes.data) setUser(userRes.data.user);
   }, [userRes.data]);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   useEffect(() => {
     if (currentUser && user && !ownComment()) {

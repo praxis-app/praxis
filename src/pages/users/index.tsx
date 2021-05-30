@@ -4,27 +4,23 @@ import { CircularProgress } from "@material-ui/core";
 import Router from "next/router";
 
 import User from "../../components/Users/User";
-import { USERS, CURRENT_USER } from "../../apollo/client/queries";
+import { USERS } from "../../apollo/client/queries";
 import { DELETE_USER, LOGOUT_USER } from "../../apollo/client/mutations";
 import { Common } from "../../constants";
+import { useCurrentUser } from "../../hooks";
 
 const Index = () => {
+  const currentUser = useCurrentUser();
   const [users, setUsers] = useState<User[]>();
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const { data } = useQuery(USERS, {
     fetchPolicy: "no-cache",
   });
-  const currentUserRes = useQuery(CURRENT_USER);
   const [deleteUser] = useMutation(DELETE_USER);
   const [logoutUser] = useMutation(LOGOUT_USER);
 
   useEffect(() => {
     if (data) setUsers(data.allUsers);
   }, [data]);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   const deleteUserHandler = async (userId: string) => {
     await deleteUser({

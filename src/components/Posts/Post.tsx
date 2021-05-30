@@ -14,18 +14,14 @@ import {
 
 import { isLoggedIn } from "../../utils/auth";
 import ImagesList from "../Images/List";
-import {
-  USER,
-  GROUP,
-  CURRENT_USER,
-  IMAGES_BY_POST_ID,
-} from "../../apollo/client/queries";
+import { GROUP, IMAGES_BY_POST_ID } from "../../apollo/client/queries";
 import LikeButton from "../Likes/LikeButton";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Post/Post.module.scss";
 import GroupItemAvatars from "../Groups/ItemAvatars";
 import { Common } from "../../constants";
+import { useCurrentUser, useUserById } from "../../hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -46,15 +42,11 @@ const Post = ({
   post: { id, userId, groupId, postGroupId, body },
   deletePost,
 }: Props) => {
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
-  const [user, setUser] = useState<User>();
+  const currentUser = useCurrentUser();
+  const user = useUserById(userId);
   const [group, setGroup] = useState<Group>();
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState<Image[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const currentUserRes = useQuery(CURRENT_USER);
-  const userRes = useQuery(USER, {
-    variables: { id: userId },
-  });
   const [getGroupRes, groupRes] = useLazyQuery(GROUP);
   const imagesRes = useQuery(IMAGES_BY_POST_ID, {
     variables: { postId: id },
@@ -62,14 +54,6 @@ const Post = ({
   });
   const classes = useStyles();
   const router = useRouter();
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
-
-  useEffect(() => {
-    if (userRes.data) setUser(userRes.data.user);
-  }, [userRes.data]);
 
   useEffect(() => {
     if (imagesRes.data) setImages(imagesRes.data.imagesByPostId);

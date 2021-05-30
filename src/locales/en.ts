@@ -83,6 +83,10 @@ const en = {
     actions: {
       motion: () => "Motion",
     },
+    toActionWithRatified: (action: string, ratified: boolean) =>
+      ` · Motion to ${action.replace(/-/g, " ")}${
+        ratified ? " · Ratified ✓" : ""
+      }`,
     form: {
       makeAMotion: () => "Make a motion...",
       motionType: () => "Motion type",

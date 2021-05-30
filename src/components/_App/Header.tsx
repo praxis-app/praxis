@@ -2,24 +2,24 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Router, { useRouter } from "next/router";
 import jwtDecode from "jwt-decode";
-import { useQuery, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import MenuIcon from "@material-ui/icons/Menu";
 
 import Messages from "../../utils/messages";
 import { setAuthToken } from "../../utils/auth";
-import { CURRENT_USER } from "../../apollo/client/queries";
 import { LOGOUT_USER, SET_CURRENT_USER } from "../../apollo/client/mutations";
 
 import styles from "../../styles/App/Header.module.scss";
 import classNames from "classnames/bind";
+import { useCurrentUser } from "../../hooks";
 const cx = classNames.bind(styles);
 
 const Header = () => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const { data } = useQuery(CURRENT_USER);
   const [logoutUser] = useMutation(LOGOUT_USER);
   const [setCurrentUser] = useMutation(SET_CURRENT_USER);
+  const currentUser = useCurrentUser();
 
   useEffect(() => {
     setOpen(false);
@@ -87,11 +87,11 @@ const Header = () => {
             </Link>
           </div>
 
-          {data && data.user.isAuthenticated ? (
+          {currentUser?.isAuthenticated ? (
             <>
               <div className={styles.navbarItem}>
-                <Link href={`/users/${data.user.name}`} passHref>
-                  <a className={styles.navbarItemText}>{data.user.name}</a>
+                <Link href={`/users/${currentUser.name}`} passHref>
+                  <a className={styles.navbarItemText}>{currentUser.name}</a>
                 </Link>
               </div>
               <div className={styles.navbarItem}>

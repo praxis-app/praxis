@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
+import { useMutation, useReactiveVar } from "@apollo/client";
 import { IconButton } from "@material-ui/core";
 import { ThumbUp, ThumbDown } from "@material-ui/icons";
 
 import { Motions } from "../../constants";
 import { motionVar } from "../../apollo/client/localState";
-import { CURRENT_USER } from "../../apollo/client/queries";
 import { CREATE_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/VoteButtons.module.scss";
+import { useCurrentUser } from "../../hooks";
 
 interface Props {
   motionId?: string;
@@ -16,22 +16,17 @@ interface Props {
 }
 
 const VoteButtons = ({ motionId, votes, setVotes }: Props) => {
+  const currentUser = useCurrentUser();
   const motionFromGlobal = useReactiveVar(motionVar);
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [upVotes, setUpVotes] = useState<Vote[]>([]);
   const [downVotes, setDownVotes] = useState<Vote[]>([]);
   const [createVote] = useMutation(CREATE_VOTE);
   const [deleteVote] = useMutation(DELETE_VOTE);
-  const currentUserRes = useQuery(CURRENT_USER);
 
   useEffect(() => {
     setUpVotes(votes.filter((vote) => vote.flipState === "up"));
     setDownVotes(votes.filter((vote) => vote.flipState === "down"));
   }, [votes]);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   const alreadyVote = (): Vote | null => {
     if (!currentUser) return null;

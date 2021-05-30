@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, ChangeEvent, useEffect } from "react";
-import { useMutation, useQuery, useReactiveVar } from "@apollo/client";
+import { useMutation, useReactiveVar } from "@apollo/client";
 import Router from "next/router";
 import {
   FormGroup,
@@ -13,11 +13,11 @@ import {
 } from "@material-ui/core";
 
 import { motionVar } from "../../apollo/client/localState";
-import { CURRENT_USER } from "../../apollo/client/queries";
 import { UPDATE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/VotesForm.module.scss";
 import { Motions, Votes } from "../../constants";
 import Messages from "../../utils/messages";
+import { useCurrentUser } from "../../hooks";
 
 const color = { color: "rgb(170, 170, 170)" };
 const useStyles = makeStyles(() => ({
@@ -33,13 +33,12 @@ interface Props {
 }
 
 const VotesForm = ({ vote, votes, setVotes, onEditPage }: Props) => {
+  const currentUser = useCurrentUser();
   const motionFromGlobal = useReactiveVar(motionVar);
   const [body, setBody] = useState<string>("");
   const [flipState, setFlipState] = useState<string>();
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
-
   const [updateVote] = useMutation(UPDATE_VOTE);
-  const currentUserRes = useQuery(CURRENT_USER);
   const classes = useStyles();
 
   useEffect(() => {
@@ -50,7 +49,7 @@ const VotesForm = ({ vote, votes, setVotes, onEditPage }: Props) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (currentUserRes.data) {
+    if (currentUser) {
       setSubmitLoading(true);
       try {
         setBody("");

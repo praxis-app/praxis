@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect } from "react";
 import { useState } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
   FormGroup,
   Button,
@@ -14,10 +14,10 @@ import {
 } from "@material-ui/core";
 
 import { Votes, Settings } from "../../constants";
-import { CURRENT_USER } from "../../apollo/client/queries";
 import { UPDATE_SETTINGS } from "../../apollo/client/mutations";
 import styles from "../../styles/Setting/SettingsForm.module.scss";
 import Messages from "../../utils/messages";
+import { useCurrentUser } from "../../hooks";
 
 const useStyles = makeStyles(() => ({
   toggle: {
@@ -47,10 +47,9 @@ const SettingsForm = ({
   setUnsavedSettings,
   anyUnsavedSettings,
 }: Props) => {
+  const currentUser = useCurrentUser();
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
   const [updateSettings] = useMutation(UPDATE_SETTINGS);
-  const currentUserRes = useQuery(CURRENT_USER);
   const classes = useStyles();
 
   useEffect(() => {
@@ -62,10 +61,6 @@ const SettingsForm = ({
     )
       setUnsavedSettings(settings);
   }, [settings]);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();

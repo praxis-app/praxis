@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Button } from "@material-ui/core";
 
-import { CURRENT_USER } from "../../apollo/client/queries";
 import {
   CREATE_MEMBER_REQUEST,
   DELETE_MEMBER_REQUEST,
@@ -10,6 +8,7 @@ import {
 } from "../../apollo/client/mutations";
 import { isLoggedIn } from "../../utils/auth";
 import Messages from "../../utils/messages";
+import { useCurrentUser } from "../../hooks";
 
 interface Props {
   group: Group;
@@ -26,16 +25,10 @@ const JoinButton = ({
   setMemberRequests,
   setGroupMembers,
 }: Props) => {
-  const [currentUser, setCurrentUser] = useState<CurrentUser>();
-  const currentUserRes = useQuery(CURRENT_USER);
-
+  const currentUser = useCurrentUser();
   const [createMemberRequest] = useMutation(CREATE_MEMBER_REQUEST);
   const [deleteMemberRequest] = useMutation(DELETE_MEMBER_REQUEST);
   const [deleteGroupMember] = useMutation(DELETE_GROUP_MEMBER);
-
-  useEffect(() => {
-    if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
-  }, [currentUserRes.data]);
 
   const alreadyRequested = () => {
     const request = memberRequests?.find(

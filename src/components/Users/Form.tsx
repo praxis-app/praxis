@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import Router from "next/router";
 import { FormGroup, Input, Button } from "@material-ui/core";
 import { Image, RemoveCircle } from "@material-ui/icons";
@@ -9,12 +9,12 @@ import {
   UPDATE_USER,
   SET_CURRENT_USER,
 } from "../../apollo/client/mutations";
-import { CURRENT_USER } from "../../apollo/client/queries";
 import { setAuthToken } from "../../utils/auth";
 
 import styles from "../../styles/User/UserForm.module.scss";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
+import { useCurrentUser } from "../../hooks";
 
 interface Props {
   user?: User;
@@ -22,18 +22,18 @@ interface Props {
 }
 
 const UserForm = ({ user, isEditing }: Props) => {
-  const [userName, setUserName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
+  const currentUser = useCurrentUser();
+  const [userName, setUserName] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
   const [profilePicture, setProfilePicture] = useState<File>();
-  const [userPassword, setUserPassword] = useState("");
-  const [userPasswordConfirm, setUserPasswordConfirm] = useState("");
+  const [userPassword, setUserPassword] = useState<string>("");
+  const [userPasswordConfirm, setUserPasswordConfirm] = useState<string>("");
   const [imageInputKey, setImageInputKey] = useState<string>("");
   const imageInput = React.useRef<HTMLInputElement>(null);
 
   const [signUp] = useMutation(SIGN_UP);
   const [updateUser] = useMutation(UPDATE_USER);
   const [setCurrentUser] = useMutation(SET_CURRENT_USER);
-  const currentUserRes = useQuery(CURRENT_USER);
 
   useEffect(() => {
     if (isEditing && user) {
@@ -47,7 +47,7 @@ const UserForm = ({ user, isEditing }: Props) => {
 
     if (isEditing && user) {
       try {
-        if (currentUserRes.data) {
+        if (currentUser) {
           const { data } = await updateUser({
             variables: {
               id: user.id,
@@ -57,7 +57,7 @@ const UserForm = ({ user, isEditing }: Props) => {
             },
           });
 
-          if (currentUserRes.data.user.id === user.id) {
+          if (currentUser.id === user.id) {
             localStorage.setItem(
               Common.LocalStorage.JwtToken,
               data.updateUser.token
