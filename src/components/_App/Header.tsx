@@ -35,7 +35,7 @@ const Header = () => {
         logoutUserMutate();
       }
     }
-  }, [setCurrentUser]);
+  }, []);
 
   const setCurrentUserMutate = async (user: User) => {
     await setCurrentUser({
@@ -87,7 +87,7 @@ const Header = () => {
             </Link>
           </div>
 
-          {currentUser?.isAuthenticated ? (
+          {currentUser ? (
             <>
               <div className={styles.navbarItem}>
                 <Link href={`/users/${currentUser.name}`} passHref>

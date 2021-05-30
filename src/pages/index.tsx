@@ -5,7 +5,6 @@ import PostForm from "../components/Posts/Form";
 import Feed from "../components/Shared/Feed";
 import { HOME_FEED } from "../apollo/client/queries";
 import { DELETE_POST, DELETE_MOTION } from "../apollo/client/mutations";
-import { isLoggedIn } from "../utils/auth";
 import WelcomeCard from "../components/About/Welcome";
 import { Common } from "../constants";
 import { feedItemsVar } from "../apollo/client/localState";
@@ -60,11 +59,9 @@ const Home = () => {
 
   return (
     <>
-      <WelcomeCard isLoggedIn={isLoggedIn(currentUser)} />
+      <WelcomeCard isLoggedIn={!!currentUser} />
 
-      {isLoggedIn(currentUser) && (
-        <PostForm posts={feed} setPosts={feedItemsVar} />
-      )}
+      {currentUser && <PostForm posts={feed} setPosts={feedItemsVar} />}
 
       <Feed
         deletePost={deletePostHandler}

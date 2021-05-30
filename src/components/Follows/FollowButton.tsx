@@ -3,7 +3,6 @@ import { IconButton } from "@material-ui/core";
 import { AddCircle, RemoveCircle } from "@material-ui/icons";
 
 import { CREATE_FOLLOW, DELETE_FOLLOW } from "../../apollo/client/mutations";
-import { isLoggedIn } from "../../utils/auth";
 import { useCurrentUser } from "../../hooks";
 
 interface Props {
@@ -53,7 +52,7 @@ const FollowButton = ({ userId, followers, setFollowers }: Props) => {
 
   return (
     <>
-      {isLoggedIn(currentUser) && notThisUser() && (
+      {currentUser && notThisUser() && (
         <>
           {alreadyFollow() ? (
             <IconButton onClick={() => deleteFollowMutation()}>

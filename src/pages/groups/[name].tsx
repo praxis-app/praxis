@@ -26,7 +26,6 @@ import {
   DELETE_POST,
   DELETE_MOTION,
 } from "../../apollo/client/mutations";
-import { isLoggedIn } from "../../utils/auth";
 import { feedItemsVar } from "../../apollo/client/localState";
 import styles from "../../styles/Group/ShowPage.module.scss";
 import { Common } from "../../constants";
@@ -150,7 +149,7 @@ const Show = () => {
   };
 
   const inThisGroup = (): boolean => {
-    if (!isLoggedIn(currentUser) || !currentUser) return false;
+    if (!currentUser) return false;
     return !!groupMembers.find((member) => member.userId === currentUser.id);
   };
 
@@ -186,7 +185,7 @@ const Show = () => {
 
         {tab === 0 && (
           <>
-            {inThisGroup() && isLoggedIn(currentUser) && (
+            {inThisGroup() && (
               <ToggleForms
                 posts={posts}
                 motions={motions}
@@ -205,7 +204,7 @@ const Show = () => {
 
         {tab === 1 && (
           <>
-            {inThisGroup() && isLoggedIn(currentUser) && (
+            {inThisGroup() && (
               <MotionsForm
                 motions={motions}
                 setMotions={setMotions}
@@ -222,7 +221,7 @@ const Show = () => {
 
         {tab === 2 && (
           <>
-            {inThisGroup() && isLoggedIn(currentUser) && (
+            {inThisGroup() && (
               <PostsForm posts={posts} setPosts={setPosts} group={group} />
             )}
             <PostsList

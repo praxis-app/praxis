@@ -7,7 +7,6 @@ import { Image, RemoveCircle } from "@material-ui/icons";
 import { CREATE_GROUP, UPDATE_GROUP } from "../../apollo/client/mutations";
 
 import styles from "../../styles/Group/GroupForm.module.scss";
-import { isLoggedIn } from "../../utils/auth";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 
@@ -78,7 +77,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
     setImageInputKey(Math.random().toString(2));
   };
 
-  if (isLoggedIn(currentUser))
+  if (currentUser)
     return (
       <form onSubmit={handleSubmit} className={styles.card}>
         <FormGroup>

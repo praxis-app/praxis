@@ -7,7 +7,6 @@ import {
   GROUP_BY_NAME,
   SETTINGS_BY_GROUP_ID,
 } from "../../../apollo/client/queries";
-import { isLoggedIn } from "../../../utils/auth";
 import GroupForm from "../../../components/Groups/Form";
 import { Settings } from "../../../constants";
 import { noCache } from "../../../utils/apollo";
@@ -66,23 +65,14 @@ const Edit = () => {
   };
 
   const ownGroup = (): boolean => {
-    return group?.creatorId === currentUser?.id;
+    if (!currentUser) return false;
+    return group?.creatorId === currentUser.id;
   };
 
-  if (isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
-
-  if (isLoggedIn(currentUser) && !ownGroup())
-    return <>{Messages.users.permissionDenied()}</>;
-
-  return (
-    <>
-      {group ? (
-        <GroupForm group={group} isEditing={true} />
-      ) : (
-        <CircularProgress style={{ color: "white" }} />
-      )}
-    </>
-  );
+  if (currentUser && isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
+  if (!ownGroup()) return <>{Messages.users.permissionDenied()}</>;
+  if (group) return <GroupForm group={group} isEditing={true} />;
+  return <CircularProgress style={{ color: "white" }} />;
 };
 
 export default Edit;

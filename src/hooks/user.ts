@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { CURRENT_USER, USER } from "../apollo/client/queries";
 import { noCache } from "../utils/apollo";
+import { isAuthenticated } from "../utils/auth";
 
 export const useCurrentUser = (): CurrentUser | undefined => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
@@ -11,7 +12,7 @@ export const useCurrentUser = (): CurrentUser | undefined => {
     if (currentUserRes.data) setCurrentUser(currentUserRes.data.user);
   }, [currentUserRes.data]);
 
-  return currentUser;
+  return isAuthenticated(currentUser) ? currentUser : undefined;
 };
 
 export const useUserById = (id: string): User | undefined => {

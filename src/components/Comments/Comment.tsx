@@ -16,7 +16,6 @@ import { IMAGES_BY_COMMENT_ID } from "../../apollo/client/queries";
 import LikeButton from "../Likes/LikeButton";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
-import { isLoggedIn } from "../../utils/auth";
 import styles from "../../styles/Comment/Comment.module.scss";
 import { Common } from "../../constants";
 import { noCache } from "../../utils/apollo";
@@ -98,7 +97,7 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
           <ImagesList images={images} />
         </CardMedia>
 
-        {isLoggedIn(currentUser) && (
+        {currentUser && (
           <CardActions>
             <LikeButton commentId={id} />
           </CardActions>

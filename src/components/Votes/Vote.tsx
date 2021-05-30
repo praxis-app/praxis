@@ -14,7 +14,6 @@ import { CheckCircle } from "@material-ui/icons";
 
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
-import { isLoggedIn } from "../../utils/auth";
 import { MOTION, SETTINGS_BY_GROUP_ID } from "../../apollo/client/queries";
 import { VERIFY_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/Vote.module.scss";
@@ -83,14 +82,12 @@ const Vote = ({
   }, [motion]);
 
   const ownVote = (): boolean => {
-    if (isLoggedIn(currentUser) && currentUser && user)
-      return currentUser.id === user.id;
+    if (currentUser && user) return currentUser.id === user.id;
     return false;
   };
 
   const ownMotion = (): boolean => {
-    if (isLoggedIn(currentUser) && currentUser && motion)
-      return currentUser.id === motion.userId;
+    if (currentUser && motion) return currentUser.id === motion.userId;
     return false;
   };
 
@@ -168,7 +165,7 @@ const Vote = ({
           </Typography>
         </CardContent>
 
-        {isLoggedIn(currentUser) &&
+        {currentUser &&
           !verified &&
           !ownVote() &&
           !ownMotion() &&

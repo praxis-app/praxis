@@ -1,6 +1,6 @@
 # Praxis
 
-Praxis is an open source social networking site. Groups are the main focus and come with a wide variety of voting features. Create a group and set it to no-admin, allowing group members to create motions and democratically decide on settings, name, theme, and more.
+Praxis is an open source social networking site. Groups are the main focus and come with a wide variety of voting features. Create a group and set it to no-admin, allowing group members to create motions and democratically decide on settings, name, theme, or planning of events.
 
 The tech stack includes the following:
 
@@ -9,7 +9,7 @@ The tech stack includes the following:
 - Next.js
 - Prisma
 
-Praxis is free and open source software, as specified above by the GNU General Public License.
+Praxis is free and open source software, as specified by the GNU General Public License.
 
 ## Setting up Praxis for development
 
@@ -26,5 +26,11 @@ The default database is PostgreSQL.
 
 ## Tools to get Involved and Collaborate
 
-- Discord (Message me for the invite): forrest#2807
+- Discord: https://discord.gg/hJUHv4ckfK or message me at **forrest#2807**
 - Notion: https://www.notion.so/praxis-74cb6558cc6f4470a967d95fad039303
+
+## Contributions
+
+Praxis is open to contributions, but we recommend creating an issue or replying in a comment to let us know what you are working on first that way we don't overwrite each other.
+
+Please read [CONTRIBUTING.md](https://github.com/forrestwilkins/praxis/blob/main/CONTRIBUTING.md) for details on this project.

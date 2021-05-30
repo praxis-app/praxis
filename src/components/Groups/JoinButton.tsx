@@ -6,7 +6,6 @@ import {
   DELETE_MEMBER_REQUEST,
   DELETE_GROUP_MEMBER,
 } from "../../apollo/client/mutations";
-import { isLoggedIn } from "../../utils/auth";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 
@@ -79,7 +78,7 @@ const JoinButton = ({
     );
   };
 
-  if (!isLoggedIn(currentUser)) return <></>;
+  if (!currentUser) return <></>;
 
   if (!alreadyRequested() && !alreadyJoined())
     return (

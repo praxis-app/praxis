@@ -15,7 +15,6 @@ import {
 import styles from "../../styles/Comment/CommentsForm.module.scss";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
-import { isLoggedIn } from "../../utils/auth";
 import { useCurrentUser } from "../../hooks";
 
 interface Props {
@@ -70,7 +69,7 @@ const CommentsForm = ({
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    if (isLoggedIn(currentUser)) {
+    if (currentUser) {
       setSubmitLoading(true);
       try {
         if (isEditing) {
