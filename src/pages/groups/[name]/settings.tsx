@@ -10,7 +10,6 @@ import {
 import SettingsForm from "../../../components/Settings/Form";
 import { Settings as SettingsConstants } from "../../../constants";
 import Messages from "../../../utils/messages";
-import { isLoggedIn } from "../../../utils/auth";
 import { useCurrentUser } from "../../../hooks";
 
 const Settings = () => {
@@ -47,7 +46,7 @@ const Settings = () => {
   }, [settingsRes.data]);
 
   useEffect(() => {
-    if (currentUser && group && isLoggedIn(currentUser) && !ownGroup()) {
+    if (currentUser && group && !ownGroup()) {
       Router.push("/");
     }
   }, [currentUser, group]);
@@ -76,12 +75,12 @@ const Settings = () => {
     return group?.creatorId === currentUser?.id;
   };
 
-  if (isLoggedIn(currentUser) && !ownGroup())
+  if (currentUser && !ownGroup())
     return <>{Messages.users.permissionDenied()}</>;
 
   if (isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
 
-  if (isLoggedIn(currentUser))
+  if (currentUser)
     return (
       <>
         <Link href={`/groups/${query.name}`}>

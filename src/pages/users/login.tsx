@@ -4,7 +4,7 @@ import Router from "next/router";
 import { Input, Button, FormGroup } from "@material-ui/core";
 
 import { SIGN_IN, SET_CURRENT_USER } from "../../apollo/client/mutations";
-import { isLoggedIn, setAuthToken } from "../../utils/auth";
+import { setAuthToken } from "../../utils/auth";
 
 import styles from "../../styles/User/UserForm.module.scss";
 import Messages from "../../utils/messages";
@@ -54,7 +54,7 @@ const Login = () => {
     }
   };
 
-  if (isLoggedIn(currentUser)) return <>{Messages.users.alreadyLoggedIn()}</>;
+  if (currentUser) return <>{Messages.users.alreadyLoggedIn()}</>;
 
   return (
     <form onSubmit={handleSubmit} className={styles.card}>

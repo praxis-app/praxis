@@ -13,7 +13,6 @@ import {
   CardMedia,
 } from "@material-ui/core";
 
-import { isLoggedIn } from "../../utils/auth";
 import { votesVar } from "../../apollo/client/localState";
 import {
   GROUP,
@@ -191,7 +190,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
           />
         )}
 
-        {isLoggedIn(currentUser) && !ownMotion() && (
+        {currentUser && !ownMotion() && (
           <CardActions>
             <VoteButtons
               motionId={id}

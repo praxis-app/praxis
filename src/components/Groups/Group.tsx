@@ -12,7 +12,6 @@ import {
   MenuItem,
 } from "@material-ui/core";
 
-import { isLoggedIn } from "../../utils/auth";
 import {
   GROUP_MEMBERS,
   MEMBER_REUQESTS,
@@ -76,7 +75,7 @@ const Group = ({ group, deleteGroup }: Props) => {
   }, [groupSettingsRes.data]);
 
   const isCreator = (): boolean => {
-    if (isLoggedIn(currentUser)) return currentUser?.id === creatorId;
+    if (currentUser) return currentUser.id === creatorId;
     return false;
   };
 
@@ -116,7 +115,7 @@ const Group = ({ group, deleteGroup }: Props) => {
             </Link>
           }
           action={
-            isLoggedIn(currentUser) &&
+            currentUser &&
             !isNoAdmin() && (
               <ItemMenu
                 itemId={id}
@@ -175,7 +174,7 @@ const Group = ({ group, deleteGroup }: Props) => {
           </CardContent>
         )}
 
-        {isLoggedIn(currentUser) && (
+        {currentUser && (
           <CardActions style={{ marginTop: "6px" }}>
             <JoinButton
               group={group}

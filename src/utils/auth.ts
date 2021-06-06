@@ -6,7 +6,7 @@ const setAuthToken = (token: any) => {
   else delete axios.defaults.headers.common.Authorization;
 };
 
-const isLoggedIn = (currentUser: CurrentUser | undefined): boolean => {
+const isAuthenticated = (currentUser: CurrentUser | undefined): boolean => {
   return (
     typeof currentUser !== "undefined" &&
     typeof localStorage !== "undefined" &&
@@ -15,4 +15,4 @@ const isLoggedIn = (currentUser: CurrentUser | undefined): boolean => {
   );
 };
 
-export { setAuthToken, isLoggedIn };
+export { setAuthToken, isAuthenticated };

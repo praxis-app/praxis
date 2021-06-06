@@ -12,7 +12,6 @@ import {
   CardMedia,
 } from "@material-ui/core";
 
-import { isLoggedIn } from "../../utils/auth";
 import ImagesList from "../Images/List";
 import { GROUP, IMAGES_BY_POST_ID } from "../../apollo/client/queries";
 import LikeButton from "../Likes/LikeButton";
@@ -127,7 +126,7 @@ const Post = ({
           <ImagesList images={images} />
         </CardMedia>
 
-        {isLoggedIn(currentUser) && (
+        {currentUser && (
           <CardActions style={{ marginTop: "6px" }}>
             <LikeButton postId={id} />
           </CardActions>

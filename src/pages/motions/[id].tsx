@@ -9,7 +9,6 @@ import {
 } from "@material-ui/core";
 import Router, { useRouter } from "next/router";
 
-import { isLoggedIn } from "../../utils/auth";
 import {
   MOTION,
   COMMENTS_BY_MOTION_ID,
@@ -141,7 +140,7 @@ const Show = () => {
 
         {tab === 1 && (
           <>
-            {isLoggedIn(currentUser) && (
+            {currentUser && (
               <CommentsForm
                 motionId={motion.id}
                 comments={comments}

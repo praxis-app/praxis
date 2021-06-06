@@ -3,7 +3,6 @@ import { useMutation, useLazyQuery } from "@apollo/client";
 import { CircularProgress } from "@material-ui/core";
 import Router, { useRouter } from "next/router";
 
-import { isLoggedIn } from "../../utils/auth";
 import { POST, COMMENTS_BY_POST_ID } from "../../apollo/client/queries";
 import { DELETE_POST, DELETE_COMMENT } from "../../apollo/client/mutations";
 import Post from "../../components/Posts/Post";
@@ -67,7 +66,7 @@ const Show = () => {
     return (
       <>
         <Post post={post} deletePost={deletePostHandler} />
-        {isLoggedIn(currentUser) && (
+        {currentUser && (
           <CommentsForm
             postId={post.id}
             comments={comments}

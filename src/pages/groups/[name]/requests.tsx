@@ -12,7 +12,6 @@ import {
 } from "../../../apollo/client/queries";
 import styles from "../../../styles/Group/Group.module.scss";
 import Request from "../../../components/Groups/Request";
-import { isLoggedIn } from "../../../utils/auth";
 import { Settings } from "../../../constants";
 import Messages from "../../../utils/messages";
 import { noCache } from "../../../utils/apollo";
@@ -87,8 +86,7 @@ const Requests = () => {
   }, [groupSettingsRes.data]);
 
   const isCreator = (): boolean => {
-    if (isLoggedIn(currentUser) && group)
-      return currentUser?.id === group.creatorId;
+    if (currentUser && group) return currentUser.id === group.creatorId;
     return false;
   };
 
