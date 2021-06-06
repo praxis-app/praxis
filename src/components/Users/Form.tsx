@@ -15,6 +15,7 @@ import styles from "../../styles/User/UserForm.module.scss";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
 import { useCurrentUser } from "../../hooks";
+import { randomKey } from "../../utils/common";
 
 interface Props {
   user?: User;
@@ -111,7 +112,7 @@ const UserForm = ({ user, isEditing }: Props) => {
 
   const removeSelectedProfilePicture = () => {
     setProfilePicture(undefined);
-    setImageInputKey(Math.random().toString(2));
+    setImageInputKey(randomKey());
   };
 
   return (

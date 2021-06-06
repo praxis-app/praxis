@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { Card, createStyles, makeStyles } from "@material-ui/core";
+import { Card, createStyles, makeStyles, Typography } from "@material-ui/core";
 
 import { GROUP_BY_NAME, GROUP_MEMBERS } from "../../../apollo/client/queries";
 import styles from "../../../styles/Group/Group.module.scss";
@@ -55,13 +55,15 @@ const Members = () => {
     <>
       <Link href={`/groups/${query.name}`}>
         <a>
-          <h1 style={{ color: "white" }}>{query.name}</h1>
+          <Typography variant="h3" style={{ fontSize: 40 }}>
+            {query.name}
+          </Typography>
         </a>
       </Link>
 
-      <h5 style={{ color: "white" }}>
+      <Typography variant="h6" style={{ marginBottom: 6, color: "white" }}>
         {Messages.groups.members(groupMembers.length)}
-      </h5>
+      </Typography>
 
       <Card className={classes.root + " " + styles.card}>
         {groupMembers.map(({ userId }: GroupMember) => {

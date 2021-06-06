@@ -20,10 +20,12 @@ body {
   color: $lightGray;
   font-family: "Inter";
   overflow: overlay;
+  margin: 0;
 }
 
 a {
   color: white;
+  text-decoration: none;
 }
 
 a:hover {
@@ -42,4 +44,8 @@ a:hover {
 ::selection {
   background: black;
   color: white;
+}
+
+*:focus {
+  outline: none !important;
 }

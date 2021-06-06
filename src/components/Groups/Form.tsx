@@ -9,6 +9,7 @@ import { CREATE_GROUP, UPDATE_GROUP } from "../../apollo/client/mutations";
 import styles from "../../styles/Group/GroupForm.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
+import { randomKey } from "../../utils/common";
 
 interface Props {
   group?: Group;
@@ -74,7 +75,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
 
   const removeSelectedCoverPhoto = () => {
     setCoverPhoto(undefined);
-    setImageInputKey(Math.random().toString(2));
+    setImageInputKey(randomKey());
   };
 
   if (currentUser)

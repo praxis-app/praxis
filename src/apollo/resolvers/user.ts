@@ -190,7 +190,7 @@ const userResolvers = {
 
       const userFound = await prisma.user.findMany({
         where: {
-          email: email,
+          email,
         },
       });
 
@@ -202,8 +202,8 @@ const userResolvers = {
 
       const user = await prisma.user.create({
         data: {
-          email: email,
-          name: name,
+          email,
+          name,
           password: hash,
         },
       });
@@ -233,7 +233,7 @@ const userResolvers = {
 
       const user = await prisma.user.findFirst({
         where: {
-          email: email,
+          email,
         },
       });
       if (!user) {
@@ -266,7 +266,7 @@ const userResolvers = {
 
       const user = await prisma.user.update({
         where: { id: parseInt(id) },
-        data: { email: email, name: name },
+        data: { email, name },
       });
 
       if (!user)

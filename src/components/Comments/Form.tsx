@@ -16,6 +16,7 @@ import styles from "../../styles/Comment/CommentsForm.module.scss";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser } from "../../hooks";
+import { randomKey } from "../../utils/common";
 
 interface Props {
   postId?: string;
@@ -127,7 +128,7 @@ const CommentsForm = ({
         return image.name !== imageName;
       })
     );
-    setImagesInputKey(Math.random().toString(2));
+    setImagesInputKey(randomKey());
   };
 
   return (

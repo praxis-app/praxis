@@ -4,11 +4,14 @@ import imageResolvers from "./image";
 import followResolvers from "./follow";
 import commentResolvers from "./comment";
 import groupResolvers from "./group";
-import memberResolvers from "./member";
+import groupMemberResolvers from "./groupMember";
 import motionResolvers from "./motion";
 import voteResolvers from "./vote";
 import likeResolvers from "./like";
 import settingResolvers from "./setting";
+import roleResolvers from "./role";
+import roleMemberResolvers from "./roleMember";
+import permissionResolvers from "./permission";
 
 export const resolvers = {
   Query: {
@@ -18,11 +21,14 @@ export const resolvers = {
     ...followResolvers.Query,
     ...likeResolvers.Query,
     ...groupResolvers.Query,
-    ...memberResolvers.Query,
+    ...groupMemberResolvers.Query,
     ...motionResolvers.Query,
     ...voteResolvers.Query,
     ...imageResolvers.Query,
     ...settingResolvers.Query,
+    ...roleResolvers.Query,
+    ...roleMemberResolvers.Query,
+    ...permissionResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
@@ -31,10 +37,13 @@ export const resolvers = {
     ...followResolvers.Mutation,
     ...likeResolvers.Mutation,
     ...groupResolvers.Mutation,
-    ...memberResolvers.Mutation,
+    ...groupMemberResolvers.Mutation,
     ...motionResolvers.Mutation,
     ...voteResolvers.Mutation,
     ...imageResolvers.Mutation,
     ...settingResolvers.Mutation,
+    ...roleResolvers.Mutation,
+    ...roleMemberResolvers.Mutation,
+    ...permissionResolvers.Mutation,
   },
 };

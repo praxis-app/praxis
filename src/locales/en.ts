@@ -1,10 +1,16 @@
+import { pluralize } from "../utils/items";
+
 const en = {
   brand: () => "praxis",
 
   actions: {
+    add: () => "Add",
+    close: () => "Close",
     create: () => "Create",
     delete: () => "Delete",
+    deleteItem: (itemType: string) => `Delete ${itemType}`,
     edit: () => "Edit",
+    pickColor: () => "Pick a Color",
     save: () => "Save",
   },
 
@@ -19,9 +25,14 @@ const en = {
       `Are you sure you want to delete this ${itemType}?`,
   },
 
+  errors: {
+    somethingWrong: () => "Something went wrong...",
+  },
+
   navigation: {
     users: () => "Users",
     groups: () => "Groups",
+    roles: () => "Roles",
   },
 
   about: {
@@ -50,7 +61,7 @@ const en = {
     },
     joinedWithData: (date: string) => `Joined ${date}`,
     following: (size: number) => `${size} Following`,
-    followers: (size: number) => `${size} Followers`,
+    followers: (size: number) => `${size} Follower${pluralize(size)}`,
     validation: {
       invalidEmail: () => "Email is invalid",
       emailRequired: () => "Email is required",
@@ -157,9 +168,10 @@ const en = {
       posts: () => "Posts",
       motions: () => "Motions",
     },
-    members: (size: number) => `${size} Members`,
-    requests: (size: number) => `${size} Requests`,
-    memberRequests: (size: number) => `${size} Member Requests`,
+    members: (size: number) => `${size} Member${pluralize(size)}`,
+    requests: (size: number) => `${size} Request${pluralize(size)}`,
+    memberRequests: (size: number) =>
+      `${size} Member Request${pluralize(size)}`,
     notFound: {
       member: () => "Member not found.",
       request: () => "Request not found.",
@@ -171,6 +183,41 @@ const en = {
     setToNoAdmin:
       () => `This group has been irriversibly set to no-admin — All changes to the
     group must now be made via motion ratification.`,
+  },
+
+  roles: {
+    actions: {
+      addMembers: () => "Add members",
+      initializeAdminRole: () => "Initialize Admin Role",
+    },
+    prompts: {
+      initializeAdminRoleConfirm: () =>
+        "Are you sure you want to create an admin role for this server? If you did not create this server or haven't been granted permission otherwise, please hit 'Cancel'.",
+    },
+    breadcrumb: () => "Roles",
+    members: {
+      prompts: {
+        removeMemberConfirm: () =>
+          "Are you sure you want to remove this member?",
+      },
+      nMembers: (size: number) => `${size} Member${pluralize(size)}`,
+    },
+    colorPickerLabel: () => "Role Color",
+    permissions: {
+      names: {
+        manageItems: (itemType: string) => `Manage ${itemType}s`,
+      },
+      descriptions: {
+        manageItems: (itemType: string) =>
+          `Allows members to delete ${itemType}s by other members.`,
+        manageRoles: () =>
+          "Allows members to create new roles and edit or delete roles lower than their highest role.",
+        manageUsers: () =>
+          "Allows members to view the full list of server members and permanently delete their accounts.",
+      },
+    },
+    serverRoles: () => "Server Roles",
+    noRoles: () => "No roles have been created for this server yet.",
   },
 
   images: {

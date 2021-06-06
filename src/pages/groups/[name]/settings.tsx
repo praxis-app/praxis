@@ -11,6 +11,7 @@ import SettingsForm from "../../../components/Settings/Form";
 import { Settings as SettingsConstants } from "../../../constants";
 import Messages from "../../../utils/messages";
 import { useCurrentUser } from "../../../hooks";
+import { noCache } from "../../../utils/apollo";
 
 const Settings = () => {
   const { query } = useRouter();
@@ -19,9 +20,10 @@ const Settings = () => {
   const [settings, setSettings] = useState<Setting[]>([]);
   const [unsavedSettings, setUnsavedSettings] = useState<Setting[]>([]);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
-  const [getSettingsRes, settingsRes] = useLazyQuery(SETTINGS_BY_GROUP_ID, {
-    fetchPolicy: "no-cache",
-  });
+  const [getSettingsRes, settingsRes] = useLazyQuery(
+    SETTINGS_BY_GROUP_ID,
+    noCache
+  );
 
   useEffect(() => {
     if (query.name)

@@ -15,6 +15,8 @@ import {
 import styles from "../../styles/Post/PostForm.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
+import { noCache } from "../../utils/apollo";
+import { randomKey } from "../../utils/common";
 
 interface Props {
   post?: Post;
@@ -26,7 +28,7 @@ interface Props {
 
 const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
-  const [savedImages, setSavedImages] = useState([]);
+  const [savedImages, setSavedImages] = useState<Image[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [body, setBody] = useState<string>("");
   const currentUser = useCurrentUser();
@@ -36,9 +38,10 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   const [createPost] = useMutation(CREATE_POST);
   const [updatePost] = useMutation(UPDATE_POST);
   const [deleteImage] = useMutation(DELETE_IMAGE);
-  const [getSavedImagesRes, savedImagesRes] = useLazyQuery(IMAGES_BY_POST_ID, {
-    fetchPolicy: "no-cache",
-  });
+  const [getSavedImagesRes, savedImagesRes] = useLazyQuery(
+    IMAGES_BY_POST_ID,
+    noCache
+  );
 
   useEffect(() => {
     if (isEditing && post) {
@@ -112,7 +115,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
         return image.name !== imageName;
       })
     );
-    setImagesInputKey(Math.random().toString(2));
+    setImagesInputKey(randomKey());
   };
 
   return (

@@ -11,6 +11,7 @@ interface Props {
   setAnchorEl: (el: null | HTMLElement) => void;
   deleteItem: (id: string) => void;
   ownItem: () => boolean;
+  hasPermission?: boolean;
   children?: React.ReactNode;
 }
 
@@ -22,6 +23,7 @@ const ItemMenu = ({
   setAnchorEl,
   deleteItem,
   ownItem,
+  hasPermission,
   children,
 }: Props) => {
   const handleMenuButtonClick = (
@@ -34,7 +36,7 @@ const ItemMenu = ({
     setAnchorEl(null);
   };
 
-  if (ownItem())
+  if (ownItem() || hasPermission)
     return (
       <>
         <IconButton onClick={handleMenuButtonClick}>
@@ -56,20 +58,23 @@ const ItemMenu = ({
             },
           }}
         >
-          <MenuItem>
-            <Link href={`/${itemType}s/${name ? name : itemId}/edit`}>
-              <a style={{ width: "100%" }}>
-                <Edit
-                  fontSize="small"
-                  style={{
-                    marginRight: "5",
-                    transform: "rotateY(180deg)",
-                  }}
-                />
-                {Messages.actions.edit()}
-              </a>
-            </Link>
-          </MenuItem>
+          {ownItem() && (
+            <MenuItem>
+              <Link href={`/${itemType}s/${name ? name : itemId}/edit`}>
+                <a style={{ width: "100%" }}>
+                  <Edit
+                    fontSize="small"
+                    style={{
+                      marginRight: "5",
+                      transform: "rotateY(180deg)",
+                    }}
+                  />
+                  {Messages.actions.edit()}
+                </a>
+              </Link>
+            </MenuItem>
+          )}
+
           <MenuItem
             onClick={() =>
               window.confirm(Messages.prompts.deleteItem(itemType)) &&

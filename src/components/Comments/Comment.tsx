@@ -17,9 +17,13 @@ import LikeButton from "../Likes/LikeButton";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Comment/Comment.module.scss";
-import { Common } from "../../constants";
+import { Common, Roles } from "../../constants";
 import { noCache } from "../../utils/apollo";
-import { useCurrentUser, useUserById } from "../../hooks";
+import {
+  useCurrentUser,
+  useHasPermissionGlobally,
+  useUserById,
+} from "../../hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -40,6 +44,9 @@ interface Props {
 
 const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
   const currentUser = useCurrentUser();
+  const [canManageComments] = useHasPermissionGlobally(
+    Roles.Permissions.ManageComments
+  );
   const user = useUserById(userId);
   const [images, setImages] = useState<Image[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -77,6 +84,7 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteComment}
               ownItem={ownComment}
+              hasPermission={canManageComments}
             />
           }
           classes={{ title: classes.title }}

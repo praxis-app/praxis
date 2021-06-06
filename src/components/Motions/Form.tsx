@@ -24,6 +24,7 @@ import { Motions } from "../../constants";
 import ActionFields from "./ActionFields";
 import styles from "../../styles/Motion/MotionForm.module.scss";
 import { useCurrentUser } from "../../hooks";
+import { randomKey } from "../../utils/common";
 
 const color = { color: "rgb(170, 170, 170)" };
 const useStyles = makeStyles(() => ({
@@ -150,7 +151,7 @@ const MotionsForm = ({
         return image.name !== imageName;
       })
     );
-    setImagesInputKey(Math.random().toString(2));
+    setImagesInputKey(randomKey());
   };
 
   return (

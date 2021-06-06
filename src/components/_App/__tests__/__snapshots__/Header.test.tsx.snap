@@ -22,16 +22,6 @@ exports[`Header should render Header component with profile and log out when use
       >
         <a
           class="navbarItemText"
-          href="/users"
-        >
-          Users
-        </a>
-      </div>
-      <div
-        class="navbarItem"
-      >
-        <a
-          class="navbarItemText"
           href="/groups"
         >
           Groups
@@ -81,7 +71,7 @@ exports[`Header should render Header component with profile and log out when use
 </div>
 `;
 
-exports[`Header should render Header component with sign up and log in when user is logged out 1`] = `
+exports[`Header should render Header component with roles and users if user has permission 1`] = `
 <div>
   <nav
     class="navbar"
@@ -108,6 +98,83 @@ exports[`Header should render Header component with sign up and log in when user
           Users
         </a>
       </div>
+      <div
+        class="navbarItem"
+      >
+        <a
+          class="navbarItemText"
+          href="/groups"
+        >
+          Groups
+        </a>
+      </div>
+      <div
+        class="navbarItem"
+      >
+        <a
+          class="navbarItemText"
+          href="/roles"
+        >
+          Roles
+        </a>
+      </div>
+      <div
+        class="navbarItem"
+      >
+        <a
+          class="navbarItemText"
+          href="/users/login"
+        >
+          Log in
+        </a>
+      </div>
+      <div
+        class="navbarItem"
+      >
+        <a
+          class="navbarItemText"
+          href="/users/signup"
+        >
+          Sign up
+        </a>
+      </div>
+    </div>
+  </nav>
+  <svg
+    aria-hidden="true"
+    class="MuiSvgIcon-root menuButton"
+    focusable="false"
+    viewBox="0 0 24 24"
+  >
+    <path
+      d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"
+    />
+  </svg>
+  <div
+    class="menuButtonTouchTarget"
+    role="button"
+    tabindex="-1"
+  />
+</div>
+`;
+
+exports[`Header should render Header component with sign up and log in when user is logged out 1`] = `
+<div>
+  <nav
+    class="navbar"
+  >
+    <div
+      class="navbarBrand"
+    >
+      <a
+        href="/"
+      >
+        praxis
+      </a>
+    </div>
+    <div
+      class="navbarItems"
+    >
       <div
         class="navbarItem"
       >

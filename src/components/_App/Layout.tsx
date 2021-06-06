@@ -1,12 +1,13 @@
 import Head from "next/head";
-import { Container } from "react-bootstrap";
+import { Container } from "@material-ui/core";
 
 import Header from "./Header";
 import HeadContent from "./HeadContent";
 import Messages from "../../utils/messages";
+import Breadcrumbs from "../Shared/Breadcrumbs";
 
 interface Props {
-  children: React.ReactNode;
+  children: React.ReactChild;
 }
 
 const Layout = ({ children }: Props) => {
@@ -17,7 +18,10 @@ const Layout = ({ children }: Props) => {
         <title>{Messages.brand()}</title>
       </Head>
       <Header />
-      <Container>{children}</Container>
+      <Container maxWidth="md">
+        <Breadcrumbs />
+        {children}
+      </Container>
     </>
   );
 };

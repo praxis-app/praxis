@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useQuery, useLazyQuery, useReactiveVar } from "@apollo/client";
 import Link from "next/link";
-
 import {
   Card,
   CardContent,
@@ -13,12 +12,12 @@ import {
   CardMedia,
 } from "@material-ui/core";
 
-import { votesVar } from "../../apollo/client/localState";
 import {
   GROUP,
   IMAGES_BY_MOTION_ID,
   VOTES_BY_MOTION_ID,
 } from "../../apollo/client/queries";
+import { votesVar } from "../../apollo/client/localState";
 import VotesForm from "../Votes/Form";
 import ImagesList from "../Images/List";
 import UserAvatar from "../Users/Avatar";
