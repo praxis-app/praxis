@@ -7,5 +7,5 @@ export * from "./like";
 export * from "./group";
 export * from "./motion";
 export * from "./vote";
-export * from "./member";
 export * from "./setting";
+export * from "./role";

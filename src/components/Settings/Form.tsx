@@ -18,6 +18,7 @@ import { UPDATE_SETTINGS } from "../../apollo/client/mutations";
 import styles from "../../styles/Setting/SettingsForm.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
+import { displayName } from "../../utils/items";
 
 const useStyles = makeStyles(() => ({
   toggle: {
@@ -108,12 +109,6 @@ const SettingsForm = ({
     }
   };
 
-  const settingName = (name: string): string => {
-    let shownName = name[0].toUpperCase() + name.slice(1);
-    shownName = shownName.replace(/-/g, " ");
-    return shownName;
-  };
-
   const setByName = (name: string, value: string) => {
     setSettings(
       settings.map((setting) => {
@@ -159,7 +154,7 @@ const SettingsForm = ({
             if (canShowSetting(name))
               return (
                 <div key={id} className={styles.setting}>
-                  <div className={styles.settingName}>{settingName(name)}</div>
+                  <div className={styles.settingName}>{displayName(name)}</div>
 
                   {name === Settings.GroupSettings.NoAdmin && (
                     <Switch

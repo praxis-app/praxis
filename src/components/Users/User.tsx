@@ -10,8 +10,8 @@ import UserAvatar from "./Avatar";
 import { FOLLOWERS, FOLLOWING } from "../../apollo/client/queries";
 import styles from "../../styles/User/User.module.scss";
 import Messages from "../../utils/messages";
-import { Common } from "../../constants";
-import { useCurrentUser } from "../../hooks";
+import { Common, Roles } from "../../constants";
+import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -47,6 +47,9 @@ const Show = ({ user, deleteUser }: Props) => {
     variables: { userId: id },
     fetchPolicy: "no-cache",
   });
+  const [canManageUsers] = useHasPermissionGlobally(
+    Roles.Permissions.ManageUsers
+  );
   const classes = useStyles();
   const date = new Date(parseInt(createdAt)).toLocaleDateString("en-US", {
     year: "numeric",
@@ -86,6 +89,7 @@ const Show = ({ user, deleteUser }: Props) => {
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteUser}
               ownItem={() => ownUser()}
+              hasPermission={canManageUsers}
             />
           </>
         }

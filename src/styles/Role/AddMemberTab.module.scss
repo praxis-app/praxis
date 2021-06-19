@@ -1,0 +1,31 @@
+@import "../App/App.module.scss";
+
+.button {
+  display: flex;
+  justify-content: space-between;
+}
+
+.buttonWrapper {
+  @extend .button;
+}
+
+.buttonText {
+  color: white;
+}
+
+.buttonCard {
+  @extend .card;
+  padding: 8px 0;
+  cursor: pointer;
+}
+
+.addCircleIcon {
+  color: white;
+  margin-right: 10px;
+  margin-left: 12px;
+}
+
+.arrowIcon {
+  color: white;
+  margin-right: 6px;
+}

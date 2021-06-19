@@ -16,7 +16,7 @@ model Motion {
   version    Int      @default(1)
   user       User?    @relation(fields: [userId], references: [id])
   userId     Int?
-  group      Group?    @relation(fields: [groupId], references: [id])
+  group      Group?   @relation(fields: [groupId], references: [id])
   groupId    Int?
   votes      Vote[]
   comments   Comment[]
@@ -33,7 +33,7 @@ model Vote {
   verified  Boolean  @default(false)
   user      User?    @relation(fields: [userId], references: [id])
   userId    Int?
-  motion    Motion?    @relation(fields: [motionId], references: [id])
+  motion    Motion?  @relation(fields: [motionId], references: [id])
   motionId  Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -57,6 +57,7 @@ model User {
   followers        Follow[] @relation("Followers")
   following        Follow[] @relation("Following")
   settings         Setting[]
+  roles            RoleMember[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
@@ -66,7 +67,7 @@ model Post {
   body      String?
   user      User?    @relation(fields: [userId], references: [id])
   userId    Int?
-  group     Group?    @relation(fields: [groupId], references: [id])
+  group     Group?   @relation(fields: [groupId], references: [id])
   groupId   Int?
   comments  Comment[]
   likes     Like[]
@@ -128,6 +129,7 @@ model Group {
   members        GroupMember[]
   memberRequests MemberRequest[]
   settings       Setting[]
+  roles          Role[]
   creatorId      Int
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -169,7 +171,7 @@ model Image {
   motionId       Int?
   comment        Comment? @relation(fields: [commentId], references: [id])
   commentId      Int?
-  group          Group? @relation(fields: [groupId], references: [id])
+  group          Group?   @relation(fields: [groupId], references: [id])
   groupId        Int?
   profilePicture Boolean  @default(false)
   createdAt      DateTime @default(now())
@@ -182,8 +184,42 @@ model Setting {
   value     String
   user      User?    @relation(fields: [userId], references: [id])
   userId    Int?
-  group     Group?    @relation(fields: [groupId], references: [id])
+  group     Group?   @relation(fields: [groupId], references: [id])
   groupId   Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Role {
+  id          Int      @default(autoincrement()) @id
+  name        String
+  color       String
+  global      Boolean  @default(false)
+  group       Group?   @relation(fields: [groupId], references: [id])
+  groupId     Int?
+  permissions Permission[]
+  members     RoleMember[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model RoleMember {
+  id          Int      @default(autoincrement()) @id
+  role        Role?    @relation(fields: [roleId], references: [id])
+  roleId      Int?
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Permission {
+  id          Int      @default(autoincrement()) @id
+  name        String
+  description String
+  enabled     Boolean  @default(false)
+  role        Role?    @relation(fields: [roleId], references: [id])
+  roleId      Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

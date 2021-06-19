@@ -1,7 +1,7 @@
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 
-const memberResolvers = {
+const groupMemberResolvers = {
   Query: {
     groupMembers: async (_: any, { groupId }: { groupId: string }) => {
       const group = await prisma.group.findFirst({
@@ -104,4 +104,4 @@ const memberResolvers = {
   },
 };
 
-export default memberResolvers;
+export default groupMemberResolvers;

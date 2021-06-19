@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { Card } from "@material-ui/core";
+import { Card, Typography } from "@material-ui/core";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 
 import { FOLLOWERS_BY_NAME } from "../../../apollo/client/queries";
@@ -41,13 +41,15 @@ const Followers = () => {
     <>
       <Link href={`/users/${query.name}`}>
         <a>
-          <h1 style={{ color: "white" }}>{query.name}</h1>
+          <Typography variant="h3" style={{ fontSize: 40 }}>
+            {query.name}
+          </Typography>
         </a>
       </Link>
 
-      <h5 style={{ color: "white" }}>
+      <Typography variant="h6" style={{ marginBottom: 6, color: "white" }}>
         {Messages.users.followers(followers.length)}
-      </h5>
+      </Typography>
 
       <Card className={classes.root + " " + styles.card}>
         {followers.map(({ followerId }) => {

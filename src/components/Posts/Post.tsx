@@ -19,8 +19,12 @@ import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Post/Post.module.scss";
 import GroupItemAvatars from "../Groups/ItemAvatars";
-import { Common } from "../../constants";
-import { useCurrentUser, useUserById } from "../../hooks";
+import { Common, Roles } from "../../constants";
+import {
+  useCurrentUser,
+  useHasPermissionGlobally,
+  useUserById,
+} from "../../hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -42,6 +46,9 @@ const Post = ({
   deletePost,
 }: Props) => {
   const currentUser = useCurrentUser();
+  const [canManagePosts] = useHasPermissionGlobally(
+    Roles.Permissions.ManagePosts
+  );
   const user = useUserById(userId);
   const [group, setGroup] = useState<Group>();
   const [images, setImages] = useState<Image[]>([]);
@@ -103,6 +110,7 @@ const Post = ({
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deletePost}
               ownItem={ownPost}
+              hasPermission={canManagePosts}
             />
           }
           classes={{ title: classes.title }}

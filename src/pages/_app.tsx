@@ -1,7 +1,6 @@
 import { ApolloProvider } from "@apollo/client";
 import { AppProps } from "next/app";
 
-import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/App/globals.scss";
 
 import Layout from "../components/_App/Layout";

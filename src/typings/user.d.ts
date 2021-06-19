@@ -33,3 +33,7 @@ interface ValidationError {
   password?: string;
   passwordConfirm?: string;
 }
+
+interface SelectedUser {
+  userId: string;
+}

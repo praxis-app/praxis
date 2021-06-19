@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress, Typography } from "@material-ui/core";
 
 import Group from "../../components/Groups/Group";
 import { GROUPS } from "../../apollo/client/queries";
 import { DELETE_GROUP } from "../../apollo/client/mutations";
 import GroupForm from "../../components/Groups/Form";
+import Messages from "../../utils/messages";
 
 const Index = () => {
   const [groups, setGroups] = useState<Group[]>();
@@ -30,6 +31,10 @@ const Index = () => {
 
   return (
     <>
+      <Typography variant="h4" style={{ marginBottom: 24 }}>
+        {Messages.navigation.groups()}
+      </Typography>
+
       <GroupForm />
       {groups ? (
         groups

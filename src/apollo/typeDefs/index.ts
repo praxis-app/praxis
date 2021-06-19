@@ -7,9 +7,12 @@ import Comment from "./comment";
 import Like from "./like";
 import Follow from "./follow";
 import Group from "./group";
-import Member from "./member";
+import GroupMember from "./groupMember";
 import Image from "./image";
 import Setting from "./setting";
+import Role from "./role";
+import RoleMember from "./roleMember";
+import Permission from "./permission";
 
 export const typeDefs = gql`
   scalar FileUpload
@@ -23,9 +26,12 @@ export const typeDefs = gql`
   ${Like}
   ${Follow}
   ${Group}
-  ${Member}
+  ${GroupMember}
   ${Image}
   ${Setting}
+  ${Role}
+  ${RoleMember}
+  ${Permission}
 
   union FeedItem = Post | Motion
 
@@ -77,6 +83,13 @@ export const typeDefs = gql`
 
     settingsByUserId(userId: ID!): [Setting]!
     settingsByGroupId(groupId: ID!): [Setting]!
+
+    role(id: ID!): Role!
+    rolesByGroupId(groupId: ID!): [Role]
+    globalRoles: [Role]!
+    roleMembers(roleId: ID!): [RoleMember]
+    permissionsByRoleId(roleId: ID!): [Permission]!
+    hasPermissionGlobally(name: String!, userId: ID!): Boolean!
   }
 
   type Mutation {
@@ -135,5 +148,19 @@ export const typeDefs = gql`
     deleteImage(id: ID!): Boolean!
 
     updateSettings(input: UpdateSettingsInput!): SettingsPayload!
+
+    createRole(
+      groupId: ID
+      global: Boolean
+      input: CreateRoleInput!
+    ): RolePayload!
+    updateRole(id: ID!, input: UpdateRoleInput!): RolePayload!
+    deleteRole(id: ID!): Boolean!
+    initializeAdminRole(userId: ID!): RolePayload!
+
+    addRoleMembers(roleId: ID!, input: AddRoleMembersInput!): RoleMemberPayload!
+    deleteRoleMember(id: ID!): Boolean!
+
+    updatePermissions(input: UpdatePermissionsInput!): PermissionsPayload!
   }
 `;

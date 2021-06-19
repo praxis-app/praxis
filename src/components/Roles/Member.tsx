@@ -1,0 +1,54 @@
+import { CircularProgress, IconButton } from "@material-ui/core";
+import { RemoveCircle } from "@material-ui/icons";
+
+import UserAvatar from "../Users/Avatar";
+import styles from "../../styles/Role/Member.module.scss";
+import { useUserById } from "../../hooks";
+import { DELETE_ROLE_MEMBER } from "../../apollo/client/mutations";
+import { useMutation } from "@apollo/client";
+import Messages from "../../utils/messages";
+
+interface Props {
+  member: RoleMember;
+  members: RoleMember[];
+  setMembers: (members: RoleMember[]) => void;
+}
+
+const RoleMember = ({ member, members, setMembers }: Props) => {
+  const { id, userId } = member;
+  const user = useUserById(userId);
+  const [deleteRoleMember] = useMutation(DELETE_ROLE_MEMBER);
+
+  const deleteRoleMemberHandler = async () => {
+    await deleteRoleMember({
+      variables: {
+        id,
+      },
+    });
+    if (members)
+      setMembers(members.filter((member: RoleMember) => member.id !== id));
+  };
+
+  if (user)
+    return (
+      <div className={styles.member}>
+        <div className={styles.link}>
+          <UserAvatar user={user} />
+          <div className={styles.userName}>{user.name}</div>
+        </div>
+
+        <IconButton
+          onClick={() =>
+            window.confirm(
+              Messages.roles.members.prompts.removeMemberConfirm()
+            ) && deleteRoleMemberHandler()
+          }
+        >
+          <RemoveCircle style={{ color: "white" }} />
+        </IconButton>
+      </div>
+    );
+  return <CircularProgress style={{ color: "white", display: "block" }} />;
+};
+
+export default RoleMember;

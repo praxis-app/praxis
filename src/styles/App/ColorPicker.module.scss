@@ -1,0 +1,30 @@
+.field {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  cursor: pointer;
+}
+
+.colorPickerWrapper {
+  margin-bottom: 36px;
+}
+
+.color {
+  display: flex;
+}
+
+.colorSquare {
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  border-radius: 5px;
+}
+
+.colorHex {
+  margin-right: 12px;
+}
+
+.pickPrompt {
+  color: white;
+  margin-bottom: 12px;
+}

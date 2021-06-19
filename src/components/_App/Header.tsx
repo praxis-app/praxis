@@ -2,28 +2,41 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import Router, { useRouter } from "next/router";
 import jwtDecode from "jwt-decode";
-import { useMutation } from "@apollo/client";
+import { useMutation, useReactiveVar } from "@apollo/client";
 import MenuIcon from "@material-ui/icons/Menu";
 
 import Messages from "../../utils/messages";
 import { setAuthToken } from "../../utils/auth";
 import { LOGOUT_USER, SET_CURRENT_USER } from "../../apollo/client/mutations";
 
-import styles from "../../styles/App/Header.module.scss";
 import classNames from "classnames/bind";
-import { useCurrentUser } from "../../hooks";
+import {
+  useCurrentUser,
+  useHasPermissionGlobally,
+  useWindowSize,
+} from "../../hooks";
+import { Roles } from "../../constants";
+import styles from "../../styles/App/Header.module.scss";
+import { headerKeyVar } from "../../apollo/client/localState";
+
 const cx = classNames.bind(styles);
 
 const Header = () => {
   const router = useRouter();
+  const windowSize = useWindowSize();
   const [open, setOpen] = useState(false);
   const [logoutUser] = useMutation(LOGOUT_USER);
   const [setCurrentUser] = useMutation(SET_CURRENT_USER);
   const currentUser = useCurrentUser();
-
-  useEffect(() => {
-    setOpen(false);
-  }, [router.asPath]);
+  const refreshKey = useReactiveVar(headerKeyVar);
+  const [canManageRoles] = useHasPermissionGlobally(
+    Roles.Permissions.ManageRoles,
+    refreshKey
+  );
+  const [canManageUsers] = useHasPermissionGlobally(
+    Roles.Permissions.ManageUsers,
+    refreshKey
+  );
 
   useEffect(() => {
     if (localStorage.jwtToken) {
@@ -36,6 +49,10 @@ const Header = () => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [router.asPath, windowSize]);
 
   const setCurrentUserMutate = async (user: User) => {
     await setCurrentUser({
@@ -54,7 +71,7 @@ const Header = () => {
 
   return (
     <>
-      <nav className={styles.navbar}>
+      <nav className={styles.navbar} key={refreshKey}>
         <div className={styles.navbarBrand}>
           {router.asPath === "/" ? (
             <span onClick={() => router.reload()} role="button" tabIndex={0}>
@@ -71,13 +88,15 @@ const Header = () => {
             navbarItemsShow: open,
           })}
         >
-          <div className={styles.navbarItem}>
-            <Link href="/users" passHref>
-              <a className={styles.navbarItemText}>
-                {Messages.navigation.users()}
-              </a>
-            </Link>
-          </div>
+          {canManageUsers && (
+            <div className={styles.navbarItem}>
+              <Link href="/users" passHref>
+                <a className={styles.navbarItemText}>
+                  {Messages.navigation.users()}
+                </a>
+              </Link>
+            </div>
+          )}
 
           <div className={styles.navbarItem}>
             <Link href="/groups" passHref>
@@ -86,6 +105,16 @@ const Header = () => {
               </a>
             </Link>
           </div>
+
+          {canManageRoles && (
+            <div className={styles.navbarItem}>
+              <Link href="/roles" passHref>
+                <a className={styles.navbarItemText}>
+                  {Messages.navigation.roles()}
+                </a>
+              </Link>
+            </div>
+          )}
 
           {currentUser ? (
             <>

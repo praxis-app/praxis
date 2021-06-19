@@ -5,6 +5,8 @@ import { setAuthToken } from "../../utils/auth";
 export const feedItemsVar = makeVar<FeedItem[]>([]);
 export const motionVar = makeVar<Motion | null>(null);
 export const votesVar = makeVar<Vote[]>([]);
+export const headerKeyVar = makeVar<string>("");
+export const breadcrumbsVar = makeVar<Breadcrumb[]>([]);
 
 export const defaults = {
   user: { isAuthenticated: false, __typename: Common.TypeNames.CurrentUser },
