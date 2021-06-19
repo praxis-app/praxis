@@ -78,8 +78,8 @@ const CommentsForm = ({
           await updateComment({
             variables: {
               id: comment?.id,
-              body: body,
-              images: images,
+              body,
+              images,
             },
           });
           if (comment?.postId) Router.push(`/posts/${comment.postId}`);
@@ -98,8 +98,8 @@ const CommentsForm = ({
           const { data } = await createComment({
             variables: {
               userId: currentUser?.id,
-              body: body,
-              images: images,
+              body,
+              images,
               ...commentedItemId,
             },
           });

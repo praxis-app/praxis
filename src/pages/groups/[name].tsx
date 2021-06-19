@@ -133,7 +133,7 @@ const Show = () => {
   const deletePostHandler = async (id: string) => {
     await deletePost({
       variables: {
-        id: id,
+        id,
       },
     });
     setPosts(posts.filter((post: Post) => post.id !== id));
@@ -142,7 +142,7 @@ const Show = () => {
   const deleteMotionHandler = async (id: string) => {
     await deleteMotion({
       variables: {
-        id: id,
+        id,
       },
     });
     setMotions(motions.filter((motion: Motion) => motion.id !== id));

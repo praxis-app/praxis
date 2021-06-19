@@ -167,7 +167,7 @@ const userResolvers = {
     userByName: async (_: any, { name }: { name: string }) => {
       const user = await prisma.user.findFirst({
         where: {
-          name: name,
+          name,
         },
       });
       return user;

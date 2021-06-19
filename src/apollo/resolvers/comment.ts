@@ -98,7 +98,7 @@ const commentResolvers = {
             },
           },
           ...commentedItemConnect,
-          body: body,
+          body,
         },
       });
 
@@ -114,7 +114,7 @@ const commentResolvers = {
       const { body, images } = input;
       const comment = await prisma.comment.update({
         where: { id: parseInt(id) },
-        data: { body: body },
+        data: { body },
       });
 
       if (!comment)

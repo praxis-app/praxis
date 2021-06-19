@@ -70,8 +70,8 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
           await updatePost({
             variables: {
               id: post.id,
-              body: body,
-              images: images,
+              body,
+              images,
             },
           });
           Router.push(`/posts/${post.id}`);
@@ -85,8 +85,8 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
           e.target.reset();
           const { data } = await createPost({
             variables: {
-              body: body,
-              images: images,
+              body,
+              images,
               groupId: group?.id,
               userId: currentUser.id,
             },

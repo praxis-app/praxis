@@ -1,7 +1,7 @@
 import { ApolloProvider } from "@apollo/client";
 import { AppProps } from "next/app";
 
-import "../styles/App/globals.scss";
+import "../styles/Common/globals.scss";
 
 import Layout from "../components/_App/Layout";
 import { useApollo } from "../apollo/client";

@@ -46,7 +46,7 @@ const postResolvers = {
     postsByUserName: async (_: any, { name }: { name: string }) => {
       const user = await prisma.user.findFirst({
         where: {
-          name: name,
+          name,
         },
         include: {
           posts: true,
@@ -58,7 +58,7 @@ const postResolvers = {
     postsByGroupName: async (_: any, { name }: { name: string }) => {
       const group = await prisma.group.findFirst({
         where: {
-          name: name,
+          name,
         },
         include: {
           posts: true,
@@ -93,7 +93,7 @@ const postResolvers = {
             },
           },
           ...(groupId && groupData),
-          body: body,
+          body,
         },
       });
 
@@ -106,7 +106,7 @@ const postResolvers = {
       const { body, images } = input;
       const post = await prisma.post.update({
         where: { id: parseInt(id) },
-        data: { body: body },
+        data: { body },
       });
 
       if (!post)
