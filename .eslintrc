@@ -35,7 +35,8 @@
         "aspects": ["invalidHref", "preferButton"]
       }
     ],
-    "no-extra-boolean-cast": "off"
+    "no-extra-boolean-cast": "off",
+    "object-shorthand": ["error", "properties"]
   },
   "settings": {
     "react": {

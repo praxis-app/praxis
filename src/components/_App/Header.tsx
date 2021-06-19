@@ -16,7 +16,7 @@ import {
   useWindowSize,
 } from "../../hooks";
 import { Roles } from "../../constants";
-import styles from "../../styles/App/Header.module.scss";
+import styles from "../../styles/Common/Header.module.scss";
 import { headerKeyVar } from "../../apollo/client/localState";
 
 const cx = classNames.bind(styles);

@@ -32,7 +32,7 @@ const FollowButton = ({ userId, followers, setFollowers }: Props) => {
   const createFollowMutation = async () => {
     const { data } = await createFollow({
       variables: {
-        userId: userId,
+        userId,
         followerId: currentUser?.id,
       },
     });

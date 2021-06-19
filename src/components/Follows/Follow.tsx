@@ -18,7 +18,7 @@ const Follow = ({ userId }: Props) => {
   const user = useUserById(userId);
   const [followers, setFollowers] = useState<Follow[]>([]);
   const followersRes = useQuery(FOLLOWERS, {
-    variables: { userId: userId },
+    variables: { userId },
     ...noCache,
   });
 
