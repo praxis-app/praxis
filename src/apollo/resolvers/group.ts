@@ -1,7 +1,6 @@
 import { GraphQLUpload } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
 import { saveImage, deleteImage } from "../../utils/image";
-import { inDev } from "../../utils/environment";
 import { Settings, Common } from "../../constants";
 import Messages from "../../utils/messages";
 
@@ -125,24 +124,27 @@ const groupResolvers = {
         },
       });
 
-      const settingsStillInDev = inDev()
-        ? [
-            {
-              name: Settings.GroupSettings.VotingType,
-              value: Settings.GroupDefaults.VotingType,
-            },
-            {
-              name: Settings.GroupSettings.VoteVerification,
-              value: Settings.GroupDefaults.VoteVerification,
-            },
-          ]
-        : [];
       const settings = [
         {
           name: Settings.GroupSettings.NoAdmin,
           value: Settings.GroupDefaults.NoAdmin,
         },
-        ...settingsStillInDev,
+        {
+          name: Settings.GroupSettings.VotingType,
+          value: Settings.GroupDefaults.VotingType,
+        },
+        {
+          name: Settings.GroupSettings.VoteVerification,
+          value: Settings.GroupDefaults.VoteVerification,
+        },
+        {
+          name: Settings.GroupSettings.ReservationsLimit,
+          value: Settings.GroupDefaults.ReservationsLimit,
+        },
+        {
+          name: Settings.GroupSettings.StandAsidesLimit,
+          value: Settings.GroupDefaults.StandAsidesLimit,
+        },
         {
           name: Settings.GroupSettings.RatificationThreshold,
           value: Settings.GroupDefaults.RatificationThreshold,

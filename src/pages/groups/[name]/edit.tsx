@@ -3,26 +3,19 @@ import { useLazyQuery } from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import { CircularProgress } from "@material-ui/core";
 
-import {
-  GROUP_BY_NAME,
-  SETTINGS_BY_GROUP_ID,
-} from "../../../apollo/client/queries";
+import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import GroupForm from "../../../components/Groups/Form";
 import { Settings } from "../../../constants";
 import { noCache } from "../../../utils/apollo";
 import Messages from "../../../utils/messages";
-import { useCurrentUser } from "../../../hooks";
+import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
 
 const Edit = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
   const [group, setGroup] = useState<Group>();
-  const [groupSettings, setGroupSettings] = useState<Setting[]>([]);
+  const [groupSettings] = useSettingsByGroupId(group?.id);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
-  const [getGroupSettingsRes, groupSettingsRes] = useLazyQuery(
-    SETTINGS_BY_GROUP_ID,
-    noCache
-  );
 
   useEffect(() => {
     if (query.name) {
@@ -33,21 +26,8 @@ const Edit = () => {
   }, [query.name]);
 
   useEffect(() => {
-    if (group) {
-      getGroupSettingsRes({
-        variables: { groupId: group.id },
-      });
-    }
-  }, [group]);
-
-  useEffect(() => {
     setGroup(groupRes.data ? groupRes.data.groupByName : groupRes.data);
   }, [groupRes.data]);
-
-  useEffect(() => {
-    if (groupSettingsRes.data)
-      setGroupSettings(groupSettingsRes.data.settingsByGroupId);
-  }, [groupSettingsRes.data]);
 
   useEffect(() => {
     if (currentUser && group && !ownGroup()) {

@@ -4,6 +4,8 @@ export namespace Settings {
     VotingType = "voting-type",
     VoteVerification = "vote-verification",
     RatificationThreshold = "ratification-threshold",
+    ReservationsLimit = "reservations-limit",
+    StandAsidesLimit = "stand-asides-limit",
     XToPass = "x-to-pass",
     XToBlock = "x-to-block",
   }
@@ -13,8 +15,10 @@ export namespace Settings {
     VotingType = "consensus",
     VoteVerification = "false",
     RatificationThreshold = "50",
+    ReservationsLimit = "2",
+    StandAsidesLimit = "2",
     XToPass = "2",
-    XToBlock = XToPass,
+    XToBlock = "2",
   }
 
   export enum States {

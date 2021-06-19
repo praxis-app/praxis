@@ -6,16 +6,22 @@ export const CREATE_VOTE = gql`
     $motionId: ID!
     $body: String
     $flipState: String
+    $consensusState: String
   ) {
     createVote(
       userId: $userId
       motionId: $motionId
-      input: { body: $body, flipState: $flipState }
+      input: {
+        body: $body
+        flipState: $flipState
+        consensusState: $consensusState
+      }
     ) {
       vote {
         id
         body
         flipState
+        consensusState
         verified
         userId
         motionId
@@ -27,12 +33,25 @@ export const CREATE_VOTE = gql`
 `;
 
 export const UPDATE_VOTE = gql`
-  mutation UpdateVoteMutation($id: ID!, $body: String, $flipState: String) {
-    updateVote(id: $id, input: { body: $body, flipState: $flipState }) {
+  mutation UpdateVoteMutation(
+    $id: ID!
+    $body: String
+    $flipState: String
+    $consensusState: String
+  ) {
+    updateVote(
+      id: $id
+      input: {
+        body: $body
+        flipState: $flipState
+        consensusState: $consensusState
+      }
+    ) {
       vote {
         id
         body
         flipState
+        consensusState
         verified
         userId
         motionId
@@ -50,6 +69,7 @@ export const VERIFY_VOTE = gql`
         id
         body
         flipState
+        consensusState
         verified
         userId
         motionId

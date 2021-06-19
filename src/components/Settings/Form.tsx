@@ -12,6 +12,7 @@ import {
   Input,
   CircularProgress,
 } from "@material-ui/core";
+import { ClassNameMap } from "@material-ui/core/styles/withStyles";
 
 import { Votes, Settings } from "../../constants";
 import { UPDATE_SETTINGS } from "../../apollo/client/mutations";
@@ -32,6 +33,35 @@ const useStyles = makeStyles(() => ({
   select: { color: "rgb(170, 170, 170)" },
   sliderRail: { width: "100px" },
 }));
+
+const NumberInput = ({
+  value,
+  name,
+  minimum,
+  handleSettingChange,
+  classes,
+}: {
+  value: string;
+  name: string;
+  minimum: number;
+  handleSettingChange: (
+    event: ChangeEvent<{ value: string }>,
+    name: string
+  ) => void;
+  classes: ClassNameMap<"toggle" | "select" | "sliderRail">;
+}) => (
+  <Input
+    value={value}
+    margin="dense"
+    onChange={(e) => handleSettingChange(e, name)}
+    inputProps={{
+      min: minimum,
+      type: "number",
+    }}
+    classes={{ input: classes.select }}
+    style={{ width: "50px" }}
+  />
+);
 
 interface Props {
   settings: Setting[];
@@ -128,143 +158,153 @@ const SettingsForm = ({
   };
 
   const canShowSetting = (name: string): boolean => {
-    const settingValue = valueByName(Settings.GroupSettings.VotingType);
-    return (
-      !(
-        settingValue &&
-        settingValue !== Votes.VotingTypes.Consensus &&
-        name === Settings.GroupSettings.RatificationThreshold
-      ) &&
-      !(
-        settingValue !== Votes.VotingTypes.XToPass &&
-        (name === Settings.GroupSettings.XToPass ||
-          name === Settings.GroupSettings.XToBlock)
-      )
-    );
+    const votingType = valueByName(Settings.GroupSettings.VotingType);
+    if (!votingType) return false;
+    if (
+      votingType !== Votes.VotingTypes.Consensus &&
+      (name === Settings.GroupSettings.RatificationThreshold ||
+        name === Settings.GroupSettings.ReservationsLimit ||
+        name === Settings.GroupSettings.StandAsidesLimit)
+    )
+      return false;
+    if (
+      votingType !== Votes.VotingTypes.XToPass &&
+      (name === Settings.GroupSettings.XToPass ||
+        name === Settings.GroupSettings.XToBlock)
+    )
+      return false;
+
+    return true;
   };
 
   if (currentUser && !settings.length)
     return <CircularProgress style={{ color: "white" }} />;
 
-  if (currentUser)
-    return (
-      <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
-        <FormGroup>
-          {settings.map(({ id, name, value }: Setting) => {
-            if (canShowSetting(name))
-              return (
-                <div key={id} className={styles.setting}>
-                  <div className={styles.settingName}>{displayName(name)}</div>
+  if (!currentUser) return <>{Messages.users.permissionDenied()}</>;
 
-                  {name === Settings.GroupSettings.NoAdmin && (
-                    <Switch
-                      checked={value === "true"}
-                      onChange={() => handleSwitchChange(name, value)}
-                      className={classes.toggle}
-                      color="primary"
-                    />
-                  )}
+  return (
+    <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
+      <FormGroup>
+        {settings.map(({ id, name, value }: Setting) => {
+          if (canShowSetting(name))
+            return (
+              <div key={id} className={styles.setting}>
+                <div className={styles.settingName}>{displayName(name)}</div>
 
-                  {name === Settings.GroupSettings.VotingType && (
-                    <NativeSelect
-                      value={value}
-                      onChange={(e) => handleSettingChange(e, name)}
-                      classes={{
-                        select: classes.select,
-                      }}
-                    >
-                      <option aria-label="None" value="" />
-                      <option value={Votes.VotingTypes.Consensus}>
-                        Model of consensus
-                      </option>
-                      <option value={Votes.VotingTypes.XToPass}>
-                        X to pass or block
-                      </option>
-                      <option value={Votes.VotingTypes.Majority}>
-                        Majority vote
-                      </option>
-                    </NativeSelect>
-                  )}
+                {name === Settings.GroupSettings.NoAdmin && (
+                  <Switch
+                    checked={value === Settings.States.On}
+                    onChange={() => handleSwitchChange(name, value)}
+                    className={classes.toggle}
+                    color="primary"
+                  />
+                )}
 
-                  {name === Settings.GroupSettings.VoteVerification && (
-                    <Switch
-                      checked={value === "true"}
-                      onChange={() => handleSwitchChange(name, value)}
-                      className={classes.toggle}
-                      color="primary"
-                    />
-                  )}
+                {name === Settings.GroupSettings.VotingType && (
+                  <NativeSelect
+                    value={value}
+                    onChange={(e) => handleSettingChange(e, name)}
+                    classes={{
+                      select: classes.select,
+                    }}
+                  >
+                    <option aria-label={Messages.forms.none()} value="" />
+                    <option value={Votes.VotingTypes.Consensus}>
+                      {Messages.votes.votingTypes.consensus()}
+                    </option>
+                    <option value={Votes.VotingTypes.XToPass}>
+                      {Messages.votes.votingTypes.xToPass()}
+                    </option>
+                    <option value={Votes.VotingTypes.Majority}>
+                      {Messages.votes.votingTypes.majority()}
+                    </option>
+                  </NativeSelect>
+                )}
 
-                  {(name === Settings.GroupSettings.XToPass ||
-                    name === Settings.GroupSettings.XToBlock) && (
-                    <Input
-                      value={value}
-                      margin="dense"
-                      onChange={(e) => handleSettingChange(e, name)}
-                      inputProps={{
-                        min: 1,
-                        type: "number",
-                      }}
-                      classes={{ input: classes.select }}
-                      style={{ width: "50px" }}
-                    />
-                  )}
+                {name === Settings.GroupSettings.VoteVerification && (
+                  <Switch
+                    checked={value === Settings.States.On}
+                    onChange={() => handleSwitchChange(name, value)}
+                    className={classes.toggle}
+                    color="primary"
+                  />
+                )}
 
-                  {name === Settings.GroupSettings.RatificationThreshold && (
-                    <Grid
-                      container
-                      spacing={2}
-                      justify="flex-end"
-                      style={{ marginBottom: "-50px" }}
-                    >
-                      <Grid item xs={5}>
-                        <Slider
-                          min={1}
-                          max={100}
-                          value={parseInt(value)}
-                          onChange={handleSliderChange}
-                        />
-                      </Grid>
-                      <Grid item>
-                        <Input
-                          value={value}
-                          margin="dense"
-                          onChange={(e) => handleSettingChange(e, name)}
-                          onBlur={() => handleBlur(value)}
-                          inputProps={{
-                            min: 1,
-                            max: 100,
-                            type: "number",
-                          }}
-                          classes={{
-                            input: classes.select,
-                          }}
-                        />
-                        %
-                      </Grid>
+                {(name === Settings.GroupSettings.XToPass ||
+                  name === Settings.GroupSettings.XToBlock) && (
+                  <NumberInput
+                    value={value}
+                    name={name}
+                    minimum={1}
+                    handleSettingChange={handleSettingChange}
+                    classes={classes}
+                  />
+                )}
+
+                {(name === Settings.GroupSettings.ReservationsLimit ||
+                  name === Settings.GroupSettings.StandAsidesLimit) && (
+                  <NumberInput
+                    value={value}
+                    name={name}
+                    minimum={0}
+                    handleSettingChange={handleSettingChange}
+                    classes={classes}
+                  />
+                )}
+
+                {name === Settings.GroupSettings.RatificationThreshold && (
+                  <Grid
+                    container
+                    spacing={2}
+                    justify="flex-end"
+                    style={{ marginBottom: "-50px" }}
+                  >
+                    <Grid item xs={5}>
+                      <Slider
+                        min={1}
+                        max={100}
+                        value={parseInt(value)}
+                        onChange={handleSliderChange}
+                      />
                     </Grid>
-                  )}
-                </div>
-              );
-          })}
-        </FormGroup>
+                    <Grid item>
+                      <Input
+                        value={value}
+                        margin="dense"
+                        onChange={(e) => handleSettingChange(e, name)}
+                        onBlur={() => handleBlur(value)}
+                        inputProps={{
+                          min: 1,
+                          max: 100,
+                          type: "number",
+                        }}
+                        classes={{
+                          input: classes.select,
+                        }}
+                      />
+                      %
+                    </Grid>
+                  </Grid>
+                )}
+              </div>
+            );
+        })}
+      </FormGroup>
 
-        {anyUnsavedSettings && (
-          <Button
-            variant="contained"
-            type="submit"
-            style={{
-              color: "white",
-              backgroundColor: "rgb(65, 65, 65)",
-            }}
-          >
-            {submitLoading ? Messages.states.saving() : Messages.actions.save()}
-          </Button>
-        )}
-      </form>
-    );
-
-  return <></>;
+      {anyUnsavedSettings && (
+        <Button
+          variant="contained"
+          type="submit"
+          style={{
+            color: "white",
+            backgroundColor: "rgb(65, 65, 65)",
+          }}
+        >
+          {submitLoading ? Messages.states.saving() : Messages.actions.save()}
+        </Button>
+      )}
+    </form>
+  );
 };
 
 export default SettingsForm;

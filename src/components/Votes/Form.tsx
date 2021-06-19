@@ -30,21 +30,30 @@ interface Props {
   votes?: Vote[];
   setVotes?: (votes: Vote[]) => void;
   onEditPage?: boolean;
+  modelOfConsensus?: boolean;
 }
 
-const VotesForm = ({ vote, votes, setVotes, onEditPage }: Props) => {
+const VotesForm = ({
+  vote,
+  votes,
+  setVotes,
+  onEditPage,
+  modelOfConsensus,
+}: Props) => {
   const currentUser = useCurrentUser();
   const motionFromGlobal = useReactiveVar(motionVar);
   const [body, setBody] = useState<string>("");
-  const [flipState, setFlipState] = useState<string>();
+  const [flipState, setFlipState] = useState<string>("");
+  const [consensusState, setConsensusState] = useState<string>("");
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [updateVote] = useMutation(UPDATE_VOTE);
   const classes = useStyles();
 
   useEffect(() => {
     setBody(vote.body);
-    setFlipState(vote.flipState);
-  }, [vote]);
+    if (modelOfConsensus) setConsensusState(vote.consensusState);
+    else setFlipState(vote.flipState);
+  }, [vote, modelOfConsensus]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -53,10 +62,12 @@ const VotesForm = ({ vote, votes, setVotes, onEditPage }: Props) => {
       setSubmitLoading(true);
       try {
         setBody("");
-        setFlipState(undefined);
+        setFlipState("");
+        setConsensusState("");
         const { data } = await updateVote({
           variables: {
             id: vote?.id,
+            consensusState,
             flipState,
             body,
           },
@@ -70,6 +81,7 @@ const VotesForm = ({ vote, votes, setVotes, onEditPage }: Props) => {
                   ...vote,
                   body: newVote.body,
                   flipState: newVote.flipState,
+                  consensusState: newVote.consensusState,
                 };
               return vote;
             })
@@ -88,17 +100,36 @@ const VotesForm = ({ vote, votes, setVotes, onEditPage }: Props) => {
     setSubmitLoading(false);
   };
 
-  const handleFlipStateChange = (
+  const handleVoteTypeChange = (
     event: React.ChangeEvent<{ value: string }>
   ) => {
-    setFlipState(event.target.value);
+    if (modelOfConsensus) setConsensusState(event.target.value);
+    else setFlipState(event.target.value);
   };
 
   const placeholderText = () => {
     if (submitLoading) return Messages.states.loading();
+
+    if (modelOfConsensus) {
+      if (consensusState === Votes.ConsensusStates.Agreement)
+        return Messages.votes.form.bodyPlaceholder.agreement();
+      if (consensusState === Votes.ConsensusStates.Reservations)
+        return Messages.votes.form.bodyPlaceholder.reservations();
+      if (consensusState === Votes.ConsensusStates.StandAside)
+        return Messages.votes.form.bodyPlaceholder.standAside();
+      if (consensusState === Votes.ConsensusStates.Block)
+        return Messages.votes.form.bodyPlaceholder.block();
+    }
+
     return flipState === Votes.FlipStates.Up
       ? Messages.votes.form.bodyPlaceholder.support()
       : Messages.votes.form.bodyPlaceholder.block();
+  };
+
+  const selectValue = (): string => {
+    if (modelOfConsensus && consensusState) return consensusState;
+    else if (flipState) return flipState;
+    return "";
   };
 
   return (
@@ -125,22 +156,43 @@ const VotesForm = ({ vote, votes, setVotes, onEditPage }: Props) => {
           <InputLabel
             style={{ color: "rgb(105, 105, 105)", fontFamily: "Inter" }}
           >
-            {Messages.votes.form.supportOrBlock()}
+            {modelOfConsensus
+              ? Messages.votes.form.agreeOrDisagree()
+              : Messages.votes.form.supportOrBlock()}
           </InputLabel>
           <NativeSelect
-            value={flipState}
-            onChange={handleFlipStateChange}
+            value={selectValue()}
+            onChange={handleVoteTypeChange}
             classes={{
               select: classes.select,
             }}
           >
-            <option aria-label="None" value="" />
-            <option value={Votes.FlipStates.Up}>
-              {Messages.votes.actions.support()}
-            </option>
-            <option value={Votes.FlipStates.Down}>
-              {Messages.votes.actions.block()}
-            </option>
+            <option aria-label={Messages.forms.none()} value="" />
+            {modelOfConsensus ? (
+              <>
+                <option value={Votes.ConsensusStates.Agreement}>
+                  {Messages.votes.consensus.voteTypes.names.agreement()}
+                </option>
+                <option value={Votes.ConsensusStates.Reservations}>
+                  {Messages.votes.consensus.voteTypes.names.reservations()}
+                </option>
+                <option value={Votes.ConsensusStates.StandAside}>
+                  {Messages.votes.consensus.voteTypes.names.standAside()}
+                </option>
+                <option value={Votes.ConsensusStates.Block}>
+                  {Messages.votes.consensus.voteTypes.names.block()}
+                </option>
+              </>
+            ) : (
+              <>
+                <option value={Votes.FlipStates.Up}>
+                  {Messages.votes.actions.support()}
+                </option>
+                <option value={Votes.FlipStates.Down}>
+                  {Messages.votes.actions.block()}
+                </option>
+              </>
+            )}
           </NativeSelect>
         </FormControl>
       </FormGroup>

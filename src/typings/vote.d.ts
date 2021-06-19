@@ -4,5 +4,6 @@ interface Vote {
   motionId: string;
   body: string;
   flipState: string;
+  consensusState: string;
   verified: boolean;
 }

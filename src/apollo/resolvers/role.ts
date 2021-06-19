@@ -154,7 +154,6 @@ const roleResolvers = {
           global: true,
         },
       });
-      console.log(roles.length);
       if (roles.length > 0) throw Error(Messages.errors.somethingWrong());
 
       const role = await prisma.role.create({

@@ -1,10 +1,8 @@
 @import "../Common/Common.module.scss";
 
-.imageInputIcon {
-  margin-top: 5px;
-  margin-left: -2px;
-  margin-right: 2px;
-  color: white;
+.imageInput {
+  @extend .imageInput;
+  height: 0;
 }
 
 .attachImage {
@@ -12,9 +10,16 @@
   font-size: 14px;
   cursor: pointer;
   margin-bottom: 6px;
+  display: flex;
 }
 
-.imageInput {
-  @extend .imageInput;
-  height: 0;
+.attachImageText {
+  margin-top: 6.5px;
+}
+
+.imageInputIcon {
+  margin-top: 5px;
+  margin-left: -2px;
+  margin-right: 6px;
+  color: white;
 }

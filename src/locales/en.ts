@@ -29,6 +29,10 @@ const en = {
     somethingWrong: () => "Something went wrong...",
   },
 
+  forms: {
+    none: () => "None",
+  },
+
   navigation: {
     users: () => "Users",
     groups: () => "Groups",
@@ -132,11 +136,51 @@ const en = {
     },
     form: {
       bodyPlaceholder: {
-        support: () => "Why do you support this motion? (optional)",
-        block: () => "Why are you blocking this motion? (optional)",
+        support: () => "Why do you support this motion?",
+        agreement: () => "Why do you agree with this motion?",
+        reservations: () => "What reservations do you have with this motion?",
+        standAside: () => "Why are you delclaring a stand aside?",
+        block: () => "Why are you blocking this motion?",
       },
       supportOrBlock: () => "Vote to support or block",
+      agreeOrDisagree: () => "Express your agreement or disagreement",
     },
+    votingTypes: {
+      consensus: () => "Model of consensus",
+      xToPass: () => "X to pass or block",
+      majority: () => "Majority vote",
+    },
+    consensus: {
+      voteTypes: {
+        names: {
+          agreement: () => "Agreement",
+          reservations: () => "Reservations",
+          standAside: () => "Stand Aside",
+          block: () => "Block",
+        },
+        descriptions: {
+          agreement: () =>
+            "I support the motion and I'm willing to implement it.",
+          reservations: () =>
+            "I have problems with it but I'll go along with it.",
+          standAside: () =>
+            "I can't support this and I won't implement it but I don't want to stop it.",
+          block: () =>
+            "I have a fundamental disagreement with the core of the motion and I don't want it to happen.",
+        },
+        labels: {
+          agreement: () => "Vote of agreement",
+          reservations: () => "Agreement with reservations",
+          standAside: () => "Vote to stand aside",
+          block: () => "Vote to block",
+        },
+      },
+    },
+    voteTypeLabel: {
+      support: () => "Vote of support",
+      block: () => "Vote to block",
+    },
+    verifiedWithCheck: () => "Verified ✓",
   },
 
   comments: {
@@ -227,6 +271,8 @@ const en = {
   items: {
     notFound: (itemType: string) => `${itemType} not found.`,
   },
+
+  middotWithSpaces: () => " · ",
 };
 
 export default en;

@@ -6,6 +6,7 @@ type Vote {
   motionId: ID!
   body: String
   flipState: String
+  consensusState: String
   verified: Boolean!
   createdAt: String!
   updatedAt: String!
@@ -14,11 +15,13 @@ type Vote {
 input CreateVoteInput {
   body: String
   flipState: String
+  consensusState: String
 }
 
 input UpdateVoteInput {
   body: String
   flipState: String
+  consensusState: String
 }
 
 type VotePayload {

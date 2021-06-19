@@ -8,14 +8,13 @@ import {
   GROUP_BY_NAME,
   MEMBER_REUQESTS,
   GROUP_MEMBERS,
-  SETTINGS_BY_GROUP_ID,
 } from "../../../apollo/client/queries";
 import styles from "../../../styles/Group/Group.module.scss";
 import Request from "../../../components/Groups/Request";
 import { Settings } from "../../../constants";
 import Messages from "../../../utils/messages";
 import { noCache } from "../../../utils/apollo";
-import { useCurrentUser } from "../../../hooks";
+import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -29,7 +28,7 @@ const Requests = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
   const [group, setGroup] = useState<Group>();
-  const [groupSettings, setGroupSettings] = useState<Setting[]>([]);
+  const [groupSettings] = useSettingsByGroupId(group?.id);
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
   const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
@@ -39,10 +38,6 @@ const Requests = () => {
   );
   const [getGroupMembersRes, groupMembersRes] = useLazyQuery(
     GROUP_MEMBERS,
-    noCache
-  );
-  const [getGroupSettingsRes, groupSettingsRes] = useLazyQuery(
-    SETTINGS_BY_GROUP_ID,
     noCache
   );
   const classes = useStyles();
@@ -62,7 +57,6 @@ const Requests = () => {
       };
       getMemberRequestsRes(variables);
       getGroupMembersRes(variables);
-      getGroupSettingsRes(variables);
     }
   }, [group]);
 
@@ -79,11 +73,6 @@ const Requests = () => {
     if (groupMembersRes.data)
       setGroupMembers(groupMembersRes.data.groupMembers);
   }, [groupMembersRes.data]);
-
-  useEffect(() => {
-    if (groupSettingsRes.data)
-      setGroupSettings(groupSettingsRes.data.settingsByGroupId);
-  }, [groupSettingsRes.data]);
 
   const isCreator = (): boolean => {
     if (currentUser && group) return currentUser.id === group.creatorId;

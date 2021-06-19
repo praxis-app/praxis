@@ -1,4 +1,4 @@
-# Contributing to Transcriptase
+# Contributing to Praxis
 
 We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
 
@@ -27,7 +27,7 @@ Pull requests are the best way to propose changes to the codebase (we use [Githu
 
 In short, when you submit code changes, your submissions are understood to be under the same [GNU General Public License](https://www.gnu.org/licenses/gpl-3.0.en.html) that covers the project.
 
-## Report bugs using Github's [issues](https://github.com/briandk/transcriptase-atom/issues)
+## Report bugs using Github's [issues](https://github.com/forrestwilkins/praxis/issues)
 
 We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/forrestwilkins/praxis/issues/new); it's that easy!
 

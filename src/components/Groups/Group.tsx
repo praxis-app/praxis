@@ -12,11 +12,7 @@ import {
   MenuItem,
 } from "@material-ui/core";
 
-import {
-  GROUP_MEMBERS,
-  MEMBER_REUQESTS,
-  SETTINGS_BY_GROUP_ID,
-} from "../../apollo/client/queries";
+import { GROUP_MEMBERS, MEMBER_REUQESTS } from "../../apollo/client/queries";
 import styles from "../../styles/Group/Group.module.scss";
 import GroupAvatar from "./Avatar";
 import JoinButton from "./JoinButton";
@@ -24,7 +20,7 @@ import ItemMenu from "../Shared/ItemMenu";
 import { Common, Settings as SettingsConstants } from "../../constants";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
-import { useCurrentUser } from "../../hooks";
+import { useCurrentUser, useSettingsByGroupId } from "../../hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -42,7 +38,7 @@ interface Props {
 
 const Group = ({ group, deleteGroup }: Props) => {
   const { id, name, description, creatorId } = group;
-  const [groupSettings, setGroupSettings] = useState<Setting[]>([]);
+  const [groupSettings] = useSettingsByGroupId(id);
   const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
   const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -53,10 +49,6 @@ const Group = ({ group, deleteGroup }: Props) => {
   };
   const groupMembersRes = useQuery(GROUP_MEMBERS, memberVariables);
   const memberRequestsRes = useQuery(MEMBER_REUQESTS, memberVariables);
-  const groupSettingsRes = useQuery(SETTINGS_BY_GROUP_ID, {
-    variables: { groupId: id },
-    ...noCache,
-  });
   const classes = useStyles();
 
   useEffect(() => {
@@ -68,11 +60,6 @@ const Group = ({ group, deleteGroup }: Props) => {
     if (memberRequestsRes.data)
       setMemberRequests(memberRequestsRes.data.memberRequests);
   }, [memberRequestsRes.data]);
-
-  useEffect(() => {
-    if (groupSettingsRes.data)
-      setGroupSettings(groupSettingsRes.data.settingsByGroupId);
-  }, [groupSettingsRes.data]);
 
   const isCreator = (): boolean => {
     if (currentUser) return currentUser.id === creatorId;
