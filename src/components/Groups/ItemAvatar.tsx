@@ -1,20 +1,34 @@
 import Link from "next/link";
 import UserAvatar from "../Users/Avatar";
 import GroupAvatar from "./Avatar";
-import styles from "../../styles/Group/ItemAvatars.module.scss";
+import styles from "../../styles/Group/ItemAvatar.module.scss";
 import { Common, Motions } from "../../constants";
 import Messages from "../../utils/messages";
+import { timeAgo } from "../../utils/time";
 
 interface Props {
   user: User;
   group: Group;
   motion?: Motion;
+  post?: Post;
 }
 
-const GroupItemAvatars = ({ user, group, motion }: Props) => {
+const GroupItemAvatar = ({ user, group, motion, post }: Props) => {
+  const createdAt = (): string => {
+    if (motion) return motion.createdAt;
+    if (post) return post.createdAt;
+    return "";
+  };
+
+  const itemHref = (): string => {
+    if (motion) return `/motions/${motion.id}`;
+    if (post) return `/posts/${post?.id}`;
+    return "";
+  };
+
   if (user && group)
     return (
-      <div className={styles.avatars}>
+      <div className={styles.avatar}>
         <div className={styles.avatarLinks}>
           <GroupAvatar group={group} />
           {user && (
@@ -27,13 +41,14 @@ const GroupItemAvatars = ({ user, group, motion }: Props) => {
           <Link href={`/groups/${group.name}`}>
             <a className={styles.groupNameLink}>{group.name}</a>
           </Link>
-          <Link href={motion ? `/motions/${motion.id}` : `/users/${user.name}`}>
+          <Link href={itemHref()}>
             <a className={styles.postByLink}>
               {Messages.groups.itemWithNameAndRatified(
                 motion ? Common.ModelNames.Motion : Common.ModelNames.Post,
                 user.name,
                 motion?.stage === Motions.Stages.Ratified
               )}
+              {timeAgo(createdAt())}
             </a>
           </Link>
         </div>
@@ -42,4 +57,4 @@ const GroupItemAvatars = ({ user, group, motion }: Props) => {
   return <></>;
 };
 
-export default GroupItemAvatars;
+export default GroupItemAvatar;

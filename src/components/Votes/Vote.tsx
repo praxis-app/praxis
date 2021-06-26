@@ -21,6 +21,7 @@ import { Common, Settings, Votes } from "../../constants";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useSettingsByGroupId, useUserById } from "../../hooks";
 import Messages from "../../utils/messages";
+import { timeAgo } from "../../utils/time";
 
 const useStyles = makeStyles({
   root: {
@@ -40,11 +41,17 @@ interface Props {
   setVotes: (votes: Vote[]) => void;
 }
 
-const Vote = ({
-  vote: { id, userId, motionId, body, flipState, consensusState, verified },
-  votes,
-  setVotes,
-}: Props) => {
+const Vote = ({ vote, votes, setVotes }: Props) => {
+  const {
+    id,
+    userId,
+    motionId,
+    body,
+    flipState,
+    consensusState,
+    verified,
+    createdAt,
+  } = vote;
   const currentUser = useCurrentUser();
   const user = useUserById(userId);
   const [motion, setMotion] = useState<Motion>();
@@ -143,6 +150,7 @@ const Vote = ({
                 <a>{user?.name}</a>
               </Link>
               <span className={styles.voteTypeLabel}>{voteTypeLabel()}</span>
+              <span className={styles.timeAgo}>{timeAgo(createdAt)}</span>
             </>
           }
           action={

@@ -18,13 +18,14 @@ import LikeButton from "../Likes/LikeButton";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Post/Post.module.scss";
-import GroupItemAvatars from "../Groups/ItemAvatars";
+import GroupItemAvatar from "../Groups/ItemAvatar";
 import { Common, Roles } from "../../constants";
 import {
   useCurrentUser,
   useHasPermissionGlobally,
   useUserById,
 } from "../../hooks";
+import { timeAgo } from "../../utils/time";
 
 const useStyles = makeStyles({
   root: {
@@ -41,10 +42,8 @@ interface Props {
   deletePost: (id: string) => void;
 }
 
-const Post = ({
-  post: { id, userId, groupId, postGroupId, body },
-  deletePost,
-}: Props) => {
+const Post = ({ post, deletePost }: Props) => {
+  const { id, userId, groupId, postGroupId, body, createdAt } = post;
   const currentUser = useCurrentUser();
   const [canManagePosts] = useHasPermissionGlobally(
     Roles.Permissions.ManagePosts
@@ -92,14 +91,21 @@ const Post = ({
         <CardHeader
           avatar={
             group && !onGroupPage()
-              ? user && <GroupItemAvatars user={user} group={group} />
+              ? user && (
+                  <GroupItemAvatar user={user} group={group} post={post} />
+                )
               : user && <UserAvatar user={user} />
           }
           title={
             (!group || onGroupPage()) && (
-              <Link href={`/users/${user?.name}`}>
-                <a>{user?.name}</a>
-              </Link>
+              <>
+                <Link href={`/users/${user?.name}`}>
+                  <a>{user?.name}</a>
+                </Link>
+                <Link href={`/posts/${id}`}>
+                  <a className={styles.timeAgo}>{timeAgo(createdAt)}</a>
+                </Link>
+              </>
             )
           }
           action={

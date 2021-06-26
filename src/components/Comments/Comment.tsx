@@ -24,6 +24,7 @@ import {
   useHasPermissionGlobally,
   useUserById,
 } from "../../hooks";
+import { timeAgo } from "../../utils/time";
 
 const useStyles = makeStyles({
   root: {
@@ -42,7 +43,8 @@ interface Props {
   deleteComment: (id: string) => void;
 }
 
-const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
+const Comment = ({ comment, deleteComment }: Props) => {
+  const { id, userId, body, createdAt } = comment;
   const currentUser = useCurrentUser();
   const [canManageComments] = useHasPermissionGlobally(
     Roles.Permissions.ManageComments
@@ -72,9 +74,12 @@ const Comment = ({ comment: { id, userId, body }, deleteComment }: Props) => {
       <Card className={classes.root}>
         <CardHeader
           title={
-            <Link href={`/users/${user?.name}`}>
-              <a>{user?.name}</a>
-            </Link>
+            <>
+              <Link href={`/users/${user?.name}`}>
+                <a>{user?.name}</a>
+              </Link>
+              <span className={styles.timeAgo}>{timeAgo(createdAt)}</span>
+            </>
           }
           action={
             <ItemMenu

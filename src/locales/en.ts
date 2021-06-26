@@ -63,7 +63,7 @@ const en = {
       email: () => "Email",
       password: () => "Password",
     },
-    joinedWithData: (date: string) => `Joined ${date}`,
+    joinedWithDate: (date: string) => `Joined ${date}`,
     following: (size: number) => `${size} Following`,
     followers: (size: number) => `${size} Follower${pluralize(size)}`,
     validation: {
@@ -270,6 +270,13 @@ const en = {
 
   items: {
     notFound: (itemType: string) => `${itemType} not found.`,
+  },
+
+  time: {
+    now: () => " · now",
+    minutesAgo: (minutes: number) => ` · ${minutes}m`,
+    hoursAgo: (hours: number) => ` · ${hours}h`,
+    daysAgo: (days: number) => ` · ${days}d`,
   },
 
   middotWithSpaces: () => " · ",

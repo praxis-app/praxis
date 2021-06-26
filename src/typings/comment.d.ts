@@ -4,4 +4,5 @@ interface Comment {
   postId: string;
   motionId: string;
   body: string;
+  createdAt: string;
 }
