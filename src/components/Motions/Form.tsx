@@ -194,7 +194,7 @@ const MotionsForm = ({
               select: classes.select,
             }}
           >
-            <option aria-label="None" value="" />
+            <option aria-label={Messages.forms.none()} value="" />
             <option value={Motions.ActionTypes.PlanEvent}>
               {Messages.motions.form.actionTypes.planEvent()}
             </option>

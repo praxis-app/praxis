@@ -1,6 +1,6 @@
 # Praxis
 
-Praxis is an open source social networking site. Groups are the main focus and come with a wide variety of voting features. Create a group and set it to no-admin, allowing group members to create motions and democratically decide on settings, name, theme, or planning of events.
+Praxis is an open source social networking site. Groups are the main focus and come with a wide variety of voting features, with consensus as the default. Create a group and set it to no-admin, allowing group members to create motions and democratically decide on settings, name, theme, or planning of events.
 
 The tech stack includes the following:
 

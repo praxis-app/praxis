@@ -3,7 +3,7 @@ import { useMutation, useReactiveVar } from "@apollo/client";
 import { IconButton } from "@material-ui/core";
 import { ThumbUp, ThumbDown } from "@material-ui/icons";
 
-import { Motions } from "../../constants";
+import { Motions, Votes } from "../../constants";
 import { motionVar } from "../../apollo/client/localState";
 import { CREATE_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/VoteButtons.module.scss";
@@ -24,8 +24,10 @@ const VoteButtons = ({ motionId, votes, setVotes }: Props) => {
   const [deleteVote] = useMutation(DELETE_VOTE);
 
   useEffect(() => {
-    setUpVotes(votes.filter((vote) => vote.flipState === "up"));
-    setDownVotes(votes.filter((vote) => vote.flipState === "down"));
+    setUpVotes(votes.filter((vote) => vote.flipState === Votes.FlipStates.Up));
+    setDownVotes(
+      votes.filter((vote) => vote.flipState === Votes.FlipStates.Down)
+    );
   }, [votes]);
 
   const alreadyVote = (): Vote | null => {
@@ -36,19 +38,20 @@ const VoteButtons = ({ motionId, votes, setVotes }: Props) => {
   };
 
   const alreadyUpVote = (): Vote | null => {
-    if (alreadyVote()?.flipState === "up") return alreadyVote();
+    if (alreadyVote()?.flipState === Votes.FlipStates.Up) return alreadyVote();
     return null;
   };
 
   const alreadyDownVote = (): Vote | null => {
-    if (alreadyVote()?.flipState === "down") return alreadyVote();
+    if (alreadyVote()?.flipState === Votes.FlipStates.Down)
+      return alreadyVote();
     return null;
   };
 
   const buttonColor = (flipState: string): string => {
     if (
-      (flipState === "up" && alreadyUpVote()) ||
-      (flipState === "down" && alreadyDownVote())
+      (flipState === Votes.FlipStates.Up && alreadyUpVote()) ||
+      (flipState === Votes.FlipStates.Down && alreadyDownVote())
     )
       return "tomato";
     return "white";
@@ -91,7 +94,11 @@ const VoteButtons = ({ motionId, votes, setVotes }: Props) => {
     flipState: string;
   }) => {
     const Icon = (props: any) =>
-      flipState === "up" ? <ThumbUp {...props} /> : <ThumbDown {...props} />;
+      flipState === Votes.FlipStates.Up ? (
+        <ThumbUp {...props} />
+      ) : (
+        <ThumbDown {...props} />
+      );
     return (
       <IconButton onClick={() => handleButtonClick(flipState)}>
         <Icon
@@ -113,8 +120,8 @@ const VoteButtons = ({ motionId, votes, setVotes }: Props) => {
 
   return (
     <>
-      <VoteButton votes={upVotes} flipState="up" />
-      <VoteButton votes={downVotes} flipState="down" />
+      <VoteButton votes={upVotes} flipState={Votes.FlipStates.Up} />
+      <VoteButton votes={downVotes} flipState={Votes.FlipStates.Down} />
     </>
   );
 };

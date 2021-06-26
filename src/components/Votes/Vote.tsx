@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import {
   Card,
@@ -14,12 +14,13 @@ import { CheckCircle } from "@material-ui/icons";
 
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
-import { MOTION, SETTINGS_BY_GROUP_ID } from "../../apollo/client/queries";
+import { MOTION } from "../../apollo/client/queries";
 import { VERIFY_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/Vote.module.scss";
-import { Settings } from "../../constants";
+import { Common, Settings, Votes } from "../../constants";
 import { noCache } from "../../utils/apollo";
-import { useCurrentUser, useUserById } from "../../hooks";
+import { useCurrentUser, useSettingsByGroupId, useUserById } from "../../hooks";
+import Messages from "../../utils/messages";
 
 const useStyles = makeStyles({
   root: {
@@ -40,25 +41,21 @@ interface Props {
 }
 
 const Vote = ({
-  vote: { id, userId, motionId, body, flipState, verified },
+  vote: { id, userId, motionId, body, flipState, consensusState, verified },
   votes,
   setVotes,
 }: Props) => {
   const currentUser = useCurrentUser();
   const user = useUserById(userId);
-  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [groupSettings, setGroupSettings] = useState<Setting[]>([]);
   const [motion, setMotion] = useState<Motion>();
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [groupSettings] = useSettingsByGroupId(motion?.groupId);
   const motionRes = useQuery(MOTION, {
     variables: {
       id: motionId,
     },
     ...noCache,
   });
-  const [getGroupSettingsRes, groupSettingsRes] = useLazyQuery(
-    SETTINGS_BY_GROUP_ID,
-    noCache
-  );
   const [deleteVote] = useMutation(DELETE_VOTE);
   const [verifyVote] = useMutation(VERIFY_VOTE);
   const classes = useStyles();
@@ -66,20 +63,6 @@ const Vote = ({
   useEffect(() => {
     if (motionRes.data) setMotion(motionRes.data.motion);
   }, [motionRes.data]);
-
-  useEffect(() => {
-    if (groupSettingsRes.data)
-      setGroupSettings(groupSettingsRes.data.settingsByGroupId);
-  }, [groupSettingsRes.data]);
-
-  useEffect(() => {
-    if (motion)
-      getGroupSettingsRes({
-        variables: {
-          groupId: motion.groupId,
-        },
-      });
-  }, [motion]);
 
   const ownVote = (): boolean => {
     if (currentUser && user) return currentUser.id === user.id;
@@ -124,6 +107,30 @@ const Vote = ({
     );
   };
 
+  const voteTypeLabel = (): string => {
+    let text = Messages.middotWithSpaces();
+
+    if (consensusState === Votes.ConsensusStates.Agreement)
+      text += Messages.votes.consensus.voteTypes.labels.agreement();
+    if (consensusState === Votes.ConsensusStates.Reservations)
+      text += Messages.votes.consensus.voteTypes.labels.reservations();
+    if (consensusState === Votes.ConsensusStates.StandAside)
+      text += Messages.votes.consensus.voteTypes.labels.standAside();
+    if (consensusState === Votes.ConsensusStates.Block)
+      text += Messages.votes.consensus.voteTypes.labels.block();
+
+    if (flipState)
+      text +=
+        flipState === Votes.FlipStates.Up
+          ? Messages.votes.voteTypeLabel.support()
+          : Messages.votes.voteTypeLabel.block();
+
+    if (verified)
+      text += Messages.middotWithSpaces() + Messages.votes.verifiedWithCheck();
+
+    return text;
+  };
+
   return (
     <div className={styles.vote} key={id}>
       <div className={styles.avatar}>{user && <UserAvatar user={user} />}</div>
@@ -135,16 +142,13 @@ const Vote = ({
               <Link href={`/users/${user?.name}`}>
                 <a>{user?.name}</a>
               </Link>
-              <span className={styles.voteTypeText}>
-                {" · Vote"} {flipState === "up" ? " of support" : " to block"}
-                {verified && " · Verified ✓"}
-              </span>
+              <span className={styles.voteTypeLabel}>{voteTypeLabel()}</span>
             </>
           }
           action={
             <ItemMenu
               itemId={id}
-              itemType={"vote"}
+              itemType={Common.ModelNames.Vote}
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteVoteHandler}

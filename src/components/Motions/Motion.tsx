@@ -23,13 +23,14 @@ import ImagesList from "../Images/List";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import GroupItemAvatars from "../Groups/ItemAvatars";
-import VoteButtons from "../Votes/VoteButtons";
+import ConsensusButtons from "../Votes/ConsensusButtons";
 import ActionData from "./ActionData";
 import styles from "../../styles/Motion/Motion.module.scss";
-import { Common, Motions } from "../../constants";
+import { Common, Motions, Settings, Votes } from "../../constants";
 import { noCache } from "../../utils/apollo";
-import { useCurrentUser, useUserById } from "../../hooks";
+import { useCurrentUser, useSettingsByGroupId, useUserById } from "../../hooks";
 import Messages from "../../utils/messages";
+import VoteButtons from "../Votes/VoteButtons";
 
 const useStyles = makeStyles({
   root: {
@@ -51,6 +52,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   const currentUser = useCurrentUser();
   const user = useUserById(userId);
   const [group, setGroup] = useState<Group>();
+  const [groupSettings] = useSettingsByGroupId(group?.id);
   const [votes, setVotes] = useState<Vote[]>([]);
   const votesFromGlobal = useReactiveVar(votesVar);
   const [images, setImages] = useState<Image[]>([]);
@@ -117,6 +119,18 @@ const Motion = ({ motion, deleteMotion }: Props) => {
 
   const isRatified = (): boolean => {
     return stage === Motions.Stages.Ratified;
+  };
+
+  const settingByName = (name: string): string => {
+    const setting = groupSettings.find((setting) => setting.name === name);
+    return setting?.value || "";
+  };
+
+  const isModelOfConsensus = (): boolean => {
+    return (
+      settingByName(Settings.GroupSettings.VotingType) ===
+      Votes.VotingTypes.Consensus
+    );
   };
 
   return (
@@ -186,16 +200,25 @@ const Motion = ({ motion, deleteMotion }: Props) => {
             votes={votes}
             vote={alreadyVote() as Vote}
             setVotes={onMotionPage() ? votesVar : setVotes}
+            modelOfConsensus={isModelOfConsensus()}
           />
         )}
 
         {currentUser && !ownMotion() && (
           <CardActions>
-            <VoteButtons
-              motionId={id}
-              votes={votes}
-              setVotes={onMotionPage() ? votesVar : setVotes}
-            />
+            {isModelOfConsensus() ? (
+              <ConsensusButtons
+                motionId={id}
+                votes={votes}
+                setVotes={onMotionPage() ? votesVar : setVotes}
+              />
+            ) : (
+              <VoteButtons
+                motionId={id}
+                votes={votes}
+                setVotes={onMotionPage() ? votesVar : setVotes}
+              />
+            )}
           </CardActions>
         )}
       </Card>

@@ -1,29 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import Link from "next/link";
+import { Typography } from "@material-ui/core";
 
-import {
-  GROUP_BY_NAME,
-  SETTINGS_BY_GROUP_ID,
-} from "../../../apollo/client/queries";
+import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import SettingsForm from "../../../components/Settings/Form";
 import { Settings as SettingsConstants } from "../../../constants";
 import Messages from "../../../utils/messages";
-import { useCurrentUser } from "../../../hooks";
-import { noCache } from "../../../utils/apollo";
+import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
 
 const Settings = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
   const [group, setGroup] = useState<Group>();
-  const [settings, setSettings] = useState<Setting[]>([]);
+  const [groupSettings, setGroupSettings] = useSettingsByGroupId(group?.id);
   const [unsavedSettings, setUnsavedSettings] = useState<Setting[]>([]);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
-  const [getSettingsRes, settingsRes] = useLazyQuery(
-    SETTINGS_BY_GROUP_ID,
-    noCache
-  );
 
   useEffect(() => {
     if (query.name)
@@ -33,35 +26,18 @@ const Settings = () => {
   }, [query.name]);
 
   useEffect(() => {
-    if (group)
-      getSettingsRes({
-        variables: { groupId: group.id },
-      });
-  }, [group]);
-
-  useEffect(() => {
     if (groupRes.data) setGroup(groupRes.data.groupByName);
   }, [groupRes.data]);
 
-  useEffect(() => {
-    if (settingsRes.data) setSettings(settingsRes.data.settingsByGroupId);
-  }, [settingsRes.data]);
-
-  useEffect(() => {
-    if (currentUser && group && !ownGroup()) {
-      Router.push("/");
-    }
-  }, [currentUser, group]);
-
   const settingByName = (name: string): string => {
-    const setting = settings.find((setting) => setting.name === name);
+    const setting = groupSettings.find((setting) => setting.name === name);
     return setting?.value || "";
   };
 
   const anyUnsavedSettings = (): boolean => {
     return (
       !!unsavedSettings.length &&
-      JSON.stringify(settings) !== JSON.stringify(unsavedSettings)
+      JSON.stringify(groupSettings) !== JSON.stringify(unsavedSettings)
     );
   };
 
@@ -74,38 +50,37 @@ const Settings = () => {
   };
 
   const ownGroup = (): boolean => {
-    return group?.creatorId === currentUser?.id;
+    if (!currentUser) return false;
+    return group?.creatorId === currentUser.id;
   };
-
-  if (currentUser && !ownGroup())
-    return <>{Messages.users.permissionDenied()}</>;
 
   if (isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
 
-  if (currentUser)
-    return (
-      <>
-        <Link href={`/groups/${query.name}`}>
-          <a>
-            <h1 style={{ color: "white" }}>{query.name}</h1>
-          </a>
-        </Link>
+  if (!ownGroup()) return <>{Messages.users.permissionDenied()}</>;
 
-        <h5 style={{ color: "white" }}>
-          {Messages.groups.settings.nameWithGroup()}
-        </h5>
+  return (
+    <>
+      <Link href={`/groups/${query.name}`}>
+        <a>
+          <Typography variant="h3" style={{ fontSize: 40 }}>
+            {query.name}
+          </Typography>
+        </a>
+      </Link>
 
-        <SettingsForm
-          settings={settings}
-          setSettings={setSettings}
-          unsavedSettings={unsavedSettings}
-          setUnsavedSettings={setUnsavedSettings}
-          anyUnsavedSettings={anyUnsavedSettings()}
-        />
-      </>
-    );
+      <Typography variant="h6" style={{ marginBottom: 6, color: "white" }}>
+        {Messages.groups.settings.nameWithGroup()}
+      </Typography>
 
-  return <></>;
+      <SettingsForm
+        settings={groupSettings}
+        setSettings={setGroupSettings}
+        unsavedSettings={unsavedSettings}
+        setUnsavedSettings={setUnsavedSettings}
+        anyUnsavedSettings={anyUnsavedSettings()}
+      />
+    </>
+  );
 };
 
 export default Settings;

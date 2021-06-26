@@ -8,6 +8,7 @@ export const VOTE = gql`
       motionId
       body
       flipState
+      consensusState
     }
   }
 `;
@@ -20,6 +21,7 @@ export const VOTES_BY_MOTION_ID = gql`
       motionId
       body
       flipState
+      consensusState
       verified
       createdAt
       updatedAt

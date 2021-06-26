@@ -107,15 +107,17 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
             e.target.files && setImage(e.target.files[0])
           }
         />
-        <span
+        <div
           className={styles.attachImage}
           onClick={() => imagesInput.current?.click()}
           role="button"
           tabIndex={0}
         >
           <Image className={styles.imageInputIcon} fontSize="small" />
-          {Messages.motions.groups.actionFields.attachImage()}
-        </span>
+          <span className={styles.attachImageText}>
+            {Messages.motions.groups.actionFields.attachImage()}
+          </span>
+        </div>
       </>
     );
 

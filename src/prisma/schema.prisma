@@ -27,16 +27,17 @@ model Motion {
 }
 
 model Vote {
-  id        Int      @default(autoincrement()) @id
-  body      String?
-  flipState String?
-  verified  Boolean  @default(false)
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    Int?
-  motion    Motion?  @relation(fields: [motionId], references: [id])
-  motionId  Int?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             Int      @default(autoincrement()) @id
+  body           String?
+  flipState      String?
+  consensusState String?
+  verified       Boolean  @default(false)
+  user           User?    @relation(fields: [userId], references: [id])
+  userId         Int?
+  motion         Motion?  @relation(fields: [motionId], references: [id])
+  motionId       Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   @@unique([userId, motionId])
 }

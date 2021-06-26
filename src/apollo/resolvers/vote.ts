@@ -1,125 +1,14 @@
 import { GraphQLUpload } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
-import { Motions, Votes, Settings, Common } from "../../constants";
+import { Common } from "../../constants";
 import Messages from "../../utils/messages";
+import Motion from "../models/motion";
 
 interface VoteInput {
   body: string;
   flipState: string;
+  consensusState: string;
 }
-
-const evaluateMotion = async (motionId: number): Promise<boolean> => {
-  const motion = await prisma.motion.findFirst({
-    where: { id: motionId },
-    include: {
-      votes: true,
-      group: true,
-    },
-  });
-  if (motion && motion.group) {
-    const group = await prisma.group.findFirst({
-      where: { id: motion.group.id },
-      include: {
-        members: true,
-        settings: true,
-      },
-    });
-    const groupMembers = group?.members || [];
-    const groupSettings = group?.settings || [];
-    const votingType = settingByName(
-      groupSettings,
-      Settings.GroupSettings.VotingType
-    );
-    const ratificationThreshold =
-      parseInt(
-        settingByName(
-          groupSettings,
-          Settings.GroupSettings.RatificationThreshold
-        )
-      ) * 0.01;
-    const upVotes = motion?.votes.filter(
-      (vote) => vote.flipState === Votes.FlipStates.Up
-    );
-    const downVotes = motion?.votes.filter(
-      (vote) => vote.flipState === Votes.FlipStates.Down
-    );
-
-    if (
-      votingType === Votes.VotingTypes.Consensus &&
-      motion.stage === Motions.Stages.Voting &&
-      downVotes.length === 0 &&
-      groupMembers.length >= 3 &&
-      upVotes.length >= groupMembers.length * ratificationThreshold
-    ) {
-      ratifyMotion(motionId);
-      return true;
-    }
-  }
-  return false;
-};
-
-const ratifyMotion = async (motionId: number) => {
-  const motion = await prisma.motion.update({
-    where: { id: motionId },
-    data: {
-      stage: Motions.Stages.Ratified,
-    },
-  });
-  doAction(motion);
-};
-
-const doAction = async (motion: BackendMotion) => {
-  if (motion && motion.action) {
-    const actionData = motion.actionData as ActionData;
-    const groupId = { id: motion.groupId as number };
-    const whereGroupId = {
-      where: {
-        ...groupId,
-      },
-    };
-
-    if (motion.action === Motions.ActionTypes.ChangeName) {
-      await prisma.group.update({
-        ...whereGroupId,
-        data: {
-          name: actionData.newGroupName,
-        },
-      });
-    }
-
-    if (motion.action === Motions.ActionTypes.ChangeDescription) {
-      await prisma.group.update({
-        ...whereGroupId,
-        data: {
-          description: actionData.newGroupDescription,
-        },
-      });
-    }
-
-    if (motion.action === Motions.ActionTypes.ChangeImage) {
-      const path = actionData.newGroupImagePath as string;
-      await prisma.image.create({
-        data: {
-          group: {
-            connect: {
-              ...groupId,
-            },
-          },
-          profilePicture: true,
-          path,
-        },
-      });
-    }
-  }
-};
-
-const settingByName = (
-  settings: BackendSetting[],
-  name: Settings.GroupSettings
-): string => {
-  const setting = settings.find((setting) => setting.name === name);
-  return setting?.value as string;
-};
 
 const voteResolvers = {
   FileUpload: GraphQLUpload,
@@ -155,7 +44,7 @@ const voteResolvers = {
         input: VoteInput;
       }
     ) {
-      const { body, flipState } = input;
+      const { body, flipState, consensusState } = input;
       const vote = await prisma.vote.create({
         data: {
           user: {
@@ -170,24 +59,25 @@ const voteResolvers = {
           },
           body,
           flipState,
+          consensusState,
         },
       });
 
-      const motionRatified = evaluateMotion(parseInt(motionId));
+      const motionRatified = Motion.evaluate(parseInt(motionId));
 
       return { vote, motionRatified };
     },
 
     async updateVote(_: any, { id, input }: { id: string; input: VoteInput }) {
-      const { body, flipState } = input;
+      const { body, flipState, consensusState } = input;
       const vote = await prisma.vote.update({
         where: { id: parseInt(id) },
-        data: { body, flipState },
+        data: { body, flipState, consensusState },
       });
       if (!vote)
         throw new Error(Messages.items.notFound(Common.TypeNames.Vote));
 
-      const motionRatified = evaluateMotion(vote.motionId as number);
+      const motionRatified = Motion.evaluate(vote.motionId as number);
       return { vote, motionRatified };
     },
 
