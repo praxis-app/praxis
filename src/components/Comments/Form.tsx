@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, ChangeEvent, useEffect } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { FormGroup, Input, Button } from "@material-ui/core";
+import { FormGroup, Input } from "@material-ui/core";
 import Router from "next/router";
 import { RemoveCircle, Image } from "@material-ui/icons";
 
@@ -16,7 +16,8 @@ import styles from "../../styles/Comment/CommentsForm.module.scss";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser } from "../../hooks";
-import { randomKey } from "../../utils/common";
+import { generateRandom } from "../../utils/common";
+import SubmitButton from "../Shared/SubmitButton";
 
 interface Props {
   postId?: string;
@@ -128,7 +129,7 @@ const CommentsForm = ({
         return image.name !== imageName;
       })
     );
-    setImagesInputKey(randomKey());
+    setImagesInputKey(generateRandom());
   };
 
   return (
@@ -208,15 +209,11 @@ const CommentsForm = ({
         })}
       </div>
 
-      <Button
-        variant="contained"
-        type="submit"
-        style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
-      >
+      <SubmitButton>
         {isEditing
           ? Messages.actions.save()
           : Messages.comments.actions.comment()}
-      </Button>
+      </SubmitButton>
     </form>
   );
 };

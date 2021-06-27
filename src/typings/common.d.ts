@@ -5,3 +5,9 @@ interface Breadcrumb {
   label: string;
   href?: string;
 }
+
+type ToastStatus = "success" | "info" | "warning" | "error";
+interface ToastNotification {
+  title: string;
+  status: ToastStatus;
+}

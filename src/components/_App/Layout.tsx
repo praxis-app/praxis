@@ -5,6 +5,7 @@ import Header from "./Header";
 import HeadContent from "./HeadContent";
 import Messages from "../../utils/messages";
 import Breadcrumbs from "../Shared/Breadcrumbs";
+import Toast from "../Shared/Toast";
 
 interface Props {
   children: React.ReactChild;
@@ -18,9 +19,10 @@ const Layout = ({ children }: Props) => {
         <title>{Messages.brand()}</title>
       </Head>
       <Header />
-      <Container maxWidth="md">
+      <Container maxWidth="md" style={{ marginBottom: 100 }}>
         <Breadcrumbs />
         {children}
+        <Toast />
       </Container>
     </>
   );

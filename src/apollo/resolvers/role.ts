@@ -38,6 +38,16 @@ const initialPermissions = (isAdmin = false): InitialPermission[] => [
     description: Messages.roles.permissions.descriptions.manageRoles(),
     enabled: isAdmin,
   },
+  {
+    name: Roles.Permissions.ManageInvites,
+    description: Messages.roles.permissions.descriptions.manageInvites(),
+    enabled: isAdmin,
+  },
+  {
+    name: Roles.Permissions.CreateInvites,
+    description: Messages.roles.permissions.descriptions.createInvites(),
+    enabled: isAdmin,
+  },
 ];
 
 const initializePermissions = async (

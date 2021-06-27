@@ -1,11 +1,10 @@
 import { useMutation } from "@apollo/client";
 import Link from "next/link";
-import { Button } from "@material-ui/core";
+import { Button, CircularProgress } from "@material-ui/core";
 
 import { APPROVE_MEMBER_REQUEST } from "../../apollo/client/mutations";
 import UserAvatar from "../Users/Avatar";
 import styles from "../../styles/Group/Member.module.scss";
-import Messages from "../../utils/messages";
 import { useUserById } from "../../hooks";
 
 interface Props {
@@ -50,7 +49,7 @@ const MemberRequest = ({
         </Button>
       </div>
     );
-  return <>{Messages.states.loading()}</>;
+  return <CircularProgress style={{ color: "white", display: "block" }} />;
 };
 
 export default MemberRequest;

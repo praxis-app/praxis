@@ -15,6 +15,7 @@ import { Close } from "@material-ui/icons";
 import styles from "../../styles/Welcome/Welcome.module.scss";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
+import { redeemedInviteToken } from "../../utils/invite";
 
 const useStyles = makeStyles({
   root: {
@@ -27,7 +28,7 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-  isLoggedIn: boolean;
+  isLoggedIn?: boolean;
 }
 
 const WelcomeCard = ({ isLoggedIn }: Props) => {
@@ -87,13 +88,15 @@ const WelcomeCard = ({ isLoggedIn }: Props) => {
         </Typography>
       </CardContent>
 
-      <CardActions style={{ marginTop: "6px" }}>
-        <Link href={"/users/signup"}>
-          <a>
-            <Button style={{ color: "white" }}>sign up</Button>
-          </a>
-        </Link>
-      </CardActions>
+      {redeemedInviteToken() && (
+        <CardActions style={{ marginTop: "6px" }}>
+          <Link href={"/users/signup"}>
+            <a>
+              <Button style={{ color: "white" }}>sign up</Button>
+            </a>
+          </Link>
+        </CardActions>
+      )}
     </Card>
   );
 };

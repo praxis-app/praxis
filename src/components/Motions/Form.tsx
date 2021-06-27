@@ -3,7 +3,6 @@ import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   FormGroup,
   Input,
-  Button,
   NativeSelect,
   FormControl,
   InputLabel,
@@ -24,7 +23,9 @@ import { Motions } from "../../constants";
 import ActionFields from "./ActionFields";
 import styles from "../../styles/Motion/MotionForm.module.scss";
 import { useCurrentUser } from "../../hooks";
-import { randomKey } from "../../utils/common";
+import { generateRandom } from "../../utils/common";
+import { noCache } from "../../utils/apollo";
+import SubmitButton from "../Shared/SubmitButton";
 
 const color = { color: "rgb(170, 170, 170)" };
 const useStyles = makeStyles(() => ({
@@ -62,9 +63,7 @@ const MotionsForm = ({
   const [deleteImage] = useMutation(DELETE_IMAGE);
   const [getSavedImagesRes, savedImagesRes] = useLazyQuery(
     IMAGES_BY_MOTION_ID,
-    {
-      fetchPolicy: "no-cache",
-    }
+    noCache
   );
   const classes = useStyles();
 
@@ -151,7 +150,7 @@ const MotionsForm = ({
         return image.name !== imageName;
       })
     );
-    setImagesInputKey(randomKey());
+    setImagesInputKey(generateRandom());
   };
 
   return (
@@ -274,15 +273,11 @@ const MotionsForm = ({
         })}
       </div>
 
-      <Button
-        variant="contained"
-        type="submit"
-        style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
-      >
+      <SubmitButton>
         {isEditing
           ? Messages.actions.save()
           : Messages.motions.actions.motion()}
-      </Button>
+      </SubmitButton>
     </form>
   );
 };

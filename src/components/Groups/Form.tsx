@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { useMutation } from "@apollo/client";
 import Router from "next/router";
-import { FormGroup, Input, Button } from "@material-ui/core";
+import { FormGroup, Input } from "@material-ui/core";
 import { Image, RemoveCircle } from "@material-ui/icons";
 
 import { CREATE_GROUP, UPDATE_GROUP } from "../../apollo/client/mutations";
@@ -9,7 +9,8 @@ import { CREATE_GROUP, UPDATE_GROUP } from "../../apollo/client/mutations";
 import styles from "../../styles/Group/GroupForm.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
-import { randomKey } from "../../utils/common";
+import { generateRandom } from "../../utils/common";
+import SubmitButton from "../Shared/SubmitButton";
 
 interface Props {
   group?: Group;
@@ -75,7 +76,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
 
   const removeSelectedCoverPhoto = () => {
     setCoverPhoto(undefined);
-    setImageInputKey(randomKey());
+    setImageInputKey(generateRandom());
   };
 
   if (currentUser)
@@ -136,13 +137,9 @@ const GroupForm = ({ group, isEditing }: Props) => {
           </div>
         )}
 
-        <Button
-          variant="contained"
-          type="submit"
-          style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
-        >
+        <SubmitButton>
           {isEditing ? Messages.actions.save() : Messages.actions.create()}
-        </Button>
+        </SubmitButton>
       </form>
     );
   return <></>;

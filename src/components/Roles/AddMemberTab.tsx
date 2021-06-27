@@ -72,7 +72,7 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
         >
           <div className={styles.buttonWrapper}>
             <div className={styles.button}>
-              <AddCircle className={styles.addCircleIcon} fontSize="small" />
+              <AddCircle className={styles.addCircleIcon} />
               <div className={styles.buttonText}>
                 {Messages.roles.actions.addMembers()}
               </div>

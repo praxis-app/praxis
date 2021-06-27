@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { useMutation } from "@apollo/client";
 import Router from "next/router";
-import { FormGroup, Input, Button } from "@material-ui/core";
+import { FormGroup, Input } from "@material-ui/core";
 import { Image, RemoveCircle } from "@material-ui/icons";
 
 import {
@@ -15,7 +15,8 @@ import styles from "../../styles/User/UserForm.module.scss";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
 import { useCurrentUser } from "../../hooks";
-import { randomKey } from "../../utils/common";
+import { generateRandom } from "../../utils/common";
+import SubmitButton from "../Shared/SubmitButton";
 
 interface Props {
   user?: User;
@@ -112,7 +113,7 @@ const UserForm = ({ user, isEditing }: Props) => {
 
   const removeSelectedProfilePicture = () => {
     setProfilePicture(undefined);
-    setImageInputKey(randomKey());
+    setImageInputKey(generateRandom());
   };
 
   return (
@@ -203,13 +204,9 @@ const UserForm = ({ user, isEditing }: Props) => {
         </>
       )}
 
-      <Button
-        variant="contained"
-        type="submit"
-        style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
-      >
+      <SubmitButton>
         {isEditing ? Messages.actions.save() : Messages.users.actions.signUp()}
-      </Button>
+      </SubmitButton>
     </form>
   );
 };

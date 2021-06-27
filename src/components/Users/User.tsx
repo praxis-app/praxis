@@ -52,7 +52,7 @@ const Show = ({ user, deleteUser }: Props) => {
     Roles.Permissions.ManageUsers
   );
   const classes = useStyles();
-  const signUpDate = formatDate(createdAt);
+  const signUpDate = formatDate(createdAt, false);
 
   useEffect(() => {
     if (followersRes.data) setFollowers(followersRes.data.userFollowers);

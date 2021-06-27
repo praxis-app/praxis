@@ -18,6 +18,7 @@ import {
 import { Roles } from "../../constants";
 import styles from "../../styles/Common/Header.module.scss";
 import { headerKeyVar } from "../../apollo/client/localState";
+import { redeemedInviteToken } from "../../utils/clientIndex";
 
 const cx = classNames.bind(styles);
 
@@ -25,6 +26,7 @@ const Header = () => {
   const router = useRouter();
   const windowSize = useWindowSize();
   const [open, setOpen] = useState(false);
+  const [inviteToken, setInviteToken] = useState<string | null>();
   const [logoutUser] = useMutation(LOGOUT_USER);
   const [setCurrentUser] = useMutation(SET_CURRENT_USER);
   const currentUser = useCurrentUser();
@@ -35,6 +37,14 @@ const Header = () => {
   );
   const [canManageUsers] = useHasPermissionGlobally(
     Roles.Permissions.ManageUsers,
+    refreshKey
+  );
+  const [canManageInvites] = useHasPermissionGlobally(
+    Roles.Permissions.ManageInvites,
+    refreshKey
+  );
+  const [canCreateInvites] = useHasPermissionGlobally(
+    Roles.Permissions.CreateInvites,
     refreshKey
   );
 
@@ -48,6 +58,7 @@ const Header = () => {
         logoutUserMutate();
       }
     }
+    setInviteToken(redeemedInviteToken());
   }, []);
 
   useEffect(() => {
@@ -116,6 +127,16 @@ const Header = () => {
             </div>
           )}
 
+          {(canManageInvites || canCreateInvites) && (
+            <div className={styles.navbarItem}>
+              <Link href="/invites" passHref>
+                <a className={styles.navbarItemText}>
+                  {Messages.invites.labels.invites()}
+                </a>
+              </Link>
+            </div>
+          )}
+
           {currentUser ? (
             <>
               <div className={styles.navbarItem}>
@@ -147,13 +168,15 @@ const Header = () => {
                   </a>
                 </Link>
               </div>
-              <div className={styles.navbarItem}>
-                <Link href="/users/signup" passHref>
-                  <a className={styles.navbarItemText}>
-                    {Messages.users.actions.signUp()}
-                  </a>
-                </Link>
-              </div>
+              {inviteToken && (
+                <div className={styles.navbarItem}>
+                  <Link href="/users/signup" passHref>
+                    <a className={styles.navbarItemText}>
+                      {Messages.users.actions.signUp()}
+                    </a>
+                  </Link>
+                </div>
+              )}
             </>
           )}
         </div>

@@ -13,6 +13,7 @@ interface Props {
   ownItem: () => boolean;
   hasPermission?: boolean;
   children?: React.ReactNode;
+  prependChildren?: boolean;
 }
 
 const ItemMenu = ({
@@ -25,6 +26,7 @@ const ItemMenu = ({
   ownItem,
   hasPermission,
   children,
+  prependChildren,
 }: Props) => {
   const handleMenuButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -58,6 +60,8 @@ const ItemMenu = ({
             },
           }}
         >
+          {prependChildren && children}
+
           {ownItem() && (
             <MenuItem>
               <Link href={`/${itemType}s/${name ? name : itemId}/edit`}>
@@ -85,7 +89,7 @@ const ItemMenu = ({
             {Messages.actions.delete()}
           </MenuItem>
 
-          {children}
+          {!prependChildren && children}
         </Menu>
       </>
     );

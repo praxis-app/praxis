@@ -5,7 +5,6 @@ import Router from "next/router";
 import {
   FormGroup,
   Input,
-  Button,
   FormControl,
   InputLabel,
   NativeSelect,
@@ -18,6 +17,7 @@ import styles from "../../styles/Vote/VotesForm.module.scss";
 import { Motions, Votes } from "../../constants";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
+import SubmitButton from "../Shared/SubmitButton";
 
 const color = { color: "rgb(170, 170, 170)" };
 const useStyles = makeStyles(() => ({
@@ -197,13 +197,7 @@ const VotesForm = ({
         </FormControl>
       </FormGroup>
 
-      <Button
-        variant="contained"
-        type="submit"
-        style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
-      >
-        {Messages.votes.actions.update()}
-      </Button>
+      <SubmitButton>{Messages.votes.actions.update()}</SubmitButton>
     </form>
   );
 };

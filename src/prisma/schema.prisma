@@ -59,6 +59,7 @@ model User {
   following        Follow[] @relation("Following")
   settings         Setting[]
   roles            RoleMember[]
+  serverInvites    ServerInvite[]
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
@@ -223,4 +224,16 @@ model Permission {
   roleId      Int?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model ServerInvite {
+  id        Int      @default(autoincrement()) @id
+  token     String   @unique
+  uses      Int      @default(0)
+  maxUses   Int?
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

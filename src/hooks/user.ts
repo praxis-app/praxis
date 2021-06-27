@@ -4,7 +4,7 @@ import { useQuery } from "@apollo/client";
 import { CURRENT_USER, USER } from "../apollo/client/queries";
 import { noCache } from "../utils/apollo";
 import { isAuthenticated } from "../utils/auth";
-import { randomKey } from "../utils/common";
+import { generateRandom } from "../utils/common";
 import { headerKeyVar } from "../apollo/client/localState";
 
 export const useCurrentUser = (): CurrentUser | undefined => {
@@ -17,7 +17,7 @@ export const useCurrentUser = (): CurrentUser | undefined => {
   }, [currentUserRes.data]);
 
   useEffect(() => {
-    headerKeyVar(randomKey());
+    headerKeyVar(generateRandom());
   }, [result]);
 
   return result;
