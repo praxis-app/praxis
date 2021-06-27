@@ -12,6 +12,7 @@ import styles from "../../styles/User/User.module.scss";
 import Messages from "../../utils/messages";
 import { Common, Roles } from "../../constants";
 import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
+import { formatDate } from "../../utils/time";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -51,11 +52,7 @@ const Show = ({ user, deleteUser }: Props) => {
     Roles.Permissions.ManageUsers
   );
   const classes = useStyles();
-  const date = new Date(parseInt(createdAt)).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const signUpDate = formatDate(createdAt);
 
   useEffect(() => {
     if (followersRes.data) setFollowers(followersRes.data.userFollowers);
@@ -98,7 +95,7 @@ const Show = ({ user, deleteUser }: Props) => {
             <a>{name}</a>
           </Link>
         }
-        subheader={Messages.users.joinedWithData(date)}
+        subheader={Messages.users.joinedWithDate(signUpDate)}
         classes={{ title: classes.title, subheader: classes.subheader }}
       />
 

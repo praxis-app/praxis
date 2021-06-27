@@ -6,4 +6,5 @@ interface Vote {
   flipState: string;
   consensusState: string;
   verified: boolean;
+  createdAt: string;
 }

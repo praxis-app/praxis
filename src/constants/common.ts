@@ -42,4 +42,11 @@ export namespace Common {
     Development = "development",
     Production = "production",
   }
+
+  export enum Time {
+    Minute = 60,
+    Hour = 3600,
+    Day = 86400,
+    Month = 2628000,
+  }
 }

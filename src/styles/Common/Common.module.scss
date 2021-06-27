@@ -1,3 +1,5 @@
+@import "../Common/colors.scss";
+
 $responsiveBreakpoint: 600px;
 $desktopBreakpoint: 850px;
 
@@ -33,6 +35,11 @@ $desktopBreakpoint: 850px;
   right: 8px;
   bottom: 14px;
   cursor: pointer;
+}
+
+.timeAgo {
+  color: $lightGray;
+  font-size: 13px;
 }
 
 // Stops blue selection for tapping of links in mobile

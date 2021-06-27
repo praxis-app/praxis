@@ -22,7 +22,7 @@ import VotesForm from "../Votes/Form";
 import ImagesList from "../Images/List";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
-import GroupItemAvatars from "../Groups/ItemAvatars";
+import GroupItemAvatar from "../Groups/ItemAvatar";
 import ConsensusButtons from "../Votes/ConsensusButtons";
 import ActionData from "./ActionData";
 import styles from "../../styles/Motion/Motion.module.scss";
@@ -31,6 +31,7 @@ import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useSettingsByGroupId, useUserById } from "../../hooks";
 import Messages from "../../utils/messages";
 import VoteButtons from "../Votes/VoteButtons";
+import { timeAgo } from "../../utils/time";
 
 const useStyles = makeStyles({
   root: {
@@ -140,7 +141,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
           avatar={
             group && !onGroupPage()
               ? user && (
-                  <GroupItemAvatars user={user} group={group} motion={motion} />
+                  <GroupItemAvatar user={user} group={group} motion={motion} />
                 )
               : user && <UserAvatar user={user} />
           }
@@ -156,7 +157,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
                     {Messages.motions.toActionWithRatified(
                       action,
                       isRatified()
-                    )}
+                    ) + timeAgo(motion.createdAt)}
                   </a>
                 </Link>
               </>
