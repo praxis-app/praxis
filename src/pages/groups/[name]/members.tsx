@@ -4,10 +4,11 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { Card, createStyles, makeStyles, Typography } from "@material-ui/core";
 
-import { GROUP_BY_NAME, GROUP_MEMBERS } from "../../../apollo/client/queries";
+import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import styles from "../../../styles/Group/Group.module.scss";
 import Member from "../../../components/Groups/Member";
 import Messages from "../../../utils/messages";
+import { useMembersByGroupId } from "../../../hooks";
 const useStyles = makeStyles(() =>
   createStyles({
     root: {
@@ -19,11 +20,8 @@ const useStyles = makeStyles(() =>
 const Members = () => {
   const { query } = useRouter();
   const [group, setGroup] = useState<Group>();
-  const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
+  const [groupMembers] = useMembersByGroupId(group?.id);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
-  const [getGroupMembersRes, groupMembersRes] = useLazyQuery(GROUP_MEMBERS, {
-    fetchPolicy: "no-cache",
-  });
   const classes = useStyles();
 
   useEffect(() => {
@@ -35,21 +33,8 @@ const Members = () => {
   }, [query.name]);
 
   useEffect(() => {
-    if (group) {
-      getGroupMembersRes({
-        variables: { groupId: group.id },
-      });
-    }
-  }, [group]);
-
-  useEffect(() => {
     if (groupRes.data) setGroup(groupRes.data.groupByName);
   }, [groupRes.data]);
-
-  useEffect(() => {
-    if (groupMembersRes.data)
-      setGroupMembers(groupMembersRes.data.groupMembers);
-  }, [groupMembersRes.data]);
 
   return (
     <>

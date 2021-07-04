@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
 import { CircularProgress } from "@material-ui/core";
-
-import { FOLLOWERS } from "../../apollo/client/queries";
 import UserAvatar from "../Users/Avatar";
 import FollowButton from "./FollowButton";
 import styles from "../../styles/Follow/Follow.module.scss";
-import { noCache } from "../../utils/apollo";
-import { useUserById } from "../../hooks";
+import { useUserById, useFollowersByUserId } from "../../hooks";
 
 interface Props {
   userId: string;
@@ -15,15 +10,7 @@ interface Props {
 
 const Follow = ({ userId }: Props) => {
   const user = useUserById(userId);
-  const [followers, setFollowers] = useState<Follow[]>([]);
-  const followersRes = useQuery(FOLLOWERS, {
-    variables: { userId },
-    ...noCache,
-  });
-
-  useEffect(() => {
-    if (followersRes.data) setFollowers(followersRes.data.userFollowers);
-  }, [followersRes.data]);
+  const [followers, setFollowers] = useFollowersByUserId(user?.id);
 
   if (user)
     return (

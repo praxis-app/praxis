@@ -12,7 +12,7 @@ import {
   MenuItem,
 } from "@material-ui/core";
 
-import { GROUP_MEMBERS, MEMBER_REUQESTS } from "../../apollo/client/queries";
+import { MEMBER_REUQESTS } from "../../apollo/client/queries";
 import styles from "../../styles/Group/Group.module.scss";
 import GroupAvatar from "./Avatar";
 import JoinButton from "./JoinButton";
@@ -20,7 +20,11 @@ import ItemMenu from "../Shared/ItemMenu";
 import { Common, Settings as SettingsConstants } from "../../constants";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
-import { useCurrentUser, useSettingsByGroupId } from "../../hooks";
+import {
+  useCurrentUser,
+  useMembersByGroupId,
+  useSettingsByGroupId,
+} from "../../hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -39,7 +43,7 @@ interface Props {
 const Group = ({ group, deleteGroup }: Props) => {
   const { id, name, description, creatorId } = group;
   const [groupSettings] = useSettingsByGroupId(id);
-  const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
+  const [groupMembers, setGroupMembers] = useMembersByGroupId(group.id);
   const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const currentUser = useCurrentUser();
@@ -47,14 +51,8 @@ const Group = ({ group, deleteGroup }: Props) => {
     variables: { groupId: group.id },
     ...noCache,
   };
-  const groupMembersRes = useQuery(GROUP_MEMBERS, memberVariables);
   const memberRequestsRes = useQuery(MEMBER_REUQESTS, memberVariables);
   const classes = useStyles();
-
-  useEffect(() => {
-    if (groupMembersRes.data)
-      setGroupMembers(groupMembersRes.data.groupMembers);
-  }, [groupMembersRes.data]);
 
   useEffect(() => {
     if (memberRequestsRes.data)

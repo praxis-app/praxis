@@ -10,6 +10,7 @@ import Follow from "../../../components/Follows/Follow";
 
 import styles from "../../../styles/Follow/Follow.module.scss";
 import Messages from "../../../utils/messages";
+import { noCache } from "../../../utils/apollo";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -21,8 +22,11 @@ const useStyles = makeStyles(() =>
 
 const Followers = () => {
   const { query } = useRouter();
-  const [followers, setFollowers] = useState([]);
-  const [getFollowersRes, followersRes] = useLazyQuery(FOLLOWERS_BY_NAME);
+  const [followers, setFollowers] = useState<Follow[]>([]);
+  const [getFollowersRes, followersRes] = useLazyQuery(
+    FOLLOWERS_BY_NAME,
+    noCache
+  );
   const classes = useStyles();
 
   useEffect(() => {
