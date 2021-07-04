@@ -12,6 +12,7 @@ import settingResolvers from "./setting";
 import roleResolvers from "./role";
 import roleMemberResolvers from "./roleMember";
 import permissionResolvers from "./permission";
+import serverInviteResolvers from "./serverInvite";
 
 export const resolvers = {
   Query: {
@@ -29,6 +30,7 @@ export const resolvers = {
     ...roleResolvers.Query,
     ...roleMemberResolvers.Query,
     ...permissionResolvers.Query,
+    ...serverInviteResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
@@ -45,5 +47,6 @@ export const resolvers = {
     ...roleResolvers.Mutation,
     ...roleMemberResolvers.Mutation,
     ...permissionResolvers.Mutation,
+    ...serverInviteResolvers.Mutation,
   },
 };

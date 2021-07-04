@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
+import { CircularProgress } from "@material-ui/core";
 
 import { FOLLOWERS } from "../../apollo/client/queries";
-
 import UserAvatar from "../Users/Avatar";
 import FollowButton from "./FollowButton";
 import styles from "../../styles/Follow/Follow.module.scss";
-import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useUserById } from "../../hooks";
 
@@ -40,7 +39,7 @@ const Follow = ({ userId }: Props) => {
         />
       </div>
     );
-  return <>{Messages.states.loading()}</>;
+  return <CircularProgress style={{ color: "white", display: "block" }} />;
 };
 
 export default Follow;

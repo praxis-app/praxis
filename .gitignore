@@ -70,3 +70,4 @@ yarn-error.log*
 !.prettierrc
 !.eslintrc
 !.babelrc
+!.github/

@@ -6,6 +6,7 @@ const en = {
   actions: {
     add: () => "Add",
     close: () => "Close",
+    copy: () => "Copy",
     create: () => "Create",
     delete: () => "Delete",
     deleteItem: (itemType: string) => `Delete ${itemType}`,
@@ -258,10 +259,52 @@ const en = {
           "Allows members to create new roles and edit or delete roles lower than their highest role.",
         manageUsers: () =>
           "Allows members to view the full list of server members and permanently delete their accounts.",
+        manageInvites: () =>
+          "Allows members to view the full list of server invites.",
+        createInvites: () =>
+          "Allows members to invite new people to this server.",
       },
     },
     serverRoles: () => "Server Roles",
     noRoles: () => "No roles have been created for this server yet.",
+  },
+
+  invites: {
+    labels: {
+      invites: () => "Invites",
+      serverInvites: () => "Server Invites",
+    },
+    columnNames: {
+      inviter: () => "INVITER",
+      code: () => "CODE",
+      uses: () => "USES",
+      expires: () => "EXPIRES",
+    },
+    prompts: {
+      removeInviteConfirm: () => "Are you sure you want to remove this invite?",
+    },
+    form: {
+      expiresAtOptions: {
+        oneDay: () => "1 day",
+        sevenDays: () => "7 days",
+        oneMonth: () => "1 month",
+        never: () => "Never",
+      },
+      maxUsesOptions: {
+        noLimit: () => "No limit",
+        xUses: (x: number) => `${x} use${x === 1 ? "" : "s"}`,
+      },
+      labels: {
+        expiresAt: () => "Expires after",
+        maxUses: () => "Max number of uses",
+      },
+    },
+    redeem: {
+      alreadySignedUp: () => "You've already signed up.",
+      expiredOrInvalid: () => "Your invite link is either expired or invalid.",
+      inviteRequired: () => "You need to be invited in order to sign up.",
+    },
+    copiedToClipboard: () => "Copied to clipboard",
   },
 
   images: {
@@ -273,10 +316,11 @@ const en = {
   },
 
   time: {
-    now: () => " · now",
-    minutesAgo: (minutes: number) => ` · ${minutes}m`,
-    hoursAgo: (hours: number) => ` · ${hours}h`,
-    daysAgo: (days: number) => ` · ${days}d`,
+    now: () => "now",
+    minutes: (minutes: number) => `${minutes}m`,
+    hours: (hours: number) => `${hours}h`,
+    days: (days: number) => `${days}d`,
+    infinity: () => "∞",
   },
 
   middotWithSpaces: () => " · ",

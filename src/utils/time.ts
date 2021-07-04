@@ -1,9 +1,9 @@
 import { Common } from "../constants";
 import Messages from "./messages";
 
-export const formatDate = (timeStamp: string): string => {
+export const formatDate = (timeStamp: string, withMiddot = true): string => {
   return (
-    Messages.middotWithSpaces() +
+    (withMiddot ? Messages.middotWithSpaces() : "") +
     new Date(parseInt(timeStamp)).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -12,24 +12,43 @@ export const formatDate = (timeStamp: string): string => {
   );
 };
 
-export const timeAgo = (timeStamp: string): string => {
+export const timeFromNow = (timeStamp: string, withMiddot = true): string => {
+  const now = new Date();
+  const secondsFromNow: number = (parseInt(timeStamp) - now.getTime()) / 1000;
+  return timeMessage(timeStamp, secondsFromNow, withMiddot);
+};
+
+export const timeAgo = (timeStamp: string, withMiddot = true): string => {
   const now = new Date();
   const secondsPast: number = (now.getTime() - parseInt(timeStamp)) / 1000;
+  return timeMessage(timeStamp, secondsPast, withMiddot);
+};
 
-  if (secondsPast < Common.Time.Minute) {
-    return Messages.time.now();
+const timeMessage = (
+  timeStamp: string,
+  timeDifference: number,
+  withMiddot = true
+): string => {
+  const middot = withMiddot ? Messages.middotWithSpaces() : "";
+  if (timeDifference < Common.Time.Minute) {
+    return middot + Messages.time.now();
   }
-  if (secondsPast < Common.Time.Hour) {
-    return Messages.time.minutesAgo(
-      Math.round(secondsPast / Common.Time.Minute)
+  if (timeDifference < Common.Time.Hour) {
+    return (
+      middot +
+      Messages.time.minutes(Math.round(timeDifference / Common.Time.Minute))
     );
   }
-  if (secondsPast < Common.Time.Day) {
-    return Messages.time.hoursAgo(Math.round(secondsPast / Common.Time.Hour));
+  if (timeDifference < Common.Time.Day) {
+    return (
+      middot +
+      Messages.time.hours(Math.round(timeDifference / Common.Time.Hour))
+    );
   }
-  if (secondsPast < Common.Time.Month) {
-    return Messages.time.daysAgo(Math.round(secondsPast / Common.Time.Day));
+  if (timeDifference < Common.Time.Month) {
+    return (
+      middot + Messages.time.days(Math.round(timeDifference / Common.Time.Day))
+    );
   }
-
-  return formatDate(timeStamp);
+  return formatDate(timeStamp, withMiddot);
 };

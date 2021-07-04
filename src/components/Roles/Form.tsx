@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { FormGroup, Input, Button } from "@material-ui/core";
+import { FormGroup, Input } from "@material-ui/core";
 
 import { CREATE_ROLE, UPDATE_ROLE } from "../../apollo/client/mutations";
 import styles from "../../styles/Group/GroupForm.module.scss";
@@ -9,7 +9,8 @@ import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import ColorPicker from "../Shared/ColorPicker";
 import { Roles } from "../../constants";
-import { randomKey } from "../../utils/common";
+import { generateRandom } from "../../utils/common";
+import SubmitButton from "../Shared/SubmitButton";
 
 interface Props {
   role?: Role;
@@ -40,7 +41,7 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
 
     if (currentUser) {
       try {
-        setColorPickerKey(randomKey());
+        setColorPickerKey(generateRandom());
         if (isEditing && role) {
           const { data } = await updateRole({
             variables: {
@@ -99,13 +100,9 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
           />
         </FormGroup>
 
-        <Button
-          type="submit"
-          variant="contained"
-          style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
-        >
+        <SubmitButton>
           {isEditing ? Messages.actions.save() : Messages.actions.create()}
-        </Button>
+        </SubmitButton>
       </form>
     );
   return <></>;

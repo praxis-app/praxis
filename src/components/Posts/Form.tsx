@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, ChangeEvent, useEffect } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { FormGroup, Input, Button } from "@material-ui/core";
+import { FormGroup, Input } from "@material-ui/core";
 import Router from "next/router";
 import { RemoveCircle, Image } from "@material-ui/icons";
 
@@ -16,7 +16,8 @@ import styles from "../../styles/Post/PostForm.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import { noCache } from "../../utils/apollo";
-import { randomKey } from "../../utils/common";
+import { generateRandom } from "../../utils/common";
+import SubmitButton from "../Shared/SubmitButton";
 
 interface Props {
   post?: Post;
@@ -115,7 +116,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
         return image.name !== imageName;
       })
     );
-    setImagesInputKey(randomKey());
+    setImagesInputKey(generateRandom());
   };
 
   return (
@@ -199,13 +200,9 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
         })}
       </div>
 
-      <Button
-        variant="contained"
-        type="submit"
-        style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
-      >
+      <SubmitButton>
         {isEditing ? Messages.actions.save() : Messages.posts.actions.post()}
-      </Button>
+      </SubmitButton>
     </form>
   );
 };

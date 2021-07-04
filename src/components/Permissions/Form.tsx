@@ -7,7 +7,7 @@ import Messages from "../../utils/messages";
 import { UPDATE_PERMISSIONS } from "../../apollo/client/mutations";
 import { useMutation } from "@apollo/client";
 import { headerKeyVar } from "../../apollo/client/localState";
-import { randomKey } from "../../utils/common";
+import { generateRandom } from "../../utils/common";
 
 const useStyles = makeStyles({
   toggle: {
@@ -65,7 +65,7 @@ const PermissionsForm = ({
       const newPermissions = data.updatePermissions.permissions;
       if (setUnsavedPermissions) setUnsavedPermissions(newPermissions);
       setPermissions(newPermissions);
-      const newKey = randomKey();
+      const newKey = generateRandom();
       setCanManageRolesDep(newKey);
       headerKeyVar(newKey);
     } catch (err) {

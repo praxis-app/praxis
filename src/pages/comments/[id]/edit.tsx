@@ -13,13 +13,13 @@ const Edit = () => {
   const { query } = useRouter();
   const [comment, setComment] = useState<Comment>();
   const [user, setUser] = useState<User>();
-  const [getCommentsRes, commentsRes] = useLazyQuery(COMMENT);
+  const [getCommentRes, commentRes] = useLazyQuery(COMMENT);
   const [getUserRes, userRes] = useLazyQuery(USER, noCache);
   const currentUser = useCurrentUser();
 
   useEffect(() => {
     if (query.id)
-      getCommentsRes({
+      getCommentRes({
         variables: { id: query.id },
       });
   }, [query.id]);
@@ -34,8 +34,8 @@ const Edit = () => {
   }, [comment]);
 
   useEffect(() => {
-    setComment(commentsRes.data ? commentsRes.data.comment : commentsRes.data);
-  }, [commentsRes.data]);
+    setComment(commentRes.data ? commentRes.data.comment : commentRes.data);
+  }, [commentRes.data]);
 
   useEffect(() => {
     if (userRes.data) setUser(userRes.data.user);

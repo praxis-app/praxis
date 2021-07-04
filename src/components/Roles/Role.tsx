@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Avatar } from "@material-ui/core";
+import { Avatar, CircularProgress } from "@material-ui/core";
 import { ArrowForwardIos, Person } from "@material-ui/icons";
 
 import Messages from "../../utils/messages";
@@ -51,7 +51,7 @@ const Role = ({ role }: Props) => {
         </a>
       </Link>
     );
-  return <>{Messages.states.loading()}</>;
+  return <CircularProgress style={{ color: "white", display: "block" }} />;
 };
 
 export default Role;

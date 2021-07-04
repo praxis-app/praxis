@@ -13,6 +13,7 @@ import Setting from "./setting";
 import Role from "./role";
 import RoleMember from "./roleMember";
 import Permission from "./permission";
+import ServerInvite from "./serverInvite";
 
 export const typeDefs = gql`
   scalar FileUpload
@@ -32,6 +33,7 @@ export const typeDefs = gql`
   ${Role}
   ${RoleMember}
   ${Permission}
+  ${ServerInvite}
 
   union FeedItem = Post | Motion
 
@@ -90,6 +92,10 @@ export const typeDefs = gql`
     roleMembers(roleId: ID!): [RoleMember]
     permissionsByRoleId(roleId: ID!): [Permission]!
     hasPermissionGlobally(name: String!, userId: ID!): Boolean!
+
+    serverInvite(id: ID!): ServerInvite!
+    serverInviteByToken(token: String!): ServerInvite
+    allServerInvites: [ServerInvite]
   }
 
   type Mutation {
@@ -162,5 +168,12 @@ export const typeDefs = gql`
     deleteRoleMember(id: ID!): Boolean!
 
     updatePermissions(input: UpdatePermissionsInput!): PermissionsPayload!
+
+    createServerInvite(
+      userId: ID!
+      input: CreateServerInviteInput!
+    ): ServerInvitePayload!
+    redeemServerInvite(token: String!): ServerInvitePayload
+    deleteServerInvite(id: ID!): Boolean!
   }
 `;

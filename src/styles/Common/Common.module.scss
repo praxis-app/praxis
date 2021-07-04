@@ -1,9 +1,9 @@
 @import "../Common/colors.scss";
 
-$responsiveBreakpoint: 600px;
 $desktopBreakpoint: 850px;
 
-.card {
+.card,
+.form {
   width: 100%;
   margin-bottom: 12px;
 }
@@ -55,7 +55,8 @@ $desktopBreakpoint: 850px;
 
 // desktop
 @media only screen and (min-width: $desktopBreakpoint) {
-  .card {
+  .card,
+  .form {
     width: 525px;
   }
 }

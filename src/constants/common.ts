@@ -1,6 +1,7 @@
 export namespace Common {
   export const PAGE_SIZE = 10;
   export const EXPIRES_IN = "90d";
+  export const DESKTOP_BREAKPOINT = 850;
 
   export enum TypeNames {
     Comment = "Comment",
@@ -15,6 +16,7 @@ export namespace Common {
     Post = "Post",
     Role = "Role",
     Setting = "Setting",
+    ServerInvite = "ServerInvite",
     User = "User",
     Vote = "Vote",
   }
@@ -36,6 +38,7 @@ export namespace Common {
   export enum LocalStorage {
     JwtToken = "jwtToken",
     WelcomeCardClosed = "welcomeCardClosed",
+    RedeemedInviteToken = "redeemedInviteToken",
   }
 
   export enum Environments {
@@ -47,6 +50,14 @@ export namespace Common {
     Minute = 60,
     Hour = 3600,
     Day = 86400,
+    Week = 604800,
     Month = 2628000,
+  }
+
+  export enum ToastStatus {
+    Success = "success",
+    Error = "error",
+    Info = "info",
+    Warning = "warning",
   }
 }

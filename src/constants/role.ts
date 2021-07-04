@@ -7,5 +7,7 @@ export namespace Roles {
     ManagePosts = "manage-posts",
     ManageComments = "manage-comments",
     ManageRoles = "manage-roles",
+    ManageInvites = "manage-invites",
+    CreateInvites = "create-invites",
   }
 }

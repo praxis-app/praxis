@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMutation } from "@apollo/client";
 import Router from "next/router";
-import { Input, Button, FormGroup } from "@material-ui/core";
+import { Input, FormGroup } from "@material-ui/core";
 
 import { SIGN_IN, SET_CURRENT_USER } from "../../apollo/client/mutations";
 import { setAuthToken } from "../../utils/auth";
@@ -10,6 +10,7 @@ import styles from "../../styles/User/UserForm.module.scss";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
 import { useCurrentUser } from "../../hooks";
+import SubmitButton from "../../components/Shared/SubmitButton";
 
 const Login = () => {
   const currentUser = useCurrentUser();
@@ -85,13 +86,7 @@ const Login = () => {
         />
       </FormGroup>
 
-      <Button
-        variant="contained"
-        type="submit"
-        style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
-      >
-        {Messages.users.actions.logIn()}
-      </Button>
+      <SubmitButton>{Messages.users.actions.logIn()}</SubmitButton>
     </form>
   );
 };

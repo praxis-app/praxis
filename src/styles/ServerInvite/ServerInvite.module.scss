@@ -1,0 +1,35 @@
+@import "../Common/Common.module.scss";
+
+.invite {
+  display: flex;
+  justify-content: space-between;
+  margin: 12px;
+}
+
+.link {
+  display: flex;
+}
+
+.userAvatar {
+  display: none;
+}
+
+.userName {
+  color: $lightGray;
+}
+
+.form {
+  @extend .form;
+  margin-bottom: 24px;
+}
+
+// desktop
+@media only screen and (min-width: $desktopBreakpoint) {
+  .userAvatar {
+    display: initial;
+  }
+  .userName {
+    margin-top: 9px;
+    margin-left: 12px;
+  }
+}

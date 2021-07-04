@@ -1,8 +1,8 @@
 import Link from "next/link";
+import { CircularProgress } from "@material-ui/core";
 
 import UserAvatar from "../Users/Avatar";
 import styles from "../../styles/Group/Member.module.scss";
-import Messages from "../../utils/messages";
 import { useUserById } from "../../hooks";
 
 interface Props {
@@ -23,7 +23,7 @@ const GroupMember = ({ userId }: Props) => {
         </div>
       </div>
     );
-  return <>{Messages.states.loading()}</>;
+  return <CircularProgress style={{ color: "white", display: "block" }} />;
 };
 
 export default GroupMember;
