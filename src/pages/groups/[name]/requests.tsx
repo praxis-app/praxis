@@ -4,17 +4,17 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { Card, createStyles, makeStyles, Typography } from "@material-ui/core";
 
-import {
-  GROUP_BY_NAME,
-  MEMBER_REUQESTS,
-  GROUP_MEMBERS,
-} from "../../../apollo/client/queries";
+import { GROUP_BY_NAME, MEMBER_REUQESTS } from "../../../apollo/client/queries";
 import styles from "../../../styles/Group/Group.module.scss";
 import Request from "../../../components/Groups/Request";
 import { Settings } from "../../../constants";
 import Messages from "../../../utils/messages";
 import { noCache } from "../../../utils/apollo";
-import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
+import {
+  useCurrentUser,
+  useMembersByGroupId,
+  useSettingsByGroupId,
+} from "../../../hooks";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -29,15 +29,11 @@ const Requests = () => {
   const currentUser = useCurrentUser();
   const [group, setGroup] = useState<Group>();
   const [groupSettings] = useSettingsByGroupId(group?.id);
-  const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
+  const [groupMembers] = useMembersByGroupId(group?.id);
   const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
   const [getMemberRequestsRes, memberRequestsRes] = useLazyQuery(
     MEMBER_REUQESTS,
-    noCache
-  );
-  const [getGroupMembersRes, groupMembersRes] = useLazyQuery(
-    GROUP_MEMBERS,
     noCache
   );
   const classes = useStyles();
@@ -52,11 +48,9 @@ const Requests = () => {
 
   useEffect(() => {
     if (group) {
-      const variables = {
+      getMemberRequestsRes({
         variables: { groupId: group.id },
-      };
-      getMemberRequestsRes(variables);
-      getGroupMembersRes(variables);
+      });
     }
   }, [group]);
 
@@ -68,11 +62,6 @@ const Requests = () => {
     if (memberRequestsRes.data)
       setMemberRequests(memberRequestsRes.data.memberRequests);
   }, [memberRequestsRes.data]);
-
-  useEffect(() => {
-    if (groupMembersRes.data)
-      setGroupMembers(groupMembersRes.data.groupMembers);
-  }, [groupMembersRes.data]);
 
   const isCreator = (): boolean => {
     if (currentUser && group) return currentUser.id === group.creatorId;

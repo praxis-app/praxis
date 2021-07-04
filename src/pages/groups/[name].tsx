@@ -16,11 +16,7 @@ import Feed from "../../components/Shared/Feed";
 import PostsForm from "../../components/Posts/Form";
 import MotionsForm from "../../components/Motions/Form";
 import ToggleForms from "../../components/Groups/ToggleForms";
-import {
-  GROUP_BY_NAME,
-  GROUP_FEED,
-  GROUP_MEMBERS,
-} from "../../apollo/client/queries";
+import { GROUP_BY_NAME, GROUP_FEED } from "../../apollo/client/queries";
 import {
   DELETE_GROUP,
   DELETE_POST,
@@ -31,7 +27,7 @@ import styles from "../../styles/Group/ShowPage.module.scss";
 import { Common } from "../../constants";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
-import { useCurrentUser } from "../../hooks";
+import { useCurrentUser, useMembersByGroupId } from "../../hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -53,13 +49,9 @@ const Show = () => {
   const [motions, setMotions] = useState<Motion[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [tab, setTab] = useState<number>(0);
-  const [groupMembers, setGroupMembers] = useState<GroupMember[]>([]);
+  const [groupMembers] = useMembersByGroupId(group?.id);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
   const [getFeedRes, feedRes] = useLazyQuery(GROUP_FEED, noCache);
-  const [getGroupMembersRes, groupMembersRes] = useLazyQuery(
-    GROUP_MEMBERS,
-    noCache
-  );
   const [deleteGroup] = useMutation(DELETE_GROUP);
   const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deletePost] = useMutation(DELETE_POST);
@@ -100,26 +92,11 @@ const Show = () => {
   }, [feedRes.data]);
 
   useEffect(() => {
-    if (groupMembersRes.data)
-      setGroupMembers(groupMembersRes.data.groupMembers);
-  }, [groupMembersRes.data]);
-
-  useEffect(() => {
     feedItemsVar([...posts, ...motions]);
     return () => {
       feedItemsVar([]);
     };
   }, [posts, motions]);
-
-  useEffect(() => {
-    if (group) {
-      getGroupMembersRes({
-        variables: {
-          groupId: group.id,
-        },
-      });
-    }
-  }, [group]);
 
   const deleteGroupHandler = async (groupId: string) => {
     await deleteGroup({

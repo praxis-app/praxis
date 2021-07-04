@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { CircularProgress } from "@material-ui/core";
 
+import FollowButton from "../Follows/FollowButton";
 import UserAvatar from "../Users/Avatar";
 import styles from "../../styles/Group/Member.module.scss";
-import { useUserById } from "../../hooks";
+import { useUserById, useFollowersByUserId } from "../../hooks";
 
 interface Props {
   userId: string;
@@ -11,6 +12,7 @@ interface Props {
 
 const GroupMember = ({ userId }: Props) => {
   const user = useUserById(userId);
+  const [followers, setFollowers] = useFollowersByUserId(userId);
 
   if (user)
     return (
@@ -21,6 +23,12 @@ const GroupMember = ({ userId }: Props) => {
             <a className={styles.userName}>{user.name}</a>
           </Link>
         </div>
+
+        <FollowButton
+          userId={userId}
+          followers={followers}
+          setFollowers={setFollowers}
+        />
       </div>
     );
   return <CircularProgress style={{ color: "white", display: "block" }} />;

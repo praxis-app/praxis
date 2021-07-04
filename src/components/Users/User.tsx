@@ -7,12 +7,17 @@ import { Card, CardHeader, CardContent } from "@material-ui/core";
 import FollowButton from "../Follows/FollowButton";
 import ItemMenu from "../Shared/ItemMenu";
 import UserAvatar from "./Avatar";
-import { FOLLOWERS, FOLLOWING } from "../../apollo/client/queries";
+import { FOLLOWING } from "../../apollo/client/queries";
 import styles from "../../styles/User/User.module.scss";
 import Messages from "../../utils/messages";
 import { Common, Roles } from "../../constants";
-import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
+import {
+  useCurrentUser,
+  useHasPermissionGlobally,
+  useFollowersByUserId,
+} from "../../hooks";
 import { formatDate } from "../../utils/time";
+import { noCache } from "../../utils/apollo";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -37,26 +42,18 @@ interface Props {
 const Show = ({ user, deleteUser }: Props) => {
   const { name, id, createdAt } = user;
   const currentUser = useCurrentUser();
-  const [followers, setFollowers] = useState<Follow[]>([]);
+  const [followers, setFollowers] = useFollowersByUserId(id);
   const [following, setFollowing] = useState<Follow[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const followersRes = useQuery(FOLLOWERS, {
-    variables: { userId: id },
-    fetchPolicy: "no-cache",
-  });
   const followingRes = useQuery(FOLLOWING, {
     variables: { userId: id },
-    fetchPolicy: "no-cache",
+    ...noCache,
   });
   const [canManageUsers] = useHasPermissionGlobally(
     Roles.Permissions.ManageUsers
   );
   const classes = useStyles();
   const signUpDate = formatDate(createdAt, false);
-
-  useEffect(() => {
-    if (followersRes.data) setFollowers(followersRes.data.userFollowers);
-  }, [followersRes.data]);
 
   useEffect(() => {
     if (followingRes.data) setFollowing(followingRes.data.userFollowing);

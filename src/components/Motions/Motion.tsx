@@ -28,7 +28,12 @@ import ActionData from "./ActionData";
 import styles from "../../styles/Motion/Motion.module.scss";
 import { Common, Motions, Settings, Votes } from "../../constants";
 import { noCache } from "../../utils/apollo";
-import { useCurrentUser, useSettingsByGroupId, useUserById } from "../../hooks";
+import {
+  useCurrentUser,
+  useMembersByGroupId,
+  useSettingsByGroupId,
+  useUserById,
+} from "../../hooks";
 import Messages from "../../utils/messages";
 import VoteButtons from "../Votes/VoteButtons";
 import { timeAgo } from "../../utils/time";
@@ -54,6 +59,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   const user = useUserById(userId);
   const [group, setGroup] = useState<Group>();
   const [groupSettings] = useSettingsByGroupId(group?.id);
+  const [groupMembers] = useMembersByGroupId(group?.id);
   const [votes, setVotes] = useState<Vote[]>([]);
   const votesFromGlobal = useReactiveVar(votesVar);
   const [images, setImages] = useState<Image[]>([]);
@@ -134,6 +140,13 @@ const Motion = ({ motion, deleteMotion }: Props) => {
     );
   };
 
+  const isAGroupMember = (): boolean => {
+    const member = groupMembers?.find(
+      (member: GroupMember) => member.userId === currentUser?.id
+    );
+    return !!member;
+  };
+
   return (
     <div key={id}>
       <Card className={classes.root + " " + styles.card}>
@@ -205,7 +218,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
           />
         )}
 
-        {currentUser && !ownMotion() && (
+        {currentUser && isAGroupMember() && !ownMotion() && (
           <CardActions>
             {isModelOfConsensus() ? (
               <ConsensusButtons
