@@ -2,6 +2,10 @@
 
 Praxis is an open source social networking site. Motions are the main focus and come with a wide variety of voting features, with consensus as the default. Create a group and set it to no-admin, allowing group members to create motions and democratically decide on settings, name, theme, or planning of real world events.
 
+While model of consensus will be the default, group members will also be able to use regular majority vote, and have the ability to create and elect new roles with various permissions. All of this can be tailored in group settings to meet the specific needs of your community, either by the groups admin, or via motions as the group potentially evolves over time.
+
+The long term vision for Praxis includes multiple, federated instances, each run autonomously and independently of the rest.
+
 The tech stack includes the following:
 
 - Apollo GraphQL
