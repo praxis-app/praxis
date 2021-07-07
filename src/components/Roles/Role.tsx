@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Avatar, CircularProgress } from "@material-ui/core";
+import { Avatar, LinearProgress } from "@material-ui/core";
 import { ArrowForwardIos, Person } from "@material-ui/icons";
 
 import Messages from "../../utils/messages";
@@ -28,7 +28,7 @@ const Role = ({ role }: Props) => {
     if (membersRes.data) setMembers(membersRes.data.roleMembers);
   }, [membersRes.data]);
 
-  if (role)
+  if (role && !membersRes.loading)
     return (
       <Link href={`/roles/${id}/edit`} passHref>
         <a className={styles.role}>
@@ -51,7 +51,7 @@ const Role = ({ role }: Props) => {
         </a>
       </Link>
     );
-  return <CircularProgress style={{ color: "white", display: "block" }} />;
+  return <LinearProgress />;
 };
 
 export default Role;

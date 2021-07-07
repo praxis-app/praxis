@@ -54,7 +54,7 @@ const Edit = () => {
 
   if (!ownComment()) return <>{Messages.users.permissionDenied()}</>;
   if (comment) return <CommentForm comment={comment} isEditing={true} />;
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default Edit;

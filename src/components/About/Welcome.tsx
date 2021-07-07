@@ -12,17 +12,12 @@ import {
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 
-import styles from "../../styles/Welcome/Welcome.module.scss";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
 import { redeemedInviteToken } from "../../utils/invite";
 
 const useStyles = makeStyles({
-  root: {
-    backgroundColor: "rgb(65, 65, 65)",
-  },
   title: {
-    fontFamily: "Inter",
     color: "white",
   },
 });
@@ -33,12 +28,14 @@ interface Props {
 
 const WelcomeCard = ({ isLoggedIn }: Props) => {
   const [closed, setClosed] = useState<boolean>(false);
+  const [inviteToken, setInviteToken] = useState<string | null>();
   const classes = useStyles();
 
   useEffect(() => {
     if (alreadyClosed()) {
       setClosed(true);
     }
+    setInviteToken(redeemedInviteToken());
   }, []);
 
   const onClose = () => {
@@ -56,43 +53,30 @@ const WelcomeCard = ({ isLoggedIn }: Props) => {
   if (isLoggedIn || alreadyClosed() || closed) return <></>;
 
   return (
-    <Card className={classes.root + " " + styles.card}>
+    <Card>
       <CardHeader
         title={Messages.about.welcomeCard.welcome()}
         action={
           <IconButton onClick={() => onClose()}>
-            <Close style={{ color: "white" }} fontSize="small" />
+            <Close color="primary" fontSize="small" />
           </IconButton>
         }
         classes={{ title: classes.title }}
       />
 
       <CardContent>
-        <Typography
-          style={{
-            color: "rgb(190, 190, 190)",
-            fontFamily: "Inter",
-            marginBottom: "12px",
-          }}
-        >
+        <Typography gutterBottom>
           {Messages.about.welcomeCard.about()}
         </Typography>
 
-        <Typography
-          style={{
-            color: "rgb(190, 190, 190)",
-            fontFamily: "Inter",
-          }}
-        >
-          {Messages.about.welcomeCard.inDev()}
-        </Typography>
+        <Typography>{Messages.about.welcomeCard.inDev()}</Typography>
       </CardContent>
 
-      {redeemedInviteToken() && (
+      {inviteToken && (
         <CardActions style={{ marginTop: "6px" }}>
           <Link href={"/users/signup"}>
             <a>
-              <Button style={{ color: "white" }}>sign up</Button>
+              <Button color="primary">sign up</Button>
             </a>
           </Link>
         </CardActions>

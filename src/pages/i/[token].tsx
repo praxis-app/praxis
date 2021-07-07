@@ -47,7 +47,7 @@ const RedeemServerInvite = () => {
     });
   };
 
-  if (inviteRes.loading) return <CircularProgress style={{ color: "white" }} />;
+  if (inviteRes.loading) return <CircularProgress />;
   if (currentUser) return <>{Messages.invites.redeem.alreadySignedUp()}</>;
   if (invite) return <WelcomeCard />;
   return <>{Messages.invites.redeem.expiredOrInvalid()}</>;

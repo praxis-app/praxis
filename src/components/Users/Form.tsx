@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { useMutation } from "@apollo/client";
 import Router from "next/router";
-import { FormGroup, Input } from "@material-ui/core";
+import { FormGroup } from "@material-ui/core";
 import { Image, RemoveCircle } from "@material-ui/icons";
 
 import {
@@ -10,13 +10,13 @@ import {
   SET_CURRENT_USER,
 } from "../../apollo/client/mutations";
 import { setAuthToken } from "../../utils/auth";
-
-import styles from "../../styles/User/UserForm.module.scss";
+import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
+import TextInput, { PasswordInput } from "../Shared/TextInput";
 
 interface Props {
   user?: User;
@@ -117,27 +117,17 @@ const UserForm = ({ user, isEditing }: Props) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.card}>
+    <form onSubmit={handleSubmit} className={styles.form}>
       <FormGroup>
-        <Input
-          type="text"
+        <TextInput
           placeholder={Messages.users.form.name()}
           onChange={(e) => setUserName(e.target.value)}
           value={userName}
-          style={{
-            marginBottom: "12px",
-            color: "rgb(170, 170, 170)",
-          }}
         />
-        <Input
-          type="text"
+        <TextInput
           placeholder={Messages.users.form.email()}
           onChange={(e) => setUserEmail(e.target.value)}
           value={userEmail}
-          style={{
-            marginBottom: "12px",
-            color: "rgb(170, 170, 170)",
-          }}
         />
 
         <input
@@ -166,7 +156,7 @@ const UserForm = ({ user, isEditing }: Props) => {
           />
 
           <RemoveCircle
-            style={{ color: "white" }}
+            color="primary"
             onClick={() => removeSelectedProfilePicture()}
             className={styles.removeSelectedImageButton}
           />
@@ -180,25 +170,15 @@ const UserForm = ({ user, isEditing }: Props) => {
               marginBottom: "6px",
             }}
           >
-            <Input
-              type="password"
+            <PasswordInput
               placeholder={Messages.users.form.password()}
               onChange={(e) => setUserPassword(e.target.value)}
               value={userPassword}
-              style={{
-                marginBottom: "12px",
-                color: "rgb(170, 170, 170)",
-              }}
             />
-            <Input
-              type="password"
+            <PasswordInput
               placeholder={Messages.users.actions.passwordConfirm()}
               onChange={(e) => setUserPasswordConfirm(e.target.value)}
               value={userPasswordConfirm}
-              style={{
-                marginBottom: "12px",
-                color: "rgb(170, 170, 170)",
-              }}
             />
           </FormGroup>
         </>

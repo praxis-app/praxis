@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { Card, CircularProgress, makeStyles } from "@material-ui/core";
+import { Card, CircularProgress } from "@material-ui/core";
 import { AddCircle, ArrowForwardIos } from "@material-ui/icons";
 
 import { USERS } from "../../apollo/client/queries";
@@ -11,12 +11,6 @@ import Dialog from "../../components/Shared/Dialog";
 import Messages from "../../utils/messages";
 import RoleMemberAdd from "./MemberAdd";
 import RoleMember from "./Member";
-
-const useStyles = makeStyles({
-  root: {
-    backgroundColor: "rgb(65, 65, 65)",
-  },
-});
 
 interface Props {
   role: Role;
@@ -33,7 +27,6 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [addRoleMembers] = useMutation(ADD_ROLE_MEMBERS);
   const usersRes = useQuery(USERS, noCache);
-  const classes = useStyles();
 
   useEffect(() => {
     setSelectedUsers([]);
@@ -67,7 +60,7 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
     return (
       <>
         <Card
-          className={classes.root + " " + styles.buttonCard}
+          className={styles.buttonCard}
           onClick={() => setAddMembersDialogOpen(true)}
         >
           <div className={styles.buttonWrapper}>
@@ -91,7 +84,7 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
           closingAction={addRoleMembersHandler}
           loading={loading}
         >
-          <Card className={classes.root + " " + styles.card}>
+          <Card>
             {users
               .filter((user) => {
                 return !members.find((member) => user.id === member.userId);
@@ -109,7 +102,7 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
           </Card>
         </Dialog>
 
-        <Card className={classes.root + " " + styles.card}>
+        <Card>
           {members.map((member) => {
             return (
               <RoleMember
@@ -124,7 +117,7 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
       </>
     );
 
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default AddMemberTab;

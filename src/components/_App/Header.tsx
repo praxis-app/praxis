@@ -16,7 +16,7 @@ import {
   useWindowSize,
 } from "../../hooks";
 import { Roles } from "../../constants";
-import styles from "../../styles/Common/Header.module.scss";
+import styles from "../../styles/Shared/Header.module.scss";
 import { headerKeyVar } from "../../apollo/client/localState";
 import { redeemedInviteToken } from "../../utils/clientIndex";
 

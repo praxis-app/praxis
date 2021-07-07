@@ -1,21 +1,18 @@
-import React from "react";
 import { useState } from "react";
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import { EmojiPeople, PostAdd } from "@material-ui/icons";
-import { makeStyles, withStyles } from "@material-ui/core";
+import { withStyles } from "@material-ui/core";
 
 import PostsForm from "../../components/Posts/Form";
 import MotionsForm from "../../components/Motions/Form";
 import styles from "../../styles/Group/ToggleForms.module.scss";
 import { Common } from "../../constants";
 
-const useStyles = makeStyles({
-  selected: {
-    backgroundColor: "red",
-  },
-});
-
 const StyledToggleButtonGroup = withStyles(() => ({
+  root: {
+    background: "rgb(65, 65, 65)",
+    float: "right",
+  },
   grouped: {
     border: "none",
     boxShadow:
@@ -39,7 +36,6 @@ const ToggleForms = ({
   group,
 }: Props) => {
   const [toggle, setToggle] = useState<string>(Common.ModelNames.Post);
-  const classes = useStyles();
 
   const handleToggle = (
     _event: React.MouseEvent<HTMLElement>,
@@ -56,7 +52,6 @@ const ToggleForms = ({
           exclusive
           size="small"
           onChange={handleToggle}
-          style={{ background: "rgb(65, 65, 65)", float: "right" }}
         >
           <ToggleButton value={Common.ModelNames.Post} color="secondary">
             <PostAdd
@@ -65,10 +60,7 @@ const ToggleForms = ({
               }
             />
           </ToggleButton>
-          <ToggleButton
-            value={Common.ModelNames.Motion}
-            classes={{ selected: classes.selected }}
-          >
+          <ToggleButton value={Common.ModelNames.Motion}>
             <EmojiPeople
               style={
                 toggle === Common.ModelNames.Motion ? { color: "white" } : {}

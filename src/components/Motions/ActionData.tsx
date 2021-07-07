@@ -1,6 +1,7 @@
 import { Typography } from "@material-ui/core";
 import Link from "next/link";
 import { Motions, Groups } from "../../constants";
+import muiTheme from "../../styles/Shared/theme";
 import baseUrl from "../../utils/baseUrl";
 import Messages from "../../utils/messages";
 
@@ -11,11 +12,7 @@ interface TextProps {
 
 const Text = ({ text, data }: TextProps) => {
   return (
-    <Typography
-      style={{
-        color: "rgb(190, 190, 190)",
-      }}
-    >
+    <Typography>
       <span
         style={{
           fontFamily: "Inter Bold",
@@ -46,8 +43,8 @@ const ActionData = ({ motion }: { motion: Motion }) => {
       <>
         <div
           style={{
+            color: muiTheme.palette.primary.main,
             fontFamily: "Inter Bold",
-            color: "rgb(190, 190, 190)",
             marginBottom: 2,
           }}
         >

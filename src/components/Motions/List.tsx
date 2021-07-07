@@ -10,7 +10,7 @@ interface Props {
 const List = ({ motions, loading, deleteMotion }: Props) => {
   if (!loading)
     return (
-      <div style={{ marginBottom: "200px" }}>
+      <>
         {motions
           .slice()
           .reverse()
@@ -23,10 +23,10 @@ const List = ({ motions, loading, deleteMotion }: Props) => {
               />
             );
           })}
-      </div>
+      </>
     );
 
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default List;

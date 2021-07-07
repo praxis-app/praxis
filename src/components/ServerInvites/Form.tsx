@@ -5,7 +5,6 @@ import {
   FormGroup,
   InputLabel,
   NativeSelect,
-  makeStyles,
 } from "@material-ui/core";
 
 import { CREATE_SERVER_INVITE } from "../../apollo/client/mutations";
@@ -15,12 +14,6 @@ import { useCurrentUser } from "../../hooks";
 import { Common } from "../../constants";
 import { ServerInvites } from "../../constants";
 import SubmitButton from "../Shared/SubmitButton";
-
-const color = { color: "rgb(170, 170, 170)" };
-const useStyles = makeStyles(() => ({
-  select: { ...color },
-  textInput: { ...color },
-}));
 
 interface Props {
   invites: ServerInvite[];
@@ -32,7 +25,6 @@ const ServerInviteForm = ({ invites, setInvites }: Props) => {
   const [expiresAt, setExpiresAt] = useState<string>("");
   const [maxUses, setMaxUses] = useState<string>("");
   const [createServerInvite] = useMutation(CREATE_SERVER_INVITE);
-  const classes = useStyles();
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -73,18 +65,8 @@ const ServerInviteForm = ({ invites, setInvites }: Props) => {
       <form onSubmit={handleSubmit} className={styles.form}>
         <FormGroup style={{ marginBottom: "12px" }}>
           <FormControl>
-            <InputLabel
-              style={{ color: "rgb(105, 105, 105)", fontFamily: "Inter" }}
-            >
-              {Messages.invites.form.labels.expiresAt()}
-            </InputLabel>
-            <NativeSelect
-              value={expiresAt}
-              onChange={handleExpiresAtChange}
-              classes={{
-                select: classes.select,
-              }}
-            >
+            <InputLabel>{Messages.invites.form.labels.expiresAt()}</InputLabel>
+            <NativeSelect value={expiresAt} onChange={handleExpiresAtChange}>
               <option aria-label={Messages.forms.none()} value="" />
               <option value={Common.Time.Day}>
                 {Messages.invites.form.expiresAtOptions.oneDay()}
@@ -102,18 +84,8 @@ const ServerInviteForm = ({ invites, setInvites }: Props) => {
           </FormControl>
 
           <FormControl>
-            <InputLabel
-              style={{ color: "rgb(105, 105, 105)", fontFamily: "Inter" }}
-            >
-              {Messages.invites.form.labels.maxUses()}
-            </InputLabel>
-            <NativeSelect
-              value={maxUses}
-              onChange={handleMaxUsesChange}
-              classes={{
-                select: classes.select,
-              }}
-            >
+            <InputLabel>{Messages.invites.form.labels.maxUses()}</InputLabel>
+            <NativeSelect value={maxUses} onChange={handleMaxUsesChange}>
               <option aria-label={Messages.forms.none()} value="" />
               <option value={undefined}>
                 {Messages.invites.form.maxUsesOptions.noLimit()}

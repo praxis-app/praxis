@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import Router, { useRouter } from "next/router";
-import {
-  Button,
-  Card,
-  CircularProgress,
-  makeStyles,
-  Tab,
-  Tabs,
-} from "@material-ui/core";
+import { Button, Card, CircularProgress, Tab, Tabs } from "@material-ui/core";
 
 import {
   ROLE,
@@ -25,18 +18,6 @@ import { Common, Roles } from "../../../constants";
 import PermissionsForm from "../../../components/Permissions/Form";
 import AddMemberTab from "../../../components/Roles/AddMemberTab";
 import { breadcrumbsVar } from "../../../apollo/client/localState";
-
-const useStyles = makeStyles({
-  root: {
-    backgroundColor: "rgb(65, 65, 65)",
-  },
-  title: {
-    fontFamily: "Inter",
-  },
-  indicator: {
-    backgroundColor: "white",
-  },
-});
 
 const Edit = () => {
   const { query } = useRouter();
@@ -59,7 +40,6 @@ const Edit = () => {
     Roles.Permissions.ManageRoles,
     [members, canManageRolesDep]
   );
-  const classes = useStyles();
 
   useEffect(() => {
     if (query.id) {
@@ -124,12 +104,12 @@ const Edit = () => {
   };
 
   if (canManageRolesLoading && permissionsRes.loading)
-    return <CircularProgress style={{ color: "white" }} />;
+    return <CircularProgress />;
 
   if (role && canManageRoles)
     return (
       <>
-        <Card className={classes.root + " " + styles.tabsCard}>
+        <Card className={styles.tabsCard}>
           <Tabs
             textColor="inherit"
             centered
@@ -137,11 +117,10 @@ const Edit = () => {
             onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
               setTab(newValue)
             }
-            classes={{ indicator: classes.indicator }}
           >
-            <Tab label="Display" style={{ color: "white" }} />
-            <Tab label="Permissions" style={{ color: "white" }} />
-            <Tab label="Members" style={{ color: "white" }} />
+            <Tab label="Display" />
+            <Tab label="Permissions" />
+            <Tab label="Members" />
           </Tabs>
         </Card>
 
@@ -155,11 +134,11 @@ const Edit = () => {
                   Messages.prompts.deleteItem(Common.ModelNames.Role)
                 ) && deleteRoleHandler(role.id)
               }
+              className={styles.deleteButton}
               style={{
                 color: "tomato",
                 backgroundColor: "rgb(55, 55, 55)",
               }}
-              className={styles.card}
               variant="text"
             >
               {Messages.actions.deleteItem(Common.TypeNames.Role)}

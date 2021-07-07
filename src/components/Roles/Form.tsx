@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { FormGroup, Input } from "@material-ui/core";
+import { FormGroup } from "@material-ui/core";
 
 import { CREATE_ROLE, UPDATE_ROLE } from "../../apollo/client/mutations";
-import styles from "../../styles/Group/GroupForm.module.scss";
+import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import ColorPicker from "../Shared/ColorPicker";
 import { Roles } from "../../constants";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
+import TextInput from "../Shared/TextInput";
 
 interface Props {
   role?: Role;
@@ -80,17 +81,12 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
 
   if (currentUser)
     return (
-      <form onSubmit={handleSubmit} className={styles.card}>
+      <form onSubmit={handleSubmit} className={styles.form}>
         <FormGroup>
-          <Input
-            type="text"
+          <TextInput
             placeholder={Messages.groups.form.name()}
             onChange={(e) => setName(e.target.value)}
             value={name}
-            style={{
-              marginBottom: "12px",
-              color: "rgb(170, 170, 170)",
-            }}
           />
           <ColorPicker
             color={color}

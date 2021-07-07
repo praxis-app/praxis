@@ -9,6 +9,7 @@ import WelcomeCard from "../components/About/Welcome";
 import { Common } from "../constants";
 import { feedItemsVar } from "../apollo/client/localState";
 import { useCurrentUser } from "../hooks";
+import { noCache } from "../utils/apollo";
 
 const Home = () => {
   const currentUser = useCurrentUser();
@@ -19,7 +20,7 @@ const Home = () => {
     variables: {
       userId: currentUser?.id,
     },
-    fetchPolicy: "no-cache",
+    ...noCache,
   });
 
   useEffect(() => {

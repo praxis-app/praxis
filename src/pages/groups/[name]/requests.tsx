@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { Card, createStyles, makeStyles, Typography } from "@material-ui/core";
+import { Card, Typography } from "@material-ui/core";
 
 import { GROUP_BY_NAME, MEMBER_REUQESTS } from "../../../apollo/client/queries";
-import styles from "../../../styles/Group/Group.module.scss";
 import Request from "../../../components/Groups/Request";
 import { Settings } from "../../../constants";
 import Messages from "../../../utils/messages";
@@ -15,14 +14,6 @@ import {
   useMembersByGroupId,
   useSettingsByGroupId,
 } from "../../../hooks";
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    root: {
-      backgroundColor: "rgb(65, 65, 65)",
-    },
-  })
-);
 
 const Requests = () => {
   const { query } = useRouter();
@@ -36,7 +27,6 @@ const Requests = () => {
     MEMBER_REUQESTS,
     noCache
   );
-  const classes = useStyles();
 
   useEffect(() => {
     if (query.name) {
@@ -95,17 +85,17 @@ const Requests = () => {
       <>
         <Link href={`/groups/${query.name}`}>
           <a>
-            <Typography variant="h3" style={{ fontSize: 40 }}>
+            <Typography variant="h3" color="primary">
               {query.name}
             </Typography>
           </a>
         </Link>
 
-        <Typography variant="h6" style={{ marginBottom: 6, color: "white" }}>
+        <Typography variant="h6">
           {Messages.groups.memberRequests(memberRequests.length)}
         </Typography>
 
-        <Card className={classes.root + " " + styles.card}>
+        <Card>
           {memberRequests.map((memberRequest: MemberRequest) => {
             return (
               <Request

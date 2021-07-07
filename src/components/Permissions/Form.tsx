@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, FormGroup, makeStyles, Switch } from "@material-ui/core";
+import { FormGroup, Switch } from "@material-ui/core";
 
 import styles from "../../styles/Role/Role.module.scss";
 import { displayName } from "../../utils/items";
@@ -8,17 +8,7 @@ import { UPDATE_PERMISSIONS } from "../../apollo/client/mutations";
 import { useMutation } from "@apollo/client";
 import { headerKeyVar } from "../../apollo/client/localState";
 import { generateRandom } from "../../utils/common";
-
-const useStyles = makeStyles({
-  toggle: {
-    "& .Mui-checked .MuiSwitch-thumb": {
-      color: "inherit",
-    },
-    "& .MuiSwitch-thumb": {
-      color: "rgb(170, 170, 170)",
-    },
-  },
-});
+import SubmitButton from "../Shared/SubmitButton";
 
 interface Props {
   permissions: Permission[];
@@ -39,7 +29,6 @@ const PermissionsForm = ({
 }: Props) => {
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [updatePermissions] = useMutation(UPDATE_PERMISSIONS);
-  const classes = useStyles();
 
   useEffect(() => {
     if (
@@ -94,7 +83,7 @@ const PermissionsForm = ({
   return (
     <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
       <FormGroup>
-        <div className={styles.card}>
+        <div className={styles.form}>
           {permissions.map(({ name, description, enabled }) => {
             return (
               <div className={styles.permission} key={name}>
@@ -110,7 +99,6 @@ const PermissionsForm = ({
                 <Switch
                   checked={enabled}
                   onChange={() => handleSwitchChange(name, !enabled)}
-                  className={classes.toggle}
                   color="primary"
                 />
               </div>
@@ -119,16 +107,9 @@ const PermissionsForm = ({
         </div>
       </FormGroup>
       {anyUnsavedPermissions && (
-        <Button
-          variant="contained"
-          type="submit"
-          style={{
-            color: "white",
-            backgroundColor: "rgb(65, 65, 65)",
-          }}
-        >
+        <SubmitButton>
           {submitLoading ? Messages.states.saving() : Messages.actions.save()}
-        </Button>
+        </SubmitButton>
       )}
     </form>
   );

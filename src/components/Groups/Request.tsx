@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import Link from "next/link";
-import { Button, CircularProgress } from "@material-ui/core";
+import { Button, LinearProgress } from "@material-ui/core";
 
 import { APPROVE_MEMBER_REQUEST } from "../../apollo/client/mutations";
 import UserAvatar from "../Users/Avatar";
@@ -41,15 +41,12 @@ const MemberRequest = ({
             <a className={styles.userName}>{user.name}</a>
           </Link>
         </div>
-        <Button
-          onClick={() => approveMemberRequestMutation()}
-          style={{ color: "white" }}
-        >
+        <Button onClick={() => approveMemberRequestMutation()} color="primary">
           Approve
         </Button>
       </div>
     );
-  return <CircularProgress style={{ color: "white", display: "block" }} />;
+  return <LinearProgress />;
 };
 
 export default MemberRequest;

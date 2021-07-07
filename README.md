@@ -33,6 +33,4 @@ The default database is PostgreSQL.
 
 ## Contributions
 
-Praxis is open to contributions, but we recommend creating an issue or replying in a comment to let us know what you are working on first that way we don't overwrite each other.
-
-Please read [CONTRIBUTING.md](https://github.com/forrestwilkins/praxis/blob/main/CONTRIBUTING.md) for details on this project.
+Praxis is open to contributions. Please read [CONTRIBUTING.md](https://github.com/forrestwilkins/praxis/blob/main/CONTRIBUTING.md) for more details. If you have any questions at all about contributing, feel free to contact us via [Discord](https://discord.gg/hJUHv4ckfK) as well.

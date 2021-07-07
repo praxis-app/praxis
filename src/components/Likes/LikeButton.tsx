@@ -97,7 +97,10 @@ const LikeButton = ({ postId, motionId, commentId }: Props) => {
         alreadyLike() ? deleteLikeMutation() : createLikeMutation()
       }
     >
-      <ThumbUp style={{ color: alreadyLike() ? "tomato" : "white" }} />
+      <ThumbUp
+        color="primary"
+        style={alreadyLike() ? { color: "tomato" } : {}}
+      />
       {likes.length > 0 && (
         <span
           className={styles.likesNumber}

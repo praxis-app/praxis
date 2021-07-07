@@ -52,7 +52,7 @@ const Edit = () => {
   if (currentUser && isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
   if (!ownGroup()) return <>{Messages.users.permissionDenied()}</>;
   if (group) return <GroupForm group={group} isEditing={true} />;
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default Edit;

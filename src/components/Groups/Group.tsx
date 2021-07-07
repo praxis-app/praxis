@@ -7,13 +7,11 @@ import {
   CardContent,
   CardActions,
   Typography,
-  makeStyles,
   CardHeader,
   MenuItem,
 } from "@material-ui/core";
 
 import { MEMBER_REUQESTS } from "../../apollo/client/queries";
-import styles from "../../styles/Group/Group.module.scss";
 import GroupAvatar from "./Avatar";
 import JoinButton from "./JoinButton";
 import ItemMenu from "../Shared/ItemMenu";
@@ -25,15 +23,6 @@ import {
   useMembersByGroupId,
   useSettingsByGroupId,
 } from "../../hooks";
-
-const useStyles = makeStyles({
-  root: {
-    backgroundColor: "rgb(65, 65, 65)",
-  },
-  title: {
-    fontFamily: "Inter",
-  },
-});
 
 interface Props {
   group: Group;
@@ -52,7 +41,6 @@ const Group = ({ group, deleteGroup }: Props) => {
     ...noCache,
   };
   const memberRequestsRes = useQuery(MEMBER_REUQESTS, memberVariables);
-  const classes = useStyles();
 
   useEffect(() => {
     if (memberRequestsRes.data)
@@ -91,7 +79,7 @@ const Group = ({ group, deleteGroup }: Props) => {
 
   return (
     <div key={id}>
-      <Card className={classes.root + " " + styles.card}>
+      <Card>
         <CardHeader
           avatar={group && <GroupAvatar group={group} />}
           title={
@@ -127,18 +115,15 @@ const Group = ({ group, deleteGroup }: Props) => {
               </ItemMenu>
             )
           }
-          classes={{ title: classes.title }}
         />
 
         {description && (
           <CardContent>
             <Typography
               style={{
-                color: "rgb(190, 190, 190)",
                 marginTop: "-12px",
-                marginBottom: "24px",
-                fontFamily: "Inter",
               }}
+              gutterBottom
             >
               {description}
             </Typography>
@@ -149,7 +134,9 @@ const Group = ({ group, deleteGroup }: Props) => {
 
             {canSeeRequests() && (
               <>
-                <span style={{ color: "white" }}> · </span>
+                <span style={{ color: "white" }}>
+                  {Messages.middotWithSpaces()}
+                </span>
 
                 <Link href={`/groups/${name}/requests`}>
                   <a>{Messages.groups.requests(memberRequests.length)}</a>

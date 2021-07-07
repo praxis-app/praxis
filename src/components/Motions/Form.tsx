@@ -6,7 +6,6 @@ import {
   NativeSelect,
   FormControl,
   InputLabel,
-  makeStyles,
 } from "@material-ui/core";
 import Router from "next/router";
 import { RemoveCircle, Image } from "@material-ui/icons";
@@ -21,17 +20,11 @@ import {
 } from "../../apollo/client/mutations";
 import { Motions } from "../../constants";
 import ActionFields from "./ActionFields";
-import styles from "../../styles/Motion/MotionForm.module.scss";
+import styles from "../../styles/Shared/Shared.module.scss";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import { noCache } from "../../utils/apollo";
 import SubmitButton from "../Shared/SubmitButton";
-
-const color = { color: "rgb(170, 170, 170)" };
-const useStyles = makeStyles(() => ({
-  select: { ...color },
-  textInput: { ...color },
-}));
 
 interface Props {
   motion?: Motion;
@@ -65,7 +58,6 @@ const MotionsForm = ({
     IMAGES_BY_MOTION_ID,
     noCache
   );
-  const classes = useStyles();
 
   useEffect(() => {
     if (isEditing && motion) {
@@ -175,24 +167,11 @@ const MotionsForm = ({
           style={{
             marginBottom: "6px",
           }}
-          classes={{
-            input: classes.textInput,
-          }}
         />
 
         <FormControl style={{ marginBottom: "20px" }}>
-          <InputLabel
-            style={{ color: "rgb(105, 105, 105)", fontFamily: "Inter" }}
-          >
-            {Messages.motions.form.motionType()}
-          </InputLabel>
-          <NativeSelect
-            value={action}
-            onChange={handleActionChange}
-            classes={{
-              select: classes.select,
-            }}
-          >
+          <InputLabel>{Messages.motions.form.motionType()}</InputLabel>
+          <NativeSelect value={action} onChange={handleActionChange}>
             <option aria-label={Messages.forms.none()} value="" />
             <option value={Motions.ActionTypes.PlanEvent}>
               {Messages.motions.form.actionTypes.planEvent()}
@@ -246,7 +225,7 @@ const MotionsForm = ({
               />
 
               <RemoveCircle
-                style={{ color: "white" }}
+                color="primary"
                 onClick={() => removeSelectedImage(image.name)}
                 className={styles.removeSelectedImageButton}
               />
@@ -264,7 +243,7 @@ const MotionsForm = ({
               />
 
               <RemoveCircle
-                style={{ color: "white" }}
+                color="primary"
                 onClick={() => deleteImageHandler(id)}
                 className={styles.removeSelectedImageButton}
               />

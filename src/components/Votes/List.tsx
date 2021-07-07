@@ -9,7 +9,7 @@ interface Props {
 const List = ({ votes, setVotes }: Props) => {
   if (votes)
     return (
-      <div style={{ marginBottom: "200px" }}>
+      <>
         {votes
           .slice()
           .reverse()
@@ -24,10 +24,10 @@ const List = ({ votes, setVotes }: Props) => {
                 />
               );
           })}
-      </div>
+      </>
     );
 
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default List;

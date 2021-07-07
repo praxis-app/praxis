@@ -10,17 +10,17 @@ interface Props {
 const List = ({ posts, loading, deletePost }: Props) => {
   if (!loading)
     return (
-      <div style={{ marginBottom: "200px" }}>
+      <>
         {posts
           .slice()
           .reverse()
           .map((post) => {
             return <Post post={post} deletePost={deletePost} key={post.id} />;
           })}
-      </div>
+      </>
     );
 
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default List;

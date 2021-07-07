@@ -80,7 +80,7 @@ const Show = () => {
       </>
     );
 
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default Show;

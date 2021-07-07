@@ -82,30 +82,21 @@ const JoinButton = ({
 
   if (!alreadyRequested() && !alreadyJoined())
     return (
-      <Button
-        onClick={() => createMemberRequestMutation()}
-        style={{ color: "white" }}
-      >
+      <Button onClick={() => createMemberRequestMutation()} color="primary">
         {Messages.groups.actions.join()}
       </Button>
     );
 
   if (!alreadyJoined())
     return (
-      <Button
-        onClick={() => deleteMemberRequestMutation()}
-        style={{ color: "white" }}
-      >
+      <Button onClick={() => deleteMemberRequestMutation()} color="primary">
         {Messages.groups.actions.cancelRequest()}
       </Button>
     );
 
   if (alreadyJoined())
     return (
-      <Button
-        onClick={() => deleteGroupMemberMutation()}
-        style={{ color: "white" }}
-      >
+      <Button onClick={() => deleteGroupMemberMutation()} color="primary">
         {Messages.groups.actions.leave()}
       </Button>
     );

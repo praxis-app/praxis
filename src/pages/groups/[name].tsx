@@ -1,13 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import Router, { useRouter } from "next/router";
-import {
-  Tab,
-  Tabs,
-  Card,
-  makeStyles,
-  CircularProgress,
-} from "@material-ui/core";
+import { Tab, Tabs, Card, CircularProgress } from "@material-ui/core";
 
 import Group from "../../components/Groups/Group";
 import PostsList from "../../components/Posts/List";
@@ -23,23 +17,10 @@ import {
   DELETE_MOTION,
 } from "../../apollo/client/mutations";
 import { feedItemsVar } from "../../apollo/client/localState";
-import styles from "../../styles/Group/ShowPage.module.scss";
 import { Common } from "../../constants";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useMembersByGroupId } from "../../hooks";
-
-const useStyles = makeStyles({
-  root: {
-    backgroundColor: "rgb(65, 65, 65)",
-  },
-  title: {
-    fontFamily: "Inter",
-  },
-  indicator: {
-    backgroundColor: "white",
-  },
-});
 
 const Show = () => {
   const { query } = useRouter();
@@ -55,7 +36,6 @@ const Show = () => {
   const [deleteGroup] = useMutation(DELETE_GROUP);
   const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deletePost] = useMutation(DELETE_POST);
-  const classes = useStyles();
 
   useEffect(() => {
     const vars = {
@@ -135,7 +115,7 @@ const Show = () => {
       <>
         <Group group={group} deleteGroup={deleteGroupHandler} />
 
-        <Card className={classes.root + " " + styles.card}>
+        <Card>
           <Tabs
             textColor="inherit"
             centered
@@ -143,20 +123,10 @@ const Show = () => {
             onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
               setTab(newValue)
             }
-            classes={{ indicator: classes.indicator }}
           >
-            <Tab
-              label={Messages.groups.tabs.all()}
-              style={{ color: "white" }}
-            />
-            <Tab
-              label={Messages.groups.tabs.motions()}
-              style={{ color: "white" }}
-            />
-            <Tab
-              label={Messages.groups.tabs.posts()}
-              style={{ color: "white" }}
-            />
+            <Tab label={Messages.groups.tabs.all()} />
+            <Tab label={Messages.groups.tabs.motions()} />
+            <Tab label={Messages.groups.tabs.posts()} />
           </Tabs>
         </Card>
 
@@ -211,7 +181,7 @@ const Show = () => {
       </>
     );
 
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default Show;

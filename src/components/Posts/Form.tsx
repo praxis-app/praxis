@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, ChangeEvent, useEffect } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { FormGroup, Input } from "@material-ui/core";
+import { FormGroup } from "@material-ui/core";
 import Router from "next/router";
 import { RemoveCircle, Image } from "@material-ui/icons";
 
@@ -12,12 +12,13 @@ import {
   UPDATE_POST,
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
-import styles from "../../styles/Post/PostForm.module.scss";
+import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import { noCache } from "../../utils/apollo";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
+import TextInput from "../Shared/TextInput";
 
 interface Props {
   post?: Post;
@@ -126,8 +127,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
       style={group && { marginTop: "48px" }}
     >
       <FormGroup>
-        <Input
-          type="text"
+        <TextInput
           placeholder={
             submitLoading
               ? Messages.states.loading()
@@ -138,10 +138,6 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setBody(e.target.value)
           }
-          style={{
-            marginBottom: "12px",
-            color: "rgb(170, 170, 170)",
-          }}
         />
 
         <input
@@ -162,43 +158,45 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
         />
       </FormGroup>
 
-      <div className={styles.selectedImages}>
-        {[...images].map((image) => {
-          return (
-            <React.Fragment key={image.name}>
-              <img
-                alt={Messages.images.couldNotRender()}
-                className={styles.selectedImage}
-                src={URL.createObjectURL(image)}
-              />
+      {(!!images.length || !!savedImages.length) && (
+        <div className={styles.selectedImages}>
+          {[...images].map((image) => {
+            return (
+              <React.Fragment key={image.name}>
+                <img
+                  alt={Messages.images.couldNotRender()}
+                  className={styles.selectedImage}
+                  src={URL.createObjectURL(image)}
+                />
 
-              <RemoveCircle
-                style={{ color: "white" }}
-                onClick={() => removeSelectedImage(image.name)}
-                className={styles.removeSelectedImageButton}
-              />
-            </React.Fragment>
-          );
-        })}
+                <RemoveCircle
+                  color="primary"
+                  onClick={() => removeSelectedImage(image.name)}
+                  className={styles.removeSelectedImageButton}
+                />
+              </React.Fragment>
+            );
+          })}
 
-        {savedImages.map(({ id, path }) => {
-          return (
-            <React.Fragment key={id}>
-              <img
-                alt={Messages.images.couldNotRender()}
-                className={styles.selectedImage}
-                src={baseUrl + path}
-              />
+          {savedImages.map(({ id, path }) => {
+            return (
+              <React.Fragment key={id}>
+                <img
+                  alt={Messages.images.couldNotRender()}
+                  className={styles.selectedImage}
+                  src={baseUrl + path}
+                />
 
-              <RemoveCircle
-                style={{ color: "white" }}
-                onClick={() => deleteImageHandler(id)}
-                className={styles.removeSelectedImageButton}
-              />
-            </React.Fragment>
-          );
-        })}
-      </div>
+                <RemoveCircle
+                  color="primary"
+                  onClick={() => deleteImageHandler(id)}
+                  className={styles.removeSelectedImageButton}
+                />
+              </React.Fragment>
+            );
+          })}
+        </div>
+      )}
 
       <SubmitButton>
         {isEditing ? Messages.actions.save() : Messages.posts.actions.post()}

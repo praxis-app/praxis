@@ -31,7 +31,7 @@ const Index = () => {
 
   return (
     <>
-      <Typography variant="h4" style={{ marginBottom: 24 }}>
+      <Typography variant="h4" gutterBottom>
         {Messages.navigation.groups()}
       </Typography>
 
@@ -50,7 +50,7 @@ const Index = () => {
             );
           })
       ) : (
-        <CircularProgress style={{ color: "white" }} />
+        <CircularProgress />
       )}
     </>
   );

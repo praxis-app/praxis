@@ -39,11 +39,7 @@ import VoteButtons from "../Votes/VoteButtons";
 import { timeAgo } from "../../utils/time";
 
 const useStyles = makeStyles({
-  root: {
-    backgroundColor: "rgb(65, 65, 65)",
-  },
   title: {
-    fontFamily: "Inter",
     marginLeft: "-5px",
   },
 });
@@ -149,7 +145,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
 
   return (
     <div key={id}>
-      <Card className={classes.root + " " + styles.card}>
+      <Card>
         <CardHeader
           avatar={
             group && !onGroupPage()
@@ -193,9 +189,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
           <CardContent style={{ paddingBottom: 12 }}>
             <Typography
               style={{
-                color: "rgb(190, 190, 190)",
                 marginTop: "-12px",
-                fontFamily: "Inter",
               }}
             >
               {body}

@@ -6,11 +6,7 @@ interface Props {
 
 const SubmitButton = ({ children }: Props) => {
   return (
-    <Button
-      type="submit"
-      variant="contained"
-      style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
-    >
+    <Button type="submit" variant="contained" color="primary">
       {children}
     </Button>
   );

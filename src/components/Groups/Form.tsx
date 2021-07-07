@@ -1,16 +1,17 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import { useMutation } from "@apollo/client";
 import Router from "next/router";
-import { FormGroup, Input } from "@material-ui/core";
+import { FormGroup } from "@material-ui/core";
 import { Image, RemoveCircle } from "@material-ui/icons";
 
 import { CREATE_GROUP, UPDATE_GROUP } from "../../apollo/client/mutations";
 
-import styles from "../../styles/Group/GroupForm.module.scss";
+import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
+import TextInput from "../Shared/TextInput";
 
 interface Props {
   group?: Group;
@@ -81,27 +82,17 @@ const GroupForm = ({ group, isEditing }: Props) => {
 
   if (currentUser)
     return (
-      <form onSubmit={handleSubmit} className={styles.card}>
+      <form onSubmit={handleSubmit} className={styles.form}>
         <FormGroup>
-          <Input
-            type="text"
+          <TextInput
             placeholder={Messages.groups.form.name()}
             onChange={(e) => setName(e.target.value)}
             value={name}
-            style={{
-              marginBottom: "12px",
-              color: "rgb(170, 170, 170)",
-            }}
           />
-          <Input
-            type="text"
+          <TextInput
             placeholder={Messages.groups.form.description()}
             onChange={(e) => setDescription(e.target.value)}
             value={description}
-            style={{
-              marginBottom: "12px",
-              color: "rgb(170, 170, 170)",
-            }}
           />
 
           <input
@@ -130,7 +121,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
             />
 
             <RemoveCircle
-              style={{ color: "white" }}
+              color="primary"
               onClick={() => removeSelectedCoverPhoto()}
               className={styles.removeSelectedImageButton}
             />

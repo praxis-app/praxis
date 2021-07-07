@@ -9,7 +9,7 @@ interface Props {
 const List = ({ comments, deleteComment }: Props) => {
   if (comments)
     return (
-      <div style={{ marginBottom: "200px" }}>
+      <>
         {comments
           .slice()
           .reverse()
@@ -22,10 +22,10 @@ const List = ({ comments, deleteComment }: Props) => {
               />
             );
           })}
-      </div>
+      </>
     );
 
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default List;

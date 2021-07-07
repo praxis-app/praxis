@@ -37,7 +37,7 @@ const SignUp = () => {
     if (currentUser?.isAuthenticated) Router.push("/");
   }, [currentUser]);
 
-  if (inviteRes.loading) return <CircularProgress style={{ color: "white" }} />;
+  if (inviteRes.loading) return <CircularProgress />;
   if (currentUser) return <>{Messages.users.alreadyRegistered()}</>;
   if (invite) return <UserForm />;
   return <>{Messages.invites.redeem.inviteRequired()}</>;

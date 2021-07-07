@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CircularProgress } from "@material-ui/core";
+import { LinearProgress } from "@material-ui/core";
 
 import FollowButton from "../Follows/FollowButton";
 import UserAvatar from "../Users/Avatar";
@@ -12,9 +12,9 @@ interface Props {
 
 const GroupMember = ({ userId }: Props) => {
   const user = useUserById(userId);
-  const [followers, setFollowers] = useFollowersByUserId(userId);
+  const [followers, setFollowers, loading] = useFollowersByUserId(userId);
 
-  if (user)
+  if (user && !loading)
     return (
       <div className={styles.member}>
         <div className={styles.link}>
@@ -31,7 +31,7 @@ const GroupMember = ({ userId }: Props) => {
         />
       </div>
     );
-  return <CircularProgress style={{ color: "white", display: "block" }} />;
+  return <LinearProgress />;
 };
 
 export default GroupMember;

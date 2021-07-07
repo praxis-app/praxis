@@ -1,4 +1,4 @@
-import { CircularProgress } from "@material-ui/core";
+import { LinearProgress } from "@material-ui/core";
 import UserAvatar from "../Users/Avatar";
 import FollowButton from "./FollowButton";
 import styles from "../../styles/Follow/Follow.module.scss";
@@ -26,7 +26,7 @@ const Follow = ({ userId }: Props) => {
         />
       </div>
     );
-  return <CircularProgress style={{ color: "white", display: "block" }} />;
+  return <LinearProgress />;
 };
 
 export default Follow;

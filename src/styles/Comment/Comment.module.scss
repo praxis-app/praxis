@@ -1,7 +1,7 @@
-@import "../Common/Common.module.scss";
+@import "../Shared/Shared.module.scss";
 
 .comment {
-  @extend .card;
+  @extend .form;
   display: flex;
   margin-bottom: 0;
 }

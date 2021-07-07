@@ -41,7 +41,7 @@ const RoleMemberAdd = ({ userId, selectedUsers, setSelectedUsers }: Props) => {
         />
       </div>
     );
-  return <CircularProgress style={{ color: "white", display: "block" }} />;
+  return <CircularProgress />;
 };
 
 export default RoleMemberAdd;
