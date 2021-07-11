@@ -49,7 +49,7 @@ const Edit = () => {
 
   if (!ownPost()) return <>{Messages.users.permissionDenied()}</>;
   if (post) return <PostForm post={post} isEditing={true} />;
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default Edit;

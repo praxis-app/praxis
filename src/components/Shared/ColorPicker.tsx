@@ -2,7 +2,7 @@ import { useState } from "react";
 import { CirclePicker, ColorResult } from "react-color";
 import { ArrowForwardIos } from "@material-ui/icons";
 
-import styles from "../../styles/Common/ColorPicker.module.scss";
+import styles from "../../styles/Shared/ColorPicker.module.scss";
 import Messages from "../../utils/messages";
 
 interface Props {

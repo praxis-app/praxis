@@ -42,23 +42,13 @@ const ItemMenu = ({
     return (
       <>
         <IconButton onClick={handleMenuButtonClick}>
-          <MoreVert style={{ color: "white" }} />
+          <MoreVert color="primary" />
         </IconButton>
         <Menu
           anchorEl={anchorEl}
           keepMounted
           open={Boolean(anchorEl)}
           onClose={handleClose}
-          PaperProps={{
-            style: {
-              backgroundColor: "rgb(65, 65, 65)",
-            },
-          }}
-          MenuListProps={{
-            style: {
-              color: "white",
-            },
-          }}
         >
           {prependChildren && children}
 

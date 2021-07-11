@@ -60,7 +60,7 @@ const Edit = () => {
         modelOfConsensus={isModelOfConsensus}
       />
     );
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default Edit;

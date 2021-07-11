@@ -56,11 +56,11 @@ const FollowButton = ({ userId, followers, setFollowers }: Props) => {
         <>
           {alreadyFollow() ? (
             <IconButton onClick={() => deleteFollowMutation()}>
-              <RemoveCircle style={{ color: "white" }} />
+              <RemoveCircle color="primary" />
             </IconButton>
           ) : (
             <IconButton onClick={() => createFollowMutation()}>
-              <AddCircle style={{ color: "white" }} />
+              <AddCircle color="primary" />
             </IconButton>
           )}
         </>

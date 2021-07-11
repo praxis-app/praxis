@@ -44,11 +44,11 @@ const RoleMember = ({ member, members, setMembers }: Props) => {
             ) && deleteRoleMemberHandler()
           }
         >
-          <RemoveCircle style={{ color: "white" }} />
+          <RemoveCircle color="primary" />
         </IconButton>
       </div>
     );
-  return <CircularProgress style={{ color: "white", display: "block" }} />;
+  return <CircularProgress />;
 };
 
 export default RoleMember;

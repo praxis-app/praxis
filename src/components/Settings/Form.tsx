@@ -3,16 +3,13 @@ import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import {
   FormGroup,
-  Button,
   Switch,
-  makeStyles,
   NativeSelect,
   Grid,
   Slider,
   Input,
   CircularProgress,
 } from "@material-ui/core";
-import { ClassNameMap } from "@material-ui/core/styles/withStyles";
 
 import { Votes, Settings } from "../../constants";
 import { UPDATE_SETTINGS } from "../../apollo/client/mutations";
@@ -20,26 +17,13 @@ import styles from "../../styles/Setting/SettingsForm.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import { displayName } from "../../utils/items";
-
-const useStyles = makeStyles(() => ({
-  toggle: {
-    "& .Mui-checked .MuiSwitch-thumb": {
-      color: "inherit",
-    },
-    "& .MuiSwitch-thumb": {
-      color: "rgb(170, 170, 170)",
-    },
-  },
-  select: { color: "rgb(170, 170, 170)" },
-  sliderRail: { width: "100px" },
-}));
+import SubmitButton from "../Shared/SubmitButton";
 
 const NumberInput = ({
   value,
   name,
   minimum,
   handleSettingChange,
-  classes,
 }: {
   value: string;
   name: string;
@@ -48,7 +32,6 @@ const NumberInput = ({
     event: ChangeEvent<{ value: string }>,
     name: string
   ) => void;
-  classes: ClassNameMap<"toggle" | "select" | "sliderRail">;
 }) => (
   <Input
     value={value}
@@ -58,7 +41,6 @@ const NumberInput = ({
       min: minimum,
       type: "number",
     }}
-    classes={{ input: classes.select }}
     style={{ width: "50px" }}
   />
 );
@@ -81,7 +63,6 @@ const SettingsForm = ({
   const currentUser = useCurrentUser();
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [updateSettings] = useMutation(UPDATE_SETTINGS);
-  const classes = useStyles();
 
   useEffect(() => {
     if (
@@ -177,8 +158,7 @@ const SettingsForm = ({
     return true;
   };
 
-  if (currentUser && !settings.length)
-    return <CircularProgress style={{ color: "white" }} />;
+  if (currentUser && !settings.length) return <CircularProgress />;
 
   if (!currentUser) return <>{Messages.users.permissionDenied()}</>;
 
@@ -195,7 +175,6 @@ const SettingsForm = ({
                   <Switch
                     checked={value === Settings.States.On}
                     onChange={() => handleSwitchChange(name, value)}
-                    className={classes.toggle}
                     color="primary"
                   />
                 )}
@@ -204,9 +183,6 @@ const SettingsForm = ({
                   <NativeSelect
                     value={value}
                     onChange={(e) => handleSettingChange(e, name)}
-                    classes={{
-                      select: classes.select,
-                    }}
                   >
                     <option aria-label={Messages.forms.none()} value="" />
                     <option value={Votes.VotingTypes.Consensus}>
@@ -225,7 +201,6 @@ const SettingsForm = ({
                   <Switch
                     checked={value === Settings.States.On}
                     onChange={() => handleSwitchChange(name, value)}
-                    className={classes.toggle}
                     color="primary"
                   />
                 )}
@@ -237,7 +212,6 @@ const SettingsForm = ({
                     name={name}
                     minimum={1}
                     handleSettingChange={handleSettingChange}
-                    classes={classes}
                   />
                 )}
 
@@ -248,7 +222,6 @@ const SettingsForm = ({
                     name={name}
                     minimum={0}
                     handleSettingChange={handleSettingChange}
-                    classes={classes}
                   />
                 )}
 
@@ -278,9 +251,6 @@ const SettingsForm = ({
                           max: 100,
                           type: "number",
                         }}
-                        classes={{
-                          input: classes.select,
-                        }}
                       />
                       %
                     </Grid>
@@ -292,16 +262,9 @@ const SettingsForm = ({
       </FormGroup>
 
       {anyUnsavedSettings && (
-        <Button
-          variant="contained"
-          type="submit"
-          style={{
-            color: "white",
-            backgroundColor: "rgb(65, 65, 65)",
-          }}
-        >
+        <SubmitButton>
           {submitLoading ? Messages.states.saving() : Messages.actions.save()}
-        </Button>
+        </SubmitButton>
       )}
     </form>
   );

@@ -7,7 +7,6 @@ import {
 import { Common } from "../../constants";
 
 const commonStyles = {
-  fontFamily: "Inter",
   borderBottom: "none",
   padding: 14,
 };

@@ -33,7 +33,7 @@ const Edit = () => {
 
   if (!ownUser()) return <>{Messages.users.permissionDenied()}</>;
   if (user) return <UserForm user={user} isEditing={true} />;
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default Edit;

@@ -1,15 +1,9 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Input, makeStyles } from "@material-ui/core";
+import { Input, Typography } from "@material-ui/core";
 import { Image } from "@material-ui/icons";
 import { Groups, Motions } from "../../constants";
 import styles from "../../styles/Motion/ActionFields.module.scss";
 import Messages from "../../utils/messages";
-
-const color = { color: "rgb(170, 170, 170)" };
-const useStyles = makeStyles(() => ({
-  select: { ...color },
-  textInput: { ...color },
-}));
 
 interface TextInputProps {
   value: string;
@@ -18,7 +12,6 @@ interface TextInputProps {
 }
 
 const TextInput = ({ value, setValue, placeholder }: TextInputProps) => {
-  const classes = useStyles();
   return (
     <Input
       type="text"
@@ -27,9 +20,6 @@ const TextInput = ({ value, setValue, placeholder }: TextInputProps) => {
       onChange={(e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
       style={{
         marginBottom: "24px",
-      }}
-      classes={{
-        input: classes.textInput,
       }}
     />
   );
@@ -123,9 +113,9 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
 
   if (actionType && actionType !== Motions.ActionTypes.Test)
     return (
-      <span style={{ marginBottom: "12px" }}>
+      <Typography gutterBottom>
         {Messages.motions.groups.actionFields.inDev()}
-      </span>
+      </Typography>
     );
 
   return <></>;

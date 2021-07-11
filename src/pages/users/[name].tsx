@@ -108,7 +108,7 @@ const Show = () => {
           />
         </>
       ) : (
-        <CircularProgress style={{ color: "white" }} />
+        <CircularProgress />
       )}
     </>
   );

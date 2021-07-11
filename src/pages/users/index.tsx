@@ -40,12 +40,12 @@ const Index = () => {
   };
 
   if (canManageUsersLoading || usersRes.data.loading)
-    return <CircularProgress style={{ color: "white" }} />;
+    return <CircularProgress />;
 
   if (canManageUsers)
     return (
       <>
-        <Typography variant="h4" style={{ marginBottom: 24 }}>
+        <Typography variant="h4" gutterBottom>
           {Messages.navigation.users()}
         </Typography>
 

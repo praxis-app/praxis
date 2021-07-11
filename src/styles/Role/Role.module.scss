@@ -1,4 +1,4 @@
-@import "../Common/Common.module.scss";
+@import "../Shared/Shared.module.scss";
 
 .role {
   display: flex;
@@ -30,8 +30,7 @@
 }
 
 .tabsCard {
-  @extend .card;
-  margin-bottom: 48px;
+  margin-bottom: 48px !important;
 }
 
 .permission {
@@ -47,4 +46,8 @@
 .permissionDescription {
   font-size: 12px;
   color: $gray;
+}
+
+.deleteButton {
+  @extend .form;
 }

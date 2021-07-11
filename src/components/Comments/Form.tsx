@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, ChangeEvent, useEffect } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
-import { FormGroup, Input } from "@material-ui/core";
+import { FormGroup } from "@material-ui/core";
 import Router from "next/router";
 import { RemoveCircle, Image } from "@material-ui/icons";
 
@@ -18,6 +18,7 @@ import { noCache } from "../../utils/apollo";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
+import TextInput from "../Shared/TextInput";
 
 interface Props {
   postId?: string;
@@ -135,8 +136,7 @@ const CommentsForm = ({
   return (
     <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
       <FormGroup>
-        <Input
-          type="text"
+        <TextInput
           placeholder={
             submitLoading
               ? Messages.states.loading()
@@ -147,10 +147,6 @@ const CommentsForm = ({
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setBody(e.target.value)
           }
-          style={{
-            marginBottom: "12px",
-            color: "rgb(170, 170, 170)",
-          }}
         />
 
         <input
@@ -182,7 +178,7 @@ const CommentsForm = ({
               />
 
               <RemoveCircle
-                style={{ color: "white" }}
+                color="primary"
                 onClick={() => removeSelectedImage(image.name)}
                 className={styles.removeSelectedImageButton}
               />
@@ -200,7 +196,7 @@ const CommentsForm = ({
               />
 
               <RemoveCircle
-                style={{ color: "white" }}
+                color="primary"
                 onClick={() => deleteImageHandler(id)}
                 className={styles.removeSelectedImageButton}
               />

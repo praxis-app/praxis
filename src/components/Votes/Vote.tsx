@@ -26,11 +26,8 @@ import { timeAgo } from "../../utils/time";
 const useStyles = makeStyles({
   root: {
     width: "100%",
-    marginBottom: 12,
-    backgroundColor: "rgb(65, 65, 65)",
   },
   title: {
-    fontFamily: "Inter",
     fontSize: 16,
   },
 });
@@ -168,9 +165,7 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
         <CardContent>
           <Typography
             style={{
-              color: "rgb(190, 190, 190)",
               marginTop: "-20px",
-              fontFamily: "Inter",
             }}
           >
             {body}
@@ -184,10 +179,7 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
           settingByName(Settings.GroupSettings.VoteVerification) ===
             Settings.States.On && (
             <CardActions style={{ marginTop: "6px" }}>
-              <Button
-                onClick={() => verifyVoteMutation()}
-                style={{ color: "white" }}
-              >
+              <Button onClick={() => verifyVoteMutation()} color="primary">
                 <CheckCircle style={{ marginRight: "5px" }} />
                 Verify
               </Button>

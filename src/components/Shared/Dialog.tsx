@@ -64,11 +64,6 @@ const CommonDialog = ({
       open={open}
       TransitionComponent={DialogTransition}
       onClose={handleCloseDialog}
-      PaperProps={{
-        style: {
-          backgroundColor: "rgb(50, 50, 50)",
-        },
-      }}
       fullScreen
     >
       <AppBar className={classes.appBar}>
@@ -95,7 +90,7 @@ const CommonDialog = ({
               {actionLabel}
             </Button>
           )}
-          {loading && <CircularProgress style={{ color: "white" }} />}
+          {loading && <CircularProgress />}
         </Toolbar>
       </AppBar>
       <Container maxWidth="md">{children}</Container>

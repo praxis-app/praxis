@@ -8,7 +8,6 @@ import FollowButton from "../Follows/FollowButton";
 import ItemMenu from "../Shared/ItemMenu";
 import UserAvatar from "./Avatar";
 import { FOLLOWING } from "../../apollo/client/queries";
-import styles from "../../styles/User/User.module.scss";
 import Messages from "../../utils/messages";
 import { Common, Roles } from "../../constants";
 import {
@@ -21,14 +20,7 @@ import { noCache } from "../../utils/apollo";
 
 const useStyles = makeStyles(() =>
   createStyles({
-    root: {
-      backgroundColor: "rgb(65, 65, 65)",
-    },
-    title: {
-      fontFamily: "Inter",
-    },
     subheader: {
-      fontFamily: "Inter",
       color: "rgb(195, 195, 195)",
     },
   })
@@ -65,7 +57,7 @@ const Show = ({ user, deleteUser }: Props) => {
   };
 
   return (
-    <Card className={classes.root + " " + styles.card}>
+    <Card>
       <CardHeader
         avatar={user && <UserAvatar user={user} />}
         action={
@@ -93,7 +85,7 @@ const Show = ({ user, deleteUser }: Props) => {
           </Link>
         }
         subheader={Messages.users.joinedWithDate(signUpDate)}
-        classes={{ title: classes.title, subheader: classes.subheader }}
+        classes={{ subheader: classes.subheader }}
       />
 
       <CardContent>
@@ -101,7 +93,7 @@ const Show = ({ user, deleteUser }: Props) => {
           <a>{Messages.users.followers(followers.length)}</a>
         </Link>
 
-        <span style={{ color: "white" }}> · </span>
+        <span style={{ color: "white" }}>{Messages.middotWithSpaces()}</span>
 
         <Link href={`/users/${name}/following`}>
           <a>{Messages.users.following(following.length)}</a>

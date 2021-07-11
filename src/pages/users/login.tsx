@@ -1,16 +1,17 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation } from "@apollo/client";
 import Router from "next/router";
-import { Input, FormGroup } from "@material-ui/core";
+import { FormGroup } from "@material-ui/core";
 
 import { SIGN_IN, SET_CURRENT_USER } from "../../apollo/client/mutations";
 import { setAuthToken } from "../../utils/auth";
 
-import styles from "../../styles/User/UserForm.module.scss";
+import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
 import { useCurrentUser } from "../../hooks";
 import SubmitButton from "../../components/Shared/SubmitButton";
+import TextInput, { PasswordInput } from "../../components/Shared/TextInput";
 
 const Login = () => {
   const currentUser = useCurrentUser();
@@ -58,31 +59,21 @@ const Login = () => {
   if (currentUser) return <>{Messages.users.alreadyLoggedIn()}</>;
 
   return (
-    <form onSubmit={handleSubmit} className={styles.card}>
+    <form onSubmit={handleSubmit} className={styles.form}>
       <FormGroup
         style={{
           marginBottom: "6px",
         }}
       >
-        <Input
-          type="text"
+        <TextInput
           placeholder={Messages.users.form.email()}
           onChange={(e) => setUserEmail(e.target.value)}
           value={userEmail}
-          style={{
-            marginBottom: "12px",
-            color: "rgb(170, 170, 170)",
-          }}
         />
-        <Input
-          type="password"
+        <PasswordInput
           placeholder={Messages.users.form.password()}
           onChange={(e) => setUserPassword(e.target.value)}
           value={userPassword}
-          style={{
-            marginBottom: "12px",
-            color: "rgb(170, 170, 170)",
-          }}
         />
       </FormGroup>
 

@@ -17,7 +17,7 @@ const List = ({ deleteMotion, deletePost, loading }: Props) => {
 
   if (!loading)
     return (
-      <div style={{ marginBottom: "200px" }}>
+      <>
         {feed
           .sort((a, b) => parseInt(b.createdAt) - parseInt(a.createdAt))
           .slice(0, Common.PAGE_SIZE)
@@ -36,10 +36,10 @@ const List = ({ deleteMotion, deletePost, loading }: Props) => {
               />
             );
           })}
-      </div>
+      </>
     );
 
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default List;

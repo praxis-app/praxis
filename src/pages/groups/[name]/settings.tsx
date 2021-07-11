@@ -62,13 +62,13 @@ const Settings = () => {
     <>
       <Link href={`/groups/${query.name}`}>
         <a>
-          <Typography variant="h3" style={{ fontSize: 40 }}>
+          <Typography variant="h3" color="primary">
             {query.name}
           </Typography>
         </a>
       </Link>
 
-      <Typography variant="h6" style={{ marginBottom: 6, color: "white" }}>
+      <Typography variant="h6">
         {Messages.groups.settings.nameWithGroup()}
       </Typography>
 

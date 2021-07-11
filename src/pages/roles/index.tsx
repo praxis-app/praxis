@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import {
-  CircularProgress,
-  Card,
-  makeStyles,
-  Typography,
-  Button,
-} from "@material-ui/core";
+import { CircularProgress, Card, Typography, Button } from "@material-ui/core";
 
 import Role from "../../components/Roles/Role";
 import { GLOBAL_ROLES } from "../../apollo/client/queries";
@@ -16,16 +10,9 @@ import {
 } from "../../apollo/client/mutations";
 import RoleForm from "../../components/Roles/Form";
 import { noCache } from "../../utils/apollo";
-import styles from "../../styles/Role/Role.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
 import { Roles } from "../../constants";
-
-const useStyles = makeStyles({
-  root: {
-    backgroundColor: "rgb(65, 65, 65)",
-  },
-});
 
 const Index = () => {
   const [roles, setRoles] = useState<Role[]>([]);
@@ -37,7 +24,6 @@ const Index = () => {
     roles
   );
   const currentUser = useCurrentUser();
-  const classes = useStyles();
 
   useEffect(() => {
     if (rolesRes.data) setRoles(rolesRes.data.globalRoles);
@@ -68,9 +54,7 @@ const Index = () => {
   if (rolesRes.data && roles.length === 0)
     return (
       <>
-        <Typography style={{ marginBottom: 12 }}>
-          {Messages.roles.noRoles()}
-        </Typography>
+        <Typography gutterBottom>{Messages.roles.noRoles()}</Typography>
         <Button
           onClick={() =>
             window.confirm(
@@ -78,26 +62,25 @@ const Index = () => {
             ) && initializeAdminRoleHandler()
           }
           variant="contained"
-          style={{ color: "white", backgroundColor: "rgb(65, 65, 65)" }}
+          color="primary"
         >
           {Messages.roles.actions.initializeAdminRole()}
         </Button>
       </>
     );
 
-  if (canManageRolesLoading || rolesRes.loading)
-    return <CircularProgress style={{ color: "white" }} />;
+  if (canManageRolesLoading || rolesRes.loading) return <CircularProgress />;
 
   if (canManageRoles)
     return (
       <>
-        <Typography variant="h4" style={{ marginBottom: 24 }}>
+        <Typography variant="h4" gutterBottom>
           {Messages.roles.serverRoles()}
         </Typography>
 
         <RoleForm roles={roles} setRoles={setRoles} />
 
-        <Card className={classes.root + " " + styles.card}>
+        <Card>
           {roles
             .slice()
             .reverse()

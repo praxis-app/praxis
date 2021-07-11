@@ -29,11 +29,8 @@ import { timeAgo } from "../../utils/time";
 const useStyles = makeStyles({
   root: {
     width: "100%",
-    marginBottom: 12,
-    backgroundColor: "rgb(65, 65, 65)",
   },
   title: {
-    fontFamily: "Inter",
     fontSize: 16,
   },
 });
@@ -97,9 +94,7 @@ const Comment = ({ comment, deleteComment }: Props) => {
         <CardContent>
           <Typography
             style={{
-              color: "rgb(190, 190, 190)",
               marginTop: "-12px",
-              fontFamily: "Inter",
             }}
           >
             {body}

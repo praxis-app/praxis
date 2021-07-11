@@ -1,8 +1,7 @@
-@import "../Common/colors.scss";
+@import "../Shared/colors.scss";
 
 $desktopBreakpoint: 850px;
 
-.card,
 .form {
   width: 100%;
   margin-bottom: 12px;
@@ -51,12 +50,4 @@ $desktopBreakpoint: 850px;
   -ms-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-}
-
-// desktop
-@media only screen and (min-width: $desktopBreakpoint) {
-  .card,
-  .form {
-    width: 525px;
-  }
 }

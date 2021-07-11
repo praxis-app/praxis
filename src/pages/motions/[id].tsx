@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, useLazyQuery, useReactiveVar } from "@apollo/client";
-import {
-  Card,
-  CircularProgress,
-  makeStyles,
-  Tab,
-  Tabs,
-} from "@material-ui/core";
+import { Card, CircularProgress, Tab, Tabs } from "@material-ui/core";
 import Router, { useRouter } from "next/router";
 
 import {
@@ -20,22 +14,9 @@ import Motion from "../../components/Motions/Motion";
 import CommentsForm from "../../components/Comments/Form";
 import CommentsList from "../../components/Comments/List";
 import VotesList from "../../components/Votes/List";
-import styles from "../../styles/Motion/Motion.module.scss";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser } from "../../hooks";
-
-const useStyles = makeStyles({
-  root: {
-    backgroundColor: "rgb(65, 65, 65)",
-  },
-  title: {
-    fontFamily: "Inter",
-  },
-  indicator: {
-    backgroundColor: "white",
-  },
-});
 
 const Show = () => {
   const { query } = useRouter();
@@ -52,7 +33,6 @@ const Show = () => {
     COMMENTS_BY_MOTION_ID,
     noCache
   );
-  const classes = useStyles();
 
   useEffect(() => {
     if (query.id) {
@@ -115,7 +95,7 @@ const Show = () => {
       <>
         <Motion motion={motion} deleteMotion={deleteMotionHandler} />
 
-        <Card className={classes.root + " " + styles.card}>
+        <Card>
           <Tabs
             textColor="inherit"
             centered
@@ -123,16 +103,9 @@ const Show = () => {
             onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
               setTab(newValue)
             }
-            classes={{ indicator: classes.indicator }}
           >
-            <Tab
-              label={Messages.motions.tabs.votes()}
-              style={{ color: "white" }}
-            />
-            <Tab
-              label={Messages.motions.tabs.comments()}
-              style={{ color: "white" }}
-            />
+            <Tab label={Messages.motions.tabs.votes()} />
+            <Tab label={Messages.motions.tabs.comments()} />
           </Tabs>
         </Card>
 
@@ -156,7 +129,7 @@ const Show = () => {
       </>
     );
 
-  return <CircularProgress style={{ color: "white" }} />;
+  return <CircularProgress />;
 };
 
 export default Show;

@@ -4,11 +4,9 @@ import { useMutation, useReactiveVar } from "@apollo/client";
 import Router from "next/router";
 import {
   FormGroup,
-  Input,
   FormControl,
   InputLabel,
   NativeSelect,
-  makeStyles,
 } from "@material-ui/core";
 
 import { motionVar } from "../../apollo/client/localState";
@@ -18,12 +16,7 @@ import { Motions, Votes } from "../../constants";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import SubmitButton from "../Shared/SubmitButton";
-
-const color = { color: "rgb(170, 170, 170)" };
-const useStyles = makeStyles(() => ({
-  select: { ...color },
-  textInput: { ...color },
-}));
+import TextInput from "../Shared/TextInput";
 
 interface Props {
   vote: Vote;
@@ -47,7 +40,6 @@ const VotesForm = ({
   const [consensusState, setConsensusState] = useState<string>("");
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [updateVote] = useMutation(UPDATE_VOTE);
-  const classes = useStyles();
 
   useEffect(() => {
     setBody(vote.body);
@@ -138,35 +130,22 @@ const VotesForm = ({
       className={onEditPage ? styles.formOnEditPage : styles.form}
     >
       <FormGroup>
-        <Input
-          type="text"
+        <TextInput
           placeholder={placeholderText()}
           value={body ? body : ""}
           multiline
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setBody(e.target.value)
           }
-          style={{
-            marginBottom: "12px",
-            color: "rgb(170, 170, 170)",
-          }}
         />
 
         <FormControl style={{ marginBottom: "20px" }}>
-          <InputLabel
-            style={{ color: "rgb(105, 105, 105)", fontFamily: "Inter" }}
-          >
+          <InputLabel>
             {modelOfConsensus
               ? Messages.votes.form.agreeOrDisagree()
               : Messages.votes.form.supportOrBlock()}
           </InputLabel>
-          <NativeSelect
-            value={selectValue()}
-            onChange={handleVoteTypeChange}
-            classes={{
-              select: classes.select,
-            }}
-          >
+          <NativeSelect value={selectValue()} onChange={handleVoteTypeChange}>
             <option aria-label={Messages.forms.none()} value="" />
             {modelOfConsensus ? (
               <>
