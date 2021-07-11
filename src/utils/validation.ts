@@ -1,7 +1,7 @@
 import validator from "validator";
 import isEmpty from "is-empty";
 import Messages from "./messages";
-import { Users } from "../constants/user";
+import { Users } from "../constants";
 
 function validateLogin(data: SignInInput) {
   const errors: ValidationError = {};

@@ -1,17 +1,24 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
+import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import Router from "next/router";
 import { FormGroup } from "@material-ui/core";
-import { Image, RemoveCircle } from "@material-ui/icons";
+import { RemoveCircle } from "@material-ui/icons";
+import { Formik, Form, Field } from "formik";
 
 import { CREATE_GROUP, UPDATE_GROUP } from "../../apollo/client/mutations";
-
 import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
-import TextInput from "../Shared/TextInput";
+import TextField from "../Shared/TextField";
+import { Common } from "../../constants";
+import ImageInput from "../Shared/ImageInput";
+
+interface FormValues {
+  name: string;
+  description: string;
+}
 
 interface Props {
   group?: Group;
@@ -20,25 +27,18 @@ interface Props {
 
 const GroupForm = ({ group, isEditing }: Props) => {
   const currentUser = useCurrentUser();
-  const [name, setName] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
   const [coverPhoto, setCoverPhoto] = useState<File>();
   const [imageInputKey, setImageInputKey] = useState<string>("");
-  const imageInput = React.useRef<HTMLInputElement>(null);
 
   const [createGroup] = useMutation(CREATE_GROUP);
   const [updateGroup] = useMutation(UPDATE_GROUP);
 
-  useEffect(() => {
-    if (isEditing && group) {
-      setName(group.name);
-      setDescription(group.description);
-    }
-  }, [group, isEditing]);
+  const initialValues = {
+    name: isEditing && group ? group.name : "",
+    description: isEditing && group ? group.description : "",
+  };
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
+  const handleSubmit = async ({ name, description }: FormValues) => {
     if (currentUser) {
       try {
         if (isEditing && group) {
@@ -53,11 +53,6 @@ const GroupForm = ({ group, isEditing }: Props) => {
 
           Router.push(`/groups/${data.updateGroup.group.name}`);
         } else {
-          e.target.reset();
-          setName("");
-          setDescription("");
-          setCoverPhoto(undefined);
-
           const { data } = await createGroup({
             variables: {
               name,
@@ -82,56 +77,49 @@ const GroupForm = ({ group, isEditing }: Props) => {
 
   if (currentUser)
     return (
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <FormGroup>
-          <TextInput
-            placeholder={Messages.groups.form.name()}
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-          />
-          <TextInput
-            placeholder={Messages.groups.form.description()}
-            onChange={(e) => setDescription(e.target.value)}
-            value={description}
-          />
+      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        {(formik) => (
+          <Form className={styles.form}>
+            <FormGroup>
+              <Field
+                name={Common.FieldNames.Name}
+                placeholder={Messages.groups.form.name()}
+                component={TextField}
+                autoComplete="off"
+              />
 
-          <input
-            type="file"
-            accept="image/*"
-            ref={imageInput}
-            key={imageInputKey}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              e.target.files && setCoverPhoto(e.target.files[0])
-            }
-            className={styles.imageInput}
-          />
-          <Image
-            className={styles.imageInputIcon}
-            onClick={() => imageInput.current?.click()}
-            fontSize="large"
-          />
-        </FormGroup>
+              <Field
+                name={Common.FieldNames.Description}
+                placeholder={Messages.groups.form.description()}
+                component={TextField}
+                multiline
+              />
 
-        {coverPhoto && (
-          <div className={styles.selectedImages}>
-            <img
-              alt={Messages.images.couldNotRender()}
-              className={styles.selectedImage}
-              src={URL.createObjectURL(coverPhoto)}
-            />
+              <ImageInput setImage={setCoverPhoto} refreshKey={imageInputKey} />
+            </FormGroup>
 
-            <RemoveCircle
-              color="primary"
-              onClick={() => removeSelectedCoverPhoto()}
-              className={styles.removeSelectedImageButton}
-            />
-          </div>
+            {coverPhoto && (
+              <div className={styles.selectedImages}>
+                <img
+                  alt={Messages.images.couldNotRender()}
+                  className={styles.selectedImage}
+                  src={URL.createObjectURL(coverPhoto)}
+                />
+
+                <RemoveCircle
+                  color="primary"
+                  onClick={() => removeSelectedCoverPhoto()}
+                  className={styles.removeSelectedImageButton}
+                />
+              </div>
+            )}
+
+            <SubmitButton disabled={!!formik.submitCount}>
+              {isEditing ? Messages.actions.save() : Messages.actions.create()}
+            </SubmitButton>
+          </Form>
         )}
-
-        <SubmitButton>
-          {isEditing ? Messages.actions.save() : Messages.actions.create()}
-        </SubmitButton>
-      </form>
+      </Formik>
     );
   return <></>;
 };

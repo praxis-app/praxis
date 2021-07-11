@@ -235,6 +235,10 @@ const en = {
       addMembers: () => "Add members",
       initializeAdminRole: () => "Initialize Admin Role",
     },
+    form: {
+      name: () => "name",
+      colorPickerLabel: () => "Role Color",
+    },
     prompts: {
       initializeAdminRoleConfirm: () =>
         "Are you sure you want to create an admin role for this server? If you did not create this server or haven't been granted permission otherwise, please hit 'Cancel'.",
@@ -247,7 +251,6 @@ const en = {
       },
       nMembers: (size: number) => `${size} Member${pluralize(size)}`,
     },
-    colorPickerLabel: () => "Role Color",
     permissions: {
       names: {
         manageItems: (itemType: string) => `Manage ${itemType}s`,

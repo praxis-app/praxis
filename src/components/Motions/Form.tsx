@@ -1,30 +1,35 @@
-import { useState, ChangeEvent, useEffect, useRef, Fragment } from "react";
+import { useState, useEffect } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import {
   FormGroup,
-  Input,
   NativeSelect,
   FormControl,
   InputLabel,
 } from "@material-ui/core";
 import Router from "next/router";
-import { RemoveCircle, Image } from "@material-ui/icons";
+import { Formik, FormikHelpers, Form, Field, FormikProps } from "formik";
 
 import Messages from "../../utils/messages";
-import baseUrl from "../../utils/baseUrl";
 import { IMAGES_BY_MOTION_ID } from "../../apollo/client/queries";
 import {
   CREATE_MOTION,
   UPDATE_MOTION,
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
-import { Motions } from "../../constants";
+import { Common, Motions } from "../../constants";
 import ActionFields from "./ActionFields";
 import styles from "../../styles/Shared/Shared.module.scss";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import { noCache } from "../../utils/apollo";
 import SubmitButton from "../Shared/SubmitButton";
+import TextField from "../Shared/TextField";
+import SelectedImages from "../Shared/SelectedImages";
+import ImageInput from "../Shared/ImageInput";
+
+interface FormikValues {
+  body: string;
+}
 
 interface Props {
   motion?: Motion;
@@ -45,11 +50,8 @@ const MotionsForm = ({
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
   const [savedImages, setSavedImages] = useState<Image[]>([]);
   const [images, setImages] = useState<File[]>([]);
-  const [body, setBody] = useState<string>("");
   const [action, setAction] = useState<string>("");
   const [actionData, setActionData] = useState<ActionData>({});
-  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
-  const imagesInput = useRef<HTMLInputElement>(null);
 
   const [createMotion] = useMutation(CREATE_MOTION);
   const [updateMotion] = useMutation(UPDATE_MOTION);
@@ -61,7 +63,6 @@ const MotionsForm = ({
 
   useEffect(() => {
     if (isEditing && motion) {
-      setBody(motion.body);
       setAction(motion.action);
     }
   }, [motion, isEditing]);
@@ -76,14 +77,13 @@ const MotionsForm = ({
     );
   }, [savedImagesRes.data]);
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
+  const handleSubmit = async (
+    { body }: FormikValues,
+    { setSubmitting, resetForm }: FormikHelpers<FormikValues>
+  ) => {
     if (currentUser) {
-      setSubmitLoading(true);
-      if (isEditing && motion) {
-        try {
-          setBody("");
+      try {
+        if (isEditing && motion) {
           await updateMotion({
             variables: {
               id: motion.id,
@@ -94,15 +94,7 @@ const MotionsForm = ({
             },
           });
           Router.push(`/motions/${motion.id}`);
-        } catch (err) {
-          alert(err);
-        }
-      } else {
-        try {
-          setBody("");
-          setAction("");
-          setImages([]);
-          e.target.reset();
+        } else {
           const { data } = await createMotion({
             variables: {
               body,
@@ -113,13 +105,16 @@ const MotionsForm = ({
               userId: currentUser.id,
             },
           });
+          resetForm();
+          setAction("");
+          setImages([]);
+          setSubmitting(false);
           if (motions && setMotions)
             setMotions([...motions, data.createMotion.motion]);
-        } catch (err) {
-          alert(err);
         }
+      } catch (err) {
+        alert(err);
       }
-      setSubmitLoading(false);
     }
   };
 
@@ -145,119 +140,86 @@ const MotionsForm = ({
     setImagesInputKey(generateRandom());
   };
 
+  const isSubmitButtonDisabled = (
+    formik: FormikProps<FormikValues>
+  ): boolean => {
+    if (isEditing && !!formik.submitCount) return true;
+    return formik.isSubmitting;
+  };
+
   return (
-    <form
-      onSubmit={(e) => handleSubmit(e)}
-      className={styles.form}
-      style={group && { marginTop: "48px" }}
+    <Formik
+      initialValues={{
+        body: isEditing && motion ? motion.body : "",
+      }}
+      onSubmit={handleSubmit}
     >
-      <FormGroup>
-        <Input
-          type="text"
-          placeholder={
-            submitLoading
-              ? Messages.states.loading()
-              : Messages.motions.form.makeAMotion()
-          }
-          value={body}
-          multiline
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setBody(e.target.value)
-          }
-          style={{
-            marginBottom: "6px",
-          }}
-        />
+      {(formik) => (
+        <Form className={styles.form} style={group && { marginTop: "48px" }}>
+          <FormGroup>
+            <Field
+              name={Common.FieldNames.Body}
+              placeholder={
+                formik.isSubmitting
+                  ? Messages.states.loading()
+                  : Messages.motions.form.makeAMotion()
+              }
+              component={TextField}
+              multiline
+              style={{ marginBottom: 0 }}
+            />
 
-        <FormControl style={{ marginBottom: "20px" }}>
-          <InputLabel>{Messages.motions.form.motionType()}</InputLabel>
-          <NativeSelect value={action} onChange={handleActionChange}>
-            <option aria-label={Messages.forms.none()} value="" />
-            <option value={Motions.ActionTypes.PlanEvent}>
-              {Messages.motions.form.actionTypes.planEvent()}
-            </option>
-            <option value={Motions.ActionTypes.ChangeName}>
-              {Messages.motions.form.actionTypes.changeName()}
-            </option>
-            <option value={Motions.ActionTypes.ChangeDescription}>
-              {Messages.motions.form.actionTypes.changeDescription()}
-            </option>
-            <option value={Motions.ActionTypes.ChangeImage}>
-              {Messages.motions.form.actionTypes.changeImage()}
-            </option>
-            <option value={Motions.ActionTypes.ChangeSettings}>
-              {Messages.motions.form.actionTypes.changeSettings()}
-            </option>
-            <option value={Motions.ActionTypes.Test}>
-              {Messages.motions.form.actionTypes.test()}
-            </option>
-          </NativeSelect>
-        </FormControl>
+            <FormControl style={{ marginBottom: "18px" }}>
+              <InputLabel>{Messages.motions.form.motionType()}</InputLabel>
+              <NativeSelect value={action} onChange={handleActionChange}>
+                <option aria-label={Messages.forms.none()} value="" />
+                <option value={Motions.ActionTypes.PlanEvent}>
+                  {Messages.motions.form.actionTypes.planEvent()}
+                </option>
+                <option value={Motions.ActionTypes.ChangeName}>
+                  {Messages.motions.form.actionTypes.changeName()}
+                </option>
+                <option value={Motions.ActionTypes.ChangeDescription}>
+                  {Messages.motions.form.actionTypes.changeDescription()}
+                </option>
+                <option value={Motions.ActionTypes.ChangeImage}>
+                  {Messages.motions.form.actionTypes.changeImage()}
+                </option>
+                <option value={Motions.ActionTypes.ChangeSettings}>
+                  {Messages.motions.form.actionTypes.changeSettings()}
+                </option>
+                <option value={Motions.ActionTypes.Test}>
+                  {Messages.motions.form.actionTypes.test()}
+                </option>
+              </NativeSelect>
+            </FormControl>
 
-        <ActionFields actionType={action} setActionData={setActionData} />
+            <ActionFields actionType={action} setActionData={setActionData} />
 
-        <input
-          multiple
-          type="file"
-          accept="image/*"
-          key={imagesInputKey}
-          ref={imagesInput}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            e.target.files && setImages([...e.target.files])
-          }
-          className={styles.imageInput}
-        />
-        <Image
-          className={styles.imageInputIcon}
-          onClick={() => imagesInput.current?.click()}
-          fontSize="large"
-        />
-      </FormGroup>
-
-      <div className={styles.selectedImages}>
-        {[...images].map((image) => {
-          return (
-            <Fragment key={image.name}>
-              <img
-                alt={Messages.images.couldNotRender()}
-                className={styles.selectedImage}
-                src={URL.createObjectURL(image)}
+            {action !== Motions.ActionTypes.ChangeImage && (
+              <ImageInput
+                setImages={setImages}
+                refreshKey={imagesInputKey}
+                multiple
               />
+            )}
+          </FormGroup>
 
-              <RemoveCircle
-                color="primary"
-                onClick={() => removeSelectedImage(image.name)}
-                className={styles.removeSelectedImageButton}
-              />
-            </Fragment>
-          );
-        })}
+          <SelectedImages
+            selectedImages={images}
+            savedImages={savedImages}
+            removeSelectedImage={removeSelectedImage}
+            deleteSavedImage={deleteImageHandler}
+          />
 
-        {savedImages.map(({ id, path }) => {
-          return (
-            <Fragment key={id}>
-              <img
-                alt={Messages.images.couldNotRender()}
-                className={styles.selectedImage}
-                src={baseUrl + path}
-              />
-
-              <RemoveCircle
-                color="primary"
-                onClick={() => deleteImageHandler(id)}
-                className={styles.removeSelectedImageButton}
-              />
-            </Fragment>
-          );
-        })}
-      </div>
-
-      <SubmitButton>
-        {isEditing
-          ? Messages.actions.save()
-          : Messages.motions.actions.motion()}
-      </SubmitButton>
-    </form>
+          <SubmitButton disabled={isSubmitButtonDisabled(formik)}>
+            {isEditing
+              ? Messages.actions.save()
+              : Messages.motions.actions.motion()}
+          </SubmitButton>
+        </Form>
+      )}
+    </Formik>
   );
 };
 
