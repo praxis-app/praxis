@@ -132,9 +132,6 @@ const commentResolvers = {
 
       for (const image of images) {
         await deleteImage(image.path);
-        await prisma.image.delete({
-          where: { id: image.id },
-        });
       }
 
       await prisma.comment.delete({

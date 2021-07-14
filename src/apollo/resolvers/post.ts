@@ -124,10 +124,13 @@ const postResolvers = {
 
       for (const image of images) {
         await deleteImage(image.path);
-        await prisma.image.delete({
-          where: { id: image.id },
-        });
+        // Image entries were previously manually deleted but cascading deletes handles this condition
       }
+
+      // TODO: cascading deletes are not deleting Like entries, requires further investigation
+      await prisma.like.deleteMany({
+        where: { postId: parseInt(id) || null },
+      });
 
       await prisma.post.delete({
         where: { id: parseInt(id) },
