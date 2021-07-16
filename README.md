@@ -28,9 +28,9 @@ The default database is PostgreSQL.
 
 ## Tools to get Involved and Collaborate
 
-- Discord: https://discord.gg/hJUHv4ckfK or message me at **forrest#2807**
+- Discord: Message me at **forrest#2807**
 - Notion: https://www.notion.so/praxis-74cb6558cc6f4470a967d95fad039303
 
 ## Contributions
 
-Praxis is open to contributions. Please read [CONTRIBUTING.md](https://github.com/forrestwilkins/praxis/blob/main/CONTRIBUTING.md) for more details. If you have any questions at all about contributing, feel free to contact us via [Discord](https://discord.gg/hJUHv4ckfK) as well.
+Praxis is open to contributions. Please read [CONTRIBUTING.md](https://github.com/forrestwilkins/praxis/blob/main/CONTRIBUTING.md) for more details.

@@ -1,11 +1,9 @@
-import React from "react";
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { FormGroup } from "@material-ui/core";
 import Router from "next/router";
-import { RemoveCircle, Image } from "@material-ui/icons";
+import { Formik, FormikHelpers, Form, Field, FormikProps } from "formik";
 
-import baseUrl from "../../utils/baseUrl";
 import { IMAGES_BY_COMMENT_ID } from "../../apollo/client/queries";
 import {
   CREATE_COMMENT,
@@ -18,7 +16,14 @@ import { noCache } from "../../utils/apollo";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
-import TextInput from "../Shared/TextInput";
+import TextField from "../Shared/TextField";
+import { Common } from "../../constants";
+import SelectedImages from "../Shared/SelectedImages";
+import ImageInput from "../Shared/ImageInput";
+
+interface FormValues {
+  body: string;
+}
 
 interface Props {
   postId?: string;
@@ -41,9 +46,6 @@ const CommentsForm = ({
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
   const [savedImages, setSavedImages] = useState<Image[]>([]);
   const [images, setImages] = useState<File[]>([]);
-  const [body, setBody] = useState<string>("");
-  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
-  const imagesInput = React.useRef<HTMLInputElement>(null);
 
   const [createComment] = useMutation(CREATE_COMMENT);
   const [updateComment] = useMutation(UPDATE_COMMENT);
@@ -52,12 +54,6 @@ const CommentsForm = ({
     IMAGES_BY_COMMENT_ID,
     noCache
   );
-
-  useEffect(() => {
-    if (isEditing && comment) {
-      setBody(comment.body);
-    }
-  }, [comment, isEditing]);
 
   useEffect(() => {
     if (comment) getSavedImagesRes({ variables: { commentId: comment.id } });
@@ -69,14 +65,13 @@ const CommentsForm = ({
     );
   }, [savedImagesRes.data]);
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
+  const handleSubmit = async (
+    { body }: FormValues,
+    { setSubmitting, resetForm }: FormikHelpers<FormValues>
+  ) => {
     if (currentUser) {
-      setSubmitLoading(true);
       try {
         if (isEditing) {
-          setBody("");
           await updateComment({
             variables: {
               id: comment?.id,
@@ -87,9 +82,6 @@ const CommentsForm = ({
           if (comment?.postId) Router.push(`/posts/${comment.postId}`);
           if (comment?.motionId) Router.push(`/motions/${comment.motionId}`);
         } else {
-          setBody("");
-          setImages([]);
-          e.target.reset();
           const commentedItemId = postId
             ? {
                 postId,
@@ -105,13 +97,15 @@ const CommentsForm = ({
               ...commentedItemId,
             },
           });
+          resetForm();
+          setImages([]);
+          setSubmitting(false);
           if (comments && setComments)
             setComments([...comments, data.createComment.comment]);
         }
       } catch (err) {
         alert(err);
       }
-      setSubmitLoading(false);
     }
   };
 
@@ -133,84 +127,54 @@ const CommentsForm = ({
     setImagesInputKey(generateRandom());
   };
 
+  const isSubmitButtonDisabled = (formik: FormikProps<FormValues>): boolean => {
+    if (isEditing && !!formik.submitCount) return true;
+    return formik.isSubmitting;
+  };
+
   return (
-    <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
-      <FormGroup>
-        <TextInput
-          placeholder={
-            submitLoading
-              ? Messages.states.loading()
-              : Messages.comments.form.leaveAComment()
-          }
-          value={body}
-          multiline
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setBody(e.target.value)
-          }
-        />
+    <Formik
+      initialValues={{
+        body: isEditing && comment ? comment.body : "",
+      }}
+      onSubmit={handleSubmit}
+    >
+      {(formik) => (
+        <Form className={styles.form}>
+          <FormGroup>
+            <Field
+              name={Common.FieldNames.Body}
+              placeholder={
+                formik.isSubmitting
+                  ? Messages.states.loading()
+                  : Messages.comments.form.leaveAComment()
+              }
+              component={TextField}
+              multiline
+            />
 
-        <input
-          multiple
-          type="file"
-          accept="image/*"
-          key={imagesInputKey}
-          ref={imagesInput}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            e.target.files && setImages([...e.target.files])
-          }
-          className={styles.imageInput}
-        />
-        <Image
-          className={styles.imageInputIcon}
-          onClick={() => imagesInput.current?.click()}
-          fontSize="large"
-        />
-      </FormGroup>
+            <ImageInput
+              setImages={setImages}
+              refreshKey={imagesInputKey}
+              multiple
+            />
+          </FormGroup>
 
-      <div className={styles.selectedImages}>
-        {[...images].map((image) => {
-          return (
-            <React.Fragment key={image.name}>
-              <img
-                alt={Messages.images.couldNotRender()}
-                className={styles.selectedImage}
-                src={URL.createObjectURL(image)}
-              />
+          <SelectedImages
+            selectedImages={images}
+            savedImages={savedImages}
+            removeSelectedImage={removeSelectedImage}
+            deleteSavedImage={deleteImageHandler}
+          />
 
-              <RemoveCircle
-                color="primary"
-                onClick={() => removeSelectedImage(image.name)}
-                className={styles.removeSelectedImageButton}
-              />
-            </React.Fragment>
-          );
-        })}
-
-        {savedImages.map(({ id, path }) => {
-          return (
-            <React.Fragment key={id}>
-              <img
-                alt={Messages.images.couldNotRender()}
-                className={styles.selectedImage}
-                src={baseUrl + path}
-              />
-
-              <RemoveCircle
-                color="primary"
-                onClick={() => deleteImageHandler(id)}
-                className={styles.removeSelectedImageButton}
-              />
-            </React.Fragment>
-          );
-        })}
-      </div>
-
-      <SubmitButton>
-        {isEditing
-          ? Messages.actions.save()
-          : Messages.comments.actions.comment()}
-      </SubmitButton>
-    </form>
+          <SubmitButton disabled={isSubmitButtonDisabled(formik)}>
+            {isEditing
+              ? Messages.actions.save()
+              : Messages.comments.actions.comment()}
+          </SubmitButton>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

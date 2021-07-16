@@ -1,13 +1,9 @@
-import { Button } from "@material-ui/core";
+import { Button, ButtonProps } from "@material-ui/core";
 
-interface Props {
-  children?: React.ReactNode;
-}
-
-const SubmitButton = ({ children }: Props) => {
+const SubmitButton = (props: ButtonProps) => {
   return (
-    <Button type="submit" variant="contained" color="primary">
-      {children}
+    <Button type="submit" variant="contained" color="primary" {...props}>
+      {props.children}
     </Button>
   );
 };

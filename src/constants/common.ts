@@ -35,6 +35,12 @@ export namespace Common {
     Vote = "vote",
   }
 
+  export enum FieldNames {
+    Body = "body",
+    Name = "name",
+    Description = "description",
+  }
+
   export enum LocalStorage {
     JwtToken = "jwtToken",
     WelcomeCardClosed = "welcomeCardClosed",

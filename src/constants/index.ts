@@ -4,4 +4,5 @@ export * from "./motion";
 export * from "./group";
 export * from "./role";
 export * from "./vote";
+export * from "./user";
 export * from "./serverInvite";

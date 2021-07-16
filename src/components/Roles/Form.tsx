@@ -2,16 +2,21 @@ import React, { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import { FormGroup } from "@material-ui/core";
+import { Formik, FormikHelpers, Form, Field } from "formik";
 
 import { CREATE_ROLE, UPDATE_ROLE } from "../../apollo/client/mutations";
 import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import ColorPicker from "../Shared/ColorPicker";
-import { Roles } from "../../constants";
+import { Common, Roles } from "../../constants";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
-import TextInput from "../Shared/TextInput";
+import TextField from "../Shared/TextField";
+
+interface FormValues {
+  name: string;
+}
 
 interface Props {
   role?: Role;
@@ -23,7 +28,6 @@ interface Props {
 
 const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
   const currentUser = useCurrentUser();
-  const [name, setName] = useState<string>("");
   const [color, setColor] = useState<string>(Roles.DEFAULT_COLOR);
   const [colorPickerKey, setColorPickerKey] = useState<string>("");
   const [createRole] = useMutation(CREATE_ROLE);
@@ -32,14 +36,14 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
 
   useEffect(() => {
     if (isEditing && role) {
-      setName(role.name);
       setColor(role.color);
     }
   }, [role, isEditing]);
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-
+  const handleSubmit = async (
+    { name }: FormValues,
+    { setSubmitting, resetForm }: FormikHelpers<FormValues>
+  ) => {
     if (currentUser) {
       try {
         setColorPickerKey(generateRandom());
@@ -54,7 +58,6 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
 
           if (setRole) setRole(data.updateRole.role);
         } else {
-          setName("");
           const { data } = await createRole({
             variables: {
               name,
@@ -64,6 +67,8 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
           });
 
           if (setRoles && roles) setRoles([...roles, data.createRole.role]);
+          setSubmitting(false);
+          resetForm();
         }
       } catch (err) {
         alert(err);
@@ -81,25 +86,33 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
 
   if (currentUser)
     return (
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <FormGroup>
-          <TextInput
-            placeholder={Messages.groups.form.name()}
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-          />
-          <ColorPicker
-            color={color}
-            onChange={handleChangeComplete}
-            label={Messages.roles.colorPickerLabel()}
-            key={colorPickerKey}
-          />
-        </FormGroup>
+      <Formik
+        initialValues={{ name: isEditing && role ? role.name : "" }}
+        onSubmit={handleSubmit}
+      >
+        {(formik) => (
+          <Form className={styles.form}>
+            <FormGroup>
+              <Field
+                name={Common.FieldNames.Name}
+                placeholder={Messages.roles.form.name()}
+                component={TextField}
+                autoComplete="off"
+              />
+              <ColorPicker
+                color={color}
+                onChange={handleChangeComplete}
+                label={Messages.roles.form.colorPickerLabel()}
+                key={colorPickerKey}
+              />
+            </FormGroup>
 
-        <SubmitButton>
-          {isEditing ? Messages.actions.save() : Messages.actions.create()}
-        </SubmitButton>
-      </form>
+            <SubmitButton disabled={formik.isSubmitting}>
+              {isEditing ? Messages.actions.save() : Messages.actions.create()}
+            </SubmitButton>
+          </Form>
+        )}
+      </Formik>
     );
   return <></>;
 };
