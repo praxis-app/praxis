@@ -1,6 +1,6 @@
 import { UserInputError } from "apollo-server-micro";
 import { GraphQLUpload } from "apollo-server-micro";
-import { saveImage } from "../../utils/image";
+import { saveImage, deleteImage } from "../../utils/image";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -288,30 +288,16 @@ const userResolvers = {
     },
 
     async deleteUser(_: any, { id }: { id: string }) {
-      const whereUserId = {
+      const userImages = await prisma.image.findMany({
         where: {
-          userId: parseInt(id),
-        },
-      };
-      const models: any[] = [
-        prisma.motion,
-        prisma.vote,
-        prisma.post,
-        prisma.comment,
-        prisma.like,
-        prisma.follow,
-        prisma.memberRequest,
-        prisma.groupMember,
-        prisma.setting,
-      ];
-      for (const model of models) {
-        await model.deleteMany(whereUserId);
-      }
-      await prisma.follow.deleteMany({
-        where: {
-          followerId: parseInt(id),
+          userId: parseInt(id) || null,
         },
       });
+
+      for (const image of userImages) {
+        await deleteImage(image.path);
+      }
+
       await prisma.user.delete({
         where: { id: parseInt(id) },
       });
