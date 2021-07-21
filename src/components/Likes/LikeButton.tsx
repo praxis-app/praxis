@@ -23,8 +23,8 @@ interface Props {
 const LikeButton = ({ postId, motionId, commentId }: Props) => {
   const currentUser = useCurrentUser();
   const [likes, setLikes] = useState<Like[]>([]);
-  const [createLike] = useMutation(CREATE_LIKE);
-  const [deleteLike] = useMutation(DELETE_LIKE);
+  const [createLike, { loading: createLikeLoading }] = useMutation(CREATE_LIKE);
+  const [deleteLike, { loading: deleteLikeLoading }] = useMutation(DELETE_LIKE);
   const [getLikesByPostId, likesByPostIdRes] = useLazyQuery(
     LIKES_BY_POST_ID,
     noCache
@@ -96,6 +96,7 @@ const LikeButton = ({ postId, motionId, commentId }: Props) => {
       onClick={() =>
         alreadyLike() ? deleteLikeMutation() : createLikeMutation()
       }
+      disabled={createLikeLoading || deleteLikeLoading}
     >
       <ThumbUp
         color="primary"
