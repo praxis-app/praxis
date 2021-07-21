@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 
-import { CURRENT_USER, USER } from "../apollo/client/queries";
+import { CURRENT_USER, USER, USERS } from "../apollo/client/queries";
 import { noCache } from "../utils/apollo";
 import { isAuthenticated } from "../utils/auth";
 import { generateRandom } from "../utils/common";
@@ -35,4 +35,15 @@ export const useUserById = (id: string): User | undefined => {
   }, [userRes.data]);
 
   return user;
+};
+
+export const useAllUsers = (): [User[], (users: User[]) => void, boolean] => {
+  const [users, setUsers] = useState<User[]>([]);
+  const usersRes = useQuery(USERS, noCache);
+
+  useEffect(() => {
+    if (usersRes.data) setUsers(usersRes.data.allUsers);
+  }, [usersRes.data]);
+
+  return [users, setUsers, !usersRes.data];
 };

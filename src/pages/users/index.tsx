@@ -1,29 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { CircularProgress, Typography } from "@material-ui/core";
 import Router from "next/router";
 
 import User from "../../components/Users/User";
-import { USERS } from "../../apollo/client/queries";
 import { DELETE_USER, LOGOUT_USER } from "../../apollo/client/mutations";
 import { Common, Roles } from "../../constants";
-import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
+import {
+  useAllUsers,
+  useCurrentUser,
+  useHasPermissionGlobally,
+} from "../../hooks";
 import Messages from "../../utils/messages";
-import { noCache } from "../../utils/apollo";
 
 const Index = () => {
   const currentUser = useCurrentUser();
-  const [users, setUsers] = useState<User[]>([]);
-  const usersRes = useQuery(USERS, noCache);
+  const [users, setUsers, usersLoading] = useAllUsers();
   const [deleteUser] = useMutation(DELETE_USER);
   const [logoutUser] = useMutation(LOGOUT_USER);
   const [canManageUsers, canManageUsersLoading] = useHasPermissionGlobally(
     Roles.Permissions.ManageUsers
   );
-
-  useEffect(() => {
-    if (usersRes.data) setUsers(usersRes.data.allUsers);
-  }, [usersRes.data]);
 
   const deleteUserHandler = async (userId: string) => {
     await deleteUser({
@@ -39,8 +35,7 @@ const Index = () => {
     }
   };
 
-  if (canManageUsersLoading || usersRes.data.loading)
-    return <CircularProgress />;
+  if (canManageUsersLoading || usersLoading) return <CircularProgress />;
 
   if (canManageUsers)
     return (
