@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Card, CircularProgress } from "@material-ui/core";
 import { AddCircle, ArrowForwardIos } from "@material-ui/icons";
 
-import { USERS } from "../../apollo/client/queries";
 import { ADD_ROLE_MEMBERS } from "../../apollo/client/mutations";
-import { noCache } from "../../utils/apollo";
 import styles from "../../styles/Role/AddMemberTab.module.scss";
 import Dialog from "../../components/Shared/Dialog";
 import Messages from "../../utils/messages";
 import RoleMemberAdd from "./MemberAdd";
 import RoleMember from "./Member";
+import { useAllUsers } from "../../hooks";
 
 interface Props {
   role: Role;
@@ -20,21 +19,16 @@ interface Props {
 }
 
 const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users] = useAllUsers();
   const [selectedUsers, setSelectedUsers] = useState<SelectedUser[]>([]);
   const [addMembersDialogOpen, setAddMembersDialogOpen] =
     useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [addRoleMembers] = useMutation(ADD_ROLE_MEMBERS);
-  const usersRes = useQuery(USERS, noCache);
 
   useEffect(() => {
     setSelectedUsers([]);
   }, [addMembersDialogOpen]);
-
-  useEffect(() => {
-    if (usersRes.data) setUsers(usersRes.data.allUsers);
-  }, [usersRes.data]);
 
   const addRoleMembersHandler = async () => {
     setLoading(true);
