@@ -37,12 +37,17 @@ export const typeDefs = gql`
 
   union FeedItem = Post | Motion
 
+  type FeedPayload {
+    pagedItems: [FeedItem]
+    totalItems: Int!
+  }
+
   type Query {
     user(id: ID!): User!
     userByName(name: String!): User!
     allUsers: [User]!
-    homeFeed(userId: ID): [FeedItem]
-    profileFeed(name: String!): [FeedItem]
+    homeFeed(userId: ID, currentPage: Int!, pageSize: Int!): FeedPayload!
+    profileFeed(name: String!, currentPage: Int!, pageSize: Int!): FeedPayload!
 
     userFollowers(userId: ID!): [Follow]!
     userFollowersByName(name: String!): [Follow]!
@@ -71,7 +76,12 @@ export const typeDefs = gql`
     group(id: ID!): Group!
     groupByName(name: String!): Group!
     allGroups: [Group]!
-    groupFeed(name: String!): [FeedItem]
+    groupFeed(
+      name: String!
+      currentPage: Int!
+      pageSize: Int!
+      itemType: String
+    ): FeedPayload!
 
     groupMembers(groupId: ID!): [GroupMember]
     memberRequests(groupId: ID!): [MemberRequest]

@@ -3,11 +3,17 @@ import prisma from "../../utils/initPrisma";
 import { saveImage, deleteImage } from "../../utils/image";
 import { Settings, Common } from "../../constants";
 import Messages from "../../utils/messages";
+import { paginate } from "../../utils/items";
 
 interface GroupInput {
   name: string;
   description: string;
   coverPhoto: any;
+}
+
+interface GroupFeedInput extends PaginationState {
+  name: string;
+  itemType: string;
 }
 
 const saveCoverPhoto = async (group: any, image: any) => {
@@ -31,22 +37,25 @@ const groupResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
-    groupFeed: async (_: any, { name }: { name: string }) => {
+    groupFeed: async (
+      _: any,
+      { name, currentPage, pageSize, itemType }: GroupFeedInput
+    ) => {
       const feed: BackendFeedItem[] = [];
 
-      const whereGroupId = {
+      const whereGroupName = {
         where: {
           name,
         },
       };
       const groupWithPosts = await prisma.group.findFirst({
-        ...whereGroupId,
+        ...whereGroupName,
         include: {
           posts: true,
         },
       });
       const groupWithMotions = await prisma.group.findFirst({
-        ...whereGroupId,
+        ...whereGroupName,
         include: {
           motions: true,
         },
@@ -60,12 +69,19 @@ const groupResolvers = {
         __typename: Common.TypeNames.Motion,
       }));
 
-      feed.push(
-        ...(postsWithType as BackendPost[]),
-        ...(motionsWithType as BackendMotion[])
-      );
+      if (!itemType || itemType === Common.ModelNames.Post)
+        feed.push(...(postsWithType as BackendPost[]));
+      if (!itemType || itemType === Common.ModelNames.Motion)
+        feed.push(...(motionsWithType as BackendMotion[]));
 
-      return feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+      return {
+        pagedItems: paginate(
+          feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+          currentPage,
+          pageSize
+        ),
+        totalItems: feed.length,
+      };
     },
 
     group: async (_: any, { id }: { id: string }) => {

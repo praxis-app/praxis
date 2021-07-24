@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import {
   FormGroup,
   NativeSelect,
@@ -19,6 +19,7 @@ import {
 import { Common, Motions } from "../../constants";
 import ActionFields from "./ActionFields";
 import styles from "../../styles/Shared/Shared.module.scss";
+import { feedVar, paginationVar } from "../../apollo/client/localState";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import { noCache } from "../../utils/apollo";
@@ -52,6 +53,8 @@ const MotionsForm = ({
   const [images, setImages] = useState<File[]>([]);
   const [action, setAction] = useState<string>("");
   const [actionData, setActionData] = useState<ActionData>({});
+  const { currentPage, pageSize } = useReactiveVar(paginationVar);
+  const feed = useReactiveVar(feedVar);
 
   const [createMotion] = useMutation(CREATE_MOTION);
   const [updateMotion] = useMutation(UPDATE_MOTION);
@@ -110,7 +113,13 @@ const MotionsForm = ({
           setImages([]);
           setSubmitting(false);
           if (motions && setMotions)
-            setMotions([...motions, data.createMotion.motion]);
+            setMotions([data.createMotion.motion, ...motions]);
+          else
+            feedVar({
+              ...feed,
+              items: feedItemsAferCreate(data.createMotion.motion),
+              totalItems: feed.totalItems + 1,
+            });
         }
       } catch (err) {
         alert(err);
@@ -145,6 +154,14 @@ const MotionsForm = ({
   ): boolean => {
     if (isEditing && !!formik.submitCount) return true;
     return formik.isSubmitting;
+  };
+
+  const feedItemsAferCreate = (newMotion: Motion): FeedItem[] => {
+    let { items, totalItems } = feed;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const onLastPage = currentPage === totalPages - 1;
+    if (totalItems > items.length && !onLastPage) items = items.slice(0, -1);
+    return [newMotion, ...items];
   };
 
   return (

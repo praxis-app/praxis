@@ -21,20 +21,10 @@ const StyledToggleButtonGroup = withStyles(() => ({
 }))(ToggleButtonGroup);
 
 interface Props {
-  posts: Post[];
-  motions: Motion[];
-  setPosts: (posts: Post[]) => void;
-  setMotions: (motions: Motion[]) => void;
   group: Group;
 }
 
-const ToggleForms = ({
-  posts,
-  motions,
-  setMotions,
-  setPosts,
-  group,
-}: Props) => {
+const ToggleForms = ({ group }: Props) => {
   const [toggle, setToggle] = useState<string>(Common.ModelNames.Post);
 
   const handleToggle = (
@@ -70,12 +60,8 @@ const ToggleForms = ({
         </StyledToggleButtonGroup>
       </div>
 
-      {toggle === Common.ModelNames.Post && (
-        <PostsForm posts={posts} setPosts={setPosts} group={group} />
-      )}
-      {toggle === Common.ModelNames.Motion && (
-        <MotionsForm motions={motions} setMotions={setMotions} group={group} />
-      )}
+      {toggle === Common.ModelNames.Post && <PostsForm group={group} />}
+      {toggle === Common.ModelNames.Motion && <MotionsForm group={group} />}
     </>
   );
 };

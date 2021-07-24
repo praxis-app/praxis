@@ -1,5 +1,4 @@
 export namespace Common {
-  export const PAGE_SIZE = 10;
   export const EXPIRES_IN = "90d";
   export const DESKTOP_BREAKPOINT = 850;
 
@@ -66,4 +65,20 @@ export namespace Common {
     Info = "info",
     Warning = "warning",
   }
+
+  export enum Pagination {
+    FirstPage = 0,
+    DefaultPageSize = 10,
+  }
+
+  export const DEFAULT_PAGINATION_STATE: PaginationState = {
+    currentPage: Pagination.FirstPage,
+    pageSize: Pagination.DefaultPageSize,
+  };
+
+  export const DEFAULT_FEED_STATE: FeedState = {
+    items: [],
+    totalItems: 0,
+    loading: false,
+  };
 }
