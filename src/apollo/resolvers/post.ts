@@ -1,4 +1,4 @@
-import { GraphQLUpload } from "apollo-server-micro";
+import { ApolloError, GraphQLUpload } from "apollo-server-micro";
 import { saveImage, deleteImage } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
@@ -11,7 +11,14 @@ interface PostInput {
 
 const saveImages = async (post: any, images: any) => {
   for (const image of images ? images : []) {
-    const path = await saveImage(image);
+    let path: any;
+
+    try {
+      path = await saveImage(image);
+    } catch (e) {
+      throw new ApolloError(" Unable to upload image(s)\nError response: " + e);
+    }
+
     await prisma.image.create({
       data: {
         user: {
@@ -97,7 +104,16 @@ const postResolvers = {
         },
       });
 
-      await saveImages(newPost, images);
+      // for image upload error catching in utils/saveImage
+      try {
+        await saveImages(newPost, images);
+      } catch (e) {
+        const currPost = {
+          where: { id: newPost.id },
+        };
+        await prisma.post.delete(currPost);
+        return e; // method is not allowed to return null, this prevents error at runtime
+      }
 
       return { post: newPost };
     },
@@ -112,7 +128,12 @@ const postResolvers = {
       if (!post)
         throw new Error(Messages.items.notFound(Common.TypeNames.Post));
 
-      await saveImages(post, images);
+      // for image upload error catching in utils/saveImage
+      try {
+        await saveImages(post, images);
+      } catch (e) {
+        return e; // method is not allowed to return null, this prevents error at runtime
+      }
 
       return { post };
     },
