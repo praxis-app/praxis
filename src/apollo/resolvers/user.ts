@@ -8,6 +8,15 @@ import prisma from "../../utils/initPrisma";
 import { validateSignup, validateLogin } from "../../utils/validation";
 import { Common } from "../../constants";
 import Messages from "../../utils/messages";
+import { paginate } from "../../utils/items";
+
+interface HomeFeedInput extends PaginationState {
+  userId?: string;
+}
+
+interface ProfileFeedInput extends PaginationState {
+  name: string;
+}
 
 const saveProfilePicture = async (user: any, image: any) => {
   if (image) {
@@ -31,7 +40,10 @@ const userResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
-    homeFeed: async (_: any, { userId }: { userId: string }) => {
+    homeFeed: async (
+      _: any,
+      { userId, currentPage, pageSize }: HomeFeedInput
+    ) => {
       let feed: BackendFeedItem[] = [];
 
       if (userId) {
@@ -130,10 +142,20 @@ const userResolvers = {
         feed = [...posts, ...motions];
       }
 
-      return feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+      return {
+        pagedItems: paginate(
+          feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+          currentPage,
+          pageSize
+        ),
+        totalItems: feed.length,
+      };
     },
 
-    profileFeed: async (_: any, { name }: { name: string }) => {
+    profileFeed: async (
+      _: any,
+      { name, currentPage, pageSize }: ProfileFeedInput
+    ) => {
       const feed: BackendFeedItem[] = [];
       const userWithFeedItems = await prisma.user.findFirst({
         where: {
@@ -153,7 +175,15 @@ const userResolvers = {
         item.__typename = Common.TypeNames.Motion;
       });
       feed.push(...posts, ...motions);
-      return feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
+      return {
+        pagedItems: paginate(
+          feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+          currentPage,
+          pageSize
+        ),
+        totalItems: feed.length,
+      };
     },
 
     user: async (_: any, { id }: { id: string }) => {

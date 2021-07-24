@@ -1,0 +1,12 @@
+@import "../Shared/Shared.module.scss";
+
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.sequenceText {
+  padding: 8px 10px 0 20px;
+}

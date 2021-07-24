@@ -51,6 +51,9 @@ const muiTheme = createTheme({
       colorPrimary: {
         color: globalTheme.palette.primary.contrastText,
       },
+      colorDisabled: {
+        color: "rgb(100, 100, 100)",
+      },
     },
 
     MuiInput: {
