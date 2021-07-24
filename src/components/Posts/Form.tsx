@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import { FormGroup } from "@material-ui/core";
 import Router from "next/router";
 import { Formik, FormikHelpers, Form, Field, FormikProps } from "formik";
@@ -13,6 +13,7 @@ import {
 import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
+import { feedVar, paginationVar } from "../../apollo/client/localState";
 import { noCache } from "../../utils/apollo";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
@@ -39,6 +40,8 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   const [savedImages, setSavedImages] = useState<Image[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const currentUser = useCurrentUser();
+  const feed = useReactiveVar(feedVar);
+  const { currentPage, pageSize } = useReactiveVar(paginationVar);
 
   const [createPost] = useMutation(CREATE_POST);
   const [updatePost] = useMutation(UPDATE_POST);
@@ -85,7 +88,13 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
           resetForm();
           setImages([]);
           setSubmitting(false);
-          if (posts && setPosts) setPosts([...posts, data.createPost.post]);
+          if (posts && setPosts) setPosts([data.createPost.post, ...posts]);
+          else
+            feedVar({
+              ...feed,
+              items: feedItemsAferCreate(data.createPost.post),
+              totalItems: feed.totalItems + 1,
+            });
         }
       } catch (err) {
         toastVar({
@@ -105,6 +114,14 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
     setSavedImages(savedImages.filter((image: Image) => image.id !== id));
   };
 
+  const feedItemsAferCreate = (newPost: Post): FeedItem[] => {
+    let { items, totalItems } = feed;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const onLastPage = currentPage === totalPages - 1;
+    if (totalItems > items.length && !onLastPage) items = items.slice(0, -1);
+    return [newPost, ...items];
+  };
+
   const removeSelectedImage = (imageName: string) => {
     setImages(
       [...images].filter((image) => {
@@ -120,7 +137,9 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   };
 
   const validatePostBody = (body: string) => {
-    return body === "" && images.length === 0 ? Messages.posts.form.postEmpty() : undefined;
+    return body === "" && images.length === 0
+      ? Messages.posts.form.postEmpty()
+      : undefined;
   };
 
   return (
