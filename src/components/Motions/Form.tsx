@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import {
   FormGroup,
   NativeSelect,
@@ -19,6 +19,7 @@ import {
 import { Common, Motions } from "../../constants";
 import ActionFields from "./ActionFields";
 import styles from "../../styles/Shared/Shared.module.scss";
+import { feedVar } from "../../apollo/client/localState";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import { noCache } from "../../utils/apollo";
@@ -52,6 +53,7 @@ const MotionsForm = ({
   const [images, setImages] = useState<File[]>([]);
   const [action, setAction] = useState<string>("");
   const [actionData, setActionData] = useState<ActionData>({});
+  const feedState = useReactiveVar(feedVar);
 
   const [createMotion] = useMutation(CREATE_MOTION);
   const [updateMotion] = useMutation(UPDATE_MOTION);
@@ -110,7 +112,13 @@ const MotionsForm = ({
           setImages([]);
           setSubmitting(false);
           if (motions && setMotions)
-            setMotions([...motions, data.createMotion.motion]);
+            setMotions([data.createMotion.motion, ...motions]);
+          else if (motions && feedState)
+            feedVar({
+              ...feedState,
+              items: [data.createMotion.motion, ...motions.slice(0, -1)],
+              totalItems: feedState.totalItems + 1,
+            });
         }
       } catch (err) {
         alert(err);

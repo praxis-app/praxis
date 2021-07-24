@@ -1,5 +1,4 @@
 export namespace Common {
-  export const PAGE_SIZE = 10;
   export const EXPIRES_IN = "90d";
   export const DESKTOP_BREAKPOINT = 850;
 
@@ -65,5 +64,10 @@ export namespace Common {
     Error = "error",
     Info = "info",
     Warning = "warning",
+  }
+
+  export enum Pagination {
+    FirstPage = 0,
+    DefaultPageSize = 10,
   }
 }

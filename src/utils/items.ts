@@ -8,3 +8,16 @@ export const pluralize = (size: number): string => {
   if (size === 0 || size > 1) return "s";
   return "";
 };
+
+export const paginate = (
+  totalItems: any[],
+  currentPage: number,
+  pageSize: number
+): any[] => {
+  let items = totalItems.reverse();
+
+  if (currentPage > 0)
+    items = items.slice(currentPage * pageSize, items.length);
+
+  return items.slice(0, pageSize);
+};

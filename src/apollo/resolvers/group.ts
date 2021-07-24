@@ -3,11 +3,16 @@ import prisma from "../../utils/initPrisma";
 import { saveImage, deleteImage } from "../../utils/image";
 import { Settings, Common } from "../../constants";
 import Messages from "../../utils/messages";
+import { paginate } from "../../utils/items";
 
 interface GroupInput {
   name: string;
   description: string;
   coverPhoto: any;
+}
+
+interface GroupFeedInput extends PaginationState {
+  name: string;
 }
 
 const saveCoverPhoto = async (group: any, image: any) => {
@@ -31,7 +36,10 @@ const groupResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
-    groupFeed: async (_: any, { name }: { name: string }) => {
+    groupFeed: async (
+      _: any,
+      { name, currentPage, pageSize }: GroupFeedInput
+    ) => {
       const feed: BackendFeedItem[] = [];
 
       const whereGroupId = {
@@ -65,7 +73,14 @@ const groupResolvers = {
         ...(motionsWithType as BackendMotion[])
       );
 
-      return feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+      return {
+        pagedItems: paginate(
+          feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+          currentPage,
+          pageSize
+        ),
+        totalItems: feed.length,
+      };
     },
 
     group: async (_: any, { id }: { id: string }) => {

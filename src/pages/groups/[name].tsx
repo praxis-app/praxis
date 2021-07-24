@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import { Tab, Tabs, Card, CircularProgress } from "@material-ui/core";
 
@@ -16,19 +16,22 @@ import {
   DELETE_POST,
   DELETE_MOTION,
 } from "../../apollo/client/mutations";
-import { feedItemsVar } from "../../apollo/client/localState";
+import { feedVar, paginationVar } from "../../apollo/client/localState";
 import { Common } from "../../constants";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useMembersByGroupId } from "../../hooks";
+import PageButtons from "../../components/Shared/PageButtons";
 
 const Show = () => {
-  const { query } = useRouter();
+  const {
+    query: { name },
+  } = useRouter();
   const currentUser = useCurrentUser();
+  const paginationState = useReactiveVar(paginationVar);
   const [group, setGroup] = useState<Group>();
   const [posts, setPosts] = useState<Post[]>([]);
   const [motions, setMotions] = useState<Motion[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [tab, setTab] = useState<number>(0);
   const [groupMembers] = useMembersByGroupId(group?.id);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
@@ -38,14 +41,25 @@ const Show = () => {
   const [deletePost] = useMutation(DELETE_POST);
 
   useEffect(() => {
-    const vars = {
-      variables: { name: query.name },
-    };
-    if (query.name) {
-      getGroupRes(vars);
-      getFeedRes(vars);
+    if (name) {
+      getGroupRes({
+        variables: { name },
+      });
     }
-  }, [query.name]);
+  }, [name]);
+
+  useEffect(() => {
+    if (name && paginationState) {
+      const { currentPage, pageSize } = paginationState;
+      getFeedRes({
+        variables: {
+          name,
+          pageSize,
+          currentPage,
+        },
+      });
+    }
+  }, [name, paginationState]);
 
   useEffect(() => {
     if (groupRes.data) setGroup(groupRes.data.groupByName);
@@ -53,30 +67,32 @@ const Show = () => {
 
   useEffect(() => {
     if (feedRes.data) {
-      feedItemsVar(feedRes.data.groupFeed);
       setPosts(
-        feedRes.data.groupFeed.filter(
+        feedRes.data.groupFeed.pagedItems.filter(
           (item: FeedItem) => item.__typename === Common.TypeNames.Post
         )
       );
       setMotions(
-        feedRes.data.groupFeed.filter(
+        feedRes.data.groupFeed.pagedItems.filter(
           (item: FeedItem) => item.__typename === Common.TypeNames.Motion
         )
       );
-      setLoading(false);
     }
-    return () => {
-      feedItemsVar([]);
-    };
   }, [feedRes.data]);
 
   useEffect(() => {
-    feedItemsVar([...posts, ...motions]);
+    if (posts && motions && feedRes.data) {
+      const items = [...posts, ...motions];
+      feedVar({
+        items,
+        loading: feedRes.loading,
+        totalItems: feedRes.data.groupFeed.totalItems,
+      });
+    }
     return () => {
-      feedItemsVar([]);
+      feedVar(null);
     };
-  }, [posts, motions]);
+  }, [posts, motions, feedRes.data]);
 
   const deleteGroupHandler = async (groupId: string) => {
     await deleteGroup({
@@ -117,12 +133,12 @@ const Show = () => {
 
         <Card>
           <Tabs
-            textColor="inherit"
-            centered
             value={tab}
             onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
               setTab(newValue)
             }
+            textColor="inherit"
+            centered
           >
             <Tab label={Messages.groups.tabs.all()} />
             <Tab label={Messages.groups.tabs.motions()} />
@@ -141,11 +157,12 @@ const Show = () => {
                 group={group}
               />
             )}
+            <PageButtons />
             <Feed
               deleteMotion={deleteMotionHandler}
               deletePost={deletePostHandler}
-              loading={loading}
             />
+            <PageButtons />
           </>
         )}
 
@@ -160,7 +177,7 @@ const Show = () => {
             )}
             <MotionsList
               motions={motions}
-              loading={loading}
+              loading={feedRes.loading}
               deleteMotion={deleteMotionHandler}
             />
           </>
@@ -173,7 +190,7 @@ const Show = () => {
             )}
             <PostsList
               posts={posts}
-              loading={loading}
+              loading={feedRes.loading}
               deletePost={deletePostHandler}
             />
           </>

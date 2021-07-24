@@ -2,12 +2,13 @@ import { makeVar } from "@apollo/client";
 import { Common } from "../../constants";
 import { setAuthToken } from "../../utils/auth";
 
-export const feedItemsVar = makeVar<FeedItem[]>([]);
+export const feedVar = makeVar<FeedState | null>(null);
 export const motionVar = makeVar<Motion | null>(null);
 export const votesVar = makeVar<Vote[]>([]);
 export const headerKeyVar = makeVar<string>("");
 export const breadcrumbsVar = makeVar<Breadcrumb[]>([]);
 export const toastVar = makeVar<ToastNotification | null>(null);
+export const paginationVar = makeVar<PaginationState | null>(null);
 
 export const defaults = {
   user: { isAuthenticated: false, __typename: Common.TypeNames.CurrentUser },

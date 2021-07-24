@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import { FormGroup } from "@material-ui/core";
 import Router from "next/router";
 import { Formik, FormikHelpers, Form, Field, FormikProps } from "formik";
@@ -13,6 +13,7 @@ import {
 import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
+import { feedVar } from "../../apollo/client/localState";
 import { noCache } from "../../utils/apollo";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
@@ -38,6 +39,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
   const [savedImages, setSavedImages] = useState<Image[]>([]);
   const [images, setImages] = useState<File[]>([]);
+  const feedState = useReactiveVar(feedVar);
   const currentUser = useCurrentUser();
 
   const [createPost] = useMutation(CREATE_POST);
@@ -85,7 +87,13 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
           resetForm();
           setImages([]);
           setSubmitting(false);
-          if (posts && setPosts) setPosts([...posts, data.createPost.post]);
+          if (posts && setPosts) setPosts([data.createPost.post, ...posts]);
+          else if (posts && feedState)
+            feedVar({
+              ...feedState,
+              items: [data.createPost.post, ...posts.slice(0, -1)],
+              totalItems: feedState.totalItems + 1,
+            });
         }
       } catch (err) {
         toastVar({

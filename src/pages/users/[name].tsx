@@ -12,17 +12,20 @@ import {
   DELETE_MOTION,
   LOGOUT_USER,
 } from "../../apollo/client/mutations";
-import { feedItemsVar } from "../../apollo/client/localState";
+import { feedVar, paginationVar } from "../../apollo/client/localState";
 import { Common } from "../../constants";
 import { useCurrentUser } from "../../hooks";
 import { noCache } from "../../utils/apollo";
+import PageButtons from "../../components/Shared/PageButtons";
 
 const Show = () => {
-  const { query } = useRouter();
+  const {
+    query: { name },
+  } = useRouter();
   const currentUser = useCurrentUser();
-  const feed = useReactiveVar(feedItemsVar);
+  const feed = useReactiveVar(feedVar);
+  const paginationState = useReactiveVar(paginationVar);
   const [user, setUser] = useState<User>();
-  const [loadingFeed, setLoadingFeed] = useState<boolean>(true);
   const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME);
   const [getFeedRes, feedRes] = useLazyQuery(PROFILE_FEED, noCache);
   const [deleteUser] = useMutation(DELETE_USER);
@@ -31,14 +34,25 @@ const Show = () => {
   const [logoutUser] = useMutation(LOGOUT_USER);
 
   useEffect(() => {
-    const vars = {
-      variables: { name: query.name },
-    };
-    if (query.name) {
-      getUserRes(vars);
-      getFeedRes(vars);
+    if (name) {
+      getUserRes({
+        variables: { name },
+      });
     }
-  }, [query.name]);
+  }, [name]);
+
+  useEffect(() => {
+    if (name && paginationState) {
+      const { currentPage, pageSize } = paginationState;
+      getFeedRes({
+        variables: {
+          name,
+          pageSize,
+          currentPage,
+        },
+      });
+    }
+  }, [name, paginationState]);
 
   useEffect(() => {
     if (userRes.data) setUser(userRes.data.userByName);
@@ -46,8 +60,11 @@ const Show = () => {
 
   useEffect(() => {
     if (feedRes.data) {
-      feedItemsVar(feedRes.data.profileFeed);
-      setLoadingFeed(false);
+      feedVar({
+        items: feedRes.data.profileFeed.pagedItems,
+        totalItems: feedRes.data.profileFeed.totalItems,
+        loading: feedRes.loading,
+      });
     }
   }, [feedRes.data]);
 
@@ -69,12 +86,14 @@ const Show = () => {
         id,
       },
     });
-    feedItemsVar(
-      feed.filter(
-        (post: FeedItem) =>
-          post.id !== id || post.__typename !== Common.TypeNames.Post
-      )
-    );
+    if (feed)
+      feedVar({
+        ...feed,
+        items: feed.items.filter(
+          (post: FeedItem) =>
+            post.id !== id || post.__typename !== Common.TypeNames.Post
+        ),
+      });
   };
 
   const deleteMotionHandler = async (id: string) => {
@@ -83,12 +102,14 @@ const Show = () => {
         id,
       },
     });
-    feedItemsVar(
-      feed.filter(
-        (motion: FeedItem) =>
-          motion.id !== id || motion.__typename !== Common.TypeNames.Motion
-      )
-    );
+    if (feed)
+      feedVar({
+        ...feed,
+        items: feed.items.filter(
+          (motion: FeedItem) =>
+            motion.id !== id || motion.__typename !== Common.TypeNames.Motion
+        ),
+      });
   };
 
   const ownUser = (): boolean => {
@@ -101,11 +122,13 @@ const Show = () => {
       {user ? (
         <>
           <User user={user} deleteUser={deleteUserHandler} />
+
+          <PageButtons />
           <Feed
-            loading={loadingFeed}
             deleteMotion={deleteMotionHandler}
             deletePost={deletePostHandler}
           />
+          <PageButtons />
         </>
       ) : (
         <CircularProgress />
