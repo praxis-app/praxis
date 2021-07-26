@@ -1,6 +1,6 @@
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createTheme } from "@material-ui/core/styles";
 
-const globalTheme = createMuiTheme({
+const globalTheme = createTheme({
   typography: {
     fontFamily: "Inter",
   },
@@ -17,7 +17,7 @@ const globalTheme = createMuiTheme({
   },
 });
 
-const muiTheme = createMuiTheme({
+const muiTheme = createTheme({
   ...globalTheme,
 
   overrides: {

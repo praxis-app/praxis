@@ -11,13 +11,7 @@ interface PostInput {
 
 const saveImages = async (post: any, images: any) => {
   for (const image of images ? images : []) {
-    let path: any;
-
-    try {
-      path = await saveImage(image);
-    } catch (e) {
-      throw new ApolloError(" Unable to upload image(s)\nError response: " + e);
-    }
+    const path = await saveImage(image);
 
     await prisma.image.create({
       data: {
@@ -112,7 +106,7 @@ const postResolvers = {
           where: { id: newPost.id },
         };
         await prisma.post.delete(currPost);
-        return e; // method is not allowed to return null, this prevents error at runtime
+        throw new ApolloError(Messages.errors.imageUploadError());
       }
 
       return { post: newPost };
@@ -132,7 +126,7 @@ const postResolvers = {
       try {
         await saveImages(post, images);
       } catch (e) {
-        return e; // method is not allowed to return null, this prevents error at runtime
+        throw new ApolloError(Messages.errors.imageUploadError());
       }
 
       return { post };
@@ -145,7 +139,6 @@ const postResolvers = {
 
       for (const image of images) {
         await deleteImage(image.path);
-        // Image entries were previously manually deleted but cascading deletes handles this condition
       }
 
       // TODO: cascading deletes are not deleting Like entries, requires further investigation

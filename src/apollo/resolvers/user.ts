@@ -1,4 +1,4 @@
-import { UserInputError } from "apollo-server-micro";
+import { ApolloError, UserInputError } from "apollo-server-micro";
 import { GraphQLUpload } from "apollo-server-micro";
 import { saveImage, deleteImage } from "../../utils/image";
 import bcrypt from "bcrypt";
@@ -12,6 +12,7 @@ import Messages from "../../utils/messages";
 const saveProfilePicture = async (user: any, image: any) => {
   if (image) {
     const path = await saveImage(image);
+
     await prisma.image.create({
       data: {
         user: {
@@ -208,7 +209,16 @@ const userResolvers = {
         },
       });
 
-      await saveProfilePicture(user, profilePicture);
+      try {
+        await saveProfilePicture(user, profilePicture);
+      } catch (e) {
+        const currUser = {
+          where: { id: user.id },
+        };
+        await prisma.user.delete(currUser);
+
+        throw new ApolloError(Messages.errors.imageUploadError() + e);
+      }
 
       const jwtPayload = {
         id: user.id,
@@ -236,6 +246,7 @@ const userResolvers = {
           email,
         },
       });
+
       if (!user) {
         throw new UserInputError(Messages.users.validation.noUserWithEmail());
       }
@@ -272,7 +283,11 @@ const userResolvers = {
       if (!user)
         throw new Error(Messages.items.notFound(Common.TypeNames.User));
 
-      await saveProfilePicture(user, profilePicture);
+      try {
+        await saveProfilePicture(user, profilePicture);
+      } catch (e) {
+        throw new ApolloError(Messages.errors.imageUploadError() + e);
+      }
 
       const jwtPayload = {
         name: user.name,
