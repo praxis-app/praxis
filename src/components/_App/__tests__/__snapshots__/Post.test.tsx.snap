@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Post should display the user's name, post body, and time 1`] = `
+<div>
+  <div>
+    <div
+      class="MuiPaper-root MuiCard-root MuiPaper-elevation1 MuiPaper-rounded"
+    >
+      <div
+        class="MuiCardHeader-root"
+      >
+        <div
+          class="MuiCardHeader-avatar"
+        >
+          <a
+            href="/users/mockUserName"
+          >
+            <div
+              class="MuiAvatar-root MuiAvatar-circle"
+              style="color: black; background-color: white;"
+            >
+              <img
+                alt="Data could not render."
+                class="MuiAvatar-img"
+                src="http://localhost:3000undefined"
+              />
+            </div>
+          </a>
+        </div>
+        <div
+          class="MuiCardHeader-content"
+        >
+          <span
+            class="MuiTypography-root MuiCardHeader-title makeStyles-title-1 MuiTypography-body2 MuiTypography-displayBlock"
+          >
+            <a
+              href="/users/mockUserName"
+            >
+              mockUserName
+            </a>
+            <a
+              class="timeAgo"
+              href="/posts/1"
+            >
+               · now
+            </a>
+          </span>
+        </div>
+        <div
+          class="MuiCardHeader-action"
+        >
+          <button
+            class="MuiButtonBase-root MuiIconButton-root"
+            tabindex="0"
+            type="button"
+          >
+            <span
+              class="MuiIconButton-label"
+            >
+              <svg
+                aria-hidden="true"
+                class="MuiSvgIcon-root MuiSvgIcon-colorPrimary"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"
+                />
+              </svg>
+            </span>
+            <span
+              class="MuiTouchRipple-root"
+            />
+          </button>
+        </div>
+      </div>
+      <div
+        class="MuiCardContent-root"
+      >
+        <p
+          class="MuiTypography-root MuiTypography-body1"
+          style="margin-top: -12px;"
+        >
+          This is a test post
+        </p>
+      </div>
+      <div
+        class="MuiCardMedia-root"
+      />
+    </div>
+  </div>
+</div>
+`;
