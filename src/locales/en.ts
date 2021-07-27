@@ -28,6 +28,7 @@ const en = {
 
   errors: {
     somethingWrong: () => "Something went wrong...",
+    imageUploadError: () => "Unable to upload image(s)",
   },
 
   forms: {

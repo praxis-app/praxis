@@ -20,6 +20,7 @@ import TextField from "../Shared/TextField";
 import { Common } from "../../constants";
 import SelectedImages from "../Shared/SelectedImages";
 import ImageInput from "../Shared/ImageInput";
+import { toastVar } from "../../apollo/client/localState";
 
 interface FormValues {
   body: string;
@@ -87,7 +88,10 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
           if (posts && setPosts) setPosts([...posts, data.createPost.post]);
         }
       } catch (err) {
-        alert(err);
+        toastVar({
+          title: Messages.errors.imageUploadError(),
+          status: Common.ToastStatus.Error,
+        });
       }
     }
   };
