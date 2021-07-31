@@ -1,26 +1,13 @@
-// Work around from https://www.prisma.io/docs/concepts/components/prisma-client/working-with-prismaclient/instantiate-prisma-client#use-a-single-shared-instance-of-prismaclient
+// Work around from https://www.prisma.io/docs/support/help-articles/nextjs-prisma-client-dev-practices
 // Prevents hot reloading in development from creating new instances of PrismaClient
 
 import { PrismaClient } from "@prisma/client";
 import { Common } from "../constants";
 
-declare global {
-  namespace NodeJS {
-    interface Global {
-      prisma: PrismaClient;
-    }
-  }
-}
+declare const global: typeof globalThis & { prisma?: PrismaClient };
 
-let prisma: PrismaClient;
-
-if (process.env.NODE_ENV === Common.Environments.Production) {
-  prisma = new PrismaClient();
-} else {
-  if (!global.prisma) {
-    global.prisma = new PrismaClient();
-  }
-  prisma = global.prisma;
-}
+const prisma = global.prisma || new PrismaClient();
+if (process.env.NODE_ENV === Common.Environments.Development)
+  global.prisma = prisma;
 
 export default prisma;
