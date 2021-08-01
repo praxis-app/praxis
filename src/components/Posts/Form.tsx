@@ -115,8 +115,12 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   };
 
   const isSubmitButtonDisabled = (formik: FormikProps<FormValues>): boolean => {
-    if (isEditing && !!formik.submitCount) return true;
+    if (isEditing && !!formik.submitCount && !formik.isValid) return true;
     return formik.isSubmitting;
+  };
+
+  const validatePostBody = (body: string) => {
+    return body === "" && images.length === 0 ? Messages.posts.form.postEmpty() : undefined;
   };
 
   return (
@@ -136,6 +140,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
                   ? Messages.states.loading()
                   : Messages.posts.form.bodyPlaceholder()
               }
+              validate={validatePostBody}
               component={TextField}
               multiline
             />

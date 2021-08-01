@@ -93,6 +93,7 @@ const en = {
     },
     form: {
       bodyPlaceholder: () => "Post something awesome...",
+      postEmpty: () => "Post cannot be empty!",
     },
   },
 
