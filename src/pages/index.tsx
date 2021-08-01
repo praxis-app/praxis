@@ -88,7 +88,7 @@ const Home = () => {
 
       <PageButtons />
       <Feed deletePost={deletePostHandler} deleteMotion={deleteMotionHandler} />
-      <PageButtons />
+      <PageButtons bottom />
     </>
   );
 };

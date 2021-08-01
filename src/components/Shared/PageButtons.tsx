@@ -1,17 +1,17 @@
 import { useReactiveVar } from "@apollo/client";
 import { useEffect } from "react";
-import { NavigateNext, NavigateBefore } from "@material-ui/icons";
-
-import { paginationVar, feedVar } from "../../apollo/client/localState";
-import { Common } from "../../constants";
-import styles from "../../styles/Shared/PageButtons.module.scss";
 import {
   createStyles,
   IconButton,
   makeStyles,
   Typography,
 } from "@material-ui/core";
+import { NavigateNext, NavigateBefore } from "@material-ui/icons";
+
+import { paginationVar, feedVar } from "../../apollo/client/localState";
+import styles from "../../styles/Shared/PageButtons.module.scss";
 import Messages from "../../utils/messages";
+import { Common } from "../../constants";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -22,7 +22,11 @@ const useStyles = makeStyles(() =>
   })
 );
 
-const PageButtons = () => {
+interface Props {
+  bottom?: boolean;
+}
+
+const PageButtons = ({ bottom = false }: Props) => {
   const paginationState = useReactiveVar(paginationVar);
   const feedState = useReactiveVar(feedVar);
   const classes = useStyles();
@@ -68,16 +72,50 @@ const PageButtons = () => {
     return Messages.states.loading();
   };
 
+  const onFirstPage = (): boolean => {
+    const currentPage = paginationState?.currentPage;
+    return currentPage === 0;
+  };
+
+  const onLastPage = (): boolean => {
+    if (paginationState && feedState) {
+      const { totalItems } = feedState;
+      const { currentPage, pageSize } = paginationState;
+      const totalPages = Math.ceil(totalItems / pageSize);
+
+      return currentPage === totalPages - 1;
+    }
+    return false;
+  };
+
+  if (bottom && feedState?.loading) return <></>;
+
   return (
     <div className={styles.container}>
       <Typography classes={{ root: classes.sequenceTextRoot }} color="primary">
         {sequenceText()}
       </Typography>
-      <IconButton onClick={() => handleButtonClick(false)} size="small">
-        <NavigateBefore color="primary" fontSize="large" />
+
+      <IconButton
+        onClick={() => handleButtonClick(false)}
+        disabled={onFirstPage()}
+        size="small"
+      >
+        <NavigateBefore
+          color={onFirstPage() ? "disabled" : "primary"}
+          fontSize="large"
+        />
       </IconButton>
-      <IconButton onClick={() => handleButtonClick()} size="small">
-        <NavigateNext color="primary" fontSize="large" />
+
+      <IconButton
+        onClick={() => handleButtonClick()}
+        disabled={onLastPage()}
+        size="small"
+      >
+        <NavigateNext
+          color={onLastPage() ? "disabled" : "primary"}
+          fontSize="large"
+        />
       </IconButton>
     </div>
   );
