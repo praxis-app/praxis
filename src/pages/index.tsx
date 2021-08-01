@@ -9,7 +9,7 @@ import WelcomeCard from "../components/About/Welcome";
 import { Common } from "../constants";
 import { feedVar, paginationVar } from "../apollo/client/localState";
 import { useCurrentUser } from "../hooks";
-import { noCache } from "../utils/apollo";
+import { noCache, resetFeed } from "../utils/clientIndex";
 import PageButtons from "../components/Shared/PageButtons";
 
 const Home = () => {
@@ -21,6 +21,12 @@ const Home = () => {
   const [getFeedRes, feedRes] = useLazyQuery(HOME_FEED, noCache);
 
   useEffect(() => {
+    return () => {
+      resetFeed();
+    };
+  }, []);
+
+  useEffect(() => {
     if (paginationState) {
       const { currentPage, pageSize } = paginationState;
       getFeedRes({
@@ -29,6 +35,11 @@ const Home = () => {
           currentPage,
           pageSize,
         },
+      });
+
+      feedVar({
+        ...feed,
+        loading: true,
       });
     }
   }, [currentUser, paginationState]);
@@ -40,10 +51,6 @@ const Home = () => {
         totalItems: feedRes.data.homeFeed.totalItems,
         loading: feedRes.loading,
       });
-
-    return () => {
-      feedVar(null);
-    };
   }, [feedRes.data]);
 
   const deletePostHandler = async (id: string) => {

@@ -1,3 +1,6 @@
+import { feedVar } from "../apollo/client/localState";
+import { Common } from "../constants";
+
 export const displayName = (name: string): string => {
   let shownName = name[0].toUpperCase() + name.slice(1);
   shownName = shownName.replace(/-/g, " ");
@@ -20,4 +23,8 @@ export const paginate = (
     items = items.slice(currentPage * pageSize, items.length);
 
   return items.slice(0, pageSize);
+};
+
+export const resetFeed = (): void => {
+  feedVar(Common.DEFAULT_FEED_STATE);
 };

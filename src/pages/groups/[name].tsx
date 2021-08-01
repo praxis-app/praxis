@@ -22,6 +22,7 @@ import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useMembersByGroupId } from "../../hooks";
 import PageButtons from "../../components/Shared/PageButtons";
+import { resetFeed } from "../../utils/items";
 
 const Show = () => {
   const {
@@ -90,7 +91,7 @@ const Show = () => {
       });
     }
     return () => {
-      feedVar(null);
+      resetFeed();
     };
   }, [posts, motions, feedRes.data]);
 

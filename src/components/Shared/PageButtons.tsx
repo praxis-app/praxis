@@ -28,7 +28,7 @@ interface Props {
 
 const PageButtons = ({ bottom = false }: Props) => {
   const paginationState = useReactiveVar(paginationVar);
-  const feedState = useReactiveVar(feedVar);
+  const { totalItems, loading: feedLoading } = useReactiveVar(feedVar);
   const classes = useStyles();
 
   useEffect(() => {
@@ -43,8 +43,7 @@ const PageButtons = ({ bottom = false }: Props) => {
   }, []);
 
   const handleButtonClick = (next = true) => {
-    if (paginationState && feedState) {
-      const { totalItems } = feedState;
+    if (paginationState) {
       const { currentPage, pageSize } = paginationState;
       const totalPages = Math.ceil(totalItems / pageSize);
       const newCurrentPage = next ? currentPage + 1 : currentPage - 1;
@@ -60,8 +59,7 @@ const PageButtons = ({ bottom = false }: Props) => {
   };
 
   const sequenceText = (): string => {
-    if (paginationState && feedState) {
-      const { totalItems } = feedState;
+    if (paginationState && !feedLoading) {
       const { currentPage, pageSize } = paginationState;
       const start = currentPage * pageSize + 1;
       let end = (currentPage + 1) * pageSize;
@@ -78,8 +76,7 @@ const PageButtons = ({ bottom = false }: Props) => {
   };
 
   const onLastPage = (): boolean => {
-    if (paginationState && feedState) {
-      const { totalItems } = feedState;
+    if (paginationState) {
       const { currentPage, pageSize } = paginationState;
       const totalPages = Math.ceil(totalItems / pageSize);
 
@@ -88,7 +85,13 @@ const PageButtons = ({ bottom = false }: Props) => {
     return false;
   };
 
-  if (bottom && feedState?.loading) return <></>;
+  const isDisabled = (next = true): boolean => {
+    if (feedLoading) return true;
+    if (next) return onLastPage();
+    return onFirstPage();
+  };
+
+  if (bottom && feedLoading) return <></>;
 
   return (
     <div className={styles.container}>
@@ -98,22 +101,22 @@ const PageButtons = ({ bottom = false }: Props) => {
 
       <IconButton
         onClick={() => handleButtonClick(false)}
-        disabled={onFirstPage()}
+        disabled={isDisabled(false)}
         size="small"
       >
         <NavigateBefore
-          color={onFirstPage() ? "disabled" : "primary"}
+          color={isDisabled(false) ? "disabled" : "primary"}
           fontSize="large"
         />
       </IconButton>
 
       <IconButton
         onClick={() => handleButtonClick()}
-        disabled={onLastPage()}
+        disabled={isDisabled()}
         size="small"
       >
         <NavigateNext
-          color={onLastPage() ? "disabled" : "primary"}
+          color={isDisabled() ? "disabled" : "primary"}
           fontSize="large"
         />
       </IconButton>

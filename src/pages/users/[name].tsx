@@ -17,6 +17,7 @@ import { Common } from "../../constants";
 import { useCurrentUser } from "../../hooks";
 import { noCache } from "../../utils/apollo";
 import PageButtons from "../../components/Shared/PageButtons";
+import { resetFeed } from "../../utils/clientIndex";
 
 const Show = () => {
   const {
@@ -59,13 +60,16 @@ const Show = () => {
   }, [userRes.data]);
 
   useEffect(() => {
-    if (feedRes.data) {
+    if (feedRes.data)
       feedVar({
         items: feedRes.data.profileFeed.pagedItems,
         totalItems: feedRes.data.profileFeed.totalItems,
         loading: feedRes.loading,
       });
-    }
+
+    return () => {
+      resetFeed();
+    };
   }, [feedRes.data]);
 
   const deleteUserHandler = async (userId: string) => {

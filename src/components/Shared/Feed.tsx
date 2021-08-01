@@ -23,7 +23,7 @@ const List = ({ deleteMotion, deletePost }: Props) => {
     setMounted(true);
   }, []);
 
-  if (feed?.items && !feed.loading)
+  if (!feed.loading)
     return (
       <>
         {feed.items.map((item) => {

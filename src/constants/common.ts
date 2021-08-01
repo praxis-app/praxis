@@ -1,6 +1,11 @@
 export namespace Common {
   export const EXPIRES_IN = "90d";
   export const DESKTOP_BREAKPOINT = 850;
+  export const DEFAULT_FEED_STATE: FeedState = {
+    items: [],
+    totalItems: 0,
+    loading: false,
+  };
 
   export enum TypeNames {
     Comment = "Comment",
