@@ -28,6 +28,7 @@ const en = {
 
   errors: {
     somethingWrong: () => "Something went wrong...",
+    imageUploadError: () => "Unable to upload image(s)",
   },
 
   forms: {
@@ -92,6 +93,7 @@ const en = {
     },
     form: {
       bodyPlaceholder: () => "Post something awesome...",
+      postEmpty: () => "Post cannot be empty!",
     },
   },
 

@@ -19,6 +19,7 @@ import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField, { PasswordField } from "../Shared/TextField";
 import ImageInput from "../Shared/ImageInput";
+import { toastVar } from "../../apollo/client/localState";
 
 interface FormValues {
   name: string;
@@ -105,7 +106,10 @@ const UserForm = ({ user, isEditing }: Props) => {
         Router.push("/");
       }
     } catch (err) {
-      alert(err);
+      toastVar({
+        title: Messages.errors.imageUploadError(),
+        status: Common.ToastStatus.Error,
+      });
     }
   };
 
