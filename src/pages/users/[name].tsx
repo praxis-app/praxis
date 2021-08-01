@@ -128,7 +128,7 @@ const Show = () => {
             deleteMotion={deleteMotionHandler}
             deletePost={deletePostHandler}
           />
-          <PageButtons />
+          <PageButtons bottom />
         </>
       ) : (
         <CircularProgress />

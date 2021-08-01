@@ -44,13 +44,14 @@ const List = ({ deleteMotion, deletePost }: Props) => {
       </>
     );
 
-  if (mounted) return (
-    <Card>
-      <LinearProgress />
-    </Card>
-  );
+  if (mounted)
+    return (
+      <Card>
+        <LinearProgress />
+      </Card>
+    );
 
-  return <></>
+  return <></>;
 };
 
 export default List;

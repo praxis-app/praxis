@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import { Container } from "@material-ui/core";
 import { ThemeProvider } from "@material-ui/core/styles";
@@ -8,7 +9,6 @@ import Messages from "../../utils/messages";
 import Breadcrumbs from "../Shared/Breadcrumbs";
 import Toast from "../Shared/Toast";
 import muiTheme from "../../styles/Shared/theme";
-import { useEffect, useState } from "react";
 
 interface Props {
   children: React.ReactChild;
@@ -24,21 +24,22 @@ const Layout = ({ children }: Props) => {
     setMounted(true);
   }, []);
 
-  if (mounted) return (
-    <ThemeProvider theme={muiTheme}>
-      <Head>
-        <HeadContent />
-        <title>{Messages.brand()}</title>
-      </Head>
-      <Header />
-      <Container maxWidth="sm">
-        <Breadcrumbs />
-        {children}
-        <Toast />
-      </Container>
-    </ThemeProvider>
-  );
-  return <></>
+  if (mounted)
+    return (
+      <ThemeProvider theme={muiTheme}>
+        <Head>
+          <HeadContent />
+          <title>{Messages.brand()}</title>
+        </Head>
+        <Header />
+        <Container maxWidth="sm">
+          <Breadcrumbs />
+          {children}
+          <Toast />
+        </Container>
+      </ThemeProvider>
+    );
+  return <></>;
 };
 
 export default Layout;
