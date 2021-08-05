@@ -89,7 +89,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
         }
       } catch (err) {
         toastVar({
-          title: Messages.errors.imageUploadError(),
+          title: err.toString(),
           status: Common.ToastStatus.Error,
         });
       }

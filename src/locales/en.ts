@@ -29,6 +29,8 @@ const en = {
   errors: {
     somethingWrong: () => "Something went wrong...",
     imageUploadError: () => "Unable to upload image(s)",
+    postCreationError: () => "Unable to create post", // I don't like this message but I can't think of another
+    postUpdateError: () => "Post could not be edited"
   },
 
   forms: {

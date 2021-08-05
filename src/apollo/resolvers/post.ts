@@ -86,19 +86,24 @@ const postResolvers = {
           },
         },
       };
-      const newPost = await prisma.post.create({
-        data: {
-          user: {
-            connect: {
-              id: parseInt(userId),
-            },
-          },
-          ...(groupId && groupData),
-          body,
-        },
-      });
 
-      // for image upload error catching in utils/saveImage
+      let newPost;
+      try {
+        newPost = await prisma.post.create({
+          data: {
+            user: {
+              connect: {
+                id: parseInt(userId),
+              },
+            },
+            ...(groupId && groupData),
+            body,
+          },
+        });
+      } catch (err) {
+        throw new ApolloError(Messages.errors.postCreationError())
+      }
+
       try {
         await saveImages(newPost, images);
       } catch (e) {
@@ -114,15 +119,19 @@ const postResolvers = {
 
     async updatePost(_: any, { id, input }: { id: string; input: PostInput }) {
       const { body, images } = input;
-      const post = await prisma.post.update({
+      let post;
+      try {
+      post = await prisma.post.update({
         where: { id: parseInt(id) },
         data: { body },
       });
+    } catch (err) {
+      throw new ApolloError(Messages.errors.postUpdateError())
+    }
 
       if (!post)
         throw new Error(Messages.items.notFound(Common.TypeNames.Post));
 
-      // for image upload error catching in utils/saveImage
       try {
         await saveImages(post, images);
       } catch (e) {
