@@ -1,3 +1,6 @@
+// This component was built before we were aware of the MUI TablePagination component: https://material-ui.com/components/pagination/#table-pagination
+// Please migrate to MUIs pagination component if this component gives any serious issues going forward.
+
 import { useReactiveVar } from "@apollo/client";
 import { useEffect } from "react";
 import {
@@ -11,7 +14,7 @@ import {
 import { NavigateNext, NavigateBefore } from "@material-ui/icons";
 
 import { paginationVar, feedVar } from "../../apollo/client/localState";
-import styles from "../../styles/Shared/PageButtons.module.scss";
+import styles from "../../styles/Shared/Pagination.module.scss";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
 
@@ -95,12 +98,12 @@ const PageButtons = ({ bottom = false }: Props) => {
   };
 
   const isDisabled = (next = true): boolean => {
-    if (feedLoading || !totalItems) return true;
+    if (feedLoading) return true;
     if (next) return onLastPage();
     return onFirstPage();
   };
 
-  if (bottom && (feedLoading || !totalItems)) return <></>;
+  if ((bottom && feedLoading) || !totalItems) return <></>;
 
   return (
     <div className={styles.container}>
@@ -150,4 +153,18 @@ const PageButtons = ({ bottom = false }: Props) => {
   );
 };
 
-export default PageButtons;
+interface PaginationProps {
+  children?: React.ReactChild;
+}
+
+const Pagination = ({ children }: PaginationProps) => {
+  return (
+    <>
+      <PageButtons />
+      {children}
+      <PageButtons bottom />
+    </>
+  );
+};
+
+export default Pagination;

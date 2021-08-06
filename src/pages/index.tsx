@@ -10,7 +10,7 @@ import { Common } from "../constants";
 import { feedVar, paginationVar } from "../apollo/client/localState";
 import { useCurrentUser } from "../hooks";
 import { noCache, resetFeed } from "../utils/clientIndex";
-import PageButtons from "../components/Shared/PageButtons";
+import Pagination from "../components/Shared/Pagination";
 
 const Home = () => {
   const currentUser = useCurrentUser();
@@ -88,9 +88,12 @@ const Home = () => {
 
       {currentUser && <PostForm posts={feed.items} />}
 
-      <PageButtons />
-      <Feed deletePost={deletePostHandler} deleteMotion={deleteMotionHandler} />
-      <PageButtons bottom />
+      <Pagination>
+        <Feed
+          deletePost={deletePostHandler}
+          deleteMotion={deleteMotionHandler}
+        />
+      </Pagination>
     </>
   );
 };

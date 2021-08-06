@@ -8,6 +8,7 @@ import Feed from "../../components/Shared/Feed";
 import PostsForm from "../../components/Posts/Form";
 import MotionsForm from "../../components/Motions/Form";
 import ToggleForms from "../../components/Groups/ToggleForms";
+import Pagination from "../../components/Shared/Pagination";
 import { GROUP_BY_NAME, GROUP_FEED } from "../../apollo/client/queries";
 import {
   DELETE_GROUP,
@@ -19,7 +20,6 @@ import { Common } from "../../constants";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useMembersByGroupId } from "../../hooks";
-import PageButtons from "../../components/Shared/PageButtons";
 import { resetFeed } from "../../utils/items";
 
 const Show = () => {
@@ -162,12 +162,12 @@ const Show = () => {
           </>
         )}
 
-        <PageButtons />
-        <Feed
-          deleteMotion={deleteMotionHandler}
-          deletePost={deletePostHandler}
-        />
-        <PageButtons bottom />
+        <Pagination>
+          <Feed
+            deleteMotion={deleteMotionHandler}
+            deletePost={deletePostHandler}
+          />
+        </Pagination>
       </>
     );
 

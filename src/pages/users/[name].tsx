@@ -5,6 +5,7 @@ import { CircularProgress } from "@material-ui/core";
 
 import User from "../../components/Users/User";
 import Feed from "../../components/Shared/Feed";
+import Pagination from "../../components/Shared/Pagination";
 import { USER_BY_NAME, PROFILE_FEED } from "../../apollo/client/queries";
 import {
   DELETE_USER,
@@ -16,7 +17,6 @@ import { feedVar, paginationVar } from "../../apollo/client/localState";
 import { Common } from "../../constants";
 import { useCurrentUser } from "../../hooks";
 import { noCache } from "../../utils/apollo";
-import PageButtons from "../../components/Shared/PageButtons";
 import { resetFeed } from "../../utils/clientIndex";
 
 const Show = () => {
@@ -133,12 +133,12 @@ const Show = () => {
         <>
           <User user={user} deleteUser={deleteUserHandler} />
 
-          <PageButtons />
-          <Feed
-            deleteMotion={deleteMotionHandler}
-            deletePost={deletePostHandler}
-          />
-          <PageButtons bottom />
+          <Pagination>
+            <Feed
+              deleteMotion={deleteMotionHandler}
+              deletePost={deletePostHandler}
+            />
+          </Pagination>
         </>
       ) : (
         <CircularProgress />
