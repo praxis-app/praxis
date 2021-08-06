@@ -11,13 +11,7 @@ interface CommentInput {
 
 const saveImages = async (comment: any, images: any) => {
   for (const image of images ? images : []) {
-    let path: any;
-
-    try {
-      path = await saveImage(image);
-    } catch (e) {
-      throw new ApolloError(" Unable to upload image(s)\nError response: " + e);
-    }
+    const path = await saveImage(image);
 
     await prisma.image.create({
       data: {
@@ -96,27 +90,31 @@ const commentResolvers = {
               },
             },
           };
-      const comment = await prisma.comment.create({
-        data: {
-          user: {
-            connect: {
-              id: parseInt(userId),
+      let comment;
+      try {
+        comment = await prisma.comment.create({
+          data: {
+            user: {
+              connect: {
+                id: parseInt(userId),
+              },
             },
+            ...commentedItemConnect,
+            body,
           },
-          ...commentedItemConnect,
-          body,
-        },
-      });
+        });
+      } catch (err) {
+        throw new ApolloError(Messages.errors.comments.commentCreationError());
+      }
 
-      // for image upload error catching in utils/saveImage
       try {
         await saveImages(comment, images);
-      } catch (e) {
+      } catch (err) {
         const currComment = {
           where: { id: comment.id },
         };
         await prisma.comment.delete(currComment);
-        return e; // method is not allowed to return null, this prevents error at runtime
+        throw new ApolloError(Messages.errors.imageUploadError());
       }
 
       return { comment };
@@ -127,19 +125,23 @@ const commentResolvers = {
       { id, input }: { id: string; input: CommentInput }
     ) {
       const { body, images } = input;
-      const comment = await prisma.comment.update({
-        where: { id: parseInt(id) },
-        data: { body },
-      });
+      let comment;
+      try {
+        comment = await prisma.comment.update({
+          where: { id: parseInt(id) },
+          data: { body },
+        });
+      } catch (err) {
+        throw new ApolloError(Messages.errors.comments.commentUpdateError());
+      }
 
       if (!comment)
         throw new Error(Messages.items.notFound(Common.TypeNames.Comment));
 
-      // for image upload error catching in utils/saveImage
       try {
         await saveImages(comment, images);
-      } catch (e) {
-        return e; // method is not allowed to return null, this prevents error at runtime
+      } catch (err) {
+        throw new ApolloError(Messages.errors.imageUploadError());
       }
 
       return { comment };

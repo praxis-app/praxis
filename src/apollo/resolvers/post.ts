@@ -101,12 +101,12 @@ const postResolvers = {
           },
         });
       } catch (err) {
-        throw new ApolloError(Messages.errors.postCreationError())
+        throw new ApolloError(Messages.errors.posts.postCreationError())
       }
 
       try {
         await saveImages(newPost, images);
-      } catch (e) {
+      } catch (err) {
         const currPost = {
           where: { id: newPost.id },
         };
@@ -126,7 +126,7 @@ const postResolvers = {
         data: { body },
       });
     } catch (err) {
-      throw new ApolloError(Messages.errors.postUpdateError())
+      throw new ApolloError(Messages.errors.posts.postUpdateError())
     }
 
       if (!post)
@@ -134,7 +134,7 @@ const postResolvers = {
 
       try {
         await saveImages(post, images);
-      } catch (e) {
+      } catch (err) {
         throw new ApolloError(Messages.errors.imageUploadError());
       }
 
