@@ -21,13 +21,15 @@ const useStyles = makeStyles((theme: Theme) => {
       display: "none",
     },
   };
+  const contrastColor = {
+    color: theme.palette.primary.contrastText,
+  };
+
   return createStyles({
     root: hideForMobile,
-    select: {
-      color: theme.palette.primary.contrastText,
-    },
+    select: contrastColor,
     icon: {
-      color: theme.palette.primary.contrastText,
+      ...contrastColor,
       ...hideForMobile,
     },
   });
