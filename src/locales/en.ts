@@ -37,6 +37,10 @@ const en = {
       commentCreationError: () => "Unable to post comment",
       commentUpdateError: () => "Unable to update comment",
     },
+    users: {
+      userCreationError: () => "There was an error creating your account",
+      userUpdateError: () => "There was an error updating your account",
+    },
   },
 
   forms: {

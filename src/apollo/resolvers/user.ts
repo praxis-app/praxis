@@ -201,23 +201,27 @@ const userResolvers = {
 
       const hash = await bcrypt.hash(password, 10);
 
-      const user = await prisma.user.create({
-        data: {
-          email,
-          name,
-          password: hash,
-        },
-      });
+      let user;
+      try {
+        user = await prisma.user.create({
+          data: {
+            email,
+            name,
+            password: hash,
+          },
+        });
+      } catch (err) {
+        throw new ApolloError(Messages.errors.users.userCreationError());
+      }
 
       try {
         await saveProfilePicture(user, profilePicture);
-      } catch (e) {
+      } catch (err) {
         const currUser = {
           where: { id: user.id },
         };
         await prisma.user.delete(currUser);
-
-        throw new ApolloError(Messages.errors.imageUploadError() + e);
+        throw new ApolloError(Messages.errors.imageUploadError());
       }
 
       const jwtPayload = {
@@ -275,10 +279,15 @@ const userResolvers = {
     ) {
       const { email, name, profilePicture } = input;
 
-      const user = await prisma.user.update({
-        where: { id: parseInt(id) },
-        data: { email, name },
-      });
+      let user;
+      try {
+        user = await prisma.user.update({
+          where: { id: parseInt(id) },
+          data: { email, name },
+        });
+      } catch (err) {
+        throw new ApolloError(Messages.errors.users.userUpdateError());
+      }
 
       if (!user)
         throw new Error(Messages.items.notFound(Common.TypeNames.User));

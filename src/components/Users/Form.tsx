@@ -107,7 +107,7 @@ const UserForm = ({ user, isEditing }: Props) => {
       }
     } catch (err) {
       toastVar({
-        title: Messages.errors.imageUploadError(),
+        title: err.toString(),
         status: Common.ToastStatus.Error,
       });
     }
