@@ -47,7 +47,7 @@ const Index = () => {
         {users
           .slice()
           .reverse()
-          .slice(0, Common.Pagination.DefaultPageSize)
+          .slice(0, Common.PageSizes.Default)
           .map((user: User) => {
             return (
               <User user={user} deleteUser={deleteUserHandler} key={user.id} />

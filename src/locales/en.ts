@@ -320,6 +320,10 @@ const en = {
     notFound: (itemType: string) => `${itemType} not found.`,
   },
 
+  pagination: {
+    rowsPerPage: (rows: number) => `Rows per page: ${rows}`,
+  },
+
   time: {
     now: () => "now",
     minutes: (minutes: number) => `${minutes}m`,

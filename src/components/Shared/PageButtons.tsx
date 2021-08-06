@@ -1,10 +1,12 @@
 import { useReactiveVar } from "@apollo/client";
 import { useEffect } from "react";
 import {
-  createStyles,
   IconButton,
-  makeStyles,
   Typography,
+  NativeSelect,
+  makeStyles,
+  Theme,
+  createStyles,
 } from "@material-ui/core";
 import { NavigateNext, NavigateBefore } from "@material-ui/icons";
 
@@ -13,14 +15,23 @@ import styles from "../../styles/Shared/PageButtons.module.scss";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    sequenceTextRoot: {
-      paddingTop: 8,
-      paddingRight: 10,
+const useStyles = makeStyles((theme: Theme) => {
+  const hideForMobile = {
+    [theme.breakpoints.down(Common.DESKTOP_BREAKPOINT)]: {
+      display: "none",
     },
-  })
-);
+  };
+  return createStyles({
+    root: hideForMobile,
+    select: {
+      color: theme.palette.primary.contrastText,
+    },
+    icon: {
+      color: theme.palette.primary.contrastText,
+      ...hideForMobile,
+    },
+  });
+});
 
 interface Props {
   bottom?: boolean;
@@ -49,6 +60,15 @@ const PageButtons = ({ bottom = false }: Props) => {
         ...paginationState,
         currentPage: newCurrentPage,
       });
+  };
+
+  const handlePageSizeChange = (
+    event: React.ChangeEvent<{ value: string }>
+  ) => {
+    paginationVar({
+      ...paginationState,
+      pageSize: parseInt(event.target.value),
+    });
   };
 
   const sequenceText = (): string => {
@@ -82,7 +102,24 @@ const PageButtons = ({ bottom = false }: Props) => {
 
   return (
     <div className={styles.container}>
-      <Typography classes={{ root: classes.sequenceTextRoot }} color="primary">
+      <NativeSelect
+        value={pageSize}
+        onChange={handlePageSizeChange}
+        classes={classes}
+        disableUnderline
+      >
+        <option value={Common.PageSizes.Min}>
+          {Messages.pagination.rowsPerPage(Common.PageSizes.Min)}
+        </option>
+        <option value={Common.PageSizes.Default}>
+          {Messages.pagination.rowsPerPage(Common.PageSizes.Default)}
+        </option>
+        <option value={Common.PageSizes.Max}>
+          {Messages.pagination.rowsPerPage(Common.PageSizes.Max)}
+        </option>
+      </NativeSelect>
+
+      <Typography className={styles.sequenceText} color="primary">
         {sequenceText()}
       </Typography>
 

@@ -66,14 +66,15 @@ export namespace Common {
     Warning = "warning",
   }
 
-  export enum Pagination {
-    FirstPage = 0,
-    DefaultPageSize = 10,
+  export enum PageSizes {
+    Min = 5,
+    Max = 20,
+    Default = 10,
   }
 
   export const DEFAULT_PAGINATION_STATE: PaginationState = {
-    currentPage: Pagination.FirstPage,
-    pageSize: Pagination.DefaultPageSize,
+    currentPage: 0,
+    pageSize: PageSizes.Default,
   };
 
   export const DEFAULT_FEED_STATE: FeedState = {
