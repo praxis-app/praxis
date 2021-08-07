@@ -16,7 +16,7 @@ exports[`Post should display the user's name, post body, and time 1`] = `
             href="/users/mockUserName"
           >
             <div
-              class="MuiAvatar-root MuiAvatar-circle"
+              class="MuiAvatar-root MuiAvatar-circular"
               style="color: black; background-color: white;"
             >
               <img
