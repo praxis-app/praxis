@@ -68,12 +68,13 @@ const PageButtons = ({ bottom = false }: Props) => {
   };
 
   const handlePageSizeChange = (
-    event: React.ChangeEvent<{ value: string }>
+    event: React.ChangeEvent<HTMLSelectElement>
   ) => {
     paginationVar({
       ...paginationState,
       pageSize: parseInt(event.target.value),
     });
+    event.target.blur();
   };
 
   const sequenceText = (): string => {
@@ -103,6 +104,12 @@ const PageButtons = ({ bottom = false }: Props) => {
     return onFirstPage();
   };
 
+  const optionText = (_pageSize: number): string => {
+    if (pageSize === _pageSize)
+      return Messages.pagination.rowsPerPage(_pageSize);
+    return _pageSize.toString();
+  };
+
   if ((bottom && feedLoading) || !totalItems) return <></>;
 
   return (
@@ -113,15 +120,15 @@ const PageButtons = ({ bottom = false }: Props) => {
         classes={classes}
         disableUnderline
       >
-        <option value={Common.PageSizes.Min}>
-          {Messages.pagination.rowsPerPage(Common.PageSizes.Min)}
-        </option>
-        <option value={Common.PageSizes.Default}>
-          {Messages.pagination.rowsPerPage(Common.PageSizes.Default)}
-        </option>
-        <option value={Common.PageSizes.Max}>
-          {Messages.pagination.rowsPerPage(Common.PageSizes.Max)}
-        </option>
+        {[
+          Common.PageSizes.Min,
+          Common.PageSizes.Default,
+          Common.PageSizes.Max,
+        ].map((_pageSize) => (
+          <option value={_pageSize} key={_pageSize}>
+            {optionText(_pageSize)}
+          </option>
+        ))}
       </NativeSelect>
 
       <Typography className={styles.sequenceText} color="primary">
