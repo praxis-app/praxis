@@ -110,7 +110,13 @@ const PageButtons = ({ bottom = false }: Props) => {
     return _pageSize.toString();
   };
 
-  if ((bottom && feedLoading) || !totalItems) return <></>;
+  const isHiding = (): boolean => {
+    if (bottom && feedLoading) return true;
+    if (!feedLoading && !totalItems) return true;
+    return false;
+  };
+
+  if (isHiding()) return <></>;
 
   return (
     <div className={styles.container}>
