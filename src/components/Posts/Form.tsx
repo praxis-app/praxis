@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { ApolloError, useLazyQuery, useMutation } from "@apollo/client";
 import { FormGroup } from "@material-ui/core";
 import Router from "next/router";
 import { Formik, FormikHelpers, Form, Field, FormikProps } from "formik";
@@ -88,10 +88,14 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
           if (posts && setPosts) setPosts([...posts, data.createPost.post]);
         }
       } catch (err) {
-        toastVar({
-          title: err.toString(),
-          status: Common.ToastStatus.Error,
-        });
+        if (err instanceof ApolloError) {
+          toastVar({
+            title: err.toString(),
+            status: Common.ToastStatus.Error,
+          });
+        } else {
+          alert(err);
+        }
       }
     }
   };
