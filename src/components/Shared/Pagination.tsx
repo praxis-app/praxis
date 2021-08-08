@@ -73,6 +73,7 @@ const PageButtons = ({ bottom = false }: Props) => {
     paginationVar({
       ...paginationState,
       pageSize: parseInt(event.target.value),
+      currentPage: 0,
     });
     event.target.blur();
   };
