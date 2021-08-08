@@ -1,17 +1,16 @@
 // This component was built before we were aware of the MUI TablePagination component: https://material-ui.com/components/pagination/#table-pagination
 // Please migrate to MUIs pagination component if this component gives any serious issues going forward.
 
-// TODO: Remove this comment line
-
 import { useReactiveVar } from "@apollo/client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   IconButton,
   Typography,
-  NativeSelect,
   makeStyles,
   Theme,
   createStyles,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import { NavigateNext, NavigateBefore } from "@material-ui/icons";
 
@@ -48,6 +47,7 @@ const PageButtons = ({ bottom = false }: Props) => {
   const paginationState = useReactiveVar(paginationVar);
   const { totalItems, loading: feedLoading } = useReactiveVar(feedVar);
   const { currentPage, pageSize } = paginationState;
+  const [selectOpen, setSelectOpen] = useState<boolean>(false);
   const classes = useStyles();
 
   useEffect(() => {
@@ -70,14 +70,13 @@ const PageButtons = ({ bottom = false }: Props) => {
   };
 
   const handlePageSizeChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<{ value: unknown }>
   ) => {
     paginationVar({
       ...paginationState,
-      pageSize: parseInt(event.target.value),
+      pageSize: parseInt(event.target.value as string),
       currentPage: 0,
     });
-    event.target.blur();
   };
 
   const sequenceText = (): string => {
@@ -117,25 +116,33 @@ const PageButtons = ({ bottom = false }: Props) => {
 
   return (
     <div className={styles.container}>
-      <Typography className={styles.sequenceText} color="primary">
+      <Typography
+        onClick={() => setSelectOpen(!selectOpen)}
+        className={styles.rowsPerPageText}
+        classes={{ root: classes.root }}
+        color="primary"
+      >
         {Messages.pagination.rowsPerPage()}
       </Typography>
-      <NativeSelect
+
+      <Select
         value={pageSize}
         onChange={handlePageSizeChange}
+        onClick={() => setSelectOpen(!selectOpen)}
         classes={classes}
         disableUnderline
+        open={selectOpen}
       >
         {[
           Common.PageSizes.Min,
           Common.PageSizes.Default,
           Common.PageSizes.Max,
         ].map((_pageSize) => (
-          <option value={_pageSize} key={_pageSize}>
-            {_pageSize.toString())}
-          </option>
+          <MenuItem value={_pageSize} key={_pageSize}>
+            {_pageSize}
+          </MenuItem>
         ))}
-      </NativeSelect>
+      </Select>
 
       <Typography className={styles.sequenceText} color="primary">
         {sequenceText()}

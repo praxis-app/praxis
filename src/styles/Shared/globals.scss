@@ -50,7 +50,7 @@ a:hover {
   outline: none !important;
 }
 
-// TODO: This should be moved to Shared/theme.ts
+// TODO: This should be removed after converting to Select component
 .MuiNativeSelect-select:not([multiple]) option {
   background-color: $darkGray !important;
   font-family: Helvetica !important;
