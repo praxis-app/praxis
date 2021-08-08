@@ -1,6 +1,8 @@
 // This component was built before we were aware of the MUI TablePagination component: https://material-ui.com/components/pagination/#table-pagination
 // Please migrate to MUIs pagination component if this component gives any serious issues going forward.
 
+// TODO: Remove this comment line
+
 import { useReactiveVar } from "@apollo/client";
 import { useEffect } from "react";
 import {
