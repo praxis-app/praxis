@@ -321,7 +321,7 @@ const en = {
   },
 
   pagination: {
-    rowsPerPage: (rows: number) => `Rows per page: ${rows}`,
+    rowsPerPage: () => "Rows per page: ",
   },
 
   time: {

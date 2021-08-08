@@ -107,12 +107,6 @@ const PageButtons = ({ bottom = false }: Props) => {
     return onFirstPage();
   };
 
-  const optionText = (_pageSize: number): string => {
-    if (pageSize === _pageSize)
-      return Messages.pagination.rowsPerPage(_pageSize);
-    return _pageSize.toString();
-  };
-
   const isHiding = (): boolean => {
     if (bottom && feedLoading) return true;
     if (!feedLoading && !totalItems) return true;
@@ -123,6 +117,9 @@ const PageButtons = ({ bottom = false }: Props) => {
 
   return (
     <div className={styles.container}>
+      <Typography className={styles.sequenceText} color="primary">
+        {Messages.pagination.rowsPerPage()}
+      </Typography>
       <NativeSelect
         value={pageSize}
         onChange={handlePageSizeChange}
@@ -135,7 +132,7 @@ const PageButtons = ({ bottom = false }: Props) => {
           Common.PageSizes.Max,
         ].map((_pageSize) => (
           <option value={_pageSize} key={_pageSize}>
-            {optionText(_pageSize)}
+            {_pageSize.toString())}
           </option>
         ))}
       </NativeSelect>
