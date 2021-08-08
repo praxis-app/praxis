@@ -101,7 +101,7 @@ const postResolvers = {
           },
         });
       } catch (err) {
-        throw new ApolloError(Messages.errors.posts.postCreationError())
+        throw new ApolloError(Messages.errors.posts.postCreationError());
       }
 
       try {
@@ -121,13 +121,13 @@ const postResolvers = {
       const { body, images } = input;
       let post;
       try {
-      post = await prisma.post.update({
-        where: { id: parseInt(id) },
-        data: { body },
-      });
-    } catch (err) {
-      throw new ApolloError(Messages.errors.posts.postUpdateError())
-    }
+        post = await prisma.post.update({
+          where: { id: parseInt(id) },
+          data: { body },
+        });
+      } catch (err) {
+        throw new ApolloError(Messages.errors.posts.postUpdateError());
+      }
 
       if (!post)
         throw new Error(Messages.items.notFound(Common.TypeNames.Post));

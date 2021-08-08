@@ -24,21 +24,22 @@ const Layout = ({ children }: Props) => {
     setMounted(true);
   }, []);
 
-  if (mounted) return (
-    <ThemeProvider theme={muiTheme}>
-      <Head>
-        <HeadContent />
-        <title>{Messages.brand()}</title>
-      </Head>
-      <Header />
-      <Container maxWidth="sm">
-        <Breadcrumbs />
-        {children}
-        <Toast />
-      </Container>
-    </ThemeProvider>
-  );
-  return <></>
+  if (mounted)
+    return (
+      <ThemeProvider theme={muiTheme}>
+        <Head>
+          <HeadContent />
+          <title>{Messages.brand()}</title>
+        </Head>
+        <Header />
+        <Container maxWidth="sm">
+          <Breadcrumbs />
+          {children}
+          <Toast />
+        </Container>
+      </ThemeProvider>
+    );
+  return <></>;
 };
 
 export default Layout;

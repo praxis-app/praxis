@@ -120,7 +120,9 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   };
 
   const validatePostBody = (body: string) => {
-    return body === "" && images.length === 0 ? Messages.posts.form.postEmpty() : undefined;
+    return body === "" && images.length === 0
+      ? Messages.posts.form.postEmpty()
+      : undefined;
   };
 
   return (
