@@ -78,7 +78,7 @@ const Login = () => {
             />
           </FormGroup>
 
-          <SubmitButton disabled={!!formik.submitCount}>
+          <SubmitButton disabled={formik.isSubmitting}>
             {Messages.users.actions.logIn()}
           </SubmitButton>
         </Form>

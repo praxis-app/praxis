@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import {
   FormGroup,
-  NativeSelect,
   FormControl,
   InputLabel,
+  MenuItem,
 } from "@material-ui/core";
 import Router from "next/router";
 import { Formik, FormikHelpers, Form, Field, FormikProps } from "formik";
@@ -27,6 +27,7 @@ import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
 import SelectedImages from "../Shared/SelectedImages";
 import ImageInput from "../Shared/ImageInput";
+import Dropdown from "../Shared/Dropdown";
 
 interface FormikValues {
   body: string;
@@ -127,8 +128,8 @@ const MotionsForm = ({
     }
   };
 
-  const handleActionChange = (event: React.ChangeEvent<{ value: string }>) => {
-    setAction(event.target.value);
+  const handleActionChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setAction(event.target.value as string);
   };
 
   const deleteImageHandler = async (id: string) => {
@@ -183,32 +184,31 @@ const MotionsForm = ({
               }
               component={TextField}
               multiline
-              style={{ marginBottom: 0 }}
+              style={{ marginBottom: 3 }}
             />
 
-            <FormControl style={{ marginBottom: "18px" }}>
+            <FormControl style={{ marginBottom: 18 }}>
               <InputLabel>{Messages.motions.form.motionType()}</InputLabel>
-              <NativeSelect value={action} onChange={handleActionChange}>
-                <option aria-label={Messages.forms.none()} value="" />
-                <option value={Motions.ActionTypes.PlanEvent}>
+              <Dropdown value={action} onChange={handleActionChange}>
+                <MenuItem value={Motions.ActionTypes.PlanEvent}>
                   {Messages.motions.form.actionTypes.planEvent()}
-                </option>
-                <option value={Motions.ActionTypes.ChangeName}>
+                </MenuItem>
+                <MenuItem value={Motions.ActionTypes.ChangeName}>
                   {Messages.motions.form.actionTypes.changeName()}
-                </option>
-                <option value={Motions.ActionTypes.ChangeDescription}>
+                </MenuItem>
+                <MenuItem value={Motions.ActionTypes.ChangeDescription}>
                   {Messages.motions.form.actionTypes.changeDescription()}
-                </option>
-                <option value={Motions.ActionTypes.ChangeImage}>
+                </MenuItem>
+                <MenuItem value={Motions.ActionTypes.ChangeImage}>
                   {Messages.motions.form.actionTypes.changeImage()}
-                </option>
-                <option value={Motions.ActionTypes.ChangeSettings}>
+                </MenuItem>
+                <MenuItem value={Motions.ActionTypes.ChangeSettings}>
                   {Messages.motions.form.actionTypes.changeSettings()}
-                </option>
-                <option value={Motions.ActionTypes.Test}>
+                </MenuItem>
+                <MenuItem value={Motions.ActionTypes.Test}>
                   {Messages.motions.form.actionTypes.test()}
-                </option>
-              </NativeSelect>
+                </MenuItem>
+              </Dropdown>
             </FormControl>
 
             <ActionFields actionType={action} setActionData={setActionData} />

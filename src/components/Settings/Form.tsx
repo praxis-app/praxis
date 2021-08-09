@@ -4,7 +4,7 @@ import { useMutation } from "@apollo/client";
 import {
   FormGroup,
   Switch,
-  NativeSelect,
+  MenuItem,
   Grid,
   Slider,
   Input,
@@ -18,6 +18,7 @@ import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import { displayName } from "../../utils/items";
 import SubmitButton from "../Shared/SubmitButton";
+import Dropdown from "../Shared/Dropdown";
 
 const NumberInput = ({
   value,
@@ -95,10 +96,10 @@ const SettingsForm = ({
   };
 
   const handleSettingChange = (
-    event: ChangeEvent<{ value: string }>,
+    event: ChangeEvent<{ value: unknown }>,
     name: string
   ) => {
-    setByName(name, event.target.value);
+    setByName(name, event.target.value as string);
   };
 
   const handleSwitchChange = (name: string, value: string) => {
@@ -180,21 +181,20 @@ const SettingsForm = ({
                 )}
 
                 {name === Settings.GroupSettings.VotingType && (
-                  <NativeSelect
+                  <Dropdown
                     value={value}
                     onChange={(e) => handleSettingChange(e, name)}
                   >
-                    <option aria-label={Messages.forms.none()} value="" />
-                    <option value={Votes.VotingTypes.Consensus}>
+                    <MenuItem value={Votes.VotingTypes.Consensus}>
                       {Messages.votes.votingTypes.consensus()}
-                    </option>
-                    <option value={Votes.VotingTypes.XToPass}>
+                    </MenuItem>
+                    <MenuItem value={Votes.VotingTypes.XToPass}>
                       {Messages.votes.votingTypes.xToPass()}
-                    </option>
-                    <option value={Votes.VotingTypes.Majority}>
+                    </MenuItem>
+                    <MenuItem value={Votes.VotingTypes.Majority}>
                       {Messages.votes.votingTypes.majority()}
-                    </option>
-                  </NativeSelect>
+                    </MenuItem>
+                  </Dropdown>
                 )}
 
                 {name === Settings.GroupSettings.VoteVerification && (

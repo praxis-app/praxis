@@ -293,10 +293,10 @@ const en = {
         oneDay: () => "1 day",
         sevenDays: () => "7 days",
         oneMonth: () => "1 month",
-        never: () => "Never",
+        never: () => "Never (default)",
       },
       maxUsesOptions: {
-        noLimit: () => "No limit",
+        noLimit: () => "No limit (default)",
         xUses: (x: number) => `${x} use${x === 1 ? "" : "s"}`,
       },
       labels: {

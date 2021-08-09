@@ -68,12 +68,6 @@ const muiTheme = createTheme({
       },
     },
 
-    MuiNativeSelect: {
-      select: {
-        color: globalTheme.palette.primary.dark,
-      },
-    },
-
     MuiSwitch: {
       root: {
         "& .Mui-checked .MuiSwitch-thumb": {
