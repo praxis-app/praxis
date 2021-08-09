@@ -1,0 +1,23 @@
+@import "../Shared/Shared.module.scss";
+
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.text {
+  padding-top: 8px;
+  padding-right: 5px;
+}
+
+.rowsPerPageText {
+  @extend .text, .noSelect;
+  cursor: pointer;
+}
+
+.sequenceText {
+  @extend .text;
+  padding-left: 20px;
+}

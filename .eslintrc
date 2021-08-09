@@ -30,7 +30,6 @@
       "error",
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
     ],
-
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/anchor-is-valid": [
       "error",
@@ -41,7 +40,13 @@
       }
     ],
     "no-extra-boolean-cast": "off",
-    "object-shorthand": ["error", "properties"]
+    "object-shorthand": ["error", "properties"],
+    "prefer-const": [
+      "error",
+      {
+        "destructuring": "all"
+      }
+    ]
   },
   "settings": {
     "react": {
