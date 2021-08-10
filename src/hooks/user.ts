@@ -23,6 +23,7 @@ export const useCurrentUser = (): CurrentUser | undefined => {
   return result;
 };
 
+// TODO: Convert return type to an array: [user, setUser, loading]
 export const useUserById = (id: string): User | undefined => {
   const [user, setUser] = useState<User>();
   const userRes = useQuery(USER, {

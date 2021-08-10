@@ -5,7 +5,7 @@ import { AddCircle, ArrowForwardIos } from "@material-ui/icons";
 
 import { ADD_ROLE_MEMBERS } from "../../apollo/client/mutations";
 import styles from "../../styles/Role/AddMemberTab.module.scss";
-import Dialog from "../../components/Shared/Dialog";
+import Modal from "../Shared/Modal";
 import Messages from "../../utils/messages";
 import RoleMemberAdd from "./MemberAdd";
 import RoleMember from "./Member";
@@ -21,14 +21,13 @@ interface Props {
 const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
   const [users] = useAllUsers();
   const [selectedUsers, setSelectedUsers] = useState<SelectedUser[]>([]);
-  const [addMembersDialogOpen, setAddMembersDialogOpen] =
-    useState<boolean>(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [addRoleMembers] = useMutation(ADD_ROLE_MEMBERS);
 
   useEffect(() => {
     setSelectedUsers([]);
-  }, [addMembersDialogOpen]);
+  }, [dialogOpen]);
 
   const addRoleMembersHandler = async () => {
     setLoading(true);
@@ -43,7 +42,7 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
       });
       const newMembers = data.addRoleMembers.roleMembers;
       setMembers([...members, ...newMembers]);
-      setAddMembersDialogOpen(false);
+      setDialogOpen(false);
     } catch (err) {
       alert(err);
     }
@@ -53,10 +52,7 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
   if (role && !membersLoading)
     return (
       <>
-        <Card
-          className={styles.buttonCard}
-          onClick={() => setAddMembersDialogOpen(true)}
-        >
+        <Card className={styles.buttonCard} onClick={() => setDialogOpen(true)}>
           <div className={styles.buttonWrapper}>
             <div className={styles.button}>
               <AddCircle className={styles.addCircleIcon} />
@@ -69,14 +65,15 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
           </div>
         </Card>
 
-        <Dialog
+        <Modal
           title={Messages.roles.actions.addMembers()}
           subtext={role.name}
-          open={addMembersDialogOpen}
-          setOpen={setAddMembersDialogOpen}
+          open={dialogOpen}
+          setOpen={setDialogOpen}
           actionLabel={Messages.actions.add()}
           closingAction={addRoleMembersHandler}
           loading={loading}
+          appBar
         >
           <Card>
             {users
@@ -94,7 +91,7 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
                 );
               })}
           </Card>
-        </Dialog>
+        </Modal>
 
         <Card>
           {members.map((member) => {

@@ -6,7 +6,7 @@ import { Typography } from "@material-ui/core";
 
 import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import SettingsForm from "../../../components/Settings/Form";
-import { Settings as SettingsConstants } from "../../../constants";
+import { Common, Settings as SettingsConstants } from "../../../constants";
 import Messages from "../../../utils/messages";
 import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
 
@@ -60,7 +60,7 @@ const Settings = () => {
 
   return (
     <>
-      <Link href={`/groups/${query.name}`}>
+      <Link href={`${Common.ResourcePaths.Group}${query.name}`}>
         <a>
           <Typography variant="h3" color="primary">
             {query.name}

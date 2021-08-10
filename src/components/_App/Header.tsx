@@ -4,12 +4,11 @@ import Router, { useRouter } from "next/router";
 import jwtDecode from "jwt-decode";
 import { useMutation, useReactiveVar } from "@apollo/client";
 import MenuIcon from "@material-ui/icons/Menu";
+import classNames from "classnames/bind";
 
 import Messages from "../../utils/messages";
 import { setAuthToken } from "../../utils/auth";
 import { LOGOUT_USER, SET_CURRENT_USER } from "../../apollo/client/mutations";
-
-import classNames from "classnames/bind";
 import {
   useCurrentUser,
   useHasPermissionGlobally,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { IconButton } from "@material-ui/core";
-import { ThumbUp } from "@material-ui/icons";
+import { Favorite } from "@material-ui/icons";
 
 import {
   LIKES_BY_POST_ID,
@@ -9,8 +9,8 @@ import {
   LIKES_BY_COMMENT_ID,
 } from "../../apollo/client/queries";
 import { CREATE_LIKE, DELETE_LIKE } from "../../apollo/client/mutations";
-
 import styles from "../../styles/Like/LikeButton.module.scss";
+import { BLURPLE, WHITE } from "../../styles/Shared/theme";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser } from "../../hooks";
 
@@ -98,14 +98,14 @@ const LikeButton = ({ postId, motionId, commentId }: Props) => {
       }
       disabled={createLikeLoading || deleteLikeLoading}
     >
-      <ThumbUp
+      <Favorite
         color="primary"
-        style={alreadyLike() ? { color: "tomato" } : {}}
+        style={alreadyLike() ? { color: BLURPLE } : {}}
       />
       {likes.length > 0 && (
         <span
           className={styles.likesNumber}
-          style={{ color: alreadyLike() ? "tomato" : "white" }}
+          style={{ color: alreadyLike() ? BLURPLE : WHITE }}
         >
           {likes.length}
         </span>

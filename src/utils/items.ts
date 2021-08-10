@@ -26,5 +26,5 @@ export const paginate = (
 };
 
 export const resetFeed = (): void => {
-  feedVar(Common.DEFAULT_FEED_STATE);
+  feedVar(Common.INITIAL_FEED_STATE);
 };

@@ -6,6 +6,7 @@ import { withStyles } from "@material-ui/core";
 import PostsForm from "../../components/Posts/Form";
 import MotionsForm from "../../components/Motions/Form";
 import styles from "../../styles/Group/ToggleForms.module.scss";
+import { WHITE } from "../../styles/Shared/theme";
 import { Common } from "../../constants";
 
 const StyledToggleButtonGroup = withStyles(() => ({
@@ -45,15 +46,13 @@ const ToggleForms = ({ group }: Props) => {
         >
           <ToggleButton value={Common.ModelNames.Post} color="secondary">
             <PostAdd
-              style={
-                toggle === Common.ModelNames.Post ? { color: "white" } : {}
-              }
+              style={toggle === Common.ModelNames.Post ? { color: WHITE } : {}}
             />
           </ToggleButton>
           <ToggleButton value={Common.ModelNames.Motion}>
             <EmojiPeople
               style={
-                toggle === Common.ModelNames.Motion ? { color: "white" } : {}
+                toggle === Common.ModelNames.Motion ? { color: WHITE } : {}
               }
             />
           </ToggleButton>

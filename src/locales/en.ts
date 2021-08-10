@@ -11,8 +11,14 @@ const en = {
     delete: () => "Delete",
     deleteItem: (itemType: string) => `Delete ${itemType}`,
     edit: () => "Edit",
+    like: () => "Like",
     pickColor: () => "Pick a Color",
     save: () => "Save",
+    share: () => "Share",
+  },
+
+  labels: {
+    all: () => "All",
   },
 
   states: {
@@ -93,7 +99,7 @@ const en = {
     },
     form: {
       bodyPlaceholder: () => "Post something awesome...",
-      postEmpty: () => "Post cannot be empty!",
+      postEmpty: () => "Post cannot be empty...",
     },
   },
 
@@ -116,6 +122,7 @@ const en = {
         changeSettings: () => "Change group settings",
         test: () => "Just a test",
       },
+      motionEmpty: () => "Motion cannot be empty...",
     },
     tabs: {
       votes: () => "Votes",
@@ -133,9 +140,13 @@ const en = {
 
   votes: {
     actions: {
-      support: () => "Support",
+      agree: () => "Agree",
       block: () => "Block",
+      reservations: () => "Reservations",
+      standAside: () => "Stand Aside",
+      support: () => "Support",
       update: () => "Update vote",
+      vote: () => "Vote",
     },
     form: {
       bodyPlaceholder: {
@@ -193,6 +204,7 @@ const en = {
     form: {
       leaveAComment: () => "Leave a comment...",
     },
+    totalComments: (total: number) => `${total} Comments`,
   },
 
   groups: {
@@ -330,6 +342,10 @@ const en = {
     hours: (hours: number) => `${hours}h`,
     days: (days: number) => `${days}d`,
     infinity: () => "∞",
+  },
+
+  development: {
+    notImplemented: () => "This feature has not yet been implemented.",
   },
 
   middotWithSpaces: () => " · ",

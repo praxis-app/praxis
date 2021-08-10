@@ -1,4 +1,5 @@
 @import "../Shared/colors.scss";
+@import "../Shared/Shared.module.scss";
 
 .avatar {
   display: flex;
@@ -27,8 +28,12 @@
 }
 
 .groupNameLink {
-  display: block;
   font-size: 15px;
+  display: block;
+  width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .postByLink {
@@ -36,4 +41,10 @@
   font-size: 13px;
   color: $lightGray;
   margin-top: -1px;
+}
+
+@media only screen and (min-width: $desktopBreakpoint) {
+  .groupNameLink {
+    width: 375px;
+  }
 }

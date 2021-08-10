@@ -85,7 +85,7 @@ const VotesForm = ({
 
           setSubmitting(false);
         } else {
-          Router.push(`/motions/${vote.motionId}`);
+          Router.push(`${Common.ResourcePaths.Motion}${vote.motionId}`);
         }
       } catch (err) {
         alert(err);
@@ -134,6 +134,7 @@ const VotesForm = ({
               placeholder={placeholderText()}
               component={TextField}
               autoComplete="off"
+              multiline
             />
 
             <FormControl style={{ marginBottom: 20 }}>

@@ -75,7 +75,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
               images,
             },
           });
-          Router.push(`/posts/${post.id}`);
+          Router.push(`${Common.ResourcePaths.Post}${post.id}`);
         } else {
           const { data } = await createPost({
             variables: {

@@ -16,6 +16,7 @@ import GroupAvatar from "./Avatar";
 import JoinButton from "./JoinButton";
 import ItemMenu from "../Shared/ItemMenu";
 import { Common, Settings as SettingsConstants } from "../../constants";
+import { WHITE } from "../../styles/Shared/theme";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import {
@@ -83,7 +84,7 @@ const Group = ({ group, deleteGroup }: Props) => {
         <CardHeader
           avatar={group && <GroupAvatar group={group} />}
           title={
-            <Link href={`/groups/${name}`}>
+            <Link href={`${Common.ResourcePaths.Group}${name}`}>
               <a>{name}</a>
             </Link>
           }
@@ -99,7 +100,9 @@ const Group = ({ group, deleteGroup }: Props) => {
                 deleteItem={deleteGroup}
                 ownItem={() => isCreator()}
               >
-                <Link href={`/groups/${group.name}/settings`}>
+                <Link
+                  href={`${Common.ResourcePaths.Group}${group.name}/settings`}
+                >
                   <a>
                     <MenuItem>
                       <Settings
@@ -128,17 +131,17 @@ const Group = ({ group, deleteGroup }: Props) => {
               {description}
             </Typography>
 
-            <Link href={`/groups/${name}/members`}>
+            <Link href={`${Common.ResourcePaths.Group}${name}/members`}>
               <a>{Messages.groups.members(groupMembers.length)}</a>
             </Link>
 
             {canSeeRequests() && (
               <>
-                <span style={{ color: "white" }}>
+                <span style={{ color: WHITE }}>
                   {Messages.middotWithSpaces()}
                 </span>
 
-                <Link href={`/groups/${name}/requests`}>
+                <Link href={`${Common.ResourcePaths.Group}${name}/requests`}>
                   <a>{Messages.groups.requests(memberRequests.length)}</a>
                 </Link>
               </>
