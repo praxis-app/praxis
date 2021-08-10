@@ -177,7 +177,7 @@ const UserForm = ({ user, isEditing }: Props) => {
             </>
           )}
 
-          <SubmitButton disabled={!!formik.submitCount}>
+          <SubmitButton disabled={formik.isSubmitting}>
             {isEditing
               ? Messages.actions.save()
               : Messages.users.actions.signUp()}

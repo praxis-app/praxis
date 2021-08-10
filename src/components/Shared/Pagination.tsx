@@ -9,7 +9,6 @@ import {
   makeStyles,
   Theme,
   createStyles,
-  Select,
   MenuItem,
 } from "@material-ui/core";
 import { NavigateNext, NavigateBefore } from "@material-ui/icons";
@@ -18,6 +17,7 @@ import { paginationVar, feedVar } from "../../apollo/client/localState";
 import styles from "../../styles/Shared/Pagination.module.scss";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
+import Dropdown from "./Dropdown";
 
 const useStyles = makeStyles((theme: Theme) => {
   const hideForMobile = {
@@ -124,7 +124,7 @@ const PageButtons = ({ bottom }: Props) => {
         {Messages.pagination.rowsPerPage()}
       </Typography>
 
-      <Select
+      <Dropdown
         value={pageSize}
         onChange={handlePageSizeChange}
         onClick={() => setSelectOpen(!selectOpen)}
@@ -141,7 +141,7 @@ const PageButtons = ({ bottom }: Props) => {
             {_pageSize}
           </MenuItem>
         ))}
-      </Select>
+      </Dropdown>
 
       <Typography className={styles.sequenceText} color="primary">
         {sequenceText()}
