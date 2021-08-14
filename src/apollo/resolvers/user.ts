@@ -211,7 +211,7 @@ const userResolvers = {
           },
         });
       } catch (err) {
-        throw new ApolloError(Messages.errors.users.userCreationError());
+        throw new ApolloError(Messages.users.errors.userCreationError());
       }
 
       try {
@@ -286,7 +286,7 @@ const userResolvers = {
           data: { email, name },
         });
       } catch (err) {
-        throw new ApolloError(Messages.errors.users.userUpdateError());
+        throw new ApolloError(Messages.users.errors.userUpdateError());
       }
 
       if (!user)

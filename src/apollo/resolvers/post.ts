@@ -101,7 +101,7 @@ const postResolvers = {
           },
         });
       } catch (err) {
-        throw new ApolloError(Messages.errors.posts.postCreationError());
+        throw new ApolloError(Messages.posts.errors.postCreationError());
       }
 
       try {
@@ -126,7 +126,7 @@ const postResolvers = {
           data: { body },
         });
       } catch (err) {
-        throw new ApolloError(Messages.errors.posts.postUpdateError());
+        throw new ApolloError(Messages.posts.errors.postUpdateError());
       }
 
       if (!post)

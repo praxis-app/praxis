@@ -104,7 +104,7 @@ const commentResolvers = {
           },
         });
       } catch (err) {
-        throw new ApolloError(Messages.errors.comments.commentCreationError());
+        throw new ApolloError(Messages.comments.errors.commentCreationError());
       }
 
       try {
@@ -132,7 +132,7 @@ const commentResolvers = {
           data: { body },
         });
       } catch (err) {
-        throw new ApolloError(Messages.errors.comments.commentUpdateError());
+        throw new ApolloError(Messages.comments.errors.commentUpdateError());
       }
 
       if (!comment)

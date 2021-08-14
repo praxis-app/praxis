@@ -29,18 +29,6 @@ const en = {
   errors: {
     somethingWrong: () => "Something went wrong...",
     imageUploadError: () => "Unable to upload image(s)",
-    posts: {
-      postCreationError: () => "Unable to create post", // I don't like this message but I can't think of another
-      postUpdateError: () => "Post could not be edited",
-    },
-    comments: {
-      commentCreationError: () => "Unable to post comment",
-      commentUpdateError: () => "Unable to update comment",
-    },
-    users: {
-      userCreationError: () => "There was an error creating your account",
-      userUpdateError: () => "There was an error updating your account",
-    },
   },
 
   forms: {
@@ -97,6 +85,10 @@ const en = {
     permissionDenied: () => "Permission denied.",
     alreadyLoggedIn: () => "You're already signed in...",
     alreadyRegistered: () => "You have already created an account...",
+    errors: {
+      userCreationError: () => "There was an error creating your account",
+      userUpdateError: () => "There was an error updating your account",
+    },
   },
 
   posts: {
@@ -106,6 +98,10 @@ const en = {
     form: {
       bodyPlaceholder: () => "Post something awesome...",
       postEmpty: () => "Post cannot be empty!",
+    },
+    errors: {
+      postCreationError: () => "Unable to create post",
+      postUpdateError: () => "Post could not be edited",
     },
   },
 
@@ -204,6 +200,10 @@ const en = {
     },
     form: {
       leaveAComment: () => "Leave a comment...",
+    },
+    errors: {
+      commentCreationError: () => "Unable to post comment",
+      commentUpdateError: () => "Unable to update comment",
     },
   },
 
