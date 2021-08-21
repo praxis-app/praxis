@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 
 import prisma from "../../utils/initPrisma";
 import { validateSignup, validateLogin } from "../../utils/validation";
-import { Common } from "../../constants";
+import { EXPIRES_IN, TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
 import { paginate } from "../../utils/items";
 
@@ -85,7 +85,7 @@ const userResolvers = {
                 ),
                 ...userWithFeedItems.motions.map((motion) => ({
                   ...motion,
-                  __typename: Common.TypeNames.Motion,
+                  __typename: TypeNames.Motion,
                 })),
               ];
           }
@@ -109,12 +109,12 @@ const userResolvers = {
               ...feed,
               ...groupMotions.map((motion) => ({
                 ...motion,
-                __typename: Common.TypeNames.Motion,
+                __typename: TypeNames.Motion,
               })),
             ];
         }
         feed.forEach((item) => {
-          if (!item.__typename) item.__typename = Common.TypeNames.Post;
+          if (!item.__typename) item.__typename = TypeNames.Post;
         });
         const uniq: BackendFeedItem[] = [];
         for (const item of feed) {
@@ -133,10 +133,10 @@ const userResolvers = {
         const posts: BackendPost[] = await prisma.post.findMany();
         const motions: BackendMotion[] = await prisma.motion.findMany();
         posts.forEach((item) => {
-          item.__typename = Common.TypeNames.Post;
+          item.__typename = TypeNames.Post;
         });
         motions.forEach((item) => {
-          item.__typename = Common.TypeNames.Motion;
+          item.__typename = TypeNames.Motion;
         });
 
         feed = [...posts, ...motions];
@@ -169,10 +169,10 @@ const userResolvers = {
       const posts = userWithFeedItems?.posts as BackendPost[];
       const motions = userWithFeedItems?.motions as BackendMotion[];
       posts.forEach((item) => {
-        item.__typename = Common.TypeNames.Post;
+        item.__typename = TypeNames.Post;
       });
       motions.forEach((item) => {
-        item.__typename = Common.TypeNames.Motion;
+        item.__typename = TypeNames.Motion;
       });
       feed.push(...posts, ...motions);
 
@@ -257,7 +257,7 @@ const userResolvers = {
       };
 
       const token = jwt.sign(jwtPayload, process.env.JWT_KEY as string, {
-        expiresIn: Common.EXPIRES_IN,
+        expiresIn: EXPIRES_IN,
       });
 
       return { user, token };
@@ -290,7 +290,7 @@ const userResolvers = {
           email: user.email,
         };
         const token = jwt.sign(jwtPayload, process.env.JWT_KEY as string, {
-          expiresIn: Common.EXPIRES_IN,
+          expiresIn: EXPIRES_IN,
         });
 
         return { user, token };
@@ -310,8 +310,7 @@ const userResolvers = {
         data: { email, name },
       });
 
-      if (!user)
-        throw new Error(Messages.items.notFound(Common.TypeNames.User));
+      if (!user) throw new Error(Messages.items.notFound(TypeNames.User));
 
       try {
         await saveProfilePicture(user, profilePicture);

@@ -1,4 +1,4 @@
-import { Common } from "../constants";
+import { Time } from "../constants/common";
 import Messages from "./messages";
 
 export const formatDate = (timeStamp: string, withMiddot = true): string => {
@@ -30,25 +30,19 @@ const timeMessage = (
   withMiddot = true
 ): string => {
   const middot = withMiddot ? Messages.middotWithSpaces() : "";
-  if (timeDifference < Common.Time.Minute) {
+  if (timeDifference < Time.Minute) {
     return middot + Messages.time.now();
   }
-  if (timeDifference < Common.Time.Hour) {
+  if (timeDifference < Time.Hour) {
     return (
-      middot +
-      Messages.time.minutes(Math.round(timeDifference / Common.Time.Minute))
+      middot + Messages.time.minutes(Math.round(timeDifference / Time.Minute))
     );
   }
-  if (timeDifference < Common.Time.Day) {
-    return (
-      middot +
-      Messages.time.hours(Math.round(timeDifference / Common.Time.Hour))
-    );
+  if (timeDifference < Time.Day) {
+    return middot + Messages.time.hours(Math.round(timeDifference / Time.Hour));
   }
-  if (timeDifference < Common.Time.Month) {
-    return (
-      middot + Messages.time.days(Math.round(timeDifference / Common.Time.Day))
-    );
+  if (timeDifference < Time.Month) {
+    return middot + Messages.time.days(Math.round(timeDifference / Time.Day));
   }
   return formatDate(timeStamp, withMiddot);
 };

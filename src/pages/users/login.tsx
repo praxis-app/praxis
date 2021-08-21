@@ -8,7 +8,8 @@ import { SIGN_IN, SET_CURRENT_USER } from "../../apollo/client/mutations";
 import { setAuthToken } from "../../utils/auth";
 import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
-import { Common, Users } from "../../constants";
+import { LocalStorage } from "../../constants/common";
+import { FieldNames } from "../../constants/user";
 import { useCurrentUser } from "../../hooks";
 import SubmitButton from "../../components/Shared/SubmitButton";
 import TextField, { PasswordField } from "../../components/Shared/TextField";
@@ -47,7 +48,7 @@ const Login = () => {
           email: user.email,
         },
       });
-      localStorage.setItem(Common.LocalStorage.JwtToken, token);
+      localStorage.setItem(LocalStorage.JwtToken, token);
       setAuthToken(token);
       Router.push("/");
     } catch (err) {
@@ -67,12 +68,12 @@ const Login = () => {
             }}
           >
             <Field
-              name={Users.FieldNames.Email}
+              name={FieldNames.Email}
               placeholder={Messages.users.form.email()}
               component={TextField}
             />
             <Field
-              name={Users.FieldNames.Password}
+              name={FieldNames.Password}
               placeholder={Messages.users.form.password()}
               component={PasswordField}
             />

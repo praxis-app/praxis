@@ -12,7 +12,8 @@ import TableCell from "../../components/Shared/TableCell";
 import { timeFromNow } from "../../utils/time";
 import Messages from "../../utils/messages";
 import ItemMenu from "../Shared/ItemMenu";
-import { Common, ServerInvites } from "../../constants";
+import { ToastStatus } from "../../constants/common";
+import { ITEM_TYPE } from "../../constants/serverInvite";
 import { toastVar } from "../../apollo/client/localState";
 
 interface Props {
@@ -32,7 +33,7 @@ const ServerInvite = ({ invite, invites, setInvites }: Props) => {
     setMenuAnchorEl(null);
     toastVar({
       title: Messages.invites.copiedToClipboard(),
-      status: Common.ToastStatus.Success,
+      status: ToastStatus.Success,
     });
   };
 
@@ -69,7 +70,7 @@ const ServerInvite = ({ invite, invites, setInvites }: Props) => {
         <TableCell>
           <ItemMenu
             itemId={invite.id}
-            itemType={ServerInvites.ITEM_TYPE}
+            itemType={ITEM_TYPE}
             anchorEl={menuAnchorEl}
             setAnchorEl={setMenuAnchorEl}
             deleteItem={deleteInviteHandler}

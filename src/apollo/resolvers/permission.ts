@@ -1,7 +1,7 @@
 import { GraphQLUpload } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
-import { Common } from "../../constants";
+import { TypeNames } from "../../constants/common";
 
 interface PermissionInput {
   permissions: Permission[];
@@ -73,7 +73,7 @@ const permissionResolvers = {
         });
 
         if (!updatedPermission)
-          throw new Error(Messages.items.notFound(Common.TypeNames.Permission));
+          throw new Error(Messages.items.notFound(TypeNames.Permission));
 
         updatedPermissions = [...updatedPermissions, updatedPermission];
       }

@@ -22,7 +22,7 @@ import VotesList from "../../components/Votes/List";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser } from "../../hooks";
-import { Common } from "../../constants";
+import { FocusTargets } from "../../constants/common";
 
 const Show = () => {
   const { query } = useRouter();
@@ -89,7 +89,7 @@ const Show = () => {
 
   useEffect(() => {
     if (query.comments) setTab(1);
-    if (query.focus) focusVar(Common.FocusTargets.CommentFormTextField);
+    if (query.focus) focusVar(FocusTargets.CommentFormTextField);
   }, [query.comments, query.focus]);
 
   const deleteMotionHandler = async (id: string) => {

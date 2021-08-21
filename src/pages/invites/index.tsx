@@ -17,17 +17,17 @@ import ServerInvite from "../../components/ServerInvites/ServerInvite";
 import TableCell from "../../components/Shared/TableCell";
 import ServerInviteForm from "../../components/ServerInvites/Form";
 import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
-import { Roles } from "../../constants";
+import { Permissions } from "../../constants/role";
 
 const Index = () => {
   const currentUser = useCurrentUser();
   const [invites, setInvites] = useState<ServerInvite[]>([]);
   const invitesRes = useQuery(SERVER_INVITES, noCache);
   const [canManageInvites, canManageInvitesLoading] = useHasPermissionGlobally(
-    Roles.Permissions.ManageInvites
+    Permissions.ManageInvites
   );
   const [canCreateInvites, canCreateInvitesLoading] = useHasPermissionGlobally(
-    Roles.Permissions.CreateInvites
+    Permissions.CreateInvites
   );
 
   useEffect(() => {

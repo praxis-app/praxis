@@ -2,12 +2,11 @@
 // Prevents hot reloading in development from creating new instances of PrismaClient
 
 import { PrismaClient } from "@prisma/client";
-import { Common } from "../constants";
+import { Environments } from "../constants/common";
 
 declare const global: typeof globalThis & { prisma?: PrismaClient };
 
 const prisma = global.prisma || new PrismaClient();
-if (process.env.NODE_ENV === Common.Environments.Development)
-  global.prisma = prisma;
+if (process.env.NODE_ENV === Environments.Development) global.prisma = prisma;
 
 export default prisma;

@@ -3,7 +3,7 @@ import { MockedProvider } from "@apollo/client/testing";
 import { mocked } from "ts-jest/utils";
 
 import Messages from "../../../utils/messages";
-import { Common } from "../../../constants";
+import { TypeNames } from "../../../constants/common";
 import Header from "../Header";
 import {
   useCurrentUser,
@@ -29,7 +29,7 @@ const mockCurrentUser: CurrentUser = {
   name: mockUserName,
   email: "test@email.com",
   isAuthenticated: true,
-  __typename: Common.TypeNames.CurrentUser,
+  __typename: TypeNames.CurrentUser,
 };
 const mockInviteToken = "mockInviteToken";
 

@@ -2,11 +2,12 @@ import { useMutation, useReactiveVar } from "@apollo/client";
 import { Menu, MenuItem, PopoverOrigin, SvgIconProps } from "@material-ui/core";
 import { ThumbUp, ThumbDown } from "@material-ui/icons";
 
-import { Motions, Votes } from "../../constants";
+import { Stages } from "../../constants/motion";
 import { motionVar } from "../../apollo/client/localState";
 import { CREATE_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
 import { useCurrentUser } from "../../hooks";
 import { BLURPLE, WHITE } from "../../styles/Shared/theme";
+import { FlipStates } from "../../constants/vote";
 import Messages from "../../utils/messages";
 
 interface VoteButtonProps {
@@ -17,7 +18,7 @@ interface VoteButtonProps {
 
 const VoteMenuItem = ({ flipState, handleClick, color }: VoteButtonProps) => {
   const IconWithText = (iconProps: SvgIconProps) =>
-    flipState === Votes.FlipStates.Up ? (
+    flipState === FlipStates.Up ? (
       <>
         <ThumbUp {...iconProps} />
         <span style={{ color }}>{Messages.votes.actions.support()}</span>
@@ -73,20 +74,19 @@ const VoteMenu = ({
   };
 
   const alreadyUpVote = (): Vote | null => {
-    if (alreadyVote()?.flipState === Votes.FlipStates.Up) return alreadyVote();
+    if (alreadyVote()?.flipState === FlipStates.Up) return alreadyVote();
     return null;
   };
 
   const alreadyDownVote = (): Vote | null => {
-    if (alreadyVote()?.flipState === Votes.FlipStates.Down)
-      return alreadyVote();
+    if (alreadyVote()?.flipState === FlipStates.Down) return alreadyVote();
     return null;
   };
 
   const menuItemColor = (flipState: string): string => {
     if (
-      (flipState === Votes.FlipStates.Up && alreadyUpVote()) ||
-      (flipState === Votes.FlipStates.Down && alreadyDownVote())
+      (flipState === FlipStates.Up && alreadyUpVote()) ||
+      (flipState === FlipStates.Down && alreadyDownVote())
     )
       return BLURPLE;
     return WHITE;
@@ -117,7 +117,7 @@ const VoteMenu = ({
       });
       newVotes = [...newVotes, data.createVote.vote];
       if (data.createVote.motionRatified && motionFromGlobal) {
-        motionVar({ ...motionFromGlobal, stage: Motions.Stages.Ratified });
+        motionVar({ ...motionFromGlobal, stage: Stages.Ratified });
       }
     }
     setVotes(newVotes);
@@ -135,14 +135,14 @@ const VoteMenu = ({
     >
       <div>
         <VoteMenuItem
-          flipState={Votes.FlipStates.Up}
+          flipState={FlipStates.Up}
           handleClick={handleButtonClick}
-          color={menuItemColor(Votes.FlipStates.Up)}
+          color={menuItemColor(FlipStates.Up)}
         />
         <VoteMenuItem
-          flipState={Votes.FlipStates.Down}
+          flipState={FlipStates.Down}
           handleClick={handleButtonClick}
-          color={menuItemColor(Votes.FlipStates.Down)}
+          color={menuItemColor(FlipStates.Down)}
         />
       </div>
     </Menu>

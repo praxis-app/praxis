@@ -16,7 +16,11 @@ import {
   LIKES_BY_POST_ID,
   TOTAL_COMMENTS_BY_POST_ID,
 } from "../../apollo/client/queries";
-import { Common } from "../../constants";
+import {
+  FocusTargets,
+  ResourcePaths,
+  ToastStatus,
+} from "../../constants/common";
 import styles from "../../styles/Shared/CardFooter.module.scss";
 import { noCache } from "../../utils/apollo";
 import Messages from "../../utils/messages";
@@ -47,7 +51,7 @@ const CardFooter = ({ postId }: Props) => {
   const classes = useStyles();
   const router = useRouter();
 
-  const linkToPostPage = `${Common.ResourcePaths.Post}${postId}`;
+  const linkToPostPage = `${ResourcePaths.Post}${postId}`;
 
   useEffect(() => {
     if (postId && likesByPostIdRes.data)
@@ -60,7 +64,7 @@ const CardFooter = ({ postId }: Props) => {
   }, [totalCommentsRes.data]);
 
   const onPostPage = (): boolean => {
-    return router.asPath.includes(Common.ResourcePaths.Post);
+    return router.asPath.includes(ResourcePaths.Post);
   };
 
   return (
@@ -101,8 +105,7 @@ const CardFooter = ({ postId }: Props) => {
         <ActionButton
           href={onPostPage() ? undefined : linkToPostPage}
           onClick={() => {
-            if (onPostPage())
-              focusVar(Common.FocusTargets.CommentFormTextField);
+            if (onPostPage()) focusVar(FocusTargets.CommentFormTextField);
           }}
         >
           <Comment
@@ -119,7 +122,7 @@ const CardFooter = ({ postId }: Props) => {
           onClick={() =>
             toastVar({
               title: Messages.development.notImplemented(),
-              status: Common.ToastStatus.Info,
+              status: ToastStatus.Info,
             })
           }
         >

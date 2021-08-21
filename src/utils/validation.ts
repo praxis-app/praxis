@@ -1,7 +1,7 @@
 import validator from "validator";
 import isEmpty from "is-empty";
 import Messages from "./messages";
-import { Users } from "../constants";
+import { NameValidation, PasswordValidation } from "../constants/user";
 
 function validateLogin(data: SignInInput) {
   const errors: ValidationError = {};
@@ -21,13 +21,13 @@ function validateLogin(data: SignInInput) {
 
   if (
     !validator.isLength(data.password, {
-      min: Users.PasswordValidation.Min,
-      max: Users.PasswordValidation.Max,
+      min: PasswordValidation.Min,
+      max: PasswordValidation.Max,
     })
   ) {
     errors.password = Messages.users.validation.passwordLength(
-      Users.PasswordValidation.Min,
-      Users.PasswordValidation.Max
+      PasswordValidation.Min,
+      PasswordValidation.Max
     );
   }
 
@@ -55,13 +55,13 @@ function validateSignup(data: SignUpInput) {
 
   if (
     !validator.isLength(data.name, {
-      min: Users.NameValidation.Min,
-      max: Users.NameValidation.Max,
+      min: NameValidation.Min,
+      max: NameValidation.Max,
     })
   ) {
     errors.name = Messages.users.validation.nameLength(
-      Users.NameValidation.Min,
-      Users.NameValidation.Max
+      NameValidation.Min,
+      NameValidation.Max
     );
   }
 
@@ -79,13 +79,13 @@ function validateSignup(data: SignUpInput) {
 
   if (
     !validator.isLength(data.password, {
-      min: Users.PasswordValidation.Min,
-      max: Users.PasswordValidation.Max,
+      min: PasswordValidation.Min,
+      max: PasswordValidation.Max,
     })
   ) {
     errors.password = Messages.users.validation.passwordLength(
-      Users.PasswordValidation.Min,
-      Users.PasswordValidation.Max
+      PasswordValidation.Min,
+      PasswordValidation.Max
     );
   }
 
@@ -95,13 +95,13 @@ function validateSignup(data: SignUpInput) {
 
   if (
     !validator.isLength(data.passwordConfirm, {
-      min: Users.PasswordValidation.Min,
-      max: Users.PasswordValidation.Max,
+      min: PasswordValidation.Min,
+      max: PasswordValidation.Max,
     })
   ) {
     errors.passwordConfirm = Messages.users.validation.passwordLength(
-      Users.PasswordValidation.Min,
-      Users.PasswordValidation.Max
+      PasswordValidation.Min,
+      PasswordValidation.Max
     );
   }
 

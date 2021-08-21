@@ -9,7 +9,7 @@ import { noCache } from "../../utils/apollo";
 import { useCurrentUser } from "../../hooks";
 import WelcomeCard from "../../components/About/Welcome";
 import Messages from "../../utils/messages";
-import { Common } from "../../constants";
+import { LocalStorage } from "../../constants/common";
 import { redeemedInviteToken } from "../../utils/invite";
 
 const RedeemServerInvite = () => {
@@ -34,7 +34,7 @@ const RedeemServerInvite = () => {
     if (inviteRes.data && query.token && !redeemedInviteToken()) {
       const token = query.token as string;
       setInvite(inviteRes.data.serverInviteByToken);
-      localStorage.setItem(Common.LocalStorage.RedeemedInviteToken, token);
+      localStorage.setItem(LocalStorage.RedeemedInviteToken, token);
       callRedeemServerInvite(token);
     }
   }, [inviteRes.data, query.token, redeemedInviteToken()]);

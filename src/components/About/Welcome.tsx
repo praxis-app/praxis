@@ -13,9 +13,9 @@ import {
 import { Close } from "@material-ui/icons";
 
 import Messages from "../../utils/messages";
-import { Common } from "../../constants";
 import { redeemedInviteToken } from "../../utils/invite";
 import { WHITE } from "../../styles/Shared/theme";
+import { LocalStorage } from "../../constants/common";
 
 const useStyles = makeStyles({
   title: {
@@ -41,13 +41,13 @@ const WelcomeCard = ({ isLoggedIn }: Props) => {
 
   const onClose = () => {
     setClosed(true);
-    localStorage.setItem(Common.LocalStorage.WelcomeCardClosed, "true");
+    localStorage.setItem(LocalStorage.WelcomeCardClosed, "true");
   };
 
   const alreadyClosed = (): boolean => {
     return (
       typeof localStorage !== "undefined" &&
-      !!localStorage.getItem(Common.LocalStorage.WelcomeCardClosed)
+      !!localStorage.getItem(LocalStorage.WelcomeCardClosed)
     );
   };
 

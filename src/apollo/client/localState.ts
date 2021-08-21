@@ -1,5 +1,10 @@
 import { makeVar } from "@apollo/client";
-import { Common } from "../../constants";
+import {
+  INITIAL_FEED_STATE,
+  INITIAL_PAGINATION_STATE,
+  LocalStorage,
+  TypeNames,
+} from "../../constants/common";
 import { setAuthToken } from "../../utils/auth";
 
 export const motionVar = makeVar<Motion | null>(null);
@@ -9,13 +14,11 @@ export const headerKeyVar = makeVar<string>("");
 export const tabVar = makeVar<number | null>(null);
 export const breadcrumbsVar = makeVar<Breadcrumb[]>([]);
 export const toastVar = makeVar<ToastNotification | null>(null);
-export const feedVar = makeVar<FeedState>(Common.INITIAL_FEED_STATE);
-export const paginationVar = makeVar<PaginationState>(
-  Common.INITIAL_PAGINATION_STATE
-);
+export const feedVar = makeVar<FeedState>(INITIAL_FEED_STATE);
+export const paginationVar = makeVar<PaginationState>(INITIAL_PAGINATION_STATE);
 
 export const defaults = {
-  user: { isAuthenticated: false, __typename: Common.TypeNames.CurrentUser },
+  user: { isAuthenticated: false, __typename: TypeNames.CurrentUser },
 };
 
 export const resolvers = {
@@ -30,7 +33,7 @@ export const resolvers = {
         user: {
           ...user,
           isAuthenticated: true,
-          __typename: Common.TypeNames.CurrentUser,
+          __typename: TypeNames.CurrentUser,
         },
       };
       cache.writeData({ data });
@@ -44,11 +47,11 @@ export const resolvers = {
           name: null,
           email: null,
           isAuthenticated: false,
-          __typename: Common.TypeNames.CurrentUser,
+          __typename: TypeNames.CurrentUser,
         },
       };
       cache.writeData({ data });
-      localStorage.removeItem(Common.LocalStorage.JwtToken);
+      localStorage.removeItem(LocalStorage.JwtToken);
       setAuthToken(false);
       return data;
     },

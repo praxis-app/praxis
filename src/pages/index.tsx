@@ -6,7 +6,7 @@ import Feed from "../components/Shared/Feed";
 import { HOME_FEED } from "../apollo/client/queries";
 import { DELETE_POST, DELETE_MOTION } from "../apollo/client/mutations";
 import WelcomeCard from "../components/About/Welcome";
-import { Common } from "../constants";
+import { TypeNames } from "../constants/common";
 import { feedVar, paginationVar } from "../apollo/client/localState";
 import { useCurrentUser } from "../hooks";
 import { noCache, resetFeed } from "../utils/clientIndex";
@@ -59,8 +59,7 @@ const Home = () => {
     feedVar({
       ...feed,
       items: feed.items.filter(
-        (item: FeedItem) =>
-          item.id !== id || item.__typename !== Common.TypeNames.Post
+        (item: FeedItem) => item.id !== id || item.__typename !== TypeNames.Post
       ),
       totalItems: feed.totalItems - 1,
     });
@@ -76,7 +75,7 @@ const Home = () => {
       ...feed,
       items: feed.items.filter(
         (item: FeedItem) =>
-          item.id !== id || item.__typename !== Common.TypeNames.Motion
+          item.id !== id || item.__typename !== TypeNames.Motion
       ),
       totalItems: feed.totalItems - 1,
     });

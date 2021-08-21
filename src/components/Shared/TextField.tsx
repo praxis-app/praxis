@@ -8,7 +8,7 @@ import {
 import { useRouter } from "next/router";
 
 import { focusVar } from "../../apollo/client/localState";
-import { Common } from "../../constants";
+import { FocusTargets, ResourcePaths } from "../../constants/common";
 
 const commonStyles = createStyles({
   root: {
@@ -25,9 +25,9 @@ const TextField = (props: TextFieldProps) => {
 
   useEffect(() => {
     if (
-      (router.asPath.includes(Common.ResourcePaths.Post) ||
-        router.asPath.includes(Common.ResourcePaths.Motion)) &&
-      currentFocus === Common.FocusTargets.CommentFormTextField
+      (router.asPath.includes(ResourcePaths.Post) ||
+        router.asPath.includes(ResourcePaths.Motion)) &&
+      currentFocus === FocusTargets.CommentFormTextField
     ) {
       ref.current?.focus();
     }

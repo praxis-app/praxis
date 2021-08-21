@@ -14,10 +14,10 @@ import {
   useHasPermissionGlobally,
   useWindowSize,
 } from "../../hooks";
-import { Roles } from "../../constants";
 import styles from "../../styles/Shared/Header.module.scss";
 import { headerKeyVar } from "../../apollo/client/localState";
 import { redeemedInviteToken } from "../../utils/clientIndex";
+import { Permissions } from "../../constants/role";
 
 const cx = classNames.bind(styles);
 
@@ -31,19 +31,19 @@ const Header = () => {
   const currentUser = useCurrentUser();
   const refreshKey = useReactiveVar(headerKeyVar);
   const [canManageRoles] = useHasPermissionGlobally(
-    Roles.Permissions.ManageRoles,
+    Permissions.ManageRoles,
     refreshKey
   );
   const [canManageUsers] = useHasPermissionGlobally(
-    Roles.Permissions.ManageUsers,
+    Permissions.ManageUsers,
     refreshKey
   );
   const [canManageInvites] = useHasPermissionGlobally(
-    Roles.Permissions.ManageInvites,
+    Permissions.ManageInvites,
     refreshKey
   );
   const [canCreateInvites] = useHasPermissionGlobally(
-    Roles.Permissions.CreateInvites,
+    Permissions.CreateInvites,
     refreshKey
   );
 

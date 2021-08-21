@@ -1,5 +1,5 @@
 import { feedVar } from "../apollo/client/localState";
-import { Common } from "../constants";
+import { INITIAL_FEED_STATE } from "../constants/common";
 
 export const displayName = (name: string): string => {
   let shownName = name[0].toUpperCase() + name.slice(1);
@@ -26,5 +26,5 @@ export const paginate = (
 };
 
 export const resetFeed = (): void => {
-  feedVar(Common.INITIAL_FEED_STATE);
+  feedVar(INITIAL_FEED_STATE);
 };

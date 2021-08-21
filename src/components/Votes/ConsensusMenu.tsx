@@ -2,10 +2,11 @@ import { useMutation, useReactiveVar } from "@apollo/client";
 import { Menu, MenuItem, PopoverOrigin, SvgIconProps } from "@material-ui/core";
 import { ThumbUp, ThumbDown, PanTool, ThumbsUpDown } from "@material-ui/icons";
 
-import { Motions, Votes } from "../../constants";
+import { Stages } from "../../constants/motion";
 import { BLURPLE, WHITE } from "../../styles/Shared/theme";
 import { motionVar } from "../../apollo/client/localState";
 import { CREATE_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
+import { ConsensusStates } from "../../constants/vote";
 import { useCurrentUser } from "../../hooks";
 import Messages from "../../utils/messages";
 
@@ -21,21 +22,21 @@ const ConsensusMenuItem = ({
   color,
 }: ConsensusMenuItemProps) => {
   const IconWithText = (iconProps: SvgIconProps) => {
-    if (consensusState === Votes.ConsensusStates.Agreement)
+    if (consensusState === ConsensusStates.Agreement)
       return (
         <>
           <ThumbUp {...iconProps} />
           <span style={{ color }}>{Messages.votes.actions.agree()}</span>
         </>
       );
-    if (consensusState === Votes.ConsensusStates.Reservations)
+    if (consensusState === ConsensusStates.Reservations)
       return (
         <>
           <ThumbsUpDown {...iconProps} />
           <span style={{ color }}>{Messages.votes.actions.reservations()}</span>
         </>
       );
-    if (consensusState === Votes.ConsensusStates.StandAside)
+    if (consensusState === ConsensusStates.StandAside)
       return (
         <>
           <ThumbDown {...iconProps} />
@@ -95,37 +96,37 @@ const ConsensusMenu = ({
   };
 
   const alreadyAgree = (): Vote | null => {
-    if (alreadyVote()?.consensusState === Votes.ConsensusStates.Agreement)
+    if (alreadyVote()?.consensusState === ConsensusStates.Agreement)
       return alreadyVote();
     return null;
   };
 
   const alreadyDeclaredReservations = (): Vote | null => {
-    if (alreadyVote()?.consensusState === Votes.ConsensusStates.Reservations)
+    if (alreadyVote()?.consensusState === ConsensusStates.Reservations)
       return alreadyVote();
     return null;
   };
 
   const alreadyDelcaredStandAside = (): Vote | null => {
-    if (alreadyVote()?.consensusState === Votes.ConsensusStates.StandAside)
+    if (alreadyVote()?.consensusState === ConsensusStates.StandAside)
       return alreadyVote();
     return null;
   };
 
   const alreadyBlocked = (): Vote | null => {
-    if (alreadyVote()?.consensusState === Votes.ConsensusStates.Block)
+    if (alreadyVote()?.consensusState === ConsensusStates.Block)
       return alreadyVote();
     return null;
   };
 
   const menuItemColor = (consensusState: string): string => {
     if (
-      (consensusState === Votes.ConsensusStates.Agreement && alreadyAgree()) ||
-      (consensusState === Votes.ConsensusStates.Reservations &&
+      (consensusState === ConsensusStates.Agreement && alreadyAgree()) ||
+      (consensusState === ConsensusStates.Reservations &&
         alreadyDeclaredReservations()) ||
-      (consensusState === Votes.ConsensusStates.StandAside &&
+      (consensusState === ConsensusStates.StandAside &&
         alreadyDelcaredStandAside()) ||
-      (consensusState === Votes.ConsensusStates.Block && alreadyBlocked())
+      (consensusState === ConsensusStates.Block && alreadyBlocked())
     )
       return BLURPLE;
     return WHITE;
@@ -156,7 +157,7 @@ const ConsensusMenu = ({
       });
       newVotes = [...newVotes, data.createVote.vote];
       if (data.createVote.motionRatified && motionFromGlobal) {
-        motionVar({ ...motionFromGlobal, stage: Motions.Stages.Ratified });
+        motionVar({ ...motionFromGlobal, stage: Stages.Ratified });
       }
     }
     setVotes(newVotes);
@@ -175,23 +176,23 @@ const ConsensusMenu = ({
       <div>
         <ConsensusMenuItem
           handleClick={handleMenuItemClick}
-          consensusState={Votes.ConsensusStates.Agreement}
-          color={menuItemColor(Votes.ConsensusStates.Agreement)}
+          consensusState={ConsensusStates.Agreement}
+          color={menuItemColor(ConsensusStates.Agreement)}
         />
         <ConsensusMenuItem
           handleClick={handleMenuItemClick}
-          consensusState={Votes.ConsensusStates.StandAside}
-          color={menuItemColor(Votes.ConsensusStates.StandAside)}
+          consensusState={ConsensusStates.StandAside}
+          color={menuItemColor(ConsensusStates.StandAside)}
         />
         <ConsensusMenuItem
           handleClick={handleMenuItemClick}
-          consensusState={Votes.ConsensusStates.Reservations}
-          color={menuItemColor(Votes.ConsensusStates.Reservations)}
+          consensusState={ConsensusStates.Reservations}
+          color={menuItemColor(ConsensusStates.Reservations)}
         />
         <ConsensusMenuItem
           handleClick={handleMenuItemClick}
-          consensusState={Votes.ConsensusStates.Block}
-          color={menuItemColor(Votes.ConsensusStates.Block)}
+          consensusState={ConsensusStates.Block}
+          color={menuItemColor(ConsensusStates.Block)}
         />
       </div>
     </Menu>

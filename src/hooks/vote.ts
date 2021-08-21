@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
-import { Votes } from "../constants";
-
-export const ConsensusStates = Votes.ConsensusStates;
-export const FlipStates = Votes.FlipStates;
+import { ConsensusStates, FlipStates } from "../constants/vote";
 
 export const useConsensusVotes = (
   votes: Vote[],

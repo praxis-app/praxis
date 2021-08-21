@@ -2,7 +2,8 @@ import Link from "next/link";
 import UserAvatar from "../Users/Avatar";
 import GroupAvatar from "./Avatar";
 import styles from "../../styles/Group/ItemAvatar.module.scss";
-import { Common, Motions } from "../../constants";
+import { ModelNames, ResourcePaths } from "../../constants/common";
+import { Stages } from "../../constants/motion";
 import Messages from "../../utils/messages";
 import { timeAgo } from "../../utils/time";
 
@@ -21,8 +22,8 @@ const GroupItemAvatar = ({ user, group, motion, post }: Props) => {
   };
 
   const itemHref = (): string => {
-    if (motion) return `${Common.ResourcePaths.Motion}${motion.id}`;
-    if (post) return `${Common.ResourcePaths.Post}${post?.id}`;
+    if (motion) return `${ResourcePaths.Motion}${motion.id}`;
+    if (post) return `${ResourcePaths.Post}${post?.id}`;
     return "";
   };
 
@@ -38,15 +39,15 @@ const GroupItemAvatar = ({ user, group, motion, post }: Props) => {
           )}
         </div>
         <div className={styles.groupPostLinks}>
-          <Link href={`${Common.ResourcePaths.Group}${group.name}`}>
+          <Link href={`${ResourcePaths.Group}${group.name}`}>
             <a className={styles.groupNameLink}>{group.name}</a>
           </Link>
           <Link href={itemHref()}>
             <a className={styles.postByLink}>
               {Messages.groups.itemWithNameAndRatified(
-                motion ? Common.ModelNames.Motion : Common.ModelNames.Post,
+                motion ? ModelNames.Motion : ModelNames.Post,
                 user.name,
-                motion?.stage === Motions.Stages.Ratified
+                motion?.stage === Stages.Ratified
               )}
               {timeAgo(createdAt())}
             </a>

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Common } from "../constants";
+import { LocalStorage } from "../constants/common";
 
 const setAuthToken = (token: any) => {
   if (token) axios.defaults.headers.common.Authorization = token;
@@ -11,7 +11,7 @@ const isAuthenticated = (currentUser: CurrentUser | undefined): boolean => {
     typeof currentUser !== "undefined" &&
     typeof localStorage !== "undefined" &&
     currentUser.isAuthenticated &&
-    localStorage.getItem(Common.LocalStorage.JwtToken) !== null
+    localStorage.getItem(LocalStorage.JwtToken) !== null
   );
 };
 

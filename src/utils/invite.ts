@@ -1,7 +1,7 @@
-import { Common } from "../constants";
+import { LocalStorage } from "../constants/common";
 
 export const redeemedInviteToken = (): string | null => {
   if (typeof localStorage !== "undefined")
-    return localStorage.getItem(Common.LocalStorage.RedeemedInviteToken);
+    return localStorage.getItem(LocalStorage.RedeemedInviteToken);
   return null;
 };

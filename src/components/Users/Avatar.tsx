@@ -15,13 +15,13 @@ import { CURRENT_PROFILE_PICTURE } from "../../apollo/client/queries";
 import Messages from "../../utils/messages";
 import styles from "../../styles/User/User.module.scss";
 import { noCache } from "../../utils/apollo";
-import { Common } from "../../constants";
+import { DESKTOP_BREAKPOINT } from "../../constants/common";
 import { BLACK, BLURPLE, WHITE } from "../../styles/Shared/theme";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      [theme.breakpoints.down(Common.DESKTOP_BREAKPOINT)]: {
+      [theme.breakpoints.down(DESKTOP_BREAKPOINT)]: {
         width: 25,
         height: 25,
       },

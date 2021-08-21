@@ -3,9 +3,9 @@ import { useReactiveVar } from "@apollo/client";
 import { Card, LinearProgress } from "@material-ui/core";
 
 import { feedVar } from "../../apollo/client/localState";
-import { Common } from "../../constants";
 import Motion from "../Motions/Motion";
 import Post from "../Posts/Post";
+import { TypeNames } from "../../constants/common";
 
 interface Props {
   deleteMotion: (id: string) => void;
@@ -36,7 +36,7 @@ const List = ({ deleteMotion, deletePost }: Props) => {
   return (
     <>
       {items.map((item) => {
-        return item.__typename === Common.TypeNames.Motion ? (
+        return item.__typename === TypeNames.Motion ? (
           <Motion
             motion={item as Motion}
             deleteMotion={deleteMotion}
