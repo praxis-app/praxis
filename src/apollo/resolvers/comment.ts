@@ -54,14 +54,22 @@ const commentResolvers = {
       const comments = await prisma.comment.findMany({
         where: { postId: parseInt(postId) },
       });
-      return comments;
+
+      return {
+        comments,
+        totalComments: comments.length,
+      };
     },
 
     commentsByMotionId: async (_: any, { motionId }: { motionId: string }) => {
       const comments = await prisma.comment.findMany({
         where: { motionId: parseInt(motionId) },
       });
-      return comments;
+
+      return {
+        comments,
+        totalComments: comments.length,
+      };
     },
   },
 

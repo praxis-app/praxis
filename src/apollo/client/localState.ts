@@ -4,12 +4,14 @@ import { setAuthToken } from "../../utils/auth";
 
 export const motionVar = makeVar<Motion | null>(null);
 export const votesVar = makeVar<Vote[]>([]);
+export const focusVar = makeVar<string>("");
 export const headerKeyVar = makeVar<string>("");
+export const tabVar = makeVar<number | null>(null);
 export const breadcrumbsVar = makeVar<Breadcrumb[]>([]);
 export const toastVar = makeVar<ToastNotification | null>(null);
-export const feedVar = makeVar<FeedState>(Common.DEFAULT_FEED_STATE);
+export const feedVar = makeVar<FeedState>(Common.INITIAL_FEED_STATE);
 export const paginationVar = makeVar<PaginationState>(
-  Common.DEFAULT_PAGINATION_STATE
+  Common.INITIAL_PAGINATION_STATE
 );
 
 export const defaults = {

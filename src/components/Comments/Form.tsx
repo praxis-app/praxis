@@ -79,8 +79,10 @@ const CommentsForm = ({
               images,
             },
           });
-          if (comment?.postId) Router.push(`/posts/${comment.postId}`);
-          if (comment?.motionId) Router.push(`/motions/${comment.motionId}`);
+          if (comment?.postId)
+            Router.push(`${Common.ResourcePaths.Post}${comment.postId}`);
+          if (comment?.motionId)
+            Router.push(`${Common.ResourcePaths.Motion}${comment.motionId}`);
         } else {
           const commentedItemId = postId
             ? {

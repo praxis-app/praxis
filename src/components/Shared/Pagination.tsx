@@ -52,7 +52,7 @@ const PageButtons = ({ bottom }: Props) => {
 
   useEffect(() => {
     return () => {
-      paginationVar(Common.DEFAULT_PAGINATION_STATE);
+      paginationVar(Common.INITIAL_PAGINATION_STATE);
     };
   }, []);
 
@@ -106,6 +106,7 @@ const PageButtons = ({ bottom }: Props) => {
   };
 
   const isHiding = (): boolean => {
+    if (totalItems <= Common.PageSizes.Min) return true;
     if (bottom && feedLoading) return true;
     if (!feedLoading && !totalItems) return true;
     return false;

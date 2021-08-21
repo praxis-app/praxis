@@ -1,5 +1,9 @@
 import { createTheme } from "@material-ui/core/styles";
 
+export const BLURPLE = "#7289DA";
+export const WHITE = "white";
+export const BLACK = "black";
+
 const globalTheme = createTheme({
   typography: {
     fontFamily: "Inter",
@@ -9,7 +13,10 @@ const globalTheme = createTheme({
     primary: {
       main: "rgb(190, 190, 190)",
       dark: "rgb(170, 170, 170)",
-      contrastText: "white",
+      contrastText: WHITE,
+    },
+    secondary: {
+      main: "rgb(90, 90, 90)",
     },
     background: {
       default: "rgb(65, 65, 65)",
@@ -100,9 +107,18 @@ const muiTheme = createTheme({
       },
     },
 
+    MuiPopover: {
+      paper: {
+        backgroundColor: globalTheme.palette.background.default,
+      },
+    },
+
     MuiTabs: {
       indicator: {
-        backgroundColor: "white",
+        backgroundColor: WHITE,
+      },
+      scrollButtons: {
+        color: WHITE,
       },
     },
 
@@ -142,7 +158,7 @@ const muiTheme = createTheme({
         backgroundColor: globalTheme.palette.background.default,
       },
       barColorPrimary: {
-        backgroundColor: "white",
+        backgroundColor: WHITE,
       },
       root: {
         margin: 12,
@@ -152,6 +168,13 @@ const muiTheme = createTheme({
     MuiContainer: {
       root: {
         marginBottom: 200,
+      },
+    },
+
+    MuiDivider: {
+      root: {
+        backgroundColor: globalTheme.palette.secondary.main,
+        marginTop: 6,
       },
     },
   },

@@ -66,8 +66,8 @@ export const typeDefs = gql`
     votesByMotionId(motionId: ID!): [Vote]
 
     comment(id: ID!): Comment!
-    commentsByPostId(postId: ID!): [Comment]
-    commentsByMotionId(motionId: ID!): [Comment]
+    commentsByPostId(postId: ID!): CommentsPayload!
+    commentsByMotionId(motionId: ID!): CommentsPayload!
 
     likesByPostId(postId: ID!): [Like]!
     likesByMotionId(motionId: ID!): [Like]!

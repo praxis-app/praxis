@@ -56,7 +56,7 @@ const Comment = ({ comment, deleteComment }: Props) => {
   const classes = useStyles();
 
   useEffect(() => {
-    setImages(imagesRes.data ? imagesRes.data.imagesByCommentId : []);
+    if (imagesRes.data) setImages(imagesRes.data.imagesByCommentId);
   }, [imagesRes.data]);
 
   const ownComment = (): boolean => {

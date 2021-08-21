@@ -6,7 +6,7 @@ import { Card, Typography } from "@material-ui/core";
 
 import { GROUP_BY_NAME, MEMBER_REUQESTS } from "../../../apollo/client/queries";
 import Request from "../../../components/Groups/Request";
-import { Settings } from "../../../constants";
+import { Common, Settings } from "../../../constants";
 import Messages from "../../../utils/messages";
 import { noCache } from "../../../utils/apollo";
 import {
@@ -83,7 +83,7 @@ const Requests = () => {
   if (canSeeRequests())
     return (
       <>
-        <Link href={`/groups/${query.name}`}>
+        <Link href={`${Common.ResourcePaths.Group}${query.name}`}>
           <a>
             <Typography variant="h3" color="primary">
               {query.name}

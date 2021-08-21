@@ -51,7 +51,9 @@ const GroupForm = ({ group, isEditing }: Props) => {
             },
           });
 
-          Router.push(`/groups/${data.updateGroup.group.name}`);
+          Router.push(
+            `${Common.ResourcePaths.Group}${data.updateGroup.group.name}`
+          );
         } else {
           const { data } = await createGroup({
             variables: {
@@ -62,7 +64,9 @@ const GroupForm = ({ group, isEditing }: Props) => {
             },
           });
 
-          Router.push(`/groups/${data.createGroup.group.name}`);
+          Router.push(
+            `${Common.ResourcePaths.Group}${data.createGroup.group.name}`
+          );
         }
       } catch (err) {
         alert(err);

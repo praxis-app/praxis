@@ -52,15 +52,15 @@ const Edit = () => {
     return setting?.value || "";
   };
 
-  if (vote)
-    return (
-      <VotesForm
-        vote={vote}
-        onEditPage={true}
-        modelOfConsensus={isModelOfConsensus}
-      />
-    );
-  return <CircularProgress />;
+  if (!vote) return <CircularProgress />;
+
+  return (
+    <VotesForm
+      vote={vote}
+      onEditPage={true}
+      modelOfConsensus={isModelOfConsensus}
+    />
+  );
 };
 
 export default Edit;

@@ -97,7 +97,7 @@ const MotionsForm = ({
               images,
             },
           });
-          Router.push(`/motions/${motion.id}`);
+          Router.push(`${Common.ResourcePaths.Motion}${motion.id}`);
         } else {
           const { data } = await createMotion({
             variables: {
@@ -165,6 +165,12 @@ const MotionsForm = ({
     return [newMotion, ...items];
   };
 
+  const validateBody = (body: string) => {
+    return body === "" && images.length === 0
+      ? Messages.motions.form.motionEmpty()
+      : undefined;
+  };
+
   return (
     <Formik
       initialValues={{
@@ -183,8 +189,9 @@ const MotionsForm = ({
                   : Messages.motions.form.makeAMotion()
               }
               component={TextField}
-              multiline
+              validate={validateBody}
               style={{ marginBottom: 3 }}
+              multiline
             />
 
             <FormControl style={{ marginBottom: 18 }}>

@@ -15,10 +15,11 @@ import { Close } from "@material-ui/icons";
 import Messages from "../../utils/messages";
 import { Common } from "../../constants";
 import { redeemedInviteToken } from "../../utils/invite";
+import { WHITE } from "../../styles/Shared/theme";
 
 const useStyles = makeStyles({
   title: {
-    color: "white",
+    color: WHITE,
   },
 });
 

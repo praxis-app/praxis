@@ -8,6 +8,7 @@ import styles from "../../styles/Role/Role.module.scss";
 import { ROLE_MEMBERS } from "../../apollo/client/queries";
 import { useQuery } from "@apollo/client";
 import { noCache } from "../../utils/apollo";
+import { BLACK } from "../../styles/Shared/theme";
 
 interface Props {
   role: Role;
@@ -36,7 +37,7 @@ const Role = ({ role }: Props) => {
             <Avatar
               style={{
                 backgroundColor: color,
-                color: "black",
+                color: BLACK,
               }}
             />
             <div className={styles.info}>

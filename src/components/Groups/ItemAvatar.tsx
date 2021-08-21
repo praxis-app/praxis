@@ -21,8 +21,8 @@ const GroupItemAvatar = ({ user, group, motion, post }: Props) => {
   };
 
   const itemHref = (): string => {
-    if (motion) return `/motions/${motion.id}`;
-    if (post) return `/posts/${post?.id}`;
+    if (motion) return `${Common.ResourcePaths.Motion}${motion.id}`;
+    if (post) return `${Common.ResourcePaths.Post}${post?.id}`;
     return "";
   };
 
@@ -38,7 +38,7 @@ const GroupItemAvatar = ({ user, group, motion, post }: Props) => {
           )}
         </div>
         <div className={styles.groupPostLinks}>
-          <Link href={`/groups/${group.name}`}>
+          <Link href={`${Common.ResourcePaths.Group}${group.name}`}>
             <a className={styles.groupNameLink}>{group.name}</a>
           </Link>
           <Link href={itemHref()}>

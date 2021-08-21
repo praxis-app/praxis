@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { CircularProgress } from "@material-ui/core";
 import Router, { useRouter } from "next/router";
@@ -16,9 +16,9 @@ const Show = () => {
   const currentUser = useCurrentUser();
   const [post, setPost] = useState<Post>();
   const [comments, setComments] = useState<Comment[]>([]);
+
   const [deletePost] = useMutation(DELETE_POST);
   const [deleteComment] = useMutation(DELETE_COMMENT);
-
   const [getPostRes, postRes] = useLazyQuery(POST);
   const [getCommentsRes, commentsRes] = useLazyQuery(
     COMMENTS_BY_POST_ID,
@@ -41,7 +41,8 @@ const Show = () => {
   }, [postRes.data]);
 
   useEffect(() => {
-    if (commentsRes.data) setComments(commentsRes.data.commentsByPostId);
+    if (commentsRes.data)
+      setComments(commentsRes.data.commentsByPostId.comments);
   }, [commentsRes.data]);
 
   const deletePostHandler = async (id: string) => {

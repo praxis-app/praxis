@@ -34,6 +34,13 @@ export namespace Common {
     Vote = "vote",
   }
 
+  // TODO: Add paths for other resources in follow up PR
+  export enum ResourcePaths {
+    Post = "/posts/",
+    Motion = "/motions/",
+    Group = "/groups/",
+  }
+
   export enum FieldNames {
     Body = "body",
     Name = "name",
@@ -72,12 +79,24 @@ export namespace Common {
     Default = 10,
   }
 
-  export const DEFAULT_PAGINATION_STATE: PaginationState = {
+  export enum KeyCodes {
+    Escape = "Escape",
+  }
+
+  export enum Events {
+    Keydown = "keydown",
+  }
+
+  export enum FocusTargets {
+    CommentFormTextField = "commentFormTextField",
+  }
+
+  export const INITIAL_PAGINATION_STATE: PaginationState = {
     currentPage: 0,
     pageSize: PageSizes.Default,
   };
 
-  export const DEFAULT_FEED_STATE: FeedState = {
+  export const INITIAL_FEED_STATE: FeedState = {
     items: [],
     totalItems: 0,
     loading: false,

@@ -1,0 +1,17 @@
+@import "../Shared/colors.scss";
+
+.chipsContainer {
+  margin-right: 7.5px;
+  margin-left: 3px;
+}
+
+.voteChip {
+  background-color: $blurple;
+  border-radius: 50%;
+  width: 22.5px;
+  height: 22.5px;
+  display: inline-block;
+  border: 2px solid $cardGray;
+  margin-left: -5px;
+  position: relative;
+}

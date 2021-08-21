@@ -1,6 +1,6 @@
 import { Typography } from "@material-ui/core";
 import Link from "next/link";
-import { Motions, Groups } from "../../constants";
+import { Motions, Groups, Common } from "../../constants";
 import muiTheme from "../../styles/Shared/theme";
 import baseUrl from "../../utils/baseUrl";
 import Messages from "../../utils/messages";
@@ -50,7 +50,7 @@ const ActionData = ({ motion }: { motion: Motion }) => {
         >
           {Messages.motions.groups.proposedAspect(Groups.Aspects.Image)}
         </div>
-        <Link href={`/motions/${id}`}>
+        <Link href={`${Common.ResourcePaths.Motion}${id}`}>
           <a>
             <img
               src={baseUrl + actionData.newGroupImagePath}
