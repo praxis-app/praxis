@@ -5,7 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useReactiveVar } from "@apollo/client";
 
 import { toastVar } from "../../apollo/client/localState";
-import { Common } from "../../constants";
+import { Events, KeyCodes } from "../../constants/common";
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -32,9 +32,9 @@ const Toast = () => {
   // which Toast, along with other components, can all respond to.
   // Will be necessary for accessibility features.
   useEffect(() => {
-    document.addEventListener(Common.Events.Keydown, handleKeyDown);
+    document.addEventListener(Events.Keydown, handleKeyDown);
     return () => {
-      document.removeEventListener(Common.Events.Keydown, handleKeyDown);
+      document.removeEventListener(Events.Keydown, handleKeyDown);
     };
   }, []);
 
@@ -43,7 +43,7 @@ const Toast = () => {
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.code === Common.KeyCodes.Escape) setOpen(false);
+    if (event.code === KeyCodes.Escape) setOpen(false);
   };
 
   return (

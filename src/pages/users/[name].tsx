@@ -14,7 +14,7 @@ import {
   LOGOUT_USER,
 } from "../../apollo/client/mutations";
 import { feedVar, paginationVar } from "../../apollo/client/localState";
-import { Common } from "../../constants";
+import { TypeNames } from "../../constants/common";
 import { useCurrentUser } from "../../hooks";
 import { noCache } from "../../utils/apollo";
 import { resetFeed } from "../../utils/clientIndex";
@@ -101,7 +101,7 @@ const Show = () => {
         ...feed,
         items: feed.items.filter(
           (item: FeedItem) =>
-            item.id !== id || item.__typename !== Common.TypeNames.Post
+            item.id !== id || item.__typename !== TypeNames.Post
         ),
       });
   };
@@ -117,7 +117,7 @@ const Show = () => {
         ...feed,
         items: feed.items.filter(
           (item: FeedItem) =>
-            item.id !== id || item.__typename !== Common.TypeNames.Motion
+            item.id !== id || item.__typename !== TypeNames.Motion
         ),
       });
   };

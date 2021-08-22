@@ -18,10 +18,10 @@ import { noCache } from "../../utils/apollo";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
-import { Common } from "../../constants";
 import SelectedImages from "../Shared/SelectedImages";
 import ImageInput from "../Shared/ImageInput";
 import { toastVar } from "../../apollo/client/localState";
+import { FieldNames, ResourcePaths, ToastStatus } from "../../constants/common";
 
 interface FormValues {
   body: string;
@@ -75,7 +75,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
               images,
             },
           });
-          Router.push(`${Common.ResourcePaths.Post}${post.id}`);
+          Router.push(`${ResourcePaths.Post}${post.id}`);
         } else {
           const { data } = await createPost({
             variables: {
@@ -99,7 +99,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
       } catch (err) {
         toastVar({
           title: Messages.errors.imageUploadError(),
-          status: Common.ToastStatus.Error,
+          status: ToastStatus.Error,
         });
       }
     }
@@ -153,7 +153,7 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
         <Form className={styles.form} style={group && { marginTop: "48px" }}>
           <FormGroup>
             <Field
-              name={Common.FieldNames.Body}
+              name={FieldNames.Body}
               placeholder={
                 formik.isSubmitting
                   ? Messages.states.loading()

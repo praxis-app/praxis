@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import { CircularProgress, Fade } from "@material-ui/core";
-import { Common } from "../../constants";
+import { DESKTOP_BREAKPOINT } from "../../constants/common";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -57,9 +57,7 @@ const Modal = ({
   open,
 }: Props) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(
-    theme.breakpoints.down(Common.DESKTOP_BREAKPOINT)
-  );
+  const isMobile = useMediaQuery(theme.breakpoints.down(DESKTOP_BREAKPOINT));
   const classes = useStyles();
 
   const handleCloseDialog = () => {

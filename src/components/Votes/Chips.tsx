@@ -3,14 +3,10 @@ import { Typography } from "@material-ui/core";
 import { ThumbsUpDown, ThumbUp, ThumbDown, PanTool } from "@material-ui/icons";
 import _ from "lodash";
 
+import { ConsensusStates, FlipStates } from "../../constants/vote";
+import { useConsensusVotes, useUpDownVotes } from "../../hooks";
 import styles from "../../styles/Vote/Chips.module.scss";
 import Chip, { ChipProps } from "./Chip";
-import {
-  ConsensusStates,
-  FlipStates,
-  useConsensusVotes,
-  useUpDownVotes,
-} from "../../hooks";
 import VotesModal from "./Modal";
 
 interface VoteChipsProps {

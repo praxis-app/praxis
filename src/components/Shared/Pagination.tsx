@@ -16,12 +16,16 @@ import { NavigateNext, NavigateBefore } from "@material-ui/icons";
 import { paginationVar, feedVar } from "../../apollo/client/localState";
 import styles from "../../styles/Shared/Pagination.module.scss";
 import Messages from "../../utils/messages";
-import { Common } from "../../constants";
 import Dropdown from "./Dropdown";
+import {
+  DESKTOP_BREAKPOINT,
+  INITIAL_PAGINATION_STATE,
+  PageSizes,
+} from "../../constants/common";
 
 const useStyles = makeStyles((theme: Theme) => {
   const hideForMobile = {
-    [theme.breakpoints.down(Common.DESKTOP_BREAKPOINT)]: {
+    [theme.breakpoints.down(DESKTOP_BREAKPOINT)]: {
       display: "none",
     },
   };
@@ -52,7 +56,7 @@ const PageButtons = ({ bottom }: Props) => {
 
   useEffect(() => {
     return () => {
-      paginationVar(Common.INITIAL_PAGINATION_STATE);
+      paginationVar(INITIAL_PAGINATION_STATE);
     };
   }, []);
 
@@ -106,7 +110,7 @@ const PageButtons = ({ bottom }: Props) => {
   };
 
   const isHiding = (): boolean => {
-    if (totalItems <= Common.PageSizes.Min) return true;
+    if (totalItems <= PageSizes.Min) return true;
     if (bottom && feedLoading) return true;
     if (!feedLoading && !totalItems) return true;
     return false;
@@ -133,11 +137,7 @@ const PageButtons = ({ bottom }: Props) => {
         disableUnderline
         open={selectOpen}
       >
-        {[
-          Common.PageSizes.Min,
-          Common.PageSizes.Default,
-          Common.PageSizes.Max,
-        ].map((_pageSize) => (
+        {[PageSizes.Min, PageSizes.Default, PageSizes.Max].map((_pageSize) => (
           <MenuItem value={_pageSize} key={_pageSize}>
             {_pageSize}
           </MenuItem>

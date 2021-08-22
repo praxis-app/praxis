@@ -12,8 +12,12 @@ import { HowToVote, Comment, Reply } from "@material-ui/icons";
 import { useRouter } from "next/router";
 
 import { focusVar, tabVar, toastVar } from "../../apollo/client/localState";
+import {
+  FocusTargets,
+  ResourcePaths,
+  ToastStatus,
+} from "../../constants/common";
 import { TOTAL_COMMENTS_BY_MOTION_ID } from "../../apollo/client/queries";
-import { Common } from "../../constants";
 import styles from "../../styles/Shared/CardFooter.module.scss";
 import { BLURPLE } from "../../styles/Shared/theme";
 import { noCache } from "../../utils/apollo";
@@ -51,7 +55,7 @@ const CardFooter = ({ motionId, votes, setVotes, modelOfConsensus }: Props) => {
   const classes = useStyles();
   const router = useRouter();
 
-  const motionPagePath = `${Common.ResourcePaths.Motion}${motionId}`;
+  const motionPagePath = `${ResourcePaths.Motion}${motionId}`;
   const toCommentsQuery = "?comments=true";
   const toFocusQuery = "&focus=true";
 
@@ -78,7 +82,7 @@ const CardFooter = ({ motionId, votes, setVotes, modelOfConsensus }: Props) => {
   };
 
   const onMotionPage = (): boolean => {
-    return router.asPath.includes(Common.ResourcePaths.Motion);
+    return router.asPath.includes(ResourcePaths.Motion);
   };
 
   const voteButtonColor = alreadyVote() ? { color: BLURPLE } : {};
@@ -122,7 +126,7 @@ const CardFooter = ({ motionId, votes, setVotes, modelOfConsensus }: Props) => {
           onClick={() => {
             if (onMotionPage()) {
               tabVar(1);
-              focusVar(Common.FocusTargets.CommentFormTextField);
+              focusVar(FocusTargets.CommentFormTextField);
             }
           }}
         >
@@ -140,7 +144,7 @@ const CardFooter = ({ motionId, votes, setVotes, modelOfConsensus }: Props) => {
           onClick={() =>
             toastVar({
               title: Messages.development.notImplemented(),
-              status: Common.ToastStatus.Info,
+              status: ToastStatus.Info,
             })
           }
         >

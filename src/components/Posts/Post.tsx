@@ -18,7 +18,8 @@ import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Shared/Shared.module.scss";
 import GroupItemAvatar from "../Groups/ItemAvatar";
-import { Common, Roles } from "../../constants";
+import { ModelNames, ResourcePaths } from "../../constants/common";
+import { Permissions } from "../../constants/role";
 import {
   useCurrentUser,
   useHasPermissionGlobally,
@@ -41,9 +42,7 @@ interface Props {
 const Post = ({ post, deletePost }: Props) => {
   const { id, userId, groupId, postGroupId, body, createdAt } = post;
   const currentUser = useCurrentUser();
-  const [canManagePosts] = useHasPermissionGlobally(
-    Roles.Permissions.ManagePosts
-  );
+  const [canManagePosts] = useHasPermissionGlobally(Permissions.ManagePosts);
   const user = useUserById(userId);
   const [group, setGroup] = useState<Group>();
   const [images, setImages] = useState<Image[]>([]);
@@ -78,7 +77,7 @@ const Post = ({ post, deletePost }: Props) => {
   };
 
   const onGroupPage = (): boolean => {
-    return router.asPath.includes(Common.ResourcePaths.Group);
+    return router.asPath.includes(ResourcePaths.Group);
   };
 
   return (
@@ -98,7 +97,7 @@ const Post = ({ post, deletePost }: Props) => {
                 <Link href={`/users/${user?.name}`}>
                   <a>{user?.name}</a>
                 </Link>
-                <Link href={`${Common.ResourcePaths.Post}${id}`}>
+                <Link href={`${ResourcePaths.Post}${id}`}>
                   <a className={styles.timeAgo}>{timeAgo(createdAt)}</a>
                 </Link>
               </>
@@ -107,7 +106,7 @@ const Post = ({ post, deletePost }: Props) => {
           action={
             <ItemMenu
               itemId={id}
-              itemType={Common.ModelNames.Post}
+              itemType={ModelNames.Post}
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deletePost}

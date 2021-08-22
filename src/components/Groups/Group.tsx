@@ -15,7 +15,8 @@ import { MEMBER_REUQESTS } from "../../apollo/client/queries";
 import GroupAvatar from "./Avatar";
 import JoinButton from "./JoinButton";
 import ItemMenu from "../Shared/ItemMenu";
-import { Common, Settings as SettingsConstants } from "../../constants";
+import { ModelNames, ResourcePaths } from "../../constants/common";
+import { GroupSettings, SettingStates } from "../../constants/setting";
 import { WHITE } from "../../styles/Shared/theme";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
@@ -59,10 +60,7 @@ const Group = ({ group, deleteGroup }: Props) => {
   };
 
   const isNoAdmin = (): boolean => {
-    return (
-      settingByName(SettingsConstants.GroupSettings.NoAdmin) ===
-      SettingsConstants.States.On
-    );
+    return settingByName(GroupSettings.NoAdmin) === SettingStates.On;
   };
 
   const isAMember = (): boolean => {
@@ -84,7 +82,7 @@ const Group = ({ group, deleteGroup }: Props) => {
         <CardHeader
           avatar={group && <GroupAvatar group={group} />}
           title={
-            <Link href={`${Common.ResourcePaths.Group}${name}`}>
+            <Link href={`${ResourcePaths.Group}${name}`}>
               <a>{name}</a>
             </Link>
           }
@@ -94,15 +92,13 @@ const Group = ({ group, deleteGroup }: Props) => {
               <ItemMenu
                 itemId={id}
                 name={group.name}
-                itemType={Common.ModelNames.Group}
+                itemType={ModelNames.Group}
                 anchorEl={menuAnchorEl}
                 setAnchorEl={setMenuAnchorEl}
                 deleteItem={deleteGroup}
                 ownItem={() => isCreator()}
               >
-                <Link
-                  href={`${Common.ResourcePaths.Group}${group.name}/settings`}
-                >
+                <Link href={`${ResourcePaths.Group}${group.name}/settings`}>
                   <a>
                     <MenuItem>
                       <Settings
@@ -131,7 +127,7 @@ const Group = ({ group, deleteGroup }: Props) => {
               {description}
             </Typography>
 
-            <Link href={`${Common.ResourcePaths.Group}${name}/members`}>
+            <Link href={`${ResourcePaths.Group}${name}/members`}>
               <a>{Messages.groups.members(groupMembers.length)}</a>
             </Link>
 
@@ -141,7 +137,7 @@ const Group = ({ group, deleteGroup }: Props) => {
                   {Messages.middotWithSpaces()}
                 </span>
 
-                <Link href={`${Common.ResourcePaths.Group}${name}/requests`}>
+                <Link href={`${ResourcePaths.Group}${name}/requests`}>
                   <a>{Messages.groups.requests(memberRequests.length)}</a>
                 </Link>
               </>

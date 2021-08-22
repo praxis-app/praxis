@@ -8,9 +8,10 @@ import {
 import { ThumbUp, ThumbDown, ThumbsUpDown, PanTool } from "@material-ui/icons";
 import { CSSProperties } from "@material-ui/core/styles/withStyles";
 
-import { ConsensusStates, FlipStates, useUserById } from "../../hooks";
+import { useUserById } from "../../hooks";
 import styles from "../../styles/Vote/Voter.module.scss";
 import UserAvatar from "../Users/Avatar";
+import { ConsensusStates, FlipStates } from "../../constants/vote";
 
 const BadgeContent = ({ vote }: { vote: Vote }) => {
   const style: CSSProperties = { fontSize: 8, marginTop: 1 };

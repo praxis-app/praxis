@@ -1,6 +1,6 @@
 import { GraphQLUpload } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
-import { Common } from "../../constants";
+import { TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
 import Motion from "../models/motion";
 
@@ -74,8 +74,7 @@ const voteResolvers = {
         where: { id: parseInt(id) },
         data: { body, flipState, consensusState },
       });
-      if (!vote)
-        throw new Error(Messages.items.notFound(Common.TypeNames.Vote));
+      if (!vote) throw new Error(Messages.items.notFound(TypeNames.Vote));
 
       const motionRatified = Motion.evaluate(vote.motionId as number);
       return { vote, motionRatified };
@@ -86,8 +85,7 @@ const voteResolvers = {
         where: { id: parseInt(id) },
         data: { verified: true },
       });
-      if (!vote)
-        throw new Error(Messages.items.notFound(Common.TypeNames.Vote));
+      if (!vote) throw new Error(Messages.items.notFound(TypeNames.Vote));
 
       return { vote };
     },

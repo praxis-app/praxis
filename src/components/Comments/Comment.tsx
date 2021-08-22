@@ -17,7 +17,8 @@ import LikeButton from "../Likes/LikeButton";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Comment/Comment.module.scss";
-import { Common, Roles } from "../../constants";
+import { ModelNames } from "../../constants/common";
+import { Permissions } from "../../constants/role";
 import { noCache } from "../../utils/apollo";
 import {
   useCurrentUser,
@@ -44,7 +45,7 @@ const Comment = ({ comment, deleteComment }: Props) => {
   const { id, userId, body, createdAt } = comment;
   const currentUser = useCurrentUser();
   const [canManageComments] = useHasPermissionGlobally(
-    Roles.Permissions.ManageComments
+    Permissions.ManageComments
   );
   const user = useUserById(userId);
   const [images, setImages] = useState<Image[]>([]);
@@ -81,7 +82,7 @@ const Comment = ({ comment, deleteComment }: Props) => {
           action={
             <ItemMenu
               itemId={id}
-              itemType={Common.ModelNames.Comment}
+              itemType={ModelNames.Comment}
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteComment}

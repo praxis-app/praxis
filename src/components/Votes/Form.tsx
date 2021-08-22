@@ -12,12 +12,14 @@ import { Formik, FormikHelpers, Form, Field } from "formik";
 import { motionVar } from "../../apollo/client/localState";
 import { UPDATE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/VotesForm.module.scss";
-import { Common, Motions, Votes } from "../../constants";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
 import Dropdown from "../Shared/Dropdown";
+import { FieldNames, ResourcePaths } from "../../constants/common";
+import { Stages } from "../../constants/motion";
+import { ConsensusStates, FlipStates } from "../../constants/vote";
 
 interface FormValues {
   body: string;
@@ -80,12 +82,12 @@ const VotesForm = ({
           );
 
           if (data.updateVote.motionRatified && motionFromGlobal) {
-            motionVar({ ...motionFromGlobal, stage: Motions.Stages.Ratified });
+            motionVar({ ...motionFromGlobal, stage: Stages.Ratified });
           }
 
           setSubmitting(false);
         } else {
-          Router.push(`${Common.ResourcePaths.Motion}${vote.motionId}`);
+          Router.push(`${ResourcePaths.Motion}${vote.motionId}`);
         }
       } catch (err) {
         alert(err);
@@ -103,17 +105,17 @@ const VotesForm = ({
 
   const placeholderText = () => {
     if (modelOfConsensus) {
-      if (consensusState === Votes.ConsensusStates.Agreement)
+      if (consensusState === ConsensusStates.Agreement)
         return Messages.votes.form.bodyPlaceholder.agreement();
-      if (consensusState === Votes.ConsensusStates.Reservations)
+      if (consensusState === ConsensusStates.Reservations)
         return Messages.votes.form.bodyPlaceholder.reservations();
-      if (consensusState === Votes.ConsensusStates.StandAside)
+      if (consensusState === ConsensusStates.StandAside)
         return Messages.votes.form.bodyPlaceholder.standAside();
-      if (consensusState === Votes.ConsensusStates.Block)
+      if (consensusState === ConsensusStates.Block)
         return Messages.votes.form.bodyPlaceholder.block();
     }
 
-    return flipState === Votes.FlipStates.Up
+    return flipState === FlipStates.Up
       ? Messages.votes.form.bodyPlaceholder.support()
       : Messages.votes.form.bodyPlaceholder.block();
   };
@@ -130,7 +132,7 @@ const VotesForm = ({
         <Form className={onEditPage ? styles.formOnEditPage : styles.form}>
           <FormGroup>
             <Field
-              name={Common.FieldNames.Body}
+              name={FieldNames.Body}
               placeholder={placeholderText()}
               component={TextField}
               autoComplete="off"
@@ -145,25 +147,25 @@ const VotesForm = ({
               </InputLabel>
               {modelOfConsensus ? (
                 <Dropdown value={selectValue()} onChange={handleVoteTypeChange}>
-                  <MenuItem value={Votes.ConsensusStates.Agreement}>
+                  <MenuItem value={ConsensusStates.Agreement}>
                     {Messages.votes.consensus.voteTypes.names.agreement()}
                   </MenuItem>
-                  <MenuItem value={Votes.ConsensusStates.Reservations}>
+                  <MenuItem value={ConsensusStates.Reservations}>
                     {Messages.votes.consensus.voteTypes.names.reservations()}
                   </MenuItem>
-                  <MenuItem value={Votes.ConsensusStates.StandAside}>
+                  <MenuItem value={ConsensusStates.StandAside}>
                     {Messages.votes.consensus.voteTypes.names.standAside()}
                   </MenuItem>
-                  <MenuItem value={Votes.ConsensusStates.Block}>
+                  <MenuItem value={ConsensusStates.Block}>
                     {Messages.votes.consensus.voteTypes.names.block()}
                   </MenuItem>
                 </Dropdown>
               ) : (
                 <Dropdown value={selectValue()} onChange={handleVoteTypeChange}>
-                  <MenuItem value={Votes.FlipStates.Up}>
+                  <MenuItem value={FlipStates.Up}>
                     {Messages.votes.actions.support()}
                   </MenuItem>
-                  <MenuItem value={Votes.FlipStates.Down}>
+                  <MenuItem value={FlipStates.Down}>
                     {Messages.votes.actions.block()}
                   </MenuItem>
                 </Dropdown>

@@ -1,6 +1,11 @@
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
-import { Common, Roles } from "../../constants";
+import { ModelNames, TypeNames } from "../../constants/common";
+import {
+  ADMIN_ROLE_NAME,
+  DEFAULT_ROLE_COLOR,
+  Permissions,
+} from "../../constants/role";
 
 interface RoleInput {
   name: string;
@@ -15,36 +20,36 @@ interface InitialPermission {
 
 const initialPermissions = (isAdmin = false): InitialPermission[] => [
   {
-    name: Roles.Permissions.ManagePosts,
+    name: Permissions.ManagePosts,
     description: Messages.roles.permissions.descriptions.manageItems(
-      Common.ModelNames.Post
+      ModelNames.Post
     ),
     enabled: isAdmin,
   },
   {
-    name: Roles.Permissions.ManageComments,
+    name: Permissions.ManageComments,
     description: Messages.roles.permissions.descriptions.manageItems(
-      Common.ModelNames.Comment
+      ModelNames.Comment
     ),
     enabled: isAdmin,
   },
   {
-    name: Roles.Permissions.ManageUsers,
+    name: Permissions.ManageUsers,
     description: Messages.roles.permissions.descriptions.manageUsers(),
     enabled: isAdmin,
   },
   {
-    name: Roles.Permissions.ManageRoles,
+    name: Permissions.ManageRoles,
     description: Messages.roles.permissions.descriptions.manageRoles(),
     enabled: isAdmin,
   },
   {
-    name: Roles.Permissions.ManageInvites,
+    name: Permissions.ManageInvites,
     description: Messages.roles.permissions.descriptions.manageInvites(),
     enabled: isAdmin,
   },
   {
-    name: Roles.Permissions.CreateInvites,
+    name: Permissions.CreateInvites,
     description: Messages.roles.permissions.descriptions.createInvites(),
     enabled: isAdmin,
   },
@@ -136,8 +141,7 @@ const roleResolvers = {
         data: { name, color },
       });
 
-      if (!role)
-        throw new Error(Messages.items.notFound(Common.TypeNames.Role));
+      if (!role) throw new Error(Messages.items.notFound(TypeNames.Role));
 
       return { role };
     },
@@ -168,8 +172,8 @@ const roleResolvers = {
 
       const role = await prisma.role.create({
         data: {
-          name: Roles.ADMIN_NAME,
-          color: Roles.DEFAULT_COLOR,
+          name: ADMIN_ROLE_NAME,
+          color: DEFAULT_ROLE_COLOR,
           global: true,
         },
       });

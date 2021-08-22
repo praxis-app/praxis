@@ -2,7 +2,7 @@ import { ApolloError, GraphQLUpload } from "apollo-server-micro";
 import { saveImage, deleteImage } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
-import { Common } from "../../constants";
+import { TypeNames } from "../../constants/common";
 
 interface PostInput {
   body: string;
@@ -119,8 +119,7 @@ const postResolvers = {
         data: { body },
       });
 
-      if (!post)
-        throw new Error(Messages.items.notFound(Common.TypeNames.Post));
+      if (!post) throw new Error(Messages.items.notFound(TypeNames.Post));
 
       // for image upload error catching in utils/saveImage
       try {

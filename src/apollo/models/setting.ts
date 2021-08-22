@@ -1,8 +1,8 @@
-import { Settings } from "../../constants";
+import { GroupSettings } from "../../constants/setting";
 
 export const groupSettingByName = (
   settings: BackendSetting[],
-  name: Settings.GroupSettings
+  name: GroupSettings
 ): string => {
   const setting = settings.find((setting) => setting.name === name);
   return setting?.value as string;

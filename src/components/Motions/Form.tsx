@@ -16,7 +16,8 @@ import {
   UPDATE_MOTION,
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
-import { Common, Motions } from "../../constants";
+import { FieldNames, ResourcePaths } from "../../constants/common";
+import { ActionTypes } from "../../constants/motion";
 import ActionFields from "./ActionFields";
 import styles from "../../styles/Shared/Shared.module.scss";
 import { feedVar, paginationVar } from "../../apollo/client/localState";
@@ -97,7 +98,7 @@ const MotionsForm = ({
               images,
             },
           });
-          Router.push(`${Common.ResourcePaths.Motion}${motion.id}`);
+          Router.push(`${ResourcePaths.Motion}${motion.id}`);
         } else {
           const { data } = await createMotion({
             variables: {
@@ -182,7 +183,7 @@ const MotionsForm = ({
         <Form className={styles.form} style={group && { marginTop: "48px" }}>
           <FormGroup>
             <Field
-              name={Common.FieldNames.Body}
+              name={FieldNames.Body}
               placeholder={
                 formik.isSubmitting
                   ? Messages.states.loading()
@@ -197,22 +198,22 @@ const MotionsForm = ({
             <FormControl style={{ marginBottom: 18 }}>
               <InputLabel>{Messages.motions.form.motionType()}</InputLabel>
               <Dropdown value={action} onChange={handleActionChange}>
-                <MenuItem value={Motions.ActionTypes.PlanEvent}>
+                <MenuItem value={ActionTypes.PlanEvent}>
                   {Messages.motions.form.actionTypes.planEvent()}
                 </MenuItem>
-                <MenuItem value={Motions.ActionTypes.ChangeName}>
+                <MenuItem value={ActionTypes.ChangeName}>
                   {Messages.motions.form.actionTypes.changeName()}
                 </MenuItem>
-                <MenuItem value={Motions.ActionTypes.ChangeDescription}>
+                <MenuItem value={ActionTypes.ChangeDescription}>
                   {Messages.motions.form.actionTypes.changeDescription()}
                 </MenuItem>
-                <MenuItem value={Motions.ActionTypes.ChangeImage}>
+                <MenuItem value={ActionTypes.ChangeImage}>
                   {Messages.motions.form.actionTypes.changeImage()}
                 </MenuItem>
-                <MenuItem value={Motions.ActionTypes.ChangeSettings}>
+                <MenuItem value={ActionTypes.ChangeSettings}>
                   {Messages.motions.form.actionTypes.changeSettings()}
                 </MenuItem>
-                <MenuItem value={Motions.ActionTypes.Test}>
+                <MenuItem value={ActionTypes.Test}>
                   {Messages.motions.form.actionTypes.test()}
                 </MenuItem>
               </Dropdown>
@@ -220,7 +221,7 @@ const MotionsForm = ({
 
             <ActionFields actionType={action} setActionData={setActionData} />
 
-            {action !== Motions.ActionTypes.ChangeImage && (
+            {action !== ActionTypes.ChangeImage && (
               <ImageInput
                 setImages={setImages}
                 refreshKey={imagesInputKey}

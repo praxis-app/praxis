@@ -25,7 +25,10 @@ import ItemMenu from "../Shared/ItemMenu";
 import GroupItemAvatar from "../Groups/ItemAvatar";
 import ActionData from "./ActionData";
 import styles from "../../styles/Motion/Motion.module.scss";
-import { Common, Motions, Settings, Votes } from "../../constants";
+import { Stages } from "../../constants/motion";
+import { ModelNames, ResourcePaths } from "../../constants/common";
+import { GroupSettings } from "../../constants/setting";
+import { VotingTypes } from "../../constants/vote";
 import { noCache } from "../../utils/apollo";
 import {
   useCurrentUser,
@@ -105,11 +108,11 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   };
 
   const onMotionPage = (): boolean => {
-    return router.asPath.includes(Common.ResourcePaths.Motion);
+    return router.asPath.includes(ResourcePaths.Motion);
   };
 
   const onGroupPage = (): boolean => {
-    return router.asPath.includes(Common.ResourcePaths.Group);
+    return router.asPath.includes(ResourcePaths.Group);
   };
 
   const alreadyVote = (): Vote | null => {
@@ -120,7 +123,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   };
 
   const isRatified = (): boolean => {
-    return stage === Motions.Stages.Ratified;
+    return stage === Stages.Ratified;
   };
 
   const settingByName = (name: string): string => {
@@ -129,10 +132,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   };
 
   const isModelOfConsensus = (): boolean => {
-    return (
-      settingByName(Settings.GroupSettings.VotingType) ===
-      Votes.VotingTypes.Consensus
-    );
+    return settingByName(GroupSettings.VotingType) === VotingTypes.Consensus;
   };
 
   const isAGroupMember = (): boolean => {
@@ -160,7 +160,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
                   <a>{user?.name}</a>
                 </Link>
 
-                <Link href={`${Common.ResourcePaths.Motion}${id}`}>
+                <Link href={`${ResourcePaths.Motion}${id}`}>
                   <a className={styles.info}>
                     {Messages.motions.toActionWithRatified(
                       action,
@@ -174,7 +174,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
           action={
             <ItemMenu
               itemId={id}
-              itemType={Common.ModelNames.Motion}
+              itemType={ModelNames.Motion}
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteMotion}

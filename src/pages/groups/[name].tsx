@@ -16,7 +16,7 @@ import {
   DELETE_MOTION,
 } from "../../apollo/client/mutations";
 import { feedVar, paginationVar } from "../../apollo/client/localState";
-import { Common } from "../../constants";
+import { ModelNames, TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useMembersByGroupId } from "../../hooks";
@@ -53,8 +53,8 @@ const Show = () => {
   useEffect(() => {
     if (name) {
       let itemType = "";
-      if (tab === 1) itemType = Common.ModelNames.Motion;
-      else if (tab === 2) itemType = Common.ModelNames.Post;
+      if (tab === 1) itemType = ModelNames.Motion;
+      else if (tab === 2) itemType = ModelNames.Post;
 
       feedVar({
         ...feed,
@@ -106,8 +106,7 @@ const Show = () => {
     feedVar({
       ...feed,
       items: feed.items.filter(
-        (item: FeedItem) =>
-          item.id !== id || item.__typename !== Common.TypeNames.Post
+        (item: FeedItem) => item.id !== id || item.__typename !== TypeNames.Post
       ),
       totalItems: feed.totalItems - 1,
     });
@@ -123,7 +122,7 @@ const Show = () => {
       ...feed,
       items: feed.items.filter(
         (item: FeedItem) =>
-          item.id !== id || item.__typename !== Common.TypeNames.Motion
+          item.id !== id || item.__typename !== TypeNames.Motion
       ),
       totalItems: feed.totalItems - 1,
     });

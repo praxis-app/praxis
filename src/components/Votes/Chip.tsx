@@ -13,9 +13,9 @@ import {
 import { SvgIconComponent } from "@material-ui/icons";
 
 import styles from "../../styles/Vote/Chips.module.scss";
-import { Common } from "../../constants";
+import { DESKTOP_BREAKPOINT } from "../../constants/common";
+import { ConsensusStates } from "../../constants/vote";
 import Messages from "../../utils/messages";
-import { ConsensusStates } from "../../hooks";
 import Voter from "./Voter";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -49,9 +49,7 @@ const VoteChip = ({
   const popoverOpen = Boolean(anchorEl);
   const classes = useStyles();
   const theme = useTheme();
-  const isDesktop = useMediaQuery(
-    theme.breakpoints.up(Common.DESKTOP_BREAKPOINT)
-  );
+  const isDesktop = useMediaQuery(theme.breakpoints.up(DESKTOP_BREAKPOINT));
   const SvgIcon = icon;
 
   const handlePopoverOpen = (

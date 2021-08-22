@@ -11,8 +11,8 @@ import { CREATE_SERVER_INVITE } from "../../apollo/client/mutations";
 import styles from "../../styles/ServerInvite/ServerInvite.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
-import { Common } from "../../constants";
-import { ServerInvites } from "../../constants";
+import { Time } from "../../constants/common";
+import { MAX_USES_OPTIONS } from "../../constants/serverInvite";
 import SubmitButton from "../Shared/SubmitButton";
 import Dropdown from "../Shared/Dropdown";
 
@@ -70,13 +70,13 @@ const ServerInviteForm = ({ invites, setInvites }: Props) => {
           <FormControl>
             <InputLabel>{Messages.invites.form.labels.expiresAt()}</InputLabel>
             <Dropdown value={expiresAt} onChange={handleExpiresAtChange}>
-              <MenuItem value={Common.Time.Day}>
+              <MenuItem value={Time.Day}>
                 {Messages.invites.form.expiresAtOptions.oneDay()}
               </MenuItem>
-              <MenuItem value={Common.Time.Week}>
+              <MenuItem value={Time.Week}>
                 {Messages.invites.form.expiresAtOptions.sevenDays()}
               </MenuItem>
-              <MenuItem value={Common.Time.Month}>
+              <MenuItem value={Time.Month}>
                 {Messages.invites.form.expiresAtOptions.oneMonth()}
               </MenuItem>
               <MenuItem value={""}>
@@ -88,7 +88,7 @@ const ServerInviteForm = ({ invites, setInvites }: Props) => {
           <FormControl>
             <InputLabel>{Messages.invites.form.labels.maxUses()}</InputLabel>
             <Dropdown value={maxUses} onChange={handleMaxUsesChange}>
-              {ServerInvites.MAX_USES_OPTIONS.map((option: number) => {
+              {MAX_USES_OPTIONS.map((option: number) => {
                 return (
                   <MenuItem value={option} key={option}>
                     {Messages.invites.form.maxUsesOptions.xUses(option)}

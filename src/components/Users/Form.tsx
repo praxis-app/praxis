@@ -13,13 +13,14 @@ import {
 import { setAuthToken } from "../../utils/auth";
 import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
-import { Common, Users } from "../../constants";
+import { LocalStorage, ToastStatus } from "../../constants/common";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField, { PasswordField } from "../Shared/TextField";
 import ImageInput from "../Shared/ImageInput";
 import { toastVar } from "../../apollo/client/localState";
+import { FieldNames } from "../../constants/user";
 
 interface FormValues {
   name: string;
@@ -66,10 +67,7 @@ const UserForm = ({ user, isEditing }: Props) => {
           });
 
           if (currentUser.id === user.id) {
-            localStorage.setItem(
-              Common.LocalStorage.JwtToken,
-              data.updateUser.token
-            );
+            localStorage.setItem(LocalStorage.JwtToken, data.updateUser.token);
             setAuthToken(data.updateUser.token);
             const { id, name, email } = data.updateUser.user;
             await setCurrentUser({
@@ -101,14 +99,14 @@ const UserForm = ({ user, isEditing }: Props) => {
           },
         });
 
-        localStorage.setItem(Common.LocalStorage.JwtToken, data.signUp.token);
+        localStorage.setItem(LocalStorage.JwtToken, data.signUp.token);
         setAuthToken(data.signUp.token);
         Router.push("/");
       }
     } catch (err) {
       toastVar({
         title: Messages.errors.imageUploadError(),
-        status: Common.ToastStatus.Error,
+        status: ToastStatus.Error,
       });
     }
   };
@@ -124,13 +122,13 @@ const UserForm = ({ user, isEditing }: Props) => {
         <Form className={styles.form}>
           <FormGroup>
             <Field
-              name={Users.FieldNames.Name}
+              name={FieldNames.Name}
               placeholder={Messages.users.form.name()}
               component={TextField}
               multiline
             />
             <Field
-              name={Users.FieldNames.Email}
+              name={FieldNames.Email}
               placeholder={Messages.users.form.email()}
               component={TextField}
             />
@@ -164,12 +162,12 @@ const UserForm = ({ user, isEditing }: Props) => {
                 }}
               >
                 <Field
-                  name={Users.FieldNames.Password}
+                  name={FieldNames.Password}
                   placeholder={Messages.users.form.password()}
                   component={PasswordField}
                 />
                 <Field
-                  name={Users.FieldNames.PasswordConfirm}
+                  name={FieldNames.PasswordConfirm}
                   placeholder={Messages.users.actions.passwordConfirm()}
                   component={PasswordField}
                 />

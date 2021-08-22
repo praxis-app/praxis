@@ -17,7 +17,9 @@ import ItemMenu from "../Shared/ItemMenu";
 import { MOTION } from "../../apollo/client/queries";
 import { VERIFY_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/Vote.module.scss";
-import { Common, Settings, Votes } from "../../constants";
+import { ModelNames } from "../../constants/common";
+import { ConsensusStates, FlipStates } from "../../constants/vote";
+import { GroupSettings, SettingStates } from "../../constants/setting";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useSettingsByGroupId, useUserById } from "../../hooks";
 import Messages from "../../utils/messages";
@@ -114,18 +116,18 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
   const voteTypeLabel = (): string => {
     let text = Messages.middotWithSpaces();
 
-    if (consensusState === Votes.ConsensusStates.Agreement)
+    if (consensusState === ConsensusStates.Agreement)
       text += Messages.votes.consensus.voteTypes.labels.agreement();
-    if (consensusState === Votes.ConsensusStates.Reservations)
+    if (consensusState === ConsensusStates.Reservations)
       text += Messages.votes.consensus.voteTypes.labels.reservations();
-    if (consensusState === Votes.ConsensusStates.StandAside)
+    if (consensusState === ConsensusStates.StandAside)
       text += Messages.votes.consensus.voteTypes.labels.standAside();
-    if (consensusState === Votes.ConsensusStates.Block)
+    if (consensusState === ConsensusStates.Block)
       text += Messages.votes.consensus.voteTypes.labels.block();
 
     if (flipState)
       text +=
-        flipState === Votes.FlipStates.Up
+        flipState === FlipStates.Up
           ? Messages.votes.voteTypeLabel.support()
           : Messages.votes.voteTypeLabel.block();
 
@@ -153,7 +155,7 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
           action={
             <ItemMenu
               itemId={id}
-              itemType={Common.ModelNames.Vote}
+              itemType={ModelNames.Vote}
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteVoteHandler}
@@ -176,8 +178,8 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
           !verified &&
           !ownVote() &&
           !ownMotion() &&
-          settingByName(Settings.GroupSettings.VoteVerification) ===
-            Settings.States.On && (
+          settingByName(GroupSettings.VoteVerification) ===
+            SettingStates.On && (
             <CardActions style={{ marginTop: "6px" }}>
               <Button onClick={() => verifyVoteMutation()} color="primary">
                 <CheckCircle style={{ marginRight: "5px" }} />

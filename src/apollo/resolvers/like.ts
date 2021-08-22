@@ -1,4 +1,4 @@
-import { Common } from "../../constants";
+import { ModelNames } from "../../constants/common";
 import prisma from "../../utils/initPrisma";
 
 const likeResolvers = {
@@ -50,14 +50,14 @@ const likeResolvers = {
         commentId,
       }: { userId: string; postId: string; motionId: string; commentId: string }
     ) {
-      let likedItemType = Common.ModelNames.Post,
+      let likedItemType = ModelNames.Post,
         likedItemId: string = postId;
       if (motionId) {
-        likedItemType = Common.ModelNames.Motion;
+        likedItemType = ModelNames.Motion;
         likedItemId = motionId;
       }
       if (commentId) {
-        likedItemType = Common.ModelNames.Comment;
+        likedItemType = ModelNames.Comment;
         likedItemId = commentId;
       }
       const like = await prisma.like.create({
