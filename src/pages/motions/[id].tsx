@@ -21,7 +21,7 @@ import CommentsList from "../../components/Comments/List";
 import VotesList from "../../components/Votes/List";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
-import { useCurrentUser } from "../../hooks";
+import { useCurrentUser, useIsDesktop } from "../../hooks";
 import { FocusTargets } from "../../constants/common";
 
 const Show = () => {
@@ -40,6 +40,7 @@ const Show = () => {
     COMMENTS_BY_MOTION_ID,
     noCache
   );
+  const isDesktop = useIsDesktop();
 
   useEffect(() => {
     if (query.id) {
@@ -89,8 +90,8 @@ const Show = () => {
 
   useEffect(() => {
     if (query.comments) setTab(1);
-    if (query.focus) focusVar(FocusTargets.CommentFormTextField);
-  }, [query.comments, query.focus]);
+    if (query.focus && isDesktop) focusVar(FocusTargets.CommentFormTextField);
+  }, [query.comments, query.focus, isDesktop]);
 
   const deleteMotionHandler = async (id: string) => {
     await deleteMotion({

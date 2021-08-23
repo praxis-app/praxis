@@ -1,4 +1,4 @@
-import { Checkbox, CircularProgress } from "@material-ui/core";
+import { Checkbox, LinearProgress } from "@material-ui/core";
 import UserAvatar from "../Users/Avatar";
 import styles from "../../styles/Role/Member.module.scss";
 import { useUserById } from "../../hooks";
@@ -41,7 +41,7 @@ const RoleMemberAdd = ({ userId, selectedUsers, setSelectedUsers }: Props) => {
         />
       </div>
     );
-  return <CircularProgress />;
+  return <LinearProgress />;
 };
 
 export default RoleMemberAdd;

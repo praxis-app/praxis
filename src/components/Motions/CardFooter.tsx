@@ -18,6 +18,7 @@ import {
   ToastStatus,
 } from "../../constants/common";
 import { TOTAL_COMMENTS_BY_MOTION_ID } from "../../apollo/client/queries";
+import { toCommentsQuery, toFocusQuery } from "../Posts/CardFooter";
 import styles from "../../styles/Shared/CardFooter.module.scss";
 import { BLURPLE } from "../../styles/Shared/theme";
 import { noCache } from "../../utils/apollo";
@@ -56,8 +57,6 @@ const CardFooter = ({ motionId, votes, setVotes, modelOfConsensus }: Props) => {
   const router = useRouter();
 
   const motionPagePath = `${ResourcePaths.Motion}${motionId}`;
-  const toCommentsQuery = "?comments=true";
-  const toFocusQuery = "&focus=true";
 
   useEffect(() => {
     if (totalCommentsRes.data)
