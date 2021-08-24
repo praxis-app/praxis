@@ -84,6 +84,7 @@ export enum KeyCodes {
 
 export enum Events {
   Keydown = "keydown",
+  Resize = "resize",
 }
 
 export enum FocusTargets {

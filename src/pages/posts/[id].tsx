@@ -9,7 +9,9 @@ import Post from "../../components/Posts/Post";
 import CommentsForm from "../../components/Comments/Form";
 import CommentsList from "../../components/Comments/List";
 import { noCache } from "../../utils/apollo";
-import { useCurrentUser } from "../../hooks";
+import { useCurrentUser, useIsDesktop } from "../../hooks";
+import { focusVar } from "../../apollo/client/localState";
+import { FocusTargets } from "../../constants/common";
 
 const Show = () => {
   const { query } = useRouter();
@@ -24,6 +26,7 @@ const Show = () => {
     COMMENTS_BY_POST_ID,
     noCache
   );
+  const isDesktop = useIsDesktop();
 
   useEffect(() => {
     if (query.id)
@@ -44,6 +47,11 @@ const Show = () => {
     if (commentsRes.data)
       setComments(commentsRes.data.commentsByPostId.comments);
   }, [commentsRes.data]);
+
+  useEffect(() => {
+    if (query.comments && query.focus && isDesktop)
+      focusVar(FocusTargets.CommentFormTextField);
+  }, [query.comments, query.focus, isDesktop]);
 
   const deletePostHandler = async (id: string) => {
     await deletePost({

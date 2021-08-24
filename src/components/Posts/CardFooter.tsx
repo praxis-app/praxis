@@ -35,6 +35,9 @@ const useStyles = makeStyles(() =>
   })
 );
 
+export const toCommentsQuery = "?comments=true";
+export const toFocusQuery = "&focus=true";
+
 interface Props {
   postId: string;
 }
@@ -51,7 +54,7 @@ const CardFooter = ({ postId }: Props) => {
   const classes = useStyles();
   const router = useRouter();
 
-  const linkToPostPage = `${ResourcePaths.Post}${postId}`;
+  const postPagePath = `${ResourcePaths.Post}${postId}`;
 
   useEffect(() => {
     if (postId && likesByPostIdRes.data)
@@ -87,7 +90,7 @@ const CardFooter = ({ postId }: Props) => {
           )}
         </Typography>
         {!!totalComments && (
-          <Link href={linkToPostPage} passHref>
+          <Link href={postPagePath} passHref>
             <a>
               <Typography className={styles.totalCommentsLink}>
                 {Messages.comments.totalComments(totalComments)}
@@ -103,7 +106,11 @@ const CardFooter = ({ postId }: Props) => {
         <ActionLikeButton postId={postId} likes={likes} setLikes={setLikes} />
 
         <ActionButton
-          href={onPostPage() ? undefined : linkToPostPage}
+          href={
+            onPostPage()
+              ? undefined
+              : postPagePath + toCommentsQuery + toFocusQuery
+          }
           onClick={() => {
             if (onPostPage()) focusVar(FocusTargets.CommentFormTextField);
           }}

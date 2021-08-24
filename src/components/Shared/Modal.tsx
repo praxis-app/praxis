@@ -7,14 +7,12 @@ import {
   IconButton,
   Typography,
   Container,
-  useMediaQuery,
-  useTheme,
   Theme,
   createStyles,
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import { CircularProgress, Fade } from "@material-ui/core";
-import { DESKTOP_BREAKPOINT } from "../../constants/common";
+import { useIsDesktop } from "../../hooks";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -56,8 +54,7 @@ const Modal = ({
   topGap,
   open,
 }: Props) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down(DESKTOP_BREAKPOINT));
+  const isMobile = !useIsDesktop();
   const classes = useStyles();
 
   const handleCloseDialog = () => {

@@ -1,4 +1,4 @@
-import { CircularProgress, IconButton } from "@material-ui/core";
+import { IconButton, LinearProgress } from "@material-ui/core";
 import { RemoveCircle } from "@material-ui/icons";
 
 import UserAvatar from "../Users/Avatar";
@@ -48,7 +48,7 @@ const RoleMember = ({ member, members, setMembers }: Props) => {
         </IconButton>
       </div>
     );
-  return <CircularProgress />;
+  return <LinearProgress />;
 };
 
 export default RoleMember;

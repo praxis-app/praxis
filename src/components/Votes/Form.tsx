@@ -7,7 +7,7 @@ import {
   InputLabel,
   MenuItem,
 } from "@material-ui/core";
-import { Formik, FormikHelpers, Form, Field } from "formik";
+import { Formik, Form, Field } from "formik";
 
 import { motionVar } from "../../apollo/client/localState";
 import { UPDATE_VOTE } from "../../apollo/client/mutations";
@@ -17,8 +17,8 @@ import { useCurrentUser } from "../../hooks";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
 import Dropdown from "../Shared/Dropdown";
-import { FieldNames, ResourcePaths } from "../../constants/common";
 import { Stages } from "../../constants/motion";
+import { FieldNames, ResourcePaths } from "../../constants/common";
 import { ConsensusStates, FlipStates } from "../../constants/vote";
 
 interface FormValues {
@@ -52,10 +52,7 @@ const VotesForm = ({
     else setFlipState(vote.flipState);
   }, [vote, modelOfConsensus]);
 
-  const handleSubmit = async (
-    { body }: FormValues,
-    { setSubmitting }: FormikHelpers<FormValues>
-  ) => {
+  const handleSubmit = async ({ body }: FormValues) => {
     if (currentUser) {
       try {
         const { data } = await updateVote({
@@ -67,6 +64,10 @@ const VotesForm = ({
           },
         });
         if (setVotes && votes) {
+          if (data.updateVote.motionRatified && motionFromGlobal) {
+            motionVar({ ...motionFromGlobal, stage: Stages.Ratified });
+          }
+
           setVotes(
             votes.map((vote) => {
               const newVote: Vote = data.updateVote.vote;
@@ -80,12 +81,6 @@ const VotesForm = ({
               return vote;
             })
           );
-
-          if (data.updateVote.motionRatified && motionFromGlobal) {
-            motionVar({ ...motionFromGlobal, stage: Stages.Ratified });
-          }
-
-          setSubmitting(false);
         } else {
           Router.push(`${ResourcePaths.Motion}${vote.motionId}`);
         }
