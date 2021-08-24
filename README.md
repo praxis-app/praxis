@@ -31,7 +31,7 @@ The default database is PostgreSQL.
 
 ## Tools to get Involved and Collaborate
 
-- Discord: https://discord.gg/CAHb3AhQat, or me at **forrest#2807**
+- Discord: https://discord.gg/CAHb3AhQat, or message me at **forrest#2807**
 - Notion: https://www.notion.so/praxis-74cb6558cc6f4470a967d95fad039303
 
 ## Contributions

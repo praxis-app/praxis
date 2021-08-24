@@ -29,7 +29,7 @@ const BadgeContent = ({ vote }: { vote: Vote }) => {
   if (vote.flipState === FlipStates.Up) return <ThumbUp {...iconProps} />;
   if (vote.flipState === FlipStates.Down) return <ThumbDown {...iconProps} />;
 
-  return <></>;
+  return null;
 };
 
 export interface Props {

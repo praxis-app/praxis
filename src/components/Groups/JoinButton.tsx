@@ -78,7 +78,7 @@ const JoinButton = ({
     );
   };
 
-  if (!currentUser) return <></>;
+  if (!currentUser) return null;
 
   if (!alreadyRequested() && !alreadyJoined())
     return (
@@ -101,7 +101,7 @@ const JoinButton = ({
       </Button>
     );
 
-  return <></>;
+  return null;
 };
 
 export default JoinButton;

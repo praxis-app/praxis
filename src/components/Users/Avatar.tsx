@@ -34,7 +34,7 @@ const BadgeAvatar = withStyles((theme: Theme) =>
     root: {
       width: 17.5,
       height: 17.5,
-      border: `2px solid ${theme.palette.background.default}`,
+      border: `2px solid ${theme.palette.background.paper}`,
       backgroundColor: BLURPLE,
     },
   })
@@ -60,7 +60,7 @@ const UserAvatar = ({ user, responsive, badge, badgeContent }: Props) => {
       setProfilePicture(profilePictureRes.data.currentProfilePicture);
   }, [profilePictureRes.data]);
 
-  if (profilePictureRes.loading) return <></>;
+  if (profilePictureRes.loading) return null;
 
   const AvatarInner = () => {
     return (

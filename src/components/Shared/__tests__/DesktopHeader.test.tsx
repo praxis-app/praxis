@@ -4,14 +4,14 @@ import { mocked } from "ts-jest/utils";
 
 import Messages from "../../../utils/messages";
 import { TypeNames } from "../../../constants/common";
-import Header from "../Header";
+import DesktopHeader from "../DesktopHeader";
 import {
   useCurrentUser,
   useHasPermissionGlobally,
   useWindowSize,
 } from "../../../hooks";
 import { redeemedInviteToken } from "../../../utils/clientIndex";
-import { mockNextUseRouter } from "../../Shared/__mocks__";
+import { mockNextUseRouter } from "../__mocks__";
 
 jest.mock("../../../hooks", () => ({
   useCurrentUser: jest.fn(),
@@ -37,7 +37,7 @@ const renderHeader = async (): Promise<RenderResult> => {
   mockNextUseRouter("/");
   return render(
     <MockedProvider>
-      <Header />
+      <DesktopHeader />
     </MockedProvider>
   );
 };

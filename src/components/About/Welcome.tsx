@@ -51,7 +51,7 @@ const WelcomeCard = ({ isLoggedIn }: Props) => {
     );
   };
 
-  if (isLoggedIn || alreadyClosed() || closed) return <></>;
+  if (isLoggedIn || alreadyClosed() || closed) return null;
 
   return (
     <Card>

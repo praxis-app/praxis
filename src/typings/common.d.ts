@@ -22,3 +22,5 @@ interface ToastNotification {
   title: string;
   status: ToastStatus;
 }
+
+type ScrollDirection = "" | ScrollDirections.Up | ScrollDirections.Down;

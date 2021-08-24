@@ -55,7 +55,7 @@ const GroupItemAvatar = ({ user, group, motion, post }: Props) => {
         </div>
       </div>
     );
-  return <></>;
+  return null;
 };
 
 export default GroupItemAvatar;

@@ -86,7 +86,7 @@ const ItemMenu = ({
       </>
     );
 
-  return <></>;
+  return null;
 };
 
 export default ItemMenu;

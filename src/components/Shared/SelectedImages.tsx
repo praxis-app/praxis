@@ -58,7 +58,7 @@ const SelectedImages = ({
         })}
       </div>
     );
-  return <></>;
+  return null;
 };
 
 export default SelectedImages;

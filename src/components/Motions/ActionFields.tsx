@@ -123,7 +123,7 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
       </Typography>
     );
 
-  return <></>;
+  return null;
 };
 
 export default ActionFields;

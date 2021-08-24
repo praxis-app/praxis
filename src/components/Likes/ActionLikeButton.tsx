@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import { Favorite } from "@material-ui/icons";
-import classNames from "classnames/bind";
+import clsx from "clsx";
 
 import { CREATE_LIKE, DELETE_LIKE } from "../../apollo/client/mutations";
 import { useCurrentUser } from "../../hooks";
@@ -27,7 +27,6 @@ const ActionLikeButton = ({
   const currentUser = useCurrentUser();
   const [createLike, { loading: createLikeLoading }] = useMutation(CREATE_LIKE);
   const [deleteLike, { loading: deleteLikeLoading }] = useMutation(DELETE_LIKE);
-  const cx = classNames.bind(styles);
 
   const alreadyLike = (): Like | null => {
     if (!currentUser) return null;
@@ -79,8 +78,8 @@ const ActionLikeButton = ({
         }}
       />
       <span
-        className={cx(styles.likeText, {
-          liked: alreadyLike(),
+        className={clsx(styles.likeText, {
+          [styles.liked]: alreadyLike(),
         })}
       >
         {Messages.actions.like()}

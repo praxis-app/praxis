@@ -115,7 +115,7 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
         )}
       </Formik>
     );
-  return <></>;
+  return null;
 };
 
 export default RoleForm;

@@ -105,7 +105,7 @@ const ServerInviteForm = ({ invites, setInvites }: Props) => {
         <SubmitButton>{Messages.actions.create()}</SubmitButton>
       </form>
     );
-  return <></>;
+  return null;
 };
 
 export default ServerInviteForm;
