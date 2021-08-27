@@ -116,7 +116,7 @@ const PageButtons = ({ bottom }: Props) => {
     return false;
   };
 
-  if (isHiding()) return <></>;
+  if (isHiding()) return null;
 
   return (
     <div className={styles.container}>

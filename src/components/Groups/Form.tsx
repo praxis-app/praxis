@@ -121,7 +121,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
         )}
       </Formik>
     );
-  return <></>;
+  return null;
 };
 
 export default GroupForm;

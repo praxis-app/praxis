@@ -3,7 +3,6 @@
 .navbar {
   background: $navbarGray;
   padding: 23px 22px;
-  margin-bottom: 40px;
   display: flex;
 }
 
@@ -63,7 +62,6 @@
 @media only screen and (min-width: $desktopBreakpoint) {
   .navbar {
     padding: 18px 32px;
-    margin-bottom: 75px;
   }
 
   .navbarItem {

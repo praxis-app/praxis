@@ -24,7 +24,7 @@ const List = ({ deleteMotion, deletePost }: Props) => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return <></>;
+  if (!mounted) return null;
 
   if (feedLoading)
     return (

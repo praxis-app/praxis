@@ -1,6 +1,10 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { useMediaQuery, useTheme } from "@material-ui/core";
-import { DESKTOP_BREAKPOINT, Events } from "../constants/common";
+import {
+  DESKTOP_BREAKPOINT,
+  Events,
+  ScrollDirections,
+} from "../constants/common";
 
 // TODO: Use useIsMountedRef to resolve the following warning:
 // Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function
@@ -35,6 +39,54 @@ export const useWindowSize = () => {
   }, []);
 
   return size;
+};
+
+export const useScrollPosition = (): number => {
+  const [scrollPosition, setScrollPosition] = useState<number>(0);
+
+  const handleScroll = () => {
+    const position = window.pageYOffset;
+    setScrollPosition(position);
+  };
+
+  useEffect(() => {
+    window.addEventListener(Events.Scroll, handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener(Events.Scroll, handleScroll);
+    };
+  }, []);
+
+  return scrollPosition;
+};
+
+export const useScrollDirection = (): ScrollDirection => {
+  const [direction, setDirection] = useState<ScrollDirection>("");
+  let previousScrollY = 0;
+
+  useEffect(() => {
+    previousScrollY = window.scrollY;
+    window.addEventListener(Events.Scroll, handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener(Events.Scroll, handleScroll);
+    };
+  }, []);
+
+  const handleScroll = () => {
+    if (previousScrollY > window.scrollY) setDirection(ScrollDirections.Up);
+    else if (previousScrollY < window.scrollY)
+      setDirection(ScrollDirections.Down);
+
+    previousScrollY = window.scrollY;
+  };
+
+  return direction;
+};
+
+export const useIsMobile = (): boolean => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down(DESKTOP_BREAKPOINT));
+  return isMobile;
 };
 
 export const useIsDesktop = (): boolean => {

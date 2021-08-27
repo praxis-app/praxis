@@ -28,7 +28,7 @@ const CommonBreadcrumbs = () => {
       </Breadcrumbs>
     );
 
-  return <></>;
+  return null;
 };
 
 export default CommonBreadcrumbs;

@@ -67,7 +67,7 @@ const ActionData = ({ motion }: { motion: Motion }) => {
       </>
     );
 
-  return <></>;
+  return null;
 };
 
 export default ActionData;

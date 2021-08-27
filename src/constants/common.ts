@@ -38,6 +38,17 @@ export enum ResourcePaths {
   Post = "/posts/",
   Motion = "/motions/",
   Group = "/groups/",
+  User = "/users/",
+}
+
+export enum NavigationPaths {
+  Home = "/",
+  Groups = "/groups",
+  Invites = "/invites",
+  Roles = "/roles",
+  Users = "/users",
+  LogIn = "/users/login",
+  SignUp = "/users/signup",
 }
 
 export enum FieldNames {
@@ -85,6 +96,12 @@ export enum KeyCodes {
 export enum Events {
   Keydown = "keydown",
   Resize = "resize",
+  Scroll = "scroll",
+}
+
+export enum ScrollDirections {
+  Up = "up",
+  Down = "down",
 }
 
 export enum FocusTargets {

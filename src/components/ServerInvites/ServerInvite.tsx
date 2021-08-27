@@ -91,7 +91,7 @@ const ServerInvite = ({ invite, invites, setInvites }: Props) => {
         </TableCell>
       </TableRow>
     );
-  return <></>;
+  return null;
 };
 
 export default ServerInvite;

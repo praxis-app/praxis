@@ -111,7 +111,7 @@ const Requests = () => {
       </>
     );
 
-  return <></>;
+  return null;
 };
 
 export default Requests;

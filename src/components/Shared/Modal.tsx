@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import { CircularProgress, Fade } from "@material-ui/core";
-import { useIsDesktop } from "../../hooks";
+import { useIsMobile } from "../../hooks";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     appBar: {
       position: "relative",
-      backgroundColor: theme.palette.background.default,
+      backgroundColor: theme.palette.background.paper,
       marginBottom: 40,
     },
   })
@@ -54,7 +54,7 @@ const Modal = ({
   topGap,
   open,
 }: Props) => {
-  const isMobile = !useIsDesktop();
+  const isMobile = useIsMobile();
   const classes = useStyles();
 
   const handleCloseDialog = () => {

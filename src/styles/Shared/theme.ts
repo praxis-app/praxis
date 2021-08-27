@@ -1,4 +1,5 @@
 import { createTheme } from "@material-ui/core/styles";
+import { DESKTOP_BREAKPOINT } from "../../constants/common";
 
 export const BLURPLE = "#7289DA";
 export const WHITE = "white";
@@ -19,7 +20,7 @@ const globalTheme = createTheme({
       main: "rgb(90, 90, 90)",
     },
     background: {
-      default: "rgb(65, 65, 65)",
+      paper: "rgb(65, 65, 65)",
     },
   },
 });
@@ -30,7 +31,7 @@ const muiTheme = createTheme({
   overrides: {
     MuiCard: {
       root: {
-        backgroundColor: globalTheme.palette.background.default,
+        backgroundColor: globalTheme.palette.background.paper,
         marginBottom: 12,
       },
     },
@@ -91,7 +92,7 @@ const muiTheme = createTheme({
         color: globalTheme.palette.primary.contrastText,
       },
       containedPrimary: {
-        backgroundColor: globalTheme.palette.background.default,
+        backgroundColor: globalTheme.palette.background.paper,
         "&:hover": {
           backgroundColor: "rgb(60, 60, 60)",
         },
@@ -100,7 +101,7 @@ const muiTheme = createTheme({
 
     MuiMenu: {
       paper: {
-        backgroundColor: globalTheme.palette.background.default,
+        backgroundColor: globalTheme.palette.background.paper,
       },
       list: {
         color: globalTheme.palette.primary.contrastText,
@@ -109,7 +110,7 @@ const muiTheme = createTheme({
 
     MuiPopover: {
       paper: {
-        backgroundColor: globalTheme.palette.background.default,
+        backgroundColor: globalTheme.palette.background.paper,
       },
     },
 
@@ -137,9 +138,37 @@ const muiTheme = createTheme({
       },
     },
 
+    MuiBottomNavigation: {
+      root: {
+        backgroundColor: "rgb(30, 30, 30)",
+        position: "fixed",
+        bottom: 0,
+        zIndex: 5,
+        width: "100%",
+        height: 70,
+      },
+    },
+
+    MuiBottomNavigationAction: {
+      root: {
+        color: globalTheme.palette.primary.dark,
+        "&$selected": {
+          color: WHITE,
+          paddingTop: 0,
+        },
+        paddingTop: 0,
+      },
+    },
+
     MuiDialog: {
       paper: {
         backgroundColor: "rgb(50, 50, 50)",
+      },
+    },
+
+    MuiSnackbar: {
+      anchorOriginBottomCenter: {
+        bottom: 85,
       },
     },
 
@@ -155,7 +184,7 @@ const muiTheme = createTheme({
 
     MuiLinearProgress: {
       colorPrimary: {
-        backgroundColor: globalTheme.palette.background.default,
+        backgroundColor: globalTheme.palette.background.paper,
       },
       barColorPrimary: {
         backgroundColor: WHITE,
@@ -167,7 +196,11 @@ const muiTheme = createTheme({
 
     MuiContainer: {
       root: {
+        marginTop: 100,
         marginBottom: 200,
+        [globalTheme.breakpoints.up(DESKTOP_BREAKPOINT)]: {
+          marginTop: 75,
+        },
       },
     },
 

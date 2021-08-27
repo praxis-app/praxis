@@ -40,6 +40,7 @@
     ],
     "no-extra-boolean-cast": "off",
     "object-shorthand": ["error", "properties"],
+    "no-unreachable": "error",
     "prefer-const": [
       "error",
       {
