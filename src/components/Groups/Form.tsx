@@ -12,7 +12,7 @@ import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
-import { Common } from "../../constants";
+import { FieldNames, ResourcePaths } from "../../constants/common";
 import ImageInput from "../Shared/ImageInput";
 
 interface FormValues {
@@ -51,7 +51,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
             },
           });
 
-          Router.push(`/groups/${data.updateGroup.group.name}`);
+          Router.push(`${ResourcePaths.Group}${data.updateGroup.group.name}`);
         } else {
           const { data } = await createGroup({
             variables: {
@@ -62,7 +62,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
             },
           });
 
-          Router.push(`/groups/${data.createGroup.group.name}`);
+          Router.push(`${ResourcePaths.Group}${data.createGroup.group.name}`);
         }
       } catch (err) {
         alert(err);
@@ -82,14 +82,14 @@ const GroupForm = ({ group, isEditing }: Props) => {
           <Form className={styles.form}>
             <FormGroup>
               <Field
-                name={Common.FieldNames.Name}
+                name={FieldNames.Name}
                 placeholder={Messages.groups.form.name()}
                 component={TextField}
                 autoComplete="off"
               />
 
               <Field
-                name={Common.FieldNames.Description}
+                name={FieldNames.Description}
                 placeholder={Messages.groups.form.description()}
                 component={TextField}
                 multiline
@@ -121,7 +121,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
         )}
       </Formik>
     );
-  return <></>;
+  return null;
 };
 
 export default GroupForm;

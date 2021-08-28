@@ -5,6 +5,7 @@ import { CircularProgress } from "@material-ui/core";
 
 import User from "../../components/Users/User";
 import Feed from "../../components/Shared/Feed";
+import Pagination from "../../components/Shared/Pagination";
 import { USER_BY_NAME, PROFILE_FEED } from "../../apollo/client/queries";
 import {
   DELETE_USER,
@@ -12,17 +13,20 @@ import {
   DELETE_MOTION,
   LOGOUT_USER,
 } from "../../apollo/client/mutations";
-import { feedItemsVar } from "../../apollo/client/localState";
-import { Common } from "../../constants";
+import { feedVar, paginationVar } from "../../apollo/client/localState";
+import { TypeNames } from "../../constants/common";
 import { useCurrentUser } from "../../hooks";
 import { noCache } from "../../utils/apollo";
+import { resetFeed } from "../../utils/clientIndex";
 
 const Show = () => {
-  const { query } = useRouter();
+  const {
+    query: { name },
+  } = useRouter();
   const currentUser = useCurrentUser();
-  const feed = useReactiveVar(feedItemsVar);
+  const feed = useReactiveVar(feedVar);
+  const { currentPage, pageSize } = useReactiveVar(paginationVar);
   const [user, setUser] = useState<User>();
-  const [loadingFeed, setLoadingFeed] = useState<boolean>(true);
   const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME);
   const [getFeedRes, feedRes] = useLazyQuery(PROFILE_FEED, noCache);
   const [deleteUser] = useMutation(DELETE_USER);
@@ -31,24 +35,47 @@ const Show = () => {
   const [logoutUser] = useMutation(LOGOUT_USER);
 
   useEffect(() => {
-    const vars = {
-      variables: { name: query.name },
+    return () => {
+      resetFeed();
     };
-    if (query.name) {
-      getUserRes(vars);
-      getFeedRes(vars);
+  }, []);
+
+  useEffect(() => {
+    if (name) {
+      getUserRes({
+        variables: { name },
+      });
     }
-  }, [query.name]);
+  }, [name]);
+
+  useEffect(() => {
+    if (name) {
+      getFeedRes({
+        variables: {
+          name,
+          pageSize,
+          currentPage,
+        },
+      });
+
+      feedVar({
+        ...feed,
+        loading: true,
+      });
+    }
+  }, [name, currentPage, pageSize]);
 
   useEffect(() => {
     if (userRes.data) setUser(userRes.data.userByName);
   }, [userRes.data]);
 
   useEffect(() => {
-    if (feedRes.data) {
-      feedItemsVar(feedRes.data.profileFeed);
-      setLoadingFeed(false);
-    }
+    if (feedRes.data)
+      feedVar({
+        items: feedRes.data.profileFeed.pagedItems,
+        totalItems: feedRes.data.profileFeed.totalItems,
+        loading: feedRes.loading,
+      });
   }, [feedRes.data]);
 
   const deleteUserHandler = async (userId: string) => {
@@ -69,12 +96,14 @@ const Show = () => {
         id,
       },
     });
-    feedItemsVar(
-      feed.filter(
-        (post: FeedItem) =>
-          post.id !== id || post.__typename !== Common.TypeNames.Post
-      )
-    );
+    if (feed)
+      feedVar({
+        ...feed,
+        items: feed.items.filter(
+          (item: FeedItem) =>
+            item.id !== id || item.__typename !== TypeNames.Post
+        ),
+      });
   };
 
   const deleteMotionHandler = async (id: string) => {
@@ -83,12 +112,14 @@ const Show = () => {
         id,
       },
     });
-    feedItemsVar(
-      feed.filter(
-        (motion: FeedItem) =>
-          motion.id !== id || motion.__typename !== Common.TypeNames.Motion
-      )
-    );
+    if (feed)
+      feedVar({
+        ...feed,
+        items: feed.items.filter(
+          (item: FeedItem) =>
+            item.id !== id || item.__typename !== TypeNames.Motion
+        ),
+      });
   };
 
   const ownUser = (): boolean => {
@@ -101,11 +132,13 @@ const Show = () => {
       {user ? (
         <>
           <User user={user} deleteUser={deleteUserHandler} />
-          <Feed
-            loading={loadingFeed}
-            deleteMotion={deleteMotionHandler}
-            deletePost={deletePostHandler}
-          />
+
+          <Pagination>
+            <Feed
+              deleteMotion={deleteMotionHandler}
+              deletePost={deletePostHandler}
+            />
+          </Pagination>
         </>
       ) : (
         <CircularProgress />

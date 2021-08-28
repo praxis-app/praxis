@@ -40,14 +40,17 @@ export const USERS = gql`
 `;
 
 export const HOME_FEED = gql`
-  query ($userId: ID) {
-    homeFeed(userId: $userId) {
-      ... on Post {
-        ...FeedPost
+  query ($userId: ID, $currentPage: Int!, $pageSize: Int!) {
+    homeFeed(userId: $userId, currentPage: $currentPage, pageSize: $pageSize) {
+      pagedItems {
+        ... on Post {
+          ...FeedPost
+        }
+        ... on Motion {
+          ...FeedMotion
+        }
       }
-      ... on Motion {
-        ...FeedMotion
-      }
+      totalItems
     }
   }
   ${FEED_POST}
@@ -55,14 +58,17 @@ export const HOME_FEED = gql`
 `;
 
 export const PROFILE_FEED = gql`
-  query ($name: String!) {
-    profileFeed(name: $name) {
-      ... on Post {
-        ...FeedPost
+  query ($name: String!, $currentPage: Int!, $pageSize: Int!) {
+    profileFeed(name: $name, currentPage: $currentPage, pageSize: $pageSize) {
+      pagedItems {
+        ... on Post {
+          ...FeedPost
+        }
+        ... on Motion {
+          ...FeedMotion
+        }
       }
-      ... on Motion {
-        ...FeedMotion
-      }
+      totalItems
     }
   }
   ${FEED_POST}

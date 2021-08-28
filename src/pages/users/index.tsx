@@ -4,7 +4,8 @@ import Router from "next/router";
 
 import User from "../../components/Users/User";
 import { DELETE_USER, LOGOUT_USER } from "../../apollo/client/mutations";
-import { Common, Roles } from "../../constants";
+import { PageSizes } from "../../constants/common";
+import { Permissions } from "../../constants/role";
 import {
   useAllUsers,
   useCurrentUser,
@@ -18,7 +19,7 @@ const Index = () => {
   const [deleteUser] = useMutation(DELETE_USER);
   const [logoutUser] = useMutation(LOGOUT_USER);
   const [canManageUsers, canManageUsersLoading] = useHasPermissionGlobally(
-    Roles.Permissions.ManageUsers
+    Permissions.ManageUsers
   );
 
   const deleteUserHandler = async (userId: string) => {
@@ -47,7 +48,7 @@ const Index = () => {
         {users
           .slice()
           .reverse()
-          .slice(0, Common.PAGE_SIZE)
+          .slice(0, PageSizes.Default)
           .map((user: User) => {
             return (
               <User user={user} deleteUser={deleteUserHandler} key={user.id} />

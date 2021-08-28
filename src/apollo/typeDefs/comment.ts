@@ -24,4 +24,9 @@ type CommentPayload {
   comment: Comment!
 }
 
+type CommentsPayload {
+  comments: [Comment]
+  totalComments: Int!
+}
+
 `;

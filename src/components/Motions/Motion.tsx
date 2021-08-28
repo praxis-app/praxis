@@ -5,11 +5,11 @@ import Link from "next/link";
 import {
   Card,
   CardContent,
-  CardActions,
   Typography,
   makeStyles,
   CardHeader,
   CardMedia,
+  CardActionArea,
 } from "@material-ui/core";
 
 import {
@@ -23,10 +23,12 @@ import ImagesList from "../Images/List";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import GroupItemAvatar from "../Groups/ItemAvatar";
-import ConsensusButtons from "../Votes/ConsensusButtons";
 import ActionData from "./ActionData";
 import styles from "../../styles/Motion/Motion.module.scss";
-import { Common, Motions, Settings, Votes } from "../../constants";
+import { Stages } from "../../constants/motion";
+import { ModelNames, ResourcePaths } from "../../constants/common";
+import { GroupSettings } from "../../constants/setting";
+import { VotingTypes } from "../../constants/vote";
 import { noCache } from "../../utils/apollo";
 import {
   useCurrentUser,
@@ -35,8 +37,8 @@ import {
   useUserById,
 } from "../../hooks";
 import Messages from "../../utils/messages";
-import VoteButtons from "../Votes/VoteButtons";
 import { timeAgo } from "../../utils/time";
+import CardFooter from "./CardFooter";
 
 const useStyles = makeStyles({
   title: {
@@ -106,11 +108,11 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   };
 
   const onMotionPage = (): boolean => {
-    return router.asPath.includes("/motions/");
+    return router.asPath.includes(ResourcePaths.Motion);
   };
 
   const onGroupPage = (): boolean => {
-    return router.asPath.includes("/groups/");
+    return router.asPath.includes(ResourcePaths.Group);
   };
 
   const alreadyVote = (): Vote | null => {
@@ -121,7 +123,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   };
 
   const isRatified = (): boolean => {
-    return stage === Motions.Stages.Ratified;
+    return stage === Stages.Ratified;
   };
 
   const settingByName = (name: string): string => {
@@ -130,10 +132,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   };
 
   const isModelOfConsensus = (): boolean => {
-    return (
-      settingByName(Settings.GroupSettings.VotingType) ===
-      Votes.VotingTypes.Consensus
-    );
+    return settingByName(GroupSettings.VotingType) === VotingTypes.Consensus;
   };
 
   const isAGroupMember = (): boolean => {
@@ -161,7 +160,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
                   <a>{user?.name}</a>
                 </Link>
 
-                <Link href={`/motions/${id}`}>
+                <Link href={`${ResourcePaths.Motion}${id}`}>
                   <a className={styles.info}>
                     {Messages.motions.toActionWithRatified(
                       action,
@@ -175,14 +174,14 @@ const Motion = ({ motion, deleteMotion }: Props) => {
           action={
             <ItemMenu
               itemId={id}
-              itemType={Common.ModelNames.Motion}
+              itemType={ModelNames.Motion}
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteMotion}
               ownItem={ownMotion}
             />
           }
-          classes={{ title: classes.title }}
+          classes={classes}
         />
 
         {body && (
@@ -199,9 +198,11 @@ const Motion = ({ motion, deleteMotion }: Props) => {
           </CardContent>
         )}
 
-        <CardMedia>
-          <ImagesList images={images} />
-        </CardMedia>
+        <CardActionArea>
+          <CardMedia>
+            <ImagesList images={images} />
+          </CardMedia>
+        </CardActionArea>
 
         {alreadyVote() && !alreadyVote()?.body && !isRatified() && (
           <VotesForm
@@ -212,22 +213,13 @@ const Motion = ({ motion, deleteMotion }: Props) => {
           />
         )}
 
-        {currentUser && isAGroupMember() && !ownMotion() && (
-          <CardActions>
-            {isModelOfConsensus() ? (
-              <ConsensusButtons
-                motionId={id}
-                votes={votes}
-                setVotes={onMotionPage() ? votesVar : setVotes}
-              />
-            ) : (
-              <VoteButtons
-                motionId={id}
-                votes={votes}
-                setVotes={onMotionPage() ? votesVar : setVotes}
-              />
-            )}
-          </CardActions>
+        {currentUser && isAGroupMember() && (
+          <CardFooter
+            motionId={id}
+            votes={votes}
+            setVotes={onMotionPage() ? votesVar : setVotes}
+            modelOfConsensus={isModelOfConsensus()}
+          />
         )}
       </Card>
     </div>

@@ -14,7 +14,8 @@ import { noCache } from "../../../utils/apollo";
 import Messages from "../../../utils/messages";
 import { useHasPermissionGlobally } from "../../../hooks";
 import styles from "../../../styles/Role/Role.module.scss";
-import { Common, Roles } from "../../../constants";
+import { Permissions } from "../../../constants/role";
+import { ModelNames, TypeNames } from "../../../constants/common";
 import PermissionsForm from "../../../components/Permissions/Form";
 import AddMemberTab from "../../../components/Roles/AddMemberTab";
 import { breadcrumbsVar } from "../../../apollo/client/localState";
@@ -37,7 +38,7 @@ const Edit = () => {
   const [getMembersRes, membersRes] = useLazyQuery(ROLE_MEMBERS, noCache);
   const [deleteRole] = useMutation(DELETE_ROLE);
   const [canManageRoles, canManageRolesLoading] = useHasPermissionGlobally(
-    Roles.Permissions.ManageRoles,
+    Permissions.ManageRoles,
     [members, canManageRolesDep]
   );
 
@@ -130,9 +131,8 @@ const Edit = () => {
 
             <Button
               onClick={() =>
-                window.confirm(
-                  Messages.prompts.deleteItem(Common.ModelNames.Role)
-                ) && deleteRoleHandler(role.id)
+                window.confirm(Messages.prompts.deleteItem(ModelNames.Role)) &&
+                deleteRoleHandler(role.id)
               }
               className={styles.deleteButton}
               style={{
@@ -141,7 +141,7 @@ const Edit = () => {
               }}
               variant="text"
             >
-              {Messages.actions.deleteItem(Common.TypeNames.Role)}
+              {Messages.actions.deleteItem(TypeNames.Role)}
             </Button>
           </>
         )}

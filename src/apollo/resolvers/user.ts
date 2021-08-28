@@ -6,8 +6,17 @@ import jwt from "jsonwebtoken";
 
 import prisma from "../../utils/initPrisma";
 import { validateSignup, validateLogin } from "../../utils/validation";
-import { Common } from "../../constants";
+import { EXPIRES_IN, TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
+import { paginate } from "../../utils/items";
+
+interface HomeFeedInput extends PaginationState {
+  userId?: string;
+}
+
+interface ProfileFeedInput extends PaginationState {
+  name: string;
+}
 
 const saveProfilePicture = async (user: any, image: any) => {
   if (image) {
@@ -31,7 +40,10 @@ const userResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
-    homeFeed: async (_: any, { userId }: { userId: string }) => {
+    homeFeed: async (
+      _: any,
+      { userId, currentPage, pageSize }: HomeFeedInput
+    ) => {
       let feed: BackendFeedItem[] = [];
 
       if (userId) {
@@ -73,7 +85,7 @@ const userResolvers = {
                 ),
                 ...userWithFeedItems.motions.map((motion) => ({
                   ...motion,
-                  __typename: Common.TypeNames.Motion,
+                  __typename: TypeNames.Motion,
                 })),
               ];
           }
@@ -97,12 +109,12 @@ const userResolvers = {
               ...feed,
               ...groupMotions.map((motion) => ({
                 ...motion,
-                __typename: Common.TypeNames.Motion,
+                __typename: TypeNames.Motion,
               })),
             ];
         }
         feed.forEach((item) => {
-          if (!item.__typename) item.__typename = Common.TypeNames.Post;
+          if (!item.__typename) item.__typename = TypeNames.Post;
         });
         const uniq: BackendFeedItem[] = [];
         for (const item of feed) {
@@ -121,19 +133,29 @@ const userResolvers = {
         const posts: BackendPost[] = await prisma.post.findMany();
         const motions: BackendMotion[] = await prisma.motion.findMany();
         posts.forEach((item) => {
-          item.__typename = Common.TypeNames.Post;
+          item.__typename = TypeNames.Post;
         });
         motions.forEach((item) => {
-          item.__typename = Common.TypeNames.Motion;
+          item.__typename = TypeNames.Motion;
         });
 
         feed = [...posts, ...motions];
       }
 
-      return feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+      return {
+        pagedItems: paginate(
+          feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+          currentPage,
+          pageSize
+        ),
+        totalItems: feed.length,
+      };
     },
 
-    profileFeed: async (_: any, { name }: { name: string }) => {
+    profileFeed: async (
+      _: any,
+      { name, currentPage, pageSize }: ProfileFeedInput
+    ) => {
       const feed: BackendFeedItem[] = [];
       const userWithFeedItems = await prisma.user.findFirst({
         where: {
@@ -147,13 +169,21 @@ const userResolvers = {
       const posts = userWithFeedItems?.posts as BackendPost[];
       const motions = userWithFeedItems?.motions as BackendMotion[];
       posts.forEach((item) => {
-        item.__typename = Common.TypeNames.Post;
+        item.__typename = TypeNames.Post;
       });
       motions.forEach((item) => {
-        item.__typename = Common.TypeNames.Motion;
+        item.__typename = TypeNames.Motion;
       });
       feed.push(...posts, ...motions);
-      return feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
+      return {
+        pagedItems: paginate(
+          feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+          currentPage,
+          pageSize
+        ),
+        totalItems: feed.length,
+      };
     },
 
     user: async (_: any, { id }: { id: string }) => {
@@ -231,7 +261,7 @@ const userResolvers = {
       };
 
       const token = jwt.sign(jwtPayload, process.env.JWT_KEY as string, {
-        expiresIn: Common.EXPIRES_IN,
+        expiresIn: EXPIRES_IN,
       });
 
       return { user, token };
@@ -264,7 +294,7 @@ const userResolvers = {
           email: user.email,
         };
         const token = jwt.sign(jwtPayload, process.env.JWT_KEY as string, {
-          expiresIn: Common.EXPIRES_IN,
+          expiresIn: EXPIRES_IN,
         });
 
         return { user, token };
@@ -289,8 +319,7 @@ const userResolvers = {
         throw new ApolloError(Messages.users.errors.userUpdateError());
       }
 
-      if (!user)
-        throw new Error(Messages.items.notFound(Common.TypeNames.User));
+      if (!user) throw new Error(Messages.items.notFound(TypeNames.User));
 
       try {
         await saveProfilePicture(user, profilePicture);

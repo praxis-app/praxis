@@ -9,7 +9,8 @@ import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import ColorPicker from "../Shared/ColorPicker";
-import { Common, Roles } from "../../constants";
+import { FieldNames } from "../../constants/common";
+import { DEFAULT_ROLE_COLOR } from "../../constants/role";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
@@ -28,7 +29,7 @@ interface Props {
 
 const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
   const currentUser = useCurrentUser();
-  const [color, setColor] = useState<string>(Roles.DEFAULT_COLOR);
+  const [color, setColor] = useState<string>(DEFAULT_ROLE_COLOR);
   const [colorPickerKey, setColorPickerKey] = useState<string>("");
   const [createRole] = useMutation(CREATE_ROLE);
   const [updateRole] = useMutation(UPDATE_ROLE);
@@ -94,7 +95,7 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
           <Form className={styles.form}>
             <FormGroup>
               <Field
-                name={Common.FieldNames.Name}
+                name={FieldNames.Name}
                 placeholder={Messages.roles.form.name()}
                 component={TextField}
                 autoComplete="off"
@@ -114,7 +115,7 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
         )}
       </Formik>
     );
-  return <></>;
+  return null;
 };
 
 export default RoleForm;

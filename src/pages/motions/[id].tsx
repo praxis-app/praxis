@@ -9,14 +9,20 @@ import {
   VOTES_BY_MOTION_ID,
 } from "../../apollo/client/queries";
 import { DELETE_MOTION, DELETE_COMMENT } from "../../apollo/client/mutations";
-import { motionVar, votesVar } from "../../apollo/client/localState";
+import {
+  motionVar,
+  votesVar,
+  tabVar,
+  focusVar,
+} from "../../apollo/client/localState";
 import Motion from "../../components/Motions/Motion";
 import CommentsForm from "../../components/Comments/Form";
 import CommentsList from "../../components/Comments/List";
 import VotesList from "../../components/Votes/List";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
-import { useCurrentUser } from "../../hooks";
+import { useCurrentUser, useIsDesktop } from "../../hooks";
+import { FocusTargets } from "../../constants/common";
 
 const Show = () => {
   const { query } = useRouter();
@@ -25,6 +31,7 @@ const Show = () => {
   const motion = useReactiveVar(motionVar);
   const [comments, setComments] = useState<Comment[]>([]);
   const [tab, setTab] = useState<number>(0);
+  const tabFromGlobal = useReactiveVar(tabVar);
   const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deleteComment] = useMutation(DELETE_COMMENT);
   const [getMotionRes, motionRes] = useLazyQuery(MOTION, noCache);
@@ -33,6 +40,7 @@ const Show = () => {
     COMMENTS_BY_MOTION_ID,
     noCache
   );
+  const isDesktop = useIsDesktop();
 
   useEffect(() => {
     if (query.id) {
@@ -64,13 +72,26 @@ const Show = () => {
   }, [votesRes.data]);
 
   useEffect(() => {
-    if (commentsRes.data) setComments(commentsRes.data.commentsByMotionId);
+    if (commentsRes.data)
+      setComments(commentsRes.data.commentsByMotionId.comments);
   }, [commentsRes.data]);
 
   useEffect(() => {
-    if (!votes.find((vote) => vote.body)) setTab(1);
-    else setTab(0);
-  }, [votes]);
+    if (!votes.find((vote) => vote.body) && comments.length && !tabFromGlobal)
+      setTab(1);
+  }, [votes, comments]);
+
+  useEffect(() => {
+    if (tabFromGlobal) {
+      setTab(tabFromGlobal);
+      tabVar(null);
+    }
+  }, [tabFromGlobal]);
+
+  useEffect(() => {
+    if (query.comments) setTab(1);
+    if (query.focus && isDesktop) focusVar(FocusTargets.CommentFormTextField);
+  }, [query.comments, query.focus, isDesktop]);
 
   const deleteMotionHandler = async (id: string) => {
     await deleteMotion({

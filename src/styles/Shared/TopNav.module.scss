@@ -1,0 +1,26 @@
+@import "./colors.scss";
+
+.topNav {
+  position: fixed;
+  top: -100px;
+  z-index: 5;
+  width: 100%;
+  background-color: $navbarGray;
+  transition: 0.4s;
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 22px;
+}
+
+.topNavOpen {
+  top: 0;
+}
+
+.brand {
+  font-size: 20px;
+  font-family: "Inter Extra Bold";
+  letter-spacing: 0.6px;
+  color: white;
+  cursor: pointer;
+  margin-top: 10px;
+}

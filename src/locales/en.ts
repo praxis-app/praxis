@@ -11,8 +11,14 @@ const en = {
     delete: () => "Delete",
     deleteItem: (itemType: string) => `Delete ${itemType}`,
     edit: () => "Edit",
+    like: () => "Like",
     pickColor: () => "Pick a Color",
     save: () => "Save",
+    share: () => "Share",
+  },
+
+  labels: {
+    all: () => "All",
   },
 
   states: {
@@ -36,6 +42,10 @@ const en = {
   },
 
   navigation: {
+    home: () => "Home",
+    invites: () => "Invites",
+    menu: () => "Menu",
+    profile: () => "Profile",
     users: () => "Users",
     groups: () => "Groups",
     roles: () => "Roles",
@@ -44,11 +54,8 @@ const en = {
   about: {
     welcomeCard: {
       welcome: () => "Welcome to Praxis",
-      about:
-        () => `Praxis is an open source social networking site. Groups are the main
-      focus and come with a wide variety of voting features. Create a group
-      and set it to no-admin, allowing group members to create motions and
-      democratically decide on settings, name, theme, and more.`,
+      about: () =>
+        `Praxis is an open source social networking site. Motions are the main focus and come with a wide variety of voting features, with consensus as the default. Create a group and set it to no-admin, allowing group members to create motions and democratically decide on settings, name, theme, or planning of real world events.`,
       inDev: () => "This project is still in development.",
     },
   },
@@ -97,7 +104,7 @@ const en = {
     },
     form: {
       bodyPlaceholder: () => "Post something awesome...",
-      postEmpty: () => "Post cannot be empty!",
+      postEmpty: () => "Post cannot be empty...",
     },
     errors: {
       postCreationError: () => "Unable to create post",
@@ -124,6 +131,7 @@ const en = {
         changeSettings: () => "Change group settings",
         test: () => "Just a test",
       },
+      motionEmpty: () => "Motion cannot be empty...",
     },
     tabs: {
       votes: () => "Votes",
@@ -141,9 +149,13 @@ const en = {
 
   votes: {
     actions: {
-      support: () => "Support",
+      agree: () => "Agree",
       block: () => "Block",
+      reservations: () => "Reservations",
+      standAside: () => "Stand Aside",
+      support: () => "Support",
       update: () => "Update vote",
+      vote: () => "Vote",
     },
     form: {
       bodyPlaceholder: {
@@ -205,6 +217,7 @@ const en = {
       commentCreationError: () => "Unable to post comment",
       commentUpdateError: () => "Unable to update comment",
     },
+    totalComments: (total: number) => `${total} Comments`,
   },
 
   groups: {
@@ -305,10 +318,10 @@ const en = {
         oneDay: () => "1 day",
         sevenDays: () => "7 days",
         oneMonth: () => "1 month",
-        never: () => "Never",
+        never: () => "Never (default)",
       },
       maxUsesOptions: {
-        noLimit: () => "No limit",
+        noLimit: () => "No limit (default)",
         xUses: (x: number) => `${x} use${x === 1 ? "" : "s"}`,
       },
       labels: {
@@ -332,12 +345,20 @@ const en = {
     notFound: (itemType: string) => `${itemType} not found.`,
   },
 
+  pagination: {
+    rowsPerPage: () => "Rows per page: ",
+  },
+
   time: {
     now: () => "now",
     minutes: (minutes: number) => `${minutes}m`,
     hours: (hours: number) => `${hours}h`,
     days: (days: number) => `${days}d`,
     infinity: () => "∞",
+  },
+
+  development: {
+    notImplemented: () => "This feature has not yet been implemented.",
   },
 
   middotWithSpaces: () => " · ",

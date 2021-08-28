@@ -17,7 +17,7 @@ import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
-import { Common } from "../../constants";
+import { FieldNames, ResourcePaths } from "../../constants/common";
 import SelectedImages from "../Shared/SelectedImages";
 import ImageInput from "../Shared/ImageInput";
 import { toastVar } from "../../apollo/client/localState";
@@ -80,8 +80,10 @@ const CommentsForm = ({
               images,
             },
           });
-          if (comment?.postId) Router.push(`/posts/${comment.postId}`);
-          if (comment?.motionId) Router.push(`/motions/${comment.motionId}`);
+          if (comment?.postId)
+            Router.push(`${ResourcePaths.Post}${comment.postId}`);
+          if (comment?.motionId)
+            Router.push(`${ResourcePaths.Motion}${comment.motionId}`);
         } else {
           const commentedItemId = postId
             ? {
@@ -147,7 +149,7 @@ const CommentsForm = ({
         <Form className={styles.form}>
           <FormGroup>
             <Field
-              name={Common.FieldNames.Body}
+              name={FieldNames.Body}
               placeholder={
                 formik.isSubmitting
                   ? Messages.states.loading()

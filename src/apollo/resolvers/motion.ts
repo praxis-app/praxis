@@ -4,7 +4,7 @@ import GraphQLJSON from "graphql-type-json";
 import { saveImage, deleteImage } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
-import { Common } from "../../constants";
+import { TypeNames } from "../../constants/common";
 
 interface MotionInput {
   body: string;
@@ -122,8 +122,7 @@ const motionResolvers = {
         data: { body, action },
       });
 
-      if (!motion)
-        throw new Error(Messages.items.notFound(Common.TypeNames.Motion));
+      if (!motion) throw new Error(Messages.items.notFound(TypeNames.Motion));
 
       await saveImages(motion, images);
 

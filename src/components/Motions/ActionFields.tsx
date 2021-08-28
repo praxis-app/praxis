@@ -1,7 +1,12 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Input, Typography } from "@material-ui/core";
 import { Image } from "@material-ui/icons";
-import { Groups, Motions } from "../../constants";
+
+import {
+  ActionTypes,
+  ActionData as MotionActionData,
+} from "../../constants/motion";
+import { GroupAspects } from "../../constants/group";
 import styles from "../../styles/Motion/ActionFields.module.scss";
 import Messages from "../../utils/messages";
 
@@ -37,43 +42,43 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
 
   useEffect(() => {
     if (!!text.length) {
-      let actionData = Motions.ActionData.NewGroupName;
-      if (actionType === Motions.ActionTypes.ChangeDescription)
-        actionData = Motions.ActionData.NewGroupDescription;
+      let actionData = MotionActionData.NewGroupName;
+      if (actionType === ActionTypes.ChangeDescription)
+        actionData = MotionActionData.NewGroupDescription;
       setActionData({
         [actionData]: text,
       });
     }
-    if (image && Motions.ActionTypes.ChangeImage) {
+    if (image && ActionTypes.ChangeImage) {
       setActionData({
-        [Motions.ActionData.NewGroupImage]: image,
+        [MotionActionData.NewGroupImage]: image,
       });
     }
   }, [text, image, actionType]);
 
-  if (actionType === Motions.ActionTypes.ChangeName)
+  if (actionType === ActionTypes.ChangeName)
     return (
       <TextInput
         placeholder={Messages.motions.groups.actionFields.newAspect(
-          Groups.Aspects.Name
+          GroupAspects.Name
         )}
         value={text}
         setValue={setText}
       />
     );
 
-  if (actionType === Motions.ActionTypes.ChangeDescription)
+  if (actionType === ActionTypes.ChangeDescription)
     return (
       <TextInput
         placeholder={Messages.motions.groups.actionFields.newAspect(
-          Groups.Aspects.Description
+          GroupAspects.Description
         )}
         value={text}
         setValue={setText}
       />
     );
 
-  if (actionType === Motions.ActionTypes.ChangeImage)
+  if (actionType === ActionTypes.ChangeImage)
     return (
       <>
         {image && (
@@ -111,14 +116,14 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
       </>
     );
 
-  if (actionType && actionType !== Motions.ActionTypes.Test)
+  if (actionType && actionType !== ActionTypes.Test)
     return (
       <Typography gutterBottom>
         {Messages.motions.groups.actionFields.inDev()}
       </Typography>
     );
 
-  return <></>;
+  return null;
 };
 
 export default ActionFields;

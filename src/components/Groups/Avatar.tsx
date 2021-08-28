@@ -6,6 +6,8 @@ import Link from "next/link";
 import baseUrl from "../../utils/baseUrl";
 import { CURRENT_COVER_PHOTO } from "../../apollo/client/queries";
 import Messages from "../../utils/messages";
+import { ResourcePaths } from "../../constants/common";
+import { BLACK, WHITE } from "../../styles/Shared/theme";
 
 interface Props {
   group: Group;
@@ -24,12 +26,12 @@ const GroupAvatar = ({ group }: Props) => {
   }, [coverPhotoRes.data]);
 
   return (
-    <Link href={`/groups/${group.name}`}>
+    <Link href={`${ResourcePaths.Group}${group.name}`}>
       <a>
         <Avatar
           style={{
-            backgroundColor: coverPhoto ? "black" : "white",
-            color: "black",
+            backgroundColor: coverPhoto ? BLACK : WHITE,
+            color: BLACK,
           }}
         >
           {coverPhoto ? (

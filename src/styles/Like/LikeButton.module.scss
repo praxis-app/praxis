@@ -1,5 +1,15 @@
+@import "../Shared/colors.scss";
+
 .likesNumber {
   margin-left: 6px;
   margin-bottom: -3px;
   font-size: 18px;
+}
+
+.likeText {
+  transition: 0.2s;
+}
+
+.liked {
+  color: $blurple !important;
 }

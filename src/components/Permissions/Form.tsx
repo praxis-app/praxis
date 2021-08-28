@@ -6,7 +6,7 @@ import { displayName } from "../../utils/items";
 import Messages from "../../utils/messages";
 import { UPDATE_PERMISSIONS } from "../../apollo/client/mutations";
 import { useMutation } from "@apollo/client";
-import { headerKeyVar } from "../../apollo/client/localState";
+import { navKeyVar } from "../../apollo/client/localState";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
 
@@ -56,7 +56,7 @@ const PermissionsForm = ({
       setPermissions(newPermissions);
       const newKey = generateRandom();
       setCanManageRolesDep(newKey);
-      headerKeyVar(newKey);
+      navKeyVar(newKey);
     } catch (err) {
       alert(err);
     }

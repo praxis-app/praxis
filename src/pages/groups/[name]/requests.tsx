@@ -6,7 +6,8 @@ import { Card, Typography } from "@material-ui/core";
 
 import { GROUP_BY_NAME, MEMBER_REUQESTS } from "../../../apollo/client/queries";
 import Request from "../../../components/Groups/Request";
-import { Settings } from "../../../constants";
+import { ResourcePaths } from "../../../constants/common";
+import { GroupSettings, SettingStates } from "../../../constants/setting";
 import Messages from "../../../utils/messages";
 import { noCache } from "../../../utils/apollo";
 import {
@@ -64,7 +65,7 @@ const Requests = () => {
   };
 
   const isNoAdmin = (): boolean => {
-    return settingByName(Settings.GroupSettings.NoAdmin) === Settings.States.On;
+    return settingByName(GroupSettings.NoAdmin) === SettingStates.On;
   };
 
   const isAMember = (): boolean => {
@@ -83,7 +84,7 @@ const Requests = () => {
   if (canSeeRequests())
     return (
       <>
-        <Link href={`/groups/${query.name}`}>
+        <Link href={`${ResourcePaths.Group}${query.name}`}>
           <a>
             <Typography variant="h3" color="primary">
               {query.name}
@@ -110,7 +111,7 @@ const Requests = () => {
       </>
     );
 
-  return <></>;
+  return null;
 };
 
 export default Requests;

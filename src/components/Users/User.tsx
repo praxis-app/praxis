@@ -9,7 +9,8 @@ import ItemMenu from "../Shared/ItemMenu";
 import UserAvatar from "./Avatar";
 import { FOLLOWING } from "../../apollo/client/queries";
 import Messages from "../../utils/messages";
-import { Common, Roles } from "../../constants";
+import { ModelNames } from "../../constants/common";
+import { WHITE } from "../../styles/Shared/theme";
 import {
   useCurrentUser,
   useHasPermissionGlobally,
@@ -17,6 +18,7 @@ import {
 } from "../../hooks";
 import { formatDate } from "../../utils/time";
 import { noCache } from "../../utils/apollo";
+import { Permissions } from "../../constants/role";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -41,9 +43,7 @@ const Show = ({ user, deleteUser }: Props) => {
     variables: { userId: id },
     ...noCache,
   });
-  const [canManageUsers] = useHasPermissionGlobally(
-    Roles.Permissions.ManageUsers
-  );
+  const [canManageUsers] = useHasPermissionGlobally(Permissions.ManageUsers);
   const classes = useStyles();
   const signUpDate = formatDate(createdAt, false);
 
@@ -70,7 +70,7 @@ const Show = ({ user, deleteUser }: Props) => {
             <ItemMenu
               name={name}
               itemId={id}
-              itemType={Common.ModelNames.User}
+              itemType={ModelNames.User}
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteUser}
@@ -93,7 +93,7 @@ const Show = ({ user, deleteUser }: Props) => {
           <a>{Messages.users.followers(followers.length)}</a>
         </Link>
 
-        <span style={{ color: "white" }}>{Messages.middotWithSpaces()}</span>
+        <span style={{ color: WHITE }}>{Messages.middotWithSpaces()}</span>
 
         <Link href={`/users/${name}/following`}>
           <a>{Messages.users.following(following.length)}</a>

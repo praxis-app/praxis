@@ -4,16 +4,17 @@ import {
   FormControl,
   FormGroup,
   InputLabel,
-  NativeSelect,
+  MenuItem,
 } from "@material-ui/core";
 
 import { CREATE_SERVER_INVITE } from "../../apollo/client/mutations";
 import styles from "../../styles/ServerInvite/ServerInvite.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
-import { Common } from "../../constants";
-import { ServerInvites } from "../../constants";
+import { Time } from "../../constants/common";
+import { MAX_USES_OPTIONS } from "../../constants/serverInvite";
 import SubmitButton from "../Shared/SubmitButton";
+import Dropdown from "../Shared/Dropdown";
 
 interface Props {
   invites: ServerInvite[];
@@ -51,13 +52,15 @@ const ServerInviteForm = ({ invites, setInvites }: Props) => {
   };
 
   const handleExpiresAtChange = (
-    event: React.ChangeEvent<{ value: string }>
+    event: React.ChangeEvent<{ value: unknown }>
   ) => {
-    setExpiresAt(event.target.value);
+    setExpiresAt((event.target.value as number).toString());
   };
 
-  const handleMaxUsesChange = (event: React.ChangeEvent<{ value: string }>) => {
-    setMaxUses(event.target.value);
+  const handleMaxUsesChange = (
+    event: React.ChangeEvent<{ value: unknown }>
+  ) => {
+    setMaxUses(event.target.value as string);
   };
 
   if (currentUser)
@@ -66,45 +69,43 @@ const ServerInviteForm = ({ invites, setInvites }: Props) => {
         <FormGroup style={{ marginBottom: "12px" }}>
           <FormControl>
             <InputLabel>{Messages.invites.form.labels.expiresAt()}</InputLabel>
-            <NativeSelect value={expiresAt} onChange={handleExpiresAtChange}>
-              <option aria-label={Messages.forms.none()} value="" />
-              <option value={Common.Time.Day}>
+            <Dropdown value={expiresAt} onChange={handleExpiresAtChange}>
+              <MenuItem value={Time.Day}>
                 {Messages.invites.form.expiresAtOptions.oneDay()}
-              </option>
-              <option value={Common.Time.Week}>
+              </MenuItem>
+              <MenuItem value={Time.Week}>
                 {Messages.invites.form.expiresAtOptions.sevenDays()}
-              </option>
-              <option value={Common.Time.Month}>
+              </MenuItem>
+              <MenuItem value={Time.Month}>
                 {Messages.invites.form.expiresAtOptions.oneMonth()}
-              </option>
-              <option value={undefined}>
+              </MenuItem>
+              <MenuItem value={""}>
                 {Messages.invites.form.expiresAtOptions.never()}
-              </option>
-            </NativeSelect>
+              </MenuItem>
+            </Dropdown>
           </FormControl>
 
           <FormControl>
             <InputLabel>{Messages.invites.form.labels.maxUses()}</InputLabel>
-            <NativeSelect value={maxUses} onChange={handleMaxUsesChange}>
-              <option aria-label={Messages.forms.none()} value="" />
-              <option value={undefined}>
-                {Messages.invites.form.maxUsesOptions.noLimit()}
-              </option>
-              {ServerInvites.MAX_USES_OPTIONS.map((option) => {
+            <Dropdown value={maxUses} onChange={handleMaxUsesChange}>
+              {MAX_USES_OPTIONS.map((option: number) => {
                 return (
-                  <option value={option} key={option}>
+                  <MenuItem value={option} key={option}>
                     {Messages.invites.form.maxUsesOptions.xUses(option)}
-                  </option>
+                  </MenuItem>
                 );
               })}
-            </NativeSelect>
+              <MenuItem value={""}>
+                {Messages.invites.form.maxUsesOptions.noLimit()}
+              </MenuItem>
+            </Dropdown>
           </FormControl>
         </FormGroup>
 
         <SubmitButton>{Messages.actions.create()}</SubmitButton>
       </form>
     );
-  return <></>;
+  return null;
 };
 
 export default ServerInviteForm;

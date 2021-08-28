@@ -1,34 +1,35 @@
 import { useState, useEffect } from "react";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import { Tab, Tabs, Card, CircularProgress } from "@material-ui/core";
 
 import Group from "../../components/Groups/Group";
-import PostsList from "../../components/Posts/List";
-import MotionsList from "../../components/Motions/List";
 import Feed from "../../components/Shared/Feed";
 import PostsForm from "../../components/Posts/Form";
 import MotionsForm from "../../components/Motions/Form";
 import ToggleForms from "../../components/Groups/ToggleForms";
+import Pagination from "../../components/Shared/Pagination";
 import { GROUP_BY_NAME, GROUP_FEED } from "../../apollo/client/queries";
 import {
   DELETE_GROUP,
   DELETE_POST,
   DELETE_MOTION,
 } from "../../apollo/client/mutations";
-import { feedItemsVar } from "../../apollo/client/localState";
-import { Common } from "../../constants";
+import { feedVar, paginationVar } from "../../apollo/client/localState";
+import { ModelNames, TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useMembersByGroupId } from "../../hooks";
+import { resetFeed } from "../../utils/items";
 
 const Show = () => {
-  const { query } = useRouter();
+  const {
+    query: { name },
+  } = useRouter();
   const currentUser = useCurrentUser();
+  const feed = useReactiveVar(feedVar);
+  const { currentPage, pageSize } = useReactiveVar(paginationVar);
   const [group, setGroup] = useState<Group>();
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [motions, setMotions] = useState<Motion[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [tab, setTab] = useState<number>(0);
   const [groupMembers] = useMembersByGroupId(group?.id);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
@@ -38,45 +39,54 @@ const Show = () => {
   const [deletePost] = useMutation(DELETE_POST);
 
   useEffect(() => {
-    const vars = {
-      variables: { name: query.name },
-    };
-    if (query.name) {
-      getGroupRes(vars);
-      getFeedRes(vars);
+    if (name) {
+      getGroupRes({
+        variables: { name },
+      });
     }
-  }, [query.name]);
+  }, [name]);
 
   useEffect(() => {
     if (groupRes.data) setGroup(groupRes.data.groupByName);
   }, [groupRes.data]);
 
   useEffect(() => {
-    if (feedRes.data) {
-      feedItemsVar(feedRes.data.groupFeed);
-      setPosts(
-        feedRes.data.groupFeed.filter(
-          (item: FeedItem) => item.__typename === Common.TypeNames.Post
-        )
-      );
-      setMotions(
-        feedRes.data.groupFeed.filter(
-          (item: FeedItem) => item.__typename === Common.TypeNames.Motion
-        )
-      );
-      setLoading(false);
+    if (name) {
+      let itemType = "";
+      if (tab === 1) itemType = ModelNames.Motion;
+      else if (tab === 2) itemType = ModelNames.Post;
+
+      feedVar({
+        ...feed,
+        loading: true,
+      });
+
+      getFeedRes({
+        variables: {
+          name,
+          pageSize,
+          currentPage,
+          itemType,
+        },
+      });
     }
-    return () => {
-      feedItemsVar([]);
-    };
+  }, [name, currentPage, pageSize, tab]);
+
+  useEffect(() => {
+    if (feedRes.data) {
+      feedVar({
+        items: feedRes.data.groupFeed.pagedItems,
+        totalItems: feedRes.data.groupFeed.totalItems,
+        loading: feedRes.loading,
+      });
+    }
   }, [feedRes.data]);
 
   useEffect(() => {
-    feedItemsVar([...posts, ...motions]);
     return () => {
-      feedItemsVar([]);
+      resetFeed();
     };
-  }, [posts, motions]);
+  }, []);
 
   const deleteGroupHandler = async (groupId: string) => {
     await deleteGroup({
@@ -93,7 +103,13 @@ const Show = () => {
         id,
       },
     });
-    setPosts(posts.filter((post: Post) => post.id !== id));
+    feedVar({
+      ...feed,
+      items: feed.items.filter(
+        (item: FeedItem) => item.id !== id || item.__typename !== TypeNames.Post
+      ),
+      totalItems: feed.totalItems - 1,
+    });
   };
 
   const deleteMotionHandler = async (id: string) => {
@@ -102,7 +118,14 @@ const Show = () => {
         id,
       },
     });
-    setMotions(motions.filter((motion: Motion) => motion.id !== id));
+    feedVar({
+      ...feed,
+      items: feed.items.filter(
+        (item: FeedItem) =>
+          item.id !== id || item.__typename !== TypeNames.Motion
+      ),
+      totalItems: feed.totalItems - 1,
+    });
   };
 
   const inThisGroup = (): boolean => {
@@ -117,12 +140,12 @@ const Show = () => {
 
         <Card>
           <Tabs
-            textColor="inherit"
-            centered
             value={tab}
             onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
               setTab(newValue)
             }
+            textColor="inherit"
+            centered
           >
             <Tab label={Messages.groups.tabs.all()} />
             <Tab label={Messages.groups.tabs.motions()} />
@@ -130,54 +153,20 @@ const Show = () => {
           </Tabs>
         </Card>
 
-        {tab === 0 && (
+        {inThisGroup() && (
           <>
-            {inThisGroup() && (
-              <ToggleForms
-                posts={posts}
-                motions={motions}
-                setPosts={setPosts}
-                setMotions={setMotions}
-                group={group}
-              />
-            )}
-            <Feed
-              deleteMotion={deleteMotionHandler}
-              deletePost={deletePostHandler}
-              loading={loading}
-            />
+            {tab === 0 && <ToggleForms group={group} />}
+            {tab === 1 && <MotionsForm group={group} />}
+            {tab === 2 && <PostsForm group={group} />}
           </>
         )}
 
-        {tab === 1 && (
-          <>
-            {inThisGroup() && (
-              <MotionsForm
-                motions={motions}
-                setMotions={setMotions}
-                group={group}
-              />
-            )}
-            <MotionsList
-              motions={motions}
-              loading={loading}
-              deleteMotion={deleteMotionHandler}
-            />
-          </>
-        )}
-
-        {tab === 2 && (
-          <>
-            {inThisGroup() && (
-              <PostsForm posts={posts} setPosts={setPosts} group={group} />
-            )}
-            <PostsList
-              posts={posts}
-              loading={loading}
-              deletePost={deletePostHandler}
-            />
-          </>
-        )}
+        <Pagination>
+          <Feed
+            deleteMotion={deleteMotionHandler}
+            deletePost={deletePostHandler}
+          />
+        </Pagination>
       </>
     );
 

@@ -5,27 +5,28 @@ import Link from "next/link";
 import {
   Card,
   CardContent,
-  CardActions,
   Typography,
   makeStyles,
   CardHeader,
   CardMedia,
+  CardActionArea,
 } from "@material-ui/core";
 
 import ImagesList from "../Images/List";
 import { GROUP, IMAGES_BY_POST_ID } from "../../apollo/client/queries";
-import LikeButton from "../Likes/LikeButton";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Shared/Shared.module.scss";
 import GroupItemAvatar from "../Groups/ItemAvatar";
-import { Common, Roles } from "../../constants";
+import { ModelNames, ResourcePaths } from "../../constants/common";
+import { Permissions } from "../../constants/role";
 import {
   useCurrentUser,
   useHasPermissionGlobally,
   useUserById,
 } from "../../hooks";
 import { noCache, timeAgo } from "../../utils/clientIndex";
+import CardFooter from "./CardFooter";
 
 const useStyles = makeStyles({
   title: {
@@ -41,9 +42,7 @@ interface Props {
 const Post = ({ post, deletePost }: Props) => {
   const { id, userId, groupId, postGroupId, body, createdAt } = post;
   const currentUser = useCurrentUser();
-  const [canManagePosts] = useHasPermissionGlobally(
-    Roles.Permissions.ManagePosts
-  );
+  const [canManagePosts] = useHasPermissionGlobally(Permissions.ManagePosts);
   const user = useUserById(userId);
   const [group, setGroup] = useState<Group>();
   const [images, setImages] = useState<Image[]>([]);
@@ -78,7 +77,7 @@ const Post = ({ post, deletePost }: Props) => {
   };
 
   const onGroupPage = (): boolean => {
-    return router.asPath.includes("/groups/");
+    return router.asPath.includes(ResourcePaths.Group);
   };
 
   return (
@@ -98,7 +97,7 @@ const Post = ({ post, deletePost }: Props) => {
                 <Link href={`/users/${user?.name}`}>
                   <a>{user?.name}</a>
                 </Link>
-                <Link href={`/posts/${id}`}>
+                <Link href={`${ResourcePaths.Post}${id}`}>
                   <a className={styles.timeAgo}>{timeAgo(createdAt)}</a>
                 </Link>
               </>
@@ -107,7 +106,7 @@ const Post = ({ post, deletePost }: Props) => {
           action={
             <ItemMenu
               itemId={id}
-              itemType={Common.ModelNames.Post}
+              itemType={ModelNames.Post}
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deletePost}
@@ -130,15 +129,13 @@ const Post = ({ post, deletePost }: Props) => {
           </CardContent>
         )}
 
-        <CardMedia>
-          <ImagesList images={images} />
-        </CardMedia>
+        <CardActionArea>
+          <CardMedia>
+            <ImagesList images={images} />
+          </CardMedia>
+        </CardActionArea>
 
-        {currentUser && (
-          <CardActions style={{ marginTop: "6px" }}>
-            <LikeButton postId={id} />
-          </CardActions>
-        )}
+        {!!currentUser && <CardFooter postId={id} />}
       </Card>
     </div>
   );

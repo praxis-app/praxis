@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { useLazyQuery, useMutation } from "@apollo/client";
+import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import {
   FormGroup,
-  NativeSelect,
   FormControl,
   InputLabel,
+  MenuItem,
 } from "@material-ui/core";
 import Router from "next/router";
 import { Formik, FormikHelpers, Form, Field, FormikProps } from "formik";
@@ -16,9 +16,11 @@ import {
   UPDATE_MOTION,
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
-import { Common, Motions } from "../../constants";
+import { FieldNames, ResourcePaths } from "../../constants/common";
+import { ActionTypes } from "../../constants/motion";
 import ActionFields from "./ActionFields";
 import styles from "../../styles/Shared/Shared.module.scss";
+import { feedVar, paginationVar } from "../../apollo/client/localState";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import { noCache } from "../../utils/apollo";
@@ -26,6 +28,7 @@ import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
 import SelectedImages from "../Shared/SelectedImages";
 import ImageInput from "../Shared/ImageInput";
+import Dropdown from "../Shared/Dropdown";
 
 interface FormikValues {
   body: string;
@@ -52,6 +55,8 @@ const MotionsForm = ({
   const [images, setImages] = useState<File[]>([]);
   const [action, setAction] = useState<string>("");
   const [actionData, setActionData] = useState<ActionData>({});
+  const { currentPage, pageSize } = useReactiveVar(paginationVar);
+  const feed = useReactiveVar(feedVar);
 
   const [createMotion] = useMutation(CREATE_MOTION);
   const [updateMotion] = useMutation(UPDATE_MOTION);
@@ -93,7 +98,7 @@ const MotionsForm = ({
               images,
             },
           });
-          Router.push(`/motions/${motion.id}`);
+          Router.push(`${ResourcePaths.Motion}${motion.id}`);
         } else {
           const { data } = await createMotion({
             variables: {
@@ -110,7 +115,13 @@ const MotionsForm = ({
           setImages([]);
           setSubmitting(false);
           if (motions && setMotions)
-            setMotions([...motions, data.createMotion.motion]);
+            setMotions([data.createMotion.motion, ...motions]);
+          else
+            feedVar({
+              ...feed,
+              items: feedItemsAferCreate(data.createMotion.motion),
+              totalItems: feed.totalItems + 1,
+            });
         }
       } catch (err) {
         alert(err);
@@ -118,8 +129,8 @@ const MotionsForm = ({
     }
   };
 
-  const handleActionChange = (event: React.ChangeEvent<{ value: string }>) => {
-    setAction(event.target.value);
+  const handleActionChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setAction(event.target.value as string);
   };
 
   const deleteImageHandler = async (id: string) => {
@@ -147,6 +158,20 @@ const MotionsForm = ({
     return formik.isSubmitting;
   };
 
+  const feedItemsAferCreate = (newMotion: Motion): FeedItem[] => {
+    let { items, totalItems } = feed;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const onLastPage = currentPage === totalPages - 1;
+    if (totalItems > items.length && !onLastPage) items = items.slice(0, -1);
+    return [newMotion, ...items];
+  };
+
+  const validateBody = (body: string) => {
+    return body === "" && images.length === 0
+      ? Messages.motions.form.motionEmpty()
+      : undefined;
+  };
+
   return (
     <Formik
       initialValues={{
@@ -158,45 +183,45 @@ const MotionsForm = ({
         <Form className={styles.form} style={group && { marginTop: "48px" }}>
           <FormGroup>
             <Field
-              name={Common.FieldNames.Body}
+              name={FieldNames.Body}
               placeholder={
                 formik.isSubmitting
                   ? Messages.states.loading()
                   : Messages.motions.form.makeAMotion()
               }
               component={TextField}
+              validate={validateBody}
+              style={{ marginBottom: 3 }}
               multiline
-              style={{ marginBottom: 0 }}
             />
 
-            <FormControl style={{ marginBottom: "18px" }}>
+            <FormControl style={{ marginBottom: 18 }}>
               <InputLabel>{Messages.motions.form.motionType()}</InputLabel>
-              <NativeSelect value={action} onChange={handleActionChange}>
-                <option aria-label={Messages.forms.none()} value="" />
-                <option value={Motions.ActionTypes.PlanEvent}>
+              <Dropdown value={action} onChange={handleActionChange}>
+                <MenuItem value={ActionTypes.PlanEvent}>
                   {Messages.motions.form.actionTypes.planEvent()}
-                </option>
-                <option value={Motions.ActionTypes.ChangeName}>
+                </MenuItem>
+                <MenuItem value={ActionTypes.ChangeName}>
                   {Messages.motions.form.actionTypes.changeName()}
-                </option>
-                <option value={Motions.ActionTypes.ChangeDescription}>
+                </MenuItem>
+                <MenuItem value={ActionTypes.ChangeDescription}>
                   {Messages.motions.form.actionTypes.changeDescription()}
-                </option>
-                <option value={Motions.ActionTypes.ChangeImage}>
+                </MenuItem>
+                <MenuItem value={ActionTypes.ChangeImage}>
                   {Messages.motions.form.actionTypes.changeImage()}
-                </option>
-                <option value={Motions.ActionTypes.ChangeSettings}>
+                </MenuItem>
+                <MenuItem value={ActionTypes.ChangeSettings}>
                   {Messages.motions.form.actionTypes.changeSettings()}
-                </option>
-                <option value={Motions.ActionTypes.Test}>
+                </MenuItem>
+                <MenuItem value={ActionTypes.Test}>
                   {Messages.motions.form.actionTypes.test()}
-                </option>
-              </NativeSelect>
+                </MenuItem>
+              </Dropdown>
             </FormControl>
 
             <ActionFields actionType={action} setActionData={setActionData} />
 
-            {action !== Motions.ActionTypes.ChangeImage && (
+            {action !== ActionTypes.ChangeImage && (
               <ImageInput
                 setImages={setImages}
                 refreshKey={imagesInputKey}

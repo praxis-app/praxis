@@ -4,20 +4,22 @@ import { useMutation } from "@apollo/client";
 import {
   FormGroup,
   Switch,
-  NativeSelect,
+  MenuItem,
   Grid,
   Slider,
   Input,
   CircularProgress,
 } from "@material-ui/core";
 
-import { Votes, Settings } from "../../constants";
+import { VotingTypes } from "../../constants/vote";
+import { GroupSettings, SettingStates } from "../../constants/setting";
 import { UPDATE_SETTINGS } from "../../apollo/client/mutations";
 import styles from "../../styles/Setting/SettingsForm.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import { displayName } from "../../utils/items";
 import SubmitButton from "../Shared/SubmitButton";
+import Dropdown from "../Shared/Dropdown";
 
 const NumberInput = ({
   value,
@@ -95,10 +97,10 @@ const SettingsForm = ({
   };
 
   const handleSettingChange = (
-    event: ChangeEvent<{ value: string }>,
+    event: ChangeEvent<{ value: unknown }>,
     name: string
   ) => {
-    setByName(name, event.target.value);
+    setByName(name, event.target.value as string);
   };
 
   const handleSwitchChange = (name: string, value: string) => {
@@ -106,17 +108,14 @@ const SettingsForm = ({
   };
 
   const handleSliderChange = (_event: any, newValue: number | number[]) => {
-    setByName(
-      Settings.GroupSettings.RatificationThreshold,
-      newValue.toString()
-    );
+    setByName(GroupSettings.RatificationThreshold, newValue.toString());
   };
 
   const handleBlur = (value: string) => {
     if (parseInt(value) < 0 || value === "") {
-      setByName(Settings.GroupSettings.RatificationThreshold, "1");
+      setByName(GroupSettings.RatificationThreshold, "1");
     } else if (parseInt(value) > 100) {
-      setByName(Settings.GroupSettings.RatificationThreshold, "100");
+      setByName(GroupSettings.RatificationThreshold, "100");
     }
   };
 
@@ -139,19 +138,18 @@ const SettingsForm = ({
   };
 
   const canShowSetting = (name: string): boolean => {
-    const votingType = valueByName(Settings.GroupSettings.VotingType);
+    const votingType = valueByName(GroupSettings.VotingType);
     if (!votingType) return false;
     if (
-      votingType !== Votes.VotingTypes.Consensus &&
-      (name === Settings.GroupSettings.RatificationThreshold ||
-        name === Settings.GroupSettings.ReservationsLimit ||
-        name === Settings.GroupSettings.StandAsidesLimit)
+      votingType !== VotingTypes.Consensus &&
+      (name === GroupSettings.RatificationThreshold ||
+        name === GroupSettings.ReservationsLimit ||
+        name === GroupSettings.StandAsidesLimit)
     )
       return false;
     if (
-      votingType !== Votes.VotingTypes.XToPass &&
-      (name === Settings.GroupSettings.XToPass ||
-        name === Settings.GroupSettings.XToBlock)
+      votingType !== VotingTypes.XToPass &&
+      (name === GroupSettings.XToPass || name === GroupSettings.XToBlock)
     )
       return false;
 
@@ -171,42 +169,41 @@ const SettingsForm = ({
               <div key={id} className={styles.setting}>
                 <div className={styles.settingName}>{displayName(name)}</div>
 
-                {name === Settings.GroupSettings.NoAdmin && (
+                {name === GroupSettings.NoAdmin && (
                   <Switch
-                    checked={value === Settings.States.On}
+                    checked={value === SettingStates.On}
                     onChange={() => handleSwitchChange(name, value)}
                     color="primary"
                   />
                 )}
 
-                {name === Settings.GroupSettings.VotingType && (
-                  <NativeSelect
+                {name === GroupSettings.VotingType && (
+                  <Dropdown
                     value={value}
                     onChange={(e) => handleSettingChange(e, name)}
                   >
-                    <option aria-label={Messages.forms.none()} value="" />
-                    <option value={Votes.VotingTypes.Consensus}>
+                    <MenuItem value={VotingTypes.Consensus}>
                       {Messages.votes.votingTypes.consensus()}
-                    </option>
-                    <option value={Votes.VotingTypes.XToPass}>
+                    </MenuItem>
+                    <MenuItem value={VotingTypes.XToPass}>
                       {Messages.votes.votingTypes.xToPass()}
-                    </option>
-                    <option value={Votes.VotingTypes.Majority}>
+                    </MenuItem>
+                    <MenuItem value={VotingTypes.Majority}>
                       {Messages.votes.votingTypes.majority()}
-                    </option>
-                  </NativeSelect>
+                    </MenuItem>
+                  </Dropdown>
                 )}
 
-                {name === Settings.GroupSettings.VoteVerification && (
+                {name === GroupSettings.VoteVerification && (
                   <Switch
-                    checked={value === Settings.States.On}
+                    checked={value === SettingStates.On}
                     onChange={() => handleSwitchChange(name, value)}
                     color="primary"
                   />
                 )}
 
-                {(name === Settings.GroupSettings.XToPass ||
-                  name === Settings.GroupSettings.XToBlock) && (
+                {(name === GroupSettings.XToPass ||
+                  name === GroupSettings.XToBlock) && (
                   <NumberInput
                     value={value}
                     name={name}
@@ -215,8 +212,8 @@ const SettingsForm = ({
                   />
                 )}
 
-                {(name === Settings.GroupSettings.ReservationsLimit ||
-                  name === Settings.GroupSettings.StandAsidesLimit) && (
+                {(name === GroupSettings.ReservationsLimit ||
+                  name === GroupSettings.StandAsidesLimit) && (
                   <NumberInput
                     value={value}
                     name={name}
@@ -225,7 +222,7 @@ const SettingsForm = ({
                   />
                 )}
 
-                {name === Settings.GroupSettings.RatificationThreshold && (
+                {name === GroupSettings.RatificationThreshold && (
                   <Grid
                     container
                     spacing={2}

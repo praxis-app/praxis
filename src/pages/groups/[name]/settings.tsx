@@ -6,7 +6,8 @@ import { Typography } from "@material-ui/core";
 
 import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import SettingsForm from "../../../components/Settings/Form";
-import { Settings as SettingsConstants } from "../../../constants";
+import { ResourcePaths } from "../../../constants/common";
+import { GroupSettings, SettingStates } from "../../../constants/setting";
 import Messages from "../../../utils/messages";
 import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
 
@@ -44,8 +45,7 @@ const Settings = () => {
   const isNoAdmin = (): boolean => {
     return (
       !anyUnsavedSettings() &&
-      settingByName(SettingsConstants.GroupSettings.NoAdmin) ===
-        SettingsConstants.States.On
+      settingByName(GroupSettings.NoAdmin) === SettingStates.On
     );
   };
 
@@ -60,7 +60,7 @@ const Settings = () => {
 
   return (
     <>
-      <Link href={`/groups/${query.name}`}>
+      <Link href={`${ResourcePaths.Group}${query.name}`}>
         <a>
           <Typography variant="h3" color="primary">
             {query.name}

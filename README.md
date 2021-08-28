@@ -22,13 +22,16 @@ Praxis is free and open source software, as specified by the GNU General Public 
 5. Create a `.env` file and include your database URL as `DATABASE_URL`
 6. Generate the Prisma client: `yarn prisma generate`
 7. Run the database migrations: `yarn prisma migrate dev --preview-feature`
-8. Start development server: `yarn dev`
+8. Run `mkdir public/uploads` to enable image uploads
+9. Start development server: `yarn dev`
+10. To create first user, navigate to http://localhost:3000/users/signup
+11. To test out roles and permissions features, navigate to http://localhost:3000/roles
 
 The default database is PostgreSQL.
 
 ## Tools to get Involved and Collaborate
 
-- Discord: Message me at **forrest#2807**
+- Discord: https://discord.gg/CAHb3AhQat, or message me at **forrest#2807**
 - Notion: https://www.notion.so/praxis-74cb6558cc6f4470a967d95fad039303
 
 ## Contributions

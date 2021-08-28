@@ -7,7 +7,8 @@ import VotesForm from "../../../components/Votes/Form";
 import { VOTE, MOTION } from "../../../apollo/client/queries";
 import { noCache } from "../../../utils/apollo";
 import { useSettingsByGroupId } from "../../../hooks";
-import { Settings, Votes } from "../../../constants";
+import { GroupSettings } from "../../../constants/setting";
+import { VotingTypes } from "../../../constants/vote";
 
 const Edit = () => {
   const { query } = useRouter();
@@ -20,8 +21,7 @@ const Edit = () => {
 
   useEffect(() => {
     setIsModelOfConsensus(
-      settingByName(Settings.GroupSettings.VotingType) ===
-        Votes.VotingTypes.Consensus
+      settingByName(GroupSettings.VotingType) === VotingTypes.Consensus
     );
   }, [groupSettings]);
 
@@ -52,15 +52,15 @@ const Edit = () => {
     return setting?.value || "";
   };
 
-  if (vote)
-    return (
-      <VotesForm
-        vote={vote}
-        onEditPage={true}
-        modelOfConsensus={isModelOfConsensus}
-      />
-    );
-  return <CircularProgress />;
+  if (!vote) return <CircularProgress />;
+
+  return (
+    <VotesForm
+      vote={vote}
+      onEditPage={true}
+      modelOfConsensus={isModelOfConsensus}
+    />
+  );
 };
 
 export default Edit;

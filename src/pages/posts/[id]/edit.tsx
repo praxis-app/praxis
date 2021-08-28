@@ -47,9 +47,9 @@ const Edit = () => {
     return false;
   };
 
+  if (!post || !user) return <CircularProgress />;
   if (!ownPost()) return <>{Messages.users.permissionDenied()}</>;
-  if (post) return <PostForm post={post} isEditing={true} />;
-  return <CircularProgress />;
+  return <PostForm post={post} isEditing={true} />;
 };
 
 export default Edit;

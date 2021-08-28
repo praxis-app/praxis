@@ -1,4 +1,4 @@
-import { Edit, Delete, MoreVert } from "@material-ui/icons";
+import { Edit, Delete, MoreHoriz } from "@material-ui/icons";
 import { Menu, MenuItem, IconButton } from "@material-ui/core";
 import Link from "next/link";
 import Messages from "../../utils/messages";
@@ -28,6 +28,8 @@ const ItemMenu = ({
   children,
   prependChildren,
 }: Props) => {
+  const margin = { marginRight: 7.5 };
+
   const handleMenuButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
@@ -42,7 +44,7 @@ const ItemMenu = ({
     return (
       <>
         <IconButton onClick={handleMenuButtonClick}>
-          <MoreVert color="primary" />
+          <MoreHoriz color="primary" />
         </IconButton>
         <Menu
           anchorEl={anchorEl}
@@ -59,7 +61,7 @@ const ItemMenu = ({
                   <Edit
                     fontSize="small"
                     style={{
-                      marginRight: "5",
+                      ...margin,
                       transform: "rotateY(180deg)",
                     }}
                   />
@@ -75,7 +77,7 @@ const ItemMenu = ({
               deleteItem(itemId)
             }
           >
-            <Delete fontSize="small" style={{ marginRight: "5" }} />
+            <Delete fontSize="small" style={margin} />
             {Messages.actions.delete()}
           </MenuItem>
 
@@ -84,7 +86,7 @@ const ItemMenu = ({
       </>
     );
 
-  return <></>;
+  return null;
 };
 
 export default ItemMenu;

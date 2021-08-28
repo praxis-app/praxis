@@ -1,4 +1,9 @@
 import { createTheme } from "@material-ui/core/styles";
+import { DESKTOP_BREAKPOINT } from "../../constants/common";
+
+export const BLURPLE = "#7289DA";
+export const WHITE = "white";
+export const BLACK = "black";
 
 const globalTheme = createTheme({
   typography: {
@@ -9,10 +14,13 @@ const globalTheme = createTheme({
     primary: {
       main: "rgb(190, 190, 190)",
       dark: "rgb(170, 170, 170)",
-      contrastText: "white",
+      contrastText: WHITE,
+    },
+    secondary: {
+      main: "rgb(90, 90, 90)",
     },
     background: {
-      default: "rgb(65, 65, 65)",
+      paper: "rgb(65, 65, 65)",
     },
   },
 });
@@ -23,7 +31,7 @@ const muiTheme = createTheme({
   overrides: {
     MuiCard: {
       root: {
-        backgroundColor: globalTheme.palette.background.default,
+        backgroundColor: globalTheme.palette.background.paper,
         marginBottom: 12,
       },
     },
@@ -51,6 +59,9 @@ const muiTheme = createTheme({
       colorPrimary: {
         color: globalTheme.palette.primary.contrastText,
       },
+      colorDisabled: {
+        color: "rgb(100, 100, 100)",
+      },
     },
 
     MuiInput: {
@@ -62,12 +73,6 @@ const muiTheme = createTheme({
     MuiInputLabel: {
       root: {
         color: "rgb(105, 105, 105)",
-      },
-    },
-
-    MuiNativeSelect: {
-      select: {
-        color: globalTheme.palette.primary.dark,
       },
     },
 
@@ -87,7 +92,7 @@ const muiTheme = createTheme({
         color: globalTheme.palette.primary.contrastText,
       },
       containedPrimary: {
-        backgroundColor: globalTheme.palette.background.default,
+        backgroundColor: globalTheme.palette.background.paper,
         "&:hover": {
           backgroundColor: "rgb(60, 60, 60)",
         },
@@ -96,16 +101,25 @@ const muiTheme = createTheme({
 
     MuiMenu: {
       paper: {
-        backgroundColor: globalTheme.palette.background.default,
+        backgroundColor: globalTheme.palette.background.paper,
       },
       list: {
         color: globalTheme.palette.primary.contrastText,
       },
     },
 
+    MuiPopover: {
+      paper: {
+        backgroundColor: globalTheme.palette.background.paper,
+      },
+    },
+
     MuiTabs: {
       indicator: {
-        backgroundColor: "white",
+        backgroundColor: WHITE,
+      },
+      scrollButtons: {
+        color: WHITE,
       },
     },
 
@@ -124,9 +138,37 @@ const muiTheme = createTheme({
       },
     },
 
+    MuiBottomNavigation: {
+      root: {
+        backgroundColor: "rgb(30, 30, 30)",
+        position: "fixed",
+        bottom: 0,
+        zIndex: 5,
+        width: "100%",
+        height: 70,
+      },
+    },
+
+    MuiBottomNavigationAction: {
+      root: {
+        color: globalTheme.palette.primary.dark,
+        "&$selected": {
+          color: WHITE,
+          paddingTop: 0,
+        },
+        paddingTop: 0,
+      },
+    },
+
     MuiDialog: {
       paper: {
         backgroundColor: "rgb(50, 50, 50)",
+      },
+    },
+
+    MuiSnackbar: {
+      anchorOriginBottomCenter: {
+        bottom: 85,
       },
     },
 
@@ -142,10 +184,10 @@ const muiTheme = createTheme({
 
     MuiLinearProgress: {
       colorPrimary: {
-        backgroundColor: globalTheme.palette.background.default,
+        backgroundColor: globalTheme.palette.background.paper,
       },
       barColorPrimary: {
-        backgroundColor: "white",
+        backgroundColor: WHITE,
       },
       root: {
         margin: 12,
@@ -154,7 +196,18 @@ const muiTheme = createTheme({
 
     MuiContainer: {
       root: {
+        marginTop: 100,
         marginBottom: 200,
+        [globalTheme.breakpoints.up(DESKTOP_BREAKPOINT)]: {
+          marginTop: 75,
+        },
+      },
+    },
+
+    MuiDivider: {
+      root: {
+        backgroundColor: globalTheme.palette.secondary.main,
+        marginTop: 6,
       },
     },
   },

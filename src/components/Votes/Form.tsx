@@ -5,18 +5,21 @@ import {
   FormGroup,
   FormControl,
   InputLabel,
-  NativeSelect,
+  MenuItem,
 } from "@material-ui/core";
-import { Formik, FormikHelpers, Form, Field } from "formik";
+import { Formik, Form, Field } from "formik";
 
 import { motionVar } from "../../apollo/client/localState";
 import { UPDATE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/VotesForm.module.scss";
-import { Common, Motions, Votes } from "../../constants";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
+import Dropdown from "../Shared/Dropdown";
+import { Stages } from "../../constants/motion";
+import { FieldNames, ResourcePaths } from "../../constants/common";
+import { ConsensusStates, FlipStates } from "../../constants/vote";
 
 interface FormValues {
   body: string;
@@ -42,16 +45,14 @@ const VotesForm = ({
   const [flipState, setFlipState] = useState<string>("");
   const [consensusState, setConsensusState] = useState<string>("");
   const [updateVote] = useMutation(UPDATE_VOTE);
+  const body = vote.body || "";
 
   useEffect(() => {
     if (modelOfConsensus) setConsensusState(vote.consensusState);
     else setFlipState(vote.flipState);
   }, [vote, modelOfConsensus]);
 
-  const handleSubmit = async (
-    { body }: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>
-  ) => {
+  const handleSubmit = async ({ body }: FormValues) => {
     if (currentUser) {
       try {
         const { data } = await updateVote({
@@ -63,6 +64,10 @@ const VotesForm = ({
           },
         });
         if (setVotes && votes) {
+          if (data.updateVote.motionRatified && motionFromGlobal) {
+            motionVar({ ...motionFromGlobal, stage: Stages.Ratified });
+          }
+
           setVotes(
             votes.map((vote) => {
               const newVote: Vote = data.updateVote.vote;
@@ -76,17 +81,8 @@ const VotesForm = ({
               return vote;
             })
           );
-
-          if (data.updateVote.motionRatified && motionFromGlobal) {
-            motionVar({ ...motionFromGlobal, stage: Motions.Stages.Ratified });
-          }
-
-          resetForm();
-          setSubmitting(false);
-          setFlipState("");
-          setConsensusState("");
         } else {
-          Router.push(`/motions/${vote.motionId}`);
+          Router.push(`${ResourcePaths.Motion}${vote.motionId}`);
         }
       } catch (err) {
         alert(err);
@@ -95,25 +91,26 @@ const VotesForm = ({
   };
 
   const handleVoteTypeChange = (
-    event: React.ChangeEvent<{ value: string }>
+    event: React.ChangeEvent<{ value: unknown }>
   ) => {
-    if (modelOfConsensus) setConsensusState(event.target.value);
-    else setFlipState(event.target.value);
+    const { value } = event.target as { value: string };
+    if (modelOfConsensus) setConsensusState(value);
+    else setFlipState(value);
   };
 
   const placeholderText = () => {
     if (modelOfConsensus) {
-      if (consensusState === Votes.ConsensusStates.Agreement)
+      if (consensusState === ConsensusStates.Agreement)
         return Messages.votes.form.bodyPlaceholder.agreement();
-      if (consensusState === Votes.ConsensusStates.Reservations)
+      if (consensusState === ConsensusStates.Reservations)
         return Messages.votes.form.bodyPlaceholder.reservations();
-      if (consensusState === Votes.ConsensusStates.StandAside)
+      if (consensusState === ConsensusStates.StandAside)
         return Messages.votes.form.bodyPlaceholder.standAside();
-      if (consensusState === Votes.ConsensusStates.Block)
+      if (consensusState === ConsensusStates.Block)
         return Messages.votes.form.bodyPlaceholder.block();
     }
 
-    return flipState === Votes.FlipStates.Up
+    return flipState === FlipStates.Up
       ? Messages.votes.form.bodyPlaceholder.support()
       : Messages.votes.form.bodyPlaceholder.block();
   };
@@ -125,58 +122,53 @@ const VotesForm = ({
   };
 
   return (
-    <Formik initialValues={{ body: vote.body }} onSubmit={handleSubmit}>
+    <Formik initialValues={{ body }} onSubmit={handleSubmit}>
       {(formik) => (
         <Form className={onEditPage ? styles.formOnEditPage : styles.form}>
           <FormGroup>
             <Field
-              name={Common.FieldNames.Body}
+              name={FieldNames.Body}
               placeholder={placeholderText()}
               component={TextField}
               autoComplete="off"
+              multiline
             />
 
-            <FormControl style={{ marginBottom: "20px" }}>
+            <FormControl style={{ marginBottom: 20 }}>
               <InputLabel>
                 {modelOfConsensus
                   ? Messages.votes.form.agreeOrDisagree()
                   : Messages.votes.form.supportOrBlock()}
               </InputLabel>
-              <NativeSelect
-                value={selectValue()}
-                onChange={handleVoteTypeChange}
-              >
-                <option aria-label={Messages.forms.none()} value="" />
-                {modelOfConsensus ? (
-                  <>
-                    <option value={Votes.ConsensusStates.Agreement}>
-                      {Messages.votes.consensus.voteTypes.names.agreement()}
-                    </option>
-                    <option value={Votes.ConsensusStates.Reservations}>
-                      {Messages.votes.consensus.voteTypes.names.reservations()}
-                    </option>
-                    <option value={Votes.ConsensusStates.StandAside}>
-                      {Messages.votes.consensus.voteTypes.names.standAside()}
-                    </option>
-                    <option value={Votes.ConsensusStates.Block}>
-                      {Messages.votes.consensus.voteTypes.names.block()}
-                    </option>
-                  </>
-                ) : (
-                  <>
-                    <option value={Votes.FlipStates.Up}>
-                      {Messages.votes.actions.support()}
-                    </option>
-                    <option value={Votes.FlipStates.Down}>
-                      {Messages.votes.actions.block()}
-                    </option>
-                  </>
-                )}
-              </NativeSelect>
+              {modelOfConsensus ? (
+                <Dropdown value={selectValue()} onChange={handleVoteTypeChange}>
+                  <MenuItem value={ConsensusStates.Agreement}>
+                    {Messages.votes.consensus.voteTypes.names.agreement()}
+                  </MenuItem>
+                  <MenuItem value={ConsensusStates.Reservations}>
+                    {Messages.votes.consensus.voteTypes.names.reservations()}
+                  </MenuItem>
+                  <MenuItem value={ConsensusStates.StandAside}>
+                    {Messages.votes.consensus.voteTypes.names.standAside()}
+                  </MenuItem>
+                  <MenuItem value={ConsensusStates.Block}>
+                    {Messages.votes.consensus.voteTypes.names.block()}
+                  </MenuItem>
+                </Dropdown>
+              ) : (
+                <Dropdown value={selectValue()} onChange={handleVoteTypeChange}>
+                  <MenuItem value={FlipStates.Up}>
+                    {Messages.votes.actions.support()}
+                  </MenuItem>
+                  <MenuItem value={FlipStates.Down}>
+                    {Messages.votes.actions.block()}
+                  </MenuItem>
+                </Dropdown>
+              )}
             </FormControl>
           </FormGroup>
 
-          <SubmitButton disabled={!!formik.submitCount}>
+          <SubmitButton disabled={formik.isSubmitting}>
             {Messages.votes.actions.update()}
           </SubmitButton>
         </Form>

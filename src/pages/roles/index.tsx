@@ -12,7 +12,7 @@ import RoleForm from "../../components/Roles/Form";
 import { noCache } from "../../utils/apollo";
 import Messages from "../../utils/messages";
 import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
-import { Roles } from "../../constants";
+import { Permissions } from "../../constants/role";
 
 const Index = () => {
   const [roles, setRoles] = useState<Role[]>([]);
@@ -20,7 +20,7 @@ const Index = () => {
   const [initializeAdminRole] = useMutation(INITIALIZE_ADMIN_ROLE);
   const rolesRes = useQuery(GLOBAL_ROLES, noCache);
   const [canManageRoles, canManageRolesLoading] = useHasPermissionGlobally(
-    Roles.Permissions.ManageRoles,
+    Permissions.ManageRoles,
     roles
   );
   const currentUser = useCurrentUser();

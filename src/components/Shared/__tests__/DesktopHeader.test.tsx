@@ -3,15 +3,15 @@ import { MockedProvider } from "@apollo/client/testing";
 import { mocked } from "ts-jest/utils";
 
 import Messages from "../../../utils/messages";
-import { Common } from "../../../constants";
-import Header from "../Header";
+import { TypeNames } from "../../../constants/common";
+import DesktopHeader from "../DesktopHeader";
 import {
   useCurrentUser,
   useHasPermissionGlobally,
   useWindowSize,
 } from "../../../hooks";
 import { redeemedInviteToken } from "../../../utils/clientIndex";
-import { mockNextUseRouter } from "../../Shared/__mocks__";
+import { mockNextUseRouter } from "../__mocks__";
 
 jest.mock("../../../hooks", () => ({
   useCurrentUser: jest.fn(),
@@ -29,7 +29,7 @@ const mockCurrentUser: CurrentUser = {
   name: mockUserName,
   email: "test@email.com",
   isAuthenticated: true,
-  __typename: Common.TypeNames.CurrentUser,
+  __typename: TypeNames.CurrentUser,
 };
 const mockInviteToken = "mockInviteToken";
 
@@ -37,7 +37,7 @@ const renderHeader = async (): Promise<RenderResult> => {
   mockNextUseRouter("/");
   return render(
     <MockedProvider>
-      <Header />
+      <DesktopHeader />
     </MockedProvider>
   );
 };

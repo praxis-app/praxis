@@ -1,5 +1,7 @@
 import prisma from "../../utils/initPrisma";
-import { Motions, Votes, Settings } from "../../constants";
+import { ConsensusStates, VotingTypes } from "../../constants/vote";
+import { ActionTypes, Stages } from "../../constants/motion";
+import { GroupSettings } from "../../constants/setting";
 import { groupSettingByName } from "./setting";
 
 const evaluate = async (motionId: number): Promise<boolean> => {
@@ -22,40 +24,34 @@ const evaluate = async (motionId: number): Promise<boolean> => {
     const groupSettings = group?.settings || [];
     const votingType = groupSettingByName(
       groupSettings,
-      Settings.GroupSettings.VotingType
+      GroupSettings.VotingType
     );
     const reservationsLimit = parseInt(
-      groupSettingByName(
-        groupSettings,
-        Settings.GroupSettings.ReservationsLimit
-      )
+      groupSettingByName(groupSettings, GroupSettings.ReservationsLimit)
     );
     const standAsidesLimit = parseInt(
-      groupSettingByName(groupSettings, Settings.GroupSettings.StandAsidesLimit)
+      groupSettingByName(groupSettings, GroupSettings.StandAsidesLimit)
     );
     const ratificationThreshold =
       parseInt(
-        groupSettingByName(
-          groupSettings,
-          Settings.GroupSettings.RatificationThreshold
-        )
+        groupSettingByName(groupSettings, GroupSettings.RatificationThreshold)
       ) * 0.01;
     const agreements = motion?.votes.filter(
-      (vote) => vote.consensusState === Votes.ConsensusStates.Agreement
+      (vote) => vote.consensusState === ConsensusStates.Agreement
     );
     const reservations = motion?.votes.filter(
-      (vote) => vote.consensusState === Votes.ConsensusStates.Reservations
+      (vote) => vote.consensusState === ConsensusStates.Reservations
     );
     const standAsides = motion?.votes.filter(
-      (vote) => vote.consensusState === Votes.ConsensusStates.StandAside
+      (vote) => vote.consensusState === ConsensusStates.StandAside
     );
     const blocks = motion?.votes.filter(
-      (vote) => vote.consensusState === Votes.ConsensusStates.Block
+      (vote) => vote.consensusState === ConsensusStates.Block
     );
     if (
       groupMembers.length >= 3 &&
-      motion.stage === Motions.Stages.Voting &&
-      votingType === Votes.VotingTypes.Consensus &&
+      motion.stage === Stages.Voting &&
+      votingType === VotingTypes.Consensus &&
       agreements.length >= groupMembers.length * ratificationThreshold &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
@@ -72,7 +68,7 @@ const ratifyMotion = async (motionId: number) => {
   const motion = await prisma.motion.update({
     where: { id: motionId },
     data: {
-      stage: Motions.Stages.Ratified,
+      stage: Stages.Ratified,
     },
   });
   doAction(motion);
@@ -88,7 +84,7 @@ const doAction = async (motion: BackendMotion) => {
       },
     };
 
-    if (motion.action === Motions.ActionTypes.ChangeName) {
+    if (motion.action === ActionTypes.ChangeName) {
       await prisma.group.update({
         ...whereGroupId,
         data: {
@@ -97,7 +93,7 @@ const doAction = async (motion: BackendMotion) => {
       });
     }
 
-    if (motion.action === Motions.ActionTypes.ChangeDescription) {
+    if (motion.action === ActionTypes.ChangeDescription) {
       await prisma.group.update({
         ...whereGroupId,
         data: {
@@ -106,7 +102,7 @@ const doAction = async (motion: BackendMotion) => {
       });
     }
 
-    if (motion.action === Motions.ActionTypes.ChangeImage) {
+    if (motion.action === ActionTypes.ChangeImage) {
       const path = actionData.newGroupImagePath as string;
       await prisma.image.create({
         data: {

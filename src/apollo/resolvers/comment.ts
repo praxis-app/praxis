@@ -2,7 +2,7 @@ import { ApolloError, GraphQLUpload } from "apollo-server-micro";
 import { saveImage, deleteImage } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
-import { Common } from "../../constants";
+import { TypeNames } from "../../constants/common";
 
 interface CommentInput {
   body: string;
@@ -48,14 +48,22 @@ const commentResolvers = {
       const comments = await prisma.comment.findMany({
         where: { postId: parseInt(postId) },
       });
-      return comments;
+
+      return {
+        comments,
+        totalComments: comments.length,
+      };
     },
 
     commentsByMotionId: async (_: any, { motionId }: { motionId: string }) => {
       const comments = await prisma.comment.findMany({
         where: { motionId: parseInt(motionId) },
       });
-      return comments;
+
+      return {
+        comments,
+        totalComments: comments.length,
+      };
     },
   },
 
@@ -135,8 +143,7 @@ const commentResolvers = {
         throw new ApolloError(Messages.comments.errors.commentUpdateError());
       }
 
-      if (!comment)
-        throw new Error(Messages.items.notFound(Common.TypeNames.Comment));
+      if (!comment) throw new Error(Messages.items.notFound(TypeNames.Comment));
 
       try {
         await saveImages(comment, images);

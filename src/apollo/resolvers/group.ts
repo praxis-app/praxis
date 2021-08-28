@@ -1,13 +1,20 @@
 import { GraphQLUpload } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
 import { saveImage, deleteImage } from "../../utils/image";
-import { Settings, Common } from "../../constants";
+import { ModelNames, TypeNames } from "../../constants/common";
+import { GroupDefaults, GroupSettings } from "../../constants/setting";
 import Messages from "../../utils/messages";
+import { paginate } from "../../utils/items";
 
 interface GroupInput {
   name: string;
   description: string;
   coverPhoto: any;
+}
+
+interface GroupFeedInput extends PaginationState {
+  name: string;
+  itemType: string;
 }
 
 const saveCoverPhoto = async (group: any, image: any) => {
@@ -31,41 +38,51 @@ const groupResolvers = {
   FileUpload: GraphQLUpload,
 
   Query: {
-    groupFeed: async (_: any, { name }: { name: string }) => {
+    groupFeed: async (
+      _: any,
+      { name, currentPage, pageSize, itemType }: GroupFeedInput
+    ) => {
       const feed: BackendFeedItem[] = [];
 
-      const whereGroupId = {
+      const whereGroupName = {
         where: {
           name,
         },
       };
       const groupWithPosts = await prisma.group.findFirst({
-        ...whereGroupId,
+        ...whereGroupName,
         include: {
           posts: true,
         },
       });
       const groupWithMotions = await prisma.group.findFirst({
-        ...whereGroupId,
+        ...whereGroupName,
         include: {
           motions: true,
         },
       });
       const postsWithType = groupWithPosts?.posts.map((post) => ({
         ...post,
-        __typename: Common.TypeNames.Post,
+        __typename: TypeNames.Post,
       }));
       const motionsWithType = groupWithMotions?.motions.map((motion) => ({
         ...motion,
-        __typename: Common.TypeNames.Motion,
+        __typename: TypeNames.Motion,
       }));
 
-      feed.push(
-        ...(postsWithType as BackendPost[]),
-        ...(motionsWithType as BackendMotion[])
-      );
+      if (!itemType || itemType === ModelNames.Post)
+        feed.push(...(postsWithType as BackendPost[]));
+      if (!itemType || itemType === ModelNames.Motion)
+        feed.push(...(motionsWithType as BackendMotion[]));
 
-      return feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+      return {
+        pagedItems: paginate(
+          feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
+          currentPage,
+          pageSize
+        ),
+        totalItems: feed.length,
+      };
     },
 
     group: async (_: any, { id }: { id: string }) => {
@@ -126,36 +143,36 @@ const groupResolvers = {
 
       const settings = [
         {
-          name: Settings.GroupSettings.NoAdmin,
-          value: Settings.GroupDefaults.NoAdmin,
+          name: GroupSettings.NoAdmin,
+          value: GroupDefaults.NoAdmin,
         },
         {
-          name: Settings.GroupSettings.VotingType,
-          value: Settings.GroupDefaults.VotingType,
+          name: GroupSettings.VotingType,
+          value: GroupDefaults.VotingType,
         },
         {
-          name: Settings.GroupSettings.VoteVerification,
-          value: Settings.GroupDefaults.VoteVerification,
+          name: GroupSettings.VoteVerification,
+          value: GroupDefaults.VoteVerification,
         },
         {
-          name: Settings.GroupSettings.ReservationsLimit,
-          value: Settings.GroupDefaults.ReservationsLimit,
+          name: GroupSettings.ReservationsLimit,
+          value: GroupDefaults.ReservationsLimit,
         },
         {
-          name: Settings.GroupSettings.StandAsidesLimit,
-          value: Settings.GroupDefaults.StandAsidesLimit,
+          name: GroupSettings.StandAsidesLimit,
+          value: GroupDefaults.StandAsidesLimit,
         },
         {
-          name: Settings.GroupSettings.RatificationThreshold,
-          value: Settings.GroupDefaults.RatificationThreshold,
+          name: GroupSettings.RatificationThreshold,
+          value: GroupDefaults.RatificationThreshold,
         },
         {
-          name: Settings.GroupSettings.XToPass,
-          value: Settings.GroupDefaults.XToPass,
+          name: GroupSettings.XToPass,
+          value: GroupDefaults.XToPass,
         },
         {
-          name: Settings.GroupSettings.XToBlock,
-          value: Settings.GroupDefaults.XToBlock,
+          name: GroupSettings.XToBlock,
+          value: GroupDefaults.XToBlock,
         },
       ];
       for (const setting of settings) {
@@ -186,8 +203,7 @@ const groupResolvers = {
         data: { name, description },
       });
 
-      if (!group)
-        throw new Error(Messages.items.notFound(Common.TypeNames.Group));
+      if (!group) throw new Error(Messages.items.notFound(TypeNames.Group));
 
       await saveCoverPhoto(group, coverPhoto);
 

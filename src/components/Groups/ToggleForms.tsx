@@ -6,7 +6,8 @@ import { withStyles } from "@material-ui/core";
 import PostsForm from "../../components/Posts/Form";
 import MotionsForm from "../../components/Motions/Form";
 import styles from "../../styles/Group/ToggleForms.module.scss";
-import { Common } from "../../constants";
+import { WHITE } from "../../styles/Shared/theme";
+import { ModelNames } from "../../constants/common";
 
 const StyledToggleButtonGroup = withStyles(() => ({
   root: {
@@ -21,21 +22,11 @@ const StyledToggleButtonGroup = withStyles(() => ({
 }))(ToggleButtonGroup);
 
 interface Props {
-  posts: Post[];
-  motions: Motion[];
-  setPosts: (posts: Post[]) => void;
-  setMotions: (motions: Motion[]) => void;
   group: Group;
 }
 
-const ToggleForms = ({
-  posts,
-  motions,
-  setMotions,
-  setPosts,
-  group,
-}: Props) => {
-  const [toggle, setToggle] = useState<string>(Common.ModelNames.Post);
+const ToggleForms = ({ group }: Props) => {
+  const [toggle, setToggle] = useState<string>(ModelNames.Post);
 
   const handleToggle = (
     _event: React.MouseEvent<HTMLElement>,
@@ -53,29 +44,21 @@ const ToggleForms = ({
           size="small"
           onChange={handleToggle}
         >
-          <ToggleButton value={Common.ModelNames.Post} color="secondary">
+          <ToggleButton value={ModelNames.Post} color="secondary">
             <PostAdd
-              style={
-                toggle === Common.ModelNames.Post ? { color: "white" } : {}
-              }
+              style={toggle === ModelNames.Post ? { color: WHITE } : {}}
             />
           </ToggleButton>
-          <ToggleButton value={Common.ModelNames.Motion}>
+          <ToggleButton value={ModelNames.Motion}>
             <EmojiPeople
-              style={
-                toggle === Common.ModelNames.Motion ? { color: "white" } : {}
-              }
+              style={toggle === ModelNames.Motion ? { color: WHITE } : {}}
             />
           </ToggleButton>
         </StyledToggleButtonGroup>
       </div>
 
-      {toggle === Common.ModelNames.Post && (
-        <PostsForm posts={posts} setPosts={setPosts} group={group} />
-      )}
-      {toggle === Common.ModelNames.Motion && (
-        <MotionsForm motions={motions} setMotions={setMotions} group={group} />
-      )}
+      {toggle === ModelNames.Post && <PostsForm group={group} />}
+      {toggle === ModelNames.Motion && <MotionsForm group={group} />}
     </>
   );
 };

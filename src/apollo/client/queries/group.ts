@@ -29,14 +29,27 @@ export const GROUP_BY_NAME = gql`
 `;
 
 export const GROUP_FEED = gql`
-  query ($name: String!) {
-    groupFeed(name: $name) {
-      ... on Post {
-        ...FeedPost
+  query (
+    $name: String!
+    $currentPage: Int!
+    $pageSize: Int!
+    $itemType: String
+  ) {
+    groupFeed(
+      name: $name
+      currentPage: $currentPage
+      pageSize: $pageSize
+      itemType: $itemType
+    ) {
+      pagedItems {
+        ... on Post {
+          ...FeedPost
+        }
+        ... on Motion {
+          ...FeedMotion
+        }
       }
-      ... on Motion {
-        ...FeedMotion
-      }
+      totalItems
     }
   }
   ${FEED_POST}

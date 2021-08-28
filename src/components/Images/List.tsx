@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+
+import { ResourcePaths } from "../../constants/common";
 import baseUrl from "../../utils/baseUrl";
 import Messages from "../../utils/messages";
 
@@ -11,8 +13,8 @@ const List = ({ images }: Props) => {
   const router = useRouter();
 
   const imgLinkPath = (image: Image): string => {
-    if (image.postId) return `/posts/${image.postId}`;
-    if (image.motionId) return `/motions/${image.motionId}`;
+    if (image.postId) return `${ResourcePaths.Post}${image.postId}`;
+    if (image.motionId) return `${ResourcePaths.Motion}${image.motionId}`;
     return router.asPath;
   };
 
