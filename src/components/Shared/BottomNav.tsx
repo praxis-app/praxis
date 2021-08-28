@@ -29,7 +29,7 @@ const BottomNav = () => {
   const [value, setValue] = useState<number>(0);
   const navDrawerOpen = useReactiveVar(navOpenVar);
   const userProfilePath = `${ResourcePaths.User}${currentUser?.name}`;
-  const currentPath = useRouter().asPath;
+  const { asPath: currentPath } = useRouter();
 
   useEffect(() => {
     if (!navDrawerOpen)
@@ -37,6 +37,7 @@ const BottomNav = () => {
         case NavigationPaths.Home:
           setValue(0);
           break;
+        case getMatching(ResourcePaths.Group):
         case NavigationPaths.Groups:
           setValue(1);
           break;
@@ -47,6 +48,12 @@ const BottomNav = () => {
           setValue(3);
       }
   }, [currentPath, navDrawerOpen]);
+
+  const getMatching = (path: string): string => {
+    const match = currentPath.match(path);
+    if (match) return currentPath;
+    return "";
+  };
 
   return (
     <BottomNavigation
