@@ -4,7 +4,7 @@ import { EmojiPeople, PostAdd } from "@material-ui/icons";
 import { withStyles } from "@material-ui/core";
 
 import PostsForm from "../../components/Posts/Form";
-import MotionsForm from "../../components/Motions/Form";
+import MotionsFormWithCard from "../Motions/FormWithCard";
 import styles from "../../styles/Group/ToggleForms.module.scss";
 import { WHITE } from "../../styles/Shared/theme";
 import { ModelNames } from "../../constants/common";
@@ -57,8 +57,9 @@ const ToggleForms = ({ group }: Props) => {
         </StyledToggleButtonGroup>
       </div>
 
+      {toggle === ModelNames.Motion && <MotionsFormWithCard group={group} />}
+
       {toggle === ModelNames.Post && <PostsForm group={group} />}
-      {toggle === ModelNames.Motion && <MotionsForm group={group} />}
     </>
   );
 };

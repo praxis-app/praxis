@@ -147,11 +147,13 @@ const Motion = ({ motion, deleteMotion }: Props) => {
       <Card>
         <CardHeader
           avatar={
-            group && !onGroupPage()
-              ? user && (
-                  <GroupItemAvatar user={user} group={group} motion={motion} />
-                )
-              : user && <UserAvatar user={user} />
+            group && !onGroupPage() ? (
+              user && (
+                <GroupItemAvatar user={user} group={group} motion={motion} />
+              )
+            ) : (
+              <UserAvatar user={user} />
+            )
           }
           title={
             (!group || onGroupPage()) && (
@@ -162,10 +164,11 @@ const Motion = ({ motion, deleteMotion }: Props) => {
 
                 <Link href={`${ResourcePaths.Motion}${id}`}>
                   <a className={styles.info}>
-                    {Messages.motions.toActionWithRatified(
-                      action,
-                      isRatified()
-                    ) + timeAgo(motion.createdAt)}
+                    {(action &&
+                      Messages.motions.toActionWithRatified(
+                        action,
+                        isRatified()
+                      )) + timeAgo(motion.createdAt)}
                   </a>
                 </Link>
               </>

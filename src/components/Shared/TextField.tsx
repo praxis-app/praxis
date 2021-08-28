@@ -10,13 +10,14 @@ import { useRouter } from "next/router";
 import { focusVar } from "../../apollo/client/localState";
 import { FocusTargets, ResourcePaths } from "../../constants/common";
 
-const commonStyles = createStyles({
-  root: {
-    marginBottom: 12,
-    width: "100%",
-  },
-});
-const StyledTextField = withStyles(() => commonStyles)(FormikTextField);
+const StyledTextField = withStyles(() =>
+  createStyles({
+    root: {
+      marginBottom: 12,
+      width: "100%",
+    },
+  })
+)(FormikTextField);
 
 const TextField = (props: TextFieldProps) => {
   const currentFocus = useReactiveVar(focusVar);
@@ -41,8 +42,8 @@ const TextField = (props: TextFieldProps) => {
     <StyledTextField
       type="text"
       inputRef={ref}
-      {...props}
       onBlur={() => handleBlur()}
+      {...props}
     />
   );
 };

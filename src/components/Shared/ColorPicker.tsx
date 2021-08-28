@@ -22,14 +22,18 @@ const ColorPicker = ({ label, color, onChange }: Props) => {
         role="button"
         tabIndex={0}
       >
-        <div>{label}</div>
+        <div className={styles.label}>{label}</div>
         <div className={styles.color}>
           <div
             style={{ backgroundColor: color }}
             className={styles.colorSquare}
           ></div>
           <div className={styles.colorHex}>{color}</div>
-          <ArrowForwardIos fontSize="small" style={{ marginTop: 3 }} />
+          <ArrowForwardIos
+            color="inherit"
+            fontSize="small"
+            style={{ marginTop: 3 }}
+          />
         </div>
       </div>
 

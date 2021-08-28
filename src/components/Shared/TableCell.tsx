@@ -4,7 +4,6 @@ import {
   createStyles,
   TableCell as MUITableCell,
 } from "@material-ui/core";
-import { DESKTOP_BREAKPOINT } from "../../constants/common";
 
 const commonStyles = {
   borderBottom: "none",
@@ -17,7 +16,7 @@ const TableCell = withStyles((theme: Theme) =>
       color: theme.palette.grey[400],
       fontSize: 16,
       ...commonStyles,
-      [theme.breakpoints.down(DESKTOP_BREAKPOINT)]: {
+      [theme.breakpoints.down("md")]: {
         fontSize: 14,
         padding: "2px 14px",
       },

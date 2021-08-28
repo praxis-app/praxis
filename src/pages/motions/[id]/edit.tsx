@@ -3,11 +3,11 @@ import { useLazyQuery } from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import { CircularProgress } from "@material-ui/core";
 
-import MotionsForm from "../../../components/Motions/Form";
 import { MOTION, USER } from "../../../apollo/client/queries";
 import { noCache } from "../../../utils/apollo";
 import Messages from "../../../utils/messages";
 import { useCurrentUser } from "../../../hooks";
+import MotionsFormWithCard from "../../../components/Motions/FormWithCard";
 
 const Edit = () => {
   const { query } = useRouter();
@@ -53,7 +53,7 @@ const Edit = () => {
   };
 
   if (!ownMotion()) return <>{Messages.users.permissionDenied()}</>;
-  if (motion) return <MotionsForm motion={motion} isEditing={true} />;
+  if (motion) return <MotionsFormWithCard motion={motion} isEditing={true} />;
   return <CircularProgress />;
 };
 

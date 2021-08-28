@@ -1,3 +1,6 @@
+import { animateScroll } from "react-scroll";
+import { SCROLL_DURATION } from "../constants/common";
+
 export const generateRandom = (): string => {
   return Math.random()
     .toString(36)
@@ -7,4 +10,9 @@ export const generateRandom = (): string => {
       return Math.random() < 0.5 ? c : c.toUpperCase();
     })
     .join("");
+};
+
+export const scrollTop = () => {
+  const options = { smooth: true, duration: SCROLL_DURATION };
+  animateScroll.scrollToTop(options);
 };

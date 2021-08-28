@@ -9,6 +9,8 @@ import {
   Slider,
   Input,
   CircularProgress,
+  Card,
+  CardContent,
 } from "@material-ui/core";
 
 import { VotingTypes } from "../../constants/vote";
@@ -161,109 +163,117 @@ const SettingsForm = ({
   if (!currentUser) return <>{Messages.users.permissionDenied()}</>;
 
   return (
-    <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
-      <FormGroup>
-        {settings.map(({ id, name, value }: Setting) => {
-          if (canShowSetting(name))
-            return (
-              <div key={id} className={styles.setting}>
-                <div className={styles.settingName}>{displayName(name)}</div>
+    <Card>
+      <CardContent>
+        <form onSubmit={(e) => handleSubmit(e)}>
+          <FormGroup>
+            {settings.map(({ id, name, value }: Setting) => {
+              if (canShowSetting(name))
+                return (
+                  <div key={id} className={styles.setting}>
+                    <div className={styles.settingName}>
+                      {displayName(name)}
+                    </div>
 
-                {name === GroupSettings.NoAdmin && (
-                  <Switch
-                    checked={value === SettingStates.On}
-                    onChange={() => handleSwitchChange(name, value)}
-                    color="primary"
-                  />
-                )}
-
-                {name === GroupSettings.VotingType && (
-                  <Dropdown
-                    value={value}
-                    onChange={(e) => handleSettingChange(e, name)}
-                  >
-                    <MenuItem value={VotingTypes.Consensus}>
-                      {Messages.votes.votingTypes.consensus()}
-                    </MenuItem>
-                    <MenuItem value={VotingTypes.XToPass}>
-                      {Messages.votes.votingTypes.xToPass()}
-                    </MenuItem>
-                    <MenuItem value={VotingTypes.Majority}>
-                      {Messages.votes.votingTypes.majority()}
-                    </MenuItem>
-                  </Dropdown>
-                )}
-
-                {name === GroupSettings.VoteVerification && (
-                  <Switch
-                    checked={value === SettingStates.On}
-                    onChange={() => handleSwitchChange(name, value)}
-                    color="primary"
-                  />
-                )}
-
-                {(name === GroupSettings.XToPass ||
-                  name === GroupSettings.XToBlock) && (
-                  <NumberInput
-                    value={value}
-                    name={name}
-                    minimum={1}
-                    handleSettingChange={handleSettingChange}
-                  />
-                )}
-
-                {(name === GroupSettings.ReservationsLimit ||
-                  name === GroupSettings.StandAsidesLimit) && (
-                  <NumberInput
-                    value={value}
-                    name={name}
-                    minimum={0}
-                    handleSettingChange={handleSettingChange}
-                  />
-                )}
-
-                {name === GroupSettings.RatificationThreshold && (
-                  <Grid
-                    container
-                    spacing={2}
-                    justify="flex-end"
-                    style={{ marginBottom: "-50px" }}
-                  >
-                    <Grid item xs={5}>
-                      <Slider
-                        min={1}
-                        max={100}
-                        value={parseInt(value)}
-                        onChange={handleSliderChange}
+                    {name === GroupSettings.NoAdmin && (
+                      <Switch
+                        checked={value === SettingStates.On}
+                        onChange={() => handleSwitchChange(name, value)}
+                        color="primary"
                       />
-                    </Grid>
-                    <Grid item>
-                      <Input
+                    )}
+
+                    {name === GroupSettings.VotingType && (
+                      <Dropdown
                         value={value}
-                        margin="dense"
                         onChange={(e) => handleSettingChange(e, name)}
-                        onBlur={() => handleBlur(value)}
-                        inputProps={{
-                          min: 1,
-                          max: 100,
-                          type: "number",
-                        }}
-                      />
-                      %
-                    </Grid>
-                  </Grid>
-                )}
-              </div>
-            );
-        })}
-      </FormGroup>
+                      >
+                        <MenuItem value={VotingTypes.Consensus}>
+                          {Messages.votes.votingTypes.consensus()}
+                        </MenuItem>
+                        <MenuItem value={VotingTypes.XToPass}>
+                          {Messages.votes.votingTypes.xToPass()}
+                        </MenuItem>
+                        <MenuItem value={VotingTypes.Majority}>
+                          {Messages.votes.votingTypes.majority()}
+                        </MenuItem>
+                      </Dropdown>
+                    )}
 
-      {anyUnsavedSettings && (
-        <SubmitButton>
-          {submitLoading ? Messages.states.saving() : Messages.actions.save()}
-        </SubmitButton>
-      )}
-    </form>
+                    {name === GroupSettings.VoteVerification && (
+                      <Switch
+                        checked={value === SettingStates.On}
+                        onChange={() => handleSwitchChange(name, value)}
+                        color="primary"
+                      />
+                    )}
+
+                    {(name === GroupSettings.XToPass ||
+                      name === GroupSettings.XToBlock) && (
+                      <NumberInput
+                        value={value}
+                        name={name}
+                        minimum={1}
+                        handleSettingChange={handleSettingChange}
+                      />
+                    )}
+
+                    {(name === GroupSettings.ReservationsLimit ||
+                      name === GroupSettings.StandAsidesLimit) && (
+                      <NumberInput
+                        value={value}
+                        name={name}
+                        minimum={0}
+                        handleSettingChange={handleSettingChange}
+                      />
+                    )}
+
+                    {name === GroupSettings.RatificationThreshold && (
+                      <Grid
+                        container
+                        spacing={2}
+                        justify="flex-end"
+                        style={{ marginBottom: "-50px" }}
+                      >
+                        <Grid item xs={5}>
+                          <Slider
+                            min={1}
+                            max={100}
+                            value={parseInt(value)}
+                            onChange={handleSliderChange}
+                          />
+                        </Grid>
+                        <Grid item>
+                          <Input
+                            value={value}
+                            margin="dense"
+                            onChange={(e) => handleSettingChange(e, name)}
+                            onBlur={() => handleBlur(value)}
+                            inputProps={{
+                              min: 1,
+                              max: 100,
+                              type: "number",
+                            }}
+                          />
+                          %
+                        </Grid>
+                      </Grid>
+                    )}
+                  </div>
+                );
+            })}
+          </FormGroup>
+
+          <div className={styles.flexEnd}>
+            <SubmitButton disabled={!anyUnsavedSettings}>
+              {submitLoading
+                ? Messages.states.saving()
+                : Messages.actions.save()}
+            </SubmitButton>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

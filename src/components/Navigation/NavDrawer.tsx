@@ -15,11 +15,11 @@ import {
 } from "@material-ui/core";
 import {
   Link as LinkIcon,
+  SupervisedUserCircle,
   AccountBox,
-  SupervisorAccount,
-  Close,
   ExitToApp,
   PersonAdd,
+  Close,
 } from "@material-ui/icons";
 
 import { navKeyVar, navOpenVar } from "../../apollo/client/localState";
@@ -34,6 +34,7 @@ import {
 import { Permissions } from "../../constants/role";
 import { LOGOUT_USER } from "../../apollo/client/mutations";
 import { redeemedInviteToken } from "../../utils/clientIndex";
+import styles from "../../styles/Shared/Shared.module.scss";
 
 const ListItemText = withStyles(() =>
   createStyles({
@@ -86,7 +87,7 @@ const NavDrawer = () => {
 
   return (
     <Drawer anchor="right" open={open} onClose={handleCose}>
-      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+      <div className={styles.flexEnd}>
         <IconButton onClick={handleCose}>
           <Close color="primary" />
         </IconButton>
@@ -113,7 +114,7 @@ const NavDrawer = () => {
             <a>
               <ListItem button>
                 <ListItemIcon>
-                  <SupervisorAccount color="primary" />
+                  <SupervisedUserCircle color="primary" />
                 </ListItemIcon>
                 <ListItemText primary={Messages.navigation.users()} />
               </ListItem>

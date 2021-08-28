@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
-import { CircularProgress } from "@material-ui/core";
+import { Card, CardContent, CircularProgress } from "@material-ui/core";
 import Router, { useRouter } from "next/router";
 
 import CommentForm from "../../../components/Comments/Form";
@@ -53,7 +53,14 @@ const Edit = () => {
   };
 
   if (!ownComment()) return <>{Messages.users.permissionDenied()}</>;
-  if (comment) return <CommentForm comment={comment} isEditing={true} />;
+  if (comment)
+    return (
+      <Card>
+        <CardContent style={{ marginTop: 12 }}>
+          <CommentForm comment={comment} isEditing={true} />
+        </CardContent>
+      </Card>
+    );
   return <CircularProgress />;
 };
 

@@ -4,12 +4,12 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { Typography } from "@material-ui/core";
 
-import { GROUP_BY_NAME } from "../../../apollo/client/queries";
-import SettingsForm from "../../../components/Settings/Form";
-import { ResourcePaths } from "../../../constants/common";
-import { GroupSettings, SettingStates } from "../../../constants/setting";
 import Messages from "../../../utils/messages";
+import { ResourcePaths } from "../../../constants/common";
+import SettingsForm from "../../../components/Settings/Form";
+import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
+import { GroupSettings, SettingStates } from "../../../constants/setting";
 
 const Settings = () => {
   const { query } = useRouter();
@@ -55,7 +55,6 @@ const Settings = () => {
   };
 
   if (isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
-
   if (!ownGroup()) return <>{Messages.users.permissionDenied()}</>;
 
   return (
@@ -68,7 +67,7 @@ const Settings = () => {
         </a>
       </Link>
 
-      <Typography variant="h6">
+      <Typography variant="h6" style={{ marginBottom: 24 }}>
         {Messages.groups.settings.nameWithGroup()}
       </Typography>
 

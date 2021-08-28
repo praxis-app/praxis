@@ -1,3 +1,8 @@
+export enum SettingStates {
+  On = "true",
+  Off = "false",
+}
+
 export enum GroupSettings {
   NoAdmin = "no-admin",
   VotingType = "voting-type",
@@ -20,7 +25,37 @@ export enum GroupDefaults {
   XToBlock = "2",
 }
 
-export enum SettingStates {
-  On = "true",
-  Off = "false",
-}
+export const INITIAL_GROUP_SETTINGS = [
+  {
+    name: GroupSettings.NoAdmin,
+    value: GroupDefaults.NoAdmin,
+  },
+  {
+    name: GroupSettings.VotingType,
+    value: GroupDefaults.VotingType,
+  },
+  {
+    name: GroupSettings.VoteVerification,
+    value: GroupDefaults.VoteVerification,
+  },
+  {
+    name: GroupSettings.ReservationsLimit,
+    value: GroupDefaults.ReservationsLimit,
+  },
+  {
+    name: GroupSettings.StandAsidesLimit,
+    value: GroupDefaults.StandAsidesLimit,
+  },
+  {
+    name: GroupSettings.RatificationThreshold,
+    value: GroupDefaults.RatificationThreshold,
+  },
+  {
+    name: GroupSettings.XToPass,
+    value: GroupDefaults.XToPass,
+  },
+  {
+    name: GroupSettings.XToBlock,
+    value: GroupDefaults.XToBlock,
+  },
+];

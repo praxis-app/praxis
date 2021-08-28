@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { FormGroup } from "@material-ui/core";
-import { Formik, FormikHelpers, Form, Field } from "formik";
+import { Card, CardContent, FormGroup } from "@material-ui/core";
+import { Formik, FormikHelpers, Form, Field, FormikProps } from "formik";
 
 import { CREATE_ROLE, UPDATE_ROLE } from "../../apollo/client/mutations";
 import styles from "../../styles/Shared/Shared.module.scss";
@@ -34,6 +34,10 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
   const [createRole] = useMutation(CREATE_ROLE);
   const [updateRole] = useMutation(UPDATE_ROLE);
   const router = useRouter();
+
+  const initialValues: FormValues = {
+    name: isEditing && role ? role.name : "",
+  };
 
   useEffect(() => {
     if (isEditing && role) {
@@ -85,35 +89,58 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
     return router.asPath === "/roles";
   };
 
+  const isSubmitButtonDisabled = ({
+    isSubmitting,
+    dirty,
+  }: FormikProps<FormValues>): boolean => {
+    if (anyUnsavedColor()) return false;
+    if (!dirty) return true;
+    return isSubmitting;
+  };
+
+  const anyUnsavedColor = (): boolean => {
+    if (!role || !isEditing) return false;
+    return role.color !== color;
+  };
+
   if (currentUser)
     return (
-      <Formik
-        initialValues={{ name: isEditing && role ? role.name : "" }}
-        onSubmit={handleSubmit}
-      >
-        {(formik) => (
-          <Form className={styles.form}>
-            <FormGroup>
-              <Field
-                name={FieldNames.Name}
-                placeholder={Messages.roles.form.name()}
-                component={TextField}
-                autoComplete="off"
-              />
-              <ColorPicker
-                color={color}
-                onChange={handleChangeComplete}
-                label={Messages.roles.form.colorPickerLabel()}
-                key={colorPickerKey}
-              />
-            </FormGroup>
+      <Card>
+        <CardContent>
+          <Formik
+            initialValues={initialValues}
+            onSubmit={handleSubmit}
+            enableReinitialize
+          >
+            {(formik) => (
+              <Form>
+                <FormGroup>
+                  <Field
+                    name={FieldNames.Name}
+                    placeholder={Messages.roles.form.name()}
+                    component={TextField}
+                    autoComplete="off"
+                  />
+                  <ColorPicker
+                    color={color}
+                    onChange={handleChangeComplete}
+                    label={Messages.roles.form.colorPickerLabel()}
+                    key={colorPickerKey}
+                  />
+                </FormGroup>
 
-            <SubmitButton disabled={formik.isSubmitting}>
-              {isEditing ? Messages.actions.save() : Messages.actions.create()}
-            </SubmitButton>
-          </Form>
-        )}
-      </Formik>
+                <div className={styles.flexEnd}>
+                  <SubmitButton disabled={isSubmitButtonDisabled(formik)}>
+                    {isEditing
+                      ? Messages.actions.save()
+                      : Messages.actions.create()}
+                  </SubmitButton>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </CardContent>
+      </Card>
     );
   return null;
 };

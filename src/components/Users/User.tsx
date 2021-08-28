@@ -59,7 +59,7 @@ const Show = ({ user, deleteUser }: Props) => {
   return (
     <Card>
       <CardHeader
-        avatar={user && <UserAvatar user={user} />}
+        avatar={<UserAvatar user={user} />}
         action={
           <>
             <FollowButton

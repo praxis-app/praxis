@@ -1,9 +1,18 @@
 import { createTheme } from "@material-ui/core/styles";
-import { DESKTOP_BREAKPOINT } from "../../constants/common";
 
 export const BLURPLE = "#7289DA";
 export const WHITE = "white";
 export const BLACK = "black";
+
+export const BLURPLE_BUTTON_COLORS = {
+  backgroundColor: BLURPLE,
+  "&:hover": {
+    backgroundColor: "#637DC9",
+  },
+  "&:active": {
+    backgroundColor: "#4666A8",
+  },
+};
 
 const globalTheme = createTheme({
   typography: {
@@ -21,6 +30,20 @@ const globalTheme = createTheme({
     },
     background: {
       paper: "rgb(65, 65, 65)",
+    },
+    action: {
+      disabled: "rgb(170, 170, 170)",
+      disabledBackground: "#4C5B91",
+    },
+  },
+
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 850,
+      lg: 1280,
+      xl: 1920,
     },
   },
 });
@@ -46,6 +69,9 @@ const muiTheme = createTheme({
       h3: {
         fontSize: 40,
       },
+      h4: {
+        marginTop: -10,
+      },
       h6: {
         marginBottom: 6,
         color: globalTheme.palette.primary.contrastText,
@@ -66,13 +92,18 @@ const muiTheme = createTheme({
 
     MuiInput: {
       root: {
-        color: globalTheme.palette.primary.dark,
+        color: globalTheme.palette.primary.light,
+      },
+      input: {
+        "&::placeholder": {
+          color: WHITE,
+        },
       },
     },
 
     MuiInputLabel: {
       root: {
-        color: "rgb(105, 105, 105)",
+        color: "rgb(140, 140, 140)",
       },
     },
 
@@ -88,6 +119,9 @@ const muiTheme = createTheme({
     },
 
     MuiButton: {
+      root: {
+        borderRadius: 9999,
+      },
       textPrimary: {
         color: globalTheme.palette.primary.contrastText,
       },
@@ -166,6 +200,12 @@ const muiTheme = createTheme({
       },
     },
 
+    MuiToolbar: {
+      root: {
+        backgroundColor: "#1e1e1e",
+      },
+    },
+
     MuiSnackbar: {
       anchorOriginBottomCenter: {
         bottom: 85,
@@ -195,11 +235,9 @@ const muiTheme = createTheme({
     },
 
     MuiContainer: {
-      root: {
-        marginTop: 100,
-        marginBottom: 200,
-        [globalTheme.breakpoints.up(DESKTOP_BREAKPOINT)]: {
-          marginTop: 75,
+      maxWidthSm: {
+        [globalTheme.breakpoints.up("md")]: {
+          maxWidth: 680,
         },
       },
     },

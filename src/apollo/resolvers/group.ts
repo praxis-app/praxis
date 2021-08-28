@@ -2,7 +2,7 @@ import { GraphQLUpload } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
 import { saveImage, deleteImage } from "../../utils/image";
 import { ModelNames, TypeNames } from "../../constants/common";
-import { GroupDefaults, GroupSettings } from "../../constants/setting";
+import { INITIAL_GROUP_SETTINGS } from "../../constants/setting";
 import Messages from "../../utils/messages";
 import { paginate } from "../../utils/items";
 
@@ -110,6 +110,27 @@ const groupResolvers = {
       const groups = await prisma.group.findMany();
       return groups;
     },
+
+    joinedGroupsByUserId: async (_: any, { userId }: { userId: string }) => {
+      const groups: BackendGroup[] = [];
+      const groupMembers = await prisma.groupMember.findMany({
+        where: {
+          userId: parseInt(userId),
+        },
+      });
+      for (const { groupId } of groupMembers) {
+        if (groupId) {
+          const whereGroupId = {
+            where: {
+              id: groupId,
+            },
+          };
+          const group = await prisma.group.findFirst(whereGroupId);
+          if (group) groups.push(group);
+        }
+      }
+      return groups;
+    },
   },
 
   Mutation: {
@@ -141,41 +162,7 @@ const groupResolvers = {
         },
       });
 
-      const settings = [
-        {
-          name: GroupSettings.NoAdmin,
-          value: GroupDefaults.NoAdmin,
-        },
-        {
-          name: GroupSettings.VotingType,
-          value: GroupDefaults.VotingType,
-        },
-        {
-          name: GroupSettings.VoteVerification,
-          value: GroupDefaults.VoteVerification,
-        },
-        {
-          name: GroupSettings.ReservationsLimit,
-          value: GroupDefaults.ReservationsLimit,
-        },
-        {
-          name: GroupSettings.StandAsidesLimit,
-          value: GroupDefaults.StandAsidesLimit,
-        },
-        {
-          name: GroupSettings.RatificationThreshold,
-          value: GroupDefaults.RatificationThreshold,
-        },
-        {
-          name: GroupSettings.XToPass,
-          value: GroupDefaults.XToPass,
-        },
-        {
-          name: GroupSettings.XToBlock,
-          value: GroupDefaults.XToBlock,
-        },
-      ];
-      for (const setting of settings) {
+      for (const setting of INITIAL_GROUP_SETTINGS) {
         const { name, value } = setting;
         await prisma.setting.create({
           data: {

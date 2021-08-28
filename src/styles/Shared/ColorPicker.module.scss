@@ -1,8 +1,15 @@
+@import "../Shared/colors.scss";
+
 .field {
   display: flex;
   justify-content: space-between;
   margin-bottom: 24px;
   cursor: pointer;
+}
+
+.label {
+  color: $lightGray;
+  margin-top: 2px;
 }
 
 .colorPickerWrapper {
@@ -11,6 +18,7 @@
 
 .color {
   display: flex;
+  color: $lightGray;
 }
 
 .colorSquare {
@@ -21,6 +29,7 @@
 }
 
 .colorHex {
+  margin-top: 2px;
   margin-right: 12px;
 }
 

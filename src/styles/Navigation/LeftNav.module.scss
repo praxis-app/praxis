@@ -1,0 +1,14 @@
+@import "../Shared/Shared.module.scss";
+
+.leftNav {
+  position: fixed;
+  top: 110px;
+  left: 208px;
+  width: 160px;
+}
+
+@media only screen and (max-width: $desktopLargeBreakpoint) {
+  .leftNav {
+    left: 108px;
+  }
+}

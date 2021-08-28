@@ -5,9 +5,10 @@ import Link from "next/link";
 
 import baseUrl from "../../utils/baseUrl";
 import { CURRENT_COVER_PHOTO } from "../../apollo/client/queries";
-import Messages from "../../utils/messages";
 import { ResourcePaths } from "../../constants/common";
 import { BLACK, WHITE } from "../../styles/Shared/theme";
+import { noCache } from "../../utils/clientIndex";
+import Messages from "../../utils/messages";
 
 interface Props {
   group: Group;
@@ -18,7 +19,7 @@ const GroupAvatar = ({ group }: Props) => {
 
   const coverPhotoRes = useQuery(CURRENT_COVER_PHOTO, {
     variables: { groupId: group.id },
-    fetchPolicy: "no-cache",
+    ...noCache,
   });
 
   useEffect(() => {

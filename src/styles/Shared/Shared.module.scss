@@ -1,44 +1,28 @@
 @import "../Shared/colors.scss";
 
 $desktopBreakpoint: 850px;
+$desktopLargeBreakpoint: 1650px;
+
+.brand {
+  font-family: "Inter Extra Bold";
+  letter-spacing: 0.6px;
+  color: white;
+  cursor: pointer;
+}
 
 .form {
   width: 100%;
   margin-bottom: 12px;
 }
 
-.imageInput {
-  visibility: hidden;
-}
-
-.imageInputIcon {
-  margin-top: -25px;
-  margin-left: -4px;
-  margin-bottom: 10px;
-  color: white;
-  cursor: pointer;
-}
-
-.selectedImages {
-  display: flex;
-  margin-bottom: 12px;
-}
-
-.selectedImage {
-  width: 200px;
-  margin-right: -4px;
-}
-
-.removeSelectedImageButton {
-  position: relative;
-  right: 8px;
-  bottom: 14px;
-  cursor: pointer;
-}
-
 .timeAgo {
   color: $lightGray;
   font-size: 13px;
+}
+
+.flexEnd {
+  display: flex;
+  justify-content: flex-end;
 }
 
 // Stops blue selection for tapping of links in mobile
@@ -51,5 +35,3 @@ $desktopBreakpoint: 850px;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
-
-// top, right, bottom, left
