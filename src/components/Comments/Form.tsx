@@ -18,8 +18,8 @@ import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
 import { FieldNames, ResourcePaths } from "../../constants/common";
-import SelectedImages from "../Shared/SelectedImages";
-import ImageInput from "../Shared/ImageInput";
+import SelectedImages from "../Images/Selected";
+import ImageInput from "../Images/Input";
 
 interface FormValues {
   body: string;
@@ -129,9 +129,12 @@ const CommentsForm = ({
     setImagesInputKey(generateRandom());
   };
 
-  const isSubmitButtonDisabled = (formik: FormikProps<FormValues>): boolean => {
-    if (isEditing && !!formik.submitCount) return true;
-    return formik.isSubmitting;
+  const isSubmitButtonDisabled = ({
+    isSubmitting,
+    dirty,
+  }: FormikProps<FormValues>): boolean => {
+    if (!isEditing && !dirty && !images.length) return true;
+    return isSubmitting;
   };
 
   return (
@@ -142,7 +145,7 @@ const CommentsForm = ({
       onSubmit={handleSubmit}
     >
       {(formik) => (
-        <Form className={styles.form}>
+        <Form className={!isEditing ? styles.form : ""}>
           <FormGroup>
             <Field
               name={FieldNames.Body}
@@ -169,11 +172,13 @@ const CommentsForm = ({
             deleteSavedImage={deleteImageHandler}
           />
 
-          <SubmitButton disabled={isSubmitButtonDisabled(formik)}>
-            {isEditing
-              ? Messages.actions.save()
-              : Messages.comments.actions.comment()}
-          </SubmitButton>
+          <div className={styles.flexEnd}>
+            <SubmitButton disabled={isSubmitButtonDisabled(formik)}>
+              {isEditing
+                ? Messages.actions.save()
+                : Messages.comments.actions.comment()}
+            </SubmitButton>
+          </div>
         </Form>
       )}
     </Formik>

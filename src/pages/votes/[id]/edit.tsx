@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
-import { CircularProgress } from "@material-ui/core";
+import { Card, CardContent, CircularProgress } from "@material-ui/core";
 import { useRouter } from "next/router";
 
 import VotesForm from "../../../components/Votes/Form";
@@ -55,11 +55,15 @@ const Edit = () => {
   if (!vote) return <CircularProgress />;
 
   return (
-    <VotesForm
-      vote={vote}
-      onEditPage={true}
-      modelOfConsensus={isModelOfConsensus}
-    />
+    <Card>
+      <CardContent>
+        <VotesForm
+          vote={vote}
+          onEditPage={true}
+          modelOfConsensus={isModelOfConsensus}
+        />
+      </CardContent>
+    </Card>
   );
 };
 

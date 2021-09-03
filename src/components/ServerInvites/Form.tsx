@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
 import {
+  Card,
+  CardContent,
   FormControl,
   FormGroup,
   InputLabel,
@@ -11,8 +13,10 @@ import { CREATE_SERVER_INVITE } from "../../apollo/client/mutations";
 import styles from "../../styles/ServerInvite/ServerInvite.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
-import { Time } from "../../constants/common";
-import { MAX_USES_OPTIONS } from "../../constants/serverInvite";
+import {
+  EXPIRES_AT_OPTIONS,
+  MAX_USES_OPTIONS,
+} from "../../constants/serverInvite";
 import SubmitButton from "../Shared/SubmitButton";
 import Dropdown from "../Shared/Dropdown";
 
@@ -23,8 +27,8 @@ interface Props {
 
 const ServerInviteForm = ({ invites, setInvites }: Props) => {
   const currentUser = useCurrentUser();
-  const [expiresAt, setExpiresAt] = useState<string>("");
   const [maxUses, setMaxUses] = useState<string>("");
+  const [expiresAt, setExpiresAt] = useState<string>("");
   const [createServerInvite] = useMutation(CREATE_SERVER_INVITE);
 
   const handleSubmit = async (e: any) => {
@@ -32,8 +36,8 @@ const ServerInviteForm = ({ invites, setInvites }: Props) => {
 
     if (currentUser) {
       try {
-        setExpiresAt("");
         setMaxUses("");
+        setExpiresAt("");
         const userId = currentUser.id;
         const { data } = await createServerInvite({
           variables: {
@@ -65,45 +69,48 @@ const ServerInviteForm = ({ invites, setInvites }: Props) => {
 
   if (currentUser)
     return (
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <FormGroup style={{ marginBottom: "12px" }}>
-          <FormControl>
-            <InputLabel>{Messages.invites.form.labels.expiresAt()}</InputLabel>
-            <Dropdown value={expiresAt} onChange={handleExpiresAtChange}>
-              <MenuItem value={Time.Day}>
-                {Messages.invites.form.expiresAtOptions.oneDay()}
-              </MenuItem>
-              <MenuItem value={Time.Week}>
-                {Messages.invites.form.expiresAtOptions.sevenDays()}
-              </MenuItem>
-              <MenuItem value={Time.Month}>
-                {Messages.invites.form.expiresAtOptions.oneMonth()}
-              </MenuItem>
-              <MenuItem value={""}>
-                {Messages.invites.form.expiresAtOptions.never()}
-              </MenuItem>
-            </Dropdown>
-          </FormControl>
+      <Card>
+        <CardContent>
+          <form onSubmit={handleSubmit}>
+            <FormGroup style={{ marginBottom: "12px" }}>
+              <FormControl>
+                <InputLabel>
+                  {Messages.invites.form.labels.expiresAt()}
+                </InputLabel>
+                <Dropdown value={expiresAt} onChange={handleExpiresAtChange}>
+                  {EXPIRES_AT_OPTIONS.map((option) => (
+                    <MenuItem value={option.value} key={option.value}>
+                      {option.message}
+                    </MenuItem>
+                  ))}
+                </Dropdown>
+              </FormControl>
 
-          <FormControl>
-            <InputLabel>{Messages.invites.form.labels.maxUses()}</InputLabel>
-            <Dropdown value={maxUses} onChange={handleMaxUsesChange}>
-              {MAX_USES_OPTIONS.map((option: number) => {
-                return (
-                  <MenuItem value={option} key={option}>
-                    {Messages.invites.form.maxUsesOptions.xUses(option)}
+              <FormControl>
+                <InputLabel>
+                  {Messages.invites.form.labels.maxUses()}
+                </InputLabel>
+                <Dropdown value={maxUses} onChange={handleMaxUsesChange}>
+                  {MAX_USES_OPTIONS.map((option: number) => {
+                    return (
+                      <MenuItem value={option} key={option}>
+                        {Messages.invites.form.maxUsesOptions.xUses(option)}
+                      </MenuItem>
+                    );
+                  })}
+                  <MenuItem value={""}>
+                    {Messages.invites.form.maxUsesOptions.noLimit()}
                   </MenuItem>
-                );
-              })}
-              <MenuItem value={""}>
-                {Messages.invites.form.maxUsesOptions.noLimit()}
-              </MenuItem>
-            </Dropdown>
-          </FormControl>
-        </FormGroup>
+                </Dropdown>
+              </FormControl>
+            </FormGroup>
 
-        <SubmitButton>{Messages.actions.create()}</SubmitButton>
-      </form>
+            <div className={styles.flexEnd}>
+              <SubmitButton>{Messages.invites.actions.generate()}</SubmitButton>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     );
   return null;
 };

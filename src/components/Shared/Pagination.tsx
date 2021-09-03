@@ -17,15 +17,11 @@ import { paginationVar, feedVar } from "../../apollo/client/localState";
 import styles from "../../styles/Shared/Pagination.module.scss";
 import Messages from "../../utils/messages";
 import Dropdown from "./Dropdown";
-import {
-  DESKTOP_BREAKPOINT,
-  INITIAL_PAGINATION_STATE,
-  PageSizes,
-} from "../../constants/common";
+import { INITIAL_PAGINATION_STATE, PageSizes } from "../../constants/common";
 
 const useStyles = makeStyles((theme: Theme) => {
   const hideForMobile = {
-    [theme.breakpoints.down(DESKTOP_BREAKPOINT)]: {
+    [theme.breakpoints.down("md")]: {
       display: "none",
     },
   };

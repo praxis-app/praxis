@@ -5,3 +5,8 @@
   margin-top: 48px;
   margin-bottom: 48px;
 }
+
+.flexEnd {
+  @extend .flexEnd;
+  margin-top: -12px;
+}

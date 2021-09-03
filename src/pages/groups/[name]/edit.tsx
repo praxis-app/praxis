@@ -14,7 +14,9 @@ const Edit = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
   const [group, setGroup] = useState<Group>();
-  const [groupSettings] = useSettingsByGroupId(group?.id);
+  const [groupSettings, _, groupSettingsLoading] = useSettingsByGroupId(
+    group?.id
+  );
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
 
   useEffect(() => {
@@ -49,10 +51,11 @@ const Edit = () => {
     return group?.creatorId === currentUser.id;
   };
 
+  if (groupRes.loading || groupSettingsLoading) return <CircularProgress />;
   if (currentUser && isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
   if (!ownGroup()) return <>{Messages.users.permissionDenied()}</>;
-  if (group) return <GroupForm group={group} isEditing={true} />;
-  return <CircularProgress />;
+
+  return <GroupForm group={group} isEditing={true} />;
 };
 
 export default Edit;

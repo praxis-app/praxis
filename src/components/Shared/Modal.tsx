@@ -6,13 +6,24 @@ import {
   Toolbar,
   IconButton,
   Typography,
-  Container,
   Theme,
   createStyles,
+  withStyles,
+  Container as MUIContainer,
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import { CircularProgress, Fade } from "@material-ui/core";
 import { useIsMobile } from "../../hooks";
+
+const Container = withStyles(() =>
+  createStyles({
+    root: {
+      marginTop: 10,
+      marginBottom: 40,
+      minHeight: 200,
+    },
+  })
+)(MUIContainer);
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

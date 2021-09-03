@@ -139,7 +139,7 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
 
   return (
     <div className={styles.vote} key={id}>
-      <div className={styles.avatar}>{user && <UserAvatar user={user} />}</div>
+      <div className={styles.avatar}>{<UserAvatar user={user} />}</div>
 
       <Card className={classes.root}>
         <CardHeader

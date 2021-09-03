@@ -78,3 +78,12 @@ export const MEMBER_REUQESTS = gql`
     }
   }
 `;
+
+export const JOINED_GROUPS_BY_USER_ID = gql`
+  query ($userId: ID!) {
+    joinedGroupsByUserId(userId: $userId) {
+      id
+      name
+    }
+  }
+`;

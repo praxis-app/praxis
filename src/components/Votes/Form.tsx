@@ -124,7 +124,7 @@ const VotesForm = ({
   return (
     <Formik initialValues={{ body }} onSubmit={handleSubmit}>
       {(formik) => (
-        <Form className={onEditPage ? styles.formOnEditPage : styles.form}>
+        <Form className={!onEditPage ? styles.form : ""}>
           <FormGroup>
             <Field
               name={FieldNames.Body}
@@ -168,9 +168,11 @@ const VotesForm = ({
             </FormControl>
           </FormGroup>
 
-          <SubmitButton disabled={formik.isSubmitting}>
-            {Messages.votes.actions.update()}
-          </SubmitButton>
+          <div className={styles.flexEnd}>
+            <SubmitButton disabled={formik.isSubmitting}>
+              {Messages.votes.actions.update()}
+            </SubmitButton>
+          </div>
         </Form>
       )}
     </Formik>

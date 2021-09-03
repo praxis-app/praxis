@@ -106,11 +106,12 @@ const PermissionsForm = ({
           })}
         </div>
       </FormGroup>
-      {anyUnsavedPermissions && (
-        <SubmitButton>
+
+      <div className={styles.flexEnd}>
+        <SubmitButton disabled={!anyUnsavedPermissions}>
           {submitLoading ? Messages.states.saving() : Messages.actions.save()}
         </SubmitButton>
-      )}
+      </div>
     </form>
   );
 };

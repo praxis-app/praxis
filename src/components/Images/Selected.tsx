@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { RemoveCircle } from "@material-ui/icons";
 
 import baseUrl from "../../utils/baseUrl";
-import styles from "../../styles/Shared/Shared.module.scss";
+import styles from "../../styles/Image/Selected.module.scss";
 import Messages from "../../utils/messages";
 
 interface Props {

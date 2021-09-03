@@ -1,5 +1,5 @@
 export const EXPIRES_IN = "90d";
-export const DESKTOP_BREAKPOINT = 850;
+export const SCROLL_DURATION = 350;
 
 export enum TypeNames {
   Comment = "Comment",
@@ -55,6 +55,7 @@ export enum FieldNames {
   Body = "body",
   Name = "name",
   Description = "description",
+  Query = "query",
 }
 
 export enum LocalStorage {
@@ -90,6 +91,7 @@ export enum PageSizes {
 }
 
 export enum KeyCodes {
+  Enter = "Enter",
   Escape = "Escape",
 }
 

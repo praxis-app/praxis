@@ -85,11 +85,11 @@ const Post = ({ post, deletePost }: Props) => {
       <Card>
         <CardHeader
           avatar={
-            group && !onGroupPage()
-              ? user && (
-                  <GroupItemAvatar user={user} group={group} post={post} />
-                )
-              : user && <UserAvatar user={user} />
+            group && !onGroupPage() ? (
+              user && <GroupItemAvatar user={user} group={group} post={post} />
+            ) : (
+              <UserAvatar user={user} />
+            )
           }
           title={
             (!group || onGroupPage()) && (

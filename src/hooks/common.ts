@@ -1,10 +1,6 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { useMediaQuery, useTheme } from "@material-ui/core";
-import {
-  DESKTOP_BREAKPOINT,
-  Events,
-  ScrollDirections,
-} from "../constants/common";
+import { Events, ScrollDirections } from "../constants/common";
 
 // TODO: Use useIsMountedRef to resolve the following warning:
 // Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function
@@ -45,7 +41,7 @@ export const useScrollPosition = (): number => {
   const [scrollPosition, setScrollPosition] = useState<number>(0);
 
   const handleScroll = () => {
-    const position = window.pageYOffset;
+    const position = window.scrollY;
     setScrollPosition(position);
   };
 
@@ -85,12 +81,12 @@ export const useScrollDirection = (): ScrollDirection => {
 
 export const useIsMobile = (): boolean => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down(DESKTOP_BREAKPOINT));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   return isMobile;
 };
 
 export const useIsDesktop = (): boolean => {
   const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up(DESKTOP_BREAKPOINT));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
   return isDesktop;
 };

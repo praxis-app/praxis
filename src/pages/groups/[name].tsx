@@ -6,7 +6,7 @@ import { Tab, Tabs, Card, CircularProgress } from "@material-ui/core";
 import Group from "../../components/Groups/Group";
 import Feed from "../../components/Shared/Feed";
 import PostsForm from "../../components/Posts/Form";
-import MotionsForm from "../../components/Motions/Form";
+import MotionsFormWithCard from "../../components/Motions/FormWithCard";
 import ToggleForms from "../../components/Groups/ToggleForms";
 import Pagination from "../../components/Shared/Pagination";
 import { GROUP_BY_NAME, GROUP_FEED } from "../../apollo/client/queries";
@@ -156,7 +156,7 @@ const Show = () => {
         {inThisGroup() && (
           <>
             {tab === 0 && <ToggleForms group={group} />}
-            {tab === 1 && <MotionsForm group={group} />}
+            {tab === 1 && <MotionsFormWithCard group={group} />}
             {tab === 2 && <PostsForm group={group} />}
           </>
         )}

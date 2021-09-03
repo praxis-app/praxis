@@ -1,7 +1,6 @@
 import { ChangeEvent, useRef } from "react";
 import { Image } from "@material-ui/icons";
-
-import styles from "../../styles/Shared/Shared.module.scss";
+import styles from "../../styles/Image/Input.module.scss";
 
 interface Props {
   setImage?: (image: File) => void;
@@ -19,7 +18,7 @@ const ImageInput = ({ setImage, setImages, multiple, refreshKey }: Props) => {
   };
 
   return (
-    <>
+    <div>
       <input
         multiple={multiple}
         type="file"
@@ -31,12 +30,14 @@ const ImageInput = ({ setImage, setImages, multiple, refreshKey }: Props) => {
         }
         className={styles.imageInput}
       />
+
       <Image
-        className={styles.imageInputIcon}
         onClick={() => imageInput.current?.click()}
+        className={styles.imageInputIcon}
         fontSize="large"
+        color="primary"
       />
-    </>
+    </div>
   );
 };
 

@@ -14,6 +14,7 @@ const en = {
     like: () => "Like",
     pickColor: () => "Pick a Color",
     save: () => "Save",
+    search: () => "Search Praxis",
     share: () => "Share",
   },
 
@@ -45,6 +46,7 @@ const en = {
     home: () => "Home",
     invites: () => "Invites",
     menu: () => "Menu",
+    preferences: () => "Preferences",
     profile: () => "Profile",
     users: () => "Users",
     groups: () => "Groups",
@@ -99,7 +101,7 @@ const en = {
       post: () => "Post",
     },
     form: {
-      bodyPlaceholder: () => "Post something awesome...",
+      bodyPlaceholder: () => "What's happening?",
       postEmpty: () => "Post cannot be empty...",
     },
   },
@@ -115,6 +117,7 @@ const en = {
     form: {
       makeAMotion: () => "Make a motion...",
       motionType: () => "Motion type",
+      group: () => "Group",
       actionTypes: {
         planEvent: () => "Plan event",
         changeName: () => "Change name",
@@ -288,6 +291,9 @@ const en = {
   },
 
   invites: {
+    actions: {
+      generate: () => "Generate a New Link",
+    },
     labels: {
       invites: () => "Invites",
       serverInvites: () => "Server Invites",

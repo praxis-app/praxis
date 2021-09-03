@@ -5,6 +5,15 @@ interface Group {
   creatorId: string;
 }
 
+interface BackendGroup {
+  id: number;
+  name: string;
+  description: string;
+  creatorId: number;
+  createdAt: Date;
+  __typename?: string;
+}
+
 interface MemberRequest {
   id: string;
   userId: string;

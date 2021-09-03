@@ -9,6 +9,8 @@ const useStyles = makeStyles(() =>
   createStyles({
     root: {
       textTransform: "none",
+      paddingLeft: 12,
+      paddingRight: 12,
     },
   })
 );

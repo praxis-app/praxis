@@ -29,3 +29,8 @@ interface ActionData {
   newGroupImagePath?: string;
   newGroupImage?: File;
 }
+
+interface ActionTypeOption {
+  message: string;
+  value: ActionTypes;
+}

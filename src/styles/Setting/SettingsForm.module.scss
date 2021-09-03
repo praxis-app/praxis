@@ -1,16 +1,17 @@
 @import "../Shared/Shared.module.scss";
 
-.form {
-  @extend .form;
-  margin-top: 48px;
-}
-
 .setting {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin: 12px 0;
+  color: $lightGray;
 }
 
 .settingName {
   white-space: nowrap;
+}
+
+.flexEnd {
+  @extend .flexEnd;
+  margin-top: 12px;
 }

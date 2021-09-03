@@ -4,7 +4,7 @@ import { Search } from "@material-ui/icons";
 import { IconButton } from "@material-ui/core";
 import clsx from "clsx";
 
-import styles from "../../styles/Shared/TopNav.module.scss";
+import styles from "../../styles/Navigation/TopNav.module.scss";
 import { useScrollDirection, useScrollPosition } from "../../hooks";
 import { ScrollDirections, ToastStatus } from "../../constants/common";
 import { toastVar } from "../../apollo/client/localState";

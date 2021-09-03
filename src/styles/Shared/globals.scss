@@ -15,6 +15,11 @@
   src: url("/fonts/Inter-ExtraBold.woff") format("woff");
 }
 
+@font-face {
+  font-family: "Inter Light";
+  src: url("/fonts/Inter-Light.woff2") format("woff");
+}
+
 body {
   background: $darkGray;
   color: $lightGray;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import jwtDecode from "jwt-decode";
 import Router from "next/router";
 
@@ -62,12 +62,16 @@ export const useRestoreUserSession = () => {
 };
 
 // TODO: Convert return type to an array: [user, setUser, loading]
-export const useUserById = (id: string): User | undefined => {
+export const useUserById = (id: string | undefined): User | undefined => {
   const [user, setUser] = useState<User>();
-  const userRes = useQuery(USER, {
-    variables: { id },
-    ...noCache,
-  });
+  const [getUserRes, userRes] = useLazyQuery(USER, noCache);
+
+  useEffect(() => {
+    if (id)
+      getUserRes({
+        variables: { id },
+      });
+  }, [id]);
 
   useEffect(() => {
     if (userRes.data) setUser(userRes.data.user);

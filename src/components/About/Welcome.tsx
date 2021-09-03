@@ -28,8 +28,8 @@ interface Props {
 }
 
 const WelcomeCard = ({ isLoggedIn }: Props) => {
-  const [closed, setClosed] = useState<boolean>(false);
   const [inviteToken, setInviteToken] = useState<string | null>();
+  const [closed, setClosed] = useState<boolean>(false);
   const classes = useStyles();
 
   useEffect(() => {

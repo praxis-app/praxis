@@ -67,7 +67,7 @@ const Comment = ({ comment, deleteComment }: Props) => {
 
   return (
     <div className={styles.comment} key={id}>
-      <div className={styles.avatar}>{user && <UserAvatar user={user} />}</div>
+      <div className={styles.avatar}>{<UserAvatar user={user} />}</div>
 
       <Card className={classes.root}>
         <CardHeader

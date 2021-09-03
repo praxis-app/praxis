@@ -82,6 +82,7 @@ export const typeDefs = gql`
       pageSize: Int!
       itemType: String
     ): FeedPayload!
+    joinedGroupsByUserId(userId: ID!): [Group]
 
     groupMembers(groupId: ID!): [GroupMember]
     memberRequests(groupId: ID!): [MemberRequest]

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import Router from "next/router";
-import { FormGroup } from "@material-ui/core";
+import { Card, CardContent, FormGroup } from "@material-ui/core";
 import { Formik, Form, Field } from "formik";
 
 import { SIGN_IN, SET_CURRENT_USER } from "../../apollo/client/mutations";
@@ -59,32 +59,42 @@ const Login = () => {
   if (currentUser) return <>{Messages.users.alreadyLoggedIn()}</>;
 
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-      {(formik) => (
-        <Form className={styles.form}>
-          <FormGroup
-            style={{
-              marginBottom: "6px",
-            }}
-          >
-            <Field
-              name={FieldNames.Email}
-              placeholder={Messages.users.form.email()}
-              component={TextField}
-            />
-            <Field
-              name={FieldNames.Password}
-              placeholder={Messages.users.form.password()}
-              component={PasswordField}
-            />
-          </FormGroup>
+    <Card>
+      <CardContent style={{ paddingBottom: 16 }}>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          enableReinitialize
+        >
+          {(formik) => (
+            <Form>
+              <FormGroup
+                style={{
+                  marginBottom: "6px",
+                }}
+              >
+                <Field
+                  name={FieldNames.Email}
+                  placeholder={Messages.users.form.email()}
+                  component={TextField}
+                />
+                <Field
+                  name={FieldNames.Password}
+                  placeholder={Messages.users.form.password()}
+                  component={PasswordField}
+                />
+              </FormGroup>
 
-          <SubmitButton disabled={formik.isSubmitting}>
-            {Messages.users.actions.logIn()}
-          </SubmitButton>
-        </Form>
-      )}
-    </Formik>
+              <div className={styles.flexEnd}>
+                <SubmitButton disabled={formik.isSubmitting}>
+                  {Messages.users.actions.logIn()}
+                </SubmitButton>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </CardContent>
+    </Card>
   );
 };
 

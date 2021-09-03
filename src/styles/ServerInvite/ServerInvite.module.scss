@@ -18,9 +18,9 @@
   color: $lightGray;
 }
 
-.form {
-  @extend .form;
-  margin-bottom: 24px;
+.flexEnd {
+  @extend .flexEnd;
+  margin-top: 24px;
 }
 
 // desktop

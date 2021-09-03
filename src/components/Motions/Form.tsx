@@ -4,9 +4,10 @@ import {
   FormGroup,
   FormControl,
   InputLabel,
+  Divider,
   MenuItem,
 } from "@material-ui/core";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import { Formik, FormikHelpers, Form, Field, FormikProps } from "formik";
 
 import Messages from "../../utils/messages";
@@ -16,30 +17,37 @@ import {
   UPDATE_MOTION,
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
-import { FieldNames, ResourcePaths } from "../../constants/common";
-import { ActionTypes } from "../../constants/motion";
+import {
+  FieldNames,
+  NavigationPaths,
+  ResourcePaths,
+} from "../../constants/common";
+import { ActionTypeOptions, ActionTypes } from "../../constants/motion";
 import ActionFields from "./ActionFields";
-import styles from "../../styles/Shared/Shared.module.scss";
+import styles from "../../styles/Motion/Motion.module.scss";
 import { feedVar, paginationVar } from "../../apollo/client/localState";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import { noCache } from "../../utils/apollo";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
-import SelectedImages from "../Shared/SelectedImages";
-import ImageInput from "../Shared/ImageInput";
+import SelectedImages from "../Images/Selected";
+import ImageInput from "../Images/Input";
 import Dropdown from "../Shared/Dropdown";
+import { truncate } from "lodash";
 
-interface FormikValues {
+interface FormValues {
   body: string;
 }
 
-interface Props {
+export interface MotionsFormProps {
   motion?: Motion;
   motions?: Motion[];
   isEditing?: boolean;
   setMotions?: (motions: Motion[]) => void;
+  groups?: Group[];
   group?: Group;
+  closeModal?: () => void;
 }
 
 const MotionsForm = ({
@@ -47,14 +55,17 @@ const MotionsForm = ({
   motions,
   isEditing,
   setMotions,
+  groups,
   group,
-}: Props) => {
+  closeModal,
+}: MotionsFormProps) => {
   const currentUser = useCurrentUser();
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
   const [savedImages, setSavedImages] = useState<Image[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [action, setAction] = useState<string>("");
   const [actionData, setActionData] = useState<ActionData>({});
+  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const { currentPage, pageSize } = useReactiveVar(paginationVar);
   const feed = useReactiveVar(feedVar);
 
@@ -65,6 +76,7 @@ const MotionsForm = ({
     IMAGES_BY_MOTION_ID,
     noCache
   );
+  const { asPath: currentPath } = useRouter();
 
   useEffect(() => {
     if (isEditing && motion) {
@@ -83,8 +95,8 @@ const MotionsForm = ({
   }, [savedImagesRes.data]);
 
   const handleSubmit = async (
-    { body }: FormikValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormikValues>
+    { body }: FormValues,
+    { setSubmitting, resetForm }: FormikHelpers<FormValues>
   ) => {
     if (currentUser) {
       try {
@@ -106,13 +118,14 @@ const MotionsForm = ({
               images,
               action,
               actionData,
-              groupId: group?.id,
               userId: currentUser.id,
+              groupId: group ? group.id : selectedGroupId,
             },
           });
           resetForm();
           setAction("");
           setImages([]);
+          setSelectedGroupId("");
           setSubmitting(false);
           if (motions && setMotions)
             setMotions([data.createMotion.motion, ...motions]);
@@ -122,6 +135,12 @@ const MotionsForm = ({
               items: feedItemsAferCreate(data.createMotion.motion),
               totalItems: feed.totalItems + 1,
             });
+
+          if (groups && selectedGroupId && closeModal) {
+            closeModal();
+            if (currentPath !== NavigationPaths.Home)
+              Router.push(NavigationPaths.Home);
+          }
         }
       } catch (err) {
         alert(err);
@@ -131,6 +150,10 @@ const MotionsForm = ({
 
   const handleActionChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setAction(event.target.value as string);
+  };
+
+  const handleGroupChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setSelectedGroupId(event.target.value as string);
   };
 
   const deleteImageHandler = async (id: string) => {
@@ -151,11 +174,15 @@ const MotionsForm = ({
     setImagesInputKey(generateRandom());
   };
 
-  const isSubmitButtonDisabled = (
-    formik: FormikProps<FormikValues>
-  ): boolean => {
-    if (isEditing && !!formik.submitCount) return true;
-    return formik.isSubmitting;
+  const isSubmitButtonDisabled = ({
+    values: { body },
+    isValid,
+    isSubmitting,
+  }: FormikProps<FormValues>): boolean => {
+    if (!group && !selectedGroupId) return true;
+    if (body === "" && images.length === 0) return true;
+    if (!isValid) return true;
+    return isSubmitting;
   };
 
   const feedItemsAferCreate = (newMotion: Motion): FeedItem[] => {
@@ -180,7 +207,7 @@ const MotionsForm = ({
       onSubmit={handleSubmit}
     >
       {(formik) => (
-        <Form className={styles.form} style={group && { marginTop: "48px" }}>
+        <Form className={styles.form}>
           <FormGroup>
             <Field
               name={FieldNames.Body}
@@ -195,29 +222,29 @@ const MotionsForm = ({
               multiline
             />
 
-            <FormControl style={{ marginBottom: 18 }}>
+            <FormControl style={{ marginBottom: groups ? 6 : 18 }}>
               <InputLabel>{Messages.motions.form.motionType()}</InputLabel>
               <Dropdown value={action} onChange={handleActionChange}>
-                <MenuItem value={ActionTypes.PlanEvent}>
-                  {Messages.motions.form.actionTypes.planEvent()}
-                </MenuItem>
-                <MenuItem value={ActionTypes.ChangeName}>
-                  {Messages.motions.form.actionTypes.changeName()}
-                </MenuItem>
-                <MenuItem value={ActionTypes.ChangeDescription}>
-                  {Messages.motions.form.actionTypes.changeDescription()}
-                </MenuItem>
-                <MenuItem value={ActionTypes.ChangeImage}>
-                  {Messages.motions.form.actionTypes.changeImage()}
-                </MenuItem>
-                <MenuItem value={ActionTypes.ChangeSettings}>
-                  {Messages.motions.form.actionTypes.changeSettings()}
-                </MenuItem>
-                <MenuItem value={ActionTypes.Test}>
-                  {Messages.motions.form.actionTypes.test()}
-                </MenuItem>
+                {ActionTypeOptions.map((option) => (
+                  <MenuItem value={option.value} key={option.value}>
+                    {option.message}
+                  </MenuItem>
+                ))}
               </Dropdown>
             </FormControl>
+
+            {groups && (
+              <FormControl style={{ marginBottom: 18 }}>
+                <InputLabel>{Messages.motions.form.group()}</InputLabel>
+                <Dropdown value={selectedGroupId} onChange={handleGroupChange}>
+                  {groups.map((group) => (
+                    <MenuItem value={group.id} key={group.id}>
+                      {truncate(group.name, { length: 65 })}
+                    </MenuItem>
+                  ))}
+                </Dropdown>
+              </FormControl>
+            )}
 
             <ActionFields actionType={action} setActionData={setActionData} />
 
@@ -237,11 +264,15 @@ const MotionsForm = ({
             deleteSavedImage={deleteImageHandler}
           />
 
-          <SubmitButton disabled={isSubmitButtonDisabled(formik)}>
-            {isEditing
-              ? Messages.actions.save()
-              : Messages.motions.actions.motion()}
-          </SubmitButton>
+          <Divider style={{ marginBottom: 24 }} />
+
+          <div className={styles.flexEnd}>
+            <SubmitButton disabled={isSubmitButtonDisabled(formik)}>
+              {isEditing
+                ? Messages.actions.save()
+                : Messages.motions.actions.motion()}
+            </SubmitButton>
+          </div>
         </Form>
       )}
     </Formik>
