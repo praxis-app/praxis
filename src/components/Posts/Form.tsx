@@ -5,8 +5,6 @@ import {
   Divider,
   FormGroup,
   withStyles,
-  Card,
-  CardContent,
   CardActions as MUICardActions,
 } from "@material-ui/core";
 import Router from "next/router";
@@ -18,18 +16,18 @@ import {
   UPDATE_POST,
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
-import styles from "../../styles/Post/Post.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import { feedVar, paginationVar } from "../../apollo/client/localState";
 import { noCache } from "../../utils/apollo";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
-import TextField from "../Posts/TextField";
+import TextField from "../Shared/TextFieldWithAvatar";
 import SelectedImages from "../Images/Selected";
 import ImageInput from "../Images/Input";
 import { toastVar } from "../../apollo/client/localState";
 import { FieldNames, ResourcePaths, ToastStatus } from "../../constants/common";
+import FormToggle from "../Motions/FormToggle";
 
 const CardActions = withStyles(() =>
   createStyles({
@@ -44,15 +42,23 @@ interface FormValues {
   body: string;
 }
 
-interface Props {
+export interface PostsFormProps {
   post?: Post;
   posts?: Post[];
   isEditing?: boolean;
   setPosts?: (posts: Post[]) => void;
   group?: Group;
+  withoutToggle?: boolean;
 }
 
-const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
+const PostsForm = ({
+  post,
+  posts,
+  isEditing,
+  setPosts,
+  group,
+  withoutToggle,
+}: PostsFormProps) => {
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
   const [savedImages, setSavedImages] = useState<Image[]>([]);
   const [images, setImages] = useState<File[]>([]);
@@ -165,57 +171,60 @@ const PostsForm = ({ post, posts, isEditing, setPosts, group }: Props) => {
   };
 
   return (
-    <Card>
-      <CardContent style={{ paddingBottom: 18 }}>
-        <Formik
-          initialValues={{
-            body: isEditing && post ? post.body : "",
-          }}
-          onSubmit={handleSubmit}
-        >
-          {(formik) => (
-            <Form className={styles.form}>
-              <FormGroup>
-                <Field
-                  name={FieldNames.Body}
-                  placeholder={
-                    formik.isSubmitting
-                      ? Messages.states.loading()
-                      : Messages.posts.form.bodyPlaceholder()
-                  }
-                  validate={validatePostBody}
-                  component={TextField}
-                  multiline
-                />
-              </FormGroup>
+    <Formik
+      initialValues={{
+        body: isEditing && post ? post.body : "",
+      }}
+      onSubmit={handleSubmit}
+    >
+      {(formik) => (
+        <Form>
+          <FormGroup>
+            <Field
+              name={FieldNames.Body}
+              placeholder={
+                formik.isSubmitting
+                  ? Messages.states.loading()
+                  : Messages.posts.form.bodyPlaceholder()
+              }
+              validate={validatePostBody}
+              component={TextField}
+              multiline
+            />
+          </FormGroup>
 
-              <SelectedImages
-                selectedImages={images}
-                savedImages={savedImages}
-                removeSelectedImage={removeSelectedImage}
-                deleteSavedImage={deleteImageHandler}
+          <SelectedImages
+            selectedImages={images}
+            savedImages={savedImages}
+            removeSelectedImage={removeSelectedImage}
+            deleteSavedImage={deleteImageHandler}
+          />
+
+          <Divider style={{ marginBottom: 18, marginTop: 18 }} />
+
+          <CardActions>
+            <div style={{ display: "flex", marginTop: -4 }}>
+              <ImageInput
+                setImages={setImages}
+                refreshKey={imagesInputKey}
+                multiple
               />
 
-              <Divider style={{ marginBottom: 18, marginTop: 0 }} />
+              {!withoutToggle && <FormToggle />}
+            </div>
 
-              <CardActions>
-                <ImageInput
-                  setImages={setImages}
-                  refreshKey={imagesInputKey}
-                  multiple
-                />
-
-                <SubmitButton disabled={isSubmitButtonDisabled(formik)}>
-                  {isEditing
-                    ? Messages.actions.save()
-                    : Messages.posts.actions.post()}
-                </SubmitButton>
-              </CardActions>
-            </Form>
-          )}
-        </Formik>
-      </CardContent>
-    </Card>
+            <SubmitButton
+              disabled={isSubmitButtonDisabled(formik)}
+              style={{ marginTop: 4 }}
+            >
+              {isEditing
+                ? Messages.actions.save()
+                : Messages.posts.actions.post()}
+            </SubmitButton>
+          </CardActions>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

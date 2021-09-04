@@ -5,7 +5,9 @@ const en = {
 
   actions: {
     add: () => "Add",
+    cancel: () => "Cancel",
     close: () => "Close",
+    confirm: () => "Confirm",
     copy: () => "Copy",
     create: () => "Create",
     delete: () => "Delete",
@@ -16,6 +18,7 @@ const en = {
     save: () => "Save",
     search: () => "Search Praxis",
     share: () => "Share",
+    submit: () => "Submit",
   },
 
   labels: {
@@ -127,15 +130,18 @@ const en = {
         test: () => "Just a test",
       },
       motionEmpty: () => "Motion cannot be empty...",
+      enterProposedSettings: () => "Enter your proposed settings below...",
     },
     tabs: {
-      votes: () => "Votes",
       comments: () => "Comments",
+      groupSettings: () => "Group Settings",
+      motion: () => "Motion",
+      votes: () => "Votes",
     },
     groups: {
       proposedAspect: (aspect: string) => `Proposed ${aspect}:`,
       actionFields: {
-        inDev: () => "This action type is still in development...",
+        inDev: () => "This motion type is still in development...",
         newAspect: (aspect: string) => `New group ${aspect}`,
         attachImage: () => "Attach new group image",
       },
@@ -248,18 +254,30 @@ const en = {
     group must now be made via motion ratification.`,
   },
 
+  settings: {
+    states: {
+      on: () => "On",
+      off: () => "Off",
+    },
+  },
+
   roles: {
     actions: {
       addMembers: () => "Add members",
       initializeAdminRole: () => "Initialize Admin Role",
     },
     form: {
-      name: () => "name",
+      name: () => "Name",
       colorPickerLabel: () => "Role Color",
     },
     prompts: {
       initializeAdminRoleConfirm: () =>
         "Are you sure you want to create an admin role for this server? If you did not create this server or haven't been granted permission otherwise, please hit 'Cancel'.",
+    },
+    tabs: {
+      display: () => "Display",
+      permissions: () => "Permissions",
+      members: () => "Members",
     },
     breadcrumb: () => "Roles",
     members: {

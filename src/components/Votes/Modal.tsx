@@ -60,7 +60,7 @@ const VotesModal = ({ votes, open, setOpen }: Props) => {
   return (
     <Modal
       open={open}
-      setOpen={setOpen}
+      onClose={() => setOpen(false)}
       appBarChildren={
         <Tabs
           value={tab}

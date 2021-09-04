@@ -15,7 +15,11 @@ import Messages from "../../../utils/messages";
 import { useHasPermissionGlobally } from "../../../hooks";
 import styles from "../../../styles/Role/Role.module.scss";
 import { Permissions } from "../../../constants/role";
-import { ModelNames, TypeNames } from "../../../constants/common";
+import {
+  ModelNames,
+  NavigationPaths,
+  TypeNames,
+} from "../../../constants/common";
 import PermissionsForm from "../../../components/Permissions/Form";
 import AddMemberTab from "../../../components/Roles/AddMemberTab";
 import { breadcrumbsVar } from "../../../apollo/client/localState";
@@ -71,14 +75,9 @@ const Edit = () => {
   }, [membersRes.data]);
 
   useEffect(() => {
-    if (permissions.length && !unsavedPermissions.length)
-      setUnsavedPermissions(permissions);
-  }, [permissions]);
-
-  useEffect(() => {
     if (role && canManageRoles)
       breadcrumbsVar([
-        { label: Messages.roles.breadcrumb(), href: "/roles" },
+        { label: Messages.roles.breadcrumb(), href: NavigationPaths.Roles },
         { label: role.name },
       ]);
     else breadcrumbsVar([]);
@@ -94,12 +93,12 @@ const Edit = () => {
         id,
       },
     });
-    Router.push("/roles");
+    Router.push(NavigationPaths.Roles);
   };
 
   const anyUnsavedPermissions = (): boolean => {
     return (
-      !!unsavedPermissions.length &&
+      Boolean(unsavedPermissions.length) &&
       JSON.stringify(permissions) !== JSON.stringify(unsavedPermissions)
     );
   };
@@ -119,9 +118,9 @@ const Edit = () => {
               setTab(newValue)
             }
           >
-            <Tab label="Display" />
-            <Tab label="Permissions" />
-            <Tab label="Members" />
+            <Tab label={Messages.roles.tabs.display()} />
+            <Tab label={Messages.roles.tabs.permissions()} />
+            <Tab label={Messages.roles.tabs.members()} />
           </Tabs>
         </Card>
 

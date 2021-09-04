@@ -1,7 +1,8 @@
+import { useRef } from "react";
 import { withStyles, createStyles, Theme } from "@material-ui/core";
 import { InputBase, InputBaseProps } from "formik-material-ui";
 import { useCurrentUser, useUserById } from "../../hooks";
-import styles from "../../styles/Post/TextField.module.scss";
+import styles from "../../styles/Shared/TextFieldWithAvatar.module.scss";
 import UserAvatar from "../Users/Avatar";
 
 const StyledTextField = withStyles((theme: Theme) =>
@@ -25,11 +26,16 @@ const StyledTextField = withStyles((theme: Theme) =>
 const TextField = (props: InputBaseProps) => {
   const currentUser = useCurrentUser();
   const user = useUserById(currentUser?.id);
+  const ref = useRef<HTMLInputElement>(null);
+
+  const handleAvatarClick = () => {
+    ref.current?.focus();
+  };
 
   return (
     <div className={styles.textFieldWrapper}>
-      <UserAvatar user={user} />
-      <StyledTextField {...props} type="text" />
+      <UserAvatar user={user} onClick={handleAvatarClick} withoutLink />
+      <StyledTextField {...props} type="text" inputRef={ref} />
     </div>
   );
 };

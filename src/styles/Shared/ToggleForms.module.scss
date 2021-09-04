@@ -1,7 +1,6 @@
-@import "../Shared/Shared.module.scss";
-
 .toggleContainer {
-  @extend .form;
+  width: 100%;
   display: flex;
   justify-content: flex-end;
+  margin-bottom: 12px;
 }

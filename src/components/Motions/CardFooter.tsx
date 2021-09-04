@@ -91,7 +91,7 @@ const CardFooter = ({ motionId, votes, setVotes, modelOfConsensus }: Props) => {
       <div className={styles.totalsContainer}>
         <VoteChips votes={votes} />
 
-        {!!totalComments && (
+        {Boolean(totalComments) && (
           <Link href={motionPagePath + toCommentsQuery} passHref>
             <a>
               <Typography className={styles.totalCommentsLink}>

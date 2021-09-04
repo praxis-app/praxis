@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { CSSProperties } from "react";
 import Link from "next/link";
 import { useReactiveVar } from "@apollo/client";
 import {
@@ -8,7 +8,6 @@ import {
   createStyles,
   ListItemIcon,
   ListItemText as MUIListItemText,
-  Button as MUIButton,
   makeStyles,
 } from "@material-ui/core";
 import {
@@ -21,13 +20,13 @@ import {
 
 import { navKeyVar } from "../../apollo/client/localState";
 import { NavigationPaths } from "../../constants/common";
-import { BLURPLE_BUTTON_COLORS, WHITE } from "../../styles/Shared/theme";
+import { WHITE } from "../../styles/Shared/theme";
 import Messages from "../../utils/messages";
 import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
 import { Permissions } from "../../constants/role";
 import styles from "../../styles/Navigation/LeftNav.module.scss";
-import MotionFormModal from "../Motions/FormModal";
 import { useRouter } from "next/router";
+import MotionButton from "../Motions/MotionButton";
 
 const ListItem = withStyles(() =>
   createStyles({
@@ -46,22 +45,6 @@ const ListItemText = withStyles(() =>
   })
 )(MUIListItemText);
 
-const Button = withStyles(() =>
-  createStyles({
-    root: {
-      width: 160,
-      height: 50,
-      fontFamily: "Inter Bold",
-      fontSize: 18,
-      letterSpacing: "0.2px",
-      textTransform: "none",
-      marginTop: 10,
-
-      ...BLURPLE_BUTTON_COLORS,
-    },
-  })
-)(MUIButton);
-
 const useStyles = makeStyles({
   bold: {
     fontFamily: "Inter Bold",
@@ -70,7 +53,6 @@ const useStyles = makeStyles({
 
 const LeftNav = () => {
   const currentUser = useCurrentUser();
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
   const refreshKey = useReactiveVar(navKeyVar);
   const [canManageRoles] = useHasPermissionGlobally(
     Permissions.ManageRoles,
@@ -97,6 +79,13 @@ const LeftNav = () => {
     };
   };
 
+  const makeLarge = (path: NavigationPaths): CSSProperties => {
+    const transition: CSSProperties = { transition: "0.2s ease" };
+    if (currentPath === path)
+      return { fontSize: 28, marginLeft: -2, ...transition };
+    return transition;
+  };
+
   return (
     <div className={styles.leftNav}>
       <List>
@@ -104,7 +93,7 @@ const LeftNav = () => {
           <a>
             <ListItem button>
               <ListItemIcon>
-                <Home color="primary" />
+                <Home color="primary" style={makeLarge(NavigationPaths.Home)} />
               </ListItemIcon>
               <ListItemText
                 primary={Messages.navigation.home()}
@@ -118,7 +107,10 @@ const LeftNav = () => {
           <a>
             <ListItem button>
               <ListItemIcon>
-                <Group color="primary" />
+                <Group
+                  style={makeLarge(NavigationPaths.Groups)}
+                  color="primary"
+                />
               </ListItemIcon>
               <ListItemText
                 primary={Messages.navigation.groups()}
@@ -133,7 +125,10 @@ const LeftNav = () => {
             <a>
               <ListItem button>
                 <ListItemIcon>
-                  <AccountBox color="primary" />
+                  <AccountBox
+                    style={makeLarge(NavigationPaths.Roles)}
+                    color="primary"
+                  />
                 </ListItemIcon>
                 <ListItemText
                   primary={Messages.navigation.roles()}
@@ -149,7 +144,10 @@ const LeftNav = () => {
             <a>
               <ListItem button>
                 <ListItemIcon>
-                  <SupervisedUserCircle color="primary" />
+                  <SupervisedUserCircle
+                    style={makeLarge(NavigationPaths.Users)}
+                    color="primary"
+                  />
                 </ListItemIcon>
                 <ListItemText
                   primary={Messages.navigation.users()}
@@ -165,7 +163,10 @@ const LeftNav = () => {
             <a>
               <ListItem button>
                 <ListItemIcon>
-                  <LinkIcon color="primary" />
+                  <LinkIcon
+                    color="primary"
+                    style={makeLarge(NavigationPaths.Invites)}
+                  />
                 </ListItemIcon>
                 <ListItemText
                   primary={Messages.navigation.invites()}
@@ -177,23 +178,7 @@ const LeftNav = () => {
         )}
       </List>
 
-      {currentUser && (
-        <>
-          <Button
-            onClick={() => setModalOpen(true)}
-            variant="contained"
-            color="primary"
-          >
-            {Messages.motions.actions.motion()}
-          </Button>
-
-          <MotionFormModal
-            open={modalOpen}
-            setOpen={setModalOpen}
-            userId={currentUser.id}
-          />
-        </>
-      )}
+      {currentUser && <MotionButton />}
     </div>
   );
 };

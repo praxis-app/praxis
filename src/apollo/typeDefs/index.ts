@@ -132,7 +132,6 @@ export const typeDefs = gql`
 
     createVote(userId: ID!, motionId: ID, input: CreateVoteInput!): VotePayload!
     updateVote(id: ID!, input: UpdateVoteInput!): VotePayload!
-    verifyVote(id: ID!): VotePayload!
     deleteVote(id: ID!): Boolean!
 
     createComment(

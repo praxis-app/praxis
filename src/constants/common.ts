@@ -108,6 +108,7 @@ export enum ScrollDirections {
 
 export enum FocusTargets {
   CommentFormTextField = "commentFormTextField",
+  None = "",
 }
 
 export const INITIAL_PAGINATION_STATE: PaginationState = {
@@ -120,3 +121,14 @@ export const INITIAL_FEED_STATE: FeedState = {
   totalItems: 0,
   loading: false,
 };
+
+export interface ToastNotification {
+  title: string;
+  status: ToastStatus;
+}
+
+export type ScrollDirection = "" | ScrollDirections.Up | ScrollDirections.Down;
+
+export type ModalOpenState = ModelNames | "";
+
+export type FormToggleState = ModelNames | "";

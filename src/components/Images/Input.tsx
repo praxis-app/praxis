@@ -18,7 +18,13 @@ const ImageInput = ({ setImage, setImages, multiple, refreshKey }: Props) => {
   };
 
   return (
-    <div>
+    <div className={styles.inputWrapper}>
+      <Image
+        onClick={() => imageInput.current?.click()}
+        className={styles.imageInputIcon}
+        style={{ fontSize: 40 }}
+        color="primary"
+      />
       <input
         multiple={multiple}
         type="file"
@@ -29,13 +35,6 @@ const ImageInput = ({ setImage, setImages, multiple, refreshKey }: Props) => {
           e.target.files && setImageState([...e.target.files])
         }
         className={styles.imageInput}
-      />
-
-      <Image
-        onClick={() => imageInput.current?.click()}
-        className={styles.imageInputIcon}
-        fontSize="large"
-        color="primary"
       />
     </div>
   );

@@ -135,7 +135,7 @@ const Post = ({ post, deletePost }: Props) => {
           </CardMedia>
         </CardActionArea>
 
-        {!!currentUser && <CardFooter postId={id} />}
+        {currentUser && <CardFooter postId={id} />}
       </Card>
     </div>
   );

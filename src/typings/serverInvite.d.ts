@@ -18,8 +18,3 @@ interface BackendServerInvite {
   createdAt: Date;
   __typename?: string;
 }
-
-interface ExpiresAtOption {
-  message: string;
-  value: Time;
-}

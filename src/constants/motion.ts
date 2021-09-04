@@ -17,10 +17,20 @@ export enum Stages {
 }
 
 export enum ActionData {
-  NewGroupName = "newGroupName",
-  NewGroupImage = "newGroupImage",
-  NewGroupImagePath = "newGroupImagePath",
-  NewGroupDescription = "newGroupDescription",
+  GroupName = "groupName",
+  GroupImage = "groupImage",
+  GroupImagePath = "groupImagePath",
+  GroupDescription = "groupDescription",
+}
+
+export enum RatificationThreshold {
+  Min = 1,
+  Max = 100,
+}
+
+interface ActionTypeOption {
+  message: string;
+  value: ActionTypes;
 }
 
 export const ActionTypeOptions: ActionTypeOption[] = [

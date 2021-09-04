@@ -80,16 +80,6 @@ const voteResolvers = {
       return { vote, motionRatified };
     },
 
-    async verifyVote(_: any, { id }: { id: string }) {
-      const vote = await prisma.vote.update({
-        where: { id: parseInt(id) },
-        data: { verified: true },
-      });
-      if (!vote) throw new Error(Messages.items.notFound(TypeNames.Vote));
-
-      return { vote };
-    },
-
     async deleteVote(_: any, { id }: { id: string }) {
       await prisma.vote.delete({
         where: { id: parseInt(id) },

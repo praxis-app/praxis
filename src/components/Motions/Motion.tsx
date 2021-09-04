@@ -139,7 +139,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
     const member = groupMembers?.find(
       (member: GroupMember) => member.userId === currentUser?.id
     );
-    return !!member;
+    return Boolean(member);
   };
 
   return (
@@ -197,7 +197,11 @@ const Motion = ({ motion, deleteMotion }: Props) => {
               {body}
             </Typography>
 
-            <ActionData motion={motion} />
+            <ActionData
+              id={id}
+              action={action}
+              actionData={motion.actionData}
+            />
           </CardContent>
         )}
 

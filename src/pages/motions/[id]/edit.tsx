@@ -53,7 +53,10 @@ const Edit = () => {
   };
 
   if (!ownMotion()) return <>{Messages.users.permissionDenied()}</>;
-  if (motion) return <MotionsFormWithCard motion={motion} isEditing={true} />;
+  if (motion)
+    return (
+      <MotionsFormWithCard motion={motion} isEditing={true} withoutToggle />
+    );
   return <CircularProgress />;
 };
 

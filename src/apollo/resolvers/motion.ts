@@ -85,9 +85,9 @@ const motionResolvers = {
       const { body, action, actionData: _actionData, images } = input;
       let actionData = _actionData;
 
-      if (actionData.newGroupImage) {
-        const newGroupImagePath = await saveImage(actionData.newGroupImage);
-        actionData = { newGroupImagePath };
+      if (actionData.groupImage) {
+        const groupImagePath = await saveImage(actionData.groupImage);
+        actionData = { groupImagePath };
       }
       const motion = await prisma.motion.create({
         data: {

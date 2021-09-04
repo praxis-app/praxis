@@ -14,6 +14,7 @@ input SettingInput {
   id: ID!
   userId: ID
   groupId: ID
+  name: String
   value: String!
 }
 
