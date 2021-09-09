@@ -1,7 +1,8 @@
 import { GraphQLUpload } from "apollo-server-micro";
 import GraphQLJSON from "graphql-type-json";
+import { Motion } from ".prisma/client";
 
-import { saveImage, deleteImage } from "../../utils/image";
+import { saveImage, deleteImage, FileUpload } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
@@ -10,17 +11,17 @@ interface MotionInput {
   body: string;
   action: string;
   actionData: any;
-  images: any;
+  images: FileUpload[];
 }
 
-const saveImages = async (motion: any, images: any) => {
+const saveImages = async (motion: Motion, images: FileUpload[]) => {
   for (const image of images ? images : []) {
     const path = await saveImage(image);
     await prisma.image.create({
       data: {
         user: {
           connect: {
-            id: motion.userId,
+            id: motion.userId as number,
           },
         },
         motion: {
@@ -85,7 +86,7 @@ const motionResolvers = {
       const { body, action, actionData: _actionData, images } = input;
       let actionData = _actionData;
 
-      if (actionData.groupImage) {
+      if (actionData?.groupImage) {
         const groupImagePath = await saveImage(actionData.groupImage);
         actionData = { groupImagePath };
       }

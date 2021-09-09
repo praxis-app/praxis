@@ -29,7 +29,7 @@ const Show = () => {
   const currentUser = useCurrentUser();
   const votes = useReactiveVar(votesVar);
   const motion = useReactiveVar(motionVar);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<ClientComment[]>([]);
   const [tab, setTab] = useState<number>(0);
   const tabFromGlobal = useReactiveVar(tabVar);
   const [deleteMotion] = useMutation(DELETE_MOTION);
@@ -82,7 +82,7 @@ const Show = () => {
   }, [votes, comments]);
 
   useEffect(() => {
-    if (tabFromGlobal) {
+    if (tabFromGlobal !== null) {
       setTab(tabFromGlobal);
       tabVar(null);
     }
@@ -108,7 +108,7 @@ const Show = () => {
         id,
       },
     });
-    setComments(comments.filter((comment: Comment) => comment.id !== id));
+    setComments(comments.filter((comment) => comment.id !== id));
   };
 
   if (motion)

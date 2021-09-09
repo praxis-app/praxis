@@ -30,7 +30,7 @@ interface FormValues {
 }
 
 interface Props {
-  user?: User;
+  user?: ClientUser;
   isEditing?: boolean;
 }
 

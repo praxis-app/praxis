@@ -11,7 +11,6 @@ import {
 
 import baseUrl from "../../utils/baseUrl";
 import { CURRENT_PROFILE_PICTURE } from "../../apollo/client/queries";
-import styles from "../../styles/User/User.module.scss";
 import { noCache } from "../../utils/apollo";
 import { ResourcePaths } from "../../constants/common";
 import { BLACK, BLURPLE, WHITE } from "../../styles/Shared/theme";
@@ -28,7 +27,7 @@ const BadgeAvatar = withStyles((theme: Theme) =>
 )(MUIAvatar);
 
 interface Props {
-  user: User | undefined;
+  user: ClientUser | undefined;
   small?: boolean;
   withoutLink?: boolean;
   badge?: boolean;
@@ -44,7 +43,7 @@ const UserAvatar = ({
   small,
   onClick,
 }: Props) => {
-  const [profilePicture, setProfilePicture] = useState<Image>();
+  const [profilePicture, setProfilePicture] = useState<ClientImage>();
   const [getProfilePictureRes, profilePictureRes] = useLazyQuery(
     CURRENT_PROFILE_PICTURE,
     noCache
@@ -72,13 +71,7 @@ const UserAvatar = ({
       }}
       src={baseUrl + profilePicture?.path}
       onClick={() => (onClick ? onClick() : {})}
-    >
-      {user && (
-        <span className={styles.avatarLetter}>
-          {user.name[0].charAt(0).toUpperCase()}
-        </span>
-      )}
-    </MUIAvatar>
+    />
   );
 
   const Avatar = () => (

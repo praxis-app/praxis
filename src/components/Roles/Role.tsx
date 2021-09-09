@@ -11,13 +11,13 @@ import { noCache } from "../../utils/apollo";
 import { BLACK } from "../../styles/Shared/theme";
 
 interface Props {
-  role: Role;
+  role: ClientRole;
   deleteRole: (id: string) => void;
 }
 
 const Role = ({ role }: Props) => {
   const { id, name, color } = role;
-  const [members, setMembers] = useState<RoleMember[]>([]);
+  const [members, setMembers] = useState<ClientRoleMember[]>([]);
   const membersRes = useQuery(ROLE_MEMBERS, {
     variables: {
       roleId: id,

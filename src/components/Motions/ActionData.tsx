@@ -98,6 +98,7 @@ const ActionData = ({ id, action, actionData }: ActionDataProps) => {
               style={{
                 width: "60%",
                 display: "block",
+                marginTop: 6,
               }}
             />
           </a>

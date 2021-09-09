@@ -28,8 +28,8 @@ interface FormValues {
 interface Props {
   postId?: string;
   motionId?: string;
-  comment?: Comment;
-  comments?: Comment[];
+  comment?: ClientComment;
+  comments?: ClientComment[];
   isEditing?: boolean;
   setComments?: (comments: any) => void;
 }
@@ -44,7 +44,7 @@ const CommentsForm = ({
 }: Props) => {
   const currentUser = useCurrentUser();
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
-  const [savedImages, setSavedImages] = useState<Image[]>([]);
+  const [savedImages, setSavedImages] = useState<ClientImage[]>([]);
   const [images, setImages] = useState<File[]>([]);
 
   const [createComment] = useMutation(CREATE_COMMENT);

@@ -26,12 +26,12 @@ import { breadcrumbsVar } from "../../../apollo/client/localState";
 
 const Edit = () => {
   const { query } = useRouter();
-  const [role, setRole] = useState<Role>();
-  const [permissions, setPermissions] = useState<Permission[]>([]);
-  const [unsavedPermissions, setUnsavedPermissions] = useState<Permission[]>(
-    []
-  );
-  const [members, setMembers] = useState<RoleMember[]>([]);
+  const [role, setRole] = useState<ClientRole>();
+  const [permissions, setPermissions] = useState<ClientPermission[]>([]);
+  const [unsavedPermissions, setUnsavedPermissions] = useState<
+    ClientPermission[]
+  >([]);
+  const [members, setMembers] = useState<ClientRoleMember[]>([]);
   const [tab, setTab] = useState<number>(0);
   const [canManageRolesDep, setCanManageRolesDep] = useState<string>("");
   const [getRoleRes, roleRes] = useLazyQuery(ROLE, noCache);

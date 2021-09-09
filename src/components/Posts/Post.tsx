@@ -35,7 +35,7 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-  post: Post;
+  post: ClientPost;
   deletePost: (id: string) => void;
 }
 
@@ -44,8 +44,8 @@ const Post = ({ post, deletePost }: Props) => {
   const currentUser = useCurrentUser();
   const [canManagePosts] = useHasPermissionGlobally(Permissions.ManagePosts);
   const user = useUserById(userId);
-  const [group, setGroup] = useState<Group>();
-  const [images, setImages] = useState<Image[]>([]);
+  const [group, setGroup] = useState<ClientGroup>();
+  const [images, setImages] = useState<ClientImage[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP);
   const imagesRes = useQuery(IMAGES_BY_POST_ID, {

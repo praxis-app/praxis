@@ -1,15 +1,17 @@
 import { ApolloError, GraphQLUpload } from "apollo-server-micro";
-import { saveImage, deleteImage } from "../../utils/image";
+import { Post } from ".prisma/client";
+
+import { saveImage, deleteImage, FileUpload } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
 
 interface PostInput {
   body: string;
-  images: any;
+  images: FileUpload[];
 }
 
-const saveImages = async (post: any, images: any) => {
+const saveImages = async (post: Post, images: FileUpload[]) => {
   for (const image of images ? images : []) {
     const path = await saveImage(image);
 
@@ -17,7 +19,7 @@ const saveImages = async (post: any, images: any) => {
       data: {
         user: {
           connect: {
-            id: post.userId,
+            id: post.userId as number,
           },
         },
         post: {
@@ -98,14 +100,13 @@ const postResolvers = {
         },
       });
 
-      // for image upload error catching in utils/saveImage
       try {
         await saveImages(newPost, images);
-      } catch (e) {
-        const currPost = {
+      } catch {
+        const wherePostId = {
           where: { id: newPost.id },
         };
-        await prisma.post.delete(currPost);
+        await prisma.post.delete(wherePostId);
         throw new ApolloError(Messages.errors.imageUploadError());
       }
 
@@ -121,10 +122,9 @@ const postResolvers = {
 
       if (!post) throw new Error(Messages.items.notFound(TypeNames.Post));
 
-      // for image upload error catching in utils/saveImage
       try {
         await saveImages(post, images);
-      } catch (e) {
+      } catch {
         throw new ApolloError(Messages.errors.imageUploadError());
       }
 

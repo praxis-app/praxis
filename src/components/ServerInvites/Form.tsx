@@ -21,8 +21,8 @@ import SubmitButton from "../Shared/SubmitButton";
 import Dropdown from "../Shared/Dropdown";
 
 interface Props {
-  invites: ServerInvite[];
-  setInvites: (roles: ServerInvite[]) => void;
+  invites: ClientServerInvite[];
+  setInvites: (roles: ClientServerInvite[]) => void;
 }
 
 const ServerInviteForm = ({ invites, setInvites }: Props) => {

@@ -1,8 +1,7 @@
-type FeedItem = Motion | Post;
-type BackendFeedItem = BackendMotion | BackendPost;
+type ClientFeedItem = ClientMotion | ClientPost;
 
 interface FeedState {
-  items: FeedItem[];
+  items: ClientFeedItem[];
   totalItems: number;
   loading: boolean;
 }

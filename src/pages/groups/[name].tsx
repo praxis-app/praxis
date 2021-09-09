@@ -29,7 +29,7 @@ const Show = () => {
   const currentUser = useCurrentUser();
   const feed = useReactiveVar(feedVar);
   const { currentPage, pageSize } = useReactiveVar(paginationVar);
-  const [group, setGroup] = useState<Group>();
+  const [group, setGroup] = useState<ClientGroup>();
   const [tab, setTab] = useState<number>(0);
   const [groupMembers] = useMembersByGroupId(group?.id);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
@@ -106,7 +106,8 @@ const Show = () => {
     feedVar({
       ...feed,
       items: feed.items.filter(
-        (item: FeedItem) => item.id !== id || item.__typename !== TypeNames.Post
+        (item: ClientFeedItem) =>
+          item.id !== id || item.__typename !== TypeNames.Post
       ),
       totalItems: feed.totalItems - 1,
     });
@@ -121,7 +122,7 @@ const Show = () => {
     feedVar({
       ...feed,
       items: feed.items.filter(
-        (item: FeedItem) =>
+        (item: ClientFeedItem) =>
           item.id !== id || item.__typename !== TypeNames.Motion
       ),
       totalItems: feed.totalItems - 1,

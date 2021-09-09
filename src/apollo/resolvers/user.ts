@@ -1,14 +1,22 @@
 import { ApolloError, UserInputError } from "apollo-server-micro";
 import { GraphQLUpload } from "apollo-server-micro";
-import { saveImage, deleteImage } from "../../utils/image";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { User } from ".prisma/client";
 
 import prisma from "../../utils/initPrisma";
-import { validateSignup, validateLogin } from "../../utils/validation";
+import { saveImage, deleteImage, FileUpload } from "../../utils/image";
+import {
+  validateSignup,
+  validateLogin,
+  validateUpdateUser,
+} from "../../utils/validation";
 import { EXPIRES_IN, TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
 import { paginate } from "../../utils/items";
+import { BackendMotion } from "../models/motion";
+import { BackendPost } from "../models/post";
+import { BackendFeedItem } from "../models/common";
 
 interface HomeFeedInput extends PaginationState {
   userId?: string;
@@ -18,7 +26,7 @@ interface ProfileFeedInput extends PaginationState {
   name: string;
 }
 
-const saveProfilePicture = async (user: any, image: any) => {
+const saveProfilePicture = async (user: User, image: FileUpload) => {
   if (image) {
     const path = await saveImage(image);
 
@@ -215,9 +223,7 @@ const userResolvers = {
       const { email, name, password, profilePicture } = input;
       const { errors, isValid } = validateSignup(input);
 
-      if (!isValid) {
-        throw new UserInputError(JSON.stringify(errors));
-      }
+      if (!isValid) throw new UserInputError(JSON.stringify(errors));
 
       const userFound = await prisma.user.findMany({
         where: {
@@ -225,9 +231,8 @@ const userResolvers = {
         },
       });
 
-      if (userFound.length > 0) {
+      if (userFound.length > 0)
         throw new UserInputError(Messages.users.validation.emailExists());
-      }
 
       const hash = await bcrypt.hash(password, 10);
 
@@ -241,13 +246,13 @@ const userResolvers = {
 
       try {
         await saveProfilePicture(user, profilePicture);
-      } catch (e) {
-        const currUser = {
+      } catch (err) {
+        const whereUserId = {
           where: { id: user.id },
         };
-        await prisma.user.delete(currUser);
+        await prisma.user.delete(whereUserId);
 
-        throw new ApolloError(Messages.errors.imageUploadError() + e);
+        throw new ApolloError(Messages.errors.imageUploadError() + err);
       }
 
       const jwtPayload = {
@@ -267,9 +272,7 @@ const userResolvers = {
       const { errors, isValid } = validateLogin(input);
       const { email, password } = input;
 
-      if (!isValid) {
-        throw new UserInputError(JSON.stringify(errors));
-      }
+      if (!isValid) throw new UserInputError(JSON.stringify(errors));
 
       const user = await prisma.user.findFirst({
         where: {
@@ -277,9 +280,8 @@ const userResolvers = {
         },
       });
 
-      if (!user) {
+      if (!user)
         throw new UserInputError(Messages.users.validation.noUserWithEmail());
-      }
 
       const passwordMatch = await bcrypt.compare(password, user.password);
 
@@ -304,6 +306,9 @@ const userResolvers = {
       { id, input }: { id: string; input: SignUpInput }
     ) {
       const { email, name, profilePicture } = input;
+      const { errors, isValid } = validateUpdateUser(input);
+
+      if (!isValid) throw new UserInputError(JSON.stringify(errors));
 
       const user = await prisma.user.update({
         where: { id: parseInt(id) },
@@ -314,8 +319,8 @@ const userResolvers = {
 
       try {
         await saveProfilePicture(user, profilePicture);
-      } catch (e) {
-        throw new ApolloError(Messages.errors.imageUploadError() + e);
+      } catch (err) {
+        throw new ApolloError(Messages.errors.imageUploadError() + err);
       }
 
       const jwtPayload = {

@@ -1,12 +1,26 @@
+import { Motion, Vote, Group, GroupMember, Setting } from ".prisma/client";
 import prisma from "../../utils/initPrisma";
-import { ConsensusStates, VotingTypes } from "../../constants/vote";
-import { ActionTypes, Stages } from "../../constants/motion";
-import { GroupSettings } from "../../constants/setting";
-import { groupSettingByName, updateSettingById } from "./setting";
-import { TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
+import { TypeNames } from "../../constants/common";
+import { GroupSettings } from "../../constants/setting";
+import {
+  Stages,
+  ActionTypes,
+  MIN_GROUP_SIZE_FOR_RATIFICATION,
+} from "../../constants/motion";
+import { ConsensusStates, FlipStates, VotingTypes } from "../../constants/vote";
+import { groupSettingByName, updateSettingById } from "./setting";
 
-const evaluate = async (motionId: number): Promise<boolean> => {
+export interface BackendMotion extends Motion {
+  __typename?: string;
+}
+
+interface MotionWithVotesAndGroup extends Motion {
+  votes: Vote[];
+  group: Group | null;
+}
+
+export const evaluate = async (motionId: number): Promise<boolean> => {
   const motion = await prisma.motion.findFirst({
     where: { id: motionId },
     include: {
@@ -28,42 +42,90 @@ const evaluate = async (motionId: number): Promise<boolean> => {
       groupSettings,
       GroupSettings.VotingType
     );
-    const reservationsLimit = parseInt(
-      groupSettingByName(groupSettings, GroupSettings.ReservationsLimit)
-    );
-    const standAsidesLimit = parseInt(
-      groupSettingByName(groupSettings, GroupSettings.StandAsidesLimit)
-    );
-    const ratificationThreshold =
-      parseInt(
-        groupSettingByName(groupSettings, GroupSettings.RatificationThreshold)
-      ) * 0.01;
-    const agreements = motion?.votes.filter(
-      (vote) => vote.consensusState === ConsensusStates.Agreement
-    );
-    const reservations = motion?.votes.filter(
-      (vote) => vote.consensusState === ConsensusStates.Reservations
-    );
-    const standAsides = motion?.votes.filter(
-      (vote) => vote.consensusState === ConsensusStates.StandAside
-    );
-    const blocks = motion?.votes.filter(
-      (vote) => vote.consensusState === ConsensusStates.Block
-    );
-    if (
-      groupMembers.length >= 3 &&
-      motion.stage === Stages.Voting &&
+    const consensus =
       votingType === VotingTypes.Consensus &&
-      agreements.length >= groupMembers.length * ratificationThreshold &&
-      reservations.length <= reservationsLimit &&
-      standAsides.length <= standAsidesLimit &&
-      blocks.length === 0
+      hasConsensus(motion, groupMembers, groupSettings);
+    const majority =
+      votingType === VotingTypes.Majority && hasMajority(motion, groupMembers);
+    const enoughToPass =
+      votingType === VotingTypes.XToPass &&
+      hasEnoughToPass(motion, groupSettings);
+
+    if (
+      groupMembers.length >= MIN_GROUP_SIZE_FOR_RATIFICATION &&
+      motion.stage === Stages.Voting &&
+      (consensus || majority || enoughToPass)
     ) {
       ratifyMotion(motionId);
       return true;
     }
   }
   return false;
+};
+
+const hasConsensus = (
+  motion: MotionWithVotesAndGroup,
+  groupMembers: GroupMember[],
+  groupSettings: Setting[]
+): boolean => {
+  const reservationsLimit = parseInt(
+    groupSettingByName(groupSettings, GroupSettings.ReservationsLimit)
+  );
+  const standAsidesLimit = parseInt(
+    groupSettingByName(groupSettings, GroupSettings.StandAsidesLimit)
+  );
+  const ratificationThreshold =
+    parseInt(
+      groupSettingByName(groupSettings, GroupSettings.RatificationThreshold)
+    ) * 0.01;
+  const agreements = motion?.votes.filter(
+    (vote) => vote.consensusState === ConsensusStates.Agreement
+  );
+  const reservations = motion?.votes.filter(
+    (vote) => vote.consensusState === ConsensusStates.Reservations
+  );
+  const standAsides = motion?.votes.filter(
+    (vote) => vote.consensusState === ConsensusStates.StandAside
+  );
+  const blocks = motion?.votes.filter(
+    (vote) => vote.consensusState === ConsensusStates.Block
+  );
+
+  return (
+    agreements.length >= groupMembers.length * ratificationThreshold &&
+    reservations.length <= reservationsLimit &&
+    standAsides.length <= standAsidesLimit &&
+    blocks.length === 0
+  );
+};
+
+const hasMajority = (
+  motion: MotionWithVotesAndGroup,
+  groupMembers: GroupMember[]
+): boolean => {
+  const upVotes = motion?.votes.filter(
+    (vote) => vote.flipState === FlipStates.Up
+  );
+  return upVotes.length > groupMembers.length * 0.5;
+};
+
+const hasEnoughToPass = (
+  motion: MotionWithVotesAndGroup,
+  groupSettings: Setting[]
+): boolean => {
+  const passLimit = parseInt(
+    groupSettingByName(groupSettings, GroupSettings.XToPass)
+  );
+  const blockLimit = parseInt(
+    groupSettingByName(groupSettings, GroupSettings.XToBlock)
+  );
+  const upVotes = motion?.votes.filter(
+    (vote) => vote.flipState === FlipStates.Up
+  );
+  const downVotes = motion?.votes.filter(
+    (vote) => vote.flipState === FlipStates.Down
+  );
+  return upVotes.length >= passLimit && downVotes.length < blockLimit;
 };
 
 const ratifyMotion = async (motionId: number) => {
@@ -76,7 +138,7 @@ const ratifyMotion = async (motionId: number) => {
   doAction(motion);
 };
 
-const doAction = async (motion: BackendMotion) => {
+const doAction = async (motion: Motion) => {
   if (motion && motion.action) {
     const actionData = motion.actionData as ActionData;
     const groupId = { id: motion.groupId as number };
@@ -131,5 +193,3 @@ const doAction = async (motion: BackendMotion) => {
     }
   }
 };
-
-export default { evaluate };

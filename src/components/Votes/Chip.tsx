@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export interface ChipProps {
   icon: SvgIconComponent;
   voteState: string;
-  votes: Vote[];
+  votes: ClientVote[];
   zIndex: number;
   marginLeft: number;
 }

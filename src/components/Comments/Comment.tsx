@@ -37,7 +37,7 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-  comment: Comment;
+  comment: ClientComment;
   deleteComment: (id: string) => void;
 }
 
@@ -48,7 +48,7 @@ const Comment = ({ comment, deleteComment }: Props) => {
     Permissions.ManageComments
   );
   const user = useUserById(userId);
-  const [images, setImages] = useState<Image[]>([]);
+  const [images, setImages] = useState<ClientImage[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const imagesRes = useQuery(IMAGES_BY_COMMENT_ID, {
     variables: { commentId: id },

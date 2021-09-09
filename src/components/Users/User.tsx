@@ -29,7 +29,7 @@ const useStyles = makeStyles(() =>
 );
 
 interface Props {
-  user: User;
+  user: ClientUser;
   deleteUser: (id: string) => void;
 }
 
@@ -37,7 +37,7 @@ const Show = ({ user, deleteUser }: Props) => {
   const { name, id, createdAt } = user;
   const currentUser = useCurrentUser();
   const [followers, setFollowers] = useFollowersByUserId(id);
-  const [following, setFollowing] = useState<Follow[]>([]);
+  const [following, setFollowing] = useState<ClientFollow[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const followingRes = useQuery(FOLLOWING, {
     variables: { userId: id },

@@ -11,8 +11,8 @@ import {
 } from "../../constants/common";
 import { setAuthToken } from "../../utils/auth";
 
-export const motionVar = makeVar<Motion | null>(null);
-export const votesVar = makeVar<Vote[]>([]);
+export const motionVar = makeVar<ClientMotion | null>(null);
+export const votesVar = makeVar<ClientVote[]>([]);
 export const navKeyVar = makeVar<string>("");
 export const navOpenVar = makeVar<boolean>(false);
 export const modalOpenVar = makeVar<ModalOpenState>("");

@@ -2,8 +2,8 @@ import { CircularProgress } from "@material-ui/core";
 import Vote from "./Vote";
 
 interface Props {
-  votes: Vote[];
-  setVotes: (votes: Vote[]) => void;
+  votes: ClientVote[];
+  setVotes: (votes: ClientVote[]) => void;
 }
 
 const List = ({ votes, setVotes }: Props) => {

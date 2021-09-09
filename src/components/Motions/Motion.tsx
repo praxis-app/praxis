@@ -47,7 +47,7 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-  motion: Motion;
+  motion: ClientMotion;
   deleteMotion: (id: string) => void;
 }
 
@@ -55,12 +55,12 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   const { id, userId, groupId, motionGroupId, body, action, stage } = motion;
   const currentUser = useCurrentUser();
   const user = useUserById(userId);
-  const [group, setGroup] = useState<Group>();
+  const [group, setGroup] = useState<ClientGroup>();
   const [groupSettings] = useSettingsByGroupId(group?.id);
   const [groupMembers] = useMembersByGroupId(group?.id);
-  const [votes, setVotes] = useState<Vote[]>([]);
+  const [votes, setVotes] = useState<ClientVote[]>([]);
   const votesFromGlobal = useReactiveVar(votesVar);
-  const [images, setImages] = useState<Image[]>([]);
+  const [images, setImages] = useState<ClientImage[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [getVotesRes, votesRes] = useLazyQuery(VOTES_BY_MOTION_ID, noCache);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP);
@@ -115,7 +115,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
     return router.asPath.includes(ResourcePaths.Group);
   };
 
-  const alreadyVote = (): Vote | null => {
+  const alreadyVote = (): ClientVote | null => {
     if (!currentUser) return null;
     const vote = votes.find((vote) => vote.userId === currentUser.id);
     if (vote) return vote;
@@ -137,7 +137,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
 
   const isAGroupMember = (): boolean => {
     const member = groupMembers?.find(
-      (member: GroupMember) => member.userId === currentUser?.id
+      (member: ClientGroupMember) => member.userId === currentUser?.id
     );
     return Boolean(member);
   };
@@ -164,11 +164,8 @@ const Motion = ({ motion, deleteMotion }: Props) => {
 
                 <Link href={`${ResourcePaths.Motion}${id}`}>
                   <a className={styles.info}>
-                    {(action &&
-                      Messages.motions.toActionWithRatified(
-                        action,
-                        isRatified()
-                      )) + timeAgo(motion.createdAt)}
+                    {(action && Messages.motions.toAction(action)) +
+                      timeAgo(motion.createdAt)}
                   </a>
                 </Link>
               </>
@@ -214,7 +211,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
         {alreadyVote() && !alreadyVote()?.body && !isRatified() && (
           <VotesForm
             votes={votes}
-            vote={alreadyVote() as Vote}
+            vote={alreadyVote() as ClientVote}
             setVotes={onMotionPage() ? votesVar : setVotes}
             modelOfConsensus={isModelOfConsensus()}
           />
@@ -226,6 +223,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
             votes={votes}
             setVotes={onMotionPage() ? votesVar : setVotes}
             modelOfConsensus={isModelOfConsensus()}
+            ratified={isRatified()}
           />
         )}
       </Card>

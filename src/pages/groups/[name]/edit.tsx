@@ -13,7 +13,7 @@ import { GroupSettings, SettingStates } from "../../../constants/setting";
 const Edit = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
-  const [group, setGroup] = useState<Group>();
+  const [group, setGroup] = useState<ClientGroup>();
   const [groupSettings, _, groupSettingsLoading] = useSettingsByGroupId(
     group?.id
   );

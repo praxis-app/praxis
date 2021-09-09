@@ -12,9 +12,9 @@ import RoleMember from "./Member";
 import { useAllUsers } from "../../hooks";
 
 interface Props {
-  role: Role;
-  members: RoleMember[];
-  setMembers: (members: RoleMember[]) => void;
+  role: ClientRole;
+  members: ClientRoleMember[];
+  setMembers: (members: ClientRoleMember[]) => void;
   membersLoading: boolean;
 }
 

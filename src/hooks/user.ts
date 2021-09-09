@@ -36,7 +36,7 @@ export const useRestoreUserSession = () => {
   useEffect(() => {
     if (localStorage.jwtToken) {
       setAuthToken(localStorage.jwtToken);
-      const decoded: User = jwtDecode(localStorage.jwtToken);
+      const decoded: ClientUser = jwtDecode(localStorage.jwtToken);
       setCurrentUserMutate(decoded);
       const currentTime = Date.now() / 1000;
       if (decoded.exp < currentTime) {
@@ -45,7 +45,7 @@ export const useRestoreUserSession = () => {
     }
   }, []);
 
-  const setCurrentUserMutate = async (user: User) => {
+  const setCurrentUserMutate = async (user: ClientUser) => {
     await setCurrentUser({
       variables: {
         id: user.id,
@@ -62,8 +62,8 @@ export const useRestoreUserSession = () => {
 };
 
 // TODO: Convert return type to an array: [user, setUser, loading]
-export const useUserById = (id: string | undefined): User | undefined => {
-  const [user, setUser] = useState<User>();
+export const useUserById = (id: string | undefined): ClientUser | undefined => {
+  const [user, setUser] = useState<ClientUser>();
   const [getUserRes, userRes] = useLazyQuery(USER, noCache);
 
   useEffect(() => {
@@ -80,8 +80,12 @@ export const useUserById = (id: string | undefined): User | undefined => {
   return user;
 };
 
-export const useAllUsers = (): [User[], (users: User[]) => void, boolean] => {
-  const [users, setUsers] = useState<User[]>([]);
+export const useAllUsers = (): [
+  ClientUser[],
+  (users: ClientUser[]) => void,
+  boolean
+] => {
+  const [users, setUsers] = useState<ClientUser[]>([]);
   const usersRes = useQuery(USERS, noCache);
 
   useEffect(() => {

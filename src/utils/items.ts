@@ -1,4 +1,5 @@
 import { feedVar } from "../apollo/client/localState";
+import { BackendFeedItem } from "../apollo/models/common";
 import { INITIAL_FEED_STATE } from "../constants/common";
 
 export const displayName = (name: string): string => {
@@ -13,10 +14,10 @@ export const pluralize = (size: number): string => {
 };
 
 export const paginate = (
-  totalItems: any[],
+  totalItems: BackendFeedItem[],
   currentPage: number,
   pageSize: number
-): any[] => {
+): BackendFeedItem[] => {
   let items = totalItems.reverse();
 
   if (currentPage > 0)

@@ -13,7 +13,7 @@ import styles from "../../styles/Vote/Voter.module.scss";
 import UserAvatar from "../Users/Avatar";
 import { ConsensusStates, FlipStates } from "../../constants/vote";
 
-const BadgeContent = ({ vote }: { vote: Vote }) => {
+const BadgeContent = ({ vote }: { vote: ClientVote }) => {
   const style: CSSProperties = { fontSize: 8, marginTop: 1 };
   const iconProps: SvgIconProps = { color: "primary", style };
 
@@ -33,7 +33,7 @@ const BadgeContent = ({ vote }: { vote: Vote }) => {
 };
 
 export interface Props {
-  vote: Vote;
+  vote: ClientVote;
   compact?: boolean;
 }
 
@@ -46,7 +46,7 @@ const Voter = ({ vote, compact }: Props) => {
   if (compact)
     return (
       <Typography className={styles.voterCompact}>
-        {user.name}
+        {user?.name}
         <span className={styles.voteBody}>
           {vote.body ? ` — ${vote.body}` : ""}
         </span>
@@ -64,7 +64,7 @@ const Voter = ({ vote, compact }: Props) => {
         <Typography style={{ marginLeft: 18, marginTop: 8 }}>
           <Link href={`/users/${user.name}`}>
             <a>
-              <span className={styles.voterName}>{user.name}</span>
+              <span className={styles.voterName}>{user?.name}</span>
             </a>
           </Link>
           {vote.body ? ` — ${vote.body}` : ""}

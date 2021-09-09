@@ -2,9 +2,10 @@ import { GraphQLUpload } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
+import { Permission, Role } from ".prisma/client";
 
 interface PermissionInput {
-  permissions: Permission[];
+  permissions: ClientPermission[];
 }
 
 const permissionResolvers = {
@@ -23,13 +24,13 @@ const permissionResolvers = {
           role: true,
         },
       });
-      const globalRoles: BackendRole[] = [];
+      const globalRoles: Role[] = [];
       for (const member of roleMembersWithRole) {
         if (member.role?.global) {
           globalRoles.push(member.role);
         }
       }
-      const permissions: BackendPermission[] = [];
+      const permissions: Permission[] = [];
       for (const role of globalRoles) {
         const _permissions = await prisma.permission.findMany({
           where: {
@@ -63,7 +64,7 @@ const permissionResolvers = {
   Mutation: {
     async updatePermissions(_: any, { input }: { input: PermissionInput }) {
       const { permissions } = input;
-      let updatedPermissions: BackendPermission[] = [];
+      let updatedPermissions: Permission[] = [];
 
       for (const permission of permissions) {
         const { id, enabled } = permission;

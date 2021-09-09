@@ -3,15 +3,14 @@ import UserAvatar from "../Users/Avatar";
 import GroupAvatar from "./Avatar";
 import styles from "../../styles/Group/ItemAvatar.module.scss";
 import { ModelNames, ResourcePaths } from "../../constants/common";
-import { Stages } from "../../constants/motion";
 import Messages from "../../utils/messages";
 import { timeAgo } from "../../utils/time";
 
 interface Props {
-  user: User;
-  group: Group;
-  motion?: Motion;
-  post?: Post;
+  user: ClientUser;
+  group: ClientGroup;
+  motion?: ClientMotion;
+  post?: ClientPost;
 }
 
 const GroupItemAvatar = ({ user, group, motion, post }: Props) => {
@@ -44,10 +43,9 @@ const GroupItemAvatar = ({ user, group, motion, post }: Props) => {
           </Link>
           <Link href={itemHref()}>
             <a className={styles.postByLink}>
-              {Messages.groups.itemWithNameAndRatified(
+              {Messages.groups.itemWithName(
                 motion ? ModelNames.Motion : ModelNames.Post,
-                user.name,
-                motion?.stage === Stages.Ratified
+                user.name
               )}
               {timeAgo(createdAt())}
             </a>

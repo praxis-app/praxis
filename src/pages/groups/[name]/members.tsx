@@ -11,7 +11,7 @@ import { useMembersByGroupId } from "../../../hooks";
 
 const Members = () => {
   const { query } = useRouter();
-  const [group, setGroup] = useState<Group>();
+  const [group, setGroup] = useState<ClientGroup>();
   const [groupMembers] = useMembersByGroupId(group?.id);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
 
@@ -42,7 +42,7 @@ const Members = () => {
       </Typography>
 
       <Card>
-        {groupMembers.map(({ userId }: GroupMember) => {
+        {groupMembers.map(({ userId }: ClientGroupMember) => {
           return <Member userId={userId} key={userId} />;
         })}
       </Card>

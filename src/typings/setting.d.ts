@@ -1,4 +1,4 @@
-interface Setting {
+interface ClientSetting {
   id: string;
   userId: string;
   groupId: string;
@@ -13,13 +13,4 @@ interface SettingInput {
   groupId?: string;
   name: string;
   value: string;
-}
-
-interface BackendSetting {
-  id: number;
-  userId: number | null;
-  groupId: number | null;
-  name: string | null;
-  value: string | null;
-  createdAt: Date;
 }

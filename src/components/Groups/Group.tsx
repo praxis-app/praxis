@@ -27,7 +27,7 @@ import {
 } from "../../hooks";
 
 interface Props {
-  group: Group;
+  group: ClientGroup;
   deleteGroup: (id: string) => void;
 }
 
@@ -35,7 +35,9 @@ const Group = ({ group, deleteGroup }: Props) => {
   const { id, name, description, creatorId } = group;
   const [groupSettings] = useSettingsByGroupId(id);
   const [groupMembers, setGroupMembers] = useMembersByGroupId(group.id);
-  const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
+  const [memberRequests, setMemberRequests] = useState<ClientMemberRequest[]>(
+    []
+  );
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const currentUser = useCurrentUser();
   const memberVariables = {
@@ -65,7 +67,7 @@ const Group = ({ group, deleteGroup }: Props) => {
 
   const isAMember = (): boolean => {
     const member = groupMembers?.find(
-      (member: GroupMember) => member.userId === currentUser?.id
+      (member: ClientGroupMember) => member.userId === currentUser?.id
     );
     return Boolean(member);
   };

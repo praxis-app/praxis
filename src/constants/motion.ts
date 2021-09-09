@@ -1,5 +1,7 @@
 import Messages from "../utils/messages";
 
+export const MIN_GROUP_SIZE_FOR_RATIFICATION = 3;
+
 export enum ActionTypes {
   PlanEvent = "plan-event",
   ChangeName = "change-name",

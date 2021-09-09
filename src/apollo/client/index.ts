@@ -14,10 +14,10 @@ const uri = `${baseUrl}/api/graphql`;
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    console.log("graphQLErrors", graphQLErrors);
+    console.error("graphQLErrors", graphQLErrors);
   }
   if (networkError) {
-    console.log("networkError", networkError);
+    console.error("networkError", networkError);
   }
 });
 

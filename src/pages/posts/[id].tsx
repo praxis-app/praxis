@@ -16,8 +16,8 @@ import { FocusTargets } from "../../constants/common";
 const Show = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
-  const [post, setPost] = useState<Post>();
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [post, setPost] = useState<ClientPost>();
+  const [comments, setComments] = useState<ClientComment[]>([]);
 
   const [deletePost] = useMutation(DELETE_POST);
   const [deleteComment] = useMutation(DELETE_COMMENT);
@@ -68,7 +68,7 @@ const Show = () => {
         id,
       },
     });
-    setComments(comments.filter((comment: Comment) => comment.id !== id));
+    setComments(comments.filter((comment) => comment.id !== id));
   };
 
   if (post)

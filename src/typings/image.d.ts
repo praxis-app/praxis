@@ -1,4 +1,4 @@
-interface Image {
+interface ClientImage {
   id: string;
   postId: string;
   motionId: string;

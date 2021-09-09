@@ -26,6 +26,7 @@ import {
   FieldNames,
   NavigationPaths,
   ResourcePaths,
+  TruncationSizes,
 } from "../../constants/common";
 import { ActionTypeOptions, ActionTypes } from "../../constants/motion";
 import ActionFields from "./ActionFields";
@@ -56,12 +57,12 @@ interface FormValues {
 }
 
 export interface MotionsFormProps {
-  motion?: Motion;
-  motions?: Motion[];
+  motion?: ClientMotion;
+  motions?: ClientMotion[];
   isEditing?: boolean;
-  setMotions?: (motions: Motion[]) => void;
-  group?: Group;
-  groups?: Group[];
+  setMotions?: (motions: ClientMotion[]) => void;
+  group?: ClientGroup;
+  groups?: ClientGroup[];
   groupsLoading?: boolean;
   closeModal?: () => void;
   withoutToggle?: boolean;
@@ -80,7 +81,7 @@ const MotionsForm = ({
 }: MotionsFormProps) => {
   const currentUser = useCurrentUser();
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
-  const [savedImages, setSavedImages] = useState<Image[]>([]);
+  const [savedImages, setSavedImages] = useState<ClientImage[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [action, setAction] = useState<string>("");
   const [actionData, setActionData] = useState<ActionData>();
@@ -160,6 +161,7 @@ const MotionsForm = ({
           setAction("");
           setActionData(undefined);
           setSubmitting(false);
+          setTouched(false);
           if (motions && setMotions)
             setMotions([data.createMotion.motion, ...motions]);
           else
@@ -195,7 +197,7 @@ const MotionsForm = ({
         id,
       },
     });
-    setSavedImages(savedImages.filter((image: Image) => image.id !== id));
+    setSavedImages(savedImages.filter((image) => image.id !== id));
   };
 
   const removeSelectedImage = (imageName: string) => {
@@ -218,7 +220,7 @@ const MotionsForm = ({
     return isSubmitting;
   };
 
-  const feedItemsAferCreate = (newMotion: Motion): FeedItem[] => {
+  const feedItemsAferCreate = (newMotion: ClientMotion): ClientFeedItem[] => {
     let { items, totalItems } = feed;
     const totalPages = Math.ceil(totalItems / pageSize);
     const onLastPage = currentPage === totalPages - 1;
@@ -281,7 +283,9 @@ const MotionsForm = ({
                           {groups.map((group) => (
                             <MenuItem value={group.id} key={group.id}>
                               {truncate(group.name, {
-                                length: isMobile ? 40 : 65,
+                                length: isMobile
+                                  ? TruncationSizes.Large
+                                  : TruncationSizes.ExtraLarge,
                               })}
                             </MenuItem>
                           ))}

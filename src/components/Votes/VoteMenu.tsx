@@ -3,12 +3,13 @@ import { Menu, MenuItem, PopoverOrigin, SvgIconProps } from "@material-ui/core";
 import { ThumbUp, ThumbDown } from "@material-ui/icons";
 
 import { Stages } from "../../constants/motion";
-import { motionVar } from "../../apollo/client/localState";
+import { feedVar, motionVar, toastVar } from "../../apollo/client/localState";
 import { CREATE_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
 import { useCurrentUser } from "../../hooks";
 import { BLURPLE, WHITE } from "../../styles/Shared/theme";
 import { FlipStates } from "../../constants/vote";
 import Messages from "../../utils/messages";
+import { ToastStatus, TypeNames } from "../../constants/common";
 
 interface VoteButtonProps {
   flipState: string;
@@ -21,12 +22,12 @@ const VoteMenuItem = ({ flipState, handleClick, color }: VoteButtonProps) => {
     flipState === FlipStates.Up ? (
       <>
         <ThumbUp {...iconProps} />
-        <span style={{ color }}>{Messages.votes.actions.support()}</span>
+        <span style={{ color }}>{Messages.votes.actions.agree()}</span>
       </>
     ) : (
       <>
         <ThumbDown {...iconProps} />
-        <span style={{ color }}>{Messages.votes.actions.block()}</span>
+        <span style={{ color }}>{Messages.votes.actions.disagree()}</span>
       </>
     );
   return (
@@ -44,8 +45,8 @@ const VoteMenuItem = ({ flipState, handleClick, color }: VoteButtonProps) => {
 
 interface VoteMenuProps {
   motionId: string;
-  votes: Vote[];
-  setVotes: (votes: Vote[]) => void;
+  votes: ClientVote[];
+  setVotes: (votes: ClientVote[]) => void;
   anchorEl: null | HTMLElement;
   handleClose: () => void;
 }
@@ -58,6 +59,7 @@ const VoteMenu = ({
   handleClose,
 }: VoteMenuProps) => {
   const currentUser = useCurrentUser();
+  const feed = useReactiveVar(feedVar);
   const motionFromGlobal = useReactiveVar(motionVar);
   const [createVote] = useMutation(CREATE_VOTE);
   const [deleteVote] = useMutation(DELETE_VOTE);
@@ -66,19 +68,19 @@ const VoteMenu = ({
     horizontal: "center",
   };
 
-  const alreadyVote = (): Vote | null => {
+  const alreadyVote = (): ClientVote | null => {
     if (!currentUser) return null;
     const vote = votes.find((vote) => vote.userId === currentUser.id);
     if (vote) return vote;
     return null;
   };
 
-  const alreadyUpVote = (): Vote | null => {
+  const alreadyUpVote = (): ClientVote | null => {
     if (alreadyVote()?.flipState === FlipStates.Up) return alreadyVote();
     return null;
   };
 
-  const alreadyDownVote = (): Vote | null => {
+  const alreadyDownVote = (): ClientVote | null => {
     if (alreadyVote()?.flipState === FlipStates.Down) return alreadyVote();
     return null;
   };
@@ -95,7 +97,7 @@ const VoteMenu = ({
   const handleButtonClick = async (flipState: string) => {
     handleClose();
 
-    let newVotes: Vote[] = votes;
+    let newVotes: ClientVote[] = votes;
     if (alreadyVote()) {
       await deleteVote({
         variables: {
@@ -116,8 +118,24 @@ const VoteMenu = ({
         },
       });
       newVotes = [...newVotes, data.createVote.vote];
-      if (data.createVote.motionRatified && motionFromGlobal) {
-        motionVar({ ...motionFromGlobal, stage: Stages.Ratified });
+      if (data.createVote.motionRatified) {
+        toastVar({
+          title: Messages.motions.toasts.ratifiedSuccess(),
+          status: ToastStatus.Success,
+        });
+
+        if (motionFromGlobal)
+          motionVar({ ...motionFromGlobal, stage: Stages.Ratified });
+
+        if (feed.totalItems)
+          feedVar({
+            ...feed,
+            items: feed.items.map((item) => {
+              if (item.id === motionId && item.__typename === TypeNames.Motion)
+                return { ...item, stage: Stages.Ratified };
+              return item;
+            }),
+          });
       }
     }
     setVotes(newVotes);

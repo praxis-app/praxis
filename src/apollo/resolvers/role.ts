@@ -1,3 +1,4 @@
+import { Role } from ".prisma/client";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { ModelNames, TypeNames } from "../../constants/common";
@@ -57,7 +58,7 @@ const initialPermissions = (isAdmin = false): InitialPermission[] => [
 
 const initializePermissions = async (
   permissions: InitialPermission[],
-  role: BackendRole
+  role: Role
 ) => {
   for (const permission of permissions) {
     await prisma.permission.create({

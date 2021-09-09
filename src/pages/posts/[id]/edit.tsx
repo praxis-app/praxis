@@ -11,8 +11,8 @@ import PostsFormWithCard from "../../../components/Posts/FormWithCard";
 
 const Edit = () => {
   const { query } = useRouter();
-  const [post, setPost] = useState<Post>();
-  const [user, setUser] = useState<User>();
+  const [post, setPost] = useState<ClientPost>();
+  const [user, setUser] = useState<ClientUser>();
   const [getPostRes, postRes] = useLazyQuery(POST);
   const [getUserRes, userRes] = useLazyQuery(USER, noCache);
   const currentUser = useCurrentUser();

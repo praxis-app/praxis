@@ -12,8 +12,8 @@ import { VotingTypes } from "../../../constants/vote";
 
 const Edit = () => {
   const { query } = useRouter();
-  const [vote, setVote] = useState<Vote>();
-  const [motion, setMotion] = useState<Motion>();
+  const [vote, setVote] = useState<ClientVote>();
+  const [motion, setMotion] = useState<ClientMotion>();
   const [groupSettings] = useSettingsByGroupId(motion?.groupId);
   const [isModelOfConsensus, setIsModelOfConsensus] = useState<boolean>(false);
   const [getVotesRes, votesRes] = useLazyQuery(VOTE, noCache);

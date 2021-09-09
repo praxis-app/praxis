@@ -29,9 +29,9 @@ const useStyles = makeStyles({
 });
 
 interface Props {
-  vote: Vote;
-  votes: Vote[];
-  setVotes: (votes: Vote[]) => void;
+  vote: ClientVote;
+  votes: ClientVote[];
+  setVotes: (votes: ClientVote[]) => void;
 }
 
 const Vote = ({ vote, votes, setVotes }: Props) => {
@@ -54,7 +54,7 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
         id,
       },
     });
-    setVotes(votes.filter((vote: Vote) => vote.id !== id));
+    setVotes(votes.filter((vote: ClientVote) => vote.id !== id));
   };
 
   const voteTypeLabel = (): string => {
@@ -72,8 +72,8 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
     if (flipState)
       text +=
         flipState === FlipStates.Up
-          ? Messages.votes.voteTypeLabel.support()
-          : Messages.votes.voteTypeLabel.block();
+          ? Messages.votes.voteTypeLabel.agreement()
+          : Messages.votes.voteTypeLabel.disagreement();
 
     if (verified)
       text += Messages.middotWithSpaces() + Messages.votes.verifiedWithCheck();

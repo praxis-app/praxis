@@ -20,7 +20,7 @@ const GroupSettingsTab = ({
   resetTabs,
 }: Props) => {
   const [groupSettings, setGroupSettings] = useSettingsByGroupId(groupId);
-  const [unsavedSettings, setUnsavedSettings] = useState<Setting[]>([]);
+  const [unsavedSettings, setUnsavedSettings] = useState<ClientSetting[]>([]);
 
   const handleSubmit = () => {
     setActionData({ groupSettings: settingsChanged() });

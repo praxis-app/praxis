@@ -14,7 +14,7 @@ const MotionFormModal = () => {
   const currentUser = useCurrentUser();
   const openFromGlobal = useReactiveVar(modalOpenVar);
   const [open, setOpen] = useState<boolean>(false);
-  const [groups, setGroups] = useState<Group[]>();
+  const [groups, setGroups] = useState<ClientGroup[]>();
   const [getGroupsRes, groupsRes] = useLazyQuery(
     JOINED_GROUPS_BY_USER_ID,
     noCache

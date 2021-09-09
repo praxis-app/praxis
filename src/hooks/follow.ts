@@ -6,8 +6,8 @@ import { noCache } from "../utils/apollo";
 export const useFollowersByUserId = (
   userId: string | undefined,
   callDep?: any
-): [Follow[], (followers: Follow[]) => void, boolean] => {
-  const [followers, setFollowers] = useState<Follow[]>([]);
+): [ClientFollow[], (followers: ClientFollow[]) => void, boolean] => {
+  const [followers, setFollowers] = useState<ClientFollow[]>([]);
   const [getFollowersRes, followersRes] = useLazyQuery(FOLLOWERS, noCache);
 
   useEffect(() => {

@@ -7,8 +7,8 @@ import { useCurrentUser } from "../../hooks";
 
 interface Props {
   userId: string;
-  followers: Follow[];
-  setFollowers: (followers: Follow[]) => void;
+  followers: ClientFollow[];
+  setFollowers: (followers: ClientFollow[]) => void;
 }
 
 const FollowButton = ({ userId, followers, setFollowers }: Props) => {

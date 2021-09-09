@@ -28,7 +28,7 @@ const Index = () => {
         id: userId,
       },
     });
-    if (users) setUsers(users.filter((user: User) => user.id !== userId));
+    if (users) setUsers(users.filter((user: ClientUser) => user.id !== userId));
 
     if (currentUser?.id === userId) {
       await logoutUser();
@@ -49,7 +49,7 @@ const Index = () => {
           .slice()
           .reverse()
           .slice(0, PageSizes.Default)
-          .map((user: User) => {
+          .map((user: ClientUser) => {
             return (
               <User user={user} deleteUser={deleteUserHandler} key={user.id} />
             );

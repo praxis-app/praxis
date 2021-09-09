@@ -13,8 +13,8 @@ interface Props {
   postId?: string;
   motionId?: string;
   commentId?: string;
-  likes: Like[];
-  setLikes: (likes: Like[]) => void;
+  likes: ClientLike[];
+  setLikes: (likes: ClientLike[]) => void;
 }
 
 const ActionLikeButton = ({
@@ -28,7 +28,7 @@ const ActionLikeButton = ({
   const [createLike, { loading: createLikeLoading }] = useMutation(CREATE_LIKE);
   const [deleteLike, { loading: deleteLikeLoading }] = useMutation(DELETE_LIKE);
 
-  const alreadyLike = (): Like | null => {
+  const alreadyLike = (): ClientLike | null => {
     if (!currentUser) return null;
 
     const like = likes.find((like) => like.userId === currentUser.id);
@@ -73,7 +73,7 @@ const ActionLikeButton = ({
         color="primary"
         style={{
           marginRight: 7.5,
-          transition: "0.2s",
+          transition: "0.3s",
           ...buttonColor,
         }}
       />

@@ -2,7 +2,7 @@ import { CircularProgress } from "@material-ui/core";
 import Motion from "./Motion";
 
 interface Props {
-  motions: Motion[];
+  motions: ClientMotion[];
   loading: boolean;
   deleteMotion: (id: string) => void;
 }

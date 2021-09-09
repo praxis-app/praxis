@@ -12,8 +12,8 @@ import MotionsFormWithCard from "../../../components/Motions/FormWithCard";
 const Edit = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
-  const [motion, setMotions] = useState<Motion>();
-  const [user, setUser] = useState<User>();
+  const [motion, setMotions] = useState<ClientMotion>();
+  const [user, setUser] = useState<ClientUser>();
   const [getMotionRes, motionRes] = useLazyQuery(MOTION);
   const [getUserRes, userRes] = useLazyQuery(USER, noCache);
 

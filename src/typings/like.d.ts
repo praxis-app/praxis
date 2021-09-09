@@ -1,4 +1,4 @@
-interface Like {
+interface ClientLike {
   id: string;
   userId: string;
   postId: string;

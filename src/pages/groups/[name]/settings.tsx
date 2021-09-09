@@ -14,10 +14,10 @@ import SettingsFormWithCard from "../../../components/Settings/FormWithCard";
 const Settings = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
-  const [group, setGroup] = useState<Group>();
+  const [group, setGroup] = useState<ClientGroup>();
   const [groupSettings, setGroupSettings, groupSettingsLoading] =
     useSettingsByGroupId(group?.id);
-  const [unsavedSettings, setUnsavedSettings] = useState<Setting[]>([]);
+  const [unsavedSettings, setUnsavedSettings] = useState<ClientSetting[]>([]);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
 
   useEffect(() => {

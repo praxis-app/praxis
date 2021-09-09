@@ -11,10 +11,10 @@ import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
 
 interface Props {
-  permissions: Permission[];
-  setPermissions: (permissions: Permission[]) => void;
-  unsavedPermissions: Permission[];
-  setUnsavedPermissions: (permissions: Permission[]) => void;
+  permissions: ClientPermission[];
+  setPermissions: (permissions: ClientPermission[]) => void;
+  unsavedPermissions: ClientPermission[];
+  setUnsavedPermissions: (permissions: ClientPermission[]) => void;
   anyUnsavedPermissions: boolean;
   setCanManageRolesDep: (dependency: string) => void;
 }

@@ -8,9 +8,9 @@ import styles from "../../styles/Group/Member.module.scss";
 import { useUserById } from "../../hooks";
 
 interface Props {
-  memberRequest: MemberRequest;
-  memberRequests: MemberRequest[];
-  setMemberRequests: (memberRequests: MemberRequest[]) => void;
+  memberRequest: ClientMemberRequest;
+  memberRequests: ClientMemberRequest[];
+  setMemberRequests: (memberRequests: ClientMemberRequest[]) => void;
 }
 
 const MemberRequest = ({

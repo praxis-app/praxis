@@ -52,13 +52,6 @@ const muiTheme = createTheme({
   ...globalTheme,
 
   overrides: {
-    MuiCard: {
-      root: {
-        backgroundColor: globalTheme.palette.background.paper,
-        marginBottom: 12,
-      },
-    },
-
     MuiTypography: {
       root: {
         color: globalTheme.palette.primary.main,
@@ -88,6 +81,13 @@ const muiTheme = createTheme({
       },
       colorDisabled: {
         color: "rgb(100, 100, 100)",
+      },
+    },
+
+    MuiCard: {
+      root: {
+        backgroundColor: globalTheme.palette.background.paper,
+        marginBottom: 12,
       },
     },
 

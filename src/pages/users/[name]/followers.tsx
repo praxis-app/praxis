@@ -11,7 +11,7 @@ import { noCache } from "../../../utils/apollo";
 
 const Followers = () => {
   const { query } = useRouter();
-  const [followers, setFollowers] = useState<Follow[]>([]);
+  const [followers, setFollowers] = useState<ClientFollow[]>([]);
   const [getFollowersRes, followersRes] = useLazyQuery(
     FOLLOWERS_BY_NAME,
     noCache

@@ -11,8 +11,8 @@ import { useCurrentUser } from "../../../hooks";
 
 const Edit = () => {
   const { query } = useRouter();
-  const [comment, setComment] = useState<Comment>();
-  const [user, setUser] = useState<User>();
+  const [comment, setComment] = useState<ClientComment>();
+  const [user, setUser] = useState<ClientUser>();
   const [getCommentRes, commentRes] = useLazyQuery(COMMENT);
   const [getUserRes, userRes] = useLazyQuery(USER, noCache);
   const currentUser = useCurrentUser();

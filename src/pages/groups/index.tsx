@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { CircularProgress, Typography } from "@material-ui/core";
+import { Card, LinearProgress, Typography } from "@material-ui/core";
 
 import Group from "../../components/Groups/Group";
 import { GROUPS } from "../../apollo/client/queries";
@@ -9,7 +9,7 @@ import GroupForm from "../../components/Groups/Form";
 import Messages from "../../utils/messages";
 
 const Index = () => {
-  const [groups, setGroups] = useState<Group[]>();
+  const [groups, setGroups] = useState<ClientGroup[]>();
   const [deleteGroup] = useMutation(DELETE_GROUP);
   const { data } = useQuery(GROUPS, {
     fetchPolicy: "no-cache",
@@ -26,7 +26,7 @@ const Index = () => {
       },
     });
     if (groups)
-      setGroups(groups.filter((group: Group) => group.id !== groupId));
+      setGroups(groups.filter((group: ClientGroup) => group.id !== groupId));
   };
 
   return (
@@ -36,11 +36,12 @@ const Index = () => {
       </Typography>
 
       <GroupForm />
+
       {groups ? (
         groups
           .slice()
           .reverse()
-          .map((group: Group) => {
+          .map((group: ClientGroup) => {
             return (
               <Group
                 group={group}
@@ -50,7 +51,9 @@ const Index = () => {
             );
           })
       ) : (
-        <CircularProgress />
+        <Card>
+          <LinearProgress />
+        </Card>
       )}
     </>
   );
