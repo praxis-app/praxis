@@ -4,7 +4,6 @@ import {
   createStyles,
   withStyles,
 } from "@material-ui/core";
-import { BLURPLE_BUTTON_COLORS } from "../../styles/Shared/theme";
 import Messages from "../../utils/messages";
 
 const Button = withStyles(() =>
@@ -13,18 +12,16 @@ const Button = withStyles(() =>
       fontFamily: "Inter Bold",
       textTransform: "none",
       minWidth: 80,
-
-      ...BLURPLE_BUTTON_COLORS,
     },
   })
 )(MUIButton);
 
-const SubmitButton = (props: ButtonProps) => {
+const CancelButton = (props: ButtonProps) => {
   return (
-    <Button type="submit" variant="contained" color="primary" {...props}>
-      {props.children ? props.children : Messages.actions.submit()}
+    <Button variant="contained" color="secondary" {...props}>
+      {props.children ? props.children : Messages.actions.cancel()}
     </Button>
   );
 };
 
-export default SubmitButton;
+export default CancelButton;

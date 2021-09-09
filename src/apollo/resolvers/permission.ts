@@ -47,7 +47,7 @@ const permissionResolvers = {
       const hasPermissionGlobally = permissions.find(
         (permission) => permission.name === name && permission.enabled
       );
-      return !!hasPermissionGlobally;
+      return Boolean(hasPermissionGlobally);
     },
 
     permissionsByRoleId: async (_: any, { roleId }: { roleId: string }) => {

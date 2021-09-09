@@ -2,7 +2,9 @@ import prisma from "../../utils/initPrisma";
 import { ConsensusStates, VotingTypes } from "../../constants/vote";
 import { ActionTypes, Stages } from "../../constants/motion";
 import { GroupSettings } from "../../constants/setting";
-import { groupSettingByName } from "./setting";
+import { groupSettingByName, updateSettingById } from "./setting";
+import { TypeNames } from "../../constants/common";
+import Messages from "../../utils/messages";
 
 const evaluate = async (motionId: number): Promise<boolean> => {
   const motion = await prisma.motion.findFirst({
@@ -88,7 +90,7 @@ const doAction = async (motion: BackendMotion) => {
       await prisma.group.update({
         ...whereGroupId,
         data: {
-          name: actionData.newGroupName,
+          name: actionData.groupName,
         },
       });
     }
@@ -97,13 +99,13 @@ const doAction = async (motion: BackendMotion) => {
       await prisma.group.update({
         ...whereGroupId,
         data: {
-          description: actionData.newGroupDescription,
+          description: actionData.groupDescription,
         },
       });
     }
 
     if (motion.action === ActionTypes.ChangeImage) {
-      const path = actionData.newGroupImagePath as string;
+      const path = actionData.groupImagePath as string;
       await prisma.image.create({
         data: {
           group: {
@@ -115,6 +117,17 @@ const doAction = async (motion: BackendMotion) => {
           path,
         },
       });
+    }
+
+    if (
+      motion.action === ActionTypes.ChangeSettings &&
+      actionData.groupSettings
+    ) {
+      for (const setting of actionData.groupSettings) {
+        const updatedSetting = await updateSettingById(setting);
+        if (!updatedSetting)
+          throw new Error(Messages.items.notFound(TypeNames.Setting));
+      }
     }
   }
 };

@@ -47,7 +47,7 @@ const WelcomeCard = ({ isLoggedIn }: Props) => {
   const alreadyClosed = (): boolean => {
     return (
       typeof localStorage !== "undefined" &&
-      !!localStorage.getItem(LocalStorage.WelcomeCardClosed)
+      Boolean(localStorage.getItem(LocalStorage.WelcomeCardClosed))
     );
   };
 

@@ -1,6 +1,6 @@
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { useMediaQuery, useTheme } from "@material-ui/core";
-import { Events, ScrollDirections } from "../constants/common";
+import { Events, ScrollDirection, ScrollDirections } from "../constants/common";
 
 // TODO: Use useIsMountedRef to resolve the following warning:
 // Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in a useEffect cleanup function

@@ -69,7 +69,7 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
           title={Messages.roles.actions.addMembers()}
           subtext={role.name}
           open={dialogOpen}
-          setOpen={setDialogOpen}
+          onClose={() => setDialogOpen(false)}
           actionLabel={Messages.actions.add()}
           closingAction={addRoleMembersHandler}
           loading={loading}

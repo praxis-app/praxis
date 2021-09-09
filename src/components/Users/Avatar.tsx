@@ -5,7 +5,6 @@ import {
   Avatar as MUIAvatar,
   Badge,
   createStyles,
-  makeStyles,
   Theme,
   withStyles,
 } from "@material-ui/core";
@@ -16,17 +15,6 @@ import styles from "../../styles/User/User.module.scss";
 import { noCache } from "../../utils/apollo";
 import { ResourcePaths } from "../../constants/common";
 import { BLACK, BLURPLE, WHITE } from "../../styles/Shared/theme";
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      [theme.breakpoints.down("md")]: {
-        width: 25,
-        height: 25,
-      },
-    },
-  })
-);
 
 const BadgeAvatar = withStyles((theme: Theme) =>
   createStyles({
@@ -42,26 +30,25 @@ const BadgeAvatar = withStyles((theme: Theme) =>
 interface Props {
   user: User | undefined;
   small?: boolean;
-  responsive?: boolean;
   withoutLink?: boolean;
   badge?: boolean;
   badgeContent?: React.ReactChild;
+  onClick?: () => void;
 }
 
 const UserAvatar = ({
   user,
-  responsive,
   withoutLink,
   badge,
   badgeContent,
   small,
+  onClick,
 }: Props) => {
   const [profilePicture, setProfilePicture] = useState<Image>();
   const [getProfilePictureRes, profilePictureRes] = useLazyQuery(
     CURRENT_PROFILE_PICTURE,
     noCache
   );
-  const classes = useStyles();
   const size = small ? { width: 25, height: 25 } : {};
 
   useEffect(() => {
@@ -81,9 +68,10 @@ const UserAvatar = ({
         ...size,
         color: BLACK,
         backgroundColor: profilePicture ? BLACK : WHITE,
+        cursor: "pointer",
       }}
-      classes={responsive ? { root: classes.root } : {}}
       src={baseUrl + profilePicture?.path}
+      onClick={() => (onClick ? onClick() : {})}
     >
       {user && (
         <span className={styles.avatarLetter}>

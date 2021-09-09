@@ -1,6 +1,6 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Input, Typography } from "@material-ui/core";
-import { Image } from "@material-ui/icons";
+import { CropOriginal } from "@material-ui/icons";
 
 import {
   ActionTypes,
@@ -41,17 +41,17 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
   const imagesInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!!text.length) {
-      let actionData = MotionActionData.NewGroupName;
+    if (text) {
+      let actionData = MotionActionData.GroupName;
       if (actionType === ActionTypes.ChangeDescription)
-        actionData = MotionActionData.NewGroupDescription;
+        actionData = MotionActionData.GroupDescription;
       setActionData({
         [actionData]: text,
       });
     }
     if (image && ActionTypes.ChangeImage) {
       setActionData({
-        [MotionActionData.NewGroupImage]: image,
+        [MotionActionData.GroupImage]: image,
       });
     }
   }, [text, image, actionType]);
@@ -108,7 +108,7 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
           role="button"
           tabIndex={0}
         >
-          <Image className={styles.imageInputIcon} fontSize="small" />
+          <CropOriginal className={styles.imageInputIcon} fontSize="small" />
           <span className={styles.attachImageText}>
             {Messages.motions.groups.actionFields.attachImage()}
           </span>
@@ -116,7 +116,11 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
       </>
     );
 
-  if (actionType && actionType !== ActionTypes.Test)
+  if (
+    actionType &&
+    actionType !== ActionTypes.Test &&
+    actionType !== ActionTypes.ChangeSettings
+  )
     return (
       <Typography gutterBottom>
         {Messages.motions.groups.actionFields.inDev()}

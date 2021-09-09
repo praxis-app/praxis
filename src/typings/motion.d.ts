@@ -17,20 +17,16 @@ interface BackendMotion {
   groupId: number | null;
   body: string | null;
   action: string | null;
-  actionData: JsonValue | null;
+  actionData: any;
   stage: string | null;
   createdAt: Date;
   __typename?: string;
 }
 
 interface ActionData {
-  newGroupName?: string;
-  newGroupDescription?: string;
-  newGroupImagePath?: string;
-  newGroupImage?: File;
-}
-
-interface ActionTypeOption {
-  message: string;
-  value: ActionTypes;
+  groupName?: string;
+  groupDescription?: string;
+  groupImagePath?: string;
+  groupImage?: File;
+  groupSettings?: SettingInput[];
 }

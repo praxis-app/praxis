@@ -7,7 +7,7 @@ import { breadcrumbsVar } from "../../apollo/client/localState";
 const CommonBreadcrumbs = () => {
   const breadcrumbs = useReactiveVar(breadcrumbsVar);
 
-  if (!!breadcrumbs.length)
+  if (breadcrumbs.length)
     return (
       <Breadcrumbs>
         {breadcrumbs.map(({ label, href }) => {

@@ -35,7 +35,7 @@ const TextField = (props: TextFieldProps) => {
   }, [currentFocus]);
 
   const handleBlur = () => {
-    focusVar("");
+    focusVar(FocusTargets.None);
   };
 
   return (

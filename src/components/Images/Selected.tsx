@@ -18,7 +18,7 @@ const SelectedImages = ({
   removeSelectedImage,
   deleteSavedImage,
 }: Props) => {
-  if (!!selectedImages.length || !!savedImages.length)
+  if (selectedImages.length + savedImages.length)
     return (
       <div className={styles.selectedImages}>
         {[...selectedImages].map((image) => {

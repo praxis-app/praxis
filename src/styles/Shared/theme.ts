@@ -68,6 +68,7 @@ const muiTheme = createTheme({
       },
       h3: {
         fontSize: 40,
+        marginBottom: 6,
       },
       h4: {
         marginTop: -10,
@@ -129,6 +130,11 @@ const muiTheme = createTheme({
         backgroundColor: globalTheme.palette.background.paper,
         "&:hover": {
           backgroundColor: "rgb(60, 60, 60)",
+        },
+      },
+      containedSecondary: {
+        "&:hover": {
+          backgroundColor: "rgb(80, 80, 80)",
         },
       },
     },

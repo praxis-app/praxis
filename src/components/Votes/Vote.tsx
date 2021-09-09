@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useMutation, useQuery } from "@apollo/client";
+import { useState } from "react";
+import { useMutation } from "@apollo/client";
 import Link from "next/link";
 import {
   Card,
@@ -7,21 +7,15 @@ import {
   Typography,
   makeStyles,
   CardHeader,
-  CardActions,
-  Button,
 } from "@material-ui/core";
-import { CheckCircle } from "@material-ui/icons";
 
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
-import { MOTION } from "../../apollo/client/queries";
-import { VERIFY_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
+import { DELETE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/Vote.module.scss";
 import { ModelNames } from "../../constants/common";
 import { ConsensusStates, FlipStates } from "../../constants/vote";
-import { GroupSettings, SettingStates } from "../../constants/setting";
-import { noCache } from "../../utils/apollo";
-import { useCurrentUser, useSettingsByGroupId, useUserById } from "../../hooks";
+import { useCurrentUser, useUserById } from "../../hooks";
 import Messages from "../../utils/messages";
 import { timeAgo } from "../../utils/time";
 
@@ -41,48 +35,17 @@ interface Props {
 }
 
 const Vote = ({ vote, votes, setVotes }: Props) => {
-  const {
-    id,
-    userId,
-    motionId,
-    body,
-    flipState,
-    consensusState,
-    verified,
-    createdAt,
-  } = vote;
+  const { id, userId, body, flipState, consensusState, verified, createdAt } =
+    vote;
   const currentUser = useCurrentUser();
   const user = useUserById(userId);
-  const [motion, setMotion] = useState<Motion>();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [groupSettings] = useSettingsByGroupId(motion?.groupId);
-  const motionRes = useQuery(MOTION, {
-    variables: {
-      id: motionId,
-    },
-    ...noCache,
-  });
   const [deleteVote] = useMutation(DELETE_VOTE);
-  const [verifyVote] = useMutation(VERIFY_VOTE);
   const classes = useStyles();
-
-  useEffect(() => {
-    if (motionRes.data) setMotion(motionRes.data.motion);
-  }, [motionRes.data]);
 
   const ownVote = (): boolean => {
     if (currentUser && user) return currentUser.id === user.id;
     return false;
-  };
-
-  const ownMotion = (): boolean => {
-    if (currentUser && motion) return currentUser.id === motion.userId;
-    return false;
-  };
-
-  const settingByName = (name: string): string => {
-    const setting = groupSettings.find((setting) => setting.name === name);
-    return setting?.value || "";
   };
 
   const deleteVoteHandler = async (id: string) => {
@@ -92,25 +55,6 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
       },
     });
     setVotes(votes.filter((vote: Vote) => vote.id !== id));
-  };
-
-  const verifyVoteMutation = async () => {
-    const { data } = await verifyVote({
-      variables: {
-        id,
-      },
-    });
-    setVotes(
-      votes.map((vote) => {
-        const newVote: Vote = data.verifyVote.vote;
-        if (vote.id === newVote.id)
-          return {
-            ...vote,
-            verified: newVote.verified,
-          };
-        return vote;
-      })
-    );
   };
 
   const voteTypeLabel = (): string => {
@@ -173,20 +117,6 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
             {body}
           </Typography>
         </CardContent>
-
-        {currentUser &&
-          !verified &&
-          !ownVote() &&
-          !ownMotion() &&
-          settingByName(GroupSettings.VoteVerification) ===
-            SettingStates.On && (
-            <CardActions style={{ marginTop: "6px" }}>
-              <Button onClick={() => verifyVoteMutation()} color="primary">
-                <CheckCircle style={{ marginRight: "5px" }} />
-                Verify
-              </Button>
-            </CardActions>
-          )}
       </Card>
     </div>
   );

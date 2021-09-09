@@ -62,23 +62,6 @@ export const UPDATE_VOTE = gql`
   }
 `;
 
-export const VERIFY_VOTE = gql`
-  mutation VerifyVoteMutation($id: ID!) {
-    verifyVote(id: $id) {
-      vote {
-        id
-        body
-        flipState
-        consensusState
-        verified
-        userId
-        motionId
-        createdAt
-      }
-    }
-  }
-`;
-
 export const DELETE_VOTE = gql`
   mutation DeleteVoteMutation($id: ID!) {
     deleteVote(id: $id)

@@ -21,8 +21,8 @@ const RoleMemberAdd = ({ userId, selectedUsers, setSelectedUsers }: Props) => {
   };
 
   const isSelected = (): boolean => {
-    return !!selectedUsers.find(
-      (selectedUser) => selectedUser.userId === userId
+    return Boolean(
+      selectedUsers.find((selectedUser) => selectedUser.userId === userId)
     );
   };
 

@@ -1,46 +1,84 @@
 import { Typography } from "@material-ui/core";
 import Link from "next/link";
+
 import { ResourcePaths } from "../../constants/common";
 import { GroupAspects } from "../../constants/group";
 import { ActionTypes } from "../../constants/motion";
+import { GroupSettings, SettingStates } from "../../constants/setting";
 import muiTheme from "../../styles/Shared/theme";
 import baseUrl from "../../utils/baseUrl";
+import { displayName } from "../../utils/items";
 import Messages from "../../utils/messages";
 
 interface TextProps {
-  text: string;
-  data: string | undefined;
+  aspect: string;
+  data?: string;
 }
 
-const Text = ({ text, data }: TextProps) => {
+const Text = ({ aspect, data }: TextProps) => {
   return (
-    <Typography>
+    <Typography style={{ marginTop: 6 }}>
       <span
         style={{
           fontFamily: "Inter Bold",
         }}
       >
-        {Messages.motions.groups.proposedAspect(text)}
+        {Messages.motions.groups.proposedAspect(aspect)}
       </span>
-      {" " + data}
+      {data && " " + data}
     </Typography>
   );
 };
 
-const ActionData = ({ motion }: { motion: Motion }) => {
-  const { id, action, actionData } = motion;
-  if (action === ActionTypes.ChangeName)
-    return <Text text={GroupAspects.Name} data={actionData.newGroupName} />;
+interface ActionDataProps {
+  id?: string;
+  action: string;
+  actionData: ActionData;
+}
 
-  if (action === ActionTypes.ChangeDescription)
+const ActionData = ({ id, action, actionData }: ActionDataProps) => {
+  const inForm = !id;
+
+  const displaySettingValue = ({ name, value }: SettingInput): string => {
+    if (name === GroupSettings.RatificationThreshold) return value + "%";
+    if (value === SettingStates.On) return Messages.settings.states.on();
+    if (value === SettingStates.Off) return Messages.settings.states.off();
+    return displayName(value);
+  };
+
+  if (action === ActionTypes.ChangeSettings && actionData.groupSettings)
+    return (
+      <div style={{ marginBottom: inForm ? 12 : 0 }}>
+        <Text aspect={GroupAspects.Settings} />
+
+        {actionData.groupSettings.map((setting) => (
+          <Typography key={setting.id}>
+            {displayName(setting.name)}: {displaySettingValue(setting)}
+          </Typography>
+        ))}
+      </div>
+    );
+
+  if (action === ActionTypes.ChangeName && actionData.groupName && !inForm)
+    return <Text aspect={GroupAspects.Name} data={actionData.groupName} />;
+
+  if (
+    action === ActionTypes.ChangeDescription &&
+    actionData.groupDescription &&
+    !inForm
+  )
     return (
       <Text
-        text={GroupAspects.Description}
-        data={actionData.newGroupDescription}
+        aspect={GroupAspects.Description}
+        data={actionData.groupDescription}
       />
     );
 
-  if (action === ActionTypes.ChangeImage)
+  if (
+    action === ActionTypes.ChangeImage &&
+    actionData.groupImagePath &&
+    !inForm
+  )
     return (
       <>
         <div
@@ -55,7 +93,7 @@ const ActionData = ({ motion }: { motion: Motion }) => {
         <Link href={`${ResourcePaths.Motion}${id}`}>
           <a>
             <img
-              src={baseUrl + actionData.newGroupImagePath}
+              src={baseUrl + actionData.groupImagePath}
               alt={Messages.images.couldNotRender()}
               style={{
                 width: "60%",

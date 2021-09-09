@@ -13,9 +13,9 @@ import SubmitButton from "../Shared/SubmitButton";
 interface Props {
   permissions: Permission[];
   setPermissions: (permissions: Permission[]) => void;
-  unsavedPermissions?: Permission[];
-  setUnsavedPermissions?: (permissions: Permission[]) => void;
-  anyUnsavedPermissions?: boolean;
+  unsavedPermissions: Permission[];
+  setUnsavedPermissions: (permissions: Permission[]) => void;
+  anyUnsavedPermissions: boolean;
   setCanManageRolesDep: (dependency: string) => void;
 }
 
@@ -31,13 +31,7 @@ const PermissionsForm = ({
   const [updatePermissions] = useMutation(UPDATE_PERMISSIONS);
 
   useEffect(() => {
-    if (
-      unsavedPermissions &&
-      setUnsavedPermissions &&
-      permissions.length &&
-      !unsavedPermissions.length
-    )
-      setUnsavedPermissions(permissions);
+    setUnsavedPermissions(permissions);
   }, [permissions]);
 
   const handleSubmit = async (e: any) => {
@@ -46,13 +40,13 @@ const PermissionsForm = ({
     try {
       const { data } = await updatePermissions({
         variables: {
-          permissions: permissions.map(({ id, enabled }) => {
+          permissions: unsavedPermissions.map(({ id, enabled }) => {
             return { id, enabled };
           }),
         },
       });
       const newPermissions = data.updatePermissions.permissions;
-      if (setUnsavedPermissions) setUnsavedPermissions(newPermissions);
+      setUnsavedPermissions(newPermissions);
       setPermissions(newPermissions);
       const newKey = generateRandom();
       setCanManageRolesDep(newKey);
@@ -68,8 +62,8 @@ const PermissionsForm = ({
   };
 
   const setByName = (name: string, enabled: boolean) => {
-    setPermissions(
-      permissions.map((permission) => {
+    setUnsavedPermissions(
+      unsavedPermissions.map((permission) => {
         if (permission.name === name)
           return {
             ...permission,
@@ -84,7 +78,7 @@ const PermissionsForm = ({
     <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
       <FormGroup>
         <div className={styles.form}>
-          {permissions.map(({ name, description, enabled }) => {
+          {unsavedPermissions.map(({ name, description, enabled }) => {
             return (
               <div className={styles.permission} key={name}>
                 <div>

@@ -4,7 +4,7 @@ import MotionsForm, { MotionsFormProps } from "./Form";
 const MotionsFormWithCard = (props: MotionsFormProps) => {
   return (
     <Card>
-      <CardContent style={{ marginTop: 12 }}>
+      <CardContent style={{ paddingBottom: 18 }}>
         <MotionsForm {...props} />
       </CardContent>
     </Card>

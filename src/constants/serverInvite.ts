@@ -5,6 +5,11 @@ export const ITEM_TYPE = "invite";
 
 export const MAX_USES_OPTIONS = [1, 5, 10, 25, 50, 100];
 
+interface ExpiresAtOption {
+  message: string;
+  value: Time | "";
+}
+
 export const EXPIRES_AT_OPTIONS: ExpiresAtOption[] = [
   {
     message: Messages.invites.form.expiresAtOptions.oneDay(),

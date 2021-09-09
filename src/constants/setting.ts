@@ -6,7 +6,6 @@ export enum SettingStates {
 export enum GroupSettings {
   NoAdmin = "no-admin",
   VotingType = "voting-type",
-  VoteVerification = "vote-verification",
   RatificationThreshold = "ratification-threshold",
   ReservationsLimit = "reservations-limit",
   StandAsidesLimit = "stand-asides-limit",
@@ -17,7 +16,6 @@ export enum GroupSettings {
 export enum GroupDefaults {
   NoAdmin = "false",
   VotingType = "consensus",
-  VoteVerification = "false",
   RatificationThreshold = "50",
   ReservationsLimit = "2",
   StandAsidesLimit = "2",
@@ -33,10 +31,6 @@ export const INITIAL_GROUP_SETTINGS = [
   {
     name: GroupSettings.VotingType,
     value: GroupDefaults.VotingType,
-  },
-  {
-    name: GroupSettings.VoteVerification,
-    value: GroupDefaults.VoteVerification,
   },
   {
     name: GroupSettings.ReservationsLimit,

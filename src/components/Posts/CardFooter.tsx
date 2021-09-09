@@ -74,7 +74,7 @@ const CardFooter = ({ postId }: Props) => {
     <>
       <div className={styles.totalsContainer}>
         <Typography>
-          {!!likes.length && (
+          {Boolean(likes.length) && (
             <>
               <span className={styles.likeChip}>
                 <Favorite
@@ -89,7 +89,7 @@ const CardFooter = ({ postId }: Props) => {
             </>
           )}
         </Typography>
-        {!!totalComments && (
+        {Boolean(totalComments) && (
           <Link href={postPagePath} passHref>
             <a>
               <Typography className={styles.totalCommentsLink}>

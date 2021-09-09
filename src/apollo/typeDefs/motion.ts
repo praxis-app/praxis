@@ -13,9 +13,10 @@ type Motion {
 }
 
 input ActionDataInput {
-  newGroupName: String
-  newGroupImage: FileUpload
-  newGroupDescription: String
+  groupName: String
+  groupImage: FileUpload
+  groupDescription: String
+  groupSettings: [SettingInput]
 }
 
 input CreateMotionInput {

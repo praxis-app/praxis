@@ -1,3 +1,8 @@
+.inputWrapper {
+  max-width: 36px;
+  max-height: 30px;
+}
+
 .imageInput {
   visibility: hidden;
   width: 0;
@@ -5,7 +10,6 @@
 }
 
 .imageInputIcon {
-  margin-top: -6px;
   margin-left: -4px;
   color: white;
   cursor: pointer;

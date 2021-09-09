@@ -2,20 +2,21 @@ import React, { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { Typography } from "@material-ui/core";
+import { Typography, CircularProgress } from "@material-ui/core";
 
 import Messages from "../../../utils/messages";
 import { ResourcePaths } from "../../../constants/common";
-import SettingsForm from "../../../components/Settings/Form";
 import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
 import { GroupSettings, SettingStates } from "../../../constants/setting";
+import SettingsFormWithCard from "../../../components/Settings/FormWithCard";
 
 const Settings = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
   const [group, setGroup] = useState<Group>();
-  const [groupSettings, setGroupSettings] = useSettingsByGroupId(group?.id);
+  const [groupSettings, setGroupSettings, groupSettingsLoading] =
+    useSettingsByGroupId(group?.id);
   const [unsavedSettings, setUnsavedSettings] = useState<Setting[]>([]);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
 
@@ -37,7 +38,7 @@ const Settings = () => {
 
   const anyUnsavedSettings = (): boolean => {
     return (
-      !!unsavedSettings.length &&
+      Boolean(unsavedSettings.length) &&
       JSON.stringify(groupSettings) !== JSON.stringify(unsavedSettings)
     );
   };
@@ -54,6 +55,7 @@ const Settings = () => {
     return group?.creatorId === currentUser.id;
   };
 
+  if (groupRes.loading || groupSettingsLoading) return <CircularProgress />;
   if (isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
   if (!ownGroup()) return <>{Messages.users.permissionDenied()}</>;
 
@@ -71,7 +73,7 @@ const Settings = () => {
         {Messages.groups.settings.nameWithGroup()}
       </Typography>
 
-      <SettingsForm
+      <SettingsFormWithCard
         settings={groupSettings}
         setSettings={setGroupSettings}
         unsavedSettings={unsavedSettings}

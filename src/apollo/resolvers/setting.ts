@@ -2,9 +2,10 @@ import { GraphQLUpload } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
+import { updateSettingById } from "../models/setting";
 
-interface SettingInput {
-  settings: Setting[];
+interface UpdateSettingsInput {
+  settings: SettingInput[];
 }
 
 const settingResolvers = {
@@ -31,21 +32,15 @@ const settingResolvers = {
   },
 
   Mutation: {
-    async updateSettings(_: any, { input }: { input: SettingInput }) {
+    async updateSettings(_: any, { input }: { input: UpdateSettingsInput }) {
       const { settings } = input;
-      let updatedSettings: BackendSetting[] = [];
+      const updatedSettings: BackendSetting[] = [];
 
       for (const setting of settings) {
-        const { id, value } = setting;
-        const updatedSetting = await prisma.setting.update({
-          where: { id: parseInt(id) },
-          data: { value },
-        });
-
+        const updatedSetting = await updateSettingById(setting);
         if (!updatedSetting)
           throw new Error(Messages.items.notFound(TypeNames.Setting));
-
-        updatedSettings = [...updatedSettings, updatedSetting];
+        updatedSettings.push(updatedSetting);
       }
 
       return { settings: updatedSettings };

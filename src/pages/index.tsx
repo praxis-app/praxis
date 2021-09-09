@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useMutation, useReactiveVar, useLazyQuery } from "@apollo/client";
 
-import PostForm from "../components/Posts/Form";
 import Feed from "../components/Shared/Feed";
 import { HOME_FEED } from "../apollo/client/queries";
 import { DELETE_POST, DELETE_MOTION } from "../apollo/client/mutations";
@@ -11,6 +10,7 @@ import { feedVar, paginationVar } from "../apollo/client/localState";
 import { useCurrentUser } from "../hooks";
 import { noCache, resetFeed } from "../utils/clientIndex";
 import Pagination from "../components/Shared/Pagination";
+import ToggleForms from "../components/Shared/ToggleForms";
 
 const Home = () => {
   const currentUser = useCurrentUser();
@@ -83,9 +83,9 @@ const Home = () => {
 
   return (
     <>
-      <WelcomeCard isLoggedIn={!!currentUser} />
+      <WelcomeCard isLoggedIn={Boolean(currentUser)} />
 
-      {currentUser && <PostForm posts={feed.items} />}
+      {currentUser && <ToggleForms />}
 
       <Pagination>
         <Feed

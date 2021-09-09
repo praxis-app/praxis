@@ -22,7 +22,11 @@ import {
   Close,
 } from "@material-ui/icons";
 
-import { navKeyVar, navOpenVar } from "../../apollo/client/localState";
+import {
+  modalOpenVar,
+  navKeyVar,
+  navOpenVar,
+} from "../../apollo/client/localState";
 import { NavigationPaths } from "../../constants/common";
 import { WHITE } from "../../styles/Shared/theme";
 import Messages from "../../utils/messages";
@@ -35,6 +39,7 @@ import { Permissions } from "../../constants/role";
 import { LOGOUT_USER } from "../../apollo/client/mutations";
 import { redeemedInviteToken } from "../../utils/clientIndex";
 import styles from "../../styles/Shared/Shared.module.scss";
+import MotionButton from "../Motions/MotionButton";
 
 const ListItemText = withStyles(() =>
   createStyles({
@@ -48,6 +53,7 @@ const NavDrawer = () => {
   const currentUser = useCurrentUser();
   const open = useReactiveVar(navOpenVar);
   const refreshKey = useReactiveVar(navKeyVar);
+  const openModal = useReactiveVar(modalOpenVar);
   const [inviteToken, setInviteToken] = useState<string | null>();
   const [canManageRoles] = useHasPermissionGlobally(
     Permissions.ManageRoles,
@@ -69,12 +75,12 @@ const NavDrawer = () => {
   const windowSize = useWindowSize();
 
   useEffect(() => {
-    navOpenVar(false);
-  }, [windowSize]);
-
-  useEffect(() => {
     setInviteToken(redeemedInviteToken());
   }, []);
+
+  useEffect(() => {
+    handleCose();
+  }, [windowSize, openModal]);
 
   const handleCose = () => {
     navOpenVar(false);
@@ -174,7 +180,15 @@ const NavDrawer = () => {
             </a>
           </Link>
         )}
+
+        {currentUser && <Divider style={{ marginBottom: 6 }} />}
       </List>
+
+      {currentUser && (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <MotionButton />
+        </div>
+      )}
     </Drawer>
   );
 };

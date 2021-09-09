@@ -53,7 +53,7 @@ const ServerInvite = ({ invite, invites, setInvites }: Props) => {
         <TableCell component="th" scope="row">
           <span className={styles.link}>
             <span className={styles.userAvatar}>
-              <UserAvatar user={user} responsive />
+              <UserAvatar user={user} small />
             </span>
             <Link href={`/users/${user.name}`} passHref>
               <a className={styles.userName}>{user.name}</a>

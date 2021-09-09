@@ -67,7 +67,7 @@ const Group = ({ group, deleteGroup }: Props) => {
     const member = groupMembers?.find(
       (member: GroupMember) => member.userId === currentUser?.id
     );
-    return !!member;
+    return Boolean(member);
   };
 
   const canSeeRequests = (): boolean => {

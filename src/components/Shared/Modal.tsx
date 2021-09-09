@@ -13,7 +13,9 @@ import {
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import { CircularProgress, Fade } from "@material-ui/core";
+
 import { useIsMobile } from "../../hooks";
+import { BLURPLE } from "../../styles/Shared/theme";
 
 const Container = withStyles(() =>
   createStyles({
@@ -42,8 +44,8 @@ interface Props {
   title?: string;
   subtext?: string;
   actionLabel?: string;
+  onClose: () => void;
   closingAction?: (_: any) => any;
-  setOpen: (open: boolean) => void;
   appBarChildren?: React.ReactChild;
   children: React.ReactChild;
   loading?: boolean;
@@ -55,7 +57,7 @@ interface Props {
 const Modal = ({
   title,
   subtext,
-  setOpen,
+  onClose,
   actionLabel,
   closingAction,
   appBarChildren,
@@ -69,7 +71,7 @@ const Modal = ({
   const classes = useStyles();
 
   const handleCloseDialog = () => {
-    setOpen(false);
+    onClose();
   };
 
   return (
@@ -86,7 +88,7 @@ const Modal = ({
           {appBarChildren ? (
             appBarChildren
           ) : (
-            <Toolbar>
+            <Toolbar style={{ backgroundColor: BLURPLE }}>
               <IconButton color="inherit" onClick={handleCloseDialog}>
                 <Close />
               </IconButton>
@@ -97,10 +99,7 @@ const Modal = ({
                 >
                   {title}
                 </Typography>
-                <Typography
-                  variant="caption"
-                  style={{ color: "rgb(150, 150, 150)" }}
-                >
+                <Typography variant="caption" color="primary">
                   {subtext}
                 </Typography>
               </div>

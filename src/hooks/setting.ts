@@ -26,5 +26,5 @@ export const useSettingsByGroupId = (
     if (settingsRes.data) setSettings(settingsRes.data.settingsByGroupId);
   }, [settingsRes.data]);
 
-  return [settings, setSettings, !settingsRes.data];
+  return [settings, setSettings, settingsRes.loading];
 };

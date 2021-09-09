@@ -5,9 +5,8 @@ import { Tab, Tabs, Card, CircularProgress } from "@material-ui/core";
 
 import Group from "../../components/Groups/Group";
 import Feed from "../../components/Shared/Feed";
-import PostsForm from "../../components/Posts/Form";
 import MotionsFormWithCard from "../../components/Motions/FormWithCard";
-import ToggleForms from "../../components/Groups/ToggleForms";
+import ToggleForms from "../../components/Shared/ToggleForms";
 import Pagination from "../../components/Shared/Pagination";
 import { GROUP_BY_NAME, GROUP_FEED } from "../../apollo/client/queries";
 import {
@@ -21,6 +20,7 @@ import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useMembersByGroupId } from "../../hooks";
 import { resetFeed } from "../../utils/items";
+import PostsFormWithCard from "../../components/Posts/FormWithCard";
 
 const Show = () => {
   const {
@@ -130,7 +130,9 @@ const Show = () => {
 
   const inThisGroup = (): boolean => {
     if (!currentUser) return false;
-    return !!groupMembers.find((member) => member.userId === currentUser.id);
+    return Boolean(
+      groupMembers.find((member) => member.userId === currentUser.id)
+    );
   };
 
   if (group)
@@ -156,8 +158,8 @@ const Show = () => {
         {inThisGroup() && (
           <>
             {tab === 0 && <ToggleForms group={group} />}
-            {tab === 1 && <MotionsFormWithCard group={group} />}
-            {tab === 2 && <PostsForm group={group} />}
+            {tab === 1 && <MotionsFormWithCard group={group} withoutToggle />}
+            {tab === 2 && <PostsFormWithCard group={group} withoutToggle />}
           </>
         )}
 
