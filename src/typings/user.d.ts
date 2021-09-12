@@ -1,4 +1,4 @@
-interface User {
+interface ClientUser {
   id: string;
   name: string;
   email: string;
@@ -25,6 +25,11 @@ interface SignUpInput {
 interface SignInInput {
   email: string;
   password: string;
+}
+
+interface UpdateUserInput {
+  email: string;
+  name: string;
 }
 
 interface ValidationError {

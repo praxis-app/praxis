@@ -39,12 +39,19 @@ const useStyles = makeStyles(() =>
 
 interface Props {
   motionId: string;
-  votes: Vote[];
-  setVotes: (votes: Vote[]) => void;
+  votes: ClientVote[];
+  setVotes: (votes: ClientVote[]) => void;
   modelOfConsensus: boolean;
+  ratified: boolean;
 }
 
-const CardFooter = ({ motionId, votes, setVotes, modelOfConsensus }: Props) => {
+const CardFooter = ({
+  motionId,
+  votes,
+  setVotes,
+  modelOfConsensus,
+  ratified,
+}: Props) => {
   const currentUser = useCurrentUser();
   const [totalComments, setTotalComments] = useState<number>(0);
   const queryPayload = {
@@ -63,7 +70,7 @@ const CardFooter = ({ motionId, votes, setVotes, modelOfConsensus }: Props) => {
       setTotalComments(totalCommentsRes.data.commentsByMotionId.totalComments);
   }, [totalCommentsRes.data]);
 
-  const alreadyVote = (): Vote | null => {
+  const alreadyVote = (): ClientVote | null => {
     if (!currentUser) return null;
     const vote = votes.find((vote) => vote.userId === currentUser.id);
     if (vote) return vote;
@@ -105,16 +112,42 @@ const CardFooter = ({ motionId, votes, setVotes, modelOfConsensus }: Props) => {
       <Divider variant="middle" />
 
       <CardActions classes={classes}>
-        <ActionButton onClick={handleVoteButtonClick}>
-          <HowToVote
-            color="primary"
-            style={{
-              marginRight: 7.5,
-              ...voteButtonColor,
+        {ratified && (
+          <ActionButton
+            href={onMotionPage() ? undefined : motionPagePath}
+            onClick={() => {
+              if (onMotionPage()) {
+                toastVar({
+                  title: Messages.motions.toasts.ratifiedInfo(),
+                  status: ToastStatus.Info,
+                });
+                tabVar(0);
+              }
             }}
-          />
-          <span style={voteButtonColor}>{Messages.votes.actions.vote()}</span>
-        </ActionButton>
+          >
+            <HowToVote
+              color="primary"
+              style={{
+                marginRight: 7.5,
+                ...voteButtonColor,
+              }}
+            />
+            <span style={voteButtonColor}>{Messages.motions.ratified()}</span>
+          </ActionButton>
+        )}
+
+        {!ratified && (
+          <ActionButton onClick={handleVoteButtonClick}>
+            <HowToVote
+              color="primary"
+              style={{
+                marginRight: 7.5,
+                ...voteButtonColor,
+              }}
+            />
+            <span style={voteButtonColor}>{Messages.votes.actions.vote()}</span>
+          </ActionButton>
+        )}
 
         <ActionButton
           href={

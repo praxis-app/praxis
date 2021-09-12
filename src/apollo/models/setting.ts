@@ -1,8 +1,9 @@
+import { Setting } from ".prisma/client";
 import { GroupSettings } from "../../constants/setting";
 import prisma from "../../utils/initPrisma";
 
 export const groupSettingByName = (
-  settings: BackendSetting[],
+  settings: Setting[],
   name: GroupSettings
 ): string => {
   const setting = settings.find((setting) => setting.name === name);
@@ -12,7 +13,7 @@ export const groupSettingByName = (
 export const updateSettingById = async ({
   id,
   value,
-}: SettingInput): Promise<BackendSetting> => {
+}: SettingInput): Promise<Setting> => {
   const setting = await prisma.setting.update({
     where: { id: parseInt(id) },
     data: { value },

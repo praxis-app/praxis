@@ -11,7 +11,7 @@ import { useCurrentUser } from "../../../hooks";
 const Edit = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<ClientUser>();
   const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME);
 
   useEffect(() => {

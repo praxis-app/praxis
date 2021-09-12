@@ -59,7 +59,8 @@ const Home = () => {
     feedVar({
       ...feed,
       items: feed.items.filter(
-        (item: FeedItem) => item.id !== id || item.__typename !== TypeNames.Post
+        (item: ClientFeedItem) =>
+          item.id !== id || item.__typename !== TypeNames.Post
       ),
       totalItems: feed.totalItems - 1,
     });
@@ -74,7 +75,7 @@ const Home = () => {
     feedVar({
       ...feed,
       items: feed.items.filter(
-        (item: FeedItem) =>
+        (item: ClientFeedItem) =>
           item.id !== id || item.__typename !== TypeNames.Motion
       ),
       totalItems: feed.totalItems - 1,

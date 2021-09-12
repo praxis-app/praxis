@@ -43,11 +43,11 @@ interface FormValues {
 }
 
 export interface PostsFormProps {
-  post?: Post;
-  posts?: Post[];
+  post?: ClientPost;
+  posts?: ClientPost[];
   isEditing?: boolean;
-  setPosts?: (posts: Post[]) => void;
-  group?: Group;
+  setPosts?: (posts: ClientPost[]) => void;
+  group?: ClientGroup;
   withoutToggle?: boolean;
 }
 
@@ -60,7 +60,7 @@ const PostsForm = ({
   withoutToggle,
 }: PostsFormProps) => {
   const [imagesInputKey, setImagesInputKey] = useState<string>("");
-  const [savedImages, setSavedImages] = useState<Image[]>([]);
+  const [savedImages, setSavedImages] = useState<ClientImage[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const currentUser = useCurrentUser();
   const feed = useReactiveVar(feedVar);
@@ -134,10 +134,10 @@ const PostsForm = ({
         id,
       },
     });
-    setSavedImages(savedImages.filter((image: Image) => image.id !== id));
+    setSavedImages(savedImages.filter((image) => image.id !== id));
   };
 
-  const feedItemsAferCreate = (newPost: Post): FeedItem[] => {
+  const feedItemsAferCreate = (newPost: ClientPost): ClientFeedItem[] => {
     let { items, totalItems } = feed;
     const totalPages = Math.ceil(totalItems / pageSize);
     const onLastPage = currentPage === totalPages - 1;

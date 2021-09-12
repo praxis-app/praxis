@@ -1,16 +1,24 @@
-import fs, { createWriteStream } from "fs";
 import { promisify } from "util";
+import fs, { createWriteStream, ReadStream } from "fs";
+import { PUBLIC_DIR_NAME, UPLOADS_PATH } from "../constants/image";
 
-export const saveImage = async (image: any): Promise<string> => {
+export interface FileUpload {
+  filename: string;
+  mimetype: string;
+  encoding: string;
+  createReadStream(): ReadStream;
+}
+
+export const saveImage = async (image: FileUpload): Promise<string> => {
   const { createReadStream, mimetype } = await image;
   const extension = mimetype.split("/")[1];
-  const path = "public/uploads/" + Date.now() + "." + extension;
+  const path = UPLOADS_PATH + Date.now() + "." + extension;
 
   await new Promise((resolve, reject) => {
     const stream = createReadStream();
 
     stream
-      .on("error", (error: any) => {
+      .on("error", (error: Error) => {
         fs.unlink(path, () => {
           reject(error);
         });
@@ -20,10 +28,10 @@ export const saveImage = async (image: any): Promise<string> => {
       .on("finish", resolve);
   });
 
-  return path.replace("public", "");
+  return path.replace(PUBLIC_DIR_NAME, "");
 };
 
 export const deleteImage = async (path: string) => {
   const unlinkAsync = promisify(fs.unlink);
-  await unlinkAsync("public" + path);
+  await unlinkAsync(PUBLIC_DIR_NAME + path);
 };

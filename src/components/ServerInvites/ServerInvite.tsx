@@ -17,9 +17,9 @@ import { ITEM_TYPE } from "../../constants/serverInvite";
 import { toastVar } from "../../apollo/client/localState";
 
 interface Props {
-  invite: ServerInvite;
-  invites: ServerInvite[];
-  setInvites: (invites: ServerInvite[]) => void;
+  invite: ClientServerInvite;
+  invites: ClientServerInvite[];
+  setInvites: (invites: ClientServerInvite[]) => void;
 }
 
 const ServerInvite = ({ invite, invites, setInvites }: Props) => {
@@ -44,7 +44,9 @@ const ServerInvite = ({ invite, invites, setInvites }: Props) => {
       },
     });
     if (invites)
-      setInvites(invites.filter((invite: ServerInvite) => invite.id !== id));
+      setInvites(
+        invites.filter((invite: ClientServerInvite) => invite.id !== id)
+      );
   };
 
   if (invite && user)

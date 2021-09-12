@@ -7,7 +7,7 @@ import Messages from "../../utils/messages";
 
 interface Props {
   selectedImages: File[];
-  savedImages: Image[];
+  savedImages: ClientImage[];
   deleteSavedImage: (id: string) => void;
   removeSelectedImage: (imageName: string) => void;
 }

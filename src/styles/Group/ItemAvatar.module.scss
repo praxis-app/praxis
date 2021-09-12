@@ -30,7 +30,7 @@
 .groupNameLink {
   font-size: 15px;
   display: block;
-  width: 200px;
+  max-width: 200px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -45,6 +45,6 @@
 
 @media only screen and (min-width: $desktopBreakpoint) {
   .groupNameLink {
-    width: 375px;
+    max-width: 375px;
   }
 }

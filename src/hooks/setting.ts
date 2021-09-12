@@ -6,8 +6,8 @@ import { noCache } from "../utils/apollo";
 export const useSettingsByGroupId = (
   groupId: string | undefined,
   callDep?: any
-): [Setting[], (settings: Setting[]) => void, boolean] => {
-  const [settings, setSettings] = useState<Setting[]>([]);
+): [ClientSetting[], (settings: ClientSetting[]) => void, boolean] => {
+  const [settings, setSettings] = useState<ClientSetting[]>([]);
   const [getSettingsRes, settingsRes] = useLazyQuery(
     SETTINGS_BY_GROUP_ID,
     noCache

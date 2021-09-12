@@ -2,7 +2,7 @@ import { CircularProgress } from "@material-ui/core";
 import Comment from "./Comment";
 
 interface Props {
-  comments: Comment[];
+  comments: ClientComment[];
   deleteComment: (id: string) => void;
 }
 
@@ -13,7 +13,7 @@ const List = ({ comments, deleteComment }: Props) => {
         {comments
           .slice()
           .reverse()
-          .map((comment: Comment) => {
+          .map((comment) => {
             return (
               <Comment
                 comment={comment}

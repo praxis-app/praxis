@@ -9,9 +9,9 @@ import { useMutation } from "@apollo/client";
 import Messages from "../../utils/messages";
 
 interface Props {
-  member: RoleMember;
-  members: RoleMember[];
-  setMembers: (members: RoleMember[]) => void;
+  member: ClientRoleMember;
+  members: ClientRoleMember[];
+  setMembers: (members: ClientRoleMember[]) => void;
 }
 
 const RoleMember = ({ member, members, setMembers }: Props) => {
@@ -26,7 +26,9 @@ const RoleMember = ({ member, members, setMembers }: Props) => {
       },
     });
     if (members)
-      setMembers(members.filter((member: RoleMember) => member.id !== id));
+      setMembers(
+        members.filter((member: ClientRoleMember) => member.id !== id)
+      );
   };
 
   if (user)

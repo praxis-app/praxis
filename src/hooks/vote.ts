@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import { ConsensusStates, FlipStates } from "../constants/vote";
 
 export const useConsensusVotes = (
-  votes: Vote[],
+  votes: ClientVote[],
   callDep?: any
-): [Vote[], Vote[], Vote[], Vote[]] => {
-  const [agreements, setAgreements] = useState<Vote[]>([]);
-  const [standAsides, setStandAsides] = useState<Vote[]>([]);
-  const [reservations, setReservations] = useState<Vote[]>([]);
-  const [blocks, setBlocks] = useState<Vote[]>([]);
+): [ClientVote[], ClientVote[], ClientVote[], ClientVote[]] => {
+  const [agreements, setAgreements] = useState<ClientVote[]>([]);
+  const [standAsides, setStandAsides] = useState<ClientVote[]>([]);
+  const [reservations, setReservations] = useState<ClientVote[]>([]);
+  const [blocks, setBlocks] = useState<ClientVote[]>([]);
 
   useEffect(() => {
     setAgreements(consensusFilter(ConsensusStates.Agreement));
@@ -17,25 +17,25 @@ export const useConsensusVotes = (
     setBlocks(consensusFilter(ConsensusStates.Block));
   }, [votes, JSON.stringify(callDep)]);
 
-  const consensusFilter = (voteState: string): Vote[] =>
+  const consensusFilter = (voteState: string): ClientVote[] =>
     votes.filter(({ consensusState }) => consensusState === voteState);
 
   return [agreements, standAsides, reservations, blocks];
 };
 
 export const useUpDownVotes = (
-  votes: Vote[],
+  votes: ClientVote[],
   callDep?: any
-): [Vote[], Vote[]] => {
-  const [upVotes, setUpVotes] = useState<Vote[]>([]);
-  const [downVotes, setDownVotes] = useState<Vote[]>([]);
+): [ClientVote[], ClientVote[]] => {
+  const [upVotes, setUpVotes] = useState<ClientVote[]>([]);
+  const [downVotes, setDownVotes] = useState<ClientVote[]>([]);
 
   useEffect(() => {
     setUpVotes(upDownFilter(FlipStates.Up));
     setDownVotes(upDownFilter(FlipStates.Down));
   }, [votes, JSON.stringify(callDep)]);
 
-  const upDownFilter = (voteState: string): Vote[] =>
+  const upDownFilter = (voteState: string): ClientVote[] =>
     votes.filter(({ flipState }) => flipState === voteState);
 
   return [upVotes, downVotes];

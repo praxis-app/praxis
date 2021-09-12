@@ -8,14 +8,14 @@ import { CURRENT_COVER_PHOTO } from "../../apollo/client/queries";
 import { ResourcePaths } from "../../constants/common";
 import { BLACK, WHITE } from "../../styles/Shared/theme";
 import { noCache } from "../../utils/clientIndex";
-import Messages from "../../utils/messages";
+import { Group } from "@material-ui/icons";
 
 interface Props {
-  group: Group;
+  group: ClientGroup;
 }
 
 const GroupAvatar = ({ group }: Props) => {
-  const [coverPhoto, setCoverPhoto] = useState<Image>();
+  const [coverPhoto, setCoverPhoto] = useState<ClientImage>();
 
   const coverPhotoRes = useQuery(CURRENT_COVER_PHOTO, {
     variables: { groupId: group.id },
@@ -34,18 +34,9 @@ const GroupAvatar = ({ group }: Props) => {
             backgroundColor: coverPhoto ? BLACK : WHITE,
             color: BLACK,
           }}
+          src={baseUrl + coverPhoto?.path}
         >
-          {coverPhoto ? (
-            <img
-              src={baseUrl + coverPhoto.path}
-              alt={Messages.images.couldNotRender()}
-              style={{
-                width: "100%",
-              }}
-            />
-          ) : (
-            <>{group.name[0].charAt(0).toUpperCase()}</>
-          )}
+          <Group />
         </Avatar>
       </a>
     </Link>

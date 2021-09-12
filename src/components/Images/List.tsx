@@ -6,13 +6,13 @@ import baseUrl from "../../utils/baseUrl";
 import Messages from "../../utils/messages";
 
 interface Props {
-  images: Image[];
+  images: ClientImage[];
 }
 
 const List = ({ images }: Props) => {
   const router = useRouter();
 
-  const imgLinkPath = (image: Image): string => {
+  const imgLinkPath = (image: ClientImage): string => {
     if (image.postId) return `${ResourcePaths.Post}${image.postId}`;
     if (image.motionId) return `${ResourcePaths.Motion}${image.motionId}`;
     return router.asPath;

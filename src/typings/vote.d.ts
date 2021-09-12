@@ -1,4 +1,4 @@
-interface Vote {
+interface ClientVote {
   id: string;
   userId: string;
   motionId: string;

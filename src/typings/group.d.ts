@@ -1,20 +1,11 @@
-interface Group {
+interface ClientGroup {
   id: string;
   name: string;
   description: string;
   creatorId: string;
 }
 
-interface BackendGroup {
-  id: number;
-  name: string;
-  description: string;
-  creatorId: number;
-  createdAt: Date;
-  __typename?: string;
-}
-
-interface MemberRequest {
+interface ClientMemberRequest {
   id: string;
   userId: string;
   groupId: string;
@@ -22,7 +13,7 @@ interface MemberRequest {
   createdAt: string;
 }
 
-interface GroupMember {
+interface ClientGroupMember {
   id: string;
   userId: string;
   groupId: string;

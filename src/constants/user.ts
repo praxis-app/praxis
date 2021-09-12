@@ -1,6 +1,6 @@
 export enum NameValidation {
   Min = 2,
-  Max = 30,
+  Max = 20,
 }
 
 export enum PasswordValidation {

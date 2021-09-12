@@ -19,10 +19,12 @@ import {
 const Requests = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
-  const [group, setGroup] = useState<Group>();
+  const [group, setGroup] = useState<ClientGroup>();
   const [groupSettings] = useSettingsByGroupId(group?.id);
   const [groupMembers] = useMembersByGroupId(group?.id);
-  const [memberRequests, setMemberRequests] = useState<MemberRequest[]>([]);
+  const [memberRequests, setMemberRequests] = useState<ClientMemberRequest[]>(
+    []
+  );
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
   const [getMemberRequestsRes, memberRequestsRes] = useLazyQuery(
     MEMBER_REUQESTS,
@@ -70,7 +72,7 @@ const Requests = () => {
 
   const isAMember = (): boolean => {
     const member = groupMembers?.find(
-      (member: GroupMember) => member.userId === currentUser?.id
+      (member: ClientGroupMember) => member.userId === currentUser?.id
     );
     return Boolean(member);
   };
@@ -97,7 +99,7 @@ const Requests = () => {
         </Typography>
 
         <Card>
-          {memberRequests.map((memberRequest: MemberRequest) => {
+          {memberRequests.map((memberRequest: ClientMemberRequest) => {
             return (
               <Request
                 memberRequest={memberRequest}

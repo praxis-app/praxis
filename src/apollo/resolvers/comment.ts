@@ -1,29 +1,33 @@
 import { ApolloError, GraphQLUpload } from "apollo-server-micro";
-import { saveImage, deleteImage } from "../../utils/image";
+import { Comment } from ".prisma/client";
+
+import { saveImage, deleteImage, FileUpload } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
 
 interface CommentInput {
   body: string;
-  images: any;
+  images: FileUpload[];
 }
 
-const saveImages = async (comment: any, images: any) => {
+const saveImages = async (comment: Comment, images: FileUpload[]) => {
   for (const image of images ? images : []) {
-    let path: any;
+    let path: string;
 
     try {
       path = await saveImage(image);
-    } catch (e) {
-      throw new ApolloError(" Unable to upload image(s)\nError response: " + e);
+    } catch (err) {
+      throw new ApolloError(
+        "Unable to upload image(s)\nError response: " + err
+      );
     }
 
     await prisma.image.create({
       data: {
         user: {
           connect: {
-            id: comment.userId,
+            id: comment.userId as number,
           },
         },
         comment: {
@@ -116,15 +120,14 @@ const commentResolvers = {
         },
       });
 
-      // for image upload error catching in utils/saveImage
       try {
         await saveImages(comment, images);
-      } catch (e) {
-        const currComment = {
+      } catch (err) {
+        const whereCommentId = {
           where: { id: comment.id },
         };
-        await prisma.comment.delete(currComment);
-        return e; // method is not allowed to return null, this prevents error at runtime
+        await prisma.comment.delete(whereCommentId);
+        return err;
       }
 
       return { comment };
@@ -142,11 +145,10 @@ const commentResolvers = {
 
       if (!comment) throw new Error(Messages.items.notFound(TypeNames.Comment));
 
-      // for image upload error catching in utils/saveImage
       try {
         await saveImages(comment, images);
-      } catch (e) {
-        return e; // method is not allowed to return null, this prevents error at runtime
+      } catch (err) {
+        return err;
       }
 
       return { comment };

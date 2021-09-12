@@ -1,15 +1,18 @@
 import { GraphQLUpload } from "apollo-server-micro";
+import { Group, Motion, Post } from ".prisma/client";
+
 import prisma from "../../utils/initPrisma";
-import { saveImage, deleteImage } from "../../utils/image";
+import { saveImage, deleteImage, FileUpload } from "../../utils/image";
 import { ModelNames, TypeNames } from "../../constants/common";
 import { INITIAL_GROUP_SETTINGS } from "../../constants/setting";
 import Messages from "../../utils/messages";
 import { paginate } from "../../utils/items";
+import { BackendFeedItem } from "../models/common";
 
 interface GroupInput {
   name: string;
   description: string;
-  coverPhoto: any;
+  coverPhoto: FileUpload;
 }
 
 interface GroupFeedInput extends PaginationState {
@@ -17,7 +20,7 @@ interface GroupFeedInput extends PaginationState {
   itemType: string;
 }
 
-const saveCoverPhoto = async (group: any, image: any) => {
+const saveCoverPhoto = async (group: Group, image: FileUpload) => {
   if (image) {
     const path = await saveImage(image);
     await prisma.image.create({
@@ -71,9 +74,9 @@ const groupResolvers = {
       }));
 
       if (!itemType || itemType === ModelNames.Post)
-        feed.push(...(postsWithType as BackendPost[]));
+        feed.push(...(postsWithType as Post[]));
       if (!itemType || itemType === ModelNames.Motion)
-        feed.push(...(motionsWithType as BackendMotion[]));
+        feed.push(...(motionsWithType as Motion[]));
 
       return {
         pagedItems: paginate(
@@ -112,7 +115,7 @@ const groupResolvers = {
     },
 
     joinedGroupsByUserId: async (_: any, { userId }: { userId: string }) => {
-      const groups: BackendGroup[] = [];
+      const groups: Group[] = [];
       const groupMembers = await prisma.groupMember.findMany({
         where: {
           userId: parseInt(userId),

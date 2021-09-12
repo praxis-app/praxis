@@ -38,13 +38,13 @@ const List = ({ deleteMotion, deletePost }: Props) => {
       {items.map((item) => {
         return item.__typename === TypeNames.Motion ? (
           <Motion
-            motion={item as Motion}
+            motion={item as ClientMotion}
             deleteMotion={deleteMotion}
             key={`motion-${item.id}`}
           />
         ) : (
           <Post
-            post={item as Post}
+            post={item as ClientPost}
             deletePost={deletePost}
             key={`post-${item.id}`}
           />

@@ -2,7 +2,7 @@ import { CircularProgress } from "@material-ui/core";
 import Post from "./Post";
 
 interface Props {
-  posts: Post[];
+  posts: ClientPost[];
   loading: boolean;
   deletePost: (id: string) => void;
 }

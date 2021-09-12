@@ -26,7 +26,7 @@ const Show = () => {
   const currentUser = useCurrentUser();
   const feed = useReactiveVar(feedVar);
   const { currentPage, pageSize } = useReactiveVar(paginationVar);
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<ClientUser>();
   const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME);
   const [getFeedRes, feedRes] = useLazyQuery(PROFILE_FEED, noCache);
   const [deleteUser] = useMutation(DELETE_USER);
@@ -100,7 +100,7 @@ const Show = () => {
       feedVar({
         ...feed,
         items: feed.items.filter(
-          (item: FeedItem) =>
+          (item: ClientFeedItem) =>
             item.id !== id || item.__typename !== TypeNames.Post
         ),
       });
@@ -116,7 +116,7 @@ const Show = () => {
       feedVar({
         ...feed,
         items: feed.items.filter(
-          (item: FeedItem) =>
+          (item: ClientFeedItem) =>
             item.id !== id || item.__typename !== TypeNames.Motion
         ),
       });

@@ -2,7 +2,7 @@ import { GraphQLUpload } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
 import { TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
-import Motion from "../models/motion";
+import { evaluate as evaluateMotion } from "../models/motion";
 
 interface VoteInput {
   body: string;
@@ -63,7 +63,7 @@ const voteResolvers = {
         },
       });
 
-      const motionRatified = Motion.evaluate(parseInt(motionId));
+      const motionRatified = evaluateMotion(parseInt(motionId));
 
       return { vote, motionRatified };
     },
@@ -76,7 +76,7 @@ const voteResolvers = {
       });
       if (!vote) throw new Error(Messages.items.notFound(TypeNames.Vote));
 
-      const motionRatified = Motion.evaluate(vote.motionId as number);
+      const motionRatified = evaluateMotion(vote.motionId as number);
       return { vote, motionRatified };
     },
 

@@ -43,7 +43,7 @@ interface Props {
 }
 
 const CardFooter = ({ postId }: Props) => {
-  const [likes, setLikes] = useState<Like[]>([]);
+  const [likes, setLikes] = useState<ClientLike[]>([]);
   const [totalComments, setTotalComments] = useState<number>(0);
   const queryPayload = {
     variables: { postId },

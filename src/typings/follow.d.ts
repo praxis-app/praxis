@@ -1,4 +1,4 @@
-interface Follow {
+interface ClientFollow {
   id: string;
   userId: string;
   followerId: string;

@@ -1,4 +1,4 @@
-interface Comment {
+interface ClientComment {
   id: string;
   userId: string;
   postId: string;

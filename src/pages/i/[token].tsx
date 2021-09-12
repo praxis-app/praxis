@@ -15,7 +15,7 @@ import { redeemedInviteToken } from "../../utils/invite";
 const RedeemServerInvite = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
-  const [invite, setInvite] = useState<ServerInvite>();
+  const [invite, setInvite] = useState<ClientServerInvite>();
   const [getInviteRes, inviteRes] = useLazyQuery(
     SERVER_INVITE_BY_TOKEN,
     noCache

@@ -7,9 +7,9 @@ import { useReactiveVar } from "@apollo/client";
 import { toastVar } from "../../apollo/client/localState";
 import { Events, KeyCodes } from "../../constants/common";
 
-function Alert(props: AlertProps) {
+const Alert = (props: AlertProps) => {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+};
 
 const useStyles = makeStyles({
   root: {

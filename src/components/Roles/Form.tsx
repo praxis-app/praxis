@@ -20,10 +20,10 @@ interface FormValues {
 }
 
 interface Props {
-  role?: Role;
-  roles?: Role[];
-  setRole?: (role: Role) => void;
-  setRoles?: (roles: Role[]) => void;
+  role?: ClientRole;
+  roles?: ClientRole[];
+  setRole?: (role: ClientRole) => void;
+  setRoles?: (roles: ClientRole[]) => void;
   isEditing?: boolean;
 }
 

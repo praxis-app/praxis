@@ -111,6 +111,13 @@ export enum FocusTargets {
   None = "",
 }
 
+export enum TruncationSizes {
+  Small = 10,
+  Medium = 20,
+  Large = 40,
+  ExtraLarge = 65,
+}
+
 export const INITIAL_PAGINATION_STATE: PaginationState = {
   currentPage: 0,
   pageSize: PageSizes.Default,

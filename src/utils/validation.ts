@@ -3,13 +3,11 @@ import isEmpty from "is-empty";
 import Messages from "./messages";
 import { NameValidation, PasswordValidation } from "../constants/user";
 
-function validateLogin(data: SignInInput) {
+export const validateLogin = (data: SignInInput) => {
   const errors: ValidationError = {};
 
-  /* eslint-disable no-param-reassign */
   data.email = !isEmpty(data.email) ? data.email : "";
   data.password = !isEmpty(data.password) ? data.password : "";
-  /* eslint-enable no-param-reassign */
 
   if (!validator.isEmail(data.email)) {
     errors.email = Messages.users.validation.invalidEmail();
@@ -39,19 +37,17 @@ function validateLogin(data: SignInInput) {
     errors,
     isValid: isEmpty(errors),
   };
-}
+};
 
-function validateSignup(data: SignUpInput) {
+export const validateSignup = (data: SignUpInput) => {
   const errors: ValidationError = {};
 
-  /* eslint-disable no-param-reassign */
   data.name = !isEmpty(data.name) ? data.name : "";
   data.email = !isEmpty(data.email) ? data.email : "";
   data.password = !isEmpty(data.password) ? data.password : "";
   data.passwordConfirm = !isEmpty(data.passwordConfirm)
     ? data.passwordConfirm
     : "";
-  /* eslint-enable no-param-reassign */
 
   if (
     !validator.isLength(data.name, {
@@ -117,6 +113,40 @@ function validateSignup(data: SignUpInput) {
     errors,
     isValid: isEmpty(errors),
   };
-}
+};
 
-export { validateLogin, validateSignup };
+export const validateUpdateUser = (data: UpdateUserInput) => {
+  const errors: ValidationError = {};
+
+  data.name = !isEmpty(data.name) ? data.name : "";
+  data.email = !isEmpty(data.email) ? data.email : "";
+
+  if (
+    !validator.isLength(data.name, {
+      min: NameValidation.Min,
+      max: NameValidation.Max,
+    })
+  ) {
+    errors.name = Messages.users.validation.nameLength(
+      NameValidation.Min,
+      NameValidation.Max
+    );
+  }
+
+  if (validator.isEmpty(data.name)) {
+    errors.name = Messages.users.validation.nameRequired();
+  }
+
+  if (!validator.isEmail(data.email)) {
+    errors.email = Messages.users.validation.invalidEmail();
+  }
+
+  if (validator.isEmpty(data.email)) {
+    errors.email = Messages.users.validation.emailRequired();
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors),
+  };
+};

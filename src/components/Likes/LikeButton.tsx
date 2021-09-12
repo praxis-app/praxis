@@ -22,7 +22,7 @@ interface Props {
 
 const LikeButton = ({ postId, motionId, commentId }: Props) => {
   const currentUser = useCurrentUser();
-  const [likes, setLikes] = useState<Like[]>([]);
+  const [likes, setLikes] = useState<ClientLike[]>([]);
   const [createLike, { loading: createLikeLoading }] = useMutation(CREATE_LIKE);
   const [deleteLike, { loading: deleteLikeLoading }] = useMutation(DELETE_LIKE);
   const [getLikesByPostId, likesByPostIdRes] = useLazyQuery(
@@ -59,7 +59,7 @@ const LikeButton = ({ postId, motionId, commentId }: Props) => {
     likesByCommentIdRes.data,
   ]);
 
-  const alreadyLike = (): Like | null => {
+  const alreadyLike = (): ClientLike | null => {
     if (!currentUser) return null;
 
     const like = likes.find((like) => like.userId === currentUser.id);
@@ -100,7 +100,10 @@ const LikeButton = ({ postId, motionId, commentId }: Props) => {
     >
       <Favorite
         color="primary"
-        style={alreadyLike() ? { color: BLURPLE } : {}}
+        style={{
+          transition: "0.3s",
+          ...(alreadyLike() ? { color: BLURPLE } : {}),
+        }}
       />
       {likes.length > 0 && (
         <span

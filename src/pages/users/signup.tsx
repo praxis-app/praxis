@@ -14,7 +14,7 @@ const SignUp = () => {
   const token = redeemedInviteToken();
   const currentUser = useCurrentUser();
   const [users, _setUsers, usersLoading] = useAllUsers();
-  const [invite, setInvite] = useState<ServerInvite>();
+  const [invite, setInvite] = useState<ClientServerInvite>();
   const [getInviteRes, inviteRes] = useLazyQuery(
     SERVER_INVITE_BY_TOKEN,
     noCache

@@ -9,16 +9,15 @@ import {
 } from "@material-ui/core";
 import { Formik, Form, Field } from "formik";
 
-import { motionVar } from "../../apollo/client/localState";
+import { feedVar, motionVar } from "../../apollo/client/localState";
 import { UPDATE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/VotesForm.module.scss";
 import Messages from "../../utils/messages";
-import { useCurrentUser } from "../../hooks";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
 import Dropdown from "../Shared/Dropdown";
 import { Stages } from "../../constants/motion";
-import { FieldNames, ResourcePaths } from "../../constants/common";
+import { FieldNames, ResourcePaths, TypeNames } from "../../constants/common";
 import { ConsensusStates, FlipStates } from "../../constants/vote";
 
 interface FormValues {
@@ -26,9 +25,9 @@ interface FormValues {
 }
 
 interface Props {
-  vote: Vote;
-  votes?: Vote[];
-  setVotes?: (votes: Vote[]) => void;
+  vote: ClientVote;
+  votes?: ClientVote[];
+  setVotes?: (votes: ClientVote[]) => void;
   onEditPage?: boolean;
   modelOfConsensus?: boolean;
 }
@@ -40,7 +39,7 @@ const VotesForm = ({
   onEditPage,
   modelOfConsensus,
 }: Props) => {
-  const currentUser = useCurrentUser();
+  const feed = useReactiveVar(feedVar);
   const motionFromGlobal = useReactiveVar(motionVar);
   const [flipState, setFlipState] = useState<string>("");
   const [consensusState, setConsensusState] = useState<string>("");
@@ -53,40 +52,51 @@ const VotesForm = ({
   }, [vote, modelOfConsensus]);
 
   const handleSubmit = async ({ body }: FormValues) => {
-    if (currentUser) {
-      try {
-        const { data } = await updateVote({
-          variables: {
-            id: vote?.id,
-            consensusState,
-            flipState,
-            body,
-          },
-        });
-        if (setVotes && votes) {
-          if (data.updateVote.motionRatified && motionFromGlobal) {
+    try {
+      const { data } = await updateVote({
+        variables: {
+          id: vote?.id,
+          consensusState,
+          flipState,
+          body,
+        },
+      });
+      if (setVotes && votes) {
+        if (data.updateVote.motionRatified) {
+          if (motionFromGlobal)
             motionVar({ ...motionFromGlobal, stage: Stages.Ratified });
-          }
-
-          setVotes(
-            votes.map((vote) => {
-              const newVote: Vote = data.updateVote.vote;
-              if (vote.id === newVote.id)
-                return {
-                  ...vote,
-                  body: newVote.body,
-                  flipState: newVote.flipState,
-                  consensusState: newVote.consensusState,
-                };
-              return vote;
-            })
-          );
-        } else {
-          Router.push(`${ResourcePaths.Motion}${vote.motionId}`);
+          if (feed.totalItems)
+            feedVar({
+              ...feed,
+              items: feed.items.map((item) => {
+                if (
+                  item.id === vote.motionId &&
+                  item.__typename === TypeNames.Motion
+                )
+                  return { ...item, stage: Stages.Ratified };
+                return item;
+              }),
+            });
         }
-      } catch (err) {
-        alert(err);
+
+        setVotes(
+          votes.map((vote) => {
+            const newVote: ClientVote = data.updateVote.vote;
+            if (vote.id === newVote.id)
+              return {
+                ...vote,
+                body: newVote.body,
+                flipState: newVote.flipState,
+                consensusState: newVote.consensusState,
+              };
+            return vote;
+          })
+        );
+      } else {
+        Router.push(`${ResourcePaths.Motion}${vote.motionId}`);
       }
+    } catch (err) {
+      alert(err);
     }
   };
 
@@ -111,8 +121,8 @@ const VotesForm = ({
     }
 
     return flipState === FlipStates.Up
-      ? Messages.votes.form.bodyPlaceholder.support()
-      : Messages.votes.form.bodyPlaceholder.block();
+      ? Messages.votes.form.bodyPlaceholder.agreement()
+      : Messages.votes.form.bodyPlaceholder.disagreement();
   };
 
   const selectValue = (): string => {
@@ -135,11 +145,7 @@ const VotesForm = ({
             />
 
             <FormControl style={{ marginBottom: 20 }}>
-              <InputLabel>
-                {modelOfConsensus
-                  ? Messages.votes.form.agreeOrDisagree()
-                  : Messages.votes.form.supportOrBlock()}
-              </InputLabel>
+              <InputLabel>{Messages.votes.form.agreeOrDisagree()}</InputLabel>
               {modelOfConsensus ? (
                 <Dropdown value={selectValue()} onChange={handleVoteTypeChange}>
                   <MenuItem value={ConsensusStates.Agreement}>
@@ -158,10 +164,10 @@ const VotesForm = ({
               ) : (
                 <Dropdown value={selectValue()} onChange={handleVoteTypeChange}>
                   <MenuItem value={FlipStates.Up}>
-                    {Messages.votes.actions.support()}
+                    {Messages.votes.actions.agree()}
                   </MenuItem>
                   <MenuItem value={FlipStates.Down}>
-                    {Messages.votes.actions.block()}
+                    {Messages.votes.actions.disagree()}
                   </MenuItem>
                 </Dropdown>
               )}

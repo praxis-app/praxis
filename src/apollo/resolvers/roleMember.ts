@@ -1,3 +1,4 @@
+import { RoleMember } from ".prisma/client";
 import prisma from "../../utils/initPrisma";
 
 interface AddMembersInput {
@@ -26,7 +27,7 @@ const roleMemberResolvers = {
       { roleId, input }: { roleId: string; input: AddMembersInput }
     ) {
       const { selectedUsers } = input;
-      const roleMembers: BackendRoleMember[] = [];
+      const roleMembers: RoleMember[] = [];
       for (const selectedUser of selectedUsers) {
         const roleMember = await prisma.roleMember.create({
           data: {

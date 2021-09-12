@@ -21,7 +21,7 @@ import { Permissions } from "../../constants/role";
 
 const Index = () => {
   const currentUser = useCurrentUser();
-  const [invites, setInvites] = useState<ServerInvite[]>([]);
+  const [invites, setInvites] = useState<ClientServerInvite[]>([]);
   const invitesRes = useQuery(SERVER_INVITES, noCache);
   const [canManageInvites, canManageInvitesLoading] = useHasPermissionGlobally(
     Permissions.ManageInvites
@@ -34,7 +34,7 @@ const Index = () => {
     if (invitesRes.data)
       setInvites(
         invitesRes.data.allServerInvites.filter(
-          (invite: ServerInvite) =>
+          (invite: ClientServerInvite) =>
             canManageInvites || invite.userId === currentUser?.id
         )
       );
@@ -70,7 +70,7 @@ const Index = () => {
             {invites
               .slice()
               .reverse()
-              .map((invite: ServerInvite) => {
+              .map((invite: ClientServerInvite) => {
                 return (
                   <ServerInvite
                     invite={invite}

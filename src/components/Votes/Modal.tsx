@@ -16,7 +16,7 @@ import Voter from "./Voter";
 
 interface TabLabelProps {
   icon: SvgIconComponent;
-  votes: Vote[];
+  votes: ClientVote[];
 }
 
 const TabLabel = ({ icon, votes }: TabLabelProps) => {
@@ -35,7 +35,7 @@ const TabLabel = ({ icon, votes }: TabLabelProps) => {
 };
 
 interface Props {
-  votes: Vote[];
+  votes: ClientVote[];
   open: boolean;
   setOpen: (open: boolean) => void;
 }
@@ -52,7 +52,7 @@ const VotesModal = ({ votes, open, setOpen }: Props) => {
     if (open) setTab(0);
   }, [open]);
 
-  const hideTab = (votes: Vote[]): CSSProperties | undefined => {
+  const hideTab = (votes: ClientVote[]): CSSProperties | undefined => {
     if (votes.length) return undefined;
     return { display: "none" };
   };

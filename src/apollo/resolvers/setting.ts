@@ -1,4 +1,6 @@
 import { GraphQLUpload } from "apollo-server-micro";
+import { Setting } from ".prisma/client";
+
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
@@ -34,7 +36,7 @@ const settingResolvers = {
   Mutation: {
     async updateSettings(_: any, { input }: { input: UpdateSettingsInput }) {
       const { settings } = input;
-      const updatedSettings: BackendSetting[] = [];
+      const updatedSettings: Setting[] = [];
 
       for (const setting of settings) {
         const updatedSetting = await updateSettingById(setting);

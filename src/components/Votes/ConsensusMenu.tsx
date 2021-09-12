@@ -4,11 +4,12 @@ import { ThumbUp, ThumbDown, PanTool, ThumbsUpDown } from "@material-ui/icons";
 
 import { Stages } from "../../constants/motion";
 import { BLURPLE, WHITE } from "../../styles/Shared/theme";
-import { motionVar } from "../../apollo/client/localState";
+import { feedVar, motionVar, toastVar } from "../../apollo/client/localState";
 import { CREATE_VOTE, DELETE_VOTE } from "../../apollo/client/mutations";
 import { ConsensusStates } from "../../constants/vote";
 import { useCurrentUser } from "../../hooks";
 import Messages from "../../utils/messages";
+import { ToastStatus, TypeNames } from "../../constants/common";
 
 interface ConsensusMenuItemProps {
   consensusState: string;
@@ -66,8 +67,8 @@ const ConsensusMenuItem = ({
 
 interface ConsensusMenuProps {
   motionId: string;
-  votes: Vote[];
-  setVotes: (votes: Vote[]) => void;
+  votes: ClientVote[];
+  setVotes: (votes: ClientVote[]) => void;
   anchorEl: null | HTMLElement;
   handleClose: () => void;
 }
@@ -80,6 +81,7 @@ const ConsensusMenu = ({
   handleClose,
 }: ConsensusMenuProps) => {
   const currentUser = useCurrentUser();
+  const feed = useReactiveVar(feedVar);
   const motionFromGlobal = useReactiveVar(motionVar);
   const [createVote] = useMutation(CREATE_VOTE);
   const [deleteVote] = useMutation(DELETE_VOTE);
@@ -88,32 +90,32 @@ const ConsensusMenu = ({
     horizontal: "center",
   };
 
-  const alreadyVote = (): Vote | null => {
+  const alreadyVote = (): ClientVote | null => {
     if (!currentUser) return null;
     const vote = votes.find((vote) => vote.userId === currentUser.id);
     if (vote) return vote;
     return null;
   };
 
-  const alreadyAgree = (): Vote | null => {
+  const alreadyAgree = (): ClientVote | null => {
     if (alreadyVote()?.consensusState === ConsensusStates.Agreement)
       return alreadyVote();
     return null;
   };
 
-  const alreadyDeclaredReservations = (): Vote | null => {
+  const alreadyDeclaredReservations = (): ClientVote | null => {
     if (alreadyVote()?.consensusState === ConsensusStates.Reservations)
       return alreadyVote();
     return null;
   };
 
-  const alreadyDelcaredStandAside = (): Vote | null => {
+  const alreadyDelcaredStandAside = (): ClientVote | null => {
     if (alreadyVote()?.consensusState === ConsensusStates.StandAside)
       return alreadyVote();
     return null;
   };
 
-  const alreadyBlocked = (): Vote | null => {
+  const alreadyBlocked = (): ClientVote | null => {
     if (alreadyVote()?.consensusState === ConsensusStates.Block)
       return alreadyVote();
     return null;
@@ -135,7 +137,7 @@ const ConsensusMenu = ({
   const handleMenuItemClick = async (consensusState: string) => {
     handleClose();
 
-    let newVotes: Vote[] = votes;
+    let newVotes: ClientVote[] = votes;
     if (alreadyVote()) {
       await deleteVote({
         variables: {
@@ -156,8 +158,24 @@ const ConsensusMenu = ({
         },
       });
       newVotes = [...newVotes, data.createVote.vote];
-      if (data.createVote.motionRatified && motionFromGlobal) {
-        motionVar({ ...motionFromGlobal, stage: Stages.Ratified });
+      if (data.createVote.motionRatified) {
+        toastVar({
+          title: Messages.motions.toasts.ratifiedSuccess(),
+          status: ToastStatus.Success,
+        });
+
+        if (motionFromGlobal)
+          motionVar({ ...motionFromGlobal, stage: Stages.Ratified });
+
+        if (feed.totalItems)
+          feedVar({
+            ...feed,
+            items: feed.items.map((item) => {
+              if (item.id === motionId && item.__typename === TypeNames.Motion)
+                return { ...item, stage: Stages.Ratified };
+              return item;
+            }),
+          });
       }
     }
     setVotes(newVotes);

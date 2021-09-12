@@ -11,13 +11,13 @@ import MotionsForm from "../Motions/Form";
 import PostsForm from "../Posts/Form";
 
 interface Props {
-  group?: Group;
+  group?: ClientGroup;
 }
 
 const ToggleForms = ({ group }: Props) => {
   const currentUser = useCurrentUser();
   const toggle = useReactiveVar(formToggleVar);
-  const [groups, setGroups] = useState<Group[]>();
+  const [groups, setGroups] = useState<ClientGroup[]>();
   const [getGroupsRes, groupsRes] = useLazyQuery(
     JOINED_GROUPS_BY_USER_ID,
     noCache

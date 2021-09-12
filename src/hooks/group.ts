@@ -6,8 +6,8 @@ import { noCache } from "../utils/apollo";
 export const useMembersByGroupId = (
   groupId: string | undefined,
   callDep?: any
-): [GroupMember[], (members: GroupMember[]) => void, boolean] => {
-  const [members, setMembers] = useState<GroupMember[]>([]);
+): [ClientGroupMember[], (members: ClientGroupMember[]) => void, boolean] => {
+  const [members, setMembers] = useState<ClientGroupMember[]>([]);
   const [getMembersRes, membersRes] = useLazyQuery(GROUP_MEMBERS, noCache);
 
   useEffect(() => {

@@ -10,7 +10,7 @@ import Chip, { ChipProps } from "./Chip";
 import VotesModal from "./Modal";
 
 interface VoteChipsProps {
-  votes: Vote[];
+  votes: ClientVote[];
 }
 
 const VoteChips = ({ votes }: VoteChipsProps) => {

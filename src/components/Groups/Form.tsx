@@ -21,7 +21,7 @@ interface FormValues {
 }
 
 interface Props {
-  group?: Group;
+  group?: ClientGroup;
   isEditing?: boolean;
 }
 

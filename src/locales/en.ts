@@ -113,10 +113,8 @@ const en = {
     actions: {
       motion: () => "Motion",
     },
-    toActionWithRatified: (action: string, ratified: boolean) =>
-      ` · Motion to ${action.replace(/-/g, " ")}${
-        ratified ? " · Ratified ✓" : ""
-      }`,
+    toAction: (action: string) => ` · Motion to ${action.replace(/-/g, " ")}`,
+    ratified: () => "Ratified",
     form: {
       makeAMotion: () => "Make a motion...",
       motionType: () => "Motion type",
@@ -146,27 +144,31 @@ const en = {
         attachImage: () => "Attach new group image",
       },
     },
+    toasts: {
+      ratifiedInfo: () =>
+        "This motion has been ratified and can no longer be voted on.",
+      ratifiedSuccess: () => "This motion has been ratified! 🎉",
+    },
   },
 
   votes: {
     actions: {
       agree: () => "Agree",
       block: () => "Block",
+      disagree: () => "Disagree",
       reservations: () => "Reservations",
       standAside: () => "Stand Aside",
-      support: () => "Support",
       update: () => "Update vote",
       vote: () => "Vote",
     },
     form: {
       bodyPlaceholder: {
-        support: () => "Why do you support this motion?",
         agreement: () => "Why do you agree with this motion?",
+        disagreement: () => "Why do you disagree with this motion?",
         reservations: () => "What reservations do you have with this motion?",
         standAside: () => "Why are you delclaring a stand aside?",
         block: () => "Why are you blocking this motion?",
       },
-      supportOrBlock: () => "Vote to support or block",
       agreeOrDisagree: () => "Express your agreement or disagreement",
     },
     votingTypes: {
@@ -193,16 +195,16 @@ const en = {
             "I have a fundamental disagreement with the core of the motion and I don't want it to happen.",
         },
         labels: {
-          agreement: () => "Vote of agreement",
-          reservations: () => "Agreement with reservations",
-          standAside: () => "Vote to stand aside",
-          block: () => "Vote to block",
+          agreement: () => "Agree",
+          reservations: () => "Reservations",
+          standAside: () => "Stand Aside",
+          block: () => "Block",
         },
       },
     },
     voteTypeLabel: {
-      support: () => "Vote of support",
-      block: () => "Vote to block",
+      agreement: () => "Agree",
+      disagreement: () => "Disagree",
     },
     verifiedWithCheck: () => "Verified ✓",
   },
@@ -214,7 +216,7 @@ const en = {
     form: {
       leaveAComment: () => "Leave a comment...",
     },
-    totalComments: (total: number) => `${total} Comments`,
+    totalComments: (total: number) => `${total} Comment${pluralize(total)}`,
   },
 
   groups: {
@@ -227,11 +229,8 @@ const en = {
       name: () => "Name",
       description: () => "Description",
     },
-    itemWithNameAndRatified: (
-      itemType: string,
-      name: string,
-      ratified: boolean
-    ) => `Group ${itemType} by ${name}${ratified ? " · Ratified ✓" : ""}`,
+    itemWithName: (itemType: string, name: string) =>
+      `Group ${itemType} by ${name}`,
     tabs: {
       all: () => "All",
       posts: () => "Posts",

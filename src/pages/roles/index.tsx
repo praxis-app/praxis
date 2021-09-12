@@ -15,7 +15,7 @@ import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
 import { Permissions } from "../../constants/role";
 
 const Index = () => {
-  const [roles, setRoles] = useState<Role[]>([]);
+  const [roles, setRoles] = useState<ClientRole[]>([]);
   const [deleteRole] = useMutation(DELETE_ROLE);
   const [initializeAdminRole] = useMutation(INITIALIZE_ADMIN_ROLE);
   const rolesRes = useQuery(GLOBAL_ROLES, noCache);
@@ -35,7 +35,7 @@ const Index = () => {
         id,
       },
     });
-    if (roles) setRoles(roles.filter((role: Role) => role.id !== id));
+    if (roles) setRoles(roles.filter((role: ClientRole) => role.id !== id));
   };
 
   const initializeAdminRoleHandler = async () => {
@@ -84,7 +84,7 @@ const Index = () => {
           {roles
             .slice()
             .reverse()
-            .map((role: Role) => {
+            .map((role: ClientRole) => {
               return (
                 <Role
                   role={role}

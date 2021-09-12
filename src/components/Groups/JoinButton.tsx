@@ -10,11 +10,11 @@ import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 
 interface Props {
-  group: Group;
-  memberRequests: MemberRequest[];
-  groupMembers: GroupMember[];
-  setMemberRequests: (memberRequests: MemberRequest[]) => void;
-  setGroupMembers: (groupMembers: GroupMember[]) => void;
+  group: ClientGroup;
+  memberRequests: ClientMemberRequest[];
+  groupMembers: ClientGroupMember[];
+  setMemberRequests: (memberRequests: ClientMemberRequest[]) => void;
+  setGroupMembers: (groupMembers: ClientGroupMember[]) => void;
 }
 
 const JoinButton = ({
@@ -31,14 +31,14 @@ const JoinButton = ({
 
   const alreadyRequested = () => {
     const request = memberRequests?.find(
-      (request: MemberRequest) => request.userId === currentUser?.id
+      (request: ClientMemberRequest) => request.userId === currentUser?.id
     );
     return request;
   };
 
   const alreadyJoined = () => {
     const member = groupMembers?.find(
-      (member: GroupMember) => member.userId === currentUser?.id
+      (member: ClientGroupMember) => member.userId === currentUser?.id
     );
     return member;
   };
