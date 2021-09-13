@@ -8,7 +8,7 @@ import { SIGN_IN, SET_CURRENT_USER } from "../../apollo/client/mutations";
 import { setAuthToken } from "../../utils/auth";
 import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
-import { LocalStorage } from "../../constants/common";
+import { LocalStorage, NavigationPaths } from "../../constants/common";
 import { FieldNames } from "../../constants/user";
 import { useCurrentUser } from "../../hooks";
 import SubmitButton from "../../components/Shared/SubmitButton";
@@ -29,7 +29,7 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (currentUser?.isAuthenticated) Router.push("/");
+    if (currentUser?.isAuthenticated) Router.push(NavigationPaths.Home);
   }, [currentUser]);
 
   const handleSubmit = async ({ email, password }: FormValues) => {
@@ -50,7 +50,7 @@ const Login = () => {
       });
       localStorage.setItem(LocalStorage.JwtToken, token);
       setAuthToken(token);
-      Router.push("/");
+      Router.push(NavigationPaths.Home);
     } catch (err) {
       alert(err);
     }

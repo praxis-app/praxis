@@ -8,6 +8,7 @@ import { COMMENT, USER } from "../../../apollo/client/queries";
 import { noCache } from "../../../utils/apollo";
 import Messages from "../../../utils/messages";
 import { useCurrentUser } from "../../../hooks";
+import { NavigationPaths } from "../../../constants/common";
 
 const Edit = () => {
   const { query } = useRouter();
@@ -43,7 +44,7 @@ const Edit = () => {
 
   useEffect(() => {
     if (currentUser && user && !ownComment()) {
-      Router.push("/");
+      Router.push(NavigationPaths.Home);
     }
   }, [currentUser, user]);
 

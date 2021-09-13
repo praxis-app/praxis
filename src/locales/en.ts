@@ -113,6 +113,10 @@ const en = {
     actions: {
       motion: () => "Motion",
     },
+    prompts: {
+      noEditAfterVoting: () =>
+        "Motions cannot be edited after voting has started.",
+    },
     toAction: (action: string) => ` · Motion to ${action.replace(/-/g, " ")}`,
     ratified: () => "Ratified",
     form: {
@@ -206,7 +210,6 @@ const en = {
       agreement: () => "Agree",
       disagreement: () => "Disagree",
     },
-    verifiedWithCheck: () => "Verified ✓",
   },
 
   comments: {

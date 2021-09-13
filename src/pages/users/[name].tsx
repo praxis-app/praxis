@@ -14,7 +14,7 @@ import {
   LOGOUT_USER,
 } from "../../apollo/client/mutations";
 import { feedVar, paginationVar } from "../../apollo/client/localState";
-import { TypeNames } from "../../constants/common";
+import { NavigationPaths, TypeNames } from "../../constants/common";
 import { useCurrentUser } from "../../hooks";
 import { noCache } from "../../utils/apollo";
 import { resetFeed } from "../../utils/clientIndex";
@@ -86,8 +86,8 @@ const Show = () => {
     });
     if (ownUser()) {
       await logoutUser();
-      Router.push("/");
-    } else Router.push("/users");
+      Router.push(NavigationPaths.Home);
+    } else Router.push(NavigationPaths.Users);
   };
 
   const deletePostHandler = async (id: string) => {

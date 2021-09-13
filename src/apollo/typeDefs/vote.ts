@@ -7,7 +7,6 @@ type Vote {
   body: String
   flipState: String
   consensusState: String
-  verified: Boolean!
   createdAt: String!
   updatedAt: String!
 }

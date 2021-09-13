@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
 import Router from "next/router";
-import { Card, CardContent, FormGroup } from "@material-ui/core";
+import {
+  Card,
+  CardContent,
+  CardActions as MUICardActions,
+  createStyles,
+  FormGroup,
+  withStyles,
+  Divider,
+} from "@material-ui/core";
 import { RemoveCircle } from "@material-ui/icons";
 import { Formik, Form, Field } from "formik";
 
@@ -13,7 +21,11 @@ import {
 import { setAuthToken } from "../../utils/auth";
 import styles from "../../styles/User/User.module.scss";
 import Messages from "../../utils/messages";
-import { LocalStorage, ToastStatus } from "../../constants/common";
+import {
+  LocalStorage,
+  NavigationPaths,
+  ToastStatus,
+} from "../../constants/common";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
@@ -21,6 +33,15 @@ import TextField, { PasswordField } from "../Shared/TextField";
 import ImageInput from "../Images/Input";
 import { toastVar } from "../../apollo/client/localState";
 import { FieldNames } from "../../constants/user";
+
+const CardActions = withStyles(() =>
+  createStyles({
+    root: {
+      justifyContent: "space-between",
+      padding: 0,
+    },
+  })
+)(MUICardActions);
 
 interface FormValues {
   name: string;
@@ -101,7 +122,7 @@ const UserForm = ({ user, isEditing }: Props) => {
 
         localStorage.setItem(LocalStorage.JwtToken, data.signUp.token);
         setAuthToken(data.signUp.token);
-        Router.push("/");
+        Router.push(NavigationPaths.Home);
       }
     } catch (err) {
       toastVar({
@@ -134,27 +155,7 @@ const UserForm = ({ user, isEditing }: Props) => {
                   placeholder={Messages.users.form.email()}
                   component={TextField}
                 />
-
-                <ImageInput
-                  setImage={setProfilePicture}
-                  refreshKey={imageInputKey}
-                />
               </FormGroup>
-
-              {profilePicture && (
-                <div className={styles.selectedImages}>
-                  <img
-                    alt={Messages.images.couldNotRender()}
-                    className={styles.selectedImage}
-                    src={URL.createObjectURL(profilePicture)}
-                  />
-                  <RemoveCircle
-                    color="primary"
-                    onClick={() => removeSelectedProfilePicture()}
-                    className={styles.removeSelectedImageButton}
-                  />
-                </div>
-              )}
 
               {!isEditing && (
                 <>
@@ -177,13 +178,42 @@ const UserForm = ({ user, isEditing }: Props) => {
                 </>
               )}
 
-              <div className={styles.flexEnd}>
-                <SubmitButton disabled={formik.isSubmitting}>
+              {profilePicture && (
+                <>
+                  <div className={styles.selectedImages}>
+                    <img
+                      alt={Messages.images.couldNotRender()}
+                      className={styles.selectedImage}
+                      src={URL.createObjectURL(profilePicture)}
+                    />
+                    <RemoveCircle
+                      color="primary"
+                      onClick={() => removeSelectedProfilePicture()}
+                      className={styles.removeSelectedImageButton}
+                    />
+                  </div>
+
+                  <Divider style={{ marginBottom: 12, marginTop: 18 }} />
+                </>
+              )}
+
+              <CardActions>
+                <div style={{ marginTop: -12 }}>
+                  <ImageInput
+                    setImage={setProfilePicture}
+                    refreshKey={imageInputKey}
+                  />
+                </div>
+
+                <SubmitButton
+                  disabled={formik.isSubmitting}
+                  style={{ marginTop: 4 }}
+                >
                   {isEditing
                     ? Messages.actions.save()
                     : Messages.users.actions.signUp()}
                 </SubmitButton>
-              </div>
+              </CardActions>
             </Form>
           )}
         </Formik>

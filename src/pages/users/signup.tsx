@@ -9,6 +9,7 @@ import { SERVER_INVITE_BY_TOKEN } from "../../apollo/client/queries";
 import { noCache } from "../../utils/apollo";
 import { useLazyQuery } from "@apollo/client";
 import { redeemedInviteToken } from "../../utils/invite";
+import { NavigationPaths } from "../../constants/common";
 
 const SignUp = () => {
   const token = redeemedInviteToken();
@@ -35,7 +36,7 @@ const SignUp = () => {
   }, [inviteRes.data]);
 
   useEffect(() => {
-    if (currentUser?.isAuthenticated) Router.push("/");
+    if (currentUser?.isAuthenticated) Router.push(NavigationPaths.Home);
   }, [currentUser]);
 
   if (inviteRes.loading || usersLoading) return <CircularProgress />;

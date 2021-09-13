@@ -6,7 +6,11 @@ import clsx from "clsx";
 
 import styles from "../../styles/Navigation/TopNav.module.scss";
 import { useScrollDirection, useScrollPosition } from "../../hooks";
-import { ScrollDirections, ToastStatus } from "../../constants/common";
+import {
+  NavigationPaths,
+  ScrollDirections,
+  ToastStatus,
+} from "../../constants/common";
 import { toastVar } from "../../apollo/client/localState";
 import Messages from "../../utils/messages";
 
@@ -26,12 +30,12 @@ const TopNav = () => {
       })}
     >
       <div className={styles.brand}>
-        {router.asPath === "/" ? (
+        {router.asPath === NavigationPaths.Home ? (
           <span onClick={() => router.reload()} role="button" tabIndex={0}>
             {Messages.brand()}
           </span>
         ) : (
-          <Link href="/" passHref>
+          <Link href={NavigationPaths.Home} passHref>
             {Messages.brand()}
           </Link>
         )}

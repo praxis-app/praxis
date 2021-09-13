@@ -179,6 +179,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteMotion}
               ownItem={ownMotion}
+              hideEdit={Boolean(votes.length)}
             />
           }
           classes={classes}

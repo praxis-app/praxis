@@ -35,8 +35,7 @@ interface Props {
 }
 
 const Vote = ({ vote, votes, setVotes }: Props) => {
-  const { id, userId, body, flipState, consensusState, verified, createdAt } =
-    vote;
+  const { id, userId, body, flipState, consensusState, createdAt } = vote;
   const currentUser = useCurrentUser();
   const user = useUserById(userId);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -74,9 +73,6 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
         flipState === FlipStates.Up
           ? Messages.votes.voteTypeLabel.agreement()
           : Messages.votes.voteTypeLabel.disagreement();
-
-    if (verified)
-      text += Messages.middotWithSpaces() + Messages.votes.verifiedWithCheck();
 
     return text;
   };

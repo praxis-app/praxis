@@ -22,7 +22,6 @@ export const VOTES_BY_MOTION_ID = gql`
       body
       flipState
       consensusState
-      verified
       createdAt
       updatedAt
     }

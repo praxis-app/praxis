@@ -22,7 +22,6 @@ export const CREATE_VOTE = gql`
         body
         flipState
         consensusState
-        verified
         userId
         motionId
         createdAt
@@ -52,7 +51,6 @@ export const UPDATE_VOTE = gql`
         body
         flipState
         consensusState
-        verified
         userId
         motionId
         createdAt
