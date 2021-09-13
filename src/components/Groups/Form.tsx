@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import Router from "next/router";
-import { Card, CardContent, FormGroup } from "@material-ui/core";
+import {
+  createStyles,
+  withStyles,
+  FormGroup,
+  Divider,
+  Card,
+  CardContent,
+  CardActions as MUICardActions,
+} from "@material-ui/core";
 import { RemoveCircle } from "@material-ui/icons";
 import { Formik, Form, Field, FormikProps } from "formik";
 
@@ -14,6 +22,15 @@ import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
 import { FieldNames, ResourcePaths } from "../../constants/common";
 import ImageInput from "../Images/Input";
+
+const CardActions = withStyles(() =>
+  createStyles({
+    root: {
+      justifyContent: "space-between",
+      padding: 0,
+    },
+  })
+)(MUICardActions);
 
 interface FormValues {
   name: string;
@@ -81,8 +98,9 @@ const GroupForm = ({ group, isEditing }: Props) => {
     dirty,
   }: FormikProps<FormValues>): boolean => {
     if (!name) return true;
-    if (!dirty) return true;
-    return isSubmitting;
+    if (isSubmitting) return true;
+    if (isEditing && coverPhoto) return false;
+    return !dirty;
   };
 
   if (currentUser)
@@ -106,35 +124,45 @@ const GroupForm = ({ group, isEditing }: Props) => {
                     component={TextField}
                     multiline
                   />
-
-                  <ImageInput
-                    setImage={setCoverPhoto}
-                    refreshKey={imageInputKey}
-                  />
                 </FormGroup>
 
                 {coverPhoto && (
-                  <div className={styles.selectedImages}>
-                    <img
-                      alt={Messages.images.couldNotRender()}
-                      className={styles.selectedImage}
-                      src={URL.createObjectURL(coverPhoto)}
-                    />
+                  <>
+                    <div className={styles.selectedImages}>
+                      <img
+                        alt={Messages.images.couldNotRender()}
+                        className={styles.selectedImage}
+                        src={URL.createObjectURL(coverPhoto)}
+                      />
 
-                    <RemoveCircle
-                      color="primary"
-                      onClick={() => removeSelectedCoverPhoto()}
-                      className={styles.removeSelectedImageButton}
+                      <RemoveCircle
+                        color="primary"
+                        onClick={() => removeSelectedCoverPhoto()}
+                        className={styles.removeSelectedImageButton}
+                      />
+                    </div>
+
+                    <Divider style={{ marginBottom: 12, marginTop: 18 }} />
+                  </>
+                )}
+
+                <CardActions>
+                  <div style={{ display: "flex", marginTop: -12 }}>
+                    <ImageInput
+                      setImage={setCoverPhoto}
+                      refreshKey={imageInputKey}
                     />
                   </div>
-                )}
-                <div className={styles.flexEnd}>
-                  <SubmitButton disabled={isSubmitButtonDisabled(formik)}>
+
+                  <SubmitButton
+                    disabled={isSubmitButtonDisabled(formik)}
+                    style={{ marginTop: 4 }}
+                  >
                     {isEditing
                       ? Messages.actions.save()
                       : Messages.actions.create()}
                   </SubmitButton>
-                </div>
+                </CardActions>
               </Form>
             )}
           </Formik>

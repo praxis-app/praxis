@@ -9,6 +9,7 @@ import { noCache } from "../../../utils/apollo";
 import Messages from "../../../utils/messages";
 import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
 import { GroupSettings, SettingStates } from "../../../constants/setting";
+import { NavigationPaths } from "../../../constants/common";
 
 const Edit = () => {
   const { query } = useRouter();
@@ -33,7 +34,7 @@ const Edit = () => {
 
   useEffect(() => {
     if (currentUser && group && !ownGroup()) {
-      Router.push("/");
+      Router.push(NavigationPaths.Home);
     }
   }, [currentUser, group]);
 

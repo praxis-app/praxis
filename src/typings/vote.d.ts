@@ -5,6 +5,5 @@ interface ClientVote {
   body: string;
   flipState: string;
   consensusState: string;
-  verified: boolean;
   createdAt: string;
 }

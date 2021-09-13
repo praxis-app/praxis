@@ -22,7 +22,7 @@ import VotesList from "../../components/Votes/List";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useIsDesktop } from "../../hooks";
-import { FocusTargets } from "../../constants/common";
+import { FocusTargets, NavigationPaths } from "../../constants/common";
 
 const Show = () => {
   const { query } = useRouter();
@@ -99,7 +99,7 @@ const Show = () => {
         id,
       },
     });
-    Router.push("/");
+    Router.push(NavigationPaths.Home);
   };
 
   const deleteCommentHandler = async (id: string) => {

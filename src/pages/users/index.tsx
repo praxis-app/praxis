@@ -4,7 +4,7 @@ import Router from "next/router";
 
 import User from "../../components/Users/User";
 import { DELETE_USER, LOGOUT_USER } from "../../apollo/client/mutations";
-import { PageSizes } from "../../constants/common";
+import { NavigationPaths, PageSizes } from "../../constants/common";
 import { Permissions } from "../../constants/role";
 import {
   useAllUsers,
@@ -32,7 +32,7 @@ const Index = () => {
 
     if (currentUser?.id === userId) {
       await logoutUser();
-      Router.push("/");
+      Router.push(NavigationPaths.Home);
     }
   };
 

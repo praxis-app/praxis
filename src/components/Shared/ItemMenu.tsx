@@ -14,6 +14,7 @@ interface Props {
   hasPermission?: boolean;
   children?: React.ReactNode;
   prependChildren?: boolean;
+  hideEdit?: boolean;
 }
 
 const ItemMenu = ({
@@ -27,6 +28,7 @@ const ItemMenu = ({
   hasPermission,
   children,
   prependChildren,
+  hideEdit,
 }: Props) => {
   const margin = { marginRight: 7.5 };
 
@@ -54,7 +56,7 @@ const ItemMenu = ({
         >
           {prependChildren && children}
 
-          {ownItem() && (
+          {ownItem() && !hideEdit && (
             <MenuItem>
               <Link href={`/${itemType}s/${name ? name : itemId}/edit`}>
                 <a style={{ width: "100%" }}>

@@ -8,6 +8,7 @@ import { noCache } from "../../../utils/apollo";
 import Messages from "../../../utils/messages";
 import { useCurrentUser } from "../../../hooks";
 import PostsFormWithCard from "../../../components/Posts/FormWithCard";
+import { NavigationPaths } from "../../../constants/common";
 
 const Edit = () => {
   const { query } = useRouter();
@@ -38,7 +39,7 @@ const Edit = () => {
 
   useEffect(() => {
     if (currentUser && user && !ownPost()) {
-      Router.push("/");
+      Router.push(NavigationPaths.Home);
     }
   }, [currentUser, user]);
 
