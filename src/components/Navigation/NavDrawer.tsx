@@ -27,12 +27,13 @@ import {
   navKeyVar,
   navOpenVar,
 } from "../../apollo/client/localState";
-import { NavigationPaths } from "../../constants/common";
+import { NavigationPaths, ResourcePaths } from "../../constants/common";
 import { WHITE } from "../../styles/Shared/theme";
 import Messages from "../../utils/messages";
 import {
   useCurrentUser,
   useHasPermissionGlobally,
+  useUserById,
   useWindowSize,
 } from "../../hooks";
 import { Permissions } from "../../constants/role";
@@ -40,6 +41,7 @@ import { LOGOUT_USER } from "../../apollo/client/mutations";
 import { redeemedInviteToken } from "../../utils/clientIndex";
 import styles from "../../styles/Shared/Shared.module.scss";
 import MotionButton from "../Motions/MotionButton";
+import UserAvatar from "../Users/Avatar";
 
 const ListItemText = withStyles(() =>
   createStyles({
@@ -51,6 +53,7 @@ const ListItemText = withStyles(() =>
 
 const NavDrawer = () => {
   const currentUser = useCurrentUser();
+  const user = useUserById(currentUser?.id);
   const open = useReactiveVar(navOpenVar);
   const refreshKey = useReactiveVar(navKeyVar);
   const openModal = useReactiveVar(modalOpenVar);
@@ -88,7 +91,7 @@ const NavDrawer = () => {
 
   const logoutUserMutate = async () => {
     await logoutUser();
-    Router.push("/users/login");
+    Router.push(NavigationPaths.LogIn);
   };
 
   return (
@@ -102,6 +105,19 @@ const NavDrawer = () => {
       <Divider style={{ marginTop: 0 }} />
 
       <List style={{ width: "50vw" }} onClick={handleCose}>
+        {currentUser && user && (
+          <Link href={`${ResourcePaths.User}${user.name}`}>
+            <a>
+              <ListItem button>
+                <ListItemIcon>
+                  <UserAvatar user={user} small />
+                </ListItemIcon>
+                <ListItemText primary={user.name} />
+              </ListItem>
+            </a>
+          </Link>
+        )}
+
         {canManageRoles && (
           <Link href={NavigationPaths.Roles}>
             <a>

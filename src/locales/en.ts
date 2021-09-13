@@ -261,6 +261,33 @@ const en = {
       on: () => "On",
       off: () => "Off",
     },
+    groups: {
+      names: {
+        noAdmin: () => "No admin",
+        votingType: () => "Voting type",
+        ratificationThreshold: () => "Ratification threshold",
+        reservationsLimit: () => "Reservations limit",
+        standAsidesLimit: () => "Stand asides limit",
+        xToPass: () => "X to pass",
+        xToBlock: () => "X to block",
+      },
+      descriptions: {
+        noAdmin: () =>
+          "Turn on No Admin to ensure that all changes to the group are made via motions.",
+        votingType: () =>
+          "Choose the type of voting model you wish to use. This will be used to determine how motions are passed.",
+        ratificationThreshold: () =>
+          "Set a threshold for the number of positive votes required for ratification to occur.",
+        reservationsLimit: () =>
+          "Set a limit for the acceptable number of reservations allowed for a motion to still be able to pass.",
+        standAsidesLimit: () =>
+          "Set a limit for the acceptable number of stand asides allowed for a motion to still be able to pass.",
+        xToPass: () =>
+          "Set a threshold for the number of positive votes required for a motion to pass.",
+        xToBlock: () =>
+          "Set a threshold for the number of negative votes required for a motion to be blocked.",
+      },
+    },
   },
 
   roles: {
