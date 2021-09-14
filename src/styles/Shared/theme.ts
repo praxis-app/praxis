@@ -1,8 +1,10 @@
 import { createTheme } from "@material-ui/core/styles";
 
+const defaultTheme = createTheme();
+
 export const BLURPLE = "#7289DA";
-export const WHITE = "white";
-export const BLACK = "black";
+export const BLACK = defaultTheme.palette.grey[900];
+export const WHITE = defaultTheme.palette.grey[100];
 
 export const BLURPLE_BUTTON_COLORS = {
   backgroundColor: BLURPLE,
@@ -21,18 +23,18 @@ const globalTheme = createTheme({
 
   palette: {
     primary: {
-      main: "rgb(190, 190, 190)",
-      dark: "rgb(170, 170, 170)",
-      contrastText: WHITE,
+      main: defaultTheme.palette.grey[400],
+      dark: defaultTheme.palette.grey[500],
+      contrastText: defaultTheme.palette.grey[100],
     },
     secondary: {
-      main: "rgb(90, 90, 90)",
+      main: defaultTheme.palette.grey[700],
     },
     background: {
-      paper: "rgb(65, 65, 65)",
+      paper: defaultTheme.palette.grey[800],
     },
     action: {
-      disabled: "rgb(170, 170, 170)",
+      disabled: defaultTheme.palette.grey[500],
       disabledBackground: "#4C5B91",
     },
   },
