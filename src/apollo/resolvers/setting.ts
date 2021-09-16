@@ -29,7 +29,9 @@ const settingResolvers = {
           groupId: parseInt(groupId),
         },
       });
-      return settings;
+      return settings.sort(
+        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+      );
     },
   },
 

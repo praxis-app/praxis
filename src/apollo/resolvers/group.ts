@@ -2,7 +2,12 @@ import { GraphQLUpload } from "apollo-server-micro";
 import { Group, Motion, Post } from ".prisma/client";
 
 import prisma from "../../utils/initPrisma";
-import { saveImage, deleteImage, FileUpload } from "../../utils/image";
+import {
+  saveImage,
+  deleteImage,
+  FileUpload,
+  randomDefaultImagePath,
+} from "../../utils/image";
 import { ModelNames, TypeNames } from "../../constants/common";
 import { INITIAL_GROUP_SETTINGS } from "../../constants/setting";
 import Messages from "../../utils/messages";
@@ -20,9 +25,15 @@ interface GroupFeedInput extends PaginationState {
   itemType: string;
 }
 
-const saveCoverPhoto = async (group: Group, image: FileUpload) => {
-  if (image) {
-    const path = await saveImage(image);
+const saveCoverPhoto = async (
+  group: Group,
+  image: FileUpload,
+  isCreatingGroup = false
+) => {
+  if (image || isCreatingGroup) {
+    let path = randomDefaultImagePath();
+    if (image) path = await saveImage(image);
+
     await prisma.image.create({
       data: {
         group: {
@@ -149,7 +160,7 @@ const groupResolvers = {
           name,
         },
       });
-      await saveCoverPhoto(group, coverPhoto);
+      await saveCoverPhoto(group, coverPhoto, true);
       await prisma.groupMember.create({
         data: {
           user: {

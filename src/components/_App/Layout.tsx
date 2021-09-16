@@ -26,7 +26,7 @@ import MotionFormModal from "../Motions/FormModal";
 const Container = withStyles((theme: Theme) =>
   createStyles({
     root: {
-      marginTop: 100,
+      marginTop: 90,
       marginBottom: 200,
       [theme.breakpoints.up("md")]: {
         marginTop: 135,

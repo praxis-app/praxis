@@ -5,7 +5,12 @@ import jwt from "jsonwebtoken";
 import { User } from ".prisma/client";
 
 import prisma from "../../utils/initPrisma";
-import { saveImage, deleteImage, FileUpload } from "../../utils/image";
+import {
+  saveImage,
+  deleteImage,
+  FileUpload,
+  randomDefaultImagePath,
+} from "../../utils/image";
 import {
   validateSignup,
   validateLogin,
@@ -26,9 +31,14 @@ interface ProfileFeedInput extends PaginationState {
   name: string;
 }
 
-const saveProfilePicture = async (user: User, image: FileUpload) => {
-  if (image) {
-    const path = await saveImage(image);
+const saveProfilePicture = async (
+  user: User,
+  image: FileUpload,
+  isCreatingUser = false
+) => {
+  if (image || isCreatingUser) {
+    let path = randomDefaultImagePath();
+    if (image) path = await saveImage(image);
 
     await prisma.image.create({
       data: {
@@ -245,7 +255,7 @@ const userResolvers = {
       });
 
       try {
-        await saveProfilePicture(user, profilePicture);
+        await saveProfilePicture(user, profilePicture, true);
       } catch (err) {
         const whereUserId = {
           where: { id: user.id },

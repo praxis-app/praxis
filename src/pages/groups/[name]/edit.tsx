@@ -5,11 +5,11 @@ import { CircularProgress } from "@material-ui/core";
 
 import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import GroupForm from "../../../components/Groups/Form";
-import { noCache } from "../../../utils/apollo";
 import Messages from "../../../utils/messages";
 import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
 import { GroupSettings, SettingStates } from "../../../constants/setting";
 import { NavigationPaths } from "../../../constants/common";
+import { noCache, settingValueByName } from "../../../utils/clientIndex";
 
 const Edit = () => {
   const { query } = useRouter();
@@ -38,13 +38,11 @@ const Edit = () => {
     }
   }, [currentUser, group]);
 
-  const settingByName = (name: string): string => {
-    const setting = groupSettings.find((setting) => setting.name === name);
-    return setting?.value || "";
-  };
-
   const isNoAdmin = (): boolean => {
-    return settingByName(GroupSettings.NoAdmin) === SettingStates.On;
+    return (
+      settingValueByName(GroupSettings.NoAdmin, groupSettings) ===
+      SettingStates.On
+    );
   };
 
   const ownGroup = (): boolean => {

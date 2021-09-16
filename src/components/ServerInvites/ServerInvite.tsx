@@ -5,7 +5,7 @@ import { TableRow, MenuItem } from "@material-ui/core";
 import { Assignment } from "@material-ui/icons";
 
 import { DELETE_SERVER_INVITE } from "../../apollo/client/mutations";
-import { useUserById } from "../../hooks";
+import { useIsDesktop, useUserById } from "../../hooks";
 import styles from "../../styles/ServerInvite/ServerInvite.module.scss";
 import UserAvatar from "../Users/Avatar";
 import TableCell from "../../components/Shared/TableCell";
@@ -27,6 +27,7 @@ const ServerInvite = ({ invite, invites, setInvites }: Props) => {
   const user = useUserById(userId);
   const [deleteInvite] = useMutation(DELETE_SERVER_INVITE);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const isDesktop = useIsDesktop();
 
   const copyInviteHandler = async () => {
     await navigator.clipboard.writeText(`${window.location.origin}/i/${token}`);
@@ -52,16 +53,16 @@ const ServerInvite = ({ invite, invites, setInvites }: Props) => {
   if (invite && user)
     return (
       <TableRow key={invite.id}>
-        <TableCell component="th" scope="row">
-          <span className={styles.link}>
-            <span className={styles.userAvatar}>
+        {isDesktop && (
+          <TableCell component="th" scope="row">
+            <span className={styles.link}>
               <UserAvatar user={user} small />
+              <Link href={`/users/${user.name}`} passHref>
+                <a className={styles.userName}>{user.name}</a>
+              </Link>
             </span>
-            <Link href={`/users/${user.name}`} passHref>
-              <a className={styles.userName}>{user.name}</a>
-            </Link>
-          </span>
-        </TableCell>
+          </TableCell>
+        )}
         <TableCell onClick={copyInviteHandler} style={{ cursor: "pointer" }}>
           {token}
         </TableCell>

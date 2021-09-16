@@ -3,7 +3,6 @@ import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import { Tab, Tabs, Card, CircularProgress } from "@material-ui/core";
 
-import Group from "../../components/Groups/Group";
 import Feed from "../../components/Shared/Feed";
 import MotionsFormWithCard from "../../components/Motions/FormWithCard";
 import ToggleForms from "../../components/Shared/ToggleForms";
@@ -21,6 +20,7 @@ import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useMembersByGroupId } from "../../hooks";
 import { resetFeed } from "../../utils/items";
 import PostsFormWithCard from "../../components/Posts/FormWithCard";
+import GroupPageHeader from "../../components/Groups/PageHeader";
 
 const Show = () => {
   const {
@@ -139,7 +139,7 @@ const Show = () => {
   if (group)
     return (
       <>
-        <Group group={group} deleteGroup={deleteGroupHandler} />
+        <GroupPageHeader group={group} deleteGroup={deleteGroupHandler} />
 
         <Card>
           <Tabs

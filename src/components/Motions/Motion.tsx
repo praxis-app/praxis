@@ -39,6 +39,7 @@ import {
 import Messages from "../../utils/messages";
 import { timeAgo } from "../../utils/time";
 import CardFooter from "./CardFooter";
+import { settingValueByName } from "../../utils/setting";
 
 const useStyles = makeStyles({
   title: {
@@ -126,13 +127,11 @@ const Motion = ({ motion, deleteMotion }: Props) => {
     return stage === Stages.Ratified;
   };
 
-  const settingByName = (name: string): string => {
-    const setting = groupSettings.find((setting) => setting.name === name);
-    return setting?.value || "";
-  };
-
   const isModelOfConsensus = (): boolean => {
-    return settingByName(GroupSettings.VotingType) === VotingTypes.Consensus;
+    return (
+      settingValueByName(GroupSettings.VotingType, groupSettings) ===
+      VotingTypes.Consensus
+    );
   };
 
   const isAGroupMember = (): boolean => {

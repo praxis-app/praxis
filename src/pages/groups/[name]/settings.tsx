@@ -9,7 +9,8 @@ import { ResourcePaths } from "../../../constants/common";
 import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
 import { GroupSettings, SettingStates } from "../../../constants/setting";
-import SettingsFormWithCard from "../../../components/Settings/FormWithCard";
+import SettingsForm from "../../../components/Settings/Form";
+import { settingValueByName } from "../../../utils/setting";
 
 const Settings = () => {
   const { query } = useRouter();
@@ -31,11 +32,6 @@ const Settings = () => {
     if (groupRes.data) setGroup(groupRes.data.groupByName);
   }, [groupRes.data]);
 
-  const settingByName = (name: string): string => {
-    const setting = groupSettings.find((setting) => setting.name === name);
-    return setting?.value || "";
-  };
-
   const anyUnsavedSettings = (): boolean => {
     return (
       Boolean(unsavedSettings.length) &&
@@ -46,7 +42,8 @@ const Settings = () => {
   const isNoAdmin = (): boolean => {
     return (
       !anyUnsavedSettings() &&
-      settingByName(GroupSettings.NoAdmin) === SettingStates.On
+      settingValueByName(GroupSettings.NoAdmin, groupSettings) ===
+        SettingStates.On
     );
   };
 
@@ -69,11 +66,11 @@ const Settings = () => {
         </a>
       </Link>
 
-      <Typography variant="h6" style={{ marginBottom: 24 }}>
+      <Typography variant="h6" color="primary" style={{ marginBottom: 24 }}>
         {Messages.groups.settings.nameWithGroup()}
       </Typography>
 
-      <SettingsFormWithCard
+      <SettingsForm
         settings={groupSettings}
         setSettings={setGroupSettings}
         unsavedSettings={unsavedSettings}

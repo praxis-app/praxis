@@ -25,7 +25,11 @@ import { displayName } from "../../utils/items";
 import SubmitButton from "../Shared/SubmitButton";
 import Dropdown from "../Shared/Dropdown";
 import CancelButton from "../Shared/CancelButton";
-import { descriptionByName } from "../../utils/setting";
+import {
+  canShowSetting,
+  descriptionByName,
+  settingValueByName,
+} from "../../utils/setting";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -91,6 +95,10 @@ const SettingsForm = ({
   const currentUser = useCurrentUser();
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [updateSettings] = useMutation(UPDATE_SETTINGS);
+  const votingType = settingValueByName(
+    GroupSettings.VotingType,
+    unsavedSettings
+  );
   const submitText = submitButtonText || Messages.actions.save();
   const classes = useStyles();
 
@@ -168,133 +176,105 @@ const SettingsForm = ({
     );
   };
 
-  const valueByName = (name: string): string => {
-    const setting = unsavedSettings.find((setting) => setting.name === name);
-    return setting?.value || "";
-  };
-
-  const canShowSetting = (name: string): boolean => {
-    const votingType = valueByName(GroupSettings.VotingType);
-    if (!votingType) return false;
-    if (
-      votingType !== VotingTypes.Consensus &&
-      (name === GroupSettings.RatificationThreshold ||
-        name === GroupSettings.ReservationsLimit ||
-        name === GroupSettings.StandAsidesLimit)
-    )
-      return false;
-    if (
-      votingType !== VotingTypes.XToPass &&
-      (name === GroupSettings.XToPass || name === GroupSettings.XToBlock)
-    )
-      return false;
-    if (!Object.values(GroupSettings).includes(name as GroupSettings))
-      return false;
-    return true;
-  };
-
   if (currentUser && !settings.length) return <LinearProgress />;
-
   if (!currentUser) return <>{Messages.users.permissionDenied()}</>;
 
   return (
     <form onSubmit={(e) => handleSubmit(e)}>
       <FormGroup>
-        {unsavedSettings
-          .sort((a, b) => parseInt(a.createdAt) - parseInt(b.createdAt))
-          .map(({ id, name, value }: ClientSetting) => {
-            if (canShowSetting(name))
-              return (
-                <Fragment key={id}>
-                  <div className={styles.setting}>
-                    <div>
-                      <div className={styles.name}>{displayName(name)}</div>
-                      <div className={styles.description}>
-                        {descriptionByName(name)}
-                      </div>
-                    </div>
-
-                    <div className={styles.inputWrapper}>
-                      {name === GroupSettings.NoAdmin && (
-                        <Switch
-                          checked={value === SettingStates.On}
-                          onChange={() => handleSwitchChange(name, value)}
-                          color="primary"
-                          classes={{ root: classes.switchRoot }}
-                        />
-                      )}
-
-                      {name === GroupSettings.VotingType && (
-                        <Dropdown
-                          value={value}
-                          onChange={(e) => handleSettingChange(e, name)}
-                          disableUnderline
-                          classes={{ icon: classes.dropdownIcon }}
-                        >
-                          <MenuItem value={VotingTypes.Consensus}>
-                            {Messages.votes.votingTypes.consensus()}
-                          </MenuItem>
-                          <MenuItem value={VotingTypes.XToPass}>
-                            {Messages.votes.votingTypes.xToPass()}
-                          </MenuItem>
-                          <MenuItem value={VotingTypes.Majority}>
-                            {Messages.votes.votingTypes.majority()}
-                          </MenuItem>
-                        </Dropdown>
-                      )}
-
-                      {(name === GroupSettings.XToPass ||
-                        name === GroupSettings.XToBlock) && (
-                        <NumberInput
-                          value={value}
-                          name={name}
-                          min={1}
-                          handleSettingChange={handleSettingChange}
-                        />
-                      )}
-
-                      {(name === GroupSettings.ReservationsLimit ||
-                        name === GroupSettings.StandAsidesLimit) && (
-                        <NumberInput
-                          value={value}
-                          name={name}
-                          min={0}
-                          handleSettingChange={handleSettingChange}
-                        />
-                      )}
-
-                      {name === GroupSettings.RatificationThreshold && (
-                        <div className={styles.ratificationThresholdInputs}>
-                          <Slider
-                            min={RatificationThreshold.Min}
-                            max={RatificationThreshold.Max}
-                            value={parseInt(value)}
-                            onChange={handleSliderChange}
-                            className={styles.slider}
-                          />
-                          <Input
-                            value={value}
-                            margin="dense"
-                            onChange={(e) => handleSettingChange(e, name)}
-                            onBlur={() => handleBlur(value)}
-                            inputProps={{
-                              min: RatificationThreshold.Min,
-                              max: RatificationThreshold.Max,
-                              type: "number",
-                            }}
-                            disableUnderline
-                            style={{ width: 70 }}
-                          />
-                          <span className={styles.percentageSign}>%</span>
-                        </div>
-                      )}
+        {unsavedSettings.map(({ id, name, value }: ClientSetting) => {
+          if (canShowSetting(name, votingType))
+            return (
+              <Fragment key={id}>
+                <div className={styles.setting}>
+                  <div>
+                    <div className={styles.name}>{displayName(name)}</div>
+                    <div className={styles.description}>
+                      {descriptionByName(name)}
                     </div>
                   </div>
 
-                  <Divider style={{ marginTop: 0, marginBottom: 6 }} />
-                </Fragment>
-              );
-          })}
+                  <div className={styles.inputWrapper}>
+                    {name === GroupSettings.NoAdmin && (
+                      <Switch
+                        checked={value === SettingStates.On}
+                        onChange={() => handleSwitchChange(name, value)}
+                        color="primary"
+                        classes={{ root: classes.switchRoot }}
+                      />
+                    )}
+
+                    {name === GroupSettings.VotingType && (
+                      <Dropdown
+                        value={value}
+                        onChange={(e) => handleSettingChange(e, name)}
+                        disableUnderline
+                        classes={{ icon: classes.dropdownIcon }}
+                      >
+                        <MenuItem value={VotingTypes.Consensus}>
+                          {Messages.votes.votingTypes.consensus()}
+                        </MenuItem>
+                        <MenuItem value={VotingTypes.XToPass}>
+                          {Messages.votes.votingTypes.xToPass()}
+                        </MenuItem>
+                        <MenuItem value={VotingTypes.Majority}>
+                          {Messages.votes.votingTypes.majority()}
+                        </MenuItem>
+                      </Dropdown>
+                    )}
+
+                    {(name === GroupSettings.XToPass ||
+                      name === GroupSettings.XToBlock) && (
+                      <NumberInput
+                        value={value}
+                        name={name}
+                        min={1}
+                        handleSettingChange={handleSettingChange}
+                      />
+                    )}
+
+                    {(name === GroupSettings.ReservationsLimit ||
+                      name === GroupSettings.StandAsidesLimit) && (
+                      <NumberInput
+                        value={value}
+                        name={name}
+                        min={0}
+                        handleSettingChange={handleSettingChange}
+                      />
+                    )}
+
+                    {name === GroupSettings.RatificationThreshold && (
+                      <div className={styles.ratificationThresholdInputs}>
+                        <Slider
+                          min={RatificationThreshold.Min}
+                          max={RatificationThreshold.Max}
+                          value={parseInt(value)}
+                          onChange={handleSliderChange}
+                          className={styles.slider}
+                        />
+                        <Input
+                          value={value}
+                          margin="dense"
+                          onChange={(e) => handleSettingChange(e, name)}
+                          onBlur={() => handleBlur(value)}
+                          inputProps={{
+                            min: RatificationThreshold.Min,
+                            max: RatificationThreshold.Max,
+                            type: "number",
+                          }}
+                          disableUnderline
+                          style={{ width: 70 }}
+                        />
+                        <span className={styles.percentageSign}>%</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <Divider style={{ marginTop: 0, marginBottom: 6 }} />
+              </Fragment>
+            );
+        })}
       </FormGroup>
 
       <div className={styles.flexEnd}>

@@ -19,12 +19,13 @@ import { ModelNames, ResourcePaths } from "../../constants/common";
 import { GroupSettings, SettingStates } from "../../constants/setting";
 import { WHITE } from "../../styles/Shared/theme";
 import Messages from "../../utils/messages";
-import { noCache } from "../../utils/apollo";
 import {
   useCurrentUser,
   useMembersByGroupId,
   useSettingsByGroupId,
 } from "../../hooks";
+import CompactText from "../Shared/CompactText";
+import { noCache, settingValueByName } from "../../utils/clientIndex";
 
 interface Props {
   group: ClientGroup;
@@ -56,13 +57,11 @@ const Group = ({ group, deleteGroup }: Props) => {
     return false;
   };
 
-  const settingByName = (name: string): string => {
-    const setting = groupSettings.find((setting) => setting.name === name);
-    return setting?.value || "";
-  };
-
   const isNoAdmin = (): boolean => {
-    return settingByName(GroupSettings.NoAdmin) === SettingStates.On;
+    return (
+      settingValueByName(GroupSettings.NoAdmin, groupSettings) ===
+      SettingStates.On
+    );
   };
 
   const isAMember = (): boolean => {
@@ -118,34 +117,34 @@ const Group = ({ group, deleteGroup }: Props) => {
           }
         />
 
-        {description && (
-          <CardContent>
+        <CardContent>
+          {description && (
             <Typography
               style={{
                 marginTop: "-12px",
               }}
               gutterBottom
             >
-              {description}
+              <CompactText text={description} />
             </Typography>
+          )}
 
-            <Link href={`${ResourcePaths.Group}${name}/members`}>
-              <a>{Messages.groups.members(groupMembers.length)}</a>
-            </Link>
+          <Link href={`${ResourcePaths.Group}${name}/members`}>
+            <a>{Messages.groups.members(groupMembers.length)}</a>
+          </Link>
 
-            {canSeeRequests() && (
-              <>
-                <span style={{ color: WHITE }}>
-                  {Messages.middotWithSpaces()}
-                </span>
+          {canSeeRequests() && (
+            <>
+              <span style={{ color: WHITE }}>
+                {Messages.middotWithSpaces()}
+              </span>
 
-                <Link href={`${ResourcePaths.Group}${name}/requests`}>
-                  <a>{Messages.groups.requests(memberRequests.length)}</a>
-                </Link>
-              </>
-            )}
-          </CardContent>
-        )}
+              <Link href={`${ResourcePaths.Group}${name}/requests`}>
+                <a>{Messages.groups.requests(memberRequests.length)}</a>
+              </Link>
+            </>
+          )}
+        </CardContent>
 
         {currentUser && (
           <CardActions style={{ marginTop: "6px" }}>

@@ -284,8 +284,8 @@ const MotionsForm = ({
                             <MenuItem value={group.id} key={group.id}>
                               {truncate(group.name, {
                                 length: isMobile
-                                  ? TruncationSizes.Large
-                                  : TruncationSizes.ExtraLarge,
+                                  ? TruncationSizes.Small
+                                  : TruncationSizes.Medium,
                               })}
                             </MenuItem>
                           ))}
