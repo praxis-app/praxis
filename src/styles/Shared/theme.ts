@@ -70,7 +70,6 @@ const muiTheme = createTheme({
       },
       h6: {
         marginBottom: 6,
-        color: globalTheme.palette.primary.contrastText,
       },
       gutterBottom: {
         marginBottom: 24,

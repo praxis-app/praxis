@@ -42,9 +42,12 @@ export enum ResourcePaths {
 }
 
 export enum NavigationPaths {
+  About = "/about",
   Home = "/",
   Groups = "/groups",
   Invites = "/invites",
+  Members = "/members",
+  Requests = "/requests",
   Roles = "/roles",
   Users = "/users",
   LogIn = "/users/login",
@@ -67,6 +70,12 @@ export enum LocalStorage {
 export enum Environments {
   Development = "development",
   Production = "production",
+}
+
+export enum DirectoryNames {
+  Public = "public",
+  Uploads = "uploads",
+  Defaults = "defaults",
 }
 
 export enum Time {
@@ -112,10 +121,10 @@ export enum FocusTargets {
 }
 
 export enum TruncationSizes {
-  Small = 10,
-  Medium = 20,
-  Large = 40,
-  ExtraLarge = 65,
+  ExtraSmall = 30,
+  Small = 40,
+  Medium = 65,
+  Large = 175,
 }
 
 export const INITIAL_PAGINATION_STATE: PaginationState = {

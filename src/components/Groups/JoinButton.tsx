@@ -96,7 +96,13 @@ const JoinButton = ({
 
   if (alreadyJoined())
     return (
-      <Button onClick={() => deleteGroupMemberMutation()} color="primary">
+      <Button
+        onClick={() =>
+          window.confirm(Messages.groups.prompts.leaveGroup()) &&
+          deleteGroupMemberMutation()
+        }
+        color="primary"
+      >
         {Messages.groups.actions.leave()}
       </Button>
     );

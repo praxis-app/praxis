@@ -1,6 +1,7 @@
 import { promisify } from "util";
 import fs, { createWriteStream, ReadStream } from "fs";
-import { PUBLIC_DIR_NAME, UPLOADS_PATH } from "../constants/image";
+import { DEFAULT_IMAGES_SIZE, UPLOADS_PATH } from "../constants/image";
+import { DirectoryNames } from "../constants/common";
 
 export interface FileUpload {
   filename: string;
@@ -28,10 +29,17 @@ export const saveImage = async (image: FileUpload): Promise<string> => {
       .on("finish", resolve);
   });
 
-  return path.replace(PUBLIC_DIR_NAME, "");
+  return path.replace(DirectoryNames.Public, "");
 };
 
 export const deleteImage = async (path: string) => {
   const unlinkAsync = promisify(fs.unlink);
-  await unlinkAsync(PUBLIC_DIR_NAME + path);
+  if (path.includes(DirectoryNames.Uploads))
+    await unlinkAsync(DirectoryNames.Public + path);
+};
+
+export const randomDefaultImagePath = (): string => {
+  return `/${DirectoryNames.Defaults}/${
+    Math.floor(Math.random() * DEFAULT_IMAGES_SIZE) + 1
+  }.jpeg`;
 };

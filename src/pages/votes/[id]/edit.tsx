@@ -9,6 +9,7 @@ import { noCache } from "../../../utils/apollo";
 import { useSettingsByGroupId } from "../../../hooks";
 import { GroupSettings } from "../../../constants/setting";
 import { VotingTypes } from "../../../constants/vote";
+import { settingValueByName } from "../../../utils/setting";
 
 const Edit = () => {
   const { query } = useRouter();
@@ -21,7 +22,8 @@ const Edit = () => {
 
   useEffect(() => {
     setIsModelOfConsensus(
-      settingByName(GroupSettings.VotingType) === VotingTypes.Consensus
+      settingValueByName(GroupSettings.VotingType, groupSettings) ===
+        VotingTypes.Consensus
     );
   }, [groupSettings]);
 
@@ -46,11 +48,6 @@ const Edit = () => {
   useEffect(() => {
     if (motionRes.data) setMotion(motionRes.data.motion);
   }, [motionRes.data]);
-
-  const settingByName = (name: string): string => {
-    const setting = groupSettings.find((setting) => setting.name === name);
-    return setting?.value || "";
-  };
 
   if (!vote) return <CircularProgress />;
 

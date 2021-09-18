@@ -16,7 +16,11 @@ import Messages from "../../utils/messages";
 import ServerInvite from "../../components/ServerInvites/ServerInvite";
 import TableCell from "../../components/Shared/TableCell";
 import ServerInviteForm from "../../components/ServerInvites/Form";
-import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
+import {
+  useCurrentUser,
+  useHasPermissionGlobally,
+  useIsDesktop,
+} from "../../hooks";
 import { Permissions } from "../../constants/role";
 
 const Index = () => {
@@ -29,6 +33,7 @@ const Index = () => {
   const [canCreateInvites, canCreateInvitesLoading] = useHasPermissionGlobally(
     Permissions.CreateInvites
   );
+  const isDesktop = useIsDesktop();
 
   useEffect(() => {
     if (invitesRes.data)
@@ -60,7 +65,9 @@ const Index = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>{Messages.invites.columnNames.inviter()}</TableCell>
+              {isDesktop && (
+                <TableCell>{Messages.invites.columnNames.inviter()}</TableCell>
+              )}
               <TableCell>{Messages.invites.columnNames.code()}</TableCell>
               <TableCell>{Messages.invites.columnNames.uses()}</TableCell>
               <TableCell>{Messages.invites.columnNames.expires()}</TableCell>

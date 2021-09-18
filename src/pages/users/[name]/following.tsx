@@ -39,7 +39,7 @@ const Following = () => {
         </a>
       </Link>
 
-      <Typography variant="h6">
+      <Typography variant="h6" color="primary">
         {Messages.users.following(following.length)}
       </Typography>
 

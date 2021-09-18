@@ -4,5 +4,6 @@ export * from "./common";
 export * from "./invite";
 export * from "./items";
 export * from "./messages";
+export * from "./setting";
 export * from "./time";
 export * from "./validation";

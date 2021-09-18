@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { breadcrumbsVar } from "../../apollo/client/localState";
 
-const CommonBreadcrumbs = () => {
+const SharedBreadcrumbs = () => {
   const breadcrumbs = useReactiveVar(breadcrumbsVar);
 
   if (breadcrumbs.length)
@@ -31,4 +31,4 @@ const CommonBreadcrumbs = () => {
   return null;
 };
 
-export default CommonBreadcrumbs;
+export default SharedBreadcrumbs;

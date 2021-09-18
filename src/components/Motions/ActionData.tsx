@@ -4,10 +4,9 @@ import Link from "next/link";
 import { ResourcePaths } from "../../constants/common";
 import { GroupAspects } from "../../constants/group";
 import { ActionTypes } from "../../constants/motion";
-import { GroupSettings, SettingStates } from "../../constants/setting";
 import muiTheme from "../../styles/Shared/theme";
 import baseUrl from "../../utils/baseUrl";
-import { displayName } from "../../utils/items";
+import { displayName, displaySettingValue } from "../../utils/clientIndex";
 import Messages from "../../utils/messages";
 
 interface TextProps {
@@ -38,13 +37,6 @@ interface ActionDataProps {
 
 const ActionData = ({ id, action, actionData }: ActionDataProps) => {
   const inForm = !id;
-
-  const displaySettingValue = ({ name, value }: SettingInput): string => {
-    if (name === GroupSettings.RatificationThreshold) return value + "%";
-    if (value === SettingStates.On) return Messages.settings.states.on();
-    if (value === SettingStates.Off) return Messages.settings.states.off();
-    return displayName(value);
-  };
 
   if (action === ActionTypes.ChangeSettings && actionData.groupSettings)
     return (

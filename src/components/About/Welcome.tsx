@@ -77,7 +77,7 @@ const WelcomeCard = ({ isLoggedIn }: Props) => {
         <CardActions style={{ marginTop: "6px" }}>
           <Link href={"/users/signup"}>
             <a>
-              <Button color="primary">sign up</Button>
+              <Button color="primary">{Messages.users.actions.signUp()}</Button>
             </a>
           </Link>
         </CardActions>

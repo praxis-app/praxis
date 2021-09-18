@@ -2,26 +2,30 @@ import React, { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { Card, Typography } from "@material-ui/core";
+import { Card, CircularProgress, Typography } from "@material-ui/core";
+import { truncate } from "lodash";
 
 import { GROUP_BY_NAME, MEMBER_REUQESTS } from "../../../apollo/client/queries";
 import Request from "../../../components/Groups/Request";
-import { ResourcePaths } from "../../../constants/common";
+import { ResourcePaths, TruncationSizes } from "../../../constants/common";
 import { GroupSettings, SettingStates } from "../../../constants/setting";
 import Messages from "../../../utils/messages";
-import { noCache } from "../../../utils/apollo";
 import {
   useCurrentUser,
   useMembersByGroupId,
   useSettingsByGroupId,
 } from "../../../hooks";
+import { noCache, settingValueByName } from "../../../utils/clientIndex";
 
 const Requests = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
   const [group, setGroup] = useState<ClientGroup>();
-  const [groupSettings] = useSettingsByGroupId(group?.id);
-  const [groupMembers] = useMembersByGroupId(group?.id);
+  const [groupSettings, _setSettings, groupSettingsLoading] =
+    useSettingsByGroupId(group?.id);
+  const [groupMembers, _setMembers, groupMembersLoading] = useMembersByGroupId(
+    group?.id
+  );
   const [memberRequests, setMemberRequests] = useState<ClientMemberRequest[]>(
     []
   );
@@ -61,13 +65,11 @@ const Requests = () => {
     return false;
   };
 
-  const settingByName = (name: string): string => {
-    const setting = groupSettings.find((setting) => setting.name === name);
-    return setting?.value || "";
-  };
-
   const isNoAdmin = (): boolean => {
-    return settingByName(GroupSettings.NoAdmin) === SettingStates.On;
+    return (
+      settingValueByName(GroupSettings.NoAdmin, groupSettings) ===
+      SettingStates.On
+    );
   };
 
   const isAMember = (): boolean => {
@@ -83,18 +85,29 @@ const Requests = () => {
     return false;
   };
 
+  if (
+    !query.name ||
+    groupRes.loading ||
+    memberRequestsRes.loading ||
+    groupMembersLoading ||
+    groupSettingsLoading
+  )
+    return <CircularProgress />;
+
   if (canSeeRequests())
     return (
       <>
         <Link href={`${ResourcePaths.Group}${query.name}`}>
           <a>
             <Typography variant="h3" color="primary">
-              {query.name}
+              {truncate(query.name as string, {
+                length: TruncationSizes.Medium,
+              })}
             </Typography>
           </a>
         </Link>
 
-        <Typography variant="h6">
+        <Typography variant="h6" color="primary">
           {Messages.groups.memberRequests(memberRequests.length)}
         </Typography>
 

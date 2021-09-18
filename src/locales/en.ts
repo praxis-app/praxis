@@ -16,6 +16,7 @@ const en = {
     like: () => "Like",
     pickColor: () => "Pick a Color",
     save: () => "Save",
+    seeMore: () => "See More",
     search: () => "Search Praxis",
     share: () => "Share",
     submit: () => "Submit",
@@ -57,6 +58,9 @@ const en = {
   },
 
   about: {
+    labels: {
+      about: () => "About",
+    },
     welcomeCard: {
       welcome: () => "Welcome to Praxis",
       about: () =>
@@ -176,9 +180,9 @@ const en = {
       agreeOrDisagree: () => "Express your agreement or disagreement",
     },
     votingTypes: {
-      consensus: () => "Model of consensus",
-      xToPass: () => "X to pass or block",
-      majority: () => "Majority vote",
+      consensus: () => "Model of Consensus",
+      xToPass: () => "X to Pass or Block",
+      majority: () => "Majority Vote",
     },
     consensus: {
       voteTypes: {
@@ -228,6 +232,9 @@ const en = {
       leave: () => "Leave",
       join: () => "Join",
     },
+    prompts: {
+      leaveGroup: () => "Are you sure you want to leave this group?",
+    },
     form: {
       name: () => "Name",
       description: () => "Description",
@@ -238,6 +245,10 @@ const en = {
       all: () => "All",
       posts: () => "Posts",
       motions: () => "Motions",
+    },
+    breadcrumbs: {
+      about: () => "About",
+      groups: () => "Groups",
     },
     members: (size: number) => `${size} Member${pluralize(size)}`,
     requests: (size: number) => `${size} Request${pluralize(size)}`,
@@ -254,6 +265,11 @@ const en = {
     setToNoAdmin:
       () => `This group has been irriversibly set to no-admin — All changes to the
     group must now be made via motion ratification.`,
+    votingTypeLabels: {
+      consensus: () => "Consensus",
+      majority: () => "Majority Vote",
+      xToPass: () => "X to Pass",
+    },
   },
 
   settings: {
@@ -264,7 +280,7 @@ const en = {
     groups: {
       names: {
         noAdmin: () => "No admin",
-        votingType: () => "Voting type",
+        votingType: () => "Voting model",
         ratificationThreshold: () => "Ratification threshold",
         reservationsLimit: () => "Reservations limit",
         standAsidesLimit: () => "Stand asides limit",
