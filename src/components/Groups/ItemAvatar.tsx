@@ -2,8 +2,7 @@ import Link from "next/link";
 import UserAvatar from "../Users/Avatar";
 import GroupAvatar from "./Avatar";
 import styles from "../../styles/Group/ItemAvatar.module.scss";
-import { ModelNames, ResourcePaths } from "../../constants/common";
-import Messages from "../../utils/messages";
+import { ResourcePaths } from "../../constants/common";
 import { timeAgo } from "../../utils/time";
 
 interface Props {
@@ -43,10 +42,7 @@ const GroupItemAvatar = ({ user, group, motion, post }: Props) => {
           </Link>
           <Link href={itemHref()}>
             <a className={styles.postByLink}>
-              {Messages.groups.itemWithName(
-                motion ? ModelNames.Motion : ModelNames.Post,
-                user.name
-              )}
+              {user.name}
               {timeAgo(createdAt())}
             </a>
           </Link>

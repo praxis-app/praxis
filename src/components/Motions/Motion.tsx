@@ -177,8 +177,8 @@ const Motion = ({ motion, deleteMotion }: Props) => {
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteMotion}
-              ownItem={ownMotion}
-              hideEdit={Boolean(votes.length)}
+              canEdit={ownMotion() && !votes.length}
+              canDelete={ownMotion() && !isRatified()}
             />
           }
           classes={classes}

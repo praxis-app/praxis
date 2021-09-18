@@ -1,78 +1,17 @@
-import { Role } from ".prisma/client";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
-import { ModelNames, TypeNames } from "../../constants/common";
+import { TypeNames } from "../../constants/common";
+import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from "../../constants/role";
 import {
-  ADMIN_ROLE_NAME,
-  DEFAULT_ROLE_COLOR,
-  Permissions,
-} from "../../constants/role";
+  initializePermissions,
+  initialGlobalPermissions,
+  initialGroupPermissions,
+} from "../models/role";
 
 interface RoleInput {
   name: string;
   color: string;
 }
-
-interface InitialPermission {
-  name: string;
-  description: string;
-  enabled: boolean;
-}
-
-const initialPermissions = (isAdmin = false): InitialPermission[] => [
-  {
-    name: Permissions.ManagePosts,
-    description: Messages.roles.permissions.descriptions.manageItems(
-      ModelNames.Post
-    ),
-    enabled: isAdmin,
-  },
-  {
-    name: Permissions.ManageComments,
-    description: Messages.roles.permissions.descriptions.manageItems(
-      ModelNames.Comment
-    ),
-    enabled: isAdmin,
-  },
-  {
-    name: Permissions.ManageUsers,
-    description: Messages.roles.permissions.descriptions.manageUsers(),
-    enabled: isAdmin,
-  },
-  {
-    name: Permissions.ManageRoles,
-    description: Messages.roles.permissions.descriptions.manageRoles(),
-    enabled: isAdmin,
-  },
-  {
-    name: Permissions.ManageInvites,
-    description: Messages.roles.permissions.descriptions.manageInvites(),
-    enabled: isAdmin,
-  },
-  {
-    name: Permissions.CreateInvites,
-    description: Messages.roles.permissions.descriptions.createInvites(),
-    enabled: isAdmin,
-  },
-];
-
-const initializePermissions = async (
-  permissions: InitialPermission[],
-  role: Role
-) => {
-  for (const permission of permissions) {
-    await prisma.permission.create({
-      data: {
-        ...permission,
-        role: {
-          connect: {
-            id: role.id,
-          },
-        },
-      },
-    });
-  }
-};
 
 const roleResolvers = {
   Query: {
@@ -131,7 +70,10 @@ const roleResolvers = {
           global,
         },
       });
-      initializePermissions(initialPermissions(), role);
+      initializePermissions(
+        groupId ? initialGroupPermissions() : initialGlobalPermissions(),
+        role
+      );
       return { role };
     },
 
@@ -178,7 +120,7 @@ const roleResolvers = {
           global: true,
         },
       });
-      initializePermissions(initialPermissions(true), role);
+      initializePermissions(initialGlobalPermissions(true), role);
       await prisma.roleMember.create({
         data: {
           user: {

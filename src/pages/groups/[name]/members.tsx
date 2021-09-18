@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -8,14 +8,20 @@ import { truncate } from "lodash";
 import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import Member from "../../../components/Groups/Member";
 import Messages from "../../../utils/messages";
-import { useMembersByGroupId } from "../../../hooks";
+import { useHasPermissionByGroupId, useMembersByGroupId } from "../../../hooks";
 import { TruncationSizes } from "../../../constants/common";
+import { GroupPermissions } from "../../../constants/role";
 
 const Members = () => {
   const { query } = useRouter();
   const [group, setGroup] = useState<ClientGroup>();
-  const [groupMembers, _, groupMembersLoading] = useMembersByGroupId(group?.id);
+  const [groupMembers, setGroupMembers, groupMembersLoading] =
+    useMembersByGroupId(group?.id);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
+  const [canKick, canKickLoading] = useHasPermissionByGroupId(
+    GroupPermissions.KickMembers,
+    group?.id
+  );
 
   useEffect(() => {
     if (query.name) {
@@ -29,7 +35,7 @@ const Members = () => {
     if (groupRes.data) setGroup(groupRes.data.groupByName);
   }, [groupRes.data]);
 
-  if (!query.name || groupRes.loading || groupMembersLoading)
+  if (!query.name || groupRes.loading || groupMembersLoading || canKickLoading)
     return <CircularProgress />;
 
   return (
@@ -49,8 +55,16 @@ const Members = () => {
       </Typography>
 
       <Card>
-        {groupMembers.map(({ userId }: ClientGroupMember) => {
-          return <Member userId={userId} key={userId} />;
+        {groupMembers.map((groupMember: ClientGroupMember) => {
+          return (
+            <Member
+              groupMember={groupMember}
+              groupMembers={groupMembers}
+              setGroupMembers={setGroupMembers}
+              canKickGroupMembers={canKick}
+              key={groupMember.id}
+            />
+          );
         })}
       </Card>
     </>

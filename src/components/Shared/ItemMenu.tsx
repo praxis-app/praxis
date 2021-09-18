@@ -1,7 +1,10 @@
+import { ReactNode } from "react";
 import { Edit, Delete, MoreHoriz } from "@material-ui/icons";
 import { Menu, MenuItem, IconButton } from "@material-ui/core";
 import Link from "next/link";
+
 import Messages from "../../utils/messages";
+import { isRenderable } from "../../utils/common";
 
 interface Props {
   name?: string;
@@ -10,11 +13,10 @@ interface Props {
   anchorEl: null | HTMLElement;
   setAnchorEl: (el: null | HTMLElement) => void;
   deleteItem: (id: string) => void;
-  ownItem: () => boolean;
-  hasPermission?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
   prependChildren?: boolean;
-  hideEdit?: boolean;
+  canEdit?: boolean;
+  canDelete?: boolean;
 }
 
 const ItemMenu = ({
@@ -24,11 +26,10 @@ const ItemMenu = ({
   anchorEl,
   setAnchorEl,
   deleteItem,
-  ownItem,
-  hasPermission,
   children,
   prependChildren,
-  hideEdit,
+  canEdit,
+  canDelete,
 }: Props) => {
   const margin = { marginRight: 7.5 };
 
@@ -42,7 +43,7 @@ const ItemMenu = ({
     setAnchorEl(null);
   };
 
-  if (ownItem() || hasPermission)
+  if (canEdit || canDelete || isRenderable(children))
     return (
       <>
         <IconButton onClick={handleMenuButtonClick}>
@@ -56,7 +57,7 @@ const ItemMenu = ({
         >
           {prependChildren && children}
 
-          {ownItem() && !hideEdit && (
+          {canEdit && (
             <MenuItem>
               <Link href={`/${itemType}s/${name ? name : itemId}/edit`}>
                 <a style={{ width: "100%" }}>
@@ -73,15 +74,17 @@ const ItemMenu = ({
             </MenuItem>
           )}
 
-          <MenuItem
-            onClick={() =>
-              window.confirm(Messages.prompts.deleteItem(itemType)) &&
-              deleteItem(itemId)
-            }
-          >
-            <Delete fontSize="small" style={margin} />
-            {Messages.actions.delete()}
-          </MenuItem>
+          {canDelete && (
+            <MenuItem
+              onClick={() =>
+                window.confirm(Messages.prompts.deleteItem(itemType)) &&
+                deleteItem(itemId)
+              }
+            >
+              <Delete fontSize="small" style={margin} />
+              {Messages.actions.delete()}
+            </MenuItem>
+          )}
 
           {!prependChildren && children}
         </Menu>

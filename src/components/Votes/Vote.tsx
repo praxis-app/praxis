@@ -99,7 +99,8 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteVoteHandler}
-              ownItem={ownVote}
+              canEdit={ownVote()}
+              canDelete={ownVote()}
             />
           }
           classes={{ title: classes.title }}

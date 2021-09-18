@@ -23,7 +23,7 @@ import { NavigationPaths } from "../../constants/common";
 import { WHITE } from "../../styles/Shared/theme";
 import Messages from "../../utils/messages";
 import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
-import { Permissions } from "../../constants/role";
+import { GlobalPermissions } from "../../constants/role";
 import styles from "../../styles/Navigation/LeftNav.module.scss";
 import { useRouter } from "next/router";
 import MotionButton from "../Motions/MotionButton";
@@ -55,19 +55,19 @@ const LeftNav = () => {
   const currentUser = useCurrentUser();
   const refreshKey = useReactiveVar(navKeyVar);
   const [canManageRoles] = useHasPermissionGlobally(
-    Permissions.ManageRoles,
+    GlobalPermissions.ManageRoles,
     refreshKey
   );
   const [canManageUsers] = useHasPermissionGlobally(
-    Permissions.ManageUsers,
+    GlobalPermissions.ManageUsers,
     refreshKey
   );
   const [canManageInvites] = useHasPermissionGlobally(
-    Permissions.ManageInvites,
+    GlobalPermissions.ManageInvites,
     refreshKey
   );
   const [canCreateInvites] = useHasPermissionGlobally(
-    Permissions.CreateInvites,
+    GlobalPermissions.CreateInvites,
     refreshKey
   );
   const { asPath: currentPath } = useRouter();

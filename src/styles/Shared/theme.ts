@@ -85,6 +85,12 @@ const muiTheme = createTheme({
       },
     },
 
+    MuiPaper: {
+      rounded: {
+        borderRadius: 8,
+      },
+    },
+
     MuiCard: {
       root: {
         backgroundColor: globalTheme.palette.background.paper,

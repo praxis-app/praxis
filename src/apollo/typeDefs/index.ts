@@ -103,6 +103,7 @@ export const typeDefs = gql`
     roleMembers(roleId: ID!): [RoleMember]
     permissionsByRoleId(roleId: ID!): [Permission]!
     hasPermissionGlobally(name: String!, userId: ID!): Boolean!
+    hasPermissionByGroupId(name: String!, userId: ID!, groupId: ID!): Boolean!
 
     serverInvite(id: ID!): ServerInvite!
     serverInviteByToken(token: String!): ServerInvite

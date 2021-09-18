@@ -2,17 +2,14 @@ import { GraphQLUpload } from "apollo-server-micro";
 import { Group, Motion, Post } from ".prisma/client";
 
 import prisma from "../../utils/initPrisma";
-import {
-  saveImage,
-  deleteImage,
-  FileUpload,
-  randomDefaultImagePath,
-} from "../../utils/image";
+import { deleteImage, FileUpload } from "../../utils/image";
 import { ModelNames, TypeNames } from "../../constants/common";
-import { INITIAL_GROUP_SETTINGS } from "../../constants/setting";
 import Messages from "../../utils/messages";
 import { paginate } from "../../utils/items";
 import { BackendFeedItem } from "../models/common";
+import { initializeGroupAdminRole } from "../models/role";
+import { initializeGroupSettings } from "../models/setting";
+import { saveGroupCoverPhoto } from "../models/group";
 
 interface GroupInput {
   name: string;
@@ -24,29 +21,6 @@ interface GroupFeedInput extends PaginationState {
   name: string;
   itemType: string;
 }
-
-const saveCoverPhoto = async (
-  group: Group,
-  image: FileUpload,
-  isCreatingGroup = false
-) => {
-  if (image || isCreatingGroup) {
-    let path = randomDefaultImagePath();
-    if (image) path = await saveImage(image);
-
-    await prisma.image.create({
-      data: {
-        group: {
-          connect: {
-            id: group.id,
-          },
-        },
-        profilePicture: true,
-        path,
-      },
-    });
-  }
-};
 
 const groupResolvers = {
   FileUpload: GraphQLUpload,
@@ -113,16 +87,15 @@ const groupResolvers = {
         where: {
           name,
         },
-        include: {
-          settings: true,
-        },
       });
       return group;
     },
 
     allGroups: async () => {
       const groups = await prisma.group.findMany();
-      return groups;
+      return groups.sort(
+        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+      );
     },
 
     joinedGroupsByUserId: async (_: any, { userId }: { userId: string }) => {
@@ -160,7 +133,7 @@ const groupResolvers = {
           name,
         },
       });
-      await saveCoverPhoto(group, coverPhoto, true);
+      await saveGroupCoverPhoto(group, coverPhoto, true);
       await prisma.groupMember.create({
         data: {
           user: {
@@ -175,22 +148,8 @@ const groupResolvers = {
           },
         },
       });
-
-      for (const setting of INITIAL_GROUP_SETTINGS) {
-        const { name, value } = setting;
-        await prisma.setting.create({
-          data: {
-            name,
-            value,
-            group: {
-              connect: {
-                id: group.id,
-              },
-            },
-          },
-        });
-      }
-
+      initializeGroupSettings(group);
+      initializeGroupAdminRole(group);
       return { group };
     },
 
@@ -205,8 +164,7 @@ const groupResolvers = {
       });
 
       if (!group) throw new Error(Messages.items.notFound(TypeNames.Group));
-
-      await saveCoverPhoto(group, coverPhoto);
+      await saveGroupCoverPhoto(group, coverPhoto);
 
       return { group };
     },

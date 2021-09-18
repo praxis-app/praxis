@@ -77,9 +77,8 @@ const ServerInvite = ({ invite, invites, setInvites }: Props) => {
             anchorEl={menuAnchorEl}
             setAnchorEl={setMenuAnchorEl}
             deleteItem={deleteInviteHandler}
-            ownItem={() => false}
+            canDelete={true}
             prependChildren
-            hasPermission
           >
             <MenuItem onClick={copyInviteHandler}>
               <Assignment

@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { CircularProgress } from "@material-ui/core";
 
 import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import GroupForm from "../../../components/Groups/Form";
 import Messages from "../../../utils/messages";
-import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
+import {
+  useCurrentUser,
+  useHasPermissionByGroupId,
+  useSettingsByGroupId,
+} from "../../../hooks";
 import { GroupSettings, SettingStates } from "../../../constants/setting";
-import { NavigationPaths } from "../../../constants/common";
 import { noCache, settingValueByName } from "../../../utils/clientIndex";
+import { GroupPermissions } from "../../../constants/role";
+import { breadcrumbsVar } from "../../../apollo/client/localState";
+import { ResourcePaths } from "../../../constants/common";
 
 const Edit = () => {
   const { query } = useRouter();
@@ -19,6 +25,10 @@ const Edit = () => {
     group?.id
   );
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
+  const [canEditGroup, canEditGroupLoading] = useHasPermissionByGroupId(
+    GroupPermissions.EditGroup,
+    group?.id
+  );
 
   useEffect(() => {
     if (query.name) {
@@ -29,14 +39,26 @@ const Edit = () => {
   }, [query.name]);
 
   useEffect(() => {
-    setGroup(groupRes.data ? groupRes.data.groupByName : groupRes.data);
+    if (groupRes.data) setGroup(groupRes.data.groupByName);
   }, [groupRes.data]);
 
   useEffect(() => {
-    if (currentUser && group && !ownGroup()) {
-      Router.push(NavigationPaths.Home);
-    }
-  }, [currentUser, group]);
+    if (group && canEditGroup)
+      breadcrumbsVar([
+        {
+          label: group.name,
+          href: `${ResourcePaths.Group}${group.name}`,
+        },
+        {
+          label: Messages.groups.breadcrumbs.editGroup(),
+        },
+      ]);
+    else breadcrumbsVar([]);
+
+    return () => {
+      breadcrumbsVar([]);
+    };
+  }, [group, canEditGroup]);
 
   const isNoAdmin = (): boolean => {
     return (
@@ -45,14 +67,10 @@ const Edit = () => {
     );
   };
 
-  const ownGroup = (): boolean => {
-    if (!currentUser) return false;
-    return group?.creatorId === currentUser.id;
-  };
-
-  if (groupRes.loading || groupSettingsLoading) return <CircularProgress />;
+  if (groupRes.loading || groupSettingsLoading || canEditGroupLoading)
+    return <CircularProgress />;
   if (currentUser && isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
-  if (!ownGroup()) return <>{Messages.users.permissionDenied()}</>;
+  if (!canEditGroup) return <>{Messages.users.permissionDenied()}</>;
 
   return <GroupForm group={group} isEditing={true} />;
 };

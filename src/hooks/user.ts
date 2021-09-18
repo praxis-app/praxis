@@ -12,6 +12,7 @@ import {
 import { CURRENT_USER, USER, USERS } from "../apollo/client/queries";
 import { LOGOUT_USER, SET_CURRENT_USER } from "../apollo/client/mutations";
 import { navKeyVar } from "../apollo/client/localState";
+import { NavigationPaths } from "../constants/common";
 
 export const useCurrentUser = (): CurrentUser | undefined => {
   const [currentUser, setCurrentUser] = useState<CurrentUser>();
@@ -57,7 +58,7 @@ export const useRestoreUserSession = () => {
 
   const logoutUserMutate = async () => {
     await logoutUser();
-    Router.push("/users/login");
+    Router.push(NavigationPaths.LogIn);
   };
 };
 
@@ -80,17 +81,20 @@ export const useUserById = (id: string | undefined): ClientUser | undefined => {
   return user;
 };
 
-export const useAllUsers = (): [
-  ClientUser[],
-  (users: ClientUser[]) => void,
-  boolean
-] => {
+export const useAllUsers = (
+  greenLight = true,
+  callDep?: any
+): [ClientUser[], (users: ClientUser[]) => void, boolean] => {
   const [users, setUsers] = useState<ClientUser[]>([]);
-  const usersRes = useQuery(USERS, noCache);
+  const [getUsersRes, usersRes] = useLazyQuery(USERS, noCache);
+
+  useEffect(() => {
+    if (greenLight) getUsersRes();
+  }, [greenLight, JSON.stringify(callDep)]);
 
   useEffect(() => {
     if (usersRes.data) setUsers(usersRes.data.allUsers);
   }, [usersRes.data]);
 
-  return [users, setUsers, !usersRes.data];
+  return [users, setUsers, usersRes.loading];
 };

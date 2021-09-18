@@ -23,5 +23,5 @@ export const useMembersByGroupId = (
     if (membersRes.data) setMembers(membersRes.data.groupMembers);
   }, [membersRes.data]);
 
-  return [members, setMembers, !membersRes.data];
+  return [members, setMembers, membersRes.loading];
 };

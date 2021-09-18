@@ -9,13 +9,14 @@ import { ROLE_MEMBERS } from "../../apollo/client/queries";
 import { useQuery } from "@apollo/client";
 import { noCache } from "../../utils/apollo";
 import { BLACK } from "../../styles/Shared/theme";
+import { NavigationPaths, ResourcePaths } from "../../constants/common";
 
 interface Props {
   role: ClientRole;
-  deleteRole: (id: string) => void;
+  group?: ClientGroup;
 }
 
-const Role = ({ role }: Props) => {
+const Role = ({ role, group }: Props) => {
   const { id, name, color } = role;
   const [members, setMembers] = useState<ClientRoleMember[]>([]);
   const membersRes = useQuery(ROLE_MEMBERS, {
@@ -24,6 +25,8 @@ const Role = ({ role }: Props) => {
     },
     ...noCache,
   });
+  const editRolePath = `${ResourcePaths.Roles}${id}${NavigationPaths.Edit}`;
+  const editGroupRolePath = `${ResourcePaths.Group}${group?.name}${editRolePath}`;
 
   useEffect(() => {
     if (membersRes.data) setMembers(membersRes.data.roleMembers);
@@ -31,7 +34,7 @@ const Role = ({ role }: Props) => {
 
   if (role && !membersRes.loading)
     return (
-      <Link href={`/roles/${id}/edit`} passHref>
+      <Link href={group ? editGroupRolePath : editRolePath} passHref>
         <a className={styles.role}>
           <div className={styles.link}>
             <Avatar

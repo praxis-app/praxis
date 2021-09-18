@@ -95,6 +95,7 @@ const Modal = ({
               <div className={classes.titleWithCaption}>
                 <Typography
                   variant="h6"
+                  color="primary"
                   style={subtext ? { marginTop: 5, marginBottom: -10 } : {}}
                 >
                   {title}

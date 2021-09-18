@@ -156,11 +156,9 @@ const PostsForm = ({
 
   const isSubmitButtonDisabled = ({
     values: { body },
-    isValid,
     isSubmitting,
   }: FormikProps<FormValues>): boolean => {
     if (body === "" && images.length === 0) return true;
-    if (!isValid) return true;
     return isSubmitting;
   };
 

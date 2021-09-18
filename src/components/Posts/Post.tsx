@@ -19,9 +19,10 @@ import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Shared/Shared.module.scss";
 import GroupItemAvatar from "../Groups/ItemAvatar";
 import { ModelNames, ResourcePaths } from "../../constants/common";
-import { Permissions } from "../../constants/role";
+import { GlobalPermissions, GroupPermissions } from "../../constants/role";
 import {
   useCurrentUser,
+  useHasPermissionByGroupId,
   useHasPermissionGlobally,
   useUserById,
 } from "../../hooks";
@@ -42,7 +43,13 @@ interface Props {
 const Post = ({ post, deletePost }: Props) => {
   const { id, userId, groupId, postGroupId, body, createdAt } = post;
   const currentUser = useCurrentUser();
-  const [canManagePosts] = useHasPermissionGlobally(Permissions.ManagePosts);
+  const [canManagePostsGlobally] = useHasPermissionGlobally(
+    GlobalPermissions.ManagePosts
+  );
+  const [canManagePostsByGroup] = useHasPermissionByGroupId(
+    GroupPermissions.ManagePosts,
+    groupId
+  );
   const user = useUserById(userId);
   const [group, setGroup] = useState<ClientGroup>();
   const [images, setImages] = useState<ClientImage[]>([]);
@@ -110,8 +117,10 @@ const Post = ({ post, deletePost }: Props) => {
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deletePost}
-              ownItem={ownPost}
-              hasPermission={canManagePosts}
+              canEdit={ownPost()}
+              canDelete={
+                ownPost() || canManagePostsGlobally || canManagePostsByGroup
+              }
             />
           }
           classes={{ title: classes.title }}

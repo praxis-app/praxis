@@ -36,7 +36,7 @@ import {
   useUserById,
   useWindowSize,
 } from "../../hooks";
-import { Permissions } from "../../constants/role";
+import { GlobalPermissions } from "../../constants/role";
 import { LOGOUT_USER } from "../../apollo/client/mutations";
 import { redeemedInviteToken } from "../../utils/clientIndex";
 import styles from "../../styles/Shared/Shared.module.scss";
@@ -59,19 +59,19 @@ const NavDrawer = () => {
   const openModal = useReactiveVar(modalOpenVar);
   const [inviteToken, setInviteToken] = useState<string | null>();
   const [canManageRoles] = useHasPermissionGlobally(
-    Permissions.ManageRoles,
+    GlobalPermissions.ManageRoles,
     refreshKey
   );
   const [canManageUsers] = useHasPermissionGlobally(
-    Permissions.ManageUsers,
+    GlobalPermissions.ManageUsers,
     refreshKey
   );
   const [canManageInvites] = useHasPermissionGlobally(
-    Permissions.ManageInvites,
+    GlobalPermissions.ManageInvites,
     refreshKey
   );
   const [canCreateInvites] = useHasPermissionGlobally(
-    Permissions.CreateInvites,
+    GlobalPermissions.CreateInvites,
     refreshKey
   );
   const [logoutUser] = useMutation(LOGOUT_USER);
