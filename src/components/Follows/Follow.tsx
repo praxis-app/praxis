@@ -1,8 +1,10 @@
+import Link from "next/link";
 import { LinearProgress } from "@material-ui/core";
 import UserAvatar from "../Users/Avatar";
 import FollowButton from "./FollowButton";
 import styles from "../../styles/Follow/Follow.module.scss";
 import { useUserById, useFollowersByUserId } from "../../hooks";
+import { ResourcePaths } from "../../constants/common";
 
 interface Props {
   userId: string;
@@ -17,7 +19,9 @@ const Follow = ({ userId }: Props) => {
       <div className={styles.follow}>
         <div className={styles.link}>
           <UserAvatar user={user} />
-          <div className={styles.userName}>{user.name}</div>
+          <Link href={`${ResourcePaths.User}${user.name}`}>
+            <a className={styles.userName}>{user.name}</a>
+          </Link>
         </div>
         <FollowButton
           userId={userId}

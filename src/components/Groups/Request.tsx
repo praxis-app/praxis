@@ -6,6 +6,7 @@ import { APPROVE_MEMBER_REQUEST } from "../../apollo/client/mutations";
 import UserAvatar from "../Users/Avatar";
 import styles from "../../styles/Group/Member.module.scss";
 import { useUserById } from "../../hooks";
+import Messages from "../../utils/messages";
 
 interface Props {
   memberRequest: ClientMemberRequest;
@@ -42,7 +43,7 @@ const MemberRequest = ({
           </Link>
         </div>
         <Button onClick={() => approveMemberRequestMutation()} color="primary">
-          Approve
+          {Messages.groups.actions.approve()}
         </Button>
       </div>
     );

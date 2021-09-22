@@ -7,6 +7,8 @@ import UserForm from "../../../components/Users/Form";
 import { USER_BY_NAME } from "../../../apollo/client/queries";
 import Messages from "../../../utils/messages";
 import { useCurrentUser } from "../../../hooks";
+import { breadcrumbsVar } from "../../../apollo/client/localState";
+import { ResourcePaths } from "../../../constants/common";
 
 const Edit = () => {
   const { query } = useRouter();
@@ -23,17 +25,36 @@ const Edit = () => {
   }, [query.name]);
 
   useEffect(() => {
-    setUser(userRes.data ? userRes.data.userByName : userRes.data);
+    if (userRes.data) setUser(userRes.data.userByName);
   }, [userRes.data]);
+
+  useEffect(() => {
+    if (user)
+      breadcrumbsVar([
+        {
+          label: user.name,
+          href: `${ResourcePaths.User}${user.name}`,
+        },
+        {
+          label: Messages.users.actions.editProfile(),
+        },
+      ]);
+    else breadcrumbsVar([]);
+
+    return () => {
+      breadcrumbsVar([]);
+    };
+  }, [user]);
 
   const ownUser = (): boolean => {
     if (currentUser && user && currentUser.id === user.id) return true;
     return false;
   };
 
+  if (userRes.loading) return <CircularProgress />;
   if (!ownUser()) return <>{Messages.users.permissionDenied()}</>;
-  if (user) return <UserForm user={user} isEditing={true} />;
-  return <CircularProgress />;
+
+  return <UserForm user={user} isEditing={true} />;
 };
 
 export default Edit;

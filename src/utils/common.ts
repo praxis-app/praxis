@@ -1,3 +1,4 @@
+import { isValidElement, ReactNode } from "react";
 import { animateScroll } from "react-scroll";
 import { SCROLL_DURATION } from "../constants/common";
 
@@ -15,4 +16,17 @@ export const generateRandom = (): string => {
 export const scrollTop = () => {
   const options = { smooth: true, duration: SCROLL_DURATION };
   animateScroll.scrollToTop(options);
+};
+
+export const isRenderable = (node: ReactNode): boolean => {
+  switch (typeof node) {
+    case "string":
+    case "number":
+      return true;
+    default:
+      if (Array.isArray(node) && node.length) {
+        return Boolean(node.reduce((a, b) => a && isRenderable(b), true));
+      }
+      return isValidElement(node);
+  }
 };

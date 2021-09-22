@@ -18,7 +18,7 @@ import {
 } from "../../hooks";
 import { formatDate } from "../../utils/time";
 import { noCache } from "../../utils/apollo";
-import { Permissions } from "../../constants/role";
+import { GlobalPermissions } from "../../constants/role";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -43,7 +43,9 @@ const Show = ({ user, deleteUser }: Props) => {
     variables: { userId: id },
     ...noCache,
   });
-  const [canManageUsers] = useHasPermissionGlobally(Permissions.ManageUsers);
+  const [canManageUsers] = useHasPermissionGlobally(
+    GlobalPermissions.ManageUsers
+  );
   const classes = useStyles();
   const signUpDate = formatDate(createdAt, false);
 
@@ -74,8 +76,8 @@ const Show = ({ user, deleteUser }: Props) => {
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteUser}
-              ownItem={() => ownUser()}
-              hasPermission={canManageUsers}
+              canEdit={ownUser()}
+              canDelete={ownUser() || canManageUsers}
             />
           </>
         }

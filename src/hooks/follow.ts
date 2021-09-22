@@ -23,5 +23,5 @@ export const useFollowersByUserId = (
     if (followersRes.data) setFollowers(followersRes.data.userFollowers);
   }, [followersRes.data]);
 
-  return [followers, setFollowers, !followersRes.data];
+  return [followers, setFollowers, followersRes.loading];
 };

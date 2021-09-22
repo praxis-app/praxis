@@ -7,11 +7,10 @@ import {
   CardHeader,
   CircularProgress,
   createStyles,
-  MenuItem,
   Typography,
   withStyles,
 } from "@material-ui/core";
-import { ChevronRight, HowToVote, Settings } from "@material-ui/icons";
+import { ChevronRight, HowToVote } from "@material-ui/icons";
 import Image from "material-ui-image";
 import Link from "next/link";
 
@@ -22,22 +21,20 @@ import {
 import { GroupSettings, SettingStates } from "../../constants/setting";
 import {
   useCurrentUser,
+  useHasPermissionByGroupId,
   useIsMobile,
   useMembersByGroupId,
   useSettingsByGroupId,
 } from "../../hooks";
 import baseUrl from "../../utils/baseUrl";
 import { BLACK, WHITE } from "../../styles/Shared/theme";
-import {
-  ModelNames,
-  NavigationPaths,
-  ResourcePaths,
-} from "../../constants/common";
+import { NavigationPaths, ResourcePaths } from "../../constants/common";
 import Messages from "../../utils/messages";
-import ItemMenu from "../Shared/ItemMenu";
 import JoinButton from "./JoinButton";
 import { VotingTypes } from "../../constants/vote";
 import { noCache, settingValueByName } from "../../utils/clientIndex";
+import { GroupPermissions } from "../../constants/role";
+import GroupItemMenu from "./ItemMenu";
 
 const CardContent = withStyles(() =>
   createStyles({
@@ -60,7 +57,7 @@ interface Props {
 }
 
 const GroupPageHeader = ({ group, deleteGroup }: Props) => {
-  const { id, name, creatorId } = group;
+  const { id, name } = group;
   const [groupSettings, _, groupSettingsLoading] = useSettingsByGroupId(id);
   const [groupMembers, setGroupMembers, groupMembersLoading] =
     useMembersByGroupId(group.id);
@@ -68,7 +65,6 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
   const [memberRequests, setMemberRequests] = useState<ClientMemberRequest[]>(
     []
   );
-  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const currentUser = useCurrentUser();
   const memberVariables = {
     variables: { groupId: group.id },
@@ -79,6 +75,23 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
     variables: { groupId: group.id },
     ...noCache,
   });
+  const [canEdit] = useHasPermissionByGroupId(GroupPermissions.EditGroup, id);
+  const [canDelete] = useHasPermissionByGroupId(
+    GroupPermissions.DeleteGroup,
+    id
+  );
+  const [canManageRoles] = useHasPermissionByGroupId(
+    GroupPermissions.ManageRoles,
+    id
+  );
+  const [canManageSettings] = useHasPermissionByGroupId(
+    GroupPermissions.ManageSettings,
+    id
+  );
+  const [canAcceptMemberRequests] = useHasPermissionByGroupId(
+    GroupPermissions.AcceptMemberRequests,
+    id
+  );
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -89,11 +102,6 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
     if (memberRequestsRes.data)
       setMemberRequests(memberRequestsRes.data.memberRequests);
   }, [memberRequestsRes.data]);
-
-  const isCreator = (): boolean => {
-    if (currentUser) return currentUser.id === creatorId;
-    return false;
-  };
 
   const isNoAdmin = (): boolean => {
     return (
@@ -110,7 +118,7 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
   };
 
   const canSeeRequests = (): boolean => {
-    if (isCreator()) return true;
+    if (canAcceptMemberRequests) return true;
     if (isNoAdmin() && isAMember()) return true;
     return false;
   };
@@ -128,6 +136,11 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
     }
   };
 
+  const showCardHeader =
+    currentUser &&
+    !isNoAdmin() &&
+    (canEdit || canDelete || canManageSettings || canManageRoles);
+
   if (
     memberRequestsRes.loading ||
     coverPhotoRes.loading ||
@@ -138,35 +151,17 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
 
   return (
     <Card>
-      {isCreator() && !isNoAdmin() && (
+      {showCardHeader && (
         <CardHeader
           action={
-            currentUser &&
-            !isNoAdmin() && (
-              <ItemMenu
-                itemId={id}
-                name={group.name}
-                itemType={ModelNames.Group}
-                anchorEl={menuAnchorEl}
-                setAnchorEl={setMenuAnchorEl}
-                deleteItem={deleteGroup}
-                ownItem={() => isCreator()}
-              >
-                <Link href={`${ResourcePaths.Group}${group.name}/settings`}>
-                  <a>
-                    <MenuItem>
-                      <Settings
-                        fontSize="small"
-                        style={{
-                          marginRight: "5",
-                        }}
-                      />
-                      {Messages.groups.settings.name()}
-                    </MenuItem>
-                  </a>
-                </Link>
-              </ItemMenu>
-            )
+            <GroupItemMenu
+              group={group}
+              deleteGroup={deleteGroup}
+              canEdit={canEdit}
+              canDelete={canDelete}
+              canManageRoles={canManageRoles}
+              canManageSettings={canManageSettings}
+            />
           }
           style={{ paddingBottom: 6 }}
         />

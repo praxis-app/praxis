@@ -39,19 +39,22 @@ export enum ResourcePaths {
   Motion = "/motions/",
   Group = "/groups/",
   User = "/users/",
+  Roles = "/roles/",
 }
 
 export enum NavigationPaths {
   About = "/about",
+  Edit = "/edit",
   Home = "/",
   Groups = "/groups",
   Invites = "/invites",
+  LogIn = "/users/login",
   Members = "/members",
   Requests = "/requests",
   Roles = "/roles",
-  Users = "/users",
-  LogIn = "/users/login",
+  Settings = "/settings",
   SignUp = "/users/signup",
+  Users = "/users",
 }
 
 export enum FieldNames {

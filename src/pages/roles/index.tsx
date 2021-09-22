@@ -4,39 +4,26 @@ import { CircularProgress, Card, Typography, Button } from "@material-ui/core";
 
 import Role from "../../components/Roles/Role";
 import { GLOBAL_ROLES } from "../../apollo/client/queries";
-import {
-  DELETE_ROLE,
-  INITIALIZE_ADMIN_ROLE,
-} from "../../apollo/client/mutations";
+import { INITIALIZE_ADMIN_ROLE } from "../../apollo/client/mutations";
 import RoleForm from "../../components/Roles/Form";
 import { noCache } from "../../utils/apollo";
 import Messages from "../../utils/messages";
 import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
-import { Permissions } from "../../constants/role";
+import { GlobalPermissions } from "../../constants/role";
 
 const Index = () => {
+  const currentUser = useCurrentUser();
   const [roles, setRoles] = useState<ClientRole[]>([]);
-  const [deleteRole] = useMutation(DELETE_ROLE);
   const [initializeAdminRole] = useMutation(INITIALIZE_ADMIN_ROLE);
   const rolesRes = useQuery(GLOBAL_ROLES, noCache);
   const [canManageRoles, canManageRolesLoading] = useHasPermissionGlobally(
-    Permissions.ManageRoles,
+    GlobalPermissions.ManageRoles,
     roles
   );
-  const currentUser = useCurrentUser();
 
   useEffect(() => {
     if (rolesRes.data) setRoles(rolesRes.data.globalRoles);
   }, [rolesRes.data]);
-
-  const deleteRoleHandler = async (id: string) => {
-    await deleteRole({
-      variables: {
-        id,
-      },
-    });
-    if (roles) setRoles(roles.filter((role: ClientRole) => role.id !== id));
-  };
 
   const initializeAdminRoleHandler = async () => {
     try {
@@ -85,13 +72,7 @@ const Index = () => {
             .slice()
             .reverse()
             .map((role: ClientRole) => {
-              return (
-                <Role
-                  role={role}
-                  deleteRole={deleteRoleHandler}
-                  key={role.id}
-                />
-              );
+              return <Role role={role} key={role.id} />;
             })}
         </Card>
       </>

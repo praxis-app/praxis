@@ -71,6 +71,7 @@ const en = {
 
   users: {
     actions: {
+      editProfile: () => "Edit Profile",
       logIn: () => "Log in",
       logOut: () => "Log out",
       signUp: () => "Sign up",
@@ -228,19 +229,22 @@ const en = {
 
   groups: {
     actions: {
-      cancelRequest: () => "Cancel request",
+      approve: () => "Approve",
+      cancelRequest: () => "Cancel Request",
       leave: () => "Leave",
       join: () => "Join",
+      manageRoles: () => "Manage Roles",
+      remove: () => "Remove",
     },
     prompts: {
       leaveGroup: () => "Are you sure you want to leave this group?",
+      removeGroupMember: () =>
+        "Are you sure you want to remove this member from the group?",
     },
     form: {
       name: () => "Name",
       description: () => "Description",
     },
-    itemWithName: (itemType: string, name: string) =>
-      `Group ${itemType} by ${name}`,
     tabs: {
       all: () => "All",
       posts: () => "Posts",
@@ -248,7 +252,9 @@ const en = {
     },
     breadcrumbs: {
       about: () => "About",
+      editGroup: () => "Edit Group",
       groups: () => "Groups",
+      groupRoles: () => "Group Roles",
     },
     members: (size: number) => `${size} Member${pluralize(size)}`,
     requests: (size: number) => `${size} Request${pluralize(size)}`,
@@ -324,7 +330,10 @@ const en = {
       permissions: () => "Permissions",
       members: () => "Members",
     },
-    breadcrumb: () => "Roles",
+    breadcrumbs: {
+      groupRoles: () => "Group Roles",
+      roles: () => "Roles",
+    },
     members: {
       prompts: {
         removeMemberConfirm: () =>
@@ -337,10 +346,19 @@ const en = {
         manageItems: (itemType: string) => `Manage ${itemType}s`,
       },
       descriptions: {
+        editGroup: () =>
+          "Allows members to edit the groups name, description, and cover photo.",
+        deleteGroup: () => "Allows members to permanently delete this group.",
         manageItems: (itemType: string) =>
           `Allows members to delete ${itemType}s by other members.`,
         manageRoles: () =>
           "Allows members to create new roles and edit or delete roles lower than their highest role.",
+        manageGroupSettings: () =>
+          "Allows members to make changes to this groups settings.",
+        acceptMemberRequests: () =>
+          "Allows members to view member requests and to allow new members to join the group.",
+        kickGroupMembers: () =>
+          "Allows members to remove other members from the group.",
         manageUsers: () =>
           "Allows members to view the full list of server members and permanently delete their accounts.",
         manageInvites: () =>
@@ -349,6 +367,7 @@ const en = {
           "Allows members to invite new people to this server.",
       },
     },
+    groupRoles: () => "Group Roles",
     serverRoles: () => "Server Roles",
     noRoles: () => "No roles have been created for this server yet.",
   },

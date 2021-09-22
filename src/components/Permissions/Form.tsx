@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { FormGroup, Switch } from "@material-ui/core";
+import { useMutation } from "@apollo/client";
 
 import styles from "../../styles/Role/Role.module.scss";
-import { displayName } from "../../utils/items";
-import Messages from "../../utils/messages";
 import { UPDATE_PERMISSIONS } from "../../apollo/client/mutations";
-import { useMutation } from "@apollo/client";
 import { navKeyVar } from "../../apollo/client/localState";
-import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
+import Messages from "../../utils/messages";
+import {
+  permissionDescription,
+  generateRandom,
+  displayName,
+} from "../../utils/clientIndex";
 
 interface Props {
   permissions: ClientPermission[];
@@ -78,7 +81,7 @@ const PermissionsForm = ({
     <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
       <FormGroup>
         <div className={styles.form}>
-          {unsavedPermissions.map(({ name, description, enabled }) => {
+          {unsavedPermissions.map(({ name, enabled }) => {
             return (
               <div className={styles.permission} key={name}>
                 <div>
@@ -86,7 +89,7 @@ const PermissionsForm = ({
                     {displayName(name)}
                   </div>
                   <div className={styles.permissionDescription}>
-                    {description}
+                    {permissionDescription(name)}
                   </div>
                 </div>
 

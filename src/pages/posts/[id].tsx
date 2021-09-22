@@ -85,6 +85,8 @@ const Show = () => {
         <CommentsList
           comments={comments}
           deleteComment={deleteCommentHandler}
+          loading={commentsRes.loading}
+          groupId={post.groupId}
         />
       </>
     );

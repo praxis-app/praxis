@@ -9,7 +9,7 @@ import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import ColorPicker from "../Shared/ColorPicker";
-import { FieldNames } from "../../constants/common";
+import { FieldNames, NavigationPaths } from "../../constants/common";
 import { DEFAULT_ROLE_COLOR } from "../../constants/role";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
@@ -24,10 +24,18 @@ interface Props {
   roles?: ClientRole[];
   setRole?: (role: ClientRole) => void;
   setRoles?: (roles: ClientRole[]) => void;
+  group?: ClientGroup;
   isEditing?: boolean;
 }
 
-const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
+const RoleForm = ({
+  role,
+  roles,
+  setRole,
+  setRoles,
+  group,
+  isEditing,
+}: Props) => {
   const currentUser = useCurrentUser();
   const [color, setColor] = useState<string>(DEFAULT_ROLE_COLOR);
   const [colorPickerKey, setColorPickerKey] = useState<string>("");
@@ -68,6 +76,7 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
               name,
               color,
               global: onGlobalRolesPage(),
+              ...(group ? { groupId: group.id } : {}),
             },
           });
 
@@ -86,7 +95,7 @@ const RoleForm = ({ role, roles, setRole, setRoles, isEditing }: Props) => {
   };
 
   const onGlobalRolesPage = (): boolean => {
-    return router.asPath === "/roles";
+    return router.asPath === NavigationPaths.Roles;
   };
 
   const isSubmitButtonDisabled = ({

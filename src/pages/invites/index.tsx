@@ -21,17 +21,17 @@ import {
   useHasPermissionGlobally,
   useIsDesktop,
 } from "../../hooks";
-import { Permissions } from "../../constants/role";
+import { GlobalPermissions } from "../../constants/role";
 
 const Index = () => {
   const currentUser = useCurrentUser();
   const [invites, setInvites] = useState<ClientServerInvite[]>([]);
   const invitesRes = useQuery(SERVER_INVITES, noCache);
   const [canManageInvites, canManageInvitesLoading] = useHasPermissionGlobally(
-    Permissions.ManageInvites
+    GlobalPermissions.ManageInvites
   );
   const [canCreateInvites, canCreateInvitesLoading] = useHasPermissionGlobally(
-    Permissions.CreateInvites
+    GlobalPermissions.CreateInvites
   );
   const isDesktop = useIsDesktop();
 

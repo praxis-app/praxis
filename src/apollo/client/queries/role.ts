@@ -49,6 +49,12 @@ export const HAS_PERMISSION_GLOBALLY = gql`
   }
 `;
 
+export const HAS_PERMISSION_BY_GROUP_ID = gql`
+  query ($name: String!, $userId: ID!, $groupId: ID!) {
+    hasPermissionByGroupId(name: $name, userId: $userId, groupId: $groupId)
+  }
+`;
+
 export const ROLE_MEMBERS = gql`
   query ($roleId: ID!) {
     roleMembers(roleId: $roleId) {

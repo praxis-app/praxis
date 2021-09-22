@@ -2,15 +2,9 @@ import { ApolloError, UserInputError } from "apollo-server-micro";
 import { GraphQLUpload } from "apollo-server-micro";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { User } from ".prisma/client";
 
 import prisma from "../../utils/initPrisma";
-import {
-  saveImage,
-  deleteImage,
-  FileUpload,
-  randomDefaultImagePath,
-} from "../../utils/image";
+import { deleteImage } from "../../utils/image";
 import {
   validateSignup,
   validateLogin,
@@ -22,6 +16,7 @@ import { paginate } from "../../utils/items";
 import { BackendMotion } from "../models/motion";
 import { BackendPost } from "../models/post";
 import { BackendFeedItem } from "../models/common";
+import { saveProfilePicture } from "../models/user";
 
 interface HomeFeedInput extends PaginationState {
   userId?: string;
@@ -30,29 +25,6 @@ interface HomeFeedInput extends PaginationState {
 interface ProfileFeedInput extends PaginationState {
   name: string;
 }
-
-const saveProfilePicture = async (
-  user: User,
-  image: FileUpload,
-  isCreatingUser = false
-) => {
-  if (image || isCreatingUser) {
-    let path = randomDefaultImagePath();
-    if (image) path = await saveImage(image);
-
-    await prisma.image.create({
-      data: {
-        user: {
-          connect: {
-            id: user.id,
-          },
-        },
-        profilePicture: true,
-        path,
-      },
-    });
-  }
-};
 
 const userResolvers = {
   FileUpload: GraphQLUpload,
@@ -64,6 +36,7 @@ const userResolvers = {
     ) => {
       let feed: BackendFeedItem[] = [];
 
+      // TODO: Extract as model functions to make code more legible, remove comments below
       if (userId) {
         // Users own posts
         const ownPosts = await prisma.post.findMany({
@@ -340,7 +313,7 @@ const userResolvers = {
       };
 
       const token = jwt.sign(jwtPayload, process.env.JWT_KEY as string, {
-        expiresIn: "90d",
+        expiresIn: EXPIRES_IN,
       });
 
       return { user, token };

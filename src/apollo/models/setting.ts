@@ -1,5 +1,5 @@
-import { Setting } from ".prisma/client";
-import { GroupSettings } from "../../constants/setting";
+import { Group, Setting } from ".prisma/client";
+import { GroupSettings, INITIAL_GROUP_SETTINGS } from "../../constants/setting";
 import prisma from "../../utils/initPrisma";
 
 export const groupSettingByName = (
@@ -19,4 +19,21 @@ export const updateSettingById = async ({
     data: { value },
   });
   return setting;
+};
+
+export const initializeGroupSettings = async (group: Group) => {
+  for (const setting of INITIAL_GROUP_SETTINGS) {
+    const { name, value } = setting;
+    await prisma.setting.create({
+      data: {
+        name,
+        value,
+        group: {
+          connect: {
+            id: group.id,
+          },
+        },
+      },
+    });
+  }
 };

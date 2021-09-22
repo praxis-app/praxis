@@ -9,20 +9,29 @@ import Modal from "../Shared/Modal";
 import Messages from "../../utils/messages";
 import RoleMemberAdd from "./MemberAdd";
 import RoleMember from "./Member";
-import { useAllUsers } from "../../hooks";
+import { useAllUsers, useMembersByGroupId } from "../../hooks";
 
 interface Props {
   role: ClientRole;
-  members: ClientRoleMember[];
-  setMembers: (members: ClientRoleMember[]) => void;
+  roleMembers: ClientRoleMember[];
+  setRoleMembers: (members: ClientRoleMember[]) => void;
   membersLoading: boolean;
+  group?: ClientGroup;
 }
 
-const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
-  const [users] = useAllUsers();
+const AddMemberTab = ({
+  role,
+  roleMembers,
+  setRoleMembers,
+  membersLoading,
+  group,
+}: Props) => {
+  const [users, _setUsers, usersLoading] = useAllUsers(!group);
+  const [groupMembers, _setGroupMembers, groupMembersLoading] =
+    useMembersByGroupId(group?.id);
   const [selectedUsers, setSelectedUsers] = useState<SelectedUser[]>([]);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [addMembersLoading, setAddMembersLoading] = useState<boolean>(false);
   const [addRoleMembers] = useMutation(ADD_ROLE_MEMBERS);
 
   useEffect(() => {
@@ -30,9 +39,13 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
   }, [dialogOpen]);
 
   const addRoleMembersHandler = async () => {
-    setLoading(true);
+    setAddMembersLoading(true);
     try {
-      const { data } = await addRoleMembers({
+      const {
+        data: {
+          addRoleMembers: { roleMembers: newRoleMembers },
+        },
+      } = await addRoleMembers({
         variables: {
           roleId: role.id,
           selectedUsers: selectedUsers.map(({ userId }) => {
@@ -40,75 +53,93 @@ const AddMemberTab = ({ role, members, setMembers, membersLoading }: Props) => {
           }),
         },
       });
-      const newMembers = data.addRoleMembers.roleMembers;
-      setMembers([...members, ...newMembers]);
+      setRoleMembers([...roleMembers, ...newRoleMembers]);
       setDialogOpen(false);
     } catch (err) {
       alert(err);
     }
-    setLoading(false);
+    setAddMembersLoading(false);
   };
 
-  if (role && !membersLoading)
-    return (
-      <>
-        <Card className={styles.buttonCard} onClick={() => setDialogOpen(true)}>
-          <div className={styles.buttonWrapper}>
-            <div className={styles.button}>
-              <AddCircle className={styles.addCircleIcon} />
-              <div className={styles.buttonText}>
-                {Messages.roles.actions.addMembers()}
-              </div>
+  if (membersLoading || usersLoading || groupMembersLoading)
+    return <CircularProgress />;
+
+  return (
+    <>
+      <Card className={styles.buttonCard} onClick={() => setDialogOpen(true)}>
+        <div className={styles.buttonWrapper}>
+          <div className={styles.button}>
+            <AddCircle className={styles.addCircleIcon} />
+            <div className={styles.buttonText}>
+              {Messages.roles.actions.addMembers()}
             </div>
-
-            <ArrowForwardIos className={styles.arrowIcon} fontSize="small" />
           </div>
-        </Card>
 
-        <Modal
-          title={Messages.roles.actions.addMembers()}
-          subtext={role.name}
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          actionLabel={Messages.actions.add()}
-          closingAction={addRoleMembersHandler}
-          loading={loading}
-          appBar
-        >
-          <Card>
-            {users
-              .filter((user) => {
-                return !members.find((member) => user.id === member.userId);
-              })
-              .map((user) => {
-                return (
-                  <RoleMemberAdd
-                    userId={user.id}
-                    selectedUsers={selectedUsers}
-                    setSelectedUsers={setSelectedUsers}
-                    key={user.id}
-                  />
-                );
-              })}
-          </Card>
-        </Modal>
+          <ArrowForwardIos className={styles.arrowIcon} fontSize="small" />
+        </div>
+      </Card>
 
+      <Modal
+        title={Messages.roles.actions.addMembers()}
+        subtext={role.name}
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        actionLabel={Messages.actions.add()}
+        closingAction={addRoleMembersHandler}
+        loading={addMembersLoading}
+        appBar
+      >
         <Card>
-          {members.map((member) => {
-            return (
-              <RoleMember
-                member={member}
-                members={members}
-                setMembers={setMembers}
-                key={member.id}
-              />
-            );
-          })}
+          {group
+            ? groupMembers
+                .filter((groupMember) => {
+                  return !roleMembers.find(
+                    (member) => groupMember.userId === member.userId
+                  );
+                })
+                .map((groupMember) => {
+                  return (
+                    <RoleMemberAdd
+                      userId={groupMember.userId}
+                      selectedUsers={selectedUsers}
+                      setSelectedUsers={setSelectedUsers}
+                      key={groupMember.userId}
+                    />
+                  );
+                })
+            : users
+                .filter((user) => {
+                  return !roleMembers.find(
+                    (roleMember) => user.id === roleMember.userId
+                  );
+                })
+                .map((user) => {
+                  return (
+                    <RoleMemberAdd
+                      userId={user.id}
+                      selectedUsers={selectedUsers}
+                      setSelectedUsers={setSelectedUsers}
+                      key={user.id}
+                    />
+                  );
+                })}
         </Card>
-      </>
-    );
+      </Modal>
 
-  return <CircularProgress />;
+      <Card>
+        {roleMembers.map((roleMember) => {
+          return (
+            <RoleMember
+              member={roleMember}
+              members={roleMembers}
+              setMembers={setRoleMembers}
+              key={roleMember.id}
+            />
+          );
+        })}
+      </Card>
+    </>
+  );
 };
 
 export default AddMemberTab;

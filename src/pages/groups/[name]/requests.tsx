@@ -12,10 +12,12 @@ import { GroupSettings, SettingStates } from "../../../constants/setting";
 import Messages from "../../../utils/messages";
 import {
   useCurrentUser,
+  useHasPermissionByGroupId,
   useMembersByGroupId,
   useSettingsByGroupId,
 } from "../../../hooks";
 import { noCache, settingValueByName } from "../../../utils/clientIndex";
+import { GroupPermissions } from "../../../constants/role";
 
 const Requests = () => {
   const { query } = useRouter();
@@ -33,6 +35,10 @@ const Requests = () => {
   const [getMemberRequestsRes, memberRequestsRes] = useLazyQuery(
     MEMBER_REUQESTS,
     noCache
+  );
+  const [canAcceptMemberRequests] = useHasPermissionByGroupId(
+    GroupPermissions.AcceptMemberRequests,
+    group?.id
   );
 
   useEffect(() => {
@@ -60,11 +66,6 @@ const Requests = () => {
       setMemberRequests(memberRequestsRes.data.memberRequests);
   }, [memberRequestsRes.data]);
 
-  const isCreator = (): boolean => {
-    if (currentUser && group) return currentUser.id === group.creatorId;
-    return false;
-  };
-
   const isNoAdmin = (): boolean => {
     return (
       settingValueByName(GroupSettings.NoAdmin, groupSettings) ===
@@ -80,7 +81,7 @@ const Requests = () => {
   };
 
   const canSeeRequests = (): boolean => {
-    if (isCreator()) return true;
+    if (canAcceptMemberRequests) return true;
     if (isNoAdmin() && isAMember()) return true;
     return false;
   };

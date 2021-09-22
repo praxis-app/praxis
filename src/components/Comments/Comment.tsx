@@ -18,13 +18,8 @@ import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Comment/Comment.module.scss";
 import { ModelNames } from "../../constants/common";
-import { Permissions } from "../../constants/role";
 import { noCache } from "../../utils/apollo";
-import {
-  useCurrentUser,
-  useHasPermissionGlobally,
-  useUserById,
-} from "../../hooks";
+import { useCurrentUser, useUserById } from "../../hooks";
 import { timeAgo } from "../../utils/time";
 
 const useStyles = makeStyles({
@@ -39,14 +34,12 @@ const useStyles = makeStyles({
 interface Props {
   comment: ClientComment;
   deleteComment: (id: string) => void;
+  canManageComments: boolean;
 }
 
-const Comment = ({ comment, deleteComment }: Props) => {
+const Comment = ({ comment, deleteComment, canManageComments }: Props) => {
   const { id, userId, body, createdAt } = comment;
   const currentUser = useCurrentUser();
-  const [canManageComments] = useHasPermissionGlobally(
-    Permissions.ManageComments
-  );
   const user = useUserById(userId);
   const [images, setImages] = useState<ClientImage[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -86,8 +79,8 @@ const Comment = ({ comment, deleteComment }: Props) => {
               anchorEl={menuAnchorEl}
               setAnchorEl={setMenuAnchorEl}
               deleteItem={deleteComment}
-              ownItem={ownComment}
-              hasPermission={canManageComments}
+              canEdit={ownComment()}
+              canDelete={ownComment() || canManageComments}
             />
           }
           classes={{ title: classes.title }}

@@ -7,19 +7,24 @@ import { Typography, CircularProgress } from "@material-ui/core";
 import Messages from "../../../utils/messages";
 import { ResourcePaths } from "../../../constants/common";
 import { GROUP_BY_NAME } from "../../../apollo/client/queries";
-import { useCurrentUser, useSettingsByGroupId } from "../../../hooks";
+import {
+  useHasPermissionByGroupId,
+  useSettingsByGroupId,
+} from "../../../hooks";
 import { GroupSettings, SettingStates } from "../../../constants/setting";
 import SettingsForm from "../../../components/Settings/Form";
 import { settingValueByName } from "../../../utils/setting";
+import { GroupPermissions } from "../../../constants/role";
 
 const Settings = () => {
   const { query } = useRouter();
-  const currentUser = useCurrentUser();
   const [group, setGroup] = useState<ClientGroup>();
   const [groupSettings, setGroupSettings, groupSettingsLoading] =
     useSettingsByGroupId(group?.id);
   const [unsavedSettings, setUnsavedSettings] = useState<ClientSetting[]>([]);
   const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
+  const [canManageSettings, canManageSettingsLoading] =
+    useHasPermissionByGroupId(GroupPermissions.ManageSettings, group?.id);
 
   useEffect(() => {
     if (query.name)
@@ -47,14 +52,10 @@ const Settings = () => {
     );
   };
 
-  const ownGroup = (): boolean => {
-    if (!currentUser) return false;
-    return group?.creatorId === currentUser.id;
-  };
-
-  if (groupRes.loading || groupSettingsLoading) return <CircularProgress />;
+  if (groupRes.loading || groupSettingsLoading || canManageSettingsLoading)
+    return <CircularProgress />;
   if (isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
-  if (!ownGroup()) return <>{Messages.users.permissionDenied()}</>;
+  if (!canManageSettings) return <>{Messages.users.permissionDenied()}</>;
 
   return (
     <>

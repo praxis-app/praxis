@@ -14,7 +14,7 @@ import { noCache } from "../../../utils/apollo";
 import Messages from "../../../utils/messages";
 import { useHasPermissionGlobally } from "../../../hooks";
 import styles from "../../../styles/Role/Role.module.scss";
-import { Permissions } from "../../../constants/role";
+import { GlobalPermissions } from "../../../constants/role";
 import {
   ModelNames,
   NavigationPaths,
@@ -42,7 +42,7 @@ const Edit = () => {
   const [getMembersRes, membersRes] = useLazyQuery(ROLE_MEMBERS, noCache);
   const [deleteRole] = useMutation(DELETE_ROLE);
   const [canManageRoles, canManageRolesLoading] = useHasPermissionGlobally(
-    Permissions.ManageRoles,
+    GlobalPermissions.ManageRoles,
     [members, canManageRolesDep]
   );
 
@@ -77,7 +77,10 @@ const Edit = () => {
   useEffect(() => {
     if (role && canManageRoles)
       breadcrumbsVar([
-        { label: Messages.roles.breadcrumb(), href: NavigationPaths.Roles },
+        {
+          label: Messages.roles.serverRoles(),
+          href: NavigationPaths.Roles,
+        },
         { label: role.name },
       ]);
     else breadcrumbsVar([]);
@@ -103,7 +106,12 @@ const Edit = () => {
     );
   };
 
-  if (canManageRolesLoading && permissionsRes.loading)
+  if (
+    canManageRolesLoading ||
+    roleRes.loading ||
+    permissionsRes.loading ||
+    membersRes.loading
+  )
     return <CircularProgress />;
 
   if (role && canManageRoles)
@@ -159,8 +167,8 @@ const Edit = () => {
         {tab === 2 && (
           <AddMemberTab
             role={role}
-            members={members}
-            setMembers={setMembers}
+            roleMembers={members}
+            setRoleMembers={setMembers}
             membersLoading={membersRes.loading}
           />
         )}
