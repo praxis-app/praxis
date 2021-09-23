@@ -17,4 +17,8 @@ interface ActionData {
   groupImagePath?: string;
   groupImage?: File;
   groupSettings?: SettingInput[];
+  groupRole?: ProposedRole;
+  groupRolePermissions?: InitialPermission[];
+  groupRoleId?: string;
+  userId?: string;
 }

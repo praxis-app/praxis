@@ -11,7 +11,7 @@ import {
   useSettingsByGroupId,
 } from "../../../hooks";
 import { GroupSettings, SettingStates } from "../../../constants/setting";
-import { settingValueByName } from "../../../utils/clientIndex";
+import { settingValue } from "../../../utils/clientIndex";
 import { GroupPermissions } from "../../../constants/role";
 import { breadcrumbsVar } from "../../../apollo/client/localState";
 import { ResourcePaths, TypeNames } from "../../../constants/common";
@@ -47,8 +47,7 @@ const Edit = () => {
 
   const isNoAdmin = (): boolean => {
     return (
-      settingValueByName(GroupSettings.NoAdmin, groupSettings) ===
-      SettingStates.On
+      settingValue(GroupSettings.NoAdmin, groupSettings) === SettingStates.On
     );
   };
 

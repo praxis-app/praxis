@@ -3,7 +3,7 @@ import { VotingTypes } from "../constants/vote";
 import { displayName } from "./items";
 import Messages from "./messages";
 
-export const descriptionByName = (name: string) => {
+export const settingDescription = (name: string) => {
   const descriptions = Messages.settings.groups.descriptions;
   switch (name) {
     case GroupSettings.NoAdmin:
@@ -20,6 +20,26 @@ export const descriptionByName = (name: string) => {
       return descriptions.xToPass();
     case GroupSettings.XToBlock:
       return descriptions.xToBlock();
+  }
+};
+
+export const settingDisplayName = (name: string) => {
+  const displayNames = Messages.settings.groups.names;
+  switch (name) {
+    case GroupSettings.NoAdmin:
+      return displayNames.noAdmin();
+    case GroupSettings.VotingType:
+      return displayNames.votingType();
+    case GroupSettings.RatificationThreshold:
+      return displayNames.ratificationThreshold();
+    case GroupSettings.ReservationsLimit:
+      return displayNames.reservationsLimit();
+    case GroupSettings.StandAsidesLimit:
+      return displayNames.standAsidesLimit();
+    case GroupSettings.XToPass:
+      return displayNames.xToPass();
+    case GroupSettings.XToBlock:
+      return displayNames.xToBlock();
   }
 };
 
@@ -49,7 +69,7 @@ export const canShowSetting = (name: string, votingType: string): boolean => {
   return true;
 };
 
-export const settingValueByName = (
+export const settingValue = (
   name: string,
   settings: ClientSetting[]
 ): string => {

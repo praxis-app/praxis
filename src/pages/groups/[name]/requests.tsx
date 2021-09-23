@@ -21,7 +21,7 @@ import {
   useMembersByGroupId,
   useSettingsByGroupId,
 } from "../../../hooks";
-import { noCache, settingValueByName } from "../../../utils/clientIndex";
+import { noCache, settingValue } from "../../../utils/clientIndex";
 import { GroupPermissions } from "../../../constants/role";
 
 const Requests = () => {
@@ -60,8 +60,7 @@ const Requests = () => {
 
   const isNoAdmin = (): boolean => {
     return (
-      settingValueByName(GroupSettings.NoAdmin, groupSettings) ===
-      SettingStates.On
+      settingValue(GroupSettings.NoAdmin, groupSettings) === SettingStates.On
     );
   };
 

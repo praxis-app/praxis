@@ -31,7 +31,6 @@ model Vote {
   body           String?
   flipState      String?
   consensusState String?
-  verified       Boolean  @default(false)
   user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId         Int?
   motion         Motion?  @relation(fields: [motionId], references: [id])
@@ -218,7 +217,6 @@ model RoleMember {
 model Permission {
   id          Int      @id @default(autoincrement())
   name        String
-  description String
   enabled     Boolean  @default(false)
   role        Role?    @relation(fields: [roleId], references: [id])
   roleId      Int?

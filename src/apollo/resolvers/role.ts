@@ -1,12 +1,14 @@
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
-import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from "../../constants/role";
 import {
-  initializePermissions,
-  initialGlobalPermissions,
-  initialGroupPermissions,
-} from "../models/role";
+  ADMIN_ROLE_NAME,
+  DEFAULT_ROLE_COLOR,
+  INITIAL_GLOBAL_ADMIN_PERMISSIONS,
+  INITIAL_GLOBAL_PERMISSIONS,
+  INITIAL_GROUP_PERMISSIONS,
+} from "../../constants/role";
+import { initializePermissions } from "../models/role";
 
 interface RoleInput {
   name: string;
@@ -71,7 +73,7 @@ const roleResolvers = {
         },
       });
       initializePermissions(
-        groupId ? initialGroupPermissions() : initialGlobalPermissions(),
+        groupId ? INITIAL_GROUP_PERMISSIONS : INITIAL_GLOBAL_PERMISSIONS,
         role
       );
       return { role };
@@ -120,7 +122,7 @@ const roleResolvers = {
           global: true,
         },
       });
-      initializePermissions(initialGlobalPermissions(true), role);
+      initializePermissions(INITIAL_GLOBAL_ADMIN_PERMISSIONS, role);
       await prisma.roleMember.create({
         data: {
           user: {

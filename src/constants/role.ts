@@ -20,3 +20,37 @@ export enum GroupPermissions {
   ManageRoles = "manage-group-roles",
   ManageSettings = "manage-group-settings",
 }
+
+export const INITIAL_GLOBAL_PERMISSIONS: InitialPermission[] = [
+  GlobalPermissions.ManagePosts,
+  GlobalPermissions.ManageComments,
+  GlobalPermissions.ManageUsers,
+  GlobalPermissions.ManageRoles,
+  GlobalPermissions.ManageInvites,
+  GlobalPermissions.CreateInvites,
+].map((name) => {
+  return { name, enabled: false };
+});
+
+export const INITIAL_GROUP_PERMISSIONS: InitialPermission[] = [
+  GroupPermissions.ManagePosts,
+  GroupPermissions.ManageComments,
+  GroupPermissions.AcceptMemberRequests,
+  GroupPermissions.KickMembers,
+  GroupPermissions.ManageRoles,
+  GroupPermissions.ManageSettings,
+  GroupPermissions.EditGroup,
+  GroupPermissions.DeleteGroup,
+].map((name) => {
+  return { name, enabled: false };
+});
+
+export const INITIAL_GLOBAL_ADMIN_PERMISSIONS: InitialPermission[] =
+  INITIAL_GLOBAL_PERMISSIONS.map((permission) => {
+    return { ...permission, enabled: true };
+  });
+
+export const INITIAL_GROUP_ADMIN_PERMISSIONS: InitialPermission[] =
+  INITIAL_GROUP_PERMISSIONS.map((permission) => {
+    return { ...permission, enabled: true };
+  });

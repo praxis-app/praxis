@@ -3,6 +3,7 @@ import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
 import { Card, CardContent, FormGroup } from "@material-ui/core";
 import { Formik, FormikHelpers, Form, Field, FormikProps } from "formik";
+import { ColorResult } from "react-color";
 
 import { CREATE_ROLE, UPDATE_ROLE } from "../../apollo/client/mutations";
 import styles from "../../styles/Shared/Shared.module.scss";
@@ -90,7 +91,7 @@ const RoleForm = ({
     }
   };
 
-  const handleChangeComplete = (color: any) => {
+  const handleChangeComplete = (color: ColorResult) => {
     setColor(color.hex);
   };
 

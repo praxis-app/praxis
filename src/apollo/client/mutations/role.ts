@@ -56,7 +56,6 @@ export const UPDATE_PERMISSIONS = gql`
         id
         roleId
         name
-        description
         enabled
         createdAt
       }

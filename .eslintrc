@@ -2,7 +2,8 @@
   "root": true,
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaFeatures": { "jsx": true }
+    "ecmaFeatures": { "jsx": true },
+    "project": ["./tsconfig.json"]
   },
   "env": {
     "browser": true,
@@ -29,6 +30,7 @@
       "error",
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
     ],
+    "@typescript-eslint/no-unnecessary-type-assertion": "error",
     "jsx-a11y/click-events-have-key-events": "off",
     "jsx-a11y/anchor-is-valid": [
       "error",

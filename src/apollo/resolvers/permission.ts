@@ -100,7 +100,9 @@ const permissionResolvers = {
           roleId: parseInt(roleId),
         },
       });
-      return permissions;
+      return permissions.sort(
+        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+      );
     },
   },
 

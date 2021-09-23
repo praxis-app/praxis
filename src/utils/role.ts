@@ -1,10 +1,42 @@
 import Messages from "./messages";
-import { ModelNames } from "../constants/common";
 import { GlobalPermissions, GroupPermissions } from "../constants/role";
 
-export const permissionDescription = (name: string) => {
-  const descriptions = Messages.roles.permissions.descriptions;
+export const permissionDisplayName = (name: string): string => {
+  const displayNames = Messages.roles.permissions.names;
+  switch (name) {
+    case GlobalPermissions.CreateInvites:
+      return displayNames.createInvites();
+    case GlobalPermissions.ManageInvites:
+      return displayNames.createInvites();
+    case GlobalPermissions.ManageComments:
+    case GroupPermissions.ManageComments:
+      return displayNames.manageComments();
+    case GlobalPermissions.ManagePosts:
+    case GroupPermissions.ManagePosts:
+      return displayNames.managePosts();
+    case GlobalPermissions.ManageRoles:
+      return displayNames.manageRoles();
+    case GlobalPermissions.ManageUsers:
+      return displayNames.manageUsers();
+    case GroupPermissions.ManageRoles:
+      return displayNames.manageRoles();
+    case GroupPermissions.AcceptMemberRequests:
+      return displayNames.acceptMemberRequests();
+    case GroupPermissions.DeleteGroup:
+      return displayNames.deleteGroup();
+    case GroupPermissions.EditGroup:
+      return displayNames.editGroup();
+    case GroupPermissions.KickMembers:
+      return displayNames.kickGroupMembers();
+    case GroupPermissions.ManageSettings:
+      return displayNames.manageSettings();
+    default:
+      return "";
+  }
+};
 
+export const permissionDescription = (name: string): string => {
+  const descriptions = Messages.roles.permissions.descriptions;
   switch (name) {
     case GlobalPermissions.CreateInvites:
       return descriptions.createInvites();
@@ -12,16 +44,15 @@ export const permissionDescription = (name: string) => {
       return descriptions.createInvites();
     case GlobalPermissions.ManageComments:
     case GroupPermissions.ManageComments:
-      return descriptions.manageItems(ModelNames.Comment);
+      return descriptions.manageComments();
     case GlobalPermissions.ManagePosts:
     case GroupPermissions.ManagePosts:
-      return descriptions.manageItems(ModelNames.Post);
+      return descriptions.managePosts();
     case GlobalPermissions.ManageRoles:
     case GroupPermissions.ManageRoles:
       return descriptions.manageRoles();
     case GlobalPermissions.ManageUsers:
       return descriptions.manageUsers();
-
     case GroupPermissions.AcceptMemberRequests:
       return descriptions.acceptMemberRequests();
     case GroupPermissions.DeleteGroup:
@@ -32,5 +63,7 @@ export const permissionDescription = (name: string) => {
       return descriptions.kickGroupMembers();
     case GroupPermissions.ManageSettings:
       return descriptions.manageGroupSettings();
+    default:
+      return "";
   }
 };

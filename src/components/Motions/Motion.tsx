@@ -39,7 +39,7 @@ import {
 import Messages from "../../utils/messages";
 import { timeAgo } from "../../utils/time";
 import CardFooter from "./CardFooter";
-import { settingValueByName } from "../../utils/setting";
+import { settingValue } from "../../utils/setting";
 
 const useStyles = makeStyles({
   title: {
@@ -129,7 +129,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
 
   const isModelOfConsensus = (): boolean => {
     return (
-      settingValueByName(GroupSettings.VotingType, groupSettings) ===
+      settingValue(GroupSettings.VotingType, groupSettings) ===
       VotingTypes.Consensus
     );
   };

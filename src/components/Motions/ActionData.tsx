@@ -1,20 +1,22 @@
-import { Typography } from "@material-ui/core";
 import Link from "next/link";
-
+import { Typography } from "@material-ui/core";
+import { displayName, displaySettingValue } from "../../utils/clientIndex";
 import { ResourcePaths } from "../../constants/common";
 import { GroupAspects } from "../../constants/group";
 import { ActionTypes } from "../../constants/motion";
 import muiTheme from "../../styles/Shared/theme";
-import baseUrl from "../../utils/baseUrl";
-import { displayName, displaySettingValue } from "../../utils/clientIndex";
 import Messages from "../../utils/messages";
+import baseUrl from "../../utils/baseUrl";
+import UserName from "../Users/Name";
+import RoleName from "../Roles/Name";
 
 interface TextProps {
-  aspect: string;
+  aspect?: string;
+  text?: string;
   data?: string;
 }
 
-const Text = ({ aspect, data }: TextProps) => {
+const ActionLabel = ({ aspect, text, data }: TextProps) => {
   return (
     <Typography style={{ marginTop: 6 }}>
       <span
@@ -22,7 +24,9 @@ const Text = ({ aspect, data }: TextProps) => {
           fontFamily: "Inter Bold",
         }}
       >
-        {Messages.motions.groups.proposedAspect(aspect)}
+        {aspect
+          ? Messages.motions.groups.proposedAspect(aspect) + (data ? ":" : "")
+          : text}
       </span>
       {data && " " + data}
     </Typography>
@@ -38,21 +42,70 @@ interface ActionDataProps {
 const ActionData = ({ id, action, actionData }: ActionDataProps) => {
   const inForm = !id;
 
+  if (
+    (action === ActionTypes.CreateRole || action === ActionTypes.ChangeRole) &&
+    actionData.groupRole &&
+    actionData.groupRolePermissions
+  )
+    return (
+      <div style={{ marginBottom: inForm ? 12 : 0 }}>
+        {action === ActionTypes.CreateRole ? (
+          <ActionLabel aspect={GroupAspects.Role} />
+        ) : (
+          <ActionLabel text={Messages.motions.groups.proposedRoleChange()} />
+        )}
+        <Typography>
+          {"• "}
+          <span style={{ color: actionData.groupRole.color }}>
+            {actionData.groupRole.name}
+          </span>
+        </Typography>
+
+        {actionData.groupRolePermissions
+          .filter((permission) => permission.enabled)
+          .map((permission) => (
+            <Typography key={permission.name}>
+              • {displayName(permission.name)}
+            </Typography>
+          ))}
+      </div>
+    );
+
+  if (
+    action === ActionTypes.AssignRole &&
+    actionData.groupRoleId &&
+    actionData.userId
+  )
+    return (
+      <div style={{ marginBottom: inForm ? 12 : 0 }}>
+        <ActionLabel text={Messages.motions.groups.proposedRoleAssignment()} />
+
+        <Typography>
+          • Role: <RoleName roleId={actionData.groupRoleId} />
+        </Typography>
+        <Typography>
+          • Member: <UserName userId={actionData.userId} noLoader />
+        </Typography>
+      </div>
+    );
+
   if (action === ActionTypes.ChangeSettings && actionData.groupSettings)
     return (
       <div style={{ marginBottom: inForm ? 12 : 0 }}>
-        <Text aspect={GroupAspects.Settings} />
+        <ActionLabel aspect={GroupAspects.Settings} />
 
         {actionData.groupSettings.map((setting) => (
           <Typography key={setting.id}>
-            {displayName(setting.name)}: {displaySettingValue(setting)}
+            • {displayName(setting.name)}: {displaySettingValue(setting)}
           </Typography>
         ))}
       </div>
     );
 
   if (action === ActionTypes.ChangeName && actionData.groupName && !inForm)
-    return <Text aspect={GroupAspects.Name} data={actionData.groupName} />;
+    return (
+      <ActionLabel aspect={GroupAspects.Name} data={actionData.groupName} />
+    );
 
   if (
     action === ActionTypes.ChangeDescription &&
@@ -60,7 +113,7 @@ const ActionData = ({ id, action, actionData }: ActionDataProps) => {
     !inForm
   )
     return (
-      <Text
+      <ActionLabel
         aspect={GroupAspects.Description}
         data={actionData.groupDescription}
       />

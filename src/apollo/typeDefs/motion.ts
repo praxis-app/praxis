@@ -17,6 +17,10 @@ input ActionDataInput {
   groupImage: FileUpload
   groupDescription: String
   groupSettings: [SettingInput]
+  groupRole: CreateRoleInput
+  groupRolePermissions: [ProposedPermissionInput]
+  groupRoleId: String
+  userId: String
 }
 
 input CreateMotionInput {

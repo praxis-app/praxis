@@ -9,7 +9,6 @@ interface ClientPermission {
   id: string;
   roleId: string;
   name: string;
-  description: string;
   enabled: boolean;
   createdAt: string;
 }
@@ -19,4 +18,14 @@ interface ClientRoleMember {
   roleId: string;
   userId: string;
   createdAt: Date;
+}
+
+interface InitialPermission {
+  name: string;
+  enabled: boolean;
+}
+
+interface ProposedRole {
+  name: string;
+  color: string;
 }
