@@ -53,7 +53,7 @@ const ListItemText = withStyles(() =>
 
 const NavDrawer = () => {
   const currentUser = useCurrentUser();
-  const user = useUserById(currentUser?.id);
+  const [user] = useUserById(currentUser?.id);
   const open = useReactiveVar(navOpenVar);
   const refreshKey = useReactiveVar(navKeyVar);
   const openModal = useReactiveVar(modalOpenVar);

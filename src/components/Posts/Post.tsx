@@ -50,7 +50,7 @@ const Post = ({ post, deletePost }: Props) => {
     GroupPermissions.ManagePosts,
     groupId
   );
-  const user = useUserById(userId);
+  const [user] = useUserById(userId);
   const [group, setGroup] = useState<ClientGroup>();
   const [images, setImages] = useState<ClientImage[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -101,7 +101,7 @@ const Post = ({ post, deletePost }: Props) => {
           title={
             (!group || onGroupPage()) && (
               <>
-                <Link href={`/users/${user?.name}`}>
+                <Link href={`${ResourcePaths.User}${user?.name}`}>
                   <a>{user?.name}</a>
                 </Link>
                 <Link href={`${ResourcePaths.Post}${id}`}>

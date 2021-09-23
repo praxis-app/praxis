@@ -1,7 +1,9 @@
-import { Checkbox, LinearProgress } from "@material-ui/core";
+import { Checkbox, LinearProgress, Typography } from "@material-ui/core";
 import UserAvatar from "../Users/Avatar";
 import styles from "../../styles/Role/Member.module.scss";
 import { useUserById } from "../../hooks";
+import { TypeNames } from "../../constants/common";
+import Messages from "../../utils/messages";
 
 interface Props {
   userId: string;
@@ -10,7 +12,7 @@ interface Props {
 }
 
 const RoleMemberAdd = ({ userId, selectedUsers, setSelectedUsers }: Props) => {
-  const user = useUserById(userId);
+  const [user, _, userLoading] = useUserById(userId);
 
   const handleChange = () => {
     if (isSelected())
@@ -26,22 +28,25 @@ const RoleMemberAdd = ({ userId, selectedUsers, setSelectedUsers }: Props) => {
     );
   };
 
-  if (user)
-    return (
-      <div className={styles.member}>
-        <div className={styles.link}>
-          <UserAvatar user={user} />
-          <div className={styles.userName}>{user.name}</div>
-        </div>
+  if (userLoading) return <LinearProgress />;
 
-        <Checkbox
-          checked={isSelected()}
-          onChange={handleChange}
-          style={{ color: "LightGray" }}
-        />
+  if (!user)
+    return <Typography>{Messages.items.notFound(TypeNames.User)}</Typography>;
+
+  return (
+    <div className={styles.member}>
+      <div className={styles.link}>
+        <UserAvatar user={user} />
+        <div className={styles.userName}>{user.name}</div>
       </div>
-    );
-  return <LinearProgress />;
+
+      <Checkbox
+        checked={isSelected()}
+        onChange={handleChange}
+        style={{ color: "LightGray" }}
+      />
+    </div>
+  );
 };
 
 export default RoleMemberAdd;

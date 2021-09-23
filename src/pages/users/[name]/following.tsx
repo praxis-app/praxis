@@ -7,6 +7,7 @@ import { Card, Typography } from "@material-ui/core";
 import { FOLLOWING_BY_NAME } from "../../../apollo/client/queries";
 import Follow from "../../../components/Follows/Follow";
 import Messages from "../../../utils/messages";
+import { ResourcePaths } from "../../../constants/common";
 
 const Following = () => {
   const { query } = useRouter();
@@ -31,7 +32,7 @@ const Following = () => {
 
   return (
     <>
-      <Link href={`/users/${query.name}`}>
+      <Link href={`${ResourcePaths.User}${query.name}`}>
         <a>
           <Typography variant="h3" color="primary">
             {query.name}

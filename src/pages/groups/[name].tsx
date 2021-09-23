@@ -1,13 +1,19 @@
 import { useState, useEffect } from "react";
 import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import Router, { useRouter } from "next/router";
-import { Tab, Tabs, Card, CircularProgress } from "@material-ui/core";
+import {
+  Tab,
+  Tabs,
+  Card,
+  CircularProgress,
+  Typography,
+} from "@material-ui/core";
 
 import Feed from "../../components/Shared/Feed";
 import MotionsFormWithCard from "../../components/Motions/FormWithCard";
 import ToggleForms from "../../components/Shared/ToggleForms";
 import Pagination from "../../components/Shared/Pagination";
-import { GROUP_BY_NAME, GROUP_FEED } from "../../apollo/client/queries";
+import { GROUP_FEED } from "../../apollo/client/queries";
 import {
   DELETE_GROUP,
   DELETE_POST,
@@ -17,7 +23,11 @@ import { feedVar, paginationVar } from "../../apollo/client/localState";
 import { ModelNames, TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
-import { useCurrentUser, useMembersByGroupId } from "../../hooks";
+import {
+  useCurrentUser,
+  useGroupByName,
+  useMembersByGroupId,
+} from "../../hooks";
 import { resetFeed } from "../../utils/items";
 import PostsFormWithCard from "../../components/Posts/FormWithCard";
 import GroupPageHeader from "../../components/Groups/PageHeader";
@@ -29,26 +39,13 @@ const Show = () => {
   const currentUser = useCurrentUser();
   const feed = useReactiveVar(feedVar);
   const { currentPage, pageSize } = useReactiveVar(paginationVar);
-  const [group, setGroup] = useState<ClientGroup>();
   const [tab, setTab] = useState<number>(0);
+  const [group, _, groupLoading] = useGroupByName(name);
   const [groupMembers] = useMembersByGroupId(group?.id);
-  const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
   const [getFeedRes, feedRes] = useLazyQuery(GROUP_FEED, noCache);
   const [deleteGroup] = useMutation(DELETE_GROUP);
   const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deletePost] = useMutation(DELETE_POST);
-
-  useEffect(() => {
-    if (name) {
-      getGroupRes({
-        variables: { name },
-      });
-    }
-  }, [name]);
-
-  useEffect(() => {
-    if (groupRes.data) setGroup(groupRes.data.groupByName);
-  }, [groupRes.data]);
 
   useEffect(() => {
     if (name) {
@@ -136,44 +133,46 @@ const Show = () => {
     );
   };
 
-  if (group)
-    return (
-      <>
-        <GroupPageHeader group={group} deleteGroup={deleteGroupHandler} />
+  if (groupLoading) return <CircularProgress />;
 
-        <Card>
-          <Tabs
-            value={tab}
-            onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
-              setTab(newValue)
-            }
-            textColor="inherit"
-            centered
-          >
-            <Tab label={Messages.groups.tabs.all()} />
-            <Tab label={Messages.groups.tabs.motions()} />
-            <Tab label={Messages.groups.tabs.posts()} />
-          </Tabs>
-        </Card>
+  if (!group)
+    return <Typography>{Messages.items.notFound(TypeNames.Group)}</Typography>;
 
-        {inThisGroup() && (
-          <>
-            {tab === 0 && <ToggleForms group={group} />}
-            {tab === 1 && <MotionsFormWithCard group={group} withoutToggle />}
-            {tab === 2 && <PostsFormWithCard group={group} withoutToggle />}
-          </>
-        )}
+  return (
+    <>
+      <GroupPageHeader group={group} deleteGroup={deleteGroupHandler} />
 
-        <Pagination>
-          <Feed
-            deleteMotion={deleteMotionHandler}
-            deletePost={deletePostHandler}
-          />
-        </Pagination>
-      </>
-    );
+      <Card>
+        <Tabs
+          value={tab}
+          onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
+            setTab(newValue)
+          }
+          textColor="inherit"
+          centered
+        >
+          <Tab label={Messages.groups.tabs.all()} />
+          <Tab label={Messages.groups.tabs.motions()} />
+          <Tab label={Messages.groups.tabs.posts()} />
+        </Tabs>
+      </Card>
 
-  return <CircularProgress />;
+      {inThisGroup() && (
+        <>
+          {tab === 0 && <ToggleForms group={group} />}
+          {tab === 1 && <MotionsFormWithCard group={group} withoutToggle />}
+          {tab === 2 && <PostsFormWithCard group={group} withoutToggle />}
+        </>
+      )}
+
+      <Pagination>
+        <Feed
+          deleteMotion={deleteMotionHandler}
+          deletePost={deletePostHandler}
+        />
+      </Pagination>
+    </>
+  );
 };
 
 export default Show;

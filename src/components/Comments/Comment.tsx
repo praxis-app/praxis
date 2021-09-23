@@ -17,7 +17,7 @@ import LikeButton from "../Likes/LikeButton";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Comment/Comment.module.scss";
-import { ModelNames } from "../../constants/common";
+import { ModelNames, ResourcePaths } from "../../constants/common";
 import { noCache } from "../../utils/apollo";
 import { useCurrentUser, useUserById } from "../../hooks";
 import { timeAgo } from "../../utils/time";
@@ -40,7 +40,7 @@ interface Props {
 const Comment = ({ comment, deleteComment, canManageComments }: Props) => {
   const { id, userId, body, createdAt } = comment;
   const currentUser = useCurrentUser();
-  const user = useUserById(userId);
+  const [user] = useUserById(userId);
   const [images, setImages] = useState<ClientImage[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const imagesRes = useQuery(IMAGES_BY_COMMENT_ID, {
@@ -66,7 +66,7 @@ const Comment = ({ comment, deleteComment, canManageComments }: Props) => {
         <CardHeader
           title={
             <>
-              <Link href={`/users/${user?.name}`}>
+              <Link href={`${ResourcePaths.User}${user?.name}`}>
                 <a>{user?.name}</a>
               </Link>
               <span className={styles.timeAgo}>{timeAgo(createdAt)}</span>

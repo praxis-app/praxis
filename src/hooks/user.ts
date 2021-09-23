@@ -62,8 +62,9 @@ export const useRestoreUserSession = () => {
   };
 };
 
-// TODO: Convert return type to an array: [user, setUser, loading]
-export const useUserById = (id: string | undefined): ClientUser | undefined => {
+export const useUserById = (
+  id: string | undefined
+): [ClientUser | undefined, (user: ClientUser) => void, boolean] => {
   const [user, setUser] = useState<ClientUser>();
   const [getUserRes, userRes] = useLazyQuery(USER, noCache);
 
@@ -78,7 +79,7 @@ export const useUserById = (id: string | undefined): ClientUser | undefined => {
     if (userRes.data) setUser(userRes.data.user);
   }, [userRes.data]);
 
-  return user;
+  return [user, setUser, userRes.loading];
 };
 
 export const useAllUsers = (

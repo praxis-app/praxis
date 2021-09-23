@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useMutation } from "@apollo/client";
-import { TableRow, MenuItem } from "@material-ui/core";
+import { TableRow, MenuItem, LinearProgress } from "@material-ui/core";
 import { Assignment } from "@material-ui/icons";
 
 import { DELETE_SERVER_INVITE } from "../../apollo/client/mutations";
@@ -12,7 +12,7 @@ import TableCell from "../../components/Shared/TableCell";
 import { timeFromNow } from "../../utils/time";
 import Messages from "../../utils/messages";
 import ItemMenu from "../Shared/ItemMenu";
-import { ToastStatus } from "../../constants/common";
+import { ResourcePaths, ToastStatus } from "../../constants/common";
 import { ITEM_TYPE } from "../../constants/serverInvite";
 import { toastVar } from "../../apollo/client/localState";
 
@@ -24,7 +24,7 @@ interface Props {
 
 const ServerInvite = ({ invite, invites, setInvites }: Props) => {
   const { id, userId, token, uses, maxUses, expiresAt } = invite;
-  const user = useUserById(userId);
+  const [user, _, userLoading] = useUserById(userId);
   const [deleteInvite] = useMutation(DELETE_SERVER_INVITE);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const isDesktop = useIsDesktop();
@@ -50,50 +50,50 @@ const ServerInvite = ({ invite, invites, setInvites }: Props) => {
       );
   };
 
-  if (invite && user)
-    return (
-      <TableRow key={invite.id}>
-        {isDesktop && (
-          <TableCell component="th" scope="row">
-            <span className={styles.link}>
-              <UserAvatar user={user} small />
-              <Link href={`/users/${user.name}`} passHref>
-                <a className={styles.userName}>{user.name}</a>
-              </Link>
-            </span>
-          </TableCell>
-        )}
-        <TableCell onClick={copyInviteHandler} style={{ cursor: "pointer" }}>
-          {token}
+  if (userLoading) return <LinearProgress />;
+
+  return (
+    <TableRow key={invite.id}>
+      {isDesktop && (
+        <TableCell component="th" scope="row">
+          <span className={styles.link}>
+            <UserAvatar user={user} small />
+            <Link href={`${ResourcePaths.User}${user?.name}`} passHref>
+              <a className={styles.userName}>{user?.name}</a>
+            </Link>
+          </span>
         </TableCell>
-        <TableCell>{uses + (maxUses ? `/${maxUses}` : "")}</TableCell>
-        <TableCell>
-          {expiresAt ? timeFromNow(expiresAt, false) : Messages.time.infinity()}
-        </TableCell>
-        <TableCell>
-          <ItemMenu
-            itemId={invite.id}
-            itemType={ITEM_TYPE}
-            anchorEl={menuAnchorEl}
-            setAnchorEl={setMenuAnchorEl}
-            deleteItem={deleteInviteHandler}
-            canDelete={true}
-            prependChildren
-          >
-            <MenuItem onClick={copyInviteHandler}>
-              <Assignment
-                fontSize="small"
-                style={{
-                  marginRight: "5",
-                }}
-              />
-              {Messages.actions.copy()}
-            </MenuItem>
-          </ItemMenu>
-        </TableCell>
-      </TableRow>
-    );
-  return null;
+      )}
+      <TableCell onClick={copyInviteHandler} style={{ cursor: "pointer" }}>
+        {token}
+      </TableCell>
+      <TableCell>{uses + (maxUses ? `/${maxUses}` : "")}</TableCell>
+      <TableCell>
+        {expiresAt ? timeFromNow(expiresAt, false) : Messages.time.infinity()}
+      </TableCell>
+      <TableCell>
+        <ItemMenu
+          itemId={invite.id}
+          itemType={ITEM_TYPE}
+          anchorEl={menuAnchorEl}
+          setAnchorEl={setMenuAnchorEl}
+          deleteItem={deleteInviteHandler}
+          canDelete={true}
+          prependChildren
+        >
+          <MenuItem onClick={copyInviteHandler}>
+            <Assignment
+              fontSize="small"
+              style={{
+                marginRight: "5",
+              }}
+            />
+            {Messages.actions.copy()}
+          </MenuItem>
+        </ItemMenu>
+      </TableCell>
+    </TableRow>
+  );
 };
 
 export default ServerInvite;

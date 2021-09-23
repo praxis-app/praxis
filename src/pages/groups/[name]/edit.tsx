@@ -1,46 +1,31 @@
-import { useState, useEffect } from "react";
-import { useLazyQuery } from "@apollo/client";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress, Typography } from "@material-ui/core";
 
-import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import GroupForm from "../../../components/Groups/Form";
 import Messages from "../../../utils/messages";
 import {
   useCurrentUser,
+  useGroupByName,
   useHasPermissionByGroupId,
   useSettingsByGroupId,
 } from "../../../hooks";
 import { GroupSettings, SettingStates } from "../../../constants/setting";
-import { noCache, settingValueByName } from "../../../utils/clientIndex";
+import { settingValueByName } from "../../../utils/clientIndex";
 import { GroupPermissions } from "../../../constants/role";
 import { breadcrumbsVar } from "../../../apollo/client/localState";
-import { ResourcePaths } from "../../../constants/common";
+import { ResourcePaths, TypeNames } from "../../../constants/common";
 
 const Edit = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
-  const [group, setGroup] = useState<ClientGroup>();
-  const [groupSettings, _, groupSettingsLoading] = useSettingsByGroupId(
-    group?.id
-  );
-  const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME, noCache);
+  const [group, _setGroup, groupLoading] = useGroupByName(query.name);
+  const [groupSettings, _setGroupSettings, groupSettingsLoading] =
+    useSettingsByGroupId(group?.id);
   const [canEditGroup, canEditGroupLoading] = useHasPermissionByGroupId(
     GroupPermissions.EditGroup,
     group?.id
   );
-
-  useEffect(() => {
-    if (query.name) {
-      getGroupRes({
-        variables: { name: query.name },
-      });
-    }
-  }, [query.name]);
-
-  useEffect(() => {
-    if (groupRes.data) setGroup(groupRes.data.groupByName);
-  }, [groupRes.data]);
 
   useEffect(() => {
     if (group && canEditGroup)
@@ -67,8 +52,10 @@ const Edit = () => {
     );
   };
 
-  if (groupRes.loading || groupSettingsLoading || canEditGroupLoading)
+  if (groupLoading || groupSettingsLoading || canEditGroupLoading)
     return <CircularProgress />;
+  if (!group)
+    return <Typography>{Messages.items.notFound(TypeNames.Group)}</Typography>;
   if (currentUser && isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
   if (!canEditGroup) return <>{Messages.users.permissionDenied()}</>;
 

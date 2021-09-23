@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button, LinearProgress } from "@material-ui/core";
+import { Button, LinearProgress, Typography } from "@material-ui/core";
 import { useMutation } from "@apollo/client";
 
 import FollowButton from "../Follows/FollowButton";
@@ -24,7 +24,7 @@ const GroupMember = ({
   canKickGroupMembers,
 }: Props) => {
   const { id, userId } = groupMember;
-  const user = useUserById(userId);
+  const [user, _, userLoading] = useUserById(userId);
   const [followers, setFollowers, followersLoading] =
     useFollowersByUserId(userId);
   const [deleteGroupMember] = useMutation(DELETE_GROUP_MEMBER);
@@ -38,7 +38,10 @@ const GroupMember = ({
     setGroupMembers(groupMembers.filter((member) => member.id !== id));
   };
 
-  if (!user || followersLoading) return <LinearProgress />;
+  if (userLoading || followersLoading) return <LinearProgress />;
+
+  if (!user)
+    return <Typography>{Messages.groups.notFound.member()}</Typography>;
 
   return (
     <div className={styles.member}>

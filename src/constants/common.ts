@@ -33,7 +33,6 @@ export enum ModelNames {
   Vote = "vote",
 }
 
-// TODO: Add paths for other resources in follow up PR
 export enum ResourcePaths {
   Post = "/posts/",
   Motion = "/motions/",
@@ -45,6 +44,8 @@ export enum ResourcePaths {
 export enum NavigationPaths {
   About = "/about",
   Edit = "/edit",
+  Followers = "/followers",
+  Following = "/following",
   Home = "/",
   Groups = "/groups",
   Invites = "/invites",

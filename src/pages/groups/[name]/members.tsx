@@ -1,46 +1,40 @@
-import { useState, useEffect } from "react";
-import { useLazyQuery } from "@apollo/client";
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { Card, CircularProgress, Typography } from "@material-ui/core";
 import { truncate } from "lodash";
 
-import { GROUP_BY_NAME } from "../../../apollo/client/queries";
 import Member from "../../../components/Groups/Member";
 import Messages from "../../../utils/messages";
-import { useHasPermissionByGroupId, useMembersByGroupId } from "../../../hooks";
-import { TruncationSizes } from "../../../constants/common";
+import {
+  useGroupByName,
+  useHasPermissionByGroupId,
+  useMembersByGroupId,
+} from "../../../hooks";
+import {
+  ResourcePaths,
+  TruncationSizes,
+  TypeNames,
+} from "../../../constants/common";
 import { GroupPermissions } from "../../../constants/role";
 
 const Members = () => {
   const { query } = useRouter();
-  const [group, setGroup] = useState<ClientGroup>();
+  const [group, _, groupLoading] = useGroupByName(query.name);
   const [groupMembers, setGroupMembers, groupMembersLoading] =
     useMembersByGroupId(group?.id);
-  const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
   const [canKick, canKickLoading] = useHasPermissionByGroupId(
     GroupPermissions.KickMembers,
     group?.id
   );
 
-  useEffect(() => {
-    if (query.name) {
-      getGroupRes({
-        variables: { name: query.name },
-      });
-    }
-  }, [query.name]);
-
-  useEffect(() => {
-    if (groupRes.data) setGroup(groupRes.data.groupByName);
-  }, [groupRes.data]);
-
-  if (!query.name || groupRes.loading || groupMembersLoading || canKickLoading)
+  if (groupLoading || groupMembersLoading || canKickLoading)
     return <CircularProgress />;
+  if (!group)
+    return <Typography>{Messages.items.notFound(TypeNames.Group)}</Typography>;
 
   return (
     <>
-      <Link href={`/groups/${query.name}`}>
+      <Link href={`${ResourcePaths.Group}${query.name}`}>
         <a>
           <Typography variant="h3" color="primary">
             {truncate(query.name as string, {
