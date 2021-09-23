@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useLazyQuery } from "@apollo/client";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Typography, CircularProgress } from "@material-ui/core";
 
 import Messages from "../../../utils/messages";
-import { ResourcePaths } from "../../../constants/common";
-import { GROUP_BY_NAME } from "../../../apollo/client/queries";
+import { ResourcePaths, TypeNames } from "../../../constants/common";
 import {
+  useGroupByName,
   useHasPermissionByGroupId,
   useSettingsByGroupId,
 } from "../../../hooks";
@@ -18,24 +17,12 @@ import { GroupPermissions } from "../../../constants/role";
 
 const Settings = () => {
   const { query } = useRouter();
-  const [group, setGroup] = useState<ClientGroup>();
+  const [group, _, groupLoading] = useGroupByName(query.name);
   const [groupSettings, setGroupSettings, groupSettingsLoading] =
     useSettingsByGroupId(group?.id);
   const [unsavedSettings, setUnsavedSettings] = useState<ClientSetting[]>([]);
-  const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
   const [canManageSettings, canManageSettingsLoading] =
     useHasPermissionByGroupId(GroupPermissions.ManageSettings, group?.id);
-
-  useEffect(() => {
-    if (query.name)
-      getGroupRes({
-        variables: { name: query.name },
-      });
-  }, [query.name]);
-
-  useEffect(() => {
-    if (groupRes.data) setGroup(groupRes.data.groupByName);
-  }, [groupRes.data]);
 
   const anyUnsavedSettings = (): boolean => {
     return (
@@ -52,8 +39,10 @@ const Settings = () => {
     );
   };
 
-  if (groupRes.loading || groupSettingsLoading || canManageSettingsLoading)
+  if (groupLoading || groupSettingsLoading || canManageSettingsLoading)
     return <CircularProgress />;
+  if (!group)
+    return <Typography>{Messages.items.notFound(TypeNames.Group)}</Typography>;
   if (isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
   if (!canManageSettings) return <>{Messages.users.permissionDenied()}</>;
 

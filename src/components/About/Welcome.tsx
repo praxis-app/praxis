@@ -15,7 +15,7 @@ import { Close } from "@material-ui/icons";
 import Messages from "../../utils/messages";
 import { redeemedInviteToken } from "../../utils/invite";
 import { WHITE } from "../../styles/Shared/theme";
-import { LocalStorage } from "../../constants/common";
+import { LocalStorage, NavigationPaths } from "../../constants/common";
 
 const useStyles = makeStyles({
   title: {
@@ -75,7 +75,7 @@ const WelcomeCard = ({ isLoggedIn }: Props) => {
 
       {inviteToken && (
         <CardActions style={{ marginTop: "6px" }}>
-          <Link href={"/users/signup"}>
+          <Link href={NavigationPaths.SignUp}>
             <a>
               <Button color="primary">{Messages.users.actions.signUp()}</Button>
             </a>

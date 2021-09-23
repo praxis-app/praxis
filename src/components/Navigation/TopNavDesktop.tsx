@@ -30,10 +30,10 @@ const useStyles = makeStyles(() =>
 );
 
 const TopNavDesktop = () => {
+  const currentUser = useCurrentUser();
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [inviteToken, setInviteToken] = useState<string | null>();
-  const currentUser = useCurrentUser();
-  const user = useUserById(currentUser?.id);
+  const [user] = useUserById(currentUser?.id);
   const classes = useStyles();
   const router = useRouter();
 

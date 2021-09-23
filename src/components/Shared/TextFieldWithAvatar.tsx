@@ -25,7 +25,7 @@ const StyledTextField = withStyles((theme: Theme) =>
 
 const TextField = (props: InputBaseProps) => {
   const currentUser = useCurrentUser();
-  const user = useUserById(currentUser?.id);
+  const [user] = useUserById(currentUser?.id);
   const ref = useRef<HTMLInputElement>(null);
 
   const handleAvatarClick = () => {

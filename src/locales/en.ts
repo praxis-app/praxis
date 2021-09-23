@@ -38,7 +38,7 @@ const en = {
   },
 
   errors: {
-    somethingWrong: () => "Something went wrong...",
+    somethingWrong: () => "Something went wrong.",
     imageUploadError: () => "Unable to upload image(s)",
   },
 
@@ -100,8 +100,8 @@ const en = {
       nameRequired: () => "Name is required",
     },
     permissionDenied: () => "Permission denied.",
-    alreadyLoggedIn: () => "You're already signed in...",
-    alreadyRegistered: () => "You have already created an account...",
+    alreadyLoggedIn: () => "You're already signed in.",
+    alreadyRegistered: () => "You have already created an account.",
   },
 
   posts: {
@@ -110,7 +110,7 @@ const en = {
     },
     form: {
       bodyPlaceholder: () => "What's happening?",
-      postEmpty: () => "Post cannot be empty...",
+      postEmpty: () => "Post cannot be empty.",
     },
   },
 
@@ -136,7 +136,7 @@ const en = {
         changeSettings: () => "Change group settings",
         test: () => "Just a test",
       },
-      motionEmpty: () => "Motion cannot be empty...",
+      motionEmpty: () => "Motion cannot be empty.",
       enterProposedSettings: () => "Enter your proposed settings below...",
     },
     tabs: {

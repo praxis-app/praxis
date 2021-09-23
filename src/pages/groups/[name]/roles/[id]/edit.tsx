@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import Router, { useRouter } from "next/router";
-import { Button, Card, CircularProgress, Tab, Tabs } from "@material-ui/core";
+import {
+  Button,
+  Card,
+  CircularProgress,
+  Tab,
+  Tabs,
+  Typography,
+} from "@material-ui/core";
 
 import {
   ROLE,
   PERMISSIONS_BY_ROLE_ID,
   ROLE_MEMBERS,
-  GROUP_BY_NAME,
 } from "../../../../../apollo/client/queries";
 import { DELETE_ROLE } from "../../../../../apollo/client/mutations";
 import RoleForm from "../../../../../components/Roles/Form";
 import { noCache } from "../../../../../utils/apollo";
 import Messages from "../../../../../utils/messages";
-import { useHasPermissionByGroupId } from "../../../../../hooks";
+import {
+  useGroupByName,
+  useHasPermissionByGroupId,
+} from "../../../../../hooks";
 import styles from "../../../../../styles/Role/Role.module.scss";
 import { GroupPermissions } from "../../../../../constants/role";
 import {
@@ -28,8 +37,8 @@ import { breadcrumbsVar } from "../../../../../apollo/client/localState";
 
 const EditGroupRolePage = () => {
   const { query } = useRouter();
+  const [group, _, groupLoading] = useGroupByName(query.name);
   const [role, setRole] = useState<ClientRole>();
-  const [group, setGroup] = useState<ClientGroup>();
   const [permissions, setPermissions] = useState<ClientPermission[]>([]);
   const [unsavedPermissions, setUnsavedPermissions] = useState<
     ClientPermission[]
@@ -43,7 +52,6 @@ const EditGroupRolePage = () => {
     noCache
   );
   const [getMembersRes, membersRes] = useLazyQuery(ROLE_MEMBERS, noCache);
-  const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
   const [deleteRole] = useMutation(DELETE_ROLE);
   const [canManageRoles, canManageRolesLoading] = useHasPermissionByGroupId(
     GroupPermissions.ManageRoles,
@@ -67,14 +75,6 @@ const EditGroupRolePage = () => {
   }, [query.id]);
 
   useEffect(() => {
-    if (query.name) {
-      getGroupRes({
-        variables: { name: query.name },
-      });
-    }
-  }, [query.name]);
-
-  useEffect(() => {
     if (roleRes.data) setRole(roleRes.data.role);
   }, [roleRes.data]);
 
@@ -86,10 +86,6 @@ const EditGroupRolePage = () => {
   useEffect(() => {
     if (membersRes.data) setMembers(membersRes.data.roleMembers);
   }, [membersRes.data]);
-
-  useEffect(() => {
-    if (groupRes.data) setGroup(groupRes.data.groupByName);
-  }, [groupRes.data]);
 
   useEffect(() => {
     if (role && group && canManageRoles)
@@ -132,11 +128,14 @@ const EditGroupRolePage = () => {
     roleRes.loading ||
     permissionsRes.loading ||
     membersRes.loading ||
-    groupRes.loading
+    groupLoading
   )
     return <CircularProgress />;
+  if (!group)
+    return <Typography>{Messages.items.notFound(TypeNames.Group)}</Typography>;
+  if (!role)
+    return <Typography>{Messages.items.notFound(TypeNames.Role)}</Typography>;
   if (!canManageRoles) return <>{Messages.users.permissionDenied()}</>;
-  if (!role) return <>{Messages.items.notFound(TypeNames.Role)}</>;
 
   return (
     <>

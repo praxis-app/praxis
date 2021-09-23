@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
-import { Card, CardContent, CircularProgress } from "@material-ui/core";
+import {
+  Card,
+  CardContent,
+  CircularProgress,
+  Typography,
+} from "@material-ui/core";
 import { useRouter } from "next/router";
 
 import VotesForm from "../../../components/Votes/Form";
@@ -10,14 +15,18 @@ import { useSettingsByGroupId } from "../../../hooks";
 import { GroupSettings } from "../../../constants/setting";
 import { VotingTypes } from "../../../constants/vote";
 import { settingValueByName } from "../../../utils/setting";
+import Messages from "../../../utils/messages";
+import { TypeNames } from "../../../constants/common";
 
 const Edit = () => {
   const { query } = useRouter();
   const [vote, setVote] = useState<ClientVote>();
   const [motion, setMotion] = useState<ClientMotion>();
-  const [groupSettings] = useSettingsByGroupId(motion?.groupId);
+  const [groupSettings, _, groupSettingsLoading] = useSettingsByGroupId(
+    motion?.groupId
+  );
   const [isModelOfConsensus, setIsModelOfConsensus] = useState<boolean>(false);
-  const [getVotesRes, votesRes] = useLazyQuery(VOTE, noCache);
+  const [getVoteRes, voteRes] = useLazyQuery(VOTE, noCache);
   const [getMotionRes, motionRes] = useLazyQuery(MOTION, noCache);
 
   useEffect(() => {
@@ -29,7 +38,7 @@ const Edit = () => {
 
   useEffect(() => {
     if (query.id)
-      getVotesRes({
+      getVoteRes({
         variables: { id: query.id },
       });
   }, [query.id]);
@@ -42,14 +51,18 @@ const Edit = () => {
   }, [vote]);
 
   useEffect(() => {
-    if (votesRes.data) setVote(votesRes.data.vote);
-  }, [votesRes.data]);
+    if (voteRes.data) setVote(voteRes.data.vote);
+  }, [voteRes.data]);
 
   useEffect(() => {
     if (motionRes.data) setMotion(motionRes.data.motion);
   }, [motionRes.data]);
 
-  if (!vote) return <CircularProgress />;
+  if (voteRes.loading || motionRes.loading || groupSettingsLoading)
+    return <CircularProgress />;
+
+  if (!vote)
+    return <Typography>{Messages.items.notFound(TypeNames.Vote)}</Typography>;
 
   return (
     <Card>

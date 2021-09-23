@@ -13,7 +13,7 @@ import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import { DELETE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/Vote.module.scss";
-import { ModelNames } from "../../constants/common";
+import { ModelNames, ResourcePaths } from "../../constants/common";
 import { ConsensusStates, FlipStates } from "../../constants/vote";
 import { useCurrentUser, useUserById } from "../../hooks";
 import Messages from "../../utils/messages";
@@ -37,7 +37,7 @@ interface Props {
 const Vote = ({ vote, votes, setVotes }: Props) => {
   const { id, userId, body, flipState, consensusState, createdAt } = vote;
   const currentUser = useCurrentUser();
-  const user = useUserById(userId);
+  const [user] = useUserById(userId);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteVote] = useMutation(DELETE_VOTE);
   const classes = useStyles();
@@ -85,7 +85,7 @@ const Vote = ({ vote, votes, setVotes }: Props) => {
         <CardHeader
           title={
             <>
-              <Link href={`/users/${user?.name}`}>
+              <Link href={`${ResourcePaths.User}${user?.name}`}>
                 <a>{user?.name}</a>
               </Link>
               <span className={styles.voteTypeLabel}>{voteTypeLabel()}</span>

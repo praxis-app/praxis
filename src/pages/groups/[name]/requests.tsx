@@ -5,13 +5,18 @@ import Link from "next/link";
 import { Card, CircularProgress, Typography } from "@material-ui/core";
 import { truncate } from "lodash";
 
-import { GROUP_BY_NAME, MEMBER_REUQESTS } from "../../../apollo/client/queries";
+import { MEMBER_REUQESTS } from "../../../apollo/client/queries";
 import Request from "../../../components/Groups/Request";
-import { ResourcePaths, TruncationSizes } from "../../../constants/common";
+import {
+  ResourcePaths,
+  TruncationSizes,
+  TypeNames,
+} from "../../../constants/common";
 import { GroupSettings, SettingStates } from "../../../constants/setting";
 import Messages from "../../../utils/messages";
 import {
   useCurrentUser,
+  useGroupByName,
   useHasPermissionByGroupId,
   useMembersByGroupId,
   useSettingsByGroupId,
@@ -22,7 +27,7 @@ import { GroupPermissions } from "../../../constants/role";
 const Requests = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
-  const [group, setGroup] = useState<ClientGroup>();
+  const [group, _setGroup, groupLoading] = useGroupByName(query.name);
   const [groupSettings, _setSettings, groupSettingsLoading] =
     useSettingsByGroupId(group?.id);
   const [groupMembers, _setMembers, groupMembersLoading] = useMembersByGroupId(
@@ -31,7 +36,6 @@ const Requests = () => {
   const [memberRequests, setMemberRequests] = useState<ClientMemberRequest[]>(
     []
   );
-  const [getGroupRes, groupRes] = useLazyQuery(GROUP_BY_NAME);
   const [getMemberRequestsRes, memberRequestsRes] = useLazyQuery(
     MEMBER_REUQESTS,
     noCache
@@ -42,24 +46,12 @@ const Requests = () => {
   );
 
   useEffect(() => {
-    if (query.name) {
-      getGroupRes({
-        variables: { name: query.name },
-      });
-    }
-  }, [query.name]);
-
-  useEffect(() => {
     if (group) {
       getMemberRequestsRes({
         variables: { groupId: group.id },
       });
     }
   }, [group]);
-
-  useEffect(() => {
-    if (groupRes.data) setGroup(groupRes.data.groupByName);
-  }, [groupRes.data]);
 
   useEffect(() => {
     if (memberRequestsRes.data)
@@ -87,13 +79,15 @@ const Requests = () => {
   };
 
   if (
-    !query.name ||
-    groupRes.loading ||
+    groupLoading ||
     memberRequestsRes.loading ||
     groupMembersLoading ||
     groupSettingsLoading
   )
     return <CircularProgress />;
+
+  if (!group)
+    return <Typography>{Messages.items.notFound(TypeNames.Group)}</Typography>;
 
   if (canSeeRequests())
     return (

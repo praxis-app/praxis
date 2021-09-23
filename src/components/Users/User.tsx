@@ -9,7 +9,11 @@ import ItemMenu from "../Shared/ItemMenu";
 import UserAvatar from "./Avatar";
 import { FOLLOWING } from "../../apollo/client/queries";
 import Messages from "../../utils/messages";
-import { ModelNames } from "../../constants/common";
+import {
+  ModelNames,
+  NavigationPaths,
+  ResourcePaths,
+} from "../../constants/common";
 import { WHITE } from "../../styles/Shared/theme";
 import {
   useCurrentUser,
@@ -82,7 +86,7 @@ const Show = ({ user, deleteUser }: Props) => {
           </>
         }
         title={
-          <Link href={`/users/${name}`}>
+          <Link href={`${ResourcePaths.User}${name}`}>
             <a>{name}</a>
           </Link>
         }
@@ -91,13 +95,13 @@ const Show = ({ user, deleteUser }: Props) => {
       />
 
       <CardContent>
-        <Link href={`/users/${name}/followers`}>
+        <Link href={`${ResourcePaths.User}${name}${NavigationPaths.Followers}`}>
           <a>{Messages.users.followers(followers.length)}</a>
         </Link>
 
         <span style={{ color: WHITE }}>{Messages.middotWithSpaces()}</span>
 
-        <Link href={`/users/${name}/following`}>
+        <Link href={`${ResourcePaths.User}${name}${NavigationPaths.Following}`}>
           <a>{Messages.users.following(following.length)}</a>
         </Link>
       </CardContent>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { IconButton, LinearProgress } from "@material-ui/core";
+import { IconButton, LinearProgress, Typography } from "@material-ui/core";
 import { RemoveCircle } from "@material-ui/icons";
 import { useMutation } from "@apollo/client";
 
@@ -8,7 +8,7 @@ import styles from "../../styles/Role/Member.module.scss";
 import { useUserById } from "../../hooks";
 import { DELETE_ROLE_MEMBER } from "../../apollo/client/mutations";
 import Messages from "../../utils/messages";
-import { ResourcePaths } from "../../constants/common";
+import { ResourcePaths, TypeNames } from "../../constants/common";
 
 interface Props {
   member: ClientRoleMember;
@@ -18,7 +18,7 @@ interface Props {
 
 const RoleMember = ({ member, members, setMembers }: Props) => {
   const { id, userId } = member;
-  const user = useUserById(userId);
+  const [user, _, userLoading] = useUserById(userId);
   const [deleteRoleMember] = useMutation(DELETE_ROLE_MEMBER);
 
   const deleteRoleMemberHandler = async () => {
@@ -33,28 +33,31 @@ const RoleMember = ({ member, members, setMembers }: Props) => {
       );
   };
 
-  if (user)
-    return (
-      <div className={styles.member}>
-        <div className={styles.link}>
-          <UserAvatar user={user} />
-          <Link href={`${ResourcePaths.User}${user.name}`}>
-            <a className={styles.userName}>{user.name}</a>
-          </Link>
-        </div>
+  if (userLoading) return <LinearProgress />;
 
-        <IconButton
-          onClick={() =>
-            window.confirm(
-              Messages.roles.members.prompts.removeMemberConfirm()
-            ) && deleteRoleMemberHandler()
-          }
-        >
-          <RemoveCircle color="primary" />
-        </IconButton>
+  if (!user)
+    return <Typography>{Messages.items.notFound(TypeNames.User)}</Typography>;
+
+  return (
+    <div className={styles.member}>
+      <div className={styles.link}>
+        <UserAvatar user={user} />
+        <Link href={`${ResourcePaths.User}${user.name}`}>
+          <a className={styles.userName}>{user.name}</a>
+        </Link>
       </div>
-    );
-  return <LinearProgress />;
+
+      <IconButton
+        onClick={() =>
+          window.confirm(
+            Messages.roles.members.prompts.removeMemberConfirm()
+          ) && deleteRoleMemberHandler()
+        }
+      >
+        <RemoveCircle color="primary" />
+      </IconButton>
+    </div>
+  );
 };
 
 export default RoleMember;

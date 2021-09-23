@@ -55,7 +55,7 @@ interface Props {
 const Motion = ({ motion, deleteMotion }: Props) => {
   const { id, userId, groupId, motionGroupId, body, action, stage } = motion;
   const currentUser = useCurrentUser();
-  const user = useUserById(userId);
+  const [user] = useUserById(userId);
   const [group, setGroup] = useState<ClientGroup>();
   const [groupSettings] = useSettingsByGroupId(group?.id);
   const [groupMembers] = useMembersByGroupId(group?.id);
@@ -157,7 +157,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
           title={
             (!group || onGroupPage()) && (
               <>
-                <Link href={`/users/${user?.name}`}>
+                <Link href={`${ResourcePaths.User}${user?.name}`}>
                   <a>{user?.name}</a>
                 </Link>
 

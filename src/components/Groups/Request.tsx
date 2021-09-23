@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import Link from "next/link";
-import { Button, LinearProgress } from "@material-ui/core";
+import { Button, LinearProgress, Typography } from "@material-ui/core";
 
 import { APPROVE_MEMBER_REQUEST } from "../../apollo/client/mutations";
 import UserAvatar from "../Users/Avatar";
@@ -19,7 +19,7 @@ const MemberRequest = ({
   memberRequests,
   setMemberRequests,
 }: Props) => {
-  const user = useUserById(memberRequest.userId);
+  const [user, _, userLoading] = useUserById(memberRequest.userId);
   const [approveMemberRequest] = useMutation(APPROVE_MEMBER_REQUEST);
 
   const approveMemberRequestMutation = async () => {
@@ -33,21 +33,24 @@ const MemberRequest = ({
     );
   };
 
-  if (user)
-    return (
-      <div className={styles.member}>
-        <div className={styles.link}>
-          <UserAvatar user={user} />
-          <Link href={`/users/${user.name}`}>
-            <a className={styles.userName}>{user.name}</a>
-          </Link>
-        </div>
-        <Button onClick={() => approveMemberRequestMutation()} color="primary">
-          {Messages.groups.actions.approve()}
-        </Button>
+  if (userLoading) return <LinearProgress />;
+
+  if (!user)
+    return <Typography>{Messages.groups.notFound.request()}</Typography>;
+
+  return (
+    <div className={styles.member}>
+      <div className={styles.link}>
+        <UserAvatar user={user} />
+        <Link href={`/users/${user.name}`}>
+          <a className={styles.userName}>{user.name}</a>
+        </Link>
       </div>
-    );
-  return <LinearProgress />;
+      <Button onClick={() => approveMemberRequestMutation()} color="primary">
+        {Messages.groups.actions.approve()}
+      </Button>
+    </div>
+  );
 };
 
 export default MemberRequest;

@@ -12,6 +12,8 @@ import { useUserById } from "../../hooks";
 import styles from "../../styles/Vote/Voter.module.scss";
 import UserAvatar from "../Users/Avatar";
 import { ConsensusStates, FlipStates } from "../../constants/vote";
+import { ResourcePaths, TypeNames } from "../../constants/common";
+import Messages from "../../utils/messages";
 
 const BadgeContent = ({ vote }: { vote: ClientVote }) => {
   const style: CSSProperties = { fontSize: 8, marginTop: 1 };
@@ -38,15 +40,16 @@ export interface Props {
 }
 
 const Voter = ({ vote, compact }: Props) => {
-  const user = useUserById(vote.userId);
+  const [user, _, userLoading] = useUserById(vote.userId);
+  const userName = user ? user.name : Messages.items.notFound(TypeNames.User);
 
   // TODO: Add check for time spent loading, only show loader after specified duration
-  if (!user) return <LinearProgress />;
+  if (userLoading) return <LinearProgress />;
 
   if (compact)
     return (
       <Typography className={styles.voterCompact}>
-        {user?.name}
+        {userName}
         <span className={styles.voteBody}>
           {vote.body ? ` — ${vote.body}` : ""}
         </span>
@@ -62,9 +65,9 @@ const Voter = ({ vote, compact }: Props) => {
           badgeContent={<BadgeContent vote={vote} />}
         />
         <Typography style={{ marginLeft: 18, marginTop: 8 }}>
-          <Link href={`/users/${user.name}`}>
+          <Link href={`${ResourcePaths.User}${user?.name}`}>
             <a>
-              <span className={styles.voterName}>{user?.name}</span>
+              <span className={styles.voterName}>{userName}</span>
             </a>
           </Link>
           {vote.body ? ` — ${vote.body}` : ""}
