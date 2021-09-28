@@ -23,7 +23,7 @@ import {
   useSettingsByGroupId,
 } from "../../hooks";
 import CompactText from "../Shared/CompactText";
-import { noCache, settingValueByName } from "../../utils/clientIndex";
+import { noCache, settingValue } from "../../utils/clientIndex";
 import { GroupPermissions } from "../../constants/role";
 import GroupItemMenu from "./ItemMenu";
 
@@ -70,8 +70,7 @@ const Group = ({ group, deleteGroup }: Props) => {
 
   const isNoAdmin = (): boolean => {
     return (
-      settingValueByName(GroupSettings.NoAdmin, groupSettings) ===
-      SettingStates.On
+      settingValue(GroupSettings.NoAdmin, groupSettings) === SettingStates.On
     );
   };
 

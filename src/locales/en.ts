@@ -127,17 +127,25 @@ const en = {
     form: {
       makeAMotion: () => "Make a motion...",
       motionType: () => "Motion type",
-      group: () => "Group",
       actionTypes: {
         planEvent: () => "Plan event",
-        changeName: () => "Change name",
-        changeDescription: () => "Change description",
-        changeImage: () => "Change group image",
+        changeName: () => "Change group name",
+        changeDescription: () => "Change about text",
+        changeImage: () => "Change cover photo",
         changeSettings: () => "Change group settings",
+        changeRules: () => "Change group rules",
+        createRole: () => "Create a group role",
+        changeRole: () => "Change a group role",
+        assignRole: () => "Assign a group role",
         test: () => "Just a test",
       },
       motionEmpty: () => "Motion cannot be empty.",
       enterProposedSettings: () => "Enter your proposed settings below...",
+      inputLabels: {
+        group: () => "Group",
+        member: () => "Member",
+        role: () => "Role",
+      },
     },
     tabs: {
       comments: () => "Comments",
@@ -146,7 +154,9 @@ const en = {
       votes: () => "Votes",
     },
     groups: {
-      proposedAspect: (aspect: string) => `Proposed ${aspect}:`,
+      proposedAspect: (aspect: string) => `Proposed ${aspect}`,
+      proposedRoleChange: () => "Proposed role change",
+      proposedRoleAssignment: () => "Proposed role assignment",
       actionFields: {
         inDev: () => "This motion type is still in development...",
         newAspect: (aspect: string) => `New group ${aspect}`,
@@ -285,13 +295,13 @@ const en = {
     },
     groups: {
       names: {
-        noAdmin: () => "No admin",
-        votingType: () => "Voting model",
-        ratificationThreshold: () => "Ratification threshold",
-        reservationsLimit: () => "Reservations limit",
-        standAsidesLimit: () => "Stand asides limit",
-        xToPass: () => "X to pass",
-        xToBlock: () => "X to block",
+        noAdmin: () => "No Admin",
+        votingType: () => "Voting Model",
+        ratificationThreshold: () => "Ratification Threshold",
+        reservationsLimit: () => "Reservations Limit",
+        standAsidesLimit: () => "Stand Asides Limit",
+        xToPass: () => "X to Pass",
+        xToBlock: () => "X to Block",
       },
       descriptions: {
         noAdmin: () =>
@@ -343,24 +353,35 @@ const en = {
     },
     permissions: {
       names: {
-        manageItems: (itemType: string) => `Manage ${itemType}s`,
+        acceptMemberRequests: () => "Approve Member Requests",
+        createInvites: () => "Create Invites",
+        deleteGroup: () => "Delete Group",
+        editGroup: () => "Edit Group",
+        kickGroupMembers: () => "Kick Members",
+        manageUsers: () => "Manage Members",
+        managePosts: () => "Manage Posts",
+        manageComments: () => "Manage Comments",
+        manageInvites: () => "Manage Invites",
+        manageRoles: () => "Manage Roles",
+        manageSettings: () => "Manage Settings",
       },
       descriptions: {
         editGroup: () =>
-          "Allows members to edit the groups name, description, and cover photo.",
+          "Allows members to edit the group's name, description, and cover photo.",
         deleteGroup: () => "Allows members to permanently delete this group.",
-        manageItems: (itemType: string) =>
-          `Allows members to delete ${itemType}s by other members.`,
+        managePosts: () => "Allows members to delete posts by other members.",
+        manageComments: () =>
+          "Allows members to delete comments by other members.",
         manageRoles: () =>
           "Allows members to create new roles and edit or delete roles lower than their highest role.",
         manageGroupSettings: () =>
-          "Allows members to make changes to this groups settings.",
+          "Allows members to make changes to this group's settings.",
         acceptMemberRequests: () =>
           "Allows members to view member requests and to allow new members to join the group.",
         kickGroupMembers: () =>
           "Allows members to remove other members from the group.",
         manageUsers: () =>
-          "Allows members to view the full list of server members and permanently delete their accounts.",
+          "Allows members to view the full list of server members and kick other members from the server.",
         manageInvites: () =>
           "Allows members to view the full list of server invites.",
         createInvites: () =>

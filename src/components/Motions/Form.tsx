@@ -28,7 +28,7 @@ import {
   ResourcePaths,
   TruncationSizes,
 } from "../../constants/common";
-import { ActionTypeOptions, ActionTypes } from "../../constants/motion";
+import { ACTION_TYPE_OPTIONS, ActionTypes } from "../../constants/motion";
 import ActionFields from "./ActionFields";
 import { feedVar, paginationVar } from "../../apollo/client/localState";
 import { useCurrentUser, useIsMobile } from "../../hooks";
@@ -42,6 +42,7 @@ import Dropdown from "../Shared/Dropdown";
 import FormToggle from "./FormToggle";
 import GroupSettingsTab from "./GroupSettingsTab";
 import ActionData from "./ActionData";
+import GroupRolesTab from "./GroupRolesTab";
 
 const CardActions = withStyles(() =>
   createStyles({
@@ -118,9 +119,20 @@ const MotionsForm = ({
   }, [savedImagesRes.data]);
 
   useEffect(() => {
-    if (action === ActionTypes.ChangeSettings && (group || selectedGroupId))
-      setTab(1);
-    else setTab(0);
+    if (group || selectedGroupId) {
+      switch (action) {
+        case ActionTypes.ChangeSettings:
+          setTab(1);
+          break;
+        case ActionTypes.CreateRole:
+        case ActionTypes.ChangeRole:
+        case ActionTypes.AssignRole:
+          setTab(2);
+          break;
+        default:
+          setTab(0);
+      }
+    } else setTab(0);
   }, [action, group, selectedGroupId]);
 
   useEffect(() => {
@@ -234,6 +246,10 @@ const MotionsForm = ({
       : undefined;
   };
 
+  const resetTabs = () => {
+    setTab(0);
+  };
+
   return (
     <Formik
       initialValues={{
@@ -265,7 +281,7 @@ const MotionsForm = ({
                         {Messages.motions.form.motionType()}
                       </InputLabel>
                       <Dropdown value={action} onChange={handleActionChange}>
-                        {ActionTypeOptions.map((option) => (
+                        {ACTION_TYPE_OPTIONS.map((option) => (
                           <MenuItem value={option.value} key={option.value}>
                             {option.message}
                           </MenuItem>
@@ -275,7 +291,9 @@ const MotionsForm = ({
 
                     {groups ? (
                       <FormControl style={{ marginBottom: 18 }}>
-                        <InputLabel>{Messages.motions.form.group()}</InputLabel>
+                        <InputLabel>
+                          {Messages.motions.form.inputLabels.group()}
+                        </InputLabel>
                         <Dropdown
                           value={selectedGroupId}
                           onChange={handleGroupChange}
@@ -350,7 +368,18 @@ const MotionsForm = ({
               setSelectedGroupId={setSelectedGroupId}
               setActionData={setActionData}
               setAction={setAction}
-              resetTabs={() => setTab(0)}
+              resetTabs={resetTabs}
+            />
+          )}
+
+          {tab === 2 && (
+            <GroupRolesTab
+              groupId={group ? group.id : selectedGroupId}
+              setSelectedGroupId={setSelectedGroupId}
+              setActionData={setActionData}
+              setAction={setAction}
+              action={action}
+              resetTabs={resetTabs}
             />
           )}
         </>

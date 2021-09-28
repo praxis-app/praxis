@@ -14,7 +14,7 @@ import { noCache } from "../../../utils/apollo";
 import { useSettingsByGroupId } from "../../../hooks";
 import { GroupSettings } from "../../../constants/setting";
 import { VotingTypes } from "../../../constants/vote";
-import { settingValueByName } from "../../../utils/setting";
+import { settingValue } from "../../../utils/setting";
 import Messages from "../../../utils/messages";
 import { TypeNames } from "../../../constants/common";
 
@@ -31,7 +31,7 @@ const Edit = () => {
 
   useEffect(() => {
     setIsModelOfConsensus(
-      settingValueByName(GroupSettings.VotingType, groupSettings) ===
+      settingValue(GroupSettings.VotingType, groupSettings) ===
         VotingTypes.Consensus
     );
   }, [groupSettings]);

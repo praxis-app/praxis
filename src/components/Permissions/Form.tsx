@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { FormGroup, Switch } from "@material-ui/core";
 import { useMutation } from "@apollo/client";
-
 import styles from "../../styles/Role/Role.module.scss";
 import { UPDATE_PERMISSIONS } from "../../apollo/client/mutations";
 import { navKeyVar } from "../../apollo/client/localState";
 import SubmitButton from "../Shared/SubmitButton";
 import Messages from "../../utils/messages";
-import {
-  permissionDescription,
-  generateRandom,
-  displayName,
-} from "../../utils/clientIndex";
+import { generateRandom } from "../../utils/clientIndex";
+import PermissionToggles from "./Toggles";
 
 interface Props {
   permissions: ClientPermission[];
@@ -19,7 +14,7 @@ interface Props {
   unsavedPermissions: ClientPermission[];
   setUnsavedPermissions: (permissions: ClientPermission[]) => void;
   anyUnsavedPermissions: boolean;
-  setCanManageRolesDep: (dependency: string) => void;
+  setCanManageRolesDep?: (dependency: string) => void;
 }
 
 const PermissionsForm = ({
@@ -52,57 +47,21 @@ const PermissionsForm = ({
       setUnsavedPermissions(newPermissions);
       setPermissions(newPermissions);
       const newKey = generateRandom();
-      setCanManageRolesDep(newKey);
       navKeyVar(newKey);
+      if (setCanManageRolesDep) setCanManageRolesDep(newKey);
     } catch (err) {
       alert(err);
     }
     setSubmitLoading(false);
   };
 
-  const handleSwitchChange = (name: string, enabled: boolean) => {
-    setByName(name, enabled);
-  };
-
-  const setByName = (name: string, enabled: boolean) => {
-    setUnsavedPermissions(
-      unsavedPermissions.map((permission) => {
-        if (permission.name === name)
-          return {
-            ...permission,
-            enabled,
-          };
-        return permission;
-      })
-    );
-  };
-
   return (
     <form onSubmit={(e) => handleSubmit(e)} className={styles.form}>
-      <FormGroup>
-        <div className={styles.form}>
-          {unsavedPermissions.map(({ name, enabled }) => {
-            return (
-              <div className={styles.permission} key={name}>
-                <div>
-                  <div className={styles.permissionName}>
-                    {displayName(name)}
-                  </div>
-                  <div className={styles.permissionDescription}>
-                    {permissionDescription(name)}
-                  </div>
-                </div>
-
-                <Switch
-                  checked={enabled}
-                  onChange={() => handleSwitchChange(name, !enabled)}
-                  color="primary"
-                />
-              </div>
-            );
-          })}
-        </div>
-      </FormGroup>
+      <PermissionToggles
+        permissions={permissions}
+        unsavedPermissions={unsavedPermissions}
+        setUnsavedPermissions={setUnsavedPermissions}
+      />
 
       <div className={styles.flexEnd}>
         <SubmitButton disabled={!anyUnsavedPermissions}>

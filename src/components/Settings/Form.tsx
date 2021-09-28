@@ -21,14 +21,14 @@ import { UPDATE_SETTINGS } from "../../apollo/client/mutations";
 import styles from "../../styles/Setting/SettingsForm.module.scss";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
-import { displayName } from "../../utils/items";
 import SubmitButton from "../Shared/SubmitButton";
 import Dropdown from "../Shared/Dropdown";
 import CancelButton from "../Shared/CancelButton";
 import {
   canShowSetting,
-  descriptionByName,
-  settingValueByName,
+  settingDescription,
+  settingDisplayName,
+  settingValue,
 } from "../../utils/setting";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -95,10 +95,7 @@ const SettingsForm = ({
   const currentUser = useCurrentUser();
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [updateSettings] = useMutation(UPDATE_SETTINGS);
-  const votingType = settingValueByName(
-    GroupSettings.VotingType,
-    unsavedSettings
-  );
+  const votingType = settingValue(GroupSettings.VotingType, unsavedSettings);
   const submitText = submitButtonText || Messages.actions.save();
   const classes = useStyles();
 
@@ -188,9 +185,11 @@ const SettingsForm = ({
               <Fragment key={id}>
                 <div className={styles.setting}>
                   <div>
-                    <div className={styles.name}>{displayName(name)}</div>
+                    <div className={styles.name}>
+                      {settingDisplayName(name)}
+                    </div>
                     <div className={styles.description}>
-                      {descriptionByName(name)}
+                      {settingDescription(name)}
                     </div>
                   </div>
 

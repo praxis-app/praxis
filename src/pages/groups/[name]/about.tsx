@@ -22,7 +22,7 @@ import {
   canShowSetting,
   displayName,
   displaySettingValue,
-  settingValueByName,
+  settingValue,
 } from "../../../utils/clientIndex";
 import { GroupSettings } from "../../../constants/setting";
 
@@ -30,10 +30,7 @@ const GroupsAbout = () => {
   const { query } = useRouter();
   const [group, _, groupLoading] = useGroupByName(query.name);
   const [groupSettings] = useSettingsByGroupId(group?.id);
-  const votingType = settingValueByName(
-    GroupSettings.VotingType,
-    groupSettings
-  );
+  const votingType = settingValue(GroupSettings.VotingType, groupSettings);
 
   useEffect(() => {
     if (group)

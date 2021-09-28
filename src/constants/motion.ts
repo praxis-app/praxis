@@ -1,6 +1,6 @@
 import Messages from "../utils/messages";
 
-export const MIN_GROUP_SIZE_FOR_RATIFICATION = 3;
+export const MIN_GROUP_SIZE_TO_RATIFY = 3;
 
 export enum ActionTypes {
   PlanEvent = "plan-event",
@@ -9,6 +9,9 @@ export enum ActionTypes {
   ChangeDescription = "change-description",
   ChangeSettings = "change-settings",
   ChangeRules = "change-rules",
+  CreateRole = "create-role",
+  ChangeRole = "change-role",
+  AssignRole = "assign-role",
   Test = "test",
 }
 
@@ -35,14 +38,10 @@ interface ActionTypeOption {
   value: ActionTypes;
 }
 
-export const ActionTypeOptions: ActionTypeOption[] = [
+export const ACTION_TYPE_OPTIONS: ActionTypeOption[] = [
   {
     message: Messages.motions.form.actionTypes.planEvent(),
     value: ActionTypes.PlanEvent,
-  },
-  {
-    message: Messages.motions.form.actionTypes.changeSettings(),
-    value: ActionTypes.ChangeSettings,
   },
   {
     message: Messages.motions.form.actionTypes.changeName(),
@@ -53,11 +52,27 @@ export const ActionTypeOptions: ActionTypeOption[] = [
     value: ActionTypes.ChangeDescription,
   },
   {
-    message: Messages.motions.form.actionTypes.test(),
-    value: ActionTypes.Test,
-  },
-  {
     message: Messages.motions.form.actionTypes.changeImage(),
     value: ActionTypes.ChangeImage,
+  },
+  {
+    message: Messages.motions.form.actionTypes.changeSettings(),
+    value: ActionTypes.ChangeSettings,
+  },
+  {
+    message: Messages.motions.form.actionTypes.createRole(),
+    value: ActionTypes.CreateRole,
+  },
+  {
+    message: Messages.motions.form.actionTypes.changeRole(),
+    value: ActionTypes.ChangeRole,
+  },
+  {
+    message: Messages.motions.form.actionTypes.assignRole(),
+    value: ActionTypes.AssignRole,
+  },
+  {
+    message: Messages.motions.form.actionTypes.test(),
+    value: ActionTypes.Test,
   },
 ];

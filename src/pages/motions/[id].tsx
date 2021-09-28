@@ -77,8 +77,7 @@ const Show = () => {
   }, [commentsRes.data]);
 
   useEffect(() => {
-    if (!votes.find((vote) => vote.body) && comments.length && !tabFromGlobal)
-      setTab(1);
+    if (!votes.find((vote) => vote.body) && !tabFromGlobal) setTab(1);
   }, [votes, comments]);
 
   useEffect(() => {

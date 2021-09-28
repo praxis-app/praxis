@@ -32,7 +32,7 @@ import { NavigationPaths, ResourcePaths } from "../../constants/common";
 import Messages from "../../utils/messages";
 import JoinButton from "./JoinButton";
 import { VotingTypes } from "../../constants/vote";
-import { noCache, settingValueByName } from "../../utils/clientIndex";
+import { noCache, settingValue } from "../../utils/clientIndex";
 import { GroupPermissions } from "../../constants/role";
 import GroupItemMenu from "./ItemMenu";
 
@@ -105,8 +105,7 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
 
   const isNoAdmin = (): boolean => {
     return (
-      settingValueByName(GroupSettings.NoAdmin, groupSettings) ===
-      SettingStates.On
+      settingValue(GroupSettings.NoAdmin, groupSettings) === SettingStates.On
     );
   };
 
@@ -124,7 +123,7 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
   };
 
   const votingType = (): string => {
-    const setting = settingValueByName(GroupSettings.VotingType, groupSettings);
+    const setting = settingValue(GroupSettings.VotingType, groupSettings);
     const votingTypes = Messages.groups.votingTypeLabels;
     switch (setting) {
       case VotingTypes.Majority:
@@ -168,7 +167,7 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
       )}
 
       <Image
-        src={(baseUrl + coverPhoto?.path) as string}
+        src={baseUrl + coverPhoto?.path}
         aspectRatio={isMobile ? 2 : 2.75}
         cover={true}
         color={BLACK}

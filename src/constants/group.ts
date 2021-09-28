@@ -3,4 +3,5 @@ export enum GroupAspects {
   Image = "image",
   Description = "description",
   Settings = "settings",
+  Role = "role",
 }

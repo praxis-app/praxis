@@ -4,7 +4,6 @@ type Permission {
   id: ID!
   roleId: ID!
   name: String!
-  description: String!
   enabled: Boolean!
   createdAt: String!
   updatedAt: String!
@@ -12,6 +11,11 @@ type Permission {
 
 input PermissionInput {
   id: ID!
+  enabled: Boolean!
+}
+
+input ProposedPermissionInput {
+  name: String!
   enabled: Boolean!
 }
 

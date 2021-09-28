@@ -12,7 +12,7 @@ import {
 } from "../../../hooks";
 import { GroupSettings, SettingStates } from "../../../constants/setting";
 import SettingsForm from "../../../components/Settings/Form";
-import { settingValueByName } from "../../../utils/setting";
+import { settingValue } from "../../../utils/setting";
 import { GroupPermissions } from "../../../constants/role";
 
 const Settings = () => {
@@ -34,8 +34,7 @@ const Settings = () => {
   const isNoAdmin = (): boolean => {
     return (
       !anyUnsavedSettings() &&
-      settingValueByName(GroupSettings.NoAdmin, groupSettings) ===
-        SettingStates.On
+      settingValue(GroupSettings.NoAdmin, groupSettings) === SettingStates.On
     );
   };
 

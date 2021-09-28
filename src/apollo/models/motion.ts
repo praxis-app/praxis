@@ -6,10 +6,11 @@ import { GroupSettings } from "../../constants/setting";
 import {
   Stages,
   ActionTypes,
-  MIN_GROUP_SIZE_FOR_RATIFICATION,
+  MIN_GROUP_SIZE_TO_RATIFY,
 } from "../../constants/motion";
 import { ConsensusStates, FlipStates, VotingTypes } from "../../constants/vote";
 import { groupSettingByName, updateSettingById } from "./setting";
+import { initializePermissions } from "./role";
 
 export interface BackendMotion extends Motion {
   __typename?: string;
@@ -52,8 +53,8 @@ export const evaluate = async (motionId: number): Promise<boolean> => {
       hasEnoughToPass(motion, groupSettings);
 
     if (
-      groupMembers.length >= MIN_GROUP_SIZE_FOR_RATIFICATION &&
       motion.stage === Stages.Voting &&
+      groupMembers.length >= MIN_GROUP_SIZE_TO_RATIFY &&
       (consensus || majority || enoughToPass)
     ) {
       ratifyMotion(motionId);
@@ -147,6 +148,13 @@ const doAction = async (motion: Motion) => {
         ...groupId,
       },
     };
+    const groupConnect = {
+      group: {
+        connect: {
+          ...groupId,
+        },
+      },
+    };
 
     if (motion.action === ActionTypes.ChangeName) {
       await prisma.group.update({
@@ -166,17 +174,15 @@ const doAction = async (motion: Motion) => {
       });
     }
 
-    if (motion.action === ActionTypes.ChangeImage) {
-      const path = actionData.groupImagePath as string;
+    if (
+      motion.action === ActionTypes.ChangeImage &&
+      actionData.groupImagePath
+    ) {
       await prisma.image.create({
         data: {
-          group: {
-            connect: {
-              ...groupId,
-            },
-          },
+          ...groupConnect,
           profilePicture: true,
-          path,
+          path: actionData.groupImagePath,
         },
       });
     }
@@ -190,6 +196,67 @@ const doAction = async (motion: Motion) => {
         if (!updatedSetting)
           throw new Error(Messages.items.notFound(TypeNames.Setting));
       }
+    }
+
+    if (
+      motion.action === ActionTypes.CreateRole &&
+      actionData.groupRole &&
+      actionData.groupRolePermissions
+    ) {
+      const role = await prisma.role.create({
+        data: {
+          ...groupConnect,
+          name: actionData.groupRole.name,
+          color: actionData.groupRole.color,
+        },
+      });
+      initializePermissions(actionData.groupRolePermissions, role);
+    }
+
+    if (
+      motion.action === ActionTypes.ChangeRole &&
+      actionData.groupRole &&
+      actionData.groupRoleId &&
+      actionData.groupRolePermissions
+    ) {
+      const roleId = parseInt(actionData.groupRoleId);
+      await prisma.role.update({
+        where: { id: roleId },
+        data: {
+          name: actionData.groupRole.name,
+          color: actionData.groupRole.color,
+        },
+      });
+      for (const { name, enabled } of actionData.groupRolePermissions) {
+        const permission = await prisma.permission.findFirst({
+          where: { roleId, name },
+        });
+        await prisma.permission.update({
+          where: { id: permission?.id },
+          data: { enabled },
+        });
+      }
+    }
+
+    if (
+      motion.action === ActionTypes.AssignRole &&
+      actionData.groupRoleId &&
+      actionData.userId
+    ) {
+      await prisma.roleMember.create({
+        data: {
+          user: {
+            connect: {
+              id: parseInt(actionData.userId),
+            },
+          },
+          role: {
+            connect: {
+              id: parseInt(actionData.groupRoleId),
+            },
+          },
+        },
+      });
     }
   }
 };

@@ -9,6 +9,7 @@ import {
 import { GroupAspects } from "../../constants/group";
 import styles from "../../styles/Motion/ActionFields.module.scss";
 import Messages from "../../utils/messages";
+import { ModelNames } from "../../constants/common";
 
 interface TextInputProps {
   value: string;
@@ -119,7 +120,8 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
   if (
     actionType &&
     actionType !== ActionTypes.Test &&
-    actionType !== ActionTypes.ChangeSettings
+    actionType !== ActionTypes.ChangeSettings &&
+    !actionType.includes(ModelNames.Role)
   )
     return (
       <Typography gutterBottom>
