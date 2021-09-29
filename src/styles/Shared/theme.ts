@@ -88,6 +88,16 @@ const muiTheme = createTheme({
     MuiPaper: {
       rounded: {
         borderRadius: 8,
+
+        [globalTheme.breakpoints.down("sm")]: {
+          borderRadius: 0,
+        },
+      },
+
+      elevation1: {
+        [globalTheme.breakpoints.down("sm")]: {
+          boxShadow: "none",
+        },
       },
     },
 
@@ -95,6 +105,19 @@ const muiTheme = createTheme({
       root: {
         backgroundColor: globalTheme.palette.background.paper,
         marginBottom: 12,
+      },
+    },
+
+    MuiContainer: {
+      root: {
+        [globalTheme.breakpoints.down("sm")]: {
+          padding: 0,
+        },
+      },
+      maxWidthSm: {
+        [globalTheme.breakpoints.up("md")]: {
+          maxWidth: 680,
+        },
       },
     },
 
@@ -244,14 +267,6 @@ const muiTheme = createTheme({
       },
       root: {
         margin: 12,
-      },
-    },
-
-    MuiContainer: {
-      maxWidthSm: {
-        [globalTheme.breakpoints.up("md")]: {
-          maxWidth: 680,
-        },
       },
     },
 
