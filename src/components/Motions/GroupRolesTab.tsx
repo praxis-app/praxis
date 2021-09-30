@@ -115,9 +115,7 @@ const GroupRolesTab = ({
     if (isCreatingRole || isChangingRole)
       setActionData({
         groupRole: { name, color },
-        groupRolePermissions: unsavedPermissions.map(({ name, enabled }) => {
-          return { name, enabled };
-        }),
+        groupRolePermissions: changedPermissions(),
         ...(isChangingRole && {
           groupRoleId: selectedRoleId,
         }),
@@ -135,6 +133,20 @@ const GroupRolesTab = ({
     setActionData(undefined);
     setAction("");
     resetTabs();
+  };
+
+  const changedPermissions = (): InitialPermission[] => {
+    const changed = unsavedPermissions.filter(
+      (unsavedPermission) =>
+        !permissions.some(
+          (permission) =>
+            unsavedPermission.name === permission.name &&
+            unsavedPermission.enabled === permission.enabled
+        )
+    );
+    return changed.map(({ name, enabled }) => {
+      return { name, enabled };
+    });
   };
 
   const handleColorChange = (color: ColorResult) => {
@@ -155,16 +167,9 @@ const GroupRolesTab = ({
     isSubmitting,
     dirty,
   }: FormikProps<FormValues>): boolean => {
-    if (anyUnsavedColor() || anyUnsavedPermissions()) return false;
+    if (anyUnsavedColor() || changedPermissions().length) return false;
     if (!dirty) return true;
     return isSubmitting;
-  };
-
-  const anyUnsavedPermissions = (): boolean => {
-    return (
-      Boolean(unsavedPermissions.length) &&
-      JSON.stringify(permissions) !== JSON.stringify(unsavedPermissions)
-    );
   };
 
   const anyUnsavedColor = (): boolean => {

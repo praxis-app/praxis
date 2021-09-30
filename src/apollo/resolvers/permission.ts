@@ -3,6 +3,7 @@ import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
 import { Permission, Role } from ".prisma/client";
+import { GroupSettings, SettingStates } from "../../constants/setting";
 
 interface PermissionInput {
   permissions: ClientPermission[];
@@ -59,6 +60,18 @@ const permissionResolvers = {
         groupId,
       }: { name: string; userId: string; groupId: string }
     ) => {
+      const groupSettings = await prisma.setting.findMany({
+        where: {
+          groupId: parseInt(groupId),
+        },
+      });
+      const isNoAdmin = groupSettings.find(
+        (setting) =>
+          setting.name === GroupSettings.NoAdmin &&
+          setting.value === SettingStates.On
+      );
+      if (isNoAdmin) return false;
+
       const roleMembersWithRole = await prisma.roleMember.findMany({
         where: {
           userId: parseInt(userId),

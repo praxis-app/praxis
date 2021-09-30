@@ -61,13 +61,14 @@ const ActionData = ({ id, action, actionData }: ActionDataProps) => {
           </span>
         </Typography>
 
-        {actionData.groupRolePermissions
-          .filter((permission) => permission.enabled)
-          .map((permission) => (
-            <Typography key={permission.name}>
-              • {displayName(permission.name)}
-            </Typography>
-          ))}
+        {actionData.groupRolePermissions.map((permission) => (
+          <Typography key={permission.name}>
+            {`• ${displayName(permission.name)}: `}
+            {permission.enabled
+              ? Messages.roles.permissions.states.enabled()
+              : Messages.roles.permissions.states.disabled()}
+          </Typography>
+        ))}
       </div>
     );
 
