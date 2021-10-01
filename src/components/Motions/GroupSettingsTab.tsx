@@ -23,7 +23,7 @@ const GroupSettingsTab = ({
   const [unsavedSettings, setUnsavedSettings] = useState<ClientSetting[]>([]);
 
   const handleSubmit = () => {
-    setActionData({ groupSettings: settingsChanged() });
+    setActionData({ groupSettings: changedSettings() });
     setUnsavedSettings(groupSettings);
     resetTabs();
   };
@@ -35,7 +35,7 @@ const GroupSettingsTab = ({
     resetTabs();
   };
 
-  const settingsChanged = (): SettingInput[] => {
+  const changedSettings = (): SettingInput[] => {
     const changed = unsavedSettings.filter(
       (unsavedSetting) =>
         !groupSettings.some(
@@ -60,7 +60,7 @@ const GroupSettingsTab = ({
         setSettings={setGroupSettings}
         unsavedSettings={unsavedSettings}
         setUnsavedSettings={setUnsavedSettings}
-        anyUnsavedSettings={Boolean(settingsChanged().length)}
+        anyUnsavedSettings={Boolean(changedSettings().length)}
         submitButtonText={Messages.actions.confirm()}
         onSubmit={handleSubmit}
         onCancel={handleCancel}

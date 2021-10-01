@@ -1,7 +1,7 @@
 {
   "name": "praxis",
   "version": "1.0.0",
-  "description": "Social networking site built with Next.js, Apollo GraphQL, and Prisma",
+  "description": "Social networking platform built with Next.js, Apollo GraphQL, and Prisma",
   "main": "index.tsx",
   "scripts": {
     "dev": "next dev",

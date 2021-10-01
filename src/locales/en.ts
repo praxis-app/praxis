@@ -155,7 +155,7 @@ const en = {
     },
     groups: {
       proposedAspect: (aspect: string) => `Proposed ${aspect}`,
-      proposedRoleChange: () => "Proposed role change",
+      proposedRoleChange: () => "Proposed role changes",
       proposedRoleAssignment: () => "Proposed role assignment",
       actionFields: {
         inDev: () => "This motion type is still in development...",
@@ -278,9 +278,8 @@ const en = {
       name: () => "Settings",
       nameWithGroup: () => "Group Settings",
     },
-    setToNoAdmin:
-      () => `This group has been irriversibly set to no-admin — All changes to the
-    group must now be made via motion ratification.`,
+    setToNoAdmin: () =>
+      "This group has been set to no-admin — All changes to the group must now be made by motions.",
     votingTypeLabels: {
       consensus: () => "Consensus",
       majority: () => "Majority Vote",
@@ -386,6 +385,10 @@ const en = {
           "Allows members to view the full list of server invites.",
         createInvites: () =>
           "Allows members to invite new people to this server.",
+      },
+      states: {
+        enabled: () => "Enabled",
+        disabled: () => "Disabled",
       },
     },
     groupRoles: () => "Group Roles",
