@@ -1,14 +1,9 @@
-import { LinearProgress } from "@material-ui/core";
 import { useUserById } from "../../hooks";
+import Messages from "../../utils/messages";
 
-interface Props {
-  userId: string;
-  noLoader?: boolean;
-}
-
-const UserName = ({ userId, noLoader }: Props) => {
+const UserName = ({ userId }: { userId: string }) => {
   const [user, _, userLoading] = useUserById(userId);
-  if (userLoading && !noLoader) return <LinearProgress />;
+  if (userLoading) return <>{Messages.states.loading()}</>;
   return <>{user?.name}</>;
 };
 

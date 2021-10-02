@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { Typography } from "@material-ui/core";
-import { displayName, displaySettingValue } from "../../utils/clientIndex";
+import {
+  displaySettingValue,
+  permissionDisplayName,
+  settingDisplayName,
+} from "../../utils/clientIndex";
 import { ResourcePaths } from "../../constants/common";
 import { GroupAspects } from "../../constants/group";
 import { ActionTypes } from "../../constants/motion";
@@ -63,7 +67,7 @@ const ActionData = ({ id, action, actionData }: ActionDataProps) => {
 
         {actionData.groupRolePermissions.map((permission) => (
           <Typography key={permission.name}>
-            {`• ${displayName(permission.name)}: `}
+            {`• ${permissionDisplayName(permission.name)}: `}
             {permission.enabled
               ? Messages.roles.permissions.states.enabled()
               : Messages.roles.permissions.states.disabled()}
@@ -85,7 +89,7 @@ const ActionData = ({ id, action, actionData }: ActionDataProps) => {
           • Role: <RoleName roleId={actionData.groupRoleId} />
         </Typography>
         <Typography>
-          • Member: <UserName userId={actionData.userId} noLoader />
+          • Member: <UserName userId={actionData.userId} />
         </Typography>
       </div>
     );
@@ -97,7 +101,7 @@ const ActionData = ({ id, action, actionData }: ActionDataProps) => {
 
         {actionData.groupSettings.map((setting) => (
           <Typography key={setting.id}>
-            • {displayName(setting.name)}: {displaySettingValue(setting)}
+            • {settingDisplayName(setting.name)}: {displaySettingValue(setting)}
           </Typography>
         ))}
       </div>

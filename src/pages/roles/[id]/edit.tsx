@@ -3,16 +3,16 @@ import { useLazyQuery, useMutation } from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import { Button, Card, CircularProgress, Tab, Tabs } from "@material-ui/core";
 
-import {
-  ROLE,
-  PERMISSIONS_BY_ROLE_ID,
-  ROLE_MEMBERS,
-} from "../../../apollo/client/queries";
+import { ROLE } from "../../../apollo/client/queries";
 import { DELETE_ROLE } from "../../../apollo/client/mutations";
 import RoleForm from "../../../components/Roles/Form";
 import { noCache } from "../../../utils/apollo";
 import Messages from "../../../utils/messages";
-import { useHasPermissionGlobally } from "../../../hooks";
+import {
+  useHasPermissionGlobally,
+  useMembersByRoleId,
+  usePermissionsByRoleId,
+} from "../../../hooks";
 import styles from "../../../styles/Role/Role.module.scss";
 import { GlobalPermissions } from "../../../constants/role";
 import {
@@ -27,20 +27,16 @@ import { breadcrumbsVar } from "../../../apollo/client/localState";
 const Edit = () => {
   const { query } = useRouter();
   const [role, setRole] = useState<ClientRole>();
-  const [permissions, setPermissions] = useState<ClientPermission[]>([]);
   const [unsavedPermissions, setUnsavedPermissions] = useState<
     ClientPermission[]
   >([]);
-  const [members, setMembers] = useState<ClientRoleMember[]>([]);
   const [tab, setTab] = useState<number>(0);
   const [canManageRolesDep, setCanManageRolesDep] = useState<string>("");
   const [getRoleRes, roleRes] = useLazyQuery(ROLE, noCache);
-  const [getPermissionsRes, permissionsRes] = useLazyQuery(
-    PERMISSIONS_BY_ROLE_ID,
-    noCache
-  );
-  const [getMembersRes, membersRes] = useLazyQuery(ROLE_MEMBERS, noCache);
   const [deleteRole] = useMutation(DELETE_ROLE);
+  const [members, setMembers, membersLoading] = useMembersByRoleId(query.id);
+  const [permissions, setPermissions, permissionsLoading] =
+    usePermissionsByRoleId(query.id);
   const [canManageRoles, canManageRolesLoading] = useHasPermissionGlobally(
     GlobalPermissions.ManageRoles,
     [members, canManageRolesDep]
@@ -51,28 +47,12 @@ const Edit = () => {
       getRoleRes({
         variables: { id: query.id },
       });
-      const byRoleId = {
-        variables: {
-          roleId: query.id,
-        },
-      };
-      getPermissionsRes(byRoleId);
-      getMembersRes(byRoleId);
     }
   }, [query.id]);
 
   useEffect(() => {
     if (roleRes.data) setRole(roleRes.data.role);
   }, [roleRes.data]);
-
-  useEffect(() => {
-    if (permissionsRes.data)
-      setPermissions(permissionsRes.data.permissionsByRoleId);
-  }, [permissionsRes.data]);
-
-  useEffect(() => {
-    if (membersRes.data) setMembers(membersRes.data.roleMembers);
-  }, [membersRes.data]);
 
   useEffect(() => {
     if (role && canManageRoles)
@@ -106,12 +86,7 @@ const Edit = () => {
     );
   };
 
-  if (
-    canManageRolesLoading ||
-    roleRes.loading ||
-    permissionsRes.loading ||
-    membersRes.loading
-  )
+  if (canManageRolesLoading || roleRes.loading || permissionsLoading)
     return <CircularProgress />;
 
   if (role && canManageRoles)
@@ -169,7 +144,7 @@ const Edit = () => {
             role={role}
             roleMembers={members}
             setRoleMembers={setMembers}
-            membersLoading={membersRes.loading}
+            membersLoading={membersLoading}
           />
         )}
       </>
