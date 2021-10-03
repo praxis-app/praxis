@@ -22,13 +22,10 @@ import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
 import styles from "../../styles/Shared/Shared.module.scss";
 import { noCache } from "../../utils/clientIndex";
-import {
-  PERMISSIONS_BY_ROLE_ID,
-  ROLES_BY_GROUP_ID,
-} from "../../apollo/client/queries";
+import { PERMISSIONS_BY_ROLE_ID } from "../../apollo/client/queries";
 import { ActionTypes } from "../../constants/motion";
 import Dropdown from "../Shared/Dropdown";
-import { useMembersByGroupId } from "../../hooks";
+import { useMembersByGroupId, useRolesByGroupId } from "../../hooks";
 import PermissionToggles from "../Permissions/Toggles";
 import { FieldNames } from "../../constants/common";
 import UserName from "../Users/Name";
@@ -57,17 +54,17 @@ const GroupRolesTab = ({
   const [color, setColor] = useState<string>(DEFAULT_ROLE_COLOR);
   const [selectedRoleId, setSelectedRoleId] = useState("");
   const [assigneeId, setAssigneeId] = useState("");
-  const [roles, setRoles] = useState<ClientRole[]>([]);
   const [permissions, setPermissions] = useState<ClientPermission[]>([]);
   const [unsavedPermissions, setUnsavedPermissions] = useState<
     ClientPermission[]
   >([]);
-  const [getRolesRes, rolesRes] = useLazyQuery(ROLES_BY_GROUP_ID, noCache);
   const [getPermissionsRes, permissionsRes] = useLazyQuery(
     PERMISSIONS_BY_ROLE_ID,
     noCache
   );
-  const [groupMembers, _, groupMembersLoading] = useMembersByGroupId(groupId);
+  const [roles, _setRoles, rolesLoading] = useRolesByGroupId(groupId);
+  const [groupMembers, _groupMembers, groupMembersLoading] =
+    useMembersByGroupId(groupId);
   const roleBySelectedId = roles.find((role) => role.id === selectedRoleId);
   const initialValues: FormValues = {
     name: roleBySelectedId ? roleBySelectedId.name : "",
@@ -75,13 +72,6 @@ const GroupRolesTab = ({
   const isCreatingRole = action === ActionTypes.CreateRole;
   const isChangingRole = action === ActionTypes.ChangeRole;
   const isAssigningRole = action === ActionTypes.AssignRole;
-
-  useEffect(() => {
-    if (groupId)
-      getRolesRes({
-        variables: { groupId },
-      });
-  }, [groupId]);
 
   useEffect(() => {
     if (selectedRoleId && isChangingRole) {
@@ -92,10 +82,6 @@ const GroupRolesTab = ({
       });
     }
   }, [selectedRoleId, action]);
-
-  useEffect(() => {
-    if (rolesRes.data) setRoles(rolesRes.data.rolesByGroupId);
-  }, [rolesRes.data]);
 
   useEffect(() => {
     if (permissionsRes.data)
@@ -190,7 +176,7 @@ const GroupRolesTab = ({
     }
   };
 
-  if (rolesRes.loading || permissionsRes.loading || groupMembersLoading)
+  if (rolesLoading || permissionsRes.loading || groupMembersLoading)
     return <LinearProgress />;
 
   return (

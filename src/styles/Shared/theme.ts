@@ -225,6 +225,30 @@ const muiTheme = createTheme({
       },
     },
 
+    MuiAccordion: {
+      root: {
+        "&:before": {
+          backgroundColor: globalTheme.palette.secondary.main,
+        },
+      },
+      rounded: {
+        "&:first-child": {
+          borderTopLeftRadius: 8,
+          borderTopRightRadius: 8,
+        },
+        "&:last-child": {
+          borderBottomLeftRadius: 8,
+          borderBottomRightRadius: 8,
+        },
+      },
+    },
+
+    MuiAccordionDetails: {
+      root: {
+        paddingBottom: 32,
+      },
+    },
+
     MuiCircularProgress: {
       colorPrimary: {
         color: globalTheme.palette.primary.contrastText,

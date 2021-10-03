@@ -394,6 +394,8 @@ const en = {
     groupRoles: () => "Group Roles",
     serverRoles: () => "Server Roles",
     noRoles: () => "No roles have been created for this server yet.",
+    noMembersOrPermissions: () =>
+      "This role has no permissions enabled and no assigned members.",
   },
 
   invites: {
