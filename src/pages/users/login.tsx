@@ -5,7 +5,7 @@ import { Card, CardContent, FormGroup } from "@material-ui/core";
 import { Formik, Form, Field } from "formik";
 
 import { SIGN_IN, SET_CURRENT_USER } from "../../apollo/client/mutations";
-import { setAuthToken } from "../../utils/auth";
+import { errorToast, setAuthToken } from "../../utils/clientIndex";
 import styles from "../../styles/Shared/Shared.module.scss";
 import Messages from "../../utils/messages";
 import { LocalStorage, NavigationPaths } from "../../constants/common";
@@ -52,7 +52,7 @@ const Login = () => {
       setAuthToken(token);
       Router.push(NavigationPaths.Home);
     } catch (err) {
-      alert(err);
+      errorToast(err);
     }
   };
 

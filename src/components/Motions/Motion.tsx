@@ -29,17 +29,20 @@ import { Stages } from "../../constants/motion";
 import { ModelNames, ResourcePaths } from "../../constants/common";
 import { GroupSettings } from "../../constants/setting";
 import { VotingTypes } from "../../constants/vote";
-import { noCache } from "../../utils/apollo";
+import {
+  noCache,
+  settingValue,
+  motionActionLabel,
+  timeAgo,
+} from "../../utils/clientIndex";
 import {
   useCurrentUser,
   useMembersByGroupId,
   useSettingsByGroupId,
   useUserById,
 } from "../../hooks";
-import Messages from "../../utils/messages";
-import { timeAgo } from "../../utils/time";
 import CardFooter from "./CardFooter";
-import { settingValue } from "../../utils/setting";
+import Messages from "../../utils/messages";
 
 const useStyles = makeStyles({
   title: {
@@ -163,8 +166,10 @@ const Motion = ({ motion, deleteMotion }: Props) => {
 
                 <Link href={`${ResourcePaths.Motion}${id}`}>
                   <a className={styles.info}>
-                    {(action && Messages.motions.toAction(action)) +
-                      timeAgo(motion.createdAt)}
+                    {action &&
+                      `${Messages.middotWithSpaces()}${motionActionLabel(
+                        action
+                      )}${timeAgo(motion.createdAt)}`}
                   </a>
                 </Link>
               </>

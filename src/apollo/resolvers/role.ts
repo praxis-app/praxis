@@ -1,6 +1,5 @@
+import { ApolloError } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
-import Messages from "../../utils/messages";
-import { TypeNames } from "../../constants/common";
 import {
   ADMIN_ROLE_NAME,
   DEFAULT_ROLE_COLOR,
@@ -9,6 +8,9 @@ import {
   INITIAL_GROUP_PERMISSIONS,
 } from "../../constants/role";
 import { initializePermissions } from "../models/role";
+import { TypeNames } from "../../constants/common";
+import Messages from "../../utils/messages";
+import { Role } from ".prisma/client";
 
 interface RoleInput {
   name: string;
@@ -64,31 +66,44 @@ const roleResolvers = {
             },
           }
         : undefined;
-      const role = await prisma.role.create({
-        data: {
-          ...groupConnect,
-          name,
-          color,
-          global,
-        },
-      });
+      let role: Role;
+
+      try {
+        role = await prisma.role.create({
+          data: {
+            ...groupConnect,
+            name,
+            color,
+            global,
+          },
+        });
+      } catch {
+        throw new ApolloError(Messages.roles.errors.create());
+      }
+
       initializePermissions(
         groupId ? INITIAL_GROUP_PERMISSIONS : INITIAL_GLOBAL_PERMISSIONS,
         role
       );
+
       return { role };
     },
 
     async updateRole(_: any, { id, input }: { id: string; input: RoleInput }) {
-      const { name, color } = input;
-      const role = await prisma.role.update({
-        where: { id: parseInt(id) },
-        data: { name, color },
-      });
+      try {
+        const { name, color } = input;
+        const role = await prisma.role.update({
+          where: { id: parseInt(id) },
+          data: { name, color },
+        });
 
-      if (!role) throw new Error(Messages.items.notFound(TypeNames.Role));
+        if (!role)
+          throw new ApolloError(Messages.items.notFound(TypeNames.Role));
 
-      return { role };
+        return { role };
+      } catch {
+        throw new ApolloError(Messages.roles.errors.update());
+      }
     },
 
     async deleteRole(_: any, { id }: { id: string }) {
@@ -113,7 +128,8 @@ const roleResolvers = {
           global: true,
         },
       });
-      if (roles.length > 0) throw Error(Messages.errors.somethingWrong());
+      if (roles.length > 0)
+        throw new ApolloError(Messages.errors.somethingWrong());
 
       const role = await prisma.role.create({
         data: {

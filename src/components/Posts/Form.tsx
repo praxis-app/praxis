@@ -10,23 +10,22 @@ import {
 import Router from "next/router";
 import { Formik, FormikHelpers, Form, Field, FormikProps } from "formik";
 
-import { IMAGES_BY_POST_ID } from "../../apollo/client/queries";
 import {
   CREATE_POST,
   UPDATE_POST,
   DELETE_IMAGE,
 } from "../../apollo/client/mutations";
+import { IMAGES_BY_POST_ID } from "../../apollo/client/queries";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import { feedVar, paginationVar } from "../../apollo/client/localState";
-import { noCache } from "../../utils/apollo";
+import { errorToast, noCache } from "../../utils/apollo";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextFieldWithAvatar";
 import SelectedImages from "../Images/Selected";
 import ImageInput from "../Images/Input";
-import { toastVar } from "../../apollo/client/localState";
-import { FieldNames, ResourcePaths, ToastStatus } from "../../constants/common";
+import { FieldNames, ResourcePaths } from "../../constants/common";
 import FormToggle from "../Motions/FormToggle";
 
 const CardActions = withStyles(() =>
@@ -120,10 +119,7 @@ const PostsForm = ({
             });
         }
       } catch (err) {
-        toastVar({
-          title: Messages.errors.imageUploadError(),
-          status: ToastStatus.Error,
-        });
+        errorToast(err);
       }
     }
   };

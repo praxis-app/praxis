@@ -1,4 +1,4 @@
-import { GraphQLUpload } from "apollo-server-micro";
+import { GraphQLUpload, ApolloError } from "apollo-server-micro";
 import GraphQLJSON from "graphql-type-json";
 import { Motion } from ".prisma/client";
 
@@ -85,30 +85,43 @@ const motionResolvers = {
     ) {
       const { body, action, actionData: _actionData, images } = input;
       let actionData = _actionData;
+      let motion: Motion;
 
       if (actionData?.groupImage) {
         const groupImagePath = await saveImage(actionData.groupImage);
         actionData = { groupImagePath };
       }
-      const motion = await prisma.motion.create({
-        data: {
-          user: {
-            connect: {
-              id: parseInt(userId),
-            },
-          },
-          group: {
-            connect: {
-              id: parseInt(groupId),
-            },
-          },
-          body,
-          action,
-          actionData,
-        },
-      });
 
-      await saveImages(motion, images);
+      try {
+        motion = await prisma.motion.create({
+          data: {
+            user: {
+              connect: {
+                id: parseInt(userId),
+              },
+            },
+            group: {
+              connect: {
+                id: parseInt(groupId),
+              },
+            },
+            body,
+            action,
+            actionData,
+          },
+        });
+      } catch {
+        throw new ApolloError(Messages.motions.errors.create());
+      }
+
+      try {
+        await saveImages(motion, images);
+      } catch {
+        await prisma.motion.delete({
+          where: { id: motion.id },
+        });
+        throw new ApolloError(Messages.errors.imageUploadError());
+      }
 
       return { motion };
     },
@@ -118,14 +131,24 @@ const motionResolvers = {
       { id, input }: { id: string; input: MotionInput }
     ) {
       const { body, action, images } = input;
-      const motion = await prisma.motion.update({
-        where: { id: parseInt(id) },
-        data: { body, action },
-      });
+      let motion: Motion;
 
-      if (!motion) throw new Error(Messages.items.notFound(TypeNames.Motion));
+      try {
+        motion = await prisma.motion.update({
+          where: { id: parseInt(id) },
+          data: { body, action },
+        });
+        if (!motion)
+          throw new ApolloError(Messages.items.notFound(TypeNames.Motion));
+      } catch {
+        throw new ApolloError(Messages.motions.errors.update());
+      }
 
-      await saveImages(motion, images);
+      try {
+        await saveImages(motion, images);
+      } catch {
+        throw new ApolloError(Messages.errors.imageUploadError());
+      }
 
       return { motion };
     },

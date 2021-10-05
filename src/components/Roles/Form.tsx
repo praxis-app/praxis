@@ -7,14 +7,14 @@ import { ColorResult } from "react-color";
 
 import { CREATE_ROLE, UPDATE_ROLE } from "../../apollo/client/mutations";
 import styles from "../../styles/Shared/Shared.module.scss";
-import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import ColorPicker from "../Shared/ColorPicker";
 import { FieldNames, NavigationPaths } from "../../constants/common";
 import { DEFAULT_ROLE_COLOR } from "../../constants/role";
-import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
+import Messages from "../../utils/messages";
+import { errorToast, generateRandom } from "../../utils/clientIndex";
 
 interface FormValues {
   name: string;
@@ -86,7 +86,7 @@ const RoleForm = ({
           resetForm();
         }
       } catch (err) {
-        alert(err);
+        errorToast(err);
       }
     }
   };

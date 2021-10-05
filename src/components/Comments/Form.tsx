@@ -12,7 +12,7 @@ import {
 } from "../../apollo/client/mutations";
 import styles from "../../styles/Comment/CommentsForm.module.scss";
 import Messages from "../../utils/messages";
-import { noCache } from "../../utils/apollo";
+import { errorToast, noCache } from "../../utils/apollo";
 import { useCurrentUser } from "../../hooks";
 import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
@@ -106,7 +106,7 @@ const CommentsForm = ({
             setComments([...comments, data.createComment.comment]);
         }
       } catch (err) {
-        alert(err);
+        errorToast(err);
       }
     }
   };

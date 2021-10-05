@@ -80,47 +80,58 @@ const postResolvers = {
         input,
       }: { userId: string; groupId: string; input: PostInput }
     ) {
+      let post: Post;
       const { body, images } = input;
-      const groupData = {
-        group: {
-          connect: {
-            id: parseInt(groupId),
-          },
-        },
-      };
-      const newPost = await prisma.post.create({
-        data: {
-          user: {
-            connect: {
-              id: parseInt(userId),
+      const groupConnect = groupId
+        ? {
+            group: {
+              connect: {
+                id: parseInt(groupId),
+              },
             },
+          }
+        : {};
+      try {
+        post = await prisma.post.create({
+          data: {
+            user: {
+              connect: {
+                id: parseInt(userId),
+              },
+            },
+            ...groupConnect,
+            body,
           },
-          ...(groupId && groupData),
-          body,
-        },
-      });
+        });
+      } catch {
+        throw new ApolloError(Messages.posts.errors.create());
+      }
 
       try {
-        await saveImages(newPost, images);
+        await saveImages(post, images);
       } catch {
-        const wherePostId = {
-          where: { id: newPost.id },
-        };
-        await prisma.post.delete(wherePostId);
+        await prisma.post.delete({
+          where: { id: post.id },
+        });
         throw new ApolloError(Messages.errors.imageUploadError());
       }
 
-      return { post: newPost };
+      return { post };
     },
 
     async updatePost(_: any, { id, input }: { id: string; input: PostInput }) {
       const { body, images } = input;
-      const post = await prisma.post.update({
-        where: { id: parseInt(id) },
-        data: { body },
-      });
-
-      if (!post) throw new Error(Messages.items.notFound(TypeNames.Post));
+      let post: Post;
+      try {
+        post = await prisma.post.update({
+          where: { id: parseInt(id) },
+          data: { body },
+        });
+        if (!post)
+          throw new ApolloError(Messages.items.notFound(TypeNames.Post));
+      } catch {
+        throw new ApolloError(Messages.posts.errors.update());
+      }
 
       try {
         await saveImages(post, images);

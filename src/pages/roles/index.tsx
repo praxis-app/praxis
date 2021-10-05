@@ -6,7 +6,7 @@ import Role from "../../components/Roles/Role";
 import { GLOBAL_ROLES } from "../../apollo/client/queries";
 import { INITIALIZE_ADMIN_ROLE } from "../../apollo/client/mutations";
 import RoleForm from "../../components/Roles/Form";
-import { noCache } from "../../utils/apollo";
+import { errorToast, noCache } from "../../utils/clientIndex";
 import Messages from "../../utils/messages";
 import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
 import { GlobalPermissions } from "../../constants/role";
@@ -34,7 +34,7 @@ const Index = () => {
       });
       setRoles([data.initializeAdminRole.role]);
     } catch (err) {
-      alert(err);
+      errorToast(err);
     }
   };
 

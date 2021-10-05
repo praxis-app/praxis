@@ -21,7 +21,7 @@ import ColorPicker from "../Shared/ColorPicker";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
 import styles from "../../styles/Shared/Shared.module.scss";
-import { noCache } from "../../utils/clientIndex";
+import { motionActionLabel, noCache } from "../../utils/clientIndex";
 import { PERMISSIONS_BY_ROLE_ID } from "../../apollo/client/queries";
 import { ActionTypes } from "../../constants/motion";
 import Dropdown from "../Shared/Dropdown";
@@ -154,6 +154,7 @@ const GroupRolesTab = ({
     dirty,
   }: FormikProps<FormValues>): boolean => {
     if (anyUnsavedColor() || changedPermissions().length) return false;
+    if (selectedRoleId && assigneeId) return false;
     if (!dirty) return true;
     return isSubmitting;
   };
@@ -162,26 +163,12 @@ const GroupRolesTab = ({
     return roleBySelectedId?.color !== color;
   };
 
-  const actionLabel = (): string => {
-    const actionTypes = Messages.motions.form.actionTypes;
-    switch (action) {
-      case ActionTypes.CreateRole:
-        return actionTypes.createRole();
-      case ActionTypes.ChangeRole:
-        return actionTypes.changeRole();
-      case ActionTypes.AssignRole:
-        return actionTypes.assignRole();
-      default:
-        return "";
-    }
-  };
-
   if (rolesLoading || permissionsRes.loading || groupMembersLoading)
     return <LinearProgress />;
 
   return (
     <>
-      <Typography gutterBottom>{actionLabel()}</Typography>
+      <Typography gutterBottom>{motionActionLabel(action)}</Typography>
 
       <Formik
         initialValues={initialValues}

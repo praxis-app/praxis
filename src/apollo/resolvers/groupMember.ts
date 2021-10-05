@@ -1,3 +1,4 @@
+import { ApolloError } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 
@@ -69,7 +70,7 @@ const groupMemberResolvers = {
         where: { id: parseInt(id) },
       });
 
-      if (!request) throw new Error(Messages.groups.notFound.request());
+      if (!request) throw new ApolloError(Messages.groups.notFound.request());
 
       let groupMember;
       if (request.userId && request.groupId)
@@ -97,7 +98,7 @@ const groupMemberResolvers = {
         data: { status: "denied" },
       });
 
-      if (!request) throw new Error(Messages.groups.notFound.request());
+      if (!request) throw new ApolloError(Messages.groups.notFound.request());
 
       return { request };
     },

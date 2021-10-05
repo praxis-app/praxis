@@ -18,21 +18,19 @@ import {
   UPDATE_USER,
   SET_CURRENT_USER,
 } from "../../apollo/client/mutations";
-import { setAuthToken } from "../../utils/auth";
 import styles from "../../styles/User/User.module.scss";
-import Messages from "../../utils/messages";
-import {
-  LocalStorage,
-  NavigationPaths,
-  ToastStatus,
-} from "../../constants/common";
+import { LocalStorage, NavigationPaths } from "../../constants/common";
 import { useCurrentUser } from "../../hooks";
-import { generateRandom } from "../../utils/common";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField, { PasswordField } from "../Shared/TextField";
 import ImageInput from "../Images/Input";
-import { toastVar } from "../../apollo/client/localState";
 import { FieldNames } from "../../constants/user";
+import Messages from "../../utils/messages";
+import {
+  errorToast,
+  generateRandom,
+  setAuthToken,
+} from "../../utils/clientIndex";
 
 const CardActions = withStyles(() =>
   createStyles({
@@ -125,10 +123,7 @@ const UserForm = ({ user, isEditing }: Props) => {
         Router.push(NavigationPaths.Home);
       }
     } catch (err) {
-      toastVar({
-        title: Messages.errors.imageUploadError(),
-        status: ToastStatus.Error,
-      });
+      errorToast(err);
     }
   };
 

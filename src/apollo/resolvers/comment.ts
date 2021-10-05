@@ -1,10 +1,10 @@
 import { ApolloError, GraphQLUpload } from "apollo-server-micro";
 import { Comment } from ".prisma/client";
 
-import { saveImage, deleteImage, FileUpload } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
+import { saveImage, deleteImage, FileUpload } from "../../utils/image";
 
 interface CommentInput {
   body: string;
@@ -17,10 +17,8 @@ const saveImages = async (comment: Comment, images: FileUpload[]) => {
 
     try {
       path = await saveImage(image);
-    } catch (err) {
-      throw new ApolloError(
-        "Unable to upload image(s)\nError response: " + err
-      );
+    } catch {
+      throw new ApolloError(Messages.errors.imageUploadError());
     }
 
     await prisma.image.create({
@@ -92,6 +90,7 @@ const commentResolvers = {
         input: CommentInput;
       }
     ) {
+      let comment: Comment;
       const { body, images } = input;
       const commentedItemConnect = postId
         ? {
@@ -108,26 +107,29 @@ const commentResolvers = {
               },
             },
           };
-      const comment = await prisma.comment.create({
-        data: {
-          user: {
-            connect: {
-              id: parseInt(userId),
+      try {
+        comment = await prisma.comment.create({
+          data: {
+            user: {
+              connect: {
+                id: parseInt(userId),
+              },
             },
+            ...commentedItemConnect,
+            body,
           },
-          ...commentedItemConnect,
-          body,
-        },
-      });
+        });
+      } catch {
+        throw new ApolloError(Messages.comments.errors.create());
+      }
 
       try {
         await saveImages(comment, images);
-      } catch (err) {
-        const whereCommentId = {
+      } catch {
+        await prisma.comment.delete({
           where: { id: comment.id },
-        };
-        await prisma.comment.delete(whereCommentId);
-        return err;
+        });
+        throw new ApolloError(Messages.errors.imageUploadError());
       }
 
       return { comment };
@@ -138,17 +140,22 @@ const commentResolvers = {
       { id, input }: { id: string; input: CommentInput }
     ) {
       const { body, images } = input;
-      const comment = await prisma.comment.update({
-        where: { id: parseInt(id) },
-        data: { body },
-      });
-
-      if (!comment) throw new Error(Messages.items.notFound(TypeNames.Comment));
+      let comment: Comment;
+      try {
+        comment = await prisma.comment.update({
+          where: { id: parseInt(id) },
+          data: { body },
+        });
+        if (!comment)
+          throw new ApolloError(Messages.items.notFound(TypeNames.Comment));
+      } catch {
+        throw new ApolloError(Messages.comments.errors.update());
+      }
 
       try {
         await saveImages(comment, images);
-      } catch (err) {
-        return err;
+      } catch {
+        throw new ApolloError(Messages.errors.imageUploadError());
       }
 
       return { comment };

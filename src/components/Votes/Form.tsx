@@ -12,13 +12,14 @@ import { Formik, Form, Field } from "formik";
 import { feedVar, motionVar } from "../../apollo/client/localState";
 import { UPDATE_VOTE } from "../../apollo/client/mutations";
 import styles from "../../styles/Vote/VotesForm.module.scss";
-import Messages from "../../utils/messages";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
 import Dropdown from "../Shared/Dropdown";
 import { Stages } from "../../constants/motion";
 import { FieldNames, ResourcePaths, TypeNames } from "../../constants/common";
 import { ConsensusStates, FlipStates } from "../../constants/vote";
+import { errorToast } from "../../utils/clientIndex";
+import Messages from "../../utils/messages";
 
 interface FormValues {
   body: string;
@@ -96,7 +97,7 @@ const VotesForm = ({
         Router.push(`${ResourcePaths.Motion}${vote.motionId}`);
       }
     } catch (err) {
-      alert(err);
+      errorToast(err);
     }
   };
 

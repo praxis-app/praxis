@@ -1,8 +1,9 @@
-import { GraphQLUpload } from "apollo-server-micro";
+import { GraphQLUpload, ApolloError } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
 import { TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
 import { evaluate as evaluateMotion } from "../models/motion";
+import { Vote } from ".prisma/client";
 
 interface VoteInput {
   body: string;
@@ -45,36 +46,46 @@ const voteResolvers = {
       }
     ) {
       const { body, flipState, consensusState } = input;
-      const vote = await prisma.vote.create({
-        data: {
-          user: {
-            connect: {
-              id: parseInt(userId),
+      let vote: Vote;
+      try {
+        vote = await prisma.vote.create({
+          data: {
+            user: {
+              connect: {
+                id: parseInt(userId),
+              },
             },
-          },
-          motion: {
-            connect: {
-              id: parseInt(motionId),
+            motion: {
+              connect: {
+                id: parseInt(motionId),
+              },
             },
+            body,
+            flipState,
+            consensusState,
           },
-          body,
-          flipState,
-          consensusState,
-        },
-      });
+        });
+      } catch {
+        throw new ApolloError(Messages.votes.errors.create());
+      }
 
       const motionRatified = evaluateMotion(parseInt(motionId));
-
       return { vote, motionRatified };
     },
 
     async updateVote(_: any, { id, input }: { id: string; input: VoteInput }) {
       const { body, flipState, consensusState } = input;
-      const vote = await prisma.vote.update({
-        where: { id: parseInt(id) },
-        data: { body, flipState, consensusState },
-      });
-      if (!vote) throw new Error(Messages.items.notFound(TypeNames.Vote));
+      let vote: Vote;
+      try {
+        vote = await prisma.vote.update({
+          where: { id: parseInt(id) },
+          data: { body, flipState, consensusState },
+        });
+        if (!vote)
+          throw new ApolloError(Messages.items.notFound(TypeNames.Vote));
+      } catch {
+        throw new ApolloError(Messages.motions.errors.update());
+      }
 
       const motionRatified = evaluateMotion(vote.motionId as number);
       return { vote, motionRatified };

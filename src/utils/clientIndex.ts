@@ -4,6 +4,7 @@ export * from "./common";
 export * from "./invite";
 export * from "./items";
 export * from "./messages";
+export * from "./motion";
 export * from "./role";
 export * from "./setting";
 export * from "./time";

@@ -1,4 +1,4 @@
-import { GraphQLUpload } from "apollo-server-micro";
+import { ApolloError, GraphQLUpload } from "apollo-server-micro";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
@@ -132,7 +132,7 @@ const permissionResolvers = {
         });
 
         if (!updatedPermission)
-          throw new Error(Messages.items.notFound(TypeNames.Permission));
+          throw new ApolloError(Messages.items.notFound(TypeNames.Permission));
 
         updatedPermissions = [...updatedPermissions, updatedPermission];
       }

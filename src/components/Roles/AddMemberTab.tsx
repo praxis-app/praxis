@@ -10,6 +10,7 @@ import Messages from "../../utils/messages";
 import RoleMemberAdd from "./MemberAdd";
 import RoleMember from "./Member";
 import { useAllUsers, useMembersByGroupId } from "../../hooks";
+import { errorToast } from "../../utils/clientIndex";
 
 interface Props {
   role: ClientRole;
@@ -56,7 +57,7 @@ const AddMemberTab = ({
       setRoleMembers([...roleMembers, ...newRoleMembers]);
       setDialogOpen(false);
     } catch (err) {
-      alert(err);
+      errorToast(err);
     }
     setAddMembersLoading(false);
   };

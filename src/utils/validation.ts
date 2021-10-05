@@ -150,3 +150,11 @@ export const validateUpdateUser = (data: UpdateUserInput) => {
     isValid: isEmpty(errors),
   };
 };
+
+export const validationError = (errors: ValidationError): string => {
+  if (errors.email) return errors.email;
+  if (errors.name) return errors.name;
+  if (errors.password) return errors.password;
+  if (errors.passwordConfirm) return errors.passwordConfirm;
+  return JSON.stringify(errors);
+};
