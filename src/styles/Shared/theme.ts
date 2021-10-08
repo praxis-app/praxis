@@ -98,6 +98,19 @@ const muiTheme = createTheme({
       },
     },
 
+    MuiContainer: {
+      root: {
+        [globalTheme.breakpoints.down("sm")]: {
+          padding: "0 8px",
+        },
+      },
+      maxWidthSm: {
+        [globalTheme.breakpoints.up("md")]: {
+          maxWidth: 680,
+        },
+      },
+    },
+
     MuiInput: {
       root: {
         color: globalTheme.palette.primary.light,
@@ -268,14 +281,6 @@ const muiTheme = createTheme({
       },
       root: {
         margin: 12,
-      },
-    },
-
-    MuiContainer: {
-      maxWidthSm: {
-        [globalTheme.breakpoints.up("md")]: {
-          maxWidth: 680,
-        },
       },
     },
 

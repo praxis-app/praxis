@@ -22,6 +22,7 @@ import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
 import { FieldNames, ResourcePaths } from "../../constants/common";
 import ImageInput from "../Images/Input";
+import { errorToast } from "../../utils/apollo";
 
 const CardActions = withStyles(() =>
   createStyles({
@@ -82,7 +83,7 @@ const GroupForm = ({ group, isEditing }: Props) => {
           Router.push(`${ResourcePaths.Group}${data.createGroup.group.name}`);
         }
       } catch (err) {
-        alert(err);
+        errorToast(err);
       }
     }
   };

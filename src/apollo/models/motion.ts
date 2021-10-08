@@ -1,4 +1,6 @@
+import { ApolloError } from "apollo-server-micro";
 import { Motion, Vote, Group, GroupMember, Setting } from ".prisma/client";
+
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
@@ -194,7 +196,7 @@ const doAction = async (motion: Motion) => {
       for (const setting of actionData.groupSettings) {
         const updatedSetting = await updateSettingById(setting);
         if (!updatedSetting)
-          throw new Error(Messages.items.notFound(TypeNames.Setting));
+          throw new ApolloError(Messages.items.notFound(TypeNames.Setting));
       }
     }
 

@@ -19,17 +19,18 @@ import { RatificationThreshold } from "../../constants/motion";
 import { GroupSettings, SettingStates } from "../../constants/setting";
 import { UPDATE_SETTINGS } from "../../apollo/client/mutations";
 import styles from "../../styles/Setting/SettingsForm.module.scss";
-import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import SubmitButton from "../Shared/SubmitButton";
 import Dropdown from "../Shared/Dropdown";
 import CancelButton from "../Shared/CancelButton";
+import Messages from "../../utils/messages";
 import {
+  errorToast,
   canShowSetting,
   settingDescription,
   settingDisplayName,
   settingValue,
-} from "../../utils/setting";
+} from "../../utils/clientIndex";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -121,7 +122,7 @@ const SettingsForm = ({
         setUnsavedSettings(newSettings);
         setSettings(newSettings);
       } catch (err) {
-        alert(err);
+        errorToast(err);
       }
     }
 

@@ -5,7 +5,7 @@ import { UPDATE_PERMISSIONS } from "../../apollo/client/mutations";
 import { navKeyVar } from "../../apollo/client/localState";
 import SubmitButton from "../Shared/SubmitButton";
 import Messages from "../../utils/messages";
-import { generateRandom } from "../../utils/clientIndex";
+import { errorToast, generateRandom } from "../../utils/clientIndex";
 import PermissionToggles from "./Toggles";
 
 interface Props {
@@ -50,7 +50,7 @@ const PermissionsForm = ({
       navKeyVar(newKey);
       if (setCanManageRolesDep) setCanManageRolesDep(newKey);
     } catch (err) {
-      alert(err);
+      errorToast(err);
     }
     setSubmitLoading(false);
   };

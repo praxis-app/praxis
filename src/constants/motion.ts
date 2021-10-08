@@ -8,7 +8,6 @@ export enum ActionTypes {
   ChangeImage = "change-image",
   ChangeDescription = "change-description",
   ChangeSettings = "change-settings",
-  ChangeRules = "change-rules",
   CreateRole = "create-role",
   ChangeRole = "change-role",
   AssignRole = "assign-role",

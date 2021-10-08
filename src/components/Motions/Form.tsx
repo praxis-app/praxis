@@ -33,7 +33,7 @@ import ActionFields from "./ActionFields";
 import { feedVar, paginationVar } from "../../apollo/client/localState";
 import { useCurrentUser, useIsMobile } from "../../hooks";
 import { generateRandom } from "../../utils/common";
-import { noCache } from "../../utils/apollo";
+import { errorToast, noCache } from "../../utils/apollo";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextFieldWithAvatar";
 import SelectedImages from "../Images/Selected";
@@ -190,7 +190,7 @@ const MotionsForm = ({
           }
         }
       } catch (err) {
-        alert(err);
+        errorToast(err);
       }
     }
   };

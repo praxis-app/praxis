@@ -1,4 +1,4 @@
-import { GraphQLUpload } from "apollo-server-micro";
+import { ApolloError, GraphQLUpload } from "apollo-server-micro";
 import { Setting } from ".prisma/client";
 
 import prisma from "../../utils/initPrisma";
@@ -43,7 +43,7 @@ const settingResolvers = {
       for (const setting of settings) {
         const updatedSetting = await updateSettingById(setting);
         if (!updatedSetting)
-          throw new Error(Messages.items.notFound(TypeNames.Setting));
+          throw new ApolloError(Messages.items.notFound(TypeNames.Setting));
         updatedSettings.push(updatedSetting);
       }
 

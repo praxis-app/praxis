@@ -2,6 +2,7 @@ import { ApolloError, UserInputError } from "apollo-server-micro";
 import { GraphQLUpload } from "apollo-server-micro";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { User } from ".prisma/client";
 
 import prisma from "../../utils/initPrisma";
 import { deleteImage } from "../../utils/image";
@@ -9,6 +10,7 @@ import {
   validateSignup,
   validateLogin,
   validateUpdateUser,
+  validationError,
 } from "../../utils/validation";
 import { EXPIRES_IN, TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
@@ -205,8 +207,9 @@ const userResolvers = {
     async signUp(_: any, { input }: { input: SignUpInput }) {
       const { email, name, password, profilePicture } = input;
       const { errors, isValid } = validateSignup(input);
+      let user: User;
 
-      if (!isValid) throw new UserInputError(JSON.stringify(errors));
+      if (!isValid) throw new UserInputError(validationError(errors));
 
       const userFound = await prisma.user.findMany({
         where: {
@@ -219,23 +222,27 @@ const userResolvers = {
 
       const hash = await bcrypt.hash(password, 10);
 
-      const user = await prisma.user.create({
-        data: {
-          email,
-          name,
-          password: hash,
-        },
-      });
+      try {
+        user = await prisma.user.create({
+          data: {
+            email,
+            name,
+            password: hash,
+          },
+        });
+      } catch {
+        throw new ApolloError(Messages.users.errors.signUp());
+      }
 
       try {
         await saveProfilePicture(user, profilePicture, true);
-      } catch (err) {
+      } catch {
         const whereUserId = {
           where: { id: user.id },
         };
         await prisma.user.delete(whereUserId);
 
-        throw new ApolloError(Messages.errors.imageUploadError() + err);
+        throw new ApolloError(Messages.errors.imageUploadError());
       }
 
       const jwtPayload = {
@@ -255,7 +262,7 @@ const userResolvers = {
       const { errors, isValid } = validateLogin(input);
       const { email, password } = input;
 
-      if (!isValid) throw new UserInputError(JSON.stringify(errors));
+      if (!isValid) throw new UserInputError(validationError(errors));
 
       const user = await prisma.user.findFirst({
         where: {
@@ -290,20 +297,25 @@ const userResolvers = {
     ) {
       const { email, name, profilePicture } = input;
       const { errors, isValid } = validateUpdateUser(input);
+      let user: User;
 
-      if (!isValid) throw new UserInputError(JSON.stringify(errors));
+      if (!isValid) throw new UserInputError(validationError(errors));
 
-      const user = await prisma.user.update({
-        where: { id: parseInt(id) },
-        data: { email, name },
-      });
-
-      if (!user) throw new Error(Messages.items.notFound(TypeNames.User));
+      try {
+        user = await prisma.user.update({
+          where: { id: parseInt(id) },
+          data: { email, name },
+        });
+        if (!user)
+          throw new ApolloError(Messages.items.notFound(TypeNames.User));
+      } catch {
+        throw new ApolloError(Messages.users.errors.update());
+      }
 
       try {
         await saveProfilePicture(user, profilePicture);
-      } catch (err) {
-        throw new ApolloError(Messages.errors.imageUploadError() + err);
+      } catch {
+        throw new ApolloError(Messages.errors.imageUploadError());
       }
 
       const jwtPayload = {
@@ -311,7 +323,6 @@ const userResolvers = {
         email: user.email,
         id: user.id,
       };
-
       const token = jwt.sign(jwtPayload, process.env.JWT_KEY as string, {
         expiresIn: EXPIRES_IN,
       });

@@ -39,7 +39,7 @@ const en = {
 
   errors: {
     somethingWrong: () => "Something went wrong.",
-    imageUploadError: () => "Unable to upload image(s)",
+    imageUploadError: () => "Unable to upload images.",
   },
 
   forms: {
@@ -85,19 +85,23 @@ const en = {
     joinedWithDate: (date: string) => `Joined ${date}`,
     following: (size: number) => `${size} Following`,
     followers: (size: number) => `${size} Follower${pluralize(size)}`,
+    errors: {
+      signUp: () => "There was an error creating your account.",
+      update: () => "There was an error updating your account.",
+    },
     validation: {
-      invalidEmail: () => "Email is invalid",
-      emailRequired: () => "Email is required",
-      emailExists: () => "Email already exists",
-      noUserWithEmail: () => "No user exists with that email",
+      invalidEmail: () => "Email is invalid.",
+      emailRequired: () => "Email is required.",
+      emailExists: () => "Email already exists.",
+      noUserWithEmail: () => "No user exists with that email.",
       passwordLength: (min: number, max: number) =>
-        `Password must be between ${min} and ${max} chars`,
-      passwordRequired: () => "Password is required",
-      passwordConfirmMatch: () => "Password and Confirm Password must match",
-      wrongPassword: () => "Wrong password. Try again",
+        `Password must be between ${min} and ${max} chars.`,
+      passwordRequired: () => "Password is required.",
+      passwordConfirmMatch: () => "Password and Confirm Password must match.",
+      wrongPassword: () => "Wrong password. Please try again.",
       nameLength: (min: number, max: number) =>
-        `Name must be between ${min} and ${max} chars`,
-      nameRequired: () => "Name is required",
+        `Name must be between ${min} and ${max} chars.`,
+      nameRequired: () => "Name is required.",
     },
     permissionDenied: () => "Permission denied.",
     alreadyLoggedIn: () => "You're already signed in.",
@@ -112,6 +116,10 @@ const en = {
       bodyPlaceholder: () => "What's happening?",
       postEmpty: () => "Post cannot be empty.",
     },
+    errors: {
+      create: () => "Unable to create post.",
+      update: () => "Post could not be edited.",
+    },
   },
 
   motions: {
@@ -122,7 +130,6 @@ const en = {
       noEditAfterVoting: () =>
         "Motions cannot be edited after voting has started.",
     },
-    toAction: (action: string) => ` · Motion to ${action.replace(/-/g, " ")}`,
     ratified: () => "Ratified",
     form: {
       makeAMotion: () => "Make a motion...",
@@ -146,6 +153,10 @@ const en = {
         member: () => "Member",
         role: () => "Role",
       },
+    },
+    errors: {
+      create: () => "Unable to create motion.",
+      update: () => "Motion could not be edited.",
     },
     tabs: {
       comments: () => "Comments",
@@ -189,6 +200,10 @@ const en = {
         block: () => "Why are you blocking this motion?",
       },
       agreeOrDisagree: () => "Express your agreement or disagreement",
+    },
+    errors: {
+      create: () => "Unable to cast vote.",
+      update: () => "Vote could not be edited.",
     },
     votingTypes: {
       consensus: () => "Model of Consensus",
@@ -234,6 +249,10 @@ const en = {
     form: {
       leaveAComment: () => "Leave a comment...",
     },
+    errors: {
+      create: () => "Unable to post comment.",
+      update: () => "Unable to edit comment.",
+    },
     totalComments: (total: number) => `${total} Comment${pluralize(total)}`,
   },
 
@@ -254,6 +273,10 @@ const en = {
     form: {
       name: () => "Name",
       description: () => "Description",
+    },
+    errors: {
+      create: () => "Unable to create group.",
+      update: () => "Group could not be edited.",
     },
     tabs: {
       all: () => "All",
@@ -329,6 +352,10 @@ const en = {
     form: {
       name: () => "Name",
       colorPickerLabel: () => "Role Color",
+    },
+    errors: {
+      create: () => "Unable to create role.",
+      update: () => "Unable to update role.",
     },
     prompts: {
       initializeAdminRoleConfirm: () =>

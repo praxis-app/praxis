@@ -19,6 +19,7 @@ import {
 } from "../../constants/serverInvite";
 import SubmitButton from "../Shared/SubmitButton";
 import Dropdown from "../Shared/Dropdown";
+import { errorToast } from "../../utils/clientIndex";
 
 interface Props {
   invites: ClientServerInvite[];
@@ -50,7 +51,7 @@ const ServerInviteForm = ({ invites, setInvites }: Props) => {
         if (setInvites && invites)
           setInvites([...invites, data.createServerInvite.serverInvite]);
       } catch (err) {
-        alert(err);
+        errorToast(err);
       }
     }
   };

@@ -1,4 +1,4 @@
-import { GraphQLUpload } from "apollo-server-micro";
+import { GraphQLUpload, ApolloError } from "apollo-server-micro";
 import { Group, Motion, Post } from ".prisma/client";
 
 import prisma from "../../utils/initPrisma";
@@ -126,14 +126,29 @@ const groupResolvers = {
       { creatorId, input }: { creatorId: string; input: GroupInput }
     ) {
       const { name, description, coverPhoto } = input;
-      const group = await prisma.group.create({
-        data: {
-          creatorId: parseInt(creatorId),
-          description,
-          name,
-        },
-      });
-      await saveGroupCoverPhoto(group, coverPhoto, true);
+      let group: Group;
+
+      try {
+        group = await prisma.group.create({
+          data: {
+            creatorId: parseInt(creatorId),
+            description,
+            name,
+          },
+        });
+      } catch {
+        throw new ApolloError(Messages.groups.errors.create());
+      }
+
+      try {
+        await saveGroupCoverPhoto(group, coverPhoto, true);
+      } catch {
+        await prisma.group.delete({
+          where: { id: group.id },
+        });
+        throw new ApolloError(Messages.errors.imageUploadError());
+      }
+
       await prisma.groupMember.create({
         data: {
           user: {
@@ -150,6 +165,7 @@ const groupResolvers = {
       });
       initializeGroupSettings(group);
       initializeGroupAdminRole(group);
+
       return { group };
     },
 
@@ -158,13 +174,24 @@ const groupResolvers = {
       { id, input }: { id: string; input: GroupInput }
     ) {
       const { name, description, coverPhoto } = input;
-      const group = await prisma.group.update({
-        where: { id: parseInt(id) },
-        data: { name, description },
-      });
+      let group: Group;
 
-      if (!group) throw new Error(Messages.items.notFound(TypeNames.Group));
-      await saveGroupCoverPhoto(group, coverPhoto);
+      try {
+        group = await prisma.group.update({
+          where: { id: parseInt(id) },
+          data: { name, description },
+        });
+        if (!group)
+          throw new ApolloError(Messages.items.notFound(TypeNames.Group));
+      } catch {
+        throw new ApolloError(Messages.groups.errors.update());
+      }
+
+      try {
+        await saveGroupCoverPhoto(group, coverPhoto);
+      } catch {
+        throw new ApolloError(Messages.errors.imageUploadError());
+      }
 
       return { group };
     },
