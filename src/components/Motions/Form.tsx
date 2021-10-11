@@ -264,11 +264,7 @@ const MotionsForm = ({
               <FormGroup>
                 <Field
                   name={FieldNames.Body}
-                  placeholder={
-                    formik.isSubmitting
-                      ? Messages.states.loading()
-                      : Messages.motions.form.makeAMotion()
-                  }
+                  placeholder={Messages.motions.form.makeAMotion()}
                   component={TextField}
                   validate={validateBody}
                   multiline

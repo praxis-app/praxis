@@ -101,7 +101,7 @@ const muiTheme = createTheme({
     MuiContainer: {
       root: {
         [globalTheme.breakpoints.down("sm")]: {
-          padding: "0 8px",
+          padding: "0 10px",
         },
       },
       maxWidthSm: {
@@ -118,6 +118,17 @@ const muiTheme = createTheme({
       input: {
         "&::placeholder": {
           color: WHITE,
+        },
+      },
+      underline: {
+        "&:before": {
+          borderBottom: `1px solid ${globalTheme.palette.secondary.main}`,
+        },
+        "&:after": {
+          borderBottom: `2px solid ${globalTheme.palette.primary.main}`,
+        },
+        "&:hover:not($disabled):not($focused):not($error):before": {
+          borderBottom: `2px solid ${globalTheme.palette.secondary.main}`,
         },
       },
     },
@@ -156,6 +167,9 @@ const muiTheme = createTheme({
         "&:hover": {
           backgroundColor: "rgb(80, 80, 80)",
         },
+      },
+      outlinedPrimary: {
+        color: globalTheme.palette.primary.contrastText,
       },
     },
 

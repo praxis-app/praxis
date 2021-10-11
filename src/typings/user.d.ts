@@ -2,6 +2,7 @@ interface ClientUser {
   id: string;
   name: string;
   email: string;
+  bio: string;
   createdAt: string;
   exp: number;
 }
@@ -30,6 +31,9 @@ interface SignInInput {
 interface UpdateUserInput {
   email: string;
   name: string;
+  bio: string;
+  profilePicture: any;
+  coverPhoto: any;
 }
 
 interface ValidationError {

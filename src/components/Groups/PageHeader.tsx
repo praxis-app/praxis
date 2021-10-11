@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import {
   Card,
-  CardActions as MUICardActions,
   CardContent as MUICardContent,
   CardHeader,
   CircularProgress,
@@ -11,23 +10,20 @@ import {
   withStyles,
 } from "@material-ui/core";
 import { ChevronRight, HowToVote } from "@material-ui/icons";
-import Image from "material-ui-image";
 import Link from "next/link";
 
 import {
-  CURRENT_COVER_PHOTO,
+  COVER_PHOTO_BY_GROUP_ID,
   MEMBER_REUQESTS,
 } from "../../apollo/client/queries";
 import { GroupSettings, SettingStates } from "../../constants/setting";
 import {
   useCurrentUser,
   useHasPermissionByGroupId,
-  useIsMobile,
   useMembersByGroupId,
   useSettingsByGroupId,
 } from "../../hooks";
-import baseUrl from "../../utils/baseUrl";
-import { BLACK, WHITE } from "../../styles/Shared/theme";
+import { WHITE } from "../../styles/Shared/theme";
 import { NavigationPaths, ResourcePaths } from "../../constants/common";
 import Messages from "../../utils/messages";
 import JoinButton from "./JoinButton";
@@ -35,21 +31,28 @@ import { VotingTypes } from "../../constants/vote";
 import { noCache, settingValue } from "../../utils/clientIndex";
 import { GroupPermissions } from "../../constants/role";
 import GroupItemMenu from "./ItemMenu";
+import CoverPhoto from "../Images/CoverPhoto";
 
 const CardContent = withStyles(() =>
   createStyles({
-    root: { marginTop: 6, paddingBottom: 0 },
+    root: {
+      marginTop: 6,
+      "&:last-child": {
+        paddingBottom: 12,
+      },
+    },
   })
 )(MUICardContent);
 
-const CardActions = withStyles(() =>
+const NameTypography = withStyles(() =>
   createStyles({
     root: {
-      justifyContent: "flex-end",
-      paddingTop: 0,
+      fontFamily: "Inter Bold",
+      marginBottom: 6,
+      maxWidth: "60%",
     },
   })
-)(MUICardActions);
+)(Typography);
 
 interface Props {
   group: ClientGroup;
@@ -71,7 +74,7 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
     ...noCache,
   };
   const memberRequestsRes = useQuery(MEMBER_REUQESTS, memberVariables);
-  const coverPhotoRes = useQuery(CURRENT_COVER_PHOTO, {
+  const coverPhotoRes = useQuery(COVER_PHOTO_BY_GROUP_ID, {
     variables: { groupId: group.id },
     ...noCache,
   });
@@ -92,10 +95,10 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
     GroupPermissions.AcceptMemberRequests,
     id
   );
-  const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (coverPhotoRes.data) setCoverPhoto(coverPhotoRes.data.currentCoverPhoto);
+    if (coverPhotoRes.data)
+      setCoverPhoto(coverPhotoRes.data.coverPhotoByGroupId);
   }, [coverPhotoRes.data]);
 
   useEffect(() => {
@@ -135,7 +138,7 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
     }
   };
 
-  const showCardHeader =
+  const showItemMenu =
     currentUser &&
     !isNoAdmin() &&
     (canEdit || canDelete || canManageSettings || canManageRoles);
@@ -150,42 +153,51 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
 
   return (
     <Card>
-      {showCardHeader && (
+      <CoverPhoto path={coverPhoto?.path} />
+
+      {(showItemMenu || currentUser) && (
         <CardHeader
           action={
-            <GroupItemMenu
-              group={group}
-              deleteGroup={deleteGroup}
-              canEdit={canEdit}
-              canDelete={canDelete}
-              canManageRoles={canManageRoles}
-              canManageSettings={canManageSettings}
-            />
+            <>
+              {currentUser && (
+                <JoinButton
+                  group={group}
+                  memberRequests={memberRequests}
+                  groupMembers={groupMembers}
+                  setMemberRequests={setMemberRequests}
+                  setGroupMembers={setGroupMembers}
+                />
+              )}
+
+              {showItemMenu && (
+                <GroupItemMenu
+                  group={group}
+                  deleteGroup={deleteGroup}
+                  canEdit={canEdit}
+                  canDelete={canDelete}
+                  canManageRoles={canManageRoles}
+                  canManageSettings={canManageSettings}
+                />
+              )}
+            </>
           }
-          style={{ paddingBottom: 6 }}
+          style={{ marginTop: 6 }}
         />
       )}
-
-      <Image
-        src={baseUrl + coverPhoto?.path}
-        aspectRatio={isMobile ? 2 : 2.75}
-        cover={true}
-        color={BLACK}
-        disableSpinner
-        disableError
-      />
 
       <CardContent>
         <Link href={`${ResourcePaths.Group}${name}${NavigationPaths.About}`}>
           <a>
-            <Typography
+            <NameTypography
               variant="h5"
               color="primary"
-              style={{ fontFamily: "Inter Bold", marginBottom: 6 }}
+              style={{
+                marginTop: showItemMenu ? -80 : -72,
+              }}
             >
               {group.name}
               <ChevronRight style={{ marginBottom: -4 }} />
-            </Typography>
+            </NameTypography>
           </a>
         </Link>
 
@@ -215,18 +227,6 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
           </>
         )}
       </CardContent>
-
-      {currentUser && (
-        <CardActions>
-          <JoinButton
-            group={group}
-            memberRequests={memberRequests}
-            groupMembers={groupMembers}
-            setMemberRequests={setMemberRequests}
-            setGroupMembers={setGroupMembers}
-          />
-        </CardActions>
-      )}
     </Card>
   );
 };

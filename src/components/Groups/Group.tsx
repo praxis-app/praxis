@@ -110,39 +110,37 @@ const Group = ({ group, deleteGroup }: Props) => {
               />
             )
           }
+          style={{ paddingBottom: 0 }}
         />
 
         <CardContent>
           {description && (
-            <Typography
-              style={{
-                marginTop: "-12px",
-              }}
-              gutterBottom
-            >
+            <Typography style={{ marginBottom: 12 }}>
               <CompactText text={description} />
             </Typography>
           )}
 
-          <Link href={`${ResourcePaths.Group}${name}/members`}>
-            <a>{Messages.groups.members(groupMembers.length)}</a>
-          </Link>
+          <Typography>
+            <Link href={`${ResourcePaths.Group}${name}/members`}>
+              <a>{Messages.groups.members(groupMembers.length)}</a>
+            </Link>
 
-          {canSeeRequests() && (
-            <>
-              <span style={{ color: WHITE }}>
-                {Messages.middotWithSpaces()}
-              </span>
+            {canSeeRequests() && (
+              <>
+                <span style={{ color: WHITE }}>
+                  {Messages.middotWithSpaces()}
+                </span>
 
-              <Link href={`${ResourcePaths.Group}${name}/requests`}>
-                <a>{Messages.groups.requests(memberRequests.length)}</a>
-              </Link>
-            </>
-          )}
+                <Link href={`${ResourcePaths.Group}${name}/requests`}>
+                  <a>{Messages.groups.requests(memberRequests.length)}</a>
+                </Link>
+              </>
+            )}
+          </Typography>
         </CardContent>
 
         {currentUser && (
-          <CardActions style={{ marginTop: "6px" }}>
+          <CardActions style={{ marginBottom: 6, paddingTop: 0 }}>
             <JoinButton
               group={group}
               memberRequests={memberRequests}

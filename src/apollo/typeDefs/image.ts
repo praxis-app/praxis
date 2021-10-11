@@ -7,8 +7,8 @@ type Image {
   motionId: ID
   commentId: ID
   groupId: ID
-  profilePicture: Boolean
   path: String!
+  variety: String
   createdAt: String!
   updatedAt: String!
 }

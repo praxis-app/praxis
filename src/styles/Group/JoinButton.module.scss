@@ -1,0 +1,11 @@
+.deleteButtonInner .leaveText {
+  display: none;
+}
+
+.deleteButtonInner:hover .joinedText {
+  display: none;
+}
+
+.deleteButtonInner:hover .leaveText {
+  display: inline;
+}

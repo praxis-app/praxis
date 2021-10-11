@@ -110,7 +110,7 @@ const NavDrawer = () => {
             <a>
               <ListItem button>
                 <ListItemIcon>
-                  <UserAvatar user={user} small />
+                  <UserAvatar user={user} withoutLink small />
                 </ListItemIcon>
                 <ListItemText primary={user.name} />
               </ListItem>

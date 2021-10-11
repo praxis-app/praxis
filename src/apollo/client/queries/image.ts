@@ -33,9 +33,9 @@ export const IMAGES_BY_COMMENT_ID = gql`
   }
 `;
 
-export const CURRENT_PROFILE_PICTURE = gql`
+export const PROFILE_PICTURE = gql`
   query ($userId: ID!) {
-    currentProfilePicture(userId: $userId) {
+    profilePicture(userId: $userId) {
       id
       userId
       path
@@ -53,9 +53,19 @@ export const PROFILE_PICTURES = gql`
   }
 `;
 
-export const CURRENT_COVER_PHOTO = gql`
+export const COVER_PHOTO_BY_USER_ID = gql`
+  query ($userId: ID!) {
+    coverPhotoByUserId(userId: $userId) {
+      id
+      userId
+      path
+    }
+  }
+`;
+
+export const COVER_PHOTO_BY_GROUP_ID = gql`
   query ($groupId: ID!) {
-    currentCoverPhoto(groupId: $groupId) {
+    coverPhotoByGroupId(groupId: $groupId) {
       id
       groupId
       path

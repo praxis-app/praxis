@@ -1,0 +1,11 @@
+.deleteButtonInner .unfollowText {
+  display: none;
+}
+
+.deleteButtonInner:hover .followingText {
+  display: none;
+}
+
+.deleteButtonInner:hover .unfollowText {
+  display: inline;
+}

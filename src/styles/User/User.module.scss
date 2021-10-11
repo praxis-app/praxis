@@ -4,3 +4,8 @@
 .avatarLetter {
   margin-top: 2px;
 }
+
+.flexBetween {
+  @extend .flexBetween;
+  margin-bottom: 6px;
+}

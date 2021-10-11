@@ -61,11 +61,19 @@ export const UPDATE_USER = gql`
     $id: ID!
     $name: String!
     $email: String!
+    $bio: String!
     $profilePicture: FileUpload
+    $coverPhoto: FileUpload
   ) {
     updateUser(
       id: $id
-      input: { name: $name, email: $email, profilePicture: $profilePicture }
+      input: {
+        name: $name
+        email: $email
+        bio: $bio
+        profilePicture: $profilePicture
+        coverPhoto: $coverPhoto
+      }
     ) {
       user {
         id

@@ -1,5 +1,9 @@
 import { useMutation } from "@apollo/client";
-import { Button } from "@material-ui/core";
+import {
+  Button as MUIButton,
+  createStyles,
+  withStyles,
+} from "@material-ui/core";
 
 import {
   CREATE_MEMBER_REQUEST,
@@ -8,6 +12,17 @@ import {
 } from "../../apollo/client/mutations";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
+import styles from "../../styles/Group/JoinButton.module.scss";
+
+const Button = withStyles(() =>
+  createStyles({
+    root: {
+      fontFamily: "Inter Bold",
+      textTransform: "none",
+      minWidth: 80,
+    },
+  })
+)(MUIButton);
 
 interface Props {
   group: ClientGroup;
@@ -80,20 +95,6 @@ const JoinButton = ({
 
   if (!currentUser) return null;
 
-  if (!alreadyRequested() && !alreadyJoined())
-    return (
-      <Button onClick={() => createMemberRequestMutation()} color="primary">
-        {Messages.groups.actions.join()}
-      </Button>
-    );
-
-  if (!alreadyJoined())
-    return (
-      <Button onClick={() => deleteMemberRequestMutation()} color="primary">
-        {Messages.groups.actions.cancelRequest()}
-      </Button>
-    );
-
   if (alreadyJoined())
     return (
       <Button
@@ -101,13 +102,38 @@ const JoinButton = ({
           window.confirm(Messages.groups.prompts.leaveGroup()) &&
           deleteGroupMemberMutation()
         }
+        variant="outlined"
         color="primary"
       >
-        {Messages.groups.actions.leave()}
+        <div className={styles.deleteButtonInner}>
+          <span className={styles.leaveText}>
+            {Messages.groups.actions.leave()}
+          </span>
+          <span className={styles.joinedText}>{Messages.groups.joined()}</span>
+        </div>
       </Button>
     );
 
-  return null;
+  if (alreadyRequested() && !alreadyJoined())
+    return (
+      <Button
+        onClick={() => deleteMemberRequestMutation()}
+        variant="outlined"
+        color="primary"
+      >
+        {Messages.groups.actions.cancelRequest()}
+      </Button>
+    );
+
+  return (
+    <Button
+      onClick={() => createMemberRequestMutation()}
+      variant="outlined"
+      color="primary"
+    >
+      {Messages.groups.actions.join()}
+    </Button>
+  );
 };
 
 export default JoinButton;

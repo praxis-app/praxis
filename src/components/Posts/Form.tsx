@@ -176,11 +176,7 @@ const PostsForm = ({
           <FormGroup>
             <Field
               name={FieldNames.Body}
-              placeholder={
-                formik.isSubmitting
-                  ? Messages.states.loading()
-                  : Messages.posts.form.bodyPlaceholder()
-              }
+              placeholder={Messages.posts.form.bodyPlaceholder()}
               validate={validatePostBody}
               component={TextField}
               multiline

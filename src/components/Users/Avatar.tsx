@@ -4,13 +4,15 @@ import Link from "next/link";
 import {
   Avatar as MUIAvatar,
   Badge,
+  CircularProgress,
   createStyles,
   Theme,
   withStyles,
 } from "@material-ui/core";
+import { CSSProperties } from "@material-ui/styles";
 
 import baseUrl from "../../utils/baseUrl";
-import { CURRENT_PROFILE_PICTURE } from "../../apollo/client/queries";
+import { PROFILE_PICTURE } from "../../apollo/client/queries";
 import { noCache } from "../../utils/apollo";
 import { ResourcePaths } from "../../constants/common";
 import { BLACK, BLURPLE, WHITE } from "../../styles/Shared/theme";
@@ -30,22 +32,26 @@ interface Props {
   user: ClientUser | undefined;
   small?: boolean;
   withoutLink?: boolean;
+  image?: File;
   badge?: boolean;
   badgeContent?: React.ReactChild;
   onClick?: () => void;
+  style?: CSSProperties;
 }
 
 const UserAvatar = ({
   user,
   withoutLink,
+  image,
   badge,
   badgeContent,
   small,
+  style,
   onClick,
 }: Props) => {
   const [profilePicture, setProfilePicture] = useState<ClientImage>();
   const [getProfilePictureRes, profilePictureRes] = useLazyQuery(
-    CURRENT_PROFILE_PICTURE,
+    PROFILE_PICTURE,
     noCache
   );
   const size = small ? { width: 25, height: 25 } : {};
@@ -56,22 +62,23 @@ const UserAvatar = ({
 
   useEffect(() => {
     if (profilePictureRes.data)
-      setProfilePicture(profilePictureRes.data.currentProfilePicture);
+      setProfilePicture(profilePictureRes.data.profilePicture);
   }, [profilePictureRes.data]);
-
-  if (profilePictureRes.loading) return null;
 
   const AvatarInner = () => (
     <MUIAvatar
       style={{
         ...size,
+        ...style,
         color: BLACK,
         backgroundColor: profilePicture ? BLACK : WHITE,
-        cursor: "pointer",
+        ...(!withoutLink && { cursor: "pointer" }),
       }}
-      src={baseUrl + profilePicture?.path}
+      src={image ? URL.createObjectURL(image) : baseUrl + profilePicture?.path}
       onClick={() => (onClick ? onClick() : {})}
-    />
+    >
+      {profilePictureRes.loading && <CircularProgress size={10} />}
+    </MUIAvatar>
   );
 
   const Avatar = () => (

@@ -25,6 +25,11 @@ $desktopLargeBreakpoint: 1650px;
   justify-content: flex-end;
 }
 
+.flexBetween {
+  display: flex;
+  justify-content: space-between;
+}
+
 .noSelect {
   -webkit-touch-callout: none;
   -webkit-user-select: none;

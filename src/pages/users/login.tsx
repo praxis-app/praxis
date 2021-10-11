@@ -75,12 +75,12 @@ const Login = () => {
               >
                 <Field
                   name={FieldNames.Email}
-                  placeholder={Messages.users.form.email()}
+                  label={Messages.users.form.email()}
                   component={TextField}
                 />
                 <Field
                   name={FieldNames.Password}
-                  placeholder={Messages.users.form.password()}
+                  label={Messages.users.form.password()}
                   component={PasswordField}
                 />
               </FormGroup>

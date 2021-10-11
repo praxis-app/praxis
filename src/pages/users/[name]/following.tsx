@@ -41,7 +41,7 @@ const Following = () => {
       </Link>
 
       <Typography variant="h6" color="primary">
-        {Messages.users.following(following.length)}
+        {Messages.users.followingWithSize(following.length)}
       </Typography>
 
       <Card>

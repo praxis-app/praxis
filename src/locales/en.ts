@@ -72,19 +72,27 @@ const en = {
   users: {
     actions: {
       editProfile: () => "Edit Profile",
+      follow: () => "Follow",
+      unfollow: () => "Unfollow",
       logIn: () => "Log in",
       logOut: () => "Log out",
       signUp: () => "Sign up",
       passwordConfirm: () => "Confirm password",
     },
     form: {
-      name: () => "Name",
+      bio: () => "Bio",
+      coverPhoto: () => "Cover Photo",
+      describeYourself: () => "Describe yourself...",
       email: () => "Email",
+      name: () => "Name",
       password: () => "Password",
+      profilePicture: () => "Profile Picture",
+      setCoverPhoto: () => "Set a cover photo...",
     },
     joinedWithDate: (date: string) => `Joined ${date}`,
-    following: (size: number) => `${size} Following`,
-    followers: (size: number) => `${size} Follower${pluralize(size)}`,
+    following: () => "Following",
+    followingWithSize: (size: number) => `${size} Following`,
+    followersWithSize: (size: number) => `${size} Follower${pluralize(size)}`,
     errors: {
       signUp: () => "There was an error creating your account.",
       update: () => "There was an error updating your account.",
@@ -289,6 +297,7 @@ const en = {
       groups: () => "Groups",
       groupRoles: () => "Group Roles",
     },
+    joined: () => "Joined",
     members: (size: number) => `${size} Member${pluralize(size)}`,
     requests: (size: number) => `${size} Request${pluralize(size)}`,
     memberRequests: (size: number) =>

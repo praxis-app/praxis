@@ -1,36 +1,57 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@apollo/client";
-import { makeStyles, createStyles } from "@material-ui/core/styles";
-import { Card, CardHeader, CardContent } from "@material-ui/core";
+import { makeStyles, createStyles, withStyles } from "@material-ui/core/styles";
+import {
+  Typography,
+  Card,
+  CardHeader,
+  CardContent as MUICardContent,
+  CardActions,
+} from "@material-ui/core";
 
 import FollowButton from "../Follows/FollowButton";
 import ItemMenu from "../Shared/ItemMenu";
 import UserAvatar from "./Avatar";
-import { FOLLOWING } from "../../apollo/client/queries";
-import Messages from "../../utils/messages";
 import {
   ModelNames,
   NavigationPaths,
   ResourcePaths,
 } from "../../constants/common";
-import { WHITE } from "../../styles/Shared/theme";
 import {
   useCurrentUser,
   useHasPermissionGlobally,
   useFollowersByUserId,
 } from "../../hooks";
-import { formatDate } from "../../utils/time";
-import { noCache } from "../../utils/apollo";
 import { GlobalPermissions } from "../../constants/role";
+import Messages from "../../utils/messages";
+import { FOLLOWING } from "../../apollo/client/queries";
+import { noCache, formatDate } from "../../utils/clientIndex";
+import { WHITE } from "../../styles/Shared/theme";
 
 const useStyles = makeStyles(() =>
   createStyles({
+    lessPadding: {
+      paddingBottom: 8,
+    },
     subheader: {
       color: "rgb(195, 195, 195)",
     },
   })
 );
+
+const CardContent = withStyles(() =>
+  createStyles({
+    root: {
+      marginTop: 6,
+      paddingTop: 0,
+
+      "&:last-child": {
+        paddingBottom: 16,
+      },
+    },
+  })
+)(MUICardContent);
 
 interface Props {
   user: ClientUser;
@@ -38,7 +59,7 @@ interface Props {
 }
 
 const Show = ({ user, deleteUser }: Props) => {
-  const { name, id, createdAt } = user;
+  const { id, name, bio, createdAt } = user;
   const currentUser = useCurrentUser();
   const [followers, setFollowers] = useFollowersByUserId(id);
   const [following, setFollowing] = useState<ClientFollow[]>([]);
@@ -67,23 +88,16 @@ const Show = ({ user, deleteUser }: Props) => {
       <CardHeader
         avatar={<UserAvatar user={user} />}
         action={
-          <>
-            <FollowButton
-              userId={id}
-              followers={followers}
-              setFollowers={setFollowers}
-            />
-            <ItemMenu
-              name={name}
-              itemId={id}
-              itemType={ModelNames.User}
-              anchorEl={menuAnchorEl}
-              setAnchorEl={setMenuAnchorEl}
-              deleteItem={deleteUser}
-              canEdit={ownUser()}
-              canDelete={ownUser() || canManageUsers}
-            />
-          </>
+          <ItemMenu
+            name={name}
+            itemId={id}
+            itemType={ModelNames.User}
+            anchorEl={menuAnchorEl}
+            setAnchorEl={setMenuAnchorEl}
+            deleteItem={deleteUser}
+            canEdit={ownUser()}
+            canDelete={ownUser() || canManageUsers}
+          />
         }
         title={
           <Link href={`${ResourcePaths.User}${name}`}>
@@ -91,20 +105,35 @@ const Show = ({ user, deleteUser }: Props) => {
           </Link>
         }
         subheader={Messages.users.joinedWithDate(signUpDate)}
-        classes={{ subheader: classes.subheader }}
+        classes={{
+          subheader: classes.subheader,
+          root: classes.lessPadding,
+        }}
       />
 
       <CardContent>
+        {bio && <Typography style={{ marginBottom: 6 }}>{bio}</Typography>}
+
         <Link href={`${ResourcePaths.User}${name}${NavigationPaths.Followers}`}>
-          <a>{Messages.users.followers(followers.length)}</a>
+          <a>{Messages.users.followersWithSize(followers.length)}</a>
         </Link>
 
         <span style={{ color: WHITE }}>{Messages.middotWithSpaces()}</span>
 
         <Link href={`${ResourcePaths.User}${name}${NavigationPaths.Following}`}>
-          <a>{Messages.users.following(following.length)}</a>
+          <a>{Messages.users.followingWithSize(following.length)}</a>
         </Link>
       </CardContent>
+
+      {currentUser && !ownUser() && (
+        <CardActions style={{ marginBottom: 6, paddingTop: 0 }}>
+          <FollowButton
+            userId={id}
+            followers={followers}
+            setFollowers={setFollowers}
+          />
+        </CardActions>
+      )}
     </Card>
   );
 };

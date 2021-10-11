@@ -41,7 +41,7 @@ const Followers = () => {
       </Link>
 
       <Typography variant="h6" color="primary">
-        {Messages.users.followers(followers.length)}
+        {Messages.users.followersWithSize(followers.length)}
       </Typography>
 
       <Card>
