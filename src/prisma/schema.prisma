@@ -46,6 +46,7 @@ model User {
   name             String
   email            String
   password         String
+  bio              String?
   posts            Post[]
   comments         Comment[]
   likes            Like[]
@@ -174,7 +175,7 @@ model Image {
   commentId      Int?
   group          Group?   @relation(fields: [groupId], references: [id])
   groupId        Int?
-  profilePicture Boolean  @default(false)
+  variety        String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }

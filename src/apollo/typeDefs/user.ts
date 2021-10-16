@@ -4,6 +4,7 @@ type User {
   id: ID!
   name: String!
   email: String!
+  bio: String
   password: String!
   createdAt: String!
   updatedAt: String!
@@ -25,7 +26,9 @@ input SignInInput {
 input UpdateUserInput {
   name: String!
   email: String!
+  bio: String!
   profilePicture: FileUpload
+  coverPhoto: FileUpload
 }
 
 type UserPayload {

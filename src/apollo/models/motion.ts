@@ -10,6 +10,7 @@ import {
   ActionTypes,
   MIN_GROUP_SIZE_TO_RATIFY,
 } from "../../constants/motion";
+import { ImageVariety } from "../../constants/image";
 import { ConsensusStates, FlipStates, VotingTypes } from "../../constants/vote";
 import { groupSettingByName, updateSettingById } from "./setting";
 import { initializePermissions } from "./role";
@@ -183,7 +184,7 @@ const doAction = async (motion: Motion) => {
       await prisma.image.create({
         data: {
           ...groupConnect,
-          profilePicture: true,
+          variety: ImageVariety.CoverPhoto,
           path: actionData.groupImagePath,
         },
       });

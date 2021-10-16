@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useMutation } from "@apollo/client";
+import { useEffect, useState } from "react";
+import { useLazyQuery, useMutation } from "@apollo/client";
 import Router from "next/router";
 import {
   Card,
@@ -9,6 +9,7 @@ import {
   FormGroup,
   withStyles,
   Divider,
+  Typography,
 } from "@material-ui/core";
 import { RemoveCircle } from "@material-ui/icons";
 import { Formik, Form, Field } from "formik";
@@ -19,7 +20,11 @@ import {
   SET_CURRENT_USER,
 } from "../../apollo/client/mutations";
 import styles from "../../styles/User/User.module.scss";
-import { LocalStorage, NavigationPaths } from "../../constants/common";
+import {
+  LocalStorage,
+  NavigationPaths,
+  ResourcePaths,
+} from "../../constants/common";
 import { useCurrentUser } from "../../hooks";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField, { PasswordField } from "../Shared/TextField";
@@ -29,8 +34,13 @@ import Messages from "../../utils/messages";
 import {
   errorToast,
   generateRandom,
+  noCache,
   setAuthToken,
 } from "../../utils/clientIndex";
+import UserAvatar from "./Avatar";
+import { COVER_PHOTO_BY_USER_ID } from "../../apollo/client/queries";
+import CoverPhoto from "../Images/CoverPhoto";
+import CompactButton from "../Shared/CompactButton";
 
 const CardActions = withStyles(() =>
   createStyles({
@@ -42,6 +52,7 @@ const CardActions = withStyles(() =>
 )(MUICardActions);
 
 interface FormValues {
+  bio: string;
   name: string;
   email: string;
   password: string;
@@ -55,19 +66,40 @@ interface Props {
 
 const UserForm = ({ user, isEditing }: Props) => {
   const currentUser = useCurrentUser();
+  const [coverPhoto, setCoverPhoto] = useState<File>();
   const [profilePicture, setProfilePicture] = useState<File>();
   const [imageInputKey, setImageInputKey] = useState<string>("");
-  const initialValues = {
-    name: isEditing && user ? user.name : "",
-    email: isEditing && user ? user.email : "",
-    password: "",
-    passwordConfirm: "",
-  };
+  const [currentCoverPhoto, setCurrentCoverPhoto] = useState<ClientImage>();
+  const [getCurrentCoverPhotoRes, currentCoverPhotoRes] = useLazyQuery(
+    COVER_PHOTO_BY_USER_ID,
+    noCache
+  );
   const [signUp] = useMutation(SIGN_UP);
   const [updateUser] = useMutation(UPDATE_USER);
   const [setCurrentUser] = useMutation(SET_CURRENT_USER);
+  const initialValues = {
+    name: isEditing && user ? user.name : "",
+    email: isEditing && user ? user.email : "",
+    bio: isEditing && user?.bio ? user.bio : "",
+    password: "",
+    passwordConfirm: "",
+  };
+
+  useEffect(() => {
+    if (user && isEditing)
+      getCurrentCoverPhotoRes({
+        variables: { userId: user.id },
+        ...noCache,
+      });
+  }, [user, isEditing]);
+
+  useEffect(() => {
+    if (currentCoverPhotoRes.data)
+      setCurrentCoverPhoto(currentCoverPhotoRes.data.coverPhotoByUserId);
+  }, [currentCoverPhotoRes.data]);
 
   const handleSubmit = async ({
+    bio,
     name,
     email,
     password,
@@ -79,9 +111,11 @@ const UserForm = ({ user, isEditing }: Props) => {
           const { data } = await updateUser({
             variables: {
               id: user.id,
+              bio,
               name,
               email,
               profilePicture,
+              coverPhoto,
             },
           });
 
@@ -97,7 +131,7 @@ const UserForm = ({ user, isEditing }: Props) => {
               },
             });
           }
-          Router.push(`/users/${data.updateUser.user.name}`);
+          Router.push(`${ResourcePaths.User}${data.updateUser.user.name}`);
         }
       } else {
         const { data } = await signUp({
@@ -138,16 +172,77 @@ const UserForm = ({ user, isEditing }: Props) => {
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
           {(formik) => (
             <Form>
+              {isEditing && (
+                <>
+                  <div className={styles.flexBetween}>
+                    <Typography color="primary">
+                      {Messages.users.form.profilePicture()}
+                    </Typography>
+
+                    <ImageInput setImage={setProfilePicture}>
+                      <CompactButton>{Messages.actions.edit()}</CompactButton>
+                    </ImageInput>
+                  </div>
+
+                  <UserAvatar
+                    user={user}
+                    withoutLink
+                    image={profilePicture}
+                    style={{
+                      width: 140,
+                      height: 140,
+                      margin: "0 auto",
+                      marginBottom: 24,
+                    }}
+                  />
+
+                  <Divider style={{ marginBottom: 12 }} />
+
+                  <div className={styles.flexBetween}>
+                    <Typography color="primary">
+                      {Messages.users.form.coverPhoto()}
+                    </Typography>
+
+                    <ImageInput setImage={setCoverPhoto}>
+                      <CompactButton>{Messages.actions.edit()}</CompactButton>
+                    </ImageInput>
+                  </div>
+
+                  {currentCoverPhoto || coverPhoto ? (
+                    <CoverPhoto
+                      path={currentCoverPhoto?.path}
+                      image={coverPhoto}
+                      rounded
+                    />
+                  ) : (
+                    <Typography>
+                      {Messages.users.form.setCoverPhoto()}
+                    </Typography>
+                  )}
+
+                  <Divider style={{ marginTop: 24, marginBottom: 12 }} />
+
+                  <Field
+                    name={FieldNames.Bio}
+                    placeholder={Messages.users.form.describeYourself()}
+                    label={Messages.users.form.bio()}
+                    component={TextField}
+                    autoComplete="off"
+                    multiline
+                  />
+                </>
+              )}
+
               <FormGroup>
                 <Field
                   name={FieldNames.Name}
-                  placeholder={Messages.users.form.name()}
+                  label={Messages.users.form.name()}
                   component={TextField}
-                  multiline
+                  autoComplete="off"
                 />
                 <Field
                   name={FieldNames.Email}
-                  placeholder={Messages.users.form.email()}
+                  label={Messages.users.form.email()}
                   component={TextField}
                 />
               </FormGroup>
@@ -161,19 +256,19 @@ const UserForm = ({ user, isEditing }: Props) => {
                   >
                     <Field
                       name={FieldNames.Password}
-                      placeholder={Messages.users.form.password()}
+                      label={Messages.users.form.password()}
                       component={PasswordField}
                     />
                     <Field
                       name={FieldNames.PasswordConfirm}
-                      placeholder={Messages.users.actions.passwordConfirm()}
+                      label={Messages.users.actions.passwordConfirm()}
                       component={PasswordField}
                     />
                   </FormGroup>
                 </>
               )}
 
-              {profilePicture && (
+              {profilePicture && !isEditing && (
                 <>
                   <div className={styles.selectedImages}>
                     <img
@@ -194,10 +289,12 @@ const UserForm = ({ user, isEditing }: Props) => {
 
               <CardActions>
                 <div style={{ marginTop: -12 }}>
-                  <ImageInput
-                    setImage={setProfilePicture}
-                    refreshKey={imageInputKey}
-                  />
+                  {!isEditing && (
+                    <ImageInput
+                      setImage={setProfilePicture}
+                      refreshKey={imageInputKey}
+                    />
+                  )}
                 </div>
 
                 <SubmitButton

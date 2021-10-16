@@ -1,9 +1,23 @@
 import { useMutation } from "@apollo/client";
-import { IconButton } from "@material-ui/core";
-import { AddCircle, RemoveCircle } from "@material-ui/icons";
-
-import { CREATE_FOLLOW, DELETE_FOLLOW } from "../../apollo/client/mutations";
+import {
+  Button as MUIButton,
+  createStyles,
+  withStyles,
+} from "@material-ui/core";
+import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
+import { CREATE_FOLLOW, DELETE_FOLLOW } from "../../apollo/client/mutations";
+import styles from "../../styles/Follow/FollowButton.module.scss";
+
+const Button = withStyles(() =>
+  createStyles({
+    root: {
+      fontFamily: "Inter Bold",
+      textTransform: "none",
+      minWidth: 80,
+    },
+  })
+)(MUIButton);
 
 interface Props {
   userId: string;
@@ -13,11 +27,14 @@ interface Props {
 
 const FollowButton = ({ userId, followers, setFollowers }: Props) => {
   const currentUser = useCurrentUser();
-  const [createFollow] = useMutation(CREATE_FOLLOW);
-  const [deleteFollow] = useMutation(DELETE_FOLLOW);
+  const [createFollow, { loading: createFollowLoading }] =
+    useMutation(CREATE_FOLLOW);
+  const [deleteFollow, { loading: deleteFollowLoading }] =
+    useMutation(DELETE_FOLLOW);
+  const loading = createFollowLoading || deleteFollowLoading;
 
-  const notThisUser = (): boolean => {
-    if (currentUser) return currentUser.id !== userId;
+  const ownUser = (): boolean => {
+    if (currentUser) return currentUser.id === userId;
     return false;
   };
 
@@ -25,7 +42,6 @@ const FollowButton = ({ userId, followers, setFollowers }: Props) => {
     const follow = followers?.find(
       (follow) => follow.followerId === currentUser?.id
     );
-
     return follow;
   };
 
@@ -50,22 +66,36 @@ const FollowButton = ({ userId, followers, setFollowers }: Props) => {
     );
   };
 
+  if (!currentUser || ownUser()) return null;
+
+  if (alreadyFollow())
+    return (
+      <Button
+        variant="outlined"
+        color="primary"
+        onClick={() => deleteFollowMutation()}
+        disabled={loading}
+      >
+        <div className={styles.deleteButtonInner}>
+          <span className={styles.followingText}>
+            {Messages.users.following()}
+          </span>
+          <span className={styles.unfollowText}>
+            {Messages.users.actions.unfollow()}
+          </span>
+        </div>
+      </Button>
+    );
+
   return (
-    <>
-      {currentUser && notThisUser() && (
-        <>
-          {alreadyFollow() ? (
-            <IconButton onClick={() => deleteFollowMutation()}>
-              <RemoveCircle color="primary" />
-            </IconButton>
-          ) : (
-            <IconButton onClick={() => createFollowMutation()}>
-              <AddCircle color="primary" />
-            </IconButton>
-          )}
-        </>
-      )}
-    </>
+    <Button
+      variant="outlined"
+      color="primary"
+      onClick={() => createFollowMutation()}
+      disabled={loading}
+    >
+      {Messages.users.actions.follow()}
+    </Button>
   );
 };
 

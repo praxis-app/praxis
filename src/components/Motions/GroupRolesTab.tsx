@@ -168,7 +168,9 @@ const GroupRolesTab = ({
 
   return (
     <>
-      <Typography gutterBottom>{motionActionLabel(action)}</Typography>
+      <Typography style={{ marginBottom: 12 }}>
+        {motionActionLabel(action)}
+      </Typography>
 
       <Formik
         initialValues={initialValues}
@@ -212,7 +214,7 @@ const GroupRolesTab = ({
                 <>
                   <Field
                     name={FieldNames.Name}
-                    placeholder={Messages.roles.form.name()}
+                    label={Messages.roles.form.name()}
                     component={TextField}
                     autoComplete="off"
                   />

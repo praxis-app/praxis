@@ -9,6 +9,7 @@ export enum PasswordValidation {
 }
 
 export enum FieldNames {
+  Bio = "bio",
   Name = "name",
   Email = "email",
   Password = "password",

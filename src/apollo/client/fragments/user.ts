@@ -5,6 +5,7 @@ export const USER_SUMMARY = gql`
     id
     name
     email
+    bio
     createdAt
   }
 `;

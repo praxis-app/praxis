@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, ReactNode, useRef } from "react";
 import { Image } from "@material-ui/icons";
 import styles from "../../styles/Image/Input.module.scss";
 
@@ -6,10 +6,17 @@ interface Props {
   setImage?: (image: File) => void;
   setImages?: (images: File[]) => void;
   multiple?: boolean;
-  refreshKey: string;
+  refreshKey?: string;
+  children?: ReactNode;
 }
 
-const ImageInput = ({ setImage, setImages, multiple, refreshKey }: Props) => {
+const ImageInput = ({
+  setImage,
+  setImages,
+  multiple,
+  refreshKey,
+  children,
+}: Props) => {
   const imageInput = useRef<HTMLInputElement>(null);
 
   const setImageState = (files: File[]) => {
@@ -19,12 +26,21 @@ const ImageInput = ({ setImage, setImages, multiple, refreshKey }: Props) => {
 
   return (
     <div className={styles.inputWrapper}>
-      <Image
+      <div
         onClick={() => imageInput.current?.click()}
-        className={styles.imageInputIcon}
-        style={{ fontSize: 40 }}
-        color="primary"
-      />
+        role="button"
+        tabIndex={0}
+      >
+        {!children ? (
+          <Image
+            className={styles.imageInputIcon}
+            style={{ fontSize: 40 }}
+            color="primary"
+          />
+        ) : (
+          children
+        )}
+      </div>
       <input
         multiple={multiple}
         type="file"

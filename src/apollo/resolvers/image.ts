@@ -1,6 +1,14 @@
+import { Image } from ".prisma/client";
 import { GraphQLUpload } from "apollo-server-micro";
+import { ImageVariety } from "../../constants/image";
 import { deleteImage } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
+
+const lastImage = async (images: Image[]): Promise<Image> => {
+  return images.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[
+    images.length - 1
+  ];
+};
 
 const imageResolvers = {
   FileUpload: GraphQLUpload,
@@ -29,29 +37,42 @@ const imageResolvers = {
 
     profilePictures: async (_: any, { userId }: { userId: string }) => {
       const profilePictures = await prisma.image.findMany({
-        where: { userId: parseInt(userId), profilePicture: true },
+        where: {
+          userId: parseInt(userId),
+          variety: ImageVariety.ProfilePicture,
+        },
       });
       return profilePictures;
     },
 
-    currentProfilePicture: async (_: any, { userId }: { userId: string }) => {
+    profilePicture: async (_: any, { userId }: { userId: string }) => {
       const profilePictures = await prisma.image.findMany({
-        where: { userId: parseInt(userId), profilePicture: true },
+        where: {
+          userId: parseInt(userId),
+          variety: ImageVariety.ProfilePicture,
+        },
       });
-      const currentProfilePicture = profilePictures.length
-        ? profilePictures[profilePictures.length - 1]
-        : null;
-      return currentProfilePicture;
+      return lastImage(profilePictures);
     },
 
-    currentCoverPhoto: async (_: any, { groupId }: { groupId: string }) => {
+    coverPhotoByUserId: async (_: any, { userId }: { userId: string }) => {
       const coverPhotos = await prisma.image.findMany({
-        where: { groupId: parseInt(groupId), profilePicture: true },
+        where: {
+          userId: parseInt(userId),
+          variety: ImageVariety.CoverPhoto,
+        },
       });
-      const currentCoverPhoto = coverPhotos.length
-        ? coverPhotos[coverPhotos.length - 1]
-        : null;
-      return currentCoverPhoto;
+      return lastImage(coverPhotos);
+    },
+
+    coverPhotoByGroupId: async (_: any, { groupId }: { groupId: string }) => {
+      const coverPhotos = await prisma.image.findMany({
+        where: {
+          groupId: parseInt(groupId),
+          variety: ImageVariety.CoverPhoto,
+        },
+      });
+      return lastImage(coverPhotos);
     },
   },
 

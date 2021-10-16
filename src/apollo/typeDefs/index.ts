@@ -90,9 +90,10 @@ export const typeDefs = gql`
     imagesByPostId(postId: ID!): [Image]
     imagesByMotionId(motionId: ID!): [Image]
     imagesByCommentId(commentId: ID!): [Image]
-    currentProfilePicture(userId: ID!): Image
+    profilePicture(userId: ID!): Image
     profilePictures(userId: ID!): [Image]
-    currentCoverPhoto(groupId: ID!): Image
+    coverPhotoByUserId(userId: ID!): Image
+    coverPhotoByGroupId(groupId: ID!): Image
 
     settingsByUserId(userId: ID!): [Setting]!
     settingsByGroupId(groupId: ID!): [Setting]!

@@ -18,7 +18,7 @@ import { paginate } from "../../utils/items";
 import { BackendMotion } from "../models/motion";
 import { BackendPost } from "../models/post";
 import { BackendFeedItem } from "../models/common";
-import { saveProfilePicture } from "../models/user";
+import { saveCoverPhoto, saveProfilePicture } from "../models/user";
 
 interface HomeFeedInput extends PaginationState {
   userId?: string;
@@ -293,9 +293,9 @@ const userResolvers = {
 
     async updateUser(
       _: any,
-      { id, input }: { id: string; input: SignUpInput }
+      { id, input }: { id: string; input: UpdateUserInput }
     ) {
-      const { email, name, profilePicture } = input;
+      const { email, name, bio, profilePicture, coverPhoto } = input;
       const { errors, isValid } = validateUpdateUser(input);
       let user: User;
 
@@ -304,7 +304,7 @@ const userResolvers = {
       try {
         user = await prisma.user.update({
           where: { id: parseInt(id) },
-          data: { email, name },
+          data: { email, name, bio },
         });
         if (!user)
           throw new ApolloError(Messages.items.notFound(TypeNames.User));
@@ -314,6 +314,7 @@ const userResolvers = {
 
       try {
         await saveProfilePicture(user, profilePicture);
+        await saveCoverPhoto(user, coverPhoto);
       } catch {
         throw new ApolloError(Messages.errors.imageUploadError());
       }

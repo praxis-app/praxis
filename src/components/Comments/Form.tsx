@@ -149,11 +149,7 @@ const CommentsForm = ({
           <FormGroup>
             <Field
               name={FieldNames.Body}
-              placeholder={
-                formik.isSubmitting
-                  ? Messages.states.loading()
-                  : Messages.comments.form.leaveAComment()
-              }
+              placeholder={Messages.comments.form.leaveAComment()}
               component={TextField}
               multiline
             />

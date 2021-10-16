@@ -1,10 +1,11 @@
 import { Group } from ".prisma/client";
 import prisma from "../../utils/initPrisma";
 import {
+  saveImage,
   FileUpload,
   randomDefaultImagePath,
-  saveImage,
 } from "../../utils/image";
+import { ImageVariety } from "../../constants/image";
 
 export const saveGroupCoverPhoto = async (
   group: Group,
@@ -22,7 +23,7 @@ export const saveGroupCoverPhoto = async (
             id: group.id,
           },
         },
-        profilePicture: true,
+        variety: ImageVariety.CoverPhoto,
         path,
       },
     });

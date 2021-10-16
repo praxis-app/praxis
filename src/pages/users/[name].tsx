@@ -3,9 +3,9 @@ import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import { CircularProgress } from "@material-ui/core";
 
-import User from "../../components/Users/User";
 import Feed from "../../components/Shared/Feed";
 import Pagination from "../../components/Shared/Pagination";
+import ProfileHeader from "../../components/Users/ProfileHeader";
 import { USER_BY_NAME, PROFILE_FEED } from "../../apollo/client/queries";
 import {
   DELETE_USER,
@@ -27,7 +27,7 @@ const Show = () => {
   const feed = useReactiveVar(feedVar);
   const { currentPage, pageSize } = useReactiveVar(paginationVar);
   const [user, setUser] = useState<ClientUser>();
-  const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME);
+  const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME, noCache);
   const [getFeedRes, feedRes] = useLazyQuery(PROFILE_FEED, noCache);
   const [deleteUser] = useMutation(DELETE_USER);
   const [deletePost] = useMutation(DELETE_POST);
@@ -131,7 +131,7 @@ const Show = () => {
     <>
       {user ? (
         <>
-          <User user={user} deleteUser={deleteUserHandler} />
+          <ProfileHeader user={user} deleteUser={deleteUserHandler} />
 
           <Pagination>
             <Feed

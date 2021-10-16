@@ -114,14 +114,14 @@ const GroupForm = ({ group, isEditing }: Props) => {
                 <FormGroup>
                   <Field
                     name={FieldNames.Name}
-                    placeholder={Messages.groups.form.name()}
+                    label={Messages.groups.form.name()}
                     component={TextField}
                     autoComplete="off"
                   />
 
                   <Field
                     name={FieldNames.Description}
-                    placeholder={Messages.groups.form.description()}
+                    label={Messages.groups.form.description()}
                     component={TextField}
                     multiline
                   />

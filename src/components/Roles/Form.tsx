@@ -127,7 +127,7 @@ const RoleForm = ({
                 <FormGroup>
                   <Field
                     name={FieldNames.Name}
-                    placeholder={Messages.roles.form.name()}
+                    label={Messages.roles.form.name()}
                     component={TextField}
                     autoComplete="off"
                   />

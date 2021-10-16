@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
-import { Avatar } from "@material-ui/core";
+import { Avatar, CircularProgress } from "@material-ui/core";
 import Link from "next/link";
 
 import baseUrl from "../../utils/baseUrl";
-import { CURRENT_COVER_PHOTO } from "../../apollo/client/queries";
+import { COVER_PHOTO_BY_GROUP_ID } from "../../apollo/client/queries";
 import { ResourcePaths } from "../../constants/common";
 import { BLACK, WHITE } from "../../styles/Shared/theme";
 import { noCache } from "../../utils/clientIndex";
@@ -17,26 +17,29 @@ interface Props {
 const GroupAvatar = ({ group }: Props) => {
   const [coverPhoto, setCoverPhoto] = useState<ClientImage>();
 
-  const coverPhotoRes = useQuery(CURRENT_COVER_PHOTO, {
-    variables: { groupId: group.id },
-    ...noCache,
-  });
+  const { data: coverPhotoData, loading: coverPhotoLoading } = useQuery(
+    COVER_PHOTO_BY_GROUP_ID,
+    {
+      variables: { groupId: group.id },
+      ...noCache,
+    }
+  );
 
   useEffect(() => {
-    if (coverPhotoRes.data) setCoverPhoto(coverPhotoRes.data.currentCoverPhoto);
-  }, [coverPhotoRes.data]);
+    if (coverPhotoData) setCoverPhoto(coverPhotoData.coverPhotoByGroupId);
+  }, [coverPhotoData]);
 
   return (
     <Link href={`${ResourcePaths.Group}${group.name}`}>
       <a>
         <Avatar
           style={{
-            backgroundColor: coverPhoto ? BLACK : WHITE,
+            backgroundColor: coverPhoto || coverPhotoLoading ? BLACK : WHITE,
             color: BLACK,
           }}
           src={baseUrl + coverPhoto?.path}
         >
-          <Group />
+          {coverPhotoLoading ? <CircularProgress size={10} /> : <Group />}
         </Avatar>
       </a>
     </Link>

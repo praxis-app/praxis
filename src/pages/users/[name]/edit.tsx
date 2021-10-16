@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { CircularProgress } from "@material-ui/core";
 import { useRouter } from "next/router";
 
 import UserForm from "../../../components/Users/Form";
 import { USER_BY_NAME } from "../../../apollo/client/queries";
-import Messages from "../../../utils/messages";
 import { useCurrentUser } from "../../../hooks";
 import { breadcrumbsVar } from "../../../apollo/client/localState";
 import { ResourcePaths } from "../../../constants/common";
+import { noCache } from "../../../utils/clientIndex";
+import Messages from "../../../utils/messages";
 
 const Edit = () => {
   const { query } = useRouter();
   const currentUser = useCurrentUser();
   const [user, setUser] = useState<ClientUser>();
-  const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME);
+  const [getUserRes, userRes] = useLazyQuery(USER_BY_NAME, noCache);
 
   useEffect(() => {
     if (query.name) {
