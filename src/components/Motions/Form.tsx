@@ -81,13 +81,13 @@ const MotionsForm = ({
   withoutToggle,
 }: MotionsFormProps) => {
   const currentUser = useCurrentUser();
-  const [imagesInputKey, setImagesInputKey] = useState<string>("");
+  const [imagesInputKey, setImagesInputKey] = useState("");
   const [savedImages, setSavedImages] = useState<ClientImage[]>([]);
   const [images, setImages] = useState<File[]>([]);
-  const [action, setAction] = useState<string>("");
+  const [action, setAction] = useState("");
   const [actionData, setActionData] = useState<ActionData>();
-  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
-  const [tab, setTab] = useState<number>(0);
+  const [selectedGroupId, setSelectedGroupId] = useState("");
+  const [tab, setTab] = useState(0);
   const [touched, setTouched] = useState<boolean>(false);
   const { currentPage, pageSize } = useReactiveVar(paginationVar);
   const feed = useReactiveVar(feedVar);

@@ -4,7 +4,7 @@ datasource db {
 }
 
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 model Motion {
@@ -60,6 +60,7 @@ model User {
   settings         Setting[]
   roles            RoleMember[]
   serverInvites    ServerInvite[]
+  eventAttendees   EventAttendee[]
   createdAt        DateTime        @default(now())
   updatedAt        DateTime        @updatedAt
 }
@@ -71,6 +72,8 @@ model Post {
   userId    Int?
   group     Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId   Int?
+  event     Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId   Int?
   comments  Comment[]
   likes     Like[]
   images    Image[]
@@ -132,6 +135,7 @@ model Group {
   memberRequests MemberRequest[]
   settings       Setting[]
   roles          Role[]
+  events         Event[]
   creatorId      Int
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
@@ -175,6 +179,8 @@ model Image {
   commentId      Int?
   group          Group?   @relation(fields: [groupId], references: [id])
   groupId        Int?
+  event          Event?   @relation(fields: [eventId], references: [id])
+  eventId        Int?
   variety        String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -235,4 +241,33 @@ model ServerInvite {
   expiresAt DateTime?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+
+model Event {
+  id           Int       @id @default(autoincrement())
+  name         String
+  description  String
+  location     String?
+  startsAt     DateTime
+  endsAt       DateTime?
+  online       Boolean   @default(false)
+  externalLink String?
+  group        Group?    @relation(fields: [groupId], references: [id])
+  groupId      Int?
+  attendees    EventAttendee[]
+  posts        Post[]
+  images       Image[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model EventAttendee {
+  id        Int      @id @default(autoincrement())
+  status    String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  event     Event?   @relation(fields: [eventId], references: [id])
+  eventId   Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

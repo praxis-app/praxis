@@ -14,10 +14,9 @@ import {
 } from "../../utils/validation";
 import { EXPIRES_IN, TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
-import { paginate } from "../../utils/items";
 import { BackendMotion } from "../models/motion";
 import { BackendPost } from "../models/post";
-import { BackendFeedItem } from "../models/common";
+import { BackendFeedItem, paginate } from "../models/common";
 import { saveCoverPhoto, saveProfilePicture } from "../models/user";
 
 interface HomeFeedInput extends PaginationState {
@@ -136,11 +135,7 @@ const userResolvers = {
       }
 
       return {
-        pagedItems: paginate(
-          feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
-          currentPage,
-          pageSize
-        ),
+        pagedItems: paginate(feed, currentPage, pageSize),
         totalItems: feed.length,
       };
     },
@@ -170,11 +165,7 @@ const userResolvers = {
       feed.push(...posts, ...motions);
 
       return {
-        pagedItems: paginate(
-          feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
-          currentPage,
-          pageSize
-        ),
+        pagedItems: paginate(feed, currentPage, pageSize),
         totalItems: feed.length,
       };
     },

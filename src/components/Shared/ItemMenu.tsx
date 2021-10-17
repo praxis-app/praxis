@@ -1,10 +1,43 @@
 import { ReactNode } from "react";
-import { Edit, Delete, MoreHoriz } from "@material-ui/icons";
-import { Menu, MenuItem, IconButton } from "@material-ui/core";
 import Link from "next/link";
+import { Edit, Delete, MoreHoriz } from "@material-ui/icons";
+import {
+  Menu,
+  MenuItem,
+  IconButton,
+  makeStyles,
+  createStyles,
+} from "@material-ui/core";
+import { CSSProperties } from "@material-ui/styles";
 
+import { isRenderable } from "../../utils/clientIndex";
 import Messages from "../../utils/messages";
-import { isRenderable } from "../../utils/common";
+import { NavigationPaths } from "../../constants/common";
+import GhostButton from "./GhostButton";
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    ghostButtonRoot: {
+      paddingLeft: 0,
+      paddingRight: 0,
+      minWidth: 37.5,
+    },
+    iconRoot: {
+      marginRight: 7.5,
+    },
+    editIconRoot: {
+      transform: "rotateY(180deg)",
+    },
+    fullWidthLink: {
+      width: "100%",
+    },
+  })
+);
+
+export const enum ItemMenuVariants {
+  Default = "default",
+  Ghost = "ghost",
+}
 
 interface Props {
   name?: string;
@@ -17,6 +50,8 @@ interface Props {
   prependChildren?: boolean;
   canEdit?: boolean;
   canDelete?: boolean;
+  variant?: ItemMenuVariants;
+  buttonStyle?: CSSProperties;
 }
 
 const ItemMenu = ({
@@ -30,8 +65,10 @@ const ItemMenu = ({
   prependChildren,
   canEdit,
   canDelete,
+  variant,
+  buttonStyle,
 }: Props) => {
-  const margin = { marginRight: 7.5 };
+  const classes = useStyles();
 
   const handleMenuButtonClick = (
     event: React.MouseEvent<HTMLButtonElement>
@@ -46,9 +83,20 @@ const ItemMenu = ({
   if (canEdit || canDelete || isRenderable(children))
     return (
       <>
-        <IconButton onClick={handleMenuButtonClick}>
-          <MoreHoriz color="primary" />
-        </IconButton>
+        {variant === ItemMenuVariants.Ghost ? (
+          <GhostButton
+            onClick={handleMenuButtonClick}
+            className={classes.ghostButtonRoot}
+            style={buttonStyle}
+          >
+            <MoreHoriz color="primary" />
+          </GhostButton>
+        ) : (
+          <IconButton onClick={handleMenuButtonClick} style={buttonStyle}>
+            <MoreHoriz color="primary" />
+          </IconButton>
+        )}
+
         <Menu
           anchorEl={anchorEl}
           keepMounted
@@ -59,14 +107,15 @@ const ItemMenu = ({
 
           {canEdit && (
             <MenuItem>
-              <Link href={`/${itemType}s/${name ? name : itemId}/edit`}>
-                <a style={{ width: "100%" }}>
+              <Link
+                href={`/${itemType}s/${name ? name : itemId}${
+                  NavigationPaths.Edit
+                }`}
+              >
+                <a className={classes.fullWidthLink}>
                   <Edit
                     fontSize="small"
-                    style={{
-                      ...margin,
-                      transform: "rotateY(180deg)",
-                    }}
+                    className={classes.iconRoot + " " + classes.editIconRoot}
                   />
                   {Messages.actions.edit()}
                 </a>
@@ -81,7 +130,7 @@ const ItemMenu = ({
                 deleteItem(itemId)
               }
             >
-              <Delete fontSize="small" style={margin} />
+              <Delete fontSize="small" className={classes.iconRoot} />
               {Messages.actions.delete()}
             </MenuItem>
           )}

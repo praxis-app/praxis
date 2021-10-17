@@ -43,7 +43,7 @@ const CommentsForm = ({
   setComments,
 }: Props) => {
   const currentUser = useCurrentUser();
-  const [imagesInputKey, setImagesInputKey] = useState<string>("");
+  const [imagesInputKey, setImagesInputKey] = useState("");
   const [savedImages, setSavedImages] = useState<ClientImage[]>([]);
   const [images, setImages] = useState<File[]>([]);
 

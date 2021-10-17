@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useQuery, useLazyQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import {
   Card,
@@ -13,7 +13,7 @@ import {
 } from "@material-ui/core";
 
 import ImagesList from "../Images/List";
-import { GROUP, IMAGES_BY_POST_ID } from "../../apollo/client/queries";
+import { IMAGES_BY_POST_ID } from "../../apollo/client/queries";
 import UserAvatar from "../Users/Avatar";
 import ItemMenu from "../Shared/ItemMenu";
 import styles from "../../styles/Shared/Shared.module.scss";
@@ -22,16 +22,22 @@ import { ModelNames, ResourcePaths } from "../../constants/common";
 import { GlobalPermissions, GroupPermissions } from "../../constants/role";
 import {
   useCurrentUser,
+  useEventById,
+  useGroupById,
   useHasPermissionByGroupId,
   useHasPermissionGlobally,
   useUserById,
 } from "../../hooks";
 import { noCache, timeAgo } from "../../utils/clientIndex";
 import CardFooter from "./CardFooter";
+import EventItemAvatar from "../Events/ItemAvatar";
 
 const useStyles = makeStyles({
-  title: {
-    marginLeft: "-5px",
+  cardHeaderTitle: {
+    marginLeft: -5,
+  },
+  bodyTypographyRoot: {
+    marginTop: -12,
   },
 });
 
@@ -41,7 +47,7 @@ interface Props {
 }
 
 const Post = ({ post, deletePost }: Props) => {
-  const { id, userId, groupId, postGroupId, body, createdAt } = post;
+  const { id, userId, groupId, eventId, postGroupId, body, createdAt } = post;
   const currentUser = useCurrentUser();
   const [canManagePostsGlobally] = useHasPermissionGlobally(
     GlobalPermissions.ManagePosts
@@ -51,10 +57,10 @@ const Post = ({ post, deletePost }: Props) => {
     groupId
   );
   const [user] = useUserById(userId);
-  const [group, setGroup] = useState<ClientGroup>();
+  const [event] = useEventById(eventId);
+  const [group] = useGroupById(groupId ? groupId : postGroupId);
   const [images, setImages] = useState<ClientImage[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [getGroupRes, groupRes] = useLazyQuery(GROUP);
   const imagesRes = useQuery(IMAGES_BY_POST_ID, {
     variables: { postId: id },
     ...noCache,
@@ -66,18 +72,6 @@ const Post = ({ post, deletePost }: Props) => {
     if (imagesRes.data) setImages(imagesRes.data.imagesByPostId);
   }, [imagesRes.data]);
 
-  useEffect(() => {
-    if (groupRes.data) setGroup(groupRes.data.group);
-  }, [groupRes.data]);
-
-  useEffect(() => {
-    if (groupId || postGroupId) {
-      getGroupRes({
-        variables: { id: groupId ? groupId : postGroupId },
-      });
-    }
-  }, [groupId, postGroupId]);
-
   const ownPost = (): boolean => {
     if (currentUser && user && currentUser.id === user.id) return true;
     return false;
@@ -87,19 +81,26 @@ const Post = ({ post, deletePost }: Props) => {
     return router.asPath.includes(ResourcePaths.Group);
   };
 
+  const onEventPage = (): boolean => {
+    return router.asPath.includes(ResourcePaths.Event);
+  };
+
   return (
     <div key={id}>
       <Card>
         <CardHeader
           avatar={
             group && !onGroupPage() ? (
-              user && <GroupItemAvatar user={user} group={group} post={post} />
+              <GroupItemAvatar user={user} group={group} post={post} />
+            ) : event && !onEventPage() ? (
+              <EventItemAvatar user={user} event={event} post={post} />
             ) : (
               <UserAvatar user={user} />
             )
           }
           title={
-            (!group || onGroupPage()) && (
+            (!group || onGroupPage()) &&
+            (!event || onEventPage()) && (
               <>
                 <Link href={`${ResourcePaths.User}${user?.name}`}>
                   <a>{user?.name}</a>
@@ -123,16 +124,12 @@ const Post = ({ post, deletePost }: Props) => {
               }
             />
           }
-          classes={{ title: classes.title }}
+          classes={{ title: classes.cardHeaderTitle }}
         />
 
         {body && (
           <CardContent>
-            <Typography
-              style={{
-                marginTop: "-12px",
-              }}
-            >
+            <Typography className={classes.bodyTypographyRoot}>
               {body}
             </Typography>
           </CardContent>

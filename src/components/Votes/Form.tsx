@@ -42,8 +42,8 @@ const VotesForm = ({
 }: Props) => {
   const feed = useReactiveVar(feedVar);
   const motionFromGlobal = useReactiveVar(motionVar);
-  const [flipState, setFlipState] = useState<string>("");
-  const [consensusState, setConsensusState] = useState<string>("");
+  const [flipState, setFlipState] = useState("");
+  const [consensusState, setConsensusState] = useState("");
   const [updateVote] = useMutation(UPDATE_VOTE);
   const body = vote.body || "";
 

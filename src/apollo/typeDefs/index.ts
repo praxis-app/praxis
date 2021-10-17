@@ -14,6 +14,8 @@ import Role from "./role";
 import RoleMember from "./roleMember";
 import Permission from "./permission";
 import ServerInvite from "./serverInvite";
+import Event from "./event";
+import EventAttendee from "./eventAttendee";
 
 export const typeDefs = gql`
   scalar FileUpload
@@ -34,6 +36,8 @@ export const typeDefs = gql`
   ${RoleMember}
   ${Permission}
   ${ServerInvite}
+  ${Event}
+  ${EventAttendee}
 
   union FeedItem = Post | Motion
 
@@ -94,6 +98,7 @@ export const typeDefs = gql`
     profilePictures(userId: ID!): [Image]
     coverPhotoByUserId(userId: ID!): Image
     coverPhotoByGroupId(groupId: ID!): Image
+    coverPhotoByEventId(eventId: ID!): Image
 
     settingsByUserId(userId: ID!): [Setting]!
     settingsByGroupId(groupId: ID!): [Setting]!
@@ -109,6 +114,21 @@ export const typeDefs = gql`
     serverInvite(id: ID!): ServerInvite!
     serverInviteByToken(token: String!): ServerInvite
     allServerInvites: [ServerInvite]
+
+    event(id: ID!): Event!
+    allEvents: [Event]
+    eventFeed(
+      eventId: ID!
+      currentPage: Int!
+      pageSize: Int!
+    ): EventFeedPayload!
+    eventsByGroupId(groupId: ID!, timeFrame: String): [Event]
+    joinedGroupEventsByUserId(
+      userId: ID!
+      timeFrame: String
+      online: Boolean
+    ): [Event]
+    eventAttendees(eventId: ID!): [EventAttendee]
   }
 
   type Mutation {
@@ -120,7 +140,12 @@ export const typeDefs = gql`
     createFollow(userId: ID!, followerId: ID!): FollowPayload!
     deleteFollow(id: ID!): Boolean!
 
-    createPost(userId: ID!, groupId: ID, input: CreatePostInput!): PostPayload!
+    createPost(
+      userId: ID!
+      groupId: ID
+      eventId: ID
+      input: CreatePostInput!
+    ): PostPayload!
     updatePost(id: ID!, input: UpdatePostInput!): PostPayload!
     deletePost(id: ID!): Boolean!
 
@@ -187,5 +212,20 @@ export const typeDefs = gql`
     ): ServerInvitePayload!
     redeemServerInvite(token: String!): ServerInvitePayload
     deleteServerInvite(id: ID!): Boolean!
+
+    createEvent(
+      userId: ID!
+      groupId: ID
+      input: CreateEventInput!
+    ): EventPayload!
+    updateEvent(id: ID!, input: UpdateEventInput!): EventPayload!
+    deleteEvent(id: ID!): Boolean!
+
+    createEventAttendee(
+      eventId: ID!
+      userId: ID!
+      input: CreateEventAttendeeInput!
+    ): EventAttendeePayload!
+    deleteEventAttendee(id: ID!): Boolean!
   }
 `;

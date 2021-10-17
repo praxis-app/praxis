@@ -4,6 +4,7 @@ type Post {
   id: ID!
   userId: ID!
   groupId: ID
+  eventId: ID
   body: String!
   createdAt: String!
   updatedAt: String!

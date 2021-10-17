@@ -2,6 +2,7 @@ export const DEFAULT_ROLE_COLOR = "#f44336";
 export const ADMIN_ROLE_NAME = "admin";
 
 export enum GlobalPermissions {
+  ManageEvents = "manage-events",
   ManageUsers = "manage-users",
   ManagePosts = "manage-posts",
   ManageComments = "manage-comments",
@@ -19,6 +20,8 @@ export enum GroupPermissions {
   KickMembers = "kick-group-members",
   ManageRoles = "manage-group-roles",
   ManageSettings = "manage-group-settings",
+  ManageEvents = "manage-group-events",
+  CreateEvents = "create-group-events",
 }
 
 export const INITIAL_GLOBAL_PERMISSIONS: InitialPermission[] = [
@@ -28,6 +31,7 @@ export const INITIAL_GLOBAL_PERMISSIONS: InitialPermission[] = [
   GlobalPermissions.ManageRoles,
   GlobalPermissions.ManageInvites,
   GlobalPermissions.CreateInvites,
+  GlobalPermissions.ManageEvents,
 ].map((name) => {
   return { name, enabled: false };
 });
@@ -37,6 +41,8 @@ export const INITIAL_GROUP_PERMISSIONS: InitialPermission[] = [
   GroupPermissions.ManageComments,
   GroupPermissions.AcceptMemberRequests,
   GroupPermissions.KickMembers,
+  GroupPermissions.CreateEvents,
+  GroupPermissions.ManageEvents,
   GroupPermissions.ManageRoles,
   GroupPermissions.ManageSettings,
   GroupPermissions.EditGroup,

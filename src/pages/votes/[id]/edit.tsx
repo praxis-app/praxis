@@ -69,8 +69,8 @@ const Edit = () => {
       <CardContent>
         <VotesForm
           vote={vote}
-          onEditPage={true}
           modelOfConsensus={isModelOfConsensus}
+          onEditPage
         />
       </CardContent>
     </Card>

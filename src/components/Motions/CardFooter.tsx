@@ -24,7 +24,7 @@ import { BLURPLE } from "../../styles/Shared/theme";
 import { noCache } from "../../utils/apollo";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
-import ActionButton from "../Shared/ActionButton";
+import CardFooterButton from "../Shared/CardFooterButton";
 import ConsensusMenu from "../Votes/ConsensusMenu";
 import VoteMenu from "../Votes/VoteMenu";
 import VoteChips from "../Votes/Chips";
@@ -53,7 +53,7 @@ const CardFooter = ({
   ratified,
 }: Props) => {
   const currentUser = useCurrentUser();
-  const [totalComments, setTotalComments] = useState<number>(0);
+  const [totalComments, setTotalComments] = useState(0);
   const queryPayload = {
     variables: { motionId },
     ...noCache,
@@ -113,7 +113,7 @@ const CardFooter = ({
 
       <CardActions classes={classes}>
         {ratified && (
-          <ActionButton
+          <CardFooterButton
             href={onMotionPage() ? undefined : motionPagePath}
             onClick={() => {
               if (onMotionPage()) {
@@ -133,11 +133,11 @@ const CardFooter = ({
               }}
             />
             <span style={voteButtonColor}>{Messages.motions.ratified()}</span>
-          </ActionButton>
+          </CardFooterButton>
         )}
 
         {!ratified && (
-          <ActionButton onClick={handleVoteButtonClick}>
+          <CardFooterButton onClick={handleVoteButtonClick}>
             <HowToVote
               color="primary"
               style={{
@@ -146,10 +146,10 @@ const CardFooter = ({
               }}
             />
             <span style={voteButtonColor}>{Messages.votes.actions.vote()}</span>
-          </ActionButton>
+          </CardFooterButton>
         )}
 
-        <ActionButton
+        <CardFooterButton
           href={
             onMotionPage()
               ? undefined
@@ -170,9 +170,9 @@ const CardFooter = ({
             }}
           />
           {Messages.comments.actions.comment()}
-        </ActionButton>
+        </CardFooterButton>
 
-        <ActionButton
+        <CardFooterButton
           onClick={() =>
             toastVar({
               title: Messages.development.notImplemented(),
@@ -188,7 +188,7 @@ const CardFooter = ({
             }}
           />
           {Messages.actions.share()}
-        </ActionButton>
+        </CardFooterButton>
       </CardActions>
 
       {modelOfConsensus ? (

@@ -37,7 +37,7 @@ interface Props {
 }
 
 const ActionFields = ({ actionType, setActionData }: Props) => {
-  const [text, setText] = useState<string>("");
+  const [text, setText] = useState("");
   const [image, setImage] = useState<File>();
   const imagesInput = useRef<HTMLInputElement>(null);
 

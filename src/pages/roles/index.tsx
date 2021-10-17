@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { CircularProgress, Card, Typography, Button } from "@material-ui/core";
+import { CircularProgress, Card, Typography } from "@material-ui/core";
+import { AccountBox } from "@material-ui/icons";
 
 import Role from "../../components/Roles/Role";
 import { GLOBAL_ROLES } from "../../apollo/client/queries";
@@ -10,6 +11,7 @@ import { errorToast, noCache } from "../../utils/clientIndex";
 import Messages from "../../utils/messages";
 import { useCurrentUser, useHasPermissionGlobally } from "../../hooks";
 import { GlobalPermissions } from "../../constants/role";
+import GhostButton from "../../components/Shared/GhostButton";
 
 const Index = () => {
   const currentUser = useCurrentUser();
@@ -42,43 +44,40 @@ const Index = () => {
     return (
       <>
         <Typography gutterBottom>{Messages.roles.noRoles()}</Typography>
-        <Button
+        <GhostButton
           onClick={() =>
             window.confirm(
               Messages.roles.prompts.initializeAdminRoleConfirm()
             ) && initializeAdminRoleHandler()
           }
-          variant="contained"
-          color="primary"
         >
+          <AccountBox style={{ marginRight: 5 }} />
           {Messages.roles.actions.initializeAdminRole()}
-        </Button>
+        </GhostButton>
       </>
     );
 
   if (canManageRolesLoading || rolesRes.loading) return <CircularProgress />;
+  if (!canManageRoles) return <>{Messages.users.permissionDenied()}</>;
 
-  if (canManageRoles)
-    return (
-      <>
-        <Typography variant="h4" gutterBottom>
-          {Messages.roles.serverRoles()}
-        </Typography>
+  return (
+    <>
+      <Typography variant="h4" gutterBottom>
+        {Messages.roles.serverRoles()}
+      </Typography>
 
-        <RoleForm roles={roles} setRoles={setRoles} />
+      <RoleForm roles={roles} setRoles={setRoles} />
 
-        <Card>
-          {roles
-            .slice()
-            .reverse()
-            .map((role: ClientRole) => {
-              return <Role role={role} key={role.id} />;
-            })}
-        </Card>
-      </>
-    );
-
-  return <>{Messages.users.permissionDenied()}</>;
+      <Card>
+        {roles
+          .slice()
+          .reverse()
+          .map((role: ClientRole) => {
+            return <Role role={role} key={role.id} />;
+          })}
+      </Card>
+    </>
+  );
 };
 
 export default Index;

@@ -7,6 +7,7 @@ type Image {
   motionId: ID
   commentId: ID
   groupId: ID
+  eventId: ID
   path: String!
   variety: String
   createdAt: String!

@@ -11,6 +11,11 @@ export const permissionDisplayName = (name: string): string => {
     case GlobalPermissions.ManageComments:
     case GroupPermissions.ManageComments:
       return displayNames.manageComments();
+    case GlobalPermissions.ManageEvents:
+    case GroupPermissions.ManageEvents:
+      return displayNames.manageEvents();
+    case GroupPermissions.CreateEvents:
+      return displayNames.createEvents();
     case GlobalPermissions.ManagePosts:
     case GroupPermissions.ManagePosts:
       return displayNames.managePosts();
@@ -45,6 +50,11 @@ export const permissionDescription = (name: string): string => {
     case GlobalPermissions.ManageComments:
     case GroupPermissions.ManageComments:
       return descriptions.manageComments();
+    case GlobalPermissions.ManageEvents:
+    case GroupPermissions.ManageEvents:
+      return descriptions.manageEvents();
+    case GroupPermissions.CreateEvents:
+      return descriptions.createEvents();
     case GlobalPermissions.ManagePosts:
     case GroupPermissions.ManagePosts:
       return descriptions.managePosts();

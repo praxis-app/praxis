@@ -94,7 +94,7 @@ const ProfileHeader = ({ user, deleteUser }: Props) => {
 
   return (
     <Card>
-      <CoverPhoto path={coverPhoto?.path} />
+      <CoverPhoto path={coverPhoto?.path} aspectRatioMobile={2.75} topRounded />
 
       <CardHeader
         action={
@@ -113,6 +113,7 @@ const ProfileHeader = ({ user, deleteUser }: Props) => {
               deleteItem={deleteUser}
               canEdit={ownUser()}
               canDelete={ownUser() || canManageUsers}
+              buttonStyle={{ marginLeft: 8 }}
             />
           </>
         }

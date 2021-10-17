@@ -9,8 +9,8 @@ import { ResourcePaths } from "../../constants/common";
 import { GroupAspects } from "../../constants/group";
 import { ActionTypes } from "../../constants/motion";
 import muiTheme from "../../styles/Shared/theme";
+import { baseUrl } from "../../utils/clientIndex";
 import Messages from "../../utils/messages";
-import baseUrl from "../../utils/baseUrl";
 import UserName from "../Users/Name";
 import RoleName from "../Roles/Name";
 

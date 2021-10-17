@@ -13,7 +13,6 @@ import {
 } from "@material-ui/core";
 
 import {
-  GROUP,
   IMAGES_BY_MOTION_ID,
   VOTES_BY_MOTION_ID,
 } from "../../apollo/client/queries";
@@ -37,6 +36,7 @@ import {
 } from "../../utils/clientIndex";
 import {
   useCurrentUser,
+  useGroupById,
   useMembersByGroupId,
   useSettingsByGroupId,
   useUserById,
@@ -59,7 +59,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   const { id, userId, groupId, motionGroupId, body, action, stage } = motion;
   const currentUser = useCurrentUser();
   const [user] = useUserById(userId);
-  const [group, setGroup] = useState<ClientGroup>();
+  const [group] = useGroupById(groupId ? groupId : motionGroupId);
   const [groupSettings] = useSettingsByGroupId(group?.id);
   const [groupMembers] = useMembersByGroupId(group?.id);
   const [votes, setVotes] = useState<ClientVote[]>([]);
@@ -67,7 +67,6 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   const [images, setImages] = useState<ClientImage[]>([]);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [getVotesRes, votesRes] = useLazyQuery(VOTES_BY_MOTION_ID, noCache);
-  const [getGroupRes, groupRes] = useLazyQuery(GROUP);
   const imagesRes = useQuery(IMAGES_BY_MOTION_ID, {
     variables: { motionId: id },
     ...noCache,
@@ -94,17 +93,6 @@ const Motion = ({ motion, deleteMotion }: Props) => {
   useEffect(() => {
     if (imagesRes.data) setImages(imagesRes.data.imagesByMotionId);
   }, [imagesRes.data]);
-
-  useEffect(() => {
-    if (groupRes.data) setGroup(groupRes.data.group);
-  }, [groupRes.data]);
-
-  useEffect(() => {
-    if (groupId || motionGroupId)
-      getGroupRes({
-        variables: { id: groupId ? groupId : motionGroupId },
-      });
-  }, [groupId, motionGroupId]);
 
   const ownMotion = (): boolean => {
     if (currentUser && user && currentUser.id === user.id) return true;

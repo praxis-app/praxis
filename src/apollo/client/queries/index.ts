@@ -10,3 +10,4 @@ export * from "./vote";
 export * from "./setting";
 export * from "./role";
 export * from "./serverInvite";
+export * from "./event";

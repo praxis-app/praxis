@@ -9,7 +9,7 @@ import {
   ResourcePaths,
 } from "../../constants/common";
 import Messages from "../../utils/messages";
-import ItemMenu from "../Shared/ItemMenu";
+import ItemMenu, { ItemMenuVariants } from "../Shared/ItemMenu";
 
 interface Props {
   group: ClientGroup;
@@ -18,6 +18,7 @@ interface Props {
   canDelete: boolean;
   canManageSettings: boolean;
   canManageRoles: boolean;
+  variant?: ItemMenuVariants;
 }
 
 const GroupItemMenu = ({
@@ -27,6 +28,7 @@ const GroupItemMenu = ({
   canDelete,
   canManageRoles,
   canManageSettings,
+  variant,
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -40,6 +42,8 @@ const GroupItemMenu = ({
       deleteItem={deleteGroup}
       canEdit={canEdit}
       canDelete={canDelete}
+      variant={variant}
+      buttonStyle={{ marginLeft: 8 }}
     >
       {canManageSettings && (
         <Link href={`${ResourcePaths.Group}${name}${NavigationPaths.Settings}`}>
@@ -48,7 +52,7 @@ const GroupItemMenu = ({
               <Settings
                 fontSize="small"
                 style={{
-                  marginRight: "5",
+                  marginRight: 5,
                 }}
               />
               {Messages.groups.settings.name()}

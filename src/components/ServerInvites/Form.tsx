@@ -28,8 +28,8 @@ interface Props {
 
 const ServerInviteForm = ({ invites, setInvites }: Props) => {
   const currentUser = useCurrentUser();
-  const [maxUses, setMaxUses] = useState<string>("");
-  const [expiresAt, setExpiresAt] = useState<string>("");
+  const [maxUses, setMaxUses] = useState("");
+  const [expiresAt, setExpiresAt] = useState("");
   const [createServerInvite] = useMutation(CREATE_SERVER_INVITE);
 
   const handleSubmit = async (e: any) => {

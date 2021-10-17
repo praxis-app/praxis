@@ -1,23 +1,9 @@
 import { useMutation } from "@apollo/client";
-import {
-  Button as MUIButton,
-  createStyles,
-  withStyles,
-} from "@material-ui/core";
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import { CREATE_FOLLOW, DELETE_FOLLOW } from "../../apollo/client/mutations";
 import styles from "../../styles/Follow/FollowButton.module.scss";
-
-const Button = withStyles(() =>
-  createStyles({
-    root: {
-      fontFamily: "Inter Bold",
-      textTransform: "none",
-      minWidth: 80,
-    },
-  })
-)(MUIButton);
+import GhostButton from "../Shared/GhostButton";
 
 interface Props {
   userId: string;
@@ -70,12 +56,7 @@ const FollowButton = ({ userId, followers, setFollowers }: Props) => {
 
   if (alreadyFollow())
     return (
-      <Button
-        variant="outlined"
-        color="primary"
-        onClick={() => deleteFollowMutation()}
-        disabled={loading}
-      >
+      <GhostButton onClick={() => deleteFollowMutation()} disabled={loading}>
         <div className={styles.deleteButtonInner}>
           <span className={styles.followingText}>
             {Messages.users.following()}
@@ -84,18 +65,13 @@ const FollowButton = ({ userId, followers, setFollowers }: Props) => {
             {Messages.users.actions.unfollow()}
           </span>
         </div>
-      </Button>
+      </GhostButton>
     );
 
   return (
-    <Button
-      variant="outlined"
-      color="primary"
-      onClick={() => createFollowMutation()}
-      disabled={loading}
-    >
+    <GhostButton onClick={() => createFollowMutation()} disabled={loading}>
       {Messages.users.actions.follow()}
-    </Button>
+    </GhostButton>
   );
 };
 

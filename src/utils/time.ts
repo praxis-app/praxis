@@ -1,14 +1,21 @@
+import dayjs from "dayjs";
 import { Time } from "../constants/common";
 import Messages from "./messages";
 
 export const formatDate = (timeStamp: string, withMiddot = true): string => {
   return (
     (withMiddot ? Messages.middotWithSpaces() : "") +
-    new Date(parseInt(timeStamp)).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
+    dayjs(parseInt(timeStamp)).format("MMMM D, YYYY")
+  );
+};
+
+export const formatDateTime = (
+  timeStamp: string,
+  withMiddot = true
+): string => {
+  return (
+    (withMiddot ? Messages.middotWithSpaces() : "") +
+    dayjs(parseInt(timeStamp)).format("dddd, MMMM D, YYYY [at] h:mm a")
   );
 };
 
@@ -45,4 +52,11 @@ const timeMessage = (
     return middot + Messages.time.days(Math.round(timeDifference / Time.Day));
   }
   return formatDate(timeStamp, withMiddot);
+};
+
+export const sameDay = (timeStamp1: string, timeStamp2: string): boolean => {
+  return (
+    dayjs(parseInt(timeStamp1)).format("dddd, MMMM D, YYYY") ===
+    dayjs(parseInt(timeStamp2)).format("dddd, MMMM D, YYYY")
+  );
 };

@@ -30,7 +30,7 @@ const Show = () => {
   const votes = useReactiveVar(votesVar);
   const motion = useReactiveVar(motionVar);
   const [comments, setComments] = useState<ClientComment[]>([]);
-  const [tab, setTab] = useState<number>(0);
+  const [tab, setTab] = useState(0);
   const tabFromGlobal = useReactiveVar(tabVar);
   const [deleteMotion] = useMutation(DELETE_MOTION);
   const [deleteComment] = useMutation(DELETE_COMMENT);

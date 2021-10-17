@@ -2,7 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { ResourcePaths } from "../../constants/common";
-import baseUrl from "../../utils/baseUrl";
+import { baseUrl } from "../../utils/clientIndex";
 import Messages from "../../utils/messages";
 
 interface Props {

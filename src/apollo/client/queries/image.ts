@@ -72,3 +72,13 @@ export const COVER_PHOTO_BY_GROUP_ID = gql`
     }
   }
 `;
+
+export const COVER_PHOTO_BY_EVENT_ID = gql`
+  query ($eventId: ID!) {
+    coverPhotoByEventId(eventId: $eventId) {
+      id
+      eventId
+      path
+    }
+  }
+`;

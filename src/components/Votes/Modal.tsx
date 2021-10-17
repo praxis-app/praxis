@@ -46,7 +46,7 @@ const VotesModal = ({ votes, open, setOpen }: Props) => {
   const [upVotes, downVotes] = useUpDownVotes(votes);
   const thumbUpVotes = [...agreements, ...upVotes];
   const thumbDownVotes = [...standAsides, ...downVotes];
-  const [tab, setTab] = useState<number>(0);
+  const [tab, setTab] = useState(0);
 
   useEffect(() => {
     if (open) setTab(0);

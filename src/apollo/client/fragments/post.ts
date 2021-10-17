@@ -5,6 +5,7 @@ export const FEED_POST = gql`
     id
     userId
     postGroupId: groupId
+    eventId
     body
     createdAt
   }
@@ -15,6 +16,7 @@ export const POST_SUMMARY = gql`
     id
     userId
     groupId
+    eventId
     body
     createdAt
   }

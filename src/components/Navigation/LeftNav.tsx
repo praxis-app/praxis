@@ -11,11 +11,12 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import {
-  SupervisedUserCircle,
-  Link as LinkIcon,
-  AccountBox,
-  Group,
-  Home,
+  Home as HomeIcon,
+  Link as InvitesIcon,
+  Group as GroupsIcon,
+  AccountBox as RolesIcon,
+  EventNote as EventsIcon,
+  SupervisedUserCircle as UsersIcon,
 } from "@material-ui/icons";
 
 import { navKeyVar } from "../../apollo/client/localState";
@@ -93,7 +94,10 @@ const LeftNav = () => {
           <a>
             <ListItem button>
               <ListItemIcon>
-                <Home color="primary" style={makeLarge(NavigationPaths.Home)} />
+                <HomeIcon
+                  color="primary"
+                  style={makeLarge(NavigationPaths.Home)}
+                />
               </ListItemIcon>
               <ListItemText
                 primary={Messages.navigation.home()}
@@ -107,7 +111,7 @@ const LeftNav = () => {
           <a>
             <ListItem button>
               <ListItemIcon>
-                <Group
+                <GroupsIcon
                   style={makeLarge(NavigationPaths.Groups)}
                   color="primary"
                 />
@@ -120,12 +124,29 @@ const LeftNav = () => {
           </a>
         </Link>
 
+        <Link href={NavigationPaths.Events}>
+          <a>
+            <ListItem button>
+              <ListItemIcon>
+                <EventsIcon
+                  style={makeLarge(NavigationPaths.Events)}
+                  color="primary"
+                />
+              </ListItemIcon>
+              <ListItemText
+                primary={Messages.navigation.events()}
+                classes={makeBold(NavigationPaths.Events)}
+              />
+            </ListItem>
+          </a>
+        </Link>
+
         {canManageRoles && (
           <Link href={NavigationPaths.Roles}>
             <a>
               <ListItem button>
                 <ListItemIcon>
-                  <AccountBox
+                  <RolesIcon
                     style={makeLarge(NavigationPaths.Roles)}
                     color="primary"
                   />
@@ -144,7 +165,7 @@ const LeftNav = () => {
             <a>
               <ListItem button>
                 <ListItemIcon>
-                  <SupervisedUserCircle
+                  <UsersIcon
                     style={makeLarge(NavigationPaths.Users)}
                     color="primary"
                   />
@@ -163,7 +184,7 @@ const LeftNav = () => {
             <a>
               <ListItem button>
                 <ListItemIcon>
-                  <LinkIcon
+                  <InvitesIcon
                     color="primary"
                     style={makeLarge(NavigationPaths.Invites)}
                   />

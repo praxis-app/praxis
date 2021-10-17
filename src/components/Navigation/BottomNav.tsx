@@ -2,12 +2,11 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Router, { useRouter } from "next/router";
 import { BottomNavigation, BottomNavigationAction } from "@material-ui/core";
-import { Person, Home, Group, Menu } from "@material-ui/icons";
+import { Home, Group, Menu, EventNote } from "@material-ui/icons";
 import { useReactiveVar } from "@apollo/client";
 
 import { NavigationPaths, ResourcePaths } from "../../constants/common";
 import { navOpenVar } from "../../apollo/client/localState";
-import { useCurrentUser } from "../../hooks";
 import Messages from "../../utils/messages";
 import { scrollTop } from "../../utils/common";
 
@@ -26,10 +25,8 @@ const NavLink = ({ href, icon, text }: NavLinkProps) => {
 };
 
 const BottomNav = () => {
-  const currentUser = useCurrentUser();
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState(0);
   const navDrawerOpen = useReactiveVar(navOpenVar);
-  const userProfilePath = `${ResourcePaths.User}${currentUser?.name}`;
   const { asPath: currentPath } = useRouter();
 
   useEffect(() => {
@@ -38,11 +35,12 @@ const BottomNav = () => {
         case NavigationPaths.Home:
           setValue(0);
           break;
-        case getMatching(ResourcePaths.Group):
-        case NavigationPaths.Groups:
+        case getMatching(ResourcePaths.Event):
+        case NavigationPaths.Events:
           setValue(1);
           break;
-        case userProfilePath:
+        case getMatching(ResourcePaths.Group):
+        case NavigationPaths.Groups:
           setValue(2);
           break;
         default:
@@ -76,16 +74,20 @@ const BottomNav = () => {
       />
 
       <BottomNavigationAction
-        onClick={() => Router.push(NavigationPaths.Groups)}
-        icon={<NavLink href={NavigationPaths.Groups} icon={<Group />} />}
-        label={Messages.navigation.groups()}
+        onClick={() => Router.push(NavigationPaths.Events)}
+        icon={
+          <NavLink
+            href={NavigationPaths.Events}
+            icon={<EventNote style={{ marginBottom: -1 }} />}
+          />
+        }
+        label={Messages.navigation.events()}
       />
 
       <BottomNavigationAction
-        disabled={!currentUser}
-        onClick={() => Router.push(userProfilePath)}
-        icon={<NavLink href={userProfilePath} icon={<Person />} />}
-        label={Messages.navigation.profile()}
+        onClick={() => Router.push(NavigationPaths.Groups)}
+        icon={<NavLink href={NavigationPaths.Groups} icon={<Group />} />}
+        label={Messages.navigation.groups()}
       />
 
       <BottomNavigationAction

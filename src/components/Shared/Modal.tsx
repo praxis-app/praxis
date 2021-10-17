@@ -13,9 +13,8 @@ import {
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import { CircularProgress, Fade } from "@material-ui/core";
-
-import { useIsMobile } from "../../hooks";
 import { BLURPLE } from "../../styles/Shared/theme";
+import { useIsMobile } from "../../hooks";
 
 const Container = withStyles(() =>
   createStyles({
@@ -31,6 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     titleWithCaption: {
       flex: 1,
+      marginLeft: 6,
     },
     appBar: {
       position: "relative",
@@ -96,7 +96,7 @@ const Modal = ({
                 <Typography
                   variant="h6"
                   color="primary"
-                  style={subtext ? { marginTop: 5, marginBottom: -10 } : {}}
+                  style={subtext ? { marginBottom: -10 } : { marginTop: 6 }}
                 >
                   {title}
                 </Typography>

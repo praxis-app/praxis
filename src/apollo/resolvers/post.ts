@@ -5,6 +5,8 @@ import { saveImage, deleteImage, FileUpload } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
 import Messages from "../../utils/messages";
 import { TypeNames } from "../../constants/common";
+import { groupConnect } from "../models/group";
+import { eventConnect } from "../models/event";
 
 interface PostInput {
   body: string;
@@ -77,20 +79,12 @@ const postResolvers = {
       {
         userId,
         groupId,
+        eventId,
         input,
-      }: { userId: string; groupId: string; input: PostInput }
+      }: { userId: string; groupId: string; eventId: string; input: PostInput }
     ) {
       let post: Post;
       const { body, images } = input;
-      const groupConnect = groupId
-        ? {
-            group: {
-              connect: {
-                id: parseInt(groupId),
-              },
-            },
-          }
-        : {};
       try {
         post = await prisma.post.create({
           data: {
@@ -99,7 +93,8 @@ const postResolvers = {
                 id: parseInt(userId),
               },
             },
-            ...groupConnect,
+            ...groupConnect(groupId),
+            ...eventConnect(eventId),
             body,
           },
         });

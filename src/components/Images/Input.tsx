@@ -1,4 +1,5 @@
 import { ChangeEvent, ReactNode, useRef } from "react";
+import { CSSProperties } from "@material-ui/styles";
 import { Image } from "@material-ui/icons";
 import styles from "../../styles/Image/Input.module.scss";
 
@@ -8,6 +9,7 @@ interface Props {
   multiple?: boolean;
   refreshKey?: string;
   children?: ReactNode;
+  style?: CSSProperties;
 }
 
 const ImageInput = ({
@@ -16,6 +18,7 @@ const ImageInput = ({
   multiple,
   refreshKey,
   children,
+  style,
 }: Props) => {
   const imageInput = useRef<HTMLInputElement>(null);
 
@@ -25,7 +28,7 @@ const ImageInput = ({
   };
 
   return (
-    <div className={styles.inputWrapper}>
+    <div className={styles.inputWrapper} style={style}>
       <div
         onClick={() => imageInput.current?.click()}
         role="button"

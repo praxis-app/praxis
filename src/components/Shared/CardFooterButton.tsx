@@ -15,7 +15,7 @@ const useStyles = makeStyles(() =>
   })
 );
 
-const ActionButton = (props: ButtonProps) => {
+const CardFooterButton = (props: ButtonProps) => {
   const classes = useStyles();
 
   return (
@@ -25,4 +25,4 @@ const ActionButton = (props: ButtonProps) => {
   );
 };
 
-export default ActionButton;
+export default CardFooterButton;

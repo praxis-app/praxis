@@ -47,6 +47,7 @@ const en = {
   },
 
   navigation: {
+    events: () => "Events",
     home: () => "Home",
     invites: () => "Invites",
     menu: () => "Menu",
@@ -121,8 +122,9 @@ const en = {
       post: () => "Post",
     },
     form: {
-      bodyPlaceholder: () => "What's happening?",
+      whatsHappening: () => "What's happening?",
       postEmpty: () => "Post cannot be empty.",
+      saySomething: () => "Say something...",
     },
     errors: {
       create: () => "Unable to create post.",
@@ -287,9 +289,10 @@ const en = {
       update: () => "Group could not be edited.",
     },
     tabs: {
-      all: () => "All",
-      posts: () => "Posts",
+      feed: () => "Feed",
       motions: () => "Motions",
+      events: () => "Events",
+      about: () => "About",
     },
     breadcrumbs: {
       about: () => "About",
@@ -389,11 +392,13 @@ const en = {
     permissions: {
       names: {
         acceptMemberRequests: () => "Approve Member Requests",
+        createEvents: () => "Create Events",
         createInvites: () => "Create Invites",
         deleteGroup: () => "Delete Group",
         editGroup: () => "Edit Group",
         kickGroupMembers: () => "Kick Members",
         manageUsers: () => "Manage Members",
+        manageEvents: () => "Manage Events",
         managePosts: () => "Manage Posts",
         manageComments: () => "Manage Comments",
         manageInvites: () => "Manage Invites",
@@ -404,9 +409,12 @@ const en = {
         editGroup: () =>
           "Allows members to edit the group's name, description, and cover photo.",
         deleteGroup: () => "Allows members to permanently delete this group.",
+        createEvents: () => "Allows members to create and plan events.",
+        manageEvents: () =>
+          "Allows members to remove events created by other members.",
         managePosts: () => "Allows members to delete posts by other members.",
         manageComments: () =>
-          "Allows members to delete comments by other members.",
+          "Allows members to remove comments by other members.",
         manageRoles: () =>
           "Allows members to create new roles and edit or delete roles lower than their highest role.",
         manageGroupSettings: () =>
@@ -475,6 +483,59 @@ const en = {
     copiedToClipboard: () => "Copied to clipboard",
   },
 
+  events: {
+    actions: {
+      create: () => "Create Event",
+    },
+    prompts: {
+      noUpcoming: () => "No upcoming events.",
+      noneThisWeek: () => "No events happening this week.",
+      noneOnline: () => "No online events.",
+      noPast: () => "No past events.",
+    },
+    form: {
+      description: () => "Description",
+      endsAt: () => "End Date and Time",
+      externalLink: () => "External Link",
+      http: () => "http://",
+      includeAddress: () => "Include a place or address",
+      location: () => "Location",
+      name: () => "Name",
+      onlineSubtext: () => "Plan a virtual event",
+      startsAt: () => "Start Date and Time",
+    },
+    errors: {
+      create: () => "Unable to create event.",
+      update: () => "Event could not be updated.",
+    },
+    breadcrumbs: {
+      editEvent: () => "Edit Event",
+      event: () => "Event",
+    },
+    timeFrames: {
+      past: () => "Past Events",
+      future: () => "Upcoming Events",
+    },
+    attendance: {
+      going: () => "Going",
+      interested: () => "Interested",
+    },
+    online: {
+      online: () => "Online",
+      onlineEvent: () => "Online Event",
+    },
+    tabs: {
+      about: () => "About",
+      discussion: () => "Discussion",
+      upcoming: () => "Upcoming",
+      thisWeek: () => "This Week",
+      past: () => "Past",
+    },
+    by: () => "Event by ",
+    discover: () => "Discover Events",
+    whatToExpect: () => "What To Expect",
+  },
+
   images: {
     couldNotRender: () => "Data could not render.",
   },
@@ -489,6 +550,8 @@ const en = {
 
   time: {
     now: () => "now",
+    hr: () => "hr",
+    min: () => "min",
     minutes: (minutes: number) => `${minutes}m`,
     hours: (hours: number) => `${hours}h`,
     days: (days: number) => `${days}d`,
