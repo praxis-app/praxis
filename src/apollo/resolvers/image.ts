@@ -1,14 +1,8 @@
-import { Image } from ".prisma/client";
 import { GraphQLUpload } from "apollo-server-micro";
 import { ImageVariety } from "../../constants/image";
 import { deleteImage } from "../../utils/image";
 import prisma from "../../utils/initPrisma";
-
-const lastImage = async (images: Image[]): Promise<Image> => {
-  return images.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())[
-    images.length - 1
-  ];
-};
+import { sortByNewest } from "../models/common";
 
 const imageResolvers = {
   FileUpload: GraphQLUpload,
@@ -52,7 +46,7 @@ const imageResolvers = {
           variety: ImageVariety.ProfilePicture,
         },
       });
-      return lastImage(profilePictures);
+      return sortByNewest(profilePictures)[0];
     },
 
     coverPhotoByUserId: async (_: any, { userId }: { userId: string }) => {
@@ -62,7 +56,7 @@ const imageResolvers = {
           variety: ImageVariety.CoverPhoto,
         },
       });
-      return lastImage(coverPhotos);
+      return sortByNewest(coverPhotos)[0];
     },
 
     coverPhotoByGroupId: async (_: any, { groupId }: { groupId: string }) => {
@@ -72,7 +66,17 @@ const imageResolvers = {
           variety: ImageVariety.CoverPhoto,
         },
       });
-      return lastImage(coverPhotos);
+      return sortByNewest(coverPhotos)[0];
+    },
+
+    coverPhotoByEventId: async (_: any, { eventId }: { eventId: string }) => {
+      const coverPhotos = await prisma.image.findMany({
+        where: {
+          eventId: parseInt(eventId),
+          variety: ImageVariety.CoverPhoto,
+        },
+      });
+      return sortByNewest(coverPhotos)[0];
     },
   },
 

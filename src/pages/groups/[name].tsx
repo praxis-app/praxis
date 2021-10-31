@@ -1,13 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import Router, { useRouter } from "next/router";
-import {
-  Tab,
-  Tabs,
-  Card,
-  CircularProgress,
-  Typography,
-} from "@material-ui/core";
+import { Card, LinearProgress, Typography } from "@material-ui/core";
 
 import Feed from "../../components/Shared/Feed";
 import MotionsFormWithCard from "../../components/Motions/FormWithCard";
@@ -20,7 +14,7 @@ import {
   DELETE_MOTION,
 } from "../../apollo/client/mutations";
 import { feedVar, paginationVar } from "../../apollo/client/localState";
-import { ModelNames, TypeNames } from "../../constants/common";
+import { ModelNames, NavigationPaths, TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
 import { noCache } from "../../utils/apollo";
 import {
@@ -29,8 +23,9 @@ import {
   useMembersByGroupId,
 } from "../../hooks";
 import { resetFeed } from "../../utils/items";
-import PostsFormWithCard from "../../components/Posts/FormWithCard";
 import GroupPageHeader from "../../components/Groups/PageHeader";
+import AboutTab from "../../components/Groups/About";
+import EventsTab from "../../components/Groups/EventsTab";
 
 const Show = () => {
   const {
@@ -39,7 +34,7 @@ const Show = () => {
   const currentUser = useCurrentUser();
   const feed = useReactiveVar(feedVar);
   const { currentPage, pageSize } = useReactiveVar(paginationVar);
-  const [tab, setTab] = useState<number>(0);
+  const [tab, setTab] = useState(0);
   const [group, _, groupLoading] = useGroupByName(name);
   const [groupMembers] = useMembersByGroupId(group?.id);
   const [getFeedRes, feedRes] = useLazyQuery(GROUP_FEED, noCache);
@@ -49,9 +44,7 @@ const Show = () => {
 
   useEffect(() => {
     if (name) {
-      let itemType = "";
-      if (tab === 1) itemType = ModelNames.Motion;
-      else if (tab === 2) itemType = ModelNames.Post;
+      const itemType = tab === 1 ? ModelNames.Motion : "";
 
       feedVar({
         ...feed,
@@ -91,7 +84,7 @@ const Show = () => {
         id: groupId,
       },
     });
-    Router.push("/groups");
+    Router.push(NavigationPaths.Groups);
   };
 
   const deletePostHandler = async (id: string) => {
@@ -133,44 +126,44 @@ const Show = () => {
     );
   };
 
-  if (groupLoading) return <CircularProgress />;
+  if (groupLoading)
+    return (
+      <Card>
+        <LinearProgress />
+      </Card>
+    );
 
   if (!group)
     return <Typography>{Messages.items.notFound(TypeNames.Group)}</Typography>;
 
   return (
     <>
-      <GroupPageHeader group={group} deleteGroup={deleteGroupHandler} />
-
-      <Card>
-        <Tabs
-          value={tab}
-          onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
-            setTab(newValue)
-          }
-          textColor="inherit"
-          centered
-        >
-          <Tab label={Messages.groups.tabs.all()} />
-          <Tab label={Messages.groups.tabs.motions()} />
-          <Tab label={Messages.groups.tabs.posts()} />
-        </Tabs>
-      </Card>
+      <GroupPageHeader
+        group={group}
+        deleteGroup={deleteGroupHandler}
+        setTab={setTab}
+        tab={tab}
+      />
 
       {inThisGroup() && (
         <>
           {tab === 0 && <ToggleForms group={group} />}
           {tab === 1 && <MotionsFormWithCard group={group} withoutToggle />}
-          {tab === 2 && <PostsFormWithCard group={group} withoutToggle />}
         </>
       )}
 
-      <Pagination>
-        <Feed
-          deleteMotion={deleteMotionHandler}
-          deletePost={deletePostHandler}
-        />
-      </Pagination>
+      {tab <= 1 && (
+        <Pagination>
+          <Feed
+            deleteMotion={deleteMotionHandler}
+            deletePost={deletePostHandler}
+          />
+        </Pagination>
+      )}
+
+      {tab === 2 && <EventsTab group={group} />}
+
+      {tab === 3 && <AboutTab group={group} />}
     </>
   );
 };

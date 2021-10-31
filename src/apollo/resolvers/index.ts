@@ -13,6 +13,8 @@ import roleResolvers from "./role";
 import roleMemberResolvers from "./roleMember";
 import permissionResolvers from "./permission";
 import serverInviteResolvers from "./serverInvite";
+import eventResolvers from "./event";
+import eventAttendeeResolvers from "./eventAttendee";
 
 export const resolvers = {
   Query: {
@@ -31,6 +33,8 @@ export const resolvers = {
     ...roleMemberResolvers.Query,
     ...permissionResolvers.Query,
     ...serverInviteResolvers.Query,
+    ...eventResolvers.Query,
+    ...eventAttendeeResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
@@ -48,5 +52,7 @@ export const resolvers = {
     ...roleMemberResolvers.Mutation,
     ...permissionResolvers.Mutation,
     ...serverInviteResolvers.Mutation,
+    ...eventResolvers.Mutation,
+    ...eventAttendeeResolvers.Mutation,
   },
 };

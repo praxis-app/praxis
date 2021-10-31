@@ -46,7 +46,7 @@ interface Props {
 const GroupForm = ({ group, isEditing }: Props) => {
   const currentUser = useCurrentUser();
   const [coverPhoto, setCoverPhoto] = useState<File>();
-  const [imageInputKey, setImageInputKey] = useState<string>("");
+  const [imageInputKey, setImageInputKey] = useState("");
 
   const [createGroup] = useMutation(CREATE_GROUP);
   const [updateGroup] = useMutation(UPDATE_GROUP);
@@ -148,12 +148,11 @@ const GroupForm = ({ group, isEditing }: Props) => {
                 )}
 
                 <CardActions>
-                  <div style={{ display: "flex", marginTop: -12 }}>
-                    <ImageInput
-                      setImage={setCoverPhoto}
-                      refreshKey={imageInputKey}
-                    />
-                  </div>
+                  <ImageInput
+                    setImage={setCoverPhoto}
+                    refreshKey={imageInputKey}
+                    style={{ marginTop: -12 }}
+                  />
 
                   <SubmitButton
                     disabled={isSubmitButtonDisabled(formik)}

@@ -72,7 +72,7 @@ const Edit = () => {
   if (!ownMotion()) return <>{Messages.users.permissionDenied()}</>;
   if (votes.length) return <>{Messages.motions.prompts.noEditAfterVoting()}</>;
 
-  return <MotionsFormWithCard motion={motion} isEditing={true} withoutToggle />;
+  return <MotionsFormWithCard motion={motion} isEditing withoutToggle />;
 };
 
 export default Edit;

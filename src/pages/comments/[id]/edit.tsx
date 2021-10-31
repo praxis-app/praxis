@@ -58,7 +58,7 @@ const Edit = () => {
     return (
       <Card>
         <CardContent style={{ marginTop: 12 }}>
-          <CommentForm comment={comment} isEditing={true} />
+          <CommentForm comment={comment} isEditing />
         </CardContent>
       </Card>
     );

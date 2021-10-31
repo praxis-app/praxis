@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { CREATE_LIKE, DELETE_LIKE } from "../../apollo/client/mutations";
 import { useCurrentUser } from "../../hooks";
 import Messages from "../../utils/messages";
-import ActionButton from "../Shared/ActionButton";
+import CardFooterButton from "../Shared/CardFooterButton";
 import styles from "../../styles/Like/LikeButton.module.scss";
 import { BLURPLE } from "../../styles/Shared/theme";
 
@@ -17,7 +17,7 @@ interface Props {
   setLikes: (likes: ClientLike[]) => void;
 }
 
-const ActionLikeButton = ({
+const CardFooterLikeButton = ({
   postId,
   motionId,
   commentId,
@@ -63,7 +63,7 @@ const ActionLikeButton = ({
   };
 
   return (
-    <ActionButton
+    <CardFooterButton
       onClick={() =>
         alreadyLike() ? deleteLikeMutation() : createLikeMutation()
       }
@@ -84,8 +84,8 @@ const ActionLikeButton = ({
       >
         {Messages.actions.like()}
       </span>
-    </ActionButton>
+    </CardFooterButton>
   );
 };
 
-export default ActionLikeButton;
+export default CardFooterLikeButton;

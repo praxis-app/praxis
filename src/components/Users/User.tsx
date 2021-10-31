@@ -7,7 +7,7 @@ import {
   Card,
   CardHeader,
   CardContent as MUICardContent,
-  CardActions,
+  CardActions as MUICardActions,
 } from "@material-ui/core";
 
 import FollowButton from "../Follows/FollowButton";
@@ -52,6 +52,16 @@ const CardContent = withStyles(() =>
     },
   })
 )(MUICardContent);
+
+const CardActions = withStyles(() =>
+  createStyles({
+    root: {
+      marginBottom: 6,
+      paddingTop: 0,
+      paddingLeft: 15,
+    },
+  })
+)(MUICardActions);
 
 interface Props {
   user: ClientUser;
@@ -126,7 +136,7 @@ const Show = ({ user, deleteUser }: Props) => {
       </CardContent>
 
       {currentUser && !ownUser() && (
-        <CardActions style={{ marginBottom: 6, paddingTop: 0 }}>
+        <CardActions>
           <FollowButton
             userId={id}
             followers={followers}

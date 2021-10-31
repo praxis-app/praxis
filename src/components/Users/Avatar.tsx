@@ -11,9 +11,8 @@ import {
 } from "@material-ui/core";
 import { CSSProperties } from "@material-ui/styles";
 
-import baseUrl from "../../utils/baseUrl";
+import { baseUrl, noCache } from "../../utils/clientIndex";
 import { PROFILE_PICTURE } from "../../apollo/client/queries";
-import { noCache } from "../../utils/apollo";
 import { ResourcePaths } from "../../constants/common";
 import { BLACK, BLURPLE, WHITE } from "../../styles/Shared/theme";
 

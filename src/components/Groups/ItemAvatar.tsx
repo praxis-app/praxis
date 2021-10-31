@@ -1,12 +1,12 @@
 import Link from "next/link";
 import UserAvatar from "../Users/Avatar";
 import GroupAvatar from "./Avatar";
-import styles from "../../styles/Group/ItemAvatar.module.scss";
+import styles from "../../styles/User/ItemAvatar.module.scss";
 import { ResourcePaths } from "../../constants/common";
 import { timeAgo } from "../../utils/time";
 
 interface Props {
-  user: ClientUser;
+  user: ClientUser | undefined;
   group: ClientGroup;
   motion?: ClientMotion;
   post?: ClientPost;
@@ -25,31 +25,27 @@ const GroupItemAvatar = ({ user, group, motion, post }: Props) => {
     return "";
   };
 
-  if (user && group)
-    return (
-      <div className={styles.avatar}>
-        <div className={styles.avatarLinks}>
-          <GroupAvatar group={group} />
-          {user && (
-            <div className={styles.avatarSmall}>
-              <UserAvatar user={user} />
-            </div>
-          )}
-        </div>
-        <div className={styles.groupPostLinks}>
-          <Link href={`${ResourcePaths.Group}${group.name}`}>
-            <a className={styles.groupNameLink}>{group.name}</a>
-          </Link>
-          <Link href={itemHref()}>
-            <a className={styles.postByLink}>
-              {user.name}
-              {timeAgo(createdAt())}
-            </a>
-          </Link>
+  return (
+    <div className={styles.avatar}>
+      <div className={styles.avatarLinks}>
+        <GroupAvatar group={group} />
+        <div className={styles.avatarSmall}>
+          <UserAvatar user={user} />
         </div>
       </div>
-    );
-  return null;
+      <div className={styles.parentItemLinks}>
+        <Link href={`${ResourcePaths.Group}${group.name}`}>
+          <a className={styles.parentNameLink}>{group.name}</a>
+        </Link>
+        <Link href={itemHref()}>
+          <a className={styles.postByLink}>
+            {user?.name}
+            {timeAgo(createdAt())}
+          </a>
+        </Link>
+      </div>
+    </div>
+  );
 };
 
 export default GroupItemAvatar;

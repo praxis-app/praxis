@@ -7,10 +7,14 @@ import {
   INITIAL_GLOBAL_PERMISSIONS,
   INITIAL_GROUP_PERMISSIONS,
 } from "../../constants/role";
-import { initializePermissions } from "../models/role";
+import {
+  initializePermissions,
+  syncWithNewRolePermissions,
+} from "../models/role";
 import { TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
 import { Role } from ".prisma/client";
+import { groupConnect } from "../models/group";
 
 interface RoleInput {
   name: string;
@@ -36,6 +40,9 @@ const roleResolvers = {
     },
 
     globalRoles: async () => {
+      // TODO: Comment out the line below after refreshing on /roles to update all roles with new permissions
+      syncWithNewRolePermissions();
+
       const roles = await prisma.role.findMany({
         where: { global: true },
       });
@@ -57,24 +64,15 @@ const roleResolvers = {
       }
     ) {
       const { name, color } = input;
-      const groupConnect = groupId
-        ? {
-            group: {
-              connect: {
-                id: parseInt(groupId),
-              },
-            },
-          }
-        : undefined;
       let role: Role;
 
       try {
         role = await prisma.role.create({
           data: {
-            ...groupConnect,
             name,
             color,
             global,
+            ...groupConnect(groupId),
           },
         });
       } catch {

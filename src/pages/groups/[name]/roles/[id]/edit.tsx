@@ -2,12 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import Router, { useRouter } from "next/router";
 import {
-  Button,
   Card,
-  CircularProgress,
   Tab,
   Tabs,
   Typography,
+  CircularProgress,
 } from "@material-ui/core";
 
 import { ROLE } from "../../../../../apollo/client/queries";
@@ -32,6 +31,7 @@ import {
 import PermissionsForm from "../../../../../components/Permissions/Form";
 import AddMemberTab from "../../../../../components/Roles/AddMemberTab";
 import { breadcrumbsVar } from "../../../../../apollo/client/localState";
+import DeleteButton from "../../../../../components/Shared/DeleteButton";
 
 const EditGroupRolePage = () => {
   const { query } = useRouter();
@@ -40,8 +40,8 @@ const EditGroupRolePage = () => {
   const [unsavedPermissions, setUnsavedPermissions] = useState<
     ClientPermission[]
   >([]);
-  const [tab, setTab] = useState<number>(0);
-  const [canManageRolesDep, setCanManageRolesDep] = useState<string>("");
+  const [tab, setTab] = useState(0);
+  const [canManageRolesDep, setCanManageRolesDep] = useState("");
   const [getRoleRes, roleRes] = useLazyQuery(ROLE, noCache);
   const [deleteRole] = useMutation(DELETE_ROLE);
   const [members, setMembers, membersLoading] = useMembersByRoleId(query.id);
@@ -132,22 +132,16 @@ const EditGroupRolePage = () => {
 
       {tab === 0 && (
         <>
-          <RoleForm role={role} setRole={setRole} isEditing={true} />
+          <RoleForm role={role} setRole={setRole} isEditing />
 
-          <Button
+          <DeleteButton
             onClick={() =>
               window.confirm(Messages.prompts.deleteItem(ModelNames.Role)) &&
               deleteRoleHandler(role.id)
             }
-            className={styles.deleteButton}
-            style={{
-              color: "tomato",
-              backgroundColor: "rgb(55, 55, 55)",
-            }}
-            variant="text"
           >
             {Messages.actions.deleteItem(TypeNames.Role)}
-          </Button>
+          </DeleteButton>
         </>
       )}
 

@@ -5,8 +5,7 @@ import prisma from "../../utils/initPrisma";
 import { deleteImage, FileUpload } from "../../utils/image";
 import { ModelNames, TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
-import { paginate } from "../../utils/items";
-import { BackendFeedItem } from "../models/common";
+import { BackendFeedItem, paginate, sortByNewest } from "../models/common";
 import { initializeGroupAdminRole } from "../models/role";
 import { initializeGroupSettings } from "../models/setting";
 import { saveGroupCoverPhoto } from "../models/group";
@@ -64,11 +63,7 @@ const groupResolvers = {
         feed.push(...(motionsWithType as Motion[]));
 
       return {
-        pagedItems: paginate(
-          feed.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime()),
-          currentPage,
-          pageSize
-        ),
+        pagedItems: paginate(feed, currentPage, pageSize),
         totalItems: feed.length,
       };
     },
@@ -93,9 +88,7 @@ const groupResolvers = {
 
     allGroups: async () => {
       const groups = await prisma.group.findMany();
-      return groups.sort(
-        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
-      );
+      return sortByNewest(groups);
     },
 
     joinedGroupsByUserId: async (_: any, { userId }: { userId: string }) => {

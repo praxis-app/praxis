@@ -5,6 +5,7 @@ const defaultTheme = createTheme();
 export const BLURPLE = "#7289DA";
 export const BLACK = defaultTheme.palette.grey[900];
 export const WHITE = defaultTheme.palette.grey[100];
+export const PRIMARY_MAIN = defaultTheme.palette.grey[400];
 
 export const BLURPLE_BUTTON_COLORS = {
   backgroundColor: BLURPLE,
@@ -23,19 +24,19 @@ const globalTheme = createTheme({
 
   palette: {
     primary: {
-      main: defaultTheme.palette.grey[400],
+      main: PRIMARY_MAIN,
       dark: defaultTheme.palette.grey[500],
       contrastText: defaultTheme.palette.grey[100],
     },
     secondary: {
       main: defaultTheme.palette.grey[700],
+      dark: "rgb(55, 55, 55)",
     },
     background: {
       paper: defaultTheme.palette.grey[800],
     },
     action: {
       disabled: defaultTheme.palette.grey[500],
-      disabledBackground: "#4C5B91",
     },
   },
 
@@ -70,6 +71,10 @@ const muiTheme = createTheme({
       },
       h6: {
         marginBottom: 6,
+      },
+      overline: {
+        fontSize: "0.85rem",
+        lineHeight: 1.8,
       },
       gutterBottom: {
         marginBottom: 24,

@@ -1,9 +1,11 @@
 export const EXPIRES_IN = "90d";
 export const SCROLL_DURATION = 350;
+export const TAB_QUERY_PARAM = "?tab=";
 
 export enum TypeNames {
   Comment = "Comment",
   CurrentUser = "CurrentUser",
+  Event = "Event",
   FeedItem = "FeedItem",
   Follow = "Follow",
   Group = "Group",
@@ -21,6 +23,7 @@ export enum TypeNames {
 
 export enum ModelNames {
   Comment = "comment",
+  Event = "event",
   Follow = "follow",
   Group = "group",
   Image = "image",
@@ -34,6 +37,7 @@ export enum ModelNames {
 }
 
 export enum ResourcePaths {
+  Event = "/events/",
   Post = "/posts/",
   Motion = "/motions/",
   Group = "/groups/",
@@ -43,6 +47,7 @@ export enum ResourcePaths {
 
 export enum NavigationPaths {
   About = "/about",
+  Events = "/events",
   Edit = "/edit",
   Followers = "/followers",
   Following = "/following",

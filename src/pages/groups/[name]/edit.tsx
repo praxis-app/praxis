@@ -58,7 +58,7 @@ const Edit = () => {
   if (currentUser && isNoAdmin()) return <>{Messages.groups.setToNoAdmin()}</>;
   if (!canEditGroup) return <>{Messages.users.permissionDenied()}</>;
 
-  return <GroupForm group={group} isEditing={true} />;
+  return <GroupForm group={group} isEditing />;
 };
 
 export default Edit;

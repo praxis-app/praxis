@@ -1,7 +1,30 @@
 import { useState, useEffect } from "react";
 import { useLazyQuery } from "@apollo/client";
-import { GROUP_BY_NAME, GROUP_MEMBERS } from "../apollo/client/queries";
+import { GROUP, GROUP_BY_NAME, GROUP_MEMBERS } from "../apollo/client/queries";
 import { noCache } from "../utils/apollo";
+
+export const useGroupById = (
+  id: string | string[] | undefined,
+  callDep?: any
+): [ClientGroup | undefined, (group: ClientGroup) => void, boolean] => {
+  const [group, setGroup] = useState<ClientGroup>();
+  const [getGroupRes, groupRes] = useLazyQuery(GROUP, noCache);
+
+  useEffect(() => {
+    if (id)
+      getGroupRes({
+        variables: {
+          id,
+        },
+      });
+  }, [id, JSON.stringify(callDep)]);
+
+  useEffect(() => {
+    if (groupRes.data) setGroup(groupRes.data.group);
+  }, [groupRes.data]);
+
+  return [group, setGroup, groupRes.loading];
+};
 
 export const useGroupByName = (
   name: string | string[] | undefined,

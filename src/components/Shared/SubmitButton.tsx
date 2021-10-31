@@ -1,29 +1,15 @@
-import {
-  Button as MUIButton,
-  ButtonProps,
-  createStyles,
-  withStyles,
-} from "@material-ui/core";
-import { BLURPLE_BUTTON_COLORS } from "../../styles/Shared/theme";
+import { ButtonProps, makeStyles } from "@material-ui/core";
 import Messages from "../../utils/messages";
+import PrimaryActionButton from "./PrimaryActionButton";
 
-const Button = withStyles(() =>
-  createStyles({
-    root: {
-      fontFamily: "Inter Bold",
-      textTransform: "none",
-      minWidth: 80,
-
-      ...BLURPLE_BUTTON_COLORS,
-    },
-  })
-)(MUIButton);
+const useStyles = makeStyles({ root: { borderRadius: 9999 } });
 
 const SubmitButton = (props: ButtonProps) => {
+  const classes = useStyles();
   return (
-    <Button type="submit" variant="contained" color="primary" {...props}>
+    <PrimaryActionButton type="submit" classes={classes} {...props}>
       {props.children ? props.children : Messages.actions.submit()}
-    </Button>
+    </PrimaryActionButton>
   );
 };
 

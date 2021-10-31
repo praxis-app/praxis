@@ -1,6 +1,6 @@
 import { generateRandom } from "../../utils/common";
 import prisma from "../../utils/initPrisma";
-import ServerInvite from "../models/serverInvite";
+import { removeExpired, timeDifference } from "../models/serverInvite";
 
 interface ServerInviteInput {
   maxUses?: number;
@@ -10,7 +10,7 @@ interface ServerInviteInput {
 const serverInviteResolvers = {
   Query: {
     serverInvite: async (_: any, { id }: { id: string }) => {
-      await ServerInvite.removeExpired();
+      await removeExpired();
       const serverInvite = await prisma.serverInvite.findFirst({
         where: {
           id: parseInt(id),
@@ -29,7 +29,7 @@ const serverInviteResolvers = {
     },
 
     allServerInvites: async () => {
-      const serverInvites = await ServerInvite.removeExpired();
+      const serverInvites = await removeExpired();
       if (serverInvites.length === 0) {
         const firstInvite = await prisma.serverInvite.create({
           data: {
@@ -68,7 +68,7 @@ const serverInviteResolvers = {
           },
           token,
           maxUses,
-          ...ServerInvite.timeDifference(expiresAt),
+          ...timeDifference(expiresAt),
         },
       });
       return { serverInvite };
@@ -82,7 +82,7 @@ const serverInviteResolvers = {
         token: string;
       }
     ) {
-      await ServerInvite.removeExpired();
+      await removeExpired();
       const whereToken = {
         where: {
           token,

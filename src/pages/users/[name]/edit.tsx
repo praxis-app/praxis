@@ -55,7 +55,7 @@ const Edit = () => {
   if (userRes.loading) return <CircularProgress />;
   if (!ownUser()) return <>{Messages.users.permissionDenied()}</>;
 
-  return <UserForm user={user} isEditing={true} />;
+  return <UserForm user={user} isEditing />;
 };
 
 export default Edit;

@@ -1,23 +1,22 @@
 import { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { Card, LinearProgress, Typography } from "@material-ui/core";
+import { CircularProgress, Typography } from "@material-ui/core";
 
 import Group from "../../components/Groups/Group";
 import { GROUPS } from "../../apollo/client/queries";
 import { DELETE_GROUP } from "../../apollo/client/mutations";
 import GroupForm from "../../components/Groups/Form";
+import { noCache } from "../../utils/clientIndex";
 import Messages from "../../utils/messages";
 
 const Index = () => {
-  const [groups, setGroups] = useState<ClientGroup[]>();
+  const [groups, setGroups] = useState<ClientGroup[]>([]);
   const [deleteGroup] = useMutation(DELETE_GROUP);
-  const { data } = useQuery(GROUPS, {
-    fetchPolicy: "no-cache",
-  });
+  const groupsRes = useQuery(GROUPS, noCache);
 
   useEffect(() => {
-    if (data) setGroups(data.allGroups);
-  }, [data]);
+    if (groupsRes.data) setGroups(groupsRes.data.allGroups);
+  }, [groupsRes.data]);
 
   const deleteGroupHandler = async (groupId: string) => {
     await deleteGroup({
@@ -29,6 +28,8 @@ const Index = () => {
       setGroups(groups.filter((group: ClientGroup) => group.id !== groupId));
   };
 
+  if (groupsRes.loading) return <CircularProgress />;
+
   return (
     <>
       <Typography variant="h4" gutterBottom>
@@ -37,24 +38,15 @@ const Index = () => {
 
       <GroupForm />
 
-      {groups ? (
-        groups
-          .slice()
-          .reverse()
-          .map((group: ClientGroup) => {
-            return (
-              <Group
-                group={group}
-                deleteGroup={deleteGroupHandler}
-                key={group.id}
-              />
-            );
-          })
-      ) : (
-        <Card>
-          <LinearProgress />
-        </Card>
-      )}
+      {groups.map((group: ClientGroup) => {
+        return (
+          <Group
+            group={group}
+            deleteGroup={deleteGroupHandler}
+            key={group.id}
+          />
+        );
+      })}
     </>
   );
 };

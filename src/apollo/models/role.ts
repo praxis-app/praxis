@@ -2,7 +2,9 @@ import { Role, Group } from "@prisma/client";
 import {
   ADMIN_ROLE_NAME,
   DEFAULT_ROLE_COLOR,
+  INITIAL_GLOBAL_PERMISSIONS,
   INITIAL_GROUP_ADMIN_PERMISSIONS,
+  INITIAL_GROUP_PERMISSIONS,
 } from "../../constants/role";
 import prisma from "../../utils/initPrisma";
 
@@ -51,4 +53,39 @@ export const initializeGroupAdminRole = async (group: Group) => {
       },
     },
   });
+};
+
+export const syncWithNewRolePermissions = async () => {
+  for (const global of [true, false]) {
+    const roles = await prisma.role.findMany({
+      where: {
+        global,
+      },
+      include: {
+        permissions: true,
+      },
+    });
+    for (const role of roles) {
+      for (const initialPermission of global
+        ? INITIAL_GLOBAL_PERMISSIONS
+        : INITIAL_GROUP_PERMISSIONS) {
+        if (
+          !role.permissions.find(
+            (rolePermission) => rolePermission.name === initialPermission.name
+          )
+        ) {
+          await prisma.permission.create({
+            data: {
+              ...initialPermission,
+              role: {
+                connect: {
+                  id: role.id,
+                },
+              },
+            },
+          });
+        }
+      }
+    }
+  }
 };

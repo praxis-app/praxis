@@ -12,3 +12,4 @@ export * from "./setting";
 export * from "./role";
 export * from "./roleMember";
 export * from "./serverInvite";
+export * from "./event";

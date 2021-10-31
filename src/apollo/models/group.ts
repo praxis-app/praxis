@@ -7,6 +7,18 @@ import {
 } from "../../utils/image";
 import { ImageVariety } from "../../constants/image";
 
+export const groupConnect = (groupId: string | number) => {
+  if (groupId)
+    return {
+      group: {
+        connect: {
+          id: Number(groupId),
+        },
+      },
+    };
+  return undefined;
+};
+
 export const saveGroupCoverPhoto = async (
   group: Group,
   image?: FileUpload,

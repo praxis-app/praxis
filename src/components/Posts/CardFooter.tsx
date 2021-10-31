@@ -24,8 +24,8 @@ import {
 import styles from "../../styles/Shared/CardFooter.module.scss";
 import { noCache } from "../../utils/apollo";
 import Messages from "../../utils/messages";
-import ActionButton from "../Shared/ActionButton";
-import ActionLikeButton from "../Likes/ActionLikeButton";
+import CardFooterButton from "../Shared/CardFooterButton";
+import CardFooterLikeButton from "../Likes/ActionLikeButton";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -44,7 +44,7 @@ interface Props {
 
 const CardFooter = ({ postId }: Props) => {
   const [likes, setLikes] = useState<ClientLike[]>([]);
-  const [totalComments, setTotalComments] = useState<number>(0);
+  const [totalComments, setTotalComments] = useState(0);
   const queryPayload = {
     variables: { postId },
     ...noCache,
@@ -103,9 +103,13 @@ const CardFooter = ({ postId }: Props) => {
       <Divider variant="middle" />
 
       <CardActions classes={classes}>
-        <ActionLikeButton postId={postId} likes={likes} setLikes={setLikes} />
+        <CardFooterLikeButton
+          postId={postId}
+          likes={likes}
+          setLikes={setLikes}
+        />
 
-        <ActionButton
+        <CardFooterButton
           href={
             onPostPage()
               ? undefined
@@ -123,9 +127,9 @@ const CardFooter = ({ postId }: Props) => {
             }}
           />
           {Messages.comments.actions.comment()}
-        </ActionButton>
+        </CardFooterButton>
 
-        <ActionButton
+        <CardFooterButton
           onClick={() =>
             toastVar({
               title: Messages.development.notImplemented(),
@@ -141,7 +145,7 @@ const CardFooter = ({ postId }: Props) => {
             }}
           />
           {Messages.actions.share()}
-        </ActionButton>
+        </CardFooterButton>
       </CardActions>
     </>
   );

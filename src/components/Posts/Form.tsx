@@ -47,6 +47,8 @@ export interface PostsFormProps {
   isEditing?: boolean;
   setPosts?: (posts: ClientPost[]) => void;
   group?: ClientGroup;
+  event?: ClientEvent;
+  bodyPlaceholder?: string;
   withoutToggle?: boolean;
 }
 
@@ -56,9 +58,11 @@ const PostsForm = ({
   isEditing,
   setPosts,
   group,
+  event,
+  bodyPlaceholder,
   withoutToggle,
 }: PostsFormProps) => {
-  const [imagesInputKey, setImagesInputKey] = useState<string>("");
+  const [imagesInputKey, setImagesInputKey] = useState("");
   const [savedImages, setSavedImages] = useState<ClientImage[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const currentUser = useCurrentUser();
@@ -104,6 +108,7 @@ const PostsForm = ({
               body,
               images,
               groupId: group?.id,
+              eventId: event?.id,
               userId: currentUser.id,
             },
           });
@@ -176,7 +181,11 @@ const PostsForm = ({
           <FormGroup>
             <Field
               name={FieldNames.Body}
-              placeholder={Messages.posts.form.bodyPlaceholder()}
+              placeholder={
+                bodyPlaceholder
+                  ? bodyPlaceholder
+                  : Messages.posts.form.whatsHappening()
+              }
               validate={validatePostBody}
               component={TextField}
               multiline

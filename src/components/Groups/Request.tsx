@@ -7,6 +7,7 @@ import UserAvatar from "../Users/Avatar";
 import styles from "../../styles/Group/Member.module.scss";
 import { useUserById } from "../../hooks";
 import Messages from "../../utils/messages";
+import { ResourcePaths } from "../../constants/common";
 
 interface Props {
   memberRequest: ClientMemberRequest;
@@ -42,7 +43,7 @@ const MemberRequest = ({
     <div className={styles.member}>
       <div className={styles.link}>
         <UserAvatar user={user} />
-        <Link href={`/users/${user.name}`}>
+        <Link href={`${ResourcePaths.User}${user.name}`}>
           <a className={styles.userName}>{user.name}</a>
         </Link>
       </div>

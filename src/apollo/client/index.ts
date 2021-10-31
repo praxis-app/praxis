@@ -3,8 +3,7 @@ import { ApolloClient, ApolloLink } from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { onError } from "apollo-link-error";
-
-import baseUrl from "../../utils/baseUrl";
+import { baseUrl } from "../../utils/baseUrl";
 import { defaults, resolvers } from "./localState";
 
 let apolloClient: any;

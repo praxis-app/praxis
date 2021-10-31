@@ -68,7 +68,7 @@ const UserForm = ({ user, isEditing }: Props) => {
   const currentUser = useCurrentUser();
   const [coverPhoto, setCoverPhoto] = useState<File>();
   const [profilePicture, setProfilePicture] = useState<File>();
-  const [imageInputKey, setImageInputKey] = useState<string>("");
+  const [imageInputKey, setImageInputKey] = useState("");
   const [currentCoverPhoto, setCurrentCoverPhoto] = useState<ClientImage>();
   const [getCurrentCoverPhotoRes, currentCoverPhotoRes] = useLazyQuery(
     COVER_PHOTO_BY_USER_ID,

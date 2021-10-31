@@ -1,10 +1,5 @@
 import { useMutation } from "@apollo/client";
-import {
-  Button as MUIButton,
-  createStyles,
-  withStyles,
-} from "@material-ui/core";
-
+import { CSSProperties } from "@material-ui/styles";
 import {
   CREATE_MEMBER_REQUEST,
   DELETE_MEMBER_REQUEST,
@@ -13,16 +8,7 @@ import {
 import Messages from "../../utils/messages";
 import { useCurrentUser } from "../../hooks";
 import styles from "../../styles/Group/JoinButton.module.scss";
-
-const Button = withStyles(() =>
-  createStyles({
-    root: {
-      fontFamily: "Inter Bold",
-      textTransform: "none",
-      minWidth: 80,
-    },
-  })
-)(MUIButton);
+import GhostButton from "../Shared/GhostButton";
 
 interface Props {
   group: ClientGroup;
@@ -30,6 +16,7 @@ interface Props {
   groupMembers: ClientGroupMember[];
   setMemberRequests: (memberRequests: ClientMemberRequest[]) => void;
   setGroupMembers: (groupMembers: ClientGroupMember[]) => void;
+  style?: CSSProperties;
 }
 
 const JoinButton = ({
@@ -38,6 +25,7 @@ const JoinButton = ({
   groupMembers,
   setMemberRequests,
   setGroupMembers,
+  style,
 }: Props) => {
   const currentUser = useCurrentUser();
   const [createMemberRequest] = useMutation(CREATE_MEMBER_REQUEST);
@@ -97,13 +85,11 @@ const JoinButton = ({
 
   if (alreadyJoined())
     return (
-      <Button
+      <GhostButton
         onClick={() =>
           window.confirm(Messages.groups.prompts.leaveGroup()) &&
           deleteGroupMemberMutation()
         }
-        variant="outlined"
-        color="primary"
       >
         <div className={styles.deleteButtonInner}>
           <span className={styles.leaveText}>
@@ -111,28 +97,20 @@ const JoinButton = ({
           </span>
           <span className={styles.joinedText}>{Messages.groups.joined()}</span>
         </div>
-      </Button>
+      </GhostButton>
     );
 
   if (alreadyRequested() && !alreadyJoined())
     return (
-      <Button
-        onClick={() => deleteMemberRequestMutation()}
-        variant="outlined"
-        color="primary"
-      >
+      <GhostButton onClick={() => deleteMemberRequestMutation()}>
         {Messages.groups.actions.cancelRequest()}
-      </Button>
+      </GhostButton>
     );
 
   return (
-    <Button
-      onClick={() => createMemberRequestMutation()}
-      variant="outlined"
-      color="primary"
-    >
+    <GhostButton onClick={() => createMemberRequestMutation()} style={style}>
       {Messages.groups.actions.join()}
-    </Button>
+    </GhostButton>
   );
 };
 

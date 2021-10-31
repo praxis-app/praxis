@@ -4,12 +4,16 @@ import {
   Card,
   CardContent as MUICardContent,
   CardHeader,
-  CircularProgress,
   createStyles,
+  Divider,
+  LinearProgress,
+  Tab,
+  Tabs,
   Typography,
   withStyles,
 } from "@material-ui/core";
 import { ChevronRight, HowToVote } from "@material-ui/icons";
+import Router, { useRouter } from "next/router";
 import Link from "next/link";
 
 import {
@@ -24,7 +28,11 @@ import {
   useSettingsByGroupId,
 } from "../../hooks";
 import { WHITE } from "../../styles/Shared/theme";
-import { NavigationPaths, ResourcePaths } from "../../constants/common";
+import {
+  NavigationPaths,
+  ResourcePaths,
+  TAB_QUERY_PARAM,
+} from "../../constants/common";
 import Messages from "../../utils/messages";
 import JoinButton from "./JoinButton";
 import { VotingTypes } from "../../constants/vote";
@@ -32,14 +40,19 @@ import { noCache, settingValue } from "../../utils/clientIndex";
 import { GroupPermissions } from "../../constants/role";
 import GroupItemMenu from "./ItemMenu";
 import CoverPhoto from "../Images/CoverPhoto";
+import { ItemMenuVariants } from "../Shared/ItemMenu";
+
+export const enum GroupTabs {
+  Motions = "motions",
+  Events = "events",
+  About = "about",
+}
 
 const CardContent = withStyles(() =>
   createStyles({
     root: {
       marginTop: 6,
-      "&:last-child": {
-        paddingBottom: 12,
-      },
+      paddingBottom: 0,
     },
   })
 )(MUICardContent);
@@ -57,9 +70,11 @@ const NameTypography = withStyles(() =>
 interface Props {
   group: ClientGroup;
   deleteGroup: (id: string) => void;
+  setTab: (tab: number) => void;
+  tab: number;
 }
 
-const GroupPageHeader = ({ group, deleteGroup }: Props) => {
+const GroupPageHeader = ({ group, deleteGroup, setTab, tab }: Props) => {
   const { id, name } = group;
   const [groupSettings, _, groupSettingsLoading] = useSettingsByGroupId(id);
   const [groupMembers, setGroupMembers, groupMembersLoading] =
@@ -96,6 +111,12 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
     id
   );
 
+  const { query } = useRouter();
+  const groupPagePath = `${ResourcePaths.Group}${name}`;
+  const motionsTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTabs.Motions}`;
+  const eventsTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTabs.Events}`;
+  const aboutTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTabs.About}`;
+
   useEffect(() => {
     if (coverPhotoRes.data)
       setCoverPhoto(coverPhotoRes.data.coverPhotoByGroupId);
@@ -105,6 +126,20 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
     if (memberRequestsRes.data)
       setMemberRequests(memberRequestsRes.data.memberRequests);
   }, [memberRequestsRes.data]);
+
+  useEffect(() => {
+    if (query.tab)
+      switch (query.tab) {
+        case GroupTabs.Motions:
+          setTab(1);
+          break;
+        case GroupTabs.Events:
+          setTab(2);
+          break;
+        case GroupTabs.About:
+          setTab(3);
+      }
+  }, [query.tab]);
 
   const isNoAdmin = (): boolean => {
     return (
@@ -149,7 +184,11 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
     groupSettingsLoading ||
     groupMembersLoading
   )
-    return <CircularProgress />;
+    return (
+      <Card>
+        <LinearProgress />
+      </Card>
+    );
 
   return (
     <Card>
@@ -177,16 +216,17 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
                   canDelete={canDelete}
                   canManageRoles={canManageRoles}
                   canManageSettings={canManageSettings}
+                  variant={ItemMenuVariants.Ghost}
                 />
               )}
             </>
           }
-          style={{ marginTop: 6 }}
+          style={{ marginTop: 12 }}
         />
       )}
 
       <CardContent>
-        <Link href={`${ResourcePaths.Group}${name}${NavigationPaths.About}`}>
+        <Link href={`${groupPagePath}${NavigationPaths.About}`}>
           <a>
             <NameTypography
               variant="h5"
@@ -201,7 +241,7 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
           </a>
         </Link>
 
-        <Link href={`${ResourcePaths.Group}${name}${NavigationPaths.About}`}>
+        <Link href={`${groupPagePath}${NavigationPaths.About}`}>
           <a>
             <HowToVote
               fontSize="small"
@@ -211,7 +251,7 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
           </a>
         </Link>
 
-        <Link href={`${ResourcePaths.Group}${name}${NavigationPaths.Members}`}>
+        <Link href={`${groupPagePath}${NavigationPaths.Members}`}>
           <a>{Messages.groups.members(groupMembers.length)}</a>
         </Link>
 
@@ -219,14 +259,40 @@ const GroupPageHeader = ({ group, deleteGroup }: Props) => {
           <>
             <span style={{ color: WHITE }}>{Messages.middotWithSpaces()}</span>
 
-            <Link
-              href={`${ResourcePaths.Group}${name}${NavigationPaths.Requests}`}
-            >
+            <Link href={`${groupPagePath}${NavigationPaths.Requests}`}>
               <a>{Messages.groups.requests(memberRequests.length)}</a>
             </Link>
           </>
         )}
+
+        <Divider style={{ marginTop: 18 }} />
       </CardContent>
+
+      <Tabs
+        value={tab}
+        onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
+          setTab(newValue)
+        }
+        textColor="inherit"
+        centered
+      >
+        <Tab
+          label={Messages.groups.tabs.feed()}
+          onClick={() => Router.push(groupPagePath)}
+        />
+        <Tab
+          label={Messages.groups.tabs.motions()}
+          onClick={() => Router.push(motionsTabPath)}
+        />
+        <Tab
+          label={Messages.groups.tabs.events()}
+          onClick={() => Router.push(eventsTabPath)}
+        />
+        <Tab
+          label={Messages.groups.tabs.about()}
+          onClick={() => Router.push(aboutTabPath)}
+        />
+      </Tabs>
     </Card>
   );
 };

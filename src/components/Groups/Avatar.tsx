@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { Avatar, CircularProgress } from "@material-ui/core";
+import { Group } from "@material-ui/icons";
 import Link from "next/link";
 
-import baseUrl from "../../utils/baseUrl";
 import { COVER_PHOTO_BY_GROUP_ID } from "../../apollo/client/queries";
 import { ResourcePaths } from "../../constants/common";
 import { BLACK, WHITE } from "../../styles/Shared/theme";
-import { noCache } from "../../utils/clientIndex";
-import { Group } from "@material-ui/icons";
+import { noCache, baseUrl } from "../../utils/clientIndex";
 
 interface Props {
   group: ClientGroup;
@@ -16,7 +15,6 @@ interface Props {
 
 const GroupAvatar = ({ group }: Props) => {
   const [coverPhoto, setCoverPhoto] = useState<ClientImage>();
-
   const { data: coverPhotoData, loading: coverPhotoLoading } = useQuery(
     COVER_PHOTO_BY_GROUP_ID,
     {

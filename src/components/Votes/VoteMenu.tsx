@@ -96,8 +96,7 @@ const VoteMenu = ({
 
   const handleButtonClick = async (flipState: string) => {
     handleClose();
-
-    let newVotes: ClientVote[] = votes;
+    let newVotes = votes;
     if (alreadyVote()) {
       await deleteVote({
         variables: {

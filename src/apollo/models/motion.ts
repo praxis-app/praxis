@@ -14,6 +14,7 @@ import { ImageVariety } from "../../constants/image";
 import { ConsensusStates, FlipStates, VotingTypes } from "../../constants/vote";
 import { groupSettingByName, updateSettingById } from "./setting";
 import { initializePermissions } from "./role";
+import { groupConnect } from "./group";
 
 export interface BackendMotion extends Motion {
   __typename?: string;
@@ -151,13 +152,6 @@ const doAction = async (motion: Motion) => {
         ...groupId,
       },
     };
-    const groupConnect = {
-      group: {
-        connect: {
-          ...groupId,
-        },
-      },
-    };
 
     if (motion.action === ActionTypes.ChangeName) {
       await prisma.group.update({
@@ -183,7 +177,7 @@ const doAction = async (motion: Motion) => {
     ) {
       await prisma.image.create({
         data: {
-          ...groupConnect,
+          ...groupConnect(groupId.id),
           variety: ImageVariety.CoverPhoto,
           path: actionData.groupImagePath,
         },
@@ -208,7 +202,7 @@ const doAction = async (motion: Motion) => {
     ) {
       const role = await prisma.role.create({
         data: {
-          ...groupConnect,
+          ...groupConnect(groupId.id),
           name: actionData.groupRole.name,
           color: actionData.groupRole.color,
         },

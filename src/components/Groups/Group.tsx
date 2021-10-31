@@ -4,9 +4,11 @@ import Link from "next/link";
 import {
   Card,
   CardContent,
-  CardActions,
   Typography,
   CardHeader,
+  withStyles,
+  createStyles,
+  CardActions as MUICardActions,
 } from "@material-ui/core";
 
 import { MEMBER_REUQESTS } from "../../apollo/client/queries";
@@ -26,6 +28,16 @@ import CompactText from "../Shared/CompactText";
 import { noCache, settingValue } from "../../utils/clientIndex";
 import { GroupPermissions } from "../../constants/role";
 import GroupItemMenu from "./ItemMenu";
+
+const CardActions = withStyles(() =>
+  createStyles({
+    root: {
+      paddingTop: 0,
+      paddingLeft: 15,
+      paddingBottom: 8,
+    },
+  })
+)(MUICardActions);
 
 interface Props {
   group: ClientGroup;
