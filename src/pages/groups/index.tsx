@@ -33,7 +33,7 @@ const Index = () => {
   return (
     <>
       <Typography variant="h4" gutterBottom>
-        {Messages.navigation.groups()}
+        {Messages.groups.actions.discover()}
       </Typography>
 
       <GroupForm />

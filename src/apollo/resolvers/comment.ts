@@ -1,10 +1,10 @@
 import { ApolloError, GraphQLUpload } from "apollo-server-micro";
 import { Comment } from ".prisma/client";
-
-import prisma from "../../utils/initPrisma";
-import Messages from "../../utils/messages";
+import { sortByNewest } from "../models/common";
 import { TypeNames } from "../../constants/common";
 import { saveImage, deleteImage, FileUpload } from "../../utils/image";
+import prisma from "../../utils/initPrisma";
+import Messages from "../../utils/messages";
 
 interface CommentInput {
   body: string;
@@ -56,9 +56,8 @@ const commentResolvers = {
       const comments = await prisma.comment.findMany({
         where: { postId: parseInt(postId) },
       });
-
       return {
-        comments,
+        comments: sortByNewest(comments),
         totalComments: comments.length,
       };
     },
@@ -67,9 +66,8 @@ const commentResolvers = {
       const comments = await prisma.comment.findMany({
         where: { motionId: parseInt(motionId) },
       });
-
       return {
-        comments,
+        comments: sortByNewest(comments),
         totalComments: comments.length,
       };
     },
@@ -165,7 +163,6 @@ const commentResolvers = {
       const images = await prisma.image.findMany({
         where: { commentId: parseInt(id) },
       });
-
       for (const image of images) {
         await deleteImage(image.path);
       }

@@ -10,7 +10,7 @@ interface Props {
   comments: ClientComment[];
   deleteComment: (id: string) => void;
   loading: boolean;
-  groupId: string;
+  groupId?: string;
 }
 
 const CommentsList = ({ comments, deleteComment, loading, groupId }: Props) => {
@@ -26,21 +26,18 @@ const CommentsList = ({ comments, deleteComment, loading, groupId }: Props) => {
 
   return (
     <>
-      {comments
-        .slice()
-        .reverse()
-        .map((comment) => {
-          return (
-            <Comment
-              comment={comment}
-              deleteComment={deleteComment}
-              canManageComments={
-                canManageCommentsGlobally || canManageCommentsByGroup
-              }
-              key={comment.id}
-            />
-          );
-        })}
+      {comments.map((comment) => {
+        return (
+          <Comment
+            comment={comment}
+            deleteComment={deleteComment}
+            canManageComments={
+              canManageCommentsGlobally || canManageCommentsByGroup
+            }
+            key={comment.id}
+          />
+        );
+      })}
     </>
   );
 };

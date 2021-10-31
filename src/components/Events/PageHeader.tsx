@@ -16,19 +16,25 @@ import {
 import {
   Flag as FlagIcon,
   Language as WebIcon,
+  Room as LocationIcon,
   WatchLater as ClockIcon,
   SupervisorAccount as AttendeesIcon,
 } from "@material-ui/icons";
-import humanizeDuration from "humanize-duration";
-import dayjs from "dayjs";
 
 import { ResourcePaths, TAB_QUERY_PARAM } from "../../constants/common";
-import { formatDateTime, isHosting, sameDay } from "../../utils/clientIndex";
+import {
+  displayAttendees,
+  displayEventDuration,
+  displayEventTime,
+  formatDateTime,
+  isHosting,
+} from "../../utils/clientIndex";
 import {
   useAttendeesByEventId,
   useCoverPhotoByEventId,
   useCurrentUser,
   useGroupById,
+  useIsMobile,
 } from "../../hooks";
 import Messages from "../../utils/messages";
 import EventItemMenu from "./ItemMenu";
@@ -36,6 +42,7 @@ import CoverPhoto from "../Images/CoverPhoto";
 import AttendanceButtons from "./AttendanceButtons";
 import { AttendingStatus } from "../../constants/event";
 import { GroupTabs } from "../Groups/PageHeader";
+import ExternalLink from "../Shared/ExternalLink";
 
 export const enum EventTabs {
   About = "about",
@@ -77,7 +84,16 @@ interface Props {
 }
 
 const EventPageHeader = ({ event, deleteEvent, tab, setTab }: Props) => {
-  const { id, name, startsAt, endsAt, online, externalLink, groupId } = event;
+  const {
+    id,
+    name,
+    startsAt,
+    endsAt,
+    location,
+    online,
+    externalLink,
+    groupId,
+  } = event;
   const [attendees, setAttendees, attendeesLoading] = useAttendeesByEventId(id);
   const [coverPhoto, _setCoverPhoto, coverPhotoLoading] =
     useCoverPhotoByEventId(id);
@@ -85,52 +101,13 @@ const EventPageHeader = ({ event, deleteEvent, tab, setTab }: Props) => {
   const currentUser = useCurrentUser();
   const { query } = useRouter();
   const classes = useStyles();
-  const going = attendees.filter(
-    (attendee) => attendee.status === AttendingStatus.Going
-  );
-  const interested = attendees.filter(
-    (attendee) => attendee.status === AttendingStatus.Interested
-  );
+  const isMobile = useIsMobile();
   const eventPagePath = `${ResourcePaths.Event}${id}`;
   const discussionTabPath = `${eventPagePath}${TAB_QUERY_PARAM}${EventTabs.Discussion}`;
 
   useEffect(() => {
     if (query.tab === EventTabs.Discussion) setTab(1);
   }, [query.tab]);
-
-  const displayTime = (): string => {
-    if (endsAt && sameDay(startsAt, endsAt))
-      return (
-        formatDateTime(startsAt, false) +
-        dayjs(parseInt(endsAt)).format(" [-] h:mm a")
-      );
-    return formatDateTime(startsAt, false);
-  };
-
-  const displayDuration = (): string | null => {
-    if (endsAt) {
-      const difference = dayjs(parseInt(endsAt)).diff(
-        dayjs(parseInt(startsAt))
-      );
-      return humanizeDuration(difference)
-        .replace(/,/g, "")
-        .replace(/hours|hour/g, Messages.time.hr())
-        .replace(/minutes|minute/g, Messages.time.min());
-    }
-    return null;
-  };
-
-  const displayAttendees = () => {
-    return `${
-      going.length
-        ? going.length + " " + Messages.events.attendance.going()
-        : ""
-    }${going.length && interested.length ? Messages.middotWithSpaces() : ""}${
-      interested.length
-        ? interested.length + " " + Messages.events.attendance.interested()
-        : ""
-    }`;
-  };
 
   if (coverPhotoLoading || groupLoading)
     return (
@@ -144,7 +121,11 @@ const EventPageHeader = ({ event, deleteEvent, tab, setTab }: Props) => {
       <CoverPhoto path={coverPhoto?.path} />
 
       <CardContent style={{ paddingBottom: 0 }}>
-        <Typography variant="overline">{displayTime()}</Typography>
+        <Typography variant="overline">
+          {isMobile
+            ? formatDateTime(startsAt, false)
+            : displayEventTime(startsAt, endsAt)}
+        </Typography>
 
         <Typography variant="h6" color="primary" style={{ marginBottom: 0 }}>
           {name}
@@ -177,17 +158,30 @@ const EventPageHeader = ({ event, deleteEvent, tab, setTab }: Props) => {
           )}
         </div>
 
-        {endsAt && (
+        {endsAt && displayEventDuration(startsAt, endsAt) && (
           <Typography className={classes.typographyRoot}>
             <ClockIcon fontSize="small" className={classes.iconRoot} />
-            {displayDuration()}
+            {displayEventDuration(startsAt, endsAt)}
           </Typography>
         )}
 
-        {Boolean(going.length + interested.length) && (
+        {Boolean(
+          attendees.filter(
+            (attendee) =>
+              attendee.status === AttendingStatus.Interested ||
+              attendee.status === AttendingStatus.Going
+          ).length
+        ) && (
           <Typography className={classes.typographyRoot}>
             <AttendeesIcon fontSize="small" className={classes.iconRoot} />
-            {displayAttendees()}
+            {displayAttendees(attendees)}
+          </Typography>
+        )}
+
+        {location && (
+          <Typography className={classes.typographyRoot}>
+            <LocationIcon fontSize="small" className={classes.iconRoot} />
+            {location}
           </Typography>
         )}
 
@@ -207,9 +201,9 @@ const EventPageHeader = ({ event, deleteEvent, tab, setTab }: Props) => {
           <Typography className={classes.typographyRoot}>
             <WebIcon fontSize="small" className={classes.iconRoot} />
             {Messages.events.online.online() + ": "}
-            <a target="_blank" rel="noopener noreferrer" href={externalLink}>
+            <ExternalLink href={externalLink} newTab>
               {externalLink}
-            </a>
+            </ExternalLink>
           </Typography>
         )}
 

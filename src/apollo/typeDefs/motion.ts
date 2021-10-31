@@ -19,6 +19,7 @@ input ActionDataInput {
   groupSettings: [SettingInput]
   groupRole: CreateRoleInput
   groupRolePermissions: [ProposedPermissionInput]
+  groupEvent: EventMotionInput
   groupRoleId: String
   userId: String
 }

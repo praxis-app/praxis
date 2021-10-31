@@ -8,12 +8,14 @@ import { feedVar, paginationVar } from "../../apollo/client/localState";
 import { noCache, resetFeed } from "../../utils/clientIndex";
 import PostsFormWithCard from "../Posts/FormWithCard";
 import Messages from "../../utils/messages";
+import { useCurrentUser } from "../../hooks";
 
 interface Props {
   event: ClientEvent;
 }
 
 const DiscussionTab = ({ event }: Props) => {
+  const currentUser = useCurrentUser();
   const feed = useReactiveVar(feedVar);
   const { currentPage, pageSize } = useReactiveVar(paginationVar);
   const [getFeedRes, feedRes] = useLazyQuery(EVENT_FEED, noCache);
@@ -67,11 +69,13 @@ const DiscussionTab = ({ event }: Props) => {
 
   return (
     <>
-      <PostsFormWithCard
-        bodyPlaceholder={Messages.posts.form.saySomething()}
-        event={event}
-        withoutToggle
-      />
+      {currentUser && (
+        <PostsFormWithCard
+          bodyPlaceholder={Messages.posts.form.saySomething()}
+          event={event}
+          withoutToggle
+        />
+      )}
 
       <Pagination>
         <Feed deletePost={deletePostHandler} />

@@ -188,7 +188,7 @@ const Motion = ({ motion, deleteMotion }: Props) => {
             </Typography>
 
             <ActionData
-              id={id}
+              motionId={id}
               action={action}
               actionData={motion.actionData}
             />

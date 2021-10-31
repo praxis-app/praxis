@@ -26,3 +26,17 @@ interface EventFormValues {
   online: boolean;
   externalLink: string;
 }
+
+interface EventMotionInput {
+  groupId: string;
+  name: string;
+  description: string;
+  location: string;
+  startsAt: string;
+  endsAt?: string;
+  online: boolean;
+  externalLink: string;
+  coverPhoto?: File;
+  coverPhotoPath?: string;
+  hosts: SelectedUser[];
+}

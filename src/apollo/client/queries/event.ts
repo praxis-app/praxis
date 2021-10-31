@@ -31,8 +31,8 @@ export const EVENT = gql`
 `;
 
 export const EVENTS = gql`
-  {
-    allEvents {
+  query ($timeFrame: String, $online: Boolean) {
+    allEvents(timeFrame: $timeFrame, online: $online) {
       ...EventSummary
     }
   }

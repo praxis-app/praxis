@@ -33,7 +33,7 @@ const EventFormModal = ({ group }: Props) => {
       subtext={group.name}
       appBar
     >
-      <EventsForm group={group} closeModal={() => setOpen(false)} />
+      <EventsForm groupId={group.id} closeModal={() => setOpen(false)} />
     </Modal>
   );
 };

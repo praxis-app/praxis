@@ -231,9 +231,7 @@ const GroupPageHeader = ({ group, deleteGroup, setTab, tab }: Props) => {
             <NameTypography
               variant="h5"
               color="primary"
-              style={{
-                marginTop: showItemMenu ? -80 : -72,
-              }}
+              style={{ marginTop: currentUser ? -80 : 0 }}
             >
               {group.name}
               <ChevronRight style={{ marginBottom: -4 }} />

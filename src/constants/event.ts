@@ -17,5 +17,5 @@ export enum EventFieldNames {
   Description = "description",
   Location = "location",
   Online = "online",
-  ExternalLinl = "externalLink",
+  ExternalLink = "externalLink",
 }

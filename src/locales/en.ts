@@ -181,7 +181,7 @@ const en = {
       actionFields: {
         inDev: () => "This motion type is still in development...",
         newAspect: (aspect: string) => `New group ${aspect}`,
-        attachImage: () => "Attach new group image",
+        attachImage: () => "Attach new cover photo",
       },
     },
     toasts: {
@@ -274,6 +274,7 @@ const en = {
       join: () => "Join",
       manageRoles: () => "Manage Roles",
       remove: () => "Remove",
+      discover: () => "Discover Groups",
     },
     prompts: {
       leaveGroup: () => "Are you sure you want to leave this group?",
@@ -381,6 +382,10 @@ const en = {
     breadcrumbs: {
       groupRoles: () => "Group Roles",
       roles: () => "Roles",
+    },
+    labels: {
+      role: () => "• Role: ",
+      member: () => "• Member: ",
     },
     members: {
       prompts: {
@@ -503,6 +508,8 @@ const en = {
       name: () => "Name",
       onlineSubtext: () => "Plan a virtual event",
       startsAt: () => "Start Date and Time",
+      chooseHost: () => "Choose a host",
+      host: () => "Host",
     },
     errors: {
       create: () => "Unable to create event.",
@@ -532,6 +539,7 @@ const en = {
       past: () => "Past",
     },
     by: () => "Event by ",
+    motion: () => "Event Motion",
     discover: () => "Discover Events",
     whatToExpect: () => "What To Expect",
   },

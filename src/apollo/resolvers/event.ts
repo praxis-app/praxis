@@ -26,6 +26,7 @@ interface EventFeedInput extends PaginationState {
 interface EventInput {
   name: string;
   description: string;
+  location: string;
   startsAt: string;
   endsAt: string;
   online: boolean;
@@ -66,11 +67,22 @@ const eventResolvers = {
       return event;
     },
 
-    allEvents: async () => {
-      const events = await prisma.event.findMany();
-      return events.sort(
-        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
-      );
+    allEvents: async (
+      _: any,
+      { timeFrame, online }: { timeFrame: string; online: boolean }
+    ) => {
+      const whereOnline = online ? { online: true } : {};
+      const events = await prisma.event.findMany({
+        where: {
+          ...whereTimeFrame(timeFrame),
+          ...whereOnline,
+        },
+      });
+      if (timeFrame === EventTimeFrames.Past)
+        return sortByStartsAt(events).reverse();
+      if (timeFrame === EventTimeFrames.ThisWeek)
+        return sortByStartsAt(filterByThisWeek(events)).reverse();
+      return sortByStartsAt(events);
     },
 
     eventsByGroupId: async (
@@ -142,6 +154,7 @@ const eventResolvers = {
       const {
         name,
         description,
+        location,
         startsAt,
         endsAt,
         online,
@@ -155,6 +168,7 @@ const eventResolvers = {
           data: {
             name,
             online,
+            location,
             description,
             externalLink,
             startsAt: new Date(startsAt),
@@ -201,6 +215,7 @@ const eventResolvers = {
       const {
         name,
         description,
+        location,
         startsAt,
         endsAt,
         online,
@@ -215,6 +230,7 @@ const eventResolvers = {
           data: {
             name,
             online,
+            location,
             description,
             externalLink,
             startsAt: new Date(startsAt),
