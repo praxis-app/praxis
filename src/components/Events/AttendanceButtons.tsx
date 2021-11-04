@@ -95,7 +95,10 @@ const AttendanceButtons = ({
   };
 
   const isDisabled =
-    createEventAttendeeLoading || deleteEventAttendeeLoading || isHosting;
+    !currentUser ||
+    createEventAttendeeLoading ||
+    deleteEventAttendeeLoading ||
+    isHosting;
   const isGoing = alreadyGoingOrInterested()?.status === AttendingStatus.Going;
   const isInterested =
     alreadyGoingOrInterested()?.status === AttendingStatus.Interested;

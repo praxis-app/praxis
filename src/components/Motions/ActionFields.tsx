@@ -121,6 +121,7 @@ const ActionFields = ({ actionType, setActionData }: Props) => {
     actionType &&
     actionType !== ActionTypes.Test &&
     actionType !== ActionTypes.ChangeSettings &&
+    actionType !== ActionTypes.PlanEvent &&
     !actionType.includes(ModelNames.Role)
   )
     return (

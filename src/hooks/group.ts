@@ -50,7 +50,7 @@ export const useGroupByName = (
 };
 
 export const useMembersByGroupId = (
-  groupId: string | undefined,
+  groupId: string | undefined | false,
   callDep?: any
 ): [ClientGroupMember[], (members: ClientGroupMember[]) => void, boolean] => {
   const [members, setMembers] = useState<ClientGroupMember[]>([]);

@@ -120,7 +120,18 @@ const ProfileHeader = ({ user, deleteUser }: Props) => {
         style={{ paddingBottom: 6 }}
       />
 
-      <div style={{ marginLeft: 12, marginTop: isMobile ? -110 : -135 }}>
+      <div
+        style={{
+          marginLeft: 12,
+          marginTop: !currentUser
+            ? isMobile
+              ? -70
+              : -100
+            : isMobile
+            ? -105
+            : -135,
+        }}
+      >
         <UserAvatar
           user={user}
           style={{

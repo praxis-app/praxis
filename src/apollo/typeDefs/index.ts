@@ -116,7 +116,7 @@ export const typeDefs = gql`
     allServerInvites: [ServerInvite]
 
     event(id: ID!): Event!
-    allEvents: [Event]
+    allEvents(timeFrame: String, online: Boolean): [Event]
     eventFeed(
       eventId: ID!
       currentPage: Int!

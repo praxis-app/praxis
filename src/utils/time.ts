@@ -60,3 +60,8 @@ export const sameDay = (timeStamp1: string, timeStamp2: string): boolean => {
     dayjs(parseInt(timeStamp2)).format("dddd, MMMM D, YYYY")
   );
 };
+
+export const nowRoundedToNextHour = (): Date => {
+  const oneHour = Time.Hour * 1000;
+  return new Date(Math.round(new Date().getTime() / oneHour) * oneHour);
+};

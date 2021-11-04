@@ -92,6 +92,15 @@ const motionResolvers = {
         actionData = { groupImagePath };
       }
 
+      if (actionData?.groupEvent?.coverPhoto) {
+        const coverPhotoPath = await saveImage(
+          actionData.groupEvent.coverPhoto
+        );
+        actionData = {
+          groupEvent: { ...actionData.groupEvent, coverPhotoPath },
+        };
+      }
+
       try {
         motion = await prisma.motion.create({
           data: {

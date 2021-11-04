@@ -43,6 +43,7 @@ import FormToggle from "./FormToggle";
 import GroupSettingsTab from "./GroupSettingsTab";
 import ActionData from "./ActionData";
 import GroupRolesTab from "./GroupRolesTab";
+import GroupEventsTab from "./GroupEventsTab";
 
 const CardActions = withStyles(() =>
   createStyles({
@@ -81,6 +82,7 @@ const MotionsForm = ({
   withoutToggle,
 }: MotionsFormProps) => {
   const currentUser = useCurrentUser();
+  const feed = useReactiveVar(feedVar);
   const [imagesInputKey, setImagesInputKey] = useState("");
   const [savedImages, setSavedImages] = useState<ClientImage[]>([]);
   const [images, setImages] = useState<File[]>([]);
@@ -90,9 +92,6 @@ const MotionsForm = ({
   const [tab, setTab] = useState(0);
   const [touched, setTouched] = useState<boolean>(false);
   const { currentPage, pageSize } = useReactiveVar(paginationVar);
-  const feed = useReactiveVar(feedVar);
-  const isMobile = useIsMobile();
-
   const [createMotion] = useMutation(CREATE_MOTION);
   const [updateMotion] = useMutation(UPDATE_MOTION);
   const [deleteImage] = useMutation(DELETE_IMAGE);
@@ -101,6 +100,7 @@ const MotionsForm = ({
     noCache
   );
   const { asPath: currentPath } = useRouter();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (isEditing && motion) {
@@ -128,6 +128,9 @@ const MotionsForm = ({
         case ActionTypes.ChangeRole:
         case ActionTypes.AssignRole:
           setTab(2);
+          break;
+        case ActionTypes.PlanEvent:
+          setTab(3);
           break;
         default:
           setTab(0);
@@ -325,7 +328,7 @@ const MotionsForm = ({
               />
 
               {actionData && (
-                <ActionData action={action} actionData={actionData} />
+                <ActionData action={action} actionData={actionData} inForm />
               )}
 
               {!touched &&
@@ -370,6 +373,17 @@ const MotionsForm = ({
 
           {tab === 2 && (
             <GroupRolesTab
+              groupId={group ? group.id : selectedGroupId}
+              setSelectedGroupId={setSelectedGroupId}
+              setActionData={setActionData}
+              setAction={setAction}
+              action={action}
+              resetTabs={resetTabs}
+            />
+          )}
+
+          {tab === 3 && (
+            <GroupEventsTab
               groupId={group ? group.id : selectedGroupId}
               setSelectedGroupId={setSelectedGroupId}
               setActionData={setActionData}

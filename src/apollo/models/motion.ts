@@ -15,6 +15,8 @@ import { ConsensusStates, FlipStates, VotingTypes } from "../../constants/vote";
 import { groupSettingByName, updateSettingById } from "./setting";
 import { initializePermissions } from "./role";
 import { groupConnect } from "./group";
+import { eventConnect, saveEventCoverPhoto } from "./event";
+import { AttendingStatus } from "../../constants/event";
 
 export interface BackendMotion extends Motion {
   __typename?: string;
@@ -140,10 +142,10 @@ const ratifyMotion = async (motionId: number) => {
       stage: Stages.Ratified,
     },
   });
-  doAction(motion);
+  implementMotion(motion);
 };
 
-const doAction = async (motion: Motion) => {
+const implementMotion = async (motion: Motion): Promise<void> => {
   if (motion && motion.action) {
     const actionData = motion.actionData as ActionData;
     const groupId = { id: motion.groupId as number };
@@ -254,6 +256,64 @@ const doAction = async (motion: Motion) => {
           },
         },
       });
+    }
+
+    if (motion.action === ActionTypes.PlanEvent && actionData.groupEvent) {
+      const {
+        name,
+        online,
+        location,
+        description,
+        externalLink,
+        startsAt,
+        endsAt,
+        groupId,
+      } = actionData.groupEvent;
+      const endDateTime = endsAt
+        ? {
+            endsAt: new Date(parseInt(endsAt)),
+          }
+        : {};
+      const event = await prisma.event.create({
+        data: {
+          name,
+          online,
+          location,
+          description,
+          externalLink,
+          startsAt: new Date(parseInt(startsAt)),
+          ...groupConnect(groupId),
+          ...endDateTime,
+        },
+      });
+
+      if (actionData.groupEvent.coverPhotoPath)
+        await prisma.image.create({
+          data: {
+            ...eventConnect(event.id),
+            variety: ImageVariety.CoverPhoto,
+            path: actionData.groupEvent.coverPhotoPath,
+          },
+        });
+      else await saveEventCoverPhoto(event, undefined, true);
+
+      for (const { userId } of actionData.groupEvent.hosts) {
+        await prisma.eventAttendee.create({
+          data: {
+            user: {
+              connect: {
+                id: parseInt(userId),
+              },
+            },
+            event: {
+              connect: {
+                id: event.id,
+              },
+            },
+            status: AttendingStatus.Host,
+          },
+        });
+      }
     }
   }
 };

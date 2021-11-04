@@ -31,6 +31,10 @@ input UpdateUserInput {
   coverPhoto: FileUpload
 }
 
+input SelectedUserInput {
+  userId: String!
+}
+
 type UserPayload {
   user: User!
   token: String!

@@ -110,48 +110,48 @@ const Show = () => {
     setComments(comments.filter((comment) => comment.id !== id));
   };
 
-  if (motion)
-    return (
-      <>
-        <Motion motion={motion} deleteMotion={deleteMotionHandler} />
+  if (motionRes.loading || votesRes.loading || commentsRes.loading)
+    return <CircularProgress />;
 
-        <Card>
-          <Tabs
-            textColor="inherit"
-            centered
-            value={tab}
-            onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
-              setTab(newValue)
-            }
-          >
-            <Tab label={Messages.motions.tabs.votes()} />
-            <Tab label={Messages.motions.tabs.comments()} />
-          </Tabs>
-        </Card>
+  return (
+    <>
+      {motion && <Motion motion={motion} deleteMotion={deleteMotionHandler} />}
 
-        {tab === 0 && <VotesList votes={votes} setVotes={votesVar} />}
+      <Card>
+        <Tabs
+          textColor="inherit"
+          centered
+          value={tab}
+          onChange={(_event: React.ChangeEvent<any>, newValue: number) =>
+            setTab(newValue)
+          }
+        >
+          <Tab label={Messages.motions.tabs.votes()} />
+          <Tab label={Messages.motions.tabs.comments()} />
+        </Tabs>
+      </Card>
 
-        {tab === 1 && (
-          <>
-            {currentUser && (
-              <CommentsForm
-                motionId={motion.id}
-                comments={comments}
-                setComments={setComments}
-              />
-            )}
-            <CommentsList
+      {tab === 0 && <VotesList votes={votes} setVotes={votesVar} />}
+
+      {tab === 1 && (
+        <>
+          {currentUser && (
+            <CommentsForm
+              motionId={motion?.id}
               comments={comments}
-              deleteComment={deleteCommentHandler}
-              loading={commentsRes.loading}
-              groupId={motion.groupId}
+              setComments={setComments}
             />
-          </>
-        )}
-      </>
-    );
-
-  return <CircularProgress />;
+          )}
+          <CommentsList
+            comments={comments}
+            deleteComment={deleteCommentHandler}
+            loading={commentsRes.loading}
+            groupId={motion?.groupId}
+          />
+        </>
+      )}
+    </>
+  );
 };
 
 export default Show;

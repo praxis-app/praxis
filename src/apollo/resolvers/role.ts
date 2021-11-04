@@ -7,10 +7,7 @@ import {
   INITIAL_GLOBAL_PERMISSIONS,
   INITIAL_GROUP_PERMISSIONS,
 } from "../../constants/role";
-import {
-  initializePermissions,
-  syncWithNewRolePermissions,
-} from "../models/role";
+import { initializePermissions } from "../models/role";
 import { TypeNames } from "../../constants/common";
 import Messages from "../../utils/messages";
 import { Role } from ".prisma/client";
@@ -40,9 +37,6 @@ const roleResolvers = {
     },
 
     globalRoles: async () => {
-      // TODO: Comment out the line below after refreshing on /roles to update all roles with new permissions
-      syncWithNewRolePermissions();
-
       const roles = await prisma.role.findMany({
         where: { global: true },
       });

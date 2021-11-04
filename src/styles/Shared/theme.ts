@@ -144,6 +144,12 @@ const muiTheme = createTheme({
       },
     },
 
+    MuiSelect: {
+      icon: {
+        color: globalTheme.palette.primary.main,
+      },
+    },
+
     MuiSwitch: {
       root: {
         "& .Mui-checked .MuiSwitch-thumb": {

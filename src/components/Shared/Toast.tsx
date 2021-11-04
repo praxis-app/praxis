@@ -35,6 +35,8 @@ const Toast = () => {
     document.addEventListener(Events.Keydown, handleKeyDown);
     return () => {
       document.removeEventListener(Events.Keydown, handleKeyDown);
+      toastVar(null);
+      setOpen(false);
     };
   }, []);
 

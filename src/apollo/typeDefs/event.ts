@@ -36,6 +36,19 @@ input UpdateEventInput {
   coverPhoto: FileUpload
 }
 
+input EventMotionInput {
+  groupId: ID!
+  name: String!
+  description: String!
+  location: String
+  startsAt: String!
+  endsAt: String
+  online: Boolean
+  externalLink: String
+  coverPhoto: FileUpload
+  hosts: [SelectedUserInput]
+}
+
 type EventPayload {
   event: Event!
 }

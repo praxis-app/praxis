@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { Typography } from "@material-ui/core";
+import { createStyles, makeStyles, Theme, Typography } from "@material-ui/core";
+import clsx from "clsx";
+
 import {
   displaySettingValue,
   permissionDisplayName,
@@ -8,11 +10,32 @@ import {
 import { ResourcePaths } from "../../constants/common";
 import { GroupAspects } from "../../constants/group";
 import { ActionTypes } from "../../constants/motion";
-import muiTheme from "../../styles/Shared/theme";
 import { baseUrl } from "../../utils/clientIndex";
 import Messages from "../../utils/messages";
 import UserName from "../Users/Name";
 import RoleName from "../Roles/Name";
+import EventMotionDetails from "../Events/MotionDetails";
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    rootInForm: {
+      marginBottom: 12,
+    },
+    groupImage: {
+      width: "60%",
+      display: "block",
+      marginTop: 6,
+    },
+    groupImageLabel: {
+      color: theme.palette.primary.main,
+      fontFamily: "Inter Bold",
+      marginBottom: 2,
+    },
+    actionLabelText: {
+      marginTop: 6,
+    },
+  })
+);
 
 interface TextProps {
   aspect?: string;
@@ -21,8 +44,9 @@ interface TextProps {
 }
 
 const ActionLabel = ({ aspect, text, data }: TextProps) => {
+  const classes = useStyles();
   return (
-    <Typography style={{ marginTop: 6 }}>
+    <Typography className={classes.actionLabelText}>
       <span
         style={{
           fontFamily: "Inter Bold",
@@ -38,13 +62,19 @@ const ActionLabel = ({ aspect, text, data }: TextProps) => {
 };
 
 interface ActionDataProps {
-  id?: string;
   action: string;
   actionData: ActionData;
+  motionId?: string;
+  inForm?: boolean;
 }
 
-const ActionData = ({ id, action, actionData }: ActionDataProps) => {
-  const inForm = !id;
+const ActionData = ({
+  action,
+  actionData,
+  motionId,
+  inForm,
+}: ActionDataProps) => {
+  const classes = useStyles();
 
   if (
     (action === ActionTypes.CreateRole || action === ActionTypes.ChangeRole) &&
@@ -52,7 +82,7 @@ const ActionData = ({ id, action, actionData }: ActionDataProps) => {
     actionData.groupRolePermissions
   )
     return (
-      <div style={{ marginBottom: inForm ? 12 : 0 }}>
+      <div className={clsx({ [classes.rootInForm]: inForm })}>
         {action === ActionTypes.CreateRole ? (
           <ActionLabel aspect={GroupAspects.Role} />
         ) : (
@@ -82,23 +112,23 @@ const ActionData = ({ id, action, actionData }: ActionDataProps) => {
     actionData.userId
   )
     return (
-      <div style={{ marginBottom: inForm ? 12 : 0 }}>
+      <div className={clsx({ [classes.rootInForm]: inForm })}>
         <ActionLabel text={Messages.motions.groups.proposedRoleAssignment()} />
-
         <Typography>
-          • Role: <RoleName roleId={actionData.groupRoleId} />
+          {Messages.roles.labels.role()}
+          <RoleName roleId={actionData.groupRoleId} />
         </Typography>
         <Typography>
-          • Member: <UserName userId={actionData.userId} />
+          {Messages.roles.labels.member()}
+          <UserName userId={actionData.userId} />
         </Typography>
       </div>
     );
 
   if (action === ActionTypes.ChangeSettings && actionData.groupSettings)
     return (
-      <div style={{ marginBottom: inForm ? 12 : 0 }}>
+      <div className={clsx({ [classes.rootInForm]: inForm })}>
         <ActionLabel aspect={GroupAspects.Settings} />
-
         {actionData.groupSettings.map((setting) => (
           <Typography key={setting.id}>
             • {settingDisplayName(setting.name)}: {displaySettingValue(setting)}
@@ -131,29 +161,28 @@ const ActionData = ({ id, action, actionData }: ActionDataProps) => {
   )
     return (
       <>
-        <div
-          style={{
-            color: muiTheme.palette.primary.main,
-            fontFamily: "Inter Bold",
-            marginBottom: 2,
-          }}
-        >
+        <div className={classes.groupImageLabel}>
           {Messages.motions.groups.proposedAspect(GroupAspects.Image)}
         </div>
-        <Link href={`${ResourcePaths.Motion}${id}`}>
+        <Link href={`${ResourcePaths.Motion}${motionId}`}>
           <a>
             <img
               src={baseUrl + actionData.groupImagePath}
               alt={Messages.images.couldNotRender()}
-              style={{
-                width: "60%",
-                display: "block",
-                marginTop: 6,
-              }}
+              className={classes.groupImage}
             />
           </a>
         </Link>
       </>
+    );
+
+  if (action === ActionTypes.PlanEvent && actionData.groupEvent)
+    return (
+      <EventMotionDetails
+        event={actionData.groupEvent}
+        motionId={motionId}
+        inForm={inForm}
+      />
     );
 
   return null;

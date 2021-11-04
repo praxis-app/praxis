@@ -3,7 +3,10 @@ import {
   ToggleButton,
   ToggleButtonGroup as MUIToggleButtonGroup,
 } from "@material-ui/lab";
-import { EmojiPeople, PostAdd } from "@material-ui/icons";
+import {
+  PostAdd as PostIcon,
+  EmojiPeople as MotionIcon,
+} from "@material-ui/icons";
 import { Theme, withStyles } from "@material-ui/core";
 
 import { WHITE } from "../../styles/Shared/theme";
@@ -40,10 +43,10 @@ const FormToggle = () => {
       onChange={handleToggle}
     >
       <ToggleButton value={ModelNames.Post} color="secondary">
-        <PostAdd style={toggle === ModelNames.Post ? { color: WHITE } : {}} />
+        <PostIcon style={toggle === ModelNames.Post ? { color: WHITE } : {}} />
       </ToggleButton>
       <ToggleButton value={ModelNames.Motion}>
-        <EmojiPeople
+        <MotionIcon
           style={toggle === ModelNames.Motion ? { color: WHITE } : {}}
         />
       </ToggleButton>

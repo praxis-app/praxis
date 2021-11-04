@@ -1,3 +1,5 @@
+// TODO: Add ability to select multiple hosts for event
+
 import { useEffect, useState } from "react";
 import { useMutation } from "@apollo/client";
 import Router from "next/router";
@@ -9,6 +11,10 @@ import {
   FormGroup,
   Typography,
   CardActions as MUICardActions,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  LinearProgress,
 } from "@material-ui/core";
 import { Add, Remove, RemoveCircle } from "@material-ui/icons";
 import { Formik, Form, Field, FormikProps } from "formik";
@@ -18,16 +24,22 @@ import dayjs, { Dayjs } from "dayjs";
 import { CREATE_EVENT, UPDATE_EVENT } from "../../apollo/client/mutations";
 import styles from "../../styles/Event/Form.module.scss";
 import Messages from "../../utils/messages";
-import { useCurrentUser } from "../../hooks";
-import { generateRandom } from "../../utils/common";
+import {
+  nowRoundedToNextHour,
+  generateRandom,
+  errorToast,
+} from "../../utils/clientIndex";
+import { useCurrentUser, useMembersByGroupId } from "../../hooks";
 import SubmitButton from "../Shared/SubmitButton";
 import TextField from "../Shared/TextField";
 import { ResourcePaths } from "../../constants/common";
 import ImageInput from "../Images/Input";
-import { errorToast } from "../../utils/apollo";
 import { EventFieldNames } from "../../constants/event";
 import DateTimePicker from "../Shared/DateTimePicker";
 import { BLURPLE } from "../../styles/Shared/theme";
+import CancelButton from "../Shared/CancelButton";
+import Dropdown from "../Shared/Dropdown";
+import UserName from "../Users/Name";
 
 const CardActions = withStyles(() =>
   createStyles({
@@ -53,20 +65,42 @@ const TextButton = withStyles(() =>
 
 interface Props {
   event?: ClientEvent;
-  group?: ClientGroup;
+  groupId?: string;
   isEditing?: boolean;
   closeModal?: () => void;
+  submitButtonText?: string;
+  onSubmit?: (groupEvent: EventMotionInput) => void;
+  onCancel?: () => void;
+  inMotionForm?: boolean;
 }
 
-const EventForm = ({ event, group, isEditing, closeModal }: Props) => {
+const EventForm = ({
+  event,
+  groupId,
+  isEditing,
+  closeModal,
+  submitButtonText,
+  onSubmit,
+  onCancel,
+  inMotionForm,
+}: Props) => {
   const currentUser = useCurrentUser();
-  const [startsAt, setStartsAt] = useState(new Date().toString());
-  const [endsAt, setEndsAt] = useState(new Date().toString());
+  const [startsAt, setStartsAt] = useState(nowRoundedToNextHour().toString());
+  const [endsAt, setEndsAt] = useState(nowRoundedToNextHour().toString());
   const [coverPhoto, setCoverPhoto] = useState<File>();
   const [imageInputKey, setImageInputKey] = useState("");
   const [showEndsAt, setShowEndsAt] = useState(false);
+  const [groupMembers, _, groupMembersLoading] = useMembersByGroupId(
+    inMotionForm && groupId
+  );
+  const [hosts, setHosts] = useState<SelectedUser[]>([]);
   const [createEvent] = useMutation(CREATE_EVENT);
   const [updateEvent] = useMutation(UPDATE_EVENT);
+  const submitText = submitButtonText
+    ? submitButtonText
+    : isEditing
+    ? Messages.actions.save()
+    : Messages.actions.create();
 
   const initialValues: EventFormValues =
     isEditing && event
@@ -89,23 +123,29 @@ const EventForm = ({ event, group, isEditing, closeModal }: Props) => {
     if (event && isEditing) {
       setStartsAt(dayjs(parseInt(event.startsAt)).toString());
       setEndsAt(dayjs(parseInt(event.endsAt)).toString());
+      if (event.endsAt) setShowEndsAt(true);
     }
   }, [event, isEditing]);
 
   useEffect(() => {
-    setEndsAt(startsAt);
-  }, [startsAt, showEndsAt]);
+    if (showEndsAt && !isEditing) setEndsAt(startsAt);
+  }, [startsAt, showEndsAt, isEditing]);
 
   const handleSubmit = async (formValues: EventFormValues) => {
-    if (currentUser) {
+    const commonVars = {
+      ...(showEndsAt && { endsAt }),
+      ...formValues,
+      coverPhoto,
+      startsAt,
+    };
+    if (onSubmit && groupId)
+      onSubmit({
+        ...commonVars,
+        groupId,
+        hosts,
+      });
+    else {
       try {
-        const commonVars = {
-          coverPhoto,
-          startsAt,
-          ...(showEndsAt && { endsAt }),
-          ...formValues,
-        };
-
         if (isEditing && event) {
           const { data } = await updateEvent({
             variables: {
@@ -118,9 +158,9 @@ const EventForm = ({ event, group, isEditing, closeModal }: Props) => {
         } else {
           const { data } = await createEvent({
             variables: {
-              userId: currentUser.id,
-              groupId: group?.id,
+              userId: currentUser?.id,
               ...commonVars,
+              groupId,
             },
           });
 
@@ -139,6 +179,9 @@ const EventForm = ({ event, group, isEditing, closeModal }: Props) => {
   const handleEndsAtChange = (value: Dayjs | null) =>
     setEndsAt((value as Dayjs).toString());
 
+  const handleHostChange = (event: React.ChangeEvent<{ value: unknown }>) =>
+    setHosts([{ userId: event.target.value as string }]);
+
   const removeSelectedCoverPhoto = () => {
     setCoverPhoto(undefined);
     setImageInputKey(generateRandom());
@@ -151,7 +194,7 @@ const EventForm = ({ event, group, isEditing, closeModal }: Props) => {
   }: FormikProps<EventFormValues>): boolean => {
     if (isSubmitting) return true;
     if (!name || !description) return true;
-    if (isEditing && coverPhoto) return false;
+    if (isEditing) return false;
     return !dirty;
   };
 
@@ -211,12 +254,36 @@ const EventForm = ({ event, group, isEditing, closeModal }: Props) => {
               multiline
             />
 
-            <Field
-              name={EventFieldNames.ExternalLinl}
-              label={Messages.events.form.externalLink()}
-              placeholder={Messages.events.form.http()}
-              component={TextField}
-            />
+            {inMotionForm && (
+              <>
+                {groupMembersLoading ? (
+                  <LinearProgress />
+                ) : (
+                  <FormControl style={{ marginBottom: 18 }}>
+                    <InputLabel>{Messages.events.form.chooseHost()}</InputLabel>
+                    <Dropdown
+                      value={hosts[0]?.userId || ""}
+                      onChange={handleHostChange}
+                    >
+                      {groupMembers.map((member) => (
+                        <MenuItem value={member.userId} key={member.id}>
+                          <UserName userId={member.userId} />
+                        </MenuItem>
+                      ))}
+                    </Dropdown>
+                  </FormControl>
+                )}
+              </>
+            )}
+
+            {formik.values.online && (
+              <Field
+                name={EventFieldNames.ExternalLink}
+                label={Messages.events.form.externalLink()}
+                placeholder={Messages.events.form.http()}
+                component={TextField}
+              />
+            )}
 
             <div className={styles.onlineField}>
               <div>
@@ -262,12 +329,15 @@ const EventForm = ({ event, group, isEditing, closeModal }: Props) => {
               style={{ marginTop: -12 }}
             />
 
-            <SubmitButton
-              disabled={isSubmitButtonDisabled(formik)}
-              style={{ marginTop: 4 }}
-            >
-              {isEditing ? Messages.actions.save() : Messages.actions.create()}
-            </SubmitButton>
+            <div className={styles.flexEnd}>
+              {onCancel && (
+                <CancelButton onClick={onCancel} style={{ marginRight: 12 }} />
+              )}
+
+              <SubmitButton disabled={isSubmitButtonDisabled(formik)}>
+                {submitText}
+              </SubmitButton>
+            </div>
           </CardActions>
         </Form>
       )}

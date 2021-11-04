@@ -12,7 +12,10 @@ import {
 } from "@material-ui/core";
 
 import Messages from "../../utils/messages";
-import { JOINED_GROUP_EVENTS_BY_USER_ID } from "../../apollo/client/queries";
+import {
+  EVENTS,
+  JOINED_GROUP_EVENTS_BY_USER_ID,
+} from "../../apollo/client/queries";
 import { noCache } from "../../utils/clientIndex";
 import { useLazyQuery, useMutation } from "@apollo/client";
 import { useCurrentUser } from "../../hooks";
@@ -38,25 +41,35 @@ const Index = () => {
   const [tab, setTab] = useState(0);
   const [events, setEvents] = useState<ClientEvent[]>([]);
   const [deleteEvent] = useMutation(DELETE_EVENT);
-  const [getEventsRes, eventsRes] = useLazyQuery(
+  const [getGroupEventsRes, groupEventsRes] = useLazyQuery(
     JOINED_GROUP_EVENTS_BY_USER_ID,
     noCache
   );
+  const [getAllEventsRes, allEventsRes] = useLazyQuery(EVENTS, noCache);
 
   useEffect(() => {
+    const variables = {
+      timeFrame: selectedTimeFrame(),
+      online: tab === 2,
+    };
     if (currentUser?.id)
-      getEventsRes({
+      getGroupEventsRes({
         variables: {
           userId: currentUser.id,
-          timeFrame: selectedTimeFrame(),
-          online: tab === 2,
+          ...variables,
         },
       });
+    else getAllEventsRes({ variables });
   }, [currentUser?.id, tab]);
 
   useEffect(() => {
-    if (eventsRes.data) setEvents(eventsRes.data.joinedGroupEventsByUserId);
-  }, [eventsRes.data]);
+    if (groupEventsRes.data)
+      setEvents(groupEventsRes.data.joinedGroupEventsByUserId);
+  }, [groupEventsRes.data]);
+
+  useEffect(() => {
+    if (allEventsRes.data) setEvents(allEventsRes.data.allEvents);
+  }, [allEventsRes.data]);
 
   const deleteEventHandler = async (id: string) => {
     await deleteEvent({
@@ -117,7 +130,7 @@ const Index = () => {
       </Card>
 
       <Card>
-        {eventsRes.loading ? (
+        {groupEventsRes.loading || allEventsRes.loading ? (
           <LinearProgress />
         ) : (
           <CardContent style={{ paddingBottom: 6 }}>

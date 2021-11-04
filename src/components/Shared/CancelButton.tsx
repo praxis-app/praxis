@@ -10,6 +10,7 @@ const Button = withStyles(() =>
   createStyles({
     root: {
       fontFamily: "Inter Bold",
+      letterSpacing: "0.2px",
       textTransform: "none",
       minWidth: 80,
     },
