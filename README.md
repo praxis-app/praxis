@@ -26,6 +26,7 @@ Praxis is free and open source software, as specified by the GNU General Public 
 9. Start development server: `yarn dev`
 10. To create first user, navigate to http://localhost:3000/users/signup
 11. To test out roles and permissions features, navigate to http://localhost:3000/roles
+12. Enable pre-commit hook with Husky: `npx husky install && npx husky add .husky/pre-commit "yarn lint-staged"`
 
 The default database is PostgreSQL.
 
