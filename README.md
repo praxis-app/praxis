@@ -28,11 +28,11 @@ Praxis is free and open source software, as specified by the GNU General Public 
 11. To test out roles and permissions features, navigate to http://localhost:3000/roles
 12. Enable pre-commit hook with Husky: `npx husky install && npx husky add .husky/pre-commit "yarn lint-staged"`
 
-The default database is PostgreSQL.
+The default database is PostgreSQL. Instructions for deploying to production are coming soon.
 
 ## Tools to get Involved and Collaborate
 
-- Discord: https://discord.gg/CAHb3AhQat, or message me at **forrest#2807**
+- Discord: message me at **forrest#2807**
 - Notion: https://www.notion.so/praxis-74cb6558cc6f4470a967d95fad039303
 
 ## Contributions
