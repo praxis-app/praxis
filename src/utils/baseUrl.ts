@@ -2,5 +2,5 @@ import { Environments } from "../constants/common";
 
 export const baseUrl =
   process.env.NODE_ENV === Environments.Production
-    ? "https://p.raxis.xyz"
+    ? process.env.PRODUCTION_BASE_URL
     : "http://localhost:3000";
