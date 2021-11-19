@@ -1,0 +1,27 @@
+version: '3'
+services:
+
+    db:
+        container_name: db
+        image: postgres:10-alpine
+        restart: always
+        environment:
+            - POSTGRES_DB=postgres
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "postgres"]
+        volumes:
+            - postgres:/var/lib/postgresql/data
+
+    web:
+        container_name: praxis-web
+        restart: always
+        build: .
+        ports:
+            - 3000:3000
+        depends_on:
+            - db
+
+volumes:
+    postgres:
