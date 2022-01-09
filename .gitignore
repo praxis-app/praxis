@@ -72,3 +72,4 @@ yarn-error.log*
 !.eslintrc
 !.babelrc
 !.github/
+!.env.example

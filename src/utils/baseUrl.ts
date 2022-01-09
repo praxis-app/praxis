@@ -1,8 +1,11 @@
 import { Environments } from "../constants/common";
+import getConfig from "next/config";
 
-require("dotenv").config();
+const {
+  publicRuntimeConfig: { PRODUCTION_BASE_URL },
+} = getConfig();
 
 export const baseUrl =
   process.env.NODE_ENV === Environments.Production
-    ? (process.env.PRODUCTION_BASE_URL as string)
+    ? (PRODUCTION_BASE_URL as string)
     : "http://localhost:3000";

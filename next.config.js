@@ -4,4 +4,8 @@ module.exports = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+
+  publicRuntimeConfig: {
+    PRODUCTION_BASE_URL: process.env.PRODUCTION_BASE_URL,
+  },
 };
