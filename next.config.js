@@ -6,6 +6,7 @@ module.exports = {
   },
 
   publicRuntimeConfig: {
+    NODE_ENV: process.env.NODE_ENV,
     PRODUCTION_BASE_URL: process.env.PRODUCTION_BASE_URL,
   },
 };
