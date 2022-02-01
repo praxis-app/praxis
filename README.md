@@ -13,6 +13,20 @@ The tech stack includes the following:
 
 Praxis is free and open source software, as specified by the GNU General Public License.
 
+## Setting up Praxis for development with docker-compose
+
+1. Install [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/).
+2. Clone this repository
+3. Create a file named `.env` in the project root directory to set the database URL. It should look like this:
+
+```
+DATABASE_URL=postgresql://praxis_pg_user:praxis_pg_password@db/praxis_pg_db
+```
+4. Run `docker-compose up -d`
+5. Access the Praxis application at [http://localhost:3000](http://localhost:3000)
+6. Access adminer (for db management) at [http://localhost:8080](http://localhost:8080). Default credentials can be found under 'db > environment' of `docker-compose.yml`.
+
+
 ## Setting up Praxis for development
 
 1. Install Node version 15.12.0 using NVM or Homebrew
