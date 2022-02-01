@@ -1,0 +1,27 @@
+version: '3.1'
+
+services:
+  node:
+    container_name: praxisnode
+    image: "node:15.12"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+        - NODE_ENV=development
+    volumes:
+        - ./:/home/node/app
+    ports:
+        - 3000:3000
+    command: [sh, -c, "yarn install && yarn prisma generate && yarn prisma migrate dev --preview-feature && yarn dev"]
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: praxis_pg_password
+      POSTGRES_USER: praxis_pg_user
+      POSTGRES_DB: praxis_pg_db
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
