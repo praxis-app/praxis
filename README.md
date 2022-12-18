@@ -13,6 +13,17 @@ The tech stack includes the following:
 
 Praxis is free and open source software, as specified by the GNU General Public License.
 
+## New location for development
+
+Praxis is currently being rebuilt from the ground up using a different tech stack and architecture, as well as improved security and a greater emphasis on accessibility.
+
+For now, please refer to the following repositories:
+
+- https://github.com/forrestwilkins/social-ui
+- https://github.com/forrestwilkins/social-api
+
+Development will be resumed here after makng more progress with the rebuild.
+
 ## Setting up Praxis for development
 
 1. Install Node version 15.12.0 using NVM or Homebrew
