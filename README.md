@@ -2,7 +2,7 @@
 
 Social networking platform API built with NestJS, GraphQL, and TypeORM
 
-Praxis UI: https://github.com/project-praxis/praxis-ui
+Praxis UI: https://github.com/praxis-project/praxis-ui
 
 ## WIP
 
