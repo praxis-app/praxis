@@ -1,6 +1,6 @@
 {
-  "name": "social-api",
-  "author": "Forrest Wilkins",
+  "name": "praxis-api",
+  "author": "Praxis Project",
   "description": "Social networking platform API built with NestJS and TypeORM",
   "license": "GPL-3.0",
   "version": "0.0.1",

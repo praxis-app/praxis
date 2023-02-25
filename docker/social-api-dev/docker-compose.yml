@@ -1,11 +1,11 @@
 version: "3.8"
 
 services:
-  social-api-dev:
-    container_name: social-api-dev
+  praxis-api-dev:
+    container_name: praxis-api-dev
     build:
       context: ../../
-      dockerfile: docker/social-api-dev/Dockerfile
+      dockerfile: docker/praxis-api-dev/Dockerfile
       target: build_stage
     volumes:
       - ../../:/usr/src/app

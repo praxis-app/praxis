@@ -1,8 +1,8 @@
-## Social API
+## Praxis API
 
 Social networking platform API built with NestJS, GraphQL, and TypeORM
 
-Social UI: https://github.com/forrestwilkins/social-ui
+Praxis UI: https://github.com/project-praxis/praxis-ui
 
 ## WIP
 
@@ -17,7 +17,7 @@ Your feedback is highly welcome!
 $ npm install -g yarn
 
 # Install project dependencies
-$ cd social-api && yarn
+$ cd praxis-api && yarn
 
 # Add .env file and edit as needed
 $ cp .env.example .env
@@ -67,4 +67,4 @@ $ npx husky install && npx husky add .husky/pre-commit "yarn lint-staged"
 
 ## Contributions
 
-Social API is open to contributions. Please read [CONTRIBUTING.md](https://github.com/forrestwilkins/social-api/blob/main/CONTRIBUTING.md) for more details.
+Praxis API is open to contributions. Please read [CONTRIBUTING.md](https://github.com/praxis-project/praxis-api/blob/main/CONTRIBUTING.md) for more details.
