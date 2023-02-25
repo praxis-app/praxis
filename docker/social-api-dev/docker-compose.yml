@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  social-api-dev:
+    container_name: social-api-dev
+    build:
+      context: ../../
+      dockerfile: docker/social-api-dev/Dockerfile
+      target: build_stage
+    volumes:
+      - ../../:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+      - 9229:9229
+    command: npm run start:debug
+    networks:
+      - webnet
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres
+    image: postgres:12
+    networks:
+      - webnet
+    environment:
+      POSTGRES_DB: ${DB_SCHEMA}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+networks:
+  webnet:
+volumes:
+  pgdata:
