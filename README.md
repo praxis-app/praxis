@@ -13,6 +13,12 @@ The tech stack includes the following:
 
 Praxis is free and open source software, as specified by the GNU General Public License.
 
+## WIP
+
+You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground.
+
+Your feedback is highly welcome!
+
 ## New location for development
 
 Praxis is currently being rebuilt from the ground up using a different tech stack and architecture, as well as improved security and a greater emphasis on accessibility.
