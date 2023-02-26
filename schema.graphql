@@ -233,8 +233,22 @@ type Query {
   role(id: Int!): Role!
   serverRoles: [Role!]!
   authCheck: Boolean!
-  serverInvite(token: String!): ServerInvite!
+  serverInvite(token: String!): ServerInviteResult!
   serverInvites: [ServerInvite!]!
+}
+
+union ServerInviteResult = ServerInvite | UserInputError | ValidationError
+
+type UserInputError implements BaseError {
+  message: String!
+}
+
+interface BaseError {
+  message: String!
+}
+
+type ValidationError implements BaseError {
+  message: String!
 }
 
 type Mutation {

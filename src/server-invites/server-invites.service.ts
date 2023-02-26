@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserInputError, ValidationError } from "apollo-server-express";
 import * as cryptoRandomString from "crypto-random-string";
 import { Repository } from "typeorm";
 import { User } from "../users/models/user.model";
@@ -20,11 +19,17 @@ export class ServerInvitesService {
       where: { token },
     });
     if (!serverInvite) {
-      throw new UserInputError("Invite not found");
+      return {
+        message: "Invite not found",
+        __typename: "UserInputError",
+      };
     }
     const isValid = validateServerInvite(serverInvite);
     if (!isValid) {
-      throw new ValidationError("Invalid server invite");
+      return {
+        message: "Invalid server invite",
+        __typename: "ValidationError",
+      };
     }
     return serverInvite;
   }

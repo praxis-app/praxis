@@ -46,7 +46,12 @@ export class AuthService {
       throw new UserInputError("Missing invite token");
     }
     if (inviteToken) {
-      await this.serverInvitesService.getValidServerInvite(inviteToken);
+      const result = await this.serverInvitesService.getValidServerInvite(
+        inviteToken
+      );
+      if ("message" in result) {
+        throw new ValidationError(result.message);
+      }
     }
 
     const existingUser = await this.usersService.getUser({
