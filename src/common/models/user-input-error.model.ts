@@ -5,5 +5,8 @@ import { BaseError } from "./base-error.interface";
   implements: () => [BaseError],
 })
 export class UserInputError implements BaseError {
+  constructor(message: string) {
+    this.message = message;
+  }
   message: string;
 }
