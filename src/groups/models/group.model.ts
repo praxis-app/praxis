@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import FeedItem from "../../common/models/feed-item.union";
+import { FeedItem } from "../../common/models/feed-item.union";
 import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
