@@ -219,6 +219,7 @@ type Query {
   me: User!
   user(id: Int, name: String): User!
   users: [User!]!
+  userCount: Int!
   group(name: String!): Group!
   groups: [Group!]!
   memberRequest(groupId: Int!): MemberRequest

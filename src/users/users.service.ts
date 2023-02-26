@@ -42,6 +42,10 @@ export class UsersService {
     return this.repository.find({ where });
   }
 
+  async getUserCount() {
+    return this.repository.count();
+  }
+
   async getCoverPhoto(userId: number) {
     return this.imagesService.getImage({
       imageType: ImageTypes.CoverPhoto,

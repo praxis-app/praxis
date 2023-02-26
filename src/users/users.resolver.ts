@@ -45,6 +45,11 @@ export class UsersResolver {
     return this.usersService.getUsers();
   }
 
+  @Query(() => Int)
+  async userCount() {
+    return this.usersService.getUserCount();
+  }
+
   @ResolveField(() => [FeedItem])
   async homeFeed(@Parent() { id }: User) {
     return this.usersService.getUserHomeFeed(id);
