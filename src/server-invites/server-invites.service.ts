@@ -15,7 +15,7 @@ export class ServerInvitesService {
     private repository: Repository<ServerInvite>
   ) {}
 
-  async getServerInvite(token: string) {
+  async getValidServerInvite(token: string) {
     const serverInvite = await this.repository.findOne({
       where: { token },
     });
@@ -29,7 +29,7 @@ export class ServerInvitesService {
     return serverInvite;
   }
 
-  async getServerInvites() {
+  async getValidServerInvites() {
     const serverInvites = await this.repository.find({
       order: { createdAt: "DESC" },
     });
@@ -51,8 +51,8 @@ export class ServerInvitesService {
     return { serverInvite };
   }
 
-  async redeemServerInvite(id: number) {
-    await this.repository.increment({ id }, "uses", 1);
+  async redeemServerInvite(token: string) {
+    await this.repository.increment({ token }, "uses", 1);
   }
 
   async deleteServerInvite(id: number) {

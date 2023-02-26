@@ -22,12 +22,12 @@ export class ServerInvitesResolver {
 
   @Query(() => ServerInvite)
   async serverInvite(@Args("token", { type: () => String }) token: string) {
-    return this.serverInvitesService.getServerInvite(token);
+    return this.serverInvitesService.getValidServerInvite(token);
   }
 
   @Query(() => [ServerInvite])
   async serverInvites() {
-    return this.serverInvitesService.getServerInvites();
+    return this.serverInvitesService.getValidServerInvites();
   }
 
   @ResolveField(() => User)

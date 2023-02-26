@@ -363,7 +363,7 @@ input SignUpInput {
   email: String!
   name: String!
   password: String!
-  inviteToken: String!
+  inviteToken: String
 }
 
 input CreateServerInviteInput {
