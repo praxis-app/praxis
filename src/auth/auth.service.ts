@@ -67,11 +67,12 @@ export class AuthService {
       ...userData,
     });
     const authTokens = await this.generateAuthTokens(user.id);
+    const userCount = await this.usersService.getUserCount();
 
     if (inviteToken) {
       await this.serverInvitesService.redeemServerInvite(inviteToken);
     }
-    return { user, authTokens };
+    return { user, userCount, authTokens };
   }
 
   async generateAuthTokens(userId: number): Promise<AuthTokens> {

@@ -181,6 +181,7 @@ type LoginPayload {
 
 type SignUpPayload {
   user: User!
+  userCount: Int!
 }
 
 type CreateGroupPayload {
