@@ -46,6 +46,11 @@ export class UsersService {
     return this.repository.count();
   }
 
+  async isFirstUser() {
+    const userCount = await this.getUserCount();
+    return userCount === 1;
+  }
+
   async getCoverPhoto(userId: number) {
     return this.imagesService.getImage({
       imageType: ImageTypes.CoverPhoto,

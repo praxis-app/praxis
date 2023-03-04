@@ -221,6 +221,7 @@ type Query {
   user(id: Int, name: String): User!
   users: [User!]!
   userCount: Int!
+  isFirstUser: Boolean!
   group(name: String!): Group!
   groups: [Group!]!
   memberRequest(groupId: Int!): MemberRequest

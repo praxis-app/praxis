@@ -18,7 +18,7 @@ const shieldPermissions = shield(
       users: canBanMembers,
       serverInvites: or(canCreateInvites, canManageInvites),
       serverInvite: allow,
-      userCount: allow,
+      isFirstUser: allow,
     },
     Mutation: {
       "*": isAuthenticated,

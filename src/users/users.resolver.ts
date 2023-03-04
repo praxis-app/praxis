@@ -50,6 +50,11 @@ export class UsersResolver {
     return this.usersService.getUserCount();
   }
 
+  @Query(() => Boolean)
+  async isFirstUser() {
+    return this.usersService.isFirstUser();
+  }
+
   @ResolveField(() => [FeedItem])
   async homeFeed(@Parent() { id }: User) {
     return this.usersService.getUserHomeFeed(id);
