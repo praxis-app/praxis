@@ -42,12 +42,8 @@ export class UsersService {
     return this.repository.find({ where });
   }
 
-  async getUserCount() {
-    return this.repository.count();
-  }
-
   async isFirstUser() {
-    const userCount = await this.getUserCount();
+    const userCount = await this.repository.count();
     return userCount === 1;
   }
 

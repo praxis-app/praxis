@@ -13,7 +13,6 @@ import { AuthTokens } from "../auth.service";
 export interface SetAuthCookieInput {
   authTokens: AuthTokens;
   user: Omit<User, "password">;
-  userCount?: number;
 }
 
 @Injectable()

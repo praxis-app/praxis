@@ -45,11 +45,6 @@ export class UsersResolver {
     return this.usersService.getUsers();
   }
 
-  @Query(() => Int)
-  async userCount() {
-    return this.usersService.getUserCount();
-  }
-
   @Query(() => Boolean)
   async isFirstUser() {
     return this.usersService.isFirstUser();
