@@ -44,7 +44,7 @@ export class UsersService {
 
   async isFirstUser() {
     const userCount = await this.repository.count();
-    return userCount === 1;
+    return userCount === 0;
   }
 
   async getCoverPhoto(userId: number) {
