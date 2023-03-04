@@ -13,7 +13,6 @@ import { Dataloaders } from "../dataloader/dataloader.service";
 import { User } from "../users/models/user.model";
 import { CreateServerInviteInput } from "./models/create-server-invite.input";
 import { CreateServerInvitePayload } from "./models/create-server-invite.payload";
-import { ServerInviteResult } from "./models/server-invite-result.union";
 import { ServerInvite } from "./models/server-invite.model";
 import { ServerInvitesService } from "./server-invites.service";
 
@@ -21,7 +20,7 @@ import { ServerInvitesService } from "./server-invites.service";
 export class ServerInvitesResolver {
   constructor(private serverInvitesService: ServerInvitesService) {}
 
-  @Query(() => ServerInviteResult)
+  @Query(() => ServerInvite)
   async serverInvite(@Args("token", { type: () => String }) token: string) {
     return this.serverInvitesService.getValidServerInvite(token);
   }
