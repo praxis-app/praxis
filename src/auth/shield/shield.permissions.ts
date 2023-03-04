@@ -16,8 +16,9 @@ const shieldPermissions = shield(
     Query: {
       "*": isAuthenticated,
       users: canBanMembers,
-      serverInvite: allow,
       serverInvites: or(canCreateInvites, canManageInvites),
+      serverInvite: allow,
+      isFirstUser: allow,
     },
     Mutation: {
       "*": isAuthenticated,

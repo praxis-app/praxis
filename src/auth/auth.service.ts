@@ -41,9 +41,14 @@ export class AuthService {
     inviteToken,
     ...userData
   }: SignUpInput): Promise<SetAuthCookieInput> {
-    const serverInvite = await this.serverInvitesService.getServerInvite(
-      inviteToken
-    );
+    const users = await this.usersService.getUsers();
+    if (users.length && !inviteToken) {
+      throw new UserInputError("Missing invite token");
+    }
+    if (inviteToken) {
+      await this.serverInvitesService.getValidServerInvite(inviteToken);
+    }
+
     const existingUser = await this.usersService.getUser({
       email: userData.email,
     });
@@ -58,9 +63,9 @@ export class AuthService {
     });
     const authTokens = await this.generateAuthTokens(user.id);
 
-    // Redeem invite only after successful sign up
-    await this.serverInvitesService.redeemServerInvite(serverInvite.id);
-
+    if (inviteToken) {
+      await this.serverInvitesService.redeemServerInvite(inviteToken);
+    }
     return { user, authTokens };
   }
 

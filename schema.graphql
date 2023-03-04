@@ -219,6 +219,7 @@ type Query {
   me: User!
   user(id: Int, name: String): User!
   users: [User!]!
+  isFirstUser: Boolean!
   group(name: String!): Group!
   groups: [Group!]!
   memberRequest(groupId: Int!): MemberRequest
@@ -363,7 +364,7 @@ input SignUpInput {
   email: String!
   name: String!
   password: String!
-  inviteToken: String!
+  inviteToken: String
 }
 
 input CreateServerInviteInput {

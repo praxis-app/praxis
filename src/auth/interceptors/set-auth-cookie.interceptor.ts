@@ -19,14 +19,14 @@ export interface SetAuthCookieInput {
 export class SetAuthCookieInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      map(({ user, authTokens }: SetAuthCookieInput) => {
+      map(({ authTokens, ...userData }: SetAuthCookieInput) => {
         const ctx = GqlExecutionContext.create(context).getContext();
         ctx.req.res.cookie("auth", authTokens, {
           httpOnly: true,
           sameSite: true,
           secure: true,
         });
-        return { user };
+        return userData;
       })
     );
   }

@@ -9,7 +9,7 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
-import FeedItem from "../common/models/feed-item.union";
+import { FeedItem } from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
@@ -43,6 +43,11 @@ export class UsersResolver {
   @Query(() => [User])
   async users() {
     return this.usersService.getUsers();
+  }
+
+  @Query(() => Boolean)
+  async isFirstUser() {
+    return this.usersService.isFirstUser();
   }
 
   @ResolveField(() => [FeedItem])

@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
-import FeedItem from "../../common/models/feed-item.union";
+import { FeedItem } from "../../common/models/feed-item.union";
 import { GroupMember } from "../../groups/group-members/models/group-member.model";
 import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
