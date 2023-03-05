@@ -1,74 +1,50 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
-# dependencies
-/node_modules
-/client/node_modules
-package-lock.json
-/.pnp
-.pnp.js
+# Other IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# next.js
-/.next/
-/out/
-
-# uploads
-/uploads
-/public/uploads
-
-# testing
-/coverage
-
-# production
-/build
-
-# TypeScript cache
-*.tsbuildinfo
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
+# ESLint and Prettier
 .eslintcache
+.husky
 
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
+# compiled output
+dist
+node_modules
 
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file
+# Environment variables file
 .env
 .env.test
-/src/.env
 .env.development.local
 .env.test.local
 .env.production.local
 
-# misc
-.DS_Store
-
+# Logs
+logs
+*.log
 npm-debug.log*
+pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
 
-# Ignore cache files
-._*
+# OS
+.DS_Store
 
-# Ignore hidden files by default
-.*
-!.gitignore
-!.gitkeep
-!.env.local
-!.prettierrc
-!.eslintrc
-!.babelrc
-!.github/
+# Tests
+/coverage
+/.nyc_output
+
+# Uploaded content
+/uploads/*
+!/uploads/README.md
