@@ -17,9 +17,9 @@ const bootstrap = async () => {
   app.use(cookieParser());
 
   const config = new DocumentBuilder()
-    .setTitle("Praxis API")
+    .setTitle("Praxis")
     .setDescription(
-      "Social networking API built with NestJS, Apollo Server, and TypeORM"
+      "Social networking API built with NestJS, GraphQL, and TypeORM"
     )
     .setVersion("1.0")
     .build();

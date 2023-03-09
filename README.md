@@ -1,4 +1,4 @@
-## Praxis API
+## Praxis
 
 Praxis is an open source social networking site. Proposals are the main focus and come with a wide variety of voting features, with consensus as the default. Create a group and set it to no-admin, allowing group members to create proposals and democratically decide on name, settings, roles, or planning of real world events.
 
@@ -75,4 +75,4 @@ $ npx husky install && npx husky add .husky/pre-commit "yarn lint-staged"
 
 ## Contributions
 
-Praxis API is open to contributions. Please read [CONTRIBUTING.md](https://github.com/praxis-project/praxis-api/blob/main/CONTRIBUTING.md) for more details.
+Praxis is open to contributions. Please read [CONTRIBUTING.md](https://github.com/praxis-project/praxis-api/blob/main/CONTRIBUTING.md) for more details.
