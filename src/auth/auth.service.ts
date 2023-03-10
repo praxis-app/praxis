@@ -38,6 +38,7 @@ export class AuthService {
 
   async signUp({
     password,
+    confirmPassword,
     inviteToken,
     ...userData
   }: SignUpInput): Promise<SetAuthCookieInput> {
@@ -54,6 +55,9 @@ export class AuthService {
     });
     if (existingUser) {
       throw new UserInputError("User already exists");
+    }
+    if (password !== confirmPassword) {
+      throw new UserInputError("Passwords do not match");
     }
 
     const passwordHash = await hash(password, SALT_ROUNDS);
