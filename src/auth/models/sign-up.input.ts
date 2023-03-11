@@ -11,6 +11,9 @@ export class SignUpInput {
   @Field()
   password: string;
 
+  @Field()
+  confirmPassword: string;
+
   @Field({ nullable: true })
   inviteToken?: string;
 }

@@ -364,6 +364,7 @@ input SignUpInput {
   email: String!
   name: String!
   password: String!
+  confirmPassword: String!
   inviteToken: String
 }
 
