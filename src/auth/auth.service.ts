@@ -37,9 +37,10 @@ export class AuthService {
   }
 
   async signUp({
+    inviteToken,
     password,
     confirmPassword,
-    inviteToken,
+    profilePicture,
     ...userData
   }: SignUpInput): Promise<SetAuthCookieInput> {
     const users = await this.usersService.getUsers();
@@ -67,6 +68,9 @@ export class AuthService {
     });
     const authTokens = await this.generateAuthTokens(user.id);
 
+    if (profilePicture) {
+      await this.usersService.saveProfilePicture(user.id, profilePicture);
+    }
     if (inviteToken) {
       await this.serverInvitesService.redeemServerInvite(inviteToken);
     }

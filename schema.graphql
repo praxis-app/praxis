@@ -365,6 +365,7 @@ input SignUpInput {
   name: String!
   password: String!
   confirmPassword: String!
+  profilePicture: Upload
   inviteToken: String
 }
 
