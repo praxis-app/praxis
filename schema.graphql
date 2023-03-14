@@ -108,10 +108,19 @@ type Group {
 
 union FeedItem = Post | Proposal
 
+type Like {
+  id: Int!
+  post: Post!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Post {
   id: Int!
   body: String
   images: [Image!]!
+  likes: [Like!]!
   user: User!
   group: Group
   createdAt: DateTime!
@@ -125,6 +134,7 @@ type User {
   bio: String
   posts: [Post!]!
   proposals: [Proposal!]!
+  likes: [Like!]!
   homeFeed: [FeedItem!]!
   profileFeed: [FeedItem!]!
   profilePicture: Image!

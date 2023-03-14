@@ -13,6 +13,7 @@ import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.mod
 import { FeedItem } from "../../common/models/feed-item.union";
 import { GroupMember } from "../../groups/group-members/models/group-member.model";
 import { Image } from "../../images/models/image.model";
+import { Like } from "../../likes/models/like.model";
 import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
 import { RoleMember } from "../../roles/role-members/models/role-member.model";
@@ -51,6 +52,12 @@ export class User {
   })
   @Field(() => [Proposal])
   proposals: Proposal[];
+
+  @OneToMany(() => Like, (like) => like.user, {
+    cascade: true,
+  })
+  @Field(() => [Like])
+  likes: Like[];
 
   @Field(() => [FeedItem])
   homeFeed: Array<typeof FeedItem>;
