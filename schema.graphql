@@ -125,6 +125,7 @@ type Post {
   group: Group
   createdAt: DateTime!
   updatedAt: DateTime!
+  likesCount: Int!
 }
 
 type User {

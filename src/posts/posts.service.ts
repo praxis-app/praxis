@@ -10,6 +10,8 @@ import { CreatePostInput } from "./models/create-post.input";
 import { Post } from "./models/post.model";
 import { UpdatePostInput } from "./models/update-post.input";
 
+type PostWithLikeCount = Post & { likeCount: number };
+
 @Injectable()
 export class PostsService {
   constructor(
@@ -36,6 +38,24 @@ export class PostsService {
         new Error(`Could not load images for post: ${id}`)
     );
     return mappedImages;
+  }
+
+  async getPostLikesCountByBatch(postIds: number[]) {
+    const posts = (await this.repository
+      .createQueryBuilder("post")
+      .leftJoinAndSelect("post.likes", "like")
+      .loadRelationCountAndMap("post.likeCount", "post.likes")
+      .select(["post.id"])
+      .whereInIds(postIds)
+      .getMany()) as PostWithLikeCount[];
+
+    return postIds.map((id) => {
+      const post = posts.find((post: Post) => post.id === id);
+      if (!post) {
+        return new Error(`Could not load likes count: ${id}`);
+      }
+      return post.likeCount;
+    });
   }
 
   async createPost({ images, ...postData }: CreatePostInput, user: User) {

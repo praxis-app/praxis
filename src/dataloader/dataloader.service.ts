@@ -28,6 +28,10 @@ export interface Dataloaders {
   proposalVoteCountLoader: DataLoader<number, number>;
   proposalVotesLoader: DataLoader<number, Vote[]>;
 
+  // Posts
+  postImagesLoader: DataLoader<number, Image[]>;
+  postLikeCountLoader: DataLoader<number, number>;
+
   // Groups
   groupCoverPhotosLoader: DataLoader<number, Image>;
   groupMemberCountLoader: DataLoader<number, number>;
@@ -36,7 +40,6 @@ export interface Dataloaders {
   memberRequestCountLoader: DataLoader<number, number>;
 
   // Misc.
-  postImagesLoader: DataLoader<number, Image[]>;
   profilePicturesLoader: DataLoader<number, Image>;
   roleMemberCountLoader: DataLoader<number, number>;
   usersLoader: DataLoader<number, User>;
@@ -58,11 +61,15 @@ export class DataloaderService {
 
   getLoaders(): Dataloaders {
     return {
-      // Proposals & votes
+      // Proposals & Votes
       proposalActionsLoader: this._createProposalActionsLoader(),
       proposalImagesLoader: this._createProposalImagesLoader(),
       proposalVoteCountLoader: this._createProposalVoteCountLoader(),
       proposalVotesLoader: this._createProposalVotesLoader(),
+
+      // Posts
+      postImagesLoader: this._createPostImagesLoader(),
+      postLikeCountLoader: this._createPostLikeCountLoader(),
 
       // Groups
       groupCoverPhotosLoader: this._createGroupCoverPhotosLoader(),
@@ -72,7 +79,6 @@ export class DataloaderService {
       memberRequestCountLoader: this._createMemberRequestCountLoader(),
 
       // Misc.
-      postImagesLoader: this._createPostImagesLoader(),
       profilePicturesLoader: this._createProfilePicturesLoader(),
       roleMemberCountLoader: this._createRoleMemberCountLoader(),
       usersLoader: this._createUsersLoader(),
@@ -106,6 +112,22 @@ export class DataloaderService {
       this.proposalActionsService.getProposalActionsByBatch(
         proposalActionIds as number[]
       )
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // Posts
+  // -------------------------------------------------------------------------
+
+  private _createPostImagesLoader() {
+    return new DataLoader<number, Image[]>(async (postIds) =>
+      this.postsService.getPostImagesByBatch(postIds as number[])
+    );
+  }
+
+  private _createPostLikeCountLoader() {
+    return new DataLoader<number, number>(async (postIds) =>
+      this.postsService.getPostLikesCountByBatch(postIds as number[])
     );
   }
 
@@ -158,12 +180,6 @@ export class DataloaderService {
   private _createProfilePicturesLoader() {
     return new DataLoader<number, Image>(async (userIds) =>
       this.usersService.getProfilePicturesByBatch(userIds as number[])
-    );
-  }
-
-  private _createPostImagesLoader() {
-    return new DataLoader<number, Image[]>(async (postIds) =>
-      this.postsService.getPostImagesByBatch(postIds as number[])
     );
   }
 

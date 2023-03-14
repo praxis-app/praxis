@@ -36,6 +36,14 @@ export class PostsResolver {
     return this.postsService.getPosts();
   }
 
+  @ResolveField(() => Int)
+  async likesCount(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Post
+  ) {
+    return loaders.postLikeCountLoader.load(id);
+  }
+
   @ResolveField(() => [Image])
   async images(
     @Context() { loaders }: { loaders: Dataloaders },
