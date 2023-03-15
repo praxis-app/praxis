@@ -5,6 +5,7 @@ import { FindOptionsWhere, In, Repository } from "typeorm";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { LikesService } from "../likes/likes.service";
 import { User } from "../users/models/user.model";
 import { CreatePostInput } from "./models/create-post.input";
 import { Post } from "./models/post.model";
@@ -17,7 +18,8 @@ export class PostsService {
   constructor(
     @InjectRepository(Post)
     private repository: Repository<Post>,
-    private imagesService: ImagesService
+    private imagesService: ImagesService,
+    private likesService: LikesService
   ) {}
 
   async getPost(id: number) {
@@ -38,6 +40,18 @@ export class PostsService {
         new Error(`Could not load images for post: ${id}`)
     );
     return mappedImages;
+  }
+
+  async getPostLikesByBatch(postIds: number[]) {
+    const likes = await this.likesService.getLikes({
+      postId: In(postIds),
+    });
+    const mappedLikes = postIds.map(
+      (id) =>
+        likes.filter((image: Image) => image.postId === id) ||
+        new Error(`Could not load likes for post: ${id}`)
+    );
+    return mappedLikes;
   }
 
   async getPostLikesCountByBatch(postIds: number[]) {

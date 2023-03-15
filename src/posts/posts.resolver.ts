@@ -14,6 +14,7 @@ import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.service";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
+import { Like } from "../likes/models/like.model";
 import { User } from "../users/models/user.model";
 import { CreatePostInput } from "./models/create-post.input";
 import { CreatePostPayload } from "./models/create-post.payload";
@@ -34,6 +35,14 @@ export class PostsResolver {
   @Query(() => [Post])
   async posts() {
     return this.postsService.getPosts();
+  }
+
+  @ResolveField(() => [Like])
+  async likes(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Post
+  ) {
+    return loaders.postLikesLoader.load(id);
   }
 
   @ResolveField(() => Int)

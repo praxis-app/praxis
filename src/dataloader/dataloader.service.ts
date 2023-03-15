@@ -11,6 +11,7 @@ import { GroupsService } from "../groups/groups.service";
 import { MemberRequestsService } from "../groups/member-requests/member-requests.service";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
+import { Like } from "../likes/models/like.model";
 import { PostsService } from "../posts/posts.service";
 import { ProposalAction } from "../proposals/proposal-actions/models/proposal-action.model";
 import { ProposalActionsService } from "../proposals/proposal-actions/proposal-actions.service";
@@ -31,6 +32,7 @@ export interface Dataloaders {
   // Posts
   postImagesLoader: DataLoader<number, Image[]>;
   postLikeCountLoader: DataLoader<number, number>;
+  postLikesLoader: DataLoader<number, Like[]>;
 
   // Groups
   groupCoverPhotosLoader: DataLoader<number, Image>;
@@ -70,6 +72,7 @@ export class DataloaderService {
       // Posts
       postImagesLoader: this._createPostImagesLoader(),
       postLikeCountLoader: this._createPostLikeCountLoader(),
+      postLikesLoader: this._createPostLikesLoader(),
 
       // Groups
       groupCoverPhotosLoader: this._createGroupCoverPhotosLoader(),
@@ -122,6 +125,12 @@ export class DataloaderService {
   private _createPostImagesLoader() {
     return new DataLoader<number, Image[]>(async (postIds) =>
       this.postsService.getPostImagesByBatch(postIds as number[])
+    );
+  }
+
+  private _createPostLikesLoader() {
+    return new DataLoader<number, Like[]>(async (postIds) =>
+      this.postsService.getPostLikesByBatch(postIds as number[])
     );
   }
 

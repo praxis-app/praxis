@@ -161,6 +161,10 @@ type CreateServerInvitePayload {
   serverInvite: ServerInvite!
 }
 
+type CreateLikePayload {
+  like: Like!
+}
+
 type CreatePostPayload {
   post: Post!
 }
@@ -226,10 +230,6 @@ type UpdateProposalPayload {
   proposal: Proposal!
 }
 
-type CreateLikePayload {
-  like: Like!
-}
-
 type Query {
   me: User!
   user(id: Int, name: String): User!
@@ -268,6 +268,8 @@ type Mutation {
   createPost(postData: CreatePostInput!): CreatePostPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
   deletePost(id: Int!): Boolean!
+  createLike(likeData: CreateLikeInput!): CreateLikePayload!
+  deleteLike(id: Int!): Boolean!
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   deleteProposal(id: Int!): Boolean!
@@ -283,8 +285,6 @@ type Mutation {
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
-  createLike(likeData: CreateLikeInput!): CreateLikePayload!
-  deleteLike(id: Int!): Boolean!
 }
 
 input UpdateUserInput {
@@ -321,6 +321,10 @@ input UpdatePostInput {
   id: Int!
   body: String
   images: [Upload!]
+}
+
+input CreateLikeInput {
+  postId: Int
 }
 
 input CreateProposalInput {
@@ -389,8 +393,4 @@ input SignUpInput {
 input CreateServerInviteInput {
   maxUses: Int
   expiresAt: DateTime
-}
-
-input CreateLikeInput {
-  postId: Int
 }

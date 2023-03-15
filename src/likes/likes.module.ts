@@ -7,5 +7,6 @@ import { Like } from "./models/like.model";
 @Module({
   imports: [TypeOrmModule.forFeature([Like])],
   providers: [LikesService, LikesResolver],
+  exports: [LikesService],
 })
 export class LikesModule {}
