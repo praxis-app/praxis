@@ -226,6 +226,10 @@ type UpdateProposalPayload {
   proposal: Proposal!
 }
 
+type CreateLikePayload {
+  like: Like!
+}
+
 type Query {
   me: User!
   user(id: Int, name: String): User!
@@ -279,6 +283,8 @@ type Mutation {
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
+  createLike(likeData: CreateLikeInput!): CreateLikePayload!
+  deleteLike(id: Int!): Boolean!
 }
 
 input UpdateUserInput {
@@ -383,4 +389,8 @@ input SignUpInput {
 input CreateServerInviteInput {
   maxUses: Int
   expiresAt: DateTime
+}
+
+input CreateLikeInput {
+  postId: Int
 }
