@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { User } from "../users/models/user.model";
 import { CreateLikeInput } from "./models/create-like.input";
+import { DeleteLikeInput } from "./models/delete-like.input";
 import { Like } from "./models/like.model";
 
 @Injectable()
@@ -23,8 +24,8 @@ export class LikesService {
     return { like };
   }
 
-  async deleteLike(id: number) {
-    await this.repository.delete(id);
+  async deleteLike(likeData: DeleteLikeInput, user: User) {
+    await this.repository.delete({ userId: user.id, ...likeData });
     return true;
   }
 }

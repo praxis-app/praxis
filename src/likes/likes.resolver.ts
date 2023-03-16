@@ -3,7 +3,6 @@
 import {
   Args,
   Context,
-  Int,
   Mutation,
   Parent,
   ResolveField,
@@ -15,6 +14,7 @@ import { User } from "../users/models/user.model";
 import { LikesService } from "./likes.service";
 import { CreateLikeInput } from "./models/create-like.input";
 import { CreateLikePayload } from "./models/create-like.payload";
+import { DeleteLikeInput } from "./models/delete-like.input";
 import { Like } from "./models/like.model";
 
 @Resolver(() => Like)
@@ -38,7 +38,10 @@ export class LikesResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteLike(@Args("id", { type: () => Int }) id: number) {
-    return this.likesService.deleteLike(id);
+  async deleteLike(
+    @Args("likeData") likeData: DeleteLikeInput,
+    @CurrentUser() user: User
+  ) {
+    return this.likesService.deleteLike(likeData, user);
   }
 }

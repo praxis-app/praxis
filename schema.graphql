@@ -269,7 +269,7 @@ type Mutation {
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
   deletePost(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
-  deleteLike(id: Int!): Boolean!
+  deleteLike(likeData: DeleteLikeInput!): Boolean!
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   deleteProposal(id: Int!): Boolean!
@@ -324,6 +324,10 @@ input UpdatePostInput {
 }
 
 input CreateLikeInput {
+  postId: Int
+}
+
+input DeleteLikeInput {
   postId: Int
 }
 
