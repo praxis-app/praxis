@@ -10,6 +10,8 @@ import {
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.service";
+import { Post } from "../posts/models/post.model";
+import { PostsService } from "../posts/posts.service";
 import { User } from "../users/models/user.model";
 import { LikesService } from "./likes.service";
 import { CreateLikeInput } from "./models/create-like.input";
@@ -19,7 +21,10 @@ import { Like } from "./models/like.model";
 
 @Resolver(() => Like)
 export class LikesResolver {
-  constructor(private likesService: LikesService) {}
+  constructor(
+    private likesService: LikesService,
+    private postsService: PostsService
+  ) {}
 
   @ResolveField(() => User)
   async user(
@@ -27,6 +32,11 @@ export class LikesResolver {
     @Parent() { userId }: Like
   ) {
     return loaders.usersLoader.load(userId);
+  }
+
+  @ResolveField(() => Post)
+  async post(@Parent() { postId }: Like) {
+    return this.postsService.getPost(postId);
   }
 
   @Mutation(() => CreateLikePayload)
