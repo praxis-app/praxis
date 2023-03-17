@@ -77,6 +77,15 @@ export class PostsResolver {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
 
+  @ResolveField(() => Boolean)
+  async isLikedByMe(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @CurrentUser() user: User,
+    @Parent() { id }: Post
+  ) {
+    return loaders.isPostLikedByMeLoader.load({ userId: user.id, postId: id });
+  }
+
   @Mutation(() => CreatePostPayload)
   async createPost(
     @Args("postData") postData: CreatePostInput,

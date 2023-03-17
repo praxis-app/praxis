@@ -22,6 +22,11 @@ import { UsersService } from "../users/users.service";
 import { Vote } from "../votes/models/vote.model";
 import { VotesService } from "../votes/votes.service";
 
+export interface IsLikedByMeKey {
+  userId: number;
+  postId: number;
+}
+
 export interface Dataloaders {
   // Proposals & Votes
   proposalActionsLoader: DataLoader<number, ProposalAction>;
@@ -30,6 +35,7 @@ export interface Dataloaders {
   proposalVotesLoader: DataLoader<number, Vote[]>;
 
   // Posts
+  isPostLikedByMeLoader: DataLoader<IsLikedByMeKey, boolean>;
   postImagesLoader: DataLoader<number, Image[]>;
   postLikeCountLoader: DataLoader<number, number>;
   postLikesLoader: DataLoader<number, Like[]>;
@@ -70,6 +76,7 @@ export class DataloaderService {
       proposalVotesLoader: this._createProposalVotesLoader(),
 
       // Posts
+      isPostLikedByMeLoader: this._createIsPostLikedByMeLoader(),
       postImagesLoader: this._createPostImagesLoader(),
       postLikeCountLoader: this._createPostLikeCountLoader(),
       postLikesLoader: this._createPostLikesLoader(),
@@ -121,6 +128,16 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
   // Posts
   // -------------------------------------------------------------------------
+
+  private _createIsPostLikedByMeLoader() {
+    return new DataLoader<IsLikedByMeKey, boolean>(
+      async (keys) =>
+        this.postsService.getIsLikedByMeByBatch(keys as IsLikedByMeKey[]),
+
+      // TODO: Determine whether this is correct usage of `cacheKeyFn`
+      { cacheKeyFn: (key) => key }
+    );
+  }
 
   private _createPostImagesLoader() {
     return new DataLoader<number, Image[]>(async (postIds) =>

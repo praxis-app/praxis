@@ -9,7 +9,9 @@ import { LikesService } from "../likes/likes.service";
 import { User } from "../users/models/user.model";
 import { CreatePostInput } from "./models/create-post.input";
 import { Post } from "./models/post.model";
+import { Like } from "../likes/models/like.model";
 import { UpdatePostInput } from "./models/update-post.input";
+import { IsLikedByMeKey } from "../dataloader/dataloader.service";
 
 type PostWithLikeCount = Post & { likeCount: number };
 
@@ -52,6 +54,15 @@ export class PostsService {
         new Error(`Could not load likes for post: ${id}`)
     );
     return mappedLikes;
+  }
+
+  async getIsLikedByMeByBatch(keys: IsLikedByMeKey[]) {
+    const postIds = keys.map(({ postId }) => postId);
+    const likes = await this.likesService.getLikes({
+      postId: In(postIds),
+      userId: keys[0].userId,
+    });
+    return postIds.map((id) => likes.some((like: Like) => like.postId === id));
   }
 
   async getPostLikesCountByBatch(postIds: number[]) {
