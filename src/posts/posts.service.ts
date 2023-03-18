@@ -36,24 +36,22 @@ export class PostsService {
     const images = await this.imagesService.getImages({
       postId: In(postIds),
     });
-    const mappedImages = postIds.map(
+    return postIds.map(
       (id) =>
         images.filter((image: Image) => image.postId === id) ||
         new Error(`Could not load images for post: ${id}`)
     );
-    return mappedImages;
   }
 
   async getPostLikesByBatch(postIds: number[]) {
     const likes = await this.likesService.getLikes({
       postId: In(postIds),
     });
-    const mappedLikes = postIds.map(
+    return postIds.map(
       (id) =>
         likes.filter((image: Image) => image.postId === id) ||
         new Error(`Could not load likes for post: ${id}`)
     );
-    return mappedLikes;
   }
 
   async getIsLikedByMeByBatch(keys: IsLikedByMeKey[]) {
