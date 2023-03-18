@@ -1,5 +1,3 @@
-// TODO: Test thoroughly and add remaining functionality - below is a WIP
-
 import {
   Args,
   Context,
