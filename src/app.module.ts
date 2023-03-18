@@ -15,6 +15,7 @@ import { Context } from "./common/common.types";
 import { DatabaseModule } from "./database/database.module";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
+import { FollowsModule } from "./follows/follows.module";
 import { GroupsModule } from "./groups/groups.module";
 import { ImagesModule } from "./images/images.module";
 import { LikesModule } from "./likes/likes.module";
@@ -75,6 +76,7 @@ const useFactory = (
     AuthModule,
     DatabaseModule,
     DataloaderModule,
+    FollowsModule,
     GroupsModule,
     ImagesModule,
     LikesModule,
