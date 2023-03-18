@@ -100,12 +100,9 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
 
   private _createIsPostLikedByMeLoader() {
-    return new DataLoader<IsLikedByMeKey, boolean>(
-      async (keys) =>
-        this.postsService.getIsLikedByMeByBatch(keys as IsLikedByMeKey[]),
-
-      // TODO: Determine whether this is correct usage of `cacheKeyFn`
-      { cacheKeyFn: (key) => key }
+    return new DataLoader<IsLikedByMeKey, boolean, number>(
+      async (keys) => this.postsService.getIsLikedByMeByBatch(keys),
+      { cacheKeyFn: (key) => key.postId }
     );
   }
 
