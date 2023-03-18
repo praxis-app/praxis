@@ -101,7 +101,8 @@ export class DataloaderService {
 
   private _createIsPostLikedByMeLoader() {
     return new DataLoader<IsLikedByMeKey, boolean, number>(
-      async (keys) => this.postsService.getIsLikedByMeByBatch(keys),
+      async (keys) =>
+        this.postsService.getIsLikedByMeByBatch(keys as IsLikedByMeKey[]),
       { cacheKeyFn: (key) => key.postId }
     );
   }

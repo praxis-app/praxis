@@ -54,7 +54,7 @@ export class PostsService {
     );
   }
 
-  async getIsLikedByMeByBatch(keys: readonly IsLikedByMeKey[]) {
+  async getIsLikedByMeByBatch(keys: IsLikedByMeKey[]) {
     const postIds = keys.map(({ postId }) => postId);
     const likes = await this.likesService.getLikes({
       postId: In(postIds),
