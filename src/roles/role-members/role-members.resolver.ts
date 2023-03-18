@@ -7,7 +7,7 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { Dataloaders } from "../../dataloader/dataloader.service";
+import { Dataloaders } from "../../dataloader/dataloader.types";
 import { User } from "../../users/models/user.model";
 import { Role } from "../models/role.model";
 import { RolesService } from "../roles.service";
