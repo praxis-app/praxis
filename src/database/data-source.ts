@@ -5,6 +5,7 @@ import { GroupMember } from "../groups/group-members/models/group-member.model";
 import { MemberRequest } from "../groups/member-requests/models/member-request.model";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
+import { Like } from "../likes/models/like.model";
 import { Post } from "../posts/models/post.model";
 import { Proposal } from "../proposals/models/proposal.model";
 import { ProposalAction } from "../proposals/proposal-actions/models/proposal-action.model";
@@ -16,6 +17,7 @@ import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
 import { Initial1675388391336 } from "./migrations/1675388391336-Initial";
 import { AddServerInviteTable1677339785709 } from "./migrations/1677339785709-AddServerInviteTable";
+import { AddLikeTable1679157357262 } from "./migrations/1679157357262-AddLikeTable";
 
 config();
 
@@ -30,6 +32,7 @@ export default new DataSource({
     Group,
     GroupMember,
     Image,
+    Like,
     MemberRequest,
     Permission,
     Post,
@@ -42,5 +45,9 @@ export default new DataSource({
     User,
     Vote,
   ],
-  migrations: [Initial1675388391336, AddServerInviteTable1677339785709],
+  migrations: [
+    AddLikeTable1679157357262,
+    AddServerInviteTable1677339785709,
+    Initial1675388391336,
+  ],
 });

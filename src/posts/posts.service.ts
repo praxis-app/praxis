@@ -2,20 +2,26 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { IsLikedByMeKey } from "../dataloader/dataloader.types";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { LikesService } from "../likes/likes.service";
+import { Like } from "../likes/models/like.model";
 import { User } from "../users/models/user.model";
 import { CreatePostInput } from "./models/create-post.input";
 import { Post } from "./models/post.model";
 import { UpdatePostInput } from "./models/update-post.input";
+
+type PostWithLikeCount = Post & { likeCount: number };
 
 @Injectable()
 export class PostsService {
   constructor(
     @InjectRepository(Post)
     private repository: Repository<Post>,
-    private imagesService: ImagesService
+    private imagesService: ImagesService,
+    private likesService: LikesService
   ) {}
 
   async getPost(id: number) {
@@ -30,12 +36,51 @@ export class PostsService {
     const images = await this.imagesService.getImages({
       postId: In(postIds),
     });
-    const mappedImages = postIds.map(
+    return postIds.map(
       (id) =>
         images.filter((image: Image) => image.postId === id) ||
         new Error(`Could not load images for post: ${id}`)
     );
-    return mappedImages;
+  }
+
+  async getPostLikesByBatch(postIds: number[]) {
+    const likes = await this.likesService.getLikes({
+      postId: In(postIds),
+    });
+    return postIds.map(
+      (id) =>
+        likes.filter((image: Image) => image.postId === id) ||
+        new Error(`Could not load likes for post: ${id}`)
+    );
+  }
+
+  async getIsLikedByMeByBatch(keys: IsLikedByMeKey[]) {
+    const postIds = keys.map(({ postId }) => postId);
+    const likes = await this.likesService.getLikes({
+      postId: In(postIds),
+      userId: keys[0].userId,
+    });
+    return postIds.map((postId) =>
+      likes.some((like: Like) => like.postId === postId)
+    );
+  }
+
+  async getPostLikesCountByBatch(postIds: number[]) {
+    const posts = (await this.repository
+      .createQueryBuilder("post")
+      .leftJoinAndSelect("post.likes", "like")
+      .loadRelationCountAndMap("post.likeCount", "post.likes")
+      .select(["post.id"])
+      .whereInIds(postIds)
+      .getMany()) as PostWithLikeCount[];
+
+    return postIds.map((id) => {
+      const post = posts.find((post: Post) => post.id === id);
+      if (!post) {
+        return new Error(`Could not load likes count: ${id}`);
+      }
+      return post.likeCount;
+    });
   }
 
   async createPost({ images, ...postData }: CreatePostInput, user: User) {

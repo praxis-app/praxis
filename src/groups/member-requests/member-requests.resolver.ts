@@ -12,7 +12,7 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../../auth/decorators/current-user.decorator";
-import { Dataloaders } from "../../dataloader/dataloader.service";
+import { Dataloaders } from "../../dataloader/dataloader.types";
 import { User } from "../../users/models/user.model";
 import { GroupMembersService } from "../group-members/group-members.service";
 import { Group } from "../models/group.model";

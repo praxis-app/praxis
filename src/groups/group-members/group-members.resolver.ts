@@ -1,5 +1,5 @@
 import { Context, Parent, ResolveField, Resolver } from "@nestjs/graphql";
-import { Dataloaders } from "../../dataloader/dataloader.service";
+import { Dataloaders } from "../../dataloader/dataloader.types";
 import { User } from "../../users/models/user.model";
 import { Group } from "../models/group.model";
 import { GroupMember } from "./models/group-member.model";

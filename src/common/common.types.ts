@@ -1,6 +1,6 @@
 import { JwtPayload } from "jsonwebtoken";
 import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
-import { Dataloaders } from "../dataloader/dataloader.service";
+import { Dataloaders } from "../dataloader/dataloader.types";
 import { User } from "../users/models/user.model";
 import { UserPermissions, UsersService } from "../users/users.service";
 

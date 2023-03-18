@@ -10,7 +10,7 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
-import { Dataloaders } from "../dataloader/dataloader.service";
+import { Dataloaders } from "../dataloader/dataloader.types";
 import { Proposal } from "../proposals/models/proposal.model";
 import { ProposalsService } from "../proposals/proposals.service";
 import { User } from "../users/models/user.model";

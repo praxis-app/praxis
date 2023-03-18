@@ -10,7 +10,7 @@ import {
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { FeedItem } from "../common/models/feed-item.union";
-import { Dataloaders } from "../dataloader/dataloader.service";
+import { Dataloaders } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";

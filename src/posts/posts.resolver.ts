@@ -11,9 +11,10 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
-import { Dataloaders } from "../dataloader/dataloader.service";
+import { Dataloaders } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
+import { Like } from "../likes/models/like.model";
 import { User } from "../users/models/user.model";
 import { CreatePostInput } from "./models/create-post.input";
 import { CreatePostPayload } from "./models/create-post.payload";
@@ -34,6 +35,22 @@ export class PostsResolver {
   @Query(() => [Post])
   async posts() {
     return this.postsService.getPosts();
+  }
+
+  @ResolveField(() => [Like])
+  async likes(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Post
+  ) {
+    return loaders.postLikesLoader.load(id);
+  }
+
+  @ResolveField(() => Int)
+  async likesCount(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Post
+  ) {
+    return loaders.postLikeCountLoader.load(id);
   }
 
   @ResolveField(() => [Image])
@@ -58,6 +75,18 @@ export class PostsResolver {
     @Parent() { groupId }: Post
   ) {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
+  }
+
+  @ResolveField(() => Boolean)
+  async isLikedByMe(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @CurrentUser() user: User,
+    @Parent() { id }: Post
+  ) {
+    return loaders.isPostLikedByMeLoader.load({
+      userId: user.id,
+      postId: id,
+    });
   }
 
   @Mutation(() => CreatePostPayload)
