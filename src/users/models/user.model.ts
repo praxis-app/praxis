@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
 import { FeedItem } from "../../common/models/feed-item.union";
+import { Follow } from "../../follows/models/follow.model";
 import { GroupMember } from "../../groups/group-members/models/group-member.model";
 import { Image } from "../../images/models/image.model";
 import { Like } from "../../likes/models/like.model";
@@ -75,6 +76,16 @@ export class User {
 
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;
+
+  @OneToMany(() => Follow, (follow) => follow.followedUser, {
+    cascade: true,
+  })
+  following: Follow[];
+
+  @OneToMany(() => Follow, (follow) => follow.user, {
+    cascade: true,
+  })
+  followers: Follow[];
 
   @OneToMany(() => GroupMember, (groupMember) => groupMember.user, {
     cascade: true,

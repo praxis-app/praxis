@@ -1,4 +1,5 @@
 import { Resolver } from "@nestjs/graphql";
+import { Follow } from "./models/follow.model";
 
-@Resolver()
+@Resolver(() => Follow)
 export class FollowsResolver {}
