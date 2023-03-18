@@ -1,5 +1,3 @@
-// TODO: Test thoroughly and add remaining functionality - below is a WIP
-
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
