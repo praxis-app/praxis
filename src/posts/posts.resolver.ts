@@ -83,7 +83,10 @@ export class PostsResolver {
     @CurrentUser() user: User,
     @Parent() { id }: Post
   ) {
-    return loaders.isPostLikedByMeLoader.load({ userId: user.id, postId: id });
+    return loaders.isPostLikedByMeLoader.load({
+      userId: user.id,
+      postId: id,
+    });
   }
 
   @Mutation(() => CreatePostPayload)
