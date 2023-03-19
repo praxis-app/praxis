@@ -96,7 +96,7 @@ export class UsersResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { id }: User
   ) {
-    return loaders.postLikeCountLoader.load(id);
+    return loaders.followerCountLoader.load(id);
   }
 
   @ResolveField(() => Int)
@@ -104,7 +104,7 @@ export class UsersResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { id }: User
   ) {
-    return loaders.postLikeCountLoader.load(id);
+    return loaders.followingCountLoader.load(id);
   }
 
   @ResolveField(() => Boolean)

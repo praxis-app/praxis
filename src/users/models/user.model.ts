@@ -77,12 +77,12 @@ export class User {
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;
 
-  @OneToMany(() => Follow, (follow) => follow.followedUser, {
+  @OneToMany(() => Follow, (follow) => follow.user, {
     cascade: true,
   })
   following: Follow[];
 
-  @OneToMany(() => Follow, (follow) => follow.user, {
+  @OneToMany(() => Follow, (follow) => follow.followedUser, {
     cascade: true,
   })
   followers: Follow[];
