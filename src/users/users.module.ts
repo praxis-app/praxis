@@ -1,6 +1,6 @@
 import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { FollowsModule } from "../follows/follows.module";
+import { FollowsModule } from "./follows/follows.module";
 import { ImagesModule } from "../images/images.module";
 import { PostsModule } from "../posts/posts.module";
 import { RoleMembersModule } from "../roles/role-members/role-members.module";

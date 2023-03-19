@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { User } from "../users/models/user.model";
+import { User } from "../models/user.model";
 import { CreateFollowInput } from "./models/create-follow.input";
 import { DeleteFollowInput } from "./models/delete-follow.input";
 import { Follow } from "./models/follow.model";
