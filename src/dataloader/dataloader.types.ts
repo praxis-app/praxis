@@ -37,11 +37,13 @@ export interface Dataloaders {
   groupsLoader: DataLoader<number, Group>;
   memberRequestCountLoader: DataLoader<number, number>;
 
-  // Misc.
+  // Users
   isFollowedByMeLoader: DataLoader<IsFollowedByMeKey, boolean>;
   profilePicturesLoader: DataLoader<number, Image>;
-  roleMemberCountLoader: DataLoader<number, number>;
   followerCountLoader: DataLoader<number, number>;
   followingCountLoader: DataLoader<number, number>;
   usersLoader: DataLoader<number, User>;
+
+  // Misc.
+  roleMemberCountLoader: DataLoader<number, number>;
 }
