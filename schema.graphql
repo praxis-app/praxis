@@ -296,7 +296,7 @@ type Mutation {
   updateRole(roleData: UpdateRoleInput!): UpdateRolePayload!
   deleteRole(id: Int!): Boolean!
   createFollow(followData: CreateFollowInput!): CreateFollowPayload!
-  deleteFollow(followData: DeleteFollowInput!): Boolean!
+  deleteFollow(followedUserId: Int!): Boolean!
   login(input: LoginInput!): LoginPayload!
   signUp(input: SignUpInput!): SignUpPayload!
   logOut: Boolean!
@@ -398,10 +398,6 @@ input PermissionInput {
 }
 
 input CreateFollowInput {
-  userId: Int!
-}
-
-input DeleteFollowInput {
   userId: Int!
 }
 

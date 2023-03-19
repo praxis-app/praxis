@@ -1,10 +1,9 @@
-import { Args, Mutation, Resolver } from "@nestjs/graphql";
+import { Args, Int, Mutation, Resolver } from "@nestjs/graphql";
 import { CurrentUser } from "../../auth/decorators/current-user.decorator";
 import { User } from "../models/user.model";
 import { FollowsService } from "./follows.service";
 import { CreateFollowInput } from "./models/create-follow.input";
 import { CreateFollowPayload } from "./models/create-follow.payload";
-import { DeleteFollowInput } from "./models/delete-follow.input";
 import { Follow } from "./models/follow.model";
 
 @Resolver(() => Follow)
@@ -21,9 +20,9 @@ export class FollowsResolver {
 
   @Mutation(() => Boolean)
   async deleteFollow(
-    @Args("followData") followData: DeleteFollowInput,
+    @Args("followedUserId", { type: () => Int }) followedUserId: number,
     @CurrentUser() user: User
   ) {
-    return this.followsService.deleteFollow(followData, user);
+    return this.followsService.deleteFollow(followedUserId, user);
   }
 }

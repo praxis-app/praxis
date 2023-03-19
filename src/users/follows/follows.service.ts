@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "../models/user.model";
 import { CreateFollowInput } from "./models/create-follow.input";
-import { DeleteFollowInput } from "./models/delete-follow.input";
 import { Follow } from "./models/follow.model";
 
 @Injectable()
@@ -35,8 +34,8 @@ export class FollowsService {
     return { follow };
   }
 
-  async deleteFollow(followData: DeleteFollowInput, user: User) {
-    await this.repository.delete({ ...followData, userId: user.id });
+  async deleteFollow(followedUserId: number, user: User) {
+    await this.repository.delete({ followedUserId, userId: user.id });
     return true;
   }
 }
