@@ -202,7 +202,9 @@ export class UsersService {
     const following = await this.followsService.getFollowing(keys[0].userId);
 
     return followedUserIds.map((followedUserId) =>
-      following.some((follow: Follow) => follow.userId === followedUserId)
+      following.some(
+        (follow: Follow) => follow.followedUserId === followedUserId
+      )
     );
   }
 
@@ -219,7 +221,6 @@ export class UsersService {
       await this.deleteUser(user.id);
       throw new Error("Could not create user");
     }
-
     return user;
   }
 
@@ -238,7 +239,6 @@ export class UsersService {
     if (coverPhoto) {
       await this.saveCoverPhoto(id, coverPhoto);
     }
-
     return { user };
   }
 
@@ -281,7 +281,6 @@ export class UsersService {
       filename,
       userId,
     });
-
     return image;
   }
 
