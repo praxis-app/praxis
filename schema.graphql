@@ -129,6 +129,14 @@ type Post {
   isLikedByMe: Boolean!
 }
 
+type Follow {
+  id: Int!
+  user: User!
+  followedUser: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type User {
   id: Int!
   name: String!
@@ -231,6 +239,10 @@ type UpdateProposalPayload {
   proposal: Proposal!
 }
 
+type CreateFollowPayload {
+  follow: Follow!
+}
+
 type Query {
   me: User!
   user(id: Int, name: String): User!
@@ -286,6 +298,8 @@ type Mutation {
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
+  createFollow(followData: CreateFollowInput!): CreateFollowPayload!
+  deleteFollow(followData: DeleteFollowInput!): Boolean!
 }
 
 input UpdateUserInput {
@@ -398,4 +412,12 @@ input SignUpInput {
 input CreateServerInviteInput {
   maxUses: Int
   expiresAt: DateTime
+}
+
+input CreateFollowInput {
+  userId: Int!
+}
+
+input DeleteFollowInput {
+  userId: Int!
 }
