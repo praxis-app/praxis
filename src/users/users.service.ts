@@ -4,6 +4,7 @@ import { UserInputError } from "apollo-server-express";
 import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { IsFollowedByMeKey } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
@@ -12,6 +13,8 @@ import { PostsService } from "../posts/posts.service";
 import { Proposal } from "../proposals/models/proposal.model";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { RolesService } from "../roles/roles.service";
+import { FollowsService } from "./follows/follows.service";
+import { Follow } from "./follows/models/follow.model";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
 
@@ -29,6 +32,7 @@ export class UsersService {
     @Inject(forwardRef(() => RolesService))
     private rolesService: RolesService,
 
+    private followsService: FollowsService,
     private imagesService: ImagesService,
     private postsService: PostsService,
     private roleMembersService: RoleMembersService
@@ -137,12 +141,11 @@ export class UsersService {
     const users = await this.getUsers({
       id: In(userIds),
     });
-    const mappedUsers = userIds.map(
+    return userIds.map(
       (id) =>
         users.find((user: User) => user.id === id) ||
         new Error(`Could not load user: ${id}`)
     );
-    return mappedUsers;
   }
 
   async getProfilePicturesByBatch(userIds: number[]) {
@@ -150,13 +153,21 @@ export class UsersService {
       imageType: ImageTypes.ProfilePicture,
       userId: In(userIds),
     });
-    const mappedProfilePictures = userIds.map(
+    return userIds.map(
       (id) =>
         profilePictures.find(
           (profilePicture: Image) => profilePicture.userId === id
         ) || new Error(`Could not load profile picture: ${id}`)
     );
-    return mappedProfilePictures;
+  }
+
+  async getIsFollowedByMeByBatch(keys: IsFollowedByMeKey[]) {
+    const followedUserIds = keys.map(({ followedUserId }) => followedUserId);
+    const following = await this.followsService.getFollowing(keys[0].userId);
+
+    return followedUserIds.map((followedUserId) =>
+      following.some((follow: Follow) => follow.userId === followedUserId)
+    );
   }
 
   async createUser(data: Partial<User>) {

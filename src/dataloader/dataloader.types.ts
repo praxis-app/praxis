@@ -12,6 +12,11 @@ export interface IsLikedByMeKey {
   postId: number;
 }
 
+export interface IsFollowedByMeKey {
+  userId: number;
+  followedUserId: number;
+}
+
 export interface Dataloaders {
   // Proposals & Votes
   proposalActionsLoader: DataLoader<number, ProposalAction>;
@@ -33,6 +38,7 @@ export interface Dataloaders {
   memberRequestCountLoader: DataLoader<number, number>;
 
   // Misc.
+  isFollowedByMeLoader: DataLoader<IsFollowedByMeKey, boolean>;
   profilePicturesLoader: DataLoader<number, Image>;
   roleMemberCountLoader: DataLoader<number, number>;
   usersLoader: DataLoader<number, User>;

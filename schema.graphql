@@ -153,6 +153,7 @@ type User {
   updatedAt: DateTime!
   followers: [Follow!]!
   following: [Follow!]!
+  isFollowedByMe: Boolean!
   joinedGroups: [Group!]!
   serverPermissions: [String!]!
 }

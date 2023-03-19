@@ -91,6 +91,18 @@ export class UsersResolver {
     return this.followsService.getFollowing(id);
   }
 
+  @ResolveField(() => Boolean)
+  async isFollowedByMe(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @CurrentUser() currentUser: User,
+    @Parent() user: User
+  ) {
+    return loaders.isFollowedByMeLoader.load({
+      userId: currentUser.id,
+      followedUserId: user.id,
+    });
+  }
+
   @ResolveField(() => [Group])
   async joinedGroups(@Parent() { id }: User) {
     return this.usersService.getJoinedGroups(id);

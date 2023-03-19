@@ -21,7 +21,11 @@ import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 import { Vote } from "../votes/models/vote.model";
 import { VotesService } from "../votes/votes.service";
-import { Dataloaders, IsLikedByMeKey } from "./dataloader.types";
+import {
+  Dataloaders,
+  IsFollowedByMeKey,
+  IsLikedByMeKey,
+} from "./dataloader.types";
 
 @Injectable()
 export class DataloaderService {
@@ -59,6 +63,7 @@ export class DataloaderService {
       memberRequestCountLoader: this._createMemberRequestCountLoader(),
 
       // Misc.
+      isFollowedByMeLoader: this._createIsFollowedByMeLoader(),
       profilePicturesLoader: this._createProfilePicturesLoader(),
       roleMemberCountLoader: this._createRoleMemberCountLoader(),
       usersLoader: this._createUsersLoader(),
@@ -164,6 +169,14 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
   // Misc.
   // -------------------------------------------------------------------------
+
+  private _createIsFollowedByMeLoader() {
+    return new DataLoader<IsFollowedByMeKey, boolean, number>(
+      async (keys) =>
+        this.usersService.getIsFollowedByMeByBatch(keys as IsFollowedByMeKey[]),
+      { cacheKeyFn: (key) => key.userId }
+    );
+  }
 
   private _createUsersLoader() {
     return new DataLoader<number, User>(async (userIds) =>
