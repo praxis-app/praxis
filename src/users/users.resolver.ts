@@ -11,6 +11,8 @@ import {
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { FeedItem } from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.types";
+import { FollowsService } from "../follows/follows.service";
+import { Follow } from "../follows/models/follow.model";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
@@ -23,6 +25,7 @@ import { UsersService } from "./users.service";
 @Resolver(() => User)
 export class UsersResolver {
   constructor(
+    private followsService: FollowsService,
     private postsService: PostsService,
     private usersService: UsersService
   ) {}
@@ -76,6 +79,16 @@ export class UsersResolver {
   @ResolveField(() => Image)
   async coverPhoto(@Parent() { id }: User) {
     return this.usersService.getCoverPhoto(id);
+  }
+
+  @ResolveField(() => [Follow])
+  async followers(@Parent() { id }: User) {
+    return this.followsService.getFollowers(id);
+  }
+
+  @ResolveField(() => [Follow])
+  async following(@Parent() { id }: User) {
+    return this.followsService.getFollowing(id);
   }
 
   @ResolveField(() => [Group])
