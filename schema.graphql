@@ -151,6 +151,8 @@ type User {
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
+  followers: [Follow!]!
+  following: [Follow!]!
   joinedGroups: [Group!]!
   serverPermissions: [String!]!
 }
@@ -168,6 +170,10 @@ type ServerInvite {
 
 type CreateServerInvitePayload {
   serverInvite: ServerInvite!
+}
+
+type CreateFollowPayload {
+  follow: Follow!
 }
 
 type CreateLikePayload {
@@ -239,10 +245,6 @@ type UpdateProposalPayload {
   proposal: Proposal!
 }
 
-type CreateFollowPayload {
-  follow: Follow!
-}
-
 type Query {
   me: User!
   user(id: Int, name: String): User!
@@ -293,13 +295,13 @@ type Mutation {
   createRole(roleData: CreateRoleInput!): CreateRolePayload!
   updateRole(roleData: UpdateRoleInput!): UpdateRolePayload!
   deleteRole(id: Int!): Boolean!
+  createFollow(followData: CreateFollowInput!): CreateFollowPayload!
+  deleteFollow(followData: DeleteFollowInput!): Boolean!
   login(input: LoginInput!): LoginPayload!
   signUp(input: SignUpInput!): SignUpPayload!
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
-  createFollow(followData: CreateFollowInput!): CreateFollowPayload!
-  deleteFollow(followData: DeleteFollowInput!): Boolean!
 }
 
 input UpdateUserInput {
@@ -395,6 +397,14 @@ input PermissionInput {
   enabled: Boolean!
 }
 
+input CreateFollowInput {
+  userId: Int!
+}
+
+input DeleteFollowInput {
+  userId: Int!
+}
+
 input LoginInput {
   email: String!
   password: String!
@@ -412,12 +422,4 @@ input SignUpInput {
 input CreateServerInviteInput {
   maxUses: Int
   expiresAt: DateTime
-}
-
-input CreateFollowInput {
-  userId: Int!
-}
-
-input DeleteFollowInput {
-  userId: Int!
 }
