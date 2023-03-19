@@ -65,7 +65,7 @@ export class PostsService {
     );
   }
 
-  async getPostLikesCountByBatch(postIds: number[]) {
+  async getLikesCountByBatch(postIds: number[]) {
     const posts = (await this.repository
       .createQueryBuilder("post")
       .leftJoinAndSelect("post.likes", "like")

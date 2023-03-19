@@ -11,12 +11,12 @@ import {
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { FeedItem } from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.types";
-import { FollowsService } from "./follows/follows.service";
-import { Follow } from "./follows/models/follow.model";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
+import { FollowsService } from "./follows/follows.service";
+import { Follow } from "./follows/models/follow.model";
 import { UpdateUserInput } from "./models/update-user.input";
 import { UpdateUserPayload } from "./models/update-user.payload";
 import { User } from "./models/user.model";
@@ -89,6 +89,22 @@ export class UsersResolver {
   @ResolveField(() => [Follow])
   async following(@Parent() { id }: User) {
     return this.followsService.getFollowing(id);
+  }
+
+  @ResolveField(() => Int)
+  async followerCount(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: User
+  ) {
+    return loaders.postLikeCountLoader.load(id);
+  }
+
+  @ResolveField(() => Int)
+  async followingCount(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: User
+  ) {
+    return loaders.postLikeCountLoader.load(id);
   }
 
   @ResolveField(() => Boolean)

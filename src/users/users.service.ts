@@ -17,11 +17,11 @@ import { FollowsService } from "./follows/follows.service";
 import { Follow } from "./follows/models/follow.model";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
-
-export interface UserPermissions {
-  serverPermissions: Set<string>;
-  groupPermissions: Record<number, Set<string>>;
-}
+import {
+  UserPermissions,
+  UserWithFollowerCount,
+  UserWithFollowingCount,
+} from "./user.types";
 
 @Injectable()
 export class UsersService {
@@ -159,6 +159,42 @@ export class UsersService {
           (profilePicture: Image) => profilePicture.userId === id
         ) || new Error(`Could not load profile picture: ${id}`)
     );
+  }
+
+  async getFollowerCountByBatch(userIds: number[]) {
+    const users = (await this.repository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.followers", "follower")
+      .loadRelationCountAndMap("user.followerCount", "user.followers")
+      .select(["user.id"])
+      .whereInIds(userIds)
+      .getMany()) as UserWithFollowerCount[];
+
+    return userIds.map((id) => {
+      const user = users.find((user: User) => user.id === id);
+      if (!user) {
+        return new Error(`Could not load followers count for user: ${id}`);
+      }
+      return user.followerCount;
+    });
+  }
+
+  async getFollowingCountByBatch(userIds: number[]) {
+    const users = (await this.repository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.following", "followed")
+      .loadRelationCountAndMap("user.followingCount", "user.following")
+      .select(["user.id"])
+      .whereInIds(userIds)
+      .getMany()) as UserWithFollowingCount[];
+
+    return userIds.map((id) => {
+      const user = users.find((user: User) => user.id === id);
+      if (!user) {
+        return new Error(`Could not load following count for user: ${id}`);
+      }
+      return user.followingCount;
+    });
   }
 
   async getIsFollowedByMeByBatch(keys: IsFollowedByMeKey[]) {

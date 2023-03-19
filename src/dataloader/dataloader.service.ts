@@ -62,11 +62,15 @@ export class DataloaderService {
       groupsLoader: this._createGroupsLoader(),
       memberRequestCountLoader: this._createMemberRequestCountLoader(),
 
-      // Misc.
+      // Users
+      followerCountLoader: this._createFollowerCountLoader(),
+      followingCountLoader: this._createFollowingCountLoader(),
       isFollowedByMeLoader: this._createIsFollowedByMeLoader(),
       profilePicturesLoader: this._createProfilePicturesLoader(),
-      roleMemberCountLoader: this._createRoleMemberCountLoader(),
       usersLoader: this._createUsersLoader(),
+
+      // Misc.
+      roleMemberCountLoader: this._createRoleMemberCountLoader(),
     };
   }
 
@@ -126,7 +130,7 @@ export class DataloaderService {
 
   private _createPostLikeCountLoader() {
     return new DataLoader<number, number>(async (postIds) =>
-      this.postsService.getPostLikesCountByBatch(postIds as number[])
+      this.postsService.getLikesCountByBatch(postIds as number[])
     );
   }
 
@@ -167,8 +171,20 @@ export class DataloaderService {
   }
 
   // -------------------------------------------------------------------------
-  // Misc.
+  // Users
   // -------------------------------------------------------------------------
+
+  private _createFollowerCountLoader() {
+    return new DataLoader<number, number>(async (userIds) =>
+      this.usersService.getFollowerCountByBatch(userIds as number[])
+    );
+  }
+
+  private _createFollowingCountLoader() {
+    return new DataLoader<number, number>(async (userIds) =>
+      this.usersService.getFollowingCountByBatch(userIds as number[])
+    );
+  }
 
   private _createIsFollowedByMeLoader() {
     return new DataLoader<IsFollowedByMeKey, boolean, number>(
@@ -189,6 +205,10 @@ export class DataloaderService {
       this.usersService.getProfilePicturesByBatch(userIds as number[])
     );
   }
+
+  // -------------------------------------------------------------------------
+  // Misc.
+  // -------------------------------------------------------------------------
 
   private _createRoleMemberCountLoader() {
     return new DataLoader<number, number>(async (roleIds) =>

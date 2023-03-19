@@ -41,5 +41,7 @@ export interface Dataloaders {
   isFollowedByMeLoader: DataLoader<IsFollowedByMeKey, boolean>;
   profilePicturesLoader: DataLoader<number, Image>;
   roleMemberCountLoader: DataLoader<number, number>;
+  followerCountLoader: DataLoader<number, number>;
+  followingCountLoader: DataLoader<number, number>;
   usersLoader: DataLoader<number, User>;
 }
