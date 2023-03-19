@@ -26,6 +26,14 @@ export class FollowsResolver {
     return loaders.usersLoader.load(userId);
   }
 
+  @ResolveField(() => User)
+  async followedUser(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { followedUserId }: Follow
+  ) {
+    return loaders.usersLoader.load(followedUserId);
+  }
+
   @Mutation(() => CreateFollowPayload)
   async createFollow(
     @Args("followedUserId", { type: () => Int }) followedUserId: number,
