@@ -35,18 +35,18 @@ export class FollowsResolver {
   }
 
   @Mutation(() => CreateFollowPayload)
-  async createFollow(
+  async followUser(
     @Args("followedUserId", { type: () => Int }) followedUserId: number,
     @CurrentUser() user: User
   ) {
-    return this.followsService.createFollow(followedUserId, user);
+    return this.followsService.followUser(followedUserId, user);
   }
 
   @Mutation(() => Boolean)
-  async deleteFollow(
+  async unfollowUser(
     @Args("followedUserId", { type: () => Int }) followedUserId: number,
     @CurrentUser() user: User
   ) {
-    return this.followsService.deleteFollow(followedUserId, user);
+    return this.followsService.unfollowUser(followedUserId, user);
   }
 }

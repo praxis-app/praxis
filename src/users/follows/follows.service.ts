@@ -25,7 +25,7 @@ export class FollowsService {
     });
   }
 
-  async createFollow(followedUserId: number, user: User) {
+  async followUser(followedUserId: number, user: User) {
     const follow = await this.repository.save({
       followedUserId,
       userId: user.id,
@@ -33,7 +33,7 @@ export class FollowsService {
     return { follow };
   }
 
-  async deleteFollow(followedUserId: number, user: User) {
+  async unfollowUser(followedUserId: number, user: User) {
     await this.repository.delete({ followedUserId, userId: user.id });
     return true;
   }

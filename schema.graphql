@@ -298,8 +298,8 @@ type Mutation {
   createRole(roleData: CreateRoleInput!): CreateRolePayload!
   updateRole(roleData: UpdateRoleInput!): UpdateRolePayload!
   deleteRole(id: Int!): Boolean!
-  createFollow(followedUserId: Int!): CreateFollowPayload!
-  deleteFollow(followedUserId: Int!): Boolean!
+  followUser(followedUserId: Int!): CreateFollowPayload!
+  unfollowUser(followedUserId: Int!): Boolean!
   login(input: LoginInput!): LoginPayload!
   signUp(input: SignUpInput!): SignUpPayload!
   logOut: Boolean!
