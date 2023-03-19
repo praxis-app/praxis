@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { User } from "../models/user.model";
-import { CreateFollowInput } from "./models/create-follow.input";
 import { Follow } from "./models/follow.model";
 
 @Injectable()
@@ -26,9 +25,9 @@ export class FollowsService {
     });
   }
 
-  async createFollow(followData: CreateFollowInput, user: User) {
+  async createFollow(followedUserId: number, user: User) {
     const follow = await this.repository.save({
-      ...followData,
+      followedUserId,
       userId: user.id,
     });
     return { follow };

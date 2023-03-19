@@ -11,7 +11,6 @@ import { CurrentUser } from "../../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../../dataloader/dataloader.types";
 import { User } from "../models/user.model";
 import { FollowsService } from "./follows.service";
-import { CreateFollowInput } from "./models/create-follow.input";
 import { CreateFollowPayload } from "./models/create-follow.payload";
 import { Follow } from "./models/follow.model";
 
@@ -29,10 +28,10 @@ export class FollowsResolver {
 
   @Mutation(() => CreateFollowPayload)
   async createFollow(
-    @Args("followData") followData: CreateFollowInput,
+    @Args("followedUserId", { type: () => Int }) followedUserId: number,
     @CurrentUser() user: User
   ) {
-    return this.followsService.createFollow(followData, user);
+    return this.followsService.createFollow(followedUserId, user);
   }
 
   @Mutation(() => Boolean)
