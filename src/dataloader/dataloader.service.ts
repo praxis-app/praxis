@@ -190,7 +190,7 @@ export class DataloaderService {
     return new DataLoader<IsFollowedByMeKey, boolean, number>(
       async (keys) =>
         this.usersService.getIsFollowedByMeByBatch(keys as IsFollowedByMeKey[]),
-      { cacheKeyFn: (key) => key.userId }
+      { cacheKeyFn: (key) => key.followedUserId }
     );
   }
 
