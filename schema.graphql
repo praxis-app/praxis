@@ -129,14 +129,6 @@ type Post {
   isLikedByMe: Boolean!
 }
 
-type Follow {
-  id: Int!
-  user: User!
-  followedUser: User!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type User {
   id: Int!
   name: String!
@@ -149,10 +141,10 @@ type User {
   profileFeed: [FeedItem!]!
   profilePicture: Image!
   coverPhoto: Image
+  followers: [User!]!
+  following: [User!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  followers: [Follow!]!
-  following: [Follow!]!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
@@ -173,6 +165,14 @@ type ServerInvite {
 
 type CreateServerInvitePayload {
   serverInvite: ServerInvite!
+}
+
+type Follow {
+  id: Int!
+  user: User!
+  followedUser: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type CreateFollowPayload {

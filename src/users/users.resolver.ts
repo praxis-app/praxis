@@ -16,7 +16,6 @@ import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { FollowsService } from "./follows/follows.service";
-import { Follow } from "./follows/models/follow.model";
 import { UpdateUserInput } from "./models/update-user.input";
 import { UpdateUserPayload } from "./models/update-user.payload";
 import { User } from "./models/user.model";
@@ -81,12 +80,12 @@ export class UsersResolver {
     return this.usersService.getCoverPhoto(id);
   }
 
-  @ResolveField(() => [Follow])
+  @ResolveField(() => [User])
   async followers(@Parent() { id }: User) {
     return this.followsService.getFollowers(id);
   }
 
-  @ResolveField(() => [Follow])
+  @ResolveField(() => [User])
   async following(@Parent() { id }: User) {
     return this.followsService.getFollowing(id);
   }

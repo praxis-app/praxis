@@ -129,6 +129,22 @@ export class UsersService {
     );
   }
 
+  async getFollowers(id: number) {
+    const user = await this.getUser({ id }, ["followers"]);
+    if (!user) {
+      throw new UserInputError("User not found");
+    }
+    return user.followers;
+  }
+
+  async getFollowing(id: number) {
+    const user = await this.getUser({ id }, ["following"]);
+    if (!user) {
+      throw new UserInputError("User not found");
+    }
+    return user.following;
+  }
+
   async isUsersPost(postId: number, userId: number) {
     const post = await this.postsService.getPost(postId);
     if (!post) {
@@ -240,6 +256,31 @@ export class UsersService {
       await this.saveCoverPhoto(id, coverPhoto);
     }
     return { user };
+  }
+
+  async followUser(id: number, followerId: number) {
+    const user = await this.getUser({ id }, ["followers"]);
+    const follower = await this.getUser({ id: followerId }, ["following"]);
+    if (!user || !follower) {
+      throw new UserInputError("User not found");
+    }
+    user.followers = [...user.followers, follower];
+    follower.following = [...follower.following, user];
+    await this.repository.save([user, follower]);
+
+    return { user };
+  }
+
+  async unfollowUser(id: number, followerId: number) {
+    const user = await this.getUser({ id }, ["followers"]);
+    const follower = await this.getUser({ id: followerId }, ["following"]);
+    if (!user || !follower) {
+      throw new UserInputError("User not found");
+    }
+    user.followers = user.followers.filter((f) => f.id !== followerId);
+    follower.following = follower.following.filter((f) => f.id !== id);
+    await this.repository.save([user, follower]);
+    return true;
   }
 
   async saveProfilePicture(
