@@ -259,11 +259,11 @@ export class UsersService {
     if (!user || !follower) {
       throw new UserInputError("User not found");
     }
-    user.followers = [...user.followers, follower];
     follower.following = [...follower.following, user];
-    await this.repository.save([user, follower]);
-
-    return { user };
+    user.followers = [...user.followers, follower];
+    await this.repository.save(follower);
+    await this.repository.save(user);
+    return { followedUser: user };
   }
 
   async unfollowUser(id: number, followerId: number) {
