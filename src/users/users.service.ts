@@ -13,8 +13,6 @@ import { PostsService } from "../posts/posts.service";
 import { Proposal } from "../proposals/models/proposal.model";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { RolesService } from "../roles/roles.service";
-import { FollowsService } from "./follows/follows.service";
-import { Follow } from "./follows/models/follow.model";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
 import {
@@ -32,7 +30,6 @@ export class UsersService {
     @Inject(forwardRef(() => RolesService))
     private rolesService: RolesService,
 
-    private followsService: FollowsService,
     private imagesService: ImagesService,
     private postsService: PostsService,
     private roleMembersService: RoleMembersService
@@ -215,12 +212,10 @@ export class UsersService {
 
   async getIsFollowedByMeByBatch(keys: IsFollowedByMeKey[]) {
     const followedUserIds = keys.map(({ followedUserId }) => followedUserId);
-    const following = await this.followsService.getFollowing(keys[0].userId);
+    const following = await this.getFollowing(keys[0].userId);
 
     return followedUserIds.map((followedUserId) =>
-      following.some(
-        (follow: Follow) => follow.followedUserId === followedUserId
-      )
+      following.some((followedUser: User) => followedUser.id === followedUserId)
     );
   }
 

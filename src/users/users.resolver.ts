@@ -15,7 +15,7 @@ import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
-import { FollowsService } from "./follows/follows.service";
+import { FollowUserPayload } from "./models/follow-user.payload";
 import { UpdateUserInput } from "./models/update-user.input";
 import { UpdateUserPayload } from "./models/update-user.payload";
 import { User } from "./models/user.model";
@@ -24,7 +24,6 @@ import { UsersService } from "./users.service";
 @Resolver(() => User)
 export class UsersResolver {
   constructor(
-    private followsService: FollowsService,
     private postsService: PostsService,
     private usersService: UsersService
   ) {}
@@ -82,12 +81,12 @@ export class UsersResolver {
 
   @ResolveField(() => [User])
   async followers(@Parent() { id }: User) {
-    return this.followsService.getFollowers(id);
+    return this.usersService.getFollowers(id);
   }
 
   @ResolveField(() => [User])
   async following(@Parent() { id }: User) {
-    return this.followsService.getFollowing(id);
+    return this.usersService.getFollowing(id);
   }
 
   @ResolveField(() => Int)
@@ -139,5 +138,21 @@ export class UsersResolver {
   @Mutation(() => Boolean)
   async deleteUser(@Args("id", { type: () => Int }) id: number) {
     return this.usersService.deleteUser(id);
+  }
+
+  @Mutation(() => FollowUserPayload)
+  async followUser(
+    @Args("followedUserId", { type: () => Int }) followedUserId: number,
+    @CurrentUser() user: User
+  ) {
+    return this.usersService.followUser(followedUserId, user.id);
+  }
+
+  @Mutation(() => Boolean)
+  async unfollowUser(
+    @Args("followedUserId", { type: () => Int }) followedUserId: number,
+    @CurrentUser() user: User
+  ) {
+    return this.usersService.unfollowUser(followedUserId, user.id);
   }
 }

@@ -167,18 +167,6 @@ type CreateServerInvitePayload {
   serverInvite: ServerInvite!
 }
 
-type Follow {
-  id: Int!
-  user: User!
-  followedUser: User!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type CreateFollowPayload {
-  follow: Follow!
-}
-
 type CreateLikePayload {
   like: Like!
 }
@@ -202,6 +190,10 @@ type UpdateRolePayload {
 
 type DeleteRoleMemberPayload {
   role: Role!
+}
+
+type FollowUserPayload {
+  followedUser: User!
 }
 
 type UpdateUserPayload {
@@ -274,6 +266,8 @@ type Mutation {
   refreshToken: Boolean!
   updateUser(userData: UpdateUserInput!): UpdateUserPayload!
   deleteUser(id: Int!): Boolean!
+  followUser(followedUserId: Int!): FollowUserPayload!
+  unfollowUser(followedUserId: Int!): Boolean!
   createGroup(groupData: CreateGroupInput!): CreateGroupPayload!
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
   deleteGroup(id: Int!): Boolean!
@@ -298,8 +292,6 @@ type Mutation {
   createRole(roleData: CreateRoleInput!): CreateRolePayload!
   updateRole(roleData: UpdateRoleInput!): UpdateRolePayload!
   deleteRole(id: Int!): Boolean!
-  followUser(followedUserId: Int!): CreateFollowPayload!
-  unfollowUser(followedUserId: Int!): Boolean!
   login(input: LoginInput!): LoginPayload!
   signUp(input: SignUpInput!): SignUpPayload!
   logOut: Boolean!
