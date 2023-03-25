@@ -18,6 +18,7 @@ import { Vote } from "../votes/models/vote.model";
 import { Initial1675388391336 } from "./migrations/1675388391336-Initial";
 import { AddServerInviteTable1677339785709 } from "./migrations/1677339785709-AddServerInviteTable";
 import { AddLikeTable1679157357262 } from "./migrations/1679157357262-AddLikeTable";
+import { AddFollowTable1679751871209 } from "./migrations/1679751871209-AddFollowTable";
 
 config();
 
@@ -46,6 +47,7 @@ export default new DataSource({
     Vote,
   ],
   migrations: [
+    AddFollowTable1679751871209,
     AddLikeTable1679157357262,
     AddServerInviteTable1677339785709,
     Initial1675388391336,

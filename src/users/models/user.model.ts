@@ -80,7 +80,11 @@ export class User {
 
   @Field(() => [User])
   @ManyToMany(() => User, (user) => user.following)
-  @JoinTable()
+  @JoinTable({
+    name: "follow",
+    joinColumn: { name: "userId" },
+    inverseJoinColumn: { name: "followerId" },
+  })
   followers: User[];
 
   @Field(() => [User])
