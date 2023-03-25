@@ -13,8 +13,6 @@ import { PostsService } from "../posts/posts.service";
 import { Proposal } from "../proposals/models/proposal.model";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { RolesService } from "../roles/roles.service";
-import { FollowsService } from "./follows/follows.service";
-import { Follow } from "./follows/models/follow.model";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
 import {
@@ -32,7 +30,6 @@ export class UsersService {
     @Inject(forwardRef(() => RolesService))
     private rolesService: RolesService,
 
-    private followsService: FollowsService,
     private imagesService: ImagesService,
     private postsService: PostsService,
     private roleMembersService: RoleMembersService
@@ -129,6 +126,22 @@ export class UsersService {
     );
   }
 
+  async getFollowers(id: number) {
+    const user = await this.getUser({ id }, ["followers"]);
+    if (!user) {
+      throw new UserInputError("User not found");
+    }
+    return user.followers;
+  }
+
+  async getFollowing(id: number) {
+    const user = await this.getUser({ id }, ["following"]);
+    if (!user) {
+      throw new UserInputError("User not found");
+    }
+    return user.following;
+  }
+
   async isUsersPost(postId: number, userId: number) {
     const post = await this.postsService.getPost(postId);
     if (!post) {
@@ -199,12 +212,10 @@ export class UsersService {
 
   async getIsFollowedByMeByBatch(keys: IsFollowedByMeKey[]) {
     const followedUserIds = keys.map(({ followedUserId }) => followedUserId);
-    const following = await this.followsService.getFollowing(keys[0].userId);
+    const following = await this.getFollowing(keys[0].userId);
 
     return followedUserIds.map((followedUserId) =>
-      following.some(
-        (follow: Follow) => follow.followedUserId === followedUserId
-      )
+      following.some((followedUser: User) => followedUser.id === followedUserId)
     );
   }
 
@@ -240,6 +251,34 @@ export class UsersService {
       await this.saveCoverPhoto(id, coverPhoto);
     }
     return { user };
+  }
+
+  async followUser(id: number, followerId: number) {
+    const user = await this.getUser({ id }, ["followers"]);
+    const follower = await this.getUser({ id: followerId }, ["following"]);
+    if (!user || !follower) {
+      throw new UserInputError("User not found");
+    }
+    follower.following = [...follower.following, user];
+    user.followers = [...user.followers, follower];
+    await this.repository.save(follower);
+    await this.repository.save(user);
+    return {
+      followedUser: user,
+      follower,
+    };
+  }
+
+  async unfollowUser(id: number, followerId: number) {
+    const user = await this.getUser({ id }, ["followers"]);
+    const follower = await this.getUser({ id: followerId }, ["following"]);
+    if (!user || !follower) {
+      throw new UserInputError("User not found");
+    }
+    user.followers = user.followers.filter((f) => f.id !== followerId);
+    follower.following = follower.following.filter((f) => f.id !== id);
+    await this.repository.save([user, follower]);
+    return true;
   }
 
   async saveProfilePicture(

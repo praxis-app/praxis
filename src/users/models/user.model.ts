@@ -5,13 +5,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
 import { FeedItem } from "../../common/models/feed-item.union";
-import { Follow } from "../follows/models/follow.model";
 import { GroupMember } from "../../groups/group-members/models/group-member.model";
 import { Image } from "../../images/models/image.model";
 import { Like } from "../../likes/models/like.model";
@@ -77,15 +78,14 @@ export class User {
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;
 
-  @OneToMany(() => Follow, (follow) => follow.user, {
-    cascade: true,
-  })
-  following: Follow[];
+  @Field(() => [User])
+  @ManyToMany(() => User, (user) => user.following)
+  @JoinTable()
+  followers: User[];
 
-  @OneToMany(() => Follow, (follow) => follow.followedUser, {
-    cascade: true,
-  })
-  followers: Follow[];
+  @Field(() => [User])
+  @ManyToMany(() => User, (user) => user.followers)
+  following: User[];
 
   @OneToMany(() => GroupMember, (groupMember) => groupMember.user, {
     cascade: true,
