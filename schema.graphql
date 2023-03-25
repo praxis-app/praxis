@@ -267,8 +267,8 @@ type Mutation {
   refreshToken: Boolean!
   updateUser(userData: UpdateUserInput!): UpdateUserPayload!
   deleteUser(id: Int!): Boolean!
-  followUser(followedUserId: Int!): FollowUserPayload!
-  unfollowUser(followedUserId: Int!): Boolean!
+  followUser(id: Int!): FollowUserPayload!
+  unfollowUser(id: Int!): Boolean!
   createGroup(groupData: CreateGroupInput!): CreateGroupPayload!
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
   deleteGroup(id: Int!): Boolean!

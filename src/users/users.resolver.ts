@@ -142,17 +142,17 @@ export class UsersResolver {
 
   @Mutation(() => FollowUserPayload)
   async followUser(
-    @Args("followedUserId", { type: () => Int }) followedUserId: number,
+    @Args("id", { type: () => Int }) id: number,
     @CurrentUser() user: User
   ) {
-    return this.usersService.followUser(followedUserId, user.id);
+    return this.usersService.followUser(id, user.id);
   }
 
   @Mutation(() => Boolean)
   async unfollowUser(
-    @Args("followedUserId", { type: () => Int }) followedUserId: number,
+    @Args("id", { type: () => Int }) id: number,
     @CurrentUser() user: User
   ) {
-    return this.usersService.unfollowUser(followedUserId, user.id);
+    return this.usersService.unfollowUser(id, user.id);
   }
 }
