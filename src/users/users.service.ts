@@ -291,6 +291,7 @@ export class UsersService {
     if (!user || !follower) {
       throw new UserInputError("User not found");
     }
+    // TODO: Refactor to avoid using `filter`
     user.followers = user.followers.filter((f) => f.id !== followerId);
     follower.following = follower.following.filter((f) => f.id !== id);
     await this.repository.save([user, follower]);
