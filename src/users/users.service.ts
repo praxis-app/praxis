@@ -10,7 +10,6 @@ import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { PostsService } from "../posts/posts.service";
-import { Proposal } from "../proposals/models/proposal.model";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { RolesService } from "../roles/roles.service";
 import { UpdateUserInput } from "./models/update-user.input";
@@ -56,26 +55,29 @@ export class UsersService {
   }
 
   async getUserHomeFeed(id: number) {
-    // TODO: Get posts from followed users and joined groups, instead of all posts
-    const posts = await this.postsService.getPosts();
-
-    const userWithJoinedGroupProposals = await this.getUser({ id }, [
+    const userWithFeed = await this.getUser({ id }, [
       "groupMembers.group.proposals",
+      "groupMembers.group.posts",
+      "following.posts",
+      "proposals",
+      "posts",
     ]);
-    if (!userWithJoinedGroupProposals) {
+    if (!userWithFeed) {
       throw new UserInputError("User not found");
     }
+    const { groupMembers, following, posts, proposals } = userWithFeed;
 
-    const { groupMembers } = userWithJoinedGroupProposals;
-    const proposals = groupMembers.reduce<Proposal[]>((result, groupMember) => {
-      result.push(...groupMember.group.proposals);
-      return result;
-    }, []);
+    for (const follow of following) {
+      posts.push(...follow.posts);
+    }
+    for (const groupMember of groupMembers) {
+      proposals.push(...groupMember.group.proposals);
+      posts.push(...groupMember.group.posts);
+    }
 
-    const feed = [...posts, ...proposals].sort(
+    return [...posts, ...proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
     );
-    return feed;
   }
 
   async getUserProfileFeed(id: number) {
