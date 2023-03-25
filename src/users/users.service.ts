@@ -67,16 +67,21 @@ export class UsersService {
       throw new UserInputError("User not found");
     }
     const { groupMembers, following, posts, proposals } = userWithFeed;
-    const postMap: Record<number, Post> = {};
 
-    for (const post of posts) {
-      postMap[post.id] = post;
-    }
+    // Initialize map with posts by this user
+    const postMap = posts.reduce<Record<number, Post>>((result, post) => {
+      result[post.id] = post;
+      return result;
+    }, {});
+
+    // Insert posts from followed users
     for (const follow of following) {
       for (const post of follow.posts) {
         postMap[post.id] = post;
       }
     }
+
+    // Insert posts and proposals from groups joined
     for (const { group } of groupMembers) {
       for (const post of group.posts) {
         postMap[post.id] = post;
