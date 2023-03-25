@@ -70,9 +70,15 @@ export class UsersService {
     for (const follow of following) {
       posts.push(...follow.posts);
     }
+
+    // TODO: Refactor to use hashmap, use less iterations
     for (const groupMember of groupMembers) {
       proposals.push(...groupMember.group.proposals);
-      posts.push(...groupMember.group.posts);
+      posts.push(
+        ...groupMember.group.posts.filter(
+          (post) => !posts.some((p) => p.id === post.id)
+        )
+      );
     }
 
     return [...posts, ...proposals].sort(
