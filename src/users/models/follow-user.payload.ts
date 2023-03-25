@@ -5,4 +5,7 @@ import { User } from "./user.model";
 export class FollowUserPayload {
   @Field()
   followedUser: User;
+
+  @Field()
+  follower: User;
 }

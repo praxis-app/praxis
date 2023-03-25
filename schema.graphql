@@ -194,6 +194,7 @@ type DeleteRoleMemberPayload {
 
 type FollowUserPayload {
   followedUser: User!
+  follower: User!
 }
 
 type UpdateUserPayload {

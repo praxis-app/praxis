@@ -263,7 +263,10 @@ export class UsersService {
     user.followers = [...user.followers, follower];
     await this.repository.save(follower);
     await this.repository.save(user);
-    return { followedUser: user };
+    return {
+      followedUser: user,
+      follower,
+    };
   }
 
   async unfollowUser(id: number, followerId: number) {
