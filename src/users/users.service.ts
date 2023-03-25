@@ -9,6 +9,7 @@ import { Group } from "../groups/models/group.model";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { RolesService } from "../roles/roles.service";
@@ -66,22 +67,24 @@ export class UsersService {
       throw new UserInputError("User not found");
     }
     const { groupMembers, following, posts, proposals } = userWithFeed;
+    const postMap: Record<number, Post> = {};
 
+    for (const post of posts) {
+      postMap[post.id] = post;
+    }
     for (const follow of following) {
-      posts.push(...follow.posts);
+      for (const post of follow.posts) {
+        postMap[post.id] = post;
+      }
+    }
+    for (const { group } of groupMembers) {
+      for (const post of group.posts) {
+        postMap[post.id] = post;
+      }
+      proposals.push(...group.proposals);
     }
 
-    // TODO: Refactor to use hashmap, use less iterations
-    for (const groupMember of groupMembers) {
-      proposals.push(...groupMember.group.proposals);
-      posts.push(
-        ...groupMember.group.posts.filter(
-          (post) => !posts.some((p) => p.id === post.id)
-        )
-      );
-    }
-
-    return [...posts, ...proposals].sort(
+    return [...Object.values(postMap), ...proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
     );
   }
