@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -32,10 +33,12 @@ export class GroupsService {
 
   async getGroupFeed(id: number) {
     const group = await this.getGroup({ id }, ["proposals", "posts"]);
-    const feed = [...group.posts, ...group.proposals].sort(
+    const sortedFeed = [...group.posts, ...group.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
     );
-    return feed;
+
+    // TODO: Update once pagination has been implemented
+    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
   }
 
   async getCoverPhotosByBatch(groupIds: number[]) {
