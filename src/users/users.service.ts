@@ -163,9 +163,7 @@ export class UsersService {
     if (!user) {
       throw new UserInputError("User not found");
     }
-
-    // TODO: Update once pagination has been implemented
-    return user.following.slice(0, DEFAULT_PAGE_SIZE);
+    return user.following;
   }
 
   async isUsersPost(postId: number, userId: number) {
