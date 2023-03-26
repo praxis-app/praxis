@@ -4,21 +4,22 @@ import { UserInputError } from "apollo-server-express";
 import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { IsFollowedByMeKey } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
-import { Proposal } from "../proposals/models/proposal.model";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { RolesService } from "../roles/roles.service";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
-
-export interface UserPermissions {
-  serverPermissions: Set<string>;
-  groupPermissions: Record<number, Set<string>>;
-}
+import {
+  UserPermissions,
+  UserWithFollowerCount,
+  UserWithFollowingCount,
+} from "./user.types";
 
 @Injectable()
 export class UsersService {
@@ -55,26 +56,42 @@ export class UsersService {
   }
 
   async getUserHomeFeed(id: number) {
-    // TODO: Get posts from followed users and joined groups, instead of all posts
-    const posts = await this.postsService.getPosts();
-
-    const userWithJoinedGroupProposals = await this.getUser({ id }, [
+    const userWithFeed = await this.getUser({ id }, [
       "groupMembers.group.proposals",
+      "groupMembers.group.posts",
+      "following.posts",
+      "proposals",
+      "posts",
     ]);
-    if (!userWithJoinedGroupProposals) {
+    if (!userWithFeed) {
       throw new UserInputError("User not found");
     }
+    const { groupMembers, following, posts, proposals } = userWithFeed;
 
-    const { groupMembers } = userWithJoinedGroupProposals;
-    const proposals = groupMembers.reduce<Proposal[]>((result, groupMember) => {
-      result.push(...groupMember.group.proposals);
+    // Initialize map with posts by this user
+    const postMap = posts.reduce<Record<number, Post>>((result, post) => {
+      result[post.id] = post;
       return result;
-    }, []);
+    }, {});
 
-    const feed = [...posts, ...proposals].sort(
+    // Insert posts from followed users
+    for (const follow of following) {
+      for (const post of follow.posts) {
+        postMap[post.id] = post;
+      }
+    }
+
+    // Insert posts and proposals from groups joined
+    for (const { group } of groupMembers) {
+      for (const post of group.posts) {
+        postMap[post.id] = post;
+      }
+      proposals.push(...group.proposals);
+    }
+
+    return [...Object.values(postMap), ...proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
     );
-    return feed;
   }
 
   async getUserProfileFeed(id: number) {
@@ -125,6 +142,22 @@ export class UsersService {
     );
   }
 
+  async getFollowers(id: number) {
+    const user = await this.getUser({ id }, ["followers"]);
+    if (!user) {
+      throw new UserInputError("User not found");
+    }
+    return user.followers;
+  }
+
+  async getFollowing(id: number) {
+    const user = await this.getUser({ id }, ["following"]);
+    if (!user) {
+      throw new UserInputError("User not found");
+    }
+    return user.following;
+  }
+
   async isUsersPost(postId: number, userId: number) {
     const post = await this.postsService.getPost(postId);
     if (!post) {
@@ -137,12 +170,11 @@ export class UsersService {
     const users = await this.getUsers({
       id: In(userIds),
     });
-    const mappedUsers = userIds.map(
+    return userIds.map(
       (id) =>
         users.find((user: User) => user.id === id) ||
         new Error(`Could not load user: ${id}`)
     );
-    return mappedUsers;
   }
 
   async getProfilePicturesByBatch(userIds: number[]) {
@@ -150,13 +182,57 @@ export class UsersService {
       imageType: ImageTypes.ProfilePicture,
       userId: In(userIds),
     });
-    const mappedProfilePictures = userIds.map(
+    return userIds.map(
       (id) =>
         profilePictures.find(
           (profilePicture: Image) => profilePicture.userId === id
         ) || new Error(`Could not load profile picture: ${id}`)
     );
-    return mappedProfilePictures;
+  }
+
+  async getFollowerCountByBatch(userIds: number[]) {
+    const users = (await this.repository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.followers", "follower")
+      .loadRelationCountAndMap("user.followerCount", "user.followers")
+      .select(["user.id"])
+      .whereInIds(userIds)
+      .getMany()) as UserWithFollowerCount[];
+
+    return userIds.map((id) => {
+      const user = users.find((user: User) => user.id === id);
+      if (!user) {
+        return new Error(`Could not load followers count for user: ${id}`);
+      }
+      return user.followerCount;
+    });
+  }
+
+  async getFollowingCountByBatch(userIds: number[]) {
+    const users = (await this.repository
+      .createQueryBuilder("user")
+      .leftJoinAndSelect("user.following", "followed")
+      .loadRelationCountAndMap("user.followingCount", "user.following")
+      .select(["user.id"])
+      .whereInIds(userIds)
+      .getMany()) as UserWithFollowingCount[];
+
+    return userIds.map((id) => {
+      const user = users.find((user: User) => user.id === id);
+      if (!user) {
+        return new Error(`Could not load following count for user: ${id}`);
+      }
+      return user.followingCount;
+    });
+  }
+
+  async getIsFollowedByMeByBatch(keys: IsFollowedByMeKey[]) {
+    const followedUserIds = keys.map(({ followedUserId }) => followedUserId);
+    const following = await this.getFollowing(keys[0].userId);
+
+    return followedUserIds.map((followedUserId) =>
+      following.some((followedUser: User) => followedUser.id === followedUserId)
+    );
   }
 
   async createUser(data: Partial<User>) {
@@ -172,7 +248,6 @@ export class UsersService {
       await this.deleteUser(user.id);
       throw new Error("Could not create user");
     }
-
     return user;
   }
 
@@ -191,8 +266,36 @@ export class UsersService {
     if (coverPhoto) {
       await this.saveCoverPhoto(id, coverPhoto);
     }
-
     return { user };
+  }
+
+  async followUser(id: number, followerId: number) {
+    const user = await this.getUser({ id }, ["followers"]);
+    const follower = await this.getUser({ id: followerId }, ["following"]);
+    if (!user || !follower) {
+      throw new UserInputError("User not found");
+    }
+    follower.following = [...follower.following, user];
+    user.followers = [...user.followers, follower];
+    await this.repository.save(follower);
+    await this.repository.save(user);
+    return {
+      followedUser: user,
+      follower,
+    };
+  }
+
+  async unfollowUser(id: number, followerId: number) {
+    const user = await this.getUser({ id }, ["followers"]);
+    const follower = await this.getUser({ id: followerId }, ["following"]);
+    if (!user || !follower) {
+      throw new UserInputError("User not found");
+    }
+    // TODO: Refactor to avoid using `filter`
+    user.followers = user.followers.filter((f) => f.id !== followerId);
+    follower.following = follower.following.filter((f) => f.id !== id);
+    await this.repository.save([user, follower]);
+    return true;
   }
 
   async saveProfilePicture(
@@ -234,7 +337,6 @@ export class UsersService {
       filename,
       userId,
     });
-
     return image;
   }
 

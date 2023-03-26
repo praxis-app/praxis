@@ -15,6 +15,7 @@ import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
+import { FollowUserPayload } from "./models/follow-user.payload";
 import { UpdateUserInput } from "./models/update-user.input";
 import { UpdateUserPayload } from "./models/update-user.payload";
 import { User } from "./models/user.model";
@@ -78,6 +79,44 @@ export class UsersResolver {
     return this.usersService.getCoverPhoto(id);
   }
 
+  @ResolveField(() => [User])
+  async followers(@Parent() { id }: User) {
+    return this.usersService.getFollowers(id);
+  }
+
+  @ResolveField(() => [User])
+  async following(@Parent() { id }: User) {
+    return this.usersService.getFollowing(id);
+  }
+
+  @ResolveField(() => Int)
+  async followerCount(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: User
+  ) {
+    return loaders.followerCountLoader.load(id);
+  }
+
+  @ResolveField(() => Int)
+  async followingCount(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: User
+  ) {
+    return loaders.followingCountLoader.load(id);
+  }
+
+  @ResolveField(() => Boolean)
+  async isFollowedByMe(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @CurrentUser() currentUser: User,
+    @Parent() user: User
+  ) {
+    return loaders.isFollowedByMeLoader.load({
+      userId: currentUser.id,
+      followedUserId: user.id,
+    });
+  }
+
   @ResolveField(() => [Group])
   async joinedGroups(@Parent() { id }: User) {
     return this.usersService.getJoinedGroups(id);
@@ -99,5 +138,21 @@ export class UsersResolver {
   @Mutation(() => Boolean)
   async deleteUser(@Args("id", { type: () => Int }) id: number) {
     return this.usersService.deleteUser(id);
+  }
+
+  @Mutation(() => FollowUserPayload)
+  async followUser(
+    @Args("id", { type: () => Int }) id: number,
+    @CurrentUser() user: User
+  ) {
+    return this.usersService.followUser(id, user.id);
+  }
+
+  @Mutation(() => Boolean)
+  async unfollowUser(
+    @Args("id", { type: () => Int }) id: number,
+    @CurrentUser() user: User
+  ) {
+    return this.usersService.unfollowUser(id, user.id);
   }
 }

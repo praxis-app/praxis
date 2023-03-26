@@ -53,6 +53,18 @@ export class PostsResolver {
     return loaders.postLikeCountLoader.load(id);
   }
 
+  @ResolveField(() => Boolean)
+  async isLikedByMe(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @CurrentUser() user: User,
+    @Parent() { id }: Post
+  ) {
+    return loaders.isPostLikedByMeLoader.load({
+      userId: user.id,
+      postId: id,
+    });
+  }
+
   @ResolveField(() => [Image])
   async images(
     @Context() { loaders }: { loaders: Dataloaders },
@@ -75,18 +87,6 @@ export class PostsResolver {
     @Parent() { groupId }: Post
   ) {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
-  }
-
-  @ResolveField(() => Boolean)
-  async isLikedByMe(
-    @Context() { loaders }: { loaders: Dataloaders },
-    @CurrentUser() user: User,
-    @Parent() { id }: Post
-  ) {
-    return loaders.isPostLikedByMeLoader.load({
-      userId: user.id,
-      postId: id,
-    });
   }
 
   @Mutation(() => CreatePostPayload)

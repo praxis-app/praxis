@@ -5,6 +5,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -75,6 +77,15 @@ export class User {
 
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;
+
+  @Field(() => [User])
+  @ManyToMany(() => User, (user) => user.following)
+  @JoinTable()
+  followers: User[];
+
+  @Field(() => [User])
+  @ManyToMany(() => User, (user) => user.followers)
+  following: User[];
 
   @OneToMany(() => GroupMember, (groupMember) => groupMember.user, {
     cascade: true,

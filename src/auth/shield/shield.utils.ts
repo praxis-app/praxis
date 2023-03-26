@@ -1,6 +1,6 @@
-import { ServerPermissions } from "../../roles/permissions/permissions.constants";
 import { UNAUTHORIZED } from "../../common/common.constants";
-import { UserPermissions } from "../../users/users.service";
+import { ServerPermissions } from "../../roles/permissions/permissions.constants";
+import { UserPermissions } from "../../users/user.types";
 
 export const hasPermission = (
   permissions: UserPermissions | null,
