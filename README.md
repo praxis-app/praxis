@@ -73,6 +73,11 @@ $ yarn test:cov
 $ npx husky install && npx husky add .husky/pre-commit "yarn lint-staged"
 ```
 
+## Tools to get Involved and Collaborate
+
+- Discord: https://discord.gg/s5MxNBehxS, or message **forrest#2807** for more information.
+- Notion: A link to the Notion page can be obtained upon request.
+
 ## Contributions
 
 Praxis is open to contributions. Please read [CONTRIBUTING.md](https://github.com/praxis-project/praxis-api/blob/main/CONTRIBUTING.md) for more details.
