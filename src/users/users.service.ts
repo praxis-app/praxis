@@ -103,10 +103,12 @@ export class UsersService {
     if (!user) {
       throw new UserInputError("User not found");
     }
-    const feed = [...user.posts, ...user.proposals].sort(
+    const sortedFeed = [...user.posts, ...user.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
     );
-    return feed;
+
+    // TODO: Update once pagination has been implemented
+    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
   }
 
   async getUserPermissions(id: number) {
@@ -151,7 +153,9 @@ export class UsersService {
     if (!user) {
       throw new UserInputError("User not found");
     }
-    return user.followers;
+
+    // TODO: Update once pagination has been implemented
+    return user.followers.slice(0, DEFAULT_PAGE_SIZE);
   }
 
   async getFollowing(id: number) {
@@ -159,7 +163,9 @@ export class UsersService {
     if (!user) {
       throw new UserInputError("User not found");
     }
-    return user.following;
+
+    // TODO: Update once pagination has been implemented
+    return user.following.slice(0, DEFAULT_PAGE_SIZE);
   }
 
   async isUsersPost(postId: number, userId: number) {
