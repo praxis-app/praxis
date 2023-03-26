@@ -4,6 +4,7 @@ import { UserInputError } from "apollo-server-express";
 import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { IsFollowedByMeKey } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
@@ -89,9 +90,12 @@ export class UsersService {
       proposals.push(...group.proposals);
     }
 
-    return [...Object.values(postMap), ...proposals].sort(
+    const sortedFeed = [...Object.values(postMap), ...proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
     );
+
+    // TODO: Update once pagination has been implemented
+    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
   }
 
   async getUserProfileFeed(id: number) {
@@ -99,10 +103,12 @@ export class UsersService {
     if (!user) {
       throw new UserInputError("User not found");
     }
-    const feed = [...user.posts, ...user.proposals].sort(
+    const sortedFeed = [...user.posts, ...user.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
     );
-    return feed;
+
+    // TODO: Update once pagination has been implemented
+    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
   }
 
   async getUserPermissions(id: number) {
@@ -147,7 +153,9 @@ export class UsersService {
     if (!user) {
       throw new UserInputError("User not found");
     }
-    return user.followers;
+
+    // TODO: Update once pagination has been implemented
+    return user.followers.slice(0, DEFAULT_PAGE_SIZE);
   }
 
   async getFollowing(id: number) {
