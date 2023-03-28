@@ -104,6 +104,7 @@ type Group {
   updatedAt: DateTime!
   memberCount: Int!
   memberRequestCount: Int!
+  isJoinedByMe: Boolean!
 }
 
 union FeedItem = Post | Proposal
