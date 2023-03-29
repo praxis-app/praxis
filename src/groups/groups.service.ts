@@ -43,6 +43,14 @@ export class GroupsService {
     return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
   }
 
+  async isJoinedByUser(id: number, userId: number) {
+    const groupMember = await this.groupMembersService.getGroupMember({
+      groupId: id,
+      userId,
+    });
+    return !!groupMember;
+  }
+
   async getCoverPhotosByBatch(groupIds: number[]) {
     const coverPhotos = await this.imagesService.getImages({
       groupId: In(groupIds),
