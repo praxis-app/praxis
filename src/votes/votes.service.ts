@@ -1,8 +1,6 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { ValidationError } from "apollo-server-express";
 import { FindOptionsWhere, Repository } from "typeorm";
-import { GroupsService } from "../groups/groups.service";
 import { Proposal } from "../proposals/models/proposal.model";
 import { ProposalsService } from "../proposals/proposals.service";
 import { CreateVoteInput } from "./models/create-vote.input";
@@ -21,9 +19,7 @@ export class VotesService {
     private proposalsRepository: Repository<Proposal>,
 
     @Inject(forwardRef(() => ProposalsService))
-    private proposalsService: ProposalsService,
-
-    private groupsService: GroupsService
+    private proposalsService: ProposalsService
   ) {}
 
   async getVote(id: number, relations?: string[]) {
@@ -55,23 +51,6 @@ export class VotesService {
   }
 
   async createVote(voteData: CreateVoteInput, userId: number) {
-    // TODO: Determine whether check for group membership should be moved to shield
-    const proposal = await this.proposalsService.getProposal(
-      voteData.proposalId,
-      ["group"]
-    );
-    if (proposal.group) {
-      const isJoinedByUser = await this.groupsService.isJoinedByUser(
-        proposal.group.id,
-        userId
-      );
-      if (!isJoinedByUser) {
-        throw new ValidationError(
-          "You must be a group member to vote on this proposal"
-        );
-      }
-    }
-
     const vote = await this.repository.save({
       ...voteData,
       userId,

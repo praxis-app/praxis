@@ -1,7 +1,8 @@
 import { rule } from "graphql-shield";
-import { ServerPermissions } from "../../roles/permissions/permissions.constants";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../common/common.types";
+import { ServerPermissions } from "../../roles/permissions/permissions.constants";
+import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
 import { hasPermission } from "./shield.utils";
 
@@ -30,15 +31,6 @@ export const canBanMembers = rule()(
     hasPermission(permissions, ServerPermissions.BanMembers)
 );
 
-export const isOwnPost = rule()(
-  async (_parent, args, { user, usersService }: Context) => {
-    if (!user) {
-      return UNAUTHORIZED;
-    }
-    return usersService.isUsersPost(args.id, user.id);
-  }
-);
-
 export const isAuthenticated = rule({ cache: "contextual" })(
   async (_parent, _args, { user }: Context) => {
     if (!user) {
@@ -52,7 +44,10 @@ export const hasValidRefreshToken = rule()(
   async (
     _parent,
     _args,
-    { claims: { refreshTokenClaims }, refreshTokensService }: Context
+    {
+      claims: { refreshTokenClaims },
+      services: { refreshTokensService },
+    }: Context
   ) => {
     const jti = getJti(refreshTokenClaims);
     const sub = getSub(refreshTokenClaims);
@@ -60,5 +55,39 @@ export const hasValidRefreshToken = rule()(
       return UNAUTHORIZED;
     }
     return refreshTokensService.validateRefreshToken(jti, sub);
+  }
+);
+
+export const isOwnPost = rule()(
+  async (_parent, args, { user, services: { usersService } }: Context) => {
+    if (!user) {
+      return UNAUTHORIZED;
+    }
+    return usersService.isUsersPost(args.id, user.id);
+  }
+);
+
+export const isProposalGroupJoinedByMe = rule()(
+  async (
+    _parent,
+    { voteData }: { voteData: CreateVoteInput },
+    { user, services: { groupsService, proposalsService } }: Context
+  ) => {
+    if (!user) {
+      return UNAUTHORIZED;
+    }
+    const { group } = await proposalsService.getProposal(voteData.proposalId, [
+      "group",
+    ]);
+    if (group) {
+      const isJoinedByUser = await groupsService.isJoinedByUser(
+        group.id,
+        user.id
+      );
+      if (!isJoinedByUser) {
+        return "You must be a group member to vote on this proposal";
+      }
+    }
+    return true;
   }
 );

@@ -16,10 +16,12 @@ import { DatabaseModule } from "./database/database.module";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
+import { GroupsService } from "./groups/groups.service";
 import { ImagesModule } from "./images/images.module";
 import { LikesModule } from "./likes/likes.module";
 import { PostsModule } from "./posts/posts.module";
 import { ProposalsModule } from "./proposals/proposals.module";
+import { ProposalsService } from "./proposals/proposals.service";
 import { RolesModule } from "./roles/roles.module";
 import { ServerInvitesModule } from "./server-invites/server-invites.module";
 import { UsersModule } from "./users/users.module";
@@ -29,22 +31,30 @@ import { VotesModule } from "./votes/votes.module";
 const useFactory = (
   configService: ConfigService,
   dataloaderService: DataloaderService,
+  groupsService: GroupsService,
+  proposalsService: ProposalsService,
   refreshTokensService: RefreshTokensService,
   usersService: UsersService
 ) => ({
   context: async ({ req }: { req: Request }): Promise<Context> => {
     const claims = getClaims(req);
     const sub = getSub(claims.accessTokenClaims);
-    const loaders = dataloaderService.getLoaders();
     const permissions = sub ? await usersService.getUserPermissions(sub) : null;
     const user = sub ? await usersService.getUser({ id: sub }) : null;
+
+    const loaders = dataloaderService.getLoaders();
+    const services = {
+      groupsService,
+      proposalsService,
+      refreshTokensService,
+      usersService,
+    };
 
     return {
       claims,
       loaders,
       permissions,
-      refreshTokensService,
-      usersService,
+      services,
       user,
     };
   },
@@ -63,10 +73,18 @@ const useFactory = (
     ConfigModule.forRoot({ isGlobal: true }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      imports: [DataloaderModule, RefreshTokensModule, UsersModule],
+      imports: [
+        DataloaderModule,
+        GroupsModule,
+        ProposalsModule,
+        RefreshTokensModule,
+        UsersModule,
+      ],
       inject: [
         ConfigService,
         DataloaderService,
+        GroupsService,
+        ProposalsService,
         RefreshTokensService,
         UsersService,
       ],

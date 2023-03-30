@@ -13,7 +13,7 @@ export const RefreshTokenUser = createParamDecorator<
   const executionContext = GqlExecutionContext.create(context);
   const {
     claims: { refreshTokenClaims },
-    usersService,
+    services: { usersService },
   }: Context = executionContext.getContext();
 
   const sub = getSub(refreshTokenClaims);

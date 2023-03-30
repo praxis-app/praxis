@@ -58,6 +58,7 @@ export class Proposal {
 
   @Field(() => Group, { nullable: true })
   @ManyToOne(() => Group, (group) => group.proposals, { onDelete: "CASCADE" })
+  // TODO: Set group as optional, in preparation for server proposals
   group: Group;
 
   @Column({ nullable: true })

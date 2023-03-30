@@ -243,18 +243,18 @@ type UpdateProposalPayload {
 }
 
 type Query {
+  group(name: String!): Group!
+  groups: [Group!]!
+  proposal(id: Int!): Proposal!
+  proposals: [Proposal!]!
   me: User!
   user(id: Int, name: String): User!
   users: [User!]!
   isFirstUser: Boolean!
-  group(name: String!): Group!
-  groups: [Group!]!
   memberRequest(groupId: Int!): MemberRequest
   memberRequests(groupName: String!): [MemberRequest!]!
   post(id: Int!): Post!
   posts: [Post!]!
-  proposal(id: Int!): Proposal!
-  proposals: [Proposal!]!
   vote(id: Int!): Vote!
   votes: [Vote!]!
   role(id: Int!): Role!
@@ -265,15 +265,18 @@ type Query {
 }
 
 type Mutation {
+  createGroup(groupData: CreateGroupInput!): CreateGroupPayload!
+  updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
+  deleteGroup(id: Int!): Boolean!
+  leaveGroup(id: Int!): Boolean!
+  createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
+  updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
+  deleteProposal(id: Int!): Boolean!
   refreshToken: Boolean!
   updateUser(userData: UpdateUserInput!): UpdateUserPayload!
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
   unfollowUser(id: Int!): Boolean!
-  createGroup(groupData: CreateGroupInput!): CreateGroupPayload!
-  updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
-  deleteGroup(id: Int!): Boolean!
-  leaveGroup(id: Int!): Boolean!
   createMemberRequest(groupId: Int!): CreateMemberRequestPayload!
   approveMemberRequest(id: Int!): ApproveMemberRequestPayload!
   cancelMemberRequest(id: Int!): Boolean!
@@ -284,9 +287,6 @@ type Mutation {
   deletePost(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
-  createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
-  updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
-  deleteProposal(id: Int!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -301,48 +301,20 @@ type Mutation {
   deleteServerInvite(id: Int!): Boolean!
 }
 
-input UpdateUserInput {
-  id: Int!
-  name: String!
-  bio: String!
-  profilePicture: Upload
-  coverPhoto: Upload
-}
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
-
 input CreateGroupInput {
   name: String!
   description: String!
   coverPhoto: Upload
 }
 
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
 input UpdateGroupInput {
   id: Int!
   name: String
   description: String
   coverPhoto: Upload
-}
-
-input CreatePostInput {
-  groupId: Int
-  body: String
-  images: [Upload!]
-}
-
-input UpdatePostInput {
-  id: Int!
-  body: String
-  images: [Upload!]
-}
-
-input CreateLikeInput {
-  postId: Int
-}
-
-input DeleteLikeInput {
-  postId: Int
 }
 
 input CreateProposalInput {
@@ -364,6 +336,34 @@ input UpdateProposalInput {
   body: String
   action: ProposalActionInput!
   images: [Upload!]
+}
+
+input UpdateUserInput {
+  id: Int!
+  name: String!
+  bio: String!
+  profilePicture: Upload
+  coverPhoto: Upload
+}
+
+input CreatePostInput {
+  groupId: Int
+  body: String
+  images: [Upload!]
+}
+
+input UpdatePostInput {
+  id: Int!
+  body: String
+  images: [Upload!]
+}
+
+input CreateLikeInput {
+  postId: Int
+}
+
+input DeleteLikeInput {
+  postId: Int
 }
 
 input CreateVoteInput {
