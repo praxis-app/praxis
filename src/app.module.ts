@@ -63,7 +63,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
         const user = sub ? await usersService.getUser({ id: sub }) : null;
 
         const loaders = dataloaderService.getLoaders();
-        const services = {
+        const services: Context["services"] = {
           groupsService,
           proposalsService,
           refreshTokensService,
