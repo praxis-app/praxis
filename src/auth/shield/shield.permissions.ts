@@ -16,21 +16,33 @@ const shieldPermissions = shield(
   {
     Query: {
       "*": isAuthenticated,
+
+      // Users
       isFirstUser: allow,
+      users: canBanMembers,
+
+      // Server Invites
       serverInvite: allow,
       serverInvites: or(canCreateInvites, canManageInvites),
-      users: canBanMembers,
     },
     Mutation: {
       "*": isAuthenticated,
+
+      // Auth
       login: allow,
       logOut: allow,
       signUp: allow,
-      createServerInvite: or(canCreateInvites, canManageInvites),
-      createVote: isProposalGroupJoinedByMe,
-      deletePost: or(canManagePosts, isOwnPost),
-      deleteServerInvite: canManageInvites,
       refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
+
+      // Votes
+      createVote: isProposalGroupJoinedByMe,
+      updateVote: isProposalGroupJoinedByMe,
+      deleteVote: isProposalGroupJoinedByMe,
+      deletePost: or(canManagePosts, isOwnPost),
+
+      // Server Invites
+      createServerInvite: or(canCreateInvites, canManageInvites),
+      deleteServerInvite: canManageInvites,
     },
     Role: canManageRoles,
     RoleMember: canManageRoles,
