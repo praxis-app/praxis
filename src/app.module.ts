@@ -28,68 +28,73 @@ import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
 import { VotesModule } from "./votes/votes.module";
 
-const useFactory = (
-  configService: ConfigService,
-  dataloaderService: DataloaderService,
-  groupsService: GroupsService,
-  proposalsService: ProposalsService,
-  refreshTokensService: RefreshTokensService,
-  usersService: UsersService
-) => ({
-  context: async ({ req }: { req: Request }): Promise<Context> => {
-    const claims = getClaims(req);
-    const sub = getSub(claims.accessTokenClaims);
-    const permissions = sub ? await usersService.getUserPermissions(sub) : null;
-    const user = sub ? await usersService.getUser({ id: sub }) : null;
-
-    const loaders = dataloaderService.getLoaders();
-    const services = {
-      groupsService,
-      proposalsService,
-      refreshTokensService,
-      usersService,
-    };
-
+const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
+  driver: ApolloDriver,
+  imports: [
+    DataloaderModule,
+    GroupsModule,
+    ProposalsModule,
+    RefreshTokensModule,
+    UsersModule,
+  ],
+  inject: [
+    ConfigService,
+    DataloaderService,
+    GroupsService,
+    ProposalsService,
+    RefreshTokensService,
+    UsersService,
+  ],
+  useFactory(
+    configService: ConfigService,
+    dataloaderService: DataloaderService,
+    groupsService: GroupsService,
+    proposalsService: ProposalsService,
+    refreshTokensService: RefreshTokensService,
+    usersService: UsersService
+  ) {
     return {
-      claims,
-      loaders,
-      permissions,
-      services,
-      user,
+      context: async ({ req }: { req: Request }): Promise<Context> => {
+        const claims = getClaims(req);
+        const sub = getSub(claims.accessTokenClaims);
+        const permissions = sub
+          ? await usersService.getUserPermissions(sub)
+          : null;
+        const user = sub ? await usersService.getUser({ id: sub }) : null;
+
+        const loaders = dataloaderService.getLoaders();
+        const services = {
+          groupsService,
+          proposalsService,
+          refreshTokensService,
+          usersService,
+        };
+
+        return {
+          claims,
+          loaders,
+          permissions,
+          services,
+          user,
+        };
+      },
+      transformSchema: (schema: GraphQLSchema) => {
+        schema = applyMiddleware(schema, shieldPermissions);
+        return schema;
+      },
+      autoSchemaFile: true,
+      cors: { origin: true, credentials: true },
+      csrfPrevention:
+        configService.get("NODE_ENV") !== Environments.Development,
+      resolvers: { Upload: GraphQLUpload },
     };
   },
-  transformSchema: (schema: GraphQLSchema) => {
-    schema = applyMiddleware(schema, shieldPermissions);
-    return schema;
-  },
-  autoSchemaFile: true,
-  cors: { origin: true, credentials: true },
-  csrfPrevention: configService.get("NODE_ENV") !== Environments.Development,
-  resolvers: { Upload: GraphQLUpload },
 });
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      imports: [
-        DataloaderModule,
-        GroupsModule,
-        ProposalsModule,
-        RefreshTokensModule,
-        UsersModule,
-      ],
-      inject: [
-        ConfigService,
-        DataloaderService,
-        GroupsService,
-        ProposalsService,
-        RefreshTokensService,
-        UsersService,
-      ],
-      useFactory,
-    }),
+    ApolloModule,
     AuthModule,
     DatabaseModule,
     DataloaderModule,
