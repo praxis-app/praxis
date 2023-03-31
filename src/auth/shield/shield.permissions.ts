@@ -36,8 +36,6 @@ const shieldPermissions = shield(
 
       // Votes
       createVote: isProposalGroupJoinedByMe,
-      updateVote: isProposalGroupJoinedByMe,
-      deleteVote: isProposalGroupJoinedByMe,
       deletePost: or(canManagePosts, isOwnPost),
 
       // Server Invites
