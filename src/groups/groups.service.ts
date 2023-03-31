@@ -75,7 +75,7 @@ export class GroupsService {
     );
   }
 
-  async getIsJoinedByMeByBatch(keys: IsJoinedByMeKey[]) {
+  async isJoinedByMeByBatch(keys: IsJoinedByMeKey[]) {
     const groupIds = keys.map(({ groupId }) => groupId);
     const groupMembers = await this.groupMembersService.getGroupMembers({
       userId: keys[0].userId,

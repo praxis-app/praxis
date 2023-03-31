@@ -175,7 +175,7 @@ export class DataloaderService {
   private _createIsJoinedByMeLoader() {
     return new DataLoader<IsJoinedByMeKey, boolean, number>(
       async (keys) =>
-        this.groupsService.getIsJoinedByMeByBatch(keys as IsJoinedByMeKey[]),
+        this.groupsService.isJoinedByMeByBatch(keys as IsJoinedByMeKey[]),
       { cacheKeyFn: (key) => key.groupId }
     );
   }
