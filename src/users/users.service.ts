@@ -12,6 +12,7 @@ import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
+import { Proposal } from "../proposals/models/proposal.model";
 import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { RolesService } from "../roles/roles.service";
 import { UpdateUserInput } from "./models/update-user.input";
@@ -69,11 +70,18 @@ export class UsersService {
     }
     const { groupMembers, following, posts, proposals } = userWithFeed;
 
-    // Initialize map with posts by this user
+    // Initialize maps with posts and proposals by this user
     const postMap = posts.reduce<Record<number, Post>>((result, post) => {
       result[post.id] = post;
       return result;
     }, {});
+    const proposalMap = proposals.reduce<Record<number, Proposal>>(
+      (result, proposal) => {
+        result[proposal.id] = proposal;
+        return result;
+      },
+      {}
+    );
 
     // Insert posts from followed users
     for (const follow of following) {
@@ -87,12 +95,15 @@ export class UsersService {
       for (const post of group.posts) {
         postMap[post.id] = post;
       }
-      proposals.push(...group.proposals);
+      for (const proposal of group.proposals) {
+        proposalMap[proposal.id] = proposal;
+      }
     }
 
-    const sortedFeed = [...Object.values(postMap), ...proposals].sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-    );
+    const sortedFeed = [
+      ...Object.values(postMap),
+      ...Object.values(proposalMap),
+    ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     // TODO: Update once pagination has been implemented
     return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
