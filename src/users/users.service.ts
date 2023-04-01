@@ -98,12 +98,11 @@ export class UsersService {
       for (const proposal of group.proposals) {
         proposalMap[proposal.id] = proposal;
       }
-      proposals.push(...group.proposals);
     }
 
     const sortedFeed = [
       ...Object.values(postMap),
-      ...Object.values(proposals),
+      ...Object.values(proposalMap),
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     // TODO: Update once pagination has been implemented
