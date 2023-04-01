@@ -13,6 +13,8 @@ import { FeedItem } from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
+import { Role } from "../roles/models/role.model";
+import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
 import { GroupMember } from "./group-members/models/group-member.model";
 import { GroupsService } from "./groups.service";
@@ -26,7 +28,8 @@ import { UpdateGroupPayload } from "./models/update-group.payload";
 export class GroupsResolver {
   constructor(
     private groupsService: GroupsService,
-    private postsService: PostsService
+    private postsService: PostsService,
+    private rolesService: RolesService
   ) {}
 
   @Query(() => Group)
@@ -91,6 +94,11 @@ export class GroupsResolver {
       userId: currentUser.id,
       groupId: group.id,
     });
+  }
+
+  @ResolveField(() => [Role])
+  async roles(@Parent() { id }: Group) {
+    return this.rolesService.getRoles({ groupId: id });
   }
 
   @Mutation(() => CreateGroupPayload)

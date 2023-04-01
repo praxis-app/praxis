@@ -255,10 +255,10 @@ type Query {
   memberRequests(groupName: String!): [MemberRequest!]!
   post(id: Int!): Post!
   posts: [Post!]!
-  vote(id: Int!): Vote!
-  votes: [Vote!]!
   role(id: Int!): Role!
   serverRoles: [Role!]!
+  vote(id: Int!): Vote!
+  votes: [Vote!]!
   authCheck: Boolean!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
@@ -287,13 +287,13 @@ type Mutation {
   deletePost(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
-  createVote(voteData: CreateVoteInput!): CreateVotePayload!
-  updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
-  deleteVote(id: Int!): Boolean!
-  deleteRoleMember(id: Int!): DeleteRoleMemberPayload!
   createRole(roleData: CreateRoleInput!): CreateRolePayload!
   updateRole(roleData: UpdateRoleInput!): UpdateRolePayload!
   deleteRole(id: Int!): Boolean!
+  deleteRoleMember(id: Int!): DeleteRoleMemberPayload!
+  createVote(voteData: CreateVoteInput!): CreateVotePayload!
+  updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
+  deleteVote(id: Int!): Boolean!
   login(input: LoginInput!): LoginPayload!
   signUp(input: SignUpInput!): SignUpPayload!
   logOut: Boolean!
@@ -366,16 +366,6 @@ input DeleteLikeInput {
   postId: Int
 }
 
-input CreateVoteInput {
-  proposalId: Int!
-  voteType: String!
-}
-
-input UpdateVoteInput {
-  id: Int!
-  voteType: String!
-}
-
 input CreateRoleInput {
   name: String!
   color: String!
@@ -392,6 +382,16 @@ input UpdateRoleInput {
 input PermissionInput {
   id: Int!
   enabled: Boolean!
+}
+
+input CreateVoteInput {
+  proposalId: Int!
+  voteType: String!
+}
+
+input UpdateVoteInput {
+  id: Int!
+  voteType: String!
 }
 
 input LoginInput {
