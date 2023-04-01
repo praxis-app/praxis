@@ -1,3 +1,5 @@
+// TODO: Determine whether this should be moved to shield or service level
+
 import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
 import { ValidationError } from "apollo-server-express";
 import { ProposalStages } from "../../proposals/proposals.constants";

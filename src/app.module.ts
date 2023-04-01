@@ -16,62 +16,85 @@ import { DatabaseModule } from "./database/database.module";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
+import { GroupsService } from "./groups/groups.service";
 import { ImagesModule } from "./images/images.module";
 import { LikesModule } from "./likes/likes.module";
 import { PostsModule } from "./posts/posts.module";
 import { ProposalsModule } from "./proposals/proposals.module";
+import { ProposalsService } from "./proposals/proposals.service";
 import { RolesModule } from "./roles/roles.module";
 import { ServerInvitesModule } from "./server-invites/server-invites.module";
 import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
 import { VotesModule } from "./votes/votes.module";
 
-const useFactory = (
-  configService: ConfigService,
-  dataloaderService: DataloaderService,
-  refreshTokensService: RefreshTokensService,
-  usersService: UsersService
-) => ({
-  context: async ({ req }: { req: Request }): Promise<Context> => {
-    const claims = getClaims(req);
-    const sub = getSub(claims.accessTokenClaims);
-    const loaders = dataloaderService.getLoaders();
-    const permissions = sub ? await usersService.getUserPermissions(sub) : null;
-    const user = sub ? await usersService.getUser({ id: sub }) : null;
-
+const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
+  driver: ApolloDriver,
+  imports: [
+    DataloaderModule,
+    GroupsModule,
+    ProposalsModule,
+    RefreshTokensModule,
+    UsersModule,
+  ],
+  inject: [
+    ConfigService,
+    DataloaderService,
+    GroupsService,
+    ProposalsService,
+    RefreshTokensService,
+    UsersService,
+  ],
+  useFactory(
+    configService: ConfigService,
+    dataloaderService: DataloaderService,
+    groupsService: GroupsService,
+    proposalsService: ProposalsService,
+    refreshTokensService: RefreshTokensService,
+    usersService: UsersService
+  ) {
     return {
-      claims,
-      loaders,
-      permissions,
-      refreshTokensService,
-      usersService,
-      user,
+      context: async ({ req }: { req: Request }): Promise<Context> => {
+        const claims = getClaims(req);
+        const sub = getSub(claims.accessTokenClaims);
+        const permissions = sub
+          ? await usersService.getUserPermissions(sub)
+          : null;
+        const user = sub ? await usersService.getUser({ id: sub }) : null;
+
+        const loaders = dataloaderService.getLoaders();
+        const services: Context["services"] = {
+          groupsService,
+          proposalsService,
+          refreshTokensService,
+          usersService,
+        };
+
+        return {
+          claims,
+          loaders,
+          permissions,
+          services,
+          user,
+        };
+      },
+      transformSchema: (schema: GraphQLSchema) => {
+        schema = applyMiddleware(schema, shieldPermissions);
+        return schema;
+      },
+      autoSchemaFile: true,
+      cors: { origin: true, credentials: true },
+      csrfPrevention:
+        configService.get("NODE_ENV") !== Environments.Development,
+      resolvers: { Upload: GraphQLUpload },
     };
   },
-  transformSchema: (schema: GraphQLSchema) => {
-    schema = applyMiddleware(schema, shieldPermissions);
-    return schema;
-  },
-  autoSchemaFile: true,
-  cors: { origin: true, credentials: true },
-  csrfPrevention: configService.get("NODE_ENV") !== Environments.Development,
-  resolvers: { Upload: GraphQLUpload },
 });
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      imports: [DataloaderModule, RefreshTokensModule, UsersModule],
-      inject: [
-        ConfigService,
-        DataloaderService,
-        RefreshTokensService,
-        UsersService,
-      ],
-      useFactory,
-    }),
+    ApolloModule,
     AuthModule,
     DatabaseModule,
     DataloaderModule,

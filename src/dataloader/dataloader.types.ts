@@ -17,6 +17,11 @@ export interface IsFollowedByMeKey {
   followedUserId: number;
 }
 
+export interface IsJoinedByMeKey {
+  userId: number;
+  groupId: number;
+}
+
 export interface Dataloaders {
   // Proposals & Votes
   proposalActionsLoader: DataLoader<number, ProposalAction>;
@@ -35,6 +40,7 @@ export interface Dataloaders {
   groupMemberCountLoader: DataLoader<number, number>;
   groupMembersLoader: DataLoader<number, GroupMember[]>;
   groupsLoader: DataLoader<number, Group>;
+  isJoinedByMeLoader: DataLoader<IsJoinedByMeKey, boolean>;
   memberRequestCountLoader: DataLoader<number, number>;
 
   // Users
@@ -44,6 +50,6 @@ export interface Dataloaders {
   followingCountLoader: DataLoader<number, number>;
   usersLoader: DataLoader<number, User>;
 
-  // Misc.
+  // Roles
   roleMemberCountLoader: DataLoader<number, number>;
 }

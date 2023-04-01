@@ -24,6 +24,7 @@ import { VotesService } from "../votes/votes.service";
 import {
   Dataloaders,
   IsFollowedByMeKey,
+  IsJoinedByMeKey,
   IsLikedByMeKey,
 } from "./dataloader.types";
 
@@ -60,6 +61,7 @@ export class DataloaderService {
       groupMemberCountLoader: this._createGroupMemberCountLoader(),
       groupMembersLoader: this._createGroupMembersLoader(),
       groupsLoader: this._createGroupsLoader(),
+      isJoinedByMeLoader: this._createIsJoinedByMeLoader(),
       memberRequestCountLoader: this._createMemberRequestCountLoader(),
 
       // Users
@@ -69,7 +71,7 @@ export class DataloaderService {
       profilePicturesLoader: this._createProfilePicturesLoader(),
       usersLoader: this._createUsersLoader(),
 
-      // Misc.
+      // Roles
       roleMemberCountLoader: this._createRoleMemberCountLoader(),
     };
   }
@@ -170,6 +172,14 @@ export class DataloaderService {
     );
   }
 
+  private _createIsJoinedByMeLoader() {
+    return new DataLoader<IsJoinedByMeKey, boolean, number>(
+      async (keys) =>
+        this.groupsService.isJoinedByMeByBatch(keys as IsJoinedByMeKey[]),
+      { cacheKeyFn: (key) => key.groupId }
+    );
+  }
+
   // -------------------------------------------------------------------------
   // Users
   // -------------------------------------------------------------------------
@@ -207,7 +217,7 @@ export class DataloaderService {
   }
 
   // -------------------------------------------------------------------------
-  // Misc.
+  // Roles
   // -------------------------------------------------------------------------
 
   private _createRoleMemberCountLoader() {

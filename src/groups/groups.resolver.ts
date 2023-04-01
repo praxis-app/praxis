@@ -81,6 +81,18 @@ export class GroupsResolver {
     return loaders.memberRequestCountLoader.load(id);
   }
 
+  @ResolveField(() => Boolean)
+  async isJoinedByMe(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @CurrentUser() currentUser: User,
+    @Parent() group: Group
+  ) {
+    return loaders.isJoinedByMeLoader.load({
+      userId: currentUser.id,
+      groupId: group.id,
+    });
+  }
+
   @Mutation(() => CreateGroupPayload)
   async createGroup(
     @Args("groupData") groupData: CreateGroupInput,
