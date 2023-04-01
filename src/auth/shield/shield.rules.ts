@@ -21,7 +21,7 @@ export const canManagePosts = rule()(
     hasPermission(permissions, ServerPermissions.ManagePosts)
 );
 
-export const canManageRoles = rule()(
+export const canManageServerRoles = rule()(
   async (_parent, _args, { permissions }: Context) =>
     hasPermission(permissions, ServerPermissions.ManageRoles)
 );

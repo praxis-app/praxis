@@ -5,7 +5,7 @@ import {
   canCreateInvites,
   canManageInvites,
   canManagePosts,
-  canManageRoles,
+  canManageServerRoles,
   hasValidRefreshToken,
   isAuthenticated,
   isOwnPost,
@@ -24,6 +24,9 @@ const shieldPermissions = shield(
       // Server Invites
       serverInvite: allow,
       serverInvites: or(canCreateInvites, canManageInvites),
+
+      // Roles & Permissions
+      serverRoles: canManageServerRoles,
     },
     Mutation: {
       "*": isAuthenticated,
@@ -42,8 +45,6 @@ const shieldPermissions = shield(
       createServerInvite: or(canCreateInvites, canManageInvites),
       deleteServerInvite: canManageInvites,
     },
-    Role: canManageRoles,
-    RoleMember: canManageRoles,
   },
   {
     allowExternalErrors: true,
