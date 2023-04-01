@@ -8,6 +8,7 @@ import { IsJoinedByMeKey } from "../dataloader/dataloader.types";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { RolesService } from "../roles/roles.service";
 import { GroupMembersService } from "./group-members/group-members.service";
 import { GroupMember } from "./group-members/models/group-member.model";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
@@ -20,9 +21,10 @@ export class GroupsService {
   constructor(
     @InjectRepository(Group)
     private repository: Repository<Group>,
-    private memberRequestsService: MemberRequestsService,
     private groupMembersService: GroupMembersService,
-    private imagesService: ImagesService
+    private memberRequestsService: MemberRequestsService,
+    private imagesService: ImagesService,
+    private rolesService: RolesService
   ) {}
 
   async getGroup(where: FindOptionsWhere<Group>, relations?: string[]) {
@@ -99,6 +101,7 @@ export class GroupsService {
     } else {
       await this.saveDefaultCoverPhoto(group.id);
     }
+    await this.rolesService.initAdminRole(userId, group.id);
 
     return { group };
   }

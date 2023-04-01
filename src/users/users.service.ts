@@ -134,6 +134,9 @@ export class UsersService {
             continue;
           }
           if (groupId) {
+            if (!result.groupPermissions[groupId]) {
+              result.groupPermissions[groupId] = new Set();
+            }
             result.groupPermissions[groupId].add(name);
             continue;
           }
@@ -260,7 +263,7 @@ export class UsersService {
 
     try {
       if (users.length === 1) {
-        await this.rolesService.initializeServerAdminRole(user.id);
+        await this.rolesService.initAdminRole(user.id);
       }
       await this.saveDefaultProfilePicture(user.id);
     } catch {
