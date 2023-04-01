@@ -3,6 +3,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ImagesModule } from "../images/images.module";
 import { PostsModule } from "../posts/posts.module";
 import { RolesModule } from "../roles/roles.module";
+import { UsersModule } from "../users/users.module";
 import { GroupMembersModule } from "./group-members/group-members.module";
 import { GroupsResolver } from "./groups.resolver";
 import { GroupsService } from "./groups.service";
@@ -17,6 +18,7 @@ import { Group } from "./models/group.model";
     ImagesModule,
     PostsModule,
     RolesModule,
+    UsersModule,
   ],
   providers: [GroupsService, GroupsResolver],
   exports: [GroupsService, TypeOrmModule],

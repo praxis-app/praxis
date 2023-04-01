@@ -101,6 +101,18 @@ export class GroupsResolver {
     return this.rolesService.getRoles({ groupId: id });
   }
 
+  @ResolveField(() => [String])
+  async myPermissions(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @CurrentUser() currentUser: User,
+    @Parent() group: Group
+  ) {
+    return loaders.myGroupPermissionsLoader.load({
+      userId: currentUser.id,
+      groupId: group.id,
+    });
+  }
+
   @Mutation(() => CreateGroupPayload)
   async createGroup(
     @Args("groupData") groupData: CreateGroupInput,

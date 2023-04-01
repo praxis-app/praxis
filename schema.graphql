@@ -105,6 +105,7 @@ type Group {
   memberCount: Int!
   memberRequestCount: Int!
   isJoinedByMe: Boolean!
+  myPermissions: [String!]!
 }
 
 union FeedItem = Post | Proposal
