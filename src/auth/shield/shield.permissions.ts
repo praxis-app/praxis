@@ -9,24 +9,36 @@ import {
   hasValidRefreshToken,
   isAuthenticated,
   isOwnPost,
+  isProposalGroupJoinedByMe,
 } from "./shield.rules";
 
 const shieldPermissions = shield(
   {
     Query: {
       "*": isAuthenticated,
-      users: canBanMembers,
-      serverInvites: or(canCreateInvites, canManageInvites),
-      serverInvite: allow,
+
+      // Users
       isFirstUser: allow,
+      users: canBanMembers,
+
+      // Server Invites
+      serverInvite: allow,
+      serverInvites: or(canCreateInvites, canManageInvites),
     },
     Mutation: {
       "*": isAuthenticated,
+
+      // Auth
       login: allow,
       logOut: allow,
       signUp: allow,
       refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
+
+      // Votes
+      createVote: isProposalGroupJoinedByMe,
       deletePost: or(canManagePosts, isOwnPost),
+
+      // Server Invites
       createServerInvite: or(canCreateInvites, canManageInvites),
       deleteServerInvite: canManageInvites,
     },

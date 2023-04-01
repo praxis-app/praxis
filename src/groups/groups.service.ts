@@ -4,10 +4,12 @@ import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
+import { IsJoinedByMeKey } from "../dataloader/dataloader.types";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { GroupMembersService } from "./group-members/group-members.service";
+import { GroupMember } from "./group-members/models/group-member.model";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { CreateGroupInput } from "./models/create-group.input";
 import { Group } from "./models/group.model";
@@ -41,6 +43,14 @@ export class GroupsService {
     return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
   }
 
+  async isJoinedByUser(id: number, userId: number) {
+    const groupMember = await this.groupMembersService.getGroupMember({
+      groupId: id,
+      userId,
+    });
+    return !!groupMember;
+  }
+
   async getCoverPhotosByBatch(groupIds: number[]) {
     const coverPhotos = await this.imagesService.getImages({
       groupId: In(groupIds),
@@ -58,12 +68,23 @@ export class GroupsService {
     const groups = await this.getGroups({
       id: In(groupIds),
     });
-    const mappedGroups = groupIds.map(
+    return groupIds.map(
       (id) =>
         groups.find((group: Group) => group.id === id) ||
         new Error(`Could not load group: ${id}`)
     );
-    return mappedGroups;
+  }
+
+  async isJoinedByMeByBatch(keys: IsJoinedByMeKey[]) {
+    const groupIds = keys.map(({ groupId }) => groupId);
+    const groupMembers = await this.groupMembersService.getGroupMembers({
+      userId: keys[0].userId,
+    });
+    return groupIds.map((groupId) =>
+      groupMembers.some(
+        (groupMember: GroupMember) => groupMember.groupId === groupId
+      )
+    );
   }
 
   async createGroup(
