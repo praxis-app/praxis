@@ -46,7 +46,7 @@ export class RolesResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { groupId }: Role
   ) {
-    return loaders.groupsLoader.load(groupId);
+    return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
 
   @ResolveField(() => [Permission])
