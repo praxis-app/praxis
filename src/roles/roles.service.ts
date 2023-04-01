@@ -40,7 +40,7 @@ export class RolesService {
   }
 
   async getAvailableUsersToAdd(id: number) {
-    const role = await this.getRole(id, ["members"]);
+    const role = await this.getRole(id, ["members", "group.members.user"]);
     if (!role?.members) {
       return [];
     }
@@ -49,6 +49,13 @@ export class RolesService {
       result.push(userId);
       return result;
     }, []);
+
+    if (role.group) {
+      const usersInGroup = role.group.members.map(({ user }) => user);
+      return usersInGroup.filter(
+        (user) => !userIds.some((userId) => userId === user.id)
+      );
+    }
 
     return this.usersService.getUsers({
       id: Not(In(userIds)),
