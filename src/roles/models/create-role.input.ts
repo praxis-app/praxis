@@ -1,4 +1,4 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { Field, InputType, Int } from "@nestjs/graphql";
 
 @InputType()
 export class CreateRoleInput {
@@ -7,4 +7,7 @@ export class CreateRoleInput {
 
   @Field()
   color: string;
+
+  @Field(() => Int, { nullable: true })
+  groupId?: number;
 }

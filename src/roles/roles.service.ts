@@ -7,7 +7,10 @@ import { UsersService } from "../users/users.service";
 import { CreateRoleInput } from "./models/create-role.input";
 import { Role } from "./models/role.model";
 import { UpdateRoleInput } from "./models/update-role.input";
-import { initServerPermissions } from "./permissions/permissions.utils";
+import {
+  initGroupPermissions,
+  initServerPermissions,
+} from "./permissions/permissions.utils";
 import { RoleMember } from "./role-members/models/role-member.model";
 import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from "./roles.constants";
 
@@ -65,7 +68,10 @@ export class RolesService {
   }
 
   async createRole(roleData: CreateRoleInput) {
-    const permissions = initServerPermissions();
+    const permissions = roleData.groupId
+      ? initGroupPermissions()
+      : initServerPermissions();
+
     const role = await this.roleRepository.save({ ...roleData, permissions });
     return { role };
   }

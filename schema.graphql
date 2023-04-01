@@ -369,6 +369,7 @@ input DeleteLikeInput {
 input CreateRoleInput {
   name: String!
   color: String!
+  groupId: Int
 }
 
 input UpdateRoleInput {
