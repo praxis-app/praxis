@@ -1,7 +1,10 @@
 import { rule } from "graphql-shield";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../common/common.types";
-import { ServerPermissions } from "../../roles/permissions/permissions.constants";
+import {
+  GroupPermissions,
+  ServerPermissions,
+} from "../../roles/permissions/permissions.constants";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
 import { hasPermission } from "./shield.utils";
@@ -29,6 +32,34 @@ export const canManageServerRoles = rule()(
 export const canBanMembers = rule()(
   async (_parent, _args, { permissions }: Context) =>
     hasPermission(permissions, ServerPermissions.BanMembers)
+);
+
+export const canApproveGroupMemberRequests = rule()(
+  async (
+    _parent,
+    args,
+    { permissions, services: { memberRequestsService } }: Context,
+    info
+  ) => {
+    let groupId: number | undefined;
+
+    if (info.fieldName === "approveMemberRequest") {
+      const memberRequest = await memberRequestsService.getMemberRequest(
+        { id: args.id },
+        ["group"]
+      );
+      if (!memberRequest) {
+        return false;
+      }
+      groupId = memberRequest.group.id;
+    }
+
+    return hasPermission(
+      permissions,
+      GroupPermissions.ApproveMemberRequests,
+      groupId
+    );
+  }
 );
 
 export const isAuthenticated = rule({ cache: "contextual" })(

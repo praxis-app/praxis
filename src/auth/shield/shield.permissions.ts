@@ -1,6 +1,7 @@
 import { allow, and, not, or, shield } from "graphql-shield";
 import { FORBIDDEN } from "../../common/common.constants";
 import {
+  canApproveGroupMemberRequests,
   canBanMembers,
   canCreateInvites,
   canManageInvites,
@@ -44,6 +45,8 @@ const shieldPermissions = shield(
       // Server Invites
       createServerInvite: or(canCreateInvites, canManageInvites),
       deleteServerInvite: canManageInvites,
+
+      approveMemberRequest: canApproveGroupMemberRequests,
     },
   },
   {

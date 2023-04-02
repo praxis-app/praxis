@@ -15,13 +15,18 @@ export class MemberRequestsService {
   constructor(
     @InjectRepository(MemberRequest)
     private repository: Repository<MemberRequest>,
+
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
+
     private groupMembersService: GroupMembersService
   ) {}
 
-  async getMemberRequest(where?: FindOptionsWhere<MemberRequest>) {
-    return this.repository.findOne({ where });
+  async getMemberRequest(
+    where: FindOptionsWhere<MemberRequest>,
+    relations?: string[]
+  ) {
+    return this.repository.findOne({ where, relations });
   }
 
   async getMemberRequests(groupName: string) {
