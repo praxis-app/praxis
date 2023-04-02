@@ -86,7 +86,7 @@ export class GroupsService {
     );
     return groupIds.map((id) => {
       if (!groupPermissions[id]) {
-        return new Error(`Could not load permissions for group: ${id}`);
+        return [];
       }
       return Array.from(groupPermissions[id]);
     });
