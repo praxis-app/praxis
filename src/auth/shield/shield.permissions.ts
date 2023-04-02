@@ -33,7 +33,7 @@ const shieldPermissions = shield(
       signUp: allow,
       refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
       createVote: isProposalGroupJoinedByMe,
-      deletePost: or(canManagePosts, isOwnPost, canManageGroupPosts),
+      deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
       createServerInvite: or(canCreateInvites, canManageInvites),
       deleteServerInvite: canManageInvites,
       approveMemberRequest: canApproveGroupMemberRequests,
