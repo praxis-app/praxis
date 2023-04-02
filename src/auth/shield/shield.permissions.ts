@@ -36,6 +36,9 @@ const shieldPermissions = shield(
       deleteServerInvite: canManageInvites,
       approveMemberRequest: canApproveGroupMemberRequests,
     },
+    Group: {
+      memberRequestCount: canApproveGroupMemberRequests,
+    },
   },
   {
     allowExternalErrors: true,

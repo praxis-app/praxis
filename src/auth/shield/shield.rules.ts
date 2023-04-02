@@ -1,6 +1,7 @@
 import { rule } from "graphql-shield";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../common/common.types";
+import { Group } from "../../groups/models/group.model";
 import {
   GroupPermissions,
   ServerPermissions,
@@ -36,7 +37,7 @@ export const canBanMembers = rule()(
 
 export const canApproveGroupMemberRequests = rule()(
   async (
-    _parent,
+    parent,
     args,
     {
       permissions,
@@ -56,6 +57,14 @@ export const canApproveGroupMemberRequests = rule()(
 
     if (info.fieldName === "memberRequests") {
       const group = await groupsService.getGroup({ name: args.groupName });
+      groupId = group.id;
+    }
+
+    if (
+      info.fieldName === "memberRequestCount" &&
+      info.parentType.name === Group.name
+    ) {
+      const group = parent as Group;
       groupId = group.id;
     }
 
