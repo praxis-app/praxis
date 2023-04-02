@@ -97,12 +97,12 @@ type Group {
   feed: [FeedItem!]!
   posts: [Post!]!
   members: [GroupMember!]!
+  memberRequests: [MemberRequest!]
   roles: [Role!]!
   proposals: [Proposal!]!
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
-  memberRequests: [MemberRequest!]!
   memberCount: Int!
   memberRequestCount: Int
   isJoinedByMe: Boolean!

@@ -71,7 +71,7 @@ export class GroupsResolver {
     return loaders.groupMembersLoader.load(id);
   }
 
-  @ResolveField(() => [MemberRequest])
+  @ResolveField(() => [MemberRequest], { nullable: true })
   async memberRequests(@Parent() { id }: Group) {
     return this.memberRequestsService.getMemberRequests(id);
   }
