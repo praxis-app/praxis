@@ -49,6 +49,17 @@ export const canDeleteGroup = rule()(
     hasPermission(permissions, GroupPermissions.DeleteGroup, id)
 );
 
+export const canManageGroupPosts = rule()(
+  async (
+    _parent,
+    { id }: { id: number },
+    { permissions, services: { postsService } }: Context
+  ) => {
+    const { groupId } = await postsService.getPost(id);
+    return hasPermission(permissions, GroupPermissions.ManagePosts, groupId);
+  }
+);
+
 export const canApproveGroupMemberRequests = rule()(
   async (
     parent,

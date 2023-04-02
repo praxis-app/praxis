@@ -22,6 +22,7 @@ import { MemberRequestsService } from "./groups/member-requests/member-requests.
 import { ImagesModule } from "./images/images.module";
 import { LikesModule } from "./likes/likes.module";
 import { PostsModule } from "./posts/posts.module";
+import { PostsService } from "./posts/posts.service";
 import { ProposalsModule } from "./proposals/proposals.module";
 import { ProposalsService } from "./proposals/proposals.service";
 import { RolesModule } from "./roles/roles.module";
@@ -36,6 +37,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     DataloaderModule,
     GroupsModule,
     MemberRequestsModule,
+    PostsModule,
     ProposalsModule,
     RefreshTokensModule,
     UsersModule,
@@ -45,6 +47,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     DataloaderService,
     GroupsService,
     MemberRequestsService,
+    PostsService,
     ProposalsService,
     RefreshTokensService,
     UsersService,
@@ -54,6 +57,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     dataloaderService: DataloaderService,
     groupsService: GroupsService,
     memberRequestsService: MemberRequestsService,
+    postsService: PostsService,
     proposalsService: ProposalsService,
     refreshTokensService: RefreshTokensService,
     usersService: UsersService
@@ -70,9 +74,10 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
         const loaders = dataloaderService.getLoaders();
         const services: ContextServices = {
           groupsService,
+          memberRequestsService,
+          postsService,
           proposalsService,
           refreshTokensService,
-          memberRequestsService,
           usersService,
         };
 

@@ -248,14 +248,14 @@ type Query {
   group(name: String!): Group!
   groups: [Group!]!
   memberRequest(groupId: Int!): MemberRequest
+  post(id: Int!): Post!
+  posts: [Post!]!
   proposal(id: Int!): Proposal!
   proposals: [Proposal!]!
   me: User!
   user(id: Int, name: String): User!
   users: [User!]!
   isFirstUser: Boolean!
-  post(id: Int!): Post!
-  posts: [Post!]!
   role(id: Int!): Role!
   serverRoles: [Role!]!
   vote(id: Int!): Vote!
@@ -274,6 +274,9 @@ type Mutation {
   approveMemberRequest(id: Int!): ApproveMemberRequestPayload!
   cancelMemberRequest(id: Int!): Boolean!
   denyMemberRequest(id: Int!): Boolean!
+  createPost(postData: CreatePostInput!): CreatePostPayload!
+  updatePost(postData: UpdatePostInput!): UpdatePostPayload!
+  deletePost(id: Int!): Boolean!
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   deleteProposal(id: Int!): Boolean!
@@ -283,9 +286,6 @@ type Mutation {
   followUser(id: Int!): FollowUserPayload!
   unfollowUser(id: Int!): Boolean!
   deleteImage(id: Int!): Boolean!
-  createPost(postData: CreatePostInput!): CreatePostPayload!
-  updatePost(postData: UpdatePostInput!): UpdatePostPayload!
-  deletePost(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
   createRole(roleData: CreateRoleInput!): CreateRolePayload!
@@ -318,6 +318,18 @@ input UpdateGroupInput {
   coverPhoto: Upload
 }
 
+input CreatePostInput {
+  groupId: Int
+  body: String
+  images: [Upload!]
+}
+
+input UpdatePostInput {
+  id: Int!
+  body: String
+  images: [Upload!]
+}
+
 input CreateProposalInput {
   groupId: Int
   body: String
@@ -345,18 +357,6 @@ input UpdateUserInput {
   bio: String!
   profilePicture: Upload
   coverPhoto: Upload
-}
-
-input CreatePostInput {
-  groupId: Int
-  body: String
-  images: [Upload!]
-}
-
-input UpdatePostInput {
-  id: Int!
-  body: String
-  images: [Upload!]
 }
 
 input CreateLikeInput {
