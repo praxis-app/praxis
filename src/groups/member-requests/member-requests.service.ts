@@ -29,12 +29,9 @@ export class MemberRequestsService {
     return this.repository.findOne({ where, relations });
   }
 
-  async getMemberRequests(groupName: string) {
+  async getMemberRequests(groupId: number) {
     return this.repository.find({
-      where: {
-        group: { name: groupName },
-        status: MemberRequestStatus.Pending,
-      },
+      where: { status: MemberRequestStatus.Pending, groupId },
       order: { createdAt: "DESC" },
     });
   }

@@ -18,6 +18,8 @@ import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
 import { GroupMember } from "./group-members/models/group-member.model";
 import { GroupsService } from "./groups.service";
+import { MemberRequestsService } from "./member-requests/member-requests.service";
+import { MemberRequest } from "./member-requests/models/member-request.model";
 import { CreateGroupInput } from "./models/create-group.input";
 import { CreateGroupPayload } from "./models/create-group.payload";
 import { Group } from "./models/group.model";
@@ -29,6 +31,7 @@ export class GroupsResolver {
   constructor(
     private groupsService: GroupsService,
     private postsService: PostsService,
+    private memberRequestsService: MemberRequestsService,
     private rolesService: RolesService
   ) {}
 
@@ -66,6 +69,11 @@ export class GroupsResolver {
     @Context() { loaders }: { loaders: Dataloaders }
   ) {
     return loaders.groupMembersLoader.load(id);
+  }
+
+  @ResolveField(() => [MemberRequest])
+  async memberRequests(@Parent() { id }: Group) {
+    return this.memberRequestsService.getMemberRequests(id);
   }
 
   @ResolveField(() => Int)

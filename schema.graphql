@@ -102,6 +102,7 @@ type Group {
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
+  memberRequests: [MemberRequest!]!
   memberCount: Int!
   memberRequestCount: Int
   isJoinedByMe: Boolean!
@@ -247,7 +248,6 @@ type Query {
   group(name: String!): Group!
   groups: [Group!]!
   memberRequest(groupId: Int!): MemberRequest
-  memberRequests(groupName: String!): [MemberRequest!]!
   proposal(id: Int!): Proposal!
   proposals: [Proposal!]!
   me: User!

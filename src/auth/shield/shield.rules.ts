@@ -39,10 +39,7 @@ export const canApproveGroupMemberRequests = rule()(
   async (
     parent,
     args,
-    {
-      permissions,
-      services: { memberRequestsService, groupsService },
-    }: Context,
+    { permissions, services: { memberRequestsService } }: Context,
     info
   ) => {
     let groupId: number | undefined;
@@ -54,12 +51,8 @@ export const canApproveGroupMemberRequests = rule()(
       );
       groupId = memberRequest?.group.id;
     }
-    if (info.fieldName === "memberRequests") {
-      const group = await groupsService.getGroup({ name: args.groupName });
-      groupId = group.id;
-    }
     if (
-      info.fieldName === "memberRequestCount" &&
+      ["memberRequests", "memberRequestCount"].includes(info.fieldName) &&
       info.parentType.name === Group.name
     ) {
       const group = parent as Group;

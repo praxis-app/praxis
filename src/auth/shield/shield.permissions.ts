@@ -22,7 +22,6 @@ const shieldPermissions = shield(
       serverInvite: allow,
       serverInvites: or(canCreateInvites, canManageInvites),
       serverRoles: canManageServerRoles,
-      memberRequests: canApproveGroupMemberRequests,
     },
     Mutation: {
       "*": isAuthenticated,
@@ -37,6 +36,7 @@ const shieldPermissions = shield(
       approveMemberRequest: canApproveGroupMemberRequests,
     },
     Group: {
+      memberRequests: canApproveGroupMemberRequests,
       memberRequestCount: canApproveGroupMemberRequests,
     },
   },
