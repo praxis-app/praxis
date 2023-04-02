@@ -79,7 +79,7 @@ export const canManageGroupRoles = rule()(
         const role = await rolesService.getRole(args.roleData.id);
         groupId = role?.groupId;
       }
-    } else if (info.fieldName === "deleteRole") {
+    } else if (["role", "deleteRole"].includes(info.fieldName)) {
       const role = await rolesService.getRole(args.id);
       groupId = role?.groupId;
     }

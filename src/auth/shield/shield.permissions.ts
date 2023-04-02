@@ -26,6 +26,7 @@ const shieldPermissions = shield(
       serverInvite: allow,
       serverInvites: or(canCreateInvites, canManageInvites),
       serverRoles: canManageServerRoles,
+      role: or(canManageServerRoles, canManageGroupRoles),
     },
     Mutation: {
       "*": isAuthenticated,
