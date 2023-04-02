@@ -41,7 +41,7 @@ export const canUpdateGroup = rule()(
     _parent,
     { groupData }: { groupData: UpdateGroupInput },
     { permissions }: Context
-  ) => hasPermission(permissions, GroupPermissions.EditGroup, groupData.id)
+  ) => hasPermission(permissions, GroupPermissions.UpdateGroup, groupData.id)
 );
 
 export const canDeleteGroup = rule()(
