@@ -54,12 +54,10 @@ export const canApproveGroupMemberRequests = rule()(
       );
       groupId = memberRequest?.group.id;
     }
-
     if (info.fieldName === "memberRequests") {
       const group = await groupsService.getGroup({ name: args.groupName });
       groupId = group.id;
     }
-
     if (
       info.fieldName === "memberRequestCount" &&
       info.parentType.name === Group.name
