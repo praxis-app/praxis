@@ -9,7 +9,7 @@ export enum ServerPermissions {
 }
 
 export enum GroupPermissions {
-  AcceptMemberRequests = "accept-group-member-requests",
+  ApproveMemberRequests = "approve-group-member-requests",
   BanMembers = "ban-group-members",
   CreateEvents = "create-group-events",
   DeleteGroup = "delete-group",
