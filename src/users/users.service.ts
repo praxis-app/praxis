@@ -247,7 +247,7 @@ export class UsersService {
 
   async getIsFollowedByMeByBatch(keys: IsFollowedByMeKey[]) {
     const followedUserIds = keys.map(({ followedUserId }) => followedUserId);
-    const following = await this.getFollowing(keys[0].userId);
+    const following = await this.getFollowing(keys[0].currentUserId);
 
     return followedUserIds.map((followedUserId) =>
       following.some((followedUser: User) => followedUser.id === followedUserId)

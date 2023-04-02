@@ -99,7 +99,7 @@ export class GroupsResolver {
     @Parent() group: Group
   ) {
     return loaders.isJoinedByMeLoader.load({
-      userId: currentUser.id,
+      currentUserId: currentUser.id,
       groupId: group.id,
     });
   }
@@ -116,7 +116,7 @@ export class GroupsResolver {
     @Parent() group: Group
   ) {
     return loaders.myGroupPermissionsLoader.load({
-      userId: currentUser.id,
+      currentUserId: currentUser.id,
       groupId: group.id,
     });
   }

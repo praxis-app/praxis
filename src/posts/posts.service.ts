@@ -58,7 +58,7 @@ export class PostsService {
     const postIds = keys.map(({ postId }) => postId);
     const likes = await this.likesService.getLikes({
       postId: In(postIds),
-      userId: keys[0].userId,
+      userId: keys[0].currentUserId,
     });
     return postIds.map((postId) =>
       likes.some((like: Like) => like.postId === postId)

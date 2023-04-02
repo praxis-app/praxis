@@ -82,7 +82,7 @@ export class GroupsService {
   async getMyGroupPermissionsByBatch(keys: MyGroupsKey[]) {
     const groupIds = keys.map(({ groupId }) => groupId);
     const { groupPermissions } = await this.usersService.getUserPermissions(
-      keys[0].userId
+      keys[0].currentUserId
     );
     return groupIds.map((id) => {
       if (!groupPermissions[id]) {
@@ -95,7 +95,7 @@ export class GroupsService {
   async isJoinedByMeByBatch(keys: MyGroupsKey[]) {
     const groupIds = keys.map(({ groupId }) => groupId);
     const groupMembers = await this.groupMembersService.getGroupMembers({
-      userId: keys[0].userId,
+      userId: keys[0].currentUserId,
     });
     return groupIds.map((groupId) =>
       groupMembers.some(

@@ -8,17 +8,17 @@ import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
 
 export interface IsLikedByMeKey {
-  userId: number;
+  currentUserId: number;
   postId: number;
 }
 
 export interface IsFollowedByMeKey {
-  userId: number;
+  currentUserId: number;
   followedUserId: number;
 }
 
 export interface MyGroupsKey {
-  userId: number;
+  currentUserId: number;
   groupId: number;
 }
 
