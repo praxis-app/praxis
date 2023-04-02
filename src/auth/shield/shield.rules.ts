@@ -2,6 +2,7 @@ import { rule } from "graphql-shield";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../common/common.types";
 import { Group } from "../../groups/models/group.model";
+import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import {
   GroupPermissions,
   ServerPermissions,
@@ -33,6 +34,19 @@ export const canManageServerRoles = rule()(
 export const canBanMembers = rule()(
   async (_parent, _args, { permissions }: Context) =>
     hasPermission(permissions, ServerPermissions.BanMembers)
+);
+
+export const canUpdateGroup = rule()(
+  async (
+    _parent,
+    { groupData }: { groupData: UpdateGroupInput },
+    { permissions }: Context
+  ) => hasPermission(permissions, GroupPermissions.EditGroup, groupData.id)
+);
+
+export const canDeleteGroup = rule()(
+  async (_parent, { id }: { id: number }, { permissions }: Context) =>
+    hasPermission(permissions, GroupPermissions.DeleteGroup, id)
 );
 
 export const canApproveGroupMemberRequests = rule()(
