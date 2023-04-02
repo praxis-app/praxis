@@ -103,7 +103,7 @@ type Group {
   createdAt: DateTime!
   updatedAt: DateTime!
   memberCount: Int!
-  memberRequestCount: Int!
+  memberRequestCount: Int
   isJoinedByMe: Boolean!
   myPermissions: [String!]!
 }
