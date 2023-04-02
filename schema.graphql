@@ -252,12 +252,12 @@ type Query {
   posts: [Post!]!
   proposal(id: Int!): Proposal!
   proposals: [Proposal!]!
+  role(id: Int!): Role!
+  serverRoles: [Role!]!
   me: User!
   user(id: Int, name: String): User!
   users: [User!]!
   isFirstUser: Boolean!
-  role(id: Int!): Role!
-  serverRoles: [Role!]!
   vote(id: Int!): Vote!
   votes: [Vote!]!
   authCheck: Boolean!
@@ -281,6 +281,9 @@ type Mutation {
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   deleteProposal(id: Int!): Boolean!
   refreshToken: Boolean!
+  createRole(roleData: CreateRoleInput!): CreateRolePayload!
+  updateRole(roleData: UpdateRoleInput!): UpdateRolePayload!
+  deleteRole(id: Int!): Boolean!
   updateUser(userData: UpdateUserInput!): UpdateUserPayload!
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
@@ -288,9 +291,6 @@ type Mutation {
   deleteImage(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
-  createRole(roleData: CreateRoleInput!): CreateRolePayload!
-  updateRole(roleData: UpdateRoleInput!): UpdateRolePayload!
-  deleteRole(id: Int!): Boolean!
   deleteRoleMember(id: Int!): DeleteRoleMemberPayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
@@ -351,22 +351,6 @@ input UpdateProposalInput {
   images: [Upload!]
 }
 
-input UpdateUserInput {
-  id: Int!
-  name: String!
-  bio: String!
-  profilePicture: Upload
-  coverPhoto: Upload
-}
-
-input CreateLikeInput {
-  postId: Int
-}
-
-input DeleteLikeInput {
-  postId: Int
-}
-
 input CreateRoleInput {
   name: String!
   color: String!
@@ -384,6 +368,22 @@ input UpdateRoleInput {
 input PermissionInput {
   id: Int!
   enabled: Boolean!
+}
+
+input UpdateUserInput {
+  id: Int!
+  name: String!
+  bio: String!
+  profilePicture: Upload
+  coverPhoto: Upload
+}
+
+input CreateLikeInput {
+  postId: Int
+}
+
+input DeleteLikeInput {
+  postId: Int
 }
 
 input CreateVoteInput {

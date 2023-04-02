@@ -26,6 +26,7 @@ import { PostsService } from "./posts/posts.service";
 import { ProposalsModule } from "./proposals/proposals.module";
 import { ProposalsService } from "./proposals/proposals.service";
 import { RolesModule } from "./roles/roles.module";
+import { RolesService } from "./roles/roles.service";
 import { ServerInvitesModule } from "./server-invites/server-invites.module";
 import { UsersModule } from "./users/users.module";
 import { UsersService } from "./users/users.service";
@@ -40,6 +41,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     PostsModule,
     ProposalsModule,
     RefreshTokensModule,
+    RolesModule,
     UsersModule,
   ],
   inject: [
@@ -50,6 +52,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     PostsService,
     ProposalsService,
     RefreshTokensService,
+    RolesService,
     UsersService,
   ],
   useFactory(
@@ -60,6 +63,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     postsService: PostsService,
     proposalsService: ProposalsService,
     refreshTokensService: RefreshTokensService,
+    rolesService: RolesService,
     usersService: UsersService
   ) {
     return {
@@ -78,6 +82,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
           postsService,
           proposalsService,
           refreshTokensService,
+          rolesService,
           usersService,
         };
 

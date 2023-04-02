@@ -3,6 +3,8 @@ import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../common/common.types";
 import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
+import { CreateRoleInput } from "../../roles/models/create-role.input";
+import { UpdateRoleInput } from "../../roles/models/update-role.input";
 import {
   GroupPermissions,
   ServerPermissions,
@@ -57,6 +59,36 @@ export const canManageGroupPosts = rule()(
   ) => {
     const { groupId } = await postsService.getPost(id);
     return hasPermission(permissions, GroupPermissions.ManagePosts, groupId);
+  }
+);
+
+export const canManageGroupRoles = rule()(
+  async (
+    parent,
+    args: { roleData: CreateRoleInput | UpdateRoleInput } | { id: number },
+    { permissions, services: { rolesService } }: Context,
+    info
+  ) => {
+    let groupId: number | undefined;
+
+    if ("roleData" in args) {
+      if (info.fieldName === "createRole" && "groupId" in args.roleData) {
+        groupId = args.roleData.groupId;
+      }
+      if (info.fieldName === "updateRole" && "id" in args.roleData) {
+        const role = await rolesService.getRole(args.roleData.id);
+        groupId = role?.groupId;
+      }
+    } else if (info.fieldName === "deleteRole") {
+      const role = await rolesService.getRole(args.id);
+      groupId = role?.groupId;
+    }
+    if (info.fieldName === "roles") {
+      const { id } = parent as Group;
+      groupId = id;
+    }
+
+    return hasPermission(permissions, GroupPermissions.ManageRoles, groupId);
   }
 );
 
