@@ -28,6 +28,8 @@ const shieldPermissions = shield(
 
       // Roles & Permissions
       serverRoles: canManageServerRoles,
+
+      memberRequests: canApproveGroupMemberRequests,
     },
     Mutation: {
       "*": isAuthenticated,
