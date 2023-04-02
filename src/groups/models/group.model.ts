@@ -52,6 +52,7 @@ export class Group {
   })
   members: GroupMember[];
 
+  @Field(() => [MemberRequest], { nullable: true })
   @OneToMany(() => MemberRequest, (memberRequest) => memberRequest.group, {
     cascade: true,
   })

@@ -11,12 +11,14 @@ import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module
 import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
 import shieldPermissions from "./auth/shield/shield.permissions";
 import { Environments } from "./common/common.constants";
-import { Context } from "./common/common.types";
+import { Context, ContextServices } from "./common/common.types";
 import { DatabaseModule } from "./database/database.module";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
 import { GroupsModule } from "./groups/groups.module";
 import { GroupsService } from "./groups/groups.service";
+import { MemberRequestsModule } from "./groups/member-requests/member-requests.module";
+import { MemberRequestsService } from "./groups/member-requests/member-requests.service";
 import { ImagesModule } from "./images/images.module";
 import { LikesModule } from "./likes/likes.module";
 import { PostsModule } from "./posts/posts.module";
@@ -33,6 +35,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   imports: [
     DataloaderModule,
     GroupsModule,
+    MemberRequestsModule,
     ProposalsModule,
     RefreshTokensModule,
     UsersModule,
@@ -41,6 +44,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     ConfigService,
     DataloaderService,
     GroupsService,
+    MemberRequestsService,
     ProposalsService,
     RefreshTokensService,
     UsersService,
@@ -49,6 +53,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     configService: ConfigService,
     dataloaderService: DataloaderService,
     groupsService: GroupsService,
+    memberRequestsService: MemberRequestsService,
     proposalsService: ProposalsService,
     refreshTokensService: RefreshTokensService,
     usersService: UsersService
@@ -63,10 +68,11 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
         const user = sub ? await usersService.getUser({ id: sub }) : null;
 
         const loaders = dataloaderService.getLoaders();
-        const services: Context["services"] = {
+        const services: ContextServices = {
           groupsService,
           proposalsService,
           refreshTokensService,
+          memberRequestsService,
           usersService,
         };
 

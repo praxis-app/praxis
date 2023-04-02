@@ -97,13 +97,14 @@ type Group {
   feed: [FeedItem!]!
   posts: [Post!]!
   members: [GroupMember!]!
+  memberRequests: [MemberRequest!]
   roles: [Role!]!
   proposals: [Proposal!]!
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
   memberCount: Int!
-  memberRequestCount: Int!
+  memberRequestCount: Int
   isJoinedByMe: Boolean!
   myPermissions: [String!]!
 }
@@ -246,14 +247,13 @@ type UpdateProposalPayload {
 type Query {
   group(name: String!): Group!
   groups: [Group!]!
+  memberRequest(groupId: Int!): MemberRequest
   proposal(id: Int!): Proposal!
   proposals: [Proposal!]!
   me: User!
   user(id: Int, name: String): User!
   users: [User!]!
   isFirstUser: Boolean!
-  memberRequest(groupId: Int!): MemberRequest
-  memberRequests(groupName: String!): [MemberRequest!]!
   post(id: Int!): Post!
   posts: [Post!]!
   role(id: Int!): Role!
@@ -270,6 +270,10 @@ type Mutation {
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
   deleteGroup(id: Int!): Boolean!
   leaveGroup(id: Int!): Boolean!
+  createMemberRequest(groupId: Int!): CreateMemberRequestPayload!
+  approveMemberRequest(id: Int!): ApproveMemberRequestPayload!
+  cancelMemberRequest(id: Int!): Boolean!
+  denyMemberRequest(id: Int!): Boolean!
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   deleteProposal(id: Int!): Boolean!
@@ -278,10 +282,6 @@ type Mutation {
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
   unfollowUser(id: Int!): Boolean!
-  createMemberRequest(groupId: Int!): CreateMemberRequestPayload!
-  approveMemberRequest(id: Int!): ApproveMemberRequestPayload!
-  cancelMemberRequest(id: Int!): Boolean!
-  denyMemberRequest(id: Int!): Boolean!
   deleteImage(id: Int!): Boolean!
   createPost(postData: CreatePostInput!): CreatePostPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
