@@ -52,10 +52,10 @@ export class RolesService {
     }, []);
 
     if (role.group) {
-      const usersInGroup = role.group.members.map(({ user }) => user);
-      return usersInGroup.filter(
-        (user) => !userIds.some((userId) => userId === user.id)
+      const groupMembers = role.group.members.filter(
+        ({ user }) => !userIds.some((userId) => userId === user.id)
       );
+      return groupMembers.map(({ user }) => user);
     }
 
     return this.usersService.getUsers({
