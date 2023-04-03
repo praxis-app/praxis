@@ -1,13 +1,10 @@
 import { GroupPermissions, ServerPermissions } from "./permissions.constants";
 
-export const initServerPermissions = (enabled = false) =>
-  Object.values(ServerPermissions).map((name) => ({
-    enabled,
-    name,
-  }));
-
-export const initGroupPermissions = (enabled = false) =>
-  Object.values(GroupPermissions).map((name) => ({
+export const initPermissions = (
+  permission: typeof ServerPermissions | typeof GroupPermissions,
+  enabled = false
+) =>
+  Object.values(permission).map((name) => ({
     enabled,
     name,
   }));
