@@ -24,7 +24,7 @@ import { VotesService } from "../votes/votes.service";
 import {
   Dataloaders,
   IsFollowedByMeKey,
-  IsJoinedByMeKey,
+  MyGroupsKey,
   IsLikedByMeKey,
 } from "./dataloader.types";
 
@@ -71,8 +71,9 @@ export class DataloaderService {
       profilePicturesLoader: this._createProfilePicturesLoader(),
       usersLoader: this._createUsersLoader(),
 
-      // Roles
+      // Roles & Permissions
       roleMemberCountLoader: this._createRoleMemberCountLoader(),
+      myGroupPermissionsLoader: this._createMyGroupPermissionsLoader(),
     };
   }
 
@@ -173,9 +174,9 @@ export class DataloaderService {
   }
 
   private _createIsJoinedByMeLoader() {
-    return new DataLoader<IsJoinedByMeKey, boolean, number>(
+    return new DataLoader<MyGroupsKey, boolean, number>(
       async (keys) =>
-        this.groupsService.isJoinedByMeByBatch(keys as IsJoinedByMeKey[]),
+        this.groupsService.isJoinedByMeByBatch(keys as MyGroupsKey[]),
       { cacheKeyFn: (key) => key.groupId }
     );
   }
@@ -217,12 +218,20 @@ export class DataloaderService {
   }
 
   // -------------------------------------------------------------------------
-  // Roles
+  // Roles & Permissions
   // -------------------------------------------------------------------------
 
   private _createRoleMemberCountLoader() {
     return new DataLoader<number, number>(async (roleIds) =>
       this.roleMembersService.getRoleMemberCountByBatch(roleIds as number[])
+    );
+  }
+
+  private _createMyGroupPermissionsLoader() {
+    return new DataLoader<MyGroupsKey, string[], number>(
+      async (keys) =>
+        this.groupsService.getMyGroupPermissionsByBatch(keys as MyGroupsKey[]),
+      { cacheKeyFn: (key) => key.groupId }
     );
   }
 }

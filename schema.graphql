@@ -97,14 +97,16 @@ type Group {
   feed: [FeedItem!]!
   posts: [Post!]!
   members: [GroupMember!]!
+  memberRequests: [MemberRequest!]
   roles: [Role!]!
   proposals: [Proposal!]!
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
   memberCount: Int!
-  memberRequestCount: Int!
+  memberRequestCount: Int
   isJoinedByMe: Boolean!
+  myPermissions: [String!]!
 }
 
 union FeedItem = Post | Proposal
@@ -245,20 +247,19 @@ type UpdateProposalPayload {
 type Query {
   group(name: String!): Group!
   groups: [Group!]!
+  memberRequest(groupId: Int!): MemberRequest
+  post(id: Int!): Post!
+  posts: [Post!]!
   proposal(id: Int!): Proposal!
   proposals: [Proposal!]!
+  role(id: Int!): Role!
+  serverRoles: [Role!]!
   me: User!
   user(id: Int, name: String): User!
   users: [User!]!
   isFirstUser: Boolean!
-  memberRequest(groupId: Int!): MemberRequest
-  memberRequests(groupName: String!): [MemberRequest!]!
-  post(id: Int!): Post!
-  posts: [Post!]!
   vote(id: Int!): Vote!
   votes: [Vote!]!
-  role(id: Int!): Role!
-  serverRoles: [Role!]!
   authCheck: Boolean!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
@@ -269,31 +270,31 @@ type Mutation {
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
   deleteGroup(id: Int!): Boolean!
   leaveGroup(id: Int!): Boolean!
-  createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
-  updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
-  deleteProposal(id: Int!): Boolean!
-  refreshToken: Boolean!
-  updateUser(userData: UpdateUserInput!): UpdateUserPayload!
-  deleteUser(id: Int!): Boolean!
-  followUser(id: Int!): FollowUserPayload!
-  unfollowUser(id: Int!): Boolean!
   createMemberRequest(groupId: Int!): CreateMemberRequestPayload!
   approveMemberRequest(id: Int!): ApproveMemberRequestPayload!
   cancelMemberRequest(id: Int!): Boolean!
   denyMemberRequest(id: Int!): Boolean!
-  deleteImage(id: Int!): Boolean!
   createPost(postData: CreatePostInput!): CreatePostPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
   deletePost(id: Int!): Boolean!
-  createLike(likeData: CreateLikeInput!): CreateLikePayload!
-  deleteLike(likeData: DeleteLikeInput!): Boolean!
-  createVote(voteData: CreateVoteInput!): CreateVotePayload!
-  updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
-  deleteVote(id: Int!): Boolean!
-  deleteRoleMember(id: Int!): DeleteRoleMemberPayload!
+  createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
+  updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
+  deleteProposal(id: Int!): Boolean!
+  refreshToken: Boolean!
   createRole(roleData: CreateRoleInput!): CreateRolePayload!
   updateRole(roleData: UpdateRoleInput!): UpdateRolePayload!
   deleteRole(id: Int!): Boolean!
+  updateUser(userData: UpdateUserInput!): UpdateUserPayload!
+  deleteUser(id: Int!): Boolean!
+  followUser(id: Int!): FollowUserPayload!
+  unfollowUser(id: Int!): Boolean!
+  deleteImage(id: Int!): Boolean!
+  createLike(likeData: CreateLikeInput!): CreateLikePayload!
+  deleteLike(likeData: DeleteLikeInput!): Boolean!
+  deleteRoleMember(id: Int!): DeleteRoleMemberPayload!
+  createVote(voteData: CreateVoteInput!): CreateVotePayload!
+  updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
+  deleteVote(id: Int!): Boolean!
   login(input: LoginInput!): LoginPayload!
   signUp(input: SignUpInput!): SignUpPayload!
   logOut: Boolean!
@@ -317,6 +318,18 @@ input UpdateGroupInput {
   coverPhoto: Upload
 }
 
+input CreatePostInput {
+  groupId: Int
+  body: String
+  images: [Upload!]
+}
+
+input UpdatePostInput {
+  id: Int!
+  body: String
+  images: [Upload!]
+}
+
 input CreateProposalInput {
   groupId: Int
   body: String
@@ -338,24 +351,31 @@ input UpdateProposalInput {
   images: [Upload!]
 }
 
+input CreateRoleInput {
+  name: String!
+  color: String!
+  groupId: Int
+}
+
+input UpdateRoleInput {
+  id: Int!
+  name: String
+  color: String
+  selectedUserIds: [Int!]
+  permissions: [PermissionInput!]
+}
+
+input PermissionInput {
+  id: Int!
+  enabled: Boolean!
+}
+
 input UpdateUserInput {
   id: Int!
   name: String!
   bio: String!
   profilePicture: Upload
   coverPhoto: Upload
-}
-
-input CreatePostInput {
-  groupId: Int
-  body: String
-  images: [Upload!]
-}
-
-input UpdatePostInput {
-  id: Int!
-  body: String
-  images: [Upload!]
 }
 
 input CreateLikeInput {
@@ -374,24 +394,6 @@ input CreateVoteInput {
 input UpdateVoteInput {
   id: Int!
   voteType: String!
-}
-
-input CreateRoleInput {
-  name: String!
-  color: String!
-}
-
-input UpdateRoleInput {
-  id: Int!
-  name: String
-  color: String
-  selectedUserIds: [Int!]
-  permissions: [PermissionInput!]
-}
-
-input PermissionInput {
-  id: Int!
-  enabled: Boolean!
 }
 
 input LoginInput {

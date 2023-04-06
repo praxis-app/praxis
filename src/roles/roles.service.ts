@@ -7,7 +7,11 @@ import { UsersService } from "../users/users.service";
 import { CreateRoleInput } from "./models/create-role.input";
 import { Role } from "./models/role.model";
 import { UpdateRoleInput } from "./models/update-role.input";
-import { initServerPermissions } from "./permissions/permissions.utils";
+import {
+  GroupPermissions,
+  ServerPermissions,
+} from "./permissions/permissions.constants";
+import { initPermissions } from "./permissions/permissions.utils";
 import { RoleMember } from "./role-members/models/role-member.model";
 import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from "./roles.constants";
 
@@ -37,7 +41,7 @@ export class RolesService {
   }
 
   async getAvailableUsersToAdd(id: number) {
-    const role = await this.getRole(id, ["members"]);
+    const role = await this.getRole(id, ["members", "group.members.user"]);
     if (!role?.members) {
       return [];
     }
@@ -47,25 +51,36 @@ export class RolesService {
       return result;
     }, []);
 
+    if (role.group) {
+      const groupMembers = role.group.members.filter(
+        ({ user }) => !userIds.some((userId) => userId === user.id)
+      );
+      return groupMembers.map(({ user }) => user);
+    }
+
     return this.usersService.getUsers({
       id: Not(In(userIds)),
     });
   }
 
-  async initializeServerAdminRole(userId: number) {
-    const permissions = initServerPermissions(true);
-    const members = [{ userId }];
-
+  async initAdminRole(userId: number, groupId?: number) {
+    const permissions = initPermissions(
+      groupId ? GroupPermissions : ServerPermissions,
+      true
+    );
     await this.roleRepository.save({
       name: ADMIN_ROLE_NAME,
       color: DEFAULT_ROLE_COLOR,
+      members: [{ userId }],
       permissions,
-      members,
+      groupId,
     });
   }
 
   async createRole(roleData: CreateRoleInput) {
-    const permissions = initServerPermissions();
+    const permissions = initPermissions(
+      roleData.groupId ? GroupPermissions : ServerPermissions
+    );
     const role = await this.roleRepository.save({ ...roleData, permissions });
     return { role };
   }

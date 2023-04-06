@@ -112,7 +112,7 @@ export class UsersResolver {
     @Parent() user: User
   ) {
     return loaders.isFollowedByMeLoader.load({
-      userId: currentUser.id,
+      currentUserId: currentUser.id,
       followedUserId: user.id,
     });
   }

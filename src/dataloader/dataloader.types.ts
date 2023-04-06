@@ -8,17 +8,17 @@ import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
 
 export interface IsLikedByMeKey {
-  userId: number;
+  currentUserId: number;
   postId: number;
 }
 
 export interface IsFollowedByMeKey {
-  userId: number;
+  currentUserId: number;
   followedUserId: number;
 }
 
-export interface IsJoinedByMeKey {
-  userId: number;
+export interface MyGroupsKey {
+  currentUserId: number;
   groupId: number;
 }
 
@@ -40,7 +40,7 @@ export interface Dataloaders {
   groupMemberCountLoader: DataLoader<number, number>;
   groupMembersLoader: DataLoader<number, GroupMember[]>;
   groupsLoader: DataLoader<number, Group>;
-  isJoinedByMeLoader: DataLoader<IsJoinedByMeKey, boolean>;
+  isJoinedByMeLoader: DataLoader<MyGroupsKey, boolean>;
   memberRequestCountLoader: DataLoader<number, number>;
 
   // Users
@@ -50,6 +50,7 @@ export interface Dataloaders {
   followingCountLoader: DataLoader<number, number>;
   usersLoader: DataLoader<number, User>;
 
-  // Roles
+  // Roles & Permissions
   roleMemberCountLoader: DataLoader<number, number>;
+  myGroupPermissionsLoader: DataLoader<MyGroupsKey, string[]>;
 }

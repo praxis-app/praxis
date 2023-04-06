@@ -25,7 +25,7 @@ export class PostsService {
   ) {}
 
   async getPost(id: number) {
-    return this.repository.findOne({ where: { id } });
+    return this.repository.findOneOrFail({ where: { id } });
   }
 
   async getPosts(where?: FindOptionsWhere<Post>) {
@@ -58,7 +58,7 @@ export class PostsService {
     const postIds = keys.map(({ postId }) => postId);
     const likes = await this.likesService.getLikes({
       postId: In(postIds),
-      userId: keys[0].userId,
+      userId: keys[0].currentUserId,
     });
     return postIds.map((postId) =>
       likes.some((like: Like) => like.postId === postId)
@@ -100,7 +100,7 @@ export class PostsService {
   async updatePost({ id, images, ...data }: UpdatePostInput) {
     await this.repository.update(id, data);
     const post = await this.getPost(id);
-    if (post && images) {
+    if (images) {
       await this.savePostImages(post.id, images);
     }
     return { post };

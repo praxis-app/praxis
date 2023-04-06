@@ -1,11 +1,16 @@
 import { allow, and, not, or, shield } from "graphql-shield";
 import { FORBIDDEN } from "../../common/common.constants";
 import {
+  canApproveGroupMemberRequests,
   canBanMembers,
   canCreateInvites,
+  canDeleteGroup,
+  canManageGroupPosts,
+  canManageGroupRoles,
   canManageInvites,
   canManagePosts,
-  canManageRoles,
+  canManageServerRoles,
+  canUpdateGroup,
   hasValidRefreshToken,
   isAuthenticated,
   isOwnPost,
@@ -16,34 +21,35 @@ const shieldPermissions = shield(
   {
     Query: {
       "*": isAuthenticated,
-
-      // Users
       isFirstUser: allow,
       users: canBanMembers,
-
-      // Server Invites
       serverInvite: allow,
       serverInvites: or(canCreateInvites, canManageInvites),
+      serverRoles: canManageServerRoles,
+      role: or(canManageServerRoles, canManageGroupRoles),
     },
     Mutation: {
       "*": isAuthenticated,
-
-      // Auth
       login: allow,
       logOut: allow,
       signUp: allow,
       refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
-
-      // Votes
       createVote: isProposalGroupJoinedByMe,
-      deletePost: or(canManagePosts, isOwnPost),
-
-      // Server Invites
+      deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
       createServerInvite: or(canCreateInvites, canManageInvites),
       deleteServerInvite: canManageInvites,
+      approveMemberRequest: canApproveGroupMemberRequests,
+      updateGroup: canUpdateGroup,
+      deleteGroup: canDeleteGroup,
+      createRole: or(canManageServerRoles, canManageGroupRoles),
+      updateRole: or(canManageServerRoles, canManageGroupRoles),
+      deleteRole: or(canManageServerRoles, canManageGroupRoles),
     },
-    Role: canManageRoles,
-    RoleMember: canManageRoles,
+    Group: {
+      roles: canManageGroupRoles,
+      memberRequests: canApproveGroupMemberRequests,
+      memberRequestCount: canApproveGroupMemberRequests,
+    },
   },
   {
     allowExternalErrors: true,

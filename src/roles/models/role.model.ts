@@ -41,10 +41,10 @@ export class Role {
 
   @Field(() => Group, { nullable: true })
   @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
-  group: Group;
+  group?: Group;
 
   @Column({ nullable: true })
-  groupId: number;
+  groupId?: number;
 
   @CreateDateColumn()
   createdAt: Date;

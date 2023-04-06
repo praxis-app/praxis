@@ -134,6 +134,9 @@ export class UsersService {
             continue;
           }
           if (groupId) {
+            if (!result.groupPermissions[groupId]) {
+              result.groupPermissions[groupId] = new Set();
+            }
             result.groupPermissions[groupId].add(name);
             continue;
           }
@@ -179,9 +182,6 @@ export class UsersService {
 
   async isUsersPost(postId: number, userId: number) {
     const post = await this.postsService.getPost(postId);
-    if (!post) {
-      throw new UserInputError("Post not found");
-    }
     return post.userId === userId;
   }
 
@@ -247,7 +247,7 @@ export class UsersService {
 
   async getIsFollowedByMeByBatch(keys: IsFollowedByMeKey[]) {
     const followedUserIds = keys.map(({ followedUserId }) => followedUserId);
-    const following = await this.getFollowing(keys[0].userId);
+    const following = await this.getFollowing(keys[0].currentUserId);
 
     return followedUserIds.map((followedUserId) =>
       following.some((followedUser: User) => followedUser.id === followedUserId)
@@ -260,7 +260,7 @@ export class UsersService {
 
     try {
       if (users.length === 1) {
-        await this.rolesService.initializeServerAdminRole(user.id);
+        await this.rolesService.initAdminRole(user.id);
       }
       await this.saveDefaultProfilePicture(user.id);
     } catch {

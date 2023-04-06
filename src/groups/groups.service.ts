@@ -4,10 +4,12 @@ import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
-import { IsJoinedByMeKey } from "../dataloader/dataloader.types";
+import { MyGroupsKey } from "../dataloader/dataloader.types";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { RolesService } from "../roles/roles.service";
+import { UsersService } from "../users/users.service";
 import { GroupMembersService } from "./group-members/group-members.service";
 import { GroupMember } from "./group-members/models/group-member.model";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
@@ -20,9 +22,11 @@ export class GroupsService {
   constructor(
     @InjectRepository(Group)
     private repository: Repository<Group>,
-    private memberRequestsService: MemberRequestsService,
     private groupMembersService: GroupMembersService,
-    private imagesService: ImagesService
+    private memberRequestsService: MemberRequestsService,
+    private imagesService: ImagesService,
+    private rolesService: RolesService,
+    private usersService: UsersService
   ) {}
 
   async getGroup(where: FindOptionsWhere<Group>, relations?: string[]) {
@@ -75,10 +79,23 @@ export class GroupsService {
     );
   }
 
-  async isJoinedByMeByBatch(keys: IsJoinedByMeKey[]) {
+  async getMyGroupPermissionsByBatch(keys: MyGroupsKey[]) {
+    const groupIds = keys.map(({ groupId }) => groupId);
+    const { groupPermissions } = await this.usersService.getUserPermissions(
+      keys[0].currentUserId
+    );
+    return groupIds.map((id) => {
+      if (!groupPermissions[id]) {
+        return [];
+      }
+      return Array.from(groupPermissions[id]);
+    });
+  }
+
+  async isJoinedByMeByBatch(keys: MyGroupsKey[]) {
     const groupIds = keys.map(({ groupId }) => groupId);
     const groupMembers = await this.groupMembersService.getGroupMembers({
-      userId: keys[0].userId,
+      userId: keys[0].currentUserId,
     });
     return groupIds.map((groupId) =>
       groupMembers.some(
@@ -99,6 +116,7 @@ export class GroupsService {
     } else {
       await this.saveDefaultCoverPhoto(group.id);
     }
+    await this.rolesService.initAdminRole(userId, group.id);
 
     return { group };
   }

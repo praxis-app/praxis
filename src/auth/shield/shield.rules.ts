@@ -1,7 +1,14 @@
 import { rule } from "graphql-shield";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../common/common.types";
-import { ServerPermissions } from "../../roles/permissions/permissions.constants";
+import { Group } from "../../groups/models/group.model";
+import { UpdateGroupInput } from "../../groups/models/update-group.input";
+import { CreateRoleInput } from "../../roles/models/create-role.input";
+import { UpdateRoleInput } from "../../roles/models/update-role.input";
+import {
+  GroupPermissions,
+  ServerPermissions,
+} from "../../roles/permissions/permissions.constants";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
 import { hasPermission } from "./shield.utils";
@@ -21,7 +28,7 @@ export const canManagePosts = rule()(
     hasPermission(permissions, ServerPermissions.ManagePosts)
 );
 
-export const canManageRoles = rule()(
+export const canManageServerRoles = rule()(
   async (_parent, _args, { permissions }: Context) =>
     hasPermission(permissions, ServerPermissions.ManageRoles)
 );
@@ -29,6 +36,92 @@ export const canManageRoles = rule()(
 export const canBanMembers = rule()(
   async (_parent, _args, { permissions }: Context) =>
     hasPermission(permissions, ServerPermissions.BanMembers)
+);
+
+export const canUpdateGroup = rule()(
+  async (
+    _parent,
+    { groupData }: { groupData: UpdateGroupInput },
+    { permissions }: Context
+  ) => hasPermission(permissions, GroupPermissions.UpdateGroup, groupData.id)
+);
+
+export const canDeleteGroup = rule()(
+  async (_parent, args: { id: number }, { permissions }: Context) =>
+    hasPermission(permissions, GroupPermissions.DeleteGroup, args.id)
+);
+
+export const canManageGroupPosts = rule()(
+  async (
+    _parent,
+    args: { id: number },
+    { permissions, services: { postsService } }: Context
+  ) => {
+    const { groupId } = await postsService.getPost(args.id);
+    return hasPermission(permissions, GroupPermissions.ManagePosts, groupId);
+  }
+);
+
+export const canManageGroupRoles = rule()(
+  async (
+    parent,
+    args: { roleData: CreateRoleInput | UpdateRoleInput } | { id: number },
+    { permissions, services: { rolesService } }: Context,
+    info
+  ) => {
+    let groupId: number | undefined;
+
+    if ("roleData" in args) {
+      if (info.fieldName === "createRole" && "groupId" in args.roleData) {
+        groupId = args.roleData.groupId;
+      }
+      if (info.fieldName === "updateRole" && "id" in args.roleData) {
+        const role = await rolesService.getRole(args.roleData.id);
+        groupId = role?.groupId;
+      }
+    } else if (["role", "deleteRole"].includes(info.fieldName)) {
+      const role = await rolesService.getRole(args.id);
+      groupId = role?.groupId;
+    }
+    if (info.fieldName === "roles") {
+      const { id } = parent as Group;
+      groupId = id;
+    }
+
+    return hasPermission(permissions, GroupPermissions.ManageRoles, groupId);
+  }
+);
+
+export const canApproveGroupMemberRequests = rule()(
+  async (
+    parent,
+    args,
+    { permissions, services: { memberRequestsService } }: Context,
+    info
+  ) => {
+    let groupId: number | undefined;
+
+    if (info.fieldName === "approveMemberRequest") {
+      const memberRequest = await memberRequestsService.getMemberRequest(
+        { id: args.id },
+        ["group"]
+      );
+      groupId = memberRequest?.group.id;
+    }
+    if (
+      ["memberRequests", "memberRequestCount"].includes(info.fieldName) &&
+      info.parentType.name === Group.name
+    ) {
+      const group = parent as Group;
+      groupId = group.id;
+    }
+
+    return hasPermission(
+      permissions,
+      GroupPermissions.ApproveMemberRequests,
+      groupId
+    );
+  }
 );
 
 export const isAuthenticated = rule({ cache: "contextual" })(

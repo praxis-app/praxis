@@ -1,6 +1,5 @@
 // TODO: Remove async keyword from resolver functions
 
-import { UnauthorizedException } from "@nestjs/common";
 import {
   Args,
   Context,
@@ -14,7 +13,6 @@ import {
 import { CurrentUser } from "../../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../../dataloader/dataloader.types";
 import { User } from "../../users/models/user.model";
-import { GroupMembersService } from "../group-members/group-members.service";
 import { Group } from "../models/group.model";
 import { MemberRequestsService } from "./member-requests.service";
 import { ApproveMemberRequestPayload } from "./models/approve-member-request.payload";
@@ -23,10 +21,7 @@ import { MemberRequest } from "./models/member-request.model";
 
 @Resolver(() => MemberRequest)
 export class MemberRequestsResolver {
-  constructor(
-    private memberRequestsService: MemberRequestsService,
-    private groupMembersService: GroupMembersService
-  ) {}
+  constructor(private memberRequestsService: MemberRequestsService) {}
 
   @Query(() => MemberRequest, { nullable: true })
   async memberRequest(
@@ -37,25 +32,6 @@ export class MemberRequestsResolver {
       user: { id },
       groupId,
     });
-  }
-
-  /**
-   * TODO: Use RBAC with CASL to protect memberRequests
-   * Manually checking for group membership is only intended to be temporary
-   */
-  @Query(() => [MemberRequest])
-  async memberRequests(
-    @Args("groupName", { type: () => String }) groupName: string,
-    @CurrentUser() { id }: User
-  ) {
-    const member = await this.groupMembersService.getGroupMember({
-      group: { name: groupName },
-      user: { id },
-    });
-    if (!member) {
-      throw new UnauthorizedException();
-    }
-    return this.memberRequestsService.getMemberRequests(groupName);
   }
 
   @ResolveField(() => Group)

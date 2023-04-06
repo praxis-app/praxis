@@ -60,7 +60,7 @@ export class PostsResolver {
     @Parent() { id }: Post
   ) {
     return loaders.isPostLikedByMeLoader.load({
-      userId: user.id,
+      currentUserId: user.id,
       postId: id,
     });
   }

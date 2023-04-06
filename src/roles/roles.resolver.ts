@@ -10,6 +10,7 @@ import {
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.types";
+import { Group } from "../groups/models/group.model";
 import { User } from "../users/models/user.model";
 import { CreateRoleInput } from "./models/create-role.input";
 import { CreateRolePayload } from "./models/create-role.payload";
@@ -38,6 +39,14 @@ export class RolesResolver {
   @Query(() => [Role])
   async serverRoles() {
     return this.rolesService.getServerRoles();
+  }
+
+  @ResolveField(() => Group)
+  async group(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { groupId }: Role
+  ) {
+    return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
 
   @ResolveField(() => [Permission])
