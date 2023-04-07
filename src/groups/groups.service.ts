@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
 import * as fs from "fs";
@@ -28,7 +28,9 @@ export class GroupsService {
     @InjectRepository(Group)
     private userRepository: Repository<User>,
 
+    @Inject(forwardRef(() => MemberRequestsService))
     private memberRequestsService: MemberRequestsService,
+
     private imagesService: ImagesService,
     private rolesService: RolesService,
     private usersService: UsersService

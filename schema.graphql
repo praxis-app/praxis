@@ -205,14 +205,6 @@ type SignUpPayload {
   user: User!
 }
 
-type GroupMember {
-  id: Int!
-  user: User!
-  group: Group!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type CreateGroupPayload {
   group: Group!
 }
@@ -222,7 +214,7 @@ type UpdateGroupPayload {
 }
 
 type ApproveMemberRequestPayload {
-  groupMember: GroupMember!
+  groupMember: User!
 }
 
 type CreateMemberRequestPayload {
