@@ -228,13 +228,6 @@ export class GroupsService {
     });
   }
 
-  async leaveGroup(id: number, userId: number) {
-    const where = { group: { id }, userId };
-    await this.deleteGroupMember(id, userId);
-    await this.memberRequestsService.deleteMemberRequest(where);
-    return true;
-  }
-
   async createGroupMember(groupId: number, userId: number) {
     const user = await this.usersService.getUser({ id: userId }, ["groups"]);
     const group = await this.getGroup({ id: groupId }, ["members"]);
@@ -267,6 +260,13 @@ export class GroupsService {
     group.members = group.members.filter((member) => member.id !== userId);
     await this.groupRepository.save(group);
 
+    return true;
+  }
+
+  async leaveGroup(id: number, userId: number) {
+    const where = { group: { id }, userId };
+    await this.deleteGroupMember(id, userId);
+    await this.memberRequestsService.deleteMemberRequest(where);
     return true;
   }
 }
