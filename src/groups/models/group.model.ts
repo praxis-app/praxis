@@ -5,6 +5,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -14,7 +16,7 @@ import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
 import { Role } from "../../roles/models/role.model";
-import { GroupMember } from "../group-members/models/group-member.model";
+import { User } from "../../users/models/user.model";
 import { MemberRequest } from "../member-requests/models/member-request.model";
 
 @Entity()
@@ -46,11 +48,10 @@ export class Group {
   })
   images: Image[];
 
-  @Field(() => [GroupMember])
-  @OneToMany(() => GroupMember, (member) => member.group, {
-    cascade: true,
-  })
-  members: GroupMember[];
+  @Field(() => [User])
+  @ManyToMany(() => User, (user) => user.groups)
+  @JoinTable()
+  members: User[];
 
   @Field(() => [MemberRequest], { nullable: true })
   @OneToMany(() => MemberRequest, (memberRequest) => memberRequest.group, {
