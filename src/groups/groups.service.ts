@@ -10,7 +10,6 @@ import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { RolesService } from "../roles/roles.service";
-import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { CreateGroupInput } from "./models/create-group.input";
@@ -24,9 +23,6 @@ export class GroupsService {
   constructor(
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
-
-    @InjectRepository(Group)
-    private userRepository: Repository<User>,
 
     @Inject(forwardRef(() => MemberRequestsService))
     private memberRequestsService: MemberRequestsService,
@@ -234,17 +230,11 @@ export class GroupsService {
     if (!user || !group) {
       throw new UserInputError("User or group not found");
     }
-    await this.userRepository.save({
-      ...user,
-      groups: [...user.groups, group],
-    });
     await this.groupRepository.save({
       ...group,
       members: [...group.members, user],
     });
-    return {
-      groupMember: user,
-    };
+    return user;
   }
 
   async deleteGroupMember(id: number, userId: number) {
@@ -253,13 +243,8 @@ export class GroupsService {
     if (!user || !group) {
       throw new UserInputError("User or group not found");
     }
-
-    user.groups = user.groups.filter((group) => group.id !== id);
-    await this.userRepository.save(user);
-
     group.members = group.members.filter((member) => member.id !== userId);
     await this.groupRepository.save(group);
-
     return true;
   }
 
