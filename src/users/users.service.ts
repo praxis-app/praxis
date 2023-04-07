@@ -58,8 +58,8 @@ export class UsersService {
 
   async getUserHomeFeed(id: number) {
     const userWithFeed = await this.getUser({ id }, [
-      "groupMembers.group.proposals",
-      "groupMembers.group.posts",
+      "groups.proposals",
+      "groups.posts",
       "following.posts",
       "proposals",
       "posts",
