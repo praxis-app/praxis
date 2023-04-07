@@ -1,7 +1,6 @@
 import { config } from "dotenv";
 import { DataSource } from "typeorm";
 import { RefreshToken } from "../auth/refresh-tokens/models/refresh-token.model";
-import { GroupMember } from "../groups/group-members/models/group-member.model";
 import { MemberRequest } from "../groups/member-requests/models/member-request.model";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
@@ -31,7 +30,6 @@ export default new DataSource({
   port: parseInt(process.env.DB_PORT as string),
   entities: [
     Group,
-    GroupMember,
     Image,
     Like,
     MemberRequest,

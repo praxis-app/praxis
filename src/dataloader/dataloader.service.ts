@@ -6,7 +6,6 @@
 import { Injectable } from "@nestjs/common";
 import * as DataLoader from "dataloader";
 import { GroupMembersService } from "../groups/group-members/group-members.service";
-import { GroupMember } from "../groups/group-members/models/group-member.model";
 import { GroupsService } from "../groups/groups.service";
 import { MemberRequestsService } from "../groups/member-requests/member-requests.service";
 import { Group } from "../groups/models/group.model";
@@ -168,7 +167,7 @@ export class DataloaderService {
   }
 
   private _createGroupMembersLoader() {
-    return new DataLoader<number, GroupMember[]>(async (groupIds) =>
+    return new DataLoader<number, any[]>(async (groupIds) =>
       this.groupMembersService.getGroupMembersByBatch(groupIds as number[])
     );
   }
