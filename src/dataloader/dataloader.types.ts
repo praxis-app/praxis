@@ -37,7 +37,7 @@ export interface Dataloaders {
   // Groups
   groupCoverPhotosLoader: DataLoader<number, Image>;
   groupMemberCountLoader: DataLoader<number, number>;
-  groupMembersLoader: DataLoader<number, any[]>;
+  groupMembersLoader: DataLoader<number, User[]>;
   groupsLoader: DataLoader<number, Group>;
   isJoinedByMeLoader: DataLoader<MyGroupsKey, boolean>;
   memberRequestCountLoader: DataLoader<number, number>;
