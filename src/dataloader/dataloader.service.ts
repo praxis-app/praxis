@@ -165,7 +165,7 @@ export class DataloaderService {
   }
 
   private _createGroupMembersLoader() {
-    return new DataLoader<number, any[]>(async (groupIds) =>
+    return new DataLoader<number, User[]>(async (groupIds) =>
       this.groupsService.getGroupMembersByBatch(groupIds as number[])
     );
   }
