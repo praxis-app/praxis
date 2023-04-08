@@ -14,9 +14,12 @@ Praxis UI: https://github.com/praxis-project/praxis-ui
 
 ## WIP
 
-You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground.
+You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground. Your feedback is highly welcome!
 
-Your feedback is highly welcome!
+Core features currently in development:
+
+- Change group roles, permissions, and settings all via proposals ✨
+- Plan real world events via proposals and voting ✨
 
 ## Installation
 
