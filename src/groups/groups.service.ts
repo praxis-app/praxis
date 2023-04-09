@@ -217,7 +217,7 @@ export class GroupsService {
   }
 
   async createGroupMember(groupId: number, userId: number) {
-    const user = await this.usersService.getUser({ id: userId }, ["groups"]);
+    const user = await this.usersService.getUser({ id: userId });
     const group = await this.getGroup({ id: groupId }, ["members"]);
     if (!user || !group) {
       throw new UserInputError("User or group not found");
@@ -230,7 +230,7 @@ export class GroupsService {
   }
 
   async deleteGroupMember(id: number, userId: number) {
-    const user = await this.usersService.getUser({ id: userId }, ["groups"]);
+    const user = await this.usersService.getUser({ id: userId });
     const group = await this.getGroup({ id }, ["members"]);
     if (!user || !group) {
       throw new UserInputError("User or group not found");

@@ -12,7 +12,6 @@ import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { Proposal } from "../proposals/models/proposal.model";
-import { RoleMembersService } from "../roles/role-members/role-members.service";
 import { RolesService } from "../roles/roles.service";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
@@ -32,8 +31,7 @@ export class UsersService {
     private rolesService: RolesService,
 
     private imagesService: ImagesService,
-    private postsService: PostsService,
-    private roleMembersService: RoleMembersService
+    private postsService: PostsService
   ) {}
 
   async getUser(where: FindOptionsWhere<User>, relations?: string[]) {
@@ -122,12 +120,12 @@ export class UsersService {
   }
 
   async getUserPermissions(id: number) {
-    const roleMembers = await this.roleMembersService.getRoleMembers({
-      where: { user: { id } },
-      relations: ["role.permissions"],
-    });
-    return roleMembers.reduce<UserPermissions>(
-      (result, { role: { groupId, permissions } }) => {
+    const user = await this.getUser({ id }, ["roles.permissions"]);
+    if (!user) {
+      throw new UserInputError("User not found");
+    }
+    return user.roles.reduce<UserPermissions>(
+      (result, { groupId, permissions }) => {
         for (const { name, enabled } of permissions) {
           if (!enabled) {
             continue;

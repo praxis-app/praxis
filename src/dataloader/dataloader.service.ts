@@ -14,7 +14,7 @@ import { PostsService } from "../posts/posts.service";
 import { ProposalAction } from "../proposals/proposal-actions/models/proposal-action.model";
 import { ProposalActionsService } from "../proposals/proposal-actions/proposal-actions.service";
 import { ProposalsService } from "../proposals/proposals.service";
-import { RoleMembersService } from "../roles/role-members/role-members.service";
+import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 import { Vote } from "../votes/models/vote.model";
@@ -34,7 +34,7 @@ export class DataloaderService {
     private postsService: PostsService,
     private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,
-    private roleMembersService: RoleMembersService,
+    private rolesService: RolesService,
     private usersService: UsersService,
     private votesService: VotesService
   ) {}
@@ -220,7 +220,7 @@ export class DataloaderService {
 
   private _createRoleMemberCountLoader() {
     return new DataLoader<number, number>(async (roleIds) =>
-      this.roleMembersService.getRoleMemberCountByBatch(roleIds as number[])
+      this.rolesService.getRoleMemberCountByBatch(roleIds as number[])
     );
   }
 

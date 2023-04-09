@@ -10,7 +10,6 @@ import { Proposal } from "../proposals/models/proposal.model";
 import { ProposalAction } from "../proposals/proposal-actions/models/proposal-action.model";
 import { Role } from "../roles/models/role.model";
 import { Permission } from "../roles/permissions/models/permission.model";
-import { RoleMember } from "../roles/role-members/models/role-member.model";
 import { ServerInvite } from "../server-invites/models/server-invite.model";
 import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
@@ -41,7 +40,6 @@ export default new DataSource({
     ProposalAction,
     RefreshToken,
     Role,
-    RoleMember,
     ServerInvite,
     User,
     Vote,

@@ -12,17 +12,15 @@ import {
   ServerPermissions,
 } from "./permissions/permissions.constants";
 import { initPermissions } from "./permissions/permissions.utils";
-import { RoleMember } from "./role-members/models/role-member.model";
 import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from "./roles.constants";
+
+type RoleWithMemberCount = Role & { memberCount: number };
 
 @Injectable()
 export class RolesService {
   constructor(
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
-
-    @InjectRepository(RoleMember)
-    private roleMemberRepository: Repository<RoleMember>,
 
     @Inject(forwardRef(() => UsersService))
     private usersService: UsersService
@@ -40,14 +38,22 @@ export class RolesService {
     return this.getRoles({ groupId: IsNull() });
   }
 
+  async getRoleMembers(roleId: number) {
+    const role = await this.getRole(roleId, ["members"]);
+    if (!role) {
+      throw new UserInputError("Role not found");
+    }
+    return role.members;
+  }
+
   async getAvailableUsersToAdd(id: number) {
     const role = await this.getRole(id, ["members", "group.members"]);
     if (!role?.members) {
       return [];
     }
 
-    const userIds = role.members.reduce<number[]>((result, { userId }) => {
-      result.push(userId);
+    const userIds = role.members.reduce<number[]>((result, { id }) => {
+      result.push(id);
       return result;
     }, []);
 
@@ -62,6 +68,24 @@ export class RolesService {
     });
   }
 
+  async getRoleMemberCountByBatch(roleIds: number[]) {
+    const roles = (await this.roleRepository
+      .createQueryBuilder("role")
+      .leftJoinAndSelect("role.members", "roleMember")
+      .loadRelationCountAndMap("role.memberCount", "role.members")
+      .select(["role.id"])
+      .whereInIds(roleIds)
+      .getMany()) as RoleWithMemberCount[];
+
+    return roleIds.map((id) => {
+      const role = roles.find((role: Role) => role.id === id);
+      if (!role) {
+        return new Error(`Could not load role member count: ${id}`);
+      }
+      return role.memberCount;
+    });
+  }
+
   async initAdminRole(userId: number, groupId?: number) {
     const permissions = initPermissions(
       groupId ? GroupPermissions : ServerPermissions,
@@ -70,7 +94,7 @@ export class RolesService {
     await this.roleRepository.save({
       name: ADMIN_ROLE_NAME,
       color: DEFAULT_ROLE_COLOR,
-      members: [{ userId }],
+      members: [{ id: userId }],
       permissions,
       groupId,
     });
@@ -118,12 +142,9 @@ export class RolesService {
         enabled,
       };
     });
-    const newMembers = this.roleMemberRepository.create(
-      selectedUserIds.map((userId) => ({
-        roleId: roleWithRelations.id,
-        userId,
-      }))
-    );
+    const newMembers = await this.usersService.getUsers({
+      id: In(selectedUserIds),
+    });
 
     const role = await this.roleRepository.save({
       ...roleWithRelations,
@@ -136,6 +157,30 @@ export class RolesService {
 
   async deleteRole(id: number) {
     await this.roleRepository.delete(id);
+    return true;
+  }
+
+  async createRoleMember(roleId: number, userId: number) {
+    const user = await this.usersService.getUser({ id: userId });
+    const role = await this.getRole(roleId, ["members"]);
+    if (!user || !role) {
+      throw new UserInputError("User or role not found");
+    }
+    await this.roleRepository.save({
+      ...role,
+      members: [...role.members, user],
+    });
+    return user;
+  }
+
+  async deleteRoleMember(id: number, userId: number) {
+    const user = await this.usersService.getUser({ id: userId });
+    const role = await this.getRole(id, ["members"]);
+    if (!user || !role) {
+      throw new UserInputError("User or role not found");
+    }
+    role.members = role.members.filter((member) => member.id !== userId);
+    await this.roleRepository.save(role);
     return true;
   }
 }

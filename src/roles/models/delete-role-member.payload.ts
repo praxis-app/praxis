@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { Role } from "../../models/role.model";
+import { Role } from "./role.model";
 
 @ObjectType()
 export class DeleteRoleMemberPayload {
