@@ -55,11 +55,13 @@ export class GroupsService {
   }
 
   async isJoinedByUser(id: number, userId: number) {
-    const user = await this.usersService.getUser({ id: userId }, ["groups"]);
-    if (!user) {
-      throw new UserInputError("User not found");
-    }
-    return user.groups.some((group) => group.id === id);
+    const group = await this.groupRepository
+      .createQueryBuilder("group")
+      .leftJoinAndSelect("group.members", "member")
+      .where("group.id = :id", { id })
+      .andWhere("member.id = :id", { id: userId })
+      .getOne();
+    return !!group?.members.length;
   }
 
   async getCoverPhotosByBatch(groupIds: number[]) {
