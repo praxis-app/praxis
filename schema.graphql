@@ -138,13 +138,12 @@ type User {
   coverPhoto: Image
   followers: [User!]!
   following: [User!]!
-  groups: [Group!]!
+  joinedGroups: [Group!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
-  joinedGroups: [Group!]!
   serverPermissions: [String!]!
 }
 

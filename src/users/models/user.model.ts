@@ -87,7 +87,7 @@ export class User {
   @ManyToMany(() => User, (user) => user.followers)
   following: User[];
 
-  @Field(() => [Group])
+  @Field(() => [Group], { name: "joinedGroups" })
   @ManyToMany(() => Group, (group) => group.members)
   groups: Group[];
 
