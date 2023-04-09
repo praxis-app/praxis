@@ -44,16 +44,6 @@ export class GroupsService {
     });
   }
 
-  async getGroupMember(id: number, userId: number) {
-    const { members } = await this.getGroup({ id }, ["members"]);
-    return members.find((member) => member.id == userId);
-  }
-
-  async getGroupMembers(id: number) {
-    const group = await this.getGroup({ id }, ["members"]);
-    return group.members;
-  }
-
   async getGroupFeed(id: number) {
     const group = await this.getGroup({ id }, ["proposals", "posts"]);
     const sortedFeed = [...group.posts, ...group.proposals].sort(
