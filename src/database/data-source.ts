@@ -18,6 +18,8 @@ import { Initial1675388391336 } from "./migrations/1675388391336-Initial";
 import { AddServerInviteTable1677339785709 } from "./migrations/1677339785709-AddServerInviteTable";
 import { AddLikeTable1679157357262 } from "./migrations/1679157357262-AddLikeTable";
 import { AddFollowTable1679778147216 } from "./migrations/1679778147216-AddFollowTable";
+import { AddGroupMemberLinkTable1681010227367 } from "./migrations/1681010227367-AddGroupMemberLinkTable";
+import { DropGroupMemberEntityTable1681010509841 } from "./migrations/1681010509841-DropGroupMemberEntityTable";
 
 config();
 
@@ -46,8 +48,10 @@ export default new DataSource({
   ],
   migrations: [
     AddFollowTable1679778147216,
+    AddGroupMemberLinkTable1681010227367,
     AddLikeTable1679157357262,
     AddServerInviteTable1677339785709,
+    DropGroupMemberEntityTable1681010509841,
     Initial1675388391336,
   ],
 });
