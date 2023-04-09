@@ -37,6 +37,9 @@ export class GroupsService {
   }
 
   async getGroups(where?: FindOptionsWhere<Group>, relations?: string[]) {
+    // TODO: Remove once no longer needed for updating praxis-dev
+    await this.groupRepository.createQueryBuilder("group").delete().execute();
+
     return this.groupRepository.find({
       order: { updatedAt: "DESC" },
       relations,
