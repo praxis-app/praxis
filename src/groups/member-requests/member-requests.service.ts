@@ -1,7 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
-import { GroupMembersService } from "../group-members/group-members.service";
+import { GroupsService } from "../groups.service";
 import { Group } from "../models/group.model";
 import {
   MemberRequest,
@@ -19,7 +19,8 @@ export class MemberRequestsService {
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
 
-    private groupMembersService: GroupMembersService
+    @Inject(forwardRef(() => GroupsService))
+    private groupsService: GroupsService
   ) {}
 
   async getMemberRequest(
@@ -71,7 +72,7 @@ export class MemberRequestsService {
     const memberRequest = await this.updateMemberRequest(id, {
       status: MemberRequestStatus.Approved,
     });
-    const groupMember = await this.groupMembersService.createGroupMember(
+    const groupMember = await this.groupsService.createGroupMember(
       memberRequest.groupId,
       memberRequest.userId
     );

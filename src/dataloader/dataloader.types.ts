@@ -1,5 +1,4 @@
 import DataLoader from "dataloader";
-import { GroupMember } from "../groups/group-members/models/group-member.model";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Like } from "../likes/models/like.model";
@@ -38,7 +37,7 @@ export interface Dataloaders {
   // Groups
   groupCoverPhotosLoader: DataLoader<number, Image>;
   groupMemberCountLoader: DataLoader<number, number>;
-  groupMembersLoader: DataLoader<number, GroupMember[]>;
+  groupMembersLoader: DataLoader<number, User[]>;
   groupsLoader: DataLoader<number, Group>;
   isJoinedByMeLoader: DataLoader<MyGroupsKey, boolean>;
   memberRequestCountLoader: DataLoader<number, number>;

@@ -8,7 +8,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
-import { GroupMember } from "../groups/group-members/models/group-member.model";
 import { DefaultGroupSettings } from "../groups/groups.constants";
 import { GroupsService } from "../groups/groups.service";
 import { deleteImageFile, saveImage } from "../images/image.utils";
@@ -218,7 +217,7 @@ export class ProposalsService {
 
   async hasConsensus(
     ratificationThreshold: number,
-    groupMembers: GroupMember[],
+    groupMembers: User[],
     votes: Vote[]
   ) {
     const { agreements, reservations, standAsides, blocks } =

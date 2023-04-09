@@ -16,7 +16,6 @@ import { PostsService } from "../posts/posts.service";
 import { Role } from "../roles/models/role.model";
 import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
-import { GroupMember } from "./group-members/models/group-member.model";
 import { GroupsService } from "./groups.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { MemberRequest } from "./member-requests/models/member-request.model";
@@ -63,7 +62,7 @@ export class GroupsResolver {
     return this.groupsService.getGroupFeed(id);
   }
 
-  @ResolveField(() => [GroupMember])
+  @ResolveField(() => [User])
   async members(
     @Parent() { id }: Group,
     @Context() { loaders }: { loaders: Dataloaders }

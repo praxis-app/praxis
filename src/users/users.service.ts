@@ -6,7 +6,6 @@ import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { IsFollowedByMeKey } from "../dataloader/dataloader.types";
-import { Group } from "../groups/models/group.model";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -59,8 +58,8 @@ export class UsersService {
 
   async getUserHomeFeed(id: number) {
     const userWithFeed = await this.getUser({ id }, [
-      "groupMembers.group.proposals",
-      "groupMembers.group.posts",
+      "groups.proposals",
+      "groups.posts",
       "following.posts",
       "proposals",
       "posts",
@@ -68,7 +67,7 @@ export class UsersService {
     if (!userWithFeed) {
       throw new UserInputError("User not found");
     }
-    const { groupMembers, following, posts, proposals } = userWithFeed;
+    const { groups, following, posts, proposals } = userWithFeed;
 
     // Initialize maps with posts and proposals by this user
     const postMap = posts.reduce<Record<number, Post>>((result, post) => {
@@ -91,7 +90,7 @@ export class UsersService {
     }
 
     // Insert posts and proposals from groups joined
-    for (const { group } of groupMembers) {
+    for (const group of groups) {
       for (const post of group.posts) {
         postMap[post.id] = post;
       }
@@ -149,17 +148,11 @@ export class UsersService {
   }
 
   async getJoinedGroups(id: number) {
-    const userWithGroups = await this.getUser({ id }, ["groupMembers.group"]);
+    const userWithGroups = await this.getUser({ id }, ["groups"]);
     if (!userWithGroups) {
       return [];
     }
-    return userWithGroups.groupMembers.reduce<Group[]>(
-      (result, groupMember) => {
-        result.push(groupMember.group);
-        return result;
-      },
-      []
-    );
+    return userWithGroups.groups;
   }
 
   async getFollowers(id: number) {

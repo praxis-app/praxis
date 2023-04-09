@@ -74,14 +74,6 @@ type Role {
   availableUsersToAdd: [User!]!
 }
 
-type GroupMember {
-  id: Int!
-  user: User!
-  group: Group!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type MemberRequest {
   id: Int!
   user: User!
@@ -96,7 +88,7 @@ type Group {
   description: String!
   feed: [FeedItem!]!
   posts: [Post!]!
-  members: [GroupMember!]!
+  members: [User!]!
   memberRequests: [MemberRequest!]
   roles: [Role!]!
   proposals: [Proposal!]!
@@ -146,12 +138,12 @@ type User {
   coverPhoto: Image
   followers: [User!]!
   following: [User!]!
+  joinedGroups: [Group!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
-  joinedGroups: [Group!]!
   serverPermissions: [String!]!
 }
 
@@ -221,7 +213,7 @@ type UpdateGroupPayload {
 }
 
 type ApproveMemberRequestPayload {
-  groupMember: GroupMember!
+  groupMember: User!
 }
 
 type CreateMemberRequestPayload {

@@ -13,7 +13,7 @@ import {
 } from "typeorm";
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
 import { FeedItem } from "../../common/models/feed-item.union";
-import { GroupMember } from "../../groups/group-members/models/group-member.model";
+import { Group } from "../../groups/models/group.model";
 import { Image } from "../../images/models/image.model";
 import { Like } from "../../likes/models/like.model";
 import { Post } from "../../posts/models/post.model";
@@ -87,10 +87,9 @@ export class User {
   @ManyToMany(() => User, (user) => user.followers)
   following: User[];
 
-  @OneToMany(() => GroupMember, (groupMember) => groupMember.user, {
-    cascade: true,
-  })
-  groupMembers: GroupMember[];
+  @Field(() => [Group], { name: "joinedGroups" })
+  @ManyToMany(() => Group, (group) => group.members)
+  groups: Group[];
 
   @OneToMany(() => RoleMember, (roleMember) => roleMember.user, {
     cascade: true,
