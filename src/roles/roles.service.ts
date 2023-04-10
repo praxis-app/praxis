@@ -52,10 +52,7 @@ export class RolesService {
       return [];
     }
 
-    const userIds = role.members.reduce<number[]>((result, { id }) => {
-      result.push(id);
-      return result;
-    }, []);
+    const userIds = role.members.map(({ id }) => id);
 
     if (role.group) {
       return role.group.members.filter(
