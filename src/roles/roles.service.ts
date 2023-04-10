@@ -115,7 +115,7 @@ export class RolesService {
       permissions = [],
       ...roleData
     }: UpdateRoleInput,
-    user: User
+    me: User
   ) {
     const roleWithRelations = await this.getRole(id, [
       "permissions",
@@ -152,7 +152,7 @@ export class RolesService {
       members: [...roleWithRelations.members, ...newMembers],
       permissions: newPermissions,
     });
-    return { role, me: user };
+    return { role, me };
   }
 
   async deleteRole(id: number) {
@@ -173,7 +173,7 @@ export class RolesService {
     return user;
   }
 
-  async deleteRoleMember(id: number, userId: number) {
+  async deleteRoleMember(id: number, userId: number, me: User) {
     const user = await this.usersService.getUser({ id: userId });
     const role = await this.getRole(id, ["members"]);
     if (!user || !role) {
@@ -182,6 +182,6 @@ export class RolesService {
     role.members = role.members.filter((member) => member.id !== userId);
     await this.roleRepository.save(role);
 
-    return { role };
+    return { role, me };
   }
 }
