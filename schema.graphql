@@ -270,7 +270,7 @@ type Mutation {
   createRole(roleData: CreateRoleInput!): CreateRolePayload!
   updateRole(roleData: UpdateRoleInput!): UpdateRolePayload!
   deleteRole(id: Int!): Boolean!
-  deleteRoleMember(roleData: DeleteRoleMemberInput!): DeleteRoleMemberPayload!
+  deleteRoleMember(roleMemberData: DeleteRoleMemberInput!): DeleteRoleMemberPayload!
   updateUser(userData: UpdateUserInput!): UpdateUserPayload!
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
