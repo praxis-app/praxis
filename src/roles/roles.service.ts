@@ -181,6 +181,7 @@ export class RolesService {
     }
     role.members = role.members.filter((member) => member.id !== userId);
     await this.roleRepository.save(role);
-    return true;
+
+    return { role };
   }
 }
