@@ -18,7 +18,7 @@ import { Image } from "../../images/models/image.model";
 import { Like } from "../../likes/models/like.model";
 import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
-import { RoleMember } from "../../roles/role-members/models/role-member.model";
+import { Role } from "../../roles/models/role.model";
 import { ServerInvite } from "../../server-invites/models/server-invite.model";
 
 @Entity()
@@ -91,10 +91,8 @@ export class User {
   @ManyToMany(() => Group, (group) => group.members)
   groups: Group[];
 
-  @OneToMany(() => RoleMember, (roleMember) => roleMember.user, {
-    cascade: true,
-  })
-  roleMembers: RoleMember[];
+  @ManyToMany(() => Role, (role) => role.members)
+  roles: Role[];
 
   @OneToMany(() => ServerInvite, (serverInvite) => serverInvite.user, {
     cascade: true,

@@ -57,18 +57,12 @@ type Permission {
   role: Role!
 }
 
-type RoleMember {
-  id: Int!
-  role: Role!
-  user: User!
-}
-
 type Role {
   id: Int!
   name: String!
   color: String!
   permissions: [Permission!]!
-  members: [RoleMember!]!
+  members: [User!]!
   group: Group
   memberCount: Int!
   availableUsersToAdd: [User!]!
@@ -178,13 +172,14 @@ type CreateRolePayload {
   role: Role!
 }
 
-type UpdateRolePayload {
+type DeleteRoleMemberPayload {
   role: Role!
   me: User!
 }
 
-type DeleteRoleMemberPayload {
+type UpdateRolePayload {
   role: Role!
+  me: User!
 }
 
 type FollowUserPayload {
@@ -276,6 +271,7 @@ type Mutation {
   createRole(roleData: CreateRoleInput!): CreateRolePayload!
   updateRole(roleData: UpdateRoleInput!): UpdateRolePayload!
   deleteRole(id: Int!): Boolean!
+  deleteRoleMember(roleMemberData: DeleteRoleMemberInput!): DeleteRoleMemberPayload!
   updateUser(userData: UpdateUserInput!): UpdateUserPayload!
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
@@ -283,7 +279,6 @@ type Mutation {
   deleteImage(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
-  deleteRoleMember(id: Int!): DeleteRoleMemberPayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -360,6 +355,11 @@ input UpdateRoleInput {
 input PermissionInput {
   id: Int!
   enabled: Boolean!
+}
+
+input DeleteRoleMemberInput {
+  roleId: Int!
+  userId: Int!
 }
 
 input UpdateUserInput {

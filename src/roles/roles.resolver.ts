@@ -14,20 +14,19 @@ import { Group } from "../groups/models/group.model";
 import { User } from "../users/models/user.model";
 import { CreateRoleInput } from "./models/create-role.input";
 import { CreateRolePayload } from "./models/create-role.payload";
+import { DeleteRoleMemberInput } from "./models/delete-role-member.input";
+import { DeleteRoleMemberPayload } from "./models/delete-role-member.payload";
 import { Role } from "./models/role.model";
 import { UpdateRoleInput } from "./models/update-role.input";
 import { UpdateRolePayload } from "./models/update-role.payload";
 import { Permission } from "./permissions/models/permission.model";
 import { PermissionsService } from "./permissions/permissions.service";
-import { RoleMember } from "./role-members/models/role-member.model";
-import { RoleMembersService } from "./role-members/role-members.service";
 import { RolesService } from "./roles.service";
 
 @Resolver(() => Role)
 export class RolesResolver {
   constructor(
     private permissionsService: PermissionsService,
-    private roleMembersService: RoleMembersService,
     private rolesService: RolesService
   ) {}
 
@@ -54,9 +53,9 @@ export class RolesResolver {
     return this.permissionsService.getPermissions({ roleId: id });
   }
 
-  @ResolveField(() => [RoleMember])
+  @ResolveField(() => [User])
   async members(@Parent() { id }: Role) {
-    return this.roleMembersService.getRoleMembers({ where: { roleId: id } });
+    return this.rolesService.getRoleMembers(id);
   }
 
   @ResolveField(() => Int)
@@ -88,5 +87,13 @@ export class RolesResolver {
   @Mutation(() => Boolean)
   async deleteRole(@Args("id", { type: () => Int }) id: number) {
     return this.rolesService.deleteRole(id);
+  }
+
+  @Mutation(() => DeleteRoleMemberPayload)
+  async deleteRoleMember(
+    @Args("roleMemberData") { roleId, userId }: DeleteRoleMemberInput,
+    @CurrentUser() user: User
+  ) {
+    return this.rolesService.deleteRoleMember(roleId, userId, user);
   }
 }

@@ -1,3 +1,5 @@
+// Used for reference: https://github.com/forrestwilkins/anrcho/blob/master/app/models/proposal.rb
+
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import {
   Column,
