@@ -1,3 +1,13 @@
+/**
+ * TODO: Add the following fields (pulled from old-praxis) to ProposalAction model below:
+ * groupEvent: EventMotionInput
+ * groupRole: CreateRoleInput
+ * groupRoleId: String
+ * groupRolePermissions: [ProposedPermissionInput]
+ * groupSettings: [SettingInput]
+ * userId: String
+ */
+
 import { Field, InputType } from "@nestjs/graphql";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 
