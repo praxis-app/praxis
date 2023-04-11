@@ -326,9 +326,23 @@ input CreateProposalInput {
 
 input ProposalActionInput {
   actionType: String!
+  role: ProposedRoleInput
   groupName: String
   groupDescription: String
   groupCoverPhoto: Upload
+}
+
+input ProposedRoleInput {
+  id: Int
+  name: String
+  color: String
+  selectedUserIds: [Int!]
+  permissions: [ProposedPermissionInput!]
+}
+
+input ProposedPermissionInput {
+  name: String!
+  enabled: Boolean!
 }
 
 input UpdateProposalInput {
