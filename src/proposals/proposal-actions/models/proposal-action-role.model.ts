@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Role } from "../../../roles/models/role.model";
 import { User } from "../../../users/models/user.model";
 import { ProposalActionPermission } from "./proposal-action-permission.model";
 import { ProposalAction } from "./proposal-action.model";
@@ -42,13 +43,17 @@ export class ProposalActionRole {
   })
   proposalAction: ProposalAction;
 
-  @Column({ nullable: true })
-  roleId?: number;
-
   @Field(() => [User], { nullable: true })
   @ManyToMany(() => User, (user) => user.roles, { nullable: true })
   @JoinTable()
   members?: User[];
+
+  @Field(() => Role)
+  @ManyToOne(() => Role, (role) => role.proposalActionRoles)
+  role: Role;
+
+  @Column()
+  roleId: number;
 
   @CreateDateColumn()
   createdAt: Date;
