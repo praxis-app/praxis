@@ -12,30 +12,18 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type Role {
-  id: Int!
-  name: String!
-  color: String!
-  permissions: [Permission!]!
-  members: [User!]!
-  group: Group
-  memberCount: Int!
-  availableUsersToAdd: [User!]!
-}
-
-type Permission {
+type ProposalActionPermission {
   id: Int!
   name: String!
   enabled: Boolean!
-  role: Role
-  proposedRole: ProposalActionRole
+  role: ProposalActionRole!
 }
 
 type ProposalActionRole {
   id: Int!
   name: String
   color: String
-  permissions: [Permission!]
+  permissions: [ProposalActionPermission!]
   proposalAction: ProposalAction!
   members: [User!]
 }
@@ -77,6 +65,24 @@ type Image {
   proposalAction: ProposalAction!
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type Permission {
+  id: Int!
+  name: String!
+  enabled: Boolean!
+  role: Role
+}
+
+type Role {
+  id: Int!
+  name: String!
+  color: String!
+  permissions: [Permission!]!
+  members: [User!]!
+  group: Group
+  memberCount: Int!
+  availableUsersToAdd: [User!]!
 }
 
 type MemberRequest {
@@ -337,21 +343,21 @@ input CreateProposalInput {
 
 input ProposalActionInput {
   actionType: String!
-  role: ProposedRoleInput
+  role: ProposalActionRoleInput
   groupName: String
   groupDescription: String
   groupCoverPhoto: Upload
 }
 
-input ProposedRoleInput {
+input ProposalActionRoleInput {
   id: Int
   name: String
   color: String
   selectedUserIds: [Int!]
-  permissions: [ProposedPermissionInput!]
+  permissions: [ProposalActionPermissionInput!]
 }
 
-input ProposedPermissionInput {
+input ProposalActionPermissionInput {
   name: String!
   enabled: Boolean!
 }

@@ -10,8 +10,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Permission } from "../../../roles/permissions/models/permission.model";
 import { User } from "../../../users/models/user.model";
+import { ProposalActionPermission } from "./proposal-action-permission.model";
 import { ProposalAction } from "./proposal-action.model";
 
 @Entity()
@@ -29,12 +29,12 @@ export class ProposalActionRole {
   @Field({ nullable: true })
   color?: string;
 
-  @Field(() => [Permission], { nullable: true })
-  @OneToMany(() => Permission, (permission) => permission.proposedRole, {
+  @Field(() => [ProposalActionPermission], { nullable: true })
+  @OneToMany(() => ProposalActionPermission, (permission) => permission.role, {
     cascade: true,
     nullable: true,
   })
-  permissions?: Permission[];
+  permissions?: ProposalActionPermission[];
 
   @Field(() => ProposalAction)
   @ManyToOne(() => ProposalAction, (proposalAction) => proposalAction.role, {

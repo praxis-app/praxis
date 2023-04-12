@@ -1,8 +1,8 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
-import { ProposedPermissionInput } from "./proposed-permission.input";
+import { ProposalActionPermissionInput } from "./proposeal-action-permission.input";
 
 @InputType()
-export class ProposedRoleInput {
+export class ProposalActionRoleInput {
   @Field(() => Int, { nullable: true })
   id: number;
 
@@ -15,6 +15,6 @@ export class ProposedRoleInput {
   @Field(() => [Int], { nullable: true })
   selectedUserIds?: number[];
 
-  @Field(() => [ProposedPermissionInput], { nullable: true })
-  permissions?: ProposedPermissionInput[];
+  @Field(() => [ProposalActionPermissionInput], { nullable: true })
+  permissions?: ProposalActionPermissionInput[];
 }

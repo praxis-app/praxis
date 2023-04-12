@@ -1,7 +1,7 @@
 import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
-export class ProposedPermissionInput {
+export class ProposalActionPermissionInput {
   @Field()
   name: string;
 
