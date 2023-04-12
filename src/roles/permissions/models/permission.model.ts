@@ -24,15 +24,14 @@ export class Permission {
   @Field()
   enabled: boolean;
 
-  @Field(() => Role, { nullable: true })
+  @Field(() => Role)
   @ManyToOne(() => Role, (role) => role.permissions, {
     onDelete: "CASCADE",
-    nullable: true,
   })
-  role?: Role;
+  role: Role;
 
-  @Column({ nullable: true })
-  roleId?: number;
+  @Column()
+  roleId: number;
 
   @CreateDateColumn()
   createdAt: Date;

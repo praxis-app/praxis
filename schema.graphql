@@ -71,7 +71,7 @@ type Permission {
   id: Int!
   name: String!
   enabled: Boolean!
-  role: Role
+  role: Role!
 }
 
 type Role {
