@@ -18,6 +18,7 @@ import { Image } from "../../images/models/image.model";
 import { Like } from "../../likes/models/like.model";
 import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
+import { ProposalActionRole } from "../../proposals/proposal-actions/models/proposal-action-role.model";
 import { Role } from "../../roles/models/role.model";
 import { ServerInvite } from "../../server-invites/models/server-invite.model";
 
@@ -93,6 +94,9 @@ export class User {
 
   @ManyToMany(() => Role, (role) => role.members)
   roles: Role[];
+
+  @ManyToMany(() => ProposalActionRole, (role) => role.members)
+  proposedRoles: ProposalActionRole[];
 
   @OneToMany(() => ServerInvite, (serverInvite) => serverInvite.user, {
     cascade: true,

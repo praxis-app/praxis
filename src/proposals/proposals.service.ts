@@ -77,7 +77,7 @@ export class ProposalsService {
   async createProposal(
     {
       images,
-      action: { groupCoverPhoto, ...action },
+      action: { groupCoverPhoto, role, ...action },
       ...proposalData
     }: CreateProposalInput,
     user: User
@@ -88,6 +88,9 @@ export class ProposalsService {
       action,
     });
     try {
+      // TODO: Remove when no longer needed for testing
+      console.log(role);
+
       if (images) {
         await this.saveProposalImages(proposal.id, images);
       }
@@ -108,7 +111,7 @@ export class ProposalsService {
   async updateProposal({
     id,
     images,
-    action: { groupCoverPhoto, ...action },
+    action: { groupCoverPhoto, role, ...action },
     ...data
   }: UpdateProposalInput) {
     const proposalWithAction = await this.getProposal(id, ["action"]);
@@ -121,6 +124,9 @@ export class ProposalsService {
       ...data,
       action: newAction,
     });
+
+    // TODO: Remove when no longer needed for testing
+    console.log(role);
 
     if (
       groupCoverPhoto &&

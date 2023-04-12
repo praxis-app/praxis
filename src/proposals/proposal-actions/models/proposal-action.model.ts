@@ -4,12 +4,14 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Image } from "../../../images/models/image.model";
 import { Proposal } from "../../models/proposal.model";
+import { ProposalActionRole } from "./proposal-action-role.model";
 
 @Entity()
 @ObjectType()
@@ -35,6 +37,17 @@ export class ProposalAction {
   })
   @Field(() => Image, { nullable: true })
   groupCoverPhoto?: Image;
+
+  @Field(() => [ProposalActionRole], { nullable: true })
+  @OneToMany(
+    () => ProposalActionRole,
+    (proposedRole) => proposedRole.proposalAction,
+    {
+      cascade: true,
+      nullable: true,
+    }
+  )
+  role?: ProposalActionRole[];
 
   @Field(() => Proposal)
   @OneToOne(() => Proposal, (proposal) => proposal.action, {

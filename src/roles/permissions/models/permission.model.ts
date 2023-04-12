@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { ProposalActionRole } from "../../../proposals/proposal-actions/models/proposal-action-role.model";
 import { Role } from "../../models/role.model";
 
 @Entity()
@@ -24,12 +25,25 @@ export class Permission {
   @Field()
   enabled: boolean;
 
-  @Field(() => Role)
-  @ManyToOne(() => Role, (role) => role.permissions, { onDelete: "CASCADE" })
-  role: Role;
+  @Field(() => Role, { nullable: true })
+  @ManyToOne(() => Role, (role) => role.permissions, {
+    onDelete: "CASCADE",
+    nullable: true,
+  })
+  role?: Role;
 
-  @Column()
-  roleId: number;
+  @Column({ nullable: true })
+  roleId?: number;
+
+  @Field(() => ProposalActionRole, { nullable: true })
+  @ManyToOne(() => Role, (role) => role.permissions, {
+    onDelete: "CASCADE",
+    nullable: true,
+  })
+  proposedRole?: ProposalActionRole;
+
+  @Column({ nullable: true })
+  proposedRoleId?: number;
 
   @CreateDateColumn()
   createdAt: Date;

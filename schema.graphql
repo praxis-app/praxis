@@ -12,12 +12,41 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Role {
+  id: Int!
+  name: String!
+  color: String!
+  permissions: [Permission!]!
+  members: [User!]!
+  group: Group
+  memberCount: Int!
+  availableUsersToAdd: [User!]!
+}
+
+type Permission {
+  id: Int!
+  name: String!
+  enabled: Boolean!
+  role: Role
+  proposedRole: ProposalActionRole
+}
+
+type ProposalActionRole {
+  id: Int!
+  name: String
+  color: String
+  permissions: [Permission!]
+  proposalAction: ProposalAction!
+  members: [User!]
+}
+
 type ProposalAction {
   id: Int!
   actionType: String!
   groupName: String
   groupDescription: String
   groupCoverPhoto: Image
+  role: [ProposalActionRole!]
   proposal: Proposal!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -48,24 +77,6 @@ type Image {
   proposalAction: ProposalAction!
   createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-type Permission {
-  id: Int!
-  name: String!
-  enabled: Boolean!
-  role: Role!
-}
-
-type Role {
-  id: Int!
-  name: String!
-  color: String!
-  permissions: [Permission!]!
-  members: [User!]!
-  group: Group
-  memberCount: Int!
-  availableUsersToAdd: [User!]!
 }
 
 type MemberRequest {
