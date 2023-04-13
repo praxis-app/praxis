@@ -43,8 +43,8 @@ type ProposalActionRole {
   name: String
   color: String
   permissions: [ProposalActionPermission!]
-  proposalAction: ProposalAction!
   members: [User!]
+  proposalAction: ProposalAction!
   role: Role!
 }
 

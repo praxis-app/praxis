@@ -37,16 +37,19 @@ export class ProposalActionRole {
   })
   permissions?: ProposalActionPermission[];
 
+  @Field(() => [User], { nullable: true })
+  @ManyToMany(() => User, (user) => user.roles, { nullable: true })
+  @JoinTable()
+  members?: User[];
+
   @Field(() => ProposalAction)
   @ManyToOne(() => ProposalAction, (proposalAction) => proposalAction.role, {
     onDelete: "CASCADE",
   })
   proposalAction: ProposalAction;
 
-  @Field(() => [User], { nullable: true })
-  @ManyToMany(() => User, (user) => user.roles, { nullable: true })
-  @JoinTable()
-  members?: User[];
+  @Column()
+  proposalActionId: number;
 
   @Field(() => Role)
   @ManyToOne(() => Role, (role) => role.proposalActionRoles)
