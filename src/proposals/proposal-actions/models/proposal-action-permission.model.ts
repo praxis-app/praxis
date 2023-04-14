@@ -31,7 +31,7 @@ export class ProposalActionPermission {
   role: ProposalActionRole;
 
   @Column()
-  roleId: number;
+  proposalActionRoleId: number;
 
   @CreateDateColumn()
   createdAt: Date;
