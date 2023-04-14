@@ -38,7 +38,7 @@ export class ProposalActionRole {
   permissions?: ProposalActionPermission[];
 
   @Field(() => [User], { nullable: true })
-  @ManyToMany(() => User, (user) => user.roles, { nullable: true })
+  @ManyToMany(() => User, (user) => user.proposedRoles, { nullable: true })
   @JoinTable()
   members?: User[];
 
