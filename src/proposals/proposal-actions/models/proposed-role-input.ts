@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
-import { ProposalActionPermissionInput } from "./proposeal-action-permission.input";
+import { ProposalActionPermissionInput } from "./proposal-action-permission.input";
 
 @InputType()
 export class ProposalActionRoleInput {
