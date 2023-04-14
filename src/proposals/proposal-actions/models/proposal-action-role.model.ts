@@ -3,16 +3,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 import { Role } from "../../../roles/models/role.model";
-import { User } from "../../../users/models/user.model";
 import { ProposalActionPermission } from "./proposal-action-permission.model";
+import { ProposalActionRoleMember } from "./proposal-action-role-member.model";
 import { ProposalAction } from "./proposal-action.model";
 
 @Entity()
@@ -37,10 +35,16 @@ export class ProposalActionRole {
   })
   permissions?: ProposalActionPermission[];
 
-  @Field(() => [User], { nullable: true })
-  @ManyToMany(() => User, (user) => user.proposedRoles, { nullable: true })
-  @JoinTable()
-  members?: User[];
+  @Field(() => [ProposalActionRoleMember], { nullable: true })
+  @OneToMany(
+    () => ProposalActionRoleMember,
+    (proposalActionRoleMember) => proposalActionRoleMember.role,
+    {
+      cascade: true,
+      nullable: true,
+    }
+  )
+  members?: ProposalActionRoleMember[];
 
   @Field(() => ProposalAction)
   @ManyToOne(() => ProposalAction, (proposalAction) => proposalAction.role, {

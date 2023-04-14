@@ -38,12 +38,21 @@ type ProposalActionPermission {
   role: ProposalActionRole!
 }
 
+type ProposalActionRoleMember {
+  id: Int!
+  changeType: String!
+  user: User!
+  role: ProposalActionRole!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type ProposalActionRole {
   id: Int!
   name: String
   color: String
   permissions: [ProposalActionPermission!]
-  members: [User!]
+  members: [ProposalActionRoleMember!]
   proposalAction: ProposalAction!
   role: Role!
 }
@@ -151,12 +160,12 @@ type User {
   coverPhoto: Image
   followers: [User!]!
   following: [User!]!
-  joinedGroups: [Group!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
+  joinedGroups: [Group!]!
   serverPermissions: [String!]!
 }
 
