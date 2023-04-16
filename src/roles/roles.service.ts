@@ -122,15 +122,15 @@ export class RolesService {
       throw new UserInputError("Could not update role");
     }
 
-    const permissionsInputMap = permissions.reduce<Record<number, boolean>>(
-      (result, { id, enabled }) => {
-        result[id] = enabled;
+    const permissionsInputMap = permissions.reduce<Record<string, boolean>>(
+      (result, { name, enabled }) => {
+        result[name] = enabled;
         return result;
       },
       {}
     );
     const newPermissions = roleWithRelations.permissions.map((permission) => {
-      const enabled = permissionsInputMap[permission.id];
+      const enabled = permissionsInputMap[permission.name];
       if (enabled === undefined) {
         return permission;
       }

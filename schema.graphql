@@ -395,7 +395,7 @@ input UpdateRoleInput {
 }
 
 input PermissionInput {
-  id: Int!
+  name: String!
   enabled: Boolean!
 }
 
