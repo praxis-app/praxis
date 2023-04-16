@@ -365,10 +365,10 @@ input ProposalActionRoleInput {
   name: String
   color: String
   selectedUserIds: [Int!]
-  permissions: [ProposalActionPermissionInput!]
+  permissions: [PermissionInput!]
 }
 
-input ProposalActionPermissionInput {
+input PermissionInput {
   name: String!
   enabled: Boolean!
 }
@@ -392,11 +392,6 @@ input UpdateRoleInput {
   color: String
   selectedUserIds: [Int!]
   permissions: [PermissionInput!]
-}
-
-input PermissionInput {
-  name: String!
-  enabled: Boolean!
 }
 
 input DeleteRoleMemberInput {
