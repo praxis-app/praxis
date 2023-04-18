@@ -29,17 +29,25 @@ export class ProposalActionRole {
   color?: string;
 
   @Field(() => [ProposalActionPermission], { nullable: true })
-  @OneToMany(() => ProposalActionPermission, (permission) => permission.role, {
-    cascade: true,
-    nullable: true,
-  })
+  @OneToMany(
+    () => ProposalActionPermission,
+    (permission) => permission.proposalActionRole,
+    {
+      cascade: true,
+      nullable: true,
+    }
+  )
   permissions?: ProposalActionPermission[];
 
   @Field(() => [ProposalActionRoleMember], { nullable: true })
-  @OneToMany(() => ProposalActionRoleMember, (roleMember) => roleMember.role, {
-    cascade: true,
-    nullable: true,
-  })
+  @OneToMany(
+    () => ProposalActionRoleMember,
+    (roleMember) => roleMember.proposalActionRole,
+    {
+      cascade: true,
+      nullable: true,
+    }
+  )
   members?: ProposalActionRoleMember[];
 
   @Field(() => ProposalAction)

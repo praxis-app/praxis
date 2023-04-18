@@ -24,11 +24,11 @@ export class ProposalActionPermission {
   @Field()
   enabled: boolean;
 
-  @Field(() => ProposalActionRole)
+  @Field(() => ProposalActionRole, { name: "role" })
   @ManyToOne(() => ProposalActionRole, (role) => role.permissions, {
     onDelete: "CASCADE",
   })
-  role: ProposalActionRole;
+  proposalActionRole: ProposalActionRole;
 
   @Column()
   proposalActionRoleId: number;

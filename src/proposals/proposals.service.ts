@@ -98,10 +98,6 @@ export class ProposalsService {
           ImageTypes.CoverPhoto
         );
       }
-
-      // TODO: Remove when no longer needed for testing
-      console.log(role);
-
       if (role) {
         await this.proposalActionsService.saveProposalActionRole(
           proposal.action.id,

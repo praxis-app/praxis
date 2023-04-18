@@ -29,15 +29,11 @@ export class ProposalActionRoleMember {
   @Column()
   userId: number;
 
-  @Field(() => ProposalActionRole)
-  @ManyToOne(
-    () => ProposalActionRole,
-    (proposalActionRole) => proposalActionRole.members,
-    {
-      onDelete: "CASCADE",
-    }
-  )
-  role: ProposalActionRole;
+  @Field(() => ProposalActionRole, { name: "role" })
+  @ManyToOne(() => ProposalActionRole, (role) => role.members, {
+    onDelete: "CASCADE",
+  })
+  proposalActionRole: ProposalActionRole;
 
   @Column()
   proposalActionRoleId: number;
