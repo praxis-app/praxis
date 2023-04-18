@@ -54,7 +54,7 @@ type ProposalActionRole {
   permissions: [ProposalActionPermission!]
   members: [ProposalActionRoleMember!]
   proposalAction: ProposalAction!
-  role: Role!
+  role: Role
 }
 
 type ProposalAction {

@@ -51,12 +51,12 @@ export class ProposalActionRole {
   @Column()
   proposalActionId: number;
 
-  @Field(() => Role)
-  @ManyToOne(() => Role, (role) => role.proposalActionRoles)
-  role: Role;
+  @Field(() => Role, { nullable: true })
+  @ManyToOne(() => Role, (role) => role.proposalActionRoles, { nullable: true })
+  role?: Role;
 
-  @Column()
-  roleId: number;
+  @Column({ nullable: true })
+  roleId?: number;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -88,9 +88,6 @@ export class ProposalsService {
       action,
     });
     try {
-      // TODO: Remove when no longer needed for testing
-      console.log(role);
-
       if (images) {
         await this.saveProposalImages(proposal.id, images);
       }
@@ -99,6 +96,16 @@ export class ProposalsService {
           proposal.action.id,
           groupCoverPhoto,
           ImageTypes.CoverPhoto
+        );
+      }
+
+      // TODO: Remove when no longer needed for testing
+      console.log(role);
+
+      if (role) {
+        await this.proposalActionsService.saveProposalActionRole(
+          proposal.action.id,
+          role
         );
       }
     } catch (err) {
