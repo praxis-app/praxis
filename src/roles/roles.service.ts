@@ -105,6 +105,10 @@ export class RolesService {
     return { role };
   }
 
+  async createRoles(roles: CreateRoleInput[]) {
+    await this.roleRepository.save(roles);
+  }
+
   async updateRole(
     {
       id,

@@ -13,6 +13,7 @@ import { GroupsService } from "../groups/groups.service";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
 import { VotesService } from "../votes/votes.service";
@@ -39,7 +40,8 @@ export class ProposalsService {
 
     private groupsService: GroupsService,
     private imagesService: ImagesService,
-    private proposalActionsService: ProposalActionsService
+    private proposalActionsService: ProposalActionsService,
+    private rolesService: RolesService
   ) {}
 
   async getProposal(id: number, relations?: string[]) {
@@ -167,9 +169,19 @@ export class ProposalsService {
 
   async implementProposal(proposalId: number) {
     const {
-      action: { actionType, groupDescription, groupCoverPhoto, groupName },
+      action: {
+        actionType,
+        groupCoverPhoto,
+        groupDescription,
+        groupName,
+        roles,
+      },
       groupId,
-    } = await this.getProposal(proposalId, ["action.groupCoverPhoto"]);
+      // TODO: Determine whether relations should be fetched below instead
+    } = await this.getProposal(proposalId, [
+      "action.groupCoverPhoto",
+      "action.roles",
+    ]);
 
     if (actionType === ProposalActionType.ChangeName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
@@ -194,6 +206,31 @@ export class ProposalsService {
       }
       await this.imagesService.updateImage(groupCoverPhoto.id, { groupId });
       await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
+    }
+
+    if (actionType === ProposalActionType.CreateRole) {
+      if (!roles) {
+        throw new UserInputError("Could not find proposal action roles");
+      }
+
+      const newRoles = roles.map((role) => {
+        const members = role.members?.map(({ userId }) => ({ id: userId }));
+
+        // TODO: Ensure all permissions are saved, not just those toggled
+        const permissions = role.permissions?.map((permission) => ({
+          name: permission.name,
+          enabled: permission.enabled,
+        }));
+
+        return {
+          name: role.name as string,
+          color: role.color as string,
+          groupId,
+          members,
+          permissions,
+        };
+      });
+      this.rolesService.createRoles(newRoles);
     }
   }
 

@@ -47,7 +47,7 @@ export class ProposalAction {
       nullable: true,
     }
   )
-  role?: ProposalActionRole[];
+  roles?: ProposalActionRole[];
 
   @Field(() => Proposal)
   @OneToOne(() => Proposal, (proposal) => proposal.action, {

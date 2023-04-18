@@ -51,7 +51,7 @@ export class ProposalActionRole {
   members?: ProposalActionRoleMember[];
 
   @Field(() => ProposalAction)
-  @ManyToOne(() => ProposalAction, (proposalAction) => proposalAction.role, {
+  @ManyToOne(() => ProposalAction, (proposalAction) => proposalAction.roles, {
     onDelete: "CASCADE",
   })
   proposalAction: ProposalAction;

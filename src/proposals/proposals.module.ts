@@ -2,6 +2,7 @@ import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { GroupsModule } from "../groups/groups.module";
 import { ImagesModule } from "../images/images.module";
+import { RolesModule } from "../roles/roles.module";
 import { VotesModule } from "../votes/votes.module";
 import { Proposal } from "./models/proposal.model";
 import { ProposalActionsModule } from "./proposal-actions/proposal-actions.module";
@@ -15,6 +16,7 @@ import { ProposalsService } from "./proposals.service";
     forwardRef(() => VotesModule),
     GroupsModule,
     ImagesModule,
+    RolesModule,
   ],
   providers: [ProposalsService, ProposalsResolver],
   exports: [ProposalsService, TypeOrmModule],

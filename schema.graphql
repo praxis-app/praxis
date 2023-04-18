@@ -63,7 +63,7 @@ type ProposalAction {
   groupName: String
   groupDescription: String
   groupCoverPhoto: Image
-  role: [ProposalActionRole!]
+  roles: [ProposalActionRole!]
   proposal: Proposal!
   createdAt: DateTime!
   updatedAt: DateTime!
