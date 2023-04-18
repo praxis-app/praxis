@@ -10,8 +10,6 @@ import {
 import { User } from "../../../users/models/user.model";
 import { ProposalActionRole } from "./proposal-action-role.model";
 
-export type RoleMemberChangeType = "add" | "remove";
-
 @ObjectType()
 @Entity()
 export class ProposalActionRoleMember {
@@ -20,7 +18,7 @@ export class ProposalActionRoleMember {
   id: number;
 
   @Field()
-  changeType: RoleMemberChangeType;
+  changeType: string;
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.proposalActionRoleMembers, {

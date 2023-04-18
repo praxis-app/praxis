@@ -94,11 +94,9 @@ export class User {
   @ManyToMany(() => Role, (role) => role.members)
   roles: Role[];
 
-  @OneToMany(
-    () => ProposalActionRoleMember,
-    (proposalActionRoleMember) => proposalActionRoleMember.user,
-    { cascade: true }
-  )
+  @OneToMany(() => ProposalActionRoleMember, (roleMember) => roleMember.user, {
+    cascade: true,
+  })
   proposalActionRoleMembers: ProposalActionRoleMember[];
 
   @OneToMany(() => ServerInvite, (serverInvite) => serverInvite.user, {

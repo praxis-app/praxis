@@ -4,13 +4,24 @@ import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { saveImage } from "../../images/image.utils";
 import { ImagesService } from "../../images/images.service";
+import { ProposalActionRoleInput } from "./models/proposal-action-role-input";
+import { ProposalActionRole } from "./models/proposal-action-role.model";
 import { ProposalAction } from "./models/proposal-action.model";
+
+export enum RoleMemberChangeType {
+  Add = "add",
+  Remove = "remove",
+}
 
 @Injectable()
 export class ProposalActionsService {
   constructor(
     @InjectRepository(ProposalAction)
-    private repository: Repository<ProposalAction>,
+    private proposalActionRepository: Repository<ProposalAction>,
+
+    @InjectRepository(ProposalActionRole)
+    private proposalActionRoleRepository: Repository<ProposalActionRole>,
+
     private imagesService: ImagesService
   ) {}
 
@@ -18,11 +29,11 @@ export class ProposalActionsService {
     where: FindOptionsWhere<ProposalAction>,
     relations?: string[]
   ) {
-    return this.repository.findOne({ where, relations });
+    return this.proposalActionRepository.findOne({ where, relations });
   }
 
   async getProposalActions(where?: FindOptionsWhere<ProposalAction>) {
-    return this.repository.find({ where });
+    return this.proposalActionRepository.find({ where });
   }
 
   async getProposedGroupCoverPhoto(proposalActionId: number) {
@@ -42,6 +53,25 @@ export class ProposalActionsService {
           (proposalAction: ProposalAction) => proposalAction.id === id
         ) || new Error(`Could not load proposal action: ${id}`)
     );
+  }
+
+  // TODO: Add logic to account for proposals to *change* group roles
+  async saveProposalActionRole(
+    proposalActionId: number,
+    { selectedUserIds, ...role }: ProposalActionRoleInput
+  ) {
+    const members = selectedUserIds
+      ? selectedUserIds.map((userId) => ({
+          changeType: RoleMemberChangeType.Add,
+          userId,
+        }))
+      : [];
+
+    await this.proposalActionRoleRepository.save({
+      proposalActionId,
+      members,
+      ...role,
+    });
   }
 
   async saveProposalActionImage(
