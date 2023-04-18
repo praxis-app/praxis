@@ -2,7 +2,7 @@ import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
 import { ValidationError } from "apollo-server-express";
 import { VotesService } from "../../votes/votes.service";
 import { UpdateProposalInput } from "../models/update-proposal.input";
-import { ProposalActionTypes } from "../proposals.constants";
+import { ProposalActionType } from "../proposals.constants";
 import { ProposalsService } from "../proposals.service";
 
 @Injectable()
@@ -24,13 +24,13 @@ export class UpdateProposalValidationPipe implements PipeTransform {
     id,
     action: { actionType, groupName, groupDescription, groupCoverPhoto },
   }: UpdateProposalInput) {
-    if (actionType === ProposalActionTypes.ChangeName && !groupName) {
+    if (actionType === ProposalActionType.ChangeName && !groupName) {
       throw new ValidationError(
         "Proposals to change group name must include a name field"
       );
     }
     if (
-      actionType === ProposalActionTypes.ChangeDescription &&
+      actionType === ProposalActionType.ChangeDescription &&
       !groupDescription
     ) {
       throw new ValidationError(
@@ -38,7 +38,7 @@ export class UpdateProposalValidationPipe implements PipeTransform {
       );
     }
     if (
-      actionType === ProposalActionTypes.ChangeCoverPhoto &&
+      actionType === ProposalActionType.ChangeCoverPhoto &&
       !groupCoverPhoto
     ) {
       const proposal = await this.proposalsService.getProposal(id, [

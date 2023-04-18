@@ -8,7 +8,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
-import { DefaultGroupSettings } from "../groups/groups.constants";
+import { DefaultGroupSetting } from "../groups/groups.constants";
 import { GroupsService } from "../groups/groups.service";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
@@ -24,8 +24,8 @@ import { ProposalActionsService } from "./proposal-actions/proposal-actions.serv
 import {
   MIN_GROUP_SIZE_TO_RATIFY,
   MIN_VOTE_COUNT_TO_RATIFY,
-  ProposalActionTypes,
-  ProposalStages,
+  ProposalActionType,
+  ProposalStage,
 } from "./proposals.constants";
 
 @Injectable()
@@ -133,7 +133,7 @@ export class ProposalsService {
 
     if (
       groupCoverPhoto &&
-      proposal.action.actionType === ProposalActionTypes.ChangeCoverPhoto
+      proposal.action.actionType === ProposalActionType.ChangeCoverPhoto
     ) {
       await this.imagesService.deleteImage({
         proposalActionId: proposal.action.id,
@@ -160,7 +160,7 @@ export class ProposalsService {
 
   async ratifyProposal(proposalId: number) {
     await this.repository.update(proposalId, {
-      stage: ProposalStages.Ratified,
+      stage: ProposalStage.Ratified,
     });
     await this.implementProposal(proposalId);
   }
@@ -171,12 +171,12 @@ export class ProposalsService {
       groupId,
     } = await this.getProposal(proposalId, ["action.groupCoverPhoto"]);
 
-    if (actionType === ProposalActionTypes.ChangeName) {
+    if (actionType === ProposalActionType.ChangeName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
       return;
     }
 
-    if (actionType === ProposalActionTypes.ChangeDescription) {
+    if (actionType === ProposalActionType.ChangeDescription) {
       await this.groupsService.updateGroup({
         description: groupDescription,
         id: groupId,
@@ -184,10 +184,7 @@ export class ProposalsService {
       return;
     }
 
-    if (
-      actionType === ProposalActionTypes.ChangeCoverPhoto &&
-      groupCoverPhoto
-    ) {
+    if (actionType === ProposalActionType.ChangeCoverPhoto && groupCoverPhoto) {
       const currentCoverPhoto = await this.imagesService.getImage({
         imageType: ImageTypes.CoverPhoto,
         groupId,
@@ -206,7 +203,7 @@ export class ProposalsService {
       "votes",
     ]);
     if (
-      proposal.stage !== ProposalStages.Voting ||
+      proposal.stage !== ProposalStage.Voting ||
       proposal.votes.length < MIN_VOTE_COUNT_TO_RATIFY ||
       proposal.group.members.length < MIN_GROUP_SIZE_TO_RATIFY
     ) {
@@ -219,7 +216,7 @@ export class ProposalsService {
     } = proposal;
 
     const ratificationThreshold =
-      DefaultGroupSettings.RatificationThreshold * 0.01;
+      DefaultGroupSetting.RatificationThreshold * 0.01;
 
     return this.hasConsensus(ratificationThreshold, members, votes);
   }
@@ -234,8 +231,8 @@ export class ProposalsService {
 
     return (
       agreements.length >= groupMembers.length * ratificationThreshold &&
-      reservations.length <= DefaultGroupSettings.ReservationsLimit &&
-      standAsides.length <= DefaultGroupSettings.StandAsidesLimit &&
+      reservations.length <= DefaultGroupSetting.ReservationsLimit &&
+      standAsides.length <= DefaultGroupSetting.StandAsidesLimit &&
       blocks.length === 0
     );
   }

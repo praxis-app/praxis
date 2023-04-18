@@ -1,6 +1,6 @@
 import { Injectable, PipeTransform } from "@nestjs/common";
 import { ValidationError } from "apollo-server-express";
-import { ProposalStages } from "../../proposals/proposals.constants";
+import { ProposalStage } from "../../proposals/proposals.constants";
 import { VotesService } from "../votes.service";
 
 @Injectable()
@@ -16,7 +16,7 @@ export class DeleteVoteValidationPipe implements PipeTransform {
 
   async validateProposalStage(value: number) {
     const { proposal } = await this.votesService.getVote(value, ["proposal"]);
-    if (proposal.stage === ProposalStages.Ratified) {
+    if (proposal.stage === ProposalStage.Ratified) {
       throw new ValidationError(
         "Proposal has been ratified and can no longer be voted on"
       );

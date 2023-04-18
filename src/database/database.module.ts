@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Environments } from "../common/common.constants";
+import { Environment } from "../common/common.constants";
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { Environments } from "../common/common.constants";
         password: configService.get("DB_PASSWORD"),
         port: parseInt(configService.get("DB_PORT") as string),
 
-        synchronize: configService.get("NODE_ENV") === Environments.Development,
+        synchronize: configService.get("NODE_ENV") === Environment.Development,
         entities: ["dist/**/*{.entity,.model}.js"],
       }),
     }),

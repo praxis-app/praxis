@@ -6,8 +6,8 @@ import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateRoleInput } from "../../roles/models/create-role.input";
 import { UpdateRoleInput } from "../../roles/models/update-role.input";
 import {
-  GroupPermissions,
-  ServerPermissions,
+  GroupPermission,
+  ServerPermission,
 } from "../../roles/permissions/permissions.constants";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
@@ -15,27 +15,27 @@ import { hasPermission } from "./shield.utils";
 
 export const canCreateInvites = rule()(
   async (_parent, _args, { permissions }: Context) =>
-    hasPermission(permissions, ServerPermissions.CreateInvites)
+    hasPermission(permissions, ServerPermission.CreateInvites)
 );
 
 export const canManageInvites = rule()(
   async (_parent, _args, { permissions }: Context) =>
-    hasPermission(permissions, ServerPermissions.ManageInvites)
+    hasPermission(permissions, ServerPermission.ManageInvites)
 );
 
 export const canManagePosts = rule()(
   async (_parent, _args, { permissions }: Context) =>
-    hasPermission(permissions, ServerPermissions.ManagePosts)
+    hasPermission(permissions, ServerPermission.ManagePosts)
 );
 
 export const canManageServerRoles = rule()(
   async (_parent, _args, { permissions }: Context) =>
-    hasPermission(permissions, ServerPermissions.ManageRoles)
+    hasPermission(permissions, ServerPermission.ManageRoles)
 );
 
 export const canBanMembers = rule()(
   async (_parent, _args, { permissions }: Context) =>
-    hasPermission(permissions, ServerPermissions.BanMembers)
+    hasPermission(permissions, ServerPermission.BanMembers)
 );
 
 export const canUpdateGroup = rule()(
@@ -43,12 +43,12 @@ export const canUpdateGroup = rule()(
     _parent,
     { groupData }: { groupData: UpdateGroupInput },
     { permissions }: Context
-  ) => hasPermission(permissions, GroupPermissions.UpdateGroup, groupData.id)
+  ) => hasPermission(permissions, GroupPermission.UpdateGroup, groupData.id)
 );
 
 export const canDeleteGroup = rule()(
   async (_parent, args: { id: number }, { permissions }: Context) =>
-    hasPermission(permissions, GroupPermissions.DeleteGroup, args.id)
+    hasPermission(permissions, GroupPermission.DeleteGroup, args.id)
 );
 
 export const canManageGroupPosts = rule()(
@@ -58,7 +58,7 @@ export const canManageGroupPosts = rule()(
     { permissions, services: { postsService } }: Context
   ) => {
     const { groupId } = await postsService.getPost(args.id);
-    return hasPermission(permissions, GroupPermissions.ManagePosts, groupId);
+    return hasPermission(permissions, GroupPermission.ManagePosts, groupId);
   }
 );
 
@@ -88,7 +88,7 @@ export const canManageGroupRoles = rule()(
       groupId = id;
     }
 
-    return hasPermission(permissions, GroupPermissions.ManageRoles, groupId);
+    return hasPermission(permissions, GroupPermission.ManageRoles, groupId);
   }
 );
 
@@ -118,7 +118,7 @@ export const canApproveGroupMemberRequests = rule()(
 
     return hasPermission(
       permissions,
-      GroupPermissions.ApproveMemberRequests,
+      GroupPermission.ApproveMemberRequests,
       groupId
     );
   }
