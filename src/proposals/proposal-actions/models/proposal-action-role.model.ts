@@ -5,6 +5,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -51,7 +52,7 @@ export class ProposalActionRole {
   members?: ProposalActionRoleMember[];
 
   @Field(() => ProposalAction)
-  @ManyToOne(() => ProposalAction, (proposalAction) => proposalAction.roles, {
+  @OneToOne(() => ProposalAction, (proposalAction) => proposalAction.role, {
     onDelete: "CASCADE",
   })
   proposalAction: ProposalAction;

@@ -174,7 +174,7 @@ export class ProposalsService {
         groupCoverPhoto,
         groupDescription,
         groupName,
-        roles,
+        role,
       },
       groupId,
       // TODO: Determine whether relations should be fetched below instead
@@ -209,28 +209,25 @@ export class ProposalsService {
     }
 
     if (actionType === ProposalActionType.CreateRole) {
-      if (!roles) {
-        throw new UserInputError("Could not find proposal action roles");
+      if (!role) {
+        throw new UserInputError("Could not find proposal action role");
       }
-
-      const newRoles = roles.map((role) => {
-        const members = role.members?.map(({ userId }) => ({ id: userId }));
-
-        // TODO: Ensure all permissions are saved, not just those toggled
-        const permissions = role.permissions?.map((permission) => ({
-          name: permission.name,
-          enabled: permission.enabled,
-        }));
-
-        return {
-          name: role.name as string,
-          color: role.color as string,
-          groupId,
-          members,
-          permissions,
-        };
-      });
-      this.rolesService.createRoles(newRoles);
+      // TODO: Ensure all permissions are saved, not just those enabled
+      const permissions = role.permissions?.map((permission) => ({
+        name: permission.name,
+        enabled: permission.enabled,
+      }));
+      const members = role.members?.map(({ userId }) => ({
+        id: userId,
+      }));
+      const newRole = {
+        name: role.name as string,
+        color: role.color as string,
+        groupId,
+        members,
+        permissions,
+      };
+      await this.rolesService.createRole(newRole);
     }
   }
 

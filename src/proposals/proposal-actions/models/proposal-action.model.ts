@@ -4,7 +4,6 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -32,14 +31,14 @@ export class ProposalAction {
   @Field({ nullable: true })
   groupDescription?: string;
 
+  @Field(() => Image, { nullable: true })
   @OneToOne(() => Image, (image) => image.proposalAction, {
     cascade: true,
   })
-  @Field(() => Image, { nullable: true })
   groupCoverPhoto?: Image;
 
-  @Field(() => [ProposalActionRole], { nullable: true })
-  @OneToMany(
+  @Field(() => ProposalActionRole, { nullable: true })
+  @OneToOne(
     () => ProposalActionRole,
     (proposedRole) => proposedRole.proposalAction,
     {
@@ -47,7 +46,7 @@ export class ProposalAction {
       nullable: true,
     }
   )
-  roles?: ProposalActionRole[];
+  role?: ProposalActionRole;
 
   @Field(() => Proposal)
   @OneToOne(() => Proposal, (proposal) => proposal.action, {
