@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { ProposalActionPermission } from "./models/proposal-action-permission.model";
 import { ProposalActionRoleInput } from "./models/proposal-action-role-input";
 import { ProposalActionRole } from "./models/proposal-action-role.model";
 
@@ -13,12 +14,21 @@ export enum RoleMemberChangeType {
 export class ProposalActionRolesService {
   constructor(
     @InjectRepository(ProposalActionRole)
-    private proposalActionRoleRepository: Repository<ProposalActionRole>
+    private proposalActionRoleRepository: Repository<ProposalActionRole>,
+
+    @InjectRepository(ProposalActionPermission)
+    private proposalActionPermissionRepository: Repository<ProposalActionPermission>
   ) {}
 
   async getProposalActionRole(proposalActionId: number) {
     return this.proposalActionRoleRepository.findOne({
       where: { proposalActionId },
+    });
+  }
+
+  async getProposalActionPermissions(proposalActionRoleId: number) {
+    return this.proposalActionPermissionRepository.find({
+      where: { proposalActionRoleId },
     });
   }
 
