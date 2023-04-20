@@ -3,6 +3,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ProposalActionPermission } from "./models/proposal-action-permission.model";
 import { ProposalActionRoleMember } from "./models/proposal-action-role-member.model";
 import { ProposalActionRole } from "./models/proposal-action-role.model";
+import { ProposalActionRoleMembersResolver } from "./proposal-action-role-members.resolver";
 import { ProposalActionRolesResolver } from "./proposal-action-roles.resolver";
 import { ProposalActionRolesService } from "./proposal-action-roles.service";
 
@@ -14,7 +15,11 @@ import { ProposalActionRolesService } from "./proposal-action-roles.service";
       ProposalActionRoleMember,
     ]),
   ],
-  providers: [ProposalActionRolesResolver, ProposalActionRolesService],
+  providers: [
+    ProposalActionRolesResolver,
+    ProposalActionRoleMembersResolver,
+    ProposalActionRolesService,
+  ],
   exports: [ProposalActionRolesService],
 })
 export class ProposalActionRolesModule {}
