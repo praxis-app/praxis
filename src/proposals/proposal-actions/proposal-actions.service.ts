@@ -36,6 +36,12 @@ export class ProposalActionsService {
     return this.proposalActionRepository.find({ where });
   }
 
+  async getProposalActionRole(proposalActionId: number) {
+    return this.proposalActionRoleRepository.findOne({
+      where: { proposalActionId },
+    });
+  }
+
   async getProposedGroupCoverPhoto(proposalActionId: number) {
     const action = await this.getProposalAction({ id: proposalActionId }, [
       "groupCoverPhoto",

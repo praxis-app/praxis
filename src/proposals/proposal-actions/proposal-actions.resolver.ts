@@ -1,6 +1,7 @@
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql";
 import { Proposal } from "../models/proposal.model";
 import { ProposalsService } from "../proposals.service";
+import { ProposalActionRole } from "./models/proposal-action-role.model";
 import { ProposalAction } from "./models/proposal-action.model";
 import { ProposalActionsService } from "./proposal-actions.service";
 
@@ -19,5 +20,10 @@ export class ProposalActionsResolver {
   @ResolveField(() => Image)
   async groupCoverPhoto(@Parent() { id }: ProposalAction) {
     return this.proposalActionsService.getProposedGroupCoverPhoto(id);
+  }
+
+  @ResolveField(() => ProposalActionRole)
+  async role(@Parent() { id }: ProposalAction) {
+    return this.proposalActionsService.getProposalActionRole(id);
   }
 }
