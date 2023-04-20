@@ -17,6 +17,7 @@ export class ProposalActionRoleMember {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
   @Field()
   changeType: string;
 
