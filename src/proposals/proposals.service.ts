@@ -21,6 +21,7 @@ import { sortConsensusVotesByType } from "../votes/votes.utils";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
 import { UpdateProposalInput } from "./models/update-proposal.input";
+import { ProposalActionRolesService } from "./proposal-actions/proposal-action-roles/proposal-action-roles.service";
 import { ProposalActionsService } from "./proposal-actions/proposal-actions.service";
 import {
   MIN_GROUP_SIZE_TO_RATIFY,
@@ -40,6 +41,7 @@ export class ProposalsService {
 
     private groupsService: GroupsService,
     private imagesService: ImagesService,
+    private proposalActionRolesService: ProposalActionRolesService,
     private proposalActionsService: ProposalActionsService,
     private rolesService: RolesService
   ) {}
@@ -101,7 +103,7 @@ export class ProposalsService {
         );
       }
       if (role) {
-        await this.proposalActionsService.saveProposalActionRole(
+        await this.proposalActionRolesService.saveProposalActionRole(
           proposal.action.id,
           role
         );

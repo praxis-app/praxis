@@ -9,10 +9,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Role } from "../../../roles/models/role.model";
+import { Role } from "../../../../roles/models/role.model";
 import { ProposalActionPermission } from "./proposal-action-permission.model";
 import { ProposalActionRoleMember } from "./proposal-action-role-member.model";
-import { ProposalAction } from "./proposal-action.model";
+import { ProposalAction } from "../../models/proposal-action.model";
 
 @Entity()
 @ObjectType()

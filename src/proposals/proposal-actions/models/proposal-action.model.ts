@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import { Image } from "../../../images/models/image.model";
 import { Proposal } from "../../models/proposal.model";
-import { ProposalActionRole } from "./proposal-action-role.model";
+import { ProposalActionRole } from "../proposal-action-roles/models/proposal-action-role.model";
 
 @Entity()
 @ObjectType()

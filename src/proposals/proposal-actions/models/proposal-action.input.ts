@@ -10,7 +10,7 @@
 
 import { Field, InputType } from "@nestjs/graphql";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
-import { ProposalActionRoleInput } from "./proposal-action-role-input";
+import { ProposalActionRoleInput } from "../proposal-action-roles/models/proposal-action-role-input";
 
 @InputType()
 export class ProposalActionInput {

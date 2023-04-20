@@ -1,14 +1,16 @@
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql";
 import { Proposal } from "../models/proposal.model";
 import { ProposalsService } from "../proposals.service";
-import { ProposalActionRole } from "./models/proposal-action-role.model";
+import { ProposalActionRole } from "./proposal-action-roles/models/proposal-action-role.model";
 import { ProposalAction } from "./models/proposal-action.model";
 import { ProposalActionsService } from "./proposal-actions.service";
+import { ProposalActionRolesService } from "./proposal-action-roles/proposal-action-roles.service";
 
 @Resolver(() => ProposalAction)
 export class ProposalActionsResolver {
   constructor(
     private proposalActionsService: ProposalActionsService,
+    private proposalActionRolesService: ProposalActionRolesService,
     private proposalsService: ProposalsService
   ) {}
 
@@ -24,6 +26,6 @@ export class ProposalActionsResolver {
 
   @ResolveField(() => ProposalActionRole)
   async role(@Parent() { id }: ProposalAction) {
-    return this.proposalActionsService.getProposalActionRole(id);
+    return this.proposalActionRolesService.getProposalActionRole(id);
   }
 }

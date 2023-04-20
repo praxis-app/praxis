@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Group } from "../../groups/models/group.model";
-import { ProposalActionRole } from "../../proposals/proposal-actions/models/proposal-action-role.model";
+import { ProposalActionRole } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
 import { User } from "../../users/models/user.model";
 import { Permission } from "../permissions/models/permission.model";
 
