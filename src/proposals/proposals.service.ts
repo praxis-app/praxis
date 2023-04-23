@@ -183,7 +183,8 @@ export class ProposalsService {
       // TODO: Determine whether relations should be fetched below instead
     } = await this.getProposal(proposalId, [
       "action.groupCoverPhoto",
-      "action.roles",
+      "action.role.permissions",
+      "action.role.members",
     ]);
 
     if (actionType === ProposalActionType.ChangeName) {

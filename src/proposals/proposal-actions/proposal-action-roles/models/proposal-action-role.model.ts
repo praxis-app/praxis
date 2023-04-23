@@ -3,6 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -55,6 +56,7 @@ export class ProposalActionRole {
   @OneToOne(() => ProposalAction, (proposalAction) => proposalAction.role, {
     onDelete: "CASCADE",
   })
+  @JoinColumn()
   proposalAction: ProposalAction;
 
   @Column()
