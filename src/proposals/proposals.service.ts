@@ -13,6 +13,8 @@ import { GroupsService } from "../groups/groups.service";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { GroupPermission } from "../roles/permissions/permissions.constants";
+import { initPermissions } from "../roles/permissions/permissions.utils";
 import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
@@ -214,11 +216,19 @@ export class ProposalsService {
       if (!role) {
         throw new UserInputError("Could not find proposal action role");
       }
-      // TODO: Ensure all permissions are saved, not just those enabled
-      const permissions = role.permissions?.map((permission) => ({
-        name: permission.name,
-        enabled: permission.enabled,
-      }));
+      // TODO: Verify that permissions are saved correctly
+      const permissions = initPermissions(GroupPermission).map((permission) => {
+        const proposedPermission = role.permissions?.find(
+          (p) => p.name === permission.name
+        );
+        if (proposedPermission) {
+          return {
+            name: proposedPermission.name,
+            enabled: proposedPermission.enabled,
+          };
+        }
+        return permission;
+      });
       const members = role.members?.map(({ userId }) => ({
         id: userId,
       }));
