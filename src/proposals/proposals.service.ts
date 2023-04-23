@@ -239,7 +239,7 @@ export class ProposalsService {
         members,
         permissions,
       };
-      await this.rolesService.createRole(newRole);
+      await this.rolesService.createRole(newRole, true);
     }
   }
 

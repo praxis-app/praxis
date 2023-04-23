@@ -1,7 +1,14 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
-import { FindOptionsWhere, In, IsNull, Not, Repository } from "typeorm";
+import {
+  DeepPartial,
+  FindOptionsWhere,
+  In,
+  IsNull,
+  Not,
+  Repository,
+} from "typeorm";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 import { CreateRoleInput } from "./models/create-role.input";
@@ -97,7 +104,10 @@ export class RolesService {
     });
   }
 
-  async createRole(roleData: CreateRoleInput) {
+  async createRole(roleData: DeepPartial<Role>, fromProposalAction = false) {
+    if (fromProposalAction) {
+      return this.roleRepository.save(roleData);
+    }
     const permissions = initPermissions(
       roleData.groupId ? GroupPermission : ServerPermission
     );
