@@ -364,8 +364,13 @@ input ProposalActionRoleInput {
   id: Int
   name: String
   color: String
-  selectedUserIds: [Int!]
+  members: [ProposalActionRoleMemberInput!]
   permissions: [PermissionInput!]
+}
+
+input ProposalActionRoleMemberInput {
+  userId: Int!
+  changeType: String!
 }
 
 input PermissionInput {

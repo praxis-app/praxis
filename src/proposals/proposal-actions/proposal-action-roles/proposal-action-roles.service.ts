@@ -45,20 +45,12 @@ export class ProposalActionRolesService {
   // TODO: Add logic to account for proposals to *change* group roles
   async saveProposalActionRole(
     proposalActionId: number,
-    { id, selectedUserIds, ...role }: ProposalActionRoleInput
+    { id, ...role }: ProposalActionRoleInput
   ) {
-    const members = selectedUserIds
-      ? selectedUserIds.map((userId) => ({
-          changeType: RoleMemberChangeType.Add,
-          userId,
-        }))
-      : [];
-
     await this.proposalActionRoleRepository.save({
       ...role,
       roleId: id,
       proposalActionId,
-      members,
     });
   }
 }
