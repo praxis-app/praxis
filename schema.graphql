@@ -272,6 +272,7 @@ type Query {
   me: User!
   user(id: Int, name: String): User!
   users: [User!]!
+  usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
   vote(id: Int!): Vote!
   votes: [Vote!]!

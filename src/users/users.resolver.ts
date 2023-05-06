@@ -8,6 +8,7 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { In } from "typeorm";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { FeedItem } from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.types";
@@ -44,6 +45,11 @@ export class UsersResolver {
   @Query(() => [User])
   async users() {
     return this.usersService.getUsers();
+  }
+
+  @Query(() => [User])
+  async usersByIds(@Args("ids", { type: () => [Int] }) ids: number[]) {
+    return this.usersService.getUsers({ id: In(ids) });
   }
 
   @Query(() => Boolean)
