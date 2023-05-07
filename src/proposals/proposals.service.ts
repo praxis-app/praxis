@@ -22,7 +22,10 @@ import { sortConsensusVotesByType } from "../votes/votes.utils";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
 import { UpdateProposalInput } from "./models/update-proposal.input";
-import { ProposalActionRolesService } from "./proposal-actions/proposal-action-roles/proposal-action-roles.service";
+import {
+  ProposalActionRolesService,
+  RoleMemberChangeType,
+} from "./proposal-actions/proposal-action-roles/proposal-action-roles.service";
 import { ProposalActionsService } from "./proposal-actions/proposal-actions.service";
 import {
   MIN_GROUP_SIZE_TO_RATIFY,
@@ -237,18 +240,37 @@ export class ProposalsService {
       );
     }
 
-    // TODO: Uncomment and add remaining update logic
-    // if (actionType === ProposalActionType.ChangeRole) {
-    //   if (!role?.roleId) {
-    //     throw new UserInputError("Could not find proposal action role");
-    //   }
-    //   const roleToUpdate = await this.rolesService.getRole(role.roleId, [
-    //     "permissions",
-    //     "members",
-    //   ]);
+    if (actionType === ProposalActionType.ChangeRole) {
+      if (!role?.roleId) {
+        throw new UserInputError("Could not find proposal action role");
+      }
+      const roleToUpdate = await this.rolesService.getRole(role.roleId, [
+        "permissions",
+        "members",
+      ]);
 
-    //   await this.rolesService.updateRole(roleToUpdate)
-    // }
+      const userIdsToAdd = role.members
+        ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Add)
+        .map(({ userId }) => userId);
+
+      const userIdsToRemove = role.members
+        ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Remove)
+        .map(({ userId }) => userId);
+
+      await this.rolesService.updateRole({
+        id: roleToUpdate.id,
+        name: role.name,
+        color: role.color,
+        permissions: role.permissions,
+        selectedUserIds: userIdsToAdd,
+      });
+      if (userIdsToRemove) {
+        await this.rolesService.deleteRoleMembers(
+          roleToUpdate.id,
+          userIdsToRemove
+        );
+      }
+    }
   }
 
   async isProposalRatifiable(proposalId: number) {

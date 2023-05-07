@@ -112,6 +112,7 @@ export class RolesService {
     await this.roleRepository.save(roles);
   }
 
+  // TODO: Refactor to accept member with changeType instead of selectedUserIds
   async updateRole(
     {
       id,
@@ -174,14 +175,19 @@ export class RolesService {
   }
 
   async deleteRoleMember(id: number, userId: number, me: User) {
-    const user = await this.usersService.getUser({ id: userId });
     const role = await this.getRole(id, ["members"]);
-    if (!user) {
-      throw new UserInputError("User not found");
-    }
     role.members = role.members.filter((member) => member.id !== userId);
     await this.roleRepository.save(role);
 
     return { role, me };
+  }
+
+  async deleteRoleMembers(id: number, userIds: number[]) {
+    const role = await this.getRole(id, ["members"]);
+
+    role.members = role.members.filter(
+      (member) => !userIds.some((id) => member.id === id)
+    );
+    await this.roleRepository.save(role);
   }
 }
