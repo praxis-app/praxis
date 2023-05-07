@@ -30,6 +30,14 @@ export class ProposalActionRole {
   @Field({ nullable: true })
   color?: string;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  oldName?: string;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  oldColor?: string;
+
   @Field(() => [ProposalActionPermission], { nullable: true })
   @OneToMany(
     () => ProposalActionPermission,

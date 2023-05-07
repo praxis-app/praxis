@@ -42,8 +42,7 @@ export class ProposalActionRolesService {
     });
   }
 
-  // TODO: Add logic to account for proposals to *change* group roles
-  async saveProposalActionRole(
+  async createProposalActionRole(
     proposalActionId: number,
     { id, ...role }: ProposalActionRoleInput
   ) {
@@ -52,5 +51,12 @@ export class ProposalActionRolesService {
       roleId: id,
       proposalActionId,
     });
+  }
+
+  async updateProposalActionRole(
+    id: number,
+    data: Partial<ProposalActionRole>
+  ) {
+    await this.proposalActionRoleRepository.update(id, data);
   }
 }

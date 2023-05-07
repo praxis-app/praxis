@@ -107,7 +107,7 @@ export class ProposalsService {
         );
       }
       if (role) {
-        await this.proposalActionRolesService.saveProposalActionRole(
+        await this.proposalActionRolesService.createProposalActionRole(
           proposal.action.id,
           role
         );
@@ -264,10 +264,19 @@ export class ProposalsService {
         permissions: role.permissions,
         selectedUserIds: userIdsToAdd,
       });
-      if (userIdsToRemove) {
+      if (userIdsToRemove?.length) {
         await this.rolesService.deleteRoleMembers(
           roleToUpdate.id,
           userIdsToRemove
+        );
+      }
+      if (role.name || role.color) {
+        await this.proposalActionRolesService.updateProposalActionRole(
+          role.id,
+          {
+            oldName: role.name ? roleToUpdate.name : undefined,
+            oldColor: role.color ? roleToUpdate.color : undefined,
+          }
         );
       }
     }

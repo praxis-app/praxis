@@ -5,6 +5,7 @@ import { ProposalActionRoleMemberInput } from "./proposal-action-role-member.inp
 @InputType()
 export class ProposalActionRoleInput {
   @Field(() => Int, { nullable: true })
+  // TODO: Rename as roleId or roleToUpdateId
   id: number;
 
   @Field({ nullable: true })
