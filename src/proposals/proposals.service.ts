@@ -236,6 +236,19 @@ export class ProposalsService {
         true
       );
     }
+
+    // TODO: Uncomment and add remaining update logic
+    // if (actionType === ProposalActionType.ChangeRole) {
+    //   if (!role?.roleId) {
+    //     throw new UserInputError("Could not find proposal action role");
+    //   }
+    //   const roleToUpdate = await this.rolesService.getRole(role.roleId, [
+    //     "permissions",
+    //     "members",
+    //   ]);
+
+    //   await this.rolesService.updateRole(roleToUpdate)
+    // }
   }
 
   async isProposalRatifiable(proposalId: number) {

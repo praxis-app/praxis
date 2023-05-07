@@ -77,11 +77,11 @@ export const canManageGroupRoles = rule()(
       }
       if (info.fieldName === "updateRole" && "id" in args.roleData) {
         const role = await rolesService.getRole(args.roleData.id);
-        groupId = role?.groupId;
+        groupId = role.groupId;
       }
     } else if (["role", "deleteRole"].includes(info.fieldName)) {
       const role = await rolesService.getRole(args.id);
-      groupId = role?.groupId;
+      groupId = role.groupId;
     }
     if (info.fieldName === "roles") {
       const { id } = parent as Group;

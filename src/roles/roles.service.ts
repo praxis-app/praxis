@@ -34,7 +34,7 @@ export class RolesService {
   ) {}
 
   async getRole(id: number, relations?: string[]) {
-    return this.roleRepository.findOne({ where: { id }, relations });
+    return this.roleRepository.findOneOrFail({ where: { id }, relations });
   }
 
   async getRoles(where?: FindOptionsWhere<Role>) {
@@ -46,19 +46,12 @@ export class RolesService {
   }
 
   async getRoleMembers(roleId: number) {
-    const role = await this.getRole(roleId, ["members"]);
-    if (!role) {
-      throw new UserInputError("Role not found");
-    }
-    return role.members;
+    const { members } = await this.getRole(roleId, ["members"]);
+    return members;
   }
 
   async getAvailableUsersToAdd(id: number) {
     const role = await this.getRole(id, ["members", "group.members"]);
-    if (!role?.members) {
-      return [];
-    }
-
     const userIds = role.members.map(({ id }) => id);
 
     if (role.group) {
@@ -126,16 +119,12 @@ export class RolesService {
       permissions = [],
       ...roleData
     }: UpdateRoleInput,
-    me: User
+    me?: User
   ) {
     const roleWithRelations = await this.getRole(id, [
       "permissions",
       "members",
     ]);
-    if (!roleWithRelations?.permissions || !roleWithRelations.members) {
-      throw new UserInputError("Could not update role");
-    }
-
     const permissionsInputMap = permissions.reduce<Record<string, boolean>>(
       (result, { name, enabled }) => {
         result[name] = enabled;
@@ -174,8 +163,8 @@ export class RolesService {
   async createRoleMember(roleId: number, userId: number) {
     const user = await this.usersService.getUser({ id: userId });
     const role = await this.getRole(roleId, ["members"]);
-    if (!user || !role) {
-      throw new UserInputError("User or role not found");
+    if (!user) {
+      throw new UserInputError("User not found");
     }
     await this.roleRepository.save({
       ...role,
@@ -187,8 +176,8 @@ export class RolesService {
   async deleteRoleMember(id: number, userId: number, me: User) {
     const user = await this.usersService.getUser({ id: userId });
     const role = await this.getRole(id, ["members"]);
-    if (!user || !role) {
-      throw new UserInputError("User or role not found");
+    if (!user) {
+      throw new UserInputError("User not found");
     }
     role.members = role.members.filter((member) => member.id !== userId);
     await this.roleRepository.save(role);
