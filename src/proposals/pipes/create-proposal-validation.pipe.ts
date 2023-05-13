@@ -17,7 +17,8 @@ export class CreateProposalValidationPipe implements PipeTransform {
     if (!action) {
       throw new ValidationError("Proposals must include an action");
     }
-    const { actionType, groupCoverPhoto, groupDescription, groupName } = action;
+    const { actionType, groupCoverPhoto, groupDescription, groupName, role } =
+      action;
     if (actionType === ProposalActionType.ChangeName && !groupName) {
       throw new ValidationError(
         "Proposals to change group name must include a name field"
@@ -37,6 +38,15 @@ export class CreateProposalValidationPipe implements PipeTransform {
     ) {
       throw new ValidationError(
         "Proposals to change group cover photo must include an image"
+      );
+    }
+    if (
+      (actionType === ProposalActionType.CreateRole ||
+        actionType === ProposalActionType.ChangeRole) &&
+      !role
+    ) {
+      throw new ValidationError(
+        "Proposals to change or add group roles must include a role"
       );
     }
   }
