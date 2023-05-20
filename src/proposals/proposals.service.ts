@@ -172,20 +172,9 @@ export class ProposalsService {
 
   async implementProposal(proposalId: number) {
     const {
-      action: {
-        actionType,
-        groupCoverPhoto,
-        groupDescription,
-        groupName,
-        role,
-      },
+      action: { id, actionType, groupCoverPhoto, groupDescription, groupName },
       groupId,
-      // TODO: Determine whether relations should be fetched below instead
-    } = await this.getProposal(proposalId, [
-      "action.groupCoverPhoto",
-      "action.role.permissions",
-      "action.role.members",
-    ]);
+    } = await this.getProposal(proposalId, ["action.groupCoverPhoto"]);
 
     if (actionType === ProposalActionType.ChangeName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
@@ -213,6 +202,9 @@ export class ProposalsService {
     }
 
     if (actionType === ProposalActionType.CreateRole) {
+      const role = await this.proposalActionRolesService.getProposalActionRole(
+        id
+      );
       if (!role) {
         throw new UserInputError("Could not find proposal action role");
       }
@@ -238,6 +230,9 @@ export class ProposalsService {
     }
 
     if (actionType === ProposalActionType.ChangeRole) {
+      const role = await this.proposalActionRolesService.getProposalActionRole(
+        id
+      );
       if (!role?.roleId) {
         throw new UserInputError("Could not find proposal action role");
       }
