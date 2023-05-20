@@ -364,7 +364,7 @@ input ProposalActionInput {
 }
 
 input ProposalActionRoleInput {
-  id: Int
+  roleToUpdateId: Int
   name: String
   color: String
   members: [ProposalActionRoleMemberInput!]

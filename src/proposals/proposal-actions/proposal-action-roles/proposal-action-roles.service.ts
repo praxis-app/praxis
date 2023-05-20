@@ -44,11 +44,11 @@ export class ProposalActionRolesService {
 
   async createProposalActionRole(
     proposalActionId: number,
-    { id, ...role }: ProposalActionRoleInput
+    { roleToUpdateId, ...role }: ProposalActionRoleInput
   ) {
     await this.proposalActionRoleRepository.save({
       ...role,
-      roleId: id,
+      roleId: roleToUpdateId,
       proposalActionId,
     });
   }
