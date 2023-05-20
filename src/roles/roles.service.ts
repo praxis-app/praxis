@@ -112,7 +112,6 @@ export class RolesService {
     await this.roleRepository.save(roles);
   }
 
-  // TODO: Refactor to accept member with changeType instead of selectedUserIds
   async updateRole(
     {
       id,
