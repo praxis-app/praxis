@@ -122,7 +122,7 @@ export class ProposalsService {
   async updateProposal({
     id,
     images,
-    action: { groupCoverPhoto, role, ...action },
+    action: { groupCoverPhoto, ...action },
     ...data
   }: UpdateProposalInput) {
     const proposalWithAction = await this.getProposal(id, ["action"]);
@@ -135,9 +135,6 @@ export class ProposalsService {
       ...data,
       action: newAction,
     });
-
-    // TODO: Remove when no longer needed for testing
-    console.log(role);
 
     if (
       groupCoverPhoto &&
