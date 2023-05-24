@@ -24,9 +24,10 @@ export class ProposalActionRolesService {
     private proposalActionRoleMemberRepository: Repository<ProposalActionRoleMember>
   ) {}
 
-  async getProposalActionRole(proposalActionId: number) {
+  async getProposalActionRole(proposalActionId: number, relations?: string[]) {
     return this.proposalActionRoleRepository.findOne({
       where: { proposalActionId },
+      relations,
     });
   }
 
