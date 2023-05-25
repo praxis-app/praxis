@@ -29,14 +29,17 @@ import { UpdateGroupPayload } from "./models/update-group.payload";
 export class GroupsResolver {
   constructor(
     private groupsService: GroupsService,
-    private postsService: PostsService,
     private memberRequestsService: MemberRequestsService,
+    private postsService: PostsService,
     private rolesService: RolesService
   ) {}
 
   @Query(() => Group)
-  async group(@Args("name", { type: () => String }) name: string) {
-    return this.groupsService.getGroup({ name });
+  async group(
+    @Args("id", { type: () => Int, nullable: true }) id: number,
+    @Args("name", { type: () => String, nullable: true }) name: string
+  ) {
+    return this.groupsService.getGroup({ id, name });
   }
 
   @Query(() => [Group])

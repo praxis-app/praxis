@@ -7,11 +7,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Role } from "../../models/role.model";
+import { ProposalActionRole } from "./proposal-action-role.model";
 
 @Entity()
 @ObjectType()
-export class Permission {
+export class ProposalActionPermission {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
@@ -24,14 +24,14 @@ export class Permission {
   @Field()
   enabled: boolean;
 
-  @Field(() => Role)
-  @ManyToOne(() => Role, (role) => role.permissions, {
+  @Field(() => ProposalActionRole, { name: "role" })
+  @ManyToOne(() => ProposalActionRole, (role) => role.permissions, {
     onDelete: "CASCADE",
   })
-  role: Role;
+  proposalActionRole: ProposalActionRole;
 
   @Column()
-  roleId: number;
+  proposalActionRoleId: number;
 
   @CreateDateColumn()
   createdAt: Date;

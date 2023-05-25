@@ -8,11 +8,13 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
-import { DefaultGroupSettings } from "../groups/groups.constants";
+import { DefaultGroupSetting } from "../groups/groups.constants";
 import { GroupsService } from "../groups/groups.service";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { GroupPermission } from "../roles/permissions/permissions.constants";
+import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
 import { VotesService } from "../votes/votes.service";
@@ -20,12 +22,16 @@ import { sortConsensusVotesByType } from "../votes/votes.utils";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
 import { UpdateProposalInput } from "./models/update-proposal.input";
+import {
+  ProposalActionRolesService,
+  RoleMemberChangeType,
+} from "./proposal-actions/proposal-action-roles/proposal-action-roles.service";
 import { ProposalActionsService } from "./proposal-actions/proposal-actions.service";
 import {
   MIN_GROUP_SIZE_TO_RATIFY,
   MIN_VOTE_COUNT_TO_RATIFY,
-  ProposalActionTypes,
-  ProposalStages,
+  ProposalActionType,
+  ProposalStage,
 } from "./proposals.constants";
 
 @Injectable()
@@ -39,7 +45,9 @@ export class ProposalsService {
 
     private groupsService: GroupsService,
     private imagesService: ImagesService,
-    private proposalActionsService: ProposalActionsService
+    private proposalActionRolesService: ProposalActionRolesService,
+    private proposalActionsService: ProposalActionsService,
+    private rolesService: RolesService
   ) {}
 
   async getProposal(id: number, relations?: string[]) {
@@ -77,7 +85,7 @@ export class ProposalsService {
   async createProposal(
     {
       images,
-      action: { groupCoverPhoto, ...action },
+      action: { groupCoverPhoto, role, ...action },
       ...proposalData
     }: CreateProposalInput,
     user: User
@@ -96,6 +104,12 @@ export class ProposalsService {
           proposal.action.id,
           groupCoverPhoto,
           ImageTypes.CoverPhoto
+        );
+      }
+      if (role) {
+        await this.proposalActionRolesService.createProposalActionRole(
+          proposal.action.id,
+          role
         );
       }
     } catch (err) {
@@ -124,7 +138,7 @@ export class ProposalsService {
 
     if (
       groupCoverPhoto &&
-      proposal.action.actionType === ProposalActionTypes.ChangeCoverPhoto
+      proposal.action.actionType === ProposalActionType.ChangeCoverPhoto
     ) {
       await this.imagesService.deleteImage({
         proposalActionId: proposal.action.id,
@@ -151,23 +165,23 @@ export class ProposalsService {
 
   async ratifyProposal(proposalId: number) {
     await this.repository.update(proposalId, {
-      stage: ProposalStages.Ratified,
+      stage: ProposalStage.Ratified,
     });
     await this.implementProposal(proposalId);
   }
 
   async implementProposal(proposalId: number) {
     const {
-      action: { actionType, groupDescription, groupCoverPhoto, groupName },
+      action: { id, actionType, groupCoverPhoto, groupDescription, groupName },
       groupId,
     } = await this.getProposal(proposalId, ["action.groupCoverPhoto"]);
 
-    if (actionType === ProposalActionTypes.ChangeName) {
+    if (actionType === ProposalActionType.ChangeName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
       return;
     }
 
-    if (actionType === ProposalActionTypes.ChangeDescription) {
+    if (actionType === ProposalActionType.ChangeDescription) {
       await this.groupsService.updateGroup({
         description: groupDescription,
         id: groupId,
@@ -175,10 +189,7 @@ export class ProposalsService {
       return;
     }
 
-    if (
-      actionType === ProposalActionTypes.ChangeCoverPhoto &&
-      groupCoverPhoto
-    ) {
+    if (actionType === ProposalActionType.ChangeCoverPhoto && groupCoverPhoto) {
       const currentCoverPhoto = await this.imagesService.getImage({
         imageType: ImageTypes.CoverPhoto,
         groupId,
@@ -189,6 +200,80 @@ export class ProposalsService {
       await this.imagesService.updateImage(groupCoverPhoto.id, { groupId });
       await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
     }
+
+    if (actionType === ProposalActionType.CreateRole) {
+      const role = await this.proposalActionRolesService.getProposalActionRole(
+        id,
+        ["permissions", "members"]
+      );
+      if (!role) {
+        throw new UserInputError("Could not find proposal action role");
+      }
+      const permissions = Object.values(GroupPermission).map((name) => {
+        const proposedPermission = role.permissions?.find(
+          (p) => p.name === name
+        );
+        return { name, enabled: !!proposedPermission?.enabled };
+      });
+      const members = role.members?.map(({ userId }) => ({
+        id: userId,
+      }));
+      await this.rolesService.createRole(
+        {
+          name: role.name,
+          color: role.color,
+          groupId,
+          members,
+          permissions,
+        },
+        true
+      );
+    }
+
+    if (actionType === ProposalActionType.ChangeRole) {
+      const role = await this.proposalActionRolesService.getProposalActionRole(
+        id,
+        ["permissions", "members"]
+      );
+      if (!role?.roleId) {
+        throw new UserInputError("Could not find proposal action role");
+      }
+      const roleToUpdate = await this.rolesService.getRole(role.roleId, [
+        "permissions",
+        "members",
+      ]);
+
+      const userIdsToAdd = role.members
+        ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Add)
+        .map(({ userId }) => userId);
+
+      const userIdsToRemove = role.members
+        ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Remove)
+        .map(({ userId }) => userId);
+
+      await this.rolesService.updateRole({
+        id: roleToUpdate.id,
+        name: role.name,
+        color: role.color,
+        permissions: role.permissions,
+        selectedUserIds: userIdsToAdd,
+      });
+      if (userIdsToRemove?.length) {
+        await this.rolesService.deleteRoleMembers(
+          roleToUpdate.id,
+          userIdsToRemove
+        );
+      }
+      if (role.name || role.color) {
+        await this.proposalActionRolesService.updateProposalActionRole(
+          role.id,
+          {
+            oldName: role.name ? roleToUpdate.name : undefined,
+            oldColor: role.color ? roleToUpdate.color : undefined,
+          }
+        );
+      }
+    }
   }
 
   async isProposalRatifiable(proposalId: number) {
@@ -197,7 +282,7 @@ export class ProposalsService {
       "votes",
     ]);
     if (
-      proposal.stage !== ProposalStages.Voting ||
+      proposal.stage !== ProposalStage.Voting ||
       proposal.votes.length < MIN_VOTE_COUNT_TO_RATIFY ||
       proposal.group.members.length < MIN_GROUP_SIZE_TO_RATIFY
     ) {
@@ -210,7 +295,7 @@ export class ProposalsService {
     } = proposal;
 
     const ratificationThreshold =
-      DefaultGroupSettings.RatificationThreshold * 0.01;
+      DefaultGroupSetting.RatificationThreshold * 0.01;
 
     return this.hasConsensus(ratificationThreshold, members, votes);
   }
@@ -225,8 +310,8 @@ export class ProposalsService {
 
     return (
       agreements.length >= groupMembers.length * ratificationThreshold &&
-      reservations.length <= DefaultGroupSettings.ReservationsLimit &&
-      standAsides.length <= DefaultGroupSettings.StandAsidesLimit &&
+      reservations.length <= DefaultGroupSetting.ReservationsLimit &&
+      standAsides.length <= DefaultGroupSetting.StandAsidesLimit &&
       blocks.length === 0
     );
   }

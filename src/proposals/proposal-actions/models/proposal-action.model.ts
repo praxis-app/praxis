@@ -1,13 +1,3 @@
-/**
- * TODO: Add the following fields (pulled from Praxis) to ProposalAction model below:
- * groupEvent: EventMotionInput
- * groupRole: CreateRoleInput
- * groupRoleId: String
- * groupRolePermissions: [ProposedPermissionInput]
- * groupSettings: [SettingInput]
- * userId: String
- */
-
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import {
   Column,
@@ -20,6 +10,7 @@ import {
 } from "typeorm";
 import { Image } from "../../../images/models/image.model";
 import { Proposal } from "../../models/proposal.model";
+import { ProposalActionRole } from "../proposal-action-roles/models/proposal-action-role.model";
 
 @Entity()
 @ObjectType()
@@ -40,11 +31,22 @@ export class ProposalAction {
   @Field({ nullable: true })
   groupDescription?: string;
 
+  @Field(() => Image, { nullable: true })
   @OneToOne(() => Image, (image) => image.proposalAction, {
     cascade: true,
   })
-  @Field(() => Image, { nullable: true })
   groupCoverPhoto?: Image;
+
+  @Field(() => ProposalActionRole, { nullable: true })
+  @OneToOne(
+    () => ProposalActionRole,
+    (proposedRole) => proposedRole.proposalAction,
+    {
+      cascade: true,
+      nullable: true,
+    }
+  )
+  role?: ProposalActionRole;
 
   @Field(() => Proposal)
   @OneToOne(() => Proposal, (proposal) => proposal.action, {

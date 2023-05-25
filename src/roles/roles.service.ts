@@ -1,15 +1,22 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
-import { FindOptionsWhere, In, IsNull, Not, Repository } from "typeorm";
+import {
+  DeepPartial,
+  FindOptionsWhere,
+  In,
+  IsNull,
+  Not,
+  Repository,
+} from "typeorm";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 import { CreateRoleInput } from "./models/create-role.input";
 import { Role } from "./models/role.model";
 import { UpdateRoleInput } from "./models/update-role.input";
 import {
-  GroupPermissions,
-  ServerPermissions,
+  GroupPermission,
+  ServerPermission,
 } from "./permissions/permissions.constants";
 import { initPermissions } from "./permissions/permissions.utils";
 import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from "./roles.constants";
@@ -27,7 +34,7 @@ export class RolesService {
   ) {}
 
   async getRole(id: number, relations?: string[]) {
-    return this.roleRepository.findOne({ where: { id }, relations });
+    return this.roleRepository.findOneOrFail({ where: { id }, relations });
   }
 
   async getRoles(where?: FindOptionsWhere<Role>) {
@@ -39,19 +46,12 @@ export class RolesService {
   }
 
   async getRoleMembers(roleId: number) {
-    const role = await this.getRole(roleId, ["members"]);
-    if (!role) {
-      throw new UserInputError("Role not found");
-    }
-    return role.members;
+    const { members } = await this.getRole(roleId, ["members"]);
+    return members;
   }
 
   async getAvailableUsersToAdd(id: number) {
     const role = await this.getRole(id, ["members", "group.members"]);
-    if (!role?.members) {
-      return [];
-    }
-
     const userIds = role.members.map(({ id }) => id);
 
     if (role.group) {
@@ -85,7 +85,7 @@ export class RolesService {
 
   async initAdminRole(userId: number, groupId?: number) {
     const permissions = initPermissions(
-      groupId ? GroupPermissions : ServerPermissions,
+      groupId ? GroupPermission : ServerPermission,
       true
     );
     await this.roleRepository.save({
@@ -97,12 +97,19 @@ export class RolesService {
     });
   }
 
-  async createRole(roleData: CreateRoleInput) {
+  async createRole(roleData: DeepPartial<Role>, fromProposalAction = false) {
+    if (fromProposalAction) {
+      return this.roleRepository.save(roleData);
+    }
     const permissions = initPermissions(
-      roleData.groupId ? GroupPermissions : ServerPermissions
+      roleData.groupId ? GroupPermission : ServerPermission
     );
     const role = await this.roleRepository.save({ ...roleData, permissions });
     return { role };
+  }
+
+  async createRoles(roles: CreateRoleInput[]) {
+    await this.roleRepository.save(roles);
   }
 
   async updateRole(
@@ -112,25 +119,21 @@ export class RolesService {
       permissions = [],
       ...roleData
     }: UpdateRoleInput,
-    me: User
+    me?: User
   ) {
     const roleWithRelations = await this.getRole(id, [
       "permissions",
       "members",
     ]);
-    if (!roleWithRelations?.permissions || !roleWithRelations.members) {
-      throw new UserInputError("Could not update role");
-    }
-
-    const permissionsInputMap = permissions.reduce<Record<number, boolean>>(
-      (result, { id, enabled }) => {
-        result[id] = enabled;
+    const permissionsInputMap = permissions.reduce<Record<string, boolean>>(
+      (result, { name, enabled }) => {
+        result[name] = enabled;
         return result;
       },
       {}
     );
     const newPermissions = roleWithRelations.permissions.map((permission) => {
-      const enabled = permissionsInputMap[permission.id];
+      const enabled = permissionsInputMap[permission.name];
       if (enabled === undefined) {
         return permission;
       }
@@ -160,8 +163,8 @@ export class RolesService {
   async createRoleMember(roleId: number, userId: number) {
     const user = await this.usersService.getUser({ id: userId });
     const role = await this.getRole(roleId, ["members"]);
-    if (!user || !role) {
-      throw new UserInputError("User or role not found");
+    if (!user) {
+      throw new UserInputError("User not found");
     }
     await this.roleRepository.save({
       ...role,
@@ -171,14 +174,19 @@ export class RolesService {
   }
 
   async deleteRoleMember(id: number, userId: number, me: User) {
-    const user = await this.usersService.getUser({ id: userId });
     const role = await this.getRole(id, ["members"]);
-    if (!user || !role) {
-      throw new UserInputError("User or role not found");
-    }
     role.members = role.members.filter((member) => member.id !== userId);
     await this.roleRepository.save(role);
 
     return { role, me };
+  }
+
+  async deleteRoleMembers(id: number, userIds: number[]) {
+    const role = await this.getRole(id, ["members"]);
+
+    role.members = role.members.filter(
+      (member) => !userIds.some((id) => member.id === id)
+    );
+    await this.roleRepository.save(role);
   }
 }

@@ -10,7 +10,7 @@ import { getClaims, getSub } from "./auth/auth.utils";
 import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
 import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
 import shieldPermissions from "./auth/shield/shield.permissions";
-import { Environments } from "./common/common.constants";
+import { Environment } from "./common/common.constants";
 import { Context, ContextServices } from "./common/common.types";
 import { DatabaseModule } from "./database/database.module";
 import { DataloaderModule } from "./dataloader/dataloader.module";
@@ -100,8 +100,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
       },
       autoSchemaFile: true,
       cors: { origin: true, credentials: true },
-      csrfPrevention:
-        configService.get("NODE_ENV") !== Environments.Development,
+      csrfPrevention: configService.get("NODE_ENV") !== Environment.Development,
       resolvers: { Upload: GraphQLUpload },
     };
   },

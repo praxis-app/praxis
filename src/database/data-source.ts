@@ -8,6 +8,9 @@ import { Like } from "../likes/models/like.model";
 import { Post } from "../posts/models/post.model";
 import { Proposal } from "../proposals/models/proposal.model";
 import { ProposalAction } from "../proposals/proposal-actions/models/proposal-action.model";
+import { ProposalActionPermission } from "../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model";
+import { ProposalActionRoleMember } from "../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
+import { ProposalActionRole } from "../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
 import { Role } from "../roles/models/role.model";
 import { Permission } from "../roles/permissions/models/permission.model";
 import { ServerInvite } from "../server-invites/models/server-invite.model";
@@ -21,6 +24,7 @@ import { AddGroupMemberLinkTable1681010227367 } from "./migrations/1681010227367
 import { DropGroupMemberEntityTable1681010509841 } from "./migrations/1681010509841-DropGroupMemberEntityTable";
 import { AddRoleMemberLinkTable1681172948650 } from "./migrations/1681172948650-AddRoleMemberLinkTable";
 import { DropRoleMemberEntityTable1681173025669 } from "./migrations/1681173025669-DropRoleMemberEntityTable";
+import { AddProposalActionRoleTable1684893300206 } from "./migrations/1684893300206-AddProposalActionRoleTable";
 
 config();
 
@@ -40,6 +44,9 @@ export default new DataSource({
     Post,
     Proposal,
     ProposalAction,
+    ProposalActionPermission,
+    ProposalActionRole,
+    ProposalActionRoleMember,
     RefreshToken,
     Role,
     ServerInvite,
@@ -50,6 +57,7 @@ export default new DataSource({
     AddFollowTable1679778147216,
     AddGroupMemberLinkTable1681010227367,
     AddLikeTable1679157357262,
+    AddProposalActionRoleTable1684893300206,
     AddRoleMemberLinkTable1681172948650,
     AddServerInviteTable1677339785709,
     DropGroupMemberEntityTable1681010509841,

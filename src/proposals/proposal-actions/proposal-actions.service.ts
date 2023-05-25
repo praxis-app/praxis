@@ -10,7 +10,8 @@ import { ProposalAction } from "./models/proposal-action.model";
 export class ProposalActionsService {
   constructor(
     @InjectRepository(ProposalAction)
-    private repository: Repository<ProposalAction>,
+    private proposalActionRepository: Repository<ProposalAction>,
+
     private imagesService: ImagesService
   ) {}
 
@@ -18,11 +19,11 @@ export class ProposalActionsService {
     where: FindOptionsWhere<ProposalAction>,
     relations?: string[]
   ) {
-    return this.repository.findOne({ where, relations });
+    return this.proposalActionRepository.findOne({ where, relations });
   }
 
   async getProposalActions(where?: FindOptionsWhere<ProposalAction>) {
-    return this.repository.find({ where });
+    return this.proposalActionRepository.find({ where });
   }
 
   async getProposedGroupCoverPhoto(proposalActionId: number) {

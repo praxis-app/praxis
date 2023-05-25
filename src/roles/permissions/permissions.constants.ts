@@ -1,4 +1,4 @@
-export enum ServerPermissions {
+export enum ServerPermission {
   BanMembers = "ban-members",
   CreateInvites = "create-invites",
   ManageComments = "manage-comments",
@@ -8,7 +8,7 @@ export enum ServerPermissions {
   ManageRoles = "manage-roles",
 }
 
-export enum GroupPermissions {
+export enum GroupPermission {
   ApproveMemberRequests = "approve-group-member-requests",
   BanMembers = "ban-group-members",
   CreateEvents = "create-group-events",

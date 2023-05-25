@@ -12,12 +12,60 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Permission {
+  id: Int!
+  name: String!
+  enabled: Boolean!
+  role: Role!
+}
+
+type Role {
+  id: Int!
+  name: String!
+  color: String!
+  permissions: [Permission!]!
+  members: [User!]!
+  group: Group
+  proposalActionRoles: [ProposalActionRole!]!
+  memberCount: Int!
+  availableUsersToAdd: [User!]!
+}
+
+type ProposalActionPermission {
+  id: Int!
+  name: String!
+  enabled: Boolean!
+  role: ProposalActionRole!
+}
+
+type ProposalActionRoleMember {
+  id: Int!
+  changeType: String!
+  user: User!
+  role: ProposalActionRole!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ProposalActionRole {
+  id: Int!
+  name: String
+  color: String
+  oldName: String
+  oldColor: String
+  permissions: [ProposalActionPermission!]
+  members: [ProposalActionRoleMember!]
+  proposalAction: ProposalAction!
+  role: Role
+}
+
 type ProposalAction {
   id: Int!
   actionType: String!
   groupName: String
   groupDescription: String
   groupCoverPhoto: Image
+  role: ProposalActionRole
   proposal: Proposal!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -48,24 +96,6 @@ type Image {
   proposalAction: ProposalAction!
   createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-type Permission {
-  id: Int!
-  name: String!
-  enabled: Boolean!
-  role: Role!
-}
-
-type Role {
-  id: Int!
-  name: String!
-  color: String!
-  permissions: [Permission!]!
-  members: [User!]!
-  group: Group
-  memberCount: Int!
-  availableUsersToAdd: [User!]!
 }
 
 type MemberRequest {
@@ -132,12 +162,12 @@ type User {
   coverPhoto: Image
   followers: [User!]!
   following: [User!]!
-  joinedGroups: [Group!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
+  joinedGroups: [Group!]!
   serverPermissions: [String!]!
 }
 
@@ -232,7 +262,7 @@ type UpdateProposalPayload {
 }
 
 type Query {
-  group(name: String!): Group!
+  group(id: Int, name: String): Group!
   groups: [Group!]!
   memberRequest(groupId: Int!): MemberRequest
   post(id: Int!): Post!
@@ -244,6 +274,7 @@ type Query {
   me: User!
   user(id: Int, name: String): User!
   users: [User!]!
+  usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
   vote(id: Int!): Vote!
   votes: [Vote!]!
@@ -326,9 +357,28 @@ input CreateProposalInput {
 
 input ProposalActionInput {
   actionType: String!
+  role: ProposalActionRoleInput
   groupName: String
   groupDescription: String
   groupCoverPhoto: Upload
+}
+
+input ProposalActionRoleInput {
+  roleToUpdateId: Int
+  name: String
+  color: String
+  members: [ProposalActionRoleMemberInput!]
+  permissions: [PermissionInput!]
+}
+
+input ProposalActionRoleMemberInput {
+  userId: Int!
+  changeType: String!
+}
+
+input PermissionInput {
+  name: String!
+  enabled: Boolean!
 }
 
 input UpdateProposalInput {
@@ -350,11 +400,6 @@ input UpdateRoleInput {
   color: String
   selectedUserIds: [Int!]
   permissions: [PermissionInput!]
-}
-
-input PermissionInput {
-  id: Int!
-  enabled: Boolean!
 }
 
 input DeleteRoleMemberInput {
