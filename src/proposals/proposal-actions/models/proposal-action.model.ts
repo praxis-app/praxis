@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -32,10 +33,10 @@ export class ProposalAction {
   groupDescription?: string;
 
   @Field(() => Image, { nullable: true })
-  @OneToOne(() => Image, (image) => image.proposalAction, {
-    cascade: true,
-  })
   groupCoverPhoto?: Image;
+
+  @OneToMany(() => Image, (image) => image.proposalAction)
+  images: Image[];
 
   @Field(() => ProposalActionRole, { nullable: true })
   @OneToOne(

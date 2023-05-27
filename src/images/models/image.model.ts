@@ -3,9 +3,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -67,14 +65,9 @@ export class Image {
   proposalId: number;
 
   @Field(() => ProposalAction)
-  @OneToOne(
-    () => ProposalAction,
-    (proposalAction) => proposalAction.groupCoverPhoto,
-    {
-      onDelete: "CASCADE",
-    }
-  )
-  @JoinColumn()
+  @ManyToOne(() => ProposalAction, (proposalAction) => proposalAction.images, {
+    onDelete: "CASCADE",
+  })
   proposalAction: ProposalAction;
 
   @Column({ nullable: true })

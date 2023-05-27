@@ -1,5 +1,6 @@
 import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
 import { ValidationError } from "apollo-server-express";
+import { ImageTypes } from "../../images/images.service";
 import { VotesService } from "../../votes/votes.service";
 import { UpdateProposalInput } from "../models/update-proposal.input";
 import { ProposalActionType } from "../proposals.constants";
@@ -42,9 +43,12 @@ export class UpdateProposalValidationPipe implements PipeTransform {
       !groupCoverPhoto
     ) {
       const proposal = await this.proposalsService.getProposal(id, [
-        "action.groupCoverPhoto",
+        "action.images",
       ]);
-      if (proposal.action.groupCoverPhoto) {
+      const alreadyExisting = proposal.images.some(
+        (image) => image.imageType === ImageTypes.CoverPhoto
+      );
+      if (alreadyExisting) {
         return;
       }
       throw new ValidationError(
