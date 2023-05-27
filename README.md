@@ -23,6 +23,8 @@ Core features currently in development:
 
 ## Installation
 
+Ensure that you're using Node v16.13.0 before installing.
+
 ```bash
 # Install Yarn globally
 $ npm install -g yarn
