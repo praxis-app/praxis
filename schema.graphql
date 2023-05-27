@@ -245,6 +245,14 @@ type CreateMemberRequestPayload {
   memberRequest: MemberRequest!
 }
 
+type GroupConfig {
+  id: Int!
+  privacy: String!
+  group: Group!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type CreateVotePayload {
   vote: Vote!
 }
@@ -276,6 +284,7 @@ type Query {
   users: [User!]!
   usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
+  groupConfig(id: Int!): GroupConfig!
   vote(id: Int!): Vote!
   votes: [Vote!]!
   authCheck: Boolean!

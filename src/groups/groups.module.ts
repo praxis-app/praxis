@@ -8,6 +8,7 @@ import { GroupsResolver } from "./groups.resolver";
 import { GroupsService } from "./groups.service";
 import { MemberRequestsModule } from "./member-requests/member-requests.module";
 import { Group } from "./models/group.model";
+import { GroupConfigsModule } from "./group-configs/group-configs.module";
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { Group } from "./models/group.model";
     PostsModule,
     RolesModule,
     UsersModule,
+    GroupConfigsModule,
   ],
   providers: [GroupsService, GroupsResolver],
   exports: [GroupsService, TypeOrmModule],
