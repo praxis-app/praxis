@@ -55,7 +55,7 @@ Open [http://localhost:3100/api](http://localhost:3100/api) with your browser to
 
 ## Make and Docker
 
-Ensure that you have both Make and Docker installed to use the following commands.
+Ensure that you have [Make](https://www.gnu.org/software/make) and [Docker](https://docs.docker.com/engine/install) installed to use the following commands.
 
 ```bash
 # Build the app
