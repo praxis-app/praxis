@@ -51,14 +51,19 @@ $ yarn start:prod
 
 Open [http://localhost:3100/api](http://localhost:3100/api) with your browser to view and interact with the API.
 
-## Docker
+## Make and Docker
+
+Ensure that you have both Make and Docker installed to use the following commands.
 
 ```bash
-# Build and start containers
-$ docker-compose up
+# Build the app
+$ make build-dev
+
+# Start the app
+$ make start-dev
 ```
 
-## Test
+## Testing
 
 ```bash
 # Unit tests
