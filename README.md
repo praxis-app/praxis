@@ -36,6 +36,8 @@ $ cd praxis-api && yarn
 $ cp .env.example .env
 ```
 
+Instructions for setting up the UI are located here: https://github.com/praxis-app/praxis-ui#installation
+
 ## Running the app
 
 ```bash
@@ -50,8 +52,6 @@ $ yarn start:prod
 ```
 
 Open [http://localhost:3100/api](http://localhost:3100/api) with your browser to view and interact with the API.
-
-Instructions for setting up the UI are located here: https://github.com/praxis-app/praxis-ui#installation
 
 ## Make and Docker
 
