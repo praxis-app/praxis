@@ -13,10 +13,4 @@ export class GroupConfigsService {
   async getGroupConfig(where: FindOptionsWhere<GroupConfig>) {
     return this.repository.findOneOrFail({ where });
   }
-
-  async test() {
-    const test = await this.getGroupConfig({ id: 1 });
-
-    return test.privacy === "";
-  }
 }

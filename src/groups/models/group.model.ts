@@ -8,6 +8,7 @@ import {
   JoinTable,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -17,6 +18,7 @@ import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
 import { Role } from "../../roles/models/role.model";
 import { User } from "../../users/models/user.model";
+import { GroupConfig } from "../group-configs/models/group-config.model";
 import { MemberRequest } from "../member-requests/models/member-request.model";
 
 @Entity()
@@ -43,6 +45,12 @@ export class Group {
   })
   posts: Post[];
 
+  @Field(() => [Proposal])
+  @OneToMany(() => Proposal, (proposal) => proposal.group, {
+    cascade: true,
+  })
+  proposals: Proposal[];
+
   @OneToMany(() => Image, (image) => image.group, {
     cascade: true,
   })
@@ -65,11 +73,11 @@ export class Group {
   })
   roles: Role[];
 
-  @Field(() => [Proposal])
-  @OneToMany(() => Proposal, (proposal) => proposal.group, {
+  @OneToOne(() => GroupConfig, (groupConfig) => groupConfig.group, {
     cascade: true,
   })
-  proposals: Proposal[];
+  @Field(() => GroupConfig, { name: "settings" })
+  config: GroupConfig;
 
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;

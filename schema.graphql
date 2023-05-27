@@ -98,6 +98,14 @@ type Image {
   updatedAt: DateTime!
 }
 
+type GroupConfig {
+  id: Int!
+  privacy: String!
+  group: Group!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type MemberRequest {
   id: Int!
   user: User!
@@ -112,10 +120,11 @@ type Group {
   description: String!
   feed: [FeedItem!]!
   posts: [Post!]!
+  proposals: [Proposal!]!
   members: [User!]!
   memberRequests: [MemberRequest!]
   roles: [Role!]!
-  proposals: [Proposal!]!
+  settings: GroupConfig!
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -243,14 +252,6 @@ type ApproveMemberRequestPayload {
 
 type CreateMemberRequestPayload {
   memberRequest: MemberRequest!
-}
-
-type GroupConfig {
-  id: Int!
-  privacy: String!
-  group: Group!
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type CreateVotePayload {

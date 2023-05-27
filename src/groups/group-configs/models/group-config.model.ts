@@ -3,7 +3,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -25,8 +26,11 @@ export class GroupConfig {
   @Field()
   privacy: string;
 
-  @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
   @Field(() => Group)
+  @OneToOne(() => Group, (group) => group.config, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn()
   group: Group;
 
   @Column()
