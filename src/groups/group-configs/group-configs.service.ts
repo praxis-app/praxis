@@ -13,4 +13,13 @@ export class GroupConfigsService {
   async getGroupConfig(where: FindOptionsWhere<GroupConfig>) {
     return this.repository.findOneOrFail({ where });
   }
+
+  async createGroupConfig(groupConfigData: Partial<GroupConfig>) {
+    return this.repository.save(groupConfigData);
+  }
+
+  // TODO: Determine whether this method is needed
+  async initGroupConfig(groupId: number) {
+    return this.createGroupConfig({ groupId });
+  }
 }

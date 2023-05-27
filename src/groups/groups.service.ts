@@ -11,6 +11,7 @@ import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { RolesService } from "../roles/roles.service";
 import { UsersService } from "../users/users.service";
+import { GroupConfigsService } from "./group-configs/group-configs.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { CreateGroupInput } from "./models/create-group.input";
 import { Group } from "./models/group.model";
@@ -27,6 +28,7 @@ export class GroupsService {
     @Inject(forwardRef(() => MemberRequestsService))
     private memberRequestsService: MemberRequestsService,
 
+    private groupConfigsService: GroupConfigsService,
     private imagesService: ImagesService,
     private rolesService: RolesService,
     private usersService: UsersService
@@ -153,6 +155,7 @@ export class GroupsService {
     } else {
       await this.saveDefaultCoverPhoto(group.id);
     }
+    await this.groupConfigsService.initGroupConfig(group.id);
     await this.rolesService.initAdminRole(userId, group.id);
 
     return { group };
