@@ -23,6 +23,8 @@ Core features currently in development:
 
 ## Installation
 
+Ensure that you're using Node v16.13.0 before proceeding.
+
 ```bash
 # Install Yarn globally
 $ npm install -g yarn
@@ -33,6 +35,8 @@ $ cd praxis-api && yarn
 # Add .env file and edit as needed
 $ cp .env.example .env
 ```
+
+Instructions for setting up the UI are located here: https://github.com/praxis-app/praxis-ui#installation
 
 ## Running the app
 
@@ -49,14 +53,19 @@ $ yarn start:prod
 
 Open [http://localhost:3100/api](http://localhost:3100/api) with your browser to view and interact with the API.
 
-## Docker
+## Make and Docker
+
+Ensure that you have [Make](https://www.gnu.org/software/make) and [Docker](https://docs.docker.com/engine/install) installed to use the following commands.
 
 ```bash
-# Build and start containers
-$ docker-compose up
+# Build the app
+$ make build-dev
+
+# Start the app
+$ make start-dev
 ```
 
-## Test
+## Testing
 
 ```bash
 # Unit tests
