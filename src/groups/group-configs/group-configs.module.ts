@@ -7,5 +7,6 @@ import { GroupConfig } from "./models/group-config.model";
 @Module({
   imports: [TypeOrmModule.forFeature([GroupConfig])],
   providers: [GroupConfigsService, GroupConfigsResolver],
+  exports: [GroupConfigsService],
 })
 export class GroupConfigsModule {}
