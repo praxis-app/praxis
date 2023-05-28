@@ -102,7 +102,7 @@ export class GroupsResolver {
     return loaders.memberRequestCountLoader.load(id);
   }
 
-  @ResolveField(() => Boolean)
+  @ResolveField(() => Boolean, { nullable: true })
   async isJoinedByMe(
     @Context() { loaders }: { loaders: Dataloaders },
     @CurrentUser() currentUser: User,
