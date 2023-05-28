@@ -13,12 +13,12 @@ import { GroupConfigsModule } from "./group-configs/group-configs.module";
 @Module({
   imports: [
     TypeOrmModule.forFeature([Group]),
+    forwardRef(() => GroupConfigsModule),
     forwardRef(() => MemberRequestsModule),
     ImagesModule,
     PostsModule,
     RolesModule,
     UsersModule,
-    GroupConfigsModule,
   ],
   providers: [GroupsService, GroupsResolver],
   exports: [GroupsService, TypeOrmModule],
