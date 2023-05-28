@@ -9,9 +9,12 @@ import { MyGroupsKey } from "../dataloader/dataloader.types";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { Post } from "../posts/models/post.model";
+import { Proposal } from "../proposals/models/proposal.model";
 import { RolesService } from "../roles/roles.service";
 import { UsersService } from "../users/users.service";
 import { GroupConfigsService } from "./group-configs/group-configs.service";
+import { GroupPrivacy } from "./group-configs/models/group-config.model";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { CreateGroupInput } from "./models/create-group.input";
 import { Group } from "./models/group.model";
@@ -54,6 +57,26 @@ export class GroupsService {
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
     );
 
+    // TODO: Update once pagination has been implemented
+    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+  }
+
+  async getPublicGroupsFeed() {
+    const publicGroups = await this.getGroups(
+      { config: { privacy: GroupPrivacy.Public } },
+      ["posts", "proposals"]
+    );
+    const [posts, proposals] = publicGroups.reduce<[Post[], Proposal[]]>(
+      (result, { posts, proposals }) => {
+        result[1].push(...proposals);
+        result[0].push(...posts);
+        return result;
+      },
+      [[], []]
+    );
+    const sortedFeed = [...posts, ...proposals].sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+    );
     // TODO: Update once pagination has been implemented
     return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
   }

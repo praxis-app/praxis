@@ -273,6 +273,7 @@ type UpdateProposalPayload {
 type Query {
   group(id: Int, name: String): Group!
   groups: [Group!]!
+  publicGroupsFeed: [FeedItem!]!
   memberRequest(groupId: Int!): MemberRequest
   post(id: Int!): Post!
   posts: [Post!]!

@@ -27,6 +27,7 @@ const shieldPermissions = shield(
       serverInvites: or(canCreateInvites, canManageInvites),
       serverRoles: canManageServerRoles,
       role: or(canManageServerRoles, canManageGroupRoles),
+      publicGroupsFeed: allow,
 
       // TODO: Remove when no longer needed for testing
       groups: allow,

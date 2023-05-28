@@ -50,6 +50,11 @@ export class GroupsResolver {
     return this.groupsService.getGroups();
   }
 
+  @Query(() => [FeedItem])
+  async publicGroupsFeed() {
+    return this.groupsService.getPublicGroupsFeed();
+  }
+
   @ResolveField(() => [Post])
   async posts(@Parent() { id }: Group) {
     return this.postsService.getPosts({ groupId: id });
