@@ -1,6 +1,7 @@
 import { rule } from "graphql-shield";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../common/common.types";
+import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
 import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateRoleInput } from "../../roles/models/create-role.input";
@@ -157,6 +158,16 @@ export const isOwnPost = rule()(
       return UNAUTHORIZED;
     }
     return usersService.isUsersPost(args.id, user.id);
+  }
+);
+
+export const isPublicGroup = rule()(
+  async (_parent, args, { services: { groupsService } }: Context) => {
+    const group = await groupsService.getGroup(
+      { id: args.id, name: args.name },
+      ["config"]
+    );
+    return group.config.privacy === GroupPrivacy.Public;
   }
 );
 

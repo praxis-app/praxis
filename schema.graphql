@@ -281,7 +281,7 @@ type Query {
   proposals: [Proposal!]!
   role(id: Int!): Role!
   serverRoles: [Role!]!
-  me: User!
+  me: User
   user(id: Int, name: String): User!
   users: [User!]!
   usersByIds(ids: [Int!]!): [User!]!

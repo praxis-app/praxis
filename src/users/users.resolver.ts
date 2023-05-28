@@ -29,7 +29,7 @@ export class UsersResolver {
     private usersService: UsersService
   ) {}
 
-  @Query(() => User)
+  @Query(() => User, { nullable: true })
   me(@CurrentUser() { id }: User) {
     return this.usersService.getUser({ id });
   }
