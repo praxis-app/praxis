@@ -53,7 +53,7 @@ export class PostsResolver {
     return loaders.postLikeCountLoader.load(id);
   }
 
-  @ResolveField(() => Boolean)
+  @ResolveField(() => Boolean, { nullable: true })
   async isLikedByMe(
     @Context() { loaders }: { loaders: Dataloaders },
     @CurrentUser() user: User,
