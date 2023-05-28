@@ -119,7 +119,7 @@ export class GroupsResolver {
     return this.rolesService.getRoles({ groupId: id });
   }
 
-  @ResolveField(() => [String])
+  @ResolveField(() => [String], { nullable: true })
   async myPermissions(
     @Context() { loaders }: { loaders: Dataloaders },
     @CurrentUser() currentUser: User,

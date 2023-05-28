@@ -131,7 +131,7 @@ type Group {
   memberCount: Int!
   memberRequestCount: Int
   isJoinedByMe: Boolean!
-  myPermissions: [String!]!
+  myPermissions: [String!]
 }
 
 union FeedItem = Post | Proposal
