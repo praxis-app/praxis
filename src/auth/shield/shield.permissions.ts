@@ -30,6 +30,7 @@ const shieldPermissions = shield(
       role: or(canManageServerRoles, canManageGroupRoles),
       group: or(isAuthenticated, isPublicGroup),
       publicGroupsFeed: allow,
+      publicGroups: allow,
 
       // TODO: Remove when no longer needed for testing
       groups: allow,

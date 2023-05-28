@@ -17,7 +17,10 @@ import { Role } from "../roles/models/role.model";
 import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
 import { GroupConfigsService } from "./group-configs/group-configs.service";
-import { GroupConfig } from "./group-configs/models/group-config.model";
+import {
+  GroupConfig,
+  GroupPrivacy,
+} from "./group-configs/models/group-config.model";
 import { GroupsService } from "./groups.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { MemberRequest } from "./member-requests/models/member-request.model";
@@ -48,6 +51,13 @@ export class GroupsResolver {
   @Query(() => [Group])
   async groups() {
     return this.groupsService.getGroups();
+  }
+
+  @Query(() => [Group])
+  async publicGroups() {
+    return this.groupsService.getGroups({
+      config: { privacy: GroupPrivacy.Public },
+    });
   }
 
   @Query(() => [FeedItem])
