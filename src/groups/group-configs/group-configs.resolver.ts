@@ -1,10 +1,8 @@
 import {
   Args,
   Context,
-  Int,
   Mutation,
   Parent,
-  Query,
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
@@ -18,12 +16,6 @@ import { UpdateGroupConfigInput } from "./models/update-group-config.input";
 @Resolver(() => GroupConfig)
 export class GroupConfigsResolver {
   constructor(private groupConfigsService: GroupConfigsService) {}
-
-  // TODO: Remove when no longer needed for testing
-  @Query(() => GroupConfig)
-  async groupConfig(@Args("id", { type: () => Int }) id: number) {
-    return this.groupConfigsService.getGroupConfig({ id });
-  }
 
   @ResolveField(() => Group)
   async group(
