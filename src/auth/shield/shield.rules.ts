@@ -171,6 +171,25 @@ export const isPublicGroup = rule()(
   }
 );
 
+export const isPublicGroupPost = rule()(
+  async (_parent, args, { services: { postsService } }: Context) => {
+    const post = await postsService.getPost(args.id, ["group.config"]);
+    if (!post.group) {
+      return false;
+    }
+    return post.group.config.privacy === GroupPrivacy.Public;
+  }
+);
+
+export const isPublicGroupProposal = rule()(
+  async (_parent, args, { services: { proposalsService } }: Context) => {
+    const proposal = await proposalsService.getProposal(args.id, [
+      "group.config",
+    ]);
+    return proposal.group.config.privacy === GroupPrivacy.Public;
+  }
+);
+
 export const isProposalGroupJoinedByMe = rule()(
   async (
     _parent,

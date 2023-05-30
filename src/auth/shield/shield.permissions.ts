@@ -16,6 +16,8 @@ import {
   isOwnPost,
   isProposalGroupJoinedByMe,
   isPublicGroup,
+  isPublicGroupPost,
+  isPublicGroupProposal,
 } from "./shield.rules";
 
 const shieldPermissions = shield(
@@ -29,6 +31,8 @@ const shieldPermissions = shield(
       serverRoles: canManageServerRoles,
       role: or(canManageServerRoles, canManageGroupRoles),
       group: or(isAuthenticated, isPublicGroup),
+      post: or(isAuthenticated, isPublicGroupPost),
+      proposal: or(isAuthenticated, isPublicGroupProposal),
       publicGroupsFeed: allow,
       publicGroups: allow,
 
