@@ -35,9 +35,6 @@ const shieldPermissions = shield(
       proposal: or(isAuthenticated, isPublicGroupProposal),
       publicGroupsFeed: allow,
       publicGroups: allow,
-
-      // TODO: Remove when no longer needed for testing
-      groups: allow,
     },
     Mutation: {
       "*": isAuthenticated,
