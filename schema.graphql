@@ -100,10 +100,10 @@ type Image {
 
 type GroupConfig {
   id: Int!
-  privacy: String!
   group: Group!
   createdAt: DateTime!
   updatedAt: DateTime!
+  isPublic: Boolean!
 }
 
 type MemberRequest {
@@ -287,7 +287,6 @@ type Query {
   users: [User!]!
   usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
-  groupConfig(id: Int!): GroupConfig!
   vote(id: Int!): Vote!
   votes: [Vote!]!
   authCheck: Boolean!

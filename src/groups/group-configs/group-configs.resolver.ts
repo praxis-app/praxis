@@ -25,6 +25,11 @@ export class GroupConfigsResolver {
     return loaders.groupsLoader.load(groupId);
   }
 
+  @ResolveField(() => Boolean)
+  async isPublic(@Parent() { id }: GroupConfig) {
+    return this.groupConfigsService.getIsPublic(id);
+  }
+
   @Mutation(() => UpdateGroupPayload)
   async updateGroupConfig(
     @Args("groupConfigData") groupConfigData: UpdateGroupConfigInput
