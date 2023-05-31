@@ -124,7 +124,6 @@ type Group {
   members: [User!]!
   memberRequests: [MemberRequest!]
   roles: [Role!]!
-  settings: GroupConfig!
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -132,6 +131,7 @@ type Group {
   memberRequestCount: Int
   isJoinedByMe: Boolean
   myPermissions: [String!]
+  settings: GroupConfig!
 }
 
 union FeedItem = Post | Proposal

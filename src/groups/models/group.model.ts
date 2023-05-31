@@ -76,7 +76,6 @@ export class Group {
   @OneToOne(() => GroupConfig, (groupConfig) => groupConfig.group, {
     cascade: true,
   })
-  @Field(() => GroupConfig, { name: "settings" })
   config: GroupConfig;
 
   @Field(() => Image, { nullable: true })
