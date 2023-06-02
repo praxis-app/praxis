@@ -28,6 +28,7 @@ import { DropRoleMemberEntityTable1681173025669 } from "./migrations/16811730256
 import { AddProposalActionRoleTable1684893300206 } from "./migrations/1684893300206-AddProposalActionRoleTable";
 import { AddProposalActionImagesConstraint1685201083917 } from "./migrations/1685201083917-AddProposalActionImagesConstraint";
 import { AddGroupConfigTable1685746618239 } from "./migrations/1685746618239-AddGroupConfigTable";
+import { AddProposalActionRoleCascadeDelete1685748700121 } from "./migrations/1685748700121-AddProposalActionRoleCascadeDelete";
 
 config();
 
@@ -63,6 +64,7 @@ export default new DataSource({
     AddGroupMemberLinkTable1681010227367,
     AddLikeTable1679157357262,
     AddProposalActionImagesConstraint1685201083917,
+    AddProposalActionRoleCascadeDelete1685748700121,
     AddProposalActionRoleTable1684893300206,
     AddRoleMemberLinkTable1681172948650,
     AddServerInviteTable1677339785709,

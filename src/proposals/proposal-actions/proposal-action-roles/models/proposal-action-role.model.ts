@@ -71,7 +71,10 @@ export class ProposalActionRole {
   proposalActionId: number;
 
   @Field(() => Role, { nullable: true })
-  @ManyToOne(() => Role, (role) => role.proposalActionRoles, { nullable: true })
+  @ManyToOne(() => Role, (role) => role.proposalActionRoles, {
+    nullable: true,
+    onDelete: "CASCADE",
+  })
   role?: Role;
 
   @Column({ nullable: true })
