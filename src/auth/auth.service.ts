@@ -11,7 +11,7 @@ import { SignUpInput } from "./models/sign-up.input";
 import { RefreshTokensService } from "./refresh-tokens/refresh-tokens.service";
 import { AccessTokenPayload } from "./strategies/jwt.strategy";
 
-const ACCESS_TOKEN_EXPIRES_IN = 15;
+const ACCESS_TOKEN_EXPIRES_IN = 60;
 const SALT_ROUNDS = 10;
 
 export interface AuthTokens {

@@ -16,6 +16,11 @@ import { PostsService } from "../posts/posts.service";
 import { Role } from "../roles/models/role.model";
 import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
+import { GroupConfigsService } from "./group-configs/group-configs.service";
+import {
+  GroupConfig,
+  GroupPrivacy,
+} from "./group-configs/models/group-config.model";
 import { GroupsService } from "./groups.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { MemberRequest } from "./member-requests/models/member-request.model";
@@ -29,6 +34,7 @@ import { UpdateGroupPayload } from "./models/update-group.payload";
 export class GroupsResolver {
   constructor(
     private groupsService: GroupsService,
+    private groupConfigsService: GroupConfigsService,
     private memberRequestsService: MemberRequestsService,
     private postsService: PostsService,
     private rolesService: RolesService
@@ -45,6 +51,18 @@ export class GroupsResolver {
   @Query(() => [Group])
   async groups() {
     return this.groupsService.getGroups();
+  }
+
+  @Query(() => [Group])
+  async publicGroups() {
+    return this.groupsService.getGroups({
+      config: { privacy: GroupPrivacy.Public },
+    });
+  }
+
+  @Query(() => [FeedItem])
+  async publicGroupsFeed() {
+    return this.groupsService.getPublicGroupsFeed();
   }
 
   @ResolveField(() => [Post])
@@ -121,6 +139,11 @@ export class GroupsResolver {
       currentUserId: currentUser.id,
       groupId: group.id,
     });
+  }
+
+  @ResolveField(() => GroupConfig)
+  async settings(@Parent() { id }: Group) {
+    return this.groupConfigsService.getGroupConfig({ groupId: id });
   }
 
   @Mutation(() => CreateGroupPayload)

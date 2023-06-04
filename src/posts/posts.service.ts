@@ -24,8 +24,8 @@ export class PostsService {
     private likesService: LikesService
   ) {}
 
-  async getPost(id: number) {
-    return this.repository.findOneOrFail({ where: { id } });
+  async getPost(id: number, relations?: string[]) {
+    return this.repository.findOneOrFail({ where: { id }, relations });
   }
 
   async getPosts(where?: FindOptionsWhere<Post>) {

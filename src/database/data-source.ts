@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import { DataSource } from "typeorm";
 import { RefreshToken } from "../auth/refresh-tokens/models/refresh-token.model";
+import { GroupConfig } from "../groups/group-configs/models/group-config.model";
 import { MemberRequest } from "../groups/member-requests/models/member-request.model";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
@@ -26,6 +27,7 @@ import { AddRoleMemberLinkTable1681172948650 } from "./migrations/1681172948650-
 import { DropRoleMemberEntityTable1681173025669 } from "./migrations/1681173025669-DropRoleMemberEntityTable";
 import { AddProposalActionRoleTable1684893300206 } from "./migrations/1684893300206-AddProposalActionRoleTable";
 import { AddProposalActionImagesConstraint1685201083917 } from "./migrations/1685201083917-AddProposalActionImagesConstraint";
+import { AddGroupConfigTable1685746618239 } from "./migrations/1685746618239-AddGroupConfigTable";
 import { AddProposalActionRoleCascadeDelete1685748700121 } from "./migrations/1685748700121-AddProposalActionRoleCascadeDelete";
 
 config();
@@ -39,6 +41,7 @@ export default new DataSource({
   port: parseInt(process.env.DB_PORT as string),
   entities: [
     Group,
+    GroupConfig,
     Image,
     Like,
     MemberRequest,
@@ -57,6 +60,7 @@ export default new DataSource({
   ],
   migrations: [
     AddFollowTable1679778147216,
+    AddGroupConfigTable1685746618239,
     AddGroupMemberLinkTable1681010227367,
     AddLikeTable1679157357262,
     AddProposalActionImagesConstraint1685201083917,

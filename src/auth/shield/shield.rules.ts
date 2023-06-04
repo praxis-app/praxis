@@ -1,6 +1,8 @@
 import { rule } from "graphql-shield";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../common/common.types";
+import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
+import { UpdateGroupConfigInput } from "../../groups/group-configs/models/update-group-config.input";
 import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateRoleInput } from "../../roles/models/create-role.input";
@@ -60,6 +62,19 @@ export const canManageGroupPosts = rule()(
     const { groupId } = await postsService.getPost(args.id);
     return hasPermission(permissions, GroupPermission.ManagePosts, groupId);
   }
+);
+
+export const canManageGroupSettings = rule()(
+  async (
+    _parent,
+    args: { groupConfigData: UpdateGroupConfigInput },
+    { permissions }: Context
+  ) =>
+    hasPermission(
+      permissions,
+      GroupPermission.ManageSettings,
+      args.groupConfigData.groupId
+    )
 );
 
 export const canManageGroupRoles = rule()(
@@ -157,6 +172,35 @@ export const isOwnPost = rule()(
       return UNAUTHORIZED;
     }
     return usersService.isUsersPost(args.id, user.id);
+  }
+);
+
+export const isPublicGroup = rule()(
+  async (_parent, args, { services: { groupsService } }: Context) => {
+    const group = await groupsService.getGroup(
+      { id: args.id, name: args.name },
+      ["config"]
+    );
+    return group.config.privacy === GroupPrivacy.Public;
+  }
+);
+
+export const isPublicGroupPost = rule()(
+  async (_parent, args, { services: { postsService } }: Context) => {
+    const post = await postsService.getPost(args.id, ["group.config"]);
+    if (!post.group) {
+      return false;
+    }
+    return post.group.config.privacy === GroupPrivacy.Public;
+  }
+);
+
+export const isPublicGroupProposal = rule()(
+  async (_parent, args, { services: { proposalsService } }: Context) => {
+    const proposal = await proposalsService.getProposal(args.id, [
+      "group.config",
+    ]);
+    return proposal.group.config.privacy === GroupPrivacy.Public;
   }
 );
 

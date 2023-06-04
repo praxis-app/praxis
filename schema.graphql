@@ -98,6 +98,14 @@ type Image {
   updatedAt: DateTime!
 }
 
+type GroupConfig {
+  id: Int!
+  group: Group!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isPublic: Boolean!
+}
+
 type MemberRequest {
   id: Int!
   user: User!
@@ -112,10 +120,10 @@ type Group {
   description: String!
   feed: [FeedItem!]!
   posts: [Post!]!
+  proposals: [Proposal!]!
   members: [User!]!
   memberRequests: [MemberRequest!]
   roles: [Role!]!
-  proposals: [Proposal!]!
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -123,6 +131,7 @@ type Group {
   memberRequestCount: Int
   isJoinedByMe: Boolean!
   myPermissions: [String!]!
+  settings: GroupConfig!
 }
 
 union FeedItem = Post | Proposal
@@ -264,6 +273,8 @@ type UpdateProposalPayload {
 type Query {
   group(id: Int, name: String): Group!
   groups: [Group!]!
+  publicGroups: [Group!]!
+  publicGroupsFeed: [FeedItem!]!
   memberRequest(groupId: Int!): MemberRequest
   post(id: Int!): Post!
   posts: [Post!]!
@@ -307,6 +318,7 @@ type Mutation {
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
   unfollowUser(id: Int!): Boolean!
+  updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
   deleteImage(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
@@ -413,6 +425,11 @@ input UpdateUserInput {
   bio: String!
   profilePicture: Upload
   coverPhoto: Upload
+}
+
+input UpdateGroupConfigInput {
+  groupId: Int!
+  privacy: String
 }
 
 input CreateLikeInput {

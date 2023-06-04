@@ -1,3 +1,8 @@
+/**
+ * TODO: Consider using fallbackRule instead of wild cards
+ * https://the-guild.dev/graphql/shield/docs/advanced/whitelisting
+ */
+
 import { allow, and, not, or, shield } from "graphql-shield";
 import { FORBIDDEN } from "../../common/common.constants";
 import {
@@ -7,6 +12,7 @@ import {
   canDeleteGroup,
   canManageGroupPosts,
   canManageGroupRoles,
+  canManageGroupSettings,
   canManageInvites,
   canManagePosts,
   canManageServerRoles,
@@ -15,6 +21,9 @@ import {
   isAuthenticated,
   isOwnPost,
   isProposalGroupJoinedByMe,
+  isPublicGroup,
+  isPublicGroupPost,
+  isPublicGroupProposal,
 } from "./shield.rules";
 
 const shieldPermissions = shield(
@@ -27,6 +36,11 @@ const shieldPermissions = shield(
       serverInvites: or(canCreateInvites, canManageInvites),
       serverRoles: canManageServerRoles,
       role: or(canManageServerRoles, canManageGroupRoles),
+      group: or(isAuthenticated, isPublicGroup),
+      post: or(isAuthenticated, isPublicGroupPost),
+      proposal: or(isAuthenticated, isPublicGroupProposal),
+      publicGroupsFeed: allow,
+      publicGroups: allow,
     },
     Mutation: {
       "*": isAuthenticated,
@@ -39,6 +53,7 @@ const shieldPermissions = shield(
       createServerInvite: or(canCreateInvites, canManageInvites),
       deleteServerInvite: canManageInvites,
       approveMemberRequest: canApproveGroupMemberRequests,
+      updateGroupConfig: canManageGroupSettings,
       updateGroup: canUpdateGroup,
       deleteGroup: canDeleteGroup,
       createRole: or(canManageServerRoles, canManageGroupRoles),
