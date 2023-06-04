@@ -1,3 +1,5 @@
+// TODO: Consider using fallbackRule instead of wild cards
+
 import { allow, and, not, or, shield } from "graphql-shield";
 import { FORBIDDEN } from "../../common/common.constants";
 import {
@@ -59,6 +61,11 @@ const shieldPermissions = shield(
       roles: canManageGroupRoles,
       memberRequests: canApproveGroupMemberRequests,
       memberRequestCount: canApproveGroupMemberRequests,
+      myPermissions: isAuthenticated,
+      isJoinedByMe: isAuthenticated,
+    },
+    Post: {
+      isLikedByMe: isAuthenticated,
     },
   },
   {
