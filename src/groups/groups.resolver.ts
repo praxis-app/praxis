@@ -112,7 +112,7 @@ export class GroupsResolver {
     return loaders.memberRequestCountLoader.load(id);
   }
 
-  @ResolveField(() => Boolean, { nullable: true })
+  @ResolveField(() => Boolean)
   async isJoinedByMe(
     @Context() { loaders }: { loaders: Dataloaders },
     @CurrentUser() currentUser: User,
@@ -129,7 +129,7 @@ export class GroupsResolver {
     return this.rolesService.getRoles({ groupId: id });
   }
 
-  @ResolveField(() => [String], { nullable: true })
+  @ResolveField(() => [String])
   async myPermissions(
     @Context() { loaders }: { loaders: Dataloaders },
     @CurrentUser() currentUser: User,
