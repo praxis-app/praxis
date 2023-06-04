@@ -1,4 +1,7 @@
-// TODO: Consider using fallbackRule instead of wild cards
+/**
+ * TODO: Consider using fallbackRule instead of wild cards
+ * https://the-guild.dev/graphql/shield/docs/advanced/whitelisting
+ */
 
 import { allow, and, not, or, shield } from "graphql-shield";
 import { FORBIDDEN } from "../../common/common.constants";
