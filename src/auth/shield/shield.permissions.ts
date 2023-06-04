@@ -64,11 +64,6 @@ const shieldPermissions = shield(
       roles: canManageGroupRoles,
       memberRequests: canApproveGroupMemberRequests,
       memberRequestCount: canApproveGroupMemberRequests,
-      myPermissions: isAuthenticated,
-      isJoinedByMe: isAuthenticated,
-    },
-    Post: {
-      isLikedByMe: isAuthenticated,
     },
   },
   {
