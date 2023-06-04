@@ -154,7 +154,7 @@ type Post {
   createdAt: DateTime!
   updatedAt: DateTime!
   likesCount: Int!
-  isLikedByMe: Boolean
+  isLikedByMe: Boolean!
 }
 
 type User {
