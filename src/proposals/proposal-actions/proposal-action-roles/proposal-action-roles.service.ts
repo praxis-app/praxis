@@ -6,10 +6,10 @@ import { ProposalActionRoleInput } from "./models/proposal-action-role-input";
 import { ProposalActionRoleMember } from "./models/proposal-action-role-member.model";
 import { ProposalActionRole } from "./models/proposal-action-role.model";
 
-export enum RoleMemberChangeType {
-  Add = "add",
-  Remove = "remove",
-}
+export const RoleMemberChangeType = {
+  Add: "add",
+  Remove: "remove",
+} as const;
 
 @Injectable()
 export class ProposalActionRolesService {
