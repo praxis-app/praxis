@@ -10,6 +10,8 @@ import { User } from "../users/models/user.model";
 import { UserPermissions } from "../users/user.types";
 import { UsersService } from "../users/users.service";
 
+export type ObjectValues<T> = T[keyof T];
+
 export interface ContextServices {
   groupsService: GroupsService;
   memberRequestsService: MemberRequestsService;

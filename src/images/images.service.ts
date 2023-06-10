@@ -4,10 +4,10 @@ import { FindOptionsWhere, Repository } from "typeorm";
 import { deleteImageFile } from "./image.utils";
 import { Image } from "./models/image.model";
 
-export const enum ImageTypes {
-  CoverPhoto = "coverPhoto",
-  ProfilePicture = "profilePicture",
-}
+export const ImageTypes = {
+  CoverPhoto: "coverPhoto",
+  ProfilePicture: "profilePicture",
+} as const;
 
 @Injectable()
 export class ImagesService {
