@@ -1,5 +1,5 @@
 import { Vote } from "./models/vote.model";
-import { VoteTypes } from "./votes.constants";
+import { VoteType } from "./votes.constants";
 
 interface SortedConsensusVotes {
   agreements: Vote[];
@@ -11,16 +11,16 @@ interface SortedConsensusVotes {
 export const sortConsensusVotesByType = (votes: Vote[]) =>
   votes.reduce<SortedConsensusVotes>(
     (result, vote) => {
-      if (vote.voteType === VoteTypes.Agreement) {
+      if (vote.voteType === VoteType.Agreement) {
         result.agreements.push(vote);
       }
-      if (vote.voteType === VoteTypes.Reservations) {
+      if (vote.voteType === VoteType.Reservations) {
         result.reservations.push(vote);
       }
-      if (vote.voteType === VoteTypes.StandAside) {
+      if (vote.voteType === VoteType.StandAside) {
         result.standAsides.push(vote);
       }
-      if (vote.voteType === VoteTypes.Block) {
+      if (vote.voteType === VoteType.Block) {
         result.blocks.push(vote);
       }
       return result;
