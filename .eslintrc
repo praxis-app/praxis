@@ -12,8 +12,10 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:typescript-enum/recommended"
   ],
+  "plugins": ["typescript-enum"],
   "rules": {
     "prettier/prettier": ["error", {}, { "usePrettierrc": true }],
     "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -33,16 +35,6 @@
       "error",
       {
         "destructuring": "all"
-      }
-    ],
-
-    // TODO: Determine whether to replace with eslint-plugin-typescript-enum rule
-    // https://www.npmjs.com/package/eslint-plugin-typescript-enum
-    "no-restricted-syntax": [
-      "error",
-      {
-        "selector": "TSEnumDeclaration",
-        "message": "Don't declare enums"
       }
     ]
   }
