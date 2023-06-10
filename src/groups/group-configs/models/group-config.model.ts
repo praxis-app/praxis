@@ -10,10 +10,10 @@ import {
 } from "typeorm";
 import { Group } from "../../models/group.model";
 
-export enum GroupPrivacy {
-  Private = "private",
-  Public = "public",
-}
+export const GroupPrivacy = {
+  Private: "private",
+  Public: "public",
+} as const;
 
 @Entity()
 @ObjectType()

@@ -10,11 +10,11 @@ import {
 import { User } from "../../../users/models/user.model";
 import { Group } from "../../models/group.model";
 
-export enum MemberRequestStatus {
-  Approved = "approved",
-  Denied = "denied",
-  Pending = "pending",
-}
+export const MemberRequestStatus = {
+  Approved: "approved",
+  Denied: "denied",
+  Pending: "pending",
+} as const;
 
 @Entity()
 @ObjectType()
