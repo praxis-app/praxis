@@ -7,7 +7,7 @@ import { FindOptionsWhere, In, Repository } from "typeorm";
 import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { IsFollowedByMeKey } from "../dataloader/dataloader.types";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
-import { ImagesService, ImageTypes } from "../images/images.service";
+import { ImagesService, ImageType } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
@@ -49,7 +49,7 @@ export class UsersService {
 
   async getCoverPhoto(userId: number) {
     return this.imagesService.getImage({
-      imageType: ImageTypes.CoverPhoto,
+      imageType: ImageType.CoverPhoto,
       userId,
     });
   }
@@ -189,7 +189,7 @@ export class UsersService {
 
   async getProfilePicturesByBatch(userIds: number[]) {
     const profilePictures = await this.imagesService.getImages({
-      imageType: ImageTypes.ProfilePicture,
+      imageType: ImageType.ProfilePicture,
       userId: In(userIds),
     });
     return userIds.map(
@@ -313,7 +313,7 @@ export class UsersService {
     profilePicture: Promise<FileUpload>
   ) {
     const filename = await saveImage(profilePicture);
-    const imageData = { imageType: ImageTypes.ProfilePicture, userId };
+    const imageData = { imageType: ImageType.ProfilePicture, userId };
     await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({
       ...imageData,
@@ -323,7 +323,7 @@ export class UsersService {
 
   async saveCoverPhoto(userId: number, coverPhoto: Promise<FileUpload>) {
     const filename = await saveImage(coverPhoto);
-    const imageData = { imageType: ImageTypes.CoverPhoto, userId };
+    const imageData = { imageType: ImageType.CoverPhoto, userId };
     await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({
       ...imageData,
@@ -343,7 +343,7 @@ export class UsersService {
     });
 
     const image = await this.imagesService.createImage({
-      imageType: ImageTypes.ProfilePicture,
+      imageType: ImageType.ProfilePicture,
       filename,
       userId,
     });

@@ -4,7 +4,7 @@ import { FindOptionsWhere, Repository } from "typeorm";
 import { deleteImageFile } from "./image.utils";
 import { Image } from "./models/image.model";
 
-export const ImageTypes = {
+export const ImageType = {
   CoverPhoto: "coverPhoto",
   ProfilePicture: "profilePicture",
 } as const;

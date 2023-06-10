@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { saveImage } from "../../images/image.utils";
-import { ImagesService, ImageTypes } from "../../images/images.service";
+import { ImagesService, ImageType } from "../../images/images.service";
 import { ProposalAction } from "./models/proposal-action.model";
 
 @Injectable()
@@ -31,7 +31,7 @@ export class ProposalActionsService {
       "images",
     ]);
     const groupCoverPhoto = action?.images.find(
-      (image) => image.imageType === ImageTypes.CoverPhoto
+      (image) => image.imageType === ImageType.CoverPhoto
     );
     return groupCoverPhoto;
   }

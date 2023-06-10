@@ -11,7 +11,7 @@ import { FindOptionsWhere, In, Repository } from "typeorm";
 import { DefaultGroupSetting } from "../groups/groups.constants";
 import { GroupsService } from "../groups/groups.service";
 import { deleteImageFile, saveImage } from "../images/image.utils";
-import { ImagesService, ImageTypes } from "../images/images.service";
+import { ImagesService, ImageType } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { GroupPermission } from "../roles/permissions/permissions.constants";
 import { RolesService } from "../roles/roles.service";
@@ -103,7 +103,7 @@ export class ProposalsService {
         await this.proposalActionsService.saveProposalActionImage(
           proposal.action.id,
           groupCoverPhoto,
-          ImageTypes.CoverPhoto
+          ImageType.CoverPhoto
         );
       }
       if (role) {
@@ -146,7 +146,7 @@ export class ProposalsService {
       await this.proposalActionsService.saveProposalActionImage(
         proposal.action.id,
         groupCoverPhoto,
-        ImageTypes.CoverPhoto
+        ImageType.CoverPhoto
       );
     }
     if (images) {
@@ -191,7 +191,7 @@ export class ProposalsService {
 
     if (actionType === ProposalActionType.ChangeCoverPhoto) {
       const currentCoverPhoto = await this.imagesService.getImage({
-        imageType: ImageTypes.CoverPhoto,
+        imageType: ImageType.CoverPhoto,
         groupId,
       });
       const newCoverPhoto =

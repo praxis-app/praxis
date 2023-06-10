@@ -7,7 +7,7 @@ import { FindOptionsWhere, In, Repository } from "typeorm";
 import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { MyGroupsKey } from "../dataloader/dataloader.types";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
-import { ImagesService, ImageTypes } from "../images/images.service";
+import { ImagesService, ImageType } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { Proposal } from "../proposals/models/proposal.model";
@@ -89,7 +89,7 @@ export class GroupsService {
   async getCoverPhotosByBatch(groupIds: number[]) {
     const coverPhotos = await this.imagesService.getImages({
       groupId: In(groupIds),
-      imageType: ImageTypes.CoverPhoto,
+      imageType: ImageType.CoverPhoto,
     });
     const mappedCoverPhotos = groupIds.map(
       (id) =>
@@ -202,7 +202,7 @@ export class GroupsService {
     await this.deleteCoverPhoto(groupId);
 
     return this.imagesService.createImage({
-      imageType: ImageTypes.CoverPhoto,
+      imageType: ImageType.CoverPhoto,
       filename,
       groupId,
     });
@@ -219,7 +219,7 @@ export class GroupsService {
       }
     });
     const image = await this.imagesService.createImage({
-      imageType: ImageTypes.CoverPhoto,
+      imageType: ImageType.CoverPhoto,
       filename,
       groupId,
     });
@@ -234,7 +234,7 @@ export class GroupsService {
 
   async deleteCoverPhoto(id: number) {
     await this.imagesService.deleteImage({
-      imageType: ImageTypes.CoverPhoto,
+      imageType: ImageType.CoverPhoto,
       group: { id },
     });
   }
