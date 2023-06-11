@@ -16,7 +16,7 @@ Praxis is free and open source software, as specified by the GNU General Public 
 
 ## Work in Progress
 
-You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground. Your feedback is highly welcome
+You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground. Your feedback is highly welcome.
 
 Core features currently in development:
 
