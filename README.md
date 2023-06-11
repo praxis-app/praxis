@@ -4,7 +4,7 @@ Praxis is an open source social networking site. Proposals are the main focus an
 
 While model of consensus is the default, group members will also be able to use regular majority vote, and have the ability to create and assign new roles with various permissions. All of this can be tailored in group settings to meet the specific needs of your community, either by a groups admin, or by proposals as a group evolves over time.
 
-The tech stack includes the following:
+The tech stack includes:
 
 - NestJS
 - GraphQL
@@ -12,14 +12,16 @@ The tech stack includes the following:
 
 Praxis UI: https://github.com/praxis-project/praxis-ui
 
-## WIP
+Praxis is free and open source software, as specified by the GNU General Public License.
 
-You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground. Your feedback is highly welcome!
+## Work in Progress
+
+You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground. Your feedback is highly welcome.
 
 Core features currently in development:
 
-- Change group roles, permissions, and settings all via proposals ✨
-- Plan real world events via proposals and voting ✨
+- Change group roles, permissions, and settings all via proposals
+- Plan real world events via proposals and voting
 
 ## Installation
 
@@ -84,11 +86,6 @@ $ yarn test:cov
 # Enable pre-commit hook with Husky
 $ npx husky install && npx husky add .husky/pre-commit "yarn lint-staged"
 ```
-
-## Tools to get Involved and Collaborate
-
-- Discord: Message **forrest#2807** for more information.
-- Notion: A link to the Notion page can be obtained upon request.
 
 ## Contributions
 
