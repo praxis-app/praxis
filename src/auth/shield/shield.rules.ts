@@ -139,7 +139,7 @@ export const canApproveGroupMemberRequests = rule()(
   }
 );
 
-export const canViewGroupRoles = rule()(
+export const isGroupMember = rule()(
   async (
     parent: Group,
     _args,
