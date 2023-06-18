@@ -139,6 +139,23 @@ export const canApproveGroupMemberRequests = rule()(
   }
 );
 
+export const canViewGroupRoles = rule()(
+  async (
+    parent: Group,
+    _args,
+    { user, services: { groupsService } }: Context
+  ) => {
+    if (!user) {
+      return UNAUTHORIZED;
+    }
+    const isGroupMember = await groupsService.isJoinedByUser(
+      parent.id,
+      user.id
+    );
+    return isGroupMember;
+  }
+);
+
 export const isAuthenticated = rule({ cache: "contextual" })(
   async (_parent, _args, { user }: Context) => {
     if (!user) {
