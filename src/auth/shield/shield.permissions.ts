@@ -17,6 +17,7 @@ import {
   canManagePosts,
   canManageServerRoles,
   canUpdateGroup,
+  isGroupMember,
   hasValidRefreshToken,
   isAuthenticated,
   isOwnPost,
@@ -61,7 +62,7 @@ const shieldPermissions = shield(
       deleteRole: or(canManageServerRoles, canManageGroupRoles),
     },
     Group: {
-      roles: canManageGroupRoles,
+      roles: isGroupMember,
       memberRequests: canApproveGroupMemberRequests,
       memberRequestCount: canApproveGroupMemberRequests,
     },
