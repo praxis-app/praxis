@@ -31,7 +31,7 @@ export class RolesResolver {
   ) {}
 
   @Query(() => Role)
-  async role(@Args("id", { type: () => Int }) id: number) {
+  async serverRole(@Args("id", { type: () => Int }) id: number) {
     return this.rolesService.getRole({ id });
   }
 
