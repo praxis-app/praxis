@@ -91,11 +91,11 @@ export const canManageGroupRoles = rule()(
         groupId = args.roleData.groupId;
       }
       if (info.fieldName === "updateRole" && "id" in args.roleData) {
-        const role = await rolesService.getRole(args.roleData.id);
+        const role = await rolesService.getRole({ id: args.roleData.id });
         groupId = role.groupId;
       }
     } else if (["role", "deleteRole"].includes(info.fieldName)) {
-      const role = await rolesService.getRole(args.id);
+      const role = await rolesService.getRole({ id: args.id });
       groupId = role.groupId;
     }
     if (info.fieldName === "roles") {
@@ -141,18 +141,24 @@ export const canApproveGroupMemberRequests = rule()(
 
 export const isGroupMember = rule()(
   async (
-    parent: Group,
-    _args,
-    { user, services: { groupsService } }: Context
+    parent: Group | undefined,
+    args,
+    { user, services: { groupsService, rolesService } }: Context
   ) => {
     if (!user) {
       return UNAUTHORIZED;
     }
-    const isGroupMember = await groupsService.isJoinedByUser(
-      parent.id,
-      user.id
-    );
-    return isGroupMember;
+    let groupId: number | undefined;
+    if (parent) {
+      groupId = parent.id;
+    } else {
+      const role = await rolesService.getRole({ id: args.id });
+      groupId = role.groupId;
+    }
+    if (!groupId) {
+      return false;
+    }
+    return groupsService.isJoinedByUser(groupId, user.id);
   }
 );
 

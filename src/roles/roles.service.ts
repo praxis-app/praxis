@@ -33,8 +33,8 @@ export class RolesService {
     private usersService: UsersService
   ) {}
 
-  async getRole(id: number, relations?: string[]) {
-    return this.roleRepository.findOneOrFail({ where: { id }, relations });
+  async getRole(where?: FindOptionsWhere<Role>, relations?: string[]) {
+    return this.roleRepository.findOneOrFail({ where, relations });
   }
 
   async getRoles(where?: FindOptionsWhere<Role>) {
@@ -45,13 +45,13 @@ export class RolesService {
     return this.getRoles({ groupId: IsNull() });
   }
 
-  async getRoleMembers(roleId: number) {
-    const { members } = await this.getRole(roleId, ["members"]);
+  async getRoleMembers(id: number) {
+    const { members } = await this.getRole({ id }, ["members"]);
     return members;
   }
 
   async getAvailableUsersToAdd(id: number) {
-    const role = await this.getRole(id, ["members", "group.members"]);
+    const role = await this.getRole({ id }, ["members", "group.members"]);
     const userIds = role.members.map(({ id }) => id);
 
     if (role.group) {
@@ -121,7 +121,7 @@ export class RolesService {
     }: UpdateRoleInput,
     me?: User
   ) {
-    const roleWithRelations = await this.getRole(id, [
+    const roleWithRelations = await this.getRole({ id }, [
       "permissions",
       "members",
     ]);
@@ -160,9 +160,9 @@ export class RolesService {
     return true;
   }
 
-  async createRoleMember(roleId: number, userId: number) {
+  async createRoleMember(id: number, userId: number) {
     const user = await this.usersService.getUser({ id: userId });
-    const role = await this.getRole(roleId, ["members"]);
+    const role = await this.getRole({ id }, ["members"]);
     if (!user) {
       throw new UserInputError("User not found");
     }
@@ -174,7 +174,7 @@ export class RolesService {
   }
 
   async deleteRoleMember(id: number, userId: number, me: User) {
-    const role = await this.getRole(id, ["members"]);
+    const role = await this.getRole({ id }, ["members"]);
     role.members = role.members.filter((member) => member.id !== userId);
     await this.roleRepository.save(role);
 
@@ -182,7 +182,7 @@ export class RolesService {
   }
 
   async deleteRoleMembers(id: number, userIds: number[]) {
-    const role = await this.getRole(id, ["members"]);
+    const role = await this.getRole({ id }, ["members"]);
 
     role.members = role.members.filter(
       (member) => !userIds.some((id) => member.id === id)

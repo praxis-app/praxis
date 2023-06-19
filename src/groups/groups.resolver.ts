@@ -8,6 +8,7 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { IsNull, Not } from "typeorm";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { FeedItem } from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.types";
@@ -63,6 +64,11 @@ export class GroupsResolver {
   @Query(() => [FeedItem])
   async publicGroupsFeed() {
     return this.groupsService.getPublicGroupsFeed();
+  }
+
+  @Query(() => Role)
+  async groupRole(@Args("id", { type: () => Int }) id: number) {
+    return this.rolesService.getRole({ id, groupId: Not(IsNull()) });
   }
 
   @ResolveField(() => [Post])

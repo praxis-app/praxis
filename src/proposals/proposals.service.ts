@@ -242,10 +242,10 @@ export class ProposalsService {
       if (!role?.roleId) {
         throw new UserInputError("Could not find proposal action role");
       }
-      const roleToUpdate = await this.rolesService.getRole(role.roleId, [
-        "permissions",
-        "members",
-      ]);
+      const roleToUpdate = await this.rolesService.getRole(
+        { id: role.roleId },
+        ["permissions", "members"]
+      );
 
       const userIdsToAdd = role.members
         ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Add)
