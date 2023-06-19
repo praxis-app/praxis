@@ -148,17 +148,14 @@ export const isGroupMember = rule()(
     if (!user) {
       return UNAUTHORIZED;
     }
-    let groupId: number | undefined;
     if (parent) {
-      groupId = parent.id;
-    } else {
-      const role = await rolesService.getRole({ id: args.id });
-      groupId = role.groupId;
+      return groupsService.isJoinedByUser(parent.id, user.id);
     }
-    if (!groupId) {
+    const role = await rolesService.getRole({ id: args.id });
+    if (!role.groupId) {
       return false;
     }
-    return groupsService.isJoinedByUser(groupId, user.id);
+    return groupsService.isJoinedByUser(role.groupId, user.id);
   }
 );
 
