@@ -12,7 +12,7 @@ import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
 import { User } from "../users/models/user.model";
-import { CreateServerRoleInput } from "./models/create-role.input";
+import { CreateServerRoleInput } from "./models/create-server-role.input";
 import { CreateRolePayload } from "./models/create-role.payload";
 import { DeleteRoleMemberInput } from "./models/delete-role-member.input";
 import { DeleteRoleMemberPayload } from "./models/delete-role-member.payload";
