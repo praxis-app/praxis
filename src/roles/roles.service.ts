@@ -11,7 +11,6 @@ import {
 } from "typeorm";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
-import { CreateRoleInput } from "./models/create-role.input";
 import { Role } from "./models/role.model";
 import { UpdateRoleInput } from "./models/update-role.input";
 import {
@@ -106,10 +105,6 @@ export class RolesService {
     );
     const role = await this.roleRepository.save({ ...roleData, permissions });
     return { role };
-  }
-
-  async createRoles(roles: CreateRoleInput[]) {
-    await this.roleRepository.save(roles);
   }
 
   async updateRole(

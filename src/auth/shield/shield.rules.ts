@@ -3,9 +3,9 @@ import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../common/common.types";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
 import { UpdateGroupConfigInput } from "../../groups/group-configs/models/update-group-config.input";
+import { CreateGroupRoleInput } from "../../groups/models/create-group-role.input";
 import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
-import { CreateRoleInput } from "../../roles/models/create-role.input";
 import { UpdateRoleInput } from "../../roles/models/update-role.input";
 import {
   GroupPermission,
@@ -80,7 +80,7 @@ export const canManageGroupSettings = rule()(
 export const canManageGroupRoles = rule()(
   async (
     parent,
-    args: { roleData: CreateRoleInput | UpdateRoleInput } | { id: number },
+    args: { roleData: CreateGroupRoleInput | UpdateRoleInput } | { id: number },
     { permissions, services: { rolesService } }: Context,
     info
   ) => {

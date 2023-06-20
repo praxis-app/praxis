@@ -14,7 +14,10 @@ import { FeedItem } from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
+import { CreateRolePayload } from "../roles/models/create-role.payload";
 import { Role } from "../roles/models/role.model";
+import { UpdateRoleInput } from "../roles/models/update-role.input";
+import { UpdateRolePayload } from "../roles/models/update-role.payload";
 import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
 import { GroupConfigsService } from "./group-configs/group-configs.service";
@@ -25,6 +28,7 @@ import {
 import { GroupsService } from "./groups.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { MemberRequest } from "./member-requests/models/member-request.model";
+import { CreateGroupRoleInput } from "./models/create-group-role.input";
 import { CreateGroupInput } from "./models/create-group.input";
 import { CreateGroupPayload } from "./models/create-group.payload";
 import { Group } from "./models/group.model";
@@ -176,5 +180,23 @@ export class GroupsResolver {
     @CurrentUser() { id: userId }: User
   ) {
     return this.groupsService.leaveGroup(id, userId);
+  }
+
+  @Mutation(() => CreateRolePayload)
+  async createGroupRole(@Args("roleData") roleData: CreateGroupRoleInput) {
+    return this.rolesService.createRole(roleData);
+  }
+
+  @Mutation(() => UpdateRolePayload)
+  async updateGroupRole(
+    @Args("roleData") roleData: UpdateRoleInput,
+    @CurrentUser() user: User
+  ) {
+    return this.rolesService.updateRole(roleData, user);
+  }
+
+  @Mutation(() => Boolean)
+  async deleteGroupRole(@Args("id", { type: () => Int }) id: number) {
+    return this.rolesService.deleteRole(id);
   }
 }
