@@ -18,7 +18,7 @@ import { DeleteRoleMemberInput } from "./models/delete-role-member.input";
 import { DeleteRoleMemberPayload } from "./models/delete-role-member.payload";
 import { Role } from "./models/role.model";
 import { UpdateRoleInput } from "./models/update-role.input";
-import { UpdateRolePayload } from "./models/update-role.payload";
+import { UpdateServerRolePayload } from "./models/update-server-role.payload";
 import { Permission } from "./permissions/models/permission.model";
 import { PermissionsService } from "./permissions/permissions.service";
 import { RolesService } from "./roles.service";
@@ -76,7 +76,7 @@ export class RolesResolver {
     return this.rolesService.createRole(roleData);
   }
 
-  @Mutation(() => UpdateRolePayload)
+  @Mutation(() => UpdateServerRolePayload)
   async updateServerRole(
     @Args("roleData") roleData: UpdateRoleInput,
     @CurrentUser() user: User

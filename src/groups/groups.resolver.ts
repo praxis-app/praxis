@@ -16,8 +16,8 @@ import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { CreateRolePayload } from "../roles/models/create-role.payload";
 import { Role } from "../roles/models/role.model";
+import { UpdateGroupRolePayload } from "../roles/models/update-group-role.payload";
 import { UpdateRoleInput } from "../roles/models/update-role.input";
-import { UpdateRolePayload } from "../roles/models/update-role.payload";
 import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
 import { GroupConfigsService } from "./group-configs/group-configs.service";
@@ -187,7 +187,7 @@ export class GroupsResolver {
     return this.rolesService.createRole(roleData);
   }
 
-  @Mutation(() => UpdateRolePayload)
+  @Mutation(() => UpdateGroupRolePayload)
   async updateGroupRole(
     @Args("roleData") roleData: UpdateRoleInput,
     @CurrentUser() user: User

@@ -216,7 +216,7 @@ type DeleteRoleMemberPayload {
   me: User!
 }
 
-type UpdateRolePayload {
+type UpdateServerRolePayload {
   role: Role!
   me: User!
 }
@@ -236,6 +236,10 @@ type LoginPayload {
 
 type SignUpPayload {
   user: User!
+}
+
+type UpdateGroupRolePayload {
+  role: Role!
 }
 
 type CreateGroupPayload {
@@ -301,7 +305,7 @@ type Mutation {
   deleteGroup(id: Int!): Boolean!
   leaveGroup(id: Int!): Boolean!
   createGroupRole(roleData: CreateGroupRoleInput!): CreateRolePayload!
-  updateGroupRole(roleData: UpdateRoleInput!): UpdateRolePayload!
+  updateGroupRole(roleData: UpdateRoleInput!): UpdateGroupRolePayload!
   deleteGroupRole(id: Int!): Boolean!
   createMemberRequest(groupId: Int!): CreateMemberRequestPayload!
   approveMemberRequest(id: Int!): ApproveMemberRequestPayload!
@@ -315,7 +319,7 @@ type Mutation {
   deleteProposal(id: Int!): Boolean!
   refreshToken: Boolean!
   createServerRole(roleData: CreateServerRoleInput!): CreateRolePayload!
-  updateServerRole(roleData: UpdateRoleInput!): UpdateRolePayload!
+  updateServerRole(roleData: UpdateRoleInput!): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
   deleteRoleMember(roleMemberData: DeleteRoleMemberInput!): DeleteRoleMemberPayload!
   updateUser(userData: UpdateUserInput!): UpdateUserPayload!
