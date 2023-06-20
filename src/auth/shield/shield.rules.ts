@@ -87,14 +87,14 @@ export const canManageGroupRoles = rule()(
     let groupId: number | undefined;
 
     if ("roleData" in args) {
-      if (info.fieldName === "createRole" && "groupId" in args.roleData) {
+      if (info.fieldName === "createGroupRole" && "groupId" in args.roleData) {
         groupId = args.roleData.groupId;
       }
-      if (info.fieldName === "updateRole" && "id" in args.roleData) {
+      if (info.fieldName === "updateGroupRole" && "id" in args.roleData) {
         const role = await rolesService.getRole({ id: args.roleData.id });
         groupId = role.groupId;
       }
-    } else if (["role", "deleteRole"].includes(info.fieldName)) {
+    } else if (["role", "deleteGroupRole"].includes(info.fieldName)) {
       const role = await rolesService.getRole({ id: args.id });
       groupId = role.groupId;
     }
