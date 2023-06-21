@@ -12,13 +12,13 @@ import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
 import { User } from "../users/models/user.model";
-import { CreateRoleInput } from "./models/create-role.input";
+import { CreateServerRoleInput } from "./models/create-server-role.input";
 import { CreateRolePayload } from "./models/create-role.payload";
 import { DeleteRoleMemberInput } from "./models/delete-role-member.input";
 import { DeleteRoleMemberPayload } from "./models/delete-role-member.payload";
 import { Role } from "./models/role.model";
 import { UpdateRoleInput } from "./models/update-role.input";
-import { UpdateRolePayload } from "./models/update-role.payload";
+import { UpdateServerRolePayload } from "./models/update-server-role.payload";
 import { Permission } from "./permissions/models/permission.model";
 import { PermissionsService } from "./permissions/permissions.service";
 import { RolesService } from "./roles.service";
@@ -72,12 +72,12 @@ export class RolesResolver {
   }
 
   @Mutation(() => CreateRolePayload)
-  async createRole(@Args("roleData") roleData: CreateRoleInput) {
+  async createServerRole(@Args("roleData") roleData: CreateServerRoleInput) {
     return this.rolesService.createRole(roleData);
   }
 
-  @Mutation(() => UpdateRolePayload)
-  async updateRole(
+  @Mutation(() => UpdateServerRolePayload)
+  async updateServerRole(
     @Args("roleData") roleData: UpdateRoleInput,
     @CurrentUser() user: User
   ) {
@@ -85,7 +85,7 @@ export class RolesResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteRole(@Args("id", { type: () => Int }) id: number) {
+  async deleteServerRole(@Args("id", { type: () => Int }) id: number) {
     return this.rolesService.deleteRole(id);
   }
 
