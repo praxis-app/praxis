@@ -6,6 +6,7 @@ import { UpdateGroupConfigInput } from "../../groups/group-configs/models/update
 import { CreateGroupRoleInput } from "../../groups/models/create-group-role.input";
 import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
+import { DeleteRoleMemberInput } from "../../roles/models/delete-role-member.input";
 import { UpdateRoleInput } from "../../roles/models/update-role.input";
 import {
   GroupPermission,
@@ -80,7 +81,10 @@ export const canManageGroupSettings = rule()(
 export const canManageGroupRoles = rule()(
   async (
     parent,
-    args: { roleData: CreateGroupRoleInput | UpdateRoleInput } | { id: number },
+    args:
+      | { roleData: CreateGroupRoleInput | UpdateRoleInput }
+      | { roleMemberData: DeleteRoleMemberInput }
+      | { id: number },
     { permissions, services: { rolesService } }: Context,
     info
   ) => {
@@ -94,6 +98,11 @@ export const canManageGroupRoles = rule()(
         const role = await rolesService.getRole({ id: args.roleData.id });
         groupId = role.groupId;
       }
+    } else if ("roleMemberData" in args) {
+      const role = await rolesService.getRole({
+        id: args.roleMemberData.roleId,
+      });
+      groupId = role.groupId;
     } else if (["role", "deleteGroupRole"].includes(info.fieldName)) {
       const role = await rolesService.getRole({ id: args.id });
       groupId = role.groupId;
