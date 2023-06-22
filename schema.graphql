@@ -307,6 +307,7 @@ type Mutation {
   createGroupRole(roleData: CreateGroupRoleInput!): CreateRolePayload!
   updateGroupRole(roleData: UpdateRoleInput!): UpdateGroupRolePayload!
   deleteGroupRole(id: Int!): Boolean!
+  deleteGroupRoleMember(roleMemberData: DeleteRoleMemberInput!): DeleteRoleMemberPayload!
   createMemberRequest(groupId: Int!): CreateMemberRequestPayload!
   approveMemberRequest(id: Int!): ApproveMemberRequestPayload!
   cancelMemberRequest(id: Int!): Boolean!
@@ -321,7 +322,7 @@ type Mutation {
   createServerRole(roleData: CreateServerRoleInput!): CreateRolePayload!
   updateServerRole(roleData: UpdateRoleInput!): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
-  deleteRoleMember(roleMemberData: DeleteRoleMemberInput!): DeleteRoleMemberPayload!
+  deleteServerRoleMember(roleMemberData: DeleteRoleMemberInput!): DeleteRoleMemberPayload!
   updateUser(userData: UpdateUserInput!): UpdateUserPayload!
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
@@ -375,6 +376,11 @@ input PermissionInput {
   enabled: Boolean!
 }
 
+input DeleteRoleMemberInput {
+  roleId: Int!
+  userId: Int!
+}
+
 input CreatePostInput {
   groupId: Int
   body: String
@@ -425,11 +431,6 @@ input UpdateProposalInput {
 input CreateServerRoleInput {
   name: String!
   color: String!
-}
-
-input DeleteRoleMemberInput {
-  roleId: Int!
-  userId: Int!
 }
 
 input UpdateUserInput {

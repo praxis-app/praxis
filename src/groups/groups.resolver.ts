@@ -15,6 +15,8 @@ import { Dataloaders } from "../dataloader/dataloader.types";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { CreateRolePayload } from "../roles/models/create-role.payload";
+import { DeleteRoleMemberInput } from "../roles/models/delete-role-member.input";
+import { DeleteRoleMemberPayload } from "../roles/models/delete-role-member.payload";
 import { Role } from "../roles/models/role.model";
 import { UpdateGroupRolePayload } from "../roles/models/update-group-role.payload";
 import { UpdateRoleInput } from "../roles/models/update-role.input";
@@ -198,5 +200,13 @@ export class GroupsResolver {
   @Mutation(() => Boolean)
   async deleteGroupRole(@Args("id", { type: () => Int }) id: number) {
     return this.rolesService.deleteRole(id);
+  }
+
+  @Mutation(() => DeleteRoleMemberPayload)
+  async deleteGroupRoleMember(
+    @Args("roleMemberData") { roleId, userId }: DeleteRoleMemberInput,
+    @CurrentUser() user: User
+  ) {
+    return this.rolesService.deleteRoleMember(roleId, userId, user);
   }
 }
