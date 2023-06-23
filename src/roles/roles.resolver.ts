@@ -8,12 +8,13 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { IsNull } from "typeorm";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
 import { User } from "../users/models/user.model";
-import { CreateServerRoleInput } from "./models/create-server-role.input";
 import { CreateRolePayload } from "./models/create-role.payload";
+import { CreateServerRoleInput } from "./models/create-server-role.input";
 import { DeleteRoleMemberInput } from "./models/delete-role-member.input";
 import { DeleteRoleMemberPayload } from "./models/delete-role-member.payload";
 import { Role } from "./models/role.model";
@@ -32,7 +33,7 @@ export class RolesResolver {
 
   @Query(() => Role)
   async serverRole(@Args("id", { type: () => Int }) id: number) {
-    return this.rolesService.getRole({ id });
+    return this.rolesService.getRole({ id, groupId: IsNull() });
   }
 
   @Query(() => [Role])
