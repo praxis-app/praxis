@@ -151,7 +151,7 @@ export const canApproveGroupMemberRequests = rule()(
 export const isGroupMember = rule()(
   async (
     parent: Group | undefined,
-    args,
+    args: { id: number },
     { user, services: { groupsService, rolesService } }: Context
   ) => {
     if (!user) {
