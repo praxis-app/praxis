@@ -1,13 +1,13 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
 
 @InputType()
-export class CreateRoleInput {
+export class CreateGroupRoleInput {
   @Field()
   name: string;
 
   @Field()
   color: string;
 
-  @Field(() => Int, { nullable: true })
-  groupId?: number;
+  @Field(() => Int)
+  groupId: number;
 }

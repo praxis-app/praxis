@@ -25,6 +25,6 @@ export class ProposalActionRolesResolver {
 
   @ResolveField(() => Role, { nullable: true })
   async role(@Parent() { roleId }: ProposalActionRole) {
-    return roleId ? this.rolesService.getRole(roleId) : null;
+    return roleId ? this.rolesService.getRole({ id: roleId }) : null;
   }
 }

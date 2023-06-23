@@ -216,7 +216,7 @@ type DeleteRoleMemberPayload {
   me: User!
 }
 
-type UpdateRolePayload {
+type UpdateServerRolePayload {
   role: Role!
   me: User!
 }
@@ -236,6 +236,10 @@ type LoginPayload {
 
 type SignUpPayload {
   user: User!
+}
+
+type UpdateGroupRolePayload {
+  role: Role!
 }
 
 type CreateGroupPayload {
@@ -275,12 +279,13 @@ type Query {
   groups: [Group!]!
   publicGroups: [Group!]!
   publicGroupsFeed: [FeedItem!]!
+  groupRole(id: Int!): Role!
   memberRequest(groupId: Int!): MemberRequest
   post(id: Int!): Post!
   posts: [Post!]!
   proposal(id: Int!): Proposal!
   proposals: [Proposal!]!
-  role(id: Int!): Role!
+  serverRole(id: Int!): Role!
   serverRoles: [Role!]!
   me: User!
   user(id: Int, name: String): User!
@@ -299,6 +304,10 @@ type Mutation {
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
   deleteGroup(id: Int!): Boolean!
   leaveGroup(id: Int!): Boolean!
+  createGroupRole(roleData: CreateGroupRoleInput!): CreateRolePayload!
+  updateGroupRole(roleData: UpdateRoleInput!): UpdateGroupRolePayload!
+  deleteGroupRole(id: Int!): Boolean!
+  deleteGroupRoleMember(roleMemberData: DeleteRoleMemberInput!): DeleteRoleMemberPayload!
   createMemberRequest(groupId: Int!): CreateMemberRequestPayload!
   approveMemberRequest(id: Int!): ApproveMemberRequestPayload!
   cancelMemberRequest(id: Int!): Boolean!
@@ -310,10 +319,10 @@ type Mutation {
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   deleteProposal(id: Int!): Boolean!
   refreshToken: Boolean!
-  createRole(roleData: CreateRoleInput!): CreateRolePayload!
-  updateRole(roleData: UpdateRoleInput!): UpdateRolePayload!
-  deleteRole(id: Int!): Boolean!
-  deleteRoleMember(roleMemberData: DeleteRoleMemberInput!): DeleteRoleMemberPayload!
+  createServerRole(roleData: CreateServerRoleInput!): CreateRolePayload!
+  updateServerRole(roleData: UpdateRoleInput!): UpdateServerRolePayload!
+  deleteServerRole(id: Int!): Boolean!
+  deleteServerRoleMember(roleMemberData: DeleteRoleMemberInput!): DeleteRoleMemberPayload!
   updateUser(userData: UpdateUserInput!): UpdateUserPayload!
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
@@ -346,6 +355,30 @@ input UpdateGroupInput {
   name: String
   description: String
   coverPhoto: Upload
+}
+
+input CreateGroupRoleInput {
+  name: String!
+  color: String!
+  groupId: Int!
+}
+
+input UpdateRoleInput {
+  id: Int!
+  name: String
+  color: String
+  selectedUserIds: [Int!]
+  permissions: [PermissionInput!]
+}
+
+input PermissionInput {
+  name: String!
+  enabled: Boolean!
+}
+
+input DeleteRoleMemberInput {
+  roleId: Int!
+  userId: Int!
 }
 
 input CreatePostInput {
@@ -388,11 +421,6 @@ input ProposalActionRoleMemberInput {
   changeType: String!
 }
 
-input PermissionInput {
-  name: String!
-  enabled: Boolean!
-}
-
 input UpdateProposalInput {
   id: Int!
   body: String
@@ -400,23 +428,9 @@ input UpdateProposalInput {
   images: [Upload!]
 }
 
-input CreateRoleInput {
+input CreateServerRoleInput {
   name: String!
   color: String!
-  groupId: Int
-}
-
-input UpdateRoleInput {
-  id: Int!
-  name: String
-  color: String
-  selectedUserIds: [Int!]
-  permissions: [PermissionInput!]
-}
-
-input DeleteRoleMemberInput {
-  roleId: Int!
-  userId: Int!
 }
 
 input UpdateUserInput {

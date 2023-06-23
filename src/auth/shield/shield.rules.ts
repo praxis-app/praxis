@@ -3,9 +3,10 @@ import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../common/common.types";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
 import { UpdateGroupConfigInput } from "../../groups/group-configs/models/update-group-config.input";
+import { CreateGroupRoleInput } from "../../groups/models/create-group-role.input";
 import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
-import { CreateRoleInput } from "../../roles/models/create-role.input";
+import { DeleteRoleMemberInput } from "../../roles/models/delete-role-member.input";
 import { UpdateRoleInput } from "../../roles/models/update-role.input";
 import {
   GroupPermission,
@@ -80,22 +81,30 @@ export const canManageGroupSettings = rule()(
 export const canManageGroupRoles = rule()(
   async (
     parent,
-    args: { roleData: CreateRoleInput | UpdateRoleInput } | { id: number },
+    args:
+      | { roleData: CreateGroupRoleInput | UpdateRoleInput }
+      | { roleMemberData: DeleteRoleMemberInput }
+      | { id: number },
     { permissions, services: { rolesService } }: Context,
     info
   ) => {
     let groupId: number | undefined;
 
     if ("roleData" in args) {
-      if (info.fieldName === "createRole" && "groupId" in args.roleData) {
+      if (info.fieldName === "createGroupRole" && "groupId" in args.roleData) {
         groupId = args.roleData.groupId;
       }
-      if (info.fieldName === "updateRole" && "id" in args.roleData) {
-        const role = await rolesService.getRole(args.roleData.id);
+      if (info.fieldName === "updateGroupRole" && "id" in args.roleData) {
+        const role = await rolesService.getRole({ id: args.roleData.id });
         groupId = role.groupId;
       }
-    } else if (["role", "deleteRole"].includes(info.fieldName)) {
-      const role = await rolesService.getRole(args.id);
+    } else if ("roleMemberData" in args) {
+      const role = await rolesService.getRole({
+        id: args.roleMemberData.roleId,
+      });
+      groupId = role.groupId;
+    } else if (["role", "deleteGroupRole"].includes(info.fieldName)) {
+      const role = await rolesService.getRole({ id: args.id });
       groupId = role.groupId;
     }
     if (info.fieldName === "roles") {
@@ -141,18 +150,21 @@ export const canApproveGroupMemberRequests = rule()(
 
 export const isGroupMember = rule()(
   async (
-    parent: Group,
-    _args,
-    { user, services: { groupsService } }: Context
+    parent: Group | undefined,
+    args: { id: number },
+    { user, services: { groupsService, rolesService } }: Context
   ) => {
     if (!user) {
       return UNAUTHORIZED;
     }
-    const isGroupMember = await groupsService.isJoinedByUser(
-      parent.id,
-      user.id
-    );
-    return isGroupMember;
+    if (parent) {
+      return groupsService.isJoinedByUser(parent.id, user.id);
+    }
+    const role = await rolesService.getRole({ id: args.id });
+    if (!role.groupId) {
+      return false;
+    }
+    return groupsService.isJoinedByUser(role.groupId, user.id);
   }
 );
 
