@@ -24,7 +24,7 @@ type GroupRolePermission {
   createEvents: Boolean!
   approveMemberRequests: Boolean!
   removeMembers: Boolean!
-  role: GroupRole!
+  groupRole: GroupRole!
 }
 
 type GroupRole {
@@ -182,7 +182,7 @@ type ServerRolePermission {
   manageInvites: Boolean!
   createInvites: Boolean!
   banMembers: Boolean!
-  role: ServerRole!
+  serverRole: ServerRole!
 }
 
 type ServerRole {

@@ -161,9 +161,9 @@ export class GroupRolesService {
     await this.groupRoleRepository.save(role);
   }
 
-  async getGroupRolePermission(id: number) {
+  async getGroupRolePermission(groupRoleId: number) {
     return this.groupRolePermissionRepository.findOne({
-      where: { roleId: id },
+      where: { groupRoleId },
     });
   }
 }

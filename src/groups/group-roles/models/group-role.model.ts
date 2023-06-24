@@ -31,7 +31,7 @@ export class GroupRole {
   @Field()
   color: string;
 
-  @OneToOne(() => GroupRolePermission, (permission) => permission.role, {
+  @OneToOne(() => GroupRolePermission, (permission) => permission.groupRole, {
     cascade: true,
   })
   permission: GroupRolePermission;

@@ -55,10 +55,10 @@ export class ServerRolePermission {
     onDelete: "CASCADE",
   })
   @JoinColumn()
-  role: ServerRole;
+  serverRole: ServerRole;
 
   @Column()
-  roleId: number;
+  serverRoleId: number;
 
   @CreateDateColumn()
   createdAt: Date;

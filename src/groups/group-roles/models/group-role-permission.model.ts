@@ -67,10 +67,10 @@ export class GroupRolePermission {
     onDelete: "CASCADE",
   })
   @JoinColumn()
-  role: GroupRole;
+  groupRole: GroupRole;
 
   @Column()
-  roleId: number;
+  groupRoleId: number;
 
   @CreateDateColumn()
   createdAt: Date;

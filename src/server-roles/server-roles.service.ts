@@ -151,9 +151,9 @@ export class ServerRolesService {
     await this.serverRoleRepository.save(role);
   }
 
-  async getServerRolePermission(roleId: number) {
+  async getServerRolePermission(serverRoleId: number) {
     return this.serverRolePermissionRepository.findOne({
-      where: { roleId },
+      where: { serverRoleId },
     });
   }
 }

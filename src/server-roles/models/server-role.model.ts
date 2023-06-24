@@ -27,7 +27,7 @@ export class ServerRole {
   @Field()
   color: string;
 
-  @OneToOne(() => ServerRolePermission, (permission) => permission.role, {
+  @OneToOne(() => ServerRolePermission, (permission) => permission.serverRole, {
     cascade: true,
   })
   permission: ServerRolePermission;
