@@ -2,12 +2,10 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
 import { DeepPartial, FindOptionsWhere, In, Not, Repository } from "typeorm";
-import { GroupPermission } from "../../roles/permissions/permissions.constants";
-import { initPermissions } from "../../roles/permissions/permissions.utils";
 import {
   ADMIN_ROLE_NAME,
   DEFAULT_ROLE_COLOR,
-} from "../../roles/roles.constants";
+} from "../../server-roles/server-roles.constants";
 import { User } from "../../users/models/user.model";
 import { UsersService } from "../../users/users.service";
 import { GroupRolePermission } from "./models/group-role-permission.model";
@@ -81,12 +79,12 @@ export class GroupRolesService {
   }
 
   async initAdminRole(userId: number, groupId: number) {
-    const permissions = initPermissions(GroupPermission, true);
+    // TODO: Add logic for permissions here
     await this.groupRoleRepository.save({
       name: ADMIN_ROLE_NAME,
       color: DEFAULT_ROLE_COLOR,
       members: [{ id: userId }],
-      permissions,
+      permissions: {},
       groupId,
     });
   }
@@ -98,10 +96,10 @@ export class GroupRolesService {
     if (fromProposalAction) {
       return this.groupRoleRepository.save(roleData);
     }
-    const permissions = initPermissions(GroupPermission);
+    // TODO: Add logic for permissions here
     const role = await this.groupRoleRepository.save({
       ...roleData,
-      permissions,
+      permissions: {},
     });
     return { role };
   }

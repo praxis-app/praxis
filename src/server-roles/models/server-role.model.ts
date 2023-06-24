@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { User } from "../../users/models/user.model";
-import { ServerPermission } from "../permissions/models/server-permission.model";
+import { ServerRolePermission } from "./server-role-permission.model";
 
 @Entity()
 @ObjectType()
@@ -27,13 +27,13 @@ export class ServerRole {
   @Field()
   color: string;
 
-  @OneToOne(() => ServerPermission, (permission) => permission.role, {
+  @OneToOne(() => ServerRolePermission, (permission) => permission.role, {
     cascade: true,
   })
-  serverPermission: ServerPermission;
+  permission: ServerRolePermission;
 
   @Field(() => [User])
-  @ManyToMany(() => User, (user) => user.roles)
+  @ManyToMany(() => User, (user) => user.groupRoles)
   @JoinTable()
   members: User[];
 

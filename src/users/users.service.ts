@@ -12,7 +12,7 @@ import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { Proposal } from "../proposals/models/proposal.model";
-import { RolesService } from "../roles/roles.service";
+import { ServerRolesService } from "../server-roles/server-roles.service";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
 import {
@@ -27,8 +27,8 @@ export class UsersService {
     @InjectRepository(User)
     private repository: Repository<User>,
 
-    @Inject(forwardRef(() => RolesService))
-    private rolesService: RolesService,
+    @Inject(forwardRef(() => ServerRolesService))
+    private rolesService: ServerRolesService,
 
     private imagesService: ImagesService,
     private postsService: PostsService
@@ -120,25 +120,31 @@ export class UsersService {
   }
 
   async getUserPermissions(id: number) {
-    const user = await this.getUser({ id }, ["roles.permissions"]);
+    const user = await this.getUser({ id }, [
+      "serverRoles.permission",
+      "groupRoles.permission",
+    ]);
     if (!user) {
       throw new UserInputError("User not found");
     }
-    return user.roles.reduce<UserPermissions>(
-      (result, { groupId, permissions }) => {
-        for (const { name, enabled } of permissions) {
-          if (!enabled) {
-            continue;
-          }
-          if (groupId) {
-            if (!result.groupPermissions[groupId]) {
-              result.groupPermissions[groupId] = new Set();
-            }
-            result.groupPermissions[groupId].add(name);
-            continue;
-          }
-          result.serverPermissions.add(name);
-        }
+    return user.groupRoles.reduce<UserPermissions>(
+      (result, { permission }) => {
+        // TODO: Add permissions logic here
+        // for (const { name, enabled } of permissions) {
+        //   if (!enabled) {
+        //     continue;
+        //   }
+        //   if (groupId) {
+        //     if (!result.groupPermissions[groupId]) {
+        //       result.groupPermissions[groupId] = new Set();
+        //     }
+        //     result.groupPermissions[groupId].add(name);
+        //     continue;
+        //   }
+        //   result.serverPermissions.add(name);
+        // }
+
+        console.log(permission);
         return result;
       },
       { serverPermissions: new Set(), groupPermissions: {} }
@@ -251,7 +257,7 @@ export class UsersService {
 
     try {
       if (users.length === 1) {
-        await this.rolesService.initAdminRole(user.id);
+        await this.rolesService.initAdminServerRole(user.id);
       }
       await this.saveDefaultProfilePicture(user.id);
     } catch {

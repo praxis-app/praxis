@@ -1,3 +1,6 @@
+export const DEFAULT_ROLE_COLOR = "#f44336";
+export const ADMIN_ROLE_NAME = "admin";
+
 export enum ServerPermission {
   BanMembers = "ban-members",
   CreateInvites = "create-invites",

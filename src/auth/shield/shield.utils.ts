@@ -1,13 +1,10 @@
 import { UNAUTHORIZED } from "../../common/common.constants";
-import {
-  GroupPermission,
-  ServerPermission,
-} from "../../roles/permissions/permissions.constants";
 import { UserPermissions } from "../../users/user.types";
 
+// TODO: Update to work with new permissions setup
 export const hasPermission = (
   permissions: UserPermissions | null,
-  permission: ServerPermission | GroupPermission,
+  permission: any,
   groupId?: number
 ) => {
   if (!permissions) {

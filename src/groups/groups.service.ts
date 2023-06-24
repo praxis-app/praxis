@@ -11,7 +11,7 @@ import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { Proposal } from "../proposals/models/proposal.model";
-import { RolesService } from "../roles/roles.service";
+import { ServerRolesService } from "../server-roles/server-roles.service";
 import { UsersService } from "../users/users.service";
 import { GroupConfigsService } from "./group-configs/group-configs.service";
 import { GroupPrivacy } from "./group-configs/models/group-config.model";
@@ -35,7 +35,7 @@ export class GroupsService {
     private groupConfigsService: GroupConfigsService,
 
     private imagesService: ImagesService,
-    private rolesService: RolesService,
+    private rolesService: ServerRolesService,
     private usersService: UsersService
   ) {}
 
@@ -181,7 +181,7 @@ export class GroupsService {
       await this.saveDefaultCoverPhoto(group.id);
     }
     await this.groupConfigsService.initGroupConfig(group.id);
-    await this.rolesService.initAdminRole(userId, group.id);
+    await this.rolesService.initAdminServerRole(userId, group.id);
 
     return { group };
   }

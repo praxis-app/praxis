@@ -2,6 +2,8 @@ import { config } from "dotenv";
 import { DataSource } from "typeorm";
 import { RefreshToken } from "../auth/refresh-tokens/models/refresh-token.model";
 import { GroupConfig } from "../groups/group-configs/models/group-config.model";
+import { GroupRolePermission } from "../groups/group-roles/models/group-role-permission.model";
+import { GroupRole } from "../groups/group-roles/models/group-role.model";
 import { MemberRequest } from "../groups/member-requests/models/member-request.model";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
@@ -12,9 +14,9 @@ import { ProposalAction } from "../proposals/proposal-actions/models/proposal-ac
 import { ProposalActionPermission } from "../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model";
 import { ProposalActionRoleMember } from "../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
 import { ProposalActionRole } from "../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
-import { Role } from "../roles/models/role.model";
-import { Permission } from "../roles/permissions/models/permission.model";
 import { ServerInvite } from "../server-invites/models/server-invite.model";
+import { ServerRolePermission } from "../server-roles/models/server-role-permission.model";
+import { ServerRole } from "../server-roles/models/server-role.model";
 import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
 import { Initial1675388391336 } from "./migrations/1675388391336-Initial";
@@ -42,10 +44,11 @@ export default new DataSource({
   entities: [
     Group,
     GroupConfig,
+    GroupRole,
+    GroupRolePermission,
     Image,
     Like,
     MemberRequest,
-    Permission,
     Post,
     Proposal,
     ProposalAction,
@@ -53,8 +56,9 @@ export default new DataSource({
     ProposalActionRole,
     ProposalActionRoleMember,
     RefreshToken,
-    Role,
     ServerInvite,
+    ServerRole,
+    ServerRolePermission,
     User,
     Vote,
   ],

@@ -10,10 +10,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Role } from "../../../../roles/models/role.model";
+import { GroupRole } from "../../../../groups/group-roles/models/group-role.model";
+import { ProposalAction } from "../../models/proposal-action.model";
 import { ProposalActionPermission } from "./proposal-action-permission.model";
 import { ProposalActionRoleMember } from "./proposal-action-role-member.model";
-import { ProposalAction } from "../../models/proposal-action.model";
 
 @Entity()
 @ObjectType()
@@ -38,8 +38,7 @@ export class ProposalActionRole {
   @Field({ nullable: true })
   oldColor?: string;
 
-  @Field(() => [ProposalActionPermission], { nullable: true })
-  @OneToMany(
+  @OneToOne(
     () => ProposalActionPermission,
     (permission) => permission.proposalActionRole,
     {
@@ -47,7 +46,7 @@ export class ProposalActionRole {
       nullable: true,
     }
   )
-  permissions?: ProposalActionPermission[];
+  permission?: ProposalActionPermission;
 
   @Field(() => [ProposalActionRoleMember], { nullable: true })
   @OneToMany(
@@ -70,15 +69,15 @@ export class ProposalActionRole {
   @Column()
   proposalActionId: number;
 
-  @Field(() => Role, { nullable: true })
-  @ManyToOne(() => Role, (role) => role.proposalActionRoles, {
+  @Field(() => GroupRole, { nullable: true })
+  @ManyToOne(() => GroupRole, (groupRole) => groupRole.proposalActionRoles, {
     nullable: true,
     onDelete: "CASCADE",
   })
-  role?: Role;
+  groupRole?: GroupRole;
 
   @Column({ nullable: true })
-  roleId?: number;
+  groupRoleId?: number;
 
   @CreateDateColumn()
   createdAt: Date;

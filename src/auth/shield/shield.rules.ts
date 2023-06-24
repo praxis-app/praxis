@@ -4,14 +4,14 @@ import { Context } from "../../common/common.types";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
 import { UpdateGroupConfigInput } from "../../groups/group-configs/models/update-group-config.input";
 import { CreateGroupRoleInput } from "../../groups/group-roles/models/create-group-role.input";
+import { DeleteGroupRoleMemberInput } from "../../groups/group-roles/models/delete-group-role-member.input";
+import { UpdateGroupRoleInput } from "../../groups/group-roles/models/update-group-role.input";
 import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
-import { DeleteRoleMemberInput } from "../../roles/models/delete-role-member.input";
-import { UpdateRoleInput } from "../../roles/models/update-role.input";
 import {
   GroupPermission,
   ServerPermission,
-} from "../../roles/permissions/permissions.constants";
+} from "../../server-roles/server-roles.constants";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
 import { hasPermission } from "./shield.utils";
@@ -82,10 +82,10 @@ export const canManageGroupRoles = rule()(
   async (
     parent,
     args:
-      | { roleData: CreateGroupRoleInput | UpdateRoleInput }
-      | { roleMemberData: DeleteRoleMemberInput }
+      | { roleData: CreateGroupRoleInput | UpdateGroupRoleInput }
+      | { roleMemberData: DeleteGroupRoleMemberInput }
       | { id: number },
-    { permissions, services: { rolesService } }: Context,
+    { permissions, services: { groupRolesService } }: Context,
     info
   ) => {
     let groupId: number | undefined;
@@ -95,16 +95,18 @@ export const canManageGroupRoles = rule()(
         groupId = args.roleData.groupId;
       }
       if (info.fieldName === "updateGroupRole" && "id" in args.roleData) {
-        const role = await rolesService.getRole({ id: args.roleData.id });
+        const role = await groupRolesService.getGroupRole({
+          id: args.roleData.id,
+        });
         groupId = role.groupId;
       }
     } else if ("roleMemberData" in args) {
-      const role = await rolesService.getRole({
+      const role = await groupRolesService.getGroupRole({
         id: args.roleMemberData.roleId,
       });
       groupId = role.groupId;
     } else if (["role", "deleteGroupRole"].includes(info.fieldName)) {
-      const role = await rolesService.getRole({ id: args.id });
+      const role = await groupRolesService.getGroupRole({ id: args.id });
       groupId = role.groupId;
     }
     if (info.fieldName === "roles") {
@@ -152,7 +154,7 @@ export const isGroupMember = rule()(
   async (
     parent: Group | undefined,
     args: { id: number },
-    { user, services: { groupsService, rolesService } }: Context
+    { user, services: { groupsService, groupRolesService } }: Context
   ) => {
     if (!user) {
       return UNAUTHORIZED;
@@ -160,7 +162,7 @@ export const isGroupMember = rule()(
     if (parent) {
       return groupsService.isJoinedByUser(parent.id, user.id);
     }
-    const role = await rolesService.getRole({ id: args.id });
+    const role = await groupRolesService.getGroupRole({ id: args.id });
     if (!role.groupId) {
       return false;
     }

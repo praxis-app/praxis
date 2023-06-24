@@ -8,12 +8,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Role } from "../../models/role.model";
-import { ServerRole } from "../../models/server-role.model";
+import { ServerRole } from "./server-role.model";
 
 @Entity()
 @ObjectType()
-export class ServerPermission {
+export class ServerRolePermission {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
@@ -47,11 +46,11 @@ export class ServerPermission {
   banMembers: boolean;
 
   @Field(() => ServerRole)
-  @OneToOne(() => ServerRole, (serverRole) => serverRole.serverPermission, {
+  @OneToOne(() => ServerRole, (serverRole) => serverRole.permission, {
     onDelete: "CASCADE",
   })
   @JoinColumn()
-  role: Role;
+  role: ServerRole;
 
   @Column()
   roleId: number;

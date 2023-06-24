@@ -13,14 +13,15 @@ import {
 } from "typeorm";
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
 import { FeedItem } from "../../common/models/feed-item.union";
+import { GroupRole } from "../../groups/group-roles/models/group-role.model";
 import { Group } from "../../groups/models/group.model";
 import { Image } from "../../images/models/image.model";
 import { Like } from "../../likes/models/like.model";
 import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
 import { ProposalActionRoleMember } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
-import { Role } from "../../roles/models/role.model";
 import { ServerInvite } from "../../server-invites/models/server-invite.model";
+import { ServerRole } from "../../server-roles/models/server-role.model";
 
 @Entity()
 @ObjectType()
@@ -91,8 +92,11 @@ export class User {
   @ManyToMany(() => Group, (group) => group.members)
   groups: Group[];
 
-  @ManyToMany(() => Role, (role) => role.members)
-  roles: Role[];
+  @ManyToMany(() => ServerRole, (serverRole) => serverRole.members)
+  serverRoles: ServerRole[];
+
+  @ManyToMany(() => GroupRole, (groupRole) => groupRole.members)
+  groupRoles: GroupRole[];
 
   @OneToMany(() => ProposalActionRoleMember, (roleMember) => roleMember.user, {
     cascade: true,

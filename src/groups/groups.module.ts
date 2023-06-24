@@ -2,7 +2,7 @@ import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ImagesModule } from "../images/images.module";
 import { PostsModule } from "../posts/posts.module";
-import { RolesModule } from "../roles/roles.module";
+import { ServerRolesModule } from "../server-roles/server-roles.module";
 import { UsersModule } from "../users/users.module";
 import { GroupsResolver } from "./groups.resolver";
 import { GroupsService } from "./groups.service";
@@ -18,7 +18,7 @@ import { GroupRolesModule } from "./group-roles/group-roles.module";
     forwardRef(() => MemberRequestsModule),
     ImagesModule,
     PostsModule,
-    RolesModule,
+    ServerRolesModule,
     UsersModule,
     GroupRolesModule,
   ],

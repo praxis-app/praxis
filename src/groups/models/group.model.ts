@@ -16,9 +16,9 @@ import { FeedItem } from "../../common/models/feed-item.union";
 import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
-import { Role } from "../../roles/models/role.model";
 import { User } from "../../users/models/user.model";
 import { GroupConfig } from "../group-configs/models/group-config.model";
+import { GroupRole } from "../group-roles/models/group-role.model";
 import { MemberRequest } from "../member-requests/models/member-request.model";
 
 @Entity()
@@ -67,11 +67,11 @@ export class Group {
   })
   memberRequests: MemberRequest[];
 
-  @Field(() => [Role])
-  @OneToMany(() => Role, (role) => role.group, {
+  @Field(() => [GroupRole])
+  @OneToMany(() => GroupRole, (role) => role.group, {
     cascade: true,
   })
-  roles: Role[];
+  roles: GroupRole[];
 
   @OneToOne(() => GroupConfig, (groupConfig) => groupConfig.group, {
     cascade: true,

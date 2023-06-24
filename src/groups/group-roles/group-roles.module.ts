@@ -12,5 +12,6 @@ import { UsersModule } from "../../users/users.module";
     UsersModule,
   ],
   providers: [GroupRolesService, GroupRolesResolver],
+  exports: [GroupRolesService],
 })
 export class GroupRolesModule {}

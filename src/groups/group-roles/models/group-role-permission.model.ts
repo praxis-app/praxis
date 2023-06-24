@@ -58,7 +58,7 @@ export class GroupRolePermission {
   removeMembers: boolean;
 
   @Field(() => GroupRole)
-  @OneToOne(() => GroupRole, (serverRole) => serverRole.serverPermission, {
+  @OneToOne(() => GroupRole, (groupRole) => groupRole.permission, {
     onDelete: "CASCADE",
   })
   @JoinColumn()
