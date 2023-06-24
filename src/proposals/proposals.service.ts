@@ -227,33 +227,41 @@ export class ProposalsService {
     }
 
     if (actionType === ProposalActionType.ChangeRole) {
-      const role = await this.proposalActionRolesService.getProposalActionRole(
-        id,
-        ["permission", "members"]
-      );
-      if (!role?.groupRoleId) {
+      const actionRole =
+        await this.proposalActionRolesService.getProposalActionRole(id, [
+          "permission",
+          "members",
+        ]);
+      if (!actionRole?.groupRoleId) {
         throw new UserInputError("Could not find proposal action role");
       }
       const roleToUpdate = await this.groupRolesService.getGroupRole(
-        { id: role.groupRoleId },
+        { id: actionRole.groupRoleId },
         ["permission", "members"]
       );
 
-      const userIdsToAdd = role.members
+      const userIdsToAdd = actionRole.members
         ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Add)
         .map(({ userId }) => userId);
 
-      const userIdsToRemove = role.members
+      const userIdsToRemove = actionRole.members
         ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Remove)
         .map(({ userId }) => userId);
 
+      const permission = roleToUpdate.permission;
+      for (const key in actionRole.permission) {
+        // Check if permission is null or undefined
+        if (actionRole.permission[key] != null) {
+          permission[key] = actionRole.permission[key];
+        }
+      }
+
       await this.groupRolesService.updateGroupRole({
         id: roleToUpdate.id,
-        name: role.name,
-        color: role.color,
-        // TODO: Add new permissions logic here
-        // permissions: role.permissions,
+        name: actionRole.name,
+        color: actionRole.color,
         selectedUserIds: userIdsToAdd,
+        permission,
       });
       if (userIdsToRemove?.length) {
         await this.groupRolesService.deleteGroupRoleMembers(
@@ -261,12 +269,12 @@ export class ProposalsService {
           userIdsToRemove
         );
       }
-      if (role.name || role.color) {
+      if (actionRole.name || actionRole.color) {
         await this.proposalActionRolesService.updateProposalActionRole(
-          role.id,
+          actionRole.id,
           {
-            oldName: role.name ? roleToUpdate.name : undefined,
-            oldColor: role.color ? roleToUpdate.color : undefined,
+            oldName: actionRole.name ? roleToUpdate.name : undefined,
+            oldColor: actionRole.color ? roleToUpdate.color : undefined,
           }
         );
       }

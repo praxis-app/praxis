@@ -17,45 +17,45 @@ export class ProposalActionPermission {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: false })
+  @Column({ nullable: true })
   @Field()
-  manageRoles: boolean;
+  manageRoles?: boolean;
 
-  @Column({ default: false })
+  @Column({ nullable: true })
   @Field()
-  manageSettings: boolean;
+  manageSettings?: boolean;
 
-  @Column({ default: false })
+  @Column({ nullable: true })
   @Field()
-  managePosts: boolean;
+  managePosts?: boolean;
 
-  @Column({ default: false })
+  @Column({ nullable: true })
   @Field()
-  manageComments: boolean;
+  manageComments?: boolean;
 
-  @Column({ default: false })
+  @Column({ nullable: true })
   @Field()
-  manageEvents: boolean;
+  manageEvents?: boolean;
 
-  @Column({ default: false })
+  @Column({ nullable: true })
   @Field()
-  updateGroup: boolean;
+  updateGroup?: boolean;
 
-  @Column({ default: false })
+  @Column({ nullable: true })
   @Field()
-  deleteGroup: boolean;
+  deleteGroup?: boolean;
 
-  @Column({ default: false })
+  @Column({ nullable: true })
   @Field()
-  createEvents: boolean;
+  createEvents?: boolean;
 
-  @Column({ default: false })
+  @Column({ nullable: true })
   @Field()
-  approveMemberRequests: boolean;
+  approveMemberRequests?: boolean;
 
-  @Column({ default: false })
+  @Column({ nullable: true })
   @Field()
-  removeMembers: boolean;
+  removeMembers?: boolean;
 
   @Field(() => ProposalActionRole, { name: "role" })
   @OneToOne(

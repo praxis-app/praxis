@@ -109,7 +109,7 @@ export class GroupRolesService {
     {
       id,
       selectedUserIds = [],
-      permissions,
+      permission: permissions,
       ...roleData
     }: UpdateGroupRoleInput,
     me?: User
