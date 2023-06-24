@@ -320,6 +320,23 @@ type UpdateProposalPayload {
   proposal: Proposal!
 }
 
+type Permission {
+  id: Int!
+  name: String!
+  enabled: Boolean!
+  role: Role!
+}
+
+type Role {
+  id: Int!
+  name: String!
+  color: String!
+  permissions: [Permission!]!
+  members: [User!]!
+  group: Group
+  proposalActionRoles: [ProposalActionRole!]!
+}
+
 type Query {
   groupRole(id: Int!): GroupRole!
   groupRoles: [GroupRole!]!

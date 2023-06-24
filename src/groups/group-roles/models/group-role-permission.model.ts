@@ -10,6 +10,11 @@ import {
 } from "typeorm";
 import { GroupRole } from "./group-role.model";
 
+export type GroupPermissions = Omit<
+  GroupRolePermission,
+  "id" | "role" | "roleId" | "createdAt" | "updatedAt"
+>;
+
 @Entity()
 @ObjectType()
 export class GroupRolePermission {

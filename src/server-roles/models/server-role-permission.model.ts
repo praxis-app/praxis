@@ -10,6 +10,11 @@ import {
 } from "typeorm";
 import { ServerRole } from "./server-role.model";
 
+export type ServerPermissions = Omit<
+  ServerRolePermission,
+  "id" | "role" | "roleId" | "createdAt" | "updatedAt"
+>;
+
 @Entity()
 @ObjectType()
 export class ServerRolePermission {
