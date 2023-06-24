@@ -11,11 +11,11 @@ import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { Proposal } from "../proposals/models/proposal.model";
-import { ServerRolesService } from "../server-roles/server-roles.service";
 import { UsersService } from "../users/users.service";
 import { GroupConfigsService } from "./group-configs/group-configs.service";
 import { GroupPrivacy } from "./group-configs/models/group-config.model";
 import { initGroupRolePermissions } from "./group-roles/group-role.utils";
+import { GroupRolesService } from "./group-roles/group-roles.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { CreateGroupInput } from "./models/create-group.input";
 import { Group } from "./models/group.model";
@@ -35,8 +35,8 @@ export class GroupsService {
     @Inject(forwardRef(() => GroupConfigsService))
     private groupConfigsService: GroupConfigsService,
 
+    private groupRolesService: GroupRolesService,
     private imagesService: ImagesService,
-    private rolesService: ServerRolesService,
     private usersService: UsersService
   ) {}
 
@@ -182,7 +182,7 @@ export class GroupsService {
       await this.saveDefaultCoverPhoto(group.id);
     }
     await this.groupConfigsService.initGroupConfig(group.id);
-    await this.rolesService.initAdminServerRole(userId, group.id);
+    await this.groupRolesService.initGroupAdminRole(userId, group.id);
 
     return { group };
   }

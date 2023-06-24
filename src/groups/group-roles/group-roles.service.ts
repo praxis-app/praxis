@@ -79,7 +79,7 @@ export class GroupRolesService {
     });
   }
 
-  async initAdminRole(userId: number, groupId: number) {
+  async initGroupAdminRole(userId: number, groupId: number) {
     const permissions = initGroupRolePermissions(true);
     await this.groupRoleRepository.save({
       name: ADMIN_ROLE_NAME,

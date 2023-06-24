@@ -7,6 +7,7 @@ import { UsersService } from "../users/users.service";
 import { ServerRolePermission } from "./models/server-role-permission.model";
 import { ServerRole } from "./models/server-role.model";
 import { UpdateServerRoleInput } from "./models/update-server-role.input";
+import { initServerRolePermissions } from "./server-role.utils";
 import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from "./server-roles.constants";
 
 type ServerRoleWithMemberCount = ServerRole & { memberCount: number };
@@ -69,14 +70,13 @@ export class ServerRolesService {
     });
   }
 
-  async initAdminServerRole(userId: number, groupId?: number) {
-    // TODO: Add logic for creating permissions
+  async initAdminServerRole(userId: number) {
+    const permission = initServerRolePermissions(true);
     await this.serverRoleRepository.save({
       name: ADMIN_ROLE_NAME,
       color: DEFAULT_ROLE_COLOR,
       members: [{ id: userId }],
-      permissions: {},
-      groupId,
+      permission,
     });
   }
 
@@ -87,10 +87,11 @@ export class ServerRolesService {
     if (fromProposalAction) {
       return this.serverRoleRepository.save(roleData);
     }
-
-    // TODO: Add logic for creating permissions
-    const role = await this.serverRoleRepository.save(roleData);
-
+    const permission = initServerRolePermissions();
+    const role = await this.serverRoleRepository.save({
+      ...roleData,
+      permission,
+    });
     return { role };
   }
 
@@ -101,7 +102,7 @@ export class ServerRolesService {
       permissions,
       ...roleData
     }: UpdateServerRoleInput,
-    me?: User
+    me: User
   ) {
     const roleWithRelations = await this.getServerRole({ id }, ["members"]);
     const newMembers = await this.usersService.getUsers({
