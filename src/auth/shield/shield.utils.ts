@@ -1,26 +1,32 @@
 import { UNAUTHORIZED } from "../../common/common.constants";
+import { GroupPermissions } from "../../groups/group-roles/models/group-role-permission.model";
+import { ServerPermissions } from "../../server-roles/models/server-role-permission.model";
 import { UserPermissions } from "../../users/user.types";
 
-// TODO: Update to work with new permissions setup
-export const hasPermission = (
+export const hasServerPermission = (
   permissions: UserPermissions | null,
-  permission: any,
-  groupId?: number
+  permission: keyof ServerPermissions
 ) => {
   if (!permissions) {
     return UNAUTHORIZED;
   }
-
-  if (groupId) {
-    const groupPermissions = permissions.groupPermissions[groupId];
-    if (!groupPermissions || !groupPermissions.has(permission)) {
-      return false;
-    }
-    return true;
-  }
-
-  const hasPermission = permissions.serverPermissions.has(permission);
+  const hasPermission = permissions.serverPermissions[permission];
   if (!hasPermission) {
+    return false;
+  }
+  return true;
+};
+
+export const hasGroupPermission = (
+  permissions: UserPermissions | null,
+  permission: keyof GroupPermissions,
+  groupId: number
+) => {
+  if (!permissions) {
+    return UNAUTHORIZED;
+  }
+  const groupPermissions = permissions.groupPermissions[groupId];
+  if (!groupPermissions || !groupPermissions[permission]) {
     return false;
   }
   return true;

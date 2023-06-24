@@ -6,20 +6,19 @@ import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { IsFollowedByMeKey } from "../dataloader/dataloader.types";
+import { GroupPermissionsMap } from "../groups/group-roles/models/group-role-permission.model";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { Proposal } from "../proposals/models/proposal.model";
+import { ServerPermissions } from "../server-roles/models/server-role-permission.model";
+import { initServerRolePermissions } from "../server-roles/server-role.utils";
 import { ServerRolesService } from "../server-roles/server-roles.service";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
-import {
-  UserPermissions,
-  UserWithFollowerCount,
-  UserWithFollowingCount,
-} from "./user.types";
+import { UserWithFollowerCount, UserWithFollowingCount } from "./user.types";
 
 @Injectable()
 export class UsersService {
@@ -127,28 +126,33 @@ export class UsersService {
     if (!user) {
       throw new UserInputError("User not found");
     }
-    return user.groupRoles.reduce<UserPermissions>(
+    const serverPermissions = user.serverRoles.reduce<ServerPermissions>(
       (result, { permission }) => {
-        // TODO: Add permissions logic here
-        // for (const { name, enabled } of permissions) {
-        //   if (!enabled) {
-        //     continue;
-        //   }
-        //   if (groupId) {
-        //     if (!result.groupPermissions[groupId]) {
-        //       result.groupPermissions[groupId] = new Set();
-        //     }
-        //     result.groupPermissions[groupId].add(name);
-        //     continue;
-        //   }
-        //   result.serverPermissions.add(name);
-        // }
-
-        console.log(permission);
+        for (const key in permission) {
+          if (permission[key]) {
+            result[key] = true;
+          }
+        }
         return result;
       },
-      { serverPermissions: new Set(), groupPermissions: {} }
+      initServerRolePermissions()
     );
+    const groupPermissions = user.groupRoles.reduce<GroupPermissionsMap>(
+      (result, { groupId, permission }) => {
+        if (!result[groupId]) {
+          result[groupId] = permission;
+        } else {
+          for (const key in permission) {
+            if (permission[key]) {
+              result[key] = true;
+            }
+          }
+        }
+        return result;
+      },
+      {}
+    );
+    return { serverPermissions, groupPermissions };
   }
 
   async getJoinedGroups(id: number) {

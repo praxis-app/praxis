@@ -10,9 +10,15 @@ import {
 } from "typeorm";
 import { ServerRole } from "./server-role.model";
 
-export type ServerPermissions = Omit<
+export type ServerPermissions = Pick<
   ServerRolePermission,
-  "id" | "role" | "roleId" | "createdAt" | "updatedAt"
+  | "removeMembers"
+  | "createInvites"
+  | "manageComments"
+  | "manageEvents"
+  | "manageInvites"
+  | "managePosts"
+  | "manageRoles"
 >;
 
 @Entity()
@@ -48,7 +54,7 @@ export class ServerRolePermission {
 
   @Column({ default: false })
   @Field()
-  banMembers: boolean;
+  removeMembers: boolean;
 
   @Field(() => ServerRole)
   @OneToOne(() => ServerRole, (serverRole) => serverRole.permission, {

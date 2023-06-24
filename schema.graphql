@@ -32,7 +32,7 @@ type GroupRole {
   name: String!
   color: String!
   members: [User!]!
-  group: Group
+  group: Group!
   proposalActionRoles: [ProposalActionRole!]!
   permissions: GroupRolePermission!
   memberCount: Int!
@@ -181,7 +181,7 @@ type ServerRolePermission {
   manageEvents: Boolean!
   manageInvites: Boolean!
   createInvites: Boolean!
-  banMembers: Boolean!
+  removeMembers: Boolean!
   serverRole: ServerRole!
 }
 

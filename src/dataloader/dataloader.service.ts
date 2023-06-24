@@ -5,6 +5,7 @@
 
 import { Injectable } from "@nestjs/common";
 import * as DataLoader from "dataloader";
+import { GroupPermissions } from "../groups/group-roles/models/group-role-permission.model";
 import { GroupsService } from "../groups/groups.service";
 import { MemberRequestsService } from "../groups/member-requests/member-requests.service";
 import { Group } from "../groups/models/group.model";
@@ -225,7 +226,7 @@ export class DataloaderService {
   }
 
   private _createMyGroupPermissionsLoader() {
-    return new DataLoader<MyGroupsKey, string[], number>(
+    return new DataLoader<MyGroupsKey, GroupPermissions, number>(
       async (keys) =>
         this.groupsService.getMyGroupPermissionsByBatch(keys as MyGroupsKey[]),
       { cacheKeyFn: (key) => key.groupId }

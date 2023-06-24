@@ -41,12 +41,12 @@ export class GroupRole {
   @JoinTable()
   members: User[];
 
-  @Field(() => Group, { nullable: true })
+  @Field(() => Group)
   @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
-  group?: Group;
+  group: Group;
 
-  @Column({ nullable: true })
-  groupId?: number;
+  @Column()
+  groupId: number;
 
   @Field(() => [ProposalActionRole])
   @OneToMany(

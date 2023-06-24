@@ -15,6 +15,7 @@ import { ServerRolesService } from "../server-roles/server-roles.service";
 import { UsersService } from "../users/users.service";
 import { GroupConfigsService } from "./group-configs/group-configs.service";
 import { GroupPrivacy } from "./group-configs/models/group-config.model";
+import { initGroupRolePermissions } from "./group-roles/group-role.utils";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { CreateGroupInput } from "./models/create-group.input";
 import { Group } from "./models/group.model";
@@ -117,9 +118,9 @@ export class GroupsService {
     );
     return groupIds.map((id) => {
       if (!groupPermissions[id]) {
-        return [];
+        return initGroupRolePermissions();
       }
-      return Array.from(groupPermissions[id]);
+      return groupPermissions[id];
     });
   }
 
