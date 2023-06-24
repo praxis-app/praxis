@@ -106,12 +106,7 @@ export class GroupRolesService {
   }
 
   async updateGroupRole(
-    {
-      id,
-      selectedUserIds = [],
-      permission: permissions,
-      ...roleData
-    }: UpdateGroupRoleInput,
+    { id, selectedUserIds = [], ...roleData }: UpdateGroupRoleInput,
     me?: User
   ) {
     const roleWithRelations = await this.getGroupRole({ id }, ["members"]);
@@ -122,7 +117,6 @@ export class GroupRolesService {
       ...roleWithRelations,
       ...roleData,
       members: [...roleWithRelations.members, ...newMembers],
-      permissions,
     });
     return { role, me };
   }

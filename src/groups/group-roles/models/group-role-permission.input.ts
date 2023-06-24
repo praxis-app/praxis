@@ -1,34 +1,36 @@
+// TODO: Determine if nullable fields are undefined or null when omitted
+
 import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
 export class GroupRolePermissionInput {
-  @Field()
-  manageRoles: boolean;
+  @Field({ nullable: true })
+  manageRoles?: boolean;
 
-  @Field()
-  manageSettings: boolean;
+  @Field({ nullable: true })
+  manageSettings?: boolean;
 
-  @Field()
-  managePosts: boolean;
+  @Field({ nullable: true })
+  managePosts?: boolean;
 
-  @Field()
-  manageComments: boolean;
+  @Field({ nullable: true })
+  manageComments?: boolean;
 
-  @Field()
-  manageEvents: boolean;
+  @Field({ nullable: true })
+  manageEvents?: boolean;
 
-  @Field()
-  updateGroup: boolean;
+  @Field({ nullable: true })
+  updateGroup?: boolean;
 
-  @Field()
-  deleteGroup: boolean;
+  @Field({ nullable: true })
+  deleteGroup?: boolean;
 
-  @Field()
-  createEvents: boolean;
+  @Field({ nullable: true })
+  createEvents?: boolean;
 
-  @Field()
-  approveMemberRequests: boolean;
+  @Field({ nullable: true })
+  approveMemberRequests?: boolean;
 
-  @Field()
-  removeMembers: boolean;
+  @Field({ nullable: true })
+  removeMembers?: boolean;
 }

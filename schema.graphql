@@ -420,16 +420,16 @@ input UpdateGroupRoleInput {
 }
 
 input GroupRolePermissionInput {
-  manageRoles: Boolean!
-  manageSettings: Boolean!
-  managePosts: Boolean!
-  manageComments: Boolean!
-  manageEvents: Boolean!
-  updateGroup: Boolean!
-  deleteGroup: Boolean!
-  createEvents: Boolean!
-  approveMemberRequests: Boolean!
-  removeMembers: Boolean!
+  manageRoles: Boolean
+  manageSettings: Boolean
+  managePosts: Boolean
+  manageComments: Boolean
+  manageEvents: Boolean
+  updateGroup: Boolean
+  deleteGroup: Boolean
+  createEvents: Boolean
+  approveMemberRequests: Boolean
+  removeMembers: Boolean
 }
 
 input DeleteGroupRoleMemberInput {
