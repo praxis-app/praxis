@@ -212,20 +212,13 @@ export class ProposalsService {
       if (!role) {
         throw new UserInputError("Could not find proposal action role");
       }
-      // TODO: Add new logic for permissions below
-      // const permissions = Object.values(GroupPermission).map((name) => {
-      //   const proposedPermission = role.permissions?.find(
-      //     (p) => p.name === name
-      //   );
-      //   return { name, enabled: !!proposedPermission?.enabled };
-      // });
-      const members = role.members?.map(({ userId }) => ({
-        id: userId,
-      }));
+      const { name, color, permission } = role;
+      const members = role.members?.map(({ userId }) => ({ id: userId }));
       await this.groupRolesService.createGroupRole(
         {
-          name: role.name,
-          color: role.color,
+          name,
+          color,
+          permission,
           groupId,
           members,
         },
@@ -236,14 +229,14 @@ export class ProposalsService {
     if (actionType === ProposalActionType.ChangeRole) {
       const role = await this.proposalActionRolesService.getProposalActionRole(
         id,
-        ["permissions", "members"]
+        ["permission", "members"]
       );
       if (!role?.groupRoleId) {
         throw new UserInputError("Could not find proposal action role");
       }
       const roleToUpdate = await this.groupRolesService.getGroupRole(
         { id: role.groupRoleId },
-        ["permissions", "members"]
+        ["permission", "members"]
       );
 
       const userIdsToAdd = role.members
