@@ -9,6 +9,7 @@ import { GroupsService } from "./groups.service";
 import { MemberRequestsModule } from "./member-requests/member-requests.module";
 import { Group } from "./models/group.model";
 import { GroupConfigsModule } from "./group-configs/group-configs.module";
+import { GroupRolesModule } from "./group-roles/group-roles.module";
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { GroupConfigsModule } from "./group-configs/group-configs.module";
     PostsModule,
     RolesModule,
     UsersModule,
+    GroupRolesModule,
   ],
   providers: [GroupsService, GroupsResolver],
   exports: [GroupsService, TypeOrmModule],

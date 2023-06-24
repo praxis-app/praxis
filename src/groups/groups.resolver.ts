@@ -18,7 +18,6 @@ import { CreateRolePayload } from "../roles/models/create-role.payload";
 import { DeleteRoleMemberInput } from "../roles/models/delete-role-member.input";
 import { DeleteRoleMemberPayload } from "../roles/models/delete-role-member.payload";
 import { Role } from "../roles/models/role.model";
-import { UpdateGroupRolePayload } from "../roles/models/update-group-role.payload";
 import { UpdateRoleInput } from "../roles/models/update-role.input";
 import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
@@ -27,10 +26,11 @@ import {
   GroupConfig,
   GroupPrivacy,
 } from "./group-configs/models/group-config.model";
+import { CreateGroupRoleInput } from "./group-roles/models/create-group-role.input";
+import { UpdateGroupRolePayload } from "./group-roles/models/update-group-role.payload";
 import { GroupsService } from "./groups.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { MemberRequest } from "./member-requests/models/member-request.model";
-import { CreateGroupRoleInput } from "./models/create-group-role.input";
 import { CreateGroupInput } from "./models/create-group.input";
 import { CreateGroupPayload } from "./models/create-group.payload";
 import { Group } from "./models/group.model";
