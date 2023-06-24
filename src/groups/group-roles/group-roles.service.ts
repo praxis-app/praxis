@@ -8,6 +8,7 @@ import {
 } from "../../server-roles/server-roles.constants";
 import { User } from "../../users/models/user.model";
 import { UsersService } from "../../users/users.service";
+import { initGroupRolePermissions } from "./group-role.utils";
 import { GroupRolePermission } from "./models/group-role-permission.model";
 import { GroupRole } from "./models/group-role.model";
 import { UpdateGroupRoleInput } from "./models/update-group-role.input";
@@ -79,12 +80,12 @@ export class GroupRolesService {
   }
 
   async initAdminRole(userId: number, groupId: number) {
-    // TODO: Add logic for permissions here
+    const permissions = initGroupRolePermissions(true);
     await this.groupRoleRepository.save({
       name: ADMIN_ROLE_NAME,
       color: DEFAULT_ROLE_COLOR,
       members: [{ id: userId }],
-      permissions: {},
+      permissions,
       groupId,
     });
   }
@@ -96,10 +97,10 @@ export class GroupRolesService {
     if (fromProposalAction) {
       return this.groupRoleRepository.save(roleData);
     }
-    // TODO: Add logic for permissions here
+    const permissions = initGroupRolePermissions();
     const role = await this.groupRoleRepository.save({
       ...roleData,
-      permissions: {},
+      permissions,
     });
     return { role };
   }
