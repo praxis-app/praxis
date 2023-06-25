@@ -215,7 +215,7 @@ type User {
   followingCount: Int!
   isFollowedByMe: Boolean!
   joinedGroups: [Group!]!
-  serverPermissions: [String!]!
+  serverPermissions: UserServerPermissions!
 }
 
 type ServerInvite {
@@ -266,6 +266,16 @@ type FollowUserPayload {
 
 type UpdateUserPayload {
   user: User!
+}
+
+type UserServerPermissions {
+  manageRoles: Boolean!
+  managePosts: Boolean!
+  manageComments: Boolean!
+  manageEvents: Boolean!
+  manageInvites: Boolean!
+  createInvites: Boolean!
+  removeMembers: Boolean!
 }
 
 type LoginPayload {

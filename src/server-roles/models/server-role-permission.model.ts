@@ -1,3 +1,5 @@
+// TODO: Add interface for common permission fields
+
 import { Field, Int, ObjectType } from "@nestjs/graphql";
 import {
   Column,
