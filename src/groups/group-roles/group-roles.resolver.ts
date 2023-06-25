@@ -60,7 +60,7 @@ export class GroupRolesResolver {
     @Parent() { id }: GroupRole,
     @Context() { loaders }: { loaders: Dataloaders }
   ) {
-    return loaders.roleMemberCountLoader.load(id);
+    return loaders.groupRoleMemberCountLoader.load(id);
   }
 
   @ResolveField(() => [User])

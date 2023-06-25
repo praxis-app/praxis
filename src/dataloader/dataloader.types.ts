@@ -51,6 +51,7 @@ export interface Dataloaders {
   usersLoader: DataLoader<number, User>;
 
   // Roles & Permissions
-  roleMemberCountLoader: DataLoader<number, number>;
+  groupRoleMemberCountLoader: DataLoader<number, number>;
+  serverRoleMemberCountLoader: DataLoader<number, number>;
   myGroupPermissionsLoader: DataLoader<MyGroupsKey, GroupPermissions>;
 }

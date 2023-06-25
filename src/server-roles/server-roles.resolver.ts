@@ -50,7 +50,7 @@ export class ServerRolesResolver {
     @Parent() { id }: ServerRole,
     @Context() { loaders }: { loaders: Dataloaders }
   ) {
-    return loaders.roleMemberCountLoader.load(id);
+    return loaders.serverRoleMemberCountLoader.load(id);
   }
 
   @ResolveField(() => [User])

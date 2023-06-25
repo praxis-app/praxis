@@ -5,6 +5,7 @@
 
 import { Injectable } from "@nestjs/common";
 import * as DataLoader from "dataloader";
+import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { GroupPermissions } from "../groups/group-roles/models/group-role-permission.model";
 import { GroupsService } from "../groups/groups.service";
 import { MemberRequestsService } from "../groups/member-requests/member-requests.service";
@@ -30,12 +31,13 @@ import {
 @Injectable()
 export class DataloaderService {
   constructor(
+    private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private memberRequestsService: MemberRequestsService,
     private postsService: PostsService,
     private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,
-    private rolesService: ServerRolesService,
+    private serverRolesService: ServerRolesService,
     private usersService: UsersService,
     private votesService: VotesService
   ) {}
@@ -70,7 +72,8 @@ export class DataloaderService {
       usersLoader: this._createUsersLoader(),
 
       // Roles & Permissions
-      roleMemberCountLoader: this._createRoleMemberCountLoader(),
+      groupRoleMemberCountLoader: this._createGroupRoleMemberCountLoader(),
+      serverRoleMemberCountLoader: this._createServerRoleMemberCountLoader(),
       myGroupPermissionsLoader: this._createMyGroupPermissionsLoader(),
     };
   }
@@ -219,9 +222,17 @@ export class DataloaderService {
   // Roles & Permissions
   // -------------------------------------------------------------------------
 
-  private _createRoleMemberCountLoader() {
+  private _createGroupRoleMemberCountLoader() {
     return new DataLoader<number, number>(async (roleIds) =>
-      this.rolesService.getServerRoleMemberCountByBatch(roleIds as number[])
+      this.groupRolesService.getGroupRoleMemberCountByBatch(roleIds as number[])
+    );
+  }
+
+  private _createServerRoleMemberCountLoader() {
+    return new DataLoader<number, number>(async (roleIds) =>
+      this.serverRolesService.getServerRoleMemberCountByBatch(
+        roleIds as number[]
+      )
     );
   }
 

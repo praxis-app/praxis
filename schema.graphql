@@ -286,6 +286,18 @@ type SignUpPayload {
   user: User!
 }
 
+type DeleteGroupRoleMemberPayload {
+  groupRole: GroupRole!
+}
+
+type CreateGroupRolePayload {
+  groupRole: GroupRole!
+}
+
+type UpdateGroupRolePayload {
+  groupRole: GroupRole!
+}
+
 type GroupPermissions {
   manageRoles: Boolean!
   manageSettings: Boolean!
@@ -313,18 +325,6 @@ type ApproveMemberRequestPayload {
 
 type CreateMemberRequestPayload {
   memberRequest: MemberRequest!
-}
-
-type DeleteGroupRoleMemberPayload {
-  groupRole: GroupRole!
-}
-
-type CreateGroupRolePayload {
-  groupRole: GroupRole!
-}
-
-type UpdateGroupRolePayload {
-  groupRole: GroupRole!
 }
 
 type CreateVotePayload {
@@ -393,14 +393,14 @@ type Mutation {
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
   unfollowUser(id: Int!): Boolean!
-  updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
-  deleteImage(id: Int!): Boolean!
-  createLike(likeData: CreateLikeInput!): CreateLikePayload!
-  deleteLike(likeData: DeleteLikeInput!): Boolean!
   createServerRole(roleData: CreateServerRoleInput!): CreateServerRolePayload!
   updateServerRole(roleData: UpdateServerRoleInput!): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
   deleteServerRoleMember(roleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
+  deleteImage(id: Int!): Boolean!
+  createLike(likeData: CreateLikeInput!): CreateLikePayload!
+  deleteLike(likeData: DeleteLikeInput!): Boolean!
+  updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -514,19 +514,6 @@ input UpdateUserInput {
   coverPhoto: Upload
 }
 
-input UpdateGroupConfigInput {
-  groupId: Int!
-  privacy: String
-}
-
-input CreateLikeInput {
-  postId: Int
-}
-
-input DeleteLikeInput {
-  postId: Int
-}
-
 input CreateServerRoleInput {
   name: String!
   color: String!
@@ -553,6 +540,19 @@ input ServerRolePermissionInput {
 input DeleteServerRoleMemberInput {
   roleId: Int!
   userId: Int!
+}
+
+input CreateLikeInput {
+  postId: Int
+}
+
+input DeleteLikeInput {
+  postId: Int
+}
+
+input UpdateGroupConfigInput {
+  groupId: Int!
+  privacy: String
 }
 
 input CreateVoteInput {
