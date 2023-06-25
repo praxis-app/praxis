@@ -20,6 +20,7 @@ import {
   GroupPrivacy,
 } from "./group-configs/models/group-config.model";
 import { GroupRolesService } from "./group-roles/group-roles.service";
+import { GroupPermissions } from "./group-roles/models/group-permissions.type";
 import { GroupRole } from "./group-roles/models/group-role.model";
 import { GroupsService } from "./groups.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
@@ -134,7 +135,7 @@ export class GroupsResolver {
     return this.groupRolesService.getGroupRoles({ groupId: id });
   }
 
-  @ResolveField(() => [String])
+  @ResolveField(() => GroupPermissions)
   async myPermissions(
     @Context() { loaders }: { loaders: Dataloaders },
     @CurrentUser() currentUser: User,
