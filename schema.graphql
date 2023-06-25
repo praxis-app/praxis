@@ -541,13 +541,13 @@ input UpdateServerRoleInput {
 }
 
 input ServerRolePermissionInput {
-  manageRoles: Boolean!
-  managePosts: Boolean!
-  manageComments: Boolean!
-  manageEvents: Boolean!
-  manageInvites: Boolean!
-  createInvites: Boolean!
-  removeMembers: Boolean!
+  manageRoles: Boolean
+  managePosts: Boolean
+  manageComments: Boolean
+  manageEvents: Boolean
+  manageInvites: Boolean
+  createInvites: Boolean
+  removeMembers: Boolean
 }
 
 input DeleteServerRoleMemberInput {
