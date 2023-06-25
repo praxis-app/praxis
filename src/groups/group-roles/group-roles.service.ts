@@ -80,12 +80,12 @@ export class GroupRolesService {
   }
 
   async initGroupAdminRole(userId: number, groupId: number) {
-    const permissions = initGroupRolePermissions(true);
+    const permission = initGroupRolePermissions(true);
     await this.groupRoleRepository.save({
       name: ADMIN_ROLE_NAME,
       color: DEFAULT_ROLE_COLOR,
       members: [{ id: userId }],
-      permissions,
+      permission,
       groupId,
     });
   }
