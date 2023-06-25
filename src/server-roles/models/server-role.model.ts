@@ -33,7 +33,7 @@ export class ServerRole {
   permission: ServerRolePermission;
 
   @Field(() => [User])
-  @ManyToMany(() => User, (user) => user.groupRoles)
+  @ManyToMany(() => User, (user) => user.serverRoles)
   @JoinTable()
   members: User[];
 
