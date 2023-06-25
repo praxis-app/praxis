@@ -21,5 +21,5 @@ export class ServerRolePermissionInput {
   createInvites: boolean;
 
   @Field()
-  banMembers: boolean;
+  removeMembers: boolean;
 }

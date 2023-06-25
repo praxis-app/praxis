@@ -32,7 +32,7 @@ export const canManageServerRoles = rule()(
     hasServerPermission(permissions, "manageRoles")
 );
 
-export const canBanMembers = rule()(
+export const canRemoveMembers = rule()(
   async (_parent, _args, { permissions }: Context) =>
     hasServerPermission(permissions, "removeMembers")
 );

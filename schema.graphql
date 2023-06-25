@@ -547,7 +547,7 @@ input ServerRolePermissionInput {
   manageEvents: Boolean!
   manageInvites: Boolean!
   createInvites: Boolean!
-  banMembers: Boolean!
+  removeMembers: Boolean!
 }
 
 input DeleteServerRoleMemberInput {
