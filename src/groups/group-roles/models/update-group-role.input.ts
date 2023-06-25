@@ -16,5 +16,5 @@ export class UpdateGroupRoleInput {
   selectedUserIds?: number[];
 
   @Field(() => GroupRolePermissionInput, { nullable: true })
-  permission?: GroupRolePermissionInput;
+  permissions?: GroupRolePermissionInput;
 }

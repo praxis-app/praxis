@@ -422,7 +422,7 @@ input UpdateGroupRoleInput {
   name: String
   color: String
   selectedUserIds: [Int!]
-  permission: GroupRolePermissionInput
+  permissions: GroupRolePermissionInput
 }
 
 input GroupRolePermissionInput {

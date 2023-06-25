@@ -235,10 +235,9 @@ export class ProposalsService {
       if (!actionRole?.groupRoleId) {
         throw new UserInputError("Could not find proposal action role");
       }
-      const roleToUpdate = await this.groupRolesService.getGroupRole(
-        { id: actionRole.groupRoleId },
-        ["permission", "members"]
-      );
+      const roleToUpdate = await this.groupRolesService.getGroupRole({
+        id: actionRole.groupRoleId,
+      });
 
       const userIdsToAdd = actionRole.members
         ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Add)
@@ -248,20 +247,12 @@ export class ProposalsService {
         ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Remove)
         .map(({ userId }) => userId);
 
-      const permission = roleToUpdate.permission;
-      for (const key in actionRole.permission) {
-        // Check if permission is null or undefined
-        if (actionRole.permission[key] != null) {
-          permission[key] = actionRole.permission[key];
-        }
-      }
-
       await this.groupRolesService.updateGroupRole({
         id: roleToUpdate.id,
         name: actionRole.name,
         color: actionRole.color,
         selectedUserIds: userIdsToAdd,
-        permission,
+        permissions: actionRole.permission,
       });
       if (userIdsToRemove?.length) {
         await this.groupRolesService.deleteGroupRoleMembers(
