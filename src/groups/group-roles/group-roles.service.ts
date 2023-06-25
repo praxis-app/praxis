@@ -121,13 +121,13 @@ export class GroupRolesService {
     const newMembers = await this.usersService.getUsers({
       id: In(selectedUserIds),
     });
-    const role = await this.groupRoleRepository.save({
+    const groupRole = await this.groupRoleRepository.save({
       ...roleWithRelations,
       ...roleData,
       members: [...roleWithRelations.members, ...newMembers],
       permission: { ...roleWithRelations.permission, ...permissions },
     });
-    return { role, me };
+    return { groupRole, me };
   }
 
   async deleteGroupRole(id: number) {
