@@ -104,17 +104,20 @@ export class ServerRolesService {
     }: UpdateServerRoleInput,
     me: User
   ) {
-    const roleWithRelations = await this.getServerRole({ id }, ["members"]);
+    const roleWithRelations = await this.getServerRole({ id }, [
+      "members",
+      "permission",
+    ]);
     const newMembers = await this.usersService.getUsers({
       id: In(selectedUserIds),
     });
-    const role = await this.serverRoleRepository.save({
+    const serverRole = await this.serverRoleRepository.save({
       ...roleWithRelations,
       ...roleData,
       members: [...roleWithRelations.members, ...newMembers],
-      permissions,
+      permission: { ...roleWithRelations.permission, ...permissions },
     });
-    return { role, me };
+    return { serverRole, me };
   }
 
   async deleteServerRole(id: number) {
