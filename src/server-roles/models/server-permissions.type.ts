@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
-export class UserServerPermissions {
+export class ServerPermissions {
   @Field()
   manageRoles: boolean;
 
