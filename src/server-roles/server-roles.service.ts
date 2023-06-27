@@ -88,11 +88,11 @@ export class ServerRolesService {
       return this.serverRoleRepository.save(roleData);
     }
     const permission = initServerRolePermissions();
-    const role = await this.serverRoleRepository.save({
+    const serverRole = await this.serverRoleRepository.save({
       ...roleData,
       permission,
     });
-    return { role };
+    return { serverRole };
   }
 
   async updateServerRole(
