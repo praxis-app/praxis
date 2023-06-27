@@ -15,7 +15,7 @@ export class ProposalActionRolesResolver {
 
   @ResolveField(() => ProposalActionPermission)
   async permissions(@Parent() { id }: ProposalActionRole) {
-    return this.proposalActionRolesService.getProposalActionPermissions(id);
+    return this.proposalActionRolesService.getProposalActionPermission(id);
   }
 
   @ResolveField(() => [ProposalActionRoleMember])

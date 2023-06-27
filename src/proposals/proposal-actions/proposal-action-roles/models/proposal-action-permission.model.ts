@@ -18,43 +18,43 @@ export class ProposalActionPermission {
   id: number;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   manageRoles?: boolean;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   manageSettings?: boolean;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   managePosts?: boolean;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   manageComments?: boolean;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   manageEvents?: boolean;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   updateGroup?: boolean;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   deleteGroup?: boolean;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   createEvents?: boolean;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   approveMemberRequests?: boolean;
 
   @Column({ nullable: true })
-  @Field()
+  @Field({ nullable: true })
   removeMembers?: boolean;
 
   @Field(() => ProposalActionRole, { name: "role" })
