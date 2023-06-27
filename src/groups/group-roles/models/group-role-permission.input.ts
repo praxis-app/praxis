@@ -1,5 +1,3 @@
-// TODO: Determine if nullable fields are undefined or null when omitted
-
 import { Field, InputType } from "@nestjs/graphql";
 
 @InputType()
