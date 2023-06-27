@@ -149,11 +149,13 @@ export class GroupRolesService {
   }
 
   async deleteGroupRoleMember(id: number, userId: number, me: User) {
-    const role = await this.getGroupRole({ id }, ["members"]);
-    role.members = role.members.filter((member) => member.id !== userId);
-    await this.groupRoleRepository.save(role);
+    const groupRole = await this.getGroupRole({ id }, ["members"]);
+    groupRole.members = groupRole.members.filter(
+      (member) => member.id !== userId
+    );
+    await this.groupRoleRepository.save(groupRole);
 
-    return { role, me };
+    return { groupRole, me };
   }
 
   async deleteGroupRoleMembers(id: number, userIds: number[]) {
