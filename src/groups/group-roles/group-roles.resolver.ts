@@ -69,16 +69,18 @@ export class GroupRolesResolver {
   }
 
   @Mutation(() => CreateGroupRolePayload)
-  async createGroupRole(@Args("roleData") roleData: CreateGroupRoleInput) {
-    return this.groupRolesService.createGroupRole(roleData);
+  async createGroupRole(
+    @Args("groupRoleData") groupRoleData: CreateGroupRoleInput
+  ) {
+    return this.groupRolesService.createGroupRole(groupRoleData);
   }
 
   @Mutation(() => UpdateGroupRolePayload)
   async updateGroupRole(
-    @Args("roleData") roleData: UpdateGroupRoleInput,
+    @Args("groupRoleData") groupRoleData: UpdateGroupRoleInput,
     @CurrentUser() user: User
   ) {
-    return this.groupRolesService.updateGroupRole(roleData, user);
+    return this.groupRolesService.updateGroupRole(groupRoleData, user);
   }
 
   @Mutation(() => Boolean)

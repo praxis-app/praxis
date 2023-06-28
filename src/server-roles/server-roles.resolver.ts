@@ -59,16 +59,18 @@ export class ServerRolesResolver {
   }
 
   @Mutation(() => CreateServerRolePayload)
-  async createServerRole(@Args("roleData") roleData: CreateServerRoleInput) {
-    return this.serverRolesService.createServerRole(roleData);
+  async createServerRole(
+    @Args("serverRoleData") serverRoleData: CreateServerRoleInput
+  ) {
+    return this.serverRolesService.createServerRole(serverRoleData);
   }
 
   @Mutation(() => UpdateServerRolePayload)
   async updateServerRole(
-    @Args("roleData") roleData: UpdateServerRoleInput,
+    @Args("serverRoleData") serverRoleData: UpdateServerRoleInput,
     @CurrentUser() user: User
   ) {
-    return this.serverRolesService.updateServerRole(roleData, user);
+    return this.serverRolesService.updateServerRole(serverRoleData, user);
   }
 
   @Mutation(() => Boolean)

@@ -78,7 +78,7 @@ export const canManageGroupRoles = rule()(
   async (
     parent,
     args:
-      | { roleData: CreateGroupRoleInput | UpdateGroupRoleInput }
+      | { groupRoleData: CreateGroupRoleInput | UpdateGroupRoleInput }
       | { roleMemberData: DeleteGroupRoleMemberInput }
       | { id: number },
     { permissions, services: { groupRolesService } }: Context,
@@ -86,13 +86,16 @@ export const canManageGroupRoles = rule()(
   ) => {
     let groupId: number | undefined;
 
-    if ("roleData" in args) {
-      if (info.fieldName === "createGroupRole" && "groupId" in args.roleData) {
-        groupId = args.roleData.groupId;
+    if ("groupRoleData" in args) {
+      if (
+        info.fieldName === "createGroupRole" &&
+        "groupId" in args.groupRoleData
+      ) {
+        groupId = args.groupRoleData.groupId;
       }
-      if (info.fieldName === "updateGroupRole" && "id" in args.roleData) {
+      if (info.fieldName === "updateGroupRole" && "id" in args.groupRoleData) {
         const role = await groupRolesService.getGroupRole({
-          id: args.roleData.id,
+          id: args.groupRoleData.id,
         });
         groupId = role.groupId;
       }
