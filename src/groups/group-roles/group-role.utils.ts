@@ -14,3 +14,9 @@ export const initGroupRolePermissions = (
   removeMembers: enabled,
   updateGroup: enabled,
 });
+
+/** Removes any null or undefined fields from `object` */
+export const cleanPermissions = <T>(object: T): Partial<T> =>
+  Object.entries(object)
+    .filter(([_, value]) => typeof value === "boolean")
+    .reduce((result, [key, value]) => ({ ...result, [key]: value }), {});

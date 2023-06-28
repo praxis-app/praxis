@@ -8,7 +8,7 @@ import {
 } from "../../server-roles/server-roles.constants";
 import { User } from "../../users/models/user.model";
 import { UsersService } from "../../users/users.service";
-import { initGroupRolePermissions } from "./group-role.utils";
+import { cleanPermissions, initGroupRolePermissions } from "./group-role.utils";
 import { GroupRolePermission } from "./models/group-role-permission.model";
 import { GroupRole } from "./models/group-role.model";
 import { UpdateGroupRoleInput } from "./models/update-group-role.input";
@@ -121,11 +121,13 @@ export class GroupRolesService {
     const newMembers = await this.usersService.getUsers({
       id: In(selectedUserIds),
     });
+    const cleanedPermissions = cleanPermissions(permissions);
+
     const groupRole = await this.groupRoleRepository.save({
       ...roleWithRelations,
       ...roleData,
       members: [...roleWithRelations.members, ...newMembers],
-      permission: { ...roleWithRelations.permission, ...permissions },
+      permission: { ...roleWithRelations.permission, ...cleanedPermissions },
     });
     return { groupRole, me };
   }
