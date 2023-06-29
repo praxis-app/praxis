@@ -95,7 +95,8 @@ export class GroupRolesService {
     fromProposalAction = false
   ) {
     if (fromProposalAction) {
-      return this.groupRoleRepository.save(roleData);
+      const permission = cleanPermissions(roleData.permission);
+      return this.groupRoleRepository.save({ ...roleData, permission });
     }
     const permission = initGroupRolePermissions();
     const groupRole = await this.groupRoleRepository.save({
