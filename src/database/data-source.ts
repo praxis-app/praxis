@@ -31,6 +31,7 @@ import { AddProposalActionRoleTable1684893300206 } from "./migrations/1684893300
 import { AddProposalActionImagesConstraint1685201083917 } from "./migrations/1685201083917-AddProposalActionImagesConstraint";
 import { AddGroupConfigTable1685746618239 } from "./migrations/1685746618239-AddGroupConfigTable";
 import { AddProposalActionRoleCascadeDelete1685748700121 } from "./migrations/1685748700121-AddProposalActionRoleCascadeDelete";
+import { RefactorRolesAndPermissions1688001951695 } from "./migrations/1688001951695-RefactorRolesAndPermissions";
 
 config();
 
@@ -45,6 +46,8 @@ export default new DataSource({
     Group,
     GroupConfig,
     GroupRole,
+    GroupRole,
+    GroupRolePermission,
     GroupRolePermission,
     Image,
     Like,
@@ -58,6 +61,8 @@ export default new DataSource({
     RefreshToken,
     ServerInvite,
     ServerRole,
+    ServerRole,
+    ServerRolePermission,
     ServerRolePermission,
     User,
     Vote,
@@ -75,5 +80,6 @@ export default new DataSource({
     DropGroupMemberEntityTable1681010509841,
     DropRoleMemberEntityTable1681173025669,
     Initial1675388391336,
+    RefactorRolesAndPermissions1688001951695,
   ],
 });
