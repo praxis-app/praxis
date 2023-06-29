@@ -78,12 +78,12 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
 
         const loaders = dataloaderService.getLoaders();
         const services: ContextServices = {
+          groupRolesService,
           groupsService,
           memberRequestsService,
           postsService,
           proposalsService,
           refreshTokensService,
-          groupRolesService,
           usersService,
         };
 
