@@ -7,7 +7,10 @@ import {
   DEFAULT_ROLE_COLOR,
 } from "../../server-roles/server-roles.constants";
 import { UsersService } from "../../users/users.service";
-import { cleanPermissions, initGroupRolePermissions } from "./group-role.utils";
+import {
+  cleanGroupPermissions,
+  initGroupRolePermissions,
+} from "./group-role.utils";
 import { GroupRolePermission } from "./models/group-role-permission.model";
 import { GroupRole } from "./models/group-role.model";
 import { UpdateGroupRoleInput } from "./models/update-group-role.input";
@@ -94,7 +97,7 @@ export class GroupRolesService {
     fromProposalAction = false
   ) {
     if (fromProposalAction) {
-      const permission = cleanPermissions(roleData.permission);
+      const permission = cleanGroupPermissions(roleData.permission);
       return this.groupRoleRepository.save({ ...roleData, permission });
     }
     const permission = initGroupRolePermissions();
@@ -118,7 +121,7 @@ export class GroupRolesService {
     const newMembers = await this.usersService.getUsers({
       id: In(selectedUserIds),
     });
-    const cleanedPermissions = cleanPermissions(permissions);
+    const cleanedPermissions = cleanGroupPermissions(permissions);
 
     const groupRole = await this.groupRoleRepository.save({
       ...roleWithRelations,
