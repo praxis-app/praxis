@@ -148,15 +148,6 @@ export class ServerRolesService {
     return { serverRole, me };
   }
 
-  async deleteServerRoleMembers(id: number, userIds: number[]) {
-    const role = await this.getServerRole({ id }, ["members"]);
-
-    role.members = role.members.filter(
-      (member) => !userIds.some((id) => member.id === id)
-    );
-    await this.serverRoleRepository.save(role);
-  }
-
   async getServerRolePermission(serverRoleId: number) {
     return this.serverRolePermissionRepository.findOne({
       where: { serverRoleId },
