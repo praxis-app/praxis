@@ -79,7 +79,7 @@ export const canManageGroupRoles = rule()(
     parent,
     args:
       | { groupRoleData: CreateGroupRoleInput | UpdateGroupRoleInput }
-      | { roleMemberData: DeleteGroupRoleMemberInput }
+      | { groupRoleMemberData: DeleteGroupRoleMemberInput }
       | { id: number },
     { permissions, services: { groupRolesService } }: Context,
     info
@@ -99,9 +99,9 @@ export const canManageGroupRoles = rule()(
         });
         groupId = role.groupId;
       }
-    } else if ("roleMemberData" in args) {
+    } else if ("groupRoleMemberData" in args) {
       const role = await groupRolesService.getGroupRole({
-        id: args.roleMemberData.roleId,
+        id: args.groupRoleMemberData.groupRoleId,
       });
       groupId = role.groupId;
     } else if (["role", "deleteGroupRole"].includes(info.fieldName)) {

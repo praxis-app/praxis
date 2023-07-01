@@ -88,8 +88,9 @@ export class GroupRolesResolver {
 
   @Mutation(() => DeleteGroupRoleMemberPayload)
   async deleteGroupRoleMember(
-    @Args("roleMemberData") { roleId, userId }: DeleteGroupRoleMemberInput
+    @Args("groupRoleMemberData")
+    { groupRoleId, userId }: DeleteGroupRoleMemberInput
   ) {
-    return this.groupRolesService.deleteGroupRoleMember(roleId, userId);
+    return this.groupRolesService.deleteGroupRoleMember(groupRoleId, userId);
   }
 }

@@ -373,7 +373,7 @@ type Mutation {
   createGroupRole(groupRoleData: CreateGroupRoleInput!): CreateGroupRolePayload!
   updateGroupRole(groupRoleData: UpdateGroupRoleInput!): UpdateGroupRolePayload!
   deleteGroupRole(id: Int!): Boolean!
-  deleteGroupRoleMember(roleMemberData: DeleteGroupRoleMemberInput!): DeleteGroupRoleMemberPayload!
+  deleteGroupRoleMember(groupRoleMemberData: DeleteGroupRoleMemberInput!): DeleteGroupRoleMemberPayload!
   createGroup(groupData: CreateGroupInput!): CreateGroupPayload!
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
   deleteGroup(id: Int!): Boolean!
@@ -396,7 +396,7 @@ type Mutation {
   createServerRole(serverRoleData: CreateServerRoleInput!): CreateServerRolePayload!
   updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
-  deleteServerRoleMember(roleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
+  deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
   deleteImage(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
@@ -439,7 +439,7 @@ input GroupRolePermissionInput {
 }
 
 input DeleteGroupRoleMemberInput {
-  roleId: Int!
+  groupRoleId: Int!
   userId: Int!
 }
 
@@ -538,7 +538,7 @@ input ServerRolePermissionInput {
 }
 
 input DeleteServerRoleMemberInput {
-  roleId: Int!
+  serverRoleId: Int!
   userId: Int!
 }
 

@@ -80,9 +80,14 @@ export class ServerRolesResolver {
 
   @Mutation(() => DeleteServerRoleMemberPayload)
   async deleteServerRoleMember(
-    @Args("roleMemberData") { roleId, userId }: DeleteServerRoleMemberInput,
+    @Args("serverRoleMemberData")
+    { serverRoleId, userId }: DeleteServerRoleMemberInput,
     @CurrentUser() user: User
   ) {
-    return this.serverRolesService.deleteServerRoleMember(roleId, userId, user);
+    return this.serverRolesService.deleteServerRoleMember(
+      serverRoleId,
+      userId,
+      user
+    );
   }
 }
