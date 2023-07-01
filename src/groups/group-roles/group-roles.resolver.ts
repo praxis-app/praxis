@@ -9,15 +9,14 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { IsNull, Not } from "typeorm";
-import { CurrentUser } from "../../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../../dataloader/dataloader.types";
-import { DeleteGroupRoleMemberPayload } from "./models/delete-group-role-member.payload";
 import { User } from "../../users/models/user.model";
 import { Group } from "../models/group.model";
 import { GroupRolesService } from "./group-roles.service";
 import { CreateGroupRoleInput } from "./models/create-group-role.input";
 import { CreateGroupRolePayload } from "./models/create-group-role.payload";
 import { DeleteGroupRoleMemberInput } from "./models/delete-group-role-member.input";
+import { DeleteGroupRoleMemberPayload } from "./models/delete-group-role-member.payload";
 import { GroupRolePermission } from "./models/group-role-permission.model";
 import { GroupRole } from "./models/group-role.model";
 import { UpdateGroupRoleInput } from "./models/update-group-role.input";
@@ -77,10 +76,9 @@ export class GroupRolesResolver {
 
   @Mutation(() => UpdateGroupRolePayload)
   async updateGroupRole(
-    @Args("groupRoleData") groupRoleData: UpdateGroupRoleInput,
-    @CurrentUser() user: User
+    @Args("groupRoleData") groupRoleData: UpdateGroupRoleInput
   ) {
-    return this.groupRolesService.updateGroupRole(groupRoleData, user);
+    return this.groupRolesService.updateGroupRole(groupRoleData);
   }
 
   @Mutation(() => Boolean)
@@ -90,9 +88,8 @@ export class GroupRolesResolver {
 
   @Mutation(() => DeleteGroupRoleMemberPayload)
   async deleteGroupRoleMember(
-    @Args("roleMemberData") { roleId, userId }: DeleteGroupRoleMemberInput,
-    @CurrentUser() user: User
+    @Args("roleMemberData") { roleId, userId }: DeleteGroupRoleMemberInput
   ) {
-    return this.groupRolesService.deleteGroupRoleMember(roleId, userId, user);
+    return this.groupRolesService.deleteGroupRoleMember(roleId, userId);
   }
 }

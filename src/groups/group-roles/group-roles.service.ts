@@ -6,7 +6,6 @@ import {
   ADMIN_ROLE_NAME,
   DEFAULT_ROLE_COLOR,
 } from "../../server-roles/server-roles.constants";
-import { User } from "../../users/models/user.model";
 import { UsersService } from "../../users/users.service";
 import { cleanPermissions, initGroupRolePermissions } from "./group-role.utils";
 import { GroupRolePermission } from "./models/group-role-permission.model";
@@ -106,15 +105,12 @@ export class GroupRolesService {
     return { groupRole };
   }
 
-  async updateGroupRole(
-    {
-      id,
-      selectedUserIds = [],
-      permissions,
-      ...roleData
-    }: UpdateGroupRoleInput,
-    me?: User
-  ) {
+  async updateGroupRole({
+    id,
+    selectedUserIds = [],
+    permissions,
+    ...roleData
+  }: UpdateGroupRoleInput) {
     const roleWithRelations = await this.getGroupRole({ id }, [
       "members",
       "permission",
@@ -130,7 +126,7 @@ export class GroupRolesService {
       members: [...roleWithRelations.members, ...newMembers],
       permission: { ...roleWithRelations.permission, ...cleanedPermissions },
     });
-    return { groupRole, me };
+    return { groupRole };
   }
 
   async deleteGroupRole(id: number) {
@@ -151,14 +147,14 @@ export class GroupRolesService {
     return user;
   }
 
-  async deleteGroupRoleMember(id: number, userId: number, me: User) {
+  async deleteGroupRoleMember(id: number, userId: number) {
     const groupRole = await this.getGroupRole({ id }, ["members"]);
     groupRole.members = groupRole.members.filter(
       (member) => member.id !== userId
     );
     await this.groupRoleRepository.save(groupRole);
 
-    return { groupRole, me };
+    return { groupRole };
   }
 
   async deleteGroupRoleMembers(id: number, userIds: number[]) {

@@ -286,11 +286,11 @@ type SignUpPayload {
   user: User!
 }
 
-type DeleteGroupRoleMemberPayload {
+type CreateGroupRolePayload {
   groupRole: GroupRole!
 }
 
-type CreateGroupRolePayload {
+type DeleteGroupRoleMemberPayload {
   groupRole: GroupRole!
 }
 
