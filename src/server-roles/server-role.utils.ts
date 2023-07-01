@@ -1,4 +1,4 @@
-import { ServerPermissions } from "./models/server-role-permission.model";
+import { ServerPermissions } from "./models/server-permissions.type";
 
 export const initServerRolePermissions = (
   enabled = false

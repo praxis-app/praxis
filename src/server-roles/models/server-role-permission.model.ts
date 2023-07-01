@@ -10,17 +10,6 @@ import {
 } from "typeorm";
 import { ServerRole } from "./server-role.model";
 
-export type ServerPermissions = Pick<
-  ServerRolePermission,
-  | "removeMembers"
-  | "createInvites"
-  | "manageComments"
-  | "manageEvents"
-  | "manageInvites"
-  | "managePosts"
-  | "manageRoles"
->;
-
 @Entity()
 @ObjectType()
 export class ServerRolePermission {

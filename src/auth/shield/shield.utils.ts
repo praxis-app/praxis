@@ -1,6 +1,6 @@
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { GroupPermissions } from "../../groups/group-roles/models/group-role-permission.model";
-import { ServerPermissions } from "../../server-roles/models/server-role-permission.model";
+import { ServerPermissions } from "../../server-roles/models/server-permissions.type";
 import { UserPermissions } from "../../users/user.types";
 
 export const hasServerPermission = (

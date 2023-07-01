@@ -13,7 +13,7 @@ import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { Proposal } from "../proposals/models/proposal.model";
-import { ServerPermissions } from "../server-roles/models/server-role-permission.model";
+import { ServerPermissions } from "../server-roles/models/server-permissions.type";
 import { initServerRolePermissions } from "../server-roles/server-role.utils";
 import { ServerRolesService } from "../server-roles/server-roles.service";
 import { UpdateUserInput } from "./models/update-user.input";
