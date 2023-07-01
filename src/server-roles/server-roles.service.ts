@@ -34,8 +34,8 @@ export class ServerRolesService {
 
   async getServerRoles(where?: FindOptionsWhere<ServerRole>) {
     return this.serverRoleRepository.find({
-      where,
       order: { updatedAt: "DESC" },
+      where,
     });
   }
 

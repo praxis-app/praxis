@@ -37,8 +37,8 @@ export class GroupRolesService {
 
   async getGroupRoles(where?: FindOptionsWhere<GroupRole>) {
     return this.groupRoleRepository.find({
-      where,
       order: { updatedAt: "DESC" },
+      where,
     });
   }
 
