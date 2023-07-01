@@ -298,6 +298,10 @@ type UpdateGroupRolePayload {
   groupRole: GroupRole!
 }
 
+type UpdateGroupPayload {
+  group: Group!
+}
+
 type GroupPermissions {
   manageRoles: Boolean!
   manageSettings: Boolean!
@@ -312,10 +316,6 @@ type GroupPermissions {
 }
 
 type CreateGroupPayload {
-  group: Group!
-}
-
-type UpdateGroupPayload {
   group: Group!
 }
 
