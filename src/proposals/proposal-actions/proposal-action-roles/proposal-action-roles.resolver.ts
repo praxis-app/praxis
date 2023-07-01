@@ -24,7 +24,10 @@ export class ProposalActionRolesResolver {
   }
 
   @ResolveField(() => GroupRole, { nullable: true })
-  async groupRole(@Parent() { groupRoleId: roleId }: ProposalActionRole) {
-    return roleId ? this.groupRolesService.getGroupRole({ id: roleId }) : null;
+  async groupRole(@Parent() { groupRoleId }: ProposalActionRole) {
+    if (!groupRoleId) {
+      return null;
+    }
+    return this.groupRolesService.getGroupRole({ id: groupRoleId });
   }
 }
