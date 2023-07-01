@@ -6,7 +6,7 @@ import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { IsFollowedByMeKey } from "../dataloader/dataloader.types";
-import { GroupPermissionsMap } from "../groups/group-roles/models/group-role-permission.model";
+import { GroupPermissionsMap } from "../groups/group-roles/models/group-permissions.type";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";

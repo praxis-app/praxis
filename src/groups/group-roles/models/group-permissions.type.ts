@@ -1,5 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 
+export type GroupPermissionsMap = Record<number, GroupPermissions>;
+
 @ObjectType()
 export class GroupPermissions {
   @Field()

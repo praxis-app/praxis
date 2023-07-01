@@ -10,22 +10,6 @@ import {
 } from "typeorm";
 import { GroupRole } from "./group-role.model";
 
-export type GroupPermissions = Pick<
-  GroupRolePermission,
-  | "approveMemberRequests"
-  | "createEvents"
-  | "deleteGroup"
-  | "manageComments"
-  | "manageEvents"
-  | "managePosts"
-  | "manageRoles"
-  | "manageSettings"
-  | "removeMembers"
-  | "updateGroup"
->;
-
-export type GroupPermissionsMap = Record<number, GroupPermissions>;
-
 @Entity()
 @ObjectType()
 export class GroupRolePermission {

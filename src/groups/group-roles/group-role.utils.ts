@@ -1,4 +1,4 @@
-import { GroupPermissions } from "./models/group-role-permission.model";
+import { GroupPermissions } from "./models/group-permissions.type";
 
 export const initGroupRolePermissions = (
   enabled = false

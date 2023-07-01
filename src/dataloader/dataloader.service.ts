@@ -6,7 +6,7 @@
 import { Injectable } from "@nestjs/common";
 import * as DataLoader from "dataloader";
 import { GroupRolesService } from "../groups/group-roles/group-roles.service";
-import { GroupPermissions } from "../groups/group-roles/models/group-role-permission.model";
+import { GroupPermissions } from "../groups/group-roles/models/group-permissions.type";
 import { GroupsService } from "../groups/groups.service";
 import { MemberRequestsService } from "../groups/member-requests/member-requests.service";
 import { Group } from "../groups/models/group.model";
@@ -24,8 +24,8 @@ import { VotesService } from "../votes/votes.service";
 import {
   Dataloaders,
   IsFollowedByMeKey,
-  MyGroupsKey,
   IsLikedByMeKey,
+  MyGroupsKey,
 } from "./dataloader.types";
 
 @Injectable()

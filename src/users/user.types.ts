@@ -1,4 +1,4 @@
-import { GroupPermissionsMap } from "../groups/group-roles/models/group-role-permission.model";
+import { GroupPermissionsMap } from "../groups/group-roles/models/group-permissions.type";
 import { ServerPermissions } from "../server-roles/models/server-permissions.type";
 import { User } from "./models/user.model";
 
