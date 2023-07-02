@@ -27,7 +27,7 @@ export class UsersService {
     private repository: Repository<User>,
 
     @Inject(forwardRef(() => ServerRolesService))
-    private rolesService: ServerRolesService,
+    private serverRolesService: ServerRolesService,
 
     private imagesService: ImagesService,
     private postsService: PostsService
@@ -261,7 +261,7 @@ export class UsersService {
 
     try {
       if (users.length === 1) {
-        await this.rolesService.initAdminServerRole(user.id);
+        await this.serverRolesService.initAdminServerRole(user.id);
       }
       await this.saveDefaultProfilePicture(user.id);
     } catch {
