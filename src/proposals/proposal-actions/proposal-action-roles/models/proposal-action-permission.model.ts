@@ -3,7 +3,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -16,18 +17,55 @@ export class ProposalActionPermission {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  @Field()
-  name: string;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  manageRoles?: boolean;
 
-  @Column()
-  @Field()
-  enabled: boolean;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  manageSettings?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  managePosts?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  manageComments?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  manageEvents?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  updateGroup?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  deleteGroup?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  createEvents?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  approveMemberRequests?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  removeMembers?: boolean;
 
   @Field(() => ProposalActionRole, { name: "role" })
-  @ManyToOne(() => ProposalActionRole, (role) => role.permissions, {
-    onDelete: "CASCADE",
-  })
+  @OneToOne(
+    () => ProposalActionRole,
+    (proposalActionRole) => proposalActionRole.permission,
+    {
+      onDelete: "CASCADE",
+    }
+  )
+  @JoinColumn()
   proposalActionRole: ProposalActionRole;
 
   @Column()

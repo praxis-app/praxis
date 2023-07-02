@@ -1,4 +1,5 @@
 import DataLoader from "dataloader";
+import { GroupPermissions } from "../groups/group-roles/models/group-permissions.type";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Like } from "../likes/models/like.model";
@@ -50,6 +51,7 @@ export interface Dataloaders {
   usersLoader: DataLoader<number, User>;
 
   // Roles & Permissions
-  roleMemberCountLoader: DataLoader<number, number>;
-  myGroupPermissionsLoader: DataLoader<MyGroupsKey, string[]>;
+  groupRoleMemberCountLoader: DataLoader<number, number>;
+  serverRoleMemberCountLoader: DataLoader<number, number>;
+  myGroupPermissionsLoader: DataLoader<MyGroupsKey, GroupPermissions>;
 }

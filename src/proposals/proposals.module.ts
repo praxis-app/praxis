@@ -1,8 +1,8 @@
 import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { GroupRolesModule } from "../groups/group-roles/group-roles.module";
 import { GroupsModule } from "../groups/groups.module";
 import { ImagesModule } from "../images/images.module";
-import { RolesModule } from "../roles/roles.module";
 import { VotesModule } from "../votes/votes.module";
 import { Proposal } from "./models/proposal.model";
 import { ProposalActionRolesModule } from "./proposal-actions/proposal-action-roles/proposal-action-roles.module";
@@ -15,10 +15,10 @@ import { ProposalsService } from "./proposals.service";
     TypeOrmModule.forFeature([Proposal]),
     forwardRef(() => ProposalActionsModule),
     forwardRef(() => VotesModule),
-    ProposalActionRolesModule,
+    GroupRolesModule,
     GroupsModule,
     ImagesModule,
-    RolesModule,
+    ProposalActionRolesModule,
   ],
   providers: [ProposalsService, ProposalsResolver],
   exports: [ProposalsService, TypeOrmModule],

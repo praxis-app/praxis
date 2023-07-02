@@ -1,8 +1,8 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { Role } from "./role.model";
+import { GroupRole } from "./group-role.model";
 
 @ObjectType()
 export class UpdateGroupRolePayload {
   @Field()
-  role: Role;
+  groupRole: GroupRole;
 }

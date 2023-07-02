@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
-import { PermissionInput } from "../../../../roles/permissions/models/permission.input";
+import { GroupRolePermissionInput } from "../../../../groups/group-roles/models/group-role-permission.input";
 import { ProposalActionRoleMemberInput } from "./proposal-action-role-member.input";
 
 @InputType()
@@ -16,6 +16,6 @@ export class ProposalActionRoleInput {
   @Field(() => [ProposalActionRoleMemberInput], { nullable: true })
   members?: ProposalActionRoleMemberInput[];
 
-  @Field(() => [PermissionInput], { nullable: true })
-  permissions?: PermissionInput[];
+  @Field(() => GroupRolePermissionInput, { nullable: true })
+  permissions?: GroupRolePermissionInput;
 }

@@ -7,17 +7,18 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Group } from "../../groups/models/group.model";
-import { ProposalActionRole } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
-import { User } from "../../users/models/user.model";
-import { Permission } from "../permissions/models/permission.model";
+import { ProposalActionRole } from "../../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
+import { User } from "../../../users/models/user.model";
+import { Group } from "../../models/group.model";
+import { GroupRolePermission } from "./group-role-permission.model";
 
 @Entity()
 @ObjectType()
-export class Role {
+export class GroupRole {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
@@ -30,28 +31,27 @@ export class Role {
   @Field()
   color: string;
 
-  @Field(() => [Permission])
-  @OneToMany(() => Permission, (permission) => permission.role, {
+  @OneToOne(() => GroupRolePermission, (permission) => permission.groupRole, {
     cascade: true,
   })
-  permissions: Permission[];
+  permission: GroupRolePermission;
 
   @Field(() => [User])
-  @ManyToMany(() => User, (user) => user.roles)
+  @ManyToMany(() => User, (user) => user.groupRoles)
   @JoinTable()
   members: User[];
 
-  @Field(() => Group, { nullable: true })
+  @Field(() => Group)
   @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
-  group?: Group;
+  group: Group;
 
-  @Column({ nullable: true })
-  groupId?: number;
+  @Column()
+  groupId: number;
 
   @Field(() => [ProposalActionRole])
   @OneToMany(
     () => ProposalActionRole,
-    (proposalActionRole) => proposalActionRole.role
+    (proposalActionRole) => proposalActionRole.groupRole
   )
   proposalActionRoles: ProposalActionRole[];
 

@@ -31,8 +31,8 @@ export class ProposalActionRolesService {
     });
   }
 
-  async getProposalActionPermissions(proposalActionRoleId: number) {
-    return this.proposalActionPermissionRepository.find({
+  async getProposalActionPermission(proposalActionRoleId: number) {
+    return this.proposalActionPermissionRepository.findOne({
       where: { proposalActionRoleId },
     });
   }
@@ -49,7 +49,8 @@ export class ProposalActionRolesService {
   ) {
     await this.proposalActionRoleRepository.save({
       ...role,
-      roleId: roleToUpdateId,
+      permission: role.permissions,
+      groupRoleId: roleToUpdateId,
       proposalActionId,
     });
   }

@@ -6,20 +6,19 @@ import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { IsFollowedByMeKey } from "../dataloader/dataloader.types";
+import { GroupPermissionsMap } from "../groups/group-roles/models/group-permissions.type";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { Proposal } from "../proposals/models/proposal.model";
-import { RolesService } from "../roles/roles.service";
+import { ServerPermissions } from "../server-roles/models/server-permissions.type";
+import { initServerRolePermissions } from "../server-roles/server-role.utils";
+import { ServerRolesService } from "../server-roles/server-roles.service";
 import { UpdateUserInput } from "./models/update-user.input";
 import { User } from "./models/user.model";
-import {
-  UserPermissions,
-  UserWithFollowerCount,
-  UserWithFollowingCount,
-} from "./user.types";
+import { UserWithFollowerCount, UserWithFollowingCount } from "./user.types";
 
 @Injectable()
 export class UsersService {
@@ -27,8 +26,8 @@ export class UsersService {
     @InjectRepository(User)
     private repository: Repository<User>,
 
-    @Inject(forwardRef(() => RolesService))
-    private rolesService: RolesService,
+    @Inject(forwardRef(() => ServerRolesService))
+    private serverRolesService: ServerRolesService,
 
     private imagesService: ImagesService,
     private postsService: PostsService
@@ -120,29 +119,40 @@ export class UsersService {
   }
 
   async getUserPermissions(id: number) {
-    const user = await this.getUser({ id }, ["roles.permissions"]);
+    const user = await this.getUser({ id }, [
+      "serverRoles.permission",
+      "groupRoles.permission",
+    ]);
     if (!user) {
       throw new UserInputError("User not found");
     }
-    return user.roles.reduce<UserPermissions>(
-      (result, { groupId, permissions }) => {
-        for (const { name, enabled } of permissions) {
-          if (!enabled) {
-            continue;
+    const serverPermissions = user.serverRoles.reduce<ServerPermissions>(
+      (result, { permission }) => {
+        for (const key in permission) {
+          if (permission[key]) {
+            result[key] = true;
           }
-          if (groupId) {
-            if (!result.groupPermissions[groupId]) {
-              result.groupPermissions[groupId] = new Set();
-            }
-            result.groupPermissions[groupId].add(name);
-            continue;
-          }
-          result.serverPermissions.add(name);
         }
         return result;
       },
-      { serverPermissions: new Set(), groupPermissions: {} }
+      initServerRolePermissions()
     );
+    const groupPermissions = user.groupRoles.reduce<GroupPermissionsMap>(
+      (result, { groupId, permission }) => {
+        if (!result[groupId]) {
+          result[groupId] = permission;
+        } else {
+          for (const key in permission) {
+            if (permission[key]) {
+              result[key] = true;
+            }
+          }
+        }
+        return result;
+      },
+      {}
+    );
+    return { serverPermissions, groupPermissions };
   }
 
   async getJoinedGroups(id: number) {
@@ -251,7 +261,7 @@ export class UsersService {
 
     try {
       if (users.length === 1) {
-        await this.rolesService.initAdminRole(user.id);
+        await this.serverRolesService.initAdminServerRole(user.id);
       }
       await this.saveDefaultProfilePicture(user.id);
     } catch {

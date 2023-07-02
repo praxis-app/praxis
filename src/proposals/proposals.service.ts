@@ -8,13 +8,12 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { DefaultGroupSetting } from "../groups/groups.constants";
 import { GroupsService } from "../groups/groups.service";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
-import { GroupPermission } from "../roles/permissions/permissions.constants";
-import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
 import { Vote } from "../votes/models/vote.model";
 import { VotesService } from "../votes/votes.service";
@@ -43,11 +42,11 @@ export class ProposalsService {
     @Inject(forwardRef(() => VotesService))
     private votesService: VotesService,
 
+    private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private imagesService: ImagesService,
     private proposalActionRolesService: ProposalActionRolesService,
-    private proposalActionsService: ProposalActionsService,
-    private rolesService: RolesService
+    private proposalActionsService: ProposalActionsService
   ) {}
 
   async getProposal(id: number, relations?: string[]) {
@@ -208,72 +207,65 @@ export class ProposalsService {
     if (actionType === ProposalActionType.CreateRole) {
       const role = await this.proposalActionRolesService.getProposalActionRole(
         id,
-        ["permissions", "members"]
+        ["permission", "members"]
       );
       if (!role) {
         throw new UserInputError("Could not find proposal action role");
       }
-      const permissions = Object.values(GroupPermission).map((name) => {
-        const proposedPermission = role.permissions?.find(
-          (p) => p.name === name
-        );
-        return { name, enabled: !!proposedPermission?.enabled };
-      });
-      const members = role.members?.map(({ userId }) => ({
-        id: userId,
-      }));
-      await this.rolesService.createRole(
+      const { name, color, permission } = role;
+      const members = role.members?.map(({ userId }) => ({ id: userId }));
+      await this.groupRolesService.createGroupRole(
         {
-          name: role.name,
-          color: role.color,
+          name,
+          color,
+          permission,
           groupId,
           members,
-          permissions,
         },
         true
       );
     }
 
     if (actionType === ProposalActionType.ChangeRole) {
-      const role = await this.proposalActionRolesService.getProposalActionRole(
-        id,
-        ["permissions", "members"]
-      );
-      if (!role?.roleId) {
+      const actionRole =
+        await this.proposalActionRolesService.getProposalActionRole(id, [
+          "permission",
+          "members",
+        ]);
+      if (!actionRole?.groupRoleId) {
         throw new UserInputError("Could not find proposal action role");
       }
-      const roleToUpdate = await this.rolesService.getRole(
-        { id: role.roleId },
-        ["permissions", "members"]
-      );
+      const roleToUpdate = await this.groupRolesService.getGroupRole({
+        id: actionRole.groupRoleId,
+      });
 
-      const userIdsToAdd = role.members
+      const userIdsToAdd = actionRole.members
         ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Add)
         .map(({ userId }) => userId);
 
-      const userIdsToRemove = role.members
+      const userIdsToRemove = actionRole.members
         ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Remove)
         .map(({ userId }) => userId);
 
-      await this.rolesService.updateRole({
+      await this.groupRolesService.updateGroupRole({
         id: roleToUpdate.id,
-        name: role.name,
-        color: role.color,
-        permissions: role.permissions,
+        name: actionRole.name,
+        color: actionRole.color,
         selectedUserIds: userIdsToAdd,
+        permissions: actionRole.permission,
       });
       if (userIdsToRemove?.length) {
-        await this.rolesService.deleteRoleMembers(
+        await this.groupRolesService.deleteGroupRoleMembers(
           roleToUpdate.id,
           userIdsToRemove
         );
       }
-      if (role.name || role.color) {
+      if (actionRole.name || actionRole.color) {
         await this.proposalActionRolesService.updateProposalActionRole(
-          role.id,
+          actionRole.id,
           {
-            oldName: role.name ? roleToUpdate.name : undefined,
-            oldColor: role.color ? roleToUpdate.color : undefined,
+            oldName: actionRole.name ? roleToUpdate.name : undefined,
+            oldColor: actionRole.color ? roleToUpdate.color : undefined,
           }
         );
       }

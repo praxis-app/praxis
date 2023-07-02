@@ -19,6 +19,7 @@ import { PostsService } from "../posts/posts.service";
 import { FollowUserPayload } from "./models/follow-user.payload";
 import { UpdateUserInput } from "./models/update-user.input";
 import { UpdateUserPayload } from "./models/update-user.payload";
+import { ServerPermissions } from "../server-roles/models/server-permissions.type";
 import { User } from "./models/user.model";
 import { UsersService } from "./users.service";
 
@@ -128,7 +129,7 @@ export class UsersResolver {
     return this.usersService.getJoinedGroups(id);
   }
 
-  @ResolveField(() => [String])
+  @ResolveField(() => ServerPermissions)
   async serverPermissions(@Parent() { id }: User) {
     const { serverPermissions } = await this.usersService.getUserPermissions(
       id

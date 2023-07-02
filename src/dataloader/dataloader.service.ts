@@ -5,6 +5,8 @@
 
 import { Injectable } from "@nestjs/common";
 import * as DataLoader from "dataloader";
+import { GroupRolesService } from "../groups/group-roles/group-roles.service";
+import { GroupPermissions } from "../groups/group-roles/models/group-permissions.type";
 import { GroupsService } from "../groups/groups.service";
 import { MemberRequestsService } from "../groups/member-requests/member-requests.service";
 import { Group } from "../groups/models/group.model";
@@ -14,7 +16,7 @@ import { PostsService } from "../posts/posts.service";
 import { ProposalAction } from "../proposals/proposal-actions/models/proposal-action.model";
 import { ProposalActionsService } from "../proposals/proposal-actions/proposal-actions.service";
 import { ProposalsService } from "../proposals/proposals.service";
-import { RolesService } from "../roles/roles.service";
+import { ServerRolesService } from "../server-roles/server-roles.service";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
 import { Vote } from "../votes/models/vote.model";
@@ -22,19 +24,20 @@ import { VotesService } from "../votes/votes.service";
 import {
   Dataloaders,
   IsFollowedByMeKey,
-  MyGroupsKey,
   IsLikedByMeKey,
+  MyGroupsKey,
 } from "./dataloader.types";
 
 @Injectable()
 export class DataloaderService {
   constructor(
+    private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private memberRequestsService: MemberRequestsService,
     private postsService: PostsService,
     private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,
-    private rolesService: RolesService,
+    private serverRolesService: ServerRolesService,
     private usersService: UsersService,
     private votesService: VotesService
   ) {}
@@ -69,7 +72,8 @@ export class DataloaderService {
       usersLoader: this._createUsersLoader(),
 
       // Roles & Permissions
-      roleMemberCountLoader: this._createRoleMemberCountLoader(),
+      groupRoleMemberCountLoader: this._createGroupRoleMemberCountLoader(),
+      serverRoleMemberCountLoader: this._createServerRoleMemberCountLoader(),
       myGroupPermissionsLoader: this._createMyGroupPermissionsLoader(),
     };
   }
@@ -218,14 +222,22 @@ export class DataloaderService {
   // Roles & Permissions
   // -------------------------------------------------------------------------
 
-  private _createRoleMemberCountLoader() {
+  private _createGroupRoleMemberCountLoader() {
     return new DataLoader<number, number>(async (roleIds) =>
-      this.rolesService.getRoleMemberCountByBatch(roleIds as number[])
+      this.groupRolesService.getGroupRoleMemberCountByBatch(roleIds as number[])
+    );
+  }
+
+  private _createServerRoleMemberCountLoader() {
+    return new DataLoader<number, number>(async (roleIds) =>
+      this.serverRolesService.getServerRoleMemberCountByBatch(
+        roleIds as number[]
+      )
     );
   }
 
   private _createMyGroupPermissionsLoader() {
-    return new DataLoader<MyGroupsKey, string[], number>(
+    return new DataLoader<MyGroupsKey, GroupPermissions, number>(
       async (keys) =>
         this.groupsService.getMyGroupPermissionsByBatch(keys as MyGroupsKey[]),
       { cacheKeyFn: (key) => key.groupId }

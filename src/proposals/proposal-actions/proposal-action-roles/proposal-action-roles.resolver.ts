@@ -1,6 +1,6 @@
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql";
-import { Role } from "../../../roles/models/role.model";
-import { RolesService } from "../../../roles/roles.service";
+import { GroupRolesService } from "../../../groups/group-roles/group-roles.service";
+import { GroupRole } from "../../../groups/group-roles/models/group-role.model";
 import { ProposalActionPermission } from "./models/proposal-action-permission.model";
 import { ProposalActionRoleMember } from "./models/proposal-action-role-member.model";
 import { ProposalActionRole } from "./models/proposal-action-role.model";
@@ -10,12 +10,12 @@ import { ProposalActionRolesService } from "./proposal-action-roles.service";
 export class ProposalActionRolesResolver {
   constructor(
     private proposalActionRolesService: ProposalActionRolesService,
-    private rolesService: RolesService
+    private groupRolesService: GroupRolesService
   ) {}
 
-  @ResolveField(() => [ProposalActionPermission])
+  @ResolveField(() => ProposalActionPermission)
   async permissions(@Parent() { id }: ProposalActionRole) {
-    return this.proposalActionRolesService.getProposalActionPermissions(id);
+    return this.proposalActionRolesService.getProposalActionPermission(id);
   }
 
   @ResolveField(() => [ProposalActionRoleMember])
@@ -23,8 +23,11 @@ export class ProposalActionRolesResolver {
     return this.proposalActionRolesService.getProposalActionRoleMembers(id);
   }
 
-  @ResolveField(() => Role, { nullable: true })
-  async role(@Parent() { roleId }: ProposalActionRole) {
-    return roleId ? this.rolesService.getRole({ id: roleId }) : null;
+  @ResolveField(() => GroupRole, { nullable: true })
+  async groupRole(@Parent() { groupRoleId }: ProposalActionRole) {
+    if (!groupRoleId) {
+      return null;
+    }
+    return this.groupRolesService.getGroupRole({ id: groupRoleId });
   }
 }

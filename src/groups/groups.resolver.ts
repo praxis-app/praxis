@@ -8,29 +8,23 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
-import { IsNull, Not } from "typeorm";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { FeedItem } from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
-import { CreateRolePayload } from "../roles/models/create-role.payload";
-import { DeleteRoleMemberInput } from "../roles/models/delete-role-member.input";
-import { DeleteRoleMemberPayload } from "../roles/models/delete-role-member.payload";
-import { Role } from "../roles/models/role.model";
-import { UpdateGroupRolePayload } from "../roles/models/update-group-role.payload";
-import { UpdateRoleInput } from "../roles/models/update-role.input";
-import { RolesService } from "../roles/roles.service";
 import { User } from "../users/models/user.model";
 import { GroupConfigsService } from "./group-configs/group-configs.service";
 import {
   GroupConfig,
   GroupPrivacy,
 } from "./group-configs/models/group-config.model";
+import { GroupRolesService } from "./group-roles/group-roles.service";
+import { GroupPermissions } from "./group-roles/models/group-permissions.type";
+import { GroupRole } from "./group-roles/models/group-role.model";
 import { GroupsService } from "./groups.service";
 import { MemberRequestsService } from "./member-requests/member-requests.service";
 import { MemberRequest } from "./member-requests/models/member-request.model";
-import { CreateGroupRoleInput } from "./models/create-group-role.input";
 import { CreateGroupInput } from "./models/create-group.input";
 import { CreateGroupPayload } from "./models/create-group.payload";
 import { Group } from "./models/group.model";
@@ -40,11 +34,11 @@ import { UpdateGroupPayload } from "./models/update-group.payload";
 @Resolver(() => Group)
 export class GroupsResolver {
   constructor(
-    private groupsService: GroupsService,
     private groupConfigsService: GroupConfigsService,
+    private groupRolesService: GroupRolesService,
+    private groupsService: GroupsService,
     private memberRequestsService: MemberRequestsService,
-    private postsService: PostsService,
-    private rolesService: RolesService
+    private postsService: PostsService
   ) {}
 
   @Query(() => Group)
@@ -72,9 +66,9 @@ export class GroupsResolver {
     return this.groupsService.getPublicGroupsFeed();
   }
 
-  @Query(() => Role)
+  @Query(() => GroupRole)
   async groupRole(@Args("id", { type: () => Int }) id: number) {
-    return this.rolesService.getRole({ id, groupId: Not(IsNull()) });
+    return this.groupRolesService.getGroupRole({ id });
   }
 
   @ResolveField(() => [Post])
@@ -136,12 +130,12 @@ export class GroupsResolver {
     });
   }
 
-  @ResolveField(() => [Role])
+  @ResolveField(() => [GroupRole])
   async roles(@Parent() { id }: Group) {
-    return this.rolesService.getRoles({ groupId: id });
+    return this.groupRolesService.getGroupRoles({ groupId: id });
   }
 
-  @ResolveField(() => [String])
+  @ResolveField(() => GroupPermissions)
   async myPermissions(
     @Context() { loaders }: { loaders: Dataloaders },
     @CurrentUser() currentUser: User,
@@ -182,31 +176,5 @@ export class GroupsResolver {
     @CurrentUser() { id: userId }: User
   ) {
     return this.groupsService.leaveGroup(id, userId);
-  }
-
-  @Mutation(() => CreateRolePayload)
-  async createGroupRole(@Args("roleData") roleData: CreateGroupRoleInput) {
-    return this.rolesService.createRole(roleData);
-  }
-
-  @Mutation(() => UpdateGroupRolePayload)
-  async updateGroupRole(
-    @Args("roleData") roleData: UpdateRoleInput,
-    @CurrentUser() user: User
-  ) {
-    return this.rolesService.updateRole(roleData, user);
-  }
-
-  @Mutation(() => Boolean)
-  async deleteGroupRole(@Args("id", { type: () => Int }) id: number) {
-    return this.rolesService.deleteRole(id);
-  }
-
-  @Mutation(() => DeleteRoleMemberPayload)
-  async deleteGroupRoleMember(
-    @Args("roleMemberData") { roleId, userId }: DeleteRoleMemberInput,
-    @CurrentUser() user: User
-  ) {
-    return this.rolesService.deleteRoleMember(roleId, userId, user);
   }
 }

@@ -1,29 +1,32 @@
 import { UNAUTHORIZED } from "../../common/common.constants";
-import {
-  GroupPermission,
-  ServerPermission,
-} from "../../roles/permissions/permissions.constants";
+import { GroupPermissions } from "../../groups/group-roles/models/group-permissions.type";
+import { ServerPermissions } from "../../server-roles/models/server-permissions.type";
 import { UserPermissions } from "../../users/user.types";
 
-export const hasPermission = (
+export const hasServerPermission = (
   permissions: UserPermissions | null,
-  permission: ServerPermission | GroupPermission,
-  groupId?: number
+  permission: keyof ServerPermissions
 ) => {
   if (!permissions) {
     return UNAUTHORIZED;
   }
-
-  if (groupId) {
-    const groupPermissions = permissions.groupPermissions[groupId];
-    if (!groupPermissions || !groupPermissions.has(permission)) {
-      return false;
-    }
-    return true;
-  }
-
-  const hasPermission = permissions.serverPermissions.has(permission);
+  const hasPermission = permissions.serverPermissions[permission];
   if (!hasPermission) {
+    return false;
+  }
+  return true;
+};
+
+export const hasGroupPermission = (
+  permissions: UserPermissions | null,
+  permission: keyof GroupPermissions,
+  groupId: number
+) => {
+  if (!permissions) {
+    return UNAUTHORIZED;
+  }
+  const groupPermissions = permissions.groupPermissions[groupId];
+  if (!groupPermissions || !groupPermissions[permission]) {
     return false;
   }
   return true;
