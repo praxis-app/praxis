@@ -53,6 +53,9 @@ export class GroupsService {
   }
 
   async getGroupFeed(id: number) {
+    // TODO: Remove after admin role is restored
+    await this.groupRolesService.restoreGroupAdminRole(id);
+
     const group = await this.getGroup({ id }, ["proposals", "posts"]);
     const sortedFeed = [...group.posts, ...group.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime()

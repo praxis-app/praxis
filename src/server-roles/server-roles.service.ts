@@ -25,6 +25,15 @@ export class ServerRolesService {
     private usersService: UsersService
   ) {}
 
+  // TODO: Remove after admin role is restored
+  async restoreServerAdminRole() {
+    const roles = await this.getServerRoles();
+    if (roles.length) {
+      return;
+    }
+    await this.initAdminServerRole(1);
+  }
+
   async getServerRole(
     where?: FindOptionsWhere<ServerRole>,
     relations?: string[]

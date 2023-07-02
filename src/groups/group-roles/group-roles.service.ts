@@ -30,6 +30,15 @@ export class GroupRolesService {
     private usersService: UsersService
   ) {}
 
+  // TODO: Remove after admin role is restored
+  async restoreGroupAdminRole(groupId: number) {
+    const roles = await this.getGroupRoles({ groupId });
+    if (roles.length) {
+      return;
+    }
+    await this.initGroupAdminRole(1, groupId);
+  }
+
   async getGroupRole(
     where?: FindOptionsWhere<GroupRole>,
     relations?: string[]

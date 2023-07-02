@@ -54,6 +54,9 @@ export class UsersService {
   }
 
   async getUserHomeFeed(id: number) {
+    // TODO: Remove after admin role is restored
+    await this.serverRolesService.restoreServerAdminRole();
+
     const userWithFeed = await this.getUser({ id }, [
       "groups.proposals",
       "groups.posts",
