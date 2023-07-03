@@ -393,6 +393,8 @@ type Query {
   authCheck: Boolean!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
+  event(id: Int): Event!
+  events: [Event!]!
 }
 
 type Mutation {
