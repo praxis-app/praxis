@@ -5,7 +5,7 @@ import { GroupsService } from "../groups.service";
 import { Group } from "../models/group.model";
 import {
   GroupMemberRequest,
-  MemberRequestStatus,
+  GroupMemberRequestStatus,
 } from "./models/group-member-request.model";
 
 type GroupWithMemberRequestCount = Group & { memberRequestCount: number };
@@ -35,7 +35,7 @@ export class GroupMemberRequestsService {
 
   async getGroupMemberRequests(groupId: number) {
     return this.groupMemberRequestRepository.find({
-      where: { status: MemberRequestStatus.Pending, groupId },
+      where: { status: GroupMemberRequestStatus.Pending, groupId },
       order: { createdAt: "DESC" },
     });
   }
@@ -50,7 +50,7 @@ export class GroupMemberRequestsService {
         "memberRequest",
         (qb) =>
           qb.andWhere("memberRequest.status = :status", {
-            status: MemberRequestStatus.Pending,
+            status: GroupMemberRequestStatus.Pending,
           })
       )
       .select(["group.id"])
@@ -67,16 +67,16 @@ export class GroupMemberRequestsService {
   }
 
   async createGroupMemberRequest(groupId: number, userId: number) {
-    const memberRequest = await this.groupMemberRequestRepository.save({
+    const groupMemberRequest = await this.groupMemberRequestRepository.save({
       groupId,
       userId,
     });
-    return { memberRequest };
+    return { groupMemberRequest };
   }
 
   async approveGroupMemberRequest(id: number) {
     const memberRequest = await this.updateGroupMemberRequest(id, {
-      status: MemberRequestStatus.Approved,
+      status: GroupMemberRequestStatus.Approved,
     });
     const groupMember = await this.groupsService.createGroupMember(
       memberRequest.groupId,
@@ -87,7 +87,7 @@ export class GroupMemberRequestsService {
 
   async denyGroupMemberRequest(id: number) {
     await this.updateGroupMemberRequest(id, {
-      status: MemberRequestStatus.Denied,
+      status: GroupMemberRequestStatus.Denied,
     });
     return true;
   }

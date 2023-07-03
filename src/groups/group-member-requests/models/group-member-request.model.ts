@@ -10,7 +10,7 @@ import {
 import { User } from "../../../users/models/user.model";
 import { Group } from "../../models/group.model";
 
-export enum MemberRequestStatus {
+export enum GroupMemberRequestStatus {
   Approved = "approved",
   Denied = "denied",
   Pending = "pending",
@@ -23,7 +23,7 @@ export class GroupMemberRequest {
   @Field(() => Int)
   id: number;
 
-  @Column({ default: MemberRequestStatus.Pending })
+  @Column({ default: GroupMemberRequestStatus.Pending })
   status: string;
 
   @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
