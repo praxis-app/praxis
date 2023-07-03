@@ -373,6 +373,10 @@ type CreateEventPayload {
   event: Event!
 }
 
+type UpdateEventPayload {
+  event: Event!
+}
+
 type Query {
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   groupRole(id: Int!): GroupRole!
@@ -442,6 +446,7 @@ type Mutation {
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
   createEvent(eventData: CreateEventInput!): CreateEventPayload!
+  updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
 }
 
 input CreateGroupRoleInput {
@@ -626,4 +631,15 @@ input CreateEventInput {
   startsAt: DateTime!
   endsAt: DateTime
   groupId: Float
+}
+
+input UpdateEventInput {
+  id: Float!
+  name: String!
+  description: String!
+  location: String
+  online: Boolean
+  externalLink: String
+  startsAt: DateTime!
+  endsAt: DateTime
 }

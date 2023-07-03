@@ -17,6 +17,8 @@ import { EventsService } from "./events.service";
 import { CreateEventInput } from "./models/create-event.input";
 import { CreateEventPayload } from "./models/create-event.payload";
 import { Event } from "./models/event.model";
+import { UpdateEventInput } from "./models/update-event.input";
+import { UpdateEventPayload } from "./models/update-event.payload";
 
 @Resolver(() => Event)
 export class EventsResolver {
@@ -46,5 +48,10 @@ export class EventsResolver {
     @CurrentUser() { id }: User
   ) {
     return this.eventsService.createEvent(eventData, id);
+  }
+
+  @Mutation(() => UpdateEventPayload)
+  async updateEvent(@Args("eventData") eventData: UpdateEventInput) {
+    return this.eventsService.updateEvent(eventData);
   }
 }

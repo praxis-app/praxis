@@ -7,6 +7,7 @@ import {
   EventAttendeeStatus,
 } from "./models/event-attendee.model";
 import { Event } from "./models/event.model";
+import { UpdateEventInput } from "./models/update-event.input";
 
 @Injectable()
 export class EventsService {
@@ -37,6 +38,12 @@ export class EventsService {
       eventId: event.id,
       userId,
     });
+    return { event };
+  }
+
+  async updateEvent({ id, ...eventData }: UpdateEventInput) {
+    await this.eventRepository.update(id, eventData);
+    const event = await this.getEvent({ id });
     return { event };
   }
 }
