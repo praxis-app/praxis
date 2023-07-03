@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Group } from "../../groups/models/group.model";
 import { Image } from "../../images/models/image.model";
+import { EventAttendee } from "./event-attendee.model";
 
 @ObjectType()
 @Entity()
@@ -37,6 +38,10 @@ export class Event {
   @Column({ nullable: true })
   @Field({ nullable: true })
   externalLink?: string;
+
+  @Field(() => [EventAttendee])
+  @OneToMany(() => EventAttendee, (attendee) => attendee.event)
+  attendees: EventAttendee[];
 
   @Field(() => [Image])
   @OneToMany(() => Image, (image) => image.post)

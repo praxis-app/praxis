@@ -114,6 +114,15 @@ type Image {
   updatedAt: DateTime!
 }
 
+type EventAttendee {
+  id: Int!
+  status: String!
+  user: User!
+  event: Event!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Event {
   id: Int!
   name: String!
@@ -121,6 +130,7 @@ type Event {
   location: String
   online: Boolean!
   externalLink: String
+  attendees: [EventAttendee!]!
   images: [Image!]!
   group: Group
   startsAt: DateTime!

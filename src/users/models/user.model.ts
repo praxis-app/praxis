@@ -13,6 +13,7 @@ import {
 } from "typeorm";
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
 import { FeedItem } from "../../common/models/feed-item.union";
+import { EventAttendee } from "../../events/models/event-attendee.model";
 import { GroupRole } from "../../groups/group-roles/models/group-role.model";
 import { Group } from "../../groups/models/group.model";
 import { Image } from "../../images/models/image.model";
@@ -97,6 +98,11 @@ export class User {
 
   @ManyToMany(() => GroupRole, (groupRole) => groupRole.members)
   groupRoles: GroupRole[];
+
+  @OneToMany(() => EventAttendee, (eventAttendee) => eventAttendee.user, {
+    cascade: true,
+  })
+  eventAttendees: EventAttendee[];
 
   @OneToMany(() => ProposalActionRoleMember, (roleMember) => roleMember.user, {
     cascade: true,
