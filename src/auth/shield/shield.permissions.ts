@@ -27,7 +27,7 @@ import {
   isPublicGroupProposal,
 } from "./shield.rules";
 
-const shieldPermissions = shield(
+export const shieldPermissions = shield(
   {
     Query: {
       "*": isAuthenticated,
@@ -56,7 +56,7 @@ const shieldPermissions = shield(
       updateServerRole: canManageServerRoles,
       deleteServerRole: canManageServerRoles,
       deleteServerRoleMember: canManageServerRoles,
-      approveMemberRequest: canApproveGroupMemberRequests,
+      approveGroupMemberRequest: canApproveGroupMemberRequests,
       updateGroupConfig: canManageGroupSettings,
       updateGroup: canUpdateGroup,
       deleteGroup: canDeleteGroup,
@@ -76,5 +76,3 @@ const shieldPermissions = shield(
     fallbackError: FORBIDDEN,
   }
 );
-
-export default shieldPermissions;

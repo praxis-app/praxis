@@ -8,7 +8,7 @@ import * as DataLoader from "dataloader";
 import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { GroupPermissions } from "../groups/group-roles/models/group-permissions.type";
 import { GroupsService } from "../groups/groups.service";
-import { MemberRequestsService } from "../groups/member-requests/member-requests.service";
+import { GroupMemberRequestsService } from "../groups/group-member-requests/group-member-requests.service";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Like } from "../likes/models/like.model";
@@ -33,7 +33,7 @@ export class DataloaderService {
   constructor(
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
-    private memberRequestsService: MemberRequestsService,
+    private memberRequestsService: GroupMemberRequestsService,
     private postsService: PostsService,
     private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,
@@ -84,25 +84,25 @@ export class DataloaderService {
 
   private _createProposalVotesLoader() {
     return new DataLoader<number, Vote[]>(async (proposalIds) =>
-      this.proposalsService.getProposalVotesByBatch(proposalIds as number[])
+      this.proposalsService.getProposalVotesBatch(proposalIds as number[])
     );
   }
 
   private _createProposalVoteCountLoader() {
     return new DataLoader<number, number>(async (proposalIds) =>
-      this.votesService.getVoteCountByBatch(proposalIds as number[])
+      this.votesService.getVoteCountBatch(proposalIds as number[])
     );
   }
 
   private _createProposalImagesLoader() {
     return new DataLoader<number, Image[]>(async (proposalIds) =>
-      this.proposalsService.getProposalImagesByBatch(proposalIds as number[])
+      this.proposalsService.getProposalImagesBatch(proposalIds as number[])
     );
   }
 
   private _createProposalActionsLoader() {
     return new DataLoader<number, ProposalAction>(async (proposalActionIds) =>
-      this.proposalActionsService.getProposalActionsByBatch(
+      this.proposalActionsService.getProposalActionsBatch(
         proposalActionIds as number[]
       )
     );
@@ -115,26 +115,26 @@ export class DataloaderService {
   private _createIsPostLikedByMeLoader() {
     return new DataLoader<IsLikedByMeKey, boolean, number>(
       async (keys) =>
-        this.postsService.getIsLikedByMeByBatch(keys as IsLikedByMeKey[]),
+        this.postsService.getIsLikedByMeBatch(keys as IsLikedByMeKey[]),
       { cacheKeyFn: (key) => key.postId }
     );
   }
 
   private _createPostImagesLoader() {
     return new DataLoader<number, Image[]>(async (postIds) =>
-      this.postsService.getPostImagesByBatch(postIds as number[])
+      this.postsService.getPostImagesBatch(postIds as number[])
     );
   }
 
   private _createPostLikesLoader() {
     return new DataLoader<number, Like[]>(async (postIds) =>
-      this.postsService.getPostLikesByBatch(postIds as number[])
+      this.postsService.getPostLikesBatch(postIds as number[])
     );
   }
 
   private _createPostLikeCountLoader() {
     return new DataLoader<number, number>(async (postIds) =>
-      this.postsService.getLikesCountByBatch(postIds as number[])
+      this.postsService.getLikesCountBatch(postIds as number[])
     );
   }
 
@@ -144,19 +144,19 @@ export class DataloaderService {
 
   private _createGroupsLoader() {
     return new DataLoader<number, Group>(async (groupIds) =>
-      this.groupsService.getGroupsByBatch(groupIds as number[])
+      this.groupsService.getGroupsBatch(groupIds as number[])
     );
   }
 
   private _createGroupCoverPhotosLoader() {
     return new DataLoader<number, Image>(async (groupIds) =>
-      this.groupsService.getCoverPhotosByBatch(groupIds as number[])
+      this.groupsService.getCoverPhotosBatch(groupIds as number[])
     );
   }
 
   private _createMemberRequestCountLoader() {
     return new DataLoader<number, number>(async (groupIds) =>
-      this.memberRequestsService.getMemberRequestCountByBatch(
+      this.memberRequestsService.getGroupMemberRequestCountBatch(
         groupIds as number[]
       )
     );
@@ -164,20 +164,20 @@ export class DataloaderService {
 
   private _createGroupMemberCountLoader() {
     return new DataLoader<number, number>(async (groupIds) =>
-      this.groupsService.getGroupMemberCountByBatch(groupIds as number[])
+      this.groupsService.getGroupMemberCountBatch(groupIds as number[])
     );
   }
 
   private _createGroupMembersLoader() {
     return new DataLoader<number, User[]>(async (groupIds) =>
-      this.groupsService.getGroupMembersByBatch(groupIds as number[])
+      this.groupsService.getGroupMembersBatch(groupIds as number[])
     );
   }
 
   private _createIsJoinedByMeLoader() {
     return new DataLoader<MyGroupsKey, boolean, number>(
       async (keys) =>
-        this.groupsService.isJoinedByMeByBatch(keys as MyGroupsKey[]),
+        this.groupsService.isJoinedByMeBatch(keys as MyGroupsKey[]),
       { cacheKeyFn: (key) => key.groupId }
     );
   }
@@ -188,33 +188,33 @@ export class DataloaderService {
 
   private _createFollowerCountLoader() {
     return new DataLoader<number, number>(async (userIds) =>
-      this.usersService.getFollowerCountByBatch(userIds as number[])
+      this.usersService.getFollowerCountBatch(userIds as number[])
     );
   }
 
   private _createFollowingCountLoader() {
     return new DataLoader<number, number>(async (userIds) =>
-      this.usersService.getFollowingCountByBatch(userIds as number[])
+      this.usersService.getFollowingCountBatch(userIds as number[])
     );
   }
 
   private _createIsFollowedByMeLoader() {
     return new DataLoader<IsFollowedByMeKey, boolean, number>(
       async (keys) =>
-        this.usersService.getIsFollowedByMeByBatch(keys as IsFollowedByMeKey[]),
+        this.usersService.getIsFollowedByMeBatch(keys as IsFollowedByMeKey[]),
       { cacheKeyFn: (key) => key.followedUserId }
     );
   }
 
   private _createUsersLoader() {
     return new DataLoader<number, User>(async (userIds) =>
-      this.usersService.getUsersByBatch(userIds as number[])
+      this.usersService.getUsersBatch(userIds as number[])
     );
   }
 
   private _createProfilePicturesLoader() {
     return new DataLoader<number, Image>(async (userIds) =>
-      this.usersService.getProfilePicturesByBatch(userIds as number[])
+      this.usersService.getProfilePicturesBatch(userIds as number[])
     );
   }
 
@@ -224,22 +224,20 @@ export class DataloaderService {
 
   private _createGroupRoleMemberCountLoader() {
     return new DataLoader<number, number>(async (roleIds) =>
-      this.groupRolesService.getGroupRoleMemberCountByBatch(roleIds as number[])
+      this.groupRolesService.getGroupRoleMemberCountBatch(roleIds as number[])
     );
   }
 
   private _createServerRoleMemberCountLoader() {
     return new DataLoader<number, number>(async (roleIds) =>
-      this.serverRolesService.getServerRoleMemberCountByBatch(
-        roleIds as number[]
-      )
+      this.serverRolesService.getServerRoleMemberCountBatch(roleIds as number[])
     );
   }
 
   private _createMyGroupPermissionsLoader() {
     return new DataLoader<MyGroupsKey, GroupPermissions, number>(
       async (keys) =>
-        this.groupsService.getMyGroupPermissionsByBatch(keys as MyGroupsKey[]),
+        this.groupsService.getMyGroupPermissionsBatch(keys as MyGroupsKey[]),
       { cacheKeyFn: (key) => key.groupId }
     );
   }

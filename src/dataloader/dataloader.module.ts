@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { GroupRolesModule } from "../groups/group-roles/group-roles.module";
 import { GroupsModule } from "../groups/groups.module";
-import { MemberRequestsModule } from "../groups/member-requests/member-requests.module";
+import { GroupMemberRequestsModule } from "../groups/group-member-requests/group-member-requests.module";
 import { PostsModule } from "../posts/posts.module";
 import { ProposalActionsModule } from "../proposals/proposal-actions/proposal-actions.module";
 import { ProposalsModule } from "../proposals/proposals.module";
@@ -14,7 +14,7 @@ import { DataloaderService } from "./dataloader.service";
   imports: [
     GroupRolesModule,
     GroupsModule,
-    MemberRequestsModule,
+    GroupMemberRequestsModule,
     PostsModule,
     ProposalActionsModule,
     ProposalsModule,

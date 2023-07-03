@@ -36,7 +36,7 @@ export class ProposalActionsService {
     return groupCoverPhoto;
   }
 
-  async getProposalActionsByBatch(proposalIds: number[]) {
+  async getProposalActionsBatch(proposalIds: number[]) {
     const proposalActions = await this.getProposalActions({
       proposalId: In(proposalIds),
     });

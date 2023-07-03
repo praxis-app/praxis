@@ -3,7 +3,7 @@ import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.serv
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { GroupsService } from "../groups/groups.service";
-import { MemberRequestsService } from "../groups/member-requests/member-requests.service";
+import { GroupMemberRequestsService } from "../groups/group-member-requests/group-member-requests.service";
 import { PostsService } from "../posts/posts.service";
 import { ProposalsService } from "../proposals/proposals.service";
 import { User } from "../users/models/user.model";
@@ -11,9 +11,9 @@ import { UserPermissions } from "../users/user.types";
 import { UsersService } from "../users/users.service";
 
 export interface ContextServices {
+  groupMemberRequestsService: GroupMemberRequestsService;
   groupRolesService: GroupRolesService;
   groupsService: GroupsService;
-  memberRequestsService: MemberRequestsService;
   postsService: PostsService;
   proposalsService: ProposalsService;
   refreshTokensService: RefreshTokensService;

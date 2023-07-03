@@ -23,8 +23,8 @@ import { GroupRolesService } from "./group-roles/group-roles.service";
 import { GroupPermissions } from "./group-roles/models/group-permissions.type";
 import { GroupRole } from "./group-roles/models/group-role.model";
 import { GroupsService } from "./groups.service";
-import { MemberRequestsService } from "./member-requests/member-requests.service";
-import { MemberRequest } from "./member-requests/models/member-request.model";
+import { GroupMemberRequestsService } from "./group-member-requests/group-member-requests.service";
+import { GroupMemberRequest } from "./group-member-requests/models/group-member-request.model";
 import { CreateGroupInput } from "./models/create-group.input";
 import { CreateGroupPayload } from "./models/create-group.payload";
 import { Group } from "./models/group.model";
@@ -37,7 +37,7 @@ export class GroupsResolver {
     private groupConfigsService: GroupConfigsService,
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
-    private memberRequestsService: MemberRequestsService,
+    private memberRequestsService: GroupMemberRequestsService,
     private postsService: PostsService
   ) {}
 
@@ -97,9 +97,9 @@ export class GroupsResolver {
     return loaders.groupMembersLoader.load(id);
   }
 
-  @ResolveField(() => [MemberRequest], { nullable: true })
+  @ResolveField(() => [GroupMemberRequest], { nullable: true })
   async memberRequests(@Parent() { id }: Group) {
-    return this.memberRequestsService.getMemberRequests(id);
+    return this.memberRequestsService.getGroupMemberRequests(id);
   }
 
   @ResolveField(() => Int)

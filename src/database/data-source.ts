@@ -2,9 +2,9 @@ import { config } from "dotenv";
 import { DataSource } from "typeorm";
 import { RefreshToken } from "../auth/refresh-tokens/models/refresh-token.model";
 import { GroupConfig } from "../groups/group-configs/models/group-config.model";
+import { GroupMemberRequest } from "../groups/group-member-requests/models/group-member-request.model";
 import { GroupRolePermission } from "../groups/group-roles/models/group-role-permission.model";
 import { GroupRole } from "../groups/group-roles/models/group-role.model";
-import { MemberRequest } from "../groups/member-requests/models/member-request.model";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Like } from "../likes/models/like.model";
@@ -32,6 +32,7 @@ import { AddProposalActionImagesConstraint1685201083917 } from "./migrations/168
 import { AddGroupConfigTable1685746618239 } from "./migrations/1685746618239-AddGroupConfigTable";
 import { AddProposalActionRoleCascadeDelete1685748700121 } from "./migrations/1685748700121-AddProposalActionRoleCascadeDelete";
 import { RefactorRolesAndPermissions1688001951695 } from "./migrations/1688001951695-RefactorRolesAndPermissions";
+import { RenameGroupMemberRequestTable1688348341669 } from "./migrations/1688348341669-RenameGroupMemberRequestTable";
 
 config();
 
@@ -45,11 +46,11 @@ export default new DataSource({
   entities: [
     Group,
     GroupConfig,
+    GroupMemberRequest,
     GroupRole,
     GroupRolePermission,
     Image,
     Like,
-    MemberRequest,
     Post,
     Proposal,
     ProposalAction,
@@ -77,5 +78,6 @@ export default new DataSource({
     DropRoleMemberEntityTable1681173025669,
     Initial1675388391336,
     RefactorRolesAndPermissions1688001951695,
+    RenameGroupMemberRequestTable1688348341669,
   ],
 });
