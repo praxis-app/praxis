@@ -9,7 +9,7 @@ import { AuthModule } from "./auth/auth.module";
 import { getClaims, getSub } from "./auth/auth.utils";
 import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
 import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
-import shieldPermissions from "./auth/shield/shield.permissions";
+import { shieldPermissions } from "./auth/shield/shield.permissions";
 import { Environment } from "./common/common.constants";
 import { Context, ContextServices } from "./common/common.types";
 import { DatabaseModule } from "./database/database.module";

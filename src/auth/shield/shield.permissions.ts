@@ -27,7 +27,7 @@ import {
   isPublicGroupProposal,
 } from "./shield.rules";
 
-const shieldPermissions = shield(
+export const shieldPermissions = shield(
   {
     Query: {
       "*": isAuthenticated,
@@ -76,5 +76,3 @@ const shieldPermissions = shield(
     fallbackError: FORBIDDEN,
   }
 );
-
-export default shieldPermissions;
