@@ -40,7 +40,7 @@ export class GroupMemberRequestsService {
     });
   }
 
-  async getGroupMemberRequestCountByBatch(groupIds: number[]) {
+  async getGroupMemberRequestCountBatch(groupIds: number[]) {
     const groups = (await this.groupRepository
       .createQueryBuilder("group")
       .leftJoinAndSelect("group.memberRequests", "memberRequest")

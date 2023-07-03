@@ -57,7 +57,7 @@ export class ProposalsService {
     return this.repository.find({ where });
   }
 
-  async getProposalVotesByBatch(proposalIds: number[]) {
+  async getProposalVotesBatch(proposalIds: number[]) {
     const votes = await this.votesService.getVotes({
       proposalId: In(proposalIds),
     });
@@ -69,7 +69,7 @@ export class ProposalsService {
     return mappedVotes;
   }
 
-  async getProposalImagesByBatch(proposalIds: number[]) {
+  async getProposalImagesBatch(proposalIds: number[]) {
     const images = await this.imagesService.getImages({
       proposalId: In(proposalIds),
     });

@@ -186,7 +186,7 @@ export class UsersService {
     return post.userId === userId;
   }
 
-  async getUsersByBatch(userIds: number[]) {
+  async getUsersBatch(userIds: number[]) {
     const users = await this.getUsers({
       id: In(userIds),
     });
@@ -197,7 +197,7 @@ export class UsersService {
     );
   }
 
-  async getProfilePicturesByBatch(userIds: number[]) {
+  async getProfilePicturesBatch(userIds: number[]) {
     const profilePictures = await this.imagesService.getImages({
       imageType: ImageTypes.ProfilePicture,
       userId: In(userIds),
@@ -210,7 +210,7 @@ export class UsersService {
     );
   }
 
-  async getFollowerCountByBatch(userIds: number[]) {
+  async getFollowerCountBatch(userIds: number[]) {
     const users = (await this.repository
       .createQueryBuilder("user")
       .leftJoinAndSelect("user.followers", "follower")
@@ -228,7 +228,7 @@ export class UsersService {
     });
   }
 
-  async getFollowingCountByBatch(userIds: number[]) {
+  async getFollowingCountBatch(userIds: number[]) {
     const users = (await this.repository
       .createQueryBuilder("user")
       .leftJoinAndSelect("user.following", "followed")
@@ -246,7 +246,7 @@ export class UsersService {
     });
   }
 
-  async getIsFollowedByMeByBatch(keys: IsFollowedByMeKey[]) {
+  async getIsFollowedByMeBatch(keys: IsFollowedByMeKey[]) {
     const followedUserIds = keys.map(({ followedUserId }) => followedUserId);
     const following = await this.getFollowing(keys[0].currentUserId);
 

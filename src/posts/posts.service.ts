@@ -32,7 +32,7 @@ export class PostsService {
     return this.repository.find({ where, order: { createdAt: "DESC" } });
   }
 
-  async getPostImagesByBatch(postIds: number[]) {
+  async getPostImagesBatch(postIds: number[]) {
     const images = await this.imagesService.getImages({
       postId: In(postIds),
     });
@@ -43,7 +43,7 @@ export class PostsService {
     );
   }
 
-  async getPostLikesByBatch(postIds: number[]) {
+  async getPostLikesBatch(postIds: number[]) {
     const likes = await this.likesService.getLikes({
       postId: In(postIds),
     });
@@ -54,7 +54,7 @@ export class PostsService {
     );
   }
 
-  async getIsLikedByMeByBatch(keys: IsLikedByMeKey[]) {
+  async getIsLikedByMeBatch(keys: IsLikedByMeKey[]) {
     const postIds = keys.map(({ postId }) => postId);
     const likes = await this.likesService.getLikes({
       postId: In(postIds),
@@ -65,7 +65,7 @@ export class PostsService {
     );
   }
 
-  async getLikesCountByBatch(postIds: number[]) {
+  async getLikesCountBatch(postIds: number[]) {
     const posts = (await this.repository
       .createQueryBuilder("post")
       .leftJoinAndSelect("post.likes", "like")

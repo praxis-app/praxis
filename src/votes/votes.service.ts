@@ -30,7 +30,7 @@ export class VotesService {
     return this.repository.find({ where });
   }
 
-  async getVoteCountByBatch(proposalIds: number[]) {
+  async getVoteCountBatch(proposalIds: number[]) {
     const proposals = (await this.proposalsRepository
       .createQueryBuilder("proposal")
       .leftJoinAndSelect("proposal.votes", "vote")

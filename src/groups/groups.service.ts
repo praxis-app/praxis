@@ -87,7 +87,7 @@ export class GroupsService {
     return group.members.some((member) => member.id === userId);
   }
 
-  async getCoverPhotosByBatch(groupIds: number[]) {
+  async getCoverPhotosBatch(groupIds: number[]) {
     const coverPhotos = await this.imagesService.getImages({
       groupId: In(groupIds),
       imageType: ImageTypes.CoverPhoto,
@@ -100,7 +100,7 @@ export class GroupsService {
     return mappedCoverPhotos;
   }
 
-  async getGroupsByBatch(groupIds: number[]) {
+  async getGroupsBatch(groupIds: number[]) {
     const groups = await this.getGroups({
       id: In(groupIds),
     });
@@ -111,7 +111,7 @@ export class GroupsService {
     );
   }
 
-  async getMyGroupPermissionsByBatch(keys: MyGroupsKey[]) {
+  async getMyGroupPermissionsBatch(keys: MyGroupsKey[]) {
     const groupIds = keys.map(({ groupId }) => groupId);
     const { groupPermissions } = await this.usersService.getUserPermissions(
       keys[0].currentUserId
@@ -124,7 +124,7 @@ export class GroupsService {
     });
   }
 
-  async isJoinedByMeByBatch(keys: MyGroupsKey[]) {
+  async isJoinedByMeBatch(keys: MyGroupsKey[]) {
     const groupIds = keys.map(({ groupId }) => groupId);
     const groups = await this.getGroups({ id: In(groupIds) }, ["members"]);
 
@@ -139,7 +139,7 @@ export class GroupsService {
     });
   }
 
-  async getGroupMembersByBatch(groupIds: number[]) {
+  async getGroupMembersBatch(groupIds: number[]) {
     const groups = await this.getGroups({ id: In(groupIds) }, ["members"]);
 
     return groupIds.map((groupId) => {
@@ -151,7 +151,7 @@ export class GroupsService {
     });
   }
 
-  async getGroupMemberCountByBatch(groupIds: number[]) {
+  async getGroupMemberCountBatch(groupIds: number[]) {
     const groups = (await this.groupRepository
       .createQueryBuilder("group")
       .leftJoinAndSelect("group.members", "groupMember")

@@ -63,7 +63,7 @@ export class GroupRolesService {
     });
   }
 
-  async getGroupRoleMemberCountByBatch(roleIds: number[]) {
+  async getGroupRoleMemberCountBatch(roleIds: number[]) {
     const roles = (await this.groupRoleRepository
       .createQueryBuilder("role")
       .leftJoinAndSelect("role.members", "roleMember")
