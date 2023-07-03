@@ -11,9 +11,9 @@ import { UserPermissions } from "../users/user.types";
 import { UsersService } from "../users/users.service";
 
 export interface ContextServices {
+  groupMemberRequestsService: GroupMemberRequestsService;
   groupRolesService: GroupRolesService;
   groupsService: GroupsService;
-  memberRequestsService: GroupMemberRequestsService;
   postsService: PostsService;
   proposalsService: ProposalsService;
   refreshTokensService: RefreshTokensService;

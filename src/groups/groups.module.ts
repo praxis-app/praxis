@@ -4,10 +4,10 @@ import { ImagesModule } from "../images/images.module";
 import { PostsModule } from "../posts/posts.module";
 import { UsersModule } from "../users/users.module";
 import { GroupConfigsModule } from "./group-configs/group-configs.module";
+import { GroupMemberRequestsModule } from "./group-member-requests/group-member-requests.module";
 import { GroupRolesModule } from "./group-roles/group-roles.module";
 import { GroupsResolver } from "./groups.resolver";
 import { GroupsService } from "./groups.service";
-import { GroupMemberRequestsModule } from "./group-member-requests/group-member-requests.module";
 import { Group } from "./models/group.model";
 
 @Module({
