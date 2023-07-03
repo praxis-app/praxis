@@ -19,8 +19,8 @@ import { GroupRolesModule } from "./groups/group-roles/group-roles.module";
 import { GroupRolesService } from "./groups/group-roles/group-roles.service";
 import { GroupsModule } from "./groups/groups.module";
 import { GroupsService } from "./groups/groups.service";
-import { MemberRequestsModule } from "./groups/member-requests/member-requests.module";
-import { MemberRequestsService } from "./groups/member-requests/member-requests.service";
+import { GroupMemberRequestsModule } from "./groups/group-member-requests/group-member-requests.module";
+import { GroupMemberRequestsService } from "./groups/group-member-requests/group-member-requests.service";
 import { ImagesModule } from "./images/images.module";
 import { LikesModule } from "./likes/likes.module";
 import { PostsModule } from "./posts/posts.module";
@@ -39,7 +39,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     DataloaderModule,
     GroupRolesModule,
     GroupsModule,
-    MemberRequestsModule,
+    GroupMemberRequestsModule,
     PostsModule,
     ProposalsModule,
     RefreshTokensModule,
@@ -50,7 +50,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     DataloaderService,
     GroupRolesService,
     GroupsService,
-    MemberRequestsService,
+    GroupMemberRequestsService,
     PostsService,
     ProposalsService,
     RefreshTokensService,
@@ -61,7 +61,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     dataloaderService: DataloaderService,
     groupRolesService: GroupRolesService,
     groupsService: GroupsService,
-    memberRequestsService: MemberRequestsService,
+    memberRequestsService: GroupMemberRequestsService,
     postsService: PostsService,
     proposalsService: ProposalsService,
     refreshTokensService: RefreshTokensService,

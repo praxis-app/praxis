@@ -6,12 +6,12 @@ import { Group } from "../models/group.model";
 import {
   MemberRequest,
   MemberRequestStatus,
-} from "./models/member-request.model";
+} from "./models/group-member-request.model";
 
 type GroupWithMemberRequestCount = Group & { memberRequestCount: number };
 
 @Injectable()
-export class MemberRequestsService {
+export class GroupMemberRequestsService {
   constructor(
     @InjectRepository(MemberRequest)
     private repository: Repository<MemberRequest>,

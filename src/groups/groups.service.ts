@@ -16,7 +16,7 @@ import { GroupConfigsService } from "./group-configs/group-configs.service";
 import { GroupPrivacy } from "./group-configs/models/group-config.model";
 import { initGroupRolePermissions } from "./group-roles/group-role.utils";
 import { GroupRolesService } from "./group-roles/group-roles.service";
-import { MemberRequestsService } from "./member-requests/member-requests.service";
+import { GroupMemberRequestsService } from "./group-member-requests/group-member-requests.service";
 import { CreateGroupInput } from "./models/create-group.input";
 import { Group } from "./models/group.model";
 import { UpdateGroupInput } from "./models/update-group.input";
@@ -29,8 +29,8 @@ export class GroupsService {
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
 
-    @Inject(forwardRef(() => MemberRequestsService))
-    private memberRequestsService: MemberRequestsService,
+    @Inject(forwardRef(() => GroupMemberRequestsService))
+    private memberRequestsService: GroupMemberRequestsService,
 
     @Inject(forwardRef(() => GroupConfigsService))
     private groupConfigsService: GroupConfigsService,

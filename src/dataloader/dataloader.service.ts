@@ -8,7 +8,7 @@ import * as DataLoader from "dataloader";
 import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { GroupPermissions } from "../groups/group-roles/models/group-permissions.type";
 import { GroupsService } from "../groups/groups.service";
-import { MemberRequestsService } from "../groups/member-requests/member-requests.service";
+import { GroupMemberRequestsService } from "../groups/group-member-requests/group-member-requests.service";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Like } from "../likes/models/like.model";
@@ -33,7 +33,7 @@ export class DataloaderService {
   constructor(
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
-    private memberRequestsService: MemberRequestsService,
+    private memberRequestsService: GroupMemberRequestsService,
     private postsService: PostsService,
     private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,

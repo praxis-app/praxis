@@ -1,5 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { MemberRequest } from "./member-request.model";
+import { MemberRequest } from "./group-member-request.model";
 
 @ObjectType()
 export class CreateMemberRequestPayload {

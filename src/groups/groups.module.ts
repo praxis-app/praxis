@@ -7,14 +7,14 @@ import { GroupConfigsModule } from "./group-configs/group-configs.module";
 import { GroupRolesModule } from "./group-roles/group-roles.module";
 import { GroupsResolver } from "./groups.resolver";
 import { GroupsService } from "./groups.service";
-import { MemberRequestsModule } from "./member-requests/member-requests.module";
+import { GroupMemberRequestsModule } from "./group-member-requests/group-member-requests.module";
 import { Group } from "./models/group.model";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Group]),
     forwardRef(() => GroupConfigsModule),
-    forwardRef(() => MemberRequestsModule),
+    forwardRef(() => GroupMemberRequestsModule),
     GroupRolesModule,
     ImagesModule,
     PostsModule,

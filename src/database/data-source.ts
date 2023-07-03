@@ -4,7 +4,7 @@ import { RefreshToken } from "../auth/refresh-tokens/models/refresh-token.model"
 import { GroupConfig } from "../groups/group-configs/models/group-config.model";
 import { GroupRolePermission } from "../groups/group-roles/models/group-role-permission.model";
 import { GroupRole } from "../groups/group-roles/models/group-role.model";
-import { MemberRequest } from "../groups/member-requests/models/member-request.model";
+import { MemberRequest } from "../groups/group-member-requests/models/group-member-request.model";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { Like } from "../likes/models/like.model";
