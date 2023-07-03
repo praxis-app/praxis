@@ -13,13 +13,14 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { FeedItem } from "../../common/models/feed-item.union";
+import { Event } from "../../events/models/event.model";
 import { Image } from "../../images/models/image.model";
 import { Post } from "../../posts/models/post.model";
 import { Proposal } from "../../proposals/models/proposal.model";
 import { User } from "../../users/models/user.model";
 import { GroupConfig } from "../group-configs/models/group-config.model";
-import { GroupRole } from "../group-roles/models/group-role.model";
 import { GroupMemberRequest } from "../group-member-requests/models/group-member-request.model";
+import { GroupRole } from "../group-roles/models/group-role.model";
 
 @Entity()
 @ObjectType()
@@ -50,6 +51,12 @@ export class Group {
     cascade: true,
   })
   proposals: Proposal[];
+
+  @Field(() => [Event])
+  @OneToMany(() => Event, (event) => event.group, {
+    cascade: true,
+  })
+  events: Event[];
 
   @OneToMany(() => Image, (image) => image.group, {
     cascade: true,

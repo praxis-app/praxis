@@ -114,6 +114,21 @@ type Image {
   updatedAt: DateTime!
 }
 
+type Event {
+  id: Int!
+  name: String!
+  description: String!
+  location: String
+  online: Boolean!
+  externalLink: String
+  images: [Image!]!
+  group: Group
+  startsAt: DateTime!
+  endsAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type GroupConfig {
   id: Int!
   group: Group!
@@ -137,6 +152,7 @@ type Group {
   feed: [FeedItem!]!
   posts: [Post!]!
   proposals: [Proposal!]!
+  events: [Event!]!
   members: [User!]!
   memberRequests: [GroupMemberRequest!]
   roles: [GroupRole!]!

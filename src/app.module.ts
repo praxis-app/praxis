@@ -15,6 +15,7 @@ import { Context, ContextServices } from "./common/common.types";
 import { DatabaseModule } from "./database/database.module";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
+import { EventsModule } from "./events/events.module";
 import { GroupMemberRequestsModule } from "./groups/group-member-requests/group-member-requests.module";
 import { GroupMemberRequestsService } from "./groups/group-member-requests/group-member-requests.service";
 import { GroupRolesModule } from "./groups/group-roles/group-roles.module";
@@ -114,13 +115,14 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     AuthModule,
     DatabaseModule,
     DataloaderModule,
+    EventsModule,
     GroupsModule,
     ImagesModule,
     LikesModule,
     PostsModule,
     ProposalsModule,
-    ServerRolesModule,
     ServerInvitesModule,
+    ServerRolesModule,
     UsersModule,
     VotesModule,
   ],
