@@ -122,7 +122,7 @@ type GroupConfig {
   isPublic: Boolean!
 }
 
-type MemberRequest {
+type GroupMemberRequest {
   id: Int!
   user: User!
   group: Group!
@@ -138,7 +138,7 @@ type Group {
   posts: [Post!]!
   proposals: [Proposal!]!
   members: [User!]!
-  memberRequests: [MemberRequest!]
+  memberRequests: [GroupMemberRequest!]
   roles: [GroupRole!]!
   coverPhoto: Image
   createdAt: DateTime!
@@ -319,12 +319,12 @@ type CreateGroupPayload {
   group: Group!
 }
 
-type ApproveMemberRequestPayload {
+type ApproveGroupMemberRequestPayload {
   groupMember: User!
 }
 
-type CreateMemberRequestPayload {
-  memberRequest: MemberRequest!
+type CreateGroupMemberRequestPayload {
+  groupMemberRequest: GroupMemberRequest!
 }
 
 type CreateVotePayload {
@@ -350,7 +350,7 @@ type Query {
   groups: [Group!]!
   publicGroups: [Group!]!
   publicGroupsFeed: [FeedItem!]!
-  memberRequest(groupId: Int!): MemberRequest
+  groupMemberRequest(groupId: Int!): GroupMemberRequest
   post(id: Int!): Post!
   posts: [Post!]!
   proposal(id: Int!): Proposal!
@@ -378,10 +378,10 @@ type Mutation {
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
   deleteGroup(id: Int!): Boolean!
   leaveGroup(id: Int!): Boolean!
-  createMemberRequest(groupId: Int!): CreateMemberRequestPayload!
-  approveMemberRequest(id: Int!): ApproveMemberRequestPayload!
-  cancelMemberRequest(id: Int!): Boolean!
-  denyMemberRequest(id: Int!): Boolean!
+  createGroupMemberRequest(groupId: Int!): CreateGroupMemberRequestPayload!
+  approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
+  cancelGroupMemberRequest(id: Int!): Boolean!
+  denyGroupMemberRequest(id: Int!): Boolean!
   createPost(postData: CreatePostInput!): CreatePostPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
   deletePost(id: Int!): Boolean!

@@ -56,7 +56,7 @@ const shieldPermissions = shield(
       updateServerRole: canManageServerRoles,
       deleteServerRole: canManageServerRoles,
       deleteServerRoleMember: canManageServerRoles,
-      approveMemberRequest: canApproveGroupMemberRequests,
+      approveGroupMemberRequest: canApproveGroupMemberRequests,
       updateGroupConfig: canManageGroupSettings,
       updateGroup: canUpdateGroup,
       deleteGroup: canDeleteGroup,

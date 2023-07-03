@@ -19,7 +19,7 @@ import { Proposal } from "../../proposals/models/proposal.model";
 import { User } from "../../users/models/user.model";
 import { GroupConfig } from "../group-configs/models/group-config.model";
 import { GroupRole } from "../group-roles/models/group-role.model";
-import { MemberRequest } from "../group-member-requests/models/group-member-request.model";
+import { GroupMemberRequest } from "../group-member-requests/models/group-member-request.model";
 
 @Entity()
 @ObjectType()
@@ -61,11 +61,11 @@ export class Group {
   @JoinTable()
   members: User[];
 
-  @Field(() => [MemberRequest], { nullable: true })
-  @OneToMany(() => MemberRequest, (memberRequest) => memberRequest.group, {
+  @Field(() => [GroupMemberRequest], { nullable: true })
+  @OneToMany(() => GroupMemberRequest, (memberRequest) => memberRequest.group, {
     cascade: true,
   })
-  memberRequests: MemberRequest[];
+  memberRequests: GroupMemberRequest[];
 
   @Field(() => [GroupRole])
   @OneToMany(() => GroupRole, (role) => role.group, {

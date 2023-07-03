@@ -130,7 +130,7 @@ export const canApproveGroupMemberRequests = rule()(
     let groupId: number | undefined;
 
     if (info.fieldName === "approveMemberRequest") {
-      const memberRequest = await memberRequestsService.getMemberRequest(
+      const memberRequest = await memberRequestsService.getGroupMemberRequest(
         { id: args.id },
         ["group"]
       );

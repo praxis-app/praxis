@@ -18,7 +18,7 @@ export enum MemberRequestStatus {
 
 @Entity()
 @ObjectType()
-export class MemberRequest {
+export class GroupMemberRequest {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number;

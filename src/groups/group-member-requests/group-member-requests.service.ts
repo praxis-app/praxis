@@ -4,7 +4,7 @@ import { FindOptionsWhere, Repository } from "typeorm";
 import { GroupsService } from "../groups.service";
 import { Group } from "../models/group.model";
 import {
-  MemberRequest,
+  GroupMemberRequest,
   MemberRequestStatus,
 } from "./models/group-member-request.model";
 
@@ -13,8 +13,8 @@ type GroupWithMemberRequestCount = Group & { memberRequestCount: number };
 @Injectable()
 export class GroupMemberRequestsService {
   constructor(
-    @InjectRepository(MemberRequest)
-    private repository: Repository<MemberRequest>,
+    @InjectRepository(GroupMemberRequest)
+    private groupMemberRequestRepository: Repository<GroupMemberRequest>,
 
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
@@ -23,21 +23,24 @@ export class GroupMemberRequestsService {
     private groupsService: GroupsService
   ) {}
 
-  async getMemberRequest(
-    where: FindOptionsWhere<MemberRequest>,
+  async getGroupMemberRequest(
+    where: FindOptionsWhere<GroupMemberRequest>,
     relations?: string[]
   ) {
-    return this.repository.findOne({ where, relations });
+    return this.groupMemberRequestRepository.findOne({
+      relations,
+      where,
+    });
   }
 
-  async getMemberRequests(groupId: number) {
-    return this.repository.find({
+  async getGroupMemberRequests(groupId: number) {
+    return this.groupMemberRequestRepository.find({
       where: { status: MemberRequestStatus.Pending, groupId },
       order: { createdAt: "DESC" },
     });
   }
 
-  async getMemberRequestCountByBatch(groupIds: number[]) {
+  async getGroupMemberRequestCountByBatch(groupIds: number[]) {
     const groups = (await this.groupRepository
       .createQueryBuilder("group")
       .leftJoinAndSelect("group.memberRequests", "memberRequest")
@@ -63,13 +66,16 @@ export class GroupMemberRequestsService {
     });
   }
 
-  async createMemberRequest(groupId: number, userId: number) {
-    const memberRequest = await this.repository.save({ groupId, userId });
+  async createGroupMemberRequest(groupId: number, userId: number) {
+    const memberRequest = await this.groupMemberRequestRepository.save({
+      groupId,
+      userId,
+    });
     return { memberRequest };
   }
 
-  async approveMemberRequest(id: number) {
-    const memberRequest = await this.updateMemberRequest(id, {
+  async approveGroupMemberRequest(id: number) {
+    const memberRequest = await this.updateGroupMemberRequest(id, {
       status: MemberRequestStatus.Approved,
     });
     const groupMember = await this.groupsService.createGroupMember(
@@ -79,28 +85,28 @@ export class GroupMemberRequestsService {
     return { groupMember };
   }
 
-  async denyMemberRequest(id: number) {
-    await this.updateMemberRequest(id, {
+  async denyGroupMemberRequest(id: number) {
+    await this.updateGroupMemberRequest(id, {
       status: MemberRequestStatus.Denied,
     });
     return true;
   }
 
-  async updateMemberRequest(
+  async updateGroupMemberRequest(
     id: number,
-    memberRequestData: Partial<MemberRequest>
+    requestData: Partial<GroupMemberRequest>
   ) {
-    await this.repository.update(id, memberRequestData);
-    return this.repository.findOneOrFail({ where: { id } });
+    await this.groupMemberRequestRepository.update(id, requestData);
+    return this.groupMemberRequestRepository.findOneOrFail({ where: { id } });
   }
 
-  async cancelMemberRequest(id: number) {
-    await this.deleteMemberRequest({ id });
+  async cancelGroupMemberRequest(id: number) {
+    await this.deleteGroupMemberRequest({ id });
     return true;
   }
 
-  async deleteMemberRequest(where: FindOptionsWhere<MemberRequest>) {
-    await this.repository.delete(where);
+  async deleteGroupMemberRequest(where: FindOptionsWhere<GroupMemberRequest>) {
+    await this.groupMemberRequestRepository.delete(where);
     return true;
   }
 }

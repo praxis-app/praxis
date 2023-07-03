@@ -156,7 +156,7 @@ export class DataloaderService {
 
   private _createMemberRequestCountLoader() {
     return new DataLoader<number, number>(async (groupIds) =>
-      this.memberRequestsService.getMemberRequestCountByBatch(
+      this.memberRequestsService.getGroupMemberRequestCountByBatch(
         groupIds as number[]
       )
     );

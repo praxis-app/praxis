@@ -267,7 +267,7 @@ export class GroupsService {
   async leaveGroup(id: number, userId: number) {
     const where = { group: { id }, userId };
     await this.deleteGroupMember(id, userId);
-    await this.memberRequestsService.deleteMemberRequest(where);
+    await this.memberRequestsService.deleteGroupMemberRequest(where);
     return true;
   }
 }

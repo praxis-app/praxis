@@ -15,20 +15,20 @@ import { Dataloaders } from "../../dataloader/dataloader.types";
 import { User } from "../../users/models/user.model";
 import { Group } from "../models/group.model";
 import { GroupMemberRequestsService } from "./group-member-requests.service";
-import { ApproveMemberRequestPayload } from "./models/approve-group-member-request.payload";
-import { CreateMemberRequestPayload } from "./models/create-group-member-request.payload";
-import { MemberRequest } from "./models/group-member-request.model";
+import { ApproveGroupMemberRequestPayload } from "./models/approve-group-member-request.payload";
+import { CreateGroupMemberRequestPayload } from "./models/create-group-member-request.payload";
+import { GroupMemberRequest } from "./models/group-member-request.model";
 
-@Resolver(() => MemberRequest)
+@Resolver(() => GroupMemberRequest)
 export class GroupMemberRequestsResolver {
   constructor(private groupMemberRequestsService: GroupMemberRequestsService) {}
 
-  @Query(() => MemberRequest, { nullable: true })
-  async memberRequest(
+  @Query(() => GroupMemberRequest, { nullable: true })
+  async groupMemberRequest(
     @Args("groupId", { type: () => Int }) groupId: number,
     @CurrentUser() { id }: User
   ) {
-    return this.groupMemberRequestsService.getMemberRequest({
+    return this.groupMemberRequestsService.getGroupMemberRequest({
       user: { id },
       groupId,
     });
@@ -37,7 +37,7 @@ export class GroupMemberRequestsResolver {
   @ResolveField(() => Group)
   async group(
     @Context() { loaders }: { loaders: Dataloaders },
-    @Parent() { groupId }: MemberRequest
+    @Parent() { groupId }: GroupMemberRequest
   ) {
     return loaders.groupsLoader.load(groupId);
   }
@@ -45,31 +45,34 @@ export class GroupMemberRequestsResolver {
   @ResolveField(() => User)
   async user(
     @Context() { loaders }: { loaders: Dataloaders },
-    @Parent() { userId }: MemberRequest
+    @Parent() { userId }: GroupMemberRequest
   ) {
     return loaders.usersLoader.load(userId);
   }
 
-  @Mutation(() => CreateMemberRequestPayload)
-  async createMemberRequest(
+  @Mutation(() => CreateGroupMemberRequestPayload)
+  async createGroupMemberRequest(
     @Args("groupId", { type: () => Int }) groupId: number,
     @CurrentUser() { id }: User
   ) {
-    return this.groupMemberRequestsService.createMemberRequest(groupId, id);
+    return this.groupMemberRequestsService.createGroupMemberRequest(
+      groupId,
+      id
+    );
   }
 
-  @Mutation(() => ApproveMemberRequestPayload)
-  async approveMemberRequest(@Args("id", { type: () => Int }) id: number) {
-    return this.groupMemberRequestsService.approveMemberRequest(id);
+  @Mutation(() => ApproveGroupMemberRequestPayload)
+  async approveGroupMemberRequest(@Args("id", { type: () => Int }) id: number) {
+    return this.groupMemberRequestsService.approveGroupMemberRequest(id);
   }
 
   @Mutation(() => Boolean)
-  async cancelMemberRequest(@Args("id", { type: () => Int }) id: number) {
-    return this.groupMemberRequestsService.cancelMemberRequest(id);
+  async cancelGroupMemberRequest(@Args("id", { type: () => Int }) id: number) {
+    return this.groupMemberRequestsService.cancelGroupMemberRequest(id);
   }
 
   @Mutation(() => Boolean)
-  async denyMemberRequest(@Args("id", { type: () => Int }) id: number) {
-    return this.groupMemberRequestsService.denyMemberRequest(id);
+  async denyGroupMemberRequest(@Args("id", { type: () => Int }) id: number) {
+    return this.groupMemberRequestsService.denyGroupMemberRequest(id);
   }
 }
