@@ -46,4 +46,9 @@ export class EventsService {
     const event = await this.getEvent({ id });
     return { event };
   }
+
+  async deleteEvent(id: number) {
+    await this.eventRepository.delete(id);
+    return true;
+  }
 }

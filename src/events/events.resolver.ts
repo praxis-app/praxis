@@ -54,4 +54,9 @@ export class EventsResolver {
   async updateEvent(@Args("eventData") eventData: UpdateEventInput) {
     return this.eventsService.updateEvent(eventData);
   }
+
+  @Mutation(() => Boolean)
+  async deleteEvent(@Args("id", { type: () => Int }) id: number) {
+    return this.eventsService.deleteEvent(id);
+  }
 }

@@ -447,6 +447,7 @@ type Mutation {
   deleteServerInvite(id: Int!): Boolean!
   createEvent(eventData: CreateEventInput!): CreateEventPayload!
   updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
+  deleteEvent(id: Int!): Boolean!
 }
 
 input CreateGroupRoleInput {
