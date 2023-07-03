@@ -10,7 +10,7 @@ import {
 import { User } from "../../users/models/user.model";
 import { Event } from "./event.model";
 
-export enum AttendingStatus {
+export enum EventAttendeeStatus {
   CoHost = "co-host",
   Going = "going",
   Host = "host",

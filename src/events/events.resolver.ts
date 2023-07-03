@@ -2,15 +2,20 @@ import {
   Args,
   Context,
   Int,
+  Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
 import { Post } from "../posts/models/post.model";
+import { User } from "../users/models/user.model";
 import { EventsService } from "./events.service";
+import { CreateEventInput } from "./models/create-event.input";
+import { CreateEventPayload } from "./models/create-event.payload";
 import { Event } from "./models/event.model";
 
 @Resolver(() => Event)
@@ -33,5 +38,13 @@ export class EventsResolver {
     @Parent() { groupId }: Post
   ) {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
+  }
+
+  @Mutation(() => CreateEventPayload)
+  async createEvent(
+    @Args("eventData") eventData: CreateEventInput,
+    @CurrentUser() { id }: User
+  ) {
+    return this.eventsService.createEvent(eventData, id);
   }
 }
