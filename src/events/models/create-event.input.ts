@@ -1,4 +1,5 @@
 import { Field, InputType } from "@nestjs/graphql";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
 
 @InputType()
 export class CreateEventInput {
@@ -7,6 +8,9 @@ export class CreateEventInput {
 
   @Field()
   description: string;
+
+  @Field(() => GraphQLUpload, { nullable: true })
+  coverPhoto?: Promise<FileUpload>;
 
   @Field({ nullable: true })
   location?: string;

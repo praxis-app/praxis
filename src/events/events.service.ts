@@ -1,6 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import * as fs from "fs";
+import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, Repository } from "typeorm";
+import { randomDefaultImagePath, saveImage } from "../images/image.utils";
+import { ImagesService, ImageTypes } from "../images/images.service";
 import { CreateEventInput } from "./models/create-event.input";
 import {
   EventAttendee,
@@ -16,7 +20,9 @@ export class EventsService {
     private eventRepository: Repository<Event>,
 
     @InjectRepository(EventAttendee)
-    private eventAttendeeRepository: Repository<EventAttendee>
+    private eventAttendeeRepository: Repository<EventAttendee>,
+
+    private imagesService: ImagesService
   ) {}
 
   async getEvent(where: FindOptionsWhere<Event>, relations?: string[]) {
@@ -31,13 +37,21 @@ export class EventsService {
     });
   }
 
-  async createEvent(eventData: CreateEventInput, userId: number) {
+  async createEvent(
+    { coverPhoto, ...eventData }: CreateEventInput,
+    userId: number
+  ) {
     const event = await this.eventRepository.save(eventData);
     await this.eventAttendeeRepository.save({
       status: EventAttendeeStatus.Host,
       eventId: event.id,
       userId,
     });
+    if (coverPhoto) {
+      await this.saveCoverPhoto(event.id, coverPhoto);
+    } else {
+      await this.saveDefaultCoverPhoto(event.id);
+    }
     return { event };
   }
 
@@ -45,6 +59,42 @@ export class EventsService {
     await this.eventRepository.update(id, eventData);
     const event = await this.getEvent({ id });
     return { event };
+  }
+
+  async saveCoverPhoto(eventId: number, coverPhoto: Promise<FileUpload>) {
+    const filename = await saveImage(coverPhoto);
+    await this.deleteCoverPhoto(eventId);
+
+    return this.imagesService.createImage({
+      imageType: ImageTypes.CoverPhoto,
+      filename,
+      eventId,
+    });
+  }
+
+  async saveDefaultCoverPhoto(eventId: number) {
+    const sourcePath = randomDefaultImagePath();
+    const filename = `${Date.now()}.jpeg`;
+    const copyPath = `./uploads/${filename}`;
+
+    fs.copyFile(sourcePath, copyPath, (err) => {
+      if (err) {
+        throw new Error(`Failed to save default cover photo: ${err}`);
+      }
+    });
+    const image = await this.imagesService.createImage({
+      imageType: ImageTypes.CoverPhoto,
+      filename,
+      eventId,
+    });
+    return image;
+  }
+
+  async deleteCoverPhoto(id: number) {
+    await this.imagesService.deleteImage({
+      imageType: ImageTypes.CoverPhoto,
+      event: { id },
+    });
   }
 
   async deleteEvent(id: number) {

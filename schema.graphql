@@ -105,11 +105,12 @@ type Image {
   id: Int!
   filename: String!
   imageType: String!
-  post: Post!
-  user: User!
-  group: Group!
-  proposal: Proposal!
-  proposalAction: ProposalAction!
+  post: Post
+  user: User
+  group: Group
+  event: Event
+  proposal: Proposal
+  proposalAction: ProposalAction
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -627,6 +628,7 @@ input CreateServerInviteInput {
 input CreateEventInput {
   name: String!
   description: String!
+  coverPhoto: Upload
   location: String
   online: Boolean
   externalLink: String
