@@ -14,9 +14,9 @@ import { Proposal } from "../proposals/models/proposal.model";
 import { UsersService } from "../users/users.service";
 import { GroupConfigsService } from "./group-configs/group-configs.service";
 import { GroupPrivacy } from "./group-configs/models/group-config.model";
+import { GroupMemberRequestsService } from "./group-member-requests/group-member-requests.service";
 import { initGroupRolePermissions } from "./group-roles/group-role.utils";
 import { GroupRolesService } from "./group-roles/group-roles.service";
-import { GroupMemberRequestsService } from "./group-member-requests/group-member-requests.service";
 import { CreateGroupInput } from "./models/create-group.input";
 import { Group } from "./models/group.model";
 import { UpdateGroupInput } from "./models/update-group.input";
@@ -167,6 +167,16 @@ export class GroupsService {
       }
       return group.memberCount;
     });
+  }
+
+  async getUpcomingEvents(id: number) {
+    const { events } = await this.getGroup({ id }, ["events"]);
+    const upcomingEvents = events.filter(
+      (event) => event.startsAt.getTime() > Date.now()
+    );
+    return upcomingEvents.sort(
+      (a, b) => a.startsAt.getTime() - b.startsAt.getTime()
+    );
   }
 
   async createGroup(

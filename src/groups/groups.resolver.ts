@@ -11,6 +11,7 @@ import {
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { FeedItem } from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.types";
+import { Event } from "../events/models/event.model";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { User } from "../users/models/user.model";
@@ -19,12 +20,12 @@ import {
   GroupConfig,
   GroupPrivacy,
 } from "./group-configs/models/group-config.model";
+import { GroupMemberRequestsService } from "./group-member-requests/group-member-requests.service";
+import { GroupMemberRequest } from "./group-member-requests/models/group-member-request.model";
 import { GroupRolesService } from "./group-roles/group-roles.service";
 import { GroupPermissions } from "./group-roles/models/group-permissions.type";
 import { GroupRole } from "./group-roles/models/group-role.model";
 import { GroupsService } from "./groups.service";
-import { GroupMemberRequestsService } from "./group-member-requests/group-member-requests.service";
-import { GroupMemberRequest } from "./group-member-requests/models/group-member-request.model";
 import { CreateGroupInput } from "./models/create-group.input";
 import { CreateGroupPayload } from "./models/create-group.payload";
 import { Group } from "./models/group.model";
@@ -128,6 +129,11 @@ export class GroupsResolver {
       currentUserId: currentUser.id,
       groupId: group.id,
     });
+  }
+
+  @ResolveField(() => [Event])
+  async upcomingEvents(@Parent() { id }: Group) {
+    return this.groupsService.getUpcomingEvents(id);
   }
 
   @ResolveField(() => [GroupRole])
