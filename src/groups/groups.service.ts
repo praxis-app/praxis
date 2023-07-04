@@ -172,7 +172,7 @@ export class GroupsService {
   async getUpcomingEvents(id: number) {
     const { events } = await this.getGroup({ id }, ["events"]);
     const upcomingEvents = events.filter(
-      (event) => event.startsAt.getTime() > Date.now()
+      (event) => event.startsAt.getTime() < Date.now()
     );
     return upcomingEvents.sort(
       (a, b) => a.startsAt.getTime() - b.startsAt.getTime()
