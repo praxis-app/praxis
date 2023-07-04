@@ -11,7 +11,6 @@ import {
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
-import { Post } from "../posts/models/post.model";
 import { User } from "../users/models/user.model";
 import { EventsService } from "./events.service";
 import { CreateEventInput } from "./models/create-event.input";
@@ -37,7 +36,7 @@ export class EventsResolver {
   @ResolveField(() => Group)
   async group(
     @Context() { loaders }: { loaders: Dataloaders },
-    @Parent() { groupId }: Post
+    @Parent() { groupId }: Event
   ) {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
