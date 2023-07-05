@@ -389,9 +389,7 @@ type Query {
   publicGroups: [Group!]!
   publicGroupsFeed: [FeedItem!]!
   post(id: Int!): Post!
-  posts: [Post!]!
   proposal(id: Int!): Proposal!
-  proposals: [Proposal!]!
   me: User!
   user(id: Int, name: String): User!
   users: [User!]!

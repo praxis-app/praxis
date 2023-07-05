@@ -32,11 +32,6 @@ export class PostsResolver {
     return this.postsService.getPost(id);
   }
 
-  @Query(() => [Post])
-  async posts() {
-    return this.postsService.getPosts();
-  }
-
   @ResolveField(() => [Like])
   async likes(
     @Context() { loaders }: { loaders: Dataloaders },

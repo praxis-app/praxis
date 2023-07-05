@@ -35,11 +35,6 @@ export class ProposalsResolver {
     return this.proposalsService.getProposal(id);
   }
 
-  @Query(() => [Proposal])
-  async proposals() {
-    return this.proposalsService.getProposals();
-  }
-
   @ResolveField(() => [Vote])
   async votes(
     @Context() { loaders }: { loaders: Dataloaders },
