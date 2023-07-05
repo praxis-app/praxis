@@ -138,6 +138,7 @@ type Event {
   endsAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+  coverPhoto: Image!
 }
 
 type GroupConfig {
@@ -396,6 +397,8 @@ type Query {
   users: [User!]!
   usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
+  event(id: Int): Event!
+  events: [Event!]!
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
   vote(id: Int!): Vote!
@@ -403,8 +406,6 @@ type Query {
   authCheck: Boolean!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
-  event(id: Int): Event!
-  events: [Event!]!
 }
 
 type Mutation {
@@ -431,14 +432,17 @@ type Mutation {
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
   unfollowUser(id: Int!): Boolean!
+  createEvent(eventData: CreateEventInput!): CreateEventPayload!
+  updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
+  deleteEvent(id: Int!): Boolean!
+  deleteImage(id: Int!): Boolean!
+  updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
   createServerRole(serverRoleData: CreateServerRoleInput!): CreateServerRolePayload!
   updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
   deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
-  deleteImage(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
-  updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -447,9 +451,6 @@ type Mutation {
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
-  createEvent(eventData: CreateEventInput!): CreateEventPayload!
-  updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
-  deleteEvent(id: Int!): Boolean!
 }
 
 input CreateGroupRoleInput {
@@ -555,6 +556,34 @@ input UpdateUserInput {
   coverPhoto: Upload
 }
 
+input CreateEventInput {
+  name: String!
+  description: String!
+  coverPhoto: Upload
+  location: String
+  online: Boolean
+  externalLink: String
+  startsAt: DateTime!
+  endsAt: DateTime
+  groupId: Float
+}
+
+input UpdateEventInput {
+  id: Float!
+  name: String!
+  description: String!
+  location: String
+  online: Boolean
+  externalLink: String
+  startsAt: DateTime!
+  endsAt: DateTime
+}
+
+input UpdateGroupConfigInput {
+  groupId: Int!
+  privacy: String
+}
+
 input CreateServerRoleInput {
   name: String!
   color: String!
@@ -591,11 +620,6 @@ input DeleteLikeInput {
   postId: Int
 }
 
-input UpdateGroupConfigInput {
-  groupId: Int!
-  privacy: String
-}
-
 input CreateVoteInput {
   proposalId: Int!
   voteType: String!
@@ -623,27 +647,4 @@ input SignUpInput {
 input CreateServerInviteInput {
   maxUses: Int
   expiresAt: DateTime
-}
-
-input CreateEventInput {
-  name: String!
-  description: String!
-  coverPhoto: Upload
-  location: String
-  online: Boolean
-  externalLink: String
-  startsAt: DateTime!
-  endsAt: DateTime
-  groupId: Float
-}
-
-input UpdateEventInput {
-  id: Float!
-  name: String!
-  description: String!
-  location: String
-  online: Boolean
-  externalLink: String
-  startsAt: DateTime!
-  endsAt: DateTime
 }

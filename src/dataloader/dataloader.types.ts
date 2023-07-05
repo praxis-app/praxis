@@ -54,4 +54,7 @@ export interface Dataloaders {
   groupRoleMemberCountLoader: DataLoader<number, number>;
   serverRoleMemberCountLoader: DataLoader<number, number>;
   myGroupPermissionsLoader: DataLoader<MyGroupsKey, GroupPermissions>;
+
+  // Events
+  eventCoverPhotosLoader: DataLoader<number, Image>;
 }

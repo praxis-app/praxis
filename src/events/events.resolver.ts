@@ -11,6 +11,7 @@ import {
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
+import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
 import { EventsService } from "./events.service";
 import { CreateEventInput } from "./models/create-event.input";
@@ -39,6 +40,14 @@ export class EventsResolver {
     @Parent() { groupId }: Event
   ) {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
+  }
+
+  @ResolveField(() => Image)
+  async coverPhoto(
+    @Parent() { id }: Event,
+    @Context() { loaders }: { loaders: Dataloaders }
+  ) {
+    return loaders.eventCoverPhotosLoader.load(id);
   }
 
   @Mutation(() => CreateEventPayload)

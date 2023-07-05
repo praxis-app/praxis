@@ -9,12 +9,14 @@ import { ServerRolesModule } from "../server-roles/server-roles.module";
 import { UsersModule } from "../users/users.module";
 import { VotesModule } from "../votes/votes.module";
 import { DataloaderService } from "./dataloader.service";
+import { EventsModule } from "../events/events.module";
 
 @Module({
   imports: [
+    EventsModule,
+    GroupMemberRequestsModule,
     GroupRolesModule,
     GroupsModule,
-    GroupMemberRequestsModule,
     PostsModule,
     ProposalActionsModule,
     ProposalsModule,

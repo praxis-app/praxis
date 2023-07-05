@@ -2,9 +2,10 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { FindOptionsWhere, In, Repository } from "typeorm";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
+import { Image } from "../images/models/image.model";
 import { CreateEventInput } from "./models/create-event.input";
 import {
   EventAttendee,
@@ -35,6 +36,19 @@ export class EventsService {
       relations,
       where,
     });
+  }
+
+  async getCoverPhotosBatch(eventIds: number[]) {
+    const coverPhotos = await this.imagesService.getImages({
+      eventId: In(eventIds),
+      imageType: ImageTypes.CoverPhoto,
+    });
+    const mappedCoverPhotos = eventIds.map(
+      (id) =>
+        coverPhotos.find((coverPhoto: Image) => coverPhoto.eventId === id) ||
+        new Error(`Could not load cover photo for event: ${id}`)
+    );
+    return mappedCoverPhotos;
   }
 
   async createEvent(

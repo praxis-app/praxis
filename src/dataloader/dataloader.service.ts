@@ -27,10 +27,12 @@ import {
   IsLikedByMeKey,
   MyGroupsKey,
 } from "./dataloader.types";
+import { EventsService } from "../events/events.service";
 
 @Injectable()
 export class DataloaderService {
   constructor(
+    private eventsService: EventsService,
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private memberRequestsService: GroupMemberRequestsService,
@@ -75,6 +77,9 @@ export class DataloaderService {
       groupRoleMemberCountLoader: this._createGroupRoleMemberCountLoader(),
       serverRoleMemberCountLoader: this._createServerRoleMemberCountLoader(),
       myGroupPermissionsLoader: this._createMyGroupPermissionsLoader(),
+
+      // Events
+      eventCoverPhotosLoader: this._createEventCoverPhotosLoader(),
     };
   }
 
@@ -239,6 +244,16 @@ export class DataloaderService {
       async (keys) =>
         this.groupsService.getMyGroupPermissionsBatch(keys as MyGroupsKey[]),
       { cacheKeyFn: (key) => key.groupId }
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // Events
+  // -------------------------------------------------------------------------
+
+  private _createEventCoverPhotosLoader() {
+    return new DataLoader<number, Image>(async (eventIds) =>
+      this.eventsService.getCoverPhotosBatch(eventIds as number[])
     );
   }
 }
