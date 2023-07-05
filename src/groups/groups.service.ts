@@ -175,7 +175,7 @@ export class GroupsService {
       (event) => event.startsAt.getTime() < Date.now()
     );
     return upcomingEvents.sort(
-      (a, b) => a.startsAt.getTime() - b.startsAt.getTime()
+      (a, b) => b.startsAt.getTime() - a.startsAt.getTime()
     );
   }
 
