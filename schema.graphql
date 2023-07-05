@@ -399,8 +399,6 @@ type Query {
   events: [Event!]!
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
-  vote(id: Int!): Vote!
-  votes: [Vote!]!
   authCheck: Boolean!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
