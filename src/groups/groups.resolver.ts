@@ -131,6 +131,12 @@ export class GroupsResolver {
     });
   }
 
+  // TODO: Remove when no longer needed for testing
+  @ResolveField(() => [Event])
+  async events(@Parent() { id }: Group) {
+    return this.groupsService.getEvents(id);
+  }
+
   @ResolveField(() => [Event])
   async upcomingEvents(@Parent() { id }: Group) {
     return this.groupsService.getUpcomingEvents(id);

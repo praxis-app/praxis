@@ -169,10 +169,15 @@ export class GroupsService {
     });
   }
 
+  async getEvents(id: number) {
+    const group = await this.getGroup({ id }, ["events"]);
+    return group.events;
+  }
+
   async getUpcomingEvents(id: number) {
-    const { events } = await this.getGroup({ id }, ["events"]);
+    const events = await this.getEvents(id);
     const upcomingEvents = events.filter(
-      (event) => event.startsAt.getTime() < Date.now()
+      (event) => event.startsAt.getTime() > Date.now()
     );
     return upcomingEvents.sort(
       (a, b) => b.startsAt.getTime() - a.startsAt.getTime()
