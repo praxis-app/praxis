@@ -184,6 +184,17 @@ export class GroupsService {
     );
   }
 
+  // TODO: Combine with getUpcomingEvents to avoid duplicate code
+  async getPastEvents(id: number) {
+    const events = await this.getEvents(id);
+    const pastEvents = events.filter(
+      (event) => event.startsAt.getTime() < Date.now()
+    );
+    return pastEvents.sort(
+      (a, b) => b.startsAt.getTime() - a.startsAt.getTime()
+    );
+  }
+
   async createGroup(
     { coverPhoto, ...groupData }: CreateGroupInput,
     userId: number

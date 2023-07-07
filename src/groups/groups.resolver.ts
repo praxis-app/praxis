@@ -142,6 +142,11 @@ export class GroupsResolver {
     return this.groupsService.getUpcomingEvents(id);
   }
 
+  @ResolveField(() => [Event])
+  async pastEvents(@Parent() { id }: Group) {
+    return this.groupsService.getPastEvents(id);
+  }
+
   @ResolveField(() => [GroupRole])
   async roles(@Parent() { id }: Group) {
     return this.groupRolesService.getGroupRoles({ groupId: id });

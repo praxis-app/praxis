@@ -175,6 +175,7 @@ type Group {
   memberRequestCount: Int
   isJoinedByMe: Boolean!
   upcomingEvents: [Event!]!
+  pastEvents: [Event!]!
   myPermissions: GroupPermissions!
   settings: GroupConfig!
 }
