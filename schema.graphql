@@ -138,6 +138,7 @@ type Event {
   endsAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
+  attendingStatus: String
   coverPhoto: Image!
 }
 
@@ -440,10 +441,10 @@ type Mutation {
   createEvent(eventData: CreateEventInput!): CreateEventPayload!
   updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
   deleteEvent(id: Int!): Boolean!
-  deleteImage(id: Int!): Boolean!
   createEventAttendee(eventAttendeeData: CreateEventAttendeeInput!): CreateEventAttendeePayload!
   updateEventAttendee(eventAttendeeData: UpdateEventAttendeeInput!): UpdateEventAttendeePayload!
-  deleteEventAttendee(id: Int!): Boolean!
+  deleteEventAttendee(eventId: Int!): Boolean!
+  deleteImage(id: Int!): Boolean!
   updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
   createServerRole(serverRoleData: CreateServerRoleInput!): CreateServerRolePayload!
   updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!

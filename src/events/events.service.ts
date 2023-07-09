@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
@@ -13,6 +13,7 @@ import {
 } from "./event-attendees/models/event-attendee.model";
 import { Event } from "./models/event.model";
 import { UpdateEventInput } from "./models/update-event.input";
+import { EventAttendeesService } from "./event-attendees/event-attendees.service";
 
 @Injectable()
 export class EventsService {
@@ -22,6 +23,9 @@ export class EventsService {
 
     @InjectRepository(EventAttendee)
     private eventAttendeeRepository: Repository<EventAttendee>,
+
+    @Inject(forwardRef(() => EventAttendeesService))
+    private eventAttendeesService: EventAttendeesService,
 
     private imagesService: ImagesService
   ) {}
@@ -36,6 +40,14 @@ export class EventsService {
       relations,
       where,
     });
+  }
+
+  async getAttendingStatus(id: number, userId: number) {
+    const eventAttendee = await this.eventAttendeesService.getEventAttendee({
+      eventId: id,
+      userId,
+    });
+    return eventAttendee?.status || null;
   }
 
   async getCoverPhotosBatch(eventIds: number[]) {

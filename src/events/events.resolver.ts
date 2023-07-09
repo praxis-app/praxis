@@ -13,6 +13,8 @@ import { Dataloaders } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
+import { EventAttendeesService } from "./event-attendees/event-attendees.service";
+import { EventAttendee } from "./event-attendees/models/event-attendee.model";
 import { EventsService } from "./events.service";
 import { CreateEventInput } from "./models/create-event.input";
 import { CreateEventPayload } from "./models/create-event.payload";
@@ -22,7 +24,10 @@ import { UpdateEventPayload } from "./models/update-event.payload";
 
 @Resolver(() => Event)
 export class EventsResolver {
-  constructor(private eventsService: EventsService) {}
+  constructor(
+    private eventsService: EventsService,
+    private eventAttendeesService: EventAttendeesService
+  ) {}
 
   @Query(() => Event)
   async event(@Args("id", { type: () => Int, nullable: true }) id: number) {
@@ -32,6 +37,19 @@ export class EventsResolver {
   @Query(() => [Event])
   async events() {
     return this.eventsService.getEvents();
+  }
+
+  @ResolveField(() => [EventAttendee])
+  async attendees(@Parent() { id }: Event) {
+    return this.eventAttendeesService.getEventAttendees({ eventId: id });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async attendingStatus(
+    @CurrentUser() { id: currentUserId }: User,
+    @Parent() { id }: Event
+  ) {
+    return this.eventsService.getAttendingStatus(id, currentUserId);
   }
 
   @ResolveField(() => Group)

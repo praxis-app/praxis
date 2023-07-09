@@ -1,25 +1,26 @@
-import { Injectable } from "@nestjs/common";
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
+import { EventsService } from "../events.service";
 import { CreateEventAttendeeInput } from "./models/create-event-attendee.input";
-import {
-  EventAttendee,
-  EventAttendeeStatus,
-} from "./models/event-attendee.model";
+import { EventAttendee } from "./models/event-attendee.model";
 import { UpdateEventAttendeeInput } from "./models/update-event-attendee.input";
 
 @Injectable()
 export class EventAttendeesService {
   constructor(
     @InjectRepository(EventAttendee)
-    private eventAttendeeRepository: Repository<EventAttendee>
+    private eventAttendeeRepository: Repository<EventAttendee>,
+
+    @Inject(forwardRef(() => EventsService))
+    private eventService: EventsService
   ) {}
 
   async getEventAttendee(
     where: FindOptionsWhere<EventAttendee>,
     relations?: string[]
   ) {
-    return this.eventAttendeeRepository.findOneOrFail({ where, relations });
+    return this.eventAttendeeRepository.findOne({ where, relations });
   }
 
   async getEventAttendees(
@@ -39,10 +40,12 @@ export class EventAttendeesService {
   ) {
     const eventAttendee = await this.eventAttendeeRepository.save({
       ...eventAttendeeData,
-      status: EventAttendeeStatus.Host,
       userId,
     });
-    return { eventAttendee };
+    const event = await this.eventService.getEvent({
+      id: eventAttendee.eventId,
+    });
+    return { event };
   }
 
   // TODO: Add update event attqendee payload type
@@ -52,8 +55,8 @@ export class EventAttendeesService {
     return { eventAttendee };
   }
 
-  async deleteEventAttendee(id: number) {
-    await this.eventAttendeeRepository.delete(id);
+  async deleteEventAttendee(eventId: number, userId: number) {
+    await this.eventAttendeeRepository.delete({ eventId, userId });
     return true;
   }
 }

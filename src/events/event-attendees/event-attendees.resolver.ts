@@ -45,7 +45,10 @@ export class EventAttendeesResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteEventAttendee(@Args("id", { type: () => Int }) id: number) {
-    return this.eventAttendeesService.deleteEventAttendee(id);
+  async deleteEventAttendee(
+    @Args("eventId", { type: () => Int }) eventId: number,
+    @CurrentUser() { id }: User
+  ) {
+    return this.eventAttendeesService.deleteEventAttendee(eventId, id);
   }
 }
