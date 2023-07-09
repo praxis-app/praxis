@@ -7,10 +7,15 @@ import {
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
+import { CurrentUser } from "../../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../../dataloader/dataloader.types";
 import { User } from "../../users/models/user.model";
 import { EventAttendeesService } from "./event-attendees.service";
+import { CreateEventAttendeeInput } from "./models/create-event-attendee.input";
+import { CreateEventAttendeePayload } from "./models/create-event-attendee.payload";
 import { EventAttendee } from "./models/event-attendee.model";
+import { UpdateEventAttendeeInput } from "./models/update-event-attendee.input";
+import { UpdateEventAttendeePayload } from "./models/update-event-attendee.payload";
 
 @Resolver(() => EventAttendee)
 export class EventAttendeesResolver {
@@ -24,8 +29,23 @@ export class EventAttendeesResolver {
     return loaders.usersLoader.load(userId);
   }
 
+  @Mutation(() => CreateEventAttendeePayload)
+  async createEventAttendee(
+    @Args("eventAttendeeData") eventData: CreateEventAttendeeInput,
+    @CurrentUser() { id }: User
+  ) {
+    return this.eventAttendeesService.createEventAttendee(eventData, id);
+  }
+
+  @Mutation(() => UpdateEventAttendeePayload)
+  async updateEventAttendee(
+    @Args("eventAttendeeData") eventData: UpdateEventAttendeeInput
+  ) {
+    return this.eventAttendeesService.updateEventAttendee(eventData);
+  }
+
   @Mutation(() => Boolean)
-  async deleteEvent(@Args("id", { type: () => Int }) id: number) {
+  async deleteEventAttendee(@Args("id", { type: () => Int }) id: number) {
     return this.eventAttendeesService.deleteEventAttendee(id);
   }
 }

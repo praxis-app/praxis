@@ -1,10 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
+import { CreateEventAttendeeInput } from "./models/create-event-attendee.input";
 import {
   EventAttendee,
   EventAttendeeStatus,
 } from "./models/event-attendee.model";
+import { UpdateEventAttendeeInput } from "./models/update-event-attendee.input";
 
 @Injectable()
 export class EventAttendeesService {
@@ -31,8 +33,10 @@ export class EventAttendeesService {
     });
   }
 
-  // TODO: Add create event attqendee payload type
-  async createEventAttendee(eventAttendeeData: any, userId: number) {
+  async createEventAttendee(
+    eventAttendeeData: CreateEventAttendeeInput,
+    userId: number
+  ) {
     const eventAttendee = await this.eventAttendeeRepository.save({
       ...eventAttendeeData,
       status: EventAttendeeStatus.Host,
@@ -42,7 +46,7 @@ export class EventAttendeesService {
   }
 
   // TODO: Add update event attqendee payload type
-  async updateEventAttendee({ id, ...eventData }: any) {
+  async updateEventAttendee({ id, ...eventData }: UpdateEventAttendeeInput) {
     await this.eventAttendeeRepository.update(id, eventData);
     const eventAttendee = await this.getEventAttendee({ id });
     return { eventAttendee };
