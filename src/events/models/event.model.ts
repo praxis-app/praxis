@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import { Group } from "../../groups/models/group.model";
 import { Image } from "../../images/models/image.model";
-import { EventAttendee } from "./event-attendee.model";
+import { EventAttendee } from "../event-attendees/models/event-attendee.model";
 
 @ObjectType()
 @Entity()

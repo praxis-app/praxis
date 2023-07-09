@@ -13,7 +13,7 @@ import {
 } from "typeorm";
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
 import { FeedItem } from "../../common/models/feed-item.union";
-import { EventAttendee } from "../../events/models/event-attendee.model";
+import { EventAttendee } from "../../events/event-attendees/models/event-attendee.model";
 import { GroupRole } from "../../groups/group-roles/models/group-role.model";
 import { Group } from "../../groups/models/group.model";
 import { Image } from "../../images/models/image.model";

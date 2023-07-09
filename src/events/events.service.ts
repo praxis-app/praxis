@@ -10,7 +10,7 @@ import { CreateEventInput } from "./models/create-event.input";
 import {
   EventAttendee,
   EventAttendeeStatus,
-} from "./models/event-attendee.model";
+} from "./event-attendees/models/event-attendee.model";
 import { Event } from "./models/event.model";
 import { UpdateEventInput } from "./models/update-event.input";
 

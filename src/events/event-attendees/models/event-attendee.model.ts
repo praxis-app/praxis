@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { User } from "../../users/models/user.model";
-import { Event } from "./event.model";
+import { User } from "../../../users/models/user.model";
+import { Event } from "../../models/event.model";
 
 export enum EventAttendeeStatus {
   CoHost = "co-host",
