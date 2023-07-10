@@ -48,11 +48,10 @@ export class EventAttendeesService {
     return { event };
   }
 
-  // TODO: Add update event attqendee payload type
   async updateEventAttendee({ id, ...eventData }: UpdateEventAttendeeInput) {
     await this.eventAttendeeRepository.update(id, eventData);
-    const eventAttendee = await this.getEventAttendee({ id });
-    return { eventAttendee };
+    const event = await this.eventService.getEvent({ id });
+    return { event };
   }
 
   async deleteEventAttendee(eventId: number, userId: number) {

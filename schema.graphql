@@ -387,7 +387,7 @@ type CreateEventAttendeePayload {
 }
 
 type UpdateEventAttendeePayload {
-  eventAttendee: EventAttendee!
+  event: Event!
 }
 
 type Query {
