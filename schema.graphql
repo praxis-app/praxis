@@ -594,7 +594,7 @@ input CreateEventAttendeeInput {
 }
 
 input UpdateEventAttendeeInput {
-  id: Int!
+  eventId: Int!
   status: String!
 }
 

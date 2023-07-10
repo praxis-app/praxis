@@ -39,9 +39,10 @@ export class EventAttendeesResolver {
 
   @Mutation(() => UpdateEventAttendeePayload)
   async updateEventAttendee(
-    @Args("eventAttendeeData") eventData: UpdateEventAttendeeInput
+    @Args("eventAttendeeData") eventData: UpdateEventAttendeeInput,
+    @CurrentUser() { id }: User
   ) {
-    return this.eventAttendeesService.updateEventAttendee(eventData);
+    return this.eventAttendeesService.updateEventAttendee(eventData, id);
   }
 
   @Mutation(() => Boolean)

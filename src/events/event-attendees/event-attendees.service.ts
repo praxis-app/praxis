@@ -48,9 +48,12 @@ export class EventAttendeesService {
     return { event };
   }
 
-  async updateEventAttendee({ id, ...eventData }: UpdateEventAttendeeInput) {
-    await this.eventAttendeeRepository.update(id, eventData);
-    const event = await this.eventService.getEvent({ id });
+  async updateEventAttendee(
+    { eventId, ...eventData }: UpdateEventAttendeeInput,
+    userId: number
+  ) {
+    await this.eventAttendeeRepository.update({ eventId, userId }, eventData);
+    const event = await this.eventService.getEvent({ id: eventId });
     return { event };
   }
 
