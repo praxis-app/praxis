@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
-import { FindOptionsWhere, In, Repository } from "typeorm";
+import { FindOptionsWhere, In, LessThan, MoreThan, Repository } from "typeorm";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -14,6 +14,7 @@ import {
 import { Event } from "./models/event.model";
 import { UpdateEventInput } from "./models/update-event.input";
 import { EventAttendeesService } from "./event-attendees/event-attendees.service";
+import { EventsInput, EventTimeFrame } from "./models/events.input";
 
 @Injectable()
 export class EventsService {
@@ -34,10 +35,19 @@ export class EventsService {
     return this.eventRepository.findOneOrFail({ where, relations });
   }
 
-  async getEvents(where?: FindOptionsWhere<Event>, relations?: string[]) {
+  // TODO: Add logic for filtering by this-week
+  async getEvents({ timeFrame, online }: EventsInput) {
+    let where: FindOptionsWhere<Event> = { online };
+
+    if (timeFrame === EventTimeFrame.Past) {
+      where = { ...where, startsAt: LessThan(new Date()) };
+    }
+    if (timeFrame === EventTimeFrame.Future) {
+      where = { ...where, startsAt: MoreThan(new Date()) };
+    }
+
     return this.eventRepository.find({
       order: { updatedAt: "DESC" },
-      relations,
       where,
     });
   }

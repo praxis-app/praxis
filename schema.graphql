@@ -406,12 +406,17 @@ type Query {
   usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
   event(id: Int): Event!
-  events: [Event!]!
+  events(filter: EventsInput!): [Event!]!
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
   authCheck: Boolean!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
+}
+
+input EventsInput {
+  timeFrame: String
+  online: Boolean
 }
 
 type Mutation {

@@ -19,6 +19,7 @@ import { EventsService } from "./events.service";
 import { CreateEventInput } from "./models/create-event.input";
 import { CreateEventPayload } from "./models/create-event.payload";
 import { Event } from "./models/event.model";
+import { EventsInput } from "./models/events.input";
 import { UpdateEventInput } from "./models/update-event.input";
 import { UpdateEventPayload } from "./models/update-event.payload";
 
@@ -35,8 +36,8 @@ export class EventsResolver {
   }
 
   @Query(() => [Event])
-  async events() {
-    return this.eventsService.getEvents();
+  async events(@Args("filter") eventsInput: EventsInput) {
+    return this.eventsService.getEvents(eventsInput);
   }
 
   @ResolveField(() => [EventAttendee])
