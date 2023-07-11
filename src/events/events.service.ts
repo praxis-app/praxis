@@ -2,19 +2,26 @@ import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
-import { FindOptionsWhere, In, LessThan, MoreThan, Repository } from "typeorm";
+import {
+  Between,
+  FindOptionsWhere,
+  In,
+  LessThan,
+  MoreThan,
+  Repository,
+} from "typeorm";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
-import { CreateEventInput } from "./models/create-event.input";
+import { EventAttendeesService } from "./event-attendees/event-attendees.service";
 import {
   EventAttendee,
   EventAttendeeStatus,
 } from "./event-attendees/models/event-attendee.model";
+import { CreateEventInput } from "./models/create-event.input";
 import { Event } from "./models/event.model";
-import { UpdateEventInput } from "./models/update-event.input";
-import { EventAttendeesService } from "./event-attendees/event-attendees.service";
 import { EventsInput, EventTimeFrame } from "./models/events.input";
+import { UpdateEventInput } from "./models/update-event.input";
 
 @Injectable()
 export class EventsService {
@@ -35,17 +42,20 @@ export class EventsService {
     return this.eventRepository.findOneOrFail({ where, relations });
   }
 
-  // TODO: Add logic for filtering by this-week
-  async getEvents({ timeFrame, online }: EventsInput) {
+  async getFilteredEvents({ timeFrame, online }: EventsInput) {
     let where: FindOptionsWhere<Event> = { online };
+    const now = new Date();
 
     if (timeFrame === EventTimeFrame.Past) {
-      where = { ...where, startsAt: LessThan(new Date()) };
+      where = { ...where, startsAt: LessThan(now) };
     }
     if (timeFrame === EventTimeFrame.Future) {
-      where = { ...where, startsAt: MoreThan(new Date()) };
+      where = { ...where, startsAt: MoreThan(now) };
     }
-
+    if (timeFrame === EventTimeFrame.ThisWeek) {
+      const oneWeekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      where = { ...where, startsAt: Between(now, oneWeekFromNow) };
+    }
     return this.eventRepository.find({
       order: { updatedAt: "DESC" },
       where,
