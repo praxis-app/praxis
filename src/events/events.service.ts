@@ -43,18 +43,18 @@ export class EventsService {
   }
 
   async getFilteredEvents({ timeFrame, online }: EventsInput) {
-    let where: FindOptionsWhere<Event> = { online };
+    const where: FindOptionsWhere<Event> = { online };
     const now = new Date();
 
     if (timeFrame === EventTimeFrame.Past) {
-      where = { ...where, startsAt: LessThan(now) };
+      where.startsAt = LessThan(now);
     }
     if (timeFrame === EventTimeFrame.Future) {
-      where = { ...where, startsAt: MoreThan(now) };
+      where.startsAt = MoreThan(now);
     }
     if (timeFrame === EventTimeFrame.ThisWeek) {
       const oneWeekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-      where = { ...where, startsAt: Between(now, oneWeekFromNow) };
+      where.startsAt = Between(now, oneWeekFromNow);
     }
     return this.eventRepository.find({
       order: { updatedAt: "DESC" },
