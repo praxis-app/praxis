@@ -84,6 +84,14 @@ export class PostsResolver {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
 
+  @ResolveField(() => Event)
+  async event(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { eventId }: Post
+  ) {
+    return eventId ? loaders.eventsLoader.load(eventId) : null;
+  }
+
   @Mutation(() => CreatePostPayload)
   async createPost(
     @Args("postData") postData: CreatePostInput,

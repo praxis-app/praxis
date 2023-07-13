@@ -28,6 +28,7 @@ import {
   MyGroupsKey,
 } from "./dataloader.types";
 import { EventsService } from "../events/events.service";
+import { Event } from "../events/models/event.model";
 
 @Injectable()
 export class DataloaderService {
@@ -80,6 +81,7 @@ export class DataloaderService {
 
       // Events
       eventCoverPhotosLoader: this._createEventCoverPhotosLoader(),
+      eventsLoader: this._createEventsLoader(),
     };
   }
 
@@ -254,6 +256,12 @@ export class DataloaderService {
   private _createEventCoverPhotosLoader() {
     return new DataLoader<number, Image>(async (eventIds) =>
       this.eventsService.getCoverPhotosBatch(eventIds as number[])
+    );
+  }
+
+  private _createEventsLoader() {
+    return new DataLoader<number, Event>(async (eventIds) =>
+      this.eventsService.getEventsBatch(eventIds as number[])
     );
   }
 }

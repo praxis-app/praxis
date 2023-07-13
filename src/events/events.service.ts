@@ -42,6 +42,14 @@ export class EventsService {
     return this.eventRepository.findOneOrFail({ where, relations });
   }
 
+  async getEvents(where?: FindOptionsWhere<Event>, relations?: string[]) {
+    return this.eventRepository.find({
+      order: { updatedAt: "DESC" },
+      relations,
+      where,
+    });
+  }
+
   async getFilteredEvents({ timeFrame, online }: EventsInput) {
     const where: FindOptionsWhere<Event> = { online };
     const now = new Date();
@@ -68,6 +76,17 @@ export class EventsService {
       userId,
     });
     return eventAttendee?.status || null;
+  }
+
+  async getEventsBatch(eventIds: number[]) {
+    const events = await this.getEvents({
+      id: In(eventIds),
+    });
+    return eventIds.map(
+      (id) =>
+        events.find((event: Event) => event.id === id) ||
+        new Error(`Could not load event: ${id}`)
+    );
   }
 
   async getCoverPhotosBatch(eventIds: number[]) {
