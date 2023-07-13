@@ -115,33 +115,6 @@ type Image {
   updatedAt: DateTime!
 }
 
-type EventAttendee {
-  id: Int!
-  status: String!
-  user: User!
-  event: Event!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type Event {
-  id: Int!
-  name: String!
-  description: String!
-  location: String
-  online: Boolean!
-  externalLink: String
-  attendees: [EventAttendee!]!
-  images: [Image!]!
-  group: Group
-  startsAt: DateTime!
-  endsAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  attendingStatus: String
-  coverPhoto: Image!
-}
-
 type GroupConfig {
   id: Int!
   group: Group!
@@ -183,6 +156,34 @@ type Group {
 
 union FeedItem = Post | Proposal
 
+type EventAttendee {
+  id: Int!
+  status: String!
+  user: User!
+  event: Event!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Event {
+  id: Int!
+  name: String!
+  description: String!
+  location: String
+  online: Boolean!
+  externalLink: String
+  attendees: [EventAttendee!]!
+  posts: [Post!]!
+  images: [Image!]!
+  group: Group
+  startsAt: DateTime!
+  endsAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  attendingStatus: String
+  coverPhoto: Image!
+}
+
 type Like {
   id: Int!
   post: Post!
@@ -198,6 +199,7 @@ type Post {
   likes: [Like!]!
   user: User!
   group: Group
+  event: Event
   createdAt: DateTime!
   updatedAt: DateTime!
   likesCount: Int!
@@ -450,13 +452,13 @@ type Mutation {
   updateEventAttendee(eventAttendeeData: UpdateEventAttendeeInput!): UpdateEventAttendeePayload!
   deleteEventAttendee(eventId: Int!): Boolean!
   deleteImage(id: Int!): Boolean!
+  createLike(likeData: CreateLikeInput!): CreateLikePayload!
+  deleteLike(likeData: DeleteLikeInput!): Boolean!
   updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
   createServerRole(serverRoleData: CreateServerRoleInput!): CreateServerRolePayload!
   updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
   deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
-  createLike(likeData: CreateLikeInput!): CreateLikePayload!
-  deleteLike(likeData: DeleteLikeInput!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -517,6 +519,7 @@ input UpdateGroupInput {
 
 input CreatePostInput {
   groupId: Int
+  eventId: Int
   body: String
   images: [Upload!]
 }
@@ -579,11 +582,11 @@ input CreateEventInput {
   externalLink: String
   startsAt: DateTime!
   endsAt: DateTime
-  groupId: Float
+  groupId: Int
 }
 
 input UpdateEventInput {
-  id: Float!
+  id: Int!
   name: String!
   description: String!
   location: String
@@ -601,6 +604,14 @@ input CreateEventAttendeeInput {
 input UpdateEventAttendeeInput {
   eventId: Int!
   status: String!
+}
+
+input CreateLikeInput {
+  postId: Int
+}
+
+input DeleteLikeInput {
+  postId: Int
 }
 
 input UpdateGroupConfigInput {
@@ -634,14 +645,6 @@ input ServerRolePermissionInput {
 input DeleteServerRoleMemberInput {
   serverRoleId: Int!
   userId: Int!
-}
-
-input CreateLikeInput {
-  postId: Int
-}
-
-input DeleteLikeInput {
-  postId: Int
 }
 
 input CreateVoteInput {

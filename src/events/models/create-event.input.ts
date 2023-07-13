@@ -1,4 +1,4 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { Field, InputType, Int } from "@nestjs/graphql";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 
 @InputType()
@@ -27,6 +27,6 @@ export class CreateEventInput {
   @Field({ nullable: true })
   endsAt?: Date;
 
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   groupId?: number;
 }
