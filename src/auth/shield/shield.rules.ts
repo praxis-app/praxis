@@ -1,6 +1,8 @@
 import { rule } from "graphql-shield";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../common/common.types";
+import { CreateEventInput } from "../../events/models/create-event.input";
+import { UpdateEventInput } from "../../events/models/update-event.input";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
 import { UpdateGroupConfigInput } from "../../groups/group-configs/models/update-group-config.input";
 import { CreateGroupRoleInput } from "../../groups/group-roles/models/create-group-role.input";
@@ -25,6 +27,11 @@ export const canManageServerInvites = rule()(
 export const canManagePosts = rule()(
   async (_parent, _args, { permissions }: Context) =>
     hasServerPermission(permissions, "managePosts")
+);
+
+export const canManageEvents = rule()(
+  async (_parent, _args, { permissions }: Context) =>
+    hasServerPermission(permissions, "manageEvents")
 );
 
 export const canManageServerRoles = rule()(
@@ -72,6 +79,34 @@ export const canManageGroupSettings = rule()(
       "manageSettings",
       args.groupConfigData.groupId
     )
+);
+
+export const canManageGroupEvents = rule()(
+  async (
+    _parent,
+    args: { eventData: CreateEventInput | UpdateEventInput } | { id: number },
+    { permissions, services: { eventsService } }: Context
+  ) => {
+    let groupId: number | undefined;
+
+    if ("eventData" in args) {
+      if ("groupId" in args.eventData) {
+        groupId = args.eventData.groupId;
+      }
+      if ("id" in args.eventData) {
+        const event = await eventsService.getEvent({ id: args.eventData.id });
+        groupId = event.groupId;
+      }
+    } else {
+      const event = await eventsService.getEvent({ id: args.id });
+      groupId = event.groupId;
+    }
+
+    if (!groupId) {
+      return false;
+    }
+    return hasGroupPermission(permissions, "manageEvents", groupId);
+  }
 );
 
 export const canManageGroupRoles = rule()(

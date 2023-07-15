@@ -393,6 +393,8 @@ type UpdateEventAttendeePayload {
 }
 
 type Query {
+  event(id: Int): Event!
+  events(filter: EventsInput!): [Event!]!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   groupRole(id: Int!): GroupRole!
   groupRoles: [GroupRole!]!
@@ -407,8 +409,6 @@ type Query {
   users: [User!]!
   usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
-  event(id: Int): Event!
-  events(filter: EventsInput!): [Event!]!
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
   authCheck: Boolean!
@@ -422,6 +422,9 @@ input EventsInput {
 }
 
 type Mutation {
+  createEvent(eventData: CreateEventInput!): CreateEventPayload!
+  updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
+  deleteEvent(id: Int!): Boolean!
   createGroupMemberRequest(groupId: Int!): CreateGroupMemberRequestPayload!
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
   cancelGroupMemberRequest(id: Int!): Boolean!
@@ -445,9 +448,6 @@ type Mutation {
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
   unfollowUser(id: Int!): Boolean!
-  createEvent(eventData: CreateEventInput!): CreateEventPayload!
-  updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
-  deleteEvent(id: Int!): Boolean!
   createEventAttendee(eventAttendeeData: CreateEventAttendeeInput!): CreateEventAttendeePayload!
   updateEventAttendee(eventAttendeeData: UpdateEventAttendeeInput!): UpdateEventAttendeePayload!
   deleteEventAttendee(eventId: Int!): Boolean!
@@ -467,6 +467,33 @@ type Mutation {
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
+}
+
+input CreateEventInput {
+  name: String!
+  description: String!
+  coverPhoto: Upload
+  location: String
+  online: Boolean
+  externalLink: String
+  startsAt: DateTime!
+  endsAt: DateTime
+  groupId: Int
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input UpdateEventInput {
+  id: Int!
+  name: String!
+  description: String!
+  coverPhoto: Upload
+  location: String
+  online: Boolean
+  externalLink: String
+  startsAt: DateTime!
+  endsAt: DateTime
 }
 
 input CreateGroupRoleInput {
@@ -506,9 +533,6 @@ input CreateGroupInput {
   description: String!
   coverPhoto: Upload
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 input UpdateGroupInput {
   id: Int!
@@ -571,30 +595,6 @@ input UpdateUserInput {
   bio: String!
   profilePicture: Upload
   coverPhoto: Upload
-}
-
-input CreateEventInput {
-  name: String!
-  description: String!
-  coverPhoto: Upload
-  location: String
-  online: Boolean
-  externalLink: String
-  startsAt: DateTime!
-  endsAt: DateTime
-  groupId: Int
-}
-
-input UpdateEventInput {
-  id: Int!
-  name: String!
-  description: String!
-  coverPhoto: Upload
-  location: String
-  online: Boolean
-  externalLink: String
-  startsAt: DateTime!
-  endsAt: DateTime
 }
 
 input CreateEventAttendeeInput {

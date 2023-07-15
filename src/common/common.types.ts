@@ -9,8 +9,10 @@ import { ProposalsService } from "../proposals/proposals.service";
 import { User } from "../users/models/user.model";
 import { UserPermissions } from "../users/user.types";
 import { UsersService } from "../users/users.service";
+import { EventsService } from "../events/events.service";
 
 export interface ContextServices {
+  eventsService: EventsService;
   groupMemberRequestsService: GroupMemberRequestsService;
   groupRolesService: GroupRolesService;
   groupsService: GroupsService;
