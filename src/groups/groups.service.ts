@@ -6,8 +6,6 @@ import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { MyGroupsKey } from "../dataloader/dataloader.types";
-import { EventsService } from "../events/events.service";
-import { EventsInput } from "../events/models/events.input";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -39,8 +37,7 @@ export class GroupsService {
 
     private groupRolesService: GroupRolesService,
     private imagesService: ImagesService,
-    private usersService: UsersService,
-    private eventsService: EventsService
+    private usersService: UsersService
   ) {}
 
   async getGroup(where: FindOptionsWhere<Group>, relations?: string[]) {
@@ -83,14 +80,6 @@ export class GroupsService {
     );
     // TODO: Update once pagination has been implemented
     return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
-  }
-
-  async getPublicGroupEvents(input: EventsInput) {
-    return this.eventsService.getFilteredEvents(input, {
-      group: {
-        config: { privacy: GroupPrivacy.Public },
-      },
-    });
   }
 
   async isJoinedByUser(id: number, userId: number) {

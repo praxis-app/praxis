@@ -43,6 +43,11 @@ export class EventsResolver {
     return this.eventsService.getFilteredEvents(input);
   }
 
+  @Query(() => [Event])
+  async publicEvents(@Args("input") input: EventsInput) {
+    return this.eventsService.getPublicEvents(input);
+  }
+
   @ResolveField(() => [EventAttendee])
   async attendees(@Parent() { id }: Event) {
     return this.eventAttendeesService.getEventAttendees({ eventId: id });

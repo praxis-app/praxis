@@ -1,6 +1,5 @@
 import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { EventsModule } from "../events/events.module";
 import { ImagesModule } from "../images/images.module";
 import { PostsModule } from "../posts/posts.module";
 import { UsersModule } from "../users/users.module";
@@ -16,7 +15,6 @@ import { Group } from "./models/group.model";
     TypeOrmModule.forFeature([Group]),
     forwardRef(() => GroupConfigsModule),
     forwardRef(() => GroupMemberRequestsModule),
-    EventsModule,
     GroupRolesModule,
     ImagesModule,
     PostsModule,

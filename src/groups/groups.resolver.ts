@@ -12,7 +12,6 @@ import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { FeedItem } from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { Event } from "../events/models/event.model";
-import { EventsInput } from "../events/models/events.input";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { User } from "../users/models/user.model";
@@ -66,11 +65,6 @@ export class GroupsResolver {
   @Query(() => [FeedItem])
   async publicGroupsFeed() {
     return this.groupsService.getPublicGroupsFeed();
-  }
-
-  @Query(() => [Event])
-  async publicGroupEvents(@Args("input") input: EventsInput) {
-    return this.groupsService.getPublicGroupEvents(input);
   }
 
   @Query(() => GroupRole)

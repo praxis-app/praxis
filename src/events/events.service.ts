@@ -10,6 +10,7 @@ import {
   MoreThan,
   Repository,
 } from "typeorm";
+import { GroupPrivacy } from "../groups/group-configs/models/group-config.model";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -70,6 +71,14 @@ export class EventsService {
     return this.eventRepository.find({
       order: { updatedAt: "DESC" },
       where,
+    });
+  }
+
+  async getPublicEvents(input: EventsInput) {
+    return this.getFilteredEvents(input, {
+      group: {
+        config: { privacy: GroupPrivacy.Public },
+      },
     });
   }
 
