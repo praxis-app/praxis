@@ -44,6 +44,7 @@ export const shieldPermissions = shield(
       groupRole: isGroupMember,
       publicGroupsFeed: allow,
       publicGroups: allow,
+      publicEvents: allow,
     },
     Mutation: {
       "*": isAuthenticated,
