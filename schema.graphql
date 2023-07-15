@@ -331,6 +331,22 @@ type UpdateGroupRolePayload {
   groupRole: GroupRole!
 }
 
+type CreateEventPayload {
+  event: Event!
+}
+
+type UpdateEventPayload {
+  event: Event!
+}
+
+type CreateEventAttendeePayload {
+  event: Event!
+}
+
+type UpdateEventAttendeePayload {
+  event: Event!
+}
+
 type UpdateGroupPayload {
   group: Group!
 }
@@ -376,25 +392,9 @@ type UpdateProposalPayload {
   proposal: Proposal!
 }
 
-type CreateEventPayload {
-  event: Event!
-}
-
-type UpdateEventPayload {
-  event: Event!
-}
-
-type CreateEventAttendeePayload {
-  event: Event!
-}
-
-type UpdateEventAttendeePayload {
-  event: Event!
-}
-
 type Query {
   event(id: Int): Event!
-  events(filter: EventsInput!): [Event!]!
+  events(input: EventsInput!): [Event!]!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   groupRole(id: Int!): GroupRole!
   groupRoles: [GroupRole!]!
@@ -402,6 +402,7 @@ type Query {
   groups: [Group!]!
   publicGroups: [Group!]!
   publicGroupsFeed: [FeedItem!]!
+  publicGroupEvents(input: EventsInput!): [Event!]!
   post(id: Int!): Post!
   proposal(id: Int!): Proposal!
   me: User!

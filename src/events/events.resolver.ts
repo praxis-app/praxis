@@ -39,8 +39,8 @@ export class EventsResolver {
   }
 
   @Query(() => [Event])
-  async events(@Args("filter") eventsInput: EventsInput) {
-    return this.eventsService.getFilteredEvents(eventsInput);
+  async events(@Args("input") input: EventsInput) {
+    return this.eventsService.getFilteredEvents(input);
   }
 
   @ResolveField(() => [EventAttendee])

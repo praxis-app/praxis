@@ -50,8 +50,11 @@ export class EventsService {
     });
   }
 
-  async getFilteredEvents({ timeFrame, online }: EventsInput) {
-    const where: FindOptionsWhere<Event> = { online };
+  async getFilteredEvents(
+    { timeFrame, online }: EventsInput,
+    inputOverride?: FindOptionsWhere<Event>
+  ) {
+    const where: FindOptionsWhere<Event> = { online, ...inputOverride };
     const now = new Date();
 
     if (timeFrame === EventTimeFrame.Past) {
