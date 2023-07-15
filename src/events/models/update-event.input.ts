@@ -1,4 +1,5 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
+import { FileUpload, GraphQLUpload } from "graphql-upload";
 
 @InputType()
 export class UpdateEventInput {
@@ -10,6 +11,9 @@ export class UpdateEventInput {
 
   @Field()
   description: string;
+
+  @Field(() => GraphQLUpload, { nullable: true })
+  coverPhoto?: Promise<FileUpload>;
 
   @Field({ nullable: true })
   location?: string;

@@ -589,6 +589,7 @@ input UpdateEventInput {
   id: Int!
   name: String!
   description: String!
+  coverPhoto: Upload
   location: String
   online: Boolean
   externalLink: String
