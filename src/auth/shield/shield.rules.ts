@@ -81,6 +81,34 @@ export const canManageGroupSettings = rule()(
     )
 );
 
+export const canCreateGroupEvents = rule()(
+  async (
+    _parent,
+    args: { eventData: CreateEventInput | UpdateEventInput } | { id: number },
+    { permissions, services: { eventsService } }: Context
+  ) => {
+    let groupId: number | undefined;
+
+    if ("eventData" in args) {
+      if ("groupId" in args.eventData) {
+        groupId = args.eventData.groupId;
+      }
+      if ("id" in args.eventData) {
+        const event = await eventsService.getEvent({ id: args.eventData.id });
+        groupId = event.groupId;
+      }
+    } else {
+      const event = await eventsService.getEvent({ id: args.id });
+      groupId = event.groupId;
+    }
+
+    if (!groupId) {
+      return false;
+    }
+    return hasGroupPermission(permissions, "createEvents", groupId);
+  }
+);
+
 export const canManageGroupEvents = rule()(
   async (
     _parent,

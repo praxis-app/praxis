@@ -27,6 +27,7 @@ import {
   isPublicGroupProposal,
   canManageGroupEvents,
   canManageEvents,
+  canCreateGroupEvents,
 } from "./shield.rules";
 
 export const shieldPermissions = shield(
@@ -66,9 +67,9 @@ export const shieldPermissions = shield(
       updateGroupRole: canManageGroupRoles,
       deleteGroupRole: canManageGroupRoles,
       deleteGroupRoleMember: canManageGroupRoles,
-      createEvent: canManageGroupEvents,
-      updateEvent: canManageGroupEvents,
+      createEvent: or(canCreateGroupEvents, canManageGroupEvents),
       deleteEvent: or(canManageEvents, canManageGroupEvents),
+      updateEvent: canManageGroupEvents,
     },
     Group: {
       roles: isGroupMember,
