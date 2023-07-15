@@ -266,6 +266,25 @@ export const isPublicGroupProposal = rule()(
   }
 );
 
+// TODO: Veryify that this works
+export const isPublicEvent = rule()(
+  async (
+    _parent,
+    args: { id: number },
+    { services: { eventsService } }: Context
+  ) => {
+    const event = await eventsService.getEvent({
+      id: args.id,
+      group: {
+        config: {
+          privacy: GroupPrivacy.Public,
+        },
+      },
+    });
+    return !!event;
+  }
+);
+
 export const isProposalGroupJoinedByMe = rule()(
   async (
     _parent,
