@@ -138,7 +138,6 @@ type Group {
   feed: [FeedItem!]!
   posts: [Post!]!
   proposals: [Proposal!]!
-  events: [Event!]!
   members: [User!]!
   memberRequests: [GroupMemberRequest!]
   roles: [GroupRole!]!

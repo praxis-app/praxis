@@ -52,7 +52,6 @@ export class Group {
   })
   proposals: Proposal[];
 
-  @Field(() => [Event])
   @OneToMany(() => Event, (event) => event.group, {
     cascade: true,
   })
