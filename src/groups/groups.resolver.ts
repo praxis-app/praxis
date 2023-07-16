@@ -135,7 +135,7 @@ export class GroupsResolver {
   }
 
   @ResolveField(() => [Event])
-  async upcomingEvents(@Parent() { id }: Group) {
+  async futureEvents(@Parent() { id }: Group) {
     return this.eventsService.getFilteredEvents(
       { timeFrame: EventTimeFrame.Future },
       { groupId: id }
