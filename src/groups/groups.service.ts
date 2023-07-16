@@ -169,13 +169,13 @@ export class GroupsService {
     });
   }
 
-  async getEvents(id: number) {
-    const group = await this.getGroup({ id }, ["events"]);
+  async getEvents(groupId: number) {
+    const group = await this.getGroup({ id: groupId }, ["events"]);
     return group.events;
   }
 
-  async getUpcomingEvents(id: number) {
-    const events = await this.getEvents(id);
+  async getUpcomingEvents(groupId: number) {
+    const events = await this.getEvents(groupId);
     const upcomingEvents = events.filter(
       (event) => event.startsAt.getTime() > Date.now()
     );
@@ -184,9 +184,9 @@ export class GroupsService {
     );
   }
 
-  // TODO: Combine with getUpcomingEvents to avoid duplicate code
-  async getPastEvents(id: number) {
-    const events = await this.getEvents(id);
+  // TODO: Combine with getUpcomingEvents to avoid duplicate code - or use getFilteredEvents method instead
+  async getPastEvents(groupId: number) {
+    const events = await this.getEvents(groupId);
     const pastEvents = events.filter(
       (event) => event.startsAt.getTime() < Date.now()
     );
