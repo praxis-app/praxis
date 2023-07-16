@@ -11,7 +11,9 @@ import {
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { FeedItem } from "../common/models/feed-item.union";
 import { Dataloaders } from "../dataloader/dataloader.types";
+import { EventsService } from "../events/events.service";
 import { Event } from "../events/models/event.model";
+import { EventTimeFrame } from "../events/models/events.input";
 import { Post } from "../posts/models/post.model";
 import { PostsService } from "../posts/posts.service";
 import { User } from "../users/models/user.model";
@@ -39,7 +41,8 @@ export class GroupsResolver {
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private memberRequestsService: GroupMemberRequestsService,
-    private postsService: PostsService
+    private postsService: PostsService,
+    private eventsService: EventsService
   ) {}
 
   @Query(() => Group)
@@ -133,12 +136,18 @@ export class GroupsResolver {
 
   @ResolveField(() => [Event])
   async upcomingEvents(@Parent() { id }: Group) {
-    return this.groupsService.getUpcomingEvents(id);
+    return this.eventsService.getFilteredEvents(
+      { timeFrame: EventTimeFrame.Future },
+      { groupId: id }
+    );
   }
 
   @ResolveField(() => [Event])
   async pastEvents(@Parent() { id }: Group) {
-    return this.groupsService.getPastEvents(id);
+    return this.eventsService.getFilteredEvents(
+      { timeFrame: EventTimeFrame.Past },
+      { groupId: id }
+    );
   }
 
   @ResolveField(() => [GroupRole])

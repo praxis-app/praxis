@@ -330,6 +330,22 @@ type UpdateGroupRolePayload {
   groupRole: GroupRole!
 }
 
+type CreateEventPayload {
+  event: Event!
+}
+
+type UpdateEventPayload {
+  event: Event!
+}
+
+type CreateEventAttendeePayload {
+  event: Event!
+}
+
+type UpdateEventAttendeePayload {
+  event: Event!
+}
+
 type UpdateGroupPayload {
   group: Group!
 }
@@ -373,22 +389,6 @@ type CreateProposalPayload {
 
 type UpdateProposalPayload {
   proposal: Proposal!
-}
-
-type CreateEventPayload {
-  event: Event!
-}
-
-type UpdateEventPayload {
-  event: Event!
-}
-
-type CreateEventAttendeePayload {
-  event: Event!
-}
-
-type UpdateEventAttendeePayload {
-  event: Event!
 }
 
 type Query {
