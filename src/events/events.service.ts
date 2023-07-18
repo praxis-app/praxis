@@ -10,6 +10,7 @@ import {
   MoreThan,
   Repository,
 } from "typeorm";
+import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { GroupPrivacy } from "../groups/group-configs/models/group-config.model";
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
@@ -68,10 +69,15 @@ export class EventsService {
       const oneWeekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
       where.startsAt = Between(now, oneWeekFromNow);
     }
-    return this.eventRepository.find({
+
+    const events = await this.eventRepository.find({
       order: { updatedAt: "DESC" },
       where,
     });
+    const sortedEvents = events.sort(
+      (a, b) => a.startsAt.getTime() - b.startsAt.getTime()
+    );
+    return sortedEvents.slice(0, DEFAULT_PAGE_SIZE);
   }
 
   async getPublicEvents(input: EventsInput) {
