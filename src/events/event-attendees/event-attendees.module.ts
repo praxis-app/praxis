@@ -1,8 +1,3 @@
-/**
- * TODO: Determine whether this module is necessary or whether
- * it can be merged with the events module
- */
-
 import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { EventsModule } from "../events.module";
