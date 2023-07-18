@@ -266,7 +266,6 @@ export const isPublicGroupProposal = rule()(
   }
 );
 
-// TODO: Veryify that this works
 export const isPublicEvent = rule()(
   async (
     _parent,
