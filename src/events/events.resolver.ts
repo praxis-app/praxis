@@ -61,6 +61,14 @@ export class EventsResolver {
     return loaders.interestedCountLoader.load(id);
   }
 
+  @ResolveField(() => Int)
+  async goingCount(
+    @Parent() { id }: Event,
+    @Context() { loaders }: { loaders: Dataloaders }
+  ) {
+    return loaders.goingCountLoader.load(id);
+  }
+
   @ResolveField(() => String, { nullable: true })
   async attendingStatus(
     @CurrentUser() { id: currentUserId }: User,

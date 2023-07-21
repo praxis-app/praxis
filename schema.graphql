@@ -180,6 +180,7 @@ type Event {
   createdAt: DateTime!
   updatedAt: DateTime!
   interestedCount: Int!
+  goingCount: Int!
   attendingStatus: String
   coverPhoto: Image!
 }

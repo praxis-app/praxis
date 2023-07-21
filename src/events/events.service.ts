@@ -26,6 +26,7 @@ import { EventsInput, EventTimeFrame } from "./models/events.input";
 import { UpdateEventInput } from "./models/update-event.input";
 
 type EventWithInterestedCount = Event & { interestedCount: number };
+type EventWithGoingCount = Event & { goingCount: number };
 
 @Injectable()
 export class EventsService {
@@ -142,6 +143,29 @@ export class EventsService {
         return new Error(`Could not load interested count for event: ${id}`);
       }
       return event.interestedCount;
+    });
+  }
+
+  async getGoingCountBatch(eventIds: number[]) {
+    const events = (await this.eventRepository
+      .createQueryBuilder("event")
+      .leftJoinAndSelect(
+        "event.attendees",
+        "eventAttendee",
+        "eventAttendee.status = :status",
+        { status: EventAttendeeStatus.Going }
+      )
+      .loadRelationCountAndMap("event.goingCount", "event.attendees")
+      .select(["event.id"])
+      .whereInIds(eventIds)
+      .getMany()) as EventWithGoingCount[];
+
+    return eventIds.map((id) => {
+      const event = events.find((event: Event) => event.id === id);
+      if (!event) {
+        return new Error(`Could not load going count for event: ${id}`);
+      }
+      return event.goingCount;
     });
   }
 

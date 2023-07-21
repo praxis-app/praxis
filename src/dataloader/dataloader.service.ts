@@ -82,6 +82,7 @@ export class DataloaderService {
       // Events
       eventCoverPhotosLoader: this._createEventCoverPhotosLoader(),
       interestedCountLoader: this._createInterestedCountLoader(),
+      goingCountLoader: this._createGoingCountLoader(),
       eventsLoader: this._createEventsLoader(),
     };
   }
@@ -269,6 +270,12 @@ export class DataloaderService {
   private _createInterestedCountLoader() {
     return new DataLoader<number, number>(async (eventIds) =>
       this.eventsService.getInterestedCountBatch(eventIds as number[])
+    );
+  }
+
+  private _createGoingCountLoader() {
+    return new DataLoader<number, number>(async (eventIds) =>
+      this.eventsService.getGoingCountBatch(eventIds as number[])
     );
   }
 }
