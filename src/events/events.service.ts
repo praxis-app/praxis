@@ -126,13 +126,15 @@ export class EventsService {
   async getInterestedCountBatch(eventIds: number[]) {
     const events = (await this.eventRepository
       .createQueryBuilder("event")
-      .leftJoinAndSelect(
+      .loadRelationCountAndMap(
+        "event.interestedCount",
         "event.attendees",
         "eventAttendee",
-        "eventAttendee.status = :status",
-        { status: EventAttendeeStatus.Interested }
+        (qb) =>
+          qb.where("eventAttendee.status = :status", {
+            status: EventAttendeeStatus.Interested,
+          })
       )
-      .loadRelationCountAndMap("event.interestedCount", "event.attendees")
       .select(["event.id"])
       .whereInIds(eventIds)
       .getMany()) as EventWithInterestedCount[];
@@ -149,13 +151,15 @@ export class EventsService {
   async getGoingCountBatch(eventIds: number[]) {
     const events = (await this.eventRepository
       .createQueryBuilder("event")
-      .leftJoinAndSelect(
+      .loadRelationCountAndMap(
+        "event.goingCount",
         "event.attendees",
         "eventAttendee",
-        "eventAttendee.status = :status",
-        { status: EventAttendeeStatus.Going }
+        (qb) =>
+          qb.where("eventAttendee.status = :status", {
+            status: EventAttendeeStatus.Going,
+          })
       )
-      .loadRelationCountAndMap("event.goingCount", "event.attendees")
       .select(["event.id"])
       .whereInIds(eventIds)
       .getMany()) as EventWithGoingCount[];
