@@ -25,6 +25,8 @@ import { Event } from "./models/event.model";
 import { EventsInput, EventTimeFrame } from "./models/events.input";
 import { UpdateEventInput } from "./models/update-event.input";
 
+type EventWithInterestedCount = Event & { interestedCount: number };
+
 @Injectable()
 export class EventsService {
   constructor(
@@ -118,6 +120,29 @@ export class EventsService {
         new Error(`Could not load cover photo for event: ${id}`)
     );
     return mappedCoverPhotos;
+  }
+
+  async getInterestedCountBatch(eventIds: number[]) {
+    const events = (await this.eventRepository
+      .createQueryBuilder("event")
+      .leftJoinAndSelect(
+        "event.attendees",
+        "eventAttendee",
+        "eventAttendee.status = :status",
+        { status: EventAttendeeStatus.Interested }
+      )
+      .loadRelationCountAndMap("event.interestedCount", "event.attendees")
+      .select(["event.id"])
+      .whereInIds(eventIds)
+      .getMany()) as EventWithInterestedCount[];
+
+    return eventIds.map((id) => {
+      const event = events.find((event: Event) => event.id === id);
+      if (!event) {
+        return new Error(`Could not load interested count for event: ${id}`);
+      }
+      return event.interestedCount;
+    });
   }
 
   async createEvent(

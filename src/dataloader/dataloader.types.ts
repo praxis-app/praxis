@@ -59,4 +59,5 @@ export interface Dataloaders {
   // Events
   eventCoverPhotosLoader: DataLoader<number, Image>;
   eventsLoader: DataLoader<number, Event>;
+  interestedCountLoader: DataLoader<number, number>;
 }

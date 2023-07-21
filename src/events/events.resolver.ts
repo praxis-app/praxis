@@ -53,6 +53,14 @@ export class EventsResolver {
     return this.eventAttendeesService.getEventAttendees({ eventId: id });
   }
 
+  @ResolveField(() => Int)
+  async interestedCount(
+    @Parent() { id }: Event,
+    @Context() { loaders }: { loaders: Dataloaders }
+  ) {
+    return loaders.interestedCountLoader.load(id);
+  }
+
   @ResolveField(() => String, { nullable: true })
   async attendingStatus(
     @CurrentUser() { id: currentUserId }: User,
