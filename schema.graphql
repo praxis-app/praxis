@@ -492,7 +492,7 @@ input UpdateEventInput {
   description: String!
   coverPhoto: Upload
   location: String
-  online: Boolean
+  online: Boolean!
   externalLink: String
   startsAt: DateTime!
   endsAt: DateTime
