@@ -17,8 +17,8 @@ export class CreateEventInput {
   @Field({ nullable: true })
   location?: string;
 
-  @Field({ nullable: true })
-  online?: boolean;
+  @Field()
+  online: boolean;
 
   @Field({ nullable: true })
   externalLink?: string;
