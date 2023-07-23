@@ -35,6 +35,7 @@ export const hasGroupPermission = (
   return true;
 };
 
+// TODO: Add shield module and service for utils that require a service
 export const getEventRuleGroupId = async (
   args: { eventData: CreateEventInput | UpdateEventInput } | { id: number },
   { services: { eventsService } }: Context
