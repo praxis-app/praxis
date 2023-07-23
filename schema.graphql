@@ -396,7 +396,6 @@ type UpdateProposalPayload {
 type Query {
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
-  publicEvents(input: EventsInput!): [Event!]!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   groupRole(id: Int!): GroupRole!
   groupRoles: [GroupRole!]!

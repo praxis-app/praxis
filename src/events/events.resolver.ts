@@ -39,13 +39,11 @@ export class EventsResolver {
   }
 
   @Query(() => [Event])
-  async events(@Args("input") input: EventsInput) {
+  async events(@Args("input") input: EventsInput, @CurrentUser() user: User) {
+    if (!user) {
+      return this.eventsService.getPublicEvents(input);
+    }
     return this.eventsService.getFilteredEvents(input);
-  }
-
-  @Query(() => [Event])
-  async publicEvents(@Args("input") input: EventsInput) {
-    return this.eventsService.getPublicEvents(input);
   }
 
   @ResolveField(() => [EventAttendee])
