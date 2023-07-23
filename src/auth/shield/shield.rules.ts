@@ -275,9 +275,7 @@ export const isPublicEvent = rule()(
     const event = await eventsService.getEvent({
       id: args.id,
       group: {
-        config: {
-          privacy: GroupPrivacy.Public,
-        },
+        config: { privacy: GroupPrivacy.Public },
       },
     });
     return !!event;
