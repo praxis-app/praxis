@@ -11,7 +11,7 @@ import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
 import {
-  getEventRuleGroupId,
+  getGroupIdFromArgs,
   hasGroupPermission,
   hasServerPermission,
 } from "./shield.utils";
@@ -85,7 +85,7 @@ export const canManageGroupSettings = rule()(
 
 export const canCreateGroupEvents = rule()(
   async (_parent, args, context: Context) => {
-    const groupId = await getEventRuleGroupId(args, context);
+    const groupId = await getGroupIdFromArgs(args, context);
     if (!groupId) {
       return false;
     }
@@ -95,7 +95,7 @@ export const canCreateGroupEvents = rule()(
 
 export const canManageGroupEvents = rule()(
   async (_parent, args, context: Context) => {
-    const groupId = await getEventRuleGroupId(args, context);
+    const groupId = await getGroupIdFromArgs(args, context);
     if (!groupId) {
       return false;
     }
