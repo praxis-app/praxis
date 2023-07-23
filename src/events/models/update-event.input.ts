@@ -18,8 +18,8 @@ export class UpdateEventInput {
   @Field({ nullable: true })
   location?: string;
 
-  @Field()
-  online: boolean;
+  @Field({ nullable: true })
+  online?: boolean;
 
   @Field({ nullable: true })
   externalLink?: string;
