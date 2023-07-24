@@ -73,7 +73,7 @@ export class AddEventTables1690147636077 implements MigrationInterface {
       `ALTER TABLE "image" DROP CONSTRAINT "FK_042895d4be7cf838f0f89949705"`
     );
     await queryRunner.query(
-      `ALTER TABLE "group_member_request" ALTER COLUMN "id" SET DEFAULT nextval('member_request_id_seq'`
+      `ALTER TABLE "group_member_request" ALTER COLUMN "id" SET DEFAULT nextval('"group_member_request_id_seq"')`
     );
     await queryRunner.query(
       `ALTER TABLE "group_member_request" ALTER COLUMN "id" DROP DEFAULT`

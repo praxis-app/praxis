@@ -13,7 +13,7 @@ export class CleanUpGroupMemberRequestTable1690168731029
       `ALTER TABLE "group_member_request" DROP CONSTRAINT "FK_2872a8db74268161aede2556c27"`
     );
     await queryRunner.query(
-      `ALTER TABLE "group_member_request" ALTER COLUMN "id" SET DEFAULT nextval('member_request_id_seq'`
+      `ALTER TABLE "group_member_request" ALTER COLUMN "id" SET DEFAULT nextval('"group_member_request_id_seq"')`
     );
     await queryRunner.query(
       `ALTER TABLE "group_member_request" ALTER COLUMN "id" DROP DEFAULT`
