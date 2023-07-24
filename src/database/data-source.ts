@@ -36,6 +36,7 @@ import { AddProposalActionRoleCascadeDelete1685748700121 } from "./migrations/16
 import { RefactorRolesAndPermissions1688001951695 } from "./migrations/1688001951695-RefactorRolesAndPermissions";
 import { RenameGroupMemberRequestTable1688348341669 } from "./migrations/1688348341669-RenameGroupMemberRequestTable";
 import { AddEventTables1690147636077 } from "./migrations/1690147636077-AddEventTables";
+import { CleanUpGroupMemberRequestTable1690168731029 } from "./migrations/1690168731029-CleanUpGroupMemberRequestTable";
 
 config();
 
@@ -80,6 +81,7 @@ export default new DataSource({
     AddProposalActionRoleTable1684893300206,
     AddRoleMemberLinkTable1681172948650,
     AddServerInviteTable1677339785709,
+    CleanUpGroupMemberRequestTable1690168731029,
     DropGroupMemberEntityTable1681010509841,
     DropRoleMemberEntityTable1681173025669,
     Initial1675388391336,
