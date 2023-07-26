@@ -37,6 +37,7 @@ import { RefactorRolesAndPermissions1688001951695 } from "./migrations/168800195
 import { RenameGroupMemberRequestTable1688348341669 } from "./migrations/1688348341669-RenameGroupMemberRequestTable";
 import { AddEventTables1690147636077 } from "./migrations/1690147636077-AddEventTables";
 import { CleanUpGroupMemberRequestTable1690168731029 } from "./migrations/1690168731029-CleanUpGroupMemberRequestTable";
+import { SetDefaultForGroupMemberRequestTable1690333204053 } from "./migrations/1690333204053-SetDefaultForGroupMemberRequestTable";
 
 config();
 
@@ -87,5 +88,6 @@ export default new DataSource({
     Initial1675388391336,
     RefactorRolesAndPermissions1688001951695,
     RenameGroupMemberRequestTable1688348341669,
+    SetDefaultForGroupMemberRequestTable1690333204053,
   ],
 });
