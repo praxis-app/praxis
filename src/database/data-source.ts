@@ -38,6 +38,7 @@ import { RenameGroupMemberRequestTable1688348341669 } from "./migrations/1688348
 import { AddEventTables1690147636077 } from "./migrations/1690147636077-AddEventTables";
 import { CleanUpGroupMemberRequestTable1690168731029 } from "./migrations/1690168731029-CleanUpGroupMemberRequestTable";
 import { SetDefaultForGroupMemberRequestTable1690333204053 } from "./migrations/1690333204053-SetDefaultForGroupMemberRequestTable";
+import { RemoveMemberRequestIdSeq1690336764201 } from "./migrations/1690336764201-RemoveMemberRequestIdSeq";
 
 config();
 
@@ -87,6 +88,7 @@ export default new DataSource({
     DropRoleMemberEntityTable1681173025669,
     Initial1675388391336,
     RefactorRolesAndPermissions1688001951695,
+    RemoveMemberRequestIdSeq1690336764201,
     RenameGroupMemberRequestTable1688348341669,
     SetDefaultForGroupMemberRequestTable1690333204053,
   ],
