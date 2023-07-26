@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { Environment } from "../common/common.constants";
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
         username: configService.get("DB_USERNAME"),
         password: configService.get("DB_PASSWORD"),
         port: parseInt(configService.get("DB_PORT") as string),
-        synchronize: false,
+        synchronize: configService.get("NODE_ENV") === Environment.Development,
         entities: ["dist/**/*{.entity,.model}.js"],
       }),
     }),
