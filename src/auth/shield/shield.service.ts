@@ -8,22 +8,24 @@ export class ShieldService {
   constructor(private eventsService: EventsService) {}
 
   async getGroupIdFromEventArgs(
-    args: { eventData: CreateEventInput | UpdateEventInput } | { id: number }
+    eventArgs:
+      | { eventData: CreateEventInput | UpdateEventInput }
+      | { id: number }
   ) {
     let groupId: number | undefined;
 
-    if ("eventData" in args) {
-      if ("groupId" in args.eventData) {
-        groupId = args.eventData.groupId;
+    if ("eventData" in eventArgs) {
+      if ("groupId" in eventArgs.eventData) {
+        groupId = eventArgs.eventData.groupId;
       }
-      if ("id" in args.eventData) {
+      if ("id" in eventArgs.eventData) {
         const event = await this.eventsService.getEvent({
-          id: args.eventData.id,
+          id: eventArgs.eventData.id,
         });
         groupId = event.groupId;
       }
     } else {
-      const event = await this.eventsService.getEvent({ id: args.id });
+      const event = await this.eventsService.getEvent({ id: eventArgs.id });
       groupId = event.groupId;
     }
 
