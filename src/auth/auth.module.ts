@@ -7,6 +7,7 @@ import { UsersModule } from "../users/users.module";
 import { AuthResolver } from "./auth.resolver";
 import { AuthService } from "./auth.service";
 import { RefreshTokensModule } from "./refresh-tokens/refresh-tokens.module";
+import { ShieldModule } from "./shield/shield.module";
 import { JwtStrategy } from "./strategies/jwt.strategy";
 
 @Module({
@@ -20,6 +21,7 @@ import { JwtStrategy } from "./strategies/jwt.strategy";
     forwardRef(() => RefreshTokensModule),
     PassportModule,
     ServerInvitesModule,
+    ShieldModule,
     UsersModule,
   ],
   providers: [AuthResolver, AuthService, JwtStrategy],
