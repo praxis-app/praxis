@@ -1,6 +1,6 @@
 ## Praxis
 
-Praxis is a collaborative decision-making platform with social networking features. Proposals are the main focus and come with a wide variety of voting models, with consensus as the default. Create a group and set it to no-admin, allowing group members to create proposals and democratically decide on name, settings, roles, or planning of real world events.
+Praxis is an open source social network with features for collaborative decision making. Proposals are the main focus and come with a wide variety of voting models, with consensus as the default. Create a group and set it to no-admin, allowing group members to create proposals and democratically decide on name, settings, roles, or planning of real world events.
 
 While model of consensus is the default, group members will also be able to use regular majority vote, and have the ability to create and assign new roles with various permissions. All of this can be tailored in group settings to meet the specific needs of your community, either by a groups admin, or by proposals as a group evolves over time.
 
