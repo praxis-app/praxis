@@ -7,7 +7,7 @@ import { UpdateEventInput } from "../../events/models/update-event.input";
 export class ShieldService {
   constructor(private eventsService: EventsService) {}
 
-  async getGroupIdFromArgs(
+  async getGroupIdFromEventArgs(
     args: { eventData: CreateEventInput | UpdateEventInput } | { id: number }
   ) {
     let groupId: number | undefined;

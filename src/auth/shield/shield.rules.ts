@@ -85,7 +85,7 @@ export const canCreateGroupEvents = rule()(
     args,
     { services: { shieldService }, permissions }: Context
   ) => {
-    const groupId = await shieldService.getGroupIdFromArgs(args);
+    const groupId = await shieldService.getGroupIdFromEventArgs(args);
     if (!groupId) {
       return false;
     }
@@ -99,7 +99,7 @@ export const canManageGroupEvents = rule()(
     args,
     { services: { shieldService }, permissions }: Context
   ) => {
-    const groupId = await shieldService.getGroupIdFromArgs(args);
+    const groupId = await shieldService.getGroupIdFromEventArgs(args);
     if (!groupId) {
       return false;
     }
