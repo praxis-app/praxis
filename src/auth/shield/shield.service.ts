@@ -12,23 +12,19 @@ export class ShieldService {
       | { eventData: CreateEventInput | UpdateEventInput }
       | { id: number }
   ) {
-    let groupId: number | undefined;
-
     if ("eventData" in eventArgs) {
       if ("groupId" in eventArgs.eventData) {
-        groupId = eventArgs.eventData.groupId;
+        return eventArgs.eventData.groupId;
       }
       if ("id" in eventArgs.eventData) {
         const event = await this.eventsService.getEvent({
           id: eventArgs.eventData.id,
         });
-        groupId = event.groupId;
+        return event.groupId;
       }
     } else {
       const event = await this.eventsService.getEvent({ id: eventArgs.id });
-      groupId = event.groupId;
+      return event.groupId;
     }
-
-    return groupId;
   }
 }
