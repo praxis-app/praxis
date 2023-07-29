@@ -72,7 +72,7 @@ export const shieldPermissions = shield(
       deleteGroupRoleMember: canManageGroupRoles,
       createEvent: or(canCreateGroupEvents, canManageGroupEvents),
       deleteEvent: or(canManageEvents, canManageGroupEvents),
-      updateEvent: canManageGroupEvents,
+      updateEvent: or(canManageEvents, canManageGroupEvents),
     },
     Group: {
       roles: isGroupMember,
