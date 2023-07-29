@@ -105,11 +105,12 @@ type Image {
   id: Int!
   filename: String!
   imageType: String!
-  post: Post!
-  user: User!
-  group: Group!
-  proposal: Proposal!
-  proposalAction: ProposalAction!
+  post: Post
+  user: User
+  group: Group
+  event: Event
+  proposal: Proposal
+  proposalAction: ProposalAction
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -146,11 +147,43 @@ type Group {
   memberCount: Int!
   memberRequestCount: Int
   isJoinedByMe: Boolean!
+  futureEvents: [Event!]!
+  pastEvents: [Event!]!
   myPermissions: GroupPermissions!
   settings: GroupConfig!
 }
 
 union FeedItem = Post | Proposal
+
+type EventAttendee {
+  id: Int!
+  status: String!
+  user: User!
+  event: Event!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Event {
+  id: Int!
+  name: String!
+  description: String!
+  location: String
+  online: Boolean!
+  externalLink: String
+  attendees: [EventAttendee!]!
+  posts: [Post!]!
+  images: [Image!]!
+  group: Group
+  startsAt: DateTime!
+  endsAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  interestedCount: Int!
+  goingCount: Int!
+  attendingStatus: String
+  coverPhoto: Image!
+}
 
 type Like {
   id: Int!
@@ -167,6 +200,7 @@ type Post {
   likes: [Like!]!
   user: User!
   group: Group
+  event: Event
   createdAt: DateTime!
   updatedAt: DateTime!
   likesCount: Int!
@@ -298,6 +332,22 @@ type UpdateGroupRolePayload {
   groupRole: GroupRole!
 }
 
+type CreateEventPayload {
+  event: Event!
+}
+
+type UpdateEventPayload {
+  event: Event!
+}
+
+type CreateEventAttendeePayload {
+  event: Event!
+}
+
+type UpdateEventAttendeePayload {
+  event: Event!
+}
+
 type UpdateGroupPayload {
   group: Group!
 }
@@ -344,6 +394,8 @@ type UpdateProposalPayload {
 }
 
 type Query {
+  event(id: Int): Event!
+  events(input: EventsInput!): [Event!]!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   groupRole(id: Int!): GroupRole!
   groupRoles: [GroupRole!]!
@@ -352,9 +404,7 @@ type Query {
   publicGroups: [Group!]!
   publicGroupsFeed: [FeedItem!]!
   post(id: Int!): Post!
-  posts: [Post!]!
   proposal(id: Int!): Proposal!
-  proposals: [Proposal!]!
   me: User!
   user(id: Int, name: String): User!
   users: [User!]!
@@ -362,14 +412,20 @@ type Query {
   isFirstUser: Boolean!
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
-  vote(id: Int!): Vote!
-  votes: [Vote!]!
   authCheck: Boolean!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
 }
 
+input EventsInput {
+  timeFrame: String
+  online: Boolean
+}
+
 type Mutation {
+  createEvent(eventData: CreateEventInput!): CreateEventPayload!
+  updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
+  deleteEvent(id: Int!): Boolean!
   createGroupMemberRequest(groupId: Int!): CreateGroupMemberRequestPayload!
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
   cancelGroupMemberRequest(id: Int!): Boolean!
@@ -393,14 +449,17 @@ type Mutation {
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
   unfollowUser(id: Int!): Boolean!
-  createServerRole(serverRoleData: CreateServerRoleInput!): CreateServerRolePayload!
-  updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
-  deleteServerRole(id: Int!): Boolean!
-  deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
+  createEventAttendee(eventAttendeeData: CreateEventAttendeeInput!): CreateEventAttendeePayload!
+  updateEventAttendee(eventAttendeeData: UpdateEventAttendeeInput!): UpdateEventAttendeePayload!
+  deleteEventAttendee(eventId: Int!): Boolean!
   deleteImage(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
   updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
+  createServerRole(serverRoleData: CreateServerRoleInput!): CreateServerRolePayload!
+  updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
+  deleteServerRole(id: Int!): Boolean!
+  deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -409,6 +468,33 @@ type Mutation {
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
+}
+
+input CreateEventInput {
+  name: String!
+  description: String!
+  coverPhoto: Upload
+  location: String
+  online: Boolean
+  externalLink: String
+  startsAt: DateTime!
+  endsAt: DateTime
+  groupId: Int
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input UpdateEventInput {
+  id: Int!
+  name: String!
+  description: String!
+  coverPhoto: Upload
+  location: String
+  online: Boolean
+  externalLink: String
+  startsAt: DateTime!
+  endsAt: DateTime
 }
 
 input CreateGroupRoleInput {
@@ -449,9 +535,6 @@ input CreateGroupInput {
   coverPhoto: Upload
 }
 
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
-
 input UpdateGroupInput {
   id: Int!
   name: String
@@ -461,6 +544,7 @@ input UpdateGroupInput {
 
 input CreatePostInput {
   groupId: Int
+  eventId: Int
   body: String
   images: [Upload!]
 }
@@ -514,6 +598,29 @@ input UpdateUserInput {
   coverPhoto: Upload
 }
 
+input CreateEventAttendeeInput {
+  eventId: Int!
+  status: String!
+}
+
+input UpdateEventAttendeeInput {
+  eventId: Int!
+  status: String!
+}
+
+input CreateLikeInput {
+  postId: Int
+}
+
+input DeleteLikeInput {
+  postId: Int
+}
+
+input UpdateGroupConfigInput {
+  groupId: Int!
+  privacy: String
+}
+
 input CreateServerRoleInput {
   name: String!
   color: String!
@@ -540,19 +647,6 @@ input ServerRolePermissionInput {
 input DeleteServerRoleMemberInput {
   serverRoleId: Int!
   userId: Int!
-}
-
-input CreateLikeInput {
-  postId: Int
-}
-
-input DeleteLikeInput {
-  postId: Int
-}
-
-input UpdateGroupConfigInput {
-  groupId: Int!
-  privacy: String
 }
 
 input CreateVoteInput {

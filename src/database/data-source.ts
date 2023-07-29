@@ -1,6 +1,8 @@
 import { config } from "dotenv";
 import { DataSource } from "typeorm";
 import { RefreshToken } from "../auth/refresh-tokens/models/refresh-token.model";
+import { EventAttendee } from "../events/event-attendees/models/event-attendee.model";
+import { Event } from "../events/models/event.model";
 import { GroupConfig } from "../groups/group-configs/models/group-config.model";
 import { GroupMemberRequest } from "../groups/group-member-requests/models/group-member-request.model";
 import { GroupRolePermission } from "../groups/group-roles/models/group-role-permission.model";
@@ -33,6 +35,10 @@ import { AddGroupConfigTable1685746618239 } from "./migrations/1685746618239-Add
 import { AddProposalActionRoleCascadeDelete1685748700121 } from "./migrations/1685748700121-AddProposalActionRoleCascadeDelete";
 import { RefactorRolesAndPermissions1688001951695 } from "./migrations/1688001951695-RefactorRolesAndPermissions";
 import { RenameGroupMemberRequestTable1688348341669 } from "./migrations/1688348341669-RenameGroupMemberRequestTable";
+import { AddEventTables1690147636077 } from "./migrations/1690147636077-AddEventTables";
+import { CleanUpGroupMemberRequestTable1690168731029 } from "./migrations/1690168731029-CleanUpGroupMemberRequestTable";
+import { SetDefaultForGroupMemberRequestTable1690333204053 } from "./migrations/1690333204053-SetDefaultForGroupMemberRequestTable";
+import { RemoveMemberRequestIdSeq1690336764201 } from "./migrations/1690336764201-RemoveMemberRequestIdSeq";
 
 config();
 
@@ -44,6 +50,8 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
   port: parseInt(process.env.DB_PORT as string),
   entities: [
+    Event,
+    EventAttendee,
     Group,
     GroupConfig,
     GroupMemberRequest,
@@ -65,6 +73,7 @@ export default new DataSource({
     Vote,
   ],
   migrations: [
+    AddEventTables1690147636077,
     AddFollowTable1679778147216,
     AddGroupConfigTable1685746618239,
     AddGroupMemberLinkTable1681010227367,
@@ -74,10 +83,13 @@ export default new DataSource({
     AddProposalActionRoleTable1684893300206,
     AddRoleMemberLinkTable1681172948650,
     AddServerInviteTable1677339785709,
+    CleanUpGroupMemberRequestTable1690168731029,
     DropGroupMemberEntityTable1681010509841,
     DropRoleMemberEntityTable1681173025669,
     Initial1675388391336,
     RefactorRolesAndPermissions1688001951695,
+    RemoveMemberRequestIdSeq1690336764201,
     RenameGroupMemberRequestTable1688348341669,
+    SetDefaultForGroupMemberRequestTable1690333204053,
   ],
 });

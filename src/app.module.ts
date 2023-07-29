@@ -15,6 +15,8 @@ import { Context, ContextServices } from "./common/common.types";
 import { DatabaseModule } from "./database/database.module";
 import { DataloaderModule } from "./dataloader/dataloader.module";
 import { DataloaderService } from "./dataloader/dataloader.service";
+import { EventsModule } from "./events/events.module";
+import { EventsService } from "./events/events.service";
 import { GroupMemberRequestsModule } from "./groups/group-member-requests/group-member-requests.module";
 import { GroupMemberRequestsService } from "./groups/group-member-requests/group-member-requests.service";
 import { GroupRolesModule } from "./groups/group-roles/group-roles.module";
@@ -37,6 +39,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
   imports: [
     DataloaderModule,
+    EventsModule,
     GroupMemberRequestsModule,
     GroupRolesModule,
     GroupsModule,
@@ -48,6 +51,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   inject: [
     ConfigService,
     DataloaderService,
+    EventsService,
     GroupMemberRequestsService,
     GroupRolesService,
     GroupsService,
@@ -59,6 +63,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   useFactory(
     configService: ConfigService,
     dataloaderService: DataloaderService,
+    eventsService: EventsService,
     groupMemberRequestsService: GroupMemberRequestsService,
     groupRolesService: GroupRolesService,
     groupsService: GroupsService,
@@ -78,6 +83,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
 
         const loaders = dataloaderService.getLoaders();
         const services: ContextServices = {
+          eventsService,
           groupMemberRequestsService,
           groupRolesService,
           groupsService,
@@ -114,13 +120,14 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     AuthModule,
     DatabaseModule,
     DataloaderModule,
+    EventsModule,
     GroupsModule,
     ImagesModule,
     LikesModule,
     PostsModule,
     ProposalsModule,
-    ServerRolesModule,
     ServerInvitesModule,
+    ServerRolesModule,
     UsersModule,
     VotesModule,
   ],

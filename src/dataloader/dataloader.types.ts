@@ -1,4 +1,5 @@
 import DataLoader from "dataloader";
+import { Event } from "../events/models/event.model";
 import { GroupPermissions } from "../groups/group-roles/models/group-permissions.type";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
@@ -54,4 +55,10 @@ export interface Dataloaders {
   groupRoleMemberCountLoader: DataLoader<number, number>;
   serverRoleMemberCountLoader: DataLoader<number, number>;
   myGroupPermissionsLoader: DataLoader<MyGroupsKey, GroupPermissions>;
+
+  // Events
+  eventCoverPhotosLoader: DataLoader<number, Image>;
+  eventsLoader: DataLoader<number, Event>;
+  interestedCountLoader: DataLoader<number, number>;
+  goingCountLoader: DataLoader<number, number>;
 }

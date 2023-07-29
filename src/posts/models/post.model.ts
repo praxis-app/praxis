@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Event } from "../../events/models/event.model";
 import { Group } from "../../groups/models/group.model";
 import { Image } from "../../images/models/image.model";
 import { Like } from "../../likes/models/like.model";
@@ -47,6 +48,13 @@ export class Post {
 
   @Column({ nullable: true })
   groupId: number;
+
+  @Field(() => Event, { nullable: true })
+  @ManyToOne(() => Event, (event) => event.posts, { onDelete: "CASCADE" })
+  event?: Event;
+
+  @Column({ nullable: true })
+  eventId: number;
 
   @CreateDateColumn()
   @Field()

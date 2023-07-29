@@ -27,10 +27,13 @@ import {
   IsLikedByMeKey,
   MyGroupsKey,
 } from "./dataloader.types";
+import { EventsService } from "../events/events.service";
+import { Event } from "../events/models/event.model";
 
 @Injectable()
 export class DataloaderService {
   constructor(
+    private eventsService: EventsService,
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private memberRequestsService: GroupMemberRequestsService,
@@ -75,6 +78,12 @@ export class DataloaderService {
       groupRoleMemberCountLoader: this._createGroupRoleMemberCountLoader(),
       serverRoleMemberCountLoader: this._createServerRoleMemberCountLoader(),
       myGroupPermissionsLoader: this._createMyGroupPermissionsLoader(),
+
+      // Events
+      eventCoverPhotosLoader: this._createEventCoverPhotosLoader(),
+      interestedCountLoader: this._createInterestedCountLoader(),
+      goingCountLoader: this._createGoingCountLoader(),
+      eventsLoader: this._createEventsLoader(),
     };
   }
 
@@ -239,6 +248,34 @@ export class DataloaderService {
       async (keys) =>
         this.groupsService.getMyGroupPermissionsBatch(keys as MyGroupsKey[]),
       { cacheKeyFn: (key) => key.groupId }
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // Events
+  // -------------------------------------------------------------------------
+
+  private _createEventCoverPhotosLoader() {
+    return new DataLoader<number, Image>(async (eventIds) =>
+      this.eventsService.getCoverPhotosBatch(eventIds as number[])
+    );
+  }
+
+  private _createEventsLoader() {
+    return new DataLoader<number, Event>(async (eventIds) =>
+      this.eventsService.getEventsBatch(eventIds as number[])
+    );
+  }
+
+  private _createInterestedCountLoader() {
+    return new DataLoader<number, number>(async (eventIds) =>
+      this.eventsService.getInterestedCountBatch(eventIds as number[])
+    );
+  }
+
+  private _createGoingCountLoader() {
+    return new DataLoader<number, number>(async (eventIds) =>
+      this.eventsService.getGoingCountBatch(eventIds as number[])
     );
   }
 }

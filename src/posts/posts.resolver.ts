@@ -32,11 +32,6 @@ export class PostsResolver {
     return this.postsService.getPost(id);
   }
 
-  @Query(() => [Post])
-  async posts() {
-    return this.postsService.getPosts();
-  }
-
   @ResolveField(() => [Like])
   async likes(
     @Context() { loaders }: { loaders: Dataloaders },
@@ -87,6 +82,14 @@ export class PostsResolver {
     @Parent() { groupId }: Post
   ) {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
+  }
+
+  @ResolveField(() => Event)
+  async event(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { eventId }: Post
+  ) {
+    return eventId ? loaders.eventsLoader.load(eventId) : null;
   }
 
   @Mutation(() => CreatePostPayload)

@@ -10,7 +10,11 @@ import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
-import { hasGroupPermission, hasServerPermission } from "./shield.utils";
+import {
+  getGroupIdFromArgs,
+  hasGroupPermission,
+  hasServerPermission,
+} from "./shield.utils";
 
 export const canCreateServerInvites = rule()(
   async (_parent, _args, { permissions }: Context) =>
@@ -25,6 +29,11 @@ export const canManageServerInvites = rule()(
 export const canManagePosts = rule()(
   async (_parent, _args, { permissions }: Context) =>
     hasServerPermission(permissions, "managePosts")
+);
+
+export const canManageEvents = rule()(
+  async (_parent, _args, { permissions }: Context) =>
+    hasServerPermission(permissions, "manageEvents")
 );
 
 export const canManageServerRoles = rule()(
@@ -72,6 +81,26 @@ export const canManageGroupSettings = rule()(
       "manageSettings",
       args.groupConfigData.groupId
     )
+);
+
+export const canCreateGroupEvents = rule()(
+  async (_parent, args, context: Context) => {
+    const groupId = await getGroupIdFromArgs(args, context);
+    if (!groupId) {
+      return false;
+    }
+    return hasGroupPermission(context.permissions, "createEvents", groupId);
+  }
+);
+
+export const canManageGroupEvents = rule()(
+  async (_parent, args, context: Context) => {
+    const groupId = await getGroupIdFromArgs(args, context);
+    if (!groupId) {
+      return false;
+    }
+    return hasGroupPermission(context.permissions, "manageEvents", groupId);
+  }
 );
 
 export const canManageGroupRoles = rule()(
@@ -234,6 +263,22 @@ export const isPublicGroupProposal = rule()(
       "group.config",
     ]);
     return proposal.group.config.privacy === GroupPrivacy.Public;
+  }
+);
+
+export const isPublicEvent = rule()(
+  async (
+    _parent,
+    args: { id: number },
+    { services: { eventsService } }: Context
+  ) => {
+    const event = await eventsService.getEvent({
+      id: args.id,
+      group: {
+        config: { privacy: GroupPrivacy.Public },
+      },
+    });
+    return !!event;
   }
 );
 

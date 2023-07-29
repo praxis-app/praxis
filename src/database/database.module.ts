@@ -14,7 +14,6 @@ import { Environment } from "../common/common.constants";
         username: configService.get("DB_USERNAME"),
         password: configService.get("DB_PASSWORD"),
         port: parseInt(configService.get("DB_PORT") as string),
-
         synchronize: configService.get("NODE_ENV") === Environment.Development,
         entities: ["dist/**/*{.entity,.model}.js"],
       }),

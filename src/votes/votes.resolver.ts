@@ -5,7 +5,6 @@ import {
   Int,
   Mutation,
   Parent,
-  Query,
   ResolveField,
   Resolver,
 } from "@nestjs/graphql";
@@ -30,16 +29,6 @@ export class VotesResolver {
     private proposalsService: ProposalsService,
     private votesService: VotesService
   ) {}
-
-  @Query(() => Vote)
-  async vote(@Args("id", { type: () => Int }) id: number) {
-    return this.votesService.getVote(id);
-  }
-
-  @Query(() => [Vote])
-  async votes() {
-    return this.votesService.getVotes();
-  }
 
   @ResolveField(() => Proposal)
   async proposal(@Parent() { proposalId }: Vote) {

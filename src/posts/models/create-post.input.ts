@@ -6,6 +6,9 @@ export class CreatePostInput {
   @Field(() => Int, { nullable: true })
   groupId: number;
 
+  @Field(() => Int, { nullable: true })
+  eventId: number;
+
   @Field({ nullable: true })
   body: string;
 

@@ -1,4 +1,7 @@
 import { UNAUTHORIZED } from "../../common/common.constants";
+import { Context } from "../../common/common.types";
+import { CreateEventInput } from "../../events/models/create-event.input";
+import { UpdateEventInput } from "../../events/models/update-event.input";
 import { GroupPermissions } from "../../groups/group-roles/models/group-permissions.type";
 import { ServerPermissions } from "../../server-roles/models/server-permissions.type";
 import { UserPermissions } from "../../users/user.types";
@@ -30,4 +33,27 @@ export const hasGroupPermission = (
     return false;
   }
   return true;
+};
+
+// TODO: Add shield module and service for utils that require a service
+export const getGroupIdFromArgs = async (
+  args: { eventData: CreateEventInput | UpdateEventInput } | { id: number },
+  { services: { eventsService } }: Context
+) => {
+  let groupId: number | undefined;
+
+  if ("eventData" in args) {
+    if ("groupId" in args.eventData) {
+      groupId = args.eventData.groupId;
+    }
+    if ("id" in args.eventData) {
+      const event = await eventsService.getEvent({ id: args.eventData.id });
+      groupId = event.groupId;
+    }
+  } else {
+    const event = await eventsService.getEvent({ id: args.id });
+    groupId = event.groupId;
+  }
+
+  return groupId;
 };
