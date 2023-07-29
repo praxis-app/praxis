@@ -12,18 +12,17 @@ export class ShieldService {
       | { eventData: CreateEventInput | UpdateEventInput }
       | { id: number }
   ) {
-    if ("eventData" in eventArgs) {
-      if ("groupId" in eventArgs.eventData) {
-        return eventArgs.eventData.groupId;
-      }
-      if ("id" in eventArgs.eventData) {
-        const event = await this.eventsService.getEvent({
-          id: eventArgs.eventData.id,
-        });
-        return event.groupId;
-      }
-    } else {
+    if ("id" in eventArgs) {
       const event = await this.eventsService.getEvent({ id: eventArgs.id });
+      return event.groupId;
+    }
+    if ("groupId" in eventArgs.eventData) {
+      return eventArgs.eventData.groupId;
+    }
+    if ("id" in eventArgs.eventData) {
+      const event = await this.eventsService.getEvent({
+        id: eventArgs.eventData.id,
+      });
       return event.groupId;
     }
   }
