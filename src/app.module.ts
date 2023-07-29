@@ -9,7 +9,9 @@ import { AuthModule } from "./auth/auth.module";
 import { getClaims, getSub } from "./auth/auth.utils";
 import { RefreshTokensModule } from "./auth/refresh-tokens/refresh-tokens.module";
 import { RefreshTokensService } from "./auth/refresh-tokens/refresh-tokens.service";
+import { ShieldModule } from "./auth/shield/shield.module";
 import { shieldPermissions } from "./auth/shield/shield.permissions";
+import { ShieldService } from "./auth/shield/shield.service";
 import { Environment } from "./common/common.constants";
 import { Context, ContextServices } from "./common/common.types";
 import { DatabaseModule } from "./database/database.module";
@@ -46,6 +48,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     PostsModule,
     ProposalsModule,
     RefreshTokensModule,
+    ShieldModule,
     UsersModule,
   ],
   inject: [
@@ -58,6 +61,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     PostsService,
     ProposalsService,
     RefreshTokensService,
+    ShieldService,
     UsersService,
   ],
   useFactory(
@@ -70,6 +74,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     postsService: PostsService,
     proposalsService: ProposalsService,
     refreshTokensService: RefreshTokensService,
+    shieldService: ShieldService,
     usersService: UsersService
   ) {
     return {
@@ -90,6 +95,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
           postsService,
           proposalsService,
           refreshTokensService,
+          shieldService,
           usersService,
         };
 

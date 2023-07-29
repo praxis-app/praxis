@@ -10,11 +10,7 @@ import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
-import {
-  getGroupIdFromArgs,
-  hasGroupPermission,
-  hasServerPermission,
-} from "./shield.utils";
+import { hasGroupPermission, hasServerPermission } from "./shield.utils";
 
 export const canCreateServerInvites = rule()(
   async (_parent, _args, { permissions }: Context) =>
@@ -84,22 +80,30 @@ export const canManageGroupSettings = rule()(
 );
 
 export const canCreateGroupEvents = rule()(
-  async (_parent, args, context: Context) => {
-    const groupId = await getGroupIdFromArgs(args, context);
+  async (
+    _parent,
+    args,
+    { services: { shieldService }, permissions }: Context
+  ) => {
+    const groupId = await shieldService.getGroupIdFromArgs(args);
     if (!groupId) {
       return false;
     }
-    return hasGroupPermission(context.permissions, "createEvents", groupId);
+    return hasGroupPermission(permissions, "createEvents", groupId);
   }
 );
 
 export const canManageGroupEvents = rule()(
-  async (_parent, args, context: Context) => {
-    const groupId = await getGroupIdFromArgs(args, context);
+  async (
+    _parent,
+    args,
+    { services: { shieldService }, permissions }: Context
+  ) => {
+    const groupId = await shieldService.getGroupIdFromArgs(args);
     if (!groupId) {
       return false;
     }
-    return hasGroupPermission(context.permissions, "manageEvents", groupId);
+    return hasGroupPermission(permissions, "manageEvents", groupId);
   }
 );
 

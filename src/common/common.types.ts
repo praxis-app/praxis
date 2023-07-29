@@ -1,15 +1,16 @@
 import { JwtPayload } from "jsonwebtoken";
 import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
+import { ShieldService } from "../auth/shield/shield.service";
 import { Dataloaders } from "../dataloader/dataloader.types";
+import { EventsService } from "../events/events.service";
+import { GroupMemberRequestsService } from "../groups/group-member-requests/group-member-requests.service";
 import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { GroupsService } from "../groups/groups.service";
-import { GroupMemberRequestsService } from "../groups/group-member-requests/group-member-requests.service";
 import { PostsService } from "../posts/posts.service";
 import { ProposalsService } from "../proposals/proposals.service";
 import { User } from "../users/models/user.model";
 import { UserPermissions } from "../users/user.types";
 import { UsersService } from "../users/users.service";
-import { EventsService } from "../events/events.service";
 
 export interface ContextServices {
   eventsService: EventsService;
@@ -19,6 +20,7 @@ export interface ContextServices {
   postsService: PostsService;
   proposalsService: ProposalsService;
   refreshTokensService: RefreshTokensService;
+  shieldService: ShieldService;
   usersService: UsersService;
 }
 

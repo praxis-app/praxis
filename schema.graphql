@@ -320,18 +320,6 @@ type SignUpPayload {
   user: User!
 }
 
-type CreateGroupRolePayload {
-  groupRole: GroupRole!
-}
-
-type DeleteGroupRoleMemberPayload {
-  groupRole: GroupRole!
-}
-
-type UpdateGroupRolePayload {
-  groupRole: GroupRole!
-}
-
 type CreateEventPayload {
   event: Event!
 }
@@ -346,6 +334,18 @@ type CreateEventAttendeePayload {
 
 type UpdateEventAttendeePayload {
   event: Event!
+}
+
+type CreateGroupRolePayload {
+  groupRole: GroupRole!
+}
+
+type DeleteGroupRoleMemberPayload {
+  groupRole: GroupRole!
+}
+
+type UpdateGroupRolePayload {
+  groupRole: GroupRole!
 }
 
 type UpdateGroupPayload {
