@@ -7,7 +7,7 @@ import { writeFileSync } from "fs";
 import { printSchema } from "graphql";
 import { graphqlUploadExpress } from "graphql-upload";
 import { join } from "path";
-import { AppModule } from "./app/app.module";
+import { AppModule } from "./app.module";
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, { cors: true });

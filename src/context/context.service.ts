@@ -13,7 +13,7 @@ import { ProposalsService } from "../proposals/proposals.service";
 import { UsersService } from "../users/users.service";
 
 @Injectable()
-export class AppService {
+export class ContextService {
   constructor(
     private dataloaderService: DataloaderService,
     private eventsService: EventsService,
