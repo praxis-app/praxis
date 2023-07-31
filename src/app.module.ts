@@ -26,10 +26,10 @@ import { VotesModule } from "./votes/votes.module";
 export const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
   imports: [ContextModule],
-  inject: [ContextService, ConfigService],
+  inject: [ConfigService, ContextService],
   useFactory: (
-    contextService: ContextService,
-    configService: ConfigService
+    configService: ConfigService,
+    contextService: ContextService
   ) => ({
     autoSchemaFile: true,
     context: contextService.getContext.bind(contextService),
