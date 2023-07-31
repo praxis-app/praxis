@@ -1,8 +1,8 @@
-type Vote {
+type EventAttendee {
   id: Int!
-  voteType: String!
-  proposal: Proposal!
+  status: String!
   user: User!
+  event: Event!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -12,31 +12,39 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type GroupRolePermission {
+type Vote {
   id: Int!
-  manageRoles: Boolean!
-  manageSettings: Boolean!
-  managePosts: Boolean!
-  manageComments: Boolean!
-  manageEvents: Boolean!
-  updateGroup: Boolean!
-  deleteGroup: Boolean!
-  createEvents: Boolean!
-  approveMemberRequests: Boolean!
-  removeMembers: Boolean!
-  groupRole: GroupRole!
+  voteType: String!
+  proposal: Proposal!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
-type GroupRole {
+type Proposal {
   id: Int!
-  name: String!
-  color: String!
-  members: [User!]!
-  group: Group!
-  proposalActionRoles: [ProposalActionRole!]!
-  permissions: GroupRolePermission!
-  memberCount: Int!
-  availableUsersToAdd: [User!]!
+  body: String
+  action: ProposalAction!
+  stage: String!
+  votes: [Vote!]!
+  images: [Image!]!
+  user: User!
+  group: Group
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  voteCount: Int!
+}
+
+type ProposalAction {
+  id: Int!
+  actionType: String!
+  groupName: String
+  groupDescription: String
+  groupCoverPhoto: Image
+  role: ProposalActionRole
+  proposal: Proposal!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type ProposalActionPermission {
@@ -75,136 +83,42 @@ type ProposalActionRole {
   permissions: ProposalActionPermission!
 }
 
-type ProposalAction {
+type GroupRolePermission {
   id: Int!
-  actionType: String!
-  groupName: String
-  groupDescription: String
-  groupCoverPhoto: Image
-  role: ProposalActionRole
-  proposal: Proposal!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  manageRoles: Boolean!
+  manageSettings: Boolean!
+  managePosts: Boolean!
+  manageComments: Boolean!
+  manageEvents: Boolean!
+  updateGroup: Boolean!
+  deleteGroup: Boolean!
+  createEvents: Boolean!
+  approveMemberRequests: Boolean!
+  removeMembers: Boolean!
+  groupRole: GroupRole!
 }
 
-type Proposal {
-  id: Int!
-  body: String
-  action: ProposalAction!
-  stage: String!
-  votes: [Vote!]!
-  images: [Image!]!
-  user: User!
-  group: Group
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  voteCount: Int!
-}
-
-type Image {
-  id: Int!
-  filename: String!
-  imageType: String!
-  post: Post
-  user: User
-  group: Group
-  event: Event
-  proposal: Proposal
-  proposalAction: ProposalAction
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type GroupConfig {
-  id: Int!
-  group: Group!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  isPublic: Boolean!
-}
-
-type GroupMemberRequest {
-  id: Int!
-  user: User!
-  group: Group!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type Group {
+type GroupRole {
   id: Int!
   name: String!
-  description: String!
-  feed: [FeedItem!]!
-  posts: [Post!]!
-  proposals: [Proposal!]!
+  color: String!
   members: [User!]!
-  memberRequests: [GroupMemberRequest!]
-  roles: [GroupRole!]!
-  coverPhoto: Image
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  group: Group!
+  proposalActionRoles: [ProposalActionRole!]!
+  permissions: GroupRolePermission!
   memberCount: Int!
-  memberRequestCount: Int
-  isJoinedByMe: Boolean!
-  futureEvents: [Event!]!
-  pastEvents: [Event!]!
-  myPermissions: GroupPermissions!
-  settings: GroupConfig!
+  availableUsersToAdd: [User!]!
 }
 
-union FeedItem = Post | Proposal
-
-type EventAttendee {
+type ServerInvite {
   id: Int!
-  status: String!
+  token: String!
+  uses: Int!
+  maxUses: Int
   user: User!
-  event: Event!
+  expiresAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-type Event {
-  id: Int!
-  name: String!
-  description: String!
-  location: String
-  online: Boolean!
-  externalLink: String
-  attendees: [EventAttendee!]!
-  posts: [Post!]!
-  images: [Image!]!
-  group: Group
-  startsAt: DateTime!
-  endsAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  interestedCount: Int!
-  goingCount: Int!
-  attendingStatus: String
-  coverPhoto: Image!
-}
-
-type Like {
-  id: Int!
-  post: Post!
-  user: User!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type Post {
-  id: Int!
-  body: String
-  images: [Image!]!
-  likes: [Like!]!
-  user: User!
-  group: Group
-  event: Event
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  likesCount: Int!
-  isLikedByMe: Boolean!
 }
 
 type ServerRolePermission {
@@ -252,19 +166,101 @@ type User {
   serverPermissions: ServerPermissions!
 }
 
-type ServerInvite {
+union FeedItem = Post | Proposal
+
+type Like {
   id: Int!
-  token: String!
-  uses: Int!
-  maxUses: Int
+  post: Post!
   user: User!
-  expiresAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-type CreateServerInvitePayload {
-  serverInvite: ServerInvite!
+type Post {
+  id: Int!
+  body: String
+  images: [Image!]!
+  likes: [Like!]!
+  user: User!
+  group: Group
+  event: Event
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  likesCount: Int!
+  isLikedByMe: Boolean!
+}
+
+type GroupConfig {
+  id: Int!
+  group: Group!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isPublic: Boolean!
+}
+
+type GroupMemberRequest {
+  id: Int!
+  user: User!
+  group: Group!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Group {
+  id: Int!
+  name: String!
+  description: String!
+  feed: [FeedItem!]!
+  posts: [Post!]!
+  proposals: [Proposal!]!
+  members: [User!]!
+  memberRequests: [GroupMemberRequest!]
+  roles: [GroupRole!]!
+  coverPhoto: Image
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  memberCount: Int!
+  memberRequestCount: Int
+  isJoinedByMe: Boolean!
+  futureEvents: [Event!]!
+  pastEvents: [Event!]!
+  myPermissions: GroupPermissions!
+  settings: GroupConfig!
+}
+
+type Event {
+  id: Int!
+  name: String!
+  description: String!
+  location: String
+  online: Boolean!
+  externalLink: String
+  attendees: [EventAttendee!]!
+  posts: [Post!]!
+  images: [Image!]!
+  group: Group
+  startsAt: DateTime!
+  endsAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  interestedCount: Int!
+  goingCount: Int!
+  attendingStatus: String
+  coverPhoto: Image!
+}
+
+type Image {
+  id: Int!
+  filename: String!
+  imageType: String!
+  post: Post
+  user: User
+  group: Group
+  event: Event
+  proposal: Proposal
+  proposalAction: ProposalAction
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type CreateLikePayload {
@@ -310,6 +306,10 @@ type ServerPermissions {
   manageInvites: Boolean!
   createInvites: Boolean!
   removeMembers: Boolean!
+}
+
+type CreateServerInvitePayload {
+  serverInvite: ServerInvite!
 }
 
 type LoginPayload {
