@@ -195,12 +195,12 @@ export const isGroupMember = rule()(
       return UNAUTHORIZED;
     }
     if (parent) {
-      return groupsService.isJoinedByUser(parent.id, user.id);
+      return groupsService.isGroupMember(parent.id, user.id);
     }
     const { groupId } = await groupRolesService.getGroupRole({
       id: args.id,
     });
-    return groupsService.isJoinedByUser(groupId, user.id);
+    return groupsService.isGroupMember(groupId, user.id);
   }
 );
 
@@ -298,7 +298,7 @@ export const isProposalGroupJoinedByMe = rule()(
       "group",
     ]);
     if (group) {
-      const isJoinedByUser = await groupsService.isJoinedByUser(
+      const isJoinedByUser = await groupsService.isGroupMember(
         group.id,
         user.id
       );

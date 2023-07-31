@@ -82,7 +82,7 @@ export class GroupsService {
     return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
   }
 
-  async isJoinedByUser(id: number, userId: number) {
+  async isGroupMember(id: number, userId: number) {
     const group = await this.getGroup({ id }, ["members"]);
     return group.members.some((member) => member.id === userId);
   }
