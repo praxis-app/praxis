@@ -1,5 +1,3 @@
-// TODO: Consider moving utils to shield service
-
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { GroupPermissions } from "../../groups/group-roles/models/group-permissions.type";
 import { ServerPermissions } from "../../server-roles/models/server-permissions.type";
