@@ -1,3 +1,4 @@
+import { Context as ApolloContext } from "apollo-server-core";
 import { JwtPayload } from "jsonwebtoken";
 import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
 import { ShieldService } from "../auth/shield/shield.service";
@@ -24,7 +25,7 @@ export interface ContextServices {
   usersService: UsersService;
 }
 
-export interface Context {
+export interface Context extends ApolloContext {
   claims: {
     accessTokenClaims: JwtPayload | null;
     refreshTokenClaims: JwtPayload | null;
