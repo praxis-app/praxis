@@ -197,11 +197,10 @@ export const isGroupMember = rule()(
     if (parent) {
       return groupsService.isJoinedByUser(parent.id, user.id);
     }
-    const role = await groupRolesService.getGroupRole({ id: args.id });
-    if (!role.groupId) {
-      return false;
-    }
-    return groupsService.isJoinedByUser(role.groupId, user.id);
+    const { groupId } = await groupRolesService.getGroupRole({
+      id: args.id,
+    });
+    return groupsService.isJoinedByUser(groupId, user.id);
   }
 );
 
