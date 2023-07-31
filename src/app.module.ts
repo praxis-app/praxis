@@ -33,15 +33,15 @@ export const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   inject: [ContextService, ConfigService],
   useFactory(contextService: ContextService, configService: ConfigService) {
     return {
-      context: contextService.getContext,
+      autoSchemaFile: true,
+      context: contextService.getContext.bind(contextService),
+      cors: { origin: true, credentials: true },
+      csrfPrevention: configService.get("NODE_ENV") !== Environment.Development,
+      resolvers: { Upload: GraphQLUpload },
       transformSchema: (schema: GraphQLSchema) => {
         schema = applyMiddleware(schema, shieldPermissions);
         return schema;
       },
-      autoSchemaFile: true,
-      cors: { origin: true, credentials: true },
-      csrfPrevention: configService.get("NODE_ENV") !== Environment.Development,
-      resolvers: { Upload: GraphQLUpload },
     };
   },
 });
