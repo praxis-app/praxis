@@ -4,7 +4,7 @@ import { AuthTokens } from "./auth.service";
 
 config();
 
-interface Claims {
+export interface Claims {
   accessTokenClaims: JwtPayload | null;
   refreshTokenClaims: JwtPayload | null;
 }
@@ -13,7 +13,7 @@ interface RequestWithCookies extends Request {
   cookies?: { auth?: AuthTokens };
 }
 
-export const getClaims = (req: RequestWithCookies): Claims => {
+export const getClaims = (req: RequestWithCookies) => {
   const { cookies } = req;
   const accessTokenClaims = cookies?.auth
     ? decodeToken(cookies.auth.access_token)
@@ -22,6 +22,15 @@ export const getClaims = (req: RequestWithCookies): Claims => {
     ? decodeToken(cookies.auth.refresh_token)
     : null;
   return { accessTokenClaims, refreshTokenClaims };
+};
+
+export const decodeToken = (token: string) => {
+  try {
+    const jwtKey = process.env.JWT_KEY as string;
+    return verify(token, jwtKey) as JwtPayload;
+  } catch {
+    return null;
+  }
 };
 
 /**
@@ -44,13 +53,4 @@ export const getJti = (claims: JwtPayload | null) => {
     return null;
   }
   return parseInt(claims.jti);
-};
-
-export const decodeToken = (token: string) => {
-  try {
-    const jwtKey = process.env.JWT_KEY as string;
-    return verify(token, jwtKey) as JwtPayload;
-  } catch {
-    return null;
-  }
 };

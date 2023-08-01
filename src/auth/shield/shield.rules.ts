@@ -1,6 +1,6 @@
 import { rule } from "graphql-shield";
 import { UNAUTHORIZED } from "../../common/common.constants";
-import { Context } from "../../common/common.types";
+import { Context } from "../../context/context.types";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
 import { UpdateGroupConfigInput } from "../../groups/group-configs/models/update-group-config.input";
 import { CreateGroupRoleInput } from "../../groups/group-roles/models/create-group-role.input";
@@ -10,11 +10,7 @@ import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
-import {
-  getGroupIdFromArgs,
-  hasGroupPermission,
-  hasServerPermission,
-} from "./shield.utils";
+import { hasGroupPermission, hasServerPermission } from "./shield.utils";
 
 export const canCreateServerInvites = rule()(
   async (_parent, _args, { permissions }: Context) =>
@@ -84,22 +80,30 @@ export const canManageGroupSettings = rule()(
 );
 
 export const canCreateGroupEvents = rule()(
-  async (_parent, args, context: Context) => {
-    const groupId = await getGroupIdFromArgs(args, context);
+  async (
+    _parent,
+    args,
+    { services: { shieldService }, permissions }: Context
+  ) => {
+    const groupId = await shieldService.getGroupIdFromEventArgs(args);
     if (!groupId) {
       return false;
     }
-    return hasGroupPermission(context.permissions, "createEvents", groupId);
+    return hasGroupPermission(permissions, "createEvents", groupId);
   }
 );
 
 export const canManageGroupEvents = rule()(
-  async (_parent, args, context: Context) => {
-    const groupId = await getGroupIdFromArgs(args, context);
+  async (
+    _parent,
+    args,
+    { services: { shieldService }, permissions }: Context
+  ) => {
+    const groupId = await shieldService.getGroupIdFromEventArgs(args);
     if (!groupId) {
       return false;
     }
-    return hasGroupPermission(context.permissions, "manageEvents", groupId);
+    return hasGroupPermission(permissions, "manageEvents", groupId);
   }
 );
 
@@ -191,13 +195,12 @@ export const isGroupMember = rule()(
       return UNAUTHORIZED;
     }
     if (parent) {
-      return groupsService.isJoinedByUser(parent.id, user.id);
+      return groupsService.isGroupMember(parent.id, user.id);
     }
-    const role = await groupRolesService.getGroupRole({ id: args.id });
-    if (!role.groupId) {
-      return false;
-    }
-    return groupsService.isJoinedByUser(role.groupId, user.id);
+    const { groupId } = await groupRolesService.getGroupRole({
+      id: args.id,
+    });
+    return groupsService.isGroupMember(groupId, user.id);
   }
 );
 
@@ -295,7 +298,7 @@ export const isProposalGroupJoinedByMe = rule()(
       "group",
     ]);
     if (group) {
-      const isJoinedByUser = await groupsService.isJoinedByUser(
+      const isJoinedByUser = await groupsService.isGroupMember(
         group.id,
         user.id
       );
