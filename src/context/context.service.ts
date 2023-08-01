@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { getClaims, getSub } from "../auth/auth.utils";
+import { Claims, getClaims, getSub } from "../auth/auth.utils";
 import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
 import { ShieldService } from "../auth/shield/shield.service";
 import { Context, ContextServices } from "./context.types";
@@ -29,11 +29,9 @@ export class ContextService {
 
   async getContext({ req }: { req: Request }): Promise<Context> {
     const claims = getClaims(req);
-    const sub = getSub(claims.accessTokenClaims);
-    const permissions = sub
-      ? await this.usersService.getUserPermissions(sub)
-      : null;
-    const user = sub ? await this.usersService.getUser({ id: sub }) : null;
+    const loaders = this.dataloaderService.getLoaders();
+    const permissions = await this.getUserPermisionsFromClaims(claims);
+    const user = await this.getUserFromClaims(claims);
 
     const services: ContextServices = {
       eventsService: this.eventsService,
@@ -46,7 +44,6 @@ export class ContextService {
       shieldService: this.shieldService,
       usersService: this.usersService,
     };
-    const loaders = this.dataloaderService.getLoaders();
 
     return {
       claims,
@@ -55,5 +52,15 @@ export class ContextService {
       services,
       user,
     };
+  }
+
+  private getUserFromClaims(claims: Claims) {
+    const sub = getSub(claims.accessTokenClaims);
+    return sub ? this.usersService.getUser({ id: sub }) : null;
+  }
+
+  private getUserPermisionsFromClaims(claims: Claims) {
+    const sub = getSub(claims.accessTokenClaims);
+    return sub ? this.usersService.getUserPermissions(sub) : null;
   }
 }
