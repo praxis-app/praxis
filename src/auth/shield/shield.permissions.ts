@@ -23,6 +23,7 @@ import {
   hasValidRefreshToken,
   isAuthenticated,
   isGroupMember,
+  isLoggingIn,
   isOwnPost,
   isProposalGroupJoinedByMe,
   isPublicEvent,
@@ -34,7 +35,6 @@ import {
 export const shieldPermissions = shield(
   {
     Query: {
-      "*": isAuthenticated,
       isFirstUser: allow,
       users: canRemoveMembers,
       serverInvite: allow,
@@ -49,7 +49,6 @@ export const shieldPermissions = shield(
       events: allow,
     },
     Mutation: {
-      "*": isAuthenticated,
       login: allow,
       logOut: allow,
       signUp: allow,
@@ -74,6 +73,7 @@ export const shieldPermissions = shield(
       deleteEvent: or(canManageEvents, canManageGroupEvents),
       updateEvent: or(canManageEvents, canManageGroupEvents),
     },
+    User: or(isAuthenticated, isLoggingIn),
     Group: {
       roles: isGroupMember,
       memberRequests: canApproveGroupMemberRequests,
@@ -83,5 +83,6 @@ export const shieldPermissions = shield(
   {
     allowExternalErrors: true,
     fallbackError: FORBIDDEN,
+    fallbackRule: isAuthenticated,
   }
 );
