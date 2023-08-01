@@ -1,8 +1,3 @@
-/**
- * TODO: Consider using fallbackRule instead of wild cards
- * https://the-guild.dev/graphql/shield/docs/advanced/whitelisting
- */
-
 import { allow, and, not, or, shield } from "graphql-shield";
 import { FORBIDDEN } from "../../common/common.constants";
 import {
@@ -23,7 +18,6 @@ import {
   hasValidRefreshToken,
   isAuthenticated,
   isGroupMember,
-  isLoggingIn,
   isOwnPost,
   isProposalGroupJoinedByMe,
   isPublicEvent,
@@ -73,7 +67,6 @@ export const shieldPermissions = shield(
       deleteEvent: or(canManageEvents, canManageGroupEvents),
       updateEvent: or(canManageEvents, canManageGroupEvents),
     },
-    User: or(isAuthenticated, isLoggingIn),
     Group: {
       roles: isGroupMember,
       memberRequests: canApproveGroupMemberRequests,

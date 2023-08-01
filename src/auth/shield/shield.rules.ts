@@ -10,7 +10,6 @@ import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
-import { LoginPayload } from "../models/login.payload";
 import { hasGroupPermission, hasServerPermission } from "./shield.utils";
 
 export const isAuthenticated = rule({ cache: "contextual" })(
@@ -20,11 +19,6 @@ export const isAuthenticated = rule({ cache: "contextual" })(
     }
     return true;
   }
-);
-
-export const isLoggingIn = rule()(
-  async (_parent, _args, _ctx, { parentType }) =>
-    parentType.name === LoginPayload.name
 );
 
 export const canCreateServerInvites = rule()(
