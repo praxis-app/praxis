@@ -78,8 +78,8 @@ export const shieldPermissions = shield(
     },
   },
   {
-    allowExternalErrors: true,
-    fallbackError: FORBIDDEN,
     fallbackRule: isAuthenticated,
+    fallbackError: FORBIDDEN,
+    allowExternalErrors: true,
   }
 );
