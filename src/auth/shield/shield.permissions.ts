@@ -76,6 +76,7 @@ export const shieldPermissions = shield(
       id: allow,
       token: allow,
     },
+    Post: or(isAuthenticated, isPublicGroupPost),
   },
   {
     fallbackRule: isAuthenticated,

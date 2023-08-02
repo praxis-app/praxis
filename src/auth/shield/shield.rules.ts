@@ -251,8 +251,9 @@ export const isPublicGroup = rule()(
 );
 
 export const isPublicGroupPost = rule()(
-  async (_parent, args, { services: { postsService } }: Context) => {
-    const post = await postsService.getPost(args.id, ["group.config"]);
+  async (parent, args, { services: { postsService } }: Context) => {
+    const postId = parent ? parent.id : args.id;
+    const post = await postsService.getPost(postId, ["group.config"]);
     if (!post.group) {
       return false;
     }
