@@ -72,6 +72,10 @@ export const shieldPermissions = shield(
       memberRequests: canApproveGroupMemberRequests,
       memberRequestCount: canApproveGroupMemberRequests,
     },
+    ServerInvite: {
+      id: allow,
+      token: allow,
+    },
   },
   {
     allowExternalErrors: true,
