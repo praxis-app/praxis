@@ -265,19 +265,20 @@ export const isPublicGroupPost = rule()(
   }
 );
 
-// TODO: Determine whether checking path is enough
-export const isPublicGroupsFeed = rule()(
-  async (_parent, _args, _ctx, { path }) =>
-    hasAncestor("publicGroupsFeed", path)
-);
-
 export const isPublicGroupProposal = rule()(
-  async (_parent, args, { services: { proposalsService } }: Context) => {
-    const proposal = await proposalsService.getProposal(args.id, [
+  async (parent, args, { services: { proposalsService } }: Context) => {
+    const proposalId = parent ? parent.id : args.id;
+    const proposal = await proposalsService.getProposal(proposalId, [
       "group.config",
     ]);
     return proposal.group.config.privacy === GroupPrivacy.Public;
   }
+);
+
+// TODO: Determine whether checking path is enough
+export const isPublicGroupsFeed = rule()(
+  async (_parent, _args, _ctx, { path }) =>
+    hasAncestor("publicGroupsFeed", path, 7)
 );
 
 export const isPublicEvent = rule()(

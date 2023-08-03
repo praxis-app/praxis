@@ -88,6 +88,7 @@ export const shieldPermissions = shield(
       id: allow,
       token: allow,
     },
+    Proposal: or(isAuthenticated, isPublicGroupProposal),
     Post: or(isAuthenticated, isPublicGroupPost),
   },
   {
