@@ -10,7 +10,11 @@ import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
-import { hasGroupPermission, hasServerPermission } from "./shield.utils";
+import {
+  hasAncestor,
+  hasGroupPermission,
+  hasServerPermission,
+} from "./shield.utils";
 
 export const isAuthenticated = rule({ cache: "contextual" })(
   async (_parent, _args, { user }: Context) => {
@@ -259,6 +263,12 @@ export const isPublicGroupPost = rule()(
     }
     return post.group.config.privacy === GroupPrivacy.Public;
   }
+);
+
+// TODO: Determine whether checking path is enough
+export const isPublicGroupsFeed = rule()(
+  async (_parent, _args, _ctx, { path }) =>
+    hasAncestor("publicGroupsFeed", path)
 );
 
 export const isPublicGroupProposal = rule()(

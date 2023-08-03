@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { Claims, getClaims, getSub } from "../auth/auth.utils";
 import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
 import { ShieldService } from "../auth/shield/shield.service";
-import { Context, ContextServices } from "./context.types";
 import { DataloaderService } from "../dataloader/dataloader.service";
 import { EventsService } from "../events/events.service";
 import { GroupMemberRequestsService } from "../groups/group-member-requests/group-member-requests.service";
@@ -11,6 +10,7 @@ import { GroupsService } from "../groups/groups.service";
 import { PostsService } from "../posts/posts.service";
 import { ProposalsService } from "../proposals/proposals.service";
 import { UsersService } from "../users/users.service";
+import { Context, ContextServices } from "./context.types";
 
 @Injectable()
 export class ContextService {

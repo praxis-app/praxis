@@ -24,6 +24,7 @@ import {
   isPublicGroup,
   isPublicGroupPost,
   isPublicGroupProposal,
+  isPublicGroupsFeed,
 } from "./shield.rules";
 
 export const shieldPermissions = shield(
@@ -67,7 +68,18 @@ export const shieldPermissions = shield(
       deleteEvent: or(canManageEvents, canManageGroupEvents),
       updateEvent: or(canManageEvents, canManageGroupEvents),
     },
+    User: {
+      id: or(isAuthenticated, isPublicGroupsFeed),
+      name: or(isAuthenticated, isPublicGroupsFeed),
+      profilePicture: or(isAuthenticated, isPublicGroupsFeed),
+    },
+    Image: {
+      id: or(isAuthenticated, isPublicGroupsFeed),
+    },
     Group: {
+      id: or(isAuthenticated, isPublicGroupsFeed),
+      name: or(isAuthenticated, isPublicGroupsFeed),
+      coverPhoto: or(isAuthenticated, isPublicGroupsFeed),
       roles: isGroupMember,
       memberRequests: canApproveGroupMemberRequests,
       memberRequestCount: canApproveGroupMemberRequests,

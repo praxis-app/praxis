@@ -1,3 +1,4 @@
+import { ResponsePath } from "graphql";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { GroupPermissions } from "../../groups/group-roles/models/group-permissions.type";
 import { ServerPermissions } from "../../server-roles/models/server-permissions.type";
@@ -28,6 +29,23 @@ export const hasGroupPermission = (
   const groupPermissions = permissions.groupPermissions[groupId];
   if (!groupPermissions || !groupPermissions[permission]) {
     return false;
+  }
+  return true;
+};
+
+export const hasAncestor = (
+  ancestor: string,
+  path: ResponsePath,
+  depth = 5
+) => {
+  if (!depth) {
+    return false;
+  }
+  if (path.key !== ancestor) {
+    if (!path.prev) {
+      return false;
+    }
+    return hasAncestor(ancestor, path.prev, depth - 1);
   }
   return true;
 };
