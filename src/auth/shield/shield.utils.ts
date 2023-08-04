@@ -1,4 +1,4 @@
-import { ResponsePath } from "graphql";
+import { GraphQLResolveInfo, ResponsePath, responsePathAsArray } from "graphql";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { GroupPermissions } from "../../groups/group-roles/models/group-permissions.type";
 import { ServerPermissions } from "../../server-roles/models/server-permissions.type";
@@ -48,4 +48,15 @@ export const hasAncestor = (
     return hasAncestor(ancestor, path.prev, depth - 1);
   }
   return true;
+};
+
+export const hasPath = (path: string, info: GraphQLResolveInfo) => {
+  const fullPath = responsePathAsArray(info.path).reduce<string>(
+    (result, segment) =>
+      `${result}${result ? "." : ""}${
+        typeof segment === "number" ? "INDEX" : segment
+      }`,
+    ""
+  );
+  return fullPath.includes(path);
 };

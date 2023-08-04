@@ -13,6 +13,7 @@ import { getJti, getSub } from "../auth.utils";
 import {
   hasAncestor,
   hasGroupPermission,
+  hasPath,
   hasServerPermission,
 } from "./shield.utils";
 
@@ -279,6 +280,11 @@ export const isPublicGroupProposal = rule()(
 export const isPublicGroupsFeed = rule()(
   async (_parent, _args, _ctx, { path }) =>
     hasAncestor("publicGroupsFeed", path, 7)
+);
+
+export const isUserAvatarInPublicFeed = rule()(
+  async (_parent, _args, _ctx, info) =>
+    hasPath("publicGroupsFeed.INDEX.user", info)
 );
 
 export const isPublicEvent = rule()(
