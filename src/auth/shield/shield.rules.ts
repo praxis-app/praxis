@@ -9,6 +9,8 @@ import { UpdateGroupRoleInput } from "../../groups/group-roles/models/update-gro
 import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { ImageTypes } from "../../images/images.service";
+import { ProposalAction } from "../../proposals/proposal-actions/models/proposal-action.model";
+import { ProposalActionRole } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
 import {
@@ -269,6 +271,26 @@ export const isPublicGroupPost = rule()(
 export const isPublicGroupProposal = rule()(
   async (parent, args, { services: { proposalsService } }: Context) => {
     const proposalId = parent ? parent.id : args.id;
+    const proposal = await proposalsService.getProposal(proposalId, [
+      "group.config",
+    ]);
+    return proposal.group.config.privacy === GroupPrivacy.Public;
+  }
+);
+
+export const isPublicGroupProposalAction = rule()(
+  async (parent, _args, { services: { proposalsService } }: Context, info) => {
+    let proposalId: number | undefined;
+
+    if (info.parentType.name === ProposalAction.name) {
+      proposalId = parent.id;
+    }
+    if (info.parentType.name === ProposalActionRole.name) {
+      proposalId = parent.proposalId;
+    }
+    if (!proposalId) {
+      return false;
+    }
     const proposal = await proposalsService.getProposal(proposalId, [
       "group.config",
     ]);
