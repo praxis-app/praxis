@@ -17,9 +17,9 @@ import {
   canUpdateGroup,
   hasValidRefreshToken,
   isAuthenticated,
-  isGroupAvatarInPublicFeed,
+  isPublicGroupAvatar,
   isGroupMember,
-  isGroupRoleInPublicFeed,
+  isPublicGroupRole,
   isOwnPost,
   isProposalGroupJoinedByMe,
   isPublicEvent,
@@ -78,11 +78,7 @@ export const shieldPermissions = shield(
       profilePicture: or(isAuthenticated, isUserInPublicFeed),
     },
     Image: {
-      id: or(
-        isAuthenticated,
-        isUserAvatarInPublicFeed,
-        isGroupAvatarInPublicFeed
-      ),
+      id: or(isAuthenticated, isUserAvatarInPublicFeed, isPublicGroupAvatar),
       // filename: or(isAuthenticated, ),
     },
     Group: {
@@ -94,9 +90,9 @@ export const shieldPermissions = shield(
       memberRequestCount: canApproveGroupMemberRequests,
     },
     GroupRole: {
-      id: or(isAuthenticated, isGroupRoleInPublicFeed),
-      name: or(isAuthenticated, isGroupRoleInPublicFeed),
-      color: or(isAuthenticated, isGroupRoleInPublicFeed),
+      id: or(isAuthenticated, isPublicGroupRole),
+      name: or(isAuthenticated, isPublicGroupRole),
+      color: or(isAuthenticated, isPublicGroupRole),
     },
     ServerInvite: {
       id: allow,

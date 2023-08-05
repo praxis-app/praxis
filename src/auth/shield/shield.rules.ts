@@ -332,12 +332,11 @@ export const isUserAvatarInPublicFeed = rule()(
     hasNodes(["publicGroupsFeed", "user", "profilePicture"], info.path)
 );
 
-export const isGroupRoleInPublicFeed = rule()(
-  async (_parent, _args, _ctx, info) =>
-    hasNodes(["publicGroupsFeed", "action", "groupRole"], info.path)
+export const isPublicGroupRole = rule()(async (_parent, _args, _ctx, info) =>
+  hasNodes(["publicGroupsFeed", "action", "groupRole"], info.path)
 );
 
-export const isGroupAvatarInPublicFeed = rule()(
+export const isPublicGroupAvatar = rule()(
   async (parent, _args, { services: { imagesService } }: Context) => {
     const image = await imagesService.getImage(
       {
