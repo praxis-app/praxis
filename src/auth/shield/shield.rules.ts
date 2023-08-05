@@ -1,6 +1,7 @@
 import { rule } from "graphql-shield";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../context/context.service";
+import { Event } from "../../events/models/event.model";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
 import { UpdateGroupConfigInput } from "../../groups/group-configs/models/update-group-config.input";
 import { CreateGroupRoleInput } from "../../groups/group-roles/models/create-group-role.input";
@@ -8,7 +9,6 @@ import { DeleteGroupRoleMemberInput } from "../../groups/group-roles/models/dele
 import { UpdateGroupRoleInput } from "../../groups/group-roles/models/update-group-role.input";
 import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
-import { ImageTypes } from "../../images/images.service";
 import { ProposalAction } from "../../proposals/proposal-actions/models/proposal-action.model";
 import { ProposalActionPermission } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model";
 import { ProposalActionRoleMember } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
@@ -336,15 +336,11 @@ export const isPublicGroupRole = rule()(async (_parent, _args, _ctx, info) =>
   hasNodes(["publicGroupsFeed", "action", "groupRole"], info.path)
 );
 
-export const isPublicGroupAvatar = rule()(
+export const isPublicGroupImage = rule()(
   async (parent, _args, { services: { imagesService } }: Context) => {
-    const image = await imagesService.getImage(
-      {
-        id: parent.id,
-        imageType: ImageTypes.CoverPhoto,
-      },
-      ["group.config"]
-    );
+    const image = await imagesService.getImage({ id: parent.id }, [
+      "group.config",
+    ]);
     return image?.group?.config.privacy === GroupPrivacy.Public;
   }
 );
@@ -360,12 +356,12 @@ export const isPublicGroupPostImage = rule()(
 
 export const isPublicEvent = rule()(
   async (
-    _parent,
+    parent: Event,
     args: { id: number },
     { services: { eventsService } }: Context
   ) => {
     const event = await eventsService.getEvent({
-      id: args.id,
+      id: parent ? parent.id : args.id,
       group: {
         config: { privacy: GroupPrivacy.Public },
       },

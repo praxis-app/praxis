@@ -17,7 +17,7 @@ import {
   canUpdateGroup,
   hasValidRefreshToken,
   isAuthenticated,
-  isPublicGroupAvatar,
+  isPublicGroupImage,
   isGroupMember,
   isPublicGroupRole,
   isOwnPost,
@@ -81,7 +81,7 @@ export const shieldPermissions = shield(
     Image: {
       id: or(
         isAuthenticated,
-        isPublicGroupAvatar,
+        isPublicGroupImage,
         isPublicGroupPostImage,
         isUserAvatarInPublicFeed
       ),
@@ -104,6 +104,7 @@ export const shieldPermissions = shield(
       id: allow,
       token: allow,
     },
+    Event: or(isAuthenticated, isPublicEvent),
     Post: or(isAuthenticated, isPublicGroupPost),
     Proposal: or(isAuthenticated, isPublicGroupProposal),
     ProposalAction: or(isAuthenticated, isPublicGroupProposalAction),
