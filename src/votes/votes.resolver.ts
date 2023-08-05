@@ -32,7 +32,7 @@ export class VotesResolver {
 
   @ResolveField(() => Proposal)
   async proposal(@Parent() { proposalId }: Vote) {
-    return this.proposalsService.getProposal({ id: proposalId });
+    return this.proposalsService.getProposal(proposalId);
   }
 
   @ResolveField(() => User)

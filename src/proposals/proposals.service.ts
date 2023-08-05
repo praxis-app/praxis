@@ -49,8 +49,8 @@ export class ProposalsService {
     private proposalActionsService: ProposalActionsService
   ) {}
 
-  async getProposal(where?: FindOptionsWhere<Proposal>, relations?: string[]) {
-    return this.repository.findOneOrFail({ where, relations });
+  async getProposal(id: number, relations?: string[]) {
+    return this.repository.findOneOrFail({ where: { id }, relations });
   }
 
   async getProposals(where?: FindOptionsWhere<Proposal>) {
@@ -124,7 +124,7 @@ export class ProposalsService {
     action: { groupCoverPhoto, ...action },
     ...data
   }: UpdateProposalInput) {
-    const proposalWithAction = await this.getProposal({ id }, ["action"]);
+    const proposalWithAction = await this.getProposal(id, ["action"]);
     const newAction = {
       ...proposalWithAction.action,
       ...action,
@@ -173,7 +173,7 @@ export class ProposalsService {
     const {
       action: { id, actionType, groupDescription, groupName },
       groupId,
-    } = await this.getProposal({ id: proposalId }, ["action"]);
+    } = await this.getProposal(proposalId, ["action"]);
 
     if (actionType === ProposalActionType.ChangeName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
@@ -273,7 +273,7 @@ export class ProposalsService {
   }
 
   async isProposalRatifiable(proposalId: number) {
-    const proposal = await this.getProposal({ id: proposalId }, [
+    const proposal = await this.getProposal(proposalId, [
       "group.members",
       "votes",
     ]);

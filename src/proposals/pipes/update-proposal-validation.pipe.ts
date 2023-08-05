@@ -42,7 +42,7 @@ export class UpdateProposalValidationPipe implements PipeTransform {
       actionType === ProposalActionType.ChangeCoverPhoto &&
       !groupCoverPhoto
     ) {
-      const proposal = await this.proposalsService.getProposal({ id }, [
+      const proposal = await this.proposalsService.getProposal(id, [
         "action.images",
       ]);
       const alreadyExisting = proposal.images.some(

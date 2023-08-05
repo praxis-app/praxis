@@ -17,7 +17,7 @@ export class ProposalActionsResolver {
 
   @ResolveField(() => Proposal)
   async proposal(@Parent() { proposalId }: ProposalAction) {
-    return this.proposalsService.getProposal({ id: proposalId });
+    return this.proposalsService.getProposal(proposalId);
   }
 
   @ResolveField(() => Image)

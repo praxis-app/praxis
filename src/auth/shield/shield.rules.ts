@@ -293,7 +293,7 @@ export const isPublicGroupProposalAction = rule()(
     if (!proposalId) {
       return false;
     }
-    const proposal = await proposalsService.getProposal({ id: proposalId }, [
+    const proposal = await proposalsService.getProposal(proposalId, [
       "group.config",
     ]);
     return proposal.group.config.privacy === GroupPrivacy.Public;
@@ -351,10 +351,9 @@ export const isProposalGroupJoinedByMe = rule()(
     if (!user) {
       return UNAUTHORIZED;
     }
-    const { group } = await proposalsService.getProposal(
-      { id: voteData.proposalId },
-      ["group"]
-    );
+    const { group } = await proposalsService.getProposal(voteData.proposalId, [
+      "group",
+    ]);
     if (group) {
       const isJoinedByUser = await groupsService.isGroupMember(
         group.id,
