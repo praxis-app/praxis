@@ -100,6 +100,7 @@ export const shieldPermissions = shield(
     Proposal: or(isAuthenticated, isPublicGroupProposal),
     ProposalAction: or(isAuthenticated, isPublicGroupProposalAction),
     ProposalActionRole: or(isAuthenticated, isPublicGroupProposalAction),
+    ProposalActionPermission: or(isAuthenticated, isPublicGroupProposalAction),
   },
   {
     fallbackRule: isAuthenticated,

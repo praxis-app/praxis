@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { Context as ApolloContext } from "apollo-server-core";
 import { JwtPayload } from "jsonwebtoken";
-import { Claims, getClaims, getSub } from "../auth/auth.utils";
+import { AuthTokens } from "../auth/auth.service";
+import { Claims, decodeToken, getSub } from "../auth/auth.utils";
 import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
 import { ShieldService } from "../auth/shield/shield.service";
 import { DataloaderService } from "../dataloader/dataloader.service";
@@ -12,6 +13,7 @@ import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { GroupsService } from "../groups/groups.service";
 import { ImagesService } from "../images/images.service";
 import { PostsService } from "../posts/posts.service";
+import { ProposalActionRolesService } from "../proposals/proposal-actions/proposal-action-roles/proposal-action-roles.service";
 import { ProposalActionsService } from "../proposals/proposal-actions/proposal-actions.service";
 import { ProposalsService } from "../proposals/proposals.service";
 import { User } from "../users/models/user.model";
@@ -25,6 +27,7 @@ export interface ContextServices {
   groupsService: GroupsService;
   imagesService: ImagesService;
   postsService: PostsService;
+  proposalActionRolesService: ProposalActionRolesService;
   proposalActionsService: ProposalActionsService;
   proposalsService: ProposalsService;
   refreshTokensService: RefreshTokensService;
@@ -43,6 +46,10 @@ export interface Context extends ApolloContext {
   user: User | null;
 }
 
+interface RequestWithCookies extends Request {
+  cookies?: { auth?: AuthTokens };
+}
+
 @Injectable()
 export class ContextService {
   constructor(
@@ -53,6 +60,7 @@ export class ContextService {
     private groupsService: GroupsService,
     private imagesService: ImagesService,
     private postsService: PostsService,
+    private proposalActionRolesService: ProposalActionRolesService,
     private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,
     private refreshTokensService: RefreshTokensService,
@@ -61,7 +69,7 @@ export class ContextService {
   ) {}
 
   async getContext({ req }: { req: Request }): Promise<Context> {
-    const claims = getClaims(req);
+    const claims = this.getClaims(req);
     const loaders = this.dataloaderService.getLoaders();
     const permissions = await this.getUserPermisionsFromClaims(claims);
     const user = await this.getUserFromClaims(claims);
@@ -73,6 +81,7 @@ export class ContextService {
       groupsService: this.groupsService,
       imagesService: this.imagesService,
       postsService: this.postsService,
+      proposalActionRolesService: this.proposalActionRolesService,
       proposalActionsService: this.proposalActionsService,
       proposalsService: this.proposalsService,
       refreshTokensService: this.refreshTokensService,
@@ -97,5 +106,16 @@ export class ContextService {
   private getUserPermisionsFromClaims(claims: Claims) {
     const sub = getSub(claims.accessTokenClaims);
     return sub ? this.usersService.getUserPermissions(sub) : null;
+  }
+
+  private getClaims(req: RequestWithCookies) {
+    const { cookies } = req;
+    const accessTokenClaims = cookies?.auth
+      ? decodeToken(cookies.auth.access_token)
+      : null;
+    const refreshTokenClaims = cookies?.auth
+      ? decodeToken(cookies.auth.refresh_token)
+      : null;
+    return { accessTokenClaims, refreshTokenClaims };
   }
 }
