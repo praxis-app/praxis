@@ -8,6 +8,7 @@ import { GroupRolesModule } from "../groups/group-roles/group-roles.module";
 import { GroupsModule } from "../groups/groups.module";
 import { ImagesModule } from "../images/images.module";
 import { PostsModule } from "../posts/posts.module";
+import { ProposalActionsModule } from "../proposals/proposal-actions/proposal-actions.module";
 import { ProposalsModule } from "../proposals/proposals.module";
 import { UsersModule } from "../users/users.module";
 import { ContextService } from "./context.service";
@@ -22,6 +23,7 @@ import { ContextService } from "./context.service";
     ImagesModule,
     PostsModule,
     ProposalsModule,
+    ProposalActionsModule,
     RefreshTokensModule,
     ShieldModule,
     UsersModule,

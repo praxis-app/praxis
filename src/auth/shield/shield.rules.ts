@@ -279,21 +279,21 @@ export const isPublicGroupProposal = rule()(
 );
 
 export const isPublicGroupProposalAction = rule()(
-  async (parent, _args, { services: { proposalsService } }: Context, info) => {
-    let proposalId: number | undefined;
-
-    if (info.parentType.name === ProposalAction.name) {
-      proposalId = parent.proposalId;
+  async (
+    parent: ProposalAction | ProposalActionRole,
+    _args,
+    { services: { proposalsService, proposalActionsService } }: Context
+  ) => {
+    if ("proposalActionId" in parent) {
+      const proposalAction = await proposalActionsService.getProposalAction(
+        { id: parent.proposalActionId },
+        ["proposal.group.config"]
+      );
+      return (
+        proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
+      );
     }
-
-    // FIXME: This isn't right
-    if (info.parentType.name === ProposalActionRole.name) {
-      proposalId = parent.proposalActionId;
-    }
-    if (!proposalId) {
-      return false;
-    }
-    const proposal = await proposalsService.getProposal(proposalId, [
+    const proposal = await proposalsService.getProposal(parent.proposalId, [
       "group.config",
     ]);
     return proposal.group.config.privacy === GroupPrivacy.Public;

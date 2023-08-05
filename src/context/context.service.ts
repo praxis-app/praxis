@@ -12,6 +12,7 @@ import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { GroupsService } from "../groups/groups.service";
 import { ImagesService } from "../images/images.service";
 import { PostsService } from "../posts/posts.service";
+import { ProposalActionsService } from "../proposals/proposal-actions/proposal-actions.service";
 import { ProposalsService } from "../proposals/proposals.service";
 import { User } from "../users/models/user.model";
 import { UserPermissions } from "../users/user.types";
@@ -24,6 +25,7 @@ export interface ContextServices {
   groupsService: GroupsService;
   imagesService: ImagesService;
   postsService: PostsService;
+  proposalActionsService: ProposalActionsService;
   proposalsService: ProposalsService;
   refreshTokensService: RefreshTokensService;
   shieldService: ShieldService;
@@ -51,6 +53,7 @@ export class ContextService {
     private groupsService: GroupsService,
     private imagesService: ImagesService,
     private postsService: PostsService,
+    private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,
     private refreshTokensService: RefreshTokensService,
     private shieldService: ShieldService,
@@ -70,6 +73,7 @@ export class ContextService {
       groupsService: this.groupsService,
       imagesService: this.imagesService,
       postsService: this.postsService,
+      proposalActionsService: this.proposalActionsService,
       proposalsService: this.proposalsService,
       refreshTokensService: this.refreshTokensService,
       shieldService: this.shieldService,
