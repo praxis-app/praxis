@@ -20,13 +20,14 @@ import {
   isGroupAvatarInPublicFeed,
   isGroupInPublicFeed,
   isGroupMember,
+  isGroupRoleInPublicFeed,
   isOwnPost,
   isProposalGroupJoinedByMe,
-  isPublicGroupProposalAction,
   isPublicEvent,
   isPublicGroup,
   isPublicGroupPost,
   isPublicGroupProposal,
+  isPublicGroupProposalAction,
   isUserAvatarInPublicFeed,
   isUserInPublicFeed,
 } from "./shield.rules";
@@ -91,6 +92,11 @@ export const shieldPermissions = shield(
       roles: isGroupMember,
       memberRequests: canApproveGroupMemberRequests,
       memberRequestCount: canApproveGroupMemberRequests,
+    },
+    GroupRole: {
+      id: isGroupRoleInPublicFeed,
+      name: isGroupRoleInPublicFeed,
+      color: isGroupRoleInPublicFeed,
     },
     ServerInvite: {
       id: allow,
