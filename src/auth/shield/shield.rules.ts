@@ -250,9 +250,9 @@ export const isOwnPost = rule()(
 );
 
 export const isPublicGroup = rule()(
-  async (_parent, args, { services: { groupsService } }: Context) => {
+  async (parent, args, { services: { groupsService } }: Context) => {
     const group = await groupsService.getGroup(
-      { id: args.id, name: args.name },
+      { id: parent ? parent.id : args.id, name: args.name },
       ["config"]
     );
     return group.config.privacy === GroupPrivacy.Public;
@@ -330,10 +330,6 @@ export const isUserInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
 export const isUserAvatarInPublicFeed = rule()(
   async (_parent, _args, _ctx, info) =>
     hasNodes(["publicGroupsFeed", "user", "profilePicture"], info.path)
-);
-
-export const isGroupInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
-  hasNodes(["publicGroupsFeed", "group"], info.path)
 );
 
 export const isGroupRoleInPublicFeed = rule()(
