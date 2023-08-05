@@ -354,6 +354,15 @@ export const isPublicGroupPostImage = rule()(
   }
 );
 
+export const isPublicGroupEventImage = rule()(
+  async (parent, _args, { services: { imagesService } }: Context) => {
+    const image = await imagesService.getImage({ id: parent.id }, [
+      "event.group.config",
+    ]);
+    return image?.event?.group?.config.privacy === GroupPrivacy.Public;
+  }
+);
+
 export const isPublicEvent = rule()(
   async (
     parent: Event,

@@ -17,19 +17,20 @@ import {
   canUpdateGroup,
   hasValidRefreshToken,
   isAuthenticated,
-  isPublicGroupImage,
   isGroupMember,
-  isPublicGroupRole,
   isOwnPost,
   isProposalGroupJoinedByMe,
   isPublicEvent,
   isPublicGroup,
+  isPublicGroupEventImage,
+  isPublicGroupImage,
   isPublicGroupPost,
+  isPublicGroupPostImage,
   isPublicGroupProposal,
   isPublicGroupProposalAction,
+  isPublicGroupRole,
   isUserAvatarInPublicFeed,
   isUserInPublicFeed,
-  isPublicGroupPostImage,
 } from "./shield.rules";
 
 export const shieldPermissions = shield(
@@ -83,6 +84,7 @@ export const shieldPermissions = shield(
         isAuthenticated,
         isPublicGroupImage,
         isPublicGroupPostImage,
+        isPublicGroupEventImage,
         isUserAvatarInPublicFeed
       ),
       filename: or(isAuthenticated, isPublicGroupPostImage),
