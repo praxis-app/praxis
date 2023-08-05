@@ -303,19 +303,8 @@ export const isUserInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
 );
 
 export const isUserAvatarInPublicFeed = rule()(
-  async (parent, _args, { services: { imagesService } }: Context) => {
-    const image = await imagesService.getImage(
-      {
-        id: parent.id,
-        imageType: ImageTypes.ProfilePicture,
-      },
-      ["post.group.config", "proposal.group.config"]
-    );
-    return (
-      image?.post?.group?.config.privacy === GroupPrivacy.Public ||
-      image?.proposal?.group?.config.privacy === GroupPrivacy.Public
-    );
-  }
+  async (_parent, _args, _ctx, info) =>
+    hasPath("publicGroupsFeed.INDEX.user.profilePicture", info.path)
 );
 
 export const isGroupInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
