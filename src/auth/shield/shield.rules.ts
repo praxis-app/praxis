@@ -343,9 +343,18 @@ export const isPublicGroupAvatar = rule()(
         id: parent.id,
         imageType: ImageTypes.CoverPhoto,
       },
-      ["group.config", "group.config"]
+      ["group.config"]
     );
     return image?.group?.config.privacy === GroupPrivacy.Public;
+  }
+);
+
+export const isPublicGroupPostImage = rule()(
+  async (parent, _args, { services: { imagesService } }: Context) => {
+    const image = await imagesService.getImage({ id: parent.id }, [
+      "post.group.config",
+    ]);
+    return image?.post?.group?.config.privacy === GroupPrivacy.Public;
   }
 );
 

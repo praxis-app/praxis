@@ -29,6 +29,7 @@ import {
   isPublicGroupProposalAction,
   isUserAvatarInPublicFeed,
   isUserInPublicFeed,
+  isPublicGroupPostImage,
 } from "./shield.rules";
 
 export const shieldPermissions = shield(
@@ -78,8 +79,13 @@ export const shieldPermissions = shield(
       profilePicture: or(isAuthenticated, isUserInPublicFeed),
     },
     Image: {
-      id: or(isAuthenticated, isUserAvatarInPublicFeed, isPublicGroupAvatar),
-      // filename: or(isAuthenticated, ),
+      id: or(
+        isAuthenticated,
+        isPublicGroupAvatar,
+        isPublicGroupPostImage,
+        isUserAvatarInPublicFeed
+      ),
+      filename: or(isAuthenticated, isPublicGroupPostImage),
     },
     Group: {
       id: or(isAuthenticated, isPublicGroup),
