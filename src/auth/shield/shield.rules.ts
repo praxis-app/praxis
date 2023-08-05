@@ -10,6 +10,8 @@ import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { ImageTypes } from "../../images/images.service";
 import { ProposalAction } from "../../proposals/proposal-actions/models/proposal-action.model";
+import { ProposalActionPermission } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model";
+import { ProposalActionRoleMember } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
 import { ProposalActionRole } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
@@ -280,9 +282,19 @@ export const isPublicGroupProposal = rule()(
 
 export const isPublicGroupProposalAction = rule()(
   async (
-    parent: ProposalAction | ProposalActionRole,
+    parent:
+      | ProposalAction
+      | ProposalActionRole
+      | ProposalActionPermission
+      | ProposalActionRoleMember,
     _args,
-    { services: { proposalsService, proposalActionsService } }: Context
+    {
+      services: {
+        proposalsService,
+        proposalActionsService,
+        proposalActionRolesService,
+      },
+    }: Context
   ) => {
     if ("proposalActionId" in parent) {
       const proposalAction = await proposalActionsService.getProposalAction(
@@ -291,6 +303,17 @@ export const isPublicGroupProposalAction = rule()(
       );
       return (
         proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
+      );
+    }
+    if ("proposalActionRoleId" in parent) {
+      const proposalActionRole =
+        await proposalActionRolesService.getProposalActionRole(
+          parent.proposalActionRoleId,
+          ["proposalAction.proposal.group.config"]
+        );
+      return (
+        proposalActionRole?.proposalAction.proposal.group.config.privacy ===
+        GroupPrivacy.Public
       );
     }
     const proposal = await proposalsService.getProposal(parent.proposalId, [
