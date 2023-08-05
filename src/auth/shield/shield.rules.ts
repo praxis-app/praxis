@@ -17,7 +17,7 @@ import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
 import {
   hasGroupPermission,
-  hasPath,
+  hasNodes,
   hasServerPermission,
 } from "./shield.utils";
 
@@ -324,16 +324,16 @@ export const isPublicGroupProposalAction = rule()(
 );
 
 export const isUserInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
-  hasPath(/publicGroupsFeed.*user/, info.path)
+  hasNodes(["publicGroupsFeed", "user"], info.path)
 );
 
 export const isUserAvatarInPublicFeed = rule()(
   async (_parent, _args, _ctx, info) =>
-    hasPath(/publicGroupsFeed.*user\.profilePicture/, info.path)
+    hasNodes(["publicGroupsFeed", "user", "profilePicture"], info.path)
 );
 
 export const isGroupInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
-  hasPath(/publicGroupsFeed.*group/, info.path)
+  hasNodes(["publicGroupsFeed", "group"], info.path)
 );
 
 export const isGroupAvatarInPublicFeed = rule()(
