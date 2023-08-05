@@ -283,10 +283,10 @@ export const isPublicGroupProposalAction = rule()(
     let proposalId: number | undefined;
 
     if (info.parentType.name === ProposalAction.name) {
-      proposalId = parent.id;
+      proposalId = parent.proposalId;
     }
     if (info.parentType.name === ProposalActionRole.name) {
-      proposalId = parent.proposalId;
+      proposalId = parent.proposalActionId;
     }
     if (!proposalId) {
       return false;
