@@ -33,23 +33,6 @@ export const hasGroupPermission = (
   return true;
 };
 
-export const hasAncestor = (
-  ancestor: string,
-  path: ResponsePath,
-  depth = 5
-) => {
-  if (!depth) {
-    return false;
-  }
-  if (path.key !== ancestor) {
-    if (!path.prev) {
-      return false;
-    }
-    return hasAncestor(ancestor, path.prev, depth - 1);
-  }
-  return true;
-};
-
 export const getPath = (path: ResponsePath) =>
   responsePathAsArray(path).reduce<string>(
     (result, segment) => `${result}${result ? "." : ""}${segment}`,
