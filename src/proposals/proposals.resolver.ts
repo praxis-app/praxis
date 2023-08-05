@@ -32,7 +32,7 @@ export class ProposalsResolver {
 
   @Query(() => Proposal)
   async proposal(@Args("id", { type: () => Int }) id: number) {
-    return this.proposalsService.getProposal(id);
+    return this.proposalsService.getProposal({ id });
   }
 
   @ResolveField(() => [Vote])
