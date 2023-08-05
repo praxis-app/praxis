@@ -10,6 +10,7 @@ import { EventsService } from "../events/events.service";
 import { GroupMemberRequestsService } from "../groups/group-member-requests/group-member-requests.service";
 import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { GroupsService } from "../groups/groups.service";
+import { ImagesService } from "../images/images.service";
 import { PostsService } from "../posts/posts.service";
 import { ProposalsService } from "../proposals/proposals.service";
 import { User } from "../users/models/user.model";
@@ -21,6 +22,7 @@ export interface ContextServices {
   groupMemberRequestsService: GroupMemberRequestsService;
   groupRolesService: GroupRolesService;
   groupsService: GroupsService;
+  imagesService: ImagesService;
   postsService: PostsService;
   proposalsService: ProposalsService;
   refreshTokensService: RefreshTokensService;
@@ -47,6 +49,7 @@ export class ContextService {
     private groupMemberRequestsService: GroupMemberRequestsService,
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
+    private imagesService: ImagesService,
     private postsService: PostsService,
     private proposalsService: ProposalsService,
     private refreshTokensService: RefreshTokensService,
@@ -65,6 +68,7 @@ export class ContextService {
       groupMemberRequestsService: this.groupMemberRequestsService,
       groupRolesService: this.groupRolesService,
       groupsService: this.groupsService,
+      imagesService: this.imagesService,
       postsService: this.postsService,
       proposalsService: this.proposalsService,
       refreshTokensService: this.refreshTokensService,

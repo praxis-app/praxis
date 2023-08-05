@@ -17,6 +17,7 @@ import {
   canUpdateGroup,
   hasValidRefreshToken,
   isAuthenticated,
+  isGroupAvatarInPublicFeed,
   isGroupInPublicFeed,
   isGroupMember,
   isOwnPost,
@@ -25,6 +26,7 @@ import {
   isPublicGroup,
   isPublicGroupPost,
   isPublicGroupProposal,
+  isUserAvatarInPublicFeed,
   isUserInPublicFeed,
 } from "./shield.rules";
 
@@ -75,7 +77,11 @@ export const shieldPermissions = shield(
       profilePicture: or(isAuthenticated, isUserInPublicFeed),
     },
     Image: {
-      id: or(isUserInPublicFeed, isGroupInPublicFeed),
+      id: or(
+        isAuthenticated,
+        isUserAvatarInPublicFeed,
+        isGroupAvatarInPublicFeed
+      ),
     },
     Group: {
       id: or(isAuthenticated, isGroupInPublicFeed),

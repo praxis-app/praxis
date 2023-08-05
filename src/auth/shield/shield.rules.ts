@@ -8,6 +8,7 @@ import { DeleteGroupRoleMemberInput } from "../../groups/group-roles/models/dele
 import { UpdateGroupRoleInput } from "../../groups/group-roles/models/update-group-role.input";
 import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
+import { ImageTypes } from "../../images/images.service";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
 import {
@@ -279,20 +280,37 @@ export const isUserInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
   hasPath("publicGroupsFeed.INDEX.user", info.path)
 );
 
-// TODO: Refactor to check IDs instead of path
 export const isUserAvatarInPublicFeed = rule()(
-  async (_parent, _args, _ctx, info) =>
-    hasPath("publicGroupsFeed.INDEX.user.profilePicture", info.path)
+  async (parent, _args, { services: { imagesService } }: Context) => {
+    const image = await imagesService.getImage(
+      {
+        id: parent.id,
+        imageType: ImageTypes.ProfilePicture,
+      },
+      ["post.group.config", "proposal.group.config"]
+    );
+    return (
+      image?.post?.group?.config.privacy === GroupPrivacy.Public ||
+      image?.proposal?.group?.config.privacy === GroupPrivacy.Public
+    );
+  }
 );
 
 export const isGroupInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
   hasPath("publicGroupsFeed.INDEX.group", info.path)
 );
 
-// TODO: Refactor to check IDs instead of path
 export const isGroupAvatarInPublicFeed = rule()(
-  async (_parent, _args, _ctx, info) =>
-    hasPath("publicGroupsFeed.INDEX.group.coverPhoto", info.path)
+  async (parent, _args, { services: { imagesService } }: Context) => {
+    const image = await imagesService.getImage(
+      {
+        id: parent.id,
+        imageType: ImageTypes.CoverPhoto,
+      },
+      ["group.config", "group.config"]
+    );
+    return image?.group?.config.privacy === GroupPrivacy.Public;
+  }
 );
 
 export const isPublicEvent = rule()(

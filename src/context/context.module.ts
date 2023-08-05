@@ -6,6 +6,7 @@ import { EventsModule } from "../events/events.module";
 import { GroupMemberRequestsModule } from "../groups/group-member-requests/group-member-requests.module";
 import { GroupRolesModule } from "../groups/group-roles/group-roles.module";
 import { GroupsModule } from "../groups/groups.module";
+import { ImagesModule } from "../images/images.module";
 import { PostsModule } from "../posts/posts.module";
 import { ProposalsModule } from "../proposals/proposals.module";
 import { UsersModule } from "../users/users.module";
@@ -18,6 +19,7 @@ import { ContextService } from "./context.service";
     GroupMemberRequestsModule,
     GroupRolesModule,
     GroupsModule,
+    ImagesModule,
     PostsModule,
     ProposalsModule,
     RefreshTokensModule,

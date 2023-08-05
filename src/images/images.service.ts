@@ -16,8 +16,8 @@ export class ImagesService {
     private repository: Repository<Image>
   ) {}
 
-  async getImage(where: FindOptionsWhere<Image>) {
-    return this.repository.findOne({ where });
+  async getImage(where: FindOptionsWhere<Image>, relations?: string[]) {
+    return this.repository.findOne({ where, relations });
   }
 
   async getImages(where?: FindOptionsWhere<Image>) {
