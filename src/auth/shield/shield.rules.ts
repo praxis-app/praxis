@@ -1,6 +1,6 @@
 import { rule } from "graphql-shield";
 import { UNAUTHORIZED } from "../../common/common.constants";
-import { Context } from "../../context/context.types";
+import { Context } from "../../context/context.service";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
 import { UpdateGroupConfigInput } from "../../groups/group-configs/models/update-group-config.input";
 import { CreateGroupRoleInput } from "../../groups/group-roles/models/create-group-role.input";
@@ -279,6 +279,7 @@ export const isUserInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
   hasPath("publicGroupsFeed.INDEX.user", info.path)
 );
 
+// TODO: Refactor to check IDs instead of path
 export const isUserAvatarInPublicFeed = rule()(
   async (_parent, _args, _ctx, info) =>
     hasPath("publicGroupsFeed.INDEX.user.profilePicture", info.path)
@@ -288,6 +289,7 @@ export const isGroupInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
   hasPath("publicGroupsFeed.INDEX.group", info.path)
 );
 
+// TODO: Refactor to check IDs instead of path
 export const isGroupAvatarInPublicFeed = rule()(
   async (_parent, _args, _ctx, info) =>
     hasPath("publicGroupsFeed.INDEX.group.coverPhoto", info.path)
