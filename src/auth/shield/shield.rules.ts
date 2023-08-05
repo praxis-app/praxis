@@ -11,7 +11,6 @@ import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { getJti, getSub } from "../auth.utils";
 import {
-  hasAncestor,
   hasGroupPermission,
   hasPath,
   hasServerPermission,
@@ -276,15 +275,22 @@ export const isPublicGroupProposal = rule()(
   }
 );
 
-// TODO: Determine whether checking path is enough
-export const isPublicGroupsFeed = rule()(
-  async (_parent, _args, _ctx, { path }) =>
-    hasAncestor("publicGroupsFeed", path, 7)
+export const isUserInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
+  hasPath("publicGroupsFeed.INDEX.user", info.path)
 );
 
 export const isUserAvatarInPublicFeed = rule()(
   async (_parent, _args, _ctx, info) =>
-    hasPath("publicGroupsFeed.INDEX.user", info)
+    hasPath("publicGroupsFeed.INDEX.user.profilePicture", info.path)
+);
+
+export const isGroupInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
+  hasPath("publicGroupsFeed.INDEX.group", info.path)
+);
+
+export const isGroupAvatarInPublicFeed = rule()(
+  async (_parent, _args, _ctx, info) =>
+    hasPath("publicGroupsFeed.INDEX.group.coverPhoto", info.path)
 );
 
 export const isPublicEvent = rule()(

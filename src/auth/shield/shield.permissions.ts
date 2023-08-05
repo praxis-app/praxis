@@ -17,6 +17,8 @@ import {
   canUpdateGroup,
   hasValidRefreshToken,
   isAuthenticated,
+  isGroupAvatarInPublicFeed,
+  isGroupInPublicFeed,
   isGroupMember,
   isOwnPost,
   isProposalGroupJoinedByMe,
@@ -24,7 +26,8 @@ import {
   isPublicGroup,
   isPublicGroupPost,
   isPublicGroupProposal,
-  isPublicGroupsFeed,
+  isUserAvatarInPublicFeed,
+  isUserInPublicFeed,
 } from "./shield.rules";
 
 export const shieldPermissions = shield(
@@ -69,17 +72,21 @@ export const shieldPermissions = shield(
       updateEvent: or(canManageEvents, canManageGroupEvents),
     },
     User: {
-      id: or(isAuthenticated, isPublicGroupsFeed),
-      name: or(isAuthenticated, isPublicGroupsFeed),
-      profilePicture: or(isAuthenticated, isPublicGroupsFeed),
+      id: or(isAuthenticated, isUserInPublicFeed),
+      name: or(isAuthenticated, isUserInPublicFeed),
+      profilePicture: or(isAuthenticated, isUserInPublicFeed),
     },
     Image: {
-      id: or(isAuthenticated, isPublicGroupsFeed),
+      id: or(
+        isAuthenticated,
+        isUserAvatarInPublicFeed,
+        isGroupAvatarInPublicFeed
+      ),
     },
     Group: {
-      id: or(isAuthenticated, isPublicGroupsFeed),
-      name: or(isAuthenticated, isPublicGroupsFeed),
-      coverPhoto: or(isAuthenticated, isPublicGroupsFeed),
+      id: or(isAuthenticated, isGroupInPublicFeed),
+      name: or(isAuthenticated, isGroupInPublicFeed),
+      coverPhoto: or(isAuthenticated, isGroupInPublicFeed),
       roles: isGroupMember,
       memberRequests: canApproveGroupMemberRequests,
       memberRequestCount: canApproveGroupMemberRequests,
