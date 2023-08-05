@@ -52,10 +52,7 @@ export const hasAncestor = (
 
 export const getPath = (path: ResponsePath) =>
   responsePathAsArray(path).reduce<string>(
-    (result, segment) =>
-      `${result}${result ? "." : ""}${
-        typeof segment === "number" ? "INDEX" : segment
-      }`,
+    (result, segment) => `${result}${result ? "." : ""}${segment}`,
     ""
   );
 
