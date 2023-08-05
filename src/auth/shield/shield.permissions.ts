@@ -84,6 +84,7 @@ export const shieldPermissions = shield(
         isUserAvatarInPublicFeed,
         isGroupAvatarInPublicFeed
       ),
+      // filename: or(isAuthenticated, ),
     },
     Group: {
       id: or(isAuthenticated, isGroupInPublicFeed),
@@ -94,9 +95,9 @@ export const shieldPermissions = shield(
       memberRequestCount: canApproveGroupMemberRequests,
     },
     GroupRole: {
-      id: isGroupRoleInPublicFeed,
-      name: isGroupRoleInPublicFeed,
-      color: isGroupRoleInPublicFeed,
+      id: or(isAuthenticated, isGroupRoleInPublicFeed),
+      name: or(isAuthenticated, isGroupRoleInPublicFeed),
+      color: or(isAuthenticated, isGroupRoleInPublicFeed),
     },
     ServerInvite: {
       id: allow,
