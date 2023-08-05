@@ -59,5 +59,10 @@ export const getPath = (path: ResponsePath) =>
     ""
   );
 
-export const hasPath = (path: string, currentPath: ResponsePath) =>
-  getPath(currentPath).includes(path);
+export const hasPath = (path: string | RegExp, currentPath: ResponsePath) => {
+  const currentPathString = getPath(currentPath);
+  if (typeof path !== "string") {
+    return path.test(currentPathString);
+  }
+  return currentPathString.includes(path);
+};

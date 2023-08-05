@@ -323,13 +323,19 @@ export const isPublicGroupProposalAction = rule()(
   }
 );
 
-export const isUserInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
-  hasPath("publicGroupsFeed.INDEX.user", info.path)
+export const isUserInPublicFeed = rule()(
+  async (_parent, _args, _ctx, info) =>
+    hasPath("publicGroupsFeed.INDEX.user", info.path) ||
+    hasPath("publicGroupsFeed.INDEX.action.role.members.INDEX.user", info.path)
 );
 
 export const isUserAvatarInPublicFeed = rule()(
   async (_parent, _args, _ctx, info) =>
-    hasPath("publicGroupsFeed.INDEX.user.profilePicture", info.path)
+    hasPath("publicGroupsFeed.INDEX.user.profilePicture", info.path) ||
+    hasPath(
+      "publicGroupsFeed.INDEX.action.role.members.INDEX.user.profilePicture",
+      info.path
+    )
 );
 
 export const isGroupInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
