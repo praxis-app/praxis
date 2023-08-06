@@ -95,9 +95,16 @@ export const shieldPermissions = shield(
       description: or(isAuthenticated, isPublicGroup),
       coverPhoto: or(isAuthenticated, isPublicGroup),
       memberCount: or(isAuthenticated, isPublicGroup),
+      settings: or(isAuthenticated, isPublicGroup),
+      feed: or(isAuthenticated, isPublicGroup),
+      futureEvents: or(isAuthenticated, isPublicGroup),
+      pastEvents: or(isAuthenticated, isPublicGroup),
       roles: isGroupMember,
       memberRequests: canApproveGroupMemberRequests,
       memberRequestCount: canApproveGroupMemberRequests,
+    },
+    GroupConfig: {
+      isPublic: or(isAuthenticated, isPublicGroup),
     },
     GroupRole: {
       id: or(isAuthenticated, isPublicGroupRole),
