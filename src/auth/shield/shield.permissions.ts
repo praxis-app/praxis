@@ -92,7 +92,9 @@ export const shieldPermissions = shield(
     Group: {
       id: or(isAuthenticated, isPublicGroup),
       name: or(isAuthenticated, isPublicGroup),
+      description: or(isAuthenticated, isPublicGroup),
       coverPhoto: or(isAuthenticated, isPublicGroup),
+      memberCount: or(isAuthenticated, isPublicGroup),
       roles: isGroupMember,
       memberRequests: canApproveGroupMemberRequests,
       memberRequestCount: canApproveGroupMemberRequests,

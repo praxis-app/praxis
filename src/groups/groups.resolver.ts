@@ -122,6 +122,7 @@ export class GroupsResolver {
     return loaders.memberRequestCountLoader.load(id);
   }
 
+  // TODO: Rename as isMember
   @ResolveField(() => Boolean)
   async isJoinedByMe(
     @Context() { loaders }: { loaders: Dataloaders },
