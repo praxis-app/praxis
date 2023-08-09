@@ -391,6 +391,7 @@ type Query {
   post(id: Int!): Post!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   group(id: Int, name: String): Group!
+  publicGroup(name: String!): Group!
   groups: [Group!]!
   publicGroups: [Group!]!
   publicGroupsFeed: [FeedItem!]!
