@@ -323,13 +323,16 @@ export const isPublicGroupProposalAction = rule()(
   }
 );
 
-export const isUserInPublicFeed = rule()(async (_parent, _args, _ctx, info) =>
-  hasNodes(["publicGroupsFeed", "user"], info.path)
+export const isUserInPublicFeed = rule()(
+  async (_parent, _args, _ctx, info) =>
+    hasNodes(["publicGroupsFeed", "user"], info.path) ||
+    hasNodes(["publicGroup", "feed", "user"], info.path)
 );
 
 export const isUserAvatarInPublicFeed = rule()(
   async (_parent, _args, _ctx, info) =>
-    hasNodes(["publicGroupsFeed", "user", "profilePicture"], info.path)
+    hasNodes(["publicGroupsFeed", "user", "profilePicture"], info.path) ||
+    hasNodes(["publicGroup", "feed", "user", "profilePicture"], info.path)
 );
 
 export const isPublicGroupRole = rule()(async (_parent, _args, _ctx, info) =>
