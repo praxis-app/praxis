@@ -389,6 +389,7 @@ type Query {
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
   post(id: Int!): Post!
+  publicPost(id: Int!): Post!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   group(id: Int, name: String): Group!
   publicGroup(name: String!): Group!

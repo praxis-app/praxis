@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { IsLikedByMeKey } from "../dataloader/dataloader.types";
+import { GroupPrivacy } from "../groups/group-configs/models/group-config.model";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
 import { Image } from "../images/models/image.model";
@@ -26,6 +27,12 @@ export class PostsService {
 
   async getPost(id: number, relations?: string[]) {
     return this.repository.findOneOrFail({ where: { id }, relations });
+  }
+
+  async getPublicPost(id: number) {
+    return this.repository.findOneOrFail({
+      where: { id, group: { config: { privacy: GroupPrivacy.Public } } },
+    });
   }
 
   async getPosts(where?: FindOptionsWhere<Post>) {

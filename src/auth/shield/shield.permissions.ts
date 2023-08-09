@@ -48,6 +48,7 @@ export const shieldPermissions = shield(
       publicGroupsFeed: allow,
       publicGroups: allow,
       publicGroup: allow,
+      publicPost: allow,
       events: allow,
     },
     Mutation: {
