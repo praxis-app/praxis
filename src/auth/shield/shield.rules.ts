@@ -9,6 +9,7 @@ import { DeleteGroupRoleMemberInput } from "../../groups/group-roles/models/dele
 import { UpdateGroupRoleInput } from "../../groups/group-roles/models/update-group-role.input";
 import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
+import { Image } from "../../images/models/image.model";
 import { ProposalAction } from "../../proposals/proposal-actions/models/proposal-action.model";
 import { ProposalActionPermission } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model";
 import { ProposalActionRoleMember } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
@@ -378,6 +379,28 @@ export const isPublicGroupPostImage = rule()(
       "post.group.config",
     ]);
     return image?.post?.group?.config.privacy === GroupPrivacy.Public;
+  }
+);
+
+export const isPublicGroupProposalImage = rule()(
+  async (
+    parent: Image,
+    _args,
+    { services: { proposalsService, proposalActionsService } }: Context
+  ) => {
+    if (parent?.proposalActionId) {
+      const proposalAction = await proposalActionsService.getProposalAction(
+        { id: parent.proposalActionId },
+        ["proposal.group.config"]
+      );
+      return (
+        proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
+      );
+    }
+    const { group } = await proposalsService.getProposal(parent.proposalId, [
+      "group.config",
+    ]);
+    return group.config.privacy === GroupPrivacy.Public;
   }
 );
 
