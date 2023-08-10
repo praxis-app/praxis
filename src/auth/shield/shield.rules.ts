@@ -354,8 +354,13 @@ export const isUserAvatarInPublicFeed = rule()(
     hasNodes(["publicGroup", "feed", "user", "profilePicture"], info.path)
 );
 
-export const isPublicGroupRole = rule()(async (_parent, _args, _ctx, info) =>
-  hasNodes(["publicGroupsFeed", "action", "groupRole"], info.path)
+export const isPublicGroupRole = rule()(
+  async (parent, _args, { services: { groupsService } }: Context) => {
+    const group = await groupsService.getGroup({ id: parent.groupId }, [
+      "config",
+    ]);
+    return group.config.privacy === GroupPrivacy.Public;
+  }
 );
 
 export const isPublicGroupImage = rule()(
