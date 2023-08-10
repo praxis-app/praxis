@@ -20,7 +20,7 @@ export class ProposalActionsResolver {
     return this.proposalsService.getProposal(proposalId);
   }
 
-  @ResolveField(() => Image)
+  @ResolveField(() => Image, { nullable: true })
   async groupCoverPhoto(@Parent() { id }: ProposalAction) {
     return this.proposalActionsService.getProposedGroupCoverPhoto(id);
   }
