@@ -30,7 +30,9 @@ import {
   isPublicGroupProposalAction,
   isPublicGroupRole,
   isUserAvatarInPublicFeed,
+  isUserAvatarInPublicPost,
   isUserInPublicFeed,
+  isUserInPublicPost,
 } from "./shield.rules";
 
 export const shieldPermissions = shield(
@@ -77,9 +79,13 @@ export const shieldPermissions = shield(
       updateEvent: or(canManageEvents, canManageGroupEvents),
     },
     User: {
-      id: or(isAuthenticated, isUserInPublicFeed),
-      name: or(isAuthenticated, isUserInPublicFeed),
-      profilePicture: or(isAuthenticated, isUserInPublicFeed),
+      id: or(isAuthenticated, isUserInPublicFeed, isUserInPublicPost),
+      name: or(isAuthenticated, isUserInPublicFeed, isUserInPublicPost),
+      profilePicture: or(
+        isAuthenticated,
+        isUserInPublicPost,
+        isUserInPublicFeed
+      ),
     },
     Image: {
       id: or(
@@ -87,6 +93,7 @@ export const shieldPermissions = shield(
         isPublicGroupImage,
         isPublicGroupPostImage,
         isPublicGroupEventImage,
+        isUserAvatarInPublicPost,
         isUserAvatarInPublicFeed
       ),
       filename: or(isAuthenticated, isPublicGroupPostImage),
