@@ -33,6 +33,7 @@ import {
   isUserAvatarInPublicPost,
   isUserInPublicFeed,
   isUserInPublicPost,
+  isPublicGroupVote,
 } from "./shield.rules";
 
 export const shieldPermissions = shield(
@@ -131,6 +132,7 @@ export const shieldPermissions = shield(
     ProposalActionRole: or(isAuthenticated, isPublicGroupProposalAction),
     ProposalActionPermission: or(isAuthenticated, isPublicGroupProposalAction),
     ProposalActionRoleMember: or(isAuthenticated, isPublicGroupProposalAction),
+    Vote: or(isAuthenticated, isUserInPublicFeed, isPublicGroupVote),
   },
   {
     fallbackRule: isAuthenticated,

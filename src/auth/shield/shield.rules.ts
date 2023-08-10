@@ -14,6 +14,7 @@ import { ProposalActionPermission } from "../../proposals/proposal-actions/propo
 import { ProposalActionRoleMember } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
 import { ProposalActionRole } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
+import { Vote } from "../../votes/models/vote.model";
 import { getJti, getSub } from "../auth.utils";
 import {
   hasGroupPermission,
@@ -325,6 +326,15 @@ export const isPublicGroupProposalAction = rule()(
 
 export const isUserInPublicPost = rule()(async (_parent, _args, _ctx, info) =>
   hasNodes(["publicPost", "user"], info.path)
+);
+
+export const isPublicGroupVote = rule()(
+  async (parent: Vote, _args, { services: { proposalsService } }: Context) => {
+    const { group } = await proposalsService.getProposal(parent.proposalId, [
+      "group.config",
+    ]);
+    return group.config.privacy === GroupPrivacy.Public;
+  }
 );
 
 export const isUserInPublicFeed = rule()(
