@@ -1,6 +1,7 @@
 import { allow, and, not, or, shield } from "graphql-shield";
 import { FORBIDDEN } from "../common/common.constants";
 import { hasValidRefreshToken, isAuthenticated } from "./rules/auth.rules";
+import { isPublicEventImage, isPublicEvent } from "./rules/event.rules";
 import {
   canApproveGroupMemberRequests,
   canCreateGroupEvents,
@@ -12,9 +13,7 @@ import {
   canUpdateGroup,
   isGroupMember,
   isProposalGroupJoinedByMe,
-  isPublicEventImage,
   isPublicGroup,
-  isPublicGroupEvent,
   isPublicGroupImage,
   isPublicGroupRole,
 } from "./rules/group.rules";
@@ -50,7 +49,7 @@ export const shieldPermissions = shield(
       post: or(isAuthenticated, isPublicPost),
       proposal: or(isAuthenticated, isPublicProposal),
       group: or(isAuthenticated, isPublicGroup),
-      event: or(isAuthenticated, isPublicGroupEvent),
+      event: or(isAuthenticated, isPublicEvent),
       groupRole: isGroupMember,
       publicGroupsFeed: allow,
       publicGroups: allow,
@@ -130,7 +129,7 @@ export const shieldPermissions = shield(
       id: allow,
       token: allow,
     },
-    Event: or(isAuthenticated, isPublicGroupEvent),
+    Event: or(isAuthenticated, isPublicEvent),
     Post: or(isAuthenticated, isPublicPost),
     Proposal: or(isAuthenticated, isPublicProposal),
     ProposalAction: or(isAuthenticated, isPublicProposalAction),
