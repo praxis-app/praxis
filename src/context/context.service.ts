@@ -4,7 +4,7 @@ import { JwtPayload } from "jsonwebtoken";
 import { AuthTokens } from "../auth/auth.service";
 import { Claims, decodeToken, getSub } from "../auth/auth.utils";
 import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
-import { ShieldService } from "../auth/shield/shield.service";
+import { ShieldService } from "../shield/shield.service";
 import { DataloaderService } from "../dataloader/dataloader.service";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { EventsService } from "../events/events.service";

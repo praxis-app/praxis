@@ -1,11 +1,11 @@
 import { rule } from "graphql-shield";
-import { Context } from "../../../context/context.service";
-import { GroupPrivacy } from "../../../groups/group-configs/models/group-config.model";
-import { Image } from "../../../images/models/image.model";
-import { ProposalAction } from "../../../proposals/proposal-actions/models/proposal-action.model";
-import { ProposalActionPermission } from "../../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model";
-import { ProposalActionRoleMember } from "../../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
-import { ProposalActionRole } from "../../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
+import { Context } from "../../context/context.service";
+import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
+import { Image } from "../../images/models/image.model";
+import { ProposalAction } from "../../proposals/proposal-actions/models/proposal-action.model";
+import { ProposalActionPermission } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model";
+import { ProposalActionRoleMember } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
+import { ProposalActionRole } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
 
 export const isPublicProposal = rule()(
   async (parent, args, { services: { proposalsService } }: Context) => {

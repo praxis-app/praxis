@@ -1,5 +1,5 @@
 import { rule } from "graphql-shield";
-import { Context } from "../../../context/context.service";
+import { Context } from "../../context/context.service";
 import { hasServerPermission } from "../shield.utils";
 
 export const canCreateServerInvites = rule()(

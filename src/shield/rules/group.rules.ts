@@ -1,16 +1,16 @@
 import { rule } from "graphql-shield";
-import { UNAUTHORIZED } from "../../../common/common.constants";
-import { Context } from "../../../context/context.service";
-import { Event } from "../../../events/models/event.model";
-import { GroupPrivacy } from "../../../groups/group-configs/models/group-config.model";
-import { UpdateGroupConfigInput } from "../../../groups/group-configs/models/update-group-config.input";
-import { CreateGroupRoleInput } from "../../../groups/group-roles/models/create-group-role.input";
-import { DeleteGroupRoleMemberInput } from "../../../groups/group-roles/models/delete-group-role-member.input";
-import { UpdateGroupRoleInput } from "../../../groups/group-roles/models/update-group-role.input";
-import { Group } from "../../../groups/models/group.model";
-import { UpdateGroupInput } from "../../../groups/models/update-group.input";
-import { CreateVoteInput } from "../../../votes/models/create-vote.input";
-import { Vote } from "../../../votes/models/vote.model";
+import { UNAUTHORIZED } from "../../common/common.constants";
+import { Context } from "../../context/context.service";
+import { Event } from "../../events/models/event.model";
+import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
+import { UpdateGroupConfigInput } from "../../groups/group-configs/models/update-group-config.input";
+import { CreateGroupRoleInput } from "../../groups/group-roles/models/create-group-role.input";
+import { DeleteGroupRoleMemberInput } from "../../groups/group-roles/models/delete-group-role-member.input";
+import { UpdateGroupRoleInput } from "../../groups/group-roles/models/update-group-role.input";
+import { Group } from "../../groups/models/group.model";
+import { UpdateGroupInput } from "../../groups/models/update-group.input";
+import { CreateVoteInput } from "../../votes/models/create-vote.input";
+import { Vote } from "../../votes/models/vote.model";
 import { hasGroupPermission } from "../shield.utils";
 
 export const isGroupMember = rule()(

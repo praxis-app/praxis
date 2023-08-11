@@ -1,7 +1,7 @@
 import { rule } from "graphql-shield";
-import { UNAUTHORIZED } from "../../../common/common.constants";
-import { Context } from "../../../context/context.service";
-import { getJti, getSub } from "../../auth.utils";
+import { UNAUTHORIZED } from "../../common/common.constants";
+import { Context } from "../../context/context.service";
+import { getJti, getSub } from "../../auth/auth.utils";
 
 export const isAuthenticated = rule({ cache: "contextual" })(
   async (_parent, _args, { user }: Context) => {

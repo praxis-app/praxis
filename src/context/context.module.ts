@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { RefreshTokensModule } from "../auth/refresh-tokens/refresh-tokens.module";
-import { ShieldModule } from "../auth/shield/shield.module";
+import { ShieldModule } from "../shield/shield.module";
 import { DataloaderModule } from "../dataloader/dataloader.module";
 import { EventsModule } from "../events/events.module";
 import { GroupMemberRequestsModule } from "../groups/group-member-requests/group-member-requests.module";

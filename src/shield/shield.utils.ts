@@ -1,8 +1,8 @@
 import { ResponsePath, responsePathAsArray } from "graphql";
-import { UNAUTHORIZED } from "../../common/common.constants";
-import { GroupPermissions } from "../../groups/group-roles/models/group-permissions.type";
-import { ServerPermissions } from "../../server-roles/models/server-permissions.type";
-import { UserPermissions } from "../../users/user.types";
+import { UNAUTHORIZED } from "../common/common.constants";
+import { GroupPermissions } from "../groups/group-roles/models/group-permissions.type";
+import { ServerPermissions } from "../server-roles/models/server-permissions.type";
+import { UserPermissions } from "../users/user.types";
 
 export const hasServerPermission = (
   permissions: UserPermissions | null,
