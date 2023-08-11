@@ -14,6 +14,7 @@ import {
   isProposalGroupJoinedByMe,
   isPublicEventImage,
   isPublicGroup,
+  isPublicGroupEvent,
   isPublicGroupImage,
   isPublicGroupRole,
   isPublicVote,
@@ -25,20 +26,19 @@ import {
   isPublicProposalImage,
 } from "./rules/proposal.rules";
 import {
-  isUserAvatarInPublicFeed,
-  isUserAvatarInPublicPost,
-  isUserInPublicFeed,
-  isUserInPublicPost,
-} from "./rules/user.rules";
-import {
   canCreateServerInvites,
   canManageEvents,
   canManagePosts,
   canManageServerInvites,
   canManageServerRoles,
   canRemoveMembers,
-  isPublicEvent,
-} from "./shield.rules";
+} from "./rules/role.rules";
+import {
+  isUserAvatarInPublicFeed,
+  isUserAvatarInPublicPost,
+  isUserInPublicFeed,
+  isUserInPublicPost,
+} from "./rules/user.rules";
 
 export const shieldPermissions = shield(
   {
@@ -50,7 +50,7 @@ export const shieldPermissions = shield(
       post: or(isAuthenticated, isPublicPost),
       proposal: or(isAuthenticated, isPublicProposal),
       group: or(isAuthenticated, isPublicGroup),
-      event: or(isAuthenticated, isPublicEvent),
+      event: or(isAuthenticated, isPublicGroupEvent),
       groupRole: isGroupMember,
       publicGroupsFeed: allow,
       publicGroups: allow,
@@ -130,7 +130,7 @@ export const shieldPermissions = shield(
       id: allow,
       token: allow,
     },
-    Event: or(isAuthenticated, isPublicEvent),
+    Event: or(isAuthenticated, isPublicGroupEvent),
     Post: or(isAuthenticated, isPublicPost),
     Proposal: or(isAuthenticated, isPublicProposal),
     ProposalAction: or(isAuthenticated, isPublicProposalAction),
