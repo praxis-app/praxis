@@ -25,6 +25,12 @@ import {
   isPublicProposalImage,
 } from "./rules/proposal.rules";
 import {
+  isUserAvatarInPublicFeed,
+  isUserAvatarInPublicPost,
+  isUserInPublicFeed,
+  isUserInPublicPost,
+} from "./rules/user.rules";
+import {
   canCreateServerInvites,
   canManageEvents,
   canManagePosts,
@@ -32,10 +38,6 @@ import {
   canManageServerRoles,
   canRemoveMembers,
   isPublicEvent,
-  isUserAvatarInPublicFeed,
-  isUserAvatarInPublicPost,
-  isUserInPublicFeed,
-  isUserInPublicPost,
 } from "./shield.rules";
 
 export const shieldPermissions = shield(

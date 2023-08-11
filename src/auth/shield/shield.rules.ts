@@ -2,7 +2,7 @@ import { rule } from "graphql-shield";
 import { Context } from "../../context/context.service";
 import { Event } from "../../events/models/event.model";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
-import { hasNodes, hasServerPermission } from "./shield.utils";
+import { hasServerPermission } from "./shield.utils";
 
 export const canCreateServerInvites = rule()(
   async (_parent, _args, { permissions }: Context) =>
@@ -32,27 +32,6 @@ export const canManageServerRoles = rule()(
 export const canRemoveMembers = rule()(
   async (_parent, _args, { permissions }: Context) =>
     hasServerPermission(permissions, "removeMembers")
-);
-
-export const isUserInPublicPost = rule()(async (_parent, _args, _ctx, info) =>
-  hasNodes(["publicPost", "user"], info.path)
-);
-
-export const isUserInPublicFeed = rule()(
-  async (_parent, _args, _ctx, info) =>
-    hasNodes(["publicGroupsFeed", "user"], info.path) ||
-    hasNodes(["publicGroup", "feed", "user"], info.path)
-);
-
-export const isUserAvatarInPublicPost = rule()(
-  async (_parent, _args, _ctx, info) =>
-    hasNodes(["publicPost", "user", "profilePicture"], info.path)
-);
-
-export const isUserAvatarInPublicFeed = rule()(
-  async (_parent, _args, _ctx, info) =>
-    hasNodes(["publicGroupsFeed", "user", "profilePicture"], info.path) ||
-    hasNodes(["publicGroup", "feed", "user", "profilePicture"], info.path)
 );
 
 export const isPublicEvent = rule()(
