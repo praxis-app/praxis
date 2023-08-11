@@ -46,7 +46,7 @@ export const isPublicGroup = rule()(
   }
 );
 
-export const isPublicGroupPost = rule()(
+export const isPublicPost = rule()(
   async (parent, args, { services: { postsService } }: Context) => {
     const postId = parent ? parent.id : args.id;
     const post = await postsService.getPost(postId, ["group.config"]);
@@ -57,7 +57,7 @@ export const isPublicGroupPost = rule()(
   }
 );
 
-export const isPublicGroupProposal = rule()(
+export const isPublicProposal = rule()(
   async (parent, args, { services: { proposalsService } }: Context) => {
     const proposalId = parent ? parent.id : args.id;
     const proposal = await proposalsService.getProposal(proposalId, [
@@ -67,7 +67,7 @@ export const isPublicGroupProposal = rule()(
   }
 );
 
-export const isPublicGroupProposalAction = rule()(
+export const isPublicProposalAction = rule()(
   async (
     parent:
       | ProposalAction
@@ -206,7 +206,7 @@ export const isPublicGroupImage = rule()(
   }
 );
 
-export const isPublicGroupPostImage = rule()(
+export const isPublicPostImage = rule()(
   async (parent, _args, { services: { imagesService } }: Context) => {
     const image = await imagesService.getImage({ id: parent.id }, [
       "post.group.config",
@@ -215,7 +215,7 @@ export const isPublicGroupPostImage = rule()(
   }
 );
 
-export const isPublicGroupProposalImage = rule()(
+export const isPublicProposalImage = rule()(
   async (
     parent: Image,
     _args,
@@ -237,7 +237,7 @@ export const isPublicGroupProposalImage = rule()(
   }
 );
 
-export const isPublicGroupEventImage = rule()(
+export const isPublicEventImage = rule()(
   async (parent, _args, { services: { imagesService } }: Context) => {
     const image = await imagesService.getImage({ id: parent.id }, [
       "event.group.config",
@@ -246,7 +246,7 @@ export const isPublicGroupEventImage = rule()(
   }
 );
 
-export const isPublicGroupVote = rule()(
+export const isPublicVote = rule()(
   async (parent: Vote, _args, { services: { proposalsService } }: Context) => {
     const { group } = await proposalsService.getProposal(parent.proposalId, [
       "group.config",
