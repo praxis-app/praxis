@@ -37,14 +37,3 @@ export const hasNodes = (nodes: string[], path: ResponsePath) => {
   const pathArray = responsePathAsArray(path);
   return nodes.every((node) => pathArray.includes(node));
 };
-
-// TODO: Determine whether to remove this function
-export const getPath = (path: ResponsePath) =>
-  responsePathAsArray(path).reduce<string>(
-    (result, segment) => `${result}${result ? "." : ""}${segment}`,
-    ""
-  );
-
-// TODO: Determine whether to remove this function
-export const hasPath = (path: RegExp, currentPath: ResponsePath) =>
-  path.test(getPath(currentPath));
