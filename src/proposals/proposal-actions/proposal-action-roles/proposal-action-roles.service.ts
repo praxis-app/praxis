@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { FindOptionsWhere, Repository } from "typeorm";
 import { ProposalActionPermission } from "./models/proposal-action-permission.model";
 import { ProposalActionRoleInput } from "./models/proposal-action-role-input";
 import { ProposalActionRoleMember } from "./models/proposal-action-role-member.model";
@@ -25,21 +25,11 @@ export class ProposalActionRolesService {
   ) {}
 
   async getProposalActionRole(
-    proposalActionRoleId: number,
+    where: FindOptionsWhere<ProposalActionRole>,
     relations?: string[]
   ) {
     return this.proposalActionRoleRepository.findOne({
-      where: { id: proposalActionRoleId },
-      relations,
-    });
-  }
-
-  async getProposalActionRoleByProposalId(
-    proposalActionId: number,
-    relations?: string[]
-  ) {
-    return this.proposalActionRoleRepository.findOne({
-      where: { proposalActionId },
+      where,
       relations,
     });
   }

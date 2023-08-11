@@ -310,7 +310,7 @@ export const isPublicGroupProposalAction = rule()(
     if ("proposalActionRoleId" in parent) {
       const proposalActionRole =
         await proposalActionRolesService.getProposalActionRole(
-          parent.proposalActionRoleId,
+          { id: parent.proposalActionRoleId },
           ["proposalAction.proposal.group.config"]
         );
       return (

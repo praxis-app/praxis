@@ -27,8 +27,8 @@ export class ProposalActionsResolver {
 
   @ResolveField(() => ProposalActionRole)
   async role(@Parent() { id }: ProposalAction) {
-    return this.proposalActionRolesService.getProposalActionRoleByProposalId(
-      id
-    );
+    return this.proposalActionRolesService.getProposalActionRole({
+      proposalActionId: id,
+    });
   }
 }

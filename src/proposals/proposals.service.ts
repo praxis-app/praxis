@@ -205,11 +205,10 @@ export class ProposalsService {
     }
 
     if (actionType === ProposalActionType.CreateRole) {
-      const role =
-        await this.proposalActionRolesService.getProposalActionRoleByProposalId(
-          id,
-          ["permission", "members"]
-        );
+      const role = await this.proposalActionRolesService.getProposalActionRole(
+        { proposalActionId: id },
+        ["permission", "members"]
+      );
       if (!role) {
         throw new UserInputError("Could not find proposal action role");
       }
@@ -229,8 +228,8 @@ export class ProposalsService {
 
     if (actionType === ProposalActionType.ChangeRole) {
       const actionRole =
-        await this.proposalActionRolesService.getProposalActionRoleByProposalId(
-          id,
+        await this.proposalActionRolesService.getProposalActionRole(
+          { proposalActionId: id },
           ["permission", "members"]
         );
       if (!actionRole?.groupRoleId) {
