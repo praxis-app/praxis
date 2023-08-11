@@ -17,13 +17,13 @@ import {
   isPublicGroupEvent,
   isPublicGroupImage,
   isPublicGroupRole,
-  isPublicVote,
 } from "./rules/group.rules";
 import { isOwnPost, isPublicPost, isPublicPostImage } from "./rules/post.rules";
 import {
   isPublicProposal,
   isPublicProposalAction,
   isPublicProposalImage,
+  isPublicVote,
 } from "./rules/proposal.rules";
 import {
   canCreateServerInvites,

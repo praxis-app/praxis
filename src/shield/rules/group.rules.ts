@@ -10,37 +10,7 @@ import { UpdateGroupRoleInput } from "../../groups/group-roles/models/update-gro
 import { Group } from "../../groups/models/group.model";
 import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
-import { Vote } from "../../votes/models/vote.model";
 import { hasGroupPermission } from "../shield.utils";
-
-export const isGroupMember = rule()(
-  async (
-    parent: Group | undefined,
-    args: { id: number },
-    { user, services: { groupsService, groupRolesService } }: Context
-  ) => {
-    if (!user) {
-      return UNAUTHORIZED;
-    }
-    if (parent) {
-      return groupsService.isGroupMember(parent.id, user.id);
-    }
-    const { groupId } = await groupRolesService.getGroupRole({
-      id: args.id,
-    });
-    return groupsService.isGroupMember(groupId, user.id);
-  }
-);
-
-export const isPublicGroup = rule()(
-  async (parent, args, { services: { groupsService } }: Context) => {
-    const group = await groupsService.getGroup(
-      { id: parent ? parent.id : args.id, name: args.name },
-      ["config"]
-    );
-    return group.config.privacy === GroupPrivacy.Public;
-  }
-);
 
 export const canManageGroupRoles = rule()(
   async (
@@ -120,83 +90,6 @@ export const canApproveGroupMemberRequests = rule()(
   }
 );
 
-export const isPublicGroupRole = rule()(
-  async (parent, _args, { services: { groupsService } }: Context) => {
-    const group = await groupsService.getGroup({ id: parent.groupId }, [
-      "config",
-    ]);
-    return group.config.privacy === GroupPrivacy.Public;
-  }
-);
-
-export const isPublicGroupImage = rule()(
-  async (parent, _args, { services: { imagesService } }: Context) => {
-    const image = await imagesService.getImage({ id: parent.id }, [
-      "group.config",
-    ]);
-    return image?.group?.config.privacy === GroupPrivacy.Public;
-  }
-);
-
-export const isPublicEventImage = rule()(
-  async (parent, _args, { services: { imagesService } }: Context) => {
-    const image = await imagesService.getImage({ id: parent.id }, [
-      "event.group.config",
-    ]);
-    return image?.event?.group?.config.privacy === GroupPrivacy.Public;
-  }
-);
-
-export const isPublicGroupEvent = rule()(
-  async (
-    parent: Event,
-    args: { id: number },
-    { services: { eventsService } }: Context
-  ) => {
-    const event = await eventsService.getEvent({
-      id: parent ? parent.id : args.id,
-      group: {
-        config: { privacy: GroupPrivacy.Public },
-      },
-    });
-    return !!event;
-  }
-);
-
-export const isPublicVote = rule()(
-  async (parent: Vote, _args, { services: { proposalsService } }: Context) => {
-    const { group } = await proposalsService.getProposal(parent.proposalId, [
-      "group.config",
-    ]);
-    return group.config.privacy === GroupPrivacy.Public;
-  }
-);
-
-export const isProposalGroupJoinedByMe = rule()(
-  async (
-    _parent,
-    { voteData }: { voteData: CreateVoteInput },
-    { user, services: { groupsService, proposalsService } }: Context
-  ) => {
-    if (!user) {
-      return UNAUTHORIZED;
-    }
-    const { group } = await proposalsService.getProposal(voteData.proposalId, [
-      "group",
-    ]);
-    if (group) {
-      const isJoinedByUser = await groupsService.isGroupMember(
-        group.id,
-        user.id
-      );
-      if (!isJoinedByUser) {
-        return "You must be a group member to vote on this proposal";
-      }
-    }
-    return true;
-  }
-);
-
 export const canUpdateGroup = rule()(
   async (
     _parent,
@@ -259,5 +152,102 @@ export const canManageGroupEvents = rule()(
       return false;
     }
     return hasGroupPermission(permissions, "manageEvents", groupId);
+  }
+);
+
+export const isGroupMember = rule()(
+  async (
+    parent: Group | undefined,
+    args: { id: number },
+    { user, services: { groupsService, groupRolesService } }: Context
+  ) => {
+    if (!user) {
+      return UNAUTHORIZED;
+    }
+    if (parent) {
+      return groupsService.isGroupMember(parent.id, user.id);
+    }
+    const { groupId } = await groupRolesService.getGroupRole({
+      id: args.id,
+    });
+    return groupsService.isGroupMember(groupId, user.id);
+  }
+);
+
+export const isPublicGroup = rule()(
+  async (parent, args, { services: { groupsService } }: Context) => {
+    const group = await groupsService.getGroup(
+      { id: parent ? parent.id : args.id, name: args.name },
+      ["config"]
+    );
+    return group.config.privacy === GroupPrivacy.Public;
+  }
+);
+
+export const isPublicGroupRole = rule()(
+  async (parent, _args, { services: { groupsService } }: Context) => {
+    const group = await groupsService.getGroup({ id: parent.groupId }, [
+      "config",
+    ]);
+    return group.config.privacy === GroupPrivacy.Public;
+  }
+);
+
+export const isPublicGroupImage = rule()(
+  async (parent, _args, { services: { imagesService } }: Context) => {
+    const image = await imagesService.getImage({ id: parent.id }, [
+      "group.config",
+    ]);
+    return image?.group?.config.privacy === GroupPrivacy.Public;
+  }
+);
+
+export const isPublicEventImage = rule()(
+  async (parent, _args, { services: { imagesService } }: Context) => {
+    const image = await imagesService.getImage({ id: parent.id }, [
+      "event.group.config",
+    ]);
+    return image?.event?.group?.config.privacy === GroupPrivacy.Public;
+  }
+);
+
+export const isPublicGroupEvent = rule()(
+  async (
+    parent: Event,
+    args: { id: number },
+    { services: { eventsService } }: Context
+  ) => {
+    const event = await eventsService.getEvent({
+      id: parent ? parent.id : args.id,
+      group: {
+        config: { privacy: GroupPrivacy.Public },
+      },
+    });
+    return !!event;
+  }
+);
+
+export const isProposalGroupJoinedByMe = rule()(
+  async (
+    _parent,
+    { voteData }: { voteData: CreateVoteInput },
+    { user, services: { groupsService, proposalsService } }: Context
+  ) => {
+    if (!user) {
+      return UNAUTHORIZED;
+    }
+    const { group } = await proposalsService.getProposal(voteData.proposalId, [
+      "group",
+    ]);
+    if (group) {
+      const isJoinedByUser = await groupsService.isGroupMember(
+        group.id,
+        user.id
+      );
+      if (!isJoinedByUser) {
+        return "You must be a group member to vote on this proposal";
+      }
+    }
+    return true;
   }
 );

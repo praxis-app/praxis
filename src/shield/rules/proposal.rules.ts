@@ -6,6 +6,7 @@ import { ProposalAction } from "../../proposals/proposal-actions/models/proposal
 import { ProposalActionPermission } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model";
 import { ProposalActionRoleMember } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
 import { ProposalActionRole } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
+import { Vote } from "../../votes/models/vote.model";
 
 export const isPublicProposal = rule()(
   async (parent, args, { services: { proposalsService } }: Context) => {
@@ -79,5 +80,14 @@ export const isPublicProposalAction = rule()(
       "group.config",
     ]);
     return proposal.group.config.privacy === GroupPrivacy.Public;
+  }
+);
+
+export const isPublicVote = rule()(
+  async (parent: Vote, _args, { services: { proposalsService } }: Context) => {
+    const { group } = await proposalsService.getProposal(parent.proposalId, [
+      "group.config",
+    ]);
+    return group.config.privacy === GroupPrivacy.Public;
   }
 );
