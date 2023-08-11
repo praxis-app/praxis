@@ -63,15 +63,6 @@ export const hasValidRefreshToken = rule()(
   }
 );
 
-export const isOwnPost = rule()(
-  async (_parent, args, { user, services: { usersService } }: Context) => {
-    if (!user) {
-      return UNAUTHORIZED;
-    }
-    return usersService.isUsersPost(args.id, user.id);
-  }
-);
-
 export const isUserInPublicPost = rule()(async (_parent, _args, _ctx, info) =>
   hasNodes(["publicPost", "user"], info.path)
 );

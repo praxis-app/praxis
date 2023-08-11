@@ -17,7 +17,7 @@ import {
   isPublicGroupRole,
   isPublicVote,
 } from "./rules/group.rules";
-import { isPublicPost, isPublicPostImage } from "./rules/post.rules";
+import { isOwnPost, isPublicPost, isPublicPostImage } from "./rules/post.rules";
 import {
   isPublicProposal,
   isPublicProposalAction,
@@ -32,7 +32,6 @@ import {
   canRemoveMembers,
   hasValidRefreshToken,
   isAuthenticated,
-  isOwnPost,
   isPublicEvent,
   isUserAvatarInPublicFeed,
   isUserAvatarInPublicPost,

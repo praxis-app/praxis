@@ -1,6 +1,16 @@
 import { rule } from "graphql-shield";
+import { UNAUTHORIZED } from "../../../common/common.constants";
 import { Context } from "../../../context/context.service";
 import { GroupPrivacy } from "../../../groups/group-configs/models/group-config.model";
+
+export const isOwnPost = rule()(
+  async (_parent, args, { user, services: { usersService } }: Context) => {
+    if (!user) {
+      return UNAUTHORIZED;
+    }
+    return usersService.isUsersPost(args.id, user.id);
+  }
+);
 
 export const isPublicPost = rule()(
   async (parent, args, { services: { postsService } }: Context) => {
