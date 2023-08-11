@@ -16,13 +16,13 @@ import {
   isPublicGroupImage,
   isPublicGroupRole,
   isPublicVote,
-} from "./rules/group.shield-rules";
-import { isPublicPost, isPublicPostImage } from "./rules/post.shield-rules";
+} from "./rules/group.rules";
+import { isPublicPost, isPublicPostImage } from "./rules/post.rules";
 import {
   isPublicProposal,
   isPublicProposalAction,
   isPublicProposalImage,
-} from "./rules/proposal.shield-rules";
+} from "./rules/proposal.rules";
 import {
   canCreateServerInvites,
   canManageEvents,
