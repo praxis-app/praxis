@@ -11,17 +11,18 @@ import {
   canUpdateGroup,
   isGroupMember,
   isProposalGroupJoinedByMe,
-  isPublicGroup,
   isPublicEventImage,
+  isPublicGroup,
   isPublicGroupImage,
-  isPublicPost,
-  isPublicPostImage,
-  isPublicProposal,
-  isPublicProposalAction,
-  isPublicProposalImage,
   isPublicGroupRole,
   isPublicVote,
 } from "./rules/group.shield-rules";
+import { isPublicPost, isPublicPostImage } from "./rules/post.shield-rules";
+import {
+  isPublicProposal,
+  isPublicProposalAction,
+  isPublicProposalImage,
+} from "./rules/proposal.shield-rules";
 import {
   canCreateServerInvites,
   canManageEvents,

@@ -8,11 +8,6 @@ import { DeleteGroupRoleMemberInput } from "../../../groups/group-roles/models/d
 import { UpdateGroupRoleInput } from "../../../groups/group-roles/models/update-group-role.input";
 import { Group } from "../../../groups/models/group.model";
 import { UpdateGroupInput } from "../../../groups/models/update-group.input";
-import { Image } from "../../../images/models/image.model";
-import { ProposalAction } from "../../../proposals/proposal-actions/models/proposal-action.model";
-import { ProposalActionPermission } from "../../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model";
-import { ProposalActionRoleMember } from "../../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
-import { ProposalActionRole } from "../../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
 import { CreateVoteInput } from "../../../votes/models/create-vote.input";
 import { Vote } from "../../../votes/models/vote.model";
 import { hasGroupPermission } from "../shield.utils";
@@ -43,70 +38,6 @@ export const isPublicGroup = rule()(
       ["config"]
     );
     return group.config.privacy === GroupPrivacy.Public;
-  }
-);
-
-export const isPublicPost = rule()(
-  async (parent, args, { services: { postsService } }: Context) => {
-    const postId = parent ? parent.id : args.id;
-    const post = await postsService.getPost(postId, ["group.config"]);
-    if (!post.group) {
-      return false;
-    }
-    return post.group.config.privacy === GroupPrivacy.Public;
-  }
-);
-
-export const isPublicProposal = rule()(
-  async (parent, args, { services: { proposalsService } }: Context) => {
-    const proposalId = parent ? parent.id : args.id;
-    const proposal = await proposalsService.getProposal(proposalId, [
-      "group.config",
-    ]);
-    return proposal.group.config.privacy === GroupPrivacy.Public;
-  }
-);
-
-export const isPublicProposalAction = rule()(
-  async (
-    parent:
-      | ProposalAction
-      | ProposalActionRole
-      | ProposalActionPermission
-      | ProposalActionRoleMember,
-    _args,
-    {
-      services: {
-        proposalsService,
-        proposalActionsService,
-        proposalActionRolesService,
-      },
-    }: Context
-  ) => {
-    if ("proposalActionId" in parent) {
-      const proposalAction = await proposalActionsService.getProposalAction(
-        { id: parent.proposalActionId },
-        ["proposal.group.config"]
-      );
-      return (
-        proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
-      );
-    }
-    if ("proposalActionRoleId" in parent) {
-      const proposalActionRole =
-        await proposalActionRolesService.getProposalActionRole(
-          { id: parent.proposalActionRoleId },
-          ["proposalAction.proposal.group.config"]
-        );
-      return (
-        proposalActionRole?.proposalAction.proposal.group.config.privacy ===
-        GroupPrivacy.Public
-      );
-    }
-    const proposal = await proposalsService.getProposal(parent.proposalId, [
-      "group.config",
-    ]);
-    return proposal.group.config.privacy === GroupPrivacy.Public;
   }
 );
 
@@ -203,37 +134,6 @@ export const isPublicGroupImage = rule()(
       "group.config",
     ]);
     return image?.group?.config.privacy === GroupPrivacy.Public;
-  }
-);
-
-export const isPublicPostImage = rule()(
-  async (parent, _args, { services: { imagesService } }: Context) => {
-    const image = await imagesService.getImage({ id: parent.id }, [
-      "post.group.config",
-    ]);
-    return image?.post?.group?.config.privacy === GroupPrivacy.Public;
-  }
-);
-
-export const isPublicProposalImage = rule()(
-  async (
-    parent: Image,
-    _args,
-    { services: { proposalsService, proposalActionsService } }: Context
-  ) => {
-    if (parent?.proposalActionId) {
-      const proposalAction = await proposalActionsService.getProposalAction(
-        { id: parent.proposalActionId },
-        ["proposal.group.config"]
-      );
-      return (
-        proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
-      );
-    }
-    const { group } = await proposalsService.getProposal(parent.proposalId, [
-      "group.config",
-    ]);
-    return group.config.privacy === GroupPrivacy.Public;
   }
 );
 
