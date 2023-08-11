@@ -1,5 +1,6 @@
 import { allow, and, not, or, shield } from "graphql-shield";
 import { FORBIDDEN } from "../../common/common.constants";
+import { hasValidRefreshToken, isAuthenticated } from "./rules/auth.rules";
 import {
   canApproveGroupMemberRequests,
   canCreateGroupEvents,
@@ -30,8 +31,6 @@ import {
   canManageServerInvites,
   canManageServerRoles,
   canRemoveMembers,
-  hasValidRefreshToken,
-  isAuthenticated,
   isPublicEvent,
   isUserAvatarInPublicFeed,
   isUserAvatarInPublicPost,
