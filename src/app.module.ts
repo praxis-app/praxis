@@ -6,7 +6,7 @@ import { GraphQLSchema } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { GraphQLUpload } from "graphql-upload";
 import { AuthModule } from "./auth/auth.module";
-import { shieldPermissions } from "./auth/shield/shield.permissions";
+import { shieldPermissions } from "./shield/shield.permissions";
 import { Environment } from "./common/common.constants";
 import { ContextModule } from "./context/context.module";
 import { ContextService } from "./context/context.service";
@@ -22,6 +22,7 @@ import { ServerInvitesModule } from "./server-invites/server-invites.module";
 import { ServerRolesModule } from "./server-roles/server-roles.module";
 import { UsersModule } from "./users/users.module";
 import { VotesModule } from "./votes/votes.module";
+import { ShieldModule } from "./shield/shield.module";
 
 export const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
@@ -56,6 +57,7 @@ export const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     ProposalsModule,
     ServerInvitesModule,
     ServerRolesModule,
+    ShieldModule,
     UsersModule,
     VotesModule,
   ],

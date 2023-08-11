@@ -1,41 +1,43 @@
 import { allow, and, not, or, shield } from "graphql-shield";
-import { FORBIDDEN } from "../../common/common.constants";
+import { FORBIDDEN } from "../common/common.constants";
+import { hasValidRefreshToken, isAuthenticated } from "./rules/auth.rules";
+import { isPublicEvent, isPublicEventImage } from "./rules/event.rules";
 import {
   canApproveGroupMemberRequests,
   canCreateGroupEvents,
-  canCreateServerInvites,
   canDeleteGroup,
-  canManageEvents,
   canManageGroupEvents,
   canManageGroupPosts,
   canManageGroupRoles,
   canManageGroupSettings,
+  canUpdateGroup,
+  isGroupMember,
+  isProposalGroupJoinedByMe,
+  isPublicGroup,
+  isPublicGroupImage,
+  isPublicGroupRole,
+} from "./rules/group.rules";
+import { isOwnPost, isPublicPost, isPublicPostImage } from "./rules/post.rules";
+import {
+  isPublicProposal,
+  isPublicProposalAction,
+  isPublicProposalImage,
+  isPublicVote,
+} from "./rules/proposal.rules";
+import {
+  canCreateServerInvites,
+  canManageEvents,
   canManagePosts,
   canManageServerInvites,
   canManageServerRoles,
   canRemoveMembers,
-  canUpdateGroup,
-  hasValidRefreshToken,
-  isAuthenticated,
-  isGroupMember,
-  isOwnPost,
-  isProposalGroupJoinedByMe,
-  isPublicEvent,
-  isPublicGroup,
-  isPublicGroupEventImage,
-  isPublicGroupImage,
-  isPublicGroupPost,
-  isPublicGroupPostImage,
-  isPublicGroupProposal,
-  isPublicGroupProposalAction,
-  isPublicGroupRole,
+} from "./rules/role.rules";
+import {
   isUserAvatarInPublicFeed,
   isUserAvatarInPublicPost,
   isUserInPublicFeed,
   isUserInPublicPost,
-  isPublicGroupVote,
-  isPublicGroupProposalImage,
-} from "./shield.rules";
+} from "./rules/user.rules";
 
 export const shieldPermissions = shield(
   {
@@ -44,8 +46,8 @@ export const shieldPermissions = shield(
       users: canRemoveMembers,
       serverInvite: allow,
       serverInvites: or(canCreateServerInvites, canManageServerInvites),
-      post: or(isAuthenticated, isPublicGroupPost),
-      proposal: or(isAuthenticated, isPublicGroupProposal),
+      post: or(isAuthenticated, isPublicPost),
+      proposal: or(isAuthenticated, isPublicProposal),
       group: or(isAuthenticated, isPublicGroup),
       event: or(isAuthenticated, isPublicEvent),
       groupRole: isGroupMember,
@@ -92,18 +94,14 @@ export const shieldPermissions = shield(
     Image: {
       id: or(
         isAuthenticated,
+        isPublicEventImage,
         isPublicGroupImage,
-        isPublicGroupPostImage,
-        isPublicGroupEventImage,
-        isUserAvatarInPublicPost,
-        isPublicGroupProposalImage,
-        isUserAvatarInPublicFeed
+        isPublicPostImage,
+        isPublicProposalImage,
+        isUserAvatarInPublicFeed,
+        isUserAvatarInPublicPost
       ),
-      filename: or(
-        isAuthenticated,
-        isPublicGroupPostImage,
-        isPublicGroupProposalImage
-      ),
+      filename: or(isAuthenticated, isPublicPostImage, isPublicProposalImage),
     },
     Group: {
       id: or(isAuthenticated, isPublicGroup),
@@ -132,13 +130,13 @@ export const shieldPermissions = shield(
       token: allow,
     },
     Event: or(isAuthenticated, isPublicEvent),
-    Post: or(isAuthenticated, isPublicGroupPost),
-    Proposal: or(isAuthenticated, isPublicGroupProposal),
-    ProposalAction: or(isAuthenticated, isPublicGroupProposalAction),
-    ProposalActionRole: or(isAuthenticated, isPublicGroupProposalAction),
-    ProposalActionPermission: or(isAuthenticated, isPublicGroupProposalAction),
-    ProposalActionRoleMember: or(isAuthenticated, isPublicGroupProposalAction),
-    Vote: or(isAuthenticated, isUserInPublicFeed, isPublicGroupVote),
+    Post: or(isAuthenticated, isPublicPost),
+    Proposal: or(isAuthenticated, isPublicProposal),
+    ProposalAction: or(isAuthenticated, isPublicProposalAction),
+    ProposalActionRole: or(isAuthenticated, isPublicProposalAction),
+    ProposalActionPermission: or(isAuthenticated, isPublicProposalAction),
+    ProposalActionRoleMember: or(isAuthenticated, isPublicProposalAction),
+    Vote: or(isAuthenticated, isUserInPublicFeed, isPublicVote),
   },
   {
     fallbackRule: isAuthenticated,
