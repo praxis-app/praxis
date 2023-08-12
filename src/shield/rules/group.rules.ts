@@ -1,7 +1,11 @@
 import { rule } from "graphql-shield";
+import { FindOptionsWhere } from "typeorm";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../context/context.types";
-import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
+import {
+  GroupConfig,
+  GroupPrivacy,
+} from "../../groups/group-configs/models/group-config.model";
 import { UpdateGroupConfigInput } from "../../groups/group-configs/models/update-group-config.input";
 import { CreateGroupRoleInput } from "../../groups/group-roles/models/create-group-role.input";
 import { DeleteGroupRoleMemberInput } from "../../groups/group-roles/models/delete-group-role-member.input";
@@ -174,12 +178,25 @@ export const isGroupMember = rule({ cache: "strict" })(
 );
 
 export const isPublicGroup = rule({ cache: "strict" })(
-  async (parent, args, { services: { groupsService } }: Context) => {
-    const group = await groupsService.getGroup(
-      { id: parent ? parent.id : args.id, name: args.name },
-      ["config"]
-    );
-    return group.config.privacy === GroupPrivacy.Public;
+  async (
+    parent: Group | GroupConfig | null,
+    args: { id: number; name: string } | null,
+    { services: { groupsService } }: Context
+  ) => {
+    let where: FindOptionsWhere<Group> = {};
+
+    if (parent instanceof Group) {
+      where = { id: parent.id };
+    } else if (parent instanceof GroupConfig) {
+      where = { id: parent.groupId };
+    } else if (args) {
+      where = { id: args.id, name: args.name };
+    }
+    if (!where.id && !where.name) {
+      return false;
+    }
+    const { config } = await groupsService.getGroup(where, ["config"]);
+    return config.privacy === GroupPrivacy.Public;
   }
 );
 
