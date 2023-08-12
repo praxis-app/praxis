@@ -65,12 +65,16 @@ export class GroupsService {
   async getPublicGroupsFeed() {
     const publicGroups = await this.getGroups(
       { config: { privacy: GroupPrivacy.Public } },
-      ["posts", "proposals"]
+      ["posts", "proposals", "events.posts"]
     );
     const [posts, proposals] = publicGroups.reduce<[Post[], Proposal[]]>(
-      (result, { posts, proposals }) => {
+      (result, { posts, proposals, events }) => {
+        const eventPosts = events.reduce<Post[]>(
+          (res, { posts }) => [...res, ...posts],
+          []
+        );
+        result[0].push(...posts, ...eventPosts);
         result[1].push(...proposals);
-        result[0].push(...posts);
         return result;
       },
       [[], []]
