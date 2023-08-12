@@ -80,26 +80,23 @@ export class UsersService {
       {}
     );
 
-    // Insert posts from followed users
-    for (const follow of following) {
-      for (const post of follow.posts) {
-        postMap[post.id] = post;
-      }
+    const extractPosts = (items: { posts: Post[] }[]) =>
+      items.flatMap((item) => item.posts);
+
+    // Insert remaining posts from joined groups and followed users
+    const remainingPosts = [
+      ...extractPosts(groups.flatMap((group) => group.events)),
+      ...extractPosts(following),
+      ...extractPosts(groups),
+    ];
+    for (const post of remainingPosts) {
+      postMap[post.id] = post;
     }
 
-    // Insert posts and proposals from groups joined
-    for (const group of groups) {
-      for (const post of group.posts) {
-        postMap[post.id] = post;
-      }
-      for (const proposal of group.proposals) {
-        proposalMap[proposal.id] = proposal;
-      }
-      for (const event of group.events) {
-        for (const post of event.posts) {
-          postMap[post.id] = post;
-        }
-      }
+    // Insert proposals from joined groups
+    const proposalsFromGroups = groups.flatMap((group) => group.proposals);
+    for (const proposal of proposalsFromGroups) {
+      proposalMap[proposal.id] = proposal;
     }
 
     const sortedFeed = [
