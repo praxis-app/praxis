@@ -80,11 +80,11 @@ type ProposalAction {
   actionType: String!
   groupName: String
   groupDescription: String
-  groupCoverPhoto: Image
   role: ProposalActionRole
   proposal: Proposal!
   createdAt: DateTime!
   updatedAt: DateTime!
+  groupCoverPhoto: Image
 }
 
 type Proposal {
@@ -312,14 +312,6 @@ type ServerPermissions {
   removeMembers: Boolean!
 }
 
-type LoginPayload {
-  user: User!
-}
-
-type SignUpPayload {
-  user: User!
-}
-
 type CreateEventPayload {
   event: Event!
 }
@@ -463,8 +455,8 @@ type Mutation {
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
   refreshToken: Boolean!
-  login(input: LoginInput!): LoginPayload!
-  signUp(input: SignUpInput!): SignUpPayload!
+  login(input: LoginInput!): Boolean!
+  signUp(input: SignUpInput!): Boolean!
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!

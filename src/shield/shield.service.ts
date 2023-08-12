@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { EventsService } from "../../events/events.service";
-import { CreateEventInput } from "../../events/models/create-event.input";
-import { UpdateEventInput } from "../../events/models/update-event.input";
+import { EventsService } from "../events/events.service";
+import { CreateEventInput } from "../events/models/create-event.input";
+import { UpdateEventInput } from "../events/models/update-event.input";
 
 @Injectable()
 export class ShieldService {

@@ -32,9 +32,6 @@ export class ProposalAction {
   @Field({ nullable: true })
   groupDescription?: string;
 
-  @Field(() => Image, { nullable: true })
-  groupCoverPhoto?: Image;
-
   @OneToMany(() => Image, (image) => image.proposalAction)
   images: Image[];
 

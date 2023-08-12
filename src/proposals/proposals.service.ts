@@ -206,7 +206,7 @@ export class ProposalsService {
 
     if (actionType === ProposalActionType.CreateRole) {
       const role = await this.proposalActionRolesService.getProposalActionRole(
-        id,
+        { proposalActionId: id },
         ["permission", "members"]
       );
       if (!role) {
@@ -228,10 +228,10 @@ export class ProposalsService {
 
     if (actionType === ProposalActionType.ChangeRole) {
       const actionRole =
-        await this.proposalActionRolesService.getProposalActionRole(id, [
-          "permission",
-          "members",
-        ]);
+        await this.proposalActionRolesService.getProposalActionRole(
+          { proposalActionId: id },
+          ["permission", "members"]
+        );
       if (!actionRole?.groupRoleId) {
         throw new UserInputError("Could not find proposal action role");
       }

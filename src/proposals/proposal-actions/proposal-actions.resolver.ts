@@ -20,13 +20,15 @@ export class ProposalActionsResolver {
     return this.proposalsService.getProposal(proposalId);
   }
 
-  @ResolveField(() => Image)
+  @ResolveField(() => Image, { nullable: true })
   async groupCoverPhoto(@Parent() { id }: ProposalAction) {
     return this.proposalActionsService.getProposedGroupCoverPhoto(id);
   }
 
   @ResolveField(() => ProposalActionRole)
   async role(@Parent() { id }: ProposalAction) {
-    return this.proposalActionRolesService.getProposalActionRole(id);
+    return this.proposalActionRolesService.getProposalActionRole({
+      proposalActionId: id,
+    });
   }
 }

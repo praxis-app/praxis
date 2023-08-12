@@ -5,7 +5,7 @@ import { compare, hash } from "bcrypt";
 import { ServerInvitesService } from "../server-invites/server-invites.service";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
-import { SetAuthCookieInput } from "./interceptors/set-auth-cookie.interceptor";
+import { AuthTokens } from "./auth.types";
 import { LoginInput } from "./models/login.input";
 import { SignUpInput } from "./models/sign-up.input";
 import { RefreshTokensService } from "./refresh-tokens/refresh-tokens.service";
@@ -13,11 +13,6 @@ import { AccessTokenPayload } from "./strategies/jwt.strategy";
 
 const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 90;
 const SALT_ROUNDS = 10;
-
-export interface AuthTokens {
-  access_token: string;
-  refresh_token: string;
-}
 
 @Injectable()
 export class AuthService {
@@ -30,10 +25,10 @@ export class AuthService {
     private usersService: UsersService
   ) {}
 
-  async login({ email, password }: LoginInput): Promise<SetAuthCookieInput> {
+  async login({ email, password }: LoginInput) {
     const user = await this.validateUser(email, password);
     const authTokens = await this.generateAuthTokens(user.id);
-    return { user, authTokens };
+    return authTokens;
   }
 
   async signUp({
@@ -42,7 +37,7 @@ export class AuthService {
     confirmPassword,
     profilePicture,
     ...userData
-  }: SignUpInput): Promise<SetAuthCookieInput> {
+  }: SignUpInput) {
     const users = await this.usersService.getUsers();
     if (users.length && !inviteToken) {
       throw new UserInputError("Missing invite token");
@@ -74,7 +69,7 @@ export class AuthService {
     if (inviteToken) {
       await this.serverInvitesService.redeemServerInvite(inviteToken);
     }
-    return { user, authTokens };
+    return authTokens;
   }
 
   async generateAuthTokens(userId: number): Promise<AuthTokens> {

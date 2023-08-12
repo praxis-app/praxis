@@ -4,7 +4,8 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { TokenExpiredError } from "jsonwebtoken";
 import { Not, Repository } from "typeorm";
 import { UsersService } from "../../users/users.service";
-import { AuthService, AuthTokens } from "../auth.service";
+import { AuthService } from "../auth.service";
+import { AuthTokens } from "../auth.types";
 import { RefreshToken } from "./models/refresh-token.model";
 
 const REFRESH_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 7;

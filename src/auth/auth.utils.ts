@@ -1,28 +1,8 @@
 import { config } from "dotenv";
 import { JwtPayload, verify } from "jsonwebtoken";
-import { AuthTokens } from "./auth.service";
+import { RequestWithCookies } from "./auth.types";
 
 config();
-
-export interface Claims {
-  accessTokenClaims: JwtPayload | null;
-  refreshTokenClaims: JwtPayload | null;
-}
-
-interface RequestWithCookies extends Request {
-  cookies?: { auth?: AuthTokens };
-}
-
-export const getClaims = (req: RequestWithCookies) => {
-  const { cookies } = req;
-  const accessTokenClaims = cookies?.auth
-    ? decodeToken(cookies.auth.access_token)
-    : null;
-  const refreshTokenClaims = cookies?.auth
-    ? decodeToken(cookies.auth.refresh_token)
-    : null;
-  return { accessTokenClaims, refreshTokenClaims };
-};
 
 export const decodeToken = (token: string) => {
   try {
@@ -53,4 +33,15 @@ export const getJti = (claims: JwtPayload | null) => {
     return null;
   }
   return parseInt(claims.jti);
+};
+
+export const getClaims = (req: RequestWithCookies) => {
+  const { cookies } = req;
+  const accessTokenClaims = cookies?.auth
+    ? decodeToken(cookies.auth.access_token)
+    : null;
+  const refreshTokenClaims = cookies?.auth
+    ? decodeToken(cookies.auth.refresh_token)
+    : null;
+  return { accessTokenClaims, refreshTokenClaims };
 };
