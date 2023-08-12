@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Claims } from "../auth/auth.types";
+import { AuthTokenClaims } from "../auth/auth.types";
 import { getClaims, getSub } from "../auth/auth.utils";
 import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
 import { DataloaderService } from "../dataloader/dataloader.service";
@@ -64,12 +64,12 @@ export class ContextService {
     };
   }
 
-  private getUserFromClaims(claims: Claims) {
+  private getUserFromClaims(claims: AuthTokenClaims) {
     const sub = getSub(claims.accessTokenClaims);
     return sub ? this.usersService.getUser({ id: sub }) : null;
   }
 
-  private getUserPermisionsFromClaims(claims: Claims) {
+  private getUserPermisionsFromClaims(claims: AuthTokenClaims) {
     const sub = getSub(claims.accessTokenClaims);
     return sub ? this.usersService.getUserPermissions(sub) : null;
   }

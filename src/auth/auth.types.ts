@@ -5,11 +5,11 @@ export interface AuthTokens {
   refresh_token: string;
 }
 
-export interface RequestWithCookies extends Request {
-  cookies?: { auth?: AuthTokens };
-}
-
-export interface Claims {
+export interface AuthTokenClaims {
   accessTokenClaims: JwtPayload | null;
   refreshTokenClaims: JwtPayload | null;
+}
+
+export interface RequestWithCookies extends Request {
+  cookies?: { auth?: AuthTokens };
 }
