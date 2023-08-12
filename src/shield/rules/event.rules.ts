@@ -1,5 +1,5 @@
 import { rule } from "graphql-shield";
-import { Context } from "../../context/context.service";
+import { Context } from "../../context/context.types";
 import { Event } from "../../events/models/event.model";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
 import { Image } from "../../images/models/image.model";

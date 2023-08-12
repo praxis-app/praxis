@@ -1,7 +1,7 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 import { GqlExecutionContext } from "@nestjs/graphql";
 import { AuthenticationError } from "apollo-server-express";
-import { Context } from "../../../context/context.service";
+import { Context } from "../../../context/context.types";
 import { User } from "../../../users/models/user.model";
 import { getSub } from "../../auth.utils";
 
