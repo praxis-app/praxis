@@ -35,7 +35,6 @@ import {
 import {
   isUserAvatarInPublicFeed,
   isUserAvatarInPublicPost,
-  isUserInPublicFeed,
   isUserInPublicGroups,
 } from "./rules/user.rules";
 
@@ -132,7 +131,7 @@ export const shieldPermissions = shield(
     ProposalActionRole: or(isAuthenticated, isPublicProposalAction),
     ProposalActionPermission: or(isAuthenticated, isPublicProposalAction),
     ProposalActionRoleMember: or(isAuthenticated, isPublicProposalAction),
-    Vote: or(isAuthenticated, isUserInPublicFeed, isPublicVote),
+    Vote: or(isAuthenticated, isPublicVote),
   },
   {
     fallbackRule: isAuthenticated,
