@@ -45,7 +45,7 @@ export const shieldPermissions = shield(
       users: canRemoveMembers,
       serverInvite: allow,
       serverInvites: or(canCreateServerInvites, canManageServerInvites),
-      post: or(isAuthenticated, isPublicPost),
+      post: or(isAuthenticated, isPublicPost, isPublicEventPost),
       proposal: or(isAuthenticated, isPublicProposal),
       group: or(isAuthenticated, isPublicGroup),
       event: or(isAuthenticated, isPublicEvent),

@@ -22,9 +22,26 @@ export const isPublicEvent = rule({ cache: "strict" })(
 );
 
 export const isPublicEventPost = rule({ cache: "strict" })(
-  async (parent: Post, _args, { services: { postsService } }: Context) => {
-    const post = await postsService.getPost(parent.id, ["event.group.config"]);
-    return post.event?.group?.config.privacy === GroupPrivacy.Public;
+  async (
+    parent: Post | null,
+    args: { id: number } | null,
+    { services: { postsService } }: Context
+  ) => {
+    let postId: number | undefined;
+
+    if (parent) {
+      postId = parent.id;
+    } else if (args) {
+      postId = args.id;
+    }
+    if (!postId) {
+      return false;
+    }
+
+    const { event } = await postsService.getPost(postId, [
+      "event.group.config",
+    ]);
+    return event?.group?.config.privacy === GroupPrivacy.Public;
   }
 );
 
