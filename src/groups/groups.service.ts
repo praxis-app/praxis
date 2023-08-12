@@ -44,13 +44,6 @@ export class GroupsService {
     return this.groupRepository.findOneOrFail({ where, relations });
   }
 
-  async getPublicGroup(name: string) {
-    return this.getGroup({
-      config: { privacy: GroupPrivacy.Public },
-      name,
-    });
-  }
-
   async getGroups(where?: FindOptionsWhere<Group>, relations?: string[]) {
     return this.groupRepository.find({
       order: { updatedAt: "DESC" },

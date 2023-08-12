@@ -53,11 +53,6 @@ export class GroupsResolver {
     return this.groupsService.getGroup({ id, name });
   }
 
-  @Query(() => Group)
-  async publicGroup(@Args("name", { type: () => String }) name: string) {
-    return this.groupsService.getPublicGroup(name);
-  }
-
   @Query(() => [Group])
   async groups() {
     return this.groupsService.getGroups();
