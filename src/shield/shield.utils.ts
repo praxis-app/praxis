@@ -1,4 +1,3 @@
-import { ResponsePath, responsePathAsArray } from "graphql";
 import { UNAUTHORIZED } from "../common/common.constants";
 import { GroupPermissions } from "../groups/group-roles/models/group-permissions.type";
 import { ServerPermissions } from "../server-roles/models/server-permissions.type";
@@ -31,9 +30,4 @@ export const hasGroupPermission = (
     return false;
   }
   return true;
-};
-
-export const hasNodes = (nodes: string[], path: ResponsePath) => {
-  const pathArray = responsePathAsArray(path);
-  return nodes.every((node) => pathArray.includes(node));
 };
