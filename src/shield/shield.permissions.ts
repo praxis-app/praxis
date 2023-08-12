@@ -86,17 +86,6 @@ export const shieldPermissions = shield(
       name: or(isAuthenticated, isUserInPublicGroups),
       profilePicture: or(isAuthenticated, isUserInPublicGroups),
     },
-    Image: {
-      id: or(
-        isAuthenticated,
-        isPublicEventImage,
-        isPublicGroupImage,
-        isPublicPostImage,
-        isPublicProposalImage,
-        isPublicUserAvatar
-      ),
-      filename: or(isAuthenticated, isPublicPostImage, isPublicProposalImage),
-    },
     Group: {
       id: or(isAuthenticated, isPublicGroup),
       name: or(isAuthenticated, isPublicGroup),
@@ -111,13 +100,24 @@ export const shieldPermissions = shield(
       memberRequestCount: canApproveGroupMemberRequests,
       roles: isGroupMember,
     },
-    GroupConfig: {
-      isPublic: or(isAuthenticated, isPublicGroup),
-    },
     GroupRole: {
       id: or(isAuthenticated, isPublicGroupRole),
       name: or(isAuthenticated, isPublicGroupRole),
       color: or(isAuthenticated, isPublicGroupRole),
+    },
+    GroupConfig: {
+      isPublic: or(isAuthenticated, isPublicGroup),
+    },
+    Image: {
+      id: or(
+        isAuthenticated,
+        isPublicEventImage,
+        isPublicGroupImage,
+        isPublicPostImage,
+        isPublicProposalImage,
+        isPublicUserAvatar
+      ),
+      filename: or(isAuthenticated, isPublicPostImage, isPublicProposalImage),
     },
     ServerInvite: {
       id: allow,
