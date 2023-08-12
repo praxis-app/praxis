@@ -1,8 +1,8 @@
 import { rule } from "graphql-shield";
 import { Context } from "../../context/context.service";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
+import { Image } from "../../images/models/image.model";
 import { User } from "../../users/models/user.model";
-import { hasNodes } from "../shield.utils";
 
 export const isUserInPublicGroups = rule()(
   async (parent: User, _args, { services: { usersService } }: Context) => {
@@ -18,13 +18,16 @@ export const isUserInPublicGroups = rule()(
   }
 );
 
-export const isUserAvatarInPublicPost = rule()(
-  async (_parent, _args, _ctx, info) =>
-    hasNodes(["publicPost", "user", "profilePicture"], info.path)
-);
-
-export const isUserAvatarInPublicFeed = rule()(
-  async (_parent, _args, _ctx, info) =>
-    hasNodes(["publicGroupsFeed", "user", "profilePicture"], info.path) ||
-    hasNodes(["publicGroup", "feed", "user", "profilePicture"], info.path)
+export const isPublicUserAvatar = rule()(
+  async (parent: Image, _args, { services: { imagesService } }: Context) => {
+    const image = await imagesService.getImage({ id: parent.id }, [
+      "user.groups.config",
+    ]);
+    if (!image) {
+      return false;
+    }
+    return image.user.groups.some(
+      (group) => group.config.privacy === GroupPrivacy.Public
+    );
+  }
 );

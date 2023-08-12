@@ -32,11 +32,7 @@ import {
   canManageServerRoles,
   canRemoveMembers,
 } from "./rules/role.rules";
-import {
-  isUserAvatarInPublicFeed,
-  isUserAvatarInPublicPost,
-  isUserInPublicGroups,
-} from "./rules/user.rules";
+import { isPublicUserAvatar, isUserInPublicGroups } from "./rules/user.rules";
 
 export const shieldPermissions = shield(
   {
@@ -93,8 +89,7 @@ export const shieldPermissions = shield(
         isPublicGroupImage,
         isPublicPostImage,
         isPublicProposalImage,
-        isUserAvatarInPublicFeed,
-        isUserAvatarInPublicPost
+        isPublicUserAvatar
       ),
       filename: or(isAuthenticated, isPublicPostImage, isPublicProposalImage),
     },
