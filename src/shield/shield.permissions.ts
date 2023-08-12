@@ -36,7 +36,7 @@ import {
   isUserAvatarInPublicFeed,
   isUserAvatarInPublicPost,
   isUserInPublicFeed,
-  isUserInPublicPost,
+  isUserInPublicGroups,
 } from "./rules/user.rules";
 
 export const shieldPermissions = shield(
@@ -83,13 +83,9 @@ export const shieldPermissions = shield(
       updateEvent: or(canManageEvents, canManageGroupEvents),
     },
     User: {
-      id: or(isAuthenticated, isUserInPublicFeed, isUserInPublicPost),
-      name: or(isAuthenticated, isUserInPublicFeed, isUserInPublicPost),
-      profilePicture: or(
-        isAuthenticated,
-        isUserInPublicPost,
-        isUserInPublicFeed
-      ),
+      id: or(isAuthenticated, isUserInPublicGroups),
+      name: or(isAuthenticated, isUserInPublicGroups),
+      profilePicture: or(isAuthenticated, isUserInPublicGroups),
     },
     Image: {
       id: or(
