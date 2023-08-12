@@ -15,7 +15,7 @@ import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { hasGroupPermission } from "../shield.utils";
 
-export const canManageGroupRoles = rule({ cache: "strict" })(
+export const canManageGroupRoles = rule()(
   async (
     parent,
     args:
@@ -93,7 +93,7 @@ export const canApproveGroupMemberRequests = rule({ cache: "strict" })(
   }
 );
 
-export const canUpdateGroup = rule({ cache: "strict" })(
+export const canUpdateGroup = rule()(
   async (
     _parent,
     { groupData }: { groupData: UpdateGroupInput },
@@ -101,7 +101,7 @@ export const canUpdateGroup = rule({ cache: "strict" })(
   ) => hasGroupPermission(permissions, "updateGroup", groupData.id)
 );
 
-export const canDeleteGroup = rule({ cache: "strict" })(
+export const canDeleteGroup = rule()(
   async (_parent, args: { id: number }, { permissions }: Context) =>
     hasGroupPermission(permissions, "deleteGroup", args.id)
 );
@@ -117,7 +117,7 @@ export const canManageGroupPosts = rule({ cache: "strict" })(
   }
 );
 
-export const canManageGroupSettings = rule({ cache: "strict" })(
+export const canManageGroupSettings = rule()(
   async (
     _parent,
     args: { groupConfigData: UpdateGroupConfigInput },
@@ -130,7 +130,7 @@ export const canManageGroupSettings = rule({ cache: "strict" })(
     )
 );
 
-export const canCreateGroupEvents = rule({ cache: "strict" })(
+export const canCreateGroupEvents = rule()(
   async (
     _parent,
     args,
@@ -144,7 +144,7 @@ export const canCreateGroupEvents = rule({ cache: "strict" })(
   }
 );
 
-export const canManageGroupEvents = rule({ cache: "strict" })(
+export const canManageGroupEvents = rule()(
   async (
     _parent,
     args,
