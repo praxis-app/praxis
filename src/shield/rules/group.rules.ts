@@ -11,7 +11,7 @@ import { UpdateGroupInput } from "../../groups/models/update-group.input";
 import { CreateVoteInput } from "../../votes/models/create-vote.input";
 import { hasGroupPermission } from "../shield.utils";
 
-export const canManageGroupRoles = rule()(
+export const canManageGroupRoles = rule({ cache: "strict" })(
   async (
     parent,
     args:
@@ -57,7 +57,7 @@ export const canManageGroupRoles = rule()(
   }
 );
 
-export const canApproveGroupMemberRequests = rule()(
+export const canApproveGroupMemberRequests = rule({ cache: "strict" })(
   async (
     parent,
     args,
@@ -89,7 +89,7 @@ export const canApproveGroupMemberRequests = rule()(
   }
 );
 
-export const canUpdateGroup = rule()(
+export const canUpdateGroup = rule({ cache: "strict" })(
   async (
     _parent,
     { groupData }: { groupData: UpdateGroupInput },
@@ -97,12 +97,12 @@ export const canUpdateGroup = rule()(
   ) => hasGroupPermission(permissions, "updateGroup", groupData.id)
 );
 
-export const canDeleteGroup = rule()(
+export const canDeleteGroup = rule({ cache: "strict" })(
   async (_parent, args: { id: number }, { permissions }: Context) =>
     hasGroupPermission(permissions, "deleteGroup", args.id)
 );
 
-export const canManageGroupPosts = rule()(
+export const canManageGroupPosts = rule({ cache: "strict" })(
   async (
     _parent,
     args: { id: number },
@@ -113,7 +113,7 @@ export const canManageGroupPosts = rule()(
   }
 );
 
-export const canManageGroupSettings = rule()(
+export const canManageGroupSettings = rule({ cache: "strict" })(
   async (
     _parent,
     args: { groupConfigData: UpdateGroupConfigInput },
@@ -126,7 +126,7 @@ export const canManageGroupSettings = rule()(
     )
 );
 
-export const canCreateGroupEvents = rule()(
+export const canCreateGroupEvents = rule({ cache: "strict" })(
   async (
     _parent,
     args,
@@ -140,7 +140,7 @@ export const canCreateGroupEvents = rule()(
   }
 );
 
-export const canManageGroupEvents = rule()(
+export const canManageGroupEvents = rule({ cache: "strict" })(
   async (
     _parent,
     args,
@@ -154,7 +154,7 @@ export const canManageGroupEvents = rule()(
   }
 );
 
-export const isGroupMember = rule()(
+export const isGroupMember = rule({ cache: "strict" })(
   async (
     parent: Group | undefined,
     args: { id: number },
@@ -173,7 +173,7 @@ export const isGroupMember = rule()(
   }
 );
 
-export const isPublicGroup = rule()(
+export const isPublicGroup = rule({ cache: "strict" })(
   async (parent, args, { services: { groupsService } }: Context) => {
     const group = await groupsService.getGroup(
       { id: parent ? parent.id : args.id, name: args.name },
@@ -183,7 +183,7 @@ export const isPublicGroup = rule()(
   }
 );
 
-export const isPublicGroupRole = rule()(
+export const isPublicGroupRole = rule({ cache: "strict" })(
   async (parent, _args, { services: { groupsService } }: Context) => {
     const group = await groupsService.getGroup({ id: parent.groupId }, [
       "config",
@@ -192,7 +192,7 @@ export const isPublicGroupRole = rule()(
   }
 );
 
-export const isPublicGroupImage = rule()(
+export const isPublicGroupImage = rule({ cache: "strict" })(
   async (parent, _args, { services: { imagesService } }: Context) => {
     const image = await imagesService.getImage({ id: parent.id }, [
       "group.config",
@@ -201,7 +201,7 @@ export const isPublicGroupImage = rule()(
   }
 );
 
-export const isProposalGroupJoinedByMe = rule()(
+export const isProposalGroupJoinedByMe = rule({ cache: "strict" })(
   async (
     _parent,
     { voteData }: { voteData: CreateVoteInput },

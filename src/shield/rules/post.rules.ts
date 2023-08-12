@@ -3,7 +3,7 @@ import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../context/context.types";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
 
-export const isOwnPost = rule()(
+export const isOwnPost = rule({ cache: "strict" })(
   async (_parent, args, { user, services: { usersService } }: Context) => {
     if (!user) {
       return UNAUTHORIZED;
@@ -12,7 +12,7 @@ export const isOwnPost = rule()(
   }
 );
 
-export const isPublicPost = rule()(
+export const isPublicPost = rule({ cache: "strict" })(
   async (parent, args, { services: { postsService } }: Context) => {
     const postId = parent ? parent.id : args.id;
     const post = await postsService.getPost(postId, ["group.config"]);
@@ -23,7 +23,7 @@ export const isPublicPost = rule()(
   }
 );
 
-export const isPublicPostImage = rule()(
+export const isPublicPostImage = rule({ cache: "strict" })(
   async (parent, _args, { services: { imagesService } }: Context) => {
     const image = await imagesService.getImage({ id: parent.id }, [
       "post.group.config",

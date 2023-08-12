@@ -8,7 +8,7 @@ import { ProposalActionRoleMember } from "../../proposals/proposal-actions/propo
 import { ProposalActionRole } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
 import { Vote } from "../../votes/models/vote.model";
 
-export const isPublicProposal = rule()(
+export const isPublicProposal = rule({ cache: "strict" })(
   async (parent, args, { services: { proposalsService } }: Context) => {
     const proposalId = parent ? parent.id : args.id;
     const proposal = await proposalsService.getProposal(proposalId, [
@@ -18,7 +18,7 @@ export const isPublicProposal = rule()(
   }
 );
 
-export const isPublicProposalImage = rule()(
+export const isPublicProposalImage = rule({ cache: "strict" })(
   async (
     parent: Image,
     _args,
@@ -40,7 +40,7 @@ export const isPublicProposalImage = rule()(
   }
 );
 
-export const isPublicProposalAction = rule()(
+export const isPublicProposalAction = rule({ cache: "strict" })(
   async (
     parent:
       | ProposalAction
@@ -83,7 +83,7 @@ export const isPublicProposalAction = rule()(
   }
 );
 
-export const isPublicVote = rule()(
+export const isPublicVote = rule({ cache: "strict" })(
   async (parent: Vote, _args, { services: { proposalsService } }: Context) => {
     const { group } = await proposalsService.getProposal(parent.proposalId, [
       "group.config",

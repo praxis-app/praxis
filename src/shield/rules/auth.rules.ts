@@ -12,7 +12,7 @@ export const isAuthenticated = rule({ cache: "contextual" })(
   }
 );
 
-export const hasValidRefreshToken = rule()(
+export const hasValidRefreshToken = rule({ cache: "contextual" })(
   async (
     _parent,
     _args,
