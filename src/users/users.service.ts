@@ -55,9 +55,10 @@ export class UsersService {
 
   async getUserHomeFeed(id: number) {
     const userWithFeed = await this.getUser({ id }, [
-      "groups.proposals",
-      "groups.posts",
       "following.posts",
+      "groups.events.posts",
+      "groups.posts",
+      "groups.proposals",
       "proposals",
       "posts",
     ]);
@@ -93,6 +94,11 @@ export class UsersService {
       }
       for (const proposal of group.proposals) {
         proposalMap[proposal.id] = proposal;
+      }
+      for (const event of group.events) {
+        for (const post of event.posts) {
+          postMap[post.id] = post;
+        }
       }
     }
 
