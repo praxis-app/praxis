@@ -78,6 +78,7 @@ export class ContextService {
     return sub ? this.usersService.getUserPermissions(sub) : null;
   }
 
+  // TODO: Determine whether to move getClaims to auth service
   private getClaims(req: RequestWithCookies) {
     const { cookies } = req;
     const accessTokenClaims = cookies?.auth
