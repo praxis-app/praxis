@@ -56,7 +56,7 @@ export const isPublicProposalAction = rule({ cache: "strict" })(
       },
     }: Context
   ) => {
-    if ("proposalActionId" in parent) {
+    if (parent instanceof ProposalActionRole) {
       const proposalAction = await proposalActionsService.getProposalAction(
         { id: parent.proposalActionId },
         ["proposal.group.config"]
@@ -65,7 +65,10 @@ export const isPublicProposalAction = rule({ cache: "strict" })(
         proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
       );
     }
-    if ("proposalActionRoleId" in parent) {
+    if (
+      parent instanceof ProposalActionRoleMember ||
+      parent instanceof ProposalActionPermission
+    ) {
       const proposalActionRole =
         await proposalActionRolesService.getProposalActionRole(
           { id: parent.proposalActionRoleId },
