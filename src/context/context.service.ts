@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { AuthTokens } from "../auth/auth.service";
-import { Claims, decodeToken, getSub } from "../auth/auth.utils";
+import { Claims } from "../auth/auth.types";
+import { getClaims, getSub } from "../auth/auth.utils";
 import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
 import { DataloaderService } from "../dataloader/dataloader.service";
 import { EventsService } from "../events/events.service";
@@ -15,10 +15,6 @@ import { ProposalsService } from "../proposals/proposals.service";
 import { ShieldService } from "../shield/shield.service";
 import { UsersService } from "../users/users.service";
 import { Context, ContextServices } from "./context.types";
-
-interface RequestWithCookies extends Request {
-  cookies?: { auth?: AuthTokens };
-}
 
 @Injectable()
 export class ContextService {
@@ -39,7 +35,7 @@ export class ContextService {
   ) {}
 
   async getContext({ req }: { req: Request }): Promise<Context> {
-    const claims = this.getClaims(req);
+    const claims = getClaims(req);
     const loaders = this.dataloaderService.getLoaders();
     const permissions = await this.getUserPermisionsFromClaims(claims);
     const user = await this.getUserFromClaims(claims);
@@ -76,17 +72,5 @@ export class ContextService {
   private getUserPermisionsFromClaims(claims: Claims) {
     const sub = getSub(claims.accessTokenClaims);
     return sub ? this.usersService.getUserPermissions(sub) : null;
-  }
-
-  // TODO: Determine whether to move getClaims to auth service
-  private getClaims(req: RequestWithCookies) {
-    const { cookies } = req;
-    const accessTokenClaims = cookies?.auth
-      ? decodeToken(cookies.auth.access_token)
-      : null;
-    const refreshTokenClaims = cookies?.auth
-      ? decodeToken(cookies.auth.refresh_token)
-      : null;
-    return { accessTokenClaims, refreshTokenClaims };
   }
 }

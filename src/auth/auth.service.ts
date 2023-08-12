@@ -5,6 +5,7 @@ import { compare, hash } from "bcrypt";
 import { ServerInvitesService } from "../server-invites/server-invites.service";
 import { User } from "../users/models/user.model";
 import { UsersService } from "../users/users.service";
+import { AuthTokens } from "./auth.types";
 import { LoginInput } from "./models/login.input";
 import { SignUpInput } from "./models/sign-up.input";
 import { RefreshTokensService } from "./refresh-tokens/refresh-tokens.service";
@@ -12,11 +13,6 @@ import { AccessTokenPayload } from "./strategies/jwt.strategy";
 
 const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 90;
 const SALT_ROUNDS = 10;
-
-export interface AuthTokens {
-  access_token: string;
-  refresh_token: string;
-}
 
 @Injectable()
 export class AuthService {

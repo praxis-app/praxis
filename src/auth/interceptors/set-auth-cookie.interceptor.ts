@@ -7,7 +7,7 @@ import {
 import { GqlExecutionContext } from "@nestjs/graphql";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
-import { AuthTokens } from "../auth.service";
+import { AuthTokens } from "../auth.types";
 
 @Injectable()
 export class SetAuthCookieInterceptor implements NestInterceptor {
