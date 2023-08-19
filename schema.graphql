@@ -329,6 +329,14 @@ type ServerPermissions {
   removeMembers: Boolean!
 }
 
+type CreateCommentPayload {
+  comment: Comment!
+}
+
+type UpdateCommentPayload {
+  comment: Comment!
+}
+
 type CreateEventPayload {
   event: Event!
 }
@@ -477,6 +485,9 @@ type Mutation {
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
+  createComment(commentData: CreateCommentInput!): CreateCommentPayload!
+  updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
+  deleteComment(id: Int!): Boolean!
 }
 
 input CreateEventInput {
@@ -685,4 +696,17 @@ input SignUpInput {
 input CreateServerInviteInput {
   maxUses: Int
   expiresAt: DateTime
+}
+
+input CreateCommentInput {
+  postId: Int
+  proposalId: Int
+  body: String
+  images: [Upload!]
+}
+
+input UpdateCommentInput {
+  id: Int!
+  body: String
+  images: [Upload!]
 }
