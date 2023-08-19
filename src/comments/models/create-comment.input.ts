@@ -10,7 +10,7 @@ export class CreateCommentInput {
   proposalId?: number;
 
   @Field({ nullable: true })
-  body?: number;
+  body?: string;
 
   @Field(() => [GraphQLUpload], { nullable: true })
   images?: Promise<FileUpload>[];
