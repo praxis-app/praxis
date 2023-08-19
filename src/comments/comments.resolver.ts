@@ -17,7 +17,7 @@ import { CreateCommentPayload } from "./models/create-comment.payload";
 import { UpdateCommentInput } from "./models/update-comment.input";
 import { UpdateCommentPayload } from "./models/update-comment.payload";
 
-@Resolver()
+@Resolver(() => Comment)
 export class CommentsResolver {
   constructor(private commentsService: CommentsService) {}
 
