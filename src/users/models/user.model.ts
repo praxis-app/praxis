@@ -12,6 +12,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
+import { Comment } from "../../comments/models/comment.model";
 import { FeedItem } from "../../common/models/feed-item.union";
 import { EventAttendee } from "../../events/event-attendees/models/event-attendee.model";
 import { GroupRole } from "../../groups/group-roles/models/group-role.model";
@@ -57,6 +58,12 @@ export class User {
   })
   @Field(() => [Proposal])
   proposals: Proposal[];
+
+  @OneToMany(() => Comment, (comment) => comment.user, {
+    cascade: true,
+  })
+  @Field(() => [Comment])
+  comments: Comment[];
 
   @OneToMany(() => Like, (like) => like.user, {
     cascade: true,

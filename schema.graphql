@@ -1,7 +1,7 @@
-type Vote {
+type Like {
   id: Int!
-  voteType: String!
-  proposal: Proposal!
+  post: Post
+  comment: Comment
   user: User!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -11,6 +11,30 @@ type Vote {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Post {
+  id: Int!
+  body: String
+  images: [Image!]!
+  comments: [Comment!]!
+  likes: [Like!]!
+  user: User!
+  group: Group
+  event: Event
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  likesCount: Int!
+  isLikedByMe: Boolean!
+}
+
+type Vote {
+  id: Int!
+  voteType: String!
+  proposal: Proposal!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
 
 type GroupRolePermission {
   id: Int!
@@ -93,26 +117,13 @@ type Proposal {
   action: ProposalAction!
   stage: String!
   votes: [Vote!]!
+  comments: [Comment!]!
   images: [Image!]!
   user: User!
   group: Group
   createdAt: DateTime!
   updatedAt: DateTime!
   voteCount: Int!
-}
-
-type Image {
-  id: Int!
-  filename: String!
-  imageType: String!
-  post: Post
-  user: User
-  group: Group
-  event: Event
-  proposal: Proposal
-  proposalAction: ProposalAction
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type GroupConfig {
@@ -185,26 +196,31 @@ type Event {
   coverPhoto: Image!
 }
 
-type Like {
+type Image {
   id: Int!
-  post: Post!
-  user: User!
+  filename: String!
+  imageType: String!
+  post: Post
+  comment: Comment
+  user: User
+  group: Group
+  event: Event
+  proposal: Proposal
+  proposalAction: ProposalAction
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-type Post {
+type Comment {
   id: Int!
   body: String
   images: [Image!]!
   likes: [Like!]!
+  post: Post
+  proposal: Proposal
   user: User!
-  group: Group
-  event: Event
   createdAt: DateTime!
   updatedAt: DateTime!
-  likesCount: Int!
-  isLikedByMe: Boolean!
 }
 
 type ServerRolePermission {
@@ -236,6 +252,7 @@ type User {
   bio: String
   posts: [Post!]!
   proposals: [Proposal!]!
+  comments: [Comment!]!
   likes: [Like!]!
   homeFeed: [FeedItem!]!
   profileFeed: [FeedItem!]!

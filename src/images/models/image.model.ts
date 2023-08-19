@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Comment } from "../../comments/models/comment.model";
 import { Event } from "../../events/models/event.model";
 import { Group } from "../../groups/models/group.model";
 import { Post } from "../../posts/models/post.model";
@@ -38,6 +39,15 @@ export class Image {
 
   @Column({ nullable: true })
   postId: number;
+
+  @Field(() => Comment, { nullable: true })
+  @ManyToOne(() => Comment, (comment) => comment.images, {
+    onDelete: "CASCADE",
+  })
+  comment?: Comment;
+
+  @Column({ nullable: true })
+  commentId?: number;
 
   @Field(() => User, { nullable: true })
   @ManyToOne(() => User, (user) => user.images, {

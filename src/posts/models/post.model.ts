@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Comment } from "../../comments/models/comment.model";
 import { Event } from "../../events/models/event.model";
 import { Group } from "../../groups/models/group.model";
 import { Image } from "../../images/models/image.model";
@@ -30,6 +31,10 @@ export class Post {
   @Field(() => [Image])
   @OneToMany(() => Image, (image) => image.post)
   images: Image[];
+
+  @Field(() => [Comment])
+  @OneToMany(() => Comment, (comment) => comment.post)
+  comments: Comment[];
 
   @Field(() => [Like])
   @OneToMany(() => Like, (like) => like.post)

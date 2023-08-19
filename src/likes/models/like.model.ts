@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Comment } from "../../comments/models/comment.model";
 import { Post } from "../../posts/models/post.model";
 import { User } from "../../users/models/user.model";
 
@@ -17,14 +18,23 @@ export class Like {
   @Field(() => Int)
   id: number;
 
-  @Field(() => Post)
+  @Field(() => Post, { nullable: true })
   @ManyToOne(() => Post, (post) => post.likes, {
     onDelete: "CASCADE",
   })
-  post: Post;
+  post?: Post;
 
-  @Column()
-  postId: number;
+  @Column({ nullable: true })
+  postId?: number;
+
+  @Field(() => Comment, { nullable: true })
+  @ManyToOne(() => Comment, (comment) => comment.likes, {
+    onDelete: "CASCADE",
+  })
+  comment?: Comment;
+
+  @Column({ nullable: true })
+  commentId?: number;
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.likes, { onDelete: "CASCADE" })
