@@ -8,5 +8,6 @@ import { Comment } from "./models/comment.model";
 @Module({
   imports: [TypeOrmModule.forFeature([Comment]), ImagesModule],
   providers: [CommentsService, CommentsResolver],
+  exports: [CommentsService],
 })
 export class CommentsModule {}

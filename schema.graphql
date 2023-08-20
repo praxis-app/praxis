@@ -284,6 +284,14 @@ type CreateServerInvitePayload {
   serverInvite: ServerInvite!
 }
 
+type CreateCommentPayload {
+  comment: Comment!
+}
+
+type UpdateCommentPayload {
+  comment: Comment!
+}
+
 type CreateLikePayload {
   like: Like!
 }
@@ -327,14 +335,6 @@ type ServerPermissions {
   manageInvites: Boolean!
   createInvites: Boolean!
   removeMembers: Boolean!
-}
-
-type CreateCommentPayload {
-  comment: Comment!
-}
-
-type UpdateCommentPayload {
-  comment: Comment!
 }
 
 type CreateEventPayload {
@@ -452,6 +452,9 @@ type Mutation {
   deletePost(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
+  createComment(commentData: CreateCommentInput!): CreateCommentPayload!
+  updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
+  deleteComment(id: Int!): Boolean!
   createGroupMemberRequest(groupId: Int!): CreateGroupMemberRequestPayload!
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
   cancelGroupMemberRequest(id: Int!): Boolean!
@@ -485,9 +488,6 @@ type Mutation {
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
-  createComment(commentData: CreateCommentInput!): CreateCommentPayload!
-  updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
-  deleteComment(id: Int!): Boolean!
 }
 
 input CreateEventInput {
@@ -546,6 +546,19 @@ input CreateLikeInput {
 
 input DeleteLikeInput {
   postId: Int
+}
+
+input CreateCommentInput {
+  postId: Int
+  proposalId: Int
+  body: String
+  images: [Upload!]
+}
+
+input UpdateCommentInput {
+  id: Int!
+  body: String
+  images: [Upload!]
 }
 
 input CreateGroupInput {
@@ -696,17 +709,4 @@ input SignUpInput {
 input CreateServerInviteInput {
   maxUses: Int
   expiresAt: DateTime
-}
-
-input CreateCommentInput {
-  postId: Int
-  proposalId: Int
-  body: String
-  images: [Upload!]
-}
-
-input UpdateCommentInput {
-  id: Int!
-  body: String
-  images: [Upload!]
 }
