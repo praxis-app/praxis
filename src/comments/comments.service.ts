@@ -22,7 +22,7 @@ export class CommentsService {
   }
 
   async getComments(where?: FindOptionsWhere<Comment>) {
-    return this.repository.find({ where, order: { createdAt: "DESC" } });
+    return this.repository.find({ where });
   }
 
   async createComment(
