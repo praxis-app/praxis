@@ -29,6 +29,9 @@ export class CommentsService {
     { images, ...commentData }: CreateCommentInput,
     user: User
   ) {
+    if (!commentData.body && !images?.length) {
+      throw new Error("Comments must include text or images");
+    }
     const comment = await this.repository.save({
       ...commentData,
       userId: user.id,
