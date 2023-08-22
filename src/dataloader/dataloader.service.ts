@@ -29,10 +29,12 @@ import {
 } from "./dataloader.types";
 import { EventsService } from "../events/events.service";
 import { Event } from "../events/models/event.model";
+import { CommentsService } from "../comments/comments.service";
 
 @Injectable()
 export class DataloaderService {
   constructor(
+    private commentsService: CommentsService,
     private eventsService: EventsService,
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
@@ -59,6 +61,9 @@ export class DataloaderService {
       postImagesLoader: this._createPostImagesLoader(),
       postLikeCountLoader: this._createPostLikeCountLoader(),
       postLikesLoader: this._createPostLikesLoader(),
+
+      // Comments
+      commentImagesLoader: this._createCommentImagesLoader(),
 
       // Groups
       groupCoverPhotosLoader: this._createGroupCoverPhotosLoader(),
@@ -151,6 +156,16 @@ export class DataloaderService {
   private _createPostCommentCountLoader() {
     return new DataLoader<number, number>(async (postIds) =>
       this.postsService.getCommentsCountBatch(postIds as number[])
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // Comments
+  // -------------------------------------------------------------------------
+
+  private _createCommentImagesLoader() {
+    return new DataLoader<number, Image[]>(async (commentIds) =>
+      this.commentsService.getCommentImagesBatch(commentIds as number[])
     );
   }
 

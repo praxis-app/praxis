@@ -39,6 +39,14 @@ export class CommentsResolver {
     return postId ? this.postsService.getPost(postId) : null;
   }
 
+  @ResolveField(() => [Image])
+  async images(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Comment
+  ) {
+    return loaders.commentImagesLoader.load(id);
+  }
+
   @Mutation(() => CreateCommentPayload)
   async createComment(
     @Args("commentData") commentData: CreateCommentInput,

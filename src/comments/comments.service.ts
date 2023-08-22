@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FileUpload } from "graphql-upload";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { FindOptionsWhere, In, Repository } from "typeorm";
 import { deleteImageFile, saveImage } from "../images/image.utils";
 import { ImagesService } from "../images/images.service";
+import { Image } from "../images/models/image.model";
 import { User } from "../users/models/user.model";
 import { Comment } from "./models/comment.model";
 import { CreateCommentInput } from "./models/create-comment.input";
@@ -23,6 +24,17 @@ export class CommentsService {
 
   async getComments(where?: FindOptionsWhere<Comment>) {
     return this.repository.find({ where });
+  }
+
+  async getCommentImagesBatch(commentIds: number[]) {
+    const images = await this.imagesService.getImages({
+      commentId: In(commentIds),
+    });
+    return commentIds.map(
+      (id) =>
+        images.filter((image: Image) => image.commentId === id) ||
+        new Error(`Could not load images for comment: ${id}`)
+    );
   }
 
   async createComment(
