@@ -55,6 +55,7 @@ export class DataloaderService {
 
       // Posts
       isPostLikedByMeLoader: this._createIsPostLikedByMeLoader(),
+      postCommentCountLoader: this._createPostCommentCountLoader(),
       postImagesLoader: this._createPostImagesLoader(),
       postLikeCountLoader: this._createPostLikeCountLoader(),
       postLikesLoader: this._createPostLikesLoader(),
@@ -144,6 +145,12 @@ export class DataloaderService {
   private _createPostLikeCountLoader() {
     return new DataLoader<number, number>(async (postIds) =>
       this.postsService.getLikesCountBatch(postIds as number[])
+    );
+  }
+
+  private _createPostCommentCountLoader() {
+    return new DataLoader<number, number>(async (postIds) =>
+      this.postsService.getCommentsCountBatch(postIds as number[])
     );
   }
 

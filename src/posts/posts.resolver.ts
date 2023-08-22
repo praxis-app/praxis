@@ -42,6 +42,14 @@ export class PostsResolver {
     return this.commentsService.getComments({ postId: id });
   }
 
+  @ResolveField(() => Int)
+  async commentCount(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Post
+  ) {
+    return loaders.postCommentCountLoader.load(id);
+  }
+
   @ResolveField(() => [Like])
   async likes(
     @Context() { loaders }: { loaders: Dataloaders },
@@ -50,6 +58,7 @@ export class PostsResolver {
     return loaders.postLikesLoader.load(id);
   }
 
+  // TODO: Rename as likeCount
   @ResolveField(() => Int)
   async likesCount(
     @Context() { loaders }: { loaders: Dataloaders },

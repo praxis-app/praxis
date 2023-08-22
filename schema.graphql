@@ -23,6 +23,7 @@ type Post {
   event: Event
   createdAt: DateTime!
   updatedAt: DateTime!
+  commentCount: Int!
   likesCount: Int!
   isLikedByMe: Boolean!
 }
