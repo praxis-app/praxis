@@ -451,11 +451,11 @@ type Mutation {
   createPost(postData: CreatePostInput!): CreatePostPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
   deletePost(id: Int!): Boolean!
-  createLike(likeData: CreateLikeInput!): CreateLikePayload!
-  deleteLike(likeData: DeleteLikeInput!): Boolean!
   createComment(commentData: CreateCommentInput!): CreateCommentPayload!
   updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
   deleteComment(id: Int!): Boolean!
+  createLike(likeData: CreateLikeInput!): CreateLikePayload!
+  deleteLike(likeData: DeleteLikeInput!): Boolean!
   createGroupMemberRequest(groupId: Int!): CreateGroupMemberRequestPayload!
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
   cancelGroupMemberRequest(id: Int!): Boolean!
@@ -541,14 +541,6 @@ input UpdatePostInput {
   images: [Upload!]
 }
 
-input CreateLikeInput {
-  postId: Int
-}
-
-input DeleteLikeInput {
-  postId: Int
-}
-
 input CreateCommentInput {
   postId: Int
   proposalId: Int
@@ -560,6 +552,14 @@ input UpdateCommentInput {
   id: Int!
   body: String
   images: [Upload!]
+}
+
+input CreateLikeInput {
+  postId: Int
+}
+
+input DeleteLikeInput {
+  postId: Int
 }
 
 input CreateGroupInput {

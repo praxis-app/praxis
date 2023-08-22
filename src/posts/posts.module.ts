@@ -10,8 +10,8 @@ import { PostsService } from "./posts.service";
 @Module({
   imports: [
     TypeOrmModule.forFeature([Post]),
+    forwardRef(() => CommentsModule),
     forwardRef(() => LikesModule),
-    CommentsModule,
     ImagesModule,
   ],
   providers: [PostsService, PostsResolver],

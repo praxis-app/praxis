@@ -9,6 +9,8 @@ import {
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { Dataloaders } from "../dataloader/dataloader.types";
+import { Post } from "../posts/models/post.model";
+import { PostsService } from "../posts/posts.service";
 import { User } from "../users/models/user.model";
 import { CommentsService } from "./comments.service";
 import { Comment } from "./models/comment.model";
@@ -19,7 +21,10 @@ import { UpdateCommentPayload } from "./models/update-comment.payload";
 
 @Resolver(() => Comment)
 export class CommentsResolver {
-  constructor(private commentsService: CommentsService) {}
+  constructor(
+    private commentsService: CommentsService,
+    private postsService: PostsService
+  ) {}
 
   @ResolveField(() => User)
   async user(
@@ -27,6 +32,11 @@ export class CommentsResolver {
     @Parent() { userId }: Comment
   ) {
     return loaders.usersLoader.load(userId);
+  }
+
+  @ResolveField(() => Post, { nullable: true })
+  async post(@Parent() { postId }: Comment) {
+    return postId ? this.postsService.getPost(postId) : null;
   }
 
   @Mutation(() => CreateCommentPayload)
