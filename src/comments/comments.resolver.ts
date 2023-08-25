@@ -34,7 +34,7 @@ export class CommentsResolver {
     return loaders.usersLoader.load(userId);
   }
 
-  @ResolveField(() => Post, { nullable: true })
+  @ResolveField(() => Post)
   async post(@Parent() { postId }: Comment) {
     return postId ? this.postsService.getPost(postId) : null;
   }
