@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { AuthTokenClaims } from "../auth/auth.types";
 import { getClaims, getSub } from "../auth/auth.utils";
 import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
+import { CommentsService } from "../comments/comments.service";
 import { DataloaderService } from "../dataloader/dataloader.service";
 import { EventsService } from "../events/events.service";
 import { GroupMemberRequestsService } from "../groups/group-member-requests/group-member-requests.service";
@@ -19,6 +20,7 @@ import { Context, ContextServices } from "./context.types";
 @Injectable()
 export class ContextService {
   constructor(
+    private commentsService: CommentsService,
     private dataloaderService: DataloaderService,
     private eventsService: EventsService,
     private groupMemberRequestsService: GroupMemberRequestsService,
@@ -41,6 +43,7 @@ export class ContextService {
     const user = await this.getUserFromClaims(claims);
 
     const services: ContextServices = {
+      commentsService: this.commentsService,
       eventsService: this.eventsService,
       groupMemberRequestsService: this.groupMemberRequestsService,
       groupRolesService: this.groupRolesService,

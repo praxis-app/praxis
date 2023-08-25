@@ -1,6 +1,7 @@
 import { allow, and, not, or, shield } from "graphql-shield";
 import { FORBIDDEN } from "../common/common.constants";
 import { hasValidRefreshToken, isAuthenticated } from "./rules/auth.rules";
+import { isOwnComment } from "./rules/comment.rules";
 import {
   isPublicEvent,
   isPublicEventImage,
@@ -10,6 +11,7 @@ import {
   canApproveGroupMemberRequests,
   canCreateGroupEvents,
   canDeleteGroup,
+  canManageGroupComments,
   canManageGroupEvents,
   canManageGroupPosts,
   canManageGroupRoles,
@@ -30,6 +32,7 @@ import {
 } from "./rules/proposal.rules";
 import {
   canCreateServerInvites,
+  canManageComments,
   canManageEvents,
   canManagePosts,
   canManageServerInvites,
@@ -78,6 +81,11 @@ export const shieldPermissions = shield(
       createEvent: or(canCreateGroupEvents, canManageGroupEvents),
       deleteEvent: or(canManageEvents, canManageGroupEvents),
       updateEvent: or(canManageEvents, canManageGroupEvents),
+      deleteComment: or(
+        isOwnComment,
+        canManageComments,
+        canManageGroupComments
+      ),
     },
     User: {
       id: or(isAuthenticated, isUserInPublicGroups),

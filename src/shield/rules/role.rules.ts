@@ -17,6 +17,11 @@ export const canManagePosts = rule({ cache: "contextual" })(
     hasServerPermission(permissions, "managePosts")
 );
 
+export const canManageComments = rule({ cache: "contextual" })(
+  async (_parent, _args, { permissions }: Context) =>
+    hasServerPermission(permissions, "manageComments")
+);
+
 export const canManageEvents = rule({ cache: "contextual" })(
   async (_parent, _args, { permissions }: Context) =>
     hasServerPermission(permissions, "manageEvents")

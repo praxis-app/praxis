@@ -117,6 +117,24 @@ export const canManageGroupPosts = rule({ cache: "strict" })(
   }
 );
 
+export const canManageGroupComments = rule({ cache: "strict" })(
+  async (
+    _parent,
+    args: { id: number },
+    { permissions, services: { commentsService } }: Context
+  ) => {
+    const { post, proposal } = await commentsService.getComment(args.id, [
+      "post",
+      "proposal",
+    ]);
+    const groupId = post?.groupId || proposal?.groupId;
+    if (!groupId) {
+      return false;
+    }
+    return hasGroupPermission(permissions, "manageComments", groupId);
+  }
+);
+
 export const canManageGroupSettings = rule()(
   async (
     _parent,
