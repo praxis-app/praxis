@@ -22,7 +22,7 @@ export class CommentsService {
     return this.repository.findOneOrFail({ where: { id }, relations });
   }
 
-  async getComments(where?: FindOptionsWhere<Comment>) {
+  async getComments(where: FindOptionsWhere<Comment>) {
     return this.repository.find({ where });
   }
 
