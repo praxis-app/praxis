@@ -23,7 +23,7 @@ export class CommentsService {
   }
 
   async getComments(where: FindOptionsWhere<Comment>) {
-    return this.repository.find({ where });
+    return this.repository.find({ where, order: { createdAt: "ASC" } });
   }
 
   async getCommentImagesBatch(commentIds: number[]) {
