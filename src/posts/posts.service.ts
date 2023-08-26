@@ -78,7 +78,7 @@ export class PostsService {
     return postIds.map((id) => {
       const post = posts.find((post: Post) => post.id === id);
       if (!post) {
-        return new Error(`Could not load likes count for post: ${id}`);
+        return new Error(`Could not load like count for post: ${id}`);
       }
       return post.likeCount;
     });
@@ -96,7 +96,7 @@ export class PostsService {
     return postIds.map((id) => {
       const post = posts.find((post: Post) => post.id === id);
       if (!post) {
-        return new Error(`Could not load comments count for post: ${id}`);
+        return new Error(`Could not load comment count for post: ${id}`);
       }
       return post.commentCount;
     });
