@@ -125,6 +125,7 @@ type Proposal {
   createdAt: DateTime!
   updatedAt: DateTime!
   voteCount: Int!
+  commentCount: Int!
 }
 
 type GroupConfig {

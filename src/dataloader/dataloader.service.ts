@@ -54,6 +54,7 @@ export class DataloaderService {
       proposalImagesLoader: this._createProposalImagesLoader(),
       proposalVoteCountLoader: this._createProposalVoteCountLoader(),
       proposalVotesLoader: this._createProposalVotesLoader(),
+      proposalCommentCountLoader: this._createProposalCommentCountLoader(),
 
       // Posts
       isPostLikedByMeLoader: this._createIsPostLikedByMeLoader(),
@@ -119,6 +120,14 @@ export class DataloaderService {
     return new DataLoader<number, ProposalAction>(async (proposalActionIds) =>
       this.proposalActionsService.getProposalActionsBatch(
         proposalActionIds as number[]
+      )
+    );
+  }
+
+  private _createProposalCommentCountLoader() {
+    return new DataLoader<number, number>(async (proposalIds) =>
+      this.proposalsService.getProposalCommentCountBatch(
+        proposalIds as number[]
       )
     );
   }

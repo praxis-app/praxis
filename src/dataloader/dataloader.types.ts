@@ -26,6 +26,7 @@ export interface MyGroupsKey {
 export interface Dataloaders {
   // Proposals & Votes
   proposalActionsLoader: DataLoader<number, ProposalAction>;
+  proposalCommentCountLoader: DataLoader<number, number>;
   proposalImagesLoader: DataLoader<number, Image[]>;
   proposalVoteCountLoader: DataLoader<number, number>;
   proposalVotesLoader: DataLoader<number, Vote[]>;
