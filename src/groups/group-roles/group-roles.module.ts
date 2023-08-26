@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { GroupRolesService } from "./group-roles.service";
 import { GroupRolesResolver } from "./group-roles.resolver";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -9,7 +9,7 @@ import { UsersModule } from "../../users/users.module";
 @Module({
   imports: [
     TypeOrmModule.forFeature([GroupRole, GroupRolePermission]),
-    UsersModule,
+    forwardRef(() => UsersModule),
   ],
   providers: [GroupRolesService, GroupRolesResolver],
   exports: [GroupRolesService],
