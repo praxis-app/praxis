@@ -155,7 +155,7 @@ export class DataloaderService {
 
   private _createPostCommentCountLoader() {
     return new DataLoader<number, number>(async (postIds) =>
-      this.postsService.getCommentsCountBatch(postIds as number[])
+      this.postsService.getPostCommentCountBatch(postIds as number[])
     );
   }
 

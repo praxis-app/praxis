@@ -84,7 +84,7 @@ export class PostsService {
     });
   }
 
-  async getCommentsCountBatch(postIds: number[]) {
+  async getPostCommentCountBatch(postIds: number[]) {
     const posts = (await this.repository
       .createQueryBuilder("post")
       .leftJoinAndSelect("post.comments", "comment")
