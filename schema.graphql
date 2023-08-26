@@ -1,7 +1,7 @@
-type Vote {
+type Like {
   id: Int!
-  voteType: String!
-  proposal: Proposal!
+  post: Post
+  comment: Comment
   user: User!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -11,6 +11,31 @@ type Vote {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Post {
+  id: Int!
+  body: String
+  images: [Image!]!
+  comments: [Comment!]!
+  likes: [Like!]!
+  user: User!
+  group: Group
+  event: Event
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  commentCount: Int!
+  likesCount: Int!
+  isLikedByMe: Boolean!
+}
+
+type Vote {
+  id: Int!
+  voteType: String!
+  proposal: Proposal!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
 
 type GroupRolePermission {
   id: Int!
@@ -93,26 +118,13 @@ type Proposal {
   action: ProposalAction!
   stage: String!
   votes: [Vote!]!
+  comments: [Comment!]!
   images: [Image!]!
   user: User!
   group: Group
   createdAt: DateTime!
   updatedAt: DateTime!
   voteCount: Int!
-}
-
-type Image {
-  id: Int!
-  filename: String!
-  imageType: String!
-  post: Post
-  user: User
-  group: Group
-  event: Event
-  proposal: Proposal
-  proposalAction: ProposalAction
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type GroupConfig {
@@ -185,26 +197,31 @@ type Event {
   coverPhoto: Image!
 }
 
-type Like {
+type Image {
   id: Int!
-  post: Post!
-  user: User!
+  filename: String!
+  imageType: String!
+  post: Post
+  comment: Comment
+  user: User
+  group: Group
+  event: Event
+  proposal: Proposal
+  proposalAction: ProposalAction
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-type Post {
+type Comment {
   id: Int!
   body: String
   images: [Image!]!
   likes: [Like!]!
+  post: Post
+  proposal: Proposal
   user: User!
-  group: Group
-  event: Event
   createdAt: DateTime!
   updatedAt: DateTime!
-  likesCount: Int!
-  isLikedByMe: Boolean!
 }
 
 type ServerRolePermission {
@@ -236,6 +253,7 @@ type User {
   bio: String
   posts: [Post!]!
   proposals: [Proposal!]!
+  comments: [Comment!]!
   likes: [Like!]!
   homeFeed: [FeedItem!]!
   profileFeed: [FeedItem!]!
@@ -265,6 +283,14 @@ type ServerInvite {
 
 type CreateServerInvitePayload {
   serverInvite: ServerInvite!
+}
+
+type CreateCommentPayload {
+  comment: Comment!
+}
+
+type UpdateCommentPayload {
+  comment: Comment!
 }
 
 type CreateLikePayload {
@@ -386,9 +412,9 @@ type UpdateProposalPayload {
 }
 
 type Query {
+  post(id: Int!): Post!
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
-  post(id: Int!): Post!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   group(id: Int, name: String): Group!
   groups: [Group!]!
@@ -415,18 +441,21 @@ input EventsInput {
 }
 
 type Mutation {
+  createComment(commentData: CreateCommentInput!): CreateCommentPayload!
+  updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
+  deleteComment(id: Int!): Boolean!
+  createPost(postData: CreatePostInput!): CreatePostPayload!
+  updatePost(postData: UpdatePostInput!): UpdatePostPayload!
+  deletePost(id: Int!): Boolean!
+  deleteImage(id: Int!): Boolean!
+  createLike(likeData: CreateLikeInput!): CreateLikePayload!
+  deleteLike(likeData: DeleteLikeInput!): Boolean!
   createEvent(eventData: CreateEventInput!): CreateEventPayload!
   updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
   deleteEvent(id: Int!): Boolean!
   createEventAttendee(eventAttendeeData: CreateEventAttendeeInput!): CreateEventAttendeePayload!
   updateEventAttendee(eventAttendeeData: UpdateEventAttendeeInput!): UpdateEventAttendeePayload!
   deleteEventAttendee(eventId: Int!): Boolean!
-  deleteImage(id: Int!): Boolean!
-  createPost(postData: CreatePostInput!): CreatePostPayload!
-  updatePost(postData: UpdatePostInput!): UpdatePostPayload!
-  deletePost(id: Int!): Boolean!
-  createLike(likeData: CreateLikeInput!): CreateLikePayload!
-  deleteLike(likeData: DeleteLikeInput!): Boolean!
   createGroupMemberRequest(groupId: Int!): CreateGroupMemberRequestPayload!
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
   cancelGroupMemberRequest(id: Int!): Boolean!
@@ -462,41 +491,20 @@ type Mutation {
   deleteServerInvite(id: Int!): Boolean!
 }
 
-input CreateEventInput {
-  name: String!
-  description: String!
-  coverPhoto: Upload
-  location: String
-  online: Boolean
-  externalLink: String
-  startsAt: DateTime!
-  endsAt: DateTime
-  groupId: Int
+input CreateCommentInput {
+  postId: Int
+  proposalId: Int
+  body: String
+  images: [Upload!]
 }
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
 
-input UpdateEventInput {
+input UpdateCommentInput {
   id: Int!
-  name: String!
-  description: String!
-  coverPhoto: Upload
-  location: String
-  online: Boolean
-  externalLink: String
-  startsAt: DateTime!
-  endsAt: DateTime
-}
-
-input CreateEventAttendeeInput {
-  eventId: Int!
-  status: String!
-}
-
-input UpdateEventAttendeeInput {
-  eventId: Int!
-  status: String!
+  body: String
+  images: [Upload!]
 }
 
 input CreatePostInput {
@@ -518,6 +526,40 @@ input CreateLikeInput {
 
 input DeleteLikeInput {
   postId: Int
+}
+
+input CreateEventInput {
+  name: String!
+  description: String!
+  coverPhoto: Upload
+  location: String
+  online: Boolean
+  externalLink: String
+  startsAt: DateTime!
+  endsAt: DateTime
+  groupId: Int
+}
+
+input UpdateEventInput {
+  id: Int!
+  name: String!
+  description: String!
+  coverPhoto: Upload
+  location: String
+  online: Boolean
+  externalLink: String
+  startsAt: DateTime!
+  endsAt: DateTime
+}
+
+input CreateEventAttendeeInput {
+  eventId: Int!
+  status: String!
+}
+
+input UpdateEventAttendeeInput {
+  eventId: Int!
+  status: String!
 }
 
 input CreateGroupInput {

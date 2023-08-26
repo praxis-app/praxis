@@ -10,9 +10,11 @@ import { UsersModule } from "../users/users.module";
 import { VotesModule } from "../votes/votes.module";
 import { DataloaderService } from "./dataloader.service";
 import { EventsModule } from "../events/events.module";
+import { CommentsModule } from "../comments/comments.module";
 
 @Module({
   imports: [
+    CommentsModule,
     EventsModule,
     GroupMemberRequestsModule,
     GroupRolesModule,

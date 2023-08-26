@@ -13,9 +13,11 @@ import { ProposalActionsModule } from "../proposals/proposal-actions/proposal-ac
 import { ProposalsModule } from "../proposals/proposals.module";
 import { UsersModule } from "../users/users.module";
 import { ContextService } from "./context.service";
+import { CommentsModule } from "../comments/comments.module";
 
 @Module({
   imports: [
+    CommentsModule,
     DataloaderModule,
     EventsModule,
     GroupMemberRequestsModule,

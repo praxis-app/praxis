@@ -32,9 +32,13 @@ export interface Dataloaders {
 
   // Posts
   isPostLikedByMeLoader: DataLoader<IsLikedByMeKey, boolean>;
+  postCommentCountLoader: DataLoader<number, number>;
   postImagesLoader: DataLoader<number, Image[]>;
   postLikeCountLoader: DataLoader<number, number>;
   postLikesLoader: DataLoader<number, Like[]>;
+
+  // Comments
+  commentImagesLoader: DataLoader<number, Image[]>;
 
   // Groups
   groupCoverPhotosLoader: DataLoader<number, Image>;

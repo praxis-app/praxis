@@ -14,6 +14,7 @@ import { Post } from "./models/post.model";
 import { UpdatePostInput } from "./models/update-post.input";
 
 type PostWithLikeCount = Post & { likeCount: number };
+type PostWithCommentCount = Post & { commentCount: number };
 
 @Injectable()
 export class PostsService {
@@ -77,9 +78,27 @@ export class PostsService {
     return postIds.map((id) => {
       const post = posts.find((post: Post) => post.id === id);
       if (!post) {
-        return new Error(`Could not load likes count: ${id}`);
+        return new Error(`Could not load like count for post: ${id}`);
       }
       return post.likeCount;
+    });
+  }
+
+  async getPostCommentCountBatch(postIds: number[]) {
+    const posts = (await this.repository
+      .createQueryBuilder("post")
+      .leftJoinAndSelect("post.comments", "comment")
+      .loadRelationCountAndMap("post.commentCount", "post.comments")
+      .select(["post.id"])
+      .whereInIds(postIds)
+      .getMany()) as PostWithCommentCount[];
+
+    return postIds.map((id) => {
+      const post = posts.find((post: Post) => post.id === id);
+      if (!post) {
+        return new Error(`Could not load comment count for post: ${id}`);
+      }
+      return post.commentCount;
     });
   }
 

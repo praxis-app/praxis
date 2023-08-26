@@ -1,6 +1,7 @@
 import { Context as ApolloContext } from "apollo-server-core";
 import { JwtPayload } from "jsonwebtoken";
 import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
+import { CommentsService } from "../comments/comments.service";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { EventsService } from "../events/events.service";
 import { GroupMemberRequestsService } from "../groups/group-member-requests/group-member-requests.service";
@@ -17,6 +18,7 @@ import { UserPermissions } from "../users/user.types";
 import { UsersService } from "../users/users.service";
 
 export interface ContextServices {
+  commentsService: CommentsService;
   eventsService: EventsService;
   groupMemberRequestsService: GroupMemberRequestsService;
   groupRolesService: GroupRolesService;

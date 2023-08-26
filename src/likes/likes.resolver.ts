@@ -34,7 +34,7 @@ export class LikesResolver {
 
   @ResolveField(() => Post)
   async post(@Parent() { postId }: Like) {
-    return this.postsService.getPost(postId);
+    return postId ? this.postsService.getPost(postId) : null;
   }
 
   @Mutation(() => CreateLikePayload)

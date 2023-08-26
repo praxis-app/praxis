@@ -17,6 +17,7 @@ import { User } from "../../users/models/user.model";
 import { Vote } from "../../votes/models/vote.model";
 import { ProposalStage } from "../proposals.constants";
 import { ProposalAction } from "../proposal-actions/models/proposal-action.model";
+import { Comment } from "../../comments/models/comment.model";
 
 @Entity()
 @ObjectType()
@@ -44,6 +45,12 @@ export class Proposal {
     cascade: true,
   })
   votes: Vote[];
+
+  @Field(() => [Comment])
+  @OneToMany(() => Comment, (comment) => comment.proposal, {
+    cascade: true,
+  })
+  comments: Comment[];
 
   @OneToMany(() => Image, (image) => image.proposal, {
     cascade: true,
