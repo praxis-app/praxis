@@ -29,7 +29,10 @@ export class CommentsService {
       where,
     });
     // TODO: Update once pagination has been implemented
-    return comments.slice(comments.length - DEFAULT_PAGE_SIZE, comments.length);
+    return comments.slice(
+      comments.length - Math.min(comments.length, DEFAULT_PAGE_SIZE),
+      comments.length
+    );
   }
 
   async getCommentImagesBatch(commentIds: number[]) {
