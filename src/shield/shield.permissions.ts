@@ -63,6 +63,7 @@ export const shieldPermissions = shield(
       signUp: allow,
       refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
       createVote: isProposalGroupJoinedByMe,
+      updatePost: isOwnPost,
       deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
       createServerInvite: or(canCreateServerInvites, canManageServerInvites),
       deleteServerInvite: canManageServerInvites,
@@ -81,6 +82,7 @@ export const shieldPermissions = shield(
       createEvent: or(canCreateGroupEvents, canManageGroupEvents),
       deleteEvent: or(canManageEvents, canManageGroupEvents),
       updateEvent: or(canManageEvents, canManageGroupEvents),
+      updateComment: isOwnComment,
       deleteComment: or(
         isOwnComment,
         canManageComments,
