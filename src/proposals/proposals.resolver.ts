@@ -10,6 +10,8 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import { CommentsService } from "../comments/comments.service";
+import { Comment } from "../comments/models/comment.model";
 import { Dataloaders } from "../dataloader/dataloader.types";
 import { Group } from "../groups/models/group.model";
 import { Image } from "../images/models/image.model";
@@ -28,7 +30,10 @@ import { ProposalsService } from "./proposals.service";
 
 @Resolver(() => Proposal)
 export class ProposalsResolver {
-  constructor(private proposalsService: ProposalsService) {}
+  constructor(
+    private proposalsService: ProposalsService,
+    private commentsService: CommentsService
+  ) {}
 
   @Query(() => Proposal)
   async proposal(@Args("id", { type: () => Int }) id: number) {
@@ -49,6 +54,19 @@ export class ProposalsResolver {
     @Parent() { id }: Proposal
   ) {
     return loaders.proposalVoteCountLoader.load(id);
+  }
+
+  @ResolveField(() => [Comment])
+  async comments(@Parent() { id }: Proposal) {
+    return this.commentsService.getComments({ proposalId: id });
+  }
+
+  @ResolveField(() => Int)
+  async commentCount(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Proposal
+  ) {
+    return loaders.proposalCommentCountLoader.load(id);
   }
 
   @ResolveField(() => [Image])

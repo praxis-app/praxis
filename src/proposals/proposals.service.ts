@@ -33,6 +33,8 @@ import {
   ProposalStage,
 } from "./proposals.constants";
 
+type ProposalWithCommentCount = Proposal & { commentCount: number };
+
 @Injectable()
 export class ProposalsService {
   constructor(
@@ -67,6 +69,26 @@ export class ProposalsService {
         new Error(`Could not load votes for proposal: ${id}`)
     );
     return mappedVotes;
+  }
+
+  async getProposalCommentCountBatch(proposalIds: number[]) {
+    const proposals = (await this.repository
+      .createQueryBuilder("proposal")
+      .leftJoinAndSelect("proposal.comments", "comment")
+      .loadRelationCountAndMap("proposal.commentCount", "proposal.comments")
+      .select(["proposal.id"])
+      .whereInIds(proposalIds)
+      .getMany()) as ProposalWithCommentCount[];
+
+    return proposalIds.map((id) => {
+      const proposal = proposals.find(
+        (proposal: Proposal) => proposal.id === id
+      );
+      if (!proposal) {
+        return new Error(`Could not load comment count for proposal: ${id}`);
+      }
+      return proposal.commentCount;
+    });
   }
 
   async getProposalImagesBatch(proposalIds: number[]) {

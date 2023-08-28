@@ -12,8 +12,8 @@ import { PostsModule } from "../posts/posts.module";
   imports: [
     TypeOrmModule.forFeature([Event, EventAttendee]),
     forwardRef(() => EventAttendeesModule),
+    forwardRef(() => PostsModule),
     ImagesModule,
-    PostsModule,
   ],
   providers: [EventsService, EventsResolver],
   exports: [EventsService],

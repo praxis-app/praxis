@@ -2,13 +2,21 @@ import { rule } from "graphql-shield";
 import { UNAUTHORIZED } from "../../common/common.constants";
 import { Context } from "../../context/context.types";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
+import { UpdatePostInput } from "../../posts/models/update-post.input";
 
 export const isOwnPost = rule({ cache: "strict" })(
-  async (_parent, args, { user, services: { usersService } }: Context) => {
+  async (
+    _parent,
+    args: { id: number } | { postData: UpdatePostInput },
+    { user, services: { usersService } }: Context
+  ) => {
     if (!user) {
       return UNAUTHORIZED;
     }
-    return usersService.isUsersPost(args.id, user.id);
+    return usersService.isUsersPost(
+      "id" in args ? args.id : args.postData.id,
+      user.id
+    );
   }
 );
 
