@@ -27,11 +27,16 @@ export const isPublicComment = rule({ cache: "strict" })(
     _args,
     { services: { commentsService } }: Context
   ) => {
-    const { post, proposal } = await commentsService.getComment(parent.id, [
-      parent.proposalId ? "proposal.group.config" : "post.group.config",
-    ]);
+    const releations = parent.proposalId
+      ? ["proposal.group.config"]
+      : ["post.group.config", "post.event.group.config"];
+    const { post, proposal } = await commentsService.getComment(
+      parent.id,
+      releations
+    );
     return (
       post?.group?.config.privacy === GroupPrivacy.Public ||
+      post?.event?.group?.config.privacy === GroupPrivacy.Public ||
       proposal?.group?.config.privacy === GroupPrivacy.Public
     );
   }
