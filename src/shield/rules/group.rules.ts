@@ -125,9 +125,10 @@ export const canManageGroupComments = rule({ cache: "strict" })(
   ) => {
     const { post, proposal } = await commentsService.getComment(args.id, [
       "post",
+      "post.event",
       "proposal",
     ]);
-    const groupId = post?.groupId || proposal?.groupId;
+    const groupId = post?.groupId || post?.event?.groupId || proposal?.groupId;
     if (!groupId) {
       return false;
     }
