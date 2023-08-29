@@ -37,6 +37,19 @@ type Vote {
   updatedAt: DateTime!
 }
 
+type ProposalActionEvent {
+  id: Int!
+  name: String!
+  description: String!
+  location: String
+  online: Boolean!
+  externalLink: String
+  images: [Image!]!
+  proposalAction: ProposalAction!
+  startsAt: DateTime!
+  endsAt: DateTime
+}
+
 type GroupRolePermission {
   id: Int!
   manageRoles: Boolean!
@@ -106,6 +119,7 @@ type ProposalAction {
   groupName: String
   groupDescription: String
   role: ProposalActionRole
+  event: ProposalActionEvent
   proposal: Proposal!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -209,6 +223,7 @@ type Image {
   event: Event
   proposal: Proposal
   proposalAction: ProposalAction
+  proposalActionEvent: ProposalActionEvent
   createdAt: DateTime!
   updatedAt: DateTime!
 }
