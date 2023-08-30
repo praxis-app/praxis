@@ -37,6 +37,24 @@ type Vote {
   updatedAt: DateTime!
 }
 
+type EventAttendee {
+  id: Int!
+  status: String!
+  user: User!
+  event: Event!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ProposalActionEventHost {
+  id: Int!
+  status: String!
+  user: User!
+  event: ProposalActionEvent!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type ProposalActionEvent {
   id: Int!
   name: String!
@@ -44,6 +62,7 @@ type ProposalActionEvent {
   location: String
   online: Boolean!
   externalLink: String
+  hosts: [ProposalActionEventHost!]!
   images: [Image!]!
   proposalAction: ProposalAction!
   startsAt: DateTime!
@@ -181,15 +200,6 @@ type Group {
 }
 
 union FeedItem = Post | Proposal
-
-type EventAttendee {
-  id: Int!
-  status: String!
-  user: User!
-  event: Event!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
 
 type Event {
   id: Int!

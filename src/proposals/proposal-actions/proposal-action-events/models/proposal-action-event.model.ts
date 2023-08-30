@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import { Image } from "../../../../images/models/image.model";
 import { ProposalAction } from "../../models/proposal-action.model";
+import { ProposalActionEventHost } from "./proposal-action-event-host.model";
 
 @Entity()
 @ObjectType()
@@ -38,6 +39,13 @@ export class ProposalActionEvent {
   @Column({ nullable: true })
   @Field({ nullable: true })
   externalLink?: string;
+
+  @Field(() => [ProposalActionEventHost])
+  @OneToMany(
+    () => ProposalActionEventHost,
+    (proposalActionEventHost) => proposalActionEventHost.event
+  )
+  hosts: ProposalActionEventHost[];
 
   @Field(() => [Image])
   @OneToMany(() => Image, (image) => image.proposalActionEvent)
