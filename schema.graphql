@@ -66,6 +66,7 @@ type ProposalActionEvent {
   proposalAction: ProposalAction!
   startsAt: DateTime!
   endsAt: DateTime
+  host: ProposalActionEventHost!
   coverPhoto: Image
 }
 
