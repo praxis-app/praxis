@@ -47,7 +47,6 @@ export class ProposalActionEvent {
   )
   hosts: ProposalActionEventHost[];
 
-  @Field(() => [Image])
   @OneToMany(() => Image, (image) => image.proposalActionEvent)
   images: Image[];
 

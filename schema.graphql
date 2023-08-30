@@ -63,10 +63,10 @@ type ProposalActionEvent {
   online: Boolean!
   externalLink: String
   hosts: [ProposalActionEventHost!]!
-  images: [Image!]!
   proposalAction: ProposalAction!
   startsAt: DateTime!
   endsAt: DateTime
+  coverPhoto: Image
 }
 
 type GroupRolePermission {
