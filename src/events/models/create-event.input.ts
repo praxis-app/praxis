@@ -5,6 +5,7 @@ import { FileUpload, GraphQLUpload } from "graphql-upload";
 @InputType()
 export class CreateEventInput {
   @Field()
+  @IsNotEmpty()
   name: string;
 
   @Field()

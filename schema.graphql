@@ -567,7 +567,7 @@ input ProposalActionEventInput {
   name: String!
   description: String!
   location: String
-  online: Boolean!
+  online: Boolean
   externalLink: String
   coverPhoto: Upload
   hostUserId: Int!
