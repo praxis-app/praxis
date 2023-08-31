@@ -571,6 +571,8 @@ input ProposalActionEventInput {
   externalLink: String
   coverPhoto: Upload
   hostUserId: Int!
+  startsAt: DateTime!
+  endsAt: DateTime
 }
 
 input ProposalActionRoleInput {

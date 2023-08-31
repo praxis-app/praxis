@@ -23,4 +23,10 @@ export class ProposalActionEventInput {
 
   @Field(() => Int)
   hostUserId: number;
+
+  @Field()
+  startsAt: Date;
+
+  @Field({ nullable: true })
+  endsAt?: Date;
 }
