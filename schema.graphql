@@ -556,10 +556,21 @@ input CreateProposalInput {
 
 input ProposalActionInput {
   actionType: String!
+  event: ProposalActionEventInput
   role: ProposalActionRoleInput
   groupName: String
   groupDescription: String
   groupCoverPhoto: Upload
+}
+
+input ProposalActionEventInput {
+  name: String!
+  description: String!
+  location: String
+  online: Boolean!
+  externalLink: String
+  coverPhoto: Upload
+  hostUserId: Int!
 }
 
 input ProposalActionRoleInput {
