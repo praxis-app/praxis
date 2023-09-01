@@ -55,12 +55,11 @@ export class ProposalActionEventsService {
     const proposalActionEvent = await this.proposalActionEventRepository.save({
       ...proposalActionEventData,
       proposalActionId,
-      hosts: [
-        {
-          status: EventAttendeeStatus.Host,
-          userId: hostUserId,
-        },
-      ],
+    });
+    await this.proposalActionEventHostRepository.save({
+      proposalActionEventId: proposalActionEvent.id,
+      status: EventAttendeeStatus.Host,
+      userId: hostUserId,
     });
     if (coverPhoto) {
       await this.saveCoverPhoto(proposalActionEvent.id, coverPhoto);

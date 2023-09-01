@@ -3,6 +3,8 @@ import { Context } from "../../context/context.types";
 import { GroupPrivacy } from "../../groups/group-configs/models/group-config.model";
 import { Image } from "../../images/models/image.model";
 import { ProposalAction } from "../../proposals/proposal-actions/models/proposal-action.model";
+import { ProposalActionEventHost } from "../../proposals/proposal-actions/proposal-action-events/models/proposal-action-event-host.model";
+import { ProposalActionEvent } from "../../proposals/proposal-actions/proposal-action-events/models/proposal-action-event.model";
 import { ProposalActionPermission } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model";
 import { ProposalActionRoleMember } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
 import { ProposalActionRole } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
@@ -45,18 +47,23 @@ export const isPublicProposalAction = rule({ cache: "strict" })(
     parent:
       | ProposalAction
       | ProposalActionRole
+      | ProposalActionEvent
       | ProposalActionPermission
       | ProposalActionRoleMember,
     _args,
     {
       services: {
-        proposalsService,
-        proposalActionsService,
+        proposalActionEventsService,
         proposalActionRolesService,
+        proposalActionsService,
+        proposalsService,
       },
     }: Context
   ) => {
-    if (parent instanceof ProposalActionRole) {
+    if (
+      parent instanceof ProposalActionRole ||
+      parent instanceof ProposalActionEvent
+    ) {
       const proposalAction = await proposalActionsService.getProposalAction(
         { id: parent.proposalActionId },
         ["proposal.group.config"]
@@ -76,6 +83,17 @@ export const isPublicProposalAction = rule({ cache: "strict" })(
         );
       return (
         proposalActionRole?.proposalAction.proposal.group.config.privacy ===
+        GroupPrivacy.Public
+      );
+    }
+    if (parent instanceof ProposalActionEventHost) {
+      const proposalActionEvent =
+        await proposalActionEventsService.getProposalActionEvent(
+          { id: parent.proposalActionEventId },
+          ["proposalAction.proposal.group.config"]
+        );
+      return (
+        proposalActionEvent?.proposalAction.proposal.group.config.privacy ===
         GroupPrivacy.Public
       );
     }

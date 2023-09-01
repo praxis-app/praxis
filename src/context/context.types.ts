@@ -9,6 +9,7 @@ import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { GroupsService } from "../groups/groups.service";
 import { ImagesService } from "../images/images.service";
 import { PostsService } from "../posts/posts.service";
+import { ProposalActionEventsService } from "../proposals/proposal-actions/proposal-action-events/proposal-action-events.service";
 import { ProposalActionRolesService } from "../proposals/proposal-actions/proposal-action-roles/proposal-action-roles.service";
 import { ProposalActionsService } from "../proposals/proposal-actions/proposal-actions.service";
 import { ProposalsService } from "../proposals/proposals.service";
@@ -26,6 +27,7 @@ export interface ContextServices {
   imagesService: ImagesService;
   postsService: PostsService;
   proposalActionRolesService: ProposalActionRolesService;
+  proposalActionEventsService: ProposalActionEventsService;
   proposalActionsService: ProposalActionsService;
   proposalsService: ProposalsService;
   refreshTokensService: RefreshTokensService;
