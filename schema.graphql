@@ -477,10 +477,10 @@ type Mutation {
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   deleteProposal(id: Int!): Boolean!
+  deleteImage(id: Int!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
-  deleteImage(id: Int!): Boolean!
   createGroupRole(groupRoleData: CreateGroupRoleInput!): CreateGroupRolePayload!
   updateGroupRole(groupRoleData: UpdateGroupRoleInput!): UpdateGroupRolePayload!
   deleteGroupRole(id: Int!): Boolean!

@@ -12,5 +12,6 @@ import { ProposalActionEventsService } from "./proposal-action-events.service";
     ImagesModule,
   ],
   providers: [ProposalActionEventsService, ProposalActionEventsResolver],
+  exports: [ProposalActionEventsService],
 })
 export class ProposalActionEventsModule {}

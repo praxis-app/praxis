@@ -21,6 +21,7 @@ import { sortConsensusVotesByType } from "../votes/votes.utils";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
 import { UpdateProposalInput } from "./models/update-proposal.input";
+import { ProposalActionEventsService } from "./proposal-actions/proposal-action-events/proposal-action-events.service";
 import {
   ProposalActionRolesService,
   RoleMemberChangeType,
@@ -48,6 +49,7 @@ export class ProposalsService {
     private groupsService: GroupsService,
     private imagesService: ImagesService,
     private proposalActionRolesService: ProposalActionRolesService,
+    private proposalActionEventsService: ProposalActionEventsService,
     private proposalActionsService: ProposalActionsService
   ) {}
 
@@ -106,7 +108,7 @@ export class ProposalsService {
   async createProposal(
     {
       images,
-      action: { groupCoverPhoto, role, ...action },
+      action: { groupCoverPhoto, role, event, ...action },
       ...proposalData
     }: CreateProposalInput,
     user: User
@@ -131,6 +133,12 @@ export class ProposalsService {
         await this.proposalActionRolesService.createProposalActionRole(
           proposal.action.id,
           role
+        );
+      }
+      if (event) {
+        await this.proposalActionEventsService.createProposalActionEvent(
+          proposal.action.id,
+          event
         );
       }
     } catch (err) {

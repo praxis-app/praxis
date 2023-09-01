@@ -44,14 +44,23 @@ export class ProposalActionEventsService {
     });
   }
 
-  async createProposalActionEvent({
-    coverPhoto,
-    hostUserId,
-    ...proposalActionEventData
-  }: Partial<ProposalActionEventInput>) {
+  async createProposalActionEvent(
+    proposalActionId: number,
+    {
+      coverPhoto,
+      hostUserId,
+      ...proposalActionEventData
+    }: Partial<ProposalActionEventInput>
+  ) {
     const proposalActionEvent = await this.proposalActionEventRepository.save({
-      hosts: [{ userId: hostUserId, status: EventAttendeeStatus.Host }],
       ...proposalActionEventData,
+      proposalActionId,
+      hosts: [
+        {
+          status: EventAttendeeStatus.Host,
+          userId: hostUserId,
+        },
+      ],
     });
     if (coverPhoto) {
       await this.saveCoverPhoto(proposalActionEvent.id, coverPhoto);
