@@ -1,9 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, Repository } from "typeorm";
 import { EventAttendeeStatus } from "../../../events/event-attendees/models/event-attendee.model";
+import { saveImage } from "../../../images/image.utils";
 import { ImagesService, ImageTypes } from "../../../images/images.service";
 import { ProposalActionEventHost } from "./models/proposal-action-event-host.model";
+import { ProposalActionEventInput } from "./models/proposal-action-event.input";
 import { ProposalActionEvent } from "./models/proposal-action-event.model";
 
 @Injectable()
@@ -38,6 +41,41 @@ export class ProposalActionEventsService {
     return this.imagesService.getImage({
       imageType: ImageTypes.CoverPhoto,
       proposalActionEventId,
+    });
+  }
+
+  async createProposalActionEvent({
+    coverPhoto,
+    hostUserId,
+    ...proposalActionEventData
+  }: Partial<ProposalActionEventInput>) {
+    const proposalActionEvent = await this.proposalActionEventRepository.save({
+      hosts: [{ userId: hostUserId, status: EventAttendeeStatus.Host }],
+      ...proposalActionEventData,
+    });
+    if (coverPhoto) {
+      await this.saveCoverPhoto(proposalActionEvent.id, coverPhoto);
+    }
+  }
+
+  async saveCoverPhoto(
+    proposalActionEventId: number,
+    coverPhoto: Promise<FileUpload>
+  ) {
+    const filename = await saveImage(coverPhoto);
+    await this.deleteCoverPhoto(proposalActionEventId);
+
+    return this.imagesService.createImage({
+      imageType: ImageTypes.CoverPhoto,
+      proposalActionEventId,
+      filename,
+    });
+  }
+
+  async deleteCoverPhoto(id: number) {
+    await this.imagesService.deleteImage({
+      imageType: ImageTypes.CoverPhoto,
+      event: { id },
     });
   }
 }
