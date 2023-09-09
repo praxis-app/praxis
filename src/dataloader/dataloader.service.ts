@@ -94,6 +94,14 @@ export class DataloaderService {
     };
   }
 
+  /**
+   * Creates a new dataloader with the given batch function and options.
+   *
+   * Passing a custom batch schedule function enables dataloader to work
+   * with asyncronous middleware.
+   *
+   * Source: https://dev.to/tsirlucas/integrating-dataloader-with-concurrent-react-53h1
+   */
   private _getDataLoader<K, V, C = K>(
     batchFn: DataLoader.BatchLoadFn<K, V>,
     options: DataLoader.Options<K, V, C> = {}
