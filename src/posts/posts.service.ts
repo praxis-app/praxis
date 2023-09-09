@@ -75,8 +75,6 @@ export class PostsService {
       .whereInIds(postIds)
       .getMany()) as PostWithLikeCount[];
 
-    console.log("getLikesCountBatch\n");
-
     return postIds.map((id) => {
       const post = posts.find((post: Post) => post.id === id);
       if (!post) {
