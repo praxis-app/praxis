@@ -168,10 +168,8 @@ export class DataloaderService {
   }
 
   private _createPostLikeCountLoader() {
-    return this._getDataLoader<number, number>(
-      async (postIds) =>
-        this.postsService.getLikesCountBatch(postIds as number[]),
-      { batchScheduleFn: (callback) => setTimeout(callback, 5) }
+    return this._getDataLoader<number, number>(async (postIds) =>
+      this.postsService.getLikesCountBatch(postIds as number[])
     );
   }
 
