@@ -8,6 +8,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
+import { EventAttendeeStatus } from "../events/event-attendees/models/event-attendee.model";
 import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { DefaultGroupSetting } from "../groups/groups.constants";
 import { GroupsService } from "../groups/groups.service";
@@ -234,12 +235,17 @@ export class ProposalsService {
   }
 
   async implementGroupEvent(proposalActionId: number) {
-    const actionEvent =
-      await this.proposalActionEventsService.getProposalActionEvent({
-        proposalActionId,
-      });
-    if (!actionEvent) {
+    const event = await this.proposalActionEventsService.getProposalActionEvent(
+      { proposalActionId }
+    );
+    if (!event) {
       throw new UserInputError("Could not find proposal action event");
+    }
+    const host = event.hosts?.find(
+      ({ status }) => status === EventAttendeeStatus.Host
+    );
+    if (!host) {
+      throw new UserInputError("Could not find proposal action event host");
     }
     console.log("TODO: Add remaining event implementation logic");
   }
