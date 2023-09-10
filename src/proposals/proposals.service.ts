@@ -167,7 +167,7 @@ export class ProposalsService {
 
     if (
       groupCoverPhoto &&
-      proposal.action.actionType === ProposalActionType.ChangeCoverPhoto
+      proposal.action.actionType === ProposalActionType.ChangeGroupCoverPhoto
     ) {
       await this.imagesService.deleteImage({
         proposalActionId: proposal.action.id,
@@ -200,17 +200,19 @@ export class ProposalsService {
   }
 
   async implementProposal(proposalId: number) {
+    const proposal = await this.getProposal(proposalId, ["action"]);
+
     const {
       action: { id, actionType, groupDescription, groupName },
       groupId,
-    } = await this.getProposal(proposalId, ["action"]);
+    } = proposal;
 
-    if (actionType === ProposalActionType.ChangeName) {
+    if (actionType === ProposalActionType.ChangeGroupName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
       return;
     }
 
-    if (actionType === ProposalActionType.ChangeDescription) {
+    if (actionType === ProposalActionType.ChangeGroupDescription) {
       await this.groupsService.updateGroup({
         description: groupDescription,
         id: groupId,
@@ -218,20 +220,8 @@ export class ProposalsService {
       return;
     }
 
-    if (actionType === ProposalActionType.ChangeCoverPhoto) {
-      const currentCoverPhoto = await this.imagesService.getImage({
-        imageType: ImageTypes.CoverPhoto,
-        groupId,
-      });
-      const newCoverPhoto =
-        await this.proposalActionsService.getProposedGroupCoverPhoto(id);
-
-      if (!currentCoverPhoto || !newCoverPhoto) {
-        throw new UserInputError("Could not find group cover photo");
-      }
-
-      await this.imagesService.updateImage(newCoverPhoto.id, { groupId });
-      await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
+    if (actionType === ProposalActionType.ChangeGroupCoverPhoto) {
+      await this.implementChangeGroupCoverPhoto(proposal);
       return;
     }
 
@@ -314,6 +304,22 @@ export class ProposalsService {
       }
       console.log("TODO: Add remaining event implementation logic");
     }
+  }
+
+  async implementChangeGroupCoverPhoto({ action: { id }, groupId }: Proposal) {
+    const currentCoverPhoto = await this.imagesService.getImage({
+      imageType: ImageTypes.CoverPhoto,
+      groupId,
+    });
+    const newCoverPhoto =
+      await this.proposalActionsService.getProposedGroupCoverPhoto(id);
+
+    if (!currentCoverPhoto || !newCoverPhoto) {
+      throw new UserInputError("Could not find group cover photo");
+    }
+
+    await this.imagesService.updateImage(newCoverPhoto.id, { groupId });
+    await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
   }
 
   async isProposalRatifiable(proposalId: number) {
