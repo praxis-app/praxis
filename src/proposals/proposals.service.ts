@@ -231,48 +231,7 @@ export class ProposalsService {
     }
 
     if (actionType === ProposalActionType.ChangeRole) {
-      const actionRole =
-        await this.proposalActionRolesService.getProposalActionRole(
-          { proposalActionId: id },
-          ["permission", "members"]
-        );
-      if (!actionRole?.groupRoleId) {
-        throw new UserInputError("Could not find proposal action role");
-      }
-      const roleToUpdate = await this.groupRolesService.getGroupRole({
-        id: actionRole.groupRoleId,
-      });
-
-      const userIdsToAdd = actionRole.members
-        ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Add)
-        .map(({ userId }) => userId);
-
-      const userIdsToRemove = actionRole.members
-        ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Remove)
-        .map(({ userId }) => userId);
-
-      await this.groupRolesService.updateGroupRole({
-        id: roleToUpdate.id,
-        name: actionRole.name,
-        color: actionRole.color,
-        selectedUserIds: userIdsToAdd,
-        permissions: actionRole.permission,
-      });
-      if (userIdsToRemove?.length) {
-        await this.groupRolesService.deleteGroupRoleMembers(
-          roleToUpdate.id,
-          userIdsToRemove
-        );
-      }
-      if (actionRole.name || actionRole.color) {
-        await this.proposalActionRolesService.updateProposalActionRole(
-          actionRole.id,
-          {
-            oldName: actionRole.name ? roleToUpdate.name : undefined,
-            oldColor: actionRole.color ? roleToUpdate.color : undefined,
-          }
-        );
-      }
+      await this.implementChangeGroupRole(proposal);
       return;
     }
 
@@ -324,6 +283,51 @@ export class ProposalsService {
       },
       true
     );
+  }
+
+  async implementChangeGroupRole({ action: { id } }: Proposal) {
+    const actionRole =
+      await this.proposalActionRolesService.getProposalActionRole(
+        { proposalActionId: id },
+        ["permission", "members"]
+      );
+    if (!actionRole?.groupRoleId) {
+      throw new UserInputError("Could not find proposal action role");
+    }
+    const roleToUpdate = await this.groupRolesService.getGroupRole({
+      id: actionRole.groupRoleId,
+    });
+
+    const userIdsToAdd = actionRole.members
+      ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Add)
+      .map(({ userId }) => userId);
+
+    const userIdsToRemove = actionRole.members
+      ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Remove)
+      .map(({ userId }) => userId);
+
+    await this.groupRolesService.updateGroupRole({
+      id: roleToUpdate.id,
+      name: actionRole.name,
+      color: actionRole.color,
+      selectedUserIds: userIdsToAdd,
+      permissions: actionRole.permission,
+    });
+    if (userIdsToRemove?.length) {
+      await this.groupRolesService.deleteGroupRoleMembers(
+        roleToUpdate.id,
+        userIdsToRemove
+      );
+    }
+    if (actionRole.name || actionRole.color) {
+      await this.proposalActionRolesService.updateProposalActionRole(
+        actionRole.id,
+        {
+          oldName: actionRole.name ? roleToUpdate.name : undefined,
+          oldColor: actionRole.color ? roleToUpdate.color : undefined,
+        }
+      );
+    }
   }
 
   async isProposalRatifiable(proposalId: number) {
