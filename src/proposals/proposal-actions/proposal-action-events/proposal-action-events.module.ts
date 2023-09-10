@@ -2,6 +2,7 @@ import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { ImagesModule } from "../../../images/images.module";
 import { UsersModule } from "../../../users/users.module";
+import { ProposalActionsModule } from "../proposal-actions.module";
 import { ProposalActionEventHost } from "./models/proposal-action-event-host.model";
 import { ProposalActionEvent } from "./models/proposal-action-event.model";
 import { ProposalActionEventHostsResolver } from "./proposal-action-event-hosts.resolver";
@@ -11,6 +12,7 @@ import { ProposalActionEventsService } from "./proposal-action-events.service";
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProposalActionEvent, ProposalActionEventHost]),
+    forwardRef(() => ProposalActionsModule),
     forwardRef(() => UsersModule),
     ImagesModule,
   ],

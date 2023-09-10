@@ -11,10 +11,10 @@ import { ProposalActionEventsModule } from "./proposal-action-events/proposal-ac
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProposalAction]),
+    forwardRef(() => ProposalActionEventsModule),
     forwardRef(() => ProposalsModule),
     ProposalActionRolesModule,
     ImagesModule,
-    ProposalActionEventsModule,
   ],
   providers: [ProposalActionsService, ProposalActionsResolver],
   exports: [ProposalActionsService],
