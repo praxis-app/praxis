@@ -84,18 +84,23 @@ export class ProposalActionEventsService {
     hostId: number
   ) {
     const event = await this.eventRepository.save(eventData);
-    const coverPhoto = images.find(
-      ({ imageType }) => imageType === ImageTypes.CoverPhoto
-    );
-    await this.eventAttendeeRepository.save({
-      status: EventAttendeeStatus.Host,
-      eventId: event.id,
-      hostId,
-    });
-    await this.imagesService.createImage({
-      ...coverPhoto,
-      eventId: event.id,
-    });
+    try {
+      const coverPhoto = images.find(
+        ({ imageType }) => imageType === ImageTypes.CoverPhoto
+      );
+      await this.eventAttendeeRepository.save({
+        status: EventAttendeeStatus.Host,
+        eventId: event.id,
+        userId: hostId,
+      });
+      await this.imagesService.createImage({
+        ...coverPhoto,
+        eventId: event.id,
+      });
+    } catch {
+      await this.eventRepository.delete(event.id);
+      throw new Error("Failed to create event from proposal action");
+    }
   }
 
   async saveCoverPhoto(
