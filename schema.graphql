@@ -312,19 +312,19 @@ type CreateServerInvitePayload {
   serverInvite: ServerInvite!
 }
 
-type CreateEventPayload {
-  event: Event!
-}
-
-type UpdateEventPayload {
-  event: Event!
-}
-
 type CreateEventAttendeePayload {
   event: Event!
 }
 
 type UpdateEventAttendeePayload {
+  event: Event!
+}
+
+type CreateEventPayload {
+  event: Event!
+}
+
+type UpdateEventPayload {
   event: Event!
 }
 

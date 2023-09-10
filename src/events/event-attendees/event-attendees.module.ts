@@ -11,6 +11,6 @@ import { EventAttendee } from "./models/event-attendee.model";
     forwardRef(() => EventsModule),
   ],
   providers: [EventAttendeesService, EventAttendeesResolver],
-  exports: [EventAttendeesService],
+  exports: [EventAttendeesService, TypeOrmModule],
 })
 export class EventAttendeesModule {}

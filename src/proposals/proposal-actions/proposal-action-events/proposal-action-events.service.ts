@@ -3,7 +3,11 @@ import { InjectRepository } from "@nestjs/typeorm";
 import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, Repository } from "typeorm";
-import { EventAttendeeStatus } from "../../../events/event-attendees/models/event-attendee.model";
+import {
+  EventAttendee,
+  EventAttendeeStatus,
+} from "../../../events/event-attendees/models/event-attendee.model";
+import { Event } from "../../../events/models/event.model";
 import { randomDefaultImagePath, saveImage } from "../../../images/image.utils";
 import { ImagesService, ImageTypes } from "../../../images/images.service";
 import { ProposalActionEventHost } from "./models/proposal-action-event-host.model";
@@ -18,6 +22,12 @@ export class ProposalActionEventsService {
 
     @InjectRepository(ProposalActionEventHost)
     private proposalActionEventHostRepository: Repository<ProposalActionEventHost>,
+
+    @InjectRepository(Event)
+    private eventRepository: Repository<Event>,
+
+    @InjectRepository(EventAttendee)
+    private eventAttendeeRepository: Repository<EventAttendee>,
 
     private imagesService: ImagesService
   ) {}
@@ -67,6 +77,25 @@ export class ProposalActionEventsService {
     } else {
       await this.saveDefaultCoverPhoto(proposalActionEvent.id);
     }
+  }
+
+  async createEventFromProposalAction(
+    { images, ...eventData }: ProposalActionEvent,
+    hostId: number
+  ) {
+    const event = await this.eventRepository.save(eventData);
+    const coverPhoto = images.find(
+      ({ imageType }) => imageType === ImageTypes.CoverPhoto
+    );
+    await this.eventAttendeeRepository.save({
+      status: EventAttendeeStatus.Host,
+      eventId: event.id,
+      hostId,
+    });
+    await this.imagesService.createImage({
+      ...coverPhoto,
+      eventId: event.id,
+    });
   }
 
   async saveCoverPhoto(
