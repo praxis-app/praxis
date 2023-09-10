@@ -48,8 +48,8 @@ export class ProposalsService {
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private imagesService: ImagesService,
-    private proposalActionRolesService: ProposalActionRolesService,
     private proposalActionEventsService: ProposalActionEventsService,
+    private proposalActionRolesService: ProposalActionRolesService,
     private proposalActionsService: ProposalActionsService
   ) {}
 
@@ -232,6 +232,7 @@ export class ProposalsService {
 
       await this.imagesService.updateImage(newCoverPhoto.id, { groupId });
       await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
+      return;
     }
 
     if (actionType === ProposalActionType.CreateRole) {
@@ -254,6 +255,7 @@ export class ProposalsService {
         },
         true
       );
+      return;
     }
 
     if (actionType === ProposalActionType.ChangeRole) {
@@ -299,6 +301,18 @@ export class ProposalsService {
           }
         );
       }
+      return;
+    }
+
+    if (actionType === ProposalActionType.PlanEvent) {
+      const actionEvent =
+        await this.proposalActionEventsService.getProposalActionEvent({
+          proposalActionId: id,
+        });
+      if (!actionEvent) {
+        throw new UserInputError("Could not find proposal action event");
+      }
+      console.log("TODO: Add remaining event implementation logic");
     }
   }
 
