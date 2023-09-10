@@ -43,7 +43,7 @@ export class ProposalActionEvent {
   @Field(() => [ProposalActionEventHost])
   @OneToMany(
     () => ProposalActionEventHost,
-    (proposalActionEventHost) => proposalActionEventHost.event
+    (proposalActionEventHost) => proposalActionEventHost.proposalActionEvent
   )
   hosts: ProposalActionEventHost[];
 

@@ -29,11 +29,15 @@ export class ProposalActionEventHost {
   @Column()
   userId: number;
 
-  @ManyToOne(() => ProposalActionEvent, (event) => event.hosts, {
-    onDelete: "CASCADE",
-  })
-  @Field(() => ProposalActionEvent)
-  event: ProposalActionEvent;
+  @ManyToOne(
+    () => ProposalActionEvent,
+    (proposalActionEvent) => proposalActionEvent.hosts,
+    {
+      onDelete: "CASCADE",
+    }
+  )
+  @Field(() => ProposalActionEvent, { name: "event" })
+  proposalActionEvent: ProposalActionEvent;
 
   @Column()
   proposalActionEventId: number;

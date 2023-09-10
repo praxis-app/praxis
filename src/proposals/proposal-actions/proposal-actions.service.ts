@@ -61,7 +61,8 @@ export class ProposalActionsService {
 
   async implementGroupEvent(proposalActionId: number) {
     const event = await this.proposalActionEventsService.getProposalActionEvent(
-      { proposalActionId }
+      { proposalActionId },
+      ["hosts"]
     );
     if (!event) {
       throw new UserInputError("Could not find proposal action event");
