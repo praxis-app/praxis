@@ -226,25 +226,7 @@ export class ProposalsService {
     }
 
     if (actionType === ProposalActionType.CreateRole) {
-      const role = await this.proposalActionRolesService.getProposalActionRole(
-        { proposalActionId: id },
-        ["permission", "members"]
-      );
-      if (!role) {
-        throw new UserInputError("Could not find proposal action role");
-      }
-      const { name, color, permission } = role;
-      const members = role.members?.map(({ userId }) => ({ id: userId }));
-      await this.groupRolesService.createGroupRole(
-        {
-          name,
-          color,
-          permission,
-          groupId,
-          members,
-        },
-        true
-      );
+      await this.implementCreateGroupRole(proposal);
       return;
     }
 
@@ -320,6 +302,28 @@ export class ProposalsService {
 
     await this.imagesService.updateImage(newCoverPhoto.id, { groupId });
     await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
+  }
+
+  async implementCreateGroupRole({ action: { id }, groupId }: Proposal) {
+    const role = await this.proposalActionRolesService.getProposalActionRole(
+      { proposalActionId: id },
+      ["permission", "members"]
+    );
+    if (!role) {
+      throw new UserInputError("Could not find proposal action role");
+    }
+    const { name, color, permission } = role;
+    const members = role.members?.map(({ userId }) => ({ id: userId }));
+    await this.groupRolesService.createGroupRole(
+      {
+        name,
+        color,
+        permission,
+        groupId,
+        members,
+      },
+      true
+    );
   }
 
   async isProposalRatifiable(proposalId: number) {
