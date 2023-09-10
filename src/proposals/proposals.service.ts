@@ -209,7 +209,6 @@ export class ProposalsService {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
       return;
     }
-
     if (actionType === ProposalActionType.ChangeGroupDescription) {
       await this.groupsService.updateGroup({
         description: groupDescription,
@@ -217,31 +216,20 @@ export class ProposalsService {
       });
       return;
     }
-
     if (actionType === ProposalActionType.ChangeGroupCoverPhoto) {
       await this.implementChangeGroupCoverPhoto(id, groupId);
       return;
     }
-
     if (actionType === ProposalActionType.CreateRole) {
       await this.implementCreateGroupRole(id, groupId);
       return;
     }
-
     if (actionType === ProposalActionType.ChangeRole) {
       await this.implementChangeGroupRole(id);
       return;
     }
-
     if (actionType === ProposalActionType.PlanEvent) {
-      const actionEvent =
-        await this.proposalActionEventsService.getProposalActionEvent({
-          proposalActionId: id,
-        });
-      if (!actionEvent) {
-        throw new UserInputError("Could not find proposal action event");
-      }
-      console.log("TODO: Add remaining event implementation logic");
+      await this.implementGroupEvent(id);
     }
   }
 
@@ -331,6 +319,17 @@ export class ProposalsService {
         }
       );
     }
+  }
+
+  async implementGroupEvent(proposalActionId: number) {
+    const actionEvent =
+      await this.proposalActionEventsService.getProposalActionEvent({
+        proposalActionId,
+      });
+    if (!actionEvent) {
+      throw new UserInputError("Could not find proposal action event");
+    }
+    console.log("TODO: Add remaining event implementation logic");
   }
 
   async isProposalRatifiable(proposalId: number) {
