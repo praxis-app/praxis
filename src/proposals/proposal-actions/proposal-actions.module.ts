@@ -7,14 +7,18 @@ import { ProposalActionRolesModule } from "./proposal-action-roles/proposal-acti
 import { ProposalActionsResolver } from "./proposal-actions.resolver";
 import { ProposalActionsService } from "./proposal-actions.service";
 import { ProposalActionEventsModule } from "./proposal-action-events/proposal-action-events.module";
+import { EventsModule } from "../../events/events.module";
+import { GroupRolesModule } from "../../groups/group-roles/group-roles.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ProposalAction]),
     forwardRef(() => ProposalActionEventsModule),
     forwardRef(() => ProposalsModule),
-    ProposalActionRolesModule,
+    EventsModule,
+    GroupRolesModule,
     ImagesModule,
+    ProposalActionRolesModule,
   ],
   providers: [ProposalActionsService, ProposalActionsResolver],
   exports: [ProposalActionsService],
