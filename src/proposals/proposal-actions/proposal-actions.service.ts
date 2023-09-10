@@ -146,6 +146,7 @@ export class ProposalActionsService {
     }
   }
 
+  // TODO: Ensure new image file is saved in case group is deleted
   async implementChangeGroupCoverPhoto(
     proposalActionId: number,
     groupId: number
