@@ -205,6 +205,18 @@ export class ProposalsService {
       groupId,
     } = await this.getProposal(proposalId, ["action"]);
 
+    if (actionType === ProposalActionType.PlanEvent) {
+      await this.implementGroupEvent(id);
+      return;
+    }
+    if (actionType === ProposalActionType.CreateRole) {
+      await this.implementCreateGroupRole(id, groupId);
+      return;
+    }
+    if (actionType === ProposalActionType.ChangeRole) {
+      await this.implementChangeGroupRole(id);
+      return;
+    }
     if (actionType === ProposalActionType.ChangeGroupName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
       return;
@@ -218,18 +230,6 @@ export class ProposalsService {
     }
     if (actionType === ProposalActionType.ChangeGroupCoverPhoto) {
       await this.implementChangeGroupCoverPhoto(id, groupId);
-      return;
-    }
-    if (actionType === ProposalActionType.CreateRole) {
-      await this.implementCreateGroupRole(id, groupId);
-      return;
-    }
-    if (actionType === ProposalActionType.ChangeRole) {
-      await this.implementChangeGroupRole(id);
-      return;
-    }
-    if (actionType === ProposalActionType.PlanEvent) {
-      await this.implementGroupEvent(id);
     }
   }
 
