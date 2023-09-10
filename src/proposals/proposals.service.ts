@@ -200,12 +200,10 @@ export class ProposalsService {
   }
 
   async implementProposal(proposalId: number) {
-    const proposal = await this.getProposal(proposalId, ["action"]);
-
     const {
       action: { id, actionType, groupDescription, groupName },
       groupId,
-    } = proposal;
+    } = await this.getProposal(proposalId, ["action"]);
 
     if (actionType === ProposalActionType.ChangeGroupName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
@@ -221,17 +219,17 @@ export class ProposalsService {
     }
 
     if (actionType === ProposalActionType.ChangeGroupCoverPhoto) {
-      await this.implementChangeGroupCoverPhoto(proposal);
+      await this.implementChangeGroupCoverPhoto(id, groupId);
       return;
     }
 
     if (actionType === ProposalActionType.CreateRole) {
-      await this.implementCreateGroupRole(proposal);
+      await this.implementCreateGroupRole(id, groupId);
       return;
     }
 
     if (actionType === ProposalActionType.ChangeRole) {
-      await this.implementChangeGroupRole(proposal);
+      await this.implementChangeGroupRole(id);
       return;
     }
 
@@ -247,13 +245,18 @@ export class ProposalsService {
     }
   }
 
-  async implementChangeGroupCoverPhoto({ action: { id }, groupId }: Proposal) {
+  async implementChangeGroupCoverPhoto(
+    proposalActionId: number,
+    groupId: number
+  ) {
     const currentCoverPhoto = await this.imagesService.getImage({
       imageType: ImageTypes.CoverPhoto,
       groupId,
     });
     const newCoverPhoto =
-      await this.proposalActionsService.getProposedGroupCoverPhoto(id);
+      await this.proposalActionsService.getProposedGroupCoverPhoto(
+        proposalActionId
+      );
 
     if (!currentCoverPhoto || !newCoverPhoto) {
       throw new UserInputError("Could not find group cover photo");
@@ -263,9 +266,9 @@ export class ProposalsService {
     await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
   }
 
-  async implementCreateGroupRole({ action: { id }, groupId }: Proposal) {
+  async implementCreateGroupRole(proposalActionId: number, groupId: number) {
     const role = await this.proposalActionRolesService.getProposalActionRole(
-      { proposalActionId: id },
+      { proposalActionId },
       ["permission", "members"]
     );
     if (!role) {
@@ -285,10 +288,10 @@ export class ProposalsService {
     );
   }
 
-  async implementChangeGroupRole({ action: { id } }: Proposal) {
+  async implementChangeGroupRole(proposalActionId: number) {
     const actionRole =
       await this.proposalActionRolesService.getProposalActionRole(
-        { proposalActionId: id },
+        { proposalActionId },
         ["permission", "members"]
       );
     if (!actionRole?.groupRoleId) {
