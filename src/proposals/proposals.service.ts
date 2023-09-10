@@ -9,6 +9,7 @@ import { UserInputError } from "apollo-server-express";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { EventAttendeeStatus } from "../events/event-attendees/models/event-attendee.model";
+import { EventsService } from "../events/events.service";
 import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { DefaultGroupSetting } from "../groups/groups.constants";
 import { GroupsService } from "../groups/groups.service";
@@ -46,6 +47,7 @@ export class ProposalsService {
     @Inject(forwardRef(() => VotesService))
     private votesService: VotesService,
 
+    private eventsService: EventsService,
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private imagesService: ImagesService,
@@ -247,7 +249,7 @@ export class ProposalsService {
     if (!host) {
       throw new UserInputError("Could not find proposal action event host");
     }
-    console.log("TODO: Add remaining event implementation logic");
+    await this.eventsService.createEventFromProposal(event, host.userId);
   }
 
   async implementCreateGroupRole(proposalActionId: number, groupId: number) {

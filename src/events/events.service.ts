@@ -15,6 +15,7 @@ import { GroupPrivacy } from "../groups/group-configs/models/group-config.model"
 import { randomDefaultImagePath, saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
+import { ProposalActionEvent } from "../proposals/proposal-actions/proposal-action-events/models/proposal-action-event.model";
 import { EventAttendeesService } from "./event-attendees/event-attendees.service";
 import {
   EventAttendee,
@@ -191,6 +192,25 @@ export class EventsService {
     return { event };
   }
 
+  async createEventFromProposal(
+    { images, ...eventData }: ProposalActionEvent,
+    hostId: number
+  ) {
+    const event = await this.eventRepository.save(eventData);
+    const coverPhoto = images.find(
+      ({ imageType }) => imageType === ImageTypes.CoverPhoto
+    );
+    await this.eventAttendeeRepository.save({
+      status: EventAttendeeStatus.Host,
+      eventId: event.id,
+      hostId,
+    });
+    await this.imagesService.createImage({
+      ...coverPhoto,
+      eventId: event.id,
+    });
+  }
+
   async updateEvent({ id, coverPhoto, ...eventData }: UpdateEventInput) {
     await this.eventRepository.update(id, eventData);
     const event = await this.getEvent({ id });
@@ -212,6 +232,7 @@ export class EventsService {
     });
   }
 
+  // TODO: Move to images service to be used for all cover photos
   async saveDefaultCoverPhoto(eventId: number) {
     const sourcePath = randomDefaultImagePath();
     const filename = `${Date.now()}.jpeg`;

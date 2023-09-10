@@ -219,6 +219,7 @@ export class GroupsService {
     });
   }
 
+  // TODO: Move to images service to be used for all cover photos
   async saveDefaultCoverPhoto(groupId: number) {
     const sourcePath = randomDefaultImagePath();
     const filename = `${Date.now()}.jpeg`;
