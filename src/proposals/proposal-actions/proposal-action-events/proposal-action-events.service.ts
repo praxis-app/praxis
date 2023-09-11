@@ -8,7 +8,11 @@ import {
   EventAttendeeStatus,
 } from "../../../events/event-attendees/models/event-attendee.model";
 import { Event } from "../../../events/models/event.model";
-import { randomDefaultImagePath, saveImage } from "../../../images/image.utils";
+import {
+  copyImage,
+  randomDefaultImagePath,
+  saveImage,
+} from "../../../images/image.utils";
 import { ImagesService, ImageTypes } from "../../../images/images.service";
 import { ProposalActionEventHost } from "./models/proposal-action-event-host.model";
 import { ProposalActionEventInput } from "./models/proposal-action-event.input";
@@ -81,21 +85,27 @@ export class ProposalActionEventsService {
 
   async createEventFromProposalAction(
     { images, ...eventData }: ProposalActionEvent,
+    groupId: number,
     hostId: number
   ) {
-    const event = await this.eventRepository.save(eventData);
+    const event = await this.eventRepository.save({ ...eventData, groupId });
     try {
-      const coverPhoto = images.find(
-        ({ imageType }) => imageType === ImageTypes.CoverPhoto
-      );
       await this.eventAttendeeRepository.save({
         status: EventAttendeeStatus.Host,
         eventId: event.id,
         userId: hostId,
       });
+      const coverPhoto = images.find(
+        ({ imageType }) => imageType === ImageTypes.CoverPhoto
+      );
+      if (!coverPhoto) {
+        throw new Error();
+      }
+      const imageFilename = copyImage(coverPhoto.filename);
       await this.imagesService.createImage({
-        ...coverPhoto,
         eventId: event.id,
+        filename: imageFilename,
+        imageType: coverPhoto?.imageType,
       });
     } catch {
       await this.eventRepository.delete(event.id);

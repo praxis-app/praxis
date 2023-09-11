@@ -59,7 +59,7 @@ export class ProposalActionsService {
     );
   }
 
-  async implementGroupEvent(proposalActionId: number) {
+  async implementGroupEvent(proposalActionId: number, groupId: number) {
     const event = await this.proposalActionEventsService.getProposalActionEvent(
       { proposalActionId },
       ["hosts", "images"]
@@ -75,6 +75,7 @@ export class ProposalActionsService {
     }
     await this.proposalActionEventsService.createEventFromProposalAction(
       event,
+      groupId,
       host.userId
     );
   }

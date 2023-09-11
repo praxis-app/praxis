@@ -200,7 +200,7 @@ export class ProposalsService {
     } = await this.getProposal(proposalId, ["action"]);
 
     if (actionType === ProposalActionType.PlanEvent) {
-      await this.proposalActionsService.implementGroupEvent(id);
+      await this.proposalActionsService.implementGroupEvent(id, groupId);
       return;
     }
     if (actionType === ProposalActionType.CreateRole) {
