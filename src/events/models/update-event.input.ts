@@ -24,6 +24,9 @@ export class UpdateEventInput {
   @Field({ nullable: true })
   externalLink?: string;
 
+  @Field(() => Int, { nullable: true })
+  hostId?: number;
+
   @Field()
   startsAt: Date;
 

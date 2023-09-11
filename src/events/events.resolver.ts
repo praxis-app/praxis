@@ -75,6 +75,11 @@ export class EventsResolver {
     return this.eventsService.getAttendingStatus(id, currentUserId);
   }
 
+  @ResolveField(() => User)
+  async host(@Parent() { id }: Event) {
+    return this.eventsService.getEventHost(id);
+  }
+
   @ResolveField(() => Group)
   async group(
     @Context() { loaders }: { loaders: Dataloaders },
@@ -97,11 +102,8 @@ export class EventsResolver {
   }
 
   @Mutation(() => CreateEventPayload)
-  async createEvent(
-    @Args("eventData") eventData: CreateEventInput,
-    @CurrentUser() { id }: User
-  ) {
-    return this.eventsService.createEvent(eventData, id);
+  async createEvent(@Args("eventData") eventData: CreateEventInput) {
+    return this.eventsService.createEvent(eventData);
   }
 
   @Mutation(() => UpdateEventPayload)

@@ -32,4 +32,7 @@ export class CreateEventInput {
 
   @Field(() => Int, { nullable: true })
   groupId?: number;
+
+  @Field(() => Int)
+  hostId: number;
 }

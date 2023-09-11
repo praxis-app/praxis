@@ -99,6 +99,17 @@ export class EventsService {
     return eventAttendee?.status || null;
   }
 
+  async getEventHost(id: number) {
+    const eventAttendee = await this.eventAttendeesService.getEventAttendee({
+      status: EventAttendeeStatus.Host,
+      eventId: id,
+    });
+    if (!eventAttendee) {
+      throw new Error(`Could not find host for event: ${id}`);
+    }
+    return eventAttendee.user;
+  }
+
   async getEventsBatch(eventIds: number[]) {
     const events = await this.getEvents({
       id: In(eventIds),
@@ -173,15 +184,12 @@ export class EventsService {
     });
   }
 
-  async createEvent(
-    { coverPhoto, ...eventData }: CreateEventInput,
-    userId: number
-  ) {
+  async createEvent({ coverPhoto, hostId, ...eventData }: CreateEventInput) {
     const event = await this.eventRepository.save(eventData);
     await this.eventAttendeeRepository.save({
       status: EventAttendeeStatus.Host,
       eventId: event.id,
-      userId,
+      userId: hostId,
     });
     if (coverPhoto) {
       await this.saveCoverPhoto(event.id, coverPhoto);
