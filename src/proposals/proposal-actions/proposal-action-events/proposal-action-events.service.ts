@@ -47,9 +47,14 @@ export class ProposalActionEventsService {
   }
 
   async getProposalActionEventHost(proposalActionEventId: number) {
-    return this.proposalActionEventHostRepository.findOne({
+    const host = await this.proposalActionEventHostRepository.findOne({
       where: { proposalActionEventId, status: EventAttendeeStatus.Host },
+      relations: ["user"],
     });
+    if (!host) {
+      throw new Error("Could not find host for proposal action event");
+    }
+    return host.user;
   }
 
   async getProposalActionEventCoverPhoto(proposalActionEventId: number) {
@@ -62,8 +67,8 @@ export class ProposalActionEventsService {
   async createProposalActionEvent(
     proposalActionId: number,
     {
+      hostId,
       coverPhoto,
-      hostUserId,
       ...proposalActionEventData
     }: Partial<ProposalActionEventInput>
   ) {
@@ -74,7 +79,7 @@ export class ProposalActionEventsService {
     await this.proposalActionEventHostRepository.save({
       proposalActionEventId: proposalActionEvent.id,
       status: EventAttendeeStatus.Host,
-      userId: hostUserId,
+      userId: hostId,
     });
     if (coverPhoto) {
       await this.saveCoverPhoto(proposalActionEvent.id, coverPhoto);

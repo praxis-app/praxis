@@ -1,8 +1,8 @@
 import { Parent, ResolveField, Resolver } from "@nestjs/graphql";
 import { Image } from "../../../images/models/image.model";
+import { User } from "../../../users/models/user.model";
 import { ProposalAction } from "../models/proposal-action.model";
 import { ProposalActionsService } from "../proposal-actions.service";
-import { ProposalActionEventHost } from "./models/proposal-action-event-host.model";
 import { ProposalActionEvent } from "./models/proposal-action-event.model";
 import { ProposalActionEventsService } from "./proposal-action-events.service";
 
@@ -13,7 +13,7 @@ export class ProposalActionEventsResolver {
     private proposalActionsService: ProposalActionsService
   ) {}
 
-  @ResolveField(() => ProposalActionEventHost)
+  @ResolveField(() => User)
   async host(@Parent() { id }: ProposalActionEvent) {
     return this.proposalActionEventsService.getProposalActionEventHost(id);
   }

@@ -66,7 +66,7 @@ type ProposalActionEvent {
   proposalAction: ProposalAction!
   startsAt: DateTime!
   endsAt: DateTime
-  host: ProposalActionEventHost!
+  host: User!
   coverPhoto: Image
 }
 
@@ -571,7 +571,7 @@ input ProposalActionEventInput {
   online: Boolean
   externalLink: String
   coverPhoto: Upload
-  hostUserId: Int!
+  hostId: Int!
   startsAt: DateTime!
   endsAt: DateTime
 }

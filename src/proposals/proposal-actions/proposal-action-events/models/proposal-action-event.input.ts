@@ -25,7 +25,7 @@ export class ProposalActionEventInput {
   coverPhoto?: Promise<FileUpload>;
 
   @Field(() => Int)
-  hostUserId: number;
+  hostId: number;
 
   @Field()
   startsAt: Date;
