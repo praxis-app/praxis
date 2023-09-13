@@ -26,14 +26,18 @@ export class GroupMemberRequest {
   @Column({ default: GroupMemberRequestStatus.Pending })
   status: string;
 
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.groupMemberRequests, {
+    onDelete: "CASCADE",
+  })
   @Field(() => User)
   user: User;
 
   @Column()
   userId: number;
 
-  @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
+  @ManyToOne(() => Group, (group) => group.memberRequests, {
+    onDelete: "CASCADE",
+  })
   @Field(() => Group)
   group: Group;
 

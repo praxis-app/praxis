@@ -15,6 +15,7 @@ import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.mod
 import { Comment } from "../../comments/models/comment.model";
 import { FeedItem } from "../../common/models/feed-item.union";
 import { EventAttendee } from "../../events/event-attendees/models/event-attendee.model";
+import { GroupMemberRequest } from "../../groups/group-member-requests/models/group-member-request.model";
 import { GroupRole } from "../../groups/group-roles/models/group-role.model";
 import { Group } from "../../groups/models/group.model";
 import { Image } from "../../images/models/image.model";
@@ -99,6 +100,13 @@ export class User {
 
   @ManyToMany(() => Group, (group) => group.members)
   groups: Group[];
+
+  @OneToMany(
+    () => GroupMemberRequest,
+    (groupMemberRequest) => groupMemberRequest.user,
+    { cascade: true }
+  )
+  groupMemberRequests: GroupMemberRequest[];
 
   @ManyToMany(() => ServerRole, (serverRole) => serverRole.members)
   serverRoles: ServerRole[];
