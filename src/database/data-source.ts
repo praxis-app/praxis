@@ -14,6 +14,8 @@ import { Like } from "../likes/models/like.model";
 import { Post } from "../posts/models/post.model";
 import { Proposal } from "../proposals/models/proposal.model";
 import { ProposalAction } from "../proposals/proposal-actions/models/proposal-action.model";
+import { ProposalActionEventHost } from "../proposals/proposal-actions/proposal-action-events/models/proposal-action-event-host.model";
+import { ProposalActionEvent } from "../proposals/proposal-actions/proposal-action-events/models/proposal-action-event.model";
 import { ProposalActionPermission } from "../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model";
 import { ProposalActionRoleMember } from "../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
 import { ProposalActionRole } from "../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
@@ -42,6 +44,7 @@ import { SetDefaultForGroupMemberRequestTable1690333204053 } from "./migrations/
 import { RemoveMemberRequestIdSeq1690336764201 } from "./migrations/1690336764201-RemoveMemberRequestIdSeq";
 import { AddCommentTable1693003196421 } from "./migrations/1693003196421-AddCommentTable";
 import { GroupMemberRequestCleanUp1694647639797 } from "./migrations/1694647639797-GroupMemberRequestCleanUp";
+import { AddProposalActionEventTables1694657129939 } from "./migrations/1694657129939-AddProposalActionEventTables";
 
 config();
 
@@ -66,6 +69,8 @@ export default new DataSource({
     Post,
     Proposal,
     ProposalAction,
+    ProposalActionEvent,
+    ProposalActionEventHost,
     ProposalActionPermission,
     ProposalActionRole,
     ProposalActionRoleMember,
@@ -83,6 +88,7 @@ export default new DataSource({
     AddGroupConfigTable1685746618239,
     AddGroupMemberLinkTable1681010227367,
     AddLikeTable1679157357262,
+    AddProposalActionEventTables1694657129939,
     AddProposalActionImagesConstraint1685201083917,
     AddProposalActionRoleCascadeDelete1685748700121,
     AddProposalActionRoleTable1684893300206,
