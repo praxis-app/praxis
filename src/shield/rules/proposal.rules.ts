@@ -35,6 +35,9 @@ export const isPublicProposalImage = rule({ cache: "strict" })(
         proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
       );
     }
+    if (!parent.proposalId) {
+      return false;
+    }
     const { group } = await proposalsService.getProposal(parent.proposalId, [
       "group.config",
     ]);

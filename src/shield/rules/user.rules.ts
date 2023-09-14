@@ -23,7 +23,7 @@ export const isPublicUserAvatar = rule({ cache: "strict" })(
     const image = await imagesService.getImage({ id: parent.id }, [
       "user.groups.config",
     ]);
-    if (!image) {
+    if (!image?.user) {
       return false;
     }
     return image.user.groups.some(

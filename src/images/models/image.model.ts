@@ -54,37 +54,37 @@ export class Image {
   @ManyToOne(() => User, (user) => user.images, {
     onDelete: "CASCADE",
   })
-  user: User;
+  user?: User;
 
   @Column({ nullable: true })
-  userId: number;
+  userId?: number;
 
   @Field(() => Group, { nullable: true })
   @ManyToOne(() => Group, (group) => group.images, {
     onDelete: "CASCADE",
   })
-  group: Group;
+  group?: Group;
 
   @Column({ nullable: true })
-  groupId: number;
+  groupId?: number;
 
   @Field(() => Event, { nullable: true })
   @ManyToOne(() => Event, (event) => event.images, {
     onDelete: "CASCADE",
   })
-  event: Event;
+  event?: Event;
 
   @Column({ nullable: true })
-  eventId: number;
+  eventId?: number;
 
   @Field(() => Proposal, { nullable: true })
   @ManyToOne(() => Proposal, (proposal) => proposal.images, {
     onDelete: "CASCADE",
   })
-  proposal: Proposal;
+  proposal?: Proposal;
 
   @Column({ nullable: true })
-  proposalId: number;
+  proposalId?: number;
 
   @Field(() => ProposalAction, { nullable: true })
   @ManyToOne(() => ProposalAction, (proposalAction) => proposalAction.images, {
