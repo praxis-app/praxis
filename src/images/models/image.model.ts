@@ -90,10 +90,10 @@ export class Image {
   @ManyToOne(() => ProposalAction, (proposalAction) => proposalAction.images, {
     onDelete: "CASCADE",
   })
-  proposalAction: ProposalAction;
+  proposalAction?: ProposalAction;
 
   @Column({ nullable: true })
-  proposalActionId: number;
+  proposalActionId?: number;
 
   @Field(() => ProposalActionEvent, { nullable: true })
   @ManyToOne(
@@ -103,10 +103,10 @@ export class Image {
       onDelete: "CASCADE",
     }
   )
-  proposalActionEvent: ProposalActionEvent;
+  proposalActionEvent?: ProposalActionEvent;
 
   @Column({ nullable: true })
-  proposalActionEventId: number;
+  proposalActionEventId?: number;
 
   @CreateDateColumn()
   @Field()
