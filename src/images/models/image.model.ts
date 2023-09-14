@@ -35,11 +35,10 @@ export class Image {
   @ManyToOne(() => Post, (post) => post.images, {
     onDelete: "CASCADE",
   })
-  // TODO: Set as optional type
-  post: Post;
+  post?: Post;
 
   @Column({ nullable: true })
-  postId: number;
+  postId?: number;
 
   @Field(() => Comment, { nullable: true })
   @ManyToOne(() => Comment, (comment) => comment.images, {
