@@ -41,6 +41,7 @@ import { CleanUpGroupMemberRequestTable1690168731029 } from "./migrations/169016
 import { SetDefaultForGroupMemberRequestTable1690333204053 } from "./migrations/1690333204053-SetDefaultForGroupMemberRequestTable";
 import { RemoveMemberRequestIdSeq1690336764201 } from "./migrations/1690336764201-RemoveMemberRequestIdSeq";
 import { AddCommentTable1693003196421 } from "./migrations/1693003196421-AddCommentTable";
+import { GroupMemberRequestCleanUp1694647639797 } from "./migrations/1694647639797-GroupMemberRequestCleanUp";
 
 config();
 
@@ -90,6 +91,7 @@ export default new DataSource({
     CleanUpGroupMemberRequestTable1690168731029,
     DropGroupMemberEntityTable1681010509841,
     DropRoleMemberEntityTable1681173025669,
+    GroupMemberRequestCleanUp1694647639797,
     Initial1675388391336,
     RefactorRolesAndPermissions1688001951695,
     RemoveMemberRequestIdSeq1690336764201,
