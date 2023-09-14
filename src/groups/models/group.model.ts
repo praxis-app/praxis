@@ -67,6 +67,7 @@ export class Group {
   @JoinTable()
   members: User[];
 
+  // TODO: Determine why group member requests are set as nullable
   @Field(() => [GroupMemberRequest], { nullable: true })
   @OneToMany(() => GroupMemberRequest, (memberRequest) => memberRequest.group, {
     cascade: true,
