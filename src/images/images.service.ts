@@ -1,8 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FindOptionsWhere, Repository } from "typeorm";
-import { deleteImageFile } from "./image.utils";
+import { deleteImageFile, randomDefaultImagePath } from "./image.utils";
 import { Image } from "./models/image.model";
+import * as fs from "fs";
 
 export const enum ImageTypes {
   CoverPhoto = "coverPhoto",
@@ -30,6 +31,24 @@ export class ImagesService {
 
   async updateImage(id: number, data: Partial<Image>) {
     return this.repository.save({ id, ...data });
+  }
+
+  async saveDefaultCoverPhoto(imageData: Partial<Image>) {
+    const sourcePath = randomDefaultImagePath();
+    const filename = `${Date.now()}.jpeg`;
+    const copyPath = `./uploads/${filename}`;
+
+    fs.copyFile(sourcePath, copyPath, (err) => {
+      if (err) {
+        throw new Error(`Failed to save default cover photo: ${err}`);
+      }
+    });
+    const image = await this.createImage({
+      imageType: ImageTypes.CoverPhoto,
+      filename,
+      ...imageData,
+    });
+    return image;
   }
 
   async deleteImage(where: FindOptionsWhere<Image>) {

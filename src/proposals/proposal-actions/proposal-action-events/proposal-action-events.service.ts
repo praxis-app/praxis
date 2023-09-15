@@ -84,7 +84,9 @@ export class ProposalActionEventsService {
     if (coverPhoto) {
       await this.saveCoverPhoto(proposalActionEvent.id, coverPhoto);
     } else {
-      await this.saveDefaultCoverPhoto(proposalActionEvent.id);
+      await this.imagesService.saveDefaultCoverPhoto({
+        proposalActionEventId: proposalActionEvent.id,
+      });
     }
   }
 

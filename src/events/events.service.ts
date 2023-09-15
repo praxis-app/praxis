@@ -1,6 +1,5 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import {
   Between,
@@ -12,7 +11,7 @@ import {
 } from "typeorm";
 import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { GroupPrivacy } from "../groups/group-configs/models/group-config.model";
-import { randomDefaultImagePath, saveImage } from "../images/image.utils";
+import { saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { EventAttendeesService } from "./event-attendees/event-attendees.service";
@@ -194,7 +193,7 @@ export class EventsService {
     if (coverPhoto) {
       await this.saveCoverPhoto(event.id, coverPhoto);
     } else {
-      await this.saveDefaultCoverPhoto(event.id);
+      await this.imagesService.saveDefaultCoverPhoto({ eventId: event.id });
     }
     return { event };
   }
@@ -218,25 +217,6 @@ export class EventsService {
       filename,
       eventId,
     });
-  }
-
-  // TODO: Move to images service to be used for all cover photos
-  async saveDefaultCoverPhoto(eventId: number) {
-    const sourcePath = randomDefaultImagePath();
-    const filename = `${Date.now()}.jpeg`;
-    const copyPath = `./uploads/${filename}`;
-
-    fs.copyFile(sourcePath, copyPath, (err) => {
-      if (err) {
-        throw new Error(`Failed to save default cover photo: ${err}`);
-      }
-    });
-    const image = await this.imagesService.createImage({
-      imageType: ImageTypes.CoverPhoto,
-      filename,
-      eventId,
-    });
-    return image;
   }
 
   async deleteCoverPhoto(id: number) {

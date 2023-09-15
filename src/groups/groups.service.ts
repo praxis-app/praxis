@@ -1,12 +1,11 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserInputError } from "apollo-server-express";
-import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
 import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { MyGroupsKey } from "../dataloader/dataloader.types";
-import { randomDefaultImagePath, saveImage } from "../images/image.utils";
+import { saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { Post } from "../posts/models/post.model";
@@ -189,7 +188,7 @@ export class GroupsService {
     if (coverPhoto) {
       await this.saveCoverPhoto(group.id, coverPhoto);
     } else {
-      await this.saveDefaultCoverPhoto(group.id);
+      await this.imagesService.saveDefaultCoverPhoto({ groupId: group.id });
     }
     await this.groupConfigsService.initGroupConfig(group.id);
     await this.groupRolesService.initGroupAdminRole(userId, group.id);
@@ -217,25 +216,6 @@ export class GroupsService {
       filename,
       groupId,
     });
-  }
-
-  // TODO: Move to images service to be used for all cover photos
-  async saveDefaultCoverPhoto(groupId: number) {
-    const sourcePath = randomDefaultImagePath();
-    const filename = `${Date.now()}.jpeg`;
-    const copyPath = `./uploads/${filename}`;
-
-    fs.copyFile(sourcePath, copyPath, (err) => {
-      if (err) {
-        throw new Error(`Failed to save default cover photo: ${err}`);
-      }
-    });
-    const image = await this.imagesService.createImage({
-      imageType: ImageTypes.CoverPhoto,
-      filename,
-      groupId,
-    });
-    return image;
   }
 
   async deleteGroup(id: number) {
