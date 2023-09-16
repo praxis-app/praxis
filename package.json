@@ -114,7 +114,7 @@
     }
   },
   "lint-staged": {
-    "src/**/*.{ts}": "yarn lint:fix",
+    "src/**/*.ts": "yarn lint:fix",
     "*.{ts,js,json,md}": "yarn format"
   }
 }
