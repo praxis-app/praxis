@@ -41,9 +41,9 @@ export class CreateProposalValidationPipe implements PipeTransform {
       );
     }
     if (
-      (actionType === ProposalActionType.CreateRole ||
-        actionType === ProposalActionType.ChangeRole) &&
-      !role
+      !role &&
+      (actionType === ProposalActionType.CreateGroupRole ||
+        actionType === ProposalActionType.ChangeGroupRole)
     ) {
       throw new ValidationError(
         "Proposals to change or add group roles must include a role"

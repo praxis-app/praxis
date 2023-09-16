@@ -199,15 +199,15 @@ export class ProposalsService {
       groupId,
     } = await this.getProposal(proposalId, ["action"]);
 
-    if (actionType === ProposalActionType.PlanEvent) {
+    if (actionType === ProposalActionType.PlanGroupEvent) {
       await this.proposalActionsService.implementGroupEvent(id, groupId);
       return;
     }
-    if (actionType === ProposalActionType.CreateRole) {
+    if (actionType === ProposalActionType.CreateGroupRole) {
       await this.proposalActionsService.implementCreateGroupRole(id, groupId);
       return;
     }
-    if (actionType === ProposalActionType.ChangeRole) {
+    if (actionType === ProposalActionType.ChangeGroupRole) {
       await this.proposalActionsService.implementChangeGroupRole(id);
       return;
     }
