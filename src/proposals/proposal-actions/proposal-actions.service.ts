@@ -159,11 +159,9 @@ export class ProposalActionsService {
     const newCoverPhoto = await this.getProposedGroupCoverPhoto(
       proposalActionId
     );
-
     if (!currentCoverPhoto || !newCoverPhoto) {
       throw new UserInputError("Could not find group cover photo");
     }
-
     await this.imagesService.updateImage(newCoverPhoto.id, { groupId });
     await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
   }
