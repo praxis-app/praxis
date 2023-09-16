@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, Repository } from "typeorm";
 import {
@@ -8,11 +7,7 @@ import {
   EventAttendeeStatus,
 } from "../../../events/event-attendees/models/event-attendee.model";
 import { Event } from "../../../events/models/event.model";
-import {
-  copyImage,
-  randomDefaultImagePath,
-  saveImage,
-} from "../../../images/image.utils";
+import { copyImage, saveImage } from "../../../images/image.utils";
 import { ImagesService, ImageTypes } from "../../../images/images.service";
 import { ProposalActionEventHost } from "./models/proposal-action-event-host.model";
 import { ProposalActionEventInput } from "./models/proposal-action-event.input";
@@ -132,25 +127,6 @@ export class ProposalActionEventsService {
       proposalActionEventId,
       filename,
     });
-  }
-
-  // TODO: Move to images service to be used for all cover photos
-  async saveDefaultCoverPhoto(eventId: number) {
-    const sourcePath = randomDefaultImagePath();
-    const filename = `${Date.now()}.jpeg`;
-    const copyPath = `./uploads/${filename}`;
-
-    fs.copyFile(sourcePath, copyPath, (err) => {
-      if (err) {
-        throw new Error(`Failed to save default cover photo: ${err}`);
-      }
-    });
-    const image = await this.imagesService.createImage({
-      imageType: ImageTypes.CoverPhoto,
-      filename,
-      eventId,
-    });
-    return image;
   }
 
   async deleteCoverPhoto(id: number) {
