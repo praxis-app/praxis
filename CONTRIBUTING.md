@@ -45,21 +45,6 @@ We use GitHub issues to track public bugs. Report a bug by [opening a new issue]
 - What actually happens
 - Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
 
-## Adding Unit Tests
-
-We use a combination of Jest and React Testing Library to test our components. The idea behind RTL is that we want to test behavior and not implementation, or returned results instead of internal variables.
-
-For instance, we might do the following:
-
-```
-it('should add a user to database', () => {
-  userManager.addUser('james', 'password');
-  expect(userManager.login('james', 'password')).toBe(true);
-});
-```
-
-Here's a [tutorial by Robin Wieruch](https://www.robinwieruch.de/react-testing-library) to help you get started. We also recommend taking a look at [John Au-Yeung's article](https://javascript.plainenglish.io/javascript-unit-test-best-practices-testing-behavior-4d1fd46ae03d) on unit test best practices.
-
 ## Use a Consistent Coding Style
 
 We're currently using ESlint and Prettier which you can find configuration files for in the project's root directory (`.eslintrc` and `.prettierrc`).
