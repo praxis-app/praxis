@@ -344,7 +344,6 @@ export class UsersService {
     });
   }
 
-  // TODO: Move to images service to be used for all cover photos
   async saveDefaultProfilePicture(userId: number) {
     const sourcePath = randomDefaultImagePath();
     const filename = `${Date.now()}.jpeg`;
