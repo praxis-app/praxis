@@ -1,6 +1,5 @@
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import * as fs from "fs";
 import { FileUpload } from "graphql-upload";
 import {
   Between,
@@ -12,7 +11,7 @@ import {
 } from "typeorm";
 import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
 import { GroupPrivacy } from "../groups/group-configs/models/group-config.model";
-import { randomDefaultImagePath, saveImage } from "../images/image.utils";
+import { saveImage } from "../images/image.utils";
 import { ImagesService, ImageTypes } from "../images/images.service";
 import { Image } from "../images/models/image.model";
 import { EventAttendeesService } from "./event-attendees/event-attendees.service";
@@ -99,6 +98,17 @@ export class EventsService {
     return eventAttendee?.status || null;
   }
 
+  async getEventHost(id: number) {
+    const eventAttendee = await this.eventAttendeesService.getEventAttendee(
+      { status: EventAttendeeStatus.Host, eventId: id },
+      ["user"]
+    );
+    if (!eventAttendee) {
+      throw new Error(`Could not find host for event: ${id}`);
+    }
+    return eventAttendee.user;
+  }
+
   async getEventsBatch(eventIds: number[]) {
     const events = await this.getEvents({
       id: In(eventIds),
@@ -173,20 +183,17 @@ export class EventsService {
     });
   }
 
-  async createEvent(
-    { coverPhoto, ...eventData }: CreateEventInput,
-    userId: number
-  ) {
+  async createEvent({ coverPhoto, hostId, ...eventData }: CreateEventInput) {
     const event = await this.eventRepository.save(eventData);
     await this.eventAttendeeRepository.save({
       status: EventAttendeeStatus.Host,
       eventId: event.id,
-      userId,
+      userId: hostId,
     });
     if (coverPhoto) {
       await this.saveCoverPhoto(event.id, coverPhoto);
     } else {
-      await this.saveDefaultCoverPhoto(event.id);
+      await this.imagesService.saveDefaultCoverPhoto({ eventId: event.id });
     }
     return { event };
   }
@@ -210,24 +217,6 @@ export class EventsService {
       filename,
       eventId,
     });
-  }
-
-  async saveDefaultCoverPhoto(eventId: number) {
-    const sourcePath = randomDefaultImagePath();
-    const filename = `${Date.now()}.jpeg`;
-    const copyPath = `./uploads/${filename}`;
-
-    fs.copyFile(sourcePath, copyPath, (err) => {
-      if (err) {
-        throw new Error(`Failed to save default cover photo: ${err}`);
-      }
-    });
-    const image = await this.imagesService.createImage({
-      imageType: ImageTypes.CoverPhoto,
-      filename,
-      eventId,
-    });
-    return image;
   }
 
   async deleteCoverPhoto(id: number) {

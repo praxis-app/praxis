@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import { Image } from "../../../images/models/image.model";
 import { Proposal } from "../../models/proposal.model";
+import { ProposalActionEvent } from "../proposal-action-events/models/proposal-action-event.model";
 import { ProposalActionRole } from "../proposal-action-roles/models/proposal-action-role.model";
 
 @Entity()
@@ -45,6 +46,17 @@ export class ProposalAction {
     }
   )
   role?: ProposalActionRole;
+
+  @Field(() => ProposalActionEvent, { nullable: true })
+  @OneToOne(
+    () => ProposalActionEvent,
+    (proposalActionEvent) => proposalActionEvent.proposalAction,
+    {
+      cascade: true,
+      nullable: true,
+    }
+  )
+  event?: ProposalActionEvent;
 
   @Field(() => Proposal)
   @OneToOne(() => Proposal, (proposal) => proposal.action, {

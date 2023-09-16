@@ -50,7 +50,7 @@ export class PostsService {
     });
     return postIds.map(
       (id) =>
-        likes.filter((image: Image) => image.postId === id) ||
+        likes.filter((like: Like) => like.postId === id) ||
         new Error(`Could not load likes for post: ${id}`)
     );
   }

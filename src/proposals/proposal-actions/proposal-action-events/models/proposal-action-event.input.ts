@@ -3,7 +3,7 @@ import { IsNotEmpty } from "class-validator";
 import { FileUpload, GraphQLUpload } from "graphql-upload";
 
 @InputType()
-export class CreateEventInput {
+export class ProposalActionEventInput {
   @Field()
   @IsNotEmpty()
   name: string;
@@ -11,9 +11,6 @@ export class CreateEventInput {
   @Field()
   @IsNotEmpty()
   description: string;
-
-  @Field(() => GraphQLUpload, { nullable: true })
-  coverPhoto?: Promise<FileUpload>;
 
   @Field({ nullable: true })
   location?: string;
@@ -24,15 +21,15 @@ export class CreateEventInput {
   @Field({ nullable: true })
   externalLink?: string;
 
+  @Field(() => GraphQLUpload, { nullable: true })
+  coverPhoto?: Promise<FileUpload>;
+
+  @Field(() => Int)
+  hostId: number;
+
   @Field()
   startsAt: Date;
 
   @Field({ nullable: true })
   endsAt?: Date;
-
-  @Field(() => Int, { nullable: true })
-  groupId?: number;
-
-  @Field(() => Int)
-  hostId: number;
 }

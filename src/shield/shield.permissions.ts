@@ -136,6 +136,8 @@ export const shieldPermissions = shield(
     Comment: or(isAuthenticated, isPublicComment),
     Proposal: or(isAuthenticated, isPublicProposal),
     ProposalAction: or(isAuthenticated, isPublicProposalAction),
+    ProposalActionEvent: or(isAuthenticated, isPublicProposalAction),
+    ProposalActionEventHost: or(isAuthenticated, isPublicProposalAction),
     ProposalActionPermission: or(isAuthenticated, isPublicProposalAction),
     ProposalActionRole: or(isAuthenticated, isPublicProposalAction),
     ProposalActionRoleMember: or(isAuthenticated, isPublicProposalAction),

@@ -32,6 +32,19 @@ export const saveImage = async (image: Promise<FileUpload>) => {
   return filename;
 };
 
+export const copyImage = (filename: string) => {
+  const sourcePath = `./uploads/${filename}`;
+  const newFilename = `${Date.now()}.${filename.split(".")[1]}`;
+  const newPath = `./uploads/${newFilename}`;
+
+  fs.copyFile(sourcePath, newPath, (err) => {
+    if (err) {
+      throw new Error(`Failed to copy image file: ${err}`);
+    }
+  });
+  return newFilename;
+};
+
 export const randomDefaultImagePath = () =>
   `./src/images/assets/defaults/${
     Math.floor(Math.random() * DEFAULT_IMAGES_SIZE) + 1

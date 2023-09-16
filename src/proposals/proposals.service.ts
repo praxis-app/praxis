@@ -5,10 +5,8 @@
 
 import { forwardRef, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { UserInputError } from "apollo-server-express";
 import { FileUpload } from "graphql-upload";
 import { FindOptionsWhere, In, Repository } from "typeorm";
-import { GroupRolesService } from "../groups/group-roles/group-roles.service";
 import { DefaultGroupSetting } from "../groups/groups.constants";
 import { GroupsService } from "../groups/groups.service";
 import { deleteImageFile, saveImage } from "../images/image.utils";
@@ -21,10 +19,8 @@ import { sortConsensusVotesByType } from "../votes/votes.utils";
 import { CreateProposalInput } from "./models/create-proposal.input";
 import { Proposal } from "./models/proposal.model";
 import { UpdateProposalInput } from "./models/update-proposal.input";
-import {
-  ProposalActionRolesService,
-  RoleMemberChangeType,
-} from "./proposal-actions/proposal-action-roles/proposal-action-roles.service";
+import { ProposalActionEventsService } from "./proposal-actions/proposal-action-events/proposal-action-events.service";
+import { ProposalActionRolesService } from "./proposal-actions/proposal-action-roles/proposal-action-roles.service";
 import { ProposalActionsService } from "./proposal-actions/proposal-actions.service";
 import {
   MIN_GROUP_SIZE_TO_RATIFY,
@@ -44,9 +40,9 @@ export class ProposalsService {
     @Inject(forwardRef(() => VotesService))
     private votesService: VotesService,
 
-    private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private imagesService: ImagesService,
+    private proposalActionEventsService: ProposalActionEventsService,
     private proposalActionRolesService: ProposalActionRolesService,
     private proposalActionsService: ProposalActionsService
   ) {}
@@ -106,7 +102,7 @@ export class ProposalsService {
   async createProposal(
     {
       images,
-      action: { groupCoverPhoto, role, ...action },
+      action: { groupCoverPhoto, role, event, ...action },
       ...proposalData
     }: CreateProposalInput,
     user: User
@@ -131,6 +127,12 @@ export class ProposalsService {
         await this.proposalActionRolesService.createProposalActionRole(
           proposal.action.id,
           role
+        );
+      }
+      if (event) {
+        await this.proposalActionEventsService.createProposalActionEvent(
+          proposal.action.id,
+          event
         );
       }
     } catch (err) {
@@ -159,7 +161,7 @@ export class ProposalsService {
 
     if (
       groupCoverPhoto &&
-      proposal.action.actionType === ProposalActionType.ChangeCoverPhoto
+      proposal.action.actionType === ProposalActionType.ChangeGroupCoverPhoto
     ) {
       await this.imagesService.deleteImage({
         proposalActionId: proposal.action.id,
@@ -185,10 +187,10 @@ export class ProposalsService {
   }
 
   async ratifyProposal(proposalId: number) {
+    await this.implementProposal(proposalId);
     await this.repository.update(proposalId, {
       stage: ProposalStage.Ratified,
     });
-    await this.implementProposal(proposalId);
   }
 
   async implementProposal(proposalId: number) {
@@ -197,100 +199,34 @@ export class ProposalsService {
       groupId,
     } = await this.getProposal(proposalId, ["action"]);
 
-    if (actionType === ProposalActionType.ChangeName) {
+    if (actionType === ProposalActionType.PlanGroupEvent) {
+      await this.proposalActionsService.implementGroupEvent(id, groupId);
+      return;
+    }
+    if (actionType === ProposalActionType.CreateGroupRole) {
+      await this.proposalActionsService.implementCreateGroupRole(id, groupId);
+      return;
+    }
+    if (actionType === ProposalActionType.ChangeGroupRole) {
+      await this.proposalActionsService.implementChangeGroupRole(id);
+      return;
+    }
+    if (actionType === ProposalActionType.ChangeGroupName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
       return;
     }
-
-    if (actionType === ProposalActionType.ChangeDescription) {
+    if (actionType === ProposalActionType.ChangeGroupDescription) {
       await this.groupsService.updateGroup({
         description: groupDescription,
         id: groupId,
       });
       return;
     }
-
-    if (actionType === ProposalActionType.ChangeCoverPhoto) {
-      const currentCoverPhoto = await this.imagesService.getImage({
-        imageType: ImageTypes.CoverPhoto,
-        groupId,
-      });
-      const newCoverPhoto =
-        await this.proposalActionsService.getProposedGroupCoverPhoto(id);
-
-      if (!currentCoverPhoto || !newCoverPhoto) {
-        throw new UserInputError("Could not find group cover photo");
-      }
-
-      await this.imagesService.updateImage(newCoverPhoto.id, { groupId });
-      await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
-    }
-
-    if (actionType === ProposalActionType.CreateRole) {
-      const role = await this.proposalActionRolesService.getProposalActionRole(
-        { proposalActionId: id },
-        ["permission", "members"]
+    if (actionType === ProposalActionType.ChangeGroupCoverPhoto) {
+      await this.proposalActionsService.implementChangeGroupCoverPhoto(
+        id,
+        groupId
       );
-      if (!role) {
-        throw new UserInputError("Could not find proposal action role");
-      }
-      const { name, color, permission } = role;
-      const members = role.members?.map(({ userId }) => ({ id: userId }));
-      await this.groupRolesService.createGroupRole(
-        {
-          name,
-          color,
-          permission,
-          groupId,
-          members,
-        },
-        true
-      );
-    }
-
-    if (actionType === ProposalActionType.ChangeRole) {
-      const actionRole =
-        await this.proposalActionRolesService.getProposalActionRole(
-          { proposalActionId: id },
-          ["permission", "members"]
-        );
-      if (!actionRole?.groupRoleId) {
-        throw new UserInputError("Could not find proposal action role");
-      }
-      const roleToUpdate = await this.groupRolesService.getGroupRole({
-        id: actionRole.groupRoleId,
-      });
-
-      const userIdsToAdd = actionRole.members
-        ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Add)
-        .map(({ userId }) => userId);
-
-      const userIdsToRemove = actionRole.members
-        ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Remove)
-        .map(({ userId }) => userId);
-
-      await this.groupRolesService.updateGroupRole({
-        id: roleToUpdate.id,
-        name: actionRole.name,
-        color: actionRole.color,
-        selectedUserIds: userIdsToAdd,
-        permissions: actionRole.permission,
-      });
-      if (userIdsToRemove?.length) {
-        await this.groupRolesService.deleteGroupRoleMembers(
-          roleToUpdate.id,
-          userIdsToRemove
-        );
-      }
-      if (actionRole.name || actionRole.color) {
-        await this.proposalActionRolesService.updateProposalActionRole(
-          actionRole.id,
-          {
-            oldName: actionRole.name ? roleToUpdate.name : undefined,
-            oldColor: actionRole.color ? roleToUpdate.color : undefined,
-          }
-        );
-      }
     }
   }
 
