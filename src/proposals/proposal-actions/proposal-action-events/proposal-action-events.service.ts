@@ -120,8 +120,6 @@ export class ProposalActionEventsService {
     coverPhoto: Promise<FileUpload>
   ) {
     const filename = await saveImage(coverPhoto);
-    await this.deleteCoverPhoto(proposalActionEventId);
-
     return this.imagesService.createImage({
       imageType: ImageTypes.CoverPhoto,
       proposalActionEventId,
