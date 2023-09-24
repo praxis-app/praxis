@@ -45,12 +45,15 @@ export const isPublicComment = rule({ cache: "strict" })(
 export const isPublicCommentImage = rule({ cache: "strict" })(
   async (parent, _args, { services: { imagesService } }: Context) => {
     const image = await imagesService.getImage({ id: parent.id }, [
-      "comment.proposal.group.config",
+      "comment.post.event.group.config",
       "comment.post.group.config",
+      "comment.proposal.group.config",
     ]);
     return (
-      image?.comment?.proposal?.group?.config.privacy === GroupPrivacy.Public ||
-      image?.comment?.post?.group?.config.privacy === GroupPrivacy.Public
+      image?.comment?.post?.event?.group?.config.privacy ===
+        GroupPrivacy.Public ||
+      image?.comment?.post?.group?.config.privacy === GroupPrivacy.Public ||
+      image?.comment?.proposal?.group?.config.privacy === GroupPrivacy.Public
     );
   }
 );
