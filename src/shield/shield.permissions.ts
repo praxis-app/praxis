@@ -1,7 +1,11 @@
 import { allow, and, not, or, shield } from "graphql-shield";
 import { FORBIDDEN } from "../common/common.constants";
 import { hasValidRefreshToken, isAuthenticated } from "./rules/auth.rules";
-import { isOwnComment, isPublicComment } from "./rules/comment.rules";
+import {
+  isOwnComment,
+  isPublicComment,
+  isPublicCommentImage,
+} from "./rules/comment.rules";
 import {
   isPublicEvent,
   isPublicEventImage,
@@ -119,13 +123,19 @@ export const shieldPermissions = shield(
     Image: {
       id: or(
         isAuthenticated,
+        isPublicCommentImage,
         isPublicEventImage,
         isPublicGroupImage,
         isPublicPostImage,
         isPublicProposalImage,
         isPublicUserAvatar
       ),
-      filename: or(isAuthenticated, isPublicPostImage, isPublicProposalImage),
+      filename: or(
+        isAuthenticated,
+        isPublicCommentImage,
+        isPublicPostImage,
+        isPublicProposalImage
+      ),
     },
     ServerInvite: {
       id: allow,
