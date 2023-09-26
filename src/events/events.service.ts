@@ -198,9 +198,16 @@ export class EventsService {
     return { event };
   }
 
-  async updateEvent({ id, coverPhoto, ...eventData }: UpdateEventInput) {
+  async updateEvent({
+    id,
+    coverPhoto,
+    hostId,
+    ...eventData
+  }: UpdateEventInput) {
     await this.eventRepository.update(id, eventData);
     const event = await this.getEvent({ id });
+
+    console.log("TODO: Add update logic for hostId", hostId);
 
     if (coverPhoto) {
       await this.saveCoverPhoto(id, coverPhoto);
