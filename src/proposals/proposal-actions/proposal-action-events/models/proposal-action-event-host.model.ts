@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -6,10 +6,10 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { EventAttendeeStatus } from "../../../../events/event-attendees/models/event-attendee.model";
-import { User } from "../../../../users/models/user.model";
-import { ProposalActionEvent } from "./proposal-action-event.model";
+} from 'typeorm';
+import { EventAttendeeStatus } from '../../../../events/event-attendees/models/event-attendee.model';
+import { User } from '../../../../users/models/user.model';
+import { ProposalActionEvent } from './proposal-action-event.model';
 
 @ObjectType()
 @Entity()
@@ -22,7 +22,7 @@ export class ProposalActionEventHost {
   @Field()
   status: string;
 
-  @ManyToOne(() => User, (user) => user.eventAttendees, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.eventAttendees, { onDelete: 'CASCADE' })
   @Field(() => User)
   user: User;
 
@@ -33,10 +33,10 @@ export class ProposalActionEventHost {
     () => ProposalActionEvent,
     (proposalActionEvent) => proposalActionEvent.hosts,
     {
-      onDelete: "CASCADE",
-    }
+      onDelete: 'CASCADE',
+    },
   )
-  @Field(() => ProposalActionEvent, { name: "event" })
+  @Field(() => ProposalActionEvent, { name: 'event' })
   proposalActionEvent: ProposalActionEvent;
 
   @Column()

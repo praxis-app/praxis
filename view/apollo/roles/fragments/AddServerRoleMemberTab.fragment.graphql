@@ -1,0 +1,6 @@
+fragment AddServerRoleMemberTab on ServerRole {
+  id
+  members {
+    ...RoleMember
+  }
+}

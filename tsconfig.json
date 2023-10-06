@@ -7,16 +7,17 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": false,
     "incremental": true,
+    "jsx": "react-jsx",
     "module": "commonjs",
     "noFallthroughCasesInSwitch": false,
     "noImplicitAny": false,
-    "noUnusedLocals": true,
     "outDir": "./dist",
     "removeComments": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strictBindCallApply": false,
     "strictNullChecks": true,
-    "target": "es2017"
+    "target": "ES2021"
   }
 }

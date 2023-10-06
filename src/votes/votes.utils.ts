@@ -1,5 +1,5 @@
-import { Vote } from "./models/vote.model";
-import { VoteTypes } from "./votes.constants";
+import { Vote } from './models/vote.model';
+import { VoteTypes } from './votes.constants';
 
 interface SortedConsensusVotes {
   agreements: Vote[];
@@ -30,5 +30,5 @@ export const sortConsensusVotesByType = (votes: Vote[]) =>
       reservations: [],
       standAsides: [],
       blocks: [],
-    }
+    },
   );

@@ -1,36 +1,28 @@
-import { ValidationPipe } from "@nestjs/common";
-import { NestFactory } from "@nestjs/core";
-import { GraphQLSchemaHost } from "@nestjs/graphql";
-import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import * as cookieParser from "cookie-parser";
-import { writeFileSync } from "fs";
-import { printSchema } from "graphql";
-import { graphqlUploadExpress } from "graphql-upload";
-import { join } from "path";
-import { AppModule } from "./app.module";
+import { ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { GraphQLSchemaHost } from '@nestjs/graphql';
+import * as cookieParser from 'cookie-parser';
+import { writeFileSync } from 'fs';
+import { printSchema } from 'graphql';
+import { graphqlUploadExpress } from 'graphql-upload-ts';
+import { join } from 'path';
+import { AppModule } from './app.module';
+import { Environment } from './shared/shared.constants';
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, { cors: true });
 
+  app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
   app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
   app.use(cookieParser());
 
-  const config = new DocumentBuilder()
-    .setTitle("Praxis")
-    .setDescription(
-      "Social networking API built with NestJS, GraphQL, and TypeORM"
-    )
-    .setVersion("1.0")
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
+  await app.listen(process.env.SERVER_PORT || 3100);
 
-  SwaggerModule.setup("api", app, document);
-
-  await app.listen(process.env.SERVER_PORT as string);
-
-  const { schema } = app.get(GraphQLSchemaHost);
-  writeFileSync(join(process.cwd(), `./schema.graphql`), printSchema(schema));
+  if (process.env.NODE_ENV === Environment.Development) {
+    const { schema } = app.get(GraphQLSchemaHost);
+    writeFileSync(join(process.cwd(), `./schema.graphql`), printSchema(schema));
+  }
 };
 
 bootstrap();

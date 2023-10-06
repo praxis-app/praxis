@@ -1,0 +1,29 @@
+fragment EventPageCard on Event {
+  id
+  name
+  description
+  location
+  online
+  externalLink
+  interestedCount
+  goingCount
+  startsAt
+  endsAt
+
+  ...EventAttendeeButtons @include(if: $isLoggedIn)
+
+  host {
+    id
+    name
+  }
+  coverPhoto {
+    id
+  }
+  group {
+    id
+    name
+    myPermissions @include(if: $isLoggedIn) {
+      manageEvents
+    }
+  }
+}

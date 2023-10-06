@@ -1,8 +1,8 @@
-import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
-import { ValidationError } from "apollo-server-express";
-import { ProposalStage } from "../../proposals/proposals.constants";
-import { UpdateVoteInput } from "../models/update-vote.input";
-import { VotesService } from "../votes.service";
+import { ValidationError } from '@nestjs/apollo';
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
+import { ProposalStage } from '../../proposals/proposals.constants';
+import { UpdateVoteInput } from '../models/update-vote.input';
+import { VotesService } from '../votes.service';
 
 @Injectable()
 export class UpdateVoteValidationPipe implements PipeTransform {
@@ -16,10 +16,10 @@ export class UpdateVoteValidationPipe implements PipeTransform {
   }
 
   async validateProposalStage(value: UpdateVoteInput) {
-    const vote = await this.votesService.getVote(value.id, ["proposal"]);
+    const vote = await this.votesService.getVote(value.id, ['proposal']);
     if (vote.proposal.stage === ProposalStage.Ratified) {
       throw new ValidationError(
-        "Proposal has been ratified and can no longer be voted on"
+        'Proposal has been ratified and can no longer be voted on',
       );
     }
   }

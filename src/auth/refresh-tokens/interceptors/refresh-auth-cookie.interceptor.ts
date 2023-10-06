@@ -3,11 +3,11 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
-} from "@nestjs/common";
-import { GqlExecutionContext } from "@nestjs/graphql";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
-import { AuthTokens } from "../../auth.types";
+} from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { AuthTokens } from '../../auth.types';
 
 @Injectable()
 export class RefreshAuthCookieInterceptor implements NestInterceptor {
@@ -15,13 +15,13 @@ export class RefreshAuthCookieInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((authTokens: AuthTokens) => {
         const ctx = GqlExecutionContext.create(context).getContext();
-        ctx.req.res.cookie("auth", authTokens, {
+        ctx.req.res.cookie('auth', authTokens, {
           httpOnly: true,
           sameSite: true,
           secure: true,
         });
         return true;
-      })
+      }),
     );
   }
 }

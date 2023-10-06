@@ -7,32 +7,32 @@ import {
   Query,
   ResolveField,
   Resolver,
-} from "@nestjs/graphql";
-import { CurrentUser } from "../auth/decorators/current-user.decorator";
-import { FeedItem } from "../common/models/feed-item.union";
-import { Dataloaders } from "../dataloader/dataloader.types";
-import { EventsService } from "../events/events.service";
-import { Event } from "../events/models/event.model";
-import { EventTimeFrame } from "../events/models/events.input";
-import { Post } from "../posts/models/post.model";
-import { PostsService } from "../posts/posts.service";
-import { User } from "../users/models/user.model";
-import { GroupConfigsService } from "./group-configs/group-configs.service";
+} from '@nestjs/graphql';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { FeedItem } from '../shared/models/feed-item.union';
+import { Dataloaders } from '../dataloader/dataloader.types';
+import { EventsService } from '../events/events.service';
+import { Event } from '../events/models/event.model';
+import { EventTimeFrame } from '../events/models/events.input';
+import { Post } from '../posts/models/post.model';
+import { PostsService } from '../posts/posts.service';
+import { User } from '../users/models/user.model';
+import { GroupConfigsService } from './group-configs/group-configs.service';
 import {
   GroupConfig,
   GroupPrivacy,
-} from "./group-configs/models/group-config.model";
-import { GroupMemberRequestsService } from "./group-member-requests/group-member-requests.service";
-import { GroupMemberRequest } from "./group-member-requests/models/group-member-request.model";
-import { GroupRolesService } from "./group-roles/group-roles.service";
-import { GroupPermissions } from "./group-roles/models/group-permissions.type";
-import { GroupRole } from "./group-roles/models/group-role.model";
-import { GroupsService } from "./groups.service";
-import { CreateGroupInput } from "./models/create-group.input";
-import { CreateGroupPayload } from "./models/create-group.payload";
-import { Group } from "./models/group.model";
-import { UpdateGroupInput } from "./models/update-group.input";
-import { UpdateGroupPayload } from "./models/update-group.payload";
+} from './group-configs/models/group-config.model';
+import { GroupMemberRequestsService } from './group-member-requests/group-member-requests.service';
+import { GroupMemberRequest } from './group-member-requests/models/group-member-request.model';
+import { GroupRolesService } from './group-roles/group-roles.service';
+import { GroupPermissions } from './group-roles/models/group-permissions.type';
+import { GroupRole } from './group-roles/models/group-role.model';
+import { GroupsService } from './groups.service';
+import { CreateGroupInput } from './models/create-group.input';
+import { CreateGroupPayload } from './models/create-group.payload';
+import { Group } from './models/group.model';
+import { UpdateGroupInput } from './models/update-group.input';
+import { UpdateGroupPayload } from './models/update-group.payload';
 
 @Resolver(() => Group)
 export class GroupsResolver {
@@ -42,13 +42,13 @@ export class GroupsResolver {
     private groupsService: GroupsService,
     private memberRequestsService: GroupMemberRequestsService,
     private postsService: PostsService,
-    private eventsService: EventsService
+    private eventsService: EventsService,
   ) {}
 
   @Query(() => Group)
   async group(
-    @Args("id", { type: () => Int, nullable: true }) id: number,
-    @Args("name", { type: () => String, nullable: true }) name: string
+    @Args('id', { type: () => Int, nullable: true }) id: number,
+    @Args('name', { type: () => String, nullable: true }) name: string,
   ) {
     return this.groupsService.getGroup({ id, name });
   }
@@ -71,7 +71,7 @@ export class GroupsResolver {
   }
 
   @Query(() => GroupRole)
-  async groupRole(@Args("id", { type: () => Int }) id: number) {
+  async groupRole(@Args('id', { type: () => Int }) id: number) {
     return this.groupRolesService.getGroupRole({ id });
   }
 
@@ -83,7 +83,7 @@ export class GroupsResolver {
   @ResolveField(() => Image)
   async coverPhoto(
     @Parent() { id }: Group,
-    @Context() { loaders }: { loaders: Dataloaders }
+    @Context() { loaders }: { loaders: Dataloaders },
   ) {
     return loaders.groupCoverPhotosLoader.load(id);
   }
@@ -96,7 +96,7 @@ export class GroupsResolver {
   @ResolveField(() => [User])
   async members(
     @Parent() { id }: Group,
-    @Context() { loaders }: { loaders: Dataloaders }
+    @Context() { loaders }: { loaders: Dataloaders },
   ) {
     return loaders.groupMembersLoader.load(id);
   }
@@ -109,7 +109,7 @@ export class GroupsResolver {
   @ResolveField(() => Int)
   async memberCount(
     @Parent() { id }: Group,
-    @Context() { loaders }: { loaders: Dataloaders }
+    @Context() { loaders }: { loaders: Dataloaders },
   ) {
     return loaders.groupMemberCountLoader.load(id);
   }
@@ -117,7 +117,7 @@ export class GroupsResolver {
   @ResolveField(() => Int, { nullable: true })
   async memberRequestCount(
     @Parent() { id }: Group,
-    @Context() { loaders }: { loaders: Dataloaders }
+    @Context() { loaders }: { loaders: Dataloaders },
   ) {
     return loaders.memberRequestCountLoader.load(id);
   }
@@ -127,7 +127,7 @@ export class GroupsResolver {
   async isJoinedByMe(
     @Context() { loaders }: { loaders: Dataloaders },
     @CurrentUser() currentUser: User,
-    @Parent() group: Group
+    @Parent() group: Group,
   ) {
     return loaders.isJoinedByMeLoader.load({
       currentUserId: currentUser.id,
@@ -139,7 +139,7 @@ export class GroupsResolver {
   async futureEvents(@Parent() { id }: Group) {
     return this.eventsService.getFilteredEvents(
       { timeFrame: EventTimeFrame.Future },
-      { groupId: id }
+      { groupId: id },
     );
   }
 
@@ -147,7 +147,7 @@ export class GroupsResolver {
   async pastEvents(@Parent() { id }: Group) {
     return this.eventsService.getFilteredEvents(
       { timeFrame: EventTimeFrame.Past },
-      { groupId: id }
+      { groupId: id },
     );
   }
 
@@ -160,7 +160,7 @@ export class GroupsResolver {
   async myPermissions(
     @Context() { loaders }: { loaders: Dataloaders },
     @CurrentUser() currentUser: User,
-    @Parent() group: Group
+    @Parent() group: Group,
   ) {
     return loaders.myGroupPermissionsLoader.load({
       currentUserId: currentUser.id,
@@ -175,26 +175,26 @@ export class GroupsResolver {
 
   @Mutation(() => CreateGroupPayload)
   async createGroup(
-    @Args("groupData") groupData: CreateGroupInput,
-    @CurrentUser() { id }: User
+    @Args('groupData') groupData: CreateGroupInput,
+    @CurrentUser() { id }: User,
   ) {
     return this.groupsService.createGroup(groupData, id);
   }
 
   @Mutation(() => UpdateGroupPayload)
-  async updateGroup(@Args("groupData") groupData: UpdateGroupInput) {
+  async updateGroup(@Args('groupData') groupData: UpdateGroupInput) {
     return this.groupsService.updateGroup(groupData);
   }
 
   @Mutation(() => Boolean)
-  async deleteGroup(@Args("id", { type: () => Int }) id: number) {
+  async deleteGroup(@Args('id', { type: () => Int }) id: number) {
     return this.groupsService.deleteGroup(id);
   }
 
   @Mutation(() => Boolean)
   async leaveGroup(
-    @Args("id", { type: () => Int }) id: number,
-    @CurrentUser() { id: userId }: User
+    @Args('id', { type: () => Int }) id: number,
+    @CurrentUser() { id: userId }: User,
   ) {
     return this.groupsService.leaveGroup(id, userId);
   }

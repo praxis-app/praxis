@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -7,8 +7,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { GroupRole } from "./group-role.model";
+} from 'typeorm';
+import { GroupRole } from './group-role.model';
 
 @Entity()
 @ObjectType()
@@ -59,7 +59,7 @@ export class GroupRolePermission {
 
   @Field(() => GroupRole)
   @OneToOne(() => GroupRole, (groupRole) => groupRole.permission, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   groupRole: GroupRole;

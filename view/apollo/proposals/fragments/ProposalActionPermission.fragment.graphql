@@ -1,0 +1,13 @@
+fragment ProposalActionPermission on ProposalActionPermission {
+  id
+  approveMemberRequests
+  createEvents
+  deleteGroup
+  manageComments
+  manageEvents
+  managePosts
+  manageRoles
+  manageSettings
+  removeMembers
+  updateGroup
+}

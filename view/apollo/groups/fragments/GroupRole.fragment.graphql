@@ -1,0 +1,11 @@
+fragment GroupRole on GroupRole {
+  id
+  name
+  color
+  memberCount
+
+  group {
+    id
+    name
+  }
+}

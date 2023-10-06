@@ -1,0 +1,13 @@
+fragment GroupRolePermissions on GroupRolePermission {
+  id
+  approveMemberRequests
+  createEvents
+  deleteGroup
+  manageComments
+  manageEvents
+  managePosts
+  manageRoles
+  manageSettings
+  removeMembers
+  updateGroup
+}

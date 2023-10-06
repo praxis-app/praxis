@@ -1,0 +1,5 @@
+query Proposal($id: Int!, $isLoggedIn: Boolean!) {
+  proposal(id: $id) {
+    ...ProposalCard
+  }
+}

@@ -1,0 +1,4 @@
+fragment AttachedImage on Image {
+  id
+  filename
+}

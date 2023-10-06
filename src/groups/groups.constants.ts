@@ -1,5 +1,3 @@
-export enum DefaultGroupSetting {
-  RatificationThreshold = 75,
-  ReservationsLimit = 2,
-  StandAsidesLimit = 2,
-}
+export const GROUP_RATIFICATION_THRESHOLD = 75;
+export const GROUP_RESERVATIONS_LIMIT = 2;
+export const GROUP_STAND_ASIDES_LIMIT = 2;

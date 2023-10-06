@@ -1,0 +1,15 @@
+query ProposalComments($id: Int!, $isLoggedIn: Boolean!) {
+  proposal(id: $id) {
+    id
+    comments {
+      ...Comment
+    }
+  }
+
+  me @include(if: $isLoggedIn) {
+    id
+    serverPermissions {
+      manageComments
+    }
+  }
+}

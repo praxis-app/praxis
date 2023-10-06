@@ -1,6 +1,6 @@
 // TODO: Add one to one relation for cover photo
 
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -11,16 +11,16 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { FeedItem } from "../../common/models/feed-item.union";
-import { Event } from "../../events/models/event.model";
-import { Image } from "../../images/models/image.model";
-import { Post } from "../../posts/models/post.model";
-import { Proposal } from "../../proposals/models/proposal.model";
-import { User } from "../../users/models/user.model";
-import { GroupConfig } from "../group-configs/models/group-config.model";
-import { GroupMemberRequest } from "../group-member-requests/models/group-member-request.model";
-import { GroupRole } from "../group-roles/models/group-role.model";
+} from 'typeorm';
+import { FeedItem } from '../../shared/models/feed-item.union';
+import { Event } from '../../events/models/event.model';
+import { Image } from '../../images/models/image.model';
+import { Post } from '../../posts/models/post.model';
+import { Proposal } from '../../proposals/models/proposal.model';
+import { User } from '../../users/models/user.model';
+import { GroupConfig } from '../group-configs/models/group-config.model';
+import { GroupMemberRequest } from '../group-member-requests/models/group-member-request.model';
+import { GroupRole } from '../group-roles/models/group-role.model';
 
 @Entity()
 @ObjectType()

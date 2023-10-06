@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -6,14 +6,14 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { User } from "../../../users/models/user.model";
-import { Group } from "../../models/group.model";
+} from 'typeorm';
+import { User } from '../../../users/models/user.model';
+import { Group } from '../../models/group.model';
 
 export enum GroupMemberRequestStatus {
-  Approved = "approved",
-  Denied = "denied",
-  Pending = "pending",
+  Approved = 'approved',
+  Denied = 'denied',
+  Pending = 'pending',
 }
 
 @Entity()
@@ -27,7 +27,7 @@ export class GroupMemberRequest {
   status: string;
 
   @ManyToOne(() => User, (user) => user.groupMemberRequests, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   @Field(() => User)
   user: User;
@@ -36,7 +36,7 @@ export class GroupMemberRequest {
   userId: number;
 
   @ManyToOne(() => Group, (group) => group.memberRequests, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   @Field(() => Group)
   group: Group;

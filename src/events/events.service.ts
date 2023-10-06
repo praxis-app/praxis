@@ -1,6 +1,6 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FileUpload } from "graphql-upload";
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FileUpload } from 'graphql-upload-ts';
 import {
   Between,
   FindOptionsWhere,
@@ -8,21 +8,21 @@ import {
   LessThan,
   MoreThan,
   Repository,
-} from "typeorm";
-import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
-import { GroupPrivacy } from "../groups/group-configs/models/group-config.model";
-import { saveImage } from "../images/image.utils";
-import { ImagesService, ImageTypes } from "../images/images.service";
-import { Image } from "../images/models/image.model";
-import { EventAttendeesService } from "./event-attendees/event-attendees.service";
+} from 'typeorm';
+import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
+import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
+import { saveImage } from '../images/image.utils';
+import { ImagesService, ImageTypes } from '../images/images.service';
+import { Image } from '../images/models/image.model';
+import { EventAttendeesService } from './event-attendees/event-attendees.service';
 import {
   EventAttendee,
   EventAttendeeStatus,
-} from "./event-attendees/models/event-attendee.model";
-import { CreateEventInput } from "./models/create-event.input";
-import { Event } from "./models/event.model";
-import { EventsInput, EventTimeFrame } from "./models/events.input";
-import { UpdateEventInput } from "./models/update-event.input";
+} from './event-attendees/models/event-attendee.model';
+import { CreateEventInput } from './models/create-event.input';
+import { Event } from './models/event.model';
+import { EventsInput, EventTimeFrame } from './models/events.input';
+import { UpdateEventInput } from './models/update-event.input';
 
 type EventWithInterestedCount = Event & { interestedCount: number };
 type EventWithGoingCount = Event & { goingCount: number };
@@ -39,7 +39,7 @@ export class EventsService {
     @Inject(forwardRef(() => EventAttendeesService))
     private eventAttendeesService: EventAttendeesService,
 
-    private imagesService: ImagesService
+    private imagesService: ImagesService,
   ) {}
 
   async getEvent(where: FindOptionsWhere<Event>, relations?: string[]) {
@@ -48,7 +48,7 @@ export class EventsService {
 
   async getEvents(where?: FindOptionsWhere<Event>, relations?: string[]) {
     return this.eventRepository.find({
-      order: { updatedAt: "DESC" },
+      order: { updatedAt: 'DESC' },
       relations,
       where,
     });
@@ -56,7 +56,7 @@ export class EventsService {
 
   async getFilteredEvents(
     { timeFrame, online }: EventsInput,
-    inputOverride?: FindOptionsWhere<Event>
+    inputOverride?: FindOptionsWhere<Event>,
   ) {
     const where: FindOptionsWhere<Event> = { online, ...inputOverride };
     const now = new Date();
@@ -73,11 +73,11 @@ export class EventsService {
     }
 
     const events = await this.eventRepository.find({
-      order: { updatedAt: "DESC" },
+      order: { updatedAt: 'DESC' },
       where,
     });
     const sortedEvents = events.sort(
-      (a, b) => a.startsAt.getTime() - b.startsAt.getTime()
+      (a, b) => a.startsAt.getTime() - b.startsAt.getTime(),
     );
     return sortedEvents.slice(0, DEFAULT_PAGE_SIZE);
   }
@@ -101,7 +101,7 @@ export class EventsService {
   async getEventHost(id: number) {
     const eventAttendee = await this.eventAttendeesService.getEventAttendee(
       { status: EventAttendeeStatus.Host, eventId: id },
-      ["user"]
+      ['user'],
     );
     if (!eventAttendee) {
       throw new Error(`Could not find host for event: ${id}`);
@@ -116,7 +116,7 @@ export class EventsService {
     return eventIds.map(
       (id) =>
         events.find((event: Event) => event.id === id) ||
-        new Error(`Could not load event: ${id}`)
+        new Error(`Could not load event: ${id}`),
     );
   }
 
@@ -128,24 +128,24 @@ export class EventsService {
     const mappedCoverPhotos = eventIds.map(
       (id) =>
         coverPhotos.find((coverPhoto: Image) => coverPhoto.eventId === id) ||
-        new Error(`Could not load cover photo for event: ${id}`)
+        new Error(`Could not load cover photo for event: ${id}`),
     );
     return mappedCoverPhotos;
   }
 
   async getInterestedCountBatch(eventIds: number[]) {
     const events = (await this.eventRepository
-      .createQueryBuilder("event")
+      .createQueryBuilder('event')
       .loadRelationCountAndMap(
-        "event.interestedCount",
-        "event.attendees",
-        "eventAttendee",
+        'event.interestedCount',
+        'event.attendees',
+        'eventAttendee',
         (qb) =>
-          qb.where("eventAttendee.status = :status", {
+          qb.where('eventAttendee.status = :status', {
             status: EventAttendeeStatus.Interested,
-          })
+          }),
       )
-      .select(["event.id"])
+      .select(['event.id'])
       .whereInIds(eventIds)
       .getMany()) as EventWithInterestedCount[];
 
@@ -160,17 +160,17 @@ export class EventsService {
 
   async getGoingCountBatch(eventIds: number[]) {
     const events = (await this.eventRepository
-      .createQueryBuilder("event")
+      .createQueryBuilder('event')
       .loadRelationCountAndMap(
-        "event.goingCount",
-        "event.attendees",
-        "eventAttendee",
+        'event.goingCount',
+        'event.attendees',
+        'eventAttendee',
         (qb) =>
-          qb.where("eventAttendee.status = :status", {
+          qb.where('eventAttendee.status = :status', {
             status: EventAttendeeStatus.Going,
-          })
+          }),
       )
-      .select(["event.id"])
+      .select(['event.id'])
       .whereInIds(eventIds)
       .getMany()) as EventWithGoingCount[];
 
@@ -207,7 +207,7 @@ export class EventsService {
     await this.eventRepository.update(id, eventData);
     const event = await this.getEvent({ id });
 
-    console.log("TODO: Add update logic for hostId", hostId);
+    console.log('TODO: Add update logic for hostId', hostId);
 
     if (coverPhoto) {
       await this.saveCoverPhoto(id, coverPhoto);

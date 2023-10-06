@@ -1,0 +1,8 @@
+fragment Vote on Vote {
+  id
+  voteType
+
+  user {
+    ...UserAvatar
+  }
+}

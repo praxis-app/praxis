@@ -1,17 +1,17 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FileUpload } from "graphql-upload";
-import { FindOptionsWhere, In, Repository } from "typeorm";
-import { IsLikedByMeKey } from "../dataloader/dataloader.types";
-import { deleteImageFile, saveImage } from "../images/image.utils";
-import { ImagesService } from "../images/images.service";
-import { Image } from "../images/models/image.model";
-import { LikesService } from "../likes/likes.service";
-import { Like } from "../likes/models/like.model";
-import { User } from "../users/models/user.model";
-import { CreatePostInput } from "./models/create-post.input";
-import { Post } from "./models/post.model";
-import { UpdatePostInput } from "./models/update-post.input";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FileUpload } from 'graphql-upload-ts';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { IsLikedByMeKey } from '../dataloader/dataloader.types';
+import { deleteImageFile, saveImage } from '../images/image.utils';
+import { ImagesService } from '../images/images.service';
+import { Image } from '../images/models/image.model';
+import { LikesService } from '../likes/likes.service';
+import { Like } from '../likes/models/like.model';
+import { User } from '../users/models/user.model';
+import { CreatePostInput } from './models/create-post.input';
+import { Post } from './models/post.model';
+import { UpdatePostInput } from './models/update-post.input';
 
 type PostWithLikeCount = Post & { likeCount: number };
 type PostWithCommentCount = Post & { commentCount: number };
@@ -22,7 +22,7 @@ export class PostsService {
     @InjectRepository(Post)
     private repository: Repository<Post>,
     private imagesService: ImagesService,
-    private likesService: LikesService
+    private likesService: LikesService,
   ) {}
 
   async getPost(id: number, relations?: string[]) {
@@ -30,7 +30,7 @@ export class PostsService {
   }
 
   async getPosts(where?: FindOptionsWhere<Post>) {
-    return this.repository.find({ where, order: { createdAt: "DESC" } });
+    return this.repository.find({ where, order: { createdAt: 'DESC' } });
   }
 
   async getPostImagesBatch(postIds: number[]) {
@@ -40,7 +40,7 @@ export class PostsService {
     return postIds.map(
       (id) =>
         images.filter((image: Image) => image.postId === id) ||
-        new Error(`Could not load images for post: ${id}`)
+        new Error(`Could not load images for post: ${id}`),
     );
   }
 
@@ -51,7 +51,7 @@ export class PostsService {
     return postIds.map(
       (id) =>
         likes.filter((like: Like) => like.postId === id) ||
-        new Error(`Could not load likes for post: ${id}`)
+        new Error(`Could not load likes for post: ${id}`),
     );
   }
 
@@ -62,16 +62,16 @@ export class PostsService {
       userId: keys[0].currentUserId,
     });
     return postIds.map((postId) =>
-      likes.some((like: Like) => like.postId === postId)
+      likes.some((like: Like) => like.postId === postId),
     );
   }
 
   async getLikesCountBatch(postIds: number[]) {
     const posts = (await this.repository
-      .createQueryBuilder("post")
-      .leftJoinAndSelect("post.likes", "like")
-      .loadRelationCountAndMap("post.likeCount", "post.likes")
-      .select(["post.id"])
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.likes', 'like')
+      .loadRelationCountAndMap('post.likeCount', 'post.likes')
+      .select(['post.id'])
       .whereInIds(postIds)
       .getMany()) as PostWithLikeCount[];
 
@@ -86,10 +86,10 @@ export class PostsService {
 
   async getPostCommentCountBatch(postIds: number[]) {
     const posts = (await this.repository
-      .createQueryBuilder("post")
-      .leftJoinAndSelect("post.comments", "comment")
-      .loadRelationCountAndMap("post.commentCount", "post.comments")
-      .select(["post.id"])
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.comments', 'comment')
+      .loadRelationCountAndMap('post.commentCount', 'post.comments')
+      .select(['post.id'])
       .whereInIds(postIds)
       .getMany()) as PostWithCommentCount[];
 

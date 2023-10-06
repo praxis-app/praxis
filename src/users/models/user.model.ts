@@ -1,6 +1,6 @@
 // TODO: Add one to one relations for profile picture and cover photo
 
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -10,21 +10,21 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { RefreshToken } from "../../auth/refresh-tokens/models/refresh-token.model";
-import { Comment } from "../../comments/models/comment.model";
-import { FeedItem } from "../../common/models/feed-item.union";
-import { EventAttendee } from "../../events/event-attendees/models/event-attendee.model";
-import { GroupMemberRequest } from "../../groups/group-member-requests/models/group-member-request.model";
-import { GroupRole } from "../../groups/group-roles/models/group-role.model";
-import { Group } from "../../groups/models/group.model";
-import { Image } from "../../images/models/image.model";
-import { Like } from "../../likes/models/like.model";
-import { Post } from "../../posts/models/post.model";
-import { Proposal } from "../../proposals/models/proposal.model";
-import { ProposalActionRoleMember } from "../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model";
-import { ServerInvite } from "../../server-invites/models/server-invite.model";
-import { ServerRole } from "../../server-roles/models/server-role.model";
+} from 'typeorm';
+import { RefreshToken } from '../../auth/refresh-tokens/models/refresh-token.model';
+import { Comment } from '../../comments/models/comment.model';
+import { FeedItem } from '../../shared/models/feed-item.union';
+import { EventAttendee } from '../../events/event-attendees/models/event-attendee.model';
+import { GroupMemberRequest } from '../../groups/group-member-requests/models/group-member-request.model';
+import { GroupRole } from '../../groups/group-roles/models/group-role.model';
+import { Group } from '../../groups/models/group.model';
+import { Image } from '../../images/models/image.model';
+import { Like } from '../../likes/models/like.model';
+import { Post } from '../../posts/models/post.model';
+import { Proposal } from '../../proposals/models/proposal.model';
+import { ProposalActionRoleMember } from '../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model';
+import { ServerInvite } from '../../server-invites/models/server-invite.model';
+import { ServerRole } from '../../server-roles/models/server-role.model';
 
 @Entity()
 @ObjectType()
@@ -104,7 +104,9 @@ export class User {
   @OneToMany(
     () => GroupMemberRequest,
     (groupMemberRequest) => groupMemberRequest.user,
-    { cascade: true }
+    {
+      cascade: true,
+    },
   )
   groupMemberRequests: GroupMemberRequest[];
 

@@ -1,0 +1,10 @@
+query GroupSettings($name: String!) {
+  group(name: $name) {
+    id
+    ...GroupSettingsForm
+
+    myPermissions {
+      ...GroupPermissions
+    }
+  }
+}

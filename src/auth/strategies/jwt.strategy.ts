@@ -1,9 +1,9 @@
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { PassportStrategy } from "@nestjs/passport";
-import { Request } from "express";
-import { Strategy } from "passport-jwt";
-import { UsersService } from "../../users/users.service";
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
+import { Request } from 'express';
+import { Strategy } from 'passport-jwt';
+import { UsersService } from '../../users/users.service';
 
 export interface AccessTokenPayload {
   /**
@@ -17,11 +17,11 @@ export interface AccessTokenPayload {
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private usersService: UsersService,
-    configService: ConfigService
+    configService: ConfigService,
   ) {
     super({
       jwtFromRequest: JwtStrategy.extractJWT,
-      secretOrKey: configService.get("JWT_KEY"),
+      secretOrKey: configService.get('JWT_KEY'),
       ignoreExpiration: false,
     });
   }
@@ -31,7 +31,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   private static extractJWT(req: Request): string | null {
-    if (req.cookies && "auth" in req.cookies) {
+    if (req.cookies && 'auth' in req.cookies) {
       return req.cookies.auth.access_token;
     }
     return null;

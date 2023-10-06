@@ -1,0 +1,11 @@
+query ServerRoles {
+  serverRoles {
+    ...ServerRole
+  }
+  me {
+    id
+    serverPermissions {
+      manageRoles
+    }
+  }
+}

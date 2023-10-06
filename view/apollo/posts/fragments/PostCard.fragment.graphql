@@ -1,0 +1,29 @@
+fragment PostCard on Post {
+  id
+  body
+  likesCount
+  commentCount
+  isLikedByMe @include(if: $isLoggedIn)
+  createdAt
+
+  images {
+    ...AttachedImage
+  }
+  user {
+    ...UserAvatar
+  }
+  group {
+    ...GroupAvatar
+    myPermissions @include(if: $isLoggedIn) {
+      ...GroupPermissions
+    }
+    isJoinedByMe @include(if: $isLoggedIn)
+  }
+  event {
+    ...EventAvatar
+    group @include(if: $isLoggedIn) {
+      id
+      isJoinedByMe
+    }
+  }
+}

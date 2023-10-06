@@ -1,0 +1,3 @@
+mutation DeleteGroupRole($id: Int!) {
+  deleteGroupRole(id: $id)
+}

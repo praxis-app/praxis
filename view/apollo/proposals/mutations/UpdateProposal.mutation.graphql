@@ -1,0 +1,10 @@
+mutation UpdateProposal(
+  $proposalData: UpdateProposalInput!
+  $isLoggedIn: Boolean = true
+) {
+  updateProposal(proposalData: $proposalData) {
+    proposal {
+      ...ProposalCard
+    }
+  }
+}

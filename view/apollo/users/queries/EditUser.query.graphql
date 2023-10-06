@@ -1,0 +1,5 @@
+query EditUser($name: String) {
+  user(name: $name) {
+    ...UserProfileCard
+  }
+}

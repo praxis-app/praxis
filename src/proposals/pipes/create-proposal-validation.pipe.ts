@@ -1,7 +1,7 @@
-import { ArgumentMetadata, Injectable, PipeTransform } from "@nestjs/common";
-import { ValidationError } from "apollo-server-express";
-import { CreateProposalInput } from "../models/create-proposal.input";
-import { ProposalActionType } from "../proposals.constants";
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
+import { CreateProposalInput } from '../models/create-proposal.input';
+import { ProposalActionType } from '../proposals.constants';
+import { ValidationError } from '@nestjs/apollo';
 
 @Injectable()
 export class CreateProposalValidationPipe implements PipeTransform {
@@ -15,13 +15,13 @@ export class CreateProposalValidationPipe implements PipeTransform {
 
   async validateProposalAction({ action }: CreateProposalInput) {
     if (!action) {
-      throw new ValidationError("Proposals must include an action");
+      throw new ValidationError('Proposals must include an action');
     }
     const { actionType, groupCoverPhoto, groupDescription, groupName, role } =
       action;
     if (actionType === ProposalActionType.ChangeGroupName && !groupName) {
       throw new ValidationError(
-        "Proposals to change group name must include a name field"
+        'Proposals to change group name must include a name field',
       );
     }
     if (
@@ -29,7 +29,7 @@ export class CreateProposalValidationPipe implements PipeTransform {
       !groupDescription
     ) {
       throw new ValidationError(
-        "Proposals to change group description must include a description field"
+        'Proposals to change group description must include a description field',
       );
     }
     if (
@@ -37,7 +37,7 @@ export class CreateProposalValidationPipe implements PipeTransform {
       !groupCoverPhoto
     ) {
       throw new ValidationError(
-        "Proposals to change group cover photo must include an image"
+        'Proposals to change group cover photo must include an image',
       );
     }
     if (
@@ -46,7 +46,7 @@ export class CreateProposalValidationPipe implements PipeTransform {
         actionType === ProposalActionType.ChangeGroupRole)
     ) {
       throw new ValidationError(
-        "Proposals to change or add group roles must include a role"
+        'Proposals to change or add group roles must include a role',
       );
     }
   }
@@ -55,7 +55,7 @@ export class CreateProposalValidationPipe implements PipeTransform {
   async validateGroupId({ groupId }: CreateProposalInput) {
     if (!groupId) {
       throw new ValidationError(
-        "Only group proposals are supported at this time"
+        'Only group proposals are supported at this time',
       );
     }
   }

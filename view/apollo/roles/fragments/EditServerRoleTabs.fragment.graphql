@@ -1,0 +1,12 @@
+fragment EditServerRoleTabs on ServerRole {
+  ...ServerRole
+  ...AddServerRoleMemberTab
+
+  permissions {
+    ...ServerRolePermissions
+  }
+
+  availableUsersToAdd {
+    ...UserAvatar
+  }
+}

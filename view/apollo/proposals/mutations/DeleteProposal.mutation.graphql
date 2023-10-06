@@ -1,0 +1,3 @@
+mutation DeleteProposal($id: Int!) {
+  deleteProposal(id: $id)
+}

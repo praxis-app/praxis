@@ -1,6 +1,6 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
-import { FileUpload, GraphQLUpload } from "graphql-upload";
-import { ProposalActionInput } from "../proposal-actions/models/proposal-action.input";
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
+import { ProposalActionInput } from '../proposal-actions/models/proposal-action.input';
 
 @InputType()
 export class CreateProposalInput {

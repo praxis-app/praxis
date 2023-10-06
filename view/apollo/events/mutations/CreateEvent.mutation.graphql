@@ -1,0 +1,10 @@
+mutation CreateEvent(
+  $eventData: CreateEventInput!
+  $isLoggedIn: Boolean = true
+) {
+  createEvent(eventData: $eventData) {
+    event {
+      ...EventCompact
+    }
+  }
+}

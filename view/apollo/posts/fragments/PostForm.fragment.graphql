@@ -1,0 +1,7 @@
+fragment PostForm on Post {
+  id
+  body
+  images {
+    ...AttachedImage
+  }
+}

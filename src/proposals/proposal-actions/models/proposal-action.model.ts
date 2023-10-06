@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -8,11 +8,11 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { Image } from "../../../images/models/image.model";
-import { Proposal } from "../../models/proposal.model";
-import { ProposalActionEvent } from "../proposal-action-events/models/proposal-action-event.model";
-import { ProposalActionRole } from "../proposal-action-roles/models/proposal-action-role.model";
+} from 'typeorm';
+import { Image } from '../../../images/models/image.model';
+import { Proposal } from '../../models/proposal.model';
+import { ProposalActionEvent } from '../proposal-action-events/models/proposal-action-event.model';
+import { ProposalActionRole } from '../proposal-action-roles/models/proposal-action-role.model';
 
 @Entity()
 @ObjectType()
@@ -43,7 +43,7 @@ export class ProposalAction {
     {
       cascade: true,
       nullable: true,
-    }
+    },
   )
   role?: ProposalActionRole;
 
@@ -54,13 +54,13 @@ export class ProposalAction {
     {
       cascade: true,
       nullable: true,
-    }
+    },
   )
   event?: ProposalActionEvent;
 
   @Field(() => Proposal)
   @OneToOne(() => Proposal, (proposal) => proposal.action, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   proposal: Proposal;

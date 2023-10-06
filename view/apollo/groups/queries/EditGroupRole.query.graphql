@@ -1,0 +1,12 @@
+query EditGroupRole($id: Int!) {
+  groupRole(id: $id) {
+    ...EditGroupRoleTabs
+
+    group {
+      id
+      myPermissions {
+        ...GroupPermissions
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+fragment GroupCard on Group {
+  ...GroupAvatar
+  description
+  memberCount
+  memberRequestCount @include(if: $isLoggedIn)
+  isJoinedByMe @include(if: $isLoggedIn)
+
+  myPermissions @include(if: $isLoggedIn) {
+    ...GroupPermissions
+  }
+}

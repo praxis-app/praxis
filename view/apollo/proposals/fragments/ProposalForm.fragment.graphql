@@ -1,0 +1,23 @@
+fragment ProposalForm on Proposal {
+  id
+  body
+
+  action {
+    id
+    actionType
+    groupDescription
+    groupName
+
+    groupCoverPhoto {
+      ...AttachedImage
+    }
+
+    role {
+      id
+    }
+  }
+
+  images {
+    ...AttachedImage
+  }
+}

@@ -1,6 +1,6 @@
-import { config } from "dotenv";
-import { JwtPayload, verify } from "jsonwebtoken";
-import { RequestWithCookies } from "./auth.types";
+import { config } from 'dotenv';
+import { JwtPayload, verify } from 'jsonwebtoken';
+import { RequestWithCookies } from './auth.types';
 
 config();
 

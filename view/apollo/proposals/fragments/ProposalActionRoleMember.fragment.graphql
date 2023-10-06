@@ -1,0 +1,8 @@
+fragment ProposalActionRoleMember on ProposalActionRoleMember {
+  id
+  changeType
+
+  user {
+    ...UserAvatar
+  }
+}

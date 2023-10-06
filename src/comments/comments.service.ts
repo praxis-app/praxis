@@ -1,22 +1,22 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FileUpload } from "graphql-upload";
-import { FindOptionsWhere, In, Repository } from "typeorm";
-import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
-import { deleteImageFile, saveImage } from "../images/image.utils";
-import { ImagesService } from "../images/images.service";
-import { Image } from "../images/models/image.model";
-import { User } from "../users/models/user.model";
-import { Comment } from "./models/comment.model";
-import { CreateCommentInput } from "./models/create-comment.input";
-import { UpdateCommentInput } from "./models/update-comment.input";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FileUpload } from 'graphql-upload-ts';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
+import { deleteImageFile, saveImage } from '../images/image.utils';
+import { ImagesService } from '../images/images.service';
+import { Image } from '../images/models/image.model';
+import { User } from '../users/models/user.model';
+import { Comment } from './models/comment.model';
+import { CreateCommentInput } from './models/create-comment.input';
+import { UpdateCommentInput } from './models/update-comment.input';
 
 @Injectable()
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
     private repository: Repository<Comment>,
-    private imagesService: ImagesService
+    private imagesService: ImagesService,
   ) {}
 
   async getComment(id: number, relations?: string[]) {
@@ -25,13 +25,13 @@ export class CommentsService {
 
   async getComments(where: FindOptionsWhere<Comment>) {
     const comments = await this.repository.find({
-      order: { createdAt: "ASC" },
+      order: { createdAt: 'ASC' },
       where,
     });
     // TODO: Update once pagination has been implemented
     return comments.slice(
       comments.length - Math.min(comments.length, DEFAULT_PAGE_SIZE),
-      comments.length
+      comments.length,
     );
   }
 
@@ -42,16 +42,16 @@ export class CommentsService {
     return commentIds.map(
       (id) =>
         images.filter((image: Image) => image.commentId === id) ||
-        new Error(`Could not load images for comment: ${id}`)
+        new Error(`Could not load images for comment: ${id}`),
     );
   }
 
   async createComment(
     { images, ...commentData }: CreateCommentInput,
-    user: User
+    user: User,
   ) {
     if (!commentData.body && !images?.length) {
-      throw new Error("Comments must include text or images");
+      throw new Error('Comments must include text or images');
     }
     const comment = await this.repository.save({
       ...commentData,

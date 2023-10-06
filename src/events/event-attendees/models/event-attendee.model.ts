@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -6,15 +6,15 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { User } from "../../../users/models/user.model";
-import { Event } from "../../models/event.model";
+} from 'typeorm';
+import { User } from '../../../users/models/user.model';
+import { Event } from '../../models/event.model';
 
 export enum EventAttendeeStatus {
-  CoHost = "co-host",
-  Going = "going",
-  Host = "host",
-  Interested = "interested",
+  CoHost = 'co-host',
+  Going = 'going',
+  Host = 'host',
+  Interested = 'interested',
 }
 
 @ObjectType()
@@ -28,14 +28,14 @@ export class EventAttendee {
   @Field()
   status: string;
 
-  @ManyToOne(() => User, (user) => user.eventAttendees, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.eventAttendees, { onDelete: 'CASCADE' })
   @Field(() => User)
   user: User;
 
   @Column()
   userId: number;
 
-  @ManyToOne(() => Event, (event) => event.attendees, { onDelete: "CASCADE" })
+  @ManyToOne(() => Event, (event) => event.attendees, { onDelete: 'CASCADE' })
   @Field(() => Event)
   event: Event;
 

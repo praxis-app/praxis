@@ -1,12 +1,12 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
-import { GroupsService } from "../groups.service";
-import { Group } from "../models/group.model";
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
+import { GroupsService } from '../groups.service';
+import { Group } from '../models/group.model';
 import {
   GroupMemberRequest,
   GroupMemberRequestStatus,
-} from "./models/group-member-request.model";
+} from './models/group-member-request.model';
 
 type GroupWithMemberRequestCount = Group & { memberRequestCount: number };
 
@@ -20,12 +20,12 @@ export class GroupMemberRequestsService {
     private groupRepository: Repository<Group>,
 
     @Inject(forwardRef(() => GroupsService))
-    private groupsService: GroupsService
+    private groupsService: GroupsService,
   ) {}
 
   async getGroupMemberRequest(
     where: FindOptionsWhere<GroupMemberRequest>,
-    relations?: string[]
+    relations?: string[],
   ) {
     return this.groupMemberRequestRepository.findOne({
       relations,
@@ -36,24 +36,24 @@ export class GroupMemberRequestsService {
   async getGroupMemberRequests(groupId: number) {
     return this.groupMemberRequestRepository.find({
       where: { status: GroupMemberRequestStatus.Pending, groupId },
-      order: { createdAt: "DESC" },
+      order: { createdAt: 'DESC' },
     });
   }
 
   async getGroupMemberRequestCountBatch(groupIds: number[]) {
     const groups = (await this.groupRepository
-      .createQueryBuilder("group")
-      .leftJoinAndSelect("group.memberRequests", "memberRequest")
+      .createQueryBuilder('group')
+      .leftJoinAndSelect('group.memberRequests', 'memberRequest')
       .loadRelationCountAndMap(
-        "group.memberRequestCount",
-        "group.memberRequests",
-        "memberRequest",
+        'group.memberRequestCount',
+        'group.memberRequests',
+        'memberRequest',
         (qb) =>
-          qb.andWhere("memberRequest.status = :status", {
+          qb.andWhere('memberRequest.status = :status', {
             status: GroupMemberRequestStatus.Pending,
-          })
+          }),
       )
-      .select(["group.id"])
+      .select(['group.id'])
       .whereInIds(groupIds)
       .getMany()) as GroupWithMemberRequestCount[];
 
@@ -80,7 +80,7 @@ export class GroupMemberRequestsService {
     });
     const groupMember = await this.groupsService.createGroupMember(
       memberRequest.groupId,
-      memberRequest.userId
+      memberRequest.userId,
     );
     return { groupMember };
   }
@@ -94,7 +94,7 @@ export class GroupMemberRequestsService {
 
   async updateGroupMemberRequest(
     id: number,
-    requestData: Partial<GroupMemberRequest>
+    requestData: Partial<GroupMemberRequest>,
   ) {
     await this.groupMemberRequestRepository.update(id, requestData);
     return this.groupMemberRequestRepository.findOneOrFail({ where: { id } });

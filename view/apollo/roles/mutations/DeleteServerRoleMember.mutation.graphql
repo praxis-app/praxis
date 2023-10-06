@@ -1,0 +1,18 @@
+mutation DeleteServerRoleMember(
+  $serverRoleMemberData: DeleteServerRoleMemberInput!
+) {
+  deleteServerRoleMember(serverRoleMemberData: $serverRoleMemberData) {
+    serverRole {
+      id
+      availableUsersToAdd {
+        ...UserAvatar
+      }
+    }
+    me {
+      id
+      serverPermissions {
+        ...ServerPermissions
+      }
+    }
+  }
+}

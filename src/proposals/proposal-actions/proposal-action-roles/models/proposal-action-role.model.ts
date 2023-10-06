@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -9,11 +9,11 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { GroupRole } from "../../../../groups/group-roles/models/group-role.model";
-import { ProposalAction } from "../../models/proposal-action.model";
-import { ProposalActionPermission } from "./proposal-action-permission.model";
-import { ProposalActionRoleMember } from "./proposal-action-role-member.model";
+} from 'typeorm';
+import { GroupRole } from '../../../../groups/group-roles/models/group-role.model';
+import { ProposalAction } from '../../models/proposal-action.model';
+import { ProposalActionPermission } from './proposal-action-permission.model';
+import { ProposalActionRoleMember } from './proposal-action-role-member.model';
 
 @Entity()
 @ObjectType()
@@ -44,7 +44,7 @@ export class ProposalActionRole {
     {
       cascade: true,
       nullable: true,
-    }
+    },
   )
   permission?: ProposalActionPermission;
 
@@ -55,13 +55,13 @@ export class ProposalActionRole {
     {
       cascade: true,
       nullable: true,
-    }
+    },
   )
   members?: ProposalActionRoleMember[];
 
   @Field(() => ProposalAction)
   @OneToOne(() => ProposalAction, (proposalAction) => proposalAction.role, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   proposalAction: ProposalAction;
@@ -72,7 +72,7 @@ export class ProposalActionRole {
   @Field(() => GroupRole, { nullable: true })
   @ManyToOne(() => GroupRole, (groupRole) => groupRole.proposalActionRoles, {
     nullable: true,
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   groupRole?: GroupRole;
 

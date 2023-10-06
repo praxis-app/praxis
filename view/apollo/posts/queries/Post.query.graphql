@@ -1,0 +1,5 @@
+query Post($id: Int!, $isLoggedIn: Boolean!) {
+  post(id: $id) {
+    ...PostCard
+  }
+}

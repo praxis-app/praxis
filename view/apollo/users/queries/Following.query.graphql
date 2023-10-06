@@ -1,0 +1,12 @@
+query Following($name: String!) {
+  user(name: $name) {
+    id
+    followingCount
+    following {
+      ...Follow
+    }
+  }
+  me {
+    id
+  }
+}

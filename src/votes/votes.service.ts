@@ -1,11 +1,11 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
-import { Proposal } from "../proposals/models/proposal.model";
-import { ProposalsService } from "../proposals/proposals.service";
-import { CreateVoteInput } from "./models/create-vote.input";
-import { UpdateVoteInput } from "./models/update-vote.input";
-import { Vote } from "./models/vote.model";
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
+import { Proposal } from '../proposals/models/proposal.model';
+import { ProposalsService } from '../proposals/proposals.service';
+import { CreateVoteInput } from './models/create-vote.input';
+import { UpdateVoteInput } from './models/update-vote.input';
+import { Vote } from './models/vote.model';
 
 type ProposalWithVoteCount = Proposal & { voteCount: number };
 
@@ -19,7 +19,7 @@ export class VotesService {
     private proposalsRepository: Repository<Proposal>,
 
     @Inject(forwardRef(() => ProposalsService))
-    private proposalsService: ProposalsService
+    private proposalsService: ProposalsService,
   ) {}
 
   async getVote(id: number, relations?: string[]) {
@@ -32,16 +32,16 @@ export class VotesService {
 
   async getVoteCountBatch(proposalIds: number[]) {
     const proposals = (await this.proposalsRepository
-      .createQueryBuilder("proposal")
-      .leftJoinAndSelect("proposal.votes", "vote")
-      .loadRelationCountAndMap("proposal.voteCount", "proposal.votes")
-      .select(["proposal.id"])
+      .createQueryBuilder('proposal')
+      .leftJoinAndSelect('proposal.votes', 'vote')
+      .loadRelationCountAndMap('proposal.voteCount', 'proposal.votes')
+      .select(['proposal.id'])
       .whereInIds(proposalIds)
       .getMany()) as ProposalWithVoteCount[];
 
     return proposalIds.map((id) => {
       const proposal = proposals.find(
-        (proposal: Proposal) => proposal.id === id
+        (proposal: Proposal) => proposal.id === id,
       );
       if (!proposal) {
         return new Error(`Could not load vote count for proposal: ${id}`);

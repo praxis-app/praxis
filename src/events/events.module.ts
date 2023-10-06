@@ -1,11 +1,11 @@
-import { forwardRef, Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { ImagesModule } from "../images/images.module";
-import { PostsModule } from "../posts/posts.module";
-import { EventAttendeesModule } from "./event-attendees/event-attendees.module";
-import { EventsResolver } from "./events.resolver";
-import { EventsService } from "./events.service";
-import { Event } from "./models/event.model";
+import { forwardRef, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ImagesModule } from '../images/images.module';
+import { PostsModule } from '../posts/posts.module';
+import { EventAttendeesModule } from './event-attendees/event-attendees.module';
+import { EventsResolver } from './events.resolver';
+import { EventsService } from './events.service';
+import { Event } from './models/event.model';
 
 @Module({
   imports: [

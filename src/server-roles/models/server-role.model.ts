@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -8,9 +8,9 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { User } from "../../users/models/user.model";
-import { ServerRolePermission } from "./server-role-permission.model";
+} from 'typeorm';
+import { User } from '../../users/models/user.model';
+import { ServerRolePermission } from './server-role-permission.model';
 
 @Entity()
 @ObjectType()

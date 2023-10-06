@@ -1,19 +1,19 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { UserInputError, ValidationError } from "apollo-server-express";
-import * as cryptoRandomString from "crypto-random-string";
-import { Repository } from "typeorm";
-import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
-import { User } from "../users/models/user.model";
-import { CreateServerInviteInput } from "./models/create-server-invite.input";
-import { ServerInvite } from "./models/server-invite.model";
-import { validateServerInvite } from "./server-invites.utils";
+import { UserInputError, ValidationError } from '@nestjs/apollo';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as cryptoRandomString from 'crypto-random-string';
+import { Repository } from 'typeorm';
+import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
+import { User } from '../users/models/user.model';
+import { CreateServerInviteInput } from './models/create-server-invite.input';
+import { ServerInvite } from './models/server-invite.model';
+import { validateServerInvite } from './server-invites.utils';
 
 @Injectable()
 export class ServerInvitesService {
   constructor(
     @InjectRepository(ServerInvite)
-    private repository: Repository<ServerInvite>
+    private repository: Repository<ServerInvite>,
   ) {}
 
   async getValidServerInvite(token: string) {
@@ -21,21 +21,21 @@ export class ServerInvitesService {
       where: { token },
     });
     if (!serverInvite) {
-      throw new UserInputError("Invite not found");
+      throw new UserInputError('Invite not found');
     }
     const isValid = validateServerInvite(serverInvite);
     if (!isValid) {
-      throw new ValidationError("Invalid server invite");
+      throw new ValidationError('Invalid server invite');
     }
     return serverInvite;
   }
 
   async getValidServerInvites() {
     const serverInvites = await this.repository.find({
-      order: { createdAt: "DESC" },
+      order: { createdAt: 'DESC' },
     });
     const validServerInvites = serverInvites.filter((serverInvite) =>
-      validateServerInvite(serverInvite)
+      validateServerInvite(serverInvite),
     );
 
     // TODO: Update once pagination has been implemented
@@ -44,7 +44,7 @@ export class ServerInvitesService {
 
   async createServerInvite(
     serverInviteData: CreateServerInviteInput,
-    user: User
+    user: User,
   ) {
     const token = cryptoRandomString({ length: 8 });
     const serverInvite = await this.repository.save({
@@ -56,7 +56,7 @@ export class ServerInvitesService {
   }
 
   async redeemServerInvite(token: string) {
-    await this.repository.increment({ token }, "uses", 1);
+    await this.repository.increment({ token }, 'uses', 1);
   }
 
   async deleteServerInvite(id: number) {

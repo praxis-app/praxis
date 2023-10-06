@@ -1,15 +1,37 @@
 {
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Docker: Attach to NestJS",
-      "type": "node",
-      "request": "attach",
-      "port": 9229,
-      "address": "0.0.0.0",
-      "localRoot": "${workspaceFolder}",
-      "remoteRoot": "/usr/src/app",
-      "restart": true
+      "name": "Debug Client",
+      "request": "launch",
+      "runtimeArgs": ["run-script", "start:client"],
+      "outputCapture": "std",
+      "runtimeExecutable": "npm",
+      "skipFiles": ["<node_internals>/**"],
+      "runtimeVersion": "18.17.1",
+      "restart": true,
+      "type": "node"
+    },
+    {
+      "name": "Debug Server",
+      "request": "launch",
+      "runtimeArgs": ["run-script", "start:debug"],
+      "outputCapture": "std",
+      "runtimeExecutable": "npm",
+      "skipFiles": ["<node_internals>/**"],
+      "runtimeVersion": "18.17.1",
+      "restart": true,
+      "type": "node"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug App",
+      "configurations": ["Debug Server", "Debug Client"],
+      "stopAll": true
     }
   ]
 }

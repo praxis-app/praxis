@@ -1,0 +1,21 @@
+fragment ProposalActionRole on ProposalActionRole {
+  id
+  name
+  color
+  oldName
+  oldColor
+
+  permissions {
+    ...ProposalActionPermission
+  }
+
+  members {
+    ...ProposalActionRoleMember
+  }
+
+  groupRole {
+    id
+    name
+    color
+  }
+}

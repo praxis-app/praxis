@@ -1,39 +1,11 @@
-# VS Code
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
-# Other IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# ESLint and Prettier
-.eslintcache
-.husky
-
-# compiled output
-dist
-node_modules
-
-# Environment variables file
-.env
-.env.test
-.env.development.local
-.env.test.local
-.env.production.local
+# Compiled output
+/dist
+/node_modules
 
 # Logs
 logs
 *.log
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
@@ -45,6 +17,27 @@ lerna-debug.log*
 /coverage
 /.nyc_output
 
+# Linting and formatting
+.husky
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Environment
+.env
+.nvmrc
+
 # Uploaded content
-/uploads/*
-!/uploads/README.md
+/content/*
+!/content/README.md

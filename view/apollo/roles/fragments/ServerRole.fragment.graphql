@@ -1,0 +1,6 @@
+fragment ServerRole on ServerRole {
+  id
+  name
+  color
+  memberCount
+}

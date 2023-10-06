@@ -1,0 +1,21 @@
+fragment EventCompact on Event {
+  id
+  name
+  description
+  startsAt
+  interestedCount
+  goingCount
+  online
+  location
+  ...EventAttendeeButtons @include(if: $isLoggedIn)
+
+  coverPhoto {
+    id
+  }
+  group {
+    id
+    myPermissions @include(if: $isLoggedIn) {
+      manageEvents
+    }
+  }
+}

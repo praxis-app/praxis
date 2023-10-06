@@ -1,0 +1,9 @@
+fragment VoteBadges on Proposal {
+  id
+  voteCount
+
+  votes {
+    ...Vote
+    ...VoteBadge
+  }
+}

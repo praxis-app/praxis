@@ -1,0 +1,3 @@
+mutation DenyGroupMemberRequest($id: Int!) {
+  denyGroupMemberRequest(id: $id)
+}

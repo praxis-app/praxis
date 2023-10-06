@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { User } from "../../../users/models/user.model";
+} from 'typeorm';
+import { User } from '../../../users/models/user.model';
 
 @Entity()
 @ObjectType()
@@ -20,7 +20,7 @@ export class RefreshToken {
   @Field()
   revoked: boolean;
 
-  @ManyToOne(() => User, (user) => user.refreshTokens, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.refreshTokens, { onDelete: 'CASCADE' })
   @Field(() => User)
   user: User;
 

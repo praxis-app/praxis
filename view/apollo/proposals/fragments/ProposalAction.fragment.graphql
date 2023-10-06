@@ -1,0 +1,18 @@
+fragment ProposalAction on ProposalAction {
+  id
+  actionType
+  groupDescription
+  groupName
+
+  event {
+    ...ProposalActionEvent
+  }
+
+  role {
+    ...ProposalActionRole
+  }
+
+  groupCoverPhoto {
+    ...AttachedImage
+  }
+}

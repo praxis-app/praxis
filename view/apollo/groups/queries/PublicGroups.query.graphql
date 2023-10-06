@@ -1,0 +1,5 @@
+query PublicGroups($isLoggedIn: Boolean = false) {
+  publicGroups {
+    ...GroupCard
+  }
+}

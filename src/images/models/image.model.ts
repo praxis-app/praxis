@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -6,15 +6,15 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { Comment } from "../../comments/models/comment.model";
-import { Event } from "../../events/models/event.model";
-import { Group } from "../../groups/models/group.model";
-import { Post } from "../../posts/models/post.model";
-import { Proposal } from "../../proposals/models/proposal.model";
-import { ProposalAction } from "../../proposals/proposal-actions/models/proposal-action.model";
-import { ProposalActionEvent } from "../../proposals/proposal-actions/proposal-action-events/models/proposal-action-event.model";
-import { User } from "../../users/models/user.model";
+} from 'typeorm';
+import { Comment } from '../../comments/models/comment.model';
+import { Event } from '../../events/models/event.model';
+import { Group } from '../../groups/models/group.model';
+import { Post } from '../../posts/models/post.model';
+import { Proposal } from '../../proposals/models/proposal.model';
+import { ProposalAction } from '../../proposals/proposal-actions/models/proposal-action.model';
+import { ProposalActionEvent } from '../../proposals/proposal-actions/proposal-action-events/models/proposal-action-event.model';
+import { User } from '../../users/models/user.model';
 
 @ObjectType()
 @Entity()
@@ -33,7 +33,7 @@ export class Image {
 
   @Field(() => Post, { nullable: true })
   @ManyToOne(() => Post, (post) => post.images, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   post?: Post;
 
@@ -42,7 +42,7 @@ export class Image {
 
   @Field(() => Comment, { nullable: true })
   @ManyToOne(() => Comment, (comment) => comment.images, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   comment?: Comment;
 
@@ -51,7 +51,7 @@ export class Image {
 
   @Field(() => User, { nullable: true })
   @ManyToOne(() => User, (user) => user.images, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   user?: User;
 
@@ -60,7 +60,7 @@ export class Image {
 
   @Field(() => Group, { nullable: true })
   @ManyToOne(() => Group, (group) => group.images, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   group?: Group;
 
@@ -69,7 +69,7 @@ export class Image {
 
   @Field(() => Event, { nullable: true })
   @ManyToOne(() => Event, (event) => event.images, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   event?: Event;
 
@@ -78,7 +78,7 @@ export class Image {
 
   @Field(() => Proposal, { nullable: true })
   @ManyToOne(() => Proposal, (proposal) => proposal.images, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   proposal?: Proposal;
 
@@ -87,7 +87,7 @@ export class Image {
 
   @Field(() => ProposalAction, { nullable: true })
   @ManyToOne(() => ProposalAction, (proposalAction) => proposalAction.images, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   proposalAction?: ProposalAction;
 
@@ -99,8 +99,8 @@ export class Image {
     () => ProposalActionEvent,
     (proposalActionEvent) => proposalActionEvent.images,
     {
-      onDelete: "CASCADE",
-    }
+      onDelete: 'CASCADE',
+    },
   )
   proposalActionEvent?: ProposalActionEvent;
 

@@ -1,0 +1,7 @@
+mutation CreateServerInvite($serverInviteData: CreateServerInviteInput!) {
+  createServerInvite(serverInviteData: $serverInviteData) {
+    serverInvite {
+      ...ServerInviteCard
+    }
+  }
+}

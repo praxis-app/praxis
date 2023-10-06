@@ -1,0 +1,21 @@
+mutation FollowUser($id: Int!, $isLoggedIn: Boolean = true) {
+  followUser(id: $id) {
+    followedUser {
+      id
+      followers {
+        ...Follow
+      }
+      ...UserProfileCard
+    }
+    follower {
+      id
+      homeFeed {
+        ...FeedItem
+      }
+      following {
+        ...Follow
+      }
+      ...UserProfileCard
+    }
+  }
+}

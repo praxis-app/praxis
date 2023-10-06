@@ -1,0 +1,5 @@
+query PublicGroupsFeed($isLoggedIn: Boolean = false) {
+  publicGroupsFeed {
+    ...FeedItem
+  }
+}
