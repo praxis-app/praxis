@@ -9,23 +9,23 @@ import {
 } from '@mui/material';
 import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { inDevToast } from '../../utils/shared.utils';
 import LevelOneHeading from '../Shared/LevelOneHeading';
 import Link from '../Shared/Link';
 import TopNavDesktop from './TopNavDesktop';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 interface Props {
   appBarProps?: AppBarProps;
 }
 
 const TopNav = ({ appBarProps }: Props) => {
+  const { pathname } = useLocation();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
   const theme = useTheme();
 
   const appBarStyles: SxProps = {
