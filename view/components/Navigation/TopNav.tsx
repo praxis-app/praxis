@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { inDevToast } from '../../utils/shared.utils';
@@ -21,8 +22,10 @@ interface Props {
 }
 
 const TopNav = ({ appBarProps }: Props) => {
+  const { pathname } = useLocation();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+  const navigate = useNavigate();
   const theme = useTheme();
 
   const appBarStyles: SxProps = {
@@ -58,20 +61,20 @@ const TopNav = ({ appBarProps }: Props) => {
     ...(isDesktop ? desktopToolbarStyles : {}),
   };
 
-  const renderBrand = () => (
-    // TODO: Add reload functionality
-    // if (asPath === NavigationPaths.Home) {
-    //   return (
-    //     <LevelOneHeading onClick={() => reload()} sx={brandStyles}>
-    //       {t('brand')}
-    //     </LevelOneHeading>
-    //   );
-    // }
-
-    <Link href={NavigationPaths.Home}>
-      <LevelOneHeading sx={brandStyles}>{t('brand')}</LevelOneHeading>
-    </Link>
-  );
+  const renderBrand = () => {
+    if (pathname === NavigationPaths.Home) {
+      return (
+        <LevelOneHeading onClick={() => navigate(0)} sx={brandStyles}>
+          {t('brand')}
+        </LevelOneHeading>
+      );
+    }
+    return (
+      <Link href={NavigationPaths.Home}>
+        <LevelOneHeading sx={brandStyles}>{t('brand')}</LevelOneHeading>
+      </Link>
+    );
+  };
 
   return (
     <AppBar role="banner" position="fixed" sx={appBarStyles} {...appBarProps}>
