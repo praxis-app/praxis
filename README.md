@@ -6,10 +6,6 @@ While model of consensus is the default, group members will also be able to use 
 
 Praxis is free and open source software, as specified by the GNU General Public License.
 
-## Experimental Architecture
-
-This version of Praxis uses a monolithic architecture, enabling easier development and deployment. This is an experimental version of Praxis, and is not yet ready for production use.
-
 ## Installation
 
 ```bash
