@@ -16,8 +16,13 @@ Praxis is free and open source software, as specified by the GNU General Public 
 
 ## Installation
 
+Ensure that you're using Node v18.17.1 before proceeding.
+
 ```bash
 $ npm install
+
+# Add .env file and edit as needed
+$ cp .env.example .env
 ```
 
 ## Running the app
