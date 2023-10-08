@@ -9,7 +9,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type EditEventQueryVariables = Types.Exact<{
-  id: Types.Scalars['Int'];
+  id: Types.Scalars['Int']['input'];
 }>;
 
 export type EditEventQuery = {

@@ -9,7 +9,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type EditUserQueryVariables = Types.Exact<{
-  name?: Types.InputMaybe<Types.Scalars['String']>;
+  name?: Types.InputMaybe<Types.Scalars['String']['input']>;
 }>;
 
 export type EditUserQuery = {

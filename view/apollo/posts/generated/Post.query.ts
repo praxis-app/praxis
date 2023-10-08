@@ -9,8 +9,8 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type PostQueryVariables = Types.Exact<{
-  id: Types.Scalars['Int'];
-  isLoggedIn: Types.Scalars['Boolean'];
+  id: Types.Scalars['Int']['input'];
+  isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
 export type PostQuery = {

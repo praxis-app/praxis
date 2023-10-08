@@ -9,7 +9,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type LikePostMutationVariables = Types.Exact<{
   likeData: Types.CreateLikeInput;
-  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type LikePostMutation = {

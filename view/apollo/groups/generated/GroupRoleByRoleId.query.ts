@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type GroupRoleByRoleIdQueryVariables = Types.Exact<{
-  id: Types.Scalars['Int'];
+  id: Types.Scalars['Int']['input'];
 }>;
 
 export type GroupRoleByRoleIdQuery = {

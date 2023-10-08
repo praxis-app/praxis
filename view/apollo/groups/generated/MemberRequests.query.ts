@@ -9,7 +9,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type MemberRequestsQueryVariables = Types.Exact<{
-  groupName: Types.Scalars['String'];
+  groupName: Types.Scalars['String']['input'];
 }>;
 
 export type MemberRequestsQuery = {

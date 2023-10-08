@@ -8,7 +8,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type ServerInviteQueryVariables = Types.Exact<{
-  token: Types.Scalars['String'];
+  token: Types.Scalars['String']['input'];
 }>;
 
 export type ServerInviteQuery = {

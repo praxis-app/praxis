@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type CreateProposalMutationVariables = Types.Exact<{
   proposalData: Types.CreateProposalInput;
-  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type CreateProposalMutation = {

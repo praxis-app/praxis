@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type UpdatePostMutationVariables = Types.Exact<{
   postData: Types.UpdatePostInput;
-  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type UpdatePostMutation = {

@@ -12,15 +12,24 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
   [SubKey in K]: Maybe<T[SubKey]>;
 };
+export type MakeEmpty<
+  T extends { [key: string]: unknown },
+  K extends keyof T,
+> = { [_ in K]?: never };
+export type Incremental<T> =
+  | T
+  | {
+      [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
+    };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-  DateTime: any;
-  Upload: any;
+  ID: { input: string; output: string };
+  String: { input: string; output: string };
+  Boolean: { input: boolean; output: boolean };
+  Int: { input: number; output: number };
+  Float: { input: number; output: number };
+  DateTime: { input: any; output: any };
+  Upload: { input: any; output: any };
 };
 
 export type ApproveGroupMemberRequestPayload = {
@@ -30,22 +39,22 @@ export type ApproveGroupMemberRequestPayload = {
 
 export type Comment = {
   __typename?: 'Comment';
-  body?: Maybe<Scalars['String']>;
-  createdAt: Scalars['DateTime'];
-  id: Scalars['Int'];
+  body?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['Int']['output'];
   images: Array<Image>;
   likes: Array<Like>;
   post?: Maybe<Post>;
   proposal?: Maybe<Proposal>;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime']['output'];
   user: User;
 };
 
 export type CreateCommentInput = {
-  body?: InputMaybe<Scalars['String']>;
-  images?: InputMaybe<Array<Scalars['Upload']>>;
-  postId?: InputMaybe<Scalars['Int']>;
-  proposalId?: InputMaybe<Scalars['Int']>;
+  body?: InputMaybe<Scalars['String']['input']>;
+  images?: InputMaybe<Array<Scalars['Upload']['input']>>;
+  postId?: InputMaybe<Scalars['Int']['input']>;
+  proposalId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreateCommentPayload = {
@@ -54,8 +63,8 @@ export type CreateCommentPayload = {
 };
 
 export type CreateEventAttendeeInput = {
-  eventId: Scalars['Int'];
-  status: Scalars['String'];
+  eventId: Scalars['Int']['input'];
+  status: Scalars['String']['input'];
 };
 
 export type CreateEventAttendeePayload = {
@@ -64,16 +73,16 @@ export type CreateEventAttendeePayload = {
 };
 
 export type CreateEventInput = {
-  coverPhoto?: InputMaybe<Scalars['Upload']>;
-  description: Scalars['String'];
-  endsAt?: InputMaybe<Scalars['DateTime']>;
-  externalLink?: InputMaybe<Scalars['String']>;
-  groupId?: InputMaybe<Scalars['Int']>;
-  hostId: Scalars['Int'];
-  location?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  online?: InputMaybe<Scalars['Boolean']>;
-  startsAt: Scalars['DateTime'];
+  coverPhoto?: InputMaybe<Scalars['Upload']['input']>;
+  description: Scalars['String']['input'];
+  endsAt?: InputMaybe<Scalars['DateTime']['input']>;
+  externalLink?: InputMaybe<Scalars['String']['input']>;
+  groupId?: InputMaybe<Scalars['Int']['input']>;
+  hostId: Scalars['Int']['input'];
+  location?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  online?: InputMaybe<Scalars['Boolean']['input']>;
+  startsAt: Scalars['DateTime']['input'];
 };
 
 export type CreateEventPayload = {
@@ -82,9 +91,9 @@ export type CreateEventPayload = {
 };
 
 export type CreateGroupInput = {
-  coverPhoto?: InputMaybe<Scalars['Upload']>;
-  description: Scalars['String'];
-  name: Scalars['String'];
+  coverPhoto?: InputMaybe<Scalars['Upload']['input']>;
+  description: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type CreateGroupMemberRequestPayload = {
@@ -98,9 +107,9 @@ export type CreateGroupPayload = {
 };
 
 export type CreateGroupRoleInput = {
-  color: Scalars['String'];
-  groupId: Scalars['Int'];
-  name: Scalars['String'];
+  color: Scalars['String']['input'];
+  groupId: Scalars['Int']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type CreateGroupRolePayload = {
@@ -109,7 +118,7 @@ export type CreateGroupRolePayload = {
 };
 
 export type CreateLikeInput = {
-  postId?: InputMaybe<Scalars['Int']>;
+  postId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreateLikePayload = {
@@ -118,10 +127,10 @@ export type CreateLikePayload = {
 };
 
 export type CreatePostInput = {
-  body?: InputMaybe<Scalars['String']>;
-  eventId?: InputMaybe<Scalars['Int']>;
-  groupId?: InputMaybe<Scalars['Int']>;
-  images?: InputMaybe<Array<Scalars['Upload']>>;
+  body?: InputMaybe<Scalars['String']['input']>;
+  eventId?: InputMaybe<Scalars['Int']['input']>;
+  groupId?: InputMaybe<Scalars['Int']['input']>;
+  images?: InputMaybe<Array<Scalars['Upload']['input']>>;
 };
 
 export type CreatePostPayload = {
@@ -131,9 +140,9 @@ export type CreatePostPayload = {
 
 export type CreateProposalInput = {
   action: ProposalActionInput;
-  body?: InputMaybe<Scalars['String']>;
-  groupId?: InputMaybe<Scalars['Int']>;
-  images?: InputMaybe<Array<Scalars['Upload']>>;
+  body?: InputMaybe<Scalars['String']['input']>;
+  groupId?: InputMaybe<Scalars['Int']['input']>;
+  images?: InputMaybe<Array<Scalars['Upload']['input']>>;
 };
 
 export type CreateProposalPayload = {
@@ -142,8 +151,8 @@ export type CreateProposalPayload = {
 };
 
 export type CreateServerInviteInput = {
-  expiresAt?: InputMaybe<Scalars['DateTime']>;
-  maxUses?: InputMaybe<Scalars['Int']>;
+  expiresAt?: InputMaybe<Scalars['DateTime']['input']>;
+  maxUses?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreateServerInvitePayload = {
@@ -152,8 +161,8 @@ export type CreateServerInvitePayload = {
 };
 
 export type CreateServerRoleInput = {
-  color: Scalars['String'];
-  name: Scalars['String'];
+  color: Scalars['String']['input'];
+  name: Scalars['String']['input'];
 };
 
 export type CreateServerRolePayload = {
@@ -162,8 +171,8 @@ export type CreateServerRolePayload = {
 };
 
 export type CreateVoteInput = {
-  proposalId: Scalars['Int'];
-  voteType: Scalars['String'];
+  proposalId: Scalars['Int']['input'];
+  voteType: Scalars['String']['input'];
 };
 
 export type CreateVotePayload = {
@@ -172,8 +181,8 @@ export type CreateVotePayload = {
 };
 
 export type DeleteGroupRoleMemberInput = {
-  groupRoleId: Scalars['Int'];
-  userId: Scalars['Int'];
+  groupRoleId: Scalars['Int']['input'];
+  userId: Scalars['Int']['input'];
 };
 
 export type DeleteGroupRoleMemberPayload = {
@@ -182,12 +191,12 @@ export type DeleteGroupRoleMemberPayload = {
 };
 
 export type DeleteLikeInput = {
-  postId?: InputMaybe<Scalars['Int']>;
+  postId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type DeleteServerRoleMemberInput = {
-  serverRoleId: Scalars['Int'];
-  userId: Scalars['Int'];
+  serverRoleId: Scalars['Int']['input'];
+  userId: Scalars['Int']['input'];
 };
 
 export type DeleteServerRoleMemberPayload = {
@@ -199,39 +208,39 @@ export type DeleteServerRoleMemberPayload = {
 export type Event = {
   __typename?: 'Event';
   attendees: Array<EventAttendee>;
-  attendingStatus?: Maybe<Scalars['String']>;
+  attendingStatus?: Maybe<Scalars['String']['output']>;
   coverPhoto: Image;
-  createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
-  endsAt?: Maybe<Scalars['DateTime']>;
-  externalLink?: Maybe<Scalars['String']>;
-  goingCount: Scalars['Int'];
+  createdAt: Scalars['DateTime']['output'];
+  description: Scalars['String']['output'];
+  endsAt?: Maybe<Scalars['DateTime']['output']>;
+  externalLink?: Maybe<Scalars['String']['output']>;
+  goingCount: Scalars['Int']['output'];
   group?: Maybe<Group>;
   host: User;
-  id: Scalars['Int'];
+  id: Scalars['Int']['output'];
   images: Array<Image>;
-  interestedCount: Scalars['Int'];
-  location?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  online: Scalars['Boolean'];
+  interestedCount: Scalars['Int']['output'];
+  location?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  online: Scalars['Boolean']['output'];
   posts: Array<Post>;
-  startsAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
+  startsAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type EventAttendee = {
   __typename?: 'EventAttendee';
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTime']['output'];
   event: Event;
-  id: Scalars['Int'];
-  status: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
+  id: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
   user: User;
 };
 
 export type EventsInput = {
-  online?: InputMaybe<Scalars['Boolean']>;
-  timeFrame?: InputMaybe<Scalars['String']>;
+  online?: InputMaybe<Scalars['Boolean']['input']>;
+  timeFrame?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type FeedItem = Post | Proposal;
@@ -245,136 +254,136 @@ export type FollowUserPayload = {
 export type Group = {
   __typename?: 'Group';
   coverPhoto?: Maybe<Image>;
-  createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
+  createdAt: Scalars['DateTime']['output'];
+  description: Scalars['String']['output'];
   feed: Array<FeedItem>;
   futureEvents: Array<Event>;
-  id: Scalars['Int'];
-  isJoinedByMe: Scalars['Boolean'];
-  memberCount: Scalars['Int'];
-  memberRequestCount?: Maybe<Scalars['Int']>;
+  id: Scalars['Int']['output'];
+  isJoinedByMe: Scalars['Boolean']['output'];
+  memberCount: Scalars['Int']['output'];
+  memberRequestCount?: Maybe<Scalars['Int']['output']>;
   memberRequests?: Maybe<Array<GroupMemberRequest>>;
   members: Array<User>;
   myPermissions: GroupPermissions;
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   pastEvents: Array<Event>;
   posts: Array<Post>;
   proposals: Array<Proposal>;
   roles: Array<GroupRole>;
   settings: GroupConfig;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type GroupConfig = {
   __typename?: 'GroupConfig';
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTime']['output'];
   group: Group;
-  id: Scalars['Int'];
-  isPublic: Scalars['Boolean'];
-  updatedAt: Scalars['DateTime'];
+  id: Scalars['Int']['output'];
+  isPublic: Scalars['Boolean']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type GroupMemberRequest = {
   __typename?: 'GroupMemberRequest';
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTime']['output'];
   group: Group;
-  id: Scalars['Int'];
-  updatedAt: Scalars['DateTime'];
+  id: Scalars['Int']['output'];
+  updatedAt: Scalars['DateTime']['output'];
   user: User;
 };
 
 export type GroupPermissions = {
   __typename?: 'GroupPermissions';
-  approveMemberRequests: Scalars['Boolean'];
-  createEvents: Scalars['Boolean'];
-  deleteGroup: Scalars['Boolean'];
-  manageComments: Scalars['Boolean'];
-  manageEvents: Scalars['Boolean'];
-  managePosts: Scalars['Boolean'];
-  manageRoles: Scalars['Boolean'];
-  manageSettings: Scalars['Boolean'];
-  removeMembers: Scalars['Boolean'];
-  updateGroup: Scalars['Boolean'];
+  approveMemberRequests: Scalars['Boolean']['output'];
+  createEvents: Scalars['Boolean']['output'];
+  deleteGroup: Scalars['Boolean']['output'];
+  manageComments: Scalars['Boolean']['output'];
+  manageEvents: Scalars['Boolean']['output'];
+  managePosts: Scalars['Boolean']['output'];
+  manageRoles: Scalars['Boolean']['output'];
+  manageSettings: Scalars['Boolean']['output'];
+  removeMembers: Scalars['Boolean']['output'];
+  updateGroup: Scalars['Boolean']['output'];
 };
 
 export type GroupRole = {
   __typename?: 'GroupRole';
   availableUsersToAdd: Array<User>;
-  color: Scalars['String'];
+  color: Scalars['String']['output'];
   group: Group;
-  id: Scalars['Int'];
-  memberCount: Scalars['Int'];
+  id: Scalars['Int']['output'];
+  memberCount: Scalars['Int']['output'];
   members: Array<User>;
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   permissions: GroupRolePermission;
   proposalActionRoles: Array<ProposalActionRole>;
 };
 
 export type GroupRolePermission = {
   __typename?: 'GroupRolePermission';
-  approveMemberRequests: Scalars['Boolean'];
-  createEvents: Scalars['Boolean'];
-  deleteGroup: Scalars['Boolean'];
+  approveMemberRequests: Scalars['Boolean']['output'];
+  createEvents: Scalars['Boolean']['output'];
+  deleteGroup: Scalars['Boolean']['output'];
   groupRole: GroupRole;
-  id: Scalars['Int'];
-  manageComments: Scalars['Boolean'];
-  manageEvents: Scalars['Boolean'];
-  managePosts: Scalars['Boolean'];
-  manageRoles: Scalars['Boolean'];
-  manageSettings: Scalars['Boolean'];
-  removeMembers: Scalars['Boolean'];
-  updateGroup: Scalars['Boolean'];
+  id: Scalars['Int']['output'];
+  manageComments: Scalars['Boolean']['output'];
+  manageEvents: Scalars['Boolean']['output'];
+  managePosts: Scalars['Boolean']['output'];
+  manageRoles: Scalars['Boolean']['output'];
+  manageSettings: Scalars['Boolean']['output'];
+  removeMembers: Scalars['Boolean']['output'];
+  updateGroup: Scalars['Boolean']['output'];
 };
 
 export type GroupRolePermissionInput = {
-  approveMemberRequests?: InputMaybe<Scalars['Boolean']>;
-  createEvents?: InputMaybe<Scalars['Boolean']>;
-  deleteGroup?: InputMaybe<Scalars['Boolean']>;
-  manageComments?: InputMaybe<Scalars['Boolean']>;
-  manageEvents?: InputMaybe<Scalars['Boolean']>;
-  managePosts?: InputMaybe<Scalars['Boolean']>;
-  manageRoles?: InputMaybe<Scalars['Boolean']>;
-  manageSettings?: InputMaybe<Scalars['Boolean']>;
-  removeMembers?: InputMaybe<Scalars['Boolean']>;
-  updateGroup?: InputMaybe<Scalars['Boolean']>;
+  approveMemberRequests?: InputMaybe<Scalars['Boolean']['input']>;
+  createEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  deleteGroup?: InputMaybe<Scalars['Boolean']['input']>;
+  manageComments?: InputMaybe<Scalars['Boolean']['input']>;
+  manageEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  managePosts?: InputMaybe<Scalars['Boolean']['input']>;
+  manageRoles?: InputMaybe<Scalars['Boolean']['input']>;
+  manageSettings?: InputMaybe<Scalars['Boolean']['input']>;
+  removeMembers?: InputMaybe<Scalars['Boolean']['input']>;
+  updateGroup?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type Image = {
   __typename?: 'Image';
   comment?: Maybe<Comment>;
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTime']['output'];
   event?: Maybe<Event>;
-  filename: Scalars['String'];
+  filename: Scalars['String']['output'];
   group?: Maybe<Group>;
-  id: Scalars['Int'];
-  imageType: Scalars['String'];
+  id: Scalars['Int']['output'];
+  imageType: Scalars['String']['output'];
   post?: Maybe<Post>;
   proposal?: Maybe<Proposal>;
   proposalAction?: Maybe<ProposalAction>;
   proposalActionEvent?: Maybe<ProposalActionEvent>;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime']['output'];
   user?: Maybe<User>;
 };
 
 export type Like = {
   __typename?: 'Like';
   comment?: Maybe<Comment>;
-  createdAt: Scalars['DateTime'];
-  id: Scalars['Int'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['Int']['output'];
   post?: Maybe<Post>;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime']['output'];
   user: User;
 };
 
 export type LoginInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   approveGroupMemberRequest: ApproveGroupMemberRequestPayload;
-  cancelGroupMemberRequest: Scalars['Boolean'];
+  cancelGroupMemberRequest: Scalars['Boolean']['output'];
   createComment: CreateCommentPayload;
   createEvent: CreateEventPayload;
   createEventAttendee: CreateEventAttendeePayload;
@@ -387,29 +396,29 @@ export type Mutation = {
   createServerInvite: CreateServerInvitePayload;
   createServerRole: CreateServerRolePayload;
   createVote: CreateVotePayload;
-  deleteComment: Scalars['Boolean'];
-  deleteEvent: Scalars['Boolean'];
-  deleteEventAttendee: Scalars['Boolean'];
-  deleteGroup: Scalars['Boolean'];
-  deleteGroupRole: Scalars['Boolean'];
+  deleteComment: Scalars['Boolean']['output'];
+  deleteEvent: Scalars['Boolean']['output'];
+  deleteEventAttendee: Scalars['Boolean']['output'];
+  deleteGroup: Scalars['Boolean']['output'];
+  deleteGroupRole: Scalars['Boolean']['output'];
   deleteGroupRoleMember: DeleteGroupRoleMemberPayload;
-  deleteImage: Scalars['Boolean'];
-  deleteLike: Scalars['Boolean'];
-  deletePost: Scalars['Boolean'];
-  deleteProposal: Scalars['Boolean'];
-  deleteServerInvite: Scalars['Boolean'];
-  deleteServerRole: Scalars['Boolean'];
+  deleteImage: Scalars['Boolean']['output'];
+  deleteLike: Scalars['Boolean']['output'];
+  deletePost: Scalars['Boolean']['output'];
+  deleteProposal: Scalars['Boolean']['output'];
+  deleteServerInvite: Scalars['Boolean']['output'];
+  deleteServerRole: Scalars['Boolean']['output'];
   deleteServerRoleMember: DeleteServerRoleMemberPayload;
-  deleteUser: Scalars['Boolean'];
-  deleteVote: Scalars['Boolean'];
-  denyGroupMemberRequest: Scalars['Boolean'];
+  deleteUser: Scalars['Boolean']['output'];
+  deleteVote: Scalars['Boolean']['output'];
+  denyGroupMemberRequest: Scalars['Boolean']['output'];
   followUser: FollowUserPayload;
-  leaveGroup: Scalars['Boolean'];
-  logOut: Scalars['Boolean'];
-  login: Scalars['Boolean'];
-  refreshToken: Scalars['Boolean'];
-  signUp: Scalars['Boolean'];
-  unfollowUser: Scalars['Boolean'];
+  leaveGroup: Scalars['Boolean']['output'];
+  logOut: Scalars['Boolean']['output'];
+  login: Scalars['Boolean']['output'];
+  refreshToken: Scalars['Boolean']['output'];
+  signUp: Scalars['Boolean']['output'];
+  unfollowUser: Scalars['Boolean']['output'];
   updateComment: UpdateCommentPayload;
   updateEvent: UpdateEventPayload;
   updateEventAttendee: UpdateEventAttendeePayload;
@@ -424,11 +433,11 @@ export type Mutation = {
 };
 
 export type MutationApproveGroupMemberRequestArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationCancelGroupMemberRequestArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationCreateCommentArgs = {
@@ -448,7 +457,7 @@ export type MutationCreateGroupArgs = {
 };
 
 export type MutationCreateGroupMemberRequestArgs = {
-  groupId: Scalars['Int'];
+  groupId: Scalars['Int']['input'];
 };
 
 export type MutationCreateGroupRoleArgs = {
@@ -480,23 +489,23 @@ export type MutationCreateVoteArgs = {
 };
 
 export type MutationDeleteCommentArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeleteEventArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeleteEventAttendeeArgs = {
-  eventId: Scalars['Int'];
+  eventId: Scalars['Int']['input'];
 };
 
 export type MutationDeleteGroupArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeleteGroupRoleArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeleteGroupRoleMemberArgs = {
@@ -504,7 +513,7 @@ export type MutationDeleteGroupRoleMemberArgs = {
 };
 
 export type MutationDeleteImageArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeleteLikeArgs = {
@@ -512,19 +521,19 @@ export type MutationDeleteLikeArgs = {
 };
 
 export type MutationDeletePostArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeleteProposalArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeleteServerInviteArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeleteServerRoleArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeleteServerRoleMemberArgs = {
@@ -532,23 +541,23 @@ export type MutationDeleteServerRoleMemberArgs = {
 };
 
 export type MutationDeleteUserArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeleteVoteArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDenyGroupMemberRequestArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationFollowUserArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationLeaveGroupArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationLoginArgs = {
@@ -560,7 +569,7 @@ export type MutationSignUpArgs = {
 };
 
 export type MutationUnfollowUserArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationUpdateCommentArgs = {
@@ -609,154 +618,154 @@ export type MutationUpdateVoteArgs = {
 
 export type Post = {
   __typename?: 'Post';
-  body?: Maybe<Scalars['String']>;
-  commentCount: Scalars['Int'];
+  body?: Maybe<Scalars['String']['output']>;
+  commentCount: Scalars['Int']['output'];
   comments: Array<Comment>;
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTime']['output'];
   event?: Maybe<Event>;
   group?: Maybe<Group>;
-  id: Scalars['Int'];
+  id: Scalars['Int']['output'];
   images: Array<Image>;
-  isLikedByMe: Scalars['Boolean'];
+  isLikedByMe: Scalars['Boolean']['output'];
   likes: Array<Like>;
-  likesCount: Scalars['Int'];
-  updatedAt: Scalars['DateTime'];
+  likesCount: Scalars['Int']['output'];
+  updatedAt: Scalars['DateTime']['output'];
   user: User;
 };
 
 export type Proposal = {
   __typename?: 'Proposal';
   action: ProposalAction;
-  body?: Maybe<Scalars['String']>;
-  commentCount: Scalars['Int'];
+  body?: Maybe<Scalars['String']['output']>;
+  commentCount: Scalars['Int']['output'];
   comments: Array<Comment>;
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTime']['output'];
   group?: Maybe<Group>;
-  id: Scalars['Int'];
+  id: Scalars['Int']['output'];
   images: Array<Image>;
-  stage: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
+  stage: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
   user: User;
-  voteCount: Scalars['Int'];
+  voteCount: Scalars['Int']['output'];
   votes: Array<Vote>;
 };
 
 export type ProposalAction = {
   __typename?: 'ProposalAction';
-  actionType: Scalars['String'];
-  createdAt: Scalars['DateTime'];
+  actionType: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
   event?: Maybe<ProposalActionEvent>;
   groupCoverPhoto?: Maybe<Image>;
-  groupDescription?: Maybe<Scalars['String']>;
-  groupName?: Maybe<Scalars['String']>;
-  id: Scalars['Int'];
+  groupDescription?: Maybe<Scalars['String']['output']>;
+  groupName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
   proposal: Proposal;
   role?: Maybe<ProposalActionRole>;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type ProposalActionEvent = {
   __typename?: 'ProposalActionEvent';
   coverPhoto?: Maybe<Image>;
-  description: Scalars['String'];
-  endsAt?: Maybe<Scalars['DateTime']>;
-  externalLink?: Maybe<Scalars['String']>;
+  description: Scalars['String']['output'];
+  endsAt?: Maybe<Scalars['DateTime']['output']>;
+  externalLink?: Maybe<Scalars['String']['output']>;
   host: User;
   hosts: Array<ProposalActionEventHost>;
-  id: Scalars['Int'];
-  location?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
-  online: Scalars['Boolean'];
+  id: Scalars['Int']['output'];
+  location?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  online: Scalars['Boolean']['output'];
   proposalAction: ProposalAction;
-  startsAt: Scalars['DateTime'];
+  startsAt: Scalars['DateTime']['output'];
 };
 
 export type ProposalActionEventHost = {
   __typename?: 'ProposalActionEventHost';
-  createdAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTime']['output'];
   event: ProposalActionEvent;
-  id: Scalars['Int'];
-  status: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
+  id: Scalars['Int']['output'];
+  status: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
   user: User;
 };
 
 export type ProposalActionEventInput = {
-  coverPhoto?: InputMaybe<Scalars['Upload']>;
-  description: Scalars['String'];
-  endsAt?: InputMaybe<Scalars['DateTime']>;
-  externalLink?: InputMaybe<Scalars['String']>;
-  hostId: Scalars['Int'];
-  location?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  online?: InputMaybe<Scalars['Boolean']>;
-  startsAt: Scalars['DateTime'];
+  coverPhoto?: InputMaybe<Scalars['Upload']['input']>;
+  description: Scalars['String']['input'];
+  endsAt?: InputMaybe<Scalars['DateTime']['input']>;
+  externalLink?: InputMaybe<Scalars['String']['input']>;
+  hostId: Scalars['Int']['input'];
+  location?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  online?: InputMaybe<Scalars['Boolean']['input']>;
+  startsAt: Scalars['DateTime']['input'];
 };
 
 export type ProposalActionInput = {
-  actionType: Scalars['String'];
+  actionType: Scalars['String']['input'];
   event?: InputMaybe<ProposalActionEventInput>;
-  groupCoverPhoto?: InputMaybe<Scalars['Upload']>;
-  groupDescription?: InputMaybe<Scalars['String']>;
-  groupName?: InputMaybe<Scalars['String']>;
+  groupCoverPhoto?: InputMaybe<Scalars['Upload']['input']>;
+  groupDescription?: InputMaybe<Scalars['String']['input']>;
+  groupName?: InputMaybe<Scalars['String']['input']>;
   role?: InputMaybe<ProposalActionRoleInput>;
 };
 
 export type ProposalActionPermission = {
   __typename?: 'ProposalActionPermission';
-  approveMemberRequests?: Maybe<Scalars['Boolean']>;
-  createEvents?: Maybe<Scalars['Boolean']>;
-  deleteGroup?: Maybe<Scalars['Boolean']>;
-  id: Scalars['Int'];
-  manageComments?: Maybe<Scalars['Boolean']>;
-  manageEvents?: Maybe<Scalars['Boolean']>;
-  managePosts?: Maybe<Scalars['Boolean']>;
-  manageRoles?: Maybe<Scalars['Boolean']>;
-  manageSettings?: Maybe<Scalars['Boolean']>;
-  removeMembers?: Maybe<Scalars['Boolean']>;
+  approveMemberRequests?: Maybe<Scalars['Boolean']['output']>;
+  createEvents?: Maybe<Scalars['Boolean']['output']>;
+  deleteGroup?: Maybe<Scalars['Boolean']['output']>;
+  id: Scalars['Int']['output'];
+  manageComments?: Maybe<Scalars['Boolean']['output']>;
+  manageEvents?: Maybe<Scalars['Boolean']['output']>;
+  managePosts?: Maybe<Scalars['Boolean']['output']>;
+  manageRoles?: Maybe<Scalars['Boolean']['output']>;
+  manageSettings?: Maybe<Scalars['Boolean']['output']>;
+  removeMembers?: Maybe<Scalars['Boolean']['output']>;
   role: ProposalActionRole;
-  updateGroup?: Maybe<Scalars['Boolean']>;
+  updateGroup?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type ProposalActionRole = {
   __typename?: 'ProposalActionRole';
-  color?: Maybe<Scalars['String']>;
+  color?: Maybe<Scalars['String']['output']>;
   groupRole?: Maybe<GroupRole>;
-  id: Scalars['Int'];
+  id: Scalars['Int']['output'];
   members?: Maybe<Array<ProposalActionRoleMember>>;
-  name?: Maybe<Scalars['String']>;
-  oldColor?: Maybe<Scalars['String']>;
-  oldName?: Maybe<Scalars['String']>;
+  name?: Maybe<Scalars['String']['output']>;
+  oldColor?: Maybe<Scalars['String']['output']>;
+  oldName?: Maybe<Scalars['String']['output']>;
   permissions: ProposalActionPermission;
   proposalAction: ProposalAction;
 };
 
 export type ProposalActionRoleInput = {
-  color?: InputMaybe<Scalars['String']>;
+  color?: InputMaybe<Scalars['String']['input']>;
   members?: InputMaybe<Array<ProposalActionRoleMemberInput>>;
-  name?: InputMaybe<Scalars['String']>;
+  name?: InputMaybe<Scalars['String']['input']>;
   permissions?: InputMaybe<GroupRolePermissionInput>;
-  roleToUpdateId?: InputMaybe<Scalars['Int']>;
+  roleToUpdateId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type ProposalActionRoleMember = {
   __typename?: 'ProposalActionRoleMember';
-  changeType: Scalars['String'];
-  createdAt: Scalars['DateTime'];
-  id: Scalars['Int'];
+  changeType: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['Int']['output'];
   role: ProposalActionRole;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime']['output'];
   user: User;
 };
 
 export type ProposalActionRoleMemberInput = {
-  changeType: Scalars['String'];
-  userId: Scalars['Int'];
+  changeType: Scalars['String']['input'];
+  userId: Scalars['Int']['input'];
 };
 
 export type Query = {
   __typename?: 'Query';
-  authCheck: Scalars['Boolean'];
+  authCheck: Scalars['Boolean']['output'];
   event: Event;
   events: Array<Event>;
   group: Group;
@@ -764,7 +773,7 @@ export type Query = {
   groupRole: GroupRole;
   groupRoles: Array<GroupRole>;
   groups: Array<Group>;
-  isFirstUser: Scalars['Boolean'];
+  isFirstUser: Scalars['Boolean']['output'];
   me: User;
   post: Post;
   proposal: Proposal;
@@ -780,7 +789,7 @@ export type Query = {
 };
 
 export type QueryEventArgs = {
-  id?: InputMaybe<Scalars['Int']>;
+  id?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type QueryEventsArgs = {
@@ -788,113 +797,113 @@ export type QueryEventsArgs = {
 };
 
 export type QueryGroupArgs = {
-  id?: InputMaybe<Scalars['Int']>;
-  name?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['Int']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type QueryGroupMemberRequestArgs = {
-  groupId: Scalars['Int'];
+  groupId: Scalars['Int']['input'];
 };
 
 export type QueryGroupRoleArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type QueryPostArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type QueryProposalArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type QueryServerInviteArgs = {
-  token: Scalars['String'];
+  token: Scalars['String']['input'];
 };
 
 export type QueryServerRoleArgs = {
-  id: Scalars['Int'];
+  id: Scalars['Int']['input'];
 };
 
 export type QueryUserArgs = {
-  id?: InputMaybe<Scalars['Int']>;
-  name?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['Int']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type QueryUsersByIdsArgs = {
-  ids: Array<Scalars['Int']>;
+  ids: Array<Scalars['Int']['input']>;
 };
 
 export type ServerInvite = {
   __typename?: 'ServerInvite';
-  createdAt: Scalars['DateTime'];
-  expiresAt?: Maybe<Scalars['DateTime']>;
-  id: Scalars['Int'];
-  maxUses?: Maybe<Scalars['Int']>;
-  token: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
+  createdAt: Scalars['DateTime']['output'];
+  expiresAt?: Maybe<Scalars['DateTime']['output']>;
+  id: Scalars['Int']['output'];
+  maxUses?: Maybe<Scalars['Int']['output']>;
+  token: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
   user: User;
-  uses: Scalars['Int'];
+  uses: Scalars['Int']['output'];
 };
 
 export type ServerPermissions = {
   __typename?: 'ServerPermissions';
-  createInvites: Scalars['Boolean'];
-  manageComments: Scalars['Boolean'];
-  manageEvents: Scalars['Boolean'];
-  manageInvites: Scalars['Boolean'];
-  managePosts: Scalars['Boolean'];
-  manageRoles: Scalars['Boolean'];
-  removeMembers: Scalars['Boolean'];
+  createInvites: Scalars['Boolean']['output'];
+  manageComments: Scalars['Boolean']['output'];
+  manageEvents: Scalars['Boolean']['output'];
+  manageInvites: Scalars['Boolean']['output'];
+  managePosts: Scalars['Boolean']['output'];
+  manageRoles: Scalars['Boolean']['output'];
+  removeMembers: Scalars['Boolean']['output'];
 };
 
 export type ServerRole = {
   __typename?: 'ServerRole';
   availableUsersToAdd: Array<User>;
-  color: Scalars['String'];
-  id: Scalars['Int'];
-  memberCount: Scalars['Int'];
+  color: Scalars['String']['output'];
+  id: Scalars['Int']['output'];
+  memberCount: Scalars['Int']['output'];
   members: Array<User>;
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   permissions: ServerRolePermission;
 };
 
 export type ServerRolePermission = {
   __typename?: 'ServerRolePermission';
-  createInvites: Scalars['Boolean'];
-  id: Scalars['Int'];
-  manageComments: Scalars['Boolean'];
-  manageEvents: Scalars['Boolean'];
-  manageInvites: Scalars['Boolean'];
-  managePosts: Scalars['Boolean'];
-  manageRoles: Scalars['Boolean'];
-  removeMembers: Scalars['Boolean'];
+  createInvites: Scalars['Boolean']['output'];
+  id: Scalars['Int']['output'];
+  manageComments: Scalars['Boolean']['output'];
+  manageEvents: Scalars['Boolean']['output'];
+  manageInvites: Scalars['Boolean']['output'];
+  managePosts: Scalars['Boolean']['output'];
+  manageRoles: Scalars['Boolean']['output'];
+  removeMembers: Scalars['Boolean']['output'];
   serverRole: ServerRole;
 };
 
 export type ServerRolePermissionInput = {
-  createInvites?: InputMaybe<Scalars['Boolean']>;
-  manageComments?: InputMaybe<Scalars['Boolean']>;
-  manageEvents?: InputMaybe<Scalars['Boolean']>;
-  manageInvites?: InputMaybe<Scalars['Boolean']>;
-  managePosts?: InputMaybe<Scalars['Boolean']>;
-  manageRoles?: InputMaybe<Scalars['Boolean']>;
-  removeMembers?: InputMaybe<Scalars['Boolean']>;
+  createInvites?: InputMaybe<Scalars['Boolean']['input']>;
+  manageComments?: InputMaybe<Scalars['Boolean']['input']>;
+  manageEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  manageInvites?: InputMaybe<Scalars['Boolean']['input']>;
+  managePosts?: InputMaybe<Scalars['Boolean']['input']>;
+  manageRoles?: InputMaybe<Scalars['Boolean']['input']>;
+  removeMembers?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type SignUpInput = {
-  confirmPassword: Scalars['String'];
-  email: Scalars['String'];
-  inviteToken?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  password: Scalars['String'];
-  profilePicture?: InputMaybe<Scalars['Upload']>;
+  confirmPassword: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+  inviteToken?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  profilePicture?: InputMaybe<Scalars['Upload']['input']>;
 };
 
 export type UpdateCommentInput = {
-  body?: InputMaybe<Scalars['String']>;
-  id: Scalars['Int'];
-  images?: InputMaybe<Array<Scalars['Upload']>>;
+  body?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['Int']['input'];
+  images?: InputMaybe<Array<Scalars['Upload']['input']>>;
 };
 
 export type UpdateCommentPayload = {
@@ -903,8 +912,8 @@ export type UpdateCommentPayload = {
 };
 
 export type UpdateEventAttendeeInput = {
-  eventId: Scalars['Int'];
-  status: Scalars['String'];
+  eventId: Scalars['Int']['input'];
+  status: Scalars['String']['input'];
 };
 
 export type UpdateEventAttendeePayload = {
@@ -913,16 +922,16 @@ export type UpdateEventAttendeePayload = {
 };
 
 export type UpdateEventInput = {
-  coverPhoto?: InputMaybe<Scalars['Upload']>;
-  description: Scalars['String'];
-  endsAt?: InputMaybe<Scalars['DateTime']>;
-  externalLink?: InputMaybe<Scalars['String']>;
-  hostId?: InputMaybe<Scalars['Int']>;
-  id: Scalars['Int'];
-  location?: InputMaybe<Scalars['String']>;
-  name: Scalars['String'];
-  online?: InputMaybe<Scalars['Boolean']>;
-  startsAt: Scalars['DateTime'];
+  coverPhoto?: InputMaybe<Scalars['Upload']['input']>;
+  description: Scalars['String']['input'];
+  endsAt?: InputMaybe<Scalars['DateTime']['input']>;
+  externalLink?: InputMaybe<Scalars['String']['input']>;
+  hostId?: InputMaybe<Scalars['Int']['input']>;
+  id: Scalars['Int']['input'];
+  location?: InputMaybe<Scalars['String']['input']>;
+  name: Scalars['String']['input'];
+  online?: InputMaybe<Scalars['Boolean']['input']>;
+  startsAt: Scalars['DateTime']['input'];
 };
 
 export type UpdateEventPayload = {
@@ -931,15 +940,15 @@ export type UpdateEventPayload = {
 };
 
 export type UpdateGroupConfigInput = {
-  groupId: Scalars['Int'];
-  privacy?: InputMaybe<Scalars['String']>;
+  groupId: Scalars['Int']['input'];
+  privacy?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateGroupInput = {
-  coverPhoto?: InputMaybe<Scalars['Upload']>;
-  description?: InputMaybe<Scalars['String']>;
-  id: Scalars['Int'];
-  name?: InputMaybe<Scalars['String']>;
+  coverPhoto?: InputMaybe<Scalars['Upload']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['Int']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateGroupPayload = {
@@ -948,11 +957,11 @@ export type UpdateGroupPayload = {
 };
 
 export type UpdateGroupRoleInput = {
-  color?: InputMaybe<Scalars['String']>;
-  id: Scalars['Int'];
-  name?: InputMaybe<Scalars['String']>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['Int']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
   permissions?: InputMaybe<GroupRolePermissionInput>;
-  selectedUserIds?: InputMaybe<Array<Scalars['Int']>>;
+  selectedUserIds?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
 export type UpdateGroupRolePayload = {
@@ -961,9 +970,9 @@ export type UpdateGroupRolePayload = {
 };
 
 export type UpdatePostInput = {
-  body?: InputMaybe<Scalars['String']>;
-  id: Scalars['Int'];
-  images?: InputMaybe<Array<Scalars['Upload']>>;
+  body?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['Int']['input'];
+  images?: InputMaybe<Array<Scalars['Upload']['input']>>;
 };
 
 export type UpdatePostPayload = {
@@ -973,9 +982,9 @@ export type UpdatePostPayload = {
 
 export type UpdateProposalInput = {
   action: ProposalActionInput;
-  body?: InputMaybe<Scalars['String']>;
-  id: Scalars['Int'];
-  images?: InputMaybe<Array<Scalars['Upload']>>;
+  body?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['Int']['input'];
+  images?: InputMaybe<Array<Scalars['Upload']['input']>>;
 };
 
 export type UpdateProposalPayload = {
@@ -984,11 +993,11 @@ export type UpdateProposalPayload = {
 };
 
 export type UpdateServerRoleInput = {
-  color?: InputMaybe<Scalars['String']>;
-  id: Scalars['Int'];
-  name?: InputMaybe<Scalars['String']>;
+  color?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['Int']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
   permissions?: InputMaybe<ServerRolePermissionInput>;
-  selectedUserIds?: InputMaybe<Array<Scalars['Int']>>;
+  selectedUserIds?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
 export type UpdateServerRolePayload = {
@@ -998,11 +1007,11 @@ export type UpdateServerRolePayload = {
 };
 
 export type UpdateUserInput = {
-  bio: Scalars['String'];
-  coverPhoto?: InputMaybe<Scalars['Upload']>;
-  id: Scalars['Int'];
-  name: Scalars['String'];
-  profilePicture?: InputMaybe<Scalars['Upload']>;
+  bio: Scalars['String']['input'];
+  coverPhoto?: InputMaybe<Scalars['Upload']['input']>;
+  id: Scalars['Int']['input'];
+  name: Scalars['String']['input'];
+  profilePicture?: InputMaybe<Scalars['Upload']['input']>;
 };
 
 export type UpdateUserPayload = {
@@ -1011,8 +1020,8 @@ export type UpdateUserPayload = {
 };
 
 export type UpdateVoteInput = {
-  id: Scalars['Int'];
-  voteType: Scalars['String'];
+  id: Scalars['Int']['input'];
+  voteType: Scalars['String']['input'];
 };
 
 export type UpdateVotePayload = {
@@ -1022,35 +1031,35 @@ export type UpdateVotePayload = {
 
 export type User = {
   __typename?: 'User';
-  bio?: Maybe<Scalars['String']>;
+  bio?: Maybe<Scalars['String']['output']>;
   comments: Array<Comment>;
   coverPhoto?: Maybe<Image>;
-  createdAt: Scalars['DateTime'];
-  email: Scalars['String'];
-  followerCount: Scalars['Int'];
+  createdAt: Scalars['DateTime']['output'];
+  email: Scalars['String']['output'];
+  followerCount: Scalars['Int']['output'];
   followers: Array<User>;
   following: Array<User>;
-  followingCount: Scalars['Int'];
+  followingCount: Scalars['Int']['output'];
   homeFeed: Array<FeedItem>;
-  id: Scalars['Int'];
-  isFollowedByMe: Scalars['Boolean'];
+  id: Scalars['Int']['output'];
+  isFollowedByMe: Scalars['Boolean']['output'];
   joinedGroups: Array<Group>;
   likes: Array<Like>;
-  name: Scalars['String'];
+  name: Scalars['String']['output'];
   posts: Array<Post>;
   profileFeed: Array<FeedItem>;
   profilePicture: Image;
   proposals: Array<Proposal>;
   serverPermissions: ServerPermissions;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type Vote = {
   __typename?: 'Vote';
-  createdAt: Scalars['DateTime'];
-  id: Scalars['Int'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['Int']['output'];
   proposal: Proposal;
-  updatedAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime']['output'];
   user: User;
-  voteType: Scalars['String'];
+  voteType: Scalars['String']['output'];
 };

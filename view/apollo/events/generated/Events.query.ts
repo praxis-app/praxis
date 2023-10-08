@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type EventsQueryVariables = Types.Exact<{
   input: Types.EventsInput;
-  isLoggedIn: Types.Scalars['Boolean'];
+  isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
 export type EventsQuery = {

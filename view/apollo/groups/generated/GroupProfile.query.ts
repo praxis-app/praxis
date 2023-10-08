@@ -11,8 +11,8 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type GroupProfileQueryVariables = Types.Exact<{
-  name: Types.Scalars['String'];
-  isLoggedIn: Types.Scalars['Boolean'];
+  name: Types.Scalars['String']['input'];
+  isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
 export type GroupProfileQuery = {

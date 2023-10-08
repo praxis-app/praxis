@@ -11,8 +11,8 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type UserProfileQueryVariables = Types.Exact<{
-  name?: Types.InputMaybe<Types.Scalars['String']>;
-  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  name?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type UserProfileQuery = {

@@ -12,7 +12,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type UpdateGroupSettingsMutationVariables = Types.Exact<{
   groupConfigData: Types.UpdateGroupConfigInput;
-  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type UpdateGroupSettingsMutation = {

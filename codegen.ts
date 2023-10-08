@@ -13,16 +13,16 @@ const DO_NOT_EDIT_PLUGIN = {
 };
 
 const config: CodegenConfig = {
-  schema: `${process.env.API_URL}/graphql`,
-  documents: ['src/apollo/**/*.graphql'],
+  schema: process.env.SCHEMA_URL,
+  documents: ['view/apollo/**/*.graphql'],
   ignoreNoDocuments: true,
 
   generates: {
-    'src/apollo/gen.ts': {
+    'view/apollo/gen.ts': {
       plugins: [DO_NOT_EDIT_PLUGIN, 'typescript'],
     },
 
-    'src/apollo/': {
+    'view/apollo/': {
       preset: 'near-operation-file',
       presetConfig: {
         baseTypesPath: 'gen.ts',

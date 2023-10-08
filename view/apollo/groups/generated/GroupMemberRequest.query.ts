@@ -8,7 +8,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type GroupMemberRequestQueryVariables = Types.Exact<{
-  groupId: Types.Scalars['Int'];
+  groupId: Types.Scalars['Int']['input'];
 }>;
 
 export type GroupMemberRequestQuery = {

@@ -9,12 +9,12 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type PostCommentsQueryVariables = Types.Exact<{
-  id: Types.Scalars['Int'];
-  isLoggedIn: Types.Scalars['Boolean'];
-  withGroup: Types.Scalars['Boolean'];
-  groupId?: Types.InputMaybe<Types.Scalars['Int']>;
-  withEvent: Types.Scalars['Boolean'];
-  eventId?: Types.InputMaybe<Types.Scalars['Int']>;
+  id: Types.Scalars['Int']['input'];
+  isLoggedIn: Types.Scalars['Boolean']['input'];
+  withGroup: Types.Scalars['Boolean']['input'];
+  groupId?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  withEvent: Types.Scalars['Boolean']['input'];
+  eventId?: Types.InputMaybe<Types.Scalars['Int']['input']>;
 }>;
 
 export type PostCommentsQuery = {

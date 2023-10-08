@@ -9,8 +9,8 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type GroupEventsTabQueryVariables = Types.Exact<{
-  groupId: Types.Scalars['Int'];
-  isLoggedIn: Types.Scalars['Boolean'];
+  groupId: Types.Scalars['Int']['input'];
+  isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
 export type GroupEventsTabQuery = {
