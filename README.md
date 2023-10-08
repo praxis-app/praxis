@@ -29,13 +29,13 @@ $ cp .env.example .env
 ## Running the app
 
 ```bash
-# Development
-$ npm run start
-
-# Watch mode
+# Start server for development
 $ npm run start:dev
 
-# Production mode
+# Start client for development
+$ npm run start:client
+
+# Start app for production
 $ npm run start:prod
 ```
 
