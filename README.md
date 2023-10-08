@@ -41,6 +41,18 @@ $ npm run start:prod
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to view and interact with the UI.
 
+## Docker
+
+Ensure that you have [Docker](https://docs.docker.com/engine/install) installed to use the following commands.
+
+```bash
+# Start app in a container
+$ docker compose up -d
+
+# Build and restart app after making changes
+$ docker compose up -d --build
+```
+
 ## ESLint and Prettier
 
 ```bash
