@@ -9,7 +9,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type FollowersQueryVariables = Types.Exact<{
-  name: Types.Scalars['String'];
+  name: Types.Scalars['String']['input'];
 }>;
 
 export type FollowersQuery = {

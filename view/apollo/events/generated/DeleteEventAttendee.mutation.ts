@@ -8,7 +8,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type DeleteEventAttendeeMutationVariables = Types.Exact<{
-  eventId: Types.Scalars['Int'];
+  eventId: Types.Scalars['Int']['input'];
 }>;
 
 export type DeleteEventAttendeeMutation = {

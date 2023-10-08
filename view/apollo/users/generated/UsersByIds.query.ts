@@ -9,7 +9,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type UsersByIdsQueryVariables = Types.Exact<{
-  userIds: Array<Types.Scalars['Int']> | Types.Scalars['Int'];
+  userIds: Array<Types.Scalars['Int']['input']> | Types.Scalars['Int']['input'];
 }>;
 
 export type UsersByIdsQuery = {

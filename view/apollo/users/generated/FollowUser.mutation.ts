@@ -11,8 +11,8 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type FollowUserMutationVariables = Types.Exact<{
-  id: Types.Scalars['Int'];
-  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']>;
+  id: Types.Scalars['Int']['input'];
+  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type FollowUserMutation = {
