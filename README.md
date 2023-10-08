@@ -28,15 +28,17 @@ $ cp .env.example .env
 ## Running the app
 
 ```bash
-# development
+# Development
 $ npm run start
 
-# watch mode
+# Watch mode
 $ npm run start:dev
 
-# production mode
+# Production mode
 $ npm run start:prod
 ```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to view and interact with the UI.
 
 ## ESLint and Prettier
 
