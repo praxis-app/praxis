@@ -19,6 +19,7 @@ Praxis is free and open source software, as specified by the GNU General Public 
 Ensure that you're using Node v18.17.1 before proceeding.
 
 ```bash
+# Install project dependencies
 $ npm install
 
 # Add .env file and edit as needed
@@ -46,6 +47,17 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to view an
 # Enable pre-commit hook with Husky
 $ npx husky install && npx husky add .husky/pre-commit "npx lint-staged"
 ```
+
+## GraphQL Code Generator
+
+Praxis takes advantage of code generation based on the current GraphQL schema. The generator should be run after any changes to GraphQL documents, as well as after any changes to the schema.
+
+```bash
+# Keep generated types and hooks in sync with the current schema
+$ npn run generate
+```
+
+Read more about [GraphQL Code Generator](https://www.the-guild.dev/graphql/codegen/docs/getting-started).
 
 ## Accessibility
 
