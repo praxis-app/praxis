@@ -1,7 +1,7 @@
-import { GroupPermissions } from "./models/group-permissions.type";
+import { GroupPermissions } from './models/group-permissions.type';
 
 export const initGroupRolePermissions = (
-  enabled = false
+  enabled = false,
 ): GroupPermissions => ({
   approveMemberRequests: enabled,
   createEvents: enabled,
@@ -16,12 +16,12 @@ export const initGroupRolePermissions = (
 });
 
 export const cleanGroupPermissions = (
-  permissions?: Partial<GroupPermissions>
+  permissions?: Partial<GroupPermissions>,
 ): Partial<GroupPermissions> => {
   if (!permissions) {
     return {};
   }
   return Object.entries(permissions)
-    .filter(([_, value]) => typeof value === "boolean")
+    .filter(([_, value]) => typeof value === 'boolean')
     .reduce((result, [key, value]) => ({ ...result, [key]: value }), {});
 };

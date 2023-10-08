@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -6,9 +6,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { User } from "../../../../users/models/user.model";
-import { ProposalActionRole } from "./proposal-action-role.model";
+} from 'typeorm';
+import { User } from '../../../../users/models/user.model';
+import { ProposalActionRole } from './proposal-action-role.model';
 
 @ObjectType()
 @Entity()
@@ -23,16 +23,16 @@ export class ProposalActionRoleMember {
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.proposalActionRoleMembers, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   user: User;
 
   @Column()
   userId: number;
 
-  @Field(() => ProposalActionRole, { name: "role" })
+  @Field(() => ProposalActionRole, { name: 'role' })
   @ManyToOne(() => ProposalActionRole, (role) => role.members, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   proposalActionRole: ProposalActionRole;
 

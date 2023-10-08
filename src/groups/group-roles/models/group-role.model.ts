@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -10,11 +10,11 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { ProposalActionRole } from "../../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model";
-import { User } from "../../../users/models/user.model";
-import { Group } from "../../models/group.model";
-import { GroupRolePermission } from "./group-role-permission.model";
+} from 'typeorm';
+import { ProposalActionRole } from '../../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model';
+import { User } from '../../../users/models/user.model';
+import { Group } from '../../models/group.model';
+import { GroupRolePermission } from './group-role-permission.model';
 
 @Entity()
 @ObjectType()
@@ -42,7 +42,7 @@ export class GroupRole {
   members: User[];
 
   @Field(() => Group)
-  @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
+  @ManyToOne(() => Group, (group) => group.posts, { onDelete: 'CASCADE' })
   group: Group;
 
   @Column()
@@ -51,7 +51,7 @@ export class GroupRole {
   @Field(() => [ProposalActionRole])
   @OneToMany(
     () => ProposalActionRole,
-    (proposalActionRole) => proposalActionRole.groupRole
+    (proposalActionRole) => proposalActionRole.groupRole,
   )
   proposalActionRoles: ProposalActionRole[];
 

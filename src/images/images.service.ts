@@ -1,20 +1,24 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
-import { deleteImageFile, randomDefaultImagePath } from "./image.utils";
-import { Image } from "./models/image.model";
-import * as fs from "fs";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
+import {
+  deleteImageFile,
+  getUploadsPath,
+  randomDefaultImagePath,
+} from './image.utils';
+import { Image } from './models/image.model';
+import * as fs from 'fs';
 
 export const enum ImageTypes {
-  CoverPhoto = "coverPhoto",
-  ProfilePicture = "profilePicture",
+  CoverPhoto = 'coverPhoto',
+  ProfilePicture = 'profilePicture',
 }
 
 @Injectable()
 export class ImagesService {
   constructor(
     @InjectRepository(Image)
-    private repository: Repository<Image>
+    private repository: Repository<Image>,
   ) {}
 
   async getImage(where: FindOptionsWhere<Image>, relations?: string[]) {
@@ -35,8 +39,9 @@ export class ImagesService {
 
   async saveDefaultCoverPhoto(imageData: Partial<Image>) {
     const sourcePath = randomDefaultImagePath();
+    const uploadsPath = getUploadsPath();
     const filename = `${Date.now()}.jpeg`;
-    const copyPath = `./uploads/${filename}`;
+    const copyPath = `${uploadsPath}/${filename}`;
 
     fs.copyFile(sourcePath, copyPath, (err) => {
       if (err) {

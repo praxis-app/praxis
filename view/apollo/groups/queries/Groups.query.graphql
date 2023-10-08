@@ -1,0 +1,8 @@
+query Groups($isLoggedIn: Boolean = true) {
+  groups {
+    ...GroupCard
+  }
+  me {
+    id
+  }
+}

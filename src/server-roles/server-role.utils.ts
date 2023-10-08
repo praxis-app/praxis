@@ -1,7 +1,7 @@
-import { ServerPermissions } from "./models/server-permissions.type";
+import { ServerPermissions } from './models/server-permissions.type';
 
 export const initServerRolePermissions = (
-  enabled = false
+  enabled = false,
 ): ServerPermissions => ({
   manageComments: enabled,
   manageEvents: enabled,

@@ -1,22 +1,22 @@
-import { Controller, Get, Param, ParseIntPipe, Res } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
-import { Response } from "express";
-import { ImagesService } from "./images.service";
+import { Controller, Get, Param, ParseIntPipe, Res } from '@nestjs/common';
+import { Response } from 'express';
+import { getUploadsPath } from './image.utils';
+import { ImagesService } from './images.service';
 
-@ApiTags("images")
-@Controller("images")
+@Controller('images')
 export class ImagesController {
   constructor(private service: ImagesService) {}
 
-  @Get(":id/view")
+  @Get(':id/view')
   async getImageFile(
-    @Param("id", ParseIntPipe) id: number,
-    @Res() res: Response
+    @Param('id', ParseIntPipe) id: number,
+    @Res() res: Response,
   ) {
     const image = await this.service.getImage({ id });
     if (!image) {
-      throw new Error("Image not found");
+      throw new Error('Image not found');
     }
-    return res.sendFile(image.filename, { root: "./uploads" });
+    const root = getUploadsPath();
+    return res.sendFile(image.filename, { root });
   }
 }

@@ -1,11 +1,11 @@
-import { UNAUTHORIZED } from "../common/common.constants";
-import { GroupPermissions } from "../groups/group-roles/models/group-permissions.type";
-import { ServerPermissions } from "../server-roles/models/server-permissions.type";
-import { UserPermissions } from "../users/user.types";
+import { UNAUTHORIZED } from '../shared/shared.constants';
+import { GroupPermissions } from '../groups/group-roles/models/group-permissions.type';
+import { ServerPermissions } from '../server-roles/models/server-permissions.type';
+import { UserPermissions } from '../users/user.types';
 
 export const hasServerPermission = (
   permissions: UserPermissions | null,
-  permission: keyof ServerPermissions
+  permission: keyof ServerPermissions,
 ) => {
   if (!permissions) {
     return UNAUTHORIZED;
@@ -20,7 +20,7 @@ export const hasServerPermission = (
 export const hasGroupPermission = (
   permissions: UserPermissions | null,
   permission: keyof GroupPermissions,
-  groupId: number
+  groupId: number,
 ) => {
   if (!permissions) {
     return UNAUTHORIZED;

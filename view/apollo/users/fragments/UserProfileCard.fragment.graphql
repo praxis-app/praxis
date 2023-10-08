@@ -1,0 +1,13 @@
+fragment UserProfileCard on User {
+  id
+  bio
+  createdAt
+  followerCount
+  followingCount
+  coverPhoto {
+    id
+  }
+
+  ...UserAvatar
+  ...FollowButton
+}

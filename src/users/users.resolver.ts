@@ -7,27 +7,27 @@ import {
   Query,
   ResolveField,
   Resolver,
-} from "@nestjs/graphql";
-import { In } from "typeorm";
-import { CurrentUser } from "../auth/decorators/current-user.decorator";
-import { FeedItem } from "../common/models/feed-item.union";
-import { Dataloaders } from "../dataloader/dataloader.types";
-import { Group } from "../groups/models/group.model";
-import { Image } from "../images/models/image.model";
-import { Post } from "../posts/models/post.model";
-import { PostsService } from "../posts/posts.service";
-import { FollowUserPayload } from "./models/follow-user.payload";
-import { UpdateUserInput } from "./models/update-user.input";
-import { UpdateUserPayload } from "./models/update-user.payload";
-import { ServerPermissions } from "../server-roles/models/server-permissions.type";
-import { User } from "./models/user.model";
-import { UsersService } from "./users.service";
+} from '@nestjs/graphql';
+import { In } from 'typeorm';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { FeedItem } from '../shared/models/feed-item.union';
+import { Dataloaders } from '../dataloader/dataloader.types';
+import { Group } from '../groups/models/group.model';
+import { Image } from '../images/models/image.model';
+import { Post } from '../posts/models/post.model';
+import { PostsService } from '../posts/posts.service';
+import { FollowUserPayload } from './models/follow-user.payload';
+import { UpdateUserInput } from './models/update-user.input';
+import { UpdateUserPayload } from './models/update-user.payload';
+import { ServerPermissions } from '../server-roles/models/server-permissions.type';
+import { User } from './models/user.model';
+import { UsersService } from './users.service';
 
 @Resolver(() => User)
 export class UsersResolver {
   constructor(
     private postsService: PostsService,
-    private usersService: UsersService
+    private usersService: UsersService,
   ) {}
 
   @Query(() => User)
@@ -37,8 +37,8 @@ export class UsersResolver {
 
   @Query(() => User)
   async user(
-    @Args("id", { type: () => Int, nullable: true }) id?: number,
-    @Args("name", { type: () => String, nullable: true }) name?: string
+    @Args('id', { type: () => Int, nullable: true }) id?: number,
+    @Args('name', { type: () => String, nullable: true }) name?: string,
   ) {
     return this.usersService.getUser({ id, name });
   }
@@ -49,7 +49,7 @@ export class UsersResolver {
   }
 
   @Query(() => [User])
-  async usersByIds(@Args("ids", { type: () => [Int] }) ids: number[]) {
+  async usersByIds(@Args('ids', { type: () => [Int] }) ids: number[]) {
     return this.usersService.getUsers({ id: In(ids) });
   }
 
@@ -76,7 +76,7 @@ export class UsersResolver {
   @ResolveField(() => Image)
   async profilePicture(
     @Context() { loaders }: { loaders: Dataloaders },
-    @Parent() { id }: User
+    @Parent() { id }: User,
   ) {
     return loaders.profilePicturesLoader.load(id);
   }
@@ -99,7 +99,7 @@ export class UsersResolver {
   @ResolveField(() => Int)
   async followerCount(
     @Context() { loaders }: { loaders: Dataloaders },
-    @Parent() { id }: User
+    @Parent() { id }: User,
   ) {
     return loaders.followerCountLoader.load(id);
   }
@@ -107,7 +107,7 @@ export class UsersResolver {
   @ResolveField(() => Int)
   async followingCount(
     @Context() { loaders }: { loaders: Dataloaders },
-    @Parent() { id }: User
+    @Parent() { id }: User,
   ) {
     return loaders.followingCountLoader.load(id);
   }
@@ -116,7 +116,7 @@ export class UsersResolver {
   async isFollowedByMe(
     @Context() { loaders }: { loaders: Dataloaders },
     @CurrentUser() currentUser: User,
-    @Parent() user: User
+    @Parent() user: User,
   ) {
     return loaders.isFollowedByMeLoader.load({
       currentUserId: currentUser.id,
@@ -131,34 +131,33 @@ export class UsersResolver {
 
   @ResolveField(() => ServerPermissions)
   async serverPermissions(@Parent() { id }: User) {
-    const { serverPermissions } = await this.usersService.getUserPermissions(
-      id
-    );
+    const { serverPermissions } =
+      await this.usersService.getUserPermissions(id);
     return serverPermissions;
   }
 
   @Mutation(() => UpdateUserPayload)
-  async updateUser(@Args("userData") userData: UpdateUserInput) {
+  async updateUser(@Args('userData') userData: UpdateUserInput) {
     return this.usersService.updateUser(userData);
   }
 
   @Mutation(() => Boolean)
-  async deleteUser(@Args("id", { type: () => Int }) id: number) {
+  async deleteUser(@Args('id', { type: () => Int }) id: number) {
     return this.usersService.deleteUser(id);
   }
 
   @Mutation(() => FollowUserPayload)
   async followUser(
-    @Args("id", { type: () => Int }) id: number,
-    @CurrentUser() user: User
+    @Args('id', { type: () => Int }) id: number,
+    @CurrentUser() user: User,
   ) {
     return this.usersService.followUser(id, user.id);
   }
 
   @Mutation(() => Boolean)
   async unfollowUser(
-    @Args("id", { type: () => Int }) id: number,
-    @CurrentUser() user: User
+    @Args('id', { type: () => Int }) id: number,
+    @CurrentUser() user: User,
   ) {
     return this.usersService.unfollowUser(id, user.id);
   }

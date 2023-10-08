@@ -1,0 +1,9 @@
+query HomeFeed($isLoggedIn: Boolean = true) {
+  me {
+    id
+    homeFeed {
+      ...FeedItem
+    }
+    ...ToggleForms
+  }
+}

@@ -1,0 +1,13 @@
+fragment EditGroupRoleTabs on GroupRole {
+  ...GroupRole
+  ...AddGroupRoleMemberTab
+  ...DeleteGroupRoleButton
+
+  permissions {
+    ...GroupRolePermissions
+  }
+
+  availableUsersToAdd {
+    ...UserAvatar
+  }
+}

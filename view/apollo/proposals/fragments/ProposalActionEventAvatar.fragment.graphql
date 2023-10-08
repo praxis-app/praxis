@@ -1,0 +1,7 @@
+fragment ProposalActionEventAvatar on ProposalActionEvent {
+  id
+  name
+  coverPhoto {
+    id
+  }
+}

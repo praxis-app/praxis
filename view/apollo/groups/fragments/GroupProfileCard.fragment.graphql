@@ -1,0 +1,17 @@
+fragment GroupProfileCard on Group {
+  id
+  name
+  memberCount
+  memberRequestCount @include(if: $isLoggedIn)
+  isJoinedByMe @include(if: $isLoggedIn)
+
+  myPermissions @include(if: $isLoggedIn) {
+    ...GroupPermissions
+  }
+  coverPhoto {
+    id
+  }
+  settings {
+    isPublic
+  }
+}

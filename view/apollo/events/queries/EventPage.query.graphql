@@ -1,0 +1,20 @@
+query EventPage($id: Int!, $isLoggedIn: Boolean!) {
+  event(id: $id) {
+    ...EventPageCard
+
+    posts {
+      ...PostCard
+    }
+
+    group {
+      id
+      name
+    }
+  }
+  me @include(if: $isLoggedIn) {
+    id
+    serverPermissions {
+      manageEvents
+    }
+  }
+}

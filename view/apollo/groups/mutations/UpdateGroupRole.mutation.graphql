@@ -1,0 +1,23 @@
+mutation UpdateGroupRole($groupRoleData: UpdateGroupRoleInput!) {
+  updateGroupRole(groupRoleData: $groupRoleData) {
+    groupRole {
+      ...GroupRole
+
+      permissions {
+        ...GroupRolePermissions
+      }
+      members {
+        ...RoleMember
+      }
+      availableUsersToAdd {
+        ...UserAvatar
+      }
+      group {
+        id
+        myPermissions {
+          ...GroupPermissions
+        }
+      }
+    }
+  }
+}

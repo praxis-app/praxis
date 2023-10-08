@@ -1,6 +1,6 @@
-import { Injectable, PipeTransform } from "@nestjs/common";
-import { ValidationError } from "apollo-server-express";
-import { VotesService } from "../../votes/votes.service";
+import { ValidationError } from '@nestjs/apollo';
+import { Injectable, PipeTransform } from '@nestjs/common';
+import { VotesService } from '../../votes/votes.service';
 
 @Injectable()
 export class DeleteProposalValidationPipe implements PipeTransform {
@@ -15,7 +15,7 @@ export class DeleteProposalValidationPipe implements PipeTransform {
     const votes = await this.votesService.getVotes({ proposalId: value });
     if (votes.length) {
       throw new ValidationError(
-        "Proposals cannot be deleted after receiving votes"
+        'Proposals cannot be deleted after receiving votes',
       );
     }
   }

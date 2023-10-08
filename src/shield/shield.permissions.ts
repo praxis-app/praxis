@@ -1,16 +1,16 @@
-import { allow, and, not, or, shield } from "graphql-shield";
-import { FORBIDDEN } from "../common/common.constants";
-import { hasValidRefreshToken, isAuthenticated } from "./rules/auth.rules";
+import { allow, and, not, or, shield } from 'graphql-shield';
+import { FORBIDDEN } from '../shared/shared.constants';
+import { hasValidRefreshToken, isAuthenticated } from './rules/auth.rules';
 import {
   isOwnComment,
   isPublicComment,
   isPublicCommentImage,
-} from "./rules/comment.rules";
+} from './rules/comment.rules';
 import {
   isPublicEvent,
   isPublicEventImage,
   isPublicEventPost,
-} from "./rules/event.rules";
+} from './rules/event.rules';
 import {
   canApproveGroupMemberRequests,
   canCreateGroupEvents,
@@ -26,14 +26,14 @@ import {
   isPublicGroup,
   isPublicGroupImage,
   isPublicGroupRole,
-} from "./rules/group.rules";
-import { isOwnPost, isPublicPost, isPublicPostImage } from "./rules/post.rules";
+} from './rules/group.rules';
+import { isOwnPost, isPublicPost, isPublicPostImage } from './rules/post.rules';
 import {
   isPublicProposal,
   isPublicProposalAction,
   isPublicProposalImage,
   isPublicVote,
-} from "./rules/proposal.rules";
+} from './rules/proposal.rules';
 import {
   canCreateServerInvites,
   canManageComments,
@@ -42,8 +42,8 @@ import {
   canManageServerInvites,
   canManageServerRoles,
   canRemoveMembers,
-} from "./rules/role.rules";
-import { isPublicUserAvatar, isUserInPublicGroups } from "./rules/user.rules";
+} from './rules/role.rules';
+import { isPublicUserAvatar, isUserInPublicGroups } from './rules/user.rules';
 
 export const shieldPermissions = shield(
   {
@@ -90,7 +90,7 @@ export const shieldPermissions = shield(
       deleteComment: or(
         isOwnComment,
         canManageComments,
-        canManageGroupComments
+        canManageGroupComments,
       ),
     },
     User: {
@@ -128,13 +128,13 @@ export const shieldPermissions = shield(
         isPublicGroupImage,
         isPublicPostImage,
         isPublicProposalImage,
-        isPublicUserAvatar
+        isPublicUserAvatar,
       ),
       filename: or(
         isAuthenticated,
         isPublicCommentImage,
         isPublicPostImage,
-        isPublicProposalImage
+        isPublicProposalImage,
       ),
     },
     ServerInvite: {
@@ -157,5 +157,5 @@ export const shieldPermissions = shield(
     fallbackRule: isAuthenticated,
     fallbackError: FORBIDDEN,
     allowExternalErrors: true,
-  }
+  },
 );

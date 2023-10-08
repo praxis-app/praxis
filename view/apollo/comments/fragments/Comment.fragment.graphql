@@ -1,0 +1,10 @@
+fragment Comment on Comment {
+  id
+  body
+  images {
+    ...AttachedImage
+  }
+  user {
+    ...UserAvatar
+  }
+}

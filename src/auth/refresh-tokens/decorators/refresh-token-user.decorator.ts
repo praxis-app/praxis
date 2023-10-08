@@ -1,9 +1,9 @@
-import { createParamDecorator, ExecutionContext } from "@nestjs/common";
-import { GqlExecutionContext } from "@nestjs/graphql";
-import { AuthenticationError } from "apollo-server-express";
-import { Context } from "../../../context/context.types";
-import { User } from "../../../users/models/user.model";
-import { getSub } from "../../auth.utils";
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { Context } from '../../../context/context.types';
+import { User } from '../../../users/models/user.model';
+import { getSub } from '../../auth.utils';
+import { AuthenticationError } from '@nestjs/apollo';
 
 export const RefreshTokenUser = createParamDecorator<
   unknown,
@@ -18,12 +18,12 @@ export const RefreshTokenUser = createParamDecorator<
 
   const sub = getSub(refreshTokenClaims);
   if (!sub) {
-    throw new AuthenticationError("Refresh token malformed");
+    throw new AuthenticationError('Refresh token malformed');
   }
 
   const user = await usersService.getUser({ id: sub });
   if (!user) {
-    throw new AuthenticationError("User not found");
+    throw new AuthenticationError('User not found');
   }
 
   return user;

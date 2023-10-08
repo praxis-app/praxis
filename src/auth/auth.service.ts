@@ -1,15 +1,15 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { UserInputError, ValidationError } from "apollo-server-express";
-import { compare, hash } from "bcrypt";
-import { ServerInvitesService } from "../server-invites/server-invites.service";
-import { User } from "../users/models/user.model";
-import { UsersService } from "../users/users.service";
-import { AuthTokens } from "./auth.types";
-import { LoginInput } from "./models/login.input";
-import { SignUpInput } from "./models/sign-up.input";
-import { RefreshTokensService } from "./refresh-tokens/refresh-tokens.service";
-import { AccessTokenPayload } from "./strategies/jwt.strategy";
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { compare, hash } from 'bcrypt';
+import { ServerInvitesService } from '../server-invites/server-invites.service';
+import { User } from '../users/models/user.model';
+import { UsersService } from '../users/users.service';
+import { AuthTokens } from './auth.types';
+import { LoginInput } from './models/login.input';
+import { SignUpInput } from './models/sign-up.input';
+import { RefreshTokensService } from './refresh-tokens/refresh-tokens.service';
+import { AccessTokenPayload } from './strategies/jwt.strategy';
+import { UserInputError, ValidationError } from '@nestjs/apollo';
 
 const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 90;
 const SALT_ROUNDS = 10;
@@ -22,7 +22,7 @@ export class AuthService {
 
     private jwtService: JwtService,
     private serverInvitesService: ServerInvitesService,
-    private usersService: UsersService
+    private usersService: UsersService,
   ) {}
 
   async login({ email, password }: LoginInput) {
@@ -40,7 +40,7 @@ export class AuthService {
   }: SignUpInput) {
     const users = await this.usersService.getUsers();
     if (users.length && !inviteToken) {
-      throw new UserInputError("Missing invite token");
+      throw new UserInputError('Missing invite token');
     }
     if (inviteToken) {
       await this.serverInvitesService.getValidServerInvite(inviteToken);
@@ -50,10 +50,10 @@ export class AuthService {
       email: userData.email,
     });
     if (existingUser) {
-      throw new UserInputError("User already exists");
+      throw new UserInputError('User already exists');
     }
     if (password !== confirmPassword) {
-      throw new UserInputError("Passwords do not match");
+      throw new UserInputError('Passwords do not match');
     }
 
     const passwordHash = await hash(password, SALT_ROUNDS);
@@ -81,17 +81,17 @@ export class AuthService {
 
   async validateUser(
     email: string,
-    password: string
-  ): Promise<Omit<User, "password">> {
+    password: string,
+  ): Promise<Omit<User, 'password'>> {
     try {
       const user = await this.usersService.getUser({ email });
       if (!user) {
-        throw new ValidationError("User not found");
+        throw new ValidationError('User not found');
       }
 
       const passwordMatch = await compare(password, user.password);
       if (!passwordMatch) {
-        throw new ValidationError("Incorrect username or password");
+        throw new ValidationError('Incorrect username or password');
       }
 
       const { password: _password, ...result } = user;

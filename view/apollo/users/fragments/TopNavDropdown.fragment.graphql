@@ -1,0 +1,7 @@
+fragment TopNavDropdown on User {
+  id
+  name
+  serverPermissions {
+    manageRoles
+  }
+}

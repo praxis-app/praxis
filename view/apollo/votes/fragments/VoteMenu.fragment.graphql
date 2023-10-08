@@ -1,0 +1,10 @@
+fragment VoteMenu on Proposal {
+  id
+  votes {
+    id
+    voteType
+    user {
+      id
+    }
+  }
+}

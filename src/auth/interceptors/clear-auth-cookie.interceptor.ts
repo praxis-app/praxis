@@ -3,10 +3,10 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
-} from "@nestjs/common";
-import { GqlExecutionContext } from "@nestjs/graphql";
-import { Observable } from "rxjs";
-import { tap } from "rxjs/operators";
+} from '@nestjs/common';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class ClearAuthCookieInterceptor implements NestInterceptor {
@@ -14,8 +14,8 @@ export class ClearAuthCookieInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const ctx = GqlExecutionContext.create(context).getContext();
-        ctx.req.res.clearCookie("auth");
-      })
+        ctx.req.res.clearCookie('auth');
+      }),
     );
   }
 }

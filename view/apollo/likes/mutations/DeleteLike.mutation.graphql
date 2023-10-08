@@ -1,0 +1,3 @@
+mutation DeleteLike($likeData: DeleteLikeInput!) {
+  deleteLike(likeData: $likeData)
+}

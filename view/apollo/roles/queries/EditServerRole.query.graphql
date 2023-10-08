@@ -1,0 +1,11 @@
+query EditServerRole($id: Int!) {
+  serverRole(id: $id) {
+    ...EditServerRoleTabs
+  }
+  me {
+    id
+    serverPermissions {
+      ...ServerPermissions
+    }
+  }
+}

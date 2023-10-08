@@ -1,0 +1,14 @@
+mutation CreateGroupMemberRequest($groupId: Int!) {
+  createGroupMemberRequest(groupId: $groupId) {
+    groupMemberRequest {
+      id
+      group {
+        id
+        name
+      }
+      user {
+        ...UserAvatar
+      }
+    }
+  }
+}

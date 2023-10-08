@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -6,8 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { User } from "../../users/models/user.model";
+} from 'typeorm';
+import { User } from '../../users/models/user.model';
 
 @ObjectType()
 @Entity()
@@ -29,7 +29,7 @@ export class ServerInvite {
   maxUses?: number;
 
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.serverInvites, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.serverInvites, { onDelete: 'CASCADE' })
   user: User;
 
   @Column()

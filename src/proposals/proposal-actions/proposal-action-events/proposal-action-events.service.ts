@@ -1,17 +1,17 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FileUpload } from "graphql-upload";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FileUpload } from 'graphql-upload-ts';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import {
   EventAttendee,
   EventAttendeeStatus,
-} from "../../../events/event-attendees/models/event-attendee.model";
-import { Event } from "../../../events/models/event.model";
-import { copyImage, saveImage } from "../../../images/image.utils";
-import { ImagesService, ImageTypes } from "../../../images/images.service";
-import { ProposalActionEventHost } from "./models/proposal-action-event-host.model";
-import { ProposalActionEventInput } from "./models/proposal-action-event.input";
-import { ProposalActionEvent } from "./models/proposal-action-event.model";
+} from '../../../events/event-attendees/models/event-attendee.model';
+import { Event } from '../../../events/models/event.model';
+import { copyImage, saveImage } from '../../../images/image.utils';
+import { ImagesService, ImageTypes } from '../../../images/images.service';
+import { ProposalActionEventHost } from './models/proposal-action-event-host.model';
+import { ProposalActionEventInput } from './models/proposal-action-event.input';
+import { ProposalActionEvent } from './models/proposal-action-event.model';
 
 @Injectable()
 export class ProposalActionEventsService {
@@ -28,12 +28,12 @@ export class ProposalActionEventsService {
     @InjectRepository(EventAttendee)
     private eventAttendeeRepository: Repository<EventAttendee>,
 
-    private imagesService: ImagesService
+    private imagesService: ImagesService,
   ) {}
 
   async getProposalActionEvent(
     where: FindOptionsWhere<ProposalActionEvent>,
-    relations?: string[]
+    relations?: string[],
   ) {
     return this.proposalActionEventRepository.findOne({
       where,
@@ -44,10 +44,10 @@ export class ProposalActionEventsService {
   async getProposalActionEventHost(proposalActionEventId: number) {
     const host = await this.proposalActionEventHostRepository.findOne({
       where: { proposalActionEventId, status: EventAttendeeStatus.Host },
-      relations: ["user"],
+      relations: ['user'],
     });
     if (!host) {
-      throw new Error("Could not find host for proposal action event");
+      throw new Error('Could not find host for proposal action event');
     }
     return host.user;
   }
@@ -65,7 +65,7 @@ export class ProposalActionEventsService {
       hostId,
       coverPhoto,
       ...proposalActionEventData
-    }: Partial<ProposalActionEventInput>
+    }: Partial<ProposalActionEventInput>,
   ) {
     const proposalActionEvent = await this.proposalActionEventRepository.save({
       ...proposalActionEventData,
@@ -88,7 +88,7 @@ export class ProposalActionEventsService {
   async createEventFromProposalAction(
     { images, ...eventData }: ProposalActionEvent,
     groupId: number,
-    hostId: number
+    hostId: number,
   ) {
     const event = await this.eventRepository.save({ ...eventData, groupId });
     try {
@@ -98,7 +98,7 @@ export class ProposalActionEventsService {
         userId: hostId,
       });
       const coverPhoto = images.find(
-        ({ imageType }) => imageType === ImageTypes.CoverPhoto
+        ({ imageType }) => imageType === ImageTypes.CoverPhoto,
       );
       if (!coverPhoto) {
         throw new Error();
@@ -111,13 +111,13 @@ export class ProposalActionEventsService {
       });
     } catch {
       await this.eventRepository.delete(event.id);
-      throw new Error("Failed to create event from proposal action");
+      throw new Error('Failed to create event from proposal action');
     }
   }
 
   async saveCoverPhoto(
     proposalActionEventId: number,
-    coverPhoto: Promise<FileUpload>
+    coverPhoto: Promise<FileUpload>,
   ) {
     const filename = await saveImage(coverPhoto);
     return this.imagesService.createImage({

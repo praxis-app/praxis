@@ -1,24 +1,28 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { UserInputError } from "apollo-server-express";
-import * as fs from "fs";
-import { FileUpload } from "graphql-upload";
-import { FindOptionsWhere, In, Repository } from "typeorm";
-import { DEFAULT_PAGE_SIZE } from "../common/common.constants";
-import { IsFollowedByMeKey } from "../dataloader/dataloader.types";
-import { GroupPermissionsMap } from "../groups/group-roles/models/group-permissions.type";
-import { randomDefaultImagePath, saveImage } from "../images/image.utils";
-import { ImagesService, ImageTypes } from "../images/images.service";
-import { Image } from "../images/models/image.model";
-import { Post } from "../posts/models/post.model";
-import { PostsService } from "../posts/posts.service";
-import { Proposal } from "../proposals/models/proposal.model";
-import { ServerPermissions } from "../server-roles/models/server-permissions.type";
-import { initServerRolePermissions } from "../server-roles/server-role.utils";
-import { ServerRolesService } from "../server-roles/server-roles.service";
-import { UpdateUserInput } from "./models/update-user.input";
-import { User } from "./models/user.model";
-import { UserWithFollowerCount, UserWithFollowingCount } from "./user.types";
+import { UserInputError } from '@nestjs/apollo';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as fs from 'fs';
+import { FileUpload } from 'graphql-upload-ts';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { IsFollowedByMeKey } from '../dataloader/dataloader.types';
+import { GroupPermissionsMap } from '../groups/group-roles/models/group-permissions.type';
+import {
+  getUploadsPath,
+  randomDefaultImagePath,
+  saveImage,
+} from '../images/image.utils';
+import { ImagesService, ImageTypes } from '../images/images.service';
+import { Image } from '../images/models/image.model';
+import { Post } from '../posts/models/post.model';
+import { PostsService } from '../posts/posts.service';
+import { Proposal } from '../proposals/models/proposal.model';
+import { ServerPermissions } from '../server-roles/models/server-permissions.type';
+import { initServerRolePermissions } from '../server-roles/server-role.utils';
+import { ServerRolesService } from '../server-roles/server-roles.service';
+import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
+import { UpdateUserInput } from './models/update-user.input';
+import { User } from './models/user.model';
+import { UserWithFollowerCount, UserWithFollowingCount } from './user.types';
 
 @Injectable()
 export class UsersService {
@@ -30,7 +34,7 @@ export class UsersService {
     private serverRolesService: ServerRolesService,
 
     private imagesService: ImagesService,
-    private postsService: PostsService
+    private postsService: PostsService,
   ) {}
 
   async getUser(where: FindOptionsWhere<User>, relations?: string[]) {
@@ -55,15 +59,15 @@ export class UsersService {
 
   async getUserHomeFeed(id: number) {
     const userWithFeed = await this.getUser({ id }, [
-      "following.posts",
-      "groups.events.posts",
-      "groups.posts",
-      "groups.proposals",
-      "proposals",
-      "posts",
+      'following.posts',
+      'groups.events.posts',
+      'groups.posts',
+      'groups.proposals',
+      'proposals',
+      'posts',
     ]);
     if (!userWithFeed) {
-      throw new UserInputError("User not found");
+      throw new UserInputError('User not found');
     }
     const { groups, following, posts, proposals } = userWithFeed;
 
@@ -77,7 +81,7 @@ export class UsersService {
         result[proposal.id] = proposal;
         return result;
       },
-      {}
+      {},
     );
 
     const extractPosts = (items: { posts: Post[] }[]) =>
@@ -109,12 +113,12 @@ export class UsersService {
   }
 
   async getUserProfileFeed(id: number) {
-    const user = await this.getUser({ id }, ["proposals", "posts"]);
+    const user = await this.getUser({ id }, ['proposals', 'posts']);
     if (!user) {
-      throw new UserInputError("User not found");
+      throw new UserInputError('User not found');
     }
     const sortedFeed = [...user.posts, ...user.proposals].sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
 
     // TODO: Update once pagination has been implemented
@@ -123,11 +127,11 @@ export class UsersService {
 
   async getUserPermissions(id: number) {
     const user = await this.getUser({ id }, [
-      "serverRoles.permission",
-      "groupRoles.permission",
+      'serverRoles.permission',
+      'groupRoles.permission',
     ]);
     if (!user) {
-      throw new UserInputError("User not found");
+      throw new UserInputError('User not found');
     }
     const serverPermissions = user.serverRoles.reduce<ServerPermissions>(
       (result, { permission }) => {
@@ -138,7 +142,7 @@ export class UsersService {
         }
         return result;
       },
-      initServerRolePermissions()
+      initServerRolePermissions(),
     );
     const groupPermissions = user.groupRoles.reduce<GroupPermissionsMap>(
       (result, { groupId, permission }) => {
@@ -153,13 +157,13 @@ export class UsersService {
         }
         return result;
       },
-      {}
+      {},
     );
     return { serverPermissions, groupPermissions };
   }
 
   async getJoinedGroups(id: number) {
-    const userWithGroups = await this.getUser({ id }, ["groups"]);
+    const userWithGroups = await this.getUser({ id }, ['groups']);
     if (!userWithGroups) {
       return [];
     }
@@ -167,9 +171,9 @@ export class UsersService {
   }
 
   async getFollowers(id: number) {
-    const user = await this.getUser({ id }, ["followers"]);
+    const user = await this.getUser({ id }, ['followers']);
     if (!user) {
-      throw new UserInputError("User not found");
+      throw new UserInputError('User not found');
     }
 
     // TODO: Update once pagination has been implemented
@@ -177,9 +181,9 @@ export class UsersService {
   }
 
   async getFollowing(id: number) {
-    const user = await this.getUser({ id }, ["following"]);
+    const user = await this.getUser({ id }, ['following']);
     if (!user) {
-      throw new UserInputError("User not found");
+      throw new UserInputError('User not found');
     }
     return user.following;
   }
@@ -196,7 +200,7 @@ export class UsersService {
     return userIds.map(
       (id) =>
         users.find((user: User) => user.id === id) ||
-        new Error(`Could not load user: ${id}`)
+        new Error(`Could not load user: ${id}`),
     );
   }
 
@@ -208,17 +212,17 @@ export class UsersService {
     return userIds.map(
       (id) =>
         profilePictures.find(
-          (profilePicture: Image) => profilePicture.userId === id
-        ) || new Error(`Could not load profile picture: ${id}`)
+          (profilePicture: Image) => profilePicture.userId === id,
+        ) || new Error(`Could not load profile picture: ${id}`),
     );
   }
 
   async getFollowerCountBatch(userIds: number[]) {
     const users = (await this.repository
-      .createQueryBuilder("user")
-      .leftJoinAndSelect("user.followers", "follower")
-      .loadRelationCountAndMap("user.followerCount", "user.followers")
-      .select(["user.id"])
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.followers', 'follower')
+      .loadRelationCountAndMap('user.followerCount', 'user.followers')
+      .select(['user.id'])
       .whereInIds(userIds)
       .getMany()) as UserWithFollowerCount[];
 
@@ -233,10 +237,10 @@ export class UsersService {
 
   async getFollowingCountBatch(userIds: number[]) {
     const users = (await this.repository
-      .createQueryBuilder("user")
-      .leftJoinAndSelect("user.following", "followed")
-      .loadRelationCountAndMap("user.followingCount", "user.following")
-      .select(["user.id"])
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.following', 'followed')
+      .loadRelationCountAndMap('user.followingCount', 'user.following')
+      .select(['user.id'])
       .whereInIds(userIds)
       .getMany()) as UserWithFollowingCount[];
 
@@ -254,7 +258,9 @@ export class UsersService {
     const following = await this.getFollowing(keys[0].currentUserId);
 
     return followedUserIds.map((followedUserId) =>
-      following.some((followedUser: User) => followedUser.id === followedUserId)
+      following.some(
+        (followedUser: User) => followedUser.id === followedUserId,
+      ),
     );
   }
 
@@ -269,7 +275,7 @@ export class UsersService {
       await this.saveDefaultProfilePicture(user.id);
     } catch {
       await this.deleteUser(user.id);
-      throw new Error("Could not create user");
+      throw new Error('Could not create user');
     }
     return user;
   }
@@ -293,10 +299,10 @@ export class UsersService {
   }
 
   async followUser(id: number, followerId: number) {
-    const user = await this.getUser({ id }, ["followers"]);
-    const follower = await this.getUser({ id: followerId }, ["following"]);
+    const user = await this.getUser({ id }, ['followers']);
+    const follower = await this.getUser({ id: followerId }, ['following']);
     if (!user || !follower) {
-      throw new UserInputError("User not found");
+      throw new UserInputError('User not found');
     }
     follower.following = [...follower.following, user];
     user.followers = [...user.followers, follower];
@@ -309,10 +315,10 @@ export class UsersService {
   }
 
   async unfollowUser(id: number, followerId: number) {
-    const user = await this.getUser({ id }, ["followers"]);
-    const follower = await this.getUser({ id: followerId }, ["following"]);
+    const user = await this.getUser({ id }, ['followers']);
+    const follower = await this.getUser({ id: followerId }, ['following']);
     if (!user || !follower) {
-      throw new UserInputError("User not found");
+      throw new UserInputError('User not found');
     }
     // TODO: Refactor to avoid using `filter`
     user.followers = user.followers.filter((f) => f.id !== followerId);
@@ -323,7 +329,7 @@ export class UsersService {
 
   async saveProfilePicture(
     userId: number,
-    profilePicture: Promise<FileUpload>
+    profilePicture: Promise<FileUpload>,
   ) {
     const filename = await saveImage(profilePicture);
     const imageData = { imageType: ImageTypes.ProfilePicture, userId };
@@ -346,8 +352,9 @@ export class UsersService {
 
   async saveDefaultProfilePicture(userId: number) {
     const sourcePath = randomDefaultImagePath();
+    const uploadsPath = getUploadsPath();
     const filename = `${Date.now()}.jpeg`;
-    const copyPath = `./uploads/${filename}`;
+    const copyPath = `${uploadsPath}/${filename}`;
 
     fs.copyFile(sourcePath, copyPath, (err) => {
       if (err) {

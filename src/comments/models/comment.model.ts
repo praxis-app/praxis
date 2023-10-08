@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -7,12 +7,12 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { Image } from "../../images/models/image.model";
-import { Like } from "../../likes/models/like.model";
-import { Post } from "../../posts/models/post.model";
-import { Proposal } from "../../proposals/models/proposal.model";
-import { User } from "../../users/models/user.model";
+} from 'typeorm';
+import { Image } from '../../images/models/image.model';
+import { Like } from '../../likes/models/like.model';
+import { Post } from '../../posts/models/post.model';
+import { Proposal } from '../../proposals/models/proposal.model';
+import { User } from '../../users/models/user.model';
 
 @Entity()
 @ObjectType()
@@ -35,7 +35,7 @@ export class Comment {
 
   @Field(() => Post, { nullable: true })
   @ManyToOne(() => Post, (post) => post.comments, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   post?: Post;
 
@@ -44,7 +44,7 @@ export class Comment {
 
   @Field(() => Proposal, { nullable: true })
   @ManyToOne(() => Proposal, (proposal) => proposal.comments, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   proposal?: Proposal;
 
@@ -52,7 +52,7 @@ export class Comment {
   proposalId?: number;
 
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.comments, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   user: User;
 
   @Column()

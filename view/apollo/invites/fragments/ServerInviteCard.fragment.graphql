@@ -1,0 +1,11 @@
+fragment ServerInviteCard on ServerInvite {
+  id
+  maxUses
+  token
+  uses
+  expiresAt
+
+  user {
+    ...UserAvatar
+  }
+}

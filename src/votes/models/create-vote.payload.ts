@@ -1,5 +1,5 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { Vote } from "./vote.model";
+import { Field, ObjectType } from '@nestjs/graphql';
+import { Vote } from './vote.model';
 
 @ObjectType()
 export class CreateVotePayload {

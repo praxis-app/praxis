@@ -1,0 +1,14 @@
+mutation CreateGroupRole($groupRoleData: CreateGroupRoleInput!) {
+  createGroupRole(groupRoleData: $groupRoleData) {
+    groupRole {
+      ...GroupRole
+
+      group {
+        id
+        roles {
+          ...GroupRole
+        }
+      }
+    }
+  }
+}

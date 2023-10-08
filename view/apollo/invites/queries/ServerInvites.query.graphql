@@ -1,0 +1,11 @@
+query ServerInvites {
+  serverInvites {
+    ...ServerInviteCard
+  }
+  me {
+    id
+    serverPermissions {
+      ...ServerPermissions
+    }
+  }
+}

@@ -1,0 +1,9 @@
+fragment MemberRequest on GroupMemberRequest {
+  id
+  user {
+    ...UserAvatar
+  }
+  group {
+    id
+  }
+}

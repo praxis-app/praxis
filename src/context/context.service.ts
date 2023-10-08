@@ -1,22 +1,22 @@
-import { Injectable } from "@nestjs/common";
-import { AuthTokenClaims } from "../auth/auth.types";
-import { getClaims, getSub } from "../auth/auth.utils";
-import { RefreshTokensService } from "../auth/refresh-tokens/refresh-tokens.service";
-import { CommentsService } from "../comments/comments.service";
-import { DataloaderService } from "../dataloader/dataloader.service";
-import { EventsService } from "../events/events.service";
-import { GroupMemberRequestsService } from "../groups/group-member-requests/group-member-requests.service";
-import { GroupRolesService } from "../groups/group-roles/group-roles.service";
-import { GroupsService } from "../groups/groups.service";
-import { ImagesService } from "../images/images.service";
-import { PostsService } from "../posts/posts.service";
-import { ProposalActionEventsService } from "../proposals/proposal-actions/proposal-action-events/proposal-action-events.service";
-import { ProposalActionRolesService } from "../proposals/proposal-actions/proposal-action-roles/proposal-action-roles.service";
-import { ProposalActionsService } from "../proposals/proposal-actions/proposal-actions.service";
-import { ProposalsService } from "../proposals/proposals.service";
-import { ShieldService } from "../shield/shield.service";
-import { UsersService } from "../users/users.service";
-import { Context, ContextServices } from "./context.types";
+import { Injectable } from '@nestjs/common';
+import { AuthTokenClaims } from '../auth/auth.types';
+import { getClaims, getSub } from '../auth/auth.utils';
+import { RefreshTokensService } from '../auth/refresh-tokens/refresh-tokens.service';
+import { CommentsService } from '../comments/comments.service';
+import { DataloaderService } from '../dataloader/dataloader.service';
+import { EventsService } from '../events/events.service';
+import { GroupMemberRequestsService } from '../groups/group-member-requests/group-member-requests.service';
+import { GroupRolesService } from '../groups/group-roles/group-roles.service';
+import { GroupsService } from '../groups/groups.service';
+import { ImagesService } from '../images/images.service';
+import { PostsService } from '../posts/posts.service';
+import { ProposalActionEventsService } from '../proposals/proposal-actions/proposal-action-events/proposal-action-events.service';
+import { ProposalActionRolesService } from '../proposals/proposal-actions/proposal-action-roles/proposal-action-roles.service';
+import { ProposalActionsService } from '../proposals/proposal-actions/proposal-actions.service';
+import { ProposalsService } from '../proposals/proposals.service';
+import { ShieldService } from '../shield/shield.service';
+import { UsersService } from '../users/users.service';
+import { Context, ContextServices } from './context.types';
 
 @Injectable()
 export class ContextService {
@@ -35,7 +35,7 @@ export class ContextService {
     private proposalsService: ProposalsService,
     private refreshTokensService: RefreshTokensService,
     private shieldService: ShieldService,
-    private usersService: UsersService
+    private usersService: UsersService,
   ) {}
 
   async getContext({ req }: { req: Request }): Promise<Context> {

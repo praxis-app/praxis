@@ -1,0 +1,8 @@
+mutation UpdateGroup($groupData: UpdateGroupInput!) {
+  updateGroup(groupData: $groupData) {
+    group {
+      ...GroupAvatar
+      description
+    }
+  }
+}

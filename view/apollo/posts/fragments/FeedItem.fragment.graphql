@@ -1,0 +1,8 @@
+fragment FeedItem on FeedItem {
+  ... on Post {
+    ...PostCard
+  }
+  ... on Proposal {
+    ...ProposalCard
+  }
+}

@@ -1,12 +1,12 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { InjectRepository } from "@nestjs/typeorm";
-import { TokenExpiredError } from "jsonwebtoken";
-import { Not, Repository } from "typeorm";
-import { UsersService } from "../../users/users.service";
-import { AuthService } from "../auth.service";
-import { AuthTokens } from "../auth.types";
-import { RefreshToken } from "./models/refresh-token.model";
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { TokenExpiredError } from 'jsonwebtoken';
+import { Not, Repository } from 'typeorm';
+import { UsersService } from '../../users/users.service';
+import { AuthService } from '../auth.service';
+import { AuthTokens } from '../auth.types';
+import { RefreshToken } from './models/refresh-token.model';
 
 const REFRESH_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 7;
 
@@ -20,7 +20,7 @@ export class RefreshTokensService {
     private authService: AuthService,
 
     private usersService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
 
   async refreshToken(userId: number): Promise<AuthTokens> {
@@ -39,7 +39,7 @@ export class RefreshTokensService {
     try {
       const token = await this.repository.findOne({ where: { id } });
       if (!token) {
-        return "Refresh token not found";
+        return 'Refresh token not found';
       }
 
       if (token.revoked) {
@@ -49,18 +49,18 @@ export class RefreshTokensService {
          */
         await this.revokeAllRefreshTokensForUser(userId);
 
-        return "Refresh token revoked";
+        return 'Refresh token revoked';
       }
 
       const user = await this.usersService.getUser({ id: userId });
       if (!user) {
-        return "Refresh token malformed";
+        return 'Refresh token malformed';
       }
 
       return true;
     } catch (err) {
       if (err instanceof TokenExpiredError) {
-        return "Refresh token expired";
+        return 'Refresh token expired';
       } else {
         return err.message as string;
       }
@@ -87,19 +87,19 @@ export class RefreshTokensService {
       { userId },
       {
         revoked: true,
-      }
+      },
     );
   }
 
   async revokeAllOtherRefreshTokensForUser(
     refreshTokenId: number,
-    userId: number
+    userId: number,
   ) {
     await this.repository.update(
       { id: Not(refreshTokenId), userId },
       {
         revoked: true,
-      }
+      },
     );
   }
 }

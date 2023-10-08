@@ -1,0 +1,11 @@
+fragment EditProfileForm on User {
+  id
+  bio
+  name
+  profilePicture {
+    id
+  }
+  coverPhoto {
+    id
+  }
+}

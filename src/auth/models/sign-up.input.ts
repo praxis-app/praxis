@@ -1,5 +1,5 @@
-import { Field, InputType } from "@nestjs/graphql";
-import { FileUpload, GraphQLUpload } from "graphql-upload";
+import { Field, InputType } from '@nestjs/graphql';
+import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
 
 @InputType()
 export class SignUpInput {

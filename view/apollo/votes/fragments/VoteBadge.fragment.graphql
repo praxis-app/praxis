@@ -1,0 +1,7 @@
+fragment VoteBadge on Vote {
+  id
+  voteType
+  user {
+    id
+  }
+}

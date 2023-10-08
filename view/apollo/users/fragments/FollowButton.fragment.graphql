@@ -1,0 +1,4 @@
+fragment FollowButton on User {
+  id
+  isFollowedByMe
+}

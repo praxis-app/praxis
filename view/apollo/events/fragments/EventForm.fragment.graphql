@@ -1,0 +1,14 @@
+fragment EventForm on Event {
+  id
+  name
+  startsAt
+  endsAt
+  description
+  location
+  online
+  externalLink
+
+  host {
+    id
+  }
+}

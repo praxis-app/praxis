@@ -1,9 +1,9 @@
-import { Field, InputType } from "@nestjs/graphql";
+import { Field, InputType } from '@nestjs/graphql';
 
 export enum EventTimeFrame {
-  Past = "past",
-  Future = "future",
-  ThisWeek = "this-week",
+  Past = 'past',
+  Future = 'future',
+  ThisWeek = 'this-week',
 }
 
 @InputType()

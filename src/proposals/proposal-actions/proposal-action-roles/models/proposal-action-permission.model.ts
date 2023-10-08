@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -7,8 +7,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { ProposalActionRole } from "./proposal-action-role.model";
+} from 'typeorm';
+import { ProposalActionRole } from './proposal-action-role.model';
 
 @Entity()
 @ObjectType()
@@ -57,13 +57,13 @@ export class ProposalActionPermission {
   @Field({ nullable: true })
   removeMembers?: boolean;
 
-  @Field(() => ProposalActionRole, { name: "role" })
+  @Field(() => ProposalActionRole, { name: 'role' })
   @OneToOne(
     () => ProposalActionRole,
     (proposalActionRole) => proposalActionRole.permission,
     {
-      onDelete: "CASCADE",
-    }
+      onDelete: 'CASCADE',
+    },
   )
   @JoinColumn()
   proposalActionRole: ProposalActionRole;

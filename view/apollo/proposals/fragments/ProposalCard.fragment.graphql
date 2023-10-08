@@ -1,0 +1,36 @@
+fragment ProposalCard on Proposal {
+  id
+  body
+  stage
+  voteCount
+  commentCount
+  createdAt
+
+  action {
+    ...ProposalAction
+  }
+  user {
+    ...UserAvatar
+  }
+  group {
+    id
+    isJoinedByMe @include(if: $isLoggedIn)
+    myPermissions @include(if: $isLoggedIn) {
+      manageComments
+    }
+    ...GroupAvatar
+  }
+  images {
+    ...AttachedImage
+  }
+
+  # TODO: Fetch votes in a separate query when votes modal is opened
+  votes {
+    user {
+      id
+    }
+  }
+
+  ...VoteMenu
+  ...VoteBadges
+}

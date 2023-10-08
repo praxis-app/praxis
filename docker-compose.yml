@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: praxis
+    build:
+      context: .
+      target: runtime_stage
+    volumes:
+      - content:/app/content
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    command: node /app/dist/main.js
+    env_file: .env
+    networks:
+      - webnet
+    depends_on:
+      - postgres
+
+  postgres:
+    container_name: postgres
+    image: postgres:16
+    networks:
+      - webnet
+    environment:
+      POSTGRES_DB: ${DB_SCHEMA}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PG_DATA: /var/lib/postgresql/data
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+networks:
+  webnet:
+volumes:
+  content:
+  pgdata:

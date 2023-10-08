@@ -1,0 +1,6 @@
+fragment AddGroupRoleMemberTab on GroupRole {
+  id
+  members {
+    ...RoleMember
+  }
+}

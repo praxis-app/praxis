@@ -1,0 +1,5 @@
+query Events($input: EventsInput!, $isLoggedIn: Boolean!) {
+  events(input: $input) {
+    ...EventCompact
+  }
+}

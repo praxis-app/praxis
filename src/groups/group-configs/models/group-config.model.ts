@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -7,12 +7,12 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { Group } from "../../models/group.model";
+} from 'typeorm';
+import { Group } from '../../models/group.model';
 
 export enum GroupPrivacy {
-  Private = "private",
-  Public = "public",
+  Private = 'private',
+  Public = 'public',
 }
 
 @Entity()
@@ -27,7 +27,7 @@ export class GroupConfig {
 
   @Field(() => Group)
   @OneToOne(() => Group, (group) => group.config, {
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   group: Group;

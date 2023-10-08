@@ -1,0 +1,15 @@
+mutation UpdateUser($userData: UpdateUserInput!) {
+  updateUser(userData: $userData) {
+    user {
+      id
+      name
+      bio
+      profilePicture {
+        id
+      }
+      coverPhoto {
+        id
+      }
+    }
+  }
+}

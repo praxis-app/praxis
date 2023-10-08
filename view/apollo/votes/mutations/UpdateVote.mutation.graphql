@@ -1,0 +1,24 @@
+mutation UpdateVote($voteData: UpdateVoteInput!) {
+  updateVote(voteData: $voteData) {
+    vote {
+      id
+      voteType
+
+      proposal {
+        id
+        stage
+
+        action {
+          id
+          actionType
+        }
+
+        group {
+          id
+          name
+          description
+        }
+      }
+    }
+  }
+}

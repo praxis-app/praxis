@@ -1,0 +1,14 @@
+query Me {
+  me {
+    id
+    ...UserAvatar
+
+    serverPermissions {
+      ...ServerPermissions
+    }
+    joinedGroups {
+      id
+      name
+    }
+  }
+}

@@ -1,6 +1,6 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
-import { GroupRolePermissionInput } from "../../../../groups/group-roles/models/group-role-permission.input";
-import { ProposalActionRoleMemberInput } from "./proposal-action-role-member.input";
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { GroupRolePermissionInput } from '../../../../groups/group-roles/models/group-role-permission.input';
+import { ProposalActionRoleMemberInput } from './proposal-action-role-member.input';
 
 @InputType()
 export class ProposalActionRoleInput {

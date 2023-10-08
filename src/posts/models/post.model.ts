@@ -1,6 +1,6 @@
 // TODO: Determine whether GraphQL models should be separate from TypeORM entities
 
-import { Field, Int, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -9,13 +9,13 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-} from "typeorm";
-import { Comment } from "../../comments/models/comment.model";
-import { Event } from "../../events/models/event.model";
-import { Group } from "../../groups/models/group.model";
-import { Image } from "../../images/models/image.model";
-import { Like } from "../../likes/models/like.model";
-import { User } from "../../users/models/user.model";
+} from 'typeorm';
+import { Comment } from '../../comments/models/comment.model';
+import { Event } from '../../events/models/event.model';
+import { Group } from '../../groups/models/group.model';
+import { Image } from '../../images/models/image.model';
+import { Like } from '../../likes/models/like.model';
+import { User } from '../../users/models/user.model';
 
 @ObjectType()
 @Entity()
@@ -41,21 +41,21 @@ export class Post {
   likes: Like[];
 
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.posts, { onDelete: "CASCADE" })
+  @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   user: User;
 
   @Column()
   userId: number;
 
   @Field(() => Group, { nullable: true })
-  @ManyToOne(() => Group, (group) => group.posts, { onDelete: "CASCADE" })
+  @ManyToOne(() => Group, (group) => group.posts, { onDelete: 'CASCADE' })
   group?: Group;
 
   @Column({ nullable: true })
   groupId: number;
 
   @Field(() => Event, { nullable: true })
-  @ManyToOne(() => Event, (event) => event.posts, { onDelete: "CASCADE" })
+  @ManyToOne(() => Event, (event) => event.posts, { onDelete: 'CASCADE' })
   event?: Event;
 
   @Column({ nullable: true })

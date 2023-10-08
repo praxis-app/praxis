@@ -1,5 +1,5 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
-import { FileUpload, GraphQLUpload } from "graphql-upload";
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
 
 @InputType()
 export class UpdateEventInput {

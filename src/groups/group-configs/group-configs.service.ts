@@ -1,9 +1,9 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
-import { GroupsService } from "../groups.service";
-import { GroupConfig, GroupPrivacy } from "./models/group-config.model";
-import { UpdateGroupConfigInput } from "./models/update-group-config.input";
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
+import { GroupsService } from '../groups.service';
+import { GroupConfig, GroupPrivacy } from './models/group-config.model';
+import { UpdateGroupConfigInput } from './models/update-group-config.input';
 
 @Injectable()
 export class GroupConfigsService {
@@ -12,7 +12,7 @@ export class GroupConfigsService {
     private repository: Repository<GroupConfig>,
 
     @Inject(forwardRef(() => GroupsService))
-    private groupsService: GroupsService
+    private groupsService: GroupsService,
   ) {}
 
   async getGroupConfig(where: FindOptionsWhere<GroupConfig>) {
@@ -33,7 +33,7 @@ export class GroupConfigsService {
     ...groupConfigData
   }: UpdateGroupConfigInput) {
     const group = await this.groupsService.getGroup({ id: groupId }, [
-      "config",
+      'config',
     ]);
     await this.repository.update(group.config.id, groupConfigData);
     return { group };

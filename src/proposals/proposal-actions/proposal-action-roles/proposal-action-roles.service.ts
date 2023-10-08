@@ -1,14 +1,14 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FindOptionsWhere, Repository } from "typeorm";
-import { ProposalActionPermission } from "./models/proposal-action-permission.model";
-import { ProposalActionRoleInput } from "./models/proposal-action-role-input";
-import { ProposalActionRoleMember } from "./models/proposal-action-role-member.model";
-import { ProposalActionRole } from "./models/proposal-action-role.model";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
+import { ProposalActionPermission } from './models/proposal-action-permission.model';
+import { ProposalActionRoleInput } from './models/proposal-action-role-input';
+import { ProposalActionRoleMember } from './models/proposal-action-role-member.model';
+import { ProposalActionRole } from './models/proposal-action-role.model';
 
 export enum RoleMemberChangeType {
-  Add = "add",
-  Remove = "remove",
+  Add = 'add',
+  Remove = 'remove',
 }
 
 @Injectable()
@@ -21,12 +21,12 @@ export class ProposalActionRolesService {
     private proposalActionPermissionRepository: Repository<ProposalActionPermission>,
 
     @InjectRepository(ProposalActionRoleMember)
-    private proposalActionRoleMemberRepository: Repository<ProposalActionRoleMember>
+    private proposalActionRoleMemberRepository: Repository<ProposalActionRoleMember>,
   ) {}
 
   async getProposalActionRole(
     where: FindOptionsWhere<ProposalActionRole>,
-    relations?: string[]
+    relations?: string[],
   ) {
     return this.proposalActionRoleRepository.findOne({
       where,
@@ -48,7 +48,7 @@ export class ProposalActionRolesService {
 
   async createProposalActionRole(
     proposalActionId: number,
-    { roleToUpdateId, ...role }: ProposalActionRoleInput
+    { roleToUpdateId, ...role }: ProposalActionRoleInput,
   ) {
     await this.proposalActionRoleRepository.save({
       ...role,
@@ -60,7 +60,7 @@ export class ProposalActionRolesService {
 
   async updateProposalActionRole(
     id: number,
-    data: Partial<ProposalActionRole>
+    data: Partial<ProposalActionRole>,
   ) {
     await this.proposalActionRoleRepository.update(id, data);
   }

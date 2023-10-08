@@ -1,5 +1,5 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { Group } from "./group.model";
+import { Field, ObjectType } from '@nestjs/graphql';
+import { Group } from './group.model';
 
 @ObjectType()
 export class UpdateGroupPayload {

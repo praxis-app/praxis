@@ -1,4 +1,4 @@
-import { ServerInvite } from "./models/server-invite.model";
+import { ServerInvite } from './models/server-invite.model';
 
 export const validateServerInvite = (serverInvite: ServerInvite) => {
   const isExpired =

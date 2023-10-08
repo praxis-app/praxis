@@ -1,0 +1,11 @@
+query GroupMembers($name: String!) {
+  group(name: $name) {
+    id
+    members {
+      ...GroupMember
+    }
+  }
+  me {
+    id
+  }
+}

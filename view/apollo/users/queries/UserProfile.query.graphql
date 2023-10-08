@@ -1,0 +1,14 @@
+query UserProfile($name: String, $isLoggedIn: Boolean = true) {
+  user(name: $name) {
+    ...UserProfileCard
+
+    profileFeed {
+      ...FeedItem
+    }
+  }
+
+  me {
+    id
+    ...ToggleForms
+  }
+}

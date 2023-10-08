@@ -1,0 +1,487 @@
+{
+  "brand": "praxis",
+
+  "actions": {
+    "cancel": "Cancel",
+    "comment": "Comment",
+    "confirm": "Confirm",
+    "copy": "Copy",
+    "create": "Create",
+    "delete": "Delete",
+    "edit": "Edit",
+    "like": "Like",
+    "post": "Post",
+    "save": "Save",
+    "share": "Share",
+    "submit": "Submit",
+    "upload": "Upload"
+  },
+
+  "prompts": {
+    "deleteItem": "Are you sure you want to delete this {{itemType}}?",
+    "inDev": "This feature is still in development.",
+    "permissionDenied": "Permission denied.",
+    "removeItem": "Are you sure you want to remove this {{itemType}}?",
+    "welcomeToPraxis": "Welcome to Praxis",
+    "whatsHappening": "What's happening?",
+    "wip": "This page is still in construction.",
+    "noContent": "No content in this feed."
+  },
+
+  "labels": {
+    "all": "All",
+    "menu": "Menu",
+    "menuButton": "Menu button",
+    "scrollToTop": "Scroll to top",
+    "toggleButton": "Toggle button",
+    "switch": "Switch"
+  },
+
+  "errors": {
+    "imageUploadError": "Unable to upload images.",
+    "somethingWentWrong": "Something went wrong."
+  },
+
+  "states": {
+    "loading": "Loading...",
+    "saving": "Saving..."
+  },
+
+  "navigation": {
+    "docs": "Docs",
+    "events": "Events",
+    "groups": "Groups",
+    "home": "Home",
+    "invites": "Invites",
+    "menu": "Menu",
+    "preferences": "Preferences",
+    "profile": "Profile",
+    "roles": "Roles",
+    "users": "Users"
+  },
+
+  "about": {
+    "welcomeCard": {
+      "projectDescription": "Praxis is an open source social network with features for collaborative decision making. Proposals are the main focus and come with a wide variety of voting features, with consensus as the default. Create a group and set it to no-admin, allowing group members to create proposals and democratically decide on settings, name, theme, or planning of real world events.",
+      "inDev": "This project is still in development and is not yet intended for serious use outside of testing or research purposes."
+    }
+  },
+
+  "proposals": {
+    "prompts": {
+      "createProposal": "Create a proposal...",
+      "joinGroupToVote": "You need to be a group member to vote on this proposal.",
+      "loginToVote": "You need to be logged in to vote.",
+      "cannotEditProposedRoles": "Editing of proposed roles is still in development.",
+      "emptyPermsAndMembers": "No proposed permissions or role members."
+    },
+    "actions": {
+      "attachNewCoverPhoto": "Attach new cover photo",
+      "changeGroupRole": "Propose a role change",
+      "createGroupRole": "Propose a new group role",
+      "createProposal": "Create Proposal",
+      "vote": "Vote"
+    },
+    "actionTypes": {
+      "changeDescription": "Change Group Description",
+      "changeCoverPhoto": "Change Cover Photo",
+      "changeName": "Change Group Name",
+      "changeRole": "Change Group Role",
+      "changeSettings": "Change Group Settings",
+      "createRole": "Create Group Role",
+      "planEvent": "Plan Event",
+      "test": "QA Test"
+    },
+    "labels": {
+      "action": "Action",
+      "color": "Color",
+      "name": "Name",
+      "newGroupDescription": "New group description",
+      "newGroupName": "New group name",
+      "proposedGroupCoverPhoto": "Proposed group cover photo",
+      "proposedGroupDescription": "Proposed group description",
+      "proposedGroupName": "Proposed group name",
+      "roleProposal": "Role proposal",
+      "eventProposal": "Event proposal",
+      "roleChangeProposal": "Role change proposal",
+      "ratified": "Ratified",
+      "selectRoleToChange": "Choose a role",
+      "usersProposal": "{{name}}'s Proposal"
+    },
+    "toasts": {
+      "noVotingAfterRatification": "This proposal has been ratified and can no longer be voted on.",
+      "ratifiedSuccess": "This proposal has been ratified! 🎉"
+    },
+    "errors": {
+      "missingActionType": "Proposals must include an action",
+      "missingGroupCoverPhoto": "Proposals to change group cover photo must include an image",
+      "missingGroupDescription": "Proposals to change group description must include a description field",
+      "missingGroupId": "Only group proposals are supported at this time",
+      "missingGroupName": "Proposals to change group name must include a name field",
+      "missingRole": "Proposals to change or add group roles must include a role"
+    }
+  },
+
+  "votes": {
+    "actions": {
+      "agree": "Agree",
+      "block": "Block",
+      "disagree": "Disagree",
+      "reservations": "Reservations",
+      "standAside": "Stand Aside",
+      "update": "Update Vote",
+      "vote": "Vote"
+    }
+  },
+
+  "comments": {
+    "prompts": {
+      "writeComment": "Write a comment...",
+      "joinToComment": "No comments yet. Join the group to comment."
+    },
+    "labels": {
+      "xComments_one": "{{count}} comment",
+      "xComments_other": "{{count}} comments"
+    }
+  },
+
+  "users": {
+    "actions": {
+      "editProfile": "Edit Profile",
+      "follow": "Follow",
+      "logIn": "Log In",
+      "logOut": "Log Out",
+      "passwordConfirm": "Confirm password",
+      "signUp": "Sign Up",
+      "unfollow": "Unfollow"
+    },
+    "errors": {
+      "signUp": "There was an error creating your account.",
+      "update": "There was an error updating your account."
+    },
+    "form": {
+      "bio": "Bio",
+      "coverPhoto": "Cover Photo",
+      "email": "Email",
+      "name": "Name",
+      "password": "Password",
+      "profilePicture": "Profile Picture",
+      "confirmPassword": "Confirm Password"
+    },
+    "profile": {
+      "following": "Following",
+      "joinDate": "Joined {{joinDate}}"
+    },
+    "prompts": {
+      "alreadyLoggedIn": "You're already signed in.",
+      "alreadyRegistered": "You have already created an account.",
+      "authenticated": "You are authenticated.",
+      "becomeAMember": "Become a Praxis Member",
+      "logOut": "Are you sure you want to log out?",
+      "permissionDenied": "Permission denied.",
+      "signInToPost": "Sign in to start posting...",
+      "unfollow": "Are you sure you want to unfollow this person?"
+    },
+    "labels": {
+      "followers_one": "{{count}} Follower",
+      "followers_other": "{{count}} Followers",
+      "following": "{{count}} Following"
+    },
+    "validation": {
+      "emailExists": "Email already exists.",
+      "emailRequired": "Email is required.",
+      "invalidEmail": "Email is invalid.",
+      "nameRequired": "Name is required.",
+      "noUserWithEmail": "No user exists with that email.",
+      "passwordConfirmMatch": "Password and Confirm Password must match.",
+      "passwordRequired": "Password is required.",
+      "wrongPassword": "Wrong password. Please try again."
+    }
+  },
+
+  "posts": {
+    "actions": {
+      "deletePost": "Delete Post"
+    },
+    "labels": {
+      "addImages": "Add images",
+      "addPost": "Add post",
+      "posts": "Posts",
+      "usersPost": "{{name}}'s Post"
+    },
+    "prompts": {
+      "loginToLike": "You need to be logged in to like this post."
+    },
+    "form": {
+      "body": "Body"
+    }
+  },
+
+  "groups": {
+    "actions": {
+      "approve": "Approve",
+      "cancelRequest": "Cancel Request",
+      "deny": "Deny",
+      "edit": "Edit Group",
+      "join": "Join",
+      "leave": "Leave"
+    },
+    "form": {
+      "name": "Name",
+      "description": "Description"
+    },
+    "headers": {
+      "discoverGroups": "Discover Groups",
+      "organizeWithGroups": "Organize Your Community with Groups"
+    },
+    "errors": {
+      "couldNotCreate": "Group could not be created",
+      "couldNotUpdate": "Group could not be updated",
+      "couldNotUpdateSettings": "Could not update group settings"
+    },
+    "labels": {
+      "consensus": "Consensus",
+      "group": "Group",
+      "groupMembers_one": "{{count}} Group Member",
+      "groupMembers_other": "{{count}} Group Members",
+      "groupRoles": "Group Roles",
+      "groupSettings": "Group Settings",
+      "joined": "Joined",
+      "majority": "Majority Vote",
+      "memberRequests_one": "{{count}} Member Request",
+      "memberRequests_other": "{{count}} Member Requests",
+      "members_one": "{{count}} Member",
+      "members_other": "{{count}} Members",
+      "private": "Private",
+      "public": "Public",
+      "requests_one": "{{count}} Request",
+      "requests_other": "{{count}} Requests",
+      "settings": "Settings",
+      "xToPass": "X to Pass"
+    },
+    "prompts": {
+      "confirmLeave": "Are you sure you want to leave the group?",
+      "publicGroup": "Anyone can view the group page and any content posted by group members."
+    },
+    "tabs": {
+      "about": "About",
+      "events": "Events",
+      "feed": "Feed",
+      "proposals": "Proposals"
+    },
+    "settings": {
+      "names": {
+        "privacy": "Privacy"
+      },
+      "descriptions": {
+        "privacy": "Choose whether or not the group and it's content are viewable to the public."
+      }
+    },
+    "tips": {
+      "organizeWithGroups": "Groups are a great way to organize your community. Whether you want to share your interests, plan events, or collaborate on projects, groups are the perfect place to do it.",
+      "groupProposals": "Proposals can be used to change how groups function, how they're structured, and who's in charge."
+    }
+  },
+
+  "events": {
+    "headers": {
+      "discoverEvents": "Discover Events",
+      "pastEvents": "Past Events",
+      "planEvents": "Plan Events",
+      "upcomingEvents": "Upcoming Events",
+      "whatToExpect": "What to Expect"
+    },
+    "form": {
+      "name": "Event name",
+      "description": "What are the details?",
+      "endDateAndTime": "End Date and Time",
+      "externalLink": "External Link",
+      "includeLocation": "Include a place or address",
+      "inPerson": "In Person",
+      "inPersonOrVirtual": "In person or virtual?",
+      "location": "Add location",
+      "startDateAndTime": "Start Date and Time",
+      "virtual": "Virtual"
+    },
+    "labels": {
+      "duration": "Duration: {{duration}}",
+      "eventBy": "Event by",
+      "going": "Going",
+      "host": "Host",
+      "interested": "Interested",
+      "online": "Online",
+      "onlineEvent": "Online Event",
+      "onlineWithColon": "Online:",
+      "past": "Past",
+      "selectHost": "Choose a host",
+      "thisWeek": "This Week",
+      "upcoming": "Upcoming"
+    },
+    "actions": {
+      "createEvent": "Create Event",
+      "editEvent": "Edit Event"
+    },
+    "prompts": {
+      "noUpcomingEvents": "No upcoming events",
+      "planVirtualEvent": "Plan a virtual event"
+    },
+    "errors": {
+      "couldNotCreate": "Event could not be created",
+      "couldNotUpdate": "Event could not be updated",
+      "missingDetails": "Event details cannot be empty",
+      "missingHost": "Event must have a host",
+      "missingLocation": "Location cannot be empty for in person events",
+      "missingName": "Event name cannot be empty",
+      "onlineOrOffline": "Event must be either virtual or in person",
+      "invalidLink": "External link must be a valid URL"
+    },
+    "tabs": {
+      "about": "About",
+      "discussion": "Discussion"
+    }
+  },
+
+  "roles": {
+    "actions": {
+      "add": "Add",
+      "addMembers": "Add members",
+      "delete": "Delete Role",
+      "manageRoles": "Manage Roles"
+    },
+    "headers": {
+      "serverRoles": "Server Roles"
+    },
+    "form": {
+      "colorPickerLabel": "Role Color",
+      "pickColor": "Pick a Color"
+    },
+    "labels": {
+      "members": "Members",
+      "membersCount_one": "{{count}} Member",
+      "membersCount_other": "{{count}} Members"
+    },
+    "tabs": {
+      "display": "Display",
+      "members": "Members",
+      "permissions": "Permissions"
+    }
+  },
+
+  "permissions": {
+    "names": {
+      "approveMemberRequests": "Approve Member Requests",
+      "banMembers": "Ban Members",
+      "createEvents": "Create Events",
+      "createInvites": "Create Invites",
+      "deleteGroup": "Delete Group",
+      "updateGroup": "Edit Group",
+      "manageComments": "Manage Comments",
+      "manageEvents": "Manage Events",
+      "manageInvites": "Manage Invites",
+      "managePosts": "Manage Posts",
+      "manageRoles": "Manage Roles",
+      "manageSettings": "Manage Settings"
+    },
+    "descriptions": {
+      "approveMemberRequests": "Allows members to view member requests and to allow new members to join the group.",
+      "banGroupMembers": "Allows members to remove other members from the group.",
+      "banMembers": "Allows members to permanently ban other members from the server.",
+      "createEvents": "Allows members to create and plan events.",
+      "createInvites": "Allows members to invite new people to the server.",
+      "deleteGroup": "Allows members to permanently delete the group.",
+      "updateGroup": "Allows members to edit the group's name, description, and cover photo.",
+      "manageComments": "Allows members to remove or hide comments by other members.",
+      "manageEvents": "Allows members to remove or edit events created by other members.",
+      "manageGroupSettings": "Allows members to make changes to the group's settings.",
+      "manageInvites": "Allows members to create or delete invite links for the server.",
+      "managePosts": "Allows members to remove or hide posts by other members.",
+      "manageRoles": "Allows members to create new roles as well as edit or delete other roles."
+    },
+    "states": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "labels": {
+      "permissions": "Permissions"
+    }
+  },
+
+  "images": {
+    "labels": {
+      "attachedImagePreview": "Attached image preview",
+      "attachedImages": "Attached images",
+      "attachImages": "Attach images",
+      "coverPhoto": "Cover photo",
+      "profilePicture": "Profile picture",
+      "removeImage": "Remove image"
+    },
+    "errors": {
+      "unsupportedFormat": "Unsupported image format"
+    }
+  },
+
+  "invites": {
+    "actions": {
+      "generateLink": "Generate a New Link"
+    },
+    "prompts": {
+      "alreadySignedUp": "You've already signed up.",
+      "copiedToClipboard": "Copied to clipboard",
+      "expiredOrInvalid": "Your invite link is either expired or invalid.",
+      "inviteRequired": "You need to be invited in order to sign up."
+    },
+    "headers": {
+      "serverInvites": "Server Invites"
+    },
+    "form": {
+      "expiresAtOptions": {
+        "never": "Never (default)",
+        "oneDay": "1 day",
+        "oneMonth": "1 month",
+        "sevenDays": "7 days"
+      },
+      "maxUsesOptions": {
+        "noLimit": "No limit (default)",
+        "xUses_one": "{{count}} use",
+        "xUses_other": "{{count}} uses"
+      },
+      "labels": {
+        "expiresAt": "Expires after",
+        "maxUses": "Max number of uses"
+      }
+    },
+    "columnNames": {
+      "code": "CODE",
+      "expires": "EXPIRES",
+      "inviter": "INVITER",
+      "uses": "USES"
+    },
+    "labels": {
+      "usesWithColon": "Uses:"
+    }
+  },
+
+  "signUp": {
+    "errors": {
+      "confirmPassword": "Passwords do not match",
+      "missingEmail": "Email cannot be empty",
+      "missingName": "Name cannot be empty",
+      "missingPassword": "Password cannot be empty"
+    }
+  },
+
+  "time": {
+    "days": "{{days}}d",
+    "hours": "{{hours}}h",
+    "hr": "hr",
+    "infinity": "∞",
+    "min": "min",
+    "minutes": "{{minutes}}m",
+    "never": "Never",
+    "now": "now"
+  },
+
+  "search": {
+    "placeholder": "Search Praxis"
+  }
+}

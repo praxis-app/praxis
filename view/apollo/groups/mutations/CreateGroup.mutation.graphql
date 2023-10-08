@@ -1,0 +1,15 @@
+mutation CreateGroup($groupData: CreateGroupInput!) {
+  createGroup(groupData: $groupData) {
+    group {
+      ...GroupAvatar
+      description
+
+      myPermissions {
+        ...GroupPermissions
+      }
+      members {
+        id
+      }
+    }
+  }
+}

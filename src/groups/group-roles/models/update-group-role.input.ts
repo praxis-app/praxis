@@ -1,5 +1,5 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
-import { GroupRolePermissionInput } from "./group-role-permission.input";
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { GroupRolePermissionInput } from './group-role-permission.input';
 
 @InputType()
 export class UpdateGroupRoleInput {

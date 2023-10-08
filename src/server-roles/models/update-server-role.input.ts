@@ -1,5 +1,5 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
-import { ServerRolePermissionInput } from "./server-role-permission.input";
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { ServerRolePermissionInput } from './server-role-permission.input';
 
 @InputType()
 export class UpdateServerRoleInput {

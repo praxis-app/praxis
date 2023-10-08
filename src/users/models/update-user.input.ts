@@ -1,9 +1,9 @@
 // TODO: Add error handling for field validation
 
-import { Field, InputType, Int } from "@nestjs/graphql";
-import { Matches } from "class-validator";
-import { FileUpload, GraphQLUpload } from "graphql-upload";
-import { VALID_NAME_CHARACTERS } from "../../common/common.constants";
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { Matches } from 'class-validator';
+import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
+import { VALID_NAME_CHARACTERS } from '../../shared/shared.constants';
 
 @InputType()
 export class UpdateUserInput {
@@ -12,7 +12,7 @@ export class UpdateUserInput {
 
   @Field()
   @Matches(VALID_NAME_CHARACTERS, {
-    message: "Usernames cannot contain special characters",
+    message: 'Usernames cannot contain special characters',
   })
   name: string;
 

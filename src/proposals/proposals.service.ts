@@ -3,31 +3,35 @@
  * TODO: Add support for other voting models
  */
 
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { FileUpload } from "graphql-upload";
-import { FindOptionsWhere, In, Repository } from "typeorm";
-import { DefaultGroupSetting } from "../groups/groups.constants";
-import { GroupsService } from "../groups/groups.service";
-import { deleteImageFile, saveImage } from "../images/image.utils";
-import { ImagesService, ImageTypes } from "../images/images.service";
-import { Image } from "../images/models/image.model";
-import { User } from "../users/models/user.model";
-import { Vote } from "../votes/models/vote.model";
-import { VotesService } from "../votes/votes.service";
-import { sortConsensusVotesByType } from "../votes/votes.utils";
-import { CreateProposalInput } from "./models/create-proposal.input";
-import { Proposal } from "./models/proposal.model";
-import { UpdateProposalInput } from "./models/update-proposal.input";
-import { ProposalActionEventsService } from "./proposal-actions/proposal-action-events/proposal-action-events.service";
-import { ProposalActionRolesService } from "./proposal-actions/proposal-action-roles/proposal-action-roles.service";
-import { ProposalActionsService } from "./proposal-actions/proposal-actions.service";
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FileUpload } from 'graphql-upload-ts';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { GroupsService } from '../groups/groups.service';
+import { deleteImageFile, saveImage } from '../images/image.utils';
+import { ImagesService, ImageTypes } from '../images/images.service';
+import { Image } from '../images/models/image.model';
+import { User } from '../users/models/user.model';
+import { Vote } from '../votes/models/vote.model';
+import { VotesService } from '../votes/votes.service';
+import { sortConsensusVotesByType } from '../votes/votes.utils';
+import { CreateProposalInput } from './models/create-proposal.input';
+import { Proposal } from './models/proposal.model';
+import { UpdateProposalInput } from './models/update-proposal.input';
+import { ProposalActionEventsService } from './proposal-actions/proposal-action-events/proposal-action-events.service';
+import { ProposalActionRolesService } from './proposal-actions/proposal-action-roles/proposal-action-roles.service';
+import { ProposalActionsService } from './proposal-actions/proposal-actions.service';
 import {
   MIN_GROUP_SIZE_TO_RATIFY,
   MIN_VOTE_COUNT_TO_RATIFY,
   ProposalActionType,
   ProposalStage,
-} from "./proposals.constants";
+} from './proposals.constants';
+import {
+  GROUP_RATIFICATION_THRESHOLD,
+  GROUP_RESERVATIONS_LIMIT,
+  GROUP_STAND_ASIDES_LIMIT,
+} from '../groups/groups.constants';
 
 type ProposalWithCommentCount = Proposal & { commentCount: number };
 
@@ -44,7 +48,7 @@ export class ProposalsService {
     private imagesService: ImagesService,
     private proposalActionEventsService: ProposalActionEventsService,
     private proposalActionRolesService: ProposalActionRolesService,
-    private proposalActionsService: ProposalActionsService
+    private proposalActionsService: ProposalActionsService,
   ) {}
 
   async getProposal(id: number, relations?: string[]) {
@@ -62,23 +66,23 @@ export class ProposalsService {
     const mappedVotes = proposalIds.map(
       (id) =>
         votes.filter((vote: Vote) => vote.proposalId === id) ||
-        new Error(`Could not load votes for proposal: ${id}`)
+        new Error(`Could not load votes for proposal: ${id}`),
     );
     return mappedVotes;
   }
 
   async getProposalCommentCountBatch(proposalIds: number[]) {
     const proposals = (await this.repository
-      .createQueryBuilder("proposal")
-      .leftJoinAndSelect("proposal.comments", "comment")
-      .loadRelationCountAndMap("proposal.commentCount", "proposal.comments")
-      .select(["proposal.id"])
+      .createQueryBuilder('proposal')
+      .leftJoinAndSelect('proposal.comments', 'comment')
+      .loadRelationCountAndMap('proposal.commentCount', 'proposal.comments')
+      .select(['proposal.id'])
       .whereInIds(proposalIds)
       .getMany()) as ProposalWithCommentCount[];
 
     return proposalIds.map((id) => {
       const proposal = proposals.find(
-        (proposal: Proposal) => proposal.id === id
+        (proposal: Proposal) => proposal.id === id,
       );
       if (!proposal) {
         return new Error(`Could not load comment count for proposal: ${id}`);
@@ -94,7 +98,7 @@ export class ProposalsService {
     const mappedImages = proposalIds.map(
       (id) =>
         images.filter((image: Image) => image.proposalId === id) ||
-        new Error(`Could not load images for proposal: ${id}`)
+        new Error(`Could not load images for proposal: ${id}`),
     );
     return mappedImages;
   }
@@ -105,7 +109,7 @@ export class ProposalsService {
       action: { groupCoverPhoto, role, event, ...action },
       ...proposalData
     }: CreateProposalInput,
-    user: User
+    user: User,
   ) {
     const proposal = await this.repository.save({
       ...proposalData,
@@ -120,19 +124,19 @@ export class ProposalsService {
         await this.proposalActionsService.saveProposalActionImage(
           proposal.action.id,
           groupCoverPhoto,
-          ImageTypes.CoverPhoto
+          ImageTypes.CoverPhoto,
         );
       }
       if (role) {
         await this.proposalActionRolesService.createProposalActionRole(
           proposal.action.id,
-          role
+          role,
         );
       }
       if (event) {
         await this.proposalActionEventsService.createProposalActionEvent(
           proposal.action.id,
-          event
+          event,
         );
       }
     } catch (err) {
@@ -148,7 +152,7 @@ export class ProposalsService {
     action: { groupCoverPhoto, ...action },
     ...data
   }: UpdateProposalInput) {
-    const proposalWithAction = await this.getProposal(id, ["action"]);
+    const proposalWithAction = await this.getProposal(id, ['action']);
     const newAction = {
       ...proposalWithAction.action,
       ...action,
@@ -169,7 +173,7 @@ export class ProposalsService {
       await this.proposalActionsService.saveProposalActionImage(
         proposal.action.id,
         groupCoverPhoto,
-        ImageTypes.CoverPhoto
+        ImageTypes.CoverPhoto,
       );
     }
     if (images) {
@@ -197,7 +201,7 @@ export class ProposalsService {
     const {
       action: { id, actionType, groupDescription, groupName },
       groupId,
-    } = await this.getProposal(proposalId, ["action"]);
+    } = await this.getProposal(proposalId, ['action']);
 
     if (actionType === ProposalActionType.PlanGroupEvent) {
       await this.proposalActionsService.implementGroupEvent(id, groupId);
@@ -225,15 +229,15 @@ export class ProposalsService {
     if (actionType === ProposalActionType.ChangeGroupCoverPhoto) {
       await this.proposalActionsService.implementChangeGroupCoverPhoto(
         id,
-        groupId
+        groupId,
       );
     }
   }
 
   async isProposalRatifiable(proposalId: number) {
     const proposal = await this.getProposal(proposalId, [
-      "group.members",
-      "votes",
+      'group.members',
+      'votes',
     ]);
     if (
       proposal.stage !== ProposalStage.Voting ||
@@ -248,8 +252,7 @@ export class ProposalsService {
       votes,
     } = proposal;
 
-    const ratificationThreshold =
-      DefaultGroupSetting.RatificationThreshold * 0.01;
+    const ratificationThreshold = GROUP_RATIFICATION_THRESHOLD * 0.01;
 
     return this.hasConsensus(ratificationThreshold, members, votes);
   }
@@ -257,15 +260,15 @@ export class ProposalsService {
   async hasConsensus(
     ratificationThreshold: number,
     groupMembers: User[],
-    votes: Vote[]
+    votes: Vote[],
   ) {
     const { agreements, reservations, standAsides, blocks } =
       sortConsensusVotesByType(votes);
 
     return (
       agreements.length >= groupMembers.length * ratificationThreshold &&
-      reservations.length <= DefaultGroupSetting.ReservationsLimit &&
-      standAsides.length <= DefaultGroupSetting.StandAsidesLimit &&
+      reservations.length <= GROUP_RESERVATIONS_LIMIT &&
+      standAsides.length <= GROUP_STAND_ASIDES_LIMIT &&
       blocks.length === 0
     );
   }
