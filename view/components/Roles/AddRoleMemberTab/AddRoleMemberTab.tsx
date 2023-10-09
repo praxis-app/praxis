@@ -14,11 +14,11 @@ import { useUpdateGroupRoleMutation } from '../../apollo/groups/generated/Update
 import { AddServerRoleMemberTabFragment } from '../../apollo/roles/generated/AddServerRoleMemberTab.fragment';
 import { useUpdateServerRoleMutation } from '../../apollo/roles/generated/UpdateServerRole.mutation';
 import { UserAvatarFragment } from '../../apollo/users/generated/UserAvatar.fragment';
-import { NavigationPaths } from '../../constants/shared.constants';
-import Flex from '../Shared/Flex';
-import Modal from '../Shared/Modal';
-import AddRoleMemberOption from './AddRoleMemberOption';
-import RoleMember from './RoleMember/RoleMember';
+import { NavigationPaths } from '../../../constants/shared.constants';
+import Flex from '../../Shared/Flex';
+import Modal from '../../Shared/Modal';
+import AddRoleMemberOption from '../AddRoleMemberOption';
+import RoleMember from '../RoleMember/RoleMember';
 
 const FlexCardContent = styled(MuiCardContent)(() => ({
   display: 'flex',

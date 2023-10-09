@@ -12,7 +12,7 @@ import {
 import { useUpdateServerRoleMutation } from '../../../apollo/roles/generated/UpdateServerRole.mutation';
 import { DEFAULT_ROLE_COLOR } from '../../../constants/role.constants';
 import { getRandomString } from '../../../utils/shared.utils';
-import RoleForm from '../RoleForm';
+import RoleForm from '../RoleForm/RoleForm';
 
 interface Props {
   editRole?: ServerRoleFragment;

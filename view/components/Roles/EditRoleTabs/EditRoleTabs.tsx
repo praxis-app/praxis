@@ -4,15 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { EditGroupRoleTabsFragment } from '../../apollo/groups/generated/EditGroupRoleTabs.fragment';
 import { EditServerRoleTabsFragment } from '../../apollo/roles/generated/EditServerRoleTabs.fragment';
-import { EditRoleTabNames } from '../../constants/role.constants';
-import { useAboveBreakpoint } from '../../hooks/shared.hooks';
-import DeleteGroupRoleButton from '../Groups/GroupRoles/DeleteGroupRoleButton';
-import GroupPermissionsForm from '../Groups/GroupRoles/GroupPermissionsForm/GroupPermissionsForm';
-import GroupRoleForm from '../Groups/GroupRoles/GroupRoleForm/GroupRoleForm';
-import AddRoleMemberTab from './AddRoleMemberTab';
-import DeleteServerRoleButton from './ServerRoles/DeleteServerRoleButton';
-import ServerPermissionsForm from './ServerRoles/ServerPermissionsForm';
-import ServerRoleForm from './ServerRoles/ServerRoleForm';
+import { EditRoleTabNames } from '../../../constants/role.constants';
+import { useAboveBreakpoint } from '../../../hooks/shared.hooks';
+import DeleteGroupRoleButton from '../../Groups/GroupRoles/DeleteGroupRoleButton/DeleteGroupRoleButton';
+import GroupPermissionsForm from '../../Groups/GroupRoles/GroupPermissionsForm/GroupPermissionsForm';
+import GroupRoleForm from '../../Groups/GroupRoles/GroupRoleForm/GroupRoleForm';
+import AddRoleMemberTab from '../AddRoleMemberTab/AddRoleMemberTab';
+import DeleteServerRoleButton from '../ServerRoles/DeleteServerRoleButton';
+import ServerPermissionsForm from '../ServerRoles/ServerPermissionsForm/ServerPermissionsForm';
+import ServerRoleForm from '../ServerRoles/ServerRoleForm';
 
 interface Props {
   role: EditServerRoleTabsFragment | EditGroupRoleTabsFragment;

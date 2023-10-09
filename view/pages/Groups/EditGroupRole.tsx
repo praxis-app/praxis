@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useEditGroupRoleLazyQuery } from '../../apollo/groups/generated/EditGroupRole.query';
-import EditRoleTabs from '../../components/Roles/EditRoleTabs';
+import EditRoleTabs from '../../components/Roles/EditRoleTabs/EditRoleTabs';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import {
