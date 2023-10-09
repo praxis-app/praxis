@@ -40,7 +40,7 @@ import CoverPhoto from '../Images/CoverPhoto';
 import ExternalLink from '../Shared/ExternalLink';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
-import EventAttendeeButtons from './EventAttendeeButtons';
+import EventAttendeeButtons from './EventAttendeeButtons/EventAttendeeButtons';
 
 enum EventPageTabs {
   About = 'about',

@@ -13,7 +13,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { isLoggedInVar } from '../../apollo/cache';
 import { useEventsLazyQuery } from '../../apollo/events/generated/Events.query';
 import { EventsInput } from '../../apollo/gen';
-import EventCompact from '../../components/Events/EventCompact';
+import EventCompact from '../../components/Events/EventCompact/EventCompact';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import {
