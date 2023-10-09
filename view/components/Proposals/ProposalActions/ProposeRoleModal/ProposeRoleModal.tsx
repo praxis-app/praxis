@@ -21,33 +21,33 @@ import {
   GroupRolePermissionInput,
   ProposalActionRoleInput,
   ProposalActionRoleMemberInput,
-} from '../../../apollo/gen';
+} from '../../../../apollo/gen';
 import { useGroupMembersByGroupIdLazyQuery } from '../../../apollo/groups/generated/GroupMembersByGroupId.query';
 import { useGroupRoleByRoleIdLazyQuery } from '../../../apollo/groups/generated/GroupRoleByRoleId.query';
 import { useGroupRolesByGroupIdLazyQuery } from '../../../apollo/groups/generated/GroupRolesByGroupId.query';
-import { FieldNames } from '../../../constants/shared.constants';
+import { FieldNames } from '../../../../constants/shared.constants';
 import {
   ProposalActionFieldName,
   ProposalActionType,
   ProposeRoleModalFieldName,
-} from '../../../constants/proposal.constants';
+} from '../../../../constants/proposal.constants';
 import {
   DEFAULT_ROLE_COLOR,
   GROUP_PERMISSION_NAMES,
-} from '../../../constants/role.constants';
-import { initGroupRolePermissions } from '../../../utils/role.utils';
+} from '../../../../constants/role.constants';
+import { initGroupRolePermissions } from '../../../../utils/role.utils';
 import Accordion, {
   AccordionDetails,
   AccordionSummary,
-} from '../../Shared/Accordion';
-import ColorPicker from '../../Shared/ColorPicker';
-import Flex from '../../Shared/Flex';
-import Modal from '../../Shared/Modal';
-import PrimaryActionButton from '../../Shared/PrimaryActionButton';
-import ProgressBar from '../../Shared/ProgressBar';
-import { TextField } from '../../Shared/TextField';
-import ProposePermissionToggle from './ProposePermissionToggle';
-import ProposeRoleMemberOption from './ProposeRoleMemberOption';
+} from '../../../Shared/Accordion';
+import ColorPicker from '../../../Shared/ColorPicker';
+import Flex from '../../../Shared/Flex';
+import Modal from '../../../Shared/Modal';
+import PrimaryActionButton from '../../../Shared/PrimaryActionButton';
+import ProgressBar from '../../../Shared/ProgressBar';
+import { TextField } from '../../../Shared/TextField';
+import ProposePermissionToggle from '../ProposePermissionToggle';
+import ProposeRoleMemberOption from '../ProposeRoleMemberOption';
 
 export interface ProposeRoleModalValues {
   name: string;

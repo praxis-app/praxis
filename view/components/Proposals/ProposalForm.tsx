@@ -53,7 +53,7 @@ import ProposalActionEvent from './ProposalActions/ProposalActionEvent/ProposalA
 import ProposalActionFields from './ProposalActions/ProposalActionFields';
 import ProposalActionRole from './ProposalActions/ProposalActionRole/ProposalActionRole';
 import ProposeEventModal from './ProposalActions/ProposeEventModal';
-import ProposeRoleModal from './ProposalActions/ProposeRoleModal';
+import ProposeRoleModal from './ProposalActions/ProposeRoleModal/ProposeRoleModal';
 
 type ProposalFormErrors = {
   action: FormikErrors<ProposalActionInput>;
