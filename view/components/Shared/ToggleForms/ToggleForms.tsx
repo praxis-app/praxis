@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { ToggleFormsFragment } from '../../apollo/users/generated/ToggleForms.fragment';
 import { DarkMode } from '../../../styles/theme';
 import PostForm from '../../Posts/PostForm/PostForm';
-import ProposalForm from '../../Proposals/ProposalForm';
+import ProposalForm from '../../Proposals/ProposalForm/ProposalForm';
 import Card from '../Card';
 
 const ACTIVE_STYLES = {

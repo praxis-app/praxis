@@ -5,7 +5,7 @@ import { AttachedImageFragmentDoc } from '../../../Images/AttachedImage/generate
 import { UserAvatarFragmentDoc } from '../../../Users/UserAvatar/generated/UserAvatar.fragment';
 import { GroupAvatarFragmentDoc } from '../../../Groups/GroupAvatar/generated/GroupAvatar.fragment';
 import { GroupPermissionsFragmentDoc } from '../../../Groups/GroupRoles/GroupRoleForm/graphql/generated/GroupPermissions.fragment';
-import { EventAvatarFragmentDoc } from '../../../Events/EventAvatar/generated/EventAvatar.fragment';
+import { EventAvatarFragmentDoc } from '../../../Events/EventAvatar/graphql/generated/EventAvatar.fragment';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */

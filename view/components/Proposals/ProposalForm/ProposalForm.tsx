@@ -18,12 +18,12 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toastVar } from '../../apollo/cache';
+import { toastVar } from '../../../apollo/cache';
 import {
   CreateProposalInput,
   ProposalActionInput,
   UpdateProposalInput,
-} from '../../apollo/gen';
+} from '../../../apollo/gen';
 import { useDeleteImageMutation } from '../../apollo/images/generated/DeleteImage.mutation';
 import { useCreateProposalMutation } from '../../apollo/proposals/generated/CreateProposal.mutation';
 import { ProposalFormFragment } from '../../apollo/proposals/generated/ProposalForm.fragment';
@@ -36,24 +36,24 @@ import { useMeQuery } from '../../apollo/users/generated/Me.query';
 import {
   ProposalActionFieldName,
   ProposalActionType,
-} from '../../constants/proposal.constants';
+} from '../../../constants/proposal.constants';
 import {
   FieldNames,
   NavigationPaths,
   TypeNames,
-} from '../../constants/shared.constants';
-import { getProposalActionTypeOptions } from '../../utils/proposal.utils';
-import { getRandomString } from '../../utils/shared.utils';
-import AttachedImagePreview from '../Images/AttachedImagePreview';
-import ImageInput from '../Images/ImageInput';
-import Flex from '../Shared/Flex';
-import PrimaryActionButton from '../Shared/PrimaryActionButton';
-import TextFieldWithAvatar from '../Shared/TextFieldWithAvatar';
-import ProposalActionEvent from './ProposalActions/ProposalActionEvent/ProposalActionEvent';
-import ProposalActionFields from './ProposalActions/ProposalActionFields';
-import ProposalActionRole from './ProposalActions/ProposalActionRole/ProposalActionRole';
-import ProposeEventModal from './ProposalActions/ProposeEventModal';
-import ProposeRoleModal from './ProposalActions/ProposeRoleModal/ProposeRoleModal';
+} from '../../../constants/shared.constants';
+import { getProposalActionTypeOptions } from '../../../utils/proposal.utils';
+import { getRandomString } from '../../../utils/shared.utils';
+import AttachedImagePreview from '../../Images/AttachedImagePreview';
+import ImageInput from '../../Images/ImageInput';
+import Flex from '../../Shared/Flex';
+import PrimaryActionButton from '../../Shared/PrimaryActionButton';
+import TextFieldWithAvatar from '../../Shared/TextFieldWithAvatar';
+import ProposalActionEvent from '../ProposalActions/ProposalActionEvent/ProposalActionEvent';
+import ProposalActionFields from '../ProposalActions/ProposalActionFields';
+import ProposalActionRole from '../ProposalActions/ProposalActionRole/ProposalActionRole';
+import ProposeEventModal from '../ProposalActions/ProposeEventModal';
+import ProposeRoleModal from '../ProposalActions/ProposeRoleModal/ProposeRoleModal';
 
 type ProposalFormErrors = {
   action: FormikErrors<ProposalActionInput>;
