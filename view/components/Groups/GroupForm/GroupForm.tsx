@@ -12,13 +12,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toastVar } from '../../../apollo/cache';
 import { CreateGroupInput, UpdateGroupInput } from '../../../apollo/gen';
-import { useCreateGroupMutation } from '../../apollo/groups/generated/CreateGroup.mutation';
-import { GroupFormFragment } from '../../apollo/groups/generated/GroupForm.fragment';
-import {
-  GroupsDocument,
-  GroupsQuery,
-} from '../../apollo/groups/generated/Groups.query';
-import { useUpdateGroupMutation } from '../../apollo/groups/generated/UpdateGroup.mutation';
 import { FieldNames } from '../../../constants/shared.constants';
 import { getGroupPath } from '../../../utils/group.utils';
 import { getRandomString } from '../../../utils/shared.utils';
@@ -27,6 +20,13 @@ import ImageInput from '../../Images/ImageInput';
 import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import { TextField } from '../../Shared/TextField';
+import { useCreateGroupMutation } from '../../apollo/groups/generated/CreateGroup.mutation';
+import {
+  GroupsDocument,
+  GroupsQuery,
+} from '../../apollo/groups/generated/Groups.query';
+import { useUpdateGroupMutation } from '../../apollo/groups/generated/UpdateGroup.mutation';
+import { GroupFormFragment } from './generated/GroupForm.fragment';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
