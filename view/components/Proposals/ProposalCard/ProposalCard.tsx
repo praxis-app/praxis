@@ -29,7 +29,7 @@ import AttachedImageList from '../../Images/AttachedImageList';
 import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import UserAvatar from '../../Users/UserAvatar/UserAvatar';
-import { removeProposal } from '../DeleteProposalButton';
+import { removeProposal } from '../DeleteProposalButton/DeleteProposalButton';
 import ProposalAction from '../ProposalActions/ProposalAction/ProposalAction';
 import ProposalCardFooter from '../ProposalCardFooter';
 
