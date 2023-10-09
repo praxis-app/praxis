@@ -9,12 +9,12 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useGroupMembersLazyQuery } from '../../apollo/groups/generated/GroupMembers.query';
-import GroupMember from '../../components/Groups/GroupMember/GroupMember';
-import Breadcrumbs from '../../components/Shared/Breadcrumbs';
-import ProgressBar from '../../components/Shared/ProgressBar';
-import { TruncationSizes } from '../../constants/shared.constants';
-import { useIsDesktop } from '../../hooks/shared.hooks';
-import { getGroupPath } from '../../utils/group.utils';
+import GroupMember from '../../../components/Groups/GroupMember/GroupMember';
+import Breadcrumbs from '../../../components/Shared/Breadcrumbs';
+import ProgressBar from '../../../components/Shared/ProgressBar';
+import { TruncationSizes } from '../../../constants/shared.constants';
+import { useIsDesktop } from '../../../hooks/shared.hooks';
+import { getGroupPath } from '../../../utils/group.utils';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
