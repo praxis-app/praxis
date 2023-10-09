@@ -3,13 +3,13 @@ import { truncate } from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useEditGroupLazyQuery } from '../../apollo/groups/generated/EditGroup.query';
-import GroupForm from '../../components/Groups/GroupForm/GroupForm';
-import Breadcrumbs from '../../components/Shared/Breadcrumbs';
-import ProgressBar from '../../components/Shared/ProgressBar';
-import { TruncationSizes } from '../../constants/shared.constants';
-import { useIsDesktop } from '../../hooks/shared.hooks';
-import { getGroupPath } from '../../utils/group.utils';
+import GroupForm from '../../../components/Groups/GroupForm/GroupForm';
+import Breadcrumbs from '../../../components/Shared/Breadcrumbs';
+import ProgressBar from '../../../components/Shared/ProgressBar';
+import { TruncationSizes } from '../../../constants/shared.constants';
+import { useIsDesktop } from '../../../hooks/shared.hooks';
+import { getGroupPath } from '../../../utils/group.utils';
+import { useEditGroupLazyQuery } from './generated/EditGroup.query';
 
 const EditGroup = () => {
   const [getGroup, { data, loading, error }] = useEditGroupLazyQuery();
