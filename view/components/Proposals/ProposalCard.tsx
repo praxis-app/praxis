@@ -28,7 +28,7 @@ import GroupItemAvatar from '../Groups/GroupItemAvatar';
 import AttachedImageList from '../Images/AttachedImageList';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
-import UserAvatar from '../Users/UserAvatar';
+import UserAvatar from '../Users/UserAvatar/UserAvatar';
 import { removeProposal } from './DeleteProposalButton';
 import ProposalAction from './ProposalActions/ProposalAction';
 import ProposalCardFooter from './ProposalCardFooter';

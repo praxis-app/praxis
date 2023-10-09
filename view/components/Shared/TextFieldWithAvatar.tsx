@@ -1,6 +1,6 @@
 import { InputBase as MuiInputBase, InputBaseProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import UserAvatar from '../Users/UserAvatar';
+import UserAvatar from '../Users/UserAvatar/UserAvatar';
 import Flex from './Flex';
 
 const InputBase = styled(MuiInputBase)<InputBaseProps>(({ theme }) => ({

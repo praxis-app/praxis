@@ -4,7 +4,7 @@ import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
 import FollowButton from './FollowButton';
-import UserAvatar from './UserAvatar';
+import UserAvatar from './UserAvatar/UserAvatar';
 
 const StyledFlex = styled(Flex)(() => ({
   marginBottom: 15,

@@ -16,7 +16,7 @@ import CompactButton from '../Shared/CompactButton';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import { TextField } from '../Shared/TextField';
-import UserAvatar from './UserAvatar';
+import UserAvatar from './UserAvatar/UserAvatar';
 
 interface Props {
   user: EditProfileFormFragment;

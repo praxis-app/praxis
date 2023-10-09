@@ -13,7 +13,7 @@ import { isDeniedAccess } from '../../utils/error.utils';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { getGroupPath } from '../../utils/group.utils';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
-import MemberRequest from '../../components/Groups/MemberRequest';
+import MemberRequest from '../../components/Groups/MemberRequest/MemberRequest';
 import { TruncationSizes } from '../../constants/shared.constants';
 import { useEffect } from 'react';
 

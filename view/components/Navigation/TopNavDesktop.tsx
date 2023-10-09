@@ -12,7 +12,7 @@ import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
 import SearchBar from '../Shared/SearchBar';
-import UserAvatar from '../Users/UserAvatar';
+import UserAvatar from '../Users/UserAvatar/UserAvatar';
 import TopNavDropdown from './TopNavDropdown';
 
 const TOP_NAV_STYLES: SxProps = {

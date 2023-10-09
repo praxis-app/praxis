@@ -11,7 +11,7 @@ import { VoteTypes } from '../../constants/vote.constants';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
-import UserAvatar from '../Users/UserAvatar';
+import UserAvatar from '../Users/UserAvatar/UserAvatar';
 import { BASE_BADGE_STYLES } from './VoteBadge';
 
 interface Props {

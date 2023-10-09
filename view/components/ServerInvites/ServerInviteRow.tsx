@@ -11,7 +11,7 @@ import { timeFromNow } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
-import UserAvatar from '../Users/UserAvatar';
+import UserAvatar from '../Users/UserAvatar/UserAvatar';
 import { removeServerInvite } from './ServerInviteCard';
 import { TableCell } from './ServerInviteTable';
 

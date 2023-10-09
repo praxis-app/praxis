@@ -12,11 +12,11 @@ import {
   MemberRequestsQuery,
   MemberRequestsQueryVariables,
 } from '../../apollo/groups/generated/MemberRequests.query';
-import { TypeNames } from '../../constants/shared.constants';
-import { getUserProfilePath } from '../../utils/user.utils';
-import SharedFlex from '../Shared/Flex';
-import Link from '../Shared/Link';
-import UserAvatar from '../Users/UserAvatar';
+import { TypeNames } from '../../../constants/shared.constants';
+import { getUserProfilePath } from '../../../utils/user.utils';
+import SharedFlex from '../../Shared/Flex';
+import Link from '../../Shared/Link';
+import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 
 const Flex = styled(SharedFlex)(() => ({
   marginBottom: 15,

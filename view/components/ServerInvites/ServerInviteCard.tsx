@@ -27,7 +27,7 @@ import { getUserProfilePath } from '../../utils/user.utils';
 import CompactButton from '../Shared/CompactButton';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
-import UserAvatar from '../Users/UserAvatar';
+import UserAvatar from '../Users/UserAvatar/UserAvatar';
 
 export const removeServerInvite = (id: number) => (cache: ApolloCache<any>) => {
   cache.updateQuery<ServerInvitesQuery>(

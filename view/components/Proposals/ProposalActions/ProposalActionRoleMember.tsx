@@ -7,7 +7,7 @@ import { ProposalActionType } from '../../../constants/proposal.constants';
 import { getUserProfilePath } from '../../../utils/user.utils';
 import Flex from '../../Shared/Flex';
 import Link from '../../Shared/Link';
-import UserAvatar from '../../Users/UserAvatar';
+import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 import ChangeIcon from './ChangeIcon';
 
 interface Props {

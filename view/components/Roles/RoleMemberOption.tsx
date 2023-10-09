@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { UserAvatarFragment } from '../../apollo/users/generated/UserAvatar.fragment';
 import Flex from '../Shared/Flex';
-import UserAvatar from '../Users/UserAvatar';
+import UserAvatar from '../Users/UserAvatar/UserAvatar';
 
 export const ROLE_MEMBER_OPTION_STYLES: SxProps = {
   borderRadius: 2,

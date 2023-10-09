@@ -16,7 +16,7 @@ import { FORBIDDEN, NavigationPaths } from '../../constants/shared.constants';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
-import UserAvatar from '../Users/UserAvatar';
+import UserAvatar from '../Users/UserAvatar/UserAvatar';
 
 const OuterFlex = styled(Flex)(() => ({
   marginBottom: 12,

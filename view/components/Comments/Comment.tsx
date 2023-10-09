@@ -11,7 +11,7 @@ import AttachedImageList from '../Images/AttachedImageList';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
-import UserAvatar from '../Users/UserAvatar';
+import UserAvatar from '../Users/UserAvatar/UserAvatar';
 import CommentForm from './CommentForm';
 
 interface Props {

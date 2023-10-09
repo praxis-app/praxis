@@ -25,7 +25,7 @@ import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
 import ImageInput from '../Images/ImageInput';
 import Flex from '../Shared/Flex';
-import UserAvatar from '../Users/UserAvatar';
+import UserAvatar from '../Users/UserAvatar/UserAvatar';
 
 interface Props extends FormikFormProps {
   editComment?: CommentFormFragment;
