@@ -13,7 +13,7 @@ import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
-import { BASE_BADGE_STYLES } from '../Votes/VoteBadge';
+import { BASE_BADGE_STYLES } from '../Votes/VoteBadge/VoteBadge';
 import LikeButton from './LikeButton';
 import PostModal from './PostModal';
 

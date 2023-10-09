@@ -14,7 +14,7 @@ import { useEventPageLazyQuery } from '../../apollo/events/generated/EventPage.q
 import EventPageCard from '../../components/Events/EventPageCard';
 import PostForm from '../../components/Posts/PostForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
-import Feed from '../../components/Shared/Feed';
+import Feed from '../../components/Shared/Feed/Feed';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { TruncationSizes } from '../../constants/shared.constants';
 import { useIsDesktop } from '../../hooks/shared.hooks';

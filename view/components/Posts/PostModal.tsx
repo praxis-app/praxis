@@ -5,7 +5,7 @@ import { PostCardFragment } from '../../apollo/posts/generated/PostCard.fragment
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import CommentForm from '../Comments/CommentForm';
 import Modal from '../Shared/Modal';
-import PostCard from './PostCard';
+import PostCard from './PostCard/PostCard';
 
 interface Props {
   post: PostCardFragment;

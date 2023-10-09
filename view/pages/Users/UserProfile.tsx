@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { inviteTokenVar, isLoggedInVar } from '../../apollo/cache';
 import { useUserProfileQuery } from '../../apollo/users/generated/UserProfile.query';
-import Feed from '../../components/Shared/Feed';
+import Feed from '../../components/Shared/Feed/Feed';
 import Link from '../../components/Shared/Link';
 import ProgressBar from '../../components/Shared/ProgressBar';
-import ToggleForms from '../../components/Shared/ToggleForms';
+import ToggleForms from '../../components/Shared/ToggleForms/ToggleForms';
 import UserProfileCard from '../../components/Users/UserProfileCard';
 import { NavigationPaths } from '../../constants/shared.constants';
 

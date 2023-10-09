@@ -15,8 +15,8 @@ import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
-import VoteBadges from '../Votes/VoteBadges';
-import VoteMenu from '../Votes/VoteMenu';
+import VoteBadges from '../Votes/VoteBadges/VoteBadges';
+import VoteMenu from '../Votes/VoteMenu/VoteMenu';
 import ProposalModal from './ProposalModal';
 
 const ICON_STYLES: SxProps = {

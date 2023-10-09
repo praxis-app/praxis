@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { isLoggedInVar } from '../../apollo/cache';
 import { useProposalLazyQuery } from '../../apollo/proposals/generated/Proposal.query';
-import ProposalCard from '../../components/Proposals/ProposalCard';
+import ProposalCard from '../../components/Proposals/ProposalCard/ProposalCard';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { isDeniedAccess } from '../../utils/error.utils';
 

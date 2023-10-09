@@ -49,9 +49,9 @@ import ImageInput from '../Images/ImageInput';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import TextFieldWithAvatar from '../Shared/TextFieldWithAvatar';
-import ProposalActionEvent from './ProposalActions/ProposalActionEvent';
+import ProposalActionEvent from './ProposalActions/ProposalActionEvent/ProposalActionEvent';
 import ProposalActionFields from './ProposalActions/ProposalActionFields';
-import ProposalActionRole from './ProposalActions/ProposalActionRole';
+import ProposalActionRole from './ProposalActions/ProposalActionRole/ProposalActionRole';
 import ProposeEventModal from './ProposalActions/ProposeEventModal';
 import ProposeRoleModal from './ProposalActions/ProposeRoleModal';
 

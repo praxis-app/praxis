@@ -5,7 +5,7 @@ import { ProposalCardFragment } from '../../apollo/proposals/generated/ProposalC
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import CommentForm from '../Comments/CommentForm';
 import Modal from '../Shared/Modal';
-import ProposalCard from './ProposalCard';
+import ProposalCard from './ProposalCard/ProposalCard';
 
 interface Props {
   proposal: ProposalCardFragment;
