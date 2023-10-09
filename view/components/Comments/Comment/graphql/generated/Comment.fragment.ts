@@ -1,8 +1,8 @@
-import * as Types from '../../../../apollo/gen';
+import * as Types from '../../../../../apollo/gen';
 
 import { gql } from '@apollo/client';
-import { AttachedImageFragmentDoc } from '../../../Images/AttachedImage/generated/AttachedImage.fragment';
-import { UserAvatarFragmentDoc } from '../../../Users/UserAvatar/generated/UserAvatar.fragment';
+import { AttachedImageFragmentDoc } from '../../../../Images/AttachedImage/generated/AttachedImage.fragment';
+import { UserAvatarFragmentDoc } from '../../../../Users/UserAvatar/generated/UserAvatar.fragment';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
