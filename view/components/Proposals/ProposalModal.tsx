@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProposalCardFragment } from '../../apollo/proposals/generated/ProposalCard.fragment';
 import { useIsDesktop } from '../../hooks/shared.hooks';
-import CommentForm from '../Comments/CommentForm';
+import CommentForm from '../Comments/CommentForm/CommentForm';
 import Modal from '../Shared/Modal';
 import ProposalCard from './ProposalCard/ProposalCard';
 

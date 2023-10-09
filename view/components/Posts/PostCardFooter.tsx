@@ -9,7 +9,7 @@ import { isLoggedInVar } from '../../apollo/cache';
 import { PostCardFragment } from '../../apollo/posts/generated/PostCard.fragment';
 import { usePostCommentsLazyQuery } from '../../apollo/posts/generated/PostComments.query';
 import { inDevToast } from '../../utils/shared.utils';
-import CommentForm from '../Comments/CommentForm';
+import CommentForm from '../Comments/CommentForm/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
