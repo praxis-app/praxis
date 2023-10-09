@@ -12,11 +12,11 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../../apollo/cache';
 import { UpdateGroupConfigInput } from '../../../apollo/gen';
-import { GroupSettingsFormFragment } from '../../apollo/groups/generated/GroupSettingsForm.fragment';
-import { useUpdateGroupSettingsMutation } from '../../apollo/groups/generated/UpdateGroupSettings.mutation';
 import { GroupPrivacy } from '../../../constants/group.constants';
 import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
+import { GroupSettingsFormFragment } from './graphql/__generated__/GroupSettingsForm.fragment';
+import { useUpdateGroupSettingsMutation } from './graphql/__generated__/UpdateGroupSettings.mutation';
 
 type FormValues = Omit<UpdateGroupConfigInput, 'groupId'>;
 
