@@ -6,8 +6,8 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toastVar } from '../../apollo/cache';
-import { CreatePostInput, UpdatePostInput } from '../../apollo/gen';
+import { toastVar } from '../../../apollo/cache';
+import { CreatePostInput, UpdatePostInput } from '../../../apollo/gen';
 import { useDeleteImageMutation } from '../../apollo/images/generated/DeleteImage.mutation';
 import { useCreatePostMutation } from '../../apollo/posts/generated/CreatePost.mutation';
 import { PostFormFragment } from '../../apollo/posts/generated/PostForm.fragment';
@@ -20,13 +20,13 @@ import {
   FieldNames,
   NavigationPaths,
   TypeNames,
-} from '../../constants/shared.constants';
-import { getRandomString } from '../../utils/shared.utils';
-import AttachedImagePreview from '../Images/AttachedImagePreview';
-import ImageInput from '../Images/ImageInput';
-import Flex from '../Shared/Flex';
-import PrimaryActionButton from '../Shared/PrimaryActionButton';
-import TextFieldWithAvatar from '../Shared/TextFieldWithAvatar';
+} from '../../../constants/shared.constants';
+import { getRandomString } from '../../../utils/shared.utils';
+import AttachedImagePreview from '../../Images/AttachedImagePreview';
+import ImageInput from '../../Images/ImageInput';
+import Flex from '../../Shared/Flex';
+import PrimaryActionButton from '../../Shared/PrimaryActionButton';
+import TextFieldWithAvatar from '../../Shared/TextFieldWithAvatar';
 
 interface Props extends FormikFormProps {
   editPost?: PostFormFragment;

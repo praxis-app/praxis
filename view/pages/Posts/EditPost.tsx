@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useEditPostLazyQuery } from '../../apollo/posts/generated/EditPost.query';
 import DeletePostButton from '../../components/Posts/DeletePostButton';
-import PostForm from '../../components/Posts/PostForm';
+import PostForm from '../../components/Posts/PostForm/PostForm';
 import Card from '../../components/Shared/Card';
 import ProgressBar from '../../components/Shared/ProgressBar';
 

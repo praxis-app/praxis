@@ -10,7 +10,7 @@ import { MouseEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ToggleFormsFragment } from '../../apollo/users/generated/ToggleForms.fragment';
 import { DarkMode } from '../../../styles/theme';
-import PostForm from '../../Posts/PostForm';
+import PostForm from '../../Posts/PostForm/PostForm';
 import ProposalForm from '../../Proposals/ProposalForm';
 import Card from '../Card';
 

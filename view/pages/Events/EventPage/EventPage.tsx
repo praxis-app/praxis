@@ -12,7 +12,7 @@ import { useParams } from 'react-router-dom';
 import { isLoggedInVar } from '../../../apollo/cache';
 import { useEventPageLazyQuery } from '../../apollo/events/generated/EventPage.query';
 import EventPageCard from '../../../components/Events/EventPageCard/EventPageCard';
-import PostForm from '../../../components/Posts/PostForm';
+import PostForm from '../../../components/Posts/PostForm/PostForm';
 import Breadcrumbs from '../../../components/Shared/Breadcrumbs';
 import Feed from '../../../components/Shared/Feed/Feed';
 import ProgressBar from '../../../components/Shared/ProgressBar';
