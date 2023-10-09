@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useServerRolesQuery } from '../../apollo/roles/generated/ServerRoles.query';
 import RoleList from '../../components/Roles/RoleList';
-import ServerRoleForm from '../../components/Roles/ServerRoles/ServerRoleForm';
+import ServerRoleForm from '../../components/Roles/ServerRoles/ServerRoleForm/ServerRoleForm';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { isDeniedAccess } from '../../utils/error.utils';

@@ -10,9 +10,9 @@ import DeleteGroupRoleButton from '../../Groups/GroupRoles/DeleteGroupRoleButton
 import GroupPermissionsForm from '../../Groups/GroupRoles/GroupPermissionsForm/GroupPermissionsForm';
 import GroupRoleForm from '../../Groups/GroupRoles/GroupRoleForm/GroupRoleForm';
 import AddRoleMemberTab from '../AddRoleMemberTab/AddRoleMemberTab';
-import DeleteServerRoleButton from '../ServerRoles/DeleteServerRoleButton';
+import DeleteServerRoleButton from '../ServerRoles/DeleteServerRoleButton/DeleteServerRoleButton';
 import ServerPermissionsForm from '../ServerRoles/ServerPermissionsForm/ServerPermissionsForm';
-import ServerRoleForm from '../ServerRoles/ServerRoleForm';
+import ServerRoleForm from '../ServerRoles/ServerRoleForm/ServerRoleForm';
 
 interface Props {
   role: EditServerRoleTabsFragment | EditGroupRoleTabsFragment;

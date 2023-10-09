@@ -1,7 +1,7 @@
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toastVar } from '../../../apollo/cache';
+import { toastVar } from '../../../../apollo/cache';
 import { useDeleteServerRoleMutation } from '../../../apollo/roles/generated/DeleteServerRole.mutation';
 import {
   ServerRolesDocument,
@@ -10,8 +10,8 @@ import {
 import {
   NavigationPaths,
   TypeNames,
-} from '../../../constants/shared.constants';
-import DeleteButton from '../../Shared/DeleteButton';
+} from '../../../../constants/shared.constants';
+import DeleteButton from '../../../Shared/DeleteButton';
 
 interface Props {
   roleId: number;

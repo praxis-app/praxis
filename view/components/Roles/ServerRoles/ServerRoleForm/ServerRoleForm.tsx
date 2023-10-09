@@ -1,8 +1,8 @@
 import { FormikHelpers } from 'formik';
 import { produce } from 'immer';
 import { useState } from 'react';
-import { toastVar } from '../../../apollo/cache';
-import { CreateServerRoleInput } from '../../../apollo/gen';
+import { toastVar } from '../../../../apollo/cache';
+import { CreateServerRoleInput } from '../../../../apollo/gen';
 import { useCreateServerRoleMutation } from '../../../apollo/roles/generated/CreateServerRole.mutation';
 import { ServerRoleFragment } from '../../../apollo/roles/generated/ServerRole.fragment';
 import {
@@ -10,9 +10,9 @@ import {
   ServerRolesQuery,
 } from '../../../apollo/roles/generated/ServerRoles.query';
 import { useUpdateServerRoleMutation } from '../../../apollo/roles/generated/UpdateServerRole.mutation';
-import { DEFAULT_ROLE_COLOR } from '../../../constants/role.constants';
-import { getRandomString } from '../../../utils/shared.utils';
-import RoleForm from '../RoleForm/RoleForm';
+import { DEFAULT_ROLE_COLOR } from '../../../../constants/role.constants';
+import { getRandomString } from '../../../../utils/shared.utils';
+import RoleForm from '../../RoleForm/RoleForm';
 
 interface Props {
   editRole?: ServerRoleFragment;
