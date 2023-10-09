@@ -1,20 +1,18 @@
 import * as Types from '../../../../apollo/gen';
 
 import { gql } from '@apollo/client';
-import { GroupAvatarFragmentDoc } from '../../GroupAvatar/__generated__/GroupAvatar.fragment';
-import { GroupPermissionsFragmentDoc } from '../../GroupRoles/GroupRoleForm/graphql/__generated__/GroupPermissions.fragment';
+import { GroupPermissionsFragmentDoc } from '../../GroupRoles/GroupRoleForm/graphql/generated/GroupPermissions.fragment';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
 
-export type GroupCardFragment = {
+export type GroupProfileCardFragment = {
   __typename?: 'Group';
-  description: string;
+  id: number;
+  name: string;
   memberCount: number;
   memberRequestCount?: number | null;
   isJoinedByMe?: boolean;
-  id: number;
-  name: string;
   myPermissions?: {
     __typename?: 'GroupPermissions';
     approveMemberRequests: boolean;
@@ -29,19 +27,25 @@ export type GroupCardFragment = {
     updateGroup: boolean;
   };
   coverPhoto?: { __typename?: 'Image'; id: number } | null;
+  settings: { __typename?: 'GroupConfig'; isPublic: boolean };
 };
 
-export const GroupCardFragmentDoc = gql`
-  fragment GroupCard on Group {
-    ...GroupAvatar
-    description
+export const GroupProfileCardFragmentDoc = gql`
+  fragment GroupProfileCard on Group {
+    id
+    name
     memberCount
     memberRequestCount @include(if: $isLoggedIn)
     isJoinedByMe @include(if: $isLoggedIn)
     myPermissions @include(if: $isLoggedIn) {
       ...GroupPermissions
     }
+    coverPhoto {
+      id
+    }
+    settings {
+      isPublic
+    }
   }
-  ${GroupAvatarFragmentDoc}
   ${GroupPermissionsFragmentDoc}
 `;

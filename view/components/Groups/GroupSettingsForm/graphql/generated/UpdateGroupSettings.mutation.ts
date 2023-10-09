@@ -2,8 +2,8 @@ import * as Types from '../../../../../apollo/gen';
 
 import { gql } from '@apollo/client';
 import { GroupSettingsFormFragmentDoc } from './GroupSettingsForm.fragment';
-import { GroupProfileCardFragmentDoc } from '../../../GroupProfileCard/__generated__/GroupProfileCard.fragment';
-import { GroupCardFragmentDoc } from '../../../GroupCard/__generated__/GroupCard.fragment';
+import { GroupProfileCardFragmentDoc } from '../../../GroupProfileCard/generated/GroupProfileCard.fragment';
+import { GroupCardFragmentDoc } from '../../../GroupCard/generated/GroupCard.fragment';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
