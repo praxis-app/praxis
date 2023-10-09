@@ -14,7 +14,7 @@ import CommentsList from '../Comments/CommentList';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import { BASE_BADGE_STYLES } from '../Votes/VoteBadge/VoteBadge';
-import LikeButton from './LikeButton';
+import LikeButton from './LikeButton/LikeButton';
 import PostModal from './PostModal';
 
 export const ICON_STYLES: SxProps = {
