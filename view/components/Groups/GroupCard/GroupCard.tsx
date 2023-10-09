@@ -13,7 +13,7 @@ import {
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isLoggedInVar, toastVar } from '../../apollo/cache';
+import { isLoggedInVar, toastVar } from '../../../apollo/cache';
 import {
   DeleteGroupMutation,
   useDeleteGroupMutation,
@@ -27,17 +27,17 @@ import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
   TypeNames,
-} from '../../constants/shared.constants';
+} from '../../../constants/shared.constants';
 import {
   getEditGroupPath,
   getGroupMembersPath,
   getGroupPath,
   getMemberRequestsPath,
-} from '../../utils/group.utils';
-import ItemMenu from '../Shared/ItemMenu';
-import Link from '../Shared/Link';
-import GroupAvatar from './GroupAvatar/GroupAvatar';
-import JoinButton from './JoinButton';
+} from '../../../utils/group.utils';
+import ItemMenu from '../../Shared/ItemMenu';
+import Link from '../../Shared/Link';
+import GroupAvatar from '../GroupAvatar/GroupAvatar';
+import JoinButton from '../JoinButton';
 import { useNavigate } from 'react-router-dom';
 
 export const removeGroup =

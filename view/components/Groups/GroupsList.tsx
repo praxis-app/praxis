@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useGroupsQuery } from '../../apollo/groups/generated/Groups.query';
-import GroupCard from '../../components/Groups/GroupCard';
+import GroupCard from './GroupCard/GroupCard';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { isDeniedAccess } from '../../utils/error.utils';
 import LevelOneHeading from '../Shared/LevelOneHeading';

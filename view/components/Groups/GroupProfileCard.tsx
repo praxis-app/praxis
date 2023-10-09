@@ -38,7 +38,7 @@ import CoverPhoto from '../Images/CoverPhoto';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
-import { removeGroup } from './GroupCard';
+import { removeGroup } from './GroupCard/GroupCard';
 import JoinButton from './JoinButton';
 
 export const enum GroupTabs {
