@@ -1,8 +1,8 @@
 import * as Types from '../../../../apollo/gen';
 
 import { gql } from '@apollo/client';
-import { GroupAvatarFragmentDoc } from '../../GroupAvatar/generated/GroupAvatar.fragment';
-import { GroupPermissionsFragmentDoc } from '../../GroupRoles/GroupRoleForm/graphql/generated/GroupPermissions.fragment';
+import { GroupAvatarFragmentDoc } from '../../GroupAvatar/__generated__/GroupAvatar.fragment';
+import { GroupPermissionsFragmentDoc } from '../../GroupRoles/GroupRoleForm/graphql/__generated__/GroupPermissions.fragment';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */

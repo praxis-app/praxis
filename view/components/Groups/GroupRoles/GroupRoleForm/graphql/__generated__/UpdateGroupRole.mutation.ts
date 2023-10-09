@@ -1,10 +1,10 @@
 import * as Types from '../../../../../../apollo/gen';
 
 import { gql } from '@apollo/client';
-import { GroupRoleFragmentDoc } from '../../../../../Roles/Role/graphql/generated/GroupRole.fragment';
-import { GroupRolePermissionsFragmentDoc } from '../../../GroupPermissionsForm/generated/GroupRolePermissions.fragment';
-import { RoleMemberFragmentDoc } from '../../../../../Roles/RoleMember/generated/RoleMember.fragment';
-import { UserAvatarFragmentDoc } from '../../../../../Users/UserAvatar/generated/UserAvatar.fragment';
+import { GroupRoleFragmentDoc } from '../../../../../Roles/Role/graphql/__generated__/GroupRole.fragment';
+import { GroupRolePermissionsFragmentDoc } from '../../../GroupPermissionsForm/__generated__/GroupRolePermissions.fragment';
+import { RoleMemberFragmentDoc } from '../../../../../Roles/RoleMember/__generated__/RoleMember.fragment';
+import { UserAvatarFragmentDoc } from '../../../../../Users/UserAvatar/__generated__/UserAvatar.fragment';
 import { GroupPermissionsFragmentDoc } from './GroupPermissions.fragment';
 import * as Apollo from '@apollo/client';
 

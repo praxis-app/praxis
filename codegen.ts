@@ -26,7 +26,7 @@ const config: CodegenConfig = {
       preset: 'near-operation-file',
       presetConfig: {
         baseTypesPath: 'apollo/gen.ts',
-        folder: './generated',
+        folder: './__generated__',
         extension: '.ts',
       },
       plugins: [

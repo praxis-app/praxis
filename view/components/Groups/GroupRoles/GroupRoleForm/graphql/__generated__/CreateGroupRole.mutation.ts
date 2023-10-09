@@ -1,7 +1,7 @@
 import * as Types from '../../../../../../apollo/gen';
 
 import { gql } from '@apollo/client';
-import { GroupRoleFragmentDoc } from '../../../../../Roles/Role/graphql/generated/GroupRole.fragment';
+import { GroupRoleFragmentDoc } from '../../../../../Roles/Role/graphql/__generated__/GroupRole.fragment';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
