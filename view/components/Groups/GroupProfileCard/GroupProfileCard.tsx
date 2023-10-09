@@ -19,27 +19,27 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { isLoggedInVar } from '../../apollo/cache';
+import { isLoggedInVar } from '../../../apollo/cache';
 import { useDeleteGroupMutation } from '../../apollo/groups/generated/DeleteGroup.mutation';
 import { GroupProfileCardFragment } from '../../apollo/groups/generated/GroupProfileCard.fragment';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
   TAB_QUERY_PARAM,
-} from '../../constants/shared.constants';
-import { useAboveBreakpoint } from '../../hooks/shared.hooks';
+} from '../../../constants/shared.constants';
+import { useAboveBreakpoint } from '../../../hooks/shared.hooks';
 import {
   getEditGroupPath,
   getGroupMembersPath,
   getGroupPath,
   getMemberRequestsPath,
-} from '../../utils/group.utils';
-import CoverPhoto from '../Images/CoverPhoto';
-import Flex from '../Shared/Flex';
-import ItemMenu from '../Shared/ItemMenu';
-import Link from '../Shared/Link';
-import { removeGroup } from './GroupCard/GroupCard';
-import JoinButton from './JoinButton';
+} from '../../../utils/group.utils';
+import CoverPhoto from '../../Images/CoverPhoto';
+import Flex from '../../Shared/Flex';
+import ItemMenu from '../../Shared/ItemMenu';
+import Link from '../../Shared/Link';
+import { removeGroup } from '../GroupCard/GroupCard';
+import JoinButton from '../JoinButton';
 
 export const enum GroupTabs {
   About = 'about',

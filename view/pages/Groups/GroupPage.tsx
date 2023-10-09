@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { isLoggedInVar } from '../../apollo/cache';
 import { useGroupProfileLazyQuery } from '../../apollo/groups/generated/GroupProfile.query';
 import GroupEventsTab from '../../components/Groups/GroupEventsTab';
-import GroupProfileCard from '../../components/Groups/GroupProfileCard';
+import GroupProfileCard from '../../components/Groups/GroupProfileCard/GroupProfileCard';
 import Feed from '../../components/Shared/Feed';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import ToggleForms from '../../components/Shared/ToggleForms';

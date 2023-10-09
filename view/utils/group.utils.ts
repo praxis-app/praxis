@@ -1,4 +1,4 @@
-import { GroupTabs } from '../components/Groups/GroupProfileCard';
+import { GroupTabs } from '../components/Groups/GroupProfileCard/GroupProfileCard';
 import {
   NavigationPaths,
   TAB_QUERY_PARAM,
