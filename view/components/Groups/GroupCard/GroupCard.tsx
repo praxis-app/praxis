@@ -37,7 +37,7 @@ import {
 import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import GroupAvatar from '../GroupAvatar/GroupAvatar';
-import JoinButton from '../JoinButton';
+import JoinButton from '../JoinButton/JoinButton';
 import { useNavigate } from 'react-router-dom';
 
 export const removeGroup =

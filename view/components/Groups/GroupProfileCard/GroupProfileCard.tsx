@@ -39,7 +39,7 @@ import Flex from '../../Shared/Flex';
 import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import { removeGroup } from '../GroupCard/GroupCard';
-import JoinButton from '../JoinButton';
+import JoinButton from '../JoinButton/JoinButton';
 
 export const enum GroupTabs {
   About = 'about',
