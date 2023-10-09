@@ -28,13 +28,13 @@ import {
   isLoggedInVar,
   isNavDrawerOpenVar,
   isRefreshingTokenVar,
-} from '../../apollo/cache';
+} from '../../../apollo/cache';
 import { useIsFirstUserQuery } from '../../apollo/users/generated/IsFirstUser.query';
 import { useMeQuery } from '../../apollo/users/generated/Me.query';
-import { NavigationPaths } from '../../constants/shared.constants';
-import { getUserProfilePath } from '../../utils/user.utils';
-import Flex from '../Shared/Flex';
-import UserAvatar from '../Users/UserAvatar/UserAvatar';
+import { NavigationPaths } from '../../../constants/shared.constants';
+import { getUserProfilePath } from '../../../utils/user.utils';
+import Flex from '../../Shared/Flex';
+import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 
 const USER_AVATAR_STYLES: SxProps = {
   width: 21,

@@ -7,13 +7,13 @@ import {
   isLoggedInVar,
   isNavDrawerOpenVar,
   toastVar,
-} from '../../apollo/cache';
-import { LoginInput } from '../../apollo/gen';
-import Flex from '../../components/Shared/Flex';
-import LevelOneHeading from '../../components/Shared/LevelOneHeading';
-import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
-import { TextField } from '../../components/Shared/TextField';
-import { UserFieldNames } from '../../constants/user.constants';
+} from '../../../apollo/cache';
+import { LoginInput } from '../../../apollo/gen';
+import Flex from '../../Shared/Flex';
+import LevelOneHeading from '../../Shared/LevelOneHeading';
+import PrimaryActionButton from '../../Shared/PrimaryActionButton';
+import { TextField } from '../../Shared/TextField';
+import { UserFieldNames } from '../../../constants/user.constants';
 
 const LoginForm = () => {
   const [login] = useLoginMutation();

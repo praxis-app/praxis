@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { inviteTokenVar, isLoggedInVar } from '../../apollo/cache';
 import { useServerInviteLazyQuery } from '../../apollo/invites/generated/ServerInvite.query';
 import { useIsFirstUserQuery } from '../../apollo/users/generated/IsFirstUser.query';
-import SignUpForm from '../../components/Auth/SignUpForm';
+import SignUpForm from '../../components/Auth/SignUpForm/SignUpForm';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { INVITE_TOKEN } from '../../constants/server-invite.constants';
 import { NavigationPaths } from '../../constants/shared.constants';

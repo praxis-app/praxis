@@ -9,24 +9,24 @@ import {
   isLoggedInVar,
   isNavDrawerOpenVar,
   toastVar,
-} from '../../apollo/cache';
-import { SignUpInput } from '../../apollo/gen';
+} from '../../../apollo/cache';
+import { SignUpInput } from '../../../apollo/gen';
 import {
   IsFirstUserDocument,
   IsFirstUserQuery,
 } from '../../apollo/users/generated/IsFirstUser.query';
-import AttachedImagePreview from '../../components/Images/AttachedImagePreview';
-import ImageInput from '../../components/Images/ImageInput';
-import Flex from '../../components/Shared/Flex';
-import LevelOneHeading from '../../components/Shared/LevelOneHeading';
-import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
-import { TextField } from '../../components/Shared/TextField';
-import { INVITE_TOKEN } from '../../constants/server-invite.constants';
-import { UserFieldNames } from '../../constants/user.constants';
+import AttachedImagePreview from '../../Images/AttachedImagePreview';
+import ImageInput from '../../Images/ImageInput';
+import Flex from '../../Shared/Flex';
+import LevelOneHeading from '../../Shared/LevelOneHeading';
+import PrimaryActionButton from '../../Shared/PrimaryActionButton';
+import { TextField } from '../../Shared/TextField';
+import { INVITE_TOKEN } from '../../../constants/server-invite.constants';
+import { UserFieldNames } from '../../../constants/user.constants';
 import {
   getRandomString,
   removeLocalStorageItem,
-} from '../../utils/shared.utils';
+} from '../../../utils/shared.utils';
 import { useParams } from 'react-router-dom';
 
 const SignUpForm = () => {
