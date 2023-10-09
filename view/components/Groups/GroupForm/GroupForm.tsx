@@ -26,7 +26,7 @@ import {
   GroupsQuery,
 } from '../../apollo/groups/generated/Groups.query';
 import { useUpdateGroupMutation } from '../../apollo/groups/generated/UpdateGroup.mutation';
-import { GroupFormFragment } from './generated/GroupForm.fragment';
+import { GroupFormFragment } from './graphql/generated/GroupForm.fragment';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
