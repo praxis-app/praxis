@@ -3,10 +3,10 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useEditPostLazyQuery } from '../../apollo/posts/generated/EditPost.query';
-import DeletePostButton from '../../components/Posts/DeletePostButton/DeletePostButton';
-import PostForm from '../../components/Posts/PostForm/PostForm';
-import Card from '../../components/Shared/Card';
-import ProgressBar from '../../components/Shared/ProgressBar';
+import DeletePostButton from '../../../components/Posts/DeletePostButton/DeletePostButton';
+import PostForm from '../../../components/Posts/PostForm/PostForm';
+import Card from '../../../components/Shared/Card';
+import ProgressBar from '../../../components/Shared/ProgressBar';
 
 const EditPost = () => {
   const [getPost, { data, loading, error }] = useEditPostLazyQuery();

@@ -30,7 +30,7 @@ import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 import { removePost } from '../DeletePostButton/DeletePostButton';
-import PostCardFooter from '../PostCardFooter';
+import PostCardFooter from '../PostCardFooter/PostCardFooter';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,

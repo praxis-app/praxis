@@ -8,7 +8,7 @@ import { useLikePostMutation } from '../../apollo/posts/generated/LikePost.mutat
 import { TypeNames } from '../../../constants/shared.constants';
 import { Blurple } from '../../../styles/theme';
 import CardFooterButton from '../../Shared/CardFooterButton';
-import { ICON_STYLES } from '../PostCardFooter';
+import { ICON_STYLES } from '../PostCardFooter/PostCardFooter';
 
 interface Props {
   postId: number;

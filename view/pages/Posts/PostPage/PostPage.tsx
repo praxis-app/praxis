@@ -3,11 +3,11 @@ import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { isLoggedInVar } from '../../apollo/cache';
+import { isLoggedInVar } from '../../../apollo/cache';
 import { usePostLazyQuery } from '../../apollo/posts/generated/Post.query';
-import PostCard from '../../components/Posts/PostCard/PostCard';
-import ProgressBar from '../../components/Shared/ProgressBar';
-import { isDeniedAccess } from '../../utils/error.utils';
+import PostCard from '../../../components/Posts/PostCard/PostCard';
+import ProgressBar from '../../../components/Shared/ProgressBar';
+import { isDeniedAccess } from '../../../utils/error.utils';
 
 const PostPage = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
