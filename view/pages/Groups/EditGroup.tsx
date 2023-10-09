@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useEditGroupLazyQuery } from '../../apollo/groups/generated/EditGroup.query';
-import GroupForm from '../../components/Groups/GroupForm';
+import GroupForm from '../../components/Groups/GroupForm/GroupForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { TruncationSizes } from '../../constants/shared.constants';

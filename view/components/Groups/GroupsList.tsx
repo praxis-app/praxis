@@ -5,7 +5,7 @@ import GroupCard from '../../components/Groups/GroupCard';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { isDeniedAccess } from '../../utils/error.utils';
 import LevelOneHeading from '../Shared/LevelOneHeading';
-import GroupForm from './GroupForm';
+import GroupForm from './GroupForm/GroupForm';
 
 const GroupsList = () => {
   const { data, loading, error } = useGroupsQuery({
