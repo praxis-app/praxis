@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useEditEventLazyQuery } from '../../apollo/events/generated/EditEvent.query';
-import EventForm from '../../components/Events/EventForm';
+import EventForm from '../../components/Events/EventForm/EventForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import Card from '../../components/Shared/Card';
 import ProgressBar from '../../components/Shared/ProgressBar';

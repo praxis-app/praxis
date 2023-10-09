@@ -15,27 +15,27 @@ import { produce } from 'immer';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toastVar } from '../../apollo/cache';
+import { toastVar } from '../../../apollo/cache';
 import { useCreateEventMutation } from '../../apollo/events/generated/CreateEvent.mutation';
 import { EventFormFragment } from '../../apollo/events/generated/EventForm.fragment';
 import { useUpdateEventMutation } from '../../apollo/events/generated/UpdateEvent.mutation';
-import { CreateEventInput, UpdateEventInput } from '../../apollo/gen';
+import { CreateEventInput, UpdateEventInput } from '../../../apollo/gen';
 import {
   GroupEventsTabDocument,
   GroupEventsTabQuery,
 } from '../../apollo/groups/generated/GroupEventsTab.query';
 import { useGroupMembersByGroupIdLazyQuery } from '../../apollo/groups/generated/GroupMembersByGroupId.query';
-import { Blurple } from '../../styles/theme';
-import { getEventPath } from '../../utils/event.utils';
-import { getRandomString, isValidUrl } from '../../utils/shared.utils';
-import { startOfNextHour } from '../../utils/time.utils';
-import AttachedImagePreview from '../Images/AttachedImagePreview';
-import ImageInput from '../Images/ImageInput';
-import DateTimePicker from '../Shared/DateTimePicker';
-import Flex from '../Shared/Flex';
-import PrimaryActionButton from '../Shared/PrimaryActionButton';
-import ProgressBar from '../Shared/ProgressBar';
-import { TextField } from '../Shared/TextField';
+import { Blurple } from '../../../styles/theme';
+import { getEventPath } from '../../../utils/event.utils';
+import { getRandomString, isValidUrl } from '../../../utils/shared.utils';
+import { startOfNextHour } from '../../../utils/time.utils';
+import AttachedImagePreview from '../../Images/AttachedImagePreview';
+import ImageInput from '../../Images/ImageInput';
+import DateTimePicker from '../../Shared/DateTimePicker';
+import Flex from '../../Shared/Flex';
+import PrimaryActionButton from '../../Shared/PrimaryActionButton';
+import ProgressBar from '../../Shared/ProgressBar';
+import { TextField } from '../../Shared/TextField';
 
 export enum EventFormFieldName {
   Name = 'name',

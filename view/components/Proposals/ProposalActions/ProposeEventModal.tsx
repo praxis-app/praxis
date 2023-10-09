@@ -23,7 +23,7 @@ import { startOfNextHour } from '../../../utils/time.utils';
 import {
   EventFormFieldName,
   SHOW_ENDS_AT_BUTTON_STYLES,
-} from '../../Events/EventForm';
+} from '../../Events/EventForm/EventForm';
 import AttachedImagePreview from '../../Images/AttachedImagePreview';
 import ImageInput from '../../Images/ImageInput';
 import DateTimePicker from '../../Shared/DateTimePicker';

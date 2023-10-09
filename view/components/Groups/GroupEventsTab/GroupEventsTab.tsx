@@ -7,7 +7,7 @@ import { isLoggedInVar } from '../../../apollo/cache';
 import { useGroupEventsTabQuery } from '../../apollo/groups/generated/GroupEventsTab.query';
 import { DarkMode } from '../../../styles/theme';
 import EventCompact from '../../Events/EventCompact/EventCompact';
-import EventForm from '../../Events/EventForm';
+import EventForm from '../../Events/EventForm/EventForm';
 import Center from '../../Shared/Center';
 import GhostButton from '../../Shared/GhostButton';
 import Modal from '../../Shared/Modal';
