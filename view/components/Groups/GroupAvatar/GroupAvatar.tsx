@@ -1,8 +1,8 @@
 import { Avatar, AvatarProps } from '@mui/material';
 import { GroupAvatarFragment } from '../../apollo/groups/generated/GroupAvatar.fragment';
-import { getGroupPath } from '../../utils/group.utils';
-import { getImagePath } from '../../utils/image.utils';
-import Link from '../Shared/Link';
+import { getGroupPath } from '../../../utils/group.utils';
+import { getImagePath } from '../../../utils/image.utils';
+import Link from '../../Shared/Link';
 
 interface Props extends AvatarProps {
   group: GroupAvatarFragment;
