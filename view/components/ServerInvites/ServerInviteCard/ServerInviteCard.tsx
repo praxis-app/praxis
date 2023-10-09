@@ -13,21 +13,21 @@ import {
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toastVar } from '../../apollo/cache';
+import { toastVar } from '../../../apollo/cache';
 import { useDeleteServerInviteMutation } from '../../apollo/invites/generated/DeleteServerInvite.mutation';
 import { ServerInviteCardFragment } from '../../apollo/invites/generated/ServerInviteCard.fragment';
 import {
   ServerInvitesDocument,
   ServerInvitesQuery,
 } from '../../apollo/invites/generated/ServerInvites.query';
-import { TypeNames } from '../../constants/shared.constants';
-import { copyInviteLink } from '../../utils/server-invite.utils';
-import { timeFromNow } from '../../utils/time.utils';
-import { getUserProfilePath } from '../../utils/user.utils';
-import CompactButton from '../Shared/CompactButton';
-import Flex from '../Shared/Flex';
-import ItemMenu from '../Shared/ItemMenu';
-import UserAvatar from '../Users/UserAvatar/UserAvatar';
+import { TypeNames } from '../../../constants/shared.constants';
+import { copyInviteLink } from '../../../utils/server-invite.utils';
+import { timeFromNow } from '../../../utils/time.utils';
+import { getUserProfilePath } from '../../../utils/user.utils';
+import CompactButton from '../../Shared/CompactButton';
+import Flex from '../../Shared/Flex';
+import ItemMenu from '../../Shared/ItemMenu';
+import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 
 export const removeServerInvite = (id: number) => (cache: ApolloCache<any>) => {
   cache.updateQuery<ServerInvitesQuery>(

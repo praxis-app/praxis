@@ -12,7 +12,7 @@ import { getUserProfilePath } from '../../utils/user.utils';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar/UserAvatar';
-import { removeServerInvite } from './ServerInviteCard';
+import { removeServerInvite } from './ServerInviteCard/ServerInviteCard';
 import { TableCell } from './ServerInviteTable';
 
 interface Props {
