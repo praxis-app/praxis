@@ -15,8 +15,8 @@ import { UpdateGroupConfigInput } from '../../../apollo/gen';
 import { GroupPrivacy } from '../../../constants/group.constants';
 import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
-import { GroupSettingsFormFragment } from './graphql/__generated__/GroupSettingsForm.fragment';
-import { useUpdateGroupSettingsMutation } from './graphql/__generated__/UpdateGroupSettings.mutation';
+import { GroupSettingsFormFragment } from './graphql/generated/GroupSettingsForm.fragment';
+import { useUpdateGroupSettingsMutation } from './graphql/generated/UpdateGroupSettings.mutation';
 
 type FormValues = Omit<UpdateGroupConfigInput, 'groupId'>;
 
