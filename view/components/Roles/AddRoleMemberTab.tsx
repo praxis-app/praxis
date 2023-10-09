@@ -18,7 +18,7 @@ import { NavigationPaths } from '../../constants/shared.constants';
 import Flex from '../Shared/Flex';
 import Modal from '../Shared/Modal';
 import AddRoleMemberOption from './AddRoleMemberOption';
-import RoleMember from './RoleMember';
+import RoleMember from './RoleMember/RoleMember';
 
 const FlexCardContent = styled(MuiCardContent)(() => ({
   display: 'flex',

@@ -7,8 +7,8 @@ import { EditServerRoleTabsFragment } from '../../apollo/roles/generated/EditSer
 import { EditRoleTabNames } from '../../constants/role.constants';
 import { useAboveBreakpoint } from '../../hooks/shared.hooks';
 import DeleteGroupRoleButton from '../Groups/GroupRoles/DeleteGroupRoleButton';
-import GroupPermissionsForm from '../Groups/GroupRoles/GroupPermissionsForm';
-import GroupRoleForm from '../Groups/GroupRoles/GroupRoleForm';
+import GroupPermissionsForm from '../Groups/GroupRoles/GroupPermissionsForm/GroupPermissionsForm';
+import GroupRoleForm from '../Groups/GroupRoles/GroupRoleForm/GroupRoleForm';
 import AddRoleMemberTab from './AddRoleMemberTab';
 import DeleteServerRoleButton from './ServerRoles/DeleteServerRoleButton';
 import ServerPermissionsForm from './ServerRoles/ServerPermissionsForm';

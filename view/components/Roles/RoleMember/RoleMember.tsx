@@ -5,18 +5,21 @@ import { RemoveCircle } from '@mui/icons-material';
 import { IconButton, Typography, styled } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { toastVar } from '../../apollo/cache';
+import { toastVar } from '../../../apollo/cache';
 import { useDeleteGroupRoleMemberMutation } from '../../apollo/groups/generated/DeleteGroupRoleMember.mutation';
 import {
   DeleteServerRoleMemberMutation,
   useDeleteServerRoleMemberMutation,
 } from '../../apollo/roles/generated/DeleteServerRoleMember.mutation';
 import { RoleMemberFragment } from '../../apollo/roles/generated/RoleMember.fragment';
-import { FORBIDDEN, NavigationPaths } from '../../constants/shared.constants';
-import { getUserProfilePath } from '../../utils/user.utils';
-import Flex from '../Shared/Flex';
-import Link from '../Shared/Link';
-import UserAvatar from '../Users/UserAvatar/UserAvatar';
+import {
+  FORBIDDEN,
+  NavigationPaths,
+} from '../../../constants/shared.constants';
+import { getUserProfilePath } from '../../../utils/user.utils';
+import Flex from '../../Shared/Flex';
+import Link from '../../Shared/Link';
+import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 
 const OuterFlex = styled(Flex)(() => ({
   marginBottom: 12,

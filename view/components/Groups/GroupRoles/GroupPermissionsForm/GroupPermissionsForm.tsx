@@ -10,14 +10,14 @@
 import { Box, BoxProps } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { toastVar } from '../../../apollo/cache';
-import { GroupRolePermissionInput } from '../../../apollo/gen';
+import { toastVar } from '../../../../apollo/cache';
+import { GroupRolePermissionInput } from '../../../../apollo/gen';
 import { GroupRolePermissionsFragment } from '../../../apollo/groups/generated/GroupRolePermissions.fragment';
 import { useUpdateGroupRoleMutation } from '../../../apollo/groups/generated/UpdateGroupRole.mutation';
-import { GROUP_PERMISSION_NAMES } from '../../../constants/role.constants';
-import Flex from '../../Shared/Flex';
-import PrimaryActionButton from '../../Shared/PrimaryActionButton';
-import GroupPermissionToggle from './GroupPermissionToggle';
+import { GROUP_PERMISSION_NAMES } from '../../../../constants/role.constants';
+import Flex from '../../../Shared/Flex';
+import PrimaryActionButton from '../../../Shared/PrimaryActionButton';
+import GroupPermissionToggle from '../GroupPermissionToggle';
 
 interface Props extends BoxProps {
   permissions: GroupRolePermissionsFragment;

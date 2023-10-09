@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useGroupRolesLazyQuery } from '../../apollo/groups/generated/GroupRoles.query';
-import GroupRoleForm from '../../components/Groups/GroupRoles/GroupRoleForm';
+import GroupRoleForm from '../../components/Groups/GroupRoles/GroupRoleForm/GroupRoleForm';
 import RoleList from '../../components/Roles/RoleList';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
