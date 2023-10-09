@@ -10,16 +10,16 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { isLoggedInVar } from '../../apollo/cache';
+import { isLoggedInVar } from '../../../apollo/cache';
 import { useEventsLazyQuery } from '../../apollo/events/generated/Events.query';
-import { EventsInput } from '../../apollo/gen';
-import EventCompact from '../../components/Events/EventCompact/EventCompact';
-import LevelOneHeading from '../../components/Shared/LevelOneHeading';
-import ProgressBar from '../../components/Shared/ProgressBar';
+import { EventsInput } from '../../../apollo/gen';
+import EventCompact from '../../../components/Events/EventCompact/EventCompact';
+import LevelOneHeading from '../../../components/Shared/LevelOneHeading';
+import ProgressBar from '../../../components/Shared/ProgressBar';
 import {
   NavigationPaths,
   TAB_QUERY_PARAM,
-} from '../../constants/shared.constants';
+} from '../../../constants/shared.constants';
 
 enum EventTabs {
   Past = 'past',

@@ -1,7 +1,7 @@
 import { RouteObject } from 'react-router-dom';
-import EditEvent from '../pages/Events/EditEvent';
-import EventPage from '../pages/Events/EventPage';
-import EventsIndex from '../pages/Events/EventsIndex';
+import EditEvent from '../pages/Events/EditEvent/EditEvent';
+import EventPage from '../pages/Events/EventPage/EventPage';
+import EventsIndex from '../pages/Events/EventsIndex/EventsIndex';
 
 const eventsRouter: RouteObject = {
   path: '/events',

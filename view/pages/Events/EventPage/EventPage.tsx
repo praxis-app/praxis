@@ -9,17 +9,17 @@ import { truncate } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { isLoggedInVar } from '../../apollo/cache';
+import { isLoggedInVar } from '../../../apollo/cache';
 import { useEventPageLazyQuery } from '../../apollo/events/generated/EventPage.query';
-import EventPageCard from '../../components/Events/EventPageCard/EventPageCard';
-import PostForm from '../../components/Posts/PostForm';
-import Breadcrumbs from '../../components/Shared/Breadcrumbs';
-import Feed from '../../components/Shared/Feed/Feed';
-import ProgressBar from '../../components/Shared/ProgressBar';
-import { TruncationSizes } from '../../constants/shared.constants';
-import { useIsDesktop } from '../../hooks/shared.hooks';
-import { isDeniedAccess } from '../../utils/error.utils';
-import { getGroupEventsTabPath } from '../../utils/group.utils';
+import EventPageCard from '../../../components/Events/EventPageCard/EventPageCard';
+import PostForm from '../../../components/Posts/PostForm';
+import Breadcrumbs from '../../../components/Shared/Breadcrumbs';
+import Feed from '../../../components/Shared/Feed/Feed';
+import ProgressBar from '../../../components/Shared/ProgressBar';
+import { TruncationSizes } from '../../../constants/shared.constants';
+import { useIsDesktop } from '../../../hooks/shared.hooks';
+import { isDeniedAccess } from '../../../utils/error.utils';
+import { getGroupEventsTabPath } from '../../../utils/group.utils';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {

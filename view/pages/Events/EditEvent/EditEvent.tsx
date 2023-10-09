@@ -4,14 +4,14 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useEditEventLazyQuery } from '../../apollo/events/generated/EditEvent.query';
-import EventForm from '../../components/Events/EventForm/EventForm';
-import Breadcrumbs from '../../components/Shared/Breadcrumbs';
-import Card from '../../components/Shared/Card';
-import ProgressBar from '../../components/Shared/ProgressBar';
-import { TruncationSizes } from '../../constants/shared.constants';
-import { useIsDesktop } from '../../hooks/shared.hooks';
-import { getEventPath } from '../../utils/event.utils';
-import { getGroupEventsTabPath } from '../../utils/group.utils';
+import EventForm from '../../../components/Events/EventForm/EventForm';
+import Breadcrumbs from '../../../components/Shared/Breadcrumbs';
+import Card from '../../../components/Shared/Card';
+import ProgressBar from '../../../components/Shared/ProgressBar';
+import { TruncationSizes } from '../../../constants/shared.constants';
+import { useIsDesktop } from '../../../hooks/shared.hooks';
+import { getEventPath } from '../../../utils/event.utils';
+import { getGroupEventsTabPath } from '../../../utils/group.utils';
 
 const EditEvent = () => {
   const [getEvent, { data, loading, error }] = useEditEventLazyQuery({
