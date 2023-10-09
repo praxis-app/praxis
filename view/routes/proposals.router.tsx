@@ -1,6 +1,6 @@
 import { RouteObject } from 'react-router-dom';
-import EditProposal from '../pages/Proposals/EditProposal';
-import ProposalPage from '../pages/Proposals/ProposalPage';
+import EditProposal from '../pages/Proposals/EditProposal/EditProposal';
+import ProposalPage from '../pages/Proposals/ProposalPage/ProposalPage';
 
 const proposalsRouter: RouteObject = {
   path: '/proposals',

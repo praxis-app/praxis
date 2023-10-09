@@ -31,7 +31,7 @@ import Link from '../../Shared/Link';
 import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 import { removeProposal } from '../DeleteProposalButton/DeleteProposalButton';
 import ProposalAction from '../ProposalActions/ProposalAction/ProposalAction';
-import ProposalCardFooter from '../ProposalCardFooter';
+import ProposalCardFooter from '../ProposalCardFooter/ProposalCardFooter';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
