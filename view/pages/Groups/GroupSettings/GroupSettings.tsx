@@ -1,14 +1,14 @@
 import { Typography } from '@mui/material';
 import { truncate } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { useIsDesktop } from '../../hooks/shared.hooks';
+import { useIsDesktop } from '../../../hooks/shared.hooks';
 import { useParams } from 'react-router-dom';
-import { isDeniedAccess } from '../../utils/error.utils';
-import ProgressBar from '../../components/Shared/ProgressBar';
-import { TruncationSizes } from '../../constants/shared.constants';
-import { getGroupPath } from '../../utils/group.utils';
-import Breadcrumbs from '../../components/Shared/Breadcrumbs';
-import GroupSettingsForm from '../../components/Groups/GroupSettingsForm/GroupSettingsForm';
+import { isDeniedAccess } from '../../../utils/error.utils';
+import ProgressBar from '../../../components/Shared/ProgressBar';
+import { TruncationSizes } from '../../../constants/shared.constants';
+import { getGroupPath } from '../../../utils/group.utils';
+import Breadcrumbs from '../../../components/Shared/Breadcrumbs';
+import GroupSettingsForm from '../../../components/Groups/GroupSettingsForm/GroupSettingsForm';
 import { useGroupSettingsLazyQuery } from '../../apollo/groups/generated/GroupSettings.query';
 import { useEffect } from 'react';
 

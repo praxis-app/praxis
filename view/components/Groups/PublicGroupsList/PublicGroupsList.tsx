@@ -1,10 +1,10 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { usePublicGroupsQuery } from '../../apollo/groups/generated/PublicGroups.query';
-import GroupCard from './GroupCard/GroupCard';
-import GroupTipsCard from '../../components/Groups/GroupTipsCard';
-import ProgressBar from '../../components/Shared/ProgressBar';
-import { isDeniedAccess } from '../../utils/error.utils';
+import GroupCard from '../GroupCard/GroupCard';
+import GroupTipsCard from '../GroupTipsCard';
+import ProgressBar from '../../Shared/ProgressBar';
+import { isDeniedAccess } from '../../../utils/error.utils';
 
 const PublicGroupsList = () => {
   const { data, loading, error } = usePublicGroupsQuery({
