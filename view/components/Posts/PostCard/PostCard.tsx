@@ -29,7 +29,7 @@ import AttachedImageList from '../../Images/AttachedImageList';
 import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import UserAvatar from '../../Users/UserAvatar/UserAvatar';
-import { removePost } from '../DeletePostButton';
+import { removePost } from '../DeletePostButton/DeletePostButton';
 import PostCardFooter from '../PostCardFooter';
 
 const CardHeader = styled(MuiCardHeader)(() => ({

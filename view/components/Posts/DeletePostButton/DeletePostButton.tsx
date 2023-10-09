@@ -1,13 +1,16 @@
 import { ApolloCache, FetchResult } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toastVar } from '../../apollo/cache';
+import { toastVar } from '../../../apollo/cache';
 import {
   DeletePostMutation,
   useDeletePostMutation,
 } from '../../apollo/posts/generated/DeletePost.mutation';
-import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
-import DeleteButton from '../Shared/DeleteButton';
+import {
+  NavigationPaths,
+  TypeNames,
+} from '../../../constants/shared.constants';
+import DeleteButton from '../../Shared/DeleteButton';
 
 export const removePost =
   (postId: number) =>
