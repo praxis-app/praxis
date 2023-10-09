@@ -6,42 +6,53 @@ import { EventAttendeeButtonsFragmentDoc } from '../../EventAttendeeButtons/grap
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
 
-export type EventCompactFragment = {
+export type EventPageCardFragment = {
   __typename?: 'Event';
   id: number;
   name: string;
   description: string;
-  startsAt: any;
+  location?: string | null;
+  online: boolean;
+  externalLink?: string | null;
   interestedCount: number;
   goingCount: number;
-  online: boolean;
-  location?: string | null;
+  startsAt: any;
+  endsAt?: any | null;
   attendingStatus?: string | null;
+  host: { __typename?: 'User'; id: number; name: string };
   coverPhoto: { __typename?: 'Image'; id: number };
   group?: {
     __typename?: 'Group';
     id: number;
+    name: string;
     isJoinedByMe?: boolean;
     myPermissions?: { __typename?: 'GroupPermissions'; manageEvents: boolean };
   } | null;
 };
 
-export const EventCompactFragmentDoc = gql`
-  fragment EventCompact on Event {
+export const EventPageCardFragmentDoc = gql`
+  fragment EventPageCard on Event {
     id
     name
     description
-    startsAt
+    location
+    online
+    externalLink
     interestedCount
     goingCount
-    online
-    location
+    startsAt
+    endsAt
     ...EventAttendeeButtons @include(if: $isLoggedIn)
+    host {
+      id
+      name
+    }
     coverPhoto {
       id
     }
     group {
       id
+      name
       myPermissions @include(if: $isLoggedIn) {
         manageEvents
       }

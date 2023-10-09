@@ -23,24 +23,24 @@ import humanizeDuration from 'humanize-duration';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { isLoggedInVar, toastVar } from '../../apollo/cache';
+import { isLoggedInVar, toastVar } from '../../../apollo/cache';
 import { useDeleteEventMutation } from '../../apollo/events/generated/DeleteEvent.mutation';
 import { EventPageCardFragment } from '../../apollo/events/generated/EventPageCard.fragment';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
   TAB_QUERY_PARAM,
-} from '../../constants/shared.constants';
-import { useAboveBreakpoint } from '../../hooks/shared.hooks';
-import { getEventPath } from '../../utils/event.utils';
-import { getGroupEventsTabPath } from '../../utils/group.utils';
-import { formatDateTime } from '../../utils/time.utils';
-import { getUserProfilePath } from '../../utils/user.utils';
-import CoverPhoto from '../Images/CoverPhoto';
-import ExternalLink from '../Shared/ExternalLink';
-import ItemMenu from '../Shared/ItemMenu';
-import Link from '../Shared/Link';
-import EventAttendeeButtons from './EventAttendeeButtons/EventAttendeeButtons';
+} from '../../../constants/shared.constants';
+import { useAboveBreakpoint } from '../../../hooks/shared.hooks';
+import { getEventPath } from '../../../utils/event.utils';
+import { getGroupEventsTabPath } from '../../../utils/group.utils';
+import { formatDateTime } from '../../../utils/time.utils';
+import { getUserProfilePath } from '../../../utils/user.utils';
+import CoverPhoto from '../../Images/CoverPhoto';
+import ExternalLink from '../../Shared/ExternalLink';
+import ItemMenu from '../../Shared/ItemMenu';
+import Link from '../../Shared/Link';
+import EventAttendeeButtons from '../EventAttendeeButtons/EventAttendeeButtons';
 
 enum EventPageTabs {
   About = 'about',

@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { isLoggedInVar } from '../../apollo/cache';
 import { useEventPageLazyQuery } from '../../apollo/events/generated/EventPage.query';
-import EventPageCard from '../../components/Events/EventPageCard';
+import EventPageCard from '../../components/Events/EventPageCard/EventPageCard';
 import PostForm from '../../components/Posts/PostForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import Feed from '../../components/Shared/Feed/Feed';
