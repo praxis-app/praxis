@@ -4,14 +4,14 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useGroupRolesLazyQuery } from '../../apollo/groups/generated/GroupRoles.query';
-import GroupRoleForm from '../../components/Groups/GroupRoles/GroupRoleForm/GroupRoleForm';
-import RoleList from '../../components/Roles/RoleList';
-import Breadcrumbs from '../../components/Shared/Breadcrumbs';
-import ProgressBar from '../../components/Shared/ProgressBar';
-import { TruncationSizes } from '../../constants/shared.constants';
-import { useIsDesktop } from '../../hooks/shared.hooks';
-import { isDeniedAccess } from '../../utils/error.utils';
-import { getGroupPath } from '../../utils/group.utils';
+import GroupRoleForm from '../../../components/Groups/GroupRoles/GroupRoleForm/GroupRoleForm';
+import RoleList from '../../../components/Roles/RoleList';
+import Breadcrumbs from '../../../components/Shared/Breadcrumbs';
+import ProgressBar from '../../../components/Shared/ProgressBar';
+import { TruncationSizes } from '../../../constants/shared.constants';
+import { useIsDesktop } from '../../../hooks/shared.hooks';
+import { isDeniedAccess } from '../../../utils/error.utils';
+import { getGroupPath } from '../../../utils/group.utils';
 
 const GroupRoles = () => {
   const [getGroupRoles, { data, loading, error }] = useGroupRolesLazyQuery();

@@ -4,7 +4,7 @@ import EditGroupRole from '../pages/Groups/EditGroupRole/EditGroupRole';
 import GroupMemberRequests from '../pages/Groups/GroupMemberRequests';
 import GroupMembers from '../pages/Groups/GroupMembers/GroupMembers';
 import GroupPage from '../pages/Groups/GroupPage/GroupPage';
-import GroupRoles from '../pages/Groups/GroupRoles';
+import GroupRoles from '../pages/Groups/GroupRoles/GroupRoles';
 import GroupSettings from '../pages/Groups/GroupSettings';
 import GroupsIndex from '../pages/Groups/GroupsIndex';
 
