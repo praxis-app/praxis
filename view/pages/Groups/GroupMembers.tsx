@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useGroupMembersLazyQuery } from '../../apollo/groups/generated/GroupMembers.query';
-import GroupMember from '../../components/Groups/GroupMember';
+import GroupMember from '../../components/Groups/GroupMember/GroupMember';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { TruncationSizes } from '../../constants/shared.constants';

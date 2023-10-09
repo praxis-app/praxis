@@ -9,7 +9,7 @@ import {
   HomeFeedQuery,
 } from '../../apollo/users/generated/HomeFeed.query';
 import { useUnfollowUserMutation } from '../../apollo/users/generated/UnfollowUser.mutation';
-import GhostButton from '../Shared/GhostButton';
+import GhostButton from '../../Shared/GhostButton';
 
 interface Props {
   currentUserId: number;

@@ -26,7 +26,7 @@ import { formatDate } from '../../utils/time.utils';
 import CoverPhoto from '../Images/CoverPhoto';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
-import FollowButton from './FollowButton';
+import FollowButton from './FollowButton/FollowButton';
 import UserAvatar from './UserAvatar/UserAvatar';
 
 const CardContent = styled(MuiCardContent)(() => ({

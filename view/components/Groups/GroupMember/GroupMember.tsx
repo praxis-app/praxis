@@ -1,10 +1,10 @@
 import { styled, Typography } from '@mui/material';
 import { GroupMemberFragment } from '../../apollo/groups/generated/GroupMember.fragment';
-import { getUserProfilePath } from '../../utils/user.utils';
-import SharedFlex from '../Shared/Flex';
-import Link from '../Shared/Link';
-import FollowButton from '../Users/FollowButton';
-import UserAvatar from '../Users/UserAvatar/UserAvatar';
+import { getUserProfilePath } from '../../../utils/user.utils';
+import SharedFlex from '../../Shared/Flex';
+import Link from '../../Shared/Link';
+import FollowButton from '../../Users/FollowButton/FollowButton';
+import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 
 const Flex = styled(SharedFlex)(() => ({
   marginBottom: 15,

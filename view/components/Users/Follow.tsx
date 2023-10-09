@@ -3,7 +3,7 @@ import { FollowFragment } from '../../apollo/users/generated/Follow.fragment';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
-import FollowButton from './FollowButton';
+import FollowButton from './FollowButton/FollowButton';
 import UserAvatar from './UserAvatar/UserAvatar';
 
 const StyledFlex = styled(Flex)(() => ({
