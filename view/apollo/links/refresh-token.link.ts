@@ -1,16 +1,13 @@
 import { Observable } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
-import {
-  MutationNames,
-  UNAUTHORIZED,
-} from '../../../constants/shared.constants';
-import { formatGQLError } from '../../../utils/error.utils';
+import { MutationNames, UNAUTHORIZED } from '../../constants/shared.constants';
+import { formatGQLError } from '../../utils/error.utils';
 import {
   isAuthLoadingVar,
   isLoggedInVar,
   isRefreshingTokenVar,
-} from '../../cache';
-import client from '../../client';
+} from '../cache';
+import client from '../client';
 import { LogOutDocument } from '../generated/LogOut.mutation';
 import { RefreshTokenDocument } from '../generated/RefreshToken.mutation';
 

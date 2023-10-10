@@ -1,7 +1,7 @@
 import { ApolloClient, from } from '@apollo/client';
 import { createUploadLink } from 'apollo-upload-client';
 import { Environments } from '../constants/shared.constants';
-import refreshTokenLink from './auth/links/refresh-token.link';
+import refreshTokenLink from './links/refresh-token.link';
 import cache from './cache';
 
 const terminatingLink = createUploadLink({

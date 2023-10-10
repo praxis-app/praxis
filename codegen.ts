@@ -14,7 +14,7 @@ const DO_NOT_EDIT_PLUGIN = {
 
 const config: CodegenConfig = {
   schema: process.env.SCHEMA_URL,
-  documents: ['view/{pages,components}/**/*.graphql'],
+  documents: ['view/**/*.graphql'],
   ignoreNoDocuments: true,
 
   generates: {
