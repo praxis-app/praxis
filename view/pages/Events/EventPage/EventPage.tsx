@@ -10,7 +10,6 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { isLoggedInVar } from '../../../apollo/cache';
-import { useEventPageLazyQuery } from '../../apollo/events/generated/EventPage.query';
 import EventPageCard from '../../../components/Events/EventPageCard/EventPageCard';
 import PostForm from '../../../components/Posts/PostForm/PostForm';
 import Breadcrumbs from '../../../components/Shared/Breadcrumbs';
@@ -20,6 +19,7 @@ import { TruncationSizes } from '../../../constants/shared.constants';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../../utils/error.utils';
 import { getGroupEventsTabPath } from '../../../utils/group.utils';
+import { useEventPageLazyQuery } from './generated/EventPage.query';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {

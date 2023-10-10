@@ -3,9 +3,7 @@ import { Box, MenuItem, SxProps, TableRow } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../apollo/cache';
-import { useDeleteServerInviteMutation } from '../../apollo/invites/generated/DeleteServerInvite.mutation';
-import { ServerInviteCardFragment } from '../../apollo/invites/generated/ServerInviteCard.fragment';
-import { ServerInvitesQuery } from '../../apollo/invites/generated/ServerInvites.query';
+import { ServerInvitesQuery } from '../../pages/Invites/ServerInvites/generated/ServerInvites.query';
 import { copyInviteLink } from '../../utils/server-invite.utils';
 import { timeFromNow } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
@@ -13,6 +11,8 @@ import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar/UserAvatar';
 import { removeServerInvite } from './ServerInviteCard/ServerInviteCard';
+import { useDeleteServerInviteMutation } from './ServerInviteCard/generated/DeleteServerInvite.mutation';
+import { ServerInviteCardFragment } from './ServerInviteCard/generated/ServerInviteCard.fragment';
 import { TableCell } from './ServerInviteTable';
 
 interface Props {

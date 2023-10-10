@@ -15,8 +15,6 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
-import { UserProfileCardFragment } from '../../apollo/users/generated/UserProfileCard.fragment';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -24,10 +22,12 @@ import {
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import { formatDate } from '../../../utils/time.utils';
 import CoverPhoto from '../../Images/CoverPhoto';
+import { useMeQuery } from '../../Navigation/NavDrawer/generated/Me.query';
 import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import FollowButton from '../FollowButton/FollowButton';
 import UserAvatar from '../UserAvatar/UserAvatar';
+import { UserProfileCardFragment } from './generated/UserProfileCard.fragment';
 
 const CardContent = styled(MuiCardContent)(() => ({
   paddingTop: 0,

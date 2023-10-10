@@ -7,9 +7,9 @@ import {
   Typography,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { FeedItemFragment } from '../../apollo/posts/generated/FeedItem.fragment';
 import PostCard from '../../Posts/PostCard/PostCard';
 import ProposalCard from '../../Proposals/ProposalCard/ProposalCard';
+import { FeedItemFragment } from './generated/FeedItem.fragment';
 
 const CARD_CONTENT_STYLES: SxProps = {
   '&:last-child': {

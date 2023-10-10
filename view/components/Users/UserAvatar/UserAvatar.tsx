@@ -1,11 +1,11 @@
 import { Avatar, AvatarProps, useTheme } from '@mui/material';
 import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
-import { UserAvatarFragment } from '../../apollo/users/generated/UserAvatar.fragment';
 import { getImagePath } from '../../../utils/image.utils';
 import { getUserProfilePath } from '../../../utils/user.utils';
+import { useMeQuery } from '../../Navigation/NavDrawer/generated/Me.query';
 import Link from '../../Shared/Link';
+import { UserAvatarFragment } from './generated/UserAvatar.fragment';
 
 interface Props extends AvatarProps {
   imageFile?: File;

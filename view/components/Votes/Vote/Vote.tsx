@@ -6,13 +6,13 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { VoteFragment } from '../../apollo/votes/generated/Vote.fragment';
 import { VoteTypes } from '../../../constants/vote.constants';
 import { getUserProfilePath } from '../../../utils/user.utils';
 import Flex from '../../Shared/Flex';
 import Link from '../../Shared/Link';
 import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 import { BASE_BADGE_STYLES } from '../VoteBadge/VoteBadge';
+import { VoteFragment } from './generated/Vote.fragment';
 
 interface Props {
   vote: VoteFragment;

@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { isLoggedInVar } from '../../../apollo/cache';
-import { useGroupProfileLazyQuery } from '../../apollo/groups/generated/GroupProfile.query';
 import GroupEventsTab from '../../../components/Groups/GroupEventsTab/GroupEventsTab';
 import GroupProfileCard from '../../../components/Groups/GroupProfileCard/GroupProfileCard';
 import Feed from '../../../components/Shared/Feed/Feed';
 import ProgressBar from '../../../components/Shared/ProgressBar';
 import ToggleForms from '../../../components/Shared/ToggleForms/ToggleForms';
 import { isDeniedAccess } from '../../../utils/error.utils';
+import { useGroupProfileLazyQuery } from './generated/GroupProfile.query';
 
 const GroupPage = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);

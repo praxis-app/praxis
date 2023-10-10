@@ -1,16 +1,16 @@
 import {
   Card,
-  styled,
+  TableCell as MuiTableCell,
   Table,
   TableBody,
-  TableCell as MuiTableCell,
   TableHead,
   TableRow,
+  styled,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ServerInviteCardFragment } from '../../apollo/invites/generated/ServerInviteCard.fragment';
-import { ServerInvitesQuery } from '../../apollo/invites/generated/ServerInvites.query';
 import ServerInviteRow from '../../components/ServerInvites/ServerInviteRow';
+import { ServerInvitesQuery } from '../../pages/Invites/ServerInvites/generated/ServerInvites.query';
+import { ServerInviteCardFragment } from './ServerInviteCard/generated/ServerInviteCard.fragment';
 
 export const TableCell = styled(MuiTableCell)(({ theme }) => ({
   color: theme.palette.text.primary,
