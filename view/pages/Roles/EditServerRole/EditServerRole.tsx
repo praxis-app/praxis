@@ -4,12 +4,12 @@ import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useEditServerRoleLazyQuery } from '../../apollo/roles/generated/EditServerRole.query';
 import EditRoleTabs from '../../../components/Roles/EditRoleTabs/EditRoleTabs';
 import Breadcrumbs from '../../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../../components/Shared/ProgressBar';
 import { NavigationPaths } from '../../../constants/shared.constants';
 import { isDeniedAccess } from '../../../utils/error.utils';
+import { useEditServerRoleLazyQuery } from './generated/EditServerRole.query';
 
 const EditServerRole = () => {
   const [getServerRole, { data, loading, error }] =

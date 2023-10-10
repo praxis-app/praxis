@@ -8,13 +8,13 @@ import { truncate } from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useFollowingLazyQuery } from '../../apollo/users/generated/Following.query';
 import Breadcrumbs from '../../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../../components/Shared/ProgressBar';
 import Follow from '../../../components/Users/Follow/Follow';
 import { TruncationSizes } from '../../../constants/shared.constants';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import { getUserProfilePath } from '../../../utils/user.utils';
+import { useFollowingLazyQuery } from './generated/Following.query';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {

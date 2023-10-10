@@ -1,6 +1,5 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useServerInvitesQuery } from '../../apollo/invites/generated/ServerInvites.query';
 import ServerInviteCard from '../../../components/ServerInvites/ServerInviteCard/ServerInviteCard';
 import ServerInviteForm from '../../../components/ServerInvites/ServerInviteForm/ServerInviteForm';
 import ServerInviteTable from '../../../components/ServerInvites/ServerInviteTable';
@@ -8,6 +7,7 @@ import LevelOneHeading from '../../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../../components/Shared/ProgressBar';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../../utils/error.utils';
+import { useServerInvitesQuery } from './generated/ServerInvites.query';
 
 const ServerInvites = () => {
   const { data, loading, error } = useServerInvitesQuery();

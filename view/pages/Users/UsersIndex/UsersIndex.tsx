@@ -1,13 +1,13 @@
 import { Person as UserIcon } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useUsersQuery } from '../../apollo/users/generated/Users.query';
 import Flex from '../../../components/Shared/Flex';
 import LevelOneHeading from '../../../components/Shared/LevelOneHeading';
 import Link from '../../../components/Shared/Link';
 import ProgressBar from '../../../components/Shared/ProgressBar';
 import { isDeniedAccess } from '../../../utils/error.utils';
 import { getUserProfilePath } from '../../../utils/user.utils';
+import { useUsersQuery } from './generated/Users.query';
 
 const UsersIndex = () => {
   const { data, error, loading } = useUsersQuery();

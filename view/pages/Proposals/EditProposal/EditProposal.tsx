@@ -2,8 +2,8 @@ import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useEditProposalLazyQuery } from '../../apollo/proposals/generated/EditProposal.query';
 import ProgressBar from '../../../components/Shared/ProgressBar';
+import { useEditProposalLazyQuery } from './generated/EditProposal.query';
 
 const EditProposal = () => {
   const [getProposal, { data, loading, error }] = useEditProposalLazyQuery();
