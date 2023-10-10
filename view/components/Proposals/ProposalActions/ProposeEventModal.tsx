@@ -13,7 +13,6 @@ import { Form, Formik, FormikErrors } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProposalActionEventInput } from '../../../apollo/gen';
-import { useGroupMembersByGroupIdLazyQuery } from '../../../apollo/groups/generated/GroupMembersByGroupId.query';
 import {
   ProposalActionFieldName,
   ProposalActionType,
@@ -24,6 +23,7 @@ import {
   EventFormFieldName,
   SHOW_ENDS_AT_BUTTON_STYLES,
 } from '../../Events/EventForm/EventForm';
+import { useGroupMembersByGroupIdLazyQuery } from '../../Events/EventForm/graphql/generated/GroupMembersByGroupId.query';
 import AttachedImagePreview from '../../Images/AttachedImagePreview';
 import ImageInput from '../../Images/ImageInput';
 import DateTimePicker from '../../Shared/DateTimePicker';

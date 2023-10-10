@@ -1,10 +1,10 @@
 import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ProposalActionFragment } from '../../../apollo/proposals/generated/ProposalAction.fragment';
 import { ProposalActionType } from '../../../../constants/proposal.constants';
 import AttachedImage from '../../../Images/AttachedImage/AttachedImage';
 import ProposalActionEvent from '../ProposalActionEvent/ProposalActionEvent';
 import ProposalActionRole from '../ProposalActionRole/ProposalActionRole';
+import { ProposalActionFragment } from './generated/ProposalAction.fragment';
 
 interface Props {
   action: ProposalActionFragment;

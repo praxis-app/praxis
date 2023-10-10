@@ -6,8 +6,6 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { ProposalActionEventInput } from '../../../../apollo/gen';
-import { ProposalActionEventFragment } from '../../../apollo/proposals/generated/ProposalActionEvent.fragment';
-import { useUserByUserIdLazyQuery } from '../../../apollo/users/generated/UserByUserId.query';
 import {
   useAboveBreakpoint,
   useIsDesktop,
@@ -23,6 +21,8 @@ import Accordion, {
 } from '../../../Shared/Accordion';
 import ExternalLink from '../../../Shared/ExternalLink';
 import Link from '../../../Shared/Link';
+import { ProposalActionEventFragment } from './graphql/generated/ProposalActionEvent.fragment';
+import { useUserByUserIdLazyQuery } from './graphql/generated/UserByUserId.query';
 
 interface Props {
   event: ProposalActionEventFragment | ProposalActionEventInput;

@@ -1,14 +1,14 @@
 import { SxProps, Typography, useTheme } from '@mui/material';
 import { ProposalActionRoleMemberInput } from '../../../../apollo/gen';
-import { ProposalActionRoleMemberFragment } from '../../../apollo/proposals/generated/ProposalActionRoleMember.fragment';
-import { UserAvatarFragment } from '../../../apollo/users/generated/UserAvatar.fragment';
-import { ChangeType } from '../../../../constants/shared.constants';
 import { ProposalActionType } from '../../../../constants/proposal.constants';
+import { ChangeType } from '../../../../constants/shared.constants';
 import { getUserProfilePath } from '../../../../utils/user.utils';
 import Flex from '../../../Shared/Flex';
 import Link from '../../../Shared/Link';
 import UserAvatar from '../../../Users/UserAvatar/UserAvatar';
+import { UserAvatarFragment } from '../../../Users/UserAvatar/generated/UserAvatar.fragment';
 import ChangeIcon from '../ChangeIcon';
+import { ProposalActionRoleMemberFragment } from './generated/ProposalActionRoleMember.fragment';
 
 interface Props {
   actionType: ProposalActionType;

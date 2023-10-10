@@ -1,8 +1,8 @@
 import { ProposalActionRoleMemberInput } from '../../../apollo/gen';
-import { RoleMemberFragment } from '../../../apollo/roles/generated/RoleMember.fragment';
-import { UserAvatarFragment } from '../../../apollo/users/generated/UserAvatar.fragment';
 import { ChangeType } from '../../../constants/shared.constants';
+import { RoleMemberFragment } from '../../Roles/RoleMember/generated/RoleMember.fragment';
 import RoleMemberOption from '../../Roles/RoleMemberOption';
+import { UserAvatarFragment } from '../../Users/UserAvatar/generated/UserAvatar.fragment';
 
 interface Props {
   member: UserAvatarFragment;

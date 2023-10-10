@@ -1,11 +1,11 @@
 import { CheckBox } from '@mui/icons-material';
 import { SxProps, Typography, useTheme } from '@mui/material';
 import { GroupRolePermissionInput } from '../../../../apollo/gen';
-import { ProposalActionPermissionFragment } from '../../../apollo/proposals/generated/ProposalActionPermission.fragment';
-import { ChangeType } from '../../../../constants/shared.constants';
 import { ProposalActionType } from '../../../../constants/proposal.constants';
+import { ChangeType } from '../../../../constants/shared.constants';
 import { getPermissionText } from '../../../../utils/role.utils';
 import ChangeIcon from '../ChangeIcon';
+import { ProposalActionPermissionFragment } from './generated/ProposalActionPermission.fragment';
 
 const CHECK_BOX_ICON_STYLES: SxProps = {
   fontSize: 18,

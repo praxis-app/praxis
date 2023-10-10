@@ -1,10 +1,10 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useHomeFeedQuery } from '../../apollo/users/generated/HomeFeed.query';
 import { isDeniedAccess } from '../../../utils/error.utils';
 import Feed from '../../Shared/Feed/Feed';
 import ProgressBar from '../../Shared/ProgressBar';
 import ToggleForms from '../../Shared/ToggleForms/ToggleForms';
+import { useHomeFeedQuery } from './generated/HomeFeed.query';
 
 const HomeFeed = () => {
   const { data, loading, error } = useHomeFeedQuery();

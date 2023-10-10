@@ -15,9 +15,6 @@ import {
   ProposalActionRoleInput,
   ProposalActionRoleMemberInput,
 } from '../../../../apollo/gen';
-import { useGroupRoleByRoleIdLazyQuery } from '../../../apollo/groups/generated/GroupRoleByRoleId.query';
-import { ProposalActionRoleFragment } from '../../../apollo/proposals/generated/ProposalActionRole.fragment';
-import { useUsersByIdsLazyQuery } from '../../../apollo/users/generated/UsersByIds.query';
 import { ProposalActionType } from '../../../../constants/proposal.constants';
 import { ChangeType } from '../../../../constants/shared.constants';
 import { useIsDesktop } from '../../../../hooks/shared.hooks';
@@ -32,6 +29,9 @@ import ProgressBar from '../../../Shared/ProgressBar';
 import ChangeIcon from '../ChangeIcon';
 import ProposalActionPermission from '../ProposalActionPermission/ProposalActionPermission';
 import ProposalActionRoleMember from '../ProposalActionRoleMember/ProposalActionRoleMember';
+import { useGroupRoleByRoleIdLazyQuery } from '../ProposeRoleModal/generated/GroupRoleByRoleId.query';
+import { ProposalActionRoleFragment } from './graphql/generated/ProposalActionRole.fragment';
+import { useUsersByIdsLazyQuery } from './graphql/generated/UsersByIds.query';
 
 interface Props extends Omit<BoxProps, 'role'> {
   role: ProposalActionRoleFragment | ProposalActionRoleInput;
