@@ -6,8 +6,6 @@ import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isLoggedInVar, toastVar } from '../../../apollo/cache';
-import { ProposalCardFragment } from '../../apollo/proposals/generated/ProposalCard.fragment';
-import { useProposalCommentsLazyQuery } from '../../apollo/proposals/generated/ProposalComments.query';
 import { ProposalStage } from '../../../constants/proposal.constants';
 import { Blurple } from '../../../styles/theme';
 import { inDevToast } from '../../../utils/shared.utils';
@@ -17,7 +15,9 @@ import CardFooterButton from '../../Shared/CardFooterButton';
 import Flex from '../../Shared/Flex';
 import VoteBadges from '../../Votes/VoteBadges/VoteBadges';
 import VoteMenu from '../../Votes/VoteMenu/VoteMenu';
+import { ProposalCardFragment } from '../ProposalCard/generated/ProposalCard.fragment';
 import ProposalModal from '../ProposalModal';
+import { useProposalCommentsLazyQuery } from './generated/ProposalComments.query';
 
 const ICON_STYLES: SxProps = {
   marginRight: '0.4ch',

@@ -2,8 +2,6 @@ import { Card, Tab, Tabs } from '@mui/material';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
-import { EditGroupRoleTabsFragment } from '../../apollo/groups/generated/EditGroupRoleTabs.fragment';
-import { EditServerRoleTabsFragment } from '../../apollo/roles/generated/EditServerRoleTabs.fragment';
 import { EditRoleTabNames } from '../../../constants/role.constants';
 import { useAboveBreakpoint } from '../../../hooks/shared.hooks';
 import DeleteGroupRoleButton from '../../Groups/GroupRoles/DeleteGroupRoleButton/DeleteGroupRoleButton';
@@ -13,6 +11,8 @@ import AddRoleMemberTab from '../AddRoleMemberTab/AddRoleMemberTab';
 import DeleteServerRoleButton from '../ServerRoles/DeleteServerRoleButton/DeleteServerRoleButton';
 import ServerPermissionsForm from '../ServerRoles/ServerPermissionsForm/ServerPermissionsForm';
 import ServerRoleForm from '../ServerRoles/ServerRoleForm/ServerRoleForm';
+import { EditGroupRoleTabsFragment } from './graphql/generated/EditGroupRoleTabs.fragment';
+import { EditServerRoleTabsFragment } from './graphql/generated/EditServerRoleTabs.fragment';
 
 interface Props {
   role: EditServerRoleTabsFragment | EditGroupRoleTabsFragment;

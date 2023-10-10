@@ -12,9 +12,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isLoggedInVar, toastVar } from '../../../apollo/cache';
-import { useDeleteProposalMutation } from '../../apollo/proposals/generated/DeleteProposal.mutation';
-import { ProposalCardFragment } from '../../apollo/proposals/generated/ProposalCard.fragment';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
 import { ProposalStage } from '../../../constants/proposal.constants';
 import {
   MIDDOT_WITH_SPACES,
@@ -26,12 +23,15 @@ import { timeAgo } from '../../../utils/time.utils';
 import { getUserProfilePath } from '../../../utils/user.utils';
 import GroupItemAvatar from '../../Groups/GroupItemAvatar';
 import AttachedImageList from '../../Images/AttachedImageList';
+import { useMeQuery } from '../../Navigation/NavDrawer/generated/Me.query';
 import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 import { removeProposal } from '../DeleteProposalButton/DeleteProposalButton';
+import { useDeleteProposalMutation } from '../DeleteProposalButton/generated/DeleteProposal.mutation';
 import ProposalAction from '../ProposalActions/ProposalAction/ProposalAction';
 import ProposalCardFooter from '../ProposalCardFooter/ProposalCardFooter';
+import { ProposalCardFragment } from './generated/ProposalCard.fragment';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,

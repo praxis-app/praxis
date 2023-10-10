@@ -4,17 +4,6 @@ import { Menu, MenuItem } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toastVar } from '../../../apollo/cache';
-import { ProposalCardFragment } from '../../apollo/proposals/generated/ProposalCard.fragment';
-import { useRolesByGroupIdLazyQuery } from '../../apollo/roles/generated/RolesByGroupId.query';
-import {
-  CreateVoteMutation,
-  useCreateVoteMutation,
-} from '../../apollo/votes/generated/CreateVote.mutation';
-import { useDeleteVoteMutation } from '../../apollo/votes/generated/DeleteVote.mutation';
-import {
-  UpdateVoteMutation,
-  useUpdateVoteMutation,
-} from '../../apollo/votes/generated/UpdateVote.mutation';
 import {
   ProposalActionType,
   ProposalStage,
@@ -23,6 +12,17 @@ import { NavigationPaths } from '../../../constants/shared.constants';
 import { VoteTypes } from '../../../constants/vote.constants';
 import { Blurple } from '../../../styles/theme';
 import { getGroupPath } from '../../../utils/group.utils';
+import { ProposalCardFragment } from '../../Proposals/ProposalCard/generated/ProposalCard.fragment';
+import {
+  CreateVoteMutation,
+  useCreateVoteMutation,
+} from './generated/CreateVote.mutation';
+import { useDeleteVoteMutation } from './generated/DeleteVote.mutation';
+import { useRolesByGroupIdLazyQuery } from './generated/RolesByGroupId.query';
+import {
+  UpdateVoteMutation,
+  useUpdateVoteMutation,
+} from './generated/UpdateVote.mutation';
 
 const ICON_STYLES = {
   fontSize: 20,

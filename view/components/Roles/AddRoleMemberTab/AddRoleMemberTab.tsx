@@ -9,16 +9,16 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { AddGroupRoleMemberTabFragment } from '../../apollo/groups/generated/AddGroupRoleMemberTab.fragment';
-import { useUpdateGroupRoleMutation } from '../../apollo/groups/generated/UpdateGroupRole.mutation';
-import { AddServerRoleMemberTabFragment } from '../../apollo/roles/generated/AddServerRoleMemberTab.fragment';
-import { useUpdateServerRoleMutation } from '../../apollo/roles/generated/UpdateServerRole.mutation';
-import { UserAvatarFragment } from '../../apollo/users/generated/UserAvatar.fragment';
 import { NavigationPaths } from '../../../constants/shared.constants';
+import { useUpdateGroupRoleMutation } from '../../Groups/GroupRoles/GroupRoleForm/graphql/generated/UpdateGroupRole.mutation';
 import Flex from '../../Shared/Flex';
 import Modal from '../../Shared/Modal';
+import { UserAvatarFragment } from '../../Users/UserAvatar/generated/UserAvatar.fragment';
 import AddRoleMemberOption from '../AddRoleMemberOption';
 import RoleMember from '../RoleMember/RoleMember';
+import { useUpdateServerRoleMutation } from '../ServerRoles/ServerRoleForm/graphql/generated/UpdateServerRole.mutation';
+import { AddGroupRoleMemberTabFragment } from './graphql/generated/AddGroupRoleMemberTab.fragment';
+import { AddServerRoleMemberTabFragment } from './graphql/generated/AddServerRoleMemberTab.fragment';
 
 const FlexCardContent = styled(MuiCardContent)(() => ({
   display: 'flex',

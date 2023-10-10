@@ -24,15 +24,6 @@ import {
   ProposalActionInput,
   UpdateProposalInput,
 } from '../../../apollo/gen';
-import { useDeleteImageMutation } from '../../apollo/images/generated/DeleteImage.mutation';
-import { useCreateProposalMutation } from '../../apollo/proposals/generated/CreateProposal.mutation';
-import { ProposalFormFragment } from '../../apollo/proposals/generated/ProposalForm.fragment';
-import { useUpdateProposalMutation } from '../../apollo/proposals/generated/UpdateProposal.mutation';
-import {
-  HomeFeedDocument,
-  HomeFeedQuery,
-} from '../../apollo/users/generated/HomeFeed.query';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
 import {
   ProposalActionFieldName,
   ProposalActionType,
@@ -46,14 +37,23 @@ import { getProposalActionTypeOptions } from '../../../utils/proposal.utils';
 import { getRandomString } from '../../../utils/shared.utils';
 import AttachedImagePreview from '../../Images/AttachedImagePreview';
 import ImageInput from '../../Images/ImageInput';
+import { useMeQuery } from '../../Navigation/NavDrawer/generated/Me.query';
+import { useDeleteImageMutation } from '../../Posts/PostForm/graphql/generated/DeleteImage.mutation';
 import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import TextFieldWithAvatar from '../../Shared/TextFieldWithAvatar';
+import {
+  HomeFeedDocument,
+  HomeFeedQuery,
+} from '../../Users/HomeFeed/generated/HomeFeed.query';
 import ProposalActionEvent from '../ProposalActions/ProposalActionEvent/ProposalActionEvent';
 import ProposalActionFields from '../ProposalActions/ProposalActionFields';
 import ProposalActionRole from '../ProposalActions/ProposalActionRole/ProposalActionRole';
 import ProposeEventModal from '../ProposalActions/ProposeEventModal';
 import ProposeRoleModal from '../ProposalActions/ProposeRoleModal/ProposeRoleModal';
+import { useCreateProposalMutation } from './graphql/generated/CreateProposal.mutation';
+import { ProposalFormFragment } from './graphql/generated/ProposalForm.fragment';
+import { useUpdateProposalMutation } from './graphql/generated/UpdateProposal.mutation';
 
 type ProposalFormErrors = {
   action: FormikErrors<ProposalActionInput>;
