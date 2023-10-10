@@ -7,10 +7,10 @@ import {
   isAuthLoadingVar,
   isLoggedInVar,
   isRefreshingTokenVar,
-} from '../../apollo/cache';
+} from '../../../apollo/cache';
 import { TopNavDropdownFragment } from '../../apollo/users/generated/TopNavDropdown.fragment';
-import { NavigationPaths } from '../../constants/shared.constants';
-import { inDevToast } from '../../utils/shared.utils';
+import { NavigationPaths } from '../../../constants/shared.constants';
+import { inDevToast } from '../../../utils/shared.utils';
 
 const ICON_PROPS: SvgIconProps = {
   fontSize: 'small',
