@@ -16,19 +16,15 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toastVar } from '../../../apollo/cache';
-import { useCreateEventMutation } from '../../apollo/events/generated/CreateEvent.mutation';
-import { EventFormFragment } from '../../apollo/events/generated/EventForm.fragment';
-import { useUpdateEventMutation } from '../../apollo/events/generated/UpdateEvent.mutation';
 import { CreateEventInput, UpdateEventInput } from '../../../apollo/gen';
-import {
-  GroupEventsTabDocument,
-  GroupEventsTabQuery,
-} from '../../apollo/groups/generated/GroupEventsTab.query';
-import { useGroupMembersByGroupIdLazyQuery } from '../../apollo/groups/generated/GroupMembersByGroupId.query';
 import { Blurple } from '../../../styles/theme';
 import { getEventPath } from '../../../utils/event.utils';
 import { getRandomString, isValidUrl } from '../../../utils/shared.utils';
 import { startOfNextHour } from '../../../utils/time.utils';
+import {
+  GroupEventsTabDocument,
+  GroupEventsTabQuery,
+} from '../../Groups/GroupEventsTab/generated/GroupEventsTab.query';
 import AttachedImagePreview from '../../Images/AttachedImagePreview';
 import ImageInput from '../../Images/ImageInput';
 import DateTimePicker from '../../Shared/DateTimePicker';
@@ -36,6 +32,10 @@ import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import ProgressBar from '../../Shared/ProgressBar';
 import { TextField } from '../../Shared/TextField';
+import { useCreateEventMutation } from './graphql/generated/CreateEvent.mutation';
+import { EventFormFragment } from './graphql/generated/EventForm.fragment';
+import { useGroupMembersByGroupIdLazyQuery } from './graphql/generated/GroupMembersByGroupId.query';
+import { useUpdateEventMutation } from './graphql/generated/UpdateEvent.mutation';
 
 export enum EventFormFieldName {
   Name = 'name',

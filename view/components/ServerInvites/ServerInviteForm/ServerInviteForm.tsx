@@ -1,10 +1,10 @@
 import {
   Card,
-  CardContent as MuiCardContent,
   FormControl,
   FormGroup,
   InputLabel,
   MenuItem,
+  CardContent as MuiCardContent,
   Select,
   styled,
 } from '@mui/material';
@@ -12,18 +12,18 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../../apollo/cache';
-import { useCreateServerInviteMutation } from '../../apollo/invites/generated/CreateServerInvite.mutation';
-import {
-  ServerInvitesDocument,
-  ServerInvitesQuery,
-} from '../../apollo/invites/generated/ServerInvites.query';
-import { Time } from '../../../constants/shared.constants';
 import {
   MAX_USES_OPTIONS,
   ServerInviteFieldNames,
 } from '../../../constants/server-invite.constants';
+import { Time } from '../../../constants/shared.constants';
+import {
+  ServerInvitesDocument,
+  ServerInvitesQuery,
+} from '../../../pages/Invites/ServerInvites/generated/ServerInvites.query';
 import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
+import { useCreateServerInviteMutation } from './generated/CreateServerInvite.mutation';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {

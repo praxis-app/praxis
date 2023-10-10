@@ -20,13 +20,13 @@ import ImageInput from '../../Images/ImageInput';
 import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import { TextField } from '../../Shared/TextField';
-import { useCreateGroupMutation } from '../../apollo/groups/generated/CreateGroup.mutation';
 import {
   GroupsDocument,
   GroupsQuery,
-} from '../../apollo/groups/generated/Groups.query';
-import { useUpdateGroupMutation } from '../../apollo/groups/generated/UpdateGroup.mutation';
+} from '../GroupsList/generated/Groups.query';
+import { useCreateGroupMutation } from './graphql/generated/CreateGroup.mutation';
 import { GroupFormFragment } from './graphql/generated/GroupForm.fragment';
+import { useUpdateGroupMutation } from './graphql/generated/UpdateGroup.mutation';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {

@@ -3,24 +3,22 @@ import { Assignment } from '@mui/icons-material';
 import {
   Box,
   Card,
-  CardContent as MuiCardContent,
   CardHeader,
   Link,
   MenuItem,
-  styled,
+  CardContent as MuiCardContent,
   Typography,
+  styled,
 } from '@mui/material';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../../apollo/cache';
-import { useDeleteServerInviteMutation } from '../../apollo/invites/generated/DeleteServerInvite.mutation';
-import { ServerInviteCardFragment } from '../../apollo/invites/generated/ServerInviteCard.fragment';
+import { TypeNames } from '../../../constants/shared.constants';
 import {
   ServerInvitesDocument,
   ServerInvitesQuery,
-} from '../../apollo/invites/generated/ServerInvites.query';
-import { TypeNames } from '../../../constants/shared.constants';
+} from '../../../pages/Invites/ServerInvites/generated/ServerInvites.query';
 import { copyInviteLink } from '../../../utils/server-invite.utils';
 import { timeFromNow } from '../../../utils/time.utils';
 import { getUserProfilePath } from '../../../utils/user.utils';
@@ -28,6 +26,8 @@ import CompactButton from '../../Shared/CompactButton';
 import Flex from '../../Shared/Flex';
 import ItemMenu from '../../Shared/ItemMenu';
 import UserAvatar from '../../Users/UserAvatar/UserAvatar';
+import { useDeleteServerInviteMutation } from './generated/DeleteServerInvite.mutation';
+import { ServerInviteCardFragment } from './generated/ServerInviteCard.fragment';
 
 export const removeServerInvite = (id: number) => (cache: ApolloCache<any>) => {
   cache.updateQuery<ServerInvitesQuery>(

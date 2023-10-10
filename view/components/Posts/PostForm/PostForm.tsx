@@ -8,14 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toastVar } from '../../../apollo/cache';
 import { CreatePostInput, UpdatePostInput } from '../../../apollo/gen';
-import { useDeleteImageMutation } from '../../apollo/images/generated/DeleteImage.mutation';
-import { useCreatePostMutation } from '../../apollo/posts/generated/CreatePost.mutation';
-import { PostFormFragment } from '../../apollo/posts/generated/PostForm.fragment';
-import { useUpdatePostMutation } from '../../apollo/posts/generated/UpdatePost.mutation';
-import {
-  HomeFeedDocument,
-  HomeFeedQuery,
-} from '../../apollo/users/generated/HomeFeed.query';
 import {
   FieldNames,
   NavigationPaths,
@@ -27,6 +19,14 @@ import ImageInput from '../../Images/ImageInput';
 import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import TextFieldWithAvatar from '../../Shared/TextFieldWithAvatar';
+import {
+  HomeFeedDocument,
+  HomeFeedQuery,
+} from '../../Users/HomeFeed/generated/HomeFeed.query';
+import { useCreatePostMutation } from './graphql/generated/CreatePost.mutation';
+import { useDeleteImageMutation } from './graphql/generated/DeleteImage.mutation';
+import { PostFormFragment } from './graphql/generated/PostForm.fragment';
+import { useUpdatePostMutation } from './graphql/generated/UpdatePost.mutation';
 
 interface Props extends FormikFormProps {
   editPost?: PostFormFragment;

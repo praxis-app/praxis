@@ -3,16 +3,16 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { toastVar } from '../../../../apollo/cache';
 import { CreateServerRoleInput } from '../../../../apollo/gen';
-import { useCreateServerRoleMutation } from '../../../apollo/roles/generated/CreateServerRole.mutation';
-import { ServerRoleFragment } from '../../../apollo/roles/generated/ServerRole.fragment';
+import { DEFAULT_ROLE_COLOR } from '../../../../constants/role.constants';
 import {
   ServerRolesDocument,
   ServerRolesQuery,
-} from '../../../apollo/roles/generated/ServerRoles.query';
-import { useUpdateServerRoleMutation } from '../../../apollo/roles/generated/UpdateServerRole.mutation';
-import { DEFAULT_ROLE_COLOR } from '../../../../constants/role.constants';
+} from '../../../../pages/Roles/ServerRolesIndex/generated/ServerRoles.query';
 import { getRandomString } from '../../../../utils/shared.utils';
+import { ServerRoleFragment } from '../../Role/graphql/generated/ServerRole.fragment';
 import RoleForm from '../../RoleForm/RoleForm';
+import { useCreateServerRoleMutation } from './graphql/generated/CreateServerRole.mutation';
+import { useUpdateServerRoleMutation } from './graphql/generated/UpdateServerRole.mutation';
 
 interface Props {
   editRole?: ServerRoleFragment;

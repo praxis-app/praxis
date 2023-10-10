@@ -21,7 +21,6 @@ import { SxProps, styled } from '@mui/material/styles';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useLogOutMutation } from '../../apollo/auth/generated/LogOut.mutation';
 import {
   inviteTokenVar,
   isAuthLoadingVar,
@@ -29,12 +28,13 @@ import {
   isNavDrawerOpenVar,
   isRefreshingTokenVar,
 } from '../../../apollo/cache';
-import { useIsFirstUserQuery } from '../../apollo/users/generated/IsFirstUser.query';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
 import { NavigationPaths } from '../../../constants/shared.constants';
+import { useIsFirstUserQuery } from '../../../pages/Auth/SignUp/generated/IsFirstUser.query';
 import { getUserProfilePath } from '../../../utils/user.utils';
 import Flex from '../../Shared/Flex';
 import UserAvatar from '../../Users/UserAvatar/UserAvatar';
+import { useLogOutMutation } from './generated/LogOut.mutation';
+import { useMeQuery } from './generated/Me.query';
 
 const USER_AVATAR_STYLES: SxProps = {
   width: 21,

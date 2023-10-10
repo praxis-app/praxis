@@ -1,20 +1,20 @@
 import {
   Card,
-  CardContent as MuiCardContent,
   CardProps,
   FormGroup,
+  CardContent as MuiCardContent,
   styled,
 } from '@mui/material';
 import { Form, Formik, FormikHelpers, FormikProps } from 'formik';
 import { ColorResult } from 'react-color';
 import { useTranslation } from 'react-i18next';
-import { GroupRoleFragment } from '../../apollo/groups/generated/GroupRole.fragment';
-import { ServerRoleFragment } from '../../apollo/roles/generated/ServerRole.fragment';
 import { FieldNames } from '../../../constants/shared.constants';
 import ColorPicker from '../../Shared/ColorPicker';
 import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import { TextField } from '../../Shared/TextField';
+import { GroupRoleFragment } from '../Role/graphql/generated/GroupRole.fragment';
+import { ServerRoleFragment } from '../Role/graphql/generated/ServerRole.fragment';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {

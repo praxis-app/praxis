@@ -5,8 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toastVar } from '../../../apollo/cache';
 import { UpdateUserInput } from '../../../apollo/gen';
-import { EditProfileFormFragment } from '../../apollo/users/generated/EditProfileForm.fragment';
-import { useUpdateUserMutation } from '../../apollo/users/generated/UpdateUser.mutation';
 import { UserFieldNames } from '../../../constants/user.constants';
 import { getUserProfilePath } from '../../../utils/user.utils';
 import CoverPhoto from '../../Images/CoverPhoto';
@@ -17,6 +15,8 @@ import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import { TextField } from '../../Shared/TextField';
 import UserAvatar from '../UserAvatar/UserAvatar';
+import { EditProfileFormFragment } from './graphql/generated/EditProfileForm.fragment';
+import { useUpdateUserMutation } from './graphql/generated/UpdateUser.mutation';
 
 interface Props {
   user: EditProfileFormFragment;

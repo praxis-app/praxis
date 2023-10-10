@@ -2,16 +2,16 @@ import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toastVar } from '../../../../apollo/cache';
-import { useDeleteServerRoleMutation } from '../../../apollo/roles/generated/DeleteServerRole.mutation';
-import {
-  ServerRolesDocument,
-  ServerRolesQuery,
-} from '../../../apollo/roles/generated/ServerRoles.query';
 import {
   NavigationPaths,
   TypeNames,
 } from '../../../../constants/shared.constants';
+import {
+  ServerRolesDocument,
+  ServerRolesQuery,
+} from '../../../../pages/Roles/ServerRolesIndex/generated/ServerRoles.query';
 import DeleteButton from '../../../Shared/DeleteButton';
+import { useDeleteServerRoleMutation } from './generated/DeleteServerRole.mutation';
 
 interface Props {
   roleId: number;

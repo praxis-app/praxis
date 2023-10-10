@@ -1,13 +1,13 @@
 import {
-  CardActionArea as MuiCardActionArea,
   Checkbox,
-  styled,
+  CardActionArea as MuiCardActionArea,
   SxProps,
   Typography,
+  styled,
 } from '@mui/material';
-import { UserAvatarFragment } from '../../apollo/users/generated/UserAvatar.fragment';
 import Flex from '../Shared/Flex';
 import UserAvatar from '../Users/UserAvatar/UserAvatar';
+import { UserAvatarFragment } from '../Users/UserAvatar/generated/UserAvatar.fragment';
 
 export const ROLE_MEMBER_OPTION_STYLES: SxProps = {
   borderRadius: 2,
