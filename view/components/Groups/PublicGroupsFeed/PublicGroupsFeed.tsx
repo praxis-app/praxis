@@ -1,10 +1,10 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { usePublicGroupsFeedQuery } from '../../apollo/groups/generated/PublicGroupsFeed.query';
 import { isDeniedAccess } from '../../../utils/error.utils';
 import WelcomeCard from '../../About/WelcomeCard';
 import Feed from '../../Shared/Feed/Feed';
 import ProgressBar from '../../Shared/ProgressBar';
+import { usePublicGroupsFeedQuery } from './generated/PublicGroupsFeed.query';
 
 const PublicGroupsFeed = () => {
   const { data, loading, error } = usePublicGroupsFeedQuery({

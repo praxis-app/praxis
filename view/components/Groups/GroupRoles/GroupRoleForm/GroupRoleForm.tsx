@@ -1,12 +1,12 @@
 import { FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { toastVar } from '../../../../apollo/cache';
-import { useCreateGroupRoleMutation } from '../../../apollo/groups/generated/CreateGroupRole.mutation';
-import { GroupRoleFragment } from '../../../apollo/groups/generated/GroupRole.fragment';
-import { useUpdateGroupRoleMutation } from '../../../apollo/groups/generated/UpdateGroupRole.mutation';
 import { DEFAULT_ROLE_COLOR } from '../../../../constants/role.constants';
 import { getRandomString } from '../../../../utils/shared.utils';
+import { GroupRoleFragment } from '../../../Roles/Role/graphql/generated/GroupRole.fragment';
 import RoleForm from '../../../Roles/RoleForm/RoleForm';
+import { useCreateGroupRoleMutation } from './graphql/generated/CreateGroupRole.mutation';
+import { useUpdateGroupRoleMutation } from './graphql/generated/UpdateGroupRole.mutation';
 
 interface Props {
   editRole?: GroupRoleFragment;

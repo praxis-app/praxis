@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { AttachedImageFragment } from '../../apollo/images/generated/AttachedImage.fragment';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import { getImagePath } from '../../../utils/image.utils';
+import { AttachedImageFragment } from './generated/AttachedImage.fragment';
 
 interface Props {
   image: AttachedImageFragment;

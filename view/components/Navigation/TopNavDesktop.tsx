@@ -5,14 +5,14 @@ import { MouseEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { inviteTokenVar, isLoggedInVar } from '../../apollo/cache';
-import { useIsFirstUserQuery } from '../../apollo/users/generated/IsFirstUser.query';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
 import { NavigationPaths } from '../../constants/shared.constants';
+import { useIsFirstUserQuery } from '../../pages/Auth/SignUp/generated/IsFirstUser.query';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
 import SearchBar from '../Shared/SearchBar';
 import UserAvatar from '../Users/UserAvatar/UserAvatar';
+import { useMeQuery } from './NavDrawer/generated/Me.query';
 import TopNavDropdown from './TopNavDropdown/TopNavDropdown';
 
 const TOP_NAV_STYLES: SxProps = {

@@ -4,20 +4,20 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../../apollo/cache';
-import { useCancelGroupMemberRequestMutation } from '../../apollo/groups/generated/CancelGroupMemberRequest.mutation';
-import { useCreateGroupMemberRequestMutation } from '../../apollo/groups/generated/CreateGroupMemberRequest.mutation';
+import { TypeNames } from '../../../constants/shared.constants';
+import {
+  MemberRequestsDocument,
+  MemberRequestsQuery,
+} from '../../../pages/Groups/GroupMemberRequests/generated/MemberRequests.query';
+import GhostButton from '../../Shared/GhostButton';
+import { useCancelGroupMemberRequestMutation } from './graphql/generated/CancelGroupMemberRequest.mutation';
+import { useCreateGroupMemberRequestMutation } from './graphql/generated/CreateGroupMemberRequest.mutation';
 import {
   GroupMemberRequestDocument,
   GroupMemberRequestQuery,
   useGroupMemberRequestQuery,
-} from '../../apollo/groups/generated/GroupMemberRequest.query';
-import { useLeaveGroupMutation } from '../../apollo/groups/generated/LeaveGroup.mutation';
-import {
-  MemberRequestsDocument,
-  MemberRequestsQuery,
-} from '../../apollo/groups/generated/MemberRequests.query';
-import { TypeNames } from '../../../constants/shared.constants';
-import GhostButton from '../../Shared/GhostButton';
+} from './graphql/generated/GroupMemberRequest.query';
+import { useLeaveGroupMutation } from './graphql/generated/LeaveGroup.mutation';
 
 const Button = styled(GhostButton)(() => ({
   marginRight: 8,

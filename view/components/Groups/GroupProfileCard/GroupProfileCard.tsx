@@ -20,8 +20,6 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isLoggedInVar } from '../../../apollo/cache';
-import { useDeleteGroupMutation } from '../../apollo/groups/generated/DeleteGroup.mutation';
-import { GroupProfileCardFragment } from '../../apollo/groups/generated/GroupProfileCard.fragment';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -40,6 +38,8 @@ import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import { removeGroup } from '../GroupCard/GroupCard';
 import JoinButton from '../JoinButton/JoinButton';
+import { useDeleteGroupMutation } from './generated/DeleteGroup.mutation';
+import { GroupProfileCardFragment } from './generated/GroupProfileCard.fragment';
 
 export const enum GroupTabs {
   About = 'about',

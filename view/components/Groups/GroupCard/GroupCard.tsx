@@ -3,26 +3,18 @@ import { AccountBox, Settings } from '@mui/icons-material';
 import {
   Box,
   Card,
-  CardContent as MuiCardContent,
-  CardHeader as MuiCardHeader,
   CardProps,
   MenuItem,
-  styled,
+  CardContent as MuiCardContent,
+  CardHeader as MuiCardHeader,
   Typography,
+  styled,
 } from '@mui/material';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { isLoggedInVar, toastVar } from '../../../apollo/cache';
-import {
-  DeleteGroupMutation,
-  useDeleteGroupMutation,
-} from '../../apollo/groups/generated/DeleteGroup.mutation';
-import { GroupCardFragment } from '../../apollo/groups/generated/GroupCard.fragment';
-import {
-  GroupsDocument,
-  GroupsQuery,
-} from '../../apollo/groups/generated/Groups.query';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -37,8 +29,16 @@ import {
 import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import GroupAvatar from '../GroupAvatar/GroupAvatar';
+import {
+  DeleteGroupMutation,
+  useDeleteGroupMutation,
+} from '../GroupProfileCard/generated/DeleteGroup.mutation';
+import {
+  GroupsDocument,
+  GroupsQuery,
+} from '../GroupsList/generated/Groups.query';
 import JoinButton from '../JoinButton/JoinButton';
-import { useNavigate } from 'react-router-dom';
+import { GroupCardFragment } from './generated/GroupCard.fragment';
 
 export const removeGroup =
   (id: number) =>
