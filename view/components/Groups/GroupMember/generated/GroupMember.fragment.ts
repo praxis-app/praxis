@@ -2,7 +2,7 @@ import * as Types from '../../../../apollo/gen';
 
 import { gql } from '@apollo/client';
 import { UserAvatarFragmentDoc } from '../../../Users/UserAvatar/generated/UserAvatar.fragment';
-import { FollowButtonFragmentDoc } from '../../../Users/FollowButton/generated/FollowButton.fragment';
+import { FollowButtonFragmentDoc } from '../../../Users/FollowButton/graphql/generated/FollowButton.fragment';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
