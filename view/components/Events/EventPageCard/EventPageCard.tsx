@@ -24,8 +24,6 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isLoggedInVar, toastVar } from '../../../apollo/cache';
-import { useDeleteEventMutation } from '../../apollo/events/generated/DeleteEvent.mutation';
-import { EventPageCardFragment } from '../../apollo/events/generated/EventPageCard.fragment';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -41,6 +39,8 @@ import ExternalLink from '../../Shared/ExternalLink';
 import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import EventAttendeeButtons from '../EventAttendeeButtons/EventAttendeeButtons';
+import { useDeleteEventMutation } from './generated/DeleteEvent.mutation';
+import { EventPageCardFragment } from './generated/EventPageCard.fragment';
 
 enum EventPageTabs {
   About = 'about',

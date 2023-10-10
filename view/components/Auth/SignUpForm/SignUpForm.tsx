@@ -3,7 +3,7 @@ import { Card, CardContent, FormGroup } from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSignUpMutation } from '../../apollo/auth/generated/SignUp.mutation';
+import { useParams } from 'react-router-dom';
 import {
   inviteTokenVar,
   isLoggedInVar,
@@ -11,23 +11,23 @@ import {
   toastVar,
 } from '../../../apollo/cache';
 import { SignUpInput } from '../../../apollo/gen';
+import { INVITE_TOKEN } from '../../../constants/server-invite.constants';
+import { UserFieldNames } from '../../../constants/user.constants';
 import {
   IsFirstUserDocument,
   IsFirstUserQuery,
-} from '../../apollo/users/generated/IsFirstUser.query';
+} from '../../../pages/Auth/SignUp/generated/IsFirstUser.query';
+import {
+  getRandomString,
+  removeLocalStorageItem,
+} from '../../../utils/shared.utils';
 import AttachedImagePreview from '../../Images/AttachedImagePreview';
 import ImageInput from '../../Images/ImageInput';
 import Flex from '../../Shared/Flex';
 import LevelOneHeading from '../../Shared/LevelOneHeading';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import { TextField } from '../../Shared/TextField';
-import { INVITE_TOKEN } from '../../../constants/server-invite.constants';
-import { UserFieldNames } from '../../../constants/user.constants';
-import {
-  getRandomString,
-  removeLocalStorageItem,
-} from '../../../utils/shared.utils';
-import { useParams } from 'react-router-dom';
+import { useSignUpMutation } from './generated/SignUp.mutation';
 
 const SignUpForm = () => {
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);

@@ -2,8 +2,6 @@ import { Box, SxProps, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../../apollo/cache';
-import { CommentFragment } from '../../apollo/comments/generated/Comment.fragment';
-import { useDeleteCommentMutation } from '../../apollo/comments/generated/DeleteComment.mutation';
 import { TypeNames } from '../../../constants/shared.constants';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import { getUserProfilePath } from '../../../utils/user.utils';
@@ -13,6 +11,8 @@ import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 import CommentForm from '../CommentForm/CommentForm';
+import { CommentFragment } from './graphql/generated/Comment.fragment';
+import { useDeleteCommentMutation } from './graphql/generated/DeleteComment.mutation';
 
 interface Props {
   canManageComments: boolean;

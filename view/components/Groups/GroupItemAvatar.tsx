@@ -1,8 +1,8 @@
 import { Box, useTheme } from '@mui/material';
-import { GroupAvatarFragment } from '../../apollo/groups/generated/GroupAvatar.fragment';
-import { UserAvatarFragment } from '../../apollo/users/generated/UserAvatar.fragment';
 import UserAvatar from '../Users/UserAvatar/UserAvatar';
+import { UserAvatarFragment } from '../Users/UserAvatar/generated/UserAvatar.fragment';
 import GroupAvatar from './GroupAvatar/GroupAvatar';
+import { GroupAvatarFragment } from './GroupAvatar/generated/GroupAvatar.fragment';
 
 interface Props {
   group: GroupAvatarFragment;

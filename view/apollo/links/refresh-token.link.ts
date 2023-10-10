@@ -1,5 +1,6 @@
 import { Observable } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
+import { LogOutDocument } from '../../components/Navigation/NavDrawer/generated/LogOut.mutation';
 import { MutationNames, UNAUTHORIZED } from '../../constants/shared.constants';
 import { formatGQLError } from '../../utils/error.utils';
 import {
@@ -8,8 +9,7 @@ import {
   isRefreshingTokenVar,
 } from '../cache';
 import client from '../client';
-import { LogOutDocument } from '../generated/LogOut.mutation';
-import { RefreshTokenDocument } from '../generated/RefreshToken.mutation';
+import { RefreshTokenDocument } from './generated/RefreshToken.mutation';
 
 type Callback = (arg: unknown) => void;
 

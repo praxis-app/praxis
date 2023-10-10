@@ -1,9 +1,9 @@
 // TODO: Refactor to avoid duplicating auth state
 
 import { ReactNode, useEffect } from 'react';
-import { useAuthCheckQuery } from '../../apollo/auth/generated/AuthCheck.query';
 import { isAuthLoadingVar, isLoggedInVar } from '../../../apollo/cache';
 import TopNav from '../../Navigation/TopNav';
+import { useAuthCheckQuery } from './generated/AuthCheck.query';
 
 interface Props {
   children: ReactNode;

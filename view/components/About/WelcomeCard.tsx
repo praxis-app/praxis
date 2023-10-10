@@ -9,8 +9,8 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { inviteTokenVar, isLoggedInVar } from '../../apollo/cache';
-import { useIsFirstUserQuery } from '../../apollo/users/generated/IsFirstUser.query';
 import { NavigationPaths } from '../../constants/shared.constants';
+import { useIsFirstUserQuery } from '../../pages/Auth/SignUp/generated/IsFirstUser.query';
 import Link from '../Shared/Link';
 
 const WelcomeCard = () => {

@@ -11,11 +11,7 @@ import { Form, Formik, FormikFormProps, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../../apollo/cache';
-import { CommentFormFragment } from '../../apollo/comments/generated/CommentForm.fragment';
-import { useCreateCommentMutation } from '../../apollo/comments/generated/CreateComment.mutation';
-import { useUpdateCommentMutation } from '../../apollo/comments/generated/UpdateComment.mutation';
 import { CreateCommentInput, UpdateCommentInput } from '../../../apollo/gen';
-import { useDeleteImageMutation } from '../../apollo/images/generated/DeleteImage.mutation';
 import {
   FieldNames,
   KeyCodes,
@@ -24,8 +20,12 @@ import {
 import { getRandomString } from '../../../utils/shared.utils';
 import AttachedImagePreview from '../../Images/AttachedImagePreview';
 import ImageInput from '../../Images/ImageInput';
+import { useDeleteImageMutation } from '../../Posts/PostForm/graphql/generated/DeleteImage.mutation';
 import Flex from '../../Shared/Flex';
 import UserAvatar from '../../Users/UserAvatar/UserAvatar';
+import { CommentFormFragment } from './graphql/generated/CommentForm.fragment';
+import { useCreateCommentMutation } from './graphql/generated/CreateComment.mutation';
+import { useUpdateCommentMutation } from './graphql/generated/UpdateComment.mutation';
 
 interface Props extends FormikFormProps {
   editComment?: CommentFormFragment;

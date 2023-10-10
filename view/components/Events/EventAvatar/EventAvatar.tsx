@@ -1,9 +1,9 @@
 import { Avatar, AvatarProps, useTheme } from '@mui/material';
-import { EventAvatarFragment } from '../../apollo/events/generated/EventAvatar.fragment';
-import { ProposalActionEventAvatarFragment } from '../../apollo/proposals/generated/ProposalActionEventAvatar.fragment';
 import { getEventPath } from '../../../utils/event.utils';
 import { getImagePath } from '../../../utils/image.utils';
 import Link from '../../Shared/Link';
+import { EventAvatarFragment } from './graphql/generated/EventAvatar.fragment';
+import { ProposalActionEventAvatarFragment } from './graphql/generated/ProposalActionEventAvatar.fragment';
 
 interface Props extends AvatarProps {
   event: EventAvatarFragment | ProposalActionEventAvatarFragment;

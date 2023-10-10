@@ -1,6 +1,6 @@
 import { Box, BoxProps } from '@mui/material';
-import { CommentFragment } from '../../apollo/comments/generated/Comment.fragment';
 import Comment from './Comment/Comment';
+import { CommentFragment } from './Comment/graphql/generated/Comment.fragment';
 
 interface Props extends BoxProps {
   canManageComments: boolean;
