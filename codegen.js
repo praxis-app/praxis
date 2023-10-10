@@ -1,7 +1,4 @@
-import { CodegenConfig } from '@graphql-codegen/cli';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+require('dotenv').config();
 
 const DO_NOT_EDIT_PLUGIN = {
   add: {
@@ -12,7 +9,7 @@ const DO_NOT_EDIT_PLUGIN = {
   },
 };
 
-const config: CodegenConfig = {
+const config = {
   schema: process.env.SCHEMA_URL,
   documents: ['view/**/*.graphql'],
   ignoreNoDocuments: true,
@@ -43,4 +40,4 @@ const config: CodegenConfig = {
   },
 };
 
-export default config;
+module.exports = config;
