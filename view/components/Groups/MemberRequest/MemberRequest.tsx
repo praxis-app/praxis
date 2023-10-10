@@ -5,15 +5,15 @@ import { Box, Button, Typography, styled } from '@mui/material';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import { TypeNames } from '../../../constants/shared.constants';
-import { getUserProfilePath } from '../../../utils/user.utils';
-import SharedFlex from '../../Shared/Flex';
-import Link from '../../Shared/Link';
-import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 import {
   MemberRequestsDocument,
   MemberRequestsQuery,
   MemberRequestsQueryVariables,
-} from '../../apollo/groups/generated/MemberRequests.query';
+} from '../../../pages/Groups/GroupMemberRequests/generated/MemberRequests.query';
+import { getUserProfilePath } from '../../../utils/user.utils';
+import SharedFlex from '../../Shared/Flex';
+import Link from '../../Shared/Link';
+import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 import { useApproveGroupMemberRequestMutation } from './generated/ApproveGroupMemberRequest.mutation';
 import { useDenyGroupMemberRequestMutation } from './generated/DenyGroupMemberRequest.mutation';
 import { MemberRequestFragment } from './generated/MemberRequest.fragment';

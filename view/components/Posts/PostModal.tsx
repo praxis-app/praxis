@@ -1,11 +1,11 @@
 import { Box, SxProps } from '@mui/material';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PostCardFragment } from '../../apollo/posts/generated/PostCard.fragment';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import CommentForm from '../Comments/CommentForm/CommentForm';
 import Modal from '../Shared/Modal';
 import PostCard from './PostCard/PostCard';
+import { PostCardFragment } from './PostCard/generated/PostCard.fragment';
 
 interface Props {
   post: PostCardFragment;

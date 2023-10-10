@@ -6,8 +6,6 @@ import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isLoggedInVar } from '../../../apollo/cache';
-import { PostCardFragment } from '../../apollo/posts/generated/PostCard.fragment';
-import { usePostCommentsLazyQuery } from '../../apollo/posts/generated/PostComments.query';
 import { inDevToast } from '../../../utils/shared.utils';
 import CommentForm from '../../Comments/CommentForm/CommentForm';
 import CommentsList from '../../Comments/CommentList';
@@ -15,7 +13,9 @@ import CardFooterButton from '../../Shared/CardFooterButton';
 import Flex from '../../Shared/Flex';
 import { BASE_BADGE_STYLES } from '../../Votes/VoteBadge/VoteBadge';
 import LikeButton from '../LikeButton/LikeButton';
+import { PostCardFragment } from '../PostCard/generated/PostCard.fragment';
 import PostModal from '../PostModal';
+import { usePostCommentsLazyQuery } from './generated/PostComments.query';
 
 export const ICON_STYLES: SxProps = {
   marginRight: '0.4ch',

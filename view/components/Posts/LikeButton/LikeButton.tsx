@@ -3,12 +3,12 @@ import { Favorite as LikeIcon } from '@mui/icons-material';
 import { SxProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { isLoggedInVar, toastVar } from '../../../apollo/cache';
-import { useDeleteLikeMutation } from '../../apollo/likes/generated/DeleteLike.mutation';
-import { useLikePostMutation } from '../../apollo/posts/generated/LikePost.mutation';
 import { TypeNames } from '../../../constants/shared.constants';
 import { Blurple } from '../../../styles/theme';
 import CardFooterButton from '../../Shared/CardFooterButton';
 import { ICON_STYLES } from '../PostCardFooter/PostCardFooter';
+import { useDeleteLikeMutation } from './graphql/generated/DeleteLike.mutation';
+import { useLikePostMutation } from './graphql/generated/LikePost.mutation';
 
 interface Props {
   postId: number;

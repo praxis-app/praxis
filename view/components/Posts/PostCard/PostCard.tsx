@@ -13,9 +13,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isLoggedInVar } from '../../../apollo/cache';
-import { useDeletePostMutation } from '../../apollo/posts/generated/DeletePost.mutation';
-import { PostCardFragment } from '../../apollo/posts/generated/PostCard.fragment';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -26,11 +23,14 @@ import { getUserProfilePath } from '../../../utils/user.utils';
 import EventItemAvatar from '../../Events/EventItemAvatar';
 import GroupItemAvatar from '../../Groups/GroupItemAvatar';
 import AttachedImageList from '../../Images/AttachedImageList';
+import { useMeQuery } from '../../Navigation/NavDrawer/generated/Me.query';
 import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import UserAvatar from '../../Users/UserAvatar/UserAvatar';
 import { removePost } from '../DeletePostButton/DeletePostButton';
+import { useDeletePostMutation } from '../DeletePostButton/generated/DeletePost.mutation';
 import PostCardFooter from '../PostCardFooter/PostCardFooter';
+import { PostCardFragment } from './generated/PostCard.fragment';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,

@@ -22,10 +22,6 @@ import {
   ProposalActionRoleInput,
   ProposalActionRoleMemberInput,
 } from '../../../../apollo/gen';
-import { useGroupMembersByGroupIdLazyQuery } from '../../../apollo/groups/generated/GroupMembersByGroupId.query';
-import { useGroupRoleByRoleIdLazyQuery } from '../../../apollo/groups/generated/GroupRoleByRoleId.query';
-import { useGroupRolesByGroupIdLazyQuery } from '../../../apollo/groups/generated/GroupRolesByGroupId.query';
-import { FieldNames } from '../../../../constants/shared.constants';
 import {
   ProposalActionFieldName,
   ProposalActionType,
@@ -35,7 +31,9 @@ import {
   DEFAULT_ROLE_COLOR,
   GROUP_PERMISSION_NAMES,
 } from '../../../../constants/role.constants';
+import { FieldNames } from '../../../../constants/shared.constants';
 import { initGroupRolePermissions } from '../../../../utils/role.utils';
+import { useGroupMembersByGroupIdLazyQuery } from '../../../Events/EventForm/graphql/generated/GroupMembersByGroupId.query';
 import Accordion, {
   AccordionDetails,
   AccordionSummary,
@@ -48,6 +46,8 @@ import ProgressBar from '../../../Shared/ProgressBar';
 import { TextField } from '../../../Shared/TextField';
 import ProposePermissionToggle from '../ProposePermissionToggle';
 import ProposeRoleMemberOption from '../ProposeRoleMemberOption';
+import { useGroupRoleByRoleIdLazyQuery } from './generated/GroupRoleByRoleId.query';
+import { useGroupRolesByGroupIdLazyQuery } from './generated/GroupRolesByGroupId.query';
 
 export interface ProposeRoleModalValues {
   name: string;
