@@ -2,15 +2,15 @@ import { AccountBox, ExitToApp, Person, Settings } from '@mui/icons-material';
 import { Menu, MenuItem, SvgIconProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLogOutMutation } from '../../apollo/auth/generated/LogOut.mutation';
 import {
   isAuthLoadingVar,
   isLoggedInVar,
   isRefreshingTokenVar,
 } from '../../../apollo/cache';
-import { TopNavDropdownFragment } from '../../apollo/users/generated/TopNavDropdown.fragment';
 import { NavigationPaths } from '../../../constants/shared.constants';
 import { inDevToast } from '../../../utils/shared.utils';
+import { useLogOutMutation } from '../NavDrawer/generated/LogOut.mutation';
+import { TopNavDropdownFragment } from './generated/TopNavDropdown.fragment';
 
 const ICON_PROPS: SvgIconProps = {
   fontSize: 'small',

@@ -1,17 +1,17 @@
 import {
-  PanTool as BlockIcon,
-  ThumbDown as StandAsideIcon,
-  ThumbsUpDown as ReservationsIcon,
   ThumbUp as AgreementIcon,
+  PanTool as BlockIcon,
+  ThumbsUpDown as ReservationsIcon,
+  ThumbDown as StandAsideIcon,
 } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
-import { VoteBadgesFragment } from '../../apollo/votes/generated/VoteBadges.fragment';
 import { VoteTypes } from '../../../constants/vote.constants';
 import { filterVotesByType } from '../../../utils/vote.utils';
 import Flex from '../../Shared/Flex';
 import VoteBadge from '../VoteBadge/VoteBadge';
 import VotesModal from '../VotesModal';
+import { VoteBadgesFragment } from './generated/VoteBadges.fragment';
 
 interface Props {
   proposal: VoteBadgesFragment;

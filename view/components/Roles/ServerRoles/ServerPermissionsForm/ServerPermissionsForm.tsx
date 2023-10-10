@@ -3,12 +3,12 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../../../apollo/cache';
 import { ServerRolePermissionInput } from '../../../../apollo/gen';
-import { ServerRolePermissionsFragment } from '../../../apollo/roles/generated/ServerRolePermissions.fragment';
-import { useUpdateServerRoleMutation } from '../../../apollo/roles/generated/UpdateServerRole.mutation';
 import { SERVER_PERMISSION_NAMES } from '../../../../constants/role.constants';
 import Flex from '../../../Shared/Flex';
 import PrimaryActionButton from '../../../Shared/PrimaryActionButton';
 import ServerPermissionToggle from '../ServerPermissionToggle';
+import { useUpdateServerRoleMutation } from '../ServerRoleForm/graphql/generated/UpdateServerRole.mutation';
+import { ServerRolePermissionsFragment } from './generated/ServerRolePermissions.fragment';
 
 interface Props extends BoxProps {
   permissions: ServerRolePermissionsFragment;

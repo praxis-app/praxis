@@ -2,14 +2,14 @@ import { Reference } from '@apollo/client';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FollowButtonFragment } from '../../apollo/users/generated/FollowButton.fragment';
-import { useFollowUserMutation } from '../../apollo/users/generated/FollowUser.mutation';
+import GhostButton from '../../Shared/GhostButton';
 import {
   HomeFeedDocument,
   HomeFeedQuery,
-} from '../../apollo/users/generated/HomeFeed.query';
-import { useUnfollowUserMutation } from '../../apollo/users/generated/UnfollowUser.mutation';
-import GhostButton from '../../Shared/GhostButton';
+} from '../HomeFeed/generated/HomeFeed.query';
+import { FollowButtonFragment } from './graphql/generated/FollowButton.fragment';
+import { useFollowUserMutation } from './graphql/generated/FollowUser.mutation';
+import { useUnfollowUserMutation } from './graphql/generated/UnfollowUser.mutation';
 
 interface Props {
   currentUserId: number;
