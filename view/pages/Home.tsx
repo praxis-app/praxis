@@ -1,7 +1,7 @@
 import { useReactiveVar } from '@apollo/client';
 import { isLoggedInVar } from '../apollo/cache';
 import PublicGroupsFeed from '../components/Groups/PublicGroupsFeed/PublicGroupsFeed';
-import HomeFeed from '../components/Users/HomeFeed';
+import HomeFeed from '../components/Users/HomeFeed/HomeFeed';
 
 const Home = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);

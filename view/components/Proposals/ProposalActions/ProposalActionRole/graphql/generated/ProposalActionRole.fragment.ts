@@ -1,8 +1,8 @@
-import * as Types from '../../../../../apollo/gen';
+import * as Types from '../../../../../../apollo/gen';
 
 import { gql } from '@apollo/client';
-import { ProposalActionPermissionFragmentDoc } from '../../ProposalActionPermission/generated/ProposalActionPermission.fragment';
-import { ProposalActionRoleMemberFragmentDoc } from '../../ProposalActionRoleMember/generated/ProposalActionRoleMember.fragment';
+import { ProposalActionPermissionFragmentDoc } from '../../../ProposalActionPermission/generated/ProposalActionPermission.fragment';
+import { ProposalActionRoleMemberFragmentDoc } from '../../../ProposalActionRoleMember/generated/ProposalActionRoleMember.fragment';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */

@@ -1,8 +1,8 @@
 import * as Types from '../../../../../apollo/gen';
 
 import { gql } from '@apollo/client';
-import { ProposalActionEventFragmentDoc } from '../../ProposalActionEvent/generated/ProposalActionEvent.fragment';
-import { ProposalActionRoleFragmentDoc } from '../../ProposalActionRole/generated/ProposalActionRole.fragment';
+import { ProposalActionEventFragmentDoc } from '../../ProposalActionEvent/graphql/generated/ProposalActionEvent.fragment';
+import { ProposalActionRoleFragmentDoc } from '../../ProposalActionRole/graphql/generated/ProposalActionRole.fragment';
 import { AttachedImageFragmentDoc } from '../../../../Images/AttachedImage/generated/AttachedImage.fragment';
 
 // THIS FILE IS GENERATED, DO NOT EDIT

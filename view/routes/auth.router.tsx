@@ -1,6 +1,6 @@
 import { RouteObject } from 'react-router-dom';
 import Login from '../pages/Auth/Login';
-import SignUp from '../pages/Auth/SignUp';
+import SignUp from '../pages/Auth/SignUp/SignUp';
 
 const authRouter: RouteObject = {
   path: '/auth',
