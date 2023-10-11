@@ -1,7 +1,4 @@
-import { CodegenConfig } from '@graphql-codegen/cli';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
+require('dotenv').config();
 
 const DO_NOT_EDIT_PLUGIN = {
   add: {
@@ -12,9 +9,9 @@ const DO_NOT_EDIT_PLUGIN = {
   },
 };
 
-const config: CodegenConfig = {
+const config = {
   schema: process.env.SCHEMA_URL,
-  documents: ['view/apollo/**/*.graphql'],
+  documents: ['view/**/*.graphql'],
   ignoreNoDocuments: true,
 
   generates: {
@@ -22,11 +19,11 @@ const config: CodegenConfig = {
       plugins: [DO_NOT_EDIT_PLUGIN, 'typescript'],
     },
 
-    'view/apollo/': {
+    'view/': {
       preset: 'near-operation-file',
       presetConfig: {
-        baseTypesPath: 'gen.ts',
-        folder: '../generated',
+        baseTypesPath: 'apollo/gen.ts',
+        folder: './generated',
         extension: '.ts',
       },
       plugins: [
@@ -43,4 +40,4 @@ const config: CodegenConfig = {
   },
 };
 
-export default config;
+module.exports = config;
