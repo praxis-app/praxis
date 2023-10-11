@@ -33,10 +33,6 @@ const config = {
       ],
       config: { withHooks: true },
     },
-
-    'schema.graphql': {
-      plugins: ['schema-ast'],
-    },
   },
 };
 
