@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { isLoggedInVar } from '../../apollo/cache';
-import { useGroupProfileLazyQuery } from '../../apollo/groups/generated/GroupProfile.query';
+import { useGroupProfileLazyQuery } from '../../apollo/groups/queries/gen/GroupProfile.gen';
 import GroupEventsTab from '../../components/Groups/GroupEventsTab';
 import GroupProfileCard from '../../components/Groups/GroupProfileCard';
 import Feed from '../../components/Shared/Feed';

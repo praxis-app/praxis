@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { isLoggedInVar } from '../../apollo/cache';
-import { useEventPageLazyQuery } from '../../apollo/events/generated/EventPage.query';
+import { useEventPageLazyQuery } from '../../apollo/events/queries/gen/EventPage.gen';
 import EventPageCard from '../../components/Events/EventPageCard';
 import PostForm from '../../components/Posts/PostForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';

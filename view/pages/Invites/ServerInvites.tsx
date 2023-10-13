@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useServerInvitesQuery } from '../../apollo/invites/generated/ServerInvites.query';
+import { useServerInvitesQuery } from '../../apollo/invites/queries/gen/ServerInvites.gen';
 import ServerInviteCard from '../../components/ServerInvites/ServerInviteCard';
 import ServerInviteForm from '../../components/ServerInvites/ServerInviteForm';
 import ServerInviteTable from '../../components/ServerInvites/ServerInviteTable';

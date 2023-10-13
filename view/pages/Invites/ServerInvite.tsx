@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { inviteTokenVar, isLoggedInVar } from '../../apollo/cache';
-import { useServerInviteLazyQuery } from '../../apollo/invites/generated/ServerInvite.query';
+import { useServerInviteLazyQuery } from '../../apollo/invites/queries/gen/ServerInvite.gen';
 import PublicGroupsFeed from '../../components/Groups/PublicGroupsFeed';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { INVITE_TOKEN } from '../../constants/server-invite.constants';

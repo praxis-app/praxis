@@ -3,7 +3,7 @@ import { Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { inviteTokenVar, isLoggedInVar } from '../../apollo/cache';
-import { useUserProfileQuery } from '../../apollo/users/generated/UserProfile.query';
+import { useUserProfileQuery } from '../../apollo/users/queries/gen/UserProfile.gen';
 import Feed from '../../components/Shared/Feed';
 import Link from '../../components/Shared/Link';
 import ProgressBar from '../../components/Shared/ProgressBar';

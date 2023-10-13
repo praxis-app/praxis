@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { isLoggedInVar } from '../../apollo/cache';
-import { useEventsLazyQuery } from '../../apollo/events/generated/Events.query';
+import { useEventsLazyQuery } from '../../apollo/events/queries/gen/Events.gen';
 import { EventsInput } from '../../apollo/gen';
 import EventCompact from '../../components/Events/EventCompact';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';

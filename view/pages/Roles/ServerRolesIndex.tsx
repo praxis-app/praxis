@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useServerRolesQuery } from '../../apollo/roles/generated/ServerRoles.query';
+import { useServerRolesQuery } from '../../apollo/roles/queries/gen/ServerRoles.gen';
 import RoleList from '../../components/Roles/RoleList';
 import ServerRoleForm from '../../components/Roles/ServerRoles/ServerRoleForm';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';

@@ -1,5 +1,5 @@
 import { styled, Typography } from '@mui/material';
-import { GroupMemberFragment } from '../../apollo/groups/generated/GroupMember.fragment';
+import { GroupMemberFragment } from '../../apollo/groups/fragments/gen/GroupMember.gen';
 import { getUserProfilePath } from '../../utils/user.utils';
 import SharedFlex from '../Shared/Flex';
 import Link from '../Shared/Link';

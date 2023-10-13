@@ -1,6 +1,6 @@
 import { t } from 'i18next';
 import { Namespace, TFunction } from 'react-i18next';
-import { GroupPermissionsFragment } from '../apollo/groups/generated/GroupPermissions.fragment';
+import { GroupPermissionsFragment } from '../apollo/groups/fragments/gen/GroupPermissions.gen';
 
 interface PermissionText {
   displayName: string | null;
