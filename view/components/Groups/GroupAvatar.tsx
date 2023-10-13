@@ -1,5 +1,5 @@
 import { Avatar, AvatarProps } from '@mui/material';
-import { GroupAvatarFragment } from '../../apollo/groups/generated/GroupAvatar.fragment';
+import { GroupAvatarFragment } from '../../apollo/groups/fragments/gen/GroupAvatar.gen';
 import { getGroupPath } from '../../utils/group.utils';
 import { getImagePath } from '../../utils/image.utils';
 import Link from '../Shared/Link';

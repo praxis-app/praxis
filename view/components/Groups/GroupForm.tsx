@@ -12,13 +12,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toastVar } from '../../apollo/cache';
 import { CreateGroupInput, UpdateGroupInput } from '../../apollo/gen';
-import { useCreateGroupMutation } from '../../apollo/groups/generated/CreateGroup.mutation';
-import { GroupFormFragment } from '../../apollo/groups/generated/GroupForm.fragment';
+import { GroupFormFragment } from '../../apollo/groups/fragments/gen/GroupForm.gen';
+import { useCreateGroupMutation } from '../../apollo/groups/mutations/gen/CreateGroup.gen';
+import { useUpdateGroupMutation } from '../../apollo/groups/mutations/gen/UpdateGroup.gen';
 import {
   GroupsDocument,
   GroupsQuery,
-} from '../../apollo/groups/generated/Groups.query';
-import { useUpdateGroupMutation } from '../../apollo/groups/generated/UpdateGroup.mutation';
+} from '../../apollo/groups/queries/gen/Groups.gen';
 import { FieldNames } from '../../constants/shared.constants';
 import { getGroupPath } from '../../utils/group.utils';
 import { getRandomString } from '../../utils/shared.utils';

@@ -1,7 +1,7 @@
 import { RemoveCircle } from '@mui/icons-material';
 import { Box, IconButton, SxProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { AttachedImageFragment } from '../../apollo/images/generated/AttachedImage.fragment';
+import { AttachedImageFragment } from '../../apollo/images/fragments/gen/AttachedImage.gen';
 import { getImagePath } from '../../utils/image.utils';
 
 const REMOVE_BUTTON: SxProps = {

@@ -5,7 +5,7 @@ import { toastVar } from '../../apollo/cache';
 import {
   DeletePostMutation,
   useDeletePostMutation,
-} from '../../apollo/posts/generated/DeletePost.mutation';
+} from '../../apollo/posts/mutations/gen/DeletePost.gen';
 import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
 import DeleteButton from '../Shared/DeleteButton';
 

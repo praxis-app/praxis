@@ -3,26 +3,27 @@ import { AccountBox, Settings } from '@mui/icons-material';
 import {
   Box,
   Card,
-  CardContent as MuiCardContent,
-  CardHeader as MuiCardHeader,
   CardProps,
   MenuItem,
-  styled,
+  CardContent as MuiCardContent,
+  CardHeader as MuiCardHeader,
   Typography,
+  styled,
 } from '@mui/material';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { isLoggedInVar, toastVar } from '../../apollo/cache';
+import { GroupCardFragment } from '../../apollo/groups/fragments/gen/GroupCard.gen';
 import {
   DeleteGroupMutation,
   useDeleteGroupMutation,
-} from '../../apollo/groups/generated/DeleteGroup.mutation';
-import { GroupCardFragment } from '../../apollo/groups/generated/GroupCard.fragment';
+} from '../../apollo/groups/mutations/gen/DeleteGroup.gen';
 import {
   GroupsDocument,
   GroupsQuery,
-} from '../../apollo/groups/generated/Groups.query';
+} from '../../apollo/groups/queries/gen/Groups.gen';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -38,7 +39,6 @@ import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import GroupAvatar from './GroupAvatar';
 import JoinButton from './JoinButton';
-import { useNavigate } from 'react-router-dom';
 
 export const removeGroup =
   (id: number) =>
