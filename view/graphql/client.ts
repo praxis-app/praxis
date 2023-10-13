@@ -6,7 +6,7 @@ import cache from './cache';
 
 const terminatingLink = createUploadLink({
   headers: { 'Apollo-Require-Preflight': 'true' },
-  uri: '/graphql',
+  uri: '/api/graphql',
 });
 
 const client = new ApolloClient({
