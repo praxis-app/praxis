@@ -6,11 +6,11 @@ While model of consensus is the default, group members will also be able to use 
 
 The tech stack includes:
 
-- GraphQL
-- TypeScript
-- TypeORM
-- NestJS
 - Vite
+- NestJS
+- GraphQL
+- TypeORM
+- TypeScript
 
 Praxis is free and open source software, as specified by the GNU General Public License.
 
