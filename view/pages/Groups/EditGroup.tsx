@@ -3,7 +3,7 @@ import { truncate } from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useEditGroupLazyQuery } from '../../apollo/groups/queries/gen/EditGroup.gen';
+import { useEditGroupLazyQuery } from '../../graphql/groups/queries/gen/EditGroup.gen';
 import GroupForm from '../../components/Groups/GroupForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';

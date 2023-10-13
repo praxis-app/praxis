@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { usePublicGroupsQuery } from '../../apollo/groups/queries/gen/PublicGroups.gen';
+import { usePublicGroupsQuery } from '../../graphql/groups/queries/gen/PublicGroups.gen';
 import GroupCard from '../../components/Groups/GroupCard';
 import GroupTipsCard from '../../components/Groups/GroupTipsCard';
 import ProgressBar from '../../components/Shared/ProgressBar';

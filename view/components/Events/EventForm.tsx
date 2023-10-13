@@ -15,16 +15,16 @@ import { produce } from 'immer';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toastVar } from '../../apollo/cache';
-import { EventFormFragment } from '../../apollo/events/fragments/gen/EventForm.gen';
-import { useCreateEventMutation } from '../../apollo/events/mutations/gen/CreateEvent.gen';
-import { useUpdateEventMutation } from '../../apollo/events/mutations/gen/UpdateEvent.gen';
-import { CreateEventInput, UpdateEventInput } from '../../apollo/gen';
+import { toastVar } from '../../graphql/cache';
+import { EventFormFragment } from '../../graphql/events/fragments/gen/EventForm.gen';
+import { useCreateEventMutation } from '../../graphql/events/mutations/gen/CreateEvent.gen';
+import { useUpdateEventMutation } from '../../graphql/events/mutations/gen/UpdateEvent.gen';
+import { CreateEventInput, UpdateEventInput } from '../../graphql/gen';
 import {
   GroupEventsTabDocument,
   GroupEventsTabQuery,
-} from '../../apollo/groups/queries/gen/GroupEventsTab.gen';
-import { useGroupMembersByGroupIdLazyQuery } from '../../apollo/groups/queries/gen/GroupMembersByGroupId.gen';
+} from '../../graphql/groups/queries/gen/GroupEventsTab.gen';
+import { useGroupMembersByGroupIdLazyQuery } from '../../graphql/groups/queries/gen/GroupMembersByGroupId.gen';
 import { Blurple } from '../../styles/theme';
 import { getEventPath } from '../../utils/event.utils';
 import { getRandomString, isValidUrl } from '../../utils/shared.utils';

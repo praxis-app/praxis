@@ -5,8 +5,8 @@ import {
   GroupRolePermission,
   GroupRolePermissionInput,
   ProposalActionRoleInput,
-} from '../../../apollo/gen';
-import { GroupPermissionsFragment } from '../../../apollo/groups/fragments/gen/GroupPermissions.gen';
+} from '../../../graphql/gen';
+import { GroupPermissionsFragment } from '../../../graphql/groups/fragments/gen/GroupPermissions.gen';
 import theme from '../../../styles/theme';
 import { getPermissionText } from '../../../utils/role.utils';
 import Flex from '../../Shared/Flex';

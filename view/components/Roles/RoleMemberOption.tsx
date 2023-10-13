@@ -5,7 +5,7 @@ import {
   Typography,
   styled,
 } from '@mui/material';
-import { UserAvatarFragment } from '../../apollo/users/fragments/gen/UserAvatar.gen';
+import { UserAvatarFragment } from '../../graphql/users/fragments/gen/UserAvatar.gen';
 import Flex from '../Shared/Flex';
 import UserAvatar from '../Users/UserAvatar';
 

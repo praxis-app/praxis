@@ -1,15 +1,15 @@
 import { FormikHelpers } from 'formik';
 import { produce } from 'immer';
 import { useState } from 'react';
-import { toastVar } from '../../../apollo/cache';
-import { CreateServerRoleInput } from '../../../apollo/gen';
-import { ServerRoleFragment } from '../../../apollo/roles/fragments/gen/ServerRole.gen';
-import { useCreateServerRoleMutation } from '../../../apollo/roles/mutations/gen/CreateServerRole.gen';
-import { useUpdateServerRoleMutation } from '../../../apollo/roles/mutations/gen/UpdateServerRole.gen';
+import { toastVar } from '../../../graphql/cache';
+import { CreateServerRoleInput } from '../../../graphql/gen';
+import { ServerRoleFragment } from '../../../graphql/roles/fragments/gen/ServerRole.gen';
+import { useCreateServerRoleMutation } from '../../../graphql/roles/mutations/gen/CreateServerRole.gen';
+import { useUpdateServerRoleMutation } from '../../../graphql/roles/mutations/gen/UpdateServerRole.gen';
 import {
   ServerRolesDocument,
   ServerRolesQuery,
-} from '../../../apollo/roles/queries/gen/ServerRoles.gen';
+} from '../../../graphql/roles/queries/gen/ServerRoles.gen';
 import { DEFAULT_ROLE_COLOR } from '../../../constants/role.constants';
 import { getRandomString } from '../../../utils/shared.utils';
 import RoleForm from '../RoleForm';

@@ -14,10 +14,10 @@ import { useLocation } from 'react-router-dom';
 import {
   ProposalActionRoleInput,
   ProposalActionRoleMemberInput,
-} from '../../../apollo/gen';
-import { useGroupRoleByRoleIdLazyQuery } from '../../../apollo/groups/queries/gen/GroupRoleByRoleId.gen';
-import { ProposalActionRoleFragment } from '../../../apollo/proposals/fragments/gen/ProposalActionRole.gen';
-import { useUsersByIdsLazyQuery } from '../../../apollo/users/queries/gen/UsersByIds.gen';
+} from '../../../graphql/gen';
+import { useGroupRoleByRoleIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRoleByRoleId.gen';
+import { ProposalActionRoleFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionRole.gen';
+import { useUsersByIdsLazyQuery } from '../../../graphql/users/queries/gen/UsersByIds.gen';
 import { ProposalActionType } from '../../../constants/proposal.constants';
 import { ChangeType } from '../../../constants/shared.constants';
 import { useIsDesktop } from '../../../hooks/shared.hooks';

@@ -2,7 +2,7 @@ import { useReactiveVar } from '@apollo/client';
 import { Close } from '@mui/icons-material';
 import { Alert, IconButton, Snackbar, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { toastVar } from '../../apollo/cache';
+import { toastVar } from '../../graphql/cache';
 
 const AUTO_HIDE_DURATION = 6000;
 

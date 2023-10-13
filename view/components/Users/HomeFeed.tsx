@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useHomeFeedQuery } from '../../apollo/users/queries/gen/HomeFeed.gen';
+import { useHomeFeedQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 import Feed from '../Shared/Feed';
 import ProgressBar from '../Shared/ProgressBar';

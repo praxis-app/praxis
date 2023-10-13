@@ -14,16 +14,16 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { isLoggedInVar, toastVar } from '../../apollo/cache';
-import { GroupCardFragment } from '../../apollo/groups/fragments/gen/GroupCard.gen';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { GroupCardFragment } from '../../graphql/groups/fragments/gen/GroupCard.gen';
 import {
   DeleteGroupMutation,
   useDeleteGroupMutation,
-} from '../../apollo/groups/mutations/gen/DeleteGroup.gen';
+} from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import {
   GroupsDocument,
   GroupsQuery,
-} from '../../apollo/groups/queries/gen/Groups.gen';
+} from '../../graphql/groups/queries/gen/Groups.gen';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,

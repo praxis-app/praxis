@@ -1,7 +1,7 @@
 import { t } from 'i18next';
 import { isValidElement, ReactNode } from 'react';
 import { animateScroll } from 'react-scroll';
-import { toastVar } from '../apollo/cache';
+import { toastVar } from '../graphql/cache';
 import { SCROLL_DURATION } from '../constants/shared.constants';
 
 /**

@@ -1,5 +1,5 @@
 import { Box, BoxProps } from '@mui/material';
-import { CommentFragment } from '../../apollo/comments/fragments/gen/Comment.gen';
+import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.gen';
 import Comment from './Comment';
 
 interface Props extends BoxProps {

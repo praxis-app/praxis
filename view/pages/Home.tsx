@@ -1,5 +1,5 @@
 import { useReactiveVar } from '@apollo/client';
-import { isLoggedInVar } from '../apollo/cache';
+import { isLoggedInVar } from '../graphql/cache';
 import PublicGroupsFeed from '../components/Groups/PublicGroupsFeed';
 import HomeFeed from '../components/Users/HomeFeed';
 

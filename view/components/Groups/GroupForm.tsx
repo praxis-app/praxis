@@ -10,15 +10,15 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toastVar } from '../../apollo/cache';
-import { CreateGroupInput, UpdateGroupInput } from '../../apollo/gen';
-import { GroupFormFragment } from '../../apollo/groups/fragments/gen/GroupForm.gen';
-import { useCreateGroupMutation } from '../../apollo/groups/mutations/gen/CreateGroup.gen';
-import { useUpdateGroupMutation } from '../../apollo/groups/mutations/gen/UpdateGroup.gen';
+import { toastVar } from '../../graphql/cache';
+import { CreateGroupInput, UpdateGroupInput } from '../../graphql/gen';
+import { GroupFormFragment } from '../../graphql/groups/fragments/gen/GroupForm.gen';
+import { useCreateGroupMutation } from '../../graphql/groups/mutations/gen/CreateGroup.gen';
+import { useUpdateGroupMutation } from '../../graphql/groups/mutations/gen/UpdateGroup.gen';
 import {
   GroupsDocument,
   GroupsQuery,
-} from '../../apollo/groups/queries/gen/Groups.gen';
+} from '../../graphql/groups/queries/gen/Groups.gen';
 import { FieldNames } from '../../constants/shared.constants';
 import { getGroupPath } from '../../utils/group.utils';
 import { getRandomString } from '../../utils/shared.utils';

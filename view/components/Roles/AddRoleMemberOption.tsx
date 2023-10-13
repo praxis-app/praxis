@@ -1,4 +1,4 @@
-import { UserAvatarFragment } from '../../apollo/users/fragments/gen/UserAvatar.gen';
+import { UserAvatarFragment } from '../../graphql/users/fragments/gen/UserAvatar.gen';
 import RoleMemberOption from './RoleMemberOption';
 
 interface Props {

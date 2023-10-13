@@ -8,8 +8,8 @@ import {
   styled,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ServerInviteCardFragment } from '../../apollo/invites/fragments/gen/ServerInviteCard.gen';
-import { ServerInvitesQuery } from '../../apollo/invites/queries/gen/ServerInvites.gen';
+import { ServerInviteCardFragment } from '../../graphql/invites/fragments/gen/ServerInviteCard.gen';
+import { ServerInvitesQuery } from '../../graphql/invites/queries/gen/ServerInvites.gen';
 import ServerInviteRow from '../../components/ServerInvites/ServerInviteRow';
 
 export const TableCell = styled(MuiTableCell)(({ theme }) => ({

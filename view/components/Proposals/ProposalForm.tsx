@@ -18,21 +18,21 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toastVar } from '../../apollo/cache';
+import { toastVar } from '../../graphql/cache';
 import {
   CreateProposalInput,
   ProposalActionInput,
   UpdateProposalInput,
-} from '../../apollo/gen';
-import { useDeleteImageMutation } from '../../apollo/images/mutations/gen/DeleteImage.gen';
-import { ProposalFormFragment } from '../../apollo/proposals/fragments/gen/ProposalForm.gen';
-import { useCreateProposalMutation } from '../../apollo/proposals/mutations/gen/CreateProposal.gen';
-import { useUpdateProposalMutation } from '../../apollo/proposals/mutations/gen/UpdateProposal.gen';
+} from '../../graphql/gen';
+import { useDeleteImageMutation } from '../../graphql/images/mutations/gen/DeleteImage.gen';
+import { ProposalFormFragment } from '../../graphql/proposals/fragments/gen/ProposalForm.gen';
+import { useCreateProposalMutation } from '../../graphql/proposals/mutations/gen/CreateProposal.gen';
+import { useUpdateProposalMutation } from '../../graphql/proposals/mutations/gen/UpdateProposal.gen';
 import {
   HomeFeedDocument,
   HomeFeedQuery,
-} from '../../apollo/users/queries/gen/HomeFeed.gen';
-import { useMeQuery } from '../../apollo/users/queries/gen/Me.gen';
+} from '../../graphql/users/queries/gen/HomeFeed.gen';
+import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import {
   ProposalActionFieldName,
   ProposalActionType,

@@ -5,7 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import App from './App';
-import client from './apollo/client';
+import client from './graphql/client';
 import './locales/i18n.config';
 import './styles/globals.css';
 import theme from './styles/theme';

@@ -1,8 +1,8 @@
 import { Avatar, AvatarProps, useTheme } from '@mui/material';
 import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { UserAvatarFragment } from '../../apollo/users/fragments/gen/UserAvatar.gen';
-import { useMeQuery } from '../../apollo/users/queries/gen/Me.gen';
+import { UserAvatarFragment } from '../../graphql/users/fragments/gen/UserAvatar.gen';
+import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { getImagePath } from '../../utils/image.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Link from '../Shared/Link';

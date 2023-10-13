@@ -10,10 +10,10 @@ import {
 } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { toastVar } from '../../apollo/cache';
-import { UpdateGroupConfigInput } from '../../apollo/gen';
-import { GroupSettingsFormFragment } from '../../apollo/groups/fragments/gen/GroupSettingsForm.gen';
-import { useUpdateGroupSettingsMutation } from '../../apollo/groups/mutations/gen/UpdateGroupSettings.gen';
+import { toastVar } from '../../graphql/cache';
+import { UpdateGroupConfigInput } from '../../graphql/gen';
+import { GroupSettingsFormFragment } from '../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
+import { useUpdateGroupSettingsMutation } from '../../graphql/groups/mutations/gen/UpdateGroupSettings.gen';
 import { GroupPrivacy } from '../../constants/group.constants';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';

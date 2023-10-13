@@ -9,7 +9,7 @@ import {
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { isNavDrawerOpenVar } from '../../apollo/cache';
+import { isNavDrawerOpenVar } from '../../graphql/cache';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { scrollTop } from '../../utils/shared.utils';
 

@@ -6,16 +6,16 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toastVar } from '../../apollo/cache';
-import { CreatePostInput, UpdatePostInput } from '../../apollo/gen';
-import { useDeleteImageMutation } from '../../apollo/images/mutations/gen/DeleteImage.gen';
-import { PostFormFragment } from '../../apollo/posts/fragments/gen/PostForm.gen';
-import { useCreatePostMutation } from '../../apollo/posts/mutations/gen/CreatePost.gen';
-import { useUpdatePostMutation } from '../../apollo/posts/mutations/gen/UpdatePost.gen';
+import { toastVar } from '../../graphql/cache';
+import { CreatePostInput, UpdatePostInput } from '../../graphql/gen';
+import { useDeleteImageMutation } from '../../graphql/images/mutations/gen/DeleteImage.gen';
+import { PostFormFragment } from '../../graphql/posts/fragments/gen/PostForm.gen';
+import { useCreatePostMutation } from '../../graphql/posts/mutations/gen/CreatePost.gen';
+import { useUpdatePostMutation } from '../../graphql/posts/mutations/gen/UpdatePost.gen';
 import {
   HomeFeedDocument,
   HomeFeedQuery,
-} from '../../apollo/users/queries/gen/HomeFeed.gen';
+} from '../../graphql/users/queries/gen/HomeFeed.gen';
 import {
   FieldNames,
   NavigationPaths,

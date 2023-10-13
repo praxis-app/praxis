@@ -1,6 +1,6 @@
 import { Divider, SxProps } from '@mui/material';
 import { Fragment } from 'react';
-import { VoteFragment } from '../../apollo/votes/fragments/gen/Vote.gen';
+import { VoteFragment } from '../../graphql/votes/fragments/gen/Vote.gen';
 import Vote from './Vote';
 
 interface Props {

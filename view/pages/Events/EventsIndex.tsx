@@ -10,9 +10,9 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { isLoggedInVar } from '../../apollo/cache';
-import { useEventsLazyQuery } from '../../apollo/events/queries/gen/Events.gen';
-import { EventsInput } from '../../apollo/gen';
+import { isLoggedInVar } from '../../graphql/cache';
+import { useEventsLazyQuery } from '../../graphql/events/queries/gen/Events.gen';
+import { EventsInput } from '../../graphql/gen';
 import EventCompact from '../../components/Events/EventCompact';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';

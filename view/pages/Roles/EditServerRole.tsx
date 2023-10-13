@@ -4,7 +4,7 @@ import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useEditServerRoleLazyQuery } from '../../apollo/roles/queries/gen/EditServerRole.gen';
+import { useEditServerRoleLazyQuery } from '../../graphql/roles/queries/gen/EditServerRole.gen';
 import EditRoleTabs from '../../components/Roles/EditRoleTabs';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';

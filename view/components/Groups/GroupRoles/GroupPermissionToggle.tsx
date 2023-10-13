@@ -1,5 +1,5 @@
-import { GroupRolePermissionInput } from '../../../apollo/gen';
-import { GroupRolePermissionsFragment } from '../../../apollo/groups/fragments/gen/GroupRolePermissions.gen';
+import { GroupRolePermissionInput } from '../../../graphql/gen';
+import { GroupRolePermissionsFragment } from '../../../graphql/groups/fragments/gen/GroupRolePermissions.gen';
 import PermissionToggle from '../../Roles/PermissionToggle';
 
 interface Props {

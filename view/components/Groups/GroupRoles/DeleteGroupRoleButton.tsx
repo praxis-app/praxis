@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toastVar } from '../../../apollo/cache';
-import { DeleteGroupRoleButtonFragment } from '../../../apollo/groups/fragments/gen/DeleteGroupRoleButton.gen';
-import { useDeleteGroupRoleMutation } from '../../../apollo/groups/mutations/gen/DeleteGroupRole.gen';
+import { toastVar } from '../../../graphql/cache';
+import { DeleteGroupRoleButtonFragment } from '../../../graphql/groups/fragments/gen/DeleteGroupRoleButton.gen';
+import { useDeleteGroupRoleMutation } from '../../../graphql/groups/mutations/gen/DeleteGroupRole.gen';
 import { NavigationPaths } from '../../../constants/shared.constants';
 import DeleteButton from '../../Shared/DeleteButton';
 

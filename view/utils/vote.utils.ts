@@ -1,4 +1,4 @@
-import { VoteBadgesFragment } from '../apollo/votes/fragments/gen/VoteBadges.gen';
+import { VoteBadgesFragment } from '../graphql/votes/fragments/gen/VoteBadges.gen';
 import { VoteTypes } from '../constants/vote.constants';
 
 export const filterVotesByType = (votes: VoteBadgesFragment['votes']) => {
