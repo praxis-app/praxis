@@ -20,8 +20,8 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { isLoggedInVar } from '../../apollo/cache';
-import { useDeleteGroupMutation } from '../../apollo/groups/generated/DeleteGroup.mutation';
-import { GroupProfileCardFragment } from '../../apollo/groups/generated/GroupProfileCard.fragment';
+import { GroupProfileCardFragment } from '../../apollo/groups/fragments/gen/GroupProfileCard.gen';
+import { useDeleteGroupMutation } from '../../apollo/groups/mutations/gen/DeleteGroup.gen';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,

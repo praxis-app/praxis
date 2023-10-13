@@ -19,7 +19,7 @@ import { SxProps, styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { isLoggedInVar } from '../../apollo/cache';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
+import { useMeQuery } from '../../apollo/users/queries/gen/Me.gen';
 import { NavigationPaths } from '../../constants/shared.constants';
 import Link from '../Shared/Link';
 

@@ -1,6 +1,6 @@
 import { Box, SxProps, useTheme } from '@mui/material';
-import { EventAvatarFragment } from '../../apollo/events/generated/EventAvatar.fragment';
-import { UserAvatarFragment } from '../../apollo/users/generated/UserAvatar.fragment';
+import { EventAvatarFragment } from '../../apollo/events/fragments/gen/EventAvatar.gen';
+import { UserAvatarFragment } from '../../apollo/users/fragments/gen/UserAvatar.gen';
 import UserAvatar from '../Users/UserAvatar';
 import EventAvatar from './EventAvatar';
 

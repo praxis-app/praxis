@@ -1,8 +1,9 @@
 import { CropOriginal } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import { FormikErrors, FormikTouched } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { CreateProposalInput } from '../../../apollo/gen';
-import { ProposalFormFragment } from '../../../apollo/proposals/generated/ProposalForm.fragment';
+import { ProposalFormFragment } from '../../../apollo/proposals/fragments/gen/ProposalForm.gen';
 import {
   ProposalActionFieldName,
   ProposalActionType,
@@ -10,7 +11,6 @@ import {
 import AttachedImagePreview from '../../Images/AttachedImagePreview';
 import ImageInput from '../../Images/ImageInput';
 import { TextField } from '../../Shared/TextField';
-import { useTranslation } from 'react-i18next';
 
 interface Props {
   editProposal?: ProposalFormFragment;

@@ -1,5 +1,5 @@
 import { Box, BoxProps } from '@mui/material';
-import { AttachedImageFragment } from '../../apollo/images/generated/AttachedImage.fragment';
+import { AttachedImageFragment } from '../../apollo/images/fragments/gen/AttachedImage.gen';
 import AttachedImage from './AttachedImage';
 
 interface Props extends Omit<BoxProps, 'children'> {

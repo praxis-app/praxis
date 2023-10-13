@@ -13,9 +13,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isLoggedInVar } from '../../apollo/cache';
-import { useDeletePostMutation } from '../../apollo/posts/generated/DeletePost.mutation';
-import { PostCardFragment } from '../../apollo/posts/generated/PostCard.fragment';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
+import { PostCardFragment } from '../../apollo/posts/fragments/gen/PostCard.gen';
+import { useDeletePostMutation } from '../../apollo/posts/mutations/gen/DeletePost.gen';
+import { useMeQuery } from '../../apollo/users/queries/gen/Me.gen';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,

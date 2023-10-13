@@ -1,11 +1,11 @@
 import {
-  CardActionArea as MuiCardActionArea,
   Checkbox,
-  styled,
+  CardActionArea as MuiCardActionArea,
   SxProps,
   Typography,
+  styled,
 } from '@mui/material';
-import { UserAvatarFragment } from '../../apollo/users/generated/UserAvatar.fragment';
+import { UserAvatarFragment } from '../../apollo/users/fragments/gen/UserAvatar.gen';
 import Flex from '../Shared/Flex';
 import UserAvatar from '../Users/UserAvatar';
 

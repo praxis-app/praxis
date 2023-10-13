@@ -24,15 +24,15 @@ import {
   ProposalActionInput,
   UpdateProposalInput,
 } from '../../apollo/gen';
-import { useDeleteImageMutation } from '../../apollo/images/generated/DeleteImage.mutation';
-import { useCreateProposalMutation } from '../../apollo/proposals/generated/CreateProposal.mutation';
-import { ProposalFormFragment } from '../../apollo/proposals/generated/ProposalForm.fragment';
-import { useUpdateProposalMutation } from '../../apollo/proposals/generated/UpdateProposal.mutation';
+import { useDeleteImageMutation } from '../../apollo/images/mutations/gen/DeleteImage.gen';
+import { ProposalFormFragment } from '../../apollo/proposals/fragments/gen/ProposalForm.gen';
+import { useCreateProposalMutation } from '../../apollo/proposals/mutations/gen/CreateProposal.gen';
+import { useUpdateProposalMutation } from '../../apollo/proposals/mutations/gen/UpdateProposal.gen';
 import {
   HomeFeedDocument,
   HomeFeedQuery,
-} from '../../apollo/users/generated/HomeFeed.query';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
+} from '../../apollo/users/queries/gen/HomeFeed.gen';
+import { useMeQuery } from '../../apollo/users/queries/gen/Me.gen';
 import {
   ProposalActionFieldName,
   ProposalActionType,

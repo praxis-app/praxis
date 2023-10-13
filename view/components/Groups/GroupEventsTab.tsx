@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isLoggedInVar } from '../../apollo/cache';
-import { useGroupEventsTabQuery } from '../../apollo/groups/generated/GroupEventsTab.query';
+import { useGroupEventsTabQuery } from '../../apollo/groups/queries/gen/GroupEventsTab.gen';
 import { DarkMode } from '../../styles/theme';
 import EventCompact from '../Events/EventCompact';
 import EventForm from '../Events/EventForm';

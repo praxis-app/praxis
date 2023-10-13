@@ -2,13 +2,13 @@
 
 import { EmojiPeople, PostAdd } from '@mui/icons-material';
 import {
-  styled,
   ToggleButton as MuiToggleButton,
   ToggleButtonGroup as MuiToggleButtonGroup,
+  styled,
 } from '@mui/material';
 import { MouseEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ToggleFormsFragment } from '../../apollo/users/generated/ToggleForms.fragment';
+import { ToggleFormsFragment } from '../../apollo/users/fragments/gen/ToggleForms.gen';
 import { DarkMode } from '../../styles/theme';
 import PostForm from '../Posts/PostForm';
 import ProposalForm from '../Proposals/ProposalForm';

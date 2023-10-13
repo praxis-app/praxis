@@ -14,7 +14,7 @@
     "start:debug": "nest start --debug --watch",
     "start:client": "vite view",
     "start:prod": "node dist/main",
-    "generate": "graphql-codegen && npm run format",
+    "gen": "graphql-codegen && npm run format",
     "lint": "eslint \"{src,view,apps,libs,test}/**/*.{ts,tsx}\"",
     "types": "tsc --noEmit",
     "test": "jest",

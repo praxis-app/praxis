@@ -1,17 +1,17 @@
 // TODO: Rename as component and fragment as GroupMemberRequest
 
 import { ApolloCache, Reference } from '@apollo/client';
-import { Box, Button, styled, Typography } from '@mui/material';
+import { Box, Button, Typography, styled } from '@mui/material';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
-import { useApproveGroupMemberRequestMutation } from '../../apollo/groups/generated/ApproveGroupMemberRequest.mutation';
-import { useDenyGroupMemberRequestMutation } from '../../apollo/groups/generated/DenyGroupMemberRequest.mutation';
-import { MemberRequestFragment } from '../../apollo/groups/generated/MemberRequest.fragment';
+import { MemberRequestFragment } from '../../apollo/groups/fragments/gen/MemberRequest.gen';
+import { useApproveGroupMemberRequestMutation } from '../../apollo/groups/mutations/gen/ApproveGroupMemberRequest.gen';
+import { useDenyGroupMemberRequestMutation } from '../../apollo/groups/mutations/gen/DenyGroupMemberRequest.gen';
 import {
   MemberRequestsDocument,
   MemberRequestsQuery,
   MemberRequestsQueryVariables,
-} from '../../apollo/groups/generated/MemberRequests.query';
+} from '../../apollo/groups/queries/gen/MemberRequests.gen';
 import { TypeNames } from '../../constants/shared.constants';
 import { getUserProfilePath } from '../../utils/user.utils';
 import SharedFlex from '../Shared/Flex';

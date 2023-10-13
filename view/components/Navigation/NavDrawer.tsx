@@ -21,7 +21,7 @@ import { SxProps, styled } from '@mui/material/styles';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useLogOutMutation } from '../../apollo/auth/generated/LogOut.mutation';
+import { useLogOutMutation } from '../../apollo/auth/mutations/gen/LogOut.gen';
 import {
   inviteTokenVar,
   isAuthLoadingVar,
@@ -29,8 +29,8 @@ import {
   isNavDrawerOpenVar,
   isRefreshingTokenVar,
 } from '../../apollo/cache';
-import { useIsFirstUserQuery } from '../../apollo/users/generated/IsFirstUser.query';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
+import { useIsFirstUserQuery } from '../../apollo/users/queries/gen/IsFirstUser.gen';
+import { useMeQuery } from '../../apollo/users/queries/gen/Me.gen';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';

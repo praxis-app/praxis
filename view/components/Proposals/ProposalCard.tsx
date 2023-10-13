@@ -12,9 +12,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isLoggedInVar, toastVar } from '../../apollo/cache';
-import { useDeleteProposalMutation } from '../../apollo/proposals/generated/DeleteProposal.mutation';
-import { ProposalCardFragment } from '../../apollo/proposals/generated/ProposalCard.fragment';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
+import { ProposalCardFragment } from '../../apollo/proposals/fragments/gen/ProposalCard.gen';
+import { useDeleteProposalMutation } from '../../apollo/proposals/mutations/gen/DeleteProposal.gen';
+import { useMeQuery } from '../../apollo/users/queries/gen/Me.gen';
 import { ProposalStage } from '../../constants/proposal.constants';
 import {
   MIDDOT_WITH_SPACES,

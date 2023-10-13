@@ -4,17 +4,17 @@ import { Menu, MenuItem } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toastVar } from '../../apollo/cache';
-import { ProposalCardFragment } from '../../apollo/proposals/generated/ProposalCard.fragment';
-import { useRolesByGroupIdLazyQuery } from '../../apollo/roles/generated/RolesByGroupId.query';
+import { ProposalCardFragment } from '../../apollo/proposals/fragments/gen/ProposalCard.gen';
+import { useRolesByGroupIdLazyQuery } from '../../apollo/roles/queries/gen/RolesByGroupId.gen';
 import {
   CreateVoteMutation,
   useCreateVoteMutation,
-} from '../../apollo/votes/generated/CreateVote.mutation';
-import { useDeleteVoteMutation } from '../../apollo/votes/generated/DeleteVote.mutation';
+} from '../../apollo/votes/mutations/gen/CreateVote.gen';
+import { useDeleteVoteMutation } from '../../apollo/votes/mutations/gen/DeleteVote.gen';
 import {
   UpdateVoteMutation,
   useUpdateVoteMutation,
-} from '../../apollo/votes/generated/UpdateVote.mutation';
+} from '../../apollo/votes/mutations/gen/UpdateVote.gen';
 import {
   ProposalActionType,
   ProposalStage,

@@ -15,9 +15,9 @@ import {
   ProposalActionRoleInput,
   ProposalActionRoleMemberInput,
 } from '../../../apollo/gen';
-import { useGroupRoleByRoleIdLazyQuery } from '../../../apollo/groups/generated/GroupRoleByRoleId.query';
-import { ProposalActionRoleFragment } from '../../../apollo/proposals/generated/ProposalActionRole.fragment';
-import { useUsersByIdsLazyQuery } from '../../../apollo/users/generated/UsersByIds.query';
+import { useGroupRoleByRoleIdLazyQuery } from '../../../apollo/groups/queries/gen/GroupRoleByRoleId.gen';
+import { ProposalActionRoleFragment } from '../../../apollo/proposals/fragments/gen/ProposalActionRole.gen';
+import { useUsersByIdsLazyQuery } from '../../../apollo/users/queries/gen/UsersByIds.gen';
 import { ProposalActionType } from '../../../constants/proposal.constants';
 import { ChangeType } from '../../../constants/shared.constants';
 import { useIsDesktop } from '../../../hooks/shared.hooks';

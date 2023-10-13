@@ -3,7 +3,8 @@ import { Card, CardContent, FormGroup } from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSignUpMutation } from '../../apollo/auth/generated/SignUp.mutation';
+import { useParams } from 'react-router-dom';
+import { useSignUpMutation } from '../../apollo/auth/mutations/gen/SignUp.gen';
 import {
   inviteTokenVar,
   isLoggedInVar,
@@ -14,7 +15,7 @@ import { SignUpInput } from '../../apollo/gen';
 import {
   IsFirstUserDocument,
   IsFirstUserQuery,
-} from '../../apollo/users/generated/IsFirstUser.query';
+} from '../../apollo/users/queries/gen/IsFirstUser.gen';
 import AttachedImagePreview from '../../components/Images/AttachedImagePreview';
 import ImageInput from '../../components/Images/ImageInput';
 import Flex from '../../components/Shared/Flex';
@@ -27,7 +28,6 @@ import {
   getRandomString,
   removeLocalStorageItem,
 } from '../../utils/shared.utils';
-import { useParams } from 'react-router-dom';
 
 const SignUpForm = () => {
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);

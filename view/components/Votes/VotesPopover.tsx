@@ -1,6 +1,6 @@
 import { PaperProps, Popover, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { VoteFragment } from '../../apollo/votes/generated/Vote.fragment';
+import { VoteFragment } from '../../apollo/votes/fragments/gen/Vote.gen';
 import { VoteTypes } from '../../constants/vote.constants';
 
 interface Props {

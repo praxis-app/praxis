@@ -2,13 +2,13 @@ import { AccountBox, ExitToApp, Person, Settings } from '@mui/icons-material';
 import { Menu, MenuItem, SvgIconProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useLogOutMutation } from '../../apollo/auth/generated/LogOut.mutation';
+import { useLogOutMutation } from '../../apollo/auth/mutations/gen/LogOut.gen';
 import {
   isAuthLoadingVar,
   isLoggedInVar,
   isRefreshingTokenVar,
 } from '../../apollo/cache';
-import { TopNavDropdownFragment } from '../../apollo/users/generated/TopNavDropdown.fragment';
+import { TopNavDropdownFragment } from '../../apollo/users/fragments/gen/TopNavDropdown.gen';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { inDevToast } from '../../utils/shared.utils';
 

@@ -1,16 +1,16 @@
 import { Typography } from '@mui/material';
 import { truncate } from 'lodash';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useIsDesktop } from '../../hooks/shared.hooks';
 import { useParams } from 'react-router-dom';
-import { isDeniedAccess } from '../../utils/error.utils';
+import { useGroupSettingsLazyQuery } from '../../apollo/groups/queries/gen/GroupSettings.gen';
+import GroupSettingsForm from '../../components/Groups/GroupSettingsForm';
+import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { TruncationSizes } from '../../constants/shared.constants';
+import { useIsDesktop } from '../../hooks/shared.hooks';
+import { isDeniedAccess } from '../../utils/error.utils';
 import { getGroupPath } from '../../utils/group.utils';
-import Breadcrumbs from '../../components/Shared/Breadcrumbs';
-import GroupSettingsForm from '../../components/Groups/GroupSettingsForm';
-import { useGroupSettingsLazyQuery } from '../../apollo/groups/generated/GroupSettings.query';
-import { useEffect } from 'react';
 
 const GroupSettings = () => {
   const [getGroup, { data, loading, error }] = useGroupSettingsLazyQuery();

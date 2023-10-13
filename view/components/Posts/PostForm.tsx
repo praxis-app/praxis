@@ -8,14 +8,14 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toastVar } from '../../apollo/cache';
 import { CreatePostInput, UpdatePostInput } from '../../apollo/gen';
-import { useDeleteImageMutation } from '../../apollo/images/generated/DeleteImage.mutation';
-import { useCreatePostMutation } from '../../apollo/posts/generated/CreatePost.mutation';
-import { PostFormFragment } from '../../apollo/posts/generated/PostForm.fragment';
-import { useUpdatePostMutation } from '../../apollo/posts/generated/UpdatePost.mutation';
+import { useDeleteImageMutation } from '../../apollo/images/mutations/gen/DeleteImage.gen';
+import { PostFormFragment } from '../../apollo/posts/fragments/gen/PostForm.gen';
+import { useCreatePostMutation } from '../../apollo/posts/mutations/gen/CreatePost.gen';
+import { useUpdatePostMutation } from '../../apollo/posts/mutations/gen/UpdatePost.gen';
 import {
   HomeFeedDocument,
   HomeFeedQuery,
-} from '../../apollo/users/generated/HomeFeed.query';
+} from '../../apollo/users/queries/gen/HomeFeed.gen';
 import {
   FieldNames,
   NavigationPaths,

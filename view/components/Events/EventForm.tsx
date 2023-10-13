@@ -16,15 +16,15 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toastVar } from '../../apollo/cache';
-import { useCreateEventMutation } from '../../apollo/events/generated/CreateEvent.mutation';
-import { EventFormFragment } from '../../apollo/events/generated/EventForm.fragment';
-import { useUpdateEventMutation } from '../../apollo/events/generated/UpdateEvent.mutation';
+import { EventFormFragment } from '../../apollo/events/fragments/gen/EventForm.gen';
+import { useCreateEventMutation } from '../../apollo/events/mutations/gen/CreateEvent.gen';
+import { useUpdateEventMutation } from '../../apollo/events/mutations/gen/UpdateEvent.gen';
 import { CreateEventInput, UpdateEventInput } from '../../apollo/gen';
 import {
   GroupEventsTabDocument,
   GroupEventsTabQuery,
-} from '../../apollo/groups/generated/GroupEventsTab.query';
-import { useGroupMembersByGroupIdLazyQuery } from '../../apollo/groups/generated/GroupMembersByGroupId.query';
+} from '../../apollo/groups/queries/gen/GroupEventsTab.gen';
+import { useGroupMembersByGroupIdLazyQuery } from '../../apollo/groups/queries/gen/GroupMembersByGroupId.gen';
 import { Blurple } from '../../styles/theme';
 import { getEventPath } from '../../utils/event.utils';
 import { getRandomString, isValidUrl } from '../../utils/shared.utils';

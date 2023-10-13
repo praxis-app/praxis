@@ -3,7 +3,7 @@ import { truncate } from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useEditEventLazyQuery } from '../../apollo/events/generated/EditEvent.query';
+import { useEditEventLazyQuery } from '../../apollo/events/queries/gen/EditEvent.gen';
 import EventForm from '../../components/Events/EventForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import Card from '../../components/Shared/Card';

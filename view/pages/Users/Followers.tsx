@@ -8,7 +8,7 @@ import { truncate } from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useFollowersLazyQuery } from '../../apollo/users/generated/Followers.query';
+import { useFollowersLazyQuery } from '../../apollo/users/queries/gen/Followers.gen';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import Follow from '../../components/Users/Follow';
