@@ -22,10 +22,9 @@ import {
   ProposalActionRoleInput,
   ProposalActionRoleMemberInput,
 } from '../../../apollo/gen';
-import { useGroupMembersByGroupIdLazyQuery } from '../../../apollo/groups/generated/GroupMembersByGroupId.query';
-import { useGroupRoleByRoleIdLazyQuery } from '../../../apollo/groups/generated/GroupRoleByRoleId.query';
-import { useGroupRolesByGroupIdLazyQuery } from '../../../apollo/groups/generated/GroupRolesByGroupId.query';
-import { FieldNames } from '../../../constants/shared.constants';
+import { useGroupMembersByGroupIdLazyQuery } from '../../../apollo/groups/queries/gen/GroupMembersByGroupId.gen';
+import { useGroupRoleByRoleIdLazyQuery } from '../../../apollo/groups/queries/gen/GroupRoleByRoleId.gen';
+import { useGroupRolesByGroupIdLazyQuery } from '../../../apollo/groups/queries/gen/GroupRolesByGroupId.gen';
 import {
   ProposalActionFieldName,
   ProposalActionType,
@@ -35,6 +34,7 @@ import {
   DEFAULT_ROLE_COLOR,
   GROUP_PERMISSION_NAMES,
 } from '../../../constants/role.constants';
+import { FieldNames } from '../../../constants/shared.constants';
 import { initGroupRolePermissions } from '../../../utils/role.utils';
 import Accordion, {
   AccordionDetails,

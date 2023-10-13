@@ -1,10 +1,10 @@
 import {
   Card,
-  CardContent as MuiCardContent,
   FormControl,
   FormGroup,
   InputLabel,
   MenuItem,
+  CardContent as MuiCardContent,
   Select,
   styled,
 } from '@mui/material';
@@ -12,16 +12,16 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../apollo/cache';
-import { useCreateServerInviteMutation } from '../../apollo/invites/generated/CreateServerInvite.mutation';
+import { useCreateServerInviteMutation } from '../../apollo/invites/mutations/gen/CreateServerInvite.gen';
 import {
   ServerInvitesDocument,
   ServerInvitesQuery,
-} from '../../apollo/invites/generated/ServerInvites.query';
-import { Time } from '../../constants/shared.constants';
+} from '../../apollo/invites/queries/gen/ServerInvites.gen';
 import {
   MAX_USES_OPTIONS,
   ServerInviteFieldNames,
 } from '../../constants/server-invite.constants';
+import { Time } from '../../constants/shared.constants';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 

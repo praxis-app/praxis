@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toastVar } from '../../apollo/cache';
-import { useDeleteProposalMutation } from '../../apollo/proposals/generated/DeleteProposal.mutation';
+import { useDeleteProposalMutation } from '../../apollo/proposals/mutations/gen/DeleteProposal.gen';
 import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
 
 export const removeProposal =

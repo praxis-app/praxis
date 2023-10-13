@@ -15,8 +15,8 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { useMeQuery } from '../../apollo/users/generated/Me.query';
-import { UserProfileCardFragment } from '../../apollo/users/generated/UserProfileCard.fragment';
+import { UserProfileCardFragment } from '../../apollo/users/fragments/gen/UserProfileCard.gen';
+import { useMeQuery } from '../../apollo/users/queries/gen/Me.gen';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,

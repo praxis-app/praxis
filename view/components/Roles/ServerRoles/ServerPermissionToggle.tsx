@@ -1,5 +1,5 @@
 import { ServerRolePermissionInput } from '../../../apollo/gen';
-import { ServerRolePermissionsFragment } from '../../../apollo/roles/generated/ServerRolePermissions.fragment';
+import { ServerRolePermissionsFragment } from '../../../apollo/roles/fragments/gen/ServerRolePermissions.gen';
 import PermissionToggle from '../PermissionToggle';
 
 interface Props {

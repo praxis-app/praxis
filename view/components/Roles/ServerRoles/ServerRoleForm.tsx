@@ -3,13 +3,13 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { toastVar } from '../../../apollo/cache';
 import { CreateServerRoleInput } from '../../../apollo/gen';
-import { useCreateServerRoleMutation } from '../../../apollo/roles/generated/CreateServerRole.mutation';
-import { ServerRoleFragment } from '../../../apollo/roles/generated/ServerRole.fragment';
+import { ServerRoleFragment } from '../../../apollo/roles/fragments/gen/ServerRole.gen';
+import { useCreateServerRoleMutation } from '../../../apollo/roles/mutations/gen/CreateServerRole.gen';
+import { useUpdateServerRoleMutation } from '../../../apollo/roles/mutations/gen/UpdateServerRole.gen';
 import {
   ServerRolesDocument,
   ServerRolesQuery,
-} from '../../../apollo/roles/generated/ServerRoles.query';
-import { useUpdateServerRoleMutation } from '../../../apollo/roles/generated/UpdateServerRole.mutation';
+} from '../../../apollo/roles/queries/gen/ServerRoles.gen';
 import { DEFAULT_ROLE_COLOR } from '../../../constants/role.constants';
 import { getRandomString } from '../../../utils/shared.utils';
 import RoleForm from '../RoleForm';
