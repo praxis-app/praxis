@@ -23,8 +23,8 @@ const config = {
       preset: 'near-operation-file',
       presetConfig: {
         baseTypesPath: 'gen.ts',
-        folder: './generated',
         extension: '.gen.ts',
+        folder: './gen',
       },
       plugins: [
         DO_NOT_EDIT_PLUGIN,
