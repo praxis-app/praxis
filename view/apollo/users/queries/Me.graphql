@@ -6,6 +6,8 @@ query Me {
     serverPermissions {
       ...ServerPermissions
     }
+
+    # TODO: Move this into another query - determine why this was added
     joinedGroups {
       id
       name
