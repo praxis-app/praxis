@@ -11,15 +11,15 @@ const DO_NOT_EDIT_PLUGIN = {
 
 const config = {
   schema: process.env.SCHEMA_URL,
-  documents: ['view/apollo/**/*.graphql'],
+  documents: ['view/graphql/**/*.graphql'],
   ignoreNoDocuments: true,
 
   generates: {
-    'view/apollo/gen.ts': {
+    'view/graphql/gen.ts': {
       plugins: [DO_NOT_EDIT_PLUGIN, 'typescript'],
     },
 
-    'view/apollo/': {
+    'view/graphql/': {
       preset: 'near-operation-file',
       presetConfig: {
         baseTypesPath: 'gen.ts',
