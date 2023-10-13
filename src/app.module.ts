@@ -35,6 +35,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     configService: ConfigService,
     contextService: ContextService,
   ) => ({
+    path: '/api/graphql',
     autoSchemaFile: true,
     context: contextService.getContext.bind(contextService),
     cors: { origin: true, credentials: true },
@@ -47,7 +48,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
 
 const ViewModule = ServeStaticModule.forRoot({
   rootPath: join(__dirname, 'view'),
-  exclude: ['/api/(.*)', '/graphql'],
+  exclude: ['/api/(.*)'],
   renderPath: '/*',
 });
 

@@ -1,7 +1,7 @@
 import { Box, SxProps } from '@mui/material';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProposalCardFragment } from '../../apollo/proposals/fragments/gen/ProposalCard.gen';
+import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import CommentForm from '../Comments/CommentForm';
 import Modal from '../Shared/Modal';

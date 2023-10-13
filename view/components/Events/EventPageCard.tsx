@@ -23,9 +23,9 @@ import humanizeDuration from 'humanize-duration';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { isLoggedInVar, toastVar } from '../../apollo/cache';
-import { EventPageCardFragment } from '../../apollo/events/fragments/gen/EventPageCard.gen';
-import { useDeleteEventMutation } from '../../apollo/events/mutations/gen/DeleteEvent.gen';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { EventPageCardFragment } from '../../graphql/events/fragments/gen/EventPageCard.gen';
+import { useDeleteEventMutation } from '../../graphql/events/mutations/gen/DeleteEvent.gen';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,

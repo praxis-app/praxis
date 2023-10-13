@@ -11,12 +11,12 @@ import {
 import { Form, Formik, FormikHelpers } from 'formik';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
-import { toastVar } from '../../apollo/cache';
-import { useCreateServerInviteMutation } from '../../apollo/invites/mutations/gen/CreateServerInvite.gen';
+import { toastVar } from '../../graphql/cache';
+import { useCreateServerInviteMutation } from '../../graphql/invites/mutations/gen/CreateServerInvite.gen';
 import {
   ServerInvitesDocument,
   ServerInvitesQuery,
-} from '../../apollo/invites/queries/gen/ServerInvites.gen';
+} from '../../graphql/invites/queries/gen/ServerInvites.gen';
 import {
   MAX_USES_OPTIONS,
   ServerInviteFieldNames,

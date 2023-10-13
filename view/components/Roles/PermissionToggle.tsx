@@ -4,7 +4,7 @@ import { ChangeEvent } from 'react';
 import {
   GroupRolePermissionInput,
   ServerRolePermissionInput,
-} from '../../apollo/gen';
+} from '../../graphql/gen';
 import theme from '../../styles/theme';
 import { getPermissionText } from '../../utils/role.utils';
 import Flex from '../Shared/Flex';

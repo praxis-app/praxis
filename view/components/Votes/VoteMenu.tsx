@@ -3,18 +3,18 @@ import { PanTool, ThumbDown, ThumbsUpDown, ThumbUp } from '@mui/icons-material';
 import { Menu, MenuItem } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { toastVar } from '../../apollo/cache';
-import { ProposalCardFragment } from '../../apollo/proposals/fragments/gen/ProposalCard.gen';
-import { useRolesByGroupIdLazyQuery } from '../../apollo/roles/queries/gen/RolesByGroupId.gen';
+import { toastVar } from '../../graphql/cache';
+import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
+import { useRolesByGroupIdLazyQuery } from '../../graphql/roles/queries/gen/RolesByGroupId.gen';
 import {
   CreateVoteMutation,
   useCreateVoteMutation,
-} from '../../apollo/votes/mutations/gen/CreateVote.gen';
-import { useDeleteVoteMutation } from '../../apollo/votes/mutations/gen/DeleteVote.gen';
+} from '../../graphql/votes/mutations/gen/CreateVote.gen';
+import { useDeleteVoteMutation } from '../../graphql/votes/mutations/gen/DeleteVote.gen';
 import {
   UpdateVoteMutation,
   useUpdateVoteMutation,
-} from '../../apollo/votes/mutations/gen/UpdateVote.gen';
+} from '../../graphql/votes/mutations/gen/UpdateVote.gen';
 import {
   ProposalActionType,
   ProposalStage,

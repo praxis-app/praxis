@@ -21,10 +21,10 @@ import {
   GroupRolePermissionInput,
   ProposalActionRoleInput,
   ProposalActionRoleMemberInput,
-} from '../../../apollo/gen';
-import { useGroupMembersByGroupIdLazyQuery } from '../../../apollo/groups/queries/gen/GroupMembersByGroupId.gen';
-import { useGroupRoleByRoleIdLazyQuery } from '../../../apollo/groups/queries/gen/GroupRoleByRoleId.gen';
-import { useGroupRolesByGroupIdLazyQuery } from '../../../apollo/groups/queries/gen/GroupRolesByGroupId.gen';
+} from '../../../graphql/gen';
+import { useGroupMembersByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupMembersByGroupId.gen';
+import { useGroupRoleByRoleIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRoleByRoleId.gen';
+import { useGroupRolesByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRolesByGroupId.gen';
 import {
   ProposalActionFieldName,
   ProposalActionType,

@@ -7,7 +7,7 @@ import {
   styled,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { inviteTokenVar } from '../../apollo/cache';
+import { inviteTokenVar } from '../../graphql/cache';
 import Link from '../../components/Shared/Link';
 import { NavigationPaths } from '../../constants/shared.constants';
 

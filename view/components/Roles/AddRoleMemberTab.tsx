@@ -9,11 +9,11 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { AddGroupRoleMemberTabFragment } from '../../apollo/groups/fragments/gen/AddGroupRoleMemberTab.gen';
-import { useUpdateGroupRoleMutation } from '../../apollo/groups/mutations/gen/UpdateGroupRole.gen';
-import { AddServerRoleMemberTabFragment } from '../../apollo/roles/fragments/gen/AddServerRoleMemberTab.gen';
-import { useUpdateServerRoleMutation } from '../../apollo/roles/mutations/gen/UpdateServerRole.gen';
-import { UserAvatarFragment } from '../../apollo/users/fragments/gen/UserAvatar.gen';
+import { AddGroupRoleMemberTabFragment } from '../../graphql/groups/fragments/gen/AddGroupRoleMemberTab.gen';
+import { useUpdateGroupRoleMutation } from '../../graphql/groups/mutations/gen/UpdateGroupRole.gen';
+import { AddServerRoleMemberTabFragment } from '../../graphql/roles/fragments/gen/AddServerRoleMemberTab.gen';
+import { useUpdateServerRoleMutation } from '../../graphql/roles/mutations/gen/UpdateServerRole.gen';
+import { UserAvatarFragment } from '../../graphql/users/fragments/gen/UserAvatar.gen';
 import { NavigationPaths } from '../../constants/shared.constants';
 import Flex from '../Shared/Flex';
 import Modal from '../Shared/Modal';

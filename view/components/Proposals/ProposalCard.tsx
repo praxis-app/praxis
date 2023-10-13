@@ -11,10 +11,10 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { isLoggedInVar, toastVar } from '../../apollo/cache';
-import { ProposalCardFragment } from '../../apollo/proposals/fragments/gen/ProposalCard.gen';
-import { useDeleteProposalMutation } from '../../apollo/proposals/mutations/gen/DeleteProposal.gen';
-import { useMeQuery } from '../../apollo/users/queries/gen/Me.gen';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
+import { useDeleteProposalMutation } from '../../graphql/proposals/mutations/gen/DeleteProposal.gen';
+import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { ProposalStage } from '../../constants/proposal.constants';
 import {
   MIDDOT_WITH_SPACES,

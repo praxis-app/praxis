@@ -2,8 +2,8 @@ import { ApolloCache } from '@apollo/client';
 import { Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toastVar } from '../../apollo/cache';
-import { useDeleteProposalMutation } from '../../apollo/proposals/mutations/gen/DeleteProposal.gen';
+import { toastVar } from '../../graphql/cache';
+import { useDeleteProposalMutation } from '../../graphql/proposals/mutations/gen/DeleteProposal.gen';
 import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
 
 export const removeProposal =

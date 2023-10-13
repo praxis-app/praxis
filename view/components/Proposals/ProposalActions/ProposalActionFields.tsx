@@ -2,8 +2,8 @@ import { CropOriginal } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import { FormikErrors, FormikTouched } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { CreateProposalInput } from '../../../apollo/gen';
-import { ProposalFormFragment } from '../../../apollo/proposals/fragments/gen/ProposalForm.gen';
+import { CreateProposalInput } from '../../../graphql/gen';
+import { ProposalFormFragment } from '../../../graphql/proposals/fragments/gen/ProposalForm.gen';
 import {
   ProposalActionFieldName,
   ProposalActionType,

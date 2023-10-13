@@ -1,12 +1,12 @@
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toastVar } from '../../../apollo/cache';
-import { useDeleteServerRoleMutation } from '../../../apollo/roles/mutations/gen/DeleteServerRole.gen';
+import { toastVar } from '../../../graphql/cache';
+import { useDeleteServerRoleMutation } from '../../../graphql/roles/mutations/gen/DeleteServerRole.gen';
 import {
   ServerRolesDocument,
   ServerRolesQuery,
-} from '../../../apollo/roles/queries/gen/ServerRoles.gen';
+} from '../../../graphql/roles/queries/gen/ServerRoles.gen';
 import {
   NavigationPaths,
   TypeNames,

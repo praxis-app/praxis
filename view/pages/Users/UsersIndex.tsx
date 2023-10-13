@@ -1,7 +1,7 @@
 import { Person as UserIcon } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useUsersQuery } from '../../apollo/users/queries/gen/Users.gen';
+import { useUsersQuery } from '../../graphql/users/queries/gen/Users.gen';
 import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import Link from '../../components/Shared/Link';

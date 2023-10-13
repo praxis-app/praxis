@@ -13,13 +13,13 @@ import {
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toastVar } from '../../apollo/cache';
-import { ServerInviteCardFragment } from '../../apollo/invites/fragments/gen/ServerInviteCard.gen';
-import { useDeleteServerInviteMutation } from '../../apollo/invites/mutations/gen/DeleteServerInvite.gen';
+import { toastVar } from '../../graphql/cache';
+import { ServerInviteCardFragment } from '../../graphql/invites/fragments/gen/ServerInviteCard.gen';
+import { useDeleteServerInviteMutation } from '../../graphql/invites/mutations/gen/DeleteServerInvite.gen';
 import {
   ServerInvitesDocument,
   ServerInvitesQuery,
-} from '../../apollo/invites/queries/gen/ServerInvites.gen';
+} from '../../graphql/invites/queries/gen/ServerInvites.gen';
 import { TypeNames } from '../../constants/shared.constants';
 import { copyInviteLink } from '../../utils/server-invite.utils';
 import { timeFromNow } from '../../utils/time.utils';

@@ -19,9 +19,9 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { isLoggedInVar } from '../../apollo/cache';
-import { GroupProfileCardFragment } from '../../apollo/groups/fragments/gen/GroupProfileCard.gen';
-import { useDeleteGroupMutation } from '../../apollo/groups/mutations/gen/DeleteGroup.gen';
+import { isLoggedInVar } from '../../graphql/cache';
+import { GroupProfileCardFragment } from '../../graphql/groups/fragments/gen/GroupProfileCard.gen';
+import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,

@@ -3,7 +3,7 @@ import { truncate } from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGroupRolesLazyQuery } from '../../apollo/groups/queries/gen/GroupRoles.gen';
+import { useGroupRolesLazyQuery } from '../../graphql/groups/queries/gen/GroupRoles.gen';
 import GroupRoleForm from '../../components/Groups/GroupRoles/GroupRoleForm';
 import RoleList from '../../components/Roles/RoleList';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';

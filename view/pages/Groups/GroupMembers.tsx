@@ -8,7 +8,7 @@ import { truncate } from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGroupMembersLazyQuery } from '../../apollo/groups/queries/gen/GroupMembers.gen';
+import { useGroupMembersLazyQuery } from '../../graphql/groups/queries/gen/GroupMembers.gen';
 import GroupMember from '../../components/Groups/GroupMember';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';

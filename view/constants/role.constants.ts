@@ -1,7 +1,7 @@
 import {
   GroupRolePermissionInput,
   ServerRolePermissionInput,
-} from '../apollo/gen';
+} from '../graphql/gen';
 
 export const DEFAULT_ROLE_COLOR = '#f44336';
 

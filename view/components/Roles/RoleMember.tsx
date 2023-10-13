@@ -5,13 +5,13 @@ import { RemoveCircle } from '@mui/icons-material';
 import { IconButton, Typography, styled } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { toastVar } from '../../apollo/cache';
-import { useDeleteGroupRoleMemberMutation } from '../../apollo/groups/mutations/gen/DeleteGroupRoleMember.gen';
-import { RoleMemberFragment } from '../../apollo/roles/fragments/gen/RoleMember.gen';
+import { toastVar } from '../../graphql/cache';
+import { useDeleteGroupRoleMemberMutation } from '../../graphql/groups/mutations/gen/DeleteGroupRoleMember.gen';
+import { RoleMemberFragment } from '../../graphql/roles/fragments/gen/RoleMember.gen';
 import {
   DeleteServerRoleMemberMutation,
   useDeleteServerRoleMemberMutation,
-} from '../../apollo/roles/mutations/gen/DeleteServerRoleMember.gen';
+} from '../../graphql/roles/mutations/gen/DeleteServerRoleMember.gen';
 import { FORBIDDEN, NavigationPaths } from '../../constants/shared.constants';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';

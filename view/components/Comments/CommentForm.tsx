@@ -10,12 +10,12 @@ import {
 import { Form, Formik, FormikFormProps, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toastVar } from '../../apollo/cache';
-import { CommentFormFragment } from '../../apollo/comments/fragments/gen/CommentForm.gen';
-import { useCreateCommentMutation } from '../../apollo/comments/mutations/gen/CreateComment.gen';
-import { useUpdateCommentMutation } from '../../apollo/comments/mutations/gen/UpdateComment.gen';
-import { CreateCommentInput, UpdateCommentInput } from '../../apollo/gen';
-import { useDeleteImageMutation } from '../../apollo/images/mutations/gen/DeleteImage.gen';
+import { toastVar } from '../../graphql/cache';
+import { CommentFormFragment } from '../../graphql/comments/fragments/gen/CommentForm.gen';
+import { useCreateCommentMutation } from '../../graphql/comments/mutations/gen/CreateComment.gen';
+import { useUpdateCommentMutation } from '../../graphql/comments/mutations/gen/UpdateComment.gen';
+import { CreateCommentInput, UpdateCommentInput } from '../../graphql/gen';
+import { useDeleteImageMutation } from '../../graphql/images/mutations/gen/DeleteImage.gen';
 import {
   FieldNames,
   KeyCodes,

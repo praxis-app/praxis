@@ -12,10 +12,10 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { isLoggedInVar } from '../../apollo/cache';
-import { PostCardFragment } from '../../apollo/posts/fragments/gen/PostCard.gen';
-import { useDeletePostMutation } from '../../apollo/posts/mutations/gen/DeletePost.gen';
-import { useMeQuery } from '../../apollo/users/queries/gen/Me.gen';
+import { isLoggedInVar } from '../../graphql/cache';
+import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
+import { useDeletePostMutation } from '../../graphql/posts/mutations/gen/DeletePost.gen';
+import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,

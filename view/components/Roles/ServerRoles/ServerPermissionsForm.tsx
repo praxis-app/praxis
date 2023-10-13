@@ -1,10 +1,10 @@
 import { Box, BoxProps } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { toastVar } from '../../../apollo/cache';
-import { ServerRolePermissionInput } from '../../../apollo/gen';
-import { ServerRolePermissionsFragment } from '../../../apollo/roles/fragments/gen/ServerRolePermissions.gen';
-import { useUpdateServerRoleMutation } from '../../../apollo/roles/mutations/gen/UpdateServerRole.gen';
+import { toastVar } from '../../../graphql/cache';
+import { ServerRolePermissionInput } from '../../../graphql/gen';
+import { ServerRolePermissionsFragment } from '../../../graphql/roles/fragments/gen/ServerRolePermissions.gen';
+import { useUpdateServerRoleMutation } from '../../../graphql/roles/mutations/gen/UpdateServerRole.gen';
 import { SERVER_PERMISSION_NAMES } from '../../../constants/role.constants';
 import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';

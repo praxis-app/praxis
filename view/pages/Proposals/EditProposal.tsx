@@ -2,7 +2,7 @@ import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useEditProposalLazyQuery } from '../../apollo/proposals/queries/gen/EditProposal.gen';
+import { useEditProposalLazyQuery } from '../../graphql/proposals/queries/gen/EditProposal.gen';
 import ProgressBar from '../../components/Shared/ProgressBar';
 
 const EditProposal = () => {

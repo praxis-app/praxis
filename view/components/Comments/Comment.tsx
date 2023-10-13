@@ -1,9 +1,9 @@
 import { Box, SxProps, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toastVar } from '../../apollo/cache';
-import { CommentFragment } from '../../apollo/comments/fragments/gen/Comment.gen';
-import { useDeleteCommentMutation } from '../../apollo/comments/mutations/gen/DeleteComment.gen';
+import { toastVar } from '../../graphql/cache';
+import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.gen';
+import { useDeleteCommentMutation } from '../../graphql/comments/mutations/gen/DeleteComment.gen';
 import { TypeNames } from '../../constants/shared.constants';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { getUserProfilePath } from '../../utils/user.utils';
