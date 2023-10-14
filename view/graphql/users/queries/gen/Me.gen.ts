@@ -27,7 +27,6 @@ export type MeQuery = {
       manageRoles: boolean;
       removeMembers: boolean;
     };
-    joinedGroups: Array<{ __typename?: 'Group'; id: number; name: string }>;
     profilePicture: { __typename?: 'Image'; id: number };
   };
 };
@@ -39,10 +38,6 @@ export const MeDocument = gql`
       ...UserAvatar
       serverPermissions {
         ...ServerPermissions
-      }
-      joinedGroups {
-        id
-        name
       }
     }
   }

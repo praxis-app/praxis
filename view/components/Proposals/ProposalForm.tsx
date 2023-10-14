@@ -18,6 +18,15 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import {
+  ProposalActionFieldName,
+  ProposalActionType,
+} from '../../constants/proposal.constants';
+import {
+  FieldNames,
+  NavigationPaths,
+  TypeNames,
+} from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import {
   CreateProposalInput,
@@ -28,20 +37,11 @@ import { useDeleteImageMutation } from '../../graphql/images/mutations/gen/Delet
 import { ProposalFormFragment } from '../../graphql/proposals/fragments/gen/ProposalForm.gen';
 import { useCreateProposalMutation } from '../../graphql/proposals/mutations/gen/CreateProposal.gen';
 import { useUpdateProposalMutation } from '../../graphql/proposals/mutations/gen/UpdateProposal.gen';
+import { ToggleFormsFragment } from '../../graphql/users/fragments/gen/ToggleForms.gen';
 import {
   HomeFeedDocument,
   HomeFeedQuery,
 } from '../../graphql/users/queries/gen/HomeFeed.gen';
-import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
-import {
-  ProposalActionFieldName,
-  ProposalActionType,
-} from '../../constants/proposal.constants';
-import {
-  FieldNames,
-  NavigationPaths,
-  TypeNames,
-} from '../../constants/shared.constants';
 import { getProposalActionTypeOptions } from '../../utils/proposal.utils';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
@@ -64,17 +64,18 @@ interface Props extends FormikFormProps {
   currentUserId: number;
   editProposal?: ProposalFormFragment;
   groupId?: number;
+  joinedGroups: ToggleFormsFragment['joinedGroups'];
 }
 
 const ProposalForm = ({
   currentUserId,
   editProposal,
   groupId,
+  joinedGroups,
   ...formProps
 }: Props) => {
   const [clicked, setClicked] = useState(false);
   const [selectInputsKey, setSelectInputsKey] = useState('');
-  const { data } = useMeQuery();
 
   const [createProposal] = useCreateProposalMutation();
   const [updateProposal] = useUpdateProposalMutation();
@@ -94,7 +95,6 @@ const ProposalForm = ({
     groupId,
   };
   const actionTypeOptions = getProposalActionTypeOptions(t);
-  const joinedGroups = data?.me?.joinedGroups;
 
   const validateProposal = ({ action, groupId }: CreateProposalInput) => {
     const errors: ProposalFormErrors = {
