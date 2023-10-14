@@ -60,7 +60,11 @@ const ToggleForms = ({ groupId, me }: Props) => {
   return (
     <Card sx={{ position: 'relative' }}>
       {showProposalForm ? (
-        <ProposalForm currentUserId={me.id} groupId={groupId} />
+        <ProposalForm
+          currentUserId={me.id}
+          groupId={groupId}
+          joinedGroups={joinedGroups}
+        />
       ) : (
         <PostForm groupId={groupId} />
       )}
