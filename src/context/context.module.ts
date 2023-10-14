@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { RefreshTokensModule } from '../auth/refresh-tokens/refresh-tokens.module';
 import { CommentsModule } from '../comments/comments.module';
 import { DataloaderModule } from '../dataloader/dataloader.module';
 import { EventsModule } from '../events/events.module';
@@ -30,7 +29,6 @@ import { ContextService } from './context.service';
     ProposalActionRolesModule,
     ProposalActionsModule,
     ProposalsModule,
-    RefreshTokensModule,
     ShieldModule,
     UsersModule,
   ],

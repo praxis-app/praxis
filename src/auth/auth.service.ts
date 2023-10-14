@@ -1,15 +1,13 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { UserInputError, ValidationError } from '@nestjs/apollo';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
-import { AuthTokens } from './auth.types';
 import { LoginInput } from './models/login.input';
 import { SignUpInput } from './models/sign-up.input';
-import { RefreshTokensService } from './refresh-tokens/refresh-tokens.service';
 import { AccessTokenPayload } from './strategies/jwt.strategy';
-import { UserInputError, ValidationError } from '@nestjs/apollo';
 
 const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 90;
 const SALT_ROUNDS = 10;
@@ -17,9 +15,6 @@ const SALT_ROUNDS = 10;
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(forwardRef(() => RefreshTokensService))
-    private refreshTokensService: RefreshTokensService,
-
     private jwtService: JwtService,
     private serverInvitesService: ServerInvitesService,
     private usersService: UsersService,
@@ -27,8 +22,7 @@ export class AuthService {
 
   async login({ email, password }: LoginInput) {
     const user = await this.validateUser(email, password);
-    const authTokens = await this.generateAuthTokens(user.id);
-    return authTokens;
+    return this.generateAccessToken(user.id);
   }
 
   async signUp({
@@ -61,7 +55,6 @@ export class AuthService {
       password: passwordHash,
       ...userData,
     });
-    const authTokens = await this.generateAuthTokens(user.id);
 
     if (profilePicture) {
       await this.usersService.saveProfilePicture(user.id, profilePicture);
@@ -69,14 +62,8 @@ export class AuthService {
     if (inviteToken) {
       await this.serverInvitesService.redeemServerInvite(inviteToken);
     }
-    return authTokens;
-  }
 
-  async generateAuthTokens(userId: number): Promise<AuthTokens> {
-    const access_token = await this.generateAccessToken(userId);
-    const { refresh_token } =
-      await this.refreshTokensService.generateRefreshToken(userId);
-    return { access_token, refresh_token };
+    return this.generateAccessToken(user.id);
   }
 
   async validateUser(

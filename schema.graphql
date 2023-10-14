@@ -511,7 +511,6 @@ type Mutation {
   updateGroupRole(groupRoleData: UpdateGroupRoleInput!): UpdateGroupRolePayload!
   deleteGroupRole(id: Int!): Boolean!
   deleteGroupRoleMember(groupRoleMemberData: DeleteGroupRoleMemberInput!): DeleteGroupRoleMemberPayload!
-  refreshToken: Boolean!
   login(input: LoginInput!): Boolean!
   signUp(input: SignUpInput!): Boolean!
   logOut: Boolean!

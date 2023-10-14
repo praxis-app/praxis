@@ -1,6 +1,6 @@
-import { allow, and, not, or, shield } from 'graphql-shield';
+import { allow, or, shield } from 'graphql-shield';
 import { FORBIDDEN } from '../shared/shared.constants';
-import { hasValidRefreshToken, isAuthenticated } from './rules/auth.rules';
+import { isAuthenticated } from './rules/auth.rules';
 import {
   isOwnComment,
   isPublicComment,
@@ -65,7 +65,6 @@ export const shieldPermissions = shield(
       login: allow,
       logOut: allow,
       signUp: allow,
-      refreshToken: and(not(isAuthenticated), hasValidRefreshToken),
       createVote: isProposalGroupJoinedByMe,
       updatePost: isOwnPost,
       deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),

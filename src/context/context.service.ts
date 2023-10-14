@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthTokenClaims } from '../auth/auth.types';
 import { getClaims, getSub } from '../auth/auth.utils';
-import { RefreshTokensService } from '../auth/refresh-tokens/refresh-tokens.service';
 import { CommentsService } from '../comments/comments.service';
 import { DataloaderService } from '../dataloader/dataloader.service';
 import { EventsService } from '../events/events.service';
@@ -33,7 +32,6 @@ export class ContextService {
     private proposalActionRolesService: ProposalActionRolesService,
     private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,
-    private refreshTokensService: RefreshTokensService,
     private shieldService: ShieldService,
     private usersService: UsersService,
   ) {}
@@ -56,7 +54,6 @@ export class ContextService {
       proposalActionRolesService: this.proposalActionRolesService,
       proposalActionsService: this.proposalActionsService,
       proposalsService: this.proposalsService,
-      refreshTokensService: this.refreshTokensService,
       shieldService: this.shieldService,
       usersService: this.usersService,
     };

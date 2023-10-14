@@ -1,6 +1,5 @@
 import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
-import { RefreshToken } from '../auth/refresh-tokens/models/refresh-token.model';
 import { Comment } from '../comments/models/comment.model';
 import { EventAttendee } from '../events/event-attendees/models/event-attendee.model';
 import { Event } from '../events/models/event.model';
@@ -74,7 +73,6 @@ export default new DataSource({
     ProposalActionPermission,
     ProposalActionRole,
     ProposalActionRoleMember,
-    RefreshToken,
     ServerInvite,
     ServerRole,
     ServerRolePermission,

@@ -1,5 +1,4 @@
 import { JwtPayload } from 'jsonwebtoken';
-import { RefreshTokensService } from '../auth/refresh-tokens/refresh-tokens.service';
 import { CommentsService } from '../comments/comments.service';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { EventsService } from '../events/events.service';
@@ -29,7 +28,6 @@ export interface ContextServices {
   proposalActionEventsService: ProposalActionEventsService;
   proposalActionsService: ProposalActionsService;
   proposalsService: ProposalsService;
-  refreshTokensService: RefreshTokensService;
   shieldService: ShieldService;
   usersService: UsersService;
 }
