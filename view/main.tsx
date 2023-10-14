@@ -1,6 +1,5 @@
 import { ApolloProvider } from '@apollo/client';
-import { ThemeProvider } from '@emotion/react';
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, ThemeProvider } from '@mui/material';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'react-lazy-load-image-component/src/effects/blur.css';
