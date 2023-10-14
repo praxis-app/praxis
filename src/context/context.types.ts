@@ -35,7 +35,6 @@ export interface ContextServices {
 export interface Context {
   claims: {
     accessTokenClaims: JwtPayload | null;
-    refreshTokenClaims: JwtPayload | null;
   };
   loaders: Dataloaders;
   permissions: UserPermissions | null;

@@ -40,8 +40,6 @@ export const getClaims = (req: RequestWithCookies) => {
   const accessTokenClaims = cookies?.auth
     ? decodeToken(cookies.auth.access_token)
     : null;
-  const refreshTokenClaims = cookies?.auth
-    ? decodeToken(cookies.auth.refresh_token)
-    : null;
-  return { accessTokenClaims, refreshTokenClaims };
+
+  return { accessTokenClaims };
 };

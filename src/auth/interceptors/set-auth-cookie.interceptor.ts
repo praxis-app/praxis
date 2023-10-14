@@ -7,15 +7,16 @@ import {
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AuthTokens } from '../auth.types';
 
 @Injectable()
 export class SetAuthCookieInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
-      map((authTokens: AuthTokens) => {
+      map((accessToken: string) => {
         const ctx = GqlExecutionContext.create(context).getContext();
-        ctx.req.res.cookie('auth', authTokens, {
+        const body = { access_token: accessToken };
+
+        ctx.req.res.cookie('auth', body, {
           httpOnly: true,
           sameSite: true,
           secure: true,
