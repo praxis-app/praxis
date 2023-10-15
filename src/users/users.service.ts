@@ -331,13 +331,17 @@ export class UsersService {
     userId: number,
     profilePicture: Promise<FileUpload>,
   ) {
-    const filename = await saveImage(profilePicture);
-    const imageData = { imageType: ImageTypes.ProfilePicture, userId };
-    await this.imagesService.deleteImage(imageData);
-    return this.imagesService.createImage({
-      ...imageData,
-      filename,
-    });
+    try {
+      const filename = await saveImage(profilePicture);
+      const imageData = { imageType: ImageTypes.ProfilePicture, userId };
+      await this.imagesService.deleteImage(imageData);
+      return this.imagesService.createImage({
+        ...imageData,
+        filename,
+      });
+    } catch (err) {
+      throw new Error('Could not save profile picture');
+    }
   }
 
   async saveCoverPhoto(userId: number, coverPhoto: Promise<FileUpload>) {
