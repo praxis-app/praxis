@@ -23,20 +23,14 @@ export const saveImage = async (image: Promise<FileUpload>) => {
 
   await new Promise((resolve, reject) => {
     const writeStream = fs.createWriteStream(path);
-    writeStream.on('finish', resolve);
 
-    // If there's an error writing the file, remove the partially written file
+    writeStream.on('finish', resolve);
     writeStream.on('error', (error) => {
       fs.unlink(path, () => {
         reject(error);
       });
     });
-
-    // In Node.js <= v13, errors are not automatically propagated between piped
-    // streams. If there is an error receiving the upload, destroy the write
-    // stream with the corresponding error.
     stream.on('error', (error) => writeStream.destroy(error));
-
     stream.pipe(writeStream);
   });
 
