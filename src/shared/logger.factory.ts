@@ -17,15 +17,6 @@ export const LoggerFactory = () => {
   const consoleTransport = new transports.Console({
     format: format.combine(
       format.timestamp(),
-
-      // TODO: Remove when ready
-      // format.cli(),
-      // format.splat(),
-      // format.align(),
-
-      format.printf((info) => {
-        return `${info.timestamp} ${info.level}: ${info.message}`;
-      }),
       utilities.format.nestLike('Praxis', {
         colors: true,
         prettyPrint: true,
