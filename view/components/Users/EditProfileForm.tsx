@@ -111,6 +111,7 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
               autoComplete="off"
               label={t('users.form.bio')}
               name={UserFieldNames.Bio}
+              multiline
             />
           </FormGroup>
 
