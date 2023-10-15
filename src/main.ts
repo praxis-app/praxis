@@ -14,6 +14,7 @@ const bootstrap = async () => {
 
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
+  app.useLogger(['log', 'error', 'warn']);
   app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }));
   app.use(cookieParser());
 
