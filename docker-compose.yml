@@ -12,6 +12,7 @@ services:
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     command: node /app/dist/main.js
+    restart: always
     env_file: .env
     networks:
       - webnet
