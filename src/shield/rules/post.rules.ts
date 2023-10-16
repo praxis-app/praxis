@@ -38,6 +38,10 @@ export const isPublicPostImage = rule({ cache: 'strict' })(async (
 ) => {
   const image = await imagesService.getImage({ id: parent.id }, [
     'post.group.config',
+    'post.event.group.config',
   ]);
-  return image?.post?.group?.config.privacy === GroupPrivacy.Public;
+  return (
+    image?.post?.group?.config.privacy === GroupPrivacy.Public ||
+    image?.post?.event?.group?.config.privacy === GroupPrivacy.Public
+  );
 });
