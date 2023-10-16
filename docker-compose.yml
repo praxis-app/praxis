@@ -8,9 +8,11 @@ services:
       target: runtime_stage
     volumes:
       - content:/app/content
+      - logs:/app/logs
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     command: node /app/dist/main.js
+    restart: always
     env_file: .env
     networks:
       - webnet
@@ -35,5 +37,6 @@ services:
 networks:
   webnet:
 volumes:
-  content:
   pgdata:
+  content:
+  logs:

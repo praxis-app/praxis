@@ -7,10 +7,14 @@ import { printSchema } from 'graphql';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
 import { join } from 'path';
 import { AppModule } from './app.module';
+import { LoggerFactory } from './shared/logger.factory';
 import { Environment } from './shared/shared.constants';
 
 const bootstrap = async () => {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule, {
+    logger: LoggerFactory(),
+    cors: true,
+  });
 
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
