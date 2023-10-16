@@ -24,7 +24,7 @@ export const LoggerFactory = () => {
   });
 
   const getTransports = () => {
-    if (process.env.PERSIST_LOGS === 'true') {
+    if (process.env.PERSIST_WINSTON_LOGS === 'true') {
       return [consoleTransport, appTransport, errorTransport];
     }
     return [consoleTransport];
