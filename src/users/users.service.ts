@@ -1,5 +1,5 @@
 import { UserInputError } from '@nestjs/apollo';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import { FileUpload } from 'graphql-upload-ts';
@@ -26,6 +26,8 @@ import { UserWithFollowerCount, UserWithFollowingCount } from './user.types';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectRepository(User)
     private repository: Repository<User>,
@@ -286,6 +288,8 @@ export class UsersService {
     profilePicture,
     ...userData
   }: UpdateUserInput) {
+    this.logger.log(`Updating user: ${JSON.stringify({ id, ...userData })}`);
+
     await this.repository.update(id, userData);
     const user = await this.getUser({ id });
 
@@ -331,7 +335,7 @@ export class UsersService {
     userId: number,
     profilePicture: Promise<FileUpload>,
   ) {
-    const filename = await saveImage(profilePicture);
+    const filename = await saveImage(profilePicture, this.logger);
     const imageData = { imageType: ImageTypes.ProfilePicture, userId };
     await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({
@@ -341,7 +345,7 @@ export class UsersService {
   }
 
   async saveCoverPhoto(userId: number, coverPhoto: Promise<FileUpload>) {
-    const filename = await saveImage(coverPhoto);
+    const filename = await saveImage(coverPhoto, this.logger);
     const imageData = { imageType: ImageTypes.CoverPhoto, userId };
     await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({
