@@ -335,7 +335,7 @@ export class UsersService {
     userId: number,
     profilePicture: Promise<FileUpload>,
   ) {
-    const filename = await saveImage(profilePicture);
+    const filename = await saveImage(profilePicture, this.logger);
     const imageData = { imageType: ImageTypes.ProfilePicture, userId };
     await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({
@@ -345,7 +345,7 @@ export class UsersService {
   }
 
   async saveCoverPhoto(userId: number, coverPhoto: Promise<FileUpload>) {
-    const filename = await saveImage(coverPhoto);
+    const filename = await saveImage(coverPhoto, this.logger);
     const imageData = { imageType: ImageTypes.CoverPhoto, userId };
     await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({
