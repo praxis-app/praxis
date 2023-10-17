@@ -79,4 +79,6 @@ Once the extension is installed, open up Chrome DevTools, and navigate to the "a
 
 ## Contributions
 
-Praxis is open to contributions. Please read [CONTRIBUTING.md](https://github.com/praxis-project/praxis-ui/blob/main/CONTRIBUTING.md) for more details.
+Praxis is open to contributions. Please read [CONTRIBUTING.md](https://github.com/praxis-app/praxis/blob/main/CONTRIBUTING.md) for more details.
+
+Get involved and collaborate with us on Discord: https://discord.gg/s5MxNBehxS

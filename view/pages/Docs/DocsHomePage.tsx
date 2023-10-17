@@ -39,7 +39,7 @@ const DocsHomePage = () => {
       <Typography marginBottom={3}>
         Praxis is free software released under the
         <DocsLink
-          href="https://github.com/praxis-app/praxis-ui/blob/main/LICENSE"
+          href="https://github.com/praxis-app/praxis/blob/main/LICENSE"
           text="GNU General Public License v3.0"
           external
         />
@@ -174,7 +174,11 @@ const DocsHomePage = () => {
         still being worked on, meaning the documentation is also likely to
         change as the project is still getting off the ground. If you'd like to
         contribute or have any questions at all, feel free to reach out to us on
-        <DocsLink href="https://github.com/praxis-app" text="GitHub" external />
+        <DocsLink
+          href="https://github.com/praxis-app/praxis"
+          text="GitHub"
+          external
+        />
         .
       </Typography>
     </Box>
