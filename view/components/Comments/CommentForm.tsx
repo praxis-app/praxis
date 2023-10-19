@@ -228,7 +228,7 @@ const CommentForm = ({
       enableReinitialize
       {...formProps}
     >
-      {({ handleChange, values, submitForm }) => (
+      {({ handleChange, values, submitForm, isSubmitting }) => (
         <Form>
           <FormGroup row>
             <UserAvatar size={35} sx={{ marginRight: 1 }} />
@@ -262,9 +262,10 @@ const CommentForm = ({
                 />
 
                 <IconButton
-                  edge="end"
+                  disabled={isSubmitting || (!values.body && !images?.length)}
                   sx={sendButtonStyles}
                   type="submit"
+                  edge="end"
                   disableRipple
                 >
                   <Send sx={{ fontSize: 20, color: 'text.secondary' }} />
