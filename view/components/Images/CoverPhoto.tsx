@@ -1,5 +1,6 @@
 import { Box, SxProps } from '@mui/material';
 import { grey } from '@mui/material/colors';
+import { SyntheticEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useIsDesktop } from '../../hooks/shared.hooks';
@@ -14,6 +15,11 @@ interface Props {
 }
 
 const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
+  const [imageHeight, setImageHeight] = useState<number>();
+
+  // TODO: Remove after using to position image
+  console.log(imageHeight);
+
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
@@ -42,6 +48,11 @@ const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
     ...sx,
   };
 
+  const handleLoad = ({ target }: SyntheticEvent<HTMLImageElement>) => {
+    const image = target as HTMLImageElement;
+    setImageHeight(image.naturalHeight);
+  };
+
   if (!getImageSrc()) {
     return (
       <Box
@@ -66,6 +77,7 @@ const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
         height="auto"
         src={getImageSrc()}
         style={{ marginTop: '-25%' }}
+        onLoadCapture={handleLoad}
         visibleByDefault={!imageId}
         width="100%"
       />
