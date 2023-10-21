@@ -59,6 +59,7 @@ export class AuthService {
     const passwordHash = await hash(password, SALT_ROUNDS);
     const user = await this.usersService.createUser({
       password: passwordHash,
+      secureEmail: userData.email,
       ...userData,
     });
     const authTokens = await this.generateAuthTokens(user.id);

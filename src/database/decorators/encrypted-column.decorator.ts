@@ -11,11 +11,11 @@ const ENCRYPTION_ALGORITHM = 'aes-256-gcm';
 export const EncryptedColumn = (
   options?: ColumnCommonOptions & ColumnEnumOptions,
 ) => {
-  if (!process.env.DB_ENCRYPTION_KEY) {
-    throw new Error('DB_ENCRYPTION_KEY is not defined');
+  if (!process.env.ENCRYPTION_KEY) {
+    throw new Error('ENCRYPTION_KEY is not defined');
   }
   const transformer = new EncryptionTransformer({
-    key: process.env.DB_ENCRYPTION_KEY,
+    key: process.env.ENCRYPTION_KEY,
     algorithm: ENCRYPTION_ALGORITHM,
     ivLength: 16,
   });
