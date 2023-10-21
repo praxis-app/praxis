@@ -27,10 +27,10 @@ const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
     if (imageFile) {
       return URL.createObjectURL(imageFile);
     }
-    if (imageId) {
-      return getImagePath(imageId);
+    if (!imageId) {
+      return '';
     }
-    return '';
+    return getImagePath(imageId);
   };
 
   const getBorderRadius = () => {
@@ -56,19 +56,13 @@ const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
     const containerHeight = isDesktop
       ? CP_CONTAINER_HEIGHT_DESKTOP
       : CP_CONTAINER_HEIGHT;
+
     const difference = containerHeight - offsetHeight;
     setImageTopMargin(difference / 2);
   };
 
   if (!getImageSrc()) {
-    return (
-      <Box
-        sx={{
-          backgroundColor: grey[900],
-          ...sharedBoxStyles,
-        }}
-      />
-    );
+    return <Box sx={{ backgroundColor: grey[900], ...sharedBoxStyles }} />;
   }
 
   return (
