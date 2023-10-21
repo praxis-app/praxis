@@ -278,6 +278,7 @@ type User {
   id: Int!
   name: String!
   email: String!
+  secureEmail: String!
   bio: String
   posts: [Post!]!
   proposals: [Proposal!]!
