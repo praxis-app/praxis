@@ -68,6 +68,7 @@
     "react-scroll": "^1.8.9",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "typeorm-encrypted": "^0.8.0",
     "winston": "^3.11.0"
   },
   "devDependencies": {
