@@ -14,6 +14,16 @@ The tech stack includes:
 
 Praxis is free and open source software, as specified by the GNU General Public License.
 
+## Work in Progress
+
+You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground. Please bear in mind that Praxis is not yet intended for serious use outside of testing or research purposes. Your feedback is highly welcome.
+
+Core features currently in development:
+
+- Change group roles, permissions, and settings all via proposals
+- Plan real world events via proposals and voting
+- Federation with ActivityPub
+
 ## Installation
 
 Ensure that you're using Node v18.17.1 before proceeding.
@@ -81,4 +91,4 @@ Once the extension is installed, open up Chrome DevTools, and navigate to the "a
 
 Praxis is open to contributions. Please read [CONTRIBUTING.md](https://github.com/praxis-app/praxis/blob/main/CONTRIBUTING.md) for more details.
 
-Get involved and collaborate with us on Discord: https://discord.gg/s5MxNBehxS
+Message **xtal_nomad** on Discord if you'd like to get involved or collaborate.
