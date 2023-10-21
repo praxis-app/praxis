@@ -13,7 +13,7 @@ import {
 } from 'typeorm';
 import { RefreshToken } from '../../auth/refresh-tokens/models/refresh-token.model';
 import { Comment } from '../../comments/models/comment.model';
-import { FeedItem } from '../../shared/models/feed-item.union';
+import { encryptColumn } from '../../database/database.utils';
 import { EventAttendee } from '../../events/event-attendees/models/event-attendee.model';
 import { GroupMemberRequest } from '../../groups/group-member-requests/models/group-member-request.model';
 import { GroupRole } from '../../groups/group-roles/models/group-role.model';
@@ -25,6 +25,7 @@ import { Proposal } from '../../proposals/models/proposal.model';
 import { ProposalActionRoleMember } from '../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model';
 import { ServerInvite } from '../../server-invites/models/server-invite.model';
 import { ServerRole } from '../../server-roles/models/server-role.model';
+import { FeedItem } from '../../shared/models/feed-item.union';
 
 @Entity()
 @ObjectType()
@@ -40,6 +41,13 @@ export class User {
   @Column({ unique: true })
   @Field()
   email: string;
+
+  @Column({
+    transformer: encryptColumn(),
+    unique: true,
+  })
+  @Field()
+  secureEmail: string;
 
   @Column()
   password: string;
