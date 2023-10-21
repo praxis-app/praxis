@@ -1,10 +1,13 @@
 import { Box, SxProps } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { SyntheticEvent, useRef, useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { getImagePath } from '../../utils/image.utils';
+
+const CP_CONTAINER_HEIGHT = 130;
+const CP_CONTAINER_HEIGHT_DESKTOP = 210;
 
 interface Props {
   imageFile?: File;
@@ -14,14 +17,8 @@ interface Props {
   topRounded?: boolean;
 }
 
-// const margin = (aspectRatio - containerWidth / containerHeight) * containerHeight / 2;
-
 const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
-  const [aspectRatio, setAspectRatio] = useState<number>(1);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // TODO: Remove after using to position image
-  console.log(aspectRatio);
+  const [imageTopMargin, setImageTopMargin] = useState<number>();
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
@@ -49,14 +46,18 @@ const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
   };
 
   const sharedBoxStyles = {
-    height: isDesktop ? 210 : 130,
+    height: isDesktop ? CP_CONTAINER_HEIGHT_DESKTOP : CP_CONTAINER_HEIGHT,
     ...getBorderRadius(),
     ...sx,
   };
 
   const handleLoad = ({ target }: SyntheticEvent<HTMLImageElement>) => {
-    const { naturalWidth, naturalHeight } = target as HTMLImageElement;
-    setAspectRatio(naturalWidth / naturalHeight);
+    const { offsetHeight } = target as HTMLImageElement;
+    const containerHeight = isDesktop
+      ? CP_CONTAINER_HEIGHT_DESKTOP
+      : CP_CONTAINER_HEIGHT;
+    const difference = containerHeight - offsetHeight;
+    setImageTopMargin(difference / 2);
   };
 
   if (!getImageSrc()) {
@@ -71,12 +72,13 @@ const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
   }
 
   return (
-    <Box ref={containerRef} sx={{ overflowY: 'hidden', ...sharedBoxStyles }}>
+    <Box sx={{ overflowY: 'hidden', ...sharedBoxStyles }}>
       <LazyLoadImage
         alt={t('images.labels.coverPhoto')}
         effect="blur"
         height="auto"
         src={getImageSrc()}
+        style={{ marginTop: imageTopMargin }}
         onLoadCapture={handleLoad}
         visibleByDefault={!imageId}
         width="100%"
