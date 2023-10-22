@@ -40,10 +40,11 @@ export class UsersResolver {
     @Args('id', { type: () => Int, nullable: true }) id?: number,
     @Args('name', { type: () => String, nullable: true }) name?: string,
   ) {
-    if (name) {
-      return this.usersService.getUserByName(name);
-    }
-    return this.usersService.getUser({ id });
+    // TODO: Uncomment when ready
+    // if (name) {
+    //   return this.usersService.getUserByName(name);
+    // }
+    return this.usersService.getUser({ id, name });
   }
 
   @Query(() => [User])

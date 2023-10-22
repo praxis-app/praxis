@@ -90,7 +90,8 @@ export class AuthService {
     password: string,
   ): Promise<Omit<User, 'password'>> {
     try {
-      const user = await this.usersService.getUserByEmail(email);
+      // TODO: Pass email to getUserByEmail instead of getUser when ready
+      const user = await this.usersService.getUser({ email });
       if (!user) {
         throw new ValidationError('User not found');
       }
