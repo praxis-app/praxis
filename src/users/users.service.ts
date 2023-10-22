@@ -55,7 +55,29 @@ export class UsersService {
   }
 
   async getUsers(where?: FindOptionsWhere<User>) {
+    // TODO: Remove once migration is complete
+    await this.migrateData();
+
     return this.repository.find({ where });
+  }
+
+  // TODO: Remove once migration is complete
+  async migrateData() {
+    const users = await this.repository.find();
+
+    for (const user of users) {
+      const { id, name, email, bio } = user;
+      const nameHash = await scryptHash(name);
+      const emailHash = await scryptHash(email);
+
+      await this.repository.update(id, {
+        nameHash,
+        emailHash,
+        secureName: name,
+        secureEmail: email,
+        secureBio: bio,
+      });
+    }
   }
 
   async isFirstUser() {
