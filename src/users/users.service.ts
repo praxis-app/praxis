@@ -20,7 +20,7 @@ import { ServerPermissions } from '../server-roles/models/server-permissions.typ
 import { initServerRolePermissions } from '../server-roles/server-role.utils';
 import { ServerRolesService } from '../server-roles/server-roles.service';
 import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
-import { getHash } from '../shared/shared.utils';
+import { scryptHash } from '../shared/shared.utils';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
 import { UserWithFollowerCount, UserWithFollowingCount } from './user.types';
@@ -45,12 +45,12 @@ export class UsersService {
   }
 
   async getUserByName(name: string) {
-    const nameHash = getHash(name);
+    const nameHash = await scryptHash(name);
     return this.repository.findOne({ where: { nameHash } });
   }
 
   async getUserByEmail(email: string) {
-    const emailHash = getHash(email);
+    const emailHash = await scryptHash(email);
     return this.repository.findOne({ where: { emailHash } });
   }
 

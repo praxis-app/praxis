@@ -3,7 +3,7 @@ import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
-import { getHash } from '../shared/shared.utils';
+import { scryptHash } from '../shared/shared.utils';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
 import { AuthTokens } from './auth.types';
@@ -57,8 +57,8 @@ export class AuthService {
       throw new UserInputError('Passwords do not match');
     }
 
-    const emailHash = getHash(userData.email);
-    const nameHash = getHash(userData.name);
+    const emailHash = await scryptHash(userData.email);
+    const nameHash = await scryptHash(userData.name);
     const passwordHash = await hash(password, SALT_ROUNDS);
 
     const user = await this.usersService.createUser({
