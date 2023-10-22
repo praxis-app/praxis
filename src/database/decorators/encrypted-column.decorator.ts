@@ -6,8 +6,6 @@ import { ColumnEnumOptions } from 'typeorm/decorator/options/ColumnEnumOptions';
 
 dotenv.config();
 
-const ENCRYPTION_ALGORITHM = 'aes-256-gcm';
-
 export const EncryptedColumn = (
   options?: ColumnCommonOptions & ColumnEnumOptions,
 ) => {
@@ -16,7 +14,7 @@ export const EncryptedColumn = (
   }
   const transformer = new EncryptionTransformer({
     key: process.env.ENCRYPTION_KEY,
-    algorithm: ENCRYPTION_ALGORITHM,
+    algorithm: 'aes-256-gcm',
     ivLength: 16,
   });
 
