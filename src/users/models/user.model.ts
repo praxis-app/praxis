@@ -1,4 +1,4 @@
-// TODO: Remove comments and duplicate columns when ready
+// TODO: Remove unneeded nullable annotations and duplicate columns when ready
 
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
@@ -43,7 +43,7 @@ export class User {
   @EncryptedColumn({ nullable: true })
   secureName: string;
 
-  @Column()
+  @Column({ nullable: true })
   nameHash: string;
 
   // Email
@@ -52,11 +52,11 @@ export class User {
   @Field()
   email: string;
 
-  @EncryptedColumn({ unique: true })
+  @EncryptedColumn({ unique: true, nullable: true })
   @Field()
   secureEmail: string;
 
-  @Column()
+  @Column({ nullable: true })
   emailHash: string;
 
   // Bio
