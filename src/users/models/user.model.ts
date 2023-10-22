@@ -38,6 +38,9 @@ export class User {
   @Field()
   name: string;
 
+  @EncryptedColumn({ nullable: true })
+  secureName: string;
+
   @Column({ unique: true })
   @Field()
   email: string;
@@ -46,12 +49,15 @@ export class User {
   @Field()
   secureEmail: string;
 
-  @Column()
-  password: string;
-
   @Column({ nullable: true })
   @Field({ nullable: true })
   bio: string;
+
+  @EncryptedColumn({ nullable: true })
+  secureBio: string;
+
+  @Column()
+  password: string;
 
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,
