@@ -53,7 +53,6 @@ export class User {
   email: string;
 
   @EncryptedColumn({ unique: true, nullable: true })
-  @Field()
   secureEmail: string;
 
   @Column({ nullable: true })
