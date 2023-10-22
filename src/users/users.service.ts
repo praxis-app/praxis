@@ -20,6 +20,7 @@ import { ServerPermissions } from '../server-roles/models/server-permissions.typ
 import { initServerRolePermissions } from '../server-roles/server-role.utils';
 import { ServerRolesService } from '../server-roles/server-roles.service';
 import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
+import { getHash } from '../shared/shared.utils';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
 import { UserWithFollowerCount, UserWithFollowingCount } from './user.types';
@@ -40,7 +41,17 @@ export class UsersService {
   ) {}
 
   async getUser(where: FindOptionsWhere<User>, relations?: string[]) {
-    return await this.repository.findOne({ where, relations });
+    return this.repository.findOne({ where, relations });
+  }
+
+  async getUserByName(name: string) {
+    const nameHash = getHash(name);
+    return this.repository.findOne({ where: { nameHash } });
+  }
+
+  async getUserByEmail(email: string) {
+    const emailHash = getHash(email);
+    return this.repository.findOne({ where: { emailHash } });
   }
 
   async getUsers(where?: FindOptionsWhere<User>) {

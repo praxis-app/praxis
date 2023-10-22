@@ -1,7 +1,9 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { UserInputError, ValidationError } from '@nestjs/apollo';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
+import { getHash } from '../shared/shared.utils';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
 import { AuthTokens } from './auth.types';
@@ -9,7 +11,6 @@ import { LoginInput } from './models/login.input';
 import { SignUpInput } from './models/sign-up.input';
 import { RefreshTokensService } from './refresh-tokens/refresh-tokens.service';
 import { AccessTokenPayload } from './strategies/jwt.strategy';
-import { UserInputError, ValidationError } from '@nestjs/apollo';
 
 const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 90;
 const SALT_ROUNDS = 10;
@@ -56,13 +57,16 @@ export class AuthService {
       throw new UserInputError('Passwords do not match');
     }
 
+    const emailHash = getHash(userData.email);
+    const nameHash = getHash(userData.name);
     const passwordHash = await hash(password, SALT_ROUNDS);
+
     const user = await this.usersService.createUser({
       password: passwordHash,
-      secureEmail: userData.email,
+      emailHash,
+      nameHash,
       ...userData,
     });
-    const authTokens = await this.generateAuthTokens(user.id);
 
     if (profilePicture) {
       await this.usersService.saveProfilePicture(user.id, profilePicture);
@@ -70,7 +74,8 @@ export class AuthService {
     if (inviteToken) {
       await this.serverInvitesService.redeemServerInvite(inviteToken);
     }
-    return authTokens;
+
+    return this.generateAuthTokens(user.id);
   }
 
   async generateAuthTokens(userId: number): Promise<AuthTokens> {
@@ -85,7 +90,7 @@ export class AuthService {
     password: string,
   ): Promise<Omit<User, 'password'>> {
     try {
-      const user = await this.usersService.getUser({ email });
+      const user = await this.usersService.getUserByEmail(email);
       if (!user) {
         throw new ValidationError('User not found');
       }

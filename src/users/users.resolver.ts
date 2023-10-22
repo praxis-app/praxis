@@ -40,7 +40,10 @@ export class UsersResolver {
     @Args('id', { type: () => Int, nullable: true }) id?: number,
     @Args('name', { type: () => String, nullable: true }) name?: string,
   ) {
-    return this.usersService.getUser({ id, name });
+    if (name) {
+      return this.usersService.getUserByName(name);
+    }
+    return this.usersService.getUser({ id });
   }
 
   @Query(() => [User])
