@@ -41,6 +41,9 @@ export class User {
   @EncryptedColumn({ nullable: true })
   secureName: string;
 
+  @Column()
+  nameHash: string;
+
   @Column({ unique: true })
   @Field()
   email: string;
@@ -48,6 +51,9 @@ export class User {
   @EncryptedColumn({ unique: true })
   @Field()
   secureEmail: string;
+
+  @Column()
+  emailHash: string;
 
   @Column({ nullable: true })
   @Field({ nullable: true })
