@@ -1,4 +1,4 @@
-// TODO: Add one to one relations for profile picture and cover photo
+// TODO: Remove comments and duplicate columns when ready
 
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
@@ -34,6 +34,8 @@ export class User {
   @Field(() => Int)
   id: number;
 
+  // Name
+
   @Column({ unique: true })
   @Field()
   name: string;
@@ -43,6 +45,8 @@ export class User {
 
   @Column()
   nameHash: string;
+
+  // Email
 
   @Column({ unique: true })
   @Field()
@@ -54,6 +58,8 @@ export class User {
 
   @Column()
   emailHash: string;
+
+  // Bio
 
   @Column({ nullable: true })
   @Field({ nullable: true })
