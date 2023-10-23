@@ -43,7 +43,7 @@ export class User {
   @EncryptedColumn({ nullable: true })
   secureName: string;
 
-  @Column({ nullable: true })
+  @Column({ unique: true, nullable: true })
   nameHash: string;
 
   // Email
@@ -52,10 +52,10 @@ export class User {
   @Field()
   email: string;
 
-  @EncryptedColumn({ unique: true, nullable: true })
+  @EncryptedColumn({ nullable: true })
   secureEmail: string;
 
-  @Column({ nullable: true })
+  @Column({ unique: true, nullable: true })
   emailHash: string;
 
   // Bio
