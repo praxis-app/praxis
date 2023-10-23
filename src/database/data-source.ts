@@ -45,6 +45,7 @@ import { RemoveMemberRequestIdSeq1690336764201 } from './migrations/169033676420
 import { AddCommentTable1693003196421 } from './migrations/1693003196421-AddCommentTable';
 import { GroupMemberRequestCleanUp1694647639797 } from './migrations/1694647639797-GroupMemberRequestCleanUp';
 import { AddProposalActionEventTables1694657129939 } from './migrations/1694657129939-AddProposalActionEventTables';
+import { AddSecureUserColumns1698025217310 } from './migrations/1698025217310-AddSecureUserColumns';
 
 config();
 
@@ -93,6 +94,7 @@ export default new DataSource({
     AddProposalActionRoleCascadeDelete1685748700121,
     AddProposalActionRoleTable1684893300206,
     AddRoleMemberLinkTable1681172948650,
+    AddSecureUserColumns1698025217310,
     AddServerInviteTable1677339785709,
     CleanUpGroupMemberRequestTable1690168731029,
     DropGroupMemberEntityTable1681010509841,
