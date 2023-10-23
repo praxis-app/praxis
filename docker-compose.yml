@@ -33,6 +33,8 @@ services:
       - ${DB_PORT}:${DB_PORT}
     volumes:
       - pgdata:/var/lib/postgresql/data
+    command: -p ${DB_PORT}
+    restart: always
 
 networks:
   webnet:
