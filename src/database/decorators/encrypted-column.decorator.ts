@@ -14,7 +14,7 @@ export const EncryptedColumn = (
   }
   const transformer = new EncryptionTransformer({
     key: process.env.ENCRYPTION_KEY,
-    algorithm: 'aes-256-gcm',
+    algorithm: 'aes-128-gcm',
     ivLength: 16,
   });
 
