@@ -439,6 +439,19 @@ type ServerPermissions {
   removeMembers: Boolean!
 }
 
+type ServerConfig {
+  id: Int!
+  canaryMessage: String!
+  showCanaryMessage: Boolean!
+  canaryMessageExpiresAt: DateTime!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type UpdateServerConfigPayload {
+  serverConfig: ServerConfig!
+}
+
 type Query {
   post(id: Int!): Post!
   proposal(id: Int!): Proposal!
@@ -517,6 +530,7 @@ type Mutation {
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
+  updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
 }
 
 input CreateCommentInput {
@@ -753,4 +767,11 @@ input SignUpInput {
 input CreateServerInviteInput {
   maxUses: Int
   expiresAt: DateTime
+}
+
+input UpdateServerConfigInput {
+  id: Int!
+  canaryMessage: String!
+  showCanaryMessage: Boolean!
+  canaryMessageExpiresAt: DateTime!
 }
