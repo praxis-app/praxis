@@ -5,12 +5,12 @@ export class UpdateServerConfigInput {
   @Field(() => Int)
   id: number;
 
-  @Field()
+  @Field({ nullable: true })
   canaryMessage: string;
 
-  @Field()
+  @Field({ nullable: true })
   showCanaryMessage: boolean;
 
-  @Field()
+  @Field({ nullable: true })
   canaryMessageExpiresAt: Date;
 }

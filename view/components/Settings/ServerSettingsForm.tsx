@@ -9,13 +9,18 @@ import {
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../graphql/cache';
-import { UpdateServerConfigInput } from '../../graphql/gen';
 import { ServerSettingsFormFragment } from '../../graphql/settings/fragments/gen/ServerSettingsForm.gen';
 import { useUpdateServerSettingsMutation } from '../../graphql/settings/mutations/gen/UpdateServerSettings.gen';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 
-type FormValues = Omit<UpdateServerConfigInput, 'id'>;
+enum ServerSettingsFormFields {
+  CanaryMessage = 'canaryMessage',
+  ShowCanaryMessage = 'showCanaryMessage',
+  CanaryMessageExpiresAt = 'canaryMessageExpiresAt',
+}
+
+type FormValues = Omit<ServerSettingsFormFragment, 'id'>;
 
 interface Props {
   serverSettings: ServerSettingsFormFragment;
@@ -28,9 +33,9 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
   const theme = useTheme();
 
   const initialValues: FormValues = {
-    canaryMessage: '',
-    canaryMessageExpiresAt: '',
-    showCanaryMessage: false,
+    canaryMessage: serverSettings.canaryMessage,
+    showCanaryMessage: serverSettings.showCanaryMessage,
+    canaryMessageExpiresAt: serverSettings.canaryMessageExpiresAt,
   };
 
   const handleSubmit = async (
@@ -59,7 +64,7 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
       onSubmit={handleSubmit}
       enableReinitialize
     >
-      {({ dirty, isSubmitting }) => (
+      {({ dirty, isSubmitting, handleChange, values }) => (
         <Form>
           <FormGroup>
             <Flex justifyContent="space-between" marginBottom={2.8}>
@@ -74,7 +79,11 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
                 </Typography>
               </Box>
 
-              <Switch checked={true} />
+              <Switch
+                checked={values.showCanaryMessage}
+                name={ServerSettingsFormFields.ShowCanaryMessage}
+                onChange={handleChange}
+              />
             </Flex>
           </FormGroup>
 

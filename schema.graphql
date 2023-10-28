@@ -772,7 +772,7 @@ input CreateServerInviteInput {
 
 input UpdateServerConfigInput {
   id: Int!
-  canaryMessage: String!
-  showCanaryMessage: Boolean!
-  canaryMessageExpiresAt: DateTime!
+  canaryMessage: String
+  showCanaryMessage: Boolean
+  canaryMessageExpiresAt: DateTime
 }

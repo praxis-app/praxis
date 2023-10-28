@@ -1009,10 +1009,10 @@ export type UpdateProposalPayload = {
 };
 
 export type UpdateServerConfigInput = {
-  canaryMessage: Scalars['String']['input'];
-  canaryMessageExpiresAt: Scalars['DateTime']['input'];
+  canaryMessage?: InputMaybe<Scalars['String']['input']>;
+  canaryMessageExpiresAt?: InputMaybe<Scalars['DateTime']['input']>;
   id: Scalars['Int']['input'];
-  showCanaryMessage: Scalars['Boolean']['input'];
+  showCanaryMessage?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type UpdateServerConfigPayload = {
