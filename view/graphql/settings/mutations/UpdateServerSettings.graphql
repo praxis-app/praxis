@@ -1,0 +1,11 @@
+mutation UpdateServerSettings($serverConfigData: UpdateServerConfigInput!) {
+  updateServerConfig(serverConfigData: $serverConfigData) {
+    serverConfig {
+      id
+      canaryMessage
+      showCanaryMessage
+      canaryMessageExpiresAt
+      updatedAt
+    }
+  }
+}
