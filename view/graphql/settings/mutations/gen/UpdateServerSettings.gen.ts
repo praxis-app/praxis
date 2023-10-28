@@ -18,9 +18,9 @@ export type UpdateServerSettingsMutation = {
     serverConfig: {
       __typename?: 'ServerConfig';
       id: number;
-      canaryMessage: string;
+      canaryMessage?: string | null;
       showCanaryMessage: boolean;
-      canaryMessageExpiresAt: any;
+      canaryMessageExpiresAt?: any | null;
       updatedAt: any;
     };
   };

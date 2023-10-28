@@ -842,8 +842,8 @@ export type QueryUsersByIdsArgs = {
 
 export type ServerConfig = {
   __typename?: 'ServerConfig';
-  canaryMessage: Scalars['String']['output'];
-  canaryMessageExpiresAt: Scalars['DateTime']['output'];
+  canaryMessage?: Maybe<Scalars['String']['output']>;
+  canaryMessageExpiresAt?: Maybe<Scalars['DateTime']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   showCanaryMessage: Scalars['Boolean']['output'];

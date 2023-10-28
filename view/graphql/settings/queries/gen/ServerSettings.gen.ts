@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { ServerSettingsFormFragmentDoc } from '../../fragments/gen/ServerSettingsForm.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -16,21 +17,19 @@ export type ServerSettingsQuery = {
   serverConfig: {
     __typename?: 'ServerConfig';
     id: number;
-    canaryMessage: string;
-    canaryMessageExpiresAt: any;
+    canaryMessage?: string | null;
     showCanaryMessage: boolean;
+    canaryMessageExpiresAt?: any | null;
   };
 };
 
 export const ServerSettingsDocument = gql`
   query ServerSettings {
     serverConfig {
-      id
-      canaryMessage
-      canaryMessageExpiresAt
-      showCanaryMessage
+      ...ServerSettingsForm
     }
   }
+  ${ServerSettingsFormFragmentDoc}
 `;
 
 /**

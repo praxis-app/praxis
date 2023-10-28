@@ -1,5 +1,6 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import ServerSettingsForm from '../../components/Settings/ServerSettingsForm';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useServerSettingsQuery } from '../../graphql/settings/queries/gen/ServerSettings.gen';
@@ -29,8 +30,7 @@ const ServerSettings = () => {
   return (
     <>
       <LevelOneHeading header>{t('navigation.serverSettings')}</LevelOneHeading>
-
-      <Typography>{String(data.serverConfig.showCanaryMessage)}</Typography>
+      <ServerSettingsForm serverSettings={data.serverConfig} />
     </>
   );
 };

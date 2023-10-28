@@ -1,8 +1,5 @@
 query ServerSettings {
   serverConfig {
-    id
-    canaryMessage
-    canaryMessageExpiresAt
-    showCanaryMessage
+    ...ServerSettingsForm
   }
 }
