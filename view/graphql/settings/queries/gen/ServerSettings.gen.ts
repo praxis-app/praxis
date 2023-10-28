@@ -19,7 +19,6 @@ export type ServerSettingsQuery = {
     id: number;
     canaryMessage?: string | null;
     showCanaryMessage: boolean;
-    canaryMessageExpiresAt?: any | null;
   };
 };
 

@@ -443,7 +443,6 @@ type ServerConfig {
   id: Int!
   canaryMessage: String
   showCanaryMessage: Boolean!
-  canaryMessageExpiresAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }

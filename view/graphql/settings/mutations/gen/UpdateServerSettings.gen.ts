@@ -20,7 +20,6 @@ export type UpdateServerSettingsMutation = {
       id: number;
       canaryMessage?: string | null;
       showCanaryMessage: boolean;
-      canaryMessageExpiresAt?: any | null;
       updatedAt: any;
     };
   };
@@ -33,7 +32,6 @@ export const UpdateServerSettingsDocument = gql`
         id
         canaryMessage
         showCanaryMessage
-        canaryMessageExpiresAt
         updatedAt
       }
     }

@@ -2,5 +2,4 @@ fragment ServerSettingsForm on ServerConfig {
   id
   canaryMessage
   showCanaryMessage
-  canaryMessageExpiresAt
 }

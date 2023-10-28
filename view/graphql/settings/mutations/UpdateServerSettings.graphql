@@ -4,7 +4,6 @@ mutation UpdateServerSettings($serverConfigData: UpdateServerConfigInput!) {
       id
       canaryMessage
       showCanaryMessage
-      canaryMessageExpiresAt
       updatedAt
     }
   }

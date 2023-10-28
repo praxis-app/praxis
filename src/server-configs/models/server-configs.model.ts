@@ -22,10 +22,6 @@ export class ServerConfig {
   @Field()
   showCanaryMessage: boolean;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  canaryMessageExpiresAt: Date;
-
   @CreateDateColumn()
   @Field()
   createdAt: Date;

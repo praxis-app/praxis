@@ -10,7 +10,6 @@ export type ServerSettingsFormFragment = {
   id: number;
   canaryMessage?: string | null;
   showCanaryMessage: boolean;
-  canaryMessageExpiresAt?: any | null;
 };
 
 export const ServerSettingsFormFragmentDoc = gql`
@@ -18,6 +17,5 @@ export const ServerSettingsFormFragmentDoc = gql`
     id
     canaryMessage
     showCanaryMessage
-    canaryMessageExpiresAt
   }
 `;
