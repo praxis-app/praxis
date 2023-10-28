@@ -19,6 +19,7 @@ import { ImagesModule } from './images/images.module';
 import { LikesModule } from './likes/likes.module';
 import { PostsModule } from './posts/posts.module';
 import { ProposalsModule } from './proposals/proposals.module';
+import { ServerConfigsModule } from './server-configs/server-configs.module';
 import { ServerInvitesModule } from './server-invites/server-invites.module';
 import { ServerRolesModule } from './server-roles/server-roles.module';
 import { Environment } from './shared/shared.constants';
@@ -26,7 +27,6 @@ import { ShieldModule } from './shield/shield.module';
 import { shieldPermissions } from './shield/shield.permissions';
 import { UsersModule } from './users/users.module';
 import { VotesModule } from './votes/votes.module';
-import { ServerSettingsModule } from './server-settings/server-settings.module';
 
 const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
@@ -67,13 +67,13 @@ const ViewModule = ServeStaticModule.forRoot({
     LikesModule,
     PostsModule,
     ProposalsModule,
+    ServerConfigsModule,
     ServerInvitesModule,
     ServerRolesModule,
     ShieldModule,
     UsersModule,
     ViewModule,
     VotesModule,
-    ServerSettingsModule,
   ],
 })
 export class AppModule {}
