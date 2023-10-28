@@ -1,4 +1,5 @@
 import { Resolver } from '@nestjs/graphql';
+import { ServerConfig } from './models/server-configs.model';
 
-@Resolver()
+@Resolver(() => ServerConfig)
 export class ServerConfigsResolver {}
