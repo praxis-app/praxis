@@ -474,6 +474,7 @@ type Query {
   authCheck: Boolean!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
+  serverConfig: ServerConfig!
 }
 
 input EventsInput {

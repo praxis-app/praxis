@@ -1,4 +1,4 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ServerConfig } from './models/server-configs.model';
 import { UpdateServerConfigInput } from './models/update-server-config.input';
 import { UpdateServerConfigPayload } from './models/update-server-config.payload';
@@ -7,6 +7,11 @@ import { ServerConfigsService } from './server-configs.service';
 @Resolver(() => ServerConfig)
 export class ServerConfigsResolver {
   constructor(private serverConfigsService: ServerConfigsService) {}
+
+  @Query(() => ServerConfig)
+  async serverConfig() {
+    return this.serverConfigsService.getServerConfig();
+  }
 
   @Mutation(() => UpdateServerConfigPayload)
   async updateServerConfig(
