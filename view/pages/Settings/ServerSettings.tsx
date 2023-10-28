@@ -22,11 +22,15 @@ const ServerSettings = () => {
     return <ProgressBar />;
   }
 
+  if (!data) {
+    return null;
+  }
+
   return (
     <>
       <LevelOneHeading header>{t('navigation.serverSettings')}</LevelOneHeading>
 
-      <Typography>{JSON.stringify(data?.serverConfig)}</Typography>
+      <Typography>{String(data.serverConfig.showCanaryMessage)}</Typography>
     </>
   );
 };
