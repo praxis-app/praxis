@@ -21,6 +21,7 @@ export enum NavigationPaths {
   Posts = '/posts',
   Proposals = '/proposals',
   Roles = '/roles',
+  ServerSettings = '/settings',
   SignUp = '/auth/signup',
   Users = '/users',
 }
