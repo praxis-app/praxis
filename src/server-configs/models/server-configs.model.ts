@@ -20,7 +20,7 @@ export class ServerConfig {
 
   @Column()
   @Field()
-  isCanaryMessageEnabled: boolean;
+  showCanaryMessage: boolean;
 
   @Column()
   @Field()
