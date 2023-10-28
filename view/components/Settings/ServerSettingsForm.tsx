@@ -1,11 +1,4 @@
-import {
-  Box,
-  Divider,
-  FormGroup,
-  Switch,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, FormGroup, Switch, Typography, useTheme } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../graphql/cache';
@@ -13,6 +6,7 @@ import { ServerSettingsFormFragment } from '../../graphql/settings/fragments/gen
 import { useUpdateServerSettingsMutation } from '../../graphql/settings/mutations/gen/UpdateServerSettings.gen';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
+import { TextField } from '../Shared/TextField';
 
 enum ServerSettingsFormFields {
   CanaryMessage = 'canaryMessage',
@@ -44,7 +38,10 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
   ) =>
     await updateServerSettings({
       variables: {
-        serverConfigData: { id: serverSettings.id, ...values },
+        serverConfigData: {
+          id: serverSettings.id,
+          ...values,
+        },
       },
       onCompleted() {
         setSubmitting(false);
@@ -53,7 +50,7 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
       onError() {
         toastVar({
           status: 'error',
-          title: t('settings.errors.couldNotUpdate'),
+          title: t('settings.form.errors.couldNotUpdate'),
         });
       },
     });
@@ -66,16 +63,18 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
     >
       {({ dirty, isSubmitting, handleChange, values }) => (
         <Form>
-          <FormGroup>
-            <Flex justifyContent="space-between" marginBottom={2.8}>
+          <FormGroup sx={{ marginBottom: 1.5 }}>
+            <Flex justifyContent="space-between" marginBottom={2}>
               <Box>
-                <Typography>{t('settings.labels.canaryMessage')}</Typography>
+                <Typography>
+                  {t('settings.form.labels.canaryMessage')}
+                </Typography>
 
                 <Typography
                   fontSize={12}
                   sx={{ color: theme.palette.text.secondary }}
                 >
-                  {t('settings.descriptions.canaryMessage')}
+                  {t('settings.form.descriptions.canaryMessage')}
                 </Typography>
               </Box>
 
@@ -85,9 +84,16 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
                 onChange={handleChange}
               />
             </Flex>
-          </FormGroup>
 
-          <Divider sx={{ marginY: 3 }} />
+            <TextField
+              autoComplete="off"
+              value={values.canaryMessage || ''}
+              disabled={!values.showCanaryMessage}
+              label={t('settings.form.placeholders.canaryMessage')}
+              name={ServerSettingsFormFields.CanaryMessage}
+              multiline
+            />
+          </FormGroup>
 
           <Flex flexEnd>
             <PrimaryActionButton
