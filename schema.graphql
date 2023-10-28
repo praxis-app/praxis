@@ -441,9 +441,9 @@ type ServerPermissions {
 
 type ServerConfig {
   id: Int!
-  canaryMessage: String!
+  canaryMessage: String
   showCanaryMessage: Boolean!
-  canaryMessageExpiresAt: DateTime!
+  canaryMessageExpiresAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }

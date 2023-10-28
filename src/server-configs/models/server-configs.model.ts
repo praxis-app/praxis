@@ -14,16 +14,16 @@ export class ServerConfig {
   @Field(() => Int)
   id: number;
 
-  @Column()
-  @Field()
+  @Column({ nullable: true })
+  @Field({ nullable: true })
   canaryMessage: string;
 
-  @Column()
+  @Column({ default: false })
   @Field()
   showCanaryMessage: boolean;
 
-  @Column()
-  @Field()
+  @Column({ nullable: true })
+  @Field({ nullable: true })
   canaryMessageExpiresAt: Date;
 
   @CreateDateColumn()

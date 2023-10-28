@@ -14,13 +14,13 @@ export class ServerConfigsService {
   async getServerConfig() {
     const serverConfigs = await this.repository.find();
     if (!serverConfigs.length) {
-      throw new Error('Server config not found');
+      return this.initializeServerConfig();
     }
     return serverConfigs[0];
   }
 
-  async createServerConfig() {
-    await this.repository.save({});
+  async initializeServerConfig() {
+    return this.repository.save({});
   }
 
   async updateServerConfig({ id, ...data }: UpdateServerConfigInput) {
