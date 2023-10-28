@@ -427,6 +427,7 @@ export type Mutation = {
   updateGroupRole: UpdateGroupRolePayload;
   updatePost: UpdatePostPayload;
   updateProposal: UpdateProposalPayload;
+  updateServerConfig: UpdateServerConfigPayload;
   updateServerRole: UpdateServerRolePayload;
   updateUser: UpdateUserPayload;
   updateVote: UpdateVotePayload;
@@ -604,6 +605,10 @@ export type MutationUpdateProposalArgs = {
   proposalData: UpdateProposalInput;
 };
 
+export type MutationUpdateServerConfigArgs = {
+  serverConfigData: UpdateServerConfigInput;
+};
+
 export type MutationUpdateServerRoleArgs = {
   serverRoleData: UpdateServerRoleInput;
 };
@@ -779,6 +784,7 @@ export type Query = {
   proposal: Proposal;
   publicGroups: Array<Group>;
   publicGroupsFeed: Array<FeedItem>;
+  serverConfig: ServerConfig;
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;
   serverRole: ServerRole;
@@ -832,6 +838,16 @@ export type QueryUserArgs = {
 
 export type QueryUsersByIdsArgs = {
   ids: Array<Scalars['Int']['input']>;
+};
+
+export type ServerConfig = {
+  __typename?: 'ServerConfig';
+  canaryMessage: Scalars['String']['output'];
+  canaryMessageExpiresAt: Scalars['DateTime']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['Int']['output'];
+  showCanaryMessage: Scalars['Boolean']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type ServerInvite = {
@@ -990,6 +1006,18 @@ export type UpdateProposalInput = {
 export type UpdateProposalPayload = {
   __typename?: 'UpdateProposalPayload';
   proposal: Proposal;
+};
+
+export type UpdateServerConfigInput = {
+  canaryMessage: Scalars['String']['input'];
+  canaryMessageExpiresAt: Scalars['DateTime']['input'];
+  id: Scalars['Int']['input'];
+  showCanaryMessage: Scalars['Boolean']['input'];
+};
+
+export type UpdateServerConfigPayload = {
+  __typename?: 'UpdateServerConfigPayload';
+  serverConfig: ServerConfig;
 };
 
 export type UpdateServerRoleInput = {
