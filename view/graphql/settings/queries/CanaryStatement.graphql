@@ -1,6 +1,7 @@
 query CanaryStatement {
   serverConfig {
-    canaryStatement
     showCanary
+    canaryStatement
+    canaryUpdatedAt
   }
 }

@@ -24,7 +24,11 @@ export class ServerConfigsService {
   }
 
   async updateServerConfig({ id, ...data }: UpdateServerConfigInput) {
-    await this.repository.update(id, data);
+    const canaryUpdatedAt = new Date().toISOString();
+    await this.repository.update(id, {
+      canaryUpdatedAt,
+      ...data,
+    });
     const serverConfig = await this.getServerConfig();
     return { serverConfig };
   }

@@ -15,16 +15,18 @@ export type CanaryStatementQuery = {
   __typename?: 'Query';
   serverConfig: {
     __typename?: 'ServerConfig';
-    canaryStatement?: string | null;
     showCanary: boolean;
+    canaryStatement?: string | null;
+    canaryUpdatedAt?: any | null;
   };
 };
 
 export const CanaryStatementDocument = gql`
   query CanaryStatement {
     serverConfig {
-      canaryStatement
       showCanary
+      canaryStatement
+      canaryUpdatedAt
     }
   }
 `;
