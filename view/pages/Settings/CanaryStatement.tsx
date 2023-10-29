@@ -4,7 +4,7 @@ import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useCanaryStatementQuery } from '../../graphql/settings/queries/gen/CanaryStatement.gen';
 
-const Canary = () => {
+const CanaryStatement = () => {
   const { data, loading, error } = useCanaryStatementQuery();
   const { t } = useTranslation();
 
@@ -39,4 +39,4 @@ const Canary = () => {
   );
 };
 
-export default Canary;
+export default CanaryStatement;
