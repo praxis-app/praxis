@@ -27,6 +27,7 @@ import { ShieldModule } from './shield/shield.module';
 import { shieldPermissions } from './shield/shield.permissions';
 import { UsersModule } from './users/users.module';
 import { VotesModule } from './votes/votes.module';
+import { CanaryModule } from './canary/canary.module';
 
 const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
@@ -74,6 +75,7 @@ const ViewModule = ServeStaticModule.forRoot({
     UsersModule,
     ViewModule,
     VotesModule,
+    CanaryModule,
   ],
 })
 export class AppModule {}
