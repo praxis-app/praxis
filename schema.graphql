@@ -443,6 +443,7 @@ type ServerConfig {
   id: Int!
   canaryStatement: String
   showCanaryStatement: Boolean!
+  canaryStatementUpdatedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }

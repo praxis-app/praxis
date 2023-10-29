@@ -843,6 +843,7 @@ export type QueryUsersByIdsArgs = {
 export type ServerConfig = {
   __typename?: 'ServerConfig';
   canaryStatement?: Maybe<Scalars['String']['output']>;
+  canaryStatementUpdatedAt: Scalars['DateTime']['output'];
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   showCanaryStatement: Scalars['Boolean']['output'];

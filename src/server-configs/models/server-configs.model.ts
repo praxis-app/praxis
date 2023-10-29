@@ -22,6 +22,10 @@ export class ServerConfig {
   @Field()
   showCanaryStatement: boolean;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  canaryStatementUpdatedAt: Date;
+
   @CreateDateColumn()
   @Field()
   createdAt: Date;
