@@ -16,11 +16,11 @@ export class ServerConfig {
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  canaryMessage: string;
+  canaryStatement: string;
 
   @Column({ default: false })
   @Field()
-  showCanaryMessage: boolean;
+  showCanaryStatement: boolean;
 
   @CreateDateColumn()
   @Field()

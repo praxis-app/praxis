@@ -9,9 +9,8 @@ import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import { TextField } from '../Shared/TextField';
 
 enum ServerSettingsFormFields {
-  CanaryMessage = 'canaryMessage',
-  ShowCanaryMessage = 'showCanaryMessage',
-  CanaryMessageExpiresAt = 'canaryMessageExpiresAt',
+  CanaryStatement = 'canaryStatement',
+  ShowCanaryStatement = 'showCanaryStatement',
 }
 
 type FormValues = Omit<ServerSettingsFormFragment, 'id'>;
@@ -27,8 +26,8 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
   const theme = useTheme();
 
   const initialValues: FormValues = {
-    canaryMessage: serverSettings.canaryMessage,
-    showCanaryMessage: serverSettings.showCanaryMessage,
+    canaryStatement: serverSettings.canaryStatement,
+    showCanaryStatement: serverSettings.showCanaryStatement,
   };
 
   const handleSubmit = async (
@@ -78,18 +77,18 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
               </Box>
 
               <Switch
-                checked={values.showCanaryMessage}
-                name={ServerSettingsFormFields.ShowCanaryMessage}
+                checked={values.showCanaryStatement}
+                name={ServerSettingsFormFields.ShowCanaryStatement}
                 onChange={handleChange}
               />
             </Flex>
 
             <TextField
               autoComplete="off"
-              value={values.canaryMessage || ''}
-              disabled={!values.showCanaryMessage}
+              value={values.canaryStatement || ''}
+              disabled={!values.showCanaryStatement}
               label={t('settings.form.placeholders.canaryMessage')}
-              name={ServerSettingsFormFields.CanaryMessage}
+              name={ServerSettingsFormFields.CanaryStatement}
               multiline
             />
           </FormGroup>

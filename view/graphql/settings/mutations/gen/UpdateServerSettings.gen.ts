@@ -18,8 +18,8 @@ export type UpdateServerSettingsMutation = {
     serverConfig: {
       __typename?: 'ServerConfig';
       id: number;
-      canaryMessage?: string | null;
-      showCanaryMessage: boolean;
+      canaryStatement?: string | null;
+      showCanaryStatement: boolean;
       updatedAt: any;
     };
   };
@@ -30,8 +30,8 @@ export const UpdateServerSettingsDocument = gql`
     updateServerConfig(serverConfigData: $serverConfigData) {
       serverConfig {
         id
-        canaryMessage
-        showCanaryMessage
+        canaryStatement
+        showCanaryStatement
         updatedAt
       }
     }
