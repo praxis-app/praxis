@@ -10,7 +10,7 @@ import { TextField } from '../Shared/TextField';
 
 enum ServerSettingsFormFields {
   CanaryStatement = 'canaryStatement',
-  ShowCanaryStatement = 'showCanaryStatement',
+  ShowCanary = 'showCanary',
 }
 
 type FormValues = Omit<ServerSettingsFormFragment, 'id'>;
@@ -27,7 +27,7 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
 
   const initialValues: FormValues = {
     canaryStatement: serverSettings.canaryStatement,
-    showCanaryStatement: serverSettings.showCanaryStatement,
+    showCanary: serverSettings.showCanary,
   };
 
   const handleSubmit = async (
@@ -77,8 +77,8 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
               </Box>
 
               <Switch
-                checked={values.showCanaryStatement}
-                name={ServerSettingsFormFields.ShowCanaryStatement}
+                checked={values.showCanary}
+                name={ServerSettingsFormFields.ShowCanary}
                 onChange={handleChange}
               />
             </Flex>
@@ -86,7 +86,7 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
             <TextField
               autoComplete="off"
               value={values.canaryStatement || ''}
-              disabled={!values.showCanaryStatement}
+              disabled={!values.showCanary}
               label={t('settings.form.placeholders.canaryMessage')}
               name={ServerSettingsFormFields.CanaryStatement}
               multiline

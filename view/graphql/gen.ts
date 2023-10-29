@@ -843,10 +843,10 @@ export type QueryUsersByIdsArgs = {
 export type ServerConfig = {
   __typename?: 'ServerConfig';
   canaryStatement?: Maybe<Scalars['String']['output']>;
-  canaryStatementUpdatedAt: Scalars['DateTime']['output'];
+  canaryUpdatedAt?: Maybe<Scalars['DateTime']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
-  showCanaryStatement: Scalars['Boolean']['output'];
+  showCanary: Scalars['Boolean']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -1009,10 +1009,9 @@ export type UpdateProposalPayload = {
 };
 
 export type UpdateServerConfigInput = {
-  canaryMessageExpiresAt?: InputMaybe<Scalars['DateTime']['input']>;
   canaryStatement?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
-  showCanaryStatement?: InputMaybe<Scalars['Boolean']['input']>;
+  showCanary?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type UpdateServerConfigPayload = {

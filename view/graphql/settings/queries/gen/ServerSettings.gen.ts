@@ -18,7 +18,7 @@ export type ServerSettingsQuery = {
     __typename?: 'ServerConfig';
     id: number;
     canaryStatement?: string | null;
-    showCanaryStatement: boolean;
+    showCanary: boolean;
   };
 };
 

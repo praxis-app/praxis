@@ -9,8 +9,5 @@ export class UpdateServerConfigInput {
   canaryStatement: string;
 
   @Field({ nullable: true })
-  showCanaryStatement: boolean;
-
-  @Field({ nullable: true })
-  canaryMessageExpiresAt: Date;
+  showCanary: boolean;
 }

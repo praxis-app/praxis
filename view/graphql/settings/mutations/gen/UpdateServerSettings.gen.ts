@@ -19,8 +19,7 @@ export type UpdateServerSettingsMutation = {
       __typename?: 'ServerConfig';
       id: number;
       canaryStatement?: string | null;
-      showCanaryStatement: boolean;
-      updatedAt: any;
+      showCanary: boolean;
     };
   };
 };
@@ -31,8 +30,7 @@ export const UpdateServerSettingsDocument = gql`
       serverConfig {
         id
         canaryStatement
-        showCanaryStatement
-        updatedAt
+        showCanary
       }
     }
   }

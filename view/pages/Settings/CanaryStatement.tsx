@@ -21,7 +21,7 @@ const Canary = () => {
   }
 
   const {
-    serverConfig: { canaryStatement, showCanaryStatement },
+    serverConfig: { canaryStatement, showCanary },
   } = data;
 
   return (
@@ -30,7 +30,7 @@ const Canary = () => {
         {t('about.headers.canaryStatement')}
       </LevelOneHeading>
 
-      {showCanaryStatement ? (
+      {showCanary && canaryStatement ? (
         <Typography>{canaryStatement}</Typography>
       ) : (
         <Typography>{t('about.prompts.canaryStatementMissing')}</Typography>

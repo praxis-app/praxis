@@ -3,8 +3,7 @@ mutation UpdateServerSettings($serverConfigData: UpdateServerConfigInput!) {
     serverConfig {
       id
       canaryStatement
-      showCanaryStatement
-      updatedAt
+      showCanary
     }
   }
 }

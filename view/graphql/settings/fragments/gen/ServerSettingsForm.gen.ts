@@ -9,13 +9,13 @@ export type ServerSettingsFormFragment = {
   __typename?: 'ServerConfig';
   id: number;
   canaryStatement?: string | null;
-  showCanaryStatement: boolean;
+  showCanary: boolean;
 };
 
 export const ServerSettingsFormFragmentDoc = gql`
   fragment ServerSettingsForm on ServerConfig {
     id
     canaryStatement
-    showCanaryStatement
+    showCanary
   }
 `;

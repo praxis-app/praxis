@@ -16,7 +16,7 @@ export type CanaryStatementQuery = {
   serverConfig: {
     __typename?: 'ServerConfig';
     canaryStatement?: string | null;
-    showCanaryStatement: boolean;
+    showCanary: boolean;
   };
 };
 
@@ -24,7 +24,7 @@ export const CanaryStatementDocument = gql`
   query CanaryStatement {
     serverConfig {
       canaryStatement
-      showCanaryStatement
+      showCanary
     }
   }
 `;
