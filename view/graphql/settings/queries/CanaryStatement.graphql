@@ -1,0 +1,6 @@
+query CanaryStatement {
+  serverConfig {
+    canaryStatement
+    showCanaryStatement
+  }
+}

@@ -68,6 +68,9 @@
     },
     "headers": {
       "canaryStatement": "Canary Statement"
+    },
+    "prompts": {
+      "canaryStatementMissing": "Canary statement is missing."
     }
   },
 
