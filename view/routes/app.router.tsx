@@ -12,6 +12,7 @@ import postsRouter from './posts.router';
 import proposalsRouter from './proposals.router';
 import rolesRouter from './roles.router';
 import usersRouter from './users.router';
+import Canary from '../pages/Canary';
 
 const appRouter = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const appRouter = createBrowserRouter([
       {
         path: 'settings',
         element: <ServerSettings />,
+      },
+      {
+        path: 'canary',
+        element: <Canary />,
       },
       {
         path: 'docs',

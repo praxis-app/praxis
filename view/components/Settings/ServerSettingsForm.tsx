@@ -29,7 +29,6 @@ const ServerSettingsForm = ({ serverSettings }: Props) => {
   const initialValues: FormValues = {
     canaryMessage: serverSettings.canaryMessage,
     showCanaryMessage: serverSettings.showCanaryMessage,
-    canaryMessageExpiresAt: serverSettings.canaryMessageExpiresAt,
   };
 
   const handleSubmit = async (
