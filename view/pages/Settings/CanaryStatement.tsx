@@ -1,8 +1,9 @@
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useCanaryStatementQuery } from '../../graphql/settings/queries/gen/CanaryStatement.gen';
+import { formatDate } from '../../utils/time.utils';
 
 const CanaryStatement = () => {
   const { data, loading, error } = useCanaryStatementQuery();
@@ -21,19 +22,27 @@ const CanaryStatement = () => {
   }
 
   const {
-    serverConfig: { canaryStatement, showCanary },
+    serverConfig: { canaryStatement, showCanary, canaryUpdatedAt },
   } = data;
+
+  const formattedUpdatedAt = formatDate(canaryUpdatedAt);
+  const updatedAtMessage = t('canary.labels.updatedAt', {
+    updatedAt: formattedUpdatedAt,
+  });
 
   return (
     <>
       <LevelOneHeading header>
-        {t('about.headers.canaryStatement')}
+        {t('canary.headers.canaryStatement')}
       </LevelOneHeading>
 
       {showCanary && canaryStatement ? (
-        <Typography>{canaryStatement}</Typography>
+        <Box>
+          <Typography marginBottom={1.5}>{canaryStatement}</Typography>
+          <Typography color="text.secondary">{updatedAtMessage}</Typography>
+        </Box>
       ) : (
-        <Typography>{t('about.prompts.canaryStatementMissing')}</Typography>
+        <Typography>{t('canary.prompts.canaryStatementMissing')}</Typography>
       )}
     </>
   );
