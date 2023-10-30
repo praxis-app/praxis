@@ -439,6 +439,13 @@ type ServerPermissions {
   removeMembers: Boolean!
 }
 
+type Canary {
+  id: Int!
+  statement: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type ServerConfig {
   id: Int!
   canaryStatement: String
@@ -474,6 +481,7 @@ type Query {
   authCheck: Boolean!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
+  canaryStatement: Canary!
   serverConfig: ServerConfig!
 }
 

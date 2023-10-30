@@ -8,6 +8,7 @@ import { applyMiddleware } from 'graphql-middleware';
 import { GraphQLUpload } from 'graphql-upload-ts';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
+import { CanaryModule } from './canary/canary.module';
 import { CommentsModule } from './comments/comments.module';
 import { ContextModule } from './context/context.module';
 import { ContextService } from './context/context.service';
@@ -27,7 +28,6 @@ import { ShieldModule } from './shield/shield.module';
 import { shieldPermissions } from './shield/shield.permissions';
 import { UsersModule } from './users/users.module';
 import { VotesModule } from './votes/votes.module';
-import { CanaryModule } from './canary/canary.module';
 
 const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
@@ -59,6 +59,7 @@ const ViewModule = ServeStaticModule.forRoot({
     ConfigModule.forRoot({ isGlobal: true }),
     ApolloModule,
     AuthModule,
+    CanaryModule,
     CommentsModule,
     DatabaseModule,
     DataloaderModule,
@@ -75,7 +76,6 @@ const ViewModule = ServeStaticModule.forRoot({
     UsersModule,
     ViewModule,
     VotesModule,
-    CanaryModule,
   ],
 })
 export class AppModule {}
