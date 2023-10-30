@@ -1,10 +1,10 @@
 import { Query, Resolver } from '@nestjs/graphql';
-import { CanaryService } from './canary.service';
+import { CanariesService } from './canaries.service';
 import { Canary } from './models/canary.model';
 
 @Resolver(() => Canary)
-export class CanaryResolver {
-  constructor(private canaryService: CanaryService) {}
+export class CanariesResolver {
+  constructor(private canaryService: CanariesService) {}
 
   @Query(() => Canary)
   async canaryStatement() {

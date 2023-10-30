@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Canary } from './models/canary.model';
 
 @Injectable()
-export class CanaryService {
+export class CanariesService {
   constructor(
     @InjectRepository(Canary)
     private repository: Repository<Canary>,

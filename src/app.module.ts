@@ -8,7 +8,7 @@ import { applyMiddleware } from 'graphql-middleware';
 import { GraphQLUpload } from 'graphql-upload-ts';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
-import { CanaryModule } from './canary/canary.module';
+import { CanariesModule } from './canaries/canaries.module';
 import { CommentsModule } from './comments/comments.module';
 import { ContextModule } from './context/context.module';
 import { ContextService } from './context/context.service';
@@ -59,7 +59,7 @@ const ViewModule = ServeStaticModule.forRoot({
     ConfigModule.forRoot({ isGlobal: true }),
     ApolloModule,
     AuthModule,
-    CanaryModule,
+    CanariesModule,
     CommentsModule,
     DatabaseModule,
     DataloaderModule,
