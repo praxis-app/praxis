@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CanariesService } from '../canaries/canaries.service';
 import { ServerConfig } from './models/server-configs.model';
 import { UpdateServerConfigInput } from './models/update-server-config.input';
 
@@ -9,6 +10,7 @@ export class ServerConfigsService {
   constructor(
     @InjectRepository(ServerConfig)
     private repository: Repository<ServerConfig>,
+    private canariesService: CanariesService,
   ) {}
 
   async getServerConfig() {
@@ -23,12 +25,21 @@ export class ServerConfigsService {
     return this.repository.save({});
   }
 
-  async updateServerConfig({ id, ...data }: UpdateServerConfigInput) {
-    const canaryUpdatedAt = new Date().toISOString();
-    await this.repository.update(id, {
-      canaryUpdatedAt,
-      ...data,
-    });
+  async updateServerConfig({
+    id,
+    canaryStatement,
+    ...data
+  }: UpdateServerConfigInput) {
+    await this.repository.update(id, data);
+
+    if (canaryStatement) {
+      const canary = await this.canariesService.getCanary();
+      await this.canariesService.updateCanary({
+        id: canary.id,
+        statement: canaryStatement,
+      });
+    }
+
     const serverConfig = await this.getServerConfig();
     return { serverConfig };
   }

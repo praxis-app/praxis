@@ -7,5 +7,6 @@ import { Canary } from './models/canary.model';
 @Module({
   imports: [TypeOrmModule.forFeature([Canary])],
   providers: [CanariesService, CanariesResolver],
+  exports: [CanariesService],
 })
 export class CanariesModule {}

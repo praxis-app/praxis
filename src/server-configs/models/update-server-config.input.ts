@@ -6,8 +6,8 @@ export class UpdateServerConfigInput {
   id: number;
 
   @Field({ nullable: true })
-  canaryStatement: string;
+  canaryStatement?: string;
 
   @Field({ nullable: true })
-  showCanary: boolean;
+  showCanary?: boolean;
 }

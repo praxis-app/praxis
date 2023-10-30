@@ -13,18 +13,20 @@ export class CanariesService {
   async getCanary() {
     const canaries = await this.repository.find();
     if (!canaries.length) {
-      return this.initializeCanary();
+      return this.createCanary({ statement: '' });
     }
     return canaries[0];
   }
 
-  async initializeCanary() {
-    return this.repository.save({});
+  async createCanary(data: Partial<Canary>): Promise<Canary> {
+    return this.repository.save(data);
   }
 
-  async updateCanary({ id, ...data }: any) {
+  async updateCanary({ id, ...data }: Partial<Canary>) {
+    if (!id) {
+      throw new Error('Canary ID was not provided');
+    }
     await this.repository.update(id, data);
-    const canary = await this.getCanary();
-    return { canary };
+    return this.getCanary();
   }
 }
