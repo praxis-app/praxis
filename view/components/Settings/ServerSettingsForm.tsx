@@ -47,10 +47,10 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
         setSubmitting(false);
         resetForm();
       },
-      onError() {
+      onError(err) {
         toastVar({
           status: 'error',
-          title: t('settings.form.errors.couldNotUpdate'),
+          title: err.message,
         });
       },
     });

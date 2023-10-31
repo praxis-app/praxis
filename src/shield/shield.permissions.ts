@@ -41,6 +41,7 @@ import {
   canManagePosts,
   canManageServerInvites,
   canManageServerRoles,
+  canManageServerSettings,
   canRemoveMembers,
 } from './rules/role.rules';
 import { isPublicUserAvatar, isUserInPublicGroups } from './rules/user.rules';
@@ -72,6 +73,7 @@ export const shieldPermissions = shield(
       deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
       createServerInvite: or(canCreateServerInvites, canManageServerInvites),
       deleteServerInvite: canManageServerInvites,
+      updateServerConfig: canManageServerSettings,
       createServerRole: canManageServerRoles,
       updateServerRole: canManageServerRoles,
       deleteServerRole: canManageServerRoles,
