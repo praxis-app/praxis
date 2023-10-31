@@ -62,6 +62,7 @@ export type UpdateServerRoleMutation = {
         manageInvites: boolean;
         managePosts: boolean;
         manageRoles: boolean;
+        manageSettings: boolean;
         removeMembers: boolean;
       };
     };

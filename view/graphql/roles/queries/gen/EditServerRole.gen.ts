@@ -57,6 +57,7 @@ export type EditServerRoleQuery = {
       manageInvites: boolean;
       managePosts: boolean;
       manageRoles: boolean;
+      manageSettings: boolean;
       removeMembers: boolean;
     };
   };

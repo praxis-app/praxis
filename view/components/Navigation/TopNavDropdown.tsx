@@ -79,10 +79,12 @@ const TopNavDropdown = ({
         </MenuItem>
       )}
 
-      <MenuItem onClick={() => navigate(NavigationPaths.ServerSettings)}>
-        <Settings {...ICON_PROPS} />
-        {t('navigation.serverSettings')}
-      </MenuItem>
+      {serverPermissions.manageSettings && (
+        <MenuItem onClick={() => navigate(NavigationPaths.ServerSettings)}>
+          <Settings {...ICON_PROPS} />
+          {t('navigation.serverSettings')}
+        </MenuItem>
+      )}
 
       <MenuItem onClick={handleLogOutButtonClick}>
         <ExitToApp {...ICON_PROPS} />

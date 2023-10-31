@@ -9,7 +9,11 @@ export type TopNavDropdownFragment = {
   __typename?: 'User';
   id: number;
   name: string;
-  serverPermissions: { __typename?: 'ServerPermissions'; manageRoles: boolean };
+  serverPermissions: {
+    __typename?: 'ServerPermissions';
+    manageRoles: boolean;
+    manageSettings: boolean;
+  };
 };
 
 export const TopNavDropdownFragmentDoc = gql`
@@ -18,6 +22,7 @@ export const TopNavDropdownFragmentDoc = gql`
     name
     serverPermissions {
       manageRoles
+      manageSettings
     }
   }
 `;
