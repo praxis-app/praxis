@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CanariesService } from '../canaries/canaries.service';
@@ -10,6 +10,8 @@ export class ServerConfigsService {
   constructor(
     @InjectRepository(ServerConfig)
     private repository: Repository<ServerConfig>,
+
+    @Inject(forwardRef(() => CanariesService))
     private canariesService: CanariesService,
   ) {}
 

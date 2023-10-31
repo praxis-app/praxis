@@ -10,4 +10,9 @@ export class CanariesResolver {
   async canary() {
     return this.canaryService.getCanary();
   }
+
+  @Query(() => Canary, { nullable: true })
+  async publicCanary() {
+    return this.canaryService.getPublicCanary();
+  }
 }

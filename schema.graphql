@@ -439,16 +439,16 @@ type ServerPermissions {
   removeMembers: Boolean!
 }
 
-type Canary {
+type ServerConfig {
   id: Int!
-  statement: String!
+  showCanary: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-type ServerConfig {
+type Canary {
   id: Int!
-  showCanary: Boolean!
+  statement: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -481,6 +481,7 @@ type Query {
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
   canary: Canary!
+  publicCanary: Canary
   serverConfig: ServerConfig!
 }
 

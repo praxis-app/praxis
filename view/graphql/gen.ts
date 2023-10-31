@@ -791,6 +791,7 @@ export type Query = {
   me: User;
   post: Post;
   proposal: Proposal;
+  publicCanary?: Maybe<Canary>;
   publicGroups: Array<Group>;
   publicGroupsFeed: Array<FeedItem>;
   serverConfig: ServerConfig;

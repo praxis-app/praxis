@@ -21,14 +21,27 @@ const CanaryStatement = () => {
     return null;
   }
 
-  const {
-    canary: { statement, updatedAt },
-  } = data;
+  const renderStatement = () => {
+    const { publicCanary } = data;
 
-  const formattedUpdatedAt = formatDate(updatedAt);
-  const updatedAtMessage = t('canary.labels.updatedAt', {
-    updatedAt: formattedUpdatedAt,
-  });
+    if (!publicCanary) {
+      return (
+        <Typography>{t('canary.prompts.canaryStatementMissing')}</Typography>
+      );
+    }
+
+    const formattedUpdatedAt = formatDate(publicCanary.updatedAt);
+    const updatedAtMessage = t('canary.labels.updatedAt', {
+      updatedAt: formattedUpdatedAt,
+    });
+
+    return (
+      <Box>
+        <Typography marginBottom={1.5}>{publicCanary.statement}</Typography>
+        <Typography color="text.secondary">{updatedAtMessage}</Typography>
+      </Box>
+    );
+  };
 
   return (
     <>
@@ -36,14 +49,7 @@ const CanaryStatement = () => {
         {t('canary.headers.canaryStatement')}
       </LevelOneHeading>
 
-      {statement ? (
-        <Box>
-          <Typography marginBottom={1.5}>{statement}</Typography>
-          <Typography color="text.secondary">{updatedAtMessage}</Typography>
-        </Box>
-      ) : (
-        <Typography>{t('canary.prompts.canaryStatementMissing')}</Typography>
-      )}
+      {renderStatement()}
     </>
   );
 };

@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ServerConfigsService } from '../server-configs/server-configs.service';
 import { Canary } from './models/canary.model';
 
 @Injectable()
@@ -8,6 +9,9 @@ export class CanariesService {
   constructor(
     @InjectRepository(Canary)
     private repository: Repository<Canary>,
+
+    @Inject(forwardRef(() => ServerConfigsService))
+    private serverConfigsService: ServerConfigsService,
   ) {}
 
   async getCanary() {
@@ -16,6 +20,14 @@ export class CanariesService {
       return this.createCanary({ statement: '' });
     }
     return canaries[0];
+  }
+
+  async getPublicCanary() {
+    const serverConfig = await this.serverConfigsService.getServerConfig();
+    if (!serverConfig.showCanary) {
+      return null;
+    }
+    return this.getCanary();
   }
 
   async createCanary(data: Partial<Canary>): Promise<Canary> {
