@@ -24,7 +24,7 @@ const CanaryStatement = () => {
   const renderStatement = () => {
     const { publicCanary } = data;
 
-    if (!publicCanary) {
+    if (!publicCanary || !publicCanary.statement) {
       return (
         <Typography>{t('canary.prompts.canaryStatementMissing')}</Typography>
       );
