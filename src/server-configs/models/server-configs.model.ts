@@ -14,10 +14,9 @@ export class ServerConfig {
   @Field(() => Int)
   id: number;
 
-  // TODO: Rename as showCanaryStatement
   @Column({ default: false })
   @Field()
-  showCanary: boolean;
+  showCanaryStatement: boolean;
 
   @CreateDateColumn()
   @Field()

@@ -19,7 +19,7 @@ export type UpdateServerSettingsMutation = {
     serverConfig: {
       __typename?: 'ServerConfig';
       id: number;
-      showCanary: boolean;
+      showCanaryStatement: boolean;
     };
     canary: {
       __typename?: 'Canary';

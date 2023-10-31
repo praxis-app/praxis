@@ -1,4 +1,4 @@
 fragment ServerSettingsForm on ServerConfig {
   id
-  showCanary
+  showCanaryStatement
 }

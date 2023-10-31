@@ -441,7 +441,7 @@ type ServerPermissions {
 
 type ServerConfig {
   id: Int!
-  showCanary: Boolean!
+  showCanaryStatement: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -781,5 +781,5 @@ input CreateServerInviteInput {
 input UpdateServerConfigInput {
   id: Int!
   canaryStatement: String
-  showCanary: Boolean
+  showCanaryStatement: Boolean
 }

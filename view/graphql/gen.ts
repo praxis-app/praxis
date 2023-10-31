@@ -854,7 +854,7 @@ export type ServerConfig = {
   __typename?: 'ServerConfig';
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
-  showCanary: Scalars['Boolean']['output'];
+  showCanaryStatement: Scalars['Boolean']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -1019,7 +1019,7 @@ export type UpdateProposalPayload = {
 export type UpdateServerConfigInput = {
   canaryStatement?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
-  showCanary?: InputMaybe<Scalars['Boolean']['input']>;
+  showCanaryStatement?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type UpdateServerConfigPayload = {

@@ -9,5 +9,5 @@ export class UpdateServerConfigInput {
   canaryStatement?: string;
 
   @Field({ nullable: true })
-  showCanary?: boolean;
+  showCanaryStatement?: boolean;
 }

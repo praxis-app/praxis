@@ -8,12 +8,12 @@ import { gql } from '@apollo/client';
 export type ServerSettingsFormFragment = {
   __typename?: 'ServerConfig';
   id: number;
-  showCanary: boolean;
+  showCanaryStatement: boolean;
 };
 
 export const ServerSettingsFormFragmentDoc = gql`
   fragment ServerSettingsForm on ServerConfig {
     id
-    showCanary
+    showCanaryStatement
   }
 `;

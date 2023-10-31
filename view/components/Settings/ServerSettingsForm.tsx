@@ -11,7 +11,7 @@ import { UpdateServerConfigInput } from '../../../src/server-configs/models/upda
 
 enum ServerSettingsFormFields {
   CanaryStatement = 'canaryStatement',
-  ShowCanary = 'showCanary',
+  ShowCanaryStatement = 'showCanaryStatement',
 }
 
 type FormValues = Omit<UpdateServerConfigInput, 'id'>;
@@ -28,7 +28,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
   const theme = useTheme();
 
   const initialValues: FormValues = {
-    showCanary: serverSettings.showCanary,
+    showCanaryStatement: serverSettings.showCanaryStatement,
     canaryStatement,
   };
 
@@ -79,8 +79,8 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               </Box>
 
               <Switch
-                checked={values.showCanary}
-                name={ServerSettingsFormFields.ShowCanary}
+                checked={values.showCanaryStatement}
+                name={ServerSettingsFormFields.ShowCanaryStatement}
                 onChange={handleChange}
               />
             </Flex>
@@ -88,7 +88,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
             <TextField
               autoComplete="off"
               value={values.canaryStatement || ''}
-              disabled={!values.showCanary}
+              disabled={!values.showCanaryStatement}
               label={t('settings.form.placeholders.canaryMessage')}
               name={ServerSettingsFormFields.CanaryStatement}
               multiline

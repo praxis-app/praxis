@@ -24,7 +24,7 @@ export class CanariesService {
 
   async getPublicCanary() {
     const serverConfig = await this.serverConfigsService.getServerConfig();
-    if (!serverConfig.showCanary) {
+    if (!serverConfig.showCanaryStatement) {
       return null;
     }
     return this.getCanary();
