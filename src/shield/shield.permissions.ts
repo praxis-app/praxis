@@ -59,6 +59,7 @@ export const shieldPermissions = shield(
       groupRole: isGroupMember,
       publicGroupsFeed: allow,
       publicGroups: allow,
+      publicCanary: allow,
       events: allow,
     },
     Mutation: {
@@ -140,6 +141,11 @@ export const shieldPermissions = shield(
     ServerInvite: {
       id: allow,
       token: allow,
+    },
+    Canary: {
+      id: allow,
+      statement: allow,
+      updatedAt: allow,
     },
     Event: or(isAuthenticated, isPublicEvent),
     Post: or(isAuthenticated, isPublicPost, isPublicEventPost),
