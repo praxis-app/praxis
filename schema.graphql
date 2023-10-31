@@ -258,6 +258,7 @@ type ServerRolePermission {
   managePosts: Boolean!
   manageComments: Boolean!
   manageEvents: Boolean!
+  manageSettings: Boolean!
   manageInvites: Boolean!
   createInvites: Boolean!
   removeMembers: Boolean!
@@ -434,6 +435,7 @@ type ServerPermissions {
   managePosts: Boolean!
   manageComments: Boolean!
   manageEvents: Boolean!
+  manageSettings: Boolean!
   manageInvites: Boolean!
   createInvites: Boolean!
   removeMembers: Boolean!
@@ -694,6 +696,7 @@ input ServerRolePermissionInput {
   managePosts: Boolean
   manageComments: Boolean
   manageEvents: Boolean
+  manageSettings: Boolean
   manageInvites: Boolean
   createInvites: Boolean
   removeMembers: Boolean
