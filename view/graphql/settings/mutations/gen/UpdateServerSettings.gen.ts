@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { ServerSettingsFormFragmentDoc } from '../../fragments/gen/ServerSettingsForm.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -18,8 +19,13 @@ export type UpdateServerSettingsMutation = {
     serverConfig: {
       __typename?: 'ServerConfig';
       id: number;
-      canaryStatement?: string | null;
       showCanary: boolean;
+    };
+    canary: {
+      __typename?: 'Canary';
+      id: number;
+      statement: string;
+      updatedAt: any;
     };
   };
 };
@@ -28,12 +34,16 @@ export const UpdateServerSettingsDocument = gql`
   mutation UpdateServerSettings($serverConfigData: UpdateServerConfigInput!) {
     updateServerConfig(serverConfigData: $serverConfigData) {
       serverConfig {
+        ...ServerSettingsForm
+      }
+      canary {
         id
-        canaryStatement
-        showCanary
+        statement
+        updatedAt
       }
     }
   }
+  ${ServerSettingsFormFragmentDoc}
 `;
 export type UpdateServerSettingsMutationFn = Apollo.MutationFunction<
   UpdateServerSettingsMutation,

@@ -14,17 +14,9 @@ export class ServerConfig {
   @Field(() => Int)
   id: number;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  canaryStatement: string;
-
   @Column({ default: false })
   @Field()
   showCanary: boolean;
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  canaryUpdatedAt: Date;
 
   @CreateDateColumn()
   @Field()

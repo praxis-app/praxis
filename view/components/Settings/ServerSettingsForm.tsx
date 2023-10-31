@@ -7,27 +7,29 @@ import { useUpdateServerSettingsMutation } from '../../graphql/settings/mutation
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import { TextField } from '../Shared/TextField';
+import { UpdateServerConfigInput } from '../../../src/server-configs/models/update-server-config.input';
 
 enum ServerSettingsFormFields {
   CanaryStatement = 'canaryStatement',
   ShowCanary = 'showCanary',
 }
 
-type FormValues = Omit<ServerSettingsFormFragment, 'id'>;
+type FormValues = Omit<UpdateServerConfigInput, 'id'>;
 
 interface Props {
   serverSettings: ServerSettingsFormFragment;
+  canaryStatement: string;
 }
 
-const ServerSettingsForm = ({ serverSettings }: Props) => {
+const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
   const [updateServerSettings] = useUpdateServerSettingsMutation();
 
   const { t } = useTranslation();
   const theme = useTheme();
 
   const initialValues: FormValues = {
-    canaryStatement: serverSettings.canaryStatement,
     showCanary: serverSettings.showCanary,
+    canaryStatement,
   };
 
   const handleSubmit = async (

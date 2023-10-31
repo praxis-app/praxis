@@ -37,6 +37,14 @@ export type ApproveGroupMemberRequestPayload = {
   groupMember: User;
 };
 
+export type Canary = {
+  __typename?: 'Canary';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['Int']['output'];
+  statement: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type Comment = {
   __typename?: 'Comment';
   body?: Maybe<Scalars['String']['output']>;
@@ -771,6 +779,7 @@ export type ProposalActionRoleMemberInput = {
 export type Query = {
   __typename?: 'Query';
   authCheck: Scalars['Boolean']['output'];
+  canaryStatement: Canary;
   event: Event;
   events: Array<Event>;
   group: Group;
@@ -842,8 +851,6 @@ export type QueryUsersByIdsArgs = {
 
 export type ServerConfig = {
   __typename?: 'ServerConfig';
-  canaryStatement?: Maybe<Scalars['String']['output']>;
-  canaryUpdatedAt?: Maybe<Scalars['DateTime']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   showCanary: Scalars['Boolean']['output'];
@@ -1016,6 +1023,7 @@ export type UpdateServerConfigInput = {
 
 export type UpdateServerConfigPayload = {
   __typename?: 'UpdateServerConfigPayload';
+  canary: Canary;
   serverConfig: ServerConfig;
 };
 

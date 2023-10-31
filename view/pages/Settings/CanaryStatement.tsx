@@ -22,10 +22,10 @@ const CanaryStatement = () => {
   }
 
   const {
-    serverConfig: { canaryStatement, showCanary, canaryUpdatedAt },
+    canaryStatement: { statement, updatedAt },
   } = data;
 
-  const formattedUpdatedAt = formatDate(canaryUpdatedAt);
+  const formattedUpdatedAt = formatDate(updatedAt);
   const updatedAtMessage = t('canary.labels.updatedAt', {
     updatedAt: formattedUpdatedAt,
   });
@@ -36,9 +36,9 @@ const CanaryStatement = () => {
         {t('canary.headers.canaryStatement')}
       </LevelOneHeading>
 
-      {showCanary && canaryStatement ? (
+      {statement ? (
         <Box>
-          <Typography marginBottom={1.5}>{canaryStatement}</Typography>
+          <Typography marginBottom={1.5}>{statement}</Typography>
           <Typography color="text.secondary">{updatedAtMessage}</Typography>
         </Box>
       ) : (

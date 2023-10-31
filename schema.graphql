@@ -448,15 +448,14 @@ type Canary {
 
 type ServerConfig {
   id: Int!
-  canaryStatement: String
   showCanary: Boolean!
-  canaryUpdatedAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
 type UpdateServerConfigPayload {
   serverConfig: ServerConfig!
+  canary: Canary!
 }
 
 type Query {

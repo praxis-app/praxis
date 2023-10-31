@@ -17,15 +17,19 @@ export type ServerSettingsQuery = {
   serverConfig: {
     __typename?: 'ServerConfig';
     id: number;
-    canaryStatement?: string | null;
     showCanary: boolean;
   };
+  canaryStatement: { __typename?: 'Canary'; id: number; statement: string };
 };
 
 export const ServerSettingsDocument = gql`
   query ServerSettings {
     serverConfig {
       ...ServerSettingsForm
+    }
+    canaryStatement {
+      id
+      statement
     }
   }
   ${ServerSettingsFormFragmentDoc}

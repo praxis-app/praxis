@@ -41,6 +41,7 @@ export class ServerConfigsService {
     }
 
     const serverConfig = await this.getServerConfig();
-    return { serverConfig };
+    const canary = await this.canariesService.getCanary();
+    return { serverConfig, canary };
   }
 }

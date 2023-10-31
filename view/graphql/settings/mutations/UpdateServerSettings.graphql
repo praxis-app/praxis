@@ -1,9 +1,12 @@
 mutation UpdateServerSettings($serverConfigData: UpdateServerConfigInput!) {
   updateServerConfig(serverConfigData: $serverConfigData) {
     serverConfig {
+      ...ServerSettingsForm
+    }
+    canary {
       id
-      canaryStatement
-      showCanary
+      statement
+      updatedAt
     }
   }
 }
