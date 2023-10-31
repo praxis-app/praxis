@@ -32,7 +32,7 @@ const ServerSettings = () => {
       <LevelOneHeading header>{t('navigation.serverSettings')}</LevelOneHeading>
       <ServerSettingsForm
         serverSettings={data.serverConfig}
-        canaryStatement={data.canaryStatement.statement}
+        canaryStatement={data.canary.statement}
       />
     </>
   );

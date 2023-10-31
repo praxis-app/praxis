@@ -13,7 +13,7 @@ export type CanaryStatementQueryVariables = Types.Exact<{
 
 export type CanaryStatementQuery = {
   __typename?: 'Query';
-  canaryStatement: {
+  canary: {
     __typename?: 'Canary';
     id: number;
     statement: string;
@@ -23,7 +23,7 @@ export type CanaryStatementQuery = {
 
 export const CanaryStatementDocument = gql`
   query CanaryStatement {
-    canaryStatement {
+    canary {
       id
       statement
       updatedAt

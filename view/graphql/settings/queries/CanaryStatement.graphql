@@ -1,5 +1,5 @@
 query CanaryStatement {
-  canaryStatement {
+  canary {
     id
     statement
     updatedAt

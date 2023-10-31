@@ -22,7 +22,7 @@ const CanaryStatement = () => {
   }
 
   const {
-    canaryStatement: { statement, updatedAt },
+    canary: { statement, updatedAt },
   } = data;
 
   const formattedUpdatedAt = formatDate(updatedAt);

@@ -7,7 +7,7 @@ export class CanariesResolver {
   constructor(private canaryService: CanariesService) {}
 
   @Query(() => Canary)
-  async canaryStatement() {
+  async canary() {
     return this.canaryService.getCanary();
   }
 }

@@ -19,7 +19,7 @@ export type ServerSettingsQuery = {
     id: number;
     showCanary: boolean;
   };
-  canaryStatement: { __typename?: 'Canary'; id: number; statement: string };
+  canary: { __typename?: 'Canary'; id: number; statement: string };
 };
 
 export const ServerSettingsDocument = gql`
@@ -27,7 +27,7 @@ export const ServerSettingsDocument = gql`
     serverConfig {
       ...ServerSettingsForm
     }
-    canaryStatement {
+    canary {
       id
       statement
     }
