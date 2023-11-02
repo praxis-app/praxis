@@ -67,14 +67,14 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
             <Flex justifyContent="space-between" marginBottom={2}>
               <Box>
                 <Typography>
-                  {t('settings.form.labels.canaryMessage')}
+                  {t('settings.form.labels.showCanaryStatement')}
                 </Typography>
 
                 <Typography
                   fontSize={12}
                   sx={{ color: theme.palette.text.secondary }}
                 >
-                  {t('settings.form.descriptions.canaryMessage')}
+                  {t('settings.form.descriptions.canaryStatement')}
                 </Typography>
               </Box>
 
@@ -89,7 +89,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               autoComplete="off"
               value={values.canaryStatement || ''}
               disabled={!values.showCanaryStatement}
-              label={t('settings.form.placeholders.canaryMessage')}
+              label={t('settings.form.placeholders.canaryStatement')}
               name={ServerSettingsFormFields.CanaryStatement}
               multiline
             />

@@ -425,14 +425,14 @@
   "settings": {
     "form": {
       "labels": {
-        "canaryMessage": "Show Canary Message",
+        "showCanaryStatement": "Show Canary Statement",
         "expiresAt": "Canary message expires after"
       },
       "placeholders": {
-        "canaryMessage": "Canary message"
+        "canaryStatement": "Canary statement"
       },
       "descriptions": {
-        "canaryMessage": "Display a message stating that this server has not been compromised."
+        "canaryStatement": "Display a message stating that this server has not been compromised by a third party."
       },
       "errors": {
         "couldNotUpdate": "Server settings could not be updated"
