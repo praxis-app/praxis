@@ -5,11 +5,7 @@ import ProgressBar from '../../components/Shared/ProgressBar';
 import { useCanaryStatementQuery } from '../../graphql/settings/queries/gen/CanaryStatement.gen';
 import { formatDate } from '../../utils/time.utils';
 
-const URL_REPLACEMENT = `
-  <a href="$1" rel="noopener noreferrer" target="_blank" style="color:#e4e6ea;" >
-    $1
-  </a>
-`;
+const URL_REPLACEMENT = `<a href="$1" rel="noopener noreferrer" target="_blank" style="color:#e4e6ea;">$1</a>`;
 const URL_REGEX = /(https?:\/\/[^\s]+)/g;
 
 const CanaryStatement = () => {
