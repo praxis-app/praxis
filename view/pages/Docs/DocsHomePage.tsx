@@ -177,7 +177,7 @@ const DocsHomePage = () => {
 
       <Typography marginBottom={1.5}>
         A canary is a statement or message that is updated regularly, and if
-        it's taken down or not updated at the specified times, it means that the
+        it's taken down or not updated on the specified dates, it means that the
         server has likely been compromised by a third party.
       </Typography>
 
