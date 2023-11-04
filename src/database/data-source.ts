@@ -1,6 +1,7 @@
 import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
 import { RefreshToken } from '../auth/refresh-tokens/models/refresh-token.model';
+import { Canary } from '../canaries/models/canary.model';
 import { Comment } from '../comments/models/comment.model';
 import { EventAttendee } from '../events/event-attendees/models/event-attendee.model';
 import { Event } from '../events/models/event.model';
@@ -47,6 +48,7 @@ import { AddCommentTable1693003196421 } from './migrations/1693003196421-AddComm
 import { GroupMemberRequestCleanUp1694647639797 } from './migrations/1694647639797-GroupMemberRequestCleanUp';
 import { AddProposalActionEventTables1694657129939 } from './migrations/1694657129939-AddProposalActionEventTables';
 import { AddServerConfigTable1699135846939 } from './migrations/1699135846939-AddServerConfigTable';
+import { AddCanaryTable1699136722535 } from './migrations/1699136722535-AddCanaryTable';
 
 config();
 
@@ -58,6 +60,7 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
   port: parseInt(process.env.DB_PORT as string),
   entities: [
+    Canary,
     Comment,
     Event,
     EventAttendee,
@@ -85,6 +88,7 @@ export default new DataSource({
     Vote,
   ],
   migrations: [
+    AddCanaryTable1699136722535,
     AddCommentTable1693003196421,
     AddEventTables1690147636077,
     AddFollowTable1679778147216,
