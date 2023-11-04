@@ -852,10 +852,8 @@ export type QueryUsersByIdsArgs = {
 
 export type ServerConfig = {
   __typename?: 'ServerConfig';
-  createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   showCanaryStatement: Scalars['Boolean']['output'];
-  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type ServerInvite = {

@@ -444,8 +444,6 @@ type ServerPermissions {
 type ServerConfig {
   id: Int!
   showCanaryStatement: Boolean!
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type Canary {

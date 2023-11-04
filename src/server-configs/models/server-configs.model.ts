@@ -19,10 +19,8 @@ export class ServerConfig {
   showCanaryStatement: boolean;
 
   @CreateDateColumn()
-  @Field()
   createdAt: Date;
 
   @UpdateDateColumn()
-  @Field()
   updatedAt: Date;
 }
