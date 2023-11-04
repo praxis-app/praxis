@@ -97,7 +97,6 @@ export default new DataSource({
     AddProposalActionRoleTable1684893300206,
     AddRoleMemberLinkTable1681172948650,
     AddServerConfigTable1699135846939,
-    AddServerConfigTable1699135846939,
     AddServerInviteTable1677339785709,
     CleanUpGroupMemberRequestTable1690168731029,
     DropGroupMemberEntityTable1681010509841,
