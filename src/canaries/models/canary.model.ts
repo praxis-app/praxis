@@ -19,7 +19,6 @@ export class Canary {
   statement: string;
 
   @CreateDateColumn()
-  @Field()
   createdAt: Date;
 
   @UpdateDateColumn()

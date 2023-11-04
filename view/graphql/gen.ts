@@ -39,7 +39,6 @@ export type ApproveGroupMemberRequestPayload = {
 
 export type Canary = {
   __typename?: 'Canary';
-  createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   statement: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];

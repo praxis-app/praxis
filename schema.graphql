@@ -449,7 +449,6 @@ type ServerConfig {
 type Canary {
   id: Int!
   statement: String!
-  createdAt: DateTime!
   updatedAt: DateTime!
 }
 
