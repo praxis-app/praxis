@@ -36,8 +36,11 @@ const CanaryStatement = () => {
     });
 
     return (
-      <Box>
-        <Typography marginBottom={1.5}>{publicCanary.statement}</Typography>
+      <Box paddingTop={1}>
+        <Typography whiteSpace="pre-wrap" paddingBottom={3} lineHeight={1}>
+          {publicCanary.statement}
+        </Typography>
+
         <Typography color="text.secondary">{updatedAtMessage}</Typography>
       </Box>
     );
