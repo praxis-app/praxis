@@ -24,7 +24,7 @@ export const isRenderable = (node: ReactNode): boolean => {
 };
 
 export const isValidUrl = (str: string) => {
-  let url;
+  let url: URL | undefined;
   try {
     url = new URL(str);
   } catch {

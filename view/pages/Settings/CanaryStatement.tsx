@@ -5,6 +5,13 @@ import ProgressBar from '../../components/Shared/ProgressBar';
 import { useCanaryStatementQuery } from '../../graphql/settings/queries/gen/CanaryStatement.gen';
 import { formatDate } from '../../utils/time.utils';
 
+const URL_REPLACEMENT = `
+  <a href="$1" rel="noopener noreferrer" target="_blank" style="color:#e4e6ea;" >
+    $1
+  </a>
+`;
+const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+
 const CanaryStatement = () => {
   const { data, loading, error } = useCanaryStatementQuery();
   const { t } = useTranslation();
@@ -20,6 +27,8 @@ const CanaryStatement = () => {
   if (!data) {
     return null;
   }
+
+  const urlifyText = (text: string) => text.replace(URL_REGEX, URL_REPLACEMENT);
 
   const renderStatement = () => {
     const { publicCanary } = data;
@@ -38,7 +47,12 @@ const CanaryStatement = () => {
     return (
       <Box paddingTop={1}>
         <Typography whiteSpace="pre-wrap" paddingBottom={3} lineHeight={1}>
-          {publicCanary.statement}
+          <Box
+            component="span"
+            dangerouslySetInnerHTML={{
+              __html: urlifyText(publicCanary.statement),
+            }}
+          />
         </Typography>
 
         <Typography color="text.secondary">{updatedAtMessage}</Typography>
