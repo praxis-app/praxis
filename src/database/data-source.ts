@@ -19,6 +19,7 @@ import { ProposalActionEvent } from '../proposals/proposal-actions/proposal-acti
 import { ProposalActionPermission } from '../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model';
 import { ProposalActionRoleMember } from '../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model';
 import { ProposalActionRole } from '../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model';
+import { ServerConfig } from '../server-configs/models/server-configs.model';
 import { ServerInvite } from '../server-invites/models/server-invite.model';
 import { ServerRolePermission } from '../server-roles/models/server-role-permission.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
@@ -45,6 +46,7 @@ import { RemoveMemberRequestIdSeq1690336764201 } from './migrations/169033676420
 import { AddCommentTable1693003196421 } from './migrations/1693003196421-AddCommentTable';
 import { GroupMemberRequestCleanUp1694647639797 } from './migrations/1694647639797-GroupMemberRequestCleanUp';
 import { AddProposalActionEventTables1694657129939 } from './migrations/1694657129939-AddProposalActionEventTables';
+import { AddServerConfigTable1699135846939 } from './migrations/1699135846939-AddServerConfigTable';
 
 config();
 
@@ -75,6 +77,7 @@ export default new DataSource({
     ProposalActionRole,
     ProposalActionRoleMember,
     RefreshToken,
+    ServerConfig,
     ServerInvite,
     ServerRole,
     ServerRolePermission,
@@ -93,6 +96,7 @@ export default new DataSource({
     AddProposalActionRoleCascadeDelete1685748700121,
     AddProposalActionRoleTable1684893300206,
     AddRoleMemberLinkTable1681172948650,
+    AddServerConfigTable1699135846939,
     AddServerInviteTable1677339785709,
     CleanUpGroupMemberRequestTable1690168731029,
     DropGroupMemberEntityTable1681010509841,
