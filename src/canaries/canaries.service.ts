@@ -17,7 +17,7 @@ export class CanariesService {
   async getCanary() {
     const canaries = await this.repository.find();
     if (!canaries.length) {
-      return this.createCanary({ statement: '' });
+      return this.initializeCanary({ statement: '' });
     }
     return canaries[0];
   }
@@ -30,7 +30,7 @@ export class CanariesService {
     return this.getCanary();
   }
 
-  async createCanary(data: Partial<Canary>): Promise<Canary> {
+  async initializeCanary(data: Partial<Canary>): Promise<Canary> {
     return this.repository.save(data);
   }
 
