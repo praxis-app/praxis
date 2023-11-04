@@ -167,6 +167,27 @@ const DocsHomePage = () => {
 
       <DocsPermissionList permissionType="group" />
 
+      <DocsSubheading>Canary Statement</DocsSubheading>
+
+      <Typography marginBottom={1.5}>
+        All Praxis servers can set a canary statement to let users know that the
+        server has not been compromised. The canary statement for this server
+        can be found <DocsLink href={NavigationPaths.Canary} text="here" />.
+      </Typography>
+
+      <Typography marginBottom={1.5}>
+        A canary is a statement or message that is updated regularly, and if
+        it's taken down or not updated at the specified times, it means that the
+        server has likely been compromised by a third party.
+      </Typography>
+
+      <Typography marginBottom={3}>
+        The canary statement can be updated by any server member who has
+        permission to manage server settings. In the future, we plan to add the
+        ability for all server members to propose changes to the canary
+        statement.
+      </Typography>
+
       <DocsSubheading>Work in Progress</DocsSubheading>
 
       <Typography marginBottom={1.5}>

@@ -9,6 +9,7 @@ export const SCROLL_DURATION = 250;
 
 export enum NavigationPaths {
   About = '/about',
+  Canary = '/canary',
   Docs = '/docs',
   Edit = '/edit',
   Events = '/events',
