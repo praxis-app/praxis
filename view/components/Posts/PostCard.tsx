@@ -80,7 +80,9 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
   const userProfilePath = getUserProfilePath(user?.name);
 
   const bodyStyles: SxProps = {
+    whiteSpace: 'pre-wrap',
     marginBottom: images.length ? 2.5 : 3.5,
+    lineHeight: 1,
   };
   const cardContentStyles: SxProps = {
     paddingTop: images.length && !body ? 2.5 : 3,
