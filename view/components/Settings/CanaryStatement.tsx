@@ -25,7 +25,7 @@ const CanaryStatement = ({ canary }: Props) => {
 
   return (
     <Box paddingTop={1}>
-      <Typography whiteSpace="pre-wrap" paddingBottom={3} lineHeight={1}>
+      <Typography whiteSpace="pre-wrap" paddingBottom={3}>
         <Box component="span" dangerouslySetInnerHTML={{ __html: body }} />
       </Typography>
 
