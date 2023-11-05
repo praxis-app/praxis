@@ -131,12 +131,13 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
     formValues: CreatePostInput | UpdatePostInput,
     formikHelpers: FormikHelpers<CreatePostInput | UpdatePostInput>,
   ) => {
+    const values = { ...formValues, body: formValues.body?.trim() };
     try {
       if (editPost) {
-        await handleUpdate(formValues, editPost);
+        await handleUpdate(values, editPost);
         return;
       }
-      await handleCreate(formValues, formikHelpers);
+      await handleCreate(values, formikHelpers);
     } catch (err) {
       toastVar({
         status: 'error',
