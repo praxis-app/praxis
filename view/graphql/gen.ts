@@ -947,13 +947,13 @@ export type UpdateEventAttendeePayload = {
 
 export type UpdateEventInput = {
   coverPhoto?: InputMaybe<Scalars['Upload']['input']>;
-  description: Scalars['String']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
   endsAt?: InputMaybe<Scalars['DateTime']['input']>;
   externalLink?: InputMaybe<Scalars['String']['input']>;
   hostId?: InputMaybe<Scalars['Int']['input']>;
   id: Scalars['Int']['input'];
   location?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
   online?: InputMaybe<Scalars['Boolean']['input']>;
   startsAt: Scalars['DateTime']['input'];
 };

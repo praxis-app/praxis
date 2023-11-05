@@ -15,13 +15,14 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { UserProfileCardFragment } from '../../graphql/users/fragments/gen/UserProfileCard.gen';
-import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
 } from '../../constants/shared.constants';
+import { UserProfileCardFragment } from '../../graphql/users/fragments/gen/UserProfileCard.gen';
+import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
+import { urlifyText } from '../../utils/shared.utils';
 import { formatDate } from '../../utils/time.utils';
 import CoverPhoto from '../Images/CoverPhoto';
 import ItemMenu from '../Shared/ItemMenu';
@@ -124,9 +125,11 @@ const UserProfileCard = ({ user, ...cardProps }: Props) => {
         </Typography>
 
         {bio && (
-          <Typography marginBottom={1.4} whiteSpace="pre-wrap">
-            {bio}
-          </Typography>
+          <Typography
+            dangerouslySetInnerHTML={{ __html: urlifyText(bio) }}
+            whiteSpace="pre-wrap"
+            marginBottom={1.4}
+          />
         )}
 
         <Typography sx={JOIN_DATE_STYLES}>

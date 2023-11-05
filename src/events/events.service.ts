@@ -9,11 +9,12 @@ import {
   MoreThan,
   Repository,
 } from 'typeorm';
-import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
 import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
 import { saveImage } from '../images/image.utils';
 import { ImagesService, ImageTypes } from '../images/images.service';
 import { Image } from '../images/models/image.model';
+import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
+import { sanitizeText } from '../shared/shared.utils';
 import { EventAttendeesService } from './event-attendees/event-attendees.service';
 import {
   EventAttendee,
@@ -190,9 +191,10 @@ export class EventsService {
     hostId,
     ...eventData
   }: CreateEventInput) {
+    const sanitizedDescription = sanitizeText(description.trim());
     const event = await this.eventRepository.save({
       externalLink: externalLink?.trim().toLowerCase(),
-      description: description?.trim(),
+      description: sanitizedDescription,
       ...eventData,
     });
     await this.eventAttendeeRepository.save({
@@ -200,11 +202,13 @@ export class EventsService {
       eventId: event.id,
       userId: hostId,
     });
+
     if (coverPhoto) {
       await this.saveCoverPhoto(event.id, coverPhoto);
     } else {
       await this.imagesService.saveDefaultCoverPhoto({ eventId: event.id });
     }
+
     return { event };
   }
 
@@ -216,18 +220,22 @@ export class EventsService {
     hostId,
     ...eventData
   }: UpdateEventInput) {
+    const sanitizedDescription = description
+      ? sanitizeText(description.trim())
+      : undefined;
     await this.eventRepository.update(id, {
       externalLink: externalLink?.trim().toLowerCase(),
-      description: description?.trim(),
+      description: sanitizedDescription,
       ...eventData,
     });
-    const event = await this.getEvent({ id });
-
-    console.log('TODO: Add update logic for hostId', hostId);
 
     if (coverPhoto) {
       await this.saveCoverPhoto(id, coverPhoto);
     }
+
+    console.log('TODO: Add update logic for hostId', hostId);
+
+    const event = await this.getEvent({ id });
     return { event };
   }
 

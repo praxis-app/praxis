@@ -1,14 +1,16 @@
+import { UserInputError } from '@nestjs/apollo';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
-import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
 import { MyGroupsKey } from '../dataloader/dataloader.types';
 import { saveImage } from '../images/image.utils';
 import { ImagesService, ImageTypes } from '../images/images.service';
 import { Image } from '../images/models/image.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
+import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
+import { sanitizeText } from '../shared/shared.utils';
 import { UsersService } from '../users/users.service';
 import { GroupConfigsService } from './group-configs/group-configs.service';
 import { GroupPrivacy } from './group-configs/models/group-config.model';
@@ -18,7 +20,6 @@ import { GroupRolesService } from './group-roles/group-roles.service';
 import { CreateGroupInput } from './models/create-group.input';
 import { Group } from './models/group.model';
 import { UpdateGroupInput } from './models/update-group.input';
-import { UserInputError } from '@nestjs/apollo';
 
 type GroupWithMemberCount = Group & { memberCount: number };
 
@@ -182,8 +183,9 @@ export class GroupsService {
     { description, coverPhoto, ...groupData }: CreateGroupInput,
     userId: number,
   ) {
+    const sanitizedDescription = sanitizeText(description.trim());
     const group = await this.groupRepository.save({
-      description: description.trim(),
+      description: sanitizedDescription,
       ...groupData,
     });
     await this.createGroupMember(group.id, userId);
@@ -205,16 +207,19 @@ export class GroupsService {
     coverPhoto,
     ...groupData
   }: UpdateGroupInput) {
+    const sanitizedDescription = description
+      ? sanitizeText(description.trim())
+      : undefined;
     await this.groupRepository.update(id, {
-      description: description?.trim(),
+      description: sanitizedDescription,
       ...groupData,
     });
-    const group = await this.getGroup({ id });
 
     if (coverPhoto) {
       await this.saveCoverPhoto(id, coverPhoto);
     }
 
+    const group = await this.getGroup({ id });
     return { group };
   }
 
