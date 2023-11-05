@@ -198,8 +198,8 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
       <CardContent sx={cardContentStyles}>
         {body && (
           <Typography
-            sx={bodyStyles}
             dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
+            sx={bodyStyles}
           />
         )}
 

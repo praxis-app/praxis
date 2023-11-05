@@ -20,6 +20,7 @@ import { ServerPermissions } from '../server-roles/models/server-permissions.typ
 import { initServerRolePermissions } from '../server-roles/server-role.utils';
 import { ServerRolesService } from '../server-roles/server-roles.service';
 import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
+import { sanitizeText } from '../shared/shared.utils';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
 import { UserWithFollowerCount, UserWithFollowingCount } from './user.types';
@@ -266,11 +267,13 @@ export class UsersService {
     );
   }
 
-  async createUser(data: Partial<User>) {
-    const user = await this.repository.save(data);
-    const users = await this.getUsers();
+  async createUser({ bio, ...userData }: Partial<User>) {
+    const sanitizedBio = bio ? sanitizeText(bio.trim()) : undefined;
+    const user = await this.repository.save({ bio: sanitizedBio, ...userData });
 
     try {
+      const users = await this.getUsers();
+
       if (users.length === 1) {
         await this.serverRolesService.initAdminServerRole(user.id);
       }
@@ -279,6 +282,7 @@ export class UsersService {
       await this.deleteUser(user.id);
       throw new Error('Could not create user');
     }
+
     return user;
   }
 
@@ -291,8 +295,11 @@ export class UsersService {
   }: UpdateUserInput) {
     this.logger.log(`Updating user: ${JSON.stringify({ id, ...userData })}`);
 
-    await this.repository.update(id, { ...userData, bio: bio.trim() });
-    const user = await this.getUser({ id });
+    const sanitizedBio = sanitizeText(bio.trim());
+    await this.repository.update(id, {
+      bio: sanitizedBio,
+      ...userData,
+    });
 
     if (profilePicture) {
       await this.saveProfilePicture(id, profilePicture);
@@ -300,6 +307,8 @@ export class UsersService {
     if (coverPhoto) {
       await this.saveCoverPhoto(id, coverPhoto);
     }
+
+    const user = await this.getUser({ id });
     return { user };
   }
 
