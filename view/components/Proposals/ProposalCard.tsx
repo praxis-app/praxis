@@ -32,6 +32,7 @@ import UserAvatar from '../Users/UserAvatar';
 import { removeProposal } from './DeleteProposalButton';
 import ProposalAction from './ProposalActions/ProposalAction';
 import ProposalCardFooter from './ProposalCardFooter';
+import { urlifyText } from '../../utils/shared.utils';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
@@ -195,7 +196,14 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
       />
 
       <CardContent sx={cardContentStyles}>
-        {body && <Typography sx={bodyStyles}>{body}</Typography>}
+        {body && (
+          <Typography sx={bodyStyles}>
+            <Box
+              dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
+              component="span"
+            />
+          </Typography>
+        )}
 
         <ProposalAction
           action={action}
