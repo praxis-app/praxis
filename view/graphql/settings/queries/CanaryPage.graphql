@@ -1,4 +1,4 @@
-query CanaryStatement {
+query CanaryPage {
   publicCanary {
     ...CanaryStatement
   }

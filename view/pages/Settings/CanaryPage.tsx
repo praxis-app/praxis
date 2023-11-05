@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import CanaryStatement from '../../components/Settings/CanaryStatement';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
-import { useCanaryStatementQuery } from '../../graphql/settings/queries/gen/CanaryStatement.gen';
+import { useCanaryPageQuery } from '../../graphql/settings/queries/gen/CanaryPage.gen';
 
 const CanaryPage = () => {
-  const { data, loading, error } = useCanaryStatementQuery();
+  const { data, loading, error } = useCanaryPageQuery();
   const { t } = useTranslation();
 
   if (error) {
