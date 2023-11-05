@@ -284,13 +284,14 @@ export class UsersService {
 
   async updateUser({
     id,
+    bio,
     coverPhoto,
     profilePicture,
     ...userData
   }: UpdateUserInput) {
     this.logger.log(`Updating user: ${JSON.stringify({ id, ...userData })}`);
 
-    await this.repository.update(id, userData);
+    await this.repository.update(id, { ...userData, bio: bio.trim() });
     const user = await this.getUser({ id });
 
     if (profilePicture) {
