@@ -166,7 +166,9 @@ const GroupCard = ({ group, currentUserId, ...cardProps }: Props) => {
         title={<Link href={groupPath}>{name}</Link>}
       />
       <CardContent>
-        <Typography sx={{ marginBottom: 1.25 }}>{description}</Typography>
+        <Typography whiteSpace="pre-wrap" marginBottom={1.25}>
+          {description}
+        </Typography>
 
         <Box sx={{ marginBottom: isLoggedIn ? 1.75 : 0 }}>
           <Link href={isLoggedIn ? groupMembersPath : groupPath}>
