@@ -1,9 +1,8 @@
 import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { formatDate } from '../../utils/time.utils';
 import { CanaryStatementFragment } from '../../graphql/settings/fragments/gen/CanaryStatement.gen';
-
-const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+import { urlifyText } from '../../utils/shared.utils';
+import { formatDate } from '../../utils/time.utils';
 
 interface Props {
   canary?: CanaryStatementFragment | null;
@@ -11,17 +10,6 @@ interface Props {
 
 const CanaryStatement = ({ canary }: Props) => {
   const { t } = useTranslation();
-
-  const urlifyText = (text: string) =>
-    text.replace(URL_REGEX, (url) => {
-      return (
-        '<a href="' +
-        url +
-        '" rel="noopener noreferrer" target="_blank" style="color:#e4e6ea;">' +
-        url +
-        '</a>'
-      );
-    });
 
   if (!canary) {
     return (

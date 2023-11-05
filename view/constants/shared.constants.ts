@@ -7,6 +7,8 @@ export const UNAUTHORIZED = 'Unauthorized';
 export const MIDDOT_WITH_SPACES = ' · ';
 export const SCROLL_DURATION = 250;
 
+export const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+
 export enum NavigationPaths {
   About = '/about',
   Canary = '/canary',

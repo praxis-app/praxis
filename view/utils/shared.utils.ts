@@ -2,7 +2,7 @@ import { t } from 'i18next';
 import { isValidElement, ReactNode } from 'react';
 import { animateScroll } from 'react-scroll';
 import { toastVar } from '../graphql/cache';
-import { SCROLL_DURATION } from '../constants/shared.constants';
+import { SCROLL_DURATION, URL_REGEX } from '../constants/shared.constants';
 
 /**
  * Returns whether or not a given node can be successfully rendered.
@@ -32,6 +32,17 @@ export const isValidUrl = (str: string) => {
   }
   return url.protocol === 'http:' || url.protocol === 'https:';
 };
+
+export const urlifyText = (text: string) =>
+  text.replace(URL_REGEX, (url) => {
+    return (
+      '<a href="' +
+      url +
+      '" rel="noopener noreferrer" target="_blank" style="color:#e4e6ea;">' +
+      url +
+      '</a>'
+    );
+  });
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
