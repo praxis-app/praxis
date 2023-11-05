@@ -179,10 +179,13 @@ export class GroupsService {
   }
 
   async createGroup(
-    { coverPhoto, ...groupData }: CreateGroupInput,
+    { description, coverPhoto, ...groupData }: CreateGroupInput,
     userId: number,
   ) {
-    const group = await this.groupRepository.save(groupData);
+    const group = await this.groupRepository.save({
+      description: description.trim(),
+      ...groupData,
+    });
     await this.createGroupMember(group.id, userId);
 
     if (coverPhoto) {
@@ -196,8 +199,16 @@ export class GroupsService {
     return { group };
   }
 
-  async updateGroup({ id, coverPhoto, ...groupData }: UpdateGroupInput) {
-    await this.groupRepository.update(id, groupData);
+  async updateGroup({
+    id,
+    description,
+    coverPhoto,
+    ...groupData
+  }: UpdateGroupInput) {
+    await this.groupRepository.update(id, {
+      description: description?.trim(),
+      ...groupData,
+    });
     const group = await this.getGroup({ id });
 
     if (coverPhoto) {
