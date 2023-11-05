@@ -1,7 +1,5 @@
 query CanaryStatement {
   publicCanary {
-    id
-    statement
-    updatedAt
+    ...CanaryStatement
   }
 }

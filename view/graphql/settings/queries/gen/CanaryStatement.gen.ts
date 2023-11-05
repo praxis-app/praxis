@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { CanaryStatementFragmentDoc } from '../../fragments/gen/CanaryStatement.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -24,11 +25,10 @@ export type CanaryStatementQuery = {
 export const CanaryStatementDocument = gql`
   query CanaryStatement {
     publicCanary {
-      id
-      statement
-      updatedAt
+      ...CanaryStatement
     }
   }
+  ${CanaryStatementFragmentDoc}
 `;
 
 /**

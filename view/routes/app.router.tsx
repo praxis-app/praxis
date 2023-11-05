@@ -4,6 +4,7 @@ import DocsHomePage from '../pages/Docs/DocsHomePage';
 import Home from '../pages/Home';
 import ServerInvite from '../pages/Invites/ServerInvite';
 import ServerInvites from '../pages/Invites/ServerInvites';
+import CanaryPage from '../pages/Settings/CanaryPage';
 import ServerSettings from '../pages/Settings/ServerSettings';
 import authRouter from './auth.router';
 import eventsRouter from './events.router';
@@ -12,7 +13,6 @@ import postsRouter from './posts.router';
 import proposalsRouter from './proposals.router';
 import rolesRouter from './roles.router';
 import usersRouter from './users.router';
-import CanaryStatement from '../pages/Settings/CanaryStatement';
 
 const appRouter = createBrowserRouter([
   {
@@ -37,7 +37,7 @@ const appRouter = createBrowserRouter([
       },
       {
         path: 'canary',
-        element: <CanaryStatement />,
+        element: <CanaryPage />,
       },
       {
         path: 'docs',
