@@ -1,9 +1,7 @@
-import sanitizeHtml from 'sanitize-html';
+import * as sanitizeHtml from 'sanitize-html';
 
-const SANITIZE_TEXT_OPTIONS = {
-  allowedTags: ['a'],
-  allowedAttributes: { a: ['href', 'rel', 'target', 'style'] },
-};
-
+/**
+ * Strip all HTML tags from a string
+ */
 export const sanitizeText = (dirty: string) =>
-  sanitizeHtml(dirty, SANITIZE_TEXT_OPTIONS);
+  sanitizeHtml(dirty, { allowedTags: [] });

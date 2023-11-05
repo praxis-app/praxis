@@ -8,6 +8,7 @@ import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
 import { LikesService } from '../likes/likes.service';
 import { Like } from '../likes/models/like.model';
+import { sanitizeText } from '../shared/shared.utils';
 import { User } from '../users/models/user.model';
 import { CreatePostInput } from './models/create-post.input';
 import { Post } from './models/post.model';
@@ -104,9 +105,9 @@ export class PostsService {
 
   async createPost({ images, body, ...postData }: CreatePostInput, user: User) {
     const post = await this.repository.save({
-      ...postData,
+      body: sanitizeText(body.trim()),
       userId: user.id,
-      body: body.trim(),
+      ...postData,
     });
 
     if (images) {
@@ -121,7 +122,10 @@ export class PostsService {
   }
 
   async updatePost({ id, images, body, ...postData }: UpdatePostInput) {
-    await this.repository.update(id, { ...postData, body: body.trim() });
+    await this.repository.update(id, {
+      body: sanitizeText(body.trim()),
+      ...postData,
+    });
     if (images) {
       await this.savePostImages(id, images);
     }
