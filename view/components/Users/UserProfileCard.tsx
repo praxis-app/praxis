@@ -123,7 +123,11 @@ const UserProfileCard = ({ user, ...cardProps }: Props) => {
           {name}
         </Typography>
 
-        {bio && <Typography sx={{ marginBottom: 1.4 }}>{bio}</Typography>}
+        {bio && (
+          <Typography marginBottom={1.4} whiteSpace="pre-wrap">
+            {bio}
+          </Typography>
+        )}
 
         <Typography sx={JOIN_DATE_STYLES}>
           <JoinDateIcon fontSize="small" sx={JOIN_DATE_ICON_STYLES} />
