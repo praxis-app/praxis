@@ -14,14 +14,12 @@ interface Props extends BoxProps {
   html: string;
 }
 
-const SanitizedHtml = ({ html, ...boxProps }: Props) => {
-  return (
-    <Box
-      component="span"
-      dangerouslySetInnerHTML={sanitize(html)}
-      {...boxProps}
-    />
-  );
-};
+const SanitizedHtml = ({ html, ...boxProps }: Props) => (
+  <Box
+    dangerouslySetInnerHTML={sanitize(html)}
+    component="span"
+    {...boxProps}
+  />
+);
 
 export default SanitizedHtml;
