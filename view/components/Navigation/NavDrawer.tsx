@@ -5,6 +5,7 @@ import {
   Article as DocsIcon,
   Link as InvitesIcon,
   ExitToApp as SessionIcon,
+  Settings,
   PersonAdd as SignUpIcon,
   SupervisedUserCircle as UsersIcon,
 } from '@mui/icons-material';
@@ -127,8 +128,13 @@ const NavDrawer = () => {
     const { me } = meData;
     const userProfilePath = getUserProfilePath(me.name);
 
-    const { removeMembers, manageRoles, createInvites, manageInvites } =
-      me.serverPermissions;
+    const {
+      createInvites,
+      manageInvites,
+      manageRoles,
+      manageSettings,
+      removeMembers,
+    } = me.serverPermissions;
 
     return (
       <>
@@ -163,6 +169,17 @@ const NavDrawer = () => {
               <InvitesIcon />
             </ListItemIcon>
             <ListItemText primary={t('navigation.invites')} />
+          </ListItemButton>
+        )}
+
+        {manageSettings && (
+          <ListItemButton
+            onClick={handleLinkClick(NavigationPaths.ServerSettings)}
+          >
+            <ListItemIcon>
+              <Settings />
+            </ListItemIcon>
+            <ListItemText primary={t('navigation.settings')} />
           </ListItemButton>
         )}
 

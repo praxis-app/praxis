@@ -41,6 +41,7 @@ import {
   canManagePosts,
   canManageServerInvites,
   canManageServerRoles,
+  canManageServerSettings,
   canRemoveMembers,
 } from './rules/role.rules';
 import { isPublicUserAvatar, isUserInPublicGroups } from './rules/user.rules';
@@ -52,6 +53,7 @@ export const shieldPermissions = shield(
       users: canRemoveMembers,
       serverInvite: allow,
       serverInvites: or(canCreateServerInvites, canManageServerInvites),
+      serverConfig: canManageServerSettings,
       post: or(isAuthenticated, isPublicPost, isPublicEventPost),
       proposal: or(isAuthenticated, isPublicProposal),
       group: or(isAuthenticated, isPublicGroup),
@@ -59,6 +61,7 @@ export const shieldPermissions = shield(
       groupRole: isGroupMember,
       publicGroupsFeed: allow,
       publicGroups: allow,
+      publicCanary: allow,
       events: allow,
     },
     Mutation: {
@@ -71,6 +74,7 @@ export const shieldPermissions = shield(
       deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
       createServerInvite: or(canCreateServerInvites, canManageServerInvites),
       deleteServerInvite: canManageServerInvites,
+      updateServerConfig: canManageServerSettings,
       createServerRole: canManageServerRoles,
       updateServerRole: canManageServerRoles,
       deleteServerRole: canManageServerRoles,
@@ -140,6 +144,11 @@ export const shieldPermissions = shield(
     ServerInvite: {
       id: allow,
       token: allow,
+    },
+    Canary: {
+      id: allow,
+      statement: allow,
+      updatedAt: allow,
     },
     Event: or(isAuthenticated, isPublicEvent),
     Post: or(isAuthenticated, isPublicPost, isPublicEventPost),

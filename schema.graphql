@@ -258,6 +258,7 @@ type ServerRolePermission {
   managePosts: Boolean!
   manageComments: Boolean!
   manageEvents: Boolean!
+  manageSettings: Boolean!
   manageInvites: Boolean!
   createInvites: Boolean!
   removeMembers: Boolean!
@@ -434,9 +435,26 @@ type ServerPermissions {
   managePosts: Boolean!
   manageComments: Boolean!
   manageEvents: Boolean!
+  manageSettings: Boolean!
   manageInvites: Boolean!
   createInvites: Boolean!
   removeMembers: Boolean!
+}
+
+type ServerConfig {
+  id: Int!
+  showCanaryStatement: Boolean!
+}
+
+type Canary {
+  id: Int!
+  statement: String!
+  updatedAt: DateTime!
+}
+
+type UpdateServerConfigPayload {
+  serverConfig: ServerConfig!
+  canary: Canary!
 }
 
 type Query {
@@ -461,6 +479,9 @@ type Query {
   authCheck: Boolean!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
+  canary: Canary!
+  publicCanary: Canary
+  serverConfig: ServerConfig!
 }
 
 input EventsInput {
@@ -517,6 +538,7 @@ type Mutation {
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
+  updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
 }
 
 input CreateCommentInput {
@@ -671,6 +693,7 @@ input ServerRolePermissionInput {
   managePosts: Boolean
   manageComments: Boolean
   manageEvents: Boolean
+  manageSettings: Boolean
   manageInvites: Boolean
   createInvites: Boolean
   removeMembers: Boolean
@@ -753,4 +776,10 @@ input SignUpInput {
 input CreateServerInviteInput {
   maxUses: Int
   expiresAt: DateTime
+}
+
+input UpdateServerConfigInput {
+  id: Int!
+  canaryStatement: String
+  showCanaryStatement: Boolean
 }

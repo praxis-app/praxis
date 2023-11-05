@@ -4,6 +4,8 @@ import DocsHomePage from '../pages/Docs/DocsHomePage';
 import Home from '../pages/Home';
 import ServerInvite from '../pages/Invites/ServerInvite';
 import ServerInvites from '../pages/Invites/ServerInvites';
+import CanaryPage from '../pages/Settings/CanaryPage';
+import ServerSettings from '../pages/Settings/ServerSettings';
 import authRouter from './auth.router';
 import eventsRouter from './events.router';
 import groupsRouter from './groups.router';
@@ -28,6 +30,14 @@ const appRouter = createBrowserRouter([
       {
         path: 'i/:token',
         element: <ServerInvite />,
+      },
+      {
+        path: 'settings',
+        element: <ServerSettings />,
+      },
+      {
+        path: 'canary',
+        element: <CanaryPage />,
       },
       {
         path: 'docs',

@@ -8,6 +8,7 @@ import { applyMiddleware } from 'graphql-middleware';
 import { GraphQLUpload } from 'graphql-upload-ts';
 import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
+import { CanariesModule } from './canaries/canaries.module';
 import { CommentsModule } from './comments/comments.module';
 import { ContextModule } from './context/context.module';
 import { ContextService } from './context/context.service';
@@ -19,6 +20,7 @@ import { ImagesModule } from './images/images.module';
 import { LikesModule } from './likes/likes.module';
 import { PostsModule } from './posts/posts.module';
 import { ProposalsModule } from './proposals/proposals.module';
+import { ServerConfigsModule } from './server-configs/server-configs.module';
 import { ServerInvitesModule } from './server-invites/server-invites.module';
 import { ServerRolesModule } from './server-roles/server-roles.module';
 import { Environment } from './shared/shared.constants';
@@ -57,6 +59,7 @@ const ViewModule = ServeStaticModule.forRoot({
     ConfigModule.forRoot({ isGlobal: true }),
     ApolloModule,
     AuthModule,
+    CanariesModule,
     CommentsModule,
     DatabaseModule,
     DataloaderModule,
@@ -66,6 +69,7 @@ const ViewModule = ServeStaticModule.forRoot({
     LikesModule,
     PostsModule,
     ProposalsModule,
+    ServerConfigsModule,
     ServerInvitesModule,
     ServerRolesModule,
     ShieldModule,

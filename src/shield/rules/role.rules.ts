@@ -14,6 +14,11 @@ export const canManageServerInvites = rule({ cache: 'contextual' })(
     hasServerPermission(permissions, 'manageInvites'),
 );
 
+export const canManageServerSettings = rule({ cache: 'contextual' })(
+  async (_parent, _args, { permissions }: Context) =>
+    hasServerPermission(permissions, 'manageSettings'),
+);
+
 export const canManagePosts = rule({ cache: 'contextual' })(
   async (_parent, _args, { permissions }: Context) =>
     hasServerPermission(permissions, 'managePosts'),

@@ -15,6 +15,9 @@ export class ServerPermissions {
   manageEvents: boolean;
 
   @Field()
+  manageSettings: boolean;
+
+  @Field()
   manageInvites: boolean;
 
   @Field()

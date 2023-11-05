@@ -6,5 +6,6 @@ fragment ServerRolePermissions on ServerRolePermission {
   manageInvites
   managePosts
   manageRoles
+  manageSettings
   removeMembers
 }

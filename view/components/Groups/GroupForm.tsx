@@ -155,6 +155,7 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
                   autoComplete="off"
                   label={t('groups.form.description')}
                   name={FieldNames.Description}
+                  multiline
                 />
                 {coverPhoto && (
                   <AttachedImagePreview

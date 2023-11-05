@@ -2,6 +2,7 @@ import { AccountBox, ExitToApp, Person, Settings } from '@mui/icons-material';
 import { Menu, MenuItem, SvgIconProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
 import {
   isAuthLoadingVar,
@@ -9,8 +10,6 @@ import {
   isRefreshingTokenVar,
 } from '../../graphql/cache';
 import { TopNavDropdownFragment } from '../../graphql/users/fragments/gen/TopNavDropdown.gen';
-import { NavigationPaths } from '../../constants/shared.constants';
-import { inDevToast } from '../../utils/shared.utils';
 
 const ICON_PROPS: SvgIconProps = {
   fontSize: 'small',
@@ -52,8 +51,6 @@ const TopNavDropdown = ({
     navigate(path);
   };
 
-  const handleRolesButtonClick = () => navigate(NavigationPaths.Roles);
-
   return (
     <Menu
       anchorEl={anchorEl}
@@ -75,15 +72,17 @@ const TopNavDropdown = ({
         {t('users.actions.editProfile')}
       </MenuItem>
 
-      <MenuItem onClick={inDevToast}>
-        <Settings {...ICON_PROPS} />
-        {t('navigation.preferences')}
-      </MenuItem>
-
       {serverPermissions.manageRoles && (
-        <MenuItem onClick={handleRolesButtonClick}>
+        <MenuItem onClick={() => navigate(NavigationPaths.Roles)}>
           <AccountBox {...ICON_PROPS} />
           {t('roles.actions.manageRoles')}
+        </MenuItem>
+      )}
+
+      {serverPermissions.manageSettings && (
+        <MenuItem onClick={() => navigate(NavigationPaths.ServerSettings)}>
+          <Settings {...ICON_PROPS} />
+          {t('navigation.serverSettings')}
         </MenuItem>
       )}
 
