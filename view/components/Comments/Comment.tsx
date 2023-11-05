@@ -132,12 +132,12 @@ const Comment = ({
         </Link>
 
         {body && (
-          <Typography lineHeight={1.2} whiteSpace="pre-wrap" paddingY={0.4}>
-            <Box
-              dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
-              component="span"
-            />
-          </Typography>
+          <Typography
+            dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
+            whiteSpace="pre-wrap"
+            lineHeight={1.2}
+            paddingY={0.4}
+          />
         )}
 
         {!!images.length && (

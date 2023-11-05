@@ -172,12 +172,10 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
 
       <CardContent sx={cardContentStyles}>
         {body && (
-          <Typography sx={bodyStyles}>
-            <Box
-              dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
-              component="span"
-            />
-          </Typography>
+          <Typography
+            dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
+            sx={bodyStyles}
+          />
         )}
 
         {!!images.length && (
