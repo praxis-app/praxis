@@ -183,11 +183,17 @@ export class EventsService {
     });
   }
 
-  async createEvent({ coverPhoto, hostId, ...eventData }: CreateEventInput) {
-    const externalLink = eventData.externalLink?.toLowerCase();
+  async createEvent({
+    coverPhoto,
+    description,
+    externalLink,
+    hostId,
+    ...eventData
+  }: CreateEventInput) {
     const event = await this.eventRepository.save({
+      externalLink: externalLink?.trim().toLowerCase(),
+      description: description?.trim(),
       ...eventData,
-      externalLink,
     });
     await this.eventAttendeeRepository.save({
       status: EventAttendeeStatus.Host,
@@ -205,11 +211,16 @@ export class EventsService {
   async updateEvent({
     id,
     coverPhoto,
+    description,
+    externalLink,
     hostId,
     ...eventData
   }: UpdateEventInput) {
-    const externalLink = eventData.externalLink?.toLowerCase();
-    await this.eventRepository.update(id, { ...eventData, externalLink });
+    await this.eventRepository.update(id, {
+      externalLink: externalLink?.trim().toLowerCase(),
+      description: description?.trim(),
+      ...eventData,
+    });
     const event = await this.getEvent({ id });
 
     console.log('TODO: Add update logic for hostId', hostId);

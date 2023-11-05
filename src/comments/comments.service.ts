@@ -47,15 +47,16 @@ export class CommentsService {
   }
 
   async createComment(
-    { images, ...commentData }: CreateCommentInput,
+    { body, images, ...commentData }: CreateCommentInput,
     user: User,
   ) {
-    if (!commentData.body && !images?.length) {
+    if (!body && !images?.length) {
       throw new Error('Comments must include text or images');
     }
     const comment = await this.repository.save({
       ...commentData,
       userId: user.id,
+      body: body?.trim(),
     });
 
     if (images) {
@@ -69,12 +70,18 @@ export class CommentsService {
     return { comment };
   }
 
-  async updateComment({ id, images, ...commentData }: UpdateCommentInput) {
-    await this.repository.update(id, commentData);
+  async updateComment({
+    id,
+    body,
+    images,
+    ...commentData
+  }: UpdateCommentInput) {
+    await this.repository.update(id, { ...commentData, body: body?.trim() });
     const comment = await this.getComment(id);
     if (images) {
       await this.saveCommentImages(comment.id, images);
     }
+
     return { comment };
   }
 

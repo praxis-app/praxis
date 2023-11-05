@@ -105,6 +105,7 @@ export class ProposalsService {
 
   async createProposal(
     {
+      body,
       images,
       action: { groupCoverPhoto, role, event, ...action },
       ...proposalData
@@ -113,6 +114,7 @@ export class ProposalsService {
   ) {
     const proposal = await this.repository.save({
       ...proposalData,
+      body: body?.trim(),
       userId: user.id,
       action,
     });
@@ -148,6 +150,7 @@ export class ProposalsService {
 
   async updateProposal({
     id,
+    body,
     images,
     action: { groupCoverPhoto, ...action },
     ...data
@@ -161,6 +164,7 @@ export class ProposalsService {
       ...proposalWithAction,
       ...data,
       action: newAction,
+      body: body?.trim(),
     });
 
     if (

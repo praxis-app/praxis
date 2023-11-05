@@ -17,7 +17,7 @@ export class CanariesService {
   async getCanary() {
     const canaries = await this.repository.find();
     if (!canaries.length) {
-      return this.initializeCanary({ statement: '' });
+      return this.initializeCanary();
     }
     return canaries[0];
   }
@@ -30,15 +30,18 @@ export class CanariesService {
     return this.getCanary();
   }
 
-  async initializeCanary(data: Partial<Canary>): Promise<Canary> {
-    return this.repository.save(data);
+  async initializeCanary(): Promise<Canary> {
+    return this.repository.save({ statement: '' });
   }
 
-  async updateCanary({ id, ...data }: Partial<Canary>) {
+  async updateCanary({ id, statement, ...canaryData }: Partial<Canary>) {
     if (!id) {
       throw new Error('Canary ID was not provided');
     }
-    await this.repository.update(id, data);
+    await this.repository.update(id, {
+      statement: statement?.trim(),
+      ...canaryData,
+    });
     return this.getCanary();
   }
 }

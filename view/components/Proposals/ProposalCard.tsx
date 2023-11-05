@@ -90,6 +90,8 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
   const formattedDate = timeAgo(createdAt);
 
   const bodyStyles = {
+    lineHeight: 1.25,
+    whiteSpace: 'pre-wrap',
     marginBottom: hasMedia ? 2.5 : 3.5,
   };
   const cardContentStyles = {

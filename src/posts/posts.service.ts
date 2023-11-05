@@ -102,8 +102,12 @@ export class PostsService {
     });
   }
 
-  async createPost({ images, ...postData }: CreatePostInput, user: User) {
-    const post = await this.repository.save({ ...postData, userId: user.id });
+  async createPost({ images, body, ...postData }: CreatePostInput, user: User) {
+    const post = await this.repository.save({
+      ...postData,
+      userId: user.id,
+      body: body.trim(),
+    });
 
     if (images) {
       try {
@@ -116,12 +120,13 @@ export class PostsService {
     return { post };
   }
 
-  async updatePost({ id, images, ...data }: UpdatePostInput) {
-    await this.repository.update(id, data);
-    const post = await this.getPost(id);
+  async updatePost({ id, images, body, ...postData }: UpdatePostInput) {
+    await this.repository.update(id, { ...postData, body: body.trim() });
     if (images) {
-      await this.savePostImages(post.id, images);
+      await this.savePostImages(id, images);
     }
+
+    const post = await this.getPost(id);
     return { post };
   }
 

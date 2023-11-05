@@ -210,12 +210,16 @@ const ProposalForm = ({
     formValues: CreateProposalInput,
     formHelpers: FormikHelpers<CreateProposalInput>,
   ) => {
+    const values = {
+      ...formValues,
+      body: formValues.body?.trim(),
+    };
     try {
       if (editProposal) {
-        await handleUpdate(formValues, editProposal);
+        await handleUpdate(values, editProposal);
         return;
       }
-      await handleCreate(formValues, formHelpers);
+      await handleCreate(values, formHelpers);
     } catch (err) {
       toastVar({
         status: 'error',

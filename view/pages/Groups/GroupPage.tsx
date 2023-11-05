@@ -75,7 +75,7 @@ const GroupPage = () => {
               {t('groups.tabs.about')}
             </Typography>
 
-            <Typography>{group.description}</Typography>
+            <Typography whiteSpace="pre-wrap">{group.description}</Typography>
           </CardContent>
         </Card>
       )}
