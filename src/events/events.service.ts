@@ -183,13 +183,17 @@ export class EventsService {
     });
   }
 
-  async createEvent({ coverPhoto, hostId, ...eventData }: CreateEventInput) {
-    const externalLink = eventData.externalLink?.toLowerCase();
-    const description = eventData.description?.trim();
+  async createEvent({
+    coverPhoto,
+    description,
+    externalLink,
+    hostId,
+    ...eventData
+  }: CreateEventInput) {
     const event = await this.eventRepository.save({
+      externalLink: externalLink?.trim().toLowerCase(),
+      description: description?.trim(),
       ...eventData,
-      externalLink,
-      description,
     });
     await this.eventAttendeeRepository.save({
       status: EventAttendeeStatus.Host,
@@ -207,15 +211,15 @@ export class EventsService {
   async updateEvent({
     id,
     coverPhoto,
+    description,
+    externalLink,
     hostId,
     ...eventData
   }: UpdateEventInput) {
-    const externalLink = eventData.externalLink?.toLowerCase();
-    const description = eventData.description?.trim();
     await this.eventRepository.update(id, {
+      externalLink: externalLink?.trim().toLowerCase(),
+      description: description?.trim(),
       ...eventData,
-      externalLink,
-      description,
     });
     const event = await this.getEvent({ id });
 
