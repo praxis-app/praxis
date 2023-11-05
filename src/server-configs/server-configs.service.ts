@@ -38,7 +38,7 @@ export class ServerConfigsService {
       const canary = await this.canariesService.getCanary();
       await this.canariesService.updateCanary({
         id: canary.id,
-        statement: canaryStatement,
+        statement: canaryStatement.trim(),
       });
     }
 
