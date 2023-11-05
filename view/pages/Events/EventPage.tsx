@@ -101,7 +101,7 @@ const EventPage = () => {
               {t('events.headers.whatToExpect')}
             </Typography>
 
-            <Typography>{event.description}</Typography>
+            <Typography whiteSpace="pre-wrap">{event.description}</Typography>
           </CardContent>
         </Card>
       )}
