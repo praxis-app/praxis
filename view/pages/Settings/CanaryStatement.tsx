@@ -43,7 +43,7 @@ const CanaryStatement = () => {
       );
     }
 
-    const html = urlifyText(publicCanary.statement);
+    const body = urlifyText(publicCanary.statement);
     const formattedUpdatedAt = formatDate(publicCanary.updatedAt);
     const updatedAtMessage = t('canary.labels.updatedAt', {
       updatedAt: formattedUpdatedAt,
@@ -52,7 +52,7 @@ const CanaryStatement = () => {
     return (
       <Box paddingTop={1}>
         <Typography whiteSpace="pre-wrap" paddingBottom={3} lineHeight={1}>
-          <Box component="span" dangerouslySetInnerHTML={{ __html: html }} />
+          <Box component="span" dangerouslySetInnerHTML={{ __html: body }} />
         </Typography>
 
         <Typography color="text.secondary">{updatedAtMessage}</Typography>
