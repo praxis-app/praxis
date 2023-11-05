@@ -162,12 +162,16 @@ const EventForm = ({ editEvent, groupId }: Props) => {
     });
 
   const handleSubmit = async (formValues: CreateEventInput) => {
+    const values = {
+      ...formValues,
+      description: formValues.description?.trim(),
+    };
     try {
       if (editEvent) {
-        await handleUpdate(formValues, editEvent);
+        await handleUpdate(values, editEvent);
         return;
       }
-      await handleCreate(formValues);
+      await handleCreate(values);
     } catch (err) {
       toastVar({
         status: 'error',

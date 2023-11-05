@@ -148,12 +148,16 @@ const CommentForm = ({
     formValues: CreateCommentInput | UpdateCommentInput,
     formikHelpers: FormikHelpers<CreateCommentInput | UpdateCommentInput>,
   ) => {
+    const values = {
+      ...formValues,
+      body: formValues.body?.trim(),
+    };
     try {
       if (editComment) {
-        await handleUpdate(formValues, editComment);
+        await handleUpdate(values, editComment);
         return;
       }
-      await handleCreate(formValues, formikHelpers);
+      await handleCreate(values, formikHelpers);
     } catch (err) {
       toastVar({
         status: 'error',

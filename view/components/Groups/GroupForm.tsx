@@ -117,13 +117,17 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
     formValues: CreateGroupInput | UpdateGroupInput,
     formikHelpers: FormikHelpers<CreateGroupInput | UpdateGroupInput>,
   ) => {
+    const values = {
+      ...formValues,
+      description: formValues.description?.trim(),
+    };
     try {
       if (editGroup) {
-        await handleUpdate(formValues, editGroup);
+        await handleUpdate(values, editGroup);
         return;
       }
       await handleCreate(
-        formValues as CreateGroupInput,
+        values as CreateGroupInput,
         formikHelpers as FormikHelpers<CreateGroupInput>,
       );
     } catch (err) {
