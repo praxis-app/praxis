@@ -1,5 +1,6 @@
 import { Link, LinkProps, SxProps } from '@mui/material';
 import { ReactNode } from 'react';
+import { isValidUrl } from '../../utils/shared.utils';
 
 interface Props extends LinkProps {
   children: ReactNode;
@@ -15,10 +16,12 @@ const ExternalLink = ({
   sx,
   ...linkProps
 }: Props) => {
+  const isLinkText = typeof children === 'string' && isValidUrl(children);
+
   const sharedStyles: SxProps = {
     color: 'text.primary',
     textDecoration: 'none',
-    textTransform: 'lowercase',
+    textTransform: isLinkText ? 'lowercase' : 'none',
     ...sx,
   };
 
