@@ -1,13 +1,13 @@
 import { Box, FormGroup, Switch, Typography, useTheme } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { UpdateServerConfigInput } from '../../../src/server-configs/models/update-server-config.input';
 import { toastVar } from '../../graphql/cache';
 import { ServerSettingsFormFragment } from '../../graphql/settings/fragments/gen/ServerSettingsForm.gen';
 import { useUpdateServerSettingsMutation } from '../../graphql/settings/mutations/gen/UpdateServerSettings.gen';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import { TextField } from '../Shared/TextField';
-import { UpdateServerConfigInput } from '../../../src/server-configs/models/update-server-config.input';
 
 enum ServerSettingsFormFields {
   CanaryStatement = 'canaryStatement',
@@ -47,10 +47,10 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
         setSubmitting(false);
         resetForm();
       },
-      onError(err) {
+      onError() {
         toastVar({
           status: 'error',
-          title: err.message,
+          title: t('canary.errors.couldNotUpdate'),
         });
       },
     });
@@ -67,14 +67,14 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
             <Flex justifyContent="space-between" marginBottom={2}>
               <Box>
                 <Typography>
-                  {t('settings.form.labels.showCanaryStatement')}
+                  {t('canary.labels.showCanaryStatement')}
                 </Typography>
 
                 <Typography
                   fontSize={12}
                   sx={{ color: theme.palette.text.secondary }}
                 >
-                  {t('settings.form.descriptions.canaryStatement')}
+                  {t('canary.descriptions.canaryStatement')}
                 </Typography>
               </Box>
 
@@ -89,7 +89,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               autoComplete="off"
               value={values.canaryStatement || ''}
               disabled={!values.showCanaryStatement}
-              label={t('settings.form.placeholders.canaryStatement')}
+              label={t('canary.placeholders.canaryStatement')}
               name={ServerSettingsFormFields.CanaryStatement}
               multiline
             />
