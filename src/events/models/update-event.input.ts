@@ -6,11 +6,11 @@ export class UpdateEventInput {
   @Field(() => Int)
   id: number;
 
-  @Field()
-  name: string;
+  @Field({ nullable: true })
+  name?: string;
 
-  @Field()
-  description: string;
+  @Field({ nullable: true })
+  description?: string;
 
   @Field(() => GraphQLUpload, { nullable: true })
   coverPhoto?: Promise<FileUpload>;

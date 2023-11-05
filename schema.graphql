@@ -719,8 +719,8 @@ input CreateEventInput {
 
 input UpdateEventInput {
   id: Int!
-  name: String!
-  description: String!
+  name: String
+  description: String
   coverPhoto: Upload
   location: String
   online: Boolean
