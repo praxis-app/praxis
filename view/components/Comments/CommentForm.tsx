@@ -48,6 +48,7 @@ const CommentForm = ({
   const [images, setImages] = useState<File[]>([]);
   const [imagesInputKey, setImagesInputKey] = useState('');
   const [showForm, setShowForm] = useState(expanded);
+  const [blurCount, setBlurCount] = useState(0);
 
   const [createComment] = useCreateCommentMutation();
   const [updateComment] = useUpdateCommentMutation();
@@ -199,6 +200,13 @@ const CommentForm = ({
     setImagesInputKey(getRandomString());
   };
 
+  const handleInputMount = (input: HTMLInputElement | null) => {
+    if (!input || !enableAutoFocus || blurCount) {
+      return;
+    }
+    input.focus();
+  };
+
   if (!showForm) {
     return (
       <Flex>
@@ -238,17 +246,18 @@ const CommentForm = ({
             <UserAvatar size={35} sx={{ marginRight: 1 }} />
 
             <Box
-              flex={1}
+              bgcolor="background.secondary"
               borderRadius={4}
               paddingX={1.5}
               paddingY={0.2}
-              sx={{ backgroundColor: 'background.secondary' }}
+              flex={1}
             >
               <Input
                 autoComplete="off"
                 name={FieldNames.Body}
                 onChange={handleChange}
-                inputRef={(input) => input && enableAutoFocus && input.focus()}
+                inputRef={handleInputMount}
+                onBlur={() => setBlurCount(blurCount + 1)}
                 onKeyDown={(e) => handleFilledInputKeyDown(e, submitForm)}
                 placeholder={t('comments.prompts.writeComment')}
                 sx={inputStyles}
