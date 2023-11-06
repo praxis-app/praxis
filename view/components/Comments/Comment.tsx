@@ -121,9 +121,9 @@ const Comment = ({
       />
 
       <Box
-        sx={{ backgroundColor: 'background.secondary' }}
-        maxWidth={isDesktop ? 'calc(100% - 90px)' : undefined}
+        bgcolor="background.secondary"
         borderRadius={4}
+        maxWidth={isDesktop ? 'calc(100% - 90px)' : undefined}
         paddingX={1.5}
         paddingY={0.5}
       >

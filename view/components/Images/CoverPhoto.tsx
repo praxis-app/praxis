@@ -62,7 +62,7 @@ const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
   };
 
   if (!getImageSrc()) {
-    return <Box sx={{ backgroundColor: grey[900], ...sharedBoxStyles }} />;
+    return <Box bgcolor={grey[900]} sx={{ ...sharedBoxStyles }} />;
   }
 
   return (
