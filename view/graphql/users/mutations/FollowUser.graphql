@@ -1,4 +1,4 @@
-mutation FollowUser($id: Int!, $isLoggedIn: Boolean = true) {
+mutation FollowUser($id: Int!) {
   followUser(id: $id) {
     followedUser {
       id
@@ -9,9 +9,6 @@ mutation FollowUser($id: Int!, $isLoggedIn: Boolean = true) {
     }
     follower {
       id
-      homeFeed {
-        ...FeedItem
-      }
       following {
         ...Follow
       }
