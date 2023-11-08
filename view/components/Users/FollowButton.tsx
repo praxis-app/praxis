@@ -2,6 +2,7 @@ import { Reference } from '@apollo/client';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TypeNames } from '../../constants/shared.constants';
 import { FollowButtonFragment } from '../../graphql/users/fragments/gen/FollowButton.gen';
 import { useFollowUserMutation } from '../../graphql/users/mutations/gen/FollowUser.gen';
 import { useUnfollowUserMutation } from '../../graphql/users/mutations/gen/UnfollowUser.gen';
@@ -80,7 +81,20 @@ const FollowButton = ({
       });
       return;
     }
-    await followUser({ variables: { id } });
+    await followUser({
+      variables: { id },
+      update: (cache) => {
+        const homeFeed = cache.readQuery({
+          query: HomeFeedDocument,
+        });
+        if (homeFeed) {
+          cache.evict({
+            id: `${TypeNames.User}:${currentUserId}`,
+            fieldName: 'homeFeed',
+          });
+        }
+      },
+    });
   };
 
   const handleClickWithPrompt = () =>
