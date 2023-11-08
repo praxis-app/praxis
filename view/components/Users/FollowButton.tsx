@@ -83,12 +83,12 @@ const FollowButton = ({
     }
     await followUser({
       variables: { id },
-      update: (cache) => {
-        const homeFeed = cache.readQuery({
+      update: ({ evict, readQuery }) => {
+        const homeFeed = readQuery({
           query: HomeFeedDocument,
         });
         if (homeFeed) {
-          cache.evict({
+          evict({
             id: `${TypeNames.User}:${currentUserId}`,
             fieldName: 'homeFeed',
           });
