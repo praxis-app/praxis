@@ -29,6 +29,7 @@ const LoginForm = () => {
   const handleSubmit = async (input: LoginInput) =>
     await login({
       variables: { input },
+      refetchQueries: ['Me'],
       onCompleted() {
         isLoggedInVar(true);
       },
