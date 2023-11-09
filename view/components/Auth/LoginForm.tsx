@@ -2,6 +2,11 @@ import { useReactiveVar } from '@apollo/client';
 import { Card, CardContent, FormGroup } from '@mui/material';
 import { Form, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import Flex from '../../components/Shared/Flex';
+import LevelOneHeading from '../../components/Shared/LevelOneHeading';
+import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
+import { TextField } from '../../components/Shared/TextField';
+import { UserFieldNames } from '../../constants/user.constants';
 import { useLoginMutation } from '../../graphql/auth/mutations/gen/Login.gen';
 import {
   isLoggedInVar,
@@ -9,11 +14,7 @@ import {
   toastVar,
 } from '../../graphql/cache';
 import { LoginInput } from '../../graphql/gen';
-import Flex from '../../components/Shared/Flex';
-import LevelOneHeading from '../../components/Shared/LevelOneHeading';
-import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
-import { TextField } from '../../components/Shared/TextField';
-import { UserFieldNames } from '../../constants/user.constants';
+import { MeDocument } from '../../graphql/users/queries/gen/Me.gen';
 
 const LoginForm = () => {
   const [login] = useLoginMutation();
@@ -29,7 +30,7 @@ const LoginForm = () => {
   const handleSubmit = async (input: LoginInput) =>
     await login({
       variables: { input },
-      refetchQueries: ['Me'],
+      refetchQueries: [MeDocument],
       onCompleted() {
         isLoggedInVar(true);
       },
