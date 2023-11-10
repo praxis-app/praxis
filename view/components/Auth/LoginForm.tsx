@@ -26,7 +26,7 @@ const LoginForm = () => {
     password: '',
   };
 
-  const handleSubmit = async (input: LoginInput) => {
+  const handleSubmit = async (input: LoginInput) =>
     await login({
       variables: { input },
       onCompleted() {
@@ -39,7 +39,6 @@ const LoginForm = () => {
         });
       },
     });
-  };
 
   return (
     <Card>
