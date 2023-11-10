@@ -59,7 +59,7 @@ const NavDrawer = () => {
 
   const { data: meData } = useMeQuery({ skip: !isLoggedIn });
   const { data: isFirstUserData } = useIsFirstUserQuery({ skip: isLoggedIn });
-  const [logOut] = useLogOutMutation();
+  const [logOut, { client }] = useLogOutMutation();
 
   const { t } = useTranslation();
   const { pathname } = useLocation();
@@ -72,8 +72,8 @@ const NavDrawer = () => {
         isAuthLoadingVar(false);
         isRefreshingTokenVar(false);
         navigate(NavigationPaths.LogIn);
+        client.cache.reset();
       },
-      update: (cache) => cache.reset(),
     });
 
   const handleLinkClick = (path: string) => () => {
