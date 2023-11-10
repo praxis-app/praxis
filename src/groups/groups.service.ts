@@ -180,12 +180,13 @@ export class GroupsService {
   }
 
   async createGroup(
-    { description, coverPhoto, ...groupData }: CreateGroupInput,
+    { name, description, coverPhoto, ...groupData }: CreateGroupInput,
     userId: number,
   ) {
     const sanitizedDescription = sanitizeText(description.trim());
     const group = await this.groupRepository.save({
       description: sanitizedDescription,
+      name: name.trim(),
       ...groupData,
     });
     await this.createGroupMember(group.id, userId);
@@ -203,6 +204,7 @@ export class GroupsService {
 
   async updateGroup({
     id,
+    name,
     description,
     coverPhoto,
     ...groupData
@@ -212,6 +214,7 @@ export class GroupsService {
       : undefined;
     await this.groupRepository.update(id, {
       description: sanitizedDescription,
+      name: name?.trim(),
       ...groupData,
     });
 
