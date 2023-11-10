@@ -114,12 +114,13 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
     });
 
   const handleSubmit = async (
-    formValues: CreateGroupInput | UpdateGroupInput,
+    { name, description, ...formValues }: CreateGroupInput | UpdateGroupInput,
     formikHelpers: FormikHelpers<CreateGroupInput | UpdateGroupInput>,
   ) => {
     const values = {
+      description: description?.trim(),
+      name: name?.trim(),
       ...formValues,
-      description: formValues.description?.trim(),
     };
     try {
       if (editGroup) {
