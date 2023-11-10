@@ -14,7 +14,6 @@ import {
   toastVar,
 } from '../../graphql/cache';
 import { LoginInput } from '../../graphql/gen';
-import { MeDocument } from '../../graphql/users/queries/gen/Me.gen';
 
 const LoginForm = () => {
   const [login] = useLoginMutation();
@@ -27,10 +26,9 @@ const LoginForm = () => {
     password: '',
   };
 
-  const handleSubmit = async (input: LoginInput) =>
+  const handleSubmit = async (input: LoginInput) => {
     await login({
       variables: { input },
-      refetchQueries: [MeDocument],
       onCompleted() {
         isLoggedInVar(true);
       },
@@ -41,6 +39,7 @@ const LoginForm = () => {
         });
       },
     });
+  };
 
   return (
     <Card>

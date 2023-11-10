@@ -29,7 +29,7 @@ const TopNavDropdown = ({
   handleClose,
   user: { name, serverPermissions },
 }: Props) => {
-  const [logOut] = useLogOutMutation();
+  const [logOut, { client }] = useLogOutMutation();
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -42,6 +42,7 @@ const TopNavDropdown = ({
         isAuthLoadingVar(false);
         isRefreshingTokenVar(false);
         navigate(NavigationPaths.LogIn);
+        client.resetStore();
       },
       update: (cache) => cache.reset(),
     });
