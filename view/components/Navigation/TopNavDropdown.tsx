@@ -42,7 +42,7 @@ const TopNavDropdown = ({
         isAuthLoadingVar(false);
         isRefreshingTokenVar(false);
         navigate(NavigationPaths.LogIn);
-        client.resetStore();
+        client.cache.reset();
       },
       update: (cache) => cache.reset(),
     });
