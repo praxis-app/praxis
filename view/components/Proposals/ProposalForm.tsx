@@ -225,8 +225,10 @@ const ProposalForm = ({
       const title = isEntityTooLarge(err)
         ? t('errors.imageTooLarge')
         : String(err);
-
-      toastVar({ status: 'error', title });
+      toastVar({
+        status: 'error',
+        title,
+      });
     }
   };
 
