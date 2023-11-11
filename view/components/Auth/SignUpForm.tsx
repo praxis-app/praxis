@@ -4,6 +4,14 @@ import { Form, Formik, FormikErrors } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import AttachedImagePreview from '../../components/Images/AttachedImagePreview';
+import ImageInput from '../../components/Images/ImageInput';
+import Flex from '../../components/Shared/Flex';
+import LevelOneHeading from '../../components/Shared/LevelOneHeading';
+import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
+import { TextField } from '../../components/Shared/TextField';
+import { INVITE_TOKEN } from '../../constants/server-invite.constants';
+import { UserFieldNames } from '../../constants/user.constants';
 import { useSignUpMutation } from '../../graphql/auth/mutations/gen/SignUp.gen';
 import {
   inviteTokenVar,
@@ -16,19 +24,12 @@ import {
   IsFirstUserDocument,
   IsFirstUserQuery,
 } from '../../graphql/users/queries/gen/IsFirstUser.gen';
-import AttachedImagePreview from '../../components/Images/AttachedImagePreview';
-import ImageInput from '../../components/Images/ImageInput';
-import Flex from '../../components/Shared/Flex';
-import LevelOneHeading from '../../components/Shared/LevelOneHeading';
-import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
-import { TextField } from '../../components/Shared/TextField';
-import { INVITE_TOKEN } from '../../constants/server-invite.constants';
-import { UserFieldNames } from '../../constants/user.constants';
+import { isEntityTooLarge } from '../../utils/error.utils';
+import { validateImageInput } from '../../utils/image.utils';
 import {
   getRandomString,
   removeLocalStorageItem,
 } from '../../utils/shared.utils';
-import { isEntityTooLarge } from '../../utils/error.utils';
 
 const SignUpForm = () => {
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
@@ -69,7 +70,25 @@ const SignUpForm = () => {
     return errors;
   };
 
+  const validateImages = () => {
+    try {
+      if (profilePicture) {
+        validateImageInput(profilePicture);
+      }
+    } catch (err) {
+      toastVar({
+        status: 'error',
+        title: err.message,
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (formValues: SignUpInput) => {
+    if (!validateImages()) {
+      return;
+    }
     await signUp({
       variables: {
         input: {
