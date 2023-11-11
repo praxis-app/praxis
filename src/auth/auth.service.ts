@@ -104,10 +104,10 @@ export class AuthService {
     return claims?.sub ? parseInt(claims.sub) : null;
   }
 
-  decodeToken(token: string) {
+  private decodeToken(accessToken: string) {
     try {
       const jwtKey = this.configService.get('JWT_KEY');
-      return verify(token, jwtKey) as JwtPayload;
+      return verify(accessToken, jwtKey) as JwtPayload;
     } catch {
       return null;
     }
