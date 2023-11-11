@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtPayload, verify } from 'jsonwebtoken';
 import { RequestWithCookies } from '../auth/auth.types';
-import { getSub } from '../auth/auth.utils';
 import { CommentsService } from '../comments/comments.service';
 import { DataloaderService } from '../dataloader/dataloader.service';
 import { EventsService } from '../events/events.service';
@@ -21,6 +22,7 @@ import { Context, ContextServices } from './context.types';
 export class ContextService {
   constructor(
     private commentsService: CommentsService,
+    private configService: ConfigService,
     private dataloaderService: DataloaderService,
     private eventsService: EventsService,
     private groupMemberRequestsService: GroupMemberRequestsService,
@@ -66,7 +68,7 @@ export class ContextService {
   }
 
   private async getUserFromReq(req: RequestWithCookies) {
-    const sub = getSub(req);
+    const sub = this.getSubFromReq(req);
     if (!sub) {
       return null;
     }
@@ -74,10 +76,27 @@ export class ContextService {
   }
 
   private async getUserPermisionsFromReq(req: RequestWithCookies) {
-    const sub = getSub(req);
+    const sub = this.getSubFromReq(req);
     if (!sub) {
       return null;
     }
     return this.usersService.getUserPermissions(sub);
+  }
+
+  private getSubFromReq({ cookies }: RequestWithCookies) {
+    if (!cookies?.access_token) {
+      return null;
+    }
+    const claims = this.decodeToken(cookies.access_token);
+    return claims?.sub ? parseInt(claims.sub) : null;
+  }
+
+  private decodeToken(token: string) {
+    try {
+      const jwtKey = this.configService.get('JWT_KEY');
+      return verify(token, jwtKey) as JwtPayload;
+    } catch {
+      return null;
+    }
   }
 }
