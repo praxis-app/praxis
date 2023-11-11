@@ -13,9 +13,8 @@ export const validateImageInput = (images: File[]) => {
     const extension = image.type.split('/')[1];
 
     if (!extension.match(VALID_IMAGE_FORMAT)) {
-      throw new Error('Only PNG, JPEG, GIF and WEBP files are allowed');
+      throw new Error(`${extension.toUpperCase()} images are not supported`);
     }
-
     if (image.size > MAX_IMAGE_SIZE) {
       throw new Error('Image size should be less than 10MB');
     }
