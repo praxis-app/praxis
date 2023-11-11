@@ -39,7 +39,8 @@
 
   "errors": {
     "imageUploadError": "Unable to upload images.",
-    "somethingWentWrong": "Something went wrong."
+    "somethingWentWrong": "Something went wrong.",
+    "imageTooLarge": "Image is too large. Maximum file size is 10MB."
   },
 
   "states": {
