@@ -4,7 +4,9 @@ const VALID_IMAGE_FORMAT = /(jpe?g|png|gif|webp)$/;
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_IMAGE_COUNT = 5;
 
-export const validateImageInput = (images: File[]) => {
+export const validateImageInput = (imageInput: File | File[]) => {
+  const images = Array.isArray(imageInput) ? imageInput : [imageInput];
+
   if (images.length > MAX_IMAGE_COUNT) {
     throw new Error(`You can upload a maximum of ${MAX_IMAGE_COUNT} images`);
   }

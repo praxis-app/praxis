@@ -28,6 +28,7 @@ import ImageInput from '../Images/ImageInput';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import { TextField } from '../Shared/TextField';
+import { validateImageInput } from '../../utils/image.utils';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
@@ -124,6 +125,9 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
       ...formValues,
     };
     try {
+      if (coverPhoto) {
+        validateImageInput(coverPhoto);
+      }
       if (editGroup) {
         await handleUpdate(values, editGroup);
         return;
