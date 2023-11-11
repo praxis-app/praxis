@@ -1,10 +1,13 @@
 import { UserInputError, ValidationError } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
+import { JwtPayload, verify } from 'jsonwebtoken';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
+import { RequestWithCookies } from './auth.types';
 import { LoginInput } from './models/login.input';
 import { SignUpInput } from './models/sign-up.input';
 import { AccessTokenPayload } from './strategies/jwt.strategy';
@@ -15,6 +18,7 @@ const SALT_ROUNDS = 10;
 @Injectable()
 export class AuthService {
   constructor(
+    private configService: ConfigService,
     private jwtService: JwtService,
     private serverInvitesService: ServerInvitesService,
     private usersService: UsersService,
@@ -93,5 +97,19 @@ export class AuthService {
     return this.jwtService.signAsync(payload, {
       expiresIn: ACCESS_TOKEN_EXPIRES_IN,
     });
+  }
+
+  getSub({ cookies }: RequestWithCookies) {
+    const claims = cookies ? this.decodeToken(cookies.access_token) : null;
+    return claims?.sub ? parseInt(claims.sub) : null;
+  }
+
+  decodeToken(token: string) {
+    try {
+      const jwtKey = this.configService.get('JWT_KEY');
+      return verify(token, jwtKey) as JwtPayload;
+    } catch {
+      return null;
+    }
   }
 }

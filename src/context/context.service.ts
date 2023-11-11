@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtPayload, verify } from 'jsonwebtoken';
+import { AuthService } from '../auth/auth.service';
 import { RequestWithCookies } from '../auth/auth.types';
 import { CommentsService } from '../comments/comments.service';
 import { DataloaderService } from '../dataloader/dataloader.service';
@@ -21,8 +20,8 @@ import { Context, ContextServices } from './context.types';
 @Injectable()
 export class ContextService {
   constructor(
+    private authService: AuthService,
     private commentsService: CommentsService,
-    private configService: ConfigService,
     private dataloaderService: DataloaderService,
     private eventsService: EventsService,
     private groupMemberRequestsService: GroupMemberRequestsService,
@@ -39,7 +38,7 @@ export class ContextService {
   ) {}
 
   async getContext({ req }: { req: RequestWithCookies }): Promise<Context> {
-    const sub = this.getSub(req);
+    const sub = this.authService.getSub(req);
     const user = await this.getUser(sub);
     const permissions = await this.getUserPermisions(sub);
     const loaders = this.dataloaderService.getLoaders();
@@ -68,25 +67,11 @@ export class ContextService {
     };
   }
 
-  private async getUser(sub: number | null) {
-    return sub ? this.usersService.getUser({ id: sub }) : null;
+  private async getUser(userId: number | null) {
+    return userId ? this.usersService.getUser({ id: userId }) : null;
   }
 
-  private async getUserPermisions(sub: number | null) {
-    return sub ? this.usersService.getUserPermissions(sub) : null;
-  }
-
-  private getSub({ cookies }: RequestWithCookies) {
-    const claims = cookies ? this.decodeToken(cookies.access_token) : null;
-    return claims?.sub ? parseInt(claims.sub) : null;
-  }
-
-  private decodeToken(token: string) {
-    try {
-      const jwtKey = this.configService.get('JWT_KEY');
-      return verify(token, jwtKey) as JwtPayload;
-    } catch {
-      return null;
-    }
+  private async getUserPermisions(userId: number | null) {
+    return userId ? this.usersService.getUserPermissions(userId) : null;
   }
 }
