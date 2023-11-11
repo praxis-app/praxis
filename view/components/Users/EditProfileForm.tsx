@@ -52,12 +52,14 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
         const path = getUserProfilePath(user.name);
         navigate(path);
       },
-      onError(error) {
-        const title = isEntityTooLarge(error)
+      onError(err) {
+        const title = isEntityTooLarge(err)
           ? t('errors.imageTooLarge')
-          : error.message;
-
-        toastVar({ status: 'error', title });
+          : err.message;
+        toastVar({
+          status: 'error',
+          title,
+        });
       },
     });
 
