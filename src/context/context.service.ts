@@ -69,25 +69,16 @@ export class ContextService {
 
   private async getUserFromReq(req: RequestWithCookies) {
     const sub = this.getSubFromReq(req);
-    if (!sub) {
-      return null;
-    }
-    return this.usersService.getUser({ id: sub });
+    return sub ? this.usersService.getUser({ id: sub }) : null;
   }
 
   private async getUserPermisionsFromReq(req: RequestWithCookies) {
     const sub = this.getSubFromReq(req);
-    if (!sub) {
-      return null;
-    }
-    return this.usersService.getUserPermissions(sub);
+    return sub ? this.usersService.getUserPermissions(sub) : null;
   }
 
   private getSubFromReq({ cookies }: RequestWithCookies) {
-    if (!cookies?.access_token) {
-      return null;
-    }
-    const claims = this.decodeToken(cookies.access_token);
+    const claims = cookies ? this.decodeToken(cookies.access_token) : null;
     return claims?.sub ? parseInt(claims.sub) : null;
   }
 
