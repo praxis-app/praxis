@@ -18,6 +18,7 @@ import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import { TextField } from '../Shared/TextField';
 import UserAvatar from './UserAvatar';
+import { validateImageInput } from '../../utils/image.utils';
 
 interface Props {
   user: EditProfileFormFragment;
@@ -37,7 +38,22 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
     name: user.name || '',
   };
 
-  const handleSubmit = async (formValues: Omit<UpdateUserInput, 'id'>) =>
+  const handleSubmit = async (formValues: Omit<UpdateUserInput, 'id'>) => {
+    try {
+      if (coverPhoto) {
+        validateImageInput(coverPhoto);
+      }
+      if (profilePicture) {
+        validateImageInput(profilePicture);
+      }
+    } catch (err) {
+      toastVar({
+        status: 'error',
+        title: err.message,
+      });
+      return;
+    }
+
     await updateUser({
       variables: {
         userData: {
@@ -62,6 +78,7 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
         });
       },
     });
+  };
 
   return (
     <Formik initialValues={initialValues} onSubmit={handleSubmit}>
