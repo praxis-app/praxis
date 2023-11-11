@@ -3,11 +3,12 @@ import { Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { UserFieldNames } from '../../constants/user.constants';
 import { toastVar } from '../../graphql/cache';
 import { UpdateUserInput } from '../../graphql/gen';
 import { EditProfileFormFragment } from '../../graphql/users/fragments/gen/EditProfileForm.gen';
 import { useUpdateUserMutation } from '../../graphql/users/mutations/gen/UpdateUser.gen';
-import { UserFieldNames } from '../../constants/user.constants';
+import { isEntityTooLarge } from '../../utils/error.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import CoverPhoto from '../Images/CoverPhoto';
 import ImageInput from '../Images/ImageInput';
@@ -52,7 +53,11 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
         navigate(path);
       },
       onError(error) {
-        toastVar({ status: 'error', title: error.message });
+        const title = isEntityTooLarge(error)
+          ? t('errors.imageTooLarge')
+          : error.message;
+
+        toastVar({ status: 'error', title });
       },
     });
 

@@ -42,6 +42,7 @@ import {
   HomeFeedDocument,
   HomeFeedQuery,
 } from '../../graphql/users/queries/gen/HomeFeed.gen';
+import { isEntityTooLarge } from '../../utils/error.utils';
 import { getProposalActionTypeOptions } from '../../utils/proposal.utils';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
@@ -221,11 +222,11 @@ const ProposalForm = ({
       }
       await handleCreate(values, formHelpers);
     } catch (err) {
-      toastVar({
-        status: 'error',
-        title: String(err),
-      });
-      console.error(err);
+      const title = isEntityTooLarge(err)
+        ? t('errors.imageTooLarge')
+        : String(err);
+
+      toastVar({ status: 'error', title });
     }
   };
 
