@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AuthTokenClaims } from '../auth/auth.types';
-import { getClaims, getSub } from '../auth/auth.utils';
+import { RequestWithCookies } from '../auth/auth.types';
+import { getSub } from '../auth/auth.utils';
 import { CommentsService } from '../comments/comments.service';
 import { DataloaderService } from '../dataloader/dataloader.service';
 import { EventsService } from '../events/events.service';
@@ -36,11 +36,10 @@ export class ContextService {
     private usersService: UsersService,
   ) {}
 
-  async getContext({ req }: { req: Request }): Promise<Context> {
-    const claims = getClaims(req);
+  async getContext({ req }: { req: RequestWithCookies }): Promise<Context> {
+    const user = await this.getUserFromReq(req);
+    const permissions = await this.getUserPermisionsFromReq(req);
     const loaders = this.dataloaderService.getLoaders();
-    const permissions = await this.getUserPermisionsFromClaims(claims);
-    const user = await this.getUserFromClaims(claims);
 
     const services: ContextServices = {
       commentsService: this.commentsService,
@@ -59,7 +58,6 @@ export class ContextService {
     };
 
     return {
-      claims,
       loaders,
       permissions,
       services,
@@ -67,13 +65,19 @@ export class ContextService {
     };
   }
 
-  private getUserFromClaims(claims: AuthTokenClaims) {
-    const sub = getSub(claims.accessTokenClaims);
-    return sub ? this.usersService.getUser({ id: sub }) : null;
+  private async getUserFromReq(req: RequestWithCookies) {
+    const sub = getSub(req);
+    if (!sub) {
+      return null;
+    }
+    return this.usersService.getUser({ id: sub });
   }
 
-  private getUserPermisionsFromClaims(claims: AuthTokenClaims) {
-    const sub = getSub(claims.accessTokenClaims);
-    return sub ? this.usersService.getUserPermissions(sub) : null;
+  private async getUserPermisionsFromReq(req: RequestWithCookies) {
+    const sub = getSub(req);
+    if (!sub) {
+      return null;
+    }
+    return this.usersService.getUserPermissions(sub);
   }
 }

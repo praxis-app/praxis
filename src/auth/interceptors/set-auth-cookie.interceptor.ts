@@ -14,9 +14,7 @@ export class SetAuthCookieInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((accessToken: string) => {
         const ctx = GqlExecutionContext.create(context).getContext();
-        const body = { access_token: accessToken };
-
-        ctx.req.res.cookie('auth', body, {
+        ctx.req.res.cookie('access_token', accessToken, {
           httpOnly: true,
           sameSite: true,
           secure: true,

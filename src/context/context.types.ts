@@ -1,4 +1,3 @@
-import { JwtPayload } from 'jsonwebtoken';
 import { CommentsService } from '../comments/comments.service';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { EventsService } from '../events/events.service';
@@ -33,9 +32,6 @@ export interface ContextServices {
 }
 
 export interface Context {
-  claims: {
-    accessTokenClaims: JwtPayload | null;
-  };
   loaders: Dataloaders;
   permissions: UserPermissions | null;
   services: ContextServices;

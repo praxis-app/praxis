@@ -17,18 +17,10 @@ export const decodeToken = (token: string) => {
  * Get sub claim - identifies the user or subject of the JWT
  * https://www.rfc-editor.org/rfc/rfc7519#section-4.1.2
  */
-export const getSub = (claims: JwtPayload | null) => {
-  if (!claims?.sub) {
+export const getSub = ({ cookies }: RequestWithCookies) => {
+  if (!cookies?.access_token) {
     return null;
   }
-  return parseInt(claims.sub);
-};
-
-export const getClaims = (req: RequestWithCookies) => {
-  const { cookies } = req;
-  const accessTokenClaims = cookies?.auth
-    ? decodeToken(cookies.auth.access_token)
-    : null;
-
-  return { accessTokenClaims };
+  const claims = decodeToken(cookies.access_token);
+  return claims?.sub ? parseInt(claims.sub) : null;
 };
