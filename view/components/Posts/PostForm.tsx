@@ -6,6 +6,11 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import {
+  FieldNames,
+  NavigationPaths,
+  TypeNames,
+} from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { CreatePostInput, UpdatePostInput } from '../../graphql/gen';
 import { useDeleteImageMutation } from '../../graphql/images/mutations/gen/DeleteImage.gen';
@@ -16,11 +21,8 @@ import {
   HomeFeedDocument,
   HomeFeedQuery,
 } from '../../graphql/users/queries/gen/HomeFeed.gen';
-import {
-  FieldNames,
-  NavigationPaths,
-  TypeNames,
-} from '../../constants/shared.constants';
+import { isEntityTooLarge } from '../../utils/error.utils';
+import { validateImageInput } from '../../utils/image.utils';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
 import ImageInput from '../Images/ImageInput';
@@ -128,23 +130,29 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
   };
 
   const handleSubmit = async (
-    formValues: CreatePostInput | UpdatePostInput,
+    { body, ...formValues }: CreatePostInput | UpdatePostInput,
     formikHelpers: FormikHelpers<CreatePostInput | UpdatePostInput>,
   ) => {
     const values = {
       ...formValues,
-      body: formValues.body?.trim(),
+      body: body?.trim(),
     };
+
     try {
+      validateImageInput(images);
+
       if (editPost) {
         await handleUpdate(values, editPost);
         return;
       }
       await handleCreate(values, formikHelpers);
     } catch (err) {
+      const title = isEntityTooLarge(err)
+        ? t('errors.imageTooLarge')
+        : String(err);
       toastVar({
         status: 'error',
-        title: String(err),
+        title,
       });
     }
   };

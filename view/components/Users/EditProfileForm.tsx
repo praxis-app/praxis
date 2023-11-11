@@ -3,11 +3,12 @@ import { Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { UserFieldNames } from '../../constants/user.constants';
 import { toastVar } from '../../graphql/cache';
 import { UpdateUserInput } from '../../graphql/gen';
 import { EditProfileFormFragment } from '../../graphql/users/fragments/gen/EditProfileForm.gen';
 import { useUpdateUserMutation } from '../../graphql/users/mutations/gen/UpdateUser.gen';
-import { UserFieldNames } from '../../constants/user.constants';
+import { isEntityTooLarge } from '../../utils/error.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import CoverPhoto from '../Images/CoverPhoto';
 import ImageInput from '../Images/ImageInput';
@@ -17,6 +18,7 @@ import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import { TextField } from '../Shared/TextField';
 import UserAvatar from './UserAvatar';
+import { validateImageInput } from '../../utils/image.utils';
 
 interface Props {
   user: EditProfileFormFragment;
@@ -36,7 +38,28 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
     name: user.name || '',
   };
 
-  const handleSubmit = async (formValues: Omit<UpdateUserInput, 'id'>) =>
+  const validateImages = () => {
+    try {
+      if (profilePicture) {
+        validateImageInput(profilePicture);
+      }
+      if (coverPhoto) {
+        validateImageInput(coverPhoto);
+      }
+    } catch (err) {
+      toastVar({
+        status: 'error',
+        title: err.message,
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (formValues: Omit<UpdateUserInput, 'id'>) => {
+    if (!validateImages()) {
+      return;
+    }
     await updateUser({
       variables: {
         userData: {
@@ -51,10 +74,17 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
         const path = getUserProfilePath(user.name);
         navigate(path);
       },
-      onError(error) {
-        toastVar({ status: 'error', title: error.message });
+      onError(err) {
+        const title = isEntityTooLarge(err)
+          ? t('errors.imageTooLarge')
+          : err.message;
+        toastVar({
+          status: 'error',
+          title,
+        });
       },
     });
+  };
 
   return (
     <Formik initialValues={initialValues} onSubmit={handleSubmit}>

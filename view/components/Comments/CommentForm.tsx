@@ -10,17 +10,19 @@ import {
 import { Form, Formik, FormikFormProps, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  FieldNames,
+  KeyCodes,
+  TypeNames,
+} from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { CommentFormFragment } from '../../graphql/comments/fragments/gen/CommentForm.gen';
 import { useCreateCommentMutation } from '../../graphql/comments/mutations/gen/CreateComment.gen';
 import { useUpdateCommentMutation } from '../../graphql/comments/mutations/gen/UpdateComment.gen';
 import { CreateCommentInput, UpdateCommentInput } from '../../graphql/gen';
 import { useDeleteImageMutation } from '../../graphql/images/mutations/gen/DeleteImage.gen';
-import {
-  FieldNames,
-  KeyCodes,
-  TypeNames,
-} from '../../constants/shared.constants';
+import { isEntityTooLarge } from '../../utils/error.utils';
+import { validateImageInput } from '../../utils/image.utils';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
 import ImageInput from '../Images/ImageInput';
@@ -146,23 +148,26 @@ const CommentForm = ({
   };
 
   const handleSubmit = async (
-    formValues: CreateCommentInput | UpdateCommentInput,
+    { body, ...formValues }: CreateCommentInput | UpdateCommentInput,
     formikHelpers: FormikHelpers<CreateCommentInput | UpdateCommentInput>,
   ) => {
-    const values = {
-      ...formValues,
-      body: formValues.body?.trim(),
-    };
+    const values = { body: body?.trim(), ...formValues };
     try {
+      if (images) {
+        validateImageInput(images);
+      }
       if (editComment) {
         await handleUpdate(values, editComment);
         return;
       }
       await handleCreate(values, formikHelpers);
     } catch (err) {
+      const title = isEntityTooLarge(err)
+        ? t('errors.imageTooLarge')
+        : String(err);
       toastVar({
         status: 'error',
-        title: String(err),
+        title,
       });
     }
   };

@@ -10,6 +10,7 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { FieldNames } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { CreateGroupInput, UpdateGroupInput } from '../../graphql/gen';
 import { GroupFormFragment } from '../../graphql/groups/fragments/gen/GroupForm.gen';
@@ -19,7 +20,7 @@ import {
   GroupsDocument,
   GroupsQuery,
 } from '../../graphql/groups/queries/gen/Groups.gen';
-import { FieldNames } from '../../constants/shared.constants';
+import { isEntityTooLarge } from '../../utils/error.utils';
 import { getGroupPath } from '../../utils/group.utils';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
@@ -27,6 +28,7 @@ import ImageInput from '../Images/ImageInput';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import { TextField } from '../Shared/TextField';
+import { validateImageInput } from '../../utils/image.utils';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
@@ -123,6 +125,9 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
       ...formValues,
     };
     try {
+      if (coverPhoto) {
+        validateImageInput(coverPhoto);
+      }
       if (editGroup) {
         await handleUpdate(values, editGroup);
         return;
@@ -132,9 +137,12 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
         formikHelpers as FormikHelpers<CreateGroupInput>,
       );
     } catch (err) {
+      const title = isEntityTooLarge(err)
+        ? t('errors.imageTooLarge')
+        : String(err);
       toastVar({
         status: 'error',
-        title: String(err),
+        title,
       });
     }
   };

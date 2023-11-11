@@ -9,6 +9,7 @@ import { join } from 'path';
 import { AppModule } from './app.module';
 import { LoggerFactory } from './shared/logger.factory';
 import { Environment } from './shared/shared.constants';
+import { MAX_IMAGE_COUNT, MAX_IMAGE_SIZE } from './images/image.constants';
 
 const bootstrap = async () => {
   const app = await NestFactory.create(AppModule, {
@@ -22,8 +23,8 @@ const bootstrap = async () => {
 
   app.use(
     graphqlUploadExpress({
-      maxFiles: 10,
-      maxFileSize: 10000000,
+      maxFiles: MAX_IMAGE_COUNT,
+      maxFileSize: MAX_IMAGE_SIZE,
       overrideSendResponse: false,
     }),
   );
