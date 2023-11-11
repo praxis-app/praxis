@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
-import { JwtPayload, verify } from 'jsonwebtoken';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
@@ -99,15 +98,20 @@ export class AuthService {
     });
   }
 
-  getSub({ cookies }: RequestWithCookies) {
-    const claims = cookies ? this.decodeToken(cookies.access_token) : null;
+  async getSub({ cookies }: RequestWithCookies) {
+    if (!cookies) {
+      return null;
+    }
+    const claims = await this.decodeToken(cookies.access_token);
     return claims?.sub ? parseInt(claims.sub) : null;
   }
 
-  private decodeToken(accessToken: string) {
+  async decodeToken(token: string) {
     try {
       const jwtKey = this.configService.get('JWT_KEY');
-      return verify(accessToken, jwtKey) as JwtPayload;
+      return this.jwtService.verifyAsync(token, {
+        secret: jwtKey,
+      });
     } catch {
       return null;
     }

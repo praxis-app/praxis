@@ -38,7 +38,7 @@ export class ContextService {
   ) {}
 
   async getContext({ req }: { req: RequestWithCookies }): Promise<Context> {
-    const sub = this.authService.getSub(req);
+    const sub = await this.authService.getSub(req);
     const user = await this.getUser(sub);
     const permissions = await this.getUserPermisions(sub);
     const loaders = this.dataloaderService.getLoaders();
