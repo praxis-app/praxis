@@ -9,6 +9,15 @@ export const isDeniedAccess = (error: ApolloError | undefined) => {
   return [UNAUTHORIZED, FORBIDDEN].includes(error.message);
 };
 
+export const isEntityTooLarge = (error: ApolloError | undefined) => {
+  const statusCode =
+    error?.networkError &&
+    'statusCode' in error.networkError &&
+    error.networkError.statusCode;
+
+  return statusCode === 413;
+};
+
 export const formatGQLError = (
   message: string,
   path?: readonly (string | number)[],
