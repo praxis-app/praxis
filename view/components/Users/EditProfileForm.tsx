@@ -38,22 +38,28 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
     name: user.name || '',
   };
 
-  const handleSubmit = async (formValues: Omit<UpdateUserInput, 'id'>) => {
+  const validateImages = () => {
     try {
-      if (coverPhoto) {
-        validateImageInput(coverPhoto);
-      }
       if (profilePicture) {
         validateImageInput(profilePicture);
+      }
+      if (coverPhoto) {
+        validateImageInput(coverPhoto);
       }
     } catch (err) {
       toastVar({
         status: 'error',
         title: err.message,
       });
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (formValues: Omit<UpdateUserInput, 'id'>) => {
+    if (!validateImages()) {
       return;
     }
-
     await updateUser({
       variables: {
         userData: {
