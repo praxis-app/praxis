@@ -146,7 +146,6 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
       const title = isEntityTooLarge(err)
         ? t('errors.imageTooLarge')
         : String(err);
-
       toastVar({
         status: 'error',
         title,

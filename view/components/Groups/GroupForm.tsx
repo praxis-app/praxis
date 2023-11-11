@@ -136,8 +136,10 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
       const title = isEntityTooLarge(err)
         ? t('errors.imageTooLarge')
         : String(err);
-
-      toastVar({ status: 'error', title });
+      toastVar({
+        status: 'error',
+        title,
+      });
     }
   };
 
