@@ -22,6 +22,7 @@ import {
   HomeFeedQuery,
 } from '../../graphql/users/queries/gen/HomeFeed.gen';
 import { isEntityTooLarge } from '../../utils/error.utils';
+import { validateImageInput } from '../../utils/image.utils';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
 import ImageInput from '../Images/ImageInput';
@@ -129,14 +130,17 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
   };
 
   const handleSubmit = async (
-    formValues: CreatePostInput | UpdatePostInput,
+    { body, ...formValues }: CreatePostInput | UpdatePostInput,
     formikHelpers: FormikHelpers<CreatePostInput | UpdatePostInput>,
   ) => {
     const values = {
       ...formValues,
-      body: formValues.body?.trim(),
+      body: body?.trim(),
     };
+
     try {
+      validateImageInput(images);
+
       if (editPost) {
         await handleUpdate(values, editPost);
         return;
