@@ -39,8 +39,9 @@ export class ContextService {
   ) {}
 
   async getContext({ req }: { req: RequestWithCookies }): Promise<Context> {
-    const user = await this.getUserFromReq(req);
-    const permissions = await this.getUserPermisionsFromReq(req);
+    const sub = this.getSub(req);
+    const user = await this.getUser(sub);
+    const permissions = await this.getUserPermisions(sub);
     const loaders = this.dataloaderService.getLoaders();
 
     const services: ContextServices = {
@@ -67,17 +68,15 @@ export class ContextService {
     };
   }
 
-  private async getUserFromReq(req: RequestWithCookies) {
-    const sub = this.getSubFromReq(req);
+  private async getUser(sub: number | null) {
     return sub ? this.usersService.getUser({ id: sub }) : null;
   }
 
-  private async getUserPermisionsFromReq(req: RequestWithCookies) {
-    const sub = this.getSubFromReq(req);
+  private async getUserPermisions(sub: number | null) {
     return sub ? this.usersService.getUserPermissions(sub) : null;
   }
 
-  private getSubFromReq({ cookies }: RequestWithCookies) {
+  private getSub({ cookies }: RequestWithCookies) {
     const claims = cookies ? this.decodeToken(cookies.access_token) : null;
     return claims?.sub ? parseInt(claims.sub) : null;
   }
