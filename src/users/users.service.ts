@@ -1,5 +1,5 @@
 import { UserInputError } from '@nestjs/apollo';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import { FileUpload } from 'graphql-upload-ts';
@@ -20,12 +20,15 @@ import { ServerPermissions } from '../server-roles/models/server-permissions.typ
 import { initServerRolePermissions } from '../server-roles/server-role.utils';
 import { ServerRolesService } from '../server-roles/server-roles.service';
 import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
+import { sanitizeText } from '../shared/shared.utils';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
 import { UserWithFollowerCount, UserWithFollowingCount } from './user.types';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     @InjectRepository(User)
     private repository: Repository<User>,
@@ -264,11 +267,13 @@ export class UsersService {
     );
   }
 
-  async createUser(data: Partial<User>) {
-    const user = await this.repository.save(data);
-    const users = await this.getUsers();
+  async createUser({ bio, ...userData }: Partial<User>) {
+    const sanitizedBio = bio ? sanitizeText(bio.trim()) : undefined;
+    const user = await this.repository.save({ bio: sanitizedBio, ...userData });
 
     try {
+      const users = await this.getUsers();
+
       if (users.length === 1) {
         await this.serverRolesService.initAdminServerRole(user.id);
       }
@@ -277,17 +282,24 @@ export class UsersService {
       await this.deleteUser(user.id);
       throw new Error('Could not create user');
     }
+
     return user;
   }
 
   async updateUser({
     id,
+    bio,
     coverPhoto,
     profilePicture,
     ...userData
   }: UpdateUserInput) {
-    await this.repository.update(id, userData);
-    const user = await this.getUser({ id });
+    this.logger.log(`Updating user: ${JSON.stringify({ id, ...userData })}`);
+
+    const sanitizedBio = sanitizeText(bio.trim());
+    await this.repository.update(id, {
+      bio: sanitizedBio,
+      ...userData,
+    });
 
     if (profilePicture) {
       await this.saveProfilePicture(id, profilePicture);
@@ -295,6 +307,8 @@ export class UsersService {
     if (coverPhoto) {
       await this.saveCoverPhoto(id, coverPhoto);
     }
+
+    const user = await this.getUser({ id });
     return { user };
   }
 
@@ -331,7 +345,7 @@ export class UsersService {
     userId: number,
     profilePicture: Promise<FileUpload>,
   ) {
-    const filename = await saveImage(profilePicture);
+    const filename = await saveImage(profilePicture, this.logger);
     const imageData = { imageType: ImageTypes.ProfilePicture, userId };
     await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({
@@ -341,7 +355,7 @@ export class UsersService {
   }
 
   async saveCoverPhoto(userId: number, coverPhoto: Promise<FileUpload>) {
-    const filename = await saveImage(coverPhoto);
+    const filename = await saveImage(coverPhoto, this.logger);
     const imageData = { imageType: ImageTypes.CoverPhoto, userId };
     await this.imagesService.deleteImage(imageData);
     return this.imagesService.createImage({

@@ -32,6 +32,7 @@ import {
   GROUP_RESERVATIONS_LIMIT,
   GROUP_STAND_ASIDES_LIMIT,
 } from '../groups/groups.constants';
+import { sanitizeText } from '../shared/shared.utils';
 
 type ProposalWithCommentCount = Proposal & { commentCount: number };
 
@@ -105,14 +106,17 @@ export class ProposalsService {
 
   async createProposal(
     {
+      body,
       images,
       action: { groupCoverPhoto, role, event, ...action },
       ...proposalData
     }: CreateProposalInput,
     user: User,
   ) {
+    const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
     const proposal = await this.repository.save({
       ...proposalData,
+      body: sanitizedBody,
       userId: user.id,
       action,
     });
@@ -148,10 +152,12 @@ export class ProposalsService {
 
   async updateProposal({
     id,
+    body,
     images,
     action: { groupCoverPhoto, ...action },
     ...data
   }: UpdateProposalInput) {
+    const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
     const proposalWithAction = await this.getProposal(id, ['action']);
     const newAction = {
       ...proposalWithAction.action,
@@ -161,6 +167,7 @@ export class ProposalsService {
       ...proposalWithAction,
       ...data,
       action: newAction,
+      body: sanitizedBody,
     });
 
     if (

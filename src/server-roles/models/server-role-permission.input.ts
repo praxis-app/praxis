@@ -15,6 +15,9 @@ export class ServerRolePermissionInput {
   manageEvents?: boolean;
 
   @Field({ nullable: true })
+  manageSettings?: boolean;
+
+  @Field({ nullable: true })
   manageInvites?: boolean;
 
   @Field({ nullable: true })

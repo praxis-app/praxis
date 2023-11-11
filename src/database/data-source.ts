@@ -1,5 +1,6 @@
-import { config } from 'dotenv';
+import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
+import { Canary } from '../canaries/models/canary.model';
 import { Comment } from '../comments/models/comment.model';
 import { EventAttendee } from '../events/event-attendees/models/event-attendee.model';
 import { Event } from '../events/models/event.model';
@@ -18,6 +19,7 @@ import { ProposalActionEvent } from '../proposals/proposal-actions/proposal-acti
 import { ProposalActionPermission } from '../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model';
 import { ProposalActionRoleMember } from '../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model';
 import { ProposalActionRole } from '../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model';
+import { ServerConfig } from '../server-configs/models/server-configs.model';
 import { ServerInvite } from '../server-invites/models/server-invite.model';
 import { ServerRolePermission } from '../server-roles/models/server-role-permission.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
@@ -44,8 +46,10 @@ import { RemoveMemberRequestIdSeq1690336764201 } from './migrations/169033676420
 import { AddCommentTable1693003196421 } from './migrations/1693003196421-AddCommentTable';
 import { GroupMemberRequestCleanUp1694647639797 } from './migrations/1694647639797-GroupMemberRequestCleanUp';
 import { AddProposalActionEventTables1694657129939 } from './migrations/1694657129939-AddProposalActionEventTables';
+import { AddServerConfigTable1699135846939 } from './migrations/1699135846939-AddServerConfigTable';
+import { AddCanaryTable1699136722535 } from './migrations/1699136722535-AddCanaryTable';
 
-config();
+dotenv.config();
 
 export default new DataSource({
   type: 'postgres',
@@ -55,6 +59,7 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
   port: parseInt(process.env.DB_PORT as string),
   entities: [
+    Canary,
     Comment,
     Event,
     EventAttendee,
@@ -73,6 +78,7 @@ export default new DataSource({
     ProposalActionPermission,
     ProposalActionRole,
     ProposalActionRoleMember,
+    ServerConfig,
     ServerInvite,
     ServerRole,
     ServerRolePermission,
@@ -80,6 +86,7 @@ export default new DataSource({
     Vote,
   ],
   migrations: [
+    AddCanaryTable1699136722535,
     AddCommentTable1693003196421,
     AddEventTables1690147636077,
     AddFollowTable1679778147216,
@@ -91,6 +98,7 @@ export default new DataSource({
     AddProposalActionRoleCascadeDelete1685748700121,
     AddProposalActionRoleTable1684893300206,
     AddRoleMemberLinkTable1681172948650,
+    AddServerConfigTable1699135846939,
     AddServerInviteTable1677339785709,
     CleanUpGroupMemberRequestTable1690168731029,
     DropGroupMemberEntityTable1681010509841,

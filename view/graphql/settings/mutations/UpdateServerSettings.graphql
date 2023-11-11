@@ -1,0 +1,12 @@
+mutation UpdateServerSettings($serverConfigData: UpdateServerConfigInput!) {
+  updateServerConfig(serverConfigData: $serverConfigData) {
+    serverConfig {
+      ...ServerSettingsForm
+    }
+    canary {
+      id
+      statement
+      updatedAt
+    }
+  }
+}

@@ -5,6 +5,7 @@ import {
   Article as DocsIcon,
   Link as InvitesIcon,
   ExitToApp as SessionIcon,
+  Settings,
   PersonAdd as SignUpIcon,
   SupervisedUserCircle as UsersIcon,
 } from '@mui/icons-material';
@@ -58,7 +59,7 @@ const NavDrawer = () => {
 
   const { data: meData } = useMeQuery({ skip: !isLoggedIn });
   const { data: isFirstUserData } = useIsFirstUserQuery({ skip: isLoggedIn });
-  const [logOut] = useLogOutMutation();
+  const [logOut, { client }] = useLogOutMutation();
 
   const { t } = useTranslation();
   const { pathname } = useLocation();
@@ -71,8 +72,8 @@ const NavDrawer = () => {
         isAuthLoadingVar(false);
         isRefreshingTokenVar(false);
         navigate(NavigationPaths.LogIn);
+        client.cache.reset();
       },
-      update: (cache) => cache.reset(),
     });
 
   const handleLinkClick = (path: string) => () => {
@@ -127,8 +128,13 @@ const NavDrawer = () => {
     const { me } = meData;
     const userProfilePath = getUserProfilePath(me.name);
 
-    const { removeMembers, manageRoles, createInvites, manageInvites } =
-      me.serverPermissions;
+    const {
+      createInvites,
+      manageInvites,
+      manageRoles,
+      manageSettings,
+      removeMembers,
+    } = me.serverPermissions;
 
     return (
       <>
@@ -163,6 +169,17 @@ const NavDrawer = () => {
               <InvitesIcon />
             </ListItemIcon>
             <ListItemText primary={t('navigation.invites')} />
+          </ListItemButton>
+        )}
+
+        {manageSettings && (
+          <ListItemButton
+            onClick={handleLinkClick(NavigationPaths.ServerSettings)}
+          >
+            <ListItemIcon>
+              <Settings />
+            </ListItemIcon>
+            <ListItemText primary={t('navigation.settings')} />
           </ListItemButton>
         )}
 

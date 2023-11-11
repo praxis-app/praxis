@@ -10,17 +10,19 @@ import {
 import { Form, Formik, FormikFormProps, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  FieldNames,
+  KeyCodes,
+  TypeNames,
+} from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { CommentFormFragment } from '../../graphql/comments/fragments/gen/CommentForm.gen';
 import { useCreateCommentMutation } from '../../graphql/comments/mutations/gen/CreateComment.gen';
 import { useUpdateCommentMutation } from '../../graphql/comments/mutations/gen/UpdateComment.gen';
 import { CreateCommentInput, UpdateCommentInput } from '../../graphql/gen';
 import { useDeleteImageMutation } from '../../graphql/images/mutations/gen/DeleteImage.gen';
-import {
-  FieldNames,
-  KeyCodes,
-  TypeNames,
-} from '../../constants/shared.constants';
+import { isEntityTooLarge } from '../../utils/error.utils';
+import { validateImageInput } from '../../utils/image.utils';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
 import ImageInput from '../Images/ImageInput';
@@ -48,6 +50,7 @@ const CommentForm = ({
   const [images, setImages] = useState<File[]>([]);
   const [imagesInputKey, setImagesInputKey] = useState('');
   const [showForm, setShowForm] = useState(expanded);
+  const [blurCount, setBlurCount] = useState(0);
 
   const [createComment] = useCreateCommentMutation();
   const [updateComment] = useUpdateCommentMutation();
@@ -145,19 +148,26 @@ const CommentForm = ({
   };
 
   const handleSubmit = async (
-    formValues: CreateCommentInput | UpdateCommentInput,
+    { body, ...formValues }: CreateCommentInput | UpdateCommentInput,
     formikHelpers: FormikHelpers<CreateCommentInput | UpdateCommentInput>,
   ) => {
+    const values = { body: body?.trim(), ...formValues };
     try {
+      if (images) {
+        validateImageInput(images);
+      }
       if (editComment) {
-        await handleUpdate(formValues, editComment);
+        await handleUpdate(values, editComment);
         return;
       }
-      await handleCreate(formValues, formikHelpers);
+      await handleCreate(values, formikHelpers);
     } catch (err) {
+      const title = isEntityTooLarge(err)
+        ? t('errors.imageTooLarge')
+        : String(err);
       toastVar({
         status: 'error',
-        title: String(err),
+        title,
       });
     }
   };
@@ -195,6 +205,13 @@ const CommentForm = ({
     setImagesInputKey(getRandomString());
   };
 
+  const handleInputMount = (input: HTMLInputElement | null) => {
+    if (!input || !enableAutoFocus || blurCount) {
+      return;
+    }
+    input.focus();
+  };
+
   if (!showForm) {
     return (
       <Flex>
@@ -228,23 +245,24 @@ const CommentForm = ({
       enableReinitialize
       {...formProps}
     >
-      {({ handleChange, values, submitForm }) => (
+      {({ handleChange, values, submitForm, isSubmitting }) => (
         <Form>
           <FormGroup row>
             <UserAvatar size={35} sx={{ marginRight: 1 }} />
 
             <Box
-              flex={1}
+              bgcolor="background.secondary"
               borderRadius={4}
               paddingX={1.5}
               paddingY={0.2}
-              sx={{ backgroundColor: 'background.secondary' }}
+              flex={1}
             >
               <Input
                 autoComplete="off"
                 name={FieldNames.Body}
                 onChange={handleChange}
-                inputRef={(input) => input && enableAutoFocus && input.focus()}
+                inputRef={handleInputMount}
+                onBlur={() => setBlurCount(blurCount + 1)}
                 onKeyDown={(e) => handleFilledInputKeyDown(e, submitForm)}
                 placeholder={t('comments.prompts.writeComment')}
                 sx={inputStyles}
@@ -262,9 +280,10 @@ const CommentForm = ({
                 />
 
                 <IconButton
-                  edge="end"
+                  disabled={isSubmitting || (!values.body && !images?.length)}
                   sx={sendButtonStyles}
                   type="submit"
+                  edge="end"
                   disableRipple
                 >
                   <Send sx={{ fontSize: 20, color: 'text.secondary' }} />

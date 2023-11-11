@@ -1,8 +1,8 @@
-import { config } from 'dotenv';
+import * as dotenv from 'dotenv';
 import { JwtPayload, verify } from 'jsonwebtoken';
 import { RequestWithCookies } from './auth.types';
 
-config();
+dotenv.config();
 
 export const decodeToken = (token: string) => {
   try {

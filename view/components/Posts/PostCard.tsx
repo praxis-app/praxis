@@ -12,15 +12,16 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { isLoggedInVar } from '../../graphql/cache';
-import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
-import { useDeletePostMutation } from '../../graphql/posts/mutations/gen/DeletePost.gen';
-import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
 } from '../../constants/shared.constants';
+import { isLoggedInVar } from '../../graphql/cache';
+import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
+import { useDeletePostMutation } from '../../graphql/posts/mutations/gen/DeletePost.gen';
+import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { getGroupPath } from '../../utils/group.utils';
+import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import EventItemAvatar from '../Events/EventItemAvatar';
@@ -80,6 +81,8 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
   const userProfilePath = getUserProfilePath(user?.name);
 
   const bodyStyles: SxProps = {
+    lineHeight: 1.25,
+    whiteSpace: 'pre-wrap',
     marginBottom: images.length ? 2.5 : 3.5,
   };
   const cardContentStyles: SxProps = {
@@ -168,7 +171,12 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
       />
 
       <CardContent sx={cardContentStyles}>
-        {body && <Typography sx={bodyStyles}>{body}</Typography>}
+        {body && (
+          <Typography
+            dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
+            sx={bodyStyles}
+          />
+        )}
 
         {!!images.length && (
           <Link aria-label={t('images.labels.attachedImages')} href={postPath}>

@@ -35,6 +35,10 @@ export class ServerRolePermission {
 
   @Column({ default: false })
   @Field()
+  manageSettings: boolean;
+
+  @Column({ default: false })
+  @Field()
   manageInvites: boolean;
 
   @Column({ default: false })

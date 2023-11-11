@@ -3,14 +3,15 @@ import { Card, CardContent, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { isLoggedInVar } from '../../graphql/cache';
-import { useGroupProfileLazyQuery } from '../../graphql/groups/queries/gen/GroupProfile.gen';
 import GroupEventsTab from '../../components/Groups/GroupEventsTab';
 import GroupProfileCard from '../../components/Groups/GroupProfileCard';
 import Feed from '../../components/Shared/Feed';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import ToggleForms from '../../components/Shared/ToggleForms';
+import { isLoggedInVar } from '../../graphql/cache';
+import { useGroupProfileLazyQuery } from '../../graphql/groups/queries/gen/GroupProfile.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
+import { urlifyText } from '../../utils/shared.utils';
 
 const GroupPage = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -47,6 +48,7 @@ const GroupPage = () => {
   }
 
   const { group, me } = data;
+  const description = urlifyText(group.description);
 
   return (
     <>
@@ -75,7 +77,10 @@ const GroupPage = () => {
               {t('groups.tabs.about')}
             </Typography>
 
-            <Typography>{group.description}</Typography>
+            <Typography
+              dangerouslySetInnerHTML={{ __html: description }}
+              whiteSpace="pre-wrap"
+            />
           </CardContent>
         </Card>
       )}

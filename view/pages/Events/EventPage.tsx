@@ -9,17 +9,18 @@ import { truncate } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { isLoggedInVar } from '../../graphql/cache';
-import { useEventPageLazyQuery } from '../../graphql/events/queries/gen/EventPage.gen';
 import EventPageCard from '../../components/Events/EventPageCard';
 import PostForm from '../../components/Posts/PostForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import Feed from '../../components/Shared/Feed';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { TruncationSizes } from '../../constants/shared.constants';
+import { isLoggedInVar } from '../../graphql/cache';
+import { useEventPageLazyQuery } from '../../graphql/events/queries/gen/EventPage.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../utils/error.utils';
 import { getGroupEventsTabPath } from '../../utils/group.utils';
+import { urlifyText } from '../../utils/shared.utils';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
@@ -64,6 +65,7 @@ const EventPage = () => {
   }
 
   const { event, me } = data;
+  const description = urlifyText(event.description);
   const canManageAllEvents = !!me?.serverPermissions.manageEvents;
 
   const breadcrumbs = event.group
@@ -101,7 +103,10 @@ const EventPage = () => {
               {t('events.headers.whatToExpect')}
             </Typography>
 
-            <Typography>{event.description}</Typography>
+            <Typography
+              dangerouslySetInnerHTML={{ __html: description }}
+              whiteSpace="pre-wrap"
+            />
           </CardContent>
         </Card>
       )}

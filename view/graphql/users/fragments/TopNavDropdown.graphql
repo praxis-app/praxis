@@ -1,7 +1,10 @@
+# TODO: Add a TopNavDesktop query and include TopNavDropdown in it
+
 fragment TopNavDropdown on User {
   id
   name
   serverPermissions {
     manageRoles
+    manageSettings
   }
 }

@@ -39,7 +39,8 @@
 
   "errors": {
     "imageUploadError": "Unable to upload images.",
-    "somethingWentWrong": "Something went wrong."
+    "somethingWentWrong": "Something went wrong.",
+    "imageTooLarge": "Image is too large. Maximum file size is 10MB."
   },
 
   "states": {
@@ -57,6 +58,8 @@
     "preferences": "Preferences",
     "profile": "Profile",
     "roles": "Roles",
+    "serverSettings": "Server Settings",
+    "settings": "Settings",
     "users": "Users"
   },
 
@@ -467,6 +470,29 @@
       "missingEmail": "Email cannot be empty",
       "missingName": "Name cannot be empty",
       "missingPassword": "Password cannot be empty"
+    }
+  },
+
+  "canary": {
+    "headers": {
+      "canaryStatement": "Canary Statement"
+    },
+    "prompts": {
+      "canaryStatementMissing": "Canary statement is missing."
+    },
+    "labels": {
+      "updatedAt": "Last updated on {{updatedAt}}",
+      "showCanaryStatement": "Show Canary Statement",
+      "expiresAt": "Canary message expires after"
+    },
+    "placeholders": {
+      "canaryStatement": "Canary statement"
+    },
+    "descriptions": {
+      "canaryStatement": "Display a message stating that this server has not been compromised by a third party."
+    },
+    "errors": {
+      "couldNotUpdate": "Server settings could not be updated"
     }
   },
 

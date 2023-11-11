@@ -1,19 +1,24 @@
-import { UnsupportedMediaTypeException } from '@nestjs/common';
+import { Logger, UnsupportedMediaTypeException } from '@nestjs/common';
 import * as fs from 'fs';
 import { FileUpload } from 'graphql-upload-ts';
 import { promisify } from 'util';
-
-const DEFAULT_IMAGES_SIZE = 10;
-const VALID_IMAGE_FORMAT = /(jpe?g|png|gif|webp)$/;
+import { DEFAULT_IMAGES_SIZE, VALID_IMAGE_FORMAT } from './image.constants';
 
 export const getUploadsPath = () => `${__dirname}/../../content`;
 
-export const saveImage = async (image: Promise<FileUpload>) => {
-  const { createReadStream, mimetype } = await image;
-  const extension = mimetype.split('/')[1];
+export const saveImage = async (
+  uploadedImage: Promise<FileUpload>,
+  logger?: Logger,
+) => {
+  const image = await uploadedImage;
+  const extension = image.mimetype.split('/')[1];
 
   if (!extension.match(VALID_IMAGE_FORMAT)) {
     throw new UnsupportedMediaTypeException('Only image files are allowed');
+  }
+
+  if (logger) {
+    logger.log(`Saving image: ${JSON.stringify(image)}`);
   }
 
   const uploadsPath = getUploadsPath();
@@ -21,10 +26,13 @@ export const saveImage = async (image: Promise<FileUpload>) => {
   const path = `${uploadsPath}/${filename}`;
 
   await new Promise((resolve, reject) => {
-    const stream = createReadStream();
+    const stream = image.createReadStream();
     stream
       .pipe(fs.createWriteStream(path))
       .on('error', (error: Error) => {
+        if (logger) {
+          logger.error(`Failed to save image: ${JSON.stringify(error)}`);
+        }
         fs.unlink(path, () => {
           reject(error);
         });

@@ -1,0 +1,4 @@
+fragment ServerSettingsForm on ServerConfig {
+  id
+  showCanaryStatement
+}

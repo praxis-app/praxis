@@ -14,6 +14,11 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import {
+  MIDDOT_WITH_SPACES,
+  NavigationPaths,
+  TypeNames,
+} from '../../constants/shared.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { GroupCardFragment } from '../../graphql/groups/fragments/gen/GroupCard.gen';
 import {
@@ -25,16 +30,12 @@ import {
   GroupsQuery,
 } from '../../graphql/groups/queries/gen/Groups.gen';
 import {
-  MIDDOT_WITH_SPACES,
-  NavigationPaths,
-  TypeNames,
-} from '../../constants/shared.constants';
-import {
   getEditGroupPath,
   getGroupMembersPath,
   getGroupPath,
   getMemberRequestsPath,
 } from '../../utils/group.utils';
+import { urlifyText } from '../../utils/shared.utils';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import GroupAvatar from './GroupAvatar';
@@ -166,7 +167,11 @@ const GroupCard = ({ group, currentUserId, ...cardProps }: Props) => {
         title={<Link href={groupPath}>{name}</Link>}
       />
       <CardContent>
-        <Typography sx={{ marginBottom: 1.25 }}>{description}</Typography>
+        <Typography
+          dangerouslySetInnerHTML={{ __html: urlifyText(description) }}
+          whiteSpace="pre-wrap"
+          marginBottom={1.25}
+        />
 
         <Box sx={{ marginBottom: isLoggedIn ? 1.75 : 0 }}>
           <Link href={isLoggedIn ? groupMembersPath : groupPath}>

@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
-import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
+import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
+import { sanitizeText } from '../shared/shared.utils';
 import { User } from '../users/models/user.model';
 import { Comment } from './models/comment.model';
 import { CreateCommentInput } from './models/create-comment.input';
@@ -47,15 +48,17 @@ export class CommentsService {
   }
 
   async createComment(
-    { images, ...commentData }: CreateCommentInput,
+    { body, images, ...commentData }: CreateCommentInput,
     user: User,
   ) {
-    if (!commentData.body && !images?.length) {
+    if (!body && !images?.length) {
       throw new Error('Comments must include text or images');
     }
+    const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
     const comment = await this.repository.save({
       ...commentData,
       userId: user.id,
+      body: sanitizedBody,
     });
 
     if (images) {
@@ -69,12 +72,22 @@ export class CommentsService {
     return { comment };
   }
 
-  async updateComment({ id, images, ...commentData }: UpdateCommentInput) {
-    await this.repository.update(id, commentData);
-    const comment = await this.getComment(id);
+  async updateComment({
+    id,
+    body,
+    images,
+    ...commentData
+  }: UpdateCommentInput) {
+    const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
+    await this.repository.update(id, {
+      body: sanitizedBody,
+      ...commentData,
+    });
     if (images) {
-      await this.saveCommentImages(comment.id, images);
+      await this.saveCommentImages(id, images);
     }
+
+    const comment = await this.getComment(id);
     return { comment };
   }
 

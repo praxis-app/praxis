@@ -42,6 +42,8 @@ import {
   HomeFeedDocument,
   HomeFeedQuery,
 } from '../../graphql/users/queries/gen/HomeFeed.gen';
+import { isEntityTooLarge } from '../../utils/error.utils';
+import { validateImageInput } from '../../utils/image.utils';
 import { getProposalActionTypeOptions } from '../../utils/proposal.utils';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
@@ -207,21 +209,31 @@ const ProposalForm = ({
   };
 
   const handleSubmit = async (
-    formValues: CreateProposalInput,
+    { body, images, ...formValues }: CreateProposalInput,
     formHelpers: FormikHelpers<CreateProposalInput>,
   ) => {
+    const values = {
+      ...formValues,
+      body: body?.trim(),
+      images,
+    };
     try {
+      if (images) {
+        validateImageInput(images);
+      }
       if (editProposal) {
-        await handleUpdate(formValues, editProposal);
+        await handleUpdate(values, editProposal);
         return;
       }
-      await handleCreate(formValues, formHelpers);
+      await handleCreate(values, formHelpers);
     } catch (err) {
+      const title = isEntityTooLarge(err)
+        ? t('errors.imageTooLarge')
+        : String(err);
       toastVar({
         status: 'error',
-        title: String(err),
+        title,
       });
-      console.error(err);
     }
   };
 

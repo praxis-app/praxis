@@ -1,11 +1,12 @@
 import { Box, SxProps, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TypeNames } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.gen';
 import { useDeleteCommentMutation } from '../../graphql/comments/mutations/gen/DeleteComment.gen';
-import { TypeNames } from '../../constants/shared.constants';
 import { useIsDesktop } from '../../hooks/shared.hooks';
+import { urlifyText } from '../../utils/shared.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import AttachedImageList from '../Images/AttachedImageList';
 import Flex from '../Shared/Flex';
@@ -120,16 +121,24 @@ const Comment = ({
       />
 
       <Box
-        sx={{ backgroundColor: 'background.secondary' }}
-        maxWidth={isDesktop ? 'calc(100% - 90px)' : undefined}
+        bgcolor="background.secondary"
         borderRadius={4}
+        maxWidth={isDesktop ? 'calc(100% - 90px)' : undefined}
         paddingX={1.5}
         paddingY={0.5}
       >
         <Link href={userPath} sx={{ fontFamily: 'Inter Medium' }}>
           {user.name}
         </Link>
-        <Typography lineHeight={1.2}>{body}</Typography>
+
+        {body && (
+          <Typography
+            dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
+            whiteSpace="pre-wrap"
+            lineHeight={1.2}
+            paddingY={0.4}
+          />
+        )}
 
         {!!images.length && (
           <AttachedImageList

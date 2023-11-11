@@ -37,6 +37,13 @@ export type ApproveGroupMemberRequestPayload = {
   groupMember: User;
 };
 
+export type Canary = {
+  __typename?: 'Canary';
+  id: Scalars['Int']['output'];
+  statement: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type Comment = {
   __typename?: 'Comment';
   body?: Maybe<Scalars['String']['output']>;
@@ -426,6 +433,7 @@ export type Mutation = {
   updateGroupRole: UpdateGroupRolePayload;
   updatePost: UpdatePostPayload;
   updateProposal: UpdateProposalPayload;
+  updateServerConfig: UpdateServerConfigPayload;
   updateServerRole: UpdateServerRolePayload;
   updateUser: UpdateUserPayload;
   updateVote: UpdateVotePayload;
@@ -603,6 +611,10 @@ export type MutationUpdateProposalArgs = {
   proposalData: UpdateProposalInput;
 };
 
+export type MutationUpdateServerConfigArgs = {
+  serverConfigData: UpdateServerConfigInput;
+};
+
 export type MutationUpdateServerRoleArgs = {
   serverRoleData: UpdateServerRoleInput;
 };
@@ -765,6 +777,7 @@ export type ProposalActionRoleMemberInput = {
 export type Query = {
   __typename?: 'Query';
   authCheck: Scalars['Boolean']['output'];
+  canary: Canary;
   event: Event;
   events: Array<Event>;
   group: Group;
@@ -776,8 +789,10 @@ export type Query = {
   me: User;
   post: Post;
   proposal: Proposal;
+  publicCanary?: Maybe<Canary>;
   publicGroups: Array<Group>;
   publicGroupsFeed: Array<FeedItem>;
+  serverConfig: ServerConfig;
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;
   serverRole: ServerRole;
@@ -833,6 +848,12 @@ export type QueryUsersByIdsArgs = {
   ids: Array<Scalars['Int']['input']>;
 };
 
+export type ServerConfig = {
+  __typename?: 'ServerConfig';
+  id: Scalars['Int']['output'];
+  showCanaryStatement: Scalars['Boolean']['output'];
+};
+
 export type ServerInvite = {
   __typename?: 'ServerInvite';
   createdAt: Scalars['DateTime']['output'];
@@ -853,6 +874,7 @@ export type ServerPermissions = {
   manageInvites: Scalars['Boolean']['output'];
   managePosts: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
+  manageSettings: Scalars['Boolean']['output'];
   removeMembers: Scalars['Boolean']['output'];
 };
 
@@ -876,6 +898,7 @@ export type ServerRolePermission = {
   manageInvites: Scalars['Boolean']['output'];
   managePosts: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
+  manageSettings: Scalars['Boolean']['output'];
   removeMembers: Scalars['Boolean']['output'];
   serverRole: ServerRole;
 };
@@ -887,6 +910,7 @@ export type ServerRolePermissionInput = {
   manageInvites?: InputMaybe<Scalars['Boolean']['input']>;
   managePosts?: InputMaybe<Scalars['Boolean']['input']>;
   manageRoles?: InputMaybe<Scalars['Boolean']['input']>;
+  manageSettings?: InputMaybe<Scalars['Boolean']['input']>;
   removeMembers?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
@@ -922,13 +946,13 @@ export type UpdateEventAttendeePayload = {
 
 export type UpdateEventInput = {
   coverPhoto?: InputMaybe<Scalars['Upload']['input']>;
-  description: Scalars['String']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
   endsAt?: InputMaybe<Scalars['DateTime']['input']>;
   externalLink?: InputMaybe<Scalars['String']['input']>;
   hostId?: InputMaybe<Scalars['Int']['input']>;
   id: Scalars['Int']['input'];
   location?: InputMaybe<Scalars['String']['input']>;
-  name: Scalars['String']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
   online?: InputMaybe<Scalars['Boolean']['input']>;
   startsAt: Scalars['DateTime']['input'];
 };
@@ -989,6 +1013,18 @@ export type UpdateProposalInput = {
 export type UpdateProposalPayload = {
   __typename?: 'UpdateProposalPayload';
   proposal: Proposal;
+};
+
+export type UpdateServerConfigInput = {
+  canaryStatement?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['Int']['input'];
+  showCanaryStatement?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type UpdateServerConfigPayload = {
+  __typename?: 'UpdateServerConfigPayload';
+  canary: Canary;
+  serverConfig: ServerConfig;
 };
 
 export type UpdateServerRoleInput = {

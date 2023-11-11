@@ -1,0 +1,9 @@
+query ServerSettings {
+  serverConfig {
+    ...ServerSettingsForm
+  }
+  canary {
+    id
+    statement
+  }
+}

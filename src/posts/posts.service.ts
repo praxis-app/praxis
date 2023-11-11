@@ -8,6 +8,7 @@ import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
 import { LikesService } from '../likes/likes.service';
 import { Like } from '../likes/models/like.model';
+import { sanitizeText } from '../shared/shared.utils';
 import { User } from '../users/models/user.model';
 import { CreatePostInput } from './models/create-post.input';
 import { Post } from './models/post.model';
@@ -102,8 +103,12 @@ export class PostsService {
     });
   }
 
-  async createPost({ images, ...postData }: CreatePostInput, user: User) {
-    const post = await this.repository.save({ ...postData, userId: user.id });
+  async createPost({ images, body, ...postData }: CreatePostInput, user: User) {
+    const post = await this.repository.save({
+      body: sanitizeText(body.trim()),
+      userId: user.id,
+      ...postData,
+    });
 
     if (images) {
       try {
@@ -116,12 +121,16 @@ export class PostsService {
     return { post };
   }
 
-  async updatePost({ id, images, ...data }: UpdatePostInput) {
-    await this.repository.update(id, data);
-    const post = await this.getPost(id);
+  async updatePost({ id, images, body, ...postData }: UpdatePostInput) {
+    await this.repository.update(id, {
+      body: sanitizeText(body.trim()),
+      ...postData,
+    });
     if (images) {
-      await this.savePostImages(post.id, images);
+      await this.savePostImages(id, images);
     }
+
+    const post = await this.getPost(id);
     return { post };
   }
 

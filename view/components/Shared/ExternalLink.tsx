@@ -1,38 +1,50 @@
-import { useTheme } from '@mui/material';
+import { Link, LinkProps, SxProps } from '@mui/material';
 import { ReactNode } from 'react';
+import { isValidUrl } from '../../utils/shared.utils';
 
-interface Props {
+interface Props extends LinkProps {
   children: ReactNode;
-  href: string;
   leftSpace?: boolean;
   newTab?: boolean;
 }
 
-const ExternalLink = ({ children, href, leftSpace, newTab = true }: Props) => {
-  const theme = useTheme();
+const ExternalLink = ({
+  children,
+  href,
+  leftSpace,
+  newTab = true,
+  sx,
+  ...linkProps
+}: Props) => {
+  const isLinkText = typeof children === 'string' && isValidUrl(children);
+
+  const sharedStyles: SxProps = {
+    color: 'text.primary',
+    textDecoration: 'none',
+    textTransform: isLinkText ? 'lowercase' : 'none',
+    ...sx,
+  };
 
   if (!newTab) {
     return (
-      <a href={href}>
+      <Link href={href} sx={sharedStyles} {...linkProps}>
         {leftSpace ? ' ' : ''}
         {children}
-      </a>
+      </Link>
     );
   }
 
   return (
-    <a
+    <Link
       href={href}
       rel="noopener noreferrer"
+      sx={sharedStyles}
       target="_blank"
-      style={{
-        textDecoration: 'none',
-        color: theme.palette.text.primary,
-      }}
+      {...linkProps}
     >
       {leftSpace ? ' ' : ''}
       {children}
-    </a>
+    </Link>
   );
 };
 

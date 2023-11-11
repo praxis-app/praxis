@@ -8,6 +8,7 @@ export const DEFAULT_ROLE_COLOR = '#f44336';
 export const SERVER_PERMISSION_NAMES: (keyof ServerRolePermissionInput)[] = [
   'manageRoles',
   'manageEvents',
+  'manageSettings',
   'managePosts',
   'manageInvites',
   'createInvites',

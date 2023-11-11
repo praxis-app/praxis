@@ -26,7 +26,9 @@ import {
 } from '../../graphql/groups/queries/gen/GroupEventsTab.gen';
 import { useGroupMembersByGroupIdLazyQuery } from '../../graphql/groups/queries/gen/GroupMembersByGroupId.gen';
 import { Blurple } from '../../styles/theme';
+import { isEntityTooLarge } from '../../utils/error.utils';
 import { getEventPath } from '../../utils/event.utils';
+import { validateImageInput } from '../../utils/image.utils';
 import { getRandomString, isValidUrl } from '../../utils/shared.utils';
 import { startOfNextHour } from '../../utils/time.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
@@ -162,16 +164,26 @@ const EventForm = ({ editEvent, groupId }: Props) => {
     });
 
   const handleSubmit = async (formValues: CreateEventInput) => {
+    const values = {
+      ...formValues,
+      description: formValues.description?.trim(),
+    };
     try {
+      if (coverPhoto) {
+        validateImageInput(coverPhoto);
+      }
       if (editEvent) {
-        await handleUpdate(formValues, editEvent);
+        await handleUpdate(values, editEvent);
         return;
       }
-      await handleCreate(formValues);
+      await handleCreate(values);
     } catch (err) {
+      const title = isEntityTooLarge(err)
+        ? t('errors.imageTooLarge')
+        : String(err);
       toastVar({
         status: 'error',
-        title: String(err),
+        title,
       });
     }
   };
