@@ -28,6 +28,7 @@ import {
   getRandomString,
   removeLocalStorageItem,
 } from '../../utils/shared.utils';
+import { isEntityTooLarge } from '../../utils/error.utils';
 
 const SignUpForm = () => {
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
@@ -94,9 +95,12 @@ const SignUpForm = () => {
         removeLocalStorageItem(INVITE_TOKEN);
       },
       onError(err) {
+        const title = isEntityTooLarge(err)
+          ? t('errors.imageTooLarge')
+          : err.message;
         toastVar({
           status: 'error',
-          title: err.message,
+          title,
         });
       },
     });
