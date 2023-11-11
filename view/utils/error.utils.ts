@@ -9,11 +9,9 @@ export const isDeniedAccess = (error: ApolloError | undefined) => {
   return [UNAUTHORIZED, FORBIDDEN].includes(error.message);
 };
 
-export const isEntityTooLarge = (error: ApolloError | undefined) => {
+export const isEntityTooLarge = ({ networkError }: ApolloError) => {
   const statusCode =
-    error?.networkError &&
-    'statusCode' in error.networkError &&
-    error.networkError.statusCode;
+    networkError && 'statusCode' in networkError && networkError.statusCode;
 
   return statusCode === 413;
 };
