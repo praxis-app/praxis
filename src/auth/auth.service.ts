@@ -103,7 +103,7 @@ export class AuthService {
       return null;
     }
     const payload = await this.decodeToken(cookies.access_token);
-    return payload?.sub ? payload.sub : null;
+    return payload ? payload.sub : null;
   }
 
   async decodeToken(token: string) {
