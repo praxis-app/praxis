@@ -15,9 +15,9 @@ export const formatGqlError = (
 ) => {
   const locationsStr = JSON.stringify(locations);
   const details = `[GraphQL error]: Message: ${message}, Locations: ${locationsStr}, Path: ${path}`;
-  const stacktrace = `Stacktrace: ${extensions?.stacktrace}`;
 
-  if (withStacktrace) {
+  if (withStacktrace && extensions) {
+    const stacktrace = `Stacktrace: ${extensions.stacktrace}`;
     return `${details}\n\n${stacktrace}`;
   }
   return details;
