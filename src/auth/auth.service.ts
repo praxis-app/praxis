@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
+import { Request } from 'express';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
-import { RequestWithCookies } from './auth.types';
 import { LoginInput } from './models/login.input';
 import { SignUpInput } from './models/sign-up.input';
 import { AccessTokenPayload } from './strategies/jwt.strategy';
@@ -98,12 +98,13 @@ export class AuthService {
     });
   }
 
-  async getSub({ cookies }: RequestWithCookies) {
-    if (!cookies) {
+  async getSub({ headers }: Request) {
+    const [type, token] = headers.authorization?.split(' ') ?? [];
+    const payload = await this.decodeToken(token);
+    if (type !== 'Bearer' || !payload) {
       return null;
     }
-    const payload = await this.decodeToken(cookies.access_token);
-    return payload ? payload.sub : null;
+    return payload.sub;
   }
 
   async decodeToken(token: string) {
