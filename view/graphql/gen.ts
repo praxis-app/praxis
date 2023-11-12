@@ -422,8 +422,8 @@ export type Mutation = {
   followUser: FollowUserPayload;
   leaveGroup: Scalars['Boolean']['output'];
   logOut: Scalars['Boolean']['output'];
-  login: Scalars['Boolean']['output'];
-  signUp: Scalars['Boolean']['output'];
+  login: Scalars['String']['output'];
+  signUp: Scalars['String']['output'];
   unfollowUser: Scalars['Boolean']['output'];
   updateComment: UpdateCommentPayload;
   updateEvent: UpdateEventPayload;

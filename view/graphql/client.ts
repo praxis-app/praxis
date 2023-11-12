@@ -1,13 +1,20 @@
 import { ApolloClient, Observable, from } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { createUploadLink } from 'apollo-upload-client';
 import { Environments } from '../constants/shared.constants';
 import { formatGQLError } from '../utils/error.utils';
 import cache from './cache';
 
-const terminatingLink = createUploadLink({
-  headers: { 'Apollo-Require-Preflight': 'true' },
-  uri: '/api/graphql',
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('token');
+  return {
+    headers: {
+      ...headers,
+      'Apollo-Require-Preflight': 'true',
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  };
 });
 
 const errorLink = onError(
@@ -33,8 +40,12 @@ const errorLink = onError(
     }),
 );
 
+const uploadLink = createUploadLink({
+  uri: '/api/graphql',
+});
+
 const client = new ApolloClient({
-  link: from([errorLink, terminatingLink]),
+  link: from([authLink, errorLink, uploadLink]),
   connectToDevTools: process.env.NODE_ENV !== Environments.Production,
   cache,
 });

@@ -37,6 +37,7 @@ const TopNavDropdown = ({
         isLoggedInVar(false);
         isAuthLoadingVar(false);
         navigate(NavigationPaths.LogIn);
+        localStorage.removeItem('token');
         client.cache.reset();
       },
       update: (cache) => cache.reset(),

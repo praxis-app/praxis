@@ -11,7 +11,7 @@ export type LoginMutationVariables = Types.Exact<{
   input: Types.LoginInput;
 }>;
 
-export type LoginMutation = { __typename?: 'Mutation'; login: boolean };
+export type LoginMutation = { __typename?: 'Mutation'; login: string };
 
 export const LoginDocument = gql`
   mutation Login($input: LoginInput!) {
