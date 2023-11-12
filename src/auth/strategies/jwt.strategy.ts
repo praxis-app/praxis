@@ -31,10 +31,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return this.usersService.getUser({ id: sub });
   }
 
-  private static extractJWT(req: Request): string | null {
-    if (req.cookies && 'auth' in req.cookies) {
-      return req.cookies.auth.access_token;
-    }
-    return null;
+  private static extractJWT(req: Request) {
+    const [type, token] = req.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }
