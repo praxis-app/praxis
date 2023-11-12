@@ -13,6 +13,7 @@ export interface AccessTokenPayload {
   sub: number;
 }
 
+// TODO: Determine if this is still being used anywhere
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
