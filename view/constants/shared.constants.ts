@@ -4,6 +4,8 @@ export const TAB_QUERY_PARAM = '?tab=';
 export const FORBIDDEN = 'Forbidden';
 export const UNAUTHORIZED = 'Unauthorized';
 
+export const ACCESS_TOKEN = 'access_token';
+
 export const MIDDOT_WITH_SPACES = ' · ';
 export const SCROLL_DURATION = 250;
 

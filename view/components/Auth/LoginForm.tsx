@@ -7,7 +7,10 @@ import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import { TextField } from '../../components/Shared/TextField';
-import { NavigationPaths } from '../../constants/shared.constants';
+import {
+  ACCESS_TOKEN,
+  NavigationPaths,
+} from '../../constants/shared.constants';
 import { UserFieldNames } from '../../constants/user.constants';
 import { useLoginMutation } from '../../graphql/auth/mutations/gen/Login.gen';
 import {
@@ -33,7 +36,7 @@ const LoginForm = () => {
     await login({
       variables: { input },
       onCompleted({ login: { access_token } }) {
-        localStorage.setItem('token', access_token);
+        localStorage.setItem(ACCESS_TOKEN, access_token);
         navigate(NavigationPaths.Home);
         isLoggedInVar(true);
       },

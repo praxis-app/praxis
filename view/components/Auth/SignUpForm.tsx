@@ -11,6 +11,7 @@ import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import { TextField } from '../../components/Shared/TextField';
 import { INVITE_TOKEN } from '../../constants/server-invite.constants';
+import { ACCESS_TOKEN } from '../../constants/shared.constants';
 import { UserFieldNames } from '../../constants/user.constants';
 import { useSignUpMutation } from '../../graphql/auth/mutations/gen/SignUp.gen';
 import {
@@ -112,7 +113,7 @@ const SignUpForm = () => {
         isLoggedInVar(true);
         setImageInputKey(getRandomString());
         removeLocalStorageItem(INVITE_TOKEN);
-        localStorage.setItem('token', access_token);
+        localStorage.setItem(ACCESS_TOKEN, access_token);
       },
       onError(err) {
         const title = isEntityTooLarge(err)

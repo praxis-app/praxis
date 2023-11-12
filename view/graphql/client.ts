@@ -2,17 +2,17 @@ import { ApolloClient, Observable, from } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 import { createUploadLink } from 'apollo-upload-client';
-import { Environments } from '../constants/shared.constants';
+import { ACCESS_TOKEN, Environments } from '../constants/shared.constants';
 import { formatGQLError } from '../utils/error.utils';
 import cache from './cache';
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('token');
+  const accessToken = localStorage.getItem(ACCESS_TOKEN);
   return {
     headers: {
       ...headers,
       'Apollo-Require-Preflight': 'true',
-      authorization: token ? `Bearer ${token}` : '',
+      authorization: accessToken ? `Bearer ${accessToken}` : '',
     },
   };
 });

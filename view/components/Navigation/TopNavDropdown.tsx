@@ -2,7 +2,10 @@ import { AccountBox, ExitToApp, Person, Settings } from '@mui/icons-material';
 import { Menu, MenuItem, SvgIconProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { NavigationPaths } from '../../constants/shared.constants';
+import {
+  ACCESS_TOKEN,
+  NavigationPaths,
+} from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
 import { isAuthLoadingVar, isLoggedInVar } from '../../graphql/cache';
 import { TopNavDropdownFragment } from '../../graphql/users/fragments/gen/TopNavDropdown.gen';
@@ -37,7 +40,7 @@ const TopNavDropdown = ({
         isLoggedInVar(false);
         isAuthLoadingVar(false);
         navigate(NavigationPaths.LogIn);
-        localStorage.removeItem('token');
+        localStorage.removeItem(ACCESS_TOKEN);
         client.cache.reset();
       },
       update: (cache) => cache.reset(),
