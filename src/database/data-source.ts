@@ -48,6 +48,7 @@ import { GroupMemberRequestCleanUp1694647639797 } from './migrations/16946476397
 import { AddProposalActionEventTables1694657129939 } from './migrations/1694657129939-AddProposalActionEventTables';
 import { AddServerConfigTable1699135846939 } from './migrations/1699135846939-AddServerConfigTable';
 import { AddCanaryTable1699136722535 } from './migrations/1699136722535-AddCanaryTable';
+import { RemoveRefreshTokenTable1699815961902 } from './migrations/1699815961902-RemoveRefreshTokenTable';
 
 dotenv.config();
 
@@ -107,6 +108,7 @@ export default new DataSource({
     Initial1675388391336,
     RefactorRolesAndPermissions1688001951695,
     RemoveMemberRequestIdSeq1690336764201,
+    RemoveRefreshTokenTable1699815961902,
     RenameGroupMemberRequestTable1688348341669,
     SetDefaultForGroupMemberRequestTable1690333204053,
   ],
