@@ -107,11 +107,12 @@ const SignUpForm = () => {
           query: IsFirstUserDocument,
         });
       },
-      onCompleted() {
+      onCompleted({ signUp: { access_token } }) {
         inviteTokenVar('');
         isLoggedInVar(true);
         setImageInputKey(getRandomString());
         removeLocalStorageItem(INVITE_TOKEN);
+        localStorage.setItem('token', access_token);
       },
       onError(err) {
         const title = isEntityTooLarge(err)

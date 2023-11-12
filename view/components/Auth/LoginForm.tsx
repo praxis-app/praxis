@@ -32,8 +32,8 @@ const LoginForm = () => {
   const handleSubmit = async (input: LoginInput) =>
     await login({
       variables: { input },
-      onCompleted({ login }) {
-        localStorage.setItem('token', login);
+      onCompleted({ login: { access_token } }) {
+        localStorage.setItem('token', access_token);
         navigate(NavigationPaths.Home);
         isLoggedInVar(true);
       },

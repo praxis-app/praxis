@@ -7,6 +7,7 @@ import { Request } from 'express';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
+import { AuthPayload } from './models/auth.payload';
 import { LoginInput } from './models/login.input';
 import { SignUpInput } from './models/sign-up.input';
 import { AccessTokenPayload } from './strategies/jwt.strategy';
@@ -23,9 +24,10 @@ export class AuthService {
     private usersService: UsersService,
   ) {}
 
-  async login({ email, password }: LoginInput) {
+  async login({ email, password }: LoginInput): Promise<AuthPayload> {
     const user = await this.validateUser(email, password);
-    return this.generateAccessToken(user.id);
+    const access_token = await this.generateAccessToken(user.id);
+    return { access_token };
   }
 
   async signUp({
@@ -34,7 +36,7 @@ export class AuthService {
     confirmPassword,
     profilePicture,
     ...userData
-  }: SignUpInput) {
+  }: SignUpInput): Promise<AuthPayload> {
     const users = await this.usersService.getUsers();
     if (users.length && !inviteToken) {
       throw new UserInputError('Missing invite token');
@@ -66,7 +68,8 @@ export class AuthService {
       await this.serverInvitesService.redeemServerInvite(inviteToken);
     }
 
-    return this.generateAccessToken(user.id);
+    const access_token = await this.generateAccessToken(user.id);
+    return { access_token };
   }
 
   async validateUser(

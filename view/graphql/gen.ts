@@ -37,6 +37,11 @@ export type ApproveGroupMemberRequestPayload = {
   groupMember: User;
 };
 
+export type AuthPayload = {
+  __typename?: 'AuthPayload';
+  access_token: Scalars['String']['output'];
+};
+
 export type Canary = {
   __typename?: 'Canary';
   id: Scalars['Int']['output'];
@@ -422,8 +427,8 @@ export type Mutation = {
   followUser: FollowUserPayload;
   leaveGroup: Scalars['Boolean']['output'];
   logOut: Scalars['Boolean']['output'];
-  login: Scalars['String']['output'];
-  signUp: Scalars['String']['output'];
+  login: AuthPayload;
+  signUp: AuthPayload;
   unfollowUser: Scalars['Boolean']['output'];
   updateComment: UpdateCommentPayload;
   updateEvent: UpdateEventPayload;

@@ -441,6 +441,10 @@ type ServerPermissions {
   removeMembers: Boolean!
 }
 
+type AuthPayload {
+  access_token: String!
+}
+
 type ServerConfig {
   id: Int!
   showCanaryStatement: Boolean!
@@ -490,8 +494,8 @@ input EventsInput {
 }
 
 type Mutation {
-  login(input: LoginInput!): String!
-  signUp(input: SignUpInput!): String!
+  login(input: LoginInput!): AuthPayload!
+  signUp(input: SignUpInput!): AuthPayload!
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
