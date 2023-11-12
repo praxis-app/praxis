@@ -4,10 +4,14 @@ import { Button, IconButton, SxProps } from '@mui/material';
 import { MouseEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { inviteTokenVar, isLoggedInVar } from '../../graphql/cache';
+import { NavigationPaths } from '../../constants/shared.constants';
+import {
+  inviteTokenVar,
+  isAuthLoadingVar,
+  isLoggedInVar,
+} from '../../graphql/cache';
 import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
-import { NavigationPaths } from '../../constants/shared.constants';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
@@ -36,6 +40,7 @@ const PROFILE_BTN_STYLES: SxProps = {
 const TopNavDesktop = () => {
   const inviteToken = useReactiveVar(inviteTokenVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isAuthLoading = useReactiveVar(isAuthLoadingVar);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
   const { data: isFirstUserData } = useIsFirstUserQuery({
@@ -50,6 +55,8 @@ const TopNavDesktop = () => {
 
   const me = meData?.me;
   const isFirstUser = isFirstUserData?.isFirstUser;
+  const showAuthButtons = !isLoggedIn && !isAuthLoading;
+
   const userProfilePath = getUserProfilePath(me?.name);
   const signUpPath = isFirstUser
     ? NavigationPaths.SignUp
@@ -92,7 +99,7 @@ const TopNavDesktop = () => {
         </Flex>
       )}
 
-      {!isLoggedIn && (
+      {showAuthButtons && (
         <Flex>
           <Button
             onClick={() => navigate(NavigationPaths.LogIn)}

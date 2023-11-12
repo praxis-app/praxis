@@ -4,11 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
-import {
-  isAuthLoadingVar,
-  isLoggedInVar,
-  isRefreshingTokenVar,
-} from '../../graphql/cache';
+import { isAuthLoadingVar, isLoggedInVar } from '../../graphql/cache';
 import { TopNavDropdownFragment } from '../../graphql/users/fragments/gen/TopNavDropdown.gen';
 
 const ICON_PROPS: SvgIconProps = {
@@ -40,7 +36,6 @@ const TopNavDropdown = ({
       onCompleted() {
         isLoggedInVar(false);
         isAuthLoadingVar(false);
-        isRefreshingTokenVar(false);
         navigate(NavigationPaths.LogIn);
         client.cache.reset();
       },

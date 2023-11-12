@@ -423,7 +423,6 @@ export type Mutation = {
   leaveGroup: Scalars['Boolean']['output'];
   logOut: Scalars['Boolean']['output'];
   login: Scalars['Boolean']['output'];
-  refreshToken: Scalars['Boolean']['output'];
   signUp: Scalars['Boolean']['output'];
   unfollowUser: Scalars['Boolean']['output'];
   updateComment: UpdateCommentPayload;

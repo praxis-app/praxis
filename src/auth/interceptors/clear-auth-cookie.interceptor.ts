@@ -14,7 +14,7 @@ export class ClearAuthCookieInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const ctx = GqlExecutionContext.create(context).getContext();
-        ctx.req.res.clearCookie('auth');
+        ctx.req.res.clearCookie('access_token');
       }),
     );
   }

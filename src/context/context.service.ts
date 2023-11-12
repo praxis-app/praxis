@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AuthTokenClaims } from '../auth/auth.types';
-import { getClaims, getSub } from '../auth/auth.utils';
-import { RefreshTokensService } from '../auth/refresh-tokens/refresh-tokens.service';
+import { AuthService } from '../auth/auth.service';
+import { RequestWithCookies } from '../auth/auth.types';
 import { CommentsService } from '../comments/comments.service';
 import { DataloaderService } from '../dataloader/dataloader.service';
 import { EventsService } from '../events/events.service';
@@ -21,6 +20,7 @@ import { Context, ContextServices } from './context.types';
 @Injectable()
 export class ContextService {
   constructor(
+    private authService: AuthService,
     private commentsService: CommentsService,
     private dataloaderService: DataloaderService,
     private eventsService: EventsService,
@@ -33,16 +33,15 @@ export class ContextService {
     private proposalActionRolesService: ProposalActionRolesService,
     private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,
-    private refreshTokensService: RefreshTokensService,
     private shieldService: ShieldService,
     private usersService: UsersService,
   ) {}
 
-  async getContext({ req }: { req: Request }): Promise<Context> {
-    const claims = getClaims(req);
+  async getContext({ req }: { req: RequestWithCookies }): Promise<Context> {
+    const sub = await this.authService.getSub(req);
+    const user = await this.getUser(sub);
+    const permissions = await this.getUserPermisions(sub);
     const loaders = this.dataloaderService.getLoaders();
-    const permissions = await this.getUserPermisionsFromClaims(claims);
-    const user = await this.getUserFromClaims(claims);
 
     const services: ContextServices = {
       commentsService: this.commentsService,
@@ -56,13 +55,11 @@ export class ContextService {
       proposalActionRolesService: this.proposalActionRolesService,
       proposalActionsService: this.proposalActionsService,
       proposalsService: this.proposalsService,
-      refreshTokensService: this.refreshTokensService,
       shieldService: this.shieldService,
       usersService: this.usersService,
     };
 
     return {
-      claims,
       loaders,
       permissions,
       services,
@@ -70,13 +67,11 @@ export class ContextService {
     };
   }
 
-  private getUserFromClaims(claims: AuthTokenClaims) {
-    const sub = getSub(claims.accessTokenClaims);
-    return sub ? this.usersService.getUser({ id: sub }) : null;
+  private async getUser(userId: number | null) {
+    return userId ? this.usersService.getUser({ id: userId }) : null;
   }
 
-  private getUserPermisionsFromClaims(claims: AuthTokenClaims) {
-    const sub = getSub(claims.accessTokenClaims);
-    return sub ? this.usersService.getUserPermissions(sub) : null;
+  private async getUserPermisions(userId: number | null) {
+    return userId ? this.usersService.getUserPermissions(userId) : null;
   }
 }

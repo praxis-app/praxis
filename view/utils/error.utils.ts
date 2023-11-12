@@ -1,6 +1,27 @@
 import { ApolloError } from '@apollo/client';
-import { SourceLocation } from 'graphql';
+import { GraphQLErrorExtensions, SourceLocation } from 'graphql';
 import { FORBIDDEN, UNAUTHORIZED } from '../constants/shared.constants';
+
+interface FormatGQLErrorOptions {
+  extensions?: GraphQLErrorExtensions;
+  locations?: readonly SourceLocation[];
+  path?: readonly (string | number)[];
+  withStacktrace?: boolean;
+}
+
+export const formatGQLError = (
+  message: string,
+  { extensions, locations, path, withStacktrace }: FormatGQLErrorOptions = {},
+) => {
+  const locationsStr = JSON.stringify(locations);
+  const details = `[GraphQL error]: Message: ${message}, Locations: ${locationsStr}, Path: ${path}`;
+
+  if (withStacktrace && extensions) {
+    const stacktrace = `Stacktrace: ${extensions.stacktrace}`;
+    return `${details}\n\n${stacktrace}`;
+  }
+  return details;
+};
 
 export const isDeniedAccess = (error: ApolloError | undefined) => {
   if (!error?.message) {
@@ -14,13 +35,4 @@ export const isEntityTooLarge = ({ networkError }: ApolloError) => {
     networkError && 'statusCode' in networkError && networkError.statusCode;
 
   return statusCode === 413;
-};
-
-export const formatGQLError = (
-  message: string,
-  path?: readonly (string | number)[],
-  locations?: readonly SourceLocation[],
-) => {
-  const locationsStr = JSON.stringify(locations);
-  return `[GraphQL error]: Message: ${message}, Locations: ${locationsStr}, Path: ${path}`;
 };

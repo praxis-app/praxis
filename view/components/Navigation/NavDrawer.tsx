@@ -22,17 +22,16 @@ import { SxProps, styled } from '@mui/material/styles';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
 import {
   inviteTokenVar,
   isAuthLoadingVar,
   isLoggedInVar,
   isNavDrawerOpenVar,
-  isRefreshingTokenVar,
 } from '../../graphql/cache';
 import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
-import { NavigationPaths } from '../../constants/shared.constants';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
 import UserAvatar from '../Users/UserAvatar';
@@ -70,7 +69,6 @@ const NavDrawer = () => {
       onCompleted() {
         isLoggedInVar(false);
         isAuthLoadingVar(false);
-        isRefreshingTokenVar(false);
         navigate(NavigationPaths.LogIn);
         client.cache.reset();
       },

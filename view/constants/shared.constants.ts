@@ -45,10 +45,6 @@ export enum TypeNames {
   User = 'User',
 }
 
-export enum MutationNames {
-  RefreshToken = 'RefreshToken',
-}
-
 export enum FieldNames {
   Body = 'body',
   Description = 'description',
