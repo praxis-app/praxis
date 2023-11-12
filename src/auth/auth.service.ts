@@ -102,16 +102,18 @@ export class AuthService {
     if (!cookies) {
       return null;
     }
-    const claims = await this.decodeToken(cookies.access_token);
-    return claims?.sub ? parseInt(claims.sub) : null;
+    const payload = await this.decodeToken(cookies.access_token);
+    return payload?.sub ? payload.sub : null;
   }
 
   async decodeToken(token: string) {
     try {
       const jwtKey = this.configService.get('JWT_KEY');
-      return this.jwtService.verifyAsync(token, {
-        secret: jwtKey,
-      });
+      const payload = await this.jwtService.verifyAsync<AccessTokenPayload>(
+        token,
+        { secret: jwtKey },
+      );
+      return payload;
     } catch {
       return null;
     }

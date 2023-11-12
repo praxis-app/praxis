@@ -41,11 +41,7 @@ const TopNavDesktop = () => {
   const { data: isFirstUserData } = useIsFirstUserQuery({
     skip: isLoggedIn,
   });
-  const {
-    data: meData,
-    loading: meLoading,
-    called: meCalled,
-  } = useMeQuery({
+  const { data: meData, loading: meLoading } = useMeQuery({
     skip: !isLoggedIn,
   });
 
@@ -54,7 +50,7 @@ const TopNavDesktop = () => {
 
   const me = meData?.me;
   const isFirstUser = isFirstUserData?.isFirstUser;
-  const showAuthButtons = !isLoggedIn && !meLoading && meCalled;
+  const showAuthButtons = !isLoggedIn && !meLoading;
 
   const userProfilePath = getUserProfilePath(me?.name);
   const signUpPath = isFirstUser
