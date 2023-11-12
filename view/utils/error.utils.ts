@@ -9,7 +9,7 @@ interface FormatGQLErrorOptions {
   withStacktrace?: boolean;
 }
 
-export const formatGqlError = (
+export const formatGQLError = (
   message: string,
   { extensions, locations, path, withStacktrace }: FormatGQLErrorOptions = {},
 ) => {

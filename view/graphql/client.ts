@@ -2,7 +2,7 @@ import { ApolloClient, Observable, from } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { createUploadLink } from 'apollo-upload-client';
 import { Environments } from '../constants/shared.constants';
-import { formatGqlError } from '../utils/error.utils';
+import { formatGQLError } from '../utils/error.utils';
 import cache from './cache';
 
 const terminatingLink = createUploadLink({
@@ -17,7 +17,7 @@ const errorLink = onError(
         graphQLErrors.map(
           async ({ message, locations, path, extensions }, index) => {
             console.error(
-              formatGqlError(message, { extensions, locations, path }),
+              formatGQLError(message, { extensions, locations, path }),
             );
             if (!response) {
               return observer.error(graphQLErrors[index]);
