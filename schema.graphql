@@ -490,8 +490,8 @@ input EventsInput {
 }
 
 type Mutation {
-  login(input: LoginInput!): Boolean!
-  signUp(input: SignUpInput!): Boolean!
+  login(input: LoginInput!): String!
+  signUp(input: SignUpInput!): String!
   logOut: Boolean!
   createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
