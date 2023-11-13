@@ -7,7 +7,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ImageAuthGuard } from './guards/image-auth.guard';
 import { getUploadsPath } from './image.utils';
 import { ImagesService } from './images.service';
 
@@ -15,7 +15,7 @@ import { ImagesService } from './images.service';
 export class ImagesController {
   constructor(private service: ImagesService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(ImageAuthGuard)
   @Get(':id/view')
   async getImageFile(
     @Param('id', ParseIntPipe) id: number,

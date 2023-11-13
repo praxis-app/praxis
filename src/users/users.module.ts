@@ -11,7 +11,7 @@ import { UsersService } from './users.service';
   imports: [
     TypeOrmModule.forFeature([User]),
     forwardRef(() => ServerRolesModule),
-    ImagesModule,
+    forwardRef(() => ImagesModule),
     PostsModule,
   ],
   providers: [UsersService, UsersResolver],

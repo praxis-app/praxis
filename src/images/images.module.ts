@@ -1,13 +1,14 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from '../users/users.module';
 import { ImagesController } from './images.controller';
 import { ImagesResolver } from './images.resolver';
 import { ImagesService } from './images.service';
 import { Image } from './models/image.model';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Image])],
+  imports: [TypeOrmModule.forFeature([Image]), forwardRef(() => UsersModule)],
   providers: [ImagesService, ImagesResolver, JwtService],
   controllers: [ImagesController],
   exports: [ImagesService],
