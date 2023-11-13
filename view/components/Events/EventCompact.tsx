@@ -3,13 +3,13 @@ import { Box, Divider, Stack, SxProps, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { MIDDOT_WITH_SPACES } from '../../constants/shared.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { EventCompactFragment } from '../../graphql/events/fragments/gen/EventCompact.gen';
 import { useDeleteEventMutation } from '../../graphql/events/mutations/gen/DeleteEvent.gen';
-import { MIDDOT_WITH_SPACES } from '../../constants/shared.constants';
+import { useImageSrc } from '../../hooks/image.hooks';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { getEventPath } from '../../utils/event.utils';
-import { getImagePath } from '../../utils/image.utils';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
@@ -41,7 +41,7 @@ const EventCompact = ({ event, isLast }: Props) => {
   } = event;
   const canManageEvents = group?.myPermissions?.manageEvents;
 
-  const imageSrc = getImagePath(coverPhoto.id);
+  const imageSrc = useImageSrc(coverPhoto.id);
   const imageSize = isDesktop ? '90px' : '65px';
 
   const eventPagePath = getEventPath(id);
