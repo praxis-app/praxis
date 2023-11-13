@@ -10,10 +10,17 @@ import { UsersService } from '../users/users.service';
 import { AuthPayload } from './models/auth.payload';
 import { LoginInput } from './models/login.input';
 import { SignUpInput } from './models/sign-up.input';
-import { AccessTokenPayload } from './strategies/jwt.strategy';
 
 const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 90;
 const SALT_ROUNDS = 10;
+
+export interface AccessTokenPayload {
+  /**
+   * Identifies the user or subject of the JWT
+   * https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.2
+   */
+  sub: number;
+}
 
 @Injectable()
 export class AuthService {
