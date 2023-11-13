@@ -149,6 +149,9 @@ export const shieldPermissions = shield(
       statement: allow,
       updatedAt: allow,
     },
+    AuthPayload: {
+      access_token: allow,
+    },
     Event: or(isAuthenticated, isPublicEvent),
     Post: or(isAuthenticated, isPublicPost, isPublicEventPost),
     Comment: or(isAuthenticated, isPublicComment),

@@ -69,6 +69,7 @@ export const scrollTop = () => {
   animateScroll.scrollToTop(options);
 };
 
+// TODO: Remove unneeded functions for localStorage
 export const getLocalStorageItem = (item: string) => {
   if (typeof localStorage === 'undefined') {
     return;

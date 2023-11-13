@@ -1,3 +1,5 @@
 mutation Login($input: LoginInput!) {
-  login(input: $input)
+  login(input: $input) {
+    access_token
+  }
 }

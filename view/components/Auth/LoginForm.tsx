@@ -6,6 +6,7 @@ import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import { TextField } from '../../components/Shared/TextField';
+import { ACCESS_TOKEN } from '../../constants/shared.constants';
 import { UserFieldNames } from '../../constants/user.constants';
 import { useLoginMutation } from '../../graphql/auth/mutations/gen/Login.gen';
 import {
@@ -16,8 +17,8 @@ import {
 import { LoginInput } from '../../graphql/gen';
 
 const LoginForm = () => {
-  const [login] = useLoginMutation();
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
+  const [login] = useLoginMutation();
 
   const { t } = useTranslation();
 
@@ -29,7 +30,8 @@ const LoginForm = () => {
   const handleSubmit = async (input: LoginInput) =>
     await login({
       variables: { input },
-      onCompleted() {
+      onCompleted({ login: { access_token } }) {
+        localStorage.setItem(ACCESS_TOKEN, access_token);
         isLoggedInVar(true);
       },
       onError(err) {
