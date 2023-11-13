@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { getAuthHeader } from '../../graphql/client';
 import { AttachedImageFragment } from '../../graphql/images/fragments/gen/AttachedImage.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { getImagePath } from '../../utils/image.utils';
@@ -18,8 +19,9 @@ const AttachedImage = ({ image, marginBottom, width = '100%' }: Props) => {
   useEffect(() => {
     const getImageSrc = async () => {
       const imagePath = getImagePath(image.id);
-      const response = await fetch(imagePath, { headers: {} });
-      const blob = await response.blob();
+      const headers = { headers: { ...getAuthHeader() } };
+      const result = await fetch(imagePath, headers);
+      const blob = await result.blob();
       const url = URL.createObjectURL(blob);
       setSrc(url);
     };

@@ -6,16 +6,18 @@ import { ACCESS_TOKEN, Environments } from '../constants/shared.constants';
 import { formatGQLError } from '../utils/error.utils';
 import cache from './cache';
 
-const authLink = setContext((_, { headers }) => {
+export const getAuthHeader = () => {
   const accessToken = localStorage.getItem(ACCESS_TOKEN);
-  return {
-    headers: {
-      ...headers,
-      'Apollo-Require-Preflight': 'true',
-      authorization: accessToken ? `Bearer ${accessToken}` : '',
-    },
-  };
-});
+  return { authorization: accessToken ? `Bearer ${accessToken}` : '' };
+};
+
+const authLink = setContext((_, { headers }) => ({
+  headers: {
+    ...headers,
+    ...getAuthHeader(),
+    'Apollo-Require-Preflight': 'true',
+  },
+}));
 
 const errorLink = onError(
   ({ graphQLErrors, networkError, response }) =>
