@@ -13,6 +13,7 @@ import { User } from '../users/models/user.model';
 import { CreatePostInput } from './models/create-post.input';
 import { Post } from './models/post.model';
 import { UpdatePostInput } from './models/update-post.input';
+import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
 
 type PostWithLikeCount = Post & { likeCount: number };
 type PostWithCommentCount = Post & { commentCount: number };
@@ -32,6 +33,17 @@ export class PostsService {
 
   async getPosts(where?: FindOptionsWhere<Post>) {
     return this.repository.find({ where, order: { createdAt: 'DESC' } });
+  }
+
+  async isPublicPostImage(imageId: number) {
+    const image = await this.imagesService.getImage({ id: imageId }, [
+      'post.group.config',
+      'post.event.group.config',
+    ]);
+    return (
+      image?.post?.group?.config.privacy === GroupPrivacy.Public ||
+      image?.post?.event?.group?.config.privacy === GroupPrivacy.Public
+    );
   }
 
   async getPostImagesBatch(postIds: number[]) {
