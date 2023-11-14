@@ -33,6 +33,7 @@ import {
   GROUP_STAND_ASIDES_LIMIT,
 } from '../groups/groups.constants';
 import { sanitizeText } from '../shared/shared.utils';
+import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
 
 type ProposalWithCommentCount = Proposal & { commentCount: number };
 
@@ -58,6 +59,26 @@ export class ProposalsService {
 
   async getProposals(where?: FindOptionsWhere<Proposal>) {
     return this.repository.find({ where });
+  }
+
+  async isPublicProposalImage(image: Image) {
+    if (image?.proposalActionId) {
+      const proposalAction =
+        await this.proposalActionsService.getProposalAction(
+          { id: image.proposalActionId },
+          ['proposal.group.config'],
+        );
+      return (
+        proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
+      );
+    }
+    if (!image.proposalId) {
+      return false;
+    }
+    const { group } = await this.getProposal(image.proposalId, [
+      'group.config',
+    ]);
+    return group.config.privacy === GroupPrivacy.Public;
   }
 
   async getProposalVotesBatch(proposalIds: number[]) {

@@ -22,28 +22,10 @@ export const isPublicProposal = rule({ cache: 'strict' })(async (
   return proposal.group.config.privacy === GroupPrivacy.Public;
 });
 
-export const isPublicProposalImage = rule({ cache: 'strict' })(async (
-  parent: Image,
-  _args,
-  { services: { proposalsService, proposalActionsService } }: Context,
-) => {
-  if (parent?.proposalActionId) {
-    const proposalAction = await proposalActionsService.getProposalAction(
-      { id: parent.proposalActionId },
-      ['proposal.group.config'],
-    );
-    return (
-      proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
-    );
-  }
-  if (!parent.proposalId) {
-    return false;
-  }
-  const { group } = await proposalsService.getProposal(parent.proposalId, [
-    'group.config',
-  ]);
-  return group.config.privacy === GroupPrivacy.Public;
-});
+export const isPublicProposalImage = rule({ cache: 'strict' })(
+  async (parent: Image, _args, { services: { proposalsService } }: Context) =>
+    proposalsService.isPublicProposalImage(parent),
+);
 
 export const isPublicProposalAction = rule({ cache: 'strict' })(async (
   parent:
