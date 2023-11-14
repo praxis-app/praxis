@@ -34,8 +34,24 @@ export class ImagesService {
   }
 
   async isPublicImage(id: number) {
-    const isPublicPostImage = await this.postsService.isPublicPostImage(id);
-    return isPublicPostImage;
+    const image = await this.getImage({ id });
+    if (!image) {
+      throw new Error(`Image not found: ${id}`);
+    }
+    if (image.postId) {
+      const isPublicPostImage = await this.postsService.isPublicPostImage(id);
+      if (!isPublicPostImage) {
+        return false;
+      }
+    }
+    // if (image.proposalId) {
+    //   const isPublicProposalImage =
+    //     await this.proposalsService.isPublicProposalImage(image);
+    //   if (!isPublicProposalImage) {
+    //     return false;
+    //   }
+    // }
+    return true;
   }
 
   async createImage(data: Partial<Image>): Promise<Image> {
