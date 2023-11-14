@@ -1,13 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as fs from 'fs';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import { PostsService } from '../posts/posts.service';
 import {
   deleteImageFile,
   getUploadsPath,
   randomDefaultImagePath,
 } from './image.utils';
 import { Image } from './models/image.model';
-import * as fs from 'fs';
 
 export const enum ImageTypes {
   CoverPhoto = 'coverPhoto',
@@ -19,6 +20,9 @@ export class ImagesService {
   constructor(
     @InjectRepository(Image)
     private repository: Repository<Image>,
+
+    @Inject(forwardRef(() => PostsService))
+    private postsService: PostsService,
   ) {}
 
   async getImage(where: FindOptionsWhere<Image>, relations?: string[]) {
@@ -27,6 +31,11 @@ export class ImagesService {
 
   async getImages(where?: FindOptionsWhere<Image>) {
     return this.repository.find({ where });
+  }
+
+  async isPublicImage(id: number) {
+    const isPublicPostImage = await this.postsService.isPublicPostImage(id);
+    return isPublicPostImage;
   }
 
   async createImage(data: Partial<Image>): Promise<Image> {

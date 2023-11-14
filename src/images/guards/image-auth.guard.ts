@@ -8,22 +8,25 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { AccessTokenPayload } from '../../auth/auth.service';
-import { PostsService } from '../../posts/posts.service';
 import { UsersService } from '../../users/users.service';
+import { ImagesService } from '../images.service';
 
 @Injectable()
 export class ImageAuthGuard implements CanActivate {
   constructor(
     private configService: ConfigService,
+    private imagesService: ImagesService,
     private jwtService: JwtService,
     private usersService: UsersService,
-    private postsService: PostsService,
   ) {}
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
-    const isLoggedIn = await this.isLoggedIn(request);
-    const isPublicImage = await this.isPublicImage(request);
+    const token = this.extractTokenFromHeader(request);
+    const isLoggedIn = await this.isLoggedIn(token);
+
+    const imageId = parseInt(request.params.id);
+    const isPublicImage = await this.imagesService.isPublicImage(imageId);
 
     if (!isLoggedIn && !isPublicImage) {
       throw new UnauthorizedException();
@@ -31,8 +34,7 @@ export class ImageAuthGuard implements CanActivate {
     return true;
   }
 
-  private async isLoggedIn(request: Request) {
-    const token = this.extractTokenFromHeader(request);
+  private async isLoggedIn(token: string | undefined) {
     if (!token) {
       return false;
     }
@@ -48,14 +50,6 @@ export class ImageAuthGuard implements CanActivate {
     } catch {
       return false;
     }
-  }
-
-  private async isPublicImage({ params }: Request) {
-    const imageId = parseInt(params.id);
-    const isPublicPostImage =
-      await this.postsService.isPublicPostImage(imageId);
-
-    return isPublicPostImage;
   }
 
   private extractTokenFromHeader(request: Request) {
