@@ -10,8 +10,9 @@ import {
   Repository,
 } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
+import { ImageTypes } from '../images/image.constants';
 import { saveImage } from '../images/image.utils';
-import { ImagesService, ImageTypes } from '../images/images.service';
+import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
 import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
 import { sanitizeText } from '../shared/shared.utils';

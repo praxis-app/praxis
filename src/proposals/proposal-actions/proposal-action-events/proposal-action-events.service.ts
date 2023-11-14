@@ -7,8 +7,9 @@ import {
   EventAttendeeStatus,
 } from '../../../events/event-attendees/models/event-attendee.model';
 import { Event } from '../../../events/models/event.model';
+import { ImageTypes } from '../../../images/image.constants';
 import { copyImage, saveImage } from '../../../images/image.utils';
-import { ImagesService, ImageTypes } from '../../../images/images.service';
+import { ImagesService } from '../../../images/images.service';
 import { ProposalActionEventHost } from './models/proposal-action-event-host.model';
 import { ProposalActionEventInput } from './models/proposal-action-event.input';
 import { ProposalActionEvent } from './models/proposal-action-event.model';

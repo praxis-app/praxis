@@ -7,10 +7,18 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
+import {
+  GROUP_RATIFICATION_THRESHOLD,
+  GROUP_RESERVATIONS_LIMIT,
+  GROUP_STAND_ASIDES_LIMIT,
+} from '../groups/groups.constants';
 import { GroupsService } from '../groups/groups.service';
+import { ImageTypes } from '../images/image.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
-import { ImagesService, ImageTypes } from '../images/images.service';
+import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
+import { sanitizeText } from '../shared/shared.utils';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 import { VotesService } from '../votes/votes.service';
@@ -27,13 +35,6 @@ import {
   ProposalActionType,
   ProposalStage,
 } from './proposals.constants';
-import {
-  GROUP_RATIFICATION_THRESHOLD,
-  GROUP_RESERVATIONS_LIMIT,
-  GROUP_STAND_ASIDES_LIMIT,
-} from '../groups/groups.constants';
-import { sanitizeText } from '../shared/shared.utils';
-import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
 
 type ProposalWithCommentCount = Proposal & { commentCount: number };
 

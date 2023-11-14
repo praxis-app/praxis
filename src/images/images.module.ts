@@ -1,6 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from '../auth/auth.module';
 import { PostsModule } from '../posts/posts.module';
 import { UsersModule } from '../users/users.module';
 import { ImagesController } from './images.controller';
@@ -13,8 +13,9 @@ import { Image } from './models/image.model';
     TypeOrmModule.forFeature([Image]),
     forwardRef(() => PostsModule),
     forwardRef(() => UsersModule),
+    forwardRef(() => AuthModule),
   ],
-  providers: [ImagesService, ImagesResolver, JwtService],
+  providers: [ImagesService, ImagesResolver],
   controllers: [ImagesController],
   exports: [ImagesService],
 })

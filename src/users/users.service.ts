@@ -6,12 +6,13 @@ import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { IsFollowedByMeKey } from '../dataloader/dataloader.types';
 import { GroupPermissionsMap } from '../groups/group-roles/models/group-permissions.type';
+import { ImageTypes } from '../images/image.constants';
 import {
   getUploadsPath,
   randomDefaultImagePath,
   saveImage,
 } from '../images/image.utils';
-import { ImagesService, ImageTypes } from '../images/images.service';
+import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
