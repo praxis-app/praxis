@@ -20,11 +20,11 @@ export class ImageAuthGuard implements CanActivate {
 
   // TODO: Check permissions for image
   async canActivate(context: ExecutionContext) {
-    const user = await this.getUser(context);
-    return !!user;
+    const isLoggedIn = await this.isLoggedIn(context);
+    return isLoggedIn;
   }
 
-  private async getUser(context: ExecutionContext) {
+  private async isLoggedIn(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
@@ -37,7 +37,8 @@ export class ImageAuthGuard implements CanActivate {
           secret: this.configService.get('JWT_KEY'),
         },
       );
-      return this.usersService.getUser({ id: payload.sub });
+      const user = await this.usersService.getUser({ id: payload.sub });
+      return !!user;
     } catch {
       throw new UnauthorizedException();
     }
