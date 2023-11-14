@@ -15,10 +15,10 @@ import { ProposalsService } from './proposals.service';
   imports: [
     TypeOrmModule.forFeature([Proposal]),
     forwardRef(() => CommentsModule),
+    forwardRef(() => ImagesModule),
     forwardRef(() => ProposalActionsModule),
     forwardRef(() => VotesModule),
     GroupsModule,
-    ImagesModule,
     ProposalActionEventsModule,
     ProposalActionRolesModule,
   ],

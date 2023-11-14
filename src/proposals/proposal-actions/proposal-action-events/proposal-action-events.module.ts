@@ -15,10 +15,10 @@ import { ProposalActionEventsService } from './proposal-action-events.service';
   imports: [
     TypeOrmModule.forFeature([ProposalActionEvent, ProposalActionEventHost]),
     forwardRef(() => ProposalActionsModule),
+    forwardRef(() => ImagesModule),
     forwardRef(() => UsersModule),
     EventAttendeesModule,
     EventsModule,
-    ImagesModule,
   ],
   providers: [
     ProposalActionEventsService,

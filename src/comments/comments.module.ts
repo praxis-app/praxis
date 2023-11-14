@@ -10,9 +10,9 @@ import { Comment } from './models/comment.model';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Comment]),
+    forwardRef(() => ImagesModule),
     forwardRef(() => PostsModule),
     forwardRef(() => ProposalsModule),
-    ImagesModule,
   ],
   providers: [CommentsService, CommentsResolver],
   exports: [CommentsService],
