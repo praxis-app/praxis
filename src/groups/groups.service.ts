@@ -100,6 +100,13 @@ export class GroupsService {
     return !!group.members.length;
   }
 
+  async isPublicGroupImage(imageId: number) {
+    const image = await this.imagesService.getImage({ id: imageId }, [
+      'group.config',
+    ]);
+    return image?.group?.config.privacy === GroupPrivacy.Public;
+  }
+
   async getCoverPhotosBatch(groupIds: number[]) {
     const coverPhotos = await this.imagesService.getImages({
       groupId: In(groupIds),

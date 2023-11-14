@@ -14,6 +14,8 @@ import { Group } from '../../groups/models/group.model';
 import { UpdateGroupInput } from '../../groups/models/update-group.input';
 import { CreateVoteInput } from '../../votes/models/create-vote.input';
 import { hasGroupPermission } from '../shield.utils';
+import { Image } from '../../images/models/image.model';
+import { GroupRole } from '../../groups/group-roles/models/group-role.model';
 
 export const canManageGroupRoles = rule()(async (
   parent,
@@ -203,7 +205,7 @@ export const isPublicGroup = rule({ cache: 'strict' })(async (
 });
 
 export const isPublicGroupRole = rule({ cache: 'strict' })(async (
-  parent,
+  parent: GroupRole,
   _args,
   { services: { groupsService } }: Context,
 ) => {
@@ -213,16 +215,10 @@ export const isPublicGroupRole = rule({ cache: 'strict' })(async (
   return group.config.privacy === GroupPrivacy.Public;
 });
 
-export const isPublicGroupImage = rule({ cache: 'strict' })(async (
-  parent,
-  _args,
-  { services: { imagesService } }: Context,
-) => {
-  const image = await imagesService.getImage({ id: parent.id }, [
-    'group.config',
-  ]);
-  return image?.group?.config.privacy === GroupPrivacy.Public;
-});
+export const isPublicGroupImage = rule({ cache: 'strict' })(
+  async (parent: Image, _args, { services: { groupsService } }: Context) =>
+    groupsService.isPublicGroupImage(parent.id),
+);
 
 export const isProposalGroupJoinedByMe = rule({ cache: 'strict' })(async (
   _parent,
