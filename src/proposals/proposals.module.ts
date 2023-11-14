@@ -18,7 +18,7 @@ import { ProposalsService } from './proposals.service';
     forwardRef(() => ImagesModule),
     forwardRef(() => ProposalActionsModule),
     forwardRef(() => VotesModule),
-    GroupsModule,
+    forwardRef(() => GroupsModule),
     ProposalActionEventsModule,
     ProposalActionRolesModule,
   ],

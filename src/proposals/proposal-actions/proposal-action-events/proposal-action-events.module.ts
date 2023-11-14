@@ -17,8 +17,8 @@ import { ProposalActionEventsService } from './proposal-action-events.service';
     forwardRef(() => ProposalActionsModule),
     forwardRef(() => ImagesModule),
     forwardRef(() => UsersModule),
+    forwardRef(() => EventsModule),
     EventAttendeesModule,
-    EventsModule,
   ],
   providers: [
     ProposalActionEventsService,

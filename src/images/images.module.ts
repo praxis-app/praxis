@@ -1,13 +1,14 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
+import { GroupsModule } from '../groups/groups.module';
 import { PostsModule } from '../posts/posts.module';
+import { ProposalsModule } from '../proposals/proposals.module';
 import { UsersModule } from '../users/users.module';
 import { ImagesController } from './images.controller';
 import { ImagesResolver } from './images.resolver';
 import { ImagesService } from './images.service';
 import { Image } from './models/image.model';
-import { ProposalsModule } from '../proposals/proposals.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ProposalsModule } from '../proposals/proposals.module';
     forwardRef(() => PostsModule),
     forwardRef(() => UsersModule),
     forwardRef(() => AuthModule),
+    GroupsModule,
     ProposalsModule,
   ],
   providers: [ImagesService, ImagesResolver],
