@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { IsFollowedByMeKey } from '../dataloader/dataloader.types';
+import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
 import { GroupPermissionsMap } from '../groups/group-roles/models/group-permissions.type';
 import { ImageTypes } from '../images/image.constants';
 import {
@@ -54,6 +55,18 @@ export class UsersService {
   async isFirstUser() {
     const userCount = await this.repository.count();
     return userCount === 0;
+  }
+
+  async isPublicUserAvatar(imageId: number) {
+    const image = await this.imagesService.getImage({ id: imageId }, [
+      'user.groups.config',
+    ]);
+    if (!image?.user) {
+      return false;
+    }
+    return image.user.groups.some(
+      (group) => group.config.privacy === GroupPrivacy.Public,
+    );
   }
 
   async getCoverPhoto(userId: number) {

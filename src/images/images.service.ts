@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { PostsService } from '../posts/posts.service';
+import { ProposalsService } from '../proposals/proposals.service';
+import { UsersService } from '../users/users.service';
 import { ImageTypes } from './image.constants';
 import {
   deleteImageFile,
@@ -10,7 +12,6 @@ import {
   randomDefaultImagePath,
 } from './image.utils';
 import { Image } from './models/image.model';
-import { ProposalsService } from '../proposals/proposals.service';
 
 @Injectable()
 export class ImagesService {
@@ -23,6 +24,8 @@ export class ImagesService {
 
     @Inject(forwardRef(() => ProposalsService))
     private proposalsService: ProposalsService,
+
+    private usersService: UsersService,
   ) {}
 
   async getImage(where: FindOptionsWhere<Image>, relations?: string[]) {
@@ -48,6 +51,14 @@ export class ImagesService {
       const isPublicProposalImage =
         await this.proposalsService.isPublicProposalImage(image);
       if (isPublicProposalImage) {
+        return true;
+      }
+    }
+    if (image.userId) {
+      const isPublicUserAvatar = await this.usersService.isPublicUserAvatar(
+        image.id,
+      );
+      if (isPublicUserAvatar) {
         return true;
       }
     }
