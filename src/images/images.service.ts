@@ -40,8 +40,8 @@ export class ImagesService {
     }
     if (image.postId) {
       const isPublicPostImage = await this.postsService.isPublicPostImage(id);
-      if (!isPublicPostImage) {
-        return false;
+      if (isPublicPostImage) {
+        return true;
       }
     }
     // if (image.proposalId) {
@@ -51,7 +51,7 @@ export class ImagesService {
     //     return false;
     //   }
     // }
-    return true;
+    return false;
   }
 
   async createImage(data: Partial<Image>): Promise<Image> {
