@@ -7,6 +7,7 @@ import { ImagesController } from './images.controller';
 import { ImagesResolver } from './images.resolver';
 import { ImagesService } from './images.service';
 import { Image } from './models/image.model';
+import { ProposalsModule } from '../proposals/proposals.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { Image } from './models/image.model';
     forwardRef(() => PostsModule),
     forwardRef(() => UsersModule),
     forwardRef(() => AuthModule),
+    ProposalsModule,
   ],
   providers: [ImagesService, ImagesResolver],
   controllers: [ImagesController],

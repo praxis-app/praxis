@@ -47,8 +47,10 @@ export class ProposalsService {
     @Inject(forwardRef(() => VotesService))
     private votesService: VotesService,
 
-    private groupsService: GroupsService,
+    @Inject(forwardRef(() => ImagesService))
     private imagesService: ImagesService,
+
+    private groupsService: GroupsService,
     private proposalActionEventsService: ProposalActionEventsService,
     private proposalActionRolesService: ProposalActionRolesService,
     private proposalActionsService: ProposalActionsService,

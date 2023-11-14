@@ -10,6 +10,7 @@ import {
   randomDefaultImagePath,
 } from './image.utils';
 import { Image } from './models/image.model';
+import { ProposalsService } from '../proposals/proposals.service';
 
 @Injectable()
 export class ImagesService {
@@ -19,10 +20,10 @@ export class ImagesService {
 
     @Inject(forwardRef(() => PostsService))
     private postsService: PostsService,
-  ) {}
 
-  // @Inject(forwardRef(() => ProposalsService))
-  // private proposalsService: ProposalsService,
+    @Inject(forwardRef(() => ProposalsService))
+    private proposalsService: ProposalsService,
+  ) {}
 
   async getImage(where: FindOptionsWhere<Image>, relations?: string[]) {
     return this.repository.findOne({ where, relations });
@@ -43,13 +44,13 @@ export class ImagesService {
         return true;
       }
     }
-    // if (image.proposalId) {
-    //   const isPublicProposalImage =
-    //     await this.proposalsService.isPublicProposalImage(image);
-    //   if (isPublicProposalImage) {
-    //     return true;
-    //   }
-    // }
+    if (image.proposalId) {
+      const isPublicProposalImage =
+        await this.proposalsService.isPublicProposalImage(image);
+      if (isPublicProposalImage) {
+        return true;
+      }
+    }
     return false;
   }
 
