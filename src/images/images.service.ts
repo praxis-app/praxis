@@ -53,23 +53,23 @@ export class ImagesService {
     if (!image) {
       throw new Error(`Image not found: ${id}`);
     }
-    if (image.postId) {
-      return this.postsService.isPublicPostImage(id);
-    }
-    if (image.commentId) {
-      return this.commentsService.isPublicCommentImage(id);
-    }
-    if (image.proposalId || image.proposalActionId) {
-      return this.proposalsService.isPublicProposalImage(image);
-    }
     if (image.userId) {
       return this.usersService.isPublicUserAvatar(image.id);
     }
     if (image.groupId) {
       return this.groupsService.isPublicGroupImage(image.id);
     }
-    if (image.eventId) {
+    if (image.proposalId || image.proposalActionId) {
+      return this.proposalsService.isPublicProposalImage(image);
+    }
+    if (image.eventId || image.proposalActionEventId) {
       return this.eventsService.isPublicEventImage(image.id);
+    }
+    if (image.postId) {
+      return this.postsService.isPublicPostImage(id);
+    }
+    if (image.commentId) {
+      return this.commentsService.isPublicCommentImage(id);
     }
     return false;
   }
