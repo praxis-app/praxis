@@ -41,6 +41,7 @@ export class EventsService {
     @Inject(forwardRef(() => EventAttendeesService))
     private eventAttendeesService: EventAttendeesService,
 
+    @Inject(forwardRef(() => ImagesService))
     private imagesService: ImagesService,
   ) {}
 
@@ -109,6 +110,17 @@ export class EventsService {
       throw new Error(`Could not find host for event: ${id}`);
     }
     return eventAttendee.user;
+  }
+
+  async isPublicEventImage(imageId: number) {
+    const image = await this.imagesService.getImage({ id: imageId }, [
+      'proposalActionEvent.proposalAction.proposal.group.config',
+      'event.group.config',
+    ]);
+    const group =
+      image?.proposalActionEvent?.proposalAction?.proposal?.group ||
+      image?.event?.group;
+    return group?.config.privacy === GroupPrivacy.Public;
   }
 
   async getEventsBatch(eventIds: number[]) {
