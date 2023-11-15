@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { API_ROOT } from '../constants/shared.constants';
 import { getAuthHeader } from '../graphql/client';
 
+// TODO: Extract getImageSrc as a utility function
 export const useImageSrc = (imageId: number | undefined) => {
   const [src, setSrc] = useState<string>();
 
