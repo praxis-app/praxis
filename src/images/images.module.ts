@@ -1,6 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
+import { CommentsModule } from '../comments/comments.module';
 import { GroupsModule } from '../groups/groups.module';
 import { PostsModule } from '../posts/posts.module';
 import { ProposalsModule } from '../proposals/proposals.module';
@@ -16,6 +17,7 @@ import { Image } from './models/image.model';
     forwardRef(() => PostsModule),
     forwardRef(() => UsersModule),
     forwardRef(() => AuthModule),
+    CommentsModule,
     GroupsModule,
     ProposalsModule,
   ],

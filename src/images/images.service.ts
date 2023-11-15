@@ -2,6 +2,7 @@ import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import { CommentsService } from '../comments/comments.service';
 import { GroupsService } from '../groups/groups.service';
 import { PostsService } from '../posts/posts.service';
 import { ProposalsService } from '../proposals/proposals.service';
@@ -29,6 +30,9 @@ export class ImagesService {
     @Inject(forwardRef(() => GroupsService))
     private groupsService: GroupsService,
 
+    @Inject(forwardRef(() => CommentsService))
+    private commentsService: CommentsService,
+
     private usersService: UsersService,
   ) {}
 
@@ -48,6 +52,13 @@ export class ImagesService {
     if (image.postId) {
       const isPublicPostImage = await this.postsService.isPublicPostImage(id);
       if (isPublicPostImage) {
+        return true;
+      }
+    }
+    if (image.commentId) {
+      const isPublicCommentImage =
+        await this.commentsService.isPublicCommentImage(id);
+      if (isPublicCommentImage) {
         return true;
       }
     }

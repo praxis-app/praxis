@@ -41,6 +41,7 @@ export class UsersService {
     @Inject(forwardRef(() => ImagesService))
     private imagesService: ImagesService,
 
+    @Inject(forwardRef(() => PostsService))
     private postsService: PostsService,
   ) {}
 
