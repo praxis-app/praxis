@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { IsLikedByMeKey } from '../dataloader/dataloader.types';
+import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
@@ -13,7 +14,6 @@ import { User } from '../users/models/user.model';
 import { CreatePostInput } from './models/create-post.input';
 import { Post } from './models/post.model';
 import { UpdatePostInput } from './models/update-post.input';
-import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
 
 type PostWithLikeCount = Post & { likeCount: number };
 type PostWithCommentCount = Post & { commentCount: number };
@@ -23,7 +23,10 @@ export class PostsService {
   constructor(
     @InjectRepository(Post)
     private repository: Repository<Post>,
+
+    @Inject(forwardRef(() => ImagesService))
     private imagesService: ImagesService,
+
     private likesService: LikesService,
   ) {}
 

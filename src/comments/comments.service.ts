@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
@@ -17,6 +18,8 @@ export class CommentsService {
   constructor(
     @InjectRepository(Comment)
     private repository: Repository<Comment>,
+
+    @Inject(forwardRef(() => ImagesService))
     private imagesService: ImagesService,
   ) {}
 
@@ -33,6 +36,20 @@ export class CommentsService {
     return comments.slice(
       comments.length - Math.min(comments.length, DEFAULT_PAGE_SIZE),
       comments.length,
+    );
+  }
+
+  async isPublicCommentImage(imageId: number) {
+    const image = await this.imagesService.getImage({ id: imageId }, [
+      'comment.post.event.group.config',
+      'comment.post.group.config',
+      'comment.proposal.group.config',
+    ]);
+    return (
+      image?.comment?.post?.event?.group?.config.privacy ===
+        GroupPrivacy.Public ||
+      image?.comment?.post?.group?.config.privacy === GroupPrivacy.Public ||
+      image?.comment?.proposal?.group?.config.privacy === GroupPrivacy.Public
     );
   }
 

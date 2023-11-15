@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, Repository } from 'typeorm';
@@ -7,8 +7,9 @@ import {
   EventAttendeeStatus,
 } from '../../../events/event-attendees/models/event-attendee.model';
 import { Event } from '../../../events/models/event.model';
+import { ImageTypes } from '../../../images/image.constants';
 import { copyImage, saveImage } from '../../../images/image.utils';
-import { ImagesService, ImageTypes } from '../../../images/images.service';
+import { ImagesService } from '../../../images/images.service';
 import { ProposalActionEventHost } from './models/proposal-action-event-host.model';
 import { ProposalActionEventInput } from './models/proposal-action-event.input';
 import { ProposalActionEvent } from './models/proposal-action-event.model';
@@ -28,6 +29,7 @@ export class ProposalActionEventsService {
     @InjectRepository(EventAttendee)
     private eventAttendeeRepository: Repository<EventAttendee>,
 
+    @Inject(forwardRef(() => ImagesService))
     private imagesService: ImagesService,
   ) {}
 
