@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getImagePath } from '../utils/image.utils';
+import { API_ROOT } from '../constants/shared.constants';
 import { getAuthHeader } from '../graphql/client';
 
 export const useImageSrc = (imageId: number | undefined) => {
@@ -10,11 +10,12 @@ export const useImageSrc = (imageId: number | undefined) => {
       return;
     }
     const getImageSrc = async () => {
-      const imagePath = getImagePath(imageId);
+      const imagePath = `${API_ROOT}/images/${imageId}/view`;
       const headers = { headers: { ...getAuthHeader() } };
       const result = await fetch(imagePath, headers);
       const blob = await result.blob();
       const url = URL.createObjectURL(blob);
+
       setSrc(url);
     };
     getImageSrc();
