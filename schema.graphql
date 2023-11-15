@@ -475,13 +475,13 @@ type Query {
   post(id: Int!): Post!
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
-  proposal(id: Int!): Proposal!
   group(id: Int, name: String): Group!
   groups: [Group!]!
   publicGroups: [Group!]!
   publicGroupsFeed: [FeedItem!]!
   groupRole(id: Int!): GroupRole!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
+  proposal(id: Int!): Proposal!
   groupRoles: [GroupRole!]!
   canary: Canary!
   publicCanary: Canary
@@ -520,11 +520,6 @@ type Mutation {
   createEventAttendee(eventAttendeeData: CreateEventAttendeeInput!): CreateEventAttendeePayload!
   updateEventAttendee(eventAttendeeData: UpdateEventAttendeeInput!): UpdateEventAttendeePayload!
   deleteEventAttendee(eventId: Int!): Boolean!
-  createLike(likeData: CreateLikeInput!): CreateLikePayload!
-  deleteLike(likeData: DeleteLikeInput!): Boolean!
-  createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
-  updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
-  deleteProposal(id: Int!): Boolean!
   createGroup(groupData: CreateGroupInput!): CreateGroupPayload!
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
   deleteGroup(id: Int!): Boolean!
@@ -534,6 +529,11 @@ type Mutation {
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
   cancelGroupMemberRequest(id: Int!): Boolean!
   denyGroupMemberRequest(id: Int!): Boolean!
+  createLike(likeData: CreateLikeInput!): CreateLikePayload!
+  deleteLike(likeData: DeleteLikeInput!): Boolean!
+  createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
+  updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
+  deleteProposal(id: Int!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -665,6 +665,24 @@ input UpdateEventAttendeeInput {
   status: String!
 }
 
+input CreateGroupInput {
+  name: String!
+  description: String!
+  coverPhoto: Upload
+}
+
+input UpdateGroupInput {
+  id: Int!
+  name: String
+  description: String
+  coverPhoto: Upload
+}
+
+input UpdateGroupConfigInput {
+  groupId: Int!
+  privacy: String
+}
+
 input CreateLikeInput {
   postId: Int
 }
@@ -732,24 +750,6 @@ input UpdateProposalInput {
   body: String
   action: ProposalActionInput!
   images: [Upload!]
-}
-
-input CreateGroupInput {
-  name: String!
-  description: String!
-  coverPhoto: Upload
-}
-
-input UpdateGroupInput {
-  id: Int!
-  name: String
-  description: String
-  coverPhoto: Upload
-}
-
-input UpdateGroupConfigInput {
-  groupId: Int!
-  privacy: String
 }
 
 input CreateVoteInput {
