@@ -54,48 +54,22 @@ export class ImagesService {
       throw new Error(`Image not found: ${id}`);
     }
     if (image.postId) {
-      const isPublicPostImage = await this.postsService.isPublicPostImage(id);
-      if (isPublicPostImage) {
-        return true;
-      }
+      return this.postsService.isPublicPostImage(id);
     }
     if (image.commentId) {
-      const isPublicCommentImage =
-        await this.commentsService.isPublicCommentImage(id);
-      if (isPublicCommentImage) {
-        return true;
-      }
+      return this.commentsService.isPublicCommentImage(id);
     }
     if (image.proposalId) {
-      const isPublicProposalImage =
-        await this.proposalsService.isPublicProposalImage(image);
-      if (isPublicProposalImage) {
-        return true;
-      }
+      return this.proposalsService.isPublicProposalImage(image);
     }
     if (image.userId) {
-      const isPublicUserAvatar = await this.usersService.isPublicUserAvatar(
-        image.id,
-      );
-      if (isPublicUserAvatar) {
-        return true;
-      }
+      return this.usersService.isPublicUserAvatar(image.id);
     }
     if (image.groupId) {
-      const isPublicGroupImage = await this.groupsService.isPublicGroupImage(
-        image.id,
-      );
-      if (isPublicGroupImage) {
-        return true;
-      }
+      return this.groupsService.isPublicGroupImage(image.id);
     }
     if (image.eventId) {
-      const isPublicEventImage = await this.eventsService.isPublicEventImage(
-        image.id,
-      );
-      if (isPublicEventImage) {
-        return true;
-      }
+      return this.eventsService.isPublicEventImage(image.id);
     }
     return false;
   }
