@@ -59,7 +59,7 @@ export class ImagesService {
     if (image.commentId) {
       return this.commentsService.isPublicCommentImage(id);
     }
-    if (image.proposalId) {
+    if (image.proposalId || image.proposalActionId) {
       return this.proposalsService.isPublicProposalImage(image);
     }
     if (image.userId) {
