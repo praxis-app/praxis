@@ -23,9 +23,9 @@ export class ImageAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);
-    const isLoggedIn = await this.isLoggedIn(token);
-
     const imageId = parseInt(request.params.id);
+
+    const isLoggedIn = await this.isLoggedIn(token);
     const isPublicImage = await this.imagesService.isPublicImage(imageId);
 
     if (!isLoggedIn && !isPublicImage) {
