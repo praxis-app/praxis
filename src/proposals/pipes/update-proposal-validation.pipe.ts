@@ -1,6 +1,6 @@
 import { ValidationError } from '@nestjs/apollo';
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
-import { ImageTypes } from '../../images/images.service';
+import { ImageTypes } from '../../images/image.constants';
 import { VotesService } from '../../votes/votes.service';
 import { UpdateProposalInput } from '../models/update-proposal.input';
 import { ProposalActionType } from '../proposals.constants';

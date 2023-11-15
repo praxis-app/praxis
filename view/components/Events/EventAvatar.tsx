@@ -1,8 +1,8 @@
 import { Avatar, AvatarProps, useTheme } from '@mui/material';
 import { EventAvatarFragment } from '../../graphql/events/fragments/gen/EventAvatar.gen';
 import { ProposalActionEventAvatarFragment } from '../../graphql/proposals/fragments/gen/ProposalActionEventAvatar.gen';
+import { useImageSrc } from '../../hooks/image.hooks';
 import { getEventPath } from '../../utils/event.utils';
-import { getImagePath } from '../../utils/image.utils';
 import Link from '../Shared/Link';
 
 interface Props extends AvatarProps {
@@ -13,11 +13,8 @@ interface Props extends AvatarProps {
 
 const EventAvatar = ({ event, withLink, size, sx, ...avatarProps }: Props) => {
   const theme = useTheme();
-
+  const src = useImageSrc(event.coverPhoto?.id);
   const eventPagePath = getEventPath(event.id);
-  const imagePath = event.coverPhoto
-    ? getImagePath(event.coverPhoto.id)
-    : undefined;
 
   const avatarStyles = {
     backgroundColor: theme.palette.background.paper,
@@ -26,12 +23,7 @@ const EventAvatar = ({ event, withLink, size, sx, ...avatarProps }: Props) => {
   };
 
   const renderAvatar = () => (
-    <Avatar
-      alt={event.name}
-      src={imagePath}
-      sx={avatarStyles}
-      {...avatarProps}
-    />
+    <Avatar alt={event.name} src={src} sx={avatarStyles} {...avatarProps} />
   );
 
   if (withLink) {

@@ -11,8 +11,8 @@ import { PostsService } from './posts.service';
   imports: [
     TypeOrmModule.forFeature([Post]),
     forwardRef(() => CommentsModule),
+    forwardRef(() => ImagesModule),
     forwardRef(() => LikesModule),
-    ImagesModule,
   ],
   providers: [PostsService, PostsResolver],
   exports: [PostsService],

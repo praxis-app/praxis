@@ -6,7 +6,6 @@ import { ServerInvitesModule } from '../server-invites/server-invites.module';
 import { UsersModule } from '../users/users.module';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
-import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -20,7 +19,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     ServerInvitesModule,
     UsersModule,
   ],
-  providers: [AuthResolver, AuthService, JwtStrategy],
+  providers: [AuthResolver, AuthService],
   exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

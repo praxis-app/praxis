@@ -2,7 +2,7 @@ import { RemoveCircle } from '@mui/icons-material';
 import { Box, IconButton, SxProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { AttachedImageFragment } from '../../graphql/images/fragments/gen/AttachedImage.gen';
-import { getImagePath } from '../../utils/image.utils';
+import { useImageSrc } from '../../hooks/image.hooks';
 
 const REMOVE_BUTTON: SxProps = {
   position: 'absolute',
@@ -20,6 +20,24 @@ const RemoveButton = ({ onClick }: { onClick(): void }) => {
     >
       <RemoveCircle />
     </IconButton>
+  );
+};
+
+const SavedImagePreview = ({
+  savedImage: { id, filename },
+  containerStyles,
+  handleDelete,
+}: {
+  containerStyles: SxProps;
+  handleDelete?(id: number): void;
+  savedImage: AttachedImageFragment;
+}) => {
+  const src = useImageSrc(id);
+  return (
+    <Box sx={containerStyles}>
+      <img alt={filename} src={src} width="100%" />
+      {handleDelete && <RemoveButton onClick={() => handleDelete(id)} />}
+    </Box>
   );
 };
 
@@ -62,11 +80,13 @@ const AttachedImagePreview = ({
       }}
     >
       {savedImages &&
-        savedImages.map(({ id, filename }) => (
-          <Box sx={containerStyles} key={id}>
-            <img alt={filename} src={getImagePath(id)} width="100%" />
-            {handleDelete && <RemoveButton onClick={() => handleDelete(id)} />}
-          </Box>
+        savedImages.map((savedImage) => (
+          <SavedImagePreview
+            key={savedImage.id}
+            containerStyles={containerStyles}
+            handleDelete={handleDelete}
+            savedImage={savedImage}
+          />
         ))}
 
       {selectedImages.map((image) => (

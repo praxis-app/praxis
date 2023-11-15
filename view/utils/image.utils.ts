@@ -1,5 +1,3 @@
-import { API_ROOT } from '../constants/shared.constants';
-
 const VALID_IMAGE_FORMAT = /(jpe?g|png|gif|webp)$/;
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_IMAGE_COUNT = 5;
@@ -22,6 +20,3 @@ export const validateImageInput = (imageInput: File | File[]) => {
     }
   }
 };
-
-export const getImagePath = (imageId: number) =>
-  `${API_ROOT}/images/${imageId}/view`;

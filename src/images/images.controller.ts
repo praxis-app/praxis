@@ -1,5 +1,13 @@
-import { Controller, Get, Param, ParseIntPipe, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Response } from 'express';
+import { ImageAuthGuard } from './guards/image-auth.guard';
 import { getUploadsPath } from './image.utils';
 import { ImagesService } from './images.service';
 
@@ -7,6 +15,7 @@ import { ImagesService } from './images.service';
 export class ImagesController {
   constructor(private service: ImagesService) {}
 
+  @UseGuards(ImageAuthGuard)
   @Get(':id/view')
   async getImageFile(
     @Param('id', ParseIntPipe) id: number,

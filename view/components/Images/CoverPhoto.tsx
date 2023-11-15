@@ -3,8 +3,8 @@ import { grey } from '@mui/material/colors';
 import { SyntheticEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { useImageSrc } from '../../hooks/image.hooks';
 import { useIsDesktop } from '../../hooks/shared.hooks';
-import { getImagePath } from '../../utils/image.utils';
 
 const CP_CONTAINER_HEIGHT = 130;
 const CP_CONTAINER_HEIGHT_DESKTOP = 210;
@@ -22,15 +22,13 @@ const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+  const src = useImageSrc(imageId);
 
   const getImageSrc = () => {
     if (imageFile) {
       return URL.createObjectURL(imageFile);
     }
-    if (!imageId) {
-      return '';
-    }
-    return getImagePath(imageId);
+    return src;
   };
 
   const getBorderRadius = () => {

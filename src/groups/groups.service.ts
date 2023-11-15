@@ -4,8 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { MyGroupsKey } from '../dataloader/dataloader.types';
+import { ImageTypes } from '../images/image.constants';
 import { saveImage } from '../images/image.utils';
-import { ImagesService, ImageTypes } from '../images/images.service';
+import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
@@ -35,8 +36,10 @@ export class GroupsService {
     @Inject(forwardRef(() => GroupConfigsService))
     private groupConfigsService: GroupConfigsService,
 
-    private groupRolesService: GroupRolesService,
+    @Inject(forwardRef(() => ImagesService))
     private imagesService: ImagesService,
+
+    private groupRolesService: GroupRolesService,
     private usersService: UsersService,
   ) {}
 
@@ -95,6 +98,13 @@ export class GroupsService {
       ['members'],
     );
     return !!group.members.length;
+  }
+
+  async isPublicGroupImage(imageId: number) {
+    const image = await this.imagesService.getImage({ id: imageId }, [
+      'group.config',
+    ]);
+    return image?.group?.config.privacy === GroupPrivacy.Public;
   }
 
   async getCoverPhotosBatch(groupIds: number[]) {

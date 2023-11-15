@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { IsLikedByMeKey } from '../dataloader/dataloader.types';
+import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
@@ -22,7 +23,10 @@ export class PostsService {
   constructor(
     @InjectRepository(Post)
     private repository: Repository<Post>,
+
+    @Inject(forwardRef(() => ImagesService))
     private imagesService: ImagesService,
+
     private likesService: LikesService,
   ) {}
 
@@ -32,6 +36,17 @@ export class PostsService {
 
   async getPosts(where?: FindOptionsWhere<Post>) {
     return this.repository.find({ where, order: { createdAt: 'DESC' } });
+  }
+
+  async isPublicPostImage(imageId: number) {
+    const image = await this.imagesService.getImage({ id: imageId }, [
+      'post.group.config',
+      'post.event.group.config',
+    ]);
+    return (
+      image?.post?.group?.config.privacy === GroupPrivacy.Public ||
+      image?.post?.event?.group?.config.privacy === GroupPrivacy.Public
+    );
   }
 
   async getPostImagesBatch(postIds: number[]) {

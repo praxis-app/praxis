@@ -10,8 +10,9 @@ import {
   Repository,
 } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
+import { ImageTypes } from '../images/image.constants';
 import { saveImage } from '../images/image.utils';
-import { ImagesService, ImageTypes } from '../images/images.service';
+import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
 import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
 import { sanitizeText } from '../shared/shared.utils';
@@ -40,6 +41,7 @@ export class EventsService {
     @Inject(forwardRef(() => EventAttendeesService))
     private eventAttendeesService: EventAttendeesService,
 
+    @Inject(forwardRef(() => ImagesService))
     private imagesService: ImagesService,
   ) {}
 
@@ -108,6 +110,17 @@ export class EventsService {
       throw new Error(`Could not find host for event: ${id}`);
     }
     return eventAttendee.user;
+  }
+
+  async isPublicEventImage(imageId: number) {
+    const image = await this.imagesService.getImage({ id: imageId }, [
+      'proposalActionEvent.proposalAction.proposal.group.config',
+      'event.group.config',
+    ]);
+    const group =
+      image?.proposalActionEvent?.proposalAction?.proposal?.group ||
+      image?.event?.group;
+    return group?.config.privacy === GroupPrivacy.Public;
   }
 
   async getEventsBatch(eventIds: number[]) {

@@ -3,7 +3,7 @@ import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserAvatarFragment } from '../../graphql/users/fragments/gen/UserAvatar.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
-import { getImagePath } from '../../utils/image.utils';
+import { useImageSrc } from '../../hooks/image.hooks';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Link from '../Shared/Link';
 
@@ -25,11 +25,13 @@ const UserAvatar = ({
   ...avatarProps
 }: Props) => {
   const { data } = useMeQuery({ skip: !!user });
-
   const { t } = useTranslation();
   const theme = useTheme();
 
   const me = data && data.me;
+  const profilePicture = user?.profilePicture || me?.profilePicture;
+  const src = useImageSrc(profilePicture?.id);
+
   const userName = user?.name || me?.name;
   const userProfilePath = getUserProfilePath(userName);
 
@@ -39,20 +41,11 @@ const UserAvatar = ({
     ...(size ? { width: size, height: size } : {}),
   };
 
-  const _getImagePath = () => {
-    if (user?.profilePicture) {
-      return getImagePath(user.profilePicture.id);
-    }
-    if (me?.profilePicture) {
-      return getImagePath(me.profilePicture.id);
-    }
-  };
-
   const getAvatarSrc = () => {
     if (imageFile) {
       return URL.createObjectURL(imageFile);
     }
-    return _getImagePath();
+    return src;
   };
 
   // TODO: Show spinner for loading state

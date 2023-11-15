@@ -11,8 +11,8 @@ import { Event } from './models/event.model';
   imports: [
     TypeOrmModule.forFeature([Event]),
     forwardRef(() => EventAttendeesModule),
+    forwardRef(() => ImagesModule),
     forwardRef(() => PostsModule),
-    ImagesModule,
   ],
   providers: [EventsService, EventsResolver],
   exports: [EventsService, TypeOrmModule],
