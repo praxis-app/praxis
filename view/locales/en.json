@@ -38,9 +38,10 @@
   },
 
   "errors": {
+    "imageTooLarge": "Image is too large. Maximum file size is 10MB.",
     "imageUploadError": "Unable to upload images.",
-    "somethingWentWrong": "Something went wrong.",
-    "imageTooLarge": "Image is too large. Maximum file size is 10MB."
+    "pageNotFound": "Page not found.",
+    "somethingWentWrong": "Something went wrong."
   },
 
   "states": {
