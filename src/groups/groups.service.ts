@@ -48,11 +48,15 @@ export class GroupsService {
   }
 
   async getGroups(where?: FindOptionsWhere<Group>, relations?: string[]) {
-    const groups = await this.groupRepository.find({
+    return this.groupRepository.find({
       order: { updatedAt: 'DESC' },
       relations,
       where,
     });
+  }
+
+  async getPagedGroups(where?: FindOptionsWhere<Group>) {
+    const groups = await this.getGroups(where);
     const sortedFeed = groups.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
