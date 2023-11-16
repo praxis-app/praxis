@@ -76,12 +76,12 @@ const CoverPhoto = ({
       <LazyLoadImage
         alt={t('images.labels.coverPhoto')}
         effect="blur"
-        height="auto"
-        src={getImageSrc()}
+        width="100%"
+        height={centerVertically ? 'auto' : '100%'}
         style={centerVertically ? { marginTop: imageTopMargin } : undefined}
+        src={getImageSrc()}
         onLoadCapture={handleLoad}
         visibleByDefault={!imageId}
-        width="100%"
       />
     </Box>
   );
