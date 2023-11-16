@@ -38,7 +38,7 @@
   },
 
   "errors": {
-    "imageTooLarge": "Image is too large. Maximum file size is 10MB.",
+    "imageTooLarge": "Image is too large. Maximum file size is 5MB.",
     "imageUploadError": "Unable to upload images.",
     "pageNotFound": "Page not found.",
     "somethingWentWrong": "Something went wrong."

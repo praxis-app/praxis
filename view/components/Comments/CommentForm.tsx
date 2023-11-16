@@ -1,6 +1,7 @@
 import { Image as ImageIcon, Send } from '@mui/icons-material';
 import {
   Box,
+  CircularProgress,
   FilledInput,
   FormGroup,
   IconButton,
@@ -52,8 +53,10 @@ const CommentForm = ({
   const [showForm, setShowForm] = useState(expanded);
   const [blurCount, setBlurCount] = useState(0);
 
-  const [createComment] = useCreateCommentMutation();
-  const [updateComment] = useUpdateCommentMutation();
+  const [createComment, { loading: createCommentLoading }] =
+    useCreateCommentMutation();
+  const [updateComment, { loading: updateCommentLoading }] =
+    useUpdateCommentMutation();
   const [deleteImage] = useDeleteImageMutation();
 
   const { t } = useTranslation();
@@ -286,7 +289,11 @@ const CommentForm = ({
                   edge="end"
                   disableRipple
                 >
-                  <Send sx={{ fontSize: 20, color: 'text.secondary' }} />
+                  {createCommentLoading || updateCommentLoading ? (
+                    <CircularProgress size={10} />
+                  ) : (
+                    <Send sx={{ fontSize: 20, color: 'text.secondary' }} />
+                  )}
                 </IconButton>
               </Flex>
             </Box>
