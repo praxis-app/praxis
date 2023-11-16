@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/App/Layout';
+import Home from '../pages/App/Home';
 import DocsHomePage from '../pages/Docs/DocsHomePage';
-import Home from '../pages/Home';
 import ServerInvite from '../pages/Invites/ServerInvite';
 import ServerInvites from '../pages/Invites/ServerInvites';
 import CanaryPage from '../pages/Settings/CanaryPage';
