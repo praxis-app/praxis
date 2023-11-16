@@ -1,5 +1,5 @@
-import { Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 import pageNotFoundGif from '../../assets/images/404.gif';
 import Center from '../../components/Shared/Center';
 
@@ -8,14 +8,15 @@ const PageNotFound = () => {
 
   return (
     <Center>
-      <Box
-        alt={t('errors.pageNotFound')}
-        component="img"
-        width="50%"
-        height="50%"
-        alignSelf="center"
+      <LazyLoadImage
         src={pageNotFoundGif}
-        sx={{ objectFit: 'cover' }}
+        alt={t('errors.pageNotFound')}
+        effect="blur"
+        style={{
+          display: 'block',
+          margin: '0 auto',
+          width: '65%',
+        }}
       />
     </Center>
   );
