@@ -96,7 +96,12 @@ const GroupSettingsForm = ({ group }: Props) => {
             </Flex>
 
             {group.settings.isPublic && (
-              <Typography fontSize={12} color="error" marginTop={1} width="80%">
+              <Typography
+                color="#ffb74d"
+                fontSize={12}
+                marginTop={1}
+                width="80%"
+              >
                 <Warning
                   sx={{
                     fontSize: 14,
