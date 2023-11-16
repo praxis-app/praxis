@@ -10,14 +10,22 @@ const CP_CONTAINER_HEIGHT = 130;
 const CP_CONTAINER_HEIGHT_DESKTOP = 210;
 
 interface Props {
+  centerVertically?: boolean;
   imageFile?: File;
   imageId?: number;
   rounded?: boolean;
-  sx?: SxProps;
   topRounded?: boolean;
+  sx?: SxProps;
 }
 
-const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
+const CoverPhoto = ({
+  rounded = false,
+  topRounded = false,
+  centerVertically = true,
+  imageFile,
+  imageId,
+  sx,
+}: Props) => {
   const [imageTopMargin, setImageTopMargin] = useState<number>();
 
   const { t } = useTranslation();
@@ -70,7 +78,7 @@ const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
         effect="blur"
         height="auto"
         src={getImageSrc()}
-        style={{ marginTop: imageTopMargin }}
+        style={centerVertically ? { marginTop: imageTopMargin } : undefined}
         onLoadCapture={handleLoad}
         visibleByDefault={!imageId}
         width="100%"
