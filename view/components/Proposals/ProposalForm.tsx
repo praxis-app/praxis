@@ -17,7 +17,7 @@ import {
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   ProposalActionFieldName,
   ProposalActionType,
@@ -83,6 +83,7 @@ const ProposalForm = ({
   const [updateProposal] = useUpdateProposalMutation();
   const [deleteImage] = useDeleteImageMutation();
 
+  const { pathname } = useLocation();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -97,6 +98,7 @@ const ProposalForm = ({
     groupId,
   };
   const actionTypeOptions = getProposalActionTypeOptions(t);
+  const isGroupPage = pathname.includes(NavigationPaths.Groups);
 
   const validateProposal = ({ action, groupId }: CreateProposalInput) => {
     const errors: ProposalFormErrors = {
@@ -329,7 +331,7 @@ const ProposalForm = ({
                   )}
                 </FormControl>
 
-                {joinedGroups && !editProposal && (
+                {joinedGroups && !editProposal && !isGroupPage && (
                   <FormControl
                     error={!!(errors.groupId && touched.groupId)}
                     sx={{ marginBottom: values.action.actionType ? 1 : 0.25 }}
@@ -444,7 +446,9 @@ const ProposalForm = ({
             groupId={values.groupId}
             setFieldValue={setFieldValue}
             onClose={() => {
-              setFieldValue('groupId', null);
+              if (!isGroupPage) {
+                setFieldValue('groupId', null);
+              }
               setFieldValue('action', action);
               setSelectInputsKey(getRandomString());
             }}
