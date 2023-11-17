@@ -458,7 +458,9 @@ const ProposalForm = ({
             currentUserId={currentUserId}
             groupId={values.groupId}
             onClose={() => {
-              setFieldValue('groupId', null);
+              if (!isGroupPage) {
+                setFieldValue('groupId', null);
+              }
               setFieldValue('action', action);
               setSelectInputsKey(getRandomString());
             }}
