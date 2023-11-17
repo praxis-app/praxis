@@ -10,14 +10,22 @@ const CP_CONTAINER_HEIGHT = 130;
 const CP_CONTAINER_HEIGHT_DESKTOP = 210;
 
 interface Props {
+  centerVertically?: boolean;
   imageFile?: File;
   imageId?: number;
   rounded?: boolean;
-  sx?: SxProps;
   topRounded?: boolean;
+  sx?: SxProps;
 }
 
-const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
+const CoverPhoto = ({
+  rounded = false,
+  topRounded = false,
+  centerVertically = true,
+  imageFile,
+  imageId,
+  sx,
+}: Props) => {
   const [imageTopMargin, setImageTopMargin] = useState<number>();
 
   const { t } = useTranslation();
@@ -68,12 +76,12 @@ const CoverPhoto = ({ imageFile, imageId, rounded, topRounded, sx }: Props) => {
       <LazyLoadImage
         alt={t('images.labels.coverPhoto')}
         effect="blur"
-        height="auto"
+        width="100%"
+        height={centerVertically ? 'auto' : '100%'}
+        style={centerVertically ? { marginTop: imageTopMargin } : undefined}
         src={getImageSrc()}
-        style={{ marginTop: imageTopMargin }}
         onLoadCapture={handleLoad}
         visibleByDefault={!imageId}
-        width="100%"
       />
     </Box>
   );

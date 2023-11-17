@@ -7,9 +7,9 @@ import { MIDDOT_WITH_SPACES } from '../../constants/shared.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { EventCompactFragment } from '../../graphql/events/fragments/gen/EventCompact.gen';
 import { useDeleteEventMutation } from '../../graphql/events/mutations/gen/DeleteEvent.gen';
-import { useImageSrc } from '../../hooks/image.hooks';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { getEventPath } from '../../utils/event.utils';
+import CoverPhoto from '../Images/CoverPhoto';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
@@ -41,9 +41,7 @@ const EventCompact = ({ event, isLast }: Props) => {
   } = event;
   const canManageEvents = group?.myPermissions?.manageEvents;
 
-  const imageSrc = useImageSrc(coverPhoto.id);
   const imageSize = isDesktop ? '90px' : '65px';
-
   const eventPagePath = getEventPath(id);
   const editEventPath = `${eventPagePath}/edit`;
   const startDate = dayjs(startsAt).format('ddd, MMM D, YYYY');
@@ -110,15 +108,11 @@ const EventCompact = ({ event, isLast }: Props) => {
       <Flex justifyContent="space-between">
         <Flex width="100%">
           <Link href={eventPagePath}>
-            <Box
-              alt={t('images.labels.coverPhoto')}
-              borderRadius="8px"
-              component="img"
-              width={imageSize}
-              height={imageSize}
-              marginRight={1.5}
-              src={imageSrc}
-              sx={{ objectFit: 'cover' }}
+            <CoverPhoto
+              sx={{ width: imageSize, height: imageSize, marginRight: 1.5 }}
+              imageId={coverPhoto.id}
+              centerVertically={false}
+              rounded
             />
           </Link>
 

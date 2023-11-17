@@ -1,7 +1,7 @@
 import { useReactiveVar } from '@apollo/client';
-import { isLoggedInVar } from '../graphql/cache';
-import PublicGroupsFeed from '../components/Groups/PublicGroupsFeed';
-import HomeFeed from '../components/Users/HomeFeed';
+import { isLoggedInVar } from '../../graphql/cache';
+import PublicGroupsFeed from '../../components/Groups/PublicGroupsFeed';
+import HomeFeed from '../../components/Users/HomeFeed';
 
 const Home = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);

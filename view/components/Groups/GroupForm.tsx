@@ -5,7 +5,7 @@ import {
   CardContent as MuiCardContent,
   styled,
 } from '@mui/material';
-import { Form, Formik, FormikHelpers } from 'formik';
+import { Form, Formik } from 'formik';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,13 +22,13 @@ import {
 } from '../../graphql/groups/queries/gen/Groups.gen';
 import { isEntityTooLarge } from '../../utils/error.utils';
 import { getGroupPath } from '../../utils/group.utils';
+import { validateImageInput } from '../../utils/image.utils';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
 import ImageInput from '../Images/ImageInput';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import { TextField } from '../Shared/TextField';
-import { validateImageInput } from '../../utils/image.utils';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
@@ -54,10 +54,7 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
     description: editGroup ? editGroup.description : '',
   };
 
-  const handleCreate = async (
-    formValues: CreateGroupInput,
-    { setSubmitting, resetForm }: FormikHelpers<CreateGroupInput>,
-  ) =>
+  const handleCreate = async (formValues: CreateGroupInput) =>
     await createGroup({
       variables: {
         groupData: {
@@ -83,11 +80,9 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
             }),
         );
       },
-      onCompleted() {
-        setImageInputKey(getRandomString());
-        setCoverPhoto(undefined);
-        setSubmitting(false);
-        resetForm();
+      onCompleted({ createGroup: { group } }) {
+        const groupPagePath = getGroupPath(group.name);
+        navigate(groupPagePath);
       },
       onError() {
         throw new Error(t('groups.errors.couldNotCreate'));
@@ -115,10 +110,11 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
       },
     });
 
-  const handleSubmit = async (
-    { name, description, ...formValues }: CreateGroupInput | UpdateGroupInput,
-    formikHelpers: FormikHelpers<CreateGroupInput | UpdateGroupInput>,
-  ) => {
+  const handleSubmit = async ({
+    name,
+    description,
+    ...formValues
+  }: CreateGroupInput | UpdateGroupInput) => {
     const values = {
       description: description?.trim(),
       name: name?.trim(),
@@ -132,10 +128,7 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
         await handleUpdate(values, editGroup);
         return;
       }
-      await handleCreate(
-        values as CreateGroupInput,
-        formikHelpers as FormikHelpers<CreateGroupInput>,
-      );
+      await handleCreate(values as CreateGroupInput);
     } catch (err) {
       const title = isEntityTooLarge(err)
         ? t('errors.imageTooLarge')

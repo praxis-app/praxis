@@ -55,6 +55,16 @@ export class GroupsService {
     });
   }
 
+  async getPagedGroups(where?: FindOptionsWhere<Group>) {
+    const groups = await this.getGroups(where);
+    const sortedFeed = groups.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
+
+    // TODO: Update once pagination has been implemented
+    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+  }
+
   async getGroupFeed(id: number) {
     const group = await this.getGroup({ id }, ['proposals', 'posts']);
     const sortedFeed = [...group.posts, ...group.proposals].sort(

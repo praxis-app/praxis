@@ -55,12 +55,12 @@ export class GroupsResolver {
 
   @Query(() => [Group])
   async groups() {
-    return this.groupsService.getGroups();
+    return this.groupsService.getPagedGroups();
   }
 
   @Query(() => [Group])
   async publicGroups() {
-    return this.groupsService.getGroups({
+    return this.groupsService.getPagedGroups({
       config: { privacy: GroupPrivacy.Public },
     });
   }

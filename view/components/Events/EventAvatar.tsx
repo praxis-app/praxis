@@ -27,7 +27,7 @@ const EventAvatar = ({ event, withLink, size, sx, ...avatarProps }: Props) => {
   );
 
   if (withLink) {
-    <Link href={eventPagePath}>{renderAvatar()}</Link>;
+    return <Link href={eventPagePath}>{renderAvatar()}</Link>;
   }
 
   return renderAvatar();

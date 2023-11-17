@@ -16,7 +16,7 @@ export const validateImageInput = (imageInput: File | File[]) => {
       throw new Error(`${extension.toUpperCase()} images are not supported`);
     }
     if (image.size > MAX_IMAGE_SIZE) {
-      throw new Error('Image is too large. Maximum file size is 10MB.');
+      throw new Error('Image is too large. Maximum file size is 5MB.');
     }
   }
 };
