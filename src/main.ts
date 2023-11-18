@@ -1,3 +1,6 @@
+// Import the OpenTelemetry SDK first
+import { otelSDK } from './shared/tracing';
+
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { GraphQLSchemaHost } from '@nestjs/graphql';
@@ -11,6 +14,8 @@ import { LoggerFactory } from './shared/logger.factory';
 import { Environment } from './shared/shared.constants';
 
 const bootstrap = async () => {
+  await otelSDK.start();
+
   const app = await NestFactory.create(AppModule, {
     logger: LoggerFactory(),
     cors: true,
