@@ -4,6 +4,7 @@ import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
 import { Resource } from '@opentelemetry/resources';
 import { NodeSDK } from '@opentelemetry/sdk-node';
+import { GraphQLInstrumentation } from '@opentelemetry/instrumentation-graphql';
 import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import * as process from 'process';
@@ -18,8 +19,9 @@ export const otelSDK = new NodeSDK({
   }),
   spanProcessor: new SimpleSpanProcessor(traceExporter),
   instrumentations: [
-    new HttpInstrumentation(),
     new ExpressInstrumentation(),
+    new GraphQLInstrumentation(),
+    new HttpInstrumentation(),
     new NestInstrumentation(),
   ],
 });
