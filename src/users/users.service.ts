@@ -78,7 +78,7 @@ export class UsersService {
   }
 
   async getUserHomeFeed(id: number) {
-    const logTimeMessage = `Fetching user ${id} home feed`;
+    const logTimeMessage = `Fetching home feed for user with ID ${id}`;
     logTime(logTimeMessage, this.logger);
 
     const userFeedQuery = this.repository

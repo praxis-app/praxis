@@ -7,7 +7,6 @@ export const logTime = (identifier: string, logger: Logger) => {
   if (timings[identifier]) {
     const end = performance.now();
     const message = `${identifier}: ${Math.round(end - timings[identifier])}ms`;
-    console.log(message);
     logger.log(message);
 
     delete timings[identifier];
