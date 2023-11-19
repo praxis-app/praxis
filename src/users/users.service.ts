@@ -22,7 +22,7 @@ import { ServerPermissions } from '../server-roles/models/server-permissions.typ
 import { initServerRolePermissions } from '../server-roles/server-role.utils';
 import { ServerRolesService } from '../server-roles/server-roles.service';
 import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
-import { sanitizeText } from '../shared/shared.utils';
+import { logTime, sanitizeText } from '../shared/shared.utils';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
 import { UserWithFollowerCount, UserWithFollowingCount } from './user.types';
@@ -78,18 +78,75 @@ export class UsersService {
   }
 
   async getUserHomeFeed(id: number) {
-    const userWithFeed = await this.getUser({ id }, [
-      'following.posts',
-      'groups.events.posts',
-      'groups.posts',
-      'groups.proposals',
-      'proposals',
-      'posts',
-    ]);
-    if (!userWithFeed) {
+    logTime('fetching userWithFeed');
+    const userFeedQuery = this.repository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.following', 'userFollowing')
+      .leftJoinAndSelect('userFollowing.posts', 'followingPost')
+
+      .leftJoinAndSelect('user.groups', 'userGroup')
+      .leftJoinAndSelect('userGroup.posts', 'groupPost')
+      .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
+
+      .leftJoinAndSelect('userGroup.events', 'groupEvent')
+      .leftJoinAndSelect('groupEvent.posts', 'groupEventPost')
+
+      .leftJoinAndSelect('user.proposals', 'userProposal')
+      .leftJoinAndSelect('user.posts', 'userPost')
+
+      .select([
+        'user.id',
+        'userGroup.id',
+        'groupEvent.id',
+        'userFollowing.id',
+
+        'userPost.id',
+        'userPost.groupId',
+        'userPost.eventId',
+        'userPost.userId',
+        'userPost.body',
+        'userPost.createdAt',
+
+        'userProposal.id',
+        'userProposal.groupId',
+        'userProposal.userId',
+        'userProposal.stage',
+        'userProposal.body',
+        'userProposal.createdAt',
+
+        'groupPost.id',
+        'groupPost.groupId',
+        'groupPost.userId',
+        'groupPost.body',
+        'groupPost.createdAt',
+
+        'groupProposal.id',
+        'groupProposal.groupId',
+        'groupProposal.stage',
+        'groupProposal.userId',
+        'groupProposal.body',
+        'groupProposal.createdAt',
+
+        'groupEventPost.id',
+        'groupEventPost.userId',
+        'groupEventPost.eventId',
+        'groupEventPost.body',
+        'groupEventPost.createdAt',
+
+        'followingPost.id',
+        'followingPost.userId',
+        'followingPost.eventId',
+        'followingPost.body',
+        'followingPost.createdAt',
+      ])
+      .where('user.id = :id', { id });
+    const userFeed = await userFeedQuery.getOne();
+    logTime('fetching userWithFeed');
+
+    if (!userFeed) {
       throw new UserInputError('User not found');
     }
-    const { groups, following, posts, proposals } = userWithFeed;
+    const { groups, following, posts, proposals } = userFeed;
 
     // Initialize maps with posts and proposals by this user
     const postMap = posts.reduce<Record<number, Post>>((result, post) => {
