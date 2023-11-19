@@ -8,15 +8,16 @@ const logTimeMap: Record<string, number> = {};
  * but with the ability to save output to a log file
  */
 export const logTime = (label: string, logger: Logger) => {
-  if (logTimeMap[label]) {
-    const end = performance.now();
-    const time = Math.round(end - logTimeMap[label]);
-    const message = `${label}: ${time}ms`;
-    logger.log(message);
-    delete logTimeMap[label];
-  } else {
+  if (!logTimeMap[label]) {
     logTimeMap[label] = performance.now();
+    return;
   }
+  const end = performance.now();
+  const time = Math.round(end - logTimeMap[label]);
+  const message = `${label}: ${time}ms`;
+
+  logger.log(message);
+  delete logTimeMap[label];
 };
 
 /**
