@@ -7,17 +7,15 @@ const logTimeMap: Record<string, number> = {};
  * Log the time similar to `console.time` and `console.timeEnd`,
  * but with the ability to save output to a log file
  */
-export const logTime = (identifier: string, logger: Logger) => {
-  if (logTimeMap[identifier]) {
+export const logTime = (label: string, logger: Logger) => {
+  if (logTimeMap[label]) {
     const end = performance.now();
-    const message = `${identifier}: ${Math.round(
-      end - logTimeMap[identifier],
-    )}ms`;
+    const time = Math.round(end - logTimeMap[label]);
+    const message = `${label}: ${time}ms`;
     logger.log(message);
-
-    delete logTimeMap[identifier];
+    delete logTimeMap[label];
   } else {
-    logTimeMap[identifier] = performance.now();
+    logTimeMap[label] = performance.now();
   }
 };
 
