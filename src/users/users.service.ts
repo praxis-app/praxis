@@ -78,7 +78,9 @@ export class UsersService {
   }
 
   async getUserHomeFeed(id: number) {
-    logTime('Fetching user home feed');
+    const logTimeMessage = `Fetching user ${id} home feed`;
+    logTime(logTimeMessage, this.logger);
+
     const userFeedQuery = this.repository
       .createQueryBuilder('user')
 
@@ -149,7 +151,7 @@ export class UsersService {
       .where('user.id = :id', { id });
 
     const userFeed = await userFeedQuery.getOne();
-    logTime('Fetching user home feed');
+    logTime(logTimeMessage, this.logger);
 
     if (!userFeed) {
       throw new UserInputError('User not found');
