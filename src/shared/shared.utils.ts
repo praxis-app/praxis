@@ -1,17 +1,23 @@
 import { Logger } from '@nestjs/common';
 import * as sanitizeHtml from 'sanitize-html';
 
-const timings: { [key: string]: number } = {};
+const logTimeMap: Record<string, number> = {};
 
+/**
+ * Log the time similar to `console.time` and `console.timeEnd`,
+ * but with the ability to save output to a log file
+ */
 export const logTime = (identifier: string, logger: Logger) => {
-  if (timings[identifier]) {
+  if (logTimeMap[identifier]) {
     const end = performance.now();
-    const message = `${identifier}: ${Math.round(end - timings[identifier])}ms`;
+    const message = `${identifier}: ${Math.round(
+      end - logTimeMap[identifier],
+    )}ms`;
     logger.log(message);
 
-    delete timings[identifier];
+    delete logTimeMap[identifier];
   } else {
-    timings[identifier] = performance.now();
+    logTimeMap[identifier] = performance.now();
   }
 };
 
