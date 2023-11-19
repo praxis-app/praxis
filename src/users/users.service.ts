@@ -78,61 +78,68 @@ export class UsersService {
   }
 
   async getUserHomeFeed(id: number) {
-    logTime('fetching userWithFeed');
+    logTime('Fetching user home feed');
     const userFeedQuery = this.repository
       .createQueryBuilder('user')
+
+      // Posts from followed users
       .leftJoinAndSelect('user.following', 'userFollowing')
       .leftJoinAndSelect('userFollowing.posts', 'followingPost')
 
+      // Posts and proposals from joined groups
       .leftJoinAndSelect('user.groups', 'userGroup')
       .leftJoinAndSelect('userGroup.posts', 'groupPost')
       .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
 
+      // Posts from joined group events
       .leftJoinAndSelect('userGroup.events', 'groupEvent')
       .leftJoinAndSelect('groupEvent.posts', 'groupEventPost')
 
+      // Posts and proposals from this user
       .leftJoinAndSelect('user.proposals', 'userProposal')
       .leftJoinAndSelect('user.posts', 'userPost')
 
-      .select([
-        'user.id',
-        'userGroup.id',
-        'groupEvent.id',
-        'userFollowing.id',
-
+      // Only select required fields
+      .select(['user.id', 'userGroup.id', 'groupEvent.id', 'userFollowing.id'])
+      .addSelect([
         'userPost.id',
         'userPost.groupId',
         'userPost.eventId',
         'userPost.userId',
         'userPost.body',
         'userPost.createdAt',
-
+      ])
+      .addSelect([
         'userProposal.id',
         'userProposal.groupId',
         'userProposal.userId',
         'userProposal.stage',
         'userProposal.body',
         'userProposal.createdAt',
-
+      ])
+      .addSelect([
         'groupPost.id',
         'groupPost.groupId',
         'groupPost.userId',
         'groupPost.body',
         'groupPost.createdAt',
-
+      ])
+      .addSelect([
         'groupProposal.id',
         'groupProposal.groupId',
         'groupProposal.stage',
         'groupProposal.userId',
         'groupProposal.body',
         'groupProposal.createdAt',
-
+      ])
+      .addSelect([
         'groupEventPost.id',
         'groupEventPost.userId',
         'groupEventPost.eventId',
         'groupEventPost.body',
         'groupEventPost.createdAt',
-
+      ])
+      .addSelect([
         'followingPost.id',
         'followingPost.userId',
         'followingPost.eventId',
@@ -140,8 +147,9 @@ export class UsersService {
         'followingPost.createdAt',
       ])
       .where('user.id = :id', { id });
+
     const userFeed = await userFeedQuery.getOne();
-    logTime('fetching userWithFeed');
+    logTime('Fetching user home feed');
 
     if (!userFeed) {
       throw new UserInputError('User not found');
