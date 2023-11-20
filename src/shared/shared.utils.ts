@@ -4,7 +4,7 @@ import * as sanitizeHtml from 'sanitize-html';
 const logTimeMap: Record<string, number> = {};
 
 /**
- * Log the time similar to `console.time` and `console.timeEnd`,
+ * Log time similar to `console.time` and `console.timeEnd`,
  * but with the ability to save output to a log file
  */
 export const logTime = (label: string, logger: Logger) => {
