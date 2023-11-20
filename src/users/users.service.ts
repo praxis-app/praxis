@@ -77,7 +77,7 @@ export class UsersService {
     });
   }
 
-  async getRawUserFeed(id: number) {
+  async getBaseUserFeed(id: number) {
     const userFeedQuery = this.repository
       .createQueryBuilder('user')
 
@@ -116,7 +116,11 @@ export class UsersService {
       ])
       .where('user.id = :id', { id });
 
-    return userFeedQuery.getOne();
+    const userFeed = await userFeedQuery.getOne();
+    if (!userFeed) {
+      throw new UserInputError('User not found');
+    }
+    return userFeed;
   }
 
   async getJoinedGroupsFeed(id: number) {
@@ -190,14 +194,11 @@ export class UsersService {
     const logTimeMessage = `Fetching home feed for user with ID ${id}`;
     logTime(logTimeMessage, this.logger);
 
-    const userFeed = await this.getRawUserFeed(id);
-    const eventPosts = await this.getUserFeedEventPosts(id);
+    const userFeed = await this.getBaseUserFeed(id);
     const groups = await this.getJoinedGroupsFeed(id);
+    const eventPosts = await this.getUserFeedEventPosts(id);
 
-    if (!userFeed) {
-      throw new UserInputError('User not found');
-    }
-    const { following, posts, proposals } = userFeed;
+    const { posts, proposals, following } = userFeed;
 
     // Initialize maps with posts and proposals by this user
     const postMap = posts.reduce<Record<number, Post>>((result, post) => {
