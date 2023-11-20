@@ -77,69 +77,69 @@ export class UsersService {
     });
   }
 
-  buildUserHomeFeedQuery(id: number) {
-    return (
-      this.repository
-        .createQueryBuilder('user')
+  async getRawUserFeed(id: number) {
+    const userFeedQuery = this.repository
+      .createQueryBuilder('user')
 
-        // Posts from followed users
-        .leftJoinAndSelect('user.following', 'userFollowing')
-        .leftJoinAndSelect('userFollowing.posts', 'followingPost')
+      // Posts from followed users
+      .leftJoinAndSelect('user.following', 'userFollowing')
+      .leftJoinAndSelect('userFollowing.posts', 'followingPost')
 
-        // Posts and proposals from joined groups
-        .leftJoinAndSelect('user.groups', 'userGroup')
-        .leftJoinAndSelect('userGroup.posts', 'groupPost')
-        .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
+      // Posts and proposals from joined groups
+      .leftJoinAndSelect('user.groups', 'userGroup')
+      .leftJoinAndSelect('userGroup.posts', 'groupPost')
+      .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
 
-        // Posts and proposals from this user
-        .leftJoinAndSelect('user.proposals', 'userProposal')
-        .leftJoinAndSelect('user.posts', 'userPost')
+      // Posts and proposals from this user
+      .leftJoinAndSelect('user.proposals', 'userProposal')
+      .leftJoinAndSelect('user.posts', 'userPost')
 
-        // Only select required fields
-        .select(['user.id', 'userGroup.id', 'userFollowing.id'])
-        .addSelect([
-          'userPost.id',
-          'userPost.groupId',
-          'userPost.eventId',
-          'userPost.userId',
-          'userPost.body',
-          'userPost.createdAt',
-        ])
-        .addSelect([
-          'userProposal.id',
-          'userProposal.groupId',
-          'userProposal.userId',
-          'userProposal.stage',
-          'userProposal.body',
-          'userProposal.createdAt',
-        ])
-        .addSelect([
-          'groupPost.id',
-          'groupPost.groupId',
-          'groupPost.userId',
-          'groupPost.body',
-          'groupPost.createdAt',
-        ])
-        .addSelect([
-          'groupProposal.id',
-          'groupProposal.groupId',
-          'groupProposal.stage',
-          'groupProposal.userId',
-          'groupProposal.body',
-          'groupProposal.createdAt',
-        ])
-        .addSelect([
-          'followingPost.id',
-          'followingPost.userId',
-          'followingPost.eventId',
-          'followingPost.body',
-          'followingPost.createdAt',
-        ])
-        .where('user.id = :id', { id })
-    );
+      // Only select required fields
+      .select(['user.id', 'userGroup.id', 'userFollowing.id'])
+      .addSelect([
+        'userPost.id',
+        'userPost.groupId',
+        'userPost.eventId',
+        'userPost.userId',
+        'userPost.body',
+        'userPost.createdAt',
+      ])
+      .addSelect([
+        'userProposal.id',
+        'userProposal.groupId',
+        'userProposal.userId',
+        'userProposal.stage',
+        'userProposal.body',
+        'userProposal.createdAt',
+      ])
+      .addSelect([
+        'groupPost.id',
+        'groupPost.groupId',
+        'groupPost.userId',
+        'groupPost.body',
+        'groupPost.createdAt',
+      ])
+      .addSelect([
+        'groupProposal.id',
+        'groupProposal.groupId',
+        'groupProposal.stage',
+        'groupProposal.userId',
+        'groupProposal.body',
+        'groupProposal.createdAt',
+      ])
+      .addSelect([
+        'followingPost.id',
+        'followingPost.userId',
+        'followingPost.eventId',
+        'followingPost.body',
+        'followingPost.createdAt',
+      ])
+      .where('user.id = :id', { id });
+
+    return userFeedQuery.getOne();
   }
 
-  async getUserHomeFeedEventPosts(id: number) {
+  async getUserFeedEventPosts(id: number) {
     const eventPostsQuery = this.repository
       .createQueryBuilder('user')
 
@@ -170,14 +170,12 @@ export class UsersService {
     return extractedEvents.flatMap((event) => event.posts);
   }
 
-  async getUserHomeFeed(id: number) {
+  async getUserFeed(id: number) {
     const logTimeMessage = `Fetching home feed for user with ID ${id}`;
     logTime(logTimeMessage, this.logger);
 
-    const userFeedQuery = this.buildUserHomeFeedQuery(id);
-    const userFeed = await userFeedQuery.getOne();
-    const eventPosts = await this.getUserHomeFeedEventPosts(id);
-    logTime(logTimeMessage, this.logger);
+    const userFeed = await this.getRawUserFeed(id);
+    const eventPosts = await this.getUserFeedEventPosts(id);
 
     if (!userFeed) {
       throw new UserInputError('User not found');
@@ -220,6 +218,8 @@ export class UsersService {
       ...Object.values(postMap),
       ...Object.values(proposalMap),
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    logTime(logTimeMessage, this.logger);
 
     // TODO: Update once pagination has been implemented
     return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
