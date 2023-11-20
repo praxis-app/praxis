@@ -60,7 +60,7 @@ export class UsersResolver {
 
   @ResolveField(() => [FeedItem])
   async homeFeed(@Parent() { id }: User) {
-    return this.usersService.getUserHomeFeed(id);
+    return this.usersService.getUserFeed(id);
   }
 
   @ResolveField(() => [FeedItem])

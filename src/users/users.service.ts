@@ -77,96 +77,131 @@ export class UsersService {
     });
   }
 
-  buildUserHomeFeedQuery(id: number) {
-    return (
-      this.repository
-        .createQueryBuilder('user')
+  async getBaseUserFeed(id: number) {
+    const userFeedQuery = this.repository
+      .createQueryBuilder('user')
 
-        // Posts from followed users
-        .leftJoinAndSelect('user.following', 'userFollowing')
-        .leftJoinAndSelect('userFollowing.posts', 'followingPost')
+      // Posts from followed users
+      .leftJoinAndSelect('user.following', 'userFollowing')
+      .leftJoinAndSelect('userFollowing.posts', 'followingPost')
 
-        // Posts and proposals from joined groups
-        .leftJoinAndSelect('user.groups', 'userGroup')
-        .leftJoinAndSelect('userGroup.posts', 'groupPost')
-        .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
+      // Posts and proposals from this user
+      .leftJoinAndSelect('user.proposals', 'userProposal')
+      .leftJoinAndSelect('user.posts', 'userPost')
 
-        // Posts from joined group events
-        .leftJoinAndSelect('userGroup.events', 'groupEvent')
-        .leftJoinAndSelect('groupEvent.posts', 'groupEventPost')
+      // Only select required fields
+      .select(['user.id', 'userFollowing.id'])
+      .addSelect([
+        'userPost.id',
+        'userPost.groupId',
+        'userPost.eventId',
+        'userPost.userId',
+        'userPost.body',
+        'userPost.createdAt',
+      ])
+      .addSelect([
+        'userProposal.id',
+        'userProposal.groupId',
+        'userProposal.userId',
+        'userProposal.stage',
+        'userProposal.body',
+        'userProposal.createdAt',
+      ])
+      .addSelect([
+        'followingPost.id',
+        'followingPost.userId',
+        'followingPost.eventId',
+        'followingPost.body',
+        'followingPost.createdAt',
+      ])
+      .where('user.id = :id', { id });
 
-        // Posts and proposals from this user
-        .leftJoinAndSelect('user.proposals', 'userProposal')
-        .leftJoinAndSelect('user.posts', 'userPost')
-
-        // Only select required fields
-        .select([
-          'user.id',
-          'userGroup.id',
-          'groupEvent.id',
-          'userFollowing.id',
-        ])
-        .addSelect([
-          'userPost.id',
-          'userPost.groupId',
-          'userPost.eventId',
-          'userPost.userId',
-          'userPost.body',
-          'userPost.createdAt',
-        ])
-        .addSelect([
-          'userProposal.id',
-          'userProposal.groupId',
-          'userProposal.userId',
-          'userProposal.stage',
-          'userProposal.body',
-          'userProposal.createdAt',
-        ])
-        .addSelect([
-          'groupPost.id',
-          'groupPost.groupId',
-          'groupPost.userId',
-          'groupPost.body',
-          'groupPost.createdAt',
-        ])
-        .addSelect([
-          'groupProposal.id',
-          'groupProposal.groupId',
-          'groupProposal.stage',
-          'groupProposal.userId',
-          'groupProposal.body',
-          'groupProposal.createdAt',
-        ])
-        .addSelect([
-          'groupEventPost.id',
-          'groupEventPost.userId',
-          'groupEventPost.eventId',
-          'groupEventPost.body',
-          'groupEventPost.createdAt',
-        ])
-        .addSelect([
-          'followingPost.id',
-          'followingPost.userId',
-          'followingPost.eventId',
-          'followingPost.body',
-          'followingPost.createdAt',
-        ])
-        .where('user.id = :id', { id })
-    );
-  }
-
-  async getUserHomeFeed(id: number) {
-    const logTimeMessage = `Fetching home feed for user with ID ${id}`;
-    logTime(logTimeMessage, this.logger);
-
-    const userFeedQuery = this.buildUserHomeFeedQuery(id);
     const userFeed = await userFeedQuery.getOne();
-    logTime(logTimeMessage, this.logger);
-
     if (!userFeed) {
       throw new UserInputError('User not found');
     }
-    const { groups, following, posts, proposals } = userFeed;
+    return userFeed;
+  }
+
+  async getJoinedGroupsFeed(id: number) {
+    const joinedGroupsFeedQuery = this.repository
+      .createQueryBuilder('user')
+
+      // Posts and proposals from joined groups
+      .leftJoinAndSelect('user.groups', 'userGroup')
+      .leftJoinAndSelect('userGroup.posts', 'groupPost')
+      .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
+
+      // Only select required fields
+      .select(['user.id', 'userGroup.id'])
+      .addSelect([
+        'groupPost.id',
+        'groupPost.groupId',
+        'groupPost.userId',
+        'groupPost.body',
+        'groupPost.createdAt',
+      ])
+      .addSelect([
+        'groupProposal.id',
+        'groupProposal.groupId',
+        'groupProposal.stage',
+        'groupProposal.userId',
+        'groupProposal.body',
+        'groupProposal.createdAt',
+      ])
+      .where('user.id = :id', { id });
+
+    const joinedGroupsFeed = await joinedGroupsFeedQuery.getOne();
+    if (!joinedGroupsFeed) {
+      throw new UserInputError('User not found');
+    }
+
+    const { groups } = joinedGroupsFeed;
+    const groupPosts = groups.flatMap((group) => group.posts);
+    const groupProposals = groups.flatMap((group) => group.proposals);
+
+    return { groupPosts, groupProposals };
+  }
+
+  async getUserFeedEventPosts(id: number) {
+    const eventPostsQuery = this.repository
+      .createQueryBuilder('user')
+
+      // Posts from joined group events
+      .leftJoinAndSelect('user.groups', 'userGroup')
+      .leftJoinAndSelect('userGroup.events', 'groupEvent')
+      .leftJoinAndSelect('groupEvent.posts', 'groupEventPost')
+
+      // Only select required fields
+      .select(['user.id', 'userGroup.id', 'groupEvent.id'])
+      .addSelect([
+        'groupEventPost.id',
+        'groupEventPost.userId',
+        'groupEventPost.eventId',
+        'groupEventPost.body',
+        'groupEventPost.createdAt',
+      ])
+      .where('user.id = :id', { id });
+
+    const userWithEventPosts = await eventPostsQuery.getOne();
+    if (!userWithEventPosts) {
+      throw new UserInputError('User not found');
+    }
+
+    const extractedEvents = userWithEventPosts.groups.flatMap(
+      (group) => group.events,
+    );
+    return extractedEvents.flatMap((event) => event.posts);
+  }
+
+  async getUserFeed(id: number) {
+    const logTimeMessage = `Fetching home feed for user with ID ${id}`;
+    logTime(logTimeMessage, this.logger);
+
+    const userFeed = await this.getBaseUserFeed(id);
+    const eventPosts = await this.getUserFeedEventPosts(id);
+    const { groupPosts, groupProposals } = await this.getJoinedGroupsFeed(id);
+    const { posts, proposals, following } = userFeed;
 
     // Initialize maps with posts and proposals by this user
     const postMap = posts.reduce<Record<number, Post>>((result, post) => {
@@ -181,22 +216,15 @@ export class UsersService {
       {},
     );
 
-    const extractPosts = (items: { posts: Post[] }[]) =>
-      items.flatMap((item) => item.posts);
-
     // Insert remaining posts from joined groups and followed users
-    const remainingPosts = [
-      ...extractPosts(groups.flatMap((group) => group.events)),
-      ...extractPosts(following),
-      ...extractPosts(groups),
-    ];
+    const followingPosts = following.flatMap((user) => user.posts);
+    const remainingPosts = [...followingPosts, ...groupPosts, ...eventPosts];
     for (const post of remainingPosts) {
       postMap[post.id] = post;
     }
 
     // Insert proposals from joined groups
-    const proposalsFromGroups = groups.flatMap((group) => group.proposals);
-    for (const proposal of proposalsFromGroups) {
+    for (const proposal of groupProposals) {
       proposalMap[proposal.id] = proposal;
     }
 
@@ -206,7 +234,10 @@ export class UsersService {
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     // TODO: Update once pagination has been implemented
-    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+    const pagedFeed = sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+
+    logTime(logTimeMessage, this.logger);
+    return pagedFeed;
   }
 
   async getUserProfileFeed(id: number) {
