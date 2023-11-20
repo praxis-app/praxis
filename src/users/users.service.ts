@@ -91,21 +91,12 @@ export class UsersService {
         .leftJoinAndSelect('userGroup.posts', 'groupPost')
         .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
 
-        // Posts from joined group events
-        .leftJoinAndSelect('userGroup.events', 'groupEvent')
-        .leftJoinAndSelect('groupEvent.posts', 'groupEventPost')
-
         // Posts and proposals from this user
         .leftJoinAndSelect('user.proposals', 'userProposal')
         .leftJoinAndSelect('user.posts', 'userPost')
 
         // Only select required fields
-        .select([
-          'user.id',
-          'userGroup.id',
-          'groupEvent.id',
-          'userFollowing.id',
-        ])
+        .select(['user.id', 'userGroup.id', 'userFollowing.id'])
         .addSelect([
           'userPost.id',
           'userPost.groupId',
@@ -138,13 +129,6 @@ export class UsersService {
           'groupProposal.createdAt',
         ])
         .addSelect([
-          'groupEventPost.id',
-          'groupEventPost.userId',
-          'groupEventPost.eventId',
-          'groupEventPost.body',
-          'groupEventPost.createdAt',
-        ])
-        .addSelect([
           'followingPost.id',
           'followingPost.userId',
           'followingPost.eventId',
@@ -155,18 +139,44 @@ export class UsersService {
     );
   }
 
+  buildEventPostsQuery(id: number) {
+    return (
+      this.repository
+        .createQueryBuilder('user')
+
+        // Posts from joined group events
+        .leftJoinAndSelect('user.groups', 'userGroup')
+        .leftJoinAndSelect('userGroup.events', 'groupEvent')
+        .leftJoinAndSelect('groupEvent.posts', 'groupEventPost')
+
+        // Only select required fields
+        .select(['user.id', 'userGroup.id', 'groupEvent.id'])
+        .addSelect([
+          'groupEventPost.id',
+          'groupEventPost.userId',
+          'groupEventPost.eventId',
+          'groupEventPost.body',
+          'groupEventPost.createdAt',
+        ])
+        .where('user.id = :id', { id })
+    );
+  }
+
   async getUserHomeFeed(id: number) {
     const logTimeMessage = `Fetching home feed for user with ID ${id}`;
     logTime(logTimeMessage, this.logger);
 
     const userFeedQuery = this.buildUserHomeFeedQuery(id);
+    const eventPostsQuery = this.buildEventPostsQuery(id);
     const userFeed = await userFeedQuery.getOne();
+    const userWithEventPosts = await eventPostsQuery.getOne();
     logTime(logTimeMessage, this.logger);
 
-    if (!userFeed) {
+    if (!userFeed || !userWithEventPosts) {
       throw new UserInputError('User not found');
     }
     const { groups, following, posts, proposals } = userFeed;
+    const { groups: groupsWithEventPosts } = userWithEventPosts;
 
     // Initialize maps with posts and proposals by this user
     const postMap = posts.reduce<Record<number, Post>>((result, post) => {
@@ -186,7 +196,7 @@ export class UsersService {
 
     // Insert remaining posts from joined groups and followed users
     const remainingPosts = [
-      ...extractPosts(groups.flatMap((group) => group.events)),
+      ...extractPosts(groupsWithEventPosts.flatMap((group) => group.events)),
       ...extractPosts(following),
       ...extractPosts(groups),
     ];
