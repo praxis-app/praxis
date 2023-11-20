@@ -85,17 +85,12 @@ export class UsersService {
       .leftJoinAndSelect('user.following', 'userFollowing')
       .leftJoinAndSelect('userFollowing.posts', 'followingPost')
 
-      // Posts and proposals from joined groups
-      .leftJoinAndSelect('user.groups', 'userGroup')
-      .leftJoinAndSelect('userGroup.posts', 'groupPost')
-      .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
-
       // Posts and proposals from this user
       .leftJoinAndSelect('user.proposals', 'userProposal')
       .leftJoinAndSelect('user.posts', 'userPost')
 
       // Only select required fields
-      .select(['user.id', 'userGroup.id', 'userFollowing.id'])
+      .select(['user.id', 'userFollowing.id'])
       .addSelect([
         'userPost.id',
         'userPost.groupId',
@@ -113,6 +108,29 @@ export class UsersService {
         'userProposal.createdAt',
       ])
       .addSelect([
+        'followingPost.id',
+        'followingPost.userId',
+        'followingPost.eventId',
+        'followingPost.body',
+        'followingPost.createdAt',
+      ])
+      .where('user.id = :id', { id });
+
+    return userFeedQuery.getOne();
+  }
+
+  async getJoinedGroupsFeed(id: number) {
+    const userFeedQuery = this.repository
+      .createQueryBuilder('user')
+
+      // Posts and proposals from joined groups
+      .leftJoinAndSelect('user.groups', 'userGroup')
+      .leftJoinAndSelect('userGroup.posts', 'groupPost')
+      .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
+
+      // Only select required fields
+      .select(['user.id', 'userGroup.id'])
+      .addSelect([
         'groupPost.id',
         'groupPost.groupId',
         'groupPost.userId',
@@ -127,16 +145,14 @@ export class UsersService {
         'groupProposal.body',
         'groupProposal.createdAt',
       ])
-      .addSelect([
-        'followingPost.id',
-        'followingPost.userId',
-        'followingPost.eventId',
-        'followingPost.body',
-        'followingPost.createdAt',
-      ])
       .where('user.id = :id', { id });
 
-    return userFeedQuery.getOne();
+    const userWithJoinedGroupsFeed = await userFeedQuery.getOne();
+    if (!userWithJoinedGroupsFeed) {
+      throw new UserInputError('User not found');
+    }
+
+    return userWithJoinedGroupsFeed.groups;
   }
 
   async getUserFeedEventPosts(id: number) {
@@ -176,11 +192,12 @@ export class UsersService {
 
     const userFeed = await this.getRawUserFeed(id);
     const eventPosts = await this.getUserFeedEventPosts(id);
+    const groups = await this.getJoinedGroupsFeed(id);
 
     if (!userFeed) {
       throw new UserInputError('User not found');
     }
-    const { groups, following, posts, proposals } = userFeed;
+    const { following, posts, proposals } = userFeed;
 
     // Initialize maps with posts and proposals by this user
     const postMap = posts.reduce<Record<number, Post>>((result, post) => {
