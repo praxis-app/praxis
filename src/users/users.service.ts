@@ -124,7 +124,7 @@ export class UsersService {
   }
 
   async getJoinedGroupsFeed(id: number) {
-    const userFeedQuery = this.repository
+    const joinedGroupsFeedQuery = this.repository
       .createQueryBuilder('user')
 
       // Posts and proposals from joined groups
@@ -151,12 +151,16 @@ export class UsersService {
       ])
       .where('user.id = :id', { id });
 
-    const userWithJoinedGroupsFeed = await userFeedQuery.getOne();
-    if (!userWithJoinedGroupsFeed) {
+    const joinedGroupsFeed = await joinedGroupsFeedQuery.getOne();
+    if (!joinedGroupsFeed) {
       throw new UserInputError('User not found');
     }
 
-    return userWithJoinedGroupsFeed.groups;
+    const { groups } = joinedGroupsFeed;
+    const groupPosts = groups.flatMap((group) => group.posts);
+    const groupProposals = groups.flatMap((group) => group.proposals);
+
+    return { groupPosts, groupProposals };
   }
 
   async getUserFeedEventPosts(id: number) {
@@ -195,9 +199,8 @@ export class UsersService {
     logTime(logTimeMessage, this.logger);
 
     const userFeed = await this.getBaseUserFeed(id);
-    const groups = await this.getJoinedGroupsFeed(id);
     const eventPosts = await this.getUserFeedEventPosts(id);
-
+    const { groupPosts, groupProposals } = await this.getJoinedGroupsFeed(id);
     const { posts, proposals, following } = userFeed;
 
     // Initialize maps with posts and proposals by this user
@@ -213,22 +216,15 @@ export class UsersService {
       {},
     );
 
-    const extractPosts = (items: { posts: Post[] }[]) =>
-      items.flatMap((item) => item.posts);
-
     // Insert remaining posts from joined groups and followed users
-    const remainingPosts = [
-      ...extractPosts(following),
-      ...extractPosts(groups),
-      ...eventPosts,
-    ];
+    const followingPosts = following.flatMap((user) => user.posts);
+    const remainingPosts = [...followingPosts, ...groupPosts, ...eventPosts];
     for (const post of remainingPosts) {
       postMap[post.id] = post;
     }
 
     // Insert proposals from joined groups
-    const proposalsFromGroups = groups.flatMap((group) => group.proposals);
-    for (const proposal of proposalsFromGroups) {
+    for (const proposal of groupProposals) {
       proposalMap[proposal.id] = proposal;
     }
 
@@ -237,10 +233,11 @@ export class UsersService {
       ...Object.values(proposalMap),
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-    logTime(logTimeMessage, this.logger);
-
     // TODO: Update once pagination has been implemented
-    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+    const pagedFeed = sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+
+    logTime(logTimeMessage, this.logger);
+    return pagedFeed;
   }
 
   async getUserProfileFeed(id: number) {
