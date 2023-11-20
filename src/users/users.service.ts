@@ -77,79 +77,89 @@ export class UsersService {
     });
   }
 
+  buildUserHomeFeedQuery(id: number) {
+    return (
+      this.repository
+        .createQueryBuilder('user')
+
+        // Posts from followed users
+        .leftJoinAndSelect('user.following', 'userFollowing')
+        .leftJoinAndSelect('userFollowing.posts', 'followingPost')
+
+        // Posts and proposals from joined groups
+        .leftJoinAndSelect('user.groups', 'userGroup')
+        .leftJoinAndSelect('userGroup.posts', 'groupPost')
+        .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
+
+        // Posts from joined group events
+        .leftJoinAndSelect('userGroup.events', 'groupEvent')
+        .leftJoinAndSelect('groupEvent.posts', 'groupEventPost')
+
+        // Posts and proposals from this user
+        .leftJoinAndSelect('user.proposals', 'userProposal')
+        .leftJoinAndSelect('user.posts', 'userPost')
+
+        // Only select required fields
+        .select([
+          'user.id',
+          'userGroup.id',
+          'groupEvent.id',
+          'userFollowing.id',
+        ])
+        .addSelect([
+          'userPost.id',
+          'userPost.groupId',
+          'userPost.eventId',
+          'userPost.userId',
+          'userPost.body',
+          'userPost.createdAt',
+        ])
+        .addSelect([
+          'userProposal.id',
+          'userProposal.groupId',
+          'userProposal.userId',
+          'userProposal.stage',
+          'userProposal.body',
+          'userProposal.createdAt',
+        ])
+        .addSelect([
+          'groupPost.id',
+          'groupPost.groupId',
+          'groupPost.userId',
+          'groupPost.body',
+          'groupPost.createdAt',
+        ])
+        .addSelect([
+          'groupProposal.id',
+          'groupProposal.groupId',
+          'groupProposal.stage',
+          'groupProposal.userId',
+          'groupProposal.body',
+          'groupProposal.createdAt',
+        ])
+        .addSelect([
+          'groupEventPost.id',
+          'groupEventPost.userId',
+          'groupEventPost.eventId',
+          'groupEventPost.body',
+          'groupEventPost.createdAt',
+        ])
+        .addSelect([
+          'followingPost.id',
+          'followingPost.userId',
+          'followingPost.eventId',
+          'followingPost.body',
+          'followingPost.createdAt',
+        ])
+        .where('user.id = :id', { id })
+    );
+  }
+
   async getUserHomeFeed(id: number) {
     const logTimeMessage = `Fetching home feed for user with ID ${id}`;
     logTime(logTimeMessage, this.logger);
 
-    const userFeedQuery = this.repository
-      .createQueryBuilder('user')
-
-      // Posts from followed users
-      .leftJoinAndSelect('user.following', 'userFollowing')
-      .leftJoinAndSelect('userFollowing.posts', 'followingPost')
-
-      // Posts and proposals from joined groups
-      .leftJoinAndSelect('user.groups', 'userGroup')
-      .leftJoinAndSelect('userGroup.posts', 'groupPost')
-      .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
-
-      // Posts from joined group events
-      .leftJoinAndSelect('userGroup.events', 'groupEvent')
-      .leftJoinAndSelect('groupEvent.posts', 'groupEventPost')
-
-      // Posts and proposals from this user
-      .leftJoinAndSelect('user.proposals', 'userProposal')
-      .leftJoinAndSelect('user.posts', 'userPost')
-
-      // Only select required fields
-      .select(['user.id', 'userGroup.id', 'groupEvent.id', 'userFollowing.id'])
-      .addSelect([
-        'userPost.id',
-        'userPost.groupId',
-        'userPost.eventId',
-        'userPost.userId',
-        'userPost.body',
-        'userPost.createdAt',
-      ])
-      .addSelect([
-        'userProposal.id',
-        'userProposal.groupId',
-        'userProposal.userId',
-        'userProposal.stage',
-        'userProposal.body',
-        'userProposal.createdAt',
-      ])
-      .addSelect([
-        'groupPost.id',
-        'groupPost.groupId',
-        'groupPost.userId',
-        'groupPost.body',
-        'groupPost.createdAt',
-      ])
-      .addSelect([
-        'groupProposal.id',
-        'groupProposal.groupId',
-        'groupProposal.stage',
-        'groupProposal.userId',
-        'groupProposal.body',
-        'groupProposal.createdAt',
-      ])
-      .addSelect([
-        'groupEventPost.id',
-        'groupEventPost.userId',
-        'groupEventPost.eventId',
-        'groupEventPost.body',
-        'groupEventPost.createdAt',
-      ])
-      .addSelect([
-        'followingPost.id',
-        'followingPost.userId',
-        'followingPost.eventId',
-        'followingPost.body',
-        'followingPost.createdAt',
-      ])
-      .where('user.id = :id', { id });
-
+    const userFeedQuery = this.buildUserHomeFeedQuery(id);
     const userFeed = await userFeedQuery.getOne();
     logTime(logTimeMessage, this.logger);
 
