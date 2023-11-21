@@ -3,11 +3,11 @@ import { API_ROOT } from '../constants/shared.constants';
 import { getAuthHeader } from '../graphql/client';
 
 // TODO: Extract getImageSrc as a utility function
-export const useImageSrc = (imageId: number | undefined) => {
+export const useImageSrc = (imageId: number | undefined, skip = false) => {
   const [src, setSrc] = useState<string>();
 
   useEffect(() => {
-    if (!imageId) {
+    if (!imageId || skip) {
       return;
     }
     const getImageSrc = async () => {
@@ -20,7 +20,7 @@ export const useImageSrc = (imageId: number | undefined) => {
       setSrc(url);
     };
     getImageSrc();
-  }, [imageId]);
+  }, [imageId, skip]);
 
   return src;
 };
