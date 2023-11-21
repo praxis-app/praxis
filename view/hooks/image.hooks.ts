@@ -1,5 +1,7 @@
-import { RefObject, useEffect, useState } from 'react';
+import { useReactiveVar } from '@apollo/client';
+import { RefObject, useEffect } from 'react';
 import { API_ROOT } from '../constants/shared.constants';
+import { imagesVar } from '../graphql/cache';
 import { getAuthHeader } from '../graphql/client';
 import { useInView } from './shared.hooks';
 
@@ -7,11 +9,12 @@ export const useImageSrc = (
   imageId: number | undefined,
   ref: RefObject<HTMLElement>,
 ) => {
-  const [src, setSrc] = useState<string>();
+  const images = useReactiveVar(imagesVar);
+  const src = imageId ? images[imageId] : undefined;
   const [, viewed] = useInView(ref);
 
   useEffect(() => {
-    if (!imageId || !viewed) {
+    if (!imageId || !viewed || src) {
       return;
     }
     const getImageSrc = async () => {
@@ -21,10 +24,10 @@ export const useImageSrc = (
       const blob = await result.blob();
       const url = URL.createObjectURL(blob);
 
-      setSrc(url);
+      imagesVar({ ...imagesVar(), [imageId]: url });
     };
     getImageSrc();
-  }, [imageId, viewed]);
+  }, [imageId, viewed, src]);
 
   return src;
 };
