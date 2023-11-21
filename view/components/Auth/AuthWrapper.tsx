@@ -2,7 +2,11 @@
 
 import { ReactNode, useEffect } from 'react';
 import { useAuthCheckQuery } from '../../graphql/auth/queries/gen/AuthCheck.gen';
-import { isAuthLoadingVar, isLoggedInVar } from '../../graphql/cache';
+import {
+  authFailedVar,
+  isAuthLoadingVar,
+  isLoggedInVar,
+} from '../../graphql/cache';
 import TopNav from '../Navigation/TopNav';
 
 interface Props {
@@ -13,6 +17,10 @@ const AuthWrapper = ({ children }: Props) => {
   const { loading } = useAuthCheckQuery({
     onCompleted({ authCheck }) {
       isLoggedInVar(authCheck);
+      authFailedVar(!authCheck);
+    },
+    onError() {
+      authFailedVar(true);
     },
   });
 
