@@ -58,7 +58,7 @@ const UserAvatar = ({
 
   const renderAvatar = () => {
     return (
-      <Flex sx={avatarStyles} {...avatarProps}>
+      <Flex ref={ref} sx={avatarStyles} {...avatarProps}>
         <LazyLoadImage
           src={getAvatarSrc()}
           alt={t('images.labels.profilePicture')}
