@@ -87,6 +87,7 @@ const UserProfileCard = ({ user, ...cardProps }: Props) => {
     marginBottom: 1.25,
     marginLeft: -0.25,
     marginTop: isDesktop ? -10.5 : -7,
+    zIndex: 1,
   };
 
   return (

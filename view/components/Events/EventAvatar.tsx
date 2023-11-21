@@ -1,4 +1,5 @@
 import { AvatarProps } from '@mui/material';
+import { useRef } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { EventAvatarFragment } from '../../graphql/events/fragments/gen/EventAvatar.gen';
 import { ProposalActionEventAvatarFragment } from '../../graphql/proposals/fragments/gen/ProposalActionEventAvatar.gen';
@@ -14,7 +15,8 @@ interface Props extends AvatarProps {
 }
 
 const EventAvatar = ({ event, withLink, size, sx, ...avatarProps }: Props) => {
-  const src = useImageSrc(event.coverPhoto?.id);
+  const ref = useRef<HTMLDivElement>(null);
+  const src = useImageSrc(event.coverPhoto?.id, ref);
   const eventPagePath = getEventPath(event.id);
 
   const avatarStyles = {
@@ -26,7 +28,7 @@ const EventAvatar = ({ event, withLink, size, sx, ...avatarProps }: Props) => {
   };
 
   const renderAvatar = () => (
-    <Flex sx={avatarStyles} {...avatarProps}>
+    <Flex ref={ref} sx={avatarStyles} {...avatarProps}>
       <LazyLoadImage
         src={src}
         alt={event.name}

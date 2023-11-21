@@ -1,5 +1,5 @@
-import { BoxProps } from '@mui/material';
-import { CSSProperties } from 'react';
+import { BoxProps, useTheme } from '@mui/material';
+import { CSSProperties, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { UserAvatarFragment } from '../../graphql/users/fragments/gen/UserAvatar.gen';
@@ -27,16 +27,20 @@ const UserAvatar = ({
   ...avatarProps
 }: Props) => {
   const { data } = useMeQuery({ skip: !!user });
+
   const { t } = useTranslation();
+  const ref = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
 
   const me = data && data.me;
   const profilePicture = user?.profilePicture || me?.profilePicture;
-  const src = useImageSrc(profilePicture?.id);
+  const src = useImageSrc(profilePicture?.id, ref);
 
   const userName = user?.name || me?.name;
   const userProfilePath = getUserProfilePath(userName);
 
   const avatarStyles = {
+    backgroundColor: theme.palette.background.paper,
     borderRadius: '50%',
     width: 40,
     height: 40,
@@ -53,7 +57,7 @@ const UserAvatar = ({
 
   const renderAvatar = () => {
     return (
-      <Flex sx={avatarStyles} {...avatarProps}>
+      <Flex ref={ref} sx={avatarStyles} {...avatarProps}>
         <LazyLoadImage
           src={getAvatarSrc()}
           alt={t('images.labels.profilePicture')}

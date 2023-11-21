@@ -1,5 +1,6 @@
 import { RemoveCircle } from '@mui/icons-material';
 import { Box, IconButton, SxProps } from '@mui/material';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AttachedImageFragment } from '../../graphql/images/fragments/gen/AttachedImage.gen';
 import { useImageSrc } from '../../hooks/image.hooks';
@@ -32,9 +33,10 @@ const SavedImagePreview = ({
   handleDelete?(id: number): void;
   savedImage: AttachedImageFragment;
 }) => {
-  const src = useImageSrc(id);
+  const ref = useRef<HTMLDivElement>(null);
+  const src = useImageSrc(id, ref);
   return (
-    <Box sx={containerStyles}>
+    <Box ref={ref} sx={containerStyles}>
       <img alt={filename} src={src} width="100%" />
       {handleDelete && <RemoveButton onClick={() => handleDelete(id)} />}
     </Box>

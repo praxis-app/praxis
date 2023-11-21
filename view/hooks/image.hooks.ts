@@ -1,13 +1,17 @@
-import { useEffect, useState } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 import { API_ROOT } from '../constants/shared.constants';
 import { getAuthHeader } from '../graphql/client';
+import { useInView } from './shared.hooks';
 
-// TODO: Extract getImageSrc as a utility function
-export const useImageSrc = (imageId: number | undefined) => {
+export const useImageSrc = (
+  imageId: number | undefined,
+  ref: RefObject<HTMLElement>,
+) => {
   const [src, setSrc] = useState<string>();
+  const [, viewed] = useInView(ref);
 
   useEffect(() => {
-    if (!imageId) {
+    if (!imageId || !viewed) {
       return;
     }
     const getImageSrc = async () => {
@@ -20,7 +24,7 @@ export const useImageSrc = (imageId: number | undefined) => {
       setSrc(url);
     };
     getImageSrc();
-  }, [imageId]);
+  }, [imageId, viewed]);
 
   return src;
 };

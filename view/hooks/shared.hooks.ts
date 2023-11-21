@@ -1,5 +1,5 @@
 import { Breakpoint, useMediaQuery, useTheme } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 import { BrowserEvents } from '../constants/shared.constants';
 
 export const useAboveBreakpoint = (breakpoint: Breakpoint) =>
@@ -25,4 +25,38 @@ export const useScrollPosition = () => {
   }, []);
 
   return scrollPosition;
+};
+
+export const useInView = (ref: RefObject<HTMLElement>, rootMargin = '0px') => {
+  const [inView, setInView] = useState(false);
+  const [viewed, setViewed] = useState(false);
+
+  useEffect(() => {
+    const isBrowserCompatible = 'IntersectionObserver' in window;
+    if (!isBrowserCompatible) {
+      setInView(true);
+      setViewed(true);
+      return;
+    }
+    if (!ref.current) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setViewed(true);
+        }
+        setInView(entry.isIntersecting);
+      },
+      { rootMargin },
+    );
+    observer.observe(ref.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [ref, rootMargin]);
+
+  return [inView, viewed];
 };
