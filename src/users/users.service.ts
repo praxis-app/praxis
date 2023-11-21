@@ -111,6 +111,7 @@ export class UsersService {
         'followingPost.id',
         'followingPost.userId',
         'followingPost.eventId',
+        'followingPost.groupId',
         'followingPost.body',
         'followingPost.createdAt',
       ])
@@ -137,6 +138,7 @@ export class UsersService {
       .addSelect([
         'groupPost.id',
         'groupPost.groupId',
+        'groupPost.eventId',
         'groupPost.userId',
         'groupPost.body',
         'groupPost.createdAt',
