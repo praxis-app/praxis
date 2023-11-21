@@ -1,12 +1,15 @@
 import { Box, BoxProps, SxProps } from '@mui/material';
-import { ReactNode, forwardRef } from 'react';
+import { ReactNode, RefObject, forwardRef } from 'react';
 
 export interface FlexProps extends BoxProps {
   children: string | number | ReactNode;
   flexEnd?: boolean;
 }
 
-const Flex = ({ children, flexEnd, sx, ...rest }: FlexProps, ref: any) => {
+const Flex = (
+  { children, flexEnd, sx, ...rest }: FlexProps,
+  ref: RefObject<unknown>,
+) => {
   const styles: SxProps = flexEnd ? { justifyContent: 'flex-end' } : {};
 
   return (
