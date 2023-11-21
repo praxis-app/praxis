@@ -1,12 +1,11 @@
-import { Avatar, AvatarProps, CircularProgress } from '@mui/material';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { GroupAvatarFragment } from '../../graphql/groups/fragments/gen/GroupAvatar.gen';
 import { useImageSrc } from '../../hooks/image.hooks';
-import { DarkMode } from '../../styles/theme';
 import { getGroupPath } from '../../utils/group.utils';
-import Center from '../Shared/Center';
+import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
 
-interface Props extends AvatarProps {
+interface Props {
   group: GroupAvatarFragment;
 }
 
@@ -16,11 +15,16 @@ const GroupAvatar = ({ group }: Props) => {
 
   return (
     <Link href={groupPagePath}>
-      <Avatar src={src} alt={group.name}>
-        <Center bgcolor={DarkMode.PhantomShip} width="100%" height="100%">
-          <CircularProgress size={10} sx={{ alignSelf: 'center' }} />
-        </Center>
-      </Avatar>
+      <Flex borderRadius="50%" width={40} height={40}>
+        <LazyLoadImage
+          src={src}
+          alt={group.name}
+          style={{ borderRadius: '50%', objectFit: 'cover' }}
+          effect="blur"
+          width="100%"
+          height="100%"
+        />
+      </Flex>
     </Link>
   );
 };
