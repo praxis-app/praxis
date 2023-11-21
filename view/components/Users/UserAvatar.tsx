@@ -1,10 +1,11 @@
 import { BoxProps } from '@mui/material';
-import { CSSProperties } from 'react';
+import { CSSProperties, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { UserAvatarFragment } from '../../graphql/users/fragments/gen/UserAvatar.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { useImageSrc } from '../../hooks/image.hooks';
+import { useInView } from '../../hooks/shared.hooks';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
@@ -27,11 +28,15 @@ const UserAvatar = ({
   ...avatarProps
 }: Props) => {
   const { data } = useMeQuery({ skip: !!user });
+
   const { t } = useTranslation();
+  const ref = useRef<HTMLDivElement>(null);
 
   const me = data && data.me;
   const profilePicture = user?.profilePicture || me?.profilePicture;
-  const src = useImageSrc(profilePicture?.id);
+
+  const isInView = useInView(ref);
+  const src = useImageSrc(profilePicture?.id, isInView);
 
   const userName = user?.name || me?.name;
   const userProfilePath = getUserProfilePath(userName);
