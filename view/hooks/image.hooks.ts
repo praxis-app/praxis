@@ -3,16 +3,15 @@ import { API_ROOT } from '../constants/shared.constants';
 import { getAuthHeader } from '../graphql/client';
 import { useInView } from './shared.hooks';
 
-// TODO: Extract getImageSrc as a utility function
 export const useImageSrc = (
   imageId: number | undefined,
   ref: RefObject<HTMLElement>,
 ) => {
   const [src, setSrc] = useState<string>();
-  const isInView = useInView(ref);
+  const [, viewed] = useInView(ref);
 
   useEffect(() => {
-    if (!imageId || !isInView) {
+    if (!imageId || !viewed) {
       return;
     }
     const getImageSrc = async () => {
@@ -25,7 +24,7 @@ export const useImageSrc = (
       setSrc(url);
     };
     getImageSrc();
-  }, [imageId, isInView]);
+  }, [imageId, viewed]);
 
   return src;
 };

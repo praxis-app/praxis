@@ -29,11 +29,13 @@ export const useScrollPosition = () => {
 
 export const useInView = (ref: RefObject<HTMLElement>, rootMargin = '0px') => {
   const [inView, setInView] = useState(false);
+  const [viewed, setViewed] = useState(false);
 
   useEffect(() => {
     const isBrowserCompatible = 'IntersectionObserver' in window;
     if (!isBrowserCompatible) {
       setInView(true);
+      setViewed(true);
       return;
     }
     if (!ref.current) {
@@ -41,7 +43,12 @@ export const useInView = (ref: RefObject<HTMLElement>, rootMargin = '0px') => {
     }
 
     const observer = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting),
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setViewed(true);
+        }
+        setInView(entry.isIntersecting);
+      },
       { rootMargin },
     );
     observer.observe(ref.current);
@@ -51,5 +58,5 @@ export const useInView = (ref: RefObject<HTMLElement>, rootMargin = '0px') => {
     };
   }, [ref, rootMargin]);
 
-  return inView;
+  return [inView, viewed];
 };
