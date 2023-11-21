@@ -1,10 +1,12 @@
-import { Avatar, AvatarProps, useTheme } from '@mui/material';
+import { Avatar, AvatarProps, CircularProgress, useTheme } from '@mui/material';
 import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserAvatarFragment } from '../../graphql/users/fragments/gen/UserAvatar.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { useImageSrc } from '../../hooks/image.hooks';
+import { DarkMode } from '../../styles/theme';
 import { getUserProfilePath } from '../../utils/user.utils';
+import Center from '../Shared/Center';
 import Link from '../Shared/Link';
 
 interface Props extends AvatarProps {
@@ -48,15 +50,20 @@ const UserAvatar = ({
     return src;
   };
 
-  // TODO: Show spinner for loading state
-  const renderAvatar = () => (
-    <Avatar
-      alt={t('images.labels.profilePicture')}
-      src={getAvatarSrc()}
-      sx={avatarStyles}
-      {...avatarProps}
-    />
-  );
+  const renderAvatar = () => {
+    return (
+      <Avatar
+        alt={t('images.labels.profilePicture')}
+        src={getAvatarSrc()}
+        sx={avatarStyles}
+        {...avatarProps}
+      >
+        <Center bgcolor={DarkMode.PhantomShip} width="100%" height="100%">
+          <CircularProgress size={10} sx={{ alignSelf: 'center' }} />
+        </Center>
+      </Avatar>
+    );
+  };
 
   if (withLink) {
     return (
