@@ -1,4 +1,4 @@
-import { BoxProps } from '@mui/material';
+import { BoxProps, useTheme } from '@mui/material';
 import { CSSProperties, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
@@ -30,6 +30,7 @@ const UserAvatar = ({
 
   const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
 
   const me = data && data.me;
   const profilePicture = user?.profilePicture || me?.profilePicture;
@@ -39,6 +40,7 @@ const UserAvatar = ({
   const userProfilePath = getUserProfilePath(userName);
 
   const avatarStyles = {
+    backgroundColor: theme.palette.background.paper,
     borderRadius: '50%',
     width: 40,
     height: 40,
