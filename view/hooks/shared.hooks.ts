@@ -32,7 +32,11 @@ export const useInView = (ref: RefObject<HTMLElement>, rootMargin = '0px') => {
 
   useEffect(() => {
     const isBrowserCompatible = 'IntersectionObserver' in window;
-    if (!ref.current || !isBrowserCompatible) {
+    if (!isBrowserCompatible) {
+      setInView(true);
+      return;
+    }
+    if (!ref.current) {
       return;
     }
 
