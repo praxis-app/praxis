@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { AttachedImageFragment } from '../../graphql/images/fragments/gen/AttachedImage.gen';
 import { useImageSrc } from '../../hooks/image.hooks';
-import { useIsDesktop, useOnScreen } from '../../hooks/shared.hooks';
+import { useIsDesktop, useInView } from '../../hooks/shared.hooks';
 
 interface Props {
   image: AttachedImageFragment;
@@ -15,7 +15,7 @@ const AttachedImage = ({ image, marginBottom, width = '100%' }: Props) => {
   const [isLoading, setIsLoaded] = useState(true);
 
   const ref = useRef<HTMLDivElement>(null);
-  const isImageInView = useOnScreen(ref);
+  const isImageInView = useInView(ref);
   const src = useImageSrc(image.id, isImageInView);
 
   const isDesktop = useIsDesktop();

@@ -27,7 +27,7 @@ export const useScrollPosition = () => {
   return scrollPosition;
 };
 
-export const useOnScreen = (ref: RefObject<HTMLElement>) => {
+export const useInView = (ref: RefObject<HTMLElement>) => {
   const [isIntersecting, setIntersecting] = useState(false);
 
   const observer = useMemo(
