@@ -36,7 +36,7 @@ const UserAvatar = ({
   const profilePicture = user?.profilePicture || me?.profilePicture;
 
   const isInView = useInView(ref);
-  const src = useImageSrc(profilePicture?.id, isInView);
+  const src = useImageSrc(profilePicture?.id, !isInView);
 
   const userName = user?.name || me?.name;
   const userProfilePath = getUserProfilePath(userName);

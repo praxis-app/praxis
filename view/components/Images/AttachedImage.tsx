@@ -16,7 +16,7 @@ const AttachedImage = ({ image, marginBottom, width = '100%' }: Props) => {
 
   const ref = useRef<HTMLDivElement>(null);
   const isImageInView = useInView(ref);
-  const src = useImageSrc(image.id, isImageInView);
+  const src = useImageSrc(image.id, !isImageInView);
 
   const isDesktop = useIsDesktop();
   const loadingHeight = isDesktop ? '500px' : '200px';
