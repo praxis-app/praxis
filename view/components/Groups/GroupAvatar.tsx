@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { GroupAvatarFragment } from '../../graphql/groups/fragments/gen/GroupAvatar.gen';
 import { useImageSrc } from '../../hooks/image.hooks';
@@ -10,12 +11,13 @@ interface Props {
 }
 
 const GroupAvatar = ({ group }: Props) => {
-  const src = useImageSrc(group.coverPhoto?.id);
+  const ref = useRef<HTMLDivElement>(null);
+  const src = useImageSrc(group.coverPhoto?.id, ref);
   const groupPagePath = getGroupPath(group.name);
 
   return (
     <Link href={groupPagePath}>
-      <Flex borderRadius="50%" width={40} height={40}>
+      <Flex ref={ref} borderRadius="50%" width={40} height={40}>
         <LazyLoadImage
           src={src}
           alt={group.name}

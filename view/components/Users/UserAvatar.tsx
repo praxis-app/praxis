@@ -5,7 +5,6 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { UserAvatarFragment } from '../../graphql/users/fragments/gen/UserAvatar.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { useImageSrc } from '../../hooks/image.hooks';
-import { useInView } from '../../hooks/shared.hooks';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
@@ -34,9 +33,7 @@ const UserAvatar = ({
 
   const me = data && data.me;
   const profilePicture = user?.profilePicture || me?.profilePicture;
-
-  const isInView = useInView(ref);
-  const src = useImageSrc(profilePicture?.id, !isInView);
+  const src = useImageSrc(profilePicture?.id, ref);
 
   const userName = user?.name || me?.name;
   const userProfilePath = getUserProfilePath(userName);

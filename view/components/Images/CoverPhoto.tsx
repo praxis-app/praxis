@@ -1,6 +1,6 @@
 import { Box, SxProps } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { SyntheticEvent, useState } from 'react';
+import { SyntheticEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { useImageSrc } from '../../hooks/image.hooks';
@@ -30,7 +30,8 @@ const CoverPhoto = ({
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
-  const src = useImageSrc(imageId);
+  const ref = useRef<HTMLDivElement>(null);
+  const src = useImageSrc(imageId, ref);
 
   const getImageSrc = () => {
     if (imageFile) {
@@ -72,7 +73,7 @@ const CoverPhoto = ({
   }
 
   return (
-    <Box sx={{ overflowY: 'hidden', ...sharedBoxStyles }}>
+    <Box ref={ref} sx={{ overflowY: 'hidden', ...sharedBoxStyles }}>
       <LazyLoadImage
         alt={t('images.labels.coverPhoto')}
         effect="blur"
