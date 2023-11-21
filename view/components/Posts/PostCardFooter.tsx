@@ -92,6 +92,11 @@ const PostCardFooter = ({
     me?.serverPermissions.manageComments
   );
 
+  const notInGroup = group && !group.isJoinedByMe;
+  const notInEventGroup = event?.group && !event.group.isJoinedByMe;
+  const showJoinToCommentPrompt =
+    (notInGroup || notInEventGroup) && !comments?.length;
+
   const commentCountStyles: SxProps = {
     '&:hover': { textDecoration: 'underline' },
     transform: 'translateY(3px)',
@@ -197,7 +202,7 @@ const PostCardFooter = ({
           />
           {renderCommentForm()}
 
-          {group && !group.isJoinedByMe && !comments?.length && (
+          {showJoinToCommentPrompt && (
             <Typography
               color="text.secondary"
               align="center"
