@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import {
+  authFailedVar,
   inviteTokenVar,
   isAuthLoadingVar,
   isLoggedInVar,
@@ -41,10 +42,12 @@ const TopNavDesktop = () => {
   const inviteToken = useReactiveVar(inviteTokenVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isAuthLoading = useReactiveVar(isAuthLoadingVar);
+  const authFailed = useReactiveVar(authFailedVar);
+
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
   const { data: isFirstUserData } = useIsFirstUserQuery({
-    skip: isLoggedIn,
+    skip: !authFailed,
   });
   const { data: meData } = useMeQuery({
     skip: !isLoggedIn,
