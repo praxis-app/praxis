@@ -69,7 +69,7 @@ const CoverPhoto = ({
   };
 
   if (!getImageSrc()) {
-    return <Box bgcolor={grey[900]} sx={{ ...sharedBoxStyles }} />;
+    return <Box ref={ref} bgcolor={grey[900]} sx={{ ...sharedBoxStyles }} />;
   }
 
   return (
