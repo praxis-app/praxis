@@ -1,8 +1,10 @@
-import { Avatar, AvatarProps, useTheme } from '@mui/material';
+import { AvatarProps } from '@mui/material';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { EventAvatarFragment } from '../../graphql/events/fragments/gen/EventAvatar.gen';
 import { ProposalActionEventAvatarFragment } from '../../graphql/proposals/fragments/gen/ProposalActionEventAvatar.gen';
 import { useImageSrc } from '../../hooks/image.hooks';
 import { getEventPath } from '../../utils/event.utils';
+import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
 
 interface Props extends AvatarProps {
@@ -12,18 +14,28 @@ interface Props extends AvatarProps {
 }
 
 const EventAvatar = ({ event, withLink, size, sx, ...avatarProps }: Props) => {
-  const theme = useTheme();
   const src = useImageSrc(event.coverPhoto?.id);
   const eventPagePath = getEventPath(event.id);
 
   const avatarStyles = {
-    backgroundColor: theme.palette.background.paper,
+    borderRadius: '50%',
+    width: 40,
+    height: 40,
     ...(size ? { width: size, height: size } : {}),
     ...sx,
   };
 
   const renderAvatar = () => (
-    <Avatar alt={event.name} src={src} sx={avatarStyles} {...avatarProps} />
+    <Flex sx={avatarStyles} {...avatarProps}>
+      <LazyLoadImage
+        src={src}
+        alt={event.name}
+        style={{ borderRadius: '50%', objectFit: 'cover' }}
+        effect="blur"
+        width="100%"
+        height="100%"
+      />
+    </Flex>
   );
 
   if (withLink) {
