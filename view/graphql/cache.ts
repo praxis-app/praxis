@@ -18,6 +18,9 @@ export const isAuthLoadingVar = makeVar(false);
 export const authFailedVar = makeVar(false);
 export const inviteTokenVar = makeVar(getLocalStorageItem(INVITE_TOKEN));
 
+// Image state
+export const imagesVar = makeVar<Record<number, string>>({});
+
 const cache = new InMemoryCache({
   possibleTypes: {
     FeedItem: ['Post', 'Proposal'],
