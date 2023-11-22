@@ -1,13 +1,18 @@
 import { Box, BoxProps, SxProps } from '@mui/material';
-import { SyntheticEvent, useState } from 'react';
+import { SyntheticEvent, useRef, useState } from 'react';
+import { useImageSrc } from '../../hooks/image.hooks';
 
 interface Props extends BoxProps {
-  src?: string;
   alt: string;
+  imageId?: number;
+  src?: string;
 }
 
-const LazyLoadImage = ({ src, alt, onLoad, ...boxProps }: Props) => {
+const LazyLoadImage = ({ alt, imageId, onLoad, src, ...boxProps }: Props) => {
   const [loaded, setLoaded] = useState(false);
+
+  const ref = useRef<HTMLDivElement>(null);
+  const srcFromImageId = useImageSrc(imageId, ref);
 
   const imageStyles: SxProps = {
     objectFit: 'cover',
@@ -22,12 +27,13 @@ const LazyLoadImage = ({ src, alt, onLoad, ...boxProps }: Props) => {
   };
 
   return (
-    <Box {...boxProps}>
+    <Box ref={ref} {...boxProps}>
       <Box
         alt={alt}
         component="img"
+        loading={src ? 'lazy' : 'eager'}
         onLoad={handleLoad}
-        src={src}
+        src={srcFromImageId || src}
         sx={imageStyles}
         width="100%"
       />
