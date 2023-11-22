@@ -11,7 +11,7 @@ export const useImageSrc = (
 ) => {
   const images = useReactiveVar(imagesVar);
   const [src, setSrc] = useState<string>();
-  const [, viewed] = useInView(ref);
+  const [, viewed] = useInView(ref, '100px');
 
   useEffect(() => {
     if (!imageId || !viewed) {
