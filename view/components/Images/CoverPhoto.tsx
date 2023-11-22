@@ -1,10 +1,8 @@
 import { Box, SxProps } from '@mui/material';
-import { grey } from '@mui/material/colors';
-import { SyntheticEvent, useRef, useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { useImageSrc } from '../../hooks/image.hooks';
 import { useIsDesktop } from '../../hooks/shared.hooks';
+import LazyLoadImage from './LazyLoadImage';
 
 const CP_CONTAINER_HEIGHT = 130;
 const CP_CONTAINER_HEIGHT_DESKTOP = 210;
@@ -30,14 +28,11 @@ const CoverPhoto = ({
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
-  const ref = useRef<HTMLDivElement>(null);
-  const src = useImageSrc(imageId, ref);
 
-  const getImageSrc = () => {
+  const getImageFileSrc = () => {
     if (imageFile) {
       return URL.createObjectURL(imageFile);
     }
-    return src;
   };
 
   const getBorderRadius = () => {
@@ -52,10 +47,15 @@ const CoverPhoto = ({
     }
   };
 
-  const sharedBoxStyles = {
+  const containerStyles: SxProps = {
     height: isDesktop ? CP_CONTAINER_HEIGHT_DESKTOP : CP_CONTAINER_HEIGHT,
+    overflowY: 'hidden',
     ...getBorderRadius(),
     ...sx,
+  };
+
+  const imageStyles: SxProps = {
+    transform: centerVertically ? `translateY(${imageTopMargin}px)` : undefined,
   };
 
   const handleLoad = ({ target }: SyntheticEvent<HTMLImageElement>) => {
@@ -68,21 +68,16 @@ const CoverPhoto = ({
     setImageTopMargin(difference / 2);
   };
 
-  if (!getImageSrc()) {
-    return <Box ref={ref} bgcolor={grey[900]} sx={{ ...sharedBoxStyles }} />;
-  }
-
   return (
-    <Box ref={ref} sx={{ overflowY: 'hidden', ...sharedBoxStyles }}>
+    <Box sx={containerStyles}>
       <LazyLoadImage
         alt={t('images.labels.coverPhoto')}
-        effect="blur"
-        width="100%"
         height={centerVertically ? 'auto' : '100%'}
-        style={centerVertically ? { marginTop: imageTopMargin } : undefined}
-        src={getImageSrc()}
+        imageId={imageId}
         onLoadCapture={handleLoad}
-        visibleByDefault={!imageId}
+        src={getImageFileSrc()}
+        sx={imageStyles}
+        width="100%"
       />
     </Box>
   );
