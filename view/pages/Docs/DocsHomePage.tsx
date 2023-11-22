@@ -6,6 +6,7 @@ import DocsDefinitionListItem from '../../components/Docs/DocsDefinitionListItem
 import DocsLink from '../../components/Docs/DocsLink';
 import DocsPermissionList from '../../components/Docs/DocsPermissionList';
 import DocsSubheading from '../../components/Docs/DocsSubheading';
+import LazyLoadImage from '../../components/Images/LazyLoadImage';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { useIsDesktop } from '../../hooks/shared.hooks';
@@ -56,13 +57,11 @@ const DocsHomePage = () => {
       </Typography>
 
       <Box margin="0 auto" paddingBottom={2.5} paddingTop={1} width="90%">
-        <Box
+        <LazyLoadImage
           alt="Role Change Proposal"
-          component="img"
           width="100%"
           height="auto"
           src={roleChangeProposal}
-          sx={{ objectFit: 'cover' }}
         />
 
         <Typography
