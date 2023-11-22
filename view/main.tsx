@@ -2,7 +2,6 @@ import { ApolloProvider } from '@apollo/client';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import 'react-lazy-load-image-component/src/effects/blur.css';
 import App from './App';
 import client from './graphql/client';
 import './locales/i18n.config';
