@@ -8,14 +8,7 @@ interface Props extends BoxProps {
   src?: string;
 }
 
-const LazyLoadImage = ({
-  alt,
-  imageId,
-  onLoad,
-  src,
-  borderRadius,
-  ...boxProps
-}: Props) => {
+const LazyLoadImage = ({ alt, imageId, onLoad, src, ...boxProps }: Props) => {
   const [loaded, setLoaded] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
@@ -34,19 +27,18 @@ const LazyLoadImage = ({
   };
 
   return (
-    <Box ref={ref} {...boxProps}>
-      <Box
-        alt={alt}
-        borderRadius={borderRadius}
-        component="img"
-        loading={src ? 'lazy' : 'eager'}
-        onLoad={handleLoad}
-        src={src || srcFromImageId}
-        sx={imageStyles}
-        width="100%"
-        height="100%"
-      />
-    </Box>
+    <Box
+      ref={ref}
+      alt={alt}
+      component="img"
+      loading={src ? 'lazy' : 'eager'}
+      onLoad={handleLoad}
+      src={src || srcFromImageId}
+      sx={imageStyles}
+      width="100%"
+      height="100%"
+      {...boxProps}
+    />
   );
 };
 
