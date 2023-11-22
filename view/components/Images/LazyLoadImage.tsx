@@ -23,7 +23,7 @@ const LazyLoadImage = ({
 
   const imageStyles: SxProps = {
     objectFit: 'cover',
-    transition: 'all 0.3s',
+    transition: 'filter 0.3s, opacity 0.3s',
     filter: loaded ? 'blur(0)' : 'blur(15px)',
     opacity: loaded ? 1 : 0,
     ...sx,
