@@ -8,7 +8,14 @@ interface Props extends BoxProps {
   src?: string;
 }
 
-const LazyLoadImage = ({ alt, imageId, onLoad, src, ...boxProps }: Props) => {
+const LazyLoadImage = ({
+  alt,
+  imageId,
+  onLoad,
+  src,
+  sx,
+  ...boxProps
+}: Props) => {
   const [loaded, setLoaded] = useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
@@ -19,6 +26,7 @@ const LazyLoadImage = ({ alt, imageId, onLoad, src, ...boxProps }: Props) => {
     transition: 'all 0.3s',
     filter: loaded ? 'blur(0)' : 'blur(15px)',
     opacity: loaded ? 1 : 0,
+    ...sx,
   };
 
   const handleLoad = (event: SyntheticEvent<HTMLImageElement, Event>) => {
