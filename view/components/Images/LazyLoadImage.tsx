@@ -35,8 +35,6 @@ const LazyLoadImage = ({ alt, imageId, onLoad, src, ...boxProps }: Props) => {
       onLoad={handleLoad}
       src={src || srcFromImageId}
       sx={imageStyles}
-      width="100%"
-      height="100%"
       {...boxProps}
     />
   );
