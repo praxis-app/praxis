@@ -10,6 +10,7 @@ import { ProposalActionRolesModule } from './proposal-actions/proposal-action-ro
 import { ProposalActionsModule } from './proposal-actions/proposal-actions.module';
 import { ProposalsResolver } from './proposals.resolver';
 import { ProposalsService } from './proposals.service';
+import { ProposalActionGroupConfigsModule } from './proposal-actions/proposal-action-group-configs/proposal-action-group-configs.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ProposalsService } from './proposals.service';
     forwardRef(() => VotesModule),
     forwardRef(() => GroupsModule),
     ProposalActionEventsModule,
+    ProposalActionGroupConfigsModule,
     ProposalActionRolesModule,
   ],
   providers: [ProposalsService, ProposalsResolver],

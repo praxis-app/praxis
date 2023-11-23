@@ -22,10 +22,9 @@ export class ProposalActionGroupConfigsService {
     proposalActionId: number,
     proposalActionGroupConfigData: ProposalActionGroupConfigInput,
   ) {
-    const proposalActionGroupConfig = await this.repository.save({
+    await this.repository.save({
       ...proposalActionGroupConfigData,
       proposalActionId,
     });
-    return proposalActionGroupConfig;
   }
 }
