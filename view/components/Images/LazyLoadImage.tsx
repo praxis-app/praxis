@@ -1,5 +1,7 @@
+import { useReactiveVar } from '@apollo/client';
 import { Box, BoxProps, SxProps } from '@mui/material';
 import { SyntheticEvent, useRef, useState } from 'react';
+import { imagesVar } from '../../graphql/cache';
 import { useImageSrc } from '../../hooks/image.hooks';
 
 interface Props extends BoxProps {
@@ -16,7 +18,9 @@ const LazyLoadImage = ({
   sx,
   ...boxProps
 }: Props) => {
-  const [loaded, setLoaded] = useState(false);
+  const images = useReactiveVar(imagesVar);
+  const alreadyLoadedSrc = imageId && images[imageId];
+  const [loaded, setLoaded] = useState(!!alreadyLoadedSrc);
 
   const ref = useRef<HTMLDivElement>(null);
   const srcFromImageId = useImageSrc(imageId, ref);
@@ -41,7 +45,7 @@ const LazyLoadImage = ({
       component="img"
       loading={src ? 'lazy' : 'eager'}
       onLoad={handleLoad}
-      src={src || srcFromImageId}
+      src={src || alreadyLoadedSrc || srcFromImageId}
       sx={imageStyles}
       {...boxProps}
     />
