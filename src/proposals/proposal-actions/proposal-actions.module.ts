@@ -14,11 +14,11 @@ import { ProposalActionsService } from './proposal-actions.service';
   imports: [
     TypeOrmModule.forFeature([ProposalAction]),
     forwardRef(() => ProposalActionEventsModule),
+    forwardRef(() => ProposalActionGroupConfigsModule),
     forwardRef(() => ProposalsModule),
     forwardRef(() => ImagesModule),
     GroupRolesModule,
     ProposalActionRolesModule,
-    ProposalActionGroupConfigsModule,
   ],
   providers: [ProposalActionsService, ProposalActionsResolver],
   exports: [ProposalActionsService],
