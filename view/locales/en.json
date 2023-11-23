@@ -92,7 +92,7 @@
       "changeName": "Change Group Name",
       "changeRole": "Change Group Role",
       "changeSettings": "Change Group Settings",
-      "createRole": "Create Group Role",
+      "createRole": "Add Group Role",
       "planEvent": "Plan Event",
       "test": "QA Test"
     },
