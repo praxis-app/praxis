@@ -49,6 +49,7 @@ const CoverPhoto = ({
 
   const containerStyles: SxProps = {
     height: isDesktop ? CP_CONTAINER_HEIGHT_DESKTOP : CP_CONTAINER_HEIGHT,
+    bgcolor: 'grey.900',
     overflowY: 'hidden',
     ...getBorderRadius(),
     ...sx,
