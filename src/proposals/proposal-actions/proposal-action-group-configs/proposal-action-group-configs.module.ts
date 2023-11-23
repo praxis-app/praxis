@@ -14,5 +14,6 @@ import { ProposalActionsModule } from '../proposal-actions.module';
     ProposalActionGroupConfigsService,
     ProposalActionGroupConfigsResolver,
   ],
+  exports: [ProposalActionGroupConfigsService],
 })
 export class ProposalActionGroupConfigsModule {}
