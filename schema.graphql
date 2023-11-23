@@ -133,6 +133,12 @@ type ProposalActionRole {
   permissions: ProposalActionPermission!
 }
 
+type ProposalActionGroupConfig {
+  id: Int!
+  privacy: String
+  proposalAction: ProposalAction!
+}
+
 type ProposalAction {
   id: Int!
   actionType: String!
@@ -140,6 +146,7 @@ type ProposalAction {
   groupDescription: String
   role: ProposalActionRole
   event: ProposalActionEvent
+  groupConfig: ProposalActionGroupConfig
   proposal: Proposal!
   createdAt: DateTime!
   updatedAt: DateTime!

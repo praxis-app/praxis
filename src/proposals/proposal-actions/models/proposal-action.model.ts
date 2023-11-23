@@ -13,7 +13,7 @@ import { Image } from '../../../images/models/image.model';
 import { Proposal } from '../../models/proposal.model';
 import { ProposalActionEvent } from '../proposal-action-events/models/proposal-action-event.model';
 import { ProposalActionRole } from '../proposal-action-roles/models/proposal-action-role.model';
-import { ProposalActionGroupConfig } from './proposal-action-group-config';
+import { ProposalActionGroupConfig } from './proposal-action-group-config.model';
 
 @Entity()
 @ObjectType()

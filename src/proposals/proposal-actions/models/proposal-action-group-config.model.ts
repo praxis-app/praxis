@@ -18,6 +18,7 @@ export class ProposalActionGroupConfig {
   id: number;
 
   @Column({ nullable: true })
+  @Field({ nullable: true })
   privacy: string;
 
   @Field(() => ProposalAction)
