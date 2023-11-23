@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProposalAction } from './proposal-action.model';
+import { ProposalAction } from '../../models/proposal-action.model';
 
 @Entity()
 @ObjectType()
