@@ -1,6 +1,6 @@
 import { ApolloCache, FetchResult } from '@apollo/client';
 import { produce } from 'immer';
-import { GroupTabs } from '../components/Groups/GroupProfileCard';
+import { GroupTabs } from '../constants/group.constants';
 import {
   NavigationPaths,
   TAB_QUERY_PARAM,

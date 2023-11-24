@@ -40,12 +40,7 @@ import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import JoinButton from './JoinButton';
-
-export const enum GroupTabs {
-  About = 'about',
-  Events = 'events',
-  Proposals = 'proposals',
-}
+import { GroupTabs } from '../../constants/group.constants';
 
 const NameText = styled(Typography)(() => ({
   fontFamily: 'Inter Bold',
