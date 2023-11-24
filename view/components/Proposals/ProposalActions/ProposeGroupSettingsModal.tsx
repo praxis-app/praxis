@@ -14,6 +14,7 @@ import {
   ProposalActionFieldName,
   ProposalActionType,
 } from '../../../constants/proposal.constants';
+import { ProposalActionGroupConfigInput } from '../../../graphql/gen';
 import Flex from '../../Shared/Flex';
 import Modal from '../../Shared/Modal';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
@@ -23,7 +24,10 @@ interface Props {
   groupId?: number | null;
   currentUserId: number;
   onClose(): void;
-  setFieldValue: (field: ProposalActionFieldName, value: any) => void;
+  setFieldValue: (
+    field: ProposalActionFieldName,
+    value: ProposalActionGroupConfigInput,
+  ) => void;
 }
 
 const ProposeGroupSettingsModal = ({
@@ -33,7 +37,6 @@ const ProposeGroupSettingsModal = ({
   setFieldValue,
 }: Props) => {
   const [open, setOpen] = useState(false);
-
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -42,7 +45,7 @@ const ProposeGroupSettingsModal = ({
     }
   }, [groupId, actionType]);
 
-  const initialValues: any = {
+  const initialValues: ProposalActionGroupConfigInput = {
     privacy: GroupPrivacy.Private,
   };
 
@@ -51,7 +54,7 @@ const ProposeGroupSettingsModal = ({
     onClose();
   };
 
-  const handleSubmit = async (formValues: any) => {
+  const handleSubmit = async (formValues: ProposalActionGroupConfigInput) => {
     setFieldValue(ProposalActionFieldName.Event, formValues);
     setOpen(false);
   };

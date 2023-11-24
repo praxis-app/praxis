@@ -671,6 +671,7 @@ export type ProposalAction = {
   actionType: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   event?: Maybe<ProposalActionEvent>;
+  groupConfig?: Maybe<ProposalActionGroupConfig>;
   groupCoverPhoto?: Maybe<Image>;
   groupDescription?: Maybe<Scalars['String']['output']>;
   groupName?: Maybe<Scalars['String']['output']>;
@@ -718,9 +719,21 @@ export type ProposalActionEventInput = {
   startsAt: Scalars['DateTime']['input'];
 };
 
+export type ProposalActionGroupConfig = {
+  __typename?: 'ProposalActionGroupConfig';
+  id: Scalars['Int']['output'];
+  privacy?: Maybe<Scalars['String']['output']>;
+  proposalAction: ProposalAction;
+};
+
+export type ProposalActionGroupConfigInput = {
+  privacy?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type ProposalActionInput = {
   actionType: Scalars['String']['input'];
   event?: InputMaybe<ProposalActionEventInput>;
+  groupConfig?: InputMaybe<ProposalActionGroupConfigInput>;
   groupCoverPhoto?: InputMaybe<Scalars['Upload']['input']>;
   groupDescription?: InputMaybe<Scalars['String']['input']>;
   groupName?: InputMaybe<Scalars['String']['input']>;
