@@ -55,7 +55,7 @@ const ProposeGroupSettingsModal = ({
   };
 
   const handleSubmit = async (formValues: ProposalActionGroupConfigInput) => {
-    setFieldValue(ProposalActionFieldName.Event, formValues);
+    setFieldValue(ProposalActionFieldName.GroupConfig, formValues);
     setOpen(false);
   };
 
