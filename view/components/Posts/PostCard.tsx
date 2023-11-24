@@ -20,6 +20,7 @@ import { isLoggedInVar } from '../../graphql/cache';
 import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
 import { useDeletePostMutation } from '../../graphql/posts/mutations/gen/DeletePost.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
+import { removePost } from '../../utils/cache.utils';
 import { getGroupPath } from '../../utils/group.utils';
 import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
@@ -30,7 +31,6 @@ import AttachedImageList from '../Images/AttachedImageList';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
-import { removePost } from './DeletePostButton';
 import PostCardFooter from './PostCardFooter';
 
 const CardHeader = styled(MuiCardHeader)(() => ({

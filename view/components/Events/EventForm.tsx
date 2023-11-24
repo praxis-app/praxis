@@ -6,7 +6,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SxProps,
   Typography,
 } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
@@ -15,6 +14,10 @@ import { produce } from 'immer';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import {
+  EventFormFieldName,
+  SHOW_ENDS_AT_BUTTON_STYLES,
+} from '../../constants/event.constants';
 import { toastVar } from '../../graphql/cache';
 import { EventFormFragment } from '../../graphql/events/fragments/gen/EventForm.gen';
 import { useCreateEventMutation } from '../../graphql/events/mutations/gen/CreateEvent.gen';
@@ -25,7 +28,6 @@ import {
   GroupEventsTabQuery,
 } from '../../graphql/groups/queries/gen/GroupEventsTab.gen';
 import { useGroupMembersByGroupIdLazyQuery } from '../../graphql/groups/queries/gen/GroupMembersByGroupId.gen';
-import { Blurple } from '../../styles/theme';
 import { isEntityTooLarge } from '../../utils/error.utils';
 import { getEventPath } from '../../utils/event.utils';
 import { validateImageInput } from '../../utils/image.utils';
@@ -38,29 +40,6 @@ import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import ProgressBar from '../Shared/ProgressBar';
 import { TextField } from '../Shared/TextField';
-
-export enum EventFormFieldName {
-  Name = 'name',
-  Description = 'description',
-  Location = 'location',
-  ExternalLink = 'externalLink',
-  StartsAt = 'startsAt',
-  EndsAt = 'endsAt',
-  Online = 'online',
-  HostId = 'hostId',
-}
-
-export const SHOW_ENDS_AT_BUTTON_STYLES: SxProps = {
-  color: Blurple.SkyDancer,
-  padding: 0,
-  textTransform: 'none',
-  width: 'fit-content',
-  '&.MuiButtonBase-root:hover': {
-    bgcolor: 'transparent',
-    textDecoration: 'underline',
-  },
-  marginBottom: 0.8,
-};
 
 interface Props {
   editEvent?: EventFormFragment;

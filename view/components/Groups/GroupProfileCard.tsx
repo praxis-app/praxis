@@ -19,14 +19,14 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { isLoggedInVar } from '../../graphql/cache';
-import { GroupProfileCardFragment } from '../../graphql/groups/fragments/gen/GroupProfileCard.gen';
-import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
   TAB_QUERY_PARAM,
 } from '../../constants/shared.constants';
+import { isLoggedInVar } from '../../graphql/cache';
+import { GroupProfileCardFragment } from '../../graphql/groups/fragments/gen/GroupProfileCard.gen';
+import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import { useAboveBreakpoint } from '../../hooks/shared.hooks';
 import {
   getEditGroupPath,
@@ -38,14 +38,9 @@ import CoverPhoto from '../Images/CoverPhoto';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
-import { removeGroup } from './GroupCard';
 import JoinButton from './JoinButton';
-
-export const enum GroupTabs {
-  About = 'about',
-  Events = 'events',
-  Proposals = 'proposals',
-}
+import { GroupTabs } from '../../constants/group.constants';
+import { removeGroup } from '../../utils/cache.utils';
 
 const NameText = styled(Typography)(() => ({
   fontFamily: 'Inter Bold',

@@ -11,17 +11,19 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
-import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
-import { useDeleteProposalMutation } from '../../graphql/proposals/mutations/gen/DeleteProposal.gen';
-import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { ProposalStage } from '../../constants/proposal.constants';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
 } from '../../constants/shared.constants';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
+import { useDeleteProposalMutation } from '../../graphql/proposals/mutations/gen/DeleteProposal.gen';
+import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
+import { removeProposal } from '../../utils/cache.utils';
 import { getGroupPath } from '../../utils/group.utils';
 import { getProposalActionLabel } from '../../utils/proposal.utils';
+import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import GroupItemAvatar from '../Groups/GroupItemAvatar';
@@ -29,10 +31,8 @@ import AttachedImageList from '../Images/AttachedImageList';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
-import { removeProposal } from './DeleteProposalButton';
 import ProposalAction from './ProposalActions/ProposalAction';
 import ProposalCardFooter from './ProposalCardFooter';
-import { urlifyText } from '../../utils/shared.utils';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,

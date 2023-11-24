@@ -12,18 +12,18 @@ import dayjs, { Dayjs } from 'dayjs';
 import { Form, Formik, FormikErrors } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProposalActionEventInput } from '../../../graphql/gen';
-import { useGroupMembersByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupMembersByGroupId.gen';
+import {
+  EventFormFieldName,
+  SHOW_ENDS_AT_BUTTON_STYLES,
+} from '../../../constants/event.constants';
 import {
   ProposalActionFieldName,
   ProposalActionType,
 } from '../../../constants/proposal.constants';
+import { ProposalActionEventInput } from '../../../graphql/gen';
+import { useGroupMembersByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupMembersByGroupId.gen';
 import { getRandomString, isValidUrl } from '../../../utils/shared.utils';
 import { startOfNextHour } from '../../../utils/time.utils';
-import {
-  EventFormFieldName,
-  SHOW_ENDS_AT_BUTTON_STYLES,
-} from '../../Events/EventForm';
 import AttachedImagePreview from '../../Images/AttachedImagePreview';
 import ImageInput from '../../Images/ImageInput';
 import DateTimePicker from '../../Shared/DateTimePicker';

@@ -13,21 +13,17 @@ import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
-import { BASE_BADGE_STYLES } from '../Votes/VoteBadge';
 import LikeButton from './LikeButton';
 import PostModal from './PostModal';
-
-export const ICON_STYLES: SxProps = {
-  marginRight: '0.4ch',
-};
+import { VOTE_BADGE_STYLES } from '../../constants/vote.constants';
 
 const ROTATED_ICON_STYLES: SxProps = {
-  ...ICON_STYLES,
+  marginRight: '0.4ch',
   transform: 'rotateY(180deg)',
 };
 
 const BADGE_STYLES: SxProps = {
-  ...BASE_BADGE_STYLES,
+  ...VOTE_BADGE_STYLES,
   width: 22.5,
   height: 22.5,
   marginRight: 0.9,

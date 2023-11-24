@@ -1,19 +1,11 @@
 import { SvgIconComponent } from '@mui/icons-material';
 import { SxProps, useTheme } from '@mui/material';
 import { useState } from 'react';
+import { VOTE_BADGE_STYLES, VoteTypes } from '../../constants/vote.constants';
 import { VoteFragment } from '../../graphql/votes/fragments/gen/Vote.gen';
-import { VoteTypes } from '../../constants/vote.constants';
 import { useIsDesktop } from '../../hooks/shared.hooks';
-import { Blurple } from '../../styles/theme';
 import Flex from '../Shared/Flex';
 import VotesPopover from './VotesPopover';
-
-export const BASE_BADGE_STYLES: SxProps = {
-  backgroundColor: Blurple.Marina,
-  borderRadius: '50%',
-  display: 'inline-flex',
-  justifyContent: 'center',
-};
 
 interface Props {
   Icon: SvgIconComponent;
@@ -28,7 +20,7 @@ const VoteBadge = ({ Icon, voteType, sx, votes }: Props) => {
   const theme = useTheme();
 
   const badgeStyles: SxProps = {
-    ...BASE_BADGE_STYLES,
+    ...VOTE_BADGE_STYLES,
     border: `2px solid ${theme.palette.background.paper}`,
     height: 25,
     width: 25,
