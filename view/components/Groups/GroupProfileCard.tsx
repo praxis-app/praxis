@@ -33,7 +33,7 @@ import {
   getGroupMembersPath,
   getGroupPath,
   getMemberRequestsPath,
-  removeGroupFromCache,
+  removeGroup,
 } from '../../utils/group.utils';
 import CoverPhoto from '../Images/CoverPhoto';
 import Flex from '../Shared/Flex';
@@ -143,7 +143,7 @@ const GroupProfileCard = ({
     navigate(NavigationPaths.Groups);
     await deleteGroup({
       variables: { id },
-      update: removeGroupFromCache(id),
+      update: removeGroup(id),
     });
   };
 

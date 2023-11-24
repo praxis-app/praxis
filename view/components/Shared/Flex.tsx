@@ -1,7 +1,7 @@
 import { Box, BoxProps, SxProps } from '@mui/material';
 import { ReactNode, RefObject, forwardRef } from 'react';
 
-export interface FlexProps extends BoxProps {
+interface FlexProps extends BoxProps {
   children: string | number | ReactNode;
   flexEnd?: boolean;
 }

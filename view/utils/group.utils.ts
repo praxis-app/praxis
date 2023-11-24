@@ -13,7 +13,7 @@ import {
   GroupsQuery,
 } from '../graphql/groups/queries/gen/Groups.gen';
 
-export const removeGroupFromCache =
+export const removeGroup =
   (id: number) =>
   (cache: ApolloCache<any>, { errors }: FetchResult<DeleteGroupMutation>) => {
     if (errors) {

@@ -1,4 +1,3 @@
-import { ApolloCache } from '@apollo/client';
 import { Assignment } from '@mui/icons-material';
 import {
   Box,
@@ -10,41 +9,22 @@ import {
   Typography,
   styled,
 } from '@mui/material';
-import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../graphql/cache';
 import { ServerInviteCardFragment } from '../../graphql/invites/fragments/gen/ServerInviteCard.gen';
 import { useDeleteServerInviteMutation } from '../../graphql/invites/mutations/gen/DeleteServerInvite.gen';
+import { ServerInvitesQuery } from '../../graphql/invites/queries/gen/ServerInvites.gen';
 import {
-  ServerInvitesDocument,
-  ServerInvitesQuery,
-} from '../../graphql/invites/queries/gen/ServerInvites.gen';
-import { TypeNames } from '../../constants/shared.constants';
-import { copyInviteLink } from '../../utils/server-invite.utils';
+  copyInviteLink,
+  removeServerInvite,
+} from '../../utils/server-invite.utils';
 import { timeFromNow } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import CompactButton from '../Shared/CompactButton';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import UserAvatar from '../Users/UserAvatar';
-
-export const removeServerInvite = (id: number) => (cache: ApolloCache<any>) => {
-  cache.updateQuery<ServerInvitesQuery>(
-    { query: ServerInvitesDocument },
-    (invitesData) =>
-      produce(invitesData, (draft) => {
-        if (!draft) {
-          return;
-        }
-        const index = draft.serverInvites.findIndex((p) => p.id === id);
-        draft.serverInvites.splice(index, 1);
-      }),
-  );
-  const cacheId = cache.identify({ id, __typename: TypeNames.ServerInvite });
-  cache.evict({ id: cacheId });
-  cache.gc();
-};
 
 const CardContent = styled(MuiCardContent)(() => ({
   display: 'flex',

@@ -25,7 +25,7 @@ import {
   getGroupMembersPath,
   getGroupPath,
   getMemberRequestsPath,
-  removeGroupFromCache,
+  removeGroup,
 } from '../../utils/group.utils';
 import { urlifyText } from '../../utils/shared.utils';
 import ItemMenu from '../Shared/ItemMenu';
@@ -77,7 +77,7 @@ const GroupCard = ({ group, currentUserId, ...cardProps }: Props) => {
   const handleDelete = async () =>
     await deleteGroup({
       variables: { id },
-      update: removeGroupFromCache(id),
+      update: removeGroup(id),
     });
 
   const handleRolesButtonClick = () => {
