@@ -1,4 +1,4 @@
-import { ApolloCache, FetchResult, useReactiveVar } from '@apollo/client';
+import { useReactiveVar } from '@apollo/client';
 import { AccountBox, Settings } from '@mui/icons-material';
 import {
   Box,
@@ -10,57 +10,28 @@ import {
   Typography,
   styled,
 } from '@mui/material';
-import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
-  TypeNames,
 } from '../../constants/shared.constants';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { isLoggedInVar } from '../../graphql/cache';
 import { GroupCardFragment } from '../../graphql/groups/fragments/gen/GroupCard.gen';
-import {
-  DeleteGroupMutation,
-  useDeleteGroupMutation,
-} from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
-import {
-  GroupsDocument,
-  GroupsQuery,
-} from '../../graphql/groups/queries/gen/Groups.gen';
+import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import {
   getEditGroupPath,
   getGroupMembersPath,
   getGroupPath,
   getMemberRequestsPath,
+  removeGroupFromCache,
 } from '../../utils/group.utils';
 import { urlifyText } from '../../utils/shared.utils';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import GroupAvatar from './GroupAvatar';
 import JoinButton from './JoinButton';
-
-export const removeGroup =
-  (id: number) =>
-  (cache: ApolloCache<any>, { errors }: FetchResult<DeleteGroupMutation>) => {
-    if (errors) {
-      toastVar({ status: 'error', title: errors[0].message });
-      return;
-    }
-    cache.updateQuery<GroupsQuery>({ query: GroupsDocument }, (groupsData) =>
-      produce(groupsData, (draft) => {
-        if (!draft) {
-          return;
-        }
-        const index = draft.groups.findIndex((p) => p.id === id);
-        draft.groups.splice(index, 1);
-      }),
-    );
-    const cacheId = cache.identify({ id, __typename: TypeNames.Group });
-    cache.evict({ id: cacheId });
-    cache.gc();
-  };
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
@@ -106,7 +77,7 @@ const GroupCard = ({ group, currentUserId, ...cardProps }: Props) => {
   const handleDelete = async () =>
     await deleteGroup({
       variables: { id },
-      update: removeGroup(id),
+      update: removeGroupFromCache(id),
     });
 
   const handleRolesButtonClick = () => {
