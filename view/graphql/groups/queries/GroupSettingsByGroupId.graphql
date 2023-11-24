@@ -1,0 +1,9 @@
+query GroupSettingsByGroupId($name: String!) {
+  group(name: $name) {
+    id
+    settings {
+      id
+      isPublic
+    }
+  }
+}
