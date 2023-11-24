@@ -419,27 +419,6 @@ const ProposalForm = ({
             />
           </FormGroup>
 
-          {!clicked && !editProposal && <Divider sx={{ marginBottom: 1.3 }} />}
-
-          <Flex sx={{ justifyContent: 'space-between' }}>
-            <ImageInput
-              key={values.images?.length}
-              onChange={handleImageInputChange(setFieldValue)}
-              multiple
-            />
-
-            <PrimaryActionButton
-              disabled={isSubmitting || !dirty}
-              isLoading={isSubmitting}
-              sx={{ marginTop: 1.5 }}
-              type="submit"
-            >
-              {editProposal
-                ? t('actions.save')
-                : t('proposals.actions.createProposal')}
-            </PrimaryActionButton>
-          </Flex>
-
           <ProposeRoleModal
             key={`${values.action.actionType}-${values.groupId}`}
             actionType={values.action.actionType}
@@ -466,6 +445,27 @@ const ProposalForm = ({
             }}
             setFieldValue={setFieldValue}
           />
+
+          {!clicked && !editProposal && <Divider sx={{ marginBottom: 1.3 }} />}
+
+          <Flex sx={{ justifyContent: 'space-between' }}>
+            <ImageInput
+              key={values.images?.length}
+              onChange={handleImageInputChange(setFieldValue)}
+              multiple
+            />
+
+            <PrimaryActionButton
+              disabled={isSubmitting || !dirty}
+              isLoading={isSubmitting}
+              sx={{ marginTop: 1.5 }}
+              type="submit"
+            >
+              {editProposal
+                ? t('actions.save')
+                : t('proposals.actions.createProposal')}
+            </PrimaryActionButton>
+          </Flex>
         </Form>
       )}
     </Formik>
