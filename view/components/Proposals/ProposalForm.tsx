@@ -450,6 +450,7 @@ const ProposalForm = ({
             actionType={values.action.actionType}
             currentUserId={currentUserId}
             groupId={values.groupId}
+            setFieldValue={setFieldValue}
             onClose={() => {
               if (!isGroupPage) {
                 setFieldValue('groupId', null);

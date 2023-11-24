@@ -10,7 +10,10 @@ import { Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GroupPrivacy } from '../../../constants/group.constants';
-import { ProposalActionType } from '../../../constants/proposal.constants';
+import {
+  ProposalActionFieldName,
+  ProposalActionType,
+} from '../../../constants/proposal.constants';
 import Flex from '../../Shared/Flex';
 import Modal from '../../Shared/Modal';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
@@ -20,9 +23,15 @@ interface Props {
   groupId?: number | null;
   currentUserId: number;
   onClose(): void;
+  setFieldValue: (field: ProposalActionFieldName, value: any) => void;
 }
 
-const ProposeGroupSettingsModal = ({ actionType, groupId, onClose }: Props) => {
+const ProposeGroupSettingsModal = ({
+  actionType,
+  groupId,
+  onClose,
+  setFieldValue,
+}: Props) => {
   const [open, setOpen] = useState(false);
 
   const { t } = useTranslation();
@@ -42,8 +51,8 @@ const ProposeGroupSettingsModal = ({ actionType, groupId, onClose }: Props) => {
     onClose();
   };
 
-  const handleSubmit = async () => {
-    // TODO: Add submit logi here
+  const handleSubmit = async (formValues: any) => {
+    setFieldValue(ProposalActionFieldName.Event, formValues);
     setOpen(false);
   };
 
