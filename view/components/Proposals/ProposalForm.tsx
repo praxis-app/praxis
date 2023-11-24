@@ -400,6 +400,11 @@ const ProposalForm = ({
                   />
                 )}
 
+                {/* TODO: Replace with proposed group settings preview */}
+                {values.action.groupConfig && (
+                  <>{JSON.stringify(values.action.groupConfig)}</>
+                )}
+
                 {errors.action?.role && !!submitCount && (
                   <Typography
                     color="error"
