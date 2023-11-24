@@ -13,8 +13,9 @@ interface Props {
 
 const ProposalAction = ({
   action: {
-    event,
     actionType,
+    event,
+    groupConfig,
     groupCoverPhoto,
     groupDescription,
     groupName,
@@ -24,11 +25,33 @@ const ProposalAction = ({
 }: Props) => {
   const { t } = useTranslation();
 
+  if (actionType === ProposalActionType.ChangeSettings) {
+    return (
+      <Typography marginBottom={3.5}>{JSON.stringify(groupConfig)}</Typography>
+    );
+  }
+
   if (actionType === ProposalActionType.PlanEvent) {
     if (!event) {
       return <Typography>{t('errors.somethingWentWrong')}</Typography>;
     }
     return <ProposalActionEvent event={event} />;
+  }
+
+  if (
+    actionType === ProposalActionType.CreateRole ||
+    actionType === ProposalActionType.ChangeRole
+  ) {
+    if (!role) {
+      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+    }
+    return (
+      <ProposalActionRole
+        actionType={actionType}
+        ratified={ratified}
+        role={role}
+      />
+    );
   }
 
   if (actionType === ProposalActionType.ChangeName) {
@@ -58,22 +81,6 @@ const ProposalAction = ({
         </Typography>
         <AttachedImage image={groupCoverPhoto} width="55%" />
       </Box>
-    );
-  }
-
-  if (
-    actionType === ProposalActionType.CreateRole ||
-    actionType === ProposalActionType.ChangeRole
-  ) {
-    if (!role) {
-      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
-    }
-    return (
-      <ProposalActionRole
-        actionType={actionType}
-        ratified={ratified}
-        role={role}
-      />
     );
   }
 

@@ -31,6 +31,11 @@ export type CreateProposalMutation = {
         actionType: string;
         groupDescription?: string | null;
         groupName?: string | null;
+        groupConfig?: {
+          __typename?: 'ProposalActionGroupConfig';
+          id: number;
+          privacy?: string | null;
+        } | null;
         event?: {
           __typename?: 'ProposalActionEvent';
           id: number;

@@ -4,6 +4,11 @@ fragment ProposalAction on ProposalAction {
   groupDescription
   groupName
 
+  groupConfig {
+    id
+    privacy
+  }
+
   event {
     ...ProposalActionEvent
   }
