@@ -274,6 +274,16 @@ const ProposalForm = ({
       );
     };
 
+  const handleModalClose = (
+    setFieldValue: (field: string, value: ProposalActionInput | null) => void,
+  ) => {
+    if (!isGroupPage) {
+      setFieldValue('groupId', null);
+    }
+    setFieldValue('action', action);
+    setSelectInputsKey(getRandomString());
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -424,40 +434,22 @@ const ProposalForm = ({
             key={`${values.action.actionType}-${values.groupId}`}
             actionType={values.action.actionType}
             groupId={values.groupId}
+            onClose={() => handleModalClose(setFieldValue)}
             setFieldValue={setFieldValue}
-            onClose={() => {
-              if (!isGroupPage) {
-                setFieldValue('groupId', null);
-              }
-              setFieldValue('action', action);
-              setSelectInputsKey(getRandomString());
-            }}
           />
           <ProposeEventModal
             actionType={values.action.actionType}
             currentUserId={currentUserId}
             groupId={values.groupId}
-            onClose={() => {
-              if (!isGroupPage) {
-                setFieldValue('groupId', null);
-              }
-              setFieldValue('action', action);
-              setSelectInputsKey(getRandomString());
-            }}
+            onClose={() => handleModalClose(setFieldValue)}
             setFieldValue={setFieldValue}
           />
           <ProposeGroupSettingsModal
             actionType={values.action.actionType}
             currentUserId={currentUserId}
             groupId={values.groupId}
+            onClose={() => handleModalClose(setFieldValue)}
             setFieldValue={setFieldValue}
-            onClose={() => {
-              if (!isGroupPage) {
-                setFieldValue('groupId', null);
-              }
-              setFieldValue('action', action);
-              setSelectInputsKey(getRandomString());
-            }}
           />
 
           {!clicked && !editProposal && <Divider sx={{ marginBottom: 1.3 }} />}
