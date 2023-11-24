@@ -17,12 +17,8 @@ import LikeButton from './LikeButton';
 import PostModal from './PostModal';
 import { VOTE_BADGE_STYLES } from '../../constants/vote.constants';
 
-export const ICON_STYLES: SxProps = {
-  marginRight: '0.4ch',
-};
-
 const ROTATED_ICON_STYLES: SxProps = {
-  ...ICON_STYLES,
+  marginRight: '0.4ch',
   transform: 'rotateY(180deg)',
 };
 
