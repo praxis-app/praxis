@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { useDeletePostMutation } from '../../graphql/posts/mutations/gen/DeletePost.gen';
-import { removePost } from '../../utils/post.utils';
+import { removePost } from '../../utils/cache.utils';
 import DeleteButton from '../Shared/DeleteButton';
 
 interface Props {

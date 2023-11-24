@@ -20,12 +20,12 @@ import {
 import { isLoggedInVar } from '../../graphql/cache';
 import { GroupCardFragment } from '../../graphql/groups/fragments/gen/GroupCard.gen';
 import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
+import { removeGroup } from '../../utils/cache.utils';
 import {
   getEditGroupPath,
   getGroupMembersPath,
   getGroupPath,
   getMemberRequestsPath,
-  removeGroup,
 } from '../../utils/group.utils';
 import { urlifyText } from '../../utils/shared.utils';
 import ItemMenu from '../Shared/ItemMenu';

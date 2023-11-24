@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { useDeleteProposalMutation } from '../../graphql/proposals/mutations/gen/DeleteProposal.gen';
-import { removeProposal } from '../../utils/proposal.utils';
+import { removeProposal } from '../../utils/cache.utils';
 
 interface Props {
   proposalId: number;

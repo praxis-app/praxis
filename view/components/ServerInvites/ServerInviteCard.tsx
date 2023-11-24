@@ -15,10 +15,8 @@ import { toastVar } from '../../graphql/cache';
 import { ServerInviteCardFragment } from '../../graphql/invites/fragments/gen/ServerInviteCard.gen';
 import { useDeleteServerInviteMutation } from '../../graphql/invites/mutations/gen/DeleteServerInvite.gen';
 import { ServerInvitesQuery } from '../../graphql/invites/queries/gen/ServerInvites.gen';
-import {
-  copyInviteLink,
-  removeServerInvite,
-} from '../../utils/server-invite.utils';
+import { removeServerInvite } from '../../utils/cache.utils';
+import { copyInviteLink } from '../../utils/server-invite.utils';
 import { timeFromNow } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import CompactButton from '../Shared/CompactButton';

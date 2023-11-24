@@ -33,7 +33,6 @@ import {
   getGroupMembersPath,
   getGroupPath,
   getMemberRequestsPath,
-  removeGroup,
 } from '../../utils/group.utils';
 import CoverPhoto from '../Images/CoverPhoto';
 import Flex from '../Shared/Flex';
@@ -41,6 +40,7 @@ import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import JoinButton from './JoinButton';
 import { GroupTabs } from '../../constants/group.constants';
+import { removeGroup } from '../../utils/cache.utils';
 
 const NameText = styled(Typography)(() => ({
   fontFamily: 'Inter Bold',

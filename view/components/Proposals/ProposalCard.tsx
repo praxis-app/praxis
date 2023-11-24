@@ -20,11 +20,9 @@ import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { useDeleteProposalMutation } from '../../graphql/proposals/mutations/gen/DeleteProposal.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
+import { removeProposal } from '../../utils/cache.utils';
 import { getGroupPath } from '../../utils/group.utils';
-import {
-  getProposalActionLabel,
-  removeProposal,
-} from '../../utils/proposal.utils';
+import { getProposalActionLabel } from '../../utils/proposal.utils';
 import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
