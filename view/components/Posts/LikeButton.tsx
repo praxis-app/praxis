@@ -8,7 +8,6 @@ import { useLikePostMutation } from '../../graphql/posts/mutations/gen/LikePost.
 import { TypeNames } from '../../constants/shared.constants';
 import { Blurple } from '../../styles/theme';
 import CardFooterButton from '../Shared/CardFooterButton';
-import { ICON_STYLES } from './PostCardFooter';
 
 interface Props {
   postId: number;
@@ -24,13 +23,10 @@ const LikeButton = ({ postId, isLikedByMe }: Props) => {
 
   const isLoading = likePostLoading || unlikePostLoading;
 
-  const likeButtonIconStyles: SxProps =
-    isLikedByMe && !isLoading
-      ? {
-          ...ICON_STYLES,
-          color: Blurple.Marina,
-        }
-      : ICON_STYLES;
+  const likeButtonIconStyles: SxProps = {
+    color: isLikedByMe && !isLoading ? Blurple.Marina : undefined,
+    marginRight: '0.4ch',
+  };
 
   const handleLikeButtonClick = async () => {
     if (!isLoggedIn) {
