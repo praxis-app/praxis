@@ -132,7 +132,7 @@ const Modal = ({
       open={open}
       sx={{ marginTop: topGap }}
       // Required for mobile
-      BackdropProps={{ onClick: onClose }}
+      BackdropProps={{ onClick: onClose }} // TODO: Replace with new prop
       // Required for desktop
       onClose={onClose}
     >

@@ -55,6 +55,7 @@ import ProposalActionEvent from './ProposalActions/ProposalActionEvent';
 import ProposalActionFields from './ProposalActions/ProposalActionFields';
 import ProposalActionRole from './ProposalActions/ProposalActionRole';
 import ProposeEventModal from './ProposalActions/ProposeEventModal';
+import ProposeGroupSettingsModal from './ProposalActions/ProposeGroupSettingsModal';
 import ProposeRoleModal from './ProposalActions/ProposeRoleModal';
 
 type ProposalFormErrors = {
@@ -444,6 +445,18 @@ const ProposalForm = ({
               setSelectInputsKey(getRandomString());
             }}
             setFieldValue={setFieldValue}
+          />
+          <ProposeGroupSettingsModal
+            actionType={values.action.actionType}
+            currentUserId={currentUserId}
+            groupId={values.groupId}
+            onClose={() => {
+              if (!isGroupPage) {
+                setFieldValue('groupId', null);
+              }
+              setFieldValue('action', action);
+              setSelectInputsKey(getRandomString());
+            }}
           />
 
           {!clicked && !editProposal && <Divider sx={{ marginBottom: 1.3 }} />}
