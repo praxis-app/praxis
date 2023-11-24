@@ -43,7 +43,7 @@
     "prefer-const": ["error", { "destructuring": "all" }],
     "react-hooks/exhaustive-deps": "error",
     "react-hooks/rules-of-hooks": "error",
-    "react-refresh/only-export-components": "warn",
+    "react-refresh/only-export-components": "error",
     "react/no-unescaped-entities": ["error", { "forbid": [">", "}"] }],
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off"
