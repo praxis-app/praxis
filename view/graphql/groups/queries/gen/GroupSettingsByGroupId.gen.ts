@@ -8,7 +8,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type GroupSettingsByGroupIdQueryVariables = Types.Exact<{
-  name: Types.Scalars['String']['input'];
+  groupId: Types.Scalars['Int']['input'];
 }>;
 
 export type GroupSettingsByGroupIdQuery = {
@@ -21,8 +21,8 @@ export type GroupSettingsByGroupIdQuery = {
 };
 
 export const GroupSettingsByGroupIdDocument = gql`
-  query GroupSettingsByGroupId($name: String!) {
-    group(name: $name) {
+  query GroupSettingsByGroupId($groupId: Int!) {
+    group(id: $groupId) {
       id
       settings {
         id
@@ -44,7 +44,7 @@ export const GroupSettingsByGroupIdDocument = gql`
  * @example
  * const { data, loading, error } = useGroupSettingsByGroupIdQuery({
  *   variables: {
- *      name: // value for 'name'
+ *      groupId: // value for 'groupId'
  *   },
  * });
  */

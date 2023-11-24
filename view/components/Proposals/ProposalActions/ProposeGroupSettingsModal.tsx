@@ -15,9 +15,11 @@ import {
   ProposalActionType,
 } from '../../../constants/proposal.constants';
 import { ProposalActionGroupConfigInput } from '../../../graphql/gen';
+import { useGroupSettingsByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupSettingsByGroupId.gen';
 import Flex from '../../Shared/Flex';
 import Modal from '../../Shared/Modal';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
+import ProgressBar from '../../Shared/ProgressBar';
 
 interface Props {
   actionType?: string;
@@ -37,16 +39,22 @@ const ProposeGroupSettingsModal = ({
   setFieldValue,
 }: Props) => {
   const [open, setOpen] = useState(false);
+
+  const [getGroupSettings, { data, loading }] =
+    useGroupSettingsByGroupIdLazyQuery();
+
   const { t } = useTranslation();
 
   useEffect(() => {
     if (groupId && actionType === ProposalActionType.ChangeSettings) {
+      getGroupSettings({ variables: { groupId } });
       setOpen(true);
     }
-  }, [groupId, actionType]);
+  }, [groupId, actionType, getGroupSettings]);
 
+  const isPublic = data?.group.settings.isPublic;
   const initialValues: ProposalActionGroupConfigInput = {
-    privacy: GroupPrivacy.Private,
+    privacy: isPublic ? GroupPrivacy.Public : GroupPrivacy.Private,
   };
 
   const handleClose = () => {
@@ -67,36 +75,46 @@ const ProposeGroupSettingsModal = ({
       contentStyles={{ minHeight: 'none' }}
       centeredTitle
     >
-      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        enableReinitialize
+      >
         {({ isSubmitting, handleChange, values, dirty }) => (
           <Form>
-            <FormGroup sx={{ paddingTop: 1 }}>
-              <Flex justifyContent="space-between">
-                <Box>
-                  <Typography>{t('groups.settings.names.privacy')}</Typography>
+            {data && (
+              <FormGroup sx={{ paddingTop: 1 }}>
+                <Flex justifyContent="space-between">
+                  <Box>
+                    <Typography>
+                      {t('groups.settings.names.privacy')}
+                    </Typography>
 
-                  <Typography fontSize={12} color="text.secondary">
-                    {t('groups.settings.descriptions.privacy')}
-                  </Typography>
-                </Box>
+                    <Typography fontSize={12} color="text.secondary">
+                      {t('groups.settings.descriptions.privacy')}
+                    </Typography>
+                  </Box>
 
-                <Select
-                  name="privacy"
-                  onChange={handleChange}
-                  sx={{ color: 'text.secondary' }}
-                  value={values.privacy}
-                  variant="standard"
-                  disableUnderline
-                >
-                  <MenuItem value={GroupPrivacy.Private}>
-                    {t('groups.labels.private')}
-                  </MenuItem>
-                  <MenuItem value={GroupPrivacy.Public}>
-                    {t('groups.labels.public')}
-                  </MenuItem>
-                </Select>
-              </Flex>
-            </FormGroup>
+                  <Select
+                    name="privacy"
+                    onChange={handleChange}
+                    sx={{ color: 'text.secondary' }}
+                    value={values.privacy}
+                    variant="standard"
+                    disableUnderline
+                  >
+                    <MenuItem value={GroupPrivacy.Private}>
+                      {t('groups.labels.private')}
+                    </MenuItem>
+                    <MenuItem value={GroupPrivacy.Public}>
+                      {t('groups.labels.public')}
+                    </MenuItem>
+                  </Select>
+                </Flex>
+              </FormGroup>
+            )}
+
+            {loading && <ProgressBar />}
 
             <Divider sx={{ marginTop: 3, marginBottom: 2 }} />
 

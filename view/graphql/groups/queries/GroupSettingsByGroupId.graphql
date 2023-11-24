@@ -1,5 +1,5 @@
-query GroupSettingsByGroupId($name: String!) {
-  group(name: $name) {
+query GroupSettingsByGroupId($groupId: Int!) {
+  group(id: $groupId) {
     id
     settings {
       id
