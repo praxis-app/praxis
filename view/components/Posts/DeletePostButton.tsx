@@ -1,28 +1,10 @@
-import { ApolloCache, FetchResult } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
-import {
-  DeletePostMutation,
-  useDeletePostMutation,
-} from '../../graphql/posts/mutations/gen/DeletePost.gen';
-import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
+import { useDeletePostMutation } from '../../graphql/posts/mutations/gen/DeletePost.gen';
+import { removePost } from '../../utils/post.utils';
 import DeleteButton from '../Shared/DeleteButton';
-
-export const removePost =
-  (postId: number) =>
-  (cache: ApolloCache<any>, { errors }: FetchResult<DeletePostMutation>) => {
-    if (errors) {
-      toastVar({ status: 'error', title: errors[0].message });
-      return;
-    }
-    const postCacheId = cache.identify({
-      __typename: TypeNames.Post,
-      id: postId,
-    });
-    cache.evict({ id: postCacheId });
-    cache.gc();
-  };
 
 interface Props {
   postId: number;
