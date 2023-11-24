@@ -1,20 +1,10 @@
-import { ApolloCache } from '@apollo/client';
 import { Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { useDeleteProposalMutation } from '../../graphql/proposals/mutations/gen/DeleteProposal.gen';
-import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
-
-export const removeProposal =
-  (proposalId: number) => (cache: ApolloCache<any>) => {
-    const proposalCacheId = cache.identify({
-      __typename: TypeNames.Proposal,
-      id: proposalId,
-    });
-    cache.evict({ id: proposalCacheId });
-    cache.gc();
-  };
+import { removeProposal } from '../../utils/proposal.utils';
 
 interface Props {
   proposalId: number;

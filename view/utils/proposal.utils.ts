@@ -1,5 +1,17 @@
+import { ApolloCache } from '@apollo/client';
 import { Namespace, TFunction } from 'react-i18next';
 import { ProposalActionType } from '../constants/proposal.constants';
+import { TypeNames } from '../constants/shared.constants';
+
+export const removeProposal =
+  (proposalId: number) => (cache: ApolloCache<any>) => {
+    const proposalCacheId = cache.identify({
+      __typename: TypeNames.Proposal,
+      id: proposalId,
+    });
+    cache.evict({ id: proposalCacheId });
+    cache.gc();
+  };
 
 export const getProposalActionTypeOptions = (
   t: TFunction<Namespace<'ns1'>, undefined>,

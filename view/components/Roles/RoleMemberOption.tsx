@@ -9,7 +9,7 @@ import { UserAvatarFragment } from '../../graphql/users/fragments/gen/UserAvatar
 import Flex from '../Shared/Flex';
 import UserAvatar from '../Users/UserAvatar';
 
-export const ROLE_MEMBER_OPTION_STYLES: SxProps = {
+const ROLE_MEMBER_OPTION_STYLES: SxProps = {
   borderRadius: 2,
   display: 'flex',
   justifyContent: 'space-between',
