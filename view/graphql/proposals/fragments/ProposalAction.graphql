@@ -5,8 +5,7 @@ fragment ProposalAction on ProposalAction {
   groupName
 
   groupConfig {
-    id
-    privacy
+    ...ProposalActionGroupSettings
   }
 
   event {

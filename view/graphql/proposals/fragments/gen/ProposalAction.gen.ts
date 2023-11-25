@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { ProposalActionGroupSettingsFragmentDoc } from './ProposalActionGroupSettings.gen';
 import { ProposalActionEventFragmentDoc } from './ProposalActionEvent.gen';
 import { ProposalActionRoleFragmentDoc } from './ProposalActionRole.gen';
 import { AttachedImageFragmentDoc } from '../../../images/fragments/gen/AttachedImage.gen';
@@ -99,8 +100,7 @@ export const ProposalActionFragmentDoc = gql`
     groupDescription
     groupName
     groupConfig {
-      id
-      privacy
+      ...ProposalActionGroupSettings
     }
     event {
       ...ProposalActionEvent
@@ -112,6 +112,7 @@ export const ProposalActionFragmentDoc = gql`
       ...AttachedImage
     }
   }
+  ${ProposalActionGroupSettingsFragmentDoc}
   ${ProposalActionEventFragmentDoc}
   ${ProposalActionRoleFragmentDoc}
   ${AttachedImageFragmentDoc}
