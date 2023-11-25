@@ -11,6 +11,8 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { ProposalActionType } from '../../../constants/proposal.constants';
+import { ChangeType } from '../../../constants/shared.constants';
 import {
   ProposalActionRoleInput,
   ProposalActionRoleMemberInput,
@@ -18,8 +20,6 @@ import {
 import { useGroupRoleByRoleIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRoleByRoleId.gen';
 import { ProposalActionRoleFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionRole.gen';
 import { useUsersByIdsLazyQuery } from '../../../graphql/users/queries/gen/UsersByIds.gen';
-import { ProposalActionType } from '../../../constants/proposal.constants';
-import { ChangeType } from '../../../constants/shared.constants';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import { cleanPermissions } from '../../../utils/role.utils';
 import { getTypedKeys } from '../../../utils/shared.utils';
@@ -79,7 +79,7 @@ const ProposalActionRole = ({
       return;
     }
     const userIds = role.members.map(
-      (member) => (member as ProposalActionRoleMemberInput).userId,
+      (member: any) => (member as ProposalActionRoleMemberInput).userId,
     );
     getSelectedUsers({
       variables: { userIds },
@@ -298,7 +298,7 @@ const ProposalActionRole = ({
                   {t('roles.labels.members')}
                 </Typography>
 
-                {members.map((member) => (
+                {members.map((member: any) => (
                   <ProposalActionRoleMember
                     key={'id' in member ? member.id : member.userId}
                     selectedUsers={selectedUsersData?.usersByIds}

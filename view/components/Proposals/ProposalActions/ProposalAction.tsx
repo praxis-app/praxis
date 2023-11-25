@@ -1,9 +1,10 @@
 import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ProposalActionFragment } from '../../../graphql/proposals/fragments/gen/ProposalAction.gen';
 import { ProposalActionType } from '../../../constants/proposal.constants';
+import { ProposalActionFragment } from '../../../graphql/proposals/fragments/gen/ProposalAction.gen';
 import AttachedImage from '../../Images/AttachedImage';
 import ProposalActionEvent from './ProposalActionEvent';
+import ProposalActionGroupSettings from './ProposalActionGroupSettings';
 import ProposalActionRole from './ProposalActionRole';
 
 interface Props {
@@ -26,9 +27,7 @@ const ProposalAction = ({
   const { t } = useTranslation();
 
   if (actionType === ProposalActionType.ChangeSettings) {
-    return (
-      <Typography marginBottom={3.5}>{JSON.stringify(groupConfig)}</Typography>
-    );
+    return <ProposalActionGroupSettings groupSettings={groupConfig} />;
   }
 
   if (actionType === ProposalActionType.PlanEvent) {
