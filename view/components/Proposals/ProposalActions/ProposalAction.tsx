@@ -9,6 +9,7 @@ import ProposalActionRole from './ProposalActionRole';
 
 interface Props {
   action: ProposalActionFragment;
+  groupId?: number;
   ratified: boolean;
 }
 
@@ -22,6 +23,7 @@ const ProposalAction = ({
     groupName,
     role,
   },
+  groupId,
   ratified,
 }: Props) => {
   const { t } = useTranslation();
@@ -30,7 +32,13 @@ const ProposalAction = ({
     if (!groupConfig) {
       return <Typography>{t('errors.somethingWentWrong')}</Typography>;
     }
-    return <ProposalActionGroupSettings groupSettings={groupConfig} />;
+    return (
+      <ProposalActionGroupSettings
+        groupSettings={groupConfig}
+        ratified={ratified}
+        groupId={groupId}
+      />
+    );
   }
 
   if (actionType === ProposalActionType.PlanEvent) {

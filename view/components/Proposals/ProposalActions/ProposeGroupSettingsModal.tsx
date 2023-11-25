@@ -52,9 +52,8 @@ const ProposeGroupSettingsModal = ({
     }
   }, [groupId, actionType, getGroupSettings]);
 
-  const isPublic = data?.group.settings.isPublic;
   const initialValues: ProposalActionGroupConfigInput = {
-    privacy: isPublic ? GroupPrivacy.Public : GroupPrivacy.Private,
+    privacy: data?.group.settings.privacy,
   };
 
   const handleClose = () => {

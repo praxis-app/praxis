@@ -172,6 +172,7 @@ type Proposal {
 
 type GroupConfig {
   id: Int!
+  privacy: String!
   group: Group!
   createdAt: DateTime!
   updatedAt: DateTime!

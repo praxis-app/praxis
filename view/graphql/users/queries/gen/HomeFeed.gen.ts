@@ -84,6 +84,24 @@ export type HomeFeedQuery = {
               __typename?: 'ProposalActionGroupConfig';
               id: number;
               privacy?: string | null;
+              oldPrivacy?: string | null;
+              proposalAction: {
+                __typename?: 'ProposalAction';
+                id: number;
+                proposal: {
+                  __typename?: 'Proposal';
+                  id: number;
+                  group?: {
+                    __typename?: 'Group';
+                    id: number;
+                    settings: {
+                      __typename?: 'GroupConfig';
+                      id: number;
+                      privacy: string;
+                    };
+                  } | null;
+                };
+              };
             } | null;
             event?: {
               __typename?: 'ProposalActionEvent';

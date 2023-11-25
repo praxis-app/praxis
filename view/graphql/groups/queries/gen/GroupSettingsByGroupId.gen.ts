@@ -16,7 +16,7 @@ export type GroupSettingsByGroupIdQuery = {
   group: {
     __typename?: 'Group';
     id: number;
-    settings: { __typename?: 'GroupConfig'; id: number; isPublic: boolean };
+    settings: { __typename?: 'GroupConfig'; id: number; privacy: string };
   };
 };
 
@@ -26,7 +26,7 @@ export const GroupSettingsByGroupIdDocument = gql`
       id
       settings {
         id
-        isPublic
+        privacy
       }
     }
   }

@@ -292,6 +292,7 @@ export type GroupConfig = {
   group: Group;
   id: Scalars['Int']['output'];
   isPublic: Scalars['Boolean']['output'];
+  privacy: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
