@@ -98,7 +98,7 @@ const ProposeGroupSettingsModal = ({
                     name="privacy"
                     onChange={handleChange}
                     sx={{ color: 'text.secondary' }}
-                    value={values.privacy}
+                    value={values.privacy || ''}
                     variant="standard"
                     disableUnderline
                   >
