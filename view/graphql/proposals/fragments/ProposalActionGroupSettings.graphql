@@ -1,0 +1,4 @@
+fragment ProposalActionGroupSettings on ProposalActionGroupConfig {
+  id
+  privacy
+}

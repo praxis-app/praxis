@@ -2,6 +2,8 @@ import { Box, SxProps, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { ProposalActionGroupConfigInput } from '../../../graphql/gen';
+import { ProposalActionGroupSettingsFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionGroupSettings.gen';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import Accordion, {
   AccordionDetails,
@@ -9,11 +11,13 @@ import Accordion, {
 } from '../../Shared/Accordion';
 
 interface Props {
-  groupSettings: any;
+  groupSettings:
+    | ProposalActionGroupSettingsFragment
+    | ProposalActionGroupConfigInput;
   preview?: boolean;
 }
 
-const ProposalActionGroupSettings = ({ preview }: Props) => {
+const ProposalActionGroupSettings = ({ groupSettings, preview }: Props) => {
   const { pathname } = useLocation();
   const isProposalPage = pathname.includes('/proposals/');
   const [showEvent, setShowEvent] = useState(!!preview || isProposalPage);
@@ -51,7 +55,7 @@ const ProposalActionGroupSettings = ({ preview }: Props) => {
         </AccordionSummary>
 
         <AccordionDetails sx={{ marginBottom: isDesktop ? 2.5 : 3 }}>
-          TODO: Add group settings here
+          {JSON.stringify(groupSettings)}
         </AccordionDetails>
       </Accordion>
     </Box>

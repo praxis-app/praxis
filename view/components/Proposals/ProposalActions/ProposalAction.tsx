@@ -27,6 +27,9 @@ const ProposalAction = ({
   const { t } = useTranslation();
 
   if (actionType === ProposalActionType.ChangeSettings) {
+    if (!groupConfig) {
+      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+    }
     return <ProposalActionGroupSettings groupSettings={groupConfig} />;
   }
 
