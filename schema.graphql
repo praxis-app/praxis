@@ -136,6 +136,7 @@ type ProposalActionRole {
 type ProposalActionGroupConfig {
   id: Int!
   privacy: String
+  oldPrivacy: String
   proposalAction: ProposalAction!
 }
 

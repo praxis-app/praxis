@@ -27,4 +27,11 @@ export class ProposalActionGroupConfigsService {
       proposalActionId,
     });
   }
+
+  async updateProposalActionRole(
+    id: number,
+    data: Partial<ProposalActionGroupConfig>,
+  ) {
+    await this.repository.update(id, data);
+  }
 }

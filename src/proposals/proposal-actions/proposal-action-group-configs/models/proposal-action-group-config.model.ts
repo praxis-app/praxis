@@ -21,6 +21,10 @@ export class ProposalActionGroupConfig {
   @Field({ nullable: true })
   privacy: string;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  oldPrivacy: string;
+
   @Field(() => ProposalAction)
   @OneToOne(
     () => ProposalAction,

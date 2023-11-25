@@ -180,6 +180,15 @@ export class ProposalActionsService {
     if (!proposedGroupConfig) {
       throw new UserInputError('Could not find proposed group settings');
     }
+    const oldGroupConfig = await this.groupConfigsService.getGroupConfig({
+      groupId,
+    });
+    // Record old group config
+    await this.proposalActionGroupConfigsService.updateProposalActionRole(
+      proposedGroupConfig.id,
+      { oldPrivacy: oldGroupConfig.privacy },
+    );
+    // Implement proposal - update group config
     await this.groupConfigsService.updateGroupConfig({
       privacy: proposedGroupConfig.privacy,
       groupId,
