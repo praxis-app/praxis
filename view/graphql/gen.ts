@@ -722,6 +722,7 @@ export type ProposalActionEventInput = {
 export type ProposalActionGroupConfig = {
   __typename?: 'ProposalActionGroupConfig';
   id: Scalars['Int']['output'];
+  oldPrivacy?: Maybe<Scalars['String']['output']>;
   privacy?: Maybe<Scalars['String']['output']>;
   proposalAction: ProposalAction;
 };
