@@ -20,9 +20,9 @@ interface Props {
   groupSettings:
     | ProposalActionGroupSettingsFragment
     | ProposalActionGroupConfigInput;
-  ratified?: boolean;
+  groupId?: number | null;
   preview?: boolean;
-  groupId?: number;
+  ratified?: boolean;
 }
 
 const ProposalActionGroupSettings = ({

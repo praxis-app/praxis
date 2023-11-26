@@ -53,6 +53,7 @@ import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import TextFieldWithAvatar from '../Shared/TextFieldWithAvatar';
 import ProposalActionEvent from './ProposalActions/ProposalActionEvent';
 import ProposalActionFields from './ProposalActions/ProposalActionFields';
+import ProposalActionGroupSettings from './ProposalActions/ProposalActionGroupSettings';
 import ProposalActionRole from './ProposalActions/ProposalActionRole';
 import ProposeEventModal from './ProposalActions/ProposeEventModal';
 import ProposeGroupSettingsModal from './ProposalActions/ProposeGroupSettingsModal';
@@ -402,7 +403,11 @@ const ProposalForm = ({
 
                 {/* TODO: Replace with proposed group settings preview */}
                 {values.action.groupConfig && (
-                  <>{JSON.stringify(values.action.groupConfig)}</>
+                  <ProposalActionGroupSettings
+                    groupSettings={values.action.groupConfig}
+                    groupId={values.groupId}
+                    preview
+                  />
                 )}
 
                 {errors.action?.role && !!submitCount && (
