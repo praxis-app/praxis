@@ -2,7 +2,7 @@ import { SxProps, Typography, useTheme } from '@mui/material';
 import { ProposalActionType } from '../../../constants/proposal.constants';
 import { ChangeType } from '../../../constants/shared.constants';
 import { ProposalActionRoleMemberInput } from '../../../graphql/gen';
-import { ProposedRoleMemberFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionRoleMember.gen';
+import { ProposedRoleMemberFragment } from '../../../graphql/proposals/fragments/gen/ProposedRoleMember.gen';
 import { UserAvatarFragment } from '../../../graphql/users/fragments/gen/UserAvatar.gen';
 import { getUserProfilePath } from '../../../utils/user.utils';
 import Flex from '../../Shared/Flex';

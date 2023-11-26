@@ -33,6 +33,13 @@ import ChangeIcon from './ChangeIcon';
 import ProposalActionPermission from './ProposalActionPermission';
 import ProposedRoleMember from './ProposedRoleMember';
 
+type ArrayElement<ArrayType extends unknown[] | undefined | null> =
+  ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
+
+type RoleMember =
+  | ProposalActionRoleMemberInput
+  | ArrayElement<ProposalActionRoleFragment['members']>;
+
 interface Props extends Omit<BoxProps, 'role'> {
   role: ProposalActionRoleFragment | ProposalActionRoleInput;
   actionType: ProposalActionType;
@@ -76,11 +83,11 @@ const ProposalActionRole = ({
 
   // Fetch data required for preview in ProposalForm
   useEffect(() => {
-    if (!preview || !role.members) {
+    if (!preview || 'id' in role || !role.members) {
       return;
     }
     const userIds = role.members.map(
-      (member: any) => (member as ProposalActionRoleMemberInput).userId,
+      (member: ProposalActionRoleMemberInput) => member.userId,
     );
     getSelectedUsers({
       variables: { userIds },
@@ -299,7 +306,7 @@ const ProposalActionRole = ({
                   {t('roles.labels.members')}
                 </Typography>
 
-                {members.map((member: any) => (
+                {members.map((member: RoleMember) => (
                   <ProposedRoleMember
                     key={'id' in member ? member.id : member.userId}
                     selectedUsers={selectedUsersData?.usersByIds}
