@@ -12,6 +12,7 @@ import {
 import { Image } from '../../../images/models/image.model';
 import { Proposal } from '../../models/proposal.model';
 import { ProposalActionEvent } from '../proposal-action-events/models/proposal-action-event.model';
+import { ProposalActionGroupConfig } from '../proposal-action-group-configs/models/proposal-action-group-config.model';
 import { ProposalActionRole } from '../proposal-action-roles/models/proposal-action-role.model';
 
 @Entity()
@@ -57,6 +58,16 @@ export class ProposalAction {
     },
   )
   event?: ProposalActionEvent;
+
+  @OneToOne(
+    () => ProposalActionGroupConfig,
+    (proposalActionGroupConfig) => proposalActionGroupConfig.proposalAction,
+    {
+      cascade: true,
+      nullable: true,
+    },
+  )
+  groupConfig?: ProposalActionGroupConfig;
 
   @Field(() => Proposal)
   @OneToOne(() => Proposal, (proposal) => proposal.action, {

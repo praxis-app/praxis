@@ -1,0 +1,19 @@
+fragment ProposalActionGroupSettings on ProposalActionGroupConfig {
+  id
+  privacy
+  oldPrivacy
+
+  proposalAction {
+    id
+    proposal {
+      id
+      group {
+        id
+        settings {
+          id
+          privacy
+        }
+      }
+    }
+  }
+}

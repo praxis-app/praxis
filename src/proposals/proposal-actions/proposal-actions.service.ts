@@ -14,6 +14,8 @@ import {
   ProposalActionRolesService,
   RoleMemberChangeType,
 } from './proposal-action-roles/proposal-action-roles.service';
+import { ProposalActionGroupConfigsService } from './proposal-action-group-configs/proposal-action-group-configs.service';
+import { GroupConfigsService } from '../../groups/group-configs/group-configs.service';
 
 @Injectable()
 export class ProposalActionsService {
@@ -27,6 +29,8 @@ export class ProposalActionsService {
     private groupRolesService: GroupRolesService,
     private proposalActionEventsService: ProposalActionEventsService,
     private proposalActionRolesService: ProposalActionRolesService,
+    private proposalActionGroupConfigsService: ProposalActionGroupConfigsService,
+    private groupConfigsService: GroupConfigsService,
   ) {}
 
   async getProposalAction(
@@ -166,6 +170,29 @@ export class ProposalActionsService {
     }
     await this.imagesService.updateImage(newCoverPhoto.id, { groupId });
     await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
+  }
+
+  async implementChangeGroupConfig(proposalActionId: number, groupId: number) {
+    const proposedGroupConfig =
+      await this.proposalActionGroupConfigsService.getProposalActionGroupConfig(
+        { proposalActionId },
+      );
+    if (!proposedGroupConfig) {
+      throw new UserInputError('Could not find proposed group settings');
+    }
+    const oldGroupConfig = await this.groupConfigsService.getGroupConfig({
+      groupId,
+    });
+    // Record old group config
+    await this.proposalActionGroupConfigsService.updateProposalActionGroupConfig(
+      proposedGroupConfig.id,
+      { oldPrivacy: oldGroupConfig.privacy },
+    );
+    // Implement proposal - update group config
+    await this.groupConfigsService.updateGroupConfig({
+      privacy: proposedGroupConfig.privacy,
+      groupId,
+    });
   }
 
   async saveProposalActionImage(

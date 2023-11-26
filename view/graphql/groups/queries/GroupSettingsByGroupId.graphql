@@ -1,0 +1,9 @@
+query GroupSettingsByGroupId($groupId: Int!) {
+  group(id: $groupId) {
+    id
+    settings {
+      id
+      privacy
+    }
+  }
+}

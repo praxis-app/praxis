@@ -35,6 +35,7 @@ import {
   ProposalActionType,
   ProposalStage,
 } from './proposals.constants';
+import { ProposalActionGroupConfigsService } from './proposal-actions/proposal-action-group-configs/proposal-action-group-configs.service';
 
 type ProposalWithCommentCount = Proposal & { commentCount: number };
 
@@ -52,6 +53,7 @@ export class ProposalsService {
 
     private groupsService: GroupsService,
     private proposalActionEventsService: ProposalActionEventsService,
+    private proposalActionGroupConfigsService: ProposalActionGroupConfigsService,
     private proposalActionRolesService: ProposalActionRolesService,
     private proposalActionsService: ProposalActionsService,
   ) {}
@@ -132,7 +134,7 @@ export class ProposalsService {
     {
       body,
       images,
-      action: { groupCoverPhoto, role, event, ...action },
+      action: { groupCoverPhoto, role, event, groupSettings, ...action },
       ...proposalData
     }: CreateProposalInput,
     user: User,
@@ -165,6 +167,12 @@ export class ProposalsService {
         await this.proposalActionEventsService.createProposalActionEvent(
           proposal.action.id,
           event,
+        );
+      }
+      if (groupSettings) {
+        await this.proposalActionGroupConfigsService.createProposalActionGroupConfig(
+          proposal.action.id,
+          groupSettings,
         );
       }
     } catch (err) {
@@ -244,6 +252,10 @@ export class ProposalsService {
     }
     if (actionType === ProposalActionType.ChangeGroupRole) {
       await this.proposalActionsService.implementChangeGroupRole(id);
+      return;
+    }
+    if (actionType === ProposalActionType.ChangeGroupSettings) {
+      await this.proposalActionsService.implementChangeGroupConfig(id, groupId);
       return;
     }
     if (actionType === ProposalActionType.ChangeGroupName) {

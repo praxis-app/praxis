@@ -292,6 +292,7 @@ export type GroupConfig = {
   group: Group;
   id: Scalars['Int']['output'];
   isPublic: Scalars['Boolean']['output'];
+  privacy: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -674,6 +675,7 @@ export type ProposalAction = {
   groupCoverPhoto?: Maybe<Image>;
   groupDescription?: Maybe<Scalars['String']['output']>;
   groupName?: Maybe<Scalars['String']['output']>;
+  groupSettings?: Maybe<ProposalActionGroupConfig>;
   id: Scalars['Int']['output'];
   proposal: Proposal;
   role?: Maybe<ProposalActionRole>;
@@ -718,12 +720,25 @@ export type ProposalActionEventInput = {
   startsAt: Scalars['DateTime']['input'];
 };
 
+export type ProposalActionGroupConfig = {
+  __typename?: 'ProposalActionGroupConfig';
+  id: Scalars['Int']['output'];
+  oldPrivacy?: Maybe<Scalars['String']['output']>;
+  privacy?: Maybe<Scalars['String']['output']>;
+  proposalAction: ProposalAction;
+};
+
+export type ProposalActionGroupConfigInput = {
+  privacy?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type ProposalActionInput = {
   actionType: Scalars['String']['input'];
   event?: InputMaybe<ProposalActionEventInput>;
   groupCoverPhoto?: InputMaybe<Scalars['Upload']['input']>;
   groupDescription?: InputMaybe<Scalars['String']['input']>;
   groupName?: InputMaybe<Scalars['String']['input']>;
+  groupSettings?: InputMaybe<ProposalActionGroupConfigInput>;
   role?: InputMaybe<ProposalActionRoleInput>;
 };
 

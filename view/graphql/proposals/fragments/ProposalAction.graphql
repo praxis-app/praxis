@@ -4,6 +4,10 @@ fragment ProposalAction on ProposalAction {
   groupDescription
   groupName
 
+  groupSettings {
+    ...ProposalActionGroupSettings
+  }
+
   event {
     ...ProposalActionEvent
   }

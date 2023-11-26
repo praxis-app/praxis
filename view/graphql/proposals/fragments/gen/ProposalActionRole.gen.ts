@@ -2,7 +2,7 @@ import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
 import { ProposalActionPermissionFragmentDoc } from './ProposalActionPermission.gen';
-import { ProposalActionRoleMemberFragmentDoc } from './ProposalActionRoleMember.gen';
+import { ProposedRoleMemberFragmentDoc } from './ProposedRoleMember.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
@@ -58,7 +58,7 @@ export const ProposalActionRoleFragmentDoc = gql`
       ...ProposalActionPermission
     }
     members {
-      ...ProposalActionRoleMember
+      ...ProposedRoleMember
     }
     groupRole {
       id
@@ -67,5 +67,5 @@ export const ProposalActionRoleFragmentDoc = gql`
     }
   }
   ${ProposalActionPermissionFragmentDoc}
-  ${ProposalActionRoleMemberFragmentDoc}
+  ${ProposedRoleMemberFragmentDoc}
 `;

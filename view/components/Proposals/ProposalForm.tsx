@@ -53,8 +53,10 @@ import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import TextFieldWithAvatar from '../Shared/TextFieldWithAvatar';
 import ProposalActionEvent from './ProposalActions/ProposalActionEvent';
 import ProposalActionFields from './ProposalActions/ProposalActionFields';
+import ProposalActionGroupSettings from './ProposalActions/ProposalActionGroupSettings';
 import ProposalActionRole from './ProposalActions/ProposalActionRole';
 import ProposeEventModal from './ProposalActions/ProposeEventModal';
+import ProposeGroupSettingsModal from './ProposalActions/ProposeGroupSettingsModal';
 import ProposeRoleModal from './ProposalActions/ProposeRoleModal';
 
 type ProposalFormErrors = {
@@ -273,6 +275,16 @@ const ProposalForm = ({
       );
     };
 
+  const handleModalClose = (
+    setFieldValue: (field: string, value: ProposalActionInput | null) => void,
+  ) => {
+    if (!isGroupPage) {
+      setFieldValue('groupId', null);
+    }
+    setFieldValue('action', action);
+    setSelectInputsKey(getRandomString());
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -389,6 +401,14 @@ const ProposalForm = ({
                   />
                 )}
 
+                {values.action.groupSettings && (
+                  <ProposalActionGroupSettings
+                    groupSettings={values.action.groupSettings}
+                    groupId={values.groupId}
+                    preview
+                  />
+                )}
+
                 {errors.action?.role && !!submitCount && (
                   <Typography
                     color="error"
@@ -419,6 +439,28 @@ const ProposalForm = ({
             />
           </FormGroup>
 
+          <ProposeRoleModal
+            key={`${values.action.actionType}-${values.groupId}`}
+            actionType={values.action.actionType}
+            groupId={values.groupId}
+            onClose={() => handleModalClose(setFieldValue)}
+            setFieldValue={setFieldValue}
+          />
+          <ProposeEventModal
+            actionType={values.action.actionType}
+            currentUserId={currentUserId}
+            groupId={values.groupId}
+            onClose={() => handleModalClose(setFieldValue)}
+            setFieldValue={setFieldValue}
+          />
+          <ProposeGroupSettingsModal
+            actionType={values.action.actionType}
+            currentUserId={currentUserId}
+            groupId={values.groupId}
+            onClose={() => handleModalClose(setFieldValue)}
+            setFieldValue={setFieldValue}
+          />
+
           {!clicked && !editProposal && <Divider sx={{ marginBottom: 1.3 }} />}
 
           <Flex sx={{ justifyContent: 'space-between' }}>
@@ -439,33 +481,6 @@ const ProposalForm = ({
                 : t('proposals.actions.createProposal')}
             </PrimaryActionButton>
           </Flex>
-
-          <ProposeRoleModal
-            key={`${values.action.actionType}-${values.groupId}`}
-            actionType={values.action.actionType}
-            groupId={values.groupId}
-            setFieldValue={setFieldValue}
-            onClose={() => {
-              if (!isGroupPage) {
-                setFieldValue('groupId', null);
-              }
-              setFieldValue('action', action);
-              setSelectInputsKey(getRandomString());
-            }}
-          />
-          <ProposeEventModal
-            actionType={values.action.actionType}
-            currentUserId={currentUserId}
-            groupId={values.groupId}
-            onClose={() => {
-              if (!isGroupPage) {
-                setFieldValue('groupId', null);
-              }
-              setFieldValue('action', action);
-              setSelectInputsKey(getRandomString());
-            }}
-            setFieldValue={setFieldValue}
-          />
         </Form>
       )}
     </Formik>

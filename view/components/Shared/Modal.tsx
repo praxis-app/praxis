@@ -132,7 +132,7 @@ const Modal = ({
       open={open}
       sx={{ marginTop: topGap }}
       // Required for mobile
-      BackdropProps={{ onClick: onClose }}
+      slotProps={{ backdrop: { onClick: onClose } }}
       // Required for desktop
       onClose={onClose}
     >

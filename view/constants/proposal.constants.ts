@@ -21,6 +21,7 @@ export enum ProposalActionFieldName {
   GroupCoverPhoto = 'action.groupCoverPhoto',
   GroupDescription = 'action.groupDescription',
   GroupName = 'action.groupName',
+  GroupSettings = 'action.groupSettings',
   Role = 'action.role',
   RoleId = 'action.role.id',
 }

@@ -17,27 +17,25 @@ export const getProposalActionTypeOptions = (
     value: ProposalActionType.ChangeDescription,
   },
   {
-    message: t('proposals.actionTypes.changeCoverPhoto'),
-    value: ProposalActionType.ChangeCoverPhoto,
+    message: t('proposals.actionTypes.changeSettings'),
+    value: ProposalActionType.ChangeSettings,
   },
   {
-    message: t('proposals.actionTypes.createRole'),
-    value: ProposalActionType.CreateRole,
+    message: t('proposals.actionTypes.changeCoverPhoto'),
+    value: ProposalActionType.ChangeCoverPhoto,
   },
   {
     message: t('proposals.actionTypes.changeRole'),
     value: ProposalActionType.ChangeRole,
   },
   {
+    message: t('proposals.actionTypes.createRole'),
+    value: ProposalActionType.CreateRole,
+  },
+  {
     message: t('proposals.actionTypes.test'),
     value: ProposalActionType.Test,
   },
-
-  // TODO: Uncomment after adding support for remaining action types
-  // {
-  //   message: t("proposals.actionTypes.changeSettings"),
-  //   value: ProposalActionType.ChangeSettings,
-  // },
 ];
 
 export const getProposalActionLabel = (

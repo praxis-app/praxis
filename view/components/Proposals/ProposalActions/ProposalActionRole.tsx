@@ -11,6 +11,8 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { ProposalActionType } from '../../../constants/proposal.constants';
+import { ChangeType } from '../../../constants/shared.constants';
 import {
   ProposalActionRoleInput,
   ProposalActionRoleMemberInput,
@@ -18,8 +20,6 @@ import {
 import { useGroupRoleByRoleIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRoleByRoleId.gen';
 import { ProposalActionRoleFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionRole.gen';
 import { useUsersByIdsLazyQuery } from '../../../graphql/users/queries/gen/UsersByIds.gen';
-import { ProposalActionType } from '../../../constants/proposal.constants';
-import { ChangeType } from '../../../constants/shared.constants';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import { cleanPermissions } from '../../../utils/role.utils';
 import { getTypedKeys } from '../../../utils/shared.utils';
@@ -31,7 +31,14 @@ import Flex from '../../Shared/Flex';
 import ProgressBar from '../../Shared/ProgressBar';
 import ChangeIcon from './ChangeIcon';
 import ProposalActionPermission from './ProposalActionPermission';
-import ProposalActionRoleMember from './ProposalActionRoleMember';
+import ProposedRoleMember from './ProposedRoleMember';
+
+type ArrayElement<ArrayType extends unknown[] | undefined | null> =
+  ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
+
+type RoleMember =
+  | ProposalActionRoleMemberInput
+  | ArrayElement<ProposalActionRoleFragment['members']>;
 
 interface Props extends Omit<BoxProps, 'role'> {
   role: ProposalActionRoleFragment | ProposalActionRoleInput;
@@ -40,6 +47,7 @@ interface Props extends Omit<BoxProps, 'role'> {
   preview?: boolean;
 }
 
+// TODO: Rename as ProposedRole
 const ProposalActionRole = ({
   actionType,
   preview,
@@ -75,11 +83,11 @@ const ProposalActionRole = ({
 
   // Fetch data required for preview in ProposalForm
   useEffect(() => {
-    if (!preview || !role.members) {
+    if (!preview || 'id' in role || !role.members) {
       return;
     }
     const userIds = role.members.map(
-      (member) => (member as ProposalActionRoleMemberInput).userId,
+      (member: ProposalActionRoleMemberInput) => member.userId,
     );
     getSelectedUsers({
       variables: { userIds },
@@ -298,8 +306,8 @@ const ProposalActionRole = ({
                   {t('roles.labels.members')}
                 </Typography>
 
-                {members.map((member) => (
-                  <ProposalActionRoleMember
+                {members.map((member: RoleMember) => (
+                  <ProposedRoleMember
                     key={'id' in member ? member.id : member.userId}
                     selectedUsers={selectedUsersData?.usersByIds}
                     actionType={actionType}

@@ -62,6 +62,7 @@ const ProposeEventModal = ({
 
   useEffect(() => {
     if (groupId) {
+      // TODO: Ensure this isn't called until the modal is opened
       getGroupMembers({ variables: { groupId } });
     }
   }, [groupId, getGroupMembers]);

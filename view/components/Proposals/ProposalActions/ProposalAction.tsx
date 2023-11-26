@@ -1,9 +1,10 @@
 import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ProposalActionFragment } from '../../../graphql/proposals/fragments/gen/ProposalAction.gen';
 import { ProposalActionType } from '../../../constants/proposal.constants';
+import { ProposalActionFragment } from '../../../graphql/proposals/fragments/gen/ProposalAction.gen';
 import AttachedImage from '../../Images/AttachedImage';
 import ProposalActionEvent from './ProposalActionEvent';
+import ProposalActionGroupSettings from './ProposalActionGroupSettings';
 import ProposalActionRole from './ProposalActionRole';
 
 interface Props {
@@ -13,8 +14,9 @@ interface Props {
 
 const ProposalAction = ({
   action: {
-    event,
     actionType,
+    event,
+    groupSettings,
     groupCoverPhoto,
     groupDescription,
     groupName,
@@ -24,11 +26,39 @@ const ProposalAction = ({
 }: Props) => {
   const { t } = useTranslation();
 
+  if (actionType === ProposalActionType.ChangeSettings) {
+    if (!groupSettings) {
+      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+    }
+    return (
+      <ProposalActionGroupSettings
+        groupSettings={groupSettings}
+        ratified={ratified}
+      />
+    );
+  }
+
   if (actionType === ProposalActionType.PlanEvent) {
     if (!event) {
       return <Typography>{t('errors.somethingWentWrong')}</Typography>;
     }
     return <ProposalActionEvent event={event} />;
+  }
+
+  if (
+    actionType === ProposalActionType.CreateRole ||
+    actionType === ProposalActionType.ChangeRole
+  ) {
+    if (!role) {
+      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+    }
+    return (
+      <ProposalActionRole
+        actionType={actionType}
+        ratified={ratified}
+        role={role}
+      />
+    );
   }
 
   if (actionType === ProposalActionType.ChangeName) {
@@ -58,22 +88,6 @@ const ProposalAction = ({
         </Typography>
         <AttachedImage image={groupCoverPhoto} width="55%" />
       </Box>
-    );
-  }
-
-  if (
-    actionType === ProposalActionType.CreateRole ||
-    actionType === ProposalActionType.ChangeRole
-  ) {
-    if (!role) {
-      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
-    }
-    return (
-      <ProposalActionRole
-        actionType={actionType}
-        ratified={ratified}
-        role={role}
-      />
     );
   }
 

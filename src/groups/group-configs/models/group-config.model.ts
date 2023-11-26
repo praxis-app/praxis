@@ -23,6 +23,7 @@ export class GroupConfig {
   id: number;
 
   @Column({ default: GroupPrivacy.Private })
+  @Field()
   privacy: string;
 
   @Field(() => Group)

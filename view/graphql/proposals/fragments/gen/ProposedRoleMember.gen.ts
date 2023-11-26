@@ -6,7 +6,7 @@ import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.g
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
 
-export type ProposalActionRoleMemberFragment = {
+export type ProposedRoleMemberFragment = {
   __typename?: 'ProposalActionRoleMember';
   id: number;
   changeType: string;
@@ -18,8 +18,8 @@ export type ProposalActionRoleMemberFragment = {
   };
 };
 
-export const ProposalActionRoleMemberFragmentDoc = gql`
-  fragment ProposalActionRoleMember on ProposalActionRoleMember {
+export const ProposedRoleMemberFragmentDoc = gql`
+  fragment ProposedRoleMember on ProposalActionRoleMember {
     id
     changeType
     user {

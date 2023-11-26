@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { ProposalActionGroupSettingsFragmentDoc } from './ProposalActionGroupSettings.gen';
 import { ProposalActionEventFragmentDoc } from './ProposalActionEvent.gen';
 import { ProposalActionRoleFragmentDoc } from './ProposalActionRole.gen';
 import { AttachedImageFragmentDoc } from '../../../images/fragments/gen/AttachedImage.gen';
@@ -14,6 +15,25 @@ export type ProposalActionFragment = {
   actionType: string;
   groupDescription?: string | null;
   groupName?: string | null;
+  groupSettings?: {
+    __typename?: 'ProposalActionGroupConfig';
+    id: number;
+    privacy?: string | null;
+    oldPrivacy?: string | null;
+    proposalAction: {
+      __typename?: 'ProposalAction';
+      id: number;
+      proposal: {
+        __typename?: 'Proposal';
+        id: number;
+        group?: {
+          __typename?: 'Group';
+          id: number;
+          settings: { __typename?: 'GroupConfig'; id: number; privacy: string };
+        } | null;
+      };
+    };
+  } | null;
   event?: {
     __typename?: 'ProposalActionEvent';
     id: number;
@@ -93,6 +113,9 @@ export const ProposalActionFragmentDoc = gql`
     actionType
     groupDescription
     groupName
+    groupSettings {
+      ...ProposalActionGroupSettings
+    }
     event {
       ...ProposalActionEvent
     }
@@ -103,6 +126,7 @@ export const ProposalActionFragmentDoc = gql`
       ...AttachedImage
     }
   }
+  ${ProposalActionGroupSettingsFragmentDoc}
   ${ProposalActionEventFragmentDoc}
   ${ProposalActionRoleFragmentDoc}
   ${AttachedImageFragmentDoc}

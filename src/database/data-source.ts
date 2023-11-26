@@ -16,6 +16,7 @@ import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
 import { ProposalActionEventHost } from '../proposals/proposal-actions/proposal-action-events/models/proposal-action-event-host.model';
 import { ProposalActionEvent } from '../proposals/proposal-actions/proposal-action-events/models/proposal-action-event.model';
+import { ProposalActionGroupConfig } from '../proposals/proposal-actions/proposal-action-group-configs/models/proposal-action-group-config.model';
 import { ProposalActionPermission } from '../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model';
 import { ProposalActionRoleMember } from '../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model';
 import { ProposalActionRole } from '../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model';
@@ -49,6 +50,7 @@ import { AddProposalActionEventTables1694657129939 } from './migrations/16946571
 import { AddServerConfigTable1699135846939 } from './migrations/1699135846939-AddServerConfigTable';
 import { AddCanaryTable1699136722535 } from './migrations/1699136722535-AddCanaryTable';
 import { RemoveRefreshTokenTable1699815961902 } from './migrations/1699815961902-RemoveRefreshTokenTable';
+import { AddProposalActionGroupConfigTable1700964923516 } from './migrations/1700964923516-AddProposalActionGroupConfigTable';
 
 dotenv.config();
 
@@ -76,6 +78,7 @@ export default new DataSource({
     ProposalAction,
     ProposalActionEvent,
     ProposalActionEventHost,
+    ProposalActionGroupConfig,
     ProposalActionPermission,
     ProposalActionRole,
     ProposalActionRoleMember,
@@ -95,6 +98,7 @@ export default new DataSource({
     AddGroupMemberLinkTable1681010227367,
     AddLikeTable1679157357262,
     AddProposalActionEventTables1694657129939,
+    AddProposalActionGroupConfigTable1700964923516,
     AddProposalActionImagesConstraint1685201083917,
     AddProposalActionRoleCascadeDelete1685748700121,
     AddProposalActionRoleTable1684893300206,
