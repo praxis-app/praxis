@@ -205,7 +205,6 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
 
         <ProposalAction
           action={action}
-          groupId={group?.id}
           ratified={stage === ProposalStage.Ratified}
         />
 

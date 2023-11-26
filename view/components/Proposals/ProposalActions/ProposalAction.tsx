@@ -9,7 +9,6 @@ import ProposalActionRole from './ProposalActionRole';
 
 interface Props {
   action: ProposalActionFragment;
-  groupId?: number;
   ratified: boolean;
 }
 
@@ -23,7 +22,6 @@ const ProposalAction = ({
     groupName,
     role,
   },
-  groupId,
   ratified,
 }: Props) => {
   const { t } = useTranslation();
@@ -36,7 +34,6 @@ const ProposalAction = ({
       <ProposalActionGroupSettings
         groupSettings={groupSettings}
         ratified={ratified}
-        groupId={groupId}
       />
     );
   }
