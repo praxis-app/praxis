@@ -84,6 +84,19 @@ const ProposalActionGroupSettings = ({
     return t('groups.labels.private');
   };
 
+  const getSettingsChanges = () => {
+    const changes: string[] = [];
+
+    if (isChangingPrivacy) {
+      changes.push(
+        `${getPrivacyLabel(oldPrivacy)} → ${getPrivacyLabel(
+          groupSettings.privacy,
+        )}`,
+      );
+    }
+    return changes.join(', ');
+  };
+
   return (
     <Box marginBottom={preview ? 0 : 2.5} marginTop={preview ? 2 : 0}>
       <Accordion
@@ -103,7 +116,7 @@ const ProposalActionGroupSettings = ({
             whiteSpace="nowrap"
             width={isDesktop ? undefined : '120px'}
           >
-            Summary of settings changes
+            {getSettingsChanges()}
           </Typography>
         </AccordionSummary>
 
