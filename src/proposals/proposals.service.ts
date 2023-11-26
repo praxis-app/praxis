@@ -256,6 +256,7 @@ export class ProposalsService {
     }
     if (actionType === ProposalActionType.ChangeGroupSettings) {
       await this.proposalActionsService.implementChangeGroupConfig(id, groupId);
+      return;
     }
     if (actionType === ProposalActionType.ChangeGroupName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
