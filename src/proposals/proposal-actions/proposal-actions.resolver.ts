@@ -40,11 +40,8 @@ export class ProposalActionsResolver {
     });
   }
 
-  @ResolveField(() => ProposalActionGroupConfig, {
-    name: 'groupSettings',
-    nullable: true,
-  })
-  async groupConfig(@Parent() { id }: ProposalActionGroupConfig) {
+  @ResolveField(() => ProposalActionGroupConfig, { nullable: true })
+  async groupSettings(@Parent() { id }: ProposalActionGroupConfig) {
     return this.proposalActionGroupConfigsService.getProposalActionGroupConfig({
       proposalActionId: id,
     });
