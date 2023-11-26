@@ -28,7 +28,7 @@ export class ProposalActionGroupConfigsService {
     });
   }
 
-  async updateProposalActionRole(
+  async updateProposalActionGroupConfig(
     id: number,
     data: Partial<ProposalActionGroupConfig>,
   ) {

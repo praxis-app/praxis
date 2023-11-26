@@ -184,7 +184,7 @@ export class ProposalActionsService {
       groupId,
     });
     // Record old group config
-    await this.proposalActionGroupConfigsService.updateProposalActionRole(
+    await this.proposalActionGroupConfigsService.updateProposalActionGroupConfig(
       proposedGroupConfig.id,
       { oldPrivacy: oldGroupConfig.privacy },
     );
