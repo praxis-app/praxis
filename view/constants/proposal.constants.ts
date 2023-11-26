@@ -18,10 +18,10 @@ export enum ProposalStage {
 export enum ProposalActionFieldName {
   ActionType = 'action.actionType',
   Event = 'action.event',
-  GroupConfig = 'action.groupConfig',
   GroupCoverPhoto = 'action.groupCoverPhoto',
   GroupDescription = 'action.groupDescription',
   GroupName = 'action.groupName',
+  GroupSettings = 'action.groupSettings',
   Role = 'action.role',
   RoleId = 'action.role.id',
 }

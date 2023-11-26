@@ -13,7 +13,6 @@ import Accordion, {
   AccordionSummary,
 } from '../../Shared/Accordion';
 import Flex from '../../Shared/Flex';
-import ProgressBar from '../../Shared/ProgressBar';
 import ChangeIcon from './ChangeIcon';
 
 interface Props {
@@ -39,14 +38,13 @@ const ProposalActionGroupSettings = ({
   const isDesktop = useIsDesktop();
   const theme = useTheme();
 
-  const [getGroupSettings, { data, loading }] =
-    useGroupSettingsByGroupIdLazyQuery();
+  const [getGroupSettings, { data }] = useGroupSettingsByGroupIdLazyQuery();
 
   useEffect(() => {
-    if (showDetails && groupId) {
+    if (preview && groupId) {
       getGroupSettings({ variables: { groupId } });
     }
-  }, [groupId, getGroupSettings, showDetails]);
+  }, [groupId, getGroupSettings, preview]);
 
   const groupSettingsToChange =
     'proposalAction' in groupSettings
@@ -121,56 +119,48 @@ const ProposalActionGroupSettings = ({
         </AccordionSummary>
 
         <AccordionDetails sx={{ marginBottom: isDesktop ? 2.5 : 3 }}>
-          {loading && <ProgressBar />}
+          <Grid
+            columns={isDesktop ? 12 : 4}
+            columnSpacing={3}
+            rowSpacing={1}
+            container
+          >
+            {isChangingPrivacy && (
+              <Grid item xs={6}>
+                <Typography fontFamily="Inter Bold" fontSize={15} gutterBottom>
+                  {t('groups.settings.names.privacy')}
+                </Typography>
 
-          {data && (
-            <Grid
-              columns={isDesktop ? 12 : 4}
-              columnSpacing={3}
-              rowSpacing={1}
-              container
-            >
-              {isChangingPrivacy && (
-                <Grid item xs={6}>
+                <Flex sx={changeStyles}>
+                  <ChangeIcon
+                    changeType={ChangeType.Remove}
+                    sx={{ marginRight: '0.8ch' }}
+                  />
                   <Typography
-                    fontFamily="Inter Bold"
-                    fontSize={15}
-                    gutterBottom
+                    color="primary"
+                    fontSize="inherit"
+                    marginRight="0.25ch"
                   >
-                    {t('groups.settings.names.privacy')}
+                    {getPrivacyLabel(oldPrivacy)}
                   </Typography>
+                </Flex>
 
-                  <Flex sx={changeStyles}>
-                    <ChangeIcon
-                      changeType={ChangeType.Remove}
-                      sx={{ marginRight: '0.8ch' }}
-                    />
-                    <Typography
-                      color="primary"
-                      fontSize="inherit"
-                      marginRight="0.25ch"
-                    >
-                      {getPrivacyLabel(oldPrivacy)}
-                    </Typography>
-                  </Flex>
-
-                  <Flex sx={changeStyles}>
-                    <ChangeIcon
-                      changeType={ChangeType.Add}
-                      sx={{ marginRight: '0.8ch' }}
-                    />
-                    <Typography
-                      color="primary"
-                      fontSize="inherit"
-                      marginRight="0.25ch"
-                    >
-                      {getPrivacyLabel(groupSettings.privacy)}
-                    </Typography>
-                  </Flex>
-                </Grid>
-              )}
-            </Grid>
-          )}
+                <Flex sx={changeStyles}>
+                  <ChangeIcon
+                    changeType={ChangeType.Add}
+                    sx={{ marginRight: '0.8ch' }}
+                  />
+                  <Typography
+                    color="primary"
+                    fontSize="inherit"
+                    marginRight="0.25ch"
+                  >
+                    {getPrivacyLabel(groupSettings.privacy)}
+                  </Typography>
+                </Flex>
+              </Grid>
+            )}
+          </Grid>
         </AccordionDetails>
       </Accordion>
     </Box>
