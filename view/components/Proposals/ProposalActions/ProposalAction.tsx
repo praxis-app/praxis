@@ -17,7 +17,7 @@ const ProposalAction = ({
   action: {
     actionType,
     event,
-    groupConfig,
+    groupSettings,
     groupCoverPhoto,
     groupDescription,
     groupName,
@@ -29,12 +29,12 @@ const ProposalAction = ({
   const { t } = useTranslation();
 
   if (actionType === ProposalActionType.ChangeSettings) {
-    if (!groupConfig) {
+    if (!groupSettings) {
       return <Typography>{t('errors.somethingWentWrong')}</Typography>;
     }
     return (
       <ProposalActionGroupSettings
-        groupSettings={groupConfig}
+        groupSettings={groupSettings}
         ratified={ratified}
         groupId={groupId}
       />

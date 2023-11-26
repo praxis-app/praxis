@@ -4,7 +4,7 @@ fragment ProposalAction on ProposalAction {
   groupDescription
   groupName
 
-  groupConfig {
+  groupSettings {
     ...ProposalActionGroupSettings
   }
 

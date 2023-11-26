@@ -29,7 +29,7 @@ export type ProposalQuery = {
       actionType: string;
       groupDescription?: string | null;
       groupName?: string | null;
-      groupConfig?: {
+      groupSettings?: {
         __typename?: 'ProposalActionGroupConfig';
         id: number;
         privacy?: string | null;

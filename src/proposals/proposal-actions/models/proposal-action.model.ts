@@ -12,8 +12,8 @@ import {
 import { Image } from '../../../images/models/image.model';
 import { Proposal } from '../../models/proposal.model';
 import { ProposalActionEvent } from '../proposal-action-events/models/proposal-action-event.model';
-import { ProposalActionRole } from '../proposal-action-roles/models/proposal-action-role.model';
 import { ProposalActionGroupConfig } from '../proposal-action-group-configs/models/proposal-action-group-config.model';
+import { ProposalActionRole } from '../proposal-action-roles/models/proposal-action-role.model';
 
 @Entity()
 @ObjectType()
@@ -59,7 +59,6 @@ export class ProposalAction {
   )
   event?: ProposalActionEvent;
 
-  @Field(() => ProposalActionGroupConfig, { nullable: true })
   @OneToOne(
     () => ProposalActionGroupConfig,
     (proposalActionGroupConfig) => proposalActionGroupConfig.proposalAction,

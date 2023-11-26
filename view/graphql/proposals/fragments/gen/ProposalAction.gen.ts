@@ -15,7 +15,7 @@ export type ProposalActionFragment = {
   actionType: string;
   groupDescription?: string | null;
   groupName?: string | null;
-  groupConfig?: {
+  groupSettings?: {
     __typename?: 'ProposalActionGroupConfig';
     id: number;
     privacy?: string | null;
@@ -113,7 +113,7 @@ export const ProposalActionFragmentDoc = gql`
     actionType
     groupDescription
     groupName
-    groupConfig {
+    groupSettings {
       ...ProposalActionGroupSettings
     }
     event {

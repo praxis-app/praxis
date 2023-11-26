@@ -21,7 +21,7 @@ export class ProposalActionInput {
   role?: ProposalActionRoleInput;
 
   @Field({ nullable: true })
-  groupConfig?: ProposalActionGroupConfigInput;
+  groupSettings?: ProposalActionGroupConfigInput;
 
   @Field({ nullable: true })
   groupName?: string;

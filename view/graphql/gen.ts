@@ -672,10 +672,10 @@ export type ProposalAction = {
   actionType: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   event?: Maybe<ProposalActionEvent>;
-  groupConfig?: Maybe<ProposalActionGroupConfig>;
   groupCoverPhoto?: Maybe<Image>;
   groupDescription?: Maybe<Scalars['String']['output']>;
   groupName?: Maybe<Scalars['String']['output']>;
+  groupSettings?: Maybe<ProposalActionGroupConfig>;
   id: Scalars['Int']['output'];
   proposal: Proposal;
   role?: Maybe<ProposalActionRole>;
@@ -735,10 +735,10 @@ export type ProposalActionGroupConfigInput = {
 export type ProposalActionInput = {
   actionType: Scalars['String']['input'];
   event?: InputMaybe<ProposalActionEventInput>;
-  groupConfig?: InputMaybe<ProposalActionGroupConfigInput>;
   groupCoverPhoto?: InputMaybe<Scalars['Upload']['input']>;
   groupDescription?: InputMaybe<Scalars['String']['input']>;
   groupName?: InputMaybe<Scalars['String']['input']>;
+  groupSettings?: InputMaybe<ProposalActionGroupConfigInput>;
   role?: InputMaybe<ProposalActionRoleInput>;
 };
 

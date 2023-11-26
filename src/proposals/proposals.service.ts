@@ -134,7 +134,7 @@ export class ProposalsService {
     {
       body,
       images,
-      action: { groupCoverPhoto, role, event, groupConfig, ...action },
+      action: { groupCoverPhoto, role, event, groupSettings, ...action },
       ...proposalData
     }: CreateProposalInput,
     user: User,
@@ -169,10 +169,10 @@ export class ProposalsService {
           event,
         );
       }
-      if (groupConfig) {
+      if (groupSettings) {
         await this.proposalActionGroupConfigsService.createProposalActionGroupConfig(
           proposal.action.id,
-          groupConfig,
+          groupSettings,
         );
       }
     } catch (err) {

@@ -65,7 +65,7 @@ export type FeedItem_Proposal_Fragment = {
     actionType: string;
     groupDescription?: string | null;
     groupName?: string | null;
-    groupConfig?: {
+    groupSettings?: {
       __typename?: 'ProposalActionGroupConfig';
       id: number;
       privacy?: string | null;

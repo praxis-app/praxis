@@ -70,6 +70,13 @@ type ProposalActionEvent {
   coverPhoto: Image
 }
 
+type ProposalActionGroupConfig {
+  id: Int!
+  privacy: String
+  oldPrivacy: String
+  proposalAction: ProposalAction!
+}
+
 type GroupRolePermission {
   id: Int!
   manageRoles: Boolean!
@@ -133,13 +140,6 @@ type ProposalActionRole {
   permissions: ProposalActionPermission!
 }
 
-type ProposalActionGroupConfig {
-  id: Int!
-  privacy: String
-  oldPrivacy: String
-  proposalAction: ProposalAction!
-}
-
 type ProposalAction {
   id: Int!
   actionType: String!
@@ -147,10 +147,10 @@ type ProposalAction {
   groupDescription: String
   role: ProposalActionRole
   event: ProposalActionEvent
-  groupConfig: ProposalActionGroupConfig
   proposal: Proposal!
   createdAt: DateTime!
   updatedAt: DateTime!
+  groupSettings: ProposalActionGroupConfig
   groupCoverPhoto: Image
 }
 
@@ -711,7 +711,7 @@ input ProposalActionInput {
   actionType: String!
   event: ProposalActionEventInput
   role: ProposalActionRoleInput
-  groupConfig: ProposalActionGroupConfigInput
+  groupSettings: ProposalActionGroupConfigInput
   groupName: String
   groupDescription: String
   groupCoverPhoto: Upload

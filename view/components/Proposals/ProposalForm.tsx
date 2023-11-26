@@ -401,10 +401,9 @@ const ProposalForm = ({
                   />
                 )}
 
-                {/* TODO: Replace with proposed group settings preview */}
-                {values.action.groupConfig && (
+                {values.action.groupSettings && (
                   <ProposalActionGroupSettings
-                    groupSettings={values.action.groupConfig}
+                    groupSettings={values.action.groupSettings}
                     groupId={values.groupId}
                     preview
                   />
