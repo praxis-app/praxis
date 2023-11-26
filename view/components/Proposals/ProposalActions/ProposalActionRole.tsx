@@ -31,7 +31,7 @@ import Flex from '../../Shared/Flex';
 import ProgressBar from '../../Shared/ProgressBar';
 import ChangeIcon from './ChangeIcon';
 import ProposalActionPermission from './ProposalActionPermission';
-import ProposalActionRoleMember from './ProposalActionRoleMember';
+import ProposedRoleMember from './ProposedRoleMember';
 
 interface Props extends Omit<BoxProps, 'role'> {
   role: ProposalActionRoleFragment | ProposalActionRoleInput;
@@ -40,6 +40,7 @@ interface Props extends Omit<BoxProps, 'role'> {
   preview?: boolean;
 }
 
+// TODO: Rename as ProposedRole
 const ProposalActionRole = ({
   actionType,
   preview,
@@ -299,7 +300,7 @@ const ProposalActionRole = ({
                 </Typography>
 
                 {members.map((member: any) => (
-                  <ProposalActionRoleMember
+                  <ProposedRoleMember
                     key={'id' in member ? member.id : member.userId}
                     selectedUsers={selectedUsersData?.usersByIds}
                     actionType={actionType}

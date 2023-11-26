@@ -1,9 +1,9 @@
 import { SxProps, Typography, useTheme } from '@mui/material';
-import { ProposalActionRoleMemberInput } from '../../../graphql/gen';
-import { ProposalActionRoleMemberFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionRoleMember.gen';
-import { UserAvatarFragment } from '../../../graphql/users/fragments/gen/UserAvatar.gen';
 import { ProposalActionType } from '../../../constants/proposal.constants';
 import { ChangeType } from '../../../constants/shared.constants';
+import { ProposalActionRoleMemberInput } from '../../../graphql/gen';
+import { ProposedRoleMemberFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionRoleMember.gen';
+import { UserAvatarFragment } from '../../../graphql/users/fragments/gen/UserAvatar.gen';
 import { getUserProfilePath } from '../../../utils/user.utils';
 import Flex from '../../Shared/Flex';
 import Link from '../../Shared/Link';
@@ -12,15 +12,11 @@ import ChangeIcon from './ChangeIcon';
 
 interface Props {
   actionType: ProposalActionType;
-  member: ProposalActionRoleMemberFragment | ProposalActionRoleMemberInput;
+  member: ProposedRoleMemberFragment | ProposalActionRoleMemberInput;
   selectedUsers?: UserAvatarFragment[];
 }
 
-const ProposalActionRoleMember = ({
-  member,
-  actionType,
-  selectedUsers,
-}: Props) => {
+const ProposedRoleMember = ({ member, actionType, selectedUsers }: Props) => {
   const theme = useTheme();
 
   const user =
@@ -72,4 +68,4 @@ const ProposalActionRoleMember = ({
   );
 };
 
-export default ProposalActionRoleMember;
+export default ProposedRoleMember;
