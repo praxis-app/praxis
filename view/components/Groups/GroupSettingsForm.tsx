@@ -18,6 +18,7 @@ import { useUpdateGroupSettingsMutation } from '../../graphql/groups/mutations/g
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
+import SliderInput from '../Shared/SliderInput';
 
 type FormValues = Omit<UpdateGroupConfigInput, 'groupId'>;
 
@@ -142,6 +143,25 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                     </MenuItem>
                   ))}
               </Select>
+            </Flex>
+
+            <Divider sx={{ marginY: 3 }} />
+
+            <Flex justifyContent="space-between">
+              <Box width="75%">
+                <Typography>
+                  {t('groups.settings.names.ratificationThreshold')}
+                </Typography>
+
+                <Typography
+                  fontSize={12}
+                  sx={{ color: theme.palette.text.secondary }}
+                >
+                  {t('groups.settings.descriptions.ratificationThreshold')}
+                </Typography>
+              </Box>
+
+              <SliderInput />
             </Flex>
 
             <Divider sx={{ marginY: 3 }} />
