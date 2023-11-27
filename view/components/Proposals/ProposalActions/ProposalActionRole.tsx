@@ -168,7 +168,16 @@ const ProposalActionRole = ({
             {accordionSummary}:
           </Typography>
           <Circle sx={{ ...circleIconStyles, marginRight: '0.5ch' }} />
-          {isChangingName ? oldName : name}
+          <Box
+            component="span"
+            display="inline-block"
+            overflow="hidden"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
+            width={isDesktop ? '390px' : '120px'}
+          >
+            {isChangingName ? oldName : name}
+          </Box>
         </AccordionSummary>
 
         <AccordionDetails sx={{ marginBottom: isDesktop ? 2 : 3 }}>

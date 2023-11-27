@@ -104,7 +104,10 @@ const ProposalActionGroupSettings = ({
       >
         <AccordionSummary>
           <Typography marginRight="0.5ch" fontFamily="Inter Bold">
-            {t('proposals.labels.proposedGroupSettings')}:
+            {isDesktop
+              ? t('proposals.labels.proposedGroupSettings')
+              : t('proposals.labels.proposedSettings')}
+            :
           </Typography>
 
           <Typography
@@ -112,7 +115,7 @@ const ProposalActionGroupSettings = ({
             overflow="hidden"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
-            width={isDesktop ? undefined : '120px'}
+            width={isDesktop ? undefined : '130px'}
           >
             {getSettingsChanges()}
           </Typography>
