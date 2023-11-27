@@ -172,6 +172,9 @@ type Proposal {
 
 type GroupConfig {
   id: Int!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
   privacy: String!
   group: Group!
   createdAt: DateTime!

@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { GroupConfigDefaults } from '../../groups.constants';
 import { Group } from '../../models/group.model';
 
 export enum GroupPrivacy {
@@ -21,6 +22,18 @@ export class GroupConfig {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number;
+
+  @Column({ default: GroupConfigDefaults.StandAsidesLimit })
+  @Field(() => Int)
+  standAsidesLimit: number;
+
+  @Column({ default: GroupConfigDefaults.ReservationsLimit })
+  @Field(() => Int)
+  reservationsLimit: number;
+
+  @Column({ default: GroupConfigDefaults.RatificationThreshold })
+  @Field(() => Int)
+  ratificationThreshold: number;
 
   @Column({ default: GroupPrivacy.Private })
   @Field()
