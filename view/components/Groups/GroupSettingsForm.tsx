@@ -10,11 +10,12 @@ import {
 } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { GroupPrivacy } from '../../constants/group.constants';
 import { toastVar } from '../../graphql/cache';
 import { UpdateGroupConfigInput } from '../../graphql/gen';
 import { GroupSettingsFormFragment } from '../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
 import { useUpdateGroupSettingsMutation } from '../../graphql/groups/mutations/gen/UpdateGroupSettings.gen';
-import { GroupPrivacy } from '../../constants/group.constants';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 
@@ -28,7 +29,9 @@ const GroupSettingsForm = ({ group }: Props) => {
   const [updateSettings] = useUpdateGroupSettingsMutation({
     errorPolicy: 'all',
   });
+
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
   const theme = useTheme();
 
   const initialValues: FormValues = {
@@ -67,7 +70,40 @@ const GroupSettingsForm = ({ group }: Props) => {
         <Form>
           <FormGroup>
             <Flex justifyContent="space-between">
-              <Box>
+              <Box width="75%">
+                <Typography>
+                  {t('groups.settings.names.standAsidesLimit')}
+                </Typography>
+
+                <Typography
+                  fontSize={12}
+                  sx={{ color: theme.palette.text.secondary }}
+                >
+                  {t('groups.settings.descriptions.standAsidesLimit')}
+                </Typography>
+              </Box>
+
+              <Select
+                name="standAsidesLimit"
+                onChange={handleChange}
+                sx={{ color: theme.palette.text.secondary }}
+                value={values.privacy}
+                variant="standard"
+                disableUnderline
+              >
+                <MenuItem value={GroupPrivacy.Private}>
+                  {t('groups.labels.private')}
+                </MenuItem>
+                <MenuItem value={GroupPrivacy.Public}>
+                  {t('groups.labels.public')}
+                </MenuItem>
+              </Select>
+            </Flex>
+
+            <Divider sx={{ marginY: 3 }} />
+
+            <Flex justifyContent="space-between">
+              <Box width={isDesktop ? 'initial' : '75%'}>
                 <Typography>{t('groups.settings.names.privacy')}</Typography>
 
                 <Typography
