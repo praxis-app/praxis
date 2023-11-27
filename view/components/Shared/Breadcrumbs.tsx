@@ -18,6 +18,14 @@ interface Props {
 
 const Breadcrumbs = ({ breadcrumbs, sx }: Props) => {
   const theme = useTheme();
+  const isDesktop = theme.breakpoints.up('md');
+
+  const labelStyles: SxProps = {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    maxWidth: isDesktop ? '380px' : '250px',
+  };
 
   return (
     <MuiBreadcrumbs sx={{ marginBottom: 1.25, ...sx }}>
@@ -34,7 +42,7 @@ const Breadcrumbs = ({ breadcrumbs, sx }: Props) => {
           );
         }
         return (
-          <Typography color="primary" key={label}>
+          <Typography key={label} color="primary" sx={labelStyles}>
             {label}
           </Typography>
         );

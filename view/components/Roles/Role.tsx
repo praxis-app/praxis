@@ -7,9 +7,10 @@ import {
   useTheme,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { GroupRoleFragment } from '../../graphql/groups/fragments/gen/GroupRole.gen';
 import { ServerRoleFragment } from '../../graphql/roles/fragments/gen/ServerRole.gen';
-import { NavigationPaths } from '../../constants/shared.constants';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import { getGroupPath } from '../../utils/group.utils';
 import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
@@ -21,6 +22,7 @@ interface Props {
 
 const Role = ({ role, gutterBottom }: Props) => {
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
   const theme = useTheme();
 
   const { id, name, color, memberCount } = role;
@@ -58,7 +60,16 @@ const Role = ({ role, gutterBottom }: Props) => {
             <Avatar sx={avatarStyes} />
 
             <Box marginTop={-0.35}>
-              <Typography marginBottom={-0.2}>{name}</Typography>
+              <Typography
+                display="inline-block"
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+                width={isDesktop ? '500px' : '250px'}
+                marginBottom={-0.2}
+              >
+                {name}
+              </Typography>
               <Typography
                 sx={{
                   color: theme.palette.text.secondary,
