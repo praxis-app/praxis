@@ -8,12 +8,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
-import {
-  GROUP_RATIFICATION_THRESHOLD,
-  GROUP_RESERVATIONS_LIMIT,
-  GROUP_STAND_ASIDES_LIMIT,
-} from '../groups/groups.constants';
+import { GROUP_RATIFICATION_THRESHOLD } from '../groups/groups.constants';
 import { GroupsService } from '../groups/groups.service';
+import { Group } from '../groups/models/group.model';
 import { ImageTypes } from '../images/image.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';
@@ -27,6 +24,7 @@ import { CreateProposalInput } from './models/create-proposal.input';
 import { Proposal } from './models/proposal.model';
 import { UpdateProposalInput } from './models/update-proposal.input';
 import { ProposalActionEventsService } from './proposal-actions/proposal-action-events/proposal-action-events.service';
+import { ProposalActionGroupConfigsService } from './proposal-actions/proposal-action-group-configs/proposal-action-group-configs.service';
 import { ProposalActionRolesService } from './proposal-actions/proposal-action-roles/proposal-action-roles.service';
 import { ProposalActionsService } from './proposal-actions/proposal-actions.service';
 import {
@@ -35,7 +33,6 @@ import {
   ProposalActionType,
   ProposalStage,
 } from './proposals.constants';
-import { ProposalActionGroupConfigsService } from './proposal-actions/proposal-action-group-configs/proposal-action-group-configs.service';
 
 type ProposalWithCommentCount = Proposal & { commentCount: number };
 
@@ -279,6 +276,7 @@ export class ProposalsService {
 
   async isProposalRatifiable(proposalId: number) {
     const proposal = await this.getProposal(proposalId, [
+      'group.config',
       'group.members',
       'votes',
     ]);
@@ -290,28 +288,21 @@ export class ProposalsService {
       return false;
     }
 
-    const {
-      group: { members },
-      votes,
-    } = proposal;
+    const { group, votes } = proposal;
 
-    const ratificationThreshold = GROUP_RATIFICATION_THRESHOLD * 0.01;
-
-    return this.hasConsensus(ratificationThreshold, members, votes);
+    return this.hasConsensus(group, votes);
   }
 
-  async hasConsensus(
-    ratificationThreshold: number,
-    groupMembers: User[],
-    votes: Vote[],
-  ) {
+  async hasConsensus(group: Group, votes: Vote[]) {
     const { agreements, reservations, standAsides, blocks } =
       sortConsensusVotesByType(votes);
 
+    const ratificationThreshold = GROUP_RATIFICATION_THRESHOLD * 0.01;
+
     return (
-      agreements.length >= groupMembers.length * ratificationThreshold &&
-      reservations.length <= GROUP_RESERVATIONS_LIMIT &&
-      standAsides.length <= GROUP_STAND_ASIDES_LIMIT &&
+      agreements.length >= group.members.length * ratificationThreshold &&
+      reservations.length <= group.config.reservationsLimit &&
+      standAsides.length <= group.config.standAsidesLimit &&
       blocks.length === 0
     );
   }
