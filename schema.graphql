@@ -693,6 +693,9 @@ input UpdateGroupInput {
 input UpdateGroupConfigInput {
   groupId: Int!
   privacy: String
+  standAsidesLimit: Int
+  reservationsLimit: Int
+  ratificationThreshold: Int
 }
 
 input CreateLikeInput {
