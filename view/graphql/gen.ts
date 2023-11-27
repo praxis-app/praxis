@@ -293,6 +293,9 @@ export type GroupConfig = {
   id: Scalars['Int']['output'];
   isPublic: Scalars['Boolean']['output'];
   privacy: Scalars['String']['output'];
+  ratificationThreshold: Scalars['Int']['output'];
+  reservationsLimit: Scalars['Int']['output'];
+  standAsidesLimit: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -985,6 +988,9 @@ export type UpdateEventPayload = {
 export type UpdateGroupConfigInput = {
   groupId: Scalars['Int']['input'];
   privacy?: InputMaybe<Scalars['String']['input']>;
+  ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
+  reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
+  standAsidesLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateGroupInput = {
