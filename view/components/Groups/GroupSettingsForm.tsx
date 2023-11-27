@@ -109,6 +109,44 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
             <Divider sx={{ marginY: 3 }} />
 
             <Flex justifyContent="space-between">
+              <Box width="75%">
+                <Typography>
+                  {t('groups.settings.names.reservationsLimit')}
+                </Typography>
+
+                <Typography
+                  fontSize={12}
+                  sx={{ color: theme.palette.text.secondary }}
+                >
+                  {t('groups.settings.descriptions.reservationsLimit')}
+                </Typography>
+              </Box>
+
+              <Select
+                name="reservationsLimit"
+                onChange={handleChange}
+                sx={{ color: theme.palette.text.secondary }}
+                value={values.reservationsLimit}
+                variant="standard"
+                disableUnderline
+              >
+                {Array(11)
+                  .fill(0)
+                  .map((_, value) => (
+                    <MenuItem
+                      key={value}
+                      value={value}
+                      sx={{ width: 75, justifyContent: 'center' }}
+                    >
+                      {value}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </Flex>
+
+            <Divider sx={{ marginY: 3 }} />
+
+            <Flex justifyContent="space-between">
               <Box width={isDesktop ? 'initial' : '75%'}>
                 <Typography>{t('groups.settings.names.privacy')}</Typography>
 

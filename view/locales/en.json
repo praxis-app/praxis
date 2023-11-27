@@ -278,7 +278,7 @@
       "names": {
         "privacy": "Privacy",
         "ratificationThreshold": "Ratification Threshold",
-        "revservationsLimit": "Reservations Limit",
+        "reservationsLimit": "Reservations Limit",
         "standAsidesLimit": "Stand Asides Limit"
       },
       "descriptions": {
