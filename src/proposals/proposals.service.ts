@@ -275,34 +275,32 @@ export class ProposalsService {
   }
 
   async isProposalRatifiable(proposalId: number) {
-    const proposal = await this.getProposal(proposalId, [
+    const { votes, stage, group } = await this.getProposal(proposalId, [
       'group.config',
       'group.members',
       'votes',
     ]);
     if (
-      proposal.stage !== ProposalStage.Voting ||
-      proposal.votes.length < MIN_VOTE_COUNT_TO_RATIFY ||
-      proposal.group.members.length < MIN_GROUP_SIZE_TO_RATIFY
+      stage !== ProposalStage.Voting ||
+      votes.length < MIN_VOTE_COUNT_TO_RATIFY ||
+      group.members.length < MIN_GROUP_SIZE_TO_RATIFY
     ) {
       return false;
     }
-
-    const { group, votes } = proposal;
-
-    return this.hasConsensus(group, votes);
+    return this.hasConsensus(votes, group);
   }
 
-  async hasConsensus(group: Group, votes: Vote[]) {
+  async hasConsensus(votes: Vote[], { members, config }: Group) {
     const { agreements, reservations, standAsides, blocks } =
       sortConsensusVotesByType(votes);
 
+    const { reservationsLimit, standAsidesLimit } = config;
     const ratificationThreshold = GROUP_RATIFICATION_THRESHOLD * 0.01;
 
     return (
-      agreements.length >= group.members.length * ratificationThreshold &&
-      reservations.length <= group.config.reservationsLimit &&
-      standAsides.length <= group.config.standAsidesLimit &&
+      agreements.length >= members.length * ratificationThreshold &&
+      reservations.length <= reservationsLimit &&
+      standAsides.length <= standAsidesLimit &&
       blocks.length === 0
     );
   }
