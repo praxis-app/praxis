@@ -122,7 +122,7 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
             overflow="hidden"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
-            width={isDesktop ? undefined : '120px'}
+            width={isDesktop ? '380px' : '120px'}
           >
             {name}
           </Typography>

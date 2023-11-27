@@ -117,6 +117,7 @@ const ProposalActionRole = ({
     ratified && 'oldColor' in role ? role.oldColor : roleToChange?.color;
 
   const isRoleChange = actionType === ProposalActionType.ChangeRole;
+  const isAddingRole = actionType === ProposalActionType.CreateRole;
   const isChangingName = isRoleChange && name && name !== oldName;
   const isChangingColor = isRoleChange && color && color !== oldColor;
 
@@ -124,10 +125,9 @@ const ProposalActionRole = ({
   const includedPermissionNames = getTypedKeys(includedPermissions);
   const hasPermissions = !!includedPermissionNames.length;
 
-  const accordionSummary =
-    actionType === ProposalActionType.CreateRole
-      ? t('proposals.labels.roleProposal')
-      : t('proposals.labels.roleChangeProposal');
+  const accordionSummary = isAddingRole
+    ? t('proposals.labels.roleProposal')
+    : t('proposals.labels.roleChangeProposal');
 
   const accordionStyles: SxProps = {
     backgroundColor: 'rgb(0, 0, 0, 0.1)',
@@ -156,6 +156,20 @@ const ProposalActionRole = ({
     paddingY: 0.5,
   };
 
+  const getRoleNameTextWidth = () => {
+    if (isDesktop) {
+      if (isChangingColor) {
+        return '330px';
+      }
+      return '390px';
+    }
+
+    if (isChangingColor) {
+      return '80px';
+    }
+    return '120px';
+  };
+
   return (
     <Box marginBottom={preview ? 0 : 2.5} {...boxProps}>
       <Accordion
@@ -168,7 +182,16 @@ const ProposalActionRole = ({
             {accordionSummary}:
           </Typography>
           <Circle sx={{ ...circleIconStyles, marginRight: '0.5ch' }} />
-          {isChangingName ? oldName : name}
+          <Box
+            component="span"
+            display="inline-block"
+            overflow="hidden"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
+            width={getRoleNameTextWidth()}
+          >
+            {isChangingName ? oldName : name}
+          </Box>
         </AccordionSummary>
 
         <AccordionDetails sx={{ marginBottom: isDesktop ? 2 : 3 }}>
