@@ -31,7 +31,15 @@ export type GroupSettingsQuery = {
       removeMembers: boolean;
       updateGroup: boolean;
     };
-    settings: { __typename?: 'GroupConfig'; id: number; isPublic: boolean };
+    settings: {
+      __typename?: 'GroupConfig';
+      id: number;
+      privacy: string;
+      isPublic: boolean;
+      ratificationThreshold: number;
+      reservationsLimit: number;
+      standAsidesLimit: number;
+    };
   };
 };
 

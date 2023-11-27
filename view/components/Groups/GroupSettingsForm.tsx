@@ -25,7 +25,7 @@ interface Props {
   group: GroupSettingsFormFragment;
 }
 
-const GroupSettingsForm = ({ group }: Props) => {
+const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   const [updateSettings] = useUpdateGroupSettingsMutation({
     errorPolicy: 'all',
   });
@@ -35,9 +35,10 @@ const GroupSettingsForm = ({ group }: Props) => {
   const theme = useTheme();
 
   const initialValues: FormValues = {
-    privacy: group.settings.isPublic
-      ? GroupPrivacy.Public
-      : GroupPrivacy.Private,
+    ratificationThreshold: settings.ratificationThreshold,
+    reservationsLimit: settings.reservationsLimit,
+    standAsidesLimit: settings.standAsidesLimit,
+    privacy: settings.privacy,
   };
 
   const handleSubmit = async (
@@ -46,7 +47,7 @@ const GroupSettingsForm = ({ group }: Props) => {
   ) =>
     await updateSettings({
       variables: {
-        groupConfigData: { groupId: group.id, ...values },
+        groupConfigData: { groupId: id, ...values },
       },
       onCompleted() {
         setSubmitting(false);
@@ -87,16 +88,21 @@ const GroupSettingsForm = ({ group }: Props) => {
                 name="standAsidesLimit"
                 onChange={handleChange}
                 sx={{ color: theme.palette.text.secondary }}
-                value={values.privacy}
+                value={values.standAsidesLimit}
                 variant="standard"
                 disableUnderline
               >
-                <MenuItem value={GroupPrivacy.Private}>
-                  {t('groups.labels.private')}
-                </MenuItem>
-                <MenuItem value={GroupPrivacy.Public}>
-                  {t('groups.labels.public')}
-                </MenuItem>
+                {Array(11)
+                  .fill(0)
+                  .map((_, value) => (
+                    <MenuItem
+                      key={value}
+                      value={value}
+                      sx={{ width: 75, justifyContent: 'center' }}
+                    >
+                      {value}
+                    </MenuItem>
+                  ))}
               </Select>
             </Flex>
 
@@ -131,7 +137,7 @@ const GroupSettingsForm = ({ group }: Props) => {
               </Select>
             </Flex>
 
-            {group.settings.isPublic && (
+            {settings.isPublic && (
               <Typography
                 color="#ffb74d"
                 fontSize={12}
