@@ -4,6 +4,9 @@ query GroupSettingsByGroupId($groupId: Int!) {
     settings {
       id
       privacy
+      ratificationThreshold
+      reservationsLimit
+      standAsidesLimit
     }
   }
 }

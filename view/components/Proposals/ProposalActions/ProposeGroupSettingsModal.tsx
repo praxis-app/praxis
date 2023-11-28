@@ -20,6 +20,9 @@ import Flex from '../../Shared/Flex';
 import Modal from '../../Shared/Modal';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import ProgressBar from '../../Shared/ProgressBar';
+import SliderInput from '../../Shared/SliderInput';
+
+const SETTING_DESCRIPTION_WIDTH = '60%';
 
 interface Props {
   actionType?: string;
@@ -52,8 +55,12 @@ const ProposeGroupSettingsModal = ({
     }
   }, [groupId, actionType, getGroupSettings]);
 
+  const groupSettings = data?.group.settings;
   const initialValues: ProposalActionGroupConfigInput = {
-    privacy: data?.group.settings.privacy,
+    privacy: groupSettings?.privacy,
+    ratificationThreshold: groupSettings?.ratificationThreshold,
+    reservationsLimit: groupSettings?.reservationsLimit,
+    standAsidesLimit: groupSettings?.standAsidesLimit,
   };
 
   const handleClose = () => {
@@ -64,6 +71,27 @@ const ProposeGroupSettingsModal = ({
   const handleSubmit = async (formValues: ProposalActionGroupConfigInput) => {
     setFieldValue(ProposalActionFieldName.GroupSettings, formValues);
     setOpen(false);
+  };
+
+  const handleSliderInputBlur = (
+    setFieldValue: (field: string, value: number) => void,
+    fieldName: string,
+    value?: number | null,
+  ) => {
+    if (value === undefined || value === null) {
+      return;
+    }
+    if (value < 0) {
+      setFieldValue(fieldName, 0);
+      return;
+    }
+    if (value > 100) {
+      setFieldValue(fieldName, 100);
+      return;
+    }
+    if (!Number.isInteger(value)) {
+      setFieldValue(fieldName, Math.round(value));
+    }
   };
 
   return (
@@ -79,10 +107,108 @@ const ProposeGroupSettingsModal = ({
         onSubmit={handleSubmit}
         enableReinitialize
       >
-        {({ isSubmitting, handleChange, values, dirty }) => (
+        {({ isSubmitting, handleChange, values, dirty, setFieldValue }) => (
           <Form>
             {data && (
               <FormGroup sx={{ paddingTop: 1 }}>
+                <Flex justifyContent="space-between">
+                  <Box width={SETTING_DESCRIPTION_WIDTH}>
+                    <Typography>
+                      {t('groups.settings.names.standAsidesLimit')}
+                    </Typography>
+
+                    <Typography fontSize={12} sx={{ color: 'text.secondary' }}>
+                      {t('groups.settings.descriptions.standAsidesLimit')}
+                    </Typography>
+                  </Box>
+
+                  <Select
+                    name="standAsidesLimit"
+                    onChange={handleChange}
+                    sx={{ color: 'text.secondary' }}
+                    value={values.standAsidesLimit || ''}
+                    variant="standard"
+                    disableUnderline
+                  >
+                    {Array(11)
+                      .fill(0)
+                      .map((_, value) => (
+                        <MenuItem
+                          key={value}
+                          value={value}
+                          sx={{ width: 75, justifyContent: 'center' }}
+                        >
+                          {value}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </Flex>
+
+                <Divider sx={{ marginY: 3 }} />
+
+                <Flex justifyContent="space-between">
+                  <Box width={SETTING_DESCRIPTION_WIDTH}>
+                    <Typography>
+                      {t('groups.settings.names.reservationsLimit')}
+                    </Typography>
+
+                    <Typography fontSize={12} sx={{ color: 'text.secondary' }}>
+                      {t('groups.settings.descriptions.reservationsLimit')}
+                    </Typography>
+                  </Box>
+
+                  <Select
+                    name="reservationsLimit"
+                    onChange={handleChange}
+                    sx={{ color: 'text.secondary' }}
+                    value={values.reservationsLimit || ''}
+                    variant="standard"
+                    disableUnderline
+                  >
+                    {Array(11)
+                      .fill(0)
+                      .map((_, value) => (
+                        <MenuItem
+                          key={value}
+                          value={value}
+                          sx={{ width: 75, justifyContent: 'center' }}
+                        >
+                          {value}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </Flex>
+
+                <Divider sx={{ marginY: 3 }} />
+
+                <Flex justifyContent="space-between">
+                  <Box width={SETTING_DESCRIPTION_WIDTH}>
+                    <Typography>
+                      {t('groups.settings.names.ratificationThreshold')}
+                    </Typography>
+
+                    <Typography fontSize={12} sx={{ color: 'text.secondary' }}>
+                      {t('groups.settings.descriptions.ratificationThreshold')}
+                    </Typography>
+                  </Box>
+
+                  <SliderInput
+                    name="ratificationThreshold"
+                    onInputChange={handleChange}
+                    onSliderChange={handleChange}
+                    value={values.ratificationThreshold || 0}
+                    onInputBlur={() =>
+                      handleSliderInputBlur(
+                        setFieldValue,
+                        'ratificationThreshold',
+                        values.ratificationThreshold,
+                      )
+                    }
+                  />
+                </Flex>
+
+                <Divider sx={{ marginY: 3 }} />
+
                 <Flex justifyContent="space-between">
                   <Box>
                     <Typography>

@@ -763,6 +763,9 @@ input GroupRolePermissionInput {
 
 input ProposalActionGroupConfigInput {
   privacy: String
+  standAsidesLimit: Int
+  reservationsLimit: Int
+  ratificationThreshold: Int
 }
 
 input UpdateProposalInput {

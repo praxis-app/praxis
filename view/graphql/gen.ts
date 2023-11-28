@@ -733,6 +733,9 @@ export type ProposalActionGroupConfig = {
 
 export type ProposalActionGroupConfigInput = {
   privacy?: InputMaybe<Scalars['String']['input']>;
+  ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
+  reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
+  standAsidesLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type ProposalActionInput = {
