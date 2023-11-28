@@ -727,8 +727,14 @@ export type ProposalActionGroupConfig = {
   __typename?: 'ProposalActionGroupConfig';
   id: Scalars['Int']['output'];
   oldPrivacy?: Maybe<Scalars['String']['output']>;
+  oldRatificationThreshold?: Maybe<Scalars['Int']['output']>;
+  oldReservationsLimit?: Maybe<Scalars['Int']['output']>;
+  oldStandAsidesLimit?: Maybe<Scalars['Int']['output']>;
   privacy?: Maybe<Scalars['String']['output']>;
   proposalAction: ProposalAction;
+  ratificationThreshold?: Maybe<Scalars['Int']['output']>;
+  reservationsLimit?: Maybe<Scalars['Int']['output']>;
+  standAsidesLimit?: Maybe<Scalars['Int']['output']>;
 };
 
 export type ProposalActionGroupConfigInput = {
