@@ -15,10 +15,11 @@ import { toastVar } from '../../graphql/cache';
 import { UpdateGroupConfigInput } from '../../graphql/gen';
 import { GroupSettingsFormFragment } from '../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
 import { useUpdateGroupSettingsMutation } from '../../graphql/groups/mutations/gen/UpdateGroupSettings.gen';
-import { useIsDesktop } from '../../hooks/shared.hooks';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import SliderInput from '../Shared/SliderInput';
+
+const SETTING_DESCRIPTION_WIDTH = '60%';
 
 type FormValues = Omit<UpdateGroupConfigInput, 'groupId'>;
 
@@ -32,7 +33,6 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   });
 
   const { t } = useTranslation();
-  const isDesktop = useIsDesktop();
   const theme = useTheme();
 
   const initialValues: FormValues = {
@@ -62,17 +62,32 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
       },
     });
 
+  const handleSliderInputBlur = (
+    setFieldValue: (field: string, value: number) => void,
+    fieldName: string,
+    value?: number | null,
+  ) => {
+    if (!value) {
+      return;
+    }
+    if (value < 0) {
+      setFieldValue(fieldName, 0);
+    } else if (value > 100) {
+      setFieldValue(fieldName, 100);
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
       enableReinitialize
     >
-      {({ dirty, isSubmitting, handleChange, values }) => (
+      {({ dirty, isSubmitting, handleChange, values, setFieldValue }) => (
         <Form>
           <FormGroup>
             <Flex justifyContent="space-between">
-              <Box width="75%">
+              <Box width={SETTING_DESCRIPTION_WIDTH}>
                 <Typography>
                   {t('groups.settings.names.standAsidesLimit')}
                 </Typography>
@@ -110,7 +125,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
             <Divider sx={{ marginY: 3 }} />
 
             <Flex justifyContent="space-between">
-              <Box width="75%">
+              <Box width={SETTING_DESCRIPTION_WIDTH}>
                 <Typography>
                   {t('groups.settings.names.reservationsLimit')}
                 </Typography>
@@ -148,7 +163,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
             <Divider sx={{ marginY: 3 }} />
 
             <Flex justifyContent="space-between">
-              <Box width="75%">
+              <Box width={SETTING_DESCRIPTION_WIDTH}>
                 <Typography>
                   {t('groups.settings.names.ratificationThreshold')}
                 </Typography>
@@ -161,13 +176,25 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                 </Typography>
               </Box>
 
-              <SliderInput />
+              <SliderInput
+                name="ratificationThreshold"
+                onInputChange={handleChange}
+                onSliderChange={handleChange}
+                value={values.ratificationThreshold}
+                onInputBlur={() =>
+                  handleSliderInputBlur(
+                    setFieldValue,
+                    'ratificationThreshold',
+                    values.ratificationThreshold,
+                  )
+                }
+              />
             </Flex>
 
             <Divider sx={{ marginY: 3 }} />
 
             <Flex justifyContent="space-between">
-              <Box width={isDesktop ? 'initial' : '75%'}>
+              <Box width={SETTING_DESCRIPTION_WIDTH}>
                 <Typography>{t('groups.settings.names.privacy')}</Typography>
 
                 <Typography
@@ -200,7 +227,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                 color="#ffb74d"
                 fontSize={12}
                 marginTop={1}
-                width="80%"
+                width={SETTING_DESCRIPTION_WIDTH}
               >
                 <Warning
                   sx={{

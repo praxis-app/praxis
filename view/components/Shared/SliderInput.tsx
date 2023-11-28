@@ -1,53 +1,56 @@
-import Box from '@mui/material/Box';
+import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Input from '@mui/material/Input';
 import Slider from '@mui/material/Slider';
-import { useState } from 'react';
 
-const SliderInput = () => {
-  const [value, setValue] = useState(30);
+interface Props {
+  onInputBlur: () => void;
+  onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSliderChange: (_: Event, newValue: number) => void;
+  value?: number | null;
+  name: string;
+}
 
-  const handleSliderChange = (_: Event, newValue: number) => {
-    setValue(newValue);
-  };
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value === '' ? 0 : Number(event.target.value));
-  };
-
-  const handleBlur = () => {
-    if (value < 0) {
-      setValue(0);
-    } else if (value > 100) {
-      setValue(100);
-    }
+const SliderInput = ({
+  onInputBlur,
+  onInputChange,
+  onSliderChange,
+  value,
+  name,
+}: Props) => {
+  const inputProps = {
+    step: 10,
+    min: 0,
+    max: 100,
+    type: 'number',
   };
 
   return (
-    <Box sx={{ width: 250 }}>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs>
-          <Slider
-            value={typeof value === 'number' ? value : 0}
-            onChange={handleSliderChange}
-          />
-        </Grid>
-        <Grid item>
-          <Input
-            value={value}
-            size="small"
-            onChange={handleInputChange}
-            onBlur={handleBlur}
-            inputProps={{
-              step: 10,
-              min: 0,
-              max: 100,
-              type: 'number',
-            }}
-          />
-        </Grid>
+    <Grid container alignItems="center" width={200}>
+      <Grid item xs paddingRight="15px">
+        <Slider
+          name={name}
+          onChange={onSliderChange}
+          size="small"
+          step={10}
+          value={typeof value === 'number' ? value : 0}
+        />
       </Grid>
-    </Box>
+      <Grid item paddingRight="5px">
+        <Input
+          inputProps={inputProps}
+          name={name}
+          onBlur={onInputBlur}
+          onChange={onInputChange}
+          size="small"
+          value={value}
+          disableUnderline
+        />
+      </Grid>
+      <Grid>
+        <Typography paddingBottom={0.25}>%</Typography>
+      </Grid>
+    </Grid>
   );
 };
 
