@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
-import { GROUP_RATIFICATION_THRESHOLD } from '../groups/groups.constants';
 import { GroupsService } from '../groups/groups.service';
 import { Group } from '../groups/models/group.model';
 import { ImageTypes } from '../images/image.constants';
@@ -293,12 +292,11 @@ export class ProposalsService {
   async hasConsensus(votes: Vote[], { members, config }: Group) {
     const { agreements, reservations, standAsides, blocks } =
       sortConsensusVotesByType(votes);
-
-    const { reservationsLimit, standAsidesLimit } = config;
-    const ratificationThreshold = GROUP_RATIFICATION_THRESHOLD * 0.01;
+    const { reservationsLimit, standAsidesLimit, ratificationThreshold } =
+      config;
 
     return (
-      agreements.length >= members.length * ratificationThreshold &&
+      agreements.length >= members.length * (ratificationThreshold * 0.01) &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
       blocks.length === 0
