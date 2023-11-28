@@ -67,13 +67,19 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
     fieldName: string,
     value?: number | null,
   ) => {
-    if (!value) {
+    if (value === undefined || value === null) {
       return;
     }
     if (value < 0) {
       setFieldValue(fieldName, 0);
-    } else if (value > 100) {
+      return;
+    }
+    if (value > 100) {
       setFieldValue(fieldName, 100);
+      return;
+    }
+    if (!Number.isInteger(value)) {
+      setFieldValue(fieldName, Math.round(value));
     }
   };
 

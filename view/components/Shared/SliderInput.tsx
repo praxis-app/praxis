@@ -32,7 +32,6 @@ const SliderInput = ({
           name={name}
           onChange={onSliderChange}
           size="small"
-          step={10}
           value={typeof value === 'number' ? value : 0}
         />
       </Grid>
