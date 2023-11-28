@@ -26,7 +26,7 @@ const SliderInput = ({
   };
 
   return (
-    <Grid container alignItems="center" width={200}>
+    <Grid container alignItems="center" width={[150, 200]}>
       <Grid item xs paddingRight="15px">
         <Slider
           name={name}
