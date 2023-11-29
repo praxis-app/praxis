@@ -31,7 +31,7 @@ import Flex from '../../Shared/Flex';
 import ProgressBar from '../../Shared/ProgressBar';
 import ChangeIcon from './ChangeIcon';
 import ProposalActionPermission from './ProposalActionPermission';
-import ProposedRoleMember from './ProposedRoleMember';
+import ProposalActionRoleMember from './ProposalActionRoleMember';
 
 type ArrayElement<ArrayType extends unknown[] | undefined | null> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
@@ -330,7 +330,7 @@ const ProposalActionRole = ({
                 </Typography>
 
                 {members.map((member: RoleMember) => (
-                  <ProposedRoleMember
+                  <ProposalActionRoleMember
                     key={'id' in member ? member.id : member.userId}
                     selectedUsers={selectedUsersData?.usersByIds}
                     actionType={actionType}
