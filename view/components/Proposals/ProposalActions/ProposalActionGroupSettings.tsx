@@ -114,32 +114,24 @@ const ProposalActionGroupSettings = ({
 
     if (isChangingPrivacy) {
       changes.push(
-        `${t('groups.settings.names.privacy')} - ${getPrivacyLabel(
-          oldPrivacy,
-        )} → ${getPrivacyLabel(groupSettings.privacy)}`,
-      );
-    }
-    if (isChangingStandAsidesLimit) {
-      changes.push(
-        `${t(
-          'groups.settings.names.standAsidesLimit',
-        )} - ${oldStandAsidesLimit} → ${groupSettings.standAsidesLimit}`,
-      );
-    }
-    if (isChangingReservationsLimit) {
-      changes.push(
-        `${t(
-          'groups.settings.names.reservationsLimit',
-        )} - ${oldReservationsLimit} → ${groupSettings.reservationsLimit}`,
+        `${getPrivacyLabel(oldPrivacy)} → ${getPrivacyLabel(
+          groupSettings.privacy,
+        )}`,
       );
     }
     if (isChangingRatificationThreshold) {
       changes.push(
-        `${t(
-          'groups.settings.names.ratificationThreshold',
-        )} - ${oldRatificationThreshold}% → ${
-          groupSettings.ratificationThreshold
-        }%`,
+        `${oldRatificationThreshold}% → ${groupSettings.ratificationThreshold}%`,
+      );
+    }
+    if (isChangingStandAsidesLimit) {
+      changes.push(
+        `${oldStandAsidesLimit} → ${groupSettings.standAsidesLimit}`,
+      );
+    }
+    if (isChangingReservationsLimit) {
+      changes.push(
+        `${oldReservationsLimit} → ${groupSettings.reservationsLimit}`,
       );
     }
     return changes.join(', ');
