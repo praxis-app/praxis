@@ -23,19 +23,19 @@ export class ProposalActionGroupConfig {
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  privacy: string;
+  privacy?: string;
 
   @Column({ nullable: true })
   @Field(() => Int, { nullable: true })
-  standAsidesLimit: number;
+  standAsidesLimit?: number;
 
   @Column({ nullable: true })
   @Field(() => Int, { nullable: true })
-  reservationsLimit: number;
+  reservationsLimit?: number;
 
   @Column({ nullable: true })
   @Field(() => Int, { nullable: true })
-  ratificationThreshold: number;
+  ratificationThreshold?: number;
 
   // -------------------------------------------------------------------------
   // Old values
@@ -43,19 +43,19 @@ export class ProposalActionGroupConfig {
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  oldPrivacy: string;
+  oldPrivacy?: string;
 
   @Column({ nullable: true })
   @Field(() => Int, { nullable: true })
-  oldStandAsidesLimit: number;
+  oldStandAsidesLimit?: number;
 
   @Column({ nullable: true })
   @Field(() => Int, { nullable: true })
-  oldReservationsLimit: number;
+  oldReservationsLimit?: number;
 
   @Column({ nullable: true })
   @Field(() => Int, { nullable: true })
-  oldRatificationThreshold: number;
+  oldRatificationThreshold?: number;
 
   // -------------------------------------------------------------------------
   // Relations and timestamps
