@@ -182,7 +182,6 @@ export class ProposalActionsService {
     }
 
     const {
-      id,
       privacy,
       ratificationThreshold,
       reservationsLimit,
@@ -195,7 +194,7 @@ export class ProposalActionsService {
 
     // Record old group config
     await this.proposalActionGroupConfigsService.updateProposalActionGroupConfig(
-      id,
+      proposedGroupConfig.id,
       {
         oldPrivacy: privacy ? groupConfig.privacy : undefined,
         oldRatificationThreshold: ratificationThreshold
