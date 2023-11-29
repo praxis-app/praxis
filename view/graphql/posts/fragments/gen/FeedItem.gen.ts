@@ -69,7 +69,13 @@ export type FeedItem_Proposal_Fragment = {
       __typename?: 'ProposalActionGroupConfig';
       id: number;
       privacy?: string | null;
+      ratificationThreshold?: number | null;
+      reservationsLimit?: number | null;
+      standAsidesLimit?: number | null;
       oldPrivacy?: string | null;
+      oldRatificationThreshold?: number | null;
+      oldReservationsLimit?: number | null;
+      oldStandAsidesLimit?: number | null;
       proposalAction: {
         __typename?: 'ProposalAction';
         id: number;
@@ -83,6 +89,9 @@ export type FeedItem_Proposal_Fragment = {
               __typename?: 'GroupConfig';
               id: number;
               privacy: string;
+              ratificationThreshold: number;
+              reservationsLimit: number;
+              standAsidesLimit: number;
             };
           } | null;
         };

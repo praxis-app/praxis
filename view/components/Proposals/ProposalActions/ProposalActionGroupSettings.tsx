@@ -56,8 +56,35 @@ const ProposalActionGroupSettings = ({
       ? groupSettings.oldPrivacy
       : groupSettingsToChange?.privacy;
 
+  const oldStandAsidesLimit =
+    ratified && 'oldStandAsidesLimit' in groupSettings
+      ? groupSettings.oldStandAsidesLimit
+      : groupSettingsToChange?.standAsidesLimit;
+
+  const oldReservationsLimit =
+    ratified && 'oldReservationsLimit' in groupSettings
+      ? groupSettings.oldReservationsLimit
+      : groupSettingsToChange?.reservationsLimit;
+
+  const oldRatificationThreshold =
+    ratified && 'oldRatificationThreshold' in groupSettings
+      ? groupSettings.oldRatificationThreshold
+      : groupSettingsToChange?.ratificationThreshold;
+
   const isChangingPrivacy =
     groupSettings.privacy && groupSettings.privacy !== oldPrivacy;
+
+  const isChangingStandAsidesLimit =
+    groupSettings.standAsidesLimit &&
+    groupSettings.standAsidesLimit !== oldStandAsidesLimit;
+
+  const isChangingReservationsLimit =
+    groupSettings.reservationsLimit &&
+    groupSettings.reservationsLimit !== oldReservationsLimit;
+
+  const isChangingRatificationThreshold =
+    groupSettings.ratificationThreshold &&
+    groupSettings.ratificationThreshold !== oldRatificationThreshold;
 
   const accordionStyles: SxProps = {
     backgroundColor: 'rgb(0, 0, 0, 0.1)',
@@ -159,6 +186,114 @@ const ProposalActionGroupSettings = ({
                     marginRight="0.25ch"
                   >
                     {getPrivacyLabel(groupSettings.privacy)}
+                  </Typography>
+                </Flex>
+              </Grid>
+            )}
+
+            {isChangingStandAsidesLimit && (
+              <Grid item xs={6}>
+                <Typography fontFamily="Inter Bold" fontSize={15} gutterBottom>
+                  {t('groups.settings.names.standAsidesLimit')}
+                </Typography>
+
+                <Flex sx={changeStyles}>
+                  <ChangeIcon
+                    changeType={ChangeType.Remove}
+                    sx={{ marginRight: '0.8ch' }}
+                  />
+                  <Typography
+                    color="primary"
+                    fontSize="inherit"
+                    marginRight="0.25ch"
+                  >
+                    {oldStandAsidesLimit}
+                  </Typography>
+                </Flex>
+
+                <Flex sx={changeStyles}>
+                  <ChangeIcon
+                    changeType={ChangeType.Add}
+                    sx={{ marginRight: '0.8ch' }}
+                  />
+                  <Typography
+                    color="primary"
+                    fontSize="inherit"
+                    marginRight="0.25ch"
+                  >
+                    {groupSettings.standAsidesLimit}
+                  </Typography>
+                </Flex>
+              </Grid>
+            )}
+
+            {isChangingReservationsLimit && (
+              <Grid item xs={6}>
+                <Typography fontFamily="Inter Bold" fontSize={15} gutterBottom>
+                  {t('groups.settings.names.reservationsLimit')}
+                </Typography>
+
+                <Flex sx={changeStyles}>
+                  <ChangeIcon
+                    changeType={ChangeType.Remove}
+                    sx={{ marginRight: '0.8ch' }}
+                  />
+                  <Typography
+                    color="primary"
+                    fontSize="inherit"
+                    marginRight="0.25ch"
+                  >
+                    {oldReservationsLimit}
+                  </Typography>
+                </Flex>
+
+                <Flex sx={changeStyles}>
+                  <ChangeIcon
+                    changeType={ChangeType.Add}
+                    sx={{ marginRight: '0.8ch' }}
+                  />
+                  <Typography
+                    color="primary"
+                    fontSize="inherit"
+                    marginRight="0.25ch"
+                  >
+                    {groupSettings.reservationsLimit}
+                  </Typography>
+                </Flex>
+              </Grid>
+            )}
+
+            {isChangingRatificationThreshold && (
+              <Grid item xs={6}>
+                <Typography fontFamily="Inter Bold" fontSize={15} gutterBottom>
+                  {t('groups.settings.names.ratificationThreshold')}
+                </Typography>
+
+                <Flex sx={changeStyles}>
+                  <ChangeIcon
+                    changeType={ChangeType.Remove}
+                    sx={{ marginRight: '0.8ch' }}
+                  />
+                  <Typography
+                    color="primary"
+                    fontSize="inherit"
+                    marginRight="0.25ch"
+                  >
+                    {oldRatificationThreshold}%
+                  </Typography>
+                </Flex>
+
+                <Flex sx={changeStyles}>
+                  <ChangeIcon
+                    changeType={ChangeType.Add}
+                    sx={{ marginRight: '0.8ch' }}
+                  />
+                  <Typography
+                    color="primary"
+                    fontSize="inherit"
+                    marginRight="0.25ch"
+                  >
+                    {groupSettings.ratificationThreshold}%
                   </Typography>
                 </Flex>
               </Grid>
