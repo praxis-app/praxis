@@ -155,10 +155,10 @@ const ProposalActionGroupSettings = ({
             rowSpacing={1}
             container
           >
-            {isChangingPrivacy && (
+            {isChangingRatificationThreshold && (
               <Grid item xs={6}>
                 <Typography fontFamily="Inter Bold" fontSize={15} gutterBottom>
-                  {t('groups.settings.names.privacy')}
+                  {t('groups.settings.names.ratificationThreshold')}
                 </Typography>
 
                 <Flex sx={changeStyles}>
@@ -171,7 +171,7 @@ const ProposalActionGroupSettings = ({
                     fontSize="inherit"
                     marginRight="0.25ch"
                   >
-                    {getPrivacyLabel(oldPrivacy)}
+                    {oldRatificationThreshold}%
                   </Typography>
                 </Flex>
 
@@ -185,7 +185,7 @@ const ProposalActionGroupSettings = ({
                     fontSize="inherit"
                     marginRight="0.25ch"
                   >
-                    {getPrivacyLabel(groupSettings.privacy)}
+                    {groupSettings.ratificationThreshold}%
                   </Typography>
                 </Flex>
               </Grid>
@@ -263,10 +263,10 @@ const ProposalActionGroupSettings = ({
               </Grid>
             )}
 
-            {isChangingRatificationThreshold && (
+            {isChangingPrivacy && (
               <Grid item xs={6}>
                 <Typography fontFamily="Inter Bold" fontSize={15} gutterBottom>
-                  {t('groups.settings.names.ratificationThreshold')}
+                  {t('groups.settings.names.privacy')}
                 </Typography>
 
                 <Flex sx={changeStyles}>
@@ -279,7 +279,7 @@ const ProposalActionGroupSettings = ({
                     fontSize="inherit"
                     marginRight="0.25ch"
                   >
-                    {oldRatificationThreshold}%
+                    {getPrivacyLabel(oldPrivacy)}
                   </Typography>
                 </Flex>
 
@@ -293,7 +293,7 @@ const ProposalActionGroupSettings = ({
                     fontSize="inherit"
                     marginRight="0.25ch"
                   >
-                    {groupSettings.ratificationThreshold}%
+                    {getPrivacyLabel(groupSettings.privacy)}
                   </Typography>
                 </Flex>
               </Grid>
