@@ -114,9 +114,32 @@ const ProposalActionGroupSettings = ({
 
     if (isChangingPrivacy) {
       changes.push(
-        `${getPrivacyLabel(oldPrivacy)} → ${getPrivacyLabel(
-          groupSettings.privacy,
-        )}`,
+        `${t('groups.settings.names.privacy')} - ${getPrivacyLabel(
+          oldPrivacy,
+        )} → ${getPrivacyLabel(groupSettings.privacy)}`,
+      );
+    }
+    if (isChangingStandAsidesLimit) {
+      changes.push(
+        `${t(
+          'groups.settings.names.standAsidesLimit',
+        )} - ${oldStandAsidesLimit} → ${groupSettings.standAsidesLimit}`,
+      );
+    }
+    if (isChangingReservationsLimit) {
+      changes.push(
+        `${t(
+          'groups.settings.names.reservationsLimit',
+        )} - ${oldReservationsLimit} → ${groupSettings.reservationsLimit}`,
+      );
+    }
+    if (isChangingRatificationThreshold) {
+      changes.push(
+        `${t(
+          'groups.settings.names.ratificationThreshold',
+        )} - ${oldRatificationThreshold}% → ${
+          groupSettings.ratificationThreshold
+        }%`,
       );
     }
     return changes.join(', ');
@@ -142,7 +165,7 @@ const ProposalActionGroupSettings = ({
             overflow="hidden"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
-            width={isDesktop ? undefined : '130px'}
+            width={isDesktop ? '330px' : '130px'}
           >
             {getSettingsChanges()}
           </Typography>
