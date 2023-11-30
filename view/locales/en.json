@@ -112,6 +112,8 @@
       "roleChangeProposal": "Role change proposal",
       "roleProposal": "Role proposal",
       "selectRoleToChange": "Choose a role",
+      "settingChangesCount_one": "{{count}} setting change",
+      "settingChangesCount_other": "{{count}} setting changes",
       "usersProposal": "{{name}}'s Proposal"
     },
     "toasts": {

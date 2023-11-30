@@ -110,31 +110,24 @@ const ProposalActionGroupSettings = ({
   };
 
   const getSettingsChanges = () => {
-    const changes: string[] = [];
+    let settingsChanged = 0;
 
     if (isChangingPrivacy) {
-      changes.push(
-        `${getPrivacyLabel(oldPrivacy)} → ${getPrivacyLabel(
-          groupSettings.privacy,
-        )}`,
-      );
-    }
-    if (isChangingRatificationThreshold) {
-      changes.push(
-        `${oldRatificationThreshold}% → ${groupSettings.ratificationThreshold}%`,
-      );
+      settingsChanged += 1;
     }
     if (isChangingStandAsidesLimit) {
-      changes.push(
-        `${oldStandAsidesLimit} → ${groupSettings.standAsidesLimit}`,
-      );
+      settingsChanged += 1;
     }
     if (isChangingReservationsLimit) {
-      changes.push(
-        `${oldReservationsLimit} → ${groupSettings.reservationsLimit}`,
-      );
+      settingsChanged += 1;
     }
-    return changes.join(', ');
+    if (isChangingRatificationThreshold) {
+      settingsChanged += 1;
+    }
+
+    return t('proposals.labels.settingChangesCount', {
+      count: settingsChanged,
+    });
   };
 
   return (
