@@ -75,15 +75,15 @@ const ProposalActionGroupSettings = ({
     groupSettings.privacy && groupSettings.privacy !== oldPrivacy;
 
   const isChangingStandAsidesLimit =
-    groupSettings.standAsidesLimit &&
+    !!groupSettings.standAsidesLimit &&
     groupSettings.standAsidesLimit !== oldStandAsidesLimit;
 
   const isChangingReservationsLimit =
-    groupSettings.reservationsLimit &&
+    !!groupSettings.reservationsLimit &&
     groupSettings.reservationsLimit !== oldReservationsLimit;
 
   const isChangingRatificationThreshold =
-    groupSettings.ratificationThreshold &&
+    !!groupSettings.ratificationThreshold &&
     groupSettings.ratificationThreshold !== oldRatificationThreshold;
 
   const accordionStyles: SxProps = {
