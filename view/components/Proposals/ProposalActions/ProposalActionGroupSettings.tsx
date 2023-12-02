@@ -1,9 +1,8 @@
-import { Box, Grid, SxProps, Typography, useTheme } from '@mui/material';
+import { Box, Grid, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { GroupPrivacy } from '../../../constants/group.constants';
-import { ChangeType } from '../../../constants/shared.constants';
 import { ProposalActionGroupConfigInput } from '../../../graphql/gen';
 import { useGroupSettingsByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupSettingsByGroupId.gen';
 import { ProposalActionGroupSettingsFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionGroupSettings.gen';
@@ -12,8 +11,7 @@ import Accordion, {
   AccordionDetails,
   AccordionSummary,
 } from '../../Shared/Accordion';
-import Flex from '../../Shared/Flex';
-import ChangeIcon from './ChangeIcon';
+import ProposedChange from './ProposedChange';
 
 interface Props {
   groupSettings:
@@ -36,7 +34,6 @@ const ProposalActionGroupSettings = ({
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
-  const theme = useTheme();
 
   const [getGroupSettings, { data }] = useGroupSettingsByGroupIdLazyQuery();
 
@@ -90,16 +87,6 @@ const ProposalActionGroupSettings = ({
     backgroundColor: 'rgb(0, 0, 0, 0.1)',
     borderRadius: 2,
     paddingX: 2,
-  };
-  const changeStyles: SxProps = {
-    borderColor: theme.palette.divider,
-    borderRadius: 1,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    fontSize: 14,
-    marginBottom: 1,
-    paddingX: 0.6,
-    paddingY: 0.5,
   };
 
   const getPrivacyLabel = (privacy?: string | null) => {
@@ -164,147 +151,35 @@ const ProposalActionGroupSettings = ({
             container
           >
             {isChangingRatificationThreshold && (
-              <Grid item xs={6}>
-                <Typography fontFamily="Inter Bold" fontSize={15} gutterBottom>
-                  {t('groups.settings.names.ratificationThreshold')}
-                </Typography>
-
-                <Flex sx={changeStyles}>
-                  <ChangeIcon
-                    changeType={ChangeType.Remove}
-                    sx={{ marginRight: '0.8ch' }}
-                  />
-                  <Typography
-                    color="primary"
-                    fontSize="inherit"
-                    marginRight="0.25ch"
-                  >
-                    {oldRatificationThreshold}%
-                  </Typography>
-                </Flex>
-
-                <Flex sx={changeStyles}>
-                  <ChangeIcon
-                    changeType={ChangeType.Add}
-                    sx={{ marginRight: '0.8ch' }}
-                  />
-                  <Typography
-                    color="primary"
-                    fontSize="inherit"
-                    marginRight="0.25ch"
-                  >
-                    {groupSettings.ratificationThreshold}%
-                  </Typography>
-                </Flex>
-              </Grid>
+              <ProposedChange
+                label={t('groups.settings.names.ratificationThreshold')}
+                proposedValue={`${groupSettings.ratificationThreshold}%`}
+                oldValue={`${oldRatificationThreshold}%`}
+              />
             )}
 
             {isChangingStandAsidesLimit && (
-              <Grid item xs={6}>
-                <Typography fontFamily="Inter Bold" fontSize={15} gutterBottom>
-                  {t('groups.settings.names.standAsidesLimit')}
-                </Typography>
-
-                <Flex sx={changeStyles}>
-                  <ChangeIcon
-                    changeType={ChangeType.Remove}
-                    sx={{ marginRight: '0.8ch' }}
-                  />
-                  <Typography
-                    color="primary"
-                    fontSize="inherit"
-                    marginRight="0.25ch"
-                  >
-                    {oldStandAsidesLimit}
-                  </Typography>
-                </Flex>
-
-                <Flex sx={changeStyles}>
-                  <ChangeIcon
-                    changeType={ChangeType.Add}
-                    sx={{ marginRight: '0.8ch' }}
-                  />
-                  <Typography
-                    color="primary"
-                    fontSize="inherit"
-                    marginRight="0.25ch"
-                  >
-                    {groupSettings.standAsidesLimit}
-                  </Typography>
-                </Flex>
-              </Grid>
+              <ProposedChange
+                label={t('groups.settings.names.standAsidesLimit')}
+                proposedValue={groupSettings.standAsidesLimit}
+                oldValue={oldStandAsidesLimit}
+              />
             )}
 
             {isChangingReservationsLimit && (
-              <Grid item xs={6}>
-                <Typography fontFamily="Inter Bold" fontSize={15} gutterBottom>
-                  {t('groups.settings.names.reservationsLimit')}
-                </Typography>
-
-                <Flex sx={changeStyles}>
-                  <ChangeIcon
-                    changeType={ChangeType.Remove}
-                    sx={{ marginRight: '0.8ch' }}
-                  />
-                  <Typography
-                    color="primary"
-                    fontSize="inherit"
-                    marginRight="0.25ch"
-                  >
-                    {oldReservationsLimit}
-                  </Typography>
-                </Flex>
-
-                <Flex sx={changeStyles}>
-                  <ChangeIcon
-                    changeType={ChangeType.Add}
-                    sx={{ marginRight: '0.8ch' }}
-                  />
-                  <Typography
-                    color="primary"
-                    fontSize="inherit"
-                    marginRight="0.25ch"
-                  >
-                    {groupSettings.reservationsLimit}
-                  </Typography>
-                </Flex>
-              </Grid>
+              <ProposedChange
+                label={t('groups.settings.names.reservationsLimit')}
+                proposedValue={groupSettings.reservationsLimit}
+                oldValue={oldReservationsLimit}
+              />
             )}
 
             {isChangingPrivacy && (
-              <Grid item xs={6}>
-                <Typography fontFamily="Inter Bold" fontSize={15} gutterBottom>
-                  {t('groups.settings.names.privacy')}
-                </Typography>
-
-                <Flex sx={changeStyles}>
-                  <ChangeIcon
-                    changeType={ChangeType.Remove}
-                    sx={{ marginRight: '0.8ch' }}
-                  />
-                  <Typography
-                    color="primary"
-                    fontSize="inherit"
-                    marginRight="0.25ch"
-                  >
-                    {getPrivacyLabel(oldPrivacy)}
-                  </Typography>
-                </Flex>
-
-                <Flex sx={changeStyles}>
-                  <ChangeIcon
-                    changeType={ChangeType.Add}
-                    sx={{ marginRight: '0.8ch' }}
-                  />
-                  <Typography
-                    color="primary"
-                    fontSize="inherit"
-                    marginRight="0.25ch"
-                  >
-                    {getPrivacyLabel(groupSettings.privacy)}
-                  </Typography>
-                </Flex>
-              </Grid>
+              <ProposedChange
+                label={t('groups.settings.names.privacy')}
+                proposedValue={getPrivacyLabel(groupSettings.privacy)}
+                oldValue={getPrivacyLabel(oldPrivacy)}
+              />
             )}
           </Grid>
         </AccordionDetails>
