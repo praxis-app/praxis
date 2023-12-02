@@ -7,7 +7,6 @@ import { GroupsService } from '../groups/groups.service';
 import { ImagesService } from '../images/images.service';
 import { PostsService } from '../posts/posts.service';
 import { ProposalActionEventsService } from '../proposals/proposal-actions/proposal-action-events/proposal-action-events.service';
-import { ProposalActionGroupConfigsService } from '../proposals/proposal-actions/proposal-action-group-configs/proposal-action-group-configs.service';
 import { ProposalActionRolesService } from '../proposals/proposal-actions/proposal-action-roles/proposal-action-roles.service';
 import { ProposalActionsService } from '../proposals/proposal-actions/proposal-actions.service';
 import { ProposalsService } from '../proposals/proposals.service';
@@ -25,7 +24,6 @@ export interface ContextServices {
   imagesService: ImagesService;
   postsService: PostsService;
   proposalActionEventsService: ProposalActionEventsService;
-  proposalActionGroupConfigsService: ProposalActionGroupConfigsService;
   proposalActionRolesService: ProposalActionRolesService;
   proposalActionsService: ProposalActionsService;
   proposalsService: ProposalsService;

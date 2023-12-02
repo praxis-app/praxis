@@ -9,7 +9,6 @@ import { GroupsModule } from '../groups/groups.module';
 import { ImagesModule } from '../images/images.module';
 import { PostsModule } from '../posts/posts.module';
 import { ProposalActionEventsModule } from '../proposals/proposal-actions/proposal-action-events/proposal-action-events.module';
-import { ProposalActionGroupConfigsModule } from '../proposals/proposal-actions/proposal-action-group-configs/proposal-action-group-configs.module';
 import { ProposalActionRolesModule } from '../proposals/proposal-actions/proposal-action-roles/proposal-action-roles.module';
 import { ProposalActionsModule } from '../proposals/proposal-actions/proposal-actions.module';
 import { ProposalsModule } from '../proposals/proposals.module';
@@ -29,7 +28,6 @@ import { ContextService } from './context.service';
     ImagesModule,
     PostsModule,
     ProposalActionEventsModule,
-    ProposalActionGroupConfigsModule,
     ProposalActionRolesModule,
     ProposalActionsModule,
     ProposalsModule,
