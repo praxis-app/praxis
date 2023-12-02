@@ -28,7 +28,11 @@ const ProposalAction = ({
 
   if (actionType === ProposalActionType.ChangeSettings) {
     if (!groupSettings) {
-      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+      return (
+        <Typography marginBottom={3.5}>
+          {t('errors.somethingWentWrong')}
+        </Typography>
+      );
     }
     return (
       <ProposalActionGroupSettings
@@ -40,7 +44,11 @@ const ProposalAction = ({
 
   if (actionType === ProposalActionType.PlanEvent) {
     if (!event) {
-      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+      return (
+        <Typography marginBottom={3.5}>
+          {t('errors.somethingWentWrong')}
+        </Typography>
+      );
     }
     return <ProposalActionEvent event={event} />;
   }
@@ -50,7 +58,11 @@ const ProposalAction = ({
     actionType === ProposalActionType.ChangeRole
   ) {
     if (!role) {
-      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+      return (
+        <Typography marginBottom={3.5}>
+          {t('errors.somethingWentWrong')}
+        </Typography>
+      );
     }
     return (
       <ProposalActionRole
@@ -79,7 +91,11 @@ const ProposalAction = ({
 
   if (actionType === ProposalActionType.ChangeCoverPhoto) {
     if (!groupCoverPhoto) {
-      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+      return (
+        <Typography marginBottom={3.5}>
+          {t('errors.somethingWentWrong')}
+        </Typography>
+      );
     }
     return (
       <Box marginBottom="20px">
