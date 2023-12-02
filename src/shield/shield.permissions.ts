@@ -162,6 +162,7 @@ export const shieldPermissions = shield(
     ProposalActionPermission: or(isAuthenticated, isPublicProposalAction),
     ProposalActionRole: or(isAuthenticated, isPublicProposalAction),
     ProposalActionRoleMember: or(isAuthenticated, isPublicProposalAction),
+    ProposalActionGroupConfig: or(isAuthenticated, isPublicProposalAction),
     Vote: or(isAuthenticated, isPublicVote),
   },
   {
