@@ -69,16 +69,12 @@ const ProposeGroupSettingsModal = ({
   };
 
   const handleSubmit = async (formValues: ProposalActionGroupConfigInput) => {
-    const changedValues = Object.keys(
-      formValues,
-    ).reduce<ProposalActionGroupConfigInput>((result, key) => {
+    const changedValues = Object.keys(formValues).reduce((result, key) => {
       if (formValues[key] !== initialValues[key]) {
         result[key] = formValues[key];
       }
       return result;
     }, {});
-
-    console.log('changedValues', changedValues);
 
     setFieldValue(ProposalActionFieldName.GroupSettings, changedValues);
     setOpen(false);
