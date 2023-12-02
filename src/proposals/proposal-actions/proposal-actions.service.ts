@@ -197,15 +197,21 @@ export class ProposalActionsService {
       proposedGroupConfig.id,
       {
         oldPrivacy: privacy ? groupConfig.privacy : undefined,
-        oldRatificationThreshold: ratificationThreshold
-          ? groupConfig.ratificationThreshold
-          : undefined,
-        oldReservationsLimit: reservationsLimit
-          ? groupConfig.reservationsLimit
-          : undefined,
-        oldStandAsidesLimit: standAsidesLimit
-          ? groupConfig.standAsidesLimit
-          : undefined,
+
+        oldRatificationThreshold:
+          ratificationThreshold || ratificationThreshold === 0
+            ? groupConfig.ratificationThreshold
+            : undefined,
+
+        oldReservationsLimit:
+          reservationsLimit || reservationsLimit === 0
+            ? groupConfig.reservationsLimit
+            : undefined,
+
+        oldStandAsidesLimit:
+          standAsidesLimit || standAsidesLimit === 0
+            ? groupConfig.standAsidesLimit
+            : undefined,
       },
     );
 
