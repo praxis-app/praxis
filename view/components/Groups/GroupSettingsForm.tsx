@@ -78,6 +78,10 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
       setFieldValue(fieldName, 100);
       return;
     }
+    if (value % 5 !== 0) {
+      setFieldValue(fieldName, Math.round(value / 5) * 5);
+      return;
+    }
     if (!Number.isInteger(value)) {
       setFieldValue(fieldName, Math.round(value));
     }
