@@ -10,7 +10,10 @@ import {
 } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { GroupPrivacy } from '../../constants/group.constants';
+import {
+  GroupPrivacy,
+  GroupSettingsFieldName,
+} from '../../constants/group.constants';
 import { toastVar } from '../../graphql/cache';
 import { UpdateGroupConfigInput } from '../../graphql/gen';
 import { GroupSettingsFormFragment } from '../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
@@ -64,9 +67,9 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
 
   const handleSliderInputBlur = (
     setFieldValue: (field: string, value: number) => void,
-    fieldName: string,
     value?: number | null,
   ) => {
+    const fieldName = GroupSettingsFieldName.RatificationThreshold;
     if (value === undefined || value === null) {
       return;
     }
@@ -111,7 +114,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               </Box>
 
               <Select
-                name="standAsidesLimit"
+                name={GroupSettingsFieldName.StandAsidesLimit}
                 onChange={handleChange}
                 sx={{ color: theme.palette.text.secondary }}
                 value={values.standAsidesLimit}
@@ -149,7 +152,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               </Box>
 
               <Select
-                name="reservationsLimit"
+                name={GroupSettingsFieldName.ReservationsLimit}
                 onChange={handleChange}
                 sx={{ color: theme.palette.text.secondary }}
                 value={values.reservationsLimit}
@@ -187,14 +190,13 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               </Box>
 
               <SliderInput
-                name="ratificationThreshold"
+                name={GroupSettingsFieldName.RatificationThreshold}
                 onInputChange={handleChange}
                 onSliderChange={handleChange}
                 value={values.ratificationThreshold}
                 onInputBlur={() =>
                   handleSliderInputBlur(
                     setFieldValue,
-                    'ratificationThreshold',
                     values.ratificationThreshold,
                   )
                 }
@@ -216,7 +218,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               </Box>
 
               <Select
-                name="privacy"
+                name={GroupSettingsFieldName.Privacy}
                 onChange={handleChange}
                 sx={{ color: theme.palette.text.secondary }}
                 value={values.privacy}

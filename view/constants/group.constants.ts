@@ -8,3 +8,10 @@ export const enum GroupTabs {
   Events = 'events',
   Proposals = 'proposals',
 }
+
+export const enum GroupSettingsFieldName {
+  Privacy = 'privacy',
+  RatificationThreshold = 'ratificationThreshold',
+  ReservationsLimit = 'reservationsLimit',
+  StandAsidesLimit = 'standAsidesLimit',
+}

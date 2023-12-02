@@ -9,7 +9,10 @@ import {
 import { Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GroupPrivacy } from '../../../constants/group.constants';
+import {
+  GroupPrivacy,
+  GroupSettingsFieldName,
+} from '../../../constants/group.constants';
 import {
   ProposalActionFieldName,
   ProposalActionType,
@@ -82,9 +85,9 @@ const ProposeGroupSettingsModal = ({
 
   const handleSliderInputBlur = (
     setFieldValue: (field: string, value: number) => void,
-    fieldName: string,
     value?: number | null,
   ) => {
+    const fieldName = GroupSettingsFieldName.RatificationThreshold;
     if (value === undefined || value === null) {
       return;
     }
@@ -134,7 +137,7 @@ const ProposeGroupSettingsModal = ({
                   </Box>
 
                   <Select
-                    name="standAsidesLimit"
+                    name={GroupSettingsFieldName.StandAsidesLimit}
                     onChange={handleChange}
                     sx={{ color: 'text.secondary' }}
                     value={values.standAsidesLimit || 0}
@@ -169,7 +172,7 @@ const ProposeGroupSettingsModal = ({
                   </Box>
 
                   <Select
-                    name="reservationsLimit"
+                    name={GroupSettingsFieldName.ReservationsLimit}
                     onChange={handleChange}
                     sx={{ color: 'text.secondary' }}
                     value={values.reservationsLimit || 0}
@@ -204,14 +207,13 @@ const ProposeGroupSettingsModal = ({
                   </Box>
 
                   <SliderInput
-                    name="ratificationThreshold"
+                    name={GroupSettingsFieldName.RatificationThreshold}
                     onInputChange={handleChange}
                     onSliderChange={handleChange}
                     value={values.ratificationThreshold || 0}
                     onInputBlur={() =>
                       handleSliderInputBlur(
                         setFieldValue,
-                        'ratificationThreshold',
                         values.ratificationThreshold,
                       )
                     }
@@ -232,7 +234,7 @@ const ProposeGroupSettingsModal = ({
                   </Box>
 
                   <Select
-                    name="privacy"
+                    name={GroupSettingsFieldName.Privacy}
                     onChange={handleChange}
                     sx={{ color: 'text.secondary' }}
                     value={values.privacy || ''}
