@@ -1,15 +1,24 @@
 import { Grid, SxProps, Typography, useTheme } from '@mui/material';
-import ChangeIcon from './ChangeIcon';
-import Flex from '../../Shared/Flex';
+import { ReactNode } from 'react';
 import { ChangeType } from '../../../constants/shared.constants';
+import Flex from '../../Shared/Flex';
+import ChangeIcon from './ChangeIcon';
 
 interface Props {
-  proposedValue?: string | number | null;
-  oldValue?: string | number | null;
   label: string;
+  oldValue?: string | number | null;
+  oldValueIcon?: ReactNode;
+  proposedValue?: string | number | null;
+  proposedValueIcon?: ReactNode;
 }
 
-const ProposedChange = ({ proposedValue, oldValue, label }: Props) => {
+const ProposedChange = ({
+  label,
+  oldValue,
+  oldValueIcon,
+  proposedValue,
+  proposedValueIcon,
+}: Props) => {
   const theme = useTheme();
 
   const changeStyles: SxProps = {
@@ -34,6 +43,7 @@ const ProposedChange = ({ proposedValue, oldValue, label }: Props) => {
           changeType={ChangeType.Remove}
           sx={{ marginRight: '0.8ch' }}
         />
+        {oldValueIcon}
         <Typography color="primary" fontSize="inherit" marginRight="0.25ch">
           {oldValue}
         </Typography>
@@ -41,6 +51,7 @@ const ProposedChange = ({ proposedValue, oldValue, label }: Props) => {
 
       <Flex sx={changeStyles}>
         <ChangeIcon changeType={ChangeType.Add} sx={{ marginRight: '0.8ch' }} />
+        {proposedValueIcon}
         <Typography color="primary" fontSize="inherit" marginRight="0.25ch">
           {proposedValue}
         </Typography>
