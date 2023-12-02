@@ -269,7 +269,7 @@
     },
     "prompts": {
       "confirmLeave": "Are you sure you want to leave the group?",
-      "publicGroup": "Anyone can view the group page and any content posted by group members."
+      "publicGroup": "Public Group: Anyone can view the group page and any content posted by group members."
     },
     "tabs": {
       "about": "About",
