@@ -19,7 +19,7 @@ const SliderInput = ({
   name,
 }: Props) => {
   const inputProps = {
-    step: 10,
+    step: 5,
     min: 0,
     max: 100,
     type: 'number',
@@ -32,6 +32,7 @@ const SliderInput = ({
           name={name}
           onChange={onSliderChange}
           size="small"
+          step={5}
           value={typeof value === 'number' ? value : 0}
         />
       </Grid>
