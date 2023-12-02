@@ -12,7 +12,7 @@ interface Props {
   proposedValueIcon?: ReactNode;
 }
 
-const ProposedChange = ({
+const ChangeDelta = ({
   label,
   oldValue,
   oldValueIcon,
@@ -60,4 +60,4 @@ const ProposedChange = ({
   );
 };
 
-export default ProposedChange;
+export default ChangeDelta;

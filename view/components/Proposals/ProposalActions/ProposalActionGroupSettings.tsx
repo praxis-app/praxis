@@ -11,7 +11,7 @@ import Accordion, {
   AccordionDetails,
   AccordionSummary,
 } from '../../Shared/Accordion';
-import ProposedChange from './ProposedChange';
+import ChangeDelta from './ChangeDelta';
 
 interface Props {
   groupSettings:
@@ -151,7 +151,7 @@ const ProposalActionGroupSettings = ({
             container
           >
             {isChangingRatificationThreshold && (
-              <ProposedChange
+              <ChangeDelta
                 label={t('groups.settings.names.ratificationThreshold')}
                 proposedValue={`${groupSettings.ratificationThreshold}%`}
                 oldValue={`${oldRatificationThreshold}%`}
@@ -159,7 +159,7 @@ const ProposalActionGroupSettings = ({
             )}
 
             {isChangingStandAsidesLimit && (
-              <ProposedChange
+              <ChangeDelta
                 label={t('groups.settings.names.standAsidesLimit')}
                 proposedValue={groupSettings.standAsidesLimit}
                 oldValue={oldStandAsidesLimit}
@@ -167,7 +167,7 @@ const ProposalActionGroupSettings = ({
             )}
 
             {isChangingReservationsLimit && (
-              <ProposedChange
+              <ChangeDelta
                 label={t('groups.settings.names.reservationsLimit')}
                 proposedValue={groupSettings.reservationsLimit}
                 oldValue={oldReservationsLimit}
@@ -175,7 +175,7 @@ const ProposalActionGroupSettings = ({
             )}
 
             {isChangingPrivacy && (
-              <ProposedChange
+              <ChangeDelta
                 label={t('groups.settings.names.privacy')}
                 proposedValue={getPrivacyLabel(groupSettings.privacy)}
                 oldValue={getPrivacyLabel(oldPrivacy)}

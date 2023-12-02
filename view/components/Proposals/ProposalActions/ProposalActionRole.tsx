@@ -26,9 +26,9 @@ import Accordion, {
   AccordionSummary,
 } from '../../Shared/Accordion';
 import ProgressBar from '../../Shared/ProgressBar';
+import ChangeDelta from './ChangeDelta';
 import ProposalActionPermission from './ProposalActionPermission';
 import ProposalActionRoleMember from './ProposalActionRoleMember';
-import ProposedChange from './ProposedChange';
 
 type ArrayElement<ArrayType extends unknown[] | undefined | null> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
@@ -196,7 +196,7 @@ const ProposalActionRole = ({
             {isRoleChange && (
               <>
                 {isChangingName && (
-                  <ProposedChange
+                  <ChangeDelta
                     label={t('proposals.labels.name')}
                     proposedValue={name}
                     oldValue={oldName}
@@ -204,7 +204,7 @@ const ProposalActionRole = ({
                 )}
 
                 {isChangingColor && (
-                  <ProposedChange
+                  <ChangeDelta
                     label={t('proposals.labels.color')}
                     proposedValue={color}
                     oldValue={oldColor}
