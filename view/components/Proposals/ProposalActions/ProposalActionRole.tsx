@@ -32,6 +32,7 @@ import ProgressBar from '../../Shared/ProgressBar';
 import ChangeIcon from './ChangeIcon';
 import ProposalActionPermission from './ProposalActionPermission';
 import ProposalActionRoleMember from './ProposalActionRoleMember';
+import ProposedChange from './ProposedChange';
 
 type ArrayElement<ArrayType extends unknown[] | undefined | null> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
@@ -210,44 +211,11 @@ const ProposalActionRole = ({
             {isRoleChange && (
               <>
                 {isChangingName && (
-                  <Grid item xs={6}>
-                    <Typography
-                      fontFamily="Inter Bold"
-                      fontSize={15}
-                      paddingTop={0.2}
-                      gutterBottom
-                    >
-                      {t('proposals.labels.name')}
-                    </Typography>
-
-                    <Flex marginBottom={isDesktop ? 0 : 1} sx={changeStyles}>
-                      <ChangeIcon
-                        changeType={ChangeType.Remove}
-                        sx={{ marginRight: '1ch' }}
-                      />
-                      <Typography
-                        color="primary"
-                        fontSize="inherit"
-                        marginRight="0.25ch"
-                      >
-                        {oldName}
-                      </Typography>
-                    </Flex>
-
-                    <Flex sx={changeStyles}>
-                      <ChangeIcon
-                        changeType={ChangeType.Add}
-                        sx={{ marginRight: '1ch' }}
-                      />
-                      <Typography
-                        color="primary"
-                        fontSize="inherit"
-                        marginRight="0.25ch"
-                      >
-                        {name}
-                      </Typography>
-                    </Flex>
-                  </Grid>
+                  <ProposedChange
+                    label={t('proposals.labels.name')}
+                    proposedValue={name}
+                    oldValue={oldName}
+                  />
                 )}
 
                 {isChangingColor && (
