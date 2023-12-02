@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddGroupConfigColumns1701547747691 implements MigrationInterface {
-  name = 'AddGroupConfigColumns1701547747691';
+export class AddGroupConfigColumns1701548819916 implements MigrationInterface {
+  name = 'AddGroupConfigColumns1701548819916';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -26,7 +26,7 @@ export class AddGroupConfigColumns1701547747691 implements MigrationInterface {
       `ALTER TABLE "group_config" ADD "standAsidesLimit" integer NOT NULL DEFAULT '2'`,
     );
     await queryRunner.query(
-      `ALTER TABLE "group_config" ADD "reservationsLimit" integer NOT NULL DEFAULT '3'`,
+      `ALTER TABLE "group_config" ADD "reservationsLimit" integer NOT NULL DEFAULT '2'`,
     );
     await queryRunner.query(
       `ALTER TABLE "group_config" ADD "ratificationThreshold" integer NOT NULL DEFAULT '50'`,

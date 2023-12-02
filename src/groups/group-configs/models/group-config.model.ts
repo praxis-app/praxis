@@ -26,7 +26,7 @@ export class GroupConfig {
   @Field(() => Int)
   standAsidesLimit: number;
 
-  @Column({ default: 3 })
+  @Column({ default: 2 })
   @Field(() => Int)
   reservationsLimit: number;
 

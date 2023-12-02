@@ -51,7 +51,7 @@ import { AddServerConfigTable1699135846939 } from './migrations/1699135846939-Ad
 import { AddCanaryTable1699136722535 } from './migrations/1699136722535-AddCanaryTable';
 import { RemoveRefreshTokenTable1699815961902 } from './migrations/1699815961902-RemoveRefreshTokenTable';
 import { AddProposalActionGroupConfigTable1700964923516 } from './migrations/1700964923516-AddProposalActionGroupConfigTable';
-import { AddGroupConfigColumns1701547747691 } from './migrations/1701547747691-AddGroupConfigColumns';
+import { AddGroupConfigColumns1701548819916 } from './migrations/1701548819916-AddGroupConfigColumns';
 
 dotenv.config();
 
@@ -95,7 +95,7 @@ export default new DataSource({
     AddCommentTable1693003196421,
     AddEventTables1690147636077,
     AddFollowTable1679778147216,
-    AddGroupConfigColumns1701547747691,
+    AddGroupConfigColumns1701548819916,
     AddGroupConfigTable1685746618239,
     AddGroupMemberLinkTable1681010227367,
     AddLikeTable1679157357262,
