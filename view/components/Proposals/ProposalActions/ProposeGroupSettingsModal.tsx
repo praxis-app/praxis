@@ -126,7 +126,7 @@ const ProposeGroupSettingsModal = ({
                     name="standAsidesLimit"
                     onChange={handleChange}
                     sx={{ color: 'text.secondary' }}
-                    value={values.standAsidesLimit || ''}
+                    value={values.standAsidesLimit || 0}
                     variant="standard"
                     disableUnderline
                   >
@@ -161,7 +161,7 @@ const ProposeGroupSettingsModal = ({
                     name="reservationsLimit"
                     onChange={handleChange}
                     sx={{ color: 'text.secondary' }}
-                    value={values.reservationsLimit || ''}
+                    value={values.reservationsLimit || 0}
                     variant="standard"
                     disableUnderline
                   >
