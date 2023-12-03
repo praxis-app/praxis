@@ -144,13 +144,13 @@ const ProposalActionRole = ({
 
   const getRoleNameTextWidth = () => {
     if (isDesktop) {
-      if (isChangingColor) {
+      if (isRoleChange) {
         return '330px';
       }
       return '390px';
     }
 
-    if (isChangingColor) {
+    if (isRoleChange) {
       return '80px';
     }
     return '120px';
