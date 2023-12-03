@@ -1,7 +1,7 @@
 import { Box, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { ReactNode } from 'react';
-import { GroupSettingsFieldName } from '../../../constants/group.constants';
-import Flex from '../../Shared/Flex';
+import { GroupSettingsFieldName } from '../../constants/group.constants';
+import Flex from '../Shared/Flex';
 
 const SETTING_DESCRIPTION_WIDTH = '60%';
 

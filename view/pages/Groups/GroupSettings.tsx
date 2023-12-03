@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useGroupSettingsLazyQuery } from '../../graphql/groups/queries/gen/GroupSettings.gen';
-import GroupSettingsForm from '../../components/Groups/GroupSettingsForm/GroupSettingsForm';
+import GroupSettingsForm from '../../components/Groups/GroupSettingsForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { TruncationSizes } from '../../constants/shared.constants';

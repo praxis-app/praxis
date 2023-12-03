@@ -12,14 +12,14 @@ import { useTranslation } from 'react-i18next';
 import {
   GroupPrivacy,
   GroupSettingsFieldName,
-} from '../../../constants/group.constants';
-import { toastVar } from '../../../graphql/cache';
-import { UpdateGroupConfigInput } from '../../../graphql/gen';
-import { GroupSettingsFormFragment } from '../../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
-import { useUpdateGroupSettingsMutation } from '../../../graphql/groups/mutations/gen/UpdateGroupSettings.gen';
-import Flex from '../../Shared/Flex';
-import PrimaryActionButton from '../../Shared/PrimaryActionButton';
-import SliderInput from '../../Shared/SliderInput';
+} from '../../constants/group.constants';
+import { toastVar } from '../../graphql/cache';
+import { UpdateGroupConfigInput } from '../../graphql/gen';
+import { GroupSettingsFormFragment } from '../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
+import { useUpdateGroupSettingsMutation } from '../../graphql/groups/mutations/gen/UpdateGroupSettings.gen';
+import Flex from '../Shared/Flex';
+import PrimaryActionButton from '../Shared/PrimaryActionButton';
+import SliderInput from '../Shared/SliderInput';
 import GroupSettingsSelect from './GroupSettingsSelect';
 
 const SETTING_DESCRIPTION_WIDTH = '60%';
