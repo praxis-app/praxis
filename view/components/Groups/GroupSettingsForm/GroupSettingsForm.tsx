@@ -4,7 +4,6 @@ import {
   Divider,
   FormGroup,
   MenuItem,
-  Select,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -176,34 +175,20 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
 
             <Divider sx={{ marginY: 3 }} />
 
-            <Flex justifyContent="space-between">
-              <Box width={SETTING_DESCRIPTION_WIDTH}>
-                <Typography>{t('groups.settings.names.privacy')}</Typography>
-
-                <Typography
-                  fontSize={12}
-                  sx={{ color: theme.palette.text.secondary }}
-                >
-                  {t('groups.settings.descriptions.privacy')}
-                </Typography>
-              </Box>
-
-              <Select
-                name={GroupSettingsFieldName.Privacy}
-                onChange={handleChange}
-                sx={{ color: theme.palette.text.secondary }}
-                value={values.privacy}
-                variant="standard"
-                disableUnderline
-              >
-                <MenuItem value={GroupPrivacy.Private}>
-                  {t('groups.labels.private')}
-                </MenuItem>
-                <MenuItem value={GroupPrivacy.Public}>
-                  {t('groups.labels.public')}
-                </MenuItem>
-              </Select>
-            </Flex>
+            <GroupSettingsSelect
+              fieldName={GroupSettingsFieldName.Privacy}
+              label={t('groups.settings.names.privacy')}
+              description={t('groups.settings.descriptions.privacy')}
+              value={values.privacy}
+              onChange={handleChange}
+            >
+              <MenuItem value={GroupPrivacy.Private}>
+                {t('groups.labels.private')}
+              </MenuItem>
+              <MenuItem value={GroupPrivacy.Public}>
+                {t('groups.labels.public')}
+              </MenuItem>
+            </GroupSettingsSelect>
 
             {settings.isPublic && (
               <Typography
