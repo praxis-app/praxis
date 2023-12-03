@@ -7,7 +7,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
-import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
+import { GroupPrivacy } from '../groups/group-configs/group-config.constants';
 import { GroupsService } from '../groups/groups.service';
 import { Group } from '../groups/models/group.model';
 import { ImageTypes } from '../images/image.constants';

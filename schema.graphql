@@ -182,6 +182,7 @@ type GroupConfig {
   standAsidesLimit: Int!
   reservationsLimit: Int!
   ratificationThreshold: Int!
+  votingTimeLimit: Int!
   privacy: String!
   group: Group!
   createdAt: DateTime!

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { IsLikedByMeKey } from '../dataloader/dataloader.types';
-import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
+import { GroupPrivacy } from '../groups/group-configs/group-config.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';

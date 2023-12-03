@@ -1,8 +1,8 @@
 import { rule } from 'graphql-shield';
-import { UNAUTHORIZED } from '../../shared/shared.constants';
 import { Context } from '../../context/context.types';
-import { GroupPrivacy } from '../../groups/group-configs/models/group-config.model';
+import { GroupPrivacy } from '../../groups/group-configs/group-config.constants';
 import { UpdatePostInput } from '../../posts/models/update-post.input';
+import { UNAUTHORIZED } from '../../shared/shared.constants';
 
 export const isOwnPost = rule({ cache: 'strict' })(async (
   _parent,

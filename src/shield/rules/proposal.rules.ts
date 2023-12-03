@@ -1,6 +1,6 @@
 import { rule } from 'graphql-shield';
 import { Context } from '../../context/context.types';
-import { GroupPrivacy } from '../../groups/group-configs/models/group-config.model';
+import { GroupPrivacy } from '../../groups/group-configs/group-config.constants';
 import { Image } from '../../images/models/image.model';
 import { ProposalAction } from '../../proposals/proposal-actions/models/proposal-action.model';
 import { ProposalActionEventHost } from '../../proposals/proposal-actions/proposal-action-events/models/proposal-action-event-host.model';

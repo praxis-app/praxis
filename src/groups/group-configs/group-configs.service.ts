@@ -2,7 +2,8 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { GroupsService } from '../groups.service';
-import { GroupConfig, GroupPrivacy } from './models/group-config.model';
+import { GroupPrivacy } from './group-config.constants';
+import { GroupConfig } from './models/group-config.model';
 import { UpdateGroupConfigInput } from './models/update-group-config.input';
 
 @Injectable()

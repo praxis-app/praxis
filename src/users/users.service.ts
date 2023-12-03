@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { IsFollowedByMeKey } from '../dataloader/dataloader.types';
-import { GroupPrivacy } from '../groups/group-configs/models/group-config.model';
+import { GroupPrivacy } from '../groups/group-configs/group-config.constants';
 import { GroupPermissionsMap } from '../groups/group-roles/models/group-permissions.type';
 import { ImageTypes } from '../images/image.constants';
 import {

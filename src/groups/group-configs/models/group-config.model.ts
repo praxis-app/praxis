@@ -10,11 +10,7 @@ import {
 } from 'typeorm';
 import { DecisionMakingModel } from '../../../proposals/proposals.constants';
 import { Group } from '../../models/group.model';
-
-export enum GroupPrivacy {
-  Private = 'private',
-  Public = 'public',
-}
+import { GroupPrivacy, THREE_DAYS } from '../group-config.constants';
 
 @Entity()
 @ObjectType()
@@ -38,6 +34,10 @@ export class GroupConfig {
   @Column({ default: 50 })
   @Field(() => Int)
   ratificationThreshold: number;
+
+  @Column({ default: THREE_DAYS })
+  @Field(() => Int)
+  votingTimeLimit: number;
 
   @Column({ default: GroupPrivacy.Private })
   @Field()
