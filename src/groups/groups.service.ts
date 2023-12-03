@@ -13,7 +13,7 @@ import { Proposal } from '../proposals/models/proposal.model';
 import { DEFAULT_PAGE_SIZE } from '../shared/shared.constants';
 import { sanitizeText } from '../shared/shared.utils';
 import { UsersService } from '../users/users.service';
-import { GroupPrivacy } from './group-configs/group-config.constants';
+import { GroupPrivacy } from './group-configs/group-configs.constants';
 import { GroupConfigsService } from './group-configs/group-configs.service';
 import { GroupMemberRequestsService } from './group-member-requests/group-member-requests.service';
 import { initGroupRolePermissions } from './group-roles/group-role.utils';

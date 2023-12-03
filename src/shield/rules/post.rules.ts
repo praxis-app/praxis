@@ -1,6 +1,6 @@
 import { rule } from 'graphql-shield';
 import { Context } from '../../context/context.types';
-import { GroupPrivacy } from '../../groups/group-configs/group-config.constants';
+import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
 import { UpdatePostInput } from '../../posts/models/update-post.input';
 import { UNAUTHORIZED } from '../../shared/shared.constants';
 

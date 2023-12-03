@@ -1,7 +1,7 @@
 import { rule } from 'graphql-shield';
 import { FindOptionsWhere } from 'typeorm';
 import { Context } from '../../context/context.types';
-import { GroupPrivacy } from '../../groups/group-configs/group-config.constants';
+import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
 import { GroupConfig } from '../../groups/group-configs/models/group-config.model';
 import { UpdateGroupConfigInput } from '../../groups/group-configs/models/update-group-config.input';
 import { CreateGroupRoleInput } from '../../groups/group-roles/models/create-group-role.input';

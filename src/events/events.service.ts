@@ -9,7 +9,7 @@ import {
   MoreThan,
   Repository,
 } from 'typeorm';
-import { GroupPrivacy } from '../groups/group-configs/group-config.constants';
+import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
 import { ImageTypes } from '../images/image.constants';
 import { saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';

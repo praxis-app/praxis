@@ -3,6 +3,16 @@ export enum DecisionMakingModel {
   Consent = 'consent',
 }
 
+export enum VotingTimeLimit {
+  HalfHour = 30,
+  OneHour = 60,
+  HalfDay = 60 * 12,
+  OneDay = 60 * 24,
+  ThreeDays = 60 * 24 * 3,
+  OneWeek = 60 * 24 * 7,
+  TwoWeeks = 60 * 24 * 14,
+}
+
 export enum ProposalActionType {
   ChangeCoverPhoto = 'change-cover-photo',
   ChangeDescription = 'change-description',

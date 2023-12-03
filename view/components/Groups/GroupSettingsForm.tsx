@@ -13,7 +13,10 @@ import {
   GroupPrivacy,
   GroupSettingsFieldName,
 } from '../../constants/group.constants';
-import { DecisionMakingModel } from '../../constants/proposal.constants';
+import {
+  DecisionMakingModel,
+  VotingTimeLimit,
+} from '../../constants/proposal.constants';
 import { toastVar } from '../../graphql/cache';
 import { UpdateGroupConfigInput } from '../../graphql/gen';
 import { GroupSettingsFormFragment } from '../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
@@ -193,6 +196,38 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                 showPercentSign
               />
             </Flex>
+
+            <Divider sx={{ marginY: 3 }} />
+
+            <GroupSettingsSelect
+              fieldName={GroupSettingsFieldName.VotingTimeLimit}
+              label={t('groups.settings.names.votingTimeLimit')}
+              description={t('groups.settings.descriptions.votingTimeLimit')}
+              value={values.votingTimeLimit}
+              onChange={handleChange}
+            >
+              <MenuItem value={VotingTimeLimit.HalfHour}>
+                {t('time.minutesFull', { count: 30 })}
+              </MenuItem>
+              <MenuItem value={VotingTimeLimit.OneHour}>
+                {t('time.hoursFull', { count: 1 })}
+              </MenuItem>
+              <MenuItem value={VotingTimeLimit.HalfDay}>
+                {t('time.hoursFull', { count: 12 })}
+              </MenuItem>
+              <MenuItem value={VotingTimeLimit.OneDay}>
+                {t('time.daysFull', { count: 1 })}
+              </MenuItem>
+              <MenuItem value={VotingTimeLimit.ThreeDays}>
+                {t('time.daysFull', { count: 3 })}
+              </MenuItem>
+              <MenuItem value={VotingTimeLimit.OneWeek}>
+                {t('time.weeks', { count: 1 })}
+              </MenuItem>
+              <MenuItem value={VotingTimeLimit.TwoWeeks}>
+                {t('time.weeks', { count: 2 })}
+              </MenuItem>
+            </GroupSettingsSelect>
 
             <Divider sx={{ marginY: 3 }} />
 

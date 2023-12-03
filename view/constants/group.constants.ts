@@ -10,9 +10,10 @@ export const enum GroupTab {
 }
 
 export const enum GroupSettingsFieldName {
-  Privacy = 'privacy',
+  DecisionMakingModel = 'decisionMakingModel',
   RatificationThreshold = 'ratificationThreshold',
   ReservationsLimit = 'reservationsLimit',
   StandAsidesLimit = 'standAsidesLimit',
-  DecisionMakingModel = 'decisionMakingModel',
+  VotingTimeLimit = 'votingTimeLimit',
+  Privacy = 'privacy',
 }

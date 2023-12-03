@@ -17,7 +17,7 @@ import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { FeedItem } from '../shared/models/feed-item.union';
 import { User } from '../users/models/user.model';
-import { GroupPrivacy } from './group-configs/group-config.constants';
+import { GroupPrivacy } from './group-configs/group-configs.constants';
 import { GroupConfigsService } from './group-configs/group-configs.service';
 import { GroupConfig } from './group-configs/models/group-config.model';
 import { GroupMemberRequestsService } from './group-member-requests/group-member-requests.service';

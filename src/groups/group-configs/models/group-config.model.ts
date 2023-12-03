@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { DecisionMakingModel } from '../../../proposals/proposals.constants';
 import { Group } from '../../models/group.model';
-import { GroupPrivacy, THREE_DAYS } from '../group-config.constants';
+import { GroupPrivacy, THREE_DAYS } from '../group-configs.constants';
 
 @Entity()
 @ObjectType()
