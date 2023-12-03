@@ -1002,6 +1002,7 @@ export type UpdateGroupConfigInput = {
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
   reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
   standAsidesLimit?: InputMaybe<Scalars['Int']['input']>;
+  votingTimeLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateGroupInput = {

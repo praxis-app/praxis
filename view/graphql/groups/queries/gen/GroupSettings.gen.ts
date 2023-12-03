@@ -39,6 +39,7 @@ export type GroupSettingsQuery = {
       ratificationThreshold: number;
       reservationsLimit: number;
       standAsidesLimit: number;
+      votingTimeLimit: number;
     };
   };
 };

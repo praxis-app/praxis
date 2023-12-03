@@ -44,6 +44,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
     ratificationThreshold: settings.ratificationThreshold,
     reservationsLimit: settings.reservationsLimit,
     standAsidesLimit: settings.standAsidesLimit,
+    votingTimeLimit: settings.votingTimeLimit,
     privacy: settings.privacy,
   };
 

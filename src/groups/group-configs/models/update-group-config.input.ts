@@ -18,5 +18,5 @@ export class UpdateGroupConfigInput {
   ratificationThreshold?: number;
 
   @Field(() => Int, { nullable: true })
-  votingTimeLimit: number;
+  votingTimeLimit?: number;
 }

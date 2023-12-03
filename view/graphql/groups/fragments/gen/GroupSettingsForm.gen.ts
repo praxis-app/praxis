@@ -16,6 +16,7 @@ export type GroupSettingsFormFragment = {
     ratificationThreshold: number;
     reservationsLimit: number;
     standAsidesLimit: number;
+    votingTimeLimit: number;
   };
 };
 
@@ -29,6 +30,7 @@ export const GroupSettingsFormFragmentDoc = gql`
       ratificationThreshold
       reservationsLimit
       standAsidesLimit
+      votingTimeLimit
     }
   }
 `;

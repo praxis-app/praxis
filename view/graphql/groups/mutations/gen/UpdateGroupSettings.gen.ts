@@ -35,6 +35,7 @@ export type UpdateGroupSettingsMutation = {
         ratificationThreshold: number;
         reservationsLimit: number;
         standAsidesLimit: number;
+        votingTimeLimit: number;
       };
       myPermissions?: {
         __typename?: 'GroupPermissions';
