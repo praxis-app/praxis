@@ -3,7 +3,7 @@ export enum GroupPrivacy {
   Public = 'public',
 }
 
-export const enum GroupTabs {
+export const enum GroupTab {
   About = 'about',
   Events = 'events',
   Proposals = 'proposals',

@@ -13,7 +13,7 @@ import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import {
   MAX_USES_OPTIONS,
-  ServerInviteFieldNames,
+  ServerInviteFieldName,
 } from '../../constants/server-invite.constants';
 import { Time } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
@@ -121,7 +121,7 @@ const ServerInviteForm = () => {
                 <FormControl variant="standard" sx={{ marginBottom: 1 }}>
                   <InputLabel>{t('invites.form.labels.expiresAt')}</InputLabel>
                   <Select
-                    name={ServerInviteFieldNames.ExpiresAt}
+                    name={ServerInviteFieldName.ExpiresAt}
                     onChange={handleChange}
                     value={values.expiresAt}
                   >
@@ -136,7 +136,7 @@ const ServerInviteForm = () => {
                 <FormControl variant="standard">
                   <InputLabel>{t('invites.form.labels.maxUses')}</InputLabel>
                   <Select
-                    name={ServerInviteFieldNames.MaxUses}
+                    name={ServerInviteFieldName.MaxUses}
                     onChange={handleChange}
                     value={values.maxUses}
                   >
