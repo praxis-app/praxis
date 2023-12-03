@@ -59,6 +59,7 @@ export class VotesService {
       await this.proposalsService.isProposalRatifiable(vote.proposalId);
     if (isProposalRatifiable) {
       await this.proposalsService.ratifyProposal(vote.proposalId);
+      await this.proposalsService.implementProposal(vote.proposalId);
     }
     return { vote };
   }

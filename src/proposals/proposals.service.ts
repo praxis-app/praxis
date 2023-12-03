@@ -226,7 +226,6 @@ export class ProposalsService {
   }
 
   async ratifyProposal(proposalId: number) {
-    await this.implementProposal(proposalId);
     await this.repository.update(proposalId, {
       stage: ProposalStage.Ratified,
     });
