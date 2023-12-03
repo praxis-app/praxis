@@ -289,6 +289,7 @@ export type Group = {
 export type GroupConfig = {
   __typename?: 'GroupConfig';
   createdAt: Scalars['DateTime']['output'];
+  decisionMakingModel: Scalars['String']['output'];
   group: Group;
   id: Scalars['Int']['output'];
   isPublic: Scalars['Boolean']['output'];
