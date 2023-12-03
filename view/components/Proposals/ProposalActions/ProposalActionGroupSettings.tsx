@@ -13,6 +13,11 @@ import Accordion, {
 } from '../../Shared/Accordion';
 import ChangeDelta from './ChangeDelta';
 
+const isChangingNumberValue = (
+  proposedValue: number | null | undefined,
+  oldValue: number | null | undefined,
+) => !!(proposedValue || proposedValue === 0) && proposedValue !== oldValue;
+
 interface Props {
   groupSettings:
     | ProposalActionGroupSettingsFragment
@@ -71,17 +76,20 @@ const ProposalActionGroupSettings = ({
   const isChangingPrivacy =
     groupSettings.privacy && groupSettings.privacy !== oldPrivacy;
 
-  const isChangingStandAsidesLimit =
-    !!groupSettings.standAsidesLimit &&
-    groupSettings.standAsidesLimit !== oldStandAsidesLimit;
+  const isChangingStandAsidesLimit = isChangingNumberValue(
+    groupSettings.standAsidesLimit,
+    oldStandAsidesLimit,
+  );
 
-  const isChangingReservationsLimit =
-    !!groupSettings.reservationsLimit &&
-    groupSettings.reservationsLimit !== oldReservationsLimit;
+  const isChangingReservationsLimit = isChangingNumberValue(
+    groupSettings.reservationsLimit,
+    oldReservationsLimit,
+  );
 
-  const isChangingRatificationThreshold =
-    !!groupSettings.ratificationThreshold &&
-    groupSettings.ratificationThreshold !== oldRatificationThreshold;
+  const isChangingRatificationThreshold = isChangingNumberValue(
+    groupSettings.ratificationThreshold,
+    oldRatificationThreshold,
+  );
 
   const accordionStyles: SxProps = {
     backgroundColor: 'rgb(0, 0, 0, 0.1)',
