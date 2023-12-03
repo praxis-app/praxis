@@ -3,10 +3,12 @@ query GroupSettingsByGroupId($groupId: Int!) {
     id
     settings {
       id
-      privacy
+      decisionMakingModel
       ratificationThreshold
       reservationsLimit
       standAsidesLimit
+      votingTimeLimit
+      privacy
     }
   }
 }

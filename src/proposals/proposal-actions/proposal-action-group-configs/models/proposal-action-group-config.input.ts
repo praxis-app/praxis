@@ -5,12 +5,18 @@ export class ProposalActionGroupConfigInput {
   @Field({ nullable: true })
   privacy?: string;
 
-  @Field(() => Int, { nullable: true })
-  standAsidesLimit: number;
+  @Field({ nullable: true })
+  decisionMakingModel?: string;
 
   @Field(() => Int, { nullable: true })
-  reservationsLimit: number;
+  standAsidesLimit?: number;
 
   @Field(() => Int, { nullable: true })
-  ratificationThreshold: number;
+  reservationsLimit?: number;
+
+  @Field(() => Int, { nullable: true })
+  ratificationThreshold?: number;
+
+  @Field(() => Int, { nullable: true })
+  votingTimeLimit?: number;
 }

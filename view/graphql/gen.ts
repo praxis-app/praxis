@@ -740,10 +740,12 @@ export type ProposalActionGroupConfig = {
 };
 
 export type ProposalActionGroupConfigInput = {
+  decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
   privacy?: InputMaybe<Scalars['String']['input']>;
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
   reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
   standAsidesLimit?: InputMaybe<Scalars['Int']['input']>;
+  votingTimeLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type ProposalActionInput = {

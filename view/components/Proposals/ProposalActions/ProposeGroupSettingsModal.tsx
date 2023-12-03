@@ -7,6 +7,7 @@ import {
   GroupSettingsFieldName,
 } from '../../../constants/group.constants';
 import {
+  DecisionMakingModel,
   ProposalActionFieldName,
   ProposalActionType,
 } from '../../../constants/proposal.constants';
@@ -54,10 +55,12 @@ const ProposeGroupSettingsModal = ({
 
   const groupSettings = data?.group.settings;
   const initialValues: ProposalActionGroupConfigInput = {
-    privacy: groupSettings?.privacy,
+    decisionMakingModel: groupSettings?.decisionMakingModel,
     ratificationThreshold: groupSettings?.ratificationThreshold,
     reservationsLimit: groupSettings?.reservationsLimit,
     standAsidesLimit: groupSettings?.standAsidesLimit,
+    votingTimeLimit: groupSettings?.votingTimeLimit,
+    privacy: groupSettings?.privacy,
   };
 
   const handleClose = () => {
@@ -119,6 +122,25 @@ const ProposeGroupSettingsModal = ({
           <Form>
             {data && (
               <FormGroup sx={{ paddingTop: 1 }}>
+                <GroupSettingsSelect
+                  fieldName={GroupSettingsFieldName.DecisionMakingModel}
+                  label={t('groups.settings.names.decisionMakingModel')}
+                  description={t(
+                    'groups.settings.descriptions.decisionMakingModel',
+                  )}
+                  value={values.decisionMakingModel || ''}
+                  onChange={handleChange}
+                >
+                  <MenuItem value={DecisionMakingModel.Consensus}>
+                    {t('groups.labels.consensus')}
+                  </MenuItem>
+                  <MenuItem value={DecisionMakingModel.Consent}>
+                    {t('groups.labels.consent')}
+                  </MenuItem>
+                </GroupSettingsSelect>
+
+                <Divider sx={{ marginY: 3 }} />
+
                 <GroupSettingsSelect
                   fieldName={GroupSettingsFieldName.StandAsidesLimit}
                   label={t('groups.settings.names.standAsidesLimit')}
