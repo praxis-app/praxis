@@ -298,6 +298,7 @@ export type GroupConfig = {
   reservationsLimit: Scalars['Int']['output'];
   standAsidesLimit: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
+  votingTimeLimit: Scalars['Int']['output'];
 };
 
 export type GroupMemberRequest = {
