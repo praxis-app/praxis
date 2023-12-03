@@ -39,7 +39,7 @@ import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import JoinButton from './JoinButton';
-import { GroupTabs } from '../../constants/group.constants';
+import { GroupTab } from '../../constants/group.constants';
 import { removeGroup } from '../../utils/cache.utils';
 
 const NameText = styled(Typography)(() => ({
@@ -85,11 +85,11 @@ const GroupProfileCard = ({
     if (!params.tab) {
       return;
     }
-    if (params.tab === GroupTabs.Events) {
+    if (params.tab === GroupTab.Events) {
       setTab(1);
       return;
     }
-    if (params.tab === GroupTabs.About) {
+    if (params.tab === GroupTab.About) {
       setTab(2);
     }
   }, [params.tab, setTab]);
@@ -114,8 +114,8 @@ const GroupProfileCard = ({
   const deleteGroupPrompt = t('prompts.deleteItem', { itemType: 'group' });
 
   const groupPagePath = `${NavigationPaths.Groups}/${name}`;
-  const aboutTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTabs.About}`;
-  const eventsTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTabs.Events}`;
+  const aboutTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTab.About}`;
+  const eventsTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTab.Events}`;
 
   const getNameTextWidth = () => {
     if (isAboveMedium) {

@@ -22,6 +22,18 @@ export class GroupConfig {
   @Field(() => Int)
   id: number;
 
+  @Column({ default: 2 })
+  @Field(() => Int)
+  standAsidesLimit: number;
+
+  @Column({ default: 2 })
+  @Field(() => Int)
+  reservationsLimit: number;
+
+  @Column({ default: 50 })
+  @Field(() => Int)
+  ratificationThreshold: number;
+
   @Column({ default: GroupPrivacy.Private })
   @Field()
   privacy: string;

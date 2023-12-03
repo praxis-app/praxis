@@ -6,13 +6,11 @@ import {
   Grid,
   SxProps,
   Typography,
-  useTheme,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { ProposalActionType } from '../../../constants/proposal.constants';
-import { ChangeType } from '../../../constants/shared.constants';
 import {
   ProposalActionRoleInput,
   ProposalActionRoleMemberInput,
@@ -27,11 +25,10 @@ import Accordion, {
   AccordionDetails,
   AccordionSummary,
 } from '../../Shared/Accordion';
-import Flex from '../../Shared/Flex';
 import ProgressBar from '../../Shared/ProgressBar';
-import ChangeIcon from './ChangeIcon';
+import ChangeDelta from './ChangeDelta';
 import ProposalActionPermission from './ProposalActionPermission';
-import ProposedRoleMember from './ProposedRoleMember';
+import ProposalActionRoleMember from './ProposalActionRoleMember';
 
 type ArrayElement<ArrayType extends unknown[] | undefined | null> =
   ArrayType extends readonly (infer ElementType)[] ? ElementType : never;
@@ -79,7 +76,6 @@ const ProposalActionRole = ({
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
-  const theme = useTheme();
 
   // Fetch data required for preview in ProposalForm
   useEffect(() => {
@@ -145,16 +141,6 @@ const ProposalActionRole = ({
     marginRight: '0.8ch',
     marginTop: 0.4,
   };
-  const changeStyles: SxProps = {
-    borderColor: theme.palette.divider,
-    borderRadius: 1,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    fontSize: 14,
-    marginBottom: 1,
-    paddingX: 0.6,
-    paddingY: 0.5,
-  };
 
   const getRoleNameTextWidth = () => {
     if (isDesktop) {
@@ -210,86 +196,23 @@ const ProposalActionRole = ({
             {isRoleChange && (
               <>
                 {isChangingName && (
-                  <Grid item xs={6}>
-                    <Typography
-                      fontFamily="Inter Bold"
-                      fontSize={15}
-                      paddingTop={0.2}
-                      gutterBottom
-                    >
-                      {t('proposals.labels.name')}
-                    </Typography>
-
-                    <Flex marginBottom={isDesktop ? 0 : 1} sx={changeStyles}>
-                      <ChangeIcon
-                        changeType={ChangeType.Remove}
-                        sx={{ marginRight: '1ch' }}
-                      />
-                      <Typography
-                        color="primary"
-                        fontSize="inherit"
-                        marginRight="0.25ch"
-                      >
-                        {oldName}
-                      </Typography>
-                    </Flex>
-
-                    <Flex sx={changeStyles}>
-                      <ChangeIcon
-                        changeType={ChangeType.Add}
-                        sx={{ marginRight: '1ch' }}
-                      />
-                      <Typography
-                        color="primary"
-                        fontSize="inherit"
-                        marginRight="0.25ch"
-                      >
-                        {name}
-                      </Typography>
-                    </Flex>
-                  </Grid>
+                  <ChangeDelta
+                    label={t('proposals.labels.name')}
+                    proposedValue={name}
+                    oldValue={oldName}
+                  />
                 )}
 
                 {isChangingColor && (
-                  <Grid item xs={6}>
-                    <Typography
-                      fontFamily="Inter Bold"
-                      fontSize={15}
-                      gutterBottom
-                    >
-                      {t('proposals.labels.color')}
-                    </Typography>
-
-                    <Flex sx={changeStyles}>
-                      <ChangeIcon
-                        changeType={ChangeType.Remove}
-                        sx={{ marginRight: '0.8ch' }}
-                      />
-                      <Circle sx={colorChangeIconStyles} />
-                      <Typography
-                        color="primary"
-                        fontSize="inherit"
-                        marginRight="0.25ch"
-                      >
-                        {oldColor}
-                      </Typography>
-                    </Flex>
-
-                    <Flex sx={changeStyles}>
-                      <ChangeIcon
-                        changeType={ChangeType.Add}
-                        sx={{ marginRight: '0.8ch' }}
-                      />
+                  <ChangeDelta
+                    label={t('proposals.labels.color')}
+                    proposedValue={color}
+                    oldValue={oldColor}
+                    oldValueIcon={<Circle sx={colorChangeIconStyles} />}
+                    proposedValueIcon={
                       <Circle sx={{ ...colorChangeIconStyles, color }} />
-                      <Typography
-                        color="primary"
-                        fontSize="inherit"
-                        marginRight="0.25ch"
-                      >
-                        {color}
-                      </Typography>
-                    </Flex>
-                  </Grid>
+                    }
+                  />
                 )}
               </>
             )}
@@ -330,7 +253,7 @@ const ProposalActionRole = ({
                 </Typography>
 
                 {members.map((member: RoleMember) => (
-                  <ProposedRoleMember
+                  <ProposalActionRoleMember
                     key={'id' in member ? member.id : member.userId}
                     selectedUsers={selectedUsersData?.usersByIds}
                     actionType={actionType}

@@ -73,7 +73,13 @@ type ProposalActionEvent {
 type ProposalActionGroupConfig {
   id: Int!
   privacy: String
+  standAsidesLimit: Int
+  reservationsLimit: Int
+  ratificationThreshold: Int
   oldPrivacy: String
+  oldStandAsidesLimit: Int
+  oldReservationsLimit: Int
+  oldRatificationThreshold: Int
   proposalAction: ProposalAction!
 }
 
@@ -172,6 +178,9 @@ type Proposal {
 
 type GroupConfig {
   id: Int!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
   privacy: String!
   group: Group!
   createdAt: DateTime!
@@ -690,6 +699,9 @@ input UpdateGroupInput {
 input UpdateGroupConfigInput {
   groupId: Int!
   privacy: String
+  standAsidesLimit: Int
+  reservationsLimit: Int
+  ratificationThreshold: Int
 }
 
 input CreateLikeInput {
@@ -757,6 +769,9 @@ input GroupRolePermissionInput {
 
 input ProposalActionGroupConfigInput {
   privacy: String
+  standAsidesLimit: Int
+  reservationsLimit: Int
+  ratificationThreshold: Int
 }
 
 input UpdateProposalInput {

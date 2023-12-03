@@ -112,6 +112,8 @@
       "roleChangeProposal": "Role change proposal",
       "roleProposal": "Role proposal",
       "selectRoleToChange": "Choose a role",
+      "settingChangesCount_one": "{{count}} setting change",
+      "settingChangesCount_other": "{{count}} setting changes",
       "usersProposal": "{{name}}'s Proposal"
     },
     "toasts": {
@@ -267,7 +269,7 @@
     },
     "prompts": {
       "confirmLeave": "Are you sure you want to leave the group?",
-      "publicGroup": "Anyone can view the group page and any content posted by group members."
+      "publicGroup": "Public Group: Anyone can view the group page and any content posted by group members."
     },
     "tabs": {
       "about": "About",
@@ -277,10 +279,16 @@
     },
     "settings": {
       "names": {
-        "privacy": "Privacy"
+        "privacy": "Privacy",
+        "ratificationThreshold": "Ratification Threshold",
+        "reservationsLimit": "Reservations Limit",
+        "standAsidesLimit": "Stand Asides Limit"
       },
       "descriptions": {
-        "privacy": "Choose whether or not the group and it's content are viewable to the public."
+        "privacy": "Choose whether or not the group and it's content are viewable to the public.",
+        "ratificationThreshold": "Set the minimum number of positive votes required for a proposal to be ratified.",
+        "reservationsLimit": "Set a limit for the acceptable number of reservations allowed for a proposal to still be able to pass.",
+        "standAsidesLimit": "Set a limit for the acceptable number of stand asides allowed for a proposal to still be able to pass."
       }
     },
     "tips": {

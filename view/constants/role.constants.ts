@@ -29,7 +29,7 @@ export const GROUP_PERMISSION_NAMES: (keyof GroupRolePermissionInput)[] = [
   'removeMembers',
 ];
 
-export enum EditRoleTabNames {
+export enum EditRoleTabName {
   Permissions = 'permissions',
   Members = 'members',
 }

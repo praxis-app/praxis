@@ -9,7 +9,10 @@ import {
 import { Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GroupPrivacy } from '../../../constants/group.constants';
+import {
+  GroupPrivacy,
+  GroupSettingsFieldName,
+} from '../../../constants/group.constants';
 import {
   ProposalActionFieldName,
   ProposalActionType,
@@ -20,6 +23,9 @@ import Flex from '../../Shared/Flex';
 import Modal from '../../Shared/Modal';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import ProgressBar from '../../Shared/ProgressBar';
+import SliderInput from '../../Shared/SliderInput';
+
+const SETTING_DESCRIPTION_WIDTH = '60%';
 
 interface Props {
   actionType?: string;
@@ -52,8 +58,12 @@ const ProposeGroupSettingsModal = ({
     }
   }, [groupId, actionType, getGroupSettings]);
 
+  const groupSettings = data?.group.settings;
   const initialValues: ProposalActionGroupConfigInput = {
-    privacy: data?.group.settings.privacy,
+    privacy: groupSettings?.privacy,
+    ratificationThreshold: groupSettings?.ratificationThreshold,
+    reservationsLimit: groupSettings?.reservationsLimit,
+    standAsidesLimit: groupSettings?.standAsidesLimit,
   };
 
   const handleClose = () => {
@@ -62,8 +72,40 @@ const ProposeGroupSettingsModal = ({
   };
 
   const handleSubmit = async (formValues: ProposalActionGroupConfigInput) => {
-    setFieldValue(ProposalActionFieldName.GroupSettings, formValues);
+    const changedValues = Object.keys(formValues).reduce((result, key) => {
+      if (formValues[key] !== initialValues[key]) {
+        result[key] = formValues[key];
+      }
+      return result;
+    }, {});
+
+    setFieldValue(ProposalActionFieldName.GroupSettings, changedValues);
     setOpen(false);
+  };
+
+  const handleSliderInputBlur = (
+    setFieldValue: (field: string, value: number) => void,
+    value?: number | null,
+  ) => {
+    const fieldName = GroupSettingsFieldName.RatificationThreshold;
+    if (value === undefined || value === null) {
+      return;
+    }
+    if (value < 0) {
+      setFieldValue(fieldName, 0);
+      return;
+    }
+    if (value > 100) {
+      setFieldValue(fieldName, 100);
+      return;
+    }
+    if (value % 5 !== 0) {
+      setFieldValue(fieldName, Math.round(value / 5) * 5);
+      return;
+    }
+    if (!Number.isInteger(value)) {
+      setFieldValue(fieldName, Math.round(value));
+    }
   };
 
   return (
@@ -79,10 +121,108 @@ const ProposeGroupSettingsModal = ({
         onSubmit={handleSubmit}
         enableReinitialize
       >
-        {({ isSubmitting, handleChange, values, dirty }) => (
+        {({ isSubmitting, handleChange, values, dirty, setFieldValue }) => (
           <Form>
             {data && (
               <FormGroup sx={{ paddingTop: 1 }}>
+                <Flex justifyContent="space-between">
+                  <Box width={SETTING_DESCRIPTION_WIDTH}>
+                    <Typography>
+                      {t('groups.settings.names.standAsidesLimit')}
+                    </Typography>
+
+                    <Typography fontSize={12} sx={{ color: 'text.secondary' }}>
+                      {t('groups.settings.descriptions.standAsidesLimit')}
+                    </Typography>
+                  </Box>
+
+                  <Select
+                    name={GroupSettingsFieldName.StandAsidesLimit}
+                    onChange={handleChange}
+                    sx={{ color: 'text.secondary' }}
+                    value={values.standAsidesLimit || 0}
+                    variant="standard"
+                    disableUnderline
+                  >
+                    {Array(11)
+                      .fill(0)
+                      .map((_, value) => (
+                        <MenuItem
+                          key={value}
+                          value={value}
+                          sx={{ width: 75, justifyContent: 'center' }}
+                        >
+                          {value}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </Flex>
+
+                <Divider sx={{ marginY: 3 }} />
+
+                <Flex justifyContent="space-between">
+                  <Box width={SETTING_DESCRIPTION_WIDTH}>
+                    <Typography>
+                      {t('groups.settings.names.reservationsLimit')}
+                    </Typography>
+
+                    <Typography fontSize={12} sx={{ color: 'text.secondary' }}>
+                      {t('groups.settings.descriptions.reservationsLimit')}
+                    </Typography>
+                  </Box>
+
+                  <Select
+                    name={GroupSettingsFieldName.ReservationsLimit}
+                    onChange={handleChange}
+                    sx={{ color: 'text.secondary' }}
+                    value={values.reservationsLimit || 0}
+                    variant="standard"
+                    disableUnderline
+                  >
+                    {Array(11)
+                      .fill(0)
+                      .map((_, value) => (
+                        <MenuItem
+                          key={value}
+                          value={value}
+                          sx={{ width: 75, justifyContent: 'center' }}
+                        >
+                          {value}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </Flex>
+
+                <Divider sx={{ marginY: 3 }} />
+
+                <Flex justifyContent="space-between">
+                  <Box width={SETTING_DESCRIPTION_WIDTH}>
+                    <Typography>
+                      {t('groups.settings.names.ratificationThreshold')}
+                    </Typography>
+
+                    <Typography fontSize={12} sx={{ color: 'text.secondary' }}>
+                      {t('groups.settings.descriptions.ratificationThreshold')}
+                    </Typography>
+                  </Box>
+
+                  <SliderInput
+                    name={GroupSettingsFieldName.RatificationThreshold}
+                    onInputChange={handleChange}
+                    onSliderChange={handleChange}
+                    value={values.ratificationThreshold || 0}
+                    onInputBlur={() =>
+                      handleSliderInputBlur(
+                        setFieldValue,
+                        values.ratificationThreshold,
+                      )
+                    }
+                    showPercentSign
+                  />
+                </Flex>
+
+                <Divider sx={{ marginY: 3 }} />
+
                 <Flex justifyContent="space-between">
                   <Box>
                     <Typography>
@@ -95,7 +235,7 @@ const ProposeGroupSettingsModal = ({
                   </Box>
 
                   <Select
-                    name="privacy"
+                    name={GroupSettingsFieldName.Privacy}
                     onChange={handleChange}
                     sx={{ color: 'text.secondary' }}
                     value={values.privacy || ''}

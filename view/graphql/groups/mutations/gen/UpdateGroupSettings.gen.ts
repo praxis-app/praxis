@@ -27,7 +27,15 @@ export type UpdateGroupSettingsMutation = {
       memberRequestCount?: number | null;
       isJoinedByMe?: boolean;
       description: string;
-      settings: { __typename?: 'GroupConfig'; id: number; isPublic: boolean };
+      settings: {
+        __typename?: 'GroupConfig';
+        id: number;
+        privacy: string;
+        isPublic: boolean;
+        ratificationThreshold: number;
+        reservationsLimit: number;
+        standAsidesLimit: number;
+      };
       myPermissions?: {
         __typename?: 'GroupPermissions';
         approveMemberRequests: boolean;

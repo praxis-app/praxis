@@ -180,17 +180,47 @@ export class ProposalActionsService {
     if (!proposedGroupConfig) {
       throw new UserInputError('Could not find proposed group settings');
     }
-    const oldGroupConfig = await this.groupConfigsService.getGroupConfig({
+
+    const {
+      privacy,
+      ratificationThreshold,
+      reservationsLimit,
+      standAsidesLimit,
+    } = proposedGroupConfig;
+
+    const groupConfig = await this.groupConfigsService.getGroupConfig({
       groupId,
     });
+
     // Record old group config
     await this.proposalActionGroupConfigsService.updateProposalActionGroupConfig(
       proposedGroupConfig.id,
-      { oldPrivacy: oldGroupConfig.privacy },
+      {
+        oldPrivacy: privacy ? groupConfig.privacy : undefined,
+
+        oldRatificationThreshold:
+          ratificationThreshold || ratificationThreshold === 0
+            ? groupConfig.ratificationThreshold
+            : undefined,
+
+        oldReservationsLimit:
+          reservationsLimit || reservationsLimit === 0
+            ? groupConfig.reservationsLimit
+            : undefined,
+
+        oldStandAsidesLimit:
+          standAsidesLimit || standAsidesLimit === 0
+            ? groupConfig.standAsidesLimit
+            : undefined,
+      },
     );
+
     // Implement proposal - update group config
     await this.groupConfigsService.updateGroupConfig({
-      privacy: proposedGroupConfig.privacy,
+      privacy: privacy ?? undefined,
+      ratificationThreshold: ratificationThreshold ?? undefined,
+      reservationsLimit: reservationsLimit ?? undefined,
+      standAsidesLimit: standAsidesLimit ?? undefined,
       groupId,
     });
   }

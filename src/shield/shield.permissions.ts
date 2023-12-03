@@ -115,13 +115,11 @@ export const shieldPermissions = shield(
       memberRequestCount: canApproveGroupMemberRequests,
       roles: isGroupMember,
     },
+    GroupConfig: or(isAuthenticated, isPublicGroup),
     GroupRole: {
       id: or(isAuthenticated, isPublicGroupRole),
       name: or(isAuthenticated, isPublicGroupRole),
       color: or(isAuthenticated, isPublicGroupRole),
-    },
-    GroupConfig: {
-      isPublic: or(isAuthenticated, isPublicGroup),
     },
     Image: {
       id: or(
@@ -162,6 +160,7 @@ export const shieldPermissions = shield(
     ProposalActionPermission: or(isAuthenticated, isPublicProposalAction),
     ProposalActionRole: or(isAuthenticated, isPublicProposalAction),
     ProposalActionRoleMember: or(isAuthenticated, isPublicProposalAction),
+    ProposalActionGroupConfig: or(isAuthenticated, isPublicProposalAction),
     Vote: or(isAuthenticated, isPublicVote),
   },
   {

@@ -1,9 +1,8 @@
-import { Box, Grid, SxProps, Typography, useTheme } from '@mui/material';
+import { Box, Grid, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { GroupPrivacy } from '../../../constants/group.constants';
-import { ChangeType } from '../../../constants/shared.constants';
 import { ProposalActionGroupConfigInput } from '../../../graphql/gen';
 import { useGroupSettingsByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupSettingsByGroupId.gen';
 import { ProposalActionGroupSettingsFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionGroupSettings.gen';
@@ -12,8 +11,12 @@ import Accordion, {
   AccordionDetails,
   AccordionSummary,
 } from '../../Shared/Accordion';
-import Flex from '../../Shared/Flex';
-import ChangeIcon from './ChangeIcon';
+import ChangeDelta from './ChangeDelta';
+
+const isChangingNumberValue = (
+  proposedValue: number | null | undefined,
+  oldValue: number | null | undefined,
+) => !!(proposedValue || proposedValue === 0) && proposedValue !== oldValue;
 
 interface Props {
   groupSettings:
@@ -36,7 +39,6 @@ const ProposalActionGroupSettings = ({
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
-  const theme = useTheme();
 
   const [getGroupSettings, { data }] = useGroupSettingsByGroupIdLazyQuery();
 
@@ -56,23 +58,43 @@ const ProposalActionGroupSettings = ({
       ? groupSettings.oldPrivacy
       : groupSettingsToChange?.privacy;
 
+  const oldStandAsidesLimit =
+    ratified && 'oldStandAsidesLimit' in groupSettings
+      ? groupSettings.oldStandAsidesLimit
+      : groupSettingsToChange?.standAsidesLimit;
+
+  const oldReservationsLimit =
+    ratified && 'oldReservationsLimit' in groupSettings
+      ? groupSettings.oldReservationsLimit
+      : groupSettingsToChange?.reservationsLimit;
+
+  const oldRatificationThreshold =
+    ratified && 'oldRatificationThreshold' in groupSettings
+      ? groupSettings.oldRatificationThreshold
+      : groupSettingsToChange?.ratificationThreshold;
+
   const isChangingPrivacy =
     groupSettings.privacy && groupSettings.privacy !== oldPrivacy;
+
+  const isChangingStandAsidesLimit = isChangingNumberValue(
+    groupSettings.standAsidesLimit,
+    oldStandAsidesLimit,
+  );
+
+  const isChangingReservationsLimit = isChangingNumberValue(
+    groupSettings.reservationsLimit,
+    oldReservationsLimit,
+  );
+
+  const isChangingRatificationThreshold = isChangingNumberValue(
+    groupSettings.ratificationThreshold,
+    oldRatificationThreshold,
+  );
 
   const accordionStyles: SxProps = {
     backgroundColor: 'rgb(0, 0, 0, 0.1)',
     borderRadius: 2,
     paddingX: 2,
-  };
-  const changeStyles: SxProps = {
-    borderColor: theme.palette.divider,
-    borderRadius: 1,
-    borderStyle: 'solid',
-    borderWidth: 1,
-    fontSize: 14,
-    marginBottom: 1,
-    paddingX: 0.6,
-    paddingY: 0.5,
   };
 
   const getPrivacyLabel = (privacy?: string | null) => {
@@ -83,16 +105,24 @@ const ProposalActionGroupSettings = ({
   };
 
   const getSettingsChanges = () => {
-    const changes: string[] = [];
+    let settingsChanged = 0;
 
     if (isChangingPrivacy) {
-      changes.push(
-        `${getPrivacyLabel(oldPrivacy)} → ${getPrivacyLabel(
-          groupSettings.privacy,
-        )}`,
-      );
+      settingsChanged += 1;
     }
-    return changes.join(', ');
+    if (isChangingStandAsidesLimit) {
+      settingsChanged += 1;
+    }
+    if (isChangingReservationsLimit) {
+      settingsChanged += 1;
+    }
+    if (isChangingRatificationThreshold) {
+      settingsChanged += 1;
+    }
+
+    return t('proposals.labels.settingChangesCount', {
+      count: settingsChanged,
+    });
   };
 
   return (
@@ -103,7 +133,11 @@ const ProposalActionGroupSettings = ({
         sx={accordionStyles}
       >
         <AccordionSummary>
-          <Typography marginRight="0.5ch" fontFamily="Inter Bold">
+          <Typography
+            fontFamily="Inter Bold"
+            marginRight="0.5ch"
+            whiteSpace="nowrap"
+          >
             {isDesktop
               ? t('proposals.labels.proposedGroupSettings')
               : t('proposals.labels.proposedSettings')}
@@ -115,7 +149,7 @@ const ProposalActionGroupSettings = ({
             overflow="hidden"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
-            width={isDesktop ? undefined : '130px'}
+            width={isDesktop ? '330px' : '140px'}
           >
             {getSettingsChanges()}
           </Typography>
@@ -128,40 +162,36 @@ const ProposalActionGroupSettings = ({
             rowSpacing={1}
             container
           >
+            {isChangingRatificationThreshold && (
+              <ChangeDelta
+                label={t('groups.settings.names.ratificationThreshold')}
+                proposedValue={`${groupSettings.ratificationThreshold}%`}
+                oldValue={`${oldRatificationThreshold}%`}
+              />
+            )}
+
+            {isChangingStandAsidesLimit && (
+              <ChangeDelta
+                label={t('groups.settings.names.standAsidesLimit')}
+                proposedValue={groupSettings.standAsidesLimit}
+                oldValue={oldStandAsidesLimit}
+              />
+            )}
+
+            {isChangingReservationsLimit && (
+              <ChangeDelta
+                label={t('groups.settings.names.reservationsLimit')}
+                proposedValue={groupSettings.reservationsLimit}
+                oldValue={oldReservationsLimit}
+              />
+            )}
+
             {isChangingPrivacy && (
-              <Grid item xs={6}>
-                <Typography fontFamily="Inter Bold" fontSize={15} gutterBottom>
-                  {t('groups.settings.names.privacy')}
-                </Typography>
-
-                <Flex sx={changeStyles}>
-                  <ChangeIcon
-                    changeType={ChangeType.Remove}
-                    sx={{ marginRight: '0.8ch' }}
-                  />
-                  <Typography
-                    color="primary"
-                    fontSize="inherit"
-                    marginRight="0.25ch"
-                  >
-                    {getPrivacyLabel(oldPrivacy)}
-                  </Typography>
-                </Flex>
-
-                <Flex sx={changeStyles}>
-                  <ChangeIcon
-                    changeType={ChangeType.Add}
-                    sx={{ marginRight: '0.8ch' }}
-                  />
-                  <Typography
-                    color="primary"
-                    fontSize="inherit"
-                    marginRight="0.25ch"
-                  >
-                    {getPrivacyLabel(groupSettings.privacy)}
-                  </Typography>
-                </Flex>
-              </Grid>
+              <ChangeDelta
+                label={t('groups.settings.names.privacy')}
+                proposedValue={getPrivacyLabel(groupSettings.privacy)}
+                oldValue={getPrivacyLabel(oldPrivacy)}
+              />
             )}
           </Grid>
         </AccordionDetails>

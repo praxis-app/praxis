@@ -8,7 +8,15 @@ import { gql } from '@apollo/client';
 export type GroupSettingsFormFragment = {
   __typename?: 'Group';
   id: number;
-  settings: { __typename?: 'GroupConfig'; id: number; isPublic: boolean };
+  settings: {
+    __typename?: 'GroupConfig';
+    id: number;
+    privacy: string;
+    isPublic: boolean;
+    ratificationThreshold: number;
+    reservationsLimit: number;
+    standAsidesLimit: number;
+  };
 };
 
 export const GroupSettingsFormFragmentDoc = gql`
@@ -16,7 +24,11 @@ export const GroupSettingsFormFragmentDoc = gql`
     id
     settings {
       id
+      privacy
       isPublic
+      ratificationThreshold
+      reservationsLimit
+      standAsidesLimit
     }
   }
 `;

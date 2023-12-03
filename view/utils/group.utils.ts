@@ -1,4 +1,4 @@
-import { GroupTabs } from '../constants/group.constants';
+import { GroupTab } from '../constants/group.constants';
 import {
   NavigationPaths,
   TAB_QUERY_PARAM,
@@ -9,7 +9,7 @@ export const getGroupPath = (groupName: string) =>
 
 export const getGroupEventsTabPath = (groupName: string) => {
   const groupPath = getGroupPath(groupName);
-  return `${groupPath}${TAB_QUERY_PARAM}${GroupTabs.Events}`;
+  return `${groupPath}${TAB_QUERY_PARAM}${GroupTab.Events}`;
 };
 
 export const getMemberRequestsPath = (groupName: string) => {

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { EditGroupRoleTabsFragment } from '../../graphql/groups/fragments/gen/EditGroupRoleTabs.gen';
 import { EditServerRoleTabsFragment } from '../../graphql/roles/fragments/gen/EditServerRoleTabs.gen';
-import { EditRoleTabNames } from '../../constants/role.constants';
+import { EditRoleTabName } from '../../constants/role.constants';
 import { useAboveBreakpoint } from '../../hooks/shared.hooks';
 import DeleteGroupRoleButton from '../Groups/GroupRoles/DeleteGroupRoleButton';
 import GroupPermissionsForm from '../Groups/GroupRoles/GroupPermissionsForm';
@@ -29,11 +29,11 @@ const EditRoleTabs = ({ role }: Props) => {
   const tabParam = searchParams.get('tab');
 
   useEffect(() => {
-    if (tabParam === EditRoleTabNames.Permissions) {
+    if (tabParam === EditRoleTabName.Permissions) {
       setTab(1);
       return;
     }
-    if (tabParam === EditRoleTabNames.Members) {
+    if (tabParam === EditRoleTabName.Members) {
       setTab(2);
       return;
     }
@@ -45,11 +45,11 @@ const EditRoleTabs = ({ role }: Props) => {
     value: number,
   ) => {
     if (value === 1) {
-      setSearchParams({ tab: EditRoleTabNames.Permissions });
+      setSearchParams({ tab: EditRoleTabName.Permissions });
       return;
     }
     if (value === 2) {
-      setSearchParams({ tab: EditRoleTabNames.Members });
+      setSearchParams({ tab: EditRoleTabName.Members });
       return;
     }
     setSearchParams({});

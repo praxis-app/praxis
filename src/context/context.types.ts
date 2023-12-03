@@ -23,8 +23,8 @@ export interface ContextServices {
   groupsService: GroupsService;
   imagesService: ImagesService;
   postsService: PostsService;
-  proposalActionRolesService: ProposalActionRolesService;
   proposalActionEventsService: ProposalActionEventsService;
+  proposalActionRolesService: ProposalActionRolesService;
   proposalActionsService: ProposalActionsService;
   proposalsService: ProposalsService;
   shieldService: ShieldService;

@@ -10,7 +10,7 @@ fragment ProposalActionRole on ProposalActionRole {
   }
 
   members {
-    ...ProposedRoleMember
+    ...ProposalActionRoleMember
   }
 
   groupRole {

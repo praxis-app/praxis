@@ -293,6 +293,9 @@ export type GroupConfig = {
   id: Scalars['Int']['output'];
   isPublic: Scalars['Boolean']['output'];
   privacy: Scalars['String']['output'];
+  ratificationThreshold: Scalars['Int']['output'];
+  reservationsLimit: Scalars['Int']['output'];
+  standAsidesLimit: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -724,12 +727,21 @@ export type ProposalActionGroupConfig = {
   __typename?: 'ProposalActionGroupConfig';
   id: Scalars['Int']['output'];
   oldPrivacy?: Maybe<Scalars['String']['output']>;
+  oldRatificationThreshold?: Maybe<Scalars['Int']['output']>;
+  oldReservationsLimit?: Maybe<Scalars['Int']['output']>;
+  oldStandAsidesLimit?: Maybe<Scalars['Int']['output']>;
   privacy?: Maybe<Scalars['String']['output']>;
   proposalAction: ProposalAction;
+  ratificationThreshold?: Maybe<Scalars['Int']['output']>;
+  reservationsLimit?: Maybe<Scalars['Int']['output']>;
+  standAsidesLimit?: Maybe<Scalars['Int']['output']>;
 };
 
 export type ProposalActionGroupConfigInput = {
   privacy?: InputMaybe<Scalars['String']['input']>;
+  ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
+  reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
+  standAsidesLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type ProposalActionInput = {
@@ -985,6 +997,9 @@ export type UpdateEventPayload = {
 export type UpdateGroupConfigInput = {
   groupId: Scalars['Int']['input'];
   privacy?: InputMaybe<Scalars['String']['input']>;
+  ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
+  reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
+  standAsidesLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateGroupInput = {

@@ -5,6 +5,7 @@ import { Image } from '../../images/models/image.model';
 import { ProposalAction } from '../../proposals/proposal-actions/models/proposal-action.model';
 import { ProposalActionEventHost } from '../../proposals/proposal-actions/proposal-action-events/models/proposal-action-event-host.model';
 import { ProposalActionEvent } from '../../proposals/proposal-actions/proposal-action-events/models/proposal-action-event.model';
+import { ProposalActionGroupConfig } from '../../proposals/proposal-actions/proposal-action-group-configs/models/proposal-action-group-config.model';
 import { ProposalActionPermission } from '../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-permission.model';
 import { ProposalActionRoleMember } from '../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model';
 import { ProposalActionRole } from '../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model';
@@ -30,9 +31,10 @@ export const isPublicProposalImage = rule({ cache: 'strict' })(
 export const isPublicProposalAction = rule({ cache: 'strict' })(async (
   parent:
     | ProposalAction
-    | ProposalActionRole
     | ProposalActionEvent
+    | ProposalActionGroupConfig
     | ProposalActionPermission
+    | ProposalActionRole
     | ProposalActionRoleMember,
   _args,
   {
@@ -44,6 +46,15 @@ export const isPublicProposalAction = rule({ cache: 'strict' })(async (
     },
   }: Context,
 ) => {
+  if (parent instanceof ProposalActionGroupConfig) {
+    const proposalAction = await proposalActionsService.getProposalAction(
+      { id: parent.proposalActionId },
+      ['proposal.group.config'],
+    );
+    return (
+      proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
+    );
+  }
   if (
     parent instanceof ProposalActionRole ||
     parent instanceof ProposalActionEvent
