@@ -1,5 +1,3 @@
-// TODO: Add `GroupSettingsSelectField` component to reduce dupe code
-
 import { Warning } from '@mui/icons-material';
 import {
   Box,
@@ -15,14 +13,15 @@ import { useTranslation } from 'react-i18next';
 import {
   GroupPrivacy,
   GroupSettingsFieldName,
-} from '../../constants/group.constants';
-import { toastVar } from '../../graphql/cache';
-import { UpdateGroupConfigInput } from '../../graphql/gen';
-import { GroupSettingsFormFragment } from '../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
-import { useUpdateGroupSettingsMutation } from '../../graphql/groups/mutations/gen/UpdateGroupSettings.gen';
-import Flex from '../Shared/Flex';
-import PrimaryActionButton from '../Shared/PrimaryActionButton';
-import SliderInput from '../Shared/SliderInput';
+} from '../../../constants/group.constants';
+import { toastVar } from '../../../graphql/cache';
+import { UpdateGroupConfigInput } from '../../../graphql/gen';
+import { GroupSettingsFormFragment } from '../../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
+import { useUpdateGroupSettingsMutation } from '../../../graphql/groups/mutations/gen/UpdateGroupSettings.gen';
+import Flex from '../../Shared/Flex';
+import PrimaryActionButton from '../../Shared/PrimaryActionButton';
+import SliderInput from '../../Shared/SliderInput';
+import GroupSettingsSelect from './GroupSettingsSelect';
 
 const SETTING_DESCRIPTION_WIDTH = '60%';
 
@@ -102,41 +101,25 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
       {({ dirty, isSubmitting, handleChange, values, setFieldValue }) => (
         <Form>
           <FormGroup>
-            <Flex justifyContent="space-between">
-              <Box width={SETTING_DESCRIPTION_WIDTH}>
-                <Typography>
-                  {t('groups.settings.names.standAsidesLimit')}
-                </Typography>
-
-                <Typography
-                  fontSize={12}
-                  sx={{ color: theme.palette.text.secondary }}
-                >
-                  {t('groups.settings.descriptions.standAsidesLimit')}
-                </Typography>
-              </Box>
-
-              <Select
-                name={GroupSettingsFieldName.StandAsidesLimit}
-                onChange={handleChange}
-                sx={{ color: theme.palette.text.secondary }}
-                value={values.standAsidesLimit}
-                variant="standard"
-                disableUnderline
-              >
-                {Array(11)
-                  .fill(0)
-                  .map((_, value) => (
-                    <MenuItem
-                      key={value}
-                      value={value}
-                      sx={{ width: 75, justifyContent: 'center' }}
-                    >
-                      {value}
-                    </MenuItem>
-                  ))}
-              </Select>
-            </Flex>
+            <GroupSettingsSelect
+              fieldName={GroupSettingsFieldName.StandAsidesLimit}
+              label={t('groups.settings.names.standAsidesLimit')}
+              description={t('groups.settings.descriptions.standAsidesLimit')}
+              value={values.standAsidesLimit}
+              onChange={handleChange}
+            >
+              {Array(11)
+                .fill(0)
+                .map((_, value) => (
+                  <MenuItem
+                    key={value}
+                    value={value}
+                    sx={{ width: 75, justifyContent: 'center' }}
+                  >
+                    {value}
+                  </MenuItem>
+                ))}
+            </GroupSettingsSelect>
 
             <Divider sx={{ marginY: 3 }} />
 
