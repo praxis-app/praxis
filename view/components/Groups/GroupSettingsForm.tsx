@@ -1,3 +1,5 @@
+// TODO: Add `GroupSettingsSelectField` component to reduce dupe code
+
 import { Warning } from '@mui/icons-material';
 import {
   Box,
