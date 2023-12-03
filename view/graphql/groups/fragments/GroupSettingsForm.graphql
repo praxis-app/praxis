@@ -8,5 +8,6 @@ fragment GroupSettingsForm on Group {
     reservationsLimit
     standAsidesLimit
     votingTimeLimit
+    decisionMakingModel
   }
 }

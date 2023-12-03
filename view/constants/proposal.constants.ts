@@ -1,3 +1,8 @@
+export enum DecisionMakingModel {
+  Consensus = 'consensus',
+  Consent = 'consent',
+}
+
 export enum ProposalActionType {
   ChangeCoverPhoto = 'change-cover-photo',
   ChangeDescription = 'change-description',

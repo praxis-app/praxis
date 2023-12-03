@@ -14,4 +14,5 @@ export const enum GroupSettingsFieldName {
   RatificationThreshold = 'ratificationThreshold',
   ReservationsLimit = 'reservationsLimit',
   StandAsidesLimit = 'standAsidesLimit',
+  DecisionMakingModel = 'decisionMakingModel',
 }

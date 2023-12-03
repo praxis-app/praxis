@@ -40,6 +40,7 @@ export type GroupSettingsQuery = {
       reservationsLimit: number;
       standAsidesLimit: number;
       votingTimeLimit: number;
+      decisionMakingModel: string;
     };
   };
 };

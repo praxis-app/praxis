@@ -17,6 +17,7 @@ export type GroupSettingsFormFragment = {
     reservationsLimit: number;
     standAsidesLimit: number;
     votingTimeLimit: number;
+    decisionMakingModel: string;
   };
 };
 
@@ -31,6 +32,7 @@ export const GroupSettingsFormFragmentDoc = gql`
       reservationsLimit
       standAsidesLimit
       votingTimeLimit
+      decisionMakingModel
     }
   }
 `;

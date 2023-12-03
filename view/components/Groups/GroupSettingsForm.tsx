@@ -13,6 +13,7 @@ import {
   GroupPrivacy,
   GroupSettingsFieldName,
 } from '../../constants/group.constants';
+import { DecisionMakingModel } from '../../constants/proposal.constants';
 import { toastVar } from '../../graphql/cache';
 import { UpdateGroupConfigInput } from '../../graphql/gen';
 import { GroupSettingsFormFragment } from '../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
@@ -39,6 +40,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   const theme = useTheme();
 
   const initialValues: FormValues = {
+    decisionMakingModel: settings.decisionMakingModel,
     ratificationThreshold: settings.ratificationThreshold,
     reservationsLimit: settings.reservationsLimit,
     standAsidesLimit: settings.standAsidesLimit,
@@ -100,6 +102,25 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
       {({ dirty, isSubmitting, handleChange, values, setFieldValue }) => (
         <Form>
           <FormGroup>
+            <GroupSettingsSelect
+              fieldName={GroupSettingsFieldName.DecisionMakingModel}
+              label={t('groups.settings.names.decisionMakingModel')}
+              description={t(
+                'groups.settings.descriptions.decisionMakingModel',
+              )}
+              value={values.decisionMakingModel}
+              onChange={handleChange}
+            >
+              <MenuItem value={DecisionMakingModel.Consensus}>
+                {t('groups.labels.consensus')}
+              </MenuItem>
+              <MenuItem value={DecisionMakingModel.Consent}>
+                {t('groups.labels.consent')}
+              </MenuItem>
+            </GroupSettingsSelect>
+
+            <Divider sx={{ marginY: 3 }} />
+
             <GroupSettingsSelect
               fieldName={GroupSettingsFieldName.StandAsidesLimit}
               label={t('groups.settings.names.standAsidesLimit')}
