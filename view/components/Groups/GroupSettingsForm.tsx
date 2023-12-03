@@ -202,6 +202,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                     values.ratificationThreshold,
                   )
                 }
+                showPercentSign
               />
             </Flex>
 

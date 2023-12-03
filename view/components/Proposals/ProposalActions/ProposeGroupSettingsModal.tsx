@@ -217,6 +217,7 @@ const ProposeGroupSettingsModal = ({
                         values.ratificationThreshold,
                       )
                     }
+                    showPercentSign
                   />
                 </Flex>
 

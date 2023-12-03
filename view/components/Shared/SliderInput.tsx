@@ -4,19 +4,21 @@ import Input from '@mui/material/Input';
 import Slider from '@mui/material/Slider';
 
 interface Props {
+  name: string;
   onInputBlur: () => void;
   onInputChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSliderChange: (_: Event, newValue: number) => void;
+  showPercentSign?: boolean;
   value?: number | null;
-  name: string;
 }
 
 const SliderInput = ({
+  name,
   onInputBlur,
   onInputChange,
   onSliderChange,
+  showPercentSign,
   value,
-  name,
 }: Props) => {
   const inputProps = {
     step: 5,
@@ -47,9 +49,11 @@ const SliderInput = ({
           disableUnderline
         />
       </Grid>
-      <Grid>
-        <Typography paddingBottom={0.25}>%</Typography>
-      </Grid>
+      {showPercentSign && (
+        <Grid>
+          <Typography paddingBottom={0.25}>%</Typography>
+        </Grid>
+      )}
     </Grid>
   );
 };
