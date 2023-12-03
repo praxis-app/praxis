@@ -125,7 +125,11 @@ const ProposalActionGroupSettings = ({
         sx={accordionStyles}
       >
         <AccordionSummary>
-          <Typography marginRight="0.5ch" fontFamily="Inter Bold">
+          <Typography
+            fontFamily="Inter Bold"
+            marginRight="0.5ch"
+            whiteSpace="nowrap"
+          >
             {isDesktop
               ? t('proposals.labels.proposedGroupSettings')
               : t('proposals.labels.proposedSettings')}
@@ -137,7 +141,7 @@ const ProposalActionGroupSettings = ({
             overflow="hidden"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
-            width={isDesktop ? '330px' : '130px'}
+            width={isDesktop ? '330px' : '140px'}
           >
             {getSettingsChanges()}
           </Typography>
