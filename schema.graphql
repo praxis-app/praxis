@@ -73,13 +73,17 @@ type ProposalActionEvent {
 type ProposalActionGroupConfig {
   id: Int!
   privacy: String
+  decisionMakingModel: String
   standAsidesLimit: Int
   reservationsLimit: Int
   ratificationThreshold: Int
+  votingTimeLimit: Int
   oldPrivacy: String
+  oldDecisionMakingModel: String
   oldStandAsidesLimit: Int
   oldReservationsLimit: Int
   oldRatificationThreshold: Int
+  oldVotingTimeLimit: Int
   proposalAction: ProposalAction!
 }
 

@@ -186,6 +186,8 @@ export class ProposalActionsService {
       ratificationThreshold,
       reservationsLimit,
       standAsidesLimit,
+      votingTimeLimit,
+      decisionMakingModel,
     } = proposedGroupConfig;
 
     const groupConfig = await this.groupConfigsService.getGroupConfig({
@@ -197,6 +199,14 @@ export class ProposalActionsService {
       proposedGroupConfig.id,
       {
         oldPrivacy: privacy ? groupConfig.privacy : undefined,
+
+        oldDecisionMakingModel: decisionMakingModel
+          ? groupConfig.decisionMakingModel
+          : undefined,
+
+        oldVotingTimeLimit: votingTimeLimit
+          ? groupConfig.votingTimeLimit
+          : undefined,
 
         oldRatificationThreshold:
           ratificationThreshold || ratificationThreshold === 0
@@ -217,10 +227,12 @@ export class ProposalActionsService {
 
     // Implement proposal - update group config
     await this.groupConfigsService.updateGroupConfig({
-      privacy: privacy ?? undefined,
+      decisionMakingModel: decisionMakingModel ?? undefined,
       ratificationThreshold: ratificationThreshold ?? undefined,
       reservationsLimit: reservationsLimit ?? undefined,
       standAsidesLimit: standAsidesLimit ?? undefined,
+      votingTimeLimit: votingTimeLimit ?? undefined,
+      privacy: privacy ?? undefined,
       groupId,
     });
   }

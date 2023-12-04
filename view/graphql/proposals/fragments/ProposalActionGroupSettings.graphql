@@ -1,15 +1,19 @@
 fragment ProposalActionGroupSettings on ProposalActionGroupConfig {
   id
 
-  privacy
+  decisionMakingModel
   ratificationThreshold
   reservationsLimit
   standAsidesLimit
+  votingTimeLimit
+  privacy
 
-  oldPrivacy
+  oldDecisionMakingModel
   oldRatificationThreshold
   oldReservationsLimit
   oldStandAsidesLimit
+  oldVotingTimeLimit
+  oldPrivacy
 
   proposalAction {
     id
@@ -19,10 +23,12 @@ fragment ProposalActionGroupSettings on ProposalActionGroupConfig {
         id
         settings {
           id
-          privacy
+          decisionMakingModel
           ratificationThreshold
           reservationsLimit
           standAsidesLimit
+          votingTimeLimit
+          privacy
         }
       }
     }

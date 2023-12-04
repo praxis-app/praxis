@@ -26,6 +26,10 @@ export class ProposalActionGroupConfig {
   privacy?: string;
 
   @Column({ nullable: true })
+  @Field({ nullable: true })
+  decisionMakingModel?: string;
+
+  @Column({ nullable: true })
   @Field(() => Int, { nullable: true })
   standAsidesLimit?: number;
 
@@ -37,6 +41,10 @@ export class ProposalActionGroupConfig {
   @Field(() => Int, { nullable: true })
   ratificationThreshold?: number;
 
+  @Column({ nullable: true })
+  @Field(() => Int, { nullable: true })
+  votingTimeLimit?: number;
+
   // -------------------------------------------------------------------------
   // Old values
   // -------------------------------------------------------------------------
@@ -44,6 +52,10 @@ export class ProposalActionGroupConfig {
   @Column({ nullable: true })
   @Field({ nullable: true })
   oldPrivacy?: string;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  oldDecisionMakingModel?: string;
 
   @Column({ nullable: true })
   @Field(() => Int, { nullable: true })
@@ -56,6 +68,10 @@ export class ProposalActionGroupConfig {
   @Column({ nullable: true })
   @Field(() => Int, { nullable: true })
   oldRatificationThreshold?: number;
+
+  @Column({ nullable: true })
+  @Field(() => Int, { nullable: true })
+  oldVotingTimeLimit?: number;
 
   // -------------------------------------------------------------------------
   // Relations and timestamps
