@@ -234,6 +234,16 @@ const ProposalActionGroupSettings = ({
             rowSpacing={1}
             container
           >
+            {isChangingDecisionMakingModel && (
+              <ChangeDelta
+                label={t('groups.settings.names.decisionMakingModel')}
+                proposedValue={getDecisionMakingModelLabel(
+                  groupSettings.decisionMakingModel,
+                )}
+                oldValue={getDecisionMakingModelLabel(oldDecisionMakingModel)}
+              />
+            )}
+
             {isChangingRatificationThreshold && (
               <ChangeDelta
                 label={t('groups.settings.names.ratificationThreshold')}
@@ -258,14 +268,6 @@ const ProposalActionGroupSettings = ({
               />
             )}
 
-            {isChangingPrivacy && (
-              <ChangeDelta
-                label={t('groups.settings.names.privacy')}
-                proposedValue={getPrivacyLabel(groupSettings.privacy)}
-                oldValue={getPrivacyLabel(oldPrivacy)}
-              />
-            )}
-
             {isChangingVotingTimeLimit && (
               <ChangeDelta
                 label={t('groups.settings.names.votingTimeLimit')}
@@ -276,13 +278,11 @@ const ProposalActionGroupSettings = ({
               />
             )}
 
-            {isChangingDecisionMakingModel && (
+            {isChangingPrivacy && (
               <ChangeDelta
-                label={t('groups.settings.names.decisionMakingModel')}
-                proposedValue={getDecisionMakingModelLabel(
-                  groupSettings.decisionMakingModel,
-                )}
-                oldValue={getDecisionMakingModelLabel(oldDecisionMakingModel)}
+                label={t('groups.settings.names.privacy')}
+                proposedValue={getPrivacyLabel(groupSettings.privacy)}
+                oldValue={getPrivacyLabel(oldPrivacy)}
               />
             )}
           </Grid>
