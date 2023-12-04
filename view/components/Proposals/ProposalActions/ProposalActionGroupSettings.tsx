@@ -17,25 +17,6 @@ import Accordion, {
 } from '../../Shared/Accordion';
 import ChangeDelta from './ChangeDelta';
 
-const isChangingNumberValue = (
-  proposedValue: number | null | undefined,
-  oldValue: number | null | undefined,
-) => !!(proposedValue || proposedValue === 0) && proposedValue !== oldValue;
-
-// TODO: Uncomment when ready to use
-// const getOldSettingValue = (
-//   groupSettings:
-//     | ProposalActionGroupSettingsFragment
-//     | ProposalActionGroupConfigInput,
-//   ratified: boolean | undefined,
-//   key: string,
-// ) => {
-//   if (ratified && `old${key}` in groupSettings) {
-//     return groupSettings[`old${key}` as keyof typeof groupSettings];
-//   }
-//   return groupSettings[key as keyof typeof groupSettings];
-// }
-
 interface Props {
   groupSettings:
     | ProposalActionGroupSettingsFragment
@@ -107,6 +88,11 @@ const ProposalActionGroupSettings = ({
   const isChangingDecisionMakingModel =
     groupSettings.decisionMakingModel &&
     groupSettings.decisionMakingModel !== oldDecisionMakingModel;
+
+  const isChangingNumberValue = (
+    proposedValue: number | null | undefined,
+    oldValue: number | null | undefined,
+  ) => !!(proposedValue || proposedValue === 0) && proposedValue !== oldValue;
 
   const isChangingStandAsidesLimit = isChangingNumberValue(
     groupSettings.standAsidesLimit,
