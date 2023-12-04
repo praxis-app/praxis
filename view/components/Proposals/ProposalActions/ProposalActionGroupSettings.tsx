@@ -18,6 +18,20 @@ const isChangingNumberValue = (
   oldValue: number | null | undefined,
 ) => !!(proposedValue || proposedValue === 0) && proposedValue !== oldValue;
 
+// TODO: Uncomment when ready to use
+// const getOldSettingValue = (
+//   groupSettings:
+//     | ProposalActionGroupSettingsFragment
+//     | ProposalActionGroupConfigInput,
+//   ratified: boolean | undefined,
+//   key: string,
+// ) => {
+//   if (ratified && `old${key}` in groupSettings) {
+//     return groupSettings[`old${key}` as keyof typeof groupSettings];
+//   }
+//   return groupSettings[key as keyof typeof groupSettings];
+// }
+
 interface Props {
   groupSettings:
     | ProposalActionGroupSettingsFragment
@@ -73,8 +87,22 @@ const ProposalActionGroupSettings = ({
       ? groupSettings.oldRatificationThreshold
       : groupSettingsToChange?.ratificationThreshold;
 
+  const oldVotingTimeLimit =
+    ratified && 'oldVotingTimeLimit' in groupSettings
+      ? groupSettings.oldVotingTimeLimit
+      : groupSettingsToChange?.votingTimeLimit;
+
+  const oldDecisionMakingModel =
+    ratified && 'oldDecisionMakingModel' in groupSettings
+      ? groupSettings.oldDecisionMakingModel
+      : groupSettingsToChange?.decisionMakingModel;
+
   const isChangingPrivacy =
     groupSettings.privacy && groupSettings.privacy !== oldPrivacy;
+
+  const isChangingDecisionMakingModel =
+    groupSettings.decisionMakingModel &&
+    groupSettings.decisionMakingModel !== oldDecisionMakingModel;
 
   const isChangingStandAsidesLimit = isChangingNumberValue(
     groupSettings.standAsidesLimit,
@@ -89,6 +117,11 @@ const ProposalActionGroupSettings = ({
   const isChangingRatificationThreshold = isChangingNumberValue(
     groupSettings.ratificationThreshold,
     oldRatificationThreshold,
+  );
+
+  const isChangingVotingTimeLimit = isChangingNumberValue(
+    groupSettings.votingTimeLimit,
+    oldVotingTimeLimit,
   );
 
   const accordionStyles: SxProps = {
@@ -117,6 +150,12 @@ const ProposalActionGroupSettings = ({
       settingsChanged += 1;
     }
     if (isChangingRatificationThreshold) {
+      settingsChanged += 1;
+    }
+    if (isChangingVotingTimeLimit) {
+      settingsChanged += 1;
+    }
+    if (isChangingDecisionMakingModel) {
       settingsChanged += 1;
     }
 
@@ -191,6 +230,22 @@ const ProposalActionGroupSettings = ({
                 label={t('groups.settings.names.privacy')}
                 proposedValue={getPrivacyLabel(groupSettings.privacy)}
                 oldValue={getPrivacyLabel(oldPrivacy)}
+              />
+            )}
+
+            {isChangingVotingTimeLimit && (
+              <ChangeDelta
+                label={t('groups.settings.names.votingTimeLimit')}
+                proposedValue={groupSettings.votingTimeLimit}
+                oldValue={oldVotingTimeLimit}
+              />
+            )}
+
+            {isChangingDecisionMakingModel && (
+              <ChangeDelta
+                label={t('groups.settings.names.decisionMakingModel')}
+                proposedValue={groupSettings.decisionMakingModel}
+                oldValue={oldDecisionMakingModel}
               />
             )}
           </Grid>
