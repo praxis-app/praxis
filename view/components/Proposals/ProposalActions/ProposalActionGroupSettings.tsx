@@ -3,6 +3,10 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { GroupPrivacy } from '../../../constants/group.constants';
+import {
+  DecisionMakingModel,
+  VotingTimeLimit,
+} from '../../../constants/proposal.constants';
 import { ProposalActionGroupConfigInput } from '../../../graphql/gen';
 import { useGroupSettingsByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupSettingsByGroupId.gen';
 import { ProposalActionGroupSettingsFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionGroupSettings.gen';
@@ -137,6 +141,35 @@ const ProposalActionGroupSettings = ({
     return t('groups.labels.private');
   };
 
+  const getDecisionMakingModelLabel = (model?: string | null) => {
+    if (model === DecisionMakingModel.Consent) {
+      return t('groups.labels.consent');
+    }
+    return t('groups.labels.consensus');
+  };
+
+  const getVotingTimeLimitLabel = (votingTimeLimit?: number | null) => {
+    if (votingTimeLimit === VotingTimeLimit.HalfHour) {
+      return t('time.minutesFull', { count: 30 });
+    }
+    if (votingTimeLimit === VotingTimeLimit.OneHour) {
+      return t('time.hoursFull', { count: 1 });
+    }
+    if (votingTimeLimit === VotingTimeLimit.HalfDay) {
+      return t('time.hoursFull', { count: 12 });
+    }
+    if (votingTimeLimit === VotingTimeLimit.OneDay) {
+      return t('time.daysFull', { count: 1 });
+    }
+    if (votingTimeLimit === VotingTimeLimit.ThreeDays) {
+      return t('time.daysFull', { count: 3 });
+    }
+    if (votingTimeLimit === VotingTimeLimit.OneWeek) {
+      return t('time.weeks', { count: 1 });
+    }
+    return t('time.weeks', { count: 2 });
+  };
+
   const getSettingsChanges = () => {
     let settingsChanged = 0;
 
@@ -236,16 +269,20 @@ const ProposalActionGroupSettings = ({
             {isChangingVotingTimeLimit && (
               <ChangeDelta
                 label={t('groups.settings.names.votingTimeLimit')}
-                proposedValue={groupSettings.votingTimeLimit}
-                oldValue={oldVotingTimeLimit}
+                proposedValue={getVotingTimeLimitLabel(
+                  groupSettings.votingTimeLimit,
+                )}
+                oldValue={getVotingTimeLimitLabel(oldVotingTimeLimit)}
               />
             )}
 
             {isChangingDecisionMakingModel && (
               <ChangeDelta
                 label={t('groups.settings.names.decisionMakingModel')}
-                proposedValue={groupSettings.decisionMakingModel}
-                oldValue={oldDecisionMakingModel}
+                proposedValue={getDecisionMakingModelLabel(
+                  groupSettings.decisionMakingModel,
+                )}
+                oldValue={getDecisionMakingModelLabel(oldDecisionMakingModel)}
               />
             )}
           </Grid>
