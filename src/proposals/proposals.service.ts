@@ -4,6 +4,12 @@
  */
 
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  Cron,
+  CronExpression,
+  SchedulerRegistry,
+  Timeout,
+} from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
@@ -54,6 +60,7 @@ export class ProposalsService {
     private proposalActionGroupConfigsService: ProposalActionGroupConfigsService,
     private proposalActionRolesService: ProposalActionRolesService,
     private proposalActionsService: ProposalActionsService,
+    private schedulerRegistry: SchedulerRegistry,
   ) {}
 
   async getProposal(id: number, relations?: string[]) {
@@ -339,5 +346,16 @@ export class ProposalsService {
     }
     await this.repository.delete(proposalId);
     return true;
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_NOON, { name: 'checkVotingTimeLimit' })
+  checkVotingTimeLimit() {
+    console.log('Checking voting time limit');
+  }
+
+  @Timeout('disableVotingTimeLimitCheck', 1000 * 60 * 60 * 6)
+  disableVotingTimeLimitCheck() {
+    const job = this.schedulerRegistry.getCronJob('checkVotingTimeLimit');
+    job.stop();
   }
 }
