@@ -4,7 +4,8 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { SchedulerRegistry } from '@nestjs/schedule';
+import { CronExpression, SchedulerRegistry } from '@nestjs/schedule';
+import { CronJob } from 'cron';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -12,27 +13,45 @@ export class ResetTimeoutInterceptor implements NestInterceptor {
   constructor(private schedulerRegistry: SchedulerRegistry) {}
 
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
-    const timeout = this.schedulerRegistry.getTimeout(
+    const isJobPresent = this.schedulerRegistry.doesExist(
+      'cron',
+      'checkVotingTimeLimit',
+    );
+    const isTimeoutPresent = this.schedulerRegistry.doesExist(
+      'timeout',
       'disableVotingTimeLimitCheck',
     );
 
-    if (timeout) {
-      this.schedulerRegistry.deleteTimeout('disableVotingTimeLimitCheck');
+    if (!isJobPresent) {
+      this.addCronJob();
     }
+    if (isTimeoutPresent) {
+      this.deleteTimeout();
+    }
+    this.addTimeout();
 
+    return next.handle();
+  }
+
+  addCronJob() {
+    const job = new CronJob(CronExpression.EVERY_DAY_AT_NOON, () =>
+      console.log('Checking voting time limit'),
+    );
+
+    this.schedulerRegistry.addCronJob('checkVotingTimeLimit', job);
+    job.start();
+  }
+
+  addTimeout() {
     const callback = () => {
       const job = this.schedulerRegistry.getCronJob('checkVotingTimeLimit');
       job.stop();
     };
-    const newTimeout = setTimeout(callback, 1000 * 60 * 60 * 6);
+    const timeout = setTimeout(callback, 1000 * 60 * 60 * 6);
+    this.schedulerRegistry.addTimeout('disableVotingTimeLimitCheck', timeout);
+  }
 
-    this.schedulerRegistry.addTimeout(
-      'disableVotingTimeLimitCheck',
-      newTimeout,
-    );
-
-    console.log('Got here 1');
-
-    return next.handle();
+  deleteTimeout() {
+    this.schedulerRegistry.deleteTimeout('disableVotingTimeLimitCheck');
   }
 }
