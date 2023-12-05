@@ -22,13 +22,17 @@ export class ResetTimeoutInterceptor implements NestInterceptor {
       'disableVotingTimeLimitCheck',
     );
 
+    if (isTimeoutPresent) {
+      this.resetTimeout();
+    }
+
+    if (!isTimeoutPresent) {
+      this.addTimeout();
+    }
+
     if (!isJobPresent) {
       this.addCronJob();
     }
-    if (isTimeoutPresent) {
-      this.deleteTimeout();
-    }
-    this.addTimeout();
 
     return next.handle();
   }
@@ -53,5 +57,10 @@ export class ResetTimeoutInterceptor implements NestInterceptor {
 
   deleteTimeout() {
     this.schedulerRegistry.deleteTimeout('disableVotingTimeLimitCheck');
+  }
+
+  resetTimeout() {
+    this.deleteTimeout();
+    this.addTimeout();
   }
 }
