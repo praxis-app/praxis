@@ -4,7 +4,6 @@
  */
 
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
@@ -340,11 +339,5 @@ export class ProposalsService {
     }
     await this.repository.delete(proposalId);
     return true;
-  }
-
-  // TODO: Add logic to check if voting time limit has passed
-  @Cron(CronExpression.EVERY_5_MINUTES)
-  checkVotingTimeLimit() {
-    console.log('Checking voting time limit');
   }
 }
