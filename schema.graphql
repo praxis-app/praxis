@@ -445,15 +445,6 @@ type UpdateServerRolePayload {
   me: User!
 }
 
-type FollowUserPayload {
-  followedUser: User!
-  follower: User!
-}
-
-type UpdateUserPayload {
-  user: User!
-}
-
 type ServerPermissions {
   manageRoles: Boolean!
   managePosts: Boolean!
@@ -463,6 +454,15 @@ type ServerPermissions {
   manageInvites: Boolean!
   createInvites: Boolean!
   removeMembers: Boolean!
+}
+
+type FollowUserPayload {
+  followedUser: User!
+  follower: User!
+}
+
+type UpdateUserPayload {
+  user: User!
 }
 
 type AuthPayload {
