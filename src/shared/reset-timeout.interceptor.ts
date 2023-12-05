@@ -1,3 +1,5 @@
+// TODO: Update cron time and timeout after testing
+
 import {
   CallHandler,
   ExecutionContext,
@@ -38,7 +40,7 @@ export class ResetTimeoutInterceptor implements NestInterceptor {
   }
 
   addCronJob() {
-    const job = new CronJob(CronExpression.EVERY_DAY_AT_NOON, () =>
+    const job = new CronJob(CronExpression.EVERY_SECOND, () =>
       console.log('Checking voting time limit'),
     );
 
@@ -48,10 +50,9 @@ export class ResetTimeoutInterceptor implements NestInterceptor {
 
   addTimeout() {
     const callback = () => {
-      const job = this.schedulerRegistry.getCronJob('checkVotingTimeLimit');
-      job.stop();
+      this.schedulerRegistry.deleteCronJob('checkVotingTimeLimit');
     };
-    const timeout = setTimeout(callback, 1000 * 60 * 60 * 6);
+    const timeout = setTimeout(callback, 1000 * 5);
     this.schedulerRegistry.addTimeout('disableVotingTimeLimitCheck', timeout);
   }
 
