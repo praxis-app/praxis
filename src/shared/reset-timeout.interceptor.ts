@@ -4,15 +4,23 @@ import {
   CallHandler,
   ExecutionContext,
   Injectable,
+  Logger,
   NestInterceptor,
 } from '@nestjs/common';
 import { CronExpression, SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
 import { Observable } from 'rxjs';
+import { ProposalsService } from '../proposals/proposals.service';
+import { logTime } from './shared.utils';
 
 @Injectable()
 export class ResetTimeoutInterceptor implements NestInterceptor {
-  constructor(private schedulerRegistry: SchedulerRegistry) {}
+  private readonly logger = new Logger(ResetTimeoutInterceptor.name);
+
+  constructor(
+    private proposalsService: ProposalsService,
+    private schedulerRegistry: SchedulerRegistry,
+  ) {}
 
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     const isJobPresent = this.schedulerRegistry.doesExist(
@@ -40,9 +48,11 @@ export class ResetTimeoutInterceptor implements NestInterceptor {
   }
 
   addCronJob() {
-    const job = new CronJob(CronExpression.EVERY_SECOND, () =>
-      console.log('Checking voting time limit'),
-    );
+    const job = new CronJob(CronExpression.EVERY_SECOND, async () => {
+      logTime('Syncronizing all proposal stages', this.logger);
+      await this.proposalsService.syncronizeAllProposalStages();
+      logTime('Syncronizing all proposal stages', this.logger);
+    });
 
     this.schedulerRegistry.addCronJob('checkVotingTimeLimit', job);
     job.start();

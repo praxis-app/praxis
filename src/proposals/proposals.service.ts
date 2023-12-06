@@ -60,8 +60,8 @@ export class ProposalsService {
     return this.repository.findOneOrFail({ where: { id }, relations });
   }
 
-  async getProposals(where?: FindOptionsWhere<Proposal>) {
-    return this.repository.find({ where });
+  async getProposals(where?: FindOptionsWhere<Proposal>, relations?: string[]) {
+    return this.repository.find({ where, relations });
   }
 
   async isPublicProposalImage(image: Image) {
@@ -330,6 +330,43 @@ export class ProposalsService {
       standAsides.length <= standAsidesLimit &&
       blocks.length === 0
     );
+  }
+
+  async syncronizeAllProposalStages() {
+    const proposals = await this.getProposals({ stage: ProposalStage.Voting }, [
+      'group.config',
+    ]);
+
+    for (const proposal of proposals) {
+      if (
+        proposal.group.config.decisionMakingModel ===
+        DecisionMakingModel.Consensus
+      ) {
+        const hasVotingPeriodEnded = await this.hasVotingPeriodEnded(
+          proposal.id,
+        );
+
+        if (hasVotingPeriodEnded) {
+          const isRatifiable = await this.isProposalRatifiable(proposal.id);
+
+          if (isRatifiable) {
+            await this.ratifyProposal(proposal.id);
+            await this.implementProposal(proposal.id);
+          }
+        }
+      }
+    }
+  }
+
+  async hasVotingPeriodEnded(proposalId: number) {
+    const { createdAt, group } = await this.getProposal(proposalId, [
+      'group.config',
+    ]);
+    const { votingTimeLimit } = group.config;
+    const minutesPassedSinceProposalCreation = Math.floor(
+      (new Date().getTime() - createdAt.getTime()) / 60000,
+    );
+    return minutesPassedSinceProposalCreation >= votingTimeLimit;
   }
 
   async deleteProposal(proposalId: number) {
