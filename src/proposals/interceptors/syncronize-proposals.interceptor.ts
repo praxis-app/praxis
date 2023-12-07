@@ -13,6 +13,11 @@ import { Observable } from 'rxjs';
 import { ProposalsService } from '../proposals.service';
 import { logTime } from '../../shared/shared.utils';
 
+enum CronJobName {
+  CheckVotingTimeLimit = 'checkVotingTimeLimit',
+  DisableVotingTimeLimitCheck = 'disableVotingTimeLimitCheck',
+}
+
 @Injectable()
 export class SyncronizeProposalsInterceptor implements NestInterceptor {
   private readonly logger = new Logger(SyncronizeProposalsInterceptor.name);
@@ -25,11 +30,11 @@ export class SyncronizeProposalsInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     const isJobPresent = this.schedulerRegistry.doesExist(
       'cron',
-      'checkVotingTimeLimit',
+      CronJobName.CheckVotingTimeLimit,
     );
     const isTimeoutPresent = this.schedulerRegistry.doesExist(
       'timeout',
-      'disableVotingTimeLimitCheck',
+      CronJobName.DisableVotingTimeLimitCheck,
     );
 
     if (isTimeoutPresent) {
@@ -54,20 +59,25 @@ export class SyncronizeProposalsInterceptor implements NestInterceptor {
       logTime('Syncronizing all proposal stages', this.logger);
     });
 
-    this.schedulerRegistry.addCronJob('checkVotingTimeLimit', job);
+    this.schedulerRegistry.addCronJob(CronJobName.CheckVotingTimeLimit, job);
     job.start();
   }
 
   addTimeout() {
     const callback = () => {
-      this.schedulerRegistry.deleteCronJob('checkVotingTimeLimit');
+      this.schedulerRegistry.deleteCronJob(CronJobName.CheckVotingTimeLimit);
     };
     const timeout = setTimeout(callback, 1000 * 5);
-    this.schedulerRegistry.addTimeout('disableVotingTimeLimitCheck', timeout);
+    this.schedulerRegistry.addTimeout(
+      CronJobName.DisableVotingTimeLimitCheck,
+      timeout,
+    );
   }
 
   deleteTimeout() {
-    this.schedulerRegistry.deleteTimeout('disableVotingTimeLimitCheck');
+    this.schedulerRegistry.deleteTimeout(
+      CronJobName.DisableVotingTimeLimitCheck,
+    );
   }
 
   resetTimeout() {
