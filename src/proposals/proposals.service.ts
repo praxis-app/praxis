@@ -3,7 +3,7 @@
  * TODO: Add support for other voting models
  */
 
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
@@ -15,7 +15,7 @@ import { ImageTypes } from '../images/image.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
-import { sanitizeText } from '../shared/shared.utils';
+import { logTime, sanitizeText } from '../shared/shared.utils';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 import { VotesService } from '../votes/votes.service';
@@ -39,6 +39,8 @@ type ProposalWithCommentCount = Proposal & { commentCount: number };
 
 @Injectable()
 export class ProposalsService {
+  private readonly logger = new Logger(ProposalsService.name);
+
   constructor(
     @InjectRepository(Proposal)
     private repository: Repository<Proposal>,
@@ -333,6 +335,9 @@ export class ProposalsService {
   }
 
   async syncronizeProposals() {
+    const logTimeMessage = 'Syncronizing proposals';
+    logTime(logTimeMessage, this.logger);
+
     const proposals = await this.getProposals({ stage: ProposalStage.Voting }, [
       'group.config',
     ]);
@@ -354,6 +359,7 @@ export class ProposalsService {
         }
       }
     }
+    logTime(logTimeMessage, this.logger);
   }
 
   async hasVotingPeriodEnded(votingTimeLimit: number, createdAt: Date) {
