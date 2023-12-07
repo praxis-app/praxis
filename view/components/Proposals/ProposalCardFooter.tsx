@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { useProposalCommentsLazyQuery } from '../../graphql/proposals/queries/gen/ProposalComments.gen';
-import { ProposalStage } from '../../constants/proposal.constants';
+import { useIsProposalRatifiedSubscription } from '../../graphql/proposals/subscriptions/gen/IsProposalRatified.gen';
 import { Blurple } from '../../styles/theme';
 import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
@@ -48,7 +48,12 @@ const ProposalCardFooter = ({
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal || isProposalPage);
 
-  const [getProposalComments, { data }] = useProposalCommentsLazyQuery();
+  const [getProposalComments, { data: proposalCommentsData }] =
+    useProposalCommentsLazyQuery();
+
+  const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
+    variables: { proposalId: proposal.id },
+  });
 
   const { t } = useTranslation();
 
@@ -70,11 +75,11 @@ const ProposalCardFooter = ({
     proposal,
   ]);
 
-  const me = data?.me;
-  const comments = data?.proposal?.comments;
-  const { stage, voteCount, votes, commentCount, group } = proposal;
+  const me = proposalCommentsData?.me;
+  const comments = proposalCommentsData?.proposal?.comments;
+  const { voteCount, votes, commentCount, group } = proposal;
+  const isRatified = isProposalRatifiedData?.isProposalRatified;
   const isDisabled = !!group && !group.isJoinedByMe;
-  const isRatified = stage === ProposalStage.Ratified;
 
   const canManageComments = !!(
     group?.myPermissions?.manageComments || me?.serverPermissions.manageComments
