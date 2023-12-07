@@ -16,7 +16,7 @@ import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
-import { SyncProposalsInterceptor } from '../proposals/interceptors/syncronize-proposals.interceptor';
+import { SyncProposalsInterceptor } from '../proposals/interceptors/sync-proposals.interceptor';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { FeedItem } from '../shared/models/feed-item.union';
 import { FollowUserPayload } from './models/follow-user.payload';
