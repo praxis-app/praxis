@@ -337,32 +337,26 @@ export class ProposalsService {
       'group.config',
     ]);
 
-    for (const proposal of proposals) {
-      if (
-        proposal.group.config.decisionMakingModel ===
-        DecisionMakingModel.Consensus
-      ) {
+    for (const { id, group, createdAt } of proposals) {
+      if (group.config.decisionMakingModel === DecisionMakingModel.Consensus) {
         const hasVotingPeriodEnded = await this.hasVotingPeriodEnded(
-          proposal.id,
+          group.config.votingTimeLimit,
+          createdAt,
         );
 
         if (hasVotingPeriodEnded) {
-          const isRatifiable = await this.isProposalRatifiable(proposal.id);
+          const isRatifiable = await this.isProposalRatifiable(id);
 
           if (isRatifiable) {
-            await this.ratifyProposal(proposal.id);
-            await this.implementProposal(proposal.id);
+            await this.ratifyProposal(id);
+            await this.implementProposal(id);
           }
         }
       }
     }
   }
 
-  async hasVotingPeriodEnded(proposalId: number) {
-    const { createdAt, group } = await this.getProposal(proposalId, [
-      'group.config',
-    ]);
-    const { votingTimeLimit } = group.config;
+  async hasVotingPeriodEnded(votingTimeLimit: number, createdAt: Date) {
     const minutesPassedSinceProposalCreation = Math.floor(
       (new Date().getTime() - createdAt.getTime()) / 60000,
     );
