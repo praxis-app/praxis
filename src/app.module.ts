@@ -44,7 +44,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     csrfPrevention: configService.get('NODE_ENV') !== Environment.Development,
     path: '/api/graphql',
     resolvers: { Upload: GraphQLUpload },
-    subscriptions: { 'graphql-ws': true },
+    subscriptions: { 'graphql-ws': { path: '/subscriptions' } },
     transformSchema: (schema: GraphQLSchema) =>
       applyMiddleware(schema, shieldPermissions),
   }),

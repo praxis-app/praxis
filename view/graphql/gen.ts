@@ -963,6 +963,15 @@ export type SignUpInput = {
   profilePicture?: InputMaybe<Scalars['Upload']['input']>;
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  isProposalRatified: Scalars['Boolean']['output'];
+};
+
+export type SubscriptionIsProposalRatifiedArgs = {
+  id: Scalars['Int']['input'];
+};
+
 export type UpdateCommentInput = {
   body?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
