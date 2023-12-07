@@ -332,7 +332,7 @@ export class ProposalsService {
     );
   }
 
-  async syncronizeAllProposalStages() {
+  async syncronizeProposals() {
     const proposals = await this.getProposals({ stage: ProposalStage.Voting }, [
       'group.config',
     ]);
