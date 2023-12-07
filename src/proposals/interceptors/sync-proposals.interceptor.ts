@@ -49,7 +49,7 @@ export class SyncProposalsInterceptor implements NestInterceptor {
   }
 
   addCronJob() {
-    const job = new CronJob(CronExpression.EVERY_SECOND, async () => {
+    const job = new CronJob(CronExpression.EVERY_MINUTE, async () => {
       await this.proposalsService.syncronizeProposals();
     });
 
@@ -58,10 +58,10 @@ export class SyncProposalsInterceptor implements NestInterceptor {
   }
 
   addTimeout() {
-    const callback = () => {
+    const callback = () =>
       this.schedulerRegistry.deleteCronJob(CronJobName.SyncronizeProposals);
-    };
-    const timeout = setTimeout(callback, 1000 * 5);
+
+    const timeout = setTimeout(callback, 1000 * 60 * 60 * 1);
     this.schedulerRegistry.addTimeout(
       CronJobName.DisableSyncronizeProposals,
       timeout,
