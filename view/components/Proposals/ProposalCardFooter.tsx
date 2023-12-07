@@ -5,6 +5,7 @@ import { Comment, HowToVote, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ProposalStage } from '../../constants/proposal.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { useProposalCommentsLazyQuery } from '../../graphql/proposals/queries/gen/ProposalComments.gen';
@@ -53,6 +54,7 @@ const ProposalCardFooter = ({
 
   const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
     variables: { proposalId: proposal.id },
+    skip: !isLoggedIn,
   });
 
   const { t } = useTranslation();
@@ -77,9 +79,12 @@ const ProposalCardFooter = ({
 
   const me = proposalCommentsData?.me;
   const comments = proposalCommentsData?.proposal?.comments;
-  const { voteCount, votes, commentCount, group } = proposal;
-  const isRatified = isProposalRatifiedData?.isProposalRatified;
+  const { voteCount, votes, commentCount, group, stage } = proposal;
   const isDisabled = !!group && !group.isJoinedByMe;
+
+  const isRatified =
+    isProposalRatifiedData?.isProposalRatified ||
+    stage === ProposalStage.Ratified;
 
   const canManageComments = !!(
     group?.myPermissions?.manageComments || me?.serverPermissions.manageComments
