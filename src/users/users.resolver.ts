@@ -16,9 +16,9 @@ import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
+import { SyncronizeProposalsInterceptor } from '../proposals/interceptors/syncronize-proposals.interceptor';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { FeedItem } from '../shared/models/feed-item.union';
-import { ResetTimeoutInterceptor } from '../shared/reset-timeout.interceptor';
 import { FollowUserPayload } from './models/follow-user.payload';
 import { UpdateUserInput } from './models/update-user.input';
 import { UpdateUserPayload } from './models/update-user.payload';
@@ -33,7 +33,7 @@ export class UsersResolver {
   ) {}
 
   @Query(() => User)
-  @UseInterceptors(ResetTimeoutInterceptor)
+  @UseInterceptors(SyncronizeProposalsInterceptor)
   me(@CurrentUser() { id }: User) {
     return this.usersService.getUser({ id });
   }

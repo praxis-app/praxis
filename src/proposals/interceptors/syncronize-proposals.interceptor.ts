@@ -10,12 +10,12 @@ import {
 import { CronExpression, SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
 import { Observable } from 'rxjs';
-import { ProposalsService } from '../proposals/proposals.service';
-import { logTime } from './shared.utils';
+import { ProposalsService } from '../proposals.service';
+import { logTime } from '../../shared/shared.utils';
 
 @Injectable()
-export class ResetTimeoutInterceptor implements NestInterceptor {
-  private readonly logger = new Logger(ResetTimeoutInterceptor.name);
+export class SyncronizeProposalsInterceptor implements NestInterceptor {
+  private readonly logger = new Logger(SyncronizeProposalsInterceptor.name);
 
   constructor(
     private proposalsService: ProposalsService,
