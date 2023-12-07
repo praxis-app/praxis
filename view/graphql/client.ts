@@ -54,6 +54,7 @@ const errorLink = onError(
 const wsLink = new GraphQLWsLink(
   createClient({
     url: `ws://localhost:${process.env.SERVER_PORT}/subscriptions`,
+    connectionParams: getAuthHeader(),
   }),
 );
 

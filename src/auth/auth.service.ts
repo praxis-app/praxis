@@ -108,8 +108,14 @@ export class AuthService {
     });
   }
 
-  async getSub({ headers }: Request) {
-    const [type, token] = headers.authorization?.split(' ') ?? [];
+  async getSub(
+    request: Request | undefined,
+    connectionParams: { authorization: string } | undefined,
+  ) {
+    const authorization =
+      request?.headers.authorization || connectionParams?.authorization;
+
+    const [type, token] = authorization?.split(' ') ?? [];
     const payload = await this.decodeToken(token);
     if (type !== 'Bearer' || !payload) {
       return null;

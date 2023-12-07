@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Request } from 'express';
 import { AuthService } from '../auth/auth.service';
 import { CommentsService } from '../comments/comments.service';
 import { DataloaderService } from '../dataloader/dataloader.service';
@@ -15,7 +14,7 @@ import { ProposalActionsService } from '../proposals/proposal-actions/proposal-a
 import { ProposalsService } from '../proposals/proposals.service';
 import { ShieldService } from '../shield/shield.service';
 import { UsersService } from '../users/users.service';
-import { Context, ContextServices } from './context.types';
+import { Context, ContextServices, GetContextParams } from './context.types';
 
 @Injectable()
 export class ContextService {
@@ -37,8 +36,11 @@ export class ContextService {
     private usersService: UsersService,
   ) {}
 
-  async getContext({ req }: { req: Request }): Promise<Context> {
-    const sub = await this.authService.getSub(req);
+  async getContext({
+    req,
+    connectionParams,
+  }: GetContextParams): Promise<Context> {
+    const sub = await this.authService.getSub(req, connectionParams);
     const user = await this.getUser(sub);
     const permissions = await this.getUserPermisions(sub);
     const loaders = this.dataloaderService.getLoaders();
