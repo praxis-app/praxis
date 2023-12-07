@@ -49,7 +49,7 @@ export class SyncProposalsInterceptor implements NestInterceptor {
   }
 
   addCronJob() {
-    const job = new CronJob(CronExpression.EVERY_MINUTE, async () => {
+    const job = new CronJob(CronExpression.EVERY_5_MINUTES, async () => {
       await this.proposalsService.syncronizeProposals();
     });
 

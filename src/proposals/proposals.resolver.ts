@@ -8,7 +8,9 @@ import {
   Query,
   ResolveField,
   Resolver,
+  Subscription,
 } from '@nestjs/graphql';
+import { PubSub } from 'graphql-subscriptions';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { CommentsService } from '../comments/comments.service';
 import { Comment } from '../comments/models/comment.model';
@@ -27,6 +29,8 @@ import { DeleteProposalValidationPipe } from './pipes/delete-proposal-validation
 import { UpdateProposalValidationPipe } from './pipes/update-proposal-validation.pipe';
 import { ProposalAction } from './proposal-actions/models/proposal-action.model';
 import { ProposalsService } from './proposals.service';
+
+const pubSub = new PubSub();
 
 @Resolver(() => Proposal)
 export class ProposalsResolver {
@@ -122,5 +126,10 @@ export class ProposalsResolver {
   @UsePipes(DeleteProposalValidationPipe)
   async deleteProposal(@Args('id', { type: () => Int }) id: number) {
     return this.proposalsService.deleteProposal(id);
+  }
+
+  @Subscription(() => Boolean)
+  isProposalRatified(@Args('id', { type: () => Int }) id: number) {
+    return pubSub.asyncIterator(`isProposalRatified-${id}`);
   }
 }

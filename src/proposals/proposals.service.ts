@@ -5,6 +5,7 @@
 
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
@@ -36,6 +37,8 @@ import {
 } from './proposals.constants';
 
 type ProposalWithCommentCount = Proposal & { commentCount: number };
+
+const pubSub = new PubSub();
 
 @Injectable()
 export class ProposalsService {
@@ -355,6 +358,10 @@ export class ProposalsService {
           if (isRatifiable) {
             await this.ratifyProposal(id);
             await this.implementProposal(id);
+
+            pubSub.publish(`isProposalRatified-${id}`, {
+              isProposalRatified: true,
+            });
           }
         }
       }

@@ -825,3 +825,7 @@ input UpdateServerConfigInput {
   canaryStatement: String
   showCanaryStatement: Boolean
 }
+
+type Subscription {
+  isProposalRatified(id: Int!): Boolean!
+}
