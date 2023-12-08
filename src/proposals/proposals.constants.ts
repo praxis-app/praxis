@@ -20,7 +20,8 @@ export enum ProposalActionType {
 }
 
 export enum ProposalStage {
+  Voting = 'voting',
   Ratified = 'ratified',
   Revision = 'revision',
-  Voting = 'voting',
+  Closed = 'closed',
 }
