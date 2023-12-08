@@ -346,7 +346,7 @@ export class ProposalsService {
     ]);
 
     for (const { id, group, createdAt } of proposals) {
-      if (group.config.decisionMakingModel === DecisionMakingModel.Consensus) {
+      if (group.config.decisionMakingModel === DecisionMakingModel.Consent) {
         const hasVotingPeriodEnded = await this.hasVotingPeriodEnded(
           group.config.votingTimeLimit,
           createdAt,

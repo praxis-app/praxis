@@ -54,6 +54,14 @@ const ProposalCardFooter = ({
 
   const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
     variables: { proposalId: proposal.id },
+    onData: ({ data: { data } }) => {
+      if (data?.isProposalRatified) {
+        toastVar({
+          status: 'info',
+          title: t('proposals.toasts.ratifiedSuccess'),
+        });
+      }
+    },
     skip: !isLoggedIn,
   });
 

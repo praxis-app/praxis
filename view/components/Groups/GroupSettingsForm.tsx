@@ -206,6 +206,9 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               value={values.votingTimeLimit}
               onChange={handleChange}
             >
+              <MenuItem value={VotingTimeLimit.OneMinute}>
+                {t('time.minutesFull', { count: 1 })}
+              </MenuItem>
               <MenuItem value={VotingTimeLimit.HalfHour}>
                 {t('time.minutesFull', { count: 30 })}
               </MenuItem>

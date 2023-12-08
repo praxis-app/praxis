@@ -4,6 +4,7 @@ export enum DecisionMakingModel {
 }
 
 export enum VotingTimeLimit {
+  OneMinute = 1, // TODO: Remove after testing
   HalfHour = 30,
   OneHour = 60,
   HalfDay = 60 * 12,
