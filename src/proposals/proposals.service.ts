@@ -5,10 +5,10 @@
 
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
-import { GroupConfig } from '../groups/group-configs/models/group-config.model';
 import { GroupsService } from '../groups/groups.service';
 import { Group } from '../groups/models/group.model';
 import { ImageTypes } from '../images/image.constants';
@@ -29,12 +29,10 @@ import { ProposalActionRolesService } from './proposal-actions/proposal-action-r
 import { ProposalActionsService } from './proposal-actions/proposal-actions.service';
 import {
   DecisionMakingModel,
-  MIN_GROUP_SIZE_TO_RATIFY,
-  MIN_VOTE_COUNT_TO_RATIFY,
+  MinGroupSizeToRatify,
   ProposalActionType,
   ProposalStage,
 } from './proposals.constants';
-import { PubSub } from 'graphql-subscriptions';
 
 type ProposalWithCommentCount = Proposal & { commentCount: number };
 
@@ -284,18 +282,14 @@ export class ProposalsService {
       proposalId,
       ['group.config', 'group.members', 'votes'],
     );
-    if (
-      stage !== ProposalStage.Voting ||
-      votes.length < MIN_VOTE_COUNT_TO_RATIFY ||
-      group.members.length < MIN_GROUP_SIZE_TO_RATIFY
-    ) {
+    if (stage !== ProposalStage.Voting) {
       return false;
     }
     if (group.config.decisionMakingModel === DecisionMakingModel.Consensus) {
       return this.hasConsensus(votes, group);
     }
     if (group.config.decisionMakingModel === DecisionMakingModel.Consent) {
-      return this.hasConsent(votes, group.config, createdAt);
+      return this.hasConsent(votes, group, createdAt);
     }
     return false;
   }
@@ -307,6 +301,7 @@ export class ProposalsService {
       config;
 
     return (
+      members.length >= MinGroupSizeToRatify.Consensus &&
       agreements.length >= members.length * (ratificationThreshold * 0.01) &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
@@ -316,20 +311,19 @@ export class ProposalsService {
 
   async hasConsent(
     votes: Vote[],
-    groupConfig: GroupConfig,
+    { members, config }: Group,
     proposalCreatedAt: Date,
   ) {
     const { reservations, standAsides, blocks } =
       sortConsensusVotesByType(votes);
-    const { reservationsLimit, standAsidesLimit, votingTimeLimit } =
-      groupConfig;
+    const { reservationsLimit, standAsidesLimit, votingTimeLimit } = config;
 
-    // TODO: Test thoroughly
     const minutesPassedSinceProposalCreation = Math.floor(
       (new Date().getTime() - proposalCreatedAt.getTime()) / 60000,
     );
 
     return (
+      members.length >= MinGroupSizeToRatify.Consent &&
       minutesPassedSinceProposalCreation >= votingTimeLimit &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
