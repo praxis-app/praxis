@@ -5,7 +5,6 @@
 
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
@@ -35,10 +34,9 @@ import {
   ProposalActionType,
   ProposalStage,
 } from './proposals.constants';
+import { PubSub } from 'graphql-subscriptions';
 
 type ProposalWithCommentCount = Proposal & { commentCount: number };
-
-const pubSub = new PubSub();
 
 @Injectable()
 export class ProposalsService {
@@ -53,6 +51,8 @@ export class ProposalsService {
 
     @Inject(forwardRef(() => ImagesService))
     private imagesService: ImagesService,
+
+    @Inject('PUB_SUB') private pubSub: PubSub,
 
     private groupsService: GroupsService,
     private proposalActionEventsService: ProposalActionEventsService,
@@ -359,7 +359,7 @@ export class ProposalsService {
             await this.ratifyProposal(id);
             await this.implementProposal(id);
 
-            pubSub.publish(`isProposalRatified-${id}`, {
+            this.pubSub.publish(`isProposalRatified-${id}`, {
               isProposalRatified: true,
             });
           }

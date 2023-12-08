@@ -21,6 +21,7 @@ import { ImagesModule } from './images/images.module';
 import { LikesModule } from './likes/likes.module';
 import { PostsModule } from './posts/posts.module';
 import { ProposalsModule } from './proposals/proposals.module';
+import { PubSubModule } from './pub-sub/pub-sub.module';
 import { ServerConfigsModule } from './server-configs/server-configs.module';
 import { ServerInvitesModule } from './server-invites/server-invites.module';
 import { ServerRolesModule } from './server-roles/server-roles.module';
@@ -72,6 +73,7 @@ const ViewModule = ServeStaticModule.forRoot({
     LikesModule,
     PostsModule,
     ProposalsModule,
+    PubSubModule,
     ServerConfigsModule,
     ServerInvitesModule,
     ServerRolesModule,

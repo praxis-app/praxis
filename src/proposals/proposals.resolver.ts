@@ -1,4 +1,4 @@
-import { UsePipes } from '@nestjs/common';
+import { Inject, UsePipes } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -30,13 +30,12 @@ import { UpdateProposalValidationPipe } from './pipes/update-proposal-validation
 import { ProposalAction } from './proposal-actions/models/proposal-action.model';
 import { ProposalsService } from './proposals.service';
 
-const pubSub = new PubSub();
-
 @Resolver(() => Proposal)
 export class ProposalsResolver {
   constructor(
-    private proposalsService: ProposalsService,
+    @Inject('PUB_SUB') private pubSub: PubSub,
     private commentsService: CommentsService,
+    private proposalsService: ProposalsService,
   ) {}
 
   @Query(() => Proposal)
@@ -130,6 +129,6 @@ export class ProposalsResolver {
 
   @Subscription(() => Boolean)
   isProposalRatified(@Args('id', { type: () => Int }) id: number) {
-    return pubSub.asyncIterator(`isProposalRatified-${id}`);
+    return this.pubSub.asyncIterator(`isProposalRatified-${id}`);
   }
 }
