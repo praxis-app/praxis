@@ -12,8 +12,8 @@ import { Observable } from 'rxjs';
 import { ProposalsService } from '../proposals.service';
 
 enum CronJobName {
-  SyncronizeProposals = 'syncronize-proposals',
-  DisableSyncronizeProposals = 'disable-syncronize-proposals',
+  synchronizeProposals = 'synchronize-proposals',
+  DisablesynchronizeProposals = 'disable-synchronize-proposals',
 }
 
 @Injectable()
@@ -26,11 +26,11 @@ export class SyncProposalsInterceptor implements NestInterceptor {
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     const isJobPresent = this.schedulerRegistry.doesExist(
       'cron',
-      CronJobName.SyncronizeProposals,
+      CronJobName.synchronizeProposals,
     );
     const isTimeoutPresent = this.schedulerRegistry.doesExist(
       'timeout',
-      CronJobName.DisableSyncronizeProposals,
+      CronJobName.DisablesynchronizeProposals,
     );
 
     if (isTimeoutPresent) {
@@ -50,27 +50,27 @@ export class SyncProposalsInterceptor implements NestInterceptor {
 
   addCronJob() {
     const job = new CronJob(CronExpression.EVERY_5_MINUTES, async () => {
-      await this.proposalsService.syncronizeProposals();
+      await this.proposalsService.synchronizeProposals();
     });
 
-    this.schedulerRegistry.addCronJob(CronJobName.SyncronizeProposals, job);
+    this.schedulerRegistry.addCronJob(CronJobName.synchronizeProposals, job);
     job.start();
   }
 
   addTimeout() {
     const callback = () =>
-      this.schedulerRegistry.deleteCronJob(CronJobName.SyncronizeProposals);
+      this.schedulerRegistry.deleteCronJob(CronJobName.synchronizeProposals);
 
     const timeout = setTimeout(callback, 1000 * 60 * 60 * 1);
     this.schedulerRegistry.addTimeout(
-      CronJobName.DisableSyncronizeProposals,
+      CronJobName.DisablesynchronizeProposals,
       timeout,
     );
   }
 
   deleteTimeout() {
     this.schedulerRegistry.deleteTimeout(
-      CronJobName.DisableSyncronizeProposals,
+      CronJobName.DisablesynchronizeProposals,
     );
   }
 

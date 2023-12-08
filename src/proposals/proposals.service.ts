@@ -331,7 +331,7 @@ export class ProposalsService {
     );
   }
 
-  async syncronizeProposals() {
+  async synchronizeProposals() {
     const logTimeMessage = 'Syncronizing proposals';
     logTime(logTimeMessage, this.logger);
 
