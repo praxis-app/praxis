@@ -60,6 +60,7 @@ const ProposalCardFooter = ({
           status: 'info',
           title: t('proposals.toasts.ratifiedSuccess'),
         });
+        console.log('Ratified 🚀');
       }
     },
     skip: !isLoggedIn,
