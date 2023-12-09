@@ -365,9 +365,14 @@ export class ProposalsService {
   }
 
   async hasVotingPeriodEnded(votingTimeLimit: number, createdAt: Date) {
+    const timeOfCreation = createdAt.getTime();
+    const now = new Date().getTime();
+    const oneMinute = 60 * 1000;
+
     const minutesPassedSinceProposalCreation = Math.floor(
-      (new Date().getTime() - createdAt.getTime()) / 60000,
+      (now - timeOfCreation) / oneMinute,
     );
+
     return minutesPassedSinceProposalCreation >= votingTimeLimit;
   }
 
