@@ -61,7 +61,7 @@ export class SyncProposalsInterceptor implements NestInterceptor {
     const callback = () =>
       this.schedulerRegistry.deleteCronJob(CronJobName.SynchronizeProposals);
 
-    const timeout = setTimeout(callback, 1000 * 60 * 60 * 1);
+    const timeout = setTimeout(callback, 1000 * 60 * 30);
     this.schedulerRegistry.addTimeout(
       CronJobName.DisableSynchronizeProposals,
       timeout,

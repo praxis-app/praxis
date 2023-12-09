@@ -62,6 +62,7 @@ export class UsersResolver {
   }
 
   @ResolveField(() => [FeedItem])
+  @UseInterceptors(SyncProposalsInterceptor)
   async homeFeed(@Parent() { id }: User) {
     return this.usersService.getUserFeed(id);
   }
