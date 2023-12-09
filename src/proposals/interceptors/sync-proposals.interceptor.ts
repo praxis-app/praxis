@@ -66,14 +66,10 @@ export class SyncProposalsInterceptor implements NestInterceptor {
     );
   }
 
-  deleteTimeout() {
+  resetTimeout() {
     this.schedulerRegistry.deleteTimeout(
       CronJobName.DisableSynchronizeProposals,
     );
-  }
-
-  resetTimeout() {
-    this.deleteTimeout();
     this.addTimeout();
   }
 }
