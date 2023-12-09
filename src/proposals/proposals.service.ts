@@ -339,29 +339,38 @@ export class ProposalsService {
       'group.config',
     ]);
 
-    for (const { id, group, createdAt } of proposals) {
-      if (group.config.decisionMakingModel !== DecisionMakingModel.Consent) {
-        continue;
-      }
-      const hasVotingPeriodEnded = this.hasVotingPeriodEnded(
-        group.config.votingTimeLimit,
-        createdAt,
-      );
-
-      if (hasVotingPeriodEnded) {
-        const isRatifiable = await this.isProposalRatifiable(id);
-
-        if (isRatifiable) {
-          await this.ratifyProposal(id);
-          await this.implementProposal(id);
-
-          this.pubSub.publish(`isProposalRatified-${id}`, {
-            isProposalRatified: true,
-          });
-        }
-      }
+    for (const proposal of proposals) {
+      await this.synchronizeProposal(proposal);
     }
     logTime(logTimeMessage, this.logger);
+  }
+
+  async synchronizeProposal({ id, group, createdAt }: Proposal) {
+    if (group.config.decisionMakingModel !== DecisionMakingModel.Consent) {
+      return;
+    }
+    const hasVotingPeriodEnded = this.hasVotingPeriodEnded(
+      group.config.votingTimeLimit,
+      createdAt,
+    );
+
+    if (hasVotingPeriodEnded) {
+      const isRatifiable = await this.isProposalRatifiable(id);
+
+      if (isRatifiable) {
+        await this.ratifyProposal(id);
+        await this.implementProposal(id);
+
+        this.pubSub.publish(`isProposalRatified-${id}`, {
+          isProposalRatified: true,
+        });
+      }
+    }
+  }
+
+  async synchronizeProposalById(id: number) {
+    const proposal = await this.getProposal(id, ['group.config']);
+    await this.synchronizeProposal(proposal);
   }
 
   hasVotingPeriodEnded(votingTimeLimit: number, createdAt: Date) {

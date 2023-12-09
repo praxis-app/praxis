@@ -435,6 +435,7 @@ export type Mutation = {
   logOut: Scalars['Boolean']['output'];
   login: AuthPayload;
   signUp: AuthPayload;
+  synchronizeProposal: SynchronizeProposalPayload;
   unfollowUser: Scalars['Boolean']['output'];
   updateComment: UpdateCommentPayload;
   updateEvent: UpdateEventPayload;
@@ -584,6 +585,10 @@ export type MutationLoginArgs = {
 
 export type MutationSignUpArgs = {
   input: SignUpInput;
+};
+
+export type MutationSynchronizeProposalArgs = {
+  id: Scalars['Int']['input'];
 };
 
 export type MutationUnfollowUserArgs = {
@@ -970,6 +975,11 @@ export type Subscription = {
 
 export type SubscriptionIsProposalRatifiedArgs = {
   id: Scalars['Int']['input'];
+};
+
+export type SynchronizeProposalPayload = {
+  __typename?: 'SynchronizeProposalPayload';
+  proposal: Proposal;
 };
 
 export type UpdateCommentInput = {
