@@ -343,7 +343,7 @@ export class ProposalsService {
       if (group.config.decisionMakingModel !== DecisionMakingModel.Consent) {
         continue;
       }
-      const hasVotingPeriodEnded = await this.hasVotingPeriodEnded(
+      const hasVotingPeriodEnded = this.hasVotingPeriodEnded(
         group.config.votingTimeLimit,
         createdAt,
       );
@@ -364,7 +364,7 @@ export class ProposalsService {
     logTime(logTimeMessage, this.logger);
   }
 
-  async hasVotingPeriodEnded(votingTimeLimit: number, createdAt: Date) {
+  hasVotingPeriodEnded(votingTimeLimit: number, createdAt: Date) {
     const timeOfCreation = createdAt.getTime();
     const now = new Date().getTime();
     const oneMinute = 60 * 1000;
