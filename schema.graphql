@@ -445,15 +445,6 @@ type UpdateServerRolePayload {
   me: User!
 }
 
-type FollowUserPayload {
-  followedUser: User!
-  follower: User!
-}
-
-type UpdateUserPayload {
-  user: User!
-}
-
 type ServerPermissions {
   manageRoles: Boolean!
   managePosts: Boolean!
@@ -463,6 +454,15 @@ type ServerPermissions {
   manageInvites: Boolean!
   createInvites: Boolean!
   removeMembers: Boolean!
+}
+
+type FollowUserPayload {
+  followedUser: User!
+  follower: User!
+}
+
+type UpdateUserPayload {
+  user: User!
 }
 
 type AuthPayload {
@@ -497,6 +497,7 @@ type Query {
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
   post(id: Int!): Post!
+  proposal(id: Int!): Proposal!
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
   group(id: Int, name: String): Group!
@@ -505,7 +506,6 @@ type Query {
   publicGroupsFeed: [FeedItem!]!
   groupRole(id: Int!): GroupRole!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
-  proposal(id: Int!): Proposal!
   groupRoles: [GroupRole!]!
   canary: Canary!
   publicCanary: Canary
@@ -538,6 +538,9 @@ type Mutation {
   createComment(commentData: CreateCommentInput!): CreateCommentPayload!
   updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
   deleteComment(id: Int!): Boolean!
+  createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
+  updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
+  deleteProposal(id: Int!): Boolean!
   createEvent(eventData: CreateEventInput!): CreateEventPayload!
   updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
   deleteEvent(id: Int!): Boolean!
@@ -553,14 +556,11 @@ type Mutation {
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
   cancelGroupMemberRequest(id: Int!): Boolean!
   denyGroupMemberRequest(id: Int!): Boolean!
-  createLike(likeData: CreateLikeInput!): CreateLikePayload!
-  deleteLike(likeData: DeleteLikeInput!): Boolean!
-  createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
-  updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
-  deleteProposal(id: Int!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
+  createLike(likeData: CreateLikeInput!): CreateLikePayload!
+  deleteLike(likeData: DeleteLikeInput!): Boolean!
   createGroupRole(groupRoleData: CreateGroupRoleInput!): CreateGroupRolePayload!
   updateGroupRole(groupRoleData: UpdateGroupRoleInput!): UpdateGroupRolePayload!
   deleteGroupRole(id: Int!): Boolean!
@@ -653,73 +653,6 @@ input UpdateCommentInput {
   images: [Upload!]
 }
 
-input CreateEventInput {
-  name: String!
-  description: String!
-  coverPhoto: Upload
-  location: String
-  online: Boolean
-  externalLink: String
-  startsAt: DateTime!
-  endsAt: DateTime
-  groupId: Int
-  hostId: Int!
-}
-
-input UpdateEventInput {
-  id: Int!
-  name: String
-  description: String
-  coverPhoto: Upload
-  location: String
-  online: Boolean
-  externalLink: String
-  hostId: Int
-  startsAt: DateTime!
-  endsAt: DateTime
-}
-
-input CreateEventAttendeeInput {
-  eventId: Int!
-  status: String!
-}
-
-input UpdateEventAttendeeInput {
-  eventId: Int!
-  status: String!
-}
-
-input CreateGroupInput {
-  name: String!
-  description: String!
-  coverPhoto: Upload
-}
-
-input UpdateGroupInput {
-  id: Int!
-  name: String
-  description: String
-  coverPhoto: Upload
-}
-
-input UpdateGroupConfigInput {
-  groupId: Int!
-  decisionMakingModel: String
-  standAsidesLimit: Int
-  reservationsLimit: Int
-  ratificationThreshold: Int
-  votingTimeLimit: Int
-  privacy: String
-}
-
-input CreateLikeInput {
-  postId: Int
-}
-
-input DeleteLikeInput {
-  postId: Int
-}
-
 input CreateProposalInput {
   groupId: Int
   body: String
@@ -791,6 +724,65 @@ input UpdateProposalInput {
   images: [Upload!]
 }
 
+input CreateEventInput {
+  name: String!
+  description: String!
+  coverPhoto: Upload
+  location: String
+  online: Boolean
+  externalLink: String
+  startsAt: DateTime!
+  endsAt: DateTime
+  groupId: Int
+  hostId: Int!
+}
+
+input UpdateEventInput {
+  id: Int!
+  name: String
+  description: String
+  coverPhoto: Upload
+  location: String
+  online: Boolean
+  externalLink: String
+  hostId: Int
+  startsAt: DateTime!
+  endsAt: DateTime
+}
+
+input CreateEventAttendeeInput {
+  eventId: Int!
+  status: String!
+}
+
+input UpdateEventAttendeeInput {
+  eventId: Int!
+  status: String!
+}
+
+input CreateGroupInput {
+  name: String!
+  description: String!
+  coverPhoto: Upload
+}
+
+input UpdateGroupInput {
+  id: Int!
+  name: String
+  description: String
+  coverPhoto: Upload
+}
+
+input UpdateGroupConfigInput {
+  groupId: Int!
+  decisionMakingModel: String
+  standAsidesLimit: Int
+  reservationsLimit: Int
+  ratificationThreshold: Int
+  votingTimeLimit: Int
+  privacy: String
+}
+
 input CreateVoteInput {
   proposalId: Int!
   voteType: String!
@@ -799,6 +791,14 @@ input CreateVoteInput {
 input UpdateVoteInput {
   id: Int!
   voteType: String!
+}
+
+input CreateLikeInput {
+  postId: Int
+}
+
+input DeleteLikeInput {
+  postId: Int
 }
 
 input CreateGroupRoleInput {
@@ -824,4 +824,8 @@ input UpdateServerConfigInput {
   id: Int!
   canaryStatement: String
   showCanaryStatement: Boolean
+}
+
+type Subscription {
+  isProposalRatified(id: Int!): Boolean!
 }

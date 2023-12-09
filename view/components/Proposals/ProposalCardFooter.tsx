@@ -3,12 +3,13 @@
 import { useReactiveVar } from '@apollo/client';
 import { Comment, HowToVote, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ProposalStage } from '../../constants/proposal.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { useProposalCommentsLazyQuery } from '../../graphql/proposals/queries/gen/ProposalComments.gen';
-import { ProposalStage } from '../../constants/proposal.constants';
+import { useIsProposalRatifiedSubscription } from '../../graphql/proposals/subscriptions/gen/IsProposalRatified.gen';
 import { Blurple } from '../../styles/theme';
 import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
@@ -18,6 +19,7 @@ import Flex from '../Shared/Flex';
 import VoteBadges from '../Votes/VoteBadges';
 import VoteMenu from '../Votes/VoteMenu';
 import ProposalModal from './ProposalModal';
+import { useInView } from '../../hooks/shared.hooks';
 
 const ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -48,7 +50,23 @@ const ProposalCardFooter = ({
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal || isProposalPage);
 
-  const [getProposalComments, { data }] = useProposalCommentsLazyQuery();
+  const [getProposalComments, { data: proposalCommentsData }] =
+    useProposalCommentsLazyQuery();
+
+  const ref = useRef<HTMLDivElement>(null);
+  const [, viewed] = useInView(ref, '100px');
+  const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
+    skip: !isLoggedIn || !viewed || proposal.stage === ProposalStage.Ratified,
+    variables: { proposalId: proposal.id },
+    onData: ({ data: { data } }) => {
+      if (data?.isProposalRatified) {
+        toastVar({
+          status: 'info',
+          title: t('proposals.toasts.ratifiedSuccess'),
+        });
+      }
+    },
+  });
 
   const { t } = useTranslation();
 
@@ -70,11 +88,14 @@ const ProposalCardFooter = ({
     proposal,
   ]);
 
-  const me = data?.me;
-  const comments = data?.proposal?.comments;
-  const { stage, voteCount, votes, commentCount, group } = proposal;
+  const me = proposalCommentsData?.me;
+  const comments = proposalCommentsData?.proposal?.comments;
+  const { voteCount, votes, commentCount, group, stage } = proposal;
   const isDisabled = !!group && !group.isJoinedByMe;
-  const isRatified = stage === ProposalStage.Ratified;
+
+  const isRatified =
+    isProposalRatifiedData?.isProposalRatified ||
+    stage === ProposalStage.Ratified;
 
   const canManageComments = !!(
     group?.myPermissions?.manageComments || me?.serverPermissions.manageComments
@@ -139,7 +160,7 @@ const ProposalCardFooter = ({
   };
 
   return (
-    <>
+    <Box ref={ref}>
       <Flex
         justifyContent={voteCount ? 'space-between' : 'end'}
         paddingBottom={voteCount || commentCount ? 0.8 : 0}
@@ -219,7 +240,7 @@ const ProposalCardFooter = ({
           proposal={proposal}
         />
       )}
-    </>
+    </Box>
   );
 };
 

@@ -3,19 +3,19 @@
  * TODO: Add support for other voting models
  */
 
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
-import { GroupConfig } from '../groups/group-configs/models/group-config.model';
 import { GroupsService } from '../groups/groups.service';
 import { Group } from '../groups/models/group.model';
 import { ImageTypes } from '../images/image.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
-import { sanitizeText } from '../shared/shared.utils';
+import { logTime, sanitizeText } from '../shared/shared.utils';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 import { VotesService } from '../votes/votes.service';
@@ -29,8 +29,7 @@ import { ProposalActionRolesService } from './proposal-actions/proposal-action-r
 import { ProposalActionsService } from './proposal-actions/proposal-actions.service';
 import {
   DecisionMakingModel,
-  MIN_GROUP_SIZE_TO_RATIFY,
-  MIN_VOTE_COUNT_TO_RATIFY,
+  MinGroupSizeToRatify,
   ProposalActionType,
   ProposalStage,
 } from './proposals.constants';
@@ -39,6 +38,8 @@ type ProposalWithCommentCount = Proposal & { commentCount: number };
 
 @Injectable()
 export class ProposalsService {
+  private readonly logger = new Logger(ProposalsService.name);
+
   constructor(
     @InjectRepository(Proposal)
     private repository: Repository<Proposal>,
@@ -48,6 +49,8 @@ export class ProposalsService {
 
     @Inject(forwardRef(() => ImagesService))
     private imagesService: ImagesService,
+
+    @Inject('PUB_SUB') private pubSub: PubSub,
 
     private groupsService: GroupsService,
     private proposalActionEventsService: ProposalActionEventsService,
@@ -60,8 +63,8 @@ export class ProposalsService {
     return this.repository.findOneOrFail({ where: { id }, relations });
   }
 
-  async getProposals(where?: FindOptionsWhere<Proposal>) {
-    return this.repository.find({ where });
+  async getProposals(where?: FindOptionsWhere<Proposal>, relations?: string[]) {
+    return this.repository.find({ where, relations });
   }
 
   async isPublicProposalImage(image: Image) {
@@ -279,18 +282,14 @@ export class ProposalsService {
       proposalId,
       ['group.config', 'group.members', 'votes'],
     );
-    if (
-      stage !== ProposalStage.Voting ||
-      votes.length < MIN_VOTE_COUNT_TO_RATIFY ||
-      group.members.length < MIN_GROUP_SIZE_TO_RATIFY
-    ) {
+    if (stage !== ProposalStage.Voting) {
       return false;
     }
     if (group.config.decisionMakingModel === DecisionMakingModel.Consensus) {
       return this.hasConsensus(votes, group);
     }
     if (group.config.decisionMakingModel === DecisionMakingModel.Consent) {
-      return this.hasConsent(votes, group.config, createdAt);
+      return this.hasConsent(votes, group, createdAt);
     }
     return false;
   }
@@ -302,6 +301,7 @@ export class ProposalsService {
       config;
 
     return (
+      members.length >= MinGroupSizeToRatify.Consensus &&
       agreements.length >= members.length * (ratificationThreshold * 0.01) &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
@@ -311,25 +311,69 @@ export class ProposalsService {
 
   async hasConsent(
     votes: Vote[],
-    groupConfig: GroupConfig,
+    { members, config }: Group,
     proposalCreatedAt: Date,
   ) {
     const { reservations, standAsides, blocks } =
       sortConsensusVotesByType(votes);
-    const { reservationsLimit, standAsidesLimit, votingTimeLimit } =
-      groupConfig;
+    const { reservationsLimit, standAsidesLimit, votingTimeLimit } = config;
 
-    // TODO: Test thoroughly
     const minutesPassedSinceProposalCreation = Math.floor(
       (new Date().getTime() - proposalCreatedAt.getTime()) / 60000,
     );
 
     return (
+      members.length >= MinGroupSizeToRatify.Consent &&
       minutesPassedSinceProposalCreation >= votingTimeLimit &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
       blocks.length === 0
     );
+  }
+
+  async synchronizeProposals() {
+    const logTimeMessage = 'Syncronizing proposals';
+    logTime(logTimeMessage, this.logger);
+
+    const proposals = await this.getProposals({ stage: ProposalStage.Voting }, [
+      'group.config',
+    ]);
+
+    for (const { id, group, createdAt } of proposals) {
+      if (group.config.decisionMakingModel !== DecisionMakingModel.Consent) {
+        continue;
+      }
+      const hasVotingPeriodEnded = this.hasVotingPeriodEnded(
+        group.config.votingTimeLimit,
+        createdAt,
+      );
+
+      if (hasVotingPeriodEnded) {
+        const isRatifiable = await this.isProposalRatifiable(id);
+
+        if (isRatifiable) {
+          await this.ratifyProposal(id);
+          await this.implementProposal(id);
+
+          this.pubSub.publish(`isProposalRatified-${id}`, {
+            isProposalRatified: true,
+          });
+        }
+      }
+    }
+    logTime(logTimeMessage, this.logger);
+  }
+
+  hasVotingPeriodEnded(votingTimeLimit: number, createdAt: Date) {
+    const timeOfCreation = createdAt.getTime();
+    const now = new Date().getTime();
+    const oneMinute = 60 * 1000;
+
+    const minutesPassedSinceProposalCreation = Math.floor(
+      (now - timeOfCreation) / oneMinute,
+    );
+
+    return minutesPassedSinceProposalCreation >= votingTimeLimit;
   }
 
   async deleteProposal(proposalId: number) {

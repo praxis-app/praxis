@@ -1,4 +1,4 @@
-import { UsePipes } from '@nestjs/common';
+import { Inject, UseInterceptors, UsePipes } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -8,7 +8,9 @@ import {
   Query,
   ResolveField,
   Resolver,
+  Subscription,
 } from '@nestjs/graphql';
+import { PubSub } from 'graphql-subscriptions';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { CommentsService } from '../comments/comments.service';
 import { Comment } from '../comments/models/comment.model';
@@ -17,6 +19,7 @@ import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
+import { SyncProposalsInterceptor } from './interceptors/sync-proposals.interceptor';
 import { CreateProposalInput } from './models/create-proposal.input';
 import { CreateProposalPayload } from './models/create-proposal.payload';
 import { Proposal } from './models/proposal.model';
@@ -31,11 +34,13 @@ import { ProposalsService } from './proposals.service';
 @Resolver(() => Proposal)
 export class ProposalsResolver {
   constructor(
-    private proposalsService: ProposalsService,
+    @Inject('PUB_SUB') private pubSub: PubSub,
     private commentsService: CommentsService,
+    private proposalsService: ProposalsService,
   ) {}
 
   @Query(() => Proposal)
+  @UseInterceptors(SyncProposalsInterceptor)
   async proposal(@Args('id', { type: () => Int }) id: number) {
     return this.proposalsService.getProposal(id);
   }
@@ -122,5 +127,10 @@ export class ProposalsResolver {
   @UsePipes(DeleteProposalValidationPipe)
   async deleteProposal(@Args('id', { type: () => Int }) id: number) {
     return this.proposalsService.deleteProposal(id);
+  }
+
+  @Subscription(() => Boolean)
+  isProposalRatified(@Args('id', { type: () => Int }) id: number) {
+    return this.pubSub.asyncIterator(`isProposalRatified-${id}`);
   }
 }
