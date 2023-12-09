@@ -57,6 +57,9 @@ const ProposalCardFooter = ({
   const [getProposalComments, { data: proposalCommentsData }] =
     useProposalCommentsLazyQuery();
 
+  const [syncProposal, { called: syncProposalCalled }] =
+    useSyncProposalMutation();
+
   const ref = useRef<HTMLDivElement>(null);
   const [, viewed] = useInView(ref, '100px');
   const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
@@ -72,8 +75,6 @@ const ProposalCardFooter = ({
     },
   });
 
-  const [syncProposal] = useSyncProposalMutation();
-
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -82,7 +83,13 @@ const ProposalCardFooter = ({
       DecisionMakingModel.Consent;
     const isVotingStage = proposal.stage === ProposalStage.Voting;
 
-    if (!viewed || !isLoggedIn || !isConsentModel || !isVotingStage) {
+    if (
+      !viewed ||
+      !isLoggedIn ||
+      !isConsentModel ||
+      !isVotingStage ||
+      syncProposalCalled
+    ) {
       return;
     }
 
@@ -102,9 +109,17 @@ const ProposalCardFooter = ({
           proposalId: proposal.id,
           isLoggedIn,
         },
+        onCompleted({ synchronizeProposal: { proposal } }) {
+          if (proposal.stage === ProposalStage.Ratified) {
+            toastVar({
+              status: 'info',
+              title: t('proposals.toasts.ratifiedSuccess'),
+            });
+          }
+        },
       });
     }
-  }, [viewed, isLoggedIn, proposal, syncProposal]);
+  }, [viewed, isLoggedIn, proposal, syncProposal, syncProposalCalled, t]);
 
   useEffect(() => {
     if (inModal || isProposalPage) {
