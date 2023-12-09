@@ -56,9 +56,8 @@ const ProposalCardFooter = ({
   const ref = useRef<HTMLDivElement>(null);
   const [, viewed] = useInView(ref, '100px');
   const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
+    skip: !isLoggedIn || !viewed || proposal.stage === ProposalStage.Ratified,
     variables: { proposalId: proposal.id },
-    skip: !isLoggedIn || !viewed,
-
     onData: ({ data: { data } }) => {
       if (data?.isProposalRatified) {
         toastVar({
