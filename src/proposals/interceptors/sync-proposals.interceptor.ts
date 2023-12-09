@@ -33,16 +33,14 @@ export class SyncProposalsInterceptor implements NestInterceptor {
       CronJobName.DisableSynchronizeProposals,
     );
 
-    if (isTimeoutPresent) {
-      this.resetTimeout();
-    }
-
-    if (!isTimeoutPresent) {
-      this.addTimeout();
-    }
-
     if (!isJobPresent) {
       this.addCronJob();
+    }
+
+    if (isTimeoutPresent) {
+      this.resetTimeout();
+    } else {
+      this.addTimeout();
     }
 
     return next.handle();
