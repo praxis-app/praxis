@@ -3,7 +3,7 @@
 import { useReactiveVar } from '@apollo/client';
 import { Comment, HowToVote, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProposalStage } from '../../constants/proposal.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
@@ -19,6 +19,7 @@ import Flex from '../Shared/Flex';
 import VoteBadges from '../Votes/VoteBadges';
 import VoteMenu from '../Votes/VoteMenu';
 import ProposalModal from './ProposalModal';
+import { useInView } from '../../hooks/shared.hooks';
 
 const ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -52,18 +53,20 @@ const ProposalCardFooter = ({
   const [getProposalComments, { data: proposalCommentsData }] =
     useProposalCommentsLazyQuery();
 
+  const ref = useRef<HTMLDivElement>(null);
+  const [, viewed] = useInView(ref, '100px');
   const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
     variables: { proposalId: proposal.id },
+    skip: !isLoggedIn || !viewed,
+
     onData: ({ data: { data } }) => {
       if (data?.isProposalRatified) {
         toastVar({
           status: 'info',
           title: t('proposals.toasts.ratifiedSuccess'),
         });
-        console.log('Ratified 🚀');
       }
     },
-    skip: !isLoggedIn,
   });
 
   const { t } = useTranslation();
@@ -158,7 +161,7 @@ const ProposalCardFooter = ({
   };
 
   return (
-    <>
+    <Box ref={ref}>
       <Flex
         justifyContent={voteCount ? 'space-between' : 'end'}
         paddingBottom={voteCount || commentCount ? 0.8 : 0}
@@ -238,7 +241,7 @@ const ProposalCardFooter = ({
           proposal={proposal}
         />
       )}
-    </>
+    </Box>
   );
 };
 
