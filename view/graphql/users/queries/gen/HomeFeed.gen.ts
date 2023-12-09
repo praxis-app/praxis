@@ -209,6 +209,12 @@ export type HomeFeedQuery = {
               __typename?: 'GroupPermissions';
               manageComments: boolean;
             };
+            settings: {
+              __typename?: 'GroupConfig';
+              id: number;
+              votingTimeLimit: number;
+              decisionMakingModel: string;
+            };
             coverPhoto?: { __typename?: 'Image'; id: number } | null;
           } | null;
           images: Array<{ __typename?: 'Image'; id: number; filename: string }>;

@@ -345,32 +345,38 @@ export class ProposalsService {
     logTime(logTimeMessage, this.logger);
   }
 
-  async synchronizeProposal({ id, group, createdAt }: Proposal) {
-    if (group.config.decisionMakingModel !== DecisionMakingModel.Consent) {
-      return;
+  async synchronizeProposal(proposal: Proposal) {
+    if (
+      proposal.group.config.decisionMakingModel !== DecisionMakingModel.Consent
+    ) {
+      return proposal;
     }
     const hasVotingPeriodEnded = this.hasVotingPeriodEnded(
-      group.config.votingTimeLimit,
-      createdAt,
+      proposal.group.config.votingTimeLimit,
+      proposal.createdAt,
     );
 
     if (hasVotingPeriodEnded) {
-      const isRatifiable = await this.isProposalRatifiable(id);
+      const isRatifiable = await this.isProposalRatifiable(proposal.id);
 
       if (isRatifiable) {
-        await this.ratifyProposal(id);
-        await this.implementProposal(id);
+        await this.ratifyProposal(proposal.id);
+        await this.implementProposal(proposal.id);
 
-        this.pubSub.publish(`isProposalRatified-${id}`, {
+        this.pubSub.publish(`isProposalRatified-${proposal.id}`, {
           isProposalRatified: true,
         });
+
+        return { ...proposal, stage: ProposalStage.Ratified };
       }
     }
+    return proposal;
   }
 
   async synchronizeProposalById(id: number) {
     const proposal = await this.getProposal(id, ['group.config']);
-    await this.synchronizeProposal(proposal);
+    const syncedProposal = await this.synchronizeProposal(proposal);
+    return { proposal: syncedProposal };
   }
 
   hasVotingPeriodEnded(votingTimeLimit: number, createdAt: Date) {

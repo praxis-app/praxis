@@ -5,7 +5,10 @@ import { Comment, HowToVote, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProposalStage } from '../../constants/proposal.constants';
+import {
+  DecisionMakingModel,
+  ProposalStage,
+} from '../../constants/proposal.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { useProposalCommentsLazyQuery } from '../../graphql/proposals/queries/gen/ProposalComments.gen';
@@ -20,6 +23,7 @@ import VoteBadges from '../Votes/VoteBadges';
 import VoteMenu from '../Votes/VoteMenu';
 import ProposalModal from './ProposalModal';
 import { useInView } from '../../hooks/shared.hooks';
+import { useSyncProposalMutation } from '../../graphql/proposals/mutations/gen/SyncProposal.gen';
 
 const ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -68,7 +72,39 @@ const ProposalCardFooter = ({
     },
   });
 
+  const [syncProposal] = useSyncProposalMutation();
+
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const isConsentModel =
+      proposal.group?.settings.decisionMakingModel ===
+      DecisionMakingModel.Consent;
+    const isVotingStage = proposal.stage === ProposalStage.Voting;
+
+    if (!viewed || !isLoggedIn || !isConsentModel || !isVotingStage) {
+      return;
+    }
+
+    const votingTimeLimit = proposal.group?.settings.votingTimeLimit;
+    const createdAt = new Date(proposal.createdAt);
+    const timeOfCreation = createdAt.getTime();
+    const now = new Date().getTime();
+    const oneMinute = 60 * 1000;
+    const minutesPassed = Math.floor((now - timeOfCreation) / oneMinute);
+
+    const hasVotingPeriodEnded =
+      votingTimeLimit && minutesPassed >= votingTimeLimit;
+
+    if (hasVotingPeriodEnded) {
+      syncProposal({
+        variables: {
+          proposalId: proposal.id,
+          isLoggedIn,
+        },
+      });
+    }
+  }, [viewed, isLoggedIn, proposal, syncProposal]);
 
   useEffect(() => {
     if (inModal || isProposalPage) {

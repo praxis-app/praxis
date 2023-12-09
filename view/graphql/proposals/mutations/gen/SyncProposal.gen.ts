@@ -8,15 +8,15 @@ import * as Apollo from '@apollo/client';
 /* eslint-disable */
 
 const defaultOptions = {} as const;
-export type UpdateProposalMutationVariables = Types.Exact<{
-  proposalData: Types.UpdateProposalInput;
+export type SyncProposalMutationVariables = Types.Exact<{
+  proposalId: Types.Scalars['Int']['input'];
   isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
-export type UpdateProposalMutation = {
+export type SyncProposalMutation = {
   __typename?: 'Mutation';
-  updateProposal: {
-    __typename?: 'UpdateProposalPayload';
+  synchronizeProposal: {
+    __typename?: 'SynchronizeProposalPayload';
     proposal: {
       __typename?: 'Proposal';
       id: number;
@@ -180,60 +180,58 @@ export type UpdateProposalMutation = {
   };
 };
 
-export const UpdateProposalDocument = gql`
-  mutation UpdateProposal(
-    $proposalData: UpdateProposalInput!
-    $isLoggedIn: Boolean = true
-  ) {
-    updateProposal(proposalData: $proposalData) {
+export const SyncProposalDocument = gql`
+  mutation SyncProposal($proposalId: Int!, $isLoggedIn: Boolean = true) {
+    synchronizeProposal(id: $proposalId) {
       proposal {
+        id
         ...ProposalCard
       }
     }
   }
   ${ProposalCardFragmentDoc}
 `;
-export type UpdateProposalMutationFn = Apollo.MutationFunction<
-  UpdateProposalMutation,
-  UpdateProposalMutationVariables
+export type SyncProposalMutationFn = Apollo.MutationFunction<
+  SyncProposalMutation,
+  SyncProposalMutationVariables
 >;
 
 /**
- * __useUpdateProposalMutation__
+ * __useSyncProposalMutation__
  *
- * To run a mutation, you first call `useUpdateProposalMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdateProposalMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useSyncProposalMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSyncProposalMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updateProposalMutation, { data, loading, error }] = useUpdateProposalMutation({
+ * const [syncProposalMutation, { data, loading, error }] = useSyncProposalMutation({
  *   variables: {
- *      proposalData: // value for 'proposalData'
+ *      proposalId: // value for 'proposalId'
  *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
-export function useUpdateProposalMutation(
+export function useSyncProposalMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    UpdateProposalMutation,
-    UpdateProposalMutationVariables
+    SyncProposalMutation,
+    SyncProposalMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useMutation<
-    UpdateProposalMutation,
-    UpdateProposalMutationVariables
-  >(UpdateProposalDocument, options);
+    SyncProposalMutation,
+    SyncProposalMutationVariables
+  >(SyncProposalDocument, options);
 }
-export type UpdateProposalMutationHookResult = ReturnType<
-  typeof useUpdateProposalMutation
+export type SyncProposalMutationHookResult = ReturnType<
+  typeof useSyncProposalMutation
 >;
-export type UpdateProposalMutationResult =
-  Apollo.MutationResult<UpdateProposalMutation>;
-export type UpdateProposalMutationOptions = Apollo.BaseMutationOptions<
-  UpdateProposalMutation,
-  UpdateProposalMutationVariables
+export type SyncProposalMutationResult =
+  Apollo.MutationResult<SyncProposalMutation>;
+export type SyncProposalMutationOptions = Apollo.BaseMutationOptions<
+  SyncProposalMutation,
+  SyncProposalMutationVariables
 >;
