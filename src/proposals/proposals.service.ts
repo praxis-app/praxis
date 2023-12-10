@@ -152,9 +152,11 @@ export class ProposalsService {
       { id: proposalData.groupId },
       ['config'],
     );
+
     const votingEndsAt = config.votingTimeLimit
       ? new Date(Date.now() + config.votingTimeLimit * 60 * 1000)
       : undefined;
+
     const proposalConfig: Partial<ProposalConfig> = {
       decisionMakingModel: config.decisionMakingModel,
       ratificationThreshold: config.ratificationThreshold,
@@ -171,6 +173,7 @@ export class ProposalsService {
       userId: user.id,
       action,
     });
+
     try {
       if (images) {
         await this.saveProposalImages(proposal.id, images);
