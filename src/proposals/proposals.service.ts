@@ -9,9 +9,7 @@ import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Not, Repository } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
-import { GroupConfig } from '../groups/group-configs/models/group-config.model';
 import { GroupsService } from '../groups/groups.service';
-import { Group } from '../groups/models/group.model';
 import { ImageTypes } from '../images/image.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';
@@ -306,30 +304,35 @@ export class ProposalsService {
   }
 
   async isProposalRatifiable(proposalId: number) {
-    const { votes, stage, group, createdAt } = await this.getProposal(
+    const { votes, stage, group, config, createdAt } = await this.getProposal(
       proposalId,
-      ['group.config', 'group.members', 'votes'],
+      ['config', 'group.config', 'group.members', 'votes'],
     );
     if (stage !== ProposalStage.Voting) {
       return false;
     }
-    if (group.config.decisionMakingModel === DecisionMakingModel.Consensus) {
-      return this.hasConsensus(votes, group);
+    if (config.decisionMakingModel === DecisionMakingModel.Consensus) {
+      return this.hasConsensus(votes, config, group.members);
     }
-    if (group.config.decisionMakingModel === DecisionMakingModel.Consent) {
-      return this.hasConsent(votes, group.config, createdAt);
+    if (config.decisionMakingModel === DecisionMakingModel.Consent) {
+      return this.hasConsent(votes, config, createdAt);
     }
     return false;
   }
 
-  async hasConsensus(votes: Vote[], { members, config }: Group) {
+  async hasConsensus(
+    votes: Vote[],
+    proposalConfig: ProposalConfig,
+    groupMembers: User[],
+  ) {
     const { agreements, reservations, standAsides, blocks } =
       sortConsensusVotesByType(votes);
     const { reservationsLimit, standAsidesLimit, ratificationThreshold } =
-      config;
+      proposalConfig;
 
     return (
-      agreements.length >= members.length * (ratificationThreshold * 0.01) &&
+      agreements.length >=
+        groupMembers.length * (ratificationThreshold * 0.01) &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
       blocks.length === 0
@@ -338,16 +341,16 @@ export class ProposalsService {
 
   async hasConsent(
     votes: Vote[],
-    groupConfig: GroupConfig,
+    proposalConfig: ProposalConfig,
     proposalCreatedAt: Date,
   ) {
     const { reservations, standAsides, blocks } =
       sortConsensusVotesByType(votes);
     const { reservationsLimit, standAsidesLimit, votingTimeLimit } =
-      groupConfig;
+      proposalConfig;
 
     const minutesPassedSinceProposalCreation = Math.floor(
-      (new Date().getTime() - proposalCreatedAt.getTime()) / 60000,
+      (new Date().getTime() - proposalCreatedAt.getTime()) / (60 * 1000),
     );
 
     return (
@@ -367,7 +370,7 @@ export class ProposalsService {
         group: { config: { votingTimeLimit: Not(0) } },
         stage: ProposalStage.Voting,
       },
-      ['group.config'],
+      ['config'],
     );
 
     for (const proposal of proposals) {
@@ -377,9 +380,9 @@ export class ProposalsService {
   }
 
   async synchronizeProposal(proposal: Proposal) {
-    const { id, group, createdAt } = proposal;
+    const { id, config, createdAt } = proposal;
     const hasVotingPeriodEnded = this.hasVotingPeriodEnded(
-      group.config.votingTimeLimit,
+      config.votingTimeLimit,
       createdAt,
     );
 
