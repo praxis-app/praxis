@@ -1,6 +1,7 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import { DecisionMakingModel } from '../../proposals/proposals.constants';
 import { GroupsService } from '../groups.service';
 import { GroupPrivacy } from './group-configs.constants';
 import { GroupConfig } from './models/group-config.model';
@@ -36,6 +37,16 @@ export class GroupConfigsService {
     const group = await this.groupsService.getGroup({ id: groupId }, [
       'config',
     ]);
+    const newConfig = { ...group.config, ...groupConfigData };
+    if (
+      newConfig.decisionMakingModel === DecisionMakingModel.Consent &&
+      newConfig.votingTimeLimit === 0
+    ) {
+      throw new Error(
+        'Voting time limit is required for consent decision making model',
+      );
+    }
+
     await this.repository.update(group.config.id, groupConfigData);
     return { group };
   }
