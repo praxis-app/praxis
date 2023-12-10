@@ -29,10 +29,10 @@ import { ProposalActionRolesService } from './proposal-actions/proposal-action-r
 import { ProposalActionsService } from './proposal-actions/proposal-actions.service';
 import {
   DecisionMakingModel,
-  MinGroupSizeToRatify,
   ProposalActionType,
   ProposalStage,
 } from './proposals.constants';
+import { GroupConfig } from '../groups/group-configs/models/group-config.model';
 
 type ProposalWithCommentCount = Proposal & { commentCount: number };
 
@@ -295,7 +295,7 @@ export class ProposalsService {
       return this.hasConsensus(votes, group);
     }
     if (group.config.decisionMakingModel === DecisionMakingModel.Consent) {
-      return this.hasConsent(votes, group, createdAt);
+      return this.hasConsent(votes, group.config, createdAt);
     }
     return false;
   }
@@ -307,7 +307,6 @@ export class ProposalsService {
       config;
 
     return (
-      members.length >= MinGroupSizeToRatify.Consensus &&
       agreements.length >= members.length * (ratificationThreshold * 0.01) &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
@@ -317,19 +316,19 @@ export class ProposalsService {
 
   async hasConsent(
     votes: Vote[],
-    { members, config }: Group,
+    groupConfig: GroupConfig,
     proposalCreatedAt: Date,
   ) {
     const { reservations, standAsides, blocks } =
       sortConsensusVotesByType(votes);
-    const { reservationsLimit, standAsidesLimit, votingTimeLimit } = config;
+    const { reservationsLimit, standAsidesLimit, votingTimeLimit } =
+      groupConfig;
 
     const minutesPassedSinceProposalCreation = Math.floor(
       (new Date().getTime() - proposalCreatedAt.getTime()) / 60000,
     );
 
     return (
-      members.length >= MinGroupSizeToRatify.Consent &&
       minutesPassedSinceProposalCreation >= votingTimeLimit &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
