@@ -1,5 +1,5 @@
 import { Box, Divider, FormGroup, MenuItem, Typography } from '@mui/material';
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikErrors } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -106,6 +106,22 @@ const ProposeGroupSettingsModal = ({
     }
   };
 
+  const validateSettings = ({
+    decisionMakingModel,
+    votingTimeLimit,
+  }: ProposalActionGroupConfigInput) => {
+    const errors: FormikErrors<ProposalActionGroupConfigInput> = {};
+    if (
+      decisionMakingModel === DecisionMakingModel.Consent &&
+      votingTimeLimit === VotingTimeLimit.Unlimited
+    ) {
+      errors.votingTimeLimit = t(
+        'groups.errors.consentVotingTimeLimitRequired',
+      );
+    }
+    return errors;
+  };
+
   return (
     <Modal
       open={open}
@@ -117,9 +133,17 @@ const ProposeGroupSettingsModal = ({
       <Formik
         initialValues={initialValues}
         onSubmit={handleSubmit}
+        validate={validateSettings}
         enableReinitialize
       >
-        {({ isSubmitting, handleChange, values, dirty, setFieldValue }) => (
+        {({
+          dirty,
+          errors,
+          handleChange,
+          isSubmitting,
+          setFieldValue,
+          values,
+        }) => (
           <Form>
             {data && (
               <FormGroup sx={{ paddingTop: 1 }}>
@@ -224,9 +248,19 @@ const ProposeGroupSettingsModal = ({
                   description={t(
                     'groups.settings.descriptions.votingTimeLimit',
                   )}
-                  value={values.votingTimeLimit || ''}
+                  value={
+                    values.votingTimeLimit || values.votingTimeLimit === 0
+                      ? values.votingTimeLimit
+                      : ''
+                  }
                   onChange={handleChange}
+                  errors={errors}
                 >
+                  {/* TODO: Remove after testing */}
+                  <MenuItem value={VotingTimeLimit.OneMinute}>
+                    {t('time.minutesFull', { count: 1 })}
+                  </MenuItem>
+
                   <MenuItem value={VotingTimeLimit.HalfHour}>
                     {t('time.minutesFull', { count: 30 })}
                   </MenuItem>
@@ -247,6 +281,9 @@ const ProposeGroupSettingsModal = ({
                   </MenuItem>
                   <MenuItem value={VotingTimeLimit.TwoWeeks}>
                     {t('time.weeks', { count: 2 })}
+                  </MenuItem>
+                  <MenuItem value={VotingTimeLimit.Unlimited}>
+                    {t('groups.labels.unlimited')}
                   </MenuItem>
                 </GroupSettingsSelect>
 
