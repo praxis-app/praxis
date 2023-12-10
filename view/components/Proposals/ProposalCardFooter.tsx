@@ -80,7 +80,7 @@ const ProposalCardFooter = ({
 
   useEffect(() => {
     const isVotingTimeLimitUnlimited =
-      proposal.group?.settings.votingTimeLimit === VotingTimeLimit.Unlimited;
+      proposal.settings.votingTimeLimit === VotingTimeLimit.Unlimited;
     const isVotingStage = proposal.stage === ProposalStage.Voting;
 
     if (
@@ -93,7 +93,7 @@ const ProposalCardFooter = ({
       return;
     }
 
-    const votingTimeLimit = proposal.group?.settings.votingTimeLimit;
+    const votingTimeLimit = proposal.settings.votingTimeLimit;
     const createdAt = new Date(proposal.createdAt);
     const timeOfCreation = createdAt.getTime();
     const now = new Date().getTime();

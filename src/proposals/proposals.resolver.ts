@@ -22,6 +22,7 @@ import { Vote } from '../votes/models/vote.model';
 import { SynchronizeProposalsInterceptor } from './interceptors/synchronize-proposals.interceptor';
 import { CreateProposalInput } from './models/create-proposal.input';
 import { CreateProposalPayload } from './models/create-proposal.payload';
+import { ProposalConfig } from './models/proposal-config.model';
 import { Proposal } from './models/proposal.model';
 import { SynchronizeProposalPayload } from './models/synchronize-proposal.payload';
 import { UpdateProposalInput } from './models/update-proposal.input';
@@ -89,6 +90,11 @@ export class ProposalsResolver {
     @Parent() { id }: Proposal,
   ) {
     return loaders.proposalActionsLoader.load(id);
+  }
+
+  @ResolveField(() => ProposalConfig)
+  async settings(@Parent() { id }: Proposal) {
+    return this.proposalsService.getProposalConfig(id);
   }
 
   @ResolveField(() => User)

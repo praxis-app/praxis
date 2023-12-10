@@ -43,7 +43,10 @@ export class ProposalsService {
 
   constructor(
     @InjectRepository(Proposal)
-    private repository: Repository<Proposal>,
+    private proposalRepository: Repository<Proposal>,
+
+    @InjectRepository(ProposalConfig)
+    private proposalConfigRepository: Repository<ProposalConfig>,
 
     @Inject(forwardRef(() => VotesService))
     private votesService: VotesService,
@@ -61,11 +64,11 @@ export class ProposalsService {
   ) {}
 
   async getProposal(id: number, relations?: string[]) {
-    return this.repository.findOneOrFail({ where: { id }, relations });
+    return this.proposalRepository.findOneOrFail({ where: { id }, relations });
   }
 
   async getProposals(where?: FindOptionsWhere<Proposal>, relations?: string[]) {
-    return this.repository.find({ where, relations });
+    return this.proposalRepository.find({ where, relations });
   }
 
   async isPublicProposalImage(image: Image) {
@@ -88,6 +91,12 @@ export class ProposalsService {
     return group.config.privacy === GroupPrivacy.Public;
   }
 
+  async getProposalConfig(proposalId: number) {
+    return this.proposalConfigRepository.findOneOrFail({
+      where: { proposalId },
+    });
+  }
+
   async getProposalVotesBatch(proposalIds: number[]) {
     const votes = await this.votesService.getVotes({
       proposalId: In(proposalIds),
@@ -101,7 +110,7 @@ export class ProposalsService {
   }
 
   async getProposalCommentCountBatch(proposalIds: number[]) {
-    const proposals = (await this.repository
+    const proposals = (await this.proposalRepository
       .createQueryBuilder('proposal')
       .leftJoinAndSelect('proposal.comments', 'comment')
       .loadRelationCountAndMap('proposal.commentCount', 'proposal.comments')
@@ -153,7 +162,7 @@ export class ProposalsService {
       standAsidesLimit: config.standAsidesLimit,
       votingTimeLimit: config.votingTimeLimit,
     };
-    const proposal = await this.repository.save({
+    const proposal = await this.proposalRepository.save({
       ...proposalData,
       body: sanitizedBody,
       config: proposalConfig,
@@ -209,7 +218,7 @@ export class ProposalsService {
       ...proposalWithAction.action,
       ...action,
     };
-    const proposal = await this.repository.save({
+    const proposal = await this.proposalRepository.save({
       ...proposalWithAction,
       ...data,
       action: newAction,
@@ -244,13 +253,13 @@ export class ProposalsService {
   }
 
   async ratifyProposal(proposalId: number) {
-    await this.repository.update(proposalId, {
+    await this.proposalRepository.update(proposalId, {
       stage: ProposalStage.Ratified,
     });
   }
 
   async closeProposal(proposalId: number) {
-    await this.repository.update(proposalId, {
+    await this.proposalRepository.update(proposalId, {
       stage: ProposalStage.Closed,
     });
   }
@@ -418,7 +427,7 @@ export class ProposalsService {
     for (const { filename } of images) {
       await deleteImageFile(filename);
     }
-    await this.repository.delete(proposalId);
+    await this.proposalRepository.delete(proposalId);
     return true;
   }
 }

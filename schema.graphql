@@ -181,7 +181,6 @@ type Proposal {
   body: String
   stage: String!
   action: ProposalAction!
-  config: ProposalConfig!
   votes: [Vote!]!
   comments: [Comment!]!
   images: [Image!]!
@@ -191,6 +190,7 @@ type Proposal {
   updatedAt: DateTime!
   voteCount: Int!
   commentCount: Int!
+  settings: ProposalConfig!
 }
 
 type GroupConfig {

@@ -44,7 +44,6 @@ export class Proposal {
   @OneToOne(() => ProposalConfig, (proposalConfig) => proposalConfig.proposal, {
     cascade: true,
   })
-  @Field(() => ProposalConfig)
   config: ProposalConfig;
 
   @Field(() => [Vote])

@@ -175,6 +175,12 @@ export type FeedItem_Proposal_Fragment = {
       filename: string;
     } | null;
   };
+  settings: {
+    __typename?: 'ProposalConfig';
+    id: number;
+    votingTimeLimit: number;
+    decisionMakingModel: string;
+  };
   user: {
     __typename?: 'User';
     id: number;
@@ -189,12 +195,6 @@ export type FeedItem_Proposal_Fragment = {
     myPermissions?: {
       __typename?: 'GroupPermissions';
       manageComments: boolean;
-    };
-    settings: {
-      __typename?: 'GroupConfig';
-      id: number;
-      votingTimeLimit: number;
-      decisionMakingModel: string;
     };
     coverPhoto?: { __typename?: 'Image'; id: number } | null;
   } | null;

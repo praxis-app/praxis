@@ -202,6 +202,12 @@ export type UserProfileQuery = {
               filename: string;
             } | null;
           };
+          settings: {
+            __typename?: 'ProposalConfig';
+            id: number;
+            votingTimeLimit: number;
+            decisionMakingModel: string;
+          };
           user: {
             __typename?: 'User';
             id: number;
@@ -216,12 +222,6 @@ export type UserProfileQuery = {
             myPermissions?: {
               __typename?: 'GroupPermissions';
               manageComments: boolean;
-            };
-            settings: {
-              __typename?: 'GroupConfig';
-              id: number;
-              votingTimeLimit: number;
-              decisionMakingModel: string;
             };
             coverPhoto?: { __typename?: 'Image'; id: number } | null;
           } | null;
