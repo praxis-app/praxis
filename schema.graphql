@@ -164,11 +164,24 @@ type ProposalAction {
   groupCoverPhoto: Image
 }
 
+type ProposalConfig {
+  id: Int!
+  decisionMakingModel: String!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
+  votingTimeLimit: Int!
+  proposal: Proposal!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Proposal {
   id: Int!
   body: String
-  action: ProposalAction!
   stage: String!
+  action: ProposalAction!
+  config: ProposalConfig!
   votes: [Vote!]!
   comments: [Comment!]!
   images: [Image!]!

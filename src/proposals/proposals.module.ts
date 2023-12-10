@@ -5,6 +5,7 @@ import { GroupsModule } from '../groups/groups.module';
 import { ImagesModule } from '../images/images.module';
 import { PubSubModule } from '../pub-sub/pub-sub.module';
 import { VotesModule } from '../votes/votes.module';
+import { ProposalConfig } from './models/proposal-config.model';
 import { Proposal } from './models/proposal.model';
 import { ProposalActionEventsModule } from './proposal-actions/proposal-action-events/proposal-action-events.module';
 import { ProposalActionGroupConfigsModule } from './proposal-actions/proposal-action-group-configs/proposal-action-group-configs.module';
@@ -15,7 +16,7 @@ import { ProposalsService } from './proposals.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Proposal]),
+    TypeOrmModule.forFeature([Proposal, ProposalConfig]),
     forwardRef(() => CommentsModule),
     forwardRef(() => ImagesModule),
     forwardRef(() => ProposalActionsModule),

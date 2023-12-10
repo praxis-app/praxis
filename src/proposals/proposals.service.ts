@@ -22,6 +22,7 @@ import { Vote } from '../votes/models/vote.model';
 import { VotesService } from '../votes/votes.service';
 import { sortConsensusVotesByType } from '../votes/votes.utils';
 import { CreateProposalInput } from './models/create-proposal.input';
+import { ProposalConfig } from './models/proposal-config.model';
 import { Proposal } from './models/proposal.model';
 import { UpdateProposalInput } from './models/update-proposal.input';
 import { ProposalActionEventsService } from './proposal-actions/proposal-action-events/proposal-action-events.service';
@@ -141,9 +142,21 @@ export class ProposalsService {
     user: User,
   ) {
     const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
+    const { config } = await this.groupsService.getGroup(
+      { id: proposalData.groupId },
+      ['config'],
+    );
+    const proposalConfig: Partial<ProposalConfig> = {
+      decisionMakingModel: config.decisionMakingModel,
+      ratificationThreshold: config.ratificationThreshold,
+      reservationsLimit: config.reservationsLimit,
+      standAsidesLimit: config.standAsidesLimit,
+      votingTimeLimit: config.votingTimeLimit,
+    };
     const proposal = await this.repository.save({
       ...proposalData,
       body: sanitizedBody,
+      config: proposalConfig,
       userId: user.id,
       action,
     });
