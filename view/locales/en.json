@@ -245,6 +245,7 @@
       "organizeWithGroups": "Organize Your Community with Groups"
     },
     "errors": {
+      "consentVotingTimeLimitRequired": "Voting time limit is required for consent decision making.",
       "couldNotCreate": "Group could not be created",
       "couldNotUpdate": "Group could not be updated",
       "couldNotUpdateSettings": "Could not update group settings"

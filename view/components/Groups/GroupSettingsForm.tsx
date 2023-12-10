@@ -7,7 +7,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { Form, Formik, FormikHelpers } from 'formik';
+import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import {
   GroupPrivacy,
@@ -105,13 +105,37 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
     }
   };
 
+  const validateSettings = ({
+    decisionMakingModel,
+    votingTimeLimit,
+  }: FormValues) => {
+    const errors: FormikErrors<FormValues> = {};
+    if (
+      decisionMakingModel === DecisionMakingModel.Consent &&
+      votingTimeLimit === VotingTimeLimit.Unlimited
+    ) {
+      errors.votingTimeLimit = t(
+        'groups.errors.consentVotingTimeLimitRequired',
+      );
+    }
+    return errors;
+  };
+
   return (
     <Formik
       initialValues={initialValues}
+      validate={validateSettings}
       onSubmit={handleSubmit}
       enableReinitialize
     >
-      {({ dirty, isSubmitting, handleChange, values, setFieldValue }) => (
+      {({
+        dirty,
+        isSubmitting,
+        handleChange,
+        values,
+        setFieldValue,
+        errors,
+      }) => (
         <Form>
           <FormGroup>
             <GroupSettingsSelect
@@ -218,6 +242,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               description={t('groups.settings.descriptions.votingTimeLimit')}
               value={values.votingTimeLimit}
               onChange={handleChange}
+              errors={errors}
             >
               {/* TODO: Remove after testing */}
               <MenuItem value={VotingTimeLimit.OneMinute}>
