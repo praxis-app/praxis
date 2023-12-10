@@ -7,7 +7,7 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, In, Not, Repository } from 'typeorm';
+import { FindOptionsWhere, In, IsNull, Not, Repository } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
 import { GroupsService } from '../groups/groups.service';
 import { ImageTypes } from '../images/image.constants';
@@ -148,18 +148,22 @@ export class ProposalsService {
     }: CreateProposalInput,
     user: User,
   ) {
-    const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
     const { config } = await this.groupsService.getGroup(
       { id: proposalData.groupId },
       ['config'],
     );
+    const votingEndsAt = config.votingTimeLimit
+      ? new Date(Date.now() + config.votingTimeLimit * 60 * 1000)
+      : undefined;
     const proposalConfig: Partial<ProposalConfig> = {
       decisionMakingModel: config.decisionMakingModel,
       ratificationThreshold: config.ratificationThreshold,
       reservationsLimit: config.reservationsLimit,
       standAsidesLimit: config.standAsidesLimit,
-      votingTimeLimit: config.votingTimeLimit,
+      votingEndsAt,
     };
+
+    const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
     const proposal = await this.proposalRepository.save({
       ...proposalData,
       body: sanitizedBody,
@@ -304,10 +308,12 @@ export class ProposalsService {
   }
 
   async isProposalRatifiable(proposalId: number) {
-    const { votes, stage, group, config, createdAt } = await this.getProposal(
-      proposalId,
-      ['config', 'group.config', 'group.members', 'votes'],
-    );
+    const { votes, stage, group, config } = await this.getProposal(proposalId, [
+      'config',
+      'group.config',
+      'group.members',
+      'votes',
+    ]);
     if (stage !== ProposalStage.Voting) {
       return false;
     }
@@ -315,20 +321,27 @@ export class ProposalsService {
       return this.hasConsensus(votes, config, group.members);
     }
     if (config.decisionMakingModel === DecisionMakingModel.Consent) {
-      return this.hasConsent(votes, config, createdAt);
+      return this.hasConsent(votes, config);
     }
     return false;
   }
 
   async hasConsensus(
     votes: Vote[],
-    proposalConfig: ProposalConfig,
+    {
+      ratificationThreshold,
+      reservationsLimit,
+      standAsidesLimit,
+      votingEndsAt,
+    }: ProposalConfig,
     groupMembers: User[],
   ) {
+    if (votingEndsAt && Date.now() < Number(votingEndsAt)) {
+      return false;
+    }
+
     const { agreements, reservations, standAsides, blocks } =
       sortConsensusVotesByType(votes);
-    const { reservationsLimit, standAsidesLimit, ratificationThreshold } =
-      proposalConfig;
 
     return (
       agreements.length >=
@@ -339,22 +352,14 @@ export class ProposalsService {
     );
   }
 
-  async hasConsent(
-    votes: Vote[],
-    proposalConfig: ProposalConfig,
-    proposalCreatedAt: Date,
-  ) {
+  async hasConsent(votes: Vote[], proposalConfig: ProposalConfig) {
     const { reservations, standAsides, blocks } =
       sortConsensusVotesByType(votes);
-    const { reservationsLimit, standAsidesLimit, votingTimeLimit } =
+    const { reservationsLimit, standAsidesLimit, votingEndsAt } =
       proposalConfig;
 
-    const minutesPassedSinceProposalCreation = Math.floor(
-      (new Date().getTime() - proposalCreatedAt.getTime()) / (60 * 1000),
-    );
-
     return (
-      minutesPassedSinceProposalCreation >= votingTimeLimit &&
+      Date.now() >= Number(votingEndsAt) &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
       blocks.length === 0
@@ -367,7 +372,7 @@ export class ProposalsService {
 
     const proposals = await this.getProposals(
       {
-        group: { config: { votingTimeLimit: Not(0) } },
+        config: { votingEndsAt: Not(IsNull()) },
         stage: ProposalStage.Voting,
       },
       ['config'],
@@ -380,13 +385,9 @@ export class ProposalsService {
   }
 
   async synchronizeProposal(proposal: Proposal) {
-    const { id, config, createdAt } = proposal;
-    const hasVotingPeriodEnded = this.hasVotingPeriodEnded(
-      config.votingTimeLimit,
-      createdAt,
-    );
+    const { id, config } = proposal;
 
-    if (hasVotingPeriodEnded) {
+    if (Date.now() >= Number(config.votingEndsAt)) {
       const isRatifiable = await this.isProposalRatifiable(id);
 
       if (isRatifiable) {
@@ -411,18 +412,6 @@ export class ProposalsService {
     const proposal = await this.getProposal(id, ['group.config']);
     const syncedProposal = await this.synchronizeProposal(proposal);
     return { proposal: syncedProposal };
-  }
-
-  hasVotingPeriodEnded(votingTimeLimit: number, createdAt: Date) {
-    const timeOfCreation = createdAt.getTime();
-    const now = new Date().getTime();
-    const oneMinute = 60 * 1000;
-
-    const minutesPassedSinceProposalCreation = Math.floor(
-      (now - timeOfCreation) / oneMinute,
-    );
-
-    return minutesPassedSinceProposalCreation >= votingTimeLimit;
   }
 
   async deleteProposal(proposalId: number) {

@@ -33,9 +33,9 @@ export class ProposalConfig {
   @Field(() => Int)
   ratificationThreshold: number;
 
-  @Column()
-  @Field(() => Int)
-  votingTimeLimit: number;
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  votingEndsAt?: Date;
 
   @Field(() => Proposal)
   @OneToOne(() => Proposal, (proposal) => proposal.config, {

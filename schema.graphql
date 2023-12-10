@@ -170,7 +170,7 @@ type ProposalConfig {
   standAsidesLimit: Int!
   reservationsLimit: Int!
   ratificationThreshold: Int!
-  votingTimeLimit: Int!
+  votingEndsAt: DateTime
   proposal: Proposal!
   createdAt: DateTime!
   updatedAt: DateTime!
