@@ -148,6 +148,7 @@ const ProposalCardFooter = ({
   const comments = proposalCommentsData?.proposal?.comments;
   const { voteCount, votes, commentCount, group, stage } = proposal;
   const isDisabled = !!group && !group.isJoinedByMe;
+  const isClosed = stage === ProposalStage.Closed;
 
   const isRatified =
     isProposalRatifiedData?.isProposalRatified ||
@@ -160,15 +161,21 @@ const ProposalCardFooter = ({
     (vote) => vote.user.id === currentUserId,
   );
 
-  const voteButtonLabel = isRatified
-    ? t('proposals.labels.ratified')
-    : t('proposals.actions.vote');
-
   const commentCountStyles: SxProps = {
     '&:hover': { textDecoration: 'underline' },
     transform: 'translateY(3px)',
     cursor: 'pointer',
     height: '24px',
+  };
+
+  const getVoteButtonLabel = () => {
+    if (isRatified) {
+      return t('proposals.labels.ratified');
+    }
+    if (isClosed) {
+      return t('proposals.labels.closed');
+    }
+    return t('proposals.actions.vote');
   };
 
   const handleVoteButtonClick = (
@@ -192,6 +199,13 @@ const ProposalCardFooter = ({
       toastVar({
         status: 'info',
         title: t('proposals.toasts.noVotingAfterRatification'),
+      });
+      return;
+    }
+    if (isClosed) {
+      toastVar({
+        status: 'info',
+        title: t('proposals.toasts.noVotingAfterClose'),
       });
       return;
     }
@@ -243,7 +257,7 @@ const ProposalCardFooter = ({
           sx={voteByCurrentUser ? { color: Blurple.Marina } : {}}
         >
           <HowToVote sx={ICON_STYLES} />
-          {voteButtonLabel}
+          {getVoteButtonLabel()}
         </CardFooterButton>
 
         <CardFooterButton onClick={handleCommentButtonClick}>

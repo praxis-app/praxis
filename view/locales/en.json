@@ -98,6 +98,7 @@
     },
     "labels": {
       "action": "Action",
+      "closed": "Closed",
       "color": "Color",
       "eventProposal": "Event proposal",
       "name": "Name",
@@ -117,6 +118,7 @@
       "usersProposal": "{{name}}'s Proposal"
     },
     "toasts": {
+      "noVotingAfterClose": "This proposal has been closed and can no longer be voted on.",
       "noVotingAfterRatification": "This proposal has been ratified and can no longer be voted on.",
       "ratifiedSuccess": "This proposal has been ratified! 🎉"
     },
