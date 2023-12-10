@@ -96,6 +96,15 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
     }
   };
 
+  const handleSliderInputClick = (decisionMakingModel?: string | null) => {
+    if (decisionMakingModel !== DecisionMakingModel.Consensus) {
+      toastVar({
+        status: 'info',
+        title: t('groups.prompts.settingDisabledForConsent'),
+      });
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -183,6 +192,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               </Box>
 
               <SliderInput
+                disabled={values.decisionMakingModel !== 'consensus'}
                 name={GroupSettingsFieldName.RatificationThreshold}
                 onInputChange={handleChange}
                 onSliderChange={handleChange}
@@ -192,6 +202,9 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                     setFieldValue,
                     values.ratificationThreshold,
                   )
+                }
+                onClick={() =>
+                  handleSliderInputClick(values.decisionMakingModel)
                 }
                 showPercentSign
               />
