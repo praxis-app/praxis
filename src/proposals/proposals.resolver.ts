@@ -23,6 +23,7 @@ import { SyncProposalsInterceptor } from './interceptors/sync-proposals.intercep
 import { CreateProposalInput } from './models/create-proposal.input';
 import { CreateProposalPayload } from './models/create-proposal.payload';
 import { Proposal } from './models/proposal.model';
+import { SynchronizeProposalPayload } from './models/synchronize-proposal.payload';
 import { UpdateProposalInput } from './models/update-proposal.input';
 import { UpdateProposalPayload } from './models/update-proposal.payload';
 import { CreateProposalValidationPipe } from './pipes/create-proposal-validation.pipe';
@@ -121,6 +122,11 @@ export class ProposalsResolver {
     @Args('proposalData') proposalData: UpdateProposalInput,
   ) {
     return this.proposalsService.updateProposal(proposalData);
+  }
+
+  @Mutation(() => SynchronizeProposalPayload)
+  async synchronizeProposal(@Args('id', { type: () => Int }) id: number) {
+    return this.proposalsService.synchronizeProposalById(id);
   }
 
   @Mutation(() => Boolean)

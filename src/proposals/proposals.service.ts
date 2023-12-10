@@ -339,29 +339,44 @@ export class ProposalsService {
       'group.config',
     ]);
 
-    for (const { id, group, createdAt } of proposals) {
-      if (group.config.decisionMakingModel !== DecisionMakingModel.Consent) {
-        continue;
-      }
-      const hasVotingPeriodEnded = this.hasVotingPeriodEnded(
-        group.config.votingTimeLimit,
-        createdAt,
-      );
-
-      if (hasVotingPeriodEnded) {
-        const isRatifiable = await this.isProposalRatifiable(id);
-
-        if (isRatifiable) {
-          await this.ratifyProposal(id);
-          await this.implementProposal(id);
-
-          this.pubSub.publish(`isProposalRatified-${id}`, {
-            isProposalRatified: true,
-          });
-        }
-      }
+    for (const proposal of proposals) {
+      await this.synchronizeProposal(proposal);
     }
     logTime(logTimeMessage, this.logger);
+  }
+
+  async synchronizeProposal(proposal: Proposal) {
+    if (
+      proposal.group.config.decisionMakingModel !== DecisionMakingModel.Consent
+    ) {
+      return proposal;
+    }
+    const hasVotingPeriodEnded = this.hasVotingPeriodEnded(
+      proposal.group.config.votingTimeLimit,
+      proposal.createdAt,
+    );
+
+    if (hasVotingPeriodEnded) {
+      const isRatifiable = await this.isProposalRatifiable(proposal.id);
+
+      if (isRatifiable) {
+        await this.ratifyProposal(proposal.id);
+        await this.implementProposal(proposal.id);
+
+        this.pubSub.publish(`isProposalRatified-${proposal.id}`, {
+          isProposalRatified: true,
+        });
+
+        return { ...proposal, stage: ProposalStage.Ratified };
+      }
+    }
+    return proposal;
+  }
+
+  async synchronizeProposalById(id: number) {
+    const proposal = await this.getProposal(id, ['group.config']);
+    const syncedProposal = await this.synchronizeProposal(proposal);
+    return { proposal: syncedProposal };
   }
 
   hasVotingPeriodEnded(votingTimeLimit: number, createdAt: Date) {

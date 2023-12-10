@@ -18,6 +18,11 @@ fragment ProposalCard on Proposal {
     myPermissions @include(if: $isLoggedIn) {
       manageComments
     }
+    settings {
+      id
+      votingTimeLimit
+      decisionMakingModel
+    }
     ...GroupAvatar
   }
   images {

@@ -419,6 +419,10 @@ type CreateProposalPayload {
   proposal: Proposal!
 }
 
+type SynchronizeProposalPayload {
+  proposal: Proposal!
+}
+
 type UpdateProposalPayload {
   proposal: Proposal!
 }
@@ -540,6 +544,7 @@ type Mutation {
   deleteComment(id: Int!): Boolean!
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
+  synchronizeProposal(id: Int!): SynchronizeProposalPayload!
   deleteProposal(id: Int!): Boolean!
   createEvent(eventData: CreateEventInput!): CreateEventPayload!
   updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
