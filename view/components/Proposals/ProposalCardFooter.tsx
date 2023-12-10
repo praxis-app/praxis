@@ -6,8 +6,8 @@ import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  DecisionMakingModel,
   ProposalStage,
+  VotingTimeLimit,
 } from '../../constants/proposal.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
@@ -79,16 +79,15 @@ const ProposalCardFooter = ({
   const { t } = useTranslation();
 
   useEffect(() => {
-    const isConsentModel =
-      proposal.group?.settings.decisionMakingModel ===
-      DecisionMakingModel.Consent;
+    const isVotingTimeLimitUnlimited =
+      proposal.group?.settings.votingTimeLimit === VotingTimeLimit.Unlimited;
     const isVotingStage = proposal.stage === ProposalStage.Voting;
 
     if (
       !viewed ||
       !isLoggedIn ||
-      !isConsentModel ||
       !isVotingStage ||
+      isVotingTimeLimitUnlimited ||
       syncProposalCalled
     ) {
       return;
