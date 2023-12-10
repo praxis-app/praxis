@@ -204,7 +204,7 @@ export type GroupProfileQuery = {
           settings: {
             __typename?: 'ProposalConfig';
             id: number;
-            votingTimeLimit: number;
+            votingEndsAt?: any | null;
             decisionMakingModel: string;
           };
           user: {

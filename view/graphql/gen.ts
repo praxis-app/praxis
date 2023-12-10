@@ -830,7 +830,7 @@ export type ProposalConfig = {
   reservationsLimit: Scalars['Int']['output'];
   standAsidesLimit: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  votingTimeLimit: Scalars['Int']['output'];
+  votingEndsAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
 export type Query = {

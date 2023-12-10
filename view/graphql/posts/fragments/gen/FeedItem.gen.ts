@@ -178,7 +178,7 @@ export type FeedItem_Proposal_Fragment = {
   settings: {
     __typename?: 'ProposalConfig';
     id: number;
-    votingTimeLimit: number;
+    votingEndsAt?: any | null;
     decisionMakingModel: string;
   };
   user: {

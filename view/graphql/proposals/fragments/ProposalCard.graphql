@@ -11,7 +11,7 @@ fragment ProposalCard on Proposal {
   }
   settings {
     id
-    votingTimeLimit
+    votingEndsAt
     decisionMakingModel
   }
   user {
