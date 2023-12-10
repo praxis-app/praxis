@@ -54,7 +54,7 @@ const ProposalCardFooter = ({
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal || isProposalPage);
 
-  const [getProposalComments, { data: proposalCommentsData, client }] =
+  const [getProposalComments, { data: proposalCommentsData }] =
     useProposalCommentsLazyQuery();
 
   const [syncProposal, { called: syncProposalCalled }] =
@@ -65,10 +65,11 @@ const ProposalCardFooter = ({
   const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
     skip: !isLoggedIn || !viewed || proposal.stage === ProposalStage.Ratified,
     variables: { proposalId: proposal.id },
-    onData: ({ data: { data } }) => {
+
+    onData: ({ data: { data }, client: { cache } }) => {
       if (data?.isProposalRatified) {
-        client.cache.modify({
-          id: client.cache.identify(proposal),
+        cache.modify({
+          id: cache.identify(proposal),
           fields: { stage: () => ProposalStage.Ratified },
         });
         toastVar({
