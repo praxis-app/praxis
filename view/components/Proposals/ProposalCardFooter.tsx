@@ -11,8 +11,10 @@ import {
 } from '../../constants/proposal.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
+import { useSyncProposalMutation } from '../../graphql/proposals/mutations/gen/SyncProposal.gen';
 import { useProposalCommentsLazyQuery } from '../../graphql/proposals/queries/gen/ProposalComments.gen';
 import { useIsProposalRatifiedSubscription } from '../../graphql/proposals/subscriptions/gen/IsProposalRatified.gen';
+import { useInView } from '../../hooks/shared.hooks';
 import { Blurple } from '../../styles/theme';
 import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
@@ -22,8 +24,6 @@ import Flex from '../Shared/Flex';
 import VoteBadges from '../Votes/VoteBadges';
 import VoteMenu from '../Votes/VoteMenu';
 import ProposalModal from './ProposalModal';
-import { useInView } from '../../hooks/shared.hooks';
-import { useSyncProposalMutation } from '../../graphql/proposals/mutations/gen/SyncProposal.gen';
 
 const ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -72,10 +72,6 @@ const ProposalCardFooter = ({
           id: cache.identify(proposal),
           fields: { stage: () => ProposalStage.Ratified },
         });
-        toastVar({
-          status: 'info',
-          title: t('proposals.toasts.ratifiedSuccess'),
-        });
       }
     },
   });
@@ -114,14 +110,6 @@ const ProposalCardFooter = ({
           proposalId: proposal.id,
           isLoggedIn,
         },
-        onCompleted({ synchronizeProposal: { proposal } }) {
-          if (proposal.stage === ProposalStage.Ratified) {
-            toastVar({
-              status: 'info',
-              title: t('proposals.toasts.ratifiedSuccess'),
-            });
-          }
-        },
       });
     }
   }, [viewed, isLoggedIn, proposal, syncProposal, syncProposalCalled, t]);
@@ -148,6 +136,7 @@ const ProposalCardFooter = ({
   const comments = proposalCommentsData?.proposal?.comments;
   const { voteCount, votes, commentCount, group, stage } = proposal;
   const isDisabled = !!group && !group.isJoinedByMe;
+  const isClosed = stage === ProposalStage.Closed;
 
   const isRatified =
     isProposalRatifiedData?.isProposalRatified ||
@@ -160,15 +149,21 @@ const ProposalCardFooter = ({
     (vote) => vote.user.id === currentUserId,
   );
 
-  const voteButtonLabel = isRatified
-    ? t('proposals.labels.ratified')
-    : t('proposals.actions.vote');
-
   const commentCountStyles: SxProps = {
     '&:hover': { textDecoration: 'underline' },
     transform: 'translateY(3px)',
     cursor: 'pointer',
     height: '24px',
+  };
+
+  const getVoteButtonLabel = () => {
+    if (isRatified) {
+      return t('proposals.labels.ratified');
+    }
+    if (isClosed) {
+      return t('proposals.labels.closed');
+    }
+    return t('proposals.actions.vote');
   };
 
   const handleVoteButtonClick = (
@@ -192,6 +187,13 @@ const ProposalCardFooter = ({
       toastVar({
         status: 'info',
         title: t('proposals.toasts.noVotingAfterRatification'),
+      });
+      return;
+    }
+    if (isClosed) {
+      toastVar({
+        status: 'info',
+        title: t('proposals.toasts.noVotingAfterClose'),
       });
       return;
     }
@@ -243,7 +245,7 @@ const ProposalCardFooter = ({
           sx={voteByCurrentUser ? { color: Blurple.Marina } : {}}
         >
           <HowToVote sx={ICON_STYLES} />
-          {voteButtonLabel}
+          {getVoteButtonLabel()}
         </CardFooterButton>
 
         <CardFooterButton onClick={handleCommentButtonClick}>

@@ -1,8 +1,3 @@
-export enum MinGroupSizeToRatify {
-  Consensus = 3,
-  Consent = 2,
-}
-
 export enum DecisionMakingModel {
   Consensus = 'consensus',
   Consent = 'consent',

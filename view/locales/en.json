@@ -98,6 +98,7 @@
     },
     "labels": {
       "action": "Action",
+      "closed": "Closed",
       "color": "Color",
       "eventProposal": "Event proposal",
       "name": "Name",
@@ -117,6 +118,7 @@
       "usersProposal": "{{name}}'s Proposal"
     },
     "toasts": {
+      "noVotingAfterClose": "This proposal has been closed and can no longer be voted on.",
       "noVotingAfterRatification": "This proposal has been ratified and can no longer be voted on.",
       "ratifiedSuccess": "This proposal has been ratified! 🎉"
     },
@@ -289,7 +291,7 @@
       },
       "descriptions": {
         "privacy": "Choose whether or not the group and it's content are viewable to the public.",
-        "ratificationThreshold": "Set the minimum number of positive votes required for a proposal to be ratified.",
+        "ratificationThreshold": "Set the minimum percentage of positive votes necessary for a proposal to be ratified under model of consensus.",
         "reservationsLimit": "Set a limit for the acceptable number of reservations allowed for a proposal to still be able to pass.",
         "standAsidesLimit": "Set a limit for the acceptable number of stand asides allowed for a proposal to still be able to pass.",
         "decisionMakingModel": "Choose from consensus or consent decision-making to enable a decision-making process that suits your group's needs.",
