@@ -268,6 +268,7 @@
       "requests_one": "{{count}} Request",
       "requests_other": "{{count}} Requests",
       "settings": "Settings",
+      "unlimited": "Unlimited",
       "xToPass": "X to Pass"
     },
     "prompts": {

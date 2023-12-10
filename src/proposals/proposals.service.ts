@@ -7,8 +7,9 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Not, Repository } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
+import { GroupConfig } from '../groups/group-configs/models/group-config.model';
 import { GroupsService } from '../groups/groups.service';
 import { Group } from '../groups/models/group.model';
 import { ImageTypes } from '../images/image.constants';
@@ -32,7 +33,6 @@ import {
   ProposalActionType,
   ProposalStage,
 } from './proposals.constants';
-import { GroupConfig } from '../groups/group-configs/models/group-config.model';
 
 type ProposalWithCommentCount = Proposal & { commentCount: number };
 
@@ -340,9 +340,13 @@ export class ProposalsService {
     const logTimeMessage = 'Syncronizing proposals';
     logTime(logTimeMessage, this.logger);
 
-    const proposals = await this.getProposals({ stage: ProposalStage.Voting }, [
-      'group.config',
-    ]);
+    const proposals = await this.getProposals(
+      {
+        group: { config: { votingTimeLimit: Not(0) } },
+        stage: ProposalStage.Voting,
+      },
+      ['group.config'],
+    );
 
     for (const proposal of proposals) {
       await this.synchronizeProposal(proposal);
