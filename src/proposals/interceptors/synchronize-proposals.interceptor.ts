@@ -17,7 +17,7 @@ enum CronJobName {
 }
 
 @Injectable()
-export class SyncProposalsInterceptor implements NestInterceptor {
+export class SynchronizeProposalsInterceptor implements NestInterceptor {
   constructor(
     private proposalsService: ProposalsService,
     private schedulerRegistry: SchedulerRegistry,

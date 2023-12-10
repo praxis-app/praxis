@@ -19,7 +19,7 @@ import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
-import { SyncProposalsInterceptor } from './interceptors/sync-proposals.interceptor';
+import { SynchronizeProposalsInterceptor } from './interceptors/synchronize-proposals.interceptor';
 import { CreateProposalInput } from './models/create-proposal.input';
 import { CreateProposalPayload } from './models/create-proposal.payload';
 import { Proposal } from './models/proposal.model';
@@ -41,7 +41,7 @@ export class ProposalsResolver {
   ) {}
 
   @Query(() => Proposal)
-  @UseInterceptors(SyncProposalsInterceptor)
+  @UseInterceptors(SynchronizeProposalsInterceptor)
   async proposal(@Args('id', { type: () => Int }) id: number) {
     return this.proposalsService.getProposal(id);
   }

@@ -16,7 +16,7 @@ import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
-import { SyncProposalsInterceptor } from '../proposals/interceptors/sync-proposals.interceptor';
+import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { FeedItem } from '../shared/models/feed-item.union';
 import { FollowUserPayload } from './models/follow-user.payload';
@@ -33,7 +33,7 @@ export class UsersResolver {
   ) {}
 
   @Query(() => User)
-  @UseInterceptors(SyncProposalsInterceptor)
+  @UseInterceptors(SynchronizeProposalsInterceptor)
   me(@CurrentUser() { id }: User) {
     return this.usersService.getUser({ id });
   }
@@ -62,7 +62,7 @@ export class UsersResolver {
   }
 
   @ResolveField(() => [FeedItem])
-  @UseInterceptors(SyncProposalsInterceptor)
+  @UseInterceptors(SynchronizeProposalsInterceptor)
   async homeFeed(@Parent() { id }: User) {
     return this.usersService.getUserFeed(id);
   }
