@@ -9,6 +9,11 @@ fragment ProposalCard on Proposal {
   action {
     ...ProposalAction
   }
+  settings {
+    id
+    votingEndsAt
+    decisionMakingModel
+  }
   user {
     ...UserAvatar
   }
@@ -17,11 +22,6 @@ fragment ProposalCard on Proposal {
     isJoinedByMe @include(if: $isLoggedIn)
     myPermissions @include(if: $isLoggedIn) {
       manageComments
-    }
-    settings {
-      id
-      votingTimeLimit
-      decisionMakingModel
     }
     ...GroupAvatar
   }

@@ -164,11 +164,23 @@ type ProposalAction {
   groupCoverPhoto: Image
 }
 
+type ProposalConfig {
+  id: Int!
+  decisionMakingModel: String!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
+  votingEndsAt: DateTime
+  proposal: Proposal!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Proposal {
   id: Int!
   body: String
-  action: ProposalAction!
   stage: String!
+  action: ProposalAction!
   votes: [Vote!]!
   comments: [Comment!]!
   images: [Image!]!
@@ -178,6 +190,7 @@ type Proposal {
   updatedAt: DateTime!
   voteCount: Int!
   commentCount: Int!
+  settings: ProposalConfig!
 }
 
 type GroupConfig {

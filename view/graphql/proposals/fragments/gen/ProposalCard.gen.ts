@@ -135,6 +135,12 @@ export type ProposalCardFragment = {
       filename: string;
     } | null;
   };
+  settings: {
+    __typename?: 'ProposalConfig';
+    id: number;
+    votingEndsAt?: any | null;
+    decisionMakingModel: string;
+  };
   user: {
     __typename?: 'User';
     id: number;
@@ -149,12 +155,6 @@ export type ProposalCardFragment = {
     myPermissions?: {
       __typename?: 'GroupPermissions';
       manageComments: boolean;
-    };
-    settings: {
-      __typename?: 'GroupConfig';
-      id: number;
-      votingTimeLimit: number;
-      decisionMakingModel: string;
     };
     coverPhoto?: { __typename?: 'Image'; id: number } | null;
   } | null;
@@ -183,6 +183,11 @@ export const ProposalCardFragmentDoc = gql`
     action {
       ...ProposalAction
     }
+    settings {
+      id
+      votingEndsAt
+      decisionMakingModel
+    }
     user {
       ...UserAvatar
     }
@@ -191,11 +196,6 @@ export const ProposalCardFragmentDoc = gql`
       isJoinedByMe @include(if: $isLoggedIn)
       myPermissions @include(if: $isLoggedIn) {
         manageComments
-      }
-      settings {
-        id
-        votingTimeLimit
-        decisionMakingModel
       }
       ...GroupAvatar
     }

@@ -5,10 +5,7 @@ import { Comment, HowToVote, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ProposalStage,
-  VotingTimeLimit,
-} from '../../constants/proposal.constants';
+import { ProposalStage } from '../../constants/proposal.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { useSyncProposalMutation } from '../../graphql/proposals/mutations/gen/SyncProposal.gen';
@@ -79,31 +76,20 @@ const ProposalCardFooter = ({
   const { t } = useTranslation();
 
   useEffect(() => {
-    const isVotingTimeLimitUnlimited =
-      proposal.group?.settings.votingTimeLimit === VotingTimeLimit.Unlimited;
+    const hasVotingTimeLimit = !!proposal.settings.votingEndsAt;
     const isVotingStage = proposal.stage === ProposalStage.Voting;
 
     if (
       !viewed ||
       !isLoggedIn ||
       !isVotingStage ||
-      isVotingTimeLimitUnlimited ||
+      !hasVotingTimeLimit ||
       syncProposalCalled
     ) {
       return;
     }
 
-    const votingTimeLimit = proposal.group?.settings.votingTimeLimit;
-    const createdAt = new Date(proposal.createdAt);
-    const timeOfCreation = createdAt.getTime();
-    const now = new Date().getTime();
-    const oneMinute = 60 * 1000;
-    const minutesPassed = Math.floor((now - timeOfCreation) / oneMinute);
-
-    const hasVotingPeriodEnded =
-      votingTimeLimit && minutesPassed >= votingTimeLimit;
-
-    if (hasVotingPeriodEnded) {
+    if (Date.now() >= Number(proposal.settings.votingEndsAt)) {
       syncProposal({
         variables: {
           proposalId: proposal.id,

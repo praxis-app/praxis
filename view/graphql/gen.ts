@@ -670,6 +670,7 @@ export type Proposal = {
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   images: Array<Image>;
+  settings: ProposalConfig;
   stage: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   user: User;
@@ -817,6 +818,19 @@ export type ProposalActionRoleMember = {
 export type ProposalActionRoleMemberInput = {
   changeType: Scalars['String']['input'];
   userId: Scalars['Int']['input'];
+};
+
+export type ProposalConfig = {
+  __typename?: 'ProposalConfig';
+  createdAt: Scalars['DateTime']['output'];
+  decisionMakingModel: Scalars['String']['output'];
+  id: Scalars['Int']['output'];
+  proposal: Proposal;
+  ratificationThreshold: Scalars['Int']['output'];
+  reservationsLimit: Scalars['Int']['output'];
+  standAsidesLimit: Scalars['Int']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  votingEndsAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
 export type Query = {

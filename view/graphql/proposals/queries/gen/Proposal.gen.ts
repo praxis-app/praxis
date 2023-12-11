@@ -139,6 +139,12 @@ export type ProposalQuery = {
         filename: string;
       } | null;
     };
+    settings: {
+      __typename?: 'ProposalConfig';
+      id: number;
+      votingEndsAt?: any | null;
+      decisionMakingModel: string;
+    };
     user: {
       __typename?: 'User';
       id: number;
@@ -153,12 +159,6 @@ export type ProposalQuery = {
       myPermissions?: {
         __typename?: 'GroupPermissions';
         manageComments: boolean;
-      };
-      settings: {
-        __typename?: 'GroupConfig';
-        id: number;
-        votingTimeLimit: number;
-        decisionMakingModel: string;
       };
       coverPhoto?: { __typename?: 'Image'; id: number } | null;
     } | null;
