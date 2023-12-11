@@ -388,26 +388,24 @@ export class ProposalsService {
 
   async synchronizeProposal(proposal: Proposal) {
     const { id, config } = proposal;
-
-    if (Date.now() >= Number(config.votingEndsAt)) {
-      const isRatifiable = await this.isProposalRatifiable(id);
-
-      if (isRatifiable) {
-        await this.ratifyProposal(id);
-        await this.implementProposal(id);
-
-        this.pubSub.publish(`isProposalRatified-${id}`, {
-          isProposalRatified: true,
-        });
-        return { ...proposal, stage: ProposalStage.Ratified };
-      }
-      if (!isRatifiable) {
-        await this.closeProposal(proposal.id);
-        return { ...proposal, stage: ProposalStage.Closed };
-      }
+    if (!config.votingEndsAt || Date.now() < Number(config.votingEndsAt)) {
+      return proposal;
     }
 
-    return proposal;
+    const isRatifiable = await this.isProposalRatifiable(id);
+
+    if (!isRatifiable) {
+      await this.closeProposal(proposal.id);
+      return { ...proposal, stage: ProposalStage.Closed };
+    }
+
+    await this.ratifyProposal(id);
+    await this.implementProposal(id);
+    this.pubSub.publish(`isProposalRatified-${id}`, {
+      isProposalRatified: true,
+    });
+
+    return { ...proposal, stage: ProposalStage.Ratified };
   }
 
   async synchronizeProposalById(id: number) {
