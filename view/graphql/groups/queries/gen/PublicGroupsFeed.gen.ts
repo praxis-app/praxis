@@ -193,8 +193,11 @@ export type PublicGroupsFeedQuery = {
         settings: {
           __typename?: 'ProposalConfig';
           id: number;
-          votingEndsAt?: any | null;
           decisionMakingModel: string;
+          ratificationThreshold: number;
+          reservationsLimit: number;
+          standAsidesLimit: number;
+          votingEndsAt?: any | null;
         };
         user: {
           __typename?: 'User';

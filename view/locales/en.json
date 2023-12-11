@@ -104,6 +104,7 @@
       "name": "Name",
       "newGroupDescription": "New group description",
       "newGroupName": "New group name",
+      "proposalSettings": "Proposal Settings",
       "proposedGroupCoverPhoto": "Proposed group cover photo",
       "proposedGroupDescription": "Proposed group description",
       "proposedGroupName": "Proposed group name",
@@ -115,7 +116,9 @@
       "selectRoleToChange": "Choose a role",
       "settingChangesCount_one": "{{count}} setting change",
       "settingChangesCount_other": "{{count}} setting changes",
-      "usersProposal": "{{name}}'s Proposal"
+      "usersProposal": "{{name}}'s Proposal",
+      "viewSettings": "View Settings",
+      "votingEndsAt": "Voting ends at {{votingEndsAt}}"
     },
     "toasts": {
       "noVotingAfterClose": "This proposal has been closed and can no longer be voted on.",

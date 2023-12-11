@@ -11,8 +11,11 @@ fragment ProposalCard on Proposal {
   }
   settings {
     id
-    votingEndsAt
     decisionMakingModel
+    ratificationThreshold
+    reservationsLimit
+    standAsidesLimit
+    votingEndsAt
   }
   user {
     ...UserAvatar

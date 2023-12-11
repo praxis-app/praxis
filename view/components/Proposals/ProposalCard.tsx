@@ -1,8 +1,10 @@
 import { useReactiveVar } from '@apollo/client';
+import { SettingsSuggest } from '@mui/icons-material';
 import {
   Box,
   Card,
   CardProps,
+  MenuItem,
   CardContent as MuiCardContent,
   CardHeader as MuiCardHeader,
   Typography,
@@ -33,6 +35,7 @@ import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 import ProposalAction from './ProposalActions/ProposalAction';
 import ProposalCardFooter from './ProposalCardFooter';
+import ProposalSettingsModal from './ProposalSettingsModal';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
@@ -58,6 +61,7 @@ interface Props extends CardProps {
 
 const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const [deleteProposal] = useDeleteProposalMutation();
@@ -69,8 +73,18 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { action, body, createdAt, group, id, images, user, voteCount, stage } =
-    proposal;
+  const {
+    id,
+    action,
+    body,
+    createdAt,
+    group,
+    images,
+    settings,
+    stage,
+    user,
+    voteCount,
+  } = proposal;
 
   const me = data && data.me;
   const isMe = me?.id === user.id;
@@ -114,6 +128,11 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
         });
       },
     });
+  };
+
+  const handleViewSettingsBtnClick = () => {
+    setShowSettingsModal(true);
+    setMenuAnchorEl(null);
   };
 
   const renderAvatar = () => {
@@ -176,10 +195,13 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
         deletePrompt={deletePrompt}
         editPath={editPath}
         setAnchorEl={setMenuAnchorEl}
-
-        // TODO: Uncomment when implementing revisions or drafts for proposals
-        // canUpdate={isMe}
-      />
+        prependChildren
+      >
+        <MenuItem onClick={handleViewSettingsBtnClick}>
+          <SettingsSuggest fontSize="small" sx={{ marginRight: 1 }} />
+          {t('proposals.labels.viewSettings')}
+        </MenuItem>
+      </ItemMenu>
     );
   };
 
@@ -221,6 +243,12 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
         isProposalPage={isProposalPage}
         proposal={proposal}
         inModal={inModal}
+      />
+
+      <ProposalSettingsModal
+        showSettingsModal={showSettingsModal}
+        setShowSettingsModal={setShowSettingsModal}
+        settings={settings}
       />
     </>
   );
