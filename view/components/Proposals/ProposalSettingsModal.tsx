@@ -1,10 +1,7 @@
 import { useTranslation } from 'react-i18next';
-import Modal from '../Shared/Modal';
-import Flex from '../Shared/Flex';
-import { Box, Divider, Typography } from '@mui/material';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
-
-const SETTING_DESCRIPTION_WIDTH = '60%';
+import Modal from '../Shared/Modal';
+import ProposalSetting from './ProposalSetting';
 
 interface Props {
   settings: ProposalCardFragment['settings'];
@@ -32,81 +29,30 @@ const ProposalSettingsModal = ({
       open={showSettingsModal}
       centeredTitle
     >
-      <Flex justifyContent="space-between">
-        <Box>
-          <Typography>
-            {t('groups.settings.names.decisionMakingModel')}
-          </Typography>
+      <ProposalSetting
+        name={t('groups.settings.names.decisionMakingModel')}
+        description={t('groups.settings.descriptions.decisionMakingModel')}
+        value={settings.decisionMakingModel}
+      />
 
-          <Typography
-            fontSize={12}
-            color="text.secondary"
-            width={SETTING_DESCRIPTION_WIDTH}
-          >
-            {t('groups.settings.descriptions.decisionMakingModel')}
-          </Typography>
-        </Box>
+      <ProposalSetting
+        name={t('groups.settings.names.standAsidesLimit')}
+        description={t('groups.settings.descriptions.standAsidesLimit')}
+        value={settings.standAsidesLimit}
+      />
 
-        <Typography>{settings.standAsidesLimit}</Typography>
-      </Flex>
+      <ProposalSetting
+        name={t('groups.settings.names.reservationsLimit')}
+        description={t('groups.settings.descriptions.reservationsLimit')}
+        value={settings.reservationsLimit}
+      />
 
-      <Divider sx={{ paddingX: 3 }} />
-
-      <Flex justifyContent="space-between">
-        <Box>
-          <Typography>{t('groups.settings.names.standAsidesLimit')}</Typography>
-
-          <Typography
-            fontSize={12}
-            color="text.secondary"
-            width={SETTING_DESCRIPTION_WIDTH}
-          >
-            {t('groups.settings.descriptions.standAsidesLimit')}
-          </Typography>
-        </Box>
-
-        <Typography>{settings.standAsidesLimit}</Typography>
-      </Flex>
-
-      <Divider sx={{ paddingX: 3 }} />
-
-      <Flex justifyContent="space-between">
-        <Box>
-          <Typography>
-            {t('groups.settings.names.reservationsLimit')}
-          </Typography>
-
-          <Typography
-            fontSize={12}
-            color="text.secondary"
-            width={SETTING_DESCRIPTION_WIDTH}
-          >
-            {t('groups.settings.descriptions.reservationsLimit')}
-          </Typography>
-        </Box>
-
-        <Typography>{settings.reservationsLimit}</Typography>
-      </Flex>
-
-      <Divider sx={{ paddingX: 3 }} />
-
-      <Flex justifyContent="space-between">
-        <Box>
-          <Typography>
-            {t('groups.settings.names.ratificationThreshold')}
-          </Typography>
-
-          <Typography
-            fontSize={12}
-            color="text.secondary"
-            width={SETTING_DESCRIPTION_WIDTH}
-          >
-            {t('groups.settings.descriptions.ratificationThreshold')}
-          </Typography>
-        </Box>
-
-        <Typography>{settings.ratificationThreshold}</Typography>
-      </Flex>
+      <ProposalSetting
+        name={t('groups.settings.names.ratificationThreshold')}
+        description={t('groups.settings.descriptions.ratificationThreshold')}
+        value={settings.ratificationThreshold}
+        divider={false}
+      />
     </Modal>
   );
 };
