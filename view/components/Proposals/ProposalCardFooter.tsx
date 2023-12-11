@@ -89,10 +89,7 @@ const ProposalCardFooter = ({
       return;
     }
 
-    const hasVotingPeriodEnded =
-      Date.now() < Number(proposal.settings.votingEndsAt);
-
-    if (hasVotingPeriodEnded) {
+    if (Date.now() >= Number(proposal.settings.votingEndsAt)) {
       syncProposal({
         variables: {
           proposalId: proposal.id,
