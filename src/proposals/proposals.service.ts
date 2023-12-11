@@ -312,9 +312,8 @@ export class ProposalsService {
 
   async isProposalRatifiable(proposalId: number) {
     const { votes, stage, group, config } = await this.getProposal(proposalId, [
-      'config',
-      'group.config',
       'group.members',
+      'config',
       'votes',
     ]);
     if (stage !== ProposalStage.Voting) {
