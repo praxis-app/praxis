@@ -76,14 +76,14 @@ const ProposalCardFooter = ({
   const { t } = useTranslation();
 
   useEffect(() => {
-    const isVotingTimeLimitUnlimited = !proposal.settings.votingEndsAt;
+    const hasVotingTimeLimit = !!proposal.settings.votingEndsAt;
     const isVotingStage = proposal.stage === ProposalStage.Voting;
 
     if (
       !viewed ||
       !isLoggedIn ||
       !isVotingStage ||
-      isVotingTimeLimitUnlimited ||
+      !hasVotingTimeLimit ||
       syncProposalCalled
     ) {
       return;
