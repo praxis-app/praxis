@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { DecisionMakingModel } from '../../constants/proposal.constants';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import Modal from '../Shared/Modal';
 import ProposalSetting from './ProposalSetting';
@@ -16,6 +17,13 @@ const ProposalSettingsModal = ({
 }: Props) => {
   const { t } = useTranslation();
 
+  const getDecisionMakingModelName = (decisionMakingModel: string) => {
+    if (decisionMakingModel === DecisionMakingModel.Consent) {
+      return t('groups.labels.consent');
+    }
+    return t('groups.labels.consensus');
+  };
+
   return (
     <Modal
       title={t('proposals.labels.proposalSettings')}
@@ -32,7 +40,7 @@ const ProposalSettingsModal = ({
       <ProposalSetting
         name={t('groups.settings.names.decisionMakingModel')}
         description={t('groups.settings.descriptions.decisionMakingModel')}
-        value={settings.decisionMakingModel}
+        value={getDecisionMakingModelName(settings.decisionMakingModel)}
       />
 
       <ProposalSetting
@@ -50,7 +58,7 @@ const ProposalSettingsModal = ({
       <ProposalSetting
         name={t('groups.settings.names.ratificationThreshold')}
         description={t('groups.settings.descriptions.ratificationThreshold')}
-        value={settings.ratificationThreshold}
+        value={`${settings.ratificationThreshold}%`}
         divider={false}
       />
     </Modal>
