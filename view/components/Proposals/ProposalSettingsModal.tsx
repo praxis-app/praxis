@@ -1,8 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import Modal from '../Shared/Modal';
 import Flex from '../Shared/Flex';
-import { Box, Typography } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
+
+const SETTING_DESCRIPTION_WIDTH = '60%';
 
 interface Props {
   settings: ProposalCardFragment['settings'];
@@ -36,7 +38,11 @@ const ProposalSettingsModal = ({
             {t('groups.settings.names.decisionMakingModel')}
           </Typography>
 
-          <Typography fontSize={12} color="text.secondary">
+          <Typography
+            fontSize={12}
+            color="text.secondary"
+            width={SETTING_DESCRIPTION_WIDTH}
+          >
             {t('groups.settings.descriptions.decisionMakingModel')}
           </Typography>
         </Box>
@@ -44,11 +50,17 @@ const ProposalSettingsModal = ({
         <Typography>{settings.standAsidesLimit}</Typography>
       </Flex>
 
+      <Divider sx={{ paddingX: 3 }} />
+
       <Flex justifyContent="space-between">
         <Box>
           <Typography>{t('groups.settings.names.standAsidesLimit')}</Typography>
 
-          <Typography fontSize={12} color="text.secondary">
+          <Typography
+            fontSize={12}
+            color="text.secondary"
+            width={SETTING_DESCRIPTION_WIDTH}
+          >
             {t('groups.settings.descriptions.standAsidesLimit')}
           </Typography>
         </Box>
@@ -56,13 +68,19 @@ const ProposalSettingsModal = ({
         <Typography>{settings.standAsidesLimit}</Typography>
       </Flex>
 
+      <Divider sx={{ paddingX: 3 }} />
+
       <Flex justifyContent="space-between">
         <Box>
           <Typography>
             {t('groups.settings.names.reservationsLimit')}
           </Typography>
 
-          <Typography fontSize={12} color="text.secondary">
+          <Typography
+            fontSize={12}
+            color="text.secondary"
+            width={SETTING_DESCRIPTION_WIDTH}
+          >
             {t('groups.settings.descriptions.reservationsLimit')}
           </Typography>
         </Box>
@@ -70,13 +88,19 @@ const ProposalSettingsModal = ({
         <Typography>{settings.reservationsLimit}</Typography>
       </Flex>
 
+      <Divider sx={{ paddingX: 3 }} />
+
       <Flex justifyContent="space-between">
         <Box>
           <Typography>
             {t('groups.settings.names.ratificationThreshold')}
           </Typography>
 
-          <Typography fontSize={12} color="text.secondary">
+          <Typography
+            fontSize={12}
+            color="text.secondary"
+            width={SETTING_DESCRIPTION_WIDTH}
+          >
             {t('groups.settings.descriptions.ratificationThreshold')}
           </Typography>
         </Box>
