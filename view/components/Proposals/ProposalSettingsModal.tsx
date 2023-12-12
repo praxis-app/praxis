@@ -39,25 +39,25 @@ const ProposalSettingsModal = ({
     >
       <ProposalSetting
         name={t('groups.settings.names.decisionMakingModel')}
-        description={t('groups.settings.descriptions.decisionMakingModel')}
+        description={t('proposals.settings.descriptions.decisionMakingModel')}
         value={getDecisionMakingModelName(settings.decisionMakingModel)}
       />
 
       <ProposalSetting
         name={t('groups.settings.names.standAsidesLimit')}
-        description={t('groups.settings.descriptions.standAsidesLimit')}
+        description={t('proposals.settings.descriptions.standAsidesLimit')}
         value={settings.standAsidesLimit}
       />
 
       <ProposalSetting
         name={t('groups.settings.names.reservationsLimit')}
-        description={t('groups.settings.descriptions.reservationsLimit')}
+        description={t('proposals.settings.descriptions.reservationsLimit')}
         value={settings.reservationsLimit}
       />
 
       <ProposalSetting
         name={t('groups.settings.names.ratificationThreshold')}
-        description={t('groups.settings.descriptions.ratificationThreshold')}
+        description={t('proposals.settings.descriptions.ratificationThreshold')}
         value={`${settings.ratificationThreshold}%`}
         divider={false}
       />
