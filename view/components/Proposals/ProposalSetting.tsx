@@ -1,7 +1,7 @@
 import { Box, Divider, Typography } from '@mui/material';
 import Flex from '../Shared/Flex';
 
-const SETTING_DESCRIPTION_WIDTH = '60%';
+const SETTING_DESCRIPTION_WIDTH = '70%';
 
 interface Props {
   name: string;
@@ -17,20 +17,26 @@ const ProposalSetting = ({
   divider = true,
 }: Props) => (
   <>
-    <Flex justifyContent="space-between">
-      <Box>
+    <Flex gap="40px">
+      <Box width={SETTING_DESCRIPTION_WIDTH}>
         <Typography>{name}</Typography>
 
-        <Typography
-          fontSize={12}
-          color="text.secondary"
-          width={SETTING_DESCRIPTION_WIDTH}
-        >
+        <Typography fontSize={12} color="text.secondary">
           {description}
         </Typography>
       </Box>
 
-      <Typography>{value}</Typography>
+      <Flex
+        alignSelf="center"
+        bgcolor="rgb(0, 0, 0, 0.1)"
+        borderRadius="8px"
+        flexDirection="column"
+        height="60px"
+        justifyContent="center"
+        width="120px"
+      >
+        <Typography textAlign="center">{value}</Typography>
+      </Flex>
     </Flex>
 
     {divider && <Divider sx={{ paddingX: 3 }} />}
