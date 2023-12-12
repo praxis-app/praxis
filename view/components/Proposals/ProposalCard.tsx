@@ -182,15 +182,12 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
   };
 
   const renderMenu = () => {
-    if (voteCount) {
-      return null;
-    }
     const editPath = `${NavigationPaths.Proposals}/${id}${NavigationPaths.Edit}`;
     const deletePrompt = t('prompts.deleteItem', { itemType: 'proposal' });
     return (
       <ItemMenu
         anchorEl={menuAnchorEl}
-        canDelete={isMe}
+        canDelete={isMe && !voteCount}
         deleteItem={handleDelete}
         deletePrompt={deletePrompt}
         editPath={editPath}
