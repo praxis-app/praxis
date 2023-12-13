@@ -222,16 +222,16 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
           />
         )}
 
-        <ProposalAction
-          action={action}
-          ratified={stage === ProposalStage.Ratified}
-        />
-
         <Link href={proposalPath}>
           {!!images.length && (
             <AttachedImageList images={images} marginBottom={me ? 1.9 : 0} />
           )}
         </Link>
+
+        <ProposalAction
+          action={action}
+          ratified={stage === ProposalStage.Ratified}
+        />
       </CardContent>
 
       <ProposalCardFooter
