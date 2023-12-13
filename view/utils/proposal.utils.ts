@@ -1,5 +1,6 @@
 import { Namespace, TFunction } from 'react-i18next';
 import { ProposalActionType } from '../constants/proposal.constants';
+import dayjs from 'dayjs';
 
 export const getProposalActionTypeOptions = (
   t: TFunction<Namespace<'ns1'>, undefined>,
@@ -63,3 +64,6 @@ export const getProposalActionLabel = (
       return '';
   }
 };
+
+export const formatClosingTime = (closingTime: string) =>
+  dayjs(closingTime).format('ddd, MMM D, YYYY [at] h:mm a');

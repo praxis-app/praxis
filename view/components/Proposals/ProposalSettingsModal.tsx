@@ -1,6 +1,10 @@
+import { Schedule } from '@mui/icons-material';
+import { Divider } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { DecisionMakingModel } from '../../constants/proposal.constants';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
+import { formatClosingTime } from '../../utils/proposal.utils';
+import Flex from '../Shared/Flex';
 import Modal from '../Shared/Modal';
 import ProposalSetting from './ProposalSetting';
 
@@ -28,7 +32,7 @@ const ProposalSettingsModal = ({
     <Modal
       title={t('proposals.labels.proposalSettings')}
       contentStyles={{
-        paddingTop: 5,
+        paddingTop: 3,
         display: 'flex',
         flexDirection: 'column',
         gap: 2.5,
@@ -37,6 +41,24 @@ const ProposalSettingsModal = ({
       open={showSettingsModal}
       centeredTitle
     >
+      {settings.votingEndsAt && (
+        <>
+          <Flex
+            alignItems="center"
+            fontFamily="Inter Bold"
+            fontSize={['14px', '16px']}
+            gap="6px"
+          >
+            <Schedule sx={{ fontSize: ['20px', undefined] }} />
+            {t('proposals.labels.closing', {
+              time: formatClosingTime(settings.votingEndsAt),
+            })}
+          </Flex>
+
+          <Divider />
+        </>
+      )}
+
       <ProposalSetting
         name={t('groups.settings.names.decisionMakingModel')}
         description={t('proposals.settings.descriptions.decisionMakingModel')}

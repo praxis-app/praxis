@@ -99,6 +99,7 @@
     "labels": {
       "action": "Action",
       "closed": "Closed",
+      "closing": "Closing {{time}}",
       "color": "Color",
       "eventProposal": "Event proposal",
       "name": "Name",
@@ -117,8 +118,7 @@
       "settingChangesCount_one": "{{count}} setting change",
       "settingChangesCount_other": "{{count}} setting changes",
       "usersProposal": "{{name}}'s Proposal",
-      "viewSettings": "View Settings",
-      "votingEndsAt": "Voting ends at {{votingEndsAt}}"
+      "viewSettings": "View Settings"
     },
     "toasts": {
       "noVotingAfterClose": "This proposal has been closed and can no longer be voted on.",
