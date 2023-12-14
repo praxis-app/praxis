@@ -1,5 +1,5 @@
 import { Schedule } from '@mui/icons-material';
-import { Divider } from '@mui/material';
+import { Divider, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { DecisionMakingModel } from '../../constants/proposal.constants';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
@@ -45,14 +45,17 @@ const ProposalSettingsModal = ({
         <>
           <Flex
             alignItems="center"
+            color="#dd3f4f"
             fontFamily="Inter Bold"
             fontSize={['14px', '16px']}
             gap="6px"
           >
             <Schedule sx={{ fontSize: ['20px', undefined] }} />
-            {t('proposals.labels.closing', {
-              time: formatClosingTime(settings.votingEndsAt),
-            })}
+            <Typography fontSize="14px" fontFamily="Inter Bold">
+              {t('proposals.labels.closing', {
+                time: formatClosingTime(settings.votingEndsAt),
+              })}
+            </Typography>
           </Flex>
 
           <Divider />
