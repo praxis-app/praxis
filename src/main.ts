@@ -18,6 +18,7 @@ const bootstrap = async () => {
 
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
+  app.getHttpAdapter().getInstance().disable('x-powered-by');
 
   app.use(
     graphqlUploadExpress({
