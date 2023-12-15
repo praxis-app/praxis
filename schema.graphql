@@ -465,6 +465,7 @@ type AuthPayload {
 
 type ServerConfig {
   id: Int!
+  securityTxt: String
   showCanaryStatement: Boolean!
 }
 
