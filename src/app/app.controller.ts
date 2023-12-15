@@ -1,10 +1,14 @@
 import { Controller, Get, Res } from '@nestjs/common';
 import { Response } from 'express';
+import { ServerConfigsService } from '../server-configs/server-configs.service';
 
 @Controller('/')
 export class AppController {
+  constructor(private serverConfigsService: ServerConfigsService) {}
+
   @Get('security.txt')
   async getSecurityTxt(@Res() res: Response) {
-    return res.send({ message: 'security.txt' });
+    const { securityTxt } = await this.serverConfigsService.getServerConfig();
+    return res.send(securityTxt || 'No security.txt found');
   }
 }
