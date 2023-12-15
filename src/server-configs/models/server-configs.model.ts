@@ -16,7 +16,7 @@ export class ServerConfig {
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  securityTxt: string;
+  securityTxt?: string;
 
   @Column({ default: false })
   @Field()
