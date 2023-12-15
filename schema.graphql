@@ -815,4 +815,5 @@ input UpdateServerConfigInput {
   id: Int!
   canaryStatement: String
   showCanaryStatement: Boolean
+  securityTxt: String
 }

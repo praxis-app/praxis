@@ -9,6 +9,6 @@ export class AppController {
   @Get('security.txt')
   async getSecurityTxt(@Res() res: Response) {
     const { securityTxt } = await this.serverConfigsService.getServerConfig();
-    return res.send(securityTxt || 'No security.txt found');
+    return res.type('text/plain').send(securityTxt || 'No security.txt found');
   }
 }
