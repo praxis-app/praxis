@@ -7,27 +7,28 @@ import { GraphQLSchema } from 'graphql';
 import { applyMiddleware } from 'graphql-middleware';
 import { GraphQLUpload } from 'graphql-upload-ts';
 import { join } from 'path';
-import { AuthModule } from './auth/auth.module';
-import { CanariesModule } from './canaries/canaries.module';
-import { CommentsModule } from './comments/comments.module';
-import { ContextModule } from './context/context.module';
-import { ContextService } from './context/context.service';
-import { DatabaseModule } from './database/database.module';
-import { DataloaderModule } from './dataloader/dataloader.module';
-import { EventsModule } from './events/events.module';
-import { GroupsModule } from './groups/groups.module';
-import { ImagesModule } from './images/images.module';
-import { LikesModule } from './likes/likes.module';
-import { PostsModule } from './posts/posts.module';
-import { ProposalsModule } from './proposals/proposals.module';
-import { ServerConfigsModule } from './server-configs/server-configs.module';
-import { ServerInvitesModule } from './server-invites/server-invites.module';
-import { ServerRolesModule } from './server-roles/server-roles.module';
-import { Environment } from './shared/shared.constants';
-import { ShieldModule } from './shield/shield.module';
-import { shieldPermissions } from './shield/shield.permissions';
-import { UsersModule } from './users/users.module';
-import { VotesModule } from './votes/votes.module';
+import { AuthModule } from '../auth/auth.module';
+import { CanariesModule } from '../canaries/canaries.module';
+import { CommentsModule } from '../comments/comments.module';
+import { ContextModule } from '../context/context.module';
+import { ContextService } from '../context/context.service';
+import { DatabaseModule } from '../database/database.module';
+import { DataloaderModule } from '../dataloader/dataloader.module';
+import { EventsModule } from '../events/events.module';
+import { GroupsModule } from '../groups/groups.module';
+import { ImagesModule } from '../images/images.module';
+import { LikesModule } from '../likes/likes.module';
+import { PostsModule } from '../posts/posts.module';
+import { ProposalsModule } from '../proposals/proposals.module';
+import { ServerConfigsModule } from '../server-configs/server-configs.module';
+import { ServerInvitesModule } from '../server-invites/server-invites.module';
+import { ServerRolesModule } from '../server-roles/server-roles.module';
+import { Environment } from '../shared/shared.constants';
+import { ShieldModule } from '../shield/shield.module';
+import { shieldPermissions } from '../shield/shield.permissions';
+import { UsersModule } from '../users/users.module';
+import { VotesModule } from '../votes/votes.module';
+import { AppController } from './app.controller';
 
 const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
@@ -77,5 +78,6 @@ const ViewModule = ServeStaticModule.forRoot({
     ViewModule,
     VotesModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}
