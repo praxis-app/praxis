@@ -1,5 +1,3 @@
-// TODO: Update cron time and timeout after testing
-
 import {
   CallHandler,
   ExecutionContext,
@@ -59,7 +57,7 @@ export class SynchronizeProposalsInterceptor implements NestInterceptor {
     const callback = () =>
       this.schedulerRegistry.deleteCronJob(CronJobName.SynchronizeProposals);
 
-    const timeout = setTimeout(callback, 1000 * 60 * 30);
+    const timeout = setTimeout(callback, 1000 * 60 * 60);
     this.schedulerRegistry.addTimeout(
       CronJobName.DisableSynchronizeProposals,
       timeout,

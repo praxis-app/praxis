@@ -244,11 +244,6 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               onChange={handleChange}
               errors={errors}
             >
-              {/* TODO: Remove after testing */}
-              <MenuItem value={VotingTimeLimit.OneMinute}>
-                {t('time.minutesFull', { count: 1 })}
-              </MenuItem>
-
               <MenuItem value={VotingTimeLimit.HalfHour}>
                 {t('time.minutesFull', { count: 30 })}
               </MenuItem>
