@@ -7,6 +7,7 @@ import { GraphQLSchema } from 'graphql';
 import { applyMiddleware } from 'graphql-middleware';
 import { GraphQLUpload } from 'graphql-upload-ts';
 import { join } from 'path';
+import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { CanariesModule } from './canaries/canaries.module';
 import { CommentsModule } from './comments/comments.module';
@@ -20,7 +21,6 @@ import { ImagesModule } from './images/images.module';
 import { LikesModule } from './likes/likes.module';
 import { PostsModule } from './posts/posts.module';
 import { ProposalsModule } from './proposals/proposals.module';
-import { SecurityTxtModule } from './security-txt/security-txt.module';
 import { ServerConfigsModule } from './server-configs/server-configs.module';
 import { ServerInvitesModule } from './server-invites/server-invites.module';
 import { ServerRolesModule } from './server-roles/server-roles.module';
@@ -51,7 +51,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
 
 const ViewModule = ServeStaticModule.forRoot({
   rootPath: join(__dirname, 'view'),
-  exclude: ['/api/(.*)'],
+  exclude: ['/api/(.*)', '/security.txt'],
   renderPath: '/*',
 });
 
@@ -70,7 +70,6 @@ const ViewModule = ServeStaticModule.forRoot({
     LikesModule,
     PostsModule,
     ProposalsModule,
-    SecurityTxtModule,
     ServerConfigsModule,
     ServerInvitesModule,
     ServerRolesModule,
@@ -79,5 +78,6 @@ const ViewModule = ServeStaticModule.forRoot({
     ViewModule,
     VotesModule,
   ],
+  controllers: [AppController],
 })
 export class AppModule {}

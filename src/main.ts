@@ -16,9 +16,9 @@ const bootstrap = async () => {
     cors: true,
   });
 
-  app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe());
+  app.setGlobalPrefix('api', { exclude: ['security.txt'] });
   app.getHttpAdapter().getInstance().disable('x-powered-by');
+  app.useGlobalPipes(new ValidationPipe());
 
   app.use(
     graphqlUploadExpress({

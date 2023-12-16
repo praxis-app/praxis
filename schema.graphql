@@ -1,3 +1,20 @@
+type Canary {
+  id: Int!
+  statement: String!
+  updatedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type ServerConfig {
+  id: Int!
+  securityTxt: String
+  showCanaryStatement: Boolean!
+}
+
 type Like {
   id: Int!
   post: Post
@@ -6,11 +23,6 @@ type Like {
   createdAt: DateTime!
   updatedAt: DateTime!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Post {
   id: Int!
@@ -461,18 +473,6 @@ type ServerPermissions {
 
 type AuthPayload {
   access_token: String!
-}
-
-type ServerConfig {
-  id: Int!
-  securityTxt: String
-  showCanaryStatement: Boolean!
-}
-
-type Canary {
-  id: Int!
-  statement: String!
-  updatedAt: DateTime!
 }
 
 type UpdateServerConfigPayload {
