@@ -140,7 +140,7 @@ export class ProposalsService {
     return mappedImages;
   }
 
-  getVotingEndsAt(votingEndsAt: Date | undefined, config: GroupConfig) {
+  getVotingEndsAt(config: GroupConfig, votingEndsAt?: Date) {
     if (votingEndsAt) {
       return votingEndsAt;
     }
@@ -169,7 +169,7 @@ export class ProposalsService {
       ratificationThreshold: config.ratificationThreshold,
       reservationsLimit: config.reservationsLimit,
       standAsidesLimit: config.standAsidesLimit,
-      votingEndsAt: this.getVotingEndsAt(votingEndsAt, config),
+      votingEndsAt: this.getVotingEndsAt(config, votingEndsAt),
     };
 
     const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
