@@ -5,6 +5,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  SelectChangeEvent,
   Typography,
 } from '@mui/material';
 import dayjs, { Dayjs } from 'dayjs';
@@ -289,6 +290,20 @@ const ProposalForm = ({
       );
     };
 
+  const handleGroupSelectChange = (
+    { target }: SelectChangeEvent<number>,
+    setFieldValue: (field: string, value: any) => void,
+  ) => {
+    const votingEndsAt = getVotingEndsAtMinDateTime(+target.value);
+    if (votingEndsAt) {
+      setFieldValue(
+        ProposalFormFieldName.VotingEndsAt,
+        votingEndsAt.add(1, 'minutes'),
+      );
+    }
+    setFieldValue(ProposalFormFieldName.GroupId, target.value);
+  };
+
   const handleModalClose = (
     setFieldValue: (field: string, value: ProposalActionInput | null) => void,
   ) => {
@@ -367,7 +382,9 @@ const ProposalForm = ({
                     <Select
                       key={selectInputsKey}
                       name="groupId"
-                      onChange={handleChange}
+                      onChange={(event) =>
+                        handleGroupSelectChange(event, setFieldValue)
+                      }
                       value={values.groupId || ''}
                     >
                       {joinedGroups.map(({ id, name }) => (
@@ -397,7 +414,7 @@ const ProposalForm = ({
                       onChange={(value: Dayjs | null) =>
                         setFieldValue(ProposalFormFieldName.VotingEndsAt, value)
                       }
-                      value={values.votingEndsAt}
+                      value={values.votingEndsAt || null}
                     />
                   </>
                 )}
