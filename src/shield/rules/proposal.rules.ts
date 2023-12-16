@@ -2,6 +2,7 @@ import { rule } from 'graphql-shield';
 import { Context } from '../../context/context.types';
 import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
 import { Image } from '../../images/models/image.model';
+import { Proposal } from '../../proposals/models/proposal.model';
 import { ProposalAction } from '../../proposals/proposal-actions/models/proposal-action.model';
 import { ProposalActionEventHost } from '../../proposals/proposal-actions/proposal-action-events/models/proposal-action-event-host.model';
 import { ProposalActionEvent } from '../../proposals/proposal-actions/proposal-action-events/models/proposal-action-event.model';
@@ -12,8 +13,8 @@ import { ProposalActionRole } from '../../proposals/proposal-actions/proposal-ac
 import { Vote } from '../../votes/models/vote.model';
 
 export const isPublicProposal = rule({ cache: 'strict' })(async (
-  parent,
-  args,
+  parent: Proposal | null,
+  args: { id: number },
   { services: { proposalsService } }: Context,
 ) => {
   const proposalId = parent ? parent.id : args.id;
