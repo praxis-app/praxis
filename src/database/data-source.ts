@@ -52,6 +52,7 @@ import { AddCanaryTable1699136722535 } from './migrations/1699136722535-AddCanar
 import { RemoveRefreshTokenTable1699815961902 } from './migrations/1699815961902-RemoveRefreshTokenTable';
 import { AddProposalActionGroupConfigTable1700964923516 } from './migrations/1700964923516-AddProposalActionGroupConfigTable';
 import { AddGroupConfigColumns1701548819916 } from './migrations/1701548819916-AddGroupConfigColumns';
+import { AddSecurityTxtColumn1702684900226 } from './migrations/1702684900226-AddSecurityTxtColumn';
 
 dotenv.config();
 
@@ -105,6 +106,7 @@ export default new DataSource({
     AddProposalActionRoleCascadeDelete1685748700121,
     AddProposalActionRoleTable1684893300206,
     AddRoleMemberLinkTable1681172948650,
+    AddSecurityTxtColumn1702684900226,
     AddServerConfigTable1699135846939,
     AddServerInviteTable1677339785709,
     CleanUpGroupMemberRequestTable1690168731029,
