@@ -5,7 +5,7 @@ import { writeFileSync } from 'fs';
 import { printSchema } from 'graphql';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
 import { join } from 'path';
-import { AppModule } from './app/app.module';
+import { AppModule } from './app.module';
 import { MAX_IMAGE_COUNT, MAX_IMAGE_SIZE } from './images/image.constants';
 import { LoggerFactory } from './shared/logger.factory';
 import { Environment } from './shared/shared.constants';
