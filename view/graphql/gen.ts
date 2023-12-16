@@ -883,6 +883,7 @@ export type QueryUsersByIdsArgs = {
 export type ServerConfig = {
   __typename?: 'ServerConfig';
   id: Scalars['Int']['output'];
+  securityTxt?: Maybe<Scalars['String']['output']>;
   showCanaryStatement: Scalars['Boolean']['output'];
 };
 
@@ -1053,6 +1054,7 @@ export type UpdateProposalPayload = {
 export type UpdateServerConfigInput = {
   canaryStatement?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
+  securityTxt?: InputMaybe<Scalars['String']['input']>;
   showCanaryStatement?: InputMaybe<Scalars['Boolean']['input']>;
 };
 

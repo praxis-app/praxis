@@ -16,6 +16,11 @@ export default defineConfig({
         rewrite: (path: string) => path.replace(/^\/api/, ''),
         changeOrigin: true,
       },
+      '/security.txt': {
+        target: `http://localhost:${process.env.SERVER_PORT}/security.txt`,
+        rewrite: (path: string) => path.replace(/^\/security\.txt/, ''),
+        changeOrigin: true,
+      },
     },
   },
   define: {

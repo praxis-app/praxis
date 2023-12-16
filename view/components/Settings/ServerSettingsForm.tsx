@@ -1,8 +1,8 @@
 import { Box, FormGroup, Switch, Typography, useTheme } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { UpdateServerConfigInput } from '../../../src/server-configs/models/update-server-config.input';
 import { toastVar } from '../../graphql/cache';
+import { UpdateServerConfigInput } from '../../graphql/gen';
 import { ServerSettingsFormFragment } from '../../graphql/settings/fragments/gen/ServerSettingsForm.gen';
 import { useUpdateServerSettingsMutation } from '../../graphql/settings/mutations/gen/UpdateServerSettings.gen';
 import Flex from '../Shared/Flex';
@@ -12,6 +12,7 @@ import { TextField } from '../Shared/TextField';
 enum ServerSettingsFormFields {
   CanaryStatement = 'canaryStatement',
   ShowCanaryStatement = 'showCanaryStatement',
+  SecurityText = 'securityTxt',
 }
 
 type FormValues = Omit<UpdateServerConfigInput, 'id'>;
@@ -29,6 +30,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
 
   const initialValues: FormValues = {
     showCanaryStatement: serverSettings.showCanaryStatement,
+    securityTxt: serverSettings.securityTxt,
     canaryStatement,
   };
 
@@ -79,7 +81,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               </Box>
 
               <Switch
-                checked={values.showCanaryStatement}
+                checked={values.showCanaryStatement || false}
                 name={ServerSettingsFormFields.ShowCanaryStatement}
                 onChange={handleChange}
               />
@@ -91,6 +93,14 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               disabled={!values.showCanaryStatement}
               label={t('canary.placeholders.canaryStatement')}
               name={ServerSettingsFormFields.CanaryStatement}
+              multiline
+            />
+
+            <TextField
+              autoComplete="off"
+              value={values.securityTxt || ''}
+              label={t('serverSettings.placeholders.securityTxt')}
+              name={ServerSettingsFormFields.SecurityText}
               multiline
             />
           </FormGroup>

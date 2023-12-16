@@ -485,6 +485,12 @@
     }
   },
 
+  "serverSettings": {
+    "placeholders": {
+      "securityTxt": "security.txt"
+    }
+  },
+
   "canary": {
     "headers": {
       "canaryStatement": "Canary Statement"

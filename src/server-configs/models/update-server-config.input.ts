@@ -10,4 +10,7 @@ export class UpdateServerConfigInput {
 
   @Field({ nullable: true })
   showCanaryStatement?: boolean;
+
+  @Field({ nullable: true })
+  securityTxt?: string;
 }
