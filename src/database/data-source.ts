@@ -53,6 +53,8 @@ import { RemoveRefreshTokenTable1699815961902 } from './migrations/1699815961902
 import { AddProposalActionGroupConfigTable1700964923516 } from './migrations/1700964923516-AddProposalActionGroupConfigTable';
 import { AddGroupConfigColumns1701548819916 } from './migrations/1701548819916-AddGroupConfigColumns';
 import { AddSecurityTxtColumn1702684900226 } from './migrations/1702684900226-AddSecurityTxtColumn';
+import { ProposalConfig } from '../proposals/models/proposal-config.model';
+import { AddProposalConfigTable1702765481954 } from './migrations/1702765481954-AddProposalConfigTable';
 
 dotenv.config();
 
@@ -84,6 +86,7 @@ export default new DataSource({
     ProposalActionPermission,
     ProposalActionRole,
     ProposalActionRoleMember,
+    ProposalConfig,
     ServerConfig,
     ServerInvite,
     ServerRole,
@@ -105,6 +108,7 @@ export default new DataSource({
     AddProposalActionImagesConstraint1685201083917,
     AddProposalActionRoleCascadeDelete1685748700121,
     AddProposalActionRoleTable1684893300206,
+    AddProposalConfigTable1702765481954,
     AddRoleMemberLinkTable1681172948650,
     AddSecurityTxtColumn1702684900226,
     AddServerConfigTable1699135846939,
