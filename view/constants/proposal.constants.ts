@@ -33,6 +33,12 @@ export enum ProposalStage {
   Closed = 'closed',
 }
 
+export enum ProposalFormFieldName {
+  Body = 'body',
+  Images = 'images',
+  VotingEndsAt = 'votingEndsAt',
+}
+
 export enum ProposalActionFieldName {
   ActionType = 'action.actionType',
   Event = 'action.event',

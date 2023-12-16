@@ -9,6 +9,7 @@ import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, IsNull, Not, Repository } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
+import { GroupConfig } from '../groups/group-configs/models/group-config.model';
 import { GroupsService } from '../groups/groups.service';
 import { ImageTypes } from '../images/image.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
@@ -139,10 +140,21 @@ export class ProposalsService {
     return mappedImages;
   }
 
+  getVotingEndsAt(votingEndsAt: Date | undefined, config: GroupConfig) {
+    if (votingEndsAt) {
+      return votingEndsAt;
+    }
+    if (!config.votingTimeLimit) {
+      return;
+    }
+    return new Date(Date.now() + config.votingTimeLimit * 60 * 1000);
+  }
+
   async createProposal(
     {
       body,
       images,
+      votingEndsAt,
       action: { groupCoverPhoto, role, event, groupSettings, ...action },
       ...proposalData
     }: CreateProposalInput,
@@ -152,17 +164,12 @@ export class ProposalsService {
       { id: proposalData.groupId },
       ['config'],
     );
-
-    const votingEndsAt = config.votingTimeLimit
-      ? new Date(Date.now() + config.votingTimeLimit * 60 * 1000)
-      : undefined;
-
     const proposalConfig: Partial<ProposalConfig> = {
       decisionMakingModel: config.decisionMakingModel,
       ratificationThreshold: config.ratificationThreshold,
       reservationsLimit: config.reservationsLimit,
       standAsidesLimit: config.standAsidesLimit,
-      votingEndsAt,
+      votingEndsAt: this.getVotingEndsAt(votingEndsAt, config),
     };
 
     const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;

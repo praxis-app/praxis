@@ -15,4 +15,7 @@ export class CreateProposalInput {
 
   @Field(() => [GraphQLUpload], { nullable: true })
   images?: Promise<FileUpload>[];
+
+  @Field({ nullable: true })
+  votingEndsAt?: Date;
 }

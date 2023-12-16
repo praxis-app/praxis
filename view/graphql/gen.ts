@@ -155,6 +155,7 @@ export type CreateProposalInput = {
   body?: InputMaybe<Scalars['String']['input']>;
   groupId?: InputMaybe<Scalars['Int']['input']>;
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
+  votingEndsAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type CreateProposalPayload = {

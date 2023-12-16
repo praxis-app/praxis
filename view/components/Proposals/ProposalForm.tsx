@@ -7,6 +7,7 @@ import {
   Select,
   Typography,
 } from '@mui/material';
+import dayjs, { Dayjs } from 'dayjs';
 import {
   Form,
   Formik,
@@ -21,12 +22,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {
   ProposalActionFieldName,
   ProposalActionType,
+  ProposalFormFieldName,
 } from '../../constants/proposal.constants';
-import {
-  FieldNames,
-  NavigationPaths,
-  TypeNames,
-} from '../../constants/shared.constants';
+import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import {
   CreateProposalInput,
@@ -48,6 +46,7 @@ import { getProposalActionTypeOptions } from '../../utils/proposal.utils';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
 import ImageInput from '../Images/ImageInput';
+import DateTimePicker from '../Shared/DateTimePicker';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import TextFieldWithAvatar from '../Shared/TextFieldWithAvatar';
@@ -101,6 +100,21 @@ const ProposalForm = ({
   };
   const actionTypeOptions = getProposalActionTypeOptions(t);
   const isGroupPage = pathname.includes(NavigationPaths.Groups);
+
+  const getSelectedGroupVotingTimeLimit = (
+    groupId: number | null | undefined,
+  ) => {
+    const selectedGroup = joinedGroups?.find((group) => group.id === groupId);
+    return selectedGroup?.settings.votingTimeLimit;
+  };
+
+  const getVotingEndsAtMinDateTime = (groupId: number | null | undefined) => {
+    const votingTimeLimit = getSelectedGroupVotingTimeLimit(groupId);
+    if (!votingTimeLimit) {
+      return null;
+    }
+    return dayjs().add(votingTimeLimit, 'minutes');
+  };
 
   const validateProposal = ({ action, groupId }: CreateProposalInput) => {
     const errors: ProposalFormErrors = {
@@ -258,7 +272,7 @@ const ProposalForm = ({
   const handleImageInputChange =
     (setFieldValue: (field: string, value: File[]) => void) =>
     (images: File[]) =>
-      setFieldValue(FieldNames.Images, images);
+      setFieldValue(ProposalFormFieldName.Images, images);
 
   const handleRemoveImage =
     (
@@ -270,7 +284,7 @@ const ProposalForm = ({
         return;
       }
       setFieldValue(
-        FieldNames.Images,
+        ProposalFormFieldName.Images,
         images.filter((image) => image.name !== imageName),
       );
     };
@@ -307,7 +321,7 @@ const ProposalForm = ({
           <FormGroup>
             <TextFieldWithAvatar
               autoComplete="off"
-              name={FieldNames.Body}
+              name={ProposalFormFieldName.Body}
               onChange={handleChange}
               placeholder={t('proposals.prompts.createProposal')}
               value={values.body}
@@ -373,6 +387,19 @@ const ProposalForm = ({
                       </Typography>
                     )}
                   </FormControl>
+                )}
+
+                {getSelectedGroupVotingTimeLimit(values?.groupId) && (
+                  <>
+                    <DateTimePicker
+                      label={t('proposals.labels.closingTime')}
+                      minDateTime={getVotingEndsAtMinDateTime(values?.groupId)}
+                      onChange={(value: Dayjs | null) =>
+                        setFieldValue(ProposalFormFieldName.VotingEndsAt, value)
+                      }
+                      value={values.votingEndsAt}
+                    />
+                  </>
                 )}
 
                 <ProposalActionFields

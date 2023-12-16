@@ -234,7 +234,16 @@ export type HomeFeedQuery = {
           }>;
         }
     >;
-    joinedGroups: Array<{ __typename?: 'Group'; id: number; name: string }>;
+    joinedGroups: Array<{
+      __typename?: 'Group';
+      id: number;
+      name: string;
+      settings: {
+        __typename?: 'GroupConfig';
+        id: number;
+        votingTimeLimit: number;
+      };
+    }>;
   };
 };
 

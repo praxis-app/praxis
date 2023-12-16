@@ -100,6 +100,7 @@
       "action": "Action",
       "closed": "Closed",
       "closing": "Closing {{time}}",
+      "closingTime": "Closing time",
       "color": "Color",
       "eventProposal": "Event proposal",
       "name": "Name",

@@ -677,6 +677,7 @@ input CreateProposalInput {
   body: String
   action: ProposalActionInput!
   images: [Upload!]
+  votingEndsAt: DateTime
 }
 
 input ProposalActionInput {
