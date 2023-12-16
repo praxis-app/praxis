@@ -39,7 +39,7 @@ export interface Context {
   user: User | null;
 }
 
-export interface GetContextParams {
+export interface GetContextOptions {
   connectionParams?: { authorization: string };
   req?: Request;
 }
