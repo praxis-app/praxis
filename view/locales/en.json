@@ -99,6 +99,7 @@
     "labels": {
       "action": "Action",
       "closed": "Closed",
+      "closedAt": "Closed at {{time}}",
       "closing": "Closing {{time}}",
       "closingTime": "Closing time",
       "color": "Color",

@@ -1,5 +1,6 @@
 import { Schedule } from '@mui/icons-material';
 import { Divider, Typography } from '@mui/material';
+import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { DecisionMakingModel } from '../../constants/proposal.constants';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
@@ -20,6 +21,14 @@ const ProposalSettingsModal = ({
   settings,
 }: Props) => {
   const { t } = useTranslation();
+
+  const isClosed =
+    settings.votingEndsAt && dayjs() > dayjs(settings.votingEndsAt);
+
+  const closingTimeLabel = t(
+    isClosed ? 'proposals.labels.closedAt' : 'proposals.labels.closing',
+    { time: formatClosingTime(settings.votingEndsAt) },
+  );
 
   const getDecisionMakingModelName = (decisionMakingModel: string) => {
     if (decisionMakingModel === DecisionMakingModel.Consent) {
@@ -52,9 +61,7 @@ const ProposalSettingsModal = ({
           >
             <Schedule sx={{ fontSize: ['20px', undefined] }} />
             <Typography fontSize="14px" fontFamily="Inter Bold">
-              {t('proposals.labels.closing', {
-                time: formatClosingTime(settings.votingEndsAt),
-              })}
+              {closingTimeLabel}
             </Typography>
           </Flex>
 
