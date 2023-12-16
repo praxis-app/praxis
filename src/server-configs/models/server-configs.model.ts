@@ -14,6 +14,10 @@ export class ServerConfig {
   @Field(() => Int)
   id: number;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  securityTxt?: string;
+
   @Column({ default: false })
   @Field()
   showCanaryStatement: boolean;

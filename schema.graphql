@@ -1,3 +1,20 @@
+type Canary {
+  id: Int!
+  statement: String!
+  updatedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type ServerConfig {
+  id: Int!
+  securityTxt: String
+  showCanaryStatement: Boolean!
+}
+
 type Like {
   id: Int!
   post: Post
@@ -6,11 +23,6 @@ type Like {
   createdAt: DateTime!
   updatedAt: DateTime!
 }
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
 
 type Post {
   id: Int!
@@ -486,17 +498,6 @@ type AuthPayload {
   access_token: String!
 }
 
-type ServerConfig {
-  id: Int!
-  showCanaryStatement: Boolean!
-}
-
-type Canary {
-  id: Int!
-  statement: String!
-  updatedAt: DateTime!
-}
-
 type UpdateServerConfigPayload {
   serverConfig: ServerConfig!
   canary: Canary!
@@ -538,16 +539,24 @@ type Mutation {
   login(input: LoginInput!): AuthPayload!
   signUp(input: SignUpInput!): AuthPayload!
   logOut: Boolean!
-  createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
+  createServerInvite(
+    serverInviteData: CreateServerInviteInput!
+  ): CreateServerInvitePayload!
   deleteServerInvite(id: Int!): Boolean!
   updateUser(userData: UpdateUserInput!): UpdateUserPayload!
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
   unfollowUser(id: Int!): Boolean!
-  createServerRole(serverRoleData: CreateServerRoleInput!): CreateServerRolePayload!
-  updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
+  createServerRole(
+    serverRoleData: CreateServerRoleInput!
+  ): CreateServerRolePayload!
+  updateServerRole(
+    serverRoleData: UpdateServerRoleInput!
+  ): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
-  deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
+  deleteServerRoleMember(
+    serverRoleMemberData: DeleteServerRoleMemberInput!
+  ): DeleteServerRoleMemberPayload!
   deleteImage(id: Int!): Boolean!
   createPost(postData: CreatePostInput!): CreatePostPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
@@ -562,14 +571,20 @@ type Mutation {
   createEvent(eventData: CreateEventInput!): CreateEventPayload!
   updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
   deleteEvent(id: Int!): Boolean!
-  createEventAttendee(eventAttendeeData: CreateEventAttendeeInput!): CreateEventAttendeePayload!
-  updateEventAttendee(eventAttendeeData: UpdateEventAttendeeInput!): UpdateEventAttendeePayload!
+  createEventAttendee(
+    eventAttendeeData: CreateEventAttendeeInput!
+  ): CreateEventAttendeePayload!
+  updateEventAttendee(
+    eventAttendeeData: UpdateEventAttendeeInput!
+  ): UpdateEventAttendeePayload!
   deleteEventAttendee(eventId: Int!): Boolean!
   createGroup(groupData: CreateGroupInput!): CreateGroupPayload!
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
   deleteGroup(id: Int!): Boolean!
   leaveGroup(id: Int!): Boolean!
-  updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
+  updateGroupConfig(
+    groupConfigData: UpdateGroupConfigInput!
+  ): UpdateGroupPayload!
   createGroupMemberRequest(groupId: Int!): CreateGroupMemberRequestPayload!
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
   cancelGroupMemberRequest(id: Int!): Boolean!
@@ -582,8 +597,12 @@ type Mutation {
   createGroupRole(groupRoleData: CreateGroupRoleInput!): CreateGroupRolePayload!
   updateGroupRole(groupRoleData: UpdateGroupRoleInput!): UpdateGroupRolePayload!
   deleteGroupRole(id: Int!): Boolean!
-  deleteGroupRoleMember(groupRoleMemberData: DeleteGroupRoleMemberInput!): DeleteGroupRoleMemberPayload!
-  updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
+  deleteGroupRoleMember(
+    groupRoleMemberData: DeleteGroupRoleMemberInput!
+  ): DeleteGroupRoleMemberPayload!
+  updateServerConfig(
+    serverConfigData: UpdateServerConfigInput!
+  ): UpdateServerConfigPayload!
 }
 
 input LoginInput {
@@ -600,7 +619,9 @@ input SignUpInput {
   inviteToken: String
 }
 
-"""The `Upload` scalar type represents a file upload."""
+"""
+The `Upload` scalar type represents a file upload.
+"""
 scalar Upload
 
 input CreateServerInviteInput {
