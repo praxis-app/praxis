@@ -1,6 +1,8 @@
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { GraphQLSchemaHost } from '@nestjs/graphql';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { writeFileSync } from 'fs';
 import { printSchema } from 'graphql';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
@@ -11,14 +13,19 @@ import { LoggerFactory } from './shared/logger.factory';
 import { Environment } from './shared/shared.constants';
 
 const bootstrap = async () => {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     logger: LoggerFactory(),
-    cors: true,
   });
+  const configService = app.get(ConfigService);
 
   app.setGlobalPrefix('api', { exclude: ['security.txt'] });
   app.getHttpAdapter().getInstance().disable('x-powered-by');
   app.useGlobalPipes(new ValidationPipe());
+  app.enable('trust proxy');
+  app.enableCors({
+    origin: configService.get<string>('CORS_ALLOWED_ORIGIN'),
+    credentials: true,
+  });
 
   app.use(
     graphqlUploadExpress({
