@@ -1,4 +1,4 @@
-mutation SyncProposal($proposalId: Int!, $isLoggedIn: Boolean = true) {
+mutation SyncProposal($proposalId: Int!, $isLoggedIn: Boolean!) {
   synchronizeProposal(id: $proposalId) {
     proposal {
       id

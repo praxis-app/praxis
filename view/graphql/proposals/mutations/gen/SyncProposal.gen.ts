@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type SyncProposalMutationVariables = Types.Exact<{
   proposalId: Types.Scalars['Int']['input'];
-  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
+  isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
 export type SyncProposalMutation = {
@@ -184,7 +184,7 @@ export type SyncProposalMutation = {
 };
 
 export const SyncProposalDocument = gql`
-  mutation SyncProposal($proposalId: Int!, $isLoggedIn: Boolean = true) {
+  mutation SyncProposal($proposalId: Int!, $isLoggedIn: Boolean!) {
     synchronizeProposal(id: $proposalId) {
       proposal {
         id
