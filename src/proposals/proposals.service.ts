@@ -153,21 +153,9 @@ export class ProposalsService {
       { id: proposalData.groupId },
       ['config'],
     );
-
     const groupClosingAt = config.votingTimeLimit
       ? new Date(Date.now() + config.votingTimeLimit * 60 * 1000)
       : undefined;
-
-    if (closingAt) {
-      if (closingAt < new Date()) {
-        throw new Error('Closing time must be in the future');
-      }
-      if (groupClosingAt && closingAt < groupClosingAt) {
-        throw new Error(
-          'Voting time limit must not be shorter than group limit',
-        );
-      }
-    }
 
     const proposalConfig: Partial<ProposalConfig> = {
       decisionMakingModel: config.decisionMakingModel,
