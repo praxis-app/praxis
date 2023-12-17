@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { InputBaseComponentProps, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Input from '@mui/material/Input';
 import Slider from '@mui/material/Slider';
@@ -25,8 +25,7 @@ const SliderInput = ({
   showPercentSign,
   value,
 }: Props) => {
-  const inputProps = {
-    step: 5,
+  const inputProps: InputBaseComponentProps = {
     min: 0,
     max: 100,
     type: 'number',
