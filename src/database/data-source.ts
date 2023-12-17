@@ -12,6 +12,7 @@ import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
 import { Like } from '../likes/models/like.model';
 import { Post } from '../posts/models/post.model';
+import { ProposalConfig } from '../proposals/models/proposal-config.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
 import { ProposalActionEventHost } from '../proposals/proposal-actions/proposal-action-events/models/proposal-action-event-host.model';
@@ -53,7 +54,7 @@ import { RemoveRefreshTokenTable1699815961902 } from './migrations/1699815961902
 import { AddProposalActionGroupConfigTable1700964923516 } from './migrations/1700964923516-AddProposalActionGroupConfigTable';
 import { AddGroupConfigColumns1701548819916 } from './migrations/1701548819916-AddGroupConfigColumns';
 import { AddSecurityTxtColumn1702684900226 } from './migrations/1702684900226-AddSecurityTxtColumn';
-import { ProposalConfig } from '../proposals/models/proposal-config.model';
+import { AddProposalConfigTable1702843109428 } from './migrations/1702843109428-AddProposalConfigTable';
 
 dotenv.config();
 
@@ -107,6 +108,7 @@ export default new DataSource({
     AddProposalActionImagesConstraint1685201083917,
     AddProposalActionRoleCascadeDelete1685748700121,
     AddProposalActionRoleTable1684893300206,
+    AddProposalConfigTable1702843109428,
     AddRoleMemberLinkTable1681172948650,
     AddSecurityTxtColumn1702684900226,
     AddServerConfigTable1699135846939,
