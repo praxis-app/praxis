@@ -9,7 +9,6 @@ import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, IsNull, Not, Repository } from 'typeorm';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
-import { GroupConfig } from '../groups/group-configs/models/group-config.model';
 import { GroupsService } from '../groups/groups.service';
 import { ImageTypes } from '../images/image.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
@@ -140,21 +139,11 @@ export class ProposalsService {
     return mappedImages;
   }
 
-  getVotingEndsAt(config: GroupConfig, votingEndsAt?: Date) {
-    if (votingEndsAt) {
-      return votingEndsAt;
-    }
-    if (!config.votingTimeLimit) {
-      return;
-    }
-    return new Date(Date.now() + config.votingTimeLimit * 60 * 1000);
-  }
-
   async createProposal(
     {
       body,
       images,
-      votingEndsAt,
+      closingAt,
       action: { groupCoverPhoto, role, event, groupSettings, ...action },
       ...proposalData
     }: CreateProposalInput,
@@ -165,13 +154,15 @@ export class ProposalsService {
       ['config'],
     );
 
-    const groupVotingEndsAt = this.getVotingEndsAt(config);
+    const groupClosingAt = config.votingTimeLimit
+      ? new Date(Date.now() + config.votingTimeLimit * 60 * 1000)
+      : undefined;
 
-    if (votingEndsAt) {
-      if (votingEndsAt < new Date()) {
+    if (closingAt) {
+      if (closingAt < new Date()) {
         throw new Error('Closing time must be in the future');
       }
-      if (groupVotingEndsAt && votingEndsAt < groupVotingEndsAt) {
+      if (groupClosingAt && closingAt < groupClosingAt) {
         throw new Error(
           'Voting time limit must not be shorter than group limit',
         );
@@ -183,7 +174,7 @@ export class ProposalsService {
       ratificationThreshold: config.ratificationThreshold,
       reservationsLimit: config.reservationsLimit,
       standAsidesLimit: config.standAsidesLimit,
-      votingEndsAt: this.getVotingEndsAt(config, votingEndsAt),
+      closingAt: closingAt || groupClosingAt,
     };
 
     const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
@@ -355,11 +346,11 @@ export class ProposalsService {
       ratificationThreshold,
       reservationsLimit,
       standAsidesLimit,
-      votingEndsAt,
+      closingAt,
     }: ProposalConfig,
     groupMembers: User[],
   ) {
-    if (votingEndsAt && Date.now() < Number(votingEndsAt)) {
+    if (closingAt && Date.now() < Number(closingAt)) {
       return false;
     }
 
@@ -378,11 +369,10 @@ export class ProposalsService {
   async hasConsent(votes: Vote[], proposalConfig: ProposalConfig) {
     const { reservations, standAsides, blocks } =
       sortConsensusVotesByType(votes);
-    const { reservationsLimit, standAsidesLimit, votingEndsAt } =
-      proposalConfig;
+    const { reservationsLimit, standAsidesLimit, closingAt } = proposalConfig;
 
     return (
-      Date.now() >= Number(votingEndsAt) &&
+      Date.now() >= Number(closingAt) &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
       blocks.length === 0
@@ -395,7 +385,7 @@ export class ProposalsService {
 
     const proposals = await this.getProposals(
       {
-        config: { votingEndsAt: Not(IsNull()) },
+        config: { closingAt: Not(IsNull()) },
         stage: ProposalStage.Voting,
       },
       ['config'],
@@ -409,7 +399,7 @@ export class ProposalsService {
 
   async synchronizeProposal(proposal: Proposal) {
     const { id, config } = proposal;
-    if (!config.votingEndsAt || Date.now() < Number(config.votingEndsAt)) {
+    if (!config.closingAt || Date.now() < Number(config.closingAt)) {
       return proposal;
     }
 

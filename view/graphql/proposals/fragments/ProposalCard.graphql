@@ -15,7 +15,7 @@ fragment ProposalCard on Proposal {
     ratificationThreshold
     reservationsLimit
     standAsidesLimit
-    votingEndsAt
+    closingAt
   }
   user {
     ...UserAvatar

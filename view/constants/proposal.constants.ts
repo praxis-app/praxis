@@ -36,7 +36,7 @@ export enum ProposalFormFieldName {
   Body = 'body',
   GroupId = 'groupId',
   Images = 'images',
-  VotingEndsAt = 'votingEndsAt',
+  ClosingAt = 'closingAt',
 }
 
 export enum ProposalActionFieldName {

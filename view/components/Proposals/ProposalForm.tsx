@@ -109,7 +109,7 @@ const ProposalForm = ({
     return selectedGroup?.settings.votingTimeLimit;
   };
 
-  const getVotingEndsAtMinDateTime = (groupId: number | null | undefined) => {
+  const getClosingAtMinDateTime = (groupId: number | null | undefined) => {
     const votingTimeLimit = getSelectedGroupVotingTimeLimit(groupId);
     if (!votingTimeLimit) {
       return null;
@@ -294,14 +294,14 @@ const ProposalForm = ({
     { target }: SelectChangeEvent<number>,
     setFieldValue: (field: string, value: any) => void,
   ) => {
-    const votingEndsAt = getVotingEndsAtMinDateTime(+target.value);
-    if (votingEndsAt) {
+    const closingAt = getClosingAtMinDateTime(+target.value);
+    if (closingAt) {
       setFieldValue(
-        ProposalFormFieldName.VotingEndsAt,
-        votingEndsAt.add(1, 'minutes'),
+        ProposalFormFieldName.ClosingAt,
+        closingAt.add(1, 'minutes'),
       );
     } else {
-      setFieldValue(ProposalFormFieldName.VotingEndsAt, null);
+      setFieldValue(ProposalFormFieldName.ClosingAt, null);
     }
     setFieldValue(ProposalFormFieldName.GroupId, target.value);
   };
@@ -410,11 +410,11 @@ const ProposalForm = ({
 
                 <DateTimePicker
                   label={t('proposals.labels.closingTime')}
-                  minDateTime={getVotingEndsAtMinDateTime(values?.groupId)}
+                  minDateTime={getClosingAtMinDateTime(values?.groupId)}
                   onChange={(value: Dayjs | null) =>
-                    setFieldValue(ProposalFormFieldName.VotingEndsAt, value)
+                    setFieldValue(ProposalFormFieldName.ClosingAt, value)
                   }
-                  value={values.votingEndsAt || null}
+                  value={values.closingAt || null}
                   sx={{ marginBottom: values.action.actionType ? 1 : 0.25 }}
                   disablePast
                 />

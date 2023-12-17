@@ -17,5 +17,5 @@ export class CreateProposalInput {
   images?: Promise<FileUpload>[];
 
   @Field({ nullable: true })
-  votingEndsAt?: Date;
+  closingAt?: Date;
 }

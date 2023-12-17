@@ -142,7 +142,7 @@ export type ProposalCardFragment = {
     ratificationThreshold: number;
     reservationsLimit: number;
     standAsidesLimit: number;
-    votingEndsAt?: any | null;
+    closingAt?: any | null;
   };
   user: {
     __typename?: 'User';
@@ -192,7 +192,7 @@ export const ProposalCardFragmentDoc = gql`
       ratificationThreshold
       reservationsLimit
       standAsidesLimit
-      votingEndsAt
+      closingAt
     }
     user {
       ...UserAvatar

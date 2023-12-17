@@ -76,7 +76,7 @@ const ProposalCardFooter = ({
   const { t } = useTranslation();
 
   useEffect(() => {
-    const hasVotingTimeLimit = !!proposal.settings.votingEndsAt;
+    const hasVotingTimeLimit = !!proposal.settings.closingAt;
     const isVotingStage = proposal.stage === ProposalStage.Voting;
 
     if (
@@ -89,7 +89,7 @@ const ProposalCardFooter = ({
       return;
     }
 
-    if (Date.now() >= Number(proposal.settings.votingEndsAt)) {
+    if (Date.now() >= Number(proposal.settings.closingAt)) {
       syncProposal({
         variables: {
           proposalId: proposal.id,

@@ -35,7 +35,7 @@ export class ProposalConfig {
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  votingEndsAt?: Date;
+  closingAt?: Date;
 
   @Field(() => Proposal)
   @OneToOne(() => Proposal, (proposal) => proposal.config, {

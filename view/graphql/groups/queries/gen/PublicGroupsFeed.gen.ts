@@ -197,7 +197,7 @@ export type PublicGroupsFeedQuery = {
           ratificationThreshold: number;
           reservationsLimit: number;
           standAsidesLimit: number;
-          votingEndsAt?: any | null;
+          closingAt?: any | null;
         };
         user: {
           __typename?: 'User';

@@ -182,7 +182,7 @@ type ProposalConfig {
   standAsidesLimit: Int!
   reservationsLimit: Int!
   ratificationThreshold: Int!
-  votingEndsAt: DateTime
+  closingAt: DateTime
   proposal: Proposal!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -677,7 +677,7 @@ input CreateProposalInput {
   body: String
   action: ProposalActionInput!
   images: [Upload!]
-  votingEndsAt: DateTime
+  closingAt: DateTime
 }
 
 input ProposalActionInput {

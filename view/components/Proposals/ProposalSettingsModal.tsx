@@ -22,12 +22,11 @@ const ProposalSettingsModal = ({
 }: Props) => {
   const { t } = useTranslation();
 
-  const isClosed =
-    settings.votingEndsAt && dayjs() > dayjs(settings.votingEndsAt);
+  const isClosed = settings.closingAt && dayjs() > dayjs(settings.closingAt);
 
   const closingTimeLabel = t(
     isClosed ? 'proposals.labels.closedAt' : 'proposals.labels.closing',
-    { time: formatClosingTime(settings.votingEndsAt) },
+    { time: formatClosingTime(settings.closingAt) },
   );
 
   const getDecisionMakingModelName = (decisionMakingModel: string) => {
@@ -50,7 +49,7 @@ const ProposalSettingsModal = ({
       open={showSettingsModal}
       centeredTitle
     >
-      {settings.votingEndsAt && (
+      {settings.closingAt && (
         <>
           <Flex
             alignItems="center"

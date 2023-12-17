@@ -153,9 +153,9 @@ export type CreatePostPayload = {
 export type CreateProposalInput = {
   action: ProposalActionInput;
   body?: InputMaybe<Scalars['String']['input']>;
+  closingAt?: InputMaybe<Scalars['DateTime']['input']>;
   groupId?: InputMaybe<Scalars['Int']['input']>;
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
-  votingEndsAt?: InputMaybe<Scalars['DateTime']['input']>;
 };
 
 export type CreateProposalPayload = {
@@ -823,6 +823,7 @@ export type ProposalActionRoleMemberInput = {
 
 export type ProposalConfig = {
   __typename?: 'ProposalConfig';
+  closingAt?: Maybe<Scalars['DateTime']['output']>;
   createdAt: Scalars['DateTime']['output'];
   decisionMakingModel: Scalars['String']['output'];
   id: Scalars['Int']['output'];
@@ -831,7 +832,6 @@ export type ProposalConfig = {
   reservationsLimit: Scalars['Int']['output'];
   standAsidesLimit: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  votingEndsAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
 export type Query = {
