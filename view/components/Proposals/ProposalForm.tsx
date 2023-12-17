@@ -377,7 +377,7 @@ const ProposalForm = ({
                 {joinedGroups && !editProposal && !isGroupPage && (
                   <FormControl
                     error={!!(errors.groupId && touched.groupId)}
-                    sx={{ marginBottom: values.action.actionType ? 1 : 0.25 }}
+                    sx={{ marginBottom: 1 }}
                     variant="standard"
                   >
                     <InputLabel>{t('groups.labels.group')}</InputLabel>
@@ -415,6 +415,7 @@ const ProposalForm = ({
                     setFieldValue(ProposalFormFieldName.VotingEndsAt, value)
                   }
                   value={values.votingEndsAt || null}
+                  sx={{ marginBottom: values.action.actionType ? 1 : 0.25 }}
                   disablePast
                 />
 

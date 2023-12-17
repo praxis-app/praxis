@@ -11,6 +11,7 @@ type Props = Pick<
   | 'minDateTime'
   | 'onChange'
   | 'value'
+  | 'sx'
 >;
 
 const DateTimePicker = ({
@@ -20,6 +21,7 @@ const DateTimePicker = ({
   minDateTime,
   onChange,
   value,
+  sx,
 }: Props) => (
   <LocalizationProvider dateAdapter={AdapterDayjs}>
     <MuiDateTimePicker
@@ -29,7 +31,7 @@ const DateTimePicker = ({
       minDateTime={minDateTime}
       onChange={onChange}
       slotProps={{ textField: { variant: 'standard' } }}
-      sx={{ marginBottom: 1.5 }}
+      sx={{ marginBottom: 1.5, ...sx }}
       value={value}
     />
   </LocalizationProvider>
