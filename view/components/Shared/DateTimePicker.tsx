@@ -5,11 +5,17 @@ import { MobileDateTimePicker as MuiDateTimePicker } from '@mui/x-date-pickers/M
 
 type Props = Pick<
   DateTimePickerProps<any>,
-  'defaultValue' | 'label' | 'minDateTime' | 'onChange' | 'value'
+  | 'defaultValue'
+  | 'disablePast'
+  | 'label'
+  | 'minDateTime'
+  | 'onChange'
+  | 'value'
 >;
 
 const DateTimePicker = ({
   defaultValue,
+  disablePast,
   label,
   minDateTime,
   onChange,
@@ -18,6 +24,7 @@ const DateTimePicker = ({
   <LocalizationProvider dateAdapter={AdapterDayjs}>
     <MuiDateTimePicker
       defaultValue={defaultValue}
+      disablePast={disablePast}
       label={label}
       minDateTime={minDateTime}
       onChange={onChange}

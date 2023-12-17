@@ -300,6 +300,8 @@ const ProposalForm = ({
         ProposalFormFieldName.VotingEndsAt,
         votingEndsAt.add(1, 'minutes'),
       );
+    } else {
+      setFieldValue(ProposalFormFieldName.VotingEndsAt, null);
     }
     setFieldValue(ProposalFormFieldName.GroupId, target.value);
   };
@@ -406,18 +408,15 @@ const ProposalForm = ({
                   </FormControl>
                 )}
 
-                {getSelectedGroupVotingTimeLimit(values?.groupId) && (
-                  <>
-                    <DateTimePicker
-                      label={t('proposals.labels.closingTime')}
-                      minDateTime={getVotingEndsAtMinDateTime(values?.groupId)}
-                      onChange={(value: Dayjs | null) =>
-                        setFieldValue(ProposalFormFieldName.VotingEndsAt, value)
-                      }
-                      value={values.votingEndsAt || null}
-                    />
-                  </>
-                )}
+                <DateTimePicker
+                  label={t('proposals.labels.closingTime')}
+                  minDateTime={getVotingEndsAtMinDateTime(values?.groupId)}
+                  onChange={(value: Dayjs | null) =>
+                    setFieldValue(ProposalFormFieldName.VotingEndsAt, value)
+                  }
+                  value={values.votingEndsAt || null}
+                  disablePast
+                />
 
                 <ProposalActionFields
                   editProposal={editProposal}
