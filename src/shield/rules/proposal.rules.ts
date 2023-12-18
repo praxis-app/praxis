@@ -68,18 +68,10 @@ export const isPublicProposalAction = rule({ cache: 'strict' })(async (
     },
   }: Context,
 ) => {
-  if (parent instanceof ProposalActionGroupConfig) {
-    const proposalAction = await proposalActionsService.getProposalAction(
-      { id: parent.proposalActionId },
-      ['proposal.group.config'],
-    );
-    return (
-      proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
-    );
-  }
   if (
     parent instanceof ProposalActionRole ||
-    parent instanceof ProposalActionEvent
+    parent instanceof ProposalActionEvent ||
+    parent instanceof ProposalActionGroupConfig
   ) {
     const proposalAction = await proposalActionsService.getProposalAction(
       { id: parent.proposalActionId },
