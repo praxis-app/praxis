@@ -52,7 +52,7 @@ const errorLink = onError(
 );
 
 const webSocketProtocol =
-  process.env.NODE_ENV === Environments.Production ? 'wss' : 'ws';
+  process.env.NODE_ENV === Environments.Development ? 'ws' : 'wss';
 
 const wsLink = new GraphQLWsLink(
   createClient({

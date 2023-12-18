@@ -4,8 +4,8 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const isProd = process.env.NODE_ENV === 'production';
-const webSocketProtocol = isProd ? 'wss' : 'ws';
+const isDev = process.env.NODE_ENV === 'development';
+const webSocketProtocol = isDev ? 'ws' : 'wss';
 
 // https://vitejs.dev/config
 export default defineConfig({
