@@ -51,11 +51,12 @@ const errorLink = onError(
     }),
 );
 
+const webSocketProtocol =
+  process.env.NODE_ENV === Environments.Production ? 'wss' : 'ws';
+
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: `${process.env.NODE_ENV === 'development' ? 'ws' : 'wss'}://${
-      window.location.host
-    }/subscriptions`,
+    url: `${webSocketProtocol}://${window.location.host}/subscriptions`,
     connectionParams: getAuthHeader(),
   }),
 );
