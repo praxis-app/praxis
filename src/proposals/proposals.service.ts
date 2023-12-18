@@ -90,9 +90,6 @@ export class ProposalsService {
   }
 
   async getProposalConfig(proposalId: number) {
-    // TODO: Remove after running once
-    await this.updateRatifiedProposalsClosingAtToBeInPast();
-
     return this.proposalConfigRepository.findOneOrFail({
       where: { proposalId },
     });
@@ -368,27 +365,6 @@ export class ProposalsService {
       standAsides.length <= standAsidesLimit &&
       blocks.length === 0
     );
-  }
-
-  async updateRatifiedProposalsClosingAtToBeInPast() {
-    const proposals = await this.getProposals(
-      {
-        config: { closingAt: Not(IsNull()) },
-        stage: ProposalStage.Ratified,
-      },
-      ['config'],
-    );
-
-    for (const proposal of proposals) {
-      const { closingAt } = proposal.config;
-
-      if (closingAt && Date.now() < Number(closingAt)) {
-        await this.proposalConfigRepository.save({
-          ...proposal.config,
-          closingAt: new Date(Date.now() - 86400000),
-        });
-      }
-    }
   }
 
   async synchronizeProposals() {
