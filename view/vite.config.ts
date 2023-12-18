@@ -16,6 +16,12 @@ export default defineConfig({
         rewrite: (path: string) => path.replace(/^\/api/, ''),
         changeOrigin: true,
       },
+      '/subscriptions': {
+        target: `ws://localhost:${process.env.SERVER_PORT}/subscriptions`,
+        rewrite: (path: string) => path.replace(/^\/subscriptions/, ''),
+        changeOrigin: true,
+        ws: true,
+      },
       '/security.txt': {
         target: `http://localhost:${process.env.SERVER_PORT}/security.txt`,
         rewrite: (path: string) => path.replace(/^\/security\.txt/, ''),
