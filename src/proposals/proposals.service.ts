@@ -383,10 +383,9 @@ export class ProposalsService {
       const { closingAt } = proposal.config;
 
       if (closingAt && Date.now() < Number(closingAt)) {
-        await this.proposalRepository.update(proposal.id, {
-          config: {
-            closingAt: new Date(Date.now() - 86400000),
-          },
+        await this.proposalConfigRepository.save({
+          ...proposal.config,
+          closingAt: new Date(Date.now() - 86400000),
         });
       }
     }
