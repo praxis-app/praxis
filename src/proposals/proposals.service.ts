@@ -369,21 +369,24 @@ export class ProposalsService {
 
   // TODO: Remove after running
   async createMissingProposalConfigs() {
-    const proposals = await this.getProposals({ config: IsNull() }, [
-      'group.config',
-    ]);
+    const proposals = await this.getProposals({}, ['config', 'group.config']);
 
     for (const proposal of proposals) {
-      const { group } = proposal;
-      const { config } = group;
+      const { group, config } = proposal;
+
+      if (config && config.id) {
+        continue;
+      }
+
+      const { config: groupConfig } = group;
 
       const proposalConfig = await this.proposalConfigRepository.save({
-        decisionMakingModel: config.decisionMakingModel,
-        ratificationThreshold: config.ratificationThreshold,
-        reservationsLimit: config.reservationsLimit,
-        standAsidesLimit: config.standAsidesLimit,
-        closingAt: config.votingTimeLimit
-          ? new Date(Date.now() + config.votingTimeLimit * 60 * 1000)
+        decisionMakingModel: groupConfig.decisionMakingModel,
+        ratificationThreshold: groupConfig.ratificationThreshold,
+        reservationsLimit: groupConfig.reservationsLimit,
+        standAsidesLimit: groupConfig.standAsidesLimit,
+        closingAt: groupConfig.votingTimeLimit
+          ? new Date(Date.now() + groupConfig.votingTimeLimit * 60 * 1000)
           : undefined,
         proposalId: proposal.id,
       });
