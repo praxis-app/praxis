@@ -33,7 +33,6 @@ import { CreateGroupPayload } from './models/create-group.payload';
 import { Group } from './models/group.model';
 import { UpdateGroupInput } from './models/update-group.input';
 import { UpdateGroupPayload } from './models/update-group.payload';
-import { ProposalsService } from '../proposals/proposals.service';
 
 @Resolver(() => Group)
 export class GroupsResolver {
@@ -44,9 +43,6 @@ export class GroupsResolver {
     private memberRequestsService: GroupMemberRequestsService,
     private postsService: PostsService,
     private eventsService: EventsService,
-
-    // TODO: Remove this once all proposals have a config
-    private proposalsService: ProposalsService,
   ) {}
 
   @Query(() => Group)
@@ -61,9 +57,6 @@ export class GroupsResolver {
   @Query(() => [Group])
   @UseInterceptors(SynchronizeProposalsInterceptor)
   async groups() {
-    // TODO: Remove this once all proposals have a config
-    await this.proposalsService.createMissingProposalConfigs();
-
     return this.groupsService.getPagedGroups();
   }
 

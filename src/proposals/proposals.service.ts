@@ -367,34 +367,6 @@ export class ProposalsService {
     );
   }
 
-  // TODO: Remove after running
-  async createMissingProposalConfigs() {
-    const proposals = await this.getProposals({}, ['config', 'group.config']);
-
-    for (const proposal of proposals) {
-      const { group, config } = proposal;
-
-      if (config && config.id) {
-        continue;
-      }
-
-      const { config: groupConfig } = group;
-
-      const proposalConfig = await this.proposalConfigRepository.save({
-        decisionMakingModel: groupConfig.decisionMakingModel,
-        ratificationThreshold: groupConfig.ratificationThreshold,
-        reservationsLimit: groupConfig.reservationsLimit,
-        standAsidesLimit: groupConfig.standAsidesLimit,
-        closingAt: groupConfig.votingTimeLimit
-          ? new Date(Date.now() + groupConfig.votingTimeLimit * 60 * 1000)
-          : undefined,
-        proposalId: proposal.id,
-      });
-
-      await this.proposalConfigRepository.save(proposalConfig);
-    }
-  }
-
   async synchronizeProposals() {
     const logTimeMessage = 'Syncronizing proposals';
     logTime(logTimeMessage, this.logger);
@@ -410,9 +382,6 @@ export class ProposalsService {
     for (const proposal of proposals) {
       await this.synchronizeProposal(proposal);
     }
-
-    // TODO: Remove after running
-    await this.createMissingProposalConfigs();
 
     logTime(logTimeMessage, this.logger);
   }
