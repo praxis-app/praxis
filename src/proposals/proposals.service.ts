@@ -391,9 +391,7 @@ export class ProposalsService {
         proposalId: proposal.id,
       });
 
-      await this.proposalRepository.update(proposal.id, {
-        config: proposalConfig,
-      });
+      await this.proposalConfigRepository.save(proposalConfig);
     }
   }
 
