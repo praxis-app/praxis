@@ -17,7 +17,9 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/subscriptions': {
-        target: `ws://localhost:${process.env.SERVER_PORT}/subscriptions`,
+        target: `${
+          process.env.NODE_ENV === 'development' ? 'ws' : 'wss'
+        }://localhost:${process.env.SERVER_PORT}/subscriptions`,
         rewrite: (path: string) => path.replace(/^\/subscriptions/, ''),
         changeOrigin: true,
         ws: true,
