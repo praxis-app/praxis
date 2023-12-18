@@ -15,13 +15,22 @@ import { Vote } from '../../votes/models/vote.model';
 export const isPublicProposal = rule({ cache: 'strict' })(async (
   parent: Proposal | null,
   args: { id: number },
-  { services: { proposalsService } }: Context,
+  { services: { proposalsService }, logger }: Context,
 ) => {
   const proposalId = parent ? parent.id : args.id;
   const proposal = await proposalsService.getProposal(proposalId, [
     'group.config',
   ]);
-  return proposal.group.config.privacy === GroupPrivacy.Public;
+
+  const isPublic = proposal.group.config.privacy === GroupPrivacy.Public;
+
+  if (!isPublic) {
+    logger.log(
+      `Proposal ${proposalId} is not public: ${JSON.stringify(parent || args)}`,
+    );
+  }
+
+  return isPublic;
 });
 
 export const isPublicProposalImage = rule({ cache: 'strict' })(

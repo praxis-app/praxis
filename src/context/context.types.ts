@@ -1,8 +1,9 @@
+import { Logger } from '@nestjs/common';
+import { Request } from 'express';
 import { CommentsService } from '../comments/comments.service';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { EventsService } from '../events/events.service';
 import { GroupMemberRequestsService } from '../groups/group-member-requests/group-member-requests.service';
-import { Request } from 'express';
 import { GroupRolesService } from '../groups/group-roles/group-roles.service';
 import { GroupsService } from '../groups/groups.service';
 import { ImagesService } from '../images/images.service';
@@ -37,6 +38,7 @@ export interface Context {
   permissions: UserPermissions | null;
   services: ContextServices;
   user: User | null;
+  logger: Logger;
 }
 
 export interface GetContextOptions {

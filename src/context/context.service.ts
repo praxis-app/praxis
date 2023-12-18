@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { CommentsService } from '../comments/comments.service';
 import { DataloaderService } from '../dataloader/dataloader.service';
@@ -18,6 +18,8 @@ import { Context, ContextServices, GetContextOptions } from './context.types';
 
 @Injectable()
 export class ContextService {
+  private readonly logger = new Logger(ContextService.name);
+
   constructor(
     private authService: AuthService,
     private commentsService: CommentsService,
@@ -62,6 +64,7 @@ export class ContextService {
     };
 
     return {
+      logger: this.logger,
       loaders,
       permissions,
       services,
