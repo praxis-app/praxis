@@ -51,9 +51,8 @@ const errorLink = onError(
     }),
 );
 
-// TODO: Uncomment after testing
-const webSocketProtocol = 'ws';
-// process.env.NODE_ENV === Environments.Development ? 'ws' : 'wss';
+const webSocketProtocol =
+  process.env.NODE_ENV === Environments.Development ? 'ws' : 'wss';
 
 const wsLink = new GraphQLWsLink(
   createClient({

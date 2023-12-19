@@ -4,9 +4,8 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-// TODO: Uncomment after testing
-// const isDev = process.env.NODE_ENV === 'development';
-const webSocketProtocol = 'ws'; // isDev ? 'ws' : 'wss';
+const isDev = process.env.NODE_ENV === 'development';
+const webSocketProtocol = isDev ? 'ws' : 'wss';
 
 // https://vitejs.dev/config
 export default defineConfig({
