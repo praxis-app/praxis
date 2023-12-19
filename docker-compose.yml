@@ -6,6 +6,8 @@ services:
     build:
       context: .
       target: runtime_stage
+      args:
+        - NODE_ENV=${NODE_ENV}
     volumes:
       - content:/app/content
       - logs:/app/logs
