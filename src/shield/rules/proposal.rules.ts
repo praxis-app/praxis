@@ -16,33 +16,19 @@ import { Vote } from '../../votes/models/vote.model';
 export const isPublicProposal = rule({ cache: 'strict' })(async (
   parent: Proposal | ProposalConfig | null,
   args: { id: number },
-  { services: { proposalsService }, logger }: Context,
+  { services: { proposalsService } }: Context,
 ) => {
   if (parent instanceof ProposalConfig) {
     const proposal = await proposalsService.getProposal(parent.proposalId, [
       'group.config',
     ]);
-    const isPublic = proposal.group.config.privacy === GroupPrivacy.Public;
-    if (!isPublic) {
-      logger.log(
-        `Proposal ${proposal.id} is not public: ${JSON.stringify(parent)}`,
-      );
-    }
-    return isPublic;
+    return proposal.group.config.privacy === GroupPrivacy.Public;
   }
-
   const proposalId = parent ? parent.id : args.id;
   const proposal = await proposalsService.getProposal(proposalId, [
     'group.config',
   ]);
-
-  const isPublic = proposal.group.config.privacy === GroupPrivacy.Public;
-  if (!isPublic) {
-    logger.log(
-      `Proposal ${proposalId} is not public: ${JSON.stringify(parent || args)}`,
-    );
-  }
-  return isPublic;
+  return proposal.group.config.privacy === GroupPrivacy.Public;
 });
 
 export const isPublicProposalImage = rule({ cache: 'strict' })(
