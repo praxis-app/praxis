@@ -4,9 +4,6 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const isDev = process.env.NODE_ENV === 'development';
-const webSocketProtocol = isDev ? 'ws' : 'wss';
-
 // https://vitejs.dev/config
 export default defineConfig({
   plugins: [react()],
@@ -18,12 +15,6 @@ export default defineConfig({
         target: `http://localhost:${process.env.SERVER_PORT}/api`,
         rewrite: (path: string) => path.replace(/^\/api/, ''),
         changeOrigin: true,
-      },
-      '/subscriptions': {
-        target: `${webSocketProtocol}://localhost:${process.env.SERVER_PORT}/subscriptions`,
-        rewrite: (path: string) => path.replace(/^\/subscriptions/, ''),
-        changeOrigin: true,
-        ws: true,
       },
       '/security.txt': {
         target: `http://localhost:${process.env.SERVER_PORT}/security.txt`,
