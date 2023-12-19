@@ -33,10 +33,11 @@ export enum ProposalStage {
 }
 
 export enum ProposalFormFieldName {
+  Action = 'action',
   Body = 'body',
+  ClosingAt = 'closingAt',
   GroupId = 'groupId',
   Images = 'images',
-  ClosingAt = 'closingAt',
 }
 
 export enum ProposalActionFieldName {

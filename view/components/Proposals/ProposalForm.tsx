@@ -310,9 +310,10 @@ const ProposalForm = ({
     setFieldValue: (field: string, value: ProposalActionInput | null) => void,
   ) => {
     if (!isGroupPage) {
-      setFieldValue('groupId', null);
+      setFieldValue(ProposalFormFieldName.GroupId, null);
     }
-    setFieldValue('action', action);
+    setFieldValue(ProposalFormFieldName.Action, action);
+    setFieldValue(ProposalFormFieldName.ClosingAt, null);
     setSelectInputsKey(getRandomString());
   };
 
