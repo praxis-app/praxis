@@ -1,5 +1,5 @@
 import { Schedule } from '@mui/icons-material';
-import { Divider, Typography } from '@mui/material';
+import { Divider, SxProps, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { DecisionMakingModel } from '../../constants/proposal.constants';
@@ -16,18 +16,33 @@ interface Props {
 }
 
 const ProposalSettingsModal = ({
+  settings: {
+    closingAt,
+    decisionMakingModel,
+    ratificationThreshold,
+    reservationsLimit,
+    standAsidesLimit,
+  },
   showSettingsModal,
   setShowSettingsModal,
-  settings,
 }: Props) => {
   const { t } = useTranslation();
 
-  const isClosed = settings.closingAt && dayjs() > dayjs(settings.closingAt);
+  const isClosed = closingAt && dayjs() > dayjs(closingAt);
+  const isConensus = decisionMakingModel === DecisionMakingModel.Consensus;
 
   const closingTimeLabel = t(
     isClosed ? 'proposals.labels.closedAt' : 'proposals.labels.closing',
-    { time: formatClosingTime(settings.closingAt) },
+    { time: formatClosingTime(closingAt) },
   );
+
+  const modalContentStyles: SxProps = {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: 'fit-content',
+    paddingY: 3,
+    gap: 2.5,
+  };
 
   const getDecisionMakingModelName = (decisionMakingModel: string) => {
     if (decisionMakingModel === DecisionMakingModel.Consent) {
@@ -39,17 +54,12 @@ const ProposalSettingsModal = ({
   return (
     <Modal
       title={t('proposals.labels.proposalSettings')}
-      contentStyles={{
-        paddingTop: 3,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2.5,
-      }}
+      contentStyles={modalContentStyles}
       onClose={() => setShowSettingsModal(false)}
       open={showSettingsModal}
       centeredTitle
     >
-      {settings.closingAt && (
+      {closingAt && (
         <>
           <Flex
             alignItems="center"
@@ -71,27 +81,34 @@ const ProposalSettingsModal = ({
       <ProposalSetting
         name={t('groups.settings.names.decisionMakingModel')}
         description={t('proposals.settings.descriptions.decisionMakingModel')}
-        value={getDecisionMakingModelName(settings.decisionMakingModel)}
+        value={getDecisionMakingModelName(decisionMakingModel)}
       />
 
       <ProposalSetting
         name={t('groups.settings.names.standAsidesLimit')}
         description={t('proposals.settings.descriptions.standAsidesLimit')}
-        value={settings.standAsidesLimit}
+        value={standAsidesLimit}
       />
 
       <ProposalSetting
         name={t('groups.settings.names.reservationsLimit')}
         description={t('proposals.settings.descriptions.reservationsLimit')}
-        value={settings.reservationsLimit}
+        value={reservationsLimit}
+        divider={isConensus}
       />
 
-      <ProposalSetting
-        name={t('groups.settings.names.ratificationThreshold')}
-        description={t('proposals.settings.descriptions.ratificationThreshold')}
-        value={`${settings.ratificationThreshold}%`}
-        divider={false}
-      />
+      {isConensus && (
+        <>
+          <ProposalSetting
+            name={t('groups.settings.names.ratificationThreshold')}
+            description={t(
+              'proposals.settings.descriptions.ratificationThreshold',
+            )}
+            value={`${ratificationThreshold}%`}
+            divider={false}
+          />
+        </>
+      )}
     </Modal>
   );
 };
