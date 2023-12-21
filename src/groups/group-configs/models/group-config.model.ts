@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { DecisionMakingModel } from '../../../proposals/proposals.constants';
 import { Group } from '../../models/group.model';
-import { GroupPrivacy, THREE_DAYS } from '../group-configs.constants';
+import { GroupPrivacy, VotingTimeLimit } from '../group-configs.constants';
 
 @Entity()
 @ObjectType()
@@ -35,7 +35,7 @@ export class GroupConfig {
   @Field(() => Int)
   ratificationThreshold: number;
 
-  @Column({ default: THREE_DAYS })
+  @Column({ default: VotingTimeLimit.Unlimited })
   @Field(() => Int)
   votingTimeLimit: number;
 

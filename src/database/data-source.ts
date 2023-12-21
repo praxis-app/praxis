@@ -55,6 +55,7 @@ import { AddProposalActionGroupConfigTable1700964923516 } from './migrations/170
 import { AddGroupConfigColumns1701548819916 } from './migrations/1701548819916-AddGroupConfigColumns';
 import { AddSecurityTxtColumn1702684900226 } from './migrations/1702684900226-AddSecurityTxtColumn';
 import { AddProposalConfigTable1702843109428 } from './migrations/1702843109428-AddProposalConfigTable';
+import { UpdateVotingTimeLimitDefault1703118466924 } from './migrations/1703118466924-UpdateVotingTimeLimitDefault';
 
 dotenv.config();
 
@@ -123,5 +124,6 @@ export default new DataSource({
     RemoveRefreshTokenTable1699815961902,
     RenameGroupMemberRequestTable1688348341669,
     SetDefaultForGroupMemberRequestTable1690333204053,
+    UpdateVotingTimeLimitDefault1703118466924,
   ],
 });
