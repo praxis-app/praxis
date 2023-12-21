@@ -19,10 +19,12 @@ export type GroupSettingsByGroupIdQuery = {
     settings: {
       __typename?: 'GroupConfig';
       id: number;
-      privacy: string;
+      decisionMakingModel: string;
       ratificationThreshold: number;
       reservationsLimit: number;
       standAsidesLimit: number;
+      votingTimeLimit: number;
+      privacy: string;
     };
   };
 };
@@ -33,10 +35,12 @@ export const GroupSettingsByGroupIdDocument = gql`
       id
       settings {
         id
-        privacy
+        decisionMakingModel
         ratificationThreshold
         reservationsLimit
         standAsidesLimit
+        votingTimeLimit
+        privacy
       }
     }
   }

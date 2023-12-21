@@ -11,13 +11,14 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Comment } from '../../comments/models/comment.model';
 import { Group } from '../../groups/models/group.model';
 import { Image } from '../../images/models/image.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
-import { ProposalStage } from '../proposals.constants';
 import { ProposalAction } from '../proposal-actions/models/proposal-action.model';
-import { Comment } from '../../comments/models/comment.model';
+import { ProposalStage } from '../proposals.constants';
+import { ProposalConfig } from './proposal-config.model';
 
 @Entity()
 @ObjectType()
@@ -30,15 +31,20 @@ export class Proposal {
   @Field({ nullable: true })
   body?: string;
 
+  @Column({ default: ProposalStage.Voting })
+  @Field()
+  stage: string;
+
   @OneToOne(() => ProposalAction, (action) => action.proposal, {
     cascade: true,
   })
   @Field(() => ProposalAction)
   action: ProposalAction;
 
-  @Column({ default: ProposalStage.Voting })
-  @Field()
-  stage: string;
+  @OneToOne(() => ProposalConfig, (proposalConfig) => proposalConfig.proposal, {
+    cascade: true,
+  })
+  config: ProposalConfig;
 
   @Field(() => [Vote])
   @OneToMany(() => Vote, (vote) => vote.proposal, {

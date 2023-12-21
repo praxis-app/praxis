@@ -1,3 +1,4 @@
+import { UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -9,19 +10,18 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { FeedItem } from '../shared/models/feed-item.union';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { EventsService } from '../events/events.service';
 import { Event } from '../events/models/event.model';
 import { EventTimeFrame } from '../events/models/events.input';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
+import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
+import { FeedItem } from '../shared/models/feed-item.union';
 import { User } from '../users/models/user.model';
+import { GroupPrivacy } from './group-configs/group-configs.constants';
 import { GroupConfigsService } from './group-configs/group-configs.service';
-import {
-  GroupConfig,
-  GroupPrivacy,
-} from './group-configs/models/group-config.model';
+import { GroupConfig } from './group-configs/models/group-config.model';
 import { GroupMemberRequestsService } from './group-member-requests/group-member-requests.service';
 import { GroupMemberRequest } from './group-member-requests/models/group-member-request.model';
 import { GroupRolesService } from './group-roles/group-roles.service';
@@ -46,6 +46,7 @@ export class GroupsResolver {
   ) {}
 
   @Query(() => Group)
+  @UseInterceptors(SynchronizeProposalsInterceptor)
   async group(
     @Args('id', { type: () => Int, nullable: true }) id: number,
     @Args('name', { type: () => String, nullable: true }) name: string,
@@ -54,6 +55,7 @@ export class GroupsResolver {
   }
 
   @Query(() => [Group])
+  @UseInterceptors(SynchronizeProposalsInterceptor)
   async groups() {
     return this.groupsService.getPagedGroups();
   }

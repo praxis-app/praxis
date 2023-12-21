@@ -1,7 +1,9 @@
 import { rule } from 'graphql-shield';
 import { Context } from '../../context/context.types';
-import { GroupPrivacy } from '../../groups/group-configs/models/group-config.model';
+import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
 import { Image } from '../../images/models/image.model';
+import { ProposalConfig } from '../../proposals/models/proposal-config.model';
+import { Proposal } from '../../proposals/models/proposal.model';
 import { ProposalAction } from '../../proposals/proposal-actions/models/proposal-action.model';
 import { ProposalActionEventHost } from '../../proposals/proposal-actions/proposal-action-events/models/proposal-action-event-host.model';
 import { ProposalActionEvent } from '../../proposals/proposal-actions/proposal-action-events/models/proposal-action-event.model';
@@ -12,10 +14,16 @@ import { ProposalActionRole } from '../../proposals/proposal-actions/proposal-ac
 import { Vote } from '../../votes/models/vote.model';
 
 export const isPublicProposal = rule({ cache: 'strict' })(async (
-  parent,
-  args,
+  parent: Proposal | ProposalConfig | null,
+  args: { id: number },
   { services: { proposalsService } }: Context,
 ) => {
+  if (parent instanceof ProposalConfig) {
+    const proposal = await proposalsService.getProposal(parent.proposalId, [
+      'group.config',
+    ]);
+    return proposal.group.config.privacy === GroupPrivacy.Public;
+  }
   const proposalId = parent ? parent.id : args.id;
   const proposal = await proposalsService.getProposal(proposalId, [
     'group.config',
@@ -46,18 +54,10 @@ export const isPublicProposalAction = rule({ cache: 'strict' })(async (
     },
   }: Context,
 ) => {
-  if (parent instanceof ProposalActionGroupConfig) {
-    const proposalAction = await proposalActionsService.getProposalAction(
-      { id: parent.proposalActionId },
-      ['proposal.group.config'],
-    );
-    return (
-      proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
-    );
-  }
   if (
     parent instanceof ProposalActionRole ||
-    parent instanceof ProposalActionEvent
+    parent instanceof ProposalActionEvent ||
+    parent instanceof ProposalActionGroupConfig
   ) {
     const proposalAction = await proposalActionsService.getProposalAction(
       { id: parent.proposalActionId },

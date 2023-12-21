@@ -2,7 +2,7 @@ import { rule } from 'graphql-shield';
 import { Comment } from '../../comments/models/comment.model';
 import { UpdateCommentInput } from '../../comments/models/update-comment.input';
 import { Context } from '../../context/context.types';
-import { GroupPrivacy } from '../../groups/group-configs/models/group-config.model';
+import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
 import { UNAUTHORIZED } from '../../shared/shared.constants';
 
 export const isOwnComment = rule({ cache: 'strict' })(async (

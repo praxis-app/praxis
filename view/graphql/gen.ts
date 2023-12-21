@@ -153,6 +153,7 @@ export type CreatePostPayload = {
 export type CreateProposalInput = {
   action: ProposalActionInput;
   body?: InputMaybe<Scalars['String']['input']>;
+  closingAt?: InputMaybe<Scalars['DateTime']['input']>;
   groupId?: InputMaybe<Scalars['Int']['input']>;
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
 };
@@ -289,6 +290,7 @@ export type Group = {
 export type GroupConfig = {
   __typename?: 'GroupConfig';
   createdAt: Scalars['DateTime']['output'];
+  decisionMakingModel: Scalars['String']['output'];
   group: Group;
   id: Scalars['Int']['output'];
   isPublic: Scalars['Boolean']['output'];
@@ -297,6 +299,7 @@ export type GroupConfig = {
   reservationsLimit: Scalars['Int']['output'];
   standAsidesLimit: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
+  votingTimeLimit: Scalars['Int']['output'];
 };
 
 export type GroupMemberRequest = {
@@ -433,6 +436,7 @@ export type Mutation = {
   logOut: Scalars['Boolean']['output'];
   login: AuthPayload;
   signUp: AuthPayload;
+  synchronizeProposal: SynchronizeProposalPayload;
   unfollowUser: Scalars['Boolean']['output'];
   updateComment: UpdateCommentPayload;
   updateEvent: UpdateEventPayload;
@@ -584,6 +588,10 @@ export type MutationSignUpArgs = {
   input: SignUpInput;
 };
 
+export type MutationSynchronizeProposalArgs = {
+  id: Scalars['Int']['input'];
+};
+
 export type MutationUnfollowUserArgs = {
   id: Scalars['Int']['input'];
 };
@@ -663,6 +671,7 @@ export type Proposal = {
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   images: Array<Image>;
+  settings: ProposalConfig;
   stage: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   user: User;
@@ -725,23 +734,29 @@ export type ProposalActionEventInput = {
 
 export type ProposalActionGroupConfig = {
   __typename?: 'ProposalActionGroupConfig';
+  decisionMakingModel?: Maybe<Scalars['String']['output']>;
   id: Scalars['Int']['output'];
+  oldDecisionMakingModel?: Maybe<Scalars['String']['output']>;
   oldPrivacy?: Maybe<Scalars['String']['output']>;
   oldRatificationThreshold?: Maybe<Scalars['Int']['output']>;
   oldReservationsLimit?: Maybe<Scalars['Int']['output']>;
   oldStandAsidesLimit?: Maybe<Scalars['Int']['output']>;
+  oldVotingTimeLimit?: Maybe<Scalars['Int']['output']>;
   privacy?: Maybe<Scalars['String']['output']>;
   proposalAction: ProposalAction;
   ratificationThreshold?: Maybe<Scalars['Int']['output']>;
   reservationsLimit?: Maybe<Scalars['Int']['output']>;
   standAsidesLimit?: Maybe<Scalars['Int']['output']>;
+  votingTimeLimit?: Maybe<Scalars['Int']['output']>;
 };
 
 export type ProposalActionGroupConfigInput = {
+  decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
   privacy?: InputMaybe<Scalars['String']['input']>;
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
   reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
   standAsidesLimit?: InputMaybe<Scalars['Int']['input']>;
+  votingTimeLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type ProposalActionInput = {
@@ -804,6 +819,19 @@ export type ProposalActionRoleMember = {
 export type ProposalActionRoleMemberInput = {
   changeType: Scalars['String']['input'];
   userId: Scalars['Int']['input'];
+};
+
+export type ProposalConfig = {
+  __typename?: 'ProposalConfig';
+  closingAt?: Maybe<Scalars['DateTime']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  decisionMakingModel: Scalars['String']['output'];
+  id: Scalars['Int']['output'];
+  proposal: Proposal;
+  ratificationThreshold: Scalars['Int']['output'];
+  reservationsLimit: Scalars['Int']['output'];
+  standAsidesLimit: Scalars['Int']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type Query = {
@@ -956,6 +984,20 @@ export type SignUpInput = {
   profilePicture?: InputMaybe<Scalars['Upload']['input']>;
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  isProposalRatified: Scalars['Boolean']['output'];
+};
+
+export type SubscriptionIsProposalRatifiedArgs = {
+  id: Scalars['Int']['input'];
+};
+
+export type SynchronizeProposalPayload = {
+  __typename?: 'SynchronizeProposalPayload';
+  proposal: Proposal;
+};
+
 export type UpdateCommentInput = {
   body?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
@@ -996,11 +1038,13 @@ export type UpdateEventPayload = {
 };
 
 export type UpdateGroupConfigInput = {
+  decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
   groupId: Scalars['Int']['input'];
   privacy?: InputMaybe<Scalars['String']['input']>;
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
   reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
   standAsidesLimit?: InputMaybe<Scalars['Int']['input']>;
+  votingTimeLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateGroupInput = {

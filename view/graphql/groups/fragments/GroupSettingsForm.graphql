@@ -2,10 +2,12 @@ fragment GroupSettingsForm on Group {
   id
   settings {
     id
-    privacy
-    isPublic
+    decisionMakingModel
     ratificationThreshold
     reservationsLimit
     standAsidesLimit
+    votingTimeLimit
+    isPublic
+    privacy
   }
 }

@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { Request } from 'express';
+import { Injectable, Logger } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { CommentsService } from '../comments/comments.service';
 import { DataloaderService } from '../dataloader/dataloader.service';
@@ -15,10 +14,12 @@ import { ProposalActionsService } from '../proposals/proposal-actions/proposal-a
 import { ProposalsService } from '../proposals/proposals.service';
 import { ShieldService } from '../shield/shield.service';
 import { UsersService } from '../users/users.service';
-import { Context, ContextServices } from './context.types';
+import { Context, ContextServices, GetContextOptions } from './context.types';
 
 @Injectable()
 export class ContextService {
+  private readonly logger = new Logger(ContextService.name);
+
   constructor(
     private authService: AuthService,
     private commentsService: CommentsService,
@@ -37,8 +38,11 @@ export class ContextService {
     private usersService: UsersService,
   ) {}
 
-  async getContext({ req }: { req: Request }): Promise<Context> {
-    const sub = await this.authService.getSub(req);
+  async getContext({
+    req,
+    connectionParams,
+  }: GetContextOptions): Promise<Context> {
+    const sub = await this.authService.getSub(req, connectionParams);
     const user = await this.getUser(sub);
     const permissions = await this.getUserPermisions(sub);
     const loaders = this.dataloaderService.getLoaders();
@@ -60,6 +64,7 @@ export class ContextService {
     };
 
     return {
+      logger: this.logger,
       loaders,
       permissions,
       services,

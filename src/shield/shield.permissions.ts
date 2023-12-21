@@ -154,6 +154,7 @@ export const shieldPermissions = shield(
     Post: or(isAuthenticated, isPublicPost, isPublicEventPost),
     Comment: or(isAuthenticated, isPublicComment),
     Proposal: or(isAuthenticated, isPublicProposal),
+    ProposalConfig: or(isAuthenticated, isPublicProposal),
     ProposalAction: or(isAuthenticated, isPublicProposalAction),
     ProposalActionEvent: or(isAuthenticated, isPublicProposalAction),
     ProposalActionEventHost: or(isAuthenticated, isPublicProposalAction),

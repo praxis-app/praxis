@@ -98,11 +98,16 @@
     },
     "labels": {
       "action": "Action",
+      "closed": "Closed",
+      "closedAt": "Closed at {{time}}",
+      "closing": "Closing {{time}}",
+      "closingTime": "Closing time",
       "color": "Color",
       "eventProposal": "Event proposal",
       "name": "Name",
       "newGroupDescription": "New group description",
       "newGroupName": "New group name",
+      "proposalSettings": "Proposal Settings",
       "proposedGroupCoverPhoto": "Proposed group cover photo",
       "proposedGroupDescription": "Proposed group description",
       "proposedGroupName": "Proposed group name",
@@ -114,9 +119,11 @@
       "selectRoleToChange": "Choose a role",
       "settingChangesCount_one": "{{count}} setting change",
       "settingChangesCount_other": "{{count}} setting changes",
-      "usersProposal": "{{name}}'s Proposal"
+      "usersProposal": "{{name}}'s Proposal",
+      "viewSettings": "View Settings"
     },
     "toasts": {
+      "noVotingAfterClose": "This proposal has been closed and can no longer be voted on.",
       "noVotingAfterRatification": "This proposal has been ratified and can no longer be voted on.",
       "ratifiedSuccess": "This proposal has been ratified! 🎉"
     },
@@ -127,6 +134,14 @@
       "missingGroupId": "Only group proposals are supported at this time",
       "missingGroupName": "Proposals to change group name must include a name field",
       "missingRole": "Proposals to change or add group roles must include a role"
+    },
+    "settings": {
+      "descriptions": {
+        "decisionMakingModel": "The process the group uses to make decisions together, which can be consensus or consent based.",
+        "standAsidesLimit": "The maximum number of stand asides allowed for a proposal to still be able to pass.",
+        "reservationsLimit": "The maximum number of reservations allowed for a proposal to still be able to pass.",
+        "ratificationThreshold": "The minimum percentage of positive votes required for a proposal to reach consensus."
+      }
     }
   },
 
@@ -243,12 +258,14 @@
       "organizeWithGroups": "Organize Your Community with Groups"
     },
     "errors": {
+      "consentVotingTimeLimitRequired": "Voting time limit is required for consent decision making.",
       "couldNotCreate": "Group could not be created",
       "couldNotUpdate": "Group could not be updated",
       "couldNotUpdateSettings": "Could not update group settings"
     },
     "labels": {
       "consensus": "Consensus",
+      "consent": "Consent",
       "group": "Group",
       "groupMembers_one": "{{count}} Group Member",
       "groupMembers_other": "{{count}} Group Members",
@@ -265,11 +282,13 @@
       "requests_one": "{{count}} Request",
       "requests_other": "{{count}} Requests",
       "settings": "Settings",
+      "unlimited": "Unlimited",
       "xToPass": "X to Pass"
     },
     "prompts": {
       "confirmLeave": "Are you sure you want to leave the group?",
-      "publicGroup": "Public Group: Anyone can view the group page and any content posted by group members."
+      "publicGroup": "Public Group: Anyone can view the group page and any content posted by group members.",
+      "settingDisabledForConsent": "This setting is disabled for consent decision making."
     },
     "tabs": {
       "about": "About",
@@ -279,16 +298,20 @@
     },
     "settings": {
       "names": {
-        "privacy": "Privacy",
+        "decisionMakingModel": "Decision Making Model",
         "ratificationThreshold": "Ratification Threshold",
         "reservationsLimit": "Reservations Limit",
-        "standAsidesLimit": "Stand Asides Limit"
+        "standAsidesLimit": "Stand Asides Limit",
+        "votingTimeLimit": "Voting Time Limit",
+        "privacy": "Privacy"
       },
       "descriptions": {
         "privacy": "Choose whether or not the group and it's content are viewable to the public.",
-        "ratificationThreshold": "Set the minimum number of positive votes required for a proposal to be ratified.",
+        "ratificationThreshold": "Set the minimum percentage of positive votes required for a proposal to reach consensus.",
         "reservationsLimit": "Set a limit for the acceptable number of reservations allowed for a proposal to still be able to pass.",
-        "standAsidesLimit": "Set a limit for the acceptable number of stand asides allowed for a proposal to still be able to pass."
+        "standAsidesLimit": "Set a limit for the acceptable number of stand asides allowed for a proposal to still be able to pass.",
+        "decisionMakingModel": "Choose from consensus or consent decision-making to enable a decision-making process that suits your group's needs.",
+        "votingTimeLimit": "Set a time limit for how long proposals can be voted on."
       }
     },
     "tips": {
@@ -516,13 +539,21 @@
 
   "time": {
     "days": "{{days}}d",
+    "daysFull_one": "{{count}} day",
+    "daysFull_other": "{{count}} days",
     "hours": "{{hours}}h",
     "hr": "hr",
     "infinity": "∞",
     "min": "min",
     "minutes": "{{minutes}}m",
+    "minutesFull_one": "{{count}} minute",
+    "minutesFull_other": "{{count}} minutes",
     "never": "Never",
-    "now": "now"
+    "now": "now",
+    "weeks_one": "{{count}} week",
+    "weeks_other": "{{count}} weeks",
+    "hoursFull_one": "{{count}} hour",
+    "hoursFull_other": "{{count}} hours"
   },
 
   "search": {

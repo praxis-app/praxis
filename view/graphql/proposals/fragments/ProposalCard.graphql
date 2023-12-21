@@ -9,6 +9,14 @@ fragment ProposalCard on Proposal {
   action {
     ...ProposalAction
   }
+  settings {
+    id
+    decisionMakingModel
+    ratificationThreshold
+    reservationsLimit
+    standAsidesLimit
+    closingAt
+  }
   user {
     ...UserAvatar
   }

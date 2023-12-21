@@ -3,5 +3,10 @@ fragment ToggleForms on User {
   joinedGroups {
     id
     name
+
+    settings {
+      id
+      votingTimeLimit
+    }
   }
 }

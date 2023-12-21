@@ -6,7 +6,7 @@ export class UpdateGroupConfigInput {
   groupId: number;
 
   @Field({ nullable: true })
-  privacy?: string;
+  decisionMakingModel?: string;
 
   @Field(() => Int, { nullable: true })
   standAsidesLimit?: number;
@@ -16,4 +16,10 @@ export class UpdateGroupConfigInput {
 
   @Field(() => Int, { nullable: true })
   ratificationThreshold?: number;
+
+  @Field(() => Int, { nullable: true })
+  votingTimeLimit?: number;
+
+  @Field({ nullable: true })
+  privacy?: string;
 }

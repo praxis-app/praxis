@@ -8,7 +8,16 @@ import { gql } from '@apollo/client';
 export type ToggleFormsFragment = {
   __typename?: 'User';
   id: number;
-  joinedGroups: Array<{ __typename?: 'Group'; id: number; name: string }>;
+  joinedGroups: Array<{
+    __typename?: 'Group';
+    id: number;
+    name: string;
+    settings: {
+      __typename?: 'GroupConfig';
+      id: number;
+      votingTimeLimit: number;
+    };
+  }>;
 };
 
 export const ToggleFormsFragmentDoc = gql`
@@ -17,6 +26,10 @@ export const ToggleFormsFragmentDoc = gql`
     joinedGroups {
       id
       name
+      settings {
+        id
+        votingTimeLimit
+      }
     }
   }
 `;

@@ -8,12 +8,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { DecisionMakingModel } from '../../../proposals/proposals.constants';
 import { Group } from '../../models/group.model';
-
-export enum GroupPrivacy {
-  Private = 'private',
-  Public = 'public',
-}
+import { GroupPrivacy, VotingTimeLimit } from '../group-configs.constants';
 
 @Entity()
 @ObjectType()
@@ -21,6 +18,10 @@ export class GroupConfig {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number;
+
+  @Column({ default: DecisionMakingModel.Consensus })
+  @Field()
+  decisionMakingModel: string;
 
   @Column({ default: 2 })
   @Field(() => Int)
@@ -33,6 +34,10 @@ export class GroupConfig {
   @Column({ default: 50 })
   @Field(() => Int)
   ratificationThreshold: number;
+
+  @Column({ default: VotingTimeLimit.Unlimited })
+  @Field(() => Int)
+  votingTimeLimit: number;
 
   @Column({ default: GroupPrivacy.Private })
   @Field()

@@ -93,6 +93,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               disabled={!values.showCanaryStatement}
               label={t('canary.placeholders.canaryStatement')}
               name={ServerSettingsFormFields.CanaryStatement}
+              sx={{ marginBottom: 2 }}
               multiline
             />
 
@@ -101,6 +102,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               value={values.securityTxt || ''}
               label={t('serverSettings.placeholders.securityTxt')}
               name={ServerSettingsFormFields.SecurityText}
+              sx={{ marginBottom: 1.5 }}
               multiline
             />
           </FormGroup>

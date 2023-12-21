@@ -1,0 +1,8 @@
+mutation SyncProposal($proposalId: Int!, $isLoggedIn: Boolean!) {
+  synchronizeProposal(id: $proposalId) {
+    proposal {
+      id
+      ...ProposalCard
+    }
+  }
+}

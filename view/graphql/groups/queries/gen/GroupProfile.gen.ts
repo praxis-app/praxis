@@ -90,14 +90,18 @@ export type GroupProfileQuery = {
             groupSettings?: {
               __typename?: 'ProposalActionGroupConfig';
               id: number;
-              privacy?: string | null;
+              decisionMakingModel?: string | null;
               ratificationThreshold?: number | null;
               reservationsLimit?: number | null;
               standAsidesLimit?: number | null;
-              oldPrivacy?: string | null;
+              votingTimeLimit?: number | null;
+              privacy?: string | null;
+              oldDecisionMakingModel?: string | null;
               oldRatificationThreshold?: number | null;
               oldReservationsLimit?: number | null;
               oldStandAsidesLimit?: number | null;
+              oldVotingTimeLimit?: number | null;
+              oldPrivacy?: string | null;
               proposalAction: {
                 __typename?: 'ProposalAction';
                 id: number;
@@ -110,10 +114,12 @@ export type GroupProfileQuery = {
                     settings: {
                       __typename?: 'GroupConfig';
                       id: number;
-                      privacy: string;
+                      decisionMakingModel: string;
                       ratificationThreshold: number;
                       reservationsLimit: number;
                       standAsidesLimit: number;
+                      votingTimeLimit: number;
+                      privacy: string;
                     };
                   } | null;
                 };
@@ -195,6 +201,15 @@ export type GroupProfileQuery = {
               filename: string;
             } | null;
           };
+          settings: {
+            __typename?: 'ProposalConfig';
+            id: number;
+            decisionMakingModel: string;
+            ratificationThreshold: number;
+            reservationsLimit: number;
+            standAsidesLimit: number;
+            closingAt?: any | null;
+          };
           user: {
             __typename?: 'User';
             id: number;
@@ -245,7 +260,16 @@ export type GroupProfileQuery = {
   me?: {
     __typename?: 'User';
     id: number;
-    joinedGroups: Array<{ __typename?: 'Group'; id: number; name: string }>;
+    joinedGroups: Array<{
+      __typename?: 'Group';
+      id: number;
+      name: string;
+      settings: {
+        __typename?: 'GroupConfig';
+        id: number;
+        votingTimeLimit: number;
+      };
+    }>;
   };
 };
 

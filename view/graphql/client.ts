@@ -1,10 +1,19 @@
-import { ApolloClient, Observable, from } from '@apollo/client';
+import { ApolloClient, Observable, from, split } from '@apollo/client';
+import { loadDevMessages, loadErrorMessages } from '@apollo/client/dev';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { getMainDefinition } from '@apollo/client/utilities';
 import { createUploadLink } from 'apollo-upload-client';
+import { createClient } from 'graphql-ws';
 import { ACCESS_TOKEN, Environments } from '../constants/shared.constants';
 import { formatGQLError } from '../utils/error.utils';
 import cache from './cache';
+
+if (process.env.NODE_ENV === Environments.Development) {
+  loadDevMessages();
+  loadErrorMessages();
+}
 
 export const getAuthHeader = () => {
   const accessToken = localStorage.getItem(ACCESS_TOKEN);
@@ -42,12 +51,36 @@ const errorLink = onError(
     }),
 );
 
-const uploadLink = createUploadLink({
+const webSocketHost =
+  process.env.NODE_ENV === Environments.Development
+    ? `ws://${window.location.hostname}:${process.env.SERVER_PORT}`
+    : `wss://${window.location.host}`;
+
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url: `${webSocketHost}/subscriptions`,
+    connectionParams: getAuthHeader(),
+  }),
+);
+
+const httpUploadLink = createUploadLink({
   uri: '/api/graphql',
 });
 
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  httpUploadLink,
+);
+
 const client = new ApolloClient({
-  link: from([authLink, errorLink, uploadLink]),
+  link: from([authLink, errorLink, splitLink]),
   connectToDevTools: process.env.NODE_ENV !== Environments.Production,
   cache,
 });

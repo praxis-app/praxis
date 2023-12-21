@@ -34,11 +34,13 @@ export type GroupSettingsQuery = {
     settings: {
       __typename?: 'GroupConfig';
       id: number;
-      privacy: string;
-      isPublic: boolean;
+      decisionMakingModel: string;
       ratificationThreshold: number;
       reservationsLimit: number;
       standAsidesLimit: number;
+      votingTimeLimit: number;
+      isPublic: boolean;
+      privacy: string;
     };
   };
 };

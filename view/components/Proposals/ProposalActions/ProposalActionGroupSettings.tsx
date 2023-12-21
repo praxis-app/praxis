@@ -3,6 +3,10 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { GroupPrivacy } from '../../../constants/group.constants';
+import {
+  DecisionMakingModel,
+  VotingTimeLimit,
+} from '../../../constants/proposal.constants';
 import { ProposalActionGroupConfigInput } from '../../../graphql/gen';
 import { useGroupSettingsByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupSettingsByGroupId.gen';
 import { ProposalActionGroupSettingsFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionGroupSettings.gen';
@@ -12,11 +16,6 @@ import Accordion, {
   AccordionSummary,
 } from '../../Shared/Accordion';
 import ChangeDelta from './ChangeDelta';
-
-const isChangingNumberValue = (
-  proposedValue: number | null | undefined,
-  oldValue: number | null | undefined,
-) => !!(proposedValue || proposedValue === 0) && proposedValue !== oldValue;
 
 interface Props {
   groupSettings:
@@ -73,8 +72,27 @@ const ProposalActionGroupSettings = ({
       ? groupSettings.oldRatificationThreshold
       : groupSettingsToChange?.ratificationThreshold;
 
+  const oldVotingTimeLimit =
+    ratified && 'oldVotingTimeLimit' in groupSettings
+      ? groupSettings.oldVotingTimeLimit
+      : groupSettingsToChange?.votingTimeLimit;
+
+  const oldDecisionMakingModel =
+    ratified && 'oldDecisionMakingModel' in groupSettings
+      ? groupSettings.oldDecisionMakingModel
+      : groupSettingsToChange?.decisionMakingModel;
+
   const isChangingPrivacy =
     groupSettings.privacy && groupSettings.privacy !== oldPrivacy;
+
+  const isChangingDecisionMakingModel =
+    groupSettings.decisionMakingModel &&
+    groupSettings.decisionMakingModel !== oldDecisionMakingModel;
+
+  const isChangingNumberValue = (
+    proposedValue: number | null | undefined,
+    oldValue: number | null | undefined,
+  ) => !!(proposedValue || proposedValue === 0) && proposedValue !== oldValue;
 
   const isChangingStandAsidesLimit = isChangingNumberValue(
     groupSettings.standAsidesLimit,
@@ -91,6 +109,11 @@ const ProposalActionGroupSettings = ({
     oldRatificationThreshold,
   );
 
+  const isChangingVotingTimeLimit = isChangingNumberValue(
+    groupSettings.votingTimeLimit,
+    oldVotingTimeLimit,
+  );
+
   const accordionStyles: SxProps = {
     backgroundColor: 'rgb(0, 0, 0, 0.1)',
     borderRadius: 2,
@@ -102,6 +125,35 @@ const ProposalActionGroupSettings = ({
       return t('groups.labels.public');
     }
     return t('groups.labels.private');
+  };
+
+  const getDecisionMakingModelLabel = (model?: string | null) => {
+    if (model === DecisionMakingModel.Consent) {
+      return t('groups.labels.consent');
+    }
+    return t('groups.labels.consensus');
+  };
+
+  const getVotingTimeLimitLabel = (votingTimeLimit?: number | null) => {
+    if (votingTimeLimit === VotingTimeLimit.HalfHour) {
+      return t('time.minutesFull', { count: 30 });
+    }
+    if (votingTimeLimit === VotingTimeLimit.OneHour) {
+      return t('time.hoursFull', { count: 1 });
+    }
+    if (votingTimeLimit === VotingTimeLimit.HalfDay) {
+      return t('time.hoursFull', { count: 12 });
+    }
+    if (votingTimeLimit === VotingTimeLimit.OneDay) {
+      return t('time.daysFull', { count: 1 });
+    }
+    if (votingTimeLimit === VotingTimeLimit.ThreeDays) {
+      return t('time.daysFull', { count: 3 });
+    }
+    if (votingTimeLimit === VotingTimeLimit.OneWeek) {
+      return t('time.weeks', { count: 1 });
+    }
+    return t('time.weeks', { count: 2 });
   };
 
   const getSettingsChanges = () => {
@@ -117,6 +169,12 @@ const ProposalActionGroupSettings = ({
       settingsChanged += 1;
     }
     if (isChangingRatificationThreshold) {
+      settingsChanged += 1;
+    }
+    if (isChangingVotingTimeLimit) {
+      settingsChanged += 1;
+    }
+    if (isChangingDecisionMakingModel) {
       settingsChanged += 1;
     }
 
@@ -162,6 +220,16 @@ const ProposalActionGroupSettings = ({
             rowSpacing={1}
             container
           >
+            {isChangingDecisionMakingModel && (
+              <ChangeDelta
+                label={t('groups.settings.names.decisionMakingModel')}
+                proposedValue={getDecisionMakingModelLabel(
+                  groupSettings.decisionMakingModel,
+                )}
+                oldValue={getDecisionMakingModelLabel(oldDecisionMakingModel)}
+              />
+            )}
+
             {isChangingRatificationThreshold && (
               <ChangeDelta
                 label={t('groups.settings.names.ratificationThreshold')}
@@ -183,6 +251,16 @@ const ProposalActionGroupSettings = ({
                 label={t('groups.settings.names.reservationsLimit')}
                 proposedValue={groupSettings.reservationsLimit}
                 oldValue={oldReservationsLimit}
+              />
+            )}
+
+            {isChangingVotingTimeLimit && (
+              <ChangeDelta
+                label={t('groups.settings.names.votingTimeLimit')}
+                proposedValue={getVotingTimeLimitLabel(
+                  groupSettings.votingTimeLimit,
+                )}
+                oldValue={getVotingTimeLimitLabel(oldVotingTimeLimit)}
               />
             )}
 

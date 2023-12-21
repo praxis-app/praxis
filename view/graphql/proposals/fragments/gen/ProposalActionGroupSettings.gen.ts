@@ -8,14 +8,18 @@ import { gql } from '@apollo/client';
 export type ProposalActionGroupSettingsFragment = {
   __typename?: 'ProposalActionGroupConfig';
   id: number;
-  privacy?: string | null;
+  decisionMakingModel?: string | null;
   ratificationThreshold?: number | null;
   reservationsLimit?: number | null;
   standAsidesLimit?: number | null;
-  oldPrivacy?: string | null;
+  votingTimeLimit?: number | null;
+  privacy?: string | null;
+  oldDecisionMakingModel?: string | null;
   oldRatificationThreshold?: number | null;
   oldReservationsLimit?: number | null;
   oldStandAsidesLimit?: number | null;
+  oldVotingTimeLimit?: number | null;
+  oldPrivacy?: string | null;
   proposalAction: {
     __typename?: 'ProposalAction';
     id: number;
@@ -28,10 +32,12 @@ export type ProposalActionGroupSettingsFragment = {
         settings: {
           __typename?: 'GroupConfig';
           id: number;
-          privacy: string;
+          decisionMakingModel: string;
           ratificationThreshold: number;
           reservationsLimit: number;
           standAsidesLimit: number;
+          votingTimeLimit: number;
+          privacy: string;
         };
       } | null;
     };
@@ -41,14 +47,18 @@ export type ProposalActionGroupSettingsFragment = {
 export const ProposalActionGroupSettingsFragmentDoc = gql`
   fragment ProposalActionGroupSettings on ProposalActionGroupConfig {
     id
-    privacy
+    decisionMakingModel
     ratificationThreshold
     reservationsLimit
     standAsidesLimit
-    oldPrivacy
+    votingTimeLimit
+    privacy
+    oldDecisionMakingModel
     oldRatificationThreshold
     oldReservationsLimit
     oldStandAsidesLimit
+    oldVotingTimeLimit
+    oldPrivacy
     proposalAction {
       id
       proposal {
@@ -57,10 +67,12 @@ export const ProposalActionGroupSettingsFragmentDoc = gql`
           id
           settings {
             id
-            privacy
+            decisionMakingModel
             ratificationThreshold
             reservationsLimit
             standAsidesLimit
+            votingTimeLimit
+            privacy
           }
         }
       }

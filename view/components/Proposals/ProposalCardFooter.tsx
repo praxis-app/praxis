@@ -3,12 +3,15 @@
 import { useReactiveVar } from '@apollo/client';
 import { Comment, HowToVote, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ProposalStage } from '../../constants/proposal.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
+import { useSyncProposalMutation } from '../../graphql/proposals/mutations/gen/SyncProposal.gen';
 import { useProposalCommentsLazyQuery } from '../../graphql/proposals/queries/gen/ProposalComments.gen';
-import { ProposalStage } from '../../constants/proposal.constants';
+import { useIsProposalRatifiedSubscription } from '../../graphql/proposals/subscriptions/gen/IsProposalRatified.gen';
+import { useInView } from '../../hooks/shared.hooks';
 import { Blurple } from '../../styles/theme';
 import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
@@ -48,9 +51,53 @@ const ProposalCardFooter = ({
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal || isProposalPage);
 
-  const [getProposalComments, { data }] = useProposalCommentsLazyQuery();
+  const [getProposalComments, { data: proposalCommentsData }] =
+    useProposalCommentsLazyQuery();
+
+  const [syncProposal, { called: syncProposalCalled }] =
+    useSyncProposalMutation();
+
+  const ref = useRef<HTMLDivElement>(null);
+  const [, viewed] = useInView(ref, '100px');
+  const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
+    skip: !isLoggedIn || !viewed || proposal.stage === ProposalStage.Ratified,
+    variables: { proposalId: proposal.id },
+
+    onData: ({ data: { data }, client: { cache } }) => {
+      if (data?.isProposalRatified) {
+        cache.modify({
+          id: cache.identify(proposal),
+          fields: { stage: () => ProposalStage.Ratified },
+        });
+      }
+    },
+  });
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const hasVotingTimeLimit = !!proposal.settings.closingAt;
+    const isVotingStage = proposal.stage === ProposalStage.Voting;
+
+    if (
+      !viewed ||
+      !isLoggedIn ||
+      !isVotingStage ||
+      !hasVotingTimeLimit ||
+      syncProposalCalled
+    ) {
+      return;
+    }
+
+    if (Date.now() >= Number(proposal.settings.closingAt)) {
+      syncProposal({
+        variables: {
+          proposalId: proposal.id,
+          isLoggedIn,
+        },
+      });
+    }
+  }, [viewed, isLoggedIn, proposal, syncProposal, syncProposalCalled, t]);
 
   useEffect(() => {
     if (inModal || isProposalPage) {
@@ -70,11 +117,15 @@ const ProposalCardFooter = ({
     proposal,
   ]);
 
-  const me = data?.me;
-  const comments = data?.proposal?.comments;
-  const { stage, voteCount, votes, commentCount, group } = proposal;
+  const me = proposalCommentsData?.me;
+  const comments = proposalCommentsData?.proposal?.comments;
+  const { voteCount, votes, commentCount, group, stage } = proposal;
   const isDisabled = !!group && !group.isJoinedByMe;
-  const isRatified = stage === ProposalStage.Ratified;
+  const isClosed = stage === ProposalStage.Closed;
+
+  const isRatified =
+    isProposalRatifiedData?.isProposalRatified ||
+    stage === ProposalStage.Ratified;
 
   const canManageComments = !!(
     group?.myPermissions?.manageComments || me?.serverPermissions.manageComments
@@ -83,15 +134,21 @@ const ProposalCardFooter = ({
     (vote) => vote.user.id === currentUserId,
   );
 
-  const voteButtonLabel = isRatified
-    ? t('proposals.labels.ratified')
-    : t('proposals.actions.vote');
-
   const commentCountStyles: SxProps = {
     '&:hover': { textDecoration: 'underline' },
     transform: 'translateY(3px)',
     cursor: 'pointer',
     height: '24px',
+  };
+
+  const getVoteButtonLabel = () => {
+    if (isRatified) {
+      return t('proposals.labels.ratified');
+    }
+    if (isClosed) {
+      return t('proposals.labels.closed');
+    }
+    return t('proposals.actions.vote');
   };
 
   const handleVoteButtonClick = (
@@ -118,6 +175,13 @@ const ProposalCardFooter = ({
       });
       return;
     }
+    if (isClosed) {
+      toastVar({
+        status: 'info',
+        title: t('proposals.toasts.noVotingAfterClose'),
+      });
+      return;
+    }
     setMenuAnchorEl(event.currentTarget);
   };
 
@@ -139,7 +203,7 @@ const ProposalCardFooter = ({
   };
 
   return (
-    <>
+    <Box ref={ref}>
       <Flex
         justifyContent={voteCount ? 'space-between' : 'end'}
         paddingBottom={voteCount || commentCount ? 0.8 : 0}
@@ -166,7 +230,7 @@ const ProposalCardFooter = ({
           sx={voteByCurrentUser ? { color: Blurple.Marina } : {}}
         >
           <HowToVote sx={ICON_STYLES} />
-          {voteButtonLabel}
+          {getVoteButtonLabel()}
         </CardFooterButton>
 
         <CardFooterButton onClick={handleCommentButtonClick}>
@@ -219,7 +283,7 @@ const ProposalCardFooter = ({
           proposal={proposal}
         />
       )}
-    </>
+    </Box>
   );
 };
 

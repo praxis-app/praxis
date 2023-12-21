@@ -2,6 +2,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { GraphQLSchema } from 'graphql';
 import { applyMiddleware } from 'graphql-middleware';
@@ -21,6 +22,7 @@ import { ImagesModule } from './images/images.module';
 import { LikesModule } from './likes/likes.module';
 import { PostsModule } from './posts/posts.module';
 import { ProposalsModule } from './proposals/proposals.module';
+import { PubSubModule } from './pub-sub/pub-sub.module';
 import { ServerConfigsModule } from './server-configs/server-configs.module';
 import { ServerInvitesModule } from './server-invites/server-invites.module';
 import { ServerRolesModule } from './server-roles/server-roles.module';
@@ -38,11 +40,12 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     configService: ConfigService,
     contextService: ContextService,
   ) => ({
-    path: '/api/graphql',
     autoSchemaFile: true,
     context: contextService.getContext.bind(contextService),
     csrfPrevention: configService.get('NODE_ENV') !== Environment.Development,
+    path: '/api/graphql',
     resolvers: { Upload: GraphQLUpload },
+    subscriptions: { 'graphql-ws': { path: '/subscriptions' } },
     transformSchema: (schema: GraphQLSchema) =>
       applyMiddleware(schema, shieldPermissions),
   }),
@@ -57,6 +60,7 @@ const ViewModule = ServeStaticModule.forRoot({
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     ApolloModule,
     AuthModule,
     CanariesModule,
@@ -69,6 +73,7 @@ const ViewModule = ServeStaticModule.forRoot({
     LikesModule,
     PostsModule,
     ProposalsModule,
+    PubSubModule,
     ServerConfigsModule,
     ServerInvitesModule,
     ServerRolesModule,

@@ -11,11 +11,13 @@ export type GroupSettingsFormFragment = {
   settings: {
     __typename?: 'GroupConfig';
     id: number;
-    privacy: string;
-    isPublic: boolean;
+    decisionMakingModel: string;
     ratificationThreshold: number;
     reservationsLimit: number;
     standAsidesLimit: number;
+    votingTimeLimit: number;
+    isPublic: boolean;
+    privacy: string;
   };
 };
 
@@ -24,11 +26,13 @@ export const GroupSettingsFormFragmentDoc = gql`
     id
     settings {
       id
-      privacy
-      isPublic
+      decisionMakingModel
       ratificationThreshold
       reservationsLimit
       standAsidesLimit
+      votingTimeLimit
+      isPublic
+      privacy
     }
   }
 `;
