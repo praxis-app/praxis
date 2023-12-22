@@ -3,7 +3,7 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { Matches } from 'class-validator';
 import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
-import { VALID_NAME_CHARACTERS } from '../../common/shared.constants';
+import { VALID_NAME_CHARACTERS } from '../../common/common.constants';
 
 @InputType()
 export class UpdateUserInput {

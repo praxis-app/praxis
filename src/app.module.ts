@@ -26,7 +26,7 @@ import { PubSubModule } from './pub-sub/pub-sub.module';
 import { ServerConfigsModule } from './server-configs/server-configs.module';
 import { ServerInvitesModule } from './server-invites/server-invites.module';
 import { ServerRolesModule } from './server-roles/server-roles.module';
-import { Environment } from './common/shared.constants';
+import { Environment } from './common/common.constants';
 import { ShieldModule } from './shield/shield.module';
 import { shieldPermissions } from './shield/shield.permissions';
 import { UsersModule } from './users/users.module';

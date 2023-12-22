@@ -14,8 +14,8 @@ import { ImageTypes } from '../images/image.constants';
 import { saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
-import { DEFAULT_PAGE_SIZE } from '../common/shared.constants';
-import { sanitizeText } from '../common/shared.utils';
+import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
+import { sanitizeText } from '../common/common.utils';
 import { EventAttendeesService } from './event-attendees/event-attendees.service';
 import {
   EventAttendee,

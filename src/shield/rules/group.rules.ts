@@ -11,7 +11,7 @@ import { UpdateGroupRoleInput } from '../../groups/group-roles/models/update-gro
 import { Group } from '../../groups/models/group.model';
 import { UpdateGroupInput } from '../../groups/models/update-group.input';
 import { Image } from '../../images/models/image.model';
-import { UNAUTHORIZED } from '../../common/shared.constants';
+import { UNAUTHORIZED } from '../../common/common.constants';
 import { CreateVoteInput } from '../../votes/models/create-vote.input';
 import { hasGroupPermission } from '../shield.utils';
 
