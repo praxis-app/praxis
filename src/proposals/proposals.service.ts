@@ -14,7 +14,7 @@ import { ImageTypes } from '../images/image.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
-import { logTime, sanitizeText } from '../shared/shared.utils';
+import { logTime, sanitizeText } from '../common/shared.utils';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 import { VotesService } from '../votes/votes.service';

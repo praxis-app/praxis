@@ -23,7 +23,7 @@ import { Proposal } from '../../proposals/models/proposal.model';
 import { ProposalActionRoleMember } from '../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model';
 import { ServerInvite } from '../../server-invites/models/server-invite.model';
 import { ServerRole } from '../../server-roles/models/server-role.model';
-import { FeedItem } from '../../shared/models/feed-item.union';
+import { FeedItem } from '../../common/models/feed-item.union';
 
 @Entity()
 @ObjectType()
