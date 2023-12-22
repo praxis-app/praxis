@@ -6,11 +6,12 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { writeFileSync } from 'fs';
 import { printSchema } from 'graphql';
 import { graphqlUploadExpress } from 'graphql-upload-ts';
+import helmet from 'helmet';
 import { join } from 'path';
 import { AppModule } from './app.module';
-import { MAX_IMAGE_COUNT, MAX_IMAGE_SIZE } from './images/image.constants';
-import { LoggerFactory } from './common/logger.factory';
 import { Environment } from './common/common.constants';
+import { LoggerFactory } from './common/logger.factory';
+import { MAX_IMAGE_COUNT, MAX_IMAGE_SIZE } from './images/image.constants';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -18,8 +19,8 @@ const bootstrap = async () => {
   });
   const configService = app.get(ConfigService);
 
+  app.use(helmet());
   app.setGlobalPrefix('api', { exclude: ['security.txt'] });
-  app.getHttpAdapter().getInstance().disable('x-powered-by');
   app.useGlobalPipes(new ValidationPipe());
   app.enable('trust proxy');
   app.enableCors({
