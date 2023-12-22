@@ -9,7 +9,7 @@ import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
 import { LikesService } from '../likes/likes.service';
 import { Like } from '../likes/models/like.model';
-import { sanitizeText } from '../common/shared.utils';
+import { sanitizeText } from '../common/common.utils';
 import { User } from '../users/models/user.model';
 import { CreatePostInput } from './models/create-post.input';
 import { Post } from './models/post.model';

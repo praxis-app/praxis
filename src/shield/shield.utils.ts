@@ -1,4 +1,4 @@
-import { UNAUTHORIZED } from '../common/shared.constants';
+import { UNAUTHORIZED } from '../common/common.constants';
 import { GroupPermissions } from '../groups/group-roles/models/group-permissions.type';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { UserPermissions } from '../users/user.types';

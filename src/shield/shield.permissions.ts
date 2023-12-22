@@ -1,5 +1,5 @@
 import { allow, or, shield } from 'graphql-shield';
-import { FORBIDDEN } from '../common/shared.constants';
+import { FORBIDDEN } from '../common/common.constants';
 import { isAuthenticated } from './rules/auth.rules';
 import {
   isOwnComment,
