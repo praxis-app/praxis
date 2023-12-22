@@ -21,6 +21,7 @@ const bootstrap = async () => {
 
   app.use(
     helmet({
+      crossOriginEmbedderPolicy: true,
       contentSecurityPolicy: {
         directives: {
           ...helmet.contentSecurityPolicy.getDefaultDirectives(),
