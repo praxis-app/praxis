@@ -17,7 +17,7 @@ import { EventTimeFrame } from '../events/models/events.input';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
-import { FeedItem } from '../shared/models/feed-item.union';
+import { FeedItem } from '../common/models/feed-item.union';
 import { User } from '../users/models/user.model';
 import { GroupPrivacy } from './group-configs/group-configs.constants';
 import { GroupConfigsService } from './group-configs/group-configs.service';

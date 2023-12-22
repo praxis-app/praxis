@@ -12,7 +12,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { FeedItem } from '../../shared/models/feed-item.union';
+import { FeedItem } from '../../common/models/feed-item.union';
 import { Event } from '../../events/models/event.model';
 import { Image } from '../../images/models/image.model';
 import { Post } from '../../posts/models/post.model';

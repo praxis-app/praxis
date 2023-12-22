@@ -9,8 +9,8 @@ import { graphqlUploadExpress } from 'graphql-upload-ts';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import { MAX_IMAGE_COUNT, MAX_IMAGE_SIZE } from './images/image.constants';
-import { LoggerFactory } from './shared/logger.factory';
-import { Environment } from './shared/shared.constants';
+import { LoggerFactory } from './common/logger.factory';
+import { Environment } from './common/shared.constants';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

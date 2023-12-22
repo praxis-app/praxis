@@ -18,7 +18,7 @@ import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
-import { FeedItem } from '../shared/models/feed-item.union';
+import { FeedItem } from '../common/models/feed-item.union';
 import { FollowUserPayload } from './models/follow-user.payload';
 import { UpdateUserInput } from './models/update-user.input';
 import { UpdateUserPayload } from './models/update-user.payload';
