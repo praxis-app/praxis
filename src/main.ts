@@ -24,7 +24,7 @@ const bootstrap = async () => {
       contentSecurityPolicy: {
         directives: {
           ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-          'img-src': ['self', 'data:', 'blob:'],
+          'img-src': ['self', 'data:', 'blob:', 'https:'],
         },
       },
     }),
