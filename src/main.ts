@@ -19,7 +19,17 @@ const bootstrap = async () => {
   });
   const configService = app.get(ConfigService);
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+          'img-src': ['self', 'data:', 'blob:'],
+        },
+      },
+    }),
+  );
+
   app.setGlobalPrefix('api', { exclude: ['security.txt'] });
   app.useGlobalPipes(new ValidationPipe());
   app.enable('trust proxy');
