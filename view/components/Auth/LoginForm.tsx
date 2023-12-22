@@ -50,7 +50,7 @@ const LoginForm = () => {
         </LevelOneHeading>
 
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-          {({ dirty, isSubmitting }) => (
+          {({ isSubmitting }) => (
             <Form hidden={isNavDrawerOpen}>
               <FormGroup>
                 <TextField
@@ -67,7 +67,7 @@ const LoginForm = () => {
 
               <Flex flexEnd>
                 <PrimaryActionButton
-                  disabled={isSubmitting || !dirty}
+                  disabled={isSubmitting}
                   isLoading={isSubmitting}
                   type="submit"
                 >

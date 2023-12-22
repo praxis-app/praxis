@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { CommentsService } from '../comments/comments.service';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { EventsService } from '../events/events.service';
@@ -39,9 +39,11 @@ export interface Context {
   services: ContextServices;
   user: User | null;
   logger: Logger;
+  res?: Response;
 }
 
 export interface GetContextOptions {
   connectionParams?: { authorization: string };
   req?: Request;
+  res?: Response;
 }

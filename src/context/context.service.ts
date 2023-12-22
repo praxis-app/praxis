@@ -40,6 +40,7 @@ export class ContextService {
 
   async getContext({
     req,
+    res,
     connectionParams,
   }: GetContextOptions): Promise<Context> {
     const sub = await this.authService.getSub(req, connectionParams);
@@ -69,6 +70,7 @@ export class ContextService {
       permissions,
       services,
       user,
+      res,
     };
   }
 
