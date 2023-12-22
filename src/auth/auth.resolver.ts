@@ -1,5 +1,7 @@
+import { UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
+import { ClearSiteDataInterceptor } from './interceptors/clear-site-data.interceptor';
 import { AuthPayload } from './models/auth.payload';
 import { LoginInput } from './models/login.input';
 import { SignUpInput } from './models/sign-up.input';
@@ -19,6 +21,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseInterceptors(ClearSiteDataInterceptor)
   async logOut() {
     return true;
   }

@@ -55,6 +55,7 @@
     "graphql-subscriptions": "^2.0.0",
     "graphql-upload-ts": "^2.1.0",
     "graphql-ws": "^5.14.2",
+    "helmet": "^7.1.0",
     "humanize-duration": "^3.30.0",
     "i18next": "^21.6.7",
     "immer": "^10.0.2",
