@@ -127,26 +127,35 @@ export const canManageGroupComments = rule({ cache: 'strict' })(async (
   return hasGroupPermission(permissions, 'manageComments', groupId);
 });
 
-export const canManageGroupSettings = rule()(
-  async (
-    _parent,
-    args: { groupConfigData: UpdateGroupConfigInput },
-    { permissions }: Context,
-  ) =>
-    hasGroupPermission(
-      permissions,
-      'manageSettings',
-      args.groupConfigData.groupId,
-    ),
-);
+export const canManageGroupSettings = rule()(async (
+  _parent,
+  args: { groupConfigData: UpdateGroupConfigInput },
+  { permissions, services: { groupsService } }: Context,
+) => {
+  const isNoAdminGroup = await groupsService.isNoAdminGroup(
+    args.groupConfigData.groupId,
+  );
+  if (isNoAdminGroup) {
+    return false;
+  }
+  return hasGroupPermission(
+    permissions,
+    'manageSettings',
+    args.groupConfigData.groupId,
+  );
+});
 
 export const canCreateGroupEvents = rule()(async (
   _parent,
   args,
-  { services: { shieldService }, permissions }: Context,
+  { services: { shieldService, groupsService }, permissions }: Context,
 ) => {
   const groupId = await shieldService.getGroupIdFromEventArgs(args);
   if (!groupId) {
+    return false;
+  }
+  const isNoAdminGroup = await groupsService.isNoAdminGroup(groupId);
+  if (isNoAdminGroup) {
     return false;
   }
   return hasGroupPermission(permissions, 'createEvents', groupId);
@@ -155,10 +164,14 @@ export const canCreateGroupEvents = rule()(async (
 export const canManageGroupEvents = rule()(async (
   _parent,
   args,
-  { services: { shieldService }, permissions }: Context,
+  { services: { shieldService, groupsService }, permissions }: Context,
 ) => {
   const groupId = await shieldService.getGroupIdFromEventArgs(args);
   if (!groupId) {
+    return false;
+  }
+  const isNoAdminGroup = await groupsService.isNoAdminGroup(groupId);
+  if (isNoAdminGroup) {
     return false;
   }
   return hasGroupPermission(permissions, 'manageEvents', groupId);

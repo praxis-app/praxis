@@ -21,6 +21,7 @@ import { GroupRolesService } from './group-roles/group-roles.service';
 import { CreateGroupInput } from './models/create-group.input';
 import { Group } from './models/group.model';
 import { UpdateGroupInput } from './models/update-group.input';
+import { AdminModel } from '../proposals/proposals.constants';
 
 type GroupWithMemberCount = Group & { memberCount: number };
 
@@ -115,6 +116,11 @@ export class GroupsService {
       'group.config',
     ]);
     return image?.group?.config.privacy === GroupPrivacy.Public;
+  }
+
+  async isNoAdminGroup(groupId: number) {
+    const config = await this.groupConfigsService.getGroupConfig({ groupId });
+    return config.adminModel === AdminModel.NoAdmin;
   }
 
   async getCoverPhotosBatch(groupIds: number[]) {
