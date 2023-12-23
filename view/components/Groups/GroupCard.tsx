@@ -17,7 +17,7 @@ import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
 } from '../../constants/shared.constants';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { GroupCardFragment } from '../../graphql/groups/fragments/gen/GroupCard.gen';
 import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import { removeGroup } from '../../utils/cache.utils';
@@ -78,6 +78,12 @@ const GroupCard = ({ group, currentUserId, ...cardProps }: Props) => {
     await deleteGroup({
       variables: { id },
       update: removeGroup(id),
+      onError() {
+        toastVar({
+          status: 'error',
+          title: t('groups.errors.couldNotDelete'),
+        });
+      },
     });
 
   const handleRolesButtonClick = () => {

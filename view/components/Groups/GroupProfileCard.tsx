@@ -24,7 +24,7 @@ import {
   NavigationPaths,
   TAB_QUERY_PARAM,
 } from '../../constants/shared.constants';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { GroupProfileCardFragment } from '../../graphql/groups/fragments/gen/GroupProfileCard.gen';
 import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import { useAboveBreakpoint } from '../../hooks/shared.hooks';
@@ -144,6 +144,13 @@ const GroupProfileCard = ({
     await deleteGroup({
       variables: { id },
       update: removeGroup(id),
+
+      onError() {
+        toastVar({
+          status: 'error',
+          title: t('groups.errors.couldNotDelete'),
+        });
+      },
     });
   };
 
