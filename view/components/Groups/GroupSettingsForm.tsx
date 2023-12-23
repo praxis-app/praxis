@@ -1,4 +1,3 @@
-import { Warning } from '@mui/icons-material';
 import {
   Box,
   Divider,
@@ -276,6 +275,9 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               description={t('groups.settings.descriptions.privacy')}
               value={values.privacy}
               onChange={handleChange}
+              warningMessage={
+                settings.isPublic ? t('groups.prompts.publicGroup') : undefined
+              }
             >
               <MenuItem value={GroupPrivacy.Private}>
                 {t('groups.labels.private')}
@@ -284,24 +286,6 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                 {t('groups.labels.public')}
               </MenuItem>
             </GroupSettingsSelect>
-
-            {settings.isPublic && (
-              <Typography
-                color="#ffb74d"
-                fontSize={12}
-                marginTop={1}
-                width={SETTING_DESCRIPTION_WIDTH}
-              >
-                <Warning
-                  sx={{
-                    fontSize: 14,
-                    marginBottom: -0.3,
-                    marginRight: '0.5ch',
-                  }}
-                />
-                {t('groups.prompts.publicGroup')}
-              </Typography>
-            )}
           </FormGroup>
 
           <Flex flexEnd>
