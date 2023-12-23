@@ -207,6 +207,7 @@ type Proposal {
 
 type GroupConfig {
   id: Int!
+  adminModel: String!
   decisionMakingModel: String!
   standAsidesLimit: Int!
   reservationsLimit: Int!

@@ -8,7 +8,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { DecisionMakingModel } from '../../../proposals/proposals.constants';
+import {
+  AdminModel,
+  DecisionMakingModel,
+} from '../../../proposals/proposals.constants';
 import { Group } from '../../models/group.model';
 import { GroupPrivacy, VotingTimeLimit } from '../group-configs.constants';
 
@@ -18,6 +21,10 @@ export class GroupConfig {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number;
+
+  @Column({ default: AdminModel.Standard })
+  @Field()
+  adminModel: string;
 
   @Column({ default: DecisionMakingModel.Consensus })
   @Field()

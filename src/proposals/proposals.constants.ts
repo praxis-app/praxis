@@ -1,3 +1,10 @@
+// TODO: Implement rotating admin model
+export enum AdminModel {
+  NoAdmin = 'no-admin',
+  Rotating = 'rotating',
+  Standard = 'standard',
+}
+
 export enum DecisionMakingModel {
   Consensus = 'consensus',
   Consent = 'consent',
