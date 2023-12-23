@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid';
 import Input from '@mui/material/Input';
 import Slider, { SliderProps } from '@mui/material/Slider';
 import { ChangeEvent } from 'react';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 
 interface Props extends Omit<SliderProps, 'value'> {
   name: string;
@@ -28,6 +29,8 @@ const SliderInput = ({
   value,
   ...sliderProps
 }: Props) => {
+  const isDesktop = useIsDesktop();
+
   const inputProps: InputBaseComponentProps = {
     min: 0,
     max: 100,
@@ -47,7 +50,7 @@ const SliderInput = ({
           disabled={disabled}
           name={name}
           onChange={onSliderChange}
-          size="small"
+          size={isDesktop ? 'small' : 'medium'}
           step={5}
           {...sliderProps}
         />
