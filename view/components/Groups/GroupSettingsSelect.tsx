@@ -2,6 +2,7 @@ import { Box, Select, SelectChangeEvent, Typography } from '@mui/material';
 import { FormikErrors } from 'formik';
 import { ReactNode } from 'react';
 import { GroupSettingsFieldName } from '../../constants/group.constants';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import Flex from '../Shared/Flex';
 
 const SETTING_DESCRIPTION_WIDTH = '60%';
@@ -25,12 +26,21 @@ const GroupSettingsSelect = ({
   onChange,
   value,
 }: Props) => {
+  const isDesktop = useIsDesktop();
+
   return (
-    <Flex justifyContent="space-between">
-      <Box width={SETTING_DESCRIPTION_WIDTH}>
+    <Flex
+      justifyContent="space-between"
+      flexDirection={isDesktop ? 'row' : 'column'}
+    >
+      <Box width={isDesktop ? SETTING_DESCRIPTION_WIDTH : '100%'}>
         <Typography>{label}</Typography>
 
-        <Typography fontSize={12} color="text.secondary">
+        <Typography
+          fontSize={12}
+          color="text.secondary"
+          paddingBottom={isDesktop ? 0 : 2}
+        >
           {description}
         </Typography>
 
@@ -47,12 +57,12 @@ const GroupSettingsSelect = ({
       </Box>
 
       <Select
+        value={value}
         name={fieldName}
         onChange={onChange}
-        sx={{ color: 'text.secondary' }}
-        value={value}
-        variant="standard"
         error={!!errors?.[fieldName]}
+        sx={{ color: 'text.secondary' }}
+        variant={isDesktop ? 'standard' : 'outlined'}
         disableUnderline
       >
         {children}

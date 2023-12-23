@@ -21,6 +21,7 @@ import { toastVar } from '../../graphql/cache';
 import { UpdateGroupConfigInput } from '../../graphql/gen';
 import { GroupSettingsFormFragment } from '../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
 import { useUpdateGroupSettingsMutation } from '../../graphql/groups/mutations/gen/UpdateGroupSettings.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import SliderInput from '../Shared/SliderInput';
@@ -40,6 +41,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   });
 
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
   const theme = useTheme();
 
   const initialValues: FormValues = {
@@ -166,7 +168,11 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                   <MenuItem
                     key={value}
                     value={value}
-                    sx={{ width: 75, justifyContent: 'center' }}
+                    sx={
+                      isDesktop
+                        ? { width: 75, justifyContent: 'center' }
+                        : undefined
+                    }
                   >
                     {value}
                   </MenuItem>
@@ -188,7 +194,11 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                   <MenuItem
                     key={value}
                     value={value}
-                    sx={{ width: 75, justifyContent: 'center' }}
+                    sx={
+                      isDesktop
+                        ? { width: 75, justifyContent: 'center' }
+                        : undefined
+                    }
                   >
                     {value}
                   </MenuItem>
