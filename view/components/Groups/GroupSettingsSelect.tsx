@@ -44,7 +44,6 @@ const GroupSettingsSelect = ({
 
   const selectStyles: SxProps = {
     color: 'text.secondary',
-    marginY: isDesktop ? 0 : 1.5,
     width: isDesktop ? undefined : '100%',
 
     '& .MuiSelect-select': {
@@ -59,27 +58,14 @@ const GroupSettingsSelect = ({
         justifyContent="space-between"
         flexDirection={isDesktop ? 'row' : 'column'}
       >
-        <Box width={isDesktop ? SETTING_DESCRIPTION_WIDTH : '100%'}>
+        <Box
+          width={isDesktop ? SETTING_DESCRIPTION_WIDTH : '100%'}
+          marginBottom={isDesktop ? 0 : 3}
+        >
           <Typography>{label}</Typography>
-
-          <Typography
-            fontSize={12}
-            color="text.secondary"
-            paddingBottom={isDesktop ? 0 : 0.5}
-          >
+          <Typography fontSize={12} color="text.secondary">
             {description}
           </Typography>
-
-          {!!errors?.[fieldName] && (
-            <Typography
-              color="error"
-              fontSize={12}
-              marginTop={0.5}
-              maxHeight={[undefined, 2.5]}
-            >
-              {errors[fieldName]?.toString()}
-            </Typography>
-          )}
         </Box>
 
         <Select
@@ -95,11 +81,23 @@ const GroupSettingsSelect = ({
         </Select>
       </Flex>
 
+      {!!errors?.[fieldName] && (
+        <Typography
+          color="error"
+          fontSize={12}
+          maxHeight={[undefined, 2.5]}
+          marginTop={isDesktop ? -1 : 1.5}
+          marginBottom={isDesktop ? 1.5 : 0}
+        >
+          {errors[fieldName]?.toString()}
+        </Typography>
+      )}
+
       {warningMessage && (
         <Typography
           color="#ffb74d"
           fontSize={12}
-          marginTop={1}
+          marginTop={isDesktop ? 1 : 2.5}
           width={isDesktop ? SETTING_DESCRIPTION_WIDTH : '100%'}
         >
           <Warning
@@ -116,7 +114,7 @@ const GroupSettingsSelect = ({
       {divider && (
         <Divider
           sx={{
-            marginTop: isDesktop ? 3 : 2.25,
+            marginTop: isDesktop ? 3 : 3.5,
             marginBottom: 3,
             ...dividerStyles,
           }}
