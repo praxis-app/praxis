@@ -8,12 +8,10 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import {
-  AdminModel,
-  DecisionMakingModel,
-} from '../../../proposals/proposals.constants';
+import { DecisionMakingModel } from '../../../proposals/proposals.constants';
 import { Group } from '../../models/group.model';
 import { GroupPrivacy, VotingTimeLimit } from '../group-configs.constants';
+import { GroupAdminModel } from '../../groups.constants';
 
 @Entity()
 @ObjectType()
@@ -22,7 +20,7 @@ export class GroupConfig {
   @Field(() => Int)
   id: number;
 
-  @Column({ default: AdminModel.Standard })
+  @Column({ default: GroupAdminModel.Standard })
   @Field()
   adminModel: string;
 

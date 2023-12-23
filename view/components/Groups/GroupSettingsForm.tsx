@@ -9,11 +9,11 @@ import {
 import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import {
+  GroupAdminModel,
   GroupPrivacy,
   GroupSettingsFieldName,
 } from '../../constants/group.constants';
 import {
-  AdminModel,
   DecisionMakingModel,
   VotingTimeLimit,
 } from '../../constants/proposal.constants';
@@ -118,7 +118,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
         'groups.errors.consentVotingTimeLimitRequired',
       );
     }
-    if (adminModel === AdminModel.Rotating) {
+    if (adminModel === GroupAdminModel.Rotating) {
       errors.adminModel = t('prompts.inDev');
     }
     return errors;
@@ -150,13 +150,13 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               errorMessageProps={{ sx: { marginTop: 1.5 } }}
               errors={errors}
             >
-              <MenuItem value={AdminModel.Standard}>
+              <MenuItem value={GroupAdminModel.Standard}>
                 {t('groups.labels.standard')}
               </MenuItem>
-              <MenuItem value={AdminModel.NoAdmin}>
+              <MenuItem value={GroupAdminModel.NoAdmin}>
                 {t('groups.labels.noAdmin')}
               </MenuItem>
-              <MenuItem value={AdminModel.Rotating}>
+              <MenuItem value={GroupAdminModel.Rotating}>
                 {t('groups.labels.rotatingAdmin')}
               </MenuItem>
             </GroupSettingsSelect>

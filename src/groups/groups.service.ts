@@ -3,6 +3,8 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
+import { sanitizeText } from '../common/common.utils';
 import { MyGroupsKey } from '../dataloader/dataloader.types';
 import { ImageTypes } from '../images/image.constants';
 import { saveImage } from '../images/image.utils';
@@ -10,18 +12,16 @@ import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
-import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
-import { sanitizeText } from '../common/common.utils';
 import { UsersService } from '../users/users.service';
 import { GroupPrivacy } from './group-configs/group-configs.constants';
 import { GroupConfigsService } from './group-configs/group-configs.service';
 import { GroupMemberRequestsService } from './group-member-requests/group-member-requests.service';
 import { initGroupRolePermissions } from './group-roles/group-role.utils';
 import { GroupRolesService } from './group-roles/group-roles.service';
+import { GroupAdminModel } from './groups.constants';
 import { CreateGroupInput } from './models/create-group.input';
 import { Group } from './models/group.model';
 import { UpdateGroupInput } from './models/update-group.input';
-import { AdminModel } from '../proposals/proposals.constants';
 
 type GroupWithMemberCount = Group & { memberCount: number };
 
@@ -120,7 +120,7 @@ export class GroupsService {
 
   async isNoAdminGroup(groupId: number) {
     const config = await this.groupConfigsService.getGroupConfig({ groupId });
-    return config.adminModel === AdminModel.NoAdmin;
+    return config.adminModel === GroupAdminModel.NoAdmin;
   }
 
   async getCoverPhotosBatch(groupIds: number[]) {
