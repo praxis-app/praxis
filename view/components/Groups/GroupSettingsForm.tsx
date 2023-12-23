@@ -1,4 +1,3 @@
-import { Warning } from '@mui/icons-material';
 import {
   Box,
   Divider,
@@ -21,6 +20,7 @@ import { toastVar } from '../../graphql/cache';
 import { UpdateGroupConfigInput } from '../../graphql/gen';
 import { GroupSettingsFormFragment } from '../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
 import { useUpdateGroupSettingsMutation } from '../../graphql/groups/mutations/gen/UpdateGroupSettings.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import SliderInput from '../Shared/SliderInput';
@@ -40,6 +40,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   });
 
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
   const theme = useTheme();
 
   const initialValues: FormValues = {
@@ -151,8 +152,6 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               </MenuItem>
             </GroupSettingsSelect>
 
-            <Divider sx={{ marginY: 3 }} />
-
             <GroupSettingsSelect
               fieldName={GroupSettingsFieldName.StandAsidesLimit}
               label={t('groups.settings.names.standAsidesLimit')}
@@ -166,14 +165,16 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                   <MenuItem
                     key={value}
                     value={value}
-                    sx={{ width: 75, justifyContent: 'center' }}
+                    sx={
+                      isDesktop
+                        ? { width: 75, justifyContent: 'center' }
+                        : undefined
+                    }
                   >
                     {value}
                   </MenuItem>
                 ))}
             </GroupSettingsSelect>
-
-            <Divider sx={{ marginY: 3 }} />
 
             <GroupSettingsSelect
               fieldName={GroupSettingsFieldName.ReservationsLimit}
@@ -188,24 +189,32 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                   <MenuItem
                     key={value}
                     value={value}
-                    sx={{ width: 75, justifyContent: 'center' }}
+                    sx={
+                      isDesktop
+                        ? { width: 75, justifyContent: 'center' }
+                        : undefined
+                    }
                   >
                     {value}
                   </MenuItem>
                 ))}
             </GroupSettingsSelect>
 
-            <Divider sx={{ marginY: 3 }} />
-
-            <Flex justifyContent="space-between">
-              <Box width={SETTING_DESCRIPTION_WIDTH}>
+            <Flex
+              justifyContent="space-between"
+              flexDirection={isDesktop ? 'row' : 'column'}
+            >
+              <Box width={isDesktop ? SETTING_DESCRIPTION_WIDTH : undefined}>
                 <Typography>
                   {t('groups.settings.names.ratificationThreshold')}
                 </Typography>
 
                 <Typography
                   fontSize={12}
-                  sx={{ color: theme.palette.text.secondary }}
+                  sx={{
+                    color: theme.palette.text.secondary,
+                    paddingBottom: isDesktop ? 0 : 1.25,
+                  }}
                 >
                   {t('groups.settings.descriptions.ratificationThreshold')}
                 </Typography>
@@ -217,6 +226,8 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                 onInputChange={handleChange}
                 onSliderChange={handleChange}
                 value={values.ratificationThreshold}
+                width={isDesktop ? 200 : '100%'}
+                marks={!isDesktop}
                 onInputBlur={() =>
                   handleSliderInputBlur(
                     setFieldValue,
@@ -230,7 +241,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               />
             </Flex>
 
-            <Divider sx={{ marginY: 3 }} />
+            <Divider sx={{ marginTop: isDesktop ? 3 : 1.2, marginBottom: 3 }} />
 
             <GroupSettingsSelect
               fieldName={GroupSettingsFieldName.VotingTimeLimit}
@@ -266,14 +277,15 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               </MenuItem>
             </GroupSettingsSelect>
 
-            <Divider sx={{ marginY: 3 }} />
-
             <GroupSettingsSelect
               fieldName={GroupSettingsFieldName.Privacy}
               label={t('groups.settings.names.privacy')}
               description={t('groups.settings.descriptions.privacy')}
               value={values.privacy}
               onChange={handleChange}
+              warningMessage={
+                settings.isPublic ? t('groups.prompts.publicGroup') : undefined
+              }
             >
               <MenuItem value={GroupPrivacy.Private}>
                 {t('groups.labels.private')}
@@ -282,27 +294,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                 {t('groups.labels.public')}
               </MenuItem>
             </GroupSettingsSelect>
-
-            {settings.isPublic && (
-              <Typography
-                color="#ffb74d"
-                fontSize={12}
-                marginTop={1}
-                width={SETTING_DESCRIPTION_WIDTH}
-              >
-                <Warning
-                  sx={{
-                    fontSize: 14,
-                    marginBottom: -0.3,
-                    marginRight: '0.5ch',
-                  }}
-                />
-                {t('groups.prompts.publicGroup')}
-              </Typography>
-            )}
           </FormGroup>
-
-          <Divider sx={{ marginY: 3 }} />
 
           <Flex flexEnd>
             <PrimaryActionButton

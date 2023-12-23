@@ -1,10 +1,10 @@
 import { InputBaseComponentProps, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import Input from '@mui/material/Input';
-import Slider from '@mui/material/Slider';
+import Slider, { SliderProps } from '@mui/material/Slider';
 import { ChangeEvent } from 'react';
 
-interface Props {
+interface Props extends Omit<SliderProps, 'value'> {
   name: string;
   disabled?: boolean;
   onInputBlur: () => void;
@@ -13,6 +13,7 @@ interface Props {
   showPercentSign?: boolean;
   value?: number | null;
   onClick?: () => void;
+  width?: number | number[] | string;
 }
 
 const SliderInput = ({
@@ -21,9 +22,11 @@ const SliderInput = ({
   onInputBlur,
   onInputChange,
   onClick,
+  width,
   onSliderChange,
   showPercentSign,
   value,
+  ...sliderProps
 }: Props) => {
   const inputProps: InputBaseComponentProps = {
     min: 0,
@@ -32,7 +35,12 @@ const SliderInput = ({
   };
 
   return (
-    <Grid width={[150, 200]} alignItems="center" onClick={onClick} container>
+    <Grid
+      width={width || [150, 200]}
+      alignItems="center"
+      onClick={onClick}
+      container
+    >
       <Grid item xs paddingRight="15px">
         <Slider
           value={typeof value === 'number' ? value : 0}
@@ -41,6 +49,7 @@ const SliderInput = ({
           onChange={onSliderChange}
           size="small"
           step={5}
+          {...sliderProps}
         />
       </Grid>
       <Grid item paddingRight="5px">
