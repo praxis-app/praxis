@@ -15,6 +15,7 @@ import { ProposalsService } from '../proposals/proposals.service';
 import { ShieldService } from '../shield/shield.service';
 import { UsersService } from '../users/users.service';
 import { Context, ContextServices, GetContextOptions } from './context.types';
+import { GroupConfigsService } from '../groups/group-configs/group-configs.service';
 
 @Injectable()
 export class ContextService {
@@ -25,6 +26,7 @@ export class ContextService {
     private commentsService: CommentsService,
     private dataloaderService: DataloaderService,
     private eventsService: EventsService,
+    private groupConfigsService: GroupConfigsService,
     private groupMemberRequestsService: GroupMemberRequestsService,
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
@@ -51,6 +53,7 @@ export class ContextService {
     const services: ContextServices = {
       commentsService: this.commentsService,
       eventsService: this.eventsService,
+      groupConfigsService: this.groupConfigsService,
       groupMemberRequestsService: this.groupMemberRequestsService,
       groupRolesService: this.groupRolesService,
       groupsService: this.groupsService,

@@ -1,4 +1,4 @@
-import { allow, or, shield } from 'graphql-shield';
+import { allow, and, not, or, shield } from 'graphql-shield';
 import { FORBIDDEN } from '../common/common.constants';
 import { isAuthenticated } from './rules/auth.rules';
 import {
@@ -22,6 +22,7 @@ import {
   canManageGroupSettings,
   canUpdateGroup,
   isGroupMember,
+  isNoAdminGroup,
   isProposalGroupJoinedByMe,
   isPublicGroup,
   isPublicGroupImage,
@@ -79,8 +80,8 @@ export const shieldPermissions = shield(
       deleteServerRole: canManageServerRoles,
       deleteServerRoleMember: canManageServerRoles,
       approveGroupMemberRequest: canApproveGroupMemberRequests,
-      updateGroupConfig: canManageGroupSettings,
-      updateGroup: canUpdateGroup,
+      updateGroupConfig: and(canManageGroupSettings, not(isNoAdminGroup)),
+      updateGroup: and(canUpdateGroup, not(isNoAdminGroup)),
       deleteGroup: canDeleteGroup,
       createGroupRole: canManageGroupRoles,
       updateGroupRole: canManageGroupRoles,

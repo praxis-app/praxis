@@ -14,6 +14,7 @@ import { Image } from '../../images/models/image.model';
 import { UNAUTHORIZED } from '../../common/common.constants';
 import { CreateVoteInput } from '../../votes/models/create-vote.input';
 import { hasGroupPermission } from '../shield.utils';
+import { AdminModel } from '../../proposals/proposals.constants';
 
 export const canManageGroupRoles = rule()(async (
   parent,
@@ -162,6 +163,31 @@ export const canManageGroupEvents = rule()(async (
     return false;
   }
   return hasGroupPermission(permissions, 'manageEvents', groupId);
+});
+
+export const isNoAdminGroup = rule({ cache: 'strict' })(async (
+  _parent,
+  args:
+    | { groupConfigData: UpdateGroupConfigInput }
+    | { groupData: UpdateGroupInput },
+  { services: { groupConfigsService } }: Context,
+) => {
+  let config: GroupConfig | undefined;
+
+  if ('groupConfigData' in args) {
+    config = await groupConfigsService.getGroupConfig({
+      groupId: args.groupConfigData.groupId,
+    });
+  }
+  if ('groupData' in args) {
+    config = await groupConfigsService.getGroupConfig({
+      groupId: args.groupData.id,
+    });
+  }
+  if (!config) {
+    return false;
+  }
+  return config.adminModel === AdminModel.NoAdmin;
 });
 
 export const isGroupMember = rule({ cache: 'strict' })(async (

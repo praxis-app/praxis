@@ -16,10 +16,12 @@ import { ShieldService } from '../shield/shield.service';
 import { User } from '../users/models/user.model';
 import { UserPermissions } from '../users/user.types';
 import { UsersService } from '../users/users.service';
+import { GroupConfigsService } from '../groups/group-configs/group-configs.service';
 
 export interface ContextServices {
   commentsService: CommentsService;
   eventsService: EventsService;
+  groupConfigsService: GroupConfigsService;
   groupMemberRequestsService: GroupMemberRequestsService;
   groupRolesService: GroupRolesService;
   groupsService: GroupsService;
