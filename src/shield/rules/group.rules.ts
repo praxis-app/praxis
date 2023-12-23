@@ -21,7 +21,7 @@ export const canManageGroupRoles = rule()(async (
     | { groupRoleData: CreateGroupRoleInput | UpdateGroupRoleInput }
     | { groupRoleMemberData: DeleteGroupRoleMemberInput }
     | { id: number },
-  { permissions, services: { groupRolesService } }: Context,
+  { permissions, services: { groupRolesService, groupsService } }: Context,
   info,
 ) => {
   let groupId: number | undefined;
@@ -56,6 +56,12 @@ export const canManageGroupRoles = rule()(async (
   if (!groupId) {
     return false;
   }
+
+  const isNoAdminGroup = await groupsService.isNoAdminGroup(groupId);
+  if (isNoAdminGroup) {
+    return false;
+  }
+
   return hasGroupPermission(permissions, 'manageRoles', groupId);
 });
 
@@ -88,18 +94,29 @@ export const canApproveGroupMemberRequests = rule({ cache: 'strict' })(async (
   return hasGroupPermission(permissions, 'approveMemberRequests', groupId);
 });
 
-export const canUpdateGroup = rule()(
-  async (
-    _parent,
-    { groupData }: { groupData: UpdateGroupInput },
-    { permissions }: Context,
-  ) => hasGroupPermission(permissions, 'updateGroup', groupData.id),
-);
+export const canUpdateGroup = rule()(async (
+  _parent,
+  { groupData }: { groupData: UpdateGroupInput },
+  { permissions, services: { groupsService } }: Context,
+) => {
+  const isNoAdminGroup = await groupsService.isNoAdminGroup(groupData.id);
+  if (isNoAdminGroup) {
+    return false;
+  }
+  return hasGroupPermission(permissions, 'updateGroup', groupData.id);
+});
 
-export const canDeleteGroup = rule()(
-  async (_parent, args: { id: number }, { permissions }: Context) =>
-    hasGroupPermission(permissions, 'deleteGroup', args.id),
-);
+export const canDeleteGroup = rule()(async (
+  _parent,
+  args: { id: number },
+  { permissions, services: { groupsService } }: Context,
+) => {
+  const isNoAdminGroup = await groupsService.isNoAdminGroup(args.id);
+  if (isNoAdminGroup) {
+    return false;
+  }
+  return hasGroupPermission(permissions, 'deleteGroup', args.id);
+});
 
 export const canManageGroupPosts = rule({ cache: 'strict' })(async (
   _parent,
