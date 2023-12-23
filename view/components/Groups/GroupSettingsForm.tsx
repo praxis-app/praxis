@@ -200,15 +200,21 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                 ))}
             </GroupSettingsSelect>
 
-            <Flex justifyContent="space-between">
-              <Box width={SETTING_DESCRIPTION_WIDTH}>
+            <Flex
+              justifyContent="space-between"
+              flexDirection={isDesktop ? 'row' : 'column'}
+            >
+              <Box width={isDesktop ? SETTING_DESCRIPTION_WIDTH : undefined}>
                 <Typography>
                   {t('groups.settings.names.ratificationThreshold')}
                 </Typography>
 
                 <Typography
                   fontSize={12}
-                  sx={{ color: theme.palette.text.secondary }}
+                  sx={{
+                    color: theme.palette.text.secondary,
+                    paddingBottom: isDesktop ? 0 : 1.25,
+                  }}
                 >
                   {t('groups.settings.descriptions.ratificationThreshold')}
                 </Typography>
@@ -220,6 +226,8 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                 onInputChange={handleChange}
                 onSliderChange={handleChange}
                 value={values.ratificationThreshold}
+                width={isDesktop ? 200 : '100%'}
+                marks={!isDesktop}
                 onInputBlur={() =>
                   handleSliderInputBlur(
                     setFieldValue,
@@ -233,7 +241,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               />
             </Flex>
 
-            <Divider sx={{ marginY: 3 }} />
+            <Divider sx={{ marginTop: isDesktop ? 3 : 1.2, marginBottom: 3 }} />
 
             <GroupSettingsSelect
               fieldName={GroupSettingsFieldName.VotingTimeLimit}
