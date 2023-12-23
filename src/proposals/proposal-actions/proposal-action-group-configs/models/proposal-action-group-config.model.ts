@@ -27,6 +27,10 @@ export class ProposalActionGroupConfig {
 
   @Column({ nullable: true })
   @Field({ nullable: true })
+  adminModel?: string;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
   decisionMakingModel?: string;
 
   @Column({ nullable: true })
@@ -52,6 +56,10 @@ export class ProposalActionGroupConfig {
   @Column({ nullable: true })
   @Field({ nullable: true })
   oldPrivacy?: string;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  oldAdminModel?: string;
 
   @Column({ nullable: true })
   @Field({ nullable: true })
