@@ -2,6 +2,7 @@ fragment GroupSettingsForm on Group {
   id
   settings {
     id
+    adminModel
     decisionMakingModel
     ratificationThreshold
     reservationsLimit

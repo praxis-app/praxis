@@ -798,6 +798,7 @@ input UpdateGroupInput {
 
 input UpdateGroupConfigInput {
   groupId: Int!
+  adminModel: String
   decisionMakingModel: String
   standAsidesLimit: Int
   reservationsLimit: Int

@@ -6,6 +6,7 @@ import {
   SelectChangeEvent,
   SxProps,
   Typography,
+  TypographyProps,
 } from '@mui/material';
 import { FormikErrors } from 'formik';
 import { ReactNode } from 'react';
@@ -20,6 +21,7 @@ interface Props {
   description: string;
   divider?: boolean;
   dividerStyles?: SxProps;
+  errorMessageProps?: TypographyProps;
   errors?: FormikErrors<any>;
   fieldName: GroupSettingsFieldName;
   label: string;
@@ -36,6 +38,7 @@ const GroupSettingsSelect = ({
   errors,
   fieldName,
   label,
+  errorMessageProps,
   onChange,
   value,
   warningMessage,
@@ -88,6 +91,7 @@ const GroupSettingsSelect = ({
           maxHeight={[undefined, 2.5]}
           marginTop={isDesktop ? -1 : 1.5}
           marginBottom={isDesktop ? 1.5 : 0}
+          {...errorMessageProps}
         >
           {errors[fieldName]?.toString()}
         </Typography>

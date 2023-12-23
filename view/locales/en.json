@@ -277,11 +277,14 @@
       "memberRequests_other": "{{count}} Member Requests",
       "members_one": "{{count}} Member",
       "members_other": "{{count}} Members",
+      "noAdmin": "No Admin",
       "private": "Private",
       "public": "Public",
       "requests_one": "{{count}} Request",
       "requests_other": "{{count}} Requests",
+      "rotatingAdmin": "Rotating Admin",
       "settings": "Settings",
+      "standard": "Standard",
       "unlimited": "Unlimited",
       "xToPass": "X to Pass"
     },
@@ -298,19 +301,21 @@
     },
     "settings": {
       "names": {
+        "adminModel": "Admin Model",
         "decisionMakingModel": "Decision Making Model",
+        "privacy": "Privacy",
         "ratificationThreshold": "Ratification Threshold",
         "reservationsLimit": "Reservations Limit",
         "standAsidesLimit": "Stand Asides Limit",
-        "votingTimeLimit": "Voting Time Limit",
-        "privacy": "Privacy"
+        "votingTimeLimit": "Voting Time Limit"
       },
       "descriptions": {
+        "adminModel": "Choose from no-admin, rotating admin, or standard to determine how the group is managed.",
+        "decisionMakingModel": "Choose from consensus or consent decision-making to enable a decision-making process that suits your group's needs.",
         "privacy": "Choose whether or not the group and it's content are viewable to the public.",
         "ratificationThreshold": "Set the minimum percentage of positive votes required for a proposal to reach consensus.",
         "reservationsLimit": "Set a limit for the acceptable number of reservations allowed for a proposal to still be able to pass.",
         "standAsidesLimit": "Set a limit for the acceptable number of stand asides allowed for a proposal to still be able to pass.",
-        "decisionMakingModel": "Choose from consensus or consent decision-making to enable a decision-making process that suits your group's needs.",
         "votingTimeLimit": "Set a time limit for how long proposals can be voted on."
       }
     },

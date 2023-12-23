@@ -1041,6 +1041,7 @@ export type UpdateEventPayload = {
 };
 
 export type UpdateGroupConfigInput = {
+  adminModel?: InputMaybe<Scalars['String']['input']>;
   decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
   groupId: Scalars['Int']['input'];
   privacy?: InputMaybe<Scalars['String']['input']>;

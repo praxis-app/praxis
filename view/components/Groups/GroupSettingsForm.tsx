@@ -13,6 +13,7 @@ import {
   GroupSettingsFieldName,
 } from '../../constants/group.constants';
 import {
+  AdminModel,
   DecisionMakingModel,
   VotingTimeLimit,
 } from '../../constants/proposal.constants';
@@ -44,6 +45,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   const theme = useTheme();
 
   const initialValues: FormValues = {
+    adminModel: settings.adminModel,
     decisionMakingModel: settings.decisionMakingModel,
     ratificationThreshold: settings.ratificationThreshold,
     reservationsLimit: settings.reservationsLimit,
@@ -105,6 +107,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   const validateSettings = ({
     decisionMakingModel,
     votingTimeLimit,
+    adminModel,
   }: FormValues) => {
     const errors: FormikErrors<FormValues> = {};
     if (
@@ -114,6 +117,9 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
       errors.votingTimeLimit = t(
         'groups.errors.consentVotingTimeLimitRequired',
       );
+    }
+    if (adminModel === AdminModel.Rotating) {
+      errors.adminModel = t('prompts.inDev');
     }
     return errors;
   };
@@ -135,6 +141,26 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
       }) => (
         <Form>
           <FormGroup>
+            <GroupSettingsSelect
+              fieldName={GroupSettingsFieldName.AdminModel}
+              label={t('groups.settings.names.adminModel')}
+              description={t('groups.settings.descriptions.adminModel')}
+              value={values.adminModel}
+              onChange={handleChange}
+              errorMessageProps={{ sx: { marginTop: 1.5 } }}
+              errors={errors}
+            >
+              <MenuItem value={AdminModel.Standard}>
+                {t('groups.labels.standard')}
+              </MenuItem>
+              <MenuItem value={AdminModel.NoAdmin}>
+                {t('groups.labels.noAdmin')}
+              </MenuItem>
+              <MenuItem value={AdminModel.Rotating}>
+                {t('groups.labels.rotatingAdmin')}
+              </MenuItem>
+            </GroupSettingsSelect>
+
             <GroupSettingsSelect
               fieldName={GroupSettingsFieldName.DecisionMakingModel}
               label={t('groups.settings.names.decisionMakingModel')}
