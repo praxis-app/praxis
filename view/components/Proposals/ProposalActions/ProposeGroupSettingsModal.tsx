@@ -164,8 +164,6 @@ const ProposeGroupSettingsModal = ({
                   </MenuItem>
                 </GroupSettingsSelect>
 
-                <Divider sx={{ marginY: 3 }} />
-
                 <GroupSettingsSelect
                   fieldName={GroupSettingsFieldName.StandAsidesLimit}
                   label={t('groups.settings.names.standAsidesLimit')}
@@ -188,8 +186,6 @@ const ProposeGroupSettingsModal = ({
                     ))}
                 </GroupSettingsSelect>
 
-                <Divider sx={{ marginY: 3 }} />
-
                 <GroupSettingsSelect
                   fieldName={GroupSettingsFieldName.ReservationsLimit}
                   label={t('groups.settings.names.reservationsLimit')}
@@ -211,8 +207,6 @@ const ProposeGroupSettingsModal = ({
                       </MenuItem>
                     ))}
                 </GroupSettingsSelect>
-
-                <Divider sx={{ marginY: 3 }} />
 
                 <Flex justifyContent="space-between">
                   <Box width={SETTING_DESCRIPTION_WIDTH}>
@@ -282,8 +276,6 @@ const ProposeGroupSettingsModal = ({
                   </MenuItem>
                 </GroupSettingsSelect>
 
-                <Divider sx={{ marginY: 3 }} />
-
                 <GroupSettingsSelect
                   fieldName={GroupSettingsFieldName.Privacy}
                   label={t('groups.settings.names.privacy')}
@@ -302,8 +294,6 @@ const ProposeGroupSettingsModal = ({
             )}
 
             {loading && <ProgressBar />}
-
-            <Divider sx={{ marginTop: 3, marginBottom: 2 }} />
 
             <Flex justifyContent="flex-end" flex={1}>
               <PrimaryActionButton

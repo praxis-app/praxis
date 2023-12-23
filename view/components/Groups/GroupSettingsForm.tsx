@@ -153,8 +153,6 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               </MenuItem>
             </GroupSettingsSelect>
 
-            <Divider sx={{ marginY: 3 }} />
-
             <GroupSettingsSelect
               fieldName={GroupSettingsFieldName.StandAsidesLimit}
               label={t('groups.settings.names.standAsidesLimit')}
@@ -179,8 +177,6 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                 ))}
             </GroupSettingsSelect>
 
-            <Divider sx={{ marginY: 3 }} />
-
             <GroupSettingsSelect
               fieldName={GroupSettingsFieldName.ReservationsLimit}
               label={t('groups.settings.names.reservationsLimit')}
@@ -204,8 +200,6 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                   </MenuItem>
                 ))}
             </GroupSettingsSelect>
-
-            <Divider sx={{ marginY: 3 }} />
 
             <Flex justifyContent="space-between">
               <Box width={SETTING_DESCRIPTION_WIDTH}>
@@ -276,8 +270,6 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               </MenuItem>
             </GroupSettingsSelect>
 
-            <Divider sx={{ marginY: 3 }} />
-
             <GroupSettingsSelect
               fieldName={GroupSettingsFieldName.Privacy}
               label={t('groups.settings.names.privacy')}
@@ -311,8 +303,6 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               </Typography>
             )}
           </FormGroup>
-
-          <Divider sx={{ marginY: 3 }} />
 
           <Flex flexEnd>
             <PrimaryActionButton
