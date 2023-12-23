@@ -39,7 +39,7 @@ const GroupSettingsSelect = ({
         <Typography
           fontSize={12}
           color="text.secondary"
-          paddingBottom={isDesktop ? 0 : 2}
+          paddingBottom={isDesktop ? 0 : 0.5}
         >
           {description}
         </Typography>
@@ -61,8 +61,17 @@ const GroupSettingsSelect = ({
         name={fieldName}
         onChange={onChange}
         error={!!errors?.[fieldName]}
-        sx={{ color: 'text.secondary' }}
-        variant={isDesktop ? 'standard' : 'outlined'}
+        sx={{
+          color: 'text.secondary',
+          marginY: isDesktop ? 0 : 1.5,
+          width: isDesktop ? undefined : '100%',
+
+          '& .MuiSelect-select': {
+            paddingY: isDesktop ? undefined : 1.5,
+          },
+          borderRadius: '4px',
+        }}
+        variant={isDesktop ? 'standard' : 'filled'}
         disableUnderline
       >
         {children}
