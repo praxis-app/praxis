@@ -25,6 +25,113 @@ const cache = new InMemoryCache({
   possibleTypes: {
     FeedItem: ['Post', 'Proposal'],
   },
+
+  typePolicies: {
+    Query: {
+      fields: {
+        posts: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+        group: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+        groups: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+        memberRequests: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+        serverRoles: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+        serverInvites: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+    User: {
+      fields: {
+        homeFeed: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+        serverPermissions: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+    Post: {
+      fields: {
+        images: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+    Proposal: {
+      fields: {
+        images: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+    Group: {
+      fields: {
+        posts: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+        members: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+        memberRequests: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+        myPermissions: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+    Role: {
+      fields: {
+        availableUsersToAdd: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+        members: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+  },
 });
 
 export default cache;
