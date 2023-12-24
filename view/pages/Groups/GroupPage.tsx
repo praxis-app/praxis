@@ -78,7 +78,9 @@ const GroupPage = () => {
             </Typography>
 
             <Typography
-              dangerouslySetInnerHTML={{ __html: description }}
+              dangerouslySetInnerHTML={{
+                __html: description || t('groups.prompts.noAboutText'),
+              }}
               whiteSpace="pre-wrap"
             />
           </CardContent>
