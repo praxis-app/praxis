@@ -118,6 +118,9 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
         'groups.errors.consentVotingTimeLimitRequired',
       );
     }
+    if (decisionMakingModel === DecisionMakingModel.MajorityVote) {
+      errors.decisionMakingModel = t('prompts.inDev');
+    }
     if (adminModel === GroupAdminModel.Rotating) {
       errors.adminModel = t('prompts.inDev');
     }
@@ -147,7 +150,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               description={t('groups.settings.descriptions.adminModel')}
               value={values.adminModel}
               onChange={handleChange}
-              errorMessageProps={{ sx: { marginTop: 1.5 } }}
+              errorMessageProps={{ sx: { marginTop: 1 } }}
               errors={errors}
             >
               <MenuItem value={GroupAdminModel.Standard}>
@@ -167,14 +170,19 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               description={t(
                 'groups.settings.descriptions.decisionMakingModel',
               )}
-              value={values.decisionMakingModel}
+              errorMessageProps={{ sx: { marginTop: 1 } }}
+              errors={errors}
               onChange={handleChange}
+              value={values.decisionMakingModel}
             >
               <MenuItem value={DecisionMakingModel.Consensus}>
                 {t('groups.labels.consensus')}
               </MenuItem>
               <MenuItem value={DecisionMakingModel.Consent}>
                 {t('groups.labels.consent')}
+              </MenuItem>
+              <MenuItem value={DecisionMakingModel.MajorityVote}>
+                {t('groups.labels.majority')}
               </MenuItem>
             </GroupSettingsSelect>
 
