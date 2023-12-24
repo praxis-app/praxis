@@ -1,21 +1,15 @@
-import {
-  Card,
-  CardContent,
-  Table,
-  TableBody,
-  TableRow,
-  Typography,
-} from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useGroupAboutTabQuery } from '../../graphql/groups/queries/gen/GroupAboutTab.gen';
-import { urlifyText } from '../../utils/shared.utils';
-import ProgressBar from '../Shared/ProgressBar';
 import { GroupAdminModel, GroupPrivacy } from '../../constants/group.constants';
 import {
   DecisionMakingModel,
   VotingTimeLimit,
 } from '../../constants/proposal.constants';
-import TableCell from '../Shared/TableCell';
+import { useGroupAboutTabQuery } from '../../graphql/groups/queries/gen/GroupAboutTab.gen';
+import { urlifyText } from '../../utils/shared.utils';
+import ProgressBar from '../Shared/ProgressBar';
+import GroupSetting from './GroupSetting';
+import Flex from '../Shared/Flex';
 
 interface Props {
   groupId: number;
@@ -112,50 +106,54 @@ const GroupAboutTab = ({ groupId }: Props) => {
             {t('groups.labels.settings')}
           </Typography>
 
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell>{t('groups.settings.names.adminModel')}</TableCell>
-                <TableCell>{getAdminModel()}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  {t('groups.settings.names.decisionMakingModel')}
-                </TableCell>
-                <TableCell>{getDecisionMakingModel()}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  {t('groups.settings.names.standAsidesLimit')}
-                </TableCell>
-                <TableCell>{settings.standAsidesLimit}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  {t('groups.settings.names.reservationsLimit')}
-                </TableCell>
-                <TableCell>{settings.reservationsLimit}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  {t('groups.settings.names.ratificationThreshold')}
-                </TableCell>
-                <TableCell>{`${settings.ratificationThreshold}%`}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  {t('groups.settings.names.votingTimeLimit')}
-                </TableCell>
-                <TableCell>{getVotingTimeLimit()}</TableCell>
-              </TableRow>
-              <TableRow
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell>{t('groups.settings.names.privacy')}</TableCell>
-                <TableCell>{getPrivacy()}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <Flex flexDirection="column" gap={3}>
+            <GroupSetting
+              name={t('groups.settings.names.adminModel')}
+              description={t('groups.settings.explanations.adminModel')}
+              value={getAdminModel()}
+            />
+
+            <GroupSetting
+              name={t('groups.settings.names.decisionMakingModel')}
+              description={t(
+                'groups.settings.explanations.decisionMakingModel',
+              )}
+              value={getDecisionMakingModel()}
+            />
+
+            <GroupSetting
+              name={t('groups.settings.names.standAsidesLimit')}
+              description={t('groups.settings.explanations.standAsidesLimit')}
+              value={settings.standAsidesLimit}
+            />
+
+            <GroupSetting
+              name={t('groups.settings.names.reservationsLimit')}
+              description={t('groups.settings.explanations.reservationsLimit')}
+              value={settings.reservationsLimit}
+            />
+
+            <GroupSetting
+              name={t('groups.settings.names.ratificationThreshold')}
+              description={t(
+                'groups.settings.explanations.ratificationThreshold',
+              )}
+              value={`${settings.ratificationThreshold}%`}
+            />
+
+            <GroupSetting
+              name={t('groups.settings.names.votingTimeLimit')}
+              description={t('groups.settings.explanations.votingTimeLimit')}
+              value={getVotingTimeLimit()}
+            />
+
+            <GroupSetting
+              name={t('groups.settings.names.privacy')}
+              description={t('groups.settings.explanations.privacy')}
+              value={getPrivacy()}
+              divider={false}
+            />
+          </Flex>
         </CardContent>
       </Card>
     </>

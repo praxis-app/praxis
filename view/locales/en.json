@@ -320,6 +320,15 @@
         "reservationsLimit": "Set a limit for the acceptable number of reservations allowed for a proposal to still be able to pass.",
         "standAsidesLimit": "Set a limit for the acceptable number of stand asides allowed for a proposal to still be able to pass.",
         "votingTimeLimit": "Set a time limit for how long proposals can be voted on."
+      },
+      "explanations": {
+        "adminModel": "No Admin groups rely on proposals, while Rotating Admin groups swap out new admins regularly, and standard groups can have multiple admins.",
+        "decisionMakingModel": "The process the group uses to make decisions together, which can be consensus or consent based.",
+        "privacy": "Public groups are viewable to anyone, while private groups are only viewable to server members.",
+        "ratificationThreshold": "The minimum percentage of positive votes required for a proposal to reach consensus.",
+        "reservationsLimit": "The maximum number of reservations allowed for a proposal to still be able to pass.",
+        "standAsidesLimit": "The maximum number of stand asides allowed for a proposal to still be able to pass.",
+        "votingTimeLimit": "The minimum amount of time proposals can be voted on before they're closed or ratified."
       }
     },
     "tips": {
