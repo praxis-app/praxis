@@ -181,7 +181,11 @@ const ProposeGroupSettingsModal = ({
                       <MenuItem
                         key={value}
                         value={value}
-                        sx={{ width: 75, justifyContent: 'center' }}
+                        sx={
+                          isDesktop
+                            ? { width: 75, justifyContent: 'center' }
+                            : undefined
+                        }
                       >
                         {value}
                       </MenuItem>
@@ -203,7 +207,11 @@ const ProposeGroupSettingsModal = ({
                       <MenuItem
                         key={value}
                         value={value}
-                        sx={{ width: 75, justifyContent: 'center' }}
+                        sx={
+                          isDesktop
+                            ? { width: 75, justifyContent: 'center' }
+                            : undefined
+                        }
                       >
                         {value}
                       </MenuItem>
