@@ -1,8 +1,9 @@
 import { useReactiveVar } from '@apollo/client';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import GroupAboutTab from '../../components/Groups/GroupAboutTab';
 import GroupEventsTab from '../../components/Groups/GroupEventsTab';
 import GroupProfileCard from '../../components/Groups/GroupProfileCard';
 import Feed from '../../components/Shared/Feed';
@@ -11,9 +12,8 @@ import ToggleForms from '../../components/Shared/ToggleForms';
 import { isLoggedInVar } from '../../graphql/cache';
 import { useGroupProfileLazyQuery } from '../../graphql/groups/queries/gen/GroupProfile.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
-import { urlifyText } from '../../utils/shared.utils';
 
-const GroupPage = () => {
+const GroupProfile = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [tab, setTab] = useState(0);
 
@@ -48,7 +48,6 @@ const GroupPage = () => {
   }
 
   const { group, me } = data;
-  const description = urlifyText(group.description);
 
   return (
     <>
@@ -70,24 +69,9 @@ const GroupPage = () => {
 
       {tab === 1 && <GroupEventsTab groupId={group.id} />}
 
-      {tab === 2 && (
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              {t('groups.tabs.about')}
-            </Typography>
-
-            <Typography
-              dangerouslySetInnerHTML={{
-                __html: description || t('groups.prompts.noAboutText'),
-              }}
-              whiteSpace="pre-wrap"
-            />
-          </CardContent>
-        </Card>
-      )}
+      {tab === 2 && <GroupAboutTab groupId={group.id} />}
     </>
   );
 };
 
-export default GroupPage;
+export default GroupProfile;

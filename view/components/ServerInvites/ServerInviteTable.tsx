@@ -1,21 +1,9 @@
-import {
-  Card,
-  TableCell as MuiTableCell,
-  Table,
-  TableBody,
-  TableHead,
-  TableRow,
-  styled,
-} from '@mui/material';
+import { Card, Table, TableBody, TableHead, TableRow } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import ServerInviteRow from '../../components/ServerInvites/ServerInviteRow';
 import { ServerInviteCardFragment } from '../../graphql/invites/fragments/gen/ServerInviteCard.gen';
 import { ServerInvitesQuery } from '../../graphql/invites/queries/gen/ServerInvites.gen';
-import ServerInviteRow from '../../components/ServerInvites/ServerInviteRow';
-
-export const TableCell = styled(MuiTableCell)(({ theme }) => ({
-  color: theme.palette.text.primary,
-  borderColor: theme.palette.divider,
-}));
+import TableCell from '../Shared/TableCell';
 
 interface Props {
   serverInvites: ServerInviteCardFragment[];

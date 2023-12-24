@@ -12,8 +12,8 @@ import { timeFromNow } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
+import TableCell from '../Shared/TableCell';
 import UserAvatar from '../Users/UserAvatar';
-import { TableCell } from './ServerInviteTable';
 
 interface Props {
   me: ServerInvitesQuery['me'];

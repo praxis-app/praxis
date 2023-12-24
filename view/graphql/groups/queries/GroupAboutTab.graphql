@@ -1,0 +1,17 @@
+query GroupAboutTab($groupId: Int!) {
+  group(id: $groupId) {
+    id
+    description
+
+    settings {
+      id
+      adminModel
+      decisionMakingModel
+      ratificationThreshold
+      reservationsLimit
+      standAsidesLimit
+      votingTimeLimit
+      privacy
+    }
+  }
+}
