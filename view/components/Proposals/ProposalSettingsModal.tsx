@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { DecisionMakingModel } from '../../constants/proposal.constants';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { formatClosingTime } from '../../utils/proposal.utils';
+import GroupSetting from '../Groups/GroupSetting';
 import Flex from '../Shared/Flex';
 import Modal from '../Shared/Modal';
-import ProposalSetting from './ProposalSetting';
 
 interface Props {
   settings: ProposalCardFragment['settings'];
@@ -15,7 +15,7 @@ interface Props {
   showSettingsModal: boolean;
 }
 
-const ProposalSettingsModal = ({
+const GroupSettingsModal = ({
   settings: {
     closingAt,
     decisionMakingModel,
@@ -78,19 +78,19 @@ const ProposalSettingsModal = ({
         </>
       )}
 
-      <ProposalSetting
+      <GroupSetting
         name={t('groups.settings.names.decisionMakingModel')}
         description={t('proposals.settings.descriptions.decisionMakingModel')}
         value={getDecisionMakingModelName(decisionMakingModel)}
       />
 
-      <ProposalSetting
+      <GroupSetting
         name={t('groups.settings.names.standAsidesLimit')}
         description={t('proposals.settings.descriptions.standAsidesLimit')}
         value={standAsidesLimit}
       />
 
-      <ProposalSetting
+      <GroupSetting
         name={t('groups.settings.names.reservationsLimit')}
         description={t('proposals.settings.descriptions.reservationsLimit')}
         value={reservationsLimit}
@@ -99,7 +99,7 @@ const ProposalSettingsModal = ({
 
       {isConensus && (
         <>
-          <ProposalSetting
+          <GroupSetting
             name={t('groups.settings.names.ratificationThreshold')}
             description={t(
               'proposals.settings.descriptions.ratificationThreshold',
@@ -113,4 +113,4 @@ const ProposalSettingsModal = ({
   );
 };
 
-export default ProposalSettingsModal;
+export default GroupSettingsModal;
