@@ -3,6 +3,7 @@ import { Event as CalendarIcon } from '@mui/icons-material';
 import { Card, CardContent, CardHeader, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GroupAdminModel } from '../../constants/group.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { useGroupEventsTabQuery } from '../../graphql/groups/queries/gen/GroupEventsTab.gen';
 import { DarkMode } from '../../styles/theme';
@@ -41,11 +42,13 @@ const GroupEventsTab = ({ groupId }: Props) => {
   }
 
   const {
-    group: { futureEvents, pastEvents, myPermissions },
+    group: { futureEvents, pastEvents, myPermissions, settings },
   } = data;
 
+  const isNoAdmin = settings.adminModel === GroupAdminModel.NoAdmin;
+
   const showCreateEventButton =
-    myPermissions?.createEvents || myPermissions?.manageEvents;
+    !isNoAdmin && (myPermissions?.createEvents || myPermissions?.manageEvents);
 
   return (
     <>
