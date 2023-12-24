@@ -27,7 +27,12 @@ export type GroupProfileCardFragment = {
     updateGroup: boolean;
   };
   coverPhoto?: { __typename?: 'Image'; id: number } | null;
-  settings: { __typename?: 'GroupConfig'; isPublic: boolean };
+  settings: {
+    __typename?: 'GroupConfig';
+    id: number;
+    isPublic: boolean;
+    adminModel: string;
+  };
 };
 
 export const GroupProfileCardFragmentDoc = gql`
@@ -44,7 +49,9 @@ export const GroupProfileCardFragmentDoc = gql`
       id
     }
     settings {
+      id
       isPublic
+      adminModel
     }
   }
   ${GroupPermissionsFragmentDoc}

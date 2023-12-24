@@ -15,6 +15,7 @@ export type GroupCardFragment = {
   isJoinedByMe?: boolean;
   id: number;
   name: string;
+  settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
   myPermissions?: {
     __typename?: 'GroupPermissions';
     approveMemberRequests: boolean;
@@ -38,6 +39,10 @@ export const GroupCardFragmentDoc = gql`
     memberCount
     memberRequestCount @include(if: $isLoggedIn)
     isJoinedByMe @include(if: $isLoggedIn)
+    settings {
+      id
+      adminModel
+    }
     myPermissions @include(if: $isLoggedIn) {
       ...GroupPermissions
     }

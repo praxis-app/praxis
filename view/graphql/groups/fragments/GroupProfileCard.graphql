@@ -12,6 +12,8 @@ fragment GroupProfileCard on Group {
     id
   }
   settings {
+    id
     isPublic
+    adminModel
   }
 }

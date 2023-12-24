@@ -19,7 +19,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { GroupTab } from '../../constants/group.constants';
+import { GroupAdminModel, GroupTab } from '../../constants/group.constants';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -174,9 +174,11 @@ const GroupProfileCard = ({
     const canManageRoles = myPermissions?.manageRoles;
     const canManageSettings = myPermissions?.manageSettings;
     const canUpdateGroup = myPermissions?.updateGroup;
+    const isNoAdmin = settings.adminModel === GroupAdminModel.NoAdmin;
 
     const showMenuButton =
-      canDeleteGroup || canUpdateGroup || canManageRoles || canManageSettings;
+      !isNoAdmin &&
+      (canDeleteGroup || canUpdateGroup || canManageRoles || canManageSettings);
 
     return (
       <>

@@ -255,7 +255,12 @@ export type GroupProfileQuery = {
       updateGroup: boolean;
     };
     coverPhoto?: { __typename?: 'Image'; id: number } | null;
-    settings: { __typename?: 'GroupConfig'; isPublic: boolean };
+    settings: {
+      __typename?: 'GroupConfig';
+      id: number;
+      isPublic: boolean;
+      adminModel: string;
+    };
   };
   me?: {
     __typename?: 'User';

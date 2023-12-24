@@ -22,6 +22,7 @@ export type GroupsQuery = {
     isJoinedByMe?: boolean;
     id: number;
     name: string;
+    settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
     myPermissions?: {
       __typename?: 'GroupPermissions';
       approveMemberRequests: boolean;
