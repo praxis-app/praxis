@@ -22,15 +22,15 @@ import dayjs from 'dayjs';
 import humanizeDuration from 'humanize-duration';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
-import { EventPageCardFragment } from '../../graphql/events/fragments/gen/EventPageCard.gen';
-import { useDeleteEventMutation } from '../../graphql/events/mutations/gen/DeleteEvent.gen';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
   TAB_QUERY_PARAM,
 } from '../../constants/shared.constants';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { EventPageCardFragment } from '../../graphql/events/fragments/gen/EventPageCard.gen';
+import { useDeleteEventMutation } from '../../graphql/events/mutations/gen/DeleteEvent.gen';
 import { useAboveBreakpoint } from '../../hooks/shared.hooks';
 import { getEventPath } from '../../utils/event.utils';
 import { getGroupEventsTabPath } from '../../utils/group.utils';
@@ -78,19 +78,21 @@ const EventPageCard = ({
   const [deleteEvent] = useDeleteEventMutation();
 
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
   const isAboveMedium = useAboveBreakpoint('md');
   const isAboveSmall = useAboveBreakpoint('sm');
   const navigate = useNavigate();
-  const params = useParams();
+
+  const tabParam = searchParams.get('tab');
 
   useEffect(() => {
-    if (!params.tab) {
+    if (!tabParam) {
       return;
     }
-    if (params.tab === EventPageTabs.Discussion) {
+    if (tabParam === EventPageTabs.Discussion) {
       setTab(1);
     }
-  }, [params.tab, setTab]);
+  }, [tabParam, setTab]);
 
   const {
     id,

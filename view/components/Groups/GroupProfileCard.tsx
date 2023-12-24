@@ -18,7 +18,8 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { GroupTab } from '../../constants/group.constants';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -28,6 +29,7 @@ import { isLoggedInVar } from '../../graphql/cache';
 import { GroupProfileCardFragment } from '../../graphql/groups/fragments/gen/GroupProfileCard.gen';
 import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import { useAboveBreakpoint } from '../../hooks/shared.hooks';
+import { removeGroup } from '../../utils/cache.utils';
 import {
   getEditGroupPath,
   getGroupMembersPath,
@@ -39,8 +41,6 @@ import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import JoinButton from './JoinButton';
-import { GroupTab } from '../../constants/group.constants';
-import { removeGroup } from '../../utils/cache.utils';
 
 const NameText = styled(Typography)(() => ({
   fontFamily: 'Inter Bold',
@@ -76,23 +76,25 @@ const GroupProfileCard = ({
   const [deleteGroup] = useDeleteGroupMutation();
 
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
   const isAboveMedium = useAboveBreakpoint('md');
   const isAboveSmall = useAboveBreakpoint('sm');
   const navigate = useNavigate();
-  const params = useParams();
+
+  const tabParam = searchParams.get('tab');
 
   useEffect(() => {
-    if (!params.tab) {
+    if (!tabParam) {
       return;
     }
-    if (params.tab === GroupTab.Events) {
+    if (tabParam === GroupTab.Events) {
       setTab(1);
       return;
     }
-    if (params.tab === GroupTab.About) {
+    if (tabParam === GroupTab.About) {
       setTab(2);
     }
-  }, [params.tab, setTab]);
+  }, [tabParam, setTab]);
 
   const {
     id,
