@@ -56,6 +56,7 @@ import { AddGroupConfigColumns1701548819916 } from './migrations/1701548819916-A
 import { AddSecurityTxtColumn1702684900226 } from './migrations/1702684900226-AddSecurityTxtColumn';
 import { AddProposalConfigTable1702843109428 } from './migrations/1702843109428-AddProposalConfigTable';
 import { UpdateVotingTimeLimitDefault1703118466924 } from './migrations/1703118466924-UpdateVotingTimeLimitDefault';
+import { AddAdminModelColumns1703454648429 } from './migrations/1703454648429-AddAdminModelColumns';
 
 dotenv.config();
 
@@ -96,6 +97,7 @@ export default new DataSource({
     Vote,
   ],
   migrations: [
+    AddAdminModelColumns1703454648429,
     AddCanaryTable1699136722535,
     AddCommentTable1693003196421,
     AddEventTables1690147636077,
