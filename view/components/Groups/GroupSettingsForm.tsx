@@ -57,7 +57,13 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   const handleSubmit = async (
     values: FormValues,
     { setSubmitting, resetForm }: FormikHelpers<FormValues>,
-  ) =>
+  ) => {
+    if (values.adminModel === GroupAdminModel.NoAdmin) {
+      const answer = window.confirm(t('groups.prompts.confirmNoAdmin'));
+      if (!answer) {
+        return;
+      }
+    }
     await updateSettings({
       variables: {
         groupConfigData: { groupId: id, ...values },
@@ -73,6 +79,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
         });
       },
     });
+  };
 
   const handleSliderInputBlur = (
     setFieldValue: (field: string, value: number) => void,
