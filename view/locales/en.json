@@ -134,14 +134,6 @@
       "missingGroupId": "Only group proposals are supported at this time",
       "missingGroupName": "Proposals to change group name must include a name field",
       "missingRole": "Proposals to change or add group roles must include a role"
-    },
-    "settings": {
-      "descriptions": {
-        "decisionMakingModel": "The process the group uses to make decisions together, which can be consensus or consent based.",
-        "standAsidesLimit": "The maximum number of stand asides allowed for a proposal to still be able to pass.",
-        "reservationsLimit": "The maximum number of reservations allowed for a proposal to still be able to pass.",
-        "ratificationThreshold": "The minimum percentage of positive votes required for a proposal to reach consensus."
-      }
     }
   },
 

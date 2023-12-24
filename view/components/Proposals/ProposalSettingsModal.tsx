@@ -80,19 +80,19 @@ const GroupSettingsModal = ({
 
       <GroupSetting
         name={t('groups.settings.names.decisionMakingModel')}
-        description={t('proposals.settings.descriptions.decisionMakingModel')}
+        description={t('groups.settings.explanations.decisionMakingModel')}
         value={getDecisionMakingModelName(decisionMakingModel)}
       />
 
       <GroupSetting
         name={t('groups.settings.names.standAsidesLimit')}
-        description={t('proposals.settings.descriptions.standAsidesLimit')}
+        description={t('groups.settings.explanations.standAsidesLimit')}
         value={standAsidesLimit}
       />
 
       <GroupSetting
         name={t('groups.settings.names.reservationsLimit')}
-        description={t('proposals.settings.descriptions.reservationsLimit')}
+        description={t('groups.settings.explanations.reservationsLimit')}
         value={reservationsLimit}
         divider={isConensus}
       />
@@ -102,7 +102,7 @@ const GroupSettingsModal = ({
           <GroupSetting
             name={t('groups.settings.names.ratificationThreshold')}
             description={t(
-              'proposals.settings.descriptions.ratificationThreshold',
+              'groups.settings.explanations.ratificationThreshold',
             )}
             value={`${ratificationThreshold}%`}
             divider={false}
