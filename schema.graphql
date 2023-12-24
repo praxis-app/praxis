@@ -733,6 +733,7 @@ input GroupRolePermissionInput {
 
 input ProposalActionGroupConfigInput {
   privacy: String
+  adminModel: String
   decisionMakingModel: String
   standAsidesLimit: Int
   reservationsLimit: Int

@@ -1,6 +1,7 @@
 fragment ProposalActionGroupSettings on ProposalActionGroupConfig {
   id
 
+  adminModel
   decisionMakingModel
   ratificationThreshold
   reservationsLimit
@@ -8,6 +9,7 @@ fragment ProposalActionGroupSettings on ProposalActionGroupConfig {
   votingTimeLimit
   privacy
 
+  oldAdminModel
   oldDecisionMakingModel
   oldRatificationThreshold
   oldReservationsLimit
@@ -23,6 +25,7 @@ fragment ProposalActionGroupSettings on ProposalActionGroupConfig {
         id
         settings {
           id
+          adminModel
           decisionMakingModel
           ratificationThreshold
           reservationsLimit

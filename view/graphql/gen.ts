@@ -754,6 +754,7 @@ export type ProposalActionGroupConfig = {
 };
 
 export type ProposalActionGroupConfigInput = {
+  adminModel?: InputMaybe<Scalars['String']['input']>;
   decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
   privacy?: InputMaybe<Scalars['String']['input']>;
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;

@@ -3,6 +3,7 @@ query GroupSettingsByGroupId($groupId: Int!) {
     id
     settings {
       id
+      adminModel
       decisionMakingModel
       ratificationThreshold
       reservationsLimit

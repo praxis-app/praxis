@@ -6,6 +6,9 @@ export class ProposalActionGroupConfigInput {
   privacy?: string;
 
   @Field({ nullable: true })
+  adminModel?: string;
+
+  @Field({ nullable: true })
   decisionMakingModel?: string;
 
   @Field(() => Int, { nullable: true })

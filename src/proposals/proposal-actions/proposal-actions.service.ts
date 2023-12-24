@@ -182,12 +182,13 @@ export class ProposalActionsService {
     }
 
     const {
-      privacy,
+      adminModel,
+      decisionMakingModel,
       ratificationThreshold,
       reservationsLimit,
       standAsidesLimit,
       votingTimeLimit,
-      decisionMakingModel,
+      privacy,
     } = proposedGroupConfig;
 
     const groupConfig = await this.groupConfigsService.getGroupConfig({
@@ -199,6 +200,8 @@ export class ProposalActionsService {
       proposedGroupConfig.id,
       {
         oldPrivacy: privacy ? groupConfig.privacy : undefined,
+
+        oldAdminModel: adminModel ? groupConfig.adminModel : undefined,
 
         oldDecisionMakingModel: decisionMakingModel
           ? groupConfig.decisionMakingModel
@@ -227,6 +230,7 @@ export class ProposalActionsService {
 
     // Implement proposal - update group config
     await this.groupConfigsService.updateGroupConfig({
+      adminModel: adminModel ?? undefined,
       decisionMakingModel: decisionMakingModel ?? undefined,
       ratificationThreshold: ratificationThreshold ?? undefined,
       reservationsLimit: reservationsLimit ?? undefined,

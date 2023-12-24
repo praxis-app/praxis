@@ -8,12 +8,14 @@ import { gql } from '@apollo/client';
 export type ProposalActionGroupSettingsFragment = {
   __typename?: 'ProposalActionGroupConfig';
   id: number;
+  adminModel?: string | null;
   decisionMakingModel?: string | null;
   ratificationThreshold?: number | null;
   reservationsLimit?: number | null;
   standAsidesLimit?: number | null;
   votingTimeLimit?: number | null;
   privacy?: string | null;
+  oldAdminModel?: string | null;
   oldDecisionMakingModel?: string | null;
   oldRatificationThreshold?: number | null;
   oldReservationsLimit?: number | null;
@@ -32,6 +34,7 @@ export type ProposalActionGroupSettingsFragment = {
         settings: {
           __typename?: 'GroupConfig';
           id: number;
+          adminModel: string;
           decisionMakingModel: string;
           ratificationThreshold: number;
           reservationsLimit: number;
@@ -47,12 +50,14 @@ export type ProposalActionGroupSettingsFragment = {
 export const ProposalActionGroupSettingsFragmentDoc = gql`
   fragment ProposalActionGroupSettings on ProposalActionGroupConfig {
     id
+    adminModel
     decisionMakingModel
     ratificationThreshold
     reservationsLimit
     standAsidesLimit
     votingTimeLimit
     privacy
+    oldAdminModel
     oldDecisionMakingModel
     oldRatificationThreshold
     oldReservationsLimit
@@ -67,6 +72,7 @@ export const ProposalActionGroupSettingsFragmentDoc = gql`
           id
           settings {
             id
+            adminModel
             decisionMakingModel
             ratificationThreshold
             reservationsLimit
