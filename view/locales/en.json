@@ -293,7 +293,7 @@
       "confirmLeave": "Are you sure you want to leave the group?",
       "publicGroup": "Public Group: Anyone can view the group page and any content posted by group members.",
       "settingDisabledForConsent": "This setting is disabled for consent decision making.",
-      "confirmNoAdmin": "Are you sure you want to set this group to No Admin? All major changes to the group will have to be made via proposals.",
+      "confirmNoAdmin": "Are you sure you want to set this group to No Admin? All major changes to the group will have to be made via proposals. This includes changes to the group name, cover photo, settings, roles, events, and more.",
       "noAboutText": "No about text"
     },
     "tabs": {
