@@ -33,6 +33,7 @@ export type EditGroupQuery = {
       removeMembers: boolean;
       updateGroup: boolean;
     };
+    settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
   };
 };
 
@@ -42,6 +43,10 @@ export const EditGroupDocument = gql`
       ...GroupForm
       myPermissions {
         ...GroupPermissions
+      }
+      settings {
+        id
+        adminModel
       }
     }
   }

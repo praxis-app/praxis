@@ -54,6 +54,10 @@ export const GroupSettingsDocument = gql`
       myPermissions {
         ...GroupPermissions
       }
+      settings {
+        id
+        adminModel
+      }
     }
   }
   ${GroupSettingsFormFragmentDoc}

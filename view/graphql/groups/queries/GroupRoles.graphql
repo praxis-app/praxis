@@ -7,5 +7,9 @@ query GroupRoles($name: String!) {
     roles {
       ...GroupRole
     }
+    settings {
+      id
+      adminModel
+    }
   }
 }

@@ -38,6 +38,7 @@ export type EditGroupRoleQuery = {
         removeMembers: boolean;
         updateGroup: boolean;
       };
+      settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
     };
     permissions: {
       __typename?: 'GroupRolePermission';
@@ -76,6 +77,10 @@ export const EditGroupRoleDocument = gql`
         id
         myPermissions {
           ...GroupPermissions
+        }
+        settings {
+          id
+          adminModel
         }
       }
     }
