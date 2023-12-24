@@ -314,7 +314,7 @@
       },
       "descriptions": {
         "adminModel": "Choose from no-admin, rotating admin, or standard to determine how the group is managed.",
-        "decisionMakingModel": "Choose from consensus or consent decision-making to enable a decision-making process that suits your group's needs.",
+        "decisionMakingModel": "Choose from consensus or consent decision-making to determine how decisions are made in the group.",
         "privacy": "Choose whether or not the group and it's content are viewable to the public.",
         "ratificationThreshold": "Set the minimum percentage of positive votes required for a proposal to reach consensus.",
         "reservationsLimit": "Set a limit for the acceptable number of reservations allowed for a proposal to still be able to pass.",
