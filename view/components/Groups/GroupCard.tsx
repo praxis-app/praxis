@@ -13,11 +13,12 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { GroupAdminModel } from '../../constants/group.constants';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
 } from '../../constants/shared.constants';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { GroupCardFragment } from '../../graphql/groups/fragments/gen/GroupCard.gen';
 import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import { removeGroup } from '../../utils/cache.utils';
@@ -64,6 +65,7 @@ const GroupCard = ({ group, currentUserId, ...cardProps }: Props) => {
     memberCount,
     memberRequestCount,
     myPermissions,
+    settings,
   } = group;
 
   const canApproveMemberRequests = myPermissions?.approveMemberRequests;
@@ -78,6 +80,12 @@ const GroupCard = ({ group, currentUserId, ...cardProps }: Props) => {
     await deleteGroup({
       variables: { id },
       update: removeGroup(id),
+      onError() {
+        toastVar({
+          status: 'error',
+          title: t('groups.errors.couldNotDelete'),
+        });
+      },
     });
 
   const handleRolesButtonClick = () => {
@@ -91,6 +99,11 @@ const GroupCard = ({ group, currentUserId, ...cardProps }: Props) => {
   };
 
   const renderItemMenu = () => {
+    const isNoAdmin = settings.adminModel === GroupAdminModel.NoAdmin;
+    if (isNoAdmin) {
+      return null;
+    }
+
     const canDeleteGroup = myPermissions?.deleteGroup;
     const canUpdateGroup = myPermissions?.updateGroup;
     const canManageRoles = myPermissions?.manageRoles;

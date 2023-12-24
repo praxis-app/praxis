@@ -66,6 +66,7 @@ export type GroupEventsTabQuery = {
       manageEvents: boolean;
       createEvents: boolean;
     };
+    settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
   };
 };
 
@@ -81,6 +82,10 @@ export const GroupEventsTabDocument = gql`
       myPermissions @include(if: $isLoggedIn) {
         manageEvents
         createEvents
+      }
+      settings {
+        id
+        adminModel
       }
     }
   }

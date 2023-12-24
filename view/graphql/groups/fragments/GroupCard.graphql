@@ -5,6 +5,11 @@ fragment GroupCard on Group {
   memberRequestCount @include(if: $isLoggedIn)
   isJoinedByMe @include(if: $isLoggedIn)
 
+  settings {
+    id
+    adminModel
+  }
+
   myPermissions @include(if: $isLoggedIn) {
     ...GroupPermissions
   }

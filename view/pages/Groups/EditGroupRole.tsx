@@ -3,14 +3,15 @@ import { truncate } from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useEditGroupRoleLazyQuery } from '../../graphql/groups/queries/gen/EditGroupRole.gen';
 import EditRoleTabs from '../../components/Roles/EditRoleTabs';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { GroupAdminModel } from '../../constants/group.constants';
 import {
   NavigationPaths,
   TruncationSizes,
 } from '../../constants/shared.constants';
+import { useEditGroupRoleLazyQuery } from '../../graphql/groups/queries/gen/EditGroupRole.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../utils/error.utils';
 import { getGroupPath } from '../../utils/group.utils';
@@ -33,7 +34,10 @@ const EditGroupRole = () => {
   const groupRolesPath = `${groupPath}${NavigationPaths.Roles}`;
   const canManageRoles = role?.group?.myPermissions?.manageRoles;
 
-  if (isDeniedAccess(error) || (role && !canManageRoles)) {
+  const isNoAdmin =
+    role?.group?.settings.adminModel === GroupAdminModel.NoAdmin;
+
+  if (isDeniedAccess(error) || (role && !canManageRoles) || isNoAdmin) {
     return <Typography>{t('prompts.permissionDenied')}</Typography>;
   }
 

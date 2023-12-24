@@ -19,13 +19,13 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { GroupTab } from '../../constants/group.constants';
+import { GroupAdminModel, GroupTab } from '../../constants/group.constants';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
   TAB_QUERY_PARAM,
 } from '../../constants/shared.constants';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { GroupProfileCardFragment } from '../../graphql/groups/fragments/gen/GroupProfileCard.gen';
 import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import { useAboveBreakpoint } from '../../hooks/shared.hooks';
@@ -146,6 +146,13 @@ const GroupProfileCard = ({
     await deleteGroup({
       variables: { id },
       update: removeGroup(id),
+
+      onError() {
+        toastVar({
+          status: 'error',
+          title: t('groups.errors.couldNotDelete'),
+        });
+      },
     });
   };
 
@@ -167,9 +174,11 @@ const GroupProfileCard = ({
     const canManageRoles = myPermissions?.manageRoles;
     const canManageSettings = myPermissions?.manageSettings;
     const canUpdateGroup = myPermissions?.updateGroup;
+    const isNoAdmin = settings.adminModel === GroupAdminModel.NoAdmin;
 
     const showMenuButton =
-      canDeleteGroup || canUpdateGroup || canManageRoles || canManageSettings;
+      !isNoAdmin &&
+      (canDeleteGroup || canUpdateGroup || canManageRoles || canManageSettings);
 
     return (
       <>

@@ -3,21 +3,24 @@ import { truncate } from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useEditGroupLazyQuery } from '../../graphql/groups/queries/gen/EditGroup.gen';
 import GroupForm from '../../components/Groups/GroupForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { GroupAdminModel } from '../../constants/group.constants';
 import { TruncationSizes } from '../../constants/shared.constants';
+import { useEditGroupLazyQuery } from '../../graphql/groups/queries/gen/EditGroup.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { getGroupPath } from '../../utils/group.utils';
 
 const EditGroup = () => {
   const [getGroup, { data, loading, error }] = useEditGroupLazyQuery();
-  const group = data?.group;
 
   const { name } = useParams();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+
+  const group = data?.group;
+  const isNoAdmin = group?.settings.adminModel === GroupAdminModel.NoAdmin;
 
   useEffect(() => {
     if (name) {
@@ -37,7 +40,7 @@ const EditGroup = () => {
     return null;
   }
 
-  if (!group.myPermissions?.updateGroup) {
+  if (!group.myPermissions?.updateGroup || isNoAdmin) {
     return <Typography>{t('prompts.permissionDenied')}</Typography>;
   }
 

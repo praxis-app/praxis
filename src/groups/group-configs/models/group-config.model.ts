@@ -11,6 +11,7 @@ import {
 import { DecisionMakingModel } from '../../../proposals/proposals.constants';
 import { Group } from '../../models/group.model';
 import { GroupPrivacy, VotingTimeLimit } from '../group-configs.constants';
+import { GroupAdminModel } from '../../groups.constants';
 
 @Entity()
 @ObjectType()
@@ -18,6 +19,10 @@ export class GroupConfig {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number;
+
+  @Column({ default: GroupAdminModel.Standard })
+  @Field()
+  adminModel: string;
 
   @Column({ default: DecisionMakingModel.Consensus })
   @Field()

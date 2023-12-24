@@ -19,6 +19,7 @@ export type GroupSettingsByGroupIdQuery = {
     settings: {
       __typename?: 'GroupConfig';
       id: number;
+      adminModel: string;
       decisionMakingModel: string;
       ratificationThreshold: number;
       reservationsLimit: number;
@@ -35,6 +36,7 @@ export const GroupSettingsByGroupIdDocument = gql`
       id
       settings {
         id
+        adminModel
         decisionMakingModel
         ratificationThreshold
         reservationsLimit

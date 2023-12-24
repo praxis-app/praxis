@@ -30,6 +30,7 @@ export type UpdateGroupSettingsMutation = {
       settings: {
         __typename?: 'GroupConfig';
         id: number;
+        adminModel: string;
         decisionMakingModel: string;
         ratificationThreshold: number;
         reservationsLimit: number;

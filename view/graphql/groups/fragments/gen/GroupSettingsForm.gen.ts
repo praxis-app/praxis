@@ -11,6 +11,7 @@ export type GroupSettingsFormFragment = {
   settings: {
     __typename?: 'GroupConfig';
     id: number;
+    adminModel: string;
     decisionMakingModel: string;
     ratificationThreshold: number;
     reservationsLimit: number;
@@ -26,6 +27,7 @@ export const GroupSettingsFormFragmentDoc = gql`
     id
     settings {
       id
+      adminModel
       decisionMakingModel
       ratificationThreshold
       reservationsLimit

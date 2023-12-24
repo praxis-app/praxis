@@ -3,6 +3,7 @@ import { Form, Formik, FormikErrors } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  GroupAdminModel,
   GroupPrivacy,
   GroupSettingsFieldName,
 } from '../../../constants/group.constants';
@@ -58,6 +59,7 @@ const ProposeGroupSettingsModal = ({
 
   const groupSettings = data?.group.settings;
   const initialValues: ProposalActionGroupConfigInput = {
+    adminModel: groupSettings?.adminModel,
     decisionMakingModel: groupSettings?.decisionMakingModel,
     ratificationThreshold: groupSettings?.ratificationThreshold,
     reservationsLimit: groupSettings?.reservationsLimit,
@@ -150,6 +152,23 @@ const ProposeGroupSettingsModal = ({
             {data && (
               <FormGroup sx={{ paddingTop: 1 }}>
                 <GroupSettingsSelect
+                  fieldName={GroupSettingsFieldName.AdminModel}
+                  label={t('groups.settings.names.adminModel')}
+                  description={t('groups.settings.descriptions.adminModel')}
+                  value={values.adminModel || ''}
+                  onChange={handleChange}
+                  errorMessageProps={{ sx: { marginTop: 1 } }}
+                  errors={errors}
+                >
+                  <MenuItem value={GroupAdminModel.Standard}>
+                    {t('groups.labels.standard')}
+                  </MenuItem>
+                  <MenuItem value={GroupAdminModel.NoAdmin}>
+                    {t('groups.labels.noAdmin')}
+                  </MenuItem>
+                </GroupSettingsSelect>
+
+                <GroupSettingsSelect
                   fieldName={GroupSettingsFieldName.DecisionMakingModel}
                   label={t('groups.settings.names.decisionMakingModel')}
                   description={t(
@@ -181,7 +200,11 @@ const ProposeGroupSettingsModal = ({
                       <MenuItem
                         key={value}
                         value={value}
-                        sx={{ width: 75, justifyContent: 'center' }}
+                        sx={
+                          isDesktop
+                            ? { width: 75, justifyContent: 'center' }
+                            : undefined
+                        }
                       >
                         {value}
                       </MenuItem>
@@ -203,7 +226,11 @@ const ProposeGroupSettingsModal = ({
                       <MenuItem
                         key={value}
                         value={value}
-                        sx={{ width: 75, justifyContent: 'center' }}
+                        sx={
+                          isDesktop
+                            ? { width: 75, justifyContent: 'center' }
+                            : undefined
+                        }
                       >
                         {value}
                       </MenuItem>

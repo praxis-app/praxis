@@ -85,12 +85,14 @@ type ProposalActionEvent {
 type ProposalActionGroupConfig {
   id: Int!
   privacy: String
+  adminModel: String
   decisionMakingModel: String
   standAsidesLimit: Int
   reservationsLimit: Int
   ratificationThreshold: Int
   votingTimeLimit: Int
   oldPrivacy: String
+  oldAdminModel: String
   oldDecisionMakingModel: String
   oldStandAsidesLimit: Int
   oldReservationsLimit: Int
@@ -207,6 +209,7 @@ type Proposal {
 
 type GroupConfig {
   id: Int!
+  adminModel: String!
   decisionMakingModel: String!
   standAsidesLimit: Int!
   reservationsLimit: Int!
@@ -730,6 +733,7 @@ input GroupRolePermissionInput {
 
 input ProposalActionGroupConfigInput {
   privacy: String
+  adminModel: String
   decisionMakingModel: String
   standAsidesLimit: Int
   reservationsLimit: Int
@@ -795,6 +799,7 @@ input UpdateGroupInput {
 
 input UpdateGroupConfigInput {
   groupId: Int!
+  adminModel: String
   decisionMakingModel: String
   standAsidesLimit: Int
   reservationsLimit: Int

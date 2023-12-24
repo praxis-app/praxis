@@ -39,6 +39,7 @@ export type GroupRolesQuery = {
       memberCount: number;
       group: { __typename?: 'Group'; id: number; name: string };
     }>;
+    settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
   };
 };
 
@@ -51,6 +52,10 @@ export const GroupRolesDocument = gql`
       }
       roles {
         ...GroupRole
+      }
+      settings {
+        id
+        adminModel
       }
     }
   }

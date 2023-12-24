@@ -10,16 +10,11 @@ interface Props {
   divider?: boolean;
 }
 
-const ProposalSetting = ({
-  name,
-  description,
-  value,
-  divider = true,
-}: Props) => (
+const GroupSetting = ({ name, description, value, divider = true }: Props) => (
   <>
     <Flex gap="40px">
       <Box width={SETTING_DESCRIPTION_WIDTH}>
-        <Typography>{name}</Typography>
+        <Typography paddingBottom={0.25}>{name}</Typography>
 
         <Typography fontSize={12} color="text.secondary">
           {description}
@@ -43,4 +38,4 @@ const ProposalSetting = ({
   </>
 );
 
-export default ProposalSetting;
+export default GroupSetting;

@@ -2,7 +2,10 @@ import { Box, Grid, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { GroupPrivacy } from '../../../constants/group.constants';
+import {
+  GroupAdminModel,
+  GroupPrivacy,
+} from '../../../constants/group.constants';
 import {
   DecisionMakingModel,
   VotingTimeLimit,
@@ -82,12 +85,20 @@ const ProposalActionGroupSettings = ({
       ? groupSettings.oldDecisionMakingModel
       : groupSettingsToChange?.decisionMakingModel;
 
+  const oldAdminModel =
+    ratified && 'oldAdminModel' in groupSettings
+      ? groupSettings.oldAdminModel
+      : groupSettingsToChange?.adminModel;
+
   const isChangingPrivacy =
     groupSettings.privacy && groupSettings.privacy !== oldPrivacy;
 
   const isChangingDecisionMakingModel =
     groupSettings.decisionMakingModel &&
     groupSettings.decisionMakingModel !== oldDecisionMakingModel;
+
+  const isChangingAdminModel =
+    groupSettings.adminModel && groupSettings.adminModel !== oldAdminModel;
 
   const isChangingNumberValue = (
     proposedValue: number | null | undefined,
@@ -134,6 +145,16 @@ const ProposalActionGroupSettings = ({
     return t('groups.labels.consensus');
   };
 
+  const getAdminModel = (adminModel?: string | null) => {
+    if (adminModel === GroupAdminModel.NoAdmin) {
+      return t('groups.labels.noAdmin');
+    }
+    if (adminModel === GroupAdminModel.Rotating) {
+      return t('groups.labels.rotatingAdmin');
+    }
+    return t('groups.labels.standard');
+  };
+
   const getVotingTimeLimitLabel = (votingTimeLimit?: number | null) => {
     if (votingTimeLimit === VotingTimeLimit.HalfHour) {
       return t('time.minutesFull', { count: 30 });
@@ -175,6 +196,9 @@ const ProposalActionGroupSettings = ({
       settingsChanged += 1;
     }
     if (isChangingDecisionMakingModel) {
+      settingsChanged += 1;
+    }
+    if (isChangingAdminModel) {
       settingsChanged += 1;
     }
 
@@ -220,6 +244,14 @@ const ProposalActionGroupSettings = ({
             rowSpacing={1}
             container
           >
+            {isChangingAdminModel && (
+              <ChangeDelta
+                label={t('groups.settings.names.adminModel')}
+                proposedValue={getAdminModel(groupSettings.adminModel)}
+                oldValue={getAdminModel(oldAdminModel)}
+              />
+            )}
+
             {isChangingDecisionMakingModel && (
               <ChangeDelta
                 label={t('groups.settings.names.decisionMakingModel')}

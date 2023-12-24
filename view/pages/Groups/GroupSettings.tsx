@@ -3,11 +3,12 @@ import { truncate } from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useGroupSettingsLazyQuery } from '../../graphql/groups/queries/gen/GroupSettings.gen';
 import GroupSettingsForm from '../../components/Groups/GroupSettingsForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { GroupAdminModel } from '../../constants/group.constants';
 import { TruncationSizes } from '../../constants/shared.constants';
+import { useGroupSettingsLazyQuery } from '../../graphql/groups/queries/gen/GroupSettings.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../utils/error.utils';
 import { getGroupPath } from '../../utils/group.utils';
@@ -21,6 +22,7 @@ const GroupSettings = () => {
 
   const group = data?.group;
   const canManageSettings = group?.myPermissions?.manageSettings;
+  const isNoAdmin = group?.settings.adminModel === GroupAdminModel.NoAdmin;
 
   useEffect(() => {
     if (name) {
@@ -28,7 +30,7 @@ const GroupSettings = () => {
     }
   }, [name, getGroup]);
 
-  if (isDeniedAccess(error) || (group && !canManageSettings)) {
+  if (isDeniedAccess(error) || (group && !canManageSettings) || isNoAdmin) {
     return <Typography>{t('prompts.permissionDenied')}</Typography>;
   }
   if (error) {

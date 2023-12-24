@@ -289,6 +289,7 @@ export type Group = {
 
 export type GroupConfig = {
   __typename?: 'GroupConfig';
+  adminModel: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   decisionMakingModel: Scalars['String']['output'];
   group: Group;
@@ -734,8 +735,10 @@ export type ProposalActionEventInput = {
 
 export type ProposalActionGroupConfig = {
   __typename?: 'ProposalActionGroupConfig';
+  adminModel?: Maybe<Scalars['String']['output']>;
   decisionMakingModel?: Maybe<Scalars['String']['output']>;
   id: Scalars['Int']['output'];
+  oldAdminModel?: Maybe<Scalars['String']['output']>;
   oldDecisionMakingModel?: Maybe<Scalars['String']['output']>;
   oldPrivacy?: Maybe<Scalars['String']['output']>;
   oldRatificationThreshold?: Maybe<Scalars['Int']['output']>;
@@ -751,6 +754,7 @@ export type ProposalActionGroupConfig = {
 };
 
 export type ProposalActionGroupConfigInput = {
+  adminModel?: InputMaybe<Scalars['String']['input']>;
   decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
   privacy?: InputMaybe<Scalars['String']['input']>;
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
@@ -1038,6 +1042,7 @@ export type UpdateEventPayload = {
 };
 
 export type UpdateGroupConfigInput = {
+  adminModel?: InputMaybe<Scalars['String']['input']>;
   decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
   groupId: Scalars['Int']['input'];
   privacy?: InputMaybe<Scalars['String']['input']>;

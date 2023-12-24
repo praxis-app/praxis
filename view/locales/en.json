@@ -134,14 +134,6 @@
       "missingGroupId": "Only group proposals are supported at this time",
       "missingGroupName": "Proposals to change group name must include a name field",
       "missingRole": "Proposals to change or add group roles must include a role"
-    },
-    "settings": {
-      "descriptions": {
-        "decisionMakingModel": "The process the group uses to make decisions together, which can be consensus or consent based.",
-        "standAsidesLimit": "The maximum number of stand asides allowed for a proposal to still be able to pass.",
-        "reservationsLimit": "The maximum number of reservations allowed for a proposal to still be able to pass.",
-        "ratificationThreshold": "The minimum percentage of positive votes required for a proposal to reach consensus."
-      }
     }
   },
 
@@ -261,6 +253,7 @@
       "consentVotingTimeLimitRequired": "Voting time limit is required for consent decision making.",
       "couldNotCreate": "Group could not be created",
       "couldNotUpdate": "Group could not be updated",
+      "couldNotDelete": "Group could not be deleted",
       "couldNotUpdateSettings": "Could not update group settings"
     },
     "labels": {
@@ -277,18 +270,23 @@
       "memberRequests_other": "{{count}} Member Requests",
       "members_one": "{{count}} Member",
       "members_other": "{{count}} Members",
+      "noAdmin": "No Admin",
       "private": "Private",
       "public": "Public",
       "requests_one": "{{count}} Request",
       "requests_other": "{{count}} Requests",
+      "rotatingAdmin": "Rotating Admin",
       "settings": "Settings",
+      "standard": "Standard",
       "unlimited": "Unlimited",
       "xToPass": "X to Pass"
     },
     "prompts": {
       "confirmLeave": "Are you sure you want to leave the group?",
       "publicGroup": "Public Group: Anyone can view the group page and any content posted by group members.",
-      "settingDisabledForConsent": "This setting is disabled for consent decision making."
+      "settingDisabledForConsent": "This setting is disabled for consent decision making.",
+      "confirmNoAdmin": "Are you sure you want to set this group to No Admin? All major changes to the group will have to be made via proposals. This includes changes to the group name, cover photo, settings, roles, events, and more.",
+      "noAboutText": "No about text"
     },
     "tabs": {
       "about": "About",
@@ -298,20 +296,31 @@
     },
     "settings": {
       "names": {
+        "adminModel": "Admin Model",
         "decisionMakingModel": "Decision Making Model",
+        "privacy": "Privacy",
         "ratificationThreshold": "Ratification Threshold",
         "reservationsLimit": "Reservations Limit",
         "standAsidesLimit": "Stand Asides Limit",
-        "votingTimeLimit": "Voting Time Limit",
-        "privacy": "Privacy"
+        "votingTimeLimit": "Voting Time Limit"
       },
       "descriptions": {
+        "adminModel": "Choose from no-admin, rotating admin, or standard to determine how the group is managed.",
+        "decisionMakingModel": "Choose from consensus or consent decision-making to determine how decisions are made in the group.",
         "privacy": "Choose whether or not the group and it's content are viewable to the public.",
         "ratificationThreshold": "Set the minimum percentage of positive votes required for a proposal to reach consensus.",
         "reservationsLimit": "Set a limit for the acceptable number of reservations allowed for a proposal to still be able to pass.",
         "standAsidesLimit": "Set a limit for the acceptable number of stand asides allowed for a proposal to still be able to pass.",
-        "decisionMakingModel": "Choose from consensus or consent decision-making to enable a decision-making process that suits your group's needs.",
-        "votingTimeLimit": "Set a time limit for how long proposals can be voted on."
+        "votingTimeLimit": "Set a time limit for how long proposals can be voted on before they're closed or ratified."
+      },
+      "explanations": {
+        "adminModel": "No Admin groups rely on proposals, while Rotating Admin groups swap out new admins regularly, and standard groups can have multiple admins.",
+        "decisionMakingModel": "The process the group uses to make decisions together, which can be consensus or consent based.",
+        "privacy": "Public groups are viewable to anyone, while private groups are only viewable to server members.",
+        "ratificationThreshold": "The minimum percentage of positive votes required for a proposal to reach consensus.",
+        "reservationsLimit": "The maximum number of reservations allowed for a proposal to still be able to pass.",
+        "standAsidesLimit": "The maximum number of stand asides allowed for a proposal to still be able to pass.",
+        "votingTimeLimit": "The minimum amount of time proposals can be voted on before they're closed or ratified."
       }
     },
     "tips": {

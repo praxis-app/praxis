@@ -34,12 +34,14 @@ export type SyncProposalMutation = {
         groupSettings?: {
           __typename?: 'ProposalActionGroupConfig';
           id: number;
+          adminModel?: string | null;
           decisionMakingModel?: string | null;
           ratificationThreshold?: number | null;
           reservationsLimit?: number | null;
           standAsidesLimit?: number | null;
           votingTimeLimit?: number | null;
           privacy?: string | null;
+          oldAdminModel?: string | null;
           oldDecisionMakingModel?: string | null;
           oldRatificationThreshold?: number | null;
           oldReservationsLimit?: number | null;
@@ -58,6 +60,7 @@ export type SyncProposalMutation = {
                 settings: {
                   __typename?: 'GroupConfig';
                   id: number;
+                  adminModel: string;
                   decisionMakingModel: string;
                   ratificationThreshold: number;
                   reservationsLimit: number;

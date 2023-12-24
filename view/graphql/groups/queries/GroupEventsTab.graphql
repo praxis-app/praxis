@@ -10,5 +10,9 @@ query GroupEventsTab($groupId: Int!, $isLoggedIn: Boolean!) {
       manageEvents
       createEvents
     }
+    settings {
+      id
+      adminModel
+    }
   }
 }

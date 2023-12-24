@@ -6,6 +6,9 @@ export class UpdateGroupConfigInput {
   groupId: number;
 
   @Field({ nullable: true })
+  adminModel?: string;
+
+  @Field({ nullable: true })
   decisionMakingModel?: string;
 
   @Field(() => Int, { nullable: true })

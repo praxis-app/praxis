@@ -1,6 +1,8 @@
-query GroupSettingsByGroupId($groupId: Int!) {
+query GroupAboutTab($groupId: Int!) {
   group(id: $groupId) {
     id
+    description
+
     settings {
       id
       adminModel

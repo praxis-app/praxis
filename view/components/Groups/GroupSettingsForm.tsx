@@ -9,6 +9,7 @@ import {
 import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import {
+  GroupAdminModel,
   GroupPrivacy,
   GroupSettingsFieldName,
 } from '../../constants/group.constants';
@@ -44,6 +45,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   const theme = useTheme();
 
   const initialValues: FormValues = {
+    adminModel: settings.adminModel,
     decisionMakingModel: settings.decisionMakingModel,
     ratificationThreshold: settings.ratificationThreshold,
     reservationsLimit: settings.reservationsLimit,
@@ -55,7 +57,13 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   const handleSubmit = async (
     values: FormValues,
     { setSubmitting, resetForm }: FormikHelpers<FormValues>,
-  ) =>
+  ) => {
+    if (values.adminModel === GroupAdminModel.NoAdmin) {
+      const answer = window.confirm(t('groups.prompts.confirmNoAdmin'));
+      if (!answer) {
+        return;
+      }
+    }
     await updateSettings({
       variables: {
         groupConfigData: { groupId: id, ...values },
@@ -71,6 +79,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
         });
       },
     });
+  };
 
   const handleSliderInputBlur = (
     setFieldValue: (field: string, value: number) => void,
@@ -105,6 +114,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   const validateSettings = ({
     decisionMakingModel,
     votingTimeLimit,
+    adminModel,
   }: FormValues) => {
     const errors: FormikErrors<FormValues> = {};
     if (
@@ -114,6 +124,12 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
       errors.votingTimeLimit = t(
         'groups.errors.consentVotingTimeLimitRequired',
       );
+    }
+    if (decisionMakingModel === DecisionMakingModel.MajorityVote) {
+      errors.decisionMakingModel = t('prompts.inDev');
+    }
+    if (adminModel === GroupAdminModel.Rotating) {
+      errors.adminModel = t('prompts.inDev');
     }
     return errors;
   };
@@ -136,19 +152,44 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
         <Form>
           <FormGroup>
             <GroupSettingsSelect
+              fieldName={GroupSettingsFieldName.AdminModel}
+              label={t('groups.settings.names.adminModel')}
+              description={t('groups.settings.descriptions.adminModel')}
+              value={values.adminModel}
+              onChange={handleChange}
+              errorMessageProps={{ sx: { marginTop: 1 } }}
+              errors={errors}
+            >
+              <MenuItem value={GroupAdminModel.Standard}>
+                {t('groups.labels.standard')}
+              </MenuItem>
+              <MenuItem value={GroupAdminModel.NoAdmin}>
+                {t('groups.labels.noAdmin')}
+              </MenuItem>
+              <MenuItem value={GroupAdminModel.Rotating}>
+                {t('groups.labels.rotatingAdmin')}
+              </MenuItem>
+            </GroupSettingsSelect>
+
+            <GroupSettingsSelect
               fieldName={GroupSettingsFieldName.DecisionMakingModel}
               label={t('groups.settings.names.decisionMakingModel')}
               description={t(
                 'groups.settings.descriptions.decisionMakingModel',
               )}
-              value={values.decisionMakingModel}
+              errorMessageProps={{ sx: { marginTop: 1 } }}
+              errors={errors}
               onChange={handleChange}
+              value={values.decisionMakingModel}
             >
               <MenuItem value={DecisionMakingModel.Consensus}>
                 {t('groups.labels.consensus')}
               </MenuItem>
               <MenuItem value={DecisionMakingModel.Consent}>
                 {t('groups.labels.consent')}
+              </MenuItem>
+              <MenuItem value={DecisionMakingModel.MajorityVote}>
+                {t('groups.labels.majority')}
               </MenuItem>
             </GroupSettingsSelect>
 
