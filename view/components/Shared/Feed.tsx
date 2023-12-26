@@ -84,6 +84,19 @@ const Feed = ({ feed, ...boxProps }: Props) => {
       {feed.map((item) => (
         <FeedItem item={item} key={`${item.__typename}-${item.id}`} />
       ))}
+
+      <TablePagination
+        component="div"
+        count={100}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        SelectProps={{
+          sx: { display: isDesktop ? undefined : 'none' },
+        }}
+        labelRowsPerPage={isDesktop ? undefined : <></>}
+      />
     </Box>
   );
 };
