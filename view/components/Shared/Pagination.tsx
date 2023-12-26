@@ -1,5 +1,5 @@
 import { TablePagination } from '@mui/material';
-import { ChangeEvent, MouseEvent } from 'react';
+import { ChangeEvent, MouseEvent, ReactNode } from 'react';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
 interface Props {
@@ -7,9 +7,16 @@ interface Props {
   rowsPerPage: number;
   setPage: (page: number) => void;
   setRowsPerPage: (rowsPerPage: number) => void;
+  children: ReactNode;
 }
 
-const Pagination = ({ page, rowsPerPage, setPage, setRowsPerPage }: Props) => {
+const Pagination = ({
+  children,
+  page,
+  rowsPerPage,
+  setPage,
+  setRowsPerPage,
+}: Props) => {
   const isDesktop = useIsDesktop();
 
   const selectProps = {
@@ -28,7 +35,7 @@ const Pagination = ({ page, rowsPerPage, setPage, setRowsPerPage }: Props) => {
     setPage(0);
   };
 
-  return (
+  const renderPagination = (bottom = false) => (
     <TablePagination
       component="div"
       page={page}
@@ -38,8 +45,16 @@ const Pagination = ({ page, rowsPerPage, setPage, setRowsPerPage }: Props) => {
       onRowsPerPageChange={handleChangeRowsPerPage}
       rowsPerPage={rowsPerPage}
       SelectProps={selectProps}
-      sx={{ marginBottom: 1.5 }}
+      sx={{ marginBottom: bottom ? 0 : 1.5 }}
     />
+  );
+
+  return (
+    <>
+      {renderPagination()}
+      {children}
+      {renderPagination(true)}
+    </>
   );
 };
 

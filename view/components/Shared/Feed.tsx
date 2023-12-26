@@ -58,18 +58,11 @@ const Feed = ({ feed, ...boxProps }: Props) => {
         rowsPerPage={rowsPerPage}
         setPage={setPage}
         setRowsPerPage={setRowsPerPage}
-      />
-
-      {feed.map((item) => (
-        <FeedItem item={item} key={`${item.__typename}-${item.id}`} />
-      ))}
-
-      <Pagination
-        page={page}
-        rowsPerPage={rowsPerPage}
-        setPage={setPage}
-        setRowsPerPage={setRowsPerPage}
-      />
+      >
+        {feed.map((item) => (
+          <FeedItem item={item} key={`${item.__typename}-${item.id}`} />
+        ))}
+      </Pagination>
     </Box>
   );
 };
