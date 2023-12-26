@@ -3,15 +3,17 @@ import { ChangeEvent, MouseEvent, ReactNode } from 'react';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
 interface Props {
+  children: ReactNode;
+  count: number;
   page: number;
   rowsPerPage: number;
   setPage: (page: number) => void;
   setRowsPerPage: (rowsPerPage: number) => void;
-  children: ReactNode;
 }
 
 const Pagination = ({
   children,
+  count,
   page,
   rowsPerPage,
   setPage,
@@ -39,7 +41,7 @@ const Pagination = ({
     <TablePagination
       component="div"
       page={page}
-      count={100}
+      count={count}
       labelRowsPerPage={isDesktop ? undefined : <></>}
       onPageChange={handleChangePage}
       onRowsPerPageChange={handleChangeRowsPerPage}
