@@ -7,12 +7,12 @@ import {
   Typography,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { PublicGroupsFeedQuery } from '../../graphql/groups/queries/gen/PublicGroupsFeed.gen';
 import { FeedItemFragment } from '../../graphql/posts/fragments/gen/FeedItem.gen';
 import { HomeFeedQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
 import PostCard from '../Posts/PostCard';
 import ProposalCard from '../Proposals/ProposalCard';
 import Pagination from './Pagination';
-import { PublicGroupsFeedQuery } from '../../graphql/groups/queries/gen/PublicGroupsFeed.gen';
 
 const CARD_CONTENT_STYLES: SxProps = {
   '&:last-child': {
@@ -21,13 +21,14 @@ const CARD_CONTENT_STYLES: SxProps = {
 };
 
 interface Props extends BoxProps {
-  feed:
+  feed?:
     | HomeFeedQuery['me']['homeFeed']
     | PublicGroupsFeedQuery['publicGroupsFeed'];
   onNextPage(): void;
   onPrevPage(): void;
   rowsPerPage: number;
   setRowsPerPage: (rowsPerPage: number) => void;
+  isLoading: boolean;
 }
 
 const FeedItem = ({ item }: { item: FeedItemFragment }) => {
@@ -46,11 +47,12 @@ const Feed = ({
   onPrevPage,
   rowsPerPage,
   setRowsPerPage,
+  isLoading,
   ...boxProps
 }: Props) => {
   const { t } = useTranslation();
 
-  if (feed.edges.length === 0) {
+  if (feed?.edges.length === 0) {
     return (
       <Card>
         <CardContent sx={CARD_CONTENT_STYLES}>
@@ -65,13 +67,14 @@ const Feed = ({
   return (
     <Box {...boxProps}>
       <Pagination
-        count={feed.totalCount}
+        count={feed?.totalCount || 0}
+        isLoading={isLoading}
         onNextPage={onNextPage}
         onPrevPage={onPrevPage}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
       >
-        {feed.edges.map(({ node }) => (
+        {feed?.edges.map(({ node }) => (
           <FeedItem item={node} key={`${node.__typename}-${node.id}`} />
         ))}
       </Pagination>

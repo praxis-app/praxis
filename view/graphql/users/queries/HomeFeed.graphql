@@ -15,6 +15,5 @@ query HomeFeed($first: Int, $after: DateTime, $isLoggedIn: Boolean = true) {
       }
       totalCount
     }
-    ...ToggleForms
   }
 }

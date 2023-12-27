@@ -2,7 +2,6 @@ import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
 import { FeedItemFragmentDoc } from '../../../posts/fragments/gen/FeedItem.gen';
-import { ToggleFormsFragmentDoc } from '../../fragments/gen/ToggleForms.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -260,16 +259,6 @@ export type HomeFeedQuery = {
         hasPreviousPage: boolean;
       };
     };
-    joinedGroups: Array<{
-      __typename?: 'Group';
-      id: number;
-      name: string;
-      settings: {
-        __typename?: 'GroupConfig';
-        id: number;
-        votingTimeLimit: number;
-      };
-    }>;
   };
 };
 
@@ -291,11 +280,9 @@ export const HomeFeedDocument = gql`
         }
         totalCount
       }
-      ...ToggleForms
     }
   }
   ${FeedItemFragmentDoc}
-  ${ToggleFormsFragmentDoc}
 `;
 
 /**

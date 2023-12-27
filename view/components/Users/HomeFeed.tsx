@@ -1,22 +1,26 @@
 import { Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
-import { useHomeFeedQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
+import { useHomeFeedLazyQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 import Feed from '../Shared/Feed';
-import ProgressBar from '../Shared/ProgressBar';
-import ToggleForms from '../Shared/ToggleForms';
 
 const HomeFeed = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [prevEndCursor, setPrevEndCursor] = useState<string>();
 
-  const { data, loading, error, refetch } = useHomeFeedQuery({
+  const [getHomeFeed, { data, loading, error }] = useHomeFeedLazyQuery({
     variables: { first: rowsPerPage },
   });
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    getHomeFeed({
+      variables: { first: rowsPerPage },
+    });
+  }, [getHomeFeed, rowsPerPage]);
 
   const handleNextPage = async () => {
     if (!data?.me.homeFeed.pageInfo.hasNextPage) {
@@ -26,16 +30,20 @@ const HomeFeed = () => {
     if (hasPreviousPage) {
       setPrevEndCursor(endCursor);
     }
-    await refetch({
-      first: rowsPerPage,
-      after: endCursor,
+    await getHomeFeed({
+      variables: {
+        first: rowsPerPage,
+        after: endCursor,
+      },
     });
   };
 
   const handlePrevPage = async () => {
-    await refetch({
-      first: rowsPerPage,
-      after: prevEndCursor,
+    await getHomeFeed({
+      variables: {
+        first: rowsPerPage,
+        after: prevEndCursor,
+      },
     });
   };
 
@@ -47,21 +55,14 @@ const HomeFeed = () => {
   }
 
   return (
-    <>
-      {data?.me && <ToggleForms me={data.me} />}
-
-      {loading && <ProgressBar />}
-
-      {data?.me.homeFeed && (
-        <Feed
-          feed={data.me.homeFeed}
-          onNextPage={handleNextPage}
-          onPrevPage={handlePrevPage}
-          rowsPerPage={rowsPerPage}
-          setRowsPerPage={setRowsPerPage}
-        />
-      )}
-    </>
+    <Feed
+      feed={data?.me.homeFeed}
+      onNextPage={handleNextPage}
+      onPrevPage={handlePrevPage}
+      rowsPerPage={rowsPerPage}
+      setRowsPerPage={setRowsPerPage}
+      isLoading={loading}
+    />
   );
 };
 

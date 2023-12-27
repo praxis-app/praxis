@@ -567,5 +567,10 @@
 
   "search": {
     "placeholder": "Search Praxis"
+  },
+
+  "pagination": {
+    "of": "of",
+    "loading": "Loading..."
   }
 }
