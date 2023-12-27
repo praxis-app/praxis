@@ -10,6 +10,8 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type HomeFeedQueryVariables = Types.Exact<{
+  offset: Types.Scalars['Int']['input'];
+  limit: Types.Scalars['Int']['input'];
   isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
@@ -251,10 +253,10 @@ export type HomeFeedQuery = {
 };
 
 export const HomeFeedDocument = gql`
-  query HomeFeed($isLoggedIn: Boolean = true) {
+  query HomeFeed($offset: Int!, $limit: Int!, $isLoggedIn: Boolean = true) {
     me {
       id
-      homeFeed {
+      homeFeed(offset: $offset, limit: $limit) {
         ...FeedItem
       }
       ...ToggleForms
@@ -276,12 +278,14 @@ export const HomeFeedDocument = gql`
  * @example
  * const { data, loading, error } = useHomeFeedQuery({
  *   variables: {
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
 export function useHomeFeedQuery(
-  baseOptions?: Apollo.QueryHookOptions<HomeFeedQuery, HomeFeedQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<HomeFeedQuery, HomeFeedQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<HomeFeedQuery, HomeFeedQueryVariables>(

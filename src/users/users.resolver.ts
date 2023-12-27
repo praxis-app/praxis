@@ -63,8 +63,12 @@ export class UsersResolver {
 
   @ResolveField(() => [FeedItem])
   @UseInterceptors(SynchronizeProposalsInterceptor)
-  async homeFeed(@Parent() { id }: User) {
-    return this.usersService.getUserFeed(id);
+  async homeFeed(
+    @Parent() { id }: User,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.usersService.getUserFeed(id, offset, limit);
   }
 
   @ResolveField(() => [FeedItem])

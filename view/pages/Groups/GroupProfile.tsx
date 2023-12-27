@@ -12,10 +12,14 @@ import ToggleForms from '../../components/Shared/ToggleForms';
 import { isLoggedInVar } from '../../graphql/cache';
 import { useGroupProfileLazyQuery } from '../../graphql/groups/queries/gen/GroupProfile.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
+import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 
 const GroupProfile = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [tab, setTab] = useState(0);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
 
   const [getGroup, { data, loading, error }] = useGroupProfileLazyQuery({
     errorPolicy: 'all',
@@ -63,7 +67,13 @@ const GroupProfile = () => {
           {me && group.isJoinedByMe && (
             <ToggleForms groupId={group.id} me={me} />
           )}
-          <Feed feed={group.feed} />
+          <Feed
+            feed={group.feed}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            setPage={setPage}
+            setRowsPerPage={setRowsPerPage}
+          />
         </>
       )}
 

@@ -336,7 +336,7 @@ type User {
   proposals: [Proposal!]!
   comments: [Comment!]!
   likes: [Like!]!
-  homeFeed: [FeedItem!]!
+  homeFeed(offset: Int, limit: Int): [FeedItem!]!
   profileFeed: [FeedItem!]!
   profilePicture: Image!
   coverPhoto: Image

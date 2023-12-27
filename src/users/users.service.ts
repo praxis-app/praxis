@@ -22,7 +22,7 @@ import { ServerPermissions } from '../server-roles/models/server-permissions.typ
 import { initServerRolePermissions } from '../server-roles/server-role.utils';
 import { ServerRolesService } from '../server-roles/server-roles.service';
 import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
-import { logTime, sanitizeText } from '../common/common.utils';
+import { logTime, paginate, sanitizeText } from '../common/common.utils';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
 import { UserWithFollowerCount, UserWithFollowingCount } from './user.types';
@@ -196,7 +196,7 @@ export class UsersService {
     return extractedEvents.flatMap((event) => event.posts);
   }
 
-  async getUserFeed(id: number) {
+  async getUserFeed(id: number, offset = 0, limit = DEFAULT_PAGE_SIZE) {
     const logTimeMessage = `Fetching home feed for user with ID ${id}`;
     logTime(logTimeMessage, this.logger);
 
@@ -235,8 +235,7 @@ export class UsersService {
       ...Object.values(proposalMap),
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-    // TODO: Update once pagination has been implemented
-    const pagedFeed = sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+    const pagedFeed = paginate(sortedFeed, offset, limit);
 
     logTime(logTimeMessage, this.logger);
     return pagedFeed;

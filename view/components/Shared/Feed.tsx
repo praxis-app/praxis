@@ -6,7 +6,6 @@ import {
   SxProps,
   Typography,
 } from '@mui/material';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FeedItemFragment } from '../../graphql/posts/fragments/gen/FeedItem.gen';
 import PostCard from '../Posts/PostCard';
@@ -21,6 +20,10 @@ const CARD_CONTENT_STYLES: SxProps = {
 
 interface Props extends BoxProps {
   feed: FeedItemFragment[];
+  page: number;
+  rowsPerPage: number;
+  setPage: (page: number) => void;
+  setRowsPerPage: (rowsPerPage: number) => void;
 }
 
 const FeedItem = ({ item }: { item: FeedItemFragment }) => {
@@ -33,10 +36,14 @@ const FeedItem = ({ item }: { item: FeedItemFragment }) => {
   return <PostCard post={item} />;
 };
 
-const Feed = ({ feed, ...boxProps }: Props) => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
+const Feed = ({
+  feed,
+  page,
+  rowsPerPage,
+  setPage,
+  setRowsPerPage,
+  ...boxProps
+}: Props) => {
   const { t } = useTranslation();
 
   if (feed.length === 0) {

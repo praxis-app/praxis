@@ -36,6 +36,7 @@ export type CreateGroupMutation = {
         updateGroup: boolean;
       };
       members: Array<{ __typename?: 'User'; id: number }>;
+      settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
       coverPhoto?: { __typename?: 'Image'; id: number } | null;
     };
   };
@@ -52,6 +53,10 @@ export const CreateGroupDocument = gql`
         }
         members {
           id
+        }
+        settings {
+          id
+          adminModel
         }
       }
     }

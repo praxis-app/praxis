@@ -1,3 +1,5 @@
+// TODO: Update event posts query to use pagination
+
 import { useReactiveVar } from '@apollo/client';
 import {
   Card,
@@ -14,7 +16,10 @@ import PostForm from '../../components/Posts/PostForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import Feed from '../../components/Shared/Feed';
 import ProgressBar from '../../components/Shared/ProgressBar';
-import { TruncationSizes } from '../../constants/shared.constants';
+import {
+  DEFAULT_PAGE_SIZE,
+  TruncationSizes,
+} from '../../constants/shared.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { useEventPageLazyQuery } from '../../graphql/events/queries/gen/EventPage.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
@@ -31,6 +36,10 @@ const CardContent = styled(MuiCardContent)(() => ({
 const EventPage = () => {
   const [tab, setTab] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
+
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const [getEvent, { data, loading, error }] = useEventPageLazyQuery({
@@ -127,7 +136,13 @@ const EventPage = () => {
             </Card>
           )}
 
-          <Feed feed={event.posts} />
+          <Feed
+            feed={event.posts}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            setPage={setPage}
+            setRowsPerPage={setRowsPerPage}
+          />
         </>
       )}
     </>

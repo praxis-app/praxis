@@ -25,3 +25,9 @@ export const logTime = (label: string, logger: Logger) => {
  */
 export const sanitizeText = (dirty: string) =>
   sanitizeHtml(dirty, { allowedTags: [] });
+
+/**
+ * Paginate an array - page 0 is the first page
+ */
+export const paginate = <T>(array: T[], offset: number, limit: number) =>
+  array.slice(offset, limit + offset);

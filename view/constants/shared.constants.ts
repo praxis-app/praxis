@@ -11,6 +11,8 @@ export const SCROLL_DURATION = 250;
 
 export const URL_REGEX = /(https?:\/\/[^\s]+)/g;
 
+export const DEFAULT_PAGE_SIZE = 10;
+
 export enum NavigationPaths {
   About = '/about',
   Canary = '/canary',

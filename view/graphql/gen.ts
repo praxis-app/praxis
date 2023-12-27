@@ -1175,6 +1175,11 @@ export type User = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type UserHomeFeedArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type Vote = {
   __typename?: 'Vote';
   createdAt: Scalars['DateTime']['output'];

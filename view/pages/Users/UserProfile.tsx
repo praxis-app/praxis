@@ -9,11 +9,18 @@ import Link from '../../components/Shared/Link';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import ToggleForms from '../../components/Shared/ToggleForms';
 import UserProfileCard from '../../components/Users/UserProfileCard';
-import { NavigationPaths } from '../../constants/shared.constants';
+import {
+  DEFAULT_PAGE_SIZE,
+  NavigationPaths,
+} from '../../constants/shared.constants';
+import { useState } from 'react';
 
 const UserProfile = () => {
   const inviteToken = useReactiveVar(inviteTokenVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
 
   const { name } = useParams();
   const { data, loading, error } = useUserProfileQuery({
@@ -75,7 +82,15 @@ const UserProfile = () => {
       <UserProfileCard user={user} />
       {isMe && <ToggleForms me={me} />}
 
-      {user.profileFeed && <Feed feed={user.profileFeed} />}
+      {user.profileFeed && (
+        <Feed
+          feed={user.profileFeed}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          setPage={setPage}
+          setRowsPerPage={setRowsPerPage}
+        />
+      )}
     </>
   );
 };
