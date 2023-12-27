@@ -12,6 +12,7 @@ import { HomeFeedQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
 import PostCard from '../Posts/PostCard';
 import ProposalCard from '../Proposals/ProposalCard';
 import Pagination from './Pagination';
+import { PublicGroupsFeedQuery } from '../../graphql/groups/queries/gen/PublicGroupsFeed.gen';
 
 const CARD_CONTENT_STYLES: SxProps = {
   '&:last-child': {
@@ -20,7 +21,9 @@ const CARD_CONTENT_STYLES: SxProps = {
 };
 
 interface Props extends BoxProps {
-  feed: HomeFeedQuery['me']['homeFeed'];
+  feed:
+    | HomeFeedQuery['me']['homeFeed']
+    | PublicGroupsFeedQuery['publicGroupsFeed'];
   onNextPage(): void;
   onPrevPage(): void;
   rowsPerPage: number;

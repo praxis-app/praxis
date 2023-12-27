@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
-import { sanitizeText } from '../common/common.utils';
+import { paginate, sanitizeText } from '../common/common.utils';
 import { MyGroupsKey } from '../dataloader/dataloader.types';
 import { ImageTypes } from '../images/image.constants';
 import { saveImage } from '../images/image.utils';
@@ -76,7 +76,7 @@ export class GroupsService {
     return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
   }
 
-  async getPublicGroupsFeed() {
+  async getPublicGroupsFeed(first = DEFAULT_PAGE_SIZE, after?: Date) {
     const publicGroups = await this.getGroups(
       { config: { privacy: GroupPrivacy.Public } },
       ['posts', 'proposals', 'events.posts'],
@@ -96,8 +96,7 @@ export class GroupsService {
     const sortedFeed = [...posts, ...proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    // TODO: Update once pagination has been implemented
-    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+    return paginate(sortedFeed, first, after);
   }
 
   async isGroupMember(groupId: number, userId: number) {

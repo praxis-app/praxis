@@ -163,6 +163,9 @@ export const shieldPermissions = shield(
     ProposalActionRoleMember: or(isAuthenticated, isPublicProposalAction),
     ProposalActionGroupConfig: or(isAuthenticated, isPublicProposalAction),
     Vote: or(isAuthenticated, isPublicVote),
+    PublicGroupsFeedConnection: allow,
+    PublicGroupsFeedEdge: allow,
+    PageInfo: allow,
   },
   {
     fallbackRule: isAuthenticated,

@@ -435,6 +435,23 @@ type CreateGroupPayload {
   group: Group!
 }
 
+type PageInfo {
+  startCursor: DateTime!
+  endCursor: DateTime!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type PublicGroupsFeedEdge {
+  cursor: DateTime!
+  node: FeedItem!
+}
+
+type PublicGroupsFeedConnection {
+  pageInfo: PageInfo!
+  edges: [PublicGroupsFeedEdge!]!
+}
+
 type CreateVotePayload {
   vote: Vote!
 }
@@ -493,13 +510,6 @@ type FollowUserPayload {
   follower: User!
 }
 
-type PageInfo {
-  startCursor: DateTime!
-  endCursor: DateTime!
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-}
-
 type HomeFeedEdge {
   cursor: DateTime!
   node: FeedItem!
@@ -541,7 +551,7 @@ type Query {
   group(id: Int, name: String): Group!
   groups: [Group!]!
   publicGroups: [Group!]!
-  publicGroupsFeed: [FeedItem!]!
+  publicGroupsFeed(first: Int, after: DateTime): PublicGroupsFeedConnection!
   groupRole(id: Int!): GroupRole!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   groupRoles: [GroupRole!]!

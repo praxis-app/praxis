@@ -858,6 +858,18 @@ export type ProposalConfig = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type PublicGroupsFeedConnection = {
+  __typename?: 'PublicGroupsFeedConnection';
+  edges: Array<PublicGroupsFeedEdge>;
+  pageInfo: PageInfo;
+};
+
+export type PublicGroupsFeedEdge = {
+  __typename?: 'PublicGroupsFeedEdge';
+  cursor: Scalars['DateTime']['output'];
+  node: FeedItem;
+};
+
 export type Query = {
   __typename?: 'Query';
   authCheck: Scalars['Boolean']['output'];
@@ -875,7 +887,7 @@ export type Query = {
   proposal: Proposal;
   publicCanary?: Maybe<Canary>;
   publicGroups: Array<Group>;
-  publicGroupsFeed: Array<FeedItem>;
+  publicGroupsFeed: PublicGroupsFeedConnection;
   serverConfig: ServerConfig;
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;
@@ -913,6 +925,11 @@ export type QueryPostArgs = {
 
 export type QueryProposalArgs = {
   id: Scalars['Int']['input'];
+};
+
+export type QueryPublicGroupsFeedArgs = {
+  after?: InputMaybe<Scalars['DateTime']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type QueryServerInviteArgs = {

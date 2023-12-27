@@ -10,6 +10,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { FeedItem } from '../common/models/feed-item.union';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { EventsService } from '../events/events.service';
 import { Event } from '../events/models/event.model';
@@ -17,7 +18,6 @@ import { EventTimeFrame } from '../events/models/events.input';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
-import { FeedItem } from '../common/models/feed-item.union';
 import { User } from '../users/models/user.model';
 import { GroupPrivacy } from './group-configs/group-configs.constants';
 import { GroupConfigsService } from './group-configs/group-configs.service';
@@ -31,6 +31,7 @@ import { GroupsService } from './groups.service';
 import { CreateGroupInput } from './models/create-group.input';
 import { CreateGroupPayload } from './models/create-group.payload';
 import { Group } from './models/group.model';
+import { PublicGroupsFeedConnection } from './models/public-groups-feed-connection.type';
 import { UpdateGroupInput } from './models/update-group.input';
 import { UpdateGroupPayload } from './models/update-group.payload';
 
@@ -67,9 +68,12 @@ export class GroupsResolver {
     });
   }
 
-  @Query(() => [FeedItem])
-  async publicGroupsFeed() {
-    return this.groupsService.getPublicGroupsFeed();
+  @Query(() => PublicGroupsFeedConnection)
+  async publicGroupsFeed(
+    @Args('first', { type: () => Int, nullable: true }) first?: number,
+    @Args('after', { nullable: true }) after?: Date,
+  ) {
+    return this.groupsService.getPublicGroupsFeed(first, after);
   }
 
   @Query(() => GroupRole)

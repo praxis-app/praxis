@@ -1,5 +1,19 @@
-query PublicGroupsFeed($isLoggedIn: Boolean = false) {
-  publicGroupsFeed {
-    ...FeedItem
+query PublicGroupsFeed(
+  $first: Int
+  $after: DateTime
+  $isLoggedIn: Boolean = false
+) {
+  publicGroupsFeed(first: $first, after: $after) {
+    edges {
+      node {
+        ...FeedItem
+      }
+    }
+    pageInfo {
+      startCursor
+      endCursor
+      hasNextPage
+      hasPreviousPage
+    }
   }
 }

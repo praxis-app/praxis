@@ -13,16 +13,37 @@ import { useState } from 'react';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 
 const PublicGroupsFeed = () => {
-  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
+  const [prevEndCursor, setPrevEndCursor] = useState<string>();
 
   const authFailed = useReactiveVar(authFailedVar);
-  const { data, loading, error } = usePublicGroupsFeedQuery({
+  const { data, loading, error, refetch } = usePublicGroupsFeedQuery({
     errorPolicy: 'all',
     skip: !authFailed,
   });
 
   const { t } = useTranslation();
+
+  const handleNextPage = async () => {
+    if (!data?.publicGroupsFeed.pageInfo.hasNextPage) {
+      return;
+    }
+    const { endCursor, hasPreviousPage } = data.publicGroupsFeed.pageInfo;
+    if (hasPreviousPage) {
+      setPrevEndCursor(endCursor);
+    }
+    await refetch({
+      first: rowsPerPage,
+      after: endCursor,
+    });
+  };
+
+  const handlePrevPage = async () => {
+    await refetch({
+      first: rowsPerPage,
+      after: prevEndCursor,
+    });
+  };
 
   if (loading) {
     return <ProgressBar />;
@@ -43,10 +64,10 @@ const PublicGroupsFeed = () => {
       <WelcomeCard />
       <Feed
         feed={data.publicGroupsFeed}
-        page={page}
         rowsPerPage={rowsPerPage}
-        setPage={setPage}
         setRowsPerPage={setRowsPerPage}
+        onNextPage={handleNextPage}
+        onPrevPage={handlePrevPage}
       />
     </>
   );
