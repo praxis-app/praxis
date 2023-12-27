@@ -5,15 +5,19 @@ import { useIsDesktop } from '../../hooks/shared.hooks';
 interface Props {
   children: ReactNode;
   count: number;
+  onNextPage(): void;
+  onPrevPage(): void;
   page: number;
   rowsPerPage: number;
-  setPage: (page: number) => void;
-  setRowsPerPage: (rowsPerPage: number) => void;
+  setPage(page: number): void;
+  setRowsPerPage(rowsPerPage: number): void;
 }
 
 const Pagination = ({
   children,
   count,
+  onNextPage,
+  onPrevPage,
   page,
   rowsPerPage,
   setPage,
@@ -28,7 +32,14 @@ const Pagination = ({
   const handleChangePage = (
     _: MouseEvent<HTMLButtonElement> | null,
     newPage: number,
-  ) => setPage(newPage);
+  ) => {
+    if (newPage > page) {
+      onNextPage();
+    } else {
+      onPrevPage();
+    }
+    setPage(newPage);
+  };
 
   const handleChangeRowsPerPage = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

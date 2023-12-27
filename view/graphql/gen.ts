@@ -368,6 +368,18 @@ export type GroupRolePermissionInput = {
   updateGroup?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export type HomeFeedConnection = {
+  __typename?: 'HomeFeedConnection';
+  edges: Array<HomeFeedEdge>;
+  pageInfo: PageInfo;
+};
+
+export type HomeFeedEdge = {
+  __typename?: 'HomeFeedEdge';
+  cursor: Scalars['DateTime']['output'];
+  node: FeedItem;
+};
+
 export type Image = {
   __typename?: 'Image';
   comment?: Maybe<Comment>;
@@ -643,6 +655,14 @@ export type MutationUpdateUserArgs = {
 
 export type MutationUpdateVoteArgs = {
   voteData: UpdateVoteInput;
+};
+
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor: Scalars['DateTime']['output'];
+  hasNextPage: Scalars['Boolean']['output'];
+  hasPreviousPage: Scalars['Boolean']['output'];
+  startCursor: Scalars['DateTime']['output'];
 };
 
 export type Post = {
@@ -1161,7 +1181,7 @@ export type User = {
   followers: Array<User>;
   following: Array<User>;
   followingCount: Scalars['Int']['output'];
-  homeFeed: Array<FeedItem>;
+  homeFeed: HomeFeedConnection;
   id: Scalars['Int']['output'];
   isFollowedByMe: Scalars['Boolean']['output'];
   joinedGroups: Array<Group>;
@@ -1176,8 +1196,8 @@ export type User = {
 };
 
 export type UserHomeFeedArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
+  after?: InputMaybe<Scalars['DateTime']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Vote = {

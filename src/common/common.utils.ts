@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import * as sanitizeHtml from 'sanitize-html';
+import { DEFAULT_PAGE_SIZE } from './common.constants';
 
 const logTimeMap: Record<string, number> = {};
 
@@ -29,5 +30,26 @@ export const sanitizeText = (dirty: string) =>
 /**
  * Paginate an array - page 0 is the first page
  */
-export const paginate = <T>(array: T[], offset: number, limit: number) =>
-  array.slice(offset, limit + offset);
+export const paginate = <T extends { createdAt: Date }>(
+  array: T[],
+  first = DEFAULT_PAGE_SIZE,
+  after?: Date,
+) => {
+  const filteredArray = after
+    ? array.filter((i) => i.createdAt < after)
+    : array;
+
+  const edges = filteredArray.slice(0, first).map((node) => ({
+    cursor: node.createdAt,
+    node,
+  }));
+
+  const pageInfo = {
+    startCursor: edges[0].cursor,
+    endCursor: edges[edges.length - 1].cursor,
+    hasNextPage: filteredArray.length > first,
+    hasPreviousPage: array.length - filteredArray.length > 0,
+  };
+
+  return { pageInfo, edges };
+};

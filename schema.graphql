@@ -336,7 +336,6 @@ type User {
   proposals: [Proposal!]!
   comments: [Comment!]!
   likes: [Like!]!
-  homeFeed(offset: Int, limit: Int): [FeedItem!]!
   profileFeed: [FeedItem!]!
   profilePicture: Image!
   coverPhoto: Image
@@ -344,6 +343,7 @@ type User {
   following: [User!]!
   createdAt: DateTime!
   updatedAt: DateTime!
+  homeFeed(first: Int, after: DateTime): HomeFeedConnection!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
@@ -491,6 +491,23 @@ type ServerPermissions {
 type FollowUserPayload {
   followedUser: User!
   follower: User!
+}
+
+type PageInfo {
+  startCursor: DateTime!
+  endCursor: DateTime!
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type HomeFeedEdge {
+  cursor: DateTime!
+  node: FeedItem!
+}
+
+type HomeFeedConnection {
+  pageInfo: PageInfo!
+  edges: [HomeFeedEdge!]!
 }
 
 type UpdateUserPayload {

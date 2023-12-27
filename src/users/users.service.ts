@@ -196,7 +196,7 @@ export class UsersService {
     return extractedEvents.flatMap((event) => event.posts);
   }
 
-  async getUserFeed(id: number, offset = 0, limit = DEFAULT_PAGE_SIZE) {
+  async getUserFeed(id: number, first = DEFAULT_PAGE_SIZE, after?: Date) {
     const logTimeMessage = `Fetching home feed for user with ID ${id}`;
     logTime(logTimeMessage, this.logger);
 
@@ -235,7 +235,7 @@ export class UsersService {
       ...Object.values(proposalMap),
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-    const pagedFeed = paginate(sortedFeed, offset, limit);
+    const pagedFeed = paginate(sortedFeed, first, after);
 
     logTime(logTimeMessage, this.logger);
     return pagedFeed;

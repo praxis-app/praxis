@@ -11,15 +11,34 @@ import ToggleForms from '../Shared/ToggleForms';
 const HomeFeed = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
+  const [prevEndCursor, setPrevEndCursor] = useState<string>();
 
-  const { data, loading, error } = useHomeFeedQuery({
-    variables: {
-      limit: rowsPerPage,
-      offset: page * rowsPerPage,
-    },
+  const { data, loading, error, refetch } = useHomeFeedQuery({
+    variables: { first: rowsPerPage },
   });
 
   const { t } = useTranslation();
+
+  const handleNextPage = async () => {
+    if (!data?.me.homeFeed.pageInfo.hasNextPage) {
+      return;
+    }
+    const { endCursor, hasPreviousPage } = data.me.homeFeed.pageInfo;
+    if (hasPreviousPage) {
+      setPrevEndCursor(endCursor);
+    }
+    await refetch({
+      first: rowsPerPage,
+      after: endCursor,
+    });
+  };
+
+  const handlePrevPage = async () => {
+    await refetch({
+      first: rowsPerPage,
+      after: prevEndCursor,
+    });
+  };
 
   if (isDeniedAccess(error)) {
     return <Typography>{t('prompts.permissionDenied')}</Typography>;
@@ -37,6 +56,8 @@ const HomeFeed = () => {
       {data?.me.homeFeed && (
         <Feed
           feed={data.me.homeFeed}
+          onNextPage={handleNextPage}
+          onPrevPage={handlePrevPage}
           page={page}
           rowsPerPage={rowsPerPage}
           setPage={setPage}

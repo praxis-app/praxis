@@ -1,8 +1,18 @@
-query HomeFeed($offset: Int!, $limit: Int!, $isLoggedIn: Boolean = true) {
+query HomeFeed($first: Int, $after: DateTime, $isLoggedIn: Boolean = true) {
   me {
     id
-    homeFeed(offset: $offset, limit: $limit) {
-      ...FeedItem
+    homeFeed(first: $first, after: $after) {
+      edges {
+        node {
+          ...FeedItem
+        }
+      }
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
     }
     ...ToggleForms
   }
