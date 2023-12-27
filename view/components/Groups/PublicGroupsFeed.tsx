@@ -1,28 +1,34 @@
-// TODO: Update PublicGroupsFeed query to use pagination
-
 import { useReactiveVar } from '@apollo/client';
 import { Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 import { authFailedVar } from '../../graphql/cache';
-import { usePublicGroupsFeedQuery } from '../../graphql/groups/queries/gen/PublicGroupsFeed.gen';
+import { usePublicGroupsFeedLazyQuery } from '../../graphql/groups/queries/gen/PublicGroupsFeed.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 import WelcomeCard from '../About/WelcomeCard';
 import Feed from '../Shared/Feed';
-import ProgressBar from '../Shared/ProgressBar';
-import { useState } from 'react';
-import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 
 const PublicGroupsFeed = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [prevEndCursor, setPrevEndCursor] = useState<string>();
 
   const authFailed = useReactiveVar(authFailedVar);
-  const { data, loading, error, refetch } = usePublicGroupsFeedQuery({
-    errorPolicy: 'all',
-    skip: !authFailed,
-  });
+  const [getPublicGroupsFeed, { data, loading, error }] =
+    usePublicGroupsFeedLazyQuery({
+      errorPolicy: 'all',
+    });
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!authFailed) {
+      return;
+    }
+    getPublicGroupsFeed({
+      variables: { first: rowsPerPage },
+    });
+  }, [getPublicGroupsFeed, rowsPerPage, authFailed]);
 
   const handleNextPage = async () => {
     if (!data?.publicGroupsFeed.pageInfo.hasNextPage) {
@@ -32,42 +38,40 @@ const PublicGroupsFeed = () => {
     if (hasPreviousPage) {
       setPrevEndCursor(endCursor);
     }
-    await refetch({
-      first: rowsPerPage,
-      after: endCursor,
+    await getPublicGroupsFeed({
+      variables: {
+        first: rowsPerPage,
+        after: endCursor,
+      },
     });
   };
 
   const handlePrevPage = async () => {
-    await refetch({
-      first: rowsPerPage,
-      after: prevEndCursor,
+    await getPublicGroupsFeed({
+      variables: {
+        first: rowsPerPage,
+        after: prevEndCursor,
+      },
     });
   };
 
-  if (loading) {
-    return <ProgressBar />;
+  if (isDeniedAccess(error)) {
+    return <Typography>{t('prompts.permissionDenied')}</Typography>;
   }
-
-  if (!data) {
-    if (isDeniedAccess(error)) {
-      return <Typography>{t('prompts.permissionDenied')}</Typography>;
-    }
-    if (error) {
-      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
-    }
-    return null;
+  if (error) {
+    return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
   return (
     <>
       <WelcomeCard />
       <Feed
-        feed={data.publicGroupsFeed}
+        feed={data?.publicGroupsFeed}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
         onNextPage={handleNextPage}
         onPrevPage={handlePrevPage}
+        isLoading={loading}
       />
     </>
   );
