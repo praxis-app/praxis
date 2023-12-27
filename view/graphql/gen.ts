@@ -310,9 +310,15 @@ export type GroupConfig = {
 
 export type GroupFeedConnection = {
   __typename?: 'GroupFeedConnection';
-  edges: Array<PublicGroupsFeedEdge>;
+  edges: Array<GroupFeedEdge>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
+};
+
+export type GroupFeedEdge = {
+  __typename?: 'GroupFeedEdge';
+  cursor: Scalars['DateTime']['output'];
+  node: FeedItem;
 };
 
 export type GroupMemberRequest = {

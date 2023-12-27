@@ -2,7 +2,7 @@ import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
 import { GroupSettingsFormFragmentDoc } from '../../fragments/gen/GroupSettingsForm.gen';
-import { GroupProfileCardFragmentDoc } from '../../fragments/gen/GroupProfileCard.gen';
+import { GroupPageCardFragmentDoc } from '../../fragments/gen/GroupPageCard.gen';
 import { GroupCardFragmentDoc } from '../../fragments/gen/GroupCard.gen';
 import * as Apollo from '@apollo/client';
 
@@ -66,13 +66,13 @@ export const UpdateGroupSettingsDocument = gql`
       group {
         id
         ...GroupSettingsForm
-        ...GroupProfileCard
+        ...GroupPageCard
         ...GroupCard
       }
     }
   }
   ${GroupSettingsFormFragmentDoc}
-  ${GroupProfileCardFragmentDoc}
+  ${GroupPageCardFragmentDoc}
   ${GroupCardFragmentDoc}
 `;
 export type UpdateGroupSettingsMutationFn = Apollo.MutationFunction<

@@ -5,17 +5,17 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import GroupAboutTab from '../../components/Groups/GroupAboutTab';
 import GroupEventsTab from '../../components/Groups/GroupEventsTab';
-import GroupProfileCard from '../../components/Groups/GroupProfileCard';
+import GroupPageCard from '../../components/Groups/GroupPageCard';
 import Feed from '../../components/Shared/Feed';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import ToggleForms from '../../components/Shared/ToggleForms';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { useGroupFeedLazyQuery } from '../../graphql/groups/queries/gen/GroupFeed.gen';
-import { useGroupProfileLazyQuery } from '../../graphql/groups/queries/gen/GroupProfile.gen';
+import { useGroupPageLazyQuery } from '../../graphql/groups/queries/gen/GroupPage.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 
-const GroupProfile = () => {
+const GroupPage = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [prevEndCursor, setPrevEndCursor] = useState<string>();
@@ -23,8 +23,8 @@ const GroupProfile = () => {
 
   const [
     getGroupProfile,
-    { data: groupProfileData, loading: groupProfileLoading, error },
-  ] = useGroupProfileLazyQuery({
+    { data: groupPageData, loading: groupPageLoading, error },
+  ] = useGroupPageLazyQuery({
     errorPolicy: 'all',
   });
 
@@ -79,11 +79,11 @@ const GroupProfile = () => {
     });
   };
 
-  if (groupProfileLoading) {
+  if (groupPageLoading) {
     return <ProgressBar />;
   }
 
-  if (!groupProfileData) {
+  if (!groupPageData) {
     if (isDeniedAccess(error)) {
       return <Typography>{t('prompts.permissionDenied')}</Typography>;
     }
@@ -94,11 +94,11 @@ const GroupProfile = () => {
     return null;
   }
 
-  const { group, me } = groupProfileData;
+  const { group, me } = groupPageData;
 
   return (
     <>
-      <GroupProfileCard
+      <GroupPageCard
         currentUserId={me?.id}
         group={group}
         setTab={setTab}
@@ -128,4 +128,4 @@ const GroupProfile = () => {
   );
 };
 
-export default GroupProfile;
+export default GroupPage;

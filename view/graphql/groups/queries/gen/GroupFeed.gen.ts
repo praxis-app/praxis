@@ -24,7 +24,7 @@ export type GroupFeedQuery = {
       __typename?: 'GroupFeedConnection';
       totalCount: number;
       edges: Array<{
-        __typename?: 'PublicGroupsFeedEdge';
+        __typename?: 'GroupFeedEdge';
         node:
           | {
               __typename?: 'Post';

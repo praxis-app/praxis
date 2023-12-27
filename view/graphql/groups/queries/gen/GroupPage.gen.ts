@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { GroupProfileCardFragmentDoc } from '../../fragments/gen/GroupProfileCard.gen';
+import { GroupPageCardFragmentDoc } from '../../fragments/gen/GroupPageCard.gen';
 import { ToggleFormsFragmentDoc } from '../../../users/fragments/gen/ToggleForms.gen';
 import * as Apollo from '@apollo/client';
 
@@ -9,12 +9,12 @@ import * as Apollo from '@apollo/client';
 /* eslint-disable */
 
 const defaultOptions = {} as const;
-export type GroupProfileQueryVariables = Types.Exact<{
+export type GroupPageQueryVariables = Types.Exact<{
   name: Types.Scalars['String']['input'];
   isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
-export type GroupProfileQuery = {
+export type GroupPageQuery = {
   __typename?: 'Query';
   group: {
     __typename?: 'Group';
@@ -61,10 +61,10 @@ export type GroupProfileQuery = {
   };
 };
 
-export const GroupProfileDocument = gql`
-  query GroupProfile($name: String!, $isLoggedIn: Boolean!) {
+export const GroupPageDocument = gql`
+  query GroupPage($name: String!, $isLoggedIn: Boolean!) {
     group(name: $name) {
-      ...GroupProfileCard
+      ...GroupPageCard
       description
     }
     me @include(if: $isLoggedIn) {
@@ -72,58 +72,53 @@ export const GroupProfileDocument = gql`
       ...ToggleForms
     }
   }
-  ${GroupProfileCardFragmentDoc}
+  ${GroupPageCardFragmentDoc}
   ${ToggleFormsFragmentDoc}
 `;
 
 /**
- * __useGroupProfileQuery__
+ * __useGroupPageQuery__
  *
- * To run a query within a React component, call `useGroupProfileQuery` and pass it any options that fit your needs.
- * When your component renders, `useGroupProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGroupPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGroupPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGroupProfileQuery({
+ * const { data, loading, error } = useGroupPageQuery({
  *   variables: {
  *      name: // value for 'name'
  *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
-export function useGroupProfileQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GroupProfileQuery,
-    GroupProfileQueryVariables
-  >,
+export function useGroupPageQuery(
+  baseOptions: Apollo.QueryHookOptions<GroupPageQuery, GroupPageQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GroupProfileQuery, GroupProfileQueryVariables>(
-    GroupProfileDocument,
+  return Apollo.useQuery<GroupPageQuery, GroupPageQueryVariables>(
+    GroupPageDocument,
     options,
   );
 }
-export function useGroupProfileLazyQuery(
+export function useGroupPageLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    GroupProfileQuery,
-    GroupProfileQueryVariables
+    GroupPageQuery,
+    GroupPageQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GroupProfileQuery, GroupProfileQueryVariables>(
-    GroupProfileDocument,
+  return Apollo.useLazyQuery<GroupPageQuery, GroupPageQueryVariables>(
+    GroupPageDocument,
     options,
   );
 }
-export type GroupProfileQueryHookResult = ReturnType<
-  typeof useGroupProfileQuery
+export type GroupPageQueryHookResult = ReturnType<typeof useGroupPageQuery>;
+export type GroupPageLazyQueryHookResult = ReturnType<
+  typeof useGroupPageLazyQuery
 >;
-export type GroupProfileLazyQueryHookResult = ReturnType<
-  typeof useGroupProfileLazyQuery
->;
-export type GroupProfileQueryResult = Apollo.QueryResult<
-  GroupProfileQuery,
-  GroupProfileQueryVariables
+export type GroupPageQueryResult = Apollo.QueryResult<
+  GroupPageQuery,
+  GroupPageQueryVariables
 >;
