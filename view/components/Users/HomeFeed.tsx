@@ -9,7 +9,6 @@ import ProgressBar from '../Shared/ProgressBar';
 import ToggleForms from '../Shared/ToggleForms';
 
 const HomeFeed = () => {
-  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [prevEndCursor, setPrevEndCursor] = useState<string>();
 
@@ -58,9 +57,7 @@ const HomeFeed = () => {
           feed={data.me.homeFeed}
           onNextPage={handleNextPage}
           onPrevPage={handlePrevPage}
-          page={page}
           rowsPerPage={rowsPerPage}
-          setPage={setPage}
           setRowsPerPage={setRowsPerPage}
         />
       )}

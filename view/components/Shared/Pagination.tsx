@@ -1,5 +1,5 @@
 import { TablePagination } from '@mui/material';
-import { ChangeEvent, MouseEvent, ReactNode } from 'react';
+import { ChangeEvent, MouseEvent, ReactNode, useState } from 'react';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
 interface Props {
@@ -7,9 +7,7 @@ interface Props {
   count: number;
   onNextPage(): void;
   onPrevPage(): void;
-  page: number;
   rowsPerPage: number;
-  setPage(page: number): void;
   setRowsPerPage(rowsPerPage: number): void;
 }
 
@@ -18,11 +16,10 @@ const Pagination = ({
   count,
   onNextPage,
   onPrevPage,
-  page,
   rowsPerPage,
-  setPage,
   setRowsPerPage,
 }: Props) => {
+  const [page, setPage] = useState(0);
   const isDesktop = useIsDesktop();
 
   const selectProps = {

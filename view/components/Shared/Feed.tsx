@@ -23,9 +23,7 @@ interface Props extends BoxProps {
   feed: HomeFeedQuery['me']['homeFeed'];
   onNextPage(): void;
   onPrevPage(): void;
-  page: number;
   rowsPerPage: number;
-  setPage: (page: number) => void;
   setRowsPerPage: (rowsPerPage: number) => void;
 }
 
@@ -43,9 +41,7 @@ const Feed = ({
   feed,
   onNextPage,
   onPrevPage,
-  page,
   rowsPerPage,
-  setPage,
   setRowsPerPage,
   ...boxProps
 }: Props) => {
@@ -69,9 +65,7 @@ const Feed = ({
         count={100}
         onNextPage={onNextPage}
         onPrevPage={onPrevPage}
-        page={page}
         rowsPerPage={rowsPerPage}
-        setPage={setPage}
         setRowsPerPage={setRowsPerPage}
       >
         {feed.edges.map(({ node }) => (
