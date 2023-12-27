@@ -121,6 +121,10 @@ export const shieldPermissions = shield(
       name: or(isAuthenticated, isPublicGroupRole),
       color: or(isAuthenticated, isPublicGroupRole),
     },
+    GroupFeedEdge: or(isAuthenticated, isPublicGroup),
+    GroupFeedConnection: or(isAuthenticated, isPublicGroup),
+    PublicGroupsFeedConnection: allow,
+    PublicGroupsFeedEdge: allow,
     Image: {
       id: or(
         isAuthenticated,
@@ -163,8 +167,6 @@ export const shieldPermissions = shield(
     ProposalActionRoleMember: or(isAuthenticated, isPublicProposalAction),
     ProposalActionGroupConfig: or(isAuthenticated, isPublicProposalAction),
     Vote: or(isAuthenticated, isPublicVote),
-    PublicGroupsFeedConnection: allow,
-    PublicGroupsFeedEdge: allow,
     PageInfo: allow,
   },
   {
