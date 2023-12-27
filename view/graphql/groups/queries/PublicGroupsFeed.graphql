@@ -15,5 +15,6 @@ query PublicGroupsFeed(
       hasNextPage
       hasPreviousPage
     }
+    totalCount
   }
 }

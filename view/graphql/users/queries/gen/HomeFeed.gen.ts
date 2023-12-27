@@ -22,6 +22,7 @@ export type HomeFeedQuery = {
     id: number;
     homeFeed: {
       __typename?: 'HomeFeedConnection';
+      totalCount: number;
       edges: Array<{
         __typename?: 'HomeFeedEdge';
         node:
@@ -288,6 +289,7 @@ export const HomeFeedDocument = gql`
           hasNextPage
           hasPreviousPage
         }
+        totalCount
       }
       ...ToggleForms
     }

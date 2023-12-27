@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { PageInfo } from '../../common/models/page-info.type';
 import { PublicGroupsFeedEdge } from './public-groups-feed-edge.type';
 
@@ -9,4 +9,7 @@ export class PublicGroupsFeedConnection {
 
   @Field(() => [PublicGroupsFeedEdge])
   edges: PublicGroupsFeedEdge[];
+
+  @Field(() => Int)
+  totalCount: number;
 }

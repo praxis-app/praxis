@@ -18,6 +18,7 @@ export type PublicGroupsFeedQuery = {
   __typename?: 'Query';
   publicGroupsFeed: {
     __typename?: 'PublicGroupsFeedConnection';
+    totalCount: number;
     edges: Array<{
       __typename?: 'PublicGroupsFeedEdge';
       node:
@@ -275,6 +276,7 @@ export const PublicGroupsFeedDocument = gql`
         hasNextPage
         hasPreviousPage
       }
+      totalCount
     }
   }
   ${FeedItemFragmentDoc}

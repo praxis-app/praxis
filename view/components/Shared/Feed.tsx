@@ -65,7 +65,7 @@ const Feed = ({
   return (
     <Box {...boxProps}>
       <Pagination
-        count={100}
+        count={feed.totalCount}
         onNextPage={onNextPage}
         onPrevPage={onPrevPage}
         rowsPerPage={rowsPerPage}

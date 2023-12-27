@@ -51,5 +51,5 @@ export const paginate = <T extends { createdAt: Date }>(
     hasPreviousPage: array.length - filteredArray.length > 0,
   };
 
-  return { pageInfo, edges };
+  return { pageInfo, edges, totalCount: array.length };
 };

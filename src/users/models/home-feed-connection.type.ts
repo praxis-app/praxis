@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { PageInfo } from '../../common/models/page-info.type';
 import { HomeFeedEdge } from './home-feed-edge.type';
 
@@ -9,4 +9,7 @@ export class HomeFeedConnection {
 
   @Field(() => [HomeFeedEdge])
   edges: HomeFeedEdge[];
+
+  @Field(() => Int)
+  totalCount: number;
 }

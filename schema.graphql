@@ -450,6 +450,7 @@ type PublicGroupsFeedEdge {
 type PublicGroupsFeedConnection {
   pageInfo: PageInfo!
   edges: [PublicGroupsFeedEdge!]!
+  totalCount: Int!
 }
 
 type CreateVotePayload {
@@ -518,6 +519,7 @@ type HomeFeedEdge {
 type HomeFeedConnection {
   pageInfo: PageInfo!
   edges: [HomeFeedEdge!]!
+  totalCount: Int!
 }
 
 type UpdateUserPayload {

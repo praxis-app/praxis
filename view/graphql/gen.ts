@@ -372,6 +372,7 @@ export type HomeFeedConnection = {
   __typename?: 'HomeFeedConnection';
   edges: Array<HomeFeedEdge>;
   pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type HomeFeedEdge = {
@@ -862,6 +863,7 @@ export type PublicGroupsFeedConnection = {
   __typename?: 'PublicGroupsFeedConnection';
   edges: Array<PublicGroupsFeedEdge>;
   pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type PublicGroupsFeedEdge = {

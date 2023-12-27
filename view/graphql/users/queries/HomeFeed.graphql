@@ -13,6 +13,7 @@ query HomeFeed($first: Int, $after: DateTime, $isLoggedIn: Boolean = true) {
         hasNextPage
         hasPreviousPage
       }
+      totalCount
     }
     ...ToggleForms
   }
