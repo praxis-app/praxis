@@ -241,7 +241,11 @@ export class UsersService {
     return pagedFeed;
   }
 
-  async getUserProfileFeed(id: number) {
+  async getUserProfileFeed(
+    id: number,
+    first = DEFAULT_PAGE_SIZE,
+    after?: Date,
+  ) {
     const user = await this.getUser({ id }, ['proposals', 'posts']);
     if (!user) {
       throw new UserInputError('User not found');
@@ -249,9 +253,7 @@ export class UsersService {
     const sortedFeed = [...user.posts, ...user.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-
-    // TODO: Update once pagination has been implemented
-    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+    return paginate(sortedFeed, first, after);
   }
 
   async getUserPermissions(id: number) {

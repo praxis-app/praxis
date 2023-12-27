@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { PageInfo } from '../../common/models/page-info.type';
-import { HomeFeedEdge } from './home-feed-edge.type';
+import { HomeFeedEdge } from './home-feed.edge';
 
 @ObjectType()
 export class HomeFeedConnection {

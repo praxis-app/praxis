@@ -1225,7 +1225,7 @@ export type User = {
   likes: Array<Like>;
   name: Scalars['String']['output'];
   posts: Array<Post>;
-  profileFeed: Array<FeedItem>;
+  profileFeed: UserProfileFeedConnection;
   profilePicture: Image;
   proposals: Array<Proposal>;
   serverPermissions: ServerPermissions;
@@ -1235,6 +1235,24 @@ export type User = {
 export type UserHomeFeedArgs = {
   after?: InputMaybe<Scalars['DateTime']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type UserProfileFeedArgs = {
+  after?: InputMaybe<Scalars['DateTime']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type UserProfileFeedConnection = {
+  __typename?: 'UserProfileFeedConnection';
+  edges: Array<UserProfileFeedEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type UserProfileFeedEdge = {
+  __typename?: 'UserProfileFeedEdge';
+  cursor: Scalars['DateTime']['output'];
+  node: FeedItem;
 };
 
 export type Vote = {

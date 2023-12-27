@@ -12,7 +12,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Comment } from '../../comments/models/comment.model';
-import { FeedItem } from '../../common/models/feed-item.union';
 import { EventAttendee } from '../../events/event-attendees/models/event-attendee.model';
 import { GroupMemberRequest } from '../../groups/group-member-requests/models/group-member-request.model';
 import { GroupRole } from '../../groups/group-roles/models/group-role.model';
@@ -70,9 +69,6 @@ export class User {
   })
   @Field(() => [Like])
   likes: Like[];
-
-  @Field(() => [FeedItem])
-  profileFeed: Array<typeof FeedItem>;
 
   @OneToMany(() => Image, (image) => image.user, {
     cascade: true,

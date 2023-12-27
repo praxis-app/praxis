@@ -36,6 +36,7 @@ const GroupPage = () => {
   const { name } = useParams();
   const { t } = useTranslation();
 
+  // TODO: Separate into 2 useEffects - with rowsPerPage and without
   useEffect(() => {
     if (name) {
       getGroupFeed({

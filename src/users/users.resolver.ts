@@ -11,18 +11,17 @@ import {
 } from '@nestjs/graphql';
 import { In } from 'typeorm';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { FeedItem } from '../common/models/feed-item.union';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
-import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { FollowUserPayload } from './models/follow-user.payload';
-import { HomeFeedConnection } from './models/home-feed-connection.type';
+import { HomeFeedConnection } from './models/home-feed.connection';
 import { UpdateUserInput } from './models/update-user.input';
 import { UpdateUserPayload } from './models/update-user.payload';
+import { UserProfileFeedConnection } from './models/user-profile-feed.connection';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
 
@@ -72,14 +71,13 @@ export class UsersResolver {
     return this.usersService.getUserFeed(id, first, after);
   }
 
-  @ResolveField(() => [FeedItem])
-  async profileFeed(@Parent() { id }: User) {
-    return this.usersService.getUserProfileFeed(id);
-  }
-
-  @ResolveField(() => [Post])
-  async posts(@Parent() { id }: User) {
-    return this.postsService.getPosts({ userId: id });
+  @ResolveField(() => UserProfileFeedConnection)
+  async profileFeed(
+    @Parent() { id }: User,
+    @Args('first', { type: () => Int, nullable: true }) first?: number,
+    @Args('after', { nullable: true }) after?: Date,
+  ) {
+    return this.usersService.getUserProfileFeed(id, first, after);
   }
 
   @ResolveField(() => Image)

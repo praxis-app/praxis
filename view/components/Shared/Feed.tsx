@@ -11,6 +11,7 @@ import { GroupFeedQuery } from '../../graphql/groups/queries/gen/GroupFeed.gen';
 import { PublicGroupsFeedQuery } from '../../graphql/groups/queries/gen/PublicGroupsFeed.gen';
 import { FeedItemFragment } from '../../graphql/posts/fragments/gen/FeedItem.gen';
 import { HomeFeedQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
+import { UserProfileFeedQuery } from '../../graphql/users/queries/gen/UserProfileFeed.gen';
 import PostCard from '../Posts/PostCard';
 import ProposalCard from '../Proposals/ProposalCard';
 import Pagination from './Pagination';
@@ -23,9 +24,10 @@ const CARD_CONTENT_STYLES: SxProps = {
 
 interface Props extends BoxProps {
   feed?:
+    | GroupFeedQuery['group']['feed']
     | HomeFeedQuery['me']['homeFeed']
     | PublicGroupsFeedQuery['publicGroupsFeed']
-    | GroupFeedQuery['group']['feed'];
+    | UserProfileFeedQuery['user']['profileFeed'];
   onNextPage(): void;
   onPrevPage(): void;
   rowsPerPage: number;
