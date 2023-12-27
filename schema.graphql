@@ -234,7 +234,6 @@ type Group {
   id: Int!
   name: String!
   description: String!
-  feed: [FeedItem!]!
   posts: [Post!]!
   proposals: [Proposal!]!
   members: [User!]!
@@ -243,6 +242,7 @@ type Group {
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
+  feed(first: Int, after: DateTime): GroupFeedConnection!
   memberCount: Int!
   memberRequestCount: Int
   isJoinedByMe: Boolean!
@@ -251,8 +251,6 @@ type Group {
   myPermissions: GroupPermissions!
   settings: GroupConfig!
 }
-
-union FeedItem = Post | Proposal
 
 type Event {
   id: Int!
@@ -351,6 +349,8 @@ type User {
   serverPermissions: ServerPermissions!
 }
 
+union FeedItem = Post | Proposal
+
 type ServerInvite {
   id: Int!
   token: String!
@@ -440,6 +440,17 @@ type PageInfo {
   endCursor: DateTime!
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
+}
+
+type GroupFeedEdge {
+  cursor: DateTime!
+  node: FeedItem!
+}
+
+type GroupFeedConnection {
+  pageInfo: PageInfo!
+  edges: [GroupFeedEdge!]!
+  totalCount: Int!
 }
 
 type PublicGroupsFeedEdge {

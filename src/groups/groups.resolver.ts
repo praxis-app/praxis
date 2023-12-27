@@ -10,7 +10,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { FeedItem } from '../common/models/feed-item.union';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { EventsService } from '../events/events.service';
 import { Event } from '../events/models/event.model';
@@ -30,8 +29,9 @@ import { GroupRole } from './group-roles/models/group-role.model';
 import { GroupsService } from './groups.service';
 import { CreateGroupInput } from './models/create-group.input';
 import { CreateGroupPayload } from './models/create-group.payload';
+import { GroupFeedConnection } from './models/group-feed.connection';
 import { Group } from './models/group.model';
-import { PublicGroupsFeedConnection } from './models/public-groups-feed-connection.type';
+import { PublicGroupsFeedConnection } from './models/public-groups-feed.connection';
 import { UpdateGroupInput } from './models/update-group.input';
 import { UpdateGroupPayload } from './models/update-group.payload';
 
@@ -94,9 +94,13 @@ export class GroupsResolver {
     return loaders.groupCoverPhotosLoader.load(id);
   }
 
-  @ResolveField(() => [FeedItem])
-  async feed(@Parent() { id }: Group) {
-    return this.groupsService.getGroupFeed(id);
+  @ResolveField(() => GroupFeedConnection)
+  async feed(
+    @Parent() { id }: Group,
+    @Args('first', { type: () => Int, nullable: true }) first?: number,
+    @Args('after', { nullable: true }) after?: Date,
+  ) {
+    return this.groupsService.getGroupFeed(id, first, after);
   }
 
   @ResolveField(() => [User])

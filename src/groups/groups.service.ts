@@ -66,14 +66,12 @@ export class GroupsService {
     return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
   }
 
-  async getGroupFeed(id: number) {
+  async getGroupFeed(id: number, first = DEFAULT_PAGE_SIZE, after?: Date) {
     const group = await this.getGroup({ id }, ['proposals', 'posts']);
     const sortedFeed = [...group.posts, ...group.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-
-    // TODO: Update once pagination has been implemented
-    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+    return paginate(sortedFeed, first, after);
   }
 
   async getPublicGroupsFeed(first = DEFAULT_PAGE_SIZE, after?: Date) {

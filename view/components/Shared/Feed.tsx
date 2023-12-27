@@ -7,6 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { GroupFeedQuery } from '../../graphql/groups/queries/gen/GroupFeed.gen';
 import { PublicGroupsFeedQuery } from '../../graphql/groups/queries/gen/PublicGroupsFeed.gen';
 import { FeedItemFragment } from '../../graphql/posts/fragments/gen/FeedItem.gen';
 import { HomeFeedQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
@@ -23,7 +24,8 @@ const CARD_CONTENT_STYLES: SxProps = {
 interface Props extends BoxProps {
   feed?:
     | HomeFeedQuery['me']['homeFeed']
-    | PublicGroupsFeedQuery['publicGroupsFeed'];
+    | PublicGroupsFeedQuery['publicGroupsFeed']
+    | GroupFeedQuery['group']['feed'];
   onNextPage(): void;
   onPrevPage(): void;
   rowsPerPage: number;

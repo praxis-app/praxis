@@ -2,10 +2,6 @@ query GroupProfile($name: String!, $isLoggedIn: Boolean!) {
   group(name: $name) {
     ...GroupProfileCard
     description
-
-    feed {
-      ...FeedItem
-    }
   }
 
   me @include(if: $isLoggedIn) {

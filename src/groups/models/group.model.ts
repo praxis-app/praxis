@@ -12,7 +12,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { FeedItem } from '../../common/models/feed-item.union';
 import { Event } from '../../events/models/event.model';
 import { Image } from '../../images/models/image.model';
 import { Post } from '../../posts/models/post.model';
@@ -36,9 +35,6 @@ export class Group {
   @Column()
   @Field()
   description: string;
-
-  @Field(() => [FeedItem])
-  feed: Array<typeof FeedItem>;
 
   @Field(() => [Post])
   @OneToMany(() => Post, (post) => post.group, {

@@ -269,7 +269,7 @@ export type Group = {
   coverPhoto?: Maybe<Image>;
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
-  feed: Array<FeedItem>;
+  feed: GroupFeedConnection;
   futureEvents: Array<Event>;
   id: Scalars['Int']['output'];
   isJoinedByMe: Scalars['Boolean']['output'];
@@ -287,6 +287,11 @@ export type Group = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type GroupFeedArgs = {
+  after?: InputMaybe<Scalars['DateTime']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type GroupConfig = {
   __typename?: 'GroupConfig';
   adminModel: Scalars['String']['output'];
@@ -301,6 +306,13 @@ export type GroupConfig = {
   standAsidesLimit: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
   votingTimeLimit: Scalars['Int']['output'];
+};
+
+export type GroupFeedConnection = {
+  __typename?: 'GroupFeedConnection';
+  edges: Array<PublicGroupsFeedEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type GroupMemberRequest = {
