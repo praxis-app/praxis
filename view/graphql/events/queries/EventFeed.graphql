@@ -1,0 +1,24 @@
+query EventFeed(
+  $eventId: Int!
+  $first: Int
+  $after: DateTime
+  $isLoggedIn: Boolean!
+) {
+  event(id: $eventId) {
+    id
+    posts(first: $first, after: $after) {
+      edges {
+        node {
+          ...PostCard
+        }
+      }
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
+      totalCount
+    }
+  }
+}

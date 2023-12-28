@@ -254,8 +254,8 @@ export type GroupFeedQuery = {
       }>;
       pageInfo: {
         __typename?: 'PageInfo';
-        startCursor: any;
-        endCursor: any;
+        startCursor?: any | null;
+        endCursor?: any | null;
         hasNextPage: boolean;
         hasPreviousPage: boolean;
       };

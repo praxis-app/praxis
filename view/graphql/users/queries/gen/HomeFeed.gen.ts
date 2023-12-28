@@ -253,8 +253,8 @@ export type HomeFeedQuery = {
       }>;
       pageInfo: {
         __typename?: 'PageInfo';
-        startCursor: any;
-        endCursor: any;
+        startCursor?: any | null;
+        endCursor?: any | null;
         hasNextPage: boolean;
         hasPreviousPage: boolean;
       };

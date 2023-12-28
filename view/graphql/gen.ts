@@ -236,9 +236,14 @@ export type Event = {
   location?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   online: Scalars['Boolean']['output'];
-  posts: Array<Post>;
+  posts: PostsConnection;
   startsAt: Scalars['DateTime']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type EventPostsArgs = {
+  after?: InputMaybe<Scalars['DateTime']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type EventAttendee = {
@@ -676,10 +681,10 @@ export type MutationUpdateVoteArgs = {
 
 export type PageInfo = {
   __typename?: 'PageInfo';
-  endCursor: Scalars['DateTime']['output'];
+  endCursor?: Maybe<Scalars['DateTime']['output']>;
   hasNextPage: Scalars['Boolean']['output'];
   hasPreviousPage: Scalars['Boolean']['output'];
-  startCursor: Scalars['DateTime']['output'];
+  startCursor?: Maybe<Scalars['DateTime']['output']>;
 };
 
 export type Post = {
@@ -697,6 +702,19 @@ export type Post = {
   likesCount: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
   user: User;
+};
+
+export type PostsConnection = {
+  __typename?: 'PostsConnection';
+  edges: Array<PostsEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+};
+
+export type PostsEdge = {
+  __typename?: 'PostsEdge';
+  cursor: Scalars['DateTime']['output'];
+  node: Post;
 };
 
 export type Proposal = {

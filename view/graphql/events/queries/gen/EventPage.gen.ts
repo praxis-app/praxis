@@ -2,7 +2,6 @@ import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
 import { EventPageCardFragmentDoc } from '../../fragments/gen/EventPageCard.gen';
-import { PostCardFragmentDoc } from '../../../posts/fragments/gen/PostCard.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -29,53 +28,6 @@ export type EventPageQuery = {
     startsAt: any;
     endsAt?: any | null;
     attendingStatus?: string | null;
-    posts: Array<{
-      __typename?: 'Post';
-      id: number;
-      body?: string | null;
-      likesCount: number;
-      commentCount: number;
-      isLikedByMe?: boolean;
-      createdAt: any;
-      images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
-      user: {
-        __typename?: 'User';
-        id: number;
-        name: string;
-        profilePicture: { __typename?: 'Image'; id: number };
-      };
-      group?: {
-        __typename?: 'Group';
-        isJoinedByMe?: boolean;
-        id: number;
-        name: string;
-        myPermissions?: {
-          __typename?: 'GroupPermissions';
-          approveMemberRequests: boolean;
-          createEvents: boolean;
-          deleteGroup: boolean;
-          manageComments: boolean;
-          manageEvents: boolean;
-          managePosts: boolean;
-          manageRoles: boolean;
-          manageSettings: boolean;
-          removeMembers: boolean;
-          updateGroup: boolean;
-        };
-        coverPhoto?: { __typename?: 'Image'; id: number } | null;
-      } | null;
-      event?: {
-        __typename?: 'Event';
-        id: number;
-        name: string;
-        group?: {
-          __typename?: 'Group';
-          id: number;
-          isJoinedByMe: boolean;
-        } | null;
-        coverPhoto: { __typename?: 'Image'; id: number };
-      } | null;
-    }>;
     group?: {
       __typename?: 'Group';
       id: number;
@@ -103,9 +55,6 @@ export const EventPageDocument = gql`
   query EventPage($id: Int!, $isLoggedIn: Boolean!) {
     event(id: $id) {
       ...EventPageCard
-      posts {
-        ...PostCard
-      }
       group {
         id
         name
@@ -119,7 +68,6 @@ export const EventPageDocument = gql`
     }
   }
   ${EventPageCardFragmentDoc}
-  ${PostCardFragmentDoc}
 `;
 
 /**

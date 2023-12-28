@@ -2,11 +2,11 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class PageInfo {
-  @Field()
-  startCursor: Date;
+  @Field({ nullable: true })
+  startCursor?: Date;
 
-  @Field()
-  endCursor: Date;
+  @Field({ nullable: true })
+  endCursor?: Date;
 
   @Field()
   hasNextPage: boolean;

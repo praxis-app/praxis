@@ -44,7 +44,6 @@ export class Event {
   @OneToMany(() => EventAttendee, (attendee) => attendee.event)
   attendees: EventAttendee[];
 
-  @Field(() => [Post])
   @OneToMany(() => Post, (post) => post.event, {
     cascade: true,
   })

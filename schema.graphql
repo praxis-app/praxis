@@ -258,7 +258,6 @@ type Event {
   online: Boolean!
   externalLink: String
   attendees: [EventAttendee!]!
-  posts: [Post!]!
   images: [Image!]!
   group: Group
   startsAt: DateTime!
@@ -269,6 +268,7 @@ type Event {
   goingCount: Int!
   attendingStatus: String
   host: User!
+  posts(first: Int, after: DateTime): PostsConnection!
   coverPhoto: Image!
 }
 
@@ -382,6 +382,24 @@ type UpdateEventAttendeePayload {
   event: Event!
 }
 
+type PageInfo {
+  startCursor: DateTime
+  endCursor: DateTime
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+}
+
+type PostsEdge {
+  cursor: DateTime!
+  node: Post!
+}
+
+type PostsConnection {
+  pageInfo: PageInfo!
+  edges: [PostsEdge!]!
+  totalCount: Int!
+}
+
 type CreateEventPayload {
   event: Event!
 }
@@ -429,13 +447,6 @@ type GroupPermissions {
 
 type CreateGroupPayload {
   group: Group!
-}
-
-type PageInfo {
-  startCursor: DateTime!
-  endCursor: DateTime!
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
 }
 
 type GroupFeedEdge {
