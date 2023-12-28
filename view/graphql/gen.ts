@@ -236,7 +236,7 @@ export type Event = {
   location?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   online: Scalars['Boolean']['output'];
-  posts: Array<Post>;
+  posts: PostsConnection;
   startsAt: Scalars['DateTime']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -680,6 +680,12 @@ export type Post = {
   likesCount: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
   user: User;
+};
+
+export type PostsConnection = {
+  __typename?: 'PostsConnection';
+  nodes: Array<Post>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Proposal = {

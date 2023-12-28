@@ -3,6 +3,8 @@ import { Context } from '../../context/context.types';
 import { Event } from '../../events/models/event.model';
 import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
 import { Image } from '../../images/models/image.model';
+import { Post } from '../../posts/models/post.model';
+import { PostsConnection } from '../../posts/models/posts.connection';
 
 export const isPublicEvent = rule({ cache: 'strict' })(async (
   parent: Event,
@@ -19,13 +21,23 @@ export const isPublicEvent = rule({ cache: 'strict' })(async (
 });
 
 export const isPublicEventPost = rule({ cache: 'strict' })(async (
-  parent,
-  args,
+  parent: Post | PostsConnection | null,
+  args: { id: number } | null,
   { services: { postsService } }: Context,
 ) => {
-  const { event } = await postsService.getPost(parent ? parent.id : args.id, [
-    'event.group.config',
-  ]);
+  let postId: number | undefined;
+
+  if (parent instanceof Post) {
+    postId = parent.id;
+  } else if (parent && 'nodes' in parent) {
+    postId = parent.nodes[0].id;
+  } else if (args) {
+    postId = args.id;
+  }
+  if (!postId) {
+    return false;
+  }
+  const { event } = await postsService.getPost(postId, ['event.group.config']);
   return event?.group?.config.privacy === GroupPrivacy.Public;
 });
 

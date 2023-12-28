@@ -268,7 +268,7 @@ type Event {
   goingCount: Int!
   attendingStatus: String
   host: User!
-  posts(offset: Int, limit: Int): [Post!]!
+  posts(offset: Int, limit: Int): PostsConnection!
   coverPhoto: Image!
 }
 
@@ -383,6 +383,11 @@ type CreateEventAttendeePayload {
 
 type UpdateEventAttendeePayload {
   event: Event!
+}
+
+type PostsConnection {
+  nodes: [Post!]!
+  totalCount: Int!
 }
 
 type CreateEventPayload {

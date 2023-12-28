@@ -12,7 +12,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
-import { Post } from '../posts/models/post.model';
+import { PostsConnection } from '../posts/models/posts.connection';
 import { User } from '../users/models/user.model';
 import { EventAttendeesService } from './event-attendees/event-attendees.service';
 import { EventAttendee } from './event-attendees/models/event-attendee.model';
@@ -86,7 +86,7 @@ export class EventsResolver {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
 
-  @ResolveField(() => [Post])
+  @ResolveField(() => PostsConnection)
   async posts(
     @Parent() { id }: Event,
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,

@@ -14,45 +14,26 @@ interface Props {
 const EventDiscussionTab = ({ eventId }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
-  const [prevEndCursor, setPrevEndCursor] = useState<string>();
+  const [page, setPage] = useState(0);
 
   const [getEventFeed, { data, loading }] = useEventFeedLazyQuery();
 
   useEffect(() => {
     getEventFeed({
       variables: {
-        first: rowsPerPage,
+        limit: rowsPerPage,
+        offset: page * rowsPerPage,
         isLoggedIn,
         eventId,
       },
     });
-  }, [getEventFeed, eventId, rowsPerPage, isLoggedIn]);
+  }, [getEventFeed, eventId, rowsPerPage, isLoggedIn, page]);
 
-  const handleNextPage = async () => {
-    if (!data?.event.posts.pageInfo.hasNextPage) {
-      return;
-    }
-    const { pageInfo } = data.event.posts;
-    const { endCursor, hasPreviousPage } = pageInfo;
-
-    if (hasPreviousPage) {
-      setPrevEndCursor(endCursor);
-    }
+  const handleChangePage = async (newPage: number) => {
     await getEventFeed({
       variables: {
-        first: rowsPerPage,
-        after: endCursor,
-        isLoggedIn,
-        eventId,
-      },
-    });
-  };
-
-  const handlePrevPage = async () => {
-    await getEventFeed({
-      variables: {
-        first: rowsPerPage,
-        after: prevEndCursor,
+        limit: rowsPerPage,
+        offset: newPage * rowsPerPage,
         isLoggedIn,
         eventId,
       },
@@ -76,11 +57,13 @@ const EventDiscussionTab = ({ eventId }: Props) => {
       )}
 
       <Feed
-        feedItems={data?.event.posts}
+        feedItems={data?.event.posts.nodes}
+        totalCount={data?.event.posts.totalCount}
         isLoading={loading}
-        onNextPage={handleNextPage}
-        onPrevPage={handlePrevPage}
+        onChangePage={handleChangePage}
+        page={page}
         rowsPerPage={rowsPerPage}
+        setPage={setPage}
         setRowsPerPage={setRowsPerPage}
       />
     </>
