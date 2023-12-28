@@ -339,16 +339,13 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   homeFeed(offset: Int, limit: Int): HomeFeedConnection!
-  homeFeedCount: Int!
-  profileFeed(offset: Int, limit: Int): [FeedItem!]!
+  profileFeed(offset: Int, limit: Int): UserProfileFeedConnection!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
   joinedGroups: [Group!]!
   serverPermissions: ServerPermissions!
 }
-
-union FeedItem = Post | Proposal
 
 type ServerInvite {
   id: Int!
@@ -444,6 +441,8 @@ type GroupFeedConnection {
   totalCount: Int!
 }
 
+union FeedItem = Post | Proposal
+
 type PublicGroupsFeedConnection {
   nodes: [FeedItem!]!
   totalCount: Int!
@@ -507,11 +506,16 @@ type FollowUserPayload {
   follower: User!
 }
 
+type HomeFeedConnection {
+  nodes: [FeedItem!]!
+  totalCount: Int!
+}
+
 type UpdateUserPayload {
   user: User!
 }
 
-type HomeFeedConnection {
+type UserProfileFeedConnection {
   nodes: [FeedItem!]!
   totalCount: Int!
 }

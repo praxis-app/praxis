@@ -11,7 +11,6 @@ import {
 } from '@nestjs/graphql';
 import { In } from 'typeorm';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { FeedItem } from '../common/models/feed-item.union';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
@@ -19,11 +18,12 @@ import { PostsService } from '../posts/posts.service';
 import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { FollowUserPayload } from './models/follow-user.payload';
+import { HomeFeedConnection } from './models/home-feed.connection';
 import { UpdateUserInput } from './models/update-user.input';
 import { UpdateUserPayload } from './models/update-user.payload';
+import { UserProfileFeedConnection } from './models/user-feed.connection';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
-import { HomeFeedConnection } from './models/home-feed.connection';
 
 @Resolver(() => User)
 export class UsersResolver {
@@ -71,12 +71,7 @@ export class UsersResolver {
     return this.usersService.getUserFeed(id, offset, limit);
   }
 
-  @ResolveField(() => Int)
-  async homeFeedCount(@Parent() { id }: User) {
-    console.log(id);
-  }
-
-  @ResolveField(() => [FeedItem])
+  @ResolveField(() => UserProfileFeedConnection)
   async profileFeed(
     @Parent() { id }: User,
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,

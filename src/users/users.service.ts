@@ -242,7 +242,7 @@ export class UsersService {
     return { nodes, totalCount: sortedFeed.length };
   }
 
-  async getUserProfileFeed(id: number, limit?: number, offset?: number) {
+  async getUserProfileFeed(id: number, offset?: number, limit?: number) {
     const user = await this.getUser({ id }, ['proposals', 'posts']);
     if (!user) {
       throw new UserInputError('User not found');
@@ -250,10 +250,10 @@ export class UsersService {
     const sortedFeed = [...user.posts, ...user.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    if (limit) {
-      return paginate(sortedFeed, limit, offset);
-    }
-    return sortedFeed;
+    const nodes =
+      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
+
+    return { nodes, totalCount: sortedFeed.length };
   }
 
   async getUserPermissions(id: number) {

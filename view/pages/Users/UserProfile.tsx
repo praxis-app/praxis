@@ -21,7 +21,7 @@ const UserProfile = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
-  const [prevEndCursor, setPrevEndCursor] = useState<string>();
+  const [page, setPage] = useState(0);
 
   const { name } = useParams();
   const { data, loading, error } = useUserProfileQuery({
@@ -41,40 +41,19 @@ const UserProfile = () => {
     }
     getFeed({
       variables: {
-        first: rowsPerPage,
+        limit: rowsPerPage,
+        offset: page * rowsPerPage,
         isLoggedIn,
         name,
       },
     });
-  }, [name, isLoggedIn, getFeed, rowsPerPage]);
+  }, [name, isLoggedIn, getFeed, rowsPerPage, page]);
 
-  const handleNextPage = async () => {
-    if (!feedData?.user.profileFeed.pageInfo.hasNextPage || !name) {
-      return;
-    }
-    const { pageInfo } = feedData.user.profileFeed;
-    const { endCursor, hasPreviousPage } = pageInfo;
-    if (hasPreviousPage) {
-      setPrevEndCursor(endCursor);
-    }
+  const handleChangePage = async (newPage: number) => {
     await getFeed({
       variables: {
-        first: rowsPerPage,
-        after: endCursor,
-        isLoggedIn,
-        name,
-      },
-    });
-  };
-
-  const handlePrevPage = async () => {
-    if (!name) {
-      return;
-    }
-    await getFeed({
-      variables: {
-        first: rowsPerPage,
-        after: prevEndCursor,
+        limit: rowsPerPage,
+        offset: newPage * rowsPerPage,
         isLoggedIn,
         name,
       },
@@ -133,11 +112,13 @@ const UserProfile = () => {
       {isMe && <ToggleForms me={me} />}
 
       <Feed
-        feedItems={feedData?.user.profileFeed}
+        feedItems={feedData?.user.profileFeed.nodes}
+        totalCount={feedData?.user.profileFeed.totalCount}
         isLoading={feedLoading}
-        onNextPage={handleNextPage}
-        onPrevPage={handlePrevPage}
+        onChangePage={handleChangePage}
+        page={page}
         rowsPerPage={rowsPerPage}
+        setPage={setPage}
         setRowsPerPage={setRowsPerPage}
       />
     </>

@@ -1199,14 +1199,13 @@ export type User = {
   following: Array<User>;
   followingCount: Scalars['Int']['output'];
   homeFeed: HomeFeedConnection;
-  homeFeedCount: Scalars['Int']['output'];
   id: Scalars['Int']['output'];
   isFollowedByMe: Scalars['Boolean']['output'];
   joinedGroups: Array<Group>;
   likes: Array<Like>;
   name: Scalars['String']['output'];
   posts: Array<Post>;
-  profileFeed: Array<FeedItem>;
+  profileFeed: UserProfileFeedConnection;
   profilePicture: Image;
   proposals: Array<Proposal>;
   serverPermissions: ServerPermissions;
@@ -1221,6 +1220,12 @@ export type UserHomeFeedArgs = {
 export type UserProfileFeedArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type UserProfileFeedConnection = {
+  __typename?: 'UserProfileFeedConnection';
+  nodes: Array<FeedItem>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Vote = {
