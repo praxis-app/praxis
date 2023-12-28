@@ -434,12 +434,12 @@ type CreateGroupPayload {
   group: Group!
 }
 
-type PublicGroupsFeedConnection {
+type GroupFeedConnection {
   feedItems: [FeedItem!]!
   totalCount: Int!
 }
 
-type GroupFeedConnection {
+type PublicGroupsFeedConnection {
   feedItems: [FeedItem!]!
   totalCount: Int!
 }
