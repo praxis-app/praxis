@@ -36,17 +36,21 @@ const GroupPage = () => {
   const { name } = useParams();
   const { t } = useTranslation();
 
-  // TODO: Separate into 2 useEffects - with rowsPerPage and without
   useEffect(() => {
     if (name) {
-      getGroupFeed({
-        variables: { name, isLoggedIn },
-      });
       getGroupProfile({
         variables: { name, isLoggedIn },
       });
+      getGroupFeed({
+        variables: {
+          limit: rowsPerPage,
+          offset: page * rowsPerPage,
+          isLoggedIn,
+          name,
+        },
+      });
     }
-  }, [name, isLoggedIn, getGroupFeed, getGroupProfile]);
+  }, [name, isLoggedIn, getGroupFeed, getGroupProfile, page, rowsPerPage]);
 
   const handleChangePage = async (newPage: number) => {
     if (!name) {

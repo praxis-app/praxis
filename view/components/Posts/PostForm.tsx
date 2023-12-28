@@ -12,7 +12,15 @@ import {
   TypeNames,
 } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
+import {
+  EventFeedDocument,
+  EventFeedQuery,
+} from '../../graphql/events/queries/gen/EventFeed.gen';
 import { CreatePostInput, UpdatePostInput } from '../../graphql/gen';
+import {
+  GroupFeedDocument,
+  GroupFeedQuery,
+} from '../../graphql/groups/queries/gen/GroupFeed.gen';
 import { useDeleteImageMutation } from '../../graphql/images/mutations/gen/DeleteImage.gen';
 import { PostFormFragment } from '../../graphql/posts/fragments/gen/PostForm.gen';
 import { useCreatePostMutation } from '../../graphql/posts/mutations/gen/CreatePost.gen';
@@ -21,6 +29,10 @@ import {
   HomeFeedDocument,
   HomeFeedQuery,
 } from '../../graphql/users/queries/gen/HomeFeed.gen';
+import {
+  UserProfileFeedDocument,
+  UserProfileFeedQuery,
+} from '../../graphql/users/queries/gen/UserProfileFeed.gen';
 import { isEntityTooLarge } from '../../utils/error.utils';
 import { validateImageInput } from '../../utils/image.utils';
 import { getRandomString } from '../../utils/shared.utils';
@@ -29,10 +41,6 @@ import ImageInput from '../Images/ImageInput';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import TextFieldWithAvatar from '../Shared/TextFieldWithAvatar';
-import {
-  UserProfileFeedDocument,
-  UserProfileFeedQuery,
-} from '../../graphql/users/queries/gen/UserProfileFeed.gen';
 
 interface Props extends FormikFormProps {
   editPost?: PostFormFragment;
@@ -96,27 +104,38 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
             }),
         );
         if (post.group) {
-          cache.modify({
-            id: cache.identify(post.group),
-            fields: {
-              feed(existingRefs, { toReference }) {
-                return [toReference(post), ...existingRefs];
+          cache.updateQuery<GroupFeedQuery>(
+            {
+              query: GroupFeedDocument,
+              variables: {
+                name: post.group.name,
+                isLoggedIn: true,
+                limit: 10,
+                offset: 0,
               },
             },
-          });
+            (groupFeedData) =>
+              produce(groupFeedData, (draft) => {
+                draft?.group.feed.nodes.unshift(post);
+              }),
+          );
         }
-        if (eventId) {
-          cache.modify({
-            id: cache.identify({
-              __typename: TypeNames.Event,
-              id: eventId,
-            }),
-            fields: {
-              posts(existingRefs, { toReference }) {
-                return [toReference(post), ...existingRefs];
+        if (post.event) {
+          cache.updateQuery<EventFeedQuery>(
+            {
+              query: EventFeedDocument,
+              variables: {
+                eventId: post.event.id,
+                isLoggedIn: true,
+                limit: 10,
+                offset: 0,
               },
             },
-          });
+            (groupFeedData) =>
+              produce(groupFeedData, (draft) => {
+                draft?.event.posts.nodes.unshift(post);
+              }),
+          );
         }
       },
       onCompleted() {
