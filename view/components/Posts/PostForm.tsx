@@ -29,6 +29,10 @@ import ImageInput from '../Images/ImageInput';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import TextFieldWithAvatar from '../Shared/TextFieldWithAvatar';
+import {
+  UserProfileFeedDocument,
+  UserProfileFeedQuery,
+} from '../../graphql/users/queries/gen/UserProfileFeed.gen';
 
 interface Props extends FormikFormProps {
   editPost?: PostFormFragment;
@@ -67,20 +71,30 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
           createPost: { post },
         } = data;
         cache.updateQuery<HomeFeedQuery>(
-          { query: HomeFeedDocument },
+          {
+            query: HomeFeedDocument,
+            variables: { limit: 10, offset: 0, isLoggedIn: true },
+          },
           (homePageData) =>
             produce(homePageData, (draft) => {
-              draft?.me?.homeFeed.unshift(post);
+              draft?.me?.homeFeed.nodes.unshift(post);
             }),
         );
-        cache.modify({
-          id: cache.identify(post.user),
-          fields: {
-            profileFeed(existingRefs, { toReference }) {
-              return [toReference(post), ...existingRefs];
+        cache.updateQuery<UserProfileFeedQuery>(
+          {
+            query: UserProfileFeedDocument,
+            variables: {
+              name: post.user.name,
+              isLoggedIn: true,
+              limit: 10,
+              offset: 0,
             },
           },
-        });
+          (userProfileFeedData) =>
+            produce(userProfileFeedData, (draft) => {
+              draft?.user.profileFeed.nodes.unshift(post);
+            }),
+        );
         if (post.group) {
           cache.modify({
             id: cache.identify(post.group),
