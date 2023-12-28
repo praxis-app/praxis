@@ -71,10 +71,10 @@ export class GroupsService {
     const sortedFeed = [...group.posts, ...group.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    const feedItems =
+    const nodes =
       offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
 
-    return { feedItems, totalCount: sortedFeed.length };
+    return { nodes, totalCount: sortedFeed.length };
   }
 
   async getPublicGroupsFeed(offset?: number, limit?: number) {
@@ -98,10 +98,10 @@ export class GroupsService {
     const sortedFeed = [...posts, ...proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    const feedItems =
+    const nodes =
       offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
 
-    return { feedItems, totalCount: sortedFeed.length };
+    return { nodes, totalCount: sortedFeed.length };
   }
 
   async isGroupMember(groupId: number, userId: number) {

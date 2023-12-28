@@ -53,7 +53,7 @@ const PublicGroupsFeed = () => {
     <>
       <WelcomeCard />
       <Feed
-        feedItems={data?.publicGroupsFeed.feedItems}
+        feedItems={data?.publicGroupsFeed.nodes}
         totalCount={data?.publicGroupsFeed.totalCount}
         isLoading={loading}
         onChangePage={handleChangePage}

@@ -19,7 +19,7 @@ export type PublicGroupsFeedQuery = {
   publicGroupsFeed: {
     __typename?: 'PublicGroupsFeedConnection';
     totalCount: number;
-    feedItems: Array<
+    nodes: Array<
       | {
           __typename?: 'Post';
           id: number;
@@ -248,7 +248,7 @@ export const PublicGroupsFeedDocument = gql`
     $isLoggedIn: Boolean = false
   ) {
     publicGroupsFeed(offset: $offset, limit: $limit) {
-      feedItems {
+      nodes {
         ...FeedItem
       }
       totalCount

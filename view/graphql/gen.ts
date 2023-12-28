@@ -313,7 +313,7 @@ export type GroupConfig = {
 
 export type GroupFeedConnection = {
   __typename?: 'GroupFeedConnection';
-  feedItems: Array<FeedItem>;
+  nodes: Array<FeedItem>;
   totalCount: Scalars['Int']['output'];
 };
 
@@ -384,7 +384,7 @@ export type GroupRolePermissionInput = {
 
 export type HomeFeedConnection = {
   __typename?: 'HomeFeedConnection';
-  feedItems: Array<FeedItem>;
+  nodes: Array<FeedItem>;
   totalCount: Scalars['Int']['output'];
 };
 
@@ -860,7 +860,7 @@ export type ProposalConfig = {
 
 export type PublicGroupsFeedConnection = {
   __typename?: 'PublicGroupsFeedConnection';
-  feedItems: Array<FeedItem>;
+  nodes: Array<FeedItem>;
   totalCount: Scalars['Int']['output'];
 };
 

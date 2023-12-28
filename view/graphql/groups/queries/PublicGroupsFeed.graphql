@@ -4,7 +4,7 @@ query PublicGroupsFeed(
   $isLoggedIn: Boolean = false
 ) {
   publicGroupsFeed(offset: $offset, limit: $limit) {
-    feedItems {
+    nodes {
       ...FeedItem
     }
     totalCount

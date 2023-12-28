@@ -235,11 +235,11 @@ export class UsersService {
       ...Object.values(proposalMap),
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-    const feedItems =
+    const nodes =
       offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
     logTime(logTimeMessage, this.logger);
 
-    return { feedItems, totalCount: sortedFeed.length };
+    return { nodes, totalCount: sortedFeed.length };
   }
 
   async getUserProfileFeed(id: number, limit?: number, offset?: number) {

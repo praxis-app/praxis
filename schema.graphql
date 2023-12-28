@@ -435,12 +435,12 @@ type CreateGroupPayload {
 }
 
 type GroupFeedConnection {
-  feedItems: [FeedItem!]!
+  nodes: [FeedItem!]!
   totalCount: Int!
 }
 
 type PublicGroupsFeedConnection {
-  feedItems: [FeedItem!]!
+  nodes: [FeedItem!]!
   totalCount: Int!
 }
 
@@ -507,7 +507,7 @@ type UpdateUserPayload {
 }
 
 type HomeFeedConnection {
-  feedItems: [FeedItem!]!
+  nodes: [FeedItem!]!
   totalCount: Int!
 }
 

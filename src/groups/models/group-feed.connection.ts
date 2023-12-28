@@ -4,7 +4,7 @@ import { FeedItem } from '../../common/models/feed-item.union';
 @ObjectType()
 export class GroupFeedConnection {
   @Field(() => [FeedItem])
-  feedItems: Array<typeof FeedItem>;
+  nodes: Array<typeof FeedItem>;
 
   @Field(() => Int)
   totalCount: number;

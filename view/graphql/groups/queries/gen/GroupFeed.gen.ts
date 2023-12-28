@@ -23,7 +23,7 @@ export type GroupFeedQuery = {
     feed: {
       __typename?: 'GroupFeedConnection';
       totalCount: number;
-      feedItems: Array<
+      nodes: Array<
         | {
             __typename?: 'Post';
             id: number;
@@ -264,7 +264,7 @@ export const GroupFeedDocument = gql`
     group(name: $name) {
       id
       feed(offset: $offset, limit: $limit) {
-        feedItems {
+        nodes {
           ...FeedItem
         }
         totalCount

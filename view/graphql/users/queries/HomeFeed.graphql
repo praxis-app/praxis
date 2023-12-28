@@ -2,7 +2,7 @@ query HomeFeed($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
   me {
     id
     homeFeed(offset: $offset, limit: $limit) {
-      feedItems {
+      nodes {
         ...FeedItem
       }
       totalCount

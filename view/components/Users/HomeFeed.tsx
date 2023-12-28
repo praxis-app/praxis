@@ -38,7 +38,7 @@ const HomeFeed = () => {
 
   return (
     <Feed
-      feedItems={data?.me.homeFeed.feedItems}
+      feedItems={data?.me.homeFeed.nodes}
       isLoading={loading}
       onChangePage={handleChangePage}
       page={page}

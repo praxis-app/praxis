@@ -95,7 +95,7 @@ const GroupPage = () => {
             <ToggleForms groupId={group.id} me={me} />
           )}
           <Feed
-            feedItems={groupFeedData?.group.feed.feedItems}
+            feedItems={groupFeedData?.group.feed.nodes}
             totalCount={groupFeedData?.group.feed.totalCount}
             isLoading={groupFeedLoading}
             onChangePage={handleChangePage}
