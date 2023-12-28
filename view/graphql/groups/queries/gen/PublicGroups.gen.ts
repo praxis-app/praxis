@@ -14,36 +14,43 @@ export type PublicGroupsQueryVariables = Types.Exact<{
 
 export type PublicGroupsQuery = {
   __typename?: 'Query';
-  publicGroups: Array<{
-    __typename?: 'Group';
-    description: string;
-    memberCount: number;
-    memberRequestCount?: number | null;
-    isJoinedByMe?: boolean;
-    id: number;
-    name: string;
-    settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
-    myPermissions?: {
-      __typename?: 'GroupPermissions';
-      approveMemberRequests: boolean;
-      createEvents: boolean;
-      deleteGroup: boolean;
-      manageComments: boolean;
-      manageEvents: boolean;
-      managePosts: boolean;
-      manageRoles: boolean;
-      manageSettings: boolean;
-      removeMembers: boolean;
-      updateGroup: boolean;
-    };
-    coverPhoto?: { __typename?: 'Image'; id: number } | null;
-  }>;
+  publicGroups: {
+    __typename?: 'GroupsConnection';
+    totalCount: number;
+    nodes: Array<{
+      __typename?: 'Group';
+      description: string;
+      memberCount: number;
+      memberRequestCount?: number | null;
+      isJoinedByMe?: boolean;
+      id: number;
+      name: string;
+      settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
+      myPermissions?: {
+        __typename?: 'GroupPermissions';
+        approveMemberRequests: boolean;
+        createEvents: boolean;
+        deleteGroup: boolean;
+        manageComments: boolean;
+        manageEvents: boolean;
+        managePosts: boolean;
+        manageRoles: boolean;
+        manageSettings: boolean;
+        removeMembers: boolean;
+        updateGroup: boolean;
+      };
+      coverPhoto?: { __typename?: 'Image'; id: number } | null;
+    }>;
+  };
 };
 
 export const PublicGroupsDocument = gql`
   query PublicGroups($isLoggedIn: Boolean = false) {
     publicGroups {
-      ...GroupCard
+      nodes {
+        ...GroupCard
+      }
+      totalCount
     }
   }
   ${GroupCardFragmentDoc}

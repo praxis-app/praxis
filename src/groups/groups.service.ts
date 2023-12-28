@@ -3,7 +3,6 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
-import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
 import { paginate, sanitizeText } from '../common/common.utils';
 import { MyGroupsKey } from '../dataloader/dataloader.types';
 import { ImageTypes } from '../images/image.constants';
@@ -56,14 +55,19 @@ export class GroupsService {
     });
   }
 
-  async getPagedGroups(where?: FindOptionsWhere<Group>) {
+  async getPagedGroups(
+    where?: FindOptionsWhere<Group>,
+    offset?: number,
+    limit?: number,
+  ) {
     const groups = await this.getGroups(where);
     const sortedFeed = groups.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
+    const nodes =
+      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
 
-    // TODO: Update once pagination has been implemented
-    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+    return { nodes, totalCount: sortedFeed.length };
   }
 
   async getGroupFeed(id: number, offset?: number, limit?: number) {

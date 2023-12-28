@@ -382,6 +382,12 @@ export type GroupRolePermissionInput = {
   updateGroup?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export type GroupsConnection = {
+  __typename?: 'GroupsConnection';
+  nodes: Array<Group>;
+  totalCount: Scalars['Int']['output'];
+};
+
 export type HomeFeedConnection = {
   __typename?: 'HomeFeedConnection';
   nodes: Array<FeedItem>;
@@ -880,13 +886,13 @@ export type Query = {
   groupMemberRequest?: Maybe<GroupMemberRequest>;
   groupRole: GroupRole;
   groupRoles: Array<GroupRole>;
-  groups: Array<Group>;
+  groups: GroupsConnection;
   isFirstUser: Scalars['Boolean']['output'];
   me: User;
   post: Post;
   proposal: Proposal;
   publicCanary?: Maybe<Canary>;
-  publicGroups: Array<Group>;
+  publicGroups: GroupsConnection;
   publicGroupsFeed: PublicGroupsFeedConnection;
   serverConfig: ServerConfig;
   serverInvite: ServerInvite;
@@ -919,12 +925,22 @@ export type QueryGroupRoleArgs = {
   id: Scalars['Int']['input'];
 };
 
+export type QueryGroupsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type QueryPostArgs = {
   id: Scalars['Int']['input'];
 };
 
 export type QueryProposalArgs = {
   id: Scalars['Int']['input'];
+};
+
+export type QueryPublicGroupsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type QueryPublicGroupsFeedArgs = {

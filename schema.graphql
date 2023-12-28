@@ -443,6 +443,11 @@ type GroupFeedConnection {
 
 union FeedItem = Post | Proposal
 
+type GroupsConnection {
+  nodes: [Group!]!
+  totalCount: Int!
+}
+
 type PublicGroupsFeedConnection {
   nodes: [FeedItem!]!
   totalCount: Int!
@@ -545,8 +550,8 @@ type Query {
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
   group(id: Int, name: String): Group!
-  groups: [Group!]!
-  publicGroups: [Group!]!
+  groups(offset: Int, limit: Int): GroupsConnection!
+  publicGroups(offset: Int, limit: Int): GroupsConnection!
   publicGroupsFeed(offset: Int, limit: Int): PublicGroupsFeedConnection!
   groupRole(id: Int!): GroupRole!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
