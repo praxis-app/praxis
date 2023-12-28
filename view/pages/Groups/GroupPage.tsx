@@ -18,7 +18,7 @@ import { isDeniedAccess } from '../../utils/error.utils';
 const GroupPage = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
-  const [prevEndCursor, setPrevEndCursor] = useState<string>();
+  const [page, setPage] = useState(0);
   const [tab, setTab] = useState(0);
 
   const [
@@ -48,32 +48,14 @@ const GroupPage = () => {
     }
   }, [name, isLoggedIn, getGroupFeed, getGroupProfile]);
 
-  const handleNextPage = async () => {
-    if (!groupFeedData?.group.feed.pageInfo.hasNextPage || !name) {
-      return;
-    }
-    const { endCursor, hasPreviousPage } = groupFeedData.group.feed.pageInfo;
-    if (hasPreviousPage) {
-      setPrevEndCursor(endCursor);
-    }
-    await getGroupFeed({
-      variables: {
-        first: rowsPerPage,
-        after: endCursor,
-        isLoggedIn,
-        name,
-      },
-    });
-  };
-
-  const handlePrevPage = async () => {
+  const handleChangePage = async (newPage: number) => {
     if (!name) {
       return;
     }
     await getGroupFeed({
       variables: {
-        first: rowsPerPage,
-        after: prevEndCursor,
+        limit: rowsPerPage,
+        offset: newPage * rowsPerPage,
         isLoggedIn,
         name,
       },
@@ -106,18 +88,21 @@ const GroupPage = () => {
         tab={tab}
       />
 
+      {/* TODO: Extract into separate component */}
       {tab === 0 && (
         <>
           {me && group.isJoinedByMe && (
             <ToggleForms groupId={group.id} me={me} />
           )}
           <Feed
-            feedItems={groupFeedData?.group.feed}
-            rowsPerPage={rowsPerPage}
-            setRowsPerPage={setRowsPerPage}
+            feedItems={groupFeedData?.group.feed.feedItems}
+            totalCount={groupFeedData?.group.feed.totalCount}
             isLoading={groupFeedLoading}
-            onNextPage={handleNextPage}
-            onPrevPage={handlePrevPage}
+            onChangePage={handleChangePage}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            setPage={setPage}
+            setRowsPerPage={setRowsPerPage}
           />
         </>
       )}

@@ -240,7 +240,7 @@ type Group {
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
-  feed(offset: Int, limit: Int): [FeedItem!]!
+  feed(offset: Int, limit: Int): GroupFeedConnection!
   memberCount: Int!
   memberRequestCount: Int
   isJoinedByMe: Boolean!
@@ -249,8 +249,6 @@ type Group {
   myPermissions: GroupPermissions!
   settings: GroupConfig!
 }
-
-union FeedItem = Post | Proposal
 
 type Event {
   id: Int!
@@ -350,6 +348,8 @@ type User {
   serverPermissions: ServerPermissions!
 }
 
+union FeedItem = Post | Proposal
+
 type ServerInvite {
   id: Int!
   token: String!
@@ -435,6 +435,11 @@ type CreateGroupPayload {
 }
 
 type PublicGroupsFeedConnection {
+  feedItems: [FeedItem!]!
+  totalCount: Int!
+}
+
+type GroupFeedConnection {
   feedItems: [FeedItem!]!
   totalCount: Int!
 }
