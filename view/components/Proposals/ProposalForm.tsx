@@ -32,6 +32,10 @@ import {
   ProposalActionInput,
   UpdateProposalInput,
 } from '../../graphql/gen';
+import {
+  GroupFeedDocument,
+  GroupFeedQuery,
+} from '../../graphql/groups/queries/gen/GroupFeed.gen';
 import { useDeleteImageMutation } from '../../graphql/images/mutations/gen/DeleteImage.gen';
 import { ProposalFormFragment } from '../../graphql/proposals/fragments/gen/ProposalForm.gen';
 import { useCreateProposalMutation } from '../../graphql/proposals/mutations/gen/CreateProposal.gen';
@@ -41,6 +45,10 @@ import {
   HomeFeedDocument,
   HomeFeedQuery,
 } from '../../graphql/users/queries/gen/HomeFeed.gen';
+import {
+  UserProfileFeedDocument,
+  UserProfileFeedQuery,
+} from '../../graphql/users/queries/gen/UserProfileFeed.gen';
 import { isEntityTooLarge } from '../../utils/error.utils';
 import { validateImageInput } from '../../utils/image.utils';
 import { getProposalActionTypeOptions } from '../../utils/proposal.utils';
@@ -179,31 +187,47 @@ const ProposalForm = ({
           createProposal: { proposal },
         } = data;
         cache.updateQuery<HomeFeedQuery>(
-          { query: HomeFeedDocument },
+          {
+            query: HomeFeedDocument,
+            variables: { limit: 10, offset: 0, isLoggedIn: true },
+          },
           (homePageData) =>
             produce(homePageData, (draft) => {
-              draft?.me?.homeFeed.unshift(proposal);
+              draft?.me?.homeFeed.nodes.unshift(proposal);
             }),
         );
-        cache.modify({
-          id: cache.identify(proposal.user),
-          fields: {
-            profileFeed(existingRefs, { toReference }) {
-              return [toReference(proposal), ...existingRefs];
+        cache.updateQuery<UserProfileFeedQuery>(
+          {
+            query: UserProfileFeedDocument,
+            variables: {
+              name: proposal.user.name,
+              isLoggedIn: true,
+              limit: 10,
+              offset: 0,
             },
           },
-        });
-        if (!proposal.group) {
-          return;
+          (userProfileFeedData) =>
+            produce(userProfileFeedData, (draft) => {
+              draft?.user.profileFeed.nodes.unshift(proposal);
+            }),
+        );
+        if (proposal.group) {
+          cache.updateQuery<GroupFeedQuery>(
+            {
+              query: GroupFeedDocument,
+              variables: {
+                name: proposal.group.name,
+                isLoggedIn: true,
+                limit: 10,
+                offset: 0,
+              },
+            },
+            (groupFeedData) =>
+              produce(groupFeedData, (draft) => {
+                draft?.group.feed.nodes.unshift(proposal);
+              }),
+          );
         }
-        cache.modify({
-          id: cache.identify(proposal.group),
-          fields: {
-            feed(existingRefs, { toReference }) {
-              return [toReference(proposal), ...existingRefs];
-            },
-          },
-        });
       },
       onCompleted() {
         resetForm();
