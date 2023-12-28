@@ -434,6 +434,11 @@ type CreateGroupPayload {
   group: Group!
 }
 
+type PublicGroupsFeedConnection {
+  feedItems: [FeedItem!]!
+  totalCount: Int!
+}
+
 type CreateVotePayload {
   vote: Vote!
 }
@@ -528,7 +533,7 @@ type Query {
   group(id: Int, name: String): Group!
   groups: [Group!]!
   publicGroups: [Group!]!
-  publicGroupsFeed(offset: Int, limit: Int): [FeedItem!]!
+  publicGroupsFeed(offset: Int, limit: Int): PublicGroupsFeedConnection!
   groupRole(id: Int!): GroupRole!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   groupRoles: [GroupRole!]!

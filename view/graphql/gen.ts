@@ -852,6 +852,12 @@ export type ProposalConfig = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type PublicGroupsFeedConnection = {
+  __typename?: 'PublicGroupsFeedConnection';
+  feedItems: Array<FeedItem>;
+  totalCount: Scalars['Int']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
   authCheck: Scalars['Boolean']['output'];
@@ -869,7 +875,7 @@ export type Query = {
   proposal: Proposal;
   publicCanary?: Maybe<Canary>;
   publicGroups: Array<Group>;
-  publicGroupsFeed: Array<FeedItem>;
+  publicGroupsFeed: PublicGroupsFeedConnection;
   serverConfig: ServerConfig;
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;

@@ -94,13 +94,14 @@ export class GroupsService {
       },
       [[], []],
     );
+
     const sortedFeed = [...posts, ...proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    if (offset) {
-      return paginate(sortedFeed, offset, limit);
-    }
-    return sortedFeed;
+    const feedItems =
+      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
+
+    return { feedItems, totalCount: sortedFeed.length };
   }
 
   async isGroupMember(groupId: number, userId: number) {

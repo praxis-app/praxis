@@ -4,6 +4,9 @@ query PublicGroupsFeed(
   $isLoggedIn: Boolean = false
 ) {
   publicGroupsFeed(offset: $offset, limit: $limit) {
-    ...FeedItem
+    feedItems {
+      ...FeedItem
+    }
+    totalCount
   }
 }

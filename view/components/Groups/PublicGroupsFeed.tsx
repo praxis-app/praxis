@@ -11,6 +11,7 @@ import Feed from '../Shared/Feed';
 
 const PublicGroupsFeed = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
+  const [page, setPage] = useState(0);
 
   const authFailed = useReactiveVar(authFailedVar);
   const [getPublicGroupsFeed, { data, loading, error }] =
@@ -25,9 +26,21 @@ const PublicGroupsFeed = () => {
       return;
     }
     getPublicGroupsFeed({
-      variables: { first: rowsPerPage },
+      variables: {
+        limit: rowsPerPage,
+        offset: page * rowsPerPage,
+      },
     });
-  }, [getPublicGroupsFeed, rowsPerPage, authFailed]);
+  }, [getPublicGroupsFeed, rowsPerPage, authFailed, page]);
+
+  const handleChangePage = async (newPage: number) => {
+    await getPublicGroupsFeed({
+      variables: {
+        limit: rowsPerPage,
+        offset: newPage * rowsPerPage,
+      },
+    });
+  };
 
   if (isDeniedAccess(error)) {
     return <Typography>{t('prompts.permissionDenied')}</Typography>;
@@ -40,11 +53,14 @@ const PublicGroupsFeed = () => {
     <>
       <WelcomeCard />
       <Feed
-        feedItems={data?.publicGroupsFeed}
-        rowsPerPage={rowsPerPage}
-        setRowsPerPage={setRowsPerPage}
+        feedItems={data?.publicGroupsFeed.feedItems}
+        totalCount={data?.publicGroupsFeed.totalCount}
         isLoading={loading}
-        page={0}
+        onChangePage={handleChangePage}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        setPage={setPage}
+        setRowsPerPage={setRowsPerPage}
       />
     </>
   );
