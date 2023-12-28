@@ -44,13 +44,16 @@ const FollowButton = ({
         variables: { id },
         update(cache) {
           cache.updateQuery<HomeFeedQuery>(
-            { query: HomeFeedDocument },
+            {
+              query: HomeFeedDocument,
+              variables: { limit: 10, offset: 0, isLoggedIn: true },
+            },
             (homePageData) =>
               produce(homePageData, (draft) => {
                 if (!draft?.me) {
                   return;
                 }
-                draft.me.homeFeed = draft.me.homeFeed.filter(
+                draft.me.homeFeed.nodes = draft.me.homeFeed.nodes.filter(
                   ({ user, group }) => user.id !== id || !!group?.id,
                 );
               }),
@@ -86,6 +89,7 @@ const FollowButton = ({
       update: (cache) => {
         const homeFeed = cache.readQuery({
           query: HomeFeedDocument,
+          variables: { limit: 10, offset: 0, isLogged: true },
         });
         if (homeFeed) {
           cache.evict({
