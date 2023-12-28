@@ -116,9 +116,12 @@ export class EventsService {
     return eventAttendee.user;
   }
 
-  async getEventPosts(id: number, first = DEFAULT_PAGE_SIZE, after?: Date) {
+  async getEventPosts(id: number, offset?: number, limit?: number) {
     const posts = await this.postsService.getPosts({ event: { id } });
-    return paginate(posts, first, after);
+    if (offset) {
+      return paginate(posts, offset, limit);
+    }
+    return posts;
   }
 
   async isPublicEventImage(imageId: number) {

@@ -76,7 +76,7 @@ const EventDiscussionTab = ({ eventId }: Props) => {
       )}
 
       <Feed
-        feed={data?.event.posts}
+        feedItems={data?.event.posts}
         isLoading={loading}
         onNextPage={handleNextPage}
         onPrevPage={handlePrevPage}

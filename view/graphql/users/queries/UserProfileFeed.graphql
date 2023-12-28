@@ -1,24 +1,13 @@
 query UserProfileFeed(
   $name: String
-  $first: Int
-  $after: DateTime
+  $offset: Int
+  $limit: Int
   $isLoggedIn: Boolean = true
 ) {
   user(name: $name) {
     id
-    profileFeed(first: $first, after: $after) {
-      edges {
-        node {
-          ...FeedItem
-        }
-      }
-      pageInfo {
-        startCursor
-        endCursor
-        hasNextPage
-        hasPreviousPage
-      }
-      totalCount
+    profileFeed(offset: $offset, limit: $limit) {
+      ...FeedItem
     }
   }
 }

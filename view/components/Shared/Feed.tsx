@@ -7,12 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { EventFeedQuery } from '../../graphql/events/queries/gen/EventFeed.gen';
-import { GroupFeedQuery } from '../../graphql/groups/queries/gen/GroupFeed.gen';
-import { PublicGroupsFeedQuery } from '../../graphql/groups/queries/gen/PublicGroupsFeed.gen';
 import { FeedItemFragment } from '../../graphql/posts/fragments/gen/FeedItem.gen';
-import { HomeFeedQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
-import { UserProfileFeedQuery } from '../../graphql/users/queries/gen/UserProfileFeed.gen';
 import PostCard from '../Posts/PostCard';
 import ProposalCard from '../Proposals/ProposalCard';
 import Pagination from './Pagination';
@@ -24,17 +19,14 @@ const CARD_CONTENT_STYLES: SxProps = {
 };
 
 interface Props extends BoxProps {
-  feed?:
-    | EventFeedQuery['event']['posts']
-    | GroupFeedQuery['group']['feed']
-    | HomeFeedQuery['me']['homeFeed']
-    | PublicGroupsFeedQuery['publicGroupsFeed']
-    | UserProfileFeedQuery['user']['profileFeed'];
-  onNextPage(): void;
-  onPrevPage(): void;
-  rowsPerPage: number;
-  setRowsPerPage: (rowsPerPage: number) => void;
+  feedItems?: FeedItemFragment[];
   isLoading: boolean;
+  onChangePage(page: number): void;
+  page: number;
+  rowsPerPage: number;
+  setPage(page: number): void;
+  setRowsPerPage: (rowsPerPage: number) => void;
+  totalCount?: number;
 }
 
 const FeedItem = ({ item }: { item: FeedItemFragment }) => {
@@ -48,17 +40,19 @@ const FeedItem = ({ item }: { item: FeedItemFragment }) => {
 };
 
 const Feed = ({
-  feed,
-  onNextPage,
-  onPrevPage,
-  rowsPerPage,
-  setRowsPerPage,
+  feedItems,
   isLoading,
+  onChangePage,
+  page,
+  rowsPerPage,
+  setPage,
+  setRowsPerPage,
+  totalCount,
   ...boxProps
 }: Props) => {
   const { t } = useTranslation();
 
-  if (feed?.edges.length === 0) {
+  if (feedItems?.length === 0) {
     return (
       <Card>
         <CardContent sx={CARD_CONTENT_STYLES}>
@@ -73,15 +67,16 @@ const Feed = ({
   return (
     <Box {...boxProps}>
       <Pagination
-        count={feed?.totalCount || 0}
+        count={totalCount || 0}
         isLoading={isLoading}
-        onNextPage={onNextPage}
-        onPrevPage={onPrevPage}
+        onChangePage={onChangePage}
+        page={page}
         rowsPerPage={rowsPerPage}
+        setPage={setPage}
         setRowsPerPage={setRowsPerPage}
       >
-        {feed?.edges.map(({ node }) => (
-          <FeedItem item={node} key={`${node.__typename}-${node.id}`} />
+        {feedItems?.map((item) => (
+          <FeedItem item={item} key={`${item.__typename}-${item.id}`} />
         ))}
       </Pagination>
     </Box>

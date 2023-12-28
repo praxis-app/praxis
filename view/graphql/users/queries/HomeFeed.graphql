@@ -1,17 +1,9 @@
-query HomeFeed($first: Int, $after: DateTime, $isLoggedIn: Boolean = true) {
+query HomeFeed($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
   me {
     id
-    homeFeed(first: $first, after: $after) {
-      edges {
-        node {
-          ...FeedItem
-        }
-      }
-      pageInfo {
-        startCursor
-        endCursor
-        hasNextPage
-        hasPreviousPage
+    homeFeed(offset: $offset, limit: $limit) {
+      feedItems {
+        ...FeedItem
       }
       totalCount
     }

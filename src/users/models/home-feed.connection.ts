@@ -1,14 +1,10 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { PageInfo } from '../../common/models/page-info.type';
-import { HomeFeedEdge } from './home-feed.edge';
+import { FeedItem } from '../../common/models/feed-item.union';
 
 @ObjectType()
 export class HomeFeedConnection {
-  @Field(() => PageInfo)
-  pageInfo: PageInfo;
-
-  @Field(() => [HomeFeedEdge])
-  edges: HomeFeedEdge[];
+  @Field(() => [FeedItem])
+  feedItems: Array<typeof FeedItem>;
 
   @Field(() => Int)
   totalCount: number;

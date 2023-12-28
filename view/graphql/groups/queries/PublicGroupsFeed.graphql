@@ -1,20 +1,9 @@
 query PublicGroupsFeed(
-  $first: Int
-  $after: DateTime
+  $offset: Int
+  $limit: Int
   $isLoggedIn: Boolean = false
 ) {
-  publicGroupsFeed(first: $first, after: $after) {
-    edges {
-      node {
-        ...FeedItem
-      }
-    }
-    pageInfo {
-      startCursor
-      endCursor
-      hasNextPage
-      hasPreviousPage
-    }
-    totalCount
+  publicGroupsFeed(offset: $offset, limit: $limit) {
+    ...FeedItem
   }
 }

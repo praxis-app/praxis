@@ -112,7 +112,7 @@ const GroupPage = () => {
             <ToggleForms groupId={group.id} me={me} />
           )}
           <Feed
-            feed={groupFeedData?.group.feed}
+            feedItems={groupFeedData?.group.feed}
             rowsPerPage={rowsPerPage}
             setRowsPerPage={setRowsPerPage}
             isLoading={groupFeedLoading}

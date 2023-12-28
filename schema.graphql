@@ -240,7 +240,7 @@ type Group {
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
-  feed(first: Int, after: DateTime): GroupFeedConnection!
+  feed(offset: Int, limit: Int): [FeedItem!]!
   memberCount: Int!
   memberRequestCount: Int
   isJoinedByMe: Boolean!
@@ -249,6 +249,8 @@ type Group {
   myPermissions: GroupPermissions!
   settings: GroupConfig!
 }
+
+union FeedItem = Post | Proposal
 
 type Event {
   id: Int!
@@ -268,7 +270,7 @@ type Event {
   goingCount: Int!
   attendingStatus: String
   host: User!
-  posts(first: Int, after: DateTime): PostsConnection!
+  posts(offset: Int, limit: Int): [Post!]!
   coverPhoto: Image!
 }
 
@@ -338,8 +340,9 @@ type User {
   following: [User!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  homeFeed(first: Int, after: DateTime): HomeFeedConnection!
-  profileFeed(first: Int, after: DateTime): UserProfileFeedConnection!
+  homeFeed(offset: Int, limit: Int): HomeFeedConnection!
+  homeFeedCount: Int!
+  profileFeed(offset: Int, limit: Int): [FeedItem!]!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
@@ -380,24 +383,6 @@ type CreateEventAttendeePayload {
 
 type UpdateEventAttendeePayload {
   event: Event!
-}
-
-type PageInfo {
-  startCursor: DateTime
-  endCursor: DateTime
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-}
-
-type PostsEdge {
-  cursor: DateTime!
-  node: Post!
-}
-
-type PostsConnection {
-  pageInfo: PageInfo!
-  edges: [PostsEdge!]!
-  totalCount: Int!
 }
 
 type CreateEventPayload {
@@ -447,30 +432,6 @@ type GroupPermissions {
 
 type CreateGroupPayload {
   group: Group!
-}
-
-type GroupFeedEdge {
-  cursor: DateTime!
-  node: FeedItem!
-}
-
-union FeedItem = Post | Proposal
-
-type GroupFeedConnection {
-  pageInfo: PageInfo!
-  edges: [GroupFeedEdge!]!
-  totalCount: Int!
-}
-
-type PublicGroupsFeedEdge {
-  cursor: DateTime!
-  node: FeedItem!
-}
-
-type PublicGroupsFeedConnection {
-  pageInfo: PageInfo!
-  edges: [PublicGroupsFeedEdge!]!
-  totalCount: Int!
 }
 
 type CreateVotePayload {
@@ -531,29 +492,12 @@ type FollowUserPayload {
   follower: User!
 }
 
-type HomeFeedEdge {
-  cursor: DateTime!
-  node: FeedItem!
-}
-
-type HomeFeedConnection {
-  pageInfo: PageInfo!
-  edges: [HomeFeedEdge!]!
-  totalCount: Int!
-}
-
 type UpdateUserPayload {
   user: User!
 }
 
-type UserProfileFeedEdge {
-  cursor: DateTime!
-  node: FeedItem!
-}
-
-type UserProfileFeedConnection {
-  pageInfo: PageInfo!
-  edges: [UserProfileFeedEdge!]!
+type HomeFeedConnection {
+  feedItems: [FeedItem!]!
   totalCount: Int!
 }
 
@@ -584,7 +528,7 @@ type Query {
   group(id: Int, name: String): Group!
   groups: [Group!]!
   publicGroups: [Group!]!
-  publicGroupsFeed(first: Int, after: DateTime): PublicGroupsFeedConnection!
+  publicGroupsFeed(offset: Int, limit: Int): [FeedItem!]!
   groupRole(id: Int!): GroupRole!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   groupRoles: [GroupRole!]!

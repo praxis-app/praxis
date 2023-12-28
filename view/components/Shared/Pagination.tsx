@@ -1,5 +1,5 @@
 import { LabelDisplayedRowsArgs, TablePagination } from '@mui/material';
-import { ChangeEvent, MouseEvent, ReactNode, useState } from 'react';
+import { ChangeEvent, MouseEvent, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
@@ -7,23 +7,23 @@ interface Props {
   children: ReactNode;
   count: number;
   isLoading: boolean;
-  onNextPage(): void;
-  onPrevPage(): void;
+  onChangePage(page: number): void;
   rowsPerPage: number;
   setRowsPerPage(rowsPerPage: number): void;
+  page: number;
+  setPage(page: number): void;
 }
 
 const Pagination = ({
   children,
   count,
   isLoading,
-  onNextPage,
-  onPrevPage,
+  onChangePage,
   rowsPerPage,
   setRowsPerPage,
+  page,
+  setPage,
 }: Props) => {
-  const [page, setPage] = useState(0);
-
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
@@ -48,11 +48,7 @@ const Pagination = ({
     _: MouseEvent<HTMLButtonElement> | null,
     newPage: number,
   ) => {
-    if (newPage > page) {
-      onNextPage();
-    } else {
-      onPrevPage();
-    }
+    onChangePage(newPage);
     setPage(newPage);
   };
 

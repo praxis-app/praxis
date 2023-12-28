@@ -66,15 +66,18 @@ export class GroupsService {
     return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
   }
 
-  async getGroupFeed(id: number, first = DEFAULT_PAGE_SIZE, after?: Date) {
+  async getGroupFeed(id: number, offset?: number, limit?: number) {
     const group = await this.getGroup({ id }, ['proposals', 'posts']);
     const sortedFeed = [...group.posts, ...group.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    return paginate(sortedFeed, first, after);
+    if (offset) {
+      return paginate(sortedFeed, offset, limit);
+    }
+    return sortedFeed;
   }
 
-  async getPublicGroupsFeed(first = DEFAULT_PAGE_SIZE, after?: Date) {
+  async getPublicGroupsFeed(offset?: number, limit?: number) {
     const publicGroups = await this.getGroups(
       { config: { privacy: GroupPrivacy.Public } },
       ['posts', 'proposals', 'events.posts'],
@@ -94,7 +97,10 @@ export class GroupsService {
     const sortedFeed = [...posts, ...proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    return paginate(sortedFeed, first, after);
+    if (offset) {
+      return paginate(sortedFeed, offset, limit);
+    }
+    return sortedFeed;
   }
 
   async isGroupMember(groupId: number, userId: number) {

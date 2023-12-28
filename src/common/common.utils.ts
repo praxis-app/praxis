@@ -29,24 +29,6 @@ export const sanitizeText = (dirty: string) =>
 
 export const paginate = <T extends { createdAt: Date }>(
   array: T[],
-  first = DEFAULT_PAGE_SIZE,
-  after?: Date,
-) => {
-  const filteredArray = after
-    ? array.filter((i) => i.createdAt < after)
-    : array;
-
-  const edges = filteredArray.slice(0, first).map((node) => ({
-    cursor: node.createdAt,
-    node,
-  }));
-
-  const pageInfo = {
-    startCursor: edges[0].cursor,
-    endCursor: edges[edges.length - 1].cursor,
-    hasNextPage: filteredArray.length > first,
-    hasPreviousPage: array.length - filteredArray.length > 0,
-  };
-
-  return { pageInfo, edges, totalCount: array.length };
-};
+  offset: number,
+  limit = DEFAULT_PAGE_SIZE,
+) => array.slice(offset, offset + limit);

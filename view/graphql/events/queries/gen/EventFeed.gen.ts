@@ -10,8 +10,8 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type EventFeedQueryVariables = Types.Exact<{
   eventId: Types.Scalars['Int']['input'];
-  first?: Types.InputMaybe<Types.Scalars['Int']['input']>;
-  after?: Types.InputMaybe<Types.Scalars['DateTime']['input']>;
+  offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
@@ -20,92 +20,67 @@ export type EventFeedQuery = {
   event: {
     __typename?: 'Event';
     id: number;
-    posts: {
-      __typename?: 'PostsConnection';
-      totalCount: number;
-      edges: Array<{
-        __typename?: 'PostsEdge';
-        node: {
-          __typename?: 'Post';
-          id: number;
-          body?: string | null;
-          likesCount: number;
-          commentCount: number;
-          isLikedByMe?: boolean;
-          createdAt: any;
-          images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
-          user: {
-            __typename?: 'User';
-            id: number;
-            name: string;
-            profilePicture: { __typename?: 'Image'; id: number };
-          };
-          group?: {
-            __typename?: 'Group';
-            isJoinedByMe?: boolean;
-            id: number;
-            name: string;
-            myPermissions?: {
-              __typename?: 'GroupPermissions';
-              approveMemberRequests: boolean;
-              createEvents: boolean;
-              deleteGroup: boolean;
-              manageComments: boolean;
-              manageEvents: boolean;
-              managePosts: boolean;
-              manageRoles: boolean;
-              manageSettings: boolean;
-              removeMembers: boolean;
-              updateGroup: boolean;
-            };
-            coverPhoto?: { __typename?: 'Image'; id: number } | null;
-          } | null;
-          event?: {
-            __typename?: 'Event';
-            id: number;
-            name: string;
-            group?: {
-              __typename?: 'Group';
-              id: number;
-              isJoinedByMe: boolean;
-            } | null;
-            coverPhoto: { __typename?: 'Image'; id: number };
-          } | null;
-        };
-      }>;
-      pageInfo: {
-        __typename?: 'PageInfo';
-        startCursor?: any | null;
-        endCursor?: any | null;
-        hasNextPage: boolean;
-        hasPreviousPage: boolean;
+    posts: Array<{
+      __typename?: 'Post';
+      id: number;
+      body?: string | null;
+      likesCount: number;
+      commentCount: number;
+      isLikedByMe?: boolean;
+      createdAt: any;
+      images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
+      user: {
+        __typename?: 'User';
+        id: number;
+        name: string;
+        profilePicture: { __typename?: 'Image'; id: number };
       };
-    };
+      group?: {
+        __typename?: 'Group';
+        isJoinedByMe?: boolean;
+        id: number;
+        name: string;
+        myPermissions?: {
+          __typename?: 'GroupPermissions';
+          approveMemberRequests: boolean;
+          createEvents: boolean;
+          deleteGroup: boolean;
+          manageComments: boolean;
+          manageEvents: boolean;
+          managePosts: boolean;
+          manageRoles: boolean;
+          manageSettings: boolean;
+          removeMembers: boolean;
+          updateGroup: boolean;
+        };
+        coverPhoto?: { __typename?: 'Image'; id: number } | null;
+      } | null;
+      event?: {
+        __typename?: 'Event';
+        id: number;
+        name: string;
+        group?: {
+          __typename?: 'Group';
+          id: number;
+          isJoinedByMe: boolean;
+        } | null;
+        coverPhoto: { __typename?: 'Image'; id: number };
+      } | null;
+    }>;
   };
 };
 
 export const EventFeedDocument = gql`
   query EventFeed(
     $eventId: Int!
-    $first: Int
-    $after: DateTime
+    $offset: Int
+    $limit: Int
     $isLoggedIn: Boolean!
   ) {
     event(id: $eventId) {
       id
-      posts(first: $first, after: $after) {
-        edges {
-          node {
-            ...PostCard
-          }
-        }
-        pageInfo {
-          startCursor
-          endCursor
-          hasNextPage
-          hasPreviousPage
-        }
-        totalCount
+      posts(offset: $offset, limit: $limit) {
+        ...PostCard
       }
     }
   }
@@ -125,8 +100,8 @@ export const EventFeedDocument = gql`
  * const { data, loading, error } = useEventFeedQuery({
  *   variables: {
  *      eventId: // value for 'eventId'
- *      first: // value for 'first'
- *      after: // value for 'after'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });

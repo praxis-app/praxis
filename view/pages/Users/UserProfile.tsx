@@ -133,7 +133,7 @@ const UserProfile = () => {
       {isMe && <ToggleForms me={me} />}
 
       <Feed
-        feed={feedData?.user.profileFeed}
+        feedItems={feedData?.user.profileFeed}
         isLoading={feedLoading}
         onNextPage={handleNextPage}
         onPrevPage={handlePrevPage}

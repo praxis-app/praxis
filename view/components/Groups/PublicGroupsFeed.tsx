@@ -11,7 +11,6 @@ import Feed from '../Shared/Feed';
 
 const PublicGroupsFeed = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
-  const [prevEndCursor, setPrevEndCursor] = useState<string>();
 
   const authFailed = useReactiveVar(authFailedVar);
   const [getPublicGroupsFeed, { data, loading, error }] =
@@ -30,31 +29,6 @@ const PublicGroupsFeed = () => {
     });
   }, [getPublicGroupsFeed, rowsPerPage, authFailed]);
 
-  const handleNextPage = async () => {
-    if (!data?.publicGroupsFeed.pageInfo.hasNextPage) {
-      return;
-    }
-    const { endCursor, hasPreviousPage } = data.publicGroupsFeed.pageInfo;
-    if (hasPreviousPage) {
-      setPrevEndCursor(endCursor);
-    }
-    await getPublicGroupsFeed({
-      variables: {
-        first: rowsPerPage,
-        after: endCursor,
-      },
-    });
-  };
-
-  const handlePrevPage = async () => {
-    await getPublicGroupsFeed({
-      variables: {
-        first: rowsPerPage,
-        after: prevEndCursor,
-      },
-    });
-  };
-
   if (isDeniedAccess(error)) {
     return <Typography>{t('prompts.permissionDenied')}</Typography>;
   }
@@ -66,12 +40,11 @@ const PublicGroupsFeed = () => {
     <>
       <WelcomeCard />
       <Feed
-        feed={data?.publicGroupsFeed}
+        feedItems={data?.publicGroupsFeed}
         rowsPerPage={rowsPerPage}
         setRowsPerPage={setRowsPerPage}
-        onNextPage={handleNextPage}
-        onPrevPage={handlePrevPage}
         isLoading={loading}
+        page={0}
       />
     </>
   );

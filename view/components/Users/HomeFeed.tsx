@@ -8,41 +8,23 @@ import Feed from '../Shared/Feed';
 
 const HomeFeed = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
-  const [prevEndCursor, setPrevEndCursor] = useState<string>();
+  const [page, setPage] = useState(0);
 
-  const [getHomeFeed, { data, loading, error }] = useHomeFeedLazyQuery({
-    variables: { first: rowsPerPage },
-  });
+  const [getHomeFeed, { data, loading, error }] = useHomeFeedLazyQuery();
 
   const { t } = useTranslation();
 
   useEffect(() => {
     getHomeFeed({
-      variables: { first: rowsPerPage },
+      variables: { limit: rowsPerPage, offset: page * rowsPerPage },
     });
-  }, [getHomeFeed, rowsPerPage]);
+  }, [getHomeFeed, rowsPerPage, page]);
 
-  const handleNextPage = async () => {
-    if (!data?.me.homeFeed.pageInfo.hasNextPage) {
-      return;
-    }
-    const { endCursor, hasPreviousPage } = data.me.homeFeed.pageInfo;
-    if (hasPreviousPage) {
-      setPrevEndCursor(endCursor);
-    }
+  const handleChangePage = async (newPage: number) => {
     await getHomeFeed({
       variables: {
-        first: rowsPerPage,
-        after: endCursor,
-      },
-    });
-  };
-
-  const handlePrevPage = async () => {
-    await getHomeFeed({
-      variables: {
-        first: rowsPerPage,
-        after: prevEndCursor,
+        limit: rowsPerPage,
+        offset: newPage * rowsPerPage,
       },
     });
   };
@@ -56,12 +38,14 @@ const HomeFeed = () => {
 
   return (
     <Feed
-      feed={data?.me.homeFeed}
-      onNextPage={handleNextPage}
-      onPrevPage={handlePrevPage}
-      rowsPerPage={rowsPerPage}
-      setRowsPerPage={setRowsPerPage}
+      feedItems={data?.me.homeFeed.feedItems}
       isLoading={loading}
+      onChangePage={handleChangePage}
+      page={page}
+      rowsPerPage={rowsPerPage}
+      setPage={setPage}
+      setRowsPerPage={setRowsPerPage}
+      totalCount={data?.me.homeFeed.totalCount}
     />
   );
 };
