@@ -36,13 +36,11 @@ export class Group {
   @Field()
   description: string;
 
-  @Field(() => [Post])
   @OneToMany(() => Post, (post) => post.group, {
     cascade: true,
   })
   posts: Post[];
 
-  @Field(() => [Proposal])
   @OneToMany(() => Proposal, (proposal) => proposal.group, {
     cascade: true,
   })

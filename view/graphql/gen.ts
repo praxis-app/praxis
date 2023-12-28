@@ -280,8 +280,6 @@ export type Group = {
   myPermissions: GroupPermissions;
   name: Scalars['String']['output'];
   pastEvents: Array<Event>;
-  posts: Array<Post>;
-  proposals: Array<Proposal>;
   roles: Array<GroupRole>;
   settings: GroupConfig;
   updatedAt: Scalars['DateTime']['output'];

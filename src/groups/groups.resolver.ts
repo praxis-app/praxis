@@ -14,8 +14,6 @@ import { Dataloaders } from '../dataloader/dataloader.types';
 import { EventsService } from '../events/events.service';
 import { Event } from '../events/models/event.model';
 import { EventTimeFrame } from '../events/models/events.input';
-import { Post } from '../posts/models/post.model';
-import { PostsService } from '../posts/posts.service';
 import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
 import { User } from '../users/models/user.model';
 import { GroupPrivacy } from './group-configs/group-configs.constants';
@@ -42,7 +40,6 @@ export class GroupsResolver {
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private memberRequestsService: GroupMemberRequestsService,
-    private postsService: PostsService,
     private eventsService: EventsService,
   ) {}
 
@@ -79,11 +76,6 @@ export class GroupsResolver {
   @Query(() => GroupRole)
   async groupRole(@Args('id', { type: () => Int }) id: number) {
     return this.groupRolesService.getGroupRole({ id });
-  }
-
-  @ResolveField(() => [Post])
-  async posts(@Parent() { id }: Group) {
-    return this.postsService.getPosts({ groupId: id });
   }
 
   @ResolveField(() => Image)

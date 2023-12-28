@@ -234,8 +234,6 @@ type Group {
   id: Int!
   name: String!
   description: String!
-  posts: [Post!]!
-  proposals: [Proposal!]!
   members: [User!]!
   memberRequests: [GroupMemberRequest!]
   roles: [GroupRole!]!
