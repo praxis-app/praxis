@@ -51,7 +51,7 @@ const PublicGroupsList = () => {
       <GroupTipsCard />
 
       <Pagination
-        count={data?.publicGroups.totalCount || 0}
+        count={data?.publicGroups.totalCount}
         isLoading={loading}
         onChangePage={onChangePage}
         page={page}

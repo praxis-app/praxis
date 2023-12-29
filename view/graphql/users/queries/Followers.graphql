@@ -1,8 +1,8 @@
-query Followers($name: String!) {
+query Followers($name: String!, $offset: Int, $limit: Int) {
   user(name: $name) {
     id
     followerCount
-    followers {
+    followers(offset: $offset, limit: $limit) {
       nodes {
         ...Follow
       }

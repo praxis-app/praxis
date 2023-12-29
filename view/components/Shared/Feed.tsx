@@ -67,7 +67,7 @@ const Feed = ({
   return (
     <Box {...boxProps}>
       <Pagination
-        count={totalCount || 0}
+        count={totalCount}
         isLoading={isLoading}
         onChangePage={onChangePage}
         page={page}

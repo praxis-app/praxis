@@ -10,7 +10,7 @@ import { useIsDesktop } from '../../hooks/shared.hooks';
 
 interface Props {
   children: ReactNode;
-  count: number;
+  count?: number;
   isLoading: boolean;
   onChangePage(page: number): void;
   rowsPerPage: number;
@@ -22,7 +22,7 @@ interface Props {
 
 const Pagination = ({
   children,
-  count,
+  count = 0,
   isLoading,
   onChangePage,
   rowsPerPage,
@@ -77,7 +77,7 @@ const Pagination = ({
   };
 
   const renderPagination = (bottom = false) => {
-    if (count < 10 || (bottom && isLoading)) {
+    if (bottom && isLoading) {
       return null;
     }
     return (

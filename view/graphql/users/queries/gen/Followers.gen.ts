@@ -10,6 +10,8 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type FollowersQueryVariables = Types.Exact<{
   name: Types.Scalars['String']['input'];
+  offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
 }>;
 
 export type FollowersQuery = {
@@ -34,11 +36,11 @@ export type FollowersQuery = {
 };
 
 export const FollowersDocument = gql`
-  query Followers($name: String!) {
+  query Followers($name: String!, $offset: Int, $limit: Int) {
     user(name: $name) {
       id
       followerCount
-      followers {
+      followers(offset: $offset, limit: $limit) {
         nodes {
           ...Follow
         }
@@ -65,6 +67,8 @@ export const FollowersDocument = gql`
  * const { data, loading, error } = useFollowersQuery({
  *   variables: {
  *      name: // value for 'name'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *   },
  * });
  */

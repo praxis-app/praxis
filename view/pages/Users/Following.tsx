@@ -94,7 +94,7 @@ const Following = () => {
 
       {!!user.followingCount && (
         <Pagination
-          count={data?.user.following.totalCount || 0}
+          count={data?.user.following.totalCount}
           isLoading={loading}
           onChangePage={onChangePage}
           page={page}

@@ -54,7 +54,7 @@ const GroupsList = () => {
       <GroupForm />
 
       <Pagination
-        count={data?.groups.totalCount || 0}
+        count={data?.groups.totalCount}
         isLoading={loading}
         onChangePage={onChangePage}
         page={page}
