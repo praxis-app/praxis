@@ -72,6 +72,7 @@ export enum Environments {
 export enum LocalStorageKey {
   AccessToken = 'access_token',
   RowsPerPage = 'rows-per-page',
+  InviteToken = 'invite-token',
 }
 
 export enum BrowserEvents {

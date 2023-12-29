@@ -10,7 +10,6 @@ import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import { TextField } from '../../components/Shared/TextField';
-import { INVITE_TOKEN } from '../../constants/server-invite.constants';
 import { LocalStorageKey } from '../../constants/shared.constants';
 import { UserFieldNames } from '../../constants/user.constants';
 import { useSignUpMutation } from '../../graphql/auth/mutations/gen/SignUp.gen';
@@ -109,7 +108,7 @@ const SignUpForm = () => {
         inviteTokenVar('');
         isLoggedInVar(true);
         setImageInputKey(getRandomString());
-        localStorage.removeItem(INVITE_TOKEN);
+        localStorage.removeItem(LocalStorageKey.InviteToken);
         localStorage.setItem(LocalStorageKey.AccessToken, access_token);
       },
       onError(err) {

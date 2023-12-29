@@ -5,8 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import SignUpForm from '../../components/Auth/SignUpForm';
 import ProgressBar from '../../components/Shared/ProgressBar';
-import { INVITE_TOKEN } from '../../constants/server-invite.constants';
-import { NavigationPaths } from '../../constants/shared.constants';
+import {
+  LocalStorageKey,
+  NavigationPaths,
+} from '../../constants/shared.constants';
 import { inviteTokenVar, isLoggedInVar } from '../../graphql/cache';
 import { useServerInviteLazyQuery } from '../../graphql/invites/queries/gen/ServerInvite.gen';
 import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
@@ -39,7 +41,7 @@ const SignUp = () => {
         variables: { token },
         onCompleted({ serverInvite }) {
           inviteTokenVar(serverInvite.token);
-          localStorage.setItem(INVITE_TOKEN, serverInvite.token);
+          localStorage.setItem(LocalStorageKey.InviteToken, serverInvite.token);
         },
       });
     }
