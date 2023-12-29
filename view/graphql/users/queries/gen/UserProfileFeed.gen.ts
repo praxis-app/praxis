@@ -8,19 +8,20 @@ import * as Apollo from '@apollo/client';
 /* eslint-disable */
 
 const defaultOptions = {} as const;
-export type HomeFeedQueryVariables = Types.Exact<{
+export type UserProfileFeedQueryVariables = Types.Exact<{
+  name?: Types.InputMaybe<Types.Scalars['String']['input']>;
   offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
-export type HomeFeedQuery = {
+export type UserProfileFeedQuery = {
   __typename?: 'Query';
-  me: {
+  user: {
     __typename?: 'User';
     id: number;
-    homeFeed: {
-      __typename?: 'HomeFeedConnection';
+    profileFeed: {
+      __typename?: 'UserProfileFeedConnection';
       totalCount: number;
       nodes: Array<
         | {
@@ -253,11 +254,16 @@ export type HomeFeedQuery = {
   };
 };
 
-export const HomeFeedDocument = gql`
-  query HomeFeed($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
-    me {
+export const UserProfileFeedDocument = gql`
+  query UserProfileFeed(
+    $name: String
+    $offset: Int
+    $limit: Int
+    $isLoggedIn: Boolean = true
+  ) {
+    user(name: $name) {
       id
-      homeFeed(offset: $offset, limit: $limit) {
+      profileFeed(offset: $offset, limit: $limit) {
         nodes {
           ...FeedItem
         }
@@ -269,49 +275,55 @@ export const HomeFeedDocument = gql`
 `;
 
 /**
- * __useHomeFeedQuery__
+ * __useUserProfileFeedQuery__
  *
- * To run a query within a React component, call `useHomeFeedQuery` and pass it any options that fit your needs.
- * When your component renders, `useHomeFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useUserProfileFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserProfileFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useHomeFeedQuery({
+ * const { data, loading, error } = useUserProfileFeedQuery({
  *   variables: {
+ *      name: // value for 'name'
  *      offset: // value for 'offset'
  *      limit: // value for 'limit'
  *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
-export function useHomeFeedQuery(
-  baseOptions?: Apollo.QueryHookOptions<HomeFeedQuery, HomeFeedQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<HomeFeedQuery, HomeFeedQueryVariables>(
-    HomeFeedDocument,
-    options,
-  );
-}
-export function useHomeFeedLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    HomeFeedQuery,
-    HomeFeedQueryVariables
+export function useUserProfileFeedQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    UserProfileFeedQuery,
+    UserProfileFeedQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<HomeFeedQuery, HomeFeedQueryVariables>(
-    HomeFeedDocument,
+  return Apollo.useQuery<UserProfileFeedQuery, UserProfileFeedQueryVariables>(
+    UserProfileFeedDocument,
     options,
   );
 }
-export type HomeFeedQueryHookResult = ReturnType<typeof useHomeFeedQuery>;
-export type HomeFeedLazyQueryHookResult = ReturnType<
-  typeof useHomeFeedLazyQuery
+export function useUserProfileFeedLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    UserProfileFeedQuery,
+    UserProfileFeedQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    UserProfileFeedQuery,
+    UserProfileFeedQueryVariables
+  >(UserProfileFeedDocument, options);
+}
+export type UserProfileFeedQueryHookResult = ReturnType<
+  typeof useUserProfileFeedQuery
 >;
-export type HomeFeedQueryResult = Apollo.QueryResult<
-  HomeFeedQuery,
-  HomeFeedQueryVariables
+export type UserProfileFeedLazyQueryHookResult = ReturnType<
+  typeof useUserProfileFeedLazyQuery
+>;
+export type UserProfileFeedQueryResult = Apollo.QueryResult<
+  UserProfileFeedQuery,
+  UserProfileFeedQueryVariables
 >;

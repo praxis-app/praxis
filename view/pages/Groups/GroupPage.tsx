@@ -5,42 +5,72 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import GroupAboutTab from '../../components/Groups/GroupAboutTab';
 import GroupEventsTab from '../../components/Groups/GroupEventsTab';
-import GroupProfileCard from '../../components/Groups/GroupProfileCard';
+import GroupPageCard from '../../components/Groups/GroupPageCard';
 import Feed from '../../components/Shared/Feed';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import ToggleForms from '../../components/Shared/ToggleForms';
-import { isLoggedInVar } from '../../graphql/cache';
-import { useGroupProfileLazyQuery } from '../../graphql/groups/queries/gen/GroupProfile.gen';
-import { isDeniedAccess } from '../../utils/error.utils';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
+import { isLoggedInVar } from '../../graphql/cache';
+import { useGroupFeedLazyQuery } from '../../graphql/groups/queries/gen/GroupFeed.gen';
+import { useGroupPageLazyQuery } from '../../graphql/groups/queries/gen/GroupPage.gen';
+import { isDeniedAccess } from '../../utils/error.utils';
 
-const GroupProfile = () => {
+const GroupPage = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
+  const [page, setPage] = useState(0);
   const [tab, setTab] = useState(0);
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
-
-  const [getGroup, { data, loading, error }] = useGroupProfileLazyQuery({
+  const [
+    getGroupProfile,
+    { data: groupPageData, loading: groupPageLoading, error },
+  ] = useGroupPageLazyQuery({
     errorPolicy: 'all',
   });
+
+  const [getGroupFeed, { data: groupFeedData, loading: groupFeedLoading }] =
+    useGroupFeedLazyQuery({
+      errorPolicy: 'all',
+    });
 
   const { name } = useParams();
   const { t } = useTranslation();
 
   useEffect(() => {
     if (name) {
-      getGroup({
+      getGroupProfile({
         variables: { name, isLoggedIn },
       });
+      getGroupFeed({
+        variables: {
+          limit: rowsPerPage,
+          offset: page * rowsPerPage,
+          isLoggedIn,
+          name,
+        },
+      });
     }
-  }, [name, isLoggedIn, getGroup]);
+  }, [name, isLoggedIn, getGroupFeed, getGroupProfile, page, rowsPerPage]);
 
-  if (loading) {
+  const handleChangePage = async (newPage: number) => {
+    if (!name) {
+      return;
+    }
+    await getGroupFeed({
+      variables: {
+        limit: rowsPerPage,
+        offset: newPage * rowsPerPage,
+        isLoggedIn,
+        name,
+      },
+    });
+  };
+
+  if (groupPageLoading) {
     return <ProgressBar />;
   }
 
-  if (!data) {
+  if (!groupPageData) {
     if (isDeniedAccess(error)) {
       return <Typography>{t('prompts.permissionDenied')}</Typography>;
     }
@@ -51,24 +81,28 @@ const GroupProfile = () => {
     return null;
   }
 
-  const { group, me } = data;
+  const { group, me } = groupPageData;
 
   return (
     <>
-      <GroupProfileCard
+      <GroupPageCard
         currentUserId={me?.id}
         group={group}
         setTab={setTab}
         tab={tab}
       />
 
+      {/* TODO: Extract into separate component */}
       {tab === 0 && (
         <>
           {me && group.isJoinedByMe && (
             <ToggleForms groupId={group.id} me={me} />
           )}
           <Feed
-            feed={group.feed}
+            feedItems={groupFeedData?.group.feed.nodes}
+            totalCount={groupFeedData?.group.feed.totalCount}
+            isLoading={groupFeedLoading}
+            onChangePage={handleChangePage}
             page={page}
             rowsPerPage={rowsPerPage}
             setPage={setPage}
@@ -84,4 +118,4 @@ const GroupProfile = () => {
   );
 };
 
-export default GroupProfile;
+export default GroupPage;

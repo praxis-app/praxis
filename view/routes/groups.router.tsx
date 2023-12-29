@@ -3,7 +3,7 @@ import EditGroup from '../pages/Groups/EditGroup';
 import EditGroupRole from '../pages/Groups/EditGroupRole';
 import GroupMemberRequests from '../pages/Groups/GroupMemberRequests';
 import GroupMembers from '../pages/Groups/GroupMembers';
-import GroupProfile from '../pages/Groups/GroupProfile';
+import GroupPage from '../pages/Groups/GroupPage';
 import GroupRoles from '../pages/Groups/GroupRoles';
 import GroupSettings from '../pages/Groups/GroupSettings';
 import GroupsIndex from '../pages/Groups/GroupsIndex';
@@ -17,7 +17,7 @@ const groupsRouter: RouteObject = {
     },
     {
       path: ':name',
-      element: <GroupProfile />,
+      element: <GroupPage />,
     },
     {
       path: ':name/edit',

@@ -19,11 +19,14 @@ const CARD_CONTENT_STYLES: SxProps = {
 };
 
 interface Props extends BoxProps {
-  feed: FeedItemFragment[];
+  feedItems?: FeedItemFragment[];
+  isLoading: boolean;
+  onChangePage(page: number): void;
   page: number;
   rowsPerPage: number;
-  setPage: (page: number) => void;
+  setPage(page: number): void;
   setRowsPerPage: (rowsPerPage: number) => void;
+  totalCount?: number;
 }
 
 const FeedItem = ({ item }: { item: FeedItemFragment }) => {
@@ -37,16 +40,19 @@ const FeedItem = ({ item }: { item: FeedItemFragment }) => {
 };
 
 const Feed = ({
-  feed,
+  feedItems,
+  isLoading,
+  onChangePage,
   page,
   rowsPerPage,
   setPage,
   setRowsPerPage,
+  totalCount,
   ...boxProps
 }: Props) => {
   const { t } = useTranslation();
 
-  if (feed.length === 0) {
+  if (feedItems?.length === 0) {
     return (
       <Card>
         <CardContent sx={CARD_CONTENT_STYLES}>
@@ -61,13 +67,15 @@ const Feed = ({
   return (
     <Box {...boxProps}>
       <Pagination
+        count={totalCount || 0}
+        isLoading={isLoading}
+        onChangePage={onChangePage}
         page={page}
         rowsPerPage={rowsPerPage}
         setPage={setPage}
         setRowsPerPage={setRowsPerPage}
-        count={100}
       >
-        {feed.map((item) => (
+        {feedItems?.map((item) => (
           <FeedItem item={item} key={`${item.__typename}-${item.id}`} />
         ))}
       </Pagination>

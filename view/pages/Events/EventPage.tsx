@@ -12,20 +12,16 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import EventPageCard from '../../components/Events/EventPageCard';
-import PostForm from '../../components/Posts/PostForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
-import Feed from '../../components/Shared/Feed';
 import ProgressBar from '../../components/Shared/ProgressBar';
-import {
-  DEFAULT_PAGE_SIZE,
-  TruncationSizes,
-} from '../../constants/shared.constants';
+import { TruncationSizes } from '../../constants/shared.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { useEventPageLazyQuery } from '../../graphql/events/queries/gen/EventPage.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../utils/error.utils';
 import { getGroupEventsTabPath } from '../../utils/group.utils';
 import { urlifyText } from '../../utils/shared.utils';
+import EventDiscussionTab from './EventDiscussionTab';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
@@ -36,10 +32,6 @@ const CardContent = styled(MuiCardContent)(() => ({
 const EventPage = () => {
   const [tab, setTab] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
-
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const [getEvent, { data, loading, error }] = useEventPageLazyQuery({
@@ -120,31 +112,7 @@ const EventPage = () => {
         </Card>
       )}
 
-      {tab === 1 && (
-        <>
-          {isLoggedIn && (
-            <Card>
-              <CardContent
-                sx={{
-                  '&:last-child': {
-                    paddingBottom: 1,
-                  },
-                }}
-              >
-                <PostForm eventId={parseInt(id)} />
-              </CardContent>
-            </Card>
-          )}
-
-          <Feed
-            feed={event.posts}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            setPage={setPage}
-            setRowsPerPage={setRowsPerPage}
-          />
-        </>
-      )}
+      {tab === 1 && <EventDiscussionTab eventId={parseInt(id)} />}
     </>
   );
 };

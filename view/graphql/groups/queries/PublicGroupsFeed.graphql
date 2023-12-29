@@ -1,5 +1,12 @@
-query PublicGroupsFeed($isLoggedIn: Boolean = false) {
-  publicGroupsFeed {
-    ...FeedItem
+query PublicGroupsFeed(
+  $offset: Int
+  $limit: Int
+  $isLoggedIn: Boolean = false
+) {
+  publicGroupsFeed(offset: $offset, limit: $limit) {
+    nodes {
+      ...FeedItem
+    }
+    totalCount
   }
 }

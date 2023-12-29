@@ -196,7 +196,7 @@ export class UsersService {
     return extractedEvents.flatMap((event) => event.posts);
   }
 
-  async getUserFeed(id: number, offset = 0, limit = DEFAULT_PAGE_SIZE) {
+  async getUserFeed(id: number, offset?: number, limit?: number) {
     const logTimeMessage = `Fetching home feed for user with ID ${id}`;
     logTime(logTimeMessage, this.logger);
 
@@ -235,13 +235,14 @@ export class UsersService {
       ...Object.values(proposalMap),
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-    const pagedFeed = paginate(sortedFeed, offset, limit);
-
+    const nodes =
+      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
     logTime(logTimeMessage, this.logger);
-    return pagedFeed;
+
+    return { nodes, totalCount: sortedFeed.length };
   }
 
-  async getUserProfileFeed(id: number) {
+  async getUserProfileFeed(id: number, offset?: number, limit?: number) {
     const user = await this.getUser({ id }, ['proposals', 'posts']);
     if (!user) {
       throw new UserInputError('User not found');
@@ -249,9 +250,10 @@ export class UsersService {
     const sortedFeed = [...user.posts, ...user.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
+    const nodes =
+      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
 
-    // TODO: Update once pagination has been implemented
-    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+    return { nodes, totalCount: sortedFeed.length };
   }
 
   async getUserPermissions(id: number) {

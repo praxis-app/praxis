@@ -6,7 +6,7 @@ import { GroupPermissionsFragmentDoc } from './GroupPermissions.gen';
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
 
-export type GroupProfileCardFragment = {
+export type GroupPageCardFragment = {
   __typename?: 'Group';
   id: number;
   name: string;
@@ -35,8 +35,8 @@ export type GroupProfileCardFragment = {
   };
 };
 
-export const GroupProfileCardFragmentDoc = gql`
-  fragment GroupProfileCard on Group {
+export const GroupPageCardFragmentDoc = gql`
+  fragment GroupPageCard on Group {
     id
     name
     memberCount

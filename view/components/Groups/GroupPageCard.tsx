@@ -26,7 +26,7 @@ import {
   TAB_QUERY_PARAM,
 } from '../../constants/shared.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
-import { GroupProfileCardFragment } from '../../graphql/groups/fragments/gen/GroupProfileCard.gen';
+import { GroupPageCardFragment } from '../../graphql/groups/fragments/gen/GroupPageCard.gen';
 import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import { useAboveBreakpoint } from '../../hooks/shared.hooks';
 import { removeGroup } from '../../utils/cache.utils';
@@ -59,12 +59,12 @@ const CardContent = styled(MuiCardContent)(() => ({
 
 interface Props extends CardProps {
   currentUserId?: number;
-  group: GroupProfileCardFragment;
+  group: GroupPageCardFragment;
   setTab(tab: number): void;
   tab: number;
 }
 
-const GroupProfileCard = ({
+const GroupPageCard = ({
   currentUserId,
   group,
   setTab,
@@ -286,4 +286,4 @@ const GroupProfileCard = ({
   );
 };
 
-export default GroupProfileCard;
+export default GroupPageCard;

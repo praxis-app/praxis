@@ -1,9 +1,11 @@
-query HomeFeed($offset: Int!, $limit: Int!, $isLoggedIn: Boolean = true) {
+query HomeFeed($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
   me {
     id
     homeFeed(offset: $offset, limit: $limit) {
-      ...FeedItem
+      nodes {
+        ...FeedItem
+      }
+      totalCount
     }
-    ...ToggleForms
   }
 }

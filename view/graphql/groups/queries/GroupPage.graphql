@@ -1,0 +1,11 @@
+query GroupPage($name: String!, $isLoggedIn: Boolean!) {
+  group(name: $name) {
+    ...GroupPageCard
+    description
+  }
+
+  me @include(if: $isLoggedIn) {
+    id
+    ...ToggleForms
+  }
+}

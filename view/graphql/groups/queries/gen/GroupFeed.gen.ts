@@ -8,19 +8,20 @@ import * as Apollo from '@apollo/client';
 /* eslint-disable */
 
 const defaultOptions = {} as const;
-export type HomeFeedQueryVariables = Types.Exact<{
+export type GroupFeedQueryVariables = Types.Exact<{
+  name: Types.Scalars['String']['input'];
   offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
-  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
+  isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
-export type HomeFeedQuery = {
+export type GroupFeedQuery = {
   __typename?: 'Query';
-  me: {
-    __typename?: 'User';
+  group: {
+    __typename?: 'Group';
     id: number;
-    homeFeed: {
-      __typename?: 'HomeFeedConnection';
+    feed: {
+      __typename?: 'GroupFeedConnection';
       totalCount: number;
       nodes: Array<
         | {
@@ -253,11 +254,16 @@ export type HomeFeedQuery = {
   };
 };
 
-export const HomeFeedDocument = gql`
-  query HomeFeed($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
-    me {
+export const GroupFeedDocument = gql`
+  query GroupFeed(
+    $name: String!
+    $offset: Int
+    $limit: Int
+    $isLoggedIn: Boolean!
+  ) {
+    group(name: $name) {
       id
-      homeFeed(offset: $offset, limit: $limit) {
+      feed(offset: $offset, limit: $limit) {
         nodes {
           ...FeedItem
         }
@@ -269,49 +275,50 @@ export const HomeFeedDocument = gql`
 `;
 
 /**
- * __useHomeFeedQuery__
+ * __useGroupFeedQuery__
  *
- * To run a query within a React component, call `useHomeFeedQuery` and pass it any options that fit your needs.
- * When your component renders, `useHomeFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGroupFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGroupFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useHomeFeedQuery({
+ * const { data, loading, error } = useGroupFeedQuery({
  *   variables: {
+ *      name: // value for 'name'
  *      offset: // value for 'offset'
  *      limit: // value for 'limit'
  *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
-export function useHomeFeedQuery(
-  baseOptions?: Apollo.QueryHookOptions<HomeFeedQuery, HomeFeedQueryVariables>,
+export function useGroupFeedQuery(
+  baseOptions: Apollo.QueryHookOptions<GroupFeedQuery, GroupFeedQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<HomeFeedQuery, HomeFeedQueryVariables>(
-    HomeFeedDocument,
+  return Apollo.useQuery<GroupFeedQuery, GroupFeedQueryVariables>(
+    GroupFeedDocument,
     options,
   );
 }
-export function useHomeFeedLazyQuery(
+export function useGroupFeedLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    HomeFeedQuery,
-    HomeFeedQueryVariables
+    GroupFeedQuery,
+    GroupFeedQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<HomeFeedQuery, HomeFeedQueryVariables>(
-    HomeFeedDocument,
+  return Apollo.useLazyQuery<GroupFeedQuery, GroupFeedQueryVariables>(
+    GroupFeedDocument,
     options,
   );
 }
-export type HomeFeedQueryHookResult = ReturnType<typeof useHomeFeedQuery>;
-export type HomeFeedLazyQueryHookResult = ReturnType<
-  typeof useHomeFeedLazyQuery
+export type GroupFeedQueryHookResult = ReturnType<typeof useGroupFeedQuery>;
+export type GroupFeedLazyQueryHookResult = ReturnType<
+  typeof useGroupFeedLazyQuery
 >;
-export type HomeFeedQueryResult = Apollo.QueryResult<
-  HomeFeedQuery,
-  HomeFeedQueryVariables
+export type GroupFeedQueryResult = Apollo.QueryResult<
+  GroupFeedQuery,
+  GroupFeedQueryVariables
 >;

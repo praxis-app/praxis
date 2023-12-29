@@ -1,34 +1,56 @@
-import { TablePagination } from '@mui/material';
+import { LabelDisplayedRowsArgs, TablePagination } from '@mui/material';
 import { ChangeEvent, MouseEvent, ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
 interface Props {
   children: ReactNode;
   count: number;
-  page: number;
+  isLoading: boolean;
+  onChangePage(page: number): void;
   rowsPerPage: number;
-  setPage: (page: number) => void;
-  setRowsPerPage: (rowsPerPage: number) => void;
+  setRowsPerPage(rowsPerPage: number): void;
+  page: number;
+  setPage(page: number): void;
 }
 
 const Pagination = ({
   children,
   count,
-  page,
+  isLoading,
+  onChangePage,
   rowsPerPage,
-  setPage,
   setRowsPerPage,
+  page,
+  setPage,
 }: Props) => {
+  const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
   const selectProps = {
-    sx: { display: isDesktop ? undefined : 'none' },
+    sx: {
+      display: isDesktop ? undefined : 'none',
+    },
+  };
+
+  const getDisplayedRowsLabel = ({
+    count,
+    from,
+    to,
+  }: LabelDisplayedRowsArgs) => {
+    if (isLoading) {
+      return t('pagination.loading');
+    }
+    return `${from}-${to} ${t('pagination.of')} ${count}`;
   };
 
   const handleChangePage = (
     _: MouseEvent<HTMLButtonElement> | null,
     newPage: number,
-  ) => setPage(newPage);
+  ) => {
+    onChangePage(newPage);
+    setPage(newPage);
+  };
 
   const handleChangeRowsPerPage = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -37,19 +59,25 @@ const Pagination = ({
     setPage(0);
   };
 
-  const renderPagination = (bottom = false) => (
-    <TablePagination
-      component="div"
-      page={page}
-      count={count}
-      labelRowsPerPage={isDesktop ? undefined : <></>}
-      onPageChange={handleChangePage}
-      onRowsPerPageChange={handleChangeRowsPerPage}
-      rowsPerPage={rowsPerPage}
-      SelectProps={selectProps}
-      sx={{ marginBottom: bottom ? 0 : 1.5 }}
-    />
-  );
+  const renderPagination = (bottom = false) => {
+    if (bottom && isLoading) {
+      return null;
+    }
+    return (
+      <TablePagination
+        component="div"
+        count={count}
+        labelDisplayedRows={getDisplayedRowsLabel}
+        labelRowsPerPage={isDesktop ? undefined : <></>}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        page={isLoading ? 0 : page}
+        rowsPerPage={rowsPerPage}
+        SelectProps={selectProps}
+        sx={{ marginBottom: bottom ? 0 : 1.5 }}
+      />
+    );
+  };
 
   return (
     <>
