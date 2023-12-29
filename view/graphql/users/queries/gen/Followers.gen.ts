@@ -19,7 +19,6 @@ export type FollowersQuery = {
   user: {
     __typename?: 'User';
     id: number;
-    followerCount: number;
     followers: {
       __typename?: 'UserConnection';
       totalCount: number;
@@ -39,7 +38,6 @@ export const FollowersDocument = gql`
   query Followers($name: String!, $offset: Int, $limit: Int) {
     user(name: $name) {
       id
-      followerCount
       followers(offset: $offset, limit: $limit) {
         nodes {
           ...Follow

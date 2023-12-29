@@ -74,7 +74,7 @@ const Followers = () => {
     {
       label: data
         ? t('users.labels.followers', {
-            count: data.user.followerCount,
+            count: data.user.followers.totalCount,
           })
         : t('pagination.loading'),
     },
@@ -94,7 +94,7 @@ const Followers = () => {
         setRowsPerPage={setRowsPerPage}
         sx={{ marginBottom: 0.5 }}
       >
-        {!!data?.user.followerCount && (
+        {!!data?.user.followers.totalCount && (
           <Card>
             <CardContent>
               {data.user.followers.nodes.map((follower) => (

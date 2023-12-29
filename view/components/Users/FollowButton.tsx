@@ -61,9 +61,14 @@ const FollowButton = ({
           cache.modify({
             id: cache.identify({ id, __typename }),
             fields: {
-              followers(existingRefs: Reference[], { readField }) {
-                return existingRefs.filter(
-                  (ref) => readField('id', ref) !== currentUserId,
+              followers(existingRef: Reference, { readField }) {
+                const nodes = readField('nodes', existingRef);
+                if (!Array.isArray(nodes)) {
+                  return existingRef;
+                }
+                return nodes.filter(
+                  (nodeRef: Reference) =>
+                    readField('id', nodeRef) !== currentUserId,
                 );
               },
               followerCount(existingCount: number) {
