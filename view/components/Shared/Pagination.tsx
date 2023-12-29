@@ -73,6 +73,7 @@ const Pagination = ({
         onRowsPerPageChange={handleChangeRowsPerPage}
         page={isLoading ? 0 : page}
         rowsPerPage={rowsPerPage}
+        rowsPerPageOptions={[10, 25, 50]}
         SelectProps={selectProps}
         sx={{ marginBottom: bottom ? 0 : 1.5 }}
       />
