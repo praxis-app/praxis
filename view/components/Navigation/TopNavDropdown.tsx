@@ -3,7 +3,7 @@ import { Menu, MenuItem, SvgIconProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
-  ACCESS_TOKEN,
+  LocalStorageKey,
   NavigationPaths,
 } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
@@ -40,7 +40,7 @@ const TopNavDropdown = ({
         isLoggedInVar(false);
         isAuthLoadingVar(false);
         navigate(NavigationPaths.LogIn);
-        localStorage.removeItem(ACCESS_TOKEN);
+        localStorage.removeItem(LocalStorageKey.AccessToken);
         client.cache.reset();
       },
       update: (cache) => cache.reset(),

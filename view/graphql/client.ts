@@ -6,7 +6,7 @@ import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { createUploadLink } from 'apollo-upload-client';
 import { createClient } from 'graphql-ws';
-import { ACCESS_TOKEN, Environments } from '../constants/shared.constants';
+import { Environments, LocalStorageKey } from '../constants/shared.constants';
 import { formatGQLError } from '../utils/error.utils';
 import cache from './cache';
 
@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === Environments.Development) {
 }
 
 export const getAuthHeader = () => {
-  const accessToken = localStorage.getItem(ACCESS_TOKEN);
+  const accessToken = localStorage.getItem(LocalStorageKey.AccessToken);
   return { authorization: accessToken ? `Bearer ${accessToken}` : '' };
 };
 
