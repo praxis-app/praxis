@@ -1,5 +1,3 @@
-// TODO: Update event posts query to use pagination
-
 import { useReactiveVar } from '@apollo/client';
 import {
   Card,

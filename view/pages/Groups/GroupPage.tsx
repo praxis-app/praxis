@@ -92,7 +92,6 @@ const GroupPage = () => {
         tab={tab}
       />
 
-      {/* TODO: Extract into separate component */}
       {tab === 0 && (
         <>
           {me && group.isJoinedByMe && (
