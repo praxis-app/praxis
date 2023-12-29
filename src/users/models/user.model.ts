@@ -81,12 +81,10 @@ export class User {
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;
 
-  @Field(() => [User])
   @ManyToMany(() => User, (user) => user.following)
   @JoinTable()
   followers: User[];
 
-  @Field(() => [User])
   @ManyToMany(() => User, (user) => user.followers)
   following: User[];
 

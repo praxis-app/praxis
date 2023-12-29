@@ -1205,8 +1205,8 @@ export type User = {
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   followerCount: Scalars['Int']['output'];
-  followers: Array<User>;
-  following: Array<User>;
+  followers: UserConnection;
+  following: UserConnection;
   followingCount: Scalars['Int']['output'];
   homeFeed: FeedItemConnection;
   id: Scalars['Int']['output'];
@@ -1222,6 +1222,16 @@ export type User = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type UserFollowersArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type UserFollowingArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type UserHomeFeedArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -1230,6 +1240,12 @@ export type UserHomeFeedArgs = {
 export type UserProfileFeedArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type UserConnection = {
+  __typename?: 'UserConnection';
+  nodes: Array<User>;
+  totalCount: Scalars['Int']['output'];
 };
 
 export type Vote = {

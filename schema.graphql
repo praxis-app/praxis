@@ -334,12 +334,12 @@ type User {
   likes: [Like!]!
   profilePicture: Image!
   coverPhoto: Image
-  followers: [User!]!
-  following: [User!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   homeFeed(offset: Int, limit: Int): FeedItemConnection!
   profileFeed(offset: Int, limit: Int): FeedItemConnection!
+  followers(offset: Int, limit: Int): UserConnection!
+  following(offset: Int, limit: Int): UserConnection!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
@@ -513,6 +513,11 @@ type FollowUserPayload {
 
 type UpdateUserPayload {
   user: User!
+}
+
+type UserConnection {
+  nodes: [User!]!
+  totalCount: Int!
 }
 
 type AuthPayload {

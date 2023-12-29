@@ -3,7 +3,10 @@ query Followers($name: String!) {
     id
     followerCount
     followers {
-      ...Follow
+      nodes {
+        ...Follow
+      }
+      totalCount
     }
   }
   me {

@@ -18,13 +18,17 @@ export type FollowersQuery = {
     __typename?: 'User';
     id: number;
     followerCount: number;
-    followers: Array<{
-      __typename?: 'User';
-      id: number;
-      name: string;
-      isFollowedByMe: boolean;
-      profilePicture: { __typename?: 'Image'; id: number };
-    }>;
+    followers: {
+      __typename?: 'UserConnection';
+      totalCount: number;
+      nodes: Array<{
+        __typename?: 'User';
+        id: number;
+        name: string;
+        isFollowedByMe: boolean;
+        profilePicture: { __typename?: 'Image'; id: number };
+      }>;
+    };
   };
   me: { __typename?: 'User'; id: number };
 };
@@ -35,7 +39,10 @@ export const FollowersDocument = gql`
       id
       followerCount
       followers {
-        ...Follow
+        nodes {
+          ...Follow
+        }
+        totalCount
       }
     }
     me {

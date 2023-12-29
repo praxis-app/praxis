@@ -21,6 +21,7 @@ import { ServerPermissions } from '../server-roles/models/server-permissions.typ
 import { FollowUserPayload } from './models/follow-user.payload';
 import { UpdateUserInput } from './models/update-user.input';
 import { UpdateUserPayload } from './models/update-user.payload';
+import { UserConnection } from './models/user.connection';
 import { User } from './models/user.model';
 import { UsersService } from './users.service';
 
@@ -92,14 +93,22 @@ export class UsersResolver {
     return this.usersService.getCoverPhoto(id);
   }
 
-  @ResolveField(() => [User])
-  async followers(@Parent() { id }: User) {
-    return this.usersService.getFollowers(id);
+  @ResolveField(() => UserConnection)
+  async followers(
+    @Parent() { id }: User,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.usersService.getFollowers(id, offset, limit);
   }
 
-  @ResolveField(() => [User])
-  async following(@Parent() { id }: User) {
-    return this.usersService.getFollowing(id);
+  @ResolveField(() => UserConnection)
+  async following(
+    @Parent() { id }: User,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.usersService.getFollowing(id, offset, limit);
   }
 
   @ResolveField(() => Int)

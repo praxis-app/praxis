@@ -1,4 +1,8 @@
-import { LabelDisplayedRowsArgs, TablePagination } from '@mui/material';
+import {
+  LabelDisplayedRowsArgs,
+  SxProps,
+  TablePagination,
+} from '@mui/material';
 import { ChangeEvent, MouseEvent, ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LocalStorageKey } from '../../constants/shared.constants';
@@ -13,6 +17,7 @@ interface Props {
   setRowsPerPage(rowsPerPage: number): void;
   page: number;
   setPage(page: number): void;
+  sx?: SxProps;
 }
 
 const Pagination = ({
@@ -24,6 +29,7 @@ const Pagination = ({
   setRowsPerPage,
   page,
   setPage,
+  sx,
 }: Props) => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
@@ -71,7 +77,7 @@ const Pagination = ({
   };
 
   const renderPagination = (bottom = false) => {
-    if (bottom && isLoading) {
+    if (count < 10 || (bottom && isLoading)) {
       return null;
     }
     return (
@@ -86,7 +92,7 @@ const Pagination = ({
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[10, 25, 50]}
         SelectProps={selectProps}
-        sx={{ marginBottom: bottom ? 0 : 1.5 }}
+        sx={{ marginBottom: bottom ? 0 : 1.5, ...sx }}
       />
     );
   };
