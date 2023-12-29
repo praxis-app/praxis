@@ -9,6 +9,8 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type PublicGroupsQueryVariables = Types.Exact<{
+  offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
@@ -45,8 +47,8 @@ export type PublicGroupsQuery = {
 };
 
 export const PublicGroupsDocument = gql`
-  query PublicGroups($isLoggedIn: Boolean = false) {
-    publicGroups {
+  query PublicGroups($offset: Int, $limit: Int, $isLoggedIn: Boolean = false) {
+    publicGroups(offset: $offset, limit: $limit) {
       nodes {
         ...GroupCard
       }
@@ -68,6 +70,8 @@ export const PublicGroupsDocument = gql`
  * @example
  * const { data, loading, error } = usePublicGroupsQuery({
  *   variables: {
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });

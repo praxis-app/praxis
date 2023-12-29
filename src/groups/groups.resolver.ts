@@ -31,6 +31,7 @@ import { GroupFeedConnection } from './models/group-feed.connection';
 import { Group } from './models/group.model';
 import { GroupsConnection } from './models/groups.connection';
 import { PublicGroupsFeedConnection } from './models/public-groups-feed.connection';
+import { PublicGroupsConnection } from './models/public-groups.connection';
 import { UpdateGroupInput } from './models/update-group.input';
 import { UpdateGroupPayload } from './models/update-group.payload';
 
@@ -62,7 +63,7 @@ export class GroupsResolver {
     return this.groupsService.getPagedGroups({}, offset, limit);
   }
 
-  @Query(() => GroupsConnection)
+  @Query(() => PublicGroupsConnection)
   async publicGroups(
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
