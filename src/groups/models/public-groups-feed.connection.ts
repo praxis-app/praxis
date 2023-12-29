@@ -1,3 +1,5 @@
+// TODO: Determine whether this is needed
+
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { FeedItem } from '../../common/models/feed-item.union';
 
