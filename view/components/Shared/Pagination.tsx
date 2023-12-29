@@ -22,7 +22,7 @@ interface Props {
 
 const Pagination = ({
   children,
-  count = 0,
+  count,
   isLoading,
   onChangePage,
   rowsPerPage,
@@ -77,13 +77,13 @@ const Pagination = ({
   };
 
   const renderPagination = (bottom = false) => {
-    if (bottom && isLoading) {
+    if (count === 0 || (bottom && isLoading)) {
       return null;
     }
     return (
       <TablePagination
         component="div"
-        count={count}
+        count={count || 0}
         labelDisplayedRows={getDisplayedRowsLabel}
         labelRowsPerPage={isDesktop ? undefined : <></>}
         onPageChange={handleChangePage}

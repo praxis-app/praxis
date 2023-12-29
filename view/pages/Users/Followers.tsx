@@ -72,9 +72,11 @@ const Followers = () => {
       href: getUserProfilePath(name),
     },
     {
-      label: t('users.labels.followers', {
-        count: data?.user.followerCount,
-      }),
+      label: data
+        ? t('users.labels.followers', {
+            count: data.user.followerCount,
+          })
+        : '',
     },
   ];
 
@@ -82,17 +84,17 @@ const Followers = () => {
     <>
       <Breadcrumbs breadcrumbs={breadcrumbs} />
 
-      {!!data?.user.followerCount && (
-        <Pagination
-          count={data?.user.followers.totalCount}
-          isLoading={loading}
-          onChangePage={onChangePage}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          setPage={setPage}
-          setRowsPerPage={setRowsPerPage}
-          sx={{ marginBottom: 1 }}
-        >
+      <Pagination
+        count={data?.user.followers.totalCount}
+        isLoading={loading}
+        onChangePage={onChangePage}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        setPage={setPage}
+        setRowsPerPage={setRowsPerPage}
+        sx={{ marginBottom: 1 }}
+      >
+        {!!data?.user.followerCount && (
           <Card>
             <CardContent>
               {data.user.followers.nodes.map((follower) => (
@@ -104,8 +106,8 @@ const Followers = () => {
               ))}
             </CardContent>
           </Card>
-        </Pagination>
-      )}
+        )}
+      </Pagination>
     </>
   );
 };
