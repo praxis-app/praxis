@@ -1,6 +1,7 @@
 import { rule } from 'graphql-shield';
 import { FindOptionsWhere } from 'typeorm';
 import { UNAUTHORIZED } from '../../common/common.constants';
+import { FeedItemConnection } from '../../common/models/feed-item.connection';
 import { Context } from '../../context/context.types';
 import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
 import { GroupConfig } from '../../groups/group-configs/models/group-config.model';
@@ -9,7 +10,6 @@ import { CreateGroupRoleInput } from '../../groups/group-roles/models/create-gro
 import { DeleteGroupRoleMemberInput } from '../../groups/group-roles/models/delete-group-role-member.input';
 import { GroupRole } from '../../groups/group-roles/models/group-role.model';
 import { UpdateGroupRoleInput } from '../../groups/group-roles/models/update-group-role.input';
-import { GroupFeedConnection } from '../../groups/models/group-feed.connection';
 import { Group } from '../../groups/models/group.model';
 import { UpdateGroupInput } from '../../groups/models/update-group.input';
 import { Image } from '../../images/models/image.model';
@@ -213,7 +213,7 @@ export const isGroupMember = rule({ cache: 'strict' })(async (
 });
 
 export const isPublicGroup = rule({ cache: 'strict' })(async (
-  parent: Group | GroupConfig | GroupFeedConnection | null,
+  parent: Group | GroupConfig | FeedItemConnection | null,
   args: { id: number; name: string } | null,
   { services: { groupsService } }: Context,
 ) => {

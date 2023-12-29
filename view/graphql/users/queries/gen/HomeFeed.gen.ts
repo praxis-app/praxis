@@ -20,7 +20,7 @@ export type HomeFeedQuery = {
     __typename?: 'User';
     id: number;
     homeFeed: {
-      __typename?: 'HomeFeedConnection';
+      __typename?: 'FeedItemConnection';
       totalCount: number;
       nodes: Array<
         | {

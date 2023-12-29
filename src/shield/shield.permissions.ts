@@ -121,7 +121,7 @@ export const shieldPermissions = shield(
       name: or(isAuthenticated, isPublicGroupRole),
       color: or(isAuthenticated, isPublicGroupRole),
     },
-    GroupFeedConnection: or(isAuthenticated, isPublicGroup),
+    FeedItemConnection: or(isAuthenticated, isPublicGroup),
     PublicGroupsFeedConnection: allow,
     PublicGroupsConnection: allow,
     Image: {

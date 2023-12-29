@@ -240,7 +240,7 @@ type Group {
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
-  feed(offset: Int, limit: Int): GroupFeedConnection!
+  feed(offset: Int, limit: Int): FeedItemConnection!
   memberCount: Int!
   memberRequestCount: Int
   isJoinedByMe: Boolean!
@@ -338,8 +338,8 @@ type User {
   following: [User!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  homeFeed(offset: Int, limit: Int): HomeFeedConnection!
-  profileFeed(offset: Int, limit: Int): UserProfileFeedConnection!
+  homeFeed(offset: Int, limit: Int): FeedItemConnection!
+  profileFeed(offset: Int, limit: Int): FeedItemConnection!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
@@ -419,6 +419,13 @@ type UpdateGroupRolePayload {
   groupRole: GroupRole!
 }
 
+type FeedItemConnection {
+  nodes: [FeedItem!]!
+  totalCount: Int!
+}
+
+union FeedItem = Post | Proposal
+
 type GroupPermissions {
   manageRoles: Boolean!
   manageSettings: Boolean!
@@ -435,13 +442,6 @@ type GroupPermissions {
 type CreateGroupPayload {
   group: Group!
 }
-
-type GroupFeedConnection {
-  nodes: [FeedItem!]!
-  totalCount: Int!
-}
-
-union FeedItem = Post | Proposal
 
 type GroupsConnection {
   nodes: [Group!]!
@@ -516,18 +516,8 @@ type FollowUserPayload {
   follower: User!
 }
 
-type HomeFeedConnection {
-  nodes: [FeedItem!]!
-  totalCount: Int!
-}
-
 type UpdateUserPayload {
   user: User!
-}
-
-type UserProfileFeedConnection {
-  nodes: [FeedItem!]!
-  totalCount: Int!
 }
 
 type AuthPayload {

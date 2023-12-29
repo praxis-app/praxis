@@ -21,7 +21,7 @@ export type UserProfileFeedQuery = {
     __typename?: 'User';
     id: number;
     profileFeed: {
-      __typename?: 'UserProfileFeedConnection';
+      __typename?: 'FeedItemConnection';
       totalCount: number;
       nodes: Array<
         | {

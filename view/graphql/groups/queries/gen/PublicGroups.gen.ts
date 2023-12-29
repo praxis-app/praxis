@@ -17,7 +17,7 @@ export type PublicGroupsQueryVariables = Types.Exact<{
 export type PublicGroupsQuery = {
   __typename?: 'Query';
   publicGroups: {
-    __typename?: 'GroupsConnection';
+    __typename?: 'PublicGroupsConnection';
     totalCount: number;
     nodes: Array<{
       __typename?: 'Group';
