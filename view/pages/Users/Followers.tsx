@@ -82,7 +82,7 @@ const Followers = () => {
 
   return (
     <>
-      <Breadcrumbs breadcrumbs={breadcrumbs} />
+      <Breadcrumbs breadcrumbs={breadcrumbs} sx={{ marginBottom: 0.25 }} />
 
       <Pagination
         count={data?.user.followers.totalCount}
@@ -92,7 +92,7 @@ const Followers = () => {
         rowsPerPage={rowsPerPage}
         setPage={setPage}
         setRowsPerPage={setRowsPerPage}
-        sx={{ marginBottom: 1 }}
+        sx={{ marginBottom: 0.5 }}
       >
         {!!data?.user.followerCount && (
           <Card>
