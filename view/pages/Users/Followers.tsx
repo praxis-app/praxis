@@ -76,7 +76,7 @@ const Followers = () => {
         ? t('users.labels.followers', {
             count: data.user.followerCount,
           })
-        : '',
+        : t('pagination.loading'),
     },
   ];
 
