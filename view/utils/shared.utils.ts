@@ -1,8 +1,8 @@
 import { t } from 'i18next';
 import { isValidElement, ReactNode } from 'react';
 import { animateScroll } from 'react-scroll';
-import { toastVar } from '../graphql/cache';
 import { SCROLL_DURATION, URL_REGEX } from '../constants/shared.constants';
+import { toastVar } from '../graphql/cache';
 
 /**
  * Returns whether or not a given node can be successfully rendered.
@@ -67,28 +67,6 @@ export const inDevToast = () => {
 export const scrollTop = () => {
   const options = { smooth: true, duration: SCROLL_DURATION };
   animateScroll.scrollToTop(options);
-};
-
-// TODO: Remove unneeded functions for localStorage - added for nextjs
-export const getLocalStorageItem = (item: string) => {
-  if (typeof localStorage === 'undefined') {
-    return;
-  }
-  return localStorage.getItem(item);
-};
-
-export const setLocalStorageItem = (item: string, value: string) => {
-  if (typeof localStorage === 'undefined') {
-    return;
-  }
-  return localStorage.setItem(item, value);
-};
-
-export const removeLocalStorageItem = (item: string) => {
-  if (typeof localStorage === 'undefined') {
-    return;
-  }
-  return localStorage.removeItem(item);
 };
 
 export const getRandomString = () =>

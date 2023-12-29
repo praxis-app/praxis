@@ -27,10 +27,7 @@ import {
 } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { isEntityTooLarge } from '../../utils/error.utils';
 import { validateImageInput } from '../../utils/image.utils';
-import {
-  getRandomString,
-  removeLocalStorageItem,
-} from '../../utils/shared.utils';
+import { getRandomString } from '../../utils/shared.utils';
 
 const SignUpForm = () => {
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
@@ -112,7 +109,7 @@ const SignUpForm = () => {
         inviteTokenVar('');
         isLoggedInVar(true);
         setImageInputKey(getRandomString());
-        removeLocalStorageItem(INVITE_TOKEN);
+        localStorage.removeItem(INVITE_TOKEN);
         localStorage.setItem(LocalStorageKey.AccessToken, access_token);
       },
       onError(err) {
