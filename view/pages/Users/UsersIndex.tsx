@@ -43,7 +43,7 @@ const UsersIndex = () => {
 
   return (
     <>
-      <LevelOneHeading header>{t('navigation.members')}</LevelOneHeading>
+      <LevelOneHeading header>{t('navigation.users')}</LevelOneHeading>
 
       <Pagination
         count={data?.users.totalCount}
