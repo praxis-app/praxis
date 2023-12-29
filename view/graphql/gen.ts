@@ -894,7 +894,7 @@ export type Query = {
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
   user: User;
-  users: Array<User>;
+  users: UserConnection;
   usersByIds: Array<User>;
 };
 
@@ -953,6 +953,11 @@ export type QueryServerRoleArgs = {
 export type QueryUserArgs = {
   id?: InputMaybe<Scalars['Int']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type QueryUsersArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type QueryUsersByIdsArgs = {

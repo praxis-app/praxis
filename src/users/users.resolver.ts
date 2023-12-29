@@ -46,9 +46,12 @@ export class UsersResolver {
     return this.usersService.getUser({ id, name });
   }
 
-  @Query(() => [User])
-  async users() {
-    return this.usersService.getUsers();
+  @Query(() => UserConnection)
+  async users(
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.usersService.getPagedUsers(offset, limit);
   }
 
   @Query(() => [User])

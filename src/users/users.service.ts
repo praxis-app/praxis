@@ -52,6 +52,12 @@ export class UsersService {
     return this.repository.find({ where });
   }
 
+  async getPagedUsers(offset?: number, limit?: number) {
+    const users = await this.getUsers();
+    const nodes = offset !== undefined ? paginate(users, offset, limit) : users;
+    return { nodes, totalCount: users.length };
+  }
+
   async isFirstUser() {
     const userCount = await this.repository.count();
     return userCount === 0;

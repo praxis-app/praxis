@@ -1,26 +1,47 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { FollowFragmentDoc } from '../../fragments/gen/Follow.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
 
 const defaultOptions = {} as const;
-export type UsersQueryVariables = Types.Exact<{ [key: string]: never }>;
+export type UsersQueryVariables = Types.Exact<{
+  offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+}>;
 
 export type UsersQuery = {
   __typename?: 'Query';
-  users: Array<{ __typename?: 'User'; id: number; name: string }>;
+  users: {
+    __typename?: 'UserConnection';
+    totalCount: number;
+    nodes: Array<{
+      __typename?: 'User';
+      id: number;
+      name: string;
+      isFollowedByMe: boolean;
+      profilePicture: { __typename?: 'Image'; id: number };
+    }>;
+  };
+  me: { __typename?: 'User'; id: number };
 };
 
 export const UsersDocument = gql`
-  query Users {
-    users {
+  query Users($offset: Int, $limit: Int) {
+    users(offset: $offset, limit: $limit) {
+      nodes {
+        ...Follow
+      }
+      totalCount
+    }
+    me {
       id
-      name
     }
   }
+  ${FollowFragmentDoc}
 `;
 
 /**
@@ -35,6 +56,8 @@ export const UsersDocument = gql`
  * @example
  * const { data, loading, error } = useUsersQuery({
  *   variables: {
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *   },
  * });
  */

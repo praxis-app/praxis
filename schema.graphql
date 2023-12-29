@@ -535,7 +535,7 @@ type Query {
   serverInvites: [ServerInvite!]!
   me: User!
   user(id: Int, name: String): User!
-  users: [User!]!
+  users(offset: Int, limit: Int): UserConnection!
   usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
   serverRole(id: Int!): ServerRole!
