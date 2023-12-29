@@ -101,6 +101,16 @@ const FollowButton = ({
     await followUser({
       variables: { id },
       update: (cache) => {
+        const followerQuery = cache.readQuery({
+          query: FollowersDocument,
+          variables: { limit: 10, offset: 0, name },
+        });
+        if (followerQuery) {
+          cache.evict({
+            id: `${TypeNames.User}:${id}`,
+            fieldName: 'followers',
+          });
+        }
         const homeFeed = cache.readQuery({
           query: HomeFeedDocument,
           variables: { limit: 10, offset: 0, isLogged: true },
