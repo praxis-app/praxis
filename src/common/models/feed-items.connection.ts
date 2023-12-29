@@ -1,8 +1,8 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { FeedItem } from '../../common/models/feed-item.union';
+import { FeedItem } from './feed-item.union';
 
 @ObjectType()
-export class FeedItemConnection {
+export class FeedItemsConnection {
   @Field(() => [FeedItem])
   nodes: Array<typeof FeedItem>;
 

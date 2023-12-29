@@ -21,7 +21,7 @@ export type FollowingQuery = {
     id: number;
     followingCount: number;
     following: {
-      __typename?: 'UserConnection';
+      __typename?: 'UsersConnection';
       totalCount: number;
       nodes: Array<{
         __typename?: 'User';

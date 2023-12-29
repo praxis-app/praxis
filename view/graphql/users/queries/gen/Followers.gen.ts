@@ -20,7 +20,7 @@ export type FollowersQuery = {
     __typename?: 'User';
     id: number;
     followers: {
-      __typename?: 'UserConnection';
+      __typename?: 'UsersConnection';
       totalCount: number;
       nodes: Array<{
         __typename?: 'User';

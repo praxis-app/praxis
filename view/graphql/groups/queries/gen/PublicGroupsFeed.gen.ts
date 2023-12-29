@@ -17,7 +17,7 @@ export type PublicGroupsFeedQueryVariables = Types.Exact<{
 export type PublicGroupsFeedQuery = {
   __typename?: 'Query';
   publicGroupsFeed: {
-    __typename?: 'FeedItemConnection';
+    __typename?: 'FeedItemsConnection';
     totalCount: number;
     nodes: Array<
       | {

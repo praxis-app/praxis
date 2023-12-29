@@ -21,7 +21,7 @@ export type GroupFeedQuery = {
     __typename?: 'Group';
     id: number;
     feed: {
-      __typename?: 'FeedItemConnection';
+      __typename?: 'FeedItemsConnection';
       totalCount: number;
       nodes: Array<
         | {

@@ -263,8 +263,8 @@ export type EventsInput = {
 
 export type FeedItem = Post | Proposal;
 
-export type FeedItemConnection = {
-  __typename?: 'FeedItemConnection';
+export type FeedItemsConnection = {
+  __typename?: 'FeedItemsConnection';
   nodes: Array<FeedItem>;
   totalCount: Scalars['Int']['output'];
 };
@@ -280,7 +280,7 @@ export type Group = {
   coverPhoto?: Maybe<Image>;
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
-  feed: FeedItemConnection;
+  feed: FeedItemsConnection;
   futureEvents: Array<Event>;
   id: Scalars['Int']['output'];
   isJoinedByMe: Scalars['Boolean']['output'];
@@ -887,14 +887,14 @@ export type Query = {
   proposal: Proposal;
   publicCanary?: Maybe<Canary>;
   publicGroups: PublicGroupsConnection;
-  publicGroupsFeed: FeedItemConnection;
+  publicGroupsFeed: FeedItemsConnection;
   serverConfig: ServerConfig;
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
   user: User;
-  users: UserConnection;
+  users: UsersConnection;
   usersByIds: Array<User>;
 };
 
@@ -1210,17 +1210,17 @@ export type User = {
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   followerCount: Scalars['Int']['output'];
-  followers: UserConnection;
-  following: UserConnection;
+  followers: UsersConnection;
+  following: UsersConnection;
   followingCount: Scalars['Int']['output'];
-  homeFeed: FeedItemConnection;
+  homeFeed: FeedItemsConnection;
   id: Scalars['Int']['output'];
   isFollowedByMe: Scalars['Boolean']['output'];
   joinedGroups: Array<Group>;
   likes: Array<Like>;
   name: Scalars['String']['output'];
   posts: Array<Post>;
-  profileFeed: FeedItemConnection;
+  profileFeed: FeedItemsConnection;
   profilePicture: Image;
   proposals: Array<Proposal>;
   serverPermissions: ServerPermissions;
@@ -1247,8 +1247,8 @@ export type UserProfileFeedArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export type UserConnection = {
-  __typename?: 'UserConnection';
+export type UsersConnection = {
+  __typename?: 'UsersConnection';
   nodes: Array<User>;
   totalCount: Scalars['Int']['output'];
 };

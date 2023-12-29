@@ -240,7 +240,7 @@ type Group {
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
-  feed(offset: Int, limit: Int): FeedItemConnection!
+  feed(offset: Int, limit: Int): FeedItemsConnection!
   memberCount: Int!
   memberRequestCount: Int
   isJoinedByMe: Boolean!
@@ -336,10 +336,10 @@ type User {
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
-  homeFeed(offset: Int, limit: Int): FeedItemConnection!
-  profileFeed(offset: Int, limit: Int): FeedItemConnection!
-  followers(offset: Int, limit: Int): UserConnection!
-  following(offset: Int, limit: Int): UserConnection!
+  homeFeed(offset: Int, limit: Int): FeedItemsConnection!
+  profileFeed(offset: Int, limit: Int): FeedItemsConnection!
+  followers(offset: Int, limit: Int): UsersConnection!
+  following(offset: Int, limit: Int): UsersConnection!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
@@ -419,7 +419,7 @@ type UpdateGroupRolePayload {
   groupRole: GroupRole!
 }
 
-type FeedItemConnection {
+type FeedItemsConnection {
   nodes: [FeedItem!]!
   totalCount: Int!
 }
@@ -515,7 +515,7 @@ type UpdateUserPayload {
   user: User!
 }
 
-type UserConnection {
+type UsersConnection {
   nodes: [User!]!
   totalCount: Int!
 }
@@ -535,7 +535,7 @@ type Query {
   serverInvites: [ServerInvite!]!
   me: User!
   user(id: Int, name: String): User!
-  users(offset: Int, limit: Int): UserConnection!
+  users(offset: Int, limit: Int): UsersConnection!
   usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
   serverRole(id: Int!): ServerRole!
@@ -547,7 +547,7 @@ type Query {
   group(id: Int, name: String): Group!
   groups(offset: Int, limit: Int): GroupsConnection!
   publicGroups(offset: Int, limit: Int): PublicGroupsConnection!
-  publicGroupsFeed(offset: Int, limit: Int): FeedItemConnection!
+  publicGroupsFeed(offset: Int, limit: Int): FeedItemsConnection!
   groupRole(id: Int!): GroupRole!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   groupRoles: [GroupRole!]!

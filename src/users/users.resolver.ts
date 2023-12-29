@@ -11,7 +11,7 @@ import {
 } from '@nestjs/graphql';
 import { In } from 'typeorm';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { FeedItemConnection } from '../common/models/feed-item.connection';
+import { FeedItemsConnection } from '../common/models/feed-items.connection';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
@@ -20,8 +20,8 @@ import { ServerPermissions } from '../server-roles/models/server-permissions.typ
 import { FollowUserPayload } from './models/follow-user.payload';
 import { UpdateUserInput } from './models/update-user.input';
 import { UpdateUserPayload } from './models/update-user.payload';
-import { UserConnection } from './models/user.connection';
 import { User } from './models/user.model';
+import { UsersConnection } from './models/users.connection';
 import { UsersService } from './users.service';
 
 @Resolver(() => User)
@@ -42,7 +42,7 @@ export class UsersResolver {
     return this.usersService.getUser({ id, name });
   }
 
-  @Query(() => UserConnection)
+  @Query(() => UsersConnection)
   async users(
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
@@ -60,7 +60,7 @@ export class UsersResolver {
     return this.usersService.isFirstUser();
   }
 
-  @ResolveField(() => FeedItemConnection)
+  @ResolveField(() => FeedItemsConnection)
   @UseInterceptors(SynchronizeProposalsInterceptor)
   async homeFeed(
     @Parent() { id }: User,
@@ -70,7 +70,7 @@ export class UsersResolver {
     return this.usersService.getUserFeed(id, offset, limit);
   }
 
-  @ResolveField(() => FeedItemConnection)
+  @ResolveField(() => FeedItemsConnection)
   async profileFeed(
     @Parent() { id }: User,
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
@@ -92,7 +92,7 @@ export class UsersResolver {
     return this.usersService.getCoverPhoto(id);
   }
 
-  @ResolveField(() => UserConnection)
+  @ResolveField(() => UsersConnection)
   async followers(
     @Parent() { id }: User,
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
@@ -101,7 +101,7 @@ export class UsersResolver {
     return this.usersService.getFollowers(id, offset, limit);
   }
 
-  @ResolveField(() => UserConnection)
+  @ResolveField(() => UsersConnection)
   async following(
     @Parent() { id }: User,
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,

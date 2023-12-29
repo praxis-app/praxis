@@ -16,7 +16,7 @@ export type UsersQueryVariables = Types.Exact<{
 export type UsersQuery = {
   __typename?: 'Query';
   users: {
-    __typename?: 'UserConnection';
+    __typename?: 'UsersConnection';
     totalCount: number;
     nodes: Array<{
       __typename?: 'User';

@@ -27,7 +27,7 @@ export type FollowUserMutation = {
       name: string;
       isFollowedByMe: boolean;
       followers: {
-        __typename?: 'UserConnection';
+        __typename?: 'UsersConnection';
         totalCount: number;
         nodes: Array<{
           __typename?: 'User';
@@ -50,7 +50,7 @@ export type FollowUserMutation = {
       name: string;
       isFollowedByMe: boolean;
       following: {
-        __typename?: 'UserConnection';
+        __typename?: 'UsersConnection';
         totalCount: number;
         nodes: Array<{
           __typename?: 'User';
