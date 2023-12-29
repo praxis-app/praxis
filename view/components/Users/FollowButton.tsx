@@ -1,4 +1,3 @@
-import { Reference } from '@apollo/client';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +5,10 @@ import { TypeNames } from '../../constants/shared.constants';
 import { FollowButtonFragment } from '../../graphql/users/fragments/gen/FollowButton.gen';
 import { useFollowUserMutation } from '../../graphql/users/mutations/gen/FollowUser.gen';
 import { useUnfollowUserMutation } from '../../graphql/users/mutations/gen/UnfollowUser.gen';
+import {
+  FollowersDocument,
+  FollowersQuery,
+} from '../../graphql/users/queries/gen/Followers.gen';
 import {
   HomeFeedDocument,
   HomeFeedQuery,
@@ -18,7 +21,7 @@ interface Props {
 }
 
 const FollowButton = ({
-  user: { id, isFollowedByMe, __typename },
+  user: { id, name, isFollowedByMe, __typename },
   currentUserId,
 }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
@@ -58,23 +61,29 @@ const FollowButton = ({
                 );
               }),
           );
+          cache.updateQuery<FollowersQuery>(
+            {
+              query: FollowersDocument,
+              variables: { limit: 10, offset: 0, name },
+            },
+            (homePageData) =>
+              produce(homePageData, (draft) => {
+                if (!draft) {
+                  return;
+                }
+                draft.user.followers.nodes = draft.user.followers.nodes.filter(
+                  ({ id: userId }) => userId !== id,
+                );
+                draft.user.followers.totalCount -= 1;
+              }),
+          );
           cache.modify({
             id: cache.identify({ id, __typename }),
             fields: {
-              followers(existingRef: Reference, { readField }) {
-                const nodes = readField('nodes', existingRef);
-                if (!Array.isArray(nodes)) {
-                  return existingRef;
-                }
-                return nodes.filter(
-                  (nodeRef: Reference) =>
-                    readField('id', nodeRef) !== currentUserId,
-                );
-              },
+              isFollowedByMe: () => false,
               followerCount(existingCount: number) {
                 return Math.max(0, existingCount - 1);
               },
-              isFollowedByMe: () => false,
             },
           });
           cache.modify({

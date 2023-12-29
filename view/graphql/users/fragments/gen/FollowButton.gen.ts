@@ -8,12 +8,14 @@ import { gql } from '@apollo/client';
 export type FollowButtonFragment = {
   __typename?: 'User';
   id: number;
+  name: string;
   isFollowedByMe: boolean;
 };
 
 export const FollowButtonFragmentDoc = gql`
   fragment FollowButton on User {
     id
+    name
     isFollowedByMe
   }
 `;
