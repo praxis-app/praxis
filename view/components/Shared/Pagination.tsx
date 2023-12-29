@@ -1,6 +1,7 @@
 import { LabelDisplayedRowsArgs, TablePagination } from '@mui/material';
-import { ChangeEvent, MouseEvent, ReactNode } from 'react';
+import { ChangeEvent, MouseEvent, ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { LocalStorageKey } from '../../constants/shared.constants';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
 interface Props {
@@ -26,6 +27,15 @@ const Pagination = ({
 }: Props) => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+
+  useEffect(() => {
+    const rowsPerPageSelection = localStorage.getItem(
+      LocalStorageKey.RowsPerPage,
+    );
+    if (rowsPerPageSelection) {
+      setRowsPerPage(parseInt(rowsPerPageSelection));
+    }
+  }, [setRowsPerPage]);
 
   const selectProps = {
     sx: {
@@ -55,6 +65,7 @@ const Pagination = ({
   const handleChangeRowsPerPage = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    localStorage.setItem(LocalStorageKey.RowsPerPage, event.target.value);
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };

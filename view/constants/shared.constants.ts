@@ -1,3 +1,5 @@
+// TODO: Update all enums to use singular names
+
 export const API_ROOT = '/api';
 export const TAB_QUERY_PARAM = '?tab=';
 
@@ -67,6 +69,11 @@ export enum ChangeType {
 export enum Environments {
   Development = 'development',
   Production = 'production',
+}
+
+export enum LocalStorageKey {
+  AccessToken = 'access_token',
+  RowsPerPage = 'rows-per-page',
 }
 
 export enum BrowserEvents {
