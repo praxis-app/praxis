@@ -448,11 +448,6 @@ type GroupsConnection {
   totalCount: Int!
 }
 
-type PublicGroupsFeedConnection {
-  nodes: [FeedItem!]!
-  totalCount: Int!
-}
-
 type PublicGroupsConnection {
   nodes: [Group!]!
   totalCount: Int!
@@ -547,7 +542,7 @@ type Query {
   group(id: Int, name: String): Group!
   groups(offset: Int, limit: Int): GroupsConnection!
   publicGroups(offset: Int, limit: Int): PublicGroupsConnection!
-  publicGroupsFeed(offset: Int, limit: Int): PublicGroupsFeedConnection!
+  publicGroupsFeed(offset: Int, limit: Int): FeedItemConnection!
   groupRole(id: Int!): GroupRole!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   groupRoles: [GroupRole!]!
