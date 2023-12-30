@@ -41,6 +41,11 @@ const GroupPage = () => {
       getGroupProfile({
         variables: { name, isLoggedIn },
       });
+    }
+  }, [name, isLoggedIn, getGroupProfile]);
+
+  useEffect(() => {
+    if (name) {
       getGroupFeed({
         variables: {
           limit: rowsPerPage,
@@ -50,7 +55,7 @@ const GroupPage = () => {
         },
       });
     }
-  }, [name, isLoggedIn, getGroupFeed, getGroupProfile, page, rowsPerPage]);
+  }, [name, isLoggedIn, getGroupFeed, page, rowsPerPage]);
 
   const handleChangePage = async (newPage: number) => {
     if (!name) {
