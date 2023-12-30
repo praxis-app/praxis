@@ -47,9 +47,15 @@ const CardContent = styled(MuiCardContent)(() => ({
 interface Props extends CardProps {
   currentUserId?: number;
   group: GroupCardFragment;
+  canRemoveGroups?: boolean;
 }
 
-const GroupCard = ({ group, currentUserId, ...cardProps }: Props) => {
+const GroupCard = ({
+  group,
+  currentUserId,
+  canRemoveGroups,
+  ...cardProps
+}: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [deleteGroup] = useDeleteGroupMutation();
@@ -104,7 +110,7 @@ const GroupCard = ({ group, currentUserId, ...cardProps }: Props) => {
       return null;
     }
 
-    const canDeleteGroup = myPermissions?.deleteGroup;
+    const canDeleteGroup = myPermissions?.deleteGroup || canRemoveGroups;
     const canUpdateGroup = myPermissions?.updateGroup;
     const canManageRoles = myPermissions?.manageRoles;
     const canManageSettings = myPermissions?.manageSettings;

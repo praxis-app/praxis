@@ -7,5 +7,8 @@ query Groups($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
   }
   me {
     id
+    serverPermissions {
+      removeGroups
+    }
   }
 }
