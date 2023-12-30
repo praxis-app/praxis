@@ -5,6 +5,9 @@ query UserProfile($name: String) {
 
   me {
     id
+    serverPermissions {
+      removeMembers
+    }
     ...ToggleForms
   }
 }

@@ -173,7 +173,8 @@
     },
     "errors": {
       "signUp": "There was an error creating your account.",
-      "update": "There was an error updating your account."
+      "update": "There was an error updating your account.",
+      "remove": "There was an error removing this member."
     },
     "form": {
       "bio": "Bio",
@@ -195,6 +196,7 @@
       "becomeAMember": "Become a Praxis Member",
       "logOut": "Are you sure you want to log out?",
       "permissionDenied": "Permission denied.",
+      "removeUser": "Are you sure you want to permanently remove this member from the server? This cannot be undone.",
       "signInToPost": "Sign in to start posting...",
       "unfollow": "Are you sure you want to unfollow this person?"
     },

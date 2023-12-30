@@ -81,11 +81,11 @@ export class User {
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;
 
-  @ManyToMany(() => User, (user) => user.following)
+  @ManyToMany(() => User, (user) => user.following, { onDelete: 'CASCADE' })
   @JoinTable()
   followers: User[];
 
-  @ManyToMany(() => User, (user) => user.followers)
+  @ManyToMany(() => User, (user) => user.followers, { onDelete: 'CASCADE' })
   following: User[];
 
   @ManyToMany(() => Group, (group) => group.members)

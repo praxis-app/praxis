@@ -12,6 +12,19 @@ import {
   ServerInvitesQuery,
 } from '../graphql/invites/queries/gen/ServerInvites.gen';
 import { DeletePostMutation } from '../graphql/posts/mutations/gen/DeletePost.gen';
+import { DeleteUserMutation } from '../graphql/users/mutations/gen/DeleteUser.gen';
+
+export const removeUser =
+  (id: number) =>
+  (cache: ApolloCache<any>, { errors }: FetchResult<DeleteUserMutation>) => {
+    if (errors) {
+      toastVar({ status: 'error', title: errors[0].message });
+      return;
+    }
+    const cacheId = cache.identify({ id, __typename: TypeNames.User });
+    cache.evict({ id: cacheId });
+    cache.gc();
+  };
 
 export const removePost =
   (postId: number) =>

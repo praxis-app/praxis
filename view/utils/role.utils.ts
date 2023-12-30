@@ -77,7 +77,6 @@ export const getPermissionText = (name: string): PermissionText => {
       return {
         displayName: _t('permissions.names.removeMembers'),
         description: _t('permissions.descriptions.removeMembers'),
-        inDev: true,
       };
     default:
       return {

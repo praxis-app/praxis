@@ -30,6 +30,10 @@ export type UserProfileQuery = {
   me: {
     __typename?: 'User';
     id: number;
+    serverPermissions: {
+      __typename?: 'ServerPermissions';
+      removeMembers: boolean;
+    };
     joinedGroups: Array<{
       __typename?: 'Group';
       id: number;
@@ -50,6 +54,9 @@ export const UserProfileDocument = gql`
     }
     me {
       id
+      serverPermissions {
+        removeMembers
+      }
       ...ToggleForms
     }
   }

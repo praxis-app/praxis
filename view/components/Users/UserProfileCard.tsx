@@ -14,14 +14,17 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
 } from '../../constants/shared.constants';
+import { toastVar } from '../../graphql/cache';
 import { UserProfileCardFragment } from '../../graphql/users/fragments/gen/UserProfileCard.gen';
+import { useDeleteUserMutation } from '../../graphql/users/mutations/gen/DeleteUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
+import { removeUser } from '../../utils/cache.utils';
 import { urlifyText } from '../../utils/shared.utils';
 import { formatDate } from '../../utils/time.utils';
 import CoverPhoto from '../Images/CoverPhoto';
@@ -53,15 +56,19 @@ const JOIN_DATE_ICON_STYLES: SxProps = {
 
 interface Props extends CardProps {
   user: UserProfileCardFragment;
+  canRemoveMembers?: boolean;
 }
 
-const UserProfileCard = ({ user, ...cardProps }: Props) => {
+const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+
+  const [deleteUser] = useDeleteUserMutation();
   const { data } = useMeQuery();
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+  const navigate = useNavigate();
   const theme = useTheme();
 
   const {
@@ -76,7 +83,6 @@ const UserProfileCard = ({ user, ...cardProps }: Props) => {
   const me = data && data.me;
   const isMe = me?.id === id;
 
-  const deleteUserPrompt = t('prompts.deleteItem', { itemType: 'user' });
   const editUserPath = `${pathname}${NavigationPaths.Edit}`;
   const followersPath = `${pathname}${NavigationPaths.Followers}`;
   const followingPath = `${pathname}${NavigationPaths.Following}`;
@@ -90,6 +96,20 @@ const UserProfileCard = ({ user, ...cardProps }: Props) => {
     zIndex: 1,
   };
 
+  const handleDelete = async () => {
+    navigate(NavigationPaths.Home);
+    await deleteUser({
+      variables: { id },
+      update: removeUser(id),
+      onError() {
+        toastVar({
+          status: 'error',
+          title: t('users.errors.remove'),
+        });
+      },
+    });
+  };
+
   return (
     <Card {...cardProps}>
       <CoverPhoto imageId={coverPhoto?.id} topRounded />
@@ -99,13 +119,15 @@ const UserProfileCard = ({ user, ...cardProps }: Props) => {
           <>
             {me && !isMe && <FollowButton user={user} currentUserId={me.id} />}
 
-            {isMe && (
+            {(isMe || canRemoveMembers) && (
               <ItemMenu
                 anchorEl={menuAnchorEl}
-                deletePrompt={deleteUserPrompt}
+                canDelete={isMe || canRemoveMembers}
+                canUpdate={isMe}
+                deleteItem={handleDelete}
+                deletePrompt={t('users.prompts.removeUser')}
                 editPath={editUserPath}
                 setAnchorEl={setMenuAnchorEl}
-                canUpdate
               />
             )}
           </>
