@@ -54,8 +54,13 @@ export class UsersService {
 
   async getPagedUsers(offset?: number, limit?: number) {
     const users = await this.getUsers();
-    const nodes = offset !== undefined ? paginate(users, offset, limit) : users;
-    return { nodes, totalCount: users.length };
+    const sortedUsers = users.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
+    const nodes =
+      offset !== undefined ? paginate(sortedUsers, offset, limit) : sortedUsers;
+
+    return { nodes, totalCount: sortedUsers.length };
   }
 
   async isFirstUser() {
