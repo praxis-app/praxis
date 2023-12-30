@@ -1,7 +1,6 @@
 import { rule } from 'graphql-shield';
 import { FindOptionsWhere } from 'typeorm';
 import { UNAUTHORIZED } from '../../common/common.constants';
-import { FeedItemsConnection } from '../../common/models/feed-items.connection';
 import { Context } from '../../context/context.types';
 import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
 import { GroupConfig } from '../../groups/group-configs/models/group-config.model';
@@ -213,7 +212,7 @@ export const isGroupMember = rule({ cache: 'strict' })(async (
 });
 
 export const isPublicGroup = rule({ cache: 'strict' })(async (
-  parent: Group | GroupConfig | FeedItemsConnection | null,
+  parent: Group | GroupConfig | null,
   args: { id: number; name: string } | null,
   { services: { groupsService } }: Context,
 ) => {
@@ -223,8 +222,6 @@ export const isPublicGroup = rule({ cache: 'strict' })(async (
     where = { id: parent.id };
   } else if (parent instanceof GroupConfig) {
     where = { id: parent.groupId };
-  } else if (parent && 'nodes' in parent) {
-    where = { id: parent.nodes[0].groupId };
   } else if (args) {
     where = { id: args.id, name: args.name };
   }

@@ -1,4 +1,5 @@
 import { rule } from 'graphql-shield';
+import { FeedItemsConnection } from '../../common/models/feed-items.connection';
 import { Context } from '../../context/context.types';
 import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
 import { Image } from '../../images/models/image.model';
@@ -14,17 +15,24 @@ import { ProposalActionRole } from '../../proposals/proposal-actions/proposal-ac
 import { Vote } from '../../votes/models/vote.model';
 
 export const isPublicProposal = rule({ cache: 'strict' })(async (
-  parent: Proposal | ProposalConfig | null,
+  parent: Proposal | ProposalConfig | FeedItemsConnection | null,
   args: { id: number },
   { services: { proposalsService } }: Context,
 ) => {
+  let proposalId: number | undefined;
+
   if (parent instanceof ProposalConfig) {
-    const proposal = await proposalsService.getProposal(parent.proposalId, [
-      'group.config',
-    ]);
-    return proposal.group.config.privacy === GroupPrivacy.Public;
+    proposalId = parent.proposalId;
+  } else if (parent instanceof Proposal) {
+    proposalId = parent.id;
+  } else if (parent && 'nodes' in parent) {
+    proposalId = parent.nodes[0].id;
+  } else if (args) {
+    proposalId = args.id;
   }
-  const proposalId = parent ? parent.id : args.id;
+  if (!proposalId) {
+    return false;
+  }
   const proposal = await proposalsService.getProposal(proposalId, [
     'group.config',
   ]);
