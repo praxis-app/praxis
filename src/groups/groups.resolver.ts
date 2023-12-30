@@ -10,14 +10,12 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { FeedItemsConnection } from '../common/models/feed-items.connection';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { EventsService } from '../events/events.service';
 import { Event } from '../events/models/event.model';
 import { EventTimeFrame } from '../events/models/events.input';
-import { Post } from '../posts/models/post.model';
-import { PostsService } from '../posts/posts.service';
 import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
-import { FeedItem } from '../common/models/feed-item.union';
 import { User } from '../users/models/user.model';
 import { GroupPrivacy } from './group-configs/group-configs.constants';
 import { GroupConfigsService } from './group-configs/group-configs.service';
@@ -31,6 +29,8 @@ import { GroupsService } from './groups.service';
 import { CreateGroupInput } from './models/create-group.input';
 import { CreateGroupPayload } from './models/create-group.payload';
 import { Group } from './models/group.model';
+import { GroupsConnection } from './models/groups.connection';
+import { PublicGroupsConnection } from './models/public-groups.connection';
 import { UpdateGroupInput } from './models/update-group.input';
 import { UpdateGroupPayload } from './models/update-group.payload';
 
@@ -41,7 +41,6 @@ export class GroupsResolver {
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private memberRequestsService: GroupMemberRequestsService,
-    private postsService: PostsService,
     private eventsService: EventsService,
   ) {}
 
@@ -54,32 +53,38 @@ export class GroupsResolver {
     return this.groupsService.getGroup({ id, name });
   }
 
-  @Query(() => [Group])
+  @Query(() => GroupsConnection)
   @UseInterceptors(SynchronizeProposalsInterceptor)
-  async groups() {
-    return this.groupsService.getPagedGroups();
+  async groups(
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.groupsService.getPagedGroups({}, offset, limit);
   }
 
-  @Query(() => [Group])
-  async publicGroups() {
-    return this.groupsService.getPagedGroups({
-      config: { privacy: GroupPrivacy.Public },
-    });
+  @Query(() => PublicGroupsConnection)
+  async publicGroups(
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.groupsService.getPagedGroups(
+      { config: { privacy: GroupPrivacy.Public } },
+      offset,
+      limit,
+    );
   }
 
-  @Query(() => [FeedItem])
-  async publicGroupsFeed() {
-    return this.groupsService.getPublicGroupsFeed();
+  @Query(() => FeedItemsConnection)
+  async publicGroupsFeed(
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.groupsService.getPublicGroupsFeed(offset, limit);
   }
 
   @Query(() => GroupRole)
   async groupRole(@Args('id', { type: () => Int }) id: number) {
     return this.groupRolesService.getGroupRole({ id });
-  }
-
-  @ResolveField(() => [Post])
-  async posts(@Parent() { id }: Group) {
-    return this.postsService.getPosts({ groupId: id });
   }
 
   @ResolveField(() => Image)
@@ -90,9 +95,13 @@ export class GroupsResolver {
     return loaders.groupCoverPhotosLoader.load(id);
   }
 
-  @ResolveField(() => [FeedItem])
-  async feed(@Parent() { id }: Group) {
-    return this.groupsService.getGroupFeed(id);
+  @ResolveField(() => FeedItemsConnection)
+  async feed(
+    @Parent() { id }: Group,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.groupsService.getGroupFeed(id, offset, limit);
   }
 
   @ResolveField(() => [User])

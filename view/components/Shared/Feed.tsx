@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { FeedItemFragment } from '../../graphql/posts/fragments/gen/FeedItem.gen';
 import PostCard from '../Posts/PostCard';
 import ProposalCard from '../Proposals/ProposalCard';
+import Pagination from './Pagination';
 
 const CARD_CONTENT_STYLES: SxProps = {
   '&:last-child': {
@@ -18,7 +19,14 @@ const CARD_CONTENT_STYLES: SxProps = {
 };
 
 interface Props extends BoxProps {
-  feed: FeedItemFragment[];
+  feedItems?: FeedItemFragment[];
+  isLoading: boolean;
+  onChangePage(page: number): void;
+  page: number;
+  rowsPerPage: number;
+  setPage(page: number): void;
+  setRowsPerPage: (rowsPerPage: number) => void;
+  totalCount?: number;
 }
 
 const FeedItem = ({ item }: { item: FeedItemFragment }) => {
@@ -31,10 +39,20 @@ const FeedItem = ({ item }: { item: FeedItemFragment }) => {
   return <PostCard post={item} />;
 };
 
-const Feed = ({ feed, ...boxProps }: Props) => {
+const Feed = ({
+  feedItems,
+  isLoading,
+  onChangePage,
+  page,
+  rowsPerPage,
+  setPage,
+  setRowsPerPage,
+  totalCount,
+  ...boxProps
+}: Props) => {
   const { t } = useTranslation();
 
-  if (feed.length === 0) {
+  if (feedItems?.length === 0) {
     return (
       <Card>
         <CardContent sx={CARD_CONTENT_STYLES}>
@@ -48,9 +66,19 @@ const Feed = ({ feed, ...boxProps }: Props) => {
 
   return (
     <Box {...boxProps}>
-      {feed.map((item) => (
-        <FeedItem item={item} key={`${item.__typename}-${item.id}`} />
-      ))}
+      <Pagination
+        count={totalCount}
+        isLoading={isLoading}
+        onChangePage={onChangePage}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        setPage={setPage}
+        setRowsPerPage={setRowsPerPage}
+      >
+        {feedItems?.map((item) => (
+          <FeedItem item={item} key={`${item.__typename}-${item.id}`} />
+        ))}
+      </Pagination>
     </Box>
   );
 };

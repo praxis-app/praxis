@@ -9,13 +9,14 @@ import {
   MoreThan,
   Repository,
 } from 'typeorm';
+import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
+import { paginate, sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
 import { ImageTypes } from '../images/image.constants';
 import { saveImage } from '../images/image.utils';
 import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
-import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
-import { sanitizeText } from '../common/common.utils';
+import { PostsService } from '../posts/posts.service';
 import { EventAttendeesService } from './event-attendees/event-attendees.service';
 import {
   EventAttendee,
@@ -43,6 +44,9 @@ export class EventsService {
 
     @Inject(forwardRef(() => ImagesService))
     private imagesService: ImagesService,
+
+    @Inject(forwardRef(() => PostsService))
+    private postsService: PostsService,
   ) {}
 
   async getEvent(where: FindOptionsWhere<Event>, relations?: string[]) {
@@ -110,6 +114,12 @@ export class EventsService {
       throw new Error(`Could not find host for event: ${id}`);
     }
     return eventAttendee.user;
+  }
+
+  async getEventPosts(id: number, offset?: number, limit?: number) {
+    const posts = await this.postsService.getPosts({ event: { id } });
+    const nodes = offset !== undefined ? paginate(posts, offset, limit) : posts;
+    return { nodes, totalCount: posts.length };
   }
 
   async isPublicEventImage(imageId: number) {

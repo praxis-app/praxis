@@ -45,14 +45,19 @@ export const removeGroup =
       toastVar({ status: 'error', title: errors[0].message });
       return;
     }
-    cache.updateQuery<GroupsQuery>({ query: GroupsDocument }, (groupsData) =>
-      produce(groupsData, (draft) => {
-        if (!draft) {
-          return;
-        }
-        const index = draft.groups.findIndex((p) => p.id === id);
-        draft.groups.splice(index, 1);
-      }),
+    cache.updateQuery<GroupsQuery>(
+      {
+        query: GroupsDocument,
+        variables: { limit: 10, offset: 0 },
+      },
+      (groupsData) =>
+        produce(groupsData, (draft) => {
+          if (!draft) {
+            return;
+          }
+          const index = draft.groups.nodes.findIndex((p) => p.id === id);
+          draft.groups.nodes.splice(index, 1);
+        }),
     );
     const cacheId = cache.identify({ id, __typename: TypeNames.Group });
     cache.evict({ id: cacheId });

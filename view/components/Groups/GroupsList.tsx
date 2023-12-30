@@ -1,35 +1,48 @@
 import { Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useGroupsQuery } from '../../graphql/groups/queries/gen/Groups.gen';
 import GroupCard from '../../components/Groups/GroupCard';
-import ProgressBar from '../../components/Shared/ProgressBar';
+import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
+import { useGroupsLazyQuery } from '../../graphql/groups/queries/gen/Groups.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 import LevelOneHeading from '../Shared/LevelOneHeading';
+import Pagination from '../Shared/Pagination';
 import GroupForm from './GroupForm';
 
 const GroupsList = () => {
-  const { data, loading, error } = useGroupsQuery({
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
+  const [page, setPage] = useState(0);
+
+  const [getGroups, { data, loading, error }] = useGroupsLazyQuery({
     errorPolicy: 'all',
   });
 
   const { t } = useTranslation();
 
-  if (loading) {
-    return <ProgressBar />;
-  }
+  useEffect(() => {
+    getGroups({
+      variables: {
+        limit: rowsPerPage,
+        offset: page * rowsPerPage,
+      },
+    });
+  }, [rowsPerPage, page, getGroups]);
 
-  if (!data) {
+  const onChangePage = async (newPage: number) => {
+    await getGroups({
+      variables: {
+        limit: rowsPerPage,
+        offset: newPage * rowsPerPage,
+      },
+    });
+  };
+
+  if (!data && error) {
     if (isDeniedAccess(error)) {
       return <Typography>{t('prompts.permissionDenied')}</Typography>;
     }
-
-    if (error) {
-      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
-    }
-    return null;
+    return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
-
-  const { groups, me } = data;
 
   return (
     <>
@@ -39,9 +52,19 @@ const GroupsList = () => {
 
       <GroupForm />
 
-      {groups.map((group) => (
-        <GroupCard group={group} currentUserId={me?.id} key={group.id} />
-      ))}
+      <Pagination
+        count={data?.groups.totalCount}
+        isLoading={loading}
+        onChangePage={onChangePage}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        setPage={setPage}
+        setRowsPerPage={setRowsPerPage}
+      >
+        {data?.groups.nodes.map((group) => (
+          <GroupCard group={group} currentUserId={data.me.id} key={group.id} />
+        ))}
+      </Pagination>
     </>
   );
 };

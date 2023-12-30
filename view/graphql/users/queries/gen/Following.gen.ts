@@ -10,6 +10,8 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type FollowingQueryVariables = Types.Exact<{
   name: Types.Scalars['String']['input'];
+  offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
 }>;
 
 export type FollowingQuery = {
@@ -18,24 +20,31 @@ export type FollowingQuery = {
     __typename?: 'User';
     id: number;
     followingCount: number;
-    following: Array<{
-      __typename?: 'User';
-      id: number;
-      name: string;
-      isFollowedByMe: boolean;
-      profilePicture: { __typename?: 'Image'; id: number };
-    }>;
+    following: {
+      __typename?: 'UsersConnection';
+      totalCount: number;
+      nodes: Array<{
+        __typename?: 'User';
+        id: number;
+        name: string;
+        isFollowedByMe: boolean;
+        profilePicture: { __typename?: 'Image'; id: number };
+      }>;
+    };
   };
   me: { __typename?: 'User'; id: number };
 };
 
 export const FollowingDocument = gql`
-  query Following($name: String!) {
+  query Following($name: String!, $offset: Int, $limit: Int) {
     user(name: $name) {
       id
       followingCount
-      following {
-        ...Follow
+      following(offset: $offset, limit: $limit) {
+        nodes {
+          ...Follow
+        }
+        totalCount
       }
     }
     me {
@@ -58,6 +67,8 @@ export const FollowingDocument = gql`
  * const { data, loading, error } = useFollowingQuery({
  *   variables: {
  *      name: // value for 'name'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *   },
  * });
  */

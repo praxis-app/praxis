@@ -1,7 +1,6 @@
 import { InMemoryCache, makeVar } from '@apollo/client';
 import { AlertColor } from '@mui/material';
-import { INVITE_TOKEN } from '../constants/server-invite.constants';
-import { getLocalStorageItem } from '../utils/shared.utils';
+import { LocalStorageKey } from '../constants/shared.constants';
 
 interface ToastNotification {
   status: AlertColor;
@@ -16,7 +15,9 @@ export const isNavDrawerOpenVar = makeVar(false);
 export const isLoggedInVar = makeVar(false);
 export const isAuthLoadingVar = makeVar(false);
 export const authFailedVar = makeVar(false);
-export const inviteTokenVar = makeVar(getLocalStorageItem(INVITE_TOKEN));
+export const inviteTokenVar = makeVar(
+  localStorage.getItem(LocalStorageKey.InviteToken),
+);
 
 // Image state
 export const imagesVar = makeVar<Record<number, string>>({});

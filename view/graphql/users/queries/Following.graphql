@@ -1,9 +1,12 @@
-query Following($name: String!) {
+query Following($name: String!, $offset: Int, $limit: Int) {
   user(name: $name) {
     id
     followingCount
-    following {
-      ...Follow
+    following(offset: $offset, limit: $limit) {
+      nodes {
+        ...Follow
+      }
+      totalCount
     }
   }
   me {

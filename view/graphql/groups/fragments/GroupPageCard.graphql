@@ -1,4 +1,4 @@
-fragment GroupProfileCard on Group {
+fragment GroupPageCard on Group {
   id
   name
   memberCount

@@ -1,5 +1,6 @@
 import { rule } from 'graphql-shield';
 import { FindOptionsWhere } from 'typeorm';
+import { UNAUTHORIZED } from '../../common/common.constants';
 import { Context } from '../../context/context.types';
 import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
 import { GroupConfig } from '../../groups/group-configs/models/group-config.model';
@@ -11,7 +12,6 @@ import { UpdateGroupRoleInput } from '../../groups/group-roles/models/update-gro
 import { Group } from '../../groups/models/group.model';
 import { UpdateGroupInput } from '../../groups/models/update-group.input';
 import { Image } from '../../images/models/image.model';
-import { UNAUTHORIZED } from '../../common/common.constants';
 import { CreateVoteInput } from '../../votes/models/create-vote.input';
 import { hasGroupPermission } from '../shield.utils';
 

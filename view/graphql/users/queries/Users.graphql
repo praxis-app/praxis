@@ -1,6 +1,11 @@
-query Users {
-  users {
+query Users($offset: Int, $limit: Int) {
+  users(offset: $offset, limit: $limit) {
+    nodes {
+      ...Follow
+    }
+    totalCount
+  }
+  me {
     id
-    name
   }
 }

@@ -2,7 +2,6 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventsModule } from '../events/events.module';
 import { ImagesModule } from '../images/images.module';
-import { PostsModule } from '../posts/posts.module';
 import { ProposalsModule } from '../proposals/proposals.module';
 import { UsersModule } from '../users/users.module';
 import { GroupConfigsModule } from './group-configs/group-configs.module';
@@ -18,7 +17,6 @@ import { Group } from './models/group.model';
     forwardRef(() => GroupConfigsModule),
     forwardRef(() => GroupMemberRequestsModule),
     forwardRef(() => ImagesModule),
-    forwardRef(() => PostsModule),
     forwardRef(() => ProposalsModule),
     forwardRef(() => UsersModule),
     EventsModule,

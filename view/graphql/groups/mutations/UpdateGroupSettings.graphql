@@ -6,7 +6,7 @@ mutation UpdateGroupSettings(
     group {
       id
       ...GroupSettingsForm
-      ...GroupProfileCard
+      ...GroupPageCard
       ...GroupCard
     }
   }

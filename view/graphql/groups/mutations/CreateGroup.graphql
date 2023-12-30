@@ -10,6 +10,10 @@ mutation CreateGroup($groupData: CreateGroupInput!) {
       members {
         id
       }
+      settings {
+        id
+        adminModel
+      }
     }
   }
 }

@@ -1,6 +1,9 @@
-query Groups($isLoggedIn: Boolean = true) {
-  groups {
-    ...GroupCard
+query Groups($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
+  groups(offset: $offset, limit: $limit) {
+    nodes {
+      ...GroupCard
+    }
+    totalCount
   }
   me {
     id

@@ -11,26 +11,22 @@ import {
 } from '@nestjs/graphql';
 import { In } from 'typeorm';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { FeedItemsConnection } from '../common/models/feed-items.connection';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
-import { Post } from '../posts/models/post.model';
-import { PostsService } from '../posts/posts.service';
 import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
-import { FeedItem } from '../common/models/feed-item.union';
 import { FollowUserPayload } from './models/follow-user.payload';
 import { UpdateUserInput } from './models/update-user.input';
 import { UpdateUserPayload } from './models/update-user.payload';
 import { User } from './models/user.model';
+import { UsersConnection } from './models/users.connection';
 import { UsersService } from './users.service';
 
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(
-    private postsService: PostsService,
-    private usersService: UsersService,
-  ) {}
+  constructor(private usersService: UsersService) {}
 
   @Query(() => User)
   @UseInterceptors(SynchronizeProposalsInterceptor)
@@ -46,9 +42,12 @@ export class UsersResolver {
     return this.usersService.getUser({ id, name });
   }
 
-  @Query(() => [User])
-  async users() {
-    return this.usersService.getUsers();
+  @Query(() => UsersConnection)
+  async users(
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.usersService.getPagedUsers(offset, limit);
   }
 
   @Query(() => [User])
@@ -61,20 +60,23 @@ export class UsersResolver {
     return this.usersService.isFirstUser();
   }
 
-  @ResolveField(() => [FeedItem])
+  @ResolveField(() => FeedItemsConnection)
   @UseInterceptors(SynchronizeProposalsInterceptor)
-  async homeFeed(@Parent() { id }: User) {
-    return this.usersService.getUserFeed(id);
+  async homeFeed(
+    @Parent() { id }: User,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.usersService.getUserFeed(id, offset, limit);
   }
 
-  @ResolveField(() => [FeedItem])
-  async profileFeed(@Parent() { id }: User) {
-    return this.usersService.getUserProfileFeed(id);
-  }
-
-  @ResolveField(() => [Post])
-  async posts(@Parent() { id }: User) {
-    return this.postsService.getPosts({ userId: id });
+  @ResolveField(() => FeedItemsConnection)
+  async profileFeed(
+    @Parent() { id }: User,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.usersService.getUserProfileFeed(id, offset, limit);
   }
 
   @ResolveField(() => Image)
@@ -90,14 +92,22 @@ export class UsersResolver {
     return this.usersService.getCoverPhoto(id);
   }
 
-  @ResolveField(() => [User])
-  async followers(@Parent() { id }: User) {
-    return this.usersService.getFollowers(id);
+  @ResolveField(() => UsersConnection)
+  async followers(
+    @Parent() { id }: User,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.usersService.getFollowers(id, offset, limit);
   }
 
-  @ResolveField(() => [User])
-  async following(@Parent() { id }: User) {
-    return this.usersService.getFollowing(id);
+  @ResolveField(() => UsersConnection)
+  async following(
+    @Parent() { id }: User,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.usersService.getFollowing(id, offset, limit);
   }
 
   @ResolveField(() => Int)

@@ -5,14 +5,17 @@ import {
   Typography,
 } from '@mui/material';
 import { truncate } from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useFollowersLazyQuery } from '../../graphql/users/queries/gen/Followers.gen';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
-import ProgressBar from '../../components/Shared/ProgressBar';
+import Pagination from '../../components/Shared/Pagination';
 import Follow from '../../components/Users/Follow';
-import { TruncationSizes } from '../../constants/shared.constants';
+import {
+  DEFAULT_PAGE_SIZE,
+  TruncationSizes,
+} from '../../constants/shared.constants';
+import { useFollowersLazyQuery } from '../../graphql/users/queries/gen/Followers.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { getUserProfilePath } from '../../utils/user.utils';
 
@@ -23,33 +26,42 @@ const CardContent = styled(MuiCardContent)(() => ({
 }));
 
 const Followers = () => {
-  const [getFollowers, { data, loading, error }] = useFollowersLazyQuery({});
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
+  const [page, setPage] = useState(0);
+
+  const [getFollowers, { data, loading, error }] = useFollowersLazyQuery();
 
   const { name } = useParams();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
-  const user = data?.user;
-  const me = data?.me;
-
   useEffect(() => {
     if (name) {
       getFollowers({
-        variables: { name },
+        variables: {
+          name,
+          limit: rowsPerPage,
+          offset: page * rowsPerPage,
+        },
       });
     }
-  }, [name, getFollowers]);
+  }, [name, getFollowers, rowsPerPage, page]);
+
+  const onChangePage = async (newPage: number) => {
+    if (!name) {
+      return;
+    }
+    await getFollowers({
+      variables: {
+        name,
+        limit: rowsPerPage,
+        offset: newPage * rowsPerPage,
+      },
+    });
+  };
 
   if (error) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
-  }
-
-  if (loading) {
-    return <ProgressBar />;
-  }
-
-  if (!me || !user) {
-    return null;
   }
 
   const breadcrumbs = [
@@ -60,25 +72,42 @@ const Followers = () => {
       href: getUserProfilePath(name),
     },
     {
-      label: t('users.labels.followers', {
-        count: user.followerCount,
-      }),
+      label: data
+        ? t('users.labels.followers', {
+            count: data.user.followers.totalCount,
+          })
+        : t('pagination.loading'),
     },
   ];
 
   return (
     <>
-      <Breadcrumbs breadcrumbs={breadcrumbs} />
+      <Breadcrumbs breadcrumbs={breadcrumbs} sx={{ marginBottom: 0.25 }} />
 
-      {!!user.followerCount && (
-        <Card>
-          <CardContent>
-            {user.followers.map((follower) => (
-              <Follow user={follower} currentUserId={me.id} key={follower.id} />
-            ))}
-          </CardContent>
-        </Card>
-      )}
+      <Pagination
+        count={data?.user.followers.totalCount}
+        isLoading={loading}
+        onChangePage={onChangePage}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        setPage={setPage}
+        setRowsPerPage={setRowsPerPage}
+        sx={{ marginBottom: 0.5 }}
+      >
+        {!!data?.user.followers.totalCount && (
+          <Card>
+            <CardContent>
+              {data.user.followers.nodes.map((follower) => (
+                <Follow
+                  key={follower.id}
+                  currentUserId={data.me.id}
+                  user={follower}
+                />
+              ))}
+            </CardContent>
+          </Card>
+        )}
+      </Pagination>
     </>
   );
 };

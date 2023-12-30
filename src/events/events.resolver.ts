@@ -12,8 +12,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
-import { Post } from '../posts/models/post.model';
-import { PostsService } from '../posts/posts.service';
+import { PostsConnection } from '../posts/models/posts.connection';
 import { User } from '../users/models/user.model';
 import { EventAttendeesService } from './event-attendees/event-attendees.service';
 import { EventAttendee } from './event-attendees/models/event-attendee.model';
@@ -30,7 +29,6 @@ export class EventsResolver {
   constructor(
     private eventsService: EventsService,
     private eventAttendeesService: EventAttendeesService,
-    private postsService: PostsService,
   ) {}
 
   @Query(() => Event)
@@ -88,9 +86,13 @@ export class EventsResolver {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
 
-  @ResolveField(() => [Post])
-  async posts(@Parent() { id }: Event) {
-    return this.postsService.getPosts({ eventId: id });
+  @ResolveField(() => PostsConnection)
+  async posts(
+    @Parent() { id }: Event,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.eventsService.getEventPosts(id, offset, limit);
   }
 
   @ResolveField(() => Image)

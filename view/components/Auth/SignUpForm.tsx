@@ -10,8 +10,7 @@ import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import { TextField } from '../../components/Shared/TextField';
-import { INVITE_TOKEN } from '../../constants/server-invite.constants';
-import { ACCESS_TOKEN } from '../../constants/shared.constants';
+import { LocalStorageKey } from '../../constants/shared.constants';
 import { UserFieldNames } from '../../constants/user.constants';
 import { useSignUpMutation } from '../../graphql/auth/mutations/gen/SignUp.gen';
 import {
@@ -27,10 +26,7 @@ import {
 } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { isEntityTooLarge } from '../../utils/error.utils';
 import { validateImageInput } from '../../utils/image.utils';
-import {
-  getRandomString,
-  removeLocalStorageItem,
-} from '../../utils/shared.utils';
+import { getRandomString } from '../../utils/shared.utils';
 
 const SignUpForm = () => {
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
@@ -112,8 +108,8 @@ const SignUpForm = () => {
         inviteTokenVar('');
         isLoggedInVar(true);
         setImageInputKey(getRandomString());
-        removeLocalStorageItem(INVITE_TOKEN);
-        localStorage.setItem(ACCESS_TOKEN, access_token);
+        localStorage.removeItem(LocalStorageKey.InviteToken);
+        localStorage.setItem(LocalStorageKey.AccessToken, access_token);
       },
       onError(err) {
         const title = isEntityTooLarge(err)

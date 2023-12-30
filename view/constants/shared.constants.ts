@@ -1,15 +1,17 @@
+// TODO: Update all enums to use singular names
+
 export const API_ROOT = '/api';
 export const TAB_QUERY_PARAM = '?tab=';
 
 export const FORBIDDEN = 'Forbidden';
 export const UNAUTHORIZED = 'Unauthorized';
 
-export const ACCESS_TOKEN = 'access_token';
-
 export const MIDDOT_WITH_SPACES = ' · ';
 export const SCROLL_DURATION = 250;
 
 export const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+
+export const DEFAULT_PAGE_SIZE = 10;
 
 export enum NavigationPaths {
   About = '/about',
@@ -65,6 +67,12 @@ export enum ChangeType {
 export enum Environments {
   Development = 'development',
   Production = 'production',
+}
+
+export enum LocalStorageKey {
+  AccessToken = 'access_token',
+  RowsPerPage = 'rows-per-page',
+  InviteToken = 'invite-token',
 }
 
 export enum BrowserEvents {

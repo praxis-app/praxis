@@ -1,0 +1,16 @@
+query GroupFeed(
+  $name: String!
+  $offset: Int
+  $limit: Int
+  $isLoggedIn: Boolean!
+) {
+  group(name: $name) {
+    id
+    feed(offset: $offset, limit: $limit) {
+      nodes {
+        ...FeedItem
+      }
+      totalCount
+    }
+  }
+}

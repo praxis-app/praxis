@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as fs from 'fs';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { logTime, paginate, sanitizeText } from '../common/common.utils';
 import { IsFollowedByMeKey } from '../dataloader/dataloader.types';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
 import { GroupPermissionsMap } from '../groups/group-roles/models/group-permissions.type';
@@ -21,8 +22,6 @@ import { Proposal } from '../proposals/models/proposal.model';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { initServerRolePermissions } from '../server-roles/server-role.utils';
 import { ServerRolesService } from '../server-roles/server-roles.service';
-import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
-import { logTime, sanitizeText } from '../common/common.utils';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
 import { UserWithFollowerCount, UserWithFollowingCount } from './user.types';
@@ -51,6 +50,17 @@ export class UsersService {
 
   async getUsers(where?: FindOptionsWhere<User>) {
     return this.repository.find({ where });
+  }
+
+  async getPagedUsers(offset?: number, limit?: number) {
+    const users = await this.getUsers();
+    const sortedUsers = users.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
+    const nodes =
+      offset !== undefined ? paginate(sortedUsers, offset, limit) : sortedUsers;
+
+    return { nodes, totalCount: sortedUsers.length };
   }
 
   async isFirstUser() {
@@ -196,7 +206,7 @@ export class UsersService {
     return extractedEvents.flatMap((event) => event.posts);
   }
 
-  async getUserFeed(id: number) {
+  async getUserFeed(id: number, offset?: number, limit?: number) {
     const logTimeMessage = `Fetching home feed for user with ID ${id}`;
     logTime(logTimeMessage, this.logger);
 
@@ -235,14 +245,14 @@ export class UsersService {
       ...Object.values(proposalMap),
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-    // TODO: Update once pagination has been implemented
-    const pagedFeed = sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
-
+    const nodes =
+      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
     logTime(logTimeMessage, this.logger);
-    return pagedFeed;
+
+    return { nodes, totalCount: sortedFeed.length };
   }
 
-  async getUserProfileFeed(id: number) {
+  async getUserProfileFeed(id: number, offset?: number, limit?: number) {
     const user = await this.getUser({ id }, ['proposals', 'posts']);
     if (!user) {
       throw new UserInputError('User not found');
@@ -250,9 +260,10 @@ export class UsersService {
     const sortedFeed = [...user.posts, ...user.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
+    const nodes =
+      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
 
-    // TODO: Update once pagination has been implemented
-    return sortedFeed.slice(0, DEFAULT_PAGE_SIZE);
+    return { nodes, totalCount: sortedFeed.length };
   }
 
   async getUserPermissions(id: number) {
@@ -300,22 +311,36 @@ export class UsersService {
     return userWithGroups.groups;
   }
 
-  async getFollowers(id: number) {
+  async getFollowers(id: number, offset?: number, limit?: number) {
     const user = await this.getUser({ id }, ['followers']);
     if (!user) {
       throw new UserInputError('User not found');
     }
+    const sortedFollowers = user.followers.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
+    const nodes =
+      offset !== undefined
+        ? paginate(sortedFollowers, offset, limit)
+        : sortedFollowers;
 
-    // TODO: Update once pagination has been implemented
-    return user.followers.slice(0, DEFAULT_PAGE_SIZE);
+    return { nodes, totalCount: sortedFollowers.length };
   }
 
-  async getFollowing(id: number) {
+  async getFollowing(id: number, offset?: number, limit?: number) {
     const user = await this.getUser({ id }, ['following']);
     if (!user) {
       throw new UserInputError('User not found');
     }
-    return user.following;
+    const sortedFollowing = user.following.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
+    const nodes =
+      offset !== undefined
+        ? paginate(sortedFollowing, offset, limit)
+        : sortedFollowing;
+
+    return { nodes, totalCount: sortedFollowing.length };
   }
 
   async isUsersPost(postId: number, userId: number) {
@@ -385,10 +410,15 @@ export class UsersService {
 
   async getIsFollowedByMeBatch(keys: IsFollowedByMeKey[]) {
     const followedUserIds = keys.map(({ followedUserId }) => followedUserId);
-    const following = await this.getFollowing(keys[0].currentUserId);
+    const user = await this.getUser({ id: keys[0].currentUserId }, [
+      'following',
+    ]);
+    if (!user) {
+      throw new UserInputError('User not found');
+    }
 
     return followedUserIds.map((followedUserId) =>
-      following.some(
+      user.following.some(
         (followedUser: User) => followedUser.id === followedUserId,
       ),
     );

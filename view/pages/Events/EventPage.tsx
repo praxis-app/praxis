@@ -10,9 +10,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import EventPageCard from '../../components/Events/EventPageCard';
-import PostForm from '../../components/Posts/PostForm';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
-import Feed from '../../components/Shared/Feed';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { TruncationSizes } from '../../constants/shared.constants';
 import { isLoggedInVar } from '../../graphql/cache';
@@ -21,6 +19,7 @@ import { useIsDesktop } from '../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../utils/error.utils';
 import { getGroupEventsTabPath } from '../../utils/group.utils';
 import { urlifyText } from '../../utils/shared.utils';
+import EventDiscussionTab from './EventDiscussionTab';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
@@ -111,25 +110,7 @@ const EventPage = () => {
         </Card>
       )}
 
-      {tab === 1 && (
-        <>
-          {isLoggedIn && (
-            <Card>
-              <CardContent
-                sx={{
-                  '&:last-child': {
-                    paddingBottom: 1,
-                  },
-                }}
-              >
-                <PostForm eventId={parseInt(id)} />
-              </CardContent>
-            </Card>
-          )}
-
-          <Feed feed={event.posts} />
-        </>
-      )}
+      {tab === 1 && <EventDiscussionTab eventId={parseInt(id)} />}
     </>
   );
 };

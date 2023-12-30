@@ -3,13 +3,14 @@ import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { inviteTokenVar, isLoggedInVar } from '../../graphql/cache';
-import { useServerInviteLazyQuery } from '../../graphql/invites/queries/gen/ServerInvite.gen';
 import PublicGroupsFeed from '../../components/Groups/PublicGroupsFeed';
 import ProgressBar from '../../components/Shared/ProgressBar';
-import { INVITE_TOKEN } from '../../constants/server-invite.constants';
-import { NavigationPaths } from '../../constants/shared.constants';
-import { setLocalStorageItem } from '../../utils/shared.utils';
+import {
+  LocalStorageKey,
+  NavigationPaths,
+} from '../../constants/shared.constants';
+import { inviteTokenVar, isLoggedInVar } from '../../graphql/cache';
+import { useServerInviteLazyQuery } from '../../graphql/invites/queries/gen/ServerInvite.gen';
 
 const ServerInvite = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -30,7 +31,7 @@ const ServerInvite = () => {
         variables: { token },
         onCompleted({ serverInvite }) {
           inviteTokenVar(serverInvite.token);
-          setLocalStorageItem(INVITE_TOKEN, serverInvite.token);
+          localStorage.setItem(LocalStorageKey.InviteToken, serverInvite.token);
         },
       });
     }

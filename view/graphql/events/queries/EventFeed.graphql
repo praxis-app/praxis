@@ -1,0 +1,16 @@
+query EventFeed(
+  $eventId: Int!
+  $offset: Int
+  $limit: Int
+  $isLoggedIn: Boolean!
+) {
+  event(id: $eventId) {
+    id
+    posts(offset: $offset, limit: $limit) {
+      nodes {
+        ...PostCard
+      }
+      totalCount
+    }
+  }
+}

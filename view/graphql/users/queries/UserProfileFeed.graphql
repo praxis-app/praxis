@@ -1,0 +1,16 @@
+query UserProfileFeed(
+  $name: String
+  $offset: Int
+  $limit: Int
+  $isLoggedIn: Boolean = true
+) {
+  user(name: $name) {
+    id
+    profileFeed(offset: $offset, limit: $limit) {
+      nodes {
+        ...FeedItem
+      }
+      totalCount
+    }
+  }
+}

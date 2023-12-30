@@ -9,42 +9,51 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type GroupsQueryVariables = Types.Exact<{
+  offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type GroupsQuery = {
   __typename?: 'Query';
-  groups: Array<{
-    __typename?: 'Group';
-    description: string;
-    memberCount: number;
-    memberRequestCount?: number | null;
-    isJoinedByMe?: boolean;
-    id: number;
-    name: string;
-    settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
-    myPermissions?: {
-      __typename?: 'GroupPermissions';
-      approveMemberRequests: boolean;
-      createEvents: boolean;
-      deleteGroup: boolean;
-      manageComments: boolean;
-      manageEvents: boolean;
-      managePosts: boolean;
-      manageRoles: boolean;
-      manageSettings: boolean;
-      removeMembers: boolean;
-      updateGroup: boolean;
-    };
-    coverPhoto?: { __typename?: 'Image'; id: number } | null;
-  }>;
+  groups: {
+    __typename?: 'GroupsConnection';
+    totalCount: number;
+    nodes: Array<{
+      __typename?: 'Group';
+      description: string;
+      memberCount: number;
+      memberRequestCount?: number | null;
+      isJoinedByMe?: boolean;
+      id: number;
+      name: string;
+      settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
+      myPermissions?: {
+        __typename?: 'GroupPermissions';
+        approveMemberRequests: boolean;
+        createEvents: boolean;
+        deleteGroup: boolean;
+        manageComments: boolean;
+        manageEvents: boolean;
+        managePosts: boolean;
+        manageRoles: boolean;
+        manageSettings: boolean;
+        removeMembers: boolean;
+        updateGroup: boolean;
+      };
+      coverPhoto?: { __typename?: 'Image'; id: number } | null;
+    }>;
+  };
   me: { __typename?: 'User'; id: number };
 };
 
 export const GroupsDocument = gql`
-  query Groups($isLoggedIn: Boolean = true) {
-    groups {
-      ...GroupCard
+  query Groups($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
+    groups(offset: $offset, limit: $limit) {
+      nodes {
+        ...GroupCard
+      }
+      totalCount
     }
     me {
       id
@@ -65,6 +74,8 @@ export const GroupsDocument = gql`
  * @example
  * const { data, loading, error } = useGroupsQuery({
  *   variables: {
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });

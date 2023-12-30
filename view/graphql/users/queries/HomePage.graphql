@@ -1,0 +1,6 @@
+query HomePage {
+  me {
+    id
+    ...ToggleForms
+  }
+}

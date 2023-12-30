@@ -23,7 +23,6 @@ import { Proposal } from '../../proposals/models/proposal.model';
 import { ProposalActionRoleMember } from '../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model';
 import { ServerInvite } from '../../server-invites/models/server-invite.model';
 import { ServerRole } from '../../server-roles/models/server-role.model';
-import { FeedItem } from '../../common/models/feed-item.union';
 
 @Entity()
 @ObjectType()
@@ -71,12 +70,6 @@ export class User {
   @Field(() => [Like])
   likes: Like[];
 
-  @Field(() => [FeedItem])
-  homeFeed: Array<typeof FeedItem>;
-
-  @Field(() => [FeedItem])
-  profileFeed: Array<typeof FeedItem>;
-
   @OneToMany(() => Image, (image) => image.user, {
     cascade: true,
   })
@@ -88,12 +81,10 @@ export class User {
   @Field(() => Image, { nullable: true })
   coverPhoto: Image;
 
-  @Field(() => [User])
   @ManyToMany(() => User, (user) => user.following)
   @JoinTable()
   followers: User[];
 
-  @Field(() => [User])
   @ManyToMany(() => User, (user) => user.followers)
   following: User[];
 

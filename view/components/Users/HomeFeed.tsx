@@ -1,41 +1,52 @@
 import { Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHomeFeedQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
+import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
+import { useHomeFeedLazyQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 import Feed from '../Shared/Feed';
-import ProgressBar from '../Shared/ProgressBar';
-import ToggleForms from '../Shared/ToggleForms';
 
 const HomeFeed = () => {
-  const { data, loading, error } = useHomeFeedQuery();
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
+  const [page, setPage] = useState(0);
+
+  const [getHomeFeed, { data, loading, error }] = useHomeFeedLazyQuery();
+
   const { t } = useTranslation();
 
-  if (loading) {
-    return <ProgressBar />;
-  }
+  useEffect(() => {
+    getHomeFeed({
+      variables: { limit: rowsPerPage, offset: page * rowsPerPage },
+    });
+  }, [getHomeFeed, rowsPerPage, page]);
 
-  if (!data) {
-    if (isDeniedAccess(error)) {
-      return <Typography>{t('prompts.permissionDenied')}</Typography>;
-    }
-    if (error) {
-      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
-    }
-    return null;
-  }
+  const handleChangePage = async (newPage: number) => {
+    await getHomeFeed({
+      variables: {
+        limit: rowsPerPage,
+        offset: newPage * rowsPerPage,
+      },
+    });
+  };
 
-  if (!data?.me) {
-    return null;
+  if (isDeniedAccess(error)) {
+    return <Typography>{t('prompts.permissionDenied')}</Typography>;
   }
-
-  const { me } = data;
-  const { homeFeed } = me;
+  if (error) {
+    return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+  }
 
   return (
-    <>
-      <ToggleForms me={me} />
-      <Feed feed={homeFeed} />
-    </>
+    <Feed
+      feedItems={data?.me.homeFeed.nodes}
+      isLoading={loading}
+      onChangePage={handleChangePage}
+      page={page}
+      rowsPerPage={rowsPerPage}
+      setPage={setPage}
+      setRowsPerPage={setRowsPerPage}
+      totalCount={data?.me.homeFeed.totalCount}
+    />
   );
 };
 

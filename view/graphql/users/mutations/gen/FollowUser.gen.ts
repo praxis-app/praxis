@@ -26,13 +26,17 @@ export type FollowUserMutation = {
       followingCount: number;
       name: string;
       isFollowedByMe: boolean;
-      followers: Array<{
-        __typename?: 'User';
-        id: number;
-        name: string;
-        isFollowedByMe: boolean;
-        profilePicture: { __typename?: 'Image'; id: number };
-      }>;
+      followers: {
+        __typename?: 'UsersConnection';
+        totalCount: number;
+        nodes: Array<{
+          __typename?: 'User';
+          id: number;
+          name: string;
+          isFollowedByMe: boolean;
+          profilePicture: { __typename?: 'Image'; id: number };
+        }>;
+      };
       coverPhoto?: { __typename?: 'Image'; id: number } | null;
       profilePicture: { __typename?: 'Image'; id: number };
     };
@@ -45,13 +49,17 @@ export type FollowUserMutation = {
       followingCount: number;
       name: string;
       isFollowedByMe: boolean;
-      following: Array<{
-        __typename?: 'User';
-        id: number;
-        name: string;
-        isFollowedByMe: boolean;
-        profilePicture: { __typename?: 'Image'; id: number };
-      }>;
+      following: {
+        __typename?: 'UsersConnection';
+        totalCount: number;
+        nodes: Array<{
+          __typename?: 'User';
+          id: number;
+          name: string;
+          isFollowedByMe: boolean;
+          profilePicture: { __typename?: 'Image'; id: number };
+        }>;
+      };
       coverPhoto?: { __typename?: 'Image'; id: number } | null;
       profilePicture: { __typename?: 'Image'; id: number };
     };
@@ -64,14 +72,20 @@ export const FollowUserDocument = gql`
       followedUser {
         id
         followers {
-          ...Follow
+          nodes {
+            ...Follow
+          }
+          totalCount
         }
         ...UserProfileCard
       }
       follower {
         id
         following {
-          ...Follow
+          nodes {
+            ...Follow
+          }
+          totalCount
         }
         ...UserProfileCard
       }

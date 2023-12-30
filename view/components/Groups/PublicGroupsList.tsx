@@ -1,21 +1,40 @@
 import { Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePublicGroupsQuery } from '../../graphql/groups/queries/gen/PublicGroups.gen';
 import GroupCard from '../../components/Groups/GroupCard';
 import GroupTipsCard from '../../components/Groups/GroupTipsCard';
-import ProgressBar from '../../components/Shared/ProgressBar';
+import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
+import { usePublicGroupsLazyQuery } from '../../graphql/groups/queries/gen/PublicGroups.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
+import Pagination from '../Shared/Pagination';
 
 const PublicGroupsList = () => {
-  const { data, loading, error } = usePublicGroupsQuery({
+  const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
+  const [page, setPage] = useState(0);
+
+  const [getGroups, { data, loading, error }] = usePublicGroupsLazyQuery({
     errorPolicy: 'all',
   });
 
   const { t } = useTranslation();
 
-  if (loading) {
-    return <ProgressBar />;
-  }
+  useEffect(() => {
+    getGroups({
+      variables: {
+        limit: rowsPerPage,
+        offset: page * rowsPerPage,
+      },
+    });
+  }, [rowsPerPage, page, getGroups]);
+
+  const onChangePage = async (newPage: number) => {
+    await getGroups({
+      variables: {
+        limit: rowsPerPage,
+        offset: newPage * rowsPerPage,
+      },
+    });
+  };
 
   if (!data) {
     if (isDeniedAccess(error)) {
@@ -31,9 +50,19 @@ const PublicGroupsList = () => {
     <>
       <GroupTipsCard />
 
-      {data.publicGroups.map((group) => (
-        <GroupCard group={group} key={group.id} />
-      ))}
+      <Pagination
+        count={data?.publicGroups.totalCount}
+        isLoading={loading}
+        onChangePage={onChangePage}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        setPage={setPage}
+        setRowsPerPage={setRowsPerPage}
+      >
+        {data?.publicGroups.nodes.map((group) => (
+          <GroupCard group={group} key={group.id} />
+        ))}
+      </Pagination>
     </>
   );
 };
