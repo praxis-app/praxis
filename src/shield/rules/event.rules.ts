@@ -1,4 +1,5 @@
 import { rule } from 'graphql-shield';
+import { FeedItemsConnection } from '../../common/models/feed-items.connection';
 import { Context } from '../../context/context.types';
 import { Event } from '../../events/models/event.model';
 import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
@@ -21,7 +22,7 @@ export const isPublicEvent = rule({ cache: 'strict' })(async (
 });
 
 export const isPublicEventPost = rule({ cache: 'strict' })(async (
-  parent: Post | PostsConnection | null,
+  parent: Post | PostsConnection | FeedItemsConnection | null,
   args: { id: number } | null,
   { services: { postsService } }: Context,
 ) => {
