@@ -431,6 +431,7 @@
       "manageSettings": "Manage Settings",
       "removeGroups": "Remove Groups",
       "removeMembers": "Remove Members",
+      "removeProposals": "Remove Proposals",
       "updateGroup": "Edit Group"
     },
     "descriptions": {
@@ -447,6 +448,7 @@
       "manageRoles": "Allows members to create new roles as well as edit or delete other roles.",
       "removeGroups": "Allows members to remove groups from the server.",
       "removeMembers": "Allows members to remove other members from the server.",
+      "removeProposals": "Allows members to remove proposals posted by other members.",
       "updateGroup": "Allows members to edit the group's name, description, and cover photo."
     },
     "states": {

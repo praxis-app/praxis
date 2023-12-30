@@ -36,8 +36,9 @@ export type UpdateServerRoleMutation = {
         managePosts: boolean;
         manageRoles: boolean;
         manageSettings: boolean;
-        removeMembers: boolean;
         removeGroups: boolean;
+        removeMembers: boolean;
+        removeProposals: boolean;
       };
       members: Array<{
         __typename?: 'User';

@@ -7,6 +7,7 @@ fragment ServerRolePermissions on ServerRolePermission {
   managePosts
   manageRoles
   manageSettings
-  removeMembers
   removeGroups
+  removeMembers
+  removeProposals
 }

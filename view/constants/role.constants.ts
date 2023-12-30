@@ -14,6 +14,7 @@ export const SERVER_PERMISSION_NAMES: (keyof ServerRolePermissionInput)[] = [
   'createInvites',
   'manageComments',
   'removeMembers',
+  'removeProposals',
   'removeGroups',
 ];
 
