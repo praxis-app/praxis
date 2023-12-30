@@ -27,6 +27,7 @@ export type MeQuery = {
       manageRoles: boolean;
       manageSettings: boolean;
       removeMembers: boolean;
+      removeGroups: boolean;
     };
     profilePicture: { __typename?: 'Image'; id: number };
   };

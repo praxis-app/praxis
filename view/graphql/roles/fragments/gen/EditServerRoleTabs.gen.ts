@@ -26,6 +26,7 @@ export type EditServerRoleTabsFragment = {
     manageRoles: boolean;
     manageSettings: boolean;
     removeMembers: boolean;
+    removeGroups: boolean;
   };
   availableUsersToAdd: Array<{
     __typename?: 'User';

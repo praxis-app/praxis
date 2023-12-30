@@ -417,32 +417,34 @@
   "permissions": {
     "names": {
       "approveMemberRequests": "Approve Member Requests",
-      "banMembers": "Ban Members",
       "createEvents": "Create Events",
       "createInvites": "Create Invites",
       "deleteGroup": "Delete Group",
-      "updateGroup": "Edit Group",
       "manageComments": "Manage Comments",
       "manageEvents": "Manage Events",
       "manageInvites": "Manage Invites",
       "managePosts": "Manage Posts",
       "manageRoles": "Manage Roles",
-      "manageSettings": "Manage Settings"
+      "manageSettings": "Manage Settings",
+      "removeGroups": "Remove Groups",
+      "removeMembers": "Remove Members",
+      "updateGroup": "Edit Group"
     },
     "descriptions": {
       "approveMemberRequests": "Allows members to view member requests and to allow new members to join the group.",
       "banGroupMembers": "Allows members to remove other members from the group.",
-      "banMembers": "Allows members to permanently ban other members from the server.",
       "createEvents": "Allows members to create and plan events.",
       "createInvites": "Allows members to invite new people to the server.",
       "deleteGroup": "Allows members to permanently delete the group.",
-      "updateGroup": "Allows members to edit the group's name, description, and cover photo.",
       "manageComments": "Allows members to remove or hide comments by other members.",
       "manageEvents": "Allows members to remove or edit events created by other members.",
       "manageGroupSettings": "Allows members to make changes to the group's settings.",
       "manageInvites": "Allows members to create or delete invite links for the server.",
       "managePosts": "Allows members to remove or hide posts by other members.",
-      "manageRoles": "Allows members to create new roles as well as edit or delete other roles."
+      "manageRoles": "Allows members to create new roles as well as edit or delete other roles.",
+      "removeGroups": "Allows members to remove groups from the server.",
+      "removeMembers": "Allows members to remove other members from the server.",
+      "updateGroup": "Allows members to edit the group's name, description, and cover photo."
     },
     "states": {
       "enabled": "Enabled",

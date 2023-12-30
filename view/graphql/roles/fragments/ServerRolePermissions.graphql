@@ -8,4 +8,5 @@ fragment ServerRolePermissions on ServerRolePermission {
   manageRoles
   manageSettings
   removeMembers
+  removeGroups
 }

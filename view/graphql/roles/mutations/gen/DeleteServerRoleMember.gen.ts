@@ -40,6 +40,7 @@ export type DeleteServerRoleMemberMutation = {
         manageRoles: boolean;
         manageSettings: boolean;
         removeMembers: boolean;
+        removeGroups: boolean;
       };
     };
   };

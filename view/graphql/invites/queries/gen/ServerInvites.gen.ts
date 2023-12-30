@@ -40,6 +40,7 @@ export type ServerInvitesQuery = {
       manageRoles: boolean;
       manageSettings: boolean;
       removeMembers: boolean;
+      removeGroups: boolean;
     };
   };
 };

@@ -32,6 +32,7 @@ export type EditServerRoleQuery = {
       manageRoles: boolean;
       manageSettings: boolean;
       removeMembers: boolean;
+      removeGroups: boolean;
     };
     availableUsersToAdd: Array<{
       __typename?: 'User';
@@ -59,6 +60,7 @@ export type EditServerRoleQuery = {
       manageRoles: boolean;
       manageSettings: boolean;
       removeMembers: boolean;
+      removeGroups: boolean;
     };
   };
 };

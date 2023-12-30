@@ -68,10 +68,15 @@ export const getPermissionText = (name: string): PermissionText => {
         displayName: _t('permissions.names.manageRoles'),
         description: _t('permissions.descriptions.manageRoles'),
       };
+    case 'removeGroups':
+      return {
+        displayName: _t('permissions.names.removeGroups'),
+        description: _t('permissions.descriptions.removeGroups'),
+      };
     case 'removeMembers':
       return {
-        displayName: _t('permissions.names.banMembers'),
-        description: _t('permissions.descriptions.banMembers'),
+        displayName: _t('permissions.names.removeMembers'),
+        description: _t('permissions.descriptions.removeMembers'),
         inDev: true,
       };
     default:
