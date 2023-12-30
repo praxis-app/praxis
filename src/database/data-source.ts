@@ -57,6 +57,7 @@ import { AddSecurityTxtColumn1702684900226 } from './migrations/1702684900226-Ad
 import { AddProposalConfigTable1702843109428 } from './migrations/1702843109428-AddProposalConfigTable';
 import { UpdateVotingTimeLimitDefault1703118466924 } from './migrations/1703118466924-UpdateVotingTimeLimitDefault';
 import { AddAdminModelColumns1703454648429 } from './migrations/1703454648429-AddAdminModelColumns';
+import { AddServerRolePermissionColumns1703978999070 } from './migrations/1703978999070-AddServerRolePermissionColumns';
 
 dotenv.config();
 
@@ -116,6 +117,7 @@ export default new DataSource({
     AddSecurityTxtColumn1702684900226,
     AddServerConfigTable1699135846939,
     AddServerInviteTable1677339785709,
+    AddServerRolePermissionColumns1703978999070,
     CleanUpGroupMemberRequestTable1690168731029,
     DropGroupMemberEntityTable1681010509841,
     DropRoleMemberEntityTable1681173025669,
