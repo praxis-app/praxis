@@ -992,6 +992,7 @@ export type ServerPermissions = {
   managePosts: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
   manageSettings: Scalars['Boolean']['output'];
+  removeGroups: Scalars['Boolean']['output'];
   removeMembers: Scalars['Boolean']['output'];
 };
 

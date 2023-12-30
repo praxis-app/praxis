@@ -505,6 +505,7 @@ type ServerPermissions {
   manageInvites: Boolean!
   createInvites: Boolean!
   removeMembers: Boolean!
+  removeGroups: Boolean!
 }
 
 type FollowUserPayload {
