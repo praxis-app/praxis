@@ -107,6 +107,9 @@ const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
       variables: { id, isMe },
       update: removeUser(id),
       onCompleted() {
+        if (!isMe) {
+          return;
+        }
         isLoggedInVar(false);
         isAuthLoadingVar(false);
         localStorage.removeItem(LocalStorageKey.AccessToken);

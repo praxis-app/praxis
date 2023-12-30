@@ -1,0 +1,5 @@
+fragment UserEntry on User {
+  id
+  ...UserAvatar
+  ...FollowButton
+}
