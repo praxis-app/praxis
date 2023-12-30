@@ -28,4 +28,7 @@ export class ServerPermissions {
 
   @Field()
   removeGroups: boolean;
+
+  @Field()
+  removeProposals: boolean;
 }

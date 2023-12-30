@@ -47,11 +47,15 @@ export class ServerRolePermission {
 
   @Column({ default: false })
   @Field()
+  removeGroups: boolean;
+
+  @Column({ default: false })
+  @Field()
   removeMembers: boolean;
 
   @Column({ default: false })
   @Field()
-  removeGroups: boolean;
+  removeProposals: boolean;
 
   @Field(() => ServerRole)
   @OneToOne(() => ServerRole, (serverRole) => serverRole.permission, {
