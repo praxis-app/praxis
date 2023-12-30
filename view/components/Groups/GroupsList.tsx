@@ -37,11 +37,10 @@ const GroupsList = () => {
     });
   };
 
-  if (isDeniedAccess(error)) {
-    return <Typography>{t('prompts.permissionDenied')}</Typography>;
-  }
-
-  if (error) {
+  if (!data && error) {
+    if (isDeniedAccess(error)) {
+      return <Typography>{t('prompts.permissionDenied')}</Typography>;
+    }
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
