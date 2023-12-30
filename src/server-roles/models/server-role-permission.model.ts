@@ -49,6 +49,10 @@ export class ServerRolePermission {
   @Field()
   removeMembers: boolean;
 
+  @Column({ default: false })
+  @Field()
+  removeGroups: boolean;
+
   @Field(() => ServerRole)
   @OneToOne(() => ServerRole, (serverRole) => serverRole.permission, {
     onDelete: 'CASCADE',

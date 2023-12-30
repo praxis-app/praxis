@@ -25,4 +25,7 @@ export class ServerRolePermissionInput {
 
   @Field({ nullable: true })
   removeMembers?: boolean;
+
+  @Field({ nullable: true })
+  removeGroups?: boolean;
 }
