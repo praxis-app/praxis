@@ -39,8 +39,9 @@ export type DeleteServerRoleMemberMutation = {
         managePosts: boolean;
         manageRoles: boolean;
         manageSettings: boolean;
-        removeMembers: boolean;
         removeGroups: boolean;
+        removeMembers: boolean;
+        removeProposals: boolean;
       };
     };
   };

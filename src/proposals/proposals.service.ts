@@ -95,6 +95,16 @@ export class ProposalsService {
     });
   }
 
+  async isOwnProposal(proposalId: number, userId: number) {
+    const proposal = await this.getProposal(proposalId);
+    return proposal.userId === userId;
+  }
+
+  async hasNoVotes(proposalId: number) {
+    const votes = await this.votesService.getVotes({ proposalId });
+    return votes.length === 0;
+  }
+
   async getProposalVotesBatch(proposalIds: number[]) {
     const votes = await this.votesService.getVotes({
       proposalId: In(proposalIds),

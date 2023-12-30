@@ -28,7 +28,6 @@ import { SynchronizeProposalPayload } from './models/synchronize-proposal.payloa
 import { UpdateProposalInput } from './models/update-proposal.input';
 import { UpdateProposalPayload } from './models/update-proposal.payload';
 import { CreateProposalValidationPipe } from './pipes/create-proposal-validation.pipe';
-import { DeleteProposalValidationPipe } from './pipes/delete-proposal-validation.pipe';
 import { UpdateProposalValidationPipe } from './pipes/update-proposal-validation.pipe';
 import { ProposalAction } from './proposal-actions/models/proposal-action.model';
 import { ProposalsService } from './proposals.service';
@@ -136,7 +135,6 @@ export class ProposalsResolver {
   }
 
   @Mutation(() => Boolean)
-  @UsePipes(DeleteProposalValidationPipe)
   async deleteProposal(@Args('id', { type: () => Int }) id: number) {
     return this.proposalsService.deleteProposal(id);
   }

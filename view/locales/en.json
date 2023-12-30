@@ -129,6 +129,7 @@
       "ratifiedSuccess": "This proposal has been ratified! 🎉"
     },
     "errors": {
+      "couldNotDelete": "Proposal could not be deleted",
       "missingActionType": "Proposals must include an action",
       "missingGroupCoverPhoto": "Proposals to change group cover photo must include an image",
       "missingGroupDescription": "Proposals to change group description must include a description field",
