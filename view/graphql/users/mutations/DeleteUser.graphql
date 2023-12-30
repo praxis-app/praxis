@@ -1,3 +1,4 @@
-mutation DeleteUser($id: Int!) {
+mutation DeleteUser($id: Int!, $isMe: Boolean!) {
   deleteUser(id: $id)
+  logOut @include(if: $isMe)
 }

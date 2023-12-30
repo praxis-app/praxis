@@ -16,10 +16,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
+  LocalStorageKey,
   MIDDOT_WITH_SPACES,
   NavigationPaths,
 } from '../../constants/shared.constants';
-import { toastVar } from '../../graphql/cache';
+import { isAuthLoadingVar, isLoggedInVar, toastVar } from '../../graphql/cache';
 import { UserProfileCardFragment } from '../../graphql/users/fragments/gen/UserProfileCard.gen';
 import { useDeleteUserMutation } from '../../graphql/users/mutations/gen/DeleteUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
@@ -62,7 +63,7 @@ interface Props extends CardProps {
 const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
 
-  const [deleteUser] = useDeleteUserMutation();
+  const [deleteUser, { client }] = useDeleteUserMutation();
   const { data } = useMeQuery();
 
   const { pathname } = useLocation();
@@ -83,6 +84,10 @@ const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
   const me = data && data.me;
   const isMe = me?.id === id;
 
+  const deletePrompt = isMe
+    ? t('users.prompts.removeSelf')
+    : t('users.prompts.removeUser');
+
   const editUserPath = `${pathname}${NavigationPaths.Edit}`;
   const followersPath = `${pathname}${NavigationPaths.Followers}`;
   const followingPath = `${pathname}${NavigationPaths.Following}`;
@@ -99,8 +104,14 @@ const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
   const handleDelete = async () => {
     navigate(NavigationPaths.Home);
     await deleteUser({
-      variables: { id },
+      variables: { id, isMe },
       update: removeUser(id),
+      onCompleted() {
+        isLoggedInVar(false);
+        isAuthLoadingVar(false);
+        localStorage.removeItem(LocalStorageKey.AccessToken);
+        client.cache.reset();
+      },
       onError() {
         toastVar({
           status: 'error',
@@ -125,7 +136,7 @@ const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
                 canDelete={isMe || canRemoveMembers}
                 canUpdate={isMe}
                 deleteItem={handleDelete}
-                deletePrompt={t('users.prompts.removeUser')}
+                deletePrompt={deletePrompt}
                 editPath={editUserPath}
                 setAnchorEl={setMenuAnchorEl}
               />

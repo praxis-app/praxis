@@ -9,16 +9,19 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type DeleteUserMutationVariables = Types.Exact<{
   id: Types.Scalars['Int']['input'];
+  isMe: Types.Scalars['Boolean']['input'];
 }>;
 
 export type DeleteUserMutation = {
   __typename?: 'Mutation';
   deleteUser: boolean;
+  logOut?: boolean;
 };
 
 export const DeleteUserDocument = gql`
-  mutation DeleteUser($id: Int!) {
+  mutation DeleteUser($id: Int!, $isMe: Boolean!) {
     deleteUser(id: $id)
+    logOut @include(if: $isMe)
   }
 `;
 export type DeleteUserMutationFn = Apollo.MutationFunction<
@@ -40,6 +43,7 @@ export type DeleteUserMutationFn = Apollo.MutationFunction<
  * const [deleteUserMutation, { data, loading, error }] = useDeleteUserMutation({
  *   variables: {
  *      id: // value for 'id'
+ *      isMe: // value for 'isMe'
  *   },
  * });
  */
