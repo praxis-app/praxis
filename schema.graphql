@@ -364,18 +364,6 @@ type CreateServerInvitePayload {
   serverInvite: ServerInvite!
 }
 
-type CreateLikePayload {
-  like: Like!
-}
-
-type CreatePostPayload {
-  post: Post!
-}
-
-type UpdatePostPayload {
-  post: Post!
-}
-
 type CreateEventAttendeePayload {
   event: Event!
 }
@@ -483,6 +471,18 @@ type UpdateCommentPayload {
   comment: Comment!
 }
 
+type CreateLikePayload {
+  like: Like!
+}
+
+type CreatePostPayload {
+  post: Post!
+}
+
+type UpdatePostPayload {
+  post: Post!
+}
+
 type CreateServerRolePayload {
   serverRole: ServerRole!
 }
@@ -579,7 +579,6 @@ type Mutation {
   updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
   deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
-  deleteImage(id: Int!): Boolean!
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   synchronizeProposal(id: Int!): SynchronizeProposalPayload!
@@ -614,6 +613,7 @@ type Mutation {
   updateGroupRole(groupRoleData: UpdateGroupRoleInput!): UpdateGroupRolePayload!
   deleteGroupRole(id: Int!): Boolean!
   deleteGroupRoleMember(groupRoleMemberData: DeleteGroupRoleMemberInput!): DeleteGroupRoleMemberPayload!
+  deleteImage(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
 }
 

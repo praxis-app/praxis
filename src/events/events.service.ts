@@ -13,8 +13,11 @@ import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
 import { paginate, sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
 import { ImageTypes } from '../images/image.constants';
-import { saveImage } from '../images/image.utils';
-import { ImagesService } from '../images/images.service';
+import {
+  deleteImageFile,
+  saveDefaultImage,
+  saveImage,
+} from '../images/image.utils';
 import { Image } from '../images/models/image.model';
 import { PostsService } from '../posts/posts.service';
 import { EventAttendeesService } from './event-attendees/event-attendees.service';
@@ -39,11 +42,11 @@ export class EventsService {
     @InjectRepository(EventAttendee)
     private eventAttendeeRepository: Repository<EventAttendee>,
 
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
+
     @Inject(forwardRef(() => EventAttendeesService))
     private eventAttendeesService: EventAttendeesService,
-
-    @Inject(forwardRef(() => ImagesService))
-    private imagesService: ImagesService,
 
     @Inject(forwardRef(() => PostsService))
     private postsService: PostsService,
@@ -123,13 +126,16 @@ export class EventsService {
   }
 
   async isPublicEventImage(imageId: number) {
-    const image = await this.imagesService.getImage({ id: imageId }, [
-      'proposalActionEvent.proposalAction.proposal.group.config',
-      'event.group.config',
-    ]);
+    const image = await this.imageRepository.findOneOrFail({
+      where: { id: imageId },
+      relations: [
+        'proposalActionEvent.proposalAction.proposal.group.config',
+        'event.group.config',
+      ],
+    });
     const group =
-      image?.proposalActionEvent?.proposalAction?.proposal?.group ||
-      image?.event?.group;
+      image.proposalActionEvent?.proposalAction?.proposal?.group ||
+      image.event?.group;
     return group?.config.privacy === GroupPrivacy.Public;
   }
 
@@ -145,9 +151,8 @@ export class EventsService {
   }
 
   async getCoverPhotosBatch(eventIds: number[]) {
-    const coverPhotos = await this.imagesService.getImages({
-      eventId: In(eventIds),
-      imageType: ImageTypes.CoverPhoto,
+    const coverPhotos = await this.imageRepository.find({
+      where: { eventId: In(eventIds), imageType: ImageTypes.CoverPhoto },
     });
     const mappedCoverPhotos = eventIds.map(
       (id) =>
@@ -229,7 +234,7 @@ export class EventsService {
     if (coverPhoto) {
       await this.saveCoverPhoto(event.id, coverPhoto);
     } else {
-      await this.imagesService.saveDefaultCoverPhoto({ eventId: event.id });
+      await this.saveDefaultCoverPhoto(event.id);
     }
 
     return { event };
@@ -266,18 +271,32 @@ export class EventsService {
     const filename = await saveImage(coverPhoto);
     await this.deleteCoverPhoto(eventId);
 
-    return this.imagesService.createImage({
+    return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,
       filename,
       eventId,
     });
   }
 
-  async deleteCoverPhoto(id: number) {
-    await this.imagesService.deleteImage({
+  async saveDefaultCoverPhoto(eventId: number) {
+    const filename = await saveDefaultImage();
+    return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,
-      event: { id },
+      filename,
+      eventId,
     });
+  }
+
+  async deleteCoverPhoto(eventId: number) {
+    const image = await this.imageRepository.findOne({
+      where: { imageType: ImageTypes.CoverPhoto, eventId },
+    });
+    if (!image) {
+      return;
+    }
+    await deleteImageFile(image.filename);
+    this.imageRepository.delete({ imageType: ImageTypes.CoverPhoto, eventId });
+    return true;
   }
 
   async deleteEvent(id: number) {
