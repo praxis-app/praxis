@@ -13,11 +13,12 @@ import { ProposalActionPermission } from './models/proposal-action-permission.mo
 import { ProposalActionRoleMember } from './models/proposal-action-role-member.model';
 import { ProposalActionRole } from './models/proposal-action-role.model';
 import { ProposalAction } from './models/proposal-action.model';
+import { ProposalActionEventHostsResolver } from './proposal-action-event-hosts.resolver';
+import { ProposalActionEventsResolver } from './proposal-action-events.resolver';
+import { ProposalActionGroupConfigsResolver } from './proposal-action-group-configs.resolver';
+import { ProposalActionRolesResolver } from './proposal-action-roles.resolver';
 import { ProposalActionsResolver } from './proposal-actions.resolver';
 import { ProposalActionsService } from './proposal-actions.service';
-import { ProposalActionRolesResolver } from './proposal-action-roles.resolver';
-import { ProposalActionEventsResolver } from './proposal-action-events.resolver';
-import { ProposalActionEventHostsResolver } from './proposal-action-event-hosts.resolver';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ProposalActionEventHostsResolver } from './proposal-action-event-hosts.
   providers: [
     ProposalActionEventHostsResolver,
     ProposalActionEventsResolver,
+    ProposalActionGroupConfigsResolver,
     ProposalActionRolesResolver,
     ProposalActionsResolver,
     ProposalActionsService,
