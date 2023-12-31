@@ -18,8 +18,8 @@ import { ProposalsService } from './proposals.service';
   imports: [
     TypeOrmModule.forFeature([Proposal, ProposalConfig, Vote, Image]),
     forwardRef(() => CommentsModule),
-    forwardRef(() => GroupsModule),
     forwardRef(() => ProposalActionsModule),
+    GroupsModule,
     ProposalActionEventsModule,
     ProposalActionGroupConfigsModule,
     ProposalActionRolesModule,

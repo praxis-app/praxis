@@ -1,4 +1,3 @@
-import { UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -15,7 +14,6 @@ import { Dataloaders } from '../dataloader/dataloader.types';
 import { EventsService } from '../events/events.service';
 import { Event } from '../events/models/event.model';
 import { EventTimeFrame } from '../events/models/events.input';
-import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
 import { User } from '../users/models/user.model';
 import { GroupPrivacy } from './group-configs/group-configs.constants';
 import { GroupConfigsService } from './group-configs/group-configs.service';
@@ -45,7 +43,6 @@ export class GroupsResolver {
   ) {}
 
   @Query(() => Group)
-  @UseInterceptors(SynchronizeProposalsInterceptor)
   async group(
     @Args('id', { type: () => Int, nullable: true }) id: number,
     @Args('name', { type: () => String, nullable: true }) name: string,
@@ -54,7 +51,6 @@ export class GroupsResolver {
   }
 
   @Query(() => GroupsConnection)
-  @UseInterceptors(SynchronizeProposalsInterceptor)
   async groups(
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
