@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { CommentsService } from '../comments/comments.service';
@@ -16,21 +16,11 @@ export class ImagesService {
     @InjectRepository(Image)
     private repository: Repository<Image>,
 
-    @Inject(forwardRef(() => PostsService))
     private postsService: PostsService,
-
-    @Inject(forwardRef(() => ProposalsService))
     private proposalsService: ProposalsService,
-
-    @Inject(forwardRef(() => GroupsService))
     private groupsService: GroupsService,
-
-    @Inject(forwardRef(() => CommentsService))
     private commentsService: CommentsService,
-
-    @Inject(forwardRef(() => EventsService))
     private eventsService: EventsService,
-
     private usersService: UsersService,
   ) {}
 
