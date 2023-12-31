@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
@@ -6,7 +6,6 @@ import { sanitizeText } from '../common/common.utils';
 import { IsLikedByMeKey } from '../dataloader/dataloader.types';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
-import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
 import { LikesService } from '../likes/likes.service';
 import { Like } from '../likes/models/like.model';
@@ -22,36 +21,36 @@ type PostWithCommentCount = Post & { commentCount: number };
 export class PostsService {
   constructor(
     @InjectRepository(Post)
-    private repository: Repository<Post>,
+    private postRepository: Repository<Post>,
 
-    @Inject(forwardRef(() => ImagesService))
-    private imagesService: ImagesService,
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
 
     private likesService: LikesService,
   ) {}
 
   async getPost(id: number, relations?: string[]) {
-    return this.repository.findOneOrFail({ where: { id }, relations });
+    return this.postRepository.findOneOrFail({ where: { id }, relations });
   }
 
   async getPosts(where?: FindOptionsWhere<Post>) {
-    return this.repository.find({ where, order: { createdAt: 'DESC' } });
+    return this.postRepository.find({ where, order: { createdAt: 'DESC' } });
   }
 
   async isPublicPostImage(imageId: number) {
-    const image = await this.imagesService.getImage({ id: imageId }, [
-      'post.group.config',
-      'post.event.group.config',
-    ]);
+    const image = await this.imageRepository.findOneOrFail({
+      where: { id: imageId },
+      relations: ['post.group.config', 'post.event.group.config'],
+    });
     return (
-      image?.post?.group?.config.privacy === GroupPrivacy.Public ||
-      image?.post?.event?.group?.config.privacy === GroupPrivacy.Public
+      image.post?.group?.config.privacy === GroupPrivacy.Public ||
+      image.post?.event?.group?.config.privacy === GroupPrivacy.Public
     );
   }
 
   async getPostImagesBatch(postIds: number[]) {
-    const images = await this.imagesService.getImages({
-      postId: In(postIds),
+    const images = await this.imageRepository.find({
+      where: { postId: In(postIds) },
     });
     return postIds.map(
       (id) =>
@@ -83,7 +82,7 @@ export class PostsService {
   }
 
   async getLikesCountBatch(postIds: number[]) {
-    const posts = (await this.repository
+    const posts = (await this.postRepository
       .createQueryBuilder('post')
       .leftJoinAndSelect('post.likes', 'like')
       .loadRelationCountAndMap('post.likeCount', 'post.likes')
@@ -101,7 +100,7 @@ export class PostsService {
   }
 
   async getPostCommentCountBatch(postIds: number[]) {
-    const posts = (await this.repository
+    const posts = (await this.postRepository
       .createQueryBuilder('post')
       .leftJoinAndSelect('post.comments', 'comment')
       .loadRelationCountAndMap('post.commentCount', 'post.comments')
@@ -119,7 +118,7 @@ export class PostsService {
   }
 
   async createPost({ images, body, ...postData }: CreatePostInput, user: User) {
-    const post = await this.repository.save({
+    const post = await this.postRepository.save({
       body: sanitizeText(body.trim()),
       userId: user.id,
       ...postData,
@@ -137,7 +136,7 @@ export class PostsService {
   }
 
   async updatePost({ id, images, body, ...postData }: UpdatePostInput) {
-    await this.repository.update(id, {
+    await this.postRepository.update(id, {
       body: sanitizeText(body.trim()),
       ...postData,
     });
@@ -152,16 +151,16 @@ export class PostsService {
   async savePostImages(postId: number, images: Promise<FileUpload>[]) {
     for (const image of images) {
       const filename = await saveImage(image);
-      await this.imagesService.createImage({ filename, postId });
+      await this.imageRepository.save({ filename, postId });
     }
   }
 
   async deletePost(postId: number) {
-    const images = await this.imagesService.getImages({ postId });
+    const images = await this.imageRepository.find({ where: { postId } });
     for (const { filename } of images) {
       await deleteImageFile(filename);
     }
-    await this.repository.delete(postId);
+    await this.postRepository.delete(postId);
     return true;
   }
 }
