@@ -1,6 +1,5 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as fs from 'fs';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { CommentsService } from '../comments/comments.service';
 import { EventsService } from '../events/events.service';
@@ -8,12 +7,7 @@ import { GroupsService } from '../groups/groups.service';
 import { PostsService } from '../posts/posts.service';
 import { ProposalsService } from '../proposals/proposals.service';
 import { UsersService } from '../users/users.service';
-import { ImageTypes } from './image.constants';
-import {
-  deleteImageFile,
-  getUploadsPath,
-  randomDefaultImagePath,
-} from './image.utils';
+import { deleteImageFile } from './image.utils';
 import { Image } from './models/image.model';
 
 @Injectable()
@@ -44,10 +38,6 @@ export class ImagesService {
     return this.repository.findOne({ where, relations });
   }
 
-  async getImages(where?: FindOptionsWhere<Image>) {
-    return this.repository.find({ where });
-  }
-
   async isPublicImage(id: number) {
     const image = await this.getImage({ id });
     if (!image) {
@@ -72,33 +62,6 @@ export class ImagesService {
       return this.commentsService.isPublicCommentImage(id);
     }
     return false;
-  }
-
-  async createImage(data: Partial<Image>): Promise<Image> {
-    return this.repository.save(data);
-  }
-
-  async updateImage(id: number, data: Partial<Image>) {
-    return this.repository.save({ id, ...data });
-  }
-
-  async saveDefaultCoverPhoto(imageData: Partial<Image>) {
-    const sourcePath = randomDefaultImagePath();
-    const uploadsPath = getUploadsPath();
-    const filename = `${Date.now()}.jpeg`;
-    const copyPath = `${uploadsPath}/${filename}`;
-
-    fs.copyFile(sourcePath, copyPath, (err) => {
-      if (err) {
-        throw new Error(`Failed to save default cover photo: ${err}`);
-      }
-    });
-    const image = await this.createImage({
-      imageType: ImageTypes.CoverPhoto,
-      filename,
-      ...imageData,
-    });
-    return image;
   }
 
   async deleteImage(where: FindOptionsWhere<Image>) {
