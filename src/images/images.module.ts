@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '../auth/auth.module';
 import { CommentsModule } from '../comments/comments.module';
@@ -15,13 +15,13 @@ import { Image } from './models/image.model';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Image]),
-    forwardRef(() => UsersModule),
-    forwardRef(() => AuthModule),
-    forwardRef(() => GroupsModule),
-    EventsModule,
-    PostsModule,
+    AuthModule,
     CommentsModule,
+    EventsModule,
+    GroupsModule,
+    PostsModule,
     ProposalsModule,
+    UsersModule,
   ],
   providers: [ImagesService, ImagesResolver],
   controllers: [ImagesController],
