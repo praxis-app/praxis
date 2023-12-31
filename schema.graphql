@@ -544,7 +544,6 @@ type Query {
   isFirstUser: Boolean!
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
-  post(id: Int!): Post!
   proposal(id: Int!): Proposal!
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
@@ -554,6 +553,7 @@ type Query {
   publicGroupsFeed(offset: Int, limit: Int): FeedItemsConnection!
   groupRole(id: Int!): GroupRole!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
+  post(id: Int!): Post!
   groupRoles: [GroupRole!]!
   canary: Canary!
   publicCanary: Canary
@@ -580,18 +580,13 @@ type Mutation {
   deleteServerRole(id: Int!): Boolean!
   deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
   deleteImage(id: Int!): Boolean!
-  createPost(postData: CreatePostInput!): CreatePostPayload!
-  updatePost(postData: UpdatePostInput!): UpdatePostPayload!
-  deletePost(id: Int!): Boolean!
-  createComment(commentData: CreateCommentInput!): CreateCommentPayload!
-  updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
-  deleteComment(id: Int!): Boolean!
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   synchronizeProposal(id: Int!): SynchronizeProposalPayload!
   deleteProposal(id: Int!): Boolean!
-  createLike(likeData: CreateLikeInput!): CreateLikePayload!
-  deleteLike(likeData: DeleteLikeInput!): Boolean!
+  createComment(commentData: CreateCommentInput!): CreateCommentPayload!
+  updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
+  deleteComment(id: Int!): Boolean!
   createEvent(eventData: CreateEventInput!): CreateEventPayload!
   updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
   deleteEvent(id: Int!): Boolean!
@@ -607,6 +602,11 @@ type Mutation {
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
   cancelGroupMemberRequest(id: Int!): Boolean!
   denyGroupMemberRequest(id: Int!): Boolean!
+  createPost(postData: CreatePostInput!): CreatePostPayload!
+  updatePost(postData: UpdatePostInput!): UpdatePostPayload!
+  deletePost(id: Int!): Boolean!
+  createLike(likeData: CreateLikeInput!): CreateLikePayload!
+  deleteLike(likeData: DeleteLikeInput!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -676,32 +676,6 @@ input ServerRolePermissionInput {
 input DeleteServerRoleMemberInput {
   serverRoleId: Int!
   userId: Int!
-}
-
-input CreatePostInput {
-  groupId: Int
-  eventId: Int
-  body: String
-  images: [Upload!]
-}
-
-input UpdatePostInput {
-  id: Int!
-  body: String
-  images: [Upload!]
-}
-
-input CreateCommentInput {
-  postId: Int
-  proposalId: Int
-  body: String
-  images: [Upload!]
-}
-
-input UpdateCommentInput {
-  id: Int!
-  body: String
-  images: [Upload!]
 }
 
 input CreateProposalInput {
@@ -777,12 +751,17 @@ input UpdateProposalInput {
   images: [Upload!]
 }
 
-input CreateLikeInput {
+input CreateCommentInput {
   postId: Int
+  proposalId: Int
+  body: String
+  images: [Upload!]
 }
 
-input DeleteLikeInput {
-  postId: Int
+input UpdateCommentInput {
+  id: Int!
+  body: String
+  images: [Upload!]
 }
 
 input CreateEventInput {
@@ -843,6 +822,27 @@ input UpdateGroupConfigInput {
   ratificationThreshold: Int
   votingTimeLimit: Int
   privacy: String
+}
+
+input CreatePostInput {
+  groupId: Int
+  eventId: Int
+  body: String
+  images: [Upload!]
+}
+
+input UpdatePostInput {
+  id: Int!
+  body: String
+  images: [Upload!]
+}
+
+input CreateLikeInput {
+  postId: Int
+}
+
+input DeleteLikeInput {
+  postId: Int
 }
 
 input CreateVoteInput {

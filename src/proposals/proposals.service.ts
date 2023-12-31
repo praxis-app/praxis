@@ -8,13 +8,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, IsNull, Not, Repository } from 'typeorm';
+import { logTime, sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
 import { GroupsService } from '../groups/groups.service';
 import { ImageTypes } from '../images/image.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
-import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
-import { logTime, sanitizeText } from '../common/common.utils';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 import { VotesService } from '../votes/votes.service';
@@ -46,11 +45,11 @@ export class ProposalsService {
     @InjectRepository(ProposalConfig)
     private proposalConfigRepository: Repository<ProposalConfig>,
 
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
+
     @Inject(forwardRef(() => VotesService))
     private votesService: VotesService,
-
-    @Inject(forwardRef(() => ImagesService))
-    private imagesService: ImagesService,
 
     @Inject('PUB_SUB') private pubSub: PubSub,
 
@@ -138,8 +137,8 @@ export class ProposalsService {
   }
 
   async getProposalImagesBatch(proposalIds: number[]) {
-    const images = await this.imagesService.getImages({
-      proposalId: In(proposalIds),
+    const images = await this.imageRepository.find({
+      where: { proposalId: In(proposalIds) },
     });
     const mappedImages = proposalIds.map(
       (id) =>
@@ -244,9 +243,9 @@ export class ProposalsService {
       groupCoverPhoto &&
       proposal.action.actionType === ProposalActionType.ChangeGroupCoverPhoto
     ) {
-      await this.imagesService.deleteImage({
-        proposalActionId: proposal.action.id,
-      });
+      await this.proposalActionsService.deleteProposalActionImage(
+        proposal.action.id,
+      );
       await this.proposalActionsService.saveProposalActionImage(
         proposal.action.id,
         groupCoverPhoto,
@@ -263,7 +262,7 @@ export class ProposalsService {
   async saveProposalImages(proposalId: number, images: Promise<FileUpload>[]) {
     for (const image of images) {
       const filename = await saveImage(image);
-      await this.imagesService.createImage({ filename, proposalId });
+      await this.imageRepository.save({ filename, proposalId });
     }
   }
 
@@ -425,7 +424,7 @@ export class ProposalsService {
   }
 
   async deleteProposal(proposalId: number) {
-    const images = await this.imagesService.getImages({ proposalId });
+    const images = await this.imageRepository.find({ where: { proposalId } });
     for (const { filename } of images) {
       await deleteImageFile(filename);
     }

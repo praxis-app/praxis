@@ -15,11 +15,11 @@ import { Image } from './models/image.model';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Image]),
-    forwardRef(() => PostsModule),
     forwardRef(() => UsersModule),
     forwardRef(() => AuthModule),
     forwardRef(() => EventsModule),
     forwardRef(() => GroupsModule),
+    PostsModule,
     CommentsModule,
     ProposalsModule,
   ],

@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GroupConfigsModule } from '../../groups/group-configs/group-configs.module';
 import { GroupRolesModule } from '../../groups/group-roles/group-roles.module';
-import { ImagesModule } from '../../images/images.module';
+import { Image } from '../../images/models/image.model';
 import { ProposalsModule } from '../proposals.module';
 import { ProposalAction } from './models/proposal-action.model';
 import { ProposalActionEventsModule } from './proposal-action-events/proposal-action-events.module';
@@ -13,11 +13,10 @@ import { ProposalActionsService } from './proposal-actions.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ProposalAction]),
+    TypeOrmModule.forFeature([ProposalAction, Image]),
     forwardRef(() => ProposalActionEventsModule),
     forwardRef(() => ProposalActionGroupConfigsModule),
     forwardRef(() => ProposalsModule),
-    forwardRef(() => ImagesModule),
     GroupConfigsModule,
     GroupRolesModule,
     ProposalActionRolesModule,

@@ -1,21 +1,21 @@
 import { UserInputError } from '@nestjs/apollo';
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { EventAttendeeStatus } from '../../events/event-attendees/models/event-attendee.model';
+import { GroupConfigsService } from '../../groups/group-configs/group-configs.service';
 import { GroupRolesService } from '../../groups/group-roles/group-roles.service';
 import { ImageTypes } from '../../images/image.constants';
-import { saveImage } from '../../images/image.utils';
-import { ImagesService } from '../../images/images.service';
+import { deleteImageFile, saveImage } from '../../images/image.utils';
+import { Image } from '../../images/models/image.model';
 import { ProposalAction } from './models/proposal-action.model';
 import { ProposalActionEventsService } from './proposal-action-events/proposal-action-events.service';
+import { ProposalActionGroupConfigsService } from './proposal-action-group-configs/proposal-action-group-configs.service';
 import {
   ProposalActionRolesService,
   RoleMemberChangeType,
 } from './proposal-action-roles/proposal-action-roles.service';
-import { ProposalActionGroupConfigsService } from './proposal-action-group-configs/proposal-action-group-configs.service';
-import { GroupConfigsService } from '../../groups/group-configs/group-configs.service';
 
 @Injectable()
 export class ProposalActionsService {
@@ -23,8 +23,8 @@ export class ProposalActionsService {
     @InjectRepository(ProposalAction)
     private proposalActionRepository: Repository<ProposalAction>,
 
-    @Inject(forwardRef(() => ImagesService))
-    private imagesService: ImagesService,
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
 
     private groupRolesService: GroupRolesService,
     private proposalActionEventsService: ProposalActionEventsService,
@@ -159,17 +159,20 @@ export class ProposalActionsService {
     proposalActionId: number,
     groupId: number,
   ) {
-    const currentCoverPhoto = await this.imagesService.getImage({
-      imageType: ImageTypes.CoverPhoto,
-      groupId,
+    const currentCoverPhoto = await this.imageRepository.findOne({
+      where: { groupId, imageType: ImageTypes.CoverPhoto },
     });
     const newCoverPhoto =
       await this.getProposedGroupCoverPhoto(proposalActionId);
     if (!currentCoverPhoto || !newCoverPhoto) {
       throw new UserInputError('Could not find group cover photo');
     }
-    await this.imagesService.updateImage(newCoverPhoto.id, { groupId });
-    await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
+    await this.imageRepository.save({
+      ...newCoverPhoto,
+      groupId,
+    });
+    await this.imageRepository.delete({ id: currentCoverPhoto.id });
+    await deleteImageFile(currentCoverPhoto.filename);
   }
 
   async implementChangeGroupConfig(proposalActionId: number, groupId: number) {
@@ -247,10 +250,22 @@ export class ProposalActionsService {
     imageType: string,
   ) {
     const filename = await saveImage(image);
-    await this.imagesService.createImage({
+    await this.imageRepository.save({
       filename,
       imageType,
       proposalActionId,
     });
+  }
+
+  async deleteProposalActionImage(proposalActionId: number) {
+    const image = await this.imageRepository.findOne({
+      where: { proposalActionId },
+    });
+    if (!image) {
+      return;
+    }
+    await deleteImageFile(image.filename);
+    this.imageRepository.delete({ proposalActionId });
+    return true;
   }
 }
