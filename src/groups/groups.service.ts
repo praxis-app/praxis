@@ -6,8 +6,11 @@ import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { paginate, sanitizeText } from '../common/common.utils';
 import { MyGroupsKey } from '../dataloader/dataloader.types';
 import { ImageTypes } from '../images/image.constants';
-import { saveImage } from '../images/image.utils';
-import { ImagesService } from '../images/images.service';
+import {
+  deleteImageFile,
+  saveDefaultImage,
+  saveImage,
+} from '../images/image.utils';
 import { Image } from '../images/models/image.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
@@ -30,14 +33,14 @@ export class GroupsService {
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
 
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
+
     @Inject(forwardRef(() => GroupMemberRequestsService))
     private memberRequestsService: GroupMemberRequestsService,
 
     @Inject(forwardRef(() => GroupConfigsService))
     private groupConfigsService: GroupConfigsService,
-
-    @Inject(forwardRef(() => ImagesService))
-    private imagesService: ImagesService,
 
     private groupRolesService: GroupRolesService,
     private usersService: UsersService,
@@ -120,10 +123,11 @@ export class GroupsService {
   }
 
   async isPublicGroupImage(imageId: number) {
-    const image = await this.imagesService.getImage({ id: imageId }, [
-      'group.config',
-    ]);
-    return image?.group?.config.privacy === GroupPrivacy.Public;
+    const image = await this.imageRepository.findOneOrFail({
+      where: { id: imageId },
+      relations: ['group.config'],
+    });
+    return image.group?.config.privacy === GroupPrivacy.Public;
   }
 
   async isNoAdminGroup(groupId: number) {
@@ -132,9 +136,8 @@ export class GroupsService {
   }
 
   async getCoverPhotosBatch(groupIds: number[]) {
-    const coverPhotos = await this.imagesService.getImages({
-      groupId: In(groupIds),
-      imageType: ImageTypes.CoverPhoto,
+    const coverPhotos = await this.imageRepository.find({
+      where: { groupId: In(groupIds), imageType: ImageTypes.CoverPhoto },
     });
     const mappedCoverPhotos = groupIds.map(
       (id) =>
@@ -228,7 +231,7 @@ export class GroupsService {
     if (coverPhoto) {
       await this.saveCoverPhoto(group.id, coverPhoto);
     } else {
-      await this.imagesService.saveDefaultCoverPhoto({ groupId: group.id });
+      await this.saveDefaultCoverPhoto(group.id);
     }
     await this.groupConfigsService.initGroupConfig(group.id);
     await this.groupRolesService.initGroupAdminRole(userId, group.id);
@@ -264,7 +267,7 @@ export class GroupsService {
     const filename = await saveImage(coverPhoto);
     await this.deleteCoverPhoto(groupId);
 
-    return this.imagesService.createImage({
+    return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,
       filename,
       groupId,
@@ -277,11 +280,16 @@ export class GroupsService {
     return true;
   }
 
-  async deleteCoverPhoto(id: number) {
-    await this.imagesService.deleteImage({
-      imageType: ImageTypes.CoverPhoto,
-      group: { id },
+  async deleteCoverPhoto(groupId: number) {
+    const image = await this.imageRepository.findOne({
+      where: { imageType: ImageTypes.CoverPhoto, groupId },
     });
+    if (!image) {
+      return;
+    }
+    await deleteImageFile(image.filename);
+    this.imageRepository.delete({ imageType: ImageTypes.CoverPhoto, groupId });
+    return true;
   }
 
   async createGroupMember(groupId: number, userId: number) {
@@ -313,5 +321,14 @@ export class GroupsService {
     await this.deleteGroupMember(id, userId);
     await this.memberRequestsService.deleteGroupMemberRequest(where);
     return true;
+  }
+
+  async saveDefaultCoverPhoto(groupId: number) {
+    const filename = await saveDefaultImage();
+    return this.imageRepository.save({
+      imageType: ImageTypes.CoverPhoto,
+      filename,
+      groupId,
+    });
   }
 }

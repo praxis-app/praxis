@@ -138,12 +138,4 @@ export class ProposalActionEventsService {
       filename,
     });
   }
-
-  // TODO: Ensure image file is deleted
-  async deleteCoverPhoto(id: number) {
-    await this.imageRepository.delete({
-      imageType: ImageTypes.CoverPhoto,
-      event: { id },
-    });
-  }
 }
