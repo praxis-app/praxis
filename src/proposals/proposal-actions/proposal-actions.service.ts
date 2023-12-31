@@ -40,8 +40,17 @@ export class ProposalActionsService {
     @InjectRepository(ProposalAction)
     private proposalActionRepository: Repository<ProposalAction>,
 
-    @InjectRepository(Image)
-    private imageRepository: Repository<Image>,
+    @InjectRepository(ProposalActionGroupConfig)
+    private proposalActionGroupConfigRepository: Repository<ProposalActionGroupConfig>,
+
+    @InjectRepository(ProposalActionRole)
+    private proposalActionRoleRepository: Repository<ProposalActionRole>,
+
+    @InjectRepository(ProposalActionPermission)
+    private proposalActionPermissionRepository: Repository<ProposalActionPermission>,
+
+    @InjectRepository(ProposalActionRoleMember)
+    private proposalActionRoleMemberRepository: Repository<ProposalActionRoleMember>,
 
     @InjectRepository(ProposalActionEvent)
     private proposalActionEventRepository: Repository<ProposalActionEvent>,
@@ -55,17 +64,8 @@ export class ProposalActionsService {
     @InjectRepository(EventAttendee)
     private eventAttendeeRepository: Repository<EventAttendee>,
 
-    @InjectRepository(ProposalActionGroupConfig)
-    private proposalActionGroupConfigRepository: Repository<ProposalActionGroupConfig>,
-
-    @InjectRepository(ProposalActionRole)
-    private proposalActionRoleRepository: Repository<ProposalActionRole>,
-
-    @InjectRepository(ProposalActionPermission)
-    private proposalActionPermissionRepository: Repository<ProposalActionPermission>,
-
-    @InjectRepository(ProposalActionRoleMember)
-    private proposalActionRoleMemberRepository: Repository<ProposalActionRoleMember>,
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
 
     private groupRolesService: GroupRolesService,
     private groupConfigsService: GroupConfigsService,
