@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, Repository } from 'typeorm';
@@ -8,8 +8,12 @@ import {
 } from '../../../events/event-attendees/models/event-attendee.model';
 import { Event } from '../../../events/models/event.model';
 import { ImageTypes } from '../../../images/image.constants';
-import { copyImage, saveImage } from '../../../images/image.utils';
-import { ImagesService } from '../../../images/images.service';
+import {
+  copyImage,
+  saveDefaultImage,
+  saveImage,
+} from '../../../images/image.utils';
+import { Image } from '../../../images/models/image.model';
 import { ProposalActionEventHost } from './models/proposal-action-event-host.model';
 import { ProposalActionEventInput } from './models/proposal-action-event.input';
 import { ProposalActionEvent } from './models/proposal-action-event.model';
@@ -26,11 +30,11 @@ export class ProposalActionEventsService {
     @InjectRepository(Event)
     private eventRepository: Repository<Event>,
 
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
+
     @InjectRepository(EventAttendee)
     private eventAttendeeRepository: Repository<EventAttendee>,
-
-    @Inject(forwardRef(() => ImagesService))
-    private imagesService: ImagesService,
   ) {}
 
   async getProposalActionEvent(
@@ -55,9 +59,8 @@ export class ProposalActionEventsService {
   }
 
   async getProposalActionEventCoverPhoto(proposalActionEventId: number) {
-    return this.imagesService.getImage({
-      imageType: ImageTypes.CoverPhoto,
-      proposalActionEventId,
+    return this.imageRepository.findOne({
+      where: { proposalActionEventId, imageType: ImageTypes.CoverPhoto },
     });
   }
 
@@ -81,9 +84,7 @@ export class ProposalActionEventsService {
     if (coverPhoto) {
       await this.saveCoverPhoto(proposalActionEvent.id, coverPhoto);
     } else {
-      await this.imagesService.saveDefaultCoverPhoto({
-        proposalActionEventId: proposalActionEvent.id,
-      });
+      await this.saveDefaultCoverPhoto(proposalActionEvent.id);
     }
   }
 
@@ -106,10 +107,10 @@ export class ProposalActionEventsService {
         throw new Error();
       }
       const imageFilename = copyImage(coverPhoto.filename);
-      await this.imagesService.createImage({
+      await this.imageRepository.save({
         eventId: event.id,
         filename: imageFilename,
-        imageType: coverPhoto?.imageType,
+        imageType: coverPhoto.imageType,
       });
     } catch {
       await this.eventRepository.delete(event.id);
@@ -122,7 +123,16 @@ export class ProposalActionEventsService {
     coverPhoto: Promise<FileUpload>,
   ) {
     const filename = await saveImage(coverPhoto);
-    return this.imagesService.createImage({
+    return this.imageRepository.save({
+      imageType: ImageTypes.CoverPhoto,
+      proposalActionEventId,
+      filename,
+    });
+  }
+
+  async saveDefaultCoverPhoto(proposalActionEventId: number) {
+    const filename = await saveDefaultImage();
+    return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,
       proposalActionEventId,
       filename,
@@ -130,7 +140,7 @@ export class ProposalActionEventsService {
   }
 
   async deleteCoverPhoto(id: number) {
-    await this.imagesService.deleteImage({
+    await this.imageRepository.delete({
       imageType: ImageTypes.CoverPhoto,
       event: { id },
     });
