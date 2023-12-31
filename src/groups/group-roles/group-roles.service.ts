@@ -1,11 +1,11 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, FindOptionsWhere, In, Not, Repository } from 'typeorm';
 import {
   ADMIN_ROLE_NAME,
   DEFAULT_ROLE_COLOR,
 } from '../../server-roles/server-roles.constants';
-import { UsersService } from '../../users/users.service';
+import { User } from '../../users/models/user.model';
 import {
   cleanGroupPermissions,
   initGroupRolePermissions,
@@ -13,7 +13,6 @@ import {
 import { GroupRolePermission } from './models/group-role-permission.model';
 import { GroupRole } from './models/group-role.model';
 import { UpdateGroupRoleInput } from './models/update-group-role.input';
-import { UserInputError } from '@nestjs/apollo';
 
 type GroupRoleWithMemberCount = GroupRole & { memberCount: number };
 
@@ -26,8 +25,8 @@ export class GroupRolesService {
     @InjectRepository(GroupRolePermission)
     private groupRolePermissionRepository: Repository<GroupRolePermission>,
 
-    @Inject(forwardRef(() => UsersService))
-    private usersService: UsersService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async getGroupRole(
@@ -58,8 +57,8 @@ export class GroupRolesService {
         (member) => !userIds.some((userId) => userId === member.id),
       );
     }
-    return this.usersService.getUsers({
-      id: Not(In(userIds)),
+    return this.userRepository.find({
+      where: { id: Not(In(userIds)) },
     });
   }
 
@@ -118,8 +117,8 @@ export class GroupRolesService {
       'members',
       'permission',
     ]);
-    const newMembers = await this.usersService.getUsers({
-      id: In(selectedUserIds),
+    const newMembers = await this.userRepository.find({
+      where: { id: In(selectedUserIds) },
     });
     const cleanedPermissions = cleanGroupPermissions(permissions);
 
@@ -135,19 +134,6 @@ export class GroupRolesService {
   async deleteGroupRole(id: number) {
     await this.groupRoleRepository.delete(id);
     return true;
-  }
-
-  async createGroupRoleMember(id: number, userId: number) {
-    const user = await this.usersService.getUser({ id: userId });
-    const role = await this.getGroupRole({ id }, ['members']);
-    if (!user) {
-      throw new UserInputError('User not found');
-    }
-    await this.groupRoleRepository.save({
-      ...role,
-      members: [...role.members, user],
-    });
-    return user;
   }
 
   async deleteGroupRoleMember(id: number, userId: number) {
