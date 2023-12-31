@@ -992,7 +992,9 @@ export type ServerPermissions = {
   managePosts: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
   manageSettings: Scalars['Boolean']['output'];
+  removeGroups: Scalars['Boolean']['output'];
   removeMembers: Scalars['Boolean']['output'];
+  removeProposals: Scalars['Boolean']['output'];
 };
 
 export type ServerRole = {
@@ -1016,7 +1018,9 @@ export type ServerRolePermission = {
   managePosts: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
   manageSettings: Scalars['Boolean']['output'];
+  removeGroups: Scalars['Boolean']['output'];
   removeMembers: Scalars['Boolean']['output'];
+  removeProposals: Scalars['Boolean']['output'];
   serverRole: ServerRole;
 };
 
@@ -1028,7 +1032,9 @@ export type ServerRolePermissionInput = {
   managePosts?: InputMaybe<Scalars['Boolean']['input']>;
   manageRoles?: InputMaybe<Scalars['Boolean']['input']>;
   manageSettings?: InputMaybe<Scalars['Boolean']['input']>;
+  removeGroups?: InputMaybe<Scalars['Boolean']['input']>;
   removeMembers?: InputMaybe<Scalars['Boolean']['input']>;
+  removeProposals?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type SignUpInput = {

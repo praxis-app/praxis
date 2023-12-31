@@ -44,7 +44,14 @@ export type GroupsQuery = {
       coverPhoto?: { __typename?: 'Image'; id: number } | null;
     }>;
   };
-  me: { __typename?: 'User'; id: number };
+  me: {
+    __typename?: 'User';
+    id: number;
+    serverPermissions: {
+      __typename?: 'ServerPermissions';
+      removeGroups: boolean;
+    };
+  };
 };
 
 export const GroupsDocument = gql`
@@ -57,6 +64,9 @@ export const GroupsDocument = gql`
     }
     me {
       id
+      serverPermissions {
+        removeGroups
+      }
     }
   }
   ${GroupCardFragmentDoc}

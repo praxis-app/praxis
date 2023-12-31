@@ -62,7 +62,12 @@ const GroupsList = () => {
         setRowsPerPage={setRowsPerPage}
       >
         {data?.groups.nodes.map((group) => (
-          <GroupCard group={group} currentUserId={data.me.id} key={group.id} />
+          <GroupCard
+            key={group.id}
+            canRemoveGroups={data.me.serverPermissions.removeGroups}
+            currentUserId={data.me.id}
+            group={group}
+          />
         ))}
       </Pagination>
     </>

@@ -39,7 +39,9 @@ export type ServerInvitesQuery = {
       managePosts: boolean;
       manageRoles: boolean;
       manageSettings: boolean;
+      removeGroups: boolean;
       removeMembers: boolean;
+      removeProposals: boolean;
     };
   };
 };

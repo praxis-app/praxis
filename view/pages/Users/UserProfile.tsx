@@ -108,7 +108,10 @@ const UserProfile = () => {
 
   return (
     <>
-      <UserProfileCard user={user} />
+      <UserProfileCard
+        canRemoveMembers={me.serverPermissions.removeMembers}
+        user={user}
+      />
       {isMe && <ToggleForms me={me} />}
 
       <Feed

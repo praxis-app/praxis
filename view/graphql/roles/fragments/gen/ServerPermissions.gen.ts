@@ -14,7 +14,9 @@ export type ServerPermissionsFragment = {
   managePosts: boolean;
   manageRoles: boolean;
   manageSettings: boolean;
+  removeGroups: boolean;
   removeMembers: boolean;
+  removeProposals: boolean;
 };
 
 export const ServerPermissionsFragmentDoc = gql`
@@ -26,6 +28,8 @@ export const ServerPermissionsFragmentDoc = gql`
     managePosts
     manageRoles
     manageSettings
+    removeGroups
     removeMembers
+    removeProposals
   }
 `;

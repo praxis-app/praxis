@@ -542,6 +542,7 @@ export class UsersService {
   }
 
   async deleteUser(userId: number) {
-    return this.repository.delete(userId);
+    await this.repository.delete(userId);
+    return true;
   }
 }

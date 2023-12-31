@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { FollowFragmentDoc } from '../../fragments/gen/Follow.gen';
+import { UserEntryFragmentDoc } from '../../fragments/gen/UserEntry.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -26,22 +26,32 @@ export type UsersQuery = {
       profilePicture: { __typename?: 'Image'; id: number };
     }>;
   };
-  me: { __typename?: 'User'; id: number };
+  me: {
+    __typename?: 'User';
+    id: number;
+    serverPermissions: {
+      __typename?: 'ServerPermissions';
+      removeMembers: boolean;
+    };
+  };
 };
 
 export const UsersDocument = gql`
   query Users($offset: Int, $limit: Int) {
     users(offset: $offset, limit: $limit) {
       nodes {
-        ...Follow
+        ...UserEntry
       }
       totalCount
     }
     me {
       id
+      serverPermissions {
+        removeMembers
+      }
     }
   }
-  ${FollowFragmentDoc}
+  ${UserEntryFragmentDoc}
 `;
 
 /**

@@ -1,4 +1,5 @@
 import { rule } from 'graphql-shield';
+import { UNAUTHORIZED } from '../../common/common.constants';
 import { FeedItemsConnection } from '../../common/models/feed-items.connection';
 import { Context } from '../../context/context.types';
 import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
@@ -13,6 +14,31 @@ import { ProposalActionPermission } from '../../proposals/proposal-actions/propo
 import { ProposalActionRoleMember } from '../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role-member.model';
 import { ProposalActionRole } from '../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model';
 import { Vote } from '../../votes/models/vote.model';
+
+export const isOwnProposal = rule({ cache: 'strict' })(async (
+  _parent,
+  args: { id: number } | null,
+  { user, services: { proposalsService } }: Context,
+) => {
+  if (!user) {
+    return UNAUTHORIZED;
+  }
+  if (!args?.id) {
+    return false;
+  }
+  return proposalsService.isOwnProposal(args.id, user.id);
+});
+
+export const hasNoVotes = rule({ cache: 'strict' })(async (
+  _parent,
+  args: { id: number } | null,
+  { services: { proposalsService } }: Context,
+) => {
+  if (!args?.id) {
+    return false;
+  }
+  return proposalsService.hasNoVotes(args.id);
+});
 
 export const isPublicProposal = rule({ cache: 'strict' })(async (
   parent: Proposal | ProposalConfig | FeedItemsConnection | null,

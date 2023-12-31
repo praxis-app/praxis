@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import Pagination from '../../components/Shared/Pagination';
-import Follow from '../../components/Users/Follow';
+import UserEntry from '../../components/Users/UserEntry';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 import { useUsersLazyQuery } from '../../graphql/users/queries/gen/Users.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
@@ -59,7 +59,12 @@ const UsersIndex = () => {
           <Card>
             <CardContent>
               {data.users.nodes.map((user) => (
-                <Follow key={user.id} currentUserId={data.me.id} user={user} />
+                <UserEntry
+                  key={user.id}
+                  currentUserId={data.me.id}
+                  canRemoveMembers={data.me.serverPermissions.removeMembers}
+                  user={user}
+                />
               ))}
             </CardContent>
           </Card>

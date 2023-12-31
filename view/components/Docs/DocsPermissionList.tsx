@@ -3,7 +3,7 @@ import {
   GROUP_PERMISSION_NAMES,
   SERVER_PERMISSION_NAMES,
 } from '../../constants/role.constants';
-import { getPermissionText } from '../../utils/role.utils';
+import { PermissionName, getPermissionText } from '../../utils/role.utils';
 import DocsDefinitionListItem from './DocsDefinitionListItem';
 
 interface Props {
@@ -18,7 +18,7 @@ const DocsPermissionList = ({ permissionType }: Props) => {
 
   return (
     <Box component="ul" paddingLeft={3} marginBottom={3}>
-      {permissions.map((permission: string) => {
+      {permissions.map((permission: PermissionName) => {
         const { displayName, description, inDev } =
           getPermissionText(permission);
         if (inDev || !displayName) {

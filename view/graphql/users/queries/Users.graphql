@@ -1,11 +1,14 @@
 query Users($offset: Int, $limit: Int) {
   users(offset: $offset, limit: $limit) {
     nodes {
-      ...Follow
+      ...UserEntry
     }
     totalCount
   }
   me {
     id
+    serverPermissions {
+      removeMembers
+    }
   }
 }

@@ -121,10 +121,10 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
     await deleteProposal({
       variables: { id },
       update: removeProposal(id),
-      onError(err) {
+      onError() {
         toastVar({
           status: 'error',
-          title: err.message,
+          title: t('proposals.errors.couldNotDelete'),
         });
       },
     });
@@ -184,10 +184,14 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
   const renderMenu = () => {
     const editPath = `${NavigationPaths.Proposals}/${id}${NavigationPaths.Edit}`;
     const deletePrompt = t('prompts.deleteItem', { itemType: 'proposal' });
+
+    const canDelete =
+      (isMe && !voteCount) || me?.serverPermissions.removeProposals;
+
     return (
       <ItemMenu
         anchorEl={menuAnchorEl}
-        canDelete={isMe && !voteCount}
+        canDelete={canDelete}
         deleteItem={handleDelete}
         deletePrompt={deletePrompt}
         editPath={editPath}

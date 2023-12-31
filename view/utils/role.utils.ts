@@ -1,6 +1,12 @@
 import { t } from 'i18next';
 import { Namespace, TFunction } from 'react-i18next';
 import { GroupPermissionsFragment } from '../graphql/groups/fragments/gen/GroupPermissions.gen';
+import { ServerRolePermissionInput } from '../graphql/gen';
+
+export type PermissionName = keyof Omit<
+  ServerRolePermissionInput & GroupPermissionsFragment,
+  '__typename'
+>;
 
 interface PermissionText {
   displayName: string | null;
@@ -10,7 +16,7 @@ interface PermissionText {
   inDev?: boolean;
 }
 
-export const getPermissionText = (name: string): PermissionText => {
+export const getPermissionText = (name: PermissionName): PermissionText => {
   const _t: TFunction<Namespace<'ns1'>, undefined> = t;
   switch (name) {
     case 'approveMemberRequests':
@@ -68,11 +74,20 @@ export const getPermissionText = (name: string): PermissionText => {
         displayName: _t('permissions.names.manageRoles'),
         description: _t('permissions.descriptions.manageRoles'),
       };
+    case 'removeGroups':
+      return {
+        displayName: _t('permissions.names.removeGroups'),
+        description: _t('permissions.descriptions.removeGroups'),
+      };
     case 'removeMembers':
       return {
-        displayName: _t('permissions.names.banMembers'),
-        description: _t('permissions.descriptions.banMembers'),
-        inDev: true,
+        displayName: _t('permissions.names.removeMembers'),
+        description: _t('permissions.descriptions.removeMembers'),
+      };
+    case 'removeProposals':
+      return {
+        displayName: _t('permissions.names.removeProposals'),
+        description: _t('permissions.descriptions.removeProposals'),
       };
     default:
       return {

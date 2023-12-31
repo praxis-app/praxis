@@ -10,5 +10,7 @@ export const initServerRolePermissions = (
   managePosts: enabled,
   manageRoles: enabled,
   manageSettings: enabled,
+  removeGroups: enabled,
   removeMembers: enabled,
+  removeProposals: enabled,
 });

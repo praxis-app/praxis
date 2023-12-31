@@ -24,5 +24,11 @@ export class ServerRolePermissionInput {
   createInvites?: boolean;
 
   @Field({ nullable: true })
+  removeGroups?: boolean;
+
+  @Field({ nullable: true })
   removeMembers?: boolean;
+
+  @Field({ nullable: true })
+  removeProposals?: boolean;
 }

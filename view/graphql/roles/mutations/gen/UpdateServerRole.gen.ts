@@ -36,7 +36,9 @@ export type UpdateServerRoleMutation = {
         managePosts: boolean;
         manageRoles: boolean;
         manageSettings: boolean;
+        removeGroups: boolean;
         removeMembers: boolean;
+        removeProposals: boolean;
       };
       members: Array<{
         __typename?: 'User';
@@ -63,7 +65,9 @@ export type UpdateServerRoleMutation = {
         managePosts: boolean;
         manageRoles: boolean;
         manageSettings: boolean;
+        removeGroups: boolean;
         removeMembers: boolean;
+        removeProposals: boolean;
       };
     };
   };

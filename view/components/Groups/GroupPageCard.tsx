@@ -58,6 +58,7 @@ const CardContent = styled(MuiCardContent)(() => ({
 }));
 
 interface Props extends CardProps {
+  canRemoveGroups?: boolean;
   currentUserId?: number;
   group: GroupPageCardFragment;
   setTab(tab: number): void;
@@ -65,6 +66,7 @@ interface Props extends CardProps {
 }
 
 const GroupPageCard = ({
+  canRemoveGroups,
   currentUserId,
   group,
   setTab,
@@ -170,7 +172,7 @@ const GroupPageCard = ({
     setTab(newValue);
 
   const renderCardActions = () => {
-    const canDeleteGroup = myPermissions?.deleteGroup;
+    const canDeleteGroup = myPermissions?.deleteGroup || canRemoveGroups;
     const canManageRoles = myPermissions?.manageRoles;
     const canManageSettings = myPermissions?.manageSettings;
     const canUpdateGroup = myPermissions?.updateGroup;

@@ -13,7 +13,7 @@ import { Group } from '../../groups/models/group.model';
 import { UpdateGroupInput } from '../../groups/models/update-group.input';
 import { Image } from '../../images/models/image.model';
 import { CreateVoteInput } from '../../votes/models/create-vote.input';
-import { hasGroupPermission } from '../shield.utils';
+import { hasGroupPermission, hasServerPermission } from '../shield.utils';
 
 export const canManageGroupRoles = rule()(async (
   parent,
@@ -111,6 +111,10 @@ export const canDeleteGroup = rule()(async (
   args: { id: number },
   { permissions, services: { groupsService } }: Context,
 ) => {
+  const canRemoveGroups = hasServerPermission(permissions, 'removeGroups');
+  if (canRemoveGroups) {
+    return true;
+  }
   const isNoAdminGroup = await groupsService.isNoAdminGroup(args.id);
   if (isNoAdminGroup) {
     return false;
