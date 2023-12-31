@@ -1,9 +1,7 @@
-import { UserInputError } from '@nestjs/apollo';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, FindOptionsWhere, In, Not, Repository } from 'typeorm';
 import { User } from '../users/models/user.model';
-import { UsersService } from '../users/users.service';
 import { ServerRolePermission } from './models/server-role-permission.model';
 import { ServerRole } from './models/server-role.model';
 import { UpdateServerRoleInput } from './models/update-server-role.input';
@@ -21,8 +19,8 @@ export class ServerRolesService {
     @InjectRepository(ServerRolePermission)
     private serverRolePermissionRepository: Repository<ServerRolePermission>,
 
-    @Inject(forwardRef(() => UsersService))
-    private usersService: UsersService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async getServerRole(
@@ -47,8 +45,9 @@ export class ServerRolesService {
   async getAvailableUsersToAdd(id: number) {
     const role = await this.getServerRole({ id }, ['members']);
     const userIds = role.members.map(({ id }) => id);
-    return this.usersService.getUsers({
-      id: Not(In(userIds)),
+
+    return this.userRepository.find({
+      where: { id: Not(In(userIds)) },
     });
   }
 
@@ -108,8 +107,8 @@ export class ServerRolesService {
       'members',
       'permission',
     ]);
-    const newMembers = await this.usersService.getUsers({
-      id: In(selectedUserIds),
+    const newMembers = await this.userRepository.find({
+      where: { id: In(selectedUserIds) },
     });
     const serverRole = await this.serverRoleRepository.save({
       ...roleWithRelations,
@@ -123,19 +122,6 @@ export class ServerRolesService {
   async deleteServerRole(id: number) {
     await this.serverRoleRepository.delete(id);
     return true;
-  }
-
-  async createServerRoleMember(id: number, userId: number) {
-    const user = await this.usersService.getUser({ id: userId });
-    const role = await this.getServerRole({ id }, ['members']);
-    if (!user) {
-      throw new UserInputError('User not found');
-    }
-    await this.serverRoleRepository.save({
-      ...role,
-      members: [...role.members, user],
-    });
-    return user;
   }
 
   async deleteServerRoleMember(id: number, userId: number, me: User) {
