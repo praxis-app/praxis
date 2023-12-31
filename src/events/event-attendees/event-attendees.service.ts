@@ -1,7 +1,7 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { EventsService } from '../events.service';
+import { Event } from '../models/event.model';
 import { CreateEventAttendeeInput } from './models/create-event-attendee.input';
 import { EventAttendee } from './models/event-attendee.model';
 import { UpdateEventAttendeeInput } from './models/update-event-attendee.input';
@@ -12,8 +12,8 @@ export class EventAttendeesService {
     @InjectRepository(EventAttendee)
     private eventAttendeeRepository: Repository<EventAttendee>,
 
-    @Inject(forwardRef(() => EventsService))
-    private eventService: EventsService,
+    @InjectRepository(Event)
+    private eventRepository: Repository<Event>,
   ) {}
 
   async getEventAttendee(
@@ -42,8 +42,8 @@ export class EventAttendeesService {
       ...eventAttendeeData,
       userId,
     });
-    const event = await this.eventService.getEvent({
-      id: eventAttendee.eventId,
+    const event = await this.eventRepository.findOne({
+      where: { id: eventAttendee.eventId },
     });
     return { event };
   }
@@ -53,7 +53,9 @@ export class EventAttendeesService {
     userId: number,
   ) {
     await this.eventAttendeeRepository.update({ eventId, userId }, eventData);
-    const event = await this.eventService.getEvent({ id: eventId });
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
     return { event };
   }
 

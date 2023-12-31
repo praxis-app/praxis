@@ -19,7 +19,7 @@ import {
   saveImage,
 } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
-import { PostsService } from '../posts/posts.service';
+import { Post } from '../posts/models/post.model';
 import { EventAttendeesService } from './event-attendees/event-attendees.service';
 import {
   EventAttendee,
@@ -45,11 +45,11 @@ export class EventsService {
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
+    @InjectRepository(Post)
+    private postRepository: Repository<Post>,
+
     @Inject(forwardRef(() => EventAttendeesService))
     private eventAttendeesService: EventAttendeesService,
-
-    @Inject(forwardRef(() => PostsService))
-    private postsService: PostsService,
   ) {}
 
   async getEvent(where: FindOptionsWhere<Event>, relations?: string[]) {
@@ -120,7 +120,7 @@ export class EventsService {
   }
 
   async getEventPosts(id: number, offset?: number, limit?: number) {
-    const posts = await this.postsService.getPosts({ event: { id } });
+    const posts = await this.postRepository.find({ where: { event: { id } } });
     const nodes = offset !== undefined ? paginate(posts, offset, limit) : posts;
     return { nodes, totalCount: posts.length };
   }
