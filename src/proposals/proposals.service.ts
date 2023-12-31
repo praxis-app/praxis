@@ -3,7 +3,7 @@
  * TODO: Add support for other voting models
  */
 
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
@@ -16,7 +16,6 @@ import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
-import { VotesService } from '../votes/votes.service';
 import { sortConsensusVotesByType } from '../votes/votes.utils';
 import { CreateProposalInput } from './models/create-proposal.input';
 import { ProposalConfig } from './models/proposal-config.model';
@@ -48,8 +47,8 @@ export class ProposalsService {
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
-    @Inject(forwardRef(() => VotesService))
-    private votesService: VotesService,
+    @InjectRepository(Vote)
+    private voteRepository: Repository<Vote>,
 
     @Inject('PUB_SUB') private pubSub: PubSub,
 
@@ -100,13 +99,13 @@ export class ProposalsService {
   }
 
   async hasNoVotes(proposalId: number) {
-    const votes = await this.votesService.getVotes({ proposalId });
+    const votes = await this.voteRepository.find({ where: { proposalId } });
     return votes.length === 0;
   }
 
   async getProposalVotesBatch(proposalIds: number[]) {
-    const votes = await this.votesService.getVotes({
-      proposalId: In(proposalIds),
+    const votes = await this.voteRepository.find({
+      where: { proposalId: In(proposalIds) },
     });
     const mappedVotes = proposalIds.map(
       (id) =>
