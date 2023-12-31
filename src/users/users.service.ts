@@ -1,5 +1,5 @@
 import { UserInputError } from '@nestjs/apollo';
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
@@ -35,10 +35,7 @@ export class UsersService {
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
-    @Inject(forwardRef(() => ServerRolesService))
     private serverRolesService: ServerRolesService,
-
-    @Inject(forwardRef(() => PostsService))
     private postsService: PostsService,
   ) {}
 

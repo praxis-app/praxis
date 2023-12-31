@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Proposal } from '../proposals/models/proposal.model';
@@ -18,7 +18,6 @@ export class VotesService {
     @InjectRepository(Proposal)
     private proposalsRepository: Repository<Proposal>,
 
-    @Inject(forwardRef(() => ProposalsService))
     private proposalsService: ProposalsService,
   ) {}
 
