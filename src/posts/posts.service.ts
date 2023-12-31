@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
 import { sanitizeText } from '../common/common.utils';
 import { IsLikedByMeKey } from '../dataloader/dataloader.types';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
@@ -35,6 +36,16 @@ export class PostsService {
 
   async getPosts(where?: FindOptionsWhere<Post>) {
     return this.postRepository.find({ where, order: { createdAt: 'DESC' } });
+  }
+
+  async getPostComments(postId: number) {
+    const { comments } = await this.getPost(postId, ['comments']);
+
+    // TODO: Update once pagination has been implemented
+    return comments.slice(
+      comments.length - Math.min(comments.length, DEFAULT_PAGE_SIZE),
+      comments.length,
+    );
   }
 
   async isPublicPostImage(imageId: number) {
