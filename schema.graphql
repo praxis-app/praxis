@@ -471,10 +471,6 @@ type UpdateCommentPayload {
   comment: Comment!
 }
 
-type CreateLikePayload {
-  like: Like!
-}
-
 type CreatePostPayload {
   post: Post!
 }
@@ -531,6 +527,10 @@ type AuthPayload {
 type UpdateServerConfigPayload {
   serverConfig: ServerConfig!
   canary: Canary!
+}
+
+type CreateLikePayload {
+  like: Like!
 }
 
 type Query {
@@ -607,14 +607,14 @@ type Mutation {
   createEventAttendee(eventAttendeeData: CreateEventAttendeeInput!): CreateEventAttendeePayload!
   updateEventAttendee(eventAttendeeData: UpdateEventAttendeeInput!): UpdateEventAttendeePayload!
   deleteEventAttendee(eventId: Int!): Boolean!
-  createLike(likeData: CreateLikeInput!): CreateLikePayload!
-  deleteLike(likeData: DeleteLikeInput!): Boolean!
   createGroupRole(groupRoleData: CreateGroupRoleInput!): CreateGroupRolePayload!
   updateGroupRole(groupRoleData: UpdateGroupRoleInput!): UpdateGroupRolePayload!
   deleteGroupRole(id: Int!): Boolean!
   deleteGroupRoleMember(groupRoleMemberData: DeleteGroupRoleMemberInput!): DeleteGroupRoleMemberPayload!
   deleteImage(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
+  createLike(likeData: CreateLikeInput!): CreateLikePayload!
+  deleteLike(likeData: DeleteLikeInput!): Boolean!
 }
 
 input LoginInput {
@@ -847,14 +847,6 @@ input UpdateEventAttendeeInput {
   status: String!
 }
 
-input CreateLikeInput {
-  postId: Int
-}
-
-input DeleteLikeInput {
-  postId: Int
-}
-
 input CreateGroupRoleInput {
   name: String!
   color: String!
@@ -879,6 +871,14 @@ input UpdateServerConfigInput {
   canaryStatement: String
   showCanaryStatement: Boolean
   securityTxt: String
+}
+
+input CreateLikeInput {
+  postId: Int
+}
+
+input DeleteLikeInput {
+  postId: Int
 }
 
 type Subscription {

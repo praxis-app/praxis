@@ -1,17 +1,16 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommentsModule } from '../comments/comments.module';
-import { LikesModule } from '../likes/likes.module';
+import { Image } from '../images/models/image.model';
+import { Like } from '../likes/models/like.model';
 import { Post } from './models/post.model';
 import { PostsResolver } from './posts.resolver';
 import { PostsService } from './posts.service';
-import { Image } from '../images/models/image.model';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Post, Image]),
+    TypeOrmModule.forFeature([Post, Image, Like]),
     forwardRef(() => CommentsModule),
-    forwardRef(() => LikesModule),
   ],
   providers: [PostsService, PostsResolver],
   exports: [PostsService],

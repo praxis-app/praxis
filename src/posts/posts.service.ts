@@ -7,7 +7,6 @@ import { IsLikedByMeKey } from '../dataloader/dataloader.types';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
-import { LikesService } from '../likes/likes.service';
 import { Like } from '../likes/models/like.model';
 import { User } from '../users/models/user.model';
 import { CreatePostInput } from './models/create-post.input';
@@ -26,7 +25,8 @@ export class PostsService {
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
-    private likesService: LikesService,
+    @InjectRepository(Like)
+    private likeRepository: Repository<Like>,
   ) {}
 
   async getPost(id: number, relations?: string[]) {
@@ -60,8 +60,8 @@ export class PostsService {
   }
 
   async getPostLikesBatch(postIds: number[]) {
-    const likes = await this.likesService.getLikes({
-      postId: In(postIds),
+    const likes = await this.likeRepository.find({
+      where: { postId: In(postIds) },
     });
     return postIds.map(
       (id) =>
@@ -72,9 +72,11 @@ export class PostsService {
 
   async getIsLikedByMeBatch(keys: IsLikedByMeKey[]) {
     const postIds = keys.map(({ postId }) => postId);
-    const likes = await this.likesService.getLikes({
-      postId: In(postIds),
-      userId: keys[0].currentUserId,
+    const likes = await this.likeRepository.find({
+      where: {
+        postId: In(postIds),
+        userId: keys[0].currentUserId,
+      },
     });
     return postIds.map((postId) =>
       likes.some((like: Like) => like.postId === postId),
