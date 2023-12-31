@@ -91,6 +91,7 @@ const GroupPage = () => {
   return (
     <>
       <GroupPageCard
+        canRemoveGroups={me?.serverPermissions?.removeGroups}
         currentUserId={me?.id}
         group={group}
         setTab={setTab}

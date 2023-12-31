@@ -48,6 +48,10 @@ export type GroupPageQuery = {
   me?: {
     __typename?: 'User';
     id: number;
+    serverPermissions: {
+      __typename?: 'ServerPermissions';
+      removeGroups: boolean;
+    };
     joinedGroups: Array<{
       __typename?: 'Group';
       id: number;
@@ -69,6 +73,9 @@ export const GroupPageDocument = gql`
     }
     me @include(if: $isLoggedIn) {
       id
+      serverPermissions {
+        removeGroups
+      }
       ...ToggleForms
     }
   }

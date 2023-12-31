@@ -6,6 +6,9 @@ query GroupPage($name: String!, $isLoggedIn: Boolean!) {
 
   me @include(if: $isLoggedIn) {
     id
+    serverPermissions {
+      removeGroups
+    }
     ...ToggleForms
   }
 }
