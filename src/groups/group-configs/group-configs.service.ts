@@ -1,8 +1,8 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { DecisionMakingModel } from '../../proposals/proposals.constants';
-import { GroupsService } from '../groups.service';
+import { Group } from '../models/group.model';
 import { GroupPrivacy } from './group-configs.constants';
 import { GroupConfig } from './models/group-config.model';
 import { UpdateGroupConfigInput } from './models/update-group-config.input';
@@ -11,14 +11,14 @@ import { UpdateGroupConfigInput } from './models/update-group-config.input';
 export class GroupConfigsService {
   constructor(
     @InjectRepository(GroupConfig)
-    private repository: Repository<GroupConfig>,
+    private groupConfigRepository: Repository<GroupConfig>,
 
-    @Inject(forwardRef(() => GroupsService))
-    private groupsService: GroupsService,
+    @InjectRepository(Group)
+    private groupRepository: Repository<Group>,
   ) {}
 
   async getGroupConfig(where: FindOptionsWhere<GroupConfig>) {
-    return this.repository.findOneOrFail({ where });
+    return this.groupConfigRepository.findOneOrFail({ where });
   }
 
   async getIsPublic(id: number) {
@@ -27,16 +27,17 @@ export class GroupConfigsService {
   }
 
   async initGroupConfig(groupId: number) {
-    return this.repository.save({ groupId });
+    return this.groupConfigRepository.save({ groupId });
   }
 
   async updateGroupConfig({
     groupId,
     ...groupConfigData
   }: UpdateGroupConfigInput) {
-    const group = await this.groupsService.getGroup({ id: groupId }, [
-      'config',
-    ]);
+    const group = await this.groupRepository.findOneOrFail({
+      where: { id: groupId },
+      relations: ['config'],
+    });
     const newConfig = { ...group.config, ...groupConfigData };
     if (
       newConfig.decisionMakingModel === DecisionMakingModel.Consent &&
@@ -47,7 +48,7 @@ export class GroupConfigsService {
       );
     }
 
-    await this.repository.update(group.config.id, groupConfigData);
+    await this.groupConfigRepository.update(group.config.id, groupConfigData);
     return { group };
   }
 }
