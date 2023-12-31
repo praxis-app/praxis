@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, IsNull, Not, Repository } from 'typeorm';
+import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
 import { logTime, sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
 import { GroupsService } from '../groups/groups.service';
@@ -91,6 +92,16 @@ export class ProposalsService {
     return this.proposalConfigRepository.findOneOrFail({
       where: { proposalId },
     });
+  }
+
+  async getProposalComments(proposalId: number) {
+    const { comments } = await this.getProposal(proposalId, ['comments']);
+
+    // TODO: Update once pagination has been implemented
+    return comments.slice(
+      comments.length - Math.min(comments.length, DEFAULT_PAGE_SIZE),
+      comments.length,
+    );
   }
 
   async isOwnProposal(proposalId: number, userId: number) {

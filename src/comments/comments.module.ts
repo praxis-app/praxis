@@ -11,7 +11,7 @@ import { Comment } from './models/comment.model';
   imports: [
     TypeOrmModule.forFeature([Comment, Image]),
     forwardRef(() => PostsModule),
-    forwardRef(() => ProposalsModule),
+    ProposalsModule,
   ],
   providers: [CommentsService, CommentsResolver],
   exports: [CommentsService],

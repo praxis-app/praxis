@@ -545,13 +545,13 @@ type Query {
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
   proposal(id: Int!): Proposal!
-  post(id: Int!): Post!
   group(id: Int, name: String): Group!
   groups(offset: Int, limit: Int): GroupsConnection!
   publicGroups(offset: Int, limit: Int): PublicGroupsConnection!
   publicGroupsFeed(offset: Int, limit: Int): FeedItemsConnection!
   groupRole(id: Int!): GroupRole!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
+  post(id: Int!): Post!
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
   groupRoles: [GroupRole!]!
@@ -583,12 +583,6 @@ type Mutation {
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   synchronizeProposal(id: Int!): SynchronizeProposalPayload!
   deleteProposal(id: Int!): Boolean!
-  createComment(commentData: CreateCommentInput!): CreateCommentPayload!
-  updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
-  deleteComment(id: Int!): Boolean!
-  createPost(postData: CreatePostInput!): CreatePostPayload!
-  updatePost(postData: UpdatePostInput!): UpdatePostPayload!
-  deletePost(id: Int!): Boolean!
   createGroup(groupData: CreateGroupInput!): CreateGroupPayload!
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
   deleteGroup(id: Int!): Boolean!
@@ -598,6 +592,12 @@ type Mutation {
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
   cancelGroupMemberRequest(id: Int!): Boolean!
   denyGroupMemberRequest(id: Int!): Boolean!
+  createPost(postData: CreatePostInput!): CreatePostPayload!
+  updatePost(postData: UpdatePostInput!): UpdatePostPayload!
+  deletePost(id: Int!): Boolean!
+  createComment(commentData: CreateCommentInput!): CreateCommentPayload!
+  updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
+  deleteComment(id: Int!): Boolean!
   createEvent(eventData: CreateEventInput!): CreateEventPayload!
   updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
   deleteEvent(id: Int!): Boolean!
@@ -751,32 +751,6 @@ input UpdateProposalInput {
   images: [Upload!]
 }
 
-input CreateCommentInput {
-  postId: Int
-  proposalId: Int
-  body: String
-  images: [Upload!]
-}
-
-input UpdateCommentInput {
-  id: Int!
-  body: String
-  images: [Upload!]
-}
-
-input CreatePostInput {
-  groupId: Int
-  eventId: Int
-  body: String
-  images: [Upload!]
-}
-
-input UpdatePostInput {
-  id: Int!
-  body: String
-  images: [Upload!]
-}
-
 input CreateGroupInput {
   name: String!
   description: String!
@@ -799,6 +773,32 @@ input UpdateGroupConfigInput {
   ratificationThreshold: Int
   votingTimeLimit: Int
   privacy: String
+}
+
+input CreatePostInput {
+  groupId: Int
+  eventId: Int
+  body: String
+  images: [Upload!]
+}
+
+input UpdatePostInput {
+  id: Int!
+  body: String
+  images: [Upload!]
+}
+
+input CreateCommentInput {
+  postId: Int
+  proposalId: Int
+  body: String
+  images: [Upload!]
+}
+
+input UpdateCommentInput {
+  id: Int!
+  body: String
+  images: [Upload!]
 }
 
 input CreateEventInput {

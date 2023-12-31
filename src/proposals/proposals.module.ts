@@ -1,6 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CommentsModule } from '../comments/comments.module';
 import { GroupsModule } from '../groups/groups.module';
 import { Image } from '../images/models/image.model';
 import { PubSubModule } from '../pub-sub/pub-sub.module';
@@ -17,7 +16,6 @@ import { ProposalsService } from './proposals.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Proposal, ProposalConfig, Vote, Image]),
-    forwardRef(() => CommentsModule),
     forwardRef(() => ProposalActionsModule),
     GroupsModule,
     ProposalActionEventsModule,

@@ -12,7 +12,6 @@ import {
 } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { CommentsService } from '../comments/comments.service';
 import { Comment } from '../comments/models/comment.model';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
@@ -36,7 +35,6 @@ import { ProposalsService } from './proposals.service';
 export class ProposalsResolver {
   constructor(
     @Inject('PUB_SUB') private pubSub: PubSub,
-    private commentsService: CommentsService,
     private proposalsService: ProposalsService,
   ) {}
 
@@ -64,7 +62,7 @@ export class ProposalsResolver {
 
   @ResolveField(() => [Comment])
   async comments(@Parent() { id }: Proposal) {
-    return this.commentsService.getComments({ proposalId: id });
+    return this.proposalsService.getProposalComments(id);
   }
 
   @ResolveField(() => Int)
