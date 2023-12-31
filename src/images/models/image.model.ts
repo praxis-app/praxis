@@ -13,7 +13,7 @@ import { Group } from '../../groups/models/group.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
 import { ProposalAction } from '../../proposals/proposal-actions/models/proposal-action.model';
-import { ProposalActionEvent } from '../../proposals/proposal-actions/proposal-action-events/models/proposal-action-event.model';
+import { ProposalActionEvent } from '../../proposals/proposal-actions/models/proposal-action-event.model';
 import { User } from '../../users/models/user.model';
 
 @ObjectType()
