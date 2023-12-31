@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import {
@@ -48,7 +48,6 @@ export class EventsService {
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
 
-    @Inject(forwardRef(() => EventAttendeesService))
     private eventAttendeesService: EventAttendeesService,
   ) {}
 

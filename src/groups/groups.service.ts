@@ -39,9 +39,7 @@ export class GroupsService {
     @Inject(forwardRef(() => GroupMemberRequestsService))
     private memberRequestsService: GroupMemberRequestsService,
 
-    @Inject(forwardRef(() => GroupConfigsService))
     private groupConfigsService: GroupConfigsService,
-
     private groupRolesService: GroupRolesService,
     private usersService: UsersService,
   ) {}
