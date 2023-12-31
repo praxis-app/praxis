@@ -22,9 +22,6 @@ import { CreateProposalInput } from './models/create-proposal.input';
 import { ProposalConfig } from './models/proposal-config.model';
 import { Proposal } from './models/proposal.model';
 import { UpdateProposalInput } from './models/update-proposal.input';
-import { ProposalActionEventsService } from './proposal-actions/proposal-action-events/proposal-action-events.service';
-import { ProposalActionGroupConfigsService } from './proposal-actions/proposal-action-group-configs/proposal-action-group-configs.service';
-import { ProposalActionRolesService } from './proposal-actions/proposal-action-roles/proposal-action-roles.service';
 import { ProposalActionsService } from './proposal-actions/proposal-actions.service';
 import {
   DecisionMakingModel,
@@ -39,6 +36,8 @@ export class ProposalsService {
   private readonly logger = new Logger(ProposalsService.name);
 
   constructor(
+    @Inject('PUB_SUB') private pubSub: PubSub,
+
     @InjectRepository(Proposal)
     private proposalRepository: Repository<Proposal>,
 
@@ -51,12 +50,7 @@ export class ProposalsService {
     @InjectRepository(Vote)
     private voteRepository: Repository<Vote>,
 
-    @Inject('PUB_SUB') private pubSub: PubSub,
-
     private groupsService: GroupsService,
-    private proposalActionEventsService: ProposalActionEventsService,
-    private proposalActionGroupConfigsService: ProposalActionGroupConfigsService,
-    private proposalActionRolesService: ProposalActionRolesService,
     private proposalActionsService: ProposalActionsService,
   ) {}
 
@@ -205,19 +199,19 @@ export class ProposalsService {
         );
       }
       if (role) {
-        await this.proposalActionRolesService.createProposalActionRole(
+        await this.proposalActionsService.createProposalActionRole(
           proposal.action.id,
           role,
         );
       }
       if (event) {
-        await this.proposalActionEventsService.createProposalActionEvent(
+        await this.proposalActionsService.createProposalActionEvent(
           proposal.action.id,
           event,
         );
       }
       if (groupSettings) {
-        await this.proposalActionGroupConfigsService.createProposalActionGroupConfig(
+        await this.proposalActionsService.createProposalActionGroupConfig(
           proposal.action.id,
           groupSettings,
         );

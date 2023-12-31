@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { EventAttendeeStatus } from '../../../../events/event-attendees/models/event-attendee.model';
-import { User } from '../../../../users/models/user.model';
+import { EventAttendeeStatus } from '../../../events/event-attendees/models/event-attendee.model';
+import { User } from '../../../users/models/user.model';
 import { ProposalActionEvent } from './proposal-action-event.model';
 
 @ObjectType()

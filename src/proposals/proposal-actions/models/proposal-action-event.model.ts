@@ -9,8 +9,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Image } from '../../../../images/models/image.model';
-import { ProposalAction } from '../../models/proposal-action.model';
+import { Image } from '../../../images/models/image.model';
+import { ProposalAction } from './proposal-action.model';
 import { ProposalActionEventHost } from './proposal-action-event-host.model';
 
 @Entity()

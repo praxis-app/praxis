@@ -10,8 +10,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { GroupRole } from '../../../../groups/group-roles/models/group-role.model';
-import { ProposalAction } from '../../models/proposal-action.model';
+import { GroupRole } from '../../../groups/group-roles/models/group-role.model';
+import { ProposalAction } from './proposal-action.model';
 import { ProposalActionPermission } from './proposal-action-permission.model';
 import { ProposalActionRoleMember } from './proposal-action-role-member.model';
 
