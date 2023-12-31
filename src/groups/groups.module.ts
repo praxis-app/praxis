@@ -15,7 +15,10 @@ import { Group } from './models/group.model';
     TypeOrmModule.forFeature([Group, Image]),
     forwardRef(() => GroupConfigsModule),
     forwardRef(() => GroupMemberRequestsModule),
+
+    // TODO: Remove forwardRef() when circular dependency is fixed
     forwardRef(() => UsersModule),
+
     EventsModule,
     GroupRolesModule,
   ],
