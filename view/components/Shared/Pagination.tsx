@@ -57,7 +57,9 @@ const Pagination = ({
     if (isLoading) {
       return t('pagination.loading');
     }
-    return `${from}-${to} ${t('pagination.of')} ${count}`;
+    return `${from}-${to} ${t('pagination.of')} ${
+      count !== -1 ? count : `${t('pagination.moreThan')} ${to}`
+    }`;
   };
 
   const handleChangePage = (
