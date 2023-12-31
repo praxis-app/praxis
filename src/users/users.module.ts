@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImagesModule } from '../images/images.module';
+import { Image } from '../images/models/image.model';
 import { PostsModule } from '../posts/posts.module';
 import { ProposalsModule } from '../proposals/proposals.module';
 import { ServerRolesModule } from '../server-roles/server-roles.module';
@@ -10,9 +11,12 @@ import { UsersService } from './users.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Image]),
     forwardRef(() => ServerRolesModule),
+
+    // TODO: Remove when ready
     forwardRef(() => ImagesModule),
+
     ProposalsModule,
     PostsModule,
   ],
