@@ -1,13 +1,12 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
-import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
-import { deleteImageFile, saveImage } from '../images/image.utils';
-import { ImagesService } from '../images/images.service';
-import { Image } from '../images/models/image.model';
 import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
 import { sanitizeText } from '../common/common.utils';
+import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
+import { deleteImageFile, saveImage } from '../images/image.utils';
+import { Image } from '../images/models/image.model';
 import { User } from '../users/models/user.model';
 import { Comment } from './models/comment.model';
 import { CreateCommentInput } from './models/create-comment.input';
@@ -17,18 +16,18 @@ import { UpdateCommentInput } from './models/update-comment.input';
 export class CommentsService {
   constructor(
     @InjectRepository(Comment)
-    private repository: Repository<Comment>,
+    private commentRepository: Repository<Comment>,
 
-    @Inject(forwardRef(() => ImagesService))
-    private imagesService: ImagesService,
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
   ) {}
 
   async getComment(id: number, relations?: string[]) {
-    return this.repository.findOneOrFail({ where: { id }, relations });
+    return this.commentRepository.findOneOrFail({ where: { id }, relations });
   }
 
   async getComments(where: FindOptionsWhere<Comment>) {
-    const comments = await this.repository.find({
+    const comments = await this.commentRepository.find({
       order: { createdAt: 'ASC' },
       where,
     });
@@ -40,22 +39,25 @@ export class CommentsService {
   }
 
   async isPublicCommentImage(imageId: number) {
-    const image = await this.imagesService.getImage({ id: imageId }, [
-      'comment.post.event.group.config',
-      'comment.post.group.config',
-      'comment.proposal.group.config',
-    ]);
+    const image = await this.imageRepository.findOneOrFail({
+      where: { id: imageId },
+      relations: [
+        'comment.post.event.group.config',
+        'comment.post.group.config',
+        'comment.proposal.group.config',
+      ],
+    });
     return (
-      image?.comment?.post?.event?.group?.config.privacy ===
+      image.comment?.post?.event?.group?.config.privacy ===
         GroupPrivacy.Public ||
-      image?.comment?.post?.group?.config.privacy === GroupPrivacy.Public ||
-      image?.comment?.proposal?.group?.config.privacy === GroupPrivacy.Public
+      image.comment?.post?.group?.config.privacy === GroupPrivacy.Public ||
+      image.comment?.proposal?.group?.config.privacy === GroupPrivacy.Public
     );
   }
 
   async getCommentImagesBatch(commentIds: number[]) {
-    const images = await this.imagesService.getImages({
-      commentId: In(commentIds),
+    const images = await this.imageRepository.find({
+      where: { commentId: In(commentIds) },
     });
     return commentIds.map(
       (id) =>
@@ -72,7 +74,7 @@ export class CommentsService {
       throw new Error('Comments must include text or images');
     }
     const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
-    const comment = await this.repository.save({
+    const comment = await this.commentRepository.save({
       ...commentData,
       userId: user.id,
       body: sanitizedBody,
@@ -96,7 +98,7 @@ export class CommentsService {
     ...commentData
   }: UpdateCommentInput) {
     const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
-    await this.repository.update(id, {
+    await this.commentRepository.update(id, {
       body: sanitizedBody,
       ...commentData,
     });
@@ -111,16 +113,16 @@ export class CommentsService {
   async saveCommentImages(commentId: number, images: Promise<FileUpload>[]) {
     for (const image of images) {
       const filename = await saveImage(image);
-      await this.imagesService.createImage({ filename, commentId });
+      await this.imageRepository.save({ commentId, filename });
     }
   }
 
   async deleteComment(commentId: number) {
-    const images = await this.imagesService.getImages({ commentId });
+    const images = await this.imageRepository.find({ where: { commentId } });
     for (const { filename } of images) {
       await deleteImageFile(filename);
     }
-    await this.repository.delete(commentId);
+    await this.commentRepository.delete(commentId);
     return true;
   }
 }

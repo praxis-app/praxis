@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ImagesModule } from '../images/images.module';
+import { Image } from '../images/models/image.model';
 import { PostsModule } from '../posts/posts.module';
 import { ProposalsModule } from '../proposals/proposals.module';
 import { CommentsResolver } from './comments.resolver';
@@ -9,8 +9,7 @@ import { Comment } from './models/comment.model';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Comment]),
-    forwardRef(() => ImagesModule),
+    TypeOrmModule.forFeature([Comment, Image]),
     forwardRef(() => PostsModule),
     forwardRef(() => ProposalsModule),
   ],
