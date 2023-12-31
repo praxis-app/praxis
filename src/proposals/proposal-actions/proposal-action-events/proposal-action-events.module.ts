@@ -18,8 +18,8 @@ import { ProposalActionEventsService } from './proposal-action-events.service';
       ProposalActionEventHost,
     ]),
     forwardRef(() => ProposalActionsModule),
-    forwardRef(() => EventsModule),
     EventAttendeesModule,
+    EventsModule,
   ],
   providers: [
     ProposalActionEventsService,
