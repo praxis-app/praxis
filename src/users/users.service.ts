@@ -530,8 +530,11 @@ export class UsersService {
     });
   }
 
-  // TODO: Ensure all associated image files are deleted
   async deleteUser(userId: number) {
+    const images = await this.imageRepository.find({ where: { userId } });
+    for (const { filename } of images) {
+      await deleteImageFile(filename);
+    }
     await this.userRepository.delete(userId);
     return true;
   }
