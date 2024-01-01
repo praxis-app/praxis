@@ -2,17 +2,17 @@ import { rule } from 'graphql-shield';
 import { UNAUTHORIZED } from '../../common/common.constants';
 import { FeedItemsConnection } from '../../common/models/feed-items.connection';
 import { Context } from '../../context/context.types';
-import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
+import { GroupPrivacy } from '../../groups/groups.constants';
 import { Image } from '../../images/models/image.model';
 import { ProposalConfig } from '../../proposals/models/proposal-config.model';
 import { Proposal } from '../../proposals/models/proposal.model';
-import { ProposalAction } from '../../proposals/proposal-actions/models/proposal-action.model';
 import { ProposalActionEventHost } from '../../proposals/proposal-actions/models/proposal-action-event-host.model';
 import { ProposalActionEvent } from '../../proposals/proposal-actions/models/proposal-action-event.model';
 import { ProposalActionGroupConfig } from '../../proposals/proposal-actions/models/proposal-action-group-config.model';
 import { ProposalActionPermission } from '../../proposals/proposal-actions/models/proposal-action-permission.model';
 import { ProposalActionRoleMember } from '../../proposals/proposal-actions/models/proposal-action-role-member.model';
 import { ProposalActionRole } from '../../proposals/proposal-actions/models/proposal-action-role.model';
+import { ProposalAction } from '../../proposals/proposal-actions/models/proposal-action.model';
 import { Vote } from '../../votes/models/vote.model';
 
 export const isOwnProposal = rule({ cache: 'strict' })(async (

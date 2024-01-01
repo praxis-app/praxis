@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
 import { paginate, sanitizeText } from '../common/common.utils';
-import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
+import { GroupPrivacy } from '../groups/groups.constants';
 import { ImageTypes } from '../images/image.constants';
 import {
   deleteImageFile,
@@ -27,7 +27,7 @@ import {
 } from './event-attendees/models/event-attendee.model';
 import { CreateEventInput } from './models/create-event.input';
 import { Event } from './models/event.model';
-import { EventsInput, EventTimeFrame } from './models/events.input';
+import { EventTimeFrame, EventsInput } from './models/events.input';
 import { UpdateEventInput } from './models/update-event.input';
 
 type EventWithInterestedCount = Event & { interestedCount: number };

@@ -1,12 +1,12 @@
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
-import { Image } from '../../images/models/image.model';
-import { Proposal } from '../models/proposal.model';
-import { ProposalsService } from '../proposals.service';
-import { ProposalAction } from './models/proposal-action.model';
-import { ProposalActionEvent } from './models/proposal-action-event.model';
-import { ProposalActionRole } from './models/proposal-action-role.model';
-import { ProposalActionsService } from './proposal-actions.service';
-import { ProposalActionGroupConfig } from './models/proposal-action-group-config.model';
+import { Image } from '../../../images/models/image.model';
+import { Proposal } from '../../models/proposal.model';
+import { ProposalsService } from '../../proposals.service';
+import { ProposalAction } from '../models/proposal-action.model';
+import { ProposalActionEvent } from '../models/proposal-action-event.model';
+import { ProposalActionRole } from '../models/proposal-action-role.model';
+import { ProposalActionsService } from '../proposal-actions.service';
+import { ProposalActionGroupConfig } from '../models/proposal-action-group-config.model';
 
 @Resolver(() => ProposalAction)
 export class ProposalActionsResolver {

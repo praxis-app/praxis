@@ -3,7 +3,6 @@ import { AuthService } from '../auth/auth.service';
 import { CommentsService } from '../comments/comments.service';
 import { DataloaderService } from '../dataloader/dataloader.service';
 import { EventsService } from '../events/events.service';
-import { GroupMemberRequestsService } from '../groups/group-member-requests/group-member-requests.service';
 import { GroupRolesService } from '../groups/group-roles/group-roles.service';
 import { GroupsService } from '../groups/groups.service';
 import { ImagesService } from '../images/images.service';
@@ -23,7 +22,6 @@ export class ContextService {
     private commentsService: CommentsService,
     private dataloaderService: DataloaderService,
     private eventsService: EventsService,
-    private groupMemberRequestsService: GroupMemberRequestsService,
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private imagesService: ImagesService,
@@ -47,7 +45,6 @@ export class ContextService {
     const services: ContextServices = {
       commentsService: this.commentsService,
       eventsService: this.eventsService,
-      groupMemberRequestsService: this.groupMemberRequestsService,
       groupRolesService: this.groupRolesService,
       groupsService: this.groupsService,
       imagesService: this.imagesService,

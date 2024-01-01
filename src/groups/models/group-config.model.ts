@@ -8,10 +8,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { DecisionMakingModel } from '../../../proposals/proposals.constants';
-import { Group } from '../../models/group.model';
-import { GroupPrivacy, VotingTimeLimit } from '../group-configs.constants';
-import { GroupAdminModel } from '../../groups.constants';
+import { DecisionMakingModel } from '../../proposals/proposals.constants';
+import { Group } from './group.model';
+import {
+  GroupAdminModel,
+  GroupPrivacy,
+  VotingTimeLimit,
+} from '../groups.constants';
 
 @Entity()
 @ObjectType()

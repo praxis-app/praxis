@@ -8,8 +8,8 @@ import {
   EventAttendeeStatus,
 } from '../../events/event-attendees/models/event-attendee.model';
 import { Event } from '../../events/models/event.model';
-import { GroupConfigsService } from '../../groups/group-configs/group-configs.service';
 import { GroupRolesService } from '../../groups/group-roles/group-roles.service';
+import { GroupsService } from '../../groups/groups.service';
 import { ImageTypes } from '../../images/image.constants';
 import {
   copyImage,
@@ -68,7 +68,7 @@ export class ProposalActionsService {
     private imageRepository: Repository<Image>,
 
     private groupRolesService: GroupRolesService,
-    private groupConfigsService: GroupConfigsService,
+    private groupsService: GroupsService,
   ) {}
 
   async getProposalAction(
@@ -223,7 +223,7 @@ export class ProposalActionsService {
       privacy,
     } = proposedGroupConfig;
 
-    const groupConfig = await this.groupConfigsService.getGroupConfig({
+    const groupConfig = await this.groupsService.getGroupConfig({
       groupId,
     });
 
@@ -258,7 +258,7 @@ export class ProposalActionsService {
     });
 
     // Implement proposal - update group config
-    await this.groupConfigsService.updateGroupConfig({
+    await this.groupsService.updateGroupConfig({
       adminModel: adminModel ?? undefined,
       decisionMakingModel: decisionMakingModel ?? undefined,
       ratificationThreshold: ratificationThreshold ?? undefined,

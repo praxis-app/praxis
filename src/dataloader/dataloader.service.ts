@@ -8,7 +8,6 @@ import * as DataLoader from 'dataloader';
 import { CommentsService } from '../comments/comments.service';
 import { EventsService } from '../events/events.service';
 import { Event } from '../events/models/event.model';
-import { GroupMemberRequestsService } from '../groups/group-member-requests/group-member-requests.service';
 import { GroupRolesService } from '../groups/group-roles/group-roles.service';
 import { GroupPermissions } from '../groups/group-roles/models/group-permissions.type';
 import { GroupsService } from '../groups/groups.service';
@@ -38,7 +37,6 @@ export class DataloaderService {
     private eventsService: EventsService,
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
-    private memberRequestsService: GroupMemberRequestsService,
     private postsService: PostsService,
     private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,
@@ -215,9 +213,7 @@ export class DataloaderService {
 
   private _createMemberRequestCountLoader() {
     return this._getDataLoader<number, number>(async (groupIds) =>
-      this.memberRequestsService.getGroupMemberRequestCountBatch(
-        groupIds as number[],
-      ),
+      this.groupsService.getGroupMemberRequestCountBatch(groupIds as number[]),
     );
   }
 

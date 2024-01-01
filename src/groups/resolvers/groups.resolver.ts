@@ -8,37 +8,33 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { FeedItemsConnection } from '../common/models/feed-items.connection';
-import { Dataloaders } from '../dataloader/dataloader.types';
-import { EventsService } from '../events/events.service';
-import { Event } from '../events/models/event.model';
-import { EventTimeFrame } from '../events/models/events.input';
-import { User } from '../users/models/user.model';
-import { GroupPrivacy } from './group-configs/group-configs.constants';
-import { GroupConfigsService } from './group-configs/group-configs.service';
-import { GroupConfig } from './group-configs/models/group-config.model';
-import { GroupMemberRequestsService } from './group-member-requests/group-member-requests.service';
-import { GroupMemberRequest } from './group-member-requests/models/group-member-request.model';
-import { GroupRolesService } from './group-roles/group-roles.service';
-import { GroupPermissions } from './group-roles/models/group-permissions.type';
-import { GroupRole } from './group-roles/models/group-role.model';
-import { GroupsService } from './groups.service';
-import { CreateGroupInput } from './models/create-group.input';
-import { CreateGroupPayload } from './models/create-group.payload';
-import { Group } from './models/group.model';
-import { GroupsConnection } from './models/groups.connection';
-import { PublicGroupsConnection } from './models/public-groups.connection';
-import { UpdateGroupInput } from './models/update-group.input';
-import { UpdateGroupPayload } from './models/update-group.payload';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { FeedItemsConnection } from '../../common/models/feed-items.connection';
+import { Dataloaders } from '../../dataloader/dataloader.types';
+import { EventsService } from '../../events/events.service';
+import { Event } from '../../events/models/event.model';
+import { EventTimeFrame } from '../../events/models/events.input';
+import { User } from '../../users/models/user.model';
+import { GroupRolesService } from '../group-roles/group-roles.service';
+import { GroupPermissions } from '../group-roles/models/group-permissions.type';
+import { GroupRole } from '../group-roles/models/group-role.model';
+import { GroupPrivacy } from '../groups.constants';
+import { GroupsService } from '../groups.service';
+import { CreateGroupInput } from '../models/create-group.input';
+import { CreateGroupPayload } from '../models/create-group.payload';
+import { GroupConfig } from '../models/group-config.model';
+import { GroupMemberRequest } from '../models/group-member-request.model';
+import { Group } from '../models/group.model';
+import { GroupsConnection } from '../models/groups.connection';
+import { PublicGroupsConnection } from '../models/public-groups.connection';
+import { UpdateGroupInput } from '../models/update-group.input';
+import { UpdateGroupPayload } from '../models/update-group.payload';
 
 @Resolver(() => Group)
 export class GroupsResolver {
   constructor(
-    private groupConfigsService: GroupConfigsService,
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
-    private memberRequestsService: GroupMemberRequestsService,
     private eventsService: EventsService,
   ) {}
 
@@ -110,7 +106,7 @@ export class GroupsResolver {
 
   @ResolveField(() => [GroupMemberRequest], { nullable: true })
   async memberRequests(@Parent() { id }: Group) {
-    return this.memberRequestsService.getGroupMemberRequests(id);
+    return this.groupsService.getGroupMemberRequests(id);
   }
 
   @ResolveField(() => Int)
@@ -177,7 +173,7 @@ export class GroupsResolver {
 
   @ResolveField(() => GroupConfig)
   async settings(@Parent() { id }: Group) {
-    return this.groupConfigsService.getGroupConfig({ groupId: id });
+    return this.groupsService.getGroupConfig({ groupId: id });
   }
 
   @Mutation(() => CreateGroupPayload)
