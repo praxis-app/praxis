@@ -28,7 +28,6 @@ export const GROUP_PERMISSION_NAMES: (keyof GroupRolePermissionInput)[] = [
   'deleteGroup',
   'manageComments',
   'approveMemberRequests',
-  'removeMembers',
 ];
 
 export enum EditRoleTabName {
