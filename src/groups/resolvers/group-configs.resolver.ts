@@ -6,12 +6,12 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { Dataloaders } from '../dataloader/dataloader.types';
-import { GroupsService } from './groups.service';
-import { GroupConfig } from './models/group-config.model';
-import { Group } from './models/group.model';
-import { UpdateGroupConfigInput } from './models/update-group-config.input';
-import { UpdateGroupPayload } from './models/update-group.payload';
+import { Dataloaders } from '../../dataloader/dataloader.types';
+import { GroupsService } from '../groups.service';
+import { GroupConfig } from '../models/group-config.model';
+import { Group } from '../models/group.model';
+import { UpdateGroupConfigInput } from '../models/update-group-config.input';
+import { UpdateGroupPayload } from '../models/update-group.payload';
 
 @Resolver(() => GroupConfig)
 export class GroupConfigsResolver {

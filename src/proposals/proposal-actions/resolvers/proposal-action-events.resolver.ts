@@ -1,9 +1,9 @@
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
-import { Image } from '../../images/models/image.model';
-import { User } from '../../users/models/user.model';
-import { ProposalAction } from './models/proposal-action.model';
-import { ProposalActionsService } from './proposal-actions.service';
-import { ProposalActionEvent } from './models/proposal-action-event.model';
+import { Image } from '../../../images/models/image.model';
+import { User } from '../../../users/models/user.model';
+import { ProposalAction } from '../models/proposal-action.model';
+import { ProposalActionsService } from '../proposal-actions.service';
+import { ProposalActionEvent } from '../models/proposal-action-event.model';
 
 @Resolver(() => ProposalActionEvent)
 export class ProposalActionEventsResolver {

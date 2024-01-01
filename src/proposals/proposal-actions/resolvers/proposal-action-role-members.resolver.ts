@@ -1,7 +1,7 @@
 import { Context, Parent, ResolveField, Resolver } from '@nestjs/graphql';
-import { Dataloaders } from '../../dataloader/dataloader.types';
-import { User } from '../../users/models/user.model';
-import { ProposalActionRoleMember } from './models/proposal-action-role-member.model';
+import { Dataloaders } from '../../../dataloader/dataloader.types';
+import { User } from '../../../users/models/user.model';
+import { ProposalActionRoleMember } from '../models/proposal-action-role-member.model';
 
 @Resolver(() => ProposalActionRoleMember)
 export class ProposalActionRoleMembersResolver {

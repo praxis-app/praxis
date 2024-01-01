@@ -10,14 +10,14 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { Dataloaders } from '../dataloader/dataloader.types';
-import { User } from '../users/models/user.model';
-import { GroupsService } from './groups.service';
-import { ApproveGroupMemberRequestPayload } from './models/approve-group-member-request.payload';
-import { CreateGroupMemberRequestPayload } from './models/create-group-member-request.payload';
-import { GroupMemberRequest } from './models/group-member-request.model';
-import { Group } from './models/group.model';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { Dataloaders } from '../../dataloader/dataloader.types';
+import { User } from '../../users/models/user.model';
+import { GroupsService } from '../groups.service';
+import { ApproveGroupMemberRequestPayload } from '../models/approve-group-member-request.payload';
+import { CreateGroupMemberRequestPayload } from '../models/create-group-member-request.payload';
+import { GroupMemberRequest } from '../models/group-member-request.model';
+import { Group } from '../models/group.model';
 
 @Resolver(() => GroupMemberRequest)
 export class GroupMemberRequestsResolver {
