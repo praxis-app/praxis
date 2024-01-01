@@ -393,18 +393,6 @@ type UpdateEventPayload {
   event: Event!
 }
 
-type UpdateGroupPayload {
-  group: Group!
-}
-
-type ApproveGroupMemberRequestPayload {
-  groupMember: User!
-}
-
-type CreateGroupMemberRequestPayload {
-  groupMemberRequest: GroupMemberRequest!
-}
-
 type CreateGroupRolePayload {
   groupRole: GroupRole!
 }
@@ -415,6 +403,18 @@ type DeleteGroupRoleMemberPayload {
 
 type UpdateGroupRolePayload {
   groupRole: GroupRole!
+}
+
+type UpdateGroupPayload {
+  group: Group!
+}
+
+type ApproveGroupMemberRequestPayload {
+  groupMember: User!
+}
+
+type CreateGroupMemberRequestPayload {
+  groupMemberRequest: GroupMemberRequest!
 }
 
 type FeedItemsConnection {
