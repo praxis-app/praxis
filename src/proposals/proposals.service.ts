@@ -10,7 +10,7 @@ import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, In, IsNull, Not, Repository } from 'typeorm';
 import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
 import { logTime, sanitizeText } from '../common/common.utils';
-import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
+import { GroupPrivacy } from '../groups/groups.constants';
 import { GroupsService } from '../groups/groups.service';
 import { ImageTypes } from '../images/image.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';

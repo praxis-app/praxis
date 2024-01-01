@@ -545,12 +545,12 @@ type Query {
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
   proposal(id: Int!): Proposal!
+  groupMemberRequest(groupId: Int!): GroupMemberRequest
   group(id: Int, name: String): Group!
   groups(offset: Int, limit: Int): GroupsConnection!
   publicGroups(offset: Int, limit: Int): PublicGroupsConnection!
   publicGroupsFeed(offset: Int, limit: Int): FeedItemsConnection!
   groupRole(id: Int!): GroupRole!
-  groupMemberRequest(groupId: Int!): GroupMemberRequest
   post(id: Int!): Post!
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
@@ -583,15 +583,15 @@ type Mutation {
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   synchronizeProposal(id: Int!): SynchronizeProposalPayload!
   deleteProposal(id: Int!): Boolean!
-  createGroup(groupData: CreateGroupInput!): CreateGroupPayload!
-  updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
-  deleteGroup(id: Int!): Boolean!
-  leaveGroup(id: Int!): Boolean!
   updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
   createGroupMemberRequest(groupId: Int!): CreateGroupMemberRequestPayload!
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
   cancelGroupMemberRequest(id: Int!): Boolean!
   denyGroupMemberRequest(id: Int!): Boolean!
+  createGroup(groupData: CreateGroupInput!): CreateGroupPayload!
+  updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
+  deleteGroup(id: Int!): Boolean!
+  leaveGroup(id: Int!): Boolean!
   createPost(postData: CreatePostInput!): CreatePostPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
   deletePost(id: Int!): Boolean!
@@ -751,6 +751,17 @@ input UpdateProposalInput {
   images: [Upload!]
 }
 
+input UpdateGroupConfigInput {
+  groupId: Int!
+  adminModel: String
+  decisionMakingModel: String
+  standAsidesLimit: Int
+  reservationsLimit: Int
+  ratificationThreshold: Int
+  votingTimeLimit: Int
+  privacy: String
+}
+
 input CreateGroupInput {
   name: String!
   description: String!
@@ -762,17 +773,6 @@ input UpdateGroupInput {
   name: String
   description: String
   coverPhoto: Upload
-}
-
-input UpdateGroupConfigInput {
-  groupId: Int!
-  adminModel: String
-  decisionMakingModel: String
-  standAsidesLimit: Int
-  reservationsLimit: Int
-  ratificationThreshold: Int
-  votingTimeLimit: Int
-  privacy: String
 }
 
 input CreatePostInput {

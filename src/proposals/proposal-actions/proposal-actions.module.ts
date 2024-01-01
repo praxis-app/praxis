@@ -2,8 +2,8 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventAttendee } from '../../events/event-attendees/models/event-attendee.model';
 import { Event } from '../../events/models/event.model';
-import { GroupConfigsModule } from '../../groups/group-configs/group-configs.module';
 import { GroupRolesModule } from '../../groups/group-roles/group-roles.module';
+import { GroupsModule } from '../../groups/groups.module';
 import { Image } from '../../images/models/image.model';
 import { ProposalsModule } from '../proposals.module';
 import { ProposalActionEventHost } from './models/proposal-action-event-host.model';
@@ -35,7 +35,7 @@ import { ProposalActionsService } from './proposal-actions.service';
       ProposalActionRoleMember,
     ]),
     forwardRef(() => ProposalsModule),
-    GroupConfigsModule,
+    GroupsModule,
     GroupRolesModule,
   ],
   providers: [

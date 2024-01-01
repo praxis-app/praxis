@@ -2,14 +2,14 @@ import { rule } from 'graphql-shield';
 import { FindOptionsWhere } from 'typeorm';
 import { UNAUTHORIZED } from '../../common/common.constants';
 import { Context } from '../../context/context.types';
-import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
-import { GroupConfig } from '../../groups/group-configs/models/group-config.model';
-import { UpdateGroupConfigInput } from '../../groups/group-configs/models/update-group-config.input';
 import { CreateGroupRoleInput } from '../../groups/group-roles/models/create-group-role.input';
 import { DeleteGroupRoleMemberInput } from '../../groups/group-roles/models/delete-group-role-member.input';
 import { GroupRole } from '../../groups/group-roles/models/group-role.model';
 import { UpdateGroupRoleInput } from '../../groups/group-roles/models/update-group-role.input';
+import { GroupPrivacy } from '../../groups/groups.constants';
+import { GroupConfig } from '../../groups/models/group-config.model';
 import { Group } from '../../groups/models/group.model';
+import { UpdateGroupConfigInput } from '../../groups/models/update-group-config.input';
 import { UpdateGroupInput } from '../../groups/models/update-group.input';
 import { Image } from '../../images/models/image.model';
 import { CreateVoteInput } from '../../votes/models/create-vote.input';
@@ -68,16 +68,16 @@ export const canManageGroupRoles = rule()(async (
 export const canApproveGroupMemberRequests = rule({ cache: 'strict' })(async (
   parent,
   args,
-  { permissions, services: { groupMemberRequestsService } }: Context,
+  { permissions, services: { groupsService } }: Context,
   info,
 ) => {
   let groupId: number | undefined;
 
   if (info.fieldName === 'approveGroupMemberRequest') {
-    const memberRequest =
-      await groupMemberRequestsService.getGroupMemberRequest({ id: args.id }, [
-        'group',
-      ]);
+    const memberRequest = await groupsService.getGroupMemberRequest(
+      { id: args.id },
+      ['group'],
+    );
     groupId = memberRequest?.group.id;
   }
   if (

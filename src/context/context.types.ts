@@ -3,7 +3,6 @@ import { Request, Response } from 'express';
 import { CommentsService } from '../comments/comments.service';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { EventsService } from '../events/events.service';
-import { GroupMemberRequestsService } from '../groups/group-member-requests/group-member-requests.service';
 import { GroupRolesService } from '../groups/group-roles/group-roles.service';
 import { GroupsService } from '../groups/groups.service';
 import { ImagesService } from '../images/images.service';
@@ -18,7 +17,6 @@ import { UsersService } from '../users/users.service';
 export interface ContextServices {
   commentsService: CommentsService;
   eventsService: EventsService;
-  groupMemberRequestsService: GroupMemberRequestsService;
   groupRolesService: GroupRolesService;
   groupsService: GroupsService;
   imagesService: ImagesService;

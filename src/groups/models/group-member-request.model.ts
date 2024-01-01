@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../../../users/models/user.model';
-import { Group } from '../../models/group.model';
+import { User } from '../../users/models/user.model';
+import { Group } from './group.model';
 
 export enum GroupMemberRequestStatus {
   Approved = 'approved',

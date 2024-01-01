@@ -17,8 +17,8 @@ import { Image } from '../../images/models/image.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
 import { User } from '../../users/models/user.model';
-import { GroupConfig } from '../group-configs/models/group-config.model';
-import { GroupMemberRequest } from '../group-member-requests/models/group-member-request.model';
+import { GroupConfig } from './group-config.model';
+import { GroupMemberRequest } from './group-member-request.model';
 import { GroupRole } from '../group-roles/models/group-role.model';
 
 @Entity()

@@ -3,7 +3,6 @@ import { AuthModule } from '../auth/auth.module';
 import { CommentsModule } from '../comments/comments.module';
 import { DataloaderModule } from '../dataloader/dataloader.module';
 import { EventsModule } from '../events/events.module';
-import { GroupMemberRequestsModule } from '../groups/group-member-requests/group-member-requests.module';
 import { GroupRolesModule } from '../groups/group-roles/group-roles.module';
 import { GroupsModule } from '../groups/groups.module';
 import { ImagesModule } from '../images/images.module';
@@ -20,7 +19,6 @@ import { ContextService } from './context.service';
     CommentsModule,
     DataloaderModule,
     EventsModule,
-    GroupMemberRequestsModule,
     GroupRolesModule,
     GroupsModule,
     ImagesModule,
