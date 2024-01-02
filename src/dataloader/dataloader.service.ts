@@ -192,12 +192,12 @@ export class DataloaderService {
       const images = await this.imageRepository.find({
         where: { proposalId: In(proposalIds) },
       });
-      const mappedImages = proposalIds.map(
+      const mappedProposalImages = proposalIds.map(
         (id) =>
           images.filter((image: Image) => image.proposalId === id) ||
           new Error(`Could not load images for proposal: ${id}`),
       );
-      return mappedImages;
+      return mappedProposalImages;
     });
   }
 
@@ -366,12 +366,12 @@ export class DataloaderService {
       const coverPhotos = await this.imageRepository.find({
         where: { groupId: In(groupIds), imageType: ImageTypes.CoverPhoto },
       });
-      const mappedCoverPhotos = groupIds.map(
+      const mappedGroupCoverPhotos = groupIds.map(
         (id) =>
           coverPhotos.find((coverPhoto: Image) => coverPhoto.groupId === id) ||
           new Error(`Could not load cover photo for group: ${id}`),
       );
-      return mappedCoverPhotos;
+      return mappedGroupCoverPhotos;
     });
   }
 
@@ -628,12 +628,12 @@ export class DataloaderService {
       const coverPhotos = await this.imageRepository.find({
         where: { eventId: In(eventIds), imageType: ImageTypes.CoverPhoto },
       });
-      const mappedCoverPhotos = eventIds.map(
+      const mappedEventCoverPhotos = eventIds.map(
         (id) =>
           coverPhotos.find((coverPhoto: Image) => coverPhoto.eventId === id) ||
           new Error(`Could not load cover photo for event: ${id}`),
       );
-      return mappedCoverPhotos;
+      return mappedEventCoverPhotos;
     });
   }
 
