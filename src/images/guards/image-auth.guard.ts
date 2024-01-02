@@ -6,18 +6,22 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Request } from 'express';
+import { Repository } from 'typeorm';
 import { AccessTokenPayload } from '../../auth/auth.service';
-import { UsersService } from '../../users/users.service';
+import { User } from '../../users/models/user.model';
 import { ImagesService } from '../images.service';
 
 @Injectable()
 export class ImageAuthGuard implements CanActivate {
   constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+
     private configService: ConfigService,
     private imagesService: ImagesService,
     private jwtService: JwtService,
-    private usersService: UsersService,
   ) {}
 
   async canActivate(context: ExecutionContext) {
@@ -45,7 +49,9 @@ export class ImageAuthGuard implements CanActivate {
           secret: this.configService.get('JWT_KEY'),
         },
       );
-      const user = await this.usersService.getUser({ id: payload.sub });
+      const user = await this.userRepository.findOne({
+        where: { id: payload.sub },
+      });
       return !!user;
     } catch {
       return false;
