@@ -28,6 +28,7 @@ export class ImagesService {
     return this.repository.findOne({ where, relations });
   }
 
+  // TOOD: Use models directly instead of services
   async isPublicImage(id: number) {
     const image = await this.getImage({ id });
     if (!image) {
