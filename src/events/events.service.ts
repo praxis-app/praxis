@@ -31,9 +31,6 @@ import { EventTimeFrame, EventsInput } from './models/events.input';
 import { UpdateEventAttendeeInput } from './models/update-event-attendee.input';
 import { UpdateEventInput } from './models/update-event.input';
 
-type EventWithInterestedCount = Event & { interestedCount: number };
-type EventWithGoingCount = Event & { goingCount: number };
-
 @Injectable()
 export class EventsService {
   constructor(
@@ -146,68 +143,6 @@ export class EventsService {
         events.find((event: Event) => event.id === id) ||
         new Error(`Could not load event: ${id}`),
     );
-  }
-
-  async getCoverPhotosBatch(eventIds: number[]) {
-    const coverPhotos = await this.imageRepository.find({
-      where: { eventId: In(eventIds), imageType: ImageTypes.CoverPhoto },
-    });
-    const mappedCoverPhotos = eventIds.map(
-      (id) =>
-        coverPhotos.find((coverPhoto: Image) => coverPhoto.eventId === id) ||
-        new Error(`Could not load cover photo for event: ${id}`),
-    );
-    return mappedCoverPhotos;
-  }
-
-  async getInterestedCountBatch(eventIds: number[]) {
-    const events = (await this.eventRepository
-      .createQueryBuilder('event')
-      .loadRelationCountAndMap(
-        'event.interestedCount',
-        'event.attendees',
-        'eventAttendee',
-        (qb) =>
-          qb.where('eventAttendee.status = :status', {
-            status: EventAttendeeStatus.Interested,
-          }),
-      )
-      .select(['event.id'])
-      .whereInIds(eventIds)
-      .getMany()) as EventWithInterestedCount[];
-
-    return eventIds.map((id) => {
-      const event = events.find((event: Event) => event.id === id);
-      if (!event) {
-        return new Error(`Could not load interested count for event: ${id}`);
-      }
-      return event.interestedCount;
-    });
-  }
-
-  async getGoingCountBatch(eventIds: number[]) {
-    const events = (await this.eventRepository
-      .createQueryBuilder('event')
-      .loadRelationCountAndMap(
-        'event.goingCount',
-        'event.attendees',
-        'eventAttendee',
-        (qb) =>
-          qb.where('eventAttendee.status = :status', {
-            status: EventAttendeeStatus.Going,
-          }),
-      )
-      .select(['event.id'])
-      .whereInIds(eventIds)
-      .getMany()) as EventWithGoingCount[];
-
-    return eventIds.map((id) => {
-      const event = events.find((event: Event) => event.id === id);
-      if (!event) {
-        return new Error(`Could not load going count for event: ${id}`);
-      }
-      return event.goingCount;
-    });
   }
 
   async createEvent({

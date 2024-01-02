@@ -2,9 +2,8 @@ import { UserInputError } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { paginate, sanitizeText } from '../common/common.utils';
-import { MyGroupsKey } from '../dataloader/dataloader.types';
 import { ImageTypes } from '../images/image.constants';
 import {
   deleteImageFile,
@@ -16,7 +15,6 @@ import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { DecisionMakingModel } from '../proposals/proposals.constants';
 import { UsersService } from '../users/users.service';
-import { initGroupRolePermissions } from './group-roles/group-role.utils';
 import { GroupRolesService } from './group-roles/group-roles.service';
 import { GroupAdminModel, GroupPrivacy } from './groups.constants';
 import { CreateGroupInput } from './models/create-group.input';
@@ -28,9 +26,6 @@ import {
 import { Group } from './models/group.model';
 import { UpdateGroupConfigInput } from './models/update-group-config.input';
 import { UpdateGroupInput } from './models/update-group.input';
-
-type GroupWithMemberCount = Group & { memberCount: number };
-type GroupWithMemberRequestCount = Group & { memberRequestCount: number };
 
 @Injectable()
 export class GroupsService {
@@ -138,87 +133,6 @@ export class GroupsService {
   async isNoAdminGroup(groupId: number) {
     const config = await this.getGroupConfig({ groupId });
     return config.adminModel === GroupAdminModel.NoAdmin;
-  }
-
-  async getCoverPhotosBatch(groupIds: number[]) {
-    const coverPhotos = await this.imageRepository.find({
-      where: { groupId: In(groupIds), imageType: ImageTypes.CoverPhoto },
-    });
-    const mappedCoverPhotos = groupIds.map(
-      (id) =>
-        coverPhotos.find((coverPhoto: Image) => coverPhoto.groupId === id) ||
-        new Error(`Could not load cover photo for group: ${id}`),
-    );
-    return mappedCoverPhotos;
-  }
-
-  async getGroupsBatch(groupIds: number[]) {
-    const groups = await this.getGroups({
-      id: In(groupIds),
-    });
-    return groupIds.map(
-      (id) =>
-        groups.find((group: Group) => group.id === id) ||
-        new Error(`Could not load group: ${id}`),
-    );
-  }
-
-  async getMyGroupPermissionsBatch(keys: MyGroupsKey[]) {
-    const groupIds = keys.map(({ groupId }) => groupId);
-    const { groupPermissions } = await this.usersService.getUserPermissions(
-      keys[0].currentUserId,
-    );
-    return groupIds.map((id) => {
-      if (!groupPermissions[id]) {
-        return initGroupRolePermissions();
-      }
-      return groupPermissions[id];
-    });
-  }
-
-  async isJoinedByMeBatch(keys: MyGroupsKey[]) {
-    const groupIds = keys.map(({ groupId }) => groupId);
-    const groups = await this.getGroups({ id: In(groupIds) }, ['members']);
-
-    return groupIds.map((groupId) => {
-      const group = groups.find((g) => g.id === groupId);
-      if (!group) {
-        return new Error(`Could not load group: ${groupId}`);
-      }
-      return group.members.some(
-        (member) => member.id === keys[0].currentUserId,
-      );
-    });
-  }
-
-  async getGroupMembersBatch(groupIds: number[]) {
-    const groups = await this.getGroups({ id: In(groupIds) }, ['members']);
-
-    return groupIds.map((groupId) => {
-      const group = groups.find((g) => g.id === groupId);
-      if (!group) {
-        return new Error(`Could not load group members: ${groupId}`);
-      }
-      return group.members;
-    });
-  }
-
-  async getGroupMemberCountBatch(groupIds: number[]) {
-    const groups = (await this.groupRepository
-      .createQueryBuilder('group')
-      .leftJoinAndSelect('group.members', 'groupMember')
-      .loadRelationCountAndMap('group.memberCount', 'group.members')
-      .select(['group.id'])
-      .whereInIds(groupIds)
-      .getMany()) as GroupWithMemberCount[];
-
-    return groupIds.map((id) => {
-      const group = groups.find((group: Group) => group.id === id);
-      if (!group) {
-        return new Error(`Could not load group member count: ${id}`);
-      }
-      return group.memberCount;
-    });
   }
 
   async createGroup(
@@ -386,32 +300,6 @@ export class GroupsService {
     return this.groupMemberRequestRepository.find({
       where: { status: GroupMemberRequestStatus.Pending, groupId },
       order: { createdAt: 'DESC' },
-    });
-  }
-
-  async getGroupMemberRequestCountBatch(groupIds: number[]) {
-    const groups = (await this.groupRepository
-      .createQueryBuilder('group')
-      .leftJoinAndSelect('group.memberRequests', 'memberRequest')
-      .loadRelationCountAndMap(
-        'group.memberRequestCount',
-        'group.memberRequests',
-        'memberRequest',
-        (qb) =>
-          qb.andWhere('memberRequest.status = :status', {
-            status: GroupMemberRequestStatus.Pending,
-          }),
-      )
-      .select(['group.id'])
-      .whereInIds(groupIds)
-      .getMany()) as GroupWithMemberRequestCount[];
-
-    return groupIds.map((id) => {
-      const group = groups.find((group: Group) => group.id === id);
-      if (!group) {
-        return new Error(`Could not load member request count: ${id}`);
-      }
-      return group.memberRequestCount;
     });
   }
 

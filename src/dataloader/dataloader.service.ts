@@ -4,45 +4,68 @@
  */
 
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import * as DataLoader from 'dataloader';
-import { CommentsService } from '../comments/comments.service';
-import { EventsService } from '../events/events.service';
+import { In, Repository } from 'typeorm';
+import { EventAttendeeStatus } from '../events/models/event-attendee.model';
 import { Event } from '../events/models/event.model';
-import { GroupRolesService } from '../groups/group-roles/group-roles.service';
+import { initGroupRolePermissions } from '../groups/group-roles/group-role.utils';
 import { GroupPermissions } from '../groups/group-roles/models/group-permissions.type';
-import { GroupsService } from '../groups/groups.service';
+import { GroupRole } from '../groups/group-roles/models/group-role.model';
+import { GroupMemberRequestStatus } from '../groups/models/group-member-request.model';
 import { Group } from '../groups/models/group.model';
+import { ImageTypes } from '../images/image.constants';
 import { Image } from '../images/models/image.model';
 import { Like } from '../likes/models/like.model';
 import { PostsService } from '../posts/posts.service';
+import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
-import { ProposalActionsService } from '../proposals/proposal-actions/proposal-actions.service';
 import { ProposalsService } from '../proposals/proposals.service';
-import { ServerRolesService } from '../server-roles/server-roles.service';
+import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
 import { Vote } from '../votes/models/vote.model';
-import { VotesService } from '../votes/votes.service';
 import {
   Dataloaders,
+  EventWithGoingCount,
+  EventWithInterestedCount,
+  GroupRoleWithMemberCount,
+  GroupWithMemberCount,
+  GroupWithMemberRequestCount,
   IsFollowedByMeKey,
   IsLikedByMeKey,
   MyGroupsKey,
+  ProposalWithVoteCount,
+  ServerRoleWithMemberCount,
 } from './dataloader.types';
 
 @Injectable()
 export class DataloaderService {
   constructor(
-    private commentsService: CommentsService,
-    private eventsService: EventsService,
-    private groupRolesService: GroupRolesService,
-    private groupsService: GroupsService,
+    @InjectRepository(Proposal)
+    private proposalsRepository: Repository<Proposal>,
+
+    @InjectRepository(ProposalAction)
+    private proposalActionRepository: Repository<ProposalAction>,
+
+    @InjectRepository(Group)
+    private groupRepository: Repository<Group>,
+
+    @InjectRepository(GroupRole)
+    private groupRoleRepository: Repository<GroupRole>,
+
+    @InjectRepository(ServerRole)
+    private serverRoleRepository: Repository<ServerRole>,
+
+    @InjectRepository(Event)
+    private eventRepository: Repository<Event>,
+
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
+
     private postsService: PostsService,
-    private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,
-    private serverRolesService: ServerRolesService,
     private usersService: UsersService,
-    private votesService: VotesService,
   ) {}
 
   getLoaders(): Dataloaders {
@@ -121,9 +144,25 @@ export class DataloaderService {
   }
 
   private _createProposalVoteCountLoader() {
-    return this._getDataLoader<number, number>(async (proposalIds) =>
-      this.votesService.getVoteCountBatch(proposalIds as number[]),
-    );
+    return this._getDataLoader<number, number>(async (proposalIds) => {
+      const proposals = (await this.proposalsRepository
+        .createQueryBuilder('proposal')
+        .leftJoinAndSelect('proposal.votes', 'vote')
+        .loadRelationCountAndMap('proposal.voteCount', 'proposal.votes')
+        .select(['proposal.id'])
+        .whereInIds(proposalIds)
+        .getMany()) as ProposalWithVoteCount[];
+
+      return proposalIds.map((id) => {
+        const proposal = proposals.find(
+          (proposal: Proposal) => proposal.id === id,
+        );
+        if (!proposal) {
+          return new Error(`Could not load vote count for proposal: ${id}`);
+        }
+        return proposal.voteCount;
+      });
+    });
   }
 
   private _createProposalImagesLoader() {
@@ -134,10 +173,17 @@ export class DataloaderService {
 
   private _createProposalActionsLoader() {
     return this._getDataLoader<number, ProposalAction>(
-      async (proposalActionIds) =>
-        this.proposalActionsService.getProposalActionsBatch(
-          proposalActionIds as number[],
-        ),
+      async (proposalActionIds) => {
+        const proposalActions = await this.proposalActionRepository.find({
+          where: { id: In(proposalActionIds) },
+        });
+        return proposalActionIds.map(
+          (id) =>
+            proposalActions.find(
+              (proposalAction: ProposalAction) => proposalAction.id === id,
+            ) || new Error(`Could not load proposal action: ${id}`),
+        );
+      },
     );
   }
 
@@ -190,9 +236,16 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
 
   private _createCommentImagesLoader() {
-    return this._getDataLoader<number, Image[]>(async (commentIds) =>
-      this.commentsService.getCommentImagesBatch(commentIds as number[]),
-    );
+    return this._getDataLoader<number, Image[]>(async (commentIds) => {
+      const images = await this.imageRepository.find({
+        where: { commentId: In(commentIds) },
+      });
+      return commentIds.map(
+        (id) =>
+          images.filter((image: Image) => image.commentId === id) ||
+          new Error(`Could not load images for comment: ${id}`),
+      );
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -200,39 +253,115 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
 
   private _createGroupsLoader() {
-    return this._getDataLoader<number, Group>(async (groupIds) =>
-      this.groupsService.getGroupsBatch(groupIds as number[]),
-    );
+    return this._getDataLoader<number, Group>(async (groupIds) => {
+      const groups = await this.groupRepository.find({
+        where: { id: In(groupIds) },
+      });
+      return groupIds.map(
+        (id) =>
+          groups.find((group: Group) => group.id === id) ||
+          new Error(`Could not load group: ${id}`),
+      );
+    });
   }
 
   private _createGroupCoverPhotosLoader() {
-    return this._getDataLoader<number, Image>(async (groupIds) =>
-      this.groupsService.getCoverPhotosBatch(groupIds as number[]),
-    );
+    return this._getDataLoader<number, Image>(async (groupIds) => {
+      const coverPhotos = await this.imageRepository.find({
+        where: { groupId: In(groupIds), imageType: ImageTypes.CoverPhoto },
+      });
+      const mappedCoverPhotos = groupIds.map(
+        (id) =>
+          coverPhotos.find((coverPhoto: Image) => coverPhoto.groupId === id) ||
+          new Error(`Could not load cover photo for group: ${id}`),
+      );
+      return mappedCoverPhotos;
+    });
   }
 
   private _createMemberRequestCountLoader() {
-    return this._getDataLoader<number, number>(async (groupIds) =>
-      this.groupsService.getGroupMemberRequestCountBatch(groupIds as number[]),
-    );
+    return this._getDataLoader<number, number>(async (groupIds) => {
+      const groups = (await this.groupRepository
+        .createQueryBuilder('group')
+        .leftJoinAndSelect('group.memberRequests', 'memberRequest')
+        .loadRelationCountAndMap(
+          'group.memberRequestCount',
+          'group.memberRequests',
+          'memberRequest',
+          (qb) =>
+            qb.andWhere('memberRequest.status = :status', {
+              status: GroupMemberRequestStatus.Pending,
+            }),
+        )
+        .select(['group.id'])
+        .whereInIds(groupIds)
+        .getMany()) as GroupWithMemberRequestCount[];
+
+      return groupIds.map((id) => {
+        const group = groups.find((group: Group) => group.id === id);
+        if (!group) {
+          return new Error(`Could not load member request count: ${id}`);
+        }
+        return group.memberRequestCount;
+      });
+    });
   }
 
   private _createGroupMemberCountLoader() {
-    return this._getDataLoader<number, number>(async (groupIds) =>
-      this.groupsService.getGroupMemberCountBatch(groupIds as number[]),
-    );
+    return this._getDataLoader<number, number>(async (groupIds) => {
+      const groups = (await this.groupRepository
+        .createQueryBuilder('group')
+        .leftJoinAndSelect('group.members', 'groupMember')
+        .loadRelationCountAndMap('group.memberCount', 'group.members')
+        .select(['group.id'])
+        .whereInIds(groupIds)
+        .getMany()) as GroupWithMemberCount[];
+
+      return groupIds.map((id) => {
+        const group = groups.find((group: Group) => group.id === id);
+        if (!group) {
+          return new Error(`Could not load group member count: ${id}`);
+        }
+        return group.memberCount;
+      });
+    });
   }
 
   private _createGroupMembersLoader() {
-    return this._getDataLoader<number, User[]>(async (groupIds) =>
-      this.groupsService.getGroupMembersBatch(groupIds as number[]),
-    );
+    return this._getDataLoader<number, User[]>(async (groupIds) => {
+      const groups = await this.groupRepository.find({
+        where: { id: In(groupIds) },
+        relations: ['members'],
+      });
+      return groupIds.map((groupId) => {
+        const group = groups.find((g) => g.id === groupId);
+        if (!group) {
+          return new Error(`Could not load group members: ${groupId}`);
+        }
+        return group.members;
+      });
+    });
   }
 
   private _createIsJoinedByMeLoader() {
     return this._getDataLoader<MyGroupsKey, boolean, number>(
-      async (keys) =>
-        this.groupsService.isJoinedByMeBatch(keys as MyGroupsKey[]),
+      async (keys) => {
+        const groupIds = keys.map(({ groupId }) => groupId);
+        const groups = await this.groupRepository.find({
+          where: { id: In(groupIds) },
+          relations: ['members'],
+        });
+
+        return groupIds.map((groupId) => {
+          const group = groups.find((g) => g.id === groupId);
+          if (!group) {
+            return new Error(`Could not load group: ${groupId}`);
+          }
+          return group.members.some(
+            (member) => member.id === keys[0].currentUserId,
+          );
+        });
+      },
       { cacheKeyFn: (key) => key.groupId },
     );
   }
@@ -278,23 +407,59 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
 
   private _createGroupRoleMemberCountLoader() {
-    return this._getDataLoader<number, number>(async (roleIds) =>
-      this.groupRolesService.getGroupRoleMemberCountBatch(roleIds as number[]),
-    );
+    return this._getDataLoader<number, number>(async (roleIds) => {
+      const roles = (await this.groupRoleRepository
+        .createQueryBuilder('role')
+        .leftJoinAndSelect('role.members', 'roleMember')
+        .loadRelationCountAndMap('role.memberCount', 'role.members')
+        .select(['role.id'])
+        .whereInIds(roleIds)
+        .getMany()) as GroupRoleWithMemberCount[];
+
+      return roleIds.map((id) => {
+        const role = roles.find((role: GroupRole) => role.id === id);
+        if (!role) {
+          return new Error(`Could not load role member count: ${id}`);
+        }
+        return role.memberCount;
+      });
+    });
   }
 
   private _createServerRoleMemberCountLoader() {
-    return this._getDataLoader<number, number>(async (roleIds) =>
-      this.serverRolesService.getServerRoleMemberCountBatch(
-        roleIds as number[],
-      ),
-    );
+    return this._getDataLoader<number, number>(async (roleIds) => {
+      const roles = (await this.serverRoleRepository
+        .createQueryBuilder('role')
+        .leftJoinAndSelect('role.members', 'roleMember')
+        .loadRelationCountAndMap('role.memberCount', 'role.members')
+        .select(['role.id'])
+        .whereInIds(roleIds)
+        .getMany()) as ServerRoleWithMemberCount[];
+
+      return roleIds.map((id) => {
+        const role = roles.find((role: ServerRole) => role.id === id);
+        if (!role) {
+          return new Error(`Could not load role member count: ${id}`);
+        }
+        return role.memberCount;
+      });
+    });
   }
 
   private _createMyGroupPermissionsLoader() {
     return this._getDataLoader<MyGroupsKey, GroupPermissions, number>(
-      async (keys) =>
-        this.groupsService.getMyGroupPermissionsBatch(keys as MyGroupsKey[]),
+      async (keys) => {
+        const groupIds = keys.map(({ groupId }) => groupId);
+        const { groupPermissions } = await this.usersService.getUserPermissions(
+          keys[0].currentUserId,
+        );
+        return groupIds.map((id) => {
+          if (!groupPermissions[id]) {
+            return initGroupRolePermissions();
+          }
+          return groupPermissions[id];
+        });
+      },
       { cacheKeyFn: (key) => key.groupId },
     );
   }
@@ -304,26 +469,83 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
 
   private _createEventCoverPhotosLoader() {
-    return this._getDataLoader<number, Image>(async (eventIds) =>
-      this.eventsService.getCoverPhotosBatch(eventIds as number[]),
-    );
+    return this._getDataLoader<number, Image>(async (eventIds) => {
+      const coverPhotos = await this.imageRepository.find({
+        where: { eventId: In(eventIds), imageType: ImageTypes.CoverPhoto },
+      });
+      const mappedCoverPhotos = eventIds.map(
+        (id) =>
+          coverPhotos.find((coverPhoto: Image) => coverPhoto.eventId === id) ||
+          new Error(`Could not load cover photo for event: ${id}`),
+      );
+      return mappedCoverPhotos;
+    });
   }
 
   private _createEventsLoader() {
-    return this._getDataLoader<number, Event>(async (eventIds) =>
-      this.eventsService.getEventsBatch(eventIds as number[]),
-    );
+    return this._getDataLoader<number, Event>(async (eventIds) => {
+      const events = await this.eventRepository.find({
+        where: { id: In(eventIds) },
+      });
+      return eventIds.map(
+        (id) =>
+          events.find((event: Event) => event.id === id) ||
+          new Error(`Could not load event: ${id}`),
+      );
+    });
   }
 
   private _createInterestedCountLoader() {
-    return this._getDataLoader<number, number>(async (eventIds) =>
-      this.eventsService.getInterestedCountBatch(eventIds as number[]),
-    );
+    return this._getDataLoader<number, number>(async (eventIds) => {
+      const events = (await this.eventRepository
+        .createQueryBuilder('event')
+        .loadRelationCountAndMap(
+          'event.interestedCount',
+          'event.attendees',
+          'eventAttendee',
+          (qb) =>
+            qb.where('eventAttendee.status = :status', {
+              status: EventAttendeeStatus.Interested,
+            }),
+        )
+        .select(['event.id'])
+        .whereInIds(eventIds)
+        .getMany()) as EventWithInterestedCount[];
+
+      return eventIds.map((id) => {
+        const event = events.find((event: Event) => event.id === id);
+        if (!event) {
+          return new Error(`Could not load interested count for event: ${id}`);
+        }
+        return event.interestedCount;
+      });
+    });
   }
 
   private _createGoingCountLoader() {
-    return this._getDataLoader<number, number>(async (eventIds) =>
-      this.eventsService.getGoingCountBatch(eventIds as number[]),
-    );
+    return this._getDataLoader<number, number>(async (eventIds) => {
+      const events = (await this.eventRepository
+        .createQueryBuilder('event')
+        .loadRelationCountAndMap(
+          'event.goingCount',
+          'event.attendees',
+          'eventAttendee',
+          (qb) =>
+            qb.where('eventAttendee.status = :status', {
+              status: EventAttendeeStatus.Going,
+            }),
+        )
+        .select(['event.id'])
+        .whereInIds(eventIds)
+        .getMany()) as EventWithGoingCount[];
+
+      return eventIds.map((id) => {
+        const event = events.find((event: Event) => event.id === id);
+        if (!event) {
+          return new Error(`Could not load going count for event: ${id}`);
+        }
+        return event.goingCount;
+      });
+    });
   }
 }

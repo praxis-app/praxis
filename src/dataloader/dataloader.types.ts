@@ -7,6 +7,9 @@ import { Like } from '../likes/models/like.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
+import { GroupRole } from '../groups/group-roles/models/group-role.model';
+import { ServerRole } from '../server-roles/models/server-role.model';
+import { Proposal } from '../proposals/models/proposal.model';
 
 export interface IsLikedByMeKey {
   currentUserId: number;
@@ -67,3 +70,15 @@ export interface Dataloaders {
   interestedCountLoader: DataLoader<number, number>;
   goingCountLoader: DataLoader<number, number>;
 }
+
+export type ProposalWithVoteCount = Proposal & { voteCount: number };
+export type ServerRoleWithMemberCount = ServerRole & { memberCount: number };
+
+export type EventWithInterestedCount = Event & { interestedCount: number };
+export type EventWithGoingCount = Event & { goingCount: number };
+
+export type GroupWithMemberCount = Group & { memberCount: number };
+export type GroupRoleWithMemberCount = GroupRole & { memberCount: number };
+export type GroupWithMemberRequestCount = Group & {
+  memberRequestCount: number;
+};

@@ -92,11 +92,11 @@ export class ProposalActionsService {
     return groupCoverPhoto;
   }
 
-  async getProposalActionsBatch(proposalIds: number[]) {
+  async getProposalActionsBatch(proposalActionIds: number[]) {
     const proposalActions = await this.getProposalActions({
-      proposalId: In(proposalIds),
+      proposalId: In(proposalActionIds),
     });
-    return proposalIds.map(
+    return proposalActionIds.map(
       (id) =>
         proposalActions.find(
           (proposalAction: ProposalAction) => proposalAction.id === id,
