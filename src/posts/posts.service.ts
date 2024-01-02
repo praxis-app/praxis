@@ -1,21 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
 import { sanitizeText } from '../common/common.utils';
-import { IsLikedByMeKey } from '../dataloader/dataloader.types';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
-import { Like } from '../likes/models/like.model';
 import { User } from '../users/models/user.model';
 import { CreatePostInput } from './models/create-post.input';
 import { Post } from './models/post.model';
 import { UpdatePostInput } from './models/update-post.input';
-
-type PostWithLikeCount = Post & { likeCount: number };
-type PostWithCommentCount = Post & { commentCount: number };
 
 @Injectable()
 export class PostsService {
@@ -25,9 +20,6 @@ export class PostsService {
 
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
-
-    @InjectRepository(Like)
-    private likeRepository: Repository<Like>,
   ) {}
 
   async getPost(id: number, relations?: string[]) {
@@ -57,77 +49,6 @@ export class PostsService {
       image.post?.group?.config.privacy === GroupPrivacy.Public ||
       image.post?.event?.group?.config.privacy === GroupPrivacy.Public
     );
-  }
-
-  async getPostImagesBatch(postIds: number[]) {
-    const images = await this.imageRepository.find({
-      where: { postId: In(postIds) },
-    });
-    return postIds.map(
-      (id) =>
-        images.filter((image: Image) => image.postId === id) ||
-        new Error(`Could not load images for post: ${id}`),
-    );
-  }
-
-  async getPostLikesBatch(postIds: number[]) {
-    const likes = await this.likeRepository.find({
-      where: { postId: In(postIds) },
-    });
-    return postIds.map(
-      (id) =>
-        likes.filter((like: Like) => like.postId === id) ||
-        new Error(`Could not load likes for post: ${id}`),
-    );
-  }
-
-  async getIsLikedByMeBatch(keys: IsLikedByMeKey[]) {
-    const postIds = keys.map(({ postId }) => postId);
-    const likes = await this.likeRepository.find({
-      where: {
-        postId: In(postIds),
-        userId: keys[0].currentUserId,
-      },
-    });
-    return postIds.map((postId) =>
-      likes.some((like: Like) => like.postId === postId),
-    );
-  }
-
-  async getLikesCountBatch(postIds: number[]) {
-    const posts = (await this.postRepository
-      .createQueryBuilder('post')
-      .leftJoinAndSelect('post.likes', 'like')
-      .loadRelationCountAndMap('post.likeCount', 'post.likes')
-      .select(['post.id'])
-      .whereInIds(postIds)
-      .getMany()) as PostWithLikeCount[];
-
-    return postIds.map((id) => {
-      const post = posts.find((post: Post) => post.id === id);
-      if (!post) {
-        return new Error(`Could not load like count for post: ${id}`);
-      }
-      return post.likeCount;
-    });
-  }
-
-  async getPostCommentCountBatch(postIds: number[]) {
-    const posts = (await this.postRepository
-      .createQueryBuilder('post')
-      .leftJoinAndSelect('post.comments', 'comment')
-      .loadRelationCountAndMap('post.commentCount', 'post.comments')
-      .select(['post.id'])
-      .whereInIds(postIds)
-      .getMany()) as PostWithCommentCount[];
-
-    return postIds.map((id) => {
-      const post = posts.find((post: Post) => post.id === id);
-      if (!post) {
-        return new Error(`Could not load comment count for post: ${id}`);
-      }
-      return post.commentCount;
-    });
   }
 
   async createPost({ images, body, ...postData }: CreatePostInput, user: User) {

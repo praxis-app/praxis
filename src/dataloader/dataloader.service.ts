@@ -17,10 +17,9 @@ import { Group } from '../groups/models/group.model';
 import { ImageTypes } from '../images/image.constants';
 import { Image } from '../images/models/image.model';
 import { Like } from '../likes/models/like.model';
-import { PostsService } from '../posts/posts.service';
+import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
-import { ProposalsService } from '../proposals/proposals.service';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
@@ -35,6 +34,9 @@ import {
   IsFollowedByMeKey,
   IsLikedByMeKey,
   MyGroupsKey,
+  PostWithCommentCount,
+  PostWithLikeCount,
+  ProposalWithCommentCount,
   ProposalWithVoteCount,
   ServerRoleWithMemberCount,
 } from './dataloader.types';
@@ -43,10 +45,19 @@ import {
 export class DataloaderService {
   constructor(
     @InjectRepository(Proposal)
-    private proposalsRepository: Repository<Proposal>,
+    private proposalRepository: Repository<Proposal>,
 
     @InjectRepository(ProposalAction)
     private proposalActionRepository: Repository<ProposalAction>,
+
+    @InjectRepository(Vote)
+    private voteRepository: Repository<Vote>,
+
+    @InjectRepository(Post)
+    private postRepository: Repository<Post>,
+
+    @InjectRepository(Like)
+    private likeRepository: Repository<Like>,
 
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
@@ -63,8 +74,6 @@ export class DataloaderService {
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
-    private postsService: PostsService,
-    private proposalsService: ProposalsService,
     private usersService: UsersService,
   ) {}
 
@@ -138,14 +147,22 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
 
   private _createProposalVotesLoader() {
-    return this._getDataLoader<number, Vote[]>(async (proposalIds) =>
-      this.proposalsService.getProposalVotesBatch(proposalIds as number[]),
-    );
+    return this._getDataLoader<number, Vote[]>(async (proposalIds) => {
+      const votes = await this.voteRepository.find({
+        where: { proposalId: In(proposalIds) },
+      });
+      const mappedVotes = proposalIds.map(
+        (id) =>
+          votes.filter((vote: Vote) => vote.proposalId === id) ||
+          new Error(`Could not load votes for proposal: ${id}`),
+      );
+      return mappedVotes;
+    });
   }
 
   private _createProposalVoteCountLoader() {
     return this._getDataLoader<number, number>(async (proposalIds) => {
-      const proposals = (await this.proposalsRepository
+      const proposals = (await this.proposalRepository
         .createQueryBuilder('proposal')
         .leftJoinAndSelect('proposal.votes', 'vote')
         .loadRelationCountAndMap('proposal.voteCount', 'proposal.votes')
@@ -166,9 +183,17 @@ export class DataloaderService {
   }
 
   private _createProposalImagesLoader() {
-    return this._getDataLoader<number, Image[]>(async (proposalIds) =>
-      this.proposalsService.getProposalImagesBatch(proposalIds as number[]),
-    );
+    return this._getDataLoader<number, Image[]>(async (proposalIds) => {
+      const images = await this.imageRepository.find({
+        where: { proposalId: In(proposalIds) },
+      });
+      const mappedImages = proposalIds.map(
+        (id) =>
+          images.filter((image: Image) => image.proposalId === id) ||
+          new Error(`Could not load images for proposal: ${id}`),
+      );
+      return mappedImages;
+    });
   }
 
   private _createProposalActionsLoader() {
@@ -188,11 +213,25 @@ export class DataloaderService {
   }
 
   private _createProposalCommentCountLoader() {
-    return this._getDataLoader<number, number>(async (proposalIds) =>
-      this.proposalsService.getProposalCommentCountBatch(
-        proposalIds as number[],
-      ),
-    );
+    return this._getDataLoader<number, number>(async (proposalIds) => {
+      const proposals = (await this.proposalRepository
+        .createQueryBuilder('proposal')
+        .leftJoinAndSelect('proposal.comments', 'comment')
+        .loadRelationCountAndMap('proposal.commentCount', 'proposal.comments')
+        .select(['proposal.id'])
+        .whereInIds(proposalIds)
+        .getMany()) as ProposalWithCommentCount[];
+
+      return proposalIds.map((id) => {
+        const proposal = proposals.find(
+          (proposal: Proposal) => proposal.id === id,
+        );
+        if (!proposal) {
+          return new Error(`Could not load comment count for proposal: ${id}`);
+        }
+        return proposal.commentCount;
+      });
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -201,34 +240,86 @@ export class DataloaderService {
 
   private _createIsPostLikedByMeLoader() {
     return this._getDataLoader<IsLikedByMeKey, boolean, number>(
-      async (keys) =>
-        this.postsService.getIsLikedByMeBatch(keys as IsLikedByMeKey[]),
+      async (keys) => {
+        const postIds = keys.map(({ postId }) => postId);
+        const likes = await this.likeRepository.find({
+          where: {
+            postId: In(postIds),
+            userId: keys[0].currentUserId,
+          },
+        });
+        return postIds.map((postId) =>
+          likes.some((like: Like) => like.postId === postId),
+        );
+      },
       { cacheKeyFn: (key) => key.postId },
     );
   }
 
   private _createPostImagesLoader() {
-    return this._getDataLoader<number, Image[]>(async (postIds) =>
-      this.postsService.getPostImagesBatch(postIds as number[]),
-    );
+    return this._getDataLoader<number, Image[]>(async (postIds) => {
+      const images = await this.imageRepository.find({
+        where: { postId: In(postIds) },
+      });
+      return postIds.map(
+        (id) =>
+          images.filter((image: Image) => image.postId === id) ||
+          new Error(`Could not load images for post: ${id}`),
+      );
+    });
   }
 
   private _createPostLikesLoader() {
-    return this._getDataLoader<number, Like[]>(async (postIds) =>
-      this.postsService.getPostLikesBatch(postIds as number[]),
-    );
+    return this._getDataLoader<number, Like[]>(async (postIds) => {
+      const likes = await this.likeRepository.find({
+        where: { postId: In(postIds) },
+      });
+      return postIds.map(
+        (id) =>
+          likes.filter((like: Like) => like.postId === id) ||
+          new Error(`Could not load likes for post: ${id}`),
+      );
+    });
   }
 
   private _createPostLikeCountLoader() {
-    return this._getDataLoader<number, number>(async (postIds) =>
-      this.postsService.getLikesCountBatch(postIds as number[]),
-    );
+    return this._getDataLoader<number, number>(async (postIds) => {
+      const posts = (await this.postRepository
+        .createQueryBuilder('post')
+        .leftJoinAndSelect('post.likes', 'like')
+        .loadRelationCountAndMap('post.likeCount', 'post.likes')
+        .select(['post.id'])
+        .whereInIds(postIds)
+        .getMany()) as PostWithLikeCount[];
+
+      return postIds.map((id) => {
+        const post = posts.find((post: Post) => post.id === id);
+        if (!post) {
+          return new Error(`Could not load like count for post: ${id}`);
+        }
+        return post.likeCount;
+      });
+    });
   }
 
   private _createPostCommentCountLoader() {
-    return this._getDataLoader<number, number>(async (postIds) =>
-      this.postsService.getPostCommentCountBatch(postIds as number[]),
-    );
+    return this._getDataLoader<number, number>(async (postIds) => {
+      const posts = (await this.postRepository
+        .createQueryBuilder('post')
+        .leftJoinAndSelect('post.comments', 'comment')
+        .loadRelationCountAndMap('post.commentCount', 'post.comments')
+        .select(['post.id'])
+        .whereInIds(postIds)
+        .getMany()) as PostWithCommentCount[];
+
+      return postIds.map((id) => {
+        const post = posts.find((post: Post) => post.id === id);
+        if (!post) {
+          return new Error(`Could not load comment count for post: ${id}`);
+        }
+        return post.commentCount;
+      });
+    });
   }
 
   // -------------------------------------------------------------------------

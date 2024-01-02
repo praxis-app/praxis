@@ -1,15 +1,16 @@
 import DataLoader from 'dataloader';
 import { Event } from '../events/models/event.model';
 import { GroupPermissions } from '../groups/group-roles/models/group-permissions.type';
+import { GroupRole } from '../groups/group-roles/models/group-role.model';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
 import { Like } from '../likes/models/like.model';
+import { Post } from '../posts/models/post.model';
+import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
+import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
-import { GroupRole } from '../groups/group-roles/models/group-role.model';
-import { ServerRole } from '../server-roles/models/server-role.model';
-import { Proposal } from '../proposals/models/proposal.model';
 
 export interface IsLikedByMeKey {
   currentUserId: number;
@@ -71,8 +72,13 @@ export interface Dataloaders {
   goingCountLoader: DataLoader<number, number>;
 }
 
-export type ProposalWithVoteCount = Proposal & { voteCount: number };
 export type ServerRoleWithMemberCount = ServerRole & { memberCount: number };
+
+export type ProposalWithVoteCount = Proposal & { voteCount: number };
+export type ProposalWithCommentCount = Proposal & { commentCount: number };
+
+export type PostWithLikeCount = Post & { likeCount: number };
+export type PostWithCommentCount = Post & { commentCount: number };
 
 export type EventWithInterestedCount = Event & { interestedCount: number };
 export type EventWithGoingCount = Event & { goingCount: number };
