@@ -20,14 +20,15 @@ import {
 } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
 import { Post } from '../posts/models/post.model';
-import { EventAttendeesService } from './event-attendees/event-attendees.service';
+import { CreateEventAttendeeInput } from './models/create-event-attendee.input';
+import { CreateEventInput } from './models/create-event.input';
 import {
   EventAttendee,
   EventAttendeeStatus,
-} from './event-attendees/models/event-attendee.model';
-import { CreateEventInput } from './models/create-event.input';
+} from './models/event-attendee.model';
 import { Event } from './models/event.model';
 import { EventTimeFrame, EventsInput } from './models/events.input';
+import { UpdateEventAttendeeInput } from './models/update-event-attendee.input';
 import { UpdateEventInput } from './models/update-event.input';
 
 type EventWithInterestedCount = Event & { interestedCount: number };
@@ -47,8 +48,6 @@ export class EventsService {
 
     @InjectRepository(Post)
     private postRepository: Repository<Post>,
-
-    private eventAttendeesService: EventAttendeesService,
   ) {}
 
   async getEvent(where: FindOptionsWhere<Event>, relations?: string[]) {
@@ -100,7 +99,7 @@ export class EventsService {
   }
 
   async getAttendingStatus(id: number, userId: number) {
-    const eventAttendee = await this.eventAttendeesService.getEventAttendee({
+    const eventAttendee = await this.getEventAttendee({
       eventId: id,
       userId,
     });
@@ -108,7 +107,7 @@ export class EventsService {
   }
 
   async getEventHost(id: number) {
-    const eventAttendee = await this.eventAttendeesService.getEventAttendee(
+    const eventAttendee = await this.getEventAttendee(
       { status: EventAttendeeStatus.Host, eventId: id },
       ['user'],
     );
@@ -300,6 +299,54 @@ export class EventsService {
 
   async deleteEvent(id: number) {
     await this.eventRepository.delete(id);
+    return true;
+  }
+
+  async getEventAttendee(
+    where: FindOptionsWhere<EventAttendee>,
+    relations?: string[],
+  ) {
+    return this.eventAttendeeRepository.findOne({ where, relations });
+  }
+
+  async getEventAttendees(
+    where?: FindOptionsWhere<EventAttendee>,
+    relations?: string[],
+  ) {
+    return this.eventAttendeeRepository.find({
+      order: { updatedAt: 'DESC' },
+      relations,
+      where,
+    });
+  }
+
+  async createEventAttendee(
+    eventAttendeeData: CreateEventAttendeeInput,
+    userId: number,
+  ) {
+    const eventAttendee = await this.eventAttendeeRepository.save({
+      ...eventAttendeeData,
+      userId,
+    });
+    const event = await this.eventRepository.findOne({
+      where: { id: eventAttendee.eventId },
+    });
+    return { event };
+  }
+
+  async updateEventAttendee(
+    { eventId, ...eventData }: UpdateEventAttendeeInput,
+    userId: number,
+  ) {
+    await this.eventAttendeeRepository.update({ eventId, userId }, eventData);
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
+    return { event };
+  }
+
+  async deleteEventAttendee(eventId: number, userId: number) {
+    await this.eventAttendeeRepository.delete({ eventId, userId });
     return true;
   }
 }

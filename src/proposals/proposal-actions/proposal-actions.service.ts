@@ -6,7 +6,7 @@ import { FindOptionsWhere, In, Repository } from 'typeorm';
 import {
   EventAttendee,
   EventAttendeeStatus,
-} from '../../events/event-attendees/models/event-attendee.model';
+} from '../../events/models/event-attendee.model';
 import { Event } from '../../events/models/event.model';
 import { GroupRolesService } from '../../groups/group-roles/group-roles.service';
 import { GroupsService } from '../../groups/groups.service';

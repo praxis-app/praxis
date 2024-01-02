@@ -12,9 +12,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Comment } from '../../comments/models/comment.model';
-import { EventAttendee } from '../../events/event-attendees/models/event-attendee.model';
-import { GroupMemberRequest } from '../../groups/models/group-member-request.model';
+import { EventAttendee } from '../../events/models/event-attendee.model';
 import { GroupRole } from '../../groups/group-roles/models/group-role.model';
+import { GroupMemberRequest } from '../../groups/models/group-member-request.model';
 import { Group } from '../../groups/models/group.model';
 import { Image } from '../../images/models/image.model';
 import { Like } from '../../likes/models/like.model';

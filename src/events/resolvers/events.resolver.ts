@@ -8,28 +8,24 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { Dataloaders } from '../dataloader/dataloader.types';
-import { Group } from '../groups/models/group.model';
-import { Image } from '../images/models/image.model';
-import { PostsConnection } from '../posts/models/posts.connection';
-import { User } from '../users/models/user.model';
-import { EventAttendeesService } from './event-attendees/event-attendees.service';
-import { EventAttendee } from './event-attendees/models/event-attendee.model';
-import { EventsService } from './events.service';
-import { CreateEventInput } from './models/create-event.input';
-import { CreateEventPayload } from './models/create-event.payload';
-import { Event } from './models/event.model';
-import { EventsInput } from './models/events.input';
-import { UpdateEventInput } from './models/update-event.input';
-import { UpdateEventPayload } from './models/update-event.payload';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { Dataloaders } from '../../dataloader/dataloader.types';
+import { Group } from '../../groups/models/group.model';
+import { Image } from '../../images/models/image.model';
+import { PostsConnection } from '../../posts/models/posts.connection';
+import { User } from '../../users/models/user.model';
+import { EventsService } from '../events.service';
+import { CreateEventInput } from '../models/create-event.input';
+import { CreateEventPayload } from '../models/create-event.payload';
+import { EventAttendee } from '../models/event-attendee.model';
+import { Event } from '../models/event.model';
+import { EventsInput } from '../models/events.input';
+import { UpdateEventInput } from '../models/update-event.input';
+import { UpdateEventPayload } from '../models/update-event.payload';
 
 @Resolver(() => Event)
 export class EventsResolver {
-  constructor(
-    private eventsService: EventsService,
-    private eventAttendeesService: EventAttendeesService,
-  ) {}
+  constructor(private eventsService: EventsService) {}
 
   @Query(() => Event)
   async event(@Args('id', { type: () => Int, nullable: true }) id: number) {
@@ -46,7 +42,7 @@ export class EventsResolver {
 
   @ResolveField(() => [EventAttendee])
   async attendees(@Parent() { id }: Event) {
-    return this.eventAttendeesService.getEventAttendees({ eventId: id });
+    return this.eventsService.getEventAttendees({ eventId: id });
   }
 
   @ResolveField(() => Int)

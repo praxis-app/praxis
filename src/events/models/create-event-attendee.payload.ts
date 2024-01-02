@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Event } from '../../models/event.model';
+import { Event } from './event.model';
 
 @ObjectType()
-export class UpdateEventAttendeePayload {
+export class CreateEventAttendeePayload {
   @Field()
   event: Event;
 }

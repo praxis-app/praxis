@@ -10,16 +10,16 @@ import {
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { Dataloaders } from '../../dataloader/dataloader.types';
 import { User } from '../../users/models/user.model';
-import { EventAttendeesService } from './event-attendees.service';
-import { CreateEventAttendeeInput } from './models/create-event-attendee.input';
-import { CreateEventAttendeePayload } from './models/create-event-attendee.payload';
-import { EventAttendee } from './models/event-attendee.model';
-import { UpdateEventAttendeeInput } from './models/update-event-attendee.input';
-import { UpdateEventAttendeePayload } from './models/update-event-attendee.payload';
+import { EventsService } from '../events.service';
+import { CreateEventAttendeeInput } from '../models/create-event-attendee.input';
+import { CreateEventAttendeePayload } from '../models/create-event-attendee.payload';
+import { EventAttendee } from '../models/event-attendee.model';
+import { UpdateEventAttendeeInput } from '../models/update-event-attendee.input';
+import { UpdateEventAttendeePayload } from '../models/update-event-attendee.payload';
 
 @Resolver(() => EventAttendee)
 export class EventAttendeesResolver {
-  constructor(private eventAttendeesService: EventAttendeesService) {}
+  constructor(private eventsService: EventsService) {}
 
   @ResolveField(() => User)
   async user(
@@ -34,7 +34,7 @@ export class EventAttendeesResolver {
     @Args('eventAttendeeData') eventData: CreateEventAttendeeInput,
     @CurrentUser() { id }: User,
   ) {
-    return this.eventAttendeesService.createEventAttendee(eventData, id);
+    return this.eventsService.createEventAttendee(eventData, id);
   }
 
   @Mutation(() => UpdateEventAttendeePayload)
@@ -42,7 +42,7 @@ export class EventAttendeesResolver {
     @Args('eventAttendeeData') eventData: UpdateEventAttendeeInput,
     @CurrentUser() { id }: User,
   ) {
-    return this.eventAttendeesService.updateEventAttendee(eventData, id);
+    return this.eventsService.updateEventAttendee(eventData, id);
   }
 
   @Mutation(() => Boolean)
@@ -50,6 +50,6 @@ export class EventAttendeesResolver {
     @Args('eventId', { type: () => Int }) eventId: number,
     @CurrentUser() { id }: User,
   ) {
-    return this.eventAttendeesService.deleteEventAttendee(eventId, id);
+    return this.eventsService.deleteEventAttendee(eventId, id);
   }
 }
