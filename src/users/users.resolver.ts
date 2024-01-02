@@ -1,4 +1,3 @@
-import { UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Context,
@@ -15,7 +14,6 @@ import { FeedItemsConnection } from '../common/models/feed-items.connection';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
-import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { FollowUserPayload } from './models/follow-user.payload';
 import { UpdateUserInput } from './models/update-user.input';
@@ -29,7 +27,6 @@ export class UsersResolver {
   constructor(private usersService: UsersService) {}
 
   @Query(() => User)
-  @UseInterceptors(SynchronizeProposalsInterceptor)
   me(@CurrentUser() { id }: User) {
     return this.usersService.getUser({ id });
   }
@@ -61,7 +58,6 @@ export class UsersResolver {
   }
 
   @ResolveField(() => FeedItemsConnection)
-  @UseInterceptors(SynchronizeProposalsInterceptor)
   async homeFeed(
     @Parent() { id }: User,
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,

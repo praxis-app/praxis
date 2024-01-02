@@ -15,40 +15,6 @@ type ServerConfig {
   showCanaryStatement: Boolean!
 }
 
-type Like {
-  id: Int!
-  post: Post
-  comment: Comment
-  user: User!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type Post {
-  id: Int!
-  body: String
-  images: [Image!]!
-  comments: [Comment!]!
-  likes: [Like!]!
-  user: User!
-  group: Group
-  event: Event
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  commentCount: Int!
-  likesCount: Int!
-  isLikedByMe: Boolean!
-}
-
-type Vote {
-  id: Int!
-  voteType: String!
-  proposal: Proposal!
-  user: User!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type EventAttendee {
   id: Int!
   status: String!
@@ -101,31 +67,18 @@ type ProposalActionGroupConfig {
   proposalAction: ProposalAction!
 }
 
-type GroupRolePermission {
+type ProposalAction {
   id: Int!
-  manageRoles: Boolean!
-  manageSettings: Boolean!
-  managePosts: Boolean!
-  manageComments: Boolean!
-  manageEvents: Boolean!
-  updateGroup: Boolean!
-  deleteGroup: Boolean!
-  createEvents: Boolean!
-  approveMemberRequests: Boolean!
-  removeMembers: Boolean!
-  groupRole: GroupRole!
-}
-
-type GroupRole {
-  id: Int!
-  name: String!
-  color: String!
-  members: [User!]!
-  group: Group!
-  proposalActionRoles: [ProposalActionRole!]!
-  permissions: GroupRolePermission!
-  memberCount: Int!
-  availableUsersToAdd: [User!]!
+  actionType: String!
+  groupName: String
+  groupDescription: String
+  role: ProposalActionRole
+  event: ProposalActionEvent
+  proposal: Proposal!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  groupSettings: ProposalActionGroupConfig
+  groupCoverPhoto: Image
 }
 
 type ProposalActionPermission {
@@ -164,62 +117,31 @@ type ProposalActionRole {
   permissions: ProposalActionPermission!
 }
 
-type ProposalAction {
+type GroupRolePermission {
   id: Int!
-  actionType: String!
-  groupName: String
-  groupDescription: String
-  role: ProposalActionRole
-  event: ProposalActionEvent
-  proposal: Proposal!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  groupSettings: ProposalActionGroupConfig
-  groupCoverPhoto: Image
+  manageRoles: Boolean!
+  manageSettings: Boolean!
+  managePosts: Boolean!
+  manageComments: Boolean!
+  manageEvents: Boolean!
+  updateGroup: Boolean!
+  deleteGroup: Boolean!
+  createEvents: Boolean!
+  approveMemberRequests: Boolean!
+  removeMembers: Boolean!
+  groupRole: GroupRole!
 }
 
-type ProposalConfig {
+type GroupRole {
   id: Int!
-  decisionMakingModel: String!
-  standAsidesLimit: Int!
-  reservationsLimit: Int!
-  ratificationThreshold: Int!
-  closingAt: DateTime
-  proposal: Proposal!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type Proposal {
-  id: Int!
-  body: String
-  stage: String!
-  action: ProposalAction!
-  votes: [Vote!]!
-  comments: [Comment!]!
-  images: [Image!]!
-  user: User!
-  group: Group
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  voteCount: Int!
-  commentCount: Int!
-  settings: ProposalConfig!
-}
-
-type GroupConfig {
-  id: Int!
-  adminModel: String!
-  decisionMakingModel: String!
-  standAsidesLimit: Int!
-  reservationsLimit: Int!
-  ratificationThreshold: Int!
-  votingTimeLimit: Int!
-  privacy: String!
+  name: String!
+  color: String!
+  members: [User!]!
   group: Group!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  isPublic: Boolean!
+  proposalActionRoles: [ProposalActionRole!]!
+  permissions: GroupRolePermission!
+  memberCount: Int!
+  availableUsersToAdd: [User!]!
 }
 
 type GroupMemberRequest {
@@ -230,72 +152,13 @@ type GroupMemberRequest {
   updatedAt: DateTime!
 }
 
-type Group {
+type ServerInvite {
   id: Int!
-  name: String!
-  description: String!
-  members: [User!]!
-  memberRequests: [GroupMemberRequest!]
-  roles: [GroupRole!]!
-  coverPhoto: Image
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  feed(offset: Int, limit: Int): FeedItemsConnection!
-  memberCount: Int!
-  memberRequestCount: Int
-  isJoinedByMe: Boolean!
-  futureEvents: [Event!]!
-  pastEvents: [Event!]!
-  myPermissions: GroupPermissions!
-  settings: GroupConfig!
-}
-
-type Event {
-  id: Int!
-  name: String!
-  description: String!
-  location: String
-  online: Boolean!
-  externalLink: String
-  attendees: [EventAttendee!]!
-  images: [Image!]!
-  group: Group
-  startsAt: DateTime!
-  endsAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  interestedCount: Int!
-  goingCount: Int!
-  attendingStatus: String
-  host: User!
-  posts(offset: Int, limit: Int): PostsConnection!
-  coverPhoto: Image!
-}
-
-type Image {
-  id: Int!
-  filename: String!
-  imageType: String!
-  post: Post
-  comment: Comment
-  user: User
-  group: Group
-  event: Event
-  proposal: Proposal
-  proposalAction: ProposalAction
-  proposalActionEvent: ProposalActionEvent
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type Comment {
-  id: Int!
-  body: String
-  images: [Image!]!
-  likes: [Like!]!
-  post: Post
-  proposal: Proposal
+  token: String!
+  uses: Int!
+  maxUses: Int
   user: User!
+  expiresAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -349,27 +212,152 @@ type User {
   serverPermissions: ServerPermissions!
 }
 
-type ServerInvite {
+type Vote {
   id: Int!
-  token: String!
-  uses: Int!
-  maxUses: Int
+  voteType: String!
+  proposal: Proposal!
   user: User!
-  expiresAt: DateTime
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
-type CreateServerInvitePayload {
-  serverInvite: ServerInvite!
+type ProposalConfig {
+  id: Int!
+  decisionMakingModel: String!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
+  closingAt: DateTime
+  proposal: Proposal!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
-type CreatePostPayload {
-  post: Post!
+type Proposal {
+  id: Int!
+  body: String
+  stage: String!
+  action: ProposalAction!
+  votes: [Vote!]!
+  comments: [Comment!]!
+  images: [Image!]!
+  user: User!
+  group: Group
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  voteCount: Int!
+  commentCount: Int!
+  settings: ProposalConfig!
 }
 
-type UpdatePostPayload {
-  post: Post!
+type GroupConfig {
+  id: Int!
+  adminModel: String!
+  decisionMakingModel: String!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
+  votingTimeLimit: Int!
+  privacy: String!
+  group: Group!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isPublic: Boolean!
+}
+
+type Group {
+  id: Int!
+  name: String!
+  description: String!
+  members: [User!]!
+  memberRequests: [GroupMemberRequest!]
+  roles: [GroupRole!]!
+  coverPhoto: Image
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  feed(offset: Int, limit: Int): FeedItemsConnection!
+  memberCount: Int!
+  memberRequestCount: Int
+  isJoinedByMe: Boolean!
+  futureEvents: [Event!]!
+  pastEvents: [Event!]!
+  myPermissions: GroupPermissions!
+  settings: GroupConfig!
+}
+
+type Event {
+  id: Int!
+  name: String!
+  description: String!
+  location: String
+  online: Boolean!
+  externalLink: String
+  attendees: [EventAttendee!]!
+  images: [Image!]!
+  group: Group
+  startsAt: DateTime!
+  endsAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  interestedCount: Int!
+  goingCount: Int!
+  attendingStatus: String
+  host: User!
+  posts(offset: Int, limit: Int): PostsConnection!
+  coverPhoto: Image!
+}
+
+type Post {
+  id: Int!
+  body: String
+  images: [Image!]!
+  comments: [Comment!]!
+  likes: [Like!]!
+  user: User!
+  group: Group
+  event: Event
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  commentCount: Int!
+  likesCount: Int!
+  isLikedByMe: Boolean!
+}
+
+type Like {
+  id: Int!
+  post: Post
+  comment: Comment
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Comment {
+  id: Int!
+  body: String
+  images: [Image!]!
+  likes: [Like!]!
+  post: Post
+  proposal: Proposal
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Image {
+  id: Int!
+  filename: String!
+  imageType: String!
+  post: Post
+  comment: Comment
+  user: User
+  group: Group
+  event: Event
+  proposal: Proposal
+  proposalAction: ProposalAction
+  proposalActionEvent: ProposalActionEvent
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type CreateEventAttendeePayload {
@@ -391,6 +379,62 @@ type CreateEventPayload {
 
 type UpdateEventPayload {
   event: Event!
+}
+
+type CreatePostPayload {
+  post: Post!
+}
+
+type UpdatePostPayload {
+  post: Post!
+}
+
+type CreateServerRolePayload {
+  serverRole: ServerRole!
+}
+
+type DeleteServerRoleMemberPayload {
+  serverRole: ServerRole!
+  me: User!
+}
+
+type UpdateServerRolePayload {
+  serverRole: ServerRole!
+  me: User!
+}
+
+type FeedItemsConnection {
+  nodes: [FeedItem!]!
+  totalCount: Int!
+}
+
+union FeedItem = Post | Proposal
+
+type ServerPermissions {
+  manageRoles: Boolean!
+  managePosts: Boolean!
+  manageComments: Boolean!
+  manageEvents: Boolean!
+  manageSettings: Boolean!
+  manageInvites: Boolean!
+  createInvites: Boolean!
+  removeMembers: Boolean!
+  removeGroups: Boolean!
+  removeProposals: Boolean!
+}
+
+type FollowUserPayload {
+  followedUser: User!
+  follower: User!
+}
+
+type UpdateUserPayload {
+  user: User!
+}
+
+type UsersConnection {
+  nodes: [User!]!
+  totalCount: Int!
 }
 
 type CreateGroupRolePayload {
@@ -416,13 +460,6 @@ type ApproveGroupMemberRequestPayload {
 type CreateGroupMemberRequestPayload {
   groupMemberRequest: GroupMemberRequest!
 }
-
-type FeedItemsConnection {
-  nodes: [FeedItem!]!
-  totalCount: Int!
-}
-
-union FeedItem = Post | Proposal
 
 type GroupPermissions {
   manageRoles: Boolean!
@@ -463,45 +500,8 @@ type UpdateProposalPayload {
   proposal: Proposal!
 }
 
-type CreateServerRolePayload {
-  serverRole: ServerRole!
-}
-
-type DeleteServerRoleMemberPayload {
-  serverRole: ServerRole!
-  me: User!
-}
-
-type UpdateServerRolePayload {
-  serverRole: ServerRole!
-  me: User!
-}
-
-type ServerPermissions {
-  manageRoles: Boolean!
-  managePosts: Boolean!
-  manageComments: Boolean!
-  manageEvents: Boolean!
-  manageSettings: Boolean!
-  manageInvites: Boolean!
-  createInvites: Boolean!
-  removeMembers: Boolean!
-  removeGroups: Boolean!
-  removeProposals: Boolean!
-}
-
-type FollowUserPayload {
-  followedUser: User!
-  follower: User!
-}
-
-type UpdateUserPayload {
-  user: User!
-}
-
-type UsersConnection {
-  nodes: [User!]!
-  totalCount: Int!
+type CreateServerInvitePayload {
+  serverInvite: ServerInvite!
 }
 
 type AuthPayload {
@@ -535,15 +535,6 @@ type CreateLikePayload {
 
 type Query {
   authCheck: Boolean!
-  serverInvite(token: String!): ServerInvite!
-  serverInvites: [ServerInvite!]!
-  me: User!
-  user(id: Int, name: String): User!
-  users(offset: Int, limit: Int): UsersConnection!
-  usersByIds(ids: [Int!]!): [User!]!
-  isFirstUser: Boolean!
-  serverRole(id: Int!): ServerRole!
-  serverRoles: [ServerRole!]!
   proposal(id: Int!): Proposal!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   group(id: Int, name: String): Group!
@@ -551,10 +542,19 @@ type Query {
   publicGroups(offset: Int, limit: Int): PublicGroupsConnection!
   publicGroupsFeed(offset: Int, limit: Int): FeedItemsConnection!
   groupRole(id: Int!): GroupRole!
-  post(id: Int!): Post!
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
   groupRoles: [GroupRole!]!
+  me: User!
+  user(id: Int, name: String): User!
+  users(offset: Int, limit: Int): UsersConnection!
+  usersByIds(ids: [Int!]!): [User!]!
+  isFirstUser: Boolean!
+  serverRole(id: Int!): ServerRole!
+  serverRoles: [ServerRole!]!
+  post(id: Int!): Post!
+  serverInvite(token: String!): ServerInvite!
+  serverInvites: [ServerInvite!]!
   canary: Canary!
   publicCanary: Canary
   serverConfig: ServerConfig!
@@ -569,16 +569,6 @@ type Mutation {
   login(input: LoginInput!): AuthPayload!
   signUp(input: SignUpInput!): AuthPayload!
   logOut: Boolean!
-  createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
-  deleteServerInvite(id: Int!): Boolean!
-  updateUser(userData: UpdateUserInput!): UpdateUserPayload!
-  deleteUser(id: Int!): Boolean!
-  followUser(id: Int!): FollowUserPayload!
-  unfollowUser(id: Int!): Boolean!
-  createServerRole(serverRoleData: CreateServerRoleInput!): CreateServerRolePayload!
-  updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
-  deleteServerRole(id: Int!): Boolean!
-  deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   synchronizeProposal(id: Int!): SynchronizeProposalPayload!
@@ -592,9 +582,6 @@ type Mutation {
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
   deleteGroup(id: Int!): Boolean!
   leaveGroup(id: Int!): Boolean!
-  createPost(postData: CreatePostInput!): CreatePostPayload!
-  updatePost(postData: UpdatePostInput!): UpdatePostPayload!
-  deletePost(id: Int!): Boolean!
   createEvent(eventData: CreateEventInput!): CreateEventPayload!
   updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
   deleteEvent(id: Int!): Boolean!
@@ -605,6 +592,19 @@ type Mutation {
   updateGroupRole(groupRoleData: UpdateGroupRoleInput!): UpdateGroupRolePayload!
   deleteGroupRole(id: Int!): Boolean!
   deleteGroupRoleMember(groupRoleMemberData: DeleteGroupRoleMemberInput!): DeleteGroupRoleMemberPayload!
+  updateUser(userData: UpdateUserInput!): UpdateUserPayload!
+  deleteUser(id: Int!): Boolean!
+  followUser(id: Int!): FollowUserPayload!
+  unfollowUser(id: Int!): Boolean!
+  createServerRole(serverRoleData: CreateServerRoleInput!): CreateServerRolePayload!
+  updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
+  deleteServerRole(id: Int!): Boolean!
+  deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
+  createPost(postData: CreatePostInput!): CreatePostPayload!
+  updatePost(postData: UpdatePostInput!): UpdatePostPayload!
+  deletePost(id: Int!): Boolean!
+  createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
+  deleteServerInvite(id: Int!): Boolean!
   createComment(commentData: CreateCommentInput!): CreateCommentPayload!
   updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
   deleteComment(id: Int!): Boolean!
@@ -633,50 +633,6 @@ input SignUpInput {
 
 """The `Upload` scalar type represents a file upload."""
 scalar Upload
-
-input CreateServerInviteInput {
-  maxUses: Int
-  expiresAt: DateTime
-}
-
-input UpdateUserInput {
-  id: Int!
-  name: String!
-  bio: String!
-  profilePicture: Upload
-  coverPhoto: Upload
-}
-
-input CreateServerRoleInput {
-  name: String!
-  color: String!
-}
-
-input UpdateServerRoleInput {
-  id: Int!
-  name: String
-  color: String
-  selectedUserIds: [Int!]
-  permissions: ServerRolePermissionInput
-}
-
-input ServerRolePermissionInput {
-  manageRoles: Boolean
-  managePosts: Boolean
-  manageComments: Boolean
-  manageEvents: Boolean
-  manageSettings: Boolean
-  manageInvites: Boolean
-  createInvites: Boolean
-  removeGroups: Boolean
-  removeMembers: Boolean
-  removeProposals: Boolean
-}
-
-input DeleteServerRoleMemberInput {
-  serverRoleId: Int!
-  userId: Int!
-}
 
 input CreateProposalInput {
   groupId: Int
@@ -775,19 +731,6 @@ input UpdateGroupInput {
   coverPhoto: Upload
 }
 
-input CreatePostInput {
-  groupId: Int
-  eventId: Int
-  body: String
-  images: [Upload!]
-}
-
-input UpdatePostInput {
-  id: Int!
-  body: String
-  images: [Upload!]
-}
-
 input CreateEventInput {
   name: String!
   description: String!
@@ -841,6 +784,63 @@ input UpdateGroupRoleInput {
 input DeleteGroupRoleMemberInput {
   groupRoleId: Int!
   userId: Int!
+}
+
+input UpdateUserInput {
+  id: Int!
+  name: String!
+  bio: String!
+  profilePicture: Upload
+  coverPhoto: Upload
+}
+
+input CreateServerRoleInput {
+  name: String!
+  color: String!
+}
+
+input UpdateServerRoleInput {
+  id: Int!
+  name: String
+  color: String
+  selectedUserIds: [Int!]
+  permissions: ServerRolePermissionInput
+}
+
+input ServerRolePermissionInput {
+  manageRoles: Boolean
+  managePosts: Boolean
+  manageComments: Boolean
+  manageEvents: Boolean
+  manageSettings: Boolean
+  manageInvites: Boolean
+  createInvites: Boolean
+  removeGroups: Boolean
+  removeMembers: Boolean
+  removeProposals: Boolean
+}
+
+input DeleteServerRoleMemberInput {
+  serverRoleId: Int!
+  userId: Int!
+}
+
+input CreatePostInput {
+  groupId: Int
+  eventId: Int
+  body: String
+  images: [Upload!]
+}
+
+input UpdatePostInput {
+  id: Int!
+  body: String
+  images: [Upload!]
+}
+
+input CreateServerInviteInput {
+  maxUses: Int
+  expiresAt: DateTime
 }
 
 input CreateCommentInput {

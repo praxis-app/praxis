@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventsModule } from '../events/events.module';
 import { Image } from '../images/models/image.model';
@@ -15,9 +15,9 @@ import { GroupsResolver } from './resolvers/groups.resolver';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Group, GroupConfig, GroupMemberRequest, Image]),
-    forwardRef(() => UsersModule),
     EventsModule,
     GroupRolesModule,
+    UsersModule,
   ],
   providers: [
     GroupConfigsResolver,
