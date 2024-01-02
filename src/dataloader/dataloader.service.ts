@@ -133,7 +133,7 @@ export class DataloaderService {
    * Creates a new dataloader with the given batch function and options.
    *
    * Passing a custom batch schedule function enables dataloader to work
-   * with asyncronous middleware.
+   * with asynchronous middleware.
    *
    * Source: https://dev.to/tsirlucas/integrating-dataloader-with-concurrent-react-53h1
    */
