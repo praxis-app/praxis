@@ -7,7 +7,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, In, IsNull, Not, Repository } from 'typeorm';
+import { FindOptionsWhere, IsNull, Not, Repository } from 'typeorm';
 import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
 import { logTime, sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
@@ -28,8 +28,6 @@ import {
   ProposalActionType,
   ProposalStage,
 } from './proposals.constants';
-
-type ProposalWithCommentCount = Proposal & { commentCount: number };
 
 @Injectable()
 export class ProposalsService {
@@ -106,50 +104,6 @@ export class ProposalsService {
   async hasNoVotes(proposalId: number) {
     const votes = await this.voteRepository.find({ where: { proposalId } });
     return votes.length === 0;
-  }
-
-  async getProposalVotesBatch(proposalIds: number[]) {
-    const votes = await this.voteRepository.find({
-      where: { proposalId: In(proposalIds) },
-    });
-    const mappedVotes = proposalIds.map(
-      (id) =>
-        votes.filter((vote: Vote) => vote.proposalId === id) ||
-        new Error(`Could not load votes for proposal: ${id}`),
-    );
-    return mappedVotes;
-  }
-
-  async getProposalCommentCountBatch(proposalIds: number[]) {
-    const proposals = (await this.proposalRepository
-      .createQueryBuilder('proposal')
-      .leftJoinAndSelect('proposal.comments', 'comment')
-      .loadRelationCountAndMap('proposal.commentCount', 'proposal.comments')
-      .select(['proposal.id'])
-      .whereInIds(proposalIds)
-      .getMany()) as ProposalWithCommentCount[];
-
-    return proposalIds.map((id) => {
-      const proposal = proposals.find(
-        (proposal: Proposal) => proposal.id === id,
-      );
-      if (!proposal) {
-        return new Error(`Could not load comment count for proposal: ${id}`);
-      }
-      return proposal.commentCount;
-    });
-  }
-
-  async getProposalImagesBatch(proposalIds: number[]) {
-    const images = await this.imageRepository.find({
-      where: { proposalId: In(proposalIds) },
-    });
-    const mappedImages = proposalIds.map(
-      (id) =>
-        images.filter((image: Image) => image.proposalId === id) ||
-        new Error(`Could not load images for proposal: ${id}`),
-    );
-    return mappedImages;
   }
 
   async createProposal(

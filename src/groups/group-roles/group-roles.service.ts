@@ -14,8 +14,6 @@ import { GroupRolePermission } from './models/group-role-permission.model';
 import { GroupRole } from './models/group-role.model';
 import { UpdateGroupRoleInput } from './models/update-group-role.input';
 
-type GroupRoleWithMemberCount = GroupRole & { memberCount: number };
-
 @Injectable()
 export class GroupRolesService {
   constructor(
@@ -59,24 +57,6 @@ export class GroupRolesService {
     }
     return this.userRepository.find({
       where: { id: Not(In(userIds)) },
-    });
-  }
-
-  async getGroupRoleMemberCountBatch(roleIds: number[]) {
-    const roles = (await this.groupRoleRepository
-      .createQueryBuilder('role')
-      .leftJoinAndSelect('role.members', 'roleMember')
-      .loadRelationCountAndMap('role.memberCount', 'role.members')
-      .select(['role.id'])
-      .whereInIds(roleIds)
-      .getMany()) as GroupRoleWithMemberCount[];
-
-    return roleIds.map((id) => {
-      const role = roles.find((role: GroupRole) => role.id === id);
-      if (!role) {
-        return new Error(`Could not load role member count: ${id}`);
-      }
-      return role.memberCount;
     });
   }
 

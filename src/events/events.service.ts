@@ -4,7 +4,6 @@ import { FileUpload } from 'graphql-upload-ts';
 import {
   Between,
   FindOptionsWhere,
-  In,
   LessThan,
   MoreThan,
   Repository,
@@ -132,17 +131,6 @@ export class EventsService {
       image.proposalActionEvent?.proposalAction?.proposal?.group ||
       image.event?.group;
     return group?.config.privacy === GroupPrivacy.Public;
-  }
-
-  async getEventsBatch(eventIds: number[]) {
-    const events = await this.getEvents({
-      id: In(eventIds),
-    });
-    return eventIds.map(
-      (id) =>
-        events.find((event: Event) => event.id === id) ||
-        new Error(`Could not load event: ${id}`),
-    );
   }
 
   async createEvent({
