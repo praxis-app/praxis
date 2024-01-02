@@ -2,9 +2,8 @@ import { UserInputError } from '@nestjs/apollo';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { logTime, paginate, sanitizeText } from '../common/common.utils';
-import { IsFollowedByMeKey } from '../dataloader/dataloader.types';
 import { GroupPermissionsMap } from '../groups/group-roles/models/group-permissions.type';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { ImageTypes } from '../images/image.constants';
@@ -22,7 +21,6 @@ import { ServerRolesService } from '../server-roles/server-roles.service';
 import { initServerRolePermissions } from '../server-roles/server-roles.utils';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
-import { UserWithFollowerCount, UserWithFollowingCount } from './user.types';
 
 @Injectable()
 export class UsersService {
@@ -341,81 +339,6 @@ export class UsersService {
   async isUsersPost(postId: number, userId: number) {
     const post = await this.postsService.getPost(postId);
     return post.userId === userId;
-  }
-
-  async getUsersBatch(userIds: number[]) {
-    const users = await this.getUsers({
-      id: In(userIds),
-    });
-    return userIds.map(
-      (id) =>
-        users.find((user: User) => user.id === id) ||
-        new Error(`Could not load user: ${id}`),
-    );
-  }
-
-  async getProfilePicturesBatch(userIds: number[]) {
-    const profilePictures = await this.imageRepository.find({
-      where: { userId: In(userIds), imageType: ImageTypes.ProfilePicture },
-    });
-    return userIds.map(
-      (id) =>
-        profilePictures.find(
-          (profilePicture: Image) => profilePicture.userId === id,
-        ) || new Error(`Could not load profile picture: ${id}`),
-    );
-  }
-
-  async getFollowerCountBatch(userIds: number[]) {
-    const users = (await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.followers', 'follower')
-      .loadRelationCountAndMap('user.followerCount', 'user.followers')
-      .select(['user.id'])
-      .whereInIds(userIds)
-      .getMany()) as UserWithFollowerCount[];
-
-    return userIds.map((id) => {
-      const user = users.find((user: User) => user.id === id);
-      if (!user) {
-        return new Error(`Could not load followers count for user: ${id}`);
-      }
-      return user.followerCount;
-    });
-  }
-
-  async getFollowingCountBatch(userIds: number[]) {
-    const users = (await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.following', 'followed')
-      .loadRelationCountAndMap('user.followingCount', 'user.following')
-      .select(['user.id'])
-      .whereInIds(userIds)
-      .getMany()) as UserWithFollowingCount[];
-
-    return userIds.map((id) => {
-      const user = users.find((user: User) => user.id === id);
-      if (!user) {
-        return new Error(`Could not load following count for user: ${id}`);
-      }
-      return user.followingCount;
-    });
-  }
-
-  async getIsFollowedByMeBatch(keys: IsFollowedByMeKey[]) {
-    const followedUserIds = keys.map(({ followedUserId }) => followedUserId);
-    const user = await this.getUser({ id: keys[0].currentUserId }, [
-      'following',
-    ]);
-    if (!user) {
-      throw new UserInputError('User not found');
-    }
-
-    return followedUserIds.map((followedUserId) =>
-      user.following.some(
-        (followedUser: User) => followedUser.id === followedUserId,
-      ),
-    );
   }
 
   async createUser({ bio, ...userData }: Partial<User>) {

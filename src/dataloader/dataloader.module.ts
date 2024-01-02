@@ -1,28 +1,33 @@
 import { Module } from '@nestjs/common';
-import { CommentsModule } from '../comments/comments.module';
-import { EventsModule } from '../events/events.module';
-import { GroupRolesModule } from '../groups/group-roles/group-roles.module';
-import { GroupsModule } from '../groups/groups.module';
-import { PostsModule } from '../posts/posts.module';
-import { ProposalActionsModule } from '../proposals/proposal-actions/proposal-actions.module';
-import { ProposalsModule } from '../proposals/proposals.module';
-import { ServerRolesModule } from '../server-roles/server-roles.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Event } from '../events/models/event.model';
+import { GroupRole } from '../groups/group-roles/models/group-role.model';
+import { Group } from '../groups/models/group.model';
+import { Image } from '../images/models/image.model';
+import { Like } from '../likes/models/like.model';
+import { Post } from '../posts/models/post.model';
+import { Proposal } from '../proposals/models/proposal.model';
+import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
+import { ServerRole } from '../server-roles/models/server-role.model';
 import { UsersModule } from '../users/users.module';
-import { VotesModule } from '../votes/votes.module';
+import { Vote } from '../votes/models/vote.model';
 import { DataloaderService } from './dataloader.service';
 
 @Module({
   imports: [
-    CommentsModule,
-    EventsModule,
-    GroupRolesModule,
-    GroupsModule,
-    PostsModule,
-    ProposalActionsModule,
-    ProposalsModule,
-    ServerRolesModule,
+    TypeOrmModule.forFeature([
+      Event,
+      Group,
+      GroupRole,
+      Image,
+      Like,
+      Post,
+      Proposal,
+      ProposalAction,
+      ServerRole,
+      Vote,
+    ]),
     UsersModule,
-    VotesModule,
   ],
   providers: [DataloaderService],
   exports: [DataloaderService],

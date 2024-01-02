@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
 import { sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
@@ -52,17 +52,6 @@ export class CommentsService {
         GroupPrivacy.Public ||
       image.comment?.post?.group?.config.privacy === GroupPrivacy.Public ||
       image.comment?.proposal?.group?.config.privacy === GroupPrivacy.Public
-    );
-  }
-
-  async getCommentImagesBatch(commentIds: number[]) {
-    const images = await this.imageRepository.find({
-      where: { commentId: In(commentIds) },
-    });
-    return commentIds.map(
-      (id) =>
-        images.filter((image: Image) => image.commentId === id) ||
-        new Error(`Could not load images for comment: ${id}`),
     );
   }
 

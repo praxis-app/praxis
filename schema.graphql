@@ -521,16 +521,16 @@ type UpdateCommentPayload {
   comment: Comment!
 }
 
+type CreateLikePayload {
+  like: Like!
+}
+
 type CreateVotePayload {
   vote: Vote!
 }
 
 type UpdateVotePayload {
   vote: Vote!
-}
-
-type CreateLikePayload {
-  like: Like!
 }
 
 type Query {
@@ -608,13 +608,13 @@ type Mutation {
   createComment(commentData: CreateCommentInput!): CreateCommentPayload!
   updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
   deleteComment(id: Int!): Boolean!
-  createVote(voteData: CreateVoteInput!): CreateVotePayload!
-  updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
-  deleteVote(id: Int!): Boolean!
   deleteImage(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
+  createVote(voteData: CreateVoteInput!): CreateVotePayload!
+  updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
+  deleteVote(id: Int!): Boolean!
 }
 
 input LoginInput {
@@ -856,16 +856,6 @@ input UpdateCommentInput {
   images: [Upload!]
 }
 
-input CreateVoteInput {
-  proposalId: Int!
-  voteType: String!
-}
-
-input UpdateVoteInput {
-  id: Int!
-  voteType: String!
-}
-
 input UpdateServerConfigInput {
   id: Int!
   canaryStatement: String
@@ -879,6 +869,16 @@ input CreateLikeInput {
 
 input DeleteLikeInput {
   postId: Int
+}
+
+input CreateVoteInput {
+  proposalId: Int!
+  voteType: String!
+}
+
+input UpdateVoteInput {
+  id: Int!
+  voteType: String!
 }
 
 type Subscription {

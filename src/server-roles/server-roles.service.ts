@@ -8,8 +8,6 @@ import { UpdateServerRoleInput } from './models/update-server-role.input';
 import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from './server-roles.constants';
 import { initServerRolePermissions } from './server-roles.utils';
 
-type ServerRoleWithMemberCount = ServerRole & { memberCount: number };
-
 @Injectable()
 export class ServerRolesService {
   constructor(
@@ -48,24 +46,6 @@ export class ServerRolesService {
 
     return this.userRepository.find({
       where: { id: Not(In(userIds)) },
-    });
-  }
-
-  async getServerRoleMemberCountBatch(roleIds: number[]) {
-    const roles = (await this.serverRoleRepository
-      .createQueryBuilder('role')
-      .leftJoinAndSelect('role.members', 'roleMember')
-      .loadRelationCountAndMap('role.memberCount', 'role.members')
-      .select(['role.id'])
-      .whereInIds(roleIds)
-      .getMany()) as ServerRoleWithMemberCount[];
-
-    return roleIds.map((id) => {
-      const role = roles.find((role: ServerRole) => role.id === id);
-      if (!role) {
-        return new Error(`Could not load role member count: ${id}`);
-      }
-      return role.memberCount;
     });
   }
 

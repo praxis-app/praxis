@@ -2,7 +2,7 @@ import { UserInputError } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import {
   EventAttendee,
   EventAttendeeStatus,
@@ -90,18 +90,6 @@ export class ProposalActionsService {
       (image) => image.imageType === ImageTypes.CoverPhoto,
     );
     return groupCoverPhoto;
-  }
-
-  async getProposalActionsBatch(proposalIds: number[]) {
-    const proposalActions = await this.getProposalActions({
-      proposalId: In(proposalIds),
-    });
-    return proposalIds.map(
-      (id) =>
-        proposalActions.find(
-          (proposalAction: ProposalAction) => proposalAction.id === id,
-        ) || new Error(`Could not load proposal action: ${id}`),
-    );
   }
 
   async implementGroupEvent(proposalActionId: number, groupId: number) {
