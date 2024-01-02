@@ -74,6 +74,9 @@ export interface Dataloaders {
 
 export type ServerRoleWithMemberCount = ServerRole & { memberCount: number };
 
+export type UserWithFollowerCount = User & { followerCount: number };
+export type UserWithFollowingCount = User & { followingCount: number };
+
 export type ProposalWithVoteCount = Proposal & { voteCount: number };
 export type ProposalWithCommentCount = Proposal & { commentCount: number };
 

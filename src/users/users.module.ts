@@ -14,6 +14,6 @@ import { UsersService } from './users.service';
     PostsModule,
   ],
   providers: [UsersService, UsersResolver],
-  exports: [UsersService],
+  exports: [UsersService, TypeOrmModule],
 })
 export class UsersModule {}

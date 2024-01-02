@@ -39,11 +39,16 @@ import {
   ProposalWithCommentCount,
   ProposalWithVoteCount,
   ServerRoleWithMemberCount,
+  UserWithFollowerCount,
+  UserWithFollowingCount,
 } from './dataloader.types';
 
 @Injectable()
 export class DataloaderService {
   constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+
     @InjectRepository(Proposal)
     private proposalRepository: Repository<Proposal>,
 
@@ -462,35 +467,94 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
 
   private _createFollowerCountLoader() {
-    return this._getDataLoader<number, number>(async (userIds) =>
-      this.usersService.getFollowerCountBatch(userIds as number[]),
-    );
+    return this._getDataLoader<number, number>(async (userIds) => {
+      const users = (await this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.followers', 'follower')
+        .loadRelationCountAndMap('user.followerCount', 'user.followers')
+        .select(['user.id'])
+        .whereInIds(userIds)
+        .getMany()) as UserWithFollowerCount[];
+
+      return userIds.map((id) => {
+        const user = users.find((user: User) => user.id === id);
+        if (!user) {
+          return new Error(`Could not load followers count for user: ${id}`);
+        }
+        return user.followerCount;
+      });
+    });
   }
 
   private _createFollowingCountLoader() {
-    return this._getDataLoader<number, number>(async (userIds) =>
-      this.usersService.getFollowingCountBatch(userIds as number[]),
-    );
+    return this._getDataLoader<number, number>(async (userIds) => {
+      const users = (await this.userRepository
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.following', 'followed')
+        .loadRelationCountAndMap('user.followingCount', 'user.following')
+        .select(['user.id'])
+        .whereInIds(userIds)
+        .getMany()) as UserWithFollowingCount[];
+
+      return userIds.map((id) => {
+        const user = users.find((user: User) => user.id === id);
+        if (!user) {
+          return new Error(`Could not load following count for user: ${id}`);
+        }
+        return user.followingCount;
+      });
+    });
   }
 
   private _createIsFollowedByMeLoader() {
     return this._getDataLoader<IsFollowedByMeKey, boolean, number>(
-      async (keys) =>
-        this.usersService.getIsFollowedByMeBatch(keys as IsFollowedByMeKey[]),
+      async (keys) => {
+        const followedUserIds = keys.map(
+          ({ followedUserId }) => followedUserId,
+        );
+        const user = await this.userRepository.findOneOrFail({
+          where: { id: keys[0].currentUserId },
+          relations: ['following'],
+        });
+        if (!user) {
+          throw new Error('User not found');
+        }
+
+        return followedUserIds.map((followedUserId) =>
+          user.following.some(
+            (followedUser: User) => followedUser.id === followedUserId,
+          ),
+        );
+      },
       { cacheKeyFn: (key) => key.followedUserId },
     );
   }
 
   private _createUsersLoader() {
-    return this._getDataLoader<number, User>(async (userIds) =>
-      this.usersService.getUsersBatch(userIds as number[]),
-    );
+    return this._getDataLoader<number, User>(async (userIds) => {
+      const users = await this.userRepository.find({
+        where: { id: In(userIds) },
+      });
+      return userIds.map(
+        (id) =>
+          users.find((user: User) => user.id === id) ||
+          new Error(`Could not load user: ${id}`),
+      );
+    });
   }
 
   private _createProfilePicturesLoader() {
-    return this._getDataLoader<number, Image>(async (userIds) =>
-      this.usersService.getProfilePicturesBatch(userIds as number[]),
-    );
+    return this._getDataLoader<number, Image>(async (userIds) => {
+      const profilePictures = await this.imageRepository.find({
+        where: { userId: In(userIds), imageType: ImageTypes.ProfilePicture },
+      });
+      return userIds.map(
+        (id) =>
+          profilePictures.find(
+            (profilePicture: Image) => profilePicture.userId === id,
+          ) || new Error(`Could not load profile picture: ${id}`),
+      );
+    });
   }
 
   // -------------------------------------------------------------------------
