@@ -5,8 +5,8 @@ import { User } from '../users/models/user.model';
 import { ServerRolePermission } from './models/server-role-permission.model';
 import { ServerRole } from './models/server-role.model';
 import { UpdateServerRoleInput } from './models/update-server-role.input';
-import { initServerRolePermissions } from './server-role.utils';
 import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from './server-roles.constants';
+import { initServerRolePermissions } from './server-roles.utils';
 
 type ServerRoleWithMemberCount = ServerRole & { memberCount: number };
 
