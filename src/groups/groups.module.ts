@@ -1,28 +1,30 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventsModule } from '../events/events.module';
-import { ImagesModule } from '../images/images.module';
-import { ProposalsModule } from '../proposals/proposals.module';
+import { Image } from '../images/models/image.model';
 import { UsersModule } from '../users/users.module';
-import { GroupConfigsModule } from './group-configs/group-configs.module';
-import { GroupMemberRequestsModule } from './group-member-requests/group-member-requests.module';
 import { GroupRolesModule } from './group-roles/group-roles.module';
-import { GroupsResolver } from './groups.resolver';
 import { GroupsService } from './groups.service';
+import { GroupConfig } from './models/group-config.model';
+import { GroupMemberRequest } from './models/group-member-request.model';
 import { Group } from './models/group.model';
+import { GroupConfigsResolver } from './resolvers/group-configs.resolver';
+import { GroupMemberRequestsResolver } from './resolvers/group-member-requests.resolver';
+import { GroupsResolver } from './resolvers/groups.resolver';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Group]),
-    forwardRef(() => GroupConfigsModule),
-    forwardRef(() => GroupMemberRequestsModule),
-    forwardRef(() => ImagesModule),
-    forwardRef(() => ProposalsModule),
-    forwardRef(() => UsersModule),
+    TypeOrmModule.forFeature([Group, GroupConfig, GroupMemberRequest, Image]),
     EventsModule,
     GroupRolesModule,
+    UsersModule,
   ],
-  providers: [GroupsService, GroupsResolver],
+  providers: [
+    GroupConfigsResolver,
+    GroupMemberRequestsResolver,
+    GroupsResolver,
+    GroupsService,
+  ],
   exports: [GroupsService, TypeOrmModule],
 })
 export class GroupsModule {}

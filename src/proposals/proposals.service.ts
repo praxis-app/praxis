@@ -3,29 +3,25 @@
  * TODO: Add support for other voting models
  */
 
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, In, IsNull, Not, Repository } from 'typeorm';
-import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
+import { FindOptionsWhere, IsNull, Not, Repository } from 'typeorm';
+import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
+import { logTime, sanitizeText } from '../common/common.utils';
+import { GroupPrivacy } from '../groups/groups.constants';
 import { GroupsService } from '../groups/groups.service';
 import { ImageTypes } from '../images/image.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
-import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
-import { logTime, sanitizeText } from '../common/common.utils';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
-import { VotesService } from '../votes/votes.service';
 import { sortConsensusVotesByType } from '../votes/votes.utils';
 import { CreateProposalInput } from './models/create-proposal.input';
 import { ProposalConfig } from './models/proposal-config.model';
 import { Proposal } from './models/proposal.model';
 import { UpdateProposalInput } from './models/update-proposal.input';
-import { ProposalActionEventsService } from './proposal-actions/proposal-action-events/proposal-action-events.service';
-import { ProposalActionGroupConfigsService } from './proposal-actions/proposal-action-group-configs/proposal-action-group-configs.service';
-import { ProposalActionRolesService } from './proposal-actions/proposal-action-roles/proposal-action-roles.service';
 import { ProposalActionsService } from './proposal-actions/proposal-actions.service';
 import {
   DecisionMakingModel,
@@ -33,31 +29,26 @@ import {
   ProposalStage,
 } from './proposals.constants';
 
-type ProposalWithCommentCount = Proposal & { commentCount: number };
-
 @Injectable()
 export class ProposalsService {
   private readonly logger = new Logger(ProposalsService.name);
 
   constructor(
+    @Inject('PUB_SUB') private pubSub: PubSub,
+
     @InjectRepository(Proposal)
     private proposalRepository: Repository<Proposal>,
 
     @InjectRepository(ProposalConfig)
     private proposalConfigRepository: Repository<ProposalConfig>,
 
-    @Inject(forwardRef(() => VotesService))
-    private votesService: VotesService,
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
 
-    @Inject(forwardRef(() => ImagesService))
-    private imagesService: ImagesService,
-
-    @Inject('PUB_SUB') private pubSub: PubSub,
+    @InjectRepository(Vote)
+    private voteRepository: Repository<Vote>,
 
     private groupsService: GroupsService,
-    private proposalActionEventsService: ProposalActionEventsService,
-    private proposalActionGroupConfigsService: ProposalActionGroupConfigsService,
-    private proposalActionRolesService: ProposalActionRolesService,
     private proposalActionsService: ProposalActionsService,
   ) {}
 
@@ -95,58 +86,24 @@ export class ProposalsService {
     });
   }
 
+  async getProposalComments(proposalId: number) {
+    const { comments } = await this.getProposal(proposalId, ['comments']);
+
+    // TODO: Update once pagination has been implemented
+    return comments.slice(
+      comments.length - Math.min(comments.length, DEFAULT_PAGE_SIZE),
+      comments.length,
+    );
+  }
+
   async isOwnProposal(proposalId: number, userId: number) {
     const proposal = await this.getProposal(proposalId);
     return proposal.userId === userId;
   }
 
   async hasNoVotes(proposalId: number) {
-    const votes = await this.votesService.getVotes({ proposalId });
+    const votes = await this.voteRepository.find({ where: { proposalId } });
     return votes.length === 0;
-  }
-
-  async getProposalVotesBatch(proposalIds: number[]) {
-    const votes = await this.votesService.getVotes({
-      proposalId: In(proposalIds),
-    });
-    const mappedVotes = proposalIds.map(
-      (id) =>
-        votes.filter((vote: Vote) => vote.proposalId === id) ||
-        new Error(`Could not load votes for proposal: ${id}`),
-    );
-    return mappedVotes;
-  }
-
-  async getProposalCommentCountBatch(proposalIds: number[]) {
-    const proposals = (await this.proposalRepository
-      .createQueryBuilder('proposal')
-      .leftJoinAndSelect('proposal.comments', 'comment')
-      .loadRelationCountAndMap('proposal.commentCount', 'proposal.comments')
-      .select(['proposal.id'])
-      .whereInIds(proposalIds)
-      .getMany()) as ProposalWithCommentCount[];
-
-    return proposalIds.map((id) => {
-      const proposal = proposals.find(
-        (proposal: Proposal) => proposal.id === id,
-      );
-      if (!proposal) {
-        return new Error(`Could not load comment count for proposal: ${id}`);
-      }
-      return proposal.commentCount;
-    });
-  }
-
-  async getProposalImagesBatch(proposalIds: number[]) {
-    const images = await this.imagesService.getImages({
-      proposalId: In(proposalIds),
-    });
-    const mappedImages = proposalIds.map(
-      (id) =>
-        images.filter((image: Image) => image.proposalId === id) ||
-        new Error(`Could not load images for proposal: ${id}`),
-    );
-    return mappedImages;
   }
 
   async createProposal(
@@ -196,19 +153,19 @@ export class ProposalsService {
         );
       }
       if (role) {
-        await this.proposalActionRolesService.createProposalActionRole(
+        await this.proposalActionsService.createProposalActionRole(
           proposal.action.id,
           role,
         );
       }
       if (event) {
-        await this.proposalActionEventsService.createProposalActionEvent(
+        await this.proposalActionsService.createProposalActionEvent(
           proposal.action.id,
           event,
         );
       }
       if (groupSettings) {
-        await this.proposalActionGroupConfigsService.createProposalActionGroupConfig(
+        await this.proposalActionsService.createProposalActionGroupConfig(
           proposal.action.id,
           groupSettings,
         );
@@ -244,9 +201,9 @@ export class ProposalsService {
       groupCoverPhoto &&
       proposal.action.actionType === ProposalActionType.ChangeGroupCoverPhoto
     ) {
-      await this.imagesService.deleteImage({
-        proposalActionId: proposal.action.id,
-      });
+      await this.proposalActionsService.deleteProposalActionImage(
+        proposal.action.id,
+      );
       await this.proposalActionsService.saveProposalActionImage(
         proposal.action.id,
         groupCoverPhoto,
@@ -263,7 +220,7 @@ export class ProposalsService {
   async saveProposalImages(proposalId: number, images: Promise<FileUpload>[]) {
     for (const image of images) {
       const filename = await saveImage(image);
-      await this.imagesService.createImage({ filename, proposalId });
+      await this.imageRepository.save({ filename, proposalId });
     }
   }
 
@@ -425,7 +382,7 @@ export class ProposalsService {
   }
 
   async deleteProposal(proposalId: number) {
-    const images = await this.imagesService.getImages({ proposalId });
+    const images = await this.imageRepository.find({ where: { proposalId } });
     for (const { filename } of images) {
       await deleteImageFile(filename);
     }

@@ -1,5 +1,6 @@
 import { UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
 import { AuthService } from './auth.service';
 import { ClearSiteDataInterceptor } from './interceptors/clear-site-data.interceptor';
 import { AuthPayload } from './models/auth.payload';
@@ -27,6 +28,7 @@ export class AuthResolver {
   }
 
   @Query(() => Boolean)
+  @UseInterceptors(SynchronizeProposalsInterceptor)
   async authCheck() {
     return true;
   }

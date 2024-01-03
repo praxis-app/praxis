@@ -1,21 +1,38 @@
 import { UserInputError } from '@nestjs/apollo';
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, In, Repository } from 'typeorm';
-import { EventAttendeeStatus } from '../../events/event-attendees/models/event-attendee.model';
-import { GroupRolesService } from '../../groups/group-roles/group-roles.service';
-import { ImageTypes } from '../../images/image.constants';
-import { saveImage } from '../../images/image.utils';
-import { ImagesService } from '../../images/images.service';
-import { ProposalAction } from './models/proposal-action.model';
-import { ProposalActionEventsService } from './proposal-action-events/proposal-action-events.service';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import {
-  ProposalActionRolesService,
-  RoleMemberChangeType,
-} from './proposal-action-roles/proposal-action-roles.service';
-import { ProposalActionGroupConfigsService } from './proposal-action-group-configs/proposal-action-group-configs.service';
-import { GroupConfigsService } from '../../groups/group-configs/group-configs.service';
+  EventAttendee,
+  EventAttendeeStatus,
+} from '../../events/models/event-attendee.model';
+import { Event } from '../../events/models/event.model';
+import { GroupRolesService } from '../../groups/group-roles/group-roles.service';
+import { GroupsService } from '../../groups/groups.service';
+import { ImageTypes } from '../../images/image.constants';
+import {
+  copyImage,
+  deleteImageFile,
+  saveDefaultImage,
+  saveImage,
+} from '../../images/image.utils';
+import { Image } from '../../images/models/image.model';
+import { ProposalActionEventHost } from './models/proposal-action-event-host.model';
+import { ProposalActionEventInput } from './models/proposal-action-event.input';
+import { ProposalActionEvent } from './models/proposal-action-event.model';
+import { ProposalActionGroupConfigInput } from './models/proposal-action-group-config.input';
+import { ProposalActionGroupConfig } from './models/proposal-action-group-config.model';
+import { ProposalActionPermission } from './models/proposal-action-permission.model';
+import { ProposalActionRoleInput } from './models/proposal-action-role-input';
+import { ProposalActionRoleMember } from './models/proposal-action-role-member.model';
+import { ProposalActionRole } from './models/proposal-action-role.model';
+import { ProposalAction } from './models/proposal-action.model';
+
+export enum RoleMemberChangeType {
+  Add = 'add',
+  Remove = 'remove',
+}
 
 @Injectable()
 export class ProposalActionsService {
@@ -23,14 +40,35 @@ export class ProposalActionsService {
     @InjectRepository(ProposalAction)
     private proposalActionRepository: Repository<ProposalAction>,
 
-    @Inject(forwardRef(() => ImagesService))
-    private imagesService: ImagesService,
+    @InjectRepository(ProposalActionGroupConfig)
+    private proposalActionGroupConfigRepository: Repository<ProposalActionGroupConfig>,
+
+    @InjectRepository(ProposalActionRole)
+    private proposalActionRoleRepository: Repository<ProposalActionRole>,
+
+    @InjectRepository(ProposalActionPermission)
+    private proposalActionPermissionRepository: Repository<ProposalActionPermission>,
+
+    @InjectRepository(ProposalActionRoleMember)
+    private proposalActionRoleMemberRepository: Repository<ProposalActionRoleMember>,
+
+    @InjectRepository(ProposalActionEvent)
+    private proposalActionEventRepository: Repository<ProposalActionEvent>,
+
+    @InjectRepository(ProposalActionEventHost)
+    private proposalActionEventHostRepository: Repository<ProposalActionEventHost>,
+
+    @InjectRepository(Event)
+    private eventRepository: Repository<Event>,
+
+    @InjectRepository(EventAttendee)
+    private eventAttendeeRepository: Repository<EventAttendee>,
+
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
 
     private groupRolesService: GroupRolesService,
-    private proposalActionEventsService: ProposalActionEventsService,
-    private proposalActionRolesService: ProposalActionRolesService,
-    private proposalActionGroupConfigsService: ProposalActionGroupConfigsService,
-    private groupConfigsService: GroupConfigsService,
+    private groupsService: GroupsService,
   ) {}
 
   async getProposalAction(
@@ -54,23 +92,11 @@ export class ProposalActionsService {
     return groupCoverPhoto;
   }
 
-  async getProposalActionsBatch(proposalIds: number[]) {
-    const proposalActions = await this.getProposalActions({
-      proposalId: In(proposalIds),
-    });
-    return proposalIds.map(
-      (id) =>
-        proposalActions.find(
-          (proposalAction: ProposalAction) => proposalAction.id === id,
-        ) || new Error(`Could not load proposal action: ${id}`),
-    );
-  }
-
   async implementGroupEvent(proposalActionId: number, groupId: number) {
-    const event = await this.proposalActionEventsService.getProposalActionEvent(
-      { proposalActionId },
-      ['hosts', 'images'],
-    );
+    const event = await this.getProposalActionEvent({ proposalActionId }, [
+      'hosts',
+      'images',
+    ]);
     if (!event) {
       throw new UserInputError('Could not find proposal action event');
     }
@@ -80,18 +106,14 @@ export class ProposalActionsService {
     if (!host) {
       throw new UserInputError('Could not find proposal action event host');
     }
-    await this.proposalActionEventsService.createEventFromProposalAction(
-      event,
-      groupId,
-      host.userId,
-    );
+    await this.createEventFromProposalAction(event, groupId, host.userId);
   }
 
   async implementCreateGroupRole(proposalActionId: number, groupId: number) {
-    const role = await this.proposalActionRolesService.getProposalActionRole(
-      { proposalActionId },
-      ['permission', 'members'],
-    );
+    const role = await this.getProposalActionRole({ proposalActionId }, [
+      'permission',
+      'members',
+    ]);
     if (!role) {
       throw new UserInputError('Could not find proposal action role');
     }
@@ -110,11 +132,10 @@ export class ProposalActionsService {
   }
 
   async implementChangeGroupRole(proposalActionId: number) {
-    const actionRole =
-      await this.proposalActionRolesService.getProposalActionRole(
-        { proposalActionId },
-        ['permission', 'members'],
-      );
+    const actionRole = await this.getProposalActionRole({ proposalActionId }, [
+      'permission',
+      'members',
+    ]);
     if (!actionRole?.groupRoleId) {
       throw new UserInputError('Could not find proposal action role');
     }
@@ -144,13 +165,10 @@ export class ProposalActionsService {
       );
     }
     if (actionRole.name || actionRole.color) {
-      await this.proposalActionRolesService.updateProposalActionRole(
-        actionRole.id,
-        {
-          oldName: actionRole.name ? roleToUpdate.name : undefined,
-          oldColor: actionRole.color ? roleToUpdate.color : undefined,
-        },
-      );
+      await this.updateProposalActionRole(actionRole.id, {
+        oldName: actionRole.name ? roleToUpdate.name : undefined,
+        oldColor: actionRole.color ? roleToUpdate.color : undefined,
+      });
     }
   }
 
@@ -159,24 +177,26 @@ export class ProposalActionsService {
     proposalActionId: number,
     groupId: number,
   ) {
-    const currentCoverPhoto = await this.imagesService.getImage({
-      imageType: ImageTypes.CoverPhoto,
-      groupId,
+    const currentCoverPhoto = await this.imageRepository.findOne({
+      where: { groupId, imageType: ImageTypes.CoverPhoto },
     });
     const newCoverPhoto =
       await this.getProposedGroupCoverPhoto(proposalActionId);
     if (!currentCoverPhoto || !newCoverPhoto) {
       throw new UserInputError('Could not find group cover photo');
     }
-    await this.imagesService.updateImage(newCoverPhoto.id, { groupId });
-    await this.imagesService.deleteImage({ id: currentCoverPhoto.id });
+    await this.imageRepository.save({
+      ...newCoverPhoto,
+      groupId,
+    });
+    await this.imageRepository.delete({ id: currentCoverPhoto.id });
+    await deleteImageFile(currentCoverPhoto.filename);
   }
 
   async implementChangeGroupConfig(proposalActionId: number, groupId: number) {
-    const proposedGroupConfig =
-      await this.proposalActionGroupConfigsService.getProposalActionGroupConfig(
-        { proposalActionId },
-      );
+    const proposedGroupConfig = await this.getProposalActionGroupConfig({
+      proposalActionId,
+    });
     if (!proposedGroupConfig) {
       throw new UserInputError('Could not find proposed group settings');
     }
@@ -191,45 +211,42 @@ export class ProposalActionsService {
       privacy,
     } = proposedGroupConfig;
 
-    const groupConfig = await this.groupConfigsService.getGroupConfig({
+    const groupConfig = await this.groupsService.getGroupConfig({
       groupId,
     });
 
     // Record old group config
-    await this.proposalActionGroupConfigsService.updateProposalActionGroupConfig(
-      proposedGroupConfig.id,
-      {
-        oldPrivacy: privacy ? groupConfig.privacy : undefined,
+    await this.updateProposalActionGroupConfig(proposedGroupConfig.id, {
+      oldPrivacy: privacy ? groupConfig.privacy : undefined,
 
-        oldAdminModel: adminModel ? groupConfig.adminModel : undefined,
+      oldAdminModel: adminModel ? groupConfig.adminModel : undefined,
 
-        oldDecisionMakingModel: decisionMakingModel
-          ? groupConfig.decisionMakingModel
+      oldDecisionMakingModel: decisionMakingModel
+        ? groupConfig.decisionMakingModel
+        : undefined,
+
+      oldVotingTimeLimit: votingTimeLimit
+        ? groupConfig.votingTimeLimit
+        : undefined,
+
+      oldRatificationThreshold:
+        ratificationThreshold || ratificationThreshold === 0
+          ? groupConfig.ratificationThreshold
           : undefined,
 
-        oldVotingTimeLimit: votingTimeLimit
-          ? groupConfig.votingTimeLimit
+      oldReservationsLimit:
+        reservationsLimit || reservationsLimit === 0
+          ? groupConfig.reservationsLimit
           : undefined,
 
-        oldRatificationThreshold:
-          ratificationThreshold || ratificationThreshold === 0
-            ? groupConfig.ratificationThreshold
-            : undefined,
-
-        oldReservationsLimit:
-          reservationsLimit || reservationsLimit === 0
-            ? groupConfig.reservationsLimit
-            : undefined,
-
-        oldStandAsidesLimit:
-          standAsidesLimit || standAsidesLimit === 0
-            ? groupConfig.standAsidesLimit
-            : undefined,
-      },
-    );
+      oldStandAsidesLimit:
+        standAsidesLimit || standAsidesLimit === 0
+          ? groupConfig.standAsidesLimit
+          : undefined,
+    });
 
     // Implement proposal - update group config
-    await this.groupConfigsService.updateGroupConfig({
+    await this.groupsService.updateGroupConfig({
       adminModel: adminModel ?? undefined,
       decisionMakingModel: decisionMakingModel ?? undefined,
       ratificationThreshold: ratificationThreshold ?? undefined,
@@ -247,10 +264,199 @@ export class ProposalActionsService {
     imageType: string,
   ) {
     const filename = await saveImage(image);
-    await this.imagesService.createImage({
+    await this.imageRepository.save({
       filename,
       imageType,
       proposalActionId,
     });
+  }
+
+  async deleteProposalActionImage(proposalActionId: number) {
+    const image = await this.imageRepository.findOne({
+      where: { proposalActionId },
+    });
+    if (!image) {
+      return;
+    }
+    await deleteImageFile(image.filename);
+    this.imageRepository.delete({ proposalActionId });
+    return true;
+  }
+
+  async getProposalActionEvent(
+    where: FindOptionsWhere<ProposalActionEvent>,
+    relations?: string[],
+  ) {
+    return this.proposalActionEventRepository.findOne({
+      where,
+      relations,
+    });
+  }
+
+  async getProposalActionEventHost(proposalActionEventId: number) {
+    const host = await this.proposalActionEventHostRepository.findOne({
+      where: { proposalActionEventId, status: EventAttendeeStatus.Host },
+      relations: ['user'],
+    });
+    if (!host) {
+      throw new Error('Could not find host for proposal action event');
+    }
+    return host.user;
+  }
+
+  async getProposalActionEventCoverPhoto(proposalActionEventId: number) {
+    return this.imageRepository.findOne({
+      where: { proposalActionEventId, imageType: ImageTypes.CoverPhoto },
+    });
+  }
+
+  async createProposalActionEvent(
+    proposalActionId: number,
+    {
+      hostId,
+      coverPhoto,
+      ...proposalActionEventData
+    }: Partial<ProposalActionEventInput>,
+  ) {
+    const proposalActionEvent = await this.proposalActionEventRepository.save({
+      ...proposalActionEventData,
+      proposalActionId,
+    });
+    await this.proposalActionEventHostRepository.save({
+      proposalActionEventId: proposalActionEvent.id,
+      status: EventAttendeeStatus.Host,
+      userId: hostId,
+    });
+    if (coverPhoto) {
+      await this.saveProposalActionEventCoverPhoto(
+        proposalActionEvent.id,
+        coverPhoto,
+      );
+    } else {
+      await this.saveProposalActionEventDefaultCoverPhoto(
+        proposalActionEvent.id,
+      );
+    }
+  }
+
+  async createEventFromProposalAction(
+    { images, ...eventData }: ProposalActionEvent,
+    groupId: number,
+    hostId: number,
+  ) {
+    const event = await this.eventRepository.save({ ...eventData, groupId });
+    try {
+      await this.eventAttendeeRepository.save({
+        status: EventAttendeeStatus.Host,
+        eventId: event.id,
+        userId: hostId,
+      });
+      const coverPhoto = images.find(
+        ({ imageType }) => imageType === ImageTypes.CoverPhoto,
+      );
+      if (!coverPhoto) {
+        throw new Error();
+      }
+      const imageFilename = copyImage(coverPhoto.filename);
+      await this.imageRepository.save({
+        eventId: event.id,
+        filename: imageFilename,
+        imageType: coverPhoto.imageType,
+      });
+    } catch {
+      await this.eventRepository.delete(event.id);
+      throw new Error('Failed to create event from proposal action');
+    }
+  }
+
+  async saveProposalActionEventCoverPhoto(
+    proposalActionEventId: number,
+    coverPhoto: Promise<FileUpload>,
+  ) {
+    const filename = await saveImage(coverPhoto);
+    return this.imageRepository.save({
+      imageType: ImageTypes.CoverPhoto,
+      proposalActionEventId,
+      filename,
+    });
+  }
+
+  async saveProposalActionEventDefaultCoverPhoto(
+    proposalActionEventId: number,
+  ) {
+    const filename = await saveDefaultImage();
+    return this.imageRepository.save({
+      imageType: ImageTypes.CoverPhoto,
+      proposalActionEventId,
+      filename,
+    });
+  }
+
+  async getProposalActionGroupConfig(
+    where: FindOptionsWhere<ProposalActionGroupConfig>,
+    relations?: string[],
+  ) {
+    return this.proposalActionGroupConfigRepository.findOne({
+      where,
+      relations,
+    });
+  }
+
+  async createProposalActionGroupConfig(
+    proposalActionId: number,
+    proposalActionGroupConfigData: ProposalActionGroupConfigInput,
+  ) {
+    await this.proposalActionGroupConfigRepository.save({
+      ...proposalActionGroupConfigData,
+      proposalActionId,
+    });
+  }
+
+  async updateProposalActionGroupConfig(
+    id: number,
+    data: Partial<ProposalActionGroupConfig>,
+  ) {
+    await this.proposalActionGroupConfigRepository.update(id, data);
+  }
+
+  async getProposalActionRole(
+    where: FindOptionsWhere<ProposalActionRole>,
+    relations?: string[],
+  ) {
+    return this.proposalActionRoleRepository.findOne({
+      where,
+      relations,
+    });
+  }
+
+  async getProposalActionPermission(proposalActionRoleId: number) {
+    return this.proposalActionPermissionRepository.findOne({
+      where: { proposalActionRoleId },
+    });
+  }
+
+  async getProposalActionRoleMembers(proposalActionRoleId: number) {
+    return this.proposalActionRoleMemberRepository.find({
+      where: { proposalActionRoleId },
+    });
+  }
+
+  async createProposalActionRole(
+    proposalActionId: number,
+    { roleToUpdateId, ...role }: ProposalActionRoleInput,
+  ) {
+    await this.proposalActionRoleRepository.save({
+      ...role,
+      permission: role.permissions,
+      groupRoleId: roleToUpdateId,
+      proposalActionId,
+    });
+  }
+
+  async updateProposalActionRole(
+    id: number,
+    data: Partial<ProposalActionRole>,
+  ) {
+    await this.proposalActionRoleRepository.update(id, data);
   }
 }

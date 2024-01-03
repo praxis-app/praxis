@@ -62,6 +62,20 @@ export const randomDefaultImagePath = () =>
     Math.floor(Math.random() * DEFAULT_IMAGES_SIZE) + 1
   }.jpeg`;
 
+export const saveDefaultImage = async () => {
+  const sourcePath = randomDefaultImagePath();
+  const uploadsPath = getUploadsPath();
+  const filename = `${Date.now()}.jpeg`;
+  const copyPath = `${uploadsPath}/${filename}`;
+
+  fs.copyFile(sourcePath, copyPath, (err) => {
+    if (err) {
+      throw new Error(`Failed to save default profile picture: ${err}`);
+    }
+  });
+  return filename;
+};
+
 export const deleteImageFile = async (filename: string) => {
   const unlinkAsync = promisify(fs.unlink);
   const uploadsPath = getUploadsPath();

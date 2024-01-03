@@ -1,19 +1,8 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as fs from 'fs';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { CommentsService } from '../comments/comments.service';
-import { EventsService } from '../events/events.service';
-import { GroupsService } from '../groups/groups.service';
-import { PostsService } from '../posts/posts.service';
-import { ProposalsService } from '../proposals/proposals.service';
-import { UsersService } from '../users/users.service';
-import { ImageTypes } from './image.constants';
-import {
-  deleteImageFile,
-  getUploadsPath,
-  randomDefaultImagePath,
-} from './image.utils';
+import { GroupPrivacy } from '../groups/groups.constants';
+import { deleteImageFile } from './image.utils';
 import { Image } from './models/image.model';
 
 @Injectable()
@@ -21,31 +10,10 @@ export class ImagesService {
   constructor(
     @InjectRepository(Image)
     private repository: Repository<Image>,
-
-    @Inject(forwardRef(() => PostsService))
-    private postsService: PostsService,
-
-    @Inject(forwardRef(() => ProposalsService))
-    private proposalsService: ProposalsService,
-
-    @Inject(forwardRef(() => GroupsService))
-    private groupsService: GroupsService,
-
-    @Inject(forwardRef(() => CommentsService))
-    private commentsService: CommentsService,
-
-    @Inject(forwardRef(() => EventsService))
-    private eventsService: EventsService,
-
-    private usersService: UsersService,
   ) {}
 
   async getImage(where: FindOptionsWhere<Image>, relations?: string[]) {
     return this.repository.findOne({ where, relations });
-  }
-
-  async getImages(where?: FindOptionsWhere<Image>) {
-    return this.repository.find({ where });
   }
 
   async isPublicImage(id: number) {
@@ -54,51 +22,85 @@ export class ImagesService {
       throw new Error(`Image not found: ${id}`);
     }
     if (image.userId) {
-      return this.usersService.isPublicUserAvatar(image.id);
+      const image = await this.repository.findOneOrFail({
+        where: { id },
+        relations: ['user.groups.config'],
+      });
+      if (!image.user) {
+        return false;
+      }
+      return image.user.groups.some(
+        (group) => group.config.privacy === GroupPrivacy.Public,
+      );
     }
     if (image.groupId) {
-      return this.groupsService.isPublicGroupImage(image.id);
+      const image = await this.repository.findOneOrFail({
+        where: { id },
+        relations: ['group.config'],
+      });
+      return image.group?.config.privacy === GroupPrivacy.Public;
     }
-    if (image.proposalId || image.proposalActionId) {
-      return this.proposalsService.isPublicProposalImage(image);
+    if (image.proposalId) {
+      const image = await this.repository.findOneOrFail({
+        where: { id },
+        relations: ['proposal.group.config'],
+      });
+      return image.proposal?.group?.config.privacy === GroupPrivacy.Public;
     }
-    if (image.eventId || image.proposalActionEventId) {
-      return this.eventsService.isPublicEventImage(image.id);
+    if (image.proposalActionId) {
+      const image = await this.repository.findOneOrFail({
+        where: { id },
+        relations: ['proposalAction.proposal.group.config'],
+      });
+      return (
+        image.proposalAction?.proposal?.group?.config.privacy ===
+        GroupPrivacy.Public
+      );
+    }
+    if (image.eventId) {
+      const image = await this.repository.findOneOrFail({
+        where: { id },
+        relations: ['event.group.config'],
+      });
+      return image.event?.group?.config.privacy === GroupPrivacy.Public;
+    }
+    if (image.proposalActionEventId) {
+      const image = await this.repository.findOneOrFail({
+        where: { id },
+        relations: ['proposalActionEvent.proposalAction.proposal.group.config'],
+      });
+      return (
+        image.proposalActionEvent?.proposalAction?.proposal?.group?.config
+          .privacy === GroupPrivacy.Public
+      );
     }
     if (image.postId) {
-      return this.postsService.isPublicPostImage(id);
+      const image = await this.repository.findOneOrFail({
+        where: { id },
+        relations: ['post.group.config', 'post.event.group.config'],
+      });
+      return (
+        image.post?.group?.config.privacy === GroupPrivacy.Public ||
+        image.post?.event?.group?.config.privacy === GroupPrivacy.Public
+      );
     }
     if (image.commentId) {
-      return this.commentsService.isPublicCommentImage(id);
+      const image = await this.repository.findOneOrFail({
+        where: { id },
+        relations: [
+          'comment.post.event.group.config',
+          'comment.post.group.config',
+          'comment.proposal.group.config',
+        ],
+      });
+      return (
+        image.comment?.post?.event?.group?.config.privacy ===
+          GroupPrivacy.Public ||
+        image.comment?.post?.group?.config.privacy === GroupPrivacy.Public ||
+        image.comment?.proposal?.group?.config.privacy === GroupPrivacy.Public
+      );
     }
     return false;
-  }
-
-  async createImage(data: Partial<Image>): Promise<Image> {
-    return this.repository.save(data);
-  }
-
-  async updateImage(id: number, data: Partial<Image>) {
-    return this.repository.save({ id, ...data });
-  }
-
-  async saveDefaultCoverPhoto(imageData: Partial<Image>) {
-    const sourcePath = randomDefaultImagePath();
-    const uploadsPath = getUploadsPath();
-    const filename = `${Date.now()}.jpeg`;
-    const copyPath = `${uploadsPath}/${filename}`;
-
-    fs.copyFile(sourcePath, copyPath, (err) => {
-      if (err) {
-        throw new Error(`Failed to save default cover photo: ${err}`);
-      }
-    });
-    const image = await this.createImage({
-      imageType: ImageTypes.CoverPhoto,
-      filename,
-      ...imageData,
-    });
-    return image;
   }
 
   async deleteImage(where: FindOptionsWhere<Image>) {

@@ -1,30 +1,26 @@
 import { UserInputError } from '@nestjs/apollo';
-import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as fs from 'fs';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { logTime, paginate, sanitizeText } from '../common/common.utils';
-import { IsFollowedByMeKey } from '../dataloader/dataloader.types';
-import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
 import { GroupPermissionsMap } from '../groups/group-roles/models/group-permissions.type';
+import { GroupPrivacy } from '../groups/groups.constants';
 import { ImageTypes } from '../images/image.constants';
 import {
-  getUploadsPath,
-  randomDefaultImagePath,
+  deleteImageFile,
+  saveDefaultImage,
   saveImage,
 } from '../images/image.utils';
-import { ImagesService } from '../images/images.service';
 import { Image } from '../images/models/image.model';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
-import { initServerRolePermissions } from '../server-roles/server-role.utils';
 import { ServerRolesService } from '../server-roles/server-roles.service';
+import { initServerRolePermissions } from '../server-roles/server-roles.utils';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
-import { UserWithFollowerCount, UserWithFollowingCount } from './user.types';
 
 @Injectable()
 export class UsersService {
@@ -32,24 +28,21 @@ export class UsersService {
 
   constructor(
     @InjectRepository(User)
-    private repository: Repository<User>,
+    private userRepository: Repository<User>,
 
-    @Inject(forwardRef(() => ServerRolesService))
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
+
     private serverRolesService: ServerRolesService,
-
-    @Inject(forwardRef(() => ImagesService))
-    private imagesService: ImagesService,
-
-    @Inject(forwardRef(() => PostsService))
     private postsService: PostsService,
   ) {}
 
   async getUser(where: FindOptionsWhere<User>, relations?: string[]) {
-    return await this.repository.findOne({ where, relations });
+    return await this.userRepository.findOne({ where, relations });
   }
 
   async getUsers(where?: FindOptionsWhere<User>) {
-    return this.repository.find({ where });
+    return this.userRepository.find({ where });
   }
 
   async getPagedUsers(offset?: number, limit?: number) {
@@ -64,15 +57,16 @@ export class UsersService {
   }
 
   async isFirstUser() {
-    const userCount = await this.repository.count();
+    const userCount = await this.userRepository.count();
     return userCount === 0;
   }
 
   async isPublicUserAvatar(imageId: number) {
-    const image = await this.imagesService.getImage({ id: imageId }, [
-      'user.groups.config',
-    ]);
-    if (!image?.user) {
+    const image = await this.imageRepository.findOneOrFail({
+      where: { id: imageId },
+      relations: ['user.groups.config'],
+    });
+    if (!image.user) {
       return false;
     }
     return image.user.groups.some(
@@ -81,14 +75,13 @@ export class UsersService {
   }
 
   async getCoverPhoto(userId: number) {
-    return this.imagesService.getImage({
-      imageType: ImageTypes.CoverPhoto,
-      userId,
+    return this.imageRepository.findOne({
+      where: { userId, imageType: ImageTypes.CoverPhoto },
     });
   }
 
   async getBaseUserFeed(id: number) {
-    const userFeedQuery = this.repository
+    const userFeedQuery = this.userRepository
       .createQueryBuilder('user')
 
       // Posts from followed users
@@ -135,7 +128,7 @@ export class UsersService {
   }
 
   async getJoinedGroupsFeed(id: number) {
-    const joinedGroupsFeedQuery = this.repository
+    const joinedGroupsFeedQuery = this.userRepository
       .createQueryBuilder('user')
 
       // Posts and proposals from joined groups
@@ -176,7 +169,7 @@ export class UsersService {
   }
 
   async getUserFeedEventPosts(id: number) {
-    const eventPostsQuery = this.repository
+    const eventPostsQuery = this.userRepository
       .createQueryBuilder('user')
 
       // Posts from joined group events
@@ -348,85 +341,12 @@ export class UsersService {
     return post.userId === userId;
   }
 
-  async getUsersBatch(userIds: number[]) {
-    const users = await this.getUsers({
-      id: In(userIds),
-    });
-    return userIds.map(
-      (id) =>
-        users.find((user: User) => user.id === id) ||
-        new Error(`Could not load user: ${id}`),
-    );
-  }
-
-  async getProfilePicturesBatch(userIds: number[]) {
-    const profilePictures = await this.imagesService.getImages({
-      imageType: ImageTypes.ProfilePicture,
-      userId: In(userIds),
-    });
-    return userIds.map(
-      (id) =>
-        profilePictures.find(
-          (profilePicture: Image) => profilePicture.userId === id,
-        ) || new Error(`Could not load profile picture: ${id}`),
-    );
-  }
-
-  async getFollowerCountBatch(userIds: number[]) {
-    const users = (await this.repository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.followers', 'follower')
-      .loadRelationCountAndMap('user.followerCount', 'user.followers')
-      .select(['user.id'])
-      .whereInIds(userIds)
-      .getMany()) as UserWithFollowerCount[];
-
-    return userIds.map((id) => {
-      const user = users.find((user: User) => user.id === id);
-      if (!user) {
-        return new Error(`Could not load followers count for user: ${id}`);
-      }
-      return user.followerCount;
-    });
-  }
-
-  async getFollowingCountBatch(userIds: number[]) {
-    const users = (await this.repository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.following', 'followed')
-      .loadRelationCountAndMap('user.followingCount', 'user.following')
-      .select(['user.id'])
-      .whereInIds(userIds)
-      .getMany()) as UserWithFollowingCount[];
-
-    return userIds.map((id) => {
-      const user = users.find((user: User) => user.id === id);
-      if (!user) {
-        return new Error(`Could not load following count for user: ${id}`);
-      }
-      return user.followingCount;
-    });
-  }
-
-  async getIsFollowedByMeBatch(keys: IsFollowedByMeKey[]) {
-    const followedUserIds = keys.map(({ followedUserId }) => followedUserId);
-    const user = await this.getUser({ id: keys[0].currentUserId }, [
-      'following',
-    ]);
-    if (!user) {
-      throw new UserInputError('User not found');
-    }
-
-    return followedUserIds.map((followedUserId) =>
-      user.following.some(
-        (followedUser: User) => followedUser.id === followedUserId,
-      ),
-    );
-  }
-
   async createUser({ bio, ...userData }: Partial<User>) {
     const sanitizedBio = bio ? sanitizeText(bio.trim()) : undefined;
-    const user = await this.repository.save({ bio: sanitizedBio, ...userData });
+    const user = await this.userRepository.save({
+      bio: sanitizedBio,
+      ...userData,
+    });
 
     try {
       const users = await this.getUsers();
@@ -453,7 +373,7 @@ export class UsersService {
     this.logger.log(`Updating user: ${JSON.stringify({ id, ...userData })}`);
 
     const sanitizedBio = sanitizeText(bio.trim());
-    await this.repository.update(id, {
+    await this.userRepository.update(id, {
       bio: sanitizedBio,
       ...userData,
     });
@@ -477,8 +397,8 @@ export class UsersService {
     }
     follower.following = [...follower.following, user];
     user.followers = [...user.followers, follower];
-    await this.repository.save(follower);
-    await this.repository.save(user);
+    await this.userRepository.save(follower);
+    await this.userRepository.save(user);
     return {
       followedUser: user,
       follower,
@@ -494,7 +414,7 @@ export class UsersService {
     // TODO: Refactor to avoid using `filter`
     user.followers = user.followers.filter((f) => f.id !== followerId);
     follower.following = follower.following.filter((f) => f.id !== id);
-    await this.repository.save([user, follower]);
+    await this.userRepository.save([user, follower]);
     return true;
   }
 
@@ -504,8 +424,8 @@ export class UsersService {
   ) {
     const filename = await saveImage(profilePicture, this.logger);
     const imageData = { imageType: ImageTypes.ProfilePicture, userId };
-    await this.imagesService.deleteImage(imageData);
-    return this.imagesService.createImage({
+    await this.deleteUserImage(userId, ImageTypes.ProfilePicture);
+    return this.imageRepository.save({
       ...imageData,
       filename,
     });
@@ -514,35 +434,40 @@ export class UsersService {
   async saveCoverPhoto(userId: number, coverPhoto: Promise<FileUpload>) {
     const filename = await saveImage(coverPhoto, this.logger);
     const imageData = { imageType: ImageTypes.CoverPhoto, userId };
-    await this.imagesService.deleteImage(imageData);
-    return this.imagesService.createImage({
+    await this.deleteUserImage(userId, ImageTypes.CoverPhoto);
+    return this.imageRepository.save({
       ...imageData,
       filename,
     });
   }
 
   async saveDefaultProfilePicture(userId: number) {
-    const sourcePath = randomDefaultImagePath();
-    const uploadsPath = getUploadsPath();
-    const filename = `${Date.now()}.jpeg`;
-    const copyPath = `${uploadsPath}/${filename}`;
-
-    fs.copyFile(sourcePath, copyPath, (err) => {
-      if (err) {
-        throw new Error(`Failed to save default profile picture: ${err}`);
-      }
-    });
-
-    const image = await this.imagesService.createImage({
+    const filename = await saveDefaultImage();
+    return this.imageRepository.save({
       imageType: ImageTypes.ProfilePicture,
       filename,
       userId,
     });
-    return image;
   }
 
   async deleteUser(userId: number) {
-    await this.repository.delete(userId);
+    const images = await this.imageRepository.find({ where: { userId } });
+    for (const { filename } of images) {
+      await deleteImageFile(filename);
+    }
+    await this.userRepository.delete(userId);
+    return true;
+  }
+
+  async deleteUserImage(userId: number, imageType: ImageTypes) {
+    const image = await this.imageRepository.findOne({
+      where: { userId, imageType },
+    });
+    if (!image) {
+      return;
+    }
+    await deleteImageFile(image.filename);
+    this.imageRepository.delete({ userId, imageType });
     return true;
   }
 }

@@ -118,7 +118,21 @@ const cache = new InMemoryCache({
         },
       },
     },
-    Role: {
+    GroupRole: {
+      fields: {
+        availableUsersToAdd: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+        members: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+    ServerRole: {
       fields: {
         availableUsersToAdd: {
           merge(_, incoming) {

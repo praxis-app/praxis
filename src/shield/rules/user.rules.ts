@@ -1,6 +1,6 @@
 import { rule } from 'graphql-shield';
 import { Context } from '../../context/context.types';
-import { GroupPrivacy } from '../../groups/group-configs/group-configs.constants';
+import { GroupPrivacy } from '../../groups/groups.constants';
 import { Image } from '../../images/models/image.model';
 import { User } from '../../users/models/user.model';
 

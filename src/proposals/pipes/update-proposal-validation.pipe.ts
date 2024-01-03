@@ -1,7 +1,9 @@
 import { ValidationError } from '@nestjs/apollo';
 import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { ImageTypes } from '../../images/image.constants';
-import { VotesService } from '../../votes/votes.service';
+import { Vote } from '../../votes/models/vote.model';
 import { UpdateProposalInput } from '../models/update-proposal.input';
 import { ProposalActionType } from '../proposals.constants';
 import { ProposalsService } from '../proposals.service';
@@ -10,7 +12,9 @@ import { ProposalsService } from '../proposals.service';
 export class UpdateProposalValidationPipe implements PipeTransform {
   constructor(
     private proposalsService: ProposalsService,
-    private votesService: VotesService,
+
+    @InjectRepository(Vote)
+    private voteRepository: Repository<Vote>,
   ) {}
 
   async transform(value: UpdateProposalInput, metadata: ArgumentMetadata) {
@@ -58,10 +62,10 @@ export class UpdateProposalValidationPipe implements PipeTransform {
   }
 
   async validateVotesReceived(value: UpdateProposalInput) {
-    const votes = await this.votesService.getVotes({
-      proposalId: value.id,
+    const votesCount = await this.voteRepository.count({
+      where: { proposalId: value.id },
     });
-    if (votes.length) {
+    if (votesCount) {
       throw new ValidationError(
         'Proposals cannot be updated after receiving votes',
       );

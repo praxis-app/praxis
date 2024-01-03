@@ -11,7 +11,7 @@ import {
 import { Group } from '../../groups/models/group.model';
 import { Image } from '../../images/models/image.model';
 import { Post } from '../../posts/models/post.model';
-import { EventAttendee } from '../event-attendees/models/event-attendee.model';
+import { EventAttendee } from './event-attendee.model';
 
 @ObjectType()
 @Entity()

@@ -1,34 +1,34 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import {
   Between,
   FindOptionsWhere,
-  In,
   LessThan,
   MoreThan,
   Repository,
 } from 'typeorm';
 import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
 import { paginate, sanitizeText } from '../common/common.utils';
-import { GroupPrivacy } from '../groups/group-configs/group-configs.constants';
+import { GroupPrivacy } from '../groups/groups.constants';
 import { ImageTypes } from '../images/image.constants';
-import { saveImage } from '../images/image.utils';
-import { ImagesService } from '../images/images.service';
+import {
+  deleteImageFile,
+  saveDefaultImage,
+  saveImage,
+} from '../images/image.utils';
 import { Image } from '../images/models/image.model';
-import { PostsService } from '../posts/posts.service';
-import { EventAttendeesService } from './event-attendees/event-attendees.service';
+import { Post } from '../posts/models/post.model';
+import { CreateEventAttendeeInput } from './models/create-event-attendee.input';
+import { CreateEventInput } from './models/create-event.input';
 import {
   EventAttendee,
   EventAttendeeStatus,
-} from './event-attendees/models/event-attendee.model';
-import { CreateEventInput } from './models/create-event.input';
+} from './models/event-attendee.model';
 import { Event } from './models/event.model';
-import { EventsInput, EventTimeFrame } from './models/events.input';
+import { EventTimeFrame, EventsInput } from './models/events.input';
+import { UpdateEventAttendeeInput } from './models/update-event-attendee.input';
 import { UpdateEventInput } from './models/update-event.input';
-
-type EventWithInterestedCount = Event & { interestedCount: number };
-type EventWithGoingCount = Event & { goingCount: number };
 
 @Injectable()
 export class EventsService {
@@ -39,14 +39,11 @@ export class EventsService {
     @InjectRepository(EventAttendee)
     private eventAttendeeRepository: Repository<EventAttendee>,
 
-    @Inject(forwardRef(() => EventAttendeesService))
-    private eventAttendeesService: EventAttendeesService,
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
 
-    @Inject(forwardRef(() => ImagesService))
-    private imagesService: ImagesService,
-
-    @Inject(forwardRef(() => PostsService))
-    private postsService: PostsService,
+    @InjectRepository(Post)
+    private postRepository: Repository<Post>,
   ) {}
 
   async getEvent(where: FindOptionsWhere<Event>, relations?: string[]) {
@@ -98,7 +95,7 @@ export class EventsService {
   }
 
   async getAttendingStatus(id: number, userId: number) {
-    const eventAttendee = await this.eventAttendeesService.getEventAttendee({
+    const eventAttendee = await this.getEventAttendee({
       eventId: id,
       userId,
     });
@@ -106,7 +103,7 @@ export class EventsService {
   }
 
   async getEventHost(id: number) {
-    const eventAttendee = await this.eventAttendeesService.getEventAttendee(
+    const eventAttendee = await this.getEventAttendee(
       { status: EventAttendeeStatus.Host, eventId: id },
       ['user'],
     );
@@ -117,94 +114,23 @@ export class EventsService {
   }
 
   async getEventPosts(id: number, offset?: number, limit?: number) {
-    const posts = await this.postsService.getPosts({ event: { id } });
+    const posts = await this.postRepository.find({ where: { event: { id } } });
     const nodes = offset !== undefined ? paginate(posts, offset, limit) : posts;
     return { nodes, totalCount: posts.length };
   }
 
   async isPublicEventImage(imageId: number) {
-    const image = await this.imagesService.getImage({ id: imageId }, [
-      'proposalActionEvent.proposalAction.proposal.group.config',
-      'event.group.config',
-    ]);
+    const image = await this.imageRepository.findOneOrFail({
+      where: { id: imageId },
+      relations: [
+        'proposalActionEvent.proposalAction.proposal.group.config',
+        'event.group.config',
+      ],
+    });
     const group =
-      image?.proposalActionEvent?.proposalAction?.proposal?.group ||
-      image?.event?.group;
+      image.proposalActionEvent?.proposalAction?.proposal?.group ||
+      image.event?.group;
     return group?.config.privacy === GroupPrivacy.Public;
-  }
-
-  async getEventsBatch(eventIds: number[]) {
-    const events = await this.getEvents({
-      id: In(eventIds),
-    });
-    return eventIds.map(
-      (id) =>
-        events.find((event: Event) => event.id === id) ||
-        new Error(`Could not load event: ${id}`),
-    );
-  }
-
-  async getCoverPhotosBatch(eventIds: number[]) {
-    const coverPhotos = await this.imagesService.getImages({
-      eventId: In(eventIds),
-      imageType: ImageTypes.CoverPhoto,
-    });
-    const mappedCoverPhotos = eventIds.map(
-      (id) =>
-        coverPhotos.find((coverPhoto: Image) => coverPhoto.eventId === id) ||
-        new Error(`Could not load cover photo for event: ${id}`),
-    );
-    return mappedCoverPhotos;
-  }
-
-  async getInterestedCountBatch(eventIds: number[]) {
-    const events = (await this.eventRepository
-      .createQueryBuilder('event')
-      .loadRelationCountAndMap(
-        'event.interestedCount',
-        'event.attendees',
-        'eventAttendee',
-        (qb) =>
-          qb.where('eventAttendee.status = :status', {
-            status: EventAttendeeStatus.Interested,
-          }),
-      )
-      .select(['event.id'])
-      .whereInIds(eventIds)
-      .getMany()) as EventWithInterestedCount[];
-
-    return eventIds.map((id) => {
-      const event = events.find((event: Event) => event.id === id);
-      if (!event) {
-        return new Error(`Could not load interested count for event: ${id}`);
-      }
-      return event.interestedCount;
-    });
-  }
-
-  async getGoingCountBatch(eventIds: number[]) {
-    const events = (await this.eventRepository
-      .createQueryBuilder('event')
-      .loadRelationCountAndMap(
-        'event.goingCount',
-        'event.attendees',
-        'eventAttendee',
-        (qb) =>
-          qb.where('eventAttendee.status = :status', {
-            status: EventAttendeeStatus.Going,
-          }),
-      )
-      .select(['event.id'])
-      .whereInIds(eventIds)
-      .getMany()) as EventWithGoingCount[];
-
-    return eventIds.map((id) => {
-      const event = events.find((event: Event) => event.id === id);
-      if (!event) {
-        return new Error(`Could not load going count for event: ${id}`);
-      }
-      return event.goingCount;
-    });
   }
 
   async createEvent({
@@ -227,9 +153,9 @@ export class EventsService {
     });
 
     if (coverPhoto) {
-      await this.saveCoverPhoto(event.id, coverPhoto);
+      await this.saveEventCoverPhoto(event.id, coverPhoto);
     } else {
-      await this.imagesService.saveDefaultCoverPhoto({ eventId: event.id });
+      await this.saveDefaultEventCoverPhoto(event.id);
     }
 
     return { event };
@@ -253,7 +179,7 @@ export class EventsService {
     });
 
     if (coverPhoto) {
-      await this.saveCoverPhoto(id, coverPhoto);
+      await this.saveEventCoverPhoto(id, coverPhoto);
     }
 
     console.log('TODO: Add update logic for hostId', hostId);
@@ -262,26 +188,88 @@ export class EventsService {
     return { event };
   }
 
-  async saveCoverPhoto(eventId: number, coverPhoto: Promise<FileUpload>) {
+  async saveEventCoverPhoto(eventId: number, coverPhoto: Promise<FileUpload>) {
     const filename = await saveImage(coverPhoto);
-    await this.deleteCoverPhoto(eventId);
+    await this.deleteEventCoverPhoto(eventId);
 
-    return this.imagesService.createImage({
+    return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,
       filename,
       eventId,
     });
   }
 
-  async deleteCoverPhoto(id: number) {
-    await this.imagesService.deleteImage({
+  async saveDefaultEventCoverPhoto(eventId: number) {
+    const filename = await saveDefaultImage();
+    return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,
-      event: { id },
+      filename,
+      eventId,
     });
+  }
+
+  async deleteEventCoverPhoto(eventId: number) {
+    const image = await this.imageRepository.findOne({
+      where: { imageType: ImageTypes.CoverPhoto, eventId },
+    });
+    if (!image) {
+      return;
+    }
+    await deleteImageFile(image.filename);
+    this.imageRepository.delete({ imageType: ImageTypes.CoverPhoto, eventId });
+    return true;
   }
 
   async deleteEvent(id: number) {
     await this.eventRepository.delete(id);
+    return true;
+  }
+
+  async getEventAttendee(
+    where: FindOptionsWhere<EventAttendee>,
+    relations?: string[],
+  ) {
+    return this.eventAttendeeRepository.findOne({ where, relations });
+  }
+
+  async getEventAttendees(
+    where?: FindOptionsWhere<EventAttendee>,
+    relations?: string[],
+  ) {
+    return this.eventAttendeeRepository.find({
+      order: { updatedAt: 'DESC' },
+      relations,
+      where,
+    });
+  }
+
+  async createEventAttendee(
+    eventAttendeeData: CreateEventAttendeeInput,
+    userId: number,
+  ) {
+    const eventAttendee = await this.eventAttendeeRepository.save({
+      ...eventAttendeeData,
+      userId,
+    });
+    const event = await this.eventRepository.findOne({
+      where: { id: eventAttendee.eventId },
+    });
+    return { event };
+  }
+
+  async updateEventAttendee(
+    { eventId, ...eventData }: UpdateEventAttendeeInput,
+    userId: number,
+  ) {
+    await this.eventAttendeeRepository.update({ eventId, userId }, eventData);
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+    });
+    return { event };
+  }
+
+  async deleteEventAttendee(eventId: number, userId: number) {
+    await this.eventAttendeeRepository.delete({ eventId, userId });
     return true;
   }
 }

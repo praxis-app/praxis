@@ -1,28 +1,53 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { GroupConfigsModule } from '../../groups/group-configs/group-configs.module';
+import { EventAttendee } from '../../events/models/event-attendee.model';
+import { Event } from '../../events/models/event.model';
 import { GroupRolesModule } from '../../groups/group-roles/group-roles.module';
-import { ImagesModule } from '../../images/images.module';
+import { GroupsModule } from '../../groups/groups.module';
+import { Image } from '../../images/models/image.model';
 import { ProposalsModule } from '../proposals.module';
+import { ProposalActionEventHost } from './models/proposal-action-event-host.model';
+import { ProposalActionEvent } from './models/proposal-action-event.model';
+import { ProposalActionGroupConfig } from './models/proposal-action-group-config.model';
+import { ProposalActionPermission } from './models/proposal-action-permission.model';
+import { ProposalActionRoleMember } from './models/proposal-action-role-member.model';
+import { ProposalActionRole } from './models/proposal-action-role.model';
 import { ProposalAction } from './models/proposal-action.model';
-import { ProposalActionEventsModule } from './proposal-action-events/proposal-action-events.module';
-import { ProposalActionGroupConfigsModule } from './proposal-action-group-configs/proposal-action-group-configs.module';
-import { ProposalActionRolesModule } from './proposal-action-roles/proposal-action-roles.module';
-import { ProposalActionsResolver } from './proposal-actions.resolver';
 import { ProposalActionsService } from './proposal-actions.service';
+import { ProposalActionEventHostsResolver } from './resolvers/proposal-action-event-hosts.resolver';
+import { ProposalActionEventsResolver } from './resolvers/proposal-action-events.resolver';
+import { ProposalActionGroupConfigsResolver } from './resolvers/proposal-action-group-configs.resolver';
+import { ProposalActionRoleMembersResolver } from './resolvers/proposal-action-role-members.resolver';
+import { ProposalActionRolesResolver } from './resolvers/proposal-action-roles.resolver';
+import { ProposalActionsResolver } from './resolvers/proposal-actions.resolver';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ProposalAction]),
-    forwardRef(() => ProposalActionEventsModule),
-    forwardRef(() => ProposalActionGroupConfigsModule),
+    TypeOrmModule.forFeature([
+      Event,
+      EventAttendee,
+      Image,
+      ProposalAction,
+      ProposalActionEvent,
+      ProposalActionEventHost,
+      ProposalActionGroupConfig,
+      ProposalActionPermission,
+      ProposalActionRole,
+      ProposalActionRoleMember,
+    ]),
     forwardRef(() => ProposalsModule),
-    forwardRef(() => ImagesModule),
-    GroupConfigsModule,
+    GroupsModule,
     GroupRolesModule,
-    ProposalActionRolesModule,
   ],
-  providers: [ProposalActionsService, ProposalActionsResolver],
+  providers: [
+    ProposalActionEventHostsResolver,
+    ProposalActionEventsResolver,
+    ProposalActionGroupConfigsResolver,
+    ProposalActionRoleMembersResolver,
+    ProposalActionRolesResolver,
+    ProposalActionsResolver,
+    ProposalActionsService,
+  ],
   exports: [ProposalActionsService],
 })
 export class ProposalActionsModule {}

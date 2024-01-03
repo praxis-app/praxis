@@ -1,28 +1,31 @@
 import { UserInputError } from '@nestjs/apollo';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { paginate, sanitizeText } from '../common/common.utils';
-import { MyGroupsKey } from '../dataloader/dataloader.types';
 import { ImageTypes } from '../images/image.constants';
-import { saveImage } from '../images/image.utils';
-import { ImagesService } from '../images/images.service';
+import {
+  deleteImageFile,
+  saveDefaultImage,
+  saveImage,
+} from '../images/image.utils';
 import { Image } from '../images/models/image.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
+import { DecisionMakingModel } from '../proposals/proposals.constants';
 import { UsersService } from '../users/users.service';
-import { GroupPrivacy } from './group-configs/group-configs.constants';
-import { GroupConfigsService } from './group-configs/group-configs.service';
-import { GroupMemberRequestsService } from './group-member-requests/group-member-requests.service';
-import { initGroupRolePermissions } from './group-roles/group-role.utils';
 import { GroupRolesService } from './group-roles/group-roles.service';
-import { GroupAdminModel } from './groups.constants';
+import { GroupAdminModel, GroupPrivacy } from './groups.constants';
 import { CreateGroupInput } from './models/create-group.input';
+import { GroupConfig } from './models/group-config.model';
+import {
+  GroupMemberRequest,
+  GroupMemberRequestStatus,
+} from './models/group-member-request.model';
 import { Group } from './models/group.model';
+import { UpdateGroupConfigInput } from './models/update-group-config.input';
 import { UpdateGroupInput } from './models/update-group.input';
-
-type GroupWithMemberCount = Group & { memberCount: number };
 
 @Injectable()
 export class GroupsService {
@@ -30,14 +33,14 @@ export class GroupsService {
     @InjectRepository(Group)
     private groupRepository: Repository<Group>,
 
-    @Inject(forwardRef(() => GroupMemberRequestsService))
-    private memberRequestsService: GroupMemberRequestsService,
+    @InjectRepository(GroupConfig)
+    private groupConfigRepository: Repository<GroupConfig>,
 
-    @Inject(forwardRef(() => GroupConfigsService))
-    private groupConfigsService: GroupConfigsService,
+    @InjectRepository(GroupMemberRequest)
+    private groupMemberRequestRepository: Repository<GroupMemberRequest>,
 
-    @Inject(forwardRef(() => ImagesService))
-    private imagesService: ImagesService,
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
 
     private groupRolesService: GroupRolesService,
     private usersService: UsersService,
@@ -120,97 +123,16 @@ export class GroupsService {
   }
 
   async isPublicGroupImage(imageId: number) {
-    const image = await this.imagesService.getImage({ id: imageId }, [
-      'group.config',
-    ]);
-    return image?.group?.config.privacy === GroupPrivacy.Public;
+    const image = await this.imageRepository.findOneOrFail({
+      where: { id: imageId },
+      relations: ['group.config'],
+    });
+    return image.group?.config.privacy === GroupPrivacy.Public;
   }
 
   async isNoAdminGroup(groupId: number) {
-    const config = await this.groupConfigsService.getGroupConfig({ groupId });
+    const config = await this.getGroupConfig({ groupId });
     return config.adminModel === GroupAdminModel.NoAdmin;
-  }
-
-  async getCoverPhotosBatch(groupIds: number[]) {
-    const coverPhotos = await this.imagesService.getImages({
-      groupId: In(groupIds),
-      imageType: ImageTypes.CoverPhoto,
-    });
-    const mappedCoverPhotos = groupIds.map(
-      (id) =>
-        coverPhotos.find((coverPhoto: Image) => coverPhoto.groupId === id) ||
-        new Error(`Could not load cover photo for group: ${id}`),
-    );
-    return mappedCoverPhotos;
-  }
-
-  async getGroupsBatch(groupIds: number[]) {
-    const groups = await this.getGroups({
-      id: In(groupIds),
-    });
-    return groupIds.map(
-      (id) =>
-        groups.find((group: Group) => group.id === id) ||
-        new Error(`Could not load group: ${id}`),
-    );
-  }
-
-  async getMyGroupPermissionsBatch(keys: MyGroupsKey[]) {
-    const groupIds = keys.map(({ groupId }) => groupId);
-    const { groupPermissions } = await this.usersService.getUserPermissions(
-      keys[0].currentUserId,
-    );
-    return groupIds.map((id) => {
-      if (!groupPermissions[id]) {
-        return initGroupRolePermissions();
-      }
-      return groupPermissions[id];
-    });
-  }
-
-  async isJoinedByMeBatch(keys: MyGroupsKey[]) {
-    const groupIds = keys.map(({ groupId }) => groupId);
-    const groups = await this.getGroups({ id: In(groupIds) }, ['members']);
-
-    return groupIds.map((groupId) => {
-      const group = groups.find((g) => g.id === groupId);
-      if (!group) {
-        return new Error(`Could not load group: ${groupId}`);
-      }
-      return group.members.some(
-        (member) => member.id === keys[0].currentUserId,
-      );
-    });
-  }
-
-  async getGroupMembersBatch(groupIds: number[]) {
-    const groups = await this.getGroups({ id: In(groupIds) }, ['members']);
-
-    return groupIds.map((groupId) => {
-      const group = groups.find((g) => g.id === groupId);
-      if (!group) {
-        return new Error(`Could not load group members: ${groupId}`);
-      }
-      return group.members;
-    });
-  }
-
-  async getGroupMemberCountBatch(groupIds: number[]) {
-    const groups = (await this.groupRepository
-      .createQueryBuilder('group')
-      .leftJoinAndSelect('group.members', 'groupMember')
-      .loadRelationCountAndMap('group.memberCount', 'group.members')
-      .select(['group.id'])
-      .whereInIds(groupIds)
-      .getMany()) as GroupWithMemberCount[];
-
-    return groupIds.map((id) => {
-      const group = groups.find((group: Group) => group.id === id);
-      if (!group) {
-        return new Error(`Could not load group member count: ${id}`);
-      }
-      return group.memberCount;
-    });
   }
 
   async createGroup(
@@ -226,11 +148,11 @@ export class GroupsService {
     await this.createGroupMember(group.id, userId);
 
     if (coverPhoto) {
-      await this.saveCoverPhoto(group.id, coverPhoto);
+      await this.saveGroupCoverPhoto(group.id, coverPhoto);
     } else {
-      await this.imagesService.saveDefaultCoverPhoto({ groupId: group.id });
+      await this.saveDefaultGroupCoverPhoto(group.id);
     }
-    await this.groupConfigsService.initGroupConfig(group.id);
+    await this.initGroupConfig(group.id);
     await this.groupRolesService.initGroupAdminRole(userId, group.id);
 
     return { group };
@@ -253,18 +175,18 @@ export class GroupsService {
     });
 
     if (coverPhoto) {
-      await this.saveCoverPhoto(id, coverPhoto);
+      await this.saveGroupCoverPhoto(id, coverPhoto);
     }
 
     const group = await this.getGroup({ id });
     return { group };
   }
 
-  async saveCoverPhoto(groupId: number, coverPhoto: Promise<FileUpload>) {
+  async saveGroupCoverPhoto(groupId: number, coverPhoto: Promise<FileUpload>) {
     const filename = await saveImage(coverPhoto);
-    await this.deleteCoverPhoto(groupId);
+    await this.deleteGroupCoverPhoto(groupId);
 
-    return this.imagesService.createImage({
+    return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,
       filename,
       groupId,
@@ -272,16 +194,21 @@ export class GroupsService {
   }
 
   async deleteGroup(id: number) {
-    await this.deleteCoverPhoto(id);
+    await this.deleteGroupCoverPhoto(id);
     await this.groupRepository.delete(id);
     return true;
   }
 
-  async deleteCoverPhoto(id: number) {
-    await this.imagesService.deleteImage({
-      imageType: ImageTypes.CoverPhoto,
-      group: { id },
+  async deleteGroupCoverPhoto(groupId: number) {
+    const image = await this.imageRepository.findOne({
+      where: { imageType: ImageTypes.CoverPhoto, groupId },
     });
+    if (!image) {
+      return;
+    }
+    await deleteImageFile(image.filename);
+    this.imageRepository.delete({ imageType: ImageTypes.CoverPhoto, groupId });
+    return true;
   }
 
   async createGroupMember(groupId: number, userId: number) {
@@ -311,7 +238,112 @@ export class GroupsService {
   async leaveGroup(id: number, userId: number) {
     const where = { group: { id }, userId };
     await this.deleteGroupMember(id, userId);
-    await this.memberRequestsService.deleteGroupMemberRequest(where);
+    await this.deleteGroupMemberRequest(where);
+    return true;
+  }
+
+  async saveDefaultGroupCoverPhoto(groupId: number) {
+    const filename = await saveDefaultImage();
+    return this.imageRepository.save({
+      imageType: ImageTypes.CoverPhoto,
+      filename,
+      groupId,
+    });
+  }
+
+  async getGroupConfig(where: FindOptionsWhere<GroupConfig>) {
+    return this.groupConfigRepository.findOneOrFail({ where });
+  }
+
+  async isPublicGroup(id: number) {
+    const groupConfig = await this.getGroupConfig({ id });
+    return groupConfig.privacy === GroupPrivacy.Public;
+  }
+
+  async initGroupConfig(groupId: number) {
+    return this.groupConfigRepository.save({ groupId });
+  }
+
+  async updateGroupConfig({
+    groupId,
+    ...groupConfigData
+  }: UpdateGroupConfigInput) {
+    const group = await this.groupRepository.findOneOrFail({
+      where: { id: groupId },
+      relations: ['config'],
+    });
+    const newConfig = { ...group.config, ...groupConfigData };
+    if (
+      newConfig.decisionMakingModel === DecisionMakingModel.Consent &&
+      newConfig.votingTimeLimit === 0
+    ) {
+      throw new Error(
+        'Voting time limit is required for consent decision making model',
+      );
+    }
+
+    await this.groupConfigRepository.update(group.config.id, groupConfigData);
+    return { group };
+  }
+
+  async getGroupMemberRequest(
+    where: FindOptionsWhere<GroupMemberRequest>,
+    relations?: string[],
+  ) {
+    return this.groupMemberRequestRepository.findOne({
+      relations,
+      where,
+    });
+  }
+
+  async getGroupMemberRequests(groupId: number) {
+    return this.groupMemberRequestRepository.find({
+      where: { status: GroupMemberRequestStatus.Pending, groupId },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async createGroupMemberRequest(groupId: number, userId: number) {
+    const groupMemberRequest = await this.groupMemberRequestRepository.save({
+      groupId,
+      userId,
+    });
+    return { groupMemberRequest };
+  }
+
+  async approveGroupMemberRequest(id: number) {
+    const memberRequest = await this.updateGroupMemberRequest(id, {
+      status: GroupMemberRequestStatus.Approved,
+    });
+    const groupMember = await this.createGroupMember(
+      memberRequest.groupId,
+      memberRequest.userId,
+    );
+    return { groupMember };
+  }
+
+  async denyGroupMemberRequest(id: number) {
+    await this.updateGroupMemberRequest(id, {
+      status: GroupMemberRequestStatus.Denied,
+    });
+    return true;
+  }
+
+  async updateGroupMemberRequest(
+    id: number,
+    requestData: Partial<GroupMemberRequest>,
+  ) {
+    await this.groupMemberRequestRepository.update(id, requestData);
+    return this.groupMemberRequestRepository.findOneOrFail({ where: { id } });
+  }
+
+  async cancelGroupMemberRequest(id: number) {
+    await this.deleteGroupMemberRequest({ id });
+    return true;
+  }
+
+  async deleteGroupMemberRequest(where: FindOptionsWhere<GroupMemberRequest>) {
+    await this.groupMemberRequestRepository.delete(where);
     return true;
   }
 }

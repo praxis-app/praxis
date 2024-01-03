@@ -11,7 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ProposalActionRole } from '../../../proposals/proposal-actions/proposal-action-roles/models/proposal-action-role.model';
+import { ProposalActionRole } from '../../../proposals/proposal-actions/models/proposal-action-role.model';
 import { User } from '../../../users/models/user.model';
 import { Group } from '../../models/group.model';
 import { GroupRolePermission } from './group-role-permission.model';

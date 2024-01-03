@@ -11,7 +11,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { CommentsService } from '../comments/comments.service';
 import { Comment } from '../comments/models/comment.model';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
@@ -27,10 +26,7 @@ import { PostsService } from './posts.service';
 
 @Resolver(() => Post)
 export class PostsResolver {
-  constructor(
-    private postsService: PostsService,
-    private commentsService: CommentsService,
-  ) {}
+  constructor(private postsService: PostsService) {}
 
   @Query(() => Post)
   async post(@Args('id', { type: () => Int }) id: number) {
@@ -39,7 +35,7 @@ export class PostsResolver {
 
   @ResolveField(() => [Comment])
   async comments(@Parent() { id }: Post) {
-    return this.commentsService.getComments({ postId: id });
+    return this.postsService.getPostComments(id);
   }
 
   @ResolveField(() => Int)
