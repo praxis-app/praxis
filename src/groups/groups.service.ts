@@ -150,7 +150,7 @@ export class GroupsService {
     if (coverPhoto) {
       await this.saveGroupCoverPhoto(group.id, coverPhoto);
     } else {
-      await this.saveGroupDefaultCoverPhoto(group.id);
+      await this.saveDefaultGroupCoverPhoto(group.id);
     }
     await this.initGroupConfig(group.id);
     await this.groupRolesService.initGroupAdminRole(userId, group.id);
@@ -242,7 +242,7 @@ export class GroupsService {
     return true;
   }
 
-  async saveGroupDefaultCoverPhoto(groupId: number) {
+  async saveDefaultGroupCoverPhoto(groupId: number) {
     const filename = await saveDefaultImage();
     return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,

@@ -155,7 +155,7 @@ export class EventsService {
     if (coverPhoto) {
       await this.saveEventCoverPhoto(event.id, coverPhoto);
     } else {
-      await this.saveEventDefaultCoverPhoto(event.id);
+      await this.saveDefaultEventCoverPhoto(event.id);
     }
 
     return { event };
@@ -199,7 +199,7 @@ export class EventsService {
     });
   }
 
-  async saveEventDefaultCoverPhoto(eventId: number) {
+  async saveDefaultEventCoverPhoto(eventId: number) {
     const filename = await saveDefaultImage();
     return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,
