@@ -31,6 +31,7 @@ import { ShieldModule } from './shield/shield.module';
 import { shieldPermissions } from './shield/shield.permissions';
 import { UsersModule } from './users/users.module';
 import { VotesModule } from './votes/votes.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
@@ -81,6 +82,7 @@ const ViewModule = ServeStaticModule.forRoot({
     UsersModule,
     ViewModule,
     VotesModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
 })
