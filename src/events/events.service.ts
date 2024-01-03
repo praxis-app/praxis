@@ -153,9 +153,9 @@ export class EventsService {
     });
 
     if (coverPhoto) {
-      await this.saveCoverPhoto(event.id, coverPhoto);
+      await this.saveEventCoverPhoto(event.id, coverPhoto);
     } else {
-      await this.saveDefaultCoverPhoto(event.id);
+      await this.saveEventDefaultCoverPhoto(event.id);
     }
 
     return { event };
@@ -179,7 +179,7 @@ export class EventsService {
     });
 
     if (coverPhoto) {
-      await this.saveCoverPhoto(id, coverPhoto);
+      await this.saveEventCoverPhoto(id, coverPhoto);
     }
 
     console.log('TODO: Add update logic for hostId', hostId);
@@ -188,9 +188,9 @@ export class EventsService {
     return { event };
   }
 
-  async saveCoverPhoto(eventId: number, coverPhoto: Promise<FileUpload>) {
+  async saveEventCoverPhoto(eventId: number, coverPhoto: Promise<FileUpload>) {
     const filename = await saveImage(coverPhoto);
-    await this.deleteCoverPhoto(eventId);
+    await this.deleteEventCoverPhoto(eventId);
 
     return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,
@@ -199,7 +199,7 @@ export class EventsService {
     });
   }
 
-  async saveDefaultCoverPhoto(eventId: number) {
+  async saveEventDefaultCoverPhoto(eventId: number) {
     const filename = await saveDefaultImage();
     return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,
@@ -208,7 +208,7 @@ export class EventsService {
     });
   }
 
-  async deleteCoverPhoto(eventId: number) {
+  async deleteEventCoverPhoto(eventId: number) {
     const image = await this.imageRepository.findOne({
       where: { imageType: ImageTypes.CoverPhoto, eventId },
     });

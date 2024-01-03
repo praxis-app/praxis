@@ -27,7 +27,7 @@ export class GroupConfigsResolver {
 
   @ResolveField(() => Boolean)
   async isPublic(@Parent() { id }: GroupConfig) {
-    return this.groupsService.getIsPublic(id);
+    return this.groupsService.isPublicGroup(id);
   }
 
   @Mutation(() => UpdateGroupPayload)

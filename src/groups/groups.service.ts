@@ -148,9 +148,9 @@ export class GroupsService {
     await this.createGroupMember(group.id, userId);
 
     if (coverPhoto) {
-      await this.saveCoverPhoto(group.id, coverPhoto);
+      await this.saveGroupCoverPhoto(group.id, coverPhoto);
     } else {
-      await this.saveDefaultCoverPhoto(group.id);
+      await this.saveGroupDefaultCoverPhoto(group.id);
     }
     await this.initGroupConfig(group.id);
     await this.groupRolesService.initGroupAdminRole(userId, group.id);
@@ -175,16 +175,16 @@ export class GroupsService {
     });
 
     if (coverPhoto) {
-      await this.saveCoverPhoto(id, coverPhoto);
+      await this.saveGroupCoverPhoto(id, coverPhoto);
     }
 
     const group = await this.getGroup({ id });
     return { group };
   }
 
-  async saveCoverPhoto(groupId: number, coverPhoto: Promise<FileUpload>) {
+  async saveGroupCoverPhoto(groupId: number, coverPhoto: Promise<FileUpload>) {
     const filename = await saveImage(coverPhoto);
-    await this.deleteCoverPhoto(groupId);
+    await this.deleteGroupCoverPhoto(groupId);
 
     return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,
@@ -194,12 +194,12 @@ export class GroupsService {
   }
 
   async deleteGroup(id: number) {
-    await this.deleteCoverPhoto(id);
+    await this.deleteGroupCoverPhoto(id);
     await this.groupRepository.delete(id);
     return true;
   }
 
-  async deleteCoverPhoto(groupId: number) {
+  async deleteGroupCoverPhoto(groupId: number) {
     const image = await this.imageRepository.findOne({
       where: { imageType: ImageTypes.CoverPhoto, groupId },
     });
@@ -242,7 +242,7 @@ export class GroupsService {
     return true;
   }
 
-  async saveDefaultCoverPhoto(groupId: number) {
+  async saveGroupDefaultCoverPhoto(groupId: number) {
     const filename = await saveDefaultImage();
     return this.imageRepository.save({
       imageType: ImageTypes.CoverPhoto,
@@ -255,7 +255,7 @@ export class GroupsService {
     return this.groupConfigRepository.findOneOrFail({ where });
   }
 
-  async getIsPublic(id: number) {
+  async isPublicGroup(id: number) {
     const groupConfig = await this.getGroupConfig({ id });
     return groupConfig.privacy === GroupPrivacy.Public;
   }
