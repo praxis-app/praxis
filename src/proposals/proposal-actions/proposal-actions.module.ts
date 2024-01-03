@@ -17,6 +17,7 @@ import { ProposalActionsService } from './proposal-actions.service';
 import { ProposalActionEventHostsResolver } from './resolvers/proposal-action-event-hosts.resolver';
 import { ProposalActionEventsResolver } from './resolvers/proposal-action-events.resolver';
 import { ProposalActionGroupConfigsResolver } from './resolvers/proposal-action-group-configs.resolver';
+import { ProposalActionRoleMembersResolver } from './resolvers/proposal-action-role-members.resolver';
 import { ProposalActionRolesResolver } from './resolvers/proposal-action-roles.resolver';
 import { ProposalActionsResolver } from './resolvers/proposal-actions.resolver';
 
@@ -42,6 +43,7 @@ import { ProposalActionsResolver } from './resolvers/proposal-actions.resolver';
     ProposalActionEventHostsResolver,
     ProposalActionEventsResolver,
     ProposalActionGroupConfigsResolver,
+    ProposalActionRoleMembersResolver,
     ProposalActionRolesResolver,
     ProposalActionsResolver,
     ProposalActionsService,
