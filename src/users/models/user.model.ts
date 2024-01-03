@@ -88,7 +88,7 @@ export class User {
   @ManyToMany(() => User, (user) => user.followers, { onDelete: 'CASCADE' })
   following: User[];
 
-  @ManyToMany(() => Group, (group) => group.members)
+  @ManyToMany(() => Group, (group) => group.members, { onDelete: 'CASCADE' })
   groups: Group[];
 
   @OneToMany(
@@ -100,10 +100,14 @@ export class User {
   )
   groupMemberRequests: GroupMemberRequest[];
 
-  @ManyToMany(() => ServerRole, (serverRole) => serverRole.members)
+  @ManyToMany(() => ServerRole, (serverRole) => serverRole.members, {
+    onDelete: 'CASCADE',
+  })
   serverRoles: ServerRole[];
 
-  @ManyToMany(() => GroupRole, (groupRole) => groupRole.members)
+  @ManyToMany(() => GroupRole, (groupRole) => groupRole.members, {
+    onDelete: 'CASCADE',
+  })
   groupRoles: GroupRole[];
 
   @OneToMany(() => EventAttendee, (eventAttendee) => eventAttendee.user, {

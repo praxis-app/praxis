@@ -58,6 +58,7 @@ import { AddProposalConfigTable1702843109428 } from './migrations/1702843109428-
 import { UpdateVotingTimeLimitDefault1703118466924 } from './migrations/1703118466924-UpdateVotingTimeLimitDefault';
 import { AddAdminModelColumns1703454648429 } from './migrations/1703454648429-AddAdminModelColumns';
 import { AddServerRolePermissionColumns1703978999070 } from './migrations/1703978999070-AddServerRolePermissionColumns';
+import { AddCascadeDeletesForUser1704254669247 } from './migrations/1704254669247-AddCascadeDeletesForUser';
 
 dotenv.config();
 
@@ -100,6 +101,7 @@ export default new DataSource({
   migrations: [
     AddAdminModelColumns1703454648429,
     AddCanaryTable1699136722535,
+    AddCascadeDeletesForUser1704254669247,
     AddCommentTable1693003196421,
     AddEventTables1690147636077,
     AddFollowTable1679778147216,
