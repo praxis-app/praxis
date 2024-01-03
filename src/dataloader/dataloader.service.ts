@@ -563,7 +563,7 @@ export class DataloaderService {
 
   private _createGroupRoleMemberCountLoader() {
     return this._getDataLoader<number, number>(async (roleIds) => {
-      const roles = (await this.groupRoleRepository
+      const groupRoles = (await this.groupRoleRepository
         .createQueryBuilder('role')
         .leftJoinAndSelect('role.members', 'roleMember')
         .loadRelationCountAndMap('role.memberCount', 'role.members')
@@ -572,18 +572,18 @@ export class DataloaderService {
         .getMany()) as GroupRoleWithMemberCount[];
 
       return roleIds.map((id) => {
-        const role = roles.find((role: GroupRole) => role.id === id);
-        if (!role) {
+        const groupRole = groupRoles.find((role: GroupRole) => role.id === id);
+        if (!groupRole) {
           return new Error(`Could not load role member count: ${id}`);
         }
-        return role.memberCount;
+        return groupRole.memberCount;
       });
     });
   }
 
   private _createServerRoleMemberCountLoader() {
     return this._getDataLoader<number, number>(async (roleIds) => {
-      const roles = (await this.serverRoleRepository
+      const serverRoles = (await this.serverRoleRepository
         .createQueryBuilder('role')
         .leftJoinAndSelect('role.members', 'roleMember')
         .loadRelationCountAndMap('role.memberCount', 'role.members')
@@ -592,11 +592,13 @@ export class DataloaderService {
         .getMany()) as ServerRoleWithMemberCount[];
 
       return roleIds.map((id) => {
-        const role = roles.find((role: ServerRole) => role.id === id);
-        if (!role) {
+        const serverRole = serverRoles.find(
+          (role: ServerRole) => role.id === id,
+        );
+        if (!serverRole) {
           return new Error(`Could not load role member count: ${id}`);
         }
-        return role.memberCount;
+        return serverRole.memberCount;
       });
     });
   }
