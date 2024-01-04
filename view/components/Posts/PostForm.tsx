@@ -133,7 +133,7 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
             },
             (groupFeedData) =>
               produce(groupFeedData, (draft) => {
-                draft?.event.posts.nodes.unshift(post);
+                draft?.event.posts.unshift(post);
               }),
           );
         }

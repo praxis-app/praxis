@@ -20,57 +20,54 @@ export type EventFeedQuery = {
   event: {
     __typename?: 'Event';
     id: number;
-    posts: {
-      __typename?: 'PostsConnection';
-      totalCount: number;
-      nodes: Array<{
-        __typename?: 'Post';
+    postsCount: number;
+    posts: Array<{
+      __typename?: 'Post';
+      id: number;
+      body?: string | null;
+      likesCount: number;
+      commentCount: number;
+      isLikedByMe?: boolean;
+      createdAt: any;
+      images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
+      user: {
+        __typename?: 'User';
         id: number;
-        body?: string | null;
-        likesCount: number;
-        commentCount: number;
-        isLikedByMe?: boolean;
-        createdAt: any;
-        images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
-        user: {
-          __typename?: 'User';
-          id: number;
-          name: string;
-          profilePicture: { __typename?: 'Image'; id: number };
+        name: string;
+        profilePicture: { __typename?: 'Image'; id: number };
+      };
+      group?: {
+        __typename?: 'Group';
+        isJoinedByMe?: boolean;
+        id: number;
+        name: string;
+        myPermissions?: {
+          __typename?: 'GroupPermissions';
+          approveMemberRequests: boolean;
+          createEvents: boolean;
+          deleteGroup: boolean;
+          manageComments: boolean;
+          manageEvents: boolean;
+          managePosts: boolean;
+          manageRoles: boolean;
+          manageSettings: boolean;
+          removeMembers: boolean;
+          updateGroup: boolean;
         };
+        coverPhoto?: { __typename?: 'Image'; id: number } | null;
+      } | null;
+      event?: {
+        __typename?: 'Event';
+        id: number;
+        name: string;
         group?: {
           __typename?: 'Group';
-          isJoinedByMe?: boolean;
           id: number;
-          name: string;
-          myPermissions?: {
-            __typename?: 'GroupPermissions';
-            approveMemberRequests: boolean;
-            createEvents: boolean;
-            deleteGroup: boolean;
-            manageComments: boolean;
-            manageEvents: boolean;
-            managePosts: boolean;
-            manageRoles: boolean;
-            manageSettings: boolean;
-            removeMembers: boolean;
-            updateGroup: boolean;
-          };
-          coverPhoto?: { __typename?: 'Image'; id: number } | null;
+          isJoinedByMe: boolean;
         } | null;
-        event?: {
-          __typename?: 'Event';
-          id: number;
-          name: string;
-          group?: {
-            __typename?: 'Group';
-            id: number;
-            isJoinedByMe: boolean;
-          } | null;
-          coverPhoto: { __typename?: 'Image'; id: number };
-        } | null;
-      }>;
-    };
+        coverPhoto: { __typename?: 'Image'; id: number };
+      } | null;
+    }>;
   };
 };
 
@@ -84,11 +81,9 @@ export const EventFeedDocument = gql`
     event(id: $eventId) {
       id
       posts(offset: $offset, limit: $limit) {
-        nodes {
-          ...PostCard
-        }
-        totalCount
+        ...PostCard
       }
+      postsCount
     }
   }
   ${PostCardFragmentDoc}
