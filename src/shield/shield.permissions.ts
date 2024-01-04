@@ -64,6 +64,7 @@ export const shieldPermissions = shield(
       groupRole: isGroupMember,
       publicGroupsFeed: allow,
       publicGroups: allow,
+      publicGroupsCount: allow,
       publicCanary: allow,
       events: allow,
     },
@@ -132,7 +133,6 @@ export const shieldPermissions = shield(
       isPublicPost,
     ),
     PublicFeedItemsConnection: allow,
-    PublicGroupsConnection: allow,
     Image: {
       id: or(
         isAuthenticated,

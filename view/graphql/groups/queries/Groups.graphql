@@ -1,10 +1,9 @@
 query Groups($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
   groups(offset: $offset, limit: $limit) {
-    nodes {
-      ...GroupCard
-    }
-    totalCount
+    ...GroupCard
   }
+  groupsCount
+
   me {
     id
     serverPermissions {

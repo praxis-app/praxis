@@ -16,44 +16,39 @@ export type PublicGroupsQueryVariables = Types.Exact<{
 
 export type PublicGroupsQuery = {
   __typename?: 'Query';
-  publicGroups: {
-    __typename?: 'PublicGroupsConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'Group';
-      description: string;
-      memberCount: number;
-      memberRequestCount?: number | null;
-      isJoinedByMe?: boolean;
-      id: number;
-      name: string;
-      settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
-      myPermissions?: {
-        __typename?: 'GroupPermissions';
-        approveMemberRequests: boolean;
-        createEvents: boolean;
-        deleteGroup: boolean;
-        manageComments: boolean;
-        manageEvents: boolean;
-        managePosts: boolean;
-        manageRoles: boolean;
-        manageSettings: boolean;
-        removeMembers: boolean;
-        updateGroup: boolean;
-      };
-      coverPhoto?: { __typename?: 'Image'; id: number } | null;
-    }>;
-  };
+  publicGroupsCount: number;
+  publicGroups: Array<{
+    __typename?: 'Group';
+    description: string;
+    memberCount: number;
+    memberRequestCount?: number | null;
+    isJoinedByMe?: boolean;
+    id: number;
+    name: string;
+    settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
+    myPermissions?: {
+      __typename?: 'GroupPermissions';
+      approveMemberRequests: boolean;
+      createEvents: boolean;
+      deleteGroup: boolean;
+      manageComments: boolean;
+      manageEvents: boolean;
+      managePosts: boolean;
+      manageRoles: boolean;
+      manageSettings: boolean;
+      removeMembers: boolean;
+      updateGroup: boolean;
+    };
+    coverPhoto?: { __typename?: 'Image'; id: number } | null;
+  }>;
 };
 
 export const PublicGroupsDocument = gql`
   query PublicGroups($offset: Int, $limit: Int, $isLoggedIn: Boolean = false) {
     publicGroups(offset: $offset, limit: $limit) {
-      nodes {
-        ...GroupCard
-      }
-      totalCount
+      ...GroupCard
     }
+    publicGroupsCount
   }
   ${GroupCardFragmentDoc}
 `;

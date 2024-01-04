@@ -383,12 +383,6 @@ export type GroupRolePermissionInput = {
   updateGroup?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
-export type GroupsConnection = {
-  __typename?: 'GroupsConnection';
-  nodes: Array<Group>;
-  totalCount: Scalars['Int']['output'];
-};
-
 export type Image = {
   __typename?: 'Image';
   comment?: Maybe<Comment>;
@@ -859,9 +853,9 @@ export type ProposalConfig = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type PublicGroupsConnection = {
-  __typename?: 'PublicGroupsConnection';
-  nodes: Array<Group>;
+export type PublicFeedItemsConnection = {
+  __typename?: 'PublicFeedItemsConnection';
+  nodes: Array<FeedItem>;
   totalCount: Scalars['Int']['output'];
 };
 
@@ -875,14 +869,16 @@ export type Query = {
   groupMemberRequest?: Maybe<GroupMemberRequest>;
   groupRole: GroupRole;
   groupRoles: Array<GroupRole>;
-  groups: GroupsConnection;
+  groups: Array<Group>;
+  groupsCount: Scalars['Int']['output'];
   isFirstUser: Scalars['Boolean']['output'];
   me: User;
   post: Post;
   proposal: Proposal;
   publicCanary?: Maybe<Canary>;
-  publicGroups: PublicGroupsConnection;
-  publicGroupsFeed: FeedItemsConnection;
+  publicGroups: Array<Group>;
+  publicGroupsCount: Scalars['Int']['output'];
+  publicGroupsFeed: PublicFeedItemsConnection;
   serverConfig: ServerConfig;
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;

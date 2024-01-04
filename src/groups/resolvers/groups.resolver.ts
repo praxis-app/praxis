@@ -26,8 +26,6 @@ import { CreateGroupPayload } from '../models/create-group.payload';
 import { GroupConfig } from '../models/group-config.model';
 import { GroupMemberRequest } from '../models/group-member-request.model';
 import { Group } from '../models/group.model';
-import { GroupsConnection } from '../models/groups.connection';
-import { PublicGroupsConnection } from '../models/public-groups.connection';
 import { UpdateGroupInput } from '../models/update-group.input';
 import { UpdateGroupPayload } from '../models/update-group.payload';
 
@@ -47,7 +45,7 @@ export class GroupsResolver {
     return this.groupsService.getGroup({ id, name });
   }
 
-  @Query(() => GroupsConnection)
+  @Query(() => [Group])
   async groups(
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
@@ -55,7 +53,12 @@ export class GroupsResolver {
     return this.groupsService.getPagedGroups({}, offset, limit);
   }
 
-  @Query(() => PublicGroupsConnection)
+  @Query(() => Int)
+  async groupsCount() {
+    return this.groupsService.getGroupsCount();
+  }
+
+  @Query(() => [Group])
   async publicGroups(
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
@@ -65,6 +68,13 @@ export class GroupsResolver {
       offset,
       limit,
     );
+  }
+
+  @Query(() => Int)
+  async publicGroupsCount() {
+    return this.groupsService.getGroupsCount({
+      config: { privacy: GroupPrivacy.Public },
+    });
   }
 
   @Query(() => PublicFeedItemsConnection)

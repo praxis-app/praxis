@@ -53,7 +53,7 @@ const GroupsList = () => {
       <GroupForm />
 
       <Pagination
-        count={data?.groups.totalCount}
+        count={data?.groupsCount}
         isLoading={loading}
         onChangePage={onChangePage}
         page={page}
@@ -61,7 +61,7 @@ const GroupsList = () => {
         setPage={setPage}
         setRowsPerPage={setRowsPerPage}
       >
-        {data?.groups.nodes.map((group) => (
+        {data?.groups.map((group) => (
           <GroupCard
             key={group.id}
             canRemoveGroups={data.me.serverPermissions.removeGroups}

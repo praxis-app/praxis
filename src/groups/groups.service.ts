@@ -58,6 +58,10 @@ export class GroupsService {
     });
   }
 
+  async getGroupsCount(where?: FindOptionsWhere<Group>) {
+    return this.groupRepository.count({ where });
+  }
+
   async getPagedGroups(
     where?: FindOptionsWhere<Group>,
     offset?: number,
@@ -67,10 +71,9 @@ export class GroupsService {
     const sortedFeed = groups.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    const nodes =
-      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
-
-    return { nodes, totalCount: sortedFeed.length };
+    return offset !== undefined
+      ? paginate(sortedFeed, offset, limit)
+      : sortedFeed;
   }
 
   async getGroupFeed(id: number, offset?: number, limit?: number) {

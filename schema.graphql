@@ -474,16 +474,6 @@ type CreateGroupPayload {
   group: Group!
 }
 
-type GroupsConnection {
-  nodes: [Group!]!
-  totalCount: Int!
-}
-
-type PublicGroupsConnection {
-  nodes: [Group!]!
-  totalCount: Int!
-}
-
 type CreateProposalPayload {
   proposal: Proposal!
 }
@@ -534,8 +524,10 @@ type Query {
   proposal(id: Int!): Proposal!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   group(id: Int, name: String): Group!
-  groups(offset: Int, limit: Int): GroupsConnection!
-  publicGroups(offset: Int, limit: Int): PublicGroupsConnection!
+  groups(offset: Int, limit: Int): [Group!]!
+  groupsCount: Int!
+  publicGroups(offset: Int, limit: Int): [Group!]!
+  publicGroupsCount: Int!
   publicGroupsFeed(offset: Int, limit: Int): PublicFeedItemsConnection!
   groupRole(id: Int!): GroupRole!
   event(id: Int): Event!

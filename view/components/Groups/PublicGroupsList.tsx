@@ -51,7 +51,7 @@ const PublicGroupsList = () => {
       <GroupTipsCard />
 
       <Pagination
-        count={data?.publicGroups.totalCount}
+        count={data?.publicGroupsCount}
         isLoading={loading}
         onChangePage={onChangePage}
         page={page}
@@ -59,7 +59,7 @@ const PublicGroupsList = () => {
         setPage={setPage}
         setRowsPerPage={setRowsPerPage}
       >
-        {data?.publicGroups.nodes.map((group) => (
+        {data?.publicGroups.map((group) => (
           <GroupCard group={group} key={group.id} />
         ))}
       </Pagination>
