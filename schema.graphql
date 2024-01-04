@@ -202,7 +202,8 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   homeFeed(offset: Int, limit: Int): FeedItemsConnection!
-  profileFeed(offset: Int, limit: Int): FeedItemsConnection!
+  profileFeed(offset: Int, limit: Int): [FeedItem!]!
+  profileFeedCount: Int!
   followers(offset: Int, limit: Int): [User!]!
   following(offset: Int, limit: Int): [User!]!
   followerCount: Int!
@@ -211,6 +212,8 @@ type User {
   joinedGroups: [Group!]!
   serverPermissions: ServerPermissions!
 }
+
+union FeedItem = Post | Proposal
 
 type Vote {
   id: Int!
@@ -285,8 +288,6 @@ type Group {
   myPermissions: GroupPermissions!
   settings: GroupConfig!
 }
-
-union FeedItem = Post | Proposal
 
 type Event {
   id: Int!

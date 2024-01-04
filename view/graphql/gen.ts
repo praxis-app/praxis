@@ -1219,7 +1219,8 @@ export type User = {
   likes: Array<Like>;
   name: Scalars['String']['output'];
   posts: Array<Post>;
-  profileFeed: FeedItemsConnection;
+  profileFeed: Array<FeedItem>;
+  profileFeedCount: Scalars['Int']['output'];
   profilePicture: Image;
   proposals: Array<Proposal>;
   serverPermissions: ServerPermissions;

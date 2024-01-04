@@ -7,10 +7,8 @@ query UserProfileFeed(
   user(name: $name) {
     id
     profileFeed(offset: $offset, limit: $limit) {
-      nodes {
-        ...FeedItem
-      }
-      totalCount
+      ...FeedItem
     }
+    profileFeedCount
   }
 }

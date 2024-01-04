@@ -100,7 +100,7 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
           },
           (userProfileFeedData) =>
             produce(userProfileFeedData, (draft) => {
-              draft?.user.profileFeed.nodes.unshift(post);
+              draft?.user.profileFeed.unshift(post);
             }),
         );
         if (post.group) {

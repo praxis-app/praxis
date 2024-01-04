@@ -10,6 +10,7 @@ import {
 } from '@nestjs/graphql';
 import { In } from 'typeorm';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { FeedItem } from '../common/models/feed-item.union';
 import { FeedItemsConnection } from '../common/models/feed-items.connection';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
@@ -70,13 +71,18 @@ export class UsersResolver {
     return this.usersService.getUserFeed(id, offset, limit);
   }
 
-  @ResolveField(() => FeedItemsConnection)
+  @ResolveField(() => [FeedItem])
   async profileFeed(
     @Parent() { id }: User,
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
   ) {
     return this.usersService.getUserProfileFeed(id, offset, limit);
+  }
+
+  @ResolveField(() => Int)
+  async profileFeedCount(@Parent() { id }: User) {
+    return this.usersService.getUserProfileFeedCount(id);
   }
 
   @ResolveField(() => Image)
