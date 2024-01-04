@@ -452,6 +452,11 @@ type CreateGroupMemberRequestPayload {
   groupMemberRequest: GroupMemberRequest!
 }
 
+type PublicFeedItemsConnection {
+  nodes: [FeedItem!]!
+  totalCount: Int!
+}
+
 type GroupPermissions {
   manageRoles: Boolean!
   manageSettings: Boolean!
@@ -531,7 +536,7 @@ type Query {
   group(id: Int, name: String): Group!
   groups(offset: Int, limit: Int): GroupsConnection!
   publicGroups(offset: Int, limit: Int): PublicGroupsConnection!
-  publicGroupsFeed(offset: Int, limit: Int): FeedItemsConnection!
+  publicGroupsFeed(offset: Int, limit: Int): PublicFeedItemsConnection!
   groupRole(id: Int!): GroupRole!
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!

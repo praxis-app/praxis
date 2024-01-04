@@ -131,6 +131,7 @@ export const shieldPermissions = shield(
       isPublicProposal,
       isPublicPost,
     ),
+    PublicFeedItemsConnection: allow,
     PublicGroupsConnection: allow,
     Image: {
       id: or(
