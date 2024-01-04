@@ -19,7 +19,6 @@ import { FollowUserPayload } from './models/follow-user.payload';
 import { UpdateUserInput } from './models/update-user.input';
 import { UpdateUserPayload } from './models/update-user.payload';
 import { User } from './models/user.model';
-import { UsersConnection } from './models/users.connection';
 import { UsersService } from './users.service';
 
 @Resolver(() => User)
@@ -39,12 +38,17 @@ export class UsersResolver {
     return this.usersService.getUser({ id, name });
   }
 
-  @Query(() => UsersConnection)
+  @Query(() => [User])
   async users(
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
   ) {
     return this.usersService.getPagedUsers(offset, limit);
+  }
+
+  @Query(() => Int)
+  async usersCount() {
+    return this.usersService.getUsersCount();
   }
 
   @Query(() => [User])
@@ -88,7 +92,7 @@ export class UsersResolver {
     return this.usersService.getCoverPhoto(id);
   }
 
-  @ResolveField(() => UsersConnection)
+  @ResolveField(() => [User])
   async followers(
     @Parent() { id }: User,
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
@@ -97,7 +101,7 @@ export class UsersResolver {
     return this.usersService.getFollowers(id, offset, limit);
   }
 
-  @ResolveField(() => UsersConnection)
+  @ResolveField(() => [User])
   async following(
     @Parent() { id }: User,
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,

@@ -45,15 +45,18 @@ export class UsersService {
     return this.userRepository.find({ where });
   }
 
+  async getUsersCount() {
+    return this.userRepository.count();
+  }
+
   async getPagedUsers(offset?: number, limit?: number) {
     const users = await this.getUsers();
     const sortedUsers = users.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    const nodes =
-      offset !== undefined ? paginate(sortedUsers, offset, limit) : sortedUsers;
-
-    return { nodes, totalCount: sortedUsers.length };
+    return offset !== undefined
+      ? paginate(sortedUsers, offset, limit)
+      : sortedUsers;
   }
 
   async isFirstUser() {

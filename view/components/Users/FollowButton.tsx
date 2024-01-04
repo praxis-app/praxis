@@ -71,10 +71,10 @@ const FollowButton = ({
                 if (!draft) {
                   return;
                 }
-                draft.user.followers.nodes = draft.user.followers.nodes.filter(
+                draft.user.followers = draft.user.followers.filter(
                   ({ id: userId }) => userId !== id,
                 );
-                draft.user.followers.totalCount -= 1;
+                draft.user.followerCount -= 1;
               }),
           );
           cache.modify({

@@ -203,8 +203,8 @@ type User {
   updatedAt: DateTime!
   homeFeed(offset: Int, limit: Int): FeedItemsConnection!
   profileFeed(offset: Int, limit: Int): FeedItemsConnection!
-  followers(offset: Int, limit: Int): UsersConnection!
-  following(offset: Int, limit: Int): UsersConnection!
+  followers(offset: Int, limit: Int): [User!]!
+  following(offset: Int, limit: Int): [User!]!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
@@ -428,11 +428,6 @@ type UpdateUserPayload {
   user: User!
 }
 
-type UsersConnection {
-  nodes: [User!]!
-  totalCount: Int!
-}
-
 type CreateGroupRolePayload {
   groupRole: GroupRole!
 }
@@ -543,7 +538,8 @@ type Query {
   groupRoles: [GroupRole!]!
   me: User!
   user(id: Int, name: String): User!
-  users(offset: Int, limit: Int): UsersConnection!
+  users(offset: Int, limit: Int): [User!]!
+  usersCount: Int!
   usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
   serverRole(id: Int!): ServerRole!

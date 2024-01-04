@@ -46,7 +46,7 @@ const UsersIndex = () => {
       <LevelOneHeading header>{t('navigation.users')}</LevelOneHeading>
 
       <Pagination
-        count={data?.users.totalCount}
+        count={data?.usersCount}
         isLoading={loading}
         onChangePage={onChangePage}
         page={page}
@@ -58,7 +58,7 @@ const UsersIndex = () => {
         {data && (
           <Card>
             <CardContent>
-              {data.users.nodes.map((user) => (
+              {data.users.map((user) => (
                 <UserEntry
                   key={user.id}
                   currentUserId={data.me.id}

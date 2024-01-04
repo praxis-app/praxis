@@ -889,8 +889,9 @@ export type Query = {
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
   user: User;
-  users: UsersConnection;
+  users: Array<User>;
   usersByIds: Array<User>;
+  usersCount: Scalars['Int']['output'];
 };
 
 export type QueryEventArgs = {
@@ -1211,8 +1212,8 @@ export type User = {
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   followerCount: Scalars['Int']['output'];
-  followers: UsersConnection;
-  following: UsersConnection;
+  followers: Array<User>;
+  following: Array<User>;
   followingCount: Scalars['Int']['output'];
   homeFeed: FeedItemsConnection;
   id: Scalars['Int']['output'];
@@ -1246,12 +1247,6 @@ export type UserHomeFeedArgs = {
 export type UserProfileFeedArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type UsersConnection = {
-  __typename?: 'UsersConnection';
-  nodes: Array<User>;
-  totalCount: Scalars['Int']['output'];
 };
 
 export type Vote = {
