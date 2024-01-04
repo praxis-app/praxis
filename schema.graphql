@@ -275,7 +275,8 @@ type Group {
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
-  feed(offset: Int, limit: Int): FeedItemsConnection!
+  feed(offset: Int, limit: Int): [FeedItem!]!
+  feedCount: Int!
   memberCount: Int!
   memberRequestCount: Int
   isJoinedByMe: Boolean!
@@ -284,6 +285,8 @@ type Group {
   myPermissions: GroupPermissions!
   settings: GroupConfig!
 }
+
+union FeedItem = Post | Proposal
 
 type Event {
   id: Int!
@@ -403,8 +406,6 @@ type FeedItemsConnection {
   nodes: [FeedItem!]!
   totalCount: Int!
 }
-
-union FeedItem = Post | Proposal
 
 type ServerPermissions {
   manageRoles: Boolean!

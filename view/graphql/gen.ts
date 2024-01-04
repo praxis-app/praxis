@@ -281,7 +281,8 @@ export type Group = {
   coverPhoto?: Maybe<Image>;
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
-  feed: FeedItemsConnection;
+  feed: Array<FeedItem>;
+  feedCount: Scalars['Int']['output'];
   futureEvents: Array<Event>;
   id: Scalars['Int']['output'];
   isJoinedByMe: Scalars['Boolean']['output'];

@@ -9,7 +9,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
-import { FeedItemsConnection } from '../../common/models/feed-items.connection';
+import { FeedItem } from '../../common/models/feed-item.union';
 import { PublicFeedItemsConnection } from '../../common/models/public-feed-items.connection';
 import { Dataloaders } from '../../dataloader/dataloader.types';
 import { EventsService } from '../../events/events.service';
@@ -98,13 +98,18 @@ export class GroupsResolver {
     return loaders.groupCoverPhotosLoader.load(id);
   }
 
-  @ResolveField(() => FeedItemsConnection)
+  @ResolveField(() => [FeedItem])
   async feed(
     @Parent() { id }: Group,
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
   ) {
     return this.groupsService.getGroupFeed(id, offset, limit);
+  }
+
+  @ResolveField(() => Int)
+  async feedCount(@Parent() { id }: Group) {
+    return this.groupsService.getGroupFeedItemCount(id);
   }
 
   @ResolveField(() => [User])

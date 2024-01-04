@@ -7,10 +7,8 @@ query GroupFeed(
   group(name: $name) {
     id
     feed(offset: $offset, limit: $limit) {
-      nodes {
-        ...FeedItem
-      }
-      totalCount
+      ...FeedItem
     }
+    feedCount
   }
 }

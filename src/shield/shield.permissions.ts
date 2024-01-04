@@ -113,6 +113,7 @@ export const shieldPermissions = shield(
       coverPhoto: or(isAuthenticated, isPublicGroup),
       settings: or(isAuthenticated, isPublicGroup),
       feed: or(isAuthenticated, isPublicGroup),
+      feedCount: or(isAuthenticated, isPublicGroup),
       futureEvents: or(isAuthenticated, isPublicGroup),
       pastEvents: or(isAuthenticated, isPublicGroup),
       memberCount: or(isAuthenticated, isPublicGroup),

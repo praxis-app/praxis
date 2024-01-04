@@ -224,7 +224,7 @@ const ProposalForm = ({
             },
             (groupFeedData) =>
               produce(groupFeedData, (draft) => {
-                draft?.group.feed.nodes.unshift(proposal);
+                draft?.group.feed.unshift(proposal);
               }),
           );
         }
