@@ -1,9 +1,11 @@
+import { useReactiveVar } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import GroupCard from '../../components/Groups/GroupCard';
 import GroupTipsCard from '../../components/Groups/GroupTipsCard';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
+import { authFailedVar } from '../../graphql/cache';
 import { usePublicGroupsLazyQuery } from '../../graphql/groups/queries/gen/PublicGroups.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 import Pagination from '../Shared/Pagination';
@@ -12,6 +14,7 @@ const PublicGroupsList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
 
+  const authFailed = useReactiveVar(authFailedVar);
   const [getGroups, { data, loading, error }] = usePublicGroupsLazyQuery({
     errorPolicy: 'all',
   });
@@ -19,13 +22,16 @@ const PublicGroupsList = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
+    if (!authFailed) {
+      return;
+    }
     getGroups({
       variables: {
         limit: rowsPerPage,
         offset: page * rowsPerPage,
       },
     });
-  }, [rowsPerPage, page, getGroups]);
+  }, [rowsPerPage, page, getGroups, authFailed]);
 
   const onChangePage = async (newPage: number) => {
     await getGroups({
@@ -51,7 +57,7 @@ const PublicGroupsList = () => {
       <GroupTipsCard />
 
       <Pagination
-        count={data?.publicGroups.totalCount}
+        count={data?.publicGroupsCount}
         isLoading={loading}
         onChangePage={onChangePage}
         page={page}
@@ -59,7 +65,7 @@ const PublicGroupsList = () => {
         setPage={setPage}
         setRowsPerPage={setRowsPerPage}
       >
-        {data?.publicGroups.nodes.map((group) => (
+        {data?.publicGroups.map((group) => (
           <GroupCard group={group} key={group.id} />
         ))}
       </Pagination>

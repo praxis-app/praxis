@@ -115,8 +115,14 @@ export class EventsService {
 
   async getEventPosts(id: number, offset?: number, limit?: number) {
     const posts = await this.postRepository.find({ where: { event: { id } } });
-    const nodes = offset !== undefined ? paginate(posts, offset, limit) : posts;
-    return { nodes, totalCount: posts.length };
+    if (offset !== undefined) {
+      return paginate(posts, offset, limit);
+    }
+    return posts;
+  }
+
+  async getEventPostsCount(id: number) {
+    return this.postRepository.count({ where: { event: { id } } });
   }
 
   async isPublicEventImage(imageId: number) {

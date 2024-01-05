@@ -68,8 +68,8 @@ export const removeGroup =
           if (!draft) {
             return;
           }
-          const index = draft.groups.nodes.findIndex((p) => p.id === id);
-          draft.groups.nodes.splice(index, 1);
+          const index = draft.groups.findIndex((p) => p.id === id);
+          draft.groups.splice(index, 1);
         }),
     );
     const cacheId = cache.identify({ id, __typename: TypeNames.Group });

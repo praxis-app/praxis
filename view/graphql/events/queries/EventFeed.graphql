@@ -7,10 +7,8 @@ query EventFeed(
   event(id: $eventId) {
     id
     posts(offset: $offset, limit: $limit) {
-      nodes {
-        ...PostCard
-      }
-      totalCount
+      ...PostCard
     }
+    postsCount
   }
 }

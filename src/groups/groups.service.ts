@@ -58,6 +58,10 @@ export class GroupsService {
     });
   }
 
+  async getGroupsCount(where?: FindOptionsWhere<Group>) {
+    return this.groupRepository.count({ where });
+  }
+
   async getPagedGroups(
     where?: FindOptionsWhere<Group>,
     offset?: number,
@@ -67,10 +71,9 @@ export class GroupsService {
     const sortedFeed = groups.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    const nodes =
-      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
-
-    return { nodes, totalCount: sortedFeed.length };
+    return offset !== undefined
+      ? paginate(sortedFeed, offset, limit)
+      : sortedFeed;
   }
 
   async getGroupFeed(id: number, offset?: number, limit?: number) {
@@ -78,10 +81,25 @@ export class GroupsService {
     const sortedFeed = [...group.posts, ...group.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    const nodes =
-      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
+    return offset !== undefined
+      ? paginate(sortedFeed, offset, limit)
+      : sortedFeed;
+  }
 
-    return { nodes, totalCount: sortedFeed.length };
+  async getGroupFeedItemCount(id: number) {
+    const postsCount = await this.groupRepository
+      .createQueryBuilder('group')
+      .leftJoin('group.posts', 'post')
+      .where('group.id = :id', { id })
+      .getCount();
+
+    const proposalsCount = await this.groupRepository
+      .createQueryBuilder('group')
+      .leftJoin('group.proposals', 'proposal')
+      .where('group.id = :id', { id })
+      .getCount();
+
+    return postsCount + proposalsCount;
   }
 
   async getPublicGroupsFeed(offset?: number, limit?: number) {

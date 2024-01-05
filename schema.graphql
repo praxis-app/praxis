@@ -202,15 +202,18 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   homeFeed(offset: Int, limit: Int): FeedItemsConnection!
-  profileFeed(offset: Int, limit: Int): FeedItemsConnection!
-  followers(offset: Int, limit: Int): UsersConnection!
-  following(offset: Int, limit: Int): UsersConnection!
+  profileFeed(offset: Int, limit: Int): [FeedItem!]!
+  profileFeedCount: Int!
+  followers(offset: Int, limit: Int): [User!]!
+  following(offset: Int, limit: Int): [User!]!
   followerCount: Int!
   followingCount: Int!
   isFollowedByMe: Boolean!
   joinedGroups: [Group!]!
   serverPermissions: ServerPermissions!
 }
+
+union FeedItem = Post | Proposal
 
 type Vote {
   id: Int!
@@ -275,7 +278,8 @@ type Group {
   coverPhoto: Image
   createdAt: DateTime!
   updatedAt: DateTime!
-  feed(offset: Int, limit: Int): FeedItemsConnection!
+  feed(offset: Int, limit: Int): [FeedItem!]!
+  feedCount: Int!
   memberCount: Int!
   memberRequestCount: Int
   isJoinedByMe: Boolean!
@@ -303,7 +307,8 @@ type Event {
   goingCount: Int!
   attendingStatus: String
   host: User!
-  posts(offset: Int, limit: Int): PostsConnection!
+  posts(offset: Int, limit: Int): [Post!]!
+  postsCount: Int!
   coverPhoto: Image!
 }
 
@@ -368,11 +373,6 @@ type UpdateEventAttendeePayload {
   event: Event!
 }
 
-type PostsConnection {
-  nodes: [Post!]!
-  totalCount: Int!
-}
-
 type CreateEventPayload {
   event: Event!
 }
@@ -408,8 +408,6 @@ type FeedItemsConnection {
   totalCount: Int!
 }
 
-union FeedItem = Post | Proposal
-
 type ServerPermissions {
   manageRoles: Boolean!
   managePosts: Boolean!
@@ -430,11 +428,6 @@ type FollowUserPayload {
 
 type UpdateUserPayload {
   user: User!
-}
-
-type UsersConnection {
-  nodes: [User!]!
-  totalCount: Int!
 }
 
 type CreateGroupRolePayload {
@@ -461,6 +454,11 @@ type CreateGroupMemberRequestPayload {
   groupMemberRequest: GroupMemberRequest!
 }
 
+type PublicFeedItemsConnection {
+  nodes: [FeedItem!]!
+  totalCount: Int!
+}
+
 type GroupPermissions {
   manageRoles: Boolean!
   manageSettings: Boolean!
@@ -476,16 +474,6 @@ type GroupPermissions {
 
 type CreateGroupPayload {
   group: Group!
-}
-
-type GroupsConnection {
-  nodes: [Group!]!
-  totalCount: Int!
-}
-
-type PublicGroupsConnection {
-  nodes: [Group!]!
-  totalCount: Int!
 }
 
 type CreateProposalPayload {
@@ -538,16 +526,19 @@ type Query {
   proposal(id: Int!): Proposal!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   group(id: Int, name: String): Group!
-  groups(offset: Int, limit: Int): GroupsConnection!
-  publicGroups(offset: Int, limit: Int): PublicGroupsConnection!
-  publicGroupsFeed(offset: Int, limit: Int): FeedItemsConnection!
+  groups(offset: Int, limit: Int): [Group!]!
+  groupsCount: Int!
+  publicGroups(offset: Int, limit: Int): [Group!]!
+  publicGroupsCount: Int!
+  publicGroupsFeed(offset: Int, limit: Int): PublicFeedItemsConnection!
   groupRole(id: Int!): GroupRole!
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
   groupRoles: [GroupRole!]!
   me: User!
   user(id: Int, name: String): User!
-  users(offset: Int, limit: Int): UsersConnection!
+  users(offset: Int, limit: Int): [User!]!
+  usersCount: Int!
   usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
   serverRole(id: Int!): ServerRole!

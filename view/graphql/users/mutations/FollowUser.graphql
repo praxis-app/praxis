@@ -3,20 +3,14 @@ mutation FollowUser($id: Int!) {
     followedUser {
       id
       followers {
-        nodes {
-          ...Follow
-        }
-        totalCount
+        ...Follow
       }
       ...UserProfileCard
     }
     follower {
       id
       following {
-        nodes {
-          ...Follow
-        }
-        totalCount
+        ...Follow
       }
       ...UserProfileCard
     }

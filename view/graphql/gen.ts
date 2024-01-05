@@ -236,7 +236,8 @@ export type Event = {
   location?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   online: Scalars['Boolean']['output'];
-  posts: PostsConnection;
+  posts: Array<Post>;
+  postsCount: Scalars['Int']['output'];
   startsAt: Scalars['DateTime']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -280,7 +281,8 @@ export type Group = {
   coverPhoto?: Maybe<Image>;
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];
-  feed: FeedItemsConnection;
+  feed: Array<FeedItem>;
+  feedCount: Scalars['Int']['output'];
   futureEvents: Array<Event>;
   id: Scalars['Int']['output'];
   isJoinedByMe: Scalars['Boolean']['output'];
@@ -380,12 +382,6 @@ export type GroupRolePermissionInput = {
   manageSettings?: InputMaybe<Scalars['Boolean']['input']>;
   removeMembers?: InputMaybe<Scalars['Boolean']['input']>;
   updateGroup?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type GroupsConnection = {
-  __typename?: 'GroupsConnection';
-  nodes: Array<Group>;
-  totalCount: Scalars['Int']['output'];
 };
 
 export type Image = {
@@ -682,12 +678,6 @@ export type Post = {
   user: User;
 };
 
-export type PostsConnection = {
-  __typename?: 'PostsConnection';
-  nodes: Array<Post>;
-  totalCount: Scalars['Int']['output'];
-};
-
 export type Proposal = {
   __typename?: 'Proposal';
   action: ProposalAction;
@@ -864,9 +854,9 @@ export type ProposalConfig = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type PublicGroupsConnection = {
-  __typename?: 'PublicGroupsConnection';
-  nodes: Array<Group>;
+export type PublicFeedItemsConnection = {
+  __typename?: 'PublicFeedItemsConnection';
+  nodes: Array<FeedItem>;
   totalCount: Scalars['Int']['output'];
 };
 
@@ -880,22 +870,25 @@ export type Query = {
   groupMemberRequest?: Maybe<GroupMemberRequest>;
   groupRole: GroupRole;
   groupRoles: Array<GroupRole>;
-  groups: GroupsConnection;
+  groups: Array<Group>;
+  groupsCount: Scalars['Int']['output'];
   isFirstUser: Scalars['Boolean']['output'];
   me: User;
   post: Post;
   proposal: Proposal;
   publicCanary?: Maybe<Canary>;
-  publicGroups: PublicGroupsConnection;
-  publicGroupsFeed: FeedItemsConnection;
+  publicGroups: Array<Group>;
+  publicGroupsCount: Scalars['Int']['output'];
+  publicGroupsFeed: PublicFeedItemsConnection;
   serverConfig: ServerConfig;
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
   user: User;
-  users: UsersConnection;
+  users: Array<User>;
   usersByIds: Array<User>;
+  usersCount: Scalars['Int']['output'];
 };
 
 export type QueryEventArgs = {
@@ -1216,8 +1209,8 @@ export type User = {
   createdAt: Scalars['DateTime']['output'];
   email: Scalars['String']['output'];
   followerCount: Scalars['Int']['output'];
-  followers: UsersConnection;
-  following: UsersConnection;
+  followers: Array<User>;
+  following: Array<User>;
   followingCount: Scalars['Int']['output'];
   homeFeed: FeedItemsConnection;
   id: Scalars['Int']['output'];
@@ -1226,7 +1219,8 @@ export type User = {
   likes: Array<Like>;
   name: Scalars['String']['output'];
   posts: Array<Post>;
-  profileFeed: FeedItemsConnection;
+  profileFeed: Array<FeedItem>;
+  profileFeedCount: Scalars['Int']['output'];
   profilePicture: Image;
   proposals: Array<Proposal>;
   serverPermissions: ServerPermissions;
@@ -1251,12 +1245,6 @@ export type UserHomeFeedArgs = {
 export type UserProfileFeedArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
-};
-
-export type UsersConnection = {
-  __typename?: 'UsersConnection';
-  nodes: Array<User>;
-  totalCount: Scalars['Int']['output'];
 };
 
 export type Vote = {

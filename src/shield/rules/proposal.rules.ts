@@ -1,6 +1,5 @@
 import { rule } from 'graphql-shield';
 import { UNAUTHORIZED } from '../../common/common.constants';
-import { FeedItemsConnection } from '../../common/models/feed-items.connection';
 import { Context } from '../../context/context.types';
 import { GroupPrivacy } from '../../groups/groups.constants';
 import { Image } from '../../images/models/image.model';
@@ -41,7 +40,7 @@ export const hasNoVotes = rule({ cache: 'strict' })(async (
 });
 
 export const isPublicProposal = rule({ cache: 'strict' })(async (
-  parent: Proposal | ProposalConfig | FeedItemsConnection | null,
+  parent: Proposal | ProposalConfig | null,
   args: { id: number },
   { services: { proposalsService } }: Context,
 ) => {
@@ -51,8 +50,6 @@ export const isPublicProposal = rule({ cache: 'strict' })(async (
     proposalId = parent.proposalId;
   } else if (parent instanceof Proposal) {
     proposalId = parent.id;
-  } else if (parent && 'nodes' in parent) {
-    proposalId = parent.nodes[0].id;
   } else if (args) {
     proposalId = args.id;
   }

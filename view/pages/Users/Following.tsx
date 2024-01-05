@@ -85,7 +85,7 @@ const Following = () => {
       <Breadcrumbs breadcrumbs={breadcrumbs} sx={{ marginBottom: 0.25 }} />
 
       <Pagination
-        count={data?.user.following.totalCount}
+        count={data?.user.followingCount}
         isLoading={loading}
         onChangePage={onChangePage}
         page={page}
@@ -97,7 +97,7 @@ const Following = () => {
         {!!data?.user.followingCount && (
           <Card>
             <CardContent>
-              {data.user.following.nodes.map((followedUser) => (
+              {data.user.following.map((followedUser) => (
                 <Follow
                   key={followedUser.id}
                   currentUserId={data.me.id}

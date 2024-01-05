@@ -74,7 +74,7 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
           },
           (groupsData) =>
             produce(groupsData, (draft) => {
-              draft?.groups.nodes.unshift({
+              draft?.groups.unshift({
                 ...createGroup.group,
                 isJoinedByMe: true,
                 memberCount: 1,

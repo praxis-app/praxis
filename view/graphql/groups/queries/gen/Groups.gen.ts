@@ -16,34 +16,31 @@ export type GroupsQueryVariables = Types.Exact<{
 
 export type GroupsQuery = {
   __typename?: 'Query';
-  groups: {
-    __typename?: 'GroupsConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'Group';
-      description: string;
-      memberCount: number;
-      memberRequestCount?: number | null;
-      isJoinedByMe?: boolean;
-      id: number;
-      name: string;
-      settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
-      myPermissions?: {
-        __typename?: 'GroupPermissions';
-        approveMemberRequests: boolean;
-        createEvents: boolean;
-        deleteGroup: boolean;
-        manageComments: boolean;
-        manageEvents: boolean;
-        managePosts: boolean;
-        manageRoles: boolean;
-        manageSettings: boolean;
-        removeMembers: boolean;
-        updateGroup: boolean;
-      };
-      coverPhoto?: { __typename?: 'Image'; id: number } | null;
-    }>;
-  };
+  groupsCount: number;
+  groups: Array<{
+    __typename?: 'Group';
+    description: string;
+    memberCount: number;
+    memberRequestCount?: number | null;
+    isJoinedByMe?: boolean;
+    id: number;
+    name: string;
+    settings: { __typename?: 'GroupConfig'; id: number; adminModel: string };
+    myPermissions?: {
+      __typename?: 'GroupPermissions';
+      approveMemberRequests: boolean;
+      createEvents: boolean;
+      deleteGroup: boolean;
+      manageComments: boolean;
+      manageEvents: boolean;
+      managePosts: boolean;
+      manageRoles: boolean;
+      manageSettings: boolean;
+      removeMembers: boolean;
+      updateGroup: boolean;
+    };
+    coverPhoto?: { __typename?: 'Image'; id: number } | null;
+  }>;
   me: {
     __typename?: 'User';
     id: number;
@@ -57,11 +54,9 @@ export type GroupsQuery = {
 export const GroupsDocument = gql`
   query Groups($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
     groups(offset: $offset, limit: $limit) {
-      nodes {
-        ...GroupCard
-      }
-      totalCount
+      ...GroupCard
     }
+    groupsCount
     me {
       id
       serverPermissions {

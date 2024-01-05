@@ -64,6 +64,7 @@ export const shieldPermissions = shield(
       groupRole: isGroupMember,
       publicGroupsFeed: allow,
       publicGroups: allow,
+      publicGroupsCount: allow,
       publicCanary: allow,
       events: allow,
     },
@@ -112,6 +113,7 @@ export const shieldPermissions = shield(
       coverPhoto: or(isAuthenticated, isPublicGroup),
       settings: or(isAuthenticated, isPublicGroup),
       feed: or(isAuthenticated, isPublicGroup),
+      feedCount: or(isAuthenticated, isPublicGroup),
       futureEvents: or(isAuthenticated, isPublicGroup),
       pastEvents: or(isAuthenticated, isPublicGroup),
       memberCount: or(isAuthenticated, isPublicGroup),
@@ -131,7 +133,7 @@ export const shieldPermissions = shield(
       isPublicProposal,
       isPublicPost,
     ),
-    PublicGroupsConnection: allow,
+    PublicFeedItemsConnection: allow,
     Image: {
       id: or(
         isAuthenticated,
@@ -163,7 +165,6 @@ export const shieldPermissions = shield(
     },
     Event: or(isAuthenticated, isPublicEvent),
     Post: or(isAuthenticated, isPublicPost, isPublicEventPost),
-    PostsConnection: or(isAuthenticated, isPublicEventPost),
     Comment: or(isAuthenticated, isPublicComment),
     Proposal: or(isAuthenticated, isPublicProposal),
     ProposalConfig: or(isAuthenticated, isPublicProposal),
