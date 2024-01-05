@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Image } from '../images/models/image.model';
 import { PostsModule } from '../posts/posts.module';
+import { Proposal } from '../proposals/models/proposal.model';
 import { ServerRolesModule } from '../server-roles/server-roles.module';
 import { User } from './models/user.model';
 import { UsersResolver } from './users.resolver';
@@ -9,7 +10,7 @@ import { UsersService } from './users.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Image]),
+    TypeOrmModule.forFeature([User, Image, Proposal]),
     ServerRolesModule,
     PostsModule,
   ],

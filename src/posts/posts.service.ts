@@ -30,6 +30,10 @@ export class PostsService {
     return this.postRepository.find({ where, order: { createdAt: 'DESC' } });
   }
 
+  async getPostsCount(where?: FindOptionsWhere<Post>) {
+    return this.postRepository.count({ where });
+  }
+
   async getPostComments(postId: number) {
     const { comments } = await this.getPost(postId, ['comments']);
 

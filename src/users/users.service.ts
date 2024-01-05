@@ -30,6 +30,9 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
 
+    @InjectRepository(Proposal)
+    private proposalRepository: Repository<Proposal>,
+
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
@@ -262,18 +265,10 @@ export class UsersService {
   }
 
   async getUserProfileFeedCount(id: number) {
-    const postsCount = await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoin('user.posts', 'post')
-      .where('user.id = :id', { id })
-      .getCount();
-
-    const proposalsCount = await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoin('user.proposals', 'proposal')
-      .where('user.id = :id', { id })
-      .getCount();
-
+    const postsCount = await this.postsService.getPostsCount({ userId: id });
+    const proposalsCount = await this.proposalRepository.count({
+      where: { userId: id },
+    });
     return postsCount + proposalsCount;
   }
 
