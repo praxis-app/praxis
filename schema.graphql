@@ -152,6 +152,16 @@ type GroupMemberRequest {
   updatedAt: DateTime!
 }
 
+type Notification {
+  id: Int!
+  message: String!
+  actionType: String!
+  status: String!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type ServerInvite {
   id: Int!
   token: String!
@@ -874,4 +884,5 @@ input UpdateVoteInput {
 
 type Subscription {
   isProposalRatified(id: Int!): Boolean!
+  notifications: Notification!
 }
