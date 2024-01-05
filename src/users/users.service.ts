@@ -330,12 +330,9 @@ export class UsersService {
     const sortedFollowers = user.followers.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    const nodes =
-      offset !== undefined
-        ? paginate(sortedFollowers, offset, limit)
-        : sortedFollowers;
-
-    return { nodes, totalCount: sortedFollowers.length };
+    return offset !== undefined
+      ? paginate(sortedFollowers, offset, limit)
+      : sortedFollowers;
   }
 
   async getFollowing(id: number, offset?: number, limit?: number) {
@@ -346,12 +343,9 @@ export class UsersService {
     const sortedFollowing = user.following.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    const nodes =
-      offset !== undefined
-        ? paginate(sortedFollowing, offset, limit)
-        : sortedFollowing;
-
-    return { nodes, totalCount: sortedFollowing.length };
+    return offset !== undefined
+      ? paginate(sortedFollowing, offset, limit)
+      : sortedFollowing;
   }
 
   async isUsersPost(postId: number, userId: number) {
