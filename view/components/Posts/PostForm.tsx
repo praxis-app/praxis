@@ -100,7 +100,7 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
           },
           (userProfileFeedData) =>
             produce(userProfileFeedData, (draft) => {
-              draft?.user.profileFeed.nodes.unshift(post);
+              draft?.user.profileFeed.unshift(post);
             }),
         );
         if (post.group) {
@@ -116,7 +116,7 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
             },
             (groupFeedData) =>
               produce(groupFeedData, (draft) => {
-                draft?.group.feed.nodes.unshift(post);
+                draft?.group.feed.unshift(post);
               }),
           );
         }
@@ -133,7 +133,7 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
             },
             (groupFeedData) =>
               produce(groupFeedData, (draft) => {
-                draft?.event.posts.nodes.unshift(post);
+                draft?.event.posts.unshift(post);
               }),
           );
         }

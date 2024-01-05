@@ -208,7 +208,7 @@ const ProposalForm = ({
           },
           (userProfileFeedData) =>
             produce(userProfileFeedData, (draft) => {
-              draft?.user.profileFeed.nodes.unshift(proposal);
+              draft?.user.profileFeed.unshift(proposal);
             }),
         );
         if (proposal.group) {
@@ -224,7 +224,7 @@ const ProposalForm = ({
             },
             (groupFeedData) =>
               produce(groupFeedData, (draft) => {
-                draft?.group.feed.nodes.unshift(proposal);
+                draft?.group.feed.unshift(proposal);
               }),
           );
         }

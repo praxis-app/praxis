@@ -3,7 +3,6 @@ import { UNAUTHORIZED } from '../../common/common.constants';
 import { Context } from '../../context/context.types';
 import { GroupPrivacy } from '../../groups/groups.constants';
 import { Post } from '../../posts/models/post.model';
-import { PostsConnection } from '../../posts/models/posts.connection';
 import { UpdatePostInput } from '../../posts/models/update-post.input';
 
 export const isOwnPost = rule({ cache: 'strict' })(async (
@@ -21,7 +20,7 @@ export const isOwnPost = rule({ cache: 'strict' })(async (
 });
 
 export const isPublicPost = rule({ cache: 'strict' })(async (
-  parent: Post | PostsConnection | null,
+  parent: Post | null,
   args: { id: number },
   { services: { postsService } }: Context,
 ) => {
@@ -29,8 +28,6 @@ export const isPublicPost = rule({ cache: 'strict' })(async (
 
   if (parent instanceof Post) {
     postId = parent.id;
-  } else if (parent && 'nodes' in parent) {
-    postId = parent.nodes[0].id;
   } else if (args) {
     postId = args.id;
   }

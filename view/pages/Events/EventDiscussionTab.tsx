@@ -57,8 +57,8 @@ const EventDiscussionTab = ({ eventId }: Props) => {
       )}
 
       <Feed
-        feedItems={data?.event.posts.nodes}
-        totalCount={data?.event.posts.totalCount}
+        feedItems={data?.event.posts}
+        totalCount={data?.event.postsCount}
         isLoading={loading}
         onChangePage={handleChangePage}
         page={page}

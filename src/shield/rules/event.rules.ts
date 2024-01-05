@@ -1,11 +1,9 @@
 import { rule } from 'graphql-shield';
-import { FeedItemsConnection } from '../../common/models/feed-items.connection';
 import { Context } from '../../context/context.types';
 import { Event } from '../../events/models/event.model';
 import { GroupPrivacy } from '../../groups/groups.constants';
 import { Image } from '../../images/models/image.model';
 import { Post } from '../../posts/models/post.model';
-import { PostsConnection } from '../../posts/models/posts.connection';
 
 export const isPublicEvent = rule({ cache: 'strict' })(async (
   parent: Event,
@@ -22,7 +20,7 @@ export const isPublicEvent = rule({ cache: 'strict' })(async (
 });
 
 export const isPublicEventPost = rule({ cache: 'strict' })(async (
-  parent: Post | PostsConnection | FeedItemsConnection | null,
+  parent: Post | null,
   args: { id: number } | null,
   { services: { postsService } }: Context,
 ) => {
@@ -30,8 +28,6 @@ export const isPublicEventPost = rule({ cache: 'strict' })(async (
 
   if (parent instanceof Post) {
     postId = parent.id;
-  } else if (parent && 'nodes' in parent) {
-    postId = parent.nodes[0].id;
   } else if (args) {
     postId = args.id;
   }

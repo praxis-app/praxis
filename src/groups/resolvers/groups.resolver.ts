@@ -9,7 +9,8 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
-import { FeedItemsConnection } from '../../common/models/feed-items.connection';
+import { FeedItem } from '../../common/models/feed-item.union';
+import { PublicFeedItemsConnection } from '../../common/models/public-feed-items.connection';
 import { Dataloaders } from '../../dataloader/dataloader.types';
 import { EventsService } from '../../events/events.service';
 import { Event } from '../../events/models/event.model';
@@ -25,8 +26,6 @@ import { CreateGroupPayload } from '../models/create-group.payload';
 import { GroupConfig } from '../models/group-config.model';
 import { GroupMemberRequest } from '../models/group-member-request.model';
 import { Group } from '../models/group.model';
-import { GroupsConnection } from '../models/groups.connection';
-import { PublicGroupsConnection } from '../models/public-groups.connection';
 import { UpdateGroupInput } from '../models/update-group.input';
 import { UpdateGroupPayload } from '../models/update-group.payload';
 
@@ -46,7 +45,7 @@ export class GroupsResolver {
     return this.groupsService.getGroup({ id, name });
   }
 
-  @Query(() => GroupsConnection)
+  @Query(() => [Group])
   async groups(
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
@@ -54,7 +53,12 @@ export class GroupsResolver {
     return this.groupsService.getPagedGroups({}, offset, limit);
   }
 
-  @Query(() => PublicGroupsConnection)
+  @Query(() => Int)
+  async groupsCount() {
+    return this.groupsService.getGroupsCount();
+  }
+
+  @Query(() => [Group])
   async publicGroups(
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
@@ -66,7 +70,14 @@ export class GroupsResolver {
     );
   }
 
-  @Query(() => FeedItemsConnection)
+  @Query(() => Int)
+  async publicGroupsCount() {
+    return this.groupsService.getGroupsCount({
+      config: { privacy: GroupPrivacy.Public },
+    });
+  }
+
+  @Query(() => PublicFeedItemsConnection)
   async publicGroupsFeed(
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
@@ -87,13 +98,18 @@ export class GroupsResolver {
     return loaders.groupCoverPhotosLoader.load(id);
   }
 
-  @ResolveField(() => FeedItemsConnection)
+  @ResolveField(() => [FeedItem])
   async feed(
     @Parent() { id }: Group,
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
   ) {
     return this.groupsService.getGroupFeed(id, offset, limit);
+  }
+
+  @ResolveField(() => Int)
+  async feedCount(@Parent() { id }: Group) {
+    return this.groupsService.getGroupFeedItemCount(id);
   }
 
   @ResolveField(() => [User])

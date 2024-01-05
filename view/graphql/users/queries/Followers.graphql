@@ -2,11 +2,9 @@ query Followers($name: String!, $offset: Int, $limit: Int) {
   user(name: $name) {
     id
     followers(offset: $offset, limit: $limit) {
-      nodes {
-        ...Follow
-      }
-      totalCount
+      ...Follow
     }
+    followerCount
   }
   me {
     id

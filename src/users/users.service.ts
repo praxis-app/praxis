@@ -45,15 +45,18 @@ export class UsersService {
     return this.userRepository.find({ where });
   }
 
+  async getUsersCount() {
+    return this.userRepository.count();
+  }
+
   async getPagedUsers(offset?: number, limit?: number) {
     const users = await this.getUsers();
     const sortedUsers = users.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    const nodes =
-      offset !== undefined ? paginate(sortedUsers, offset, limit) : sortedUsers;
-
-    return { nodes, totalCount: sortedUsers.length };
+    return offset !== undefined
+      ? paginate(sortedUsers, offset, limit)
+      : sortedUsers;
   }
 
   async isFirstUser() {
@@ -253,10 +256,25 @@ export class UsersService {
     const sortedFeed = [...user.posts, ...user.proposals].sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    const nodes =
-      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
+    return offset !== undefined
+      ? paginate(sortedFeed, offset, limit)
+      : sortedFeed;
+  }
 
-    return { nodes, totalCount: sortedFeed.length };
+  async getUserProfileFeedCount(id: number) {
+    const postsCount = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoin('user.posts', 'post')
+      .where('user.id = :id', { id })
+      .getCount();
+
+    const proposalsCount = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoin('user.proposals', 'proposal')
+      .where('user.id = :id', { id })
+      .getCount();
+
+    return postsCount + proposalsCount;
   }
 
   async getUserPermissions(id: number) {

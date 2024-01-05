@@ -15,17 +15,14 @@ export type UsersQueryVariables = Types.Exact<{
 
 export type UsersQuery = {
   __typename?: 'Query';
-  users: {
-    __typename?: 'UsersConnection';
-    totalCount: number;
-    nodes: Array<{
-      __typename?: 'User';
-      id: number;
-      name: string;
-      isFollowedByMe: boolean;
-      profilePicture: { __typename?: 'Image'; id: number };
-    }>;
-  };
+  usersCount: number;
+  users: Array<{
+    __typename?: 'User';
+    id: number;
+    name: string;
+    isFollowedByMe: boolean;
+    profilePicture: { __typename?: 'Image'; id: number };
+  }>;
   me: {
     __typename?: 'User';
     id: number;
@@ -39,11 +36,9 @@ export type UsersQuery = {
 export const UsersDocument = gql`
   query Users($offset: Int, $limit: Int) {
     users(offset: $offset, limit: $limit) {
-      nodes {
-        ...UserEntry
-      }
-      totalCount
+      ...UserEntry
     }
+    usersCount
     me {
       id
       serverPermissions {

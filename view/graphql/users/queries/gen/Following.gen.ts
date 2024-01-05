@@ -20,17 +20,13 @@ export type FollowingQuery = {
     __typename?: 'User';
     id: number;
     followingCount: number;
-    following: {
-      __typename?: 'UsersConnection';
-      totalCount: number;
-      nodes: Array<{
-        __typename?: 'User';
-        id: number;
-        name: string;
-        isFollowedByMe: boolean;
-        profilePicture: { __typename?: 'Image'; id: number };
-      }>;
-    };
+    following: Array<{
+      __typename?: 'User';
+      id: number;
+      name: string;
+      isFollowedByMe: boolean;
+      profilePicture: { __typename?: 'Image'; id: number };
+    }>;
   };
   me: { __typename?: 'User'; id: number };
 };
@@ -39,13 +35,10 @@ export const FollowingDocument = gql`
   query Following($name: String!, $offset: Int, $limit: Int) {
     user(name: $name) {
       id
-      followingCount
       following(offset: $offset, limit: $limit) {
-        nodes {
-          ...Follow
-        }
-        totalCount
+        ...Follow
       }
+      followingCount
     }
     me {
       id

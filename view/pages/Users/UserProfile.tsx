@@ -115,8 +115,8 @@ const UserProfile = () => {
       {isMe && <ToggleForms me={me} />}
 
       <Feed
-        feedItems={feedData?.user.profileFeed.nodes}
-        totalCount={feedData?.user.profileFeed.totalCount}
+        feedItems={feedData?.user.profileFeed}
+        totalCount={feedData?.user.profileFeedCount}
         isLoading={feedLoading}
         onChangePage={handleChangePage}
         page={page}

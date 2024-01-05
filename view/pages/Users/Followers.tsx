@@ -74,7 +74,7 @@ const Followers = () => {
     {
       label: data
         ? t('users.labels.followers', {
-            count: data.user.followers.totalCount,
+            count: data.user.followerCount,
           })
         : t('pagination.loading'),
     },
@@ -85,7 +85,7 @@ const Followers = () => {
       <Breadcrumbs breadcrumbs={breadcrumbs} sx={{ marginBottom: 0.25 }} />
 
       <Pagination
-        count={data?.user.followers.totalCount}
+        count={data?.user.followerCount}
         isLoading={loading}
         onChangePage={onChangePage}
         page={page}
@@ -94,10 +94,10 @@ const Followers = () => {
         setRowsPerPage={setRowsPerPage}
         sx={{ marginBottom: 0.5 }}
       >
-        {!!data?.user.followers.totalCount && (
+        {!!data?.user.followerCount && (
           <Card>
             <CardContent>
-              {data.user.followers.nodes.map((follower) => (
+              {data.user.followers.map((follower) => (
                 <Follow
                   key={follower.id}
                   currentUserId={data.me.id}

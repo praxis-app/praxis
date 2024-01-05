@@ -1,8 +1,6 @@
 query PublicGroups($offset: Int, $limit: Int, $isLoggedIn: Boolean = false) {
   publicGroups(offset: $offset, limit: $limit) {
-    nodes {
-      ...GroupCard
-    }
-    totalCount
+    ...GroupCard
   }
+  publicGroupsCount
 }
