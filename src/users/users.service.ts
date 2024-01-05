@@ -30,6 +30,9 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
 
+    @InjectRepository(Post)
+    private postRepository: Repository<Post>,
+
     @InjectRepository(Proposal)
     private proposalRepository: Repository<Proposal>,
 
@@ -265,7 +268,9 @@ export class UsersService {
   }
 
   async getUserProfileFeedCount(id: number) {
-    const postsCount = await this.postsService.getPostsCount({ userId: id });
+    const postsCount = await this.postRepository.count({
+      where: { userId: id },
+    });
     const proposalsCount = await this.proposalRepository.count({
       where: { userId: id },
     });
