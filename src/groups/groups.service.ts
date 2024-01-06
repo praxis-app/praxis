@@ -39,6 +39,12 @@ export class GroupsService {
     @InjectRepository(GroupMemberRequest)
     private groupMemberRequestRepository: Repository<GroupMemberRequest>,
 
+    @InjectRepository(Post)
+    private postRepository: Repository<Post>,
+
+    @InjectRepository(Proposal)
+    private proposalRepository: Repository<Proposal>,
+
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
@@ -87,18 +93,12 @@ export class GroupsService {
   }
 
   async getGroupFeedItemCount(id: number) {
-    const postsCount = await this.groupRepository
-      .createQueryBuilder('group')
-      .leftJoin('group.posts', 'post')
-      .where('group.id = :id', { id })
-      .getCount();
-
-    const proposalsCount = await this.groupRepository
-      .createQueryBuilder('group')
-      .leftJoin('group.proposals', 'proposal')
-      .where('group.id = :id', { id })
-      .getCount();
-
+    const postsCount = await this.postRepository.count({
+      where: { groupId: id },
+    });
+    const proposalsCount = await this.proposalRepository.count({
+      where: { groupId: id },
+    });
     return postsCount + proposalsCount;
   }
 
