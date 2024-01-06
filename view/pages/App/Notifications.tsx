@@ -5,7 +5,7 @@ import {
   styled,
 } from '@mui/material';
 import { t } from 'i18next';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Namespace, TFunction, useTranslation } from 'react-i18next';
 import Center from '../../components/Shared/Center';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
@@ -30,6 +30,7 @@ const getNotificationMessage = (actionType: string, name?: string) => {
   if (actionType === NotificationActionType.PostLike) {
     return _t('notifications.messages.postLike', { name });
   }
+  return _t('notifications.errors.invalidType');
 };
 
 const CardContent = styled(MuiCardContent)(() => ({
@@ -89,9 +90,12 @@ const Notifications = () => {
         <Card>
           <CardContent>
             {data?.notifications.map(({ id, actionType, otherUser }) => (
-              <Fragment key={id}>
-                {getNotificationMessage(actionType, otherUser?.name)}
-              </Fragment>
+              <Typography
+                key={id}
+                dangerouslySetInnerHTML={{
+                  __html: getNotificationMessage(actionType, otherUser?.name),
+                }}
+              />
             ))}
 
             {data?.notifications.length === 0 && (
