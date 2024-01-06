@@ -13,7 +13,7 @@ interface Props {
 }
 
 const Notification = ({
-  notification: { id, actionType, otherUser },
+  notification: { id, actionType, otherUser, __typename },
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -38,7 +38,14 @@ const Notification = ({
   };
 
   const handleDelete = () => {
-    deleteNotification({ variables: { id } });
+    deleteNotification({
+      variables: { id },
+      update(cache) {
+        const cacheId = cache.identify({ id, __typename });
+        cache.evict({ id: cacheId });
+        cache.gc();
+      },
+    });
   };
 
   return (
