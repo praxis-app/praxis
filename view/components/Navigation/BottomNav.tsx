@@ -45,25 +45,25 @@ const BottomNav = () => {
       return;
     }
     if (
-      pathname === NavigationPaths.Groups ||
-      pathname.includes(NavigationPaths.Groups)
-    ) {
-      setValue(1);
-      return;
-    }
-    if (isLoggedIn && pathname === NavigationPaths.Activity) {
-      setValue(2);
-      return;
-    }
-    if (
       !isLoggedIn &&
       (pathname === NavigationPaths.Events ||
         pathname.includes(NavigationPaths.Events))
     ) {
+      setValue(1);
+      return;
+    }
+    if (
+      pathname === NavigationPaths.Groups ||
+      pathname.includes(NavigationPaths.Groups)
+    ) {
       setValue(2);
       return;
     }
-    setValue(3);
+    if (isLoggedIn && pathname === NavigationPaths.Activity) {
+      setValue(3);
+      return;
+    }
+    setValue(4);
   }, [pathname, isNavDrawerOpen, isLoggedIn]);
 
   const handleHomeButtonClick = () => {
@@ -93,23 +93,25 @@ const BottomNav = () => {
           onClick={handleHomeButtonClick}
         />
 
+        {!isLoggedIn && (
+          <BottomNavigationAction
+            icon={<EventNote />}
+            label={t('navigation.events')}
+            onClick={() => navigate(NavigationPaths.Events)}
+          />
+        )}
+
         <BottomNavigationAction
           icon={<Group />}
           label={t('navigation.groups')}
           onClick={() => navigate(NavigationPaths.Groups)}
         />
 
-        {isLoggedIn ? (
+        {isLoggedIn && (
           <BottomNavigationAction
             icon={<Notifications />}
             label={t('navigation.activity')}
             onClick={() => navigate(NavigationPaths.Activity)}
-          />
-        ) : (
-          <BottomNavigationAction
-            icon={<EventNote />}
-            label={t('navigation.events')}
-            onClick={() => navigate(NavigationPaths.Events)}
           />
         )}
 
