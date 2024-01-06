@@ -30,6 +30,12 @@ export class UsersService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
 
+    @InjectRepository(Post)
+    private postRepository: Repository<Post>,
+
+    @InjectRepository(Proposal)
+    private proposalRepository: Repository<Proposal>,
+
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
@@ -262,18 +268,12 @@ export class UsersService {
   }
 
   async getUserProfileFeedCount(id: number) {
-    const postsCount = await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoin('user.posts', 'post')
-      .where('user.id = :id', { id })
-      .getCount();
-
-    const proposalsCount = await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoin('user.proposals', 'proposal')
-      .where('user.id = :id', { id })
-      .getCount();
-
+    const postsCount = await this.postRepository.count({
+      where: { userId: id },
+    });
+    const proposalsCount = await this.proposalRepository.count({
+      where: { userId: id },
+    });
     return postsCount + proposalsCount;
   }
 
@@ -330,12 +330,9 @@ export class UsersService {
     const sortedFollowers = user.followers.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    const nodes =
-      offset !== undefined
-        ? paginate(sortedFollowers, offset, limit)
-        : sortedFollowers;
-
-    return { nodes, totalCount: sortedFollowers.length };
+    return offset !== undefined
+      ? paginate(sortedFollowers, offset, limit)
+      : sortedFollowers;
   }
 
   async getFollowing(id: number, offset?: number, limit?: number) {
@@ -346,12 +343,9 @@ export class UsersService {
     const sortedFollowing = user.following.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    const nodes =
-      offset !== undefined
-        ? paginate(sortedFollowing, offset, limit)
-        : sortedFollowing;
-
-    return { nodes, totalCount: sortedFollowing.length };
+    return offset !== undefined
+      ? paginate(sortedFollowing, offset, limit)
+      : sortedFollowing;
   }
 
   async isUsersPost(postId: number, userId: number) {
