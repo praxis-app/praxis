@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import { NotificationActionType } from '../notifications/notifications.constants';
+import { NotificationsService } from '../notifications/notifications.service';
 import { ProposalsService } from '../proposals/proposals.service';
 import { CreateVoteInput } from './models/create-vote.input';
 import { UpdateVoteInput } from './models/update-vote.input';
@@ -13,6 +15,8 @@ export class VotesService {
     private repository: Repository<Vote>,
 
     private proposalsService: ProposalsService,
+
+    private notificationsService: NotificationsService,
   ) {}
 
   async getVote(id: number, relations?: string[]) {
@@ -34,6 +38,12 @@ export class VotesService {
       await this.proposalsService.ratifyProposal(vote.proposalId);
       await this.proposalsService.implementProposal(vote.proposalId);
     }
+    const proposal = await this.proposalsService.getProposal(vote.proposalId);
+    await this.notificationsService.notify(
+      NotificationActionType.ProposalVote,
+      proposal.userId,
+      vote.userId,
+    );
     return { vote };
   }
 

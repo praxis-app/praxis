@@ -30,12 +30,17 @@ export class NotificationsService {
     return this.repository.count({ where: { userId } });
   }
 
-  async notify(userId: number, actionType: NotificationActionType) {
+  async notify(
+    actionType: NotificationActionType,
+    userId: number,
+    otherUserId?: number,
+  ) {
     const message = this.getNotificationMessage(actionType);
     const notification = await this.repository.save({
       actionType,
       message,
       userId,
+      otherUserId,
     });
     await this.pubSub.publish(`user-notification-${userId}`, notification);
   }
