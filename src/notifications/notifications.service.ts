@@ -4,6 +4,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { Repository } from 'typeorm';
+import { paginate } from '../common/common.utils';
 import { Notification } from './models/notification.model';
 import { NotificationActionType } from './notifications.constants';
 
@@ -15,6 +16,15 @@ export class NotificationsService {
     @InjectRepository(Notification)
     private repository: Repository<Notification>,
   ) {}
+
+  async getNotifications(userId: number, offset?: number, limit?: number) {
+    const notifications = await this.repository.find({
+      where: { userId },
+    });
+    return offset !== undefined
+      ? paginate(notifications, offset, limit)
+      : notifications;
+  }
 
   async notify(userId: number, actionType: NotificationActionType) {
     const message = this.getNotificationMessage(actionType);

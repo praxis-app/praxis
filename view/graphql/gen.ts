@@ -883,6 +883,7 @@ export type Query = {
   groupsCount: Scalars['Int']['output'];
   isFirstUser: Scalars['Boolean']['output'];
   me: User;
+  notifications: Array<Notification>;
   post: Post;
   proposal: Proposal;
   publicCanary?: Maybe<Canary>;
@@ -922,6 +923,11 @@ export type QueryGroupRoleArgs = {
 };
 
 export type QueryGroupsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type QueryNotificationsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -1051,7 +1057,7 @@ export type SignUpInput = {
 export type Subscription = {
   __typename?: 'Subscription';
   isProposalRatified: Scalars['Boolean']['output'];
-  notifications: Notification;
+  notification: Notification;
 };
 
 export type SubscriptionIsProposalRatifiedArgs = {

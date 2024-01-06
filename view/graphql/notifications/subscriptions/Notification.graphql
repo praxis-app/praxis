@@ -1,5 +1,5 @@
-subscription Notifications {
-  notifications {
+subscription Notification {
+  notification {
     id
     message
     status

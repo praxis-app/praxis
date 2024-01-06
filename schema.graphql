@@ -557,6 +557,7 @@ type Query {
   canary: Canary!
   publicCanary: Canary
   serverConfig: ServerConfig!
+  notifications(offset: Int, limit: Int): [Notification!]!
 }
 
 input EventsInput {
@@ -882,5 +883,5 @@ input UpdateVoteInput {
 
 type Subscription {
   isProposalRatified(id: Int!): Boolean!
-  notifications: Notification!
+  notification: Notification!
 }

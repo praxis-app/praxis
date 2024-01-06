@@ -1,0 +1,8 @@
+query Notifications($offset: Int, $limit: Int) {
+  notifications(offset: $offset, limit: $limit) {
+    id
+    message
+    status
+    createdAt
+  }
+}
