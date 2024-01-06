@@ -5,6 +5,7 @@ import {
   Group as GroupsIcon,
   Home as HomeIcon,
   Link as InvitesIcon,
+  Notifications,
   AccountBox as RolesIcon,
   SupervisedUserCircle as UsersIcon,
 } from '@mui/icons-material';
@@ -110,6 +111,20 @@ const LeftNav = () => {
           />
         </ListItemButton>
       </Link>
+
+      {isLoggedIn && (
+        <Link href={NavigationPaths.Activity}>
+          <ListItemButton>
+            <ListItemIcon>
+              <Notifications sx={getIconStyle(NavigationPaths.Activity)} />
+            </ListItemIcon>
+            <ListItemText
+              isActive={isActive(NavigationPaths.Activity)}
+              primary={t('navigation.activity')}
+            />
+          </ListItemButton>
+        </Link>
+      )}
 
       <Link href={NavigationPaths.Events}>
         <ListItemButton>
