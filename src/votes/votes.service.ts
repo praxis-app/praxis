@@ -39,11 +39,12 @@ export class VotesService {
       await this.proposalsService.implementProposal(vote.proposalId);
     }
     const proposal = await this.proposalsService.getProposal(vote.proposalId);
-    await this.notificationsService.notify(
-      NotificationActionType.ProposalVote,
-      proposal.userId,
-      vote.userId,
-    );
+    await this.notificationsService.createNotification({
+      actionType: NotificationActionType.ProposalVote,
+      otherUserId: vote.userId,
+      userId: proposal.userId,
+      proposalId: proposal.id,
+    });
     return { vote };
   }
 

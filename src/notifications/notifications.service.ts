@@ -6,7 +6,6 @@ import { PubSub } from 'graphql-subscriptions';
 import { Repository } from 'typeorm';
 import { paginate } from '../common/common.utils';
 import { Notification } from './models/notification.model';
-import { NotificationActionType } from './notifications.constants';
 
 @Injectable()
 export class NotificationsService {
@@ -54,16 +53,13 @@ export class NotificationsService {
     return post;
   }
 
-  async notify(
-    actionType: NotificationActionType,
-    userId: number,
-    otherUserId?: number,
-  ) {
-    const notification = await this.notificationRepository.save({
-      actionType,
-      userId,
-      otherUserId,
-    });
-    await this.pubSub.publish(`user-notification-${userId}`, notification);
+  async createNotification(notificationData: Partial<Notification>) {
+    const notification =
+      await this.notificationRepository.save(notificationData);
+
+    await this.pubSub.publish(
+      `user-notification-${notificationData.userId}`,
+      notification,
+    );
   }
 }
