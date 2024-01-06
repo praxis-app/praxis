@@ -7,6 +7,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Post } from '../../posts/models/post.model';
+import { Proposal } from '../../proposals/models/proposal.model';
 import { User } from '../../users/models/user.model';
 import { NotificationStatus } from '../notifications.constants';
 
@@ -39,6 +41,24 @@ export class Notification {
 
   @Column({ nullable: true })
   otherUserId?: number;
+
+  @ManyToOne(() => Proposal, (proposal) => proposal.notifications, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  proposal?: Proposal;
+
+  @Column({ nullable: true })
+  proposalId?: number;
+
+  @ManyToOne(() => Post, (post) => post.notifications, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  post?: Post;
+
+  @Column({ nullable: true })
+  postId?: number;
 
   @CreateDateColumn()
   @Field()

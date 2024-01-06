@@ -667,6 +667,8 @@ export type Notification = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   otherUser?: Maybe<User>;
+  post?: Maybe<Post>;
+  proposal?: Maybe<Proposal>;
   status: Scalars['String']['output'];
 };
 

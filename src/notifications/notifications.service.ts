@@ -38,6 +38,22 @@ export class NotificationsService {
     return otherUser;
   }
 
+  async getProposal(notificationId: number) {
+    const { proposal } = await this.notificationRepository.findOneOrFail({
+      where: { id: notificationId },
+      relations: ['proposal'],
+    });
+    return proposal;
+  }
+
+  async getPost(notificationId: number) {
+    const { post } = await this.notificationRepository.findOneOrFail({
+      where: { id: notificationId },
+      relations: ['post'],
+    });
+    return post;
+  }
+
   async notify(
     actionType: NotificationActionType,
     userId: number,

@@ -152,14 +152,6 @@ type GroupMemberRequest {
   updatedAt: DateTime!
 }
 
-type Notification {
-  id: Int!
-  actionType: String!
-  status: String!
-  createdAt: DateTime!
-  otherUser: User
-}
-
 type ServerInvite {
   id: Int!
   token: String!
@@ -222,6 +214,16 @@ type User {
 }
 
 union FeedItem = Post | Proposal
+
+type Notification {
+  id: Int!
+  actionType: String!
+  status: String!
+  createdAt: DateTime!
+  otherUser: User
+  proposal: Proposal
+  post: Post
+}
 
 type Vote {
   id: Int!
