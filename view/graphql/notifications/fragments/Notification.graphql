@@ -8,4 +8,7 @@ fragment Notification on Notification {
     id
     name
   }
+  proposal {
+    id
+  }
 }

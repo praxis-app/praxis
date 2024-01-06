@@ -12,6 +12,7 @@ export type NotificationFragment = {
   status: string;
   createdAt: any;
   otherUser?: { __typename?: 'User'; id: number; name: string } | null;
+  proposal?: { __typename?: 'Proposal'; id: number } | null;
 };
 
 export const NotificationFragmentDoc = gql`
@@ -23,6 +24,9 @@ export const NotificationFragmentDoc = gql`
     otherUser {
       id
       name
+    }
+    proposal {
+      id
     }
   }
 `;

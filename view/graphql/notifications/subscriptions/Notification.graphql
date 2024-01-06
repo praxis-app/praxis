@@ -1,3 +1,5 @@
+# TODO: Rename to not overlap with fragment
+
 subscription Notification {
   notification {
     id

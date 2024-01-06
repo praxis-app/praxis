@@ -3,17 +3,19 @@ import { t } from 'i18next';
 import { useState } from 'react';
 import { Namespace, TFunction } from 'react-i18next';
 import { NotificationActionType } from '../../constants/notifications.constants';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { NotificationFragment } from '../../graphql/notifications/fragments/gen/Notification.gen';
 import { useDeleteNotificationMutation } from '../../graphql/notifications/mutations/gen/DeleteNotification.gen';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
+import Link from '../Shared/Link';
 
 interface Props {
   notification: NotificationFragment;
 }
 
 const Notification = ({
-  notification: { id, actionType, otherUser, __typename },
+  notification: { id, actionType, otherUser, proposal, __typename },
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -37,6 +39,13 @@ const Notification = ({
     return _t('notifications.errors.invalidType');
   };
 
+  const getPath = () => {
+    if (actionType === NotificationActionType.ProposalVote) {
+      return `${NavigationPaths.Proposals}/${proposal?.id}`;
+    }
+    return NavigationPaths.Home;
+  };
+
   const handleDelete = () => {
     deleteNotification({
       variables: { id },
@@ -50,11 +59,13 @@ const Notification = ({
 
   return (
     <Flex alignItems="center" justifyContent="space-between">
-      <Typography
-        dangerouslySetInnerHTML={{
-          __html: getNotificationMessage(actionType, otherUser?.name),
-        }}
-      />
+      <Link href={getPath()}>
+        <Typography
+          dangerouslySetInnerHTML={{
+            __html: getNotificationMessage(actionType, otherUser?.name),
+          }}
+        />
+      </Link>
 
       <ItemMenu
         anchorEl={menuAnchorEl}

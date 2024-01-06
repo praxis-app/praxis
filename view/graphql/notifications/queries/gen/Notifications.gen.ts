@@ -23,6 +23,7 @@ export type NotificationsQuery = {
     status: string;
     createdAt: any;
     otherUser?: { __typename?: 'User'; id: number; name: string } | null;
+    proposal?: { __typename?: 'Proposal'; id: number } | null;
   }>;
 };
 
