@@ -1,11 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/App/Layout';
-import Notifications from '../pages/App/Notifications';
 import HomePage from '../pages/App/HomePage';
 import PageNotFound from '../pages/App/PageNotFound';
 import DocsHomePage from '../pages/Docs/DocsHomePage';
 import ServerInvite from '../pages/Invites/ServerInvite';
 import ServerInvites from '../pages/Invites/ServerInvites';
+import Notifications from '../pages/Notifications/Notifications';
 import CanaryPage from '../pages/Settings/CanaryPage';
 import ServerSettings from '../pages/Settings/ServerSettings';
 import authRouter from './auth.router';
