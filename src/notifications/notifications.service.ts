@@ -26,6 +26,10 @@ export class NotificationsService {
       : notifications;
   }
 
+  async getNotificationsCount(userId: number) {
+    return this.repository.count({ where: { userId } });
+  }
+
   async notify(userId: number, actionType: NotificationActionType) {
     const message = this.getNotificationMessage(actionType);
     const notification = await this.repository.save({

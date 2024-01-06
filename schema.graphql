@@ -558,6 +558,7 @@ type Query {
   publicCanary: Canary
   serverConfig: ServerConfig!
   notifications(offset: Int, limit: Int): [Notification!]!
+  notificationsCount: Int!
 }
 
 input EventsInput {

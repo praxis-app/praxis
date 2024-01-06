@@ -884,6 +884,7 @@ export type Query = {
   isFirstUser: Scalars['Boolean']['output'];
   me: User;
   notifications: Array<Notification>;
+  notificationsCount: Scalars['Int']['output'];
   post: Post;
   proposal: Proposal;
   publicCanary?: Maybe<Canary>;

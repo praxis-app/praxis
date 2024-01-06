@@ -14,6 +14,7 @@ export type NotificationsQueryVariables = Types.Exact<{
 
 export type NotificationsQuery = {
   __typename?: 'Query';
+  notificationsCount: number;
   notifications: Array<{
     __typename?: 'Notification';
     id: number;
@@ -31,6 +32,7 @@ export const NotificationsDocument = gql`
       status
       createdAt
     }
+    notificationsCount
   }
 `;
 

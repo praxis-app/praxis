@@ -555,6 +555,22 @@
     }
   },
 
+  "search": {
+    "placeholder": "Search Praxis"
+  },
+
+  "notifications": {
+    "prompts": {
+      "noNotifications": "Nothing to see here yet"
+    }
+  },
+
+  "pagination": {
+    "of": "of",
+    "moreThan": "more than",
+    "loading": "Loading..."
+  },
+
   "time": {
     "days": "{{days}}d",
     "daysFull_one": "{{count}} day",
@@ -572,15 +588,5 @@
     "weeks_other": "{{count}} weeks",
     "hoursFull_one": "{{count}} hour",
     "hoursFull_other": "{{count}} hours"
-  },
-
-  "search": {
-    "placeholder": "Search Praxis"
-  },
-
-  "pagination": {
-    "of": "of",
-    "moreThan": "more than",
-    "loading": "Loading..."
   }
 }

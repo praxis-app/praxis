@@ -78,8 +78,8 @@ const Pagination = ({
     setPage(0);
   };
 
-  const renderPagination = (bottom = false) => {
-    if (count === 0 || (bottom && isLoading)) {
+  const renderPagination = (top = false) => {
+    if (top && isLoading) {
       return null;
     }
     return (
@@ -94,16 +94,16 @@ const Pagination = ({
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[10, 25, 50]}
         SelectProps={selectProps}
-        sx={{ marginBottom: bottom ? 0 : 1.5, ...sx }}
+        sx={{ marginBottom: top ? 1.5 : 0, ...sx }}
       />
     );
   };
 
   return (
     <>
-      {renderPagination()}
-      {children}
       {renderPagination(true)}
+      {children}
+      {renderPagination()}
     </>
   );
 };

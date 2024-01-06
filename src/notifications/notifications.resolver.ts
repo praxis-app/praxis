@@ -22,6 +22,11 @@ export class NotificationsResolver {
     return this.notificationsService.getNotifications(user.id, offset, limit);
   }
 
+  @Query(() => Int)
+  notificationsCount(@CurrentUser() user: User) {
+    return this.notificationsService.getNotificationsCount(user.id);
+  }
+
   @Subscription(() => Notification)
   notification(@CurrentUser() user: User) {
     return this.pubSub.asyncIterator(`user-notification-${user.id}`);

@@ -5,4 +5,5 @@ query Notifications($offset: Int, $limit: Int) {
     status
     createdAt
   }
+  notificationsCount
 }
