@@ -21,7 +21,7 @@ export type NotificationsQuery = {
     actionType: string;
     status: string;
     createdAt: any;
-    otherUser: { __typename?: 'User'; id: number; name: string };
+    otherUser?: { __typename?: 'User'; id: number; name: string } | null;
   }>;
 };
 

@@ -36,7 +36,7 @@ export class NotificationsResolver {
   }
 
   // TODO: Add data loader for batching otherUser queries
-  @ResolveField(() => User)
+  @ResolveField(() => User, { nullable: true })
   otherUser(@Parent() { id }: Notification) {
     return this.notificationsService.getOtherUser(id);
   }

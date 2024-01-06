@@ -15,7 +15,7 @@ import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 import { useNotificationsLazyQuery } from '../../graphql/notifications/queries/gen/Notifications.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 
-const getNotificationMessage = (actionType: string, name: string) => {
+const getNotificationMessage = (actionType: string, name?: string) => {
   const _t: TFunction<Namespace<'ns1'>, undefined> = t;
 
   if (actionType === NotificationActionType.ProposalVote) {
@@ -90,7 +90,7 @@ const Notifications = () => {
           <CardContent>
             {data?.notifications.map(({ id, actionType, otherUser }) => (
               <Fragment key={id}>
-                {getNotificationMessage(actionType, otherUser.name)}
+                {getNotificationMessage(actionType, otherUser?.name)}
               </Fragment>
             ))}
 
