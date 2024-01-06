@@ -618,6 +618,7 @@ type Mutation {
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
+  deleteNotification(id: Int!): Boolean!
 }
 
 input LoginInput {

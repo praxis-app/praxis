@@ -440,6 +440,7 @@ export type Mutation = {
   deleteGroupRoleMember: DeleteGroupRoleMemberPayload;
   deleteImage: Scalars['Boolean']['output'];
   deleteLike: Scalars['Boolean']['output'];
+  deleteNotification: Scalars['Boolean']['output'];
   deletePost: Scalars['Boolean']['output'];
   deleteProposal: Scalars['Boolean']['output'];
   deleteServerInvite: Scalars['Boolean']['output'];
@@ -555,6 +556,10 @@ export type MutationDeleteImageArgs = {
 
 export type MutationDeleteLikeArgs = {
   likeData: DeleteLikeInput;
+};
+
+export type MutationDeleteNotificationArgs = {
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeletePostArgs = {

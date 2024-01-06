@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { NotificationFragmentDoc } from '../../fragments/gen/Notification.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -28,17 +29,11 @@ export type NotificationsQuery = {
 export const NotificationsDocument = gql`
   query Notifications($offset: Int, $limit: Int) {
     notifications(offset: $offset, limit: $limit) {
-      id
-      actionType
-      status
-      createdAt
-      otherUser {
-        id
-        name
-      }
+      ...Notification
     }
     notificationsCount
   }
+  ${NotificationFragmentDoc}
 `;
 
 /**

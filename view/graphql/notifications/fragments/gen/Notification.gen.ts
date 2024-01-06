@@ -1,0 +1,28 @@
+import * as Types from '../../../gen';
+
+import { gql } from '@apollo/client';
+
+// THIS FILE IS GENERATED, DO NOT EDIT
+/* eslint-disable */
+
+export type NotificationFragment = {
+  __typename?: 'Notification';
+  id: number;
+  actionType: string;
+  status: string;
+  createdAt: any;
+  otherUser?: { __typename?: 'User'; id: number; name: string } | null;
+};
+
+export const NotificationFragmentDoc = gql`
+  fragment Notification on Notification {
+    id
+    actionType
+    status
+    createdAt
+    otherUser {
+      id
+      name
+    }
+  }
+`;

@@ -2,6 +2,7 @@ import { Inject } from '@nestjs/common';
 import {
   Args,
   Int,
+  Mutation,
   Parent,
   Query,
   ResolveField,
@@ -53,6 +54,11 @@ export class NotificationsResolver {
   @ResolveField(() => Post, { nullable: true })
   post(@Parent() { id }: Notification) {
     return this.notificationsService.getPost(id);
+  }
+
+  @Mutation(() => Boolean)
+  deleteNotification(@Args('id', { type: () => Int }) id: number) {
+    return this.notificationsService.deleteNotification(id);
   }
 
   @Subscription(() => Notification)

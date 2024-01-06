@@ -1,37 +1,19 @@
 import {
   Card,
+  Divider,
   CardContent as MuiCardContent,
   Typography,
   styled,
 } from '@mui/material';
-import { t } from 'i18next';
-import { useEffect, useState } from 'react';
-import { Namespace, TFunction, useTranslation } from 'react-i18next';
+import { Fragment, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import Notification from '../../components/Notifications/Notification';
 import Center from '../../components/Shared/Center';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import Pagination from '../../components/Shared/Pagination';
-import { NotificationActionType } from '../../constants/notifications.constants';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 import { useNotificationsLazyQuery } from '../../graphql/notifications/queries/gen/Notifications.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
-
-const getNotificationMessage = (actionType: string, name?: string) => {
-  const _t: TFunction<Namespace<'ns1'>, undefined> = t;
-
-  if (actionType === NotificationActionType.ProposalVote) {
-    return _t('notifications.messages.proposalVote', { name });
-  }
-  if (actionType === NotificationActionType.ProposalComment) {
-    return _t('notifications.messages.proposalComment', { name });
-  }
-  if (actionType === NotificationActionType.PostComment) {
-    return _t('notifications.messages.postComment', { name });
-  }
-  if (actionType === NotificationActionType.PostLike) {
-    return _t('notifications.messages.postLike', { name });
-  }
-  return _t('notifications.errors.invalidType');
-};
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
@@ -89,13 +71,14 @@ const Notifications = () => {
       >
         <Card>
           <CardContent>
-            {data?.notifications.map(({ id, actionType, otherUser }) => (
-              <Typography
-                key={id}
-                dangerouslySetInnerHTML={{
-                  __html: getNotificationMessage(actionType, otherUser?.name),
-                }}
-              />
+            {data?.notifications.map((notification, index) => (
+              <Fragment key={notification.id}>
+                <Notification notification={notification} />
+
+                {index !== data?.notifications.length - 1 && (
+                  <Divider sx={{ marginY: 1.5 }} />
+                )}
+              </Fragment>
             ))}
 
             {data?.notifications.length === 0 && (
