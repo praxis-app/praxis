@@ -16,7 +16,7 @@ export type NotificationSubscription = {
   notification: {
     __typename?: 'Notification';
     id: number;
-    message: string;
+    actionType: string;
     status: string;
     createdAt: any;
   };
@@ -26,7 +26,7 @@ export const NotificationDocument = gql`
   subscription Notification {
     notification {
       id
-      message
+      actionType
       status
       createdAt
     }

@@ -562,6 +562,12 @@
   "notifications": {
     "prompts": {
       "noNotifications": "Nothing to see here yet"
+    },
+    "messages": {
+      "postComment": "{{name}} commented on your post",
+      "postLike": "{{name}} liked your post",
+      "proposalComment": "{{name}} commented on your proposal",
+      "proposalVote": "{{name}} voted on your proposal"
     }
   },
 

@@ -14,11 +14,11 @@ export class NotificationsService {
     @Inject('PUB_SUB') private pubSub: PubSub,
 
     @InjectRepository(Notification)
-    private repository: Repository<Notification>,
+    private notificationRepository: Repository<Notification>,
   ) {}
 
   async getNotifications(userId: number, offset?: number, limit?: number) {
-    const notifications = await this.repository.find({
+    const notifications = await this.notificationRepository.find({
       where: { userId },
     });
     return offset !== undefined
@@ -27,7 +27,15 @@ export class NotificationsService {
   }
 
   async getNotificationsCount(userId: number) {
-    return this.repository.count({ where: { userId } });
+    return this.notificationRepository.count({ where: { userId } });
+  }
+
+  async getOtherUser(notificationId: number) {
+    const { otherUser } = await this.notificationRepository.findOneOrFail({
+      where: { id: notificationId },
+      relations: ['otherUser'],
+    });
+    return otherUser;
   }
 
   async notify(
@@ -35,30 +43,11 @@ export class NotificationsService {
     userId: number,
     otherUserId?: number,
   ) {
-    const notification = await this.repository.save({
+    const notification = await this.notificationRepository.save({
       actionType,
       userId,
       otherUserId,
     });
     await this.pubSub.publish(`user-notification-${userId}`, notification);
-  }
-
-  async getNotificationMessage(notificationId: number) {
-    const { actionType } = await this.repository.findOneOrFail({
-      where: { id: notificationId },
-    });
-
-    if (actionType === NotificationActionType.ProposalVote) {
-      return '{{userName}} voted on your proposal';
-    }
-    if (actionType === NotificationActionType.ProposalComment) {
-      return '{{userName}} commented on your proposal';
-    }
-    if (actionType === NotificationActionType.PostComment) {
-      return '{{userName}} commented on your post';
-    }
-    if (actionType === NotificationActionType.PostLike) {
-      return '{{userName}} liked your post';
-    }
   }
 }

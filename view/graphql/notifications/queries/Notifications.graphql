@@ -1,9 +1,14 @@
 query Notifications($offset: Int, $limit: Int) {
   notifications(offset: $offset, limit: $limit) {
     id
-    message
+    actionType
     status
     createdAt
+
+    otherUser {
+      id
+      name
+    }
   }
   notificationsCount
 }

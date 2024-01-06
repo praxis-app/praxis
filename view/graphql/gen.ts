@@ -666,7 +666,7 @@ export type Notification = {
   actionType: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
-  message: Scalars['String']['output'];
+  otherUser: User;
   status: Scalars['String']['output'];
 };
 

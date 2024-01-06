@@ -18,9 +18,10 @@ export type NotificationsQuery = {
   notifications: Array<{
     __typename?: 'Notification';
     id: number;
-    message: string;
+    actionType: string;
     status: string;
     createdAt: any;
+    otherUser: { __typename?: 'User'; id: number; name: string };
   }>;
 };
 
@@ -28,9 +29,13 @@ export const NotificationsDocument = gql`
   query Notifications($offset: Int, $limit: Int) {
     notifications(offset: $offset, limit: $limit) {
       id
-      message
+      actionType
       status
       createdAt
+      otherUser {
+        id
+        name
+      }
     }
     notificationsCount
   }

@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/App/Layout';
-import Activity from '../pages/App/Activity';
+import Notifications from '../pages/App/Notifications';
 import HomePage from '../pages/App/HomePage';
 import PageNotFound from '../pages/App/PageNotFound';
 import DocsHomePage from '../pages/Docs/DocsHomePage';
@@ -47,7 +47,7 @@ const appRouter = createBrowserRouter([
       },
       {
         path: 'activity',
-        element: <Activity />,
+        element: <Notifications />,
       },
       {
         path: 'docs',

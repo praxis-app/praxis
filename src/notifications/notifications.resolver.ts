@@ -2,6 +2,7 @@ import { Inject } from '@nestjs/common';
 import {
   Args,
   Int,
+  Parent,
   Query,
   ResolveField,
   Resolver,
@@ -34,9 +35,10 @@ export class NotificationsResolver {
     return this.notificationsService.getNotificationsCount(user.id);
   }
 
-  @ResolveField(() => String)
-  message(@CurrentUser() user: User) {
-    return this.notificationsService.getNotificationMessage(user.id);
+  // TODO: Add data loader for batching otherUser queries
+  @ResolveField(() => User)
+  otherUser(@Parent() { id }: Notification) {
+    return this.notificationsService.getOtherUser(id);
   }
 
   @Subscription(() => Notification)
