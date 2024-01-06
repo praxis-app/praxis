@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/App/Layout';
+import Activity from '../pages/App/Activity';
 import HomePage from '../pages/App/HomePage';
 import PageNotFound from '../pages/App/PageNotFound';
 import DocsHomePage from '../pages/Docs/DocsHomePage';
@@ -43,6 +44,10 @@ const appRouter = createBrowserRouter([
       {
         path: 'canary',
         element: <CanaryPage />,
+      },
+      {
+        path: 'activity',
+        element: <Activity />,
       },
       {
         path: 'docs',

@@ -1,5 +1,11 @@
 import { useReactiveVar } from '@apollo/client';
-import { EventNote, Group, Home, Menu } from '@mui/icons-material';
+import {
+  EventNote,
+  Group,
+  Home,
+  Menu,
+  Notifications,
+} from '@mui/icons-material';
 import {
   BottomNavigation,
   BottomNavigationAction,
@@ -9,8 +15,8 @@ import {
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { isNavDrawerOpenVar } from '../../graphql/cache';
 import { NavigationPaths } from '../../constants/shared.constants';
+import { isLoggedInVar, isNavDrawerOpenVar } from '../../graphql/cache';
 import { scrollTop } from '../../utils/shared.utils';
 
 const PAPER_STYLES: SxProps = {
@@ -22,40 +28,43 @@ const PAPER_STYLES: SxProps = {
 };
 
 const BottomNav = () => {
-  const [value, setValue] = useState(0);
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
+  const [value, setValue] = useState(0);
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isNavDrawerOpen) {
-      const getMatching = (path: string): string => {
-        const match = pathname.match(path);
-        if (match) {
-          return pathname;
-        }
-        return '';
-      };
-
-      switch (pathname) {
-        case NavigationPaths.Home:
-          setValue(0);
-          break;
-        case getMatching('groups'):
-        case NavigationPaths.Groups:
-          setValue(2);
-          break;
-        case getMatching('events'):
-        case NavigationPaths.Events:
-          setValue(1);
-          break;
-        default:
-          setValue(3);
-      }
+    if (isNavDrawerOpen) {
+      return;
     }
-  }, [pathname, isNavDrawerOpen]);
+    if (pathname === NavigationPaths.Home) {
+      setValue(0);
+      return;
+    }
+    if (
+      pathname === NavigationPaths.Groups ||
+      pathname.includes(NavigationPaths.Groups)
+    ) {
+      setValue(1);
+      return;
+    }
+    if (isLoggedIn && pathname === NavigationPaths.Activity) {
+      setValue(2);
+      return;
+    }
+    if (
+      !isLoggedIn &&
+      (pathname === NavigationPaths.Events ||
+        pathname.includes(NavigationPaths.Events))
+    ) {
+      setValue(2);
+      return;
+    }
+    setValue(3);
+  }, [pathname, isNavDrawerOpen, isLoggedIn]);
 
   const handleHomeButtonClick = () => {
     if (pathname === NavigationPaths.Home) {
@@ -85,16 +94,24 @@ const BottomNav = () => {
         />
 
         <BottomNavigationAction
-          icon={<EventNote />}
-          label={t('navigation.events')}
-          onClick={() => navigate(NavigationPaths.Events)}
-        />
-
-        <BottomNavigationAction
           icon={<Group />}
           label={t('navigation.groups')}
           onClick={() => navigate(NavigationPaths.Groups)}
         />
+
+        {isLoggedIn ? (
+          <BottomNavigationAction
+            icon={<Notifications />}
+            label={t('navigation.activity')}
+            onClick={() => navigate(NavigationPaths.Activity)}
+          />
+        ) : (
+          <BottomNavigationAction
+            icon={<EventNote />}
+            label={t('navigation.events')}
+            onClick={() => navigate(NavigationPaths.Events)}
+          />
+        )}
 
         <BottomNavigationAction
           icon={<Menu />}

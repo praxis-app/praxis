@@ -50,12 +50,12 @@
   },
 
   "navigation": {
+    "activity": "Activity",
     "docs": "Docs",
     "events": "Events",
     "groups": "Groups",
     "home": "Home",
     "invites": "Invites",
-    "members": "Members",
     "menu": "Menu",
     "preferences": "Preferences",
     "profile": "Profile",

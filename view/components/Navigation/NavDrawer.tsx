@@ -3,6 +3,7 @@ import {
   AccountBox,
   Close,
   Article as DocsIcon,
+  EventNote,
   Link as InvitesIcon,
   ExitToApp as SessionIcon,
   Settings,
@@ -149,6 +150,22 @@ const NavDrawer = () => {
           <ListItemText primary={me.name} />
         </ListItemButton>
 
+        <ListItemButton onClick={handleLinkClick(NavigationPaths.Events)}>
+          <ListItemIcon>
+            <EventNote />
+          </ListItemIcon>
+          <ListItemText primary={t('navigation.events')} />
+        </ListItemButton>
+
+        {(createInvites || manageInvites) && (
+          <ListItemButton onClick={handleLinkClick(NavigationPaths.Invites)}>
+            <ListItemIcon>
+              <InvitesIcon />
+            </ListItemIcon>
+            <ListItemText primary={t('navigation.invites')} />
+          </ListItemButton>
+        )}
+
         {manageRoles && (
           <ListItemButton onClick={handleLinkClick(NavigationPaths.Roles)}>
             <ListItemIcon>
@@ -167,15 +184,6 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
-        {(createInvites || manageInvites) && (
-          <ListItemButton onClick={handleLinkClick(NavigationPaths.Invites)}>
-            <ListItemIcon>
-              <InvitesIcon />
-            </ListItemIcon>
-            <ListItemText primary={t('navigation.invites')} />
-          </ListItemButton>
-        )}
-
         {manageSettings && (
           <ListItemButton
             onClick={handleLinkClick(NavigationPaths.ServerSettings)}
@@ -187,8 +195,6 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
-        {renderDocsButton()}
-
         <ListItemButton
           onClick={() =>
             window.confirm(t('users.prompts.logOut')) && handleLogOutClick()
@@ -199,6 +205,8 @@ const NavDrawer = () => {
           </ListItemIcon>
           <ListItemText primary={t('users.actions.logOut')} />
         </ListItemButton>
+
+        {renderDocsButton()}
       </>
     );
   };
