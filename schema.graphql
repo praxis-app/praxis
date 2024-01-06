@@ -154,10 +154,10 @@ type GroupMemberRequest {
 
 type Notification {
   id: Int!
-  message: String!
   actionType: String!
   status: String!
   createdAt: DateTime!
+  message: String!
 }
 
 type ServerInvite {

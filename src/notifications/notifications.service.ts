@@ -35,28 +35,30 @@ export class NotificationsService {
     userId: number,
     otherUserId?: number,
   ) {
-    const message = this.getNotificationMessage(actionType);
     const notification = await this.repository.save({
       actionType,
-      message,
       userId,
       otherUserId,
     });
     await this.pubSub.publish(`user-notification-${userId}`, notification);
   }
 
-  getNotificationMessage(actionType: NotificationActionType) {
+  async getNotificationMessage(notificationId: number) {
+    const { actionType } = await this.repository.findOneOrFail({
+      where: { id: notificationId },
+    });
+
     if (actionType === NotificationActionType.ProposalVote) {
-      return 'Someone voted on your proposal';
+      return '{{userName}} voted on your proposal';
     }
     if (actionType === NotificationActionType.ProposalComment) {
-      return 'Someone commented on your proposal';
+      return '{{userName}} commented on your proposal';
     }
     if (actionType === NotificationActionType.PostComment) {
-      return 'Someone commented on your post';
+      return '{{userName}} commented on your post';
     }
     if (actionType === NotificationActionType.PostLike) {
-      return 'Someone liked your post';
+      return '{{userName}} liked your post';
     }
   }
 }

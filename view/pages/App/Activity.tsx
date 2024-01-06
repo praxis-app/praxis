@@ -1,4 +1,9 @@
-import { Card, CardContent, Typography } from '@mui/material';
+import {
+  Card,
+  CardContent as MuiCardContent,
+  Typography,
+  styled,
+} from '@mui/material';
 import { Fragment, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Center from '../../components/Shared/Center';
@@ -7,6 +12,12 @@ import Pagination from '../../components/Shared/Pagination';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 import { useNotificationsLazyQuery } from '../../graphql/notifications/queries/gen/Notifications.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
+
+const CardContent = styled(MuiCardContent)(() => ({
+  '&:last-child': {
+    paddingBottom: 18,
+  },
+}));
 
 const Activity = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);

@@ -19,10 +19,6 @@ export class Notification {
 
   @Column()
   @Field()
-  message: string;
-
-  @Column()
-  @Field()
   actionType: string;
 
   @Column({ default: NotificationStatus.Unread })
