@@ -661,6 +661,15 @@ export type MutationUpdateVoteArgs = {
   voteData: UpdateVoteInput;
 };
 
+export type Notification = {
+  __typename?: 'Notification';
+  actionType: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['Int']['output'];
+  message: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+};
+
 export type Post = {
   __typename?: 'Post';
   body?: Maybe<Scalars['String']['output']>;
@@ -1042,6 +1051,7 @@ export type SignUpInput = {
 export type Subscription = {
   __typename?: 'Subscription';
   isProposalRatified: Scalars['Boolean']['output'];
+  notifications: Notification;
 };
 
 export type SubscriptionIsProposalRatifiedArgs = {

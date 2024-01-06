@@ -157,9 +157,7 @@ type Notification {
   message: String!
   actionType: String!
   status: String!
-  user: User!
   createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type ServerInvite {

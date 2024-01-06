@@ -1,0 +1,8 @@
+subscription Notifications {
+  notifications {
+    id
+    message
+    status
+    createdAt
+  }
+}
