@@ -29,6 +29,7 @@ export type NotificationsQuery = {
       profilePicture: { __typename?: 'Image'; id: number };
     } | null;
     proposal?: { __typename?: 'Proposal'; id: number } | null;
+    post?: { __typename?: 'Post'; id: number } | null;
   }>;
 };
 

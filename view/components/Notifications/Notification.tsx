@@ -1,4 +1,11 @@
-import { PanTool, ThumbDown, ThumbUp, ThumbsUpDown } from '@mui/icons-material';
+import {
+  AutoAwesome,
+  Comment,
+  PanTool,
+  ThumbDown,
+  ThumbUp,
+  ThumbsUpDown,
+} from '@mui/icons-material';
 import {
   Box,
   SvgIconProps,
@@ -25,7 +32,15 @@ interface Props {
 }
 
 const Notification = ({
-  notification: { id, actionType, otherUser, proposal, createdAt, __typename },
+  notification: {
+    id,
+    actionType,
+    otherUser,
+    post,
+    proposal,
+    createdAt,
+    __typename,
+  },
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [deleteNotification] = useDeleteNotificationMutation();
@@ -77,6 +92,12 @@ const Notification = ({
     if (isProposalVote) {
       return `${NavigationPaths.Proposals}/${proposal?.id}`;
     }
+    if (actionType === NotificationActionType.ProposalComment) {
+      return `${NavigationPaths.Proposals}/${proposal?.id}`;
+    }
+    if (actionType === NotificationActionType.PostComment) {
+      return `${NavigationPaths.Posts}/${post?.id}`;
+    }
     return NavigationPaths.Home;
   };
 
@@ -113,7 +134,13 @@ const Notification = ({
     if (actionType === NotificationActionType.ProposalVoteBlock) {
       return <PanTool {...iconProps} />;
     }
-    return <ThumbUp {...iconProps} />;
+    if (actionType === NotificationActionType.ProposalVoteAgreement) {
+      return <ThumbUp {...iconProps} />;
+    }
+    if (actionType.includes('comment')) {
+      return <Comment {...iconProps} />;
+    }
+    return <AutoAwesome {...iconProps} />;
   };
 
   return (

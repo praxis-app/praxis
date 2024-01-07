@@ -10,4 +10,7 @@ fragment Notification on Notification {
   proposal {
     id
   }
+  post {
+    id
+  }
 }

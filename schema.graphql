@@ -556,11 +556,11 @@ type Query {
   post(id: Int!): Post!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
+  notifications(offset: Int, limit: Int): [Notification!]!
+  notificationsCount: Int!
   canary: Canary!
   publicCanary: Canary
   serverConfig: ServerConfig!
-  notifications(offset: Int, limit: Int): [Notification!]!
-  notificationsCount: Int!
 }
 
 input EventsInput {
@@ -611,6 +611,7 @@ type Mutation {
   createComment(commentData: CreateCommentInput!): CreateCommentPayload!
   updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
   deleteComment(id: Int!): Boolean!
+  deleteNotification(id: Int!): Boolean!
   deleteImage(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
@@ -618,7 +619,6 @@ type Mutation {
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
-  deleteNotification(id: Int!): Boolean!
 }
 
 input LoginInput {

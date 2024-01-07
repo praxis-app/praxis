@@ -19,6 +19,7 @@ export type NotificationFragment = {
     profilePicture: { __typename?: 'Image'; id: number };
   } | null;
   proposal?: { __typename?: 'Proposal'; id: number } | null;
+  post?: { __typename?: 'Post'; id: number } | null;
 };
 
 export const NotificationFragmentDoc = gql`
@@ -31,6 +32,9 @@ export const NotificationFragmentDoc = gql`
       ...UserAvatar
     }
     proposal {
+      id
+    }
+    post {
       id
     }
   }
