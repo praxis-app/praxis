@@ -145,7 +145,15 @@ const Notification = ({
 
   return (
     <Flex alignItems="center" justifyContent="space-between">
-      <Link href={getPath()} sx={{ display: 'flex', gap: '13px' }}>
+      <Link
+        href={getPath()}
+        sx={{
+          display: 'flex',
+          gap: '13px',
+          flex: 1,
+          marginRight: '5px',
+        }}
+      >
         {otherUser && (
           <Box position="relative">
             <UserAvatar user={otherUser} />
@@ -160,6 +168,9 @@ const Notification = ({
                 getNotificationMessage(actionType, otherUser?.name),
               ),
             }}
+            lineHeight={1}
+            marginBottom={0.5}
+            marginTop={0.25}
           />
           <Typography color="text.secondary" fontSize="13px" marginTop="-2px">
             {timeAgo(createdAt)}
