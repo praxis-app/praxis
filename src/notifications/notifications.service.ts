@@ -6,6 +6,7 @@ import { PubSub } from 'graphql-subscriptions';
 import { Repository } from 'typeorm';
 import { paginate } from '../common/common.utils';
 import { Notification } from './models/notification.model';
+import { UpdateNotificationInput } from './models/update-notification.input';
 
 @Injectable()
 export class NotificationsService {
@@ -64,6 +65,14 @@ export class NotificationsService {
       `user-notification-${notificationData.userId}`,
       notification,
     );
+  }
+
+  async updateNotification({ id, status }: UpdateNotificationInput) {
+    await this.notificationRepository.update(id, { status });
+    const notification = await this.notificationRepository.findOneOrFail({
+      where: { id },
+    });
+    return { notification };
   }
 
   async deleteNotification(notificationId: number) {

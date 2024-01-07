@@ -462,6 +462,7 @@ export type Mutation = {
   updateGroup: UpdateGroupPayload;
   updateGroupConfig: UpdateGroupPayload;
   updateGroupRole: UpdateGroupRolePayload;
+  updateNotification: Notification;
   updatePost: UpdatePostPayload;
   updateProposal: UpdateProposalPayload;
   updateServerConfig: UpdateServerConfigPayload;
@@ -640,6 +641,10 @@ export type MutationUpdateGroupConfigArgs = {
 
 export type MutationUpdateGroupRoleArgs = {
   groupRoleData: UpdateGroupRoleInput;
+};
+
+export type MutationUpdateNotificationArgs = {
+  notificationData: UpdateNotificationInput;
 };
 
 export type MutationUpdatePostArgs = {
@@ -1150,6 +1155,11 @@ export type UpdateGroupRoleInput = {
 export type UpdateGroupRolePayload = {
   __typename?: 'UpdateGroupRolePayload';
   groupRole: GroupRole;
+};
+
+export type UpdateNotificationInput = {
+  id: Scalars['Int']['input'];
+  status: Scalars['String']['input'];
 };
 
 export type UpdatePostInput = {

@@ -611,6 +611,7 @@ type Mutation {
   createComment(commentData: CreateCommentInput!): CreateCommentPayload!
   updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
   deleteComment(id: Int!): Boolean!
+  updateNotification(notificationData: UpdateNotificationInput!): Notification!
   deleteNotification(id: Int!): Boolean!
   deleteImage(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
@@ -858,6 +859,11 @@ input UpdateCommentInput {
   id: Int!
   body: String
   images: [Upload!]
+}
+
+input UpdateNotificationInput {
+  id: Int!
+  status: String!
 }
 
 input UpdateServerConfigInput {

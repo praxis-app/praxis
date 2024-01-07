@@ -15,6 +15,7 @@ import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { User } from '../users/models/user.model';
 import { Notification } from './models/notification.model';
+import { UpdateNotificationInput } from './models/update-notification.input';
 import { NotificationsService } from './notifications.service';
 
 @Resolver(() => Notification)
@@ -54,6 +55,13 @@ export class NotificationsResolver {
   @ResolveField(() => Post, { nullable: true })
   post(@Parent() { id }: Notification) {
     return this.notificationsService.getPost(id);
+  }
+
+  @Mutation(() => Notification)
+  updateNotification(
+    @Args('notificationData') notificationData: UpdateNotificationInput,
+  ) {
+    return this.notificationsService.updateNotification(notificationData);
   }
 
   @Mutation(() => Boolean)
