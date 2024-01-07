@@ -13,10 +13,11 @@ interface Props {
   count?: number;
   isLoading: boolean;
   onChangePage(page: number): void;
-  rowsPerPage: number;
-  setRowsPerPage(rowsPerPage: number): void;
   page: number;
+  rowsPerPage: number;
   setPage(page: number): void;
+  setRowsPerPage(rowsPerPage: number): void;
+  showTopPagination?: boolean;
   sx?: SxProps;
 }
 
@@ -25,10 +26,11 @@ const Pagination = ({
   count,
   isLoading,
   onChangePage,
-  rowsPerPage,
-  setRowsPerPage,
   page,
+  rowsPerPage,
   setPage,
+  setRowsPerPage,
+  showTopPagination = true,
   sx,
 }: Props) => {
   const { t } = useTranslation();
@@ -79,7 +81,7 @@ const Pagination = ({
   };
 
   const renderPagination = (top = false) => {
-    if (top && isLoading) {
+    if ((top && isLoading) || (!showTopPagination && top)) {
       return null;
     }
     return (

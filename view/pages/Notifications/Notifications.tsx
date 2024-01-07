@@ -68,6 +68,7 @@ const Notifications = () => {
         setPage={setPage}
         setRowsPerPage={setRowsPerPage}
         sx={{ marginBottom: 0.75 }}
+        showTopPagination={false}
       >
         <Card>
           <CardContent>
