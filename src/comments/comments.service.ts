@@ -102,15 +102,17 @@ export class CommentsService {
           relations: ['user'],
         });
 
-    await this.notificationsService.createNotification({
-      actionType: comment.postId
-        ? NotificationActionType.PostComment
-        : NotificationActionType.ProposalComment,
-      proposalId: comment.proposalId,
-      postId: comment.postId,
-      otherUserId: user.id,
-      userId,
-    });
+    if (userId !== user.id) {
+      await this.notificationsService.createNotification({
+        actionType: comment.postId
+          ? NotificationActionType.PostComment
+          : NotificationActionType.ProposalComment,
+        proposalId: comment.proposalId,
+        postId: comment.postId,
+        otherUserId: user.id,
+        userId,
+      });
+    }
 
     return { comment };
   }

@@ -41,13 +41,16 @@ export class VotesService {
     }
 
     const proposal = await this.proposalsService.getProposal(vote.proposalId);
-    const voteNotificationType = this.getVoteNotificationType(vote.voteType);
-    await this.notificationsService.createNotification({
-      actionType: voteNotificationType,
-      otherUserId: vote.userId,
-      userId: proposal.userId,
-      proposalId: proposal.id,
-    });
+
+    if (vote.userId !== proposal.userId) {
+      const voteNotificationType = this.getVoteNotificationType(vote.voteType);
+      await this.notificationsService.createNotification({
+        actionType: voteNotificationType,
+        otherUserId: vote.userId,
+        userId: proposal.userId,
+        proposalId: proposal.id,
+      });
+    }
 
     return { vote };
   }

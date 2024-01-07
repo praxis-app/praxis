@@ -50,14 +50,16 @@ export class LikesService {
           relations: ['user', 'post'],
         });
 
-    await this.notificationsService.createNotification({
-      actionType: like.postId
-        ? NotificationActionType.PostLike
-        : NotificationActionType.CommentLike,
-      postId: 'post' in rest ? rest.post?.id : like.postId,
-      otherUserId: user.id,
-      userId,
-    });
+    if (userId !== user.id) {
+      await this.notificationsService.createNotification({
+        actionType: like.postId
+          ? NotificationActionType.PostLike
+          : NotificationActionType.CommentLike,
+        postId: 'post' in rest ? rest.post?.id : like.postId,
+        otherUserId: user.id,
+        userId,
+      });
+    }
 
     return { like };
   }
