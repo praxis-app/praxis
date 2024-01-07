@@ -11,6 +11,7 @@ import Notification from '../../components/Notifications/Notification';
 import Center from '../../components/Shared/Center';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import Pagination from '../../components/Shared/Pagination';
+import ProgressBar from '../../components/Shared/ProgressBar';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 import { useNotificationsLazyQuery } from '../../graphql/notifications/queries/gen/Notifications.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
@@ -54,6 +55,9 @@ const Notifications = () => {
   if (error) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
+  if (loading) {
+    return <ProgressBar />;
+  }
 
   return (
     <>
@@ -61,7 +65,6 @@ const Notifications = () => {
 
       <Pagination
         count={data?.notificationsCount}
-        isLoading={loading}
         onChangePage={onChangePage}
         page={page}
         rowsPerPage={rowsPerPage}

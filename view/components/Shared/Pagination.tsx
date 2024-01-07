@@ -11,7 +11,7 @@ import { useIsDesktop } from '../../hooks/shared.hooks';
 interface Props {
   children: ReactNode;
   count?: number;
-  isLoading: boolean;
+  isLoading?: boolean;
   onChangePage(page: number): void;
   page: number;
   rowsPerPage: number;
