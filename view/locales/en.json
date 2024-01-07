@@ -564,6 +564,13 @@
       "noNotifications": "Nothing to see here yet",
       "confirmDelete": "Are you sure you want to delete this notification?"
     },
+    "labels": {
+      "markAllAsRead": "Mark all as read",
+      "markAsRead": "Mark as read",
+      "markAsUnread": "Mark as unread",
+      "read": "Read",
+      "unread": "Unread"
+    },
     "messages": {
       "postComment": "<b>{{name}}</b> commented on your post",
       "postLike": "<b>{{name}}</b> liked your post",

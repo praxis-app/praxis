@@ -7,12 +7,14 @@ interface Props {
   disabled?: boolean;
   href: string;
   leftSpace?: boolean;
+  onClick?: () => void;
   sx?: SxProps;
 }
 
-const Link = ({ children, disabled, href, leftSpace, sx }: Props) => (
+const Link = ({ children, disabled, href, leftSpace, onClick, sx }: Props) => (
   <MuiLink
     component={ReactRouterLink}
+    onClick={onClick}
     to={href}
     sx={{
       color: 'text.primary',

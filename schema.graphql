@@ -511,6 +511,10 @@ type UpdateServerConfigPayload {
   canary: Canary!
 }
 
+type UpdateNotificationPayload {
+  notification: Notification!
+}
+
 type CreateCommentPayload {
   comment: Comment!
 }
@@ -611,7 +615,7 @@ type Mutation {
   createComment(commentData: CreateCommentInput!): CreateCommentPayload!
   updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
   deleteComment(id: Int!): Boolean!
-  updateNotification(notificationData: UpdateNotificationInput!): Notification!
+  updateNotification(notificationData: UpdateNotificationInput!): UpdateNotificationPayload!
   deleteNotification(id: Int!): Boolean!
   deleteImage(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!

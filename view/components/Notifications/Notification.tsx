@@ -13,14 +13,21 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { t } from 'i18next';
+
 import { useState } from 'react';
-import { Namespace, TFunction } from 'react-i18next';
-import { NotificationActionType } from '../../constants/notifications.constants';
-import { NavigationPaths } from '../../constants/shared.constants';
+import { Namespace, TFunction, useTranslation } from 'react-i18next';
+import {
+  NotificationActionType,
+  NotificationStatus,
+} from '../../constants/notifications.constants';
+import {
+  MIDDOT_WITH_SPACES,
+  NavigationPaths,
+} from '../../constants/shared.constants';
 import { VOTE_BADGE_STYLES } from '../../constants/vote.constants';
 import { NotificationFragment } from '../../graphql/notifications/fragments/gen/Notification.gen';
 import { useDeleteNotificationMutation } from '../../graphql/notifications/mutations/gen/DeleteNotification.gen';
+import { useUpdateNotificationMutation } from '../../graphql/notifications/mutations/gen/UpdateNotification.gen';
 import { timeAgo } from '../../utils/time.utils';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
@@ -36,6 +43,7 @@ const Notification = ({
     id,
     actionType,
     otherUser,
+    status,
     post,
     proposal,
     createdAt,
@@ -43,9 +51,14 @@ const Notification = ({
   },
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
+
+  const [updateNotification] = useUpdateNotificationMutation();
   const [deleteNotification] = useDeleteNotificationMutation();
 
+  const { t } = useTranslation();
   const theme = useTheme();
+
+  const isRead = status === NotificationStatus.Read;
 
   const isProposalVote = [
     NotificationActionType.ProposalVoteAgreement,
@@ -115,6 +128,12 @@ const Notification = ({
     });
   };
 
+  const handleUpdate = (status: string) => {
+    updateNotification({
+      variables: { notificationData: { id, status } },
+    });
+  };
+
   const renderVoteIcon = () => {
     const sx: SxProps = {
       fontSize: 8,
@@ -153,11 +172,12 @@ const Notification = ({
     <Flex alignItems="center" justifyContent="space-between">
       <Link
         href={getPath()}
+        onClick={() => handleUpdate(NotificationStatus.Read)}
         sx={{
+          marginRight: '5px',
           display: 'flex',
           gap: '13px',
           flex: 1,
-          marginRight: '5px',
         }}
       >
         {otherUser && (
@@ -178,8 +198,11 @@ const Notification = ({
             marginBottom={0.5}
             marginTop={0.25}
           />
+
           <Typography color="text.secondary" fontSize="13px" marginTop="-2px">
             {timeAgo(createdAt)}
+            {!isRead &&
+              MIDDOT_WITH_SPACES + ' ' + t('notifications.labels.unread')}
           </Typography>
         </Box>
       </Link>

@@ -1,0 +1,7 @@
+mutation UpdateNotification($notificationData: UpdateNotificationInput!) {
+  updateNotification(notificationData: $notificationData) {
+    notification {
+      ...Notification
+    }
+  }
+}

@@ -16,6 +16,7 @@ import { Proposal } from '../proposals/models/proposal.model';
 import { User } from '../users/models/user.model';
 import { Notification } from './models/notification.model';
 import { UpdateNotificationInput } from './models/update-notification.input';
+import { UpdateNotificationPayload } from './models/update-notification.payload';
 import { NotificationsService } from './notifications.service';
 
 @Resolver(() => Notification)
@@ -57,7 +58,7 @@ export class NotificationsResolver {
     return this.notificationsService.getPost(id);
   }
 
-  @Mutation(() => Notification)
+  @Mutation(() => UpdateNotificationPayload)
   updateNotification(
     @Args('notificationData') notificationData: UpdateNotificationInput,
   ) {
