@@ -42,6 +42,16 @@ export type AuthPayload = {
   access_token: Scalars['String']['output'];
 };
 
+export type BulkUpdateNotificationsInput = {
+  ids: Array<Scalars['Int']['input']>;
+  status: Scalars['String']['input'];
+};
+
+export type BulkUpdateNotificationsPayload = {
+  __typename?: 'BulkUpdateNotificationsPayload';
+  notifications: Array<Notification>;
+};
+
 export type Canary = {
   __typename?: 'Canary';
   id: Scalars['Int']['output'];
@@ -419,6 +429,7 @@ export type LoginInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   approveGroupMemberRequest: ApproveGroupMemberRequestPayload;
+  bulkUpdateNotifications: BulkUpdateNotificationsPayload;
   cancelGroupMemberRequest: Scalars['Boolean']['output'];
   createComment: CreateCommentPayload;
   createEvent: CreateEventPayload;
@@ -473,6 +484,10 @@ export type Mutation = {
 
 export type MutationApproveGroupMemberRequestArgs = {
   id: Scalars['Int']['input'];
+};
+
+export type MutationBulkUpdateNotificationsArgs = {
+  notificationsData: BulkUpdateNotificationsInput;
 };
 
 export type MutationCancelGroupMemberRequestArgs = {

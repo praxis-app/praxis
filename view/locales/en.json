@@ -565,7 +565,7 @@
       "confirmDelete": "Are you sure you want to delete this notification?"
     },
     "labels": {
-      "markAllAsRead": "Mark all as read",
+      "markAllAsRead": "Mark all as Read",
       "markAsRead": "Mark as read",
       "markAsUnread": "Mark as unread",
       "delete": "Delete Notification",

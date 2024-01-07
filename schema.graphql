@@ -511,6 +511,10 @@ type UpdateServerConfigPayload {
   canary: Canary!
 }
 
+type BulkUpdateNotificationsPayload {
+  notifications: [Notification!]!
+}
+
 type UpdateNotificationPayload {
   notification: Notification!
 }
@@ -616,6 +620,7 @@ type Mutation {
   updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
   deleteComment(id: Int!): Boolean!
   updateNotification(notificationData: UpdateNotificationInput!): UpdateNotificationPayload!
+  bulkUpdateNotifications(notificationsData: BulkUpdateNotificationsInput!): BulkUpdateNotificationsPayload!
   deleteNotification(id: Int!): Boolean!
   deleteImage(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
@@ -867,6 +872,11 @@ input UpdateCommentInput {
 
 input UpdateNotificationInput {
   id: Int!
+  status: String!
+}
+
+input BulkUpdateNotificationsInput {
+  ids: [Int!]!
   status: String!
 }
 

@@ -3,8 +3,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { paginate } from '../common/common.utils';
+import { BulkUpdateNotificationsInput } from './models/bulk-update-notifications.input';
 import { Notification } from './models/notification.model';
 import { UpdateNotificationInput } from './models/update-notification.input';
 
@@ -73,6 +74,19 @@ export class NotificationsService {
       where: { id },
     });
     return { notification };
+  }
+
+  async bulkUpdateNotifications({ ids, status }: BulkUpdateNotificationsInput) {
+    await this.notificationRepository.update(
+      {
+        id: In(ids),
+      },
+      { status },
+    );
+    const notifications = await this.notificationRepository.find({
+      where: { id: In(ids) },
+    });
+    return { notifications };
   }
 
   async deleteNotification(notificationId: number) {

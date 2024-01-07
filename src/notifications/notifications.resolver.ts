@@ -14,6 +14,8 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { User } from '../users/models/user.model';
+import { BulkUpdateNotificationsInput } from './models/bulk-update-notifications.input';
+import { BulkUpdateNotificationsPayload } from './models/bulk-update-notifications.payload';
 import { Notification } from './models/notification.model';
 import { UpdateNotificationInput } from './models/update-notification.input';
 import { UpdateNotificationPayload } from './models/update-notification.payload';
@@ -63,6 +65,13 @@ export class NotificationsResolver {
     @Args('notificationData') notificationData: UpdateNotificationInput,
   ) {
     return this.notificationsService.updateNotification(notificationData);
+  }
+
+  @Mutation(() => BulkUpdateNotificationsPayload)
+  bulkUpdateNotifications(
+    @Args('notificationsData') notificationsData: BulkUpdateNotificationsInput,
+  ) {
+    return this.notificationsService.bulkUpdateNotifications(notificationsData);
   }
 
   @Mutation(() => Boolean)
