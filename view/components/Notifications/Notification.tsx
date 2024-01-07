@@ -67,6 +67,12 @@ const Notification = ({
     return _t('notifications.errors.invalidType');
   };
 
+  const convertBoldToSpan = (message: string) => {
+    return message
+      .replace(/<b>/g, '<span style="font-family: Inter Bold;">')
+      .replace(/<\/b>/g, '</span>');
+  };
+
   const getPath = () => {
     if (isProposalVote) {
       return `${NavigationPaths.Proposals}/${proposal?.id}`;
@@ -123,7 +129,9 @@ const Notification = ({
         <Box>
           <Typography
             dangerouslySetInnerHTML={{
-              __html: getNotificationMessage(actionType, otherUser?.name),
+              __html: convertBoldToSpan(
+                getNotificationMessage(actionType, otherUser?.name),
+              ),
             }}
           />
           <Typography color="text.secondary" fontSize="13px" marginTop="-2px">
