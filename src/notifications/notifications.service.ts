@@ -20,9 +20,12 @@ export class NotificationsService {
     const notifications = await this.notificationRepository.find({
       where: { userId },
     });
+    const sortedNotifications = notifications.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
     return offset !== undefined
-      ? paginate(notifications, offset, limit)
-      : notifications;
+      ? paginate(sortedNotifications, offset, limit)
+      : sortedNotifications;
   }
 
   async getNotificationsCount(userId: number) {
