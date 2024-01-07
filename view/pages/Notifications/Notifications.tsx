@@ -80,7 +80,7 @@ const Notifications = () => {
                 <Notification notification={notification} />
 
                 {index !== data?.notifications.length - 1 && (
-                  <Divider sx={{ marginY: 1.5 }} />
+                  <Divider sx={{ marginY: 1.75 }} />
                 )}
               </Fragment>
             ))}
