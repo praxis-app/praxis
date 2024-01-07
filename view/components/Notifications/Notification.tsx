@@ -98,6 +98,9 @@ const Notification = ({
     if (actionType === NotificationActionType.PostComment) {
       return `${NavigationPaths.Posts}/${post?.id}`;
     }
+    if (actionType === NotificationActionType.PostLike) {
+      return `${NavigationPaths.Posts}/${post?.id}`;
+    }
     return NavigationPaths.Home;
   };
 
@@ -134,7 +137,10 @@ const Notification = ({
     if (actionType === NotificationActionType.ProposalVoteBlock) {
       return <PanTool {...iconProps} />;
     }
-    if (actionType === NotificationActionType.ProposalVoteAgreement) {
+    if (
+      actionType === NotificationActionType.ProposalVoteAgreement ||
+      actionType === NotificationActionType.PostLike
+    ) {
       return <ThumbUp {...iconProps} />;
     }
     if (actionType.includes('comment')) {

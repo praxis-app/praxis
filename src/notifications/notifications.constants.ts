@@ -4,6 +4,7 @@ export enum NotificationStatus {
 }
 
 export enum NotificationActionType {
+  CommentLike = 'comment-like',
   PostLike = 'post-like',
   PostComment = 'post-comment',
   ProposalComment = 'proposal-comment',
