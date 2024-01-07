@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
 import { Namespace, TFunction } from 'react-i18next';
@@ -6,16 +6,18 @@ import { NotificationActionType } from '../../constants/notifications.constants'
 import { NavigationPaths } from '../../constants/shared.constants';
 import { NotificationFragment } from '../../graphql/notifications/fragments/gen/Notification.gen';
 import { useDeleteNotificationMutation } from '../../graphql/notifications/mutations/gen/DeleteNotification.gen';
+import { timeAgo } from '../../utils/time.utils';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
+import UserAvatar from '../Users/UserAvatar';
 
 interface Props {
   notification: NotificationFragment;
 }
 
 const Notification = ({
-  notification: { id, actionType, otherUser, proposal, __typename },
+  notification: { id, actionType, otherUser, proposal, createdAt, __typename },
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -59,12 +61,18 @@ const Notification = ({
 
   return (
     <Flex alignItems="center" justifyContent="space-between">
-      <Link href={getPath()}>
-        <Typography
-          dangerouslySetInnerHTML={{
-            __html: getNotificationMessage(actionType, otherUser?.name),
-          }}
-        />
+      <Link href={getPath()} sx={{ display: 'flex', gap: '10px' }}>
+        {otherUser && <UserAvatar user={otherUser} />}
+        <Box>
+          <Typography
+            dangerouslySetInnerHTML={{
+              __html: getNotificationMessage(actionType, otherUser?.name),
+            }}
+          />
+          <Typography variant="caption" color="text.secondary">
+            {timeAgo(createdAt)}
+          </Typography>
+        </Box>
       </Link>
 
       <ItemMenu

@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
@@ -11,7 +12,12 @@ export type NotificationFragment = {
   actionType: string;
   status: string;
   createdAt: any;
-  otherUser?: { __typename?: 'User'; id: number; name: string } | null;
+  otherUser?: {
+    __typename?: 'User';
+    id: number;
+    name: string;
+    profilePicture: { __typename?: 'Image'; id: number };
+  } | null;
   proposal?: { __typename?: 'Proposal'; id: number } | null;
 };
 
@@ -22,11 +28,11 @@ export const NotificationFragmentDoc = gql`
     status
     createdAt
     otherUser {
-      id
-      name
+      ...UserAvatar
     }
     proposal {
       id
     }
   }
+  ${UserAvatarFragmentDoc}
 `;

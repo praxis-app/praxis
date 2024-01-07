@@ -5,8 +5,7 @@ fragment Notification on Notification {
   createdAt
 
   otherUser {
-    id
-    name
+    ...UserAvatar
   }
   proposal {
     id
