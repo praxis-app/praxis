@@ -1,7 +1,8 @@
+import { DoneAll } from '@mui/icons-material';
 import {
-  Button,
   Card,
   Divider,
+  MenuItem,
   CardContent as MuiCardContent,
   Typography,
   styled,
@@ -11,10 +12,10 @@ import { useTranslation } from 'react-i18next';
 import Notification from '../../components/Notifications/Notification';
 import Center from '../../components/Shared/Center';
 import Flex from '../../components/Shared/Flex';
+import ItemMenu from '../../components/Shared/ItemMenu';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import Pagination from '../../components/Shared/Pagination';
 import ProgressBar from '../../components/Shared/ProgressBar';
-import Spinner from '../../components/Shared/Spinner';
 import { NotificationStatus } from '../../constants/notifications.constants';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 import { useBulkUpdateNotificationsMutation } from '../../graphql/notifications/mutations/gen/BulkUpdateNotifications.gen';
@@ -28,6 +29,7 @@ const CardContent = styled(MuiCardContent)(() => ({
 }));
 
 const Notifications = () => {
+  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
 
@@ -69,6 +71,7 @@ const Notifications = () => {
         },
       },
     });
+    setMenuAnchorEl(null);
   };
 
   if (isDeniedAccess(error)) {
@@ -86,13 +89,22 @@ const Notifications = () => {
       <Flex justifyContent="space-between" alignItems="center">
         <LevelOneHeading header>{t('navigation.activity')}</LevelOneHeading>
 
-        <Button
-          sx={{ marginBottom: '24px', textTransform: 'none' }}
-          startIcon={bulkUpdateLoading ? <Spinner size={10} /> : null}
-          onClick={handleBulkUpdate}
+        <ItemMenu
+          anchorEl={menuAnchorEl}
+          buttonStyles={{ marginBottom: '24px', width: '72px' }}
+          deleteBtnLabel={t('notifications.labels.delete')}
+          deletePrompt={t('notifications.prompts.confirmDelete')}
+          loading={bulkUpdateLoading}
+          setAnchorEl={setMenuAnchorEl}
+          variant="ghost"
+          prependChildren
+          canDelete
         >
-          {t('notifications.labels.markAllAsRead')}
-        </Button>
+          <MenuItem onClick={handleBulkUpdate}>
+            <DoneAll fontSize="small" sx={{ marginRight: 1 }} />
+            {t('notifications.labels.markAllAsRead')}
+          </MenuItem>
+        </ItemMenu>
       </Flex>
 
       <Pagination

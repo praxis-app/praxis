@@ -12,15 +12,15 @@ interface Props {
   canDelete?: boolean;
   canUpdate?: boolean;
   children?: ReactNode;
+  deleteBtnLabel?: string;
   deleteItem?: () => void;
   deletePrompt?: string;
-  deleteBtnLabel?: string;
   editPath?: string;
+  loading?: boolean;
   onEditButtonClick?: () => void;
   prependChildren?: boolean;
   setAnchorEl: (el: HTMLElement | null) => void;
   variant?: 'ghost' | 'default';
-  loading?: boolean;
 }
 
 const ItemMenu = ({
@@ -29,11 +29,11 @@ const ItemMenu = ({
   canDelete,
   canUpdate,
   children,
-  loading,
+  deleteBtnLabel,
   deleteItem,
   deletePrompt,
-  deleteBtnLabel,
   editPath,
+  loading,
   onEditButtonClick,
   prependChildren,
   setAnchorEl,
@@ -94,7 +94,11 @@ const ItemMenu = ({
         onClick={handleMenuButtonClick}
         sx={menuButtonStyles}
       >
-        {loading ? <Spinner size={10} /> : <MoreHoriz />}
+        {loading ? (
+          <Spinner size={10} sx={{ marginY: '7px' }} />
+        ) : (
+          <MoreHoriz />
+        )}
       </Button>
 
       <Menu
