@@ -568,6 +568,7 @@
       "markAllAsRead": "Mark all as read",
       "markAsRead": "Mark as read",
       "markAsUnread": "Mark as unread",
+      "delete": "Delete Notification",
       "read": "Read",
       "unread": "Unread"
     },

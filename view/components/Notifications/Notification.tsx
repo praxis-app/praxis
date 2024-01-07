@@ -1,5 +1,6 @@
 import {
   AutoAwesome,
+  Check,
   Comment,
   PanTool,
   ThumbDown,
@@ -8,6 +9,7 @@ import {
 } from '@mui/icons-material';
 import {
   Box,
+  MenuItem,
   SvgIconProps,
   SxProps,
   Typography,
@@ -52,8 +54,10 @@ const Notification = ({
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
-  const [updateNotification] = useUpdateNotificationMutation();
-  const [deleteNotification] = useDeleteNotificationMutation();
+  const [updateNotification, { loading: updateLoading }] =
+    useUpdateNotificationMutation();
+  const [deleteNotification, { loading: deleteLoading }] =
+    useDeleteNotificationMutation();
 
   const { t } = useTranslation();
   const theme = useTheme();
@@ -128,10 +132,13 @@ const Notification = ({
     });
   };
 
-  const handleUpdate = (status: string) => {
+  const handleRead = () => {
     updateNotification({
-      variables: { notificationData: { id, status } },
+      variables: {
+        notificationData: { id, status: NotificationStatus.Read },
+      },
     });
+    setMenuAnchorEl(null);
   };
 
   const renderVoteIcon = () => {
@@ -172,7 +179,7 @@ const Notification = ({
     <Flex alignItems="center" justifyContent="space-between">
       <Link
         href={getPath()}
-        onClick={() => handleUpdate(NotificationStatus.Read)}
+        onClick={handleRead}
         sx={{
           marginRight: '5px',
           display: 'flex',
@@ -209,11 +216,19 @@ const Notification = ({
 
       <ItemMenu
         anchorEl={menuAnchorEl}
+        deleteBtnLabel={t('notifications.labels.delete')}
         deleteItem={handleDelete}
         deletePrompt={t('notifications.prompts.confirmDelete')}
+        loading={updateLoading || deleteLoading}
         setAnchorEl={setMenuAnchorEl}
+        prependChildren
         canDelete
-      />
+      >
+        <MenuItem onClick={handleRead} disabled={isRead}>
+          <Check fontSize="small" sx={{ marginRight: 1 }} />
+          {t('notifications.labels.markAsRead')}
+        </MenuItem>
+      </ItemMenu>
     </Flex>
   );
 };
