@@ -69,7 +69,7 @@ const Notification = ({
               __html: getNotificationMessage(actionType, otherUser?.name),
             }}
           />
-          <Typography variant="caption" color="text.secondary">
+          <Typography color="text.secondary" fontSize="13px" marginTop="-2px">
             {timeAgo(createdAt)}
           </Typography>
         </Box>
