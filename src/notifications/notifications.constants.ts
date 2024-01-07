@@ -8,5 +8,8 @@ export enum NotificationActionType {
   PostComment = 'post-comment',
   ProposalComment = 'proposal-comment',
   ProposalRatified = 'proposal-ratified',
-  ProposalVote = 'proposal-vote',
+  ProposalVoteAgreement = 'proposal-vote-agreement',
+  ProposalVoteReservations = 'proposal-vote-reservations',
+  ProposalVoteStandAside = 'proposal-vote-stand-aside',
+  ProposalVoteBlock = 'proposal-vote-block',
 }

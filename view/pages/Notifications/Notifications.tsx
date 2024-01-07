@@ -86,7 +86,7 @@ const Notifications = () => {
             ))}
 
             {data?.notifications.length === 0 && (
-              <Center marginTop="20px" marginBottom="10px">
+              <Center marginTop="13px" marginBottom="10px">
                 <Typography>
                   {t('notifications.prompts.noNotifications')}
                 </Typography>

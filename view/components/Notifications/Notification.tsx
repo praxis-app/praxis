@@ -23,10 +23,17 @@ const Notification = ({
 
   const [deleteNotification] = useDeleteNotificationMutation();
 
+  const isProposalVote = [
+    NotificationActionType.ProposalVoteAgreement,
+    NotificationActionType.ProposalVoteReservations,
+    NotificationActionType.ProposalVoteStandAside,
+    NotificationActionType.ProposalVoteBlock,
+  ].includes(actionType as NotificationActionType);
+
   const getNotificationMessage = (actionType: string, name?: string) => {
     const _t: TFunction<Namespace<'ns1'>, undefined> = t;
 
-    if (actionType === NotificationActionType.ProposalVote) {
+    if (isProposalVote) {
       return _t('notifications.messages.proposalVote', { name });
     }
     if (actionType === NotificationActionType.ProposalComment) {
@@ -42,7 +49,7 @@ const Notification = ({
   };
 
   const getPath = () => {
-    if (actionType === NotificationActionType.ProposalVote) {
+    if (isProposalVote) {
       return `${NavigationPaths.Proposals}/${proposal?.id}`;
     }
     return NavigationPaths.Home;
