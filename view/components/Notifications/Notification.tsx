@@ -1,9 +1,17 @@
-import { Box, Typography } from '@mui/material';
+import { PanTool, ThumbDown, ThumbUp, ThumbsUpDown } from '@mui/icons-material';
+import {
+  Box,
+  SvgIconProps,
+  SxProps,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { t } from 'i18next';
 import { useState } from 'react';
 import { Namespace, TFunction } from 'react-i18next';
 import { NotificationActionType } from '../../constants/notifications.constants';
 import { NavigationPaths } from '../../constants/shared.constants';
+import { VOTE_BADGE_STYLES } from '../../constants/vote.constants';
 import { NotificationFragment } from '../../graphql/notifications/fragments/gen/Notification.gen';
 import { useDeleteNotificationMutation } from '../../graphql/notifications/mutations/gen/DeleteNotification.gen';
 import { timeAgo } from '../../utils/time.utils';
@@ -20,8 +28,9 @@ const Notification = ({
   notification: { id, actionType, otherUser, proposal, createdAt, __typename },
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
-
   const [deleteNotification] = useDeleteNotificationMutation();
+
+  const theme = useTheme();
 
   const isProposalVote = [
     NotificationActionType.ProposalVoteAgreement,
@@ -29,6 +38,16 @@ const Notification = ({
     NotificationActionType.ProposalVoteStandAside,
     NotificationActionType.ProposalVoteBlock,
   ].includes(actionType as NotificationActionType);
+
+  const voteBadgeStyles: SxProps = {
+    ...VOTE_BADGE_STYLES,
+    border: `2px solid ${theme.palette.background.paper}`,
+    height: 20,
+    width: 20,
+    position: 'absolute',
+    top: 25,
+    left: 26,
+  };
 
   const getNotificationMessage = (actionType: string, name?: string) => {
     const _t: TFunction<Namespace<'ns1'>, undefined> = t;
@@ -66,10 +85,41 @@ const Notification = ({
     });
   };
 
+  const renderVoteIcon = () => {
+    const sx: SxProps = {
+      fontSize: 8,
+      marginTop: 0.5,
+      transform:
+        actionType === NotificationActionType.ProposalVoteBlock
+          ? 'translateX(-0.5px)'
+          : null,
+    };
+    const iconProps: SvgIconProps = {
+      color: 'primary',
+      sx,
+    };
+    if (actionType === NotificationActionType.ProposalVoteReservations) {
+      return <ThumbsUpDown {...iconProps} />;
+    }
+    if (actionType === NotificationActionType.ProposalVoteStandAside) {
+      return <ThumbDown {...iconProps} />;
+    }
+    if (actionType === NotificationActionType.ProposalVoteBlock) {
+      return <PanTool {...iconProps} />;
+    }
+    return <ThumbUp {...iconProps} />;
+  };
+
   return (
     <Flex alignItems="center" justifyContent="space-between">
-      <Link href={getPath()} sx={{ display: 'flex', gap: '10px' }}>
-        {otherUser && <UserAvatar user={otherUser} />}
+      <Link href={getPath()} sx={{ display: 'flex', gap: '13px' }}>
+        {otherUser && (
+          <Box position="relative">
+            <UserAvatar user={otherUser} />
+            <Box sx={voteBadgeStyles}>{renderVoteIcon()}</Box>
+          </Box>
+        )}
+
         <Box>
           <Typography
             dangerouslySetInnerHTML={{
