@@ -5,14 +5,12 @@ import { UpdateNotificationInput } from '../../notifications/models/update-notif
 
 export const isOwnNotification = rule({ cache: 'strict' })(async (
   _parent,
-  args: { notificationData: UpdateNotificationInput },
+  args: { notificationData: UpdateNotificationInput } | { id: number },
   { user, services: { notificationsService } }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
   }
-  return notificationsService.isOwnNotification(
-    args.notificationData.id,
-    user.id,
-  );
+  const notificationId = 'id' in args ? args.id : args.notificationData.id;
+  return notificationsService.isOwnNotification(notificationId, user.id);
 });

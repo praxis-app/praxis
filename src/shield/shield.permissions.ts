@@ -96,6 +96,7 @@ export const shieldPermissions = shield(
       deleteEvent: or(canManageEvents, canManageGroupEvents),
       updateEvent: or(canManageEvents, canManageGroupEvents),
       updateNotification: isOwnNotification,
+      deleteNotification: isOwnNotification,
       updateComment: isOwnComment,
       deleteComment: or(
         isOwnComment,
