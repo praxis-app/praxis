@@ -324,19 +324,29 @@ export class GroupsService {
     });
   }
 
+  async getMembersWithApprovalPermission(groupId: number) {
+    return this.usersService.getUsers({
+      groupRoles: {
+        permission: { approveMemberRequests: true },
+        groupId,
+      },
+    });
+  }
+
   async createGroupMemberRequest(groupId: number, userId: number) {
     const groupMemberRequest = await this.groupMemberRequestRepository.save({
       groupId,
       userId,
     });
-
-    // TODO: Iterate over group members with permission to approve member requests
-    await this.notificationsService.createNotification({
-      actionType: NotificationType.GroupMemberRequest,
-      groupId: groupMemberRequest.groupId,
-      otherUserId: userId,
-    });
-
+    const members = await this.getMembersWithApprovalPermission(groupId);
+    for (const member of members) {
+      await this.notificationsService.createNotification({
+        actionType: NotificationType.GroupMemberRequest,
+        groupId: groupMemberRequest.groupId,
+        otherUserId: userId,
+        userId: member.id,
+      });
+    }
     return { groupMemberRequest };
   }
 
@@ -348,6 +358,11 @@ export class GroupsService {
       memberRequest.groupId,
       memberRequest.userId,
     );
+    await this.notificationsService.createNotification({
+      actionType: NotificationType.GroupMemberRequestApproval,
+      groupId: memberRequest.groupId,
+      userId: memberRequest.userId,
+    });
     return { groupMember };
   }
 

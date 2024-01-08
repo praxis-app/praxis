@@ -2,6 +2,7 @@ import {
   AutoAwesome,
   Check,
   Comment,
+  Group,
   PanTool,
   Person,
   ThumbDown,
@@ -36,7 +37,9 @@ import {
   UnreadNotificationsDocument,
   UnreadNotificationsQuery,
 } from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
+import { getMemberRequestsPath } from '../../utils/group.utils';
 import { timeAgo } from '../../utils/time.utils';
+import GroupAvatar from '../Groups/GroupAvatar';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
@@ -53,6 +56,7 @@ const Notification = ({
     otherUser,
     status,
     post,
+    group,
     proposal,
     createdAt,
     __typename,
@@ -77,7 +81,7 @@ const Notification = ({
     NotificationType.ProposalVoteBlock,
   ].includes(actionType as NotificationType);
 
-  const voteBadgeStyles: SxProps = {
+  const iconStyles: SxProps = {
     ...VOTE_BADGE_STYLES,
     border: `2px solid ${theme.palette.background.paper}`,
     height: 20,
@@ -87,23 +91,44 @@ const Notification = ({
     left: 26,
   };
 
-  const getNotificationMessage = (actionType: string, name?: string) => {
+  const getNotificationMessage = () => {
     const _t: TFunction<Namespace<'ns1'>, undefined> = t;
 
-    if (isProposalVote) {
-      return _t('notifications.messages.proposalVote', { name });
-    }
-    if (actionType === NotificationType.ProposalComment) {
-      return _t('notifications.messages.proposalComment', { name });
-    }
-    if (actionType === NotificationType.PostComment) {
-      return _t('notifications.messages.postComment', { name });
+    if (actionType === NotificationType.Follow) {
+      return _t('notifications.messages.follow', {
+        name: otherUser?.name,
+      });
     }
     if (actionType === NotificationType.PostLike) {
-      return _t('notifications.messages.postLike', { name });
+      return _t('notifications.messages.postLike', {
+        name: otherUser?.name,
+      });
     }
-    if (actionType === NotificationType.Follow) {
-      return _t('notifications.messages.follow', { name });
+    if (isProposalVote) {
+      return _t('notifications.messages.proposalVote', {
+        name: otherUser?.name,
+      });
+    }
+    if (actionType === NotificationType.ProposalComment) {
+      return _t('notifications.messages.proposalComment', {
+        name: otherUser?.name,
+      });
+    }
+    if (actionType === NotificationType.PostComment) {
+      return _t('notifications.messages.postComment', {
+        name: otherUser?.name,
+      });
+    }
+    if (actionType === NotificationType.GroupMemberRequest) {
+      return _t('notifications.messages.groupMemberRequest', {
+        name: otherUser?.name,
+        groupName: group?.name,
+      });
+    }
+    if (actionType === NotificationType.GroupMemberRequestApproval) {
+      return _t('notifications.messages.groupMemberRequestApproval', {
+        groupName: group?.name,
+      });
     }
     return _t('notifications.errors.invalidType');
   };
@@ -129,6 +154,12 @@ const Notification = ({
     }
     if (actionType === NotificationType.Follow) {
       return `${NavigationPaths.Users}/${otherUser?.name}`;
+    }
+    if (actionType === NotificationType.GroupMemberRequest) {
+      return getMemberRequestsPath(group?.name as string);
+    }
+    if (actionType === NotificationType.GroupMemberRequestApproval) {
+      return `${NavigationPaths.Groups}/${group?.name}`;
     }
     return NavigationPaths.Home;
   };
@@ -165,7 +196,7 @@ const Notification = ({
     setMenuAnchorEl(null);
   };
 
-  const renderVoteIcon = () => {
+  const renderIcon = () => {
     const sx: SxProps = {
       fontSize: 8,
       marginTop: 0.5,
@@ -199,6 +230,12 @@ const Notification = ({
     if (actionType === NotificationType.Follow) {
       return <Person {...iconProps} />;
     }
+    if (
+      actionType === NotificationType.GroupMemberRequest ||
+      actionType === NotificationType.GroupMemberRequestApproval
+    ) {
+      return <Group {...iconProps} />;
+    }
     return <AutoAwesome {...iconProps} />;
   };
 
@@ -217,16 +254,21 @@ const Notification = ({
         {otherUser && (
           <Box position="relative">
             <UserAvatar user={otherUser} />
-            <Box sx={voteBadgeStyles}>{renderVoteIcon()}</Box>
+            <Box sx={iconStyles}>{renderIcon()}</Box>
+          </Box>
+        )}
+
+        {group && !otherUser && (
+          <Box position="relative">
+            <GroupAvatar group={group} withLink={false} />
+            <Box sx={iconStyles}>{renderIcon()}</Box>
           </Box>
         )}
 
         <Box>
           <Typography
             dangerouslySetInnerHTML={{
-              __html: convertBoldToSpan(
-                getNotificationMessage(actionType, otherUser?.name),
-              ),
+              __html: convertBoldToSpan(getNotificationMessage()),
             }}
             lineHeight={1}
             marginBottom={0.5}

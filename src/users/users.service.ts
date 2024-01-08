@@ -50,8 +50,8 @@ export class UsersService {
     return await this.userRepository.findOne({ where, relations });
   }
 
-  async getUsers(where?: FindOptionsWhere<User>) {
-    return this.userRepository.find({ where });
+  async getUsers(where?: FindOptionsWhere<User>, relations?: string[]) {
+    return this.userRepository.find({ where, relations });
   }
 
   async getUsersCount() {

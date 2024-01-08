@@ -30,6 +30,12 @@ export type NotificationsQuery = {
     } | null;
     proposal?: { __typename?: 'Proposal'; id: number } | null;
     post?: { __typename?: 'Post'; id: number } | null;
+    group?: {
+      __typename?: 'Group';
+      id: number;
+      name: string;
+      coverPhoto?: { __typename?: 'Image'; id: number } | null;
+    } | null;
   }>;
 };
 

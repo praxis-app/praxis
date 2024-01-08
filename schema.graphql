@@ -259,6 +259,7 @@ type Notification {
   status: String!
   createdAt: DateTime!
   otherUser: User
+  group: Group
   proposal: Proposal
   post: Post
 }

@@ -2,6 +2,7 @@ import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
 import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.gen';
+import { GroupAvatarFragmentDoc } from '../../../groups/fragments/gen/GroupAvatar.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
@@ -20,6 +21,12 @@ export type NotificationFragment = {
   } | null;
   proposal?: { __typename?: 'Proposal'; id: number } | null;
   post?: { __typename?: 'Post'; id: number } | null;
+  group?: {
+    __typename?: 'Group';
+    id: number;
+    name: string;
+    coverPhoto?: { __typename?: 'Image'; id: number } | null;
+  } | null;
 };
 
 export const NotificationFragmentDoc = gql`
@@ -37,6 +44,10 @@ export const NotificationFragmentDoc = gql`
     post {
       id
     }
+    group {
+      ...GroupAvatar
+    }
   }
   ${UserAvatarFragmentDoc}
+  ${GroupAvatarFragmentDoc}
 `;

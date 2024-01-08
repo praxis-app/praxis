@@ -13,4 +13,7 @@ fragment Notification on Notification {
   post {
     id
   }
+  group {
+    ...GroupAvatar
+  }
 }

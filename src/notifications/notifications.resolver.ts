@@ -11,6 +11,7 @@ import {
 } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Group } from '../groups/models/group.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { User } from '../users/models/user.model';
@@ -51,19 +52,25 @@ export class NotificationsResolver {
     });
   }
 
-  // TODO: Add data loader for batching otherUser queries
+  // TODO: Add data loader for batching queries
   @ResolveField(() => User, { nullable: true })
   otherUser(@Parent() { id }: Notification) {
     return this.notificationsService.getOtherUser(id);
   }
 
-  // TODO: Add data loader for batching otherUser queries
+  // TODO: Add data loader for batching queries
+  @ResolveField(() => Group, { nullable: true })
+  group(@Parent() { id }: Notification) {
+    return this.notificationsService.getGroup(id);
+  }
+
+  // TODO: Add data loader for batching queries
   @ResolveField(() => Proposal, { nullable: true })
   proposal(@Parent() { id }: Notification) {
     return this.notificationsService.getProposal(id);
   }
 
-  // TODO: Add data loader for batching otherUser queries
+  // TODO: Add data loader for batching queries
   @ResolveField(() => Post, { nullable: true })
   post(@Parent() { id }: Notification) {
     return this.notificationsService.getPost(id);

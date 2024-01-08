@@ -42,6 +42,14 @@ export class NotificationsService {
     return otherUser;
   }
 
+  async getGroup(notificationId: number) {
+    const { group } = await this.notificationRepository.findOneOrFail({
+      where: { id: notificationId },
+      relations: ['group'],
+    });
+    return group;
+  }
+
   async getProposal(notificationId: number) {
     const { proposal } = await this.notificationRepository.findOneOrFail({
       where: { id: notificationId },
