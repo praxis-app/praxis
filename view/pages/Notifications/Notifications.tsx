@@ -26,6 +26,10 @@ import {
   NotificationsQuery,
   useNotificationsLazyQuery,
 } from '../../graphql/notifications/queries/gen/Notifications.gen';
+import {
+  UnreadNotificationsDocument,
+  UnreadNotificationsQuery,
+} from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 
 const CardContent = styled(MuiCardContent)(() => ({
@@ -86,6 +90,18 @@ const Notifications = () => {
           ids: data.notifications.map((notification) => notification.id),
           status: NotificationStatus.Read,
         },
+      },
+      update(cache) {
+        cache.updateQuery<UnreadNotificationsQuery>(
+          { query: UnreadNotificationsDocument },
+          (notificationsData) =>
+            produce(notificationsData, (draft) => {
+              if (!draft) {
+                return;
+              }
+              draft.unreadNotificationsCount = 0;
+            }),
+        );
       },
     });
     setMenuAnchorEl(null);
