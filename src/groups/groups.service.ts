@@ -11,6 +11,8 @@ import {
   saveImage,
 } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
+import { NotificationType } from '../notifications/notifications.constants';
+import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { DecisionMakingModel } from '../proposals/proposals.constants';
@@ -48,6 +50,7 @@ export class GroupsService {
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
+    private notificationsService: NotificationsService,
     private groupRolesService: GroupRolesService,
     private usersService: UsersService,
   ) {}
@@ -326,6 +329,14 @@ export class GroupsService {
       groupId,
       userId,
     });
+
+    // TODO: Iterate over group members with permission to approve member requests
+    await this.notificationsService.createNotification({
+      actionType: NotificationType.GroupMemberRequest,
+      groupId: groupMemberRequest.groupId,
+      otherUserId: userId,
+    });
+
     return { groupMemberRequest };
   }
 

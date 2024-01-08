@@ -215,16 +215,6 @@ type User {
 
 union FeedItem = Post | Proposal
 
-type Notification {
-  id: Int!
-  actionType: String!
-  status: String!
-  createdAt: DateTime!
-  otherUser: User
-  proposal: Proposal
-  post: Post
-}
-
 type Vote {
   id: Int!
   voteType: String!
@@ -261,6 +251,16 @@ type Proposal {
   voteCount: Int!
   commentCount: Int!
   settings: ProposalConfig!
+}
+
+type Notification {
+  id: Int!
+  actionType: String!
+  status: String!
+  createdAt: DateTime!
+  otherUser: User
+  proposal: Proposal
+  post: Post
 }
 
 type GroupConfig {
@@ -553,15 +553,15 @@ type Query {
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
   groupRoles: [GroupRole!]!
+  notifications(offset: Int, limit: Int): [Notification!]!
+  notificationsCount: Int!
+  unreadNotificationsCount: Int!
   me: User!
   user(id: Int, name: String): User!
   users(offset: Int, limit: Int): [User!]!
   usersCount: Int!
   usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
-  notifications(offset: Int, limit: Int): [Notification!]!
-  notificationsCount: Int!
-  unreadNotificationsCount: Int!
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
   post(id: Int!): Post!
@@ -604,14 +604,14 @@ type Mutation {
   updateGroupRole(groupRoleData: UpdateGroupRoleInput!): UpdateGroupRolePayload!
   deleteGroupRole(id: Int!): Boolean!
   deleteGroupRoleMember(groupRoleMemberData: DeleteGroupRoleMemberInput!): DeleteGroupRoleMemberPayload!
-  updateUser(userData: UpdateUserInput!): UpdateUserPayload!
-  deleteUser(id: Int!): Boolean!
-  followUser(id: Int!): FollowUserPayload!
-  unfollowUser(id: Int!): Boolean!
   updateNotification(notificationData: UpdateNotificationInput!): UpdateNotificationPayload!
   bulkUpdateNotifications(notificationsData: BulkUpdateNotificationsInput!): BulkUpdateNotificationsPayload!
   deleteNotification(id: Int!): Boolean!
   clearNotifications: Boolean!
+  updateUser(userData: UpdateUserInput!): UpdateUserPayload!
+  deleteUser(id: Int!): Boolean!
+  followUser(id: Int!): FollowUserPayload!
+  unfollowUser(id: Int!): Boolean!
   createServerRole(serverRoleData: CreateServerRoleInput!): CreateServerRolePayload!
   updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
@@ -802,14 +802,6 @@ input DeleteGroupRoleMemberInput {
   userId: Int!
 }
 
-input UpdateUserInput {
-  id: Int!
-  name: String!
-  bio: String!
-  profilePicture: Upload
-  coverPhoto: Upload
-}
-
 input UpdateNotificationInput {
   id: Int!
   status: String!
@@ -818,6 +810,14 @@ input UpdateNotificationInput {
 input BulkUpdateNotificationsInput {
   ids: [Int!]!
   status: String!
+}
+
+input UpdateUserInput {
+  id: Int!
+  name: String!
+  bio: String!
+  profilePicture: Upload
+  coverPhoto: Upload
 }
 
 input CreateServerRoleInput {

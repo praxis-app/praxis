@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Group } from '../../groups/models/group.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
 import { User } from '../../users/models/user.model';
@@ -42,6 +43,15 @@ export class Notification {
 
   @Column({ nullable: true })
   otherUserId?: number;
+
+  @ManyToOne(() => Group, (group) => group.notifications, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  group?: Group;
+
+  @Column({ nullable: true })
+  groupId?: number;
 
   @ManyToOne(() => Proposal, (proposal) => proposal.notifications, {
     onDelete: 'CASCADE',
