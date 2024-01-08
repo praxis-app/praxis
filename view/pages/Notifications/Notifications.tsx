@@ -124,6 +124,16 @@ const Notifications = () => {
               draft.notificationsCount = 0;
             }),
         );
+        cache.updateQuery<UnreadNotificationsQuery>(
+          { query: UnreadNotificationsDocument },
+          (notificationsData) =>
+            produce(notificationsData, (draft) => {
+              if (!draft) {
+                return;
+              }
+              draft.unreadNotificationsCount = 0;
+            }),
+        );
       },
     });
     setMenuAnchorEl(null);
