@@ -1,0 +1,7 @@
+# TODO: Rename to not overlap with fragment
+
+subscription Notified {
+  notification {
+    ...Notification
+  }
+}

@@ -14,14 +14,24 @@ import {
   SxProps,
   Typography,
 } from '@mui/material';
+import { produce } from 'immer';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { isLoggedInVar, isNavDrawerOpenVar } from '../../graphql/cache';
-import { scrollTop } from '../../utils/shared.utils';
-import { useUnreadNotificationsQuery } from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
+import {
+  NotificationsDocument,
+  NotificationsQuery,
+} from '../../graphql/notifications/queries/gen/Notifications.gen';
+import {
+  UnreadNotificationsDocument,
+  UnreadNotificationsQuery,
+  useUnreadNotificationsQuery,
+} from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
+import { useNotifiedSubscription } from '../../graphql/notifications/subscriptions/gen/Notified.gen';
 import { Blurple } from '../../styles/theme';
+import { scrollTop } from '../../utils/shared.utils';
 import Flex from '../Shared/Flex';
 
 const PAPER_STYLES: SxProps = {
@@ -37,7 +47,39 @@ const BottomNav = () => {
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
   const [value, setValue] = useState(0);
 
-  const { data } = useUnreadNotificationsQuery();
+  const { data: unreadNotificationsData } = useUnreadNotificationsQuery();
+
+  useNotifiedSubscription({
+    onData({ data: { data }, client: { cache } }) {
+      if (!data?.notification) {
+        return;
+      }
+      cache.updateQuery<NotificationsQuery>(
+        {
+          query: NotificationsDocument,
+          variables: { limit: 10, offset: 0 },
+        },
+        (notificationsData) =>
+          produce(notificationsData, (draft) => {
+            if (!draft) {
+              return;
+            }
+            draft.notifications.unshift(data.notification);
+            draft.notificationsCount += 1;
+          }),
+      );
+      cache.updateQuery<UnreadNotificationsQuery>(
+        { query: UnreadNotificationsDocument },
+        (notificationsData) =>
+          produce(notificationsData, (draft) => {
+            if (!draft) {
+              return;
+            }
+            draft.unreadNotificationsCount += 1;
+          }),
+      );
+    },
+  });
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
@@ -119,7 +161,7 @@ const BottomNav = () => {
             icon={
               <Box position="relative">
                 <Notifications />
-                {!!data?.unreadNotificationsCount && (
+                {!!unreadNotificationsData?.unreadNotificationsCount && (
                   <Flex
                     bgcolor={Blurple.Marina}
                     height="18px"
@@ -132,7 +174,7 @@ const BottomNav = () => {
                     left="10px"
                   >
                     <Typography fontSize="12px" color="primary">
-                      {data?.unreadNotificationsCount}
+                      {unreadNotificationsData?.unreadNotificationsCount}
                     </Typography>
                   </Flex>
                 )}

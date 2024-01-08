@@ -62,10 +62,9 @@ export class NotificationsService {
     const notification =
       await this.notificationRepository.save(notificationData);
 
-    await this.pubSub.publish(
-      `user-notification-${notificationData.userId}`,
+    await this.pubSub.publish(`user-notification-${notificationData.userId}`, {
       notification,
-    );
+    });
   }
 
   async updateNotification({ id, status }: UpdateNotificationInput) {
