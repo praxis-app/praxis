@@ -60,6 +60,11 @@ const cache = new InMemoryCache({
             return incoming;
           },
         },
+        notifications: {
+          merge(_, incoming) {
+            return incoming;
+          },
+        },
       },
     },
     User: {

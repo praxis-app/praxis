@@ -431,6 +431,7 @@ export type Mutation = {
   approveGroupMemberRequest: ApproveGroupMemberRequestPayload;
   bulkUpdateNotifications: BulkUpdateNotificationsPayload;
   cancelGroupMemberRequest: Scalars['Boolean']['output'];
+  clearNotifications: Scalars['Boolean']['output'];
   createComment: CreateCommentPayload;
   createEvent: CreateEventPayload;
   createEventAttendee: CreateEventAttendeePayload;

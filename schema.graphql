@@ -622,6 +622,7 @@ type Mutation {
   updateNotification(notificationData: UpdateNotificationInput!): UpdateNotificationPayload!
   bulkUpdateNotifications(notificationsData: BulkUpdateNotificationsInput!): BulkUpdateNotificationsPayload!
   deleteNotification(id: Int!): Boolean!
+  clearNotifications: Boolean!
   deleteImage(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!

@@ -79,6 +79,11 @@ export class NotificationsResolver {
     return this.notificationsService.deleteNotification(id);
   }
 
+  @Mutation(() => Boolean)
+  clearNotifications(@CurrentUser() user: User) {
+    return this.notificationsService.clearNotifications(user.id);
+  }
+
   @Subscription(() => Notification)
   notification(@CurrentUser() user: User) {
     return this.pubSub.asyncIterator(`user-notification-${user.id}`);

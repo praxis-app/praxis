@@ -562,13 +562,15 @@
   "notifications": {
     "prompts": {
       "noNotifications": "Nothing to see here yet",
-      "confirmDelete": "Are you sure you want to delete this notification?"
+      "confirmDelete": "Are you sure you want to delete this notification?",
+      "confirmClearAll": "Are you sure you want to clear all activity?"
     },
     "labels": {
       "markAllAsRead": "Mark all as read",
       "markAsRead": "Mark as read",
       "markAsUnread": "Mark as unread",
       "delete": "Delete Notification",
+      "clearAll": "Clear all activity",
       "read": "Read",
       "unread": "Unread"
     },

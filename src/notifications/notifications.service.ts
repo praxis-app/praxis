@@ -93,4 +93,9 @@ export class NotificationsService {
     await this.notificationRepository.delete(notificationId);
     return true;
   }
+
+  async clearNotifications(userId: number) {
+    await this.notificationRepository.delete({ userId });
+    return true;
+  }
 }
