@@ -1,9 +1,0 @@
-mutation BulkUpdateNotifications(
-  $notificationsData: BulkUpdateNotificationsInput!
-) {
-  bulkUpdateNotifications(notificationsData: $notificationsData) {
-    notifications {
-      ...Notification
-    }
-  }
-}

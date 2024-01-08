@@ -42,16 +42,6 @@ export type AuthPayload = {
   access_token: Scalars['String']['output'];
 };
 
-export type BulkUpdateNotificationsInput = {
-  ids: Array<Scalars['Int']['input']>;
-  status: Scalars['String']['input'];
-};
-
-export type BulkUpdateNotificationsPayload = {
-  __typename?: 'BulkUpdateNotificationsPayload';
-  notifications: Array<Notification>;
-};
-
 export type Canary = {
   __typename?: 'Canary';
   id: Scalars['Int']['output'];
@@ -429,7 +419,6 @@ export type LoginInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   approveGroupMemberRequest: ApproveGroupMemberRequestPayload;
-  bulkUpdateNotifications: BulkUpdateNotificationsPayload;
   cancelGroupMemberRequest: Scalars['Boolean']['output'];
   clearNotifications: Scalars['Boolean']['output'];
   createComment: CreateCommentPayload;
@@ -465,6 +454,7 @@ export type Mutation = {
   leaveGroup: Scalars['Boolean']['output'];
   logOut: Scalars['Boolean']['output'];
   login: AuthPayload;
+  readNotifications: ReadNotificationsPayload;
   signUp: AuthPayload;
   synchronizeProposal: SynchronizeProposalPayload;
   unfollowUser: Scalars['Boolean']['output'];
@@ -485,10 +475,6 @@ export type Mutation = {
 
 export type MutationApproveGroupMemberRequestArgs = {
   id: Scalars['Int']['input'];
-};
-
-export type MutationBulkUpdateNotificationsArgs = {
-  notificationsData: BulkUpdateNotificationsInput;
 };
 
 export type MutationCancelGroupMemberRequestArgs = {
@@ -621,6 +607,11 @@ export type MutationLeaveGroupArgs = {
 
 export type MutationLoginArgs = {
   input: LoginInput;
+};
+
+export type MutationReadNotificationsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type MutationSignUpArgs = {
@@ -1001,6 +992,11 @@ export type QueryUsersArgs = {
 
 export type QueryUsersByIdsArgs = {
   ids: Array<Scalars['Int']['input']>;
+};
+
+export type ReadNotificationsPayload = {
+  __typename?: 'ReadNotificationsPayload';
+  notifications: Array<Notification>;
 };
 
 export type ServerConfig = {

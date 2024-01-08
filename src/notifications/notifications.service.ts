@@ -3,11 +3,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
-import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { paginate } from '../common/common.utils';
-import { BulkUpdateNotificationsInput } from './models/bulk-update-notifications.input';
 import { Notification } from './models/notification.model';
 import { UpdateNotificationInput } from './models/update-notification.input';
+import { NotificationStatus } from './notifications.constants';
 
 @Injectable()
 export class NotificationsService {
@@ -58,15 +58,15 @@ export class NotificationsService {
     return { notification };
   }
 
-  async bulkUpdateNotifications({ ids, status }: BulkUpdateNotificationsInput) {
+  async readNotifications(userId: number, offset?: number, limit?: number) {
     await this.notificationRepository.update(
-      {
-        id: In(ids),
-      },
-      { status },
+      { userId },
+      { status: NotificationStatus.Read },
     );
     const notifications = await this.notificationRepository.find({
-      where: { id: In(ids) },
+      where: { userId },
+      skip: offset,
+      take: limit,
     });
     return { notifications };
   }

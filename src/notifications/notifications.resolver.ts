@@ -17,9 +17,8 @@ import { Group } from '../groups/models/group.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { User } from '../users/models/user.model';
-import { BulkUpdateNotificationsInput } from './models/bulk-update-notifications.input';
-import { BulkUpdateNotificationsPayload } from './models/bulk-update-notifications.payload';
 import { Notification } from './models/notification.model';
+import { ReadNotificationsPayload } from './models/read-notifications.payload';
 import { UpdateNotificationInput } from './models/update-notification.input';
 import { UpdateNotificationPayload } from './models/update-notification.payload';
 import { NotificationStatus } from './notifications.constants';
@@ -93,12 +92,13 @@ export class NotificationsResolver {
     return this.notificationsService.updateNotification(notificationData);
   }
 
-  // TODO: Convert to readNotifications or similar - use current user decorator
-  @Mutation(() => BulkUpdateNotificationsPayload)
-  bulkUpdateNotifications(
-    @Args('notificationsData') notificationsData: BulkUpdateNotificationsInput,
+  @Mutation(() => ReadNotificationsPayload)
+  readNotifications(
+    @CurrentUser() user: User,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
   ) {
-    return this.notificationsService.bulkUpdateNotifications(notificationsData);
+    return this.notificationsService.readNotifications(user.id, offset, limit);
   }
 
   @Mutation(() => Boolean)

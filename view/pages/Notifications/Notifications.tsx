@@ -1,3 +1,4 @@
+import { ApolloCache } from '@apollo/client';
 import { Check, Delete } from '@mui/icons-material';
 import {
   Card,
@@ -17,10 +18,9 @@ import ItemMenu from '../../components/Shared/ItemMenu';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import Pagination from '../../components/Shared/Pagination';
 import ProgressBar from '../../components/Shared/ProgressBar';
-import { NotificationStatus } from '../../constants/notifications.constants';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
-import { useBulkUpdateNotificationsMutation } from '../../graphql/notifications/mutations/gen/BulkUpdateNotifications.gen';
 import { useClearNotificationMutation } from '../../graphql/notifications/mutations/gen/ClearNotifications.gen';
+import { useReadNotificationsMutation } from '../../graphql/notifications/mutations/gen/ReadNotifications.gen';
 import {
   NotificationsDocument,
   NotificationsQuery,
@@ -31,7 +31,6 @@ import {
   UnreadNotificationsQuery,
 } from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
-import { ApolloCache } from '@apollo/client';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
@@ -51,17 +50,18 @@ const Notifications = () => {
 
   const [
     bulkUpdateNotifications,
-    { loading: bulkUpdateLoading, error: bulkUpdateError },
-  ] = useBulkUpdateNotificationsMutation();
+    { loading: readNotificationsLoading, error: readNotificationsError },
+  ] = useReadNotificationsMutation();
 
   const [
     clearNotifications,
-    { loading: clearNotificationsLoading, error: clearNotificationsErro },
+    { loading: clearNotificationsLoading, error: clearNotificationsError },
   ] = useClearNotificationMutation();
 
   const { t } = useTranslation();
 
-  const error = notificationsError || bulkUpdateError || clearNotificationsErro;
+  const error =
+    notificationsError || readNotificationsError || clearNotificationsError;
 
   useEffect(() => {
     getNotifications({
@@ -100,10 +100,8 @@ const Notifications = () => {
     }
     await bulkUpdateNotifications({
       variables: {
-        notificationsData: {
-          ids: data.notifications.map((notification) => notification.id),
-          status: NotificationStatus.Read,
-        },
+        limit: rowsPerPage,
+        offset: page * rowsPerPage,
       },
       update: resetUnreadCount,
     });
@@ -157,7 +155,7 @@ const Notifications = () => {
           buttonStyles={{ marginBottom: '24px', width: '72px' }}
           deleteBtnLabel={t('notifications.labels.delete')}
           deletePrompt={t('notifications.prompts.confirmDelete')}
-          loading={bulkUpdateLoading || clearNotificationsLoading}
+          loading={readNotificationsLoading || clearNotificationsLoading}
           setAnchorEl={setMenuAnchorEl}
           variant="ghost"
           prependChildren
