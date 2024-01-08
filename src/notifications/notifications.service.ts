@@ -34,6 +34,13 @@ export class NotificationsService {
     return this.notificationRepository.count({ where });
   }
 
+  async isOwnNotification(notificationId: number, userId: number) {
+    const count = await this.notificationRepository.count({
+      where: { id: notificationId, userId },
+    });
+    return count > 0;
+  }
+
   async createNotification(notificationData: Partial<Notification>) {
     const notification =
       await this.notificationRepository.save(notificationData);
