@@ -1,4 +1,4 @@
-import { ClearAll, DoneAll } from '@mui/icons-material';
+import { Check, Delete } from '@mui/icons-material';
 import {
   Card,
   Divider,
@@ -39,16 +39,24 @@ const Notifications = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
 
-  const [getNotifications, { data, loading: notificationsLoading, error }] =
-    useNotificationsLazyQuery();
+  const [
+    getNotifications,
+    { data, loading: notificationsLoading, error: notificationsError },
+  ] = useNotificationsLazyQuery();
 
-  const [bulkUpdateNotifications, { loading: bulkUpdateLoading }] =
-    useBulkUpdateNotificationsMutation();
+  const [
+    bulkUpdateNotifications,
+    { loading: bulkUpdateLoading, error: bulkUpdateError },
+  ] = useBulkUpdateNotificationsMutation();
 
-  const [clearNotifications, { loading: clearNotificationsLoading }] =
-    useClearNotificationMutation();
+  const [
+    clearNotifications,
+    { loading: clearNotificationsLoading, error: clearNotificationsErro },
+  ] = useClearNotificationMutation();
 
   const { t } = useTranslation();
+
+  const error = notificationsError || bulkUpdateError || clearNotificationsErro;
 
   useEffect(() => {
     getNotifications({
@@ -136,11 +144,11 @@ const Notifications = () => {
           canDelete
         >
           <MenuItem onClick={handleBulkUpdate}>
-            <DoneAll fontSize="small" sx={{ marginRight: 1 }} />
+            <Check fontSize="small" sx={{ marginRight: 1 }} />
             {t('notifications.labels.markAllAsRead')}
           </MenuItem>
           <MenuItem onClick={handleClearAllWithConfirm}>
-            <ClearAll fontSize="small" sx={{ marginRight: 1 }} />
+            <Delete fontSize="small" sx={{ marginRight: 1 }} />
             {t('notifications.labels.clearAll')}
           </MenuItem>
         </ItemMenu>
