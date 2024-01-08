@@ -17,6 +17,7 @@ import {
   useTheme,
 } from '@mui/material';
 
+import { produce } from 'immer';
 import { useState } from 'react';
 import { Namespace, TFunction, useTranslation } from 'react-i18next';
 import {
@@ -31,6 +32,10 @@ import { VOTE_BADGE_STYLES } from '../../constants/vote.constants';
 import { NotificationFragment } from '../../graphql/notifications/fragments/gen/Notification.gen';
 import { useDeleteNotificationMutation } from '../../graphql/notifications/mutations/gen/DeleteNotification.gen';
 import { useUpdateNotificationMutation } from '../../graphql/notifications/mutations/gen/UpdateNotification.gen';
+import {
+  UnreadNotificationsDocument,
+  UnreadNotificationsQuery,
+} from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
 import { timeAgo } from '../../utils/time.utils';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
@@ -143,6 +148,18 @@ const Notification = ({
     updateNotification({
       variables: {
         notificationData: { id, status: NotificationStatus.Read },
+      },
+      update(cache) {
+        cache.updateQuery<UnreadNotificationsQuery>(
+          { query: UnreadNotificationsDocument },
+          (notificationsData) =>
+            produce(notificationsData, (draft) => {
+              if (!draft) {
+                return;
+              }
+              draft.unreadNotificationsCount -= 1;
+            }),
+        );
       },
     });
     setMenuAnchorEl(null);
