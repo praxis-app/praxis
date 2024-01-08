@@ -31,6 +31,7 @@ import {
   UnreadNotificationsQuery,
 } from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
+import { ApolloCache } from '@apollo/client';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
@@ -80,6 +81,19 @@ const Notifications = () => {
     });
   };
 
+  const resetUnreadCount = (cache: ApolloCache<any>) => {
+    cache.updateQuery<UnreadNotificationsQuery>(
+      { query: UnreadNotificationsDocument },
+      (notificationsData) =>
+        produce(notificationsData, (draft) => {
+          if (!draft) {
+            return;
+          }
+          draft.unreadNotificationsCount = 0;
+        }),
+    );
+  };
+
   const handleBulkUpdate = async () => {
     if (!data) {
       return;
@@ -91,18 +105,7 @@ const Notifications = () => {
           status: NotificationStatus.Read,
         },
       },
-      update(cache) {
-        cache.updateQuery<UnreadNotificationsQuery>(
-          { query: UnreadNotificationsDocument },
-          (notificationsData) =>
-            produce(notificationsData, (draft) => {
-              if (!draft) {
-                return;
-              }
-              draft.unreadNotificationsCount = 0;
-            }),
-        );
-      },
+      update: resetUnreadCount,
     });
     setMenuAnchorEl(null);
   };
@@ -124,16 +127,7 @@ const Notifications = () => {
               draft.notificationsCount = 0;
             }),
         );
-        cache.updateQuery<UnreadNotificationsQuery>(
-          { query: UnreadNotificationsDocument },
-          (notificationsData) =>
-            produce(notificationsData, (draft) => {
-              if (!draft) {
-                return;
-              }
-              draft.unreadNotificationsCount = 0;
-            }),
-        );
+        resetUnreadCount(cache);
       },
     });
     setMenuAnchorEl(null);
