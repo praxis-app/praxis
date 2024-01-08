@@ -1,6 +1,7 @@
 import { Inject } from '@nestjs/common';
 import {
   Args,
+  Context,
   Int,
   Mutation,
   Parent,
@@ -11,6 +12,7 @@ import {
 } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
@@ -52,16 +54,20 @@ export class NotificationsResolver {
     });
   }
 
-  // TODO: Add data loader for batching queries
   @ResolveField(() => User, { nullable: true })
-  otherUser(@Parent() { id }: Notification) {
-    return this.notificationsService.getOtherUser(id);
+  otherUser(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { otherUserId }: Notification,
+  ) {
+    return otherUserId ? loaders.usersLoader.load(otherUserId) : null;
   }
 
-  // TODO: Add data loader for batching queries
   @ResolveField(() => Group, { nullable: true })
-  group(@Parent() { id }: Notification) {
-    return this.notificationsService.getGroup(id);
+  group(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { groupId }: Notification,
+  ) {
+    return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
 
   // TODO: Add data loader for batching queries
