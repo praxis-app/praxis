@@ -29,6 +29,7 @@ export interface MyGroupsKey {
 
 export interface Dataloaders {
   // Proposals & Votes
+  proposalsLoader: DataLoader<number, Proposal>;
   proposalActionsLoader: DataLoader<number, ProposalAction>;
   proposalCommentCountLoader: DataLoader<number, number>;
   proposalImagesLoader: DataLoader<number, Image[]>;
@@ -36,6 +37,7 @@ export interface Dataloaders {
   proposalVotesLoader: DataLoader<number, Vote[]>;
 
   // Posts
+  postsLoader: DataLoader<number, Post>;
   isPostLikedByMeLoader: DataLoader<IsLikedByMeKey, boolean>;
   postCommentCountLoader: DataLoader<number, number>;
   postImagesLoader: DataLoader<number, Image[]>;

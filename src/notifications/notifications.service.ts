@@ -34,22 +34,6 @@ export class NotificationsService {
     return this.notificationRepository.count({ where });
   }
 
-  async getProposal(notificationId: number) {
-    const { proposal } = await this.notificationRepository.findOneOrFail({
-      where: { id: notificationId },
-      relations: ['proposal'],
-    });
-    return proposal;
-  }
-
-  async getPost(notificationId: number) {
-    const { post } = await this.notificationRepository.findOneOrFail({
-      where: { id: notificationId },
-      relations: ['post'],
-    });
-    return post;
-  }
-
   async createNotification(notificationData: Partial<Notification>) {
     const notification =
       await this.notificationRepository.save(notificationData);

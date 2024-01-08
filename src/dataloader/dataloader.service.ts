@@ -85,6 +85,7 @@ export class DataloaderService {
   getLoaders(): Dataloaders {
     return {
       // Proposals & Votes
+      proposalsLoader: this._createProposalsLoader(),
       proposalActionsLoader: this._createProposalActionsLoader(),
       proposalImagesLoader: this._createProposalImagesLoader(),
       proposalVoteCountLoader: this._createProposalVoteCountLoader(),
@@ -92,6 +93,7 @@ export class DataloaderService {
       proposalCommentCountLoader: this._createProposalCommentCountLoader(),
 
       // Posts
+      postsLoader: this._createPostsLoader(),
       isPostLikedByMeLoader: this._createIsPostLikedByMeLoader(),
       postCommentCountLoader: this._createPostCommentCountLoader(),
       postImagesLoader: this._createPostImagesLoader(),
@@ -150,6 +152,19 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
   // Proposals & Votes
   // -------------------------------------------------------------------------
+
+  private _createProposalsLoader() {
+    return this._getDataLoader<number, Proposal>(async (proposalIds) => {
+      const proposals = await this.proposalRepository.find({
+        where: { id: In(proposalIds) },
+      });
+      return proposalIds.map(
+        (id) =>
+          proposals.find((proposal: Proposal) => proposal.id === id) ||
+          new Error(`Could not load proposal: ${id}`),
+      );
+    });
+  }
 
   private _createProposalVotesLoader() {
     return this._getDataLoader<number, Vote[]>(async (proposalIds) => {
@@ -242,6 +257,19 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
   // Posts
   // -------------------------------------------------------------------------
+
+  private _createPostsLoader() {
+    return this._getDataLoader<number, Post>(async (postIds) => {
+      const posts = await this.postRepository.find({
+        where: { id: In(postIds) },
+      });
+      return postIds.map(
+        (id) =>
+          posts.find((post: Post) => post.id === id) ||
+          new Error(`Could not load post: ${id}`),
+      );
+    });
+  }
 
   private _createIsPostLikedByMeLoader() {
     return this._getDataLoader<IsLikedByMeKey, boolean, number>(

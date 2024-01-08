@@ -70,16 +70,20 @@ export class NotificationsResolver {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
 
-  // TODO: Add data loader for batching queries
   @ResolveField(() => Proposal, { nullable: true })
-  proposal(@Parent() { id }: Notification) {
-    return this.notificationsService.getProposal(id);
+  proposal(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { proposalId }: Notification,
+  ) {
+    return proposalId ? loaders.proposalsLoader.load(proposalId) : null;
   }
 
-  // TODO: Add data loader for batching queries
   @ResolveField(() => Post, { nullable: true })
-  post(@Parent() { id }: Notification) {
-    return this.notificationsService.getPost(id);
+  post(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { postId }: Notification,
+  ) {
+    return postId ? loaders.postsLoader.load(postId) : null;
   }
 
   @Mutation(() => UpdateNotificationPayload)
