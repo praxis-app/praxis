@@ -3,6 +3,7 @@ import {
   Check,
   Comment,
   PanTool,
+  Person,
   ThumbDown,
   ThumbUp,
   ThumbsUpDown,
@@ -19,8 +20,8 @@ import {
 import { useState } from 'react';
 import { Namespace, TFunction, useTranslation } from 'react-i18next';
 import {
-  NotificationType,
   NotificationStatus,
+  NotificationType,
 } from '../../constants/notifications.constants';
 import {
   MIDDOT_WITH_SPACES,
@@ -96,6 +97,9 @@ const Notification = ({
     if (actionType === NotificationType.PostLike) {
       return _t('notifications.messages.postLike', { name });
     }
+    if (actionType === NotificationType.Follow) {
+      return _t('notifications.messages.follow', { name });
+    }
     return _t('notifications.errors.invalidType');
   };
 
@@ -117,6 +121,9 @@ const Notification = ({
     }
     if (actionType === NotificationType.PostLike) {
       return `${NavigationPaths.Posts}/${post?.id}`;
+    }
+    if (actionType === NotificationType.Follow) {
+      return `${NavigationPaths.Users}/${otherUser?.name}`;
     }
     return NavigationPaths.Home;
   };
@@ -171,6 +178,9 @@ const Notification = ({
     }
     if (actionType.includes('comment')) {
       return <Comment {...iconProps} />;
+    }
+    if (actionType === NotificationType.Follow) {
+      return <Person {...iconProps} />;
     }
     return <AutoAwesome {...iconProps} />;
   };

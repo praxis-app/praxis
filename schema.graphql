@@ -391,6 +391,14 @@ type UpdateEventPayload {
   event: Event!
 }
 
+type BulkUpdateNotificationsPayload {
+  notifications: [Notification!]!
+}
+
+type UpdateNotificationPayload {
+  notification: Notification!
+}
+
 type CreatePostPayload {
   post: Post!
 }
@@ -511,14 +519,6 @@ type UpdateServerConfigPayload {
   canary: Canary!
 }
 
-type BulkUpdateNotificationsPayload {
-  notifications: [Notification!]!
-}
-
-type UpdateNotificationPayload {
-  notification: Notification!
-}
-
 type CreateCommentPayload {
   comment: Comment!
 }
@@ -559,14 +559,14 @@ type Query {
   usersCount: Int!
   usersByIds(ids: [Int!]!): [User!]!
   isFirstUser: Boolean!
+  notifications(offset: Int, limit: Int): [Notification!]!
+  notificationsCount: Int!
+  unreadNotificationsCount: Int!
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
   post(id: Int!): Post!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
-  notifications(offset: Int, limit: Int): [Notification!]!
-  notificationsCount: Int!
-  unreadNotificationsCount: Int!
   canary: Canary!
   publicCanary: Canary
   serverConfig: ServerConfig!
@@ -608,6 +608,10 @@ type Mutation {
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
   unfollowUser(id: Int!): Boolean!
+  updateNotification(notificationData: UpdateNotificationInput!): UpdateNotificationPayload!
+  bulkUpdateNotifications(notificationsData: BulkUpdateNotificationsInput!): BulkUpdateNotificationsPayload!
+  deleteNotification(id: Int!): Boolean!
+  clearNotifications: Boolean!
   createServerRole(serverRoleData: CreateServerRoleInput!): CreateServerRolePayload!
   updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
@@ -620,10 +624,6 @@ type Mutation {
   createComment(commentData: CreateCommentInput!): CreateCommentPayload!
   updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
   deleteComment(id: Int!): Boolean!
-  updateNotification(notificationData: UpdateNotificationInput!): UpdateNotificationPayload!
-  bulkUpdateNotifications(notificationsData: BulkUpdateNotificationsInput!): BulkUpdateNotificationsPayload!
-  deleteNotification(id: Int!): Boolean!
-  clearNotifications: Boolean!
   deleteImage(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
@@ -810,6 +810,16 @@ input UpdateUserInput {
   coverPhoto: Upload
 }
 
+input UpdateNotificationInput {
+  id: Int!
+  status: String!
+}
+
+input BulkUpdateNotificationsInput {
+  ids: [Int!]!
+  status: String!
+}
+
 input CreateServerRoleInput {
   name: String!
   color: String!
@@ -870,16 +880,6 @@ input UpdateCommentInput {
   id: Int!
   body: String
   images: [Upload!]
-}
-
-input UpdateNotificationInput {
-  id: Int!
-  status: String!
-}
-
-input BulkUpdateNotificationsInput {
-  ids: [Int!]!
-  status: String!
 }
 
 input UpdateServerConfigInput {
