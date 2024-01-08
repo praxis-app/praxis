@@ -3,7 +3,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
-import { In, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { paginate } from '../common/common.utils';
 import { BulkUpdateNotificationsInput } from './models/bulk-update-notifications.input';
 import { Notification } from './models/notification.model';
@@ -30,8 +30,8 @@ export class NotificationsService {
       : sortedNotifications;
   }
 
-  async getNotificationsCount(userId: number) {
-    return this.notificationRepository.count({ where: { userId } });
+  async getNotificationsCount(where?: FindOptionsWhere<Notification>) {
+    return this.notificationRepository.count({ where });
   }
 
   async getOtherUser(notificationId: number) {

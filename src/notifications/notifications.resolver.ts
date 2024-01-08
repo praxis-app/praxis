@@ -19,6 +19,7 @@ import { BulkUpdateNotificationsPayload } from './models/bulk-update-notificatio
 import { Notification } from './models/notification.model';
 import { UpdateNotificationInput } from './models/update-notification.input';
 import { UpdateNotificationPayload } from './models/update-notification.payload';
+import { NotificationStatus } from './notifications.constants';
 import { NotificationsService } from './notifications.service';
 
 @Resolver(() => Notification)
@@ -39,7 +40,15 @@ export class NotificationsResolver {
 
   @Query(() => Int)
   notificationsCount(@CurrentUser() user: User) {
-    return this.notificationsService.getNotificationsCount(user.id);
+    return this.notificationsService.getNotificationsCount({ userId: user.id });
+  }
+
+  @Query(() => Int)
+  unreadNotificationsCount(@CurrentUser() user: User) {
+    return this.notificationsService.getNotificationsCount({
+      status: NotificationStatus.Unread,
+      userId: user.id,
+    });
   }
 
   // TODO: Add data loader for batching otherUser queries

@@ -566,6 +566,7 @@ type Query {
   serverInvites: [ServerInvite!]!
   notifications(offset: Int, limit: Int): [Notification!]!
   notificationsCount: Int!
+  unreadNotificationsCount: Int!
   canary: Canary!
   publicCanary: Canary
   serverConfig: ServerConfig!

@@ -924,6 +924,7 @@ export type Query = {
   serverInvites: Array<ServerInvite>;
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
+  unreadNotificationsCount: Scalars['Int']['output'];
   user: User;
   users: Array<User>;
   usersByIds: Array<User>;

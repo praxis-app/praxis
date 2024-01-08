@@ -9,8 +9,10 @@ import {
 import {
   BottomNavigation,
   BottomNavigationAction,
+  Box,
   Paper,
   SxProps,
+  Typography,
 } from '@mui/material';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +20,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { isLoggedInVar, isNavDrawerOpenVar } from '../../graphql/cache';
 import { scrollTop } from '../../utils/shared.utils';
+import { useUnreadNotificationsQuery } from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
+import { Blurple } from '../../styles/theme';
+import Flex from '../Shared/Flex';
 
 const PAPER_STYLES: SxProps = {
   position: 'fixed',
@@ -31,6 +36,8 @@ const BottomNav = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
   const [value, setValue] = useState(0);
+
+  const { data } = useUnreadNotificationsQuery();
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
@@ -109,7 +116,28 @@ const BottomNav = () => {
 
         {isLoggedIn && (
           <BottomNavigationAction
-            icon={<Notifications />}
+            icon={
+              <Box position="relative">
+                <Notifications />
+                {!!data?.unreadNotificationsCount && (
+                  <Flex
+                    bgcolor={Blurple.Marina}
+                    height="18px"
+                    width="18px"
+                    position="absolute"
+                    alignItems="center"
+                    justifyContent="center"
+                    borderRadius="9999px"
+                    bottom="13px"
+                    left="10px"
+                  >
+                    <Typography fontSize="12px" color="primary">
+                      {data?.unreadNotificationsCount}
+                    </Typography>
+                  </Flex>
+                )}
+              </Box>
+            }
             label={t('navigation.activity')}
             onClick={() => navigate(NavigationPaths.Activity)}
           />
