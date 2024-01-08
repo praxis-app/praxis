@@ -93,6 +93,7 @@ export class NotificationsResolver {
     return this.notificationsService.updateNotification(notificationData);
   }
 
+  // TODO: Convert to readNotifications or similar - use current user decorator
   @Mutation(() => BulkUpdateNotificationsPayload)
   bulkUpdateNotifications(
     @Args('notificationsData') notificationsData: BulkUpdateNotificationsInput,
