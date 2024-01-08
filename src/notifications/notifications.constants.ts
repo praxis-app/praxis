@@ -3,14 +3,16 @@ export enum NotificationStatus {
   Unread = 'unread',
 }
 
-export enum NotificationActionType {
+export enum NotificationType {
   CommentLike = 'comment-like',
-  PostLike = 'post-like',
+  GroupMemberRequest = 'group-member-request',
+  GroupMemberRequestApproval = 'group-member-request-approval',
   PostComment = 'post-comment',
+  PostLike = 'post-like',
   ProposalComment = 'proposal-comment',
-  ProposalRatified = 'proposal-ratified',
+  ProposalRatification = 'proposal-ratification',
   ProposalVoteAgreement = 'proposal-vote-agreement',
+  ProposalVoteBlock = 'proposal-vote-block',
   ProposalVoteReservations = 'proposal-vote-reservations',
   ProposalVoteStandAside = 'proposal-vote-stand-aside',
-  ProposalVoteBlock = 'proposal-vote-block',
 }

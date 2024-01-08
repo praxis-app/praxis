@@ -19,7 +19,7 @@ import {
 import { useState } from 'react';
 import { Namespace, TFunction, useTranslation } from 'react-i18next';
 import {
-  NotificationActionType,
+  NotificationType,
   NotificationStatus,
 } from '../../constants/notifications.constants';
 import {
@@ -65,11 +65,11 @@ const Notification = ({
   const isRead = status === NotificationStatus.Read;
 
   const isProposalVote = [
-    NotificationActionType.ProposalVoteAgreement,
-    NotificationActionType.ProposalVoteReservations,
-    NotificationActionType.ProposalVoteStandAside,
-    NotificationActionType.ProposalVoteBlock,
-  ].includes(actionType as NotificationActionType);
+    NotificationType.ProposalVoteAgreement,
+    NotificationType.ProposalVoteReservations,
+    NotificationType.ProposalVoteStandAside,
+    NotificationType.ProposalVoteBlock,
+  ].includes(actionType as NotificationType);
 
   const voteBadgeStyles: SxProps = {
     ...VOTE_BADGE_STYLES,
@@ -87,13 +87,13 @@ const Notification = ({
     if (isProposalVote) {
       return _t('notifications.messages.proposalVote', { name });
     }
-    if (actionType === NotificationActionType.ProposalComment) {
+    if (actionType === NotificationType.ProposalComment) {
       return _t('notifications.messages.proposalComment', { name });
     }
-    if (actionType === NotificationActionType.PostComment) {
+    if (actionType === NotificationType.PostComment) {
       return _t('notifications.messages.postComment', { name });
     }
-    if (actionType === NotificationActionType.PostLike) {
+    if (actionType === NotificationType.PostLike) {
       return _t('notifications.messages.postLike', { name });
     }
     return _t('notifications.errors.invalidType');
@@ -109,13 +109,13 @@ const Notification = ({
     if (isProposalVote) {
       return `${NavigationPaths.Proposals}/${proposal?.id}`;
     }
-    if (actionType === NotificationActionType.ProposalComment) {
+    if (actionType === NotificationType.ProposalComment) {
       return `${NavigationPaths.Proposals}/${proposal?.id}`;
     }
-    if (actionType === NotificationActionType.PostComment) {
+    if (actionType === NotificationType.PostComment) {
       return `${NavigationPaths.Posts}/${post?.id}`;
     }
-    if (actionType === NotificationActionType.PostLike) {
+    if (actionType === NotificationType.PostLike) {
       return `${NavigationPaths.Posts}/${post?.id}`;
     }
     return NavigationPaths.Home;
@@ -146,7 +146,7 @@ const Notification = ({
       fontSize: 8,
       marginTop: 0.5,
       transform:
-        actionType === NotificationActionType.ProposalVoteBlock
+        actionType === NotificationType.ProposalVoteBlock
           ? 'translateX(-0.5px)'
           : null,
     };
@@ -154,18 +154,18 @@ const Notification = ({
       color: 'primary',
       sx,
     };
-    if (actionType === NotificationActionType.ProposalVoteReservations) {
+    if (actionType === NotificationType.ProposalVoteReservations) {
       return <ThumbsUpDown {...iconProps} />;
     }
-    if (actionType === NotificationActionType.ProposalVoteStandAside) {
+    if (actionType === NotificationType.ProposalVoteStandAside) {
       return <ThumbDown {...iconProps} />;
     }
-    if (actionType === NotificationActionType.ProposalVoteBlock) {
+    if (actionType === NotificationType.ProposalVoteBlock) {
       return <PanTool {...iconProps} />;
     }
     if (
-      actionType === NotificationActionType.ProposalVoteAgreement ||
-      actionType === NotificationActionType.PostLike
+      actionType === NotificationType.ProposalVoteAgreement ||
+      actionType === NotificationType.PostLike
     ) {
       return <ThumbUp {...iconProps} />;
     }

@@ -7,7 +7,7 @@ import { sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
-import { NotificationActionType } from '../notifications/notifications.constants';
+import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
@@ -105,8 +105,8 @@ export class CommentsService {
     if (userId !== user.id) {
       await this.notificationsService.createNotification({
         actionType: comment.postId
-          ? NotificationActionType.PostComment
-          : NotificationActionType.ProposalComment,
+          ? NotificationType.PostComment
+          : NotificationType.ProposalComment,
         proposalId: comment.proposalId,
         postId: comment.postId,
         otherUserId: user.id,

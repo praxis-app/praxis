@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment } from '../comments/models/comment.model';
-import { NotificationActionType } from '../notifications/notifications.constants';
+import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { User } from '../users/models/user.model';
@@ -53,8 +53,8 @@ export class LikesService {
     if (userId !== user.id) {
       await this.notificationsService.createNotification({
         actionType: like.postId
-          ? NotificationActionType.PostLike
-          : NotificationActionType.CommentLike,
+          ? NotificationType.PostLike
+          : NotificationType.CommentLike,
         postId: 'post' in rest ? rest.post?.id : like.postId,
         otherUserId: user.id,
         userId,

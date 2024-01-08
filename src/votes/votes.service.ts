@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { NotificationActionType } from '../notifications/notifications.constants';
+import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ProposalsService } from '../proposals/proposals.service';
 import { CreateVoteInput } from './models/create-vote.input';
@@ -57,15 +57,15 @@ export class VotesService {
 
   getVoteNotificationType(voteType: string) {
     if (voteType === VoteTypes.Reservations) {
-      return NotificationActionType.ProposalVoteReservations;
+      return NotificationType.ProposalVoteReservations;
     }
     if (voteType === VoteTypes.StandAside) {
-      return NotificationActionType.ProposalVoteStandAside;
+      return NotificationType.ProposalVoteStandAside;
     }
     if (voteType === VoteTypes.Block) {
-      return NotificationActionType.ProposalVoteBlock;
+      return NotificationType.ProposalVoteBlock;
     }
-    return NotificationActionType.ProposalVoteAgreement;
+    return NotificationType.ProposalVoteAgreement;
   }
 
   async updateVote({ id, ...data }: UpdateVoteInput) {
