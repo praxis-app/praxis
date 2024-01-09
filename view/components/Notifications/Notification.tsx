@@ -10,14 +10,7 @@ import {
   ThumbUp,
   ThumbsUpDown,
 } from '@mui/icons-material';
-import {
-  Box,
-  MenuItem,
-  SvgIconProps,
-  SxProps,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Box, MenuItem, SxProps, Typography, useTheme } from '@mui/material';
 
 import { produce } from 'immer';
 import { useState } from 'react';
@@ -82,14 +75,23 @@ const Notification = ({
     NotificationType.ProposalVoteBlock,
   ].includes(actionType as NotificationType);
 
-  const iconStyles: SxProps = {
+  const iconContainerStyles: SxProps = {
     ...VOTE_BADGE_STYLES,
     border: `2px solid ${theme.palette.background.paper}`,
-    height: 20,
-    width: 20,
+    height: 23,
+    width: 23,
     position: 'absolute',
-    top: 25,
-    left: 26,
+    top: 22,
+    left: 23,
+  };
+  const iconStyles: SxProps = {
+    fontSize: 10,
+    marginTop: 0.5,
+    color: 'text.primary',
+    transform:
+      actionType === NotificationType.ProposalVoteBlock
+        ? 'translateX(-0.5px)'
+        : null,
   };
 
   const getNotificationMessage = () => {
@@ -204,49 +206,39 @@ const Notification = ({
   };
 
   const renderIcon = () => {
-    const sx: SxProps = {
-      fontSize: 8,
-      marginTop: 0.5,
-      transform:
-        actionType === NotificationType.ProposalVoteBlock
-          ? 'translateX(-0.5px)'
-          : null,
-    };
-    const iconProps: SvgIconProps = {
-      color: 'primary',
-      sx,
-    };
     if (actionType === NotificationType.ProposalVoteReservations) {
-      return <ThumbsUpDown {...iconProps} />;
+      return <ThumbsUpDown sx={iconStyles} />;
     }
     if (actionType === NotificationType.ProposalVoteStandAside) {
-      return <ThumbDown {...iconProps} />;
+      return <ThumbDown sx={iconStyles} />;
     }
     if (actionType === NotificationType.ProposalVoteBlock) {
-      return <PanTool {...iconProps} />;
+      return <PanTool sx={iconStyles} />;
     }
     if (
       actionType === NotificationType.ProposalVoteAgreement ||
       actionType === NotificationType.PostLike
     ) {
-      return <ThumbUp {...iconProps} />;
+      return <ThumbUp sx={iconStyles} />;
     }
     if (actionType === NotificationType.ProposalRatification) {
-      return <HowToVote {...iconProps} />;
+      return (
+        <HowToVote sx={{ ...iconStyles, fontSize: 11, marginTop: 0.45 }} />
+      );
     }
     if (actionType.includes('comment')) {
-      return <Comment {...iconProps} />;
+      return <Comment sx={{ ...iconStyles, marginTop: 0.6 }} />;
     }
     if (actionType === NotificationType.Follow) {
-      return <Person {...iconProps} />;
+      return <Person sx={iconStyles} />;
     }
     if (
       actionType === NotificationType.GroupMemberRequest ||
       actionType === NotificationType.GroupMemberRequestApproval
     ) {
-      return <Group {...iconProps} />;
+      return <Group sx={iconStyles} />;
     }
-    return <AutoAwesome {...iconProps} />;
+    return <AutoAwesome sx={iconStyles} />;
   };
 
   return (
@@ -264,14 +256,14 @@ const Notification = ({
         {otherUser && (
           <Box position="relative">
             <UserAvatar user={otherUser} />
-            <Box sx={iconStyles}>{renderIcon()}</Box>
+            <Box sx={iconContainerStyles}>{renderIcon()}</Box>
           </Box>
         )}
 
         {group && !otherUser && (
           <Box position="relative">
             <GroupAvatar group={group} withLink={false} />
-            <Box sx={iconStyles}>{renderIcon()}</Box>
+            <Box sx={iconContainerStyles}>{renderIcon()}</Box>
           </Box>
         )}
 
