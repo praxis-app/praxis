@@ -1,5 +1,3 @@
-// TODO: Account for notifications sent to multiple users
-
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
