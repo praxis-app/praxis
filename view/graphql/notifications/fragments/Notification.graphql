@@ -1,6 +1,6 @@
 fragment Notification on Notification {
   id
-  actionType
+  notificationType
   status
   createdAt
 

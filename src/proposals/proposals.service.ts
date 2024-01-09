@@ -237,7 +237,7 @@ export class ProposalsService {
 
     const proposal = await this.getProposal(proposalId);
     await this.notificationsService.createNotification({
-      actionType: NotificationType.ProposalRatification,
+      notificationType: NotificationType.ProposalRatification,
       groupId: proposal.groupId,
       userId: proposal.userId,
       proposalId,

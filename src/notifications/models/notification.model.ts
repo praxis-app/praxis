@@ -20,10 +20,9 @@ export class Notification {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // TODO: Rename as notificationType
   @Column()
   @Field()
-  actionType: string;
+  notificationType: string;
 
   @Column({ default: NotificationStatus.Unread })
   @Field()

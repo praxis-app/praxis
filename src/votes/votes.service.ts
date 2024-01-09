@@ -45,7 +45,7 @@ export class VotesService {
     if (vote.userId !== proposal.userId) {
       const voteNotificationType = this.getVoteNotificationType(vote.voteType);
       await this.notificationsService.createNotification({
-        actionType: voteNotificationType,
+        notificationType: voteNotificationType,
         otherUserId: vote.userId,
         userId: proposal.userId,
         proposalId: proposal.id,

@@ -341,7 +341,7 @@ export class GroupsService {
     const members = await this.getMembersWithApprovalPermission(groupId);
     for (const member of members) {
       await this.notificationsService.createNotification({
-        actionType: NotificationType.GroupMemberRequest,
+        notificationType: NotificationType.GroupMemberRequest,
         groupId: groupMemberRequest.groupId,
         otherUserId: userId,
         userId: member.id,
@@ -359,7 +359,7 @@ export class GroupsService {
       memberRequest.userId,
     );
     await this.notificationsService.createNotification({
-      actionType: NotificationType.GroupMemberRequestApproval,
+      notificationType: NotificationType.GroupMemberRequestApproval,
       groupId: memberRequest.groupId,
       userId: memberRequest.userId,
     });

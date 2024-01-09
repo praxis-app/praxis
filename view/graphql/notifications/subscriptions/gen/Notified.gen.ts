@@ -17,7 +17,7 @@ export type NotifiedSubscription = {
   notification: {
     __typename?: 'Notification';
     id: number;
-    actionType: string;
+    notificationType: string;
     status: string;
     createdAt: any;
     otherUser?: {
@@ -26,14 +26,14 @@ export type NotifiedSubscription = {
       name: string;
       profilePicture: { __typename?: 'Image'; id: number };
     } | null;
-    proposal?: { __typename?: 'Proposal'; id: number } | null;
-    post?: { __typename?: 'Post'; id: number } | null;
     group?: {
       __typename?: 'Group';
       id: number;
       name: string;
       coverPhoto?: { __typename?: 'Image'; id: number } | null;
     } | null;
+    proposal?: { __typename?: 'Proposal'; id: number } | null;
+    post?: { __typename?: 'Post'; id: number } | null;
   };
 };
 

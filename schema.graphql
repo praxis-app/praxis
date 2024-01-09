@@ -255,7 +255,7 @@ type Proposal {
 
 type Notification {
   id: Int!
-  actionType: String!
+  notificationType: String!
   status: String!
   createdAt: DateTime!
   otherUser: User

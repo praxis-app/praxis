@@ -680,10 +680,10 @@ export type MutationUpdateVoteArgs = {
 
 export type Notification = {
   __typename?: 'Notification';
-  actionType: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
+  notificationType: Scalars['String']['output'];
   otherUser?: Maybe<User>;
   post?: Maybe<Post>;
   proposal?: Maybe<Proposal>;

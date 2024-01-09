@@ -416,7 +416,7 @@ export class UsersService {
     await this.userRepository.save(user);
 
     await this.notificationsService.createNotification({
-      actionType: NotificationType.Follow,
+      notificationType: NotificationType.Follow,
       otherUserId: followerId,
       userId: user.id,
     });

@@ -104,7 +104,7 @@ export class CommentsService {
 
     if (userId !== user.id) {
       await this.notificationsService.createNotification({
-        actionType: comment.postId
+        notificationType: comment.postId
           ? NotificationType.PostComment
           : NotificationType.ProposalComment,
         proposalId: comment.proposalId,

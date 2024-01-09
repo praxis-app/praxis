@@ -46,7 +46,7 @@ interface Props {
 const Notification = ({
   notification: {
     id,
-    actionType,
+    notificationType,
     otherUser,
     status,
     post,
@@ -73,7 +73,7 @@ const Notification = ({
     NotificationType.ProposalVoteReservations,
     NotificationType.ProposalVoteStandAside,
     NotificationType.ProposalVoteBlock,
-  ].includes(actionType as NotificationType);
+  ].includes(notificationType as NotificationType);
 
   const iconContainerStyles: SxProps = {
     ...VOTE_BADGE_STYLES,
@@ -89,7 +89,7 @@ const Notification = ({
     marginTop: 0.5,
     color: 'text.primary',
     transform:
-      actionType === NotificationType.ProposalVoteBlock
+      notificationType === NotificationType.ProposalVoteBlock
         ? 'translateX(-0.5px)'
         : null,
   };
@@ -97,12 +97,12 @@ const Notification = ({
   const getNotificationMessage = () => {
     const _t: TFunction<Namespace<'ns1'>, undefined> = t;
 
-    if (actionType === NotificationType.Follow) {
+    if (notificationType === NotificationType.Follow) {
       return _t('notifications.messages.follow', {
         name: otherUser?.name,
       });
     }
-    if (actionType === NotificationType.PostLike) {
+    if (notificationType === NotificationType.PostLike) {
       return _t('notifications.messages.postLike', {
         name: otherUser?.name,
       });
@@ -112,28 +112,28 @@ const Notification = ({
         name: otherUser?.name,
       });
     }
-    if (actionType === NotificationType.ProposalRatification) {
+    if (notificationType === NotificationType.ProposalRatification) {
       return _t('notifications.messages.proposalRatification', {
         groupName: group?.name,
       });
     }
-    if (actionType === NotificationType.ProposalComment) {
+    if (notificationType === NotificationType.ProposalComment) {
       return _t('notifications.messages.proposalComment', {
         name: otherUser?.name,
       });
     }
-    if (actionType === NotificationType.PostComment) {
+    if (notificationType === NotificationType.PostComment) {
       return _t('notifications.messages.postComment', {
         name: otherUser?.name,
       });
     }
-    if (actionType === NotificationType.GroupMemberRequest) {
+    if (notificationType === NotificationType.GroupMemberRequest) {
       return _t('notifications.messages.groupMemberRequest', {
         name: otherUser?.name,
         groupName: group?.name,
       });
     }
-    if (actionType === NotificationType.GroupMemberRequestApproval) {
+    if (notificationType === NotificationType.GroupMemberRequestApproval) {
       return _t('notifications.messages.groupMemberRequestApproval', {
         groupName: group?.name,
       });
@@ -150,24 +150,24 @@ const Notification = ({
   const getPath = () => {
     if (
       isProposalVote ||
-      actionType === NotificationType.ProposalComment ||
-      actionType === NotificationType.ProposalRatification
+      notificationType === NotificationType.ProposalComment ||
+      notificationType === NotificationType.ProposalRatification
     ) {
       return `${NavigationPaths.Proposals}/${proposal?.id}`;
     }
-    if (actionType === NotificationType.PostComment) {
+    if (notificationType === NotificationType.PostComment) {
       return `${NavigationPaths.Posts}/${post?.id}`;
     }
-    if (actionType === NotificationType.PostLike) {
+    if (notificationType === NotificationType.PostLike) {
       return `${NavigationPaths.Posts}/${post?.id}`;
     }
-    if (actionType === NotificationType.Follow) {
+    if (notificationType === NotificationType.Follow) {
       return `${NavigationPaths.Users}/${otherUser?.name}`;
     }
-    if (actionType === NotificationType.GroupMemberRequest) {
+    if (notificationType === NotificationType.GroupMemberRequest) {
       return getMemberRequestsPath(group?.name as string);
     }
-    if (actionType === NotificationType.GroupMemberRequestApproval) {
+    if (notificationType === NotificationType.GroupMemberRequestApproval) {
       return `${NavigationPaths.Groups}/${group?.name}`;
     }
     return NavigationPaths.Home;
@@ -206,35 +206,35 @@ const Notification = ({
   };
 
   const renderIcon = () => {
-    if (actionType === NotificationType.ProposalVoteReservations) {
+    if (notificationType === NotificationType.ProposalVoteReservations) {
       return <ThumbsUpDown sx={iconStyles} />;
     }
-    if (actionType === NotificationType.ProposalVoteStandAside) {
+    if (notificationType === NotificationType.ProposalVoteStandAside) {
       return <ThumbDown sx={iconStyles} />;
     }
-    if (actionType === NotificationType.ProposalVoteBlock) {
+    if (notificationType === NotificationType.ProposalVoteBlock) {
       return <PanTool sx={iconStyles} />;
     }
     if (
-      actionType === NotificationType.ProposalVoteAgreement ||
-      actionType === NotificationType.PostLike
+      notificationType === NotificationType.ProposalVoteAgreement ||
+      notificationType === NotificationType.PostLike
     ) {
       return <ThumbUp sx={iconStyles} />;
     }
-    if (actionType === NotificationType.ProposalRatification) {
+    if (notificationType === NotificationType.ProposalRatification) {
       return (
         <HowToVote sx={{ ...iconStyles, fontSize: 11, marginTop: 0.45 }} />
       );
     }
-    if (actionType.includes('comment')) {
+    if (notificationType.includes('comment')) {
       return <Comment sx={{ ...iconStyles, marginTop: 0.6 }} />;
     }
-    if (actionType === NotificationType.Follow) {
+    if (notificationType === NotificationType.Follow) {
       return <Person sx={iconStyles} />;
     }
     if (
-      actionType === NotificationType.GroupMemberRequest ||
-      actionType === NotificationType.GroupMemberRequestApproval
+      notificationType === NotificationType.GroupMemberRequest ||
+      notificationType === NotificationType.GroupMemberRequestApproval
     ) {
       return <Group sx={iconStyles} />;
     }

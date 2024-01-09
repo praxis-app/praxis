@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddNotificationsTable1704757927372 implements MigrationInterface {
-  name = 'AddNotificationsTable1704757927372';
+export class AddNotificationsTable1704767517224 implements MigrationInterface {
+  name = 'AddNotificationsTable1704767517224';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "notification" ("id" SERIAL NOT NULL, "actionType" character varying NOT NULL, "status" character varying NOT NULL DEFAULT 'unread', "userId" integer NOT NULL, "otherUserId" integer, "groupId" integer, "proposalId" integer, "postId" integer, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_705b6c7cdf9b2c2ff7ac7872cb7" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "notification" ("id" SERIAL NOT NULL, "notificationType" character varying NOT NULL, "status" character varying NOT NULL DEFAULT 'unread', "userId" integer NOT NULL, "otherUserId" integer, "groupId" integer, "proposalId" integer, "postId" integer, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_705b6c7cdf9b2c2ff7ac7872cb7" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `ALTER TABLE "notification" ADD CONSTRAINT "FK_1ced25315eb974b73391fb1c81b" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,

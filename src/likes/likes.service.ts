@@ -52,7 +52,7 @@ export class LikesService {
 
     if (userId !== user.id) {
       await this.notificationsService.createNotification({
-        actionType: like.postId
+        notificationType: like.postId
           ? NotificationType.PostLike
           : NotificationType.CommentLike,
         postId: 'post' in rest ? rest.post?.id : like.postId,
