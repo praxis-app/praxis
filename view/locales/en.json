@@ -581,6 +581,7 @@
       "postComment": "<b>{{name}}</b> commented on your post.",
       "postLike": "<b>{{name}}</b> liked your post.",
       "proposalComment": "<b>{{name}}</b> commented on your proposal.",
+      "proposalRatification": "Your proposal was ratified.",
       "proposalVote": "<b>{{name}}</b> voted on your proposal."
     },
     "errors": {

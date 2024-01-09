@@ -7,13 +7,13 @@ fragment Notification on Notification {
   otherUser {
     ...UserAvatar
   }
+  group {
+    ...GroupAvatar
+  }
   proposal {
     id
   }
   post {
     id
-  }
-  group {
-    ...GroupAvatar
   }
 }

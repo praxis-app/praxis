@@ -15,6 +15,8 @@ import { GroupsService } from '../groups/groups.service';
 import { ImageTypes } from '../images/image.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
+import { NotificationType } from '../notifications/notifications.constants';
+import { NotificationsService } from '../notifications/notifications.service';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 import { sortConsensusVotesByType } from '../votes/votes.utils';
@@ -49,6 +51,7 @@ export class ProposalsService {
     private voteRepository: Repository<Vote>,
 
     private groupsService: GroupsService,
+    private notificationsService: NotificationsService,
     private proposalActionsService: ProposalActionsService,
   ) {}
 
@@ -228,6 +231,17 @@ export class ProposalsService {
     await this.proposalRepository.update(proposalId, {
       stage: ProposalStage.Ratified,
     });
+    await this.pubSub.publish(`isProposalRatified-${proposalId}`, {
+      isProposalRatified: true,
+    });
+
+    const proposal = await this.getProposal(proposalId);
+    await this.notificationsService.createNotification({
+      actionType: NotificationType.ProposalRatification,
+      groupId: proposal.groupId,
+      userId: proposal.userId,
+      proposalId,
+    });
   }
 
   async closeProposal(proposalId: number) {
@@ -368,9 +382,6 @@ export class ProposalsService {
 
     await this.ratifyProposal(id);
     await this.implementProposal(id);
-    this.pubSub.publish(`isProposalRatified-${id}`, {
-      isProposalRatified: true,
-    });
 
     return { ...proposal, stage: ProposalStage.Ratified };
   }

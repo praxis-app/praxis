@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GroupsModule } from '../groups/groups.module';
 import { Image } from '../images/models/image.model';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { PubSubModule } from '../pub-sub/pub-sub.module';
 import { Vote } from '../votes/models/vote.model';
 import { ProposalConfig } from './models/proposal-config.model';
@@ -14,6 +15,7 @@ import { ProposalsService } from './proposals.service';
   imports: [
     TypeOrmModule.forFeature([Image, Proposal, ProposalConfig, Vote]),
     forwardRef(() => ProposalActionsModule),
+    NotificationsModule,
     GroupsModule,
     PubSubModule,
   ],

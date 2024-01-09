@@ -3,6 +3,7 @@ import {
   Check,
   Comment,
   Group,
+  HowToVote,
   PanTool,
   Person,
   ThumbDown,
@@ -109,6 +110,9 @@ const Notification = ({
         name: otherUser?.name,
       });
     }
+    if (actionType === NotificationType.ProposalRatification) {
+      return _t('notifications.messages.proposalRatification');
+    }
     if (actionType === NotificationType.ProposalComment) {
       return _t('notifications.messages.proposalComment', {
         name: otherUser?.name,
@@ -140,10 +144,11 @@ const Notification = ({
   };
 
   const getPath = () => {
-    if (isProposalVote) {
-      return `${NavigationPaths.Proposals}/${proposal?.id}`;
-    }
-    if (actionType === NotificationType.ProposalComment) {
+    if (
+      isProposalVote ||
+      actionType === NotificationType.ProposalComment ||
+      actionType === NotificationType.ProposalRatification
+    ) {
       return `${NavigationPaths.Proposals}/${proposal?.id}`;
     }
     if (actionType === NotificationType.PostComment) {
@@ -223,6 +228,9 @@ const Notification = ({
       actionType === NotificationType.PostLike
     ) {
       return <ThumbUp {...iconProps} />;
+    }
+    if (actionType === NotificationType.ProposalRatification) {
+      return <HowToVote {...iconProps} />;
     }
     if (actionType.includes('comment')) {
       return <Comment {...iconProps} />;

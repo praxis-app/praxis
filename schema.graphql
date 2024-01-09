@@ -543,6 +543,9 @@ type UpdateVotePayload {
 type Query {
   authCheck: Boolean!
   proposal(id: Int!): Proposal!
+  notifications(offset: Int, limit: Int): [Notification!]!
+  notificationsCount: Int!
+  unreadNotificationsCount: Int!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   group(id: Int, name: String): Group!
   groups(offset: Int, limit: Int): [Group!]!
@@ -554,9 +557,6 @@ type Query {
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
   groupRoles: [GroupRole!]!
-  notifications(offset: Int, limit: Int): [Notification!]!
-  notificationsCount: Int!
-  unreadNotificationsCount: Int!
   me: User!
   user(id: Int, name: String): User!
   users(offset: Int, limit: Int): [User!]!
@@ -586,6 +586,10 @@ type Mutation {
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   synchronizeProposal(id: Int!): SynchronizeProposalPayload!
   deleteProposal(id: Int!): Boolean!
+  updateNotification(notificationData: UpdateNotificationInput!): UpdateNotificationPayload!
+  readNotifications(offset: Int, limit: Int): ReadNotificationsPayload!
+  deleteNotification(id: Int!): Boolean!
+  clearNotifications: Boolean!
   updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
   createGroupMemberRequest(groupId: Int!): CreateGroupMemberRequestPayload!
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
@@ -605,10 +609,6 @@ type Mutation {
   updateGroupRole(groupRoleData: UpdateGroupRoleInput!): UpdateGroupRolePayload!
   deleteGroupRole(id: Int!): Boolean!
   deleteGroupRoleMember(groupRoleMemberData: DeleteGroupRoleMemberInput!): DeleteGroupRoleMemberPayload!
-  updateNotification(notificationData: UpdateNotificationInput!): UpdateNotificationPayload!
-  readNotifications(offset: Int, limit: Int): ReadNotificationsPayload!
-  deleteNotification(id: Int!): Boolean!
-  clearNotifications: Boolean!
   updateUser(userData: UpdateUserInput!): UpdateUserPayload!
   deleteUser(id: Int!): Boolean!
   followUser(id: Int!): FollowUserPayload!
@@ -724,6 +724,11 @@ input UpdateProposalInput {
   images: [Upload!]
 }
 
+input UpdateNotificationInput {
+  id: Int!
+  status: String!
+}
+
 input UpdateGroupConfigInput {
   groupId: Int!
   adminModel: String
@@ -801,11 +806,6 @@ input UpdateGroupRoleInput {
 input DeleteGroupRoleMemberInput {
   groupRoleId: Int!
   userId: Int!
-}
-
-input UpdateNotificationInput {
-  id: Int!
-  status: String!
 }
 
 input UpdateUserInput {
