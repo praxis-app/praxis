@@ -41,10 +41,10 @@ const NotificationCount = (boxProps: BoxProps) => {
       position="absolute"
       alignItems="center"
       justifyContent="center"
+      paddingLeft={count > 99 ? '2px' : 0}
       borderRadius="9999px"
       bottom="13px"
       left="10px"
-      // paddingLeft="2px" // TODO: Include conditionally
       {...boxProps}
     >
       <Typography fontSize="12px" color="primary" paddingX="4px">
