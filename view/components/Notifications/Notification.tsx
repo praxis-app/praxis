@@ -111,7 +111,9 @@ const Notification = ({
       });
     }
     if (actionType === NotificationType.ProposalRatification) {
-      return _t('notifications.messages.proposalRatification');
+      return _t('notifications.messages.proposalRatification', {
+        groupName: group?.name,
+      });
     }
     if (actionType === NotificationType.ProposalComment) {
       return _t('notifications.messages.proposalComment', {
@@ -278,8 +280,8 @@ const Notification = ({
             dangerouslySetInnerHTML={{
               __html: convertBoldToSpan(getNotificationMessage()),
             }}
-            lineHeight={1}
-            marginBottom={0.5}
+            lineHeight={1.25}
+            marginBottom={0.25}
             marginTop={0.25}
           />
 
