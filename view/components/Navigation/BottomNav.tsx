@@ -12,19 +12,14 @@ import {
   Box,
   Paper,
   SxProps,
-  Typography,
 } from '@mui/material';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { isLoggedInVar, isNavDrawerOpenVar } from '../../graphql/cache';
-import { useUnreadNotificationsQuery } from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
-import { useNotifiedSubscription } from '../../graphql/notifications/subscriptions/gen/Notified.gen';
-import { Blurple } from '../../styles/theme';
-import { addNotification } from '../../utils/cache.utils';
 import { scrollTop } from '../../utils/shared.utils';
-import Flex from '../Shared/Flex';
+import NotificationCount from '../Notifications/NotificationCount';
 
 const PAPER_STYLES: SxProps = {
   position: 'fixed',
@@ -38,17 +33,6 @@ const BottomNav = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
   const [value, setValue] = useState(0);
-
-  const { data: unreadNotificationsData } = useUnreadNotificationsQuery();
-
-  useNotifiedSubscription({
-    onData({ data: { data }, client: { cache } }) {
-      if (!data?.notification) {
-        return;
-      }
-      addNotification(cache, data);
-    },
-  });
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
@@ -130,23 +114,7 @@ const BottomNav = () => {
             icon={
               <Box position="relative">
                 <Notifications />
-                {!!unreadNotificationsData?.unreadNotificationsCount && (
-                  <Flex
-                    bgcolor={Blurple.Marina}
-                    height="18px"
-                    width="18px"
-                    position="absolute"
-                    alignItems="center"
-                    justifyContent="center"
-                    borderRadius="9999px"
-                    bottom="13px"
-                    left="10px"
-                  >
-                    <Typography fontSize="12px" color="primary">
-                      {unreadNotificationsData?.unreadNotificationsCount}
-                    </Typography>
-                  </Flex>
-                )}
+                <NotificationCount />
               </Box>
             }
             label={t('navigation.activity')}
