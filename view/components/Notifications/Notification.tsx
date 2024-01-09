@@ -66,7 +66,7 @@ const Notification = ({
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const isRead = status === NotificationStatus.Read;
+  const isUnread = status === NotificationStatus.Unread;
 
   const isProposalVote = [
     NotificationType.ProposalVoteAgreement,
@@ -279,7 +279,7 @@ const Notification = ({
 
           <Typography color="text.secondary" fontSize="13px" marginTop="-2px">
             {timeAgo(createdAt)}
-            {!isRead &&
+            {isUnread &&
               MIDDOT_WITH_SPACES + ' ' + t('notifications.labels.unread')}
           </Typography>
         </Box>
@@ -295,7 +295,7 @@ const Notification = ({
         prependChildren
         canDelete
       >
-        <MenuItem onClick={handleRead} disabled={isRead}>
+        <MenuItem onClick={handleRead} disabled={!isUnread}>
           <Check fontSize="small" sx={{ marginRight: 1 }} />
           {t('notifications.labels.markAsRead')}
         </MenuItem>
