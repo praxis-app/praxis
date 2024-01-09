@@ -1,11 +1,11 @@
-import { Typography } from '@mui/material';
+import { BoxProps, Typography } from '@mui/material';
 import { useUnreadNotificationsQuery } from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
 import { useNotifiedSubscription } from '../../graphql/notifications/subscriptions/gen/Notified.gen';
 import { Blurple } from '../../styles/theme';
 import { addNotification } from '../../utils/cache.utils';
 import Flex from '../Shared/Flex';
 
-const NotificationCount = () => {
+const NotificationCount = (boxProps: BoxProps) => {
   const { data } = useUnreadNotificationsQuery();
   const count = data?.unreadNotificationsCount;
 
@@ -33,8 +33,9 @@ const NotificationCount = () => {
       justifyContent="center"
       borderRadius="9999px"
       bottom="13px"
-      // paddingLeft="2px" // TODO: Include conditionally
       left="10px"
+      // paddingLeft="2px" // TODO: Include conditionally
+      {...boxProps}
     >
       <Typography fontSize="12px" color="primary" paddingX="4px">
         {count}

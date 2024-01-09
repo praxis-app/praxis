@@ -15,20 +15,15 @@ import {
   ListItemIcon as MuiListItemIcon,
   ListItemText as MuiListItemText,
   ListItemTextProps as MuiListItemTextProps,
-  Typography,
 } from '@mui/material';
 import { SxProps, styled } from '@mui/material/styles';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { isLoggedInVar } from '../../graphql/cache';
-import { useNotifiedSubscription } from '../../graphql/notifications/subscriptions/gen/Notified.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
-import { addNotification } from '../../utils/cache.utils';
+import NotificationCount from '../Notifications/NotificationCount';
 import Link from '../Shared/Link';
-import { useUnreadNotificationsQuery } from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
-import Flex from '../Shared/Flex';
-import { Blurple } from '../../styles/theme';
 
 interface ListItemTextProps extends MuiListItemTextProps {
   isActive?: boolean;
@@ -58,18 +53,7 @@ const ListItemIcon = styled(MuiListItemIcon)(() => ({
 
 const LeftNav = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-
   const { data: meData, loading } = useMeQuery({ skip: !isLoggedIn });
-  const { data: unreadNotificationsData } = useUnreadNotificationsQuery();
-
-  useNotifiedSubscription({
-    onData({ data: { data }, client: { cache } }) {
-      if (!data?.notification) {
-        return;
-      }
-      addNotification(cache, data);
-    },
-  });
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
@@ -133,24 +117,7 @@ const LeftNav = () => {
         <Link href={NavigationPaths.Activity}>
           <ListItemButton>
             <ListItemIcon sx={{ position: 'relative' }}>
-              {!!unreadNotificationsData?.unreadNotificationsCount && (
-                <Flex
-                  bgcolor={Blurple.Marina}
-                  height="18px"
-                  width="18px"
-                  position="absolute"
-                  alignItems="center"
-                  justifyContent="center"
-                  borderRadius="9999px"
-                  bottom="10px"
-                  left="18px"
-                >
-                  <Typography fontSize="12px" color="primary">
-                    {unreadNotificationsData?.unreadNotificationsCount}
-                  </Typography>
-                </Flex>
-              )}
-
+              <NotificationCount bottom="10px" left="18px" />
               <Notifications sx={getIconStyle(NavigationPaths.Activity)} />
             </ListItemIcon>
             <ListItemText
