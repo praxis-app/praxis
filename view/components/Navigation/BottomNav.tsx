@@ -14,23 +14,15 @@ import {
   SxProps,
   Typography,
 } from '@mui/material';
-import { produce } from 'immer';
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { isLoggedInVar, isNavDrawerOpenVar } from '../../graphql/cache';
-import {
-  NotificationsDocument,
-  NotificationsQuery,
-} from '../../graphql/notifications/queries/gen/Notifications.gen';
-import {
-  UnreadNotificationsDocument,
-  UnreadNotificationsQuery,
-  useUnreadNotificationsQuery,
-} from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
+import { useUnreadNotificationsQuery } from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
 import { useNotifiedSubscription } from '../../graphql/notifications/subscriptions/gen/Notified.gen';
 import { Blurple } from '../../styles/theme';
+import { addNotification } from '../../utils/cache.utils';
 import { scrollTop } from '../../utils/shared.utils';
 import Flex from '../Shared/Flex';
 
@@ -54,30 +46,7 @@ const BottomNav = () => {
       if (!data?.notification) {
         return;
       }
-      cache.updateQuery<NotificationsQuery>(
-        {
-          query: NotificationsDocument,
-          variables: { limit: 10, offset: 0 },
-        },
-        (notificationsData) =>
-          produce(notificationsData, (draft) => {
-            if (!draft) {
-              return;
-            }
-            draft.notifications.unshift(data.notification);
-            draft.notificationsCount += 1;
-          }),
-      );
-      cache.updateQuery<UnreadNotificationsQuery>(
-        { query: UnreadNotificationsDocument },
-        (notificationsData) =>
-          produce(notificationsData, (draft) => {
-            if (!draft) {
-              return;
-            }
-            draft.unreadNotificationsCount += 1;
-          }),
-      );
+      addNotification(cache, data);
     },
   });
 
