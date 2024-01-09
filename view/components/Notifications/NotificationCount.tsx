@@ -18,6 +18,16 @@ const NotificationCount = (boxProps: BoxProps) => {
     },
   });
 
+  const getCountText = () => {
+    if (!count) {
+      return;
+    }
+    if (count > 99) {
+      return '99+';
+    }
+    return count;
+  };
+
   if (!count) {
     return null;
   }
@@ -38,7 +48,7 @@ const NotificationCount = (boxProps: BoxProps) => {
       {...boxProps}
     >
       <Typography fontSize="12px" color="primary" paddingX="4px">
-        {count}
+        {getCountText()}
       </Typography>
     </Flex>
   );
