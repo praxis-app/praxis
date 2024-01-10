@@ -5,7 +5,15 @@ import { Blurple } from '../../styles/theme';
 import { addNotification } from '../../utils/cache.utils';
 import Flex from '../Shared/Flex';
 
-const NotificationCount = (boxProps: BoxProps) => {
+interface Props extends BoxProps {
+  size?: string | number;
+}
+
+const NotificationCount = ({
+  fontSize = '12px',
+  size = '18px',
+  ...boxProps
+}: Props) => {
   const { data } = useUnreadNotificationsQuery();
   const count = data?.unreadNotificationsCount;
 
@@ -35,8 +43,8 @@ const NotificationCount = (boxProps: BoxProps) => {
   return (
     <Flex
       bgcolor={Blurple.Marina}
-      height="18px"
-      minWidth="18px"
+      height={size}
+      minWidth={size}
       width="fit-content"
       position="absolute"
       alignItems="center"
@@ -47,7 +55,12 @@ const NotificationCount = (boxProps: BoxProps) => {
       left="10px"
       {...boxProps}
     >
-      <Typography fontSize="12px" color="primary" paddingX="4px">
+      <Typography
+        color="primary"
+        fontFamily="Inter Medium"
+        fontSize={fontSize}
+        paddingX="4px"
+      >
         {getCountText()}
       </Typography>
     </Flex>

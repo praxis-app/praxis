@@ -117,7 +117,7 @@ const LeftNav = () => {
         <Link href={NavigationPaths.Activity}>
           <ListItemButton>
             <ListItemIcon sx={{ position: 'relative' }}>
-              <NotificationCount bottom="10px" left="18px" />
+              <NotificationCount size="20px" bottom="11px" left="17px" />
               <Notifications sx={getIconStyle(NavigationPaths.Activity)} />
             </ListItemIcon>
             <ListItemText
