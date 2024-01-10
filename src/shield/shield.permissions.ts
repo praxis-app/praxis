@@ -27,6 +27,7 @@ import {
   isPublicGroupImage,
   isPublicGroupRole,
 } from './rules/group.rules';
+import { isOwnNotification } from './rules/notification.rules';
 import { isOwnPost, isPublicPost, isPublicPostImage } from './rules/post.rules';
 import {
   hasNoVotes,
@@ -94,6 +95,8 @@ export const shieldPermissions = shield(
       createEvent: or(canCreateGroupEvents, canManageGroupEvents),
       deleteEvent: or(canManageEvents, canManageGroupEvents),
       updateEvent: or(canManageEvents, canManageGroupEvents),
+      updateNotification: isOwnNotification,
+      deleteNotification: isOwnNotification,
       updateComment: isOwnComment,
       deleteComment: or(
         isOwnComment,

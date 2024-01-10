@@ -21,6 +21,8 @@ import { ServerRolesService } from '../server-roles/server-roles.service';
 import { initServerRolePermissions } from '../server-roles/server-roles.utils';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
+import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationType } from '../notifications/notifications.constants';
 
 @Injectable()
 export class UsersService {
@@ -39,6 +41,7 @@ export class UsersService {
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
+    private notificationsService: NotificationsService,
     private serverRolesService: ServerRolesService,
     private postsService: PostsService,
   ) {}
@@ -47,8 +50,8 @@ export class UsersService {
     return await this.userRepository.findOne({ where, relations });
   }
 
-  async getUsers(where?: FindOptionsWhere<User>) {
-    return this.userRepository.find({ where });
+  async getUsers(where?: FindOptionsWhere<User>, relations?: string[]) {
+    return this.userRepository.find({ where, relations });
   }
 
   async getUsersCount() {
@@ -411,6 +414,13 @@ export class UsersService {
     user.followers = [...user.followers, follower];
     await this.userRepository.save(follower);
     await this.userRepository.save(user);
+
+    await this.notificationsService.createNotification({
+      notificationType: NotificationType.Follow,
+      otherUserId: followerId,
+      userId: user.id,
+    });
+
     return {
       followedUser: user,
       follower,

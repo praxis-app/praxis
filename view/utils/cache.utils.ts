@@ -11,6 +11,15 @@ import {
   ServerInvitesDocument,
   ServerInvitesQuery,
 } from '../graphql/invites/queries/gen/ServerInvites.gen';
+import {
+  NotificationsDocument,
+  NotificationsQuery,
+} from '../graphql/notifications/queries/gen/Notifications.gen';
+import {
+  UnreadNotificationsDocument,
+  UnreadNotificationsQuery,
+} from '../graphql/notifications/queries/gen/UnreadNotifications.gen';
+import { NotifiedSubscription } from '../graphql/notifications/subscriptions/gen/Notified.gen';
 import { DeletePostMutation } from '../graphql/posts/mutations/gen/DeletePost.gen';
 import { DeleteUserMutation } from '../graphql/users/mutations/gen/DeleteUser.gen';
 
@@ -92,4 +101,34 @@ export const removeServerInvite = (id: number) => (cache: ApolloCache<any>) => {
   const cacheId = cache.identify({ id, __typename: TypeNames.ServerInvite });
   cache.evict({ id: cacheId });
   cache.gc();
+};
+
+export const addNotification = (
+  cache: ApolloCache<any>,
+  data: NotifiedSubscription,
+) => {
+  cache.updateQuery<NotificationsQuery>(
+    {
+      query: NotificationsDocument,
+      variables: { limit: 10, offset: 0 },
+    },
+    (notificationsData) =>
+      produce(notificationsData, (draft) => {
+        if (!draft) {
+          return;
+        }
+        draft.notifications.unshift(data.notification);
+        draft.notificationsCount += 1;
+      }),
+  );
+  cache.updateQuery<UnreadNotificationsQuery>(
+    { query: UnreadNotificationsDocument },
+    (notificationsData) =>
+      produce(notificationsData, (draft) => {
+        if (!draft) {
+          return;
+        }
+        draft.unreadNotificationsCount += 1;
+      }),
+  );
 };

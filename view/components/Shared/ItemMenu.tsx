@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import GhostButton from './GhostButton';
+import Spinner from './Spinner';
 
 interface Props {
   anchorEl: HTMLElement | null;
@@ -11,9 +12,11 @@ interface Props {
   canDelete?: boolean;
   canUpdate?: boolean;
   children?: ReactNode;
+  deleteBtnLabel?: string;
   deleteItem?: () => void;
   deletePrompt?: string;
   editPath?: string;
+  loading?: boolean;
   onEditButtonClick?: () => void;
   prependChildren?: boolean;
   setAnchorEl: (el: HTMLElement | null) => void;
@@ -26,9 +29,11 @@ const ItemMenu = ({
   canDelete,
   canUpdate,
   children,
+  deleteBtnLabel,
   deleteItem,
   deletePrompt,
   editPath,
+  loading,
   onEditButtonClick,
   prependChildren,
   setAnchorEl,
@@ -89,7 +94,11 @@ const ItemMenu = ({
         onClick={handleMenuButtonClick}
         sx={menuButtonStyles}
       >
-        <MoreHoriz />
+        {loading ? (
+          <Spinner size={10} sx={{ marginY: '7px' }} />
+        ) : (
+          <MoreHoriz />
+        )}
       </Button>
 
       <Menu
@@ -121,7 +130,7 @@ const ItemMenu = ({
         {showDeleteButton && (
           <MenuItem onClick={handleDeleteWithPrompt}>
             <Delete fontSize="small" sx={{ marginRight: 1 }} />
-            {t('actions.delete')}
+            {deleteBtnLabel || t('actions.delete')}
           </MenuItem>
         )}
 

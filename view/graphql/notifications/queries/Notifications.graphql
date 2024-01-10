@@ -1,0 +1,6 @@
+query Notifications($offset: Int, $limit: Int) {
+  notifications(offset: $offset, limit: $limit) {
+    ...Notification
+  }
+  notificationsCount
+}

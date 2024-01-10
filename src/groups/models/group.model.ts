@@ -14,12 +14,13 @@ import {
 } from 'typeorm';
 import { Event } from '../../events/models/event.model';
 import { Image } from '../../images/models/image.model';
+import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
 import { User } from '../../users/models/user.model';
+import { GroupRole } from '../group-roles/models/group-role.model';
 import { GroupConfig } from './group-config.model';
 import { GroupMemberRequest } from './group-member-request.model';
-import { GroupRole } from '../group-roles/models/group-role.model';
 
 @Entity()
 @ObjectType()
@@ -73,6 +74,9 @@ export class Group {
     cascade: true,
   })
   roles: GroupRole[];
+
+  @OneToMany(() => Notification, (notification) => notification.group)
+  notifications: Notification[];
 
   @OneToOne(() => GroupConfig, (groupConfig) => groupConfig.group, {
     cascade: true,

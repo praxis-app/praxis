@@ -14,7 +14,7 @@ export enum DarkMode {
 
 export enum Blurple {
   BlueWhale = '#222d3e',
-  Marina = '#687CD4',
+  Marina = '#5868CB',
   PoolWater = '#3b86f7',
   SavoryBlue = '#5969CB',
   SkyDancer = '#588cf2',

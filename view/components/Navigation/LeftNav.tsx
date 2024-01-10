@@ -5,6 +5,7 @@ import {
   Group as GroupsIcon,
   Home as HomeIcon,
   Link as InvitesIcon,
+  Notifications,
   AccountBox as RolesIcon,
   SupervisedUserCircle as UsersIcon,
 } from '@mui/icons-material';
@@ -21,6 +22,7 @@ import { useLocation } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
+import NotificationCount from '../Notifications/NotificationCount';
 import Link from '../Shared/Link';
 
 interface ListItemTextProps extends MuiListItemTextProps {
@@ -51,12 +53,12 @@ const ListItemIcon = styled(MuiListItemIcon)(() => ({
 
 const LeftNav = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-  const { data, loading } = useMeQuery({ skip: !isLoggedIn });
+  const { data: meData, loading } = useMeQuery({ skip: !isLoggedIn });
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
 
-  const me = data?.me;
+  const me = meData?.me;
   const canBanUsers = me?.serverPermissions.removeMembers;
   const canManageRoles = me?.serverPermissions.manageRoles;
   const canCreateInvites = me?.serverPermissions.createInvites;
@@ -110,6 +112,21 @@ const LeftNav = () => {
           />
         </ListItemButton>
       </Link>
+
+      {isLoggedIn && (
+        <Link href={NavigationPaths.Activity}>
+          <ListItemButton>
+            <ListItemIcon sx={{ position: 'relative' }}>
+              <NotificationCount size="20px" bottom="11px" left="17px" />
+              <Notifications sx={getIconStyle(NavigationPaths.Activity)} />
+            </ListItemIcon>
+            <ListItemText
+              isActive={isActive(NavigationPaths.Activity)}
+              primary={t('navigation.activity')}
+            />
+          </ListItemButton>
+        </Link>
+      )}
 
       <Link href={NavigationPaths.Events}>
         <ListItemButton>

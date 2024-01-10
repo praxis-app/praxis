@@ -11,6 +11,8 @@ import {
   saveImage,
 } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
+import { NotificationType } from '../notifications/notifications.constants';
+import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { DecisionMakingModel } from '../proposals/proposals.constants';
@@ -48,6 +50,7 @@ export class GroupsService {
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
+    private notificationsService: NotificationsService,
     private groupRolesService: GroupRolesService,
     private usersService: UsersService,
   ) {}
@@ -321,11 +324,29 @@ export class GroupsService {
     });
   }
 
+  async getMembersWithApprovalPermission(groupId: number) {
+    return this.usersService.getUsers({
+      groupRoles: {
+        permission: { approveMemberRequests: true },
+        groupId,
+      },
+    });
+  }
+
   async createGroupMemberRequest(groupId: number, userId: number) {
     const groupMemberRequest = await this.groupMemberRequestRepository.save({
       groupId,
       userId,
     });
+    const members = await this.getMembersWithApprovalPermission(groupId);
+    for (const member of members) {
+      await this.notificationsService.createNotification({
+        notificationType: NotificationType.GroupMemberRequest,
+        groupId: groupMemberRequest.groupId,
+        otherUserId: userId,
+        userId: member.id,
+      });
+    }
     return { groupMemberRequest };
   }
 
@@ -337,6 +358,11 @@ export class GroupsService {
       memberRequest.groupId,
       memberRequest.userId,
     );
+    await this.notificationsService.createNotification({
+      notificationType: NotificationType.GroupMemberRequestApproval,
+      groupId: memberRequest.groupId,
+      userId: memberRequest.userId,
+    });
     return { groupMember };
   }
 

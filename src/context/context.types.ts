@@ -6,6 +6,7 @@ import { EventsService } from '../events/events.service';
 import { GroupRolesService } from '../groups/group-roles/group-roles.service';
 import { GroupsService } from '../groups/groups.service';
 import { ImagesService } from '../images/images.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PostsService } from '../posts/posts.service';
 import { ProposalActionsService } from '../proposals/proposal-actions/proposal-actions.service';
 import { ProposalsService } from '../proposals/proposals.service';
@@ -20,6 +21,7 @@ export interface ContextServices {
   groupRolesService: GroupRolesService;
   groupsService: GroupsService;
   imagesService: ImagesService;
+  notificationsService: NotificationsService;
   postsService: PostsService;
   proposalActionsService: ProposalActionsService;
   proposalsService: ProposalsService;

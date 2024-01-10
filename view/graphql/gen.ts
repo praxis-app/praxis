@@ -420,6 +420,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   approveGroupMemberRequest: ApproveGroupMemberRequestPayload;
   cancelGroupMemberRequest: Scalars['Boolean']['output'];
+  clearNotifications: Scalars['Boolean']['output'];
   createComment: CreateCommentPayload;
   createEvent: CreateEventPayload;
   createEventAttendee: CreateEventAttendeePayload;
@@ -440,6 +441,7 @@ export type Mutation = {
   deleteGroupRoleMember: DeleteGroupRoleMemberPayload;
   deleteImage: Scalars['Boolean']['output'];
   deleteLike: Scalars['Boolean']['output'];
+  deleteNotification: Scalars['Boolean']['output'];
   deletePost: Scalars['Boolean']['output'];
   deleteProposal: Scalars['Boolean']['output'];
   deleteServerInvite: Scalars['Boolean']['output'];
@@ -452,6 +454,7 @@ export type Mutation = {
   leaveGroup: Scalars['Boolean']['output'];
   logOut: Scalars['Boolean']['output'];
   login: AuthPayload;
+  readNotifications: ReadNotificationsPayload;
   signUp: AuthPayload;
   synchronizeProposal: SynchronizeProposalPayload;
   unfollowUser: Scalars['Boolean']['output'];
@@ -461,6 +464,7 @@ export type Mutation = {
   updateGroup: UpdateGroupPayload;
   updateGroupConfig: UpdateGroupPayload;
   updateGroupRole: UpdateGroupRolePayload;
+  updateNotification: UpdateNotificationPayload;
   updatePost: UpdatePostPayload;
   updateProposal: UpdateProposalPayload;
   updateServerConfig: UpdateServerConfigPayload;
@@ -557,6 +561,10 @@ export type MutationDeleteLikeArgs = {
   likeData: DeleteLikeInput;
 };
 
+export type MutationDeleteNotificationArgs = {
+  id: Scalars['Int']['input'];
+};
+
 export type MutationDeletePostArgs = {
   id: Scalars['Int']['input'];
 };
@@ -601,6 +609,11 @@ export type MutationLoginArgs = {
   input: LoginInput;
 };
 
+export type MutationReadNotificationsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type MutationSignUpArgs = {
   input: SignUpInput;
 };
@@ -637,6 +650,10 @@ export type MutationUpdateGroupRoleArgs = {
   groupRoleData: UpdateGroupRoleInput;
 };
 
+export type MutationUpdateNotificationArgs = {
+  notificationData: UpdateNotificationInput;
+};
+
 export type MutationUpdatePostArgs = {
   postData: UpdatePostInput;
 };
@@ -659,6 +676,18 @@ export type MutationUpdateUserArgs = {
 
 export type MutationUpdateVoteArgs = {
   voteData: UpdateVoteInput;
+};
+
+export type Notification = {
+  __typename?: 'Notification';
+  createdAt: Scalars['DateTime']['output'];
+  group?: Maybe<Group>;
+  id: Scalars['Int']['output'];
+  notificationType: Scalars['String']['output'];
+  otherUser?: Maybe<User>;
+  post?: Maybe<Post>;
+  proposal?: Maybe<Proposal>;
+  status: Scalars['String']['output'];
 };
 
 export type Post = {
@@ -874,6 +903,8 @@ export type Query = {
   groupsCount: Scalars['Int']['output'];
   isFirstUser: Scalars['Boolean']['output'];
   me: User;
+  notifications: Array<Notification>;
+  notificationsCount: Scalars['Int']['output'];
   post: Post;
   proposal: Proposal;
   publicCanary?: Maybe<Canary>;
@@ -885,6 +916,7 @@ export type Query = {
   serverInvites: Array<ServerInvite>;
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
+  unreadNotificationsCount: Scalars['Int']['output'];
   user: User;
   users: Array<User>;
   usersByIds: Array<User>;
@@ -913,6 +945,11 @@ export type QueryGroupRoleArgs = {
 };
 
 export type QueryGroupsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type QueryNotificationsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -955,6 +992,11 @@ export type QueryUsersArgs = {
 
 export type QueryUsersByIdsArgs = {
   ids: Array<Scalars['Int']['input']>;
+};
+
+export type ReadNotificationsPayload = {
+  __typename?: 'ReadNotificationsPayload';
+  notifications: Array<Notification>;
 };
 
 export type ServerConfig = {
@@ -1042,6 +1084,7 @@ export type SignUpInput = {
 export type Subscription = {
   __typename?: 'Subscription';
   isProposalRatified: Scalars['Boolean']['output'];
+  notification: Notification;
 };
 
 export type SubscriptionIsProposalRatifiedArgs = {
@@ -1126,6 +1169,16 @@ export type UpdateGroupRoleInput = {
 export type UpdateGroupRolePayload = {
   __typename?: 'UpdateGroupRolePayload';
   groupRole: GroupRole;
+};
+
+export type UpdateNotificationInput = {
+  id: Scalars['Int']['input'];
+  status: Scalars['String']['input'];
+};
+
+export type UpdateNotificationPayload = {
+  __typename?: 'UpdateNotificationPayload';
+  notification: Notification;
 };
 
 export type UpdatePostInput = {

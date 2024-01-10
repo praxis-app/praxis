@@ -11,6 +11,7 @@ import { GroupMemberRequest } from '../groups/models/group-member-request.model'
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
 import { Like } from '../likes/models/like.model';
+import { Notification } from '../notifications/models/notification.model';
 import { Post } from '../posts/models/post.model';
 import { ProposalConfig } from '../proposals/models/proposal-config.model';
 import { Proposal } from '../proposals/models/proposal.model';
@@ -59,6 +60,7 @@ import { UpdateVotingTimeLimitDefault1703118466924 } from './migrations/17031184
 import { AddAdminModelColumns1703454648429 } from './migrations/1703454648429-AddAdminModelColumns';
 import { AddServerRolePermissionColumns1703978999070 } from './migrations/1703978999070-AddServerRolePermissionColumns';
 import { AddCascadeDeletesForUser1704254669247 } from './migrations/1704254669247-AddCascadeDeletesForUser';
+import { AddNotificationsTable1704767517224 } from './migrations/1704767517224-AddNotificationsTable';
 
 dotenv.config();
 
@@ -81,6 +83,7 @@ export default new DataSource({
     GroupRolePermission,
     Image,
     Like,
+    Notification,
     Post,
     Proposal,
     ProposalAction,
@@ -109,6 +112,7 @@ export default new DataSource({
     AddGroupConfigTable1685746618239,
     AddGroupMemberLinkTable1681010227367,
     AddLikeTable1679157357262,
+    AddNotificationsTable1704767517224,
     AddProposalActionEventTables1694657129939,
     AddProposalActionGroupConfigTable1700964923516,
     AddProposalActionImagesConstraint1685201083917,

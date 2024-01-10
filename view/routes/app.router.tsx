@@ -5,6 +5,7 @@ import PageNotFound from '../pages/App/PageNotFound';
 import DocsHomePage from '../pages/Docs/DocsHomePage';
 import ServerInvite from '../pages/Invites/ServerInvite';
 import ServerInvites from '../pages/Invites/ServerInvites';
+import Notifications from '../pages/Notifications/Notifications';
 import CanaryPage from '../pages/Settings/CanaryPage';
 import ServerSettings from '../pages/Settings/ServerSettings';
 import authRouter from './auth.router';
@@ -43,6 +44,10 @@ const appRouter = createBrowserRouter([
       {
         path: 'canary',
         element: <CanaryPage />,
+      },
+      {
+        path: 'activity',
+        element: <Notifications />,
       },
       {
         path: 'docs',

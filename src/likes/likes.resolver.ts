@@ -9,7 +9,6 @@ import {
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Post } from '../posts/models/post.model';
-import { PostsService } from '../posts/posts.service';
 import { User } from '../users/models/user.model';
 import { LikesService } from './likes.service';
 import { CreateLikeInput } from './models/create-like.input';
@@ -19,10 +18,7 @@ import { Like } from './models/like.model';
 
 @Resolver(() => Like)
 export class LikesResolver {
-  constructor(
-    private likesService: LikesService,
-    private postsService: PostsService,
-  ) {}
+  constructor(private likesService: LikesService) {}
 
   @ResolveField(() => User)
   async user(
@@ -34,7 +30,10 @@ export class LikesResolver {
 
   @ResolveField(() => Post)
   async post(@Parent() { postId }: Like) {
-    return postId ? this.postsService.getPost(postId) : null;
+    if (!postId) {
+      return null;
+    }
+    return this.likesService.getLikedPost(postId);
   }
 
   @Mutation(() => CreateLikePayload)

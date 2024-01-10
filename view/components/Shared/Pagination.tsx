@@ -11,12 +11,13 @@ import { useIsDesktop } from '../../hooks/shared.hooks';
 interface Props {
   children: ReactNode;
   count?: number;
-  isLoading: boolean;
+  isLoading?: boolean;
   onChangePage(page: number): void;
-  rowsPerPage: number;
-  setRowsPerPage(rowsPerPage: number): void;
   page: number;
+  rowsPerPage: number;
   setPage(page: number): void;
+  setRowsPerPage(rowsPerPage: number): void;
+  showTopPagination?: boolean;
   sx?: SxProps;
 }
 
@@ -25,10 +26,11 @@ const Pagination = ({
   count,
   isLoading,
   onChangePage,
-  rowsPerPage,
-  setRowsPerPage,
   page,
+  rowsPerPage,
   setPage,
+  setRowsPerPage,
+  showTopPagination = true,
   sx,
 }: Props) => {
   const { t } = useTranslation();
@@ -78,8 +80,8 @@ const Pagination = ({
     setPage(0);
   };
 
-  const renderPagination = (bottom = false) => {
-    if (count === 0 || (bottom && isLoading)) {
+  const renderPagination = (top = false) => {
+    if ((top && isLoading) || (!showTopPagination && top)) {
       return null;
     }
     return (
@@ -94,16 +96,16 @@ const Pagination = ({
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[10, 25, 50]}
         SelectProps={selectProps}
-        sx={{ marginBottom: bottom ? 0 : 1.5, ...sx }}
+        sx={{ marginBottom: top ? 1.5 : 0, ...sx }}
       />
     );
   };
 
   return (
     <>
-      {renderPagination()}
-      {children}
       {renderPagination(true)}
+      {children}
+      {renderPagination()}
     </>
   );
 };

@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import { NotificationType } from '../notifications/notifications.constants';
+import { NotificationsService } from '../notifications/notifications.service';
 import { ProposalsService } from '../proposals/proposals.service';
 import { CreateVoteInput } from './models/create-vote.input';
 import { UpdateVoteInput } from './models/update-vote.input';
 import { Vote } from './models/vote.model';
+import { VoteTypes } from './votes.constants';
 
 @Injectable()
 export class VotesService {
@@ -13,6 +16,8 @@ export class VotesService {
     private repository: Repository<Vote>,
 
     private proposalsService: ProposalsService,
+
+    private notificationsService: NotificationsService,
   ) {}
 
   async getVote(id: number, relations?: string[]) {
@@ -34,7 +39,33 @@ export class VotesService {
       await this.proposalsService.ratifyProposal(vote.proposalId);
       await this.proposalsService.implementProposal(vote.proposalId);
     }
+
+    const proposal = await this.proposalsService.getProposal(vote.proposalId);
+
+    if (vote.userId !== proposal.userId) {
+      const voteNotificationType = this.getVoteNotificationType(vote.voteType);
+      await this.notificationsService.createNotification({
+        notificationType: voteNotificationType,
+        otherUserId: vote.userId,
+        userId: proposal.userId,
+        proposalId: proposal.id,
+      });
+    }
+
     return { vote };
+  }
+
+  getVoteNotificationType(voteType: string) {
+    if (voteType === VoteTypes.Reservations) {
+      return NotificationType.ProposalVoteReservations;
+    }
+    if (voteType === VoteTypes.StandAside) {
+      return NotificationType.ProposalVoteStandAside;
+    }
+    if (voteType === VoteTypes.Block) {
+      return NotificationType.ProposalVoteBlock;
+    }
+    return NotificationType.ProposalVoteAgreement;
   }
 
   async updateVote({ id, ...data }: UpdateVoteInput) {

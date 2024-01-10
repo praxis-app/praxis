@@ -15,6 +15,7 @@ export const DEFAULT_PAGE_SIZE = 10;
 
 export enum NavigationPaths {
   About = '/about',
+  Activity = '/activity',
   Canary = '/canary',
   Docs = '/docs',
   Edit = '/edit',

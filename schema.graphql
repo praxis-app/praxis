@@ -253,6 +253,17 @@ type Proposal {
   settings: ProposalConfig!
 }
 
+type Notification {
+  id: Int!
+  notificationType: String!
+  status: String!
+  createdAt: DateTime!
+  otherUser: User
+  group: Group
+  proposal: Proposal
+  post: Post
+}
+
 type GroupConfig {
   id: Int!
   adminModel: String!
@@ -379,6 +390,14 @@ type CreateEventPayload {
 
 type UpdateEventPayload {
   event: Event!
+}
+
+type ReadNotificationsPayload {
+  notifications: [Notification!]!
+}
+
+type UpdateNotificationPayload {
+  notification: Notification!
 }
 
 type CreatePostPayload {
@@ -524,6 +543,9 @@ type UpdateVotePayload {
 type Query {
   authCheck: Boolean!
   proposal(id: Int!): Proposal!
+  notifications(offset: Int, limit: Int): [Notification!]!
+  notificationsCount: Int!
+  unreadNotificationsCount: Int!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   group(id: Int, name: String): Group!
   groups(offset: Int, limit: Int): [Group!]!
@@ -564,6 +586,10 @@ type Mutation {
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   synchronizeProposal(id: Int!): SynchronizeProposalPayload!
   deleteProposal(id: Int!): Boolean!
+  updateNotification(notificationData: UpdateNotificationInput!): UpdateNotificationPayload!
+  readNotifications(offset: Int, limit: Int): ReadNotificationsPayload!
+  deleteNotification(id: Int!): Boolean!
+  clearNotifications: Boolean!
   updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
   createGroupMemberRequest(groupId: Int!): CreateGroupMemberRequestPayload!
   approveGroupMemberRequest(id: Int!): ApproveGroupMemberRequestPayload!
@@ -696,6 +722,11 @@ input UpdateProposalInput {
   body: String
   action: ProposalActionInput!
   images: [Upload!]
+}
+
+input UpdateNotificationInput {
+  id: Int!
+  status: String!
 }
 
 input UpdateGroupConfigInput {
@@ -874,4 +905,5 @@ input UpdateVoteInput {
 
 type Subscription {
   isProposalRatified(id: Int!): Boolean!
+  notification: Notification!
 }

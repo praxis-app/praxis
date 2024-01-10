@@ -7,6 +7,10 @@ import { sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
+import { NotificationType } from '../notifications/notifications.constants';
+import { NotificationsService } from '../notifications/notifications.service';
+import { Post } from '../posts/models/post.model';
+import { Proposal } from '../proposals/models/proposal.model';
 import { User } from '../users/models/user.model';
 import { Comment } from './models/comment.model';
 import { CreateCommentInput } from './models/create-comment.input';
@@ -20,6 +24,14 @@ export class CommentsService {
 
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
+
+    @InjectRepository(Post)
+    private postRepository: Repository<Post>,
+
+    @InjectRepository(Proposal)
+    private proposalRepository: Repository<Proposal>,
+
+    private notificationsService: NotificationsService,
   ) {}
 
   async getComment(id: number, relations?: string[]) {
@@ -77,6 +89,31 @@ export class CommentsService {
         throw new Error(err.message);
       }
     }
+
+    const {
+      user: { id: userId },
+    } = comment.postId
+      ? await this.postRepository.findOneOrFail({
+          where: { id: comment.postId },
+          relations: ['user'],
+        })
+      : await this.proposalRepository.findOneOrFail({
+          where: { id: comment.proposalId },
+          relations: ['user'],
+        });
+
+    if (userId !== user.id) {
+      await this.notificationsService.createNotification({
+        notificationType: comment.postId
+          ? NotificationType.PostComment
+          : NotificationType.ProposalComment,
+        proposalId: comment.proposalId,
+        postId: comment.postId,
+        otherUserId: user.id,
+        userId,
+      });
+    }
+
     return { comment };
   }
 

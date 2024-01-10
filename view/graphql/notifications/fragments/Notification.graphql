@@ -1,0 +1,19 @@
+fragment Notification on Notification {
+  id
+  notificationType
+  status
+  createdAt
+
+  otherUser {
+    ...UserAvatar
+  }
+  group {
+    ...GroupAvatar
+  }
+  proposal {
+    id
+  }
+  post {
+    id
+  }
+}
