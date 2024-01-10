@@ -1,15 +1,8 @@
 import { ApolloCache } from '@apollo/client';
 import { Check, Delete } from '@mui/icons-material';
-import {
-  Card,
-  Divider,
-  MenuItem,
-  CardContent as MuiCardContent,
-  Typography,
-  styled,
-} from '@mui/material';
+import { Card, MenuItem, Typography } from '@mui/material';
 import { produce } from 'immer';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Notification from '../../components/Notifications/Notification';
 import Center from '../../components/Shared/Center';
@@ -31,12 +24,6 @@ import {
   UnreadNotificationsQuery,
 } from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
-
-const CardContent = styled(MuiCardContent)(() => ({
-  '&:last-child': {
-    paddingBottom: 18,
-  },
-}));
 
 const Notifications = () => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
@@ -183,25 +170,22 @@ const Notifications = () => {
         showTopPagination={false}
       >
         <Card>
-          <CardContent>
-            {data?.notifications.map((notification, index) => (
-              <Fragment key={notification.id}>
-                <Notification notification={notification} />
+          {data?.notifications.map((notification, index) => (
+            <Notification
+              key={notification.id}
+              notification={notification}
+              isFirst={index === 0}
+              isLast={index === data.notifications.length - 1}
+            />
+          ))}
 
-                {index !== data?.notifications.length - 1 && (
-                  <Divider sx={{ marginY: 1.75 }} />
-                )}
-              </Fragment>
-            ))}
-
-            {data?.notifications.length === 0 && (
-              <Center marginTop="13px" marginBottom="10px">
-                <Typography>
-                  {t('notifications.prompts.noNotifications')}
-                </Typography>
-              </Center>
-            )}
-          </CardContent>
+          {data?.notifications.length === 0 && (
+            <Center marginY="35px">
+              <Typography>
+                {t('notifications.prompts.noNotifications')}
+              </Typography>
+            </Center>
+          )}
         </Card>
       </Pagination>
     </>

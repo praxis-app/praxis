@@ -19,10 +19,7 @@ import {
   NotificationStatus,
   NotificationType,
 } from '../../constants/notifications.constants';
-import {
-  MIDDOT_WITH_SPACES,
-  NavigationPaths,
-} from '../../constants/shared.constants';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { VOTE_BADGE_STYLES } from '../../constants/vote.constants';
 import { NotificationFragment } from '../../graphql/notifications/fragments/gen/Notification.gen';
 import { useDeleteNotificationMutation } from '../../graphql/notifications/mutations/gen/DeleteNotification.gen';
@@ -41,6 +38,8 @@ import UserAvatar from '../Users/UserAvatar';
 
 interface Props {
   notification: NotificationFragment;
+  isLast: boolean;
+  isFirst: boolean;
 }
 
 const Notification = ({
@@ -55,6 +54,8 @@ const Notification = ({
     createdAt,
     __typename,
   },
+  isFirst,
+  isLast,
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -242,7 +243,14 @@ const Notification = ({
   };
 
   return (
-    <Flex alignItems="center" justifyContent="space-between">
+    <Flex
+      paddingX="16px"
+      paddingTop={isFirst ? '16px' : '8px'}
+      paddingBottom={isLast ? '16px' : '8px'}
+      alignItems="center"
+      justifyContent="space-between"
+      bgcolor={isUnread ? 'rgba(88, 101, 242, 0.1)' : 'transparent'}
+    >
       <Link
         href={getPath()}
         onClick={handleRead}
@@ -279,8 +287,6 @@ const Notification = ({
 
           <Typography color="text.secondary" fontSize="13px" marginTop="-2px">
             {timeAgo(createdAt)}
-            {isUnread &&
-              MIDDOT_WITH_SPACES + ' ' + t('notifications.labels.unread')}
           </Typography>
         </Box>
       </Link>
