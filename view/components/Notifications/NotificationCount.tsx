@@ -15,7 +15,7 @@ const NotificationCount = ({
   ...boxProps
 }: Props) => {
   const { data } = useUnreadNotificationsQuery();
-  const count = data?.unreadNotificationsCount;
+  const count = data?.unreadNotificationsCount || 0;
 
   useNotifiedSubscription({
     onData({ data: { data }, client: { cache } }) {
@@ -27,16 +27,13 @@ const NotificationCount = ({
   });
 
   const getCountText = () => {
-    if (!count) {
-      return;
-    }
     if (count > 99) {
       return '99+';
     }
     return count;
   };
 
-  if (!count) {
+  if (count < 1) {
     return null;
   }
 
