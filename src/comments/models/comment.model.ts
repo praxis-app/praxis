@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Image } from '../../images/models/image.model';
 import { Like } from '../../likes/models/like.model';
+import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
 import { User } from '../../users/models/user.model';
@@ -32,6 +33,9 @@ export class Comment {
   @Field(() => [Like])
   @OneToMany(() => Like, (like) => like.comment)
   likes: Like[];
+
+  @OneToMany(() => Notification, (notification) => notification.comment)
+  notifications: Notification[];
 
   @Field(() => Post, { nullable: true })
   @ManyToOne(() => Post, (post) => post.comments, {

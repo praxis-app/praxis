@@ -31,6 +31,7 @@ export class LikesService {
     });
   }
 
+  // TODO: Add support for liking comments
   async createLike(likeData: CreateLikeInput, user: User) {
     const like = await this.likeRepository.save({
       ...likeData,
@@ -39,7 +40,6 @@ export class LikesService {
 
     const {
       user: { id: userId },
-      ...rest
     } = like.postId
       ? await this.postRepository.findOneOrFail({
           where: { id: like.postId },
@@ -47,7 +47,7 @@ export class LikesService {
         })
       : await this.commentRepository.findOneOrFail({
           where: { id: like.commentId },
-          relations: ['user', 'post'],
+          relations: ['user'],
         });
 
     if (userId !== user.id) {
@@ -55,8 +55,9 @@ export class LikesService {
         notificationType: like.postId
           ? NotificationType.PostLike
           : NotificationType.CommentLike,
-        postId: 'post' in rest ? rest.post?.id : like.postId,
+        commentId: like.commentId,
         otherUserId: user.id,
+        postId: like.postId,
         userId,
       });
     }
@@ -66,6 +67,30 @@ export class LikesService {
 
   async deleteLike(likeData: DeleteLikeInput, user: User) {
     await this.likeRepository.delete({ userId: user.id, ...likeData });
+
+    const {
+      user: { id: userId },
+    } = likeData.postId
+      ? await this.postRepository.findOneOrFail({
+          where: { id: likeData.postId },
+          relations: ['user'],
+        })
+      : await this.commentRepository.findOneOrFail({
+          where: { id: likeData.commentId },
+          relations: ['user'],
+        });
+
+    await this.notificationsService.deleteNotifications({
+      notificationType: likeData.postId
+        ? NotificationType.PostLike
+        : NotificationType.CommentLike,
+      ...(likeData.postId
+        ? { postId: likeData.postId }
+        : { commentId: likeData.commentId }),
+      otherUserId: user.id,
+      userId,
+    });
+
     return true;
   }
 }

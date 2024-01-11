@@ -887,10 +887,12 @@ input UpdateServerConfigInput {
 
 input CreateLikeInput {
   postId: Int
+  commentId: Int
 }
 
 input DeleteLikeInput {
   postId: Int
+  commentId: Int
 }
 
 input CreateVoteInput {

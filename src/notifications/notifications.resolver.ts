@@ -108,7 +108,7 @@ export class NotificationsResolver {
 
   @Mutation(() => Boolean)
   clearNotifications(@CurrentUser() user: User) {
-    return this.notificationsService.clearNotifications(user.id);
+    return this.notificationsService.deleteNotifications({ userId: user.id });
   }
 
   @Subscription(() => Notification)

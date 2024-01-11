@@ -74,8 +74,8 @@ export class NotificationsService {
     return true;
   }
 
-  async clearNotifications(userId: number) {
-    await this.notificationRepository.delete({ userId });
+  async deleteNotifications(where: FindOptionsWhere<Notification>) {
+    await this.notificationRepository.delete(where);
     return true;
   }
 }
