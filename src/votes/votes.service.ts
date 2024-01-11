@@ -49,6 +49,7 @@ export class VotesService {
         otherUserId: vote.userId,
         userId: proposal.userId,
         proposalId: proposal.id,
+        voteId: vote.id,
       });
     }
 

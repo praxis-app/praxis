@@ -13,6 +13,7 @@ import { Like } from '../../likes/models/like.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
 import { User } from '../../users/models/user.model';
+import { Vote } from '../../votes/models/vote.model';
 import { NotificationStatus } from '../notifications.constants';
 
 @ObjectType()
@@ -80,6 +81,15 @@ export class Notification {
 
   @Column({ nullable: true })
   commentId?: number;
+
+  @ManyToOne(() => Vote, (vote) => vote.notifications, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  vote?: Vote;
+
+  @Column({ nullable: true })
+  voteId?: number;
 
   @ManyToOne(() => Like, (like) => like.notifications, {
     onDelete: 'CASCADE',
