@@ -69,7 +69,10 @@ export class CommentsResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteComment(@Args('id', { type: () => Int }) id: number) {
-    return this.commentsService.deleteComment(id);
+  async deleteComment(
+    @Args('id', { type: () => Int }) id: number,
+    @CurrentUser() user: User,
+  ) {
+    return this.commentsService.deleteComment(id, user);
   }
 }
