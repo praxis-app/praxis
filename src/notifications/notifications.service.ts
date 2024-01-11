@@ -4,7 +4,6 @@ import { PubSub } from 'graphql-subscriptions';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { paginate } from '../common/common.utils';
 import { Notification } from './models/notification.model';
-import { UpdateNotificationInput } from './models/update-notification.input';
 import { NotificationStatus } from './notifications.constants';
 
 @Injectable()
@@ -48,8 +47,11 @@ export class NotificationsService {
     });
   }
 
-  async updateNotification({ id, status }: UpdateNotificationInput) {
-    await this.notificationRepository.update(id, { status });
+  async updateNotification({
+    id,
+    ...notificationData
+  }: Partial<Notification> & { id: number }) {
+    await this.notificationRepository.update(id, notificationData);
     const notification = await this.notificationRepository.findOneOrFail({
       where: { id },
     });

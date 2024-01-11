@@ -71,7 +71,14 @@ export class VotesService {
 
   async updateVote({ id, ...data }: UpdateVoteInput) {
     await this.repository.update(id, data);
-    const vote = await this.getVote(id);
+    const vote = await this.getVote(id, ['notifications']);
+
+    const voteNotificationType = this.getVoteNotificationType(vote.voteType);
+    await this.notificationsService.updateNotification({
+      id: vote.notifications[0].id,
+      notificationType: voteNotificationType,
+    });
+
     return { vote };
   }
 
