@@ -130,6 +130,7 @@ export type CreateGroupRolePayload = {
 };
 
 export type CreateLikeInput = {
+  commentId?: InputMaybe<Scalars['Int']['input']>;
   postId?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -204,6 +205,7 @@ export type DeleteGroupRoleMemberPayload = {
 };
 
 export type DeleteLikeInput = {
+  commentId?: InputMaybe<Scalars['Int']['input']>;
   postId?: InputMaybe<Scalars['Int']['input']>;
 };
 
