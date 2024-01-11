@@ -58,6 +58,7 @@ export class LikesService {
         commentId: like.commentId,
         otherUserId: user.id,
         postId: like.postId,
+        likeId: like.id,
         userId,
       });
     }
@@ -67,30 +68,6 @@ export class LikesService {
 
   async deleteLike(likeData: DeleteLikeInput, user: User) {
     await this.likeRepository.delete({ userId: user.id, ...likeData });
-
-    const {
-      user: { id: userId },
-    } = likeData.postId
-      ? await this.postRepository.findOneOrFail({
-          where: { id: likeData.postId },
-          relations: ['user'],
-        })
-      : await this.commentRepository.findOneOrFail({
-          where: { id: likeData.commentId },
-          relations: ['user'],
-        });
-
-    await this.notificationsService.deleteNotifications({
-      notificationType: likeData.postId
-        ? NotificationType.PostLike
-        : NotificationType.CommentLike,
-      ...(likeData.postId
-        ? { postId: likeData.postId }
-        : { commentId: likeData.commentId }),
-      otherUserId: user.id,
-      userId,
-    });
-
     return true;
   }
 }
