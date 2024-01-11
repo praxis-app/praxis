@@ -85,7 +85,7 @@ export class CommentsService {
       try {
         await this.saveCommentImages(comment.id, images);
       } catch (err) {
-        await this.deleteComment(comment.id, user);
+        await this.deleteComment(comment.id);
         throw new Error(err.message);
       }
     }
@@ -144,25 +144,11 @@ export class CommentsService {
     }
   }
 
-  async deleteComment(commentId: number, user: User) {
+  async deleteComment(commentId: number) {
     const images = await this.imageRepository.find({ where: { commentId } });
     for (const { filename } of images) {
       await deleteImageFile(filename);
     }
-
-    const { post, proposal } = await this.commentRepository.findOneOrFail({
-      where: { id: commentId },
-      relations: ['post.user', 'proposal.user'],
-    });
-    await this.notificationsService.deleteNotifications({
-      notificationType: post
-        ? NotificationType.PostComment
-        : NotificationType.ProposalComment,
-      ...(post ? { postId: post.id } : { proposalId: proposal?.id }),
-      userId: post?.user.id || proposal?.user.id,
-      otherUserId: user.id,
-    });
-
     await this.commentRepository.delete(commentId);
     return true;
   }
