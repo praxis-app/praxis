@@ -22,6 +22,7 @@ interface Props {
   open: boolean;
   allVotes: VoteFragment[];
   agreements: VoteFragment[];
+  disagreements: VoteFragment[];
   reservations: VoteFragment[];
   standAsides: VoteFragment[];
   blocks: VoteFragment[];
@@ -32,6 +33,7 @@ const VotesModal = ({
   open,
   allVotes,
   agreements,
+  disagreements,
   reservations,
   standAsides,
   blocks,
@@ -68,6 +70,10 @@ const VotesModal = ({
         sx={{ display: agreements.length ? 'initial' : 'none' }}
       />
       <Tab
+        label={renderTabLabel(ThumbDown, disagreements.length)}
+        sx={{ display: disagreements.length ? 'initial' : 'none' }}
+      />
+      <Tab
         label={renderTabLabel(ThumbsUpDown, reservations.length)}
         sx={{ display: reservations.length ? 'initial' : 'none' }}
       />
@@ -92,9 +98,10 @@ const VotesModal = ({
     >
       {tab === 0 && <VoteList votes={allVotes} />}
       {tab === 1 && <VoteList votes={agreements} />}
-      {tab === 2 && <VoteList votes={reservations} />}
-      {tab === 3 && <VoteList votes={standAsides} />}
-      {tab === 4 && <VoteList votes={blocks} />}
+      {tab === 2 && <VoteList votes={disagreements} />}
+      {tab === 3 && <VoteList votes={reservations} />}
+      {tab === 4 && <VoteList votes={standAsides} />}
+      {tab === 5 && <VoteList votes={blocks} />}
     </Modal>
   );
 };

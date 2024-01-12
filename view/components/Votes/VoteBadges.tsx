@@ -83,6 +83,7 @@ const VoteBadges = ({ proposal: { votes, voteCount, settings } }: Props) => {
       <VotesModal
         allVotes={votes}
         agreements={agreements}
+        disagreements={disagreements}
         blocks={blocks}
         open={isModalOpen}
         reservations={reservations}

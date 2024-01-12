@@ -35,6 +35,9 @@ const VotesPopover = ({
     if (voteType === VoteTypes.Block) {
       return t('votes.actions.block');
     }
+    if (voteType === VoteTypes.Disagreement) {
+      return t('votes.actions.disagree');
+    }
     return t('votes.actions.agree');
   };
 
@@ -44,6 +47,7 @@ const VotesPopover = ({
       onClose={handlePopoverClose}
       open={!!anchorEl}
       sx={{ pointerEvents: 'none' }}
+      // TODO: Use slotProps.paper instead
       PaperProps={paperProps}
       anchorOrigin={{
         vertical: 'bottom',
