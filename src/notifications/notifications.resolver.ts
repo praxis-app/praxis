@@ -87,9 +87,9 @@ export class NotificationsResolver {
 
   @Mutation(() => UpdateNotificationPayload)
   updateNotification(
-    @Args('notificationData') notificationData: UpdateNotificationInput,
+    @Args('notificationData') { id, ...data }: UpdateNotificationInput,
   ) {
-    return this.notificationsService.updateNotification(notificationData);
+    return this.notificationsService.updateNotification(id, data);
   }
 
   @Mutation(() => ReadNotificationsPayload)

@@ -69,14 +69,19 @@ export class VotesService {
     return NotificationType.ProposalVoteAgreement;
   }
 
-  async updateVote({ id, ...data }: UpdateVoteInput) {
+  async updateVote({ id, ...data }: UpdateVoteInput, userId: number) {
     await this.repository.update(id, data);
-    const vote = await this.getVote(id, ['notifications']);
 
-    const voteNotificationType = this.getVoteNotificationType(vote.voteType);
-    await this.notificationsService.updateNotification({
-      id: vote.notifications[0].id,
-      notificationType: voteNotificationType,
+    const vote = await this.getVote(id, ['proposal']);
+    const notification = await this.notificationsService.getNotification({
+      otherUserId: userId,
+      proposalId: vote.proposalId,
+      userId: vote.proposal.userId,
+      voteId: vote.id,
+    });
+    const notificationType = this.getVoteNotificationType(vote.voteType);
+    await this.notificationsService.updateNotification(notification.id, {
+      notificationType,
     });
 
     return { vote };

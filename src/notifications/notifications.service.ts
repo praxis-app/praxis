@@ -15,6 +15,10 @@ export class NotificationsService {
     private notificationRepository: Repository<Notification>,
   ) {}
 
+  async getNotification(where?: FindOptionsWhere<Notification>) {
+    return this.notificationRepository.findOneOrFail({ where });
+  }
+
   async getNotifications(userId: number, offset?: number, limit?: number) {
     const notifications = await this.notificationRepository.find({
       where: { userId },
@@ -31,27 +35,22 @@ export class NotificationsService {
     return this.notificationRepository.count({ where });
   }
 
-  async isOwnNotification(notificationId: number, userId: number) {
+  async isOwnNotification(id: number, userId: number) {
     const count = await this.notificationRepository.count({
-      where: { id: notificationId, userId },
+      where: { id, userId },
     });
     return count > 0;
   }
 
-  async createNotification(notificationData: Partial<Notification>) {
-    const notification =
-      await this.notificationRepository.save(notificationData);
-
-    await this.pubSub.publish(`user-notification-${notificationData.userId}`, {
+  async createNotification(data: Partial<Notification>) {
+    const notification = await this.notificationRepository.save(data);
+    await this.pubSub.publish(`user-notification-${data.userId}`, {
       notification,
     });
   }
 
-  async updateNotification({
-    id,
-    ...notificationData
-  }: Partial<Notification> & { id: number }) {
-    await this.notificationRepository.update(id, notificationData);
+  async updateNotification(id: number, data: Partial<Notification>) {
+    await this.notificationRepository.update(id, data);
     const notification = await this.notificationRepository.findOneOrFail({
       where: { id },
     });
