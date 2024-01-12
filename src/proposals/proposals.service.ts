@@ -309,6 +309,9 @@ export class ProposalsService {
     if (config.decisionMakingModel === DecisionMakingModel.Consent) {
       return this.hasConsent(votes, config);
     }
+    if (config.decisionMakingModel === DecisionMakingModel.MajorityVote) {
+      return this.hasMajorityVote(votes, config);
+    }
     return false;
   }
 
