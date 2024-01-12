@@ -183,6 +183,9 @@ const ProposeGroupSettingsModal = ({
                   <MenuItem value={DecisionMakingModel.Consent}>
                     {t('groups.labels.consent')}
                   </MenuItem>
+                  <MenuItem value={DecisionMakingModel.MajorityVote}>
+                    {t('groups.labels.majority')}
+                  </MenuItem>
                 </GroupSettingsSelect>
 
                 <GroupSettingsSelect

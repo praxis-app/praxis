@@ -125,9 +125,6 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
         'groups.errors.consentVotingTimeLimitRequired',
       );
     }
-    if (decisionMakingModel === DecisionMakingModel.MajorityVote) {
-      errors.decisionMakingModel = t('prompts.inDev');
-    }
     if (adminModel === GroupAdminModel.Rotating) {
       errors.adminModel = t('prompts.inDev');
     }
