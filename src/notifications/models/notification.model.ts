@@ -39,6 +39,8 @@ export class Notification {
 
   @ManyToOne(() => User, (otherUser) => otherUser.notifications, {
     onDelete: 'CASCADE',
+
+    // TODO: Determine if nullable is really needed here
     nullable: true,
   })
   otherUser?: User;
