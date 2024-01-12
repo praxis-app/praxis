@@ -6,8 +6,9 @@ import {
 } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import { useMemo, useState } from 'react';
-import { VoteBadgesFragment } from '../../graphql/votes/fragments/gen/VoteBadges.gen';
+import { DecisionMakingModel } from '../../constants/proposal.constants';
 import { VoteTypes } from '../../constants/vote.constants';
+import { VoteBadgesFragment } from '../../graphql/votes/fragments/gen/VoteBadges.gen';
 import { filterVotesByType } from '../../utils/vote.utils';
 import Flex from '../Shared/Flex';
 import VoteBadge from './VoteBadge';
@@ -17,18 +18,24 @@ interface Props {
   proposal: VoteBadgesFragment;
 }
 
-const VoteBadges = ({ proposal: { votes, voteCount } }: Props) => {
+const VoteBadges = ({ proposal: { votes, voteCount, settings } }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { agreements, reservations, standAsides, blocks } = useMemo(
-    () => filterVotesByType(votes),
-    [votes],
-  );
+  const { agreements, disagreements, reservations, standAsides, blocks } =
+    useMemo(() => filterVotesByType(votes), [votes]);
+
+  const isMajorityVote =
+    settings.decisionMakingModel === DecisionMakingModel.MajorityVote;
 
   const agreementsBadge = {
     Icon: AgreementIcon,
     votes: agreements,
     voteType: VoteTypes.Agreement,
+  };
+  const disagreementsBadge = {
+    Icon: StandAsideIcon,
+    votes: disagreements,
+    voteType: VoteTypes.Disagreement,
   };
   const reservationsBadge = {
     Icon: ReservationsIcon,
@@ -46,12 +53,11 @@ const VoteBadges = ({ proposal: { votes, voteCount } }: Props) => {
     voteType: VoteTypes.Block,
   };
 
-  const badges = [
-    agreementsBadge,
-    standAsidesBadge,
-    reservationsBadge,
-    blocksBadge,
-  ]
+  const badges = isMajorityVote
+    ? [agreementsBadge, disagreementsBadge]
+    : [agreementsBadge, standAsidesBadge, reservationsBadge, blocksBadge];
+
+  const filteredBadges = badges
     .filter((badge) => badge.votes.length)
     .sort((a, b) => b.votes.length - a.votes.length);
 
@@ -62,7 +68,7 @@ const VoteBadges = ({ proposal: { votes, voteCount } }: Props) => {
     <>
       <Flex sx={{ cursor: 'pointer', height: '24px' }} onClick={handleClick}>
         <Flex paddingRight={1}>
-          {badges.map((badge, index) => (
+          {filteredBadges.map((badge, index) => (
             <VoteBadge
               {...badge}
               key={badge.voteType}

@@ -2,6 +2,11 @@ fragment VoteBadges on Proposal {
   id
   voteCount
 
+  settings {
+    id
+    decisionMakingModel
+  }
+
   votes {
     ...Vote
     ...VoteBadge

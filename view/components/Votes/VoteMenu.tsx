@@ -16,6 +16,7 @@ import {
   useUpdateVoteMutation,
 } from '../../graphql/votes/mutations/gen/UpdateVote.gen';
 import {
+  DecisionMakingModel,
   ProposalActionType,
   ProposalStage,
 } from '../../constants/proposal.constants';
@@ -50,6 +51,9 @@ const VoteMenu = ({ anchorEl, onClose, currentUserId, proposal }: Props) => {
   const voteByCurrentUser = proposal.votes.find(
     (vote) => vote.user.id === currentUserId,
   );
+
+  const isMajorityVote =
+    proposal.settings.decisionMakingModel === DecisionMakingModel.MajorityVote;
 
   const getMenuItemStyles = (voteType: string) => {
     if (!voteByCurrentUser || voteByCurrentUser.voteType !== voteType) {
@@ -211,29 +215,44 @@ const VoteMenu = ({ anchorEl, onClose, currentUserId, proposal }: Props) => {
         {t('votes.actions.agree')}
       </MenuItem>
 
-      <MenuItem
-        onClick={handleClick(VoteTypes.StandAside)}
-        sx={getMenuItemStyles(VoteTypes.StandAside)}
-      >
-        <ThumbDown sx={ICON_STYLES} />
-        {t('votes.actions.standAside')}
-      </MenuItem>
+      {isMajorityVote ? (
+        <MenuItem
+          onClick={handleClick(VoteTypes.Disagreement)}
+          sx={getMenuItemStyles(VoteTypes.Disagreement)}
+        >
+          <ThumbDown sx={ICON_STYLES} />
+          {t('votes.actions.disagree')}
+        </MenuItem>
+      ) : (
+        [
+          <MenuItem
+            key={VoteTypes.StandAside}
+            onClick={handleClick(VoteTypes.StandAside)}
+            sx={getMenuItemStyles(VoteTypes.StandAside)}
+          >
+            <ThumbDown sx={ICON_STYLES} />
+            {t('votes.actions.standAside')}
+          </MenuItem>,
 
-      <MenuItem
-        onClick={handleClick(VoteTypes.Reservations)}
-        sx={getMenuItemStyles(VoteTypes.Reservations)}
-      >
-        <ThumbsUpDown sx={ICON_STYLES} />
-        {t('votes.actions.reservations')}
-      </MenuItem>
+          <MenuItem
+            key={VoteTypes.Reservations}
+            onClick={handleClick(VoteTypes.Reservations)}
+            sx={getMenuItemStyles(VoteTypes.Reservations)}
+          >
+            <ThumbsUpDown sx={ICON_STYLES} />
+            {t('votes.actions.reservations')}
+          </MenuItem>,
 
-      <MenuItem
-        onClick={handleClick(VoteTypes.Block)}
-        sx={getMenuItemStyles(VoteTypes.Block)}
-      >
-        <PanTool sx={ICON_STYLES} />
-        {t('votes.actions.block')}
-      </MenuItem>
+          <MenuItem
+            key={VoteTypes.Block}
+            onClick={handleClick(VoteTypes.Block)}
+            sx={getMenuItemStyles(VoteTypes.Block)}
+          >
+            <PanTool sx={ICON_STYLES} />
+            {t('votes.actions.block')}
+          </MenuItem>,
+        ]
+      )}
     </Menu>
   );
 };
