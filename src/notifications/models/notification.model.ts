@@ -39,9 +39,6 @@ export class Notification {
 
   @ManyToOne(() => User, (otherUser) => otherUser.notifications, {
     onDelete: 'CASCADE',
-
-    // TODO: Determine if nullable is really needed here
-    nullable: true,
   })
   otherUser?: User;
 
@@ -50,7 +47,6 @@ export class Notification {
 
   @ManyToOne(() => Group, (group) => group.notifications, {
     onDelete: 'CASCADE',
-    nullable: true,
   })
   group?: Group;
 
@@ -59,7 +55,6 @@ export class Notification {
 
   @ManyToOne(() => Proposal, (proposal) => proposal.notifications, {
     onDelete: 'CASCADE',
-    nullable: true,
   })
   proposal?: Proposal;
 
@@ -68,7 +63,6 @@ export class Notification {
 
   @ManyToOne(() => Post, (post) => post.notifications, {
     onDelete: 'CASCADE',
-    nullable: true,
   })
   post?: Post;
 
@@ -77,7 +71,6 @@ export class Notification {
 
   @ManyToOne(() => Comment, (comment) => comment.notifications, {
     onDelete: 'CASCADE',
-    nullable: true,
   })
   comment?: Comment;
 
@@ -86,7 +79,6 @@ export class Notification {
 
   @ManyToOne(() => Vote, (vote) => vote.notifications, {
     onDelete: 'CASCADE',
-    nullable: true,
   })
   vote?: Vote;
 
@@ -95,7 +87,6 @@ export class Notification {
 
   @ManyToOne(() => Like, (like) => like.notifications, {
     onDelete: 'CASCADE',
-    nullable: true,
   })
   like?: Like;
 
