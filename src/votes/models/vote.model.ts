@@ -4,9 +4,11 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Notification } from '../../notifications/models/notification.model';
 import { Proposal } from '../../proposals/models/proposal.model';
 import { User } from '../../users/models/user.model';
 
@@ -36,6 +38,9 @@ export class Vote {
 
   @Column()
   userId: number;
+
+  @OneToMany(() => Notification, (notification) => notification.vote)
+  notifications: Notification[];
 
   @CreateDateColumn()
   @Field()

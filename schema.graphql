@@ -24,6 +24,44 @@ type EventAttendee {
   updatedAt: DateTime!
 }
 
+type Vote {
+  id: Int!
+  voteType: String!
+  proposal: Proposal!
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ProposalConfig {
+  id: Int!
+  decisionMakingModel: String!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
+  closingAt: DateTime
+  proposal: Proposal!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Proposal {
+  id: Int!
+  body: String
+  stage: String!
+  action: ProposalAction!
+  votes: [Vote!]!
+  comments: [Comment!]!
+  images: [Image!]!
+  user: User!
+  group: Group
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  voteCount: Int!
+  commentCount: Int!
+  settings: ProposalConfig!
+}
+
 type ProposalActionEventHost {
   id: Int!
   status: String!
@@ -215,53 +253,43 @@ type User {
 
 union FeedItem = Post | Proposal
 
-type Vote {
-  id: Int!
-  voteType: String!
-  proposal: Proposal!
-  user: User!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ProposalConfig {
-  id: Int!
-  decisionMakingModel: String!
-  standAsidesLimit: Int!
-  reservationsLimit: Int!
-  ratificationThreshold: Int!
-  closingAt: DateTime
-  proposal: Proposal!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type Proposal {
+type Post {
   id: Int!
   body: String
-  stage: String!
-  action: ProposalAction!
-  votes: [Vote!]!
-  comments: [Comment!]!
   images: [Image!]!
+  comments: [Comment!]!
+  likes: [Like!]!
   user: User!
   group: Group
+  event: Event
   createdAt: DateTime!
   updatedAt: DateTime!
-  voteCount: Int!
   commentCount: Int!
-  settings: ProposalConfig!
+  likesCount: Int!
+  isLikedByMe: Boolean!
 }
 
-type Notification {
+type Event {
   id: Int!
-  notificationType: String!
-  status: String!
-  createdAt: DateTime!
-  otherUser: User
+  name: String!
+  description: String!
+  location: String
+  online: Boolean!
+  externalLink: String
+  attendees: [EventAttendee!]!
+  images: [Image!]!
   group: Group
-  proposal: Proposal
-  post: Post
+  startsAt: DateTime!
+  endsAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  interestedCount: Int!
+  goingCount: Int!
+  attendingStatus: String
+  host: User!
+  posts(offset: Int, limit: Int): [Post!]!
+  postsCount: Int!
+  coverPhoto: Image!
 }
 
 type GroupConfig {
@@ -300,43 +328,15 @@ type Group {
   settings: GroupConfig!
 }
 
-type Event {
+type Notification {
   id: Int!
-  name: String!
-  description: String!
-  location: String
-  online: Boolean!
-  externalLink: String
-  attendees: [EventAttendee!]!
-  images: [Image!]!
-  group: Group
-  startsAt: DateTime!
-  endsAt: DateTime
+  notificationType: String!
+  status: String!
   createdAt: DateTime!
-  updatedAt: DateTime!
-  interestedCount: Int!
-  goingCount: Int!
-  attendingStatus: String
-  host: User!
-  posts(offset: Int, limit: Int): [Post!]!
-  postsCount: Int!
-  coverPhoto: Image!
-}
-
-type Post {
-  id: Int!
-  body: String
-  images: [Image!]!
-  comments: [Comment!]!
-  likes: [Like!]!
-  user: User!
+  otherUser: User
   group: Group
-  event: Event
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  commentCount: Int!
-  likesCount: Int!
-  isLikedByMe: Boolean!
+  proposal: Proposal
+  post: Post
 }
 
 type Like {
@@ -887,10 +887,12 @@ input UpdateServerConfigInput {
 
 input CreateLikeInput {
   postId: Int
+  commentId: Int
 }
 
 input DeleteLikeInput {
   postId: Int
+  commentId: Int
 }
 
 input CreateVoteInput {

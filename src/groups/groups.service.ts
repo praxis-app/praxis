@@ -381,8 +381,17 @@ export class GroupsService {
     return this.groupMemberRequestRepository.findOneOrFail({ where: { id } });
   }
 
-  async cancelGroupMemberRequest(id: number) {
+  async cancelGroupMemberRequest(id: number, userId: number) {
+    const groupMemberRequest = await this.getGroupMemberRequest({ id });
+    if (!groupMemberRequest) {
+      throw new UserInputError('Group member request not found');
+    }
     await this.deleteGroupMemberRequest({ id });
+    await this.notificationsService.deleteNotifications({
+      notificationType: NotificationType.GroupMemberRequest,
+      groupId: groupMemberRequest.groupId,
+      otherUserId: userId,
+    });
     return true;
   }
 

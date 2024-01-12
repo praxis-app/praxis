@@ -437,6 +437,13 @@ export class UsersService {
     user.followers = user.followers.filter((f) => f.id !== followerId);
     follower.following = follower.following.filter((f) => f.id !== id);
     await this.userRepository.save([user, follower]);
+
+    await this.notificationsService.deleteNotifications({
+      notificationType: NotificationType.Follow,
+      otherUserId: followerId,
+      userId: user.id,
+    });
+
     return true;
   }
 

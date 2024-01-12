@@ -110,6 +110,7 @@ export class CommentsService {
         proposalId: comment.proposalId,
         postId: comment.postId,
         otherUserId: user.id,
+        commentId: comment.id,
         userId,
       });
     }

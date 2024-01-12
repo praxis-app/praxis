@@ -64,8 +64,11 @@ export class GroupMemberRequestsResolver {
   }
 
   @Mutation(() => Boolean)
-  async cancelGroupMemberRequest(@Args('id', { type: () => Int }) id: number) {
-    return this.groupsService.cancelGroupMemberRequest(id);
+  async cancelGroupMemberRequest(
+    @Args('id', { type: () => Int }) id: number,
+    @CurrentUser() user: User,
+  ) {
+    return this.groupsService.cancelGroupMemberRequest(id, user.id);
   }
 
   @Mutation(() => Boolean)

@@ -4,7 +4,6 @@ import { PubSub } from 'graphql-subscriptions';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { paginate } from '../common/common.utils';
 import { Notification } from './models/notification.model';
-import { UpdateNotificationInput } from './models/update-notification.input';
 import { NotificationStatus } from './notifications.constants';
 
 @Injectable()
@@ -15,6 +14,10 @@ export class NotificationsService {
     @InjectRepository(Notification)
     private notificationRepository: Repository<Notification>,
   ) {}
+
+  async getNotification(where?: FindOptionsWhere<Notification>) {
+    return this.notificationRepository.findOneOrFail({ where });
+  }
 
   async getNotifications(userId: number, offset?: number, limit?: number) {
     const notifications = await this.notificationRepository.find({
@@ -32,24 +35,22 @@ export class NotificationsService {
     return this.notificationRepository.count({ where });
   }
 
-  async isOwnNotification(notificationId: number, userId: number) {
+  async isOwnNotification(id: number, userId: number) {
     const count = await this.notificationRepository.count({
-      where: { id: notificationId, userId },
+      where: { id, userId },
     });
     return count > 0;
   }
 
-  async createNotification(notificationData: Partial<Notification>) {
-    const notification =
-      await this.notificationRepository.save(notificationData);
-
-    await this.pubSub.publish(`user-notification-${notificationData.userId}`, {
+  async createNotification(data: Partial<Notification>) {
+    const notification = await this.notificationRepository.save(data);
+    await this.pubSub.publish(`user-notification-${data.userId}`, {
       notification,
     });
   }
 
-  async updateNotification({ id, status }: UpdateNotificationInput) {
-    await this.notificationRepository.update(id, { status });
+  async updateNotification(id: number, data: Partial<Notification>) {
+    await this.notificationRepository.update(id, data);
     const notification = await this.notificationRepository.findOneOrFail({
       where: { id },
     });
@@ -74,8 +75,8 @@ export class NotificationsService {
     return true;
   }
 
-  async clearNotifications(userId: number) {
-    await this.notificationRepository.delete({ userId });
+  async deleteNotifications(where: FindOptionsWhere<Notification>) {
+    await this.notificationRepository.delete(where);
     return true;
   }
 }

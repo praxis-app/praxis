@@ -54,8 +54,11 @@ export class VotesResolver {
 
   @Mutation(() => UpdateVotePayload)
   @UsePipes(UpdateVoteValidationPipe)
-  async updateVote(@Args('voteData') voteData: UpdateVoteInput) {
-    return this.votesService.updateVote(voteData);
+  async updateVote(
+    @Args('voteData') voteData: UpdateVoteInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.votesService.updateVote(voteData, user.id);
   }
 
   @Mutation(() => Boolean)

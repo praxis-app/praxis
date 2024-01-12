@@ -7,10 +7,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Comment } from '../../comments/models/comment.model';
 import { Group } from '../../groups/models/group.model';
+import { Like } from '../../likes/models/like.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
 import { User } from '../../users/models/user.model';
+import { Vote } from '../../votes/models/vote.model';
 import { NotificationStatus } from '../notifications.constants';
 
 @ObjectType()
@@ -36,7 +39,6 @@ export class Notification {
 
   @ManyToOne(() => User, (otherUser) => otherUser.notifications, {
     onDelete: 'CASCADE',
-    nullable: true,
   })
   otherUser?: User;
 
@@ -45,7 +47,6 @@ export class Notification {
 
   @ManyToOne(() => Group, (group) => group.notifications, {
     onDelete: 'CASCADE',
-    nullable: true,
   })
   group?: Group;
 
@@ -54,7 +55,6 @@ export class Notification {
 
   @ManyToOne(() => Proposal, (proposal) => proposal.notifications, {
     onDelete: 'CASCADE',
-    nullable: true,
   })
   proposal?: Proposal;
 
@@ -63,12 +63,35 @@ export class Notification {
 
   @ManyToOne(() => Post, (post) => post.notifications, {
     onDelete: 'CASCADE',
-    nullable: true,
   })
   post?: Post;
 
   @Column({ nullable: true })
   postId?: number;
+
+  @ManyToOne(() => Comment, (comment) => comment.notifications, {
+    onDelete: 'CASCADE',
+  })
+  comment?: Comment;
+
+  @Column({ nullable: true })
+  commentId?: number;
+
+  @ManyToOne(() => Vote, (vote) => vote.notifications, {
+    onDelete: 'CASCADE',
+  })
+  vote?: Vote;
+
+  @Column({ nullable: true })
+  voteId?: number;
+
+  @ManyToOne(() => Like, (like) => like.notifications, {
+    onDelete: 'CASCADE',
+  })
+  like?: Like;
+
+  @Column({ nullable: true })
+  likeId?: number;
 
   @CreateDateColumn()
   @Field()

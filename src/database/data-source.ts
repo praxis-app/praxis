@@ -61,6 +61,7 @@ import { AddAdminModelColumns1703454648429 } from './migrations/1703454648429-Ad
 import { AddServerRolePermissionColumns1703978999070 } from './migrations/1703978999070-AddServerRolePermissionColumns';
 import { AddCascadeDeletesForUser1704254669247 } from './migrations/1704254669247-AddCascadeDeletesForUser';
 import { AddNotificationsTable1704767517224 } from './migrations/1704767517224-AddNotificationsTable';
+import { AddNotificationRelationColumns1705026747368 } from './migrations/1705026747368-AddNotificationRelationColumns';
 
 dotenv.config();
 
@@ -112,6 +113,7 @@ export default new DataSource({
     AddGroupConfigTable1685746618239,
     AddGroupMemberLinkTable1681010227367,
     AddLikeTable1679157357262,
+    AddNotificationRelationColumns1705026747368,
     AddNotificationsTable1704767517224,
     AddProposalActionEventTables1694657129939,
     AddProposalActionGroupConfigTable1700964923516,

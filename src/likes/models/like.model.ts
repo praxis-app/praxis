@@ -4,10 +4,12 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Comment } from '../../comments/models/comment.model';
+import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
 import { User } from '../../users/models/user.model';
 
@@ -42,6 +44,9 @@ export class Like {
 
   @Column()
   userId: number;
+
+  @OneToMany(() => Notification, (notification) => notification.like)
+  notifications: Notification[];
 
   @CreateDateColumn()
   @Field()
