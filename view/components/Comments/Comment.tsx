@@ -220,7 +220,7 @@ const Comment = ({
           )}
         </Flex>
 
-        <Flex paddingLeft="12px" gap="8px" alignSelf="center">
+        <Flex paddingLeft="12px" gap="8px">
           <Typography fontSize="13px" color="text.secondary">
             {formattedDate}
           </Typography>
