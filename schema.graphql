@@ -358,6 +358,7 @@ type Comment {
   proposal: Proposal
   likes: [Like!]!
   likeCount: Int!
+  isLikedByMe: Boolean!
 }
 
 type Image {

@@ -1,4 +1,7 @@
-mutation CreateComment($commentData: CreateCommentInput!) {
+mutation CreateComment(
+  $commentData: CreateCommentInput!
+  $isLoggedIn: Boolean = true
+) {
   createComment(commentData: $commentData) {
     comment {
       ...Comment

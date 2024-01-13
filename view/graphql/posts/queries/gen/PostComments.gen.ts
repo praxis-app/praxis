@@ -26,6 +26,7 @@ export type PostCommentsQuery = {
       __typename?: 'Comment';
       id: number;
       body?: string | null;
+      isLikedByMe?: boolean;
       createdAt: any;
       images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
       user: {

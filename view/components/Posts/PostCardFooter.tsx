@@ -5,6 +5,7 @@ import { Comment, Favorite as LikeIcon, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { VOTE_BADGE_STYLES } from '../../constants/vote.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
 import { usePostCommentsLazyQuery } from '../../graphql/posts/queries/gen/PostComments.gen';
@@ -13,9 +14,8 @@ import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
-import LikeButton from './LikeButton';
+import PostLikeButton from './PostLikeButton';
 import PostModal from './PostModal';
-import { VOTE_BADGE_STYLES } from '../../constants/vote.constants';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -172,7 +172,7 @@ const PostCardFooter = ({
           paddingX: inModal ? 0 : undefined,
         }}
       >
-        <LikeButton postId={id} isLikedByMe={!!isLikedByMe} />
+        <PostLikeButton postId={id} isLikedByMe={!!isLikedByMe} />
 
         <CardFooterButton onClick={handleCommentButtonClick}>
           <Comment sx={ROTATED_ICON_STYLES} />

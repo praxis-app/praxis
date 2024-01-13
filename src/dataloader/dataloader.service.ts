@@ -33,8 +33,9 @@ import {
   GroupRoleWithMemberCount,
   GroupWithMemberCount,
   GroupWithMemberRequestCount,
+  IsCommentLikedByMeKey,
   IsFollowedByMeKey,
-  IsLikedByMeKey,
+  IsPostLikedByMeKey,
   MyGroupsKey,
   PostWithCommentCount,
   PostWithLikeCount,
@@ -109,6 +110,7 @@ export class DataloaderService {
       commentImagesLoader: this._createCommentImagesLoader(),
       commentLikeCountLoader: this._createCommentLikeCountLoader(),
       commentLikesLoader: this._createCommentLikesLoader(),
+      isCommentLikedByMeLoader: this._createIsCommentLikedByMeLoader(),
 
       // Groups
       groupCoverPhotosLoader: this._createGroupCoverPhotosLoader(),
@@ -279,7 +281,7 @@ export class DataloaderService {
   }
 
   private _createIsPostLikedByMeLoader() {
-    return this._getDataLoader<IsLikedByMeKey, boolean, number>(
+    return this._getDataLoader<IsPostLikedByMeKey, boolean, number>(
       async (keys) => {
         const postIds = keys.map(({ postId }) => postId);
         const likes = await this.likeRepository.find({
@@ -410,6 +412,24 @@ export class DataloaderService {
         return comment.likeCount;
       });
     });
+  }
+
+  private _createIsCommentLikedByMeLoader() {
+    return this._getDataLoader<IsCommentLikedByMeKey, boolean, number>(
+      async (keys) => {
+        const commentIds = keys.map(({ commentId }) => commentId);
+        const likes = await this.likeRepository.find({
+          where: {
+            commentId: In(commentIds),
+            userId: keys[0].currentUserId,
+          },
+        });
+        return commentIds.map((commentId) =>
+          likes.some((like: Like) => like.commentId === commentId),
+        );
+      },
+      { cacheKeyFn: (key) => key.commentId },
+    );
   }
 
   // -------------------------------------------------------------------------

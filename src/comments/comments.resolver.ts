@@ -72,6 +72,18 @@ export class CommentsResolver {
     return loaders.commentLikeCountLoader.load(id);
   }
 
+  @ResolveField(() => Boolean)
+  async isLikedByMe(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @CurrentUser() user: User,
+    @Parent() { id }: Comment,
+  ) {
+    return loaders.isCommentLikedByMeLoader.load({
+      currentUserId: user.id,
+      commentId: id,
+    });
+  }
+
   @Mutation(() => CreateCommentPayload)
   async createComment(
     @Args('commentData') commentData: CreateCommentInput,

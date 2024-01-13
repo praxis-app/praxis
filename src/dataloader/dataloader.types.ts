@@ -13,9 +13,14 @@ import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 
-export interface IsLikedByMeKey {
+export interface IsPostLikedByMeKey {
   currentUserId: number;
   postId: number;
+}
+
+export interface IsCommentLikedByMeKey {
+  currentUserId: number;
+  commentId: number;
 }
 
 export interface IsFollowedByMeKey {
@@ -39,7 +44,7 @@ export interface Dataloaders {
 
   // Posts
   postsLoader: DataLoader<number, Post>;
-  isPostLikedByMeLoader: DataLoader<IsLikedByMeKey, boolean>;
+  isPostLikedByMeLoader: DataLoader<IsPostLikedByMeKey, boolean>;
   postCommentCountLoader: DataLoader<number, number>;
   postImagesLoader: DataLoader<number, Image[]>;
   postLikeCountLoader: DataLoader<number, number>;
@@ -49,6 +54,7 @@ export interface Dataloaders {
   commentImagesLoader: DataLoader<number, Image[]>;
   commentLikeCountLoader: DataLoader<number, number>;
   commentLikesLoader: DataLoader<number, Like[]>;
+  isCommentLikedByMeLoader: DataLoader<IsCommentLikedByMeKey, boolean>;
 
   // Groups
   groupCoverPhotosLoader: DataLoader<number, Image>;

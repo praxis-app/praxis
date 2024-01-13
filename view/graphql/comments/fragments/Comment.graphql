@@ -1,6 +1,7 @@
 fragment Comment on Comment {
   id
   body
+  isLikedByMe @include(if: $isLoggedIn)
   createdAt
 
   images {

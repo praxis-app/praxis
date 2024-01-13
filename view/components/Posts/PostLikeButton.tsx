@@ -2,10 +2,10 @@ import { useReactiveVar } from '@apollo/client';
 import { Favorite as LikeIcon } from '@mui/icons-material';
 import { SxProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { TypeNames } from '../../constants/shared.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { useDeleteLikeMutation } from '../../graphql/likes/mutations/gen/DeleteLike.gen';
 import { useLikePostMutation } from '../../graphql/posts/mutations/gen/LikePost.gen';
-import { TypeNames } from '../../constants/shared.constants';
 import { Blurple } from '../../styles/theme';
 import CardFooterButton from '../Shared/CardFooterButton';
 
@@ -14,7 +14,7 @@ interface Props {
   isLikedByMe: boolean;
 }
 
-const LikeButton = ({ postId, isLikedByMe }: Props) => {
+const PostLikeButton = ({ postId, isLikedByMe }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [likePost, { loading: likePostLoading }] = useLikePostMutation();
   const [unlikePost, { loading: unlikePostLoading }] = useDeleteLikeMutation();
@@ -71,4 +71,4 @@ const LikeButton = ({ postId, isLikedByMe }: Props) => {
   );
 };
 
-export default LikeButton;
+export default PostLikeButton;

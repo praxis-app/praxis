@@ -10,6 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type CreateCommentMutationVariables = Types.Exact<{
   commentData: Types.CreateCommentInput;
+  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type CreateCommentMutation = {
@@ -20,9 +21,14 @@ export type CreateCommentMutation = {
       __typename?: 'Comment';
       id: number;
       body?: string | null;
+      isLikedByMe?: boolean;
       createdAt: any;
-      post: { __typename?: 'Post'; id: number; commentCount: number };
-      proposal: { __typename?: 'Proposal'; id: number; commentCount: number };
+      post?: { __typename?: 'Post'; id: number; commentCount: number } | null;
+      proposal?: {
+        __typename?: 'Proposal';
+        id: number;
+        commentCount: number;
+      } | null;
       images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
       user: {
         __typename?: 'User';
@@ -35,7 +41,10 @@ export type CreateCommentMutation = {
 };
 
 export const CreateCommentDocument = gql`
-  mutation CreateComment($commentData: CreateCommentInput!) {
+  mutation CreateComment(
+    $commentData: CreateCommentInput!
+    $isLoggedIn: Boolean = true
+  ) {
     createComment(commentData: $commentData) {
       comment {
         ...Comment
@@ -71,6 +80,7 @@ export type CreateCommentMutationFn = Apollo.MutationFunction<
  * const [createCommentMutation, { data, loading, error }] = useCreateCommentMutation({
  *   variables: {
  *      commentData: // value for 'commentData'
+ *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */

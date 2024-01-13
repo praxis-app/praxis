@@ -1,11 +1,15 @@
+import { useReactiveVar } from '@apollo/client';
 import { Box, ButtonBase, SxProps, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TypeNames } from '../../constants/shared.constants';
-import { toastVar } from '../../graphql/cache';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.gen';
 import { useDeleteCommentMutation } from '../../graphql/comments/mutations/gen/DeleteComment.gen';
+import { useLikeCommentMutation } from '../../graphql/comments/mutations/gen/LikeComment.gen';
+import { useDeleteLikeMutation } from '../../graphql/likes/mutations/gen/DeleteLike.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
+import { Blurple } from '../../styles/theme';
 import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
@@ -31,17 +35,25 @@ const Comment = ({
   postId,
   proposalId,
 }: Props) => {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showItemMenu, setShowItemMenu] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [deleteComment] = useDeleteCommentMutation();
+
+  const [deleteComment, { loading: deleteCommentLoading }] =
+    useDeleteCommentMutation();
+  const [likeComment, { loading: likeCommentLoading }] =
+    useLikeCommentMutation();
+  const [unlikeComment, { loading: unlikeCommentLoading }] =
+    useDeleteLikeMutation();
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
-  const { id, user, body, images, createdAt, __typename } = comment;
-  const isMe = user.id === currentUserId;
+  const { id, user, body, images, createdAt, isLikedByMe, __typename } =
+    comment;
 
+  const isMe = user.id === currentUserId;
   const deleteCommentPrompt = t('prompts.deleteItem', { itemType: 'comment' });
   const userPath = getUserProfilePath(user.name);
   const formattedDate = timeAgo(createdAt);
@@ -51,6 +63,50 @@ const Comment = ({
     marginLeft: 0.5,
     width: 40,
     height: 40,
+  };
+
+  const likeButtonStyles: SxProps = {
+    borderRadius: '2px',
+    color: isLikedByMe ? Blurple.Marina : 'text.secondary',
+    fontFamily: 'Inter Medium',
+    paddingX: '4px',
+  };
+
+  const handleLikeBtnClick = async () => {
+    if (!isLoggedIn) {
+      toastVar({
+        title: t('posts.prompts.loginToLike'),
+        status: 'info',
+      });
+      return;
+    }
+    const variables = { likeData: { commentId: id } };
+    if (isLikedByMe) {
+      unlikeComment({
+        variables,
+        update(cache) {
+          const cacheId = cache.identify({ id, __typename });
+          cache.modify({
+            id: cacheId,
+            fields: {
+              isLikedByMe: () => false,
+              likeCount: (existingCount: number) => existingCount - 1,
+            },
+          });
+        },
+      });
+      return;
+    }
+    await likeComment({
+      variables,
+      update(cache) {
+        const cacheId = cache.identify({ id, __typename });
+        cache.modify({
+          id: cacheId,
+          fields: { isLikedByMe: () => true },
+        });
+      },
+    });
   };
 
   const handleDelete = async () =>
@@ -164,6 +220,7 @@ const Comment = ({
               canUpdate={isMe}
               deleteItem={handleDelete}
               deletePrompt={deleteCommentPrompt}
+              loading={deleteCommentLoading}
               onEditButtonClick={() => setShowEditForm(true)}
               setAnchorEl={setMenuAnchorEl}
             />
@@ -175,12 +232,9 @@ const Comment = ({
             {formattedDate}
           </Typography>
           <ButtonBase
-            sx={{
-              borderRadius: '2px',
-              color: 'text.secondary',
-              fontFamily: 'Inter Medium',
-              paddingX: '4px',
-            }}
+            disabled={likeCommentLoading || unlikeCommentLoading}
+            onClick={handleLikeBtnClick}
+            sx={likeButtonStyles}
           >
             {t('actions.like')}
           </ButtonBase>
