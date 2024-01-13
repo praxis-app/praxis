@@ -138,7 +138,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
     if (
       decisionMakingModel === DecisionMakingModel.MajorityVote &&
       ratificationThreshold &&
-      ratificationThreshold < 51
+      ratificationThreshold <= 50
     ) {
       errors.ratificationThreshold = t(
         'groups.errors.majorityVoteRatificationThreshold',
