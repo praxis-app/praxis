@@ -356,15 +356,15 @@ export class ProposalsService {
 
   async hasMajorityVote(
     votes: Vote[],
-    proposalConfig: ProposalConfig,
+    { ratificationThreshold, closingAt }: ProposalConfig,
     groupMembers: User[],
   ) {
-    const { ratificationThreshold, closingAt } = proposalConfig;
+    if (closingAt && Date.now() < Number(closingAt)) {
+      return false;
+    }
     const { agreements } = sortMajorityVotesByType(votes);
-    const isPastClosingAt = Date.now() >= Number(closingAt);
 
     return (
-      isPastClosingAt &&
       agreements.length >= groupMembers.length * (ratificationThreshold * 0.01)
     );
   }
