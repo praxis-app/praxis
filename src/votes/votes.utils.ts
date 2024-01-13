@@ -32,3 +32,17 @@ export const sortConsensusVotesByType = (votes: Vote[]) =>
       blocks: [],
     },
   );
+
+export const sortMajorityVotesByType = (votes: Vote[]) =>
+  votes.reduce<{ agreements: Vote[]; disagreements: Vote[] }>(
+    (result, vote) => {
+      if (vote.voteType === VoteTypes.Agreement) {
+        result.agreements.push(vote);
+      }
+      if (vote.voteType === VoteTypes.Disagreement) {
+        result.disagreements.push(vote);
+      }
+      return result;
+    },
+    { agreements: [], disagreements: [] },
+  );

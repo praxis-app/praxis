@@ -15,7 +15,7 @@ interface Props {
   showSettingsModal: boolean;
 }
 
-const GroupSettingsModal = ({
+const ProposalSettingsModal = ({
   settings: {
     closingAt,
     decisionMakingModel,
@@ -29,7 +29,8 @@ const GroupSettingsModal = ({
   const { t } = useTranslation();
 
   const isClosed = closingAt && dayjs() > dayjs(closingAt);
-  const isConensus = decisionMakingModel === DecisionMakingModel.Consensus;
+  const showRatificationThreshold =
+    decisionMakingModel !== DecisionMakingModel.Consent;
 
   const closingTimeLabel = t(
     isClosed ? 'proposals.labels.closedAt' : 'proposals.labels.closing',
@@ -47,6 +48,9 @@ const GroupSettingsModal = ({
   const getDecisionMakingModelName = (decisionMakingModel: string) => {
     if (decisionMakingModel === DecisionMakingModel.Consent) {
       return t('groups.labels.consent');
+    }
+    if (decisionMakingModel === DecisionMakingModel.MajorityVote) {
+      return t('groups.labels.majorityVote');
     }
     return t('groups.labels.consensus');
   };
@@ -94,10 +98,10 @@ const GroupSettingsModal = ({
         name={t('groups.settings.names.reservationsLimit')}
         description={t('groups.settings.explanations.reservationsLimit')}
         value={reservationsLimit}
-        divider={isConensus}
+        divider={showRatificationThreshold}
       />
 
-      {isConensus && (
+      {showRatificationThreshold && (
         <>
           <GroupSetting
             name={t('groups.settings.names.ratificationThreshold')}
@@ -113,4 +117,4 @@ const GroupSettingsModal = ({
   );
 };
 
-export default GroupSettingsModal;
+export default ProposalSettingsModal;

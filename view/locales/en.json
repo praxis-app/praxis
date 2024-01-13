@@ -259,7 +259,8 @@
       "couldNotCreate": "Group could not be created",
       "couldNotUpdate": "Group could not be updated",
       "couldNotDelete": "Group could not be deleted",
-      "couldNotUpdateSettings": "Could not update group settings"
+      "couldNotUpdateSettings": "Could not update group settings",
+      "majorityVoteRatificationThreshold": "Ratification threshold must be greater than 50% for majority vote."
     },
     "labels": {
       "consensus": "Consensus",
@@ -271,6 +272,7 @@
       "groupSettings": "Group Settings",
       "joined": "Joined",
       "majority": "Majority Vote",
+      "majorityVote": "Majority Vote",
       "memberRequests_one": "{{count}} Member Request",
       "memberRequests_other": "{{count}} Member Requests",
       "members_one": "{{count}} Member",
@@ -290,6 +292,7 @@
       "confirmLeave": "Are you sure you want to leave the group?",
       "publicGroup": "Public Group: Anyone can view the group page and any content posted by group members.",
       "settingDisabledForConsent": "This setting is disabled for consent decision making.",
+      "settingDisabledForMajority": "This setting is disabled for majority vote.",
       "confirmNoAdmin": "Are you sure you want to set this group to No Admin? All major changes to the group will have to be made via proposals. This includes changes to the group name, cover photo, settings, roles, events, and more.",
       "noAboutText": "No about text"
     },

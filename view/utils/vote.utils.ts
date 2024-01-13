@@ -5,6 +5,9 @@ export const filterVotesByType = (votes: VoteBadgesFragment['votes']) => {
   const agreements = votes.filter(
     (vote) => vote.voteType === VoteTypes.Agreement,
   );
+  const disagreements = votes.filter(
+    (vote) => vote.voteType === VoteTypes.Disagreement,
+  );
   const reservations = votes.filter(
     (vote) => vote.voteType === VoteTypes.Reservations,
   );
@@ -13,5 +16,5 @@ export const filterVotesByType = (votes: VoteBadgesFragment['votes']) => {
   );
   const blocks = votes.filter((vote) => vote.voteType === VoteTypes.Block);
 
-  return { agreements, reservations, standAsides, blocks };
+  return { agreements, disagreements, reservations, standAsides, blocks };
 };

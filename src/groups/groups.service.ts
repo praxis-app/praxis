@@ -302,6 +302,17 @@ export class GroupsService {
         'Voting time limit is required for consent decision making model',
       );
     }
+    if (
+      newConfig.decisionMakingModel === DecisionMakingModel.MajorityVote &&
+      newConfig.ratificationThreshold <= 50
+    ) {
+      throw new Error(
+        'Ratification threshold must be greater than 50% for majority vote',
+      );
+    }
+    if (newConfig.adminModel === GroupAdminModel.Rotating) {
+      throw new Error('Rotating admin model is not supported yet');
+    }
 
     await this.groupConfigRepository.update(group.config.id, groupConfigData);
     return { group };

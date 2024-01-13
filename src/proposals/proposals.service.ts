@@ -19,7 +19,10 @@ import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
-import { sortConsensusVotesByType } from '../votes/votes.utils';
+import {
+  sortConsensusVotesByType,
+  sortMajorityVotesByType,
+} from '../votes/votes.utils';
 import { CreateProposalInput } from './models/create-proposal.input';
 import { ProposalConfig } from './models/proposal-config.model';
 import { Proposal } from './models/proposal.model';
@@ -306,6 +309,9 @@ export class ProposalsService {
     if (config.decisionMakingModel === DecisionMakingModel.Consent) {
       return this.hasConsent(votes, config);
     }
+    if (config.decisionMakingModel === DecisionMakingModel.MajorityVote) {
+      return this.hasMajorityVote(votes, config, group.members);
+    }
     return false;
   }
 
@@ -345,6 +351,21 @@ export class ProposalsService {
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
       blocks.length === 0
+    );
+  }
+
+  async hasMajorityVote(
+    votes: Vote[],
+    { ratificationThreshold, closingAt }: ProposalConfig,
+    groupMembers: User[],
+  ) {
+    if (closingAt && Date.now() < Number(closingAt)) {
+      return false;
+    }
+    const { agreements } = sortMajorityVotesByType(votes);
+
+    return (
+      agreements.length >= groupMembers.length * (ratificationThreshold * 0.01)
     );
   }
 

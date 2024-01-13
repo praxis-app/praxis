@@ -11,6 +11,11 @@ export type VoteBadgesFragment = {
   __typename?: 'Proposal';
   id: number;
   voteCount: number;
+  settings: {
+    __typename?: 'ProposalConfig';
+    id: number;
+    decisionMakingModel: string;
+  };
   votes: Array<{
     __typename?: 'Vote';
     id: number;
@@ -28,6 +33,10 @@ export const VoteBadgesFragmentDoc = gql`
   fragment VoteBadges on Proposal {
     id
     voteCount
+    settings {
+      id
+      decisionMakingModel
+    }
     votes {
       ...Vote
       ...VoteBadge

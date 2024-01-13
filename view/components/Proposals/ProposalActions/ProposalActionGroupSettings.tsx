@@ -142,6 +142,9 @@ const ProposalActionGroupSettings = ({
     if (model === DecisionMakingModel.Consent) {
       return t('groups.labels.consent');
     }
+    if (model === DecisionMakingModel.MajorityVote) {
+      return t('groups.labels.majorityVote');
+    }
     return t('groups.labels.consensus');
   };
 

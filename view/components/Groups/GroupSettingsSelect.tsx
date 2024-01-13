@@ -19,6 +19,7 @@ const SETTING_DESCRIPTION_WIDTH = '60%';
 interface Props {
   children: ReactNode;
   description: string;
+  disabled?: boolean;
   divider?: boolean;
   dividerStyles?: SxProps;
   errorMessageProps?: TypographyProps;
@@ -26,6 +27,7 @@ interface Props {
   fieldName: GroupSettingsFieldName;
   label: string;
   onChange: (event: SelectChangeEvent<any>, child: ReactNode) => void;
+  onClick?: () => void;
   value?: number | string | null;
   warningMessage?: string;
 }
@@ -33,13 +35,15 @@ interface Props {
 const GroupSettingsSelect = ({
   children,
   description,
+  disabled,
   divider = true,
   dividerStyles,
+  errorMessageProps,
   errors,
   fieldName,
   label,
-  errorMessageProps,
   onChange,
+  onClick,
   value,
   warningMessage,
 }: Props) => {
@@ -60,6 +64,7 @@ const GroupSettingsSelect = ({
       <Flex
         justifyContent="space-between"
         flexDirection={isDesktop ? 'row' : 'column'}
+        onClick={onClick}
       >
         <Box
           width={isDesktop ? SETTING_DESCRIPTION_WIDTH : '100%'}
@@ -78,6 +83,7 @@ const GroupSettingsSelect = ({
           error={!!errors?.[fieldName]}
           sx={selectStyles}
           variant={isDesktop ? 'standard' : 'filled'}
+          disabled={disabled}
           disableUnderline
         >
           {children}
@@ -89,7 +95,7 @@ const GroupSettingsSelect = ({
           color="error"
           fontSize={12}
           maxHeight={[undefined, 2.5]}
-          marginTop={isDesktop ? -1 : 1.5}
+          marginTop={isDesktop ? 0.5 : 1.5}
           marginBottom={isDesktop ? 1.5 : 0}
           {...errorMessageProps}
         >

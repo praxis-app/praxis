@@ -35,6 +35,9 @@ const VotesPopover = ({
     if (voteType === VoteTypes.Block) {
       return t('votes.actions.block');
     }
+    if (voteType === VoteTypes.Disagreement) {
+      return t('votes.actions.disagree');
+    }
     return t('votes.actions.agree');
   };
 
@@ -43,8 +46,8 @@ const VotesPopover = ({
       anchorEl={anchorEl}
       onClose={handlePopoverClose}
       open={!!anchorEl}
+      slotProps={{ paper: paperProps }}
       sx={{ pointerEvents: 'none' }}
-      PaperProps={paperProps}
       anchorOrigin={{
         vertical: 'bottom',
         horizontal: 'left',

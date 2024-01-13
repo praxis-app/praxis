@@ -51,6 +51,9 @@ const Vote = ({ vote: { user, voteType } }: Props) => {
     if (voteType === VoteTypes.Block) {
       return <PanTool {...iconProps} />;
     }
+    if (voteType === VoteTypes.Disagreement) {
+      return <ThumbDown {...iconProps} />;
+    }
     return <ThumbUp {...iconProps} />;
   };
 

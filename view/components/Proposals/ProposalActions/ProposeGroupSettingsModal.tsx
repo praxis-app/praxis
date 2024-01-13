@@ -13,15 +13,16 @@ import {
   ProposalActionType,
   VotingTimeLimit,
 } from '../../../constants/proposal.constants';
+import { toastVar } from '../../../graphql/cache';
 import { ProposalActionGroupConfigInput } from '../../../graphql/gen';
 import { useGroupSettingsByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupSettingsByGroupId.gen';
+import { useIsDesktop } from '../../../hooks/shared.hooks';
 import GroupSettingsSelect from '../../Groups/GroupSettingsSelect';
 import Flex from '../../Shared/Flex';
 import Modal from '../../Shared/Modal';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import ProgressBar from '../../Shared/ProgressBar';
 import SliderInput from '../../Shared/SliderInput';
-import { useIsDesktop } from '../../../hooks/shared.hooks';
 
 const SETTING_DESCRIPTION_WIDTH = '60%';
 
@@ -101,17 +102,33 @@ const ProposeGroupSettingsModal = ({
       setFieldValue(fieldName, 100);
       return;
     }
-    if (value % 5 !== 0) {
-      setFieldValue(fieldName, Math.round(value / 5) * 5);
-      return;
-    }
     if (!Number.isInteger(value)) {
       setFieldValue(fieldName, Math.round(value));
     }
   };
 
+  const handleSliderInputClick = (decisionMakingModel?: string | null) => {
+    if (decisionMakingModel === DecisionMakingModel.Consent) {
+      toastVar({
+        status: 'info',
+        title: t('groups.prompts.settingDisabledForConsent'),
+      });
+    }
+  };
+
+  const handleConsensusLimitClick = (decisionMakingModel?: string | null) => {
+    if (decisionMakingModel === DecisionMakingModel.MajorityVote) {
+      toastVar({
+        status: 'info',
+        title: t('groups.prompts.settingDisabledForMajority'),
+      });
+    }
+  };
+
   const validateSettings = ({
+    adminModel,
     decisionMakingModel,
+    ratificationThreshold,
     votingTimeLimit,
   }: ProposalActionGroupConfigInput) => {
     const errors: FormikErrors<ProposalActionGroupConfigInput> = {};
@@ -122,6 +139,18 @@ const ProposeGroupSettingsModal = ({
       errors.votingTimeLimit = t(
         'groups.errors.consentVotingTimeLimitRequired',
       );
+    }
+    if (
+      decisionMakingModel === DecisionMakingModel.MajorityVote &&
+      ratificationThreshold &&
+      ratificationThreshold <= 50
+    ) {
+      errors.ratificationThreshold = t(
+        'groups.errors.majorityVoteRatificationThreshold',
+      );
+    }
+    if (adminModel === GroupAdminModel.Rotating) {
+      errors.adminModel = t('prompts.inDev');
     }
     return errors;
   };
@@ -166,6 +195,9 @@ const ProposeGroupSettingsModal = ({
                   <MenuItem value={GroupAdminModel.NoAdmin}>
                     {t('groups.labels.noAdmin')}
                   </MenuItem>
+                  <MenuItem value={GroupAdminModel.Rotating}>
+                    {t('groups.labels.rotatingAdmin')}
+                  </MenuItem>
                 </GroupSettingsSelect>
 
                 <GroupSettingsSelect
@@ -183,16 +215,26 @@ const ProposeGroupSettingsModal = ({
                   <MenuItem value={DecisionMakingModel.Consent}>
                     {t('groups.labels.consent')}
                   </MenuItem>
+                  <MenuItem value={DecisionMakingModel.MajorityVote}>
+                    {t('groups.labels.majority')}
+                  </MenuItem>
                 </GroupSettingsSelect>
 
                 <GroupSettingsSelect
                   fieldName={GroupSettingsFieldName.StandAsidesLimit}
                   label={t('groups.settings.names.standAsidesLimit')}
+                  disabled={
+                    values.decisionMakingModel ===
+                    DecisionMakingModel.MajorityVote
+                  }
                   description={t(
                     'groups.settings.descriptions.standAsidesLimit',
                   )}
                   value={values.standAsidesLimit || 0}
                   onChange={handleChange}
+                  onClick={() =>
+                    handleConsensusLimitClick(values.decisionMakingModel)
+                  }
                 >
                   {Array(11)
                     .fill(0)
@@ -214,11 +256,18 @@ const ProposeGroupSettingsModal = ({
                 <GroupSettingsSelect
                   fieldName={GroupSettingsFieldName.ReservationsLimit}
                   label={t('groups.settings.names.reservationsLimit')}
+                  disabled={
+                    values.decisionMakingModel ===
+                    DecisionMakingModel.MajorityVote
+                  }
                   description={t(
                     'groups.settings.descriptions.reservationsLimit',
                   )}
                   value={values.reservationsLimit || 0}
                   onChange={handleChange}
+                  onClick={() =>
+                    handleConsensusLimitClick(values.decisionMakingModel)
+                  }
                 >
                   {Array(11)
                     .fill(0)
@@ -255,21 +304,38 @@ const ProposeGroupSettingsModal = ({
                     >
                       {t('groups.settings.descriptions.ratificationThreshold')}
                     </Typography>
+
+                    {!!errors.ratificationThreshold && (
+                      <Typography
+                        color="error"
+                        fontSize={12}
+                        marginTop={isDesktop ? 1 : 0}
+                        marginBottom={isDesktop ? 1.5 : 0.25}
+                      >
+                        {errors.ratificationThreshold}
+                      </Typography>
+                    )}
                   </Box>
 
                   <SliderInput
-                    name={GroupSettingsFieldName.RatificationThreshold}
-                    onInputChange={handleChange}
-                    onSliderChange={handleChange}
-                    value={values.ratificationThreshold || 0}
-                    width={isDesktop ? 200 : '100%'}
                     marks={!isDesktop}
+                    disabled={
+                      values.decisionMakingModel === DecisionMakingModel.Consent
+                    }
+                    name={GroupSettingsFieldName.RatificationThreshold}
+                    onClick={() =>
+                      handleSliderInputClick(values.decisionMakingModel)
+                    }
                     onInputBlur={() =>
                       handleSliderInputBlur(
                         setFieldValue,
                         values.ratificationThreshold,
                       )
                     }
+                    onInputChange={handleChange}
+                    onSliderChange={handleChange}
+                    value={values.ratificationThreshold || 0}
+                    width={isDesktop ? 200 : '100%'}
                     showPercentSign
                   />
                 </Flex>
