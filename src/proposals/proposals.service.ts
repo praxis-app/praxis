@@ -310,7 +310,7 @@ export class ProposalsService {
       return this.hasConsent(votes, config);
     }
     if (config.decisionMakingModel === DecisionMakingModel.MajorityVote) {
-      return this.hasMajorityVote(votes, config);
+      return this.hasMajorityVote(votes, config, group.members);
     }
     return false;
   }
@@ -354,15 +354,18 @@ export class ProposalsService {
     );
   }
 
-  async hasMajorityVote(votes: Vote[], proposalConfig: ProposalConfig) {
+  async hasMajorityVote(
+    votes: Vote[],
+    proposalConfig: ProposalConfig,
+    groupMembers: User[],
+  ) {
     const { ratificationThreshold, closingAt } = proposalConfig;
-    const { agreements, disagreements } = sortMajorityVotesByType(votes);
-    const totalVotesCount = agreements.length + disagreements.length;
+    const { agreements } = sortMajorityVotesByType(votes);
     const isPastClosingAt = Date.now() >= Number(closingAt);
 
     return (
       isPastClosingAt &&
-      agreements.length >= totalVotesCount * (ratificationThreshold * 0.01)
+      agreements.length >= groupMembers.length * (ratificationThreshold * 0.01)
     );
   }
 
