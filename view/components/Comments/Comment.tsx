@@ -220,8 +220,8 @@ const Comment = ({
           )}
         </Flex>
 
-        <Flex paddingLeft="12px" gap="8px">
-          <Typography fontSize="13px" color="text.secondary">
+        <Flex paddingLeft="12px" paddingTop="4px" gap="8px">
+          <Typography fontSize="13px" color="text.secondary" lineHeight={1}>
             {formattedDate}
           </Typography>
           <ButtonBase
@@ -231,6 +231,7 @@ const Comment = ({
               borderRadius: '2px',
               color: isLikedByMe ? Blurple.Marina : 'text.secondary',
               fontFamily: 'Inter Medium',
+              lineHeight: 1,
               paddingX: '4px',
             }}
           >
