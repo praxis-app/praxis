@@ -322,7 +322,9 @@ export class UsersService {
     if (!userWithGroups) {
       return [];
     }
-    return userWithGroups.groups;
+    return userWithGroups.groups.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
   }
 
   async getFollowers(id: number, offset?: number, limit?: number) {
