@@ -7,6 +7,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as DataLoader from 'dataloader';
 import { In, Repository } from 'typeorm';
+import { Comment } from '../comments/models/comment.model';
 import { EventAttendeeStatus } from '../events/models/event-attendee.model';
 import { Event } from '../events/models/event.model';
 import { initGroupRolePermissions } from '../groups/group-roles/group-role.utils';
@@ -25,6 +26,7 @@ import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
 import { Vote } from '../votes/models/vote.model';
 import {
+  CommentWithLikeCount,
   Dataloaders,
   EventWithGoingCount,
   EventWithInterestedCount,
@@ -79,6 +81,9 @@ export class DataloaderService {
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
+    @InjectRepository(Comment)
+    private commentRepository: Repository<Comment>,
+
     private usersService: UsersService,
   ) {}
 
@@ -102,6 +107,8 @@ export class DataloaderService {
 
       // Comments
       commentImagesLoader: this._createCommentImagesLoader(),
+      commentLikeCountLoader: this._createCommentLikeCountLoader(),
+      commentLikesLoader: this._createCommentLikesLoader(),
 
       // Groups
       groupCoverPhotosLoader: this._createGroupCoverPhotosLoader(),
@@ -369,6 +376,39 @@ export class DataloaderService {
           images.filter((image: Image) => image.commentId === id) ||
           new Error(`Could not load images for comment: ${id}`),
       );
+    });
+  }
+
+  private _createCommentLikesLoader() {
+    return this._getDataLoader<number, Like[]>(async (commentIds) => {
+      const likes = await this.likeRepository.find({
+        where: { commentId: In(commentIds) },
+      });
+      return commentIds.map(
+        (id) =>
+          likes.filter((like: Like) => like.commentId === id) ||
+          new Error(`Could not load likes for comment: ${id}`),
+      );
+    });
+  }
+
+  private _createCommentLikeCountLoader() {
+    return this._getDataLoader<number, number>(async (commentIds) => {
+      const comments = (await this.commentRepository
+        .createQueryBuilder('comment')
+        .leftJoinAndSelect('comment.likes', 'like')
+        .loadRelationCountAndMap('comment.likeCount', 'comment.likes')
+        .select(['comment.id'])
+        .whereInIds(commentIds)
+        .getMany()) as CommentWithLikeCount[];
+
+      return commentIds.map((id) => {
+        const comment = comments.find((comment: Comment) => comment.id === id);
+        if (!comment) {
+          return new Error(`Could not load like count for comment: ${id}`);
+        }
+        return comment.likeCount;
+      });
     });
   }
 

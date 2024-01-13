@@ -30,14 +30,12 @@ export class Comment {
   @OneToMany(() => Image, (image) => image.post)
   images: Image[];
 
-  @Field(() => [Like])
   @OneToMany(() => Like, (like) => like.comment)
   likes: Like[];
 
   @OneToMany(() => Notification, (notification) => notification.comment)
   notifications: Notification[];
 
-  @Field(() => Post, { nullable: true })
   @ManyToOne(() => Post, (post) => post.comments, {
     onDelete: 'CASCADE',
   })
@@ -46,7 +44,6 @@ export class Comment {
   @Column({ nullable: true })
   postId?: number;
 
-  @Field(() => Proposal, { nullable: true })
   @ManyToOne(() => Proposal, (proposal) => proposal.comments, {
     onDelete: 'CASCADE',
   })
@@ -55,7 +52,6 @@ export class Comment {
   @Column({ nullable: true })
   proposalId?: number;
 
-  @Field(() => User)
   @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   user: User;
 
@@ -67,6 +63,5 @@ export class Comment {
   createdAt: Date;
 
   @UpdateDateColumn()
-  @Field()
   updatedAt: Date;
 }

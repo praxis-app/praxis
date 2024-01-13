@@ -352,12 +352,12 @@ type Comment {
   id: Int!
   body: String
   images: [Image!]!
-  likes: [Like!]!
-  post: Post
-  proposal: Proposal
-  user: User!
   createdAt: DateTime!
-  updatedAt: DateTime!
+  user: User!
+  post: Post!
+  proposal: Proposal!
+  likes: [Like!]!
+  likeCount: Int!
 }
 
 type Image {

@@ -1,4 +1,5 @@
 import DataLoader from 'dataloader';
+import { Comment } from '../comments/models/comment.model';
 import { Event } from '../events/models/event.model';
 import { GroupPermissions } from '../groups/group-roles/models/group-permissions.type';
 import { GroupRole } from '../groups/group-roles/models/group-role.model';
@@ -46,6 +47,8 @@ export interface Dataloaders {
 
   // Comments
   commentImagesLoader: DataLoader<number, Image[]>;
+  commentLikeCountLoader: DataLoader<number, number>;
+  commentLikesLoader: DataLoader<number, Like[]>;
 
   // Groups
   groupCoverPhotosLoader: DataLoader<number, Image>;
@@ -82,8 +85,9 @@ export type UserWithFollowingCount = User & { followingCount: number };
 export type ProposalWithVoteCount = Proposal & { voteCount: number };
 export type ProposalWithCommentCount = Proposal & { commentCount: number };
 
-export type PostWithLikeCount = Post & { likeCount: number };
+export type CommentWithLikeCount = Comment & { likeCount: number };
 export type PostWithCommentCount = Post & { commentCount: number };
+export type PostWithLikeCount = Post & { likeCount: number };
 
 export type EventWithInterestedCount = Event & { interestedCount: number };
 export type EventWithGoingCount = Event & { goingCount: number };
