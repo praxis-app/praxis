@@ -124,36 +124,51 @@ const Comment = ({
       />
 
       <Box maxWidth={isDesktop ? 'calc(100% - 90px)' : undefined}>
-        <Box
-          bgcolor="background.secondary"
-          borderRadius={4}
-          paddingX={1.5}
-          paddingY={0.5}
-          minWidth="85px"
-        >
-          <Link href={userPath} sx={{ fontFamily: 'Inter Medium' }}>
-            {user.name}
-          </Link>
+        <Flex>
+          <Box
+            bgcolor="background.secondary"
+            borderRadius={4}
+            paddingX={1.5}
+            paddingY={0.5}
+            minWidth="85px"
+          >
+            <Link href={userPath} sx={{ fontFamily: 'Inter Medium' }}>
+              {user.name}
+            </Link>
 
-          {body && (
-            <Typography
-              dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
-              whiteSpace="pre-wrap"
-              lineHeight={1.2}
-              paddingY={0.4}
+            {body && (
+              <Typography
+                dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
+                whiteSpace="pre-wrap"
+                lineHeight={1.2}
+                paddingY={0.4}
+              />
+            )}
+
+            {!!images.length && (
+              <AttachedImageList
+                images={images}
+                width={250}
+                paddingX={2}
+                paddingBottom={1}
+                paddingTop={1.5}
+              />
+            )}
+          </Box>
+
+          {showItemMenu && (
+            <ItemMenu
+              anchorEl={menuAnchorEl}
+              buttonStyles={itemMenuStyles}
+              canDelete={isMe || canManageComments}
+              canUpdate={isMe}
+              deleteItem={handleDelete}
+              deletePrompt={deleteCommentPrompt}
+              onEditButtonClick={() => setShowEditForm(true)}
+              setAnchorEl={setMenuAnchorEl}
             />
           )}
-
-          {!!images.length && (
-            <AttachedImageList
-              images={images}
-              width={250}
-              paddingX={2}
-              paddingBottom={1}
-              paddingTop={1.5}
-            />
-          )}
-        </Box>
+        </Flex>
 
         <Flex paddingLeft="12px" gap="8px" alignSelf="center">
           <Typography fontSize="13px" color="text.secondary">
@@ -162,28 +177,15 @@ const Comment = ({
           <ButtonBase
             sx={{
               borderRadius: '2px',
-              paddingX: '4px',
-              fontFamily: 'Inter Medium',
               color: 'text.secondary',
+              fontFamily: 'Inter Medium',
+              paddingX: '4px',
             }}
           >
             {t('actions.like')}
           </ButtonBase>
         </Flex>
       </Box>
-
-      {showItemMenu && (
-        <ItemMenu
-          anchorEl={menuAnchorEl}
-          buttonStyles={itemMenuStyles}
-          canDelete={isMe || canManageComments}
-          canUpdate={isMe}
-          deleteItem={handleDelete}
-          deletePrompt={deleteCommentPrompt}
-          onEditButtonClick={() => setShowEditForm(true)}
-          setAnchorEl={setMenuAnchorEl}
-        />
-      )}
     </Flex>
   );
 };
