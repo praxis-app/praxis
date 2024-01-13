@@ -301,7 +301,9 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               </Box>
 
               <SliderInput
-                disabled={values.decisionMakingModel === 'consent'}
+                disabled={
+                  values.decisionMakingModel === DecisionMakingModel.Consent
+                }
                 name={GroupSettingsFieldName.RatificationThreshold}
                 onInputChange={handleChange}
                 onSliderChange={handleChange}
