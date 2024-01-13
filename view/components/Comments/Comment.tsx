@@ -65,13 +65,6 @@ const Comment = ({
     height: 40,
   };
 
-  const likeButtonStyles: SxProps = {
-    borderRadius: '2px',
-    color: isLikedByMe ? Blurple.Marina : 'text.secondary',
-    fontFamily: 'Inter Medium',
-    paddingX: '4px',
-  };
-
   const handleLikeBtnClick = async () => {
     if (!isLoggedIn) {
       toastVar({
@@ -234,7 +227,12 @@ const Comment = ({
           <ButtonBase
             disabled={likeCommentLoading || unlikeCommentLoading}
             onClick={handleLikeBtnClick}
-            sx={likeButtonStyles}
+            sx={{
+              borderRadius: '2px',
+              color: isLikedByMe ? Blurple.Marina : 'text.secondary',
+              fontFamily: 'Inter Medium',
+              paddingX: '4px',
+            }}
           >
             {t('actions.like')}
           </ButtonBase>
