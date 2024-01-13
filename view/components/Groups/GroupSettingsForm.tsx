@@ -111,6 +111,15 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
     }
   };
 
+  const handleConsensusLimitClick = (decisionMakingModel?: string | null) => {
+    if (decisionMakingModel === DecisionMakingModel.MajorityVote) {
+      toastVar({
+        status: 'info',
+        title: t('groups.prompts.settingDisabledForMajority'),
+      });
+    }
+  };
+
   const validateSettings = ({
     adminModel,
     decisionMakingModel,
@@ -201,11 +210,17 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
             </GroupSettingsSelect>
 
             <GroupSettingsSelect
+              description={t('groups.settings.descriptions.standAsidesLimit')}
+              disabled={
+                values.decisionMakingModel === DecisionMakingModel.MajorityVote
+              }
               fieldName={GroupSettingsFieldName.StandAsidesLimit}
               label={t('groups.settings.names.standAsidesLimit')}
-              description={t('groups.settings.descriptions.standAsidesLimit')}
-              value={values.standAsidesLimit}
               onChange={handleChange}
+              onClick={() =>
+                handleConsensusLimitClick(values.decisionMakingModel)
+              }
+              value={values.standAsidesLimit}
             >
               {Array(11)
                 .fill(0)
@@ -225,11 +240,17 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
             </GroupSettingsSelect>
 
             <GroupSettingsSelect
+              description={t('groups.settings.descriptions.reservationsLimit')}
+              disabled={
+                values.decisionMakingModel === DecisionMakingModel.MajorityVote
+              }
               fieldName={GroupSettingsFieldName.ReservationsLimit}
               label={t('groups.settings.names.reservationsLimit')}
-              description={t('groups.settings.descriptions.reservationsLimit')}
-              value={values.reservationsLimit}
+              onClick={() =>
+                handleConsensusLimitClick(values.decisionMakingModel)
+              }
               onChange={handleChange}
+              value={values.reservationsLimit}
             >
               {Array(11)
                 .fill(0)
