@@ -29,8 +29,8 @@ const ProposalSettingsModal = ({
   const { t } = useTranslation();
 
   const isClosed = closingAt && dayjs() > dayjs(closingAt);
-  const isMajorityVote =
-    decisionMakingModel === DecisionMakingModel.MajorityVote;
+  const showRatificationThreshold =
+    decisionMakingModel !== DecisionMakingModel.Consent;
 
   const closingTimeLabel = t(
     isClosed ? 'proposals.labels.closedAt' : 'proposals.labels.closing',
@@ -98,10 +98,10 @@ const ProposalSettingsModal = ({
         name={t('groups.settings.names.reservationsLimit')}
         description={t('groups.settings.explanations.reservationsLimit')}
         value={reservationsLimit}
-        divider={!isMajorityVote}
+        divider={showRatificationThreshold}
       />
 
-      {!isMajorityVote && (
+      {showRatificationThreshold && (
         <>
           <GroupSetting
             name={t('groups.settings.names.ratificationThreshold')}
