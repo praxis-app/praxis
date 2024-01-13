@@ -272,6 +272,7 @@
       "groupSettings": "Group Settings",
       "joined": "Joined",
       "majority": "Majority Vote",
+      "majorityVote": "Majority Vote",
       "memberRequests_one": "{{count}} Member Request",
       "memberRequests_other": "{{count}} Member Requests",
       "members_one": "{{count}} Member",
