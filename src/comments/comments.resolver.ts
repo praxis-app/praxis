@@ -38,12 +38,12 @@ export class CommentsResolver {
     return loaders.usersLoader.load(userId);
   }
 
-  @ResolveField(() => Post)
+  @ResolveField(() => Post, { nullable: true })
   async post(@Parent() { postId }: Comment) {
     return postId ? this.postsService.getPost(postId) : null;
   }
 
-  @ResolveField(() => Proposal)
+  @ResolveField(() => Proposal, { nullable: true })
   async proposal(@Parent() { proposalId }: Comment) {
     return proposalId ? this.proposalsService.getProposal(proposalId) : null;
   }

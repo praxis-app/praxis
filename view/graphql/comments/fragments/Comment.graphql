@@ -1,6 +1,8 @@
 fragment Comment on Comment {
   id
   body
+  createdAt
+
   images {
     ...AttachedImage
   }

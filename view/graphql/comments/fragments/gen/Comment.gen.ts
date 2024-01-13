@@ -11,6 +11,7 @@ export type CommentFragment = {
   __typename?: 'Comment';
   id: number;
   body?: string | null;
+  createdAt: any;
   images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
   user: {
     __typename?: 'User';
@@ -24,6 +25,7 @@ export const CommentFragmentDoc = gql`
   fragment Comment on Comment {
     id
     body
+    createdAt
     images {
       ...AttachedImage
     }

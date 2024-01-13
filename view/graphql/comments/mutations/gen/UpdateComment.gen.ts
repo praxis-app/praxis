@@ -20,6 +20,7 @@ export type UpdateCommentMutation = {
       __typename?: 'Comment';
       id: number;
       body?: string | null;
+      createdAt: any;
       images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
       user: {
         __typename?: 'User';

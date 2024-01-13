@@ -55,10 +55,10 @@ export type Comment = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   images: Array<Image>;
+  likeCount: Scalars['Int']['output'];
   likes: Array<Like>;
-  post?: Maybe<Post>;
-  proposal?: Maybe<Proposal>;
-  updatedAt: Scalars['DateTime']['output'];
+  post: Post;
+  proposal: Proposal;
   user: User;
 };
 

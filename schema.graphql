@@ -354,8 +354,8 @@ type Comment {
   images: [Image!]!
   createdAt: DateTime!
   user: User!
-  post: Post!
-  proposal: Proposal!
+  post: Post
+  proposal: Proposal
   likes: [Like!]!
   likeCount: Int!
 }

@@ -1,4 +1,4 @@
-import { Box, SxProps, Typography } from '@mui/material';
+import { Box, ButtonBase, SxProps, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TypeNames } from '../../constants/shared.constants';
@@ -7,6 +7,7 @@ import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.ge
 import { useDeleteCommentMutation } from '../../graphql/comments/mutations/gen/DeleteComment.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { urlifyText } from '../../utils/shared.utils';
+import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import AttachedImageList from '../Images/AttachedImageList';
 import Flex from '../Shared/Flex';
@@ -38,10 +39,12 @@ const Comment = ({
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
-  const { id, user, body, images, __typename } = comment;
+  const { id, user, body, images, createdAt, __typename } = comment;
   const isMe = user.id === currentUserId;
-  const userPath = getUserProfilePath(user.name);
+
   const deleteCommentPrompt = t('prompts.deleteItem', { itemType: 'comment' });
+  const userPath = getUserProfilePath(user.name);
+  const formattedDate = timeAgo(createdAt);
 
   const itemMenuStyles: SxProps = {
     alignSelf: 'center',
@@ -120,35 +123,53 @@ const Comment = ({
         withLink
       />
 
-      <Box
-        bgcolor="background.secondary"
-        borderRadius={4}
-        maxWidth={isDesktop ? 'calc(100% - 90px)' : undefined}
-        paddingX={1.5}
-        paddingY={0.5}
-      >
-        <Link href={userPath} sx={{ fontFamily: 'Inter Medium' }}>
-          {user.name}
-        </Link>
+      <Box maxWidth={isDesktop ? 'calc(100% - 90px)' : undefined}>
+        <Box
+          bgcolor="background.secondary"
+          borderRadius={4}
+          paddingX={1.5}
+          paddingY={0.5}
+          minWidth="85px"
+        >
+          <Link href={userPath} sx={{ fontFamily: 'Inter Medium' }}>
+            {user.name}
+          </Link>
 
-        {body && (
-          <Typography
-            dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
-            whiteSpace="pre-wrap"
-            lineHeight={1.2}
-            paddingY={0.4}
-          />
-        )}
+          {body && (
+            <Typography
+              dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
+              whiteSpace="pre-wrap"
+              lineHeight={1.2}
+              paddingY={0.4}
+            />
+          )}
 
-        {!!images.length && (
-          <AttachedImageList
-            images={images}
-            width={250}
-            paddingX={2}
-            paddingBottom={1}
-            paddingTop={1.5}
-          />
-        )}
+          {!!images.length && (
+            <AttachedImageList
+              images={images}
+              width={250}
+              paddingX={2}
+              paddingBottom={1}
+              paddingTop={1.5}
+            />
+          )}
+        </Box>
+
+        <Flex paddingLeft="12px" gap="8px" alignSelf="center">
+          <Typography fontSize="13px" color="text.secondary">
+            {formattedDate}
+          </Typography>
+          <ButtonBase
+            sx={{
+              borderRadius: '2px',
+              paddingX: '4px',
+              fontFamily: 'Inter Medium',
+              color: 'text.secondary',
+            }}
+          >
+            {t('actions.like')}
+          </ButtonBase>
+        </Flex>
       </Box>
 
       {showItemMenu && (

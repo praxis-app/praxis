@@ -20,12 +20,9 @@ export type CreateCommentMutation = {
       __typename?: 'Comment';
       id: number;
       body?: string | null;
-      post?: { __typename?: 'Post'; id: number; commentCount: number } | null;
-      proposal?: {
-        __typename?: 'Proposal';
-        id: number;
-        commentCount: number;
-      } | null;
+      createdAt: any;
+      post: { __typename?: 'Post'; id: number; commentCount: number };
+      proposal: { __typename?: 'Proposal'; id: number; commentCount: number };
       images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
       user: {
         __typename?: 'User';
