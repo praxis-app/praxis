@@ -103,7 +103,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   };
 
   const handleSliderInputClick = (decisionMakingModel?: string | null) => {
-    if (decisionMakingModel !== DecisionMakingModel.Consensus) {
+    if (decisionMakingModel === DecisionMakingModel.Consent) {
       toastVar({
         status: 'info',
         title: t('groups.prompts.settingDisabledForConsent'),
@@ -112,9 +112,10 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   };
 
   const validateSettings = ({
-    decisionMakingModel,
-    votingTimeLimit,
     adminModel,
+    decisionMakingModel,
+    ratificationThreshold,
+    votingTimeLimit,
   }: FormValues) => {
     const errors: FormikErrors<FormValues> = {};
     if (
@@ -123,6 +124,15 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
     ) {
       errors.votingTimeLimit = t(
         'groups.errors.consentVotingTimeLimitRequired',
+      );
+    }
+    if (
+      decisionMakingModel === DecisionMakingModel.MajorityVote &&
+      ratificationThreshold &&
+      ratificationThreshold < 51
+    ) {
+      errors.ratificationThreshold = t(
+        'groups.errors.majorityVoteRatificationThreshold',
       );
     }
     if (adminModel === GroupAdminModel.Rotating) {
@@ -256,10 +266,21 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
                 >
                   {t('groups.settings.descriptions.ratificationThreshold')}
                 </Typography>
+
+                {!!errors.ratificationThreshold && (
+                  <Typography
+                    color="error"
+                    fontSize={12}
+                    marginTop={isDesktop ? 1 : 0}
+                    marginBottom={isDesktop ? 1.5 : 0.25}
+                  >
+                    {errors.ratificationThreshold}
+                  </Typography>
+                )}
               </Box>
 
               <SliderInput
-                disabled={values.decisionMakingModel !== 'consensus'}
+                disabled={values.decisionMakingModel === 'consent'}
                 name={GroupSettingsFieldName.RatificationThreshold}
                 onInputChange={handleChange}
                 onSliderChange={handleChange}

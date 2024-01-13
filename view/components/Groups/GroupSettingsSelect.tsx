@@ -89,7 +89,7 @@ const GroupSettingsSelect = ({
           color="error"
           fontSize={12}
           maxHeight={[undefined, 2.5]}
-          marginTop={isDesktop ? -1 : 1.5}
+          marginTop={isDesktop ? 0.5 : 1.5}
           marginBottom={isDesktop ? 1.5 : 0}
           {...errorMessageProps}
         >
