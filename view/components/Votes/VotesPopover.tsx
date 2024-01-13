@@ -46,9 +46,8 @@ const VotesPopover = ({
       anchorEl={anchorEl}
       onClose={handlePopoverClose}
       open={!!anchorEl}
+      slotProps={{ paper: paperProps }}
       sx={{ pointerEvents: 'none' }}
-      // TODO: Use slotProps.paper instead
-      PaperProps={paperProps}
       anchorOrigin={{
         vertical: 'bottom',
         horizontal: 'left',
