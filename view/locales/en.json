@@ -610,7 +610,6 @@
     "minutesFull_one": "{{count}} minute",
     "minutesFull_other": "{{count}} minutes",
     "never": "Never",
-    "now": "now",
     "weeks_one": "{{count}} week",
     "weeks_other": "{{count}} weeks",
     "hoursFull_one": "{{count}} hour",

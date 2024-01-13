@@ -10,7 +10,7 @@ export const formatDateTime = (timeStamp: string): string =>
 
 export const timeMessage = (timeStamp: string, timeDifference: number) => {
   if (timeDifference < Time.Minute) {
-    return t('time.now');
+    return t('time.minutes', { minutes: 1 });
   }
   if (timeDifference < Time.Hour) {
     return t('time.minutes', {
