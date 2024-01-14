@@ -283,7 +283,7 @@ const Comment = ({
             onClick={handleLikeBtnClick}
             sx={{
               borderRadius: '2px',
-              color: isLikedByMe ? Blurple.Marina : 'text.secondary',
+              color: isLikedByMe ? Blurple.SavoryBlue : 'text.secondary',
               fontFamily: 'Inter Medium',
               lineHeight: 1,
               paddingX: '4px',

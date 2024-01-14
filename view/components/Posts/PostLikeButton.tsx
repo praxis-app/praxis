@@ -61,7 +61,7 @@ const PostLikeButton = ({ postId, isLikedByMe }: Props) => {
 
   return (
     <CardFooterButton
-      sx={isLikedByMe ? { color: Blurple.Marina } : {}}
+      sx={isLikedByMe ? { color: Blurple.SavoryBlue } : {}}
       disabled={isLoading}
       onClick={handleLikeButtonClick}
     >
