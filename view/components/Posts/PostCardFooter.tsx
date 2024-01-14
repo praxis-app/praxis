@@ -1,17 +1,17 @@
 // TODO: Add basic functionality for sharing. Below is a WIP
 
 import { useReactiveVar } from '@apollo/client';
-import { Comment, Favorite as LikeIcon, Reply } from '@mui/icons-material';
+import { Comment, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { VOTE_BADGE_STYLES } from '../../constants/vote.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
 import { usePostCommentsLazyQuery } from '../../graphql/posts/queries/gen/PostComments.gen';
 import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
+import LikeBadge from '../Likes/LikeBadge';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import PostLikeButton from './PostLikeButton';
@@ -20,13 +20,6 @@ import PostModal from './PostModal';
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
   transform: 'rotateY(180deg)',
-};
-
-const BADGE_STYLES: SxProps = {
-  ...VOTE_BADGE_STYLES,
-  width: 22.5,
-  height: 22.5,
-  marginRight: 0.9,
 };
 
 interface Props {
@@ -143,12 +136,7 @@ const PostCardFooter = ({
         >
           {!!likesCount && (
             <Flex>
-              <Box sx={BADGE_STYLES}>
-                <LikeIcon
-                  color="primary"
-                  sx={{ fontSize: 13, marginTop: 0.65 }}
-                />
-              </Box>
+              <LikeBadge />
               {likesCount}
             </Flex>
           )}

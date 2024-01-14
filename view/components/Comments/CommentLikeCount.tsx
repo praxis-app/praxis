@@ -1,8 +1,7 @@
-import { ThumbUp } from '@mui/icons-material';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useState } from 'react';
 import { useIsDesktop } from '../../hooks/shared.hooks';
-import { Blurple } from '../../styles/theme';
+import LikeBadge from '../Likes/LikeBadge';
 import LikesPopover from '../Likes/LikesPopover';
 import Flex from '../Shared/Flex';
 
@@ -66,23 +65,7 @@ const CommentLikeCount = ({
       padding="2px"
       gap="6px"
     >
-      <Box
-        bgcolor={Blurple.Marina}
-        borderRadius="50%"
-        display="inline-flex"
-        justifyContent="center"
-        width="22px"
-        height="22px"
-      >
-        <ThumbUp
-          sx={{
-            fontSize: 13,
-            marginTop: 0.55,
-            marginLeft: '1px',
-            color: 'text.primary',
-          }}
-        />
-      </Box>
+      <LikeBadge />
       {likeCount > 1 && (
         <Typography
           fontSize="13px"
