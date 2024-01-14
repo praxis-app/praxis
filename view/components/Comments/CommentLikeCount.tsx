@@ -3,8 +3,8 @@ import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { Blurple } from '../../styles/theme';
+import LikesPopover from '../Likes/LikesPopover';
 import Flex from '../Shared/Flex';
-import CommentLikesPopover from './CommentLikesPopover';
 
 const BOX_SHADOW = `0px 0px 1px 1px rgba(0,0,0,0.05),
                     0px 0px 1px 1px rgba(0,0,0,0.05),
@@ -14,9 +14,15 @@ interface Props {
   likeCount: number;
   rightLikeCount: boolean;
   onClick(): void;
+  commentId: number;
 }
 
-const CommentLikeCount = ({ likeCount, rightLikeCount, onClick }: Props) => {
+const CommentLikeCount = ({
+  commentId,
+  likeCount,
+  rightLikeCount,
+  onClick,
+}: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const isDesktop = useIsDesktop();
 
@@ -88,8 +94,9 @@ const CommentLikeCount = ({ likeCount, rightLikeCount, onClick }: Props) => {
       )}
 
       {isDesktop && (
-        <CommentLikesPopover
+        <LikesPopover
           anchorEl={anchorEl}
+          commentId={commentId}
           handlePopoverClose={handlePopoverClose}
         />
       )}

@@ -1,0 +1,9 @@
+query LikesPopover($postId: Int, $commentId: Int) {
+  likes(postId: $postId, commentId: $commentId) {
+    id
+    user {
+      id
+      name
+    }
+  }
+}

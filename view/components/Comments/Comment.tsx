@@ -245,9 +245,10 @@ const Comment = ({
 
             {!!likeCount && (
               <CommentLikeCount
+                commentId={id}
                 likeCount={likeCount}
-                rightLikeCount={rightLikeCount}
                 onClick={() => setShowLikesModal(true)}
+                rightLikeCount={rightLikeCount}
               />
             )}
 
