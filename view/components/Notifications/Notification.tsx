@@ -128,6 +128,11 @@ const Notification = ({
         name: otherUser?.name,
       });
     }
+    if (notificationType === NotificationType.CommentLike) {
+      return _t('notifications.messages.commentLike', {
+        name: otherUser?.name,
+      });
+    }
     if (notificationType === NotificationType.GroupMemberRequest) {
       return _t('notifications.messages.groupMemberRequest', {
         name: otherUser?.name,
@@ -218,6 +223,7 @@ const Notification = ({
     }
     if (
       notificationType === NotificationType.ProposalVoteAgreement ||
+      notificationType === NotificationType.CommentLike ||
       notificationType === NotificationType.PostLike
     ) {
       return <ThumbUp sx={iconStyles} />;

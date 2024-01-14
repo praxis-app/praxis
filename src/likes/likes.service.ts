@@ -40,7 +40,6 @@ export class LikesService {
     });
   }
 
-  // TODO: Add support for liking comments
   async createLike(likeData: CreateLikeInput, user: User) {
     const like = await this.likeRepository.save({
       ...likeData,
