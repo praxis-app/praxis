@@ -259,7 +259,7 @@ const Comment = ({
             />
           </Box>
 
-          {showItemMenu && (
+          {showItemMenu && isDesktop && (
             <ItemMenu
               anchorEl={menuAnchorEl}
               buttonStyles={itemMenuStyles}
@@ -285,6 +285,7 @@ const Comment = ({
               borderRadius: '2px',
               color: isLikedByMe ? Blurple.SavoryBlue : 'text.secondary',
               fontFamily: 'Inter Medium',
+              fontSize: isDesktop ? undefined : '13px',
               lineHeight: 1,
               paddingX: '4px',
             }}
