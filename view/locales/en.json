@@ -34,7 +34,8 @@
     "menuButton": "Menu button",
     "scrollToTop": "Scroll to top",
     "switch": "Switch",
-    "toggleButton": "Toggle button"
+    "toggleButton": "Toggle button",
+    "likes": "Likes"
   },
 
   "errors": {

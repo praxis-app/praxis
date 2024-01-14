@@ -1,5 +1,8 @@
 import { ThumbUp } from '@mui/icons-material';
-import { Box, Typography } from '@mui/material';
+import { Box, PaperProps, Popover, Typography } from '@mui/material';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import { Blurple } from '../../styles/theme';
 import Flex from '../Shared/Flex';
 
@@ -14,6 +17,18 @@ interface Props {
 }
 
 const CommentLikeCount = ({ likeCount, rightLikeCount, onClick }: Props) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
+
+  const paperProps: PaperProps = {
+    sx: {
+      paddingX: 1.75,
+      paddingY: 1.25,
+    },
+  };
+
   const getLikeCountText = () => {
     if (likeCount > 99) {
       return '99+';
@@ -32,6 +47,12 @@ const CommentLikeCount = ({ likeCount, rightLikeCount, onClick }: Props) => {
     return '0px';
   };
 
+  const handlePopoverOpen = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
+  ) => setAnchorEl(event.currentTarget);
+
+  const handlePopoverClose = () => setAnchorEl(null);
+
   return (
     <Flex
       position="absolute"
@@ -42,6 +63,8 @@ const CommentLikeCount = ({ likeCount, rightLikeCount, onClick }: Props) => {
       sx={{ cursor: 'pointer' }}
       alignItems="center"
       borderRadius="50px"
+      onMouseEnter={handlePopoverOpen}
+      onMouseLeave={handlePopoverClose}
       onClick={onClick}
       padding="2px"
       gap="6px"
@@ -71,6 +94,30 @@ const CommentLikeCount = ({ likeCount, rightLikeCount, onClick }: Props) => {
         >
           {getLikeCountText()}
         </Typography>
+      )}
+
+      {isDesktop && (
+        <Popover
+          anchorEl={anchorEl}
+          onClose={handlePopoverClose}
+          open={!!anchorEl}
+          slotProps={{ paper: paperProps }}
+          sx={{ pointerEvents: 'none' }}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+        >
+          <Typography color="primary" gutterBottom>
+            {t('labels.likes')}
+          </Typography>
+
+          {/* TODO: Add likes here */}
+        </Popover>
       )}
     </Flex>
   );
