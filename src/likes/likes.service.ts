@@ -46,32 +46,31 @@ export class LikesService {
       userId: user.id,
     });
 
-    const {
-      user: { id: userId },
-    } = like.postId
-      ? await this.postRepository.findOneOrFail({
-          where: { id: like.postId },
-          relations: ['user'],
-        })
-      : await this.commentRepository.findOneOrFail({
+    const likedItem = like.commentId
+      ? await this.commentRepository.findOneOrFail({
           where: { id: like.commentId },
-          relations: ['user'],
+        })
+      : await this.postRepository.findOneOrFail({
+          where: { id: like.postId },
         });
 
-    if (userId !== user.id) {
+    if (likedItem.userId !== user.id) {
       await this.notificationsService.createNotification({
         notificationType: like.postId
           ? NotificationType.PostLike
           : NotificationType.CommentLike,
         commentId: like.commentId,
+        userId: likedItem.userId,
         otherUserId: user.id,
         postId: like.postId,
         likeId: like.id,
-        userId,
       });
     }
 
-    return { like };
+    if (like.commentId) {
+      return { like, comment: likedItem };
+    }
+    return { like, post: likedItem };
   }
 
   async deleteLike(likeData: DeleteLikeInput, user: User) {

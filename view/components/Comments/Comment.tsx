@@ -112,7 +112,7 @@ const Comment = ({
       });
       return;
     }
-    const variables = { likeData: { commentId: id } };
+    const variables = { likeData: { commentId: id }, isLoggedIn };
     if (isLikedByMe) {
       unlikeComment({
         variables,
@@ -129,19 +129,7 @@ const Comment = ({
       });
       return;
     }
-    await likeComment({
-      variables,
-      update(cache) {
-        const cacheId = cache.identify({ id, __typename });
-        cache.modify({
-          id: cacheId,
-          fields: {
-            isLikedByMe: () => true,
-            likeCount: (existingCount: number) => existingCount + 1,
-          },
-        });
-      },
-    });
+    await likeComment({ variables });
   };
 
   const handleDelete = async () =>

@@ -137,7 +137,9 @@ export type CreateLikeInput = {
 
 export type CreateLikePayload = {
   __typename?: 'CreateLikePayload';
+  comment?: Maybe<Comment>;
   like: Like;
+  post?: Maybe<Post>;
 };
 
 export type CreatePostInput = {

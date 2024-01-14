@@ -532,6 +532,8 @@ type UpdateCommentPayload {
 
 type CreateLikePayload {
   like: Like!
+  post: Post
+  comment: Comment
 }
 
 type CreateVotePayload {

@@ -1,14 +1,17 @@
-mutation LikeComment($likeData: CreateLikeInput!) {
+mutation LikeComment($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
   createLike(likeData: $likeData) {
+    post {
+      id
+      likesCount
+      isLikedByMe @include(if: $isLoggedIn)
+    }
+    comment {
+      id
+      likeCount
+      isLikedByMe @include(if: $isLoggedIn)
+    }
     like {
       id
-
-      # TODO: Determine why cache is not updating for the below
-      # comment {
-      #   id
-      #   likeCount
-      #   isLikedByMe @include(if: $isLoggedIn)
-      # }
     }
   }
 }

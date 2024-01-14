@@ -9,19 +9,42 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type LikeCommentMutationVariables = Types.Exact<{
   likeData: Types.CreateLikeInput;
+  isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
 export type LikeCommentMutation = {
   __typename?: 'Mutation';
   createLike: {
     __typename?: 'CreateLikePayload';
+    post?: {
+      __typename?: 'Post';
+      id: number;
+      likesCount: number;
+      isLikedByMe?: boolean;
+    } | null;
+    comment?: {
+      __typename?: 'Comment';
+      id: number;
+      likeCount: number;
+      isLikedByMe?: boolean;
+    } | null;
     like: { __typename?: 'Like'; id: number };
   };
 };
 
 export const LikeCommentDocument = gql`
-  mutation LikeComment($likeData: CreateLikeInput!) {
+  mutation LikeComment($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
     createLike(likeData: $likeData) {
+      post {
+        id
+        likesCount
+        isLikedByMe @include(if: $isLoggedIn)
+      }
+      comment {
+        id
+        likeCount
+        isLikedByMe @include(if: $isLoggedIn)
+      }
       like {
         id
       }
@@ -47,6 +70,7 @@ export type LikeCommentMutationFn = Apollo.MutationFunction<
  * const [likeCommentMutation, { data, loading, error }] = useLikeCommentMutation({
  *   variables: {
  *      likeData: // value for 'likeData'
+ *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
