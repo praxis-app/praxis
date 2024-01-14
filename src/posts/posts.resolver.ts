@@ -54,9 +54,8 @@ export class PostsResolver {
     return loaders.postLikesLoader.load(id);
   }
 
-  // TODO: Rename as likeCount
   @ResolveField(() => Int)
-  async likesCount(
+  async likeCount(
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { id }: Post,
   ) {

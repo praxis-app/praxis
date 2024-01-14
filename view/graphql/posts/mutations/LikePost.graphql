@@ -4,7 +4,7 @@ mutation LikePost($likeData: CreateLikeInput!, $isLoggedIn: Boolean = true) {
       id
       post {
         id
-        likesCount
+        likeCount
         isLikedByMe @include(if: $isLoggedIn)
       }
     }

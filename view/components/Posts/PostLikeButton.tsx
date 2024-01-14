@@ -49,7 +49,7 @@ const PostLikeButton = ({ postId, isLikedByMe }: Props) => {
             id: cacheId,
             fields: {
               isLikedByMe: () => false,
-              likesCount: (existingCount: number) => existingCount - 1,
+              likeCount: (existingCount: number) => existingCount - 1,
             },
           });
         },

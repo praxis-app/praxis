@@ -14,7 +14,7 @@ export type PostCardFragment = {
   __typename?: 'Post';
   id: number;
   body?: string | null;
-  likesCount: number;
+  likeCount: number;
   commentCount: number;
   isLikedByMe?: boolean;
   createdAt: any;
@@ -58,7 +58,7 @@ export const PostCardFragmentDoc = gql`
   fragment PostCard on Post {
     id
     body
-    likesCount
+    likeCount
     commentCount
     isLikedByMe @include(if: $isLoggedIn)
     createdAt

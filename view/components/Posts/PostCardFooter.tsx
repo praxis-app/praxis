@@ -72,7 +72,7 @@ const PostCardFooter = ({
     post,
   ]);
 
-  const { id, likesCount, commentCount, isLikedByMe } = post;
+  const { id, likeCount, commentCount, isLikedByMe } = post;
   const comments = postCommentsData?.post.comments;
   const group = postCommentsData?.group;
   const event = postCommentsData?.event;
@@ -137,13 +137,13 @@ const PostCardFooter = ({
   };
 
   return (
-    <Box marginTop={likesCount ? 1.25 : 2}>
+    <Box marginTop={likeCount ? 1.25 : 2}>
       <Box paddingX={inModal ? 0 : '16px'}>
         <Flex
-          justifyContent={likesCount ? 'space-between' : 'end'}
-          marginBottom={likesCount || commentCount ? 0.8 : 0}
+          justifyContent={likeCount ? 'space-between' : 'end'}
+          marginBottom={likeCount || commentCount ? 0.8 : 0}
         >
-          {!!likesCount && (
+          {!!likeCount && (
             <>
               <Flex
                 onClick={() => setShowLikesModal(true)}
@@ -158,9 +158,7 @@ const PostCardFooter = ({
                   marginRight="11px"
                 />
 
-                <Typography sx={{ userSelect: 'none' }}>
-                  {likesCount}
-                </Typography>
+                <Typography sx={{ userSelect: 'none' }}>{likeCount}</Typography>
               </Flex>
 
               <LikesModal

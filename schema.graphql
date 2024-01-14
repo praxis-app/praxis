@@ -265,7 +265,7 @@ type Post {
   createdAt: DateTime!
   updatedAt: DateTime!
   commentCount: Int!
-  likesCount: Int!
+  likeCount: Int!
   isLikedByMe: Boolean!
 }
 

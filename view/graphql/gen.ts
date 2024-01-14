@@ -707,8 +707,8 @@ export type Post = {
   id: Scalars['Int']['output'];
   images: Array<Image>;
   isLikedByMe: Scalars['Boolean']['output'];
+  likeCount: Scalars['Int']['output'];
   likes: Array<Like>;
-  likesCount: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
   user: User;
 };
