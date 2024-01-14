@@ -71,6 +71,8 @@ const Comment = ({
   useEffect(() => {
     if (likeCount && ref.current && ref.current.offsetWidth < 200) {
       setRightLikeCount(true);
+    } else {
+      setRightLikeCount(false);
     }
   }, [likeCount, ref.current?.offsetWidth]);
 
