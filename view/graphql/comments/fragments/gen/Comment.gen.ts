@@ -11,6 +11,7 @@ export type CommentFragment = {
   __typename?: 'Comment';
   id: number;
   body?: string | null;
+  likeCount: number;
   isLikedByMe?: boolean;
   createdAt: any;
   images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
@@ -26,6 +27,7 @@ export const CommentFragmentDoc = gql`
   fragment Comment on Comment {
     id
     body
+    likeCount
     isLikedByMe @include(if: $isLoggedIn)
     createdAt
     images {

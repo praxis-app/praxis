@@ -1,6 +1,7 @@
 import { useReactiveVar } from '@apollo/client';
+import { ThumbUp } from '@mui/icons-material';
 import { Box, ButtonBase, SxProps, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TypeNames } from '../../constants/shared.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
@@ -39,19 +40,37 @@ const Comment = ({
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showItemMenu, setShowItemMenu] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
+  const [rightLikeCount, setRightLikeCount] = useState(false);
 
   const [deleteComment, { loading: deleteCommentLoading }] =
     useDeleteCommentMutation();
+
   const [likeComment, { loading: likeCommentLoading }] =
     useLikeCommentMutation();
+
   const [unlikeComment, { loading: unlikeCommentLoading }] =
     useDeleteLikeMutation();
 
   const { t } = useTranslation();
+  const ref = useRef<HTMLDivElement>(null);
   const isDesktop = useIsDesktop();
 
-  const { id, user, body, images, createdAt, isLikedByMe, __typename } =
-    comment;
+  const {
+    id,
+    user,
+    body,
+    images,
+    createdAt,
+    isLikedByMe,
+    likeCount,
+    __typename,
+  } = comment;
+
+  useEffect(() => {
+    if (likeCount && ref.current && ref.current.offsetWidth < 200) {
+      setRightLikeCount(true);
+    }
+  }, [likeCount, ref.current?.offsetWidth]);
 
   const isMe = user.id === currentUserId;
   const deleteCommentPrompt = t('prompts.deleteItem', { itemType: 'comment' });
@@ -63,6 +82,34 @@ const Comment = ({
     marginLeft: 0.5,
     width: 40,
     height: 40,
+  };
+
+  const getLikeCountText = () => {
+    if (likeCount > 99) {
+      return '99+';
+    }
+    return likeCount;
+  };
+
+  // TODO: Account for when there are more than 9 likes
+  const getLikeCountRightPosition = () => {
+    if (rightLikeCount) {
+      if (likeCount > 1) {
+        return '-35px';
+      }
+      return '-16px';
+    }
+    return '0px';
+  };
+
+  const getCommentBodyRightMargin = () => {
+    if (rightLikeCount) {
+      if (likeCount > 1) {
+        return '35px';
+      }
+      return '15px';
+    }
+    return '0px';
   };
 
   const handleLikeBtnClick = async () => {
@@ -96,7 +143,10 @@ const Comment = ({
         const cacheId = cache.identify({ id, __typename });
         cache.modify({
           id: cacheId,
-          fields: { isLikedByMe: () => true },
+          fields: {
+            isLikedByMe: () => true,
+            likeCount: (existingCount: number) => existingCount + 1,
+          },
         });
       },
     });
@@ -177,9 +227,12 @@ const Comment = ({
           <Box
             bgcolor="background.secondary"
             borderRadius={4}
-            paddingX={1.5}
-            paddingY={0.5}
+            marginRight={getCommentBodyRightMargin()}
             minWidth="85px"
+            paddingX={1.5}
+            paddingY={1}
+            position="relative"
+            ref={ref}
           >
             <Link href={userPath} sx={{ fontFamily: 'Inter Medium' }}>
               {user.name}
@@ -202,6 +255,43 @@ const Comment = ({
                 paddingBottom={1}
                 paddingTop={1.5}
               />
+            )}
+
+            {!!likeCount && (
+              <Flex
+                position="absolute"
+                right={getLikeCountRightPosition()}
+                bottom={rightLikeCount ? '5px' : '-15px'}
+                boxShadow={1}
+                bgcolor="background.secondary"
+                alignItems="center"
+                borderRadius="50px"
+                padding="2px"
+                gap="6px"
+              >
+                <Box
+                  bgcolor={Blurple.Marina}
+                  borderRadius="50%"
+                  display="inline-flex"
+                  justifyContent="center"
+                  width="22px"
+                  height="22px"
+                >
+                  <ThumbUp
+                    sx={{
+                      fontSize: 13,
+                      marginTop: 0.55,
+                      marginLeft: '1px',
+                      color: 'text.primary',
+                    }}
+                  />
+                </Box>
+                {likeCount > 1 && (
+                  <Typography fontSize="13px" paddingRight="5px">
+                    {getLikeCountText()}
+                  </Typography>
+                )}
+              </Flex>
             )}
           </Box>
 

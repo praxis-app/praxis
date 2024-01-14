@@ -22,6 +22,7 @@ export type ProposalCommentsQuery = {
       __typename?: 'Comment';
       id: number;
       body?: string | null;
+      likeCount: number;
       isLikedByMe?: boolean;
       createdAt: any;
       images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
