@@ -51,11 +51,11 @@ export class CommentsService {
   }
 
   async getCommentProposalId(commentId: number) {
-    const { proposalId } = await this.commentRepository.findOneOrFail({
+    const comment = await this.commentRepository.findOne({
       where: { id: commentId },
       select: ['proposalId'],
     });
-    return proposalId;
+    return comment?.proposalId;
   }
 
   async isPublicCommentImage(imageId: number) {
