@@ -33,19 +33,19 @@ const CommentLikeCount = ({
   };
 
   const getLikeCountRightPosition = () => {
-    if (rightLikeCount) {
-      if (likeCount > 99) {
-        return '-54px';
-      }
-      if (likeCount > 9) {
-        return '-44px';
-      }
-      if (likeCount > 1) {
-        return '-35px';
-      }
-      return '-17px';
+    if (!rightLikeCount) {
+      return '0px';
     }
-    return '0px';
+    if (likeCount > 99) {
+      return '-54px';
+    }
+    if (likeCount > 9) {
+      return '-44px';
+    }
+    if (likeCount > 1) {
+      return '-35px';
+    }
+    return '-17px';
   };
 
   const handlePopoverOpen = (

@@ -89,19 +89,19 @@ const Comment = ({
   };
 
   const getCommentBodyRightMargin = () => {
-    if (rightLikeCount) {
-      if (likeCount > 99) {
-        return '52px';
-      }
-      if (likeCount > 9) {
-        return '42px';
-      }
-      if (likeCount > 1) {
-        return '35px';
-      }
-      return '15px';
+    if (!rightLikeCount) {
+      return '0px';
     }
-    return '0px';
+    if (likeCount > 99) {
+      return '52px';
+    }
+    if (likeCount > 9) {
+      return '42px';
+    }
+    if (likeCount > 1) {
+      return '35px';
+    }
+    return '15px';
   };
 
   const handleLikeBtnClick = async () => {
