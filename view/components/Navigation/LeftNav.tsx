@@ -88,7 +88,7 @@ const LeftNav = () => {
   // TODO: Determine whether or not to refactor to use Stack instead of List
   // https://mui.com/material-ui/react-stack
   return (
-    <List component={'div'} role="navigation" sx={listStyles}>
+    <List component="div" role="navigation" sx={listStyles}>
       <Link href={NavigationPaths.Home}>
         <ListItemButton>
           <ListItemIcon>
