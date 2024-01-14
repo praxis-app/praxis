@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Comment } from '../comments/models/comment.model';
+import { GroupPrivacy } from '../groups/groups.constants';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
@@ -38,6 +39,26 @@ export class LikesService {
     return this.postRepository.findOneOrFail({
       where: { id: postId },
     });
+  }
+
+  async isPublicLike(likeId: number) {
+    const { post, comment } = await this.likeRepository.findOneOrFail({
+      where: { id: likeId },
+      relations: [
+        'post.group.config',
+        'post.event.group.config',
+        'comment.post.group.config',
+        'comment.post.event.group.config',
+        'comment.proposal.group.config',
+      ],
+    });
+    return (
+      post?.group?.config.privacy === GroupPrivacy.Public ||
+      post?.event?.group?.config.privacy === GroupPrivacy.Public ||
+      comment?.post?.group?.config.privacy === GroupPrivacy.Public ||
+      comment?.proposal?.group?.config.privacy === GroupPrivacy.Public ||
+      comment?.post?.event?.group?.config.privacy === GroupPrivacy.Public
+    );
   }
 
   async createLike(likeData: CreateLikeInput, user: User) {

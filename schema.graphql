@@ -572,10 +572,10 @@ type Query {
   post(id: Int!): Post!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
+  likes(postId: Int, commentId: Int): [Like!]!
   canary: Canary!
   publicCanary: Canary
   serverConfig: ServerConfig!
-  likes(postId: Int, commentId: Int): [Like!]!
 }
 
 input EventsInput {
@@ -631,9 +631,9 @@ type Mutation {
   updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
   deleteComment(id: Int!): Boolean!
   deleteImage(id: Int!): Boolean!
-  updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
+  updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -883,13 +883,6 @@ input UpdateCommentInput {
   images: [Upload!]
 }
 
-input UpdateServerConfigInput {
-  id: Int!
-  canaryStatement: String
-  showCanaryStatement: Boolean
-  securityTxt: String
-}
-
 input CreateLikeInput {
   postId: Int
   commentId: Int
@@ -898,6 +891,13 @@ input CreateLikeInput {
 input DeleteLikeInput {
   postId: Int
   commentId: Int
+}
+
+input UpdateServerConfigInput {
+  id: Int!
+  canaryStatement: String
+  showCanaryStatement: Boolean
+  securityTxt: String
 }
 
 input CreateVoteInput {

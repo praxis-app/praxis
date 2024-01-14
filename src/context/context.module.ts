@@ -6,6 +6,7 @@ import { EventsModule } from '../events/events.module';
 import { GroupRolesModule } from '../groups/group-roles/group-roles.module';
 import { GroupsModule } from '../groups/groups.module';
 import { ImagesModule } from '../images/images.module';
+import { LikesModule } from '../likes/likes.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { PostsModule } from '../posts/posts.module';
 import { ProposalActionsModule } from '../proposals/proposal-actions/proposal-actions.module';
@@ -23,6 +24,7 @@ import { ContextService } from './context.service';
     GroupRolesModule,
     GroupsModule,
     ImagesModule,
+    LikesModule,
     NotificationsModule,
     PostsModule,
     ProposalActionsModule,

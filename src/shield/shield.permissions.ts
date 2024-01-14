@@ -27,6 +27,7 @@ import {
   isPublicGroupImage,
   isPublicGroupRole,
 } from './rules/group.rules';
+import { isPublicLike } from './rules/like.rules';
 import { isOwnNotification } from './rules/notification.rules';
 import { isOwnPost, isPublicPost, isPublicPostImage } from './rules/post.rules';
 import {
@@ -169,6 +170,7 @@ export const shieldPermissions = shield(
     },
     Event: or(isAuthenticated, isPublicEvent),
     Post: or(isAuthenticated, isPublicPost, isPublicEventPost),
+    Like: or(isAuthenticated, isPublicLike),
     Comment: or(isAuthenticated, isPublicComment),
     Proposal: or(isAuthenticated, isPublicProposal),
     ProposalConfig: or(isAuthenticated, isPublicProposal),
