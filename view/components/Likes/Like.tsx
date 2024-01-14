@@ -1,4 +1,6 @@
-import { SxProps, Typography } from '@mui/material';
+import { ThumbUp } from '@mui/icons-material';
+import { Box, SxProps, Typography, useTheme } from '@mui/material';
+import { VOTE_BADGE_STYLES } from '../../constants/vote.constants';
 import { LikeFragment } from '../../graphql/likes/fragments/gen/Like.gen';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
@@ -12,6 +14,8 @@ interface Props {
 }
 
 const Like = ({ like: { user }, currentUserId }: Props) => {
+  const theme = useTheme();
+
   const isMe = user.id === currentUserId;
   const userProfilePath = getUserProfilePath(user.name);
 
@@ -23,11 +27,33 @@ const Like = ({ like: { user }, currentUserId }: Props) => {
     },
   };
 
+  const iconContainerStyles: SxProps = {
+    ...VOTE_BADGE_STYLES,
+    border: `2px solid ${theme.palette.background.paper}`,
+    height: 23,
+    width: 23,
+    position: 'absolute',
+    top: 22,
+    left: 23,
+  };
+
+  const iconStyles: SxProps = {
+    fontSize: 10,
+    marginTop: 0.5,
+    color: 'text.primary',
+  };
+
   return (
     <Flex sx={flexStyles}>
       <Link href={userProfilePath}>
         <Flex>
-          <UserAvatar user={user} sx={{ marginRight: 1.5 }} />
+          <Box position="relative">
+            <UserAvatar user={user} sx={{ marginRight: 1.5 }} />
+
+            <Box sx={iconContainerStyles}>
+              <ThumbUp sx={iconStyles} />
+            </Box>
+          </Box>
           <Typography sx={{ marginTop: 1 }}>{user.name}</Typography>
         </Flex>
       </Link>
