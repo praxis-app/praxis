@@ -8,6 +8,7 @@ import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.ge
 import { useDeleteCommentMutation } from '../../graphql/comments/mutations/gen/DeleteComment.gen';
 import { useLikeCommentMutation } from '../../graphql/comments/mutations/gen/LikeComment.gen';
 import { useDeleteLikeMutation } from '../../graphql/likes/mutations/gen/DeleteLike.gen';
+import { LikesPopoverDocument } from '../../graphql/likes/queries/gen/LikesPopover.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { Blurple } from '../../styles/theme';
 import { urlifyText } from '../../utils/shared.utils';
@@ -125,6 +126,16 @@ const Comment = ({
               likeCount: (existingCount: number) => existingCount - 1,
             },
           });
+          const likesQuery = cache.readQuery({
+            query: LikesPopoverDocument,
+            variables: { commentId: id },
+          });
+          if (likesQuery) {
+            cache.evict({
+              fieldName: 'likes',
+              args: { commentId: id },
+            });
+          }
         },
       });
       return;
