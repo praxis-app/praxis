@@ -21,13 +21,15 @@ export const isPublicEvent = rule({ cache: 'strict' })(async (
 
 export const isPublicEventPost = rule({ cache: 'strict' })(async (
   parent: Post | null,
-  args: { id: number } | null,
+  args: { id: number } | { postId: number } | null,
   { services: { postsService } }: Context,
 ) => {
   let postId: number | undefined;
 
   if (parent instanceof Post) {
     postId = parent.id;
+  } else if (args && 'postId' in args) {
+    postId = args.postId;
   } else if (args) {
     postId = args.id;
   }
