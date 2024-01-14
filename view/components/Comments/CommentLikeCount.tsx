@@ -1,8 +1,6 @@
 import { Typography } from '@mui/material';
 import { useState } from 'react';
-import { useIsDesktop } from '../../hooks/shared.hooks';
 import LikeBadge from '../Likes/LikeBadge';
-import LikesPopover from '../Likes/LikesPopover';
 import Flex from '../Shared/Flex';
 
 const BOX_SHADOW = `0px 0px 1px 1px rgba(0,0,0,0.05),
@@ -23,7 +21,6 @@ const CommentLikeCount = ({
   onClick,
 }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const isDesktop = useIsDesktop();
 
   const getLikeCountText = () => {
     if (likeCount > 99) {
@@ -70,7 +67,11 @@ const CommentLikeCount = ({
       padding="2px"
       gap="6px"
     >
-      <LikeBadge />
+      <LikeBadge
+        commentId={commentId}
+        anchorEl={anchorEl}
+        handlePopoverClose={handlePopoverClose}
+      />
       {likeCount > 1 && (
         <Typography
           fontSize="13px"
@@ -79,14 +80,6 @@ const CommentLikeCount = ({
         >
           {getLikeCountText()}
         </Typography>
-      )}
-
-      {isDesktop && (
-        <LikesPopover
-          anchorEl={anchorEl}
-          commentId={commentId}
-          handlePopoverClose={handlePopoverClose}
-        />
       )}
     </Flex>
   );
