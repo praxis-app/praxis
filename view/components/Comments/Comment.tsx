@@ -1,20 +1,11 @@
-import { useReactiveVar } from '@apollo/client';
-import { Box, ButtonBase, SxProps, Typography } from '@mui/material';
-import { produce } from 'immer';
+import { Box, SxProps, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TypeNames } from '../../constants/shared.constants';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { toastVar } from '../../graphql/cache';
 import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.gen';
 import { useDeleteCommentMutation } from '../../graphql/comments/mutations/gen/DeleteComment.gen';
-import { useLikeCommentMutation } from '../../graphql/comments/mutations/gen/LikeComment.gen';
-import { useDeleteLikeMutation } from '../../graphql/likes/mutations/gen/DeleteLike.gen';
-import {
-  LikesPopoverDocument,
-  LikesPopoverQuery,
-} from '../../graphql/likes/queries/gen/LikesPopover.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
-import { Blurple } from '../../styles/theme';
 import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
@@ -25,6 +16,7 @@ import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 import CommentForm from './CommentForm';
+import CommentLikeButton from './CommentLikeButton';
 import CommentLikeCount from './CommentLikeCount';
 
 interface Props {
@@ -42,7 +34,6 @@ const Comment = ({
   postId,
   proposalId,
 }: Props) => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showItemMenu, setShowItemMenu] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -52,26 +43,11 @@ const Comment = ({
   const [deleteComment, { loading: deleteCommentLoading }] =
     useDeleteCommentMutation();
 
-  const [likeComment, { loading: likeCommentLoading }] =
-    useLikeCommentMutation();
-
-  const [unlikeComment, { loading: unlikeCommentLoading }] =
-    useDeleteLikeMutation();
-
   const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
   const isDesktop = useIsDesktop();
 
-  const {
-    id,
-    user,
-    body,
-    images,
-    createdAt,
-    isLikedByMe,
-    likeCount,
-    __typename,
-  } = comment;
+  const { id, user, body, images, createdAt, likeCount, __typename } = comment;
 
   useEffect(() => {
     if (likeCount && ref.current && ref.current.offsetWidth < 200) {
@@ -107,61 +83,6 @@ const Comment = ({
       return '35px';
     }
     return '15px';
-  };
-
-  const handleLikeBtnClick = async () => {
-    if (!isLoggedIn) {
-      toastVar({
-        title: t('posts.prompts.loginToLike'),
-        status: 'info',
-      });
-      return;
-    }
-    const variables = { likeData: { commentId: id }, isLoggedIn };
-    if (isLikedByMe) {
-      unlikeComment({
-        variables,
-        update(cache) {
-          const cacheId = cache.identify({ id, __typename });
-          cache.modify({
-            id: cacheId,
-            fields: {
-              isLikedByMe: () => false,
-              likeCount: (existingCount: number) => existingCount - 1,
-            },
-          });
-          const likesQuery = cache.readQuery({
-            query: LikesPopoverDocument,
-            variables: { commentId: id },
-          });
-          if (likesQuery) {
-            cache.evict({
-              fieldName: 'likes',
-              args: { commentId: id },
-            });
-          }
-        },
-      });
-      return;
-    }
-    await likeComment({
-      variables,
-      update(cache, { data }) {
-        if (!data) {
-          return;
-        }
-        cache.updateQuery<LikesPopoverQuery>(
-          {
-            query: LikesPopoverDocument,
-            variables: { commentId: id },
-          },
-          (likesData) =>
-            produce(likesData, (draft) => {
-              draft?.likes.unshift(data.createLike.like);
-            }),
-        );
-      },
-    });
   };
 
   const handleDelete = async () =>
@@ -304,20 +225,7 @@ const Comment = ({
           <Typography fontSize="13px" color="text.secondary" lineHeight={1}>
             {formattedDate}
           </Typography>
-          <ButtonBase
-            disabled={likeCommentLoading || unlikeCommentLoading}
-            onClick={handleLikeBtnClick}
-            sx={{
-              borderRadius: '2px',
-              color: isLikedByMe ? Blurple.SavoryBlue : 'text.secondary',
-              fontFamily: 'Inter Medium',
-              fontSize: isDesktop ? undefined : '13px',
-              lineHeight: 1,
-              paddingX: '4px',
-            }}
-          >
-            {t('actions.like')}
-          </ButtonBase>
+          <CommentLikeButton comment={comment} />
         </Flex>
       </Box>
     </Flex>

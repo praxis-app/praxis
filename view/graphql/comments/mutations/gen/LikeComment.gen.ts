@@ -17,12 +17,6 @@ export type LikeCommentMutation = {
   __typename?: 'Mutation';
   createLike: {
     __typename?: 'CreateLikePayload';
-    post?: {
-      __typename?: 'Post';
-      id: number;
-      likesCount: number;
-      isLikedByMe?: boolean;
-    } | null;
     comment?: {
       __typename?: 'Comment';
       id: number;
@@ -46,11 +40,6 @@ export type LikeCommentMutation = {
 export const LikeCommentDocument = gql`
   mutation LikeComment($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
     createLike(likeData: $likeData) {
-      post {
-        id
-        likesCount
-        isLikedByMe @include(if: $isLoggedIn)
-      }
       comment {
         id
         likeCount

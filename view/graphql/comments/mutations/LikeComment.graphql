@@ -1,10 +1,5 @@
 mutation LikeComment($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
   createLike(likeData: $likeData) {
-    post {
-      id
-      likesCount
-      isLikedByMe @include(if: $isLoggedIn)
-    }
     comment {
       id
       likeCount

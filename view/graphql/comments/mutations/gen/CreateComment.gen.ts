@@ -22,8 +22,8 @@ export type CreateCommentMutation = {
       id: number;
       body?: string | null;
       likeCount: number;
-      isLikedByMe?: boolean;
       createdAt: any;
+      isLikedByMe?: boolean;
       post?: { __typename?: 'Post'; id: number; commentCount: number } | null;
       proposal?: {
         __typename?: 'Proposal';
