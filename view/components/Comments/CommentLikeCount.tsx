@@ -3,6 +3,10 @@ import { Box, Typography } from '@mui/material';
 import { Blurple } from '../../styles/theme';
 import Flex from '../Shared/Flex';
 
+const BOX_SHADOW = `0px 0px 1px 1px rgba(0,0,0,0.05),
+                    0px 0px 1px 1px rgba(0,0,0,0.05),
+                    0px 0px 1px 0px rgba(0,0,0,0.05)`;
+
 interface Props {
   likeCount: number;
   rightLikeCount: boolean;
@@ -32,7 +36,7 @@ const CommentLikeCount = ({ likeCount, rightLikeCount }: Props) => {
       position="absolute"
       right={getLikeCountRightPosition()}
       bottom={rightLikeCount ? '5px' : '-15px'}
-      boxShadow={1}
+      boxShadow={BOX_SHADOW}
       bgcolor="background.secondary"
       alignItems="center"
       borderRadius="50px"
