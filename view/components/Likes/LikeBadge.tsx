@@ -8,6 +8,7 @@ const LikeBadge = (boxProps: BoxProps) => (
     borderRadius="50%"
     display="inline-flex"
     justifyContent="center"
+    sx={{ cursor: 'pointer' }}
     width="22px"
     height="22px"
     {...boxProps}

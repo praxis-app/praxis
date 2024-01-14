@@ -8,10 +8,13 @@ import { useTranslation } from 'react-i18next';
 import { isLoggedInVar } from '../../graphql/cache';
 import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
 import { usePostCommentsLazyQuery } from '../../graphql/posts/queries/gen/PostComments.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import LikeBadge from '../Likes/LikeBadge';
+import LikesModal from '../Likes/LikesModal';
+import LikesPopover from '../Likes/LikesPopover';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import PostLikeButton from './PostLikeButton';
@@ -40,11 +43,14 @@ const PostCardFooter = ({
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showComments, setShowComments] = useState(inModal || isPostPage);
+  const [showLikesModal, setShowLikesModal] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const [getPostComments, { data: postCommentsData }] =
     usePostCommentsLazyQuery();
 
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
 
   useEffect(() => {
     if (inModal || isPostPage) {
@@ -114,6 +120,12 @@ const PostCardFooter = ({
     }
   };
 
+  const handlePopoverOpen = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
+  ) => setAnchorEl(event.currentTarget);
+
+  const handlePopoverClose = () => setAnchorEl(null);
+
   const renderCommentForm = () => {
     if (!isLoggedIn || inModal) {
       return null;
@@ -135,10 +147,34 @@ const PostCardFooter = ({
           marginBottom={likesCount || commentCount ? 0.8 : 0}
         >
           {!!likesCount && (
-            <Flex>
-              <LikeBadge marginRight="11px" />
-              {likesCount}
-            </Flex>
+            <>
+              <Flex
+                onClick={() => setShowLikesModal(true)}
+                onMouseEnter={handlePopoverOpen}
+                onMouseLeave={handlePopoverClose}
+                sx={{ cursor: 'pointer' }}
+              >
+                <LikeBadge marginRight="11px" />
+
+                <Typography sx={{ userSelect: 'none' }}>
+                  {likesCount}
+                </Typography>
+
+                {isDesktop && (
+                  <LikesPopover
+                    anchorEl={anchorEl}
+                    postId={id}
+                    handlePopoverClose={handlePopoverClose}
+                  />
+                )}
+              </Flex>
+
+              <LikesModal
+                open={showLikesModal}
+                onClose={() => setShowLikesModal(false)}
+                postId={id}
+              />
+            </>
           )}
 
           {!!commentCount && (
