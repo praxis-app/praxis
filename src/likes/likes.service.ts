@@ -29,7 +29,7 @@ export class LikesService {
     if (!postId && !commentId) {
       throw new Error('Either postId or commentId must be provided');
     }
-    return await this.likeRepository.find({
+    return this.likeRepository.find({
       where: { postId, commentId },
     });
   }

@@ -47,7 +47,7 @@ export class UsersService {
   ) {}
 
   async getUser(where: FindOptionsWhere<User>, relations?: string[]) {
-    return await this.userRepository.findOne({ where, relations });
+    return this.userRepository.findOne({ where, relations });
   }
 
   async getUsers(where?: FindOptionsWhere<User>, relations?: string[]) {
