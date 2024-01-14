@@ -21,13 +21,15 @@ export const isOwnPost = rule({ cache: 'strict' })(async (
 
 export const isPublicPost = rule({ cache: 'strict' })(async (
   parent: Post | null,
-  args: { id: number },
+  args: { id: number } | { postId: number },
   { services: { postsService } }: Context,
 ) => {
   let postId: number | undefined;
 
   if (parent instanceof Post) {
     postId = parent.id;
+  } else if (args && 'postId' in args) {
+    postId = args.postId;
   } else if (args) {
     postId = args.id;
   }
