@@ -1,10 +1,15 @@
 import { useReactiveVar } from '@apollo/client';
 import { Favorite as LikeIcon } from '@mui/icons-material';
 import { SxProps } from '@mui/material';
+import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import { TypeNames } from '../../constants/shared.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { useDeleteLikeMutation } from '../../graphql/likes/mutations/gen/DeleteLike.gen';
+import {
+  LikesPopoverDocument,
+  LikesPopoverQuery,
+} from '../../graphql/likes/queries/gen/LikesPopover.gen';
 import { useLikePostMutation } from '../../graphql/posts/mutations/gen/LikePost.gen';
 import { Blurple } from '../../styles/theme';
 import CardFooterButton from '../Shared/CardFooterButton';
@@ -52,11 +57,38 @@ const PostLikeButton = ({ postId, isLikedByMe }: Props) => {
               likeCount: (existingCount: number) => existingCount - 1,
             },
           });
+          const likesQuery = cache.readQuery({
+            query: LikesPopoverDocument,
+            variables: { postId },
+          });
+          if (likesQuery) {
+            cache.evict({
+              fieldName: 'likes',
+              args: { postId },
+            });
+          }
         },
       });
       return;
     }
-    await likePost({ variables });
+    await likePost({
+      variables,
+      update(cache, { data }) {
+        if (!data) {
+          return;
+        }
+        cache.updateQuery<LikesPopoverQuery>(
+          {
+            query: LikesPopoverDocument,
+            variables: { postId },
+          },
+          (likesData) =>
+            produce(likesData, (draft) => {
+              draft?.likes.unshift(data.createLike.like);
+            }),
+        );
+      },
+    });
   };
 
   return (
