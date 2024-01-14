@@ -62,7 +62,7 @@ const Modal = ({
   };
   const dialogContentStyles: SxProps = isDesktop
     ? {
-        minHeight: '65vh',
+        minHeight: '50vh',
         width: '600px',
         ...contentStyles,
       }
