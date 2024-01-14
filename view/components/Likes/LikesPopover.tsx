@@ -1,5 +1,3 @@
-// TODO: Rename as LikesPopover - use for both comments and posts
-
 import { PaperProps, Popover, Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
