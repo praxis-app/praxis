@@ -1,5 +1,6 @@
 import { useReactiveVar } from '@apollo/client';
 import { Box, ButtonBase, SxProps, Typography } from '@mui/material';
+import { produce } from 'immer';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TypeNames } from '../../constants/shared.constants';
@@ -8,7 +9,10 @@ import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.ge
 import { useDeleteCommentMutation } from '../../graphql/comments/mutations/gen/DeleteComment.gen';
 import { useLikeCommentMutation } from '../../graphql/comments/mutations/gen/LikeComment.gen';
 import { useDeleteLikeMutation } from '../../graphql/likes/mutations/gen/DeleteLike.gen';
-import { LikesPopoverDocument } from '../../graphql/likes/queries/gen/LikesPopover.gen';
+import {
+  LikesPopoverDocument,
+  LikesPopoverQuery,
+} from '../../graphql/likes/queries/gen/LikesPopover.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { Blurple } from '../../styles/theme';
 import { urlifyText } from '../../utils/shared.utils';
@@ -140,7 +144,24 @@ const Comment = ({
       });
       return;
     }
-    await likeComment({ variables });
+    await likeComment({
+      variables,
+      update(cache, { data }) {
+        if (!data) {
+          return;
+        }
+        cache.updateQuery<LikesPopoverQuery>(
+          {
+            query: LikesPopoverDocument,
+            variables: { commentId: id },
+          },
+          (likesData) =>
+            produce(likesData, (draft) => {
+              draft?.likes.unshift(data.createLike.like);
+            }),
+        );
+      },
+    });
   };
 
   const handleDelete = async () =>

@@ -12,6 +12,7 @@ mutation LikeComment($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
     }
     like {
       id
+      ...Like
     }
   }
 }
