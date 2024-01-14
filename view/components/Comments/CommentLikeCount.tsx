@@ -10,9 +10,10 @@ const BOX_SHADOW = `0px 0px 1px 1px rgba(0,0,0,0.05),
 interface Props {
   likeCount: number;
   rightLikeCount: boolean;
+  onClick(): void;
 }
 
-const CommentLikeCount = ({ likeCount, rightLikeCount }: Props) => {
+const CommentLikeCount = ({ likeCount, rightLikeCount, onClick }: Props) => {
   const getLikeCountText = () => {
     if (likeCount > 99) {
       return '99+';
@@ -41,6 +42,7 @@ const CommentLikeCount = ({ likeCount, rightLikeCount }: Props) => {
       sx={{ cursor: 'pointer' }}
       alignItems="center"
       borderRadius="50px"
+      onClick={onClick}
       padding="2px"
       gap="6px"
     >

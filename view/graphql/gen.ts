@@ -905,6 +905,7 @@ export type Query = {
   groups: Array<Group>;
   groupsCount: Scalars['Int']['output'];
   isFirstUser: Scalars['Boolean']['output'];
+  likes: Array<Like>;
   me: User;
   notifications: Array<Notification>;
   notificationsCount: Scalars['Int']['output'];
@@ -950,6 +951,11 @@ export type QueryGroupRoleArgs = {
 export type QueryGroupsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type QueryLikesArgs = {
+  commentId?: InputMaybe<Scalars['Int']['input']>;
+  postId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type QueryNotificationsArgs = {

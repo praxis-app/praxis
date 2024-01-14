@@ -1,8 +1,10 @@
 import {
   Args,
   Context,
+  Int,
   Mutation,
   Parent,
+  Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
@@ -19,6 +21,14 @@ import { Like } from './models/like.model';
 @Resolver(() => Like)
 export class LikesResolver {
   constructor(private likesService: LikesService) {}
+
+  @Query(() => [Like])
+  async likes(
+    @Args('postId', { type: () => Int, nullable: true }) postId?: number,
+    @Args('commentId', { type: () => Int, nullable: true }) commentId?: number,
+  ) {
+    return this.likesService.getLikes({ postId, commentId });
+  }
 
   @ResolveField(() => User)
   async user(

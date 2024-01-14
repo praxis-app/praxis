@@ -572,6 +572,7 @@ type Query {
   canary: Canary!
   publicCanary: Canary
   serverConfig: ServerConfig!
+  likes(postId: Int, commentId: Int): [Like!]!
 }
 
 input EventsInput {

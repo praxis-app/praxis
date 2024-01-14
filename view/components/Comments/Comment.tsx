@@ -14,6 +14,7 @@ import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import AttachedImageList from '../Images/AttachedImageList';
+import LikesModal from '../Likes/LikesModal';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
@@ -41,6 +42,7 @@ const Comment = ({
   const [showItemMenu, setShowItemMenu] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
   const [rightLikeCount, setRightLikeCount] = useState(false);
+  const [showLikesModal, setShowLikesModal] = useState(false);
 
   const [deleteComment, { loading: deleteCommentLoading }] =
     useDeleteCommentMutation();
@@ -243,8 +245,15 @@ const Comment = ({
               <CommentLikeCount
                 likeCount={likeCount}
                 rightLikeCount={rightLikeCount}
+                onClick={() => setShowLikesModal(true)}
               />
             )}
+
+            <LikesModal
+              open={showLikesModal}
+              onClose={() => setShowLikesModal(false)}
+              commentId={id}
+            />
           </Box>
 
           {showItemMenu && (

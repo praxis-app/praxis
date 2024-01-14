@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { Comment } from '../comments/models/comment.model';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -24,6 +24,15 @@ export class LikesService {
 
     private notificationsService: NotificationsService,
   ) {}
+
+  async getLikes({ postId, commentId }: FindOptionsWhere<Like>) {
+    if (!postId && !commentId) {
+      throw new Error('Either postId or commentId must be provided');
+    }
+    return await this.likeRepository.find({
+      where: { postId, commentId },
+    });
+  }
 
   async getLikedPost(postId: number) {
     return this.postRepository.findOneOrFail({
