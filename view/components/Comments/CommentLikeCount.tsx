@@ -32,9 +32,14 @@ const CommentLikeCount = ({
     return likeCount;
   };
 
-  // TODO: Account for when there are more than 9 likes
   const getLikeCountRightPosition = () => {
     if (rightLikeCount) {
+      if (likeCount > 99) {
+        return '-54px';
+      }
+      if (likeCount > 9) {
+        return '-44px';
+      }
       if (likeCount > 1) {
         return '-35px';
       }
