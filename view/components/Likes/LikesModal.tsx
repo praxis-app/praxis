@@ -48,7 +48,10 @@ const LikesModal = ({ postId, commentId, open, onClose }: Props) => {
     >
       {loading && <ProgressBar />}
       {error && <Typography>{t('errors.somethingWentWrong')}</Typography>}
-      {data?.likes.map((like) => <Like key={like.id} like={like} />)}
+
+      {data?.likes.map((like) => (
+        <Like key={like.id} like={like} currentUserId={data.me?.id} />
+      ))}
     </Modal>
   );
 };

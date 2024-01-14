@@ -27,12 +27,16 @@ export type LikesQuery = {
       profilePicture: { __typename?: 'Image'; id: number };
     };
   }>;
+  me?: { __typename?: 'User'; id: number };
 };
 
 export const LikesDocument = gql`
   query Likes($postId: Int, $commentId: Int, $isLoggedIn: Boolean!) {
     likes(postId: $postId, commentId: $commentId) {
       ...Like
+    }
+    me @include(if: $isLoggedIn) {
+      id
     }
   }
   ${LikeFragmentDoc}
