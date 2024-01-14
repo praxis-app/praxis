@@ -16,7 +16,7 @@ export enum Blurple {
   BlueWhale = '#222d3e',
   Marina = '#5868CB',
   PoolWater = '#3b86f7',
-  SavoryBlue = '#5969CB',
+  SavoryBlue = '#6573CF',
   SkyDancer = '#588cf2',
 }
 
