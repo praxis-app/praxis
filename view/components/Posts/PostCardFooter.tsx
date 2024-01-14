@@ -136,7 +136,7 @@ const PostCardFooter = ({
         >
           {!!likesCount && (
             <Flex>
-              <LikeBadge />
+              <LikeBadge marginRight="11px" />
               {likesCount}
             </Flex>
           )}

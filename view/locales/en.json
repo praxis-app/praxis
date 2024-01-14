@@ -580,7 +580,8 @@
       "unread": "Unread"
     },
     "messages": {
-      "commentLike": "<b>{{name}}</b> liked your comment.",
+      "commentLike": "<b>{{name}}</b> likes your comment.",
+      "commentLikeWithText": "<b>{{name}}</b> likes your comment: {{text}}",
       "follow": "<b>{{name}}</b> followed you.",
       "groupMemberRequest": "<b>{{name}}</b> requested to join <b>{{groupName}}</b>.",
       "groupMemberRequestApproval": "Your request to join <b>{{groupName}}</b> was approved.",

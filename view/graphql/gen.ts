@@ -683,6 +683,7 @@ export type MutationUpdateVoteArgs = {
 
 export type Notification = {
   __typename?: 'Notification';
+  comment?: Maybe<Comment>;
   createdAt: Scalars['DateTime']['output'];
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];

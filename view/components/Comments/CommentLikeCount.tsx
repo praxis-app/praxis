@@ -38,7 +38,7 @@ const CommentLikeCount = ({
       if (likeCount > 1) {
         return '-35px';
       }
-      return '-16px';
+      return '-17px';
     }
     return '0px';
   };

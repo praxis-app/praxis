@@ -107,6 +107,7 @@ export class DataloaderService {
       postLikesLoader: this._createPostLikesLoader(),
 
       // Comments
+      commentsLoader: this._createCommentsLoader(),
       commentImagesLoader: this._createCommentImagesLoader(),
       commentLikeCountLoader: this._createCommentLikeCountLoader(),
       commentLikesLoader: this._createCommentLikesLoader(),
@@ -367,6 +368,19 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
   // Comments
   // -------------------------------------------------------------------------
+
+  private _createCommentsLoader() {
+    return this._getDataLoader<number, Comment>(async (commentIds) => {
+      const comments = await this.commentRepository.find({
+        where: { id: In(commentIds) },
+      });
+      return commentIds.map(
+        (id) =>
+          comments.find((comment: Comment) => comment.id === id) ||
+          new Error(`Could not load comment: ${id}`),
+      );
+    });
+  }
 
   private _createCommentImagesLoader() {
     return this._getDataLoader<number, Image[]>(async (commentIds) => {

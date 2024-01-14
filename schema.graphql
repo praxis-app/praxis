@@ -337,6 +337,7 @@ type Notification {
   group: Group
   proposal: Proposal
   post: Post
+  comment: Comment
 }
 
 type Like {

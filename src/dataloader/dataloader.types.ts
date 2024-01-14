@@ -51,6 +51,7 @@ export interface Dataloaders {
   postLikesLoader: DataLoader<number, Like[]>;
 
   // Comments
+  commentsLoader: DataLoader<number, Comment>;
   commentImagesLoader: DataLoader<number, Image[]>;
   commentLikeCountLoader: DataLoader<number, number>;
   commentLikesLoader: DataLoader<number, Like[]>;
