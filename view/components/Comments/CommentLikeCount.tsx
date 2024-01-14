@@ -38,6 +38,7 @@ const CommentLikeCount = ({ likeCount, rightLikeCount }: Props) => {
       bottom={rightLikeCount ? '5px' : '-15px'}
       boxShadow={BOX_SHADOW}
       bgcolor="background.secondary"
+      sx={{ cursor: 'pointer' }}
       alignItems="center"
       borderRadius="50px"
       padding="2px"
@@ -61,7 +62,11 @@ const CommentLikeCount = ({ likeCount, rightLikeCount }: Props) => {
         />
       </Box>
       {likeCount > 1 && (
-        <Typography fontSize="13px" paddingRight="5px">
+        <Typography
+          fontSize="13px"
+          paddingRight="5px"
+          sx={{ userSelect: 'none' }}
+        >
           {getLikeCountText()}
         </Typography>
       )}
