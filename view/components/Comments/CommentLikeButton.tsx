@@ -34,7 +34,7 @@ const CommentLikeButton = ({
   const handleLikeBtnClick = async () => {
     if (!isLoggedIn) {
       toastVar({
-        title: t('posts.prompts.loginToLike'),
+        title: t('comments.prompts.loginToLike'),
         status: 'info',
       });
       return;
