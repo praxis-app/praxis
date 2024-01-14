@@ -45,19 +45,19 @@ export class LikesService {
     const { post, comment } = await this.likeRepository.findOneOrFail({
       where: { id: likeId },
       relations: [
-        'post.group.config',
-        'post.event.group.config',
-        'comment.post.group.config',
         'comment.post.event.group.config',
+        'comment.post.group.config',
         'comment.proposal.group.config',
+        'post.event.group.config',
+        'post.group.config',
       ],
     });
     return (
-      post?.group?.config.privacy === GroupPrivacy.Public ||
-      post?.event?.group?.config.privacy === GroupPrivacy.Public ||
+      comment?.post?.event?.group?.config.privacy === GroupPrivacy.Public ||
       comment?.post?.group?.config.privacy === GroupPrivacy.Public ||
       comment?.proposal?.group?.config.privacy === GroupPrivacy.Public ||
-      comment?.post?.event?.group?.config.privacy === GroupPrivacy.Public
+      post?.event?.group?.config.privacy === GroupPrivacy.Public ||
+      post?.group?.config.privacy === GroupPrivacy.Public
     );
   }
 
