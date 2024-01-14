@@ -1,5 +1,4 @@
 import { useReactiveVar } from '@apollo/client';
-import { ThumbUp } from '@mui/icons-material';
 import { Box, ButtonBase, SxProps, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,6 +19,7 @@ import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 import CommentForm from './CommentForm';
+import CommentLikeCount from './CommentLikeCount';
 
 interface Props {
   canManageComments: boolean;
@@ -82,24 +82,6 @@ const Comment = ({
     marginLeft: 0.5,
     width: 40,
     height: 40,
-  };
-
-  const getLikeCountText = () => {
-    if (likeCount > 99) {
-      return '99+';
-    }
-    return likeCount;
-  };
-
-  // TODO: Account for when there are more than 9 likes
-  const getLikeCountRightPosition = () => {
-    if (rightLikeCount) {
-      if (likeCount > 1) {
-        return '-35px';
-      }
-      return '-16px';
-    }
-    return '0px';
   };
 
   const getCommentBodyRightMargin = () => {
@@ -258,40 +240,10 @@ const Comment = ({
             )}
 
             {!!likeCount && (
-              <Flex
-                position="absolute"
-                right={getLikeCountRightPosition()}
-                bottom={rightLikeCount ? '5px' : '-15px'}
-                boxShadow={1}
-                bgcolor="background.secondary"
-                alignItems="center"
-                borderRadius="50px"
-                padding="2px"
-                gap="6px"
-              >
-                <Box
-                  bgcolor={Blurple.Marina}
-                  borderRadius="50%"
-                  display="inline-flex"
-                  justifyContent="center"
-                  width="22px"
-                  height="22px"
-                >
-                  <ThumbUp
-                    sx={{
-                      fontSize: 13,
-                      marginTop: 0.55,
-                      marginLeft: '1px',
-                      color: 'text.primary',
-                    }}
-                  />
-                </Box>
-                {likeCount > 1 && (
-                  <Typography fontSize="13px" paddingRight="5px">
-                    {getLikeCountText()}
-                  </Typography>
-                )}
-              </Flex>
+              <CommentLikeCount
+                likeCount={likeCount}
+                rightLikeCount={rightLikeCount}
+              />
             )}
           </Box>
 
