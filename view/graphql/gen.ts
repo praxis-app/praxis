@@ -461,6 +461,7 @@ export type Mutation = {
   deleteNotification: Scalars['Boolean']['output'];
   deletePost: Scalars['Boolean']['output'];
   deleteProposal: Scalars['Boolean']['output'];
+  deleteRule: Scalars['Boolean']['output'];
   deleteServerInvite: Scalars['Boolean']['output'];
   deleteServerRole: Scalars['Boolean']['output'];
   deleteServerRoleMember: DeleteServerRoleMemberPayload;
@@ -593,6 +594,10 @@ export type MutationDeletePostArgs = {
 
 export type MutationDeleteProposalArgs = {
   id: Scalars['Int']['input'];
+};
+
+export type MutationDeleteRuleArgs = {
+  ruleId: Scalars['Float']['input'];
 };
 
 export type MutationDeleteServerInviteArgs = {

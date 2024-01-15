@@ -24,4 +24,9 @@ export class RulesResolver {
   async updateRule(@Args('ruleData') ruleData: UpdateRuleInput) {
     return this.rulesService.updateRule(ruleData);
   }
+
+  @Mutation(() => Boolean)
+  async deleteRule(@Args('ruleId') ruleId: number) {
+    return this.rulesService.deleteRule(ruleId);
+  }
 }

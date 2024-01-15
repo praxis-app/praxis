@@ -654,6 +654,7 @@ type Mutation {
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createRule(ruleData: CreateRuleInput!): CreateRulePayload!
   updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
+  deleteRule(ruleId: Float!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
