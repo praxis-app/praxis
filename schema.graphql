@@ -545,6 +545,14 @@ type CreateLikePayload {
   comment: Comment
 }
 
+type CreateRulePayload {
+  rule: Rule!
+}
+
+type UpdateRulePayload {
+  rule: Rule!
+}
+
 type CreateVotePayload {
   vote: Vote!
 }
@@ -644,6 +652,8 @@ type Mutation {
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
+  createRule(ruleData: CreateRuleInput!): CreateRulePayload!
+  updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -908,6 +918,18 @@ input UpdateServerConfigInput {
   canaryStatement: String
   showCanaryStatement: Boolean
   securityTxt: String
+}
+
+input CreateRuleInput {
+  groupId: Int
+  text: String!
+  priority: Int
+}
+
+input UpdateRuleInput {
+  id: Int!
+  text: String
+  priority: Int
 }
 
 input CreateVoteInput {

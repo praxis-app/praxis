@@ -167,6 +167,17 @@ export type CreateProposalPayload = {
   proposal: Proposal;
 };
 
+export type CreateRuleInput = {
+  groupId?: InputMaybe<Scalars['Int']['input']>;
+  priority?: InputMaybe<Scalars['Int']['input']>;
+  text: Scalars['String']['input'];
+};
+
+export type CreateRulePayload = {
+  __typename?: 'CreateRulePayload';
+  rule: Rule;
+};
+
 export type CreateServerInviteInput = {
   expiresAt?: InputMaybe<Scalars['DateTime']['input']>;
   maxUses?: InputMaybe<Scalars['Int']['input']>;
@@ -435,6 +446,7 @@ export type Mutation = {
   createLike: CreateLikePayload;
   createPost: CreatePostPayload;
   createProposal: CreateProposalPayload;
+  createRule: CreateRulePayload;
   createServerInvite: CreateServerInvitePayload;
   createServerRole: CreateServerRolePayload;
   createVote: CreateVotePayload;
@@ -472,6 +484,7 @@ export type Mutation = {
   updateNotification: UpdateNotificationPayload;
   updatePost: UpdatePostPayload;
   updateProposal: UpdateProposalPayload;
+  updateRule: UpdateRulePayload;
   updateServerConfig: UpdateServerConfigPayload;
   updateServerRole: UpdateServerRolePayload;
   updateUser: UpdateUserPayload;
@@ -520,6 +533,10 @@ export type MutationCreatePostArgs = {
 
 export type MutationCreateProposalArgs = {
   proposalData: CreateProposalInput;
+};
+
+export type MutationCreateRuleArgs = {
+  ruleData: CreateRuleInput;
 };
 
 export type MutationCreateServerInviteArgs = {
@@ -665,6 +682,10 @@ export type MutationUpdatePostArgs = {
 
 export type MutationUpdateProposalArgs = {
   proposalData: UpdateProposalInput;
+};
+
+export type MutationUpdateRuleArgs = {
+  ruleData: UpdateRuleInput;
 };
 
 export type MutationUpdateServerConfigArgs = {
@@ -923,6 +944,7 @@ export type Query = {
   serverInvites: Array<ServerInvite>;
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
+  serverRules: Array<Rule>;
   unreadNotificationsCount: Scalars['Int']['output'];
   user: User;
   users: Array<User>;
@@ -1009,6 +1031,16 @@ export type QueryUsersByIdsArgs = {
 export type ReadNotificationsPayload = {
   __typename?: 'ReadNotificationsPayload';
   notifications: Array<Notification>;
+};
+
+export type Rule = {
+  __typename?: 'Rule';
+  createdAt: Scalars['DateTime']['output'];
+  group?: Maybe<Group>;
+  id: Scalars['Int']['output'];
+  priority: Scalars['Int']['output'];
+  text: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type ServerConfig = {
@@ -1214,6 +1246,17 @@ export type UpdateProposalInput = {
 export type UpdateProposalPayload = {
   __typename?: 'UpdateProposalPayload';
   proposal: Proposal;
+};
+
+export type UpdateRuleInput = {
+  id: Scalars['Int']['input'];
+  priority?: InputMaybe<Scalars['Int']['input']>;
+  text?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateRulePayload = {
+  __typename?: 'UpdateRulePayload';
+  rule: Rule;
 };
 
 export type UpdateServerConfigInput = {
