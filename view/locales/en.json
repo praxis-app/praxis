@@ -600,7 +600,18 @@
 
   "rules": {
     "headers": {
-      "serverRules": "Server Rules"
+      "serverRules": "Server Rules",
+      "createRule": "Create Rule"
+    },
+    "prompts": {
+      "noRules": "No rules yet."
+    },
+    "labels": {
+      "create": "Create Rule"
+    },
+    "placeholders": {
+      "title": "Title",
+      "description": "Description"
     }
   },
 
