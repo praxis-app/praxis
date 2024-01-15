@@ -1,8 +1,13 @@
 import { FormGroup } from '@mui/material';
 import { Form, Formik } from 'formik';
+import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import { CreateRuleInput } from '../../graphql/gen';
 import { useCreateRuleMutation } from '../../graphql/rules/mutations/gen/CreateRule.gen';
+import {
+  ServerRulesDocument,
+  ServerRulesQuery,
+} from '../../graphql/rules/queries/gen/ServerRules.gen';
 import Flex from '../Shared/Flex';
 import Modal from '../Shared/Modal';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
@@ -34,6 +39,23 @@ const CreateRuleModal = ({ isOpen, handleCloseModal }: Props) => {
           title: values[RuleFormFieldName.Title],
           description: values[RuleFormFieldName.Description],
         },
+      },
+      update(cache, { data }) {
+        if (!data) {
+          return;
+        }
+        cache.updateQuery<ServerRulesQuery>(
+          {
+            query: ServerRulesDocument,
+          },
+          (groupsData) =>
+            produce(groupsData, (draft) => {
+              draft?.serverRules.push(data.createRule.rule);
+            }),
+        );
+      },
+      onCompleted() {
+        handleCloseModal();
       },
     });
   };
