@@ -597,7 +597,7 @@ export type MutationDeleteProposalArgs = {
 };
 
 export type MutationDeleteRuleArgs = {
-  ruleId: Scalars['Float']['input'];
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeleteServerInviteArgs = {

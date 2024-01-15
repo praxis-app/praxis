@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateRuleInput } from './models/create-rule.input';
 import { CreateRulePayload } from './models/create-rule.payload';
 import { Rule } from './models/rule.model';
@@ -26,7 +26,7 @@ export class RulesResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteRule(@Args('ruleId') ruleId: number) {
-    return this.rulesService.deleteRule(ruleId);
+  async deleteRule(@Args('id', { type: () => Int }) id: number) {
+    return this.rulesService.deleteRule(id);
   }
 }
