@@ -50,6 +50,14 @@ export class CommentsService {
     );
   }
 
+  async getCommentProposalId(commentId: number) {
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId },
+      select: ['proposalId'],
+    });
+    return comment?.proposalId;
+  }
+
   async isPublicCommentImage(imageId: number) {
     const image = await this.imageRepository.findOneOrFail({
       where: { id: imageId },

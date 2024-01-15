@@ -227,7 +227,7 @@ const ProposalCardFooter = ({
       <CardActions sx={{ justifyContent: 'space-around' }}>
         <CardFooterButton
           onClick={handleVoteButtonClick}
-          sx={voteByCurrentUser ? { color: Blurple.Marina } : {}}
+          sx={voteByCurrentUser ? { color: Blurple.SavoryBlue } : {}}
         >
           <HowToVote sx={ICON_STYLES} />
           {getVoteButtonLabel()}

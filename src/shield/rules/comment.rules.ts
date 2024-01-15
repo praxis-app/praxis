@@ -20,16 +20,38 @@ export const isOwnComment = rule({ cache: 'strict' })(async (
 });
 
 export const isPublicComment = rule({ cache: 'strict' })(async (
-  parent: Comment,
-  _args,
+  parent: Comment | null,
+  args: { commentId: number } | null,
   { services: { commentsService } }: Context,
 ) => {
-  const releations = parent.proposalId
+  if (args?.commentId) {
+    const proposalId = await commentsService.getCommentProposalId(
+      args.commentId,
+    );
+    const relations = proposalId
+      ? ['proposal.group.config']
+      : ['post.group.config', 'post.event.group.config'];
+
+    const { post, proposal } = await commentsService.getComment(
+      args.commentId,
+      relations,
+    );
+    return (
+      post?.group?.config.privacy === GroupPrivacy.Public ||
+      post?.event?.group?.config.privacy === GroupPrivacy.Public ||
+      proposal?.group?.config.privacy === GroupPrivacy.Public
+    );
+  }
+  if (!parent) {
+    return false;
+  }
+
+  const relations = parent.proposalId
     ? ['proposal.group.config']
     : ['post.group.config', 'post.event.group.config'];
   const { post, proposal } = await commentsService.getComment(
     parent.id,
-    releations,
+    relations,
   );
   return (
     post?.group?.config.privacy === GroupPrivacy.Public ||

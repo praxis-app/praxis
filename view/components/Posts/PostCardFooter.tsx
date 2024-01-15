@@ -1,7 +1,7 @@
 // TODO: Add basic functionality for sharing. Below is a WIP
 
 import { useReactiveVar } from '@apollo/client';
-import { Comment, Favorite as LikeIcon, Reply } from '@mui/icons-material';
+import { Comment, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,22 +11,16 @@ import { usePostCommentsLazyQuery } from '../../graphql/posts/queries/gen/PostCo
 import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
+import LikeBadge from '../Likes/LikeBadge';
+import LikesModal from '../Likes/LikesModal';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
-import LikeButton from './LikeButton';
+import PostLikeButton from './PostLikeButton';
 import PostModal from './PostModal';
-import { VOTE_BADGE_STYLES } from '../../constants/vote.constants';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
   transform: 'rotateY(180deg)',
-};
-
-const BADGE_STYLES: SxProps = {
-  ...VOTE_BADGE_STYLES,
-  width: 22.5,
-  height: 22.5,
-  marginRight: 0.9,
 };
 
 interface Props {
@@ -47,6 +41,8 @@ const PostCardFooter = ({
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showComments, setShowComments] = useState(inModal || isPostPage);
+  const [showLikesModal, setShowLikesModal] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const [getPostComments, { data: postCommentsData }] =
     usePostCommentsLazyQuery();
@@ -76,7 +72,7 @@ const PostCardFooter = ({
     post,
   ]);
 
-  const { id, likesCount, commentCount, isLikedByMe } = post;
+  const { id, likeCount, commentCount, isLikedByMe } = post;
   const comments = postCommentsData?.post.comments;
   const group = postCommentsData?.group;
   const event = postCommentsData?.event;
@@ -121,6 +117,12 @@ const PostCardFooter = ({
     }
   };
 
+  const handlePopoverOpen = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
+  ) => setAnchorEl(event.currentTarget);
+
+  const handlePopoverClose = () => setAnchorEl(null);
+
   const renderCommentForm = () => {
     if (!isLoggedIn || inModal) {
       return null;
@@ -135,22 +137,36 @@ const PostCardFooter = ({
   };
 
   return (
-    <Box marginTop={likesCount ? 1.25 : 2}>
+    <Box marginTop={likeCount ? 1.25 : 2}>
       <Box paddingX={inModal ? 0 : '16px'}>
         <Flex
-          justifyContent={likesCount ? 'space-between' : 'end'}
-          marginBottom={likesCount || commentCount ? 0.8 : 0}
+          justifyContent={likeCount ? 'space-between' : 'end'}
+          marginBottom={likeCount || commentCount ? 0.8 : 0}
         >
-          {!!likesCount && (
-            <Flex>
-              <Box sx={BADGE_STYLES}>
-                <LikeIcon
-                  color="primary"
-                  sx={{ fontSize: 13, marginTop: 0.65 }}
+          {!!likeCount && (
+            <>
+              <Flex
+                onClick={() => setShowLikesModal(true)}
+                onMouseEnter={handlePopoverOpen}
+                onMouseLeave={handlePopoverClose}
+                sx={{ cursor: 'pointer' }}
+              >
+                <LikeBadge
+                  postId={id}
+                  anchorEl={anchorEl}
+                  handlePopoverClose={handlePopoverClose}
+                  marginRight="11px"
                 />
-              </Box>
-              {likesCount}
-            </Flex>
+
+                <Typography sx={{ userSelect: 'none' }}>{likeCount}</Typography>
+              </Flex>
+
+              <LikesModal
+                open={showLikesModal}
+                onClose={() => setShowLikesModal(false)}
+                postId={id}
+              />
+            </>
           )}
 
           {!!commentCount && (
@@ -172,7 +188,7 @@ const PostCardFooter = ({
           paddingX: inModal ? 0 : undefined,
         }}
       >
-        <LikeButton postId={id} isLikedByMe={!!isLikedByMe} />
+        <PostLikeButton postId={id} isLikedByMe={!!isLikedByMe} />
 
         <CardFooterButton onClick={handleCommentButtonClick}>
           <Comment sx={ROTATED_ICON_STYLES} />

@@ -1,5 +1,5 @@
 import { Box, SxProps, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TypeNames } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
@@ -7,13 +7,17 @@ import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.ge
 import { useDeleteCommentMutation } from '../../graphql/comments/mutations/gen/DeleteComment.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { urlifyText } from '../../utils/shared.utils';
+import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import AttachedImageList from '../Images/AttachedImageList';
+import LikesModal from '../Likes/LikesModal';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 import CommentForm from './CommentForm';
+import CommentLikeButton from './CommentLikeButton';
+import CommentLikeCount from './CommentLikeCount';
 
 interface Props {
   canManageComments: boolean;
@@ -33,21 +37,52 @@ const Comment = ({
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showItemMenu, setShowItemMenu] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [deleteComment] = useDeleteCommentMutation();
+  const [rightLikeCount, setRightLikeCount] = useState(false);
+  const [showLikesModal, setShowLikesModal] = useState(false);
+
+  const [deleteComment, { loading: deleteCommentLoading }] =
+    useDeleteCommentMutation();
 
   const { t } = useTranslation();
+  const ref = useRef<HTMLDivElement>(null);
   const isDesktop = useIsDesktop();
 
-  const { id, user, body, images, __typename } = comment;
+  const { id, user, body, images, createdAt, likeCount, __typename } = comment;
+
+  useEffect(() => {
+    if (likeCount && ref.current && ref.current.offsetWidth < 200) {
+      setRightLikeCount(true);
+    } else {
+      setRightLikeCount(false);
+    }
+  }, [likeCount, ref.current?.offsetWidth]);
+
   const isMe = user.id === currentUserId;
-  const userPath = getUserProfilePath(user.name);
   const deleteCommentPrompt = t('prompts.deleteItem', { itemType: 'comment' });
+  const userPath = getUserProfilePath(user.name);
+  const formattedDate = timeAgo(createdAt);
 
   const itemMenuStyles: SxProps = {
     alignSelf: 'center',
     marginLeft: 0.5,
     width: 40,
     height: 40,
+  };
+
+  const getCommentBodyRightMargin = () => {
+    if (!rightLikeCount) {
+      return '0px';
+    }
+    if (likeCount > 99) {
+      return '52px';
+    }
+    if (likeCount > 9) {
+      return '42px';
+    }
+    if (likeCount > 1) {
+      return '35px';
+    }
+    return '15px';
   };
 
   const handleDelete = async () =>
@@ -120,49 +155,79 @@ const Comment = ({
         withLink
       />
 
-      <Box
-        bgcolor="background.secondary"
-        borderRadius={4}
-        maxWidth={isDesktop ? 'calc(100% - 90px)' : undefined}
-        paddingX={1.5}
-        paddingY={0.5}
-      >
-        <Link href={userPath} sx={{ fontFamily: 'Inter Medium' }}>
-          {user.name}
-        </Link>
+      <Box maxWidth={isDesktop ? 'calc(100% - 90px)' : undefined}>
+        <Flex>
+          <Box
+            bgcolor="background.secondary"
+            borderRadius={4}
+            marginRight={getCommentBodyRightMargin()}
+            minWidth="85px"
+            paddingX={1.5}
+            paddingY={1}
+            position="relative"
+            ref={ref}
+          >
+            <Link href={userPath} sx={{ fontFamily: 'Inter Medium' }}>
+              {user.name}
+            </Link>
 
-        {body && (
-          <Typography
-            dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
-            whiteSpace="pre-wrap"
-            lineHeight={1.2}
-            paddingY={0.4}
-          />
-        )}
+            {body && (
+              <Typography
+                dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
+                whiteSpace="pre-wrap"
+                lineHeight={1.2}
+                paddingY={0.4}
+              />
+            )}
 
-        {!!images.length && (
-          <AttachedImageList
-            images={images}
-            width={250}
-            paddingX={2}
-            paddingBottom={1}
-            paddingTop={1.5}
-          />
-        )}
+            {!!images.length && (
+              <AttachedImageList
+                images={images}
+                width={250}
+                paddingX={2}
+                paddingBottom={1}
+                paddingTop={1.5}
+              />
+            )}
+
+            {!!likeCount && (
+              <CommentLikeCount
+                commentId={id}
+                likeCount={likeCount}
+                onClick={() => setShowLikesModal(true)}
+                rightLikeCount={rightLikeCount}
+              />
+            )}
+
+            <LikesModal
+              open={showLikesModal}
+              onClose={() => setShowLikesModal(false)}
+              commentId={id}
+            />
+          </Box>
+
+          {showItemMenu && isDesktop && (
+            <ItemMenu
+              anchorEl={menuAnchorEl}
+              buttonStyles={itemMenuStyles}
+              canDelete={isMe || canManageComments}
+              canUpdate={isMe}
+              deleteItem={handleDelete}
+              deletePrompt={deleteCommentPrompt}
+              loading={deleteCommentLoading}
+              onEditButtonClick={() => setShowEditForm(true)}
+              setAnchorEl={setMenuAnchorEl}
+            />
+          )}
+        </Flex>
+
+        <Flex paddingLeft="12px" paddingTop="4px" gap="8px">
+          <Typography fontSize="13px" color="text.secondary" lineHeight={1}>
+            {formattedDate}
+          </Typography>
+          <CommentLikeButton comment={comment} />
+        </Flex>
       </Box>
-
-      {showItemMenu && (
-        <ItemMenu
-          anchorEl={menuAnchorEl}
-          buttonStyles={itemMenuStyles}
-          canDelete={isMe || canManageComments}
-          canUpdate={isMe}
-          deleteItem={handleDelete}
-          deletePrompt={deleteCommentPrompt}
-          onEditButtonClick={() => setShowEditForm(true)}
-          setAnchorEl={setMenuAnchorEl}
-        />
-      )}
     </Flex>
   );
 };

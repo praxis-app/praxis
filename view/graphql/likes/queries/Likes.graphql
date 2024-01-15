@@ -1,0 +1,8 @@
+query Likes($postId: Int, $commentId: Int, $isLoggedIn: Boolean!) {
+  likes(postId: $postId, commentId: $commentId) {
+    ...Like
+  }
+  me @include(if: $isLoggedIn) {
+    id
+  }
+}

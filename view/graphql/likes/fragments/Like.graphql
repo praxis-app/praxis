@@ -1,0 +1,7 @@
+fragment Like on Like {
+  id
+  user {
+    ...UserAvatar
+    ...FollowButton @include(if: $isLoggedIn)
+  }
+}

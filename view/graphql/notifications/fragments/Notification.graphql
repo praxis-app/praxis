@@ -16,4 +16,16 @@ fragment Notification on Notification {
   post {
     id
   }
+
+  comment {
+    id
+    body
+
+    post {
+      id
+    }
+    proposal {
+      id
+    }
+  }
 }

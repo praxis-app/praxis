@@ -1,6 +1,11 @@
 fragment Comment on Comment {
   id
   body
+  likeCount
+  createdAt
+
+  ...CommentLikeButton
+
   images {
     ...AttachedImage
   }

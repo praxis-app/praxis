@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { Comment } from '../comments/models/comment.model';
+import { GroupPrivacy } from '../groups/groups.constants';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
@@ -25,45 +26,72 @@ export class LikesService {
     private notificationsService: NotificationsService,
   ) {}
 
+  async getLikes({ postId, commentId }: FindOptionsWhere<Like>) {
+    if (!postId && !commentId) {
+      throw new Error('Either postId or commentId must be provided');
+    }
+    return this.likeRepository.find({
+      where: { postId, commentId },
+    });
+  }
+
   async getLikedPost(postId: number) {
     return this.postRepository.findOneOrFail({
       where: { id: postId },
     });
   }
 
-  // TODO: Add support for liking comments
+  async isPublicLike(likeId: number) {
+    const { post, comment } = await this.likeRepository.findOneOrFail({
+      where: { id: likeId },
+      relations: [
+        'comment.post.event.group.config',
+        'comment.post.group.config',
+        'comment.proposal.group.config',
+        'post.event.group.config',
+        'post.group.config',
+      ],
+    });
+    return (
+      comment?.post?.event?.group?.config.privacy === GroupPrivacy.Public ||
+      comment?.post?.group?.config.privacy === GroupPrivacy.Public ||
+      comment?.proposal?.group?.config.privacy === GroupPrivacy.Public ||
+      post?.event?.group?.config.privacy === GroupPrivacy.Public ||
+      post?.group?.config.privacy === GroupPrivacy.Public
+    );
+  }
+
   async createLike(likeData: CreateLikeInput, user: User) {
     const like = await this.likeRepository.save({
       ...likeData,
       userId: user.id,
     });
 
-    const {
-      user: { id: userId },
-    } = like.postId
-      ? await this.postRepository.findOneOrFail({
-          where: { id: like.postId },
-          relations: ['user'],
-        })
-      : await this.commentRepository.findOneOrFail({
+    const likedItem = like.commentId
+      ? await this.commentRepository.findOneOrFail({
           where: { id: like.commentId },
-          relations: ['user'],
+        })
+      : await this.postRepository.findOneOrFail({
+          where: { id: like.postId },
         });
 
-    if (userId !== user.id) {
+    if (likedItem.userId !== user.id) {
       await this.notificationsService.createNotification({
         notificationType: like.postId
           ? NotificationType.PostLike
           : NotificationType.CommentLike,
         commentId: like.commentId,
+        userId: likedItem.userId,
         otherUserId: user.id,
         postId: like.postId,
         likeId: like.id,
-        userId,
       });
     }
 
-    return { like };
+    if (like.commentId) {
+      return { like, comment: likedItem };
+    }
+    return { like, post: likedItem };
   }
 
   async deleteLike(likeData: DeleteLikeInput, user: User) {

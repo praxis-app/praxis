@@ -12,6 +12,7 @@ import {
 } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Comment } from '../comments/models/comment.model';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Post } from '../posts/models/post.model';
@@ -83,6 +84,14 @@ export class NotificationsResolver {
     @Parent() { postId }: Notification,
   ) {
     return postId ? loaders.postsLoader.load(postId) : null;
+  }
+
+  @ResolveField(() => Comment, { nullable: true })
+  comment(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { commentId }: Notification,
+  ) {
+    return commentId ? loaders.commentsLoader.load(commentId) : null;
   }
 
   @Mutation(() => UpdateNotificationPayload)

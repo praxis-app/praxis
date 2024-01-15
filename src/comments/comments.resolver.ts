@@ -9,6 +9,7 @@ import {
 } from '@nestjs/graphql';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Dataloaders } from '../dataloader/dataloader.types';
+import { Like } from '../likes/models/like.model';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { Proposal } from '../proposals/models/proposal.model';
@@ -37,12 +38,12 @@ export class CommentsResolver {
     return loaders.usersLoader.load(userId);
   }
 
-  @ResolveField(() => Post)
+  @ResolveField(() => Post, { nullable: true })
   async post(@Parent() { postId }: Comment) {
     return postId ? this.postsService.getPost(postId) : null;
   }
 
-  @ResolveField(() => Proposal)
+  @ResolveField(() => Proposal, { nullable: true })
   async proposal(@Parent() { proposalId }: Comment) {
     return proposalId ? this.proposalsService.getProposal(proposalId) : null;
   }
@@ -53,6 +54,34 @@ export class CommentsResolver {
     @Parent() { id }: Comment,
   ) {
     return loaders.commentImagesLoader.load(id);
+  }
+
+  @ResolveField(() => [Like])
+  async likes(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Like,
+  ) {
+    return loaders.commentLikesLoader.load(id);
+  }
+
+  @ResolveField(() => Int)
+  async likeCount(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Post,
+  ) {
+    return loaders.commentLikeCountLoader.load(id);
+  }
+
+  @ResolveField(() => Boolean)
+  async isLikedByMe(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @CurrentUser() user: User,
+    @Parent() { id }: Comment,
+  ) {
+    return loaders.isCommentLikedByMeLoader.load({
+      currentUserId: user.id,
+      commentId: id,
+    });
   }
 
   @Mutation(() => CreateCommentPayload)

@@ -55,10 +55,11 @@ export type Comment = {
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
   images: Array<Image>;
+  isLikedByMe: Scalars['Boolean']['output'];
+  likeCount: Scalars['Int']['output'];
   likes: Array<Like>;
   post?: Maybe<Post>;
   proposal?: Maybe<Proposal>;
-  updatedAt: Scalars['DateTime']['output'];
   user: User;
 };
 
@@ -136,7 +137,9 @@ export type CreateLikeInput = {
 
 export type CreateLikePayload = {
   __typename?: 'CreateLikePayload';
+  comment?: Maybe<Comment>;
   like: Like;
+  post?: Maybe<Post>;
 };
 
 export type CreatePostInput = {
@@ -682,6 +685,7 @@ export type MutationUpdateVoteArgs = {
 
 export type Notification = {
   __typename?: 'Notification';
+  comment?: Maybe<Comment>;
   createdAt: Scalars['DateTime']['output'];
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
@@ -703,8 +707,8 @@ export type Post = {
   id: Scalars['Int']['output'];
   images: Array<Image>;
   isLikedByMe: Scalars['Boolean']['output'];
+  likeCount: Scalars['Int']['output'];
   likes: Array<Like>;
-  likesCount: Scalars['Int']['output'];
   updatedAt: Scalars['DateTime']['output'];
   user: User;
 };
@@ -904,6 +908,7 @@ export type Query = {
   groups: Array<Group>;
   groupsCount: Scalars['Int']['output'];
   isFirstUser: Scalars['Boolean']['output'];
+  likes: Array<Like>;
   me: User;
   notifications: Array<Notification>;
   notificationsCount: Scalars['Int']['output'];
@@ -949,6 +954,11 @@ export type QueryGroupRoleArgs = {
 export type QueryGroupsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type QueryLikesArgs = {
+  commentId?: InputMaybe<Scalars['Int']['input']>;
+  postId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type QueryNotificationsArgs = {

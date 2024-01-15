@@ -11,8 +11,8 @@ import {
   ThumbsUpDown,
 } from '@mui/icons-material';
 import { Box, MenuItem, SxProps, Typography, useTheme } from '@mui/material';
-
 import { produce } from 'immer';
+import { truncate } from 'lodash';
 import { useState } from 'react';
 import { Namespace, TFunction, useTranslation } from 'react-i18next';
 import {
@@ -50,6 +50,7 @@ const Notification = ({
     status,
     post,
     group,
+    comment,
     proposal,
     createdAt,
     __typename,
@@ -128,6 +129,17 @@ const Notification = ({
         name: otherUser?.name,
       });
     }
+    if (notificationType === NotificationType.CommentLike) {
+      if (comment?.body) {
+        return _t('notifications.messages.commentLikeWithText', {
+          name: otherUser?.name,
+          text: `"${truncate(comment?.body, { length: 30 })}"`,
+        });
+      }
+      return _t('notifications.messages.commentLike', {
+        name: otherUser?.name,
+      });
+    }
     if (notificationType === NotificationType.GroupMemberRequest) {
       return _t('notifications.messages.groupMemberRequest', {
         name: otherUser?.name,
@@ -161,6 +173,12 @@ const Notification = ({
     }
     if (notificationType === NotificationType.PostLike) {
       return `${NavigationPaths.Posts}/${post?.id}`;
+    }
+    if (notificationType === NotificationType.CommentLike) {
+      if (comment?.post?.id) {
+        return `${NavigationPaths.Posts}/${comment?.post?.id}`;
+      }
+      return `${NavigationPaths.Proposals}/${comment?.proposal?.id}`;
     }
     if (notificationType === NotificationType.Follow) {
       return `${NavigationPaths.Users}/${otherUser?.name}`;
@@ -218,6 +236,7 @@ const Notification = ({
     }
     if (
       notificationType === NotificationType.ProposalVoteAgreement ||
+      notificationType === NotificationType.CommentLike ||
       notificationType === NotificationType.PostLike
     ) {
       return <ThumbUp sx={iconStyles} />;

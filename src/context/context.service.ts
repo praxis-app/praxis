@@ -6,6 +6,7 @@ import { EventsService } from '../events/events.service';
 import { GroupRolesService } from '../groups/group-roles/group-roles.service';
 import { GroupsService } from '../groups/groups.service';
 import { ImagesService } from '../images/images.service';
+import { LikesService } from '../likes/likes.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { PostsService } from '../posts/posts.service';
 import { ProposalActionsService } from '../proposals/proposal-actions/proposal-actions.service';
@@ -26,6 +27,7 @@ export class ContextService {
     private groupRolesService: GroupRolesService,
     private groupsService: GroupsService,
     private imagesService: ImagesService,
+    private likesService: LikesService,
     private notificationsService: NotificationsService,
     private postsService: PostsService,
     private proposalActionsService: ProposalActionsService,
@@ -50,6 +52,7 @@ export class ContextService {
       groupRolesService: this.groupRolesService,
       groupsService: this.groupsService,
       imagesService: this.imagesService,
+      likesService: this.likesService,
       notificationsService: this.notificationsService,
       postsService: this.postsService,
       proposalActionsService: this.proposalActionsService,

@@ -27,6 +27,13 @@ export type NotificationFragment = {
   } | null;
   proposal?: { __typename?: 'Proposal'; id: number } | null;
   post?: { __typename?: 'Post'; id: number } | null;
+  comment?: {
+    __typename?: 'Comment';
+    id: number;
+    body?: string | null;
+    post?: { __typename?: 'Post'; id: number } | null;
+    proposal?: { __typename?: 'Proposal'; id: number } | null;
+  } | null;
 };
 
 export const NotificationFragmentDoc = gql`
@@ -46,6 +53,16 @@ export const NotificationFragmentDoc = gql`
     }
     post {
       id
+    }
+    comment {
+      id
+      body
+      post {
+        id
+      }
+      proposal {
+        id
+      }
     }
   }
   ${UserAvatarFragmentDoc}

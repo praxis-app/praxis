@@ -71,14 +71,6 @@ const LeftNav = () => {
     width: 160,
   };
 
-  const getIconStyle = (path: NavigationPaths) => {
-    const transition = { transition: '0.2s ease' };
-    if (path === pathname) {
-      return { fontSize: 28, ...transition };
-    }
-    return transition;
-  };
-
   const isActive = (path: NavigationPaths) => path === pathname;
 
   if (loading) {
@@ -88,11 +80,11 @@ const LeftNav = () => {
   // TODO: Determine whether or not to refactor to use Stack instead of List
   // https://mui.com/material-ui/react-stack
   return (
-    <List component={'div'} role="navigation" sx={listStyles}>
+    <List component="div" role="navigation" sx={listStyles}>
       <Link href={NavigationPaths.Home}>
         <ListItemButton>
           <ListItemIcon>
-            <HomeIcon sx={getIconStyle(NavigationPaths.Home)} />
+            <HomeIcon />
           </ListItemIcon>
           <ListItemText
             isActive={isActive(NavigationPaths.Home)}
@@ -104,7 +96,7 @@ const LeftNav = () => {
       <Link href={NavigationPaths.Groups}>
         <ListItemButton>
           <ListItemIcon>
-            <GroupsIcon sx={getIconStyle(NavigationPaths.Groups)} />
+            <GroupsIcon />
           </ListItemIcon>
           <ListItemText
             isActive={isActive(NavigationPaths.Groups)}
@@ -118,7 +110,7 @@ const LeftNav = () => {
           <ListItemButton>
             <ListItemIcon sx={{ position: 'relative' }}>
               <NotificationCount size="20px" bottom="11px" left="17px" />
-              <Notifications sx={getIconStyle(NavigationPaths.Activity)} />
+              <Notifications />
             </ListItemIcon>
             <ListItemText
               isActive={isActive(NavigationPaths.Activity)}
@@ -131,7 +123,7 @@ const LeftNav = () => {
       <Link href={NavigationPaths.Events}>
         <ListItemButton>
           <ListItemIcon>
-            <EventsIcon sx={getIconStyle(NavigationPaths.Events)} />
+            <EventsIcon />
           </ListItemIcon>
           <ListItemText
             isActive={isActive(NavigationPaths.Events)}
@@ -144,7 +136,7 @@ const LeftNav = () => {
         <Link href={NavigationPaths.Roles}>
           <ListItemButton>
             <ListItemIcon>
-              <RolesIcon sx={getIconStyle(NavigationPaths.Roles)} />
+              <RolesIcon />
             </ListItemIcon>
             <ListItemText
               isActive={isActive(NavigationPaths.Roles)}
@@ -158,7 +150,7 @@ const LeftNav = () => {
         <Link href={NavigationPaths.Users}>
           <ListItemButton>
             <ListItemIcon>
-              <UsersIcon sx={getIconStyle(NavigationPaths.Users)} />
+              <UsersIcon />
             </ListItemIcon>
             <ListItemText
               isActive={isActive(NavigationPaths.Users)}
@@ -172,7 +164,7 @@ const LeftNav = () => {
         <Link href={NavigationPaths.Invites}>
           <ListItemButton>
             <ListItemIcon>
-              <InvitesIcon sx={getIconStyle(NavigationPaths.Invites)} />
+              <InvitesIcon />
             </ListItemIcon>
             <ListItemText
               isActive={isActive(NavigationPaths.Invites)}
@@ -185,7 +177,7 @@ const LeftNav = () => {
       <Link href={NavigationPaths.Docs}>
         <ListItemButton>
           <ListItemIcon>
-            <DocsIcon sx={getIconStyle(NavigationPaths.Docs)} />
+            <DocsIcon />
           </ListItemIcon>
           <ListItemText
             isActive={isActive(NavigationPaths.Docs)}

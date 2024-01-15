@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Comment } from '../comments/models/comment.model';
 import { Event } from '../events/models/event.model';
 import { GroupRole } from '../groups/group-roles/models/group-role.model';
 import { Group } from '../groups/models/group.model';
@@ -16,6 +17,7 @@ import { DataloaderService } from './dataloader.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      Comment,
       Event,
       Group,
       GroupRole,

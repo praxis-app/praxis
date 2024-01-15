@@ -1,4 +1,5 @@
 import DataLoader from 'dataloader';
+import { Comment } from '../comments/models/comment.model';
 import { Event } from '../events/models/event.model';
 import { GroupPermissions } from '../groups/group-roles/models/group-permissions.type';
 import { GroupRole } from '../groups/group-roles/models/group-role.model';
@@ -12,9 +13,14 @@ import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 
-export interface IsLikedByMeKey {
+export interface IsPostLikedByMeKey {
   currentUserId: number;
   postId: number;
+}
+
+export interface IsCommentLikedByMeKey {
+  currentUserId: number;
+  commentId: number;
 }
 
 export interface IsFollowedByMeKey {
@@ -38,14 +44,18 @@ export interface Dataloaders {
 
   // Posts
   postsLoader: DataLoader<number, Post>;
-  isPostLikedByMeLoader: DataLoader<IsLikedByMeKey, boolean>;
+  isPostLikedByMeLoader: DataLoader<IsPostLikedByMeKey, boolean>;
   postCommentCountLoader: DataLoader<number, number>;
   postImagesLoader: DataLoader<number, Image[]>;
   postLikeCountLoader: DataLoader<number, number>;
   postLikesLoader: DataLoader<number, Like[]>;
 
   // Comments
+  commentsLoader: DataLoader<number, Comment>;
   commentImagesLoader: DataLoader<number, Image[]>;
+  commentLikeCountLoader: DataLoader<number, number>;
+  commentLikesLoader: DataLoader<number, Like[]>;
+  isCommentLikedByMeLoader: DataLoader<IsCommentLikedByMeKey, boolean>;
 
   // Groups
   groupCoverPhotosLoader: DataLoader<number, Image>;
@@ -82,8 +92,9 @@ export type UserWithFollowingCount = User & { followingCount: number };
 export type ProposalWithVoteCount = Proposal & { voteCount: number };
 export type ProposalWithCommentCount = Proposal & { commentCount: number };
 
-export type PostWithLikeCount = Post & { likeCount: number };
+export type CommentWithLikeCount = Comment & { likeCount: number };
 export type PostWithCommentCount = Post & { commentCount: number };
+export type PostWithLikeCount = Post & { likeCount: number };
 
 export type EventWithInterestedCount = Event & { interestedCount: number };
 export type EventWithGoingCount = Event & { goingCount: number };

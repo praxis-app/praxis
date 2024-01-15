@@ -2,9 +2,11 @@ mutation LikePost($likeData: CreateLikeInput!, $isLoggedIn: Boolean = true) {
   createLike(likeData: $likeData) {
     like {
       id
+      ...Like
+
       post {
         id
-        likesCount
+        likeCount
         isLikedByMe @include(if: $isLoggedIn)
       }
     }

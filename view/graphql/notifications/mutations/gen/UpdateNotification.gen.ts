@@ -36,6 +36,13 @@ export type UpdateNotificationMutation = {
       } | null;
       proposal?: { __typename?: 'Proposal'; id: number } | null;
       post?: { __typename?: 'Post'; id: number } | null;
+      comment?: {
+        __typename?: 'Comment';
+        id: number;
+        body?: string | null;
+        post?: { __typename?: 'Post'; id: number } | null;
+        proposal?: { __typename?: 'Proposal'; id: number } | null;
+      } | null;
     };
   };
 };

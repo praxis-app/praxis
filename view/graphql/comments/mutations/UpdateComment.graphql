@@ -1,4 +1,7 @@
-mutation UpdateComment($commentData: UpdateCommentInput!) {
+mutation UpdateComment(
+  $commentData: UpdateCommentInput!
+  $isLoggedIn: Boolean = true
+) {
   updateComment(commentData: $commentData) {
     comment {
       ...Comment

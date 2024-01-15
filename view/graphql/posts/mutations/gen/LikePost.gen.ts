@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { LikeFragmentDoc } from '../../../likes/fragments/gen/Like.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -22,9 +23,16 @@ export type LikePostMutation = {
       post?: {
         __typename?: 'Post';
         id: number;
-        likesCount: number;
+        likeCount: number;
         isLikedByMe?: boolean;
       } | null;
+      user: {
+        __typename?: 'User';
+        id: number;
+        name: string;
+        isFollowedByMe: boolean;
+        profilePicture: { __typename?: 'Image'; id: number };
+      };
     };
   };
 };
@@ -34,14 +42,16 @@ export const LikePostDocument = gql`
     createLike(likeData: $likeData) {
       like {
         id
+        ...Like
         post {
           id
-          likesCount
+          likeCount
           isLikedByMe @include(if: $isLoggedIn)
         }
       }
     }
   }
+  ${LikeFragmentDoc}
 `;
 export type LikePostMutationFn = Apollo.MutationFunction<
   LikePostMutation,

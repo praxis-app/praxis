@@ -26,7 +26,7 @@ export type UserProfileFeedQuery = {
           __typename?: 'Post';
           id: number;
           body?: string | null;
-          likesCount: number;
+          likeCount: number;
           commentCount: number;
           isLikedByMe?: boolean;
           createdAt: any;
