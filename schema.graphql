@@ -292,6 +292,15 @@ type Event {
   coverPhoto: Image!
 }
 
+type Rule {
+  id: Int!
+  text: String!
+  priority: Int!
+  group: Group
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type GroupConfig {
   id: Int!
   adminModel: String!
@@ -576,6 +585,7 @@ type Query {
   canary: Canary!
   publicCanary: Canary
   serverConfig: ServerConfig!
+  serverRules: [Rule!]!
 }
 
 input EventsInput {
