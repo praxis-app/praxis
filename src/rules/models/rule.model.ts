@@ -18,7 +18,11 @@ export class Rule {
 
   @Column()
   @Field()
-  text: string;
+  title: string;
+
+  @Column()
+  @Field()
+  description: string;
 
   @Column()
   @Field(() => Int)

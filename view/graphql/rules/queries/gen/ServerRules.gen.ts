@@ -14,7 +14,8 @@ export type ServerRulesQuery = {
   serverRules: Array<{
     __typename?: 'Rule';
     id: number;
-    text: string;
+    title: string;
+    description: string;
     priority: number;
   }>;
 };
@@ -23,7 +24,8 @@ export const ServerRulesDocument = gql`
   query ServerRules {
     serverRules {
       id
-      text
+      title
+      description
       priority
     }
   }

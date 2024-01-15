@@ -1041,10 +1041,11 @@ export type ReadNotificationsPayload = {
 export type Rule = {
   __typename?: 'Rule';
   createdAt: Scalars['DateTime']['output'];
+  description: Scalars['String']['output'];
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   priority: Scalars['Int']['output'];
-  text: Scalars['String']['output'];
+  title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
