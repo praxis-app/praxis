@@ -5,6 +5,7 @@ import {
   Article as DocsIcon,
   EventNote,
   Link as InvitesIcon,
+  Rule,
   ExitToApp as SessionIcon,
   Settings,
   PersonAdd as SignUpIcon,
@@ -101,6 +102,15 @@ const NavDrawer = () => {
     </ListItemButton>
   );
 
+  const renderRulesButton = () => (
+    <ListItemButton onClick={handleLinkClick(NavigationPaths.Rules)}>
+      <ListItemIcon>
+        <Rule />
+      </ListItemIcon>
+      <ListItemText primary={t('navigation.rules')} />
+    </ListItemButton>
+  );
+
   const renderList = () => {
     if (!meData?.me) {
       const signUpPath = isFirstUserData?.isFirstUser
@@ -109,6 +119,7 @@ const NavDrawer = () => {
 
       return (
         <>
+          {renderRulesButton()}
           {renderDocsButton()}
 
           <ListItemButton onClick={handleLinkClick(NavigationPaths.LogIn)}>
@@ -206,6 +217,7 @@ const NavDrawer = () => {
           <ListItemText primary={t('users.actions.logOut')} />
         </ListItemButton>
 
+        {renderRulesButton()}
         {renderDocsButton()}
       </>
     );

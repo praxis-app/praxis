@@ -14,6 +14,7 @@ import groupsRouter from './groups.router';
 import postsRouter from './posts.router';
 import proposalsRouter from './proposals.router';
 import rolesRouter from './roles.router';
+import rulesRouter from './rules.router';
 import usersRouter from './users.router';
 
 const appRouter = createBrowserRouter([
@@ -59,6 +60,7 @@ const appRouter = createBrowserRouter([
       postsRouter,
       proposalsRouter,
       rolesRouter,
+      rulesRouter,
       usersRouter,
     ],
   },

@@ -60,6 +60,7 @@
     "preferences": "Preferences",
     "profile": "Profile",
     "roles": "Roles",
+    "rules": "Rules",
     "serverSettings": "Server Settings",
     "settings": "Settings",
     "users": "Users"
@@ -594,6 +595,12 @@
     },
     "errors": {
       "invalidType": "Invalid notification type"
+    }
+  },
+
+  "rules": {
+    "headers": {
+      "serverRules": "Server Rules"
     }
   },
 

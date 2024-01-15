@@ -7,6 +7,7 @@ import {
   Link as InvitesIcon,
   Notifications,
   AccountBox as RolesIcon,
+  Rule,
   SupervisedUserCircle as UsersIcon,
 } from '@mui/icons-material';
 import {
@@ -173,6 +174,18 @@ const LeftNav = () => {
           </ListItemButton>
         </Link>
       )}
+
+      <Link href={NavigationPaths.Rules}>
+        <ListItemButton>
+          <ListItemIcon>
+            <Rule />
+          </ListItemIcon>
+          <ListItemText
+            isActive={isActive(NavigationPaths.Rules)}
+            primary={t('navigation.rules')}
+          />
+        </ListItemButton>
+      </Link>
 
       <Link href={NavigationPaths.Docs}>
         <ListItemButton>
