@@ -924,8 +924,8 @@ input UpdateServerConfigInput {
 
 input CreateRuleInput {
   groupId: Int
-  text: String!
-  priority: Int
+  title: String!
+  description: String!
 }
 
 input UpdateRuleInput {

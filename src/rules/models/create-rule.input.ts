@@ -3,11 +3,11 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 @InputType()
 export class CreateRuleInput {
   @Field(() => Int, { nullable: true })
-  groupId: number;
+  groupId?: number;
 
   @Field()
-  text: string;
+  title: string;
 
-  @Field(() => Int, { nullable: true })
-  priority: number;
+  @Field()
+  description: string;
 }

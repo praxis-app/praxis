@@ -15,12 +15,21 @@ export class RulesService {
   async getServerRules() {
     return this.ruleRepository.find({
       where: { groupId: IsNull() },
-      order: { updatedAt: 'DESC' },
+      order: { priority: 'ASC' },
     });
   }
 
   async createRule(ruleData: CreateRuleInput) {
-    const rule = await this.ruleRepository.save(ruleData);
+    const [lowestPriorityRule] = await this.ruleRepository.find({
+      where: { groupId: ruleData.groupId || IsNull() },
+      order: { priority: 'DESC' },
+      take: 1,
+    });
+    const priority = lowestPriorityRule ? lowestPriorityRule.priority + 1 : 0;
+    const rule = await this.ruleRepository.save({
+      ...ruleData,
+      priority,
+    });
     return { rule };
   }
 

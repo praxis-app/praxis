@@ -168,9 +168,9 @@ export type CreateProposalPayload = {
 };
 
 export type CreateRuleInput = {
+  description: Scalars['String']['input'];
   groupId?: InputMaybe<Scalars['Int']['input']>;
-  priority?: InputMaybe<Scalars['Int']['input']>;
-  text: Scalars['String']['input'];
+  title: Scalars['String']['input'];
 };
 
 export type CreateRulePayload = {

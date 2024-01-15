@@ -1,10 +1,12 @@
-import { useTranslation } from 'react-i18next';
-import Modal from '../Shared/Modal';
-import { Form, Formik } from 'formik';
 import { FormGroup } from '@mui/material';
-import { TextField } from '../Shared/TextField';
+import { Form, Formik } from 'formik';
+import { useTranslation } from 'react-i18next';
+import { CreateRuleInput } from '../../graphql/gen';
+import { useCreateRuleMutation } from '../../graphql/rules/mutations/gen/CreateRule.gen';
 import Flex from '../Shared/Flex';
+import Modal from '../Shared/Modal';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
+import { TextField } from '../Shared/TextField';
 
 enum RuleFormFieldName {
   Title = 'title',
@@ -17,15 +19,23 @@ interface Props {
 }
 
 const CreateRuleModal = ({ isOpen, handleCloseModal }: Props) => {
+  const [createRule] = useCreateRuleMutation();
   const { t } = useTranslation();
 
-  const initialValues = {
+  const initialValues: CreateRuleInput = {
     [RuleFormFieldName.Title]: '',
     [RuleFormFieldName.Description]: '',
   };
 
-  const handleSubmit = async (values: any) => {
-    console.log(values);
+  const handleSubmit = async (values: CreateRuleInput) => {
+    await createRule({
+      variables: {
+        ruleData: {
+          title: values[RuleFormFieldName.Title],
+          description: values[RuleFormFieldName.Description],
+        },
+      },
+    });
   };
 
   return (

@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography } from '@mui/material';
+import { Box, Card, CardContent, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CreateRuleModal from '../../components/Rules/CreateRuleModal';
@@ -40,6 +40,12 @@ const ServerRules = () => {
               {t('rules.prompts.noRules')}
             </Typography>
           )}
+
+          {data?.serverRules.map((rule) => (
+            <Box key={rule.id} paddingBottom={2}>
+              {JSON.stringify(rule)}
+            </Box>
+          ))}
         </CardContent>
       </Card>
 
