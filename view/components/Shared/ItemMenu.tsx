@@ -1,5 +1,11 @@
 import { Delete, Edit, MoreHoriz } from '@mui/icons-material';
-import { IconButton, Menu, MenuItem, SxProps } from '@mui/material';
+import {
+  IconButton,
+  IconButtonProps,
+  Menu,
+  MenuItem,
+  SxProps,
+} from '@mui/material';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +21,7 @@ interface Props {
   deleteBtnLabel?: string;
   deleteItem?: () => void;
   deletePrompt?: string;
+  edge?: IconButtonProps['edge'];
   editPath?: string;
   loading?: boolean;
   onEditButtonClick?: () => void;
@@ -32,6 +39,7 @@ const ItemMenu = ({
   deleteBtnLabel,
   deleteItem,
   deletePrompt,
+  edge,
   editPath,
   loading,
   onEditButtonClick,
@@ -93,6 +101,7 @@ const ItemMenu = ({
         aria-label={t('labels.menuButton')}
         onClick={handleMenuButtonClick}
         sx={menuButtonStyles}
+        edge={edge}
       >
         {loading ? (
           <Spinner size={10} sx={{ marginY: '7px' }} />
