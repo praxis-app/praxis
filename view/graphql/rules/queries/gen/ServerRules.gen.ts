@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { RuleFragmentDoc } from '../../fragments/gen/Rule.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -23,12 +24,10 @@ export type ServerRulesQuery = {
 export const ServerRulesDocument = gql`
   query ServerRules {
     serverRules {
-      id
-      title
-      description
-      priority
+      ...Rule
     }
   }
+  ${RuleFragmentDoc}
 `;
 
 /**

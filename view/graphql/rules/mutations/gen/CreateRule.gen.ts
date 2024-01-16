@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { RuleFragmentDoc } from '../../fragments/gen/Rule.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -29,13 +30,11 @@ export const CreateRuleDocument = gql`
   mutation CreateRule($ruleData: CreateRuleInput!) {
     createRule(ruleData: $ruleData) {
       rule {
-        id
-        title
-        description
-        priority
+        ...Rule
       }
     }
   }
+  ${RuleFragmentDoc}
 `;
 export type CreateRuleMutationFn = Apollo.MutationFunction<
   CreateRuleMutation,

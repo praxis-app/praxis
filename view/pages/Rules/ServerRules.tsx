@@ -1,7 +1,8 @@
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CreateRuleModal from '../../components/Rules/CreateRuleModal';
+import Rule from '../../components/Rules/Rule';
 import Flex from '../../components/Shared/Flex';
 import GhostButton from '../../components/Shared/GhostButton';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
@@ -40,11 +41,12 @@ const ServerRules = () => {
               {t('rules.prompts.noRules')}
             </Typography>
           )}
-
-          {data?.serverRules.map((rule) => (
-            <Box key={rule.id} paddingBottom={2}>
-              {JSON.stringify(rule)}
-            </Box>
+          {data?.serverRules.map((rule, index) => (
+            <Rule
+              key={rule.id}
+              rule={rule}
+              isLast={index + 1 !== data.serverRules.length}
+            />
           ))}
         </CardContent>
       </Card>

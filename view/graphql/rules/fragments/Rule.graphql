@@ -1,0 +1,6 @@
+fragment Rule on Rule {
+  id
+  title
+  description
+  priority
+}

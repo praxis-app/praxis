@@ -1,8 +1,5 @@
 query ServerRules {
   serverRules {
-    id
-    title
-    description
-    priority
+    ...Rule
   }
 }
