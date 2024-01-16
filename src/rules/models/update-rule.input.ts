@@ -6,7 +6,10 @@ export class UpdateRuleInput {
   id: number;
 
   @Field({ nullable: true })
-  text: string;
+  title: string;
+
+  @Field({ nullable: true })
+  description: string;
 
   @Field(() => Int, { nullable: true })
   priority: number;

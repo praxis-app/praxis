@@ -930,7 +930,8 @@ input CreateRuleInput {
 
 input UpdateRuleInput {
   id: Int!
-  text: String
+  title: String
+  description: String
   priority: Int
 }
 

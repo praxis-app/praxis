@@ -1,11 +1,12 @@
 import { Card, CardContent, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import CreateRuleModal from '../../components/Rules/CreateRuleModal';
 import Rule from '../../components/Rules/Rule';
+import RuleForm from '../../components/Rules/RuleForm';
 import Flex from '../../components/Shared/Flex';
 import GhostButton from '../../components/Shared/GhostButton';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
+import Modal from '../../components/Shared/Modal';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useServerRulesQuery } from '../../graphql/rules/queries/gen/ServerRules.gen';
 
@@ -51,10 +52,15 @@ const ServerRules = () => {
         </CardContent>
       </Card>
 
-      <CreateRuleModal
-        isOpen={isCreateModalOpen}
-        handleCloseModal={() => setIsCreateModalOpen(false)}
-      />
+      <Modal
+        title={t('rules.headers.createRule')}
+        contentStyles={{ minHeight: '30vh' }}
+        onClose={() => setIsCreateModalOpen(false)}
+        open={isCreateModalOpen}
+        centeredTitle
+      >
+        <RuleForm onSubmit={() => setIsCreateModalOpen(false)} />
+      </Modal>
     </>
   );
 };

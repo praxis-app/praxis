@@ -5,20 +5,23 @@ import { RuleFragment } from '../../graphql/rules/fragments/gen/Rule.gen';
 import { useDeleteRuleMutation } from '../../graphql/rules/mutations/gen/DeleteRule.gen';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
+import Modal from '../Shared/Modal';
+import RuleForm from './RuleForm';
 
 interface Props {
   rule: RuleFragment;
   isLast: boolean;
 }
 
-const Rule = ({
-  rule: { id, priority, title, description, __typename },
-  isLast,
-}: Props) => {
+const Rule = ({ rule, isLast }: Props) => {
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
+
   const [deleteRule, { loading }] = useDeleteRuleMutation();
 
   const { t } = useTranslation();
+
+  const { id, title, description, priority, __typename } = rule;
 
   const handleDelete = async () => {
     await deleteRule({
@@ -49,15 +52,34 @@ const Rule = ({
         <ItemMenu
           anchorEl={menuAnchorEl}
           deleteItem={handleDelete}
+          updateBtnLabel={t('rules.labels.edit')}
           deleteBtnLabel={t('rules.labels.delete')}
           deletePrompt={t('rules.prompts.confirmDelete')}
+          onEditButtonClick={() => setIsUpdateModalOpen(true)}
           setAnchorEl={setMenuAnchorEl}
           loading={loading}
           prependChildren
           // TODO: Account for permissions
           canDelete
+          canUpdate
         />
       </Flex>
+
+      <Modal
+        title={t('rules.headers.updateRule')}
+        contentStyles={{ minHeight: '30vh' }}
+        onClose={() => setIsUpdateModalOpen(false)}
+        open={isUpdateModalOpen}
+        centeredTitle
+      >
+        <RuleForm
+          editRule={rule}
+          onSubmit={() => {
+            setIsUpdateModalOpen(false);
+            setMenuAnchorEl(null);
+          }}
+        />
+      </Modal>
 
       {isLast && <Divider sx={{ marginY: 2 }} />}
     </>

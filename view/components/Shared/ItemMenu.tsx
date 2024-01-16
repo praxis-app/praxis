@@ -27,6 +27,7 @@ interface Props {
   onEditButtonClick?: () => void;
   prependChildren?: boolean;
   setAnchorEl: (el: HTMLElement | null) => void;
+  updateBtnLabel?: string;
   variant?: 'ghost' | 'default';
 }
 
@@ -45,6 +46,7 @@ const ItemMenu = ({
   onEditButtonClick,
   prependChildren,
   setAnchorEl,
+  updateBtnLabel,
   variant,
 }: Props) => {
   const { t } = useTranslation();
@@ -132,7 +134,7 @@ const ItemMenu = ({
         {showEditButton && (
           <MenuItem onClick={handleEditButtonClick}>
             <Edit fontSize="small" sx={editIconStyles} />
-            {t('actions.edit')}
+            {updateBtnLabel || t('actions.edit')}
           </MenuItem>
         )}
 

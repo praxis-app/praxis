@@ -1255,9 +1255,10 @@ export type UpdateProposalPayload = {
 };
 
 export type UpdateRuleInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
   priority?: InputMaybe<Scalars['Int']['input']>;
-  text?: InputMaybe<Scalars['String']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type UpdateRulePayload = {

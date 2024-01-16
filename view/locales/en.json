@@ -601,7 +601,8 @@
   "rules": {
     "headers": {
       "serverRules": "Server Rules",
-      "createRule": "Create Rule"
+      "createRule": "Create Rule",
+      "updateRule": "Edit Rule"
     },
     "prompts": {
       "noRules": "No rules yet.",
