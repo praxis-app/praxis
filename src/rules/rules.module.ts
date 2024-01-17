@@ -7,5 +7,6 @@ import { RulesService } from './rules.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Rule])],
   providers: [RulesService, RulesResolver],
+  exports: [RulesService],
 })
 export class RulesModule {}

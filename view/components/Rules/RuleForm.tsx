@@ -2,6 +2,7 @@ import { FormGroup } from '@mui/material';
 import { Form, Formik } from 'formik';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
+import { toastVar } from '../../graphql/cache';
 import { CreateRuleInput } from '../../graphql/gen';
 import { RuleFormFragment } from '../../graphql/rules/fragments/gen/RuleForm.gen';
 import { useCreateRuleMutation } from '../../graphql/rules/mutations/gen/CreateRule.gen';
@@ -45,6 +46,12 @@ const RuleForm = ({ editRule, onSubmit }: Props) => {
             description: values[RuleFormFieldName.Description],
           },
         },
+        onError(err) {
+          toastVar({
+            status: 'error',
+            title: err.message,
+          });
+        },
         onCompleted() {
           onSubmit();
         },
@@ -71,6 +78,12 @@ const RuleForm = ({ editRule, onSubmit }: Props) => {
               draft?.serverRules.push(data.createRule.rule);
             }),
         );
+      },
+      onError(err) {
+        toastVar({
+          status: 'error',
+          title: err.message,
+        });
       },
       onCompleted() {
         onSubmit();

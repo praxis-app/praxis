@@ -43,12 +43,14 @@ import {
   canManageComments,
   canManageEvents,
   canManagePosts,
+  canManageRules,
   canManageServerInvites,
   canManageServerRoles,
   canManageServerSettings,
   canRemoveMembers,
   canRemoveProposals,
 } from './rules/role.rules';
+import { isPublicRule } from './rules/rule.rules';
 import { isPublicUserAvatar, isUserInPublicGroups } from './rules/user.rules';
 
 export const shieldPermissions = shield(
@@ -68,6 +70,7 @@ export const shieldPermissions = shield(
       publicGroups: allow,
       publicGroupsCount: allow,
       publicCanary: allow,
+      serverRules: allow,
       events: allow,
       likes: or(
         isAuthenticated,
@@ -102,6 +105,9 @@ export const shieldPermissions = shield(
       createEvent: or(canCreateGroupEvents, canManageGroupEvents),
       deleteEvent: or(canManageEvents, canManageGroupEvents),
       updateEvent: or(canManageEvents, canManageGroupEvents),
+      createRule: canManageRules,
+      updateRule: canManageRules,
+      deleteRule: canManageRules,
       updateNotification: isOwnNotification,
       deleteNotification: isOwnNotification,
       updateComment: isOwnComment,
@@ -173,6 +179,7 @@ export const shieldPermissions = shield(
     AuthPayload: {
       access_token: allow,
     },
+    Rule: or(isAuthenticated, isPublicRule),
     Event: or(isAuthenticated, isPublicEvent),
     Post: or(isAuthenticated, isPublicPost, isPublicEventPost),
     Like: or(isAuthenticated, isPublicLike),

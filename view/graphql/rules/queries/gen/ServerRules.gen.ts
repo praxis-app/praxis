@@ -8,7 +8,9 @@ import * as Apollo from '@apollo/client';
 /* eslint-disable */
 
 const defaultOptions = {} as const;
-export type ServerRulesQueryVariables = Types.Exact<{ [key: string]: never }>;
+export type ServerRulesQueryVariables = Types.Exact<{
+  isLoggedIn: Types.Scalars['Boolean']['input'];
+}>;
 
 export type ServerRulesQuery = {
   __typename?: 'Query';
@@ -19,12 +21,26 @@ export type ServerRulesQuery = {
     description: string;
     priority: number;
   }>;
+  me?: {
+    __typename?: 'User';
+    id: number;
+    serverPermissions: {
+      __typename?: 'ServerPermissions';
+      manageRules: boolean;
+    };
+  };
 };
 
 export const ServerRulesDocument = gql`
-  query ServerRules {
+  query ServerRules($isLoggedIn: Boolean!) {
     serverRules {
       ...Rule
+    }
+    me @include(if: $isLoggedIn) {
+      id
+      serverPermissions {
+        manageRules
+      }
     }
   }
   ${RuleFragmentDoc}
@@ -42,11 +58,12 @@ export const ServerRulesDocument = gql`
  * @example
  * const { data, loading, error } = useServerRulesQuery({
  *   variables: {
+ *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
 export function useServerRulesQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     ServerRulesQuery,
     ServerRulesQueryVariables
   >,

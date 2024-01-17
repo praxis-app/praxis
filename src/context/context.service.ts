@@ -11,6 +11,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { PostsService } from '../posts/posts.service';
 import { ProposalActionsService } from '../proposals/proposal-actions/proposal-actions.service';
 import { ProposalsService } from '../proposals/proposals.service';
+import { RulesService } from '../rules/rules.service';
 import { ShieldService } from '../shield/shield.service';
 import { UsersService } from '../users/users.service';
 import { Context, ContextServices, GetContextOptions } from './context.types';
@@ -32,6 +33,7 @@ export class ContextService {
     private postsService: PostsService,
     private proposalActionsService: ProposalActionsService,
     private proposalsService: ProposalsService,
+    private rulesService: RulesService,
     private shieldService: ShieldService,
     private usersService: UsersService,
   ) {}
@@ -57,6 +59,7 @@ export class ContextService {
       postsService: this.postsService,
       proposalActionsService: this.proposalActionsService,
       proposalsService: this.proposalsService,
+      rulesService: this.rulesService,
       shieldService: this.shieldService,
       usersService: this.usersService,
     };

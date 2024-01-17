@@ -1,6 +1,7 @@
 import { Box, Divider, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toastVar } from '../../graphql/cache';
 import { RuleFragment } from '../../graphql/rules/fragments/gen/Rule.gen';
 import { useDeleteRuleMutation } from '../../graphql/rules/mutations/gen/DeleteRule.gen';
 import Flex from '../Shared/Flex';
@@ -9,11 +10,12 @@ import Modal from '../Shared/Modal';
 import RuleForm from './RuleForm';
 
 interface Props {
-  rule: RuleFragment;
+  canManageRules: boolean;
   isLast: boolean;
+  rule: RuleFragment;
 }
 
-const Rule = ({ rule, isLast }: Props) => {
+const Rule = ({ rule, isLast, canManageRules }: Props) => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -30,6 +32,12 @@ const Rule = ({ rule, isLast }: Props) => {
         const cacheId = cache.identify({ id, __typename });
         cache.evict({ id: cacheId });
         cache.gc();
+      },
+      onError(err) {
+        toastVar({
+          status: 'error',
+          title: err.message,
+        });
       },
     });
   };
@@ -50,18 +58,17 @@ const Rule = ({ rule, isLast }: Props) => {
         </Flex>
 
         <ItemMenu
-          anchorEl={menuAnchorEl}
+          canDelete={canManageRules}
+          canUpdate={canManageRules}
           deleteItem={handleDelete}
-          updateBtnLabel={t('rules.labels.edit')}
           deleteBtnLabel={t('rules.labels.delete')}
           deletePrompt={t('rules.prompts.confirmDelete')}
+          updateBtnLabel={t('rules.labels.edit')}
           onEditButtonClick={() => setIsUpdateModalOpen(true)}
           setAnchorEl={setMenuAnchorEl}
+          anchorEl={menuAnchorEl}
           loading={loading}
           prependChildren
-          // TODO: Account for permissions
-          canDelete
-          canUpdate
         />
       </Flex>
 

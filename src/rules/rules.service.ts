@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import { GroupPrivacy } from '../groups/groups.constants';
 import { CreateRuleInput } from './models/create-rule.input';
 import { Rule } from './models/rule.model';
 import { UpdateRuleInput } from './models/update-rule.input';
@@ -17,6 +18,17 @@ export class RulesService {
       where: { groupId: IsNull() },
       order: { priority: 'ASC' },
     });
+  }
+
+  async isPublicRule(ruleId: number) {
+    const rule = await this.ruleRepository.findOneOrFail({
+      where: { id: ruleId },
+      relations: ['group.config'],
+    });
+    if (rule.group) {
+      return rule.group.config.privacy === GroupPrivacy.Public;
+    }
+    return !rule.groupId;
   }
 
   async createRule(ruleData: CreateRuleInput) {
