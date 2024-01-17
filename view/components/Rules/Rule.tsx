@@ -1,3 +1,4 @@
+import { DragIndicator } from '@mui/icons-material';
 import { Box, Divider, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -46,7 +47,9 @@ const Rule = ({ rule, isLast, canManageRules, isDragging }: Props) => {
   return (
     <>
       <Flex justifyContent="space-between" gap="6px">
-        <Flex gap="14px" sx={{ userSelect: 'none', cursor: 'grab' }}>
+        <Flex gap="14px" sx={{ userSelect: 'none', cursor: 'grab' }} flex={1}>
+          {canManageRules && <DragIndicator sx={{ color: 'text.secondary' }} />}
+
           <Typography>{priority + 1}</Typography>
 
           <Box>
@@ -64,7 +67,7 @@ const Rule = ({ rule, isLast, canManageRules, isDragging }: Props) => {
           deleteItem={handleDelete}
           deleteBtnLabel={t('rules.labels.delete')}
           deletePrompt={t('rules.prompts.confirmDelete')}
-          buttonStyles={{ height: 40, alignSelf: 'center' }}
+          buttonStyles={{ height: 40, transform: 'translateY(-8px)' }}
           updateBtnLabel={t('rules.labels.edit')}
           onEditButtonClick={() => setIsUpdateModalOpen(true)}
           setAnchorEl={setMenuAnchorEl}
