@@ -12,13 +12,16 @@ import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import Modal from '../../components/Shared/Modal';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { isLoggedInVar } from '../../graphql/cache';
-import { useServerRulesQuery } from '../../graphql/rules/queries/gen/ServerRules.gen';
+import {
+  ServerRulesDocument,
+  useServerRulesQuery,
+} from '../../graphql/rules/queries/gen/ServerRules.gen';
 
 const ServerRules = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-  const { data, loading, error } = useServerRulesQuery({
+  const { data, loading, error, client } = useServerRulesQuery({
     variables: { isLoggedIn },
   });
 
@@ -62,7 +65,20 @@ const ServerRules = () => {
 
           <DragDropContext
             onDragEnd={(dropResult) => {
-              console.log('drag end', dropResult);
+              if (!dropResult.destination) {
+                return;
+              }
+              const { source, destination } = dropResult;
+              const newRules = [...serverRules!];
+
+              const [removed] = newRules.splice(source.index, 1);
+              newRules.splice(destination.index, 0, removed);
+
+              client.writeQuery({
+                query: ServerRulesDocument,
+                data: { serverRules: newRules, me: data?.me },
+                variables: { isLoggedIn },
+              });
             }}
           >
             {serverRules?.map((rule, index) => (
