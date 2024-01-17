@@ -63,6 +63,7 @@ const Rule = ({ rule, isLast, canManageRules }: Props) => {
           deleteItem={handleDelete}
           deleteBtnLabel={t('rules.labels.delete')}
           deletePrompt={t('rules.prompts.confirmDelete')}
+          buttonStyles={{ height: 40, alignSelf: 'center' }}
           updateBtnLabel={t('rules.labels.edit')}
           onEditButtonClick={() => setIsUpdateModalOpen(true)}
           setAnchorEl={setMenuAnchorEl}
