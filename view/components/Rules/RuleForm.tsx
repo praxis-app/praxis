@@ -1,8 +1,9 @@
+import { useReactiveVar } from '@apollo/client';
 import { FormGroup } from '@mui/material';
 import { Form, Formik } from 'formik';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
-import { toastVar } from '../../graphql/cache';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { CreateRuleInput } from '../../graphql/gen';
 import { RuleFormFragment } from '../../graphql/rules/fragments/gen/RuleForm.gen';
 import { useCreateRuleMutation } from '../../graphql/rules/mutations/gen/CreateRule.gen';
@@ -26,6 +27,8 @@ interface Props {
 }
 
 const RuleForm = ({ editRule, onSubmit }: Props) => {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+
   const [createRule] = useCreateRuleMutation();
   const [updateRule] = useUpdateRuleMutation();
 
@@ -72,6 +75,7 @@ const RuleForm = ({ editRule, onSubmit }: Props) => {
         cache.updateQuery<ServerRulesQuery>(
           {
             query: ServerRulesDocument,
+            variables: { isLoggedIn },
           },
           (groupsData) =>
             produce(groupsData, (draft) => {
