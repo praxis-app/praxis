@@ -13,9 +13,10 @@ interface Props {
   canManageRules: boolean;
   isLast: boolean;
   rule: RuleFragment;
+  isDragging: boolean;
 }
 
-const Rule = ({ rule, isLast, canManageRules }: Props) => {
+const Rule = ({ rule, isLast, canManageRules, isDragging }: Props) => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -44,8 +45,8 @@ const Rule = ({ rule, isLast, canManageRules }: Props) => {
 
   return (
     <>
-      <Flex justifyContent="space-between">
-        <Flex gap="14px">
+      <Flex justifyContent="space-between" gap="6px">
+        <Flex gap="14px" sx={{ userSelect: 'none', cursor: 'grab' }}>
           <Typography>{priority + 1}</Typography>
 
           <Box>
@@ -89,7 +90,7 @@ const Rule = ({ rule, isLast, canManageRules }: Props) => {
         />
       </Modal>
 
-      {isLast && <Divider sx={{ marginY: 2 }} />}
+      {isLast && !isDragging && <Divider sx={{ marginY: 2 }} />}
     </>
   );
 };

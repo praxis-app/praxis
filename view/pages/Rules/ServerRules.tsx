@@ -59,56 +59,48 @@ const ServerRules = () => {
               {t('rules.prompts.noRules')}
             </Typography>
           )}
-          {serverRules?.map((rule, index) => (
-            <Rule
-              key={rule.id}
-              rule={rule}
-              isLast={index + 1 !== serverRules.length}
-              canManageRules={canManageRules}
-            />
-          ))}
+
+          <DragDropContext
+            onDragEnd={(dropResult) => {
+              console.log('drag end', dropResult);
+            }}
+          >
+            {serverRules?.map((rule, index) => (
+              <Droppable droppableId={`droppable-${index + 1}`} key={rule.id}>
+                {(droppableProvided, droppableSnapshot) => (
+                  <Box
+                    ref={droppableProvided.innerRef}
+                    style={{
+                      backgroundColor: droppableSnapshot.isDraggingOver
+                        ? 'rgba(255, 255, 255, 0.2)'
+                        : undefined,
+                    }}
+                    {...droppableProvided.droppableProps}
+                  >
+                    {droppableProvided.placeholder}
+                    <Draggable draggableId={index.toString()} index={index}>
+                      {(draggableProvided, draggableSnapshot) => (
+                        <Box
+                          ref={draggableProvided.innerRef}
+                          {...draggableProvided.draggableProps}
+                          {...draggableProvided.dragHandleProps}
+                        >
+                          <Rule
+                            rule={rule}
+                            isLast={index + 1 !== serverRules.length}
+                            canManageRules={canManageRules}
+                            isDragging={draggableSnapshot.isDragging}
+                          />
+                        </Box>
+                      )}
+                    </Draggable>
+                  </Box>
+                )}
+              </Droppable>
+            ))}
+          </DragDropContext>
         </CardContent>
       </Card>
-
-      <DragDropContext
-        onDragEnd={(dropResult) => {
-          console.log('drag end', dropResult);
-        }}
-      >
-        {serverRules?.map((item, index) => (
-          <Droppable droppableId={`droppable-${index + 1}`} key={item.id}>
-            {(provided, snapshot) => (
-              <Box
-                ref={provided.innerRef}
-                style={{
-                  backgroundColor: snapshot.isDraggingOver
-                    ? 'rgba(255, 255, 255, 0.2)'
-                    : 'rgba(255, 255, 255, 0.05)',
-                }}
-                {...provided.droppableProps}
-              >
-                {provided.placeholder}
-                <Draggable draggableId={index.toString()} index={index}>
-                  {(provided) => (
-                    <Box
-                      marginBottom={2}
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <Typography
-                        sx={{ cursor: 'pointer', userSelect: 'none' }}
-                      >
-                        {JSON.stringify(item.title)}
-                      </Typography>
-                    </Box>
-                  )}
-                </Draggable>
-              </Box>
-            )}
-          </Droppable>
-        ))}
-      </DragDropContext>
 
       <Modal
         title={t('rules.headers.createRule')}
