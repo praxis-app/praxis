@@ -54,7 +54,21 @@ export class RulesService {
   }
 
   async deleteRule(ruleId: number) {
-    await this.ruleRepository.delete({ id: ruleId });
+    const rule = await this.ruleRepository.findOneOrFail({
+      where: { id: ruleId },
+      select: ['priority'],
+    });
+
+    await this.ruleRepository.delete({
+      id: ruleId,
+    });
+    await this.ruleRepository
+      .createQueryBuilder()
+      .update(Rule)
+      .set({ priority: () => 'priority - 1' })
+      .where('priority > :priority', { priority: rule.priority })
+      .execute();
+
     return true;
   }
 }
