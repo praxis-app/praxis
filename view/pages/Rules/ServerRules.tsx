@@ -81,20 +81,23 @@ const ServerRules = () => {
               });
             }}
           >
-            {serverRules?.map((rule, index) => (
-              <Droppable droppableId={`droppable-${index + 1}`} key={rule.id}>
-                {(droppableProvided, droppableSnapshot) => (
-                  <Box
-                    ref={droppableProvided.innerRef}
-                    style={{
-                      backgroundColor: droppableSnapshot.isDraggingOver
-                        ? 'rgba(255, 255, 255, 0.2)'
-                        : undefined,
-                    }}
-                    {...droppableProvided.droppableProps}
-                  >
-                    {droppableProvided.placeholder}
-                    <Draggable draggableId={index.toString()} index={index}>
+            <Droppable droppableId="droppable">
+              {(droppableProvided, droppableSnapshot) => (
+                <Box
+                  {...droppableProvided.droppableProps}
+                  ref={droppableProvided.innerRef}
+                  sx={{
+                    bgcolor: droppableSnapshot.isDraggingOver
+                      ? 'rgba(255, 255, 255, 0.2)'
+                      : undefined,
+                  }}
+                >
+                  {serverRules?.map((rule, index) => (
+                    <Draggable
+                      key={rule.id}
+                      draggableId={rule.id.toString()}
+                      index={index}
+                    >
                       {(draggableProvided, draggableSnapshot) => (
                         <Box
                           ref={draggableProvided.innerRef}
@@ -103,17 +106,22 @@ const ServerRules = () => {
                         >
                           <Rule
                             rule={rule}
-                            isLast={index + 1 !== serverRules.length}
                             canManageRules={canManageRules}
-                            isDragging={draggableSnapshot.isDragging}
+                            isDragging={
+                              draggableSnapshot.isDragging ||
+                              droppableSnapshot.isDraggingOver
+                            }
+                            isLast={index + 1 !== serverRules.length}
                           />
                         </Box>
                       )}
                     </Draggable>
-                  </Box>
-                )}
-              </Droppable>
-            ))}
+                  ))}
+
+                  {droppableProvided.placeholder}
+                </Box>
+              )}
+            </Droppable>
           </DragDropContext>
         </CardContent>
       </Card>

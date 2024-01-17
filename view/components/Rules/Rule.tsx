@@ -90,7 +90,7 @@ const Rule = ({ rule, isLast, canManageRules, isDragging }: Props) => {
         />
       </Modal>
 
-      {isLast && !isDragging && <Divider sx={{ marginY: 2 }} />}
+      {isLast && <Box marginY={2}>{!isDragging && <Divider />}</Box>}
     </>
   );
 };
