@@ -213,6 +213,7 @@ type ServerRolePermission {
   removeGroups: Boolean!
   removeMembers: Boolean!
   removeProposals: Boolean!
+  manageRules: Boolean!
   serverRole: ServerRole!
 }
 
@@ -450,6 +451,7 @@ type ServerPermissions {
   removeMembers: Boolean!
   removeGroups: Boolean!
   removeProposals: Boolean!
+  manageRules: Boolean!
 }
 
 type FollowUserPayload {
@@ -867,6 +869,7 @@ input ServerRolePermissionInput {
   removeGroups: Boolean
   removeMembers: Boolean
   removeProposals: Boolean
+  manageRules: Boolean
 }
 
 input DeleteServerRoleMemberInput {

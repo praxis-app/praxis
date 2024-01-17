@@ -35,6 +35,7 @@ export type UpdateServerRoleMutation = {
         manageInvites: boolean;
         managePosts: boolean;
         manageRoles: boolean;
+        manageRules: boolean;
         manageSettings: boolean;
         removeGroups: boolean;
         removeMembers: boolean;
@@ -64,6 +65,7 @@ export type UpdateServerRoleMutation = {
         manageInvites: boolean;
         managePosts: boolean;
         manageRoles: boolean;
+        manageRules: boolean;
         manageSettings: boolean;
         removeGroups: boolean;
         removeMembers: boolean;

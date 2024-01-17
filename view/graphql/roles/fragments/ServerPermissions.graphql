@@ -5,6 +5,7 @@ fragment ServerPermissions on ServerPermissions {
   manageInvites
   managePosts
   manageRoles
+  manageRules
   manageSettings
   removeGroups
   removeMembers

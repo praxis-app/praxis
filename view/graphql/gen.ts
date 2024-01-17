@@ -1076,6 +1076,7 @@ export type ServerPermissions = {
   manageInvites: Scalars['Boolean']['output'];
   managePosts: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
+  manageRules: Scalars['Boolean']['output'];
   manageSettings: Scalars['Boolean']['output'];
   removeGroups: Scalars['Boolean']['output'];
   removeMembers: Scalars['Boolean']['output'];
@@ -1102,6 +1103,7 @@ export type ServerRolePermission = {
   manageInvites: Scalars['Boolean']['output'];
   managePosts: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
+  manageRules: Scalars['Boolean']['output'];
   manageSettings: Scalars['Boolean']['output'];
   removeGroups: Scalars['Boolean']['output'];
   removeMembers: Scalars['Boolean']['output'];
@@ -1116,6 +1118,7 @@ export type ServerRolePermissionInput = {
   manageInvites?: InputMaybe<Scalars['Boolean']['input']>;
   managePosts?: InputMaybe<Scalars['Boolean']['input']>;
   manageRoles?: InputMaybe<Scalars['Boolean']['input']>;
+  manageRules?: InputMaybe<Scalars['Boolean']['input']>;
   manageSettings?: InputMaybe<Scalars['Boolean']['input']>;
   removeGroups?: InputMaybe<Scalars['Boolean']['input']>;
   removeMembers?: InputMaybe<Scalars['Boolean']['input']>;
