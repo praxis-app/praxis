@@ -31,11 +31,11 @@ const ServerRules = () => {
   const canManageRules = !!data?.me?.serverPermissions.manageRules;
 
   const handleDragEnd = (dropResult: DropResult) => {
-    if (!dropResult.destination) {
+    if (!dropResult.destination || !serverRules) {
       return;
     }
     const { source, destination } = dropResult;
-    const newRules = [...serverRules!];
+    const newRules = [...serverRules];
 
     const [removed] = newRules.splice(source.index, 1);
     newRules.splice(destination.index, 0, removed);
