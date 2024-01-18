@@ -38,7 +38,10 @@ const ServerRules = () => {
     const newRules = [...serverRules];
 
     const [removed] = newRules.splice(source.index, 1);
-    newRules.splice(destination.index, 0, removed);
+    newRules.splice(destination.index, 0, {
+      ...removed,
+      priority: destination.index,
+    });
 
     client.writeQuery({
       query: ServerRulesDocument,
