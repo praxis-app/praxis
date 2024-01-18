@@ -5,7 +5,6 @@ import { Rule } from './models/rule.model';
 import { UpdateRuleInput } from './models/update-rule.input';
 import { UpdateRulePayload } from './models/update-rule.payload';
 import { UpdateRulesPriorityInput } from './models/update-rules-priority.input';
-import { UpdateRulesPriorityPayload } from './models/update-rules-priority.payload';
 import { RulesService } from './rules.service';
 
 @Resolver()
@@ -27,7 +26,7 @@ export class RulesResolver {
     return this.rulesService.updateRule(ruleData);
   }
 
-  @Mutation(() => UpdateRulesPriorityPayload)
+  @Mutation(() => Boolean)
   async updateRulesPriority(
     @Args('rulesData') rulesData: UpdateRulesPriorityInput,
   ) {

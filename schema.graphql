@@ -556,10 +556,6 @@ type UpdateRulePayload {
   rule: Rule!
 }
 
-type UpdateRulesPriorityPayload {
-  rules: [Rule!]!
-}
-
 type CreateVotePayload {
   vote: Vote!
 }
@@ -660,7 +656,7 @@ type Mutation {
   deleteLike(likeData: DeleteLikeInput!): Boolean!
   createRule(ruleData: CreateRuleInput!): CreateRulePayload!
   updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
-  updateRulesPriority(rulesData: UpdateRulesPriorityInput!): UpdateRulesPriorityPayload!
+  updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
   deleteRule(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!

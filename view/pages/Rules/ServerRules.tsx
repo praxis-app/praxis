@@ -12,6 +12,7 @@ import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import Modal from '../../components/Shared/Modal';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { isLoggedInVar } from '../../graphql/cache';
+import { useUpdateRulesPriorityMutation } from '../../graphql/rules/mutations/gen/UpdateRulesPriority.gen';
 import {
   ServerRulesDocument,
   useServerRulesQuery,
@@ -19,8 +20,9 @@ import {
 
 const ServerRules = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+
+  const [updateRules] = useUpdateRulesPriorityMutation();
   const { data, loading, error, client } = useServerRulesQuery({
     variables: { isLoggedIn },
   });
@@ -30,7 +32,7 @@ const ServerRules = () => {
   const serverRules = data?.serverRules;
   const canManageRules = !!data?.me?.serverPermissions.manageRules;
 
-  const handleDragEnd = (dropResult: DropResult) => {
+  const handleDragEnd = async (dropResult: DropResult) => {
     if (!dropResult.destination || !serverRules) {
       return;
     }
@@ -49,6 +51,17 @@ const ServerRules = () => {
       query: ServerRulesDocument,
       data: { serverRules: newRulesWithCorrectOrder, me: data?.me },
       variables: { isLoggedIn },
+    });
+
+    await updateRules({
+      variables: {
+        rulesData: {
+          rules: newRulesWithCorrectOrder.map((rule) => ({
+            id: rule.id,
+            priority: rule.priority,
+          })),
+        },
+      },
     });
   };
 

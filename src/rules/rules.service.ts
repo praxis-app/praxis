@@ -55,8 +55,8 @@ export class RulesService {
   }
 
   async updateRulesPriority({ rules }: UpdateRulesPriorityInput) {
-    const newRules = await this.ruleRepository.save(rules);
-    return { rules: newRules };
+    await this.ruleRepository.save(rules);
+    return true;
   }
 
   async deleteRule(ruleId: number) {

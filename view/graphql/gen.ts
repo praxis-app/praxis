@@ -486,7 +486,7 @@ export type Mutation = {
   updatePost: UpdatePostPayload;
   updateProposal: UpdateProposalPayload;
   updateRule: UpdateRulePayload;
-  updateRulesPriority: UpdateRulesPriorityPayload;
+  updateRulesPriority: Scalars['Boolean']['output'];
   updateServerConfig: UpdateServerConfigPayload;
   updateServerRole: UpdateServerRolePayload;
   updateUser: UpdateUserPayload;
@@ -1281,11 +1281,6 @@ export type UpdateRulePriorityInput = {
 
 export type UpdateRulesPriorityInput = {
   rules: Array<UpdateRulePriorityInput>;
-};
-
-export type UpdateRulesPriorityPayload = {
-  __typename?: 'UpdateRulesPriorityPayload';
-  rules: Array<Rule>;
 };
 
 export type UpdateServerConfigInput = {
