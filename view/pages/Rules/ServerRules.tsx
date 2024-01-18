@@ -1,7 +1,7 @@
 import { useReactiveVar } from '@apollo/client';
 import { Box, Card, CardContent, Typography } from '@mui/material';
 import { useState } from 'react';
-import { DragDropContext, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, DropResult } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
 import Rule from '../../components/Rules/Rule';
 import RuleForm from '../../components/Rules/RuleForm';
@@ -29,6 +29,23 @@ const ServerRules = () => {
 
   const serverRules = data?.serverRules;
   const canManageRules = !!data?.me?.serverPermissions.manageRules;
+
+  const handleDragEnd = (dropResult: DropResult) => {
+    if (!dropResult.destination) {
+      return;
+    }
+    const { source, destination } = dropResult;
+    const newRules = [...serverRules!];
+
+    const [removed] = newRules.splice(source.index, 1);
+    newRules.splice(destination.index, 0, removed);
+
+    client.writeQuery({
+      query: ServerRulesDocument,
+      data: { serverRules: newRules, me: data?.me },
+      variables: { isLoggedIn },
+    });
+  };
 
   if (error) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
@@ -63,24 +80,7 @@ const ServerRules = () => {
             </Typography>
           )}
 
-          <DragDropContext
-            onDragEnd={(dropResult) => {
-              if (!dropResult.destination) {
-                return;
-              }
-              const { source, destination } = dropResult;
-              const newRules = [...serverRules!];
-
-              const [removed] = newRules.splice(source.index, 1);
-              newRules.splice(destination.index, 0, removed);
-
-              client.writeQuery({
-                query: ServerRulesDocument,
-                data: { serverRules: newRules, me: data?.me },
-                variables: { isLoggedIn },
-              });
-            }}
-          >
+          <DragDropContext onDragEnd={handleDragEnd}>
             <Droppable droppableId="droppable">
               {(droppableProvided, droppableSnapshot) => (
                 <Box
@@ -117,7 +117,6 @@ const ServerRules = () => {
                       )}
                     </Draggable>
                   ))}
-
                   {droppableProvided.placeholder}
                 </Box>
               )}
