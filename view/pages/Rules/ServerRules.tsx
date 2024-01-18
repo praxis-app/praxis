@@ -34,18 +34,20 @@ const ServerRules = () => {
     if (!dropResult.destination || !serverRules) {
       return;
     }
-    const { source, destination } = dropResult;
     const newRules = [...serverRules];
+    const { source, destination } = dropResult;
 
     const [removed] = newRules.splice(source.index, 1);
-    newRules.splice(destination.index, 0, {
-      ...removed,
-      priority: destination.index,
-    });
+    newRules.splice(destination.index, 0, removed);
+
+    const newRulesWithCorrectOrder = newRules.map((rule, index) => ({
+      ...rule,
+      priority: index,
+    }));
 
     client.writeQuery({
       query: ServerRulesDocument,
-      data: { serverRules: newRules, me: data?.me },
+      data: { serverRules: newRulesWithCorrectOrder, me: data?.me },
       variables: { isLoggedIn },
     });
   };
