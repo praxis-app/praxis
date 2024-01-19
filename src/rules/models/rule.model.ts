@@ -28,7 +28,6 @@ export class Rule {
   @Field(() => Int)
   priority: number;
 
-  @Field(() => Group, { nullable: true })
   @ManyToOne(() => Group, (group) => group.rules, { onDelete: 'CASCADE' })
   group?: Group;
 
@@ -36,7 +35,6 @@ export class Rule {
   groupId?: number;
 
   @CreateDateColumn()
-  @Field()
   createdAt: Date;
 
   @Field()

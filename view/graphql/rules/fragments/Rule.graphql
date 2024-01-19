@@ -3,6 +3,7 @@ fragment Rule on Rule {
   title
   description
   priority
+  updatedAt
 
   ...RuleForm
 }

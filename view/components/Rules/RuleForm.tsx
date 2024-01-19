@@ -1,10 +1,10 @@
 import { useReactiveVar } from '@apollo/client';
 import { Button, FormGroup } from '@mui/material';
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikErrors } from 'formik';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
-import { CreateRuleInput } from '../../graphql/gen';
+import { CreateRuleInput, UpdateRuleInput } from '../../graphql/gen';
 import { RuleFormFragment } from '../../graphql/rules/fragments/gen/RuleForm.gen';
 import { useCreateRuleMutation } from '../../graphql/rules/mutations/gen/CreateRule.gen';
 import { useUpdateRuleMutation } from '../../graphql/rules/mutations/gen/UpdateRule.gen';
@@ -29,7 +29,6 @@ interface Props {
 
 const RuleForm = ({ editRule, onSubmit, onCancel }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-
   const [createRule] = useCreateRuleMutation();
   const [updateRule] = useUpdateRuleMutation();
 
@@ -96,20 +95,40 @@ const RuleForm = ({ editRule, onSubmit, onCancel }: Props) => {
     });
   };
 
+  const validate = ({
+    title,
+    description,
+  }: CreateRuleInput | UpdateRuleInput) => {
+    const errors: FormikErrors<CreateRuleInput | UpdateRuleInput> = {};
+    if (!title?.trim()) {
+      errors.title = t('rules.errors.titleMissing');
+    }
+    if (!description?.trim()) {
+      errors.description = t('rules.errors.descriptionMissing');
+    }
+    return errors;
+  };
+
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-      {({ dirty, isSubmitting }) => (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validate={validate}
+    >
+      {({ dirty, isSubmitting, errors, submitCount }) => (
         <Form>
           <FormGroup sx={{ marginBottom: 2 }}>
             <TextField
               autoComplete="off"
               label={t('rules.placeholders.title')}
               name={RuleFormFieldName.Title}
+              error={!!errors.title && !!submitCount}
             />
             <TextField
               autoComplete="off"
               label={t('rules.placeholders.description')}
               name={RuleFormFieldName.Description}
+              error={!!errors.description && !!submitCount}
               multiline
             />
           </FormGroup>

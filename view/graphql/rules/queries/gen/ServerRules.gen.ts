@@ -20,6 +20,7 @@ export type ServerRulesQuery = {
     title: string;
     description: string;
     priority: number;
+    updatedAt: any;
   }>;
   me?: {
     __typename?: 'User';

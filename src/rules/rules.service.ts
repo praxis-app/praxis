@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import { sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { CreateRuleInput } from './models/create-rule.input';
 import { Rule } from './models/rule.model';
@@ -33,6 +34,7 @@ export class RulesService {
   }
 
   async createRule(ruleData: CreateRuleInput) {
+    this.validateRule(ruleData.title, ruleData.description);
     const [lowestPriorityRule] = await this.ruleRepository.find({
       where: { groupId: ruleData.groupId || IsNull() },
       order: { priority: 'DESC' },
@@ -46,12 +48,26 @@ export class RulesService {
     return { rule };
   }
 
-  async updateRule({ id, ...ruleData }: UpdateRuleInput) {
-    await this.ruleRepository.update(id, ruleData);
+  async updateRule({ id, description, ...ruleData }: UpdateRuleInput) {
+    this.validateRule(ruleData.title, description);
+    const sanitizedDescription = sanitizeText(description.trim());
+    await this.ruleRepository.update(id, {
+      description: sanitizedDescription,
+      ...ruleData,
+    });
     const rule = await this.ruleRepository.findOneOrFail({
       where: { id },
     });
     return { rule };
+  }
+
+  validateRule(title: string, description: string) {
+    if (!title.trim()) {
+      throw new Error('Title is required');
+    }
+    if (!description.trim()) {
+      throw new Error('Description is required');
+    }
   }
 
   async updateRulesPriority({ rules }: UpdateRulesPriorityInput) {

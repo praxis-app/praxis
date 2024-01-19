@@ -298,8 +298,6 @@ type Rule {
   title: String!
   description: String!
   priority: Int!
-  group: Group
-  createdAt: DateTime!
   updatedAt: DateTime!
 }
 
