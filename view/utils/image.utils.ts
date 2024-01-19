@@ -1,5 +1,5 @@
 const VALID_IMAGE_FORMAT = /(jpe?g|png|gif|webp)$/;
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_IMAGE_SIZE = 8 * 1024 * 1024; // 8MB
 const MAX_IMAGE_COUNT = 5;
 
 export const validateImageInput = (imageInput: File | File[]) => {
@@ -16,7 +16,7 @@ export const validateImageInput = (imageInput: File | File[]) => {
       throw new Error(`${extension.toUpperCase()} images are not supported`);
     }
     if (image.size > MAX_IMAGE_SIZE) {
-      throw new Error('Image is too large. Maximum file size is 5MB.');
+      throw new Error('Image is too large. Maximum file size is 8MB.');
     }
   }
 };
