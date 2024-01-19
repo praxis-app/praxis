@@ -82,18 +82,11 @@ const Rule = ({
     setIsClicking(true);
   };
 
-  const renderDivider = () => {
-    if (isDragging && isClicking) {
-      return null;
-    }
-    return <Divider />;
-  };
-
   return (
     <>
       <Flex
         justifyContent="space-between"
-        padding={isClicking && isDragging ? '6px' : undefined}
+        padding={isDragging ? '6px' : undefined}
         bgcolor={backgroundColor}
         borderRadius="8px"
         gap="6px"
@@ -149,7 +142,7 @@ const Rule = ({
         />
       </Modal>
 
-      {isLast && <Box marginY={2}>{renderDivider()}</Box>}
+      {isLast && <Box marginY={2}>{!isDragging && <Divider />}</Box>}
     </>
   );
 };

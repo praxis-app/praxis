@@ -138,7 +138,7 @@ const ServerRules = () => {
               droppableId="droppable"
               isDropDisabled={!canManageRules || updateRulesLoading}
             >
-              {(droppableProvided, droppableSnapshot) => (
+              {(droppableProvided) => (
                 <Box
                   {...droppableProvided.droppableProps}
                   ref={droppableProvided.innerRef}
@@ -161,10 +161,7 @@ const ServerRules = () => {
                           <Rule
                             rule={rule}
                             canManageRules={canManageRules}
-                            isDragging={
-                              draggableSnapshot.isDragging ||
-                              droppableSnapshot.isDraggingOver
-                            }
+                            isDragging={draggableSnapshot.isDragging}
                             isLast={index + 1 !== serverRules.length}
                             isLoading={updateRulesLoading}
                           />
