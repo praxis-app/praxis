@@ -71,13 +71,9 @@ export class RulesService {
   }
 
   async updateRulesPriority({ rules }: UpdateRulesPriorityInput) {
-    const containsExtraFields = rules.some(
-      (rule) => Object.keys(rule).length > 2,
+    await this.ruleRepository.save(
+      rules.map(({ id, priority }) => ({ id, priority })),
     );
-    if (containsExtraFields) {
-      throw new Error('Only id and priority fields are allowed');
-    }
-    await this.ruleRepository.save(rules);
     return true;
   }
 
