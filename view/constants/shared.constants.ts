@@ -79,6 +79,8 @@ export enum LocalStorageKey {
 
 export enum BrowserEvents {
   Keydown = 'keydown',
+  MouseDown = 'mousedown',
+  MouseUp = 'mouseup',
   Resize = 'resize',
   Scroll = 'scroll',
 }

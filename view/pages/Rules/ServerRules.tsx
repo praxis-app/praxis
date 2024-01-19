@@ -22,8 +22,17 @@ const ServerRules = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
-  const [updateRules] = useUpdateRulesPriorityMutation();
-  const { data, loading, error, client } = useServerRulesQuery({
+  const [
+    updateRules,
+    { loading: updateRulesLoading, error: updateRulesError },
+  ] = useUpdateRulesPriorityMutation();
+
+  const {
+    data,
+    client,
+    error: serverRulesError,
+    loading: serverRulesLoading,
+  } = useServerRulesQuery({
     variables: { isLoggedIn },
   });
 
@@ -65,11 +74,11 @@ const ServerRules = () => {
     });
   };
 
-  if (error) {
+  if (serverRulesError || updateRulesError) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
-  if (loading) {
+  if (serverRulesLoading) {
     return <ProgressBar />;
   }
 
@@ -99,7 +108,10 @@ const ServerRules = () => {
           )}
 
           <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="droppable">
+            <Droppable
+              droppableId="droppable"
+              isDropDisabled={!canManageRules || updateRulesLoading}
+            >
               {(droppableProvided, droppableSnapshot) => (
                 <Box
                   {...droppableProvided.droppableProps}
@@ -114,6 +126,7 @@ const ServerRules = () => {
                     <Draggable
                       key={rule.id}
                       draggableId={rule.id.toString()}
+                      isDragDisabled={!canManageRules || updateRulesLoading}
                       index={index}
                     >
                       {(draggableProvided, draggableSnapshot) => (
