@@ -82,6 +82,11 @@ const Rule = ({
     setIsClicking(true);
   };
 
+  const handleCloseModal = () => {
+    setIsUpdateModalOpen(false);
+    setMenuAnchorEl(null);
+  };
+
   return (
     <>
       <Flex
@@ -135,10 +140,8 @@ const Rule = ({
       >
         <RuleForm
           editRule={rule}
-          onSubmit={() => {
-            setIsUpdateModalOpen(false);
-            setMenuAnchorEl(null);
-          }}
+          onSubmit={handleCloseModal}
+          onCancel={handleCloseModal}
         />
       </Modal>
 

@@ -1,5 +1,5 @@
 import { useReactiveVar } from '@apollo/client';
-import { FormGroup } from '@mui/material';
+import { Button, FormGroup } from '@mui/material';
 import { Form, Formik } from 'formik';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
@@ -23,10 +23,11 @@ enum RuleFormFieldName {
 
 interface Props {
   onSubmit(): void;
+  onCancel(): void;
   editRule?: RuleFormFragment;
 }
 
-const RuleForm = ({ editRule, onSubmit }: Props) => {
+const RuleForm = ({ editRule, onSubmit, onCancel }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const [createRule] = useCreateRuleMutation();
@@ -113,7 +114,18 @@ const RuleForm = ({ editRule, onSubmit }: Props) => {
             />
           </FormGroup>
 
-          <Flex justifyContent="flex-end">
+          <Flex justifyContent="flex-end" gap="12px">
+            <Button
+              sx={{
+                marginTop: 1.5,
+                textTransform: 'none',
+                borderRadius: 9999,
+                paddingX: '20px',
+              }}
+              onClick={onCancel}
+            >
+              {t('actions.cancel')}
+            </Button>
             <PrimaryActionButton
               disabled={isSubmitting || !dirty}
               isLoading={isSubmitting}

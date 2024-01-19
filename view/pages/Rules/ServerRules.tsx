@@ -92,6 +92,8 @@ const ServerRules = () => {
     });
   };
 
+  const handleCloseModal = () => setIsCreateModalOpen(false);
+
   const handlePopoverOpen = (
     event: React.MouseEvent<HTMLElement, MouseEvent>,
   ) => {
@@ -200,11 +202,11 @@ const ServerRules = () => {
       <Modal
         title={t('rules.headers.createRule')}
         contentStyles={{ minHeight: '30vh' }}
-        onClose={() => setIsCreateModalOpen(false)}
+        onClose={handleCloseModal}
         open={isCreateModalOpen}
         centeredTitle
       >
-        <RuleForm onSubmit={() => setIsCreateModalOpen(false)} />
+        <RuleForm onSubmit={handleCloseModal} onCancel={handleCloseModal} />
       </Modal>
     </>
   );
