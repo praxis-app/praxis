@@ -2,6 +2,7 @@ import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CanariesService } from '../canaries/canaries.service';
+import { sanitizeText } from '../common/common.utils';
 import { ServerConfig } from './models/server-configs.model';
 import { UpdateServerConfigInput } from './models/update-server-config.input';
 
@@ -36,9 +37,11 @@ export class ServerConfigsService {
 
     if (canaryStatement) {
       const canary = await this.canariesService.getCanary();
+      const sanitizedCanaryStatement = sanitizeText(canaryStatement.trim());
+
       await this.canariesService.updateCanary({
         id: canary.id,
-        statement: canaryStatement,
+        statement: sanitizedCanaryStatement,
       });
     }
 

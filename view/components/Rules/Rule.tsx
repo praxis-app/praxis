@@ -6,6 +6,7 @@ import { BrowserEvents } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { RuleFragment } from '../../graphql/rules/fragments/gen/Rule.gen';
 import { useDeleteRuleMutation } from '../../graphql/rules/mutations/gen/DeleteRule.gen';
+import { urlifyText } from '../../utils/shared.utils';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Modal from '../Shared/Modal';
@@ -34,6 +35,7 @@ const Rule = ({
   const { t } = useTranslation();
 
   const { id, title, description, priority, __typename } = rule;
+  const urlifiedDescription = urlifyText(description);
 
   const backgroundColor =
     isClicking && isDragging ? 'rgba(255,255,255,0.025)' : 'transparent';
@@ -113,9 +115,12 @@ const Rule = ({
           <Box>
             <Typography>{title}</Typography>
 
-            <Typography color="text.secondary" fontSize="12px">
-              {description}
-            </Typography>
+            <Typography
+              fontSize="12px"
+              color="text.secondary"
+              dangerouslySetInnerHTML={{ __html: urlifiedDescription }}
+              whiteSpace="pre-wrap"
+            />
           </Box>
         </Flex>
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
+import { sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { CreateRuleInput } from './models/create-rule.input';
 import { Rule } from './models/rule.model';
@@ -46,8 +47,12 @@ export class RulesService {
     return { rule };
   }
 
-  async updateRule({ id, ...ruleData }: UpdateRuleInput) {
-    await this.ruleRepository.update(id, ruleData);
+  async updateRule({ id, description, ...ruleData }: UpdateRuleInput) {
+    const sanitizedDescription = sanitizeText(description.trim());
+    await this.ruleRepository.update(id, {
+      description: sanitizedDescription,
+      ...ruleData,
+    });
     const rule = await this.ruleRepository.findOneOrFail({
       where: { id },
     });
