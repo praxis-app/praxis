@@ -618,6 +618,10 @@
     "placeholders": {
       "title": "Title",
       "description": "Description"
+    },
+    "errors": {
+      "titleMissing": "Rule title cannot be empty",
+      "descriptionMissing": "Rule description cannot be empty"
     }
   },
 
