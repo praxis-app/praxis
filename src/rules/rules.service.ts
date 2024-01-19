@@ -50,11 +50,13 @@ export class RulesService {
 
   async updateRule({ id, description, ...ruleData }: UpdateRuleInput) {
     this.validateRule(ruleData?.title, description);
+
     const sanitizedDescription = sanitizeText(description?.trim());
     await this.ruleRepository.update(id, {
       description: sanitizedDescription,
       ...ruleData,
     });
+
     const rule = await this.ruleRepository.findOneOrFail({
       where: { id },
     });
