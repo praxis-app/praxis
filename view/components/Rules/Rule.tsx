@@ -82,9 +82,13 @@ const Rule = ({
     setIsClicking(true);
   };
 
+  const handleEditBtnClick = () => {
+    setIsUpdateModalOpen(true);
+    setMenuAnchorEl(null);
+  };
+
   const handleCloseModal = () => {
     setIsUpdateModalOpen(false);
-    setMenuAnchorEl(null);
   };
 
   return (
@@ -123,7 +127,7 @@ const Rule = ({
           deletePrompt={t('rules.prompts.confirmDelete')}
           buttonStyles={{ height: 40, transform: 'translateY(-8px)' }}
           updateBtnLabel={t('rules.labels.edit')}
-          onEditButtonClick={() => setIsUpdateModalOpen(true)}
+          onEditButtonClick={handleEditBtnClick}
           setAnchorEl={setMenuAnchorEl}
           anchorEl={menuAnchorEl}
           loading={deleteLoading}
