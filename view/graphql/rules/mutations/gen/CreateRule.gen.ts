@@ -22,6 +22,7 @@ export type CreateRuleMutation = {
       title: string;
       description: string;
       priority: number;
+      updatedAt: any;
     };
   };
 };

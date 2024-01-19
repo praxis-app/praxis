@@ -12,6 +12,7 @@ export type RuleFragment = {
   title: string;
   description: string;
   priority: number;
+  updatedAt: any;
 };
 
 export const RuleFragmentDoc = gql`
@@ -20,6 +21,7 @@ export const RuleFragmentDoc = gql`
     title
     description
     priority
+    updatedAt
     ...RuleForm
   }
   ${RuleFormFragmentDoc}

@@ -13,6 +13,7 @@ import {
   ServerRulesQuery,
 } from '../../graphql/rules/queries/gen/ServerRules.gen';
 import { urlifyText } from '../../utils/shared.utils';
+import { formatDateTime } from '../../utils/time.utils';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Modal from '../Shared/Modal';
@@ -42,7 +43,7 @@ const Rule = ({
 
   const { t } = useTranslation();
 
-  const { id, title, description, priority, __typename } = rule;
+  const { id, title, description, priority, updatedAt, __typename } = rule;
   const urlifiedDescription = urlifyText(description);
 
   const backgroundColor =
@@ -140,7 +141,7 @@ const Rule = ({
 
           <Typography>{priority + 1}</Typography>
 
-          <Box>
+          <Box title={formatDateTime(updatedAt)}>
             <Typography>{title}</Typography>
 
             <Typography
