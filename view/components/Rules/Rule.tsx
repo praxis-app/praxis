@@ -35,6 +35,9 @@ const Rule = ({
 
   const { id, title, description, priority, __typename } = rule;
 
+  const backgroundColor =
+    isClicking && isDragging ? 'rgba(255,255,255,0.025)' : 'transparent';
+
   useEffect(() => {
     const handleMouseUp = () => setIsClicking(false);
     window.addEventListener(BrowserEvents.MouseUp, handleMouseUp, {
@@ -79,9 +82,22 @@ const Rule = ({
     setIsClicking(true);
   };
 
+  const renderDivider = () => {
+    if (isDragging && isClicking) {
+      return null;
+    }
+    return <Divider />;
+  };
+
   return (
     <>
-      <Flex justifyContent="space-between" gap="6px">
+      <Flex
+        justifyContent="space-between"
+        padding={isClicking && isDragging ? '6px' : undefined}
+        bgcolor={backgroundColor}
+        borderRadius="8px"
+        gap="6px"
+      >
         <Flex
           flex={1}
           gap="14px"
@@ -133,7 +149,7 @@ const Rule = ({
         />
       </Modal>
 
-      {isLast && <Box marginY={2}>{!isDragging && <Divider />}</Box>}
+      {isLast && <Box marginY={2}>{renderDivider()}</Box>}
     </>
   );
 };
