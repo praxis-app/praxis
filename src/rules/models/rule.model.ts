@@ -28,7 +28,9 @@ export class Rule {
   @Field(() => Int)
   priority: number;
 
-  @ManyToOne(() => Group, (group) => group.rules, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Group, (group) => group.rules, {
+    onDelete: 'CASCADE',
+  })
   group?: Group;
 
   @Column({ nullable: true })
