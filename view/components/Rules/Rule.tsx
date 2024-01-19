@@ -1,11 +1,17 @@
+import { useReactiveVar } from '@apollo/client';
 import { DragIndicator } from '@mui/icons-material';
 import { Box, Divider, Typography } from '@mui/material';
+import { produce } from 'immer';
 import { CSSProperties, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BrowserEvents } from '../../constants/shared.constants';
-import { toastVar } from '../../graphql/cache';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { RuleFragment } from '../../graphql/rules/fragments/gen/Rule.gen';
 import { useDeleteRuleMutation } from '../../graphql/rules/mutations/gen/DeleteRule.gen';
+import {
+  ServerRulesDocument,
+  ServerRulesQuery,
+} from '../../graphql/rules/queries/gen/ServerRules.gen';
 import { urlifyText } from '../../utils/shared.utils';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
@@ -31,7 +37,9 @@ const Rule = ({
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [deleteRule, { loading: deleteLoading }] = useDeleteRuleMutation();
+
   const { t } = useTranslation();
 
   const { id, title, description, priority, __typename } = rule;
@@ -64,6 +72,26 @@ const Rule = ({
     await deleteRule({
       variables: { id },
       update(cache) {
+        cache.updateQuery<ServerRulesQuery>(
+          {
+            query: ServerRulesDocument,
+            variables: { isLoggedIn },
+          },
+          (rulesData) => {
+            if (!rulesData) {
+              return;
+            }
+            const newRules = rulesData.serverRules.map((rule) => {
+              if (priority > rule.priority) {
+                return rule;
+              }
+              return { ...rule, priority: rule.priority - 1 };
+            });
+            return produce(rulesData, (draft) => {
+              draft.serverRules = newRules;
+            });
+          },
+        );
         const cacheId = cache.identify({ id, __typename });
         cache.evict({ id: cacheId });
         cache.gc();
