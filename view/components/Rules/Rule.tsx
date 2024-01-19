@@ -1,6 +1,8 @@
+import { DragIndicator } from '@mui/icons-material';
 import { Box, Divider, Typography } from '@mui/material';
-import { useState } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BrowserEvents } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { RuleFragment } from '../../graphql/rules/fragments/gen/Rule.gen';
 import { useDeleteRuleMutation } from '../../graphql/rules/mutations/gen/DeleteRule.gen';
@@ -11,19 +13,50 @@ import RuleForm from './RuleForm';
 
 interface Props {
   canManageRules: boolean;
+  isDragging: boolean;
   isLast: boolean;
+  isLoading: boolean;
   rule: RuleFragment;
 }
 
-const Rule = ({ rule, isLast, canManageRules }: Props) => {
+const Rule = ({
+  canManageRules,
+  isDragging,
+  isLast,
+  isLoading,
+  rule,
+}: Props) => {
+  const [isClicking, setIsClicking] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
-  const [deleteRule, { loading }] = useDeleteRuleMutation();
-
+  const [deleteRule, { loading: deleteLoading }] = useDeleteRuleMutation();
   const { t } = useTranslation();
 
   const { id, title, description, priority, __typename } = rule;
+
+  const backgroundColor =
+    isClicking && isDragging ? 'rgba(255,255,255,0.025)' : 'transparent';
+
+  useEffect(() => {
+    const handleMouseUp = () => setIsClicking(false);
+    window.addEventListener(BrowserEvents.MouseUp, handleMouseUp, {
+      passive: true,
+    });
+    return () => {
+      window.removeEventListener(BrowserEvents.MouseUp, handleMouseUp);
+    };
+  }, []);
+
+  const getCursor = (): CSSProperties['cursor'] => {
+    if (isLoading || deleteLoading || !canManageRules) {
+      return 'initial';
+    }
+    if (isClicking || isDragging) {
+      return 'grabbing';
+    }
+    return 'grab';
+  };
 
   const handleDelete = async () => {
     await deleteRule({
@@ -42,10 +75,39 @@ const Rule = ({ rule, isLast, canManageRules }: Props) => {
     });
   };
 
+  const handleMouseDown = () => {
+    if (!canManageRules || isLoading) {
+      return;
+    }
+    setIsClicking(true);
+  };
+
+  const handleEditBtnClick = () => {
+    setIsUpdateModalOpen(true);
+    setMenuAnchorEl(null);
+  };
+
+  const handleCloseModal = () => {
+    setIsUpdateModalOpen(false);
+  };
+
   return (
     <>
-      <Flex justifyContent="space-between">
-        <Flex gap="14px">
+      <Flex
+        justifyContent="space-between"
+        padding={isDragging ? '6px' : undefined}
+        bgcolor={backgroundColor}
+        borderRadius="8px"
+        gap="6px"
+      >
+        <Flex
+          flex={1}
+          gap="14px"
+          onMouseDown={handleMouseDown}
+          sx={{ userSelect: 'none', cursor: getCursor() }}
+        >
+          {canManageRules && <DragIndicator sx={{ color: 'text.secondary' }} />}
+
           <Typography>{priority + 1}</Typography>
 
           <Box>
@@ -63,12 +125,12 @@ const Rule = ({ rule, isLast, canManageRules }: Props) => {
           deleteItem={handleDelete}
           deleteBtnLabel={t('rules.labels.delete')}
           deletePrompt={t('rules.prompts.confirmDelete')}
-          buttonStyles={{ height: 40, alignSelf: 'center' }}
+          buttonStyles={{ height: 40, transform: 'translateY(-8px)' }}
           updateBtnLabel={t('rules.labels.edit')}
-          onEditButtonClick={() => setIsUpdateModalOpen(true)}
+          onEditButtonClick={handleEditBtnClick}
           setAnchorEl={setMenuAnchorEl}
           anchorEl={menuAnchorEl}
-          loading={loading}
+          loading={deleteLoading}
           prependChildren
         />
       </Flex>
@@ -82,14 +144,12 @@ const Rule = ({ rule, isLast, canManageRules }: Props) => {
       >
         <RuleForm
           editRule={rule}
-          onSubmit={() => {
-            setIsUpdateModalOpen(false);
-            setMenuAnchorEl(null);
-          }}
+          onSubmit={handleCloseModal}
+          onCancel={handleCloseModal}
         />
       </Modal>
 
-      {isLast && <Divider sx={{ marginY: 2 }} />}
+      {isLast && <Box marginY={2}>{!isDragging && <Divider />}</Box>}
     </>
   );
 };

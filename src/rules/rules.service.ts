@@ -5,6 +5,7 @@ import { GroupPrivacy } from '../groups/groups.constants';
 import { CreateRuleInput } from './models/create-rule.input';
 import { Rule } from './models/rule.model';
 import { UpdateRuleInput } from './models/update-rule.input';
+import { UpdateRulesPriorityInput } from './models/update-rules-priority.input';
 
 @Injectable()
 export class RulesService {
@@ -51,6 +52,17 @@ export class RulesService {
       where: { id },
     });
     return { rule };
+  }
+
+  async updateRulesPriority({ rules }: UpdateRulesPriorityInput) {
+    const containsExtraFields = rules.some(
+      (rule) => Object.keys(rule).length > 2,
+    );
+    if (containsExtraFields) {
+      throw new Error('Only id and priority fields are allowed');
+    }
+    await this.ruleRepository.save(rules);
+    return true;
   }
 
   async deleteRule(ruleId: number) {

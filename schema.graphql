@@ -656,6 +656,7 @@ type Mutation {
   deleteLike(likeData: DeleteLikeInput!): Boolean!
   createRule(ruleData: CreateRuleInput!): CreateRulePayload!
   updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
+  updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
   deleteRule(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
@@ -929,6 +930,15 @@ input UpdateRuleInput {
   title: String
   description: String
   priority: Int
+}
+
+input UpdateRulesPriorityInput {
+  rules: [UpdateRulePriorityInput!]!
+}
+
+input UpdateRulePriorityInput {
+  id: Int!
+  priority: Int!
 }
 
 input UpdateServerConfigInput {

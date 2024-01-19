@@ -94,18 +94,6 @@ const LeftNav = () => {
         </ListItemButton>
       </Link>
 
-      <Link href={NavigationPaths.Groups}>
-        <ListItemButton>
-          <ListItemIcon>
-            <GroupsIcon />
-          </ListItemIcon>
-          <ListItemText
-            isActive={isActive(NavigationPaths.Groups)}
-            primary={t('navigation.groups')}
-          />
-        </ListItemButton>
-      </Link>
-
       {isLoggedIn && (
         <Link href={NavigationPaths.Activity}>
           <ListItemButton>
@@ -120,6 +108,18 @@ const LeftNav = () => {
           </ListItemButton>
         </Link>
       )}
+
+      <Link href={NavigationPaths.Groups}>
+        <ListItemButton>
+          <ListItemIcon>
+            <GroupsIcon />
+          </ListItemIcon>
+          <ListItemText
+            isActive={isActive(NavigationPaths.Groups)}
+            primary={t('navigation.groups')}
+          />
+        </ListItemButton>
+      </Link>
 
       <Link href={NavigationPaths.Events}>
         <ListItemButton>

@@ -1,0 +1,3 @@
+mutation UpdateRulesPriority($rulesData: UpdateRulesPriorityInput!) {
+  updateRulesPriority(rulesData: $rulesData)
+}
