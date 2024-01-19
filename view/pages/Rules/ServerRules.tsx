@@ -201,6 +201,7 @@ const ServerRules = () => {
 
       <Modal
         title={t('rules.headers.createRule')}
+        topGap={isDesktop ? undefined : '150px'}
         contentStyles={{ minHeight: '30vh' }}
         onClose={handleCloseModal}
         open={isCreateModalOpen}

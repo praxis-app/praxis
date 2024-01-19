@@ -12,6 +12,7 @@ import {
   ServerRulesDocument,
   ServerRulesQuery,
 } from '../../graphql/rules/queries/gen/ServerRules.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import { urlifyText } from '../../utils/shared.utils';
 import { formatDateTime } from '../../utils/time.utils';
 import Flex from '../Shared/Flex';
@@ -42,6 +43,7 @@ const Rule = ({
   const [deleteRule, { loading: deleteLoading }] = useDeleteRuleMutation();
 
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
 
   const { id, title, description, priority, updatedAt, __typename } = rule;
   const urlifiedDescription = urlifyText(description);
@@ -172,6 +174,7 @@ const Rule = ({
       <Modal
         title={t('rules.headers.updateRule')}
         contentStyles={{ minHeight: '30vh' }}
+        topGap={isDesktop ? undefined : '150px'}
         onClose={() => setIsUpdateModalOpen(false)}
         open={isUpdateModalOpen}
         centeredTitle
