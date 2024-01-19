@@ -77,6 +77,7 @@ export class RulesService {
     return true;
   }
 
+  // TODO: Add support for group rules
   async deleteRule(ruleId: number) {
     const rule = await this.ruleRepository.findOneOrFail({
       where: { id: ruleId },
