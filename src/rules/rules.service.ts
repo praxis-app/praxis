@@ -34,6 +34,7 @@ export class RulesService {
   }
 
   async createRule(ruleData: CreateRuleInput) {
+    this.validateRule(ruleData.title, ruleData.description);
     const [lowestPriorityRule] = await this.ruleRepository.find({
       where: { groupId: ruleData.groupId || IsNull() },
       order: { priority: 'DESC' },
@@ -48,6 +49,7 @@ export class RulesService {
   }
 
   async updateRule({ id, description, ...ruleData }: UpdateRuleInput) {
+    this.validateRule(ruleData.title, description);
     const sanitizedDescription = sanitizeText(description.trim());
     await this.ruleRepository.update(id, {
       description: sanitizedDescription,
@@ -57,6 +59,15 @@ export class RulesService {
       where: { id },
     });
     return { rule };
+  }
+
+  validateRule(title: string, description: string) {
+    if (!title.trim()) {
+      throw new Error('Title is required');
+    }
+    if (!description.trim()) {
+      throw new Error('Description is required');
+    }
   }
 
   async updateRulesPriority({ rules }: UpdateRulesPriorityInput) {
