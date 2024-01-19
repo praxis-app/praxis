@@ -27,10 +27,10 @@ export class RulesService {
       where: { id: ruleId },
       relations: ['group.config'],
     });
-    if (rule.group) {
-      return rule.group.config.privacy === GroupPrivacy.Public;
+    if (!rule.group) {
+      return true;
     }
-    return !rule.groupId;
+    return rule.group.config.privacy === GroupPrivacy.Public;
   }
 
   async createRule(ruleData: CreateRuleInput) {
