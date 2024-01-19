@@ -1,6 +1,6 @@
 import { DragIndicator } from '@mui/icons-material';
 import { Box, Divider, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BrowserEvents } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
@@ -13,17 +13,24 @@ import RuleForm from './RuleForm';
 
 interface Props {
   canManageRules: boolean;
-  isLast: boolean;
-  rule: RuleFragment;
   isDragging: boolean;
+  isLast: boolean;
+  isLoading: boolean;
+  rule: RuleFragment;
 }
 
-const Rule = ({ rule, isLast, canManageRules, isDragging }: Props) => {
+const Rule = ({
+  canManageRules,
+  isDragging,
+  isLast,
+  isLoading,
+  rule,
+}: Props) => {
   const [isClicking, setIsClicking] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
-  const [deleteRule, { loading }] = useDeleteRuleMutation();
+  const [deleteRule, { loading: deleteLoading }] = useDeleteRuleMutation();
   const { t } = useTranslation();
 
   const { id, title, description, priority, __typename } = rule;
@@ -37,6 +44,16 @@ const Rule = ({ rule, isLast, canManageRules, isDragging }: Props) => {
       window.removeEventListener(BrowserEvents.MouseUp, handleMouseUp);
     };
   }, []);
+
+  const getCursor = (): CSSProperties['cursor'] => {
+    if (isLoading || deleteLoading || !canManageRules) {
+      return 'initial';
+    }
+    if (isClicking || isDragging) {
+      return 'grabbing';
+    }
+    return 'grab';
+  };
 
   const handleDelete = async () => {
     await deleteRule({
@@ -55,17 +72,21 @@ const Rule = ({ rule, isLast, canManageRules, isDragging }: Props) => {
     });
   };
 
+  const handleMouseDown = () => {
+    if (!canManageRules || isLoading) {
+      return;
+    }
+    setIsClicking(true);
+  };
+
   return (
     <>
       <Flex justifyContent="space-between" gap="6px">
         <Flex
-          gap="14px"
-          sx={{
-            userSelect: 'none',
-            cursor: isClicking || isDragging ? 'grabbing' : 'grab',
-          }}
-          onMouseDown={() => setIsClicking(true)}
           flex={1}
+          gap="14px"
+          onMouseDown={handleMouseDown}
+          sx={{ userSelect: 'none', cursor: getCursor() }}
         >
           {canManageRules && <DragIndicator sx={{ color: 'text.secondary' }} />}
 
@@ -91,7 +112,7 @@ const Rule = ({ rule, isLast, canManageRules, isDragging }: Props) => {
           onEditButtonClick={() => setIsUpdateModalOpen(true)}
           setAnchorEl={setMenuAnchorEl}
           anchorEl={menuAnchorEl}
-          loading={loading}
+          loading={deleteLoading}
           prependChildren
         />
       </Flex>

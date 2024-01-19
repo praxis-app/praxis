@@ -1,5 +1,13 @@
 import { useReactiveVar } from '@apollo/client';
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardContent,
+  CircularProgress,
+  PaperProps,
+  Popover,
+  Typography,
+} from '@mui/material';
 import { useState } from 'react';
 import { DragDropContext, Draggable, DropResult } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
@@ -17,9 +25,11 @@ import {
   ServerRulesDocument,
   useServerRulesQuery,
 } from '../../graphql/rules/queries/gen/ServerRules.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const ServerRules = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const [
@@ -37,9 +47,17 @@ const ServerRules = () => {
   });
 
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
 
   const serverRules = data?.serverRules;
   const canManageRules = !!data?.me?.serverPermissions.manageRules;
+
+  const paperProps: PaperProps = {
+    sx: {
+      paddingX: 1.75,
+      paddingY: 1.25,
+    },
+  };
 
   const handleDragEnd = async (dropResult: DropResult) => {
     if (!dropResult.destination || !serverRules) {
@@ -72,6 +90,14 @@ const ServerRules = () => {
         },
       },
     });
+  };
+
+  const handlePopoverOpen = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
+  ) => {
+    if (updateRulesLoading && isDesktop) {
+      setAnchorEl(event.currentTarget);
+    }
   };
 
   if (serverRulesError || updateRulesError) {
@@ -116,11 +142,6 @@ const ServerRules = () => {
                 <Box
                   {...droppableProvided.droppableProps}
                   ref={droppableProvided.innerRef}
-                  sx={{
-                    bgcolor: droppableSnapshot.isDraggingOver
-                      ? 'rgba(255, 255, 255, 0.2)'
-                      : undefined,
-                  }}
                 >
                   {serverRules?.map((rule, index) => (
                     <Draggable
@@ -132,6 +153,8 @@ const ServerRules = () => {
                       {(draggableProvided, draggableSnapshot) => (
                         <Box
                           ref={draggableProvided.innerRef}
+                          onMouseEnter={handlePopoverOpen}
+                          onMouseLeave={() => setAnchorEl(null)}
                           {...draggableProvided.draggableProps}
                           {...draggableProvided.dragHandleProps}
                         >
@@ -143,6 +166,7 @@ const ServerRules = () => {
                               droppableSnapshot.isDraggingOver
                             }
                             isLast={index + 1 !== serverRules.length}
+                            isLoading={updateRulesLoading}
                           />
                         </Box>
                       )}
@@ -154,6 +178,26 @@ const ServerRules = () => {
             </Droppable>
           </DragDropContext>
         </CardContent>
+
+        <Popover
+          anchorEl={anchorEl}
+          open={!!anchorEl && updateRulesLoading}
+          slotProps={{ paper: paperProps }}
+          sx={{ pointerEvents: 'none' }}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <Flex alignItems="center" gap="8px" paddingTop="5px">
+            <CircularProgress size={14} />
+            <Typography>{t('states.loading')}</Typography>
+          </Flex>
+        </Popover>
       </Card>
 
       <Modal
