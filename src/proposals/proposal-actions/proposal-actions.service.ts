@@ -172,23 +172,27 @@ export class ProposalActionsService {
     }
   }
 
-  // TODO: Ensure new image file is saved in case group is deleted
   async implementChangeGroupCoverPhoto(
     proposalActionId: number,
     groupId: number,
   ) {
-    const currentCoverPhoto = await this.imageRepository.findOne({
+    const currentCoverPhoto = await this.imageRepository.findOneOrFail({
       where: { groupId, imageType: ImageTypes.CoverPhoto },
     });
     const newCoverPhoto =
       await this.getProposedGroupCoverPhoto(proposalActionId);
-    if (!currentCoverPhoto || !newCoverPhoto) {
+
+    if (!newCoverPhoto) {
       throw new UserInputError('Could not find group cover photo');
     }
+
+    const imageFilename = copyImage(newCoverPhoto.filename);
     await this.imageRepository.save({
-      ...newCoverPhoto,
       groupId,
+      filename: imageFilename,
+      imageType: newCoverPhoto.imageType,
     });
+
     await this.imageRepository.delete({ id: currentCoverPhoto.id });
     await deleteImageFile(currentCoverPhoto.filename);
   }
