@@ -62,6 +62,8 @@ import { AddServerRolePermissionColumns1703978999070 } from './migrations/170397
 import { AddCascadeDeletesForUser1704254669247 } from './migrations/1704254669247-AddCascadeDeletesForUser';
 import { AddNotificationsTable1704767517224 } from './migrations/1704767517224-AddNotificationsTable';
 import { AddNotificationRelationColumns1705026747368 } from './migrations/1705026747368-AddNotificationRelationColumns';
+import { Rule } from '../rules/models/rule.model';
+import { AddRuleTable1705711560882 } from './migrations/1705711560882-AddRuleTable';
 
 dotenv.config();
 
@@ -95,6 +97,7 @@ export default new DataSource({
     ProposalActionRole,
     ProposalActionRoleMember,
     ProposalConfig,
+    Rule,
     ServerConfig,
     ServerInvite,
     ServerRole,
@@ -122,6 +125,7 @@ export default new DataSource({
     AddProposalActionRoleTable1684893300206,
     AddProposalConfigTable1702843109428,
     AddRoleMemberLinkTable1681172948650,
+    AddRuleTable1705711560882,
     AddSecurityTxtColumn1702684900226,
     AddServerConfigTable1699135846939,
     AddServerInviteTable1677339785709,
