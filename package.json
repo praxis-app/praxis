@@ -59,6 +59,7 @@
     "humanize-duration": "^3.30.0",
     "i18next": "^21.6.7",
     "immer": "^10.0.2",
+    "marked": "^11.1.1",
     "nest-winston": "^1.9.4",
     "passport-jwt": "^4.0.1",
     "pg": "^8.11.3",

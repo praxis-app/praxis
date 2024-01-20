@@ -13,7 +13,11 @@ import {
   ServerRulesQuery,
 } from '../../graphql/rules/queries/gen/ServerRules.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
-import { urlifyText } from '../../utils/shared.utils';
+import {
+  convertBoldToSpan,
+  parseMarkdownText,
+  urlifyText,
+} from '../../utils/shared.utils';
 import { formatDateTime } from '../../utils/time.utils';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
@@ -38,6 +42,7 @@ const Rule = ({
   const [isClicking, setIsClicking] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
+  const [formattedDescription, setFormattedDescription] = useState<string>();
 
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [deleteRule, { loading: deleteLoading }] = useDeleteRuleMutation();
@@ -46,10 +51,19 @@ const Rule = ({
   const isDesktop = useIsDesktop();
 
   const { id, title, description, priority, updatedAt, __typename } = rule;
-  const urlifiedDescription = urlifyText(description);
 
   const backgroundColor =
     isClicking && isDragging ? 'rgba(255,255,255,0.025)' : 'transparent';
+
+  useEffect(() => {
+    const formatDescription = async () => {
+      const urlified = urlifyText(description);
+      const markdown = await parseMarkdownText(urlified);
+      const formatted = convertBoldToSpan(markdown);
+      setFormattedDescription(formatted);
+    };
+    formatDescription();
+  }, [description]);
 
   useEffect(() => {
     const handleMouseUp = () => setIsClicking(false);
@@ -124,6 +138,10 @@ const Rule = ({
     setIsUpdateModalOpen(false);
   };
 
+  if (!formattedDescription) {
+    return null;
+  }
+
   return (
     <>
       <Flex
@@ -149,7 +167,9 @@ const Rule = ({
             <Typography
               fontSize="12px"
               color="text.secondary"
-              dangerouslySetInnerHTML={{ __html: urlifiedDescription }}
+              dangerouslySetInnerHTML={{
+                __html: formattedDescription,
+              }}
               whiteSpace="pre-wrap"
             />
           </Box>
