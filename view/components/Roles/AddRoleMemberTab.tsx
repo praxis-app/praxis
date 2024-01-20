@@ -3,22 +3,24 @@ import {
   Card,
   CardActionArea,
   CardContent as MuiCardContent,
+  SxProps,
   Typography,
   styled,
 } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { AddGroupRoleMemberTabFragment } from '../../graphql/groups/fragments/gen/AddGroupRoleMemberTab.gen';
 import { useUpdateGroupRoleMutation } from '../../graphql/groups/mutations/gen/UpdateGroupRole.gen';
 import { AddServerRoleMemberTabFragment } from '../../graphql/roles/fragments/gen/AddServerRoleMemberTab.gen';
 import { useUpdateServerRoleMutation } from '../../graphql/roles/mutations/gen/UpdateServerRole.gen';
 import { UserAvatarFragment } from '../../graphql/users/fragments/gen/UserAvatar.gen';
-import { NavigationPaths } from '../../constants/shared.constants';
 import Flex from '../Shared/Flex';
 import Modal from '../Shared/Modal';
 import AddRoleMemberOption from './AddRoleMemberOption';
 import RoleMember from './RoleMember';
+import { toastVar } from '../../graphql/cache';
 
 const FlexCardContent = styled(MuiCardContent)(() => ({
   display: 'flex',
@@ -45,13 +47,16 @@ const AddRoleMemberTab = ({
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [updateGroupRole] = useUpdateGroupRoleMutation();
-  const [updateServerRole] = useUpdateServerRoleMutation();
+  const [updateGroupRole, { loading: updateGroupRoleLoading }] =
+    useUpdateGroupRoleMutation();
+
+  const [updateServerRole, { loading: updateServerRoleLoading }] =
+    useUpdateServerRoleMutation();
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
 
-  const addCircleStyles = {
+  const addCircleStyles: SxProps = {
     fontSize: 23,
     marginRight: 1.25,
   };
@@ -64,6 +69,13 @@ const AddRoleMemberTab = ({
     setSelectedUserIds([]);
   };
 
+  const onError = (err: Error) => {
+    toastVar({
+      status: 'error',
+      title: err.message,
+    });
+  };
+
   const handleSubmit = async () => {
     const isGroupRole = pathname.includes(NavigationPaths.Groups);
     const roleData = { id, selectedUserIds };
@@ -72,12 +84,14 @@ const AddRoleMemberTab = ({
       await updateGroupRole({
         variables: { groupRoleData: roleData },
         onCompleted,
+        onError,
       });
       return;
     }
     await updateServerRole({
       variables: { serverRoleData: roleData },
       onCompleted,
+      onError,
     });
   };
 
@@ -105,6 +119,7 @@ const AddRoleMemberTab = ({
         title={t('roles.actions.addMembers')}
         actionLabel={t('roles.actions.add')}
         closingAction={handleSubmit}
+        isLoading={updateGroupRoleLoading || updateServerRoleLoading}
         onClose={handleCloseModal}
         open={isModalOpen}
       >

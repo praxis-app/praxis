@@ -1,8 +1,3 @@
-/**
- * TODO: Add the following field(s) to ProposalAction model below:
- * groupSettings: [SettingInput]
- */
-
 import { Field, InputType } from '@nestjs/graphql';
 import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
 import { ProposalActionEventInput } from './proposal-action-event.input';

@@ -3,6 +3,7 @@ import {
   AppBar,
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogContent,
   DialogProps,
@@ -30,6 +31,7 @@ interface Props {
   subtext?: string;
   title?: string;
   topGap?: string | number;
+  isLoading?: boolean;
 }
 
 const Modal = ({
@@ -45,6 +47,7 @@ const Modal = ({
   open,
   subtext,
   title,
+  isLoading,
   topGap,
 }: Props) => {
   const isDesktop = useIsDesktop();
@@ -119,7 +122,22 @@ const Modal = ({
             </Typography>
           )}
         </Box>
-        {actionLabel && <Button onClick={closingAction}>{actionLabel}</Button>}
+        {closingAction && actionLabel && (
+          <Button
+            disabled={isLoading}
+            onClick={closingAction}
+            startIcon={
+              isLoading && (
+                <CircularProgress
+                  size={10}
+                  sx={{ marginRight: '4px', color: 'inherit' }}
+                />
+              )
+            }
+          >
+            {actionLabel}
+          </Button>
+        )}
       </Toolbar>
     );
   };
