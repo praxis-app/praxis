@@ -102,12 +102,12 @@ export class ProposalsResolver {
     return loaders.usersLoader.load(userId);
   }
 
-  @ResolveField(() => Group)
+  @ResolveField(() => Group, { nullable: true })
   async group(
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { groupId }: Proposal,
   ) {
-    return loaders.groupsLoader.load(groupId);
+    return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
 
   @Mutation(() => CreateProposalPayload)

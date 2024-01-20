@@ -69,7 +69,7 @@ export class ProposalsService {
           ['proposal.group.config'],
         );
       return (
-        proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
+        proposalAction?.proposal.group?.config.privacy === GroupPrivacy.Public
       );
     }
     if (!image.proposalId) {
@@ -78,7 +78,7 @@ export class ProposalsService {
     const { group } = await this.getProposal(image.proposalId, [
       'group.config',
     ]);
-    return group.config.privacy === GroupPrivacy.Public;
+    return group?.config.privacy === GroupPrivacy.Public;
   }
 
   async getProposalConfig(proposalId: number) {
@@ -254,6 +254,11 @@ export class ProposalsService {
       groupId,
     } = await this.getProposal(proposalId, ['action']);
 
+    // TODO: Add support for server proposals
+    if (!groupId) {
+      return;
+    }
+
     if (actionType === ProposalActionType.PlanGroupEvent) {
       await this.proposalActionsService.implementGroupEvent(id, groupId);
       return;
@@ -295,6 +300,12 @@ export class ProposalsService {
       'config',
       'votes',
     ]);
+
+    // TODO: Add support for server proposals
+    if (!group) {
+      return false;
+    }
+
     if (stage !== ProposalStage.Voting) {
       return false;
     }

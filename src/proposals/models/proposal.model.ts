@@ -75,13 +75,11 @@ export class Proposal {
   @Column()
   userId: number;
 
-  @Field(() => Group, { nullable: true })
   @ManyToOne(() => Group, (group) => group.proposals, { onDelete: 'CASCADE' })
-  // TODO: Set group as optional, in preparation for server proposals
-  group: Group;
+  group?: Group;
 
   @Column({ nullable: true })
-  groupId: number;
+  groupId?: number;
 
   @CreateDateColumn()
   @Field()
