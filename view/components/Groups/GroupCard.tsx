@@ -106,14 +106,13 @@ const GroupCard = ({
 
   const renderItemMenu = () => {
     const isNoAdmin = settings.adminModel === GroupAdminModel.NoAdmin;
-    if (isNoAdmin) {
-      return null;
-    }
+    const canUpdateGroup = !isNoAdmin && myPermissions?.updateGroup;
+    const canManageRoles = !isNoAdmin && myPermissions?.manageRoles;
+    const canManageSettings = !isNoAdmin && myPermissions?.manageSettings;
 
-    const canDeleteGroup = myPermissions?.deleteGroup || canRemoveGroups;
-    const canUpdateGroup = myPermissions?.updateGroup;
-    const canManageRoles = myPermissions?.manageRoles;
-    const canManageSettings = myPermissions?.manageSettings;
+    const canDeleteGroup =
+      (!isNoAdmin && myPermissions?.deleteGroup) || canRemoveGroups;
+
     if (
       !canDeleteGroup &&
       !canUpdateGroup &&
