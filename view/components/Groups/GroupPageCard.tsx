@@ -1,5 +1,3 @@
-// TODO: Add remaining layout and functionality - below is a WIP
-
 import { useReactiveVar } from '@apollo/client';
 import { AccountBox, Lock, Public, Settings } from '@mui/icons-material';
 import {

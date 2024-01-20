@@ -1,8 +1,3 @@
-/**
- * TODO: Add support for implementing remaining action types
- * TODO: Add support for other voting models
- */
-
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';

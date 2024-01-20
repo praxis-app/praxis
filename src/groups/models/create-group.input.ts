@@ -1,5 +1,3 @@
-// TODO: Add pipes for group validation
-
 import { Field, InputType } from '@nestjs/graphql';
 import { Matches } from 'class-validator';
 import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';

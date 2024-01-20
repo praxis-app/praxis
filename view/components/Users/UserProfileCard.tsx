@@ -1,5 +1,3 @@
-// TODO: Implement remaining functionality - below is a WIP
-
 import { DateRange as JoinDateIcon } from '@mui/icons-material';
 import {
   Box,
