@@ -52,7 +52,7 @@ const Rule = ({
 
   const { id, title, description, priority, updatedAt, __typename } = rule;
 
-  const backgroundColor = isGrabbing
+  const backgroundColor = isDragging
     ? 'rgba(255,255,255,0.025)'
     : 'transparent';
 
@@ -147,7 +147,7 @@ const Rule = ({
     <>
       <Flex
         justifyContent="space-between"
-        padding={isGrabbing ? '6px' : undefined}
+        padding={isDragging ? '6px' : undefined}
         bgcolor={backgroundColor}
         borderRadius="8px"
         gap="6px"
