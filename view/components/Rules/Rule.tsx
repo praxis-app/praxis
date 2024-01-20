@@ -39,7 +39,7 @@ const Rule = ({
   isLoading,
   rule,
 }: Props) => {
-  const [isClicking, setIsClicking] = useState(false);
+  const [isGrabbing, setIsGrabbing] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [formattedDescription, setFormattedDescription] = useState<string>();
@@ -52,8 +52,9 @@ const Rule = ({
 
   const { id, title, description, priority, updatedAt, __typename } = rule;
 
-  const backgroundColor =
-    isClicking && isDragging ? 'rgba(255,255,255,0.025)' : 'transparent';
+  const backgroundColor = isGrabbing
+    ? 'rgba(255,255,255,0.025)'
+    : 'transparent';
 
   useEffect(() => {
     const formatDescription = async () => {
@@ -66,7 +67,7 @@ const Rule = ({
   }, [description]);
 
   useEffect(() => {
-    const handleMouseUp = () => setIsClicking(false);
+    const handleMouseUp = () => setIsGrabbing(false);
     window.addEventListener(BrowserEvents.MouseUp, handleMouseUp, {
       passive: true,
     });
@@ -79,7 +80,7 @@ const Rule = ({
     if (isLoading || deleteLoading || !canManageRules) {
       return 'initial';
     }
-    if (isClicking || isDragging) {
+    if (isGrabbing) {
       return 'grabbing';
     }
     return 'grab';
@@ -126,7 +127,7 @@ const Rule = ({
     if (!canManageRules || isLoading) {
       return;
     }
-    setIsClicking(true);
+    setIsGrabbing(true);
   };
 
   const handleEditBtnClick = () => {
@@ -146,7 +147,7 @@ const Rule = ({
     <>
       <Flex
         justifyContent="space-between"
-        padding={isDragging ? '6px' : undefined}
+        padding={isGrabbing ? '6px' : undefined}
         bgcolor={backgroundColor}
         borderRadius="8px"
         gap="6px"
