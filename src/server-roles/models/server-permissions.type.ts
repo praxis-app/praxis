@@ -31,4 +31,7 @@ export class ServerPermissions {
 
   @Field()
   removeProposals: boolean;
+
+  @Field()
+  manageRules: boolean;
 }

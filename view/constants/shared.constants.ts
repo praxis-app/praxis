@@ -29,6 +29,7 @@ export enum NavigationPaths {
   Posts = '/posts',
   Proposals = '/proposals',
   Roles = '/roles',
+  Rules = '/rules',
   ServerSettings = '/settings',
   SignUp = '/auth/signup',
   Users = '/users',
@@ -78,6 +79,8 @@ export enum LocalStorageKey {
 
 export enum BrowserEvents {
   Keydown = 'keydown',
+  MouseDown = 'mousedown',
+  MouseUp = 'mouseup',
   Resize = 'resize',
   Scroll = 'scroll',
 }

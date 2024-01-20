@@ -1,0 +1,11 @@
+query ServerRules($isLoggedIn: Boolean!) {
+  serverRules {
+    ...Rule
+  }
+  me @include(if: $isLoggedIn) {
+    id
+    serverPermissions {
+      manageRules
+    }
+  }
+}

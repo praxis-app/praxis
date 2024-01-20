@@ -1,0 +1,7 @@
+mutation CreateRule($ruleData: CreateRuleInput!) {
+  createRule(ruleData: $ruleData) {
+    rule {
+      ...Rule
+    }
+  }
+}

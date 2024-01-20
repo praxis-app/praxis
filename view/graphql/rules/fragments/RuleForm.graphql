@@ -1,0 +1,5 @@
+fragment RuleForm on Rule {
+  id
+  title
+  description
+}

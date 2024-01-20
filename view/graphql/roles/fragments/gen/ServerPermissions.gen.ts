@@ -13,6 +13,7 @@ export type ServerPermissionsFragment = {
   manageInvites: boolean;
   managePosts: boolean;
   manageRoles: boolean;
+  manageRules: boolean;
   manageSettings: boolean;
   removeGroups: boolean;
   removeMembers: boolean;
@@ -27,6 +28,7 @@ export const ServerPermissionsFragmentDoc = gql`
     manageInvites
     managePosts
     manageRoles
+    manageRules
     manageSettings
     removeGroups
     removeMembers

@@ -167,6 +167,17 @@ export type CreateProposalPayload = {
   proposal: Proposal;
 };
 
+export type CreateRuleInput = {
+  description: Scalars['String']['input'];
+  groupId?: InputMaybe<Scalars['Int']['input']>;
+  title: Scalars['String']['input'];
+};
+
+export type CreateRulePayload = {
+  __typename?: 'CreateRulePayload';
+  rule: Rule;
+};
+
 export type CreateServerInviteInput = {
   expiresAt?: InputMaybe<Scalars['DateTime']['input']>;
   maxUses?: InputMaybe<Scalars['Int']['input']>;
@@ -435,6 +446,7 @@ export type Mutation = {
   createLike: CreateLikePayload;
   createPost: CreatePostPayload;
   createProposal: CreateProposalPayload;
+  createRule: CreateRulePayload;
   createServerInvite: CreateServerInvitePayload;
   createServerRole: CreateServerRolePayload;
   createVote: CreateVotePayload;
@@ -449,6 +461,7 @@ export type Mutation = {
   deleteNotification: Scalars['Boolean']['output'];
   deletePost: Scalars['Boolean']['output'];
   deleteProposal: Scalars['Boolean']['output'];
+  deleteRule: Scalars['Boolean']['output'];
   deleteServerInvite: Scalars['Boolean']['output'];
   deleteServerRole: Scalars['Boolean']['output'];
   deleteServerRoleMember: DeleteServerRoleMemberPayload;
@@ -472,6 +485,8 @@ export type Mutation = {
   updateNotification: UpdateNotificationPayload;
   updatePost: UpdatePostPayload;
   updateProposal: UpdateProposalPayload;
+  updateRule: UpdateRulePayload;
+  updateRulesPriority: Scalars['Boolean']['output'];
   updateServerConfig: UpdateServerConfigPayload;
   updateServerRole: UpdateServerRolePayload;
   updateUser: UpdateUserPayload;
@@ -520,6 +535,10 @@ export type MutationCreatePostArgs = {
 
 export type MutationCreateProposalArgs = {
   proposalData: CreateProposalInput;
+};
+
+export type MutationCreateRuleArgs = {
+  ruleData: CreateRuleInput;
 };
 
 export type MutationCreateServerInviteArgs = {
@@ -575,6 +594,10 @@ export type MutationDeletePostArgs = {
 };
 
 export type MutationDeleteProposalArgs = {
+  id: Scalars['Int']['input'];
+};
+
+export type MutationDeleteRuleArgs = {
   id: Scalars['Int']['input'];
 };
 
@@ -665,6 +688,14 @@ export type MutationUpdatePostArgs = {
 
 export type MutationUpdateProposalArgs = {
   proposalData: UpdateProposalInput;
+};
+
+export type MutationUpdateRuleArgs = {
+  ruleData: UpdateRuleInput;
+};
+
+export type MutationUpdateRulesPriorityArgs = {
+  rulesData: UpdateRulesPriorityInput;
 };
 
 export type MutationUpdateServerConfigArgs = {
@@ -923,6 +954,7 @@ export type Query = {
   serverInvites: Array<ServerInvite>;
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
+  serverRules: Array<Rule>;
   unreadNotificationsCount: Scalars['Int']['output'];
   user: User;
   users: Array<User>;
@@ -1011,6 +1043,15 @@ export type ReadNotificationsPayload = {
   notifications: Array<Notification>;
 };
 
+export type Rule = {
+  __typename?: 'Rule';
+  description: Scalars['String']['output'];
+  id: Scalars['Int']['output'];
+  priority: Scalars['Int']['output'];
+  title: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type ServerConfig = {
   __typename?: 'ServerConfig';
   id: Scalars['Int']['output'];
@@ -1038,6 +1079,7 @@ export type ServerPermissions = {
   manageInvites: Scalars['Boolean']['output'];
   managePosts: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
+  manageRules: Scalars['Boolean']['output'];
   manageSettings: Scalars['Boolean']['output'];
   removeGroups: Scalars['Boolean']['output'];
   removeMembers: Scalars['Boolean']['output'];
@@ -1064,6 +1106,7 @@ export type ServerRolePermission = {
   manageInvites: Scalars['Boolean']['output'];
   managePosts: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
+  manageRules: Scalars['Boolean']['output'];
   manageSettings: Scalars['Boolean']['output'];
   removeGroups: Scalars['Boolean']['output'];
   removeMembers: Scalars['Boolean']['output'];
@@ -1078,6 +1121,7 @@ export type ServerRolePermissionInput = {
   manageInvites?: InputMaybe<Scalars['Boolean']['input']>;
   managePosts?: InputMaybe<Scalars['Boolean']['input']>;
   manageRoles?: InputMaybe<Scalars['Boolean']['input']>;
+  manageRules?: InputMaybe<Scalars['Boolean']['input']>;
   manageSettings?: InputMaybe<Scalars['Boolean']['input']>;
   removeGroups?: InputMaybe<Scalars['Boolean']['input']>;
   removeMembers?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1214,6 +1258,27 @@ export type UpdateProposalInput = {
 export type UpdateProposalPayload = {
   __typename?: 'UpdateProposalPayload';
   proposal: Proposal;
+};
+
+export type UpdateRuleInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['Int']['input'];
+  priority?: InputMaybe<Scalars['Int']['input']>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateRulePayload = {
+  __typename?: 'UpdateRulePayload';
+  rule: Rule;
+};
+
+export type UpdateRulePriorityInput = {
+  id: Scalars['Int']['input'];
+  priority: Scalars['Int']['input'];
+};
+
+export type UpdateRulesPriorityInput = {
+  rules: Array<UpdateRulePriorityInput>;
 };
 
 export type UpdateServerConfigInput = {

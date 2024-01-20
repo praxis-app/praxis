@@ -213,6 +213,7 @@ type ServerRolePermission {
   removeGroups: Boolean!
   removeMembers: Boolean!
   removeProposals: Boolean!
+  manageRules: Boolean!
   serverRole: ServerRole!
 }
 
@@ -290,6 +291,14 @@ type Event {
   posts(offset: Int, limit: Int): [Post!]!
   postsCount: Int!
   coverPhoto: Image!
+}
+
+type Rule {
+  id: Int!
+  title: String!
+  description: String!
+  priority: Int!
+  updatedAt: DateTime!
 }
 
 type GroupConfig {
@@ -440,6 +449,7 @@ type ServerPermissions {
   removeMembers: Boolean!
   removeGroups: Boolean!
   removeProposals: Boolean!
+  manageRules: Boolean!
 }
 
 type FollowUserPayload {
@@ -536,6 +546,14 @@ type CreateLikePayload {
   comment: Comment
 }
 
+type CreateRulePayload {
+  rule: Rule!
+}
+
+type UpdateRulePayload {
+  rule: Rule!
+}
+
 type CreateVotePayload {
   vote: Vote!
 }
@@ -573,6 +591,7 @@ type Query {
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
   likes(postId: Int, commentId: Int): [Like!]!
+  serverRules: [Rule!]!
   canary: Canary!
   publicCanary: Canary
   serverConfig: ServerConfig!
@@ -633,6 +652,10 @@ type Mutation {
   deleteImage(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
+  createRule(ruleData: CreateRuleInput!): CreateRulePayload!
+  updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
+  updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
+  deleteRule(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
@@ -845,6 +868,7 @@ input ServerRolePermissionInput {
   removeGroups: Boolean
   removeMembers: Boolean
   removeProposals: Boolean
+  manageRules: Boolean
 }
 
 input DeleteServerRoleMemberInput {
@@ -891,6 +915,28 @@ input CreateLikeInput {
 input DeleteLikeInput {
   postId: Int
   commentId: Int
+}
+
+input CreateRuleInput {
+  groupId: Int
+  title: String!
+  description: String!
+}
+
+input UpdateRuleInput {
+  id: Int!
+  title: String
+  description: String
+  priority: Int
+}
+
+input UpdateRulesPriorityInput {
+  rules: [UpdateRulePriorityInput!]!
+}
+
+input UpdateRulePriorityInput {
+  id: Int!
+  priority: Int!
 }
 
 input UpdateServerConfigInput {

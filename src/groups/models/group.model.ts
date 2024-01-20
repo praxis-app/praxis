@@ -17,6 +17,7 @@ import { Image } from '../../images/models/image.model';
 import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
+import { Rule } from '../../rules/models/rule.model';
 import { User } from '../../users/models/user.model';
 import { GroupRole } from '../group-roles/models/group-role.model';
 import { GroupConfig } from './group-config.model';
@@ -77,6 +78,11 @@ export class Group {
 
   @OneToMany(() => Notification, (notification) => notification.group)
   notifications: Notification[];
+
+  @OneToMany(() => Rule, (rule) => rule.group, {
+    cascade: true,
+  })
+  rules: Rule[];
 
   @OneToOne(() => GroupConfig, (groupConfig) => groupConfig.group, {
     cascade: true,

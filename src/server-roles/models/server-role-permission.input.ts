@@ -31,4 +31,7 @@ export class ServerRolePermissionInput {
 
   @Field({ nullable: true })
   removeProposals?: boolean;
+
+  @Field({ nullable: true })
+  manageRules?: boolean;
 }

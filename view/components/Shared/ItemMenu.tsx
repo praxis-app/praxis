@@ -1,5 +1,11 @@
 import { Delete, Edit, MoreHoriz } from '@mui/icons-material';
-import { IconButton, Menu, MenuItem, SxProps } from '@mui/material';
+import {
+  IconButton,
+  IconButtonProps,
+  Menu,
+  MenuItem,
+  SxProps,
+} from '@mui/material';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -15,11 +21,13 @@ interface Props {
   deleteBtnLabel?: string;
   deleteItem?: () => void;
   deletePrompt?: string;
+  edge?: IconButtonProps['edge'];
   editPath?: string;
   loading?: boolean;
   onEditButtonClick?: () => void;
   prependChildren?: boolean;
   setAnchorEl: (el: HTMLElement | null) => void;
+  updateBtnLabel?: string;
   variant?: 'ghost' | 'default';
 }
 
@@ -32,11 +40,13 @@ const ItemMenu = ({
   deleteBtnLabel,
   deleteItem,
   deletePrompt,
+  edge,
   editPath,
   loading,
   onEditButtonClick,
   prependChildren,
   setAnchorEl,
+  updateBtnLabel,
   variant,
 }: Props) => {
   const { t } = useTranslation();
@@ -93,6 +103,7 @@ const ItemMenu = ({
         aria-label={t('labels.menuButton')}
         onClick={handleMenuButtonClick}
         sx={menuButtonStyles}
+        edge={edge}
       >
         {loading ? (
           <Spinner size={10} sx={{ marginY: '7px' }} />
@@ -123,7 +134,7 @@ const ItemMenu = ({
         {showEditButton && (
           <MenuItem onClick={handleEditButtonClick}>
             <Edit fontSize="small" sx={editIconStyles} />
-            {t('actions.edit')}
+            {updateBtnLabel || t('actions.edit')}
           </MenuItem>
         )}
 

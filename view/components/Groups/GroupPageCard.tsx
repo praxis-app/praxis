@@ -172,15 +172,16 @@ const GroupPageCard = ({
     setTab(newValue);
 
   const renderCardActions = () => {
-    const canDeleteGroup = myPermissions?.deleteGroup || canRemoveGroups;
-    const canManageRoles = myPermissions?.manageRoles;
-    const canManageSettings = myPermissions?.manageSettings;
-    const canUpdateGroup = myPermissions?.updateGroup;
     const isNoAdmin = settings.adminModel === GroupAdminModel.NoAdmin;
+    const canManageRoles = !isNoAdmin && myPermissions?.manageRoles;
+    const canManageSettings = !isNoAdmin && myPermissions?.manageSettings;
+    const canUpdateGroup = !isNoAdmin && myPermissions?.updateGroup;
+
+    const canDeleteGroup =
+      (!isNoAdmin && myPermissions?.deleteGroup) || canRemoveGroups;
 
     const showMenuButton =
-      !isNoAdmin &&
-      (canDeleteGroup || canUpdateGroup || canManageRoles || canManageSettings);
+      canDeleteGroup || canUpdateGroup || canManageRoles || canManageSettings;
 
     return (
       <>

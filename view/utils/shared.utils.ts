@@ -1,4 +1,5 @@
 import { t } from 'i18next';
+import { marked } from 'marked';
 import { isValidElement, ReactNode } from 'react';
 import { animateScroll } from 'react-scroll';
 import { SCROLL_DURATION, URL_REGEX } from '../constants/shared.constants';
@@ -43,6 +44,16 @@ export const urlifyText = (text: string) =>
       '</a>'
     );
   });
+
+export const parseMarkdownText = async (text: string) => {
+  const parsedText = await marked.parse(text);
+  return parsedText.replace(/<\/?p>/g, '');
+};
+
+export const convertBoldToSpan = (text: string) =>
+  text
+    .replace(/<b?strong>/g, '<span style="font-family: Inter Bold;">')
+    .replace(/<\/b?strong>/g, '</span>');
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 

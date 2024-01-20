@@ -29,6 +29,11 @@ export const canRemoveProposals = rule({ cache: 'contextual' })(
     hasServerPermission(permissions, 'removeProposals'),
 );
 
+export const canManageRules = rule({ cache: 'contextual' })(
+  async (_parent, _args, { permissions }: Context) =>
+    hasServerPermission(permissions, 'manageRules'),
+);
+
 export const canManageComments = rule({ cache: 'contextual' })(
   async (_parent, _args, { permissions }: Context) =>
     hasServerPermission(permissions, 'manageComments'),

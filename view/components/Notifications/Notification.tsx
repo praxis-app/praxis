@@ -29,6 +29,7 @@ import {
   UnreadNotificationsQuery,
 } from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
 import { getMemberRequestsPath } from '../../utils/group.utils';
+import { convertBoldToSpan } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import GroupAvatar from '../Groups/GroupAvatar';
 import Flex from '../Shared/Flex';
@@ -152,12 +153,6 @@ const Notification = ({
       });
     }
     return _t('notifications.errors.invalidType');
-  };
-
-  const convertBoldToSpan = (message: string) => {
-    return message
-      .replace(/<b>/g, '<span style="font-family: Inter Bold;">')
-      .replace(/<\/b>/g, '</span>');
   };
 
   const getPath = () => {

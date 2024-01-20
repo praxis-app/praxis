@@ -12,6 +12,7 @@ import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { CanariesModule } from './canaries/canaries.module';
 import { CommentsModule } from './comments/comments.module';
+import { Environment } from './common/common.constants';
 import { ContextModule } from './context/context.module';
 import { ContextService } from './context/context.service';
 import { DatabaseModule } from './database/database.module';
@@ -20,18 +21,18 @@ import { EventsModule } from './events/events.module';
 import { GroupsModule } from './groups/groups.module';
 import { ImagesModule } from './images/images.module';
 import { LikesModule } from './likes/likes.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { PostsModule } from './posts/posts.module';
 import { ProposalsModule } from './proposals/proposals.module';
 import { PubSubModule } from './pub-sub/pub-sub.module';
+import { RulesModule } from './rules/rules.module';
 import { ServerConfigsModule } from './server-configs/server-configs.module';
 import { ServerInvitesModule } from './server-invites/server-invites.module';
 import { ServerRolesModule } from './server-roles/server-roles.module';
-import { Environment } from './common/common.constants';
 import { ShieldModule } from './shield/shield.module';
 import { shieldPermissions } from './shield/shield.permissions';
 import { UsersModule } from './users/users.module';
 import { VotesModule } from './votes/votes.module';
-import { NotificationsModule } from './notifications/notifications.module';
 
 const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   driver: ApolloDriver,
@@ -72,9 +73,11 @@ const ViewModule = ServeStaticModule.forRoot({
     GroupsModule,
     ImagesModule,
     LikesModule,
+    NotificationsModule,
     PostsModule,
     ProposalsModule,
     PubSubModule,
+    RulesModule,
     ServerConfigsModule,
     ServerInvitesModule,
     ServerRolesModule,
@@ -82,7 +85,6 @@ const ViewModule = ServeStaticModule.forRoot({
     UsersModule,
     ViewModule,
     VotesModule,
-    NotificationsModule,
   ],
   controllers: [AppController],
 })
