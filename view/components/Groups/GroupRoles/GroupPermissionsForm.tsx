@@ -7,7 +7,7 @@
  * - Remove Members
  */
 
-import { Box, BoxProps } from '@mui/material';
+import { Box, BoxProps, CircularProgress } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../../graphql/cache';
@@ -25,7 +25,7 @@ interface Props extends BoxProps {
 }
 
 const GroupPermissionsForm = ({ permissions, roleId, ...boxProps }: Props) => {
-  const [updateRole] = useUpdateGroupRoleMutation();
+  const [updateRole, { loading }] = useUpdateGroupRoleMutation();
   const { t } = useTranslation();
 
   const initialValues: GroupRolePermissionInput = {};
@@ -71,7 +71,12 @@ const GroupPermissionsForm = ({ permissions, roleId, ...boxProps }: Props) => {
             ))}
             <Flex justifyContent="end" sx={{ marginTop: 6 }}>
               <PrimaryActionButton
-                disabled={isSubmitting || !dirty}
+                disabled={isSubmitting || loading || !dirty}
+                startIcon={
+                  loading && (
+                    <CircularProgress size={10} sx={{ marginRight: 0.25 }} />
+                  )
+                }
                 type="submit"
               >
                 {t('actions.save')}

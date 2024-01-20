@@ -1,4 +1,4 @@
-import { Box, BoxProps } from '@mui/material';
+import { Box, BoxProps, CircularProgress } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../../graphql/cache';
@@ -16,7 +16,7 @@ interface Props extends BoxProps {
 }
 
 const ServerPermissionsForm = ({ permissions, roleId, ...boxProps }: Props) => {
-  const [updateRole] = useUpdateServerRoleMutation();
+  const [updateRole, { loading }] = useUpdateServerRoleMutation();
   const { t } = useTranslation();
 
   const initialValues: ServerRolePermissionInput = {};
@@ -62,7 +62,12 @@ const ServerPermissionsForm = ({ permissions, roleId, ...boxProps }: Props) => {
             ))}
             <Flex justifyContent="end" sx={{ marginTop: 6 }}>
               <PrimaryActionButton
-                disabled={isSubmitting || !dirty}
+                disabled={isSubmitting || loading || !dirty}
+                startIcon={
+                  loading && (
+                    <CircularProgress size={10} sx={{ marginRight: 0.25 }} />
+                  )
+                }
                 type="submit"
               >
                 {t('actions.save')}
