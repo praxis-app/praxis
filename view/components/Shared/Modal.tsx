@@ -124,8 +124,16 @@ const Modal = ({
         </Box>
         {closingAction && actionLabel && (
           <Button
+            disabled={isLoading}
             onClick={closingAction}
-            startIcon={isLoading && <CircularProgress size={10} />}
+            startIcon={
+              isLoading && (
+                <CircularProgress
+                  size={10}
+                  sx={{ marginRight: '4px', color: 'inherit' }}
+                />
+              )
+            }
           >
             {actionLabel}
           </Button>
