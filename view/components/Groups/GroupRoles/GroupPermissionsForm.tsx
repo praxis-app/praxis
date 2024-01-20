@@ -1,20 +1,11 @@
-/**
- * TODO: Add remaining functionality - below is a WIP
- *
- * Permissions that still need to be implemented fully:
- * - Manage Events
- * - Manage Comments
- * - Remove Members
- */
-
-import { Box, BoxProps, CircularProgress } from '@mui/material';
+import { Box, BoxProps } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { GROUP_PERMISSION_NAMES } from '../../../constants/role.constants';
 import { toastVar } from '../../../graphql/cache';
 import { GroupRolePermissionInput } from '../../../graphql/gen';
 import { GroupRolePermissionsFragment } from '../../../graphql/groups/fragments/gen/GroupRolePermissions.gen';
 import { useUpdateGroupRoleMutation } from '../../../graphql/groups/mutations/gen/UpdateGroupRole.gen';
-import { GROUP_PERMISSION_NAMES } from '../../../constants/role.constants';
 import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import GroupPermissionToggle from './GroupPermissionToggle';
@@ -72,11 +63,7 @@ const GroupPermissionsForm = ({ permissions, roleId, ...boxProps }: Props) => {
             <Flex justifyContent="end" sx={{ marginTop: 6 }}>
               <PrimaryActionButton
                 disabled={isSubmitting || loading || !dirty}
-                startIcon={
-                  loading && (
-                    <CircularProgress size={10} sx={{ marginRight: 0.25 }} />
-                  )
-                }
+                isLoading={isSubmitting || loading}
                 type="submit"
               >
                 {t('actions.save')}

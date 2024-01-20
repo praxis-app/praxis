@@ -1,11 +1,11 @@
-import { Box, BoxProps, CircularProgress } from '@mui/material';
+import { Box, BoxProps } from '@mui/material';
 import { Form, Formik, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { SERVER_PERMISSION_NAMES } from '../../../constants/role.constants';
 import { toastVar } from '../../../graphql/cache';
 import { ServerRolePermissionInput } from '../../../graphql/gen';
 import { ServerRolePermissionsFragment } from '../../../graphql/roles/fragments/gen/ServerRolePermissions.gen';
 import { useUpdateServerRoleMutation } from '../../../graphql/roles/mutations/gen/UpdateServerRole.gen';
-import { SERVER_PERMISSION_NAMES } from '../../../constants/role.constants';
 import Flex from '../../Shared/Flex';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
 import ServerPermissionToggle from './ServerPermissionToggle';
@@ -63,11 +63,7 @@ const ServerPermissionsForm = ({ permissions, roleId, ...boxProps }: Props) => {
             <Flex justifyContent="end" sx={{ marginTop: 6 }}>
               <PrimaryActionButton
                 disabled={isSubmitting || loading || !dirty}
-                startIcon={
-                  loading && (
-                    <CircularProgress size={10} sx={{ marginRight: 0.25 }} />
-                  )
-                }
+                isLoading={isSubmitting || loading}
                 type="submit"
               >
                 {t('actions.save')}
