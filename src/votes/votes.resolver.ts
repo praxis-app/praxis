@@ -30,9 +30,9 @@ export class VotesResolver {
     private votesService: VotesService,
   ) {}
 
-  @ResolveField(() => Proposal)
+  @ResolveField(() => Proposal, { nullable: true })
   async proposal(@Parent() { proposalId }: Vote) {
-    return this.proposalsService.getProposal(proposalId);
+    return proposalId ? this.proposalsService.getProposal(proposalId) : null;
   }
 
   @ResolveField(() => User)

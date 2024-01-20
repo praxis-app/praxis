@@ -66,14 +66,16 @@ const VoteMenu = ({ anchorEl, onClose, currentUserId, proposal }: Props) => {
     data: CreateVoteMutation | UpdateVoteMutation,
   ) => {
     const {
-      vote: {
-        proposal: {
-          action: { actionType },
-          group,
-          stage,
-        },
-      },
+      vote: { proposal },
     } = 'createVote' in data ? data.createVote : data.updateVote;
+    if (!proposal) {
+      return;
+    }
+    const {
+      action: { actionType },
+      group,
+      stage,
+    } = proposal;
 
     const isRatified = stage === ProposalStage.Ratified;
 

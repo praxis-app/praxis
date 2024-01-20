@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Notification } from '../../notifications/models/notification.model';
 import { Proposal } from '../../proposals/models/proposal.model';
+import { QuestionnaireTicket } from '../../questions/models/questionnaire-ticket.model';
 import { User } from '../../users/models/user.model';
 
 @Entity()
@@ -23,16 +24,26 @@ export class Vote {
   @Field()
   voteType: string;
 
-  @Field(() => Proposal)
   @ManyToOne(() => Proposal, (proposal) => proposal.votes, {
     onDelete: 'CASCADE',
   })
-  proposal: Proposal;
+  proposal?: Proposal;
 
-  @Column()
-  proposalId: number;
+  @Column({ nullable: true })
+  proposalId?: number;
 
-  @Field(() => User)
+  @ManyToOne(
+    () => QuestionnaireTicket,
+    (questionnaireTicket) => questionnaireTicket.votes,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  questionnaireTicket?: QuestionnaireTicket;
+
+  @Column({ nullable: true })
+  questionnaireTicketId?: number;
+
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   user: User;
 
@@ -43,10 +54,8 @@ export class Vote {
   notifications: Notification[];
 
   @CreateDateColumn()
-  @Field()
   createdAt: Date;
 
   @UpdateDateColumn()
-  @Field()
   updatedAt: Date;
 }

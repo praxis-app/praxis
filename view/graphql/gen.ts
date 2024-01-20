@@ -1379,10 +1379,8 @@ export type UserProfileFeedArgs = {
 
 export type Vote = {
   __typename?: 'Vote';
-  createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
-  proposal: Proposal;
-  updatedAt: Scalars['DateTime']['output'];
+  proposal?: Maybe<Proposal>;
   user: User;
   voteType: Scalars['String']['output'];
 };

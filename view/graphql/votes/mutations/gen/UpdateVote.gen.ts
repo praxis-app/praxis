@@ -19,7 +19,7 @@ export type UpdateVoteMutation = {
       __typename?: 'Vote';
       id: number;
       voteType: string;
-      proposal: {
+      proposal?: {
         __typename?: 'Proposal';
         id: number;
         stage: string;
@@ -34,7 +34,7 @@ export type UpdateVoteMutation = {
           name: string;
           description: string;
         } | null;
-      };
+      } | null;
     };
   };
 };

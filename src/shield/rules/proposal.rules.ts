@@ -127,6 +127,9 @@ export const isPublicVote = rule({ cache: 'strict' })(async (
   _args,
   { services: { proposalsService } }: Context,
 ) => {
+  if (!parent.proposalId) {
+    return false;
+  }
   const { group } = await proposalsService.getProposal(parent.proposalId, [
     'group.config',
   ]);

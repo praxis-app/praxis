@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Group } from '../../groups/models/group.model';
+import { Vote } from '../../votes/models/vote.model';
 import { Answer } from './answer.model';
 
 @ObjectType()
@@ -18,12 +19,13 @@ export class QuestionnaireTicket {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => Answer, (answer) => answer.question, {
-    cascade: true,
-  })
+  @OneToMany(() => Answer, (answer) => answer.questionnaireTicket)
   answers: Answer[];
 
-  @ManyToOne(() => Group, (group) => group.rules, {
+  @OneToMany(() => Vote, (vote) => vote.questionnaireTicket)
+  votes: Vote[];
+
+  @ManyToOne(() => Group, (group) => group.questionnaireTickets, {
     onDelete: 'CASCADE',
   })
   group?: Group;

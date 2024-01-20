@@ -27,10 +27,8 @@ type EventAttendee {
 type Vote {
   id: Int!
   voteType: String!
-  proposal: Proposal!
+  proposal: Proposal
   user: User!
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type ProposalConfig {

@@ -98,7 +98,7 @@ export class Group {
       cascade: true,
     },
   )
-  questionnaireTicket: QuestionnaireTicket[];
+  questionnaireTickets: QuestionnaireTicket[];
 
   @OneToOne(() => GroupConfig, (groupConfig) => groupConfig.group, {
     cascade: true,
