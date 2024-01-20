@@ -32,25 +32,26 @@ const ServerRules = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
-  const [
-    updateRules,
-    { loading: updateRulesLoading, error: updateRulesError },
-  ] = useUpdateRulesPriorityMutation();
-
   const {
-    data,
     client,
+    data: serverRulesData,
     error: serverRulesError,
     loading: serverRulesLoading,
   } = useServerRulesQuery({
     variables: { isLoggedIn },
   });
 
+  const [
+    updateRules,
+    { loading: updateRulesLoading, error: updateRulesError },
+  ] = useUpdateRulesPriorityMutation();
+
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
-  const serverRules = data?.serverRules;
-  const canManageRules = !!data?.me?.serverPermissions.manageRules;
+  const me = serverRulesData?.me;
+  const serverRules = serverRulesData?.serverRules;
+  const canManageRules = !!me?.serverPermissions.manageRules;
 
   const paperProps: PaperProps = {
     sx: {
@@ -76,7 +77,7 @@ const ServerRules = () => {
 
     client.writeQuery({
       query: ServerRulesDocument,
-      data: { serverRules: newRulesWithCorrectOrder, me: data?.me },
+      data: { serverRules: newRulesWithCorrectOrder, me },
       variables: { isLoggedIn },
     });
 
