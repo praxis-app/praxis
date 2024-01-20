@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Question } from './question.model';
+import { QuestionnaireTicket } from './questionnaire-ticket.model';
 
 @ObjectType()
 @Entity()
@@ -19,6 +20,16 @@ export class Answer {
   @Column()
   @Field()
   text: string;
+
+  @ManyToOne(
+    () => QuestionnaireTicket,
+    (questionnaireTicket) => questionnaireTicket.answers,
+    { onDelete: 'CASCADE' },
+  )
+  questionnaireTicket: QuestionnaireTicket;
+
+  @Column()
+  questionnaireTicketId: number;
 
   @ManyToOne(() => Question, (question) => question.answers, {
     onDelete: 'CASCADE',
