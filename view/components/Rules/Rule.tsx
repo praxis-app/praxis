@@ -168,9 +168,7 @@ const Rule = ({
             <Typography
               fontSize="12px"
               color="text.secondary"
-              dangerouslySetInnerHTML={{
-                __html: formattedDescription,
-              }}
+              dangerouslySetInnerHTML={{ __html: formattedDescription }}
               whiteSpace="pre-wrap"
             />
           </Box>
