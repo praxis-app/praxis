@@ -59,7 +59,7 @@ export const isPublicProposal = rule({ cache: 'strict' })(async (
   const proposal = await proposalsService.getProposal(proposalId, [
     'group.config',
   ]);
-  return proposal.group.config.privacy === GroupPrivacy.Public;
+  return proposal.group?.config.privacy === GroupPrivacy.Public;
 });
 
 export const isPublicProposalImage = rule({ cache: 'strict' })(
@@ -88,7 +88,7 @@ export const isPublicProposalAction = rule({ cache: 'strict' })(async (
       ['proposal.group.config'],
     );
     return (
-      proposalAction?.proposal.group.config.privacy === GroupPrivacy.Public
+      proposalAction?.proposal.group?.config.privacy === GroupPrivacy.Public
     );
   }
   if (
@@ -101,7 +101,7 @@ export const isPublicProposalAction = rule({ cache: 'strict' })(async (
         ['proposalAction.proposal.group.config'],
       );
     return (
-      proposalActionRole?.proposalAction.proposal.group.config.privacy ===
+      proposalActionRole?.proposalAction.proposal.group?.config.privacy ===
       GroupPrivacy.Public
     );
   }
@@ -112,14 +112,14 @@ export const isPublicProposalAction = rule({ cache: 'strict' })(async (
         ['proposalAction.proposal.group.config'],
       );
     return (
-      proposalActionEvent?.proposalAction.proposal.group.config.privacy ===
+      proposalActionEvent?.proposalAction.proposal.group?.config.privacy ===
       GroupPrivacy.Public
     );
   }
   const proposal = await proposalsService.getProposal(parent.proposalId, [
     'group.config',
   ]);
-  return proposal.group.config.privacy === GroupPrivacy.Public;
+  return proposal.group?.config.privacy === GroupPrivacy.Public;
 });
 
 export const isPublicVote = rule({ cache: 'strict' })(async (
@@ -130,5 +130,5 @@ export const isPublicVote = rule({ cache: 'strict' })(async (
   const { group } = await proposalsService.getProposal(parent.proposalId, [
     'group.config',
   ]);
-  return group.config.privacy === GroupPrivacy.Public;
+  return group?.config.privacy === GroupPrivacy.Public;
 });

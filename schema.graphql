@@ -54,12 +54,12 @@ type Proposal {
   comments: [Comment!]!
   images: [Image!]!
   user: User!
-  group: Group
   createdAt: DateTime!
   updatedAt: DateTime!
   voteCount: Int!
   commentCount: Int!
   settings: ProposalConfig!
+  group: Group
 }
 
 type ProposalActionEventHost {
