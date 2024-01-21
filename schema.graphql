@@ -672,6 +672,7 @@ type Mutation {
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
   updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
+  updateQuestionsPriority(questionsData: UpdateQuestionsPriorityInput!): Boolean!
   deleteQuestion(id: Int!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
@@ -970,6 +971,15 @@ input CreateQuestionInput {
 input UpdateQuestionInput {
   id: Int!
   text: String!
+}
+
+input UpdateQuestionsPriorityInput {
+  questions: [UpdateQuestionPriorityInput!]!
+}
+
+input UpdateQuestionPriorityInput {
+  id: Int!
+  priority: Int!
 }
 
 input CreateVoteInput {

@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   CardActions,
+  IconButton,
   CardContent as MuiCardContent,
   CardHeader as MuiCardHeader,
   Typography,
@@ -19,6 +20,7 @@ import {
 } from '../../graphql/questions/queries/gen/ServerQuestions.gen';
 import { DarkMode } from '../../styles/theme';
 import QuestionFormModal from './QuestionFormModal';
+import { DragIndicator } from '@mui/icons-material';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingTop: '14px',
@@ -96,6 +98,11 @@ const Question = ({ question }: Props) => {
               {text}
             </Typography>
           </>
+        }
+        action={
+          <IconButton disableRipple>
+            <DragIndicator sx={{ color: 'text.secondary' }} />
+          </IconButton>
         }
       />
 

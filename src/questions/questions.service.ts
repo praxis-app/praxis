@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { sanitizeText } from '../common/common.utils';
 import { Question } from './models/question.model';
+import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
 
 @Injectable()
 export class QuestionsService {
@@ -43,6 +44,13 @@ export class QuestionsService {
       where: { id },
     });
     return { question };
+  }
+
+  async updateQuestionsPriority({ questions }: UpdateQuestionsPriorityInput) {
+    await this.questionRepository.save(
+      questions.map(({ id, priority }) => ({ id, priority })),
+    );
+    return true;
   }
 
   // TODO: Add support for group questions

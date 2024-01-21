@@ -4,6 +4,7 @@ import { CreateQuestionPayload } from './models/create-question.payload';
 import { Question } from './models/question.model';
 import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionPayload } from './models/update-question.payload';
+import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
 import { QuestionsService } from './questions.service';
 
 @Resolver()
@@ -27,6 +28,13 @@ export class QuestionsResolver {
     @Args('questionData') questionData: UpdateQuestionInput,
   ) {
     return this.questionsService.updateQuestion(questionData);
+  }
+
+  @Mutation(() => Boolean)
+  async updateQuestionsPriority(
+    @Args('questionsData') questionsData: UpdateQuestionsPriorityInput,
+  ) {
+    return this.questionsService.updateQuestionsPriority(questionsData);
   }
 
   @Mutation(() => Boolean)
