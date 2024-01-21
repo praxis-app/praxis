@@ -629,7 +629,8 @@
     "labels": {
       "membershipQuestions": "Membership Questions",
       "questions": "Questions",
-      "vibeCheck": "Vibe Check"
+      "vibeCheck": "Vibe Check",
+      "createQuestion": "Create Question"
     }
   },
 
