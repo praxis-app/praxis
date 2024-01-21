@@ -167,6 +167,16 @@ export type CreateProposalPayload = {
   proposal: Proposal;
 };
 
+export type CreateQuestionInput = {
+  groupId?: InputMaybe<Scalars['Int']['input']>;
+  text: Scalars['String']['input'];
+};
+
+export type CreateQuestionPayload = {
+  __typename?: 'CreateQuestionPayload';
+  question: Question;
+};
+
 export type CreateRuleInput = {
   description: Scalars['String']['input'];
   groupId?: InputMaybe<Scalars['Int']['input']>;
@@ -446,6 +456,7 @@ export type Mutation = {
   createLike: CreateLikePayload;
   createPost: CreatePostPayload;
   createProposal: CreateProposalPayload;
+  createQuestion: CreateQuestionPayload;
   createRule: CreateRulePayload;
   createServerInvite: CreateServerInvitePayload;
   createServerRole: CreateServerRolePayload;
@@ -461,6 +472,7 @@ export type Mutation = {
   deleteNotification: Scalars['Boolean']['output'];
   deletePost: Scalars['Boolean']['output'];
   deleteProposal: Scalars['Boolean']['output'];
+  deleteQuestion: Scalars['Boolean']['output'];
   deleteRule: Scalars['Boolean']['output'];
   deleteServerInvite: Scalars['Boolean']['output'];
   deleteServerRole: Scalars['Boolean']['output'];
@@ -485,6 +497,7 @@ export type Mutation = {
   updateNotification: UpdateNotificationPayload;
   updatePost: UpdatePostPayload;
   updateProposal: UpdateProposalPayload;
+  updateQuestion: UpdateQuestionPayload;
   updateRule: UpdateRulePayload;
   updateRulesPriority: Scalars['Boolean']['output'];
   updateServerConfig: UpdateServerConfigPayload;
@@ -535,6 +548,10 @@ export type MutationCreatePostArgs = {
 
 export type MutationCreateProposalArgs = {
   proposalData: CreateProposalInput;
+};
+
+export type MutationCreateQuestionArgs = {
+  questionData: CreateQuestionInput;
 };
 
 export type MutationCreateRuleArgs = {
@@ -594,6 +611,10 @@ export type MutationDeletePostArgs = {
 };
 
 export type MutationDeleteProposalArgs = {
+  id: Scalars['Int']['input'];
+};
+
+export type MutationDeleteQuestionArgs = {
   id: Scalars['Int']['input'];
 };
 
@@ -688,6 +709,10 @@ export type MutationUpdatePostArgs = {
 
 export type MutationUpdateProposalArgs = {
   proposalData: UpdateProposalInput;
+};
+
+export type MutationUpdateQuestionArgs = {
+  questionData: UpdateQuestionInput;
 };
 
 export type MutationUpdateRuleArgs = {
@@ -1266,6 +1291,16 @@ export type UpdateProposalInput = {
 export type UpdateProposalPayload = {
   __typename?: 'UpdateProposalPayload';
   proposal: Proposal;
+};
+
+export type UpdateQuestionInput = {
+  id: Scalars['Int']['input'];
+  text: Scalars['String']['input'];
+};
+
+export type UpdateQuestionPayload = {
+  __typename?: 'UpdateQuestionPayload';
+  question: Question;
 };
 
 export type UpdateRuleInput = {

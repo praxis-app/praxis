@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import QuestionFormModal from '../../components/Questions/QuestionFormModal';
@@ -11,7 +11,6 @@ import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const VibeCheck = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const { data, loading, error } = useServerQuestionsQuery();
 
   const { t } = useTranslation();
@@ -42,11 +41,14 @@ const VibeCheck = () => {
         </GhostButton>
       </Flex>
 
-      {JSON.stringify(data)}
+      {data?.serverQuestions.map((question) => (
+        <Box key={question.id}>{question.text}</Box>
+      ))}
 
       <QuestionFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onSubmit={() => setIsModalOpen(false)}
       />
     </>
   );

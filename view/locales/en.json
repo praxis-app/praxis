@@ -637,6 +637,9 @@
     },
     "errors": {
       "missingText": "Question text cannot be empty"
+    },
+    "placeholders": {
+      "text": "Question text"
     }
   },
 

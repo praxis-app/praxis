@@ -1,6 +1,16 @@
 import { Button, FormGroup, SxProps } from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';
+import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
+import { CreateQuestionInput } from '../../../src/questions/models/create-question.input';
+import { toastVar } from '../../graphql/cache';
+import { QuestionFormModalFragment } from '../../graphql/questions/fragments/gen/QuestionFormModal.gen';
+import { useCreateQuestionMutation } from '../../graphql/questions/mutations/gen/CreateQuestion.gen';
+import { useUpdateQuestionMutation } from '../../graphql/questions/mutations/gen/UpdateQuestion.gen';
+import {
+  ServerQuestionsDocument,
+  ServerQuestionsQuery,
+} from '../../graphql/questions/queries/gen/ServerQuestions.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import Flex from '../Shared/Flex';
 import Modal from '../Shared/Modal';
@@ -10,14 +20,23 @@ import { TextField } from '../Shared/TextField';
 interface Props {
   isOpen: boolean;
   onClose(): void;
-  editQuestion?: any;
+  onSubmit(): void;
+  editQuestion?: QuestionFormModalFragment;
 }
 
-const QuestionFormModal = ({ isOpen, onClose, editQuestion }: Props) => {
+const QuestionFormModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  editQuestion,
+}: Props) => {
+  const [createQuestion] = useCreateQuestionMutation();
+  const [updateQuestion] = useUpdateQuestionMutation();
+
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
-  const initialValues: any = {
+  const initialValues: CreateQuestionInput = {
     text: editQuestion?.text || '',
   };
 
@@ -32,12 +51,61 @@ const QuestionFormModal = ({ isOpen, onClose, editQuestion }: Props) => {
     paddingX: '20px',
   };
 
-  const handleSubmit = async (values: any) => {
-    console.log(values);
+  const handleSubmit = async (values: CreateQuestionInput) => {
+    if (editQuestion) {
+      await updateQuestion({
+        variables: {
+          questionData: {
+            id: editQuestion.id,
+            text: values.text,
+          },
+        },
+        onError(err) {
+          toastVar({
+            status: 'error',
+            title: err.message,
+          });
+        },
+        onCompleted() {
+          onSubmit();
+        },
+      });
+      return;
+    }
+    await createQuestion({
+      variables: {
+        questionData: {
+          text: values.text,
+        },
+      },
+      update(cache, { data }) {
+        if (!data) {
+          return;
+        }
+        cache.updateQuery<ServerQuestionsQuery>(
+          {
+            query: ServerQuestionsDocument,
+          },
+          (groupsData) =>
+            produce(groupsData, (draft) => {
+              draft?.serverQuestions.push(data.createQuestion.question);
+            }),
+        );
+      },
+      onError(err) {
+        toastVar({
+          status: 'error',
+          title: err.message,
+        });
+      },
+      onCompleted() {
+        onSubmit();
+      },
+    });
   };
 
-  const validate = ({ text }: any) => {
-    const errors: FormikErrors<any> = {};
+  const validate = ({ text }: CreateQuestionInput) => {
+    const errors: FormikErrors<CreateQuestionInput> = {};
     if (!text?.trim()) {
       errors.text = t('questions.errors.missingText');
     }
@@ -62,9 +130,9 @@ const QuestionFormModal = ({ isOpen, onClose, editQuestion }: Props) => {
           <Form>
             <FormGroup sx={{ marginBottom: 2 }}>
               <TextField
-                label={title}
                 autoComplete="off"
                 error={!!errors.text && !!submitCount}
+                label={t('questions.placeholders.text')}
                 name="text"
                 multiline
               />
