@@ -2,4 +2,6 @@ fragment Question on Question {
   id
   text
   priority
+
+  ...QuestionFormModal
 }

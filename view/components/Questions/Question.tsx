@@ -7,9 +7,11 @@ import {
   Typography,
   styled,
 } from '@mui/material';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QuestionFragment } from '../../graphql/questions/fragments/gen/Question.gen';
 import { DarkMode } from '../../styles/theme';
+import QuestionFormModal from './QuestionFormModal';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingTop: '14px',
@@ -25,7 +27,9 @@ interface Props {
   question: QuestionFragment;
 }
 
-const Question = ({ question: { text, priority } }: Props) => {
+const Question = ({ question }: Props) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { t } = useTranslation();
   return (
     <Card>
@@ -34,12 +38,12 @@ const Question = ({ question: { text, priority } }: Props) => {
           <>
             <Typography color="text.secondary" fontSize="15px">
               {t('questions.headers.questionPriority', {
-                priority: priority + 1,
+                priority: question.priority + 1,
               })}
             </Typography>
 
             <Typography fontFamily="Inter Bold" fontSize="18px">
-              {text}
+              {question.text}
             </Typography>
           </>
         }
@@ -59,6 +63,7 @@ const Question = ({ question: { text, priority } }: Props) => {
 
       <CardActions sx={{ margin: 1 }}>
         <Button
+          onClick={() => setIsModalOpen(true)}
           sx={{
             textTransform: 'none',
             backgroundColor: '#2F3C5E',
@@ -88,6 +93,13 @@ const Question = ({ question: { text, priority } }: Props) => {
           {t('actions.delete')}
         </Button>
       </CardActions>
+
+      <QuestionFormModal
+        isOpen={isModalOpen}
+        editQuestion={question}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={() => setIsModalOpen(false)}
+      />
     </Card>
   );
 };

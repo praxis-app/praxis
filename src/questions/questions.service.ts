@@ -14,6 +14,7 @@ export class QuestionsService {
   async getServerQuestions() {
     return await this.questionRepository.find({
       where: { groupId: IsNull() },
+      order: { priority: 'ASC' },
     });
   }
 

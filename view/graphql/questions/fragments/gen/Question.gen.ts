@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { QuestionFormModalFragmentDoc } from './QuestionFormModal.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
@@ -17,5 +18,7 @@ export const QuestionFragmentDoc = gql`
     id
     text
     priority
+    ...QuestionFormModal
   }
+  ${QuestionFormModalFragmentDoc}
 `;
