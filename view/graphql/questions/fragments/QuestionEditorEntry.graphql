@@ -1,4 +1,4 @@
-fragment Question on Question {
+fragment QuestionEditorEntry on Question {
   id
   text
   priority

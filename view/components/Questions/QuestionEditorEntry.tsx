@@ -1,3 +1,4 @@
+import { DragIndicator } from '@mui/icons-material';
 import {
   Button,
   Card,
@@ -12,7 +13,7 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../graphql/cache';
-import { QuestionFragment } from '../../graphql/questions/fragments/gen/Question.gen';
+import { QuestionEditorEntryFragment } from '../../graphql/questions/fragments/gen/QuestionEditorEntry.gen';
 import { useDeleteQuestionMutation } from '../../graphql/questions/mutations/gen/DeleteQuestion.gen';
 import {
   ServerQuestionsDocument,
@@ -20,7 +21,6 @@ import {
 } from '../../graphql/questions/queries/gen/ServerQuestions.gen';
 import { DarkMode } from '../../styles/theme';
 import QuestionFormModal from './QuestionFormModal';
-import { DragIndicator } from '@mui/icons-material';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingTop: '14px',
@@ -33,11 +33,11 @@ const CardContent = styled(MuiCardContent)(() => ({
 }));
 
 interface Props {
-  question: QuestionFragment;
+  question: QuestionEditorEntryFragment;
   isDragging: boolean;
 }
 
-const Question = ({ question, isDragging }: Props) => {
+const QuestionEditorEntry = ({ question, isDragging }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteQuestion] = useDeleteQuestionMutation();
   const { t } = useTranslation();
@@ -166,4 +166,4 @@ const Question = ({ question, isDragging }: Props) => {
   );
 };
 
-export default Question;
+export default QuestionEditorEntry;

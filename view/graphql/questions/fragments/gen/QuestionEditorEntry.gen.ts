@@ -6,15 +6,15 @@ import { QuestionFormModalFragmentDoc } from './QuestionFormModal.gen';
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
 
-export type QuestionFragment = {
+export type QuestionEditorEntryFragment = {
   __typename?: 'Question';
   id: number;
   text: string;
   priority: number;
 };
 
-export const QuestionFragmentDoc = gql`
-  fragment Question on Question {
+export const QuestionEditorEntryFragmentDoc = gql`
+  fragment QuestionEditorEntry on Question {
     id
     text
     priority
