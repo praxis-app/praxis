@@ -952,6 +952,7 @@ export type Query = {
   serverConfig: ServerConfig;
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;
+  serverQuestions: Array<Question>;
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
   serverRules: Array<Rule>;
@@ -1036,6 +1037,13 @@ export type QueryUsersArgs = {
 
 export type QueryUsersByIdsArgs = {
   ids: Array<Scalars['Int']['input']>;
+};
+
+export type Question = {
+  __typename?: 'Question';
+  id: Scalars['Int']['output'];
+  priority: Scalars['Int']['output'];
+  text: Scalars['String']['output'];
 };
 
 export type ReadNotificationsPayload = {

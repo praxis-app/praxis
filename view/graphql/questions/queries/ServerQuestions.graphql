@@ -1,0 +1,7 @@
+query ServerQuestions {
+  serverQuestions {
+    id
+    text
+    priority
+  }
+}

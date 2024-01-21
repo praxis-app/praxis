@@ -24,6 +24,12 @@ type EventAttendee {
   updatedAt: DateTime!
 }
 
+type Question {
+  id: Int!
+  text: String!
+  priority: Int!
+}
+
 type Vote {
   id: Int!
   voteType: String!
@@ -593,6 +599,7 @@ type Query {
   canary: Canary!
   publicCanary: Canary
   serverConfig: ServerConfig!
+  serverQuestions: [Question!]!
 }
 
 input EventsInput {
