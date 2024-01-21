@@ -13,10 +13,10 @@ import eventsRouter from './events.router';
 import groupsRouter from './groups.router';
 import postsRouter from './posts.router';
 import proposalsRouter from './proposals.router';
+import questionsRouter from './questions.router';
 import rolesRouter from './roles.router';
 import rulesRouter from './rules.router';
 import usersRouter from './users.router';
-import VibeCheck from '../pages/Questions/VibeCheck';
 
 const appRouter = createBrowserRouter([
   {
@@ -55,15 +55,12 @@ const appRouter = createBrowserRouter([
         path: 'docs',
         element: <DocsHomePage />,
       },
-      {
-        path: 'questions',
-        element: <VibeCheck />,
-      },
       authRouter,
       eventsRouter,
       groupsRouter,
       postsRouter,
       proposalsRouter,
+      questionsRouter,
       rolesRouter,
       rulesRouter,
       usersRouter,

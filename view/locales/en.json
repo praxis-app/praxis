@@ -629,6 +629,7 @@
     "labels": {
       "membershipQuestions": "Membership Questions",
       "questions": "Questions",
+      "serverQuestions": "Server Questions",
       "vibeCheck": "Vibe Check"
     },
     "headers": {

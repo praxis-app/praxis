@@ -196,11 +196,13 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
-        <ListItemButton onClick={handleLinkClick(NavigationPaths.Questions)}>
+        <ListItemButton
+          onClick={handleLinkClick(NavigationPaths.ManageQuestions)}
+        >
           <ListItemIcon>
             <HowToReg />
           </ListItemIcon>
-          <ListItemText primary={t('questions.labels.vibeCheck')} />
+          <ListItemText primary={t('questions.labels.questions')} />
         </ListItemButton>
 
         {manageSettings && (

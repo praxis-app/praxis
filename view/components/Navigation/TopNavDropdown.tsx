@@ -92,9 +92,9 @@ const TopNavDropdown = ({
         </MenuItem>
       )}
 
-      <MenuItem onClick={() => navigate(NavigationPaths.Questions)}>
+      <MenuItem onClick={() => navigate(NavigationPaths.ManageQuestions)}>
         <HowToReg {...ICON_PROPS} />
-        {t('questions.labels.vibeCheck')}
+        {t('questions.labels.questions')}
       </MenuItem>
 
       <MenuItem onClick={handleLogOutButtonClick}>
