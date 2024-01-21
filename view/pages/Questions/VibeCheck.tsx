@@ -1,27 +1,78 @@
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
+import { DragDropContext, Draggable, DropResult } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
 import Question from '../../components/Questions/Question';
 import QuestionFormModal from '../../components/Questions/QuestionFormModal';
+import Droppable from '../../components/Shared/Droppable';
 import Flex from '../../components/Shared/Flex';
 import GhostButton from '../../components/Shared/GhostButton';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
-import { useServerQuestionsQuery } from '../../graphql/questions/queries/gen/ServerQuestions.gen';
+import { useUpdateQuestionsPriorityMutation } from '../../graphql/questions/mutations/gen/UpdateQuestionsPriority.gen';
+import {
+  ServerQuestionsDocument,
+  ServerQuestionsQuery,
+  useServerQuestionsQuery,
+} from '../../graphql/questions/queries/gen/ServerQuestions.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const VibeCheck = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { data, loading, error } = useServerQuestionsQuery();
+
+  const {
+    data: serverQuestionsData,
+    loading: serverQuestionsLoading,
+    error: serverQuestionsError,
+  } = useServerQuestionsQuery();
+
+  const [updateQuestions, { client, loading: updateQuestionsLoading }] =
+    useUpdateQuestionsPriorityMutation();
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
-  if (error) {
+  const serverQuestions = serverQuestionsData?.serverQuestions;
+
+  const handleDragEnd = async (dropResult: DropResult) => {
+    if (!dropResult.destination || !serverQuestions) {
+      return;
+    }
+    const newQuestions = [...serverQuestions];
+    const { source, destination } = dropResult;
+
+    const [removed] = newQuestions.splice(source.index, 1);
+    newQuestions.splice(destination.index, 0, removed);
+
+    const newQuestionsWithCorrectOrder = newQuestions.map(
+      (question, index) => ({
+        ...question,
+        priority: index,
+      }),
+    );
+
+    client.writeQuery<ServerQuestionsQuery>({
+      query: ServerQuestionsDocument,
+      data: { serverQuestions: newQuestionsWithCorrectOrder },
+    });
+
+    await updateQuestions({
+      variables: {
+        questionsData: {
+          questions: newQuestionsWithCorrectOrder.map((question) => ({
+            id: question.id,
+            priority: question.priority,
+          })),
+        },
+      },
+    });
+  };
+
+  if (serverQuestionsError) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
-  if (loading) {
+  if (serverQuestionsLoading) {
     return <ProgressBar />;
   }
 
@@ -42,9 +93,39 @@ const VibeCheck = () => {
         </GhostButton>
       </Flex>
 
-      {data?.serverQuestions.map((question) => (
-        <Question key={question.id} question={question} />
-      ))}
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable
+          droppableId="droppable"
+          isDropDisabled={updateQuestionsLoading}
+        >
+          {(droppableProvided) => (
+            <Box
+              {...droppableProvided.droppableProps}
+              ref={droppableProvided.innerRef}
+            >
+              {serverQuestions?.map((question, index) => (
+                <Draggable
+                  key={question.id}
+                  draggableId={question.id.toString()}
+                  isDragDisabled={updateQuestionsLoading}
+                  index={index}
+                >
+                  {(draggableProvided) => (
+                    <Box
+                      ref={draggableProvided.innerRef}
+                      {...draggableProvided.draggableProps}
+                      {...draggableProvided.dragHandleProps}
+                    >
+                      <Question key={question.id} question={question} />
+                    </Box>
+                  )}
+                </Draggable>
+              ))}
+              {droppableProvided.placeholder}
+            </Box>
+          )}
+        </Droppable>
+      </DragDropContext>
 
       <QuestionFormModal
         isOpen={isModalOpen}
