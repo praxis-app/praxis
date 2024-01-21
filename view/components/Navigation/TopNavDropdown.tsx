@@ -1,4 +1,10 @@
-import { AccountBox, ExitToApp, Person, Settings } from '@mui/icons-material';
+import {
+  AccountBox,
+  ExitToApp,
+  HowToReg,
+  Person,
+  Settings,
+} from '@mui/icons-material';
 import { Menu, MenuItem, SvgIconProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -85,6 +91,11 @@ const TopNavDropdown = ({
           {t('navigation.serverSettings')}
         </MenuItem>
       )}
+
+      <MenuItem onClick={() => navigate(NavigationPaths.Questions)}>
+        <HowToReg {...ICON_PROPS} />
+        {t('questions.labels.vibeCheck')}
+      </MenuItem>
 
       <MenuItem onClick={handleLogOutButtonClick}>
         <ExitToApp {...ICON_PROPS} />

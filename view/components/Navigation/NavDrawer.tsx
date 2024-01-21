@@ -4,6 +4,7 @@ import {
   Close,
   Article as DocsIcon,
   EventNote,
+  HowToReg,
   Link as InvitesIcon,
   Rule,
   ExitToApp as SessionIcon,
@@ -194,6 +195,13 @@ const NavDrawer = () => {
             <ListItemText primary={t('navigation.users')} />
           </ListItemButton>
         )}
+
+        <ListItemButton onClick={handleLinkClick(NavigationPaths.Questions)}>
+          <ListItemIcon>
+            <HowToReg />
+          </ListItemIcon>
+          <ListItemText primary={t('questions.labels.vibeCheck')} />
+        </ListItemButton>
 
         {manageSettings && (
           <ListItemButton

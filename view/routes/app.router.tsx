@@ -16,6 +16,7 @@ import proposalsRouter from './proposals.router';
 import rolesRouter from './roles.router';
 import rulesRouter from './rules.router';
 import usersRouter from './users.router';
+import VibeCheck from '../pages/Questions/VibeCheck';
 
 const appRouter = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ const appRouter = createBrowserRouter([
       {
         path: 'docs',
         element: <DocsHomePage />,
+      },
+      {
+        path: 'questions',
+        element: <VibeCheck />,
       },
       authRouter,
       eventsRouter,

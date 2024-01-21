@@ -625,6 +625,14 @@
     }
   },
 
+  "questions": {
+    "labels": {
+      "membershipQuestions": "Membership Questions",
+      "questions": "Questions",
+      "vibeCheck": "Vibe Check"
+    }
+  },
+
   "pagination": {
     "of": "of",
     "moreThan": "more than",
