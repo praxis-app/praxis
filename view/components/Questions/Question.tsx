@@ -34,9 +34,10 @@ const CardContent = styled(MuiCardContent)(() => ({
 
 interface Props {
   question: QuestionFragment;
+  isDragging: boolean;
 }
 
-const Question = ({ question }: Props) => {
+const Question = ({ question, isDragging }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteQuestion] = useDeleteQuestionMutation();
   const { t } = useTranslation();
@@ -84,7 +85,7 @@ const Question = ({ question }: Props) => {
     handleDelete();
 
   return (
-    <Card>
+    <Card sx={{ opacity: isDragging ? 0.6 : 1, cursor: 'grab' }}>
       <CardHeader
         title={
           <>
@@ -100,8 +101,11 @@ const Question = ({ question }: Props) => {
           </>
         }
         action={
-          <IconButton disableRipple>
-            <DragIndicator sx={{ color: 'text.secondary' }} />
+          <IconButton
+            sx={{ color: 'text.secondary', cursor: 'grab' }}
+            disableRipple
+          >
+            <DragIndicator />
           </IconButton>
         }
       />

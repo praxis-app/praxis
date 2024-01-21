@@ -110,13 +110,17 @@ const VibeCheck = () => {
                   isDragDisabled={updateQuestionsLoading}
                   index={index}
                 >
-                  {(draggableProvided) => (
+                  {(draggableProvided, draggableSnapshot) => (
                     <Box
                       ref={draggableProvided.innerRef}
                       {...draggableProvided.draggableProps}
                       {...draggableProvided.dragHandleProps}
                     >
-                      <Question key={question.id} question={question} />
+                      <Question
+                        key={question.id}
+                        question={question}
+                        isDragging={draggableSnapshot.isDragging}
+                      />
                     </Box>
                   )}
                 </Draggable>
