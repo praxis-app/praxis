@@ -633,13 +633,15 @@
     },
     "headers": {
       "createQuestion": "Create Question",
-      "updateQuestion": "Edit Question"
+      "updateQuestion": "Edit Question",
+      "questionPriority": "Question {{priority}}"
     },
     "errors": {
       "missingText": "Question text cannot be empty"
     },
     "placeholders": {
-      "text": "Question text"
+      "text": "Question text",
+      "writeAnswer": "Write your answer..."
     }
   },
 

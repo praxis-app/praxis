@@ -1,6 +1,7 @@
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Question from '../../components/Questions/Question';
 import QuestionFormModal from '../../components/Questions/QuestionFormModal';
 import Flex from '../../components/Shared/Flex';
 import GhostButton from '../../components/Shared/GhostButton';
@@ -42,7 +43,7 @@ const VibeCheck = () => {
       </Flex>
 
       {data?.serverQuestions.map((question) => (
-        <Box key={question.id}>{question.text}</Box>
+        <Question key={question.id} question={question} />
       ))}
 
       <QuestionFormModal
