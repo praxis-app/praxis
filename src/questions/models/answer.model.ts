@@ -4,11 +4,14 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Question } from './question.model';
 import { QuestionnaireTicket } from './questionnaire-ticket.model';
+import { Comment } from '../../comments/models/comment.model';
+import { Like } from '../../likes/models/like.model';
 
 @ObjectType()
 @Entity()
@@ -20,6 +23,12 @@ export class Answer {
   @Column()
   @Field()
   text: string;
+
+  @OneToMany(() => Comment, (comment) => comment.answer)
+  comments: Comment[];
+
+  @OneToMany(() => Like, (like) => like.answer)
+  likes: Like[];
 
   @ManyToOne(
     () => QuestionnaireTicket,

@@ -12,6 +12,7 @@ import { Comment } from '../../comments/models/comment.model';
 import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
 import { User } from '../../users/models/user.model';
+import { Answer } from '../../questions/models/answer.model';
 
 @Entity()
 @ObjectType()
@@ -37,6 +38,14 @@ export class Like {
 
   @Column({ nullable: true })
   commentId?: number;
+
+  @ManyToOne(() => Answer, (answer) => answer.likes, {
+    onDelete: 'CASCADE',
+  })
+  answer?: Answer;
+
+  @Column({ nullable: true })
+  answerId?: number;
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.likes, { onDelete: 'CASCADE' })
