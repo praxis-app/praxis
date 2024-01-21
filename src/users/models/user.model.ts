@@ -47,6 +47,9 @@ export class User {
   @Field({ nullable: true })
   bio: string;
 
+  @Column({ default: false })
+  verified: boolean;
+
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,
   })
