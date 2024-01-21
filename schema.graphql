@@ -558,6 +558,14 @@ type UpdateRulePayload {
   rule: Rule!
 }
 
+type CreateQuestionPayload {
+  question: Question!
+}
+
+type UpdateQuestionPayload {
+  question: Question!
+}
+
 type CreateVotePayload {
   vote: Vote!
 }
@@ -662,6 +670,9 @@ type Mutation {
   updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
   deleteRule(id: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
+  createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
+  updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
+  deleteQuestion(id: Int!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -949,6 +960,16 @@ input UpdateServerConfigInput {
   canaryStatement: String
   showCanaryStatement: Boolean
   securityTxt: String
+}
+
+input CreateQuestionInput {
+  groupId: Int
+  text: String!
+}
+
+input UpdateQuestionInput {
+  id: Int!
+  text: String!
 }
 
 input CreateVoteInput {
