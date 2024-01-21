@@ -1,5 +1,7 @@
 import { Typography } from '@mui/material';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import QuestionFormModal from '../../components/Questions/QuestionFormModal';
 import Flex from '../../components/Shared/Flex';
 import GhostButton from '../../components/Shared/GhostButton';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
@@ -8,6 +10,8 @@ import { useServerQuestionsQuery } from '../../graphql/questions/queries/gen/Ser
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const VibeCheck = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { data, loading, error } = useServerQuestionsQuery();
 
   const { t } = useTranslation();
@@ -28,14 +32,22 @@ const VibeCheck = () => {
           {t('questions.labels.vibeCheck')}
         </LevelOneHeading>
 
-        <GhostButton sx={{ marginBottom: 3.5 }}>
+        <GhostButton
+          sx={{ marginBottom: 3.5 }}
+          onClick={() => setIsModalOpen(true)}
+        >
           {isDesktop
-            ? t('questions.labels.createQuestion')
+            ? t('questions.headers.createQuestion')
             : t('actions.create')}
         </GhostButton>
       </Flex>
 
       {JSON.stringify(data)}
+
+      <QuestionFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </>
   );
 };

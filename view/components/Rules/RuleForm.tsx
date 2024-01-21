@@ -1,3 +1,5 @@
+// TODO: Convert to a modal since its only ever used in modals
+
 import { useReactiveVar } from '@apollo/client';
 import { Button, FormGroup } from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';

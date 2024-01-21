@@ -629,8 +629,14 @@
     "labels": {
       "membershipQuestions": "Membership Questions",
       "questions": "Questions",
-      "vibeCheck": "Vibe Check",
-      "createQuestion": "Create Question"
+      "vibeCheck": "Vibe Check"
+    },
+    "headers": {
+      "createQuestion": "Create Question",
+      "updateQuestion": "Edit Question"
+    },
+    "errors": {
+      "missingText": "Question text cannot be empty"
     }
   },
 
