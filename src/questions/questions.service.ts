@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { sanitizeText } from '../common/common.utils';
+import { CreateQuestionInput } from './models/create-question.input';
 import { Question } from './models/question.model';
+import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
 
 @Injectable()
@@ -19,7 +21,7 @@ export class QuestionsService {
     });
   }
 
-  async createQuestion(questionData: any) {
+  async createQuestion(questionData: CreateQuestionInput) {
     const [lowestPriorityQuestion] = await this.questionRepository.find({
       where: { groupId: questionData.groupId || IsNull() },
       order: { priority: 'DESC' },
@@ -35,7 +37,7 @@ export class QuestionsService {
     return { question };
   }
 
-  async updateQuestion({ id, text }: any) {
+  async updateQuestion({ id, text }: UpdateQuestionInput) {
     const sanitizedText = sanitizeText(text?.trim());
     await this.questionRepository.update(id, {
       text: sanitizedText,
