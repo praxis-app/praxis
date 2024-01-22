@@ -1,0 +1,4 @@
+fragment Question on Question {
+  id
+  text
+}
