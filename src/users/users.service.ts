@@ -358,23 +358,27 @@ export class UsersService {
     return post.userId === userId;
   }
 
-  async createUser({ bio, ...userData }: Partial<User>) {
-    const sanitizedBio = bio ? sanitizeText(bio.trim()) : undefined;
+  async createUser(
+    name: string,
+    email: string,
+    password: string,
+    profilePicture?: Promise<FileUpload>,
+  ) {
     const user = await this.userRepository.save({
-      bio: sanitizedBio,
-      ...userData,
+      name,
+      email,
+      password,
     });
 
-    try {
-      const users = await this.getUsers();
-
-      if (users.length === 1) {
-        await this.serverRolesService.initAdminServerRole(user.id);
-      }
+    if (profilePicture) {
+      await this.saveProfilePicture(user.id, profilePicture);
+    } else {
       await this.saveDefaultProfilePicture(user.id);
-    } catch {
-      await this.deleteUser(user.id);
-      throw new Error('Could not create user');
+    }
+
+    const users = await this.getUsers();
+    if (users.length === 1) {
+      await this.serverRolesService.initAdminServerRole(user.id);
     }
 
     return user;

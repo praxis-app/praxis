@@ -37,11 +37,12 @@ export class AuthService {
   }
 
   async signUp({
-    inviteToken,
+    name,
+    email,
     password,
     confirmPassword,
     profilePicture,
-    ...userData
+    inviteToken,
   }: SignUpInput): Promise<AuthPayload> {
     const users = await this.usersService.getUsers();
     if (users.length && !inviteToken) {
@@ -51,9 +52,7 @@ export class AuthService {
       await this.serverInvitesService.getValidServerInvite(inviteToken);
     }
 
-    const existingUser = await this.usersService.getUser({
-      email: userData.email,
-    });
+    const existingUser = await this.usersService.getUser({ email });
     if (existingUser) {
       throw new Error('User already exists');
     }
@@ -62,15 +61,13 @@ export class AuthService {
     }
 
     const passwordHash = await hash(password, SALT_ROUNDS);
-    const user = await this.usersService.createUser({
-      password: passwordHash,
-      ...userData,
-    });
+    const user = await this.usersService.createUser(
+      name,
+      email,
+      passwordHash,
+      profilePicture,
+    );
 
-    if (profilePicture) {
-      // TODO: Move this to createUser method
-      await this.usersService.saveProfilePicture(user.id, profilePicture);
-    }
     if (inviteToken) {
       await this.serverInvitesService.redeemServerInvite(inviteToken);
     }
