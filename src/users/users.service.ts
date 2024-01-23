@@ -23,6 +23,7 @@ import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
 import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../notifications/notifications.constants';
+import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 
 @Injectable()
 export class UsersService {
@@ -40,6 +41,9 @@ export class UsersService {
 
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
+
+    @InjectRepository(QuestionnaireTicket)
+    private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
 
     private notificationsService: NotificationsService,
     private serverRolesService: ServerRolesService,
@@ -376,6 +380,12 @@ export class UsersService {
       await this.saveDefaultProfilePicture(user.id);
     }
 
+    // Initialize questionnaire ticket for user
+    await this.questionnaireTicketRepository.save({
+      userId: user.id,
+    });
+
+    // Initialize admin role for first user
     const users = await this.getUsers();
     if (users.length === 1) {
       await this.serverRolesService.initAdminServerRole(user.id);
