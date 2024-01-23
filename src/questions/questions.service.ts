@@ -2,8 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { sanitizeText } from '../common/common.utils';
+import { User } from '../users/models/user.model';
+import { AnswerQuestionsInput } from './models/answer-questions.input';
+import { Answer } from './models/answer.model';
 import { CreateQuestionInput } from './models/create-question.input';
 import { Question } from './models/question.model';
+import { QuestionnaireTicket } from './models/questionnaire-ticket.model';
 import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
 
@@ -12,6 +16,12 @@ export class QuestionsService {
   constructor(
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
+
+    @InjectRepository(Answer)
+    private anwersRepository: Repository<Answer>,
+
+    @InjectRepository(QuestionnaireTicket)
+    private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
   ) {}
 
   async getServerQuestions() {
@@ -52,6 +62,25 @@ export class QuestionsService {
     await this.questionRepository.save(
       questions.map(({ id, priority }) => ({ id, priority })),
     );
+    return true;
+  }
+
+  async answerQuestions(
+    { questionnaireTicketId, answers }: AnswerQuestionsInput,
+    user: User,
+  ) {
+    const count = await this.questionnaireTicketRepository.count({
+      where: { id: questionnaireTicketId, userId: user.id },
+    });
+    if (!count) {
+      throw new Error('Questionnaire ticket not found');
+    }
+    const newAnswers = answers.map(({ questionId, text }) => ({
+      questionnaireTicketId,
+      questionId,
+      text,
+    }));
+    await this.anwersRepository.save(newAnswers);
     return true;
   }
 

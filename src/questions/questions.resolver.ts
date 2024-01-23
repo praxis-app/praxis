@@ -1,4 +1,7 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { User } from '../users/models/user.model';
+import { AnswerQuestionsInput } from './models/answer-questions.input';
 import { CreateQuestionInput } from './models/create-question.input';
 import { CreateQuestionPayload } from './models/create-question.payload';
 import { Question } from './models/question.model';
@@ -35,6 +38,14 @@ export class QuestionsResolver {
     @Args('questionsData') questionsData: UpdateQuestionsPriorityInput,
   ) {
     return this.questionsService.updateQuestionsPriority(questionsData);
+  }
+
+  @Mutation(() => Boolean)
+  async answerQuestions(
+    @Args('answersData') answersData: AnswerQuestionsInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.questionsService.answerQuestions(answersData, user);
   }
 
   @Mutation(() => Boolean)

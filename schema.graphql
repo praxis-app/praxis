@@ -673,6 +673,7 @@ type Mutation {
   createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
   updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
   updateQuestionsPriority(questionsData: UpdateQuestionsPriorityInput!): Boolean!
+  answerQuestions(answersData: AnswerQuestionsInput!): Boolean!
   deleteQuestion(id: Int!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
@@ -980,6 +981,16 @@ input UpdateQuestionsPriorityInput {
 input UpdateQuestionPriorityInput {
   id: Int!
   priority: Int!
+}
+
+input AnswerQuestionsInput {
+  questionnaireTicketId: Int!
+  answers: [AnswerInput!]!
+}
+
+input AnswerInput {
+  questionId: Int!
+  text: String!
 }
 
 input CreateVoteInput {
