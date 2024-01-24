@@ -28,6 +28,7 @@ type Question {
   id: Int!
   text: String!
   priority: Int!
+  myAnswer: Answer
 }
 
 type Answer {

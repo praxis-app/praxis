@@ -1,7 +1,16 @@
-import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { User } from '../../users/models/user.model';
 import { AnswerQuestionsInput } from '../models/answer-questions.input';
+import { Answer } from '../models/answer.model';
 import { CreateQuestionInput } from '../models/create-question.input';
 import { CreateQuestionPayload } from '../models/create-question.payload';
 import { Question } from '../models/question.model';
@@ -17,6 +26,14 @@ export class QuestionsResolver {
   @Query(() => [Question])
   async serverQuestions() {
     return this.questionsService.getServerQuestions();
+  }
+
+  @ResolveField(() => Answer, { nullable: true })
+  async myAnswer(
+    @Parent() { id, groupId }: Question,
+    @CurrentUser() user: User,
+  ) {
+    return this.questionsService.getUserAnswer(id, user.id, groupId);
   }
 
   @Mutation(() => CreateQuestionPayload)

@@ -35,6 +35,16 @@ export class QuestionsService {
     });
   }
 
+  async getUserAnswer(questionId: number, userId: number, groupId?: number) {
+    const answer = await this.anwersRepository.findOne({
+      where: {
+        questionnaireTicket: { userId, groupId },
+        questionId,
+      },
+    });
+    return answer;
+  }
+
   async getQuestionnaireTicketQuestions(groupId?: number) {
     if (groupId) {
       return this.questionRepository.find({
