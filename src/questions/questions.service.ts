@@ -35,6 +35,16 @@ export class QuestionsService {
     });
   }
 
+  async getQuestionnaireTicketQuestions(groupId?: number) {
+    if (groupId) {
+      return this.questionRepository.find({
+        where: { groupId },
+        order: { priority: 'ASC' },
+      });
+    }
+    return this.getServerQuestions();
+  }
+
   async getQuestionnaireTicketAnswers(questionnaireTicketId: number) {
     return this.anwersRepository.find({
       where: { questionnaireTicketId },

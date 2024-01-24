@@ -37,6 +37,7 @@ type Answer {
 
 type QuestionnaireTicket {
   id: Int!
+  questions: [Question!]!
   answers: [Answer!]!
   votes: [Vote!]!
   user: User!
