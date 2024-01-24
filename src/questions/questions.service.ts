@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { sanitizeText } from '../common/common.utils';
 import { User } from '../users/models/user.model';
+import { Vote } from '../votes/models/vote.model';
 import { AnswerQuestionsInput } from './models/answer-questions.input';
 import { Answer } from './models/answer.model';
 import { CreateQuestionInput } from './models/create-question.input';
@@ -20,15 +21,46 @@ export class QuestionsService {
     @InjectRepository(Answer)
     private anwersRepository: Repository<Answer>,
 
+    @InjectRepository(Vote)
+    private votesRepository: Repository<Vote>,
+
     @InjectRepository(QuestionnaireTicket)
     private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
   ) {}
 
   async getServerQuestions() {
-    return await this.questionRepository.find({
+    return this.questionRepository.find({
       where: { groupId: IsNull() },
       order: { priority: 'ASC' },
     });
+  }
+
+  async getQuestionnaireTicketAnswers(questionnaireTicketId: number) {
+    return this.anwersRepository.find({
+      where: { questionnaireTicketId },
+    });
+  }
+
+  async getQuestionnaireTicketVotes(questionnaireTicketId: number) {
+    return this.votesRepository.find({
+      where: { questionnaireTicketId },
+    });
+  }
+
+  async getQuestionnaireTicketUser(questionnaireTicketId: number) {
+    const { user } = await this.questionnaireTicketRepository.findOneOrFail({
+      where: { id: questionnaireTicketId },
+      relations: ['user'],
+    });
+    return user;
+  }
+
+  async getQuestionnaireTicketGroup(questionnaireTicketId: number) {
+    const { group } = await this.questionnaireTicketRepository.findOneOrFail({
+      where: { id: questionnaireTicketId },
+      relations: ['group'],
+    });
+    return group;
   }
 
   async createQuestion(questionData: CreateQuestionInput) {

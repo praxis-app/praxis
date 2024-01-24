@@ -362,6 +362,12 @@ export class UsersService {
     return post.userId === userId;
   }
 
+  async getQuestionnaireTicket(userId: number) {
+    return this.questionnaireTicketRepository.findOneOrFail({
+      where: { userId },
+    });
+  }
+
   async createUser(
     name: string,
     email: string,

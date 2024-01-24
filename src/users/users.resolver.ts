@@ -15,6 +15,7 @@ import { FeedItemsConnection } from '../common/models/feed-items.connection';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
+import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { FollowUserPayload } from './models/follow-user.payload';
 import { UpdateUserInput } from './models/update-user.input';
@@ -83,6 +84,11 @@ export class UsersResolver {
   @ResolveField(() => Int)
   async profileFeedCount(@Parent() { id }: User) {
     return this.usersService.getUserProfileFeedCount(id);
+  }
+
+  @ResolveField(() => QuestionnaireTicket)
+  async questionnaireTicket(@Parent() { id }: User) {
+    return this.usersService.getQuestionnaireTicket(id);
   }
 
   @ResolveField(() => Image)

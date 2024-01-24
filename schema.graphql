@@ -30,6 +30,19 @@ type Question {
   priority: Int!
 }
 
+type Answer {
+  id: Int!
+  text: String!
+}
+
+type QuestionnaireTicket {
+  id: Int!
+  answers: [Answer!]!
+  votes: [Vote!]!
+  user: User!
+  group: Group
+}
+
 type Vote {
   id: Int!
   voteType: String!
@@ -247,6 +260,7 @@ type User {
   homeFeed(offset: Int, limit: Int): FeedItemsConnection!
   profileFeed(offset: Int, limit: Int): [FeedItem!]!
   profileFeedCount: Int!
+  questionnaireTicket: QuestionnaireTicket!
   followers(offset: Int, limit: Int): [User!]!
   following(offset: Int, limit: Int): [User!]!
   followerCount: Int!

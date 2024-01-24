@@ -1,16 +1,16 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { User } from '../users/models/user.model';
-import { AnswerQuestionsInput } from './models/answer-questions.input';
-import { CreateQuestionInput } from './models/create-question.input';
-import { CreateQuestionPayload } from './models/create-question.payload';
-import { Question } from './models/question.model';
-import { UpdateQuestionInput } from './models/update-question.input';
-import { UpdateQuestionPayload } from './models/update-question.payload';
-import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
-import { QuestionsService } from './questions.service';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { User } from '../../users/models/user.model';
+import { AnswerQuestionsInput } from '../models/answer-questions.input';
+import { CreateQuestionInput } from '../models/create-question.input';
+import { CreateQuestionPayload } from '../models/create-question.payload';
+import { Question } from '../models/question.model';
+import { UpdateQuestionInput } from '../models/update-question.input';
+import { UpdateQuestionPayload } from '../models/update-question.payload';
+import { UpdateQuestionsPriorityInput } from '../models/update-questions-priority.input';
+import { QuestionsService } from '../questions.service';
 
-@Resolver()
+@Resolver(() => Question)
 export class QuestionsResolver {
   constructor(private questionsService: QuestionsService) {}
 
