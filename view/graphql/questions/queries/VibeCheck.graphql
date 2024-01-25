@@ -1,5 +1,11 @@
 query VibeCheck {
-  serverQuestions {
-    ...Question
+  me {
+    id
+    questionnaireTicket {
+      id
+      questions {
+        ...Question
+      }
+    }
   }
 }

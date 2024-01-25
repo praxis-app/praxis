@@ -14,6 +14,8 @@ const VibeCheck = () => {
 
   const initialValues = {};
 
+  const questions = data?.me.questionnaireTicket.questions;
+
   const handleSubmit = async (values: any) => {
     console.log(values);
   };
@@ -35,7 +37,7 @@ const VibeCheck = () => {
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
         {({ dirty, isSubmitting }) => (
           <Form>
-            {data?.serverQuestions.map((question) => (
+            {questions?.map((question) => (
               <Question question={question} key={question.id} />
             ))}
 

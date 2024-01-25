@@ -12,13 +12,32 @@ export type VibeCheckQueryVariables = Types.Exact<{ [key: string]: never }>;
 
 export type VibeCheckQuery = {
   __typename?: 'Query';
-  serverQuestions: Array<{ __typename?: 'Question'; id: number; text: string }>;
+  me: {
+    __typename?: 'User';
+    id: number;
+    questionnaireTicket: {
+      __typename?: 'QuestionnaireTicket';
+      id: number;
+      questions: Array<{
+        __typename?: 'Question';
+        id: number;
+        text: string;
+        myAnswer?: { __typename?: 'Answer'; id: number; text: string } | null;
+      }>;
+    };
+  };
 };
 
 export const VibeCheckDocument = gql`
   query VibeCheck {
-    serverQuestions {
-      ...Question
+    me {
+      id
+      questionnaireTicket {
+        id
+        questions {
+          ...Question
+        }
+      }
     }
   }
   ${QuestionFragmentDoc}
