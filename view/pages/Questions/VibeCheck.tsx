@@ -14,7 +14,8 @@ const VibeCheck = () => {
 
   const initialValues = {};
 
-  const questions = data?.me.questionnaireTicket.questions;
+  const questionnaireTicket = data?.me.questionnaireTicket;
+  const questions = questionnaireTicket?.questions;
 
   const handleSubmit = async (values: any) => {
     console.log(values);
