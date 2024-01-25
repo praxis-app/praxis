@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
 import { sanitizeText } from '../common/common.utils';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
@@ -15,6 +15,9 @@ import { UpdateQuestionsPriorityInput } from './models/update-questions-priority
 @Injectable()
 export class QuestionsService {
   constructor(
+    @InjectRepository(QuestionnaireTicket)
+    private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
+
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
 
@@ -23,9 +26,6 @@ export class QuestionsService {
 
     @InjectRepository(Vote)
     private votesRepository: Repository<Vote>,
-
-    @InjectRepository(QuestionnaireTicket)
-    private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
   ) {}
 
   async getServerQuestions() {
@@ -35,14 +35,8 @@ export class QuestionsService {
     });
   }
 
-  async getUserAnswer(questionId: number, userId: number, groupId?: number) {
-    const answer = await this.anwersRepository.findOne({
-      where: {
-        questionnaireTicket: { userId, groupId },
-        questionId,
-      },
-    });
-    return answer;
+  async getAnswer(where?: FindOptionsWhere<Answer>) {
+    return this.anwersRepository.findOne({ where });
   }
 
   async getQuestionnaireTicketQuestions(groupId?: number) {

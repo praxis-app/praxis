@@ -32,6 +32,22 @@ export type Scalars = {
   Upload: { input: any; output: any };
 };
 
+export type Answer = {
+  __typename?: 'Answer';
+  id: Scalars['Int']['output'];
+  text: Scalars['String']['output'];
+};
+
+export type AnswerInput = {
+  questionId: Scalars['Int']['input'];
+  text: Scalars['String']['input'];
+};
+
+export type AnswerQuestionsInput = {
+  answers: Array<AnswerInput>;
+  questionnaireTicketId: Scalars['Int']['input'];
+};
+
 export type ApproveGroupMemberRequestPayload = {
   __typename?: 'ApproveGroupMemberRequestPayload';
   groupMember: User;
@@ -444,6 +460,7 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  answerQuestions: Scalars['Boolean']['output'];
   approveGroupMemberRequest: ApproveGroupMemberRequestPayload;
   cancelGroupMemberRequest: Scalars['Boolean']['output'];
   clearNotifications: Scalars['Boolean']['output'];
@@ -505,6 +522,10 @@ export type Mutation = {
   updateServerRole: UpdateServerRolePayload;
   updateUser: UpdateUserPayload;
   updateVote: UpdateVotePayload;
+};
+
+export type MutationAnswerQuestionsArgs = {
+  answersData: AnswerQuestionsInput;
 };
 
 export type MutationApproveGroupMemberRequestArgs = {
@@ -1071,9 +1092,25 @@ export type QueryUsersByIdsArgs = {
 
 export type Question = {
   __typename?: 'Question';
+  answer?: Maybe<Answer>;
   id: Scalars['Int']['output'];
+  myAnswer?: Maybe<Answer>;
   priority: Scalars['Int']['output'];
   text: Scalars['String']['output'];
+};
+
+export type QuestionAnswerArgs = {
+  questionnaireTicketId: Scalars['Int']['input'];
+};
+
+export type QuestionnaireTicket = {
+  __typename?: 'QuestionnaireTicket';
+  answers: Array<Answer>;
+  group?: Maybe<Group>;
+  id: Scalars['Int']['output'];
+  questions: Array<Question>;
+  user: User;
+  votes: Array<Vote>;
 };
 
 export type ReadNotificationsPayload = {
@@ -1410,6 +1447,7 @@ export type User = {
   profileFeedCount: Scalars['Int']['output'];
   profilePicture: Image;
   proposals: Array<Proposal>;
+  questionnaireTicket: QuestionnaireTicket;
   serverPermissions: ServerPermissions;
   updatedAt: Scalars['DateTime']['output'];
 };

@@ -29,11 +29,26 @@ export class QuestionsResolver {
   }
 
   @ResolveField(() => Answer, { nullable: true })
+  async answer(
+    @Args('questionnaireTicketId', { type: () => Int })
+    questionnaireTicketId: number,
+    @Parent() { id }: Question,
+  ) {
+    return this.questionsService.getAnswer({
+      questionnaireTicketId,
+      questionId: id,
+    });
+  }
+
+  @ResolveField(() => Answer, { nullable: true })
   async myAnswer(
     @Parent() { id, groupId }: Question,
     @CurrentUser() user: User,
   ) {
-    return this.questionsService.getUserAnswer(id, user.id, groupId);
+    return this.questionsService.getAnswer({
+      questionnaireTicket: { userId: user.id, groupId },
+      questionId: id,
+    });
   }
 
   @Mutation(() => CreateQuestionPayload)
