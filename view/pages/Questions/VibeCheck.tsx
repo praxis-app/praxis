@@ -6,16 +6,12 @@ import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { AnswerQuestionsInput } from '../../graphql/gen';
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
 
 const VibeCheck = () => {
   const { data, loading, error } = useVibeCheckQuery();
   const { t } = useTranslation();
-
-  const initialValues = {};
-
-  const questionnaireTicket = data?.me.questionnaireTicket;
-  const questions = questionnaireTicket?.questions;
 
   const handleSubmit = async (values: any) => {
     console.log(values);
@@ -29,6 +25,23 @@ const VibeCheck = () => {
     return <ProgressBar />;
   }
 
+  if (!data) {
+    return null;
+  }
+
+  const { questionnaireTicket } = data.me;
+  const { questions } = questionnaireTicket;
+
+  const initialValues: AnswerQuestionsInput = {
+    questionnaireTicketId: questionnaireTicket.id,
+    answers: questions.map(({ id, myAnswer }) => {
+      if (!myAnswer) {
+        return { questionId: id, text: '' };
+      }
+      return { questionId: id, text: myAnswer?.text };
+    }),
+  };
+
   return (
     <>
       <LevelOneHeading header>
@@ -36,17 +49,21 @@ const VibeCheck = () => {
       </LevelOneHeading>
 
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        {({ dirty, isSubmitting }) => (
+        {({ dirty, isSubmitting, setFieldValue, values }) => (
           <Form>
-            {questions?.map((question) => (
-              <Question question={question} key={question.id} />
+            {questions.map((question) => (
+              <Question
+                key={question.id}
+                question={question}
+                answers={values.answers}
+                setFieldValue={setFieldValue}
+              />
             ))}
 
-            <Flex justifyContent="flex-end">
+            <Flex justifyContent="flex-end" paddingTop={0.25}>
               <PrimaryActionButton
                 disabled={isSubmitting || !dirty}
                 isLoading={isSubmitting}
-                sx={{ marginTop: 1.5 }}
                 type="submit"
               >
                 {t('actions.submit')}

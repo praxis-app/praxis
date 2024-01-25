@@ -2,12 +2,16 @@ import {
   Card,
   CardContent as MuiCardContent,
   CardHeader as MuiCardHeader,
+  TextField,
   Typography,
   styled,
 } from '@mui/material';
+import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { AnswerInput } from '../../graphql/gen';
 import { QuestionFragment } from '../../graphql/questions/fragments/gen/Question.gen';
-import { TextField } from '../Shared/TextField';
+
+const ANSWERS_FIELD_NAME = 'answers';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingTop: '11px',
@@ -17,16 +21,32 @@ const CardHeader = styled(MuiCardHeader)(() => ({
 const CardContent = styled(MuiCardContent)(() => ({
   paddingTop: '14px',
   '&:last-child': {
-    paddingBottom: '6px',
+    paddingBottom: '14px',
   },
 }));
 
 interface Props {
   question: QuestionFragment;
+  setFieldValue(name: string, value: AnswerInput[]): void;
+  answers: AnswerInput[];
 }
 
-const Question = ({ question: { text } }: Props) => {
+const Question = ({
+  question: { id, text },
+  setFieldValue,
+  answers,
+}: Props) => {
   const { t } = useTranslation();
+
+  const handleTextFieldChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
+    const newAnswers = answers.map((answer) => {
+      if (answer.questionId !== id) {
+        return answer;
+      }
+      return { ...answer, text: target.value };
+    });
+    setFieldValue(ANSWERS_FIELD_NAME, newAnswers);
+  };
 
   return (
     <Card>
@@ -43,6 +63,7 @@ const Question = ({ question: { text } }: Props) => {
           autoComplete="off"
           label={t('questions.placeholders.writeAnswer')}
           name="text"
+          onChange={handleTextFieldChange}
           sx={{ width: '100%' }}
           variant="outlined"
           multiline
