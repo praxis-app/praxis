@@ -1,0 +1,3 @@
+mutation AnswerQuestions($answersData: AnswerQuestionsInput!) {
+  answerQuestions(answersData: $answersData)
+}

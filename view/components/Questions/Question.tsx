@@ -38,6 +38,8 @@ const Question = ({
 }: Props) => {
   const { t } = useTranslation();
 
+  const answer = answers.find((answer) => answer.questionId === id);
+
   const handleTextFieldChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const newAnswers = answers.map((answer) => {
       if (answer.questionId !== id) {
@@ -62,7 +64,7 @@ const Question = ({
         <TextField
           autoComplete="off"
           label={t('questions.placeholders.writeAnswer')}
-          name="text"
+          defaultValue={answer?.text}
           onChange={handleTextFieldChange}
           sx={{ width: '100%' }}
           variant="outlined"

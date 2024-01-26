@@ -7,39 +7,50 @@ import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { AnswerQuestionsInput } from '../../graphql/gen';
+import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/gen/AnswerQuestions.gen';
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
 
 const VibeCheck = () => {
-  const { data, loading, error } = useVibeCheckQuery();
+  const {
+    data: vibeCheckData,
+    loading: vibeCheckLoading,
+    error: vibeCheckError,
+  } = useVibeCheckQuery();
+
+  const [answerQuestions, { error: answerQuestionsError }] =
+    useAnswerQuestionsMutation();
+
   const { t } = useTranslation();
 
-  const handleSubmit = async (values: any) => {
-    console.log(values);
+  const handleSubmit = async (answersData: AnswerQuestionsInput) => {
+    await answerQuestions({ variables: { answersData } });
   };
 
-  if (error) {
+  if (vibeCheckError || answerQuestionsError) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
-  if (loading) {
+  if (vibeCheckLoading) {
     return <ProgressBar />;
   }
 
-  if (!data) {
+  if (!vibeCheckData) {
     return null;
   }
 
-  const { questionnaireTicket } = data.me;
+  const { questionnaireTicket } = vibeCheckData.me;
   const { questions } = questionnaireTicket;
+
+  const answers = questions.map(({ id, myAnswer }) => {
+    if (!myAnswer) {
+      return { questionId: id, text: '' };
+    }
+    return { questionId: id, text: myAnswer?.text };
+  });
 
   const initialValues: AnswerQuestionsInput = {
     questionnaireTicketId: questionnaireTicket.id,
-    answers: questions.map(({ id, myAnswer }) => {
-      if (!myAnswer) {
-        return { questionId: id, text: '' };
-      }
-      return { questionId: id, text: myAnswer?.text };
-    }),
+    answers,
   };
 
   return (

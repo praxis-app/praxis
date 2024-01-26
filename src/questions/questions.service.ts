@@ -121,11 +121,21 @@ export class QuestionsService {
     if (!count) {
       throw new Error('Questionnaire ticket not found');
     }
-    const newAnswers = answers.map(({ questionId, text }) => ({
-      questionnaireTicketId,
-      questionId,
-      text,
-    }));
+    const existingAnswers = await this.anwersRepository.find({
+      where: { questionnaireTicketId },
+    });
+    const newAnswers = answers.map((answer) => {
+      const existingAnswer = existingAnswers.find(
+        (a) => a.questionId === answer.questionId,
+      );
+      return {
+        questionnaireTicketId,
+        id: existingAnswer?.id,
+        questionId: answer.questionId,
+        text: sanitizeText(answer.text),
+        userId: user.id,
+      };
+    });
     await this.anwersRepository.save(newAnswers);
     return true;
   }
