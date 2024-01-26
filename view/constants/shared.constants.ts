@@ -27,7 +27,6 @@ export enum NavigationPaths {
   Invites = '/invites',
   LogIn = '/auth/login',
   ManageQuestions = '/questions/manage',
-  VibeCheck = '/questions',
   Posts = '/posts',
   Proposals = '/proposals',
   Roles = '/roles',
@@ -35,6 +34,7 @@ export enum NavigationPaths {
   ServerSettings = '/settings',
   SignUp = '/auth/signup',
   Users = '/users',
+  VibeCheck = '/questions',
 }
 
 export enum TypeNames {

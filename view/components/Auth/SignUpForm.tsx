@@ -3,14 +3,17 @@ import { Card, CardContent, FormGroup } from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import AttachedImagePreview from '../../components/Images/AttachedImagePreview';
 import ImageInput from '../../components/Images/ImageInput';
 import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import { TextField } from '../../components/Shared/TextField';
-import { LocalStorageKey } from '../../constants/shared.constants';
+import {
+  LocalStorageKey,
+  NavigationPaths,
+} from '../../constants/shared.constants';
 import { UserFieldNames } from '../../constants/user.constants';
 import { useSignUpMutation } from '../../graphql/auth/mutations/gen/SignUp.gen';
 import {
@@ -36,6 +39,7 @@ const SignUpForm = () => {
 
   const { token } = useParams();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const initialValues: SignUpInput = {
     email: '',
@@ -110,6 +114,7 @@ const SignUpForm = () => {
         setImageInputKey(getRandomString());
         localStorage.removeItem(LocalStorageKey.InviteToken);
         localStorage.setItem(LocalStorageKey.AccessToken, access_token);
+        navigate(NavigationPaths.VibeCheck);
       },
       onError(err) {
         const title = isEntityTooLarge(err)

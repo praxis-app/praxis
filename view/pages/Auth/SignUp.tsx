@@ -5,20 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import SignUpForm from '../../components/Auth/SignUpForm';
 import ProgressBar from '../../components/Shared/ProgressBar';
-import {
-  LocalStorageKey,
-  NavigationPaths,
-} from '../../constants/shared.constants';
+import { LocalStorageKey } from '../../constants/shared.constants';
 import { inviteTokenVar, isLoggedInVar } from '../../graphql/cache';
 import { useServerInviteLazyQuery } from '../../graphql/invites/queries/gen/ServerInvite.gen';
 import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 
 const SignUp = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-
-  const { t } = useTranslation();
-  const { token } = useParams();
-  const navigate = useNavigate();
 
   const [
     getServerInvite,
@@ -31,11 +24,11 @@ const SignUp = () => {
     error: userCountError,
   } = useIsFirstUserQuery({ skip: isLoggedIn });
 
+  const { t } = useTranslation();
+  const { token } = useParams();
+  const navigate = useNavigate();
+
   useEffect(() => {
-    if (isLoggedIn) {
-      navigate(NavigationPaths.Home);
-      return;
-    }
     if (token) {
       getServerInvite({
         variables: { token },
@@ -45,7 +38,7 @@ const SignUp = () => {
         },
       });
     }
-  }, [isLoggedIn, token, navigate, getServerInvite]);
+  }, [token, navigate, getServerInvite]);
 
   if (serverInviteError) {
     return <Typography>{t('invites.prompts.expiredOrInvalid')}</Typography>;
@@ -53,8 +46,11 @@ const SignUp = () => {
   if (userCountError) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
-  if (serverInviteLoading || userCountLoading || isLoggedIn) {
+  if (serverInviteLoading || userCountLoading) {
     return <ProgressBar />;
+  }
+  if (isLoggedIn) {
+    return <Typography>{t('users.prompts.alreadyRegistered')}</Typography>;
   }
   if (!token && !data?.isFirstUser) {
     return <Typography>{t('invites.prompts.inviteRequired')}</Typography>;
