@@ -1,4 +1,4 @@
-import { Button, CircularProgress, SxProps, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import Question from '../../components/Questions/Question';
@@ -17,18 +17,10 @@ const VibeCheck = () => {
     error: vibeCheckError,
   } = useVibeCheckQuery();
 
-  const [
-    answerQuestions,
-    { error: answerQuestionsError, loading: answerQuestionsLoading },
-  ] = useAnswerQuestionsMutation();
+  const [answerQuestions, { error: answerQuestionsError }] =
+    useAnswerQuestionsMutation();
 
   const { t } = useTranslation();
-
-  const saveProgressBtnStyles: SxProps = {
-    textTransform: 'none',
-    borderRadius: 9999,
-    paddingX: '20px',
-  };
 
   const handleSubmit = async (answersData: AnswerQuestionsInput) => {
     await answerQuestions({ variables: { answersData } });
@@ -80,24 +72,11 @@ const VibeCheck = () => {
                 question={question}
                 answers={values.answers}
                 setFieldValue={setFieldValue}
+                onBlur={() => handleSaveProgress(values)}
               />
             ))}
 
-            <Flex justifyContent="flex-end" gap="8px" paddingTop={0.25}>
-              <Button
-                onClick={() => handleSaveProgress(values)}
-                startIcon={
-                  answerQuestionsLoading && (
-                    <CircularProgress
-                      size={10}
-                      sx={{ marginRight: '4px', color: 'inherit' }}
-                    />
-                  )
-                }
-                sx={saveProgressBtnStyles}
-              >
-                {t('questions.actions.saveProgress')}
-              </Button>
+            <Flex justifyContent="flex-end" paddingTop={0.25}>
               <PrimaryActionButton
                 disabled={isSubmitting || !dirty}
                 isLoading={isSubmitting}

@@ -29,12 +29,14 @@ interface Props {
   question: QuestionFragment;
   setFieldValue(name: string, value: AnswerInput[]): void;
   answers: AnswerInput[];
+  onBlur(): void;
 }
 
 const Question = ({
   question: { id, text },
   setFieldValue,
   answers,
+  onBlur,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -68,6 +70,7 @@ const Question = ({
           onChange={handleTextFieldChange}
           sx={{ width: '100%' }}
           variant="outlined"
+          onBlur={onBlur}
           multiline
         />
       </CardContent>
