@@ -626,6 +626,9 @@
   },
 
   "questions": {
+    "actions": {
+      "saveProgress": "Save progress"
+    },
     "labels": {
       "membershipQuestions": "Membership Questions",
       "questions": "Questions",

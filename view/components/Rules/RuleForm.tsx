@@ -135,7 +135,7 @@ const RuleForm = ({ editRule, onSubmit, onCancel }: Props) => {
             />
           </FormGroup>
 
-          <Flex justifyContent="flex-end" gap="12px">
+          <Flex justifyContent="flex-end" gap="8px">
             <Button
               sx={{
                 marginTop: 1.5,

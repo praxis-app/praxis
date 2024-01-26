@@ -138,7 +138,7 @@ const QuestionFormModal = ({
               />
             </FormGroup>
 
-            <Flex justifyContent="flex-end" gap="12px">
+            <Flex justifyContent="flex-end" gap="8px">
               <Button onClick={onClose} sx={cancelButtonStyles}>
                 {t('actions.cancel')}
               </Button>
