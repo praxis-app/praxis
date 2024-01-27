@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { QuestionFragmentDoc } from '../../fragments/gen/Question.gen';
+import { AnswerQuestionsFormFragmentDoc } from '../../fragments/gen/AnswerQuestionsForm.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -33,14 +33,11 @@ export const VibeCheckDocument = gql`
     me {
       id
       questionnaireTicket {
-        id
-        questions {
-          ...Question
-        }
+        ...AnswerQuestionsForm
       }
     }
   }
-  ${QuestionFragmentDoc}
+  ${AnswerQuestionsFormFragmentDoc}
 `;
 
 /**

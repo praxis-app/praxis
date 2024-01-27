@@ -1,15 +1,13 @@
 import { Sync } from '@mui/icons-material';
 import { Typography } from '@mui/material';
-import { Form, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import Question from '../../components/Questions/Question';
 import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
-import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { AnswerQuestionsInput } from '../../graphql/gen';
 import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/gen/AnswerQuestions.gen';
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
+import AnswerQuestionsForm from './AnswerQuestionsForm';
 
 const VibeCheck = () => {
   const {
@@ -52,19 +50,6 @@ const VibeCheck = () => {
   }
 
   const { questionnaireTicket } = vibeCheckData.me;
-  const { questions } = questionnaireTicket;
-
-  const answers = questions.map(({ id, myAnswer }) => {
-    if (!myAnswer) {
-      return { questionId: id, text: '' };
-    }
-    return { questionId: id, text: myAnswer?.text };
-  });
-
-  const initialValues: AnswerQuestionsInput = {
-    questionnaireTicketId: questionnaireTicket.id,
-    answers,
-  };
 
   return (
     <>
@@ -81,34 +66,12 @@ const VibeCheck = () => {
         )}
       </Flex>
 
-      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        {({ dirty, isSubmitting, setFieldValue, values, resetForm }) => (
-          <Form>
-            {questions.map((question) => (
-              <Question
-                key={question.id}
-                question={question}
-                answers={values.answers}
-                setFieldValue={setFieldValue}
-                onBlur={() => {
-                  handleSaveProgress(values, dirty);
-                  resetForm();
-                }}
-              />
-            ))}
-
-            <Flex justifyContent="flex-end" paddingTop={0.25}>
-              <PrimaryActionButton
-                disabled={isSubmitting || answerQuestionsLoading || !dirty}
-                isLoading={isSubmitting || answerQuestionsLoading}
-                type="submit"
-              >
-                {t('actions.submit')}
-              </PrimaryActionButton>
-            </Flex>
-          </Form>
-        )}
-      </Formik>
+      <AnswerQuestionsForm
+        questionnaireTicket={questionnaireTicket}
+        isLoading={answerQuestionsLoading}
+        onSaveProgress={handleSaveProgress}
+        onSubmit={handleSubmit}
+      />
     </>
   );
 };

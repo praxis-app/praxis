@@ -2,10 +2,7 @@ query VibeCheck {
   me {
     id
     questionnaireTicket {
-      id
-      questions {
-        ...Question
-      }
+      ...AnswerQuestionsForm
     }
   }
 }
