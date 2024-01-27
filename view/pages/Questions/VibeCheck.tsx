@@ -1,3 +1,4 @@
+import { Sync } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -17,8 +18,10 @@ const VibeCheck = () => {
     error: vibeCheckError,
   } = useVibeCheckQuery();
 
-  const [answerQuestions, { error: answerQuestionsError }] =
-    useAnswerQuestionsMutation();
+  const [
+    answerQuestions,
+    { loading: answerQuestionsLoading, error: answerQuestionsError },
+  ] = useAnswerQuestionsMutation();
 
   const { t } = useTranslation();
 
@@ -59,9 +62,18 @@ const VibeCheck = () => {
 
   return (
     <>
-      <LevelOneHeading header>
-        {t('questions.labels.vibeCheck')}
-      </LevelOneHeading>
+      <Flex justifyContent="space-between" alignItems="center">
+        <LevelOneHeading header>
+          {t('questions.labels.vibeCheck')}
+        </LevelOneHeading>
+
+        {answerQuestionsLoading && (
+          <Typography alignSelf="start" paddingTop={0.3}>
+            <Sync sx={{ fontSize: 18, marginBottom: -0.3, marginRight: 0.8 }} />
+            {t('states.saving')}
+          </Typography>
+        )}
+      </Flex>
 
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
         {({ dirty, isSubmitting, setFieldValue, values }) => (
