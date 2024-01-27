@@ -29,7 +29,13 @@ const VibeCheck = () => {
     await answerQuestions({ variables: { answersData } });
   };
 
-  const handleSaveProgress = async (answersData: AnswerQuestionsInput) => {
+  const handleSaveProgress = async (
+    answersData: AnswerQuestionsInput,
+    dirty: boolean,
+  ) => {
+    if (!dirty) {
+      return;
+    }
     await answerQuestions({ variables: { answersData } });
   };
 
@@ -76,7 +82,7 @@ const VibeCheck = () => {
       </Flex>
 
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        {({ dirty, isSubmitting, setFieldValue, values }) => (
+        {({ dirty, isSubmitting, setFieldValue, values, resetForm }) => (
           <Form>
             {questions.map((question) => (
               <Question
@@ -84,14 +90,17 @@ const VibeCheck = () => {
                 question={question}
                 answers={values.answers}
                 setFieldValue={setFieldValue}
-                onBlur={() => handleSaveProgress(values)}
+                onBlur={() => {
+                  handleSaveProgress(values, dirty);
+                  resetForm();
+                }}
               />
             ))}
 
             <Flex justifyContent="flex-end" paddingTop={0.25}>
               <PrimaryActionButton
-                disabled={isSubmitting || !dirty}
-                isLoading={isSubmitting}
+                disabled={isSubmitting || answerQuestionsLoading || !dirty}
+                isLoading={isSubmitting || answerQuestionsLoading}
                 type="submit"
               >
                 {t('actions.submit')}
