@@ -7,7 +7,7 @@ import ProgressBar from '../../components/Shared/ProgressBar';
 import { AnswerQuestionsInput } from '../../graphql/gen';
 import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/gen/AnswerQuestions.gen';
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
-import AnswerQuestionsForm from './AnswerQuestionsForm';
+import AnswerQuestionsForm from '../../components/Questions/AnswerQuestionsForm';
 
 const VibeCheck = () => {
   const {

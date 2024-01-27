@@ -1,10 +1,10 @@
 import { Form, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import Question from '../../components/Questions/Question';
-import Flex from '../../components/Shared/Flex';
-import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import { AnswerQuestionsInput } from '../../graphql/gen';
 import { AnswerQuestionsFormFragment } from '../../graphql/questions/fragments/gen/AnswerQuestionsForm.gen';
+import Flex from '../Shared/Flex';
+import PrimaryActionButton from '../Shared/PrimaryActionButton';
+import Question from './Question';
 
 interface Props {
   questionnaireTicket: AnswerQuestionsFormFragment;
