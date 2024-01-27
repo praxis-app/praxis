@@ -13,12 +13,23 @@ import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { Answer } from './answer.model';
 
+enum QuestionnaireTicketStatus {
+  InProgress = 'in-progress',
+  Submitted = 'submitted',
+  Approved = 'approved',
+  Denied = 'denied',
+}
+
 @ObjectType()
 @Entity()
 export class QuestionnaireTicket {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ default: QuestionnaireTicketStatus.InProgress })
+  @Field()
+  status: string;
 
   @OneToMany(() => Answer, (answer) => answer.questionnaireTicket, {
     cascade: true,
