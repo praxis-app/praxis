@@ -8,7 +8,10 @@ import { AnswerQuestionsInput } from './models/answer-questions.input';
 import { Answer } from './models/answer.model';
 import { CreateQuestionInput } from './models/create-question.input';
 import { Question } from './models/question.model';
-import { QuestionnaireTicket } from './models/questionnaire-ticket.model';
+import {
+  QuestionnaireTicket,
+  QuestionnaireTicketStatus,
+} from './models/questionnaire-ticket.model';
 import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
 
@@ -137,6 +140,20 @@ export class QuestionsService {
       };
     });
     await this.anwersRepository.save(newAnswers);
+
+    // Mark as submitted if all questions have been answered
+    const questionCount = await this.questionRepository.count({
+      where: { groupId: IsNull() },
+    });
+    const answerCount = await this.anwersRepository.count({
+      where: { questionnaireTicketId },
+    });
+    if (questionCount === answerCount) {
+      await this.questionnaireTicketRepository.update(questionnaireTicketId, {
+        status: QuestionnaireTicketStatus.Submitted,
+      });
+    }
+
     return true;
   }
 

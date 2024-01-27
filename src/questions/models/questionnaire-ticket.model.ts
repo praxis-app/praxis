@@ -13,7 +13,7 @@ import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { Answer } from './answer.model';
 
-enum QuestionnaireTicketStatus {
+export enum QuestionnaireTicketStatus {
   InProgress = 'in-progress',
   Submitted = 'submitted',
   Approved = 'approved',
