@@ -1,0 +1,8 @@
+fragment AnswerQuestionsFormField on Question {
+  id
+  text
+  myAnswer {
+    id
+    text
+  }
+}

@@ -9,7 +9,7 @@ import {
 import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnswerInput } from '../../graphql/gen';
-import { QuestionFragment } from '../../graphql/questions/fragments/gen/Question.gen';
+import { AnswerQuestionsFormFieldFragment } from '../../graphql/questions/fragments/gen/AnswerQuestionsFormField.gen';
 
 const ANSWERS_FIELD_NAME = 'answers';
 
@@ -26,13 +26,13 @@ const CardContent = styled(MuiCardContent)(() => ({
 }));
 
 interface Props {
-  question: QuestionFragment;
+  question: AnswerQuestionsFormFieldFragment;
   setFieldValue(name: string, value: AnswerInput[]): void;
   answers: AnswerInput[];
   onBlur(): void;
 }
 
-const Question = ({
+const AnswerQuestionsFormField = ({
   question: { id, text },
   setFieldValue,
   answers,
@@ -78,4 +78,4 @@ const Question = ({
   );
 };
 
-export default Question;
+export default AnswerQuestionsFormField;

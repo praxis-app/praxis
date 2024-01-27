@@ -4,7 +4,7 @@ import { AnswerQuestionsInput } from '../../graphql/gen';
 import { AnswerQuestionsFormFragment } from '../../graphql/questions/fragments/gen/AnswerQuestionsForm.gen';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
-import Question from './Question';
+import AnswerQuestionsFormField from './AnswerQuestionsFormField';
 
 interface Props {
   questionnaireTicket: AnswerQuestionsFormFragment;
@@ -39,7 +39,7 @@ const AnswerQuestionsForm = ({
       {({ dirty, isSubmitting, setFieldValue, values, resetForm }) => (
         <Form>
           {questions.map((question) => (
-            <Question
+            <AnswerQuestionsFormField
               key={question.id}
               question={question}
               answers={values.answers}
