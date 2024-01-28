@@ -31,6 +31,7 @@ const AnswerQuestionsForm = ({
 
   const initialValues: AnswerQuestionsInput = {
     questionnaireTicketId: questionnaireTicket.id,
+    isSubmitting: false,
     answers,
   };
 
@@ -53,7 +54,7 @@ const AnswerQuestionsForm = ({
 
           <Flex justifyContent="flex-end" paddingTop={0.25}>
             <PrimaryActionButton
-              disabled={isSubmitting || isLoading || !dirty}
+              disabled={isSubmitting || isLoading}
               isLoading={isSubmitting || isLoading}
               type="submit"
             >

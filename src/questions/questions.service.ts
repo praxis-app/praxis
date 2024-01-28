@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
+import { FindOptionsWhere, IsNull, Not, Repository } from 'typeorm';
 import { sanitizeText } from '../common/common.utils';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
@@ -115,7 +115,7 @@ export class QuestionsService {
   }
 
   async answerQuestions(
-    { questionnaireTicketId, answers }: AnswerQuestionsInput,
+    { questionnaireTicketId, answers, isSubmitting }: AnswerQuestionsInput,
     user: User,
   ) {
     const count = await this.questionnaireTicketRepository.count({
@@ -146,15 +146,20 @@ export class QuestionsService {
       where: { groupId: IsNull() },
     });
     const answerCount = await this.anwersRepository.count({
-      where: { questionnaireTicketId },
+      where: { questionnaireTicketId, text: Not('') },
     });
-    if (questionCount === answerCount) {
+    if (questionCount === answerCount && isSubmitting) {
       await this.questionnaireTicketRepository.update(questionnaireTicketId, {
         status: QuestionnaireTicketStatus.Submitted,
       });
     }
 
-    return true;
+    const questionnaireTicket =
+      await this.questionnaireTicketRepository.findOneOrFail({
+        where: { id: questionnaireTicketId },
+      });
+
+    return { questionnaireTicket };
   }
 
   // TODO: Add support for group questions

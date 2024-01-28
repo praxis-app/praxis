@@ -10,6 +10,7 @@ import {
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { User } from '../../users/models/user.model';
 import { AnswerQuestionsInput } from '../models/answer-questions.input';
+import { AnswerQuestionsPayload } from '../models/answer-questions.payload';
 import { Answer } from '../models/answer.model';
 import { CreateQuestionInput } from '../models/create-question.input';
 import { CreateQuestionPayload } from '../models/create-question.payload';
@@ -72,7 +73,7 @@ export class QuestionsResolver {
     return this.questionsService.updateQuestionsPriority(questionsData);
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => AnswerQuestionsPayload)
   async answerQuestions(
     @Args('answersData') answersData: AnswerQuestionsInput,
     @CurrentUser() user: User,

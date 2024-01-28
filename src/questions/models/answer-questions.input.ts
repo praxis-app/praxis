@@ -16,4 +16,7 @@ export class AnswerQuestionsInput {
 
   @Field(() => [AnswerInput])
   answers: AnswerInput[];
+
+  @Field()
+  isSubmitting: boolean;
 }

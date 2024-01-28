@@ -1,6 +1,8 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { AnswerQuestionsFormFragmentDoc } from '../../fragments/gen/AnswerQuestionsForm.gen';
+import { AnsweredQuestionsFragmentDoc } from '../../fragments/gen/AnsweredQuestions.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -13,13 +15,35 @@ export type AnswerQuestionsMutationVariables = Types.Exact<{
 
 export type AnswerQuestionsMutation = {
   __typename?: 'Mutation';
-  answerQuestions: boolean;
+  answerQuestions: {
+    __typename?: 'AnswerQuestionsPayload';
+    questionnaireTicket: {
+      __typename?: 'QuestionnaireTicket';
+      status: string;
+      id: number;
+      questions: Array<{
+        __typename?: 'Question';
+        id: number;
+        text: string;
+        priority: number;
+        myAnswer?: { __typename?: 'Answer'; id: number; text: string } | null;
+      }>;
+    };
+  };
 };
 
 export const AnswerQuestionsDocument = gql`
   mutation AnswerQuestions($answersData: AnswerQuestionsInput!) {
-    answerQuestions(answersData: $answersData)
+    answerQuestions(answersData: $answersData) {
+      questionnaireTicket {
+        ...AnswerQuestionsForm
+        ...AnsweredQuestions
+        status
+      }
+    }
   }
+  ${AnswerQuestionsFormFragmentDoc}
+  ${AnsweredQuestionsFragmentDoc}
 `;
 export type AnswerQuestionsMutationFn = Apollo.MutationFunction<
   AnswerQuestionsMutation,

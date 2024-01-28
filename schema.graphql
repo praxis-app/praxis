@@ -576,6 +576,10 @@ type UpdateRulePayload {
   rule: Rule!
 }
 
+type AnswerQuestionsPayload {
+  questionnaireTicket: QuestionnaireTicket!
+}
+
 type CreateQuestionPayload {
   question: Question!
 }
@@ -691,7 +695,7 @@ type Mutation {
   createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
   updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
   updateQuestionsPriority(questionsData: UpdateQuestionsPriorityInput!): Boolean!
-  answerQuestions(answersData: AnswerQuestionsInput!): Boolean!
+  answerQuestions(answersData: AnswerQuestionsInput!): AnswerQuestionsPayload!
   deleteQuestion(id: Int!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
@@ -1004,6 +1008,7 @@ input UpdateQuestionPriorityInput {
 input AnswerQuestionsInput {
   questionnaireTicketId: Int!
   answers: [AnswerInput!]!
+  isSubmitting: Boolean!
 }
 
 input AnswerInput {

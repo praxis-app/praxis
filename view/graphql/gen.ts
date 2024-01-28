@@ -45,7 +45,13 @@ export type AnswerInput = {
 
 export type AnswerQuestionsInput = {
   answers: Array<AnswerInput>;
+  isSubmitting: Scalars['Boolean']['input'];
   questionnaireTicketId: Scalars['Int']['input'];
+};
+
+export type AnswerQuestionsPayload = {
+  __typename?: 'AnswerQuestionsPayload';
+  questionnaireTicket: QuestionnaireTicket;
 };
 
 export type ApproveGroupMemberRequestPayload = {
@@ -460,7 +466,7 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  answerQuestions: Scalars['Boolean']['output'];
+  answerQuestions: AnswerQuestionsPayload;
   approveGroupMemberRequest: ApproveGroupMemberRequestPayload;
   cancelGroupMemberRequest: Scalars['Boolean']['output'];
   clearNotifications: Scalars['Boolean']['output'];

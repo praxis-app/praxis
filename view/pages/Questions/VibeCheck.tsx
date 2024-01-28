@@ -26,7 +26,11 @@ const VibeCheck = () => {
   const { t } = useTranslation();
 
   const handleSubmit = async (answersData: AnswerQuestionsInput) => {
-    await answerQuestions({ variables: { answersData } });
+    await answerQuestions({
+      variables: {
+        answersData: { ...answersData, isSubmitting: true },
+      },
+    });
   };
 
   const handleSaveProgress = async (

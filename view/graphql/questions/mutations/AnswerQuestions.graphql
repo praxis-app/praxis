@@ -1,3 +1,9 @@
 mutation AnswerQuestions($answersData: AnswerQuestionsInput!) {
-  answerQuestions(answersData: $answersData)
+  answerQuestions(answersData: $answersData) {
+    questionnaireTicket {
+      ...AnswerQuestionsForm
+      ...AnsweredQuestions
+      status
+    }
+  }
 }
