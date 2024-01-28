@@ -13,6 +13,7 @@ type ServerConfig {
   id: Int!
   securityTxt: String
   showCanaryStatement: Boolean!
+  serverQuestionsPrompt: String
 }
 
 type EventAttendee {
@@ -984,6 +985,7 @@ input UpdateServerConfigInput {
   canaryStatement: String
   showCanaryStatement: Boolean
   securityTxt: String
+  serverQuestionsPrompt: String
 }
 
 input CreateQuestionInput {

@@ -10,6 +10,7 @@ import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import { TextField } from '../Shared/TextField';
 
 enum ServerSettingsFormFields {
+  ServerQuestionsPrompt = 'serverQuestionsPrompt',
   CanaryStatement = 'canaryStatement',
   ShowCanaryStatement = 'showCanaryStatement',
   SecurityText = 'securityTxt',
@@ -31,6 +32,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
   const initialValues: FormValues = {
     showCanaryStatement: serverSettings.showCanaryStatement,
     securityTxt: serverSettings.securityTxt,
+    serverQuestionsPrompt: serverSettings.serverQuestionsPrompt,
     canaryStatement,
   };
 
@@ -66,6 +68,15 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
       {({ dirty, isSubmitting, handleChange, values }) => (
         <Form>
           <FormGroup sx={{ marginBottom: 1.5 }}>
+            <TextField
+              autoComplete="off"
+              value={values.serverQuestionsPrompt || ''}
+              label={t('serverSettings.placeholders.serverQuestionsPrompt')}
+              name={ServerSettingsFormFields.ServerQuestionsPrompt}
+              sx={{ marginBottom: 1.5 }}
+              multiline
+            />
+
             <Flex justifyContent="space-between" marginBottom={2}>
               <Box>
                 <Typography>

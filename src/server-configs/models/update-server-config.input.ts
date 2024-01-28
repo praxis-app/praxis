@@ -13,4 +13,7 @@ export class UpdateServerConfigInput {
 
   @Field({ nullable: true })
   securityTxt?: string;
+
+  @Field({ nullable: true })
+  serverQuestionsPrompt?: string;
 }

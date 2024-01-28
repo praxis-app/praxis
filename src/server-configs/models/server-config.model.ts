@@ -22,6 +22,10 @@ export class ServerConfig {
   @Field()
   showCanaryStatement: boolean;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  serverQuestionsPrompt?: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

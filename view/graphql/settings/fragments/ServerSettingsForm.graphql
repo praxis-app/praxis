@@ -1,5 +1,6 @@
 fragment ServerSettingsForm on ServerConfig {
   id
+  serverQuestionsPrompt
   showCanaryStatement
   securityTxt
 }
