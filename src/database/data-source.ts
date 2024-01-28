@@ -22,7 +22,7 @@ import { ProposalActionPermission } from '../proposals/proposal-actions/models/p
 import { ProposalActionRoleMember } from '../proposals/proposal-actions/models/proposal-action-role-member.model';
 import { ProposalActionRole } from '../proposals/proposal-actions/models/proposal-action-role.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
-import { ServerConfig } from '../server-configs/models/server-configs.model';
+import { ServerConfig } from '../server-configs/models/server-config.model';
 import { ServerInvite } from '../server-invites/models/server-invite.model';
 import { ServerRolePermission } from '../server-roles/models/server-role-permission.model';
 import { ServerRole } from '../server-roles/models/server-role.model';

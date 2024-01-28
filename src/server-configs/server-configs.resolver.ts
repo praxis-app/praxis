@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { ServerConfig } from './models/server-configs.model';
+import { ServerConfig } from './models/server-config.model';
 import { UpdateServerConfigInput } from './models/update-server-config.input';
 import { UpdateServerConfigPayload } from './models/update-server-config.payload';
 import { ServerConfigsService } from './server-configs.service';

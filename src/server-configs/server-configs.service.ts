@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CanariesService } from '../canaries/canaries.service';
 import { sanitizeText } from '../common/common.utils';
-import { ServerConfig } from './models/server-configs.model';
+import { ServerConfig } from './models/server-config.model';
 import { UpdateServerConfigInput } from './models/update-server-config.input';
 
 @Injectable()
