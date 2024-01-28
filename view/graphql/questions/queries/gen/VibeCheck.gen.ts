@@ -17,6 +17,7 @@ export type VibeCheckQuery = {
     id: number;
     questionnaireTicket: {
       __typename?: 'QuestionnaireTicket';
+      status: string;
       id: number;
       questions: Array<{
         __typename?: 'Question';
@@ -34,6 +35,7 @@ export const VibeCheckDocument = gql`
       id
       questionnaireTicket {
         ...AnswerQuestionsForm
+        status
       }
     }
   }

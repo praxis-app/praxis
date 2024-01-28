@@ -1109,6 +1109,7 @@ export type QuestionnaireTicket = {
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   questions: Array<Question>;
+  status: Scalars['String']['output'];
   user: User;
   votes: Array<Vote>;
 };

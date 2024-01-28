@@ -1,13 +1,14 @@
 import { Sync } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import AnswerQuestionsForm from '../../components/Questions/AnswerQuestionsForm';
 import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { QuestionnaireTicketStatus } from '../../constants/question.constants';
 import { AnswerQuestionsInput } from '../../graphql/gen';
 import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/gen/AnswerQuestions.gen';
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
-import AnswerQuestionsForm from '../../components/Questions/AnswerQuestionsForm';
 
 const VibeCheck = () => {
   const {
@@ -50,6 +51,7 @@ const VibeCheck = () => {
   }
 
   const { questionnaireTicket } = vibeCheckData.me;
+  const { status } = questionnaireTicket;
 
   return (
     <>
@@ -66,12 +68,14 @@ const VibeCheck = () => {
         )}
       </Flex>
 
-      <AnswerQuestionsForm
-        questionnaireTicket={questionnaireTicket}
-        isLoading={answerQuestionsLoading}
-        onSaveProgress={handleSaveProgress}
-        onSubmit={handleSubmit}
-      />
+      {status === QuestionnaireTicketStatus.InProgress && (
+        <AnswerQuestionsForm
+          questionnaireTicket={questionnaireTicket}
+          isLoading={answerQuestionsLoading}
+          onSaveProgress={handleSaveProgress}
+          onSubmit={handleSubmit}
+        />
+      )}
     </>
   );
 };
