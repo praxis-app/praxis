@@ -26,15 +26,16 @@ export enum NavigationPaths {
   Home = '/',
   Invites = '/invites',
   LogIn = '/auth/login',
-  ManageQuestions = '/questions/manage',
   Posts = '/posts',
   Proposals = '/proposals',
   Roles = '/roles',
   Rules = '/rules',
+  ServerQuestionnaires = '/questionnaires',
+  ServerQuestions = '/questions',
   ServerSettings = '/settings',
   SignUp = '/auth/signup',
   Users = '/users',
-  VibeCheck = '/questions',
+  VibeCheck = '/vibe-check',
 }
 
 export enum TypeNames {

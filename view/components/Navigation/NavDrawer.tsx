@@ -6,6 +6,7 @@ import {
   EventNote,
   HowToReg,
   Link as InvitesIcon,
+  QuestionAnswer,
   Rule,
   ExitToApp as SessionIcon,
   Settings,
@@ -197,7 +198,16 @@ const NavDrawer = () => {
         )}
 
         <ListItemButton
-          onClick={handleLinkClick(NavigationPaths.ManageQuestions)}
+          onClick={handleLinkClick(NavigationPaths.ServerQuestionnaires)}
+        >
+          <ListItemIcon>
+            <QuestionAnswer />
+          </ListItemIcon>
+          <ListItemText primary={t('questions.labels.questionnaires')} />
+        </ListItemButton>
+
+        <ListItemButton
+          onClick={handleLinkClick(NavigationPaths.ServerQuestions)}
         >
           <ListItemIcon>
             <HowToReg />

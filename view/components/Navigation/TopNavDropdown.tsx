@@ -3,6 +3,7 @@ import {
   ExitToApp,
   HowToReg,
   Person,
+  QuestionAnswer,
   Settings,
 } from '@mui/icons-material';
 import { Menu, MenuItem, SvgIconProps } from '@mui/material';
@@ -92,7 +93,12 @@ const TopNavDropdown = ({
         </MenuItem>
       )}
 
-      <MenuItem onClick={() => navigate(NavigationPaths.ManageQuestions)}>
+      <MenuItem onClick={() => navigate(NavigationPaths.ServerQuestionnaires)}>
+        <QuestionAnswer {...ICON_PROPS} />
+        {t('questions.labels.questionnaires')}
+      </MenuItem>
+
+      <MenuItem onClick={() => navigate(NavigationPaths.ServerQuestions)}>
         <HowToReg {...ICON_PROPS} />
         {t('questions.labels.questions')}
       </MenuItem>

@@ -633,6 +633,7 @@
     "labels": {
       "membershipQuestions": "Membership Questions",
       "questions": "Questions",
+      "questionnaires": "Questionnaires",
       "serverQuestions": "Server Questions",
       "vibeCheck": "Vibe Check",
       "answer": "Answer"
