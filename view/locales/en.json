@@ -642,7 +642,8 @@
       "questionPriority": "Question {{priority}}"
     },
     "errors": {
-      "missingText": "Question text cannot be empty"
+      "missingText": "Question text cannot be empty",
+      "missingAnswer": "Answer cannot be empty"
     },
     "placeholders": {
       "text": "Question text",

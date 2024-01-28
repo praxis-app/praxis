@@ -29,6 +29,7 @@ interface Props {
   question: AnswerQuestionsFormFieldFragment;
   setFieldValue(name: string, value: AnswerInput[]): void;
   answers: AnswerInput[];
+  error?: string;
   onBlur(): void;
 }
 
@@ -36,6 +37,7 @@ const AnswerQuestionsFormField = ({
   question: { id, text },
   setFieldValue,
   answers,
+  error,
   onBlur,
 }: Props) => {
   const { t } = useTranslation();
@@ -70,9 +72,16 @@ const AnswerQuestionsFormField = ({
           onChange={handleTextFieldChange}
           sx={{ width: '100%' }}
           variant="outlined"
+          error={!!error}
           onBlur={onBlur}
           multiline
         />
+
+        {error && (
+          <Typography color="error" fontSize={12} paddingTop={0.5}>
+            {error}
+          </Typography>
+        )}
       </CardContent>
     </Card>
   );

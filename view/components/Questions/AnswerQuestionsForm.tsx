@@ -1,4 +1,5 @@
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikErrors } from 'formik';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnswerQuestionsInput } from '../../graphql/gen';
 import { AnswerQuestionsFormFragment } from '../../graphql/questions/fragments/gen/AnswerQuestionsForm.gen';
@@ -19,6 +20,8 @@ const AnswerQuestionsForm = ({
   onSubmit,
   onSaveProgress,
 }: Props) => {
+  const [errorsMap, setErrorsMap] = useState<Record<number, string>>({});
+
   const { t } = useTranslation();
 
   const { questions } = questionnaireTicket;
@@ -35,9 +38,42 @@ const AnswerQuestionsForm = ({
     answers,
   };
 
+  const validate = ({ answers }: AnswerQuestionsInput) => {
+    const errors: FormikErrors<AnswerQuestionsInput> = {};
+
+    for (const answer of answers) {
+      if (!answer.text.trim()) {
+        setErrorsMap((prevErrorsMap) => ({
+          ...prevErrorsMap,
+          [answer.questionId]: t('questions.errors.missingAnswer'),
+        }));
+        errors.answers = t('questions.errors.missingAnswer');
+      } else {
+        setErrorsMap((prevErrorsMap) => ({
+          ...prevErrorsMap,
+          [answer.questionId]: '',
+        }));
+      }
+    }
+
+    return errors;
+  };
+
   return (
-    <Formik initialValues={initialValues} onSubmit={onSubmit}>
-      {({ dirty, isSubmitting, setFieldValue, values, resetForm }) => (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      validate={validate}
+      enableReinitialize
+    >
+      {({
+        dirty,
+        isSubmitting,
+        resetForm,
+        setFieldValue,
+        submitCount,
+        values,
+      }) => (
         <Form>
           {questions.map((question) => (
             <AnswerQuestionsFormField
@@ -45,6 +81,7 @@ const AnswerQuestionsForm = ({
               question={question}
               answers={values.answers}
               setFieldValue={setFieldValue}
+              error={submitCount ? errorsMap[question.id] : undefined}
               onBlur={() => {
                 onSaveProgress(values, dirty);
                 resetForm();
