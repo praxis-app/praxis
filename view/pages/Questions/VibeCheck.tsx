@@ -1,5 +1,4 @@
-import { Sync } from '@mui/icons-material';
-import { Typography } from '@mui/material';
+import { CircularProgress, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AnswerQuestionsForm from '../../components/Questions/AnswerQuestionsForm';
@@ -91,7 +90,7 @@ const VibeCheck = () => {
 
         {answerQuestionsLoading && (
           <Typography alignSelf="start" paddingTop={0.3}>
-            <Sync sx={{ fontSize: 18, marginBottom: -0.3, marginRight: 0.8 }} />
+            <CircularProgress size={12} sx={{ marginRight: 1 }} />
             {t('states.saving')}
           </Typography>
         )}
