@@ -1,5 +1,5 @@
-import { Form, Formik, FormikErrors } from 'formik';
-import { useState } from 'react';
+import { Form, Formik } from 'formik';
+import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnswerQuestionsInput } from '../../graphql/gen';
 import { AnswerQuestionsFormFragment } from '../../graphql/questions/fragments/gen/AnswerQuestionsForm.gen';
@@ -8,10 +8,12 @@ import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import AnswerQuestionsFormField from './AnswerQuestionsFormField';
 
 interface Props {
+  errorsMap: Record<number, string>;
+  setErrorsMap: Dispatch<SetStateAction<Record<number, string>>>;
+  onSaveProgress(answersData: AnswerQuestionsInput, dirty: boolean): void;
+  onSubmit(answersData: AnswerQuestionsInput): void;
   questionnaireTicket: AnswerQuestionsFormFragment;
   isLoading: boolean;
-  onSubmit(answersData: AnswerQuestionsInput): void;
-  onSaveProgress(answersData: AnswerQuestionsInput, dirty: boolean): void;
 }
 
 const AnswerQuestionsForm = ({
@@ -19,9 +21,9 @@ const AnswerQuestionsForm = ({
   isLoading,
   onSubmit,
   onSaveProgress,
+  errorsMap,
+  setErrorsMap,
 }: Props) => {
-  const [errorsMap, setErrorsMap] = useState<Record<number, string>>({});
-
   const { t } = useTranslation();
 
   const { questions } = questionnaireTicket;
@@ -39,15 +41,12 @@ const AnswerQuestionsForm = ({
   };
 
   const validate = ({ answers }: AnswerQuestionsInput) => {
-    const errors: FormikErrors<AnswerQuestionsInput> = {};
-
     for (const answer of answers) {
       if (!answer.text.trim()) {
         setErrorsMap((prevErrorsMap) => ({
           ...prevErrorsMap,
           [answer.questionId]: t('questions.errors.missingAnswer'),
         }));
-        errors.answers = t('questions.errors.missingAnswer');
       } else {
         setErrorsMap((prevErrorsMap) => ({
           ...prevErrorsMap,
@@ -55,8 +54,6 @@ const AnswerQuestionsForm = ({
         }));
       }
     }
-
-    return errors;
   };
 
   return (

@@ -1,5 +1,6 @@
 import { Sync } from '@mui/icons-material';
 import { Typography } from '@mui/material';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AnswerQuestionsForm from '../../components/Questions/AnswerQuestionsForm';
 import AnsweredQuestions from '../../components/Questions/AnsweredQuestions';
@@ -13,6 +14,8 @@ import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/ge
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
 
 const VibeCheck = () => {
+  const [errorsMap, setErrorsMap] = useState<Record<number, string>>({});
+
   const {
     data: vibeCheckData,
     loading: vibeCheckLoading,
@@ -25,6 +28,9 @@ const VibeCheck = () => {
   const { t } = useTranslation();
 
   const handleSubmit = async (answersData: AnswerQuestionsInput) => {
+    if (Object.values(errorsMap).some((error) => error)) {
+      return;
+    }
     await answerQuestions({
       variables: {
         answersData: { ...answersData, isSubmitting: true },
@@ -93,6 +99,8 @@ const VibeCheck = () => {
           questionnaireTicket={questionnaireTicket}
           isLoading={answerQuestionsLoading}
           onSaveProgress={handleSaveProgress}
+          setErrorsMap={setErrorsMap}
+          errorsMap={errorsMap}
           onSubmit={handleSubmit}
         />
       )}
