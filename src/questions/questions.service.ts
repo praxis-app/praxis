@@ -118,12 +118,18 @@ export class QuestionsService {
     { questionnaireTicketId, answers, isSubmitting }: AnswerQuestionsInput,
     user: User,
   ) {
+    const hasEmptyAnswers = answers.some((answer) => !answer.text.trim());
+    if (isSubmitting && hasEmptyAnswers) {
+      throw new Error('Empty answers are not allowed');
+    }
+
     const count = await this.questionnaireTicketRepository.count({
       where: { id: questionnaireTicketId, userId: user.id },
     });
     if (!count) {
       throw new Error('Questionnaire ticket not found');
     }
+
     const existingAnswers = await this.anwersRepository.find({
       where: { questionnaireTicketId },
     });

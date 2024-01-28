@@ -25,7 +25,7 @@ export const logTime = (label: string, logger: Logger) => {
  * Strip all HTML tags from a string
  */
 export const sanitizeText = (dirty?: string) =>
-  sanitizeHtml(dirty || '', { allowedTags: [] });
+  sanitizeHtml(dirty?.trim() || '', { allowedTags: [] });
 
 export const paginate = <T extends { createdAt: Date }>(
   array: T[],

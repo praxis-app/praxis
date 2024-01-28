@@ -7,6 +7,7 @@ import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { QuestionnaireTicketStatus } from '../../constants/question.constants';
+import { toastVar } from '../../graphql/cache';
 import { AnswerQuestionsInput } from '../../graphql/gen';
 import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/gen/AnswerQuestions.gen';
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
@@ -18,10 +19,8 @@ const VibeCheck = () => {
     error: vibeCheckError,
   } = useVibeCheckQuery();
 
-  const [
-    answerQuestions,
-    { loading: answerQuestionsLoading, error: answerQuestionsError },
-  ] = useAnswerQuestionsMutation();
+  const [answerQuestions, { loading: answerQuestionsLoading }] =
+    useAnswerQuestionsMutation();
 
   const { t } = useTranslation();
 
@@ -29,6 +28,12 @@ const VibeCheck = () => {
     await answerQuestions({
       variables: {
         answersData: { ...answersData, isSubmitting: true },
+      },
+      onError(err) {
+        toastVar({
+          status: 'error',
+          title: err.message,
+        });
       },
     });
   };
@@ -40,10 +45,20 @@ const VibeCheck = () => {
     if (!dirty) {
       return;
     }
-    await answerQuestions({ variables: { answersData } });
+    await answerQuestions({
+      variables: {
+        answersData,
+      },
+      onError(err) {
+        toastVar({
+          status: 'error',
+          title: err.message,
+        });
+      },
+    });
   };
 
-  if (vibeCheckError || answerQuestionsError) {
+  if (vibeCheckError) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
