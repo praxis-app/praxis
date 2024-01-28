@@ -11,6 +11,11 @@ import { QuestionsService } from '../questions.service';
 export class QuestionnaireTicketsResolver {
   constructor(private questionsService: QuestionsService) {}
 
+  @ResolveField(() => String, { nullable: true })
+  async prompt(@Parent() { groupId }: QuestionnaireTicket) {
+    return this.questionsService.getQuestionnairePrompt(groupId);
+  }
+
   @ResolveField(() => [Question])
   async questions(@Parent() { groupId }: QuestionnaireTicket) {
     return this.questionsService.getQuestionnaireTicketQuestions(groupId);

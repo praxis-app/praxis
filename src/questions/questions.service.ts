@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, IsNull, Not, Repository } from 'typeorm';
 import { sanitizeText } from '../common/common.utils';
+import { ServerConfigsService } from '../server-configs/server-configs.service';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 import { AnswerQuestionsInput } from './models/answer-questions.input';
@@ -29,6 +30,8 @@ export class QuestionsService {
 
     @InjectRepository(Vote)
     private votesRepository: Repository<Vote>,
+
+    private serverConfigsService: ServerConfigsService,
   ) {}
 
   async getServerQuestions() {
@@ -40,6 +43,17 @@ export class QuestionsService {
 
   async getAnswer(where?: FindOptionsWhere<Answer>) {
     return this.anwersRepository.findOne({ where });
+  }
+
+  // TODO: Add support for group questions
+  async getQuestionnairePrompt(groupId?: number) {
+    if (groupId) {
+      throw new Error('Group questions are not supported yet');
+    }
+    const { serverQuestionsPrompt } =
+      await this.serverConfigsService.getServerConfig();
+
+    return serverQuestionsPrompt;
   }
 
   async getQuestionnaireTicketQuestions(groupId?: number) {

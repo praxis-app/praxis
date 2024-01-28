@@ -41,6 +41,7 @@ type Answer {
 type QuestionnaireTicket {
   id: Int!
   status: String!
+  prompt: String
   questions: [Question!]!
   answers: [Answer!]!
   votes: [Vote!]!

@@ -97,25 +97,34 @@ const VibeCheck = () => {
       </Flex>
 
       {status === QuestionnaireTicketStatus.InProgress && (
-        <AnswerQuestionsForm
-          questionnaireTicket={questionnaireTicket}
-          isLoading={answerQuestionsLoading}
-          onSaveProgress={handleSaveProgress}
-          setErrorsMap={setErrorsMap}
-          errorsMap={errorsMap}
-          onSubmit={handleSubmit}
-        />
+        <>
+          {questionnaireTicket.prompt && (
+            <Card>
+              <CardContent sx={{ '&:last-child': { paddingBottom: 2 } }}>
+                <Typography>{questionnaireTicket.prompt}</Typography>
+              </CardContent>
+            </Card>
+          )}
+
+          <AnswerQuestionsForm
+            questionnaireTicket={questionnaireTicket}
+            isLoading={answerQuestionsLoading}
+            onSaveProgress={handleSaveProgress}
+            setErrorsMap={setErrorsMap}
+            errorsMap={errorsMap}
+            onSubmit={handleSubmit}
+          />
+        </>
       )}
 
       {status === QuestionnaireTicketStatus.Submitted && (
         <>
           <Card>
             <CardContent sx={{ '&:last-child': { paddingBottom: 2 } }}>
-              <Typography fontSize="18px" fontFamily="Inter Medium">
-                {t('questions.prompts.waitForResults')}
-              </Typography>
+              <Typography>{t('questions.prompts.waitForResults')}</Typography>
             </CardContent>
           </Card>
+
           <AnsweredQuestions questionnaireTicket={questionnaireTicket} />
         </>
       )}

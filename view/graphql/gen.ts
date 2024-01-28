@@ -1114,6 +1114,7 @@ export type QuestionnaireTicket = {
   answers: Array<Answer>;
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
+  prompt?: Maybe<Scalars['String']['output']>;
   questions: Array<Question>;
   status: Scalars['String']['output'];
   user: User;

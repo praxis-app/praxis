@@ -5,6 +5,7 @@ query VibeCheck {
       ...AnswerQuestionsForm
       ...AnsweredQuestions
       status
+      prompt
     }
   }
 }

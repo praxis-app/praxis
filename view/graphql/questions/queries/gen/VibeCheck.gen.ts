@@ -19,6 +19,7 @@ export type VibeCheckQuery = {
     questionnaireTicket: {
       __typename?: 'QuestionnaireTicket';
       status: string;
+      prompt?: string | null;
       id: number;
       questions: Array<{
         __typename?: 'Question';
@@ -39,6 +40,7 @@ export const VibeCheckDocument = gql`
         ...AnswerQuestionsForm
         ...AnsweredQuestions
         status
+        prompt
       }
     }
   }
