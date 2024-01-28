@@ -1,0 +1,5 @@
+query QuestionnairePage($questionnaireTicketId: Int!) {
+  questionnaireTicket(questionnaireTicketId: $questionnaireTicketId) {
+    ...QuestionnaireTicket
+  }
+}

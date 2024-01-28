@@ -41,6 +41,8 @@ type Answer {
 type QuestionnaireTicket {
   id: Int!
   status: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   prompt: String
   questions: [Question!]!
   answers: [Answer!]!
@@ -631,6 +633,8 @@ type Query {
   canary: Canary!
   publicCanary: Canary
   serverConfig: ServerConfig!
+  questionnaireTicket(questionnaireTicketId: Int!): QuestionnaireTicket!
+  serverQuestionnaireTickets: [QuestionnaireTicket!]!
   serverQuestions: [Question!]!
 }
 

@@ -1,4 +1,11 @@
-import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Int,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { Group } from '../../groups/models/group.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
@@ -10,6 +17,19 @@ import { QuestionsService } from '../questions.service';
 @Resolver(() => QuestionnaireTicket)
 export class QuestionnaireTicketsResolver {
   constructor(private questionsService: QuestionsService) {}
+
+  @Query(() => QuestionnaireTicket)
+  async questionnaireTicket(
+    @Args('questionnaireTicketId', { type: () => Int })
+    questionnaireTicketId: number,
+  ) {
+    return this.questionsService.getQuestionnaireTicket(questionnaireTicketId);
+  }
+
+  @Query(() => [QuestionnaireTicket])
+  async serverQuestionnaireTickets() {
+    return this.questionsService.getServerQuestionnaireTickets();
+  }
 
   @ResolveField(() => String, { nullable: true })
   async prompt(@Parent() { groupId }: QuestionnaireTicket) {

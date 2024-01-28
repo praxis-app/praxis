@@ -41,6 +41,18 @@ export class QuestionsService {
     });
   }
 
+  async getQuestionnaireTicket(questionnaireTicketId: number) {
+    return this.questionnaireTicketRepository.findOneOrFail({
+      where: { id: questionnaireTicketId },
+    });
+  }
+
+  async getServerQuestionnaireTickets() {
+    return this.questionnaireTicketRepository.find({
+      where: { groupId: IsNull() },
+    });
+  }
+
   async getAnswer(where?: FindOptionsWhere<Answer>) {
     return this.anwersRepository.findOne({ where });
   }

@@ -58,8 +58,10 @@ export class QuestionnaireTicket {
   groupId?: number;
 
   @CreateDateColumn()
+  @Field()
   createdAt: Date;
 
   @UpdateDateColumn()
+  @Field()
   updatedAt: Date;
 }

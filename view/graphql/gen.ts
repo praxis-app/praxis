@@ -1006,9 +1006,11 @@ export type Query = {
   publicGroups: Array<Group>;
   publicGroupsCount: Scalars['Int']['output'];
   publicGroupsFeed: PublicFeedItemsConnection;
+  questionnaireTicket: QuestionnaireTicket;
   serverConfig: ServerConfig;
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;
+  serverQuestionnaireTickets: Array<QuestionnaireTicket>;
   serverQuestions: Array<Question>;
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
@@ -1074,6 +1076,10 @@ export type QueryPublicGroupsFeedArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type QueryQuestionnaireTicketArgs = {
+  questionnaireTicketId: Scalars['Int']['input'];
+};
+
 export type QueryServerInviteArgs = {
   token: Scalars['String']['input'];
 };
@@ -1112,11 +1118,13 @@ export type QuestionAnswerArgs = {
 export type QuestionnaireTicket = {
   __typename?: 'QuestionnaireTicket';
   answers: Array<Answer>;
+  createdAt: Scalars['DateTime']['output'];
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   prompt?: Maybe<Scalars['String']['output']>;
   questions: Array<Question>;
   status: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
   user: User;
   votes: Array<Vote>;
 };

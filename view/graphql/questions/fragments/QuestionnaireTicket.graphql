@@ -1,0 +1,21 @@
+fragment QuestionnaireTicket on QuestionnaireTicket {
+  id
+  status
+
+  questions {
+    id
+    text
+    priority
+    answer(questionnaireTicketId: $questionnaireTicketId) {
+      id
+      text
+    }
+  }
+
+  user {
+    ...UserAvatar
+  }
+  votes {
+    ...Vote
+  }
+}

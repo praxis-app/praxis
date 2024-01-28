@@ -14,6 +14,7 @@ interface Props extends BoxProps {
   size?: number;
   user?: UserAvatarFragment;
   withLink?: boolean;
+  href?: string;
 }
 
 const UserAvatar = ({
@@ -23,6 +24,7 @@ const UserAvatar = ({
   sx,
   user,
   withLink,
+  href,
   ...avatarProps
 }: Props) => {
   const { data } = useMeQuery({ skip: !!user });
@@ -66,7 +68,7 @@ const UserAvatar = ({
 
   if (withLink) {
     return (
-      <Link href={userProfilePath} sx={linkStyles}>
+      <Link href={href || userProfilePath} sx={linkStyles}>
         {renderAvatar()}
       </Link>
     );

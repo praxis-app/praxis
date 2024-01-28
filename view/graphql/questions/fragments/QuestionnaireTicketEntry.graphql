@@ -1,0 +1,12 @@
+fragment QuestionnaireTicketEntry on QuestionnaireTicket {
+  id
+  status
+  createdAt
+
+  user {
+    ...UserAvatar
+  }
+  votes {
+    ...Vote
+  }
+}
