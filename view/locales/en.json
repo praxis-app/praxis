@@ -648,6 +648,9 @@
     "placeholders": {
       "text": "Question text",
       "writeAnswer": "Write your answer..."
+    },
+    "prompts": {
+      "confirmSubmit": "Are you sure you want to submit your answers?"
     }
   },
 

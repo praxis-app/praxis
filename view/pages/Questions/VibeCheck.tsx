@@ -31,6 +31,9 @@ const VibeCheck = () => {
     if (Object.values(errorsMap).some((error) => error)) {
       return;
     }
+    if (!window.confirm(t('questions.prompts.confirmSubmit'))) {
+      return;
+    }
     await answerQuestions({
       variables: {
         answersData: { ...answersData, isSubmitting: true },
