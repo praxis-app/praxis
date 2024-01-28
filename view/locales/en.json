@@ -650,7 +650,8 @@
       "writeAnswer": "Write your answer..."
     },
     "prompts": {
-      "confirmSubmit": "Are you sure you want to submit your answers?"
+      "confirmSubmit": "Are you sure you want to submit your answers?",
+      "waitForResults": "You're answers are being reviewed and we'll notify you once there's any updates. Stay tuned!"
     }
   },
 

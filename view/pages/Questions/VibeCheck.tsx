@@ -1,4 +1,4 @@
-import { CircularProgress, Typography } from '@mui/material';
+import { Card, CardContent, CircularProgress, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AnswerQuestionsForm from '../../components/Questions/AnswerQuestionsForm';
@@ -108,7 +108,16 @@ const VibeCheck = () => {
       )}
 
       {status === QuestionnaireTicketStatus.Submitted && (
-        <AnsweredQuestions questionnaireTicket={questionnaireTicket} />
+        <>
+          <Card>
+            <CardContent sx={{ '&:last-child': { paddingBottom: 2 } }}>
+              <Typography fontSize="18px" fontFamily="Inter Medium">
+                {t('questions.prompts.waitForResults')}
+              </Typography>
+            </CardContent>
+          </Card>
+          <AnsweredQuestions questionnaireTicket={questionnaireTicket} />
+        </>
       )}
     </>
   );
