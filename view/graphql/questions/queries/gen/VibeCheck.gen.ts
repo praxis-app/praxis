@@ -2,6 +2,7 @@ import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
 import { AnswerQuestionsFormFragmentDoc } from '../../fragments/gen/AnswerQuestionsForm.gen';
+import { AnsweredQuestionsFragmentDoc } from '../../fragments/gen/AnsweredQuestions.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -23,6 +24,7 @@ export type VibeCheckQuery = {
         __typename?: 'Question';
         id: number;
         text: string;
+        priority: number;
         myAnswer?: { __typename?: 'Answer'; id: number; text: string } | null;
       }>;
     };
@@ -35,11 +37,13 @@ export const VibeCheckDocument = gql`
       id
       questionnaireTicket {
         ...AnswerQuestionsForm
+        ...AnsweredQuestions
         status
       }
     }
   }
   ${AnswerQuestionsFormFragmentDoc}
+  ${AnsweredQuestionsFragmentDoc}
 `;
 
 /**

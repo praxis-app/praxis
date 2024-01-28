@@ -3,6 +3,7 @@ query VibeCheck {
     id
     questionnaireTicket {
       ...AnswerQuestionsForm
+      ...AnsweredQuestions
       status
     }
   }

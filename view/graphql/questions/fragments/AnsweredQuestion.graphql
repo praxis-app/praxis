@@ -1,0 +1,9 @@
+fragment AnsweredQuestion on Question {
+  id
+  text
+  priority
+  myAnswer {
+    id
+    text
+  }
+}

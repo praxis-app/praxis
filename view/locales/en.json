@@ -633,7 +633,8 @@
       "membershipQuestions": "Membership Questions",
       "questions": "Questions",
       "serverQuestions": "Server Questions",
-      "vibeCheck": "Vibe Check"
+      "vibeCheck": "Vibe Check",
+      "answer": "Answer"
     },
     "headers": {
       "createQuestion": "Create Question",

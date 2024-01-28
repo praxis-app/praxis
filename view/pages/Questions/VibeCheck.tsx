@@ -2,6 +2,7 @@ import { Sync } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import AnswerQuestionsForm from '../../components/Questions/AnswerQuestionsForm';
+import AnsweredQuestions from '../../components/Questions/AnsweredQuestions';
 import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
@@ -75,6 +76,10 @@ const VibeCheck = () => {
           onSaveProgress={handleSaveProgress}
           onSubmit={handleSubmit}
         />
+      )}
+
+      {status === QuestionnaireTicketStatus.Submitted && (
+        <AnsweredQuestions questionnaireTicket={questionnaireTicket} />
       )}
     </>
   );
