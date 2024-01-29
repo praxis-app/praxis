@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { AnsweredQuestionFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestion.gen';
+import { MyAnsweredQuestionFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestion.gen';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingTop: '11px',
@@ -21,17 +22,26 @@ const CardContent = styled(MuiCardContent)(() => ({
 }));
 
 interface Props {
-  question: AnsweredQuestionFragment;
+  question: AnsweredQuestionFragment | MyAnsweredQuestionFragment;
 }
 
-const AnsweredQuestion = ({
-  question: { text, priority, myAnswer },
-}: Props) => {
+const AnsweredQuestion = ({ question }: Props) => {
   const { t } = useTranslation();
+
+  const { text, priority } = question;
 
   const questionText = `${t('questions.headers.questionPriority', {
     priority: priority + 1,
   })}: ${text}`;
+
+  const getAnswerText = () => {
+    if ('myAnswer' in question) {
+      return question.myAnswer?.text;
+    }
+    if ('answer' in question) {
+      return question.answer?.text;
+    }
+  };
 
   return (
     <Card>
@@ -39,7 +49,7 @@ const AnsweredQuestion = ({
         title={<Typography color="text.secondary">{questionText}</Typography>}
       />
       <CardContent>
-        <Typography>{myAnswer?.text}</Typography>
+        <Typography>{getAnswerText()}</Typography>
       </CardContent>
     </Card>
   );

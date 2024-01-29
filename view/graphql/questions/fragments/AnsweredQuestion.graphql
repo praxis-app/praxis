@@ -2,7 +2,7 @@ fragment AnsweredQuestion on Question {
   id
   text
   priority
-  myAnswer {
+  answer(questionnaireTicketId: $questionnaireTicketId) {
     id
     text
   }

@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { AnsweredQuestionFragmentDoc } from './AnsweredQuestion.gen';
+import { MyAnsweredQuestionFragmentDoc } from './MyAnsweredQuestion.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
@@ -22,8 +22,8 @@ export const AnsweredQuestionsFragmentDoc = gql`
   fragment AnsweredQuestions on QuestionnaireTicket {
     id
     questions {
-      ...AnsweredQuestion
+      ...MyAnsweredQuestion
     }
   }
-  ${AnsweredQuestionFragmentDoc}
+  ${MyAnsweredQuestionFragmentDoc}
 `;

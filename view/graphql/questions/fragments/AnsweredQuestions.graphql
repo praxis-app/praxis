@@ -1,6 +1,6 @@
 fragment AnsweredQuestions on QuestionnaireTicket {
   id
   questions {
-    ...AnsweredQuestion
+    ...MyAnsweredQuestion
   }
 }

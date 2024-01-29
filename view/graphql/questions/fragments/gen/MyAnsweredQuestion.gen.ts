@@ -5,20 +5,20 @@ import { gql } from '@apollo/client';
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
 
-export type AnsweredQuestionFragment = {
+export type MyAnsweredQuestionFragment = {
   __typename?: 'Question';
   id: number;
   text: string;
   priority: number;
-  answer?: { __typename?: 'Answer'; id: number; text: string } | null;
+  myAnswer?: { __typename?: 'Answer'; id: number; text: string } | null;
 };
 
-export const AnsweredQuestionFragmentDoc = gql`
-  fragment AnsweredQuestion on Question {
+export const MyAnsweredQuestionFragmentDoc = gql`
+  fragment MyAnsweredQuestion on Question {
     id
     text
     priority
-    answer(questionnaireTicketId: $questionnaireTicketId) {
+    myAnswer {
       id
       text
     }
