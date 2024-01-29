@@ -6,7 +6,7 @@ import {
   styled,
 } from '@mui/material';
 import { MIDDOT_WITH_SPACES } from '../../constants/shared.constants';
-import { QuestionnaireTicketEntryFragment } from '../../graphql/questions/fragments/gen/QuestionnaireTicketEntry.gen';
+import { QuestionnaireTicketCardFragment } from '../../graphql/questions/fragments/gen/QuestionnaireTicketCard.gen';
 import { timeAgo } from '../../utils/time.utils';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
@@ -22,10 +22,10 @@ const CardHeader = styled(MuiCardHeader)(() => ({
 }));
 
 interface Props {
-  questionnaireTicket: QuestionnaireTicketEntryFragment;
+  questionnaireTicket: QuestionnaireTicketCardFragment;
 }
 
-const QuestionnaireTicketEntry = ({
+const QuestionnaireTicketCard = ({
   questionnaireTicket: { id, user, createdAt },
 }: Props) => {
   const questionnaireTicketPath = `/questionnaires/${id}`;
@@ -59,4 +59,4 @@ const QuestionnaireTicketEntry = ({
   );
 };
 
-export default QuestionnaireTicketEntry;
+export default QuestionnaireTicketCard;

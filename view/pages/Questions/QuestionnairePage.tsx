@@ -1,7 +1,8 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import QuestionnaireTicket from '../../components/Questions/QuestionnaireTicket';
+import AnsweredQuestion from '../../components/Questions/AnsweredQuestion';
+import QuestionnaireTicketCard from '../../components/Questions/QuestionnaireTicketCard';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useQuestionnairePageQuery } from '../../graphql/questions/queries/gen/QuestionnairePage.gen';
 
@@ -26,7 +27,18 @@ const QuestionnairePage = () => {
     return null;
   }
 
-  return <QuestionnaireTicket questionnaireTicket={data.questionnaireTicket} />;
+  const { questionnaireTicket } = data;
+  const { questions } = questionnaireTicket;
+
+  return (
+    <>
+      <QuestionnaireTicketCard questionnaireTicket={questionnaireTicket} />
+
+      {questions.map((question) => (
+        <AnsweredQuestion key={question.id} question={question} />
+      ))}
+    </>
+  );
 };
 
 export default QuestionnairePage;

@@ -1,5 +1,5 @@
 query ServerQuestionnaires {
   serverQuestionnaireTickets {
-    ...QuestionnaireTicketEntry
+    ...QuestionnaireTicketCard
   }
 }

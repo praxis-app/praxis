@@ -1,9 +1,9 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import QuestionnaireTicketEntry from '../../components/Questions/QuestionnaireTicketEntry';
+import QuestionnaireTicketCard from '../../components/Questions/QuestionnaireTicketCard';
+import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useServerQuestionnairesQuery } from '../../graphql/questions/queries/gen/ServerQuestionnaires.gen';
-import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 
 const ServerQuestionnaires = () => {
   const { data, loading, error } = useServerQuestionnairesQuery();
@@ -29,7 +29,7 @@ const ServerQuestionnaires = () => {
       </LevelOneHeading>
 
       {data.serverQuestionnaireTickets.map((questionnaire) => (
-        <QuestionnaireTicketEntry
+        <QuestionnaireTicketCard
           key={questionnaire.id}
           questionnaireTicket={questionnaire}
         />

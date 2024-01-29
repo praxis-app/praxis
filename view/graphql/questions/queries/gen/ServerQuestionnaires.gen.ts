@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { QuestionnaireTicketEntryFragmentDoc } from '../../fragments/gen/QuestionnaireTicketEntry.gen';
+import { QuestionnaireTicketCardFragmentDoc } from '../../fragments/gen/QuestionnaireTicketCard.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -42,10 +42,10 @@ export type ServerQuestionnairesQuery = {
 export const ServerQuestionnairesDocument = gql`
   query ServerQuestionnaires {
     serverQuestionnaireTickets {
-      ...QuestionnaireTicketEntry
+      ...QuestionnaireTicketCard
     }
   }
-  ${QuestionnaireTicketEntryFragmentDoc}
+  ${QuestionnaireTicketCardFragmentDoc}
 `;
 
 /**

@@ -1,4 +1,4 @@
-fragment QuestionnaireTicketEntry on QuestionnaireTicket {
+fragment QuestionnaireTicketCard on QuestionnaireTicket {
   id
   status
   createdAt

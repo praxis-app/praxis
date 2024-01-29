@@ -1,7 +1,10 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { QuestionnaireTicketFragmentDoc } from '../../fragments/gen/QuestionnaireTicket.gen';
+import { QuestionnaireTicketCardFragmentDoc } from '../../fragments/gen/QuestionnaireTicketCard.gen';
+import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.gen';
+import { VoteFragmentDoc } from '../../../votes/fragments/gen/Vote.gen';
+import { AnsweredQuestionFragmentDoc } from '../../fragments/gen/AnsweredQuestion.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -49,10 +52,22 @@ export type QuestionnairePageQuery = {
 export const QuestionnairePageDocument = gql`
   query QuestionnairePage($questionnaireTicketId: Int!) {
     questionnaireTicket(questionnaireTicketId: $questionnaireTicketId) {
-      ...QuestionnaireTicket
+      ...QuestionnaireTicketCard
+      questions {
+        ...AnsweredQuestion
+      }
+      user {
+        ...UserAvatar
+      }
+      votes {
+        ...Vote
+      }
     }
   }
-  ${QuestionnaireTicketFragmentDoc}
+  ${QuestionnaireTicketCardFragmentDoc}
+  ${AnsweredQuestionFragmentDoc}
+  ${UserAvatarFragmentDoc}
+  ${VoteFragmentDoc}
 `;
 
 /**
