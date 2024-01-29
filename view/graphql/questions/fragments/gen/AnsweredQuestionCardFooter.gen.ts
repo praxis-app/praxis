@@ -1,35 +1,28 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { AnsweredQuestionCardFooterFragmentDoc } from './AnsweredQuestionCardFooter.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
 
-export type AnsweredQuestionFragment = {
+export type AnsweredQuestionCardFooterFragment = {
   __typename?: 'Question';
   id: number;
-  text: string;
-  priority: number;
   answer?: {
     __typename?: 'Answer';
     id: number;
-    text: string;
     likeCount: number;
     commentCount: number;
   } | null;
 };
 
-export const AnsweredQuestionFragmentDoc = gql`
-  fragment AnsweredQuestion on Question {
+export const AnsweredQuestionCardFooterFragmentDoc = gql`
+  fragment AnsweredQuestionCardFooter on Question {
     id
-    text
-    priority
     answer(questionnaireTicketId: $questionnaireTicketId) {
       id
-      text
+      likeCount
+      commentCount
     }
-    ...AnsweredQuestionCardFooter
   }
-  ${AnsweredQuestionCardFooterFragmentDoc}
 `;

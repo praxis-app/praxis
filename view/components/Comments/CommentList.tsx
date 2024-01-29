@@ -3,7 +3,7 @@ import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.ge
 import Comment from './Comment';
 
 interface Props extends BoxProps {
-  canManageComments: boolean;
+  canManageComments?: boolean;
   comments: CommentFragment[];
   currentUserId?: number;
   postId?: number;

@@ -8,6 +8,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { AnsweredQuestionFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestion.gen';
 import { MyAnsweredQuestionFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestion.gen';
+import AnsweredQuestionCardFooter from './AnweredQuestionCardFooter';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingTop: '11px',
@@ -51,6 +52,8 @@ const AnsweredQuestion = ({ question }: Props) => {
       <CardContent>
         <Typography>{getAnswerText()}</Typography>
       </CardContent>
+
+      <AnsweredQuestionCardFooter question={question} />
     </Card>
   );
 };

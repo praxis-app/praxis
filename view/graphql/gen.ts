@@ -989,6 +989,7 @@ export type PublicFeedItemsConnection = {
 
 export type Query = {
   __typename?: 'Query';
+  answer: Answer;
   authCheck: Scalars['Boolean']['output'];
   canary: Canary;
   event: Event;
@@ -1024,6 +1025,10 @@ export type Query = {
   users: Array<User>;
   usersByIds: Array<User>;
   usersCount: Scalars['Int']['output'];
+};
+
+export type QueryAnswerArgs = {
+  id: Scalars['Int']['input'];
 };
 
 export type QueryEventArgs = {

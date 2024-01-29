@@ -640,6 +640,7 @@ type Query {
   questionnaireTicket(questionnaireTicketId: Int!): QuestionnaireTicket!
   serverQuestionnaireTickets: [QuestionnaireTicket!]!
   serverQuestions: [Question!]!
+  answer(id: Int!): Answer!
 }
 
 input EventsInput {

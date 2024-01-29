@@ -1,0 +1,8 @@
+fragment AnsweredQuestionCardFooter on Question {
+  id
+  answer(questionnaireTicketId: $questionnaireTicketId) {
+    id
+    likeCount
+    commentCount
+  }
+}

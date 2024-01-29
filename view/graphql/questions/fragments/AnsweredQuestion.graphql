@@ -6,4 +6,5 @@ fragment AnsweredQuestion on Question {
     id
     text
   }
+  ...AnsweredQuestionCardFooter
 }

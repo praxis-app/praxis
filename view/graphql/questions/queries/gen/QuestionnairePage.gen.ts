@@ -27,7 +27,13 @@ export type QuestionnairePageQuery = {
       id: number;
       text: string;
       priority: number;
-      answer?: { __typename?: 'Answer'; id: number; text: string } | null;
+      answer?: {
+        __typename?: 'Answer';
+        id: number;
+        text: string;
+        likeCount: number;
+        commentCount: number;
+      } | null;
     }>;
     user: {
       __typename?: 'User';

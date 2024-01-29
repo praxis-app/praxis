@@ -20,7 +20,7 @@ import CommentLikeButton from './CommentLikeButton';
 import CommentLikeCount from './CommentLikeCount';
 
 interface Props {
-  canManageComments: boolean;
+  canManageComments?: boolean;
   comment: CommentFragment;
   currentUserId?: number;
   postId?: number;
