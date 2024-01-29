@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { QuestionEditorEntryFragmentDoc } from '../../fragments/gen/QuestionEditorEntry.gen';
+import { QuestionEditorCardFragmentDoc } from '../../fragments/gen/QuestionEditorCard.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -25,10 +25,10 @@ export type ServerQuestionsQuery = {
 export const ServerQuestionsDocument = gql`
   query ServerQuestions {
     serverQuestions {
-      ...QuestionEditorEntry
+      ...QuestionEditorCard
     }
   }
-  ${QuestionEditorEntryFragmentDoc}
+  ${QuestionEditorCardFragmentDoc}
 `;
 
 /**

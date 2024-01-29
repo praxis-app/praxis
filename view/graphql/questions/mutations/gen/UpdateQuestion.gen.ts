@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { QuestionEditorEntryFragmentDoc } from '../../fragments/gen/QuestionEditorEntry.gen';
+import { QuestionEditorCardFragmentDoc } from '../../fragments/gen/QuestionEditorCard.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -29,11 +29,11 @@ export const UpdateQuestionDocument = gql`
   mutation UpdateQuestion($questionData: UpdateQuestionInput!) {
     updateQuestion(questionData: $questionData) {
       question {
-        ...QuestionEditorEntry
+        ...QuestionEditorCard
       }
     }
   }
-  ${QuestionEditorEntryFragmentDoc}
+  ${QuestionEditorCardFragmentDoc}
 `;
 export type UpdateQuestionMutationFn = Apollo.MutationFunction<
   UpdateQuestionMutation,

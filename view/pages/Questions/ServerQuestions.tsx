@@ -2,7 +2,7 @@ import { Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import { DragDropContext, Draggable, DropResult } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
-import QuestionEditorEntry from '../../components/Questions/QuestionEditorEntry';
+import QuestionEditorCard from '../../components/Questions/QuestionEditorCard';
 import QuestionFormModal from '../../components/Questions/QuestionFormModal';
 import Droppable from '../../components/Shared/Droppable';
 import Flex from '../../components/Shared/Flex';
@@ -118,7 +118,7 @@ const ServerQuestions = () => {
                       {...draggableProvided.draggableProps}
                       {...draggableProvided.dragHandleProps}
                     >
-                      <QuestionEditorEntry
+                      <QuestionEditorCard
                         key={question.id}
                         question={question}
                         isDragging={draggableSnapshot.isDragging}

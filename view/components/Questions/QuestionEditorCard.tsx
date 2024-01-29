@@ -13,7 +13,7 @@ import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../graphql/cache';
-import { QuestionEditorEntryFragment } from '../../graphql/questions/fragments/gen/QuestionEditorEntry.gen';
+import { QuestionEditorCardFragment } from '../../graphql/questions/fragments/gen/QuestionEditorCard.gen';
 import { useDeleteQuestionMutation } from '../../graphql/questions/mutations/gen/DeleteQuestion.gen';
 import {
   ServerQuestionsDocument,
@@ -33,11 +33,11 @@ const CardContent = styled(MuiCardContent)(() => ({
 }));
 
 interface Props {
-  question: QuestionEditorEntryFragment;
+  question: QuestionEditorCardFragment;
   isDragging: boolean;
 }
 
-const QuestionEditorEntry = ({ question, isDragging }: Props) => {
+const QuestionEditorCard = ({ question, isDragging }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteQuestion] = useDeleteQuestionMutation();
   const { t } = useTranslation();
@@ -166,4 +166,4 @@ const QuestionEditorEntry = ({ question, isDragging }: Props) => {
   );
 };
 
-export default QuestionEditorEntry;
+export default QuestionEditorCard;
