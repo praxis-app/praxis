@@ -34,7 +34,11 @@ export type Scalars = {
 
 export type Answer = {
   __typename?: 'Answer';
+  commentCount: Scalars['Int']['output'];
+  comments: Array<Comment>;
   id: Scalars['Int']['output'];
+  likeCount: Scalars['Int']['output'];
+  likes: Array<Like>;
   text: Scalars['String']['output'];
 };
 

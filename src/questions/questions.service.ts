@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, IsNull, Not, Repository } from 'typeorm';
+import { Comment } from '../comments/models/comment.model';
 import { sanitizeText } from '../common/common.utils';
+import { Like } from '../likes/models/like.model';
 import { ServerConfigsService } from '../server-configs/server-configs.service';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
@@ -31,6 +33,12 @@ export class QuestionsService {
     @InjectRepository(Vote)
     private votesRepository: Repository<Vote>,
 
+    @InjectRepository(Like)
+    private likeRepository: Repository<Like>,
+
+    @InjectRepository(Comment)
+    private commentRepository: Repository<Comment>,
+
     private serverConfigsService: ServerConfigsService,
   ) {}
 
@@ -38,6 +46,34 @@ export class QuestionsService {
     return this.questionRepository.find({
       where: { groupId: IsNull() },
       order: { priority: 'ASC' },
+    });
+  }
+
+  async getAnswer(where?: FindOptionsWhere<Answer>) {
+    return this.anwersRepository.findOne({ where });
+  }
+
+  async getAnswerLikes(answerId: number) {
+    return this.likeRepository.find({
+      where: { answerId },
+    });
+  }
+
+  async getAnswerLikeCount(answerId: number) {
+    return this.likeRepository.count({
+      where: { answerId },
+    });
+  }
+
+  async getAnswerComments(answerId: number) {
+    return this.commentRepository.find({
+      where: { answerId },
+    });
+  }
+
+  async getAnswerCommentCount(answerId: number) {
+    return this.commentRepository.count({
+      where: { answerId },
     });
   }
 
@@ -51,10 +87,6 @@ export class QuestionsService {
     return this.questionnaireTicketRepository.find({
       where: { groupId: IsNull() },
     });
-  }
-
-  async getAnswer(where?: FindOptionsWhere<Answer>) {
-    return this.anwersRepository.findOne({ where });
   }
 
   // TODO: Add support for group questions

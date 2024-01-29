@@ -36,6 +36,10 @@ type Question {
 type Answer {
   id: Int!
   text: String!
+  likes: [Like!]!
+  likeCount: Int!
+  comments: [Comment!]!
+  commentCount: Int!
 }
 
 type QuestionnaireTicket {
