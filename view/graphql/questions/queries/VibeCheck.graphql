@@ -2,8 +2,10 @@ query VibeCheck {
   me {
     id
     questionnaireTicket {
+      questions {
+        ...MyAnsweredQuestion
+      }
       ...AnswerQuestionsForm
-      ...AnsweredQuestions
       status
       prompt
     }

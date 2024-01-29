@@ -1,8 +1,8 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { MyAnsweredQuestionFragmentDoc } from '../../fragments/gen/MyAnsweredQuestion.gen';
 import { AnswerQuestionsFormFragmentDoc } from '../../fragments/gen/AnswerQuestionsForm.gen';
-import { AnsweredQuestionsFragmentDoc } from '../../fragments/gen/AnsweredQuestions.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -36,14 +36,16 @@ export const AnswerQuestionsDocument = gql`
   mutation AnswerQuestions($answersData: AnswerQuestionsInput!) {
     answerQuestions(answersData: $answersData) {
       questionnaireTicket {
+        questions {
+          ...MyAnsweredQuestion
+        }
         ...AnswerQuestionsForm
-        ...AnsweredQuestions
         status
       }
     }
   }
+  ${MyAnsweredQuestionFragmentDoc}
   ${AnswerQuestionsFormFragmentDoc}
-  ${AnsweredQuestionsFragmentDoc}
 `;
 export type AnswerQuestionsMutationFn = Apollo.MutationFunction<
   AnswerQuestionsMutation,
