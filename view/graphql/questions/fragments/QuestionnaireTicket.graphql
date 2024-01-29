@@ -1,15 +1,10 @@
 fragment QuestionnaireTicket on QuestionnaireTicket {
   id
   status
+  ...QuestionnaireTicketEntry
 
   questions {
-    id
-    text
-    priority
-    answer(questionnaireTicketId: $questionnaireTicketId) {
-      id
-      text
-    }
+    ...AnsweredQuestion
   }
 
   user {

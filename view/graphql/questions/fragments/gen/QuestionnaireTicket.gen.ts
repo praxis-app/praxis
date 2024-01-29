@@ -1,8 +1,10 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { QuestionnaireTicketEntryFragmentDoc } from './QuestionnaireTicketEntry.gen';
 import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.gen';
 import { VoteFragmentDoc } from '../../../votes/fragments/gen/Vote.gen';
+import { AnsweredQuestionFragmentDoc } from './AnsweredQuestion.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
@@ -11,6 +13,7 @@ export type QuestionnaireTicketFragment = {
   __typename?: 'QuestionnaireTicket';
   id: number;
   status: string;
+  createdAt: any;
   questions: Array<{
     __typename?: 'Question';
     id: number;
@@ -41,14 +44,9 @@ export const QuestionnaireTicketFragmentDoc = gql`
   fragment QuestionnaireTicket on QuestionnaireTicket {
     id
     status
+    ...QuestionnaireTicketEntry
     questions {
-      id
-      text
-      priority
-      answer(questionnaireTicketId: $questionnaireTicketId) {
-        id
-        text
-      }
+      ...AnsweredQuestion
     }
     user {
       ...UserAvatar
@@ -57,6 +55,8 @@ export const QuestionnaireTicketFragmentDoc = gql`
       ...Vote
     }
   }
+  ${QuestionnaireTicketEntryFragmentDoc}
+  ${AnsweredQuestionFragmentDoc}
   ${UserAvatarFragmentDoc}
   ${VoteFragmentDoc}
 `;

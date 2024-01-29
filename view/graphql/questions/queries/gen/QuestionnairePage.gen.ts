@@ -18,6 +18,7 @@ export type QuestionnairePageQuery = {
     __typename?: 'QuestionnaireTicket';
     id: number;
     status: string;
+    createdAt: any;
     questions: Array<{
       __typename?: 'Question';
       id: number;
