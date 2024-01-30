@@ -1,4 +1,4 @@
-fragment MyAnsweredQuestion on Question {
+fragment MyAnsweredQuestionCard on Question {
   id
   text
   priority

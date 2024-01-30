@@ -6,8 +6,8 @@ import {
   styled,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { AnsweredQuestionFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestion.gen';
-import { MyAnsweredQuestionFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestion.gen';
+import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
+import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestionCard.gen';
 import AnsweredQuestionCardFooter from './AnweredQuestionCardFooter';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
@@ -23,10 +23,10 @@ const CardContent = styled(MuiCardContent)(() => ({
 }));
 
 interface Props {
-  question: AnsweredQuestionFragment | MyAnsweredQuestionFragment;
+  question: AnsweredQuestionCardFragment | MyAnsweredQuestionCardFragment;
 }
 
-const AnsweredQuestion = ({ question }: Props) => {
+const AnsweredQuestionCard = ({ question }: Props) => {
   const { t } = useTranslation();
 
   const { text, priority } = question;
@@ -58,4 +58,4 @@ const AnsweredQuestion = ({ question }: Props) => {
   );
 };
 
-export default AnsweredQuestion;
+export default AnsweredQuestionCard;

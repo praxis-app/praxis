@@ -3,7 +3,7 @@ query QuestionnairePage($questionnaireTicketId: Int!, $isLoggedIn: Boolean!) {
     ...QuestionnaireTicketCard
 
     questions {
-      ...AnsweredQuestion
+      ...AnsweredQuestionCard
     }
     user {
       ...UserAvatar

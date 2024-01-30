@@ -4,7 +4,7 @@ import { gql } from '@apollo/client';
 import { QuestionnaireTicketCardFragmentDoc } from '../../fragments/gen/QuestionnaireTicketCard.gen';
 import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.gen';
 import { VoteFragmentDoc } from '../../../votes/fragments/gen/Vote.gen';
-import { AnsweredQuestionFragmentDoc } from '../../fragments/gen/AnsweredQuestion.gen';
+import { AnsweredQuestionCardFragmentDoc } from '../../fragments/gen/AnsweredQuestionCard.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -62,7 +62,7 @@ export const QuestionnairePageDocument = gql`
     questionnaireTicket(questionnaireTicketId: $questionnaireTicketId) {
       ...QuestionnaireTicketCard
       questions {
-        ...AnsweredQuestion
+        ...AnsweredQuestionCard
       }
       user {
         ...UserAvatar
@@ -73,7 +73,7 @@ export const QuestionnairePageDocument = gql`
     }
   }
   ${QuestionnaireTicketCardFragmentDoc}
-  ${AnsweredQuestionFragmentDoc}
+  ${AnsweredQuestionCardFragmentDoc}
   ${UserAvatarFragmentDoc}
   ${VoteFragmentDoc}
 `;

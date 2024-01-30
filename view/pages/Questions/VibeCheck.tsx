@@ -2,7 +2,7 @@ import { Card, CardContent, CircularProgress, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AnswerQuestionsForm from '../../components/Questions/AnswerQuestionsForm';
-import AnsweredQuestion from '../../components/Questions/AnsweredQuestion';
+import AnsweredQuestionCard from '../../components/Questions/AnsweredQuestionCard';
 import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
@@ -126,7 +126,7 @@ const VibeCheck = () => {
           </Card>
 
           {questions.map((question: any) => (
-            <AnsweredQuestion key={question.id} question={question} />
+            <AnsweredQuestionCard key={question.id} question={question} />
           ))}
         </>
       )}

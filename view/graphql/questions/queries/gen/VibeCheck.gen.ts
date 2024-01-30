@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { MyAnsweredQuestionFragmentDoc } from '../../fragments/gen/MyAnsweredQuestion.gen';
+import { MyAnsweredQuestionCardFragmentDoc } from '../../fragments/gen/MyAnsweredQuestionCard.gen';
 import { AnswerQuestionsFormFragmentDoc } from '../../fragments/gen/AnswerQuestionsForm.gen';
 import * as Apollo from '@apollo/client';
 
@@ -38,7 +38,7 @@ export const VibeCheckDocument = gql`
       id
       questionnaireTicket {
         questions {
-          ...MyAnsweredQuestion
+          ...MyAnsweredQuestionCard
         }
         ...AnswerQuestionsForm
         status
@@ -46,7 +46,7 @@ export const VibeCheckDocument = gql`
       }
     }
   }
-  ${MyAnsweredQuestionFragmentDoc}
+  ${MyAnsweredQuestionCardFragmentDoc}
   ${AnswerQuestionsFormFragmentDoc}
 `;
 

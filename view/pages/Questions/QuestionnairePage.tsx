@@ -2,7 +2,7 @@ import { useReactiveVar } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import AnsweredQuestion from '../../components/Questions/AnsweredQuestion';
+import AnsweredQuestionCard from '../../components/Questions/AnsweredQuestionCard';
 import QuestionnaireTicketCard from '../../components/Questions/QuestionnaireTicketCard';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { isLoggedInVar } from '../../graphql/cache';
@@ -38,7 +38,7 @@ const QuestionnairePage = () => {
       <QuestionnaireTicketCard questionnaireTicket={questionnaireTicket} />
 
       {questions.map((question) => (
-        <AnsweredQuestion key={question.id} question={question} />
+        <AnsweredQuestionCard key={question.id} question={question} />
       ))}
     </>
   );

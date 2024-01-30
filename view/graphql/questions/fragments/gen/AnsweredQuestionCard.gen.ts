@@ -6,7 +6,7 @@ import { AnsweredQuestionCardFooterFragmentDoc } from './AnsweredQuestionCardFoo
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
 
-export type AnsweredQuestionFragment = {
+export type AnsweredQuestionCardFragment = {
   __typename?: 'Question';
   id: number;
   text: string;
@@ -21,8 +21,8 @@ export type AnsweredQuestionFragment = {
   } | null;
 };
 
-export const AnsweredQuestionFragmentDoc = gql`
-  fragment AnsweredQuestion on Question {
+export const AnsweredQuestionCardFragmentDoc = gql`
+  fragment AnsweredQuestionCard on Question {
     id
     text
     priority
