@@ -52,8 +52,8 @@ export const parseMarkdownText = async (text: string) => {
 
 export const convertBoldToSpan = (text: string) =>
   text
-    .replace(/<b?strong>/g, '<span style="font-family: Inter Bold;">')
-    .replace(/<\/b?strong>/g, '</span>');
+    .replace(/<(b|strong)>/g, '<span style="font-family: Inter Bold;">')
+    .replace(/<\/(b|strong)>/g, '</span>');
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
