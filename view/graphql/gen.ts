@@ -37,6 +37,7 @@ export type Answer = {
   commentCount: Scalars['Int']['output'];
   comments: Array<Comment>;
   id: Scalars['Int']['output'];
+  isLikedByMe: Scalars['Boolean']['output'];
   likeCount: Scalars['Int']['output'];
   likes: Array<Like>;
   text: Scalars['String']['output'];
@@ -157,12 +158,14 @@ export type CreateGroupRolePayload = {
 };
 
 export type CreateLikeInput = {
+  answerId?: InputMaybe<Scalars['Int']['input']>;
   commentId?: InputMaybe<Scalars['Int']['input']>;
   postId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreateLikePayload = {
   __typename?: 'CreateLikePayload';
+  answer?: Maybe<Answer>;
   comment?: Maybe<Comment>;
   like: Like;
   post?: Maybe<Post>;
@@ -255,6 +258,7 @@ export type DeleteGroupRoleMemberPayload = {
 };
 
 export type DeleteLikeInput = {
+  answerId?: InputMaybe<Scalars['Int']['input']>;
   commentId?: InputMaybe<Scalars['Int']['input']>;
   postId?: InputMaybe<Scalars['Int']['input']>;
 };

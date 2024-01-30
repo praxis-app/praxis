@@ -38,6 +38,7 @@ type Answer {
   text: String!
   likes: [Like!]!
   likeCount: Int!
+  isLikedByMe: Boolean!
   comments: [Comment!]!
   commentCount: Int!
 }
@@ -574,6 +575,7 @@ type CreateLikePayload {
   like: Like!
   post: Post
   comment: Comment
+  answer: Answer
 }
 
 type CreateRulePayload {
@@ -961,11 +963,13 @@ input UpdateCommentInput {
 input CreateLikeInput {
   postId: Int
   commentId: Int
+  answerId: Int
 }
 
 input DeleteLikeInput {
   postId: Int
   commentId: Int
+  answerId: Int
 }
 
 input CreateRuleInput {

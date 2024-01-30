@@ -7,4 +7,7 @@ export class DeleteLikeInput {
 
   @Field(() => Int, { nullable: true })
   commentId?: number;
+
+  @Field(() => Int, { nullable: true })
+  answerId?: number;
 }

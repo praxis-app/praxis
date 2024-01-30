@@ -33,6 +33,7 @@ import {
   GroupRoleWithMemberCount,
   GroupWithMemberCount,
   GroupWithMemberRequestCount,
+  IsAnswerLikedByMeKey,
   IsCommentLikedByMeKey,
   IsFollowedByMeKey,
   IsPostLikedByMeKey,
@@ -138,6 +139,9 @@ export class DataloaderService {
       interestedCountLoader: this._createInterestedCountLoader(),
       goingCountLoader: this._createGoingCountLoader(),
       eventsLoader: this._createEventsLoader(),
+
+      // Questions & Answers
+      isAnswerLikedByMeLoader: this._createIsAnswerLikedByMeLoader(),
     };
   }
 
@@ -806,5 +810,27 @@ export class DataloaderService {
         return event.goingCount;
       });
     });
+  }
+
+  // -------------------------------------------------------------------------
+  // Questions & Answers
+  // -------------------------------------------------------------------------
+
+  private _createIsAnswerLikedByMeLoader() {
+    return this._getDataLoader<IsAnswerLikedByMeKey, boolean, number>(
+      async (keys) => {
+        const answerIds = keys.map(({ answerId }) => answerId);
+        const likes = await this.likeRepository.find({
+          where: {
+            answerId: In(answerIds),
+            userId: keys[0].currentUserId,
+          },
+        });
+        return answerIds.map((answerId) =>
+          likes.some((like: Like) => like.answerId === answerId),
+        );
+      },
+      { cacheKeyFn: (key) => key.answerId },
+    );
   }
 }

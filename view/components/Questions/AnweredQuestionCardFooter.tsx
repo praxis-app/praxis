@@ -1,4 +1,4 @@
-// TODO: Add basic functionality for sharing. Below is a WIP
+// TODO: Add remaining layout and functionality. Below is a WIP
 
 import { useReactiveVar } from '@apollo/client';
 import { Comment } from '@mui/icons-material';
@@ -14,6 +14,7 @@ import LikeBadge from '../Likes/LikeBadge';
 import LikesModal from '../Likes/LikesModal';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
+import AnsweredLikeButton from './AnswerLikeButton';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -53,6 +54,7 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
   const commentCount = answer?.commentCount;
   const comments = answerCommentsData?.answer.comments;
   const me = answerCommentsData?.me;
+  const isLikedByMe = answer?.isLikedByMe;
 
   const commentCountStyles: SxProps = {
     '&:hover': { textDecoration: 'underline' },
@@ -61,11 +63,11 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
   };
 
   const handleCommentButtonClick = async () => {
-    if (inModal) {
+    if (inModal || !answer) {
       return;
     }
     const { data } = await getAnswerComments({
-      variables: { id, isLoggedIn },
+      variables: { id: answer.id, isLoggedIn },
     });
     const comments = data?.answer.comments;
     if (comments && comments.length > 1) {
@@ -87,6 +89,10 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
     }
     return <CommentForm postId={id} enableAutoFocus />;
   };
+
+  if (!answer) {
+    return null;
+  }
 
   return (
     <Box marginTop={likeCount ? 1.25 : 2}>
@@ -140,8 +146,7 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
           paddingX: inModal ? 0 : undefined,
         }}
       >
-        {/* TODO: Add like button component */}
-        {/* <PostLikeButton postId={id} isLikedByMe={!!isLikedByMe} /> */}
+        <AnsweredLikeButton answerId={answer.id} isLikedByMe={!!isLikedByMe} />
 
         <CardFooterButton onClick={handleCommentButtonClick}>
           <Comment sx={ROTATED_ICON_STYLES} />

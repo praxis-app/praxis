@@ -17,6 +17,7 @@ export type AnsweredQuestionFragment = {
     text: string;
     likeCount: number;
     commentCount: number;
+    isLikedByMe?: boolean;
   } | null;
 };
 

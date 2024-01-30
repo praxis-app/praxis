@@ -13,6 +13,7 @@ export type AnsweredQuestionCardFooterFragment = {
     id: number;
     likeCount: number;
     commentCount: number;
+    isLikedByMe?: boolean;
   } | null;
 };
 
@@ -23,6 +24,7 @@ export const AnsweredQuestionCardFooterFragmentDoc = gql`
       id
       likeCount
       commentCount
+      isLikedByMe @include(if: $isLoggedIn)
     }
   }
 `;

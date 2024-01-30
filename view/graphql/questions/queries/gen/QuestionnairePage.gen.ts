@@ -13,6 +13,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type QuestionnairePageQueryVariables = Types.Exact<{
   questionnaireTicketId: Types.Scalars['Int']['input'];
+  isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
 export type QuestionnairePageQuery = {
@@ -33,6 +34,7 @@ export type QuestionnairePageQuery = {
         text: string;
         likeCount: number;
         commentCount: number;
+        isLikedByMe?: boolean;
       } | null;
     }>;
     user: {
@@ -56,7 +58,7 @@ export type QuestionnairePageQuery = {
 };
 
 export const QuestionnairePageDocument = gql`
-  query QuestionnairePage($questionnaireTicketId: Int!) {
+  query QuestionnairePage($questionnaireTicketId: Int!, $isLoggedIn: Boolean!) {
     questionnaireTicket(questionnaireTicketId: $questionnaireTicketId) {
       ...QuestionnaireTicketCard
       questions {
@@ -89,6 +91,7 @@ export const QuestionnairePageDocument = gql`
  * const { data, loading, error } = useQuestionnairePageQuery({
  *   variables: {
  *      questionnaireTicketId: // value for 'questionnaireTicketId'
+ *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */

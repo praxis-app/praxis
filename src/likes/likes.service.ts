@@ -10,6 +10,7 @@ import { User } from '../users/models/user.model';
 import { CreateLikeInput } from './models/create-like.input';
 import { DeleteLikeInput } from './models/delete-like.input';
 import { Like } from './models/like.model';
+import { Answer } from '../questions/models/answer.model';
 
 @Injectable()
 export class LikesService {
@@ -22,6 +23,9 @@ export class LikesService {
 
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
+
+    @InjectRepository(Answer)
+    private answerRepository: Repository<Answer>,
 
     private notificationsService: NotificationsService,
   ) {}
@@ -61,27 +65,46 @@ export class LikesService {
     );
   }
 
+  async getLikedItem(like: Like) {
+    if (like.commentId) {
+      return this.commentRepository.findOneOrFail({
+        where: { id: like.commentId },
+      });
+    }
+    if (like.answerId) {
+      return this.answerRepository.findOneOrFail({
+        where: { id: like.answerId },
+        relations: ['questionnaireTicket'],
+      });
+    }
+    return this.postRepository.findOneOrFail({
+      where: { id: like.postId },
+    });
+  }
+
+  getLikedItemUserId(likedItem: Post | Comment | Answer) {
+    if (likedItem instanceof Answer) {
+      return likedItem.questionnaireTicket.userId;
+    }
+    return likedItem.userId;
+  }
+
   async createLike(likeData: CreateLikeInput, user: User) {
     const like = await this.likeRepository.save({
       ...likeData,
       userId: user.id,
     });
 
-    const likedItem = like.commentId
-      ? await this.commentRepository.findOneOrFail({
-          where: { id: like.commentId },
-        })
-      : await this.postRepository.findOneOrFail({
-          where: { id: like.postId },
-        });
+    const likedItem = await this.getLikedItem(like);
+    const likedItemUserId = this.getLikedItemUserId(likedItem);
 
-    if (likedItem.userId !== user.id) {
+    if (likedItemUserId !== user.id) {
       await this.notificationsService.createNotification({
         notificationType: like.postId
           ? NotificationType.PostLike
           : NotificationType.CommentLike,
         commentId: like.commentId,
-        userId: likedItem.userId,
+        userId: likedItemUserId,
         otherUserId: user.id,
         postId: like.postId,
         likeId: like.id,
@@ -90,6 +113,9 @@ export class LikesService {
 
     if (like.commentId) {
       return { like, comment: likedItem };
+    }
+    if (like.answerId) {
+      return { like, answer: likedItem };
     }
     return { like, post: likedItem };
   }

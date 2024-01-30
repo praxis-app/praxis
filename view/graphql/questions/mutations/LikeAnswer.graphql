@@ -1,0 +1,13 @@
+mutation LikeAnswer($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
+  createLike(likeData: $likeData) {
+    answer {
+      id
+      likeCount
+      isLikedByMe @include(if: $isLoggedIn)
+    }
+    like {
+      id
+      ...Like
+    }
+  }
+}

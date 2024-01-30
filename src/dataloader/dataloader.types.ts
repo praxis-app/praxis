@@ -23,6 +23,11 @@ export interface IsCommentLikedByMeKey {
   commentId: number;
 }
 
+export interface IsAnswerLikedByMeKey {
+  currentUserId: number;
+  answerId: number;
+}
+
 export interface IsFollowedByMeKey {
   currentUserId: number;
   followedUserId: number;
@@ -82,6 +87,9 @@ export interface Dataloaders {
   eventsLoader: DataLoader<number, Event>;
   interestedCountLoader: DataLoader<number, number>;
   goingCountLoader: DataLoader<number, number>;
+
+  // Questions & Answers
+  isAnswerLikedByMeLoader: DataLoader<IsAnswerLikedByMeKey, boolean>;
 }
 
 export type ServerRoleWithMemberCount = ServerRole & { memberCount: number };

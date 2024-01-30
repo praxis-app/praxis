@@ -39,6 +39,7 @@ export enum NavigationPaths {
 }
 
 export enum TypeNames {
+  Answer = 'Answer',
   Event = 'Event',
   EventAttendee = 'EventAttendee',
   Group = 'Group',
@@ -49,6 +50,7 @@ export enum TypeNames {
   MemberRequest = 'MemberRequest',
   Post = 'Post',
   Proposal = 'Proposal',
+  Question = 'Question',
   ServerInvite = 'ServerInvite',
   ServerRole = 'ServerRole',
   User = 'User',
