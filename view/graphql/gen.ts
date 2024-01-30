@@ -41,6 +41,7 @@ export type Answer = {
   likeCount: Scalars['Int']['output'];
   likes: Array<Like>;
   text: Scalars['String']['output'];
+  user: User;
 };
 
 export type AnswerInput = {

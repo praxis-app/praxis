@@ -6,7 +6,7 @@ import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isLoggedInVar } from '../../graphql/cache';
-import { AnsweredQuestionCardFooterFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCardFooter.gen';
+import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
 import { useAnswerCommentsLazyQuery } from '../../graphql/questions/queries/gen/AnswerComments.gen';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
@@ -15,6 +15,7 @@ import LikesModal from '../Likes/LikesModal';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import AnsweredLikeButton from './AnswerLikeButton';
+import AnsweredQuestionModal from './AnsweredQuestionModal';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -22,32 +23,32 @@ const ROTATED_ICON_STYLES: SxProps = {
 };
 
 interface Props {
-  question: AnsweredQuestionCardFooterFragment;
+  question: AnsweredQuestionCardFragment;
   inModal?: boolean;
 }
 
 const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-  const [, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [showComments, setShowComments] = useState(inModal);
   const [showLikesModal, setShowLikesModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
-  const [getAnswerComments, { data: answerCommentsData }] =
-    useAnswerCommentsLazyQuery();
+  const [
+    getAnswerComments,
+    { data: answerCommentsData, called: answerCommentsCalled },
+  ] = useAnswerCommentsLazyQuery();
 
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (inModal) {
-      getAnswerComments({
-        variables: {
-          id: question.id,
-          isLoggedIn,
-        },
-      });
+    if (!inModal || !question.answer || answerCommentsCalled) {
+      return;
     }
-  }, [getAnswerComments, inModal, isLoggedIn, question]);
+    getAnswerComments({
+      variables: { id: question.answer.id, isLoggedIn },
+    });
+  }, [getAnswerComments, inModal, isLoggedIn, question, answerCommentsCalled]);
 
   const { id, answer } = question;
   const likeCount = answer?.likeCount;
@@ -168,13 +169,11 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
         </Box>
       )}
 
-      {/*
-      TODO: Add modal component 
-      <PostModal
-        post={post}
+      <AnsweredQuestionModal
+        question={question}
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-      /> */}
+      />
     </Box>
   );
 };

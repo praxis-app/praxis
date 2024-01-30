@@ -1,7 +1,6 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { AnsweredQuestionCardFooterFragmentDoc } from './AnsweredQuestionCardFooter.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
@@ -18,6 +17,7 @@ export type AnsweredQuestionCardFragment = {
     likeCount: number;
     commentCount: number;
     isLikedByMe?: boolean;
+    user: { __typename?: 'User'; id: number; name: string };
   } | null;
 };
 
@@ -29,8 +29,13 @@ export const AnsweredQuestionCardFragmentDoc = gql`
     answer(questionnaireTicketId: $questionnaireTicketId) {
       id
       text
+      likeCount
+      commentCount
+      isLikedByMe @include(if: $isLoggedIn)
+      user {
+        id
+        name
+      }
     }
-    ...AnsweredQuestionCardFooter
   }
-  ${AnsweredQuestionCardFooterFragmentDoc}
 `;

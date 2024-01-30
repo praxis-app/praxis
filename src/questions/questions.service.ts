@@ -77,6 +77,14 @@ export class QuestionsService {
     });
   }
 
+  async getAnswerUser(answerId: number) {
+    const { questionnaireTicket } = await this.anwersRepository.findOneOrFail({
+      where: { id: answerId },
+      relations: ['questionnaireTicket.user'],
+    });
+    return questionnaireTicket.user;
+  }
+
   async getQuestionnaireTicket(questionnaireTicketId: number) {
     return this.questionnaireTicketRepository.findOneOrFail({
       where: { id: questionnaireTicketId },

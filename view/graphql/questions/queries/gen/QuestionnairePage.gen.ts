@@ -35,6 +35,7 @@ export type QuestionnairePageQuery = {
         likeCount: number;
         commentCount: number;
         isLikedByMe?: boolean;
+        user: { __typename?: 'User'; id: number; name: string };
       } | null;
     }>;
     user: {

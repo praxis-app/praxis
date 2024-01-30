@@ -37,6 +37,7 @@ type Answer {
   id: Int!
   text: String!
   likes: [Like!]!
+  user: User!
   likeCount: Int!
   isLikedByMe: Boolean!
   comments: [Comment!]!

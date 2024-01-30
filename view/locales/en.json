@@ -641,7 +641,8 @@
     "headers": {
       "createQuestion": "Create Question",
       "updateQuestion": "Edit Question",
-      "questionPriority": "Question {{priority}}"
+      "questionPriority": "Question {{priority}}",
+      "usersAnswer": "{{name}}'s Answer"
     },
     "errors": {
       "missingText": "Question text cannot be empty",

@@ -5,6 +5,12 @@ fragment AnsweredQuestionCard on Question {
   answer(questionnaireTicketId: $questionnaireTicketId) {
     id
     text
+    likeCount
+    commentCount
+    isLikedByMe @include(if: $isLoggedIn)
+    user {
+      id
+      name
+    }
   }
-  ...AnsweredQuestionCardFooter
 }

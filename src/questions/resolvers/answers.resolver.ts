@@ -13,7 +13,6 @@ import { Dataloaders } from '../../dataloader/dataloader.types';
 import { Like } from '../../likes/models/like.model';
 import { User } from '../../users/models/user.model';
 import { Answer } from '../models/answer.model';
-import { Question } from '../models/question.model';
 import { QuestionsService } from '../questions.service';
 
 @Resolver(() => Answer)
@@ -26,12 +25,17 @@ export class AnswersResolver {
   }
 
   @ResolveField(() => [Like])
-  async likes(@Parent() { id }: Question) {
+  async likes(@Parent() { id }: Answer) {
     return this.questionsService.getAnswerLikes(id);
   }
 
+  @ResolveField(() => User)
+  async user(@Parent() { id }: Answer) {
+    return this.questionsService.getAnswerUser(id);
+  }
+
   @ResolveField(() => Int)
-  async likeCount(@Parent() { id }: Question) {
+  async likeCount(@Parent() { id }: Answer) {
     return this.questionsService.getAnswerLikeCount(id);
   }
 
@@ -48,12 +52,12 @@ export class AnswersResolver {
   }
 
   @ResolveField(() => [Comment])
-  async comments(@Parent() { id }: Question) {
+  async comments(@Parent() { id }: Answer) {
     return this.questionsService.getAnswerComments(id);
   }
 
   @ResolveField(() => Int)
-  async commentCount(@Parent() { id }: Question) {
+  async commentCount(@Parent() { id }: Answer) {
     return this.questionsService.getAnswerCommentCount(id);
   }
 }

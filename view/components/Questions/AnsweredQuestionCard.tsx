@@ -2,6 +2,7 @@ import {
   Card,
   CardContent as MuiCardContent,
   CardHeader as MuiCardHeader,
+  SxProps,
   Typography,
   styled,
 } from '@mui/material';
@@ -24,9 +25,10 @@ const CardContent = styled(MuiCardContent)(() => ({
 
 interface Props {
   question: AnsweredQuestionCardFragment | MyAnsweredQuestionCardFragment;
+  inModal?: boolean;
 }
 
-const AnsweredQuestionCard = ({ question }: Props) => {
+const AnsweredQuestionCard = ({ question, inModal }: Props) => {
   const { t } = useTranslation();
 
   const { text, priority } = question;
@@ -34,6 +36,11 @@ const AnsweredQuestionCard = ({ question }: Props) => {
   const questionText = `${t('questions.headers.questionPriority', {
     priority: priority + 1,
   })}: ${text}`;
+
+  const cardContentStyles: SxProps = {
+    paddingTop: 3,
+    paddingX: inModal ? 0 : undefined,
+  };
 
   const getAnswerText = () => {
     if ('myAnswer' in question) {
@@ -44,18 +51,28 @@ const AnsweredQuestionCard = ({ question }: Props) => {
     }
   };
 
-  return (
-    <Card>
+  const renderAnsweredQuestion = () => (
+    <>
       <CardHeader
         title={<Typography color="text.secondary">{questionText}</Typography>}
+        sx={{
+          paddingX: inModal ? 0 : undefined,
+          paddingTop: inModal ? 0 : undefined,
+        }}
       />
-      <CardContent>
+      <CardContent sx={cardContentStyles}>
         <Typography>{getAnswerText()}</Typography>
       </CardContent>
 
-      <AnsweredQuestionCardFooter question={question} />
-    </Card>
+      <AnsweredQuestionCardFooter question={question} inModal={inModal} />
+    </>
   );
+
+  if (inModal) {
+    return renderAnsweredQuestion();
+  }
+
+  return <Card>{renderAnsweredQuestion()}</Card>;
 };
 
 export default AnsweredQuestionCard;
