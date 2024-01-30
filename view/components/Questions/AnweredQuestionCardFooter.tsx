@@ -84,10 +84,10 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
   const handlePopoverClose = () => setAnchorEl(null);
 
   const renderCommentForm = () => {
-    if (!isLoggedIn || inModal) {
+    if (!isLoggedIn || inModal || !answer) {
       return null;
     }
-    return <CommentForm postId={id} enableAutoFocus />;
+    return <CommentForm answerId={answer.id} enableAutoFocus />;
   };
 
   if (!answer) {

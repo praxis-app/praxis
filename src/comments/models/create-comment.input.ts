@@ -9,6 +9,9 @@ export class CreateCommentInput {
   @Field(() => Int, { nullable: true })
   proposalId?: number;
 
+  @Field(() => Int, { nullable: true })
+  answerId?: number;
+
   @Field({ nullable: true })
   body?: string;
 

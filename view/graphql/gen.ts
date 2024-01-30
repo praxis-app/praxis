@@ -78,6 +78,7 @@ export type Canary = {
 
 export type Comment = {
   __typename?: 'Comment';
+  answer?: Maybe<Answer>;
   body?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
@@ -91,6 +92,7 @@ export type Comment = {
 };
 
 export type CreateCommentInput = {
+  answerId?: InputMaybe<Scalars['Int']['input']>;
   body?: InputMaybe<Scalars['String']['input']>;
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
   postId?: InputMaybe<Scalars['Int']['input']>;

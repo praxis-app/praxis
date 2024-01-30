@@ -8,10 +8,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Question } from './question.model';
-import { QuestionnaireTicket } from './questionnaire-ticket.model';
 import { Comment } from '../../comments/models/comment.model';
 import { Like } from '../../likes/models/like.model';
+import { Notification } from '../../notifications/models/notification.model';
+import { Question } from './question.model';
+import { QuestionnaireTicket } from './questionnaire-ticket.model';
 
 @ObjectType()
 @Entity()
@@ -29,6 +30,9 @@ export class Answer {
 
   @OneToMany(() => Like, (like) => like.answer)
   likes: Like[];
+
+  @OneToMany(() => Notification, (notification) => notification.answer)
+  notifications: Notification[];
 
   @ManyToOne(
     () => QuestionnaireTicket,

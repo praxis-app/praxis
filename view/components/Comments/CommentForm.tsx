@@ -31,6 +31,7 @@ import Flex from '../Shared/Flex';
 import UserAvatar from '../Users/UserAvatar';
 
 interface Props extends FormikFormProps {
+  answerId?: number;
   editComment?: CommentFormFragment;
   enableAutoFocus?: boolean;
   expanded?: boolean;
@@ -40,6 +41,7 @@ interface Props extends FormikFormProps {
 }
 
 const CommentForm = ({
+  answerId,
   editComment,
   enableAutoFocus,
   expanded,
@@ -81,6 +83,16 @@ const CommentForm = ({
     transform: 'translateY(5px)',
   };
 
+  const getTypeName = () => {
+    if (answerId) {
+      return TypeNames.Answer;
+    }
+    if (proposalId) {
+      return TypeNames.Proposal;
+    }
+    return TypeNames.Post;
+  };
+
   const handleCreate = async (
     formValues: CreateCommentInput,
     { resetForm, setSubmitting }: FormikHelpers<CreateCommentInput>,
@@ -94,6 +106,7 @@ const CommentForm = ({
           ...formValues,
           proposalId,
           postId,
+          answerId,
           images,
         },
       },
@@ -106,8 +119,8 @@ const CommentForm = ({
         } = data;
 
         const cacheId = cache.identify({
-          __typename: postId ? TypeNames.Post : TypeNames.Proposal,
-          id: postId || proposalId,
+          __typename: getTypeName(),
+          id: postId || proposalId || answerId,
         });
         cache.modify({
           id: cacheId,

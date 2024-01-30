@@ -14,6 +14,7 @@ import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalsService } from '../proposals/proposals.service';
+import { Answer } from '../questions/models/answer.model';
 import { User } from '../users/models/user.model';
 import { CommentsService } from './comments.service';
 import { Comment } from './models/comment.model';
@@ -46,6 +47,11 @@ export class CommentsResolver {
   @ResolveField(() => Proposal, { nullable: true })
   async proposal(@Parent() { proposalId }: Comment) {
     return proposalId ? this.proposalsService.getProposal(proposalId) : null;
+  }
+
+  @ResolveField(() => Answer, { nullable: true })
+  async answer(@Parent() { answerId }: Comment) {
+    return answerId ? this.commentsService.getCommentedAnswer(answerId) : null;
   }
 
   @ResolveField(() => [Image])

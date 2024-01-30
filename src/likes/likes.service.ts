@@ -106,6 +106,7 @@ export class LikesService {
         commentId: like.commentId,
         userId: likedItemUserId,
         otherUserId: user.id,
+        answerId: like.answerId,
         postId: like.postId,
         likeId: like.id,
       });

@@ -397,6 +397,7 @@ type Comment {
   user: User!
   post: Post
   proposal: Proposal
+  answer: Answer
   likes: [Like!]!
   likeCount: Int!
   isLikedByMe: Boolean!
@@ -950,6 +951,7 @@ input CreateServerInviteInput {
 input CreateCommentInput {
   postId: Int
   proposalId: Int
+  answerId: Int
   body: String
   images: [Upload!]
 }

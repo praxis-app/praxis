@@ -6,13 +6,14 @@ import { Post } from '../posts/models/post.model';
 import { PostsModule } from '../posts/posts.module';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalsModule } from '../proposals/proposals.module';
+import { Answer } from '../questions/models/answer.model';
 import { CommentsResolver } from './comments.resolver';
 import { CommentsService } from './comments.service';
 import { Comment } from './models/comment.model';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Comment, Image, Post, Proposal]),
+    TypeOrmModule.forFeature([Comment, Image, Post, Proposal, Answer]),
     NotificationsModule,
     PostsModule,
     ProposalsModule,

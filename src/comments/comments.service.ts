@@ -11,6 +11,7 @@ import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
+import { Answer } from '../questions/models/answer.model';
 import { User } from '../users/models/user.model';
 import { Comment } from './models/comment.model';
 import { CreateCommentInput } from './models/create-comment.input';
@@ -30,6 +31,9 @@ export class CommentsService {
 
     @InjectRepository(Proposal)
     private proposalRepository: Repository<Proposal>,
+
+    @InjectRepository(Answer)
+    private answerRepository: Repository<Answer>,
 
     private notificationsService: NotificationsService,
   ) {}
@@ -75,6 +79,34 @@ export class CommentsService {
     );
   }
 
+  async getCommentedAnswer(answerId: number) {
+    return this.answerRepository.findOne({
+      where: { id: answerId },
+    });
+  }
+
+  async getCommentedItemUserId(comment: Comment) {
+    if (comment.proposalId) {
+      const proposal = await this.proposalRepository.findOneOrFail({
+        where: { id: comment.proposalId },
+        relations: ['user'],
+      });
+      return proposal.user.id;
+    }
+    if (comment.answerId) {
+      const answer = await this.answerRepository.findOneOrFail({
+        where: { id: comment.answerId },
+        relations: ['questionnaireTicket'],
+      });
+      return answer.questionnaireTicket.userId;
+    }
+    const post = await this.postRepository.findOneOrFail({
+      where: { id: comment.postId },
+      relations: ['user'],
+    });
+    return post.user.id;
+  }
+
   async createComment(
     { body, images, ...commentData }: CreateCommentInput,
     user: User,
@@ -98,28 +130,19 @@ export class CommentsService {
       }
     }
 
-    const {
-      user: { id: userId },
-    } = comment.postId
-      ? await this.postRepository.findOneOrFail({
-          where: { id: comment.postId },
-          relations: ['user'],
-        })
-      : await this.proposalRepository.findOneOrFail({
-          where: { id: comment.proposalId },
-          relations: ['user'],
-        });
+    const commentedItemUserId = await this.getCommentedItemUserId(comment);
 
-    if (userId !== user.id) {
+    if (commentedItemUserId !== user.id) {
       await this.notificationsService.createNotification({
         notificationType: comment.postId
           ? NotificationType.PostComment
           : NotificationType.ProposalComment,
-        proposalId: comment.proposalId,
-        postId: comment.postId,
-        otherUserId: user.id,
+        answerId: comment.answerId,
         commentId: comment.id,
-        userId,
+        otherUserId: user.id,
+        postId: comment.postId,
+        proposalId: comment.proposalId,
+        userId: commentedItemUserId,
       });
     }
 
