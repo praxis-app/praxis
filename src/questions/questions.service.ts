@@ -94,6 +94,7 @@ export class QuestionsService {
   async getServerQuestionnaireTickets() {
     return this.questionnaireTicketRepository.find({
       where: { groupId: IsNull() },
+      order: { createdAt: 'DESC' },
     });
   }
 
