@@ -28,4 +28,9 @@ fragment Notification on Notification {
       id
     }
   }
+
+  answer {
+    id
+    text
+  }
 }

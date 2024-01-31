@@ -107,6 +107,16 @@ export class CommentsService {
     return post.user.id;
   }
 
+  getCommentedItemNotificationType(comment: Comment) {
+    if (comment.proposalId) {
+      return NotificationType.ProposalComment;
+    }
+    if (comment.answerId) {
+      return NotificationType.AnswerComment;
+    }
+    return NotificationType.PostComment;
+  }
+
   async createComment(
     { body, images, ...commentData }: CreateCommentInput,
     user: User,
@@ -131,18 +141,17 @@ export class CommentsService {
     }
 
     const commentedItemUserId = await this.getCommentedItemUserId(comment);
+    const notificationType = this.getCommentedItemNotificationType(comment);
 
     if (commentedItemUserId !== user.id) {
       await this.notificationsService.createNotification({
-        notificationType: comment.postId
-          ? NotificationType.PostComment
-          : NotificationType.ProposalComment,
         answerId: comment.answerId,
         commentId: comment.id,
         otherUserId: user.id,
         postId: comment.postId,
         proposalId: comment.proposalId,
         userId: commentedItemUserId,
+        notificationType,
       });
     }
 

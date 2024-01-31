@@ -4,6 +4,8 @@ export enum NotificationStatus {
 }
 
 export enum NotificationType {
+  AnswerComment = 'answer-comment',
+  AnswerLike = 'answer-like',
   CommentLike = 'comment-like',
   Follow = 'follow',
   GroupMemberRequest = 'group-member-request',

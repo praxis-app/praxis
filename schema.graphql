@@ -379,6 +379,7 @@ type Notification {
   proposal: Proposal
   post: Post
   comment: Comment
+  answer: Answer
 }
 
 type Like {

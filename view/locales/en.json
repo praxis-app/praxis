@@ -585,6 +585,8 @@
       "unread": "Unread"
     },
     "messages": {
+      "answerLike": "<b>{{name}}</b> likes your answer: {{text}}",
+      "answerComment": "<b>{{name}}</b> commented on your answer.",
       "commentLike": "<b>{{name}}</b> likes your comment.",
       "commentLikeWithText": "<b>{{name}}</b> likes your comment: {{text}}",
       "follow": "<b>{{name}}</b> followed you.",

@@ -21,6 +21,7 @@ import { Like } from '../likes/models/like.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
+import { Answer } from '../questions/models/answer.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
@@ -86,6 +87,9 @@ export class DataloaderService {
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
 
+    @InjectRepository(Answer)
+    private answerRepository: Repository<Answer>,
+
     private usersService: UsersService,
   ) {}
 
@@ -141,6 +145,7 @@ export class DataloaderService {
       eventsLoader: this._createEventsLoader(),
 
       // Questions & Answers
+      answersLoader: this._createAnswersLoader(),
       isAnswerLikedByMeLoader: this._createIsAnswerLikedByMeLoader(),
     };
   }
@@ -815,6 +820,19 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
   // Questions & Answers
   // -------------------------------------------------------------------------
+
+  private _createAnswersLoader() {
+    return this._getDataLoader<number, Answer>(async (answerIds) => {
+      const answers = await this.answerRepository.find({
+        where: { id: In(answerIds) },
+      });
+      return answerIds.map(
+        (id) =>
+          answers.find((answer: Answer) => answer.id === id) ||
+          new Error(`Could not load answer: ${id}`),
+      );
+    });
+  }
 
   private _createIsAnswerLikedByMeLoader() {
     return this._getDataLoader<IsAnswerLikedByMeKey, boolean, number>(

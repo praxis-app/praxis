@@ -89,6 +89,16 @@ export class LikesService {
     return likedItem.userId;
   }
 
+  getLikedItemNotificationType(likedItem: Post | Comment | Answer) {
+    if (likedItem instanceof Answer) {
+      return NotificationType.AnswerLike;
+    }
+    if (likedItem instanceof Comment) {
+      return NotificationType.CommentLike;
+    }
+    return NotificationType.PostLike;
+  }
+
   async createLike(likeData: CreateLikeInput, user: User) {
     const like = await this.likeRepository.save({
       ...likeData,
@@ -97,12 +107,11 @@ export class LikesService {
 
     const likedItem = await this.getLikedItem(like);
     const likedItemUserId = this.getLikedItemUserId(likedItem);
+    const notificationType = this.getLikedItemNotificationType(likedItem);
 
     if (likedItemUserId !== user.id) {
       await this.notificationsService.createNotification({
-        notificationType: like.postId
-          ? NotificationType.PostLike
-          : NotificationType.CommentLike,
+        notificationType,
         commentId: like.commentId,
         userId: likedItemUserId,
         otherUserId: user.id,

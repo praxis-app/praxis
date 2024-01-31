@@ -34,6 +34,7 @@ export type NotificationFragment = {
     post?: { __typename?: 'Post'; id: number } | null;
     proposal?: { __typename?: 'Proposal'; id: number } | null;
   } | null;
+  answer?: { __typename?: 'Answer'; id: number; text: string } | null;
 };
 
 export const NotificationFragmentDoc = gql`
@@ -63,6 +64,10 @@ export const NotificationFragmentDoc = gql`
       proposal {
         id
       }
+    }
+    answer {
+      id
+      text
     }
   }
   ${UserAvatarFragmentDoc}

@@ -46,13 +46,14 @@ interface Props {
 const Notification = ({
   notification: {
     id,
+    answer,
+    comment,
+    group,
     notificationType,
     otherUser,
-    status,
     post,
-    group,
-    comment,
     proposal,
+    status,
     createdAt,
     __typename,
   },
@@ -130,6 +131,17 @@ const Notification = ({
         name: otherUser?.name,
       });
     }
+    if (notificationType === NotificationType.AnswerComment) {
+      return _t('notifications.messages.answerComment', {
+        name: otherUser?.name,
+      });
+    }
+    if (notificationType === NotificationType.AnswerLike) {
+      return _t('notifications.messages.answerLike', {
+        name: otherUser?.name,
+        text: `"${truncate(answer?.text, { length: 30 })}"`,
+      });
+    }
     if (notificationType === NotificationType.CommentLike) {
       if (comment?.body) {
         return _t('notifications.messages.commentLikeWithText', {
@@ -184,6 +196,12 @@ const Notification = ({
     if (notificationType === NotificationType.GroupMemberRequestApproval) {
       return `${NavigationPaths.Groups}/${group?.name}`;
     }
+    if (
+      notificationType === NotificationType.AnswerComment ||
+      notificationType === NotificationType.AnswerLike
+    ) {
+      return NavigationPaths.VibeCheck;
+    }
     return NavigationPaths.Home;
   };
 
@@ -232,6 +250,7 @@ const Notification = ({
     if (
       notificationType === NotificationType.ProposalVoteAgreement ||
       notificationType === NotificationType.CommentLike ||
+      notificationType === NotificationType.AnswerLike ||
       notificationType === NotificationType.PostLike
     ) {
       return <ThumbUp sx={iconStyles} />;
