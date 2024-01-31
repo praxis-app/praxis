@@ -168,12 +168,11 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
         <Box paddingX={inModal ? 0 : '16px'}>
           <Divider sx={{ marginBottom: 2 }} />
 
-          {/* TODO: Add answerId prop to CommentsList */}
           <CommentsList
             comments={comments || []}
             currentUserId={me?.id}
             marginBottom={inModal && !isLoggedIn ? 2.5 : undefined}
-            postId={question.id}
+            answerId={answer.id}
           />
           {renderCommentForm()}
         </Box>

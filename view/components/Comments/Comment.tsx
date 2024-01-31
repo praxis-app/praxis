@@ -20,6 +20,7 @@ import CommentLikeButton from './CommentLikeButton';
 import CommentLikeCount from './CommentLikeCount';
 
 interface Props {
+  answerId?: number;
   canManageComments?: boolean;
   comment: CommentFragment;
   currentUserId?: number;
@@ -28,6 +29,7 @@ interface Props {
 }
 
 const Comment = ({
+  answerId,
   comment,
   canManageComments,
   currentUserId,
@@ -89,6 +91,19 @@ const Comment = ({
     await deleteComment({
       variables: { id },
       update(cache) {
+        if (proposalId) {
+          cache.modify({
+            id: cache.identify({
+              id: proposalId,
+              __typename: TypeNames.Proposal,
+            }),
+            fields: {
+              commentCount(existingCount: number) {
+                return Math.max(0, existingCount - 1);
+              },
+            },
+          });
+        }
         if (postId) {
           cache.modify({
             id: cache.identify({ id: postId, __typename: TypeNames.Post }),
@@ -99,12 +114,9 @@ const Comment = ({
             },
           });
         }
-        if (proposalId) {
+        if (answerId) {
           cache.modify({
-            id: cache.identify({
-              id: proposalId,
-              __typename: TypeNames.Proposal,
-            }),
+            id: cache.identify({ id: answerId, __typename: TypeNames.Answer }),
             fields: {
               commentCount(existingCount: number) {
                 return Math.max(0, existingCount - 1);
