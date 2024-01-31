@@ -1,4 +1,4 @@
-query VibeCheck {
+query VibeCheck($isLoggedIn: Boolean!) {
   me {
     id
     questionnaireTicket {

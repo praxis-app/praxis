@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isLoggedInVar } from '../../graphql/cache';
 import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
+import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestionCard.gen';
 import { useAnswerCommentsLazyQuery } from '../../graphql/questions/queries/gen/AnswerComments.gen';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
@@ -23,7 +24,7 @@ const ROTATED_ICON_STYLES: SxProps = {
 };
 
 interface Props {
-  question: AnsweredQuestionCardFragment;
+  question: AnsweredQuestionCardFragment | MyAnsweredQuestionCardFragment;
   inModal?: boolean;
 }
 
@@ -41,16 +42,22 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
 
   const { t } = useTranslation();
 
+  const answer =
+    'myAnswer' in question
+      ? question.myAnswer
+      : 'answer' in question
+      ? question.answer
+      : undefined;
+
   useEffect(() => {
-    if (!inModal || !question.answer || answerCommentsCalled) {
+    if (!inModal || !answer || answerCommentsCalled) {
       return;
     }
     getAnswerComments({
-      variables: { id: question.answer.id, isLoggedIn },
+      variables: { id: answer.id, isLoggedIn },
     });
-  }, [getAnswerComments, inModal, isLoggedIn, question, answerCommentsCalled]);
+  }, [getAnswerComments, inModal, isLoggedIn, answer, answerCommentsCalled]);
 
-  const { id, answer } = question;
   const likeCount = answer?.likeCount;
   const commentCount = answer?.commentCount;
   const comments = answerCommentsData?.answer.comments;
@@ -110,8 +117,9 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
                 onMouseLeave={handlePopoverClose}
                 sx={{ cursor: 'pointer' }}
               >
+                {/* TODO: Add answerId prop to LikeBadge */}
                 <LikeBadge
-                  postId={id}
+                  postId={question.id}
                   anchorEl={anchorEl}
                   handlePopoverClose={handlePopoverClose}
                   marginRight="11px"
@@ -120,10 +128,11 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
                 <Typography sx={{ userSelect: 'none' }}>{likeCount}</Typography>
               </Flex>
 
+              {/* TODO: Add answerId prop to LikesModal */}
               <LikesModal
                 open={showLikesModal}
                 onClose={() => setShowLikesModal(false)}
-                postId={id}
+                postId={question.id}
               />
             </>
           )}
@@ -159,11 +168,12 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
         <Box paddingX={inModal ? 0 : '16px'}>
           <Divider sx={{ marginBottom: 2 }} />
 
+          {/* TODO: Add answerId prop to CommentsList */}
           <CommentsList
             comments={comments || []}
             currentUserId={me?.id}
             marginBottom={inModal && !isLoggedIn ? 2.5 : undefined}
-            postId={id}
+            postId={question.id}
           />
           {renderCommentForm()}
         </Box>

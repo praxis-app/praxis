@@ -7,19 +7,21 @@ import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { QuestionnaireTicketStatus } from '../../constants/question.constants';
-import { toastVar } from '../../graphql/cache';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { AnswerQuestionsInput } from '../../graphql/gen';
 import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/gen/AnswerQuestions.gen';
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
+import { useReactiveVar } from '@apollo/client';
 
 const VibeCheck = () => {
   const [errorsMap, setErrorsMap] = useState<Record<number, string>>({});
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const {
     data: vibeCheckData,
     loading: vibeCheckLoading,
     error: vibeCheckError,
-  } = useVibeCheckQuery();
+  } = useVibeCheckQuery({ variables: { isLoggedIn } });
 
   const [answerQuestions, { loading: answerQuestionsLoading }] =
     useAnswerQuestionsMutation();
@@ -36,6 +38,7 @@ const VibeCheck = () => {
     await answerQuestions({
       variables: {
         answersData: { ...answersData, isSubmitting: true },
+        isLoggedIn,
       },
       onError(err) {
         toastVar({
@@ -56,6 +59,7 @@ const VibeCheck = () => {
     await answerQuestions({
       variables: {
         answersData,
+        isLoggedIn,
       },
       onError(err) {
         toastVar({

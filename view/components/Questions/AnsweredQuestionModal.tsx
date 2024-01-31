@@ -2,13 +2,14 @@ import { Box, SxProps } from '@mui/material';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
+import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestionCard.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import CommentForm from '../Comments/CommentForm';
 import Modal from '../Shared/Modal';
 import AnsweredQuestionCard from './AnsweredQuestionCard';
 
 interface Props {
-  question: AnsweredQuestionCardFragment;
+  question: AnsweredQuestionCardFragment | MyAnsweredQuestionCardFragment;
   open: boolean;
   onClose(): void;
 }
@@ -19,11 +20,18 @@ const AnsweredQuestionModal = ({ question, open, onClose }: Props) => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
+  const answer =
+    'myAnswer' in question
+      ? question.myAnswer
+      : 'answer' in question
+      ? question.answer
+      : undefined;
+
   useEffect(() => {
     ref.current?.scrollIntoView();
-  }, [question.answer?.commentCount]);
+  }, [answer?.commentCount]);
 
-  const userName = question.answer?.user?.name || '';
+  const userName = answer?.user?.name || '';
   const title = t('questions.headers.usersAnswer', {
     name: userName[0].toUpperCase() + userName.slice(1),
   });
@@ -34,7 +42,7 @@ const AnsweredQuestionModal = ({ question, open, onClose }: Props) => {
     minHeight: '50vh',
   };
 
-  if (!question.answer) {
+  if (!answer) {
     return null;
   }
 
@@ -50,7 +58,7 @@ const AnsweredQuestionModal = ({ question, open, onClose }: Props) => {
           paddingX="16px"
           width="100%"
         >
-          <CommentForm answerId={question.answer.id} expanded />
+          <CommentForm answerId={answer.id} expanded />
         </Box>
       }
       maxWidth="md"

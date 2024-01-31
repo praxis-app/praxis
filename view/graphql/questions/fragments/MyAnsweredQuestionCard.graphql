@@ -5,5 +5,12 @@ fragment MyAnsweredQuestionCard on Question {
   myAnswer {
     id
     text
+    likeCount
+    commentCount
+    isLikedByMe @include(if: $isLoggedIn)
+    user {
+      id
+      name
+    }
   }
 }

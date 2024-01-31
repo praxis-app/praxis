@@ -9,7 +9,9 @@ import * as Apollo from '@apollo/client';
 /* eslint-disable */
 
 const defaultOptions = {} as const;
-export type VibeCheckQueryVariables = Types.Exact<{ [key: string]: never }>;
+export type VibeCheckQueryVariables = Types.Exact<{
+  isLoggedIn: Types.Scalars['Boolean']['input'];
+}>;
 
 export type VibeCheckQuery = {
   __typename?: 'Query';
@@ -26,14 +28,22 @@ export type VibeCheckQuery = {
         id: number;
         text: string;
         priority: number;
-        myAnswer?: { __typename?: 'Answer'; id: number; text: string } | null;
+        myAnswer?: {
+          __typename?: 'Answer';
+          id: number;
+          text: string;
+          likeCount: number;
+          commentCount: number;
+          isLikedByMe?: boolean;
+          user: { __typename?: 'User'; id: number; name: string };
+        } | null;
       }>;
     };
   };
 };
 
 export const VibeCheckDocument = gql`
-  query VibeCheck {
+  query VibeCheck($isLoggedIn: Boolean!) {
     me {
       id
       questionnaireTicket {
@@ -62,14 +72,12 @@ export const VibeCheckDocument = gql`
  * @example
  * const { data, loading, error } = useVibeCheckQuery({
  *   variables: {
+ *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
 export function useVibeCheckQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    VibeCheckQuery,
-    VibeCheckQueryVariables
-  >,
+  baseOptions: Apollo.QueryHookOptions<VibeCheckQuery, VibeCheckQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<VibeCheckQuery, VibeCheckQueryVariables>(

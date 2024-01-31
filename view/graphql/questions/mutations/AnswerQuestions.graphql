@@ -1,4 +1,7 @@
-mutation AnswerQuestions($answersData: AnswerQuestionsInput!) {
+mutation AnswerQuestions(
+  $answersData: AnswerQuestionsInput!
+  $isLoggedIn: Boolean!
+) {
   answerQuestions(answersData: $answersData) {
     questionnaireTicket {
       questions {

@@ -10,7 +10,15 @@ export type MyAnsweredQuestionCardFragment = {
   id: number;
   text: string;
   priority: number;
-  myAnswer?: { __typename?: 'Answer'; id: number; text: string } | null;
+  myAnswer?: {
+    __typename?: 'Answer';
+    id: number;
+    text: string;
+    likeCount: number;
+    commentCount: number;
+    isLikedByMe?: boolean;
+    user: { __typename?: 'User'; id: number; name: string };
+  } | null;
 };
 
 export const MyAnsweredQuestionCardFragmentDoc = gql`
@@ -21,6 +29,13 @@ export const MyAnsweredQuestionCardFragmentDoc = gql`
     myAnswer {
       id
       text
+      likeCount
+      commentCount
+      isLikedByMe @include(if: $isLoggedIn)
+      user {
+        id
+        name
+      }
     }
   }
 `;
