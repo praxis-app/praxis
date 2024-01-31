@@ -36,6 +36,7 @@ type Question {
 type Answer {
   id: Int!
   text: String!
+  questionnaireTicket: QuestionnaireTicket!
   likes: [Like!]!
   user: User!
   likeCount: Int!

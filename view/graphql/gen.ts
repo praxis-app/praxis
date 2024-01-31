@@ -40,6 +40,7 @@ export type Answer = {
   isLikedByMe: Scalars['Boolean']['output'];
   likeCount: Scalars['Int']['output'];
   likes: Array<Like>;
+  questionnaireTicket: QuestionnaireTicket;
   text: Scalars['String']['output'];
   user: User;
 };

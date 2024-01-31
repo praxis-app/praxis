@@ -185,6 +185,10 @@ const Notification = ({
       if (comment?.post?.id) {
         return `${NavigationPaths.Posts}/${comment?.post?.id}`;
       }
+      if (comment?.answer?.id) {
+        const { id } = comment.answer.questionnaireTicket;
+        return `${NavigationPaths.ServerQuestionnaires}/${id}`;
+      }
       return `${NavigationPaths.Proposals}/${comment?.proposal?.id}`;
     }
     if (notificationType === NotificationType.Follow) {

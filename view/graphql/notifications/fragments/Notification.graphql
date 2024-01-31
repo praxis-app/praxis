@@ -27,6 +27,12 @@ fragment Notification on Notification {
     proposal {
       id
     }
+    answer {
+      id
+      questionnaireTicket {
+        id
+      }
+    }
   }
 
   answer {
