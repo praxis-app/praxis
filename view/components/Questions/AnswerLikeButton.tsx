@@ -17,7 +17,7 @@ import { Blurple } from '../../styles/theme';
 import CardFooterButton from '../Shared/CardFooterButton';
 
 interface Props {
-  answerId: number;
+  answerId?: number;
   isLikedByMe: boolean;
 }
 
@@ -93,7 +93,7 @@ const AnsweredLikeButton = ({ answerId, isLikedByMe }: Props) => {
   return (
     <CardFooterButton
       sx={isLikedByMe ? { color: Blurple.SavoryBlue } : {}}
-      disabled={isLoading}
+      disabled={isLoading || !answerId}
       onClick={handleLikeButtonClick}
     >
       <LikeIcon sx={likeButtonIconStyles} />

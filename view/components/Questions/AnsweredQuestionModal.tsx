@@ -31,20 +31,18 @@ const AnsweredQuestionModal = ({ question, open, onClose }: Props) => {
     ref.current?.scrollIntoView();
   }, [answer?.commentCount]);
 
-  const userName = answer?.user?.name || '';
-  const title = t('questions.headers.usersAnswer', {
-    name: userName[0].toUpperCase() + userName.slice(1),
-  });
+  const userName = answer?.user.name;
+  const title = userName
+    ? t('questions.headers.usersAnswer', {
+        name: userName[0].toUpperCase() + userName.slice(1),
+      })
+    : undefined;
 
   const contentStyles: SxProps = {
     width: isDesktop ? '700px' : '100%',
     paddingBottom: 0,
     minHeight: '50vh',
   };
-
-  if (!answer) {
-    return null;
-  }
 
   return (
     <Modal
@@ -58,7 +56,7 @@ const AnsweredQuestionModal = ({ question, open, onClose }: Props) => {
           paddingX="16px"
           width="100%"
         >
-          <CommentForm answerId={answer.id} expanded />
+          <CommentForm answerId={answer?.id} expanded />
         </Box>
       }
       maxWidth="md"

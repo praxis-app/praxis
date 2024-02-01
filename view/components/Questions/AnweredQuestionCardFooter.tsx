@@ -98,10 +98,6 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
     return <CommentForm answerId={answer.id} enableAutoFocus />;
   };
 
-  if (!answer) {
-    return null;
-  }
-
   return (
     <Box marginTop={likeCount ? 1.25 : 2}>
       <Box paddingX={inModal ? 0 : '16px'}>
@@ -156,9 +152,9 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
           paddingX: inModal ? 0 : undefined,
         }}
       >
-        <AnsweredLikeButton answerId={answer.id} isLikedByMe={!!isLikedByMe} />
+        <AnsweredLikeButton answerId={answer?.id} isLikedByMe={!!isLikedByMe} />
 
-        <CardFooterButton onClick={handleCommentButtonClick}>
+        <CardFooterButton onClick={handleCommentButtonClick} disabled={!answer}>
           <Comment sx={ROTATED_ICON_STYLES} />
           {t('actions.comment')}
         </CardFooterButton>
@@ -172,7 +168,7 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
             comments={comments || []}
             currentUserId={me?.id}
             marginBottom={inModal && !isLoggedIn ? 2.5 : undefined}
-            answerId={answer.id}
+            answerId={answer?.id}
           />
           {renderCommentForm()}
         </Box>
