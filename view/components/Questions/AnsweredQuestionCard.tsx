@@ -1,20 +1,8 @@
-import {
-  Card,
-  CardContent,
-  CardHeader as MuiCardHeader,
-  SxProps,
-  Typography,
-  styled,
-} from '@mui/material';
+import { Card, CardContent, SxProps, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
 import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestionCard.gen';
 import AnsweredQuestionCardFooter from './AnweredQuestionCardFooter';
-
-const CardHeader = styled(MuiCardHeader)(() => ({
-  paddingTop: '14px',
-  paddingBottom: '0px',
-}));
 
 interface Props {
   question: AnsweredQuestionCardFragment | MyAnsweredQuestionCardFragment;
@@ -31,7 +19,7 @@ const AnsweredQuestionCard = ({ question, inModal }: Props) => {
   })}: ${text}`;
 
   const cardContentStyles: SxProps = {
-    paddingTop: 1.2,
+    paddingTop: 1.8,
     paddingBottom: 0.6,
     paddingX: inModal ? 0 : undefined,
   };
@@ -47,14 +35,10 @@ const AnsweredQuestionCard = ({ question, inModal }: Props) => {
 
   const renderAnsweredQuestion = () => (
     <>
-      <CardHeader
-        title={<Typography color="text.secondary">{questionText}</Typography>}
-        sx={{
-          paddingX: inModal ? 0 : undefined,
-          paddingTop: inModal ? 0 : undefined,
-        }}
-      />
       <CardContent sx={cardContentStyles}>
+        <Typography color="text.secondary" paddingBottom={1.2}>
+          {questionText}
+        </Typography>
         <Typography>
           {getAnswerText() || t('questions.labels.noAnswer')}
         </Typography>
