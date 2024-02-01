@@ -1,6 +1,6 @@
 import {
   Card,
-  CardContent as MuiCardContent,
+  CardContent,
   CardHeader as MuiCardHeader,
   SxProps,
   Typography,
@@ -12,15 +12,8 @@ import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragment
 import AnsweredQuestionCardFooter from './AnweredQuestionCardFooter';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
-  paddingTop: '11px',
+  paddingTop: '14px',
   paddingBottom: '0px',
-}));
-
-const CardContent = styled(MuiCardContent)(() => ({
-  paddingTop: '6px',
-  '&:last-child': {
-    paddingBottom: '14px',
-  },
 }));
 
 interface Props {
@@ -38,7 +31,8 @@ const AnsweredQuestionCard = ({ question, inModal }: Props) => {
   })}: ${text}`;
 
   const cardContentStyles: SxProps = {
-    paddingTop: 3,
+    paddingTop: 1.2,
+    paddingBottom: 0.6,
     paddingX: inModal ? 0 : undefined,
   };
 
