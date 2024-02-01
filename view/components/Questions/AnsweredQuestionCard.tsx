@@ -61,7 +61,9 @@ const AnsweredQuestionCard = ({ question, inModal }: Props) => {
         }}
       />
       <CardContent sx={cardContentStyles}>
-        <Typography>{getAnswerText()}</Typography>
+        <Typography>
+          {getAnswerText() || t('questions.labels.noAnswer')}
+        </Typography>
       </CardContent>
 
       <AnsweredQuestionCardFooter question={question} inModal={inModal} />
