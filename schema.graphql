@@ -11,6 +11,11 @@ scalar DateTime
 
 type ServerConfig {
   id: Int!
+  decisionMakingModel: String!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
+  votingTimeLimit: Int!
   securityTxt: String
   showCanaryStatement: Boolean!
   serverQuestionsPrompt: String
