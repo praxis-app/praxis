@@ -17,7 +17,7 @@ import { toastVar } from '../../../graphql/cache';
 import { ProposalActionGroupConfigInput } from '../../../graphql/gen';
 import { useGroupSettingsByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupSettingsByGroupId.gen';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
-import GroupSettingsSelect from '../../Groups/GroupSettingsSelect';
+import SettingsSelect from '../../Settings/SettingsSelect';
 import Flex from '../../Shared/Flex';
 import Modal from '../../Shared/Modal';
 import PrimaryActionButton from '../../Shared/PrimaryActionButton';
@@ -180,7 +180,7 @@ const ProposeGroupSettingsModal = ({
           <Form>
             {data && (
               <FormGroup sx={{ paddingTop: 1 }}>
-                <GroupSettingsSelect
+                <SettingsSelect
                   fieldName={GroupSettingsFieldName.AdminModel}
                   label={t('groups.settings.names.adminModel')}
                   description={t('groups.settings.descriptions.adminModel')}
@@ -198,9 +198,9 @@ const ProposeGroupSettingsModal = ({
                   <MenuItem value={GroupAdminModel.Rotating}>
                     {t('groups.labels.rotatingAdmin')}
                   </MenuItem>
-                </GroupSettingsSelect>
+                </SettingsSelect>
 
-                <GroupSettingsSelect
+                <SettingsSelect
                   fieldName={GroupSettingsFieldName.DecisionMakingModel}
                   label={t('groups.settings.names.decisionMakingModel')}
                   description={t(
@@ -218,9 +218,9 @@ const ProposeGroupSettingsModal = ({
                   <MenuItem value={DecisionMakingModel.MajorityVote}>
                     {t('groups.labels.majority')}
                   </MenuItem>
-                </GroupSettingsSelect>
+                </SettingsSelect>
 
-                <GroupSettingsSelect
+                <SettingsSelect
                   fieldName={GroupSettingsFieldName.StandAsidesLimit}
                   label={t('groups.settings.names.standAsidesLimit')}
                   disabled={
@@ -251,9 +251,9 @@ const ProposeGroupSettingsModal = ({
                         {value}
                       </MenuItem>
                     ))}
-                </GroupSettingsSelect>
+                </SettingsSelect>
 
-                <GroupSettingsSelect
+                <SettingsSelect
                   fieldName={GroupSettingsFieldName.ReservationsLimit}
                   label={t('groups.settings.names.reservationsLimit')}
                   disabled={
@@ -284,7 +284,7 @@ const ProposeGroupSettingsModal = ({
                         {value}
                       </MenuItem>
                     ))}
-                </GroupSettingsSelect>
+                </SettingsSelect>
 
                 <Flex
                   justifyContent="space-between"
@@ -344,7 +344,7 @@ const ProposeGroupSettingsModal = ({
                   sx={{ marginTop: isDesktop ? 3 : 1.2, marginBottom: 3 }}
                 />
 
-                <GroupSettingsSelect
+                <SettingsSelect
                   fieldName={GroupSettingsFieldName.VotingTimeLimit}
                   label={t('groups.settings.names.votingTimeLimit')}
                   description={t(
@@ -382,9 +382,9 @@ const ProposeGroupSettingsModal = ({
                   <MenuItem value={VotingTimeLimit.Unlimited}>
                     {t('groups.labels.unlimited')}
                   </MenuItem>
-                </GroupSettingsSelect>
+                </SettingsSelect>
 
-                <GroupSettingsSelect
+                <SettingsSelect
                   fieldName={GroupSettingsFieldName.Privacy}
                   label={t('groups.settings.names.privacy')}
                   description={t('groups.settings.descriptions.privacy')}
@@ -397,7 +397,7 @@ const ProposeGroupSettingsModal = ({
                   <MenuItem value={GroupPrivacy.Public}>
                     {t('groups.labels.public')}
                   </MenuItem>
-                </GroupSettingsSelect>
+                </SettingsSelect>
               </FormGroup>
             )}
 
