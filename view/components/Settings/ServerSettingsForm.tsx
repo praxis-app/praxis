@@ -359,6 +359,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
                 checked={values.showCanaryStatement || false}
                 name={ServerSettingsFormFields.ShowCanaryStatement}
                 onChange={handleChange}
+                sx={{ alignSelf: 'center' }}
               />
             </Flex>
 
