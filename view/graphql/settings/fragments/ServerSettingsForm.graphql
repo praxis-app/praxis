@@ -1,6 +1,11 @@
 fragment ServerSettingsForm on ServerConfig {
   id
+  decisionMakingModel
+  ratificationThreshold
+  reservationsLimit
+  securityTxt
   serverQuestionsPrompt
   showCanaryStatement
-  securityTxt
+  standAsidesLimit
+  votingTimeLimit
 }

@@ -16,4 +16,19 @@ export class UpdateServerConfigInput {
 
   @Field({ nullable: true })
   serverQuestionsPrompt?: string;
+
+  @Field({ nullable: true })
+  decisionMakingModel?: string;
+
+  @Field(() => Int, { nullable: true })
+  standAsidesLimit?: number;
+
+  @Field(() => Int, { nullable: true })
+  reservationsLimit?: number;
+
+  @Field(() => Int, { nullable: true })
+  ratificationThreshold?: number;
+
+  @Field(() => Int, { nullable: true })
+  votingTimeLimit?: number;
 }

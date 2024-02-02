@@ -1010,6 +1010,11 @@ input UpdateServerConfigInput {
   showCanaryStatement: Boolean
   securityTxt: String
   serverQuestionsPrompt: String
+  decisionMakingModel: String
+  standAsidesLimit: Int
+  reservationsLimit: Int
+  ratificationThreshold: Int
+  votingTimeLimit: Int
 }
 
 input CreateQuestionInput {

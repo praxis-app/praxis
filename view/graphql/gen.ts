@@ -1163,10 +1163,15 @@ export type Rule = {
 
 export type ServerConfig = {
   __typename?: 'ServerConfig';
+  decisionMakingModel: Scalars['String']['output'];
   id: Scalars['Int']['output'];
+  ratificationThreshold: Scalars['Int']['output'];
+  reservationsLimit: Scalars['Int']['output'];
   securityTxt?: Maybe<Scalars['String']['output']>;
   serverQuestionsPrompt?: Maybe<Scalars['String']['output']>;
   showCanaryStatement: Scalars['Boolean']['output'];
+  standAsidesLimit: Scalars['Int']['output'];
+  votingTimeLimit: Scalars['Int']['output'];
 };
 
 export type ServerInvite = {
@@ -1412,10 +1417,15 @@ export type UpdateRulesPriorityInput = {
 
 export type UpdateServerConfigInput = {
   canaryStatement?: InputMaybe<Scalars['String']['input']>;
+  decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
+  ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
+  reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
   securityTxt?: InputMaybe<Scalars['String']['input']>;
   serverQuestionsPrompt?: InputMaybe<Scalars['String']['input']>;
   showCanaryStatement?: InputMaybe<Scalars['Boolean']['input']>;
+  standAsidesLimit?: InputMaybe<Scalars['Int']['input']>;
+  votingTimeLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateServerConfigPayload = {
