@@ -5,6 +5,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -13,6 +14,7 @@ import { Group } from '../../groups/models/group.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { Answer } from './answer.model';
+import { QuestionnaireTicketConfig } from './questionnaire-ticket-config.model';
 
 export enum QuestionnaireTicketStatus {
   InProgress = 'in-progress',
@@ -64,11 +66,20 @@ export class QuestionnaireTicket {
   @Column({ nullable: true })
   groupId?: number;
 
+  @OneToOne(
+    () => QuestionnaireTicketConfig,
+    (questionnaireTicketConfig) =>
+      questionnaireTicketConfig.questionnaireTicket,
+    {
+      cascade: true,
+    },
+  )
+  config: QuestionnaireTicketConfig;
+
   @CreateDateColumn()
   @Field()
   createdAt: Date;
 
   @UpdateDateColumn()
-  @Field()
   updatedAt: Date;
 }

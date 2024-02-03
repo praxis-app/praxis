@@ -17,6 +17,7 @@ import {
 } from './models/questionnaire-ticket.model';
 import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
+import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
 
 @Injectable()
 export class QuestionsService {
@@ -38,6 +39,9 @@ export class QuestionsService {
 
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
+
+    @InjectRepository(QuestionnaireTicketConfig)
+    private questionnaireTicketConfigRepository: Repository<QuestionnaireTicketConfig>,
 
     private serverConfigsService: ServerConfigsService,
   ) {}
@@ -172,6 +176,15 @@ export class QuestionsService {
       relations: ['group'],
     });
     return group;
+  }
+
+  async getQuestionnaireTicketConfig(questionnaireTicketId: number) {
+    const config = await this.questionnaireTicketConfigRepository.findOneOrFail(
+      {
+        where: { id: questionnaireTicketId },
+      },
+    );
+    return config;
   }
 
   async createQuestion(questionData: CreateQuestionInput) {

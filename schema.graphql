@@ -50,12 +50,20 @@ type Answer {
   commentCount: Int!
 }
 
+type QuestionnaireTicketConfig {
+  id: Int!
+  decisionMakingModel: String!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
+  votingTimeLimit: Int!
+}
+
 type QuestionnaireTicket {
   id: Int!
   status: String!
   comments: [Comment!]!
   createdAt: DateTime!
-  updatedAt: DateTime!
   prompt: String
   questions: [Question!]!
   answers: [Answer!]!
@@ -65,6 +73,7 @@ type QuestionnaireTicket {
   commentCount: Int!
   user: User!
   group: Group
+  config: QuestionnaireTicketConfig!
 }
 
 type Vote {

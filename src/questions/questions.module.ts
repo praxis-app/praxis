@@ -11,11 +11,13 @@ import { QuestionsService } from './questions.service';
 import { QuestionnaireTicketsResolver } from './resolvers/questionnaire-tickets.resolver';
 import { QuestionsResolver } from './resolvers/questions.resolver';
 import { AnswersResolver } from './resolvers/answers.resolver';
+import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       QuestionnaireTicket,
+      QuestionnaireTicketConfig,
       Question,
       Answer,
       Comment,

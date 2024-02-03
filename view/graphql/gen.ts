@@ -1140,6 +1140,7 @@ export type QuestionnaireTicket = {
   answers: Array<Answer>;
   commentCount: Scalars['Int']['output'];
   comments: Array<Comment>;
+  config: QuestionnaireTicketConfig;
   createdAt: Scalars['DateTime']['output'];
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
@@ -1147,10 +1148,19 @@ export type QuestionnaireTicket = {
   prompt?: Maybe<Scalars['String']['output']>;
   questions: Array<Question>;
   status: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
   user: User;
   voteCount: Scalars['Int']['output'];
   votes: Array<Vote>;
+};
+
+export type QuestionnaireTicketConfig = {
+  __typename?: 'QuestionnaireTicketConfig';
+  decisionMakingModel: Scalars['String']['output'];
+  id: Scalars['Int']['output'];
+  ratificationThreshold: Scalars['Int']['output'];
+  reservationsLimit: Scalars['Int']['output'];
+  standAsidesLimit: Scalars['Int']['output'];
+  votingTimeLimit: Scalars['Int']['output'];
 };
 
 export type ReadNotificationsPayload = {

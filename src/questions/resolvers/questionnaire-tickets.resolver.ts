@@ -14,6 +14,7 @@ import { Answer } from '../models/answer.model';
 import { Question } from '../models/question.model';
 import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
 import { QuestionsService } from '../questions.service';
+import { QuestionnaireTicketConfig } from '../models/questionnaire-ticket-config.model';
 
 @Resolver(() => QuestionnaireTicket)
 export class QuestionnaireTicketsResolver {
@@ -83,5 +84,10 @@ export class QuestionnaireTicketsResolver {
   @ResolveField(() => Group, { nullable: true })
   async group(@Parent() { id }: QuestionnaireTicket) {
     return this.questionsService.getQuestionnaireTicketGroup(id);
+  }
+
+  @ResolveField(() => QuestionnaireTicketConfig)
+  async config(@Parent() { id }: QuestionnaireTicket) {
+    return this.questionsService.getQuestionnaireTicketConfig(id);
   }
 }
