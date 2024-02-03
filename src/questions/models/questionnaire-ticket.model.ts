@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Comment } from '../../comments/models/comment.model';
 import { Group } from '../../groups/models/group.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
@@ -40,6 +41,12 @@ export class QuestionnaireTicket {
     cascade: true,
   })
   votes: Vote[];
+
+  @Field(() => [Comment])
+  @OneToMany(() => Comment, (comment) => comment.questionnaireTicket, {
+    cascade: true,
+  })
+  comments: Comment[];
 
   @ManyToOne(() => User, (user) => user.questionnaireTickets, {
     onDelete: 'CASCADE',

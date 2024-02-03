@@ -10,6 +10,7 @@ import { QuestionnaireTicketCardFragment } from '../../graphql/questions/fragmen
 import { timeAgo } from '../../utils/time.utils';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
+import QuestionnaireTicketCardFooter from './QuestionnaireTicketCardFooter';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
@@ -25,9 +26,8 @@ interface Props {
   questionnaireTicket: QuestionnaireTicketCardFragment;
 }
 
-const QuestionnaireTicketCard = ({
-  questionnaireTicket: { id, user, createdAt },
-}: Props) => {
+const QuestionnaireTicketCard = ({ questionnaireTicket }: Props) => {
+  const { id, createdAt, user } = questionnaireTicket;
   const questionnaireTicketPath = `/questionnaires/${id}`;
   const formattedDate = timeAgo(createdAt);
 
@@ -55,6 +55,10 @@ const QuestionnaireTicketCard = ({
       <CardContent sx={{ '&:last-child': { paddingBottom: 1.5 } }}>
         TODO: Add remaining layout
       </CardContent>
+
+      <QuestionnaireTicketCardFooter
+        questionnaireTicket={questionnaireTicket}
+      />
     </Card>
   );
 };

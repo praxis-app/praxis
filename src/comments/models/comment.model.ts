@@ -13,8 +13,9 @@ import { Like } from '../../likes/models/like.model';
 import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
-import { User } from '../../users/models/user.model';
 import { Answer } from '../../questions/models/answer.model';
+import { QuestionnaireTicket } from '../../questions/models/questionnaire-ticket.model';
+import { User } from '../../users/models/user.model';
 
 @Entity()
 @ObjectType()
@@ -60,6 +61,18 @@ export class Comment {
 
   @Column({ nullable: true })
   answerId?: number;
+
+  @ManyToOne(
+    () => QuestionnaireTicket,
+    (questionnaireTicket) => questionnaireTicket.comments,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  questionnaireTicket?: QuestionnaireTicket;
+
+  @Column({ nullable: true })
+  questionnaireTicketId?: number;
 
   @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   user: User;

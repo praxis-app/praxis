@@ -1136,6 +1136,8 @@ export type QuestionAnswerArgs = {
 export type QuestionnaireTicket = {
   __typename?: 'QuestionnaireTicket';
   answers: Array<Answer>;
+  commentCount: Scalars['Int']['output'];
+  comments: Array<Comment>;
   createdAt: Scalars['DateTime']['output'];
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
@@ -1144,6 +1146,7 @@ export type QuestionnaireTicket = {
   status: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   user: User;
+  voteCount: Scalars['Int']['output'];
   votes: Array<Vote>;
 };
 

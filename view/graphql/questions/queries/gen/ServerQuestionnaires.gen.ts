@@ -18,6 +18,8 @@ export type ServerQuestionnairesQuery = {
     __typename?: 'QuestionnaireTicket';
     id: number;
     status: string;
+    voteCount: number;
+    commentCount: number;
     createdAt: any;
     user: {
       __typename?: 'User';
@@ -25,17 +27,6 @@ export type ServerQuestionnairesQuery = {
       name: string;
       profilePicture: { __typename?: 'Image'; id: number };
     };
-    votes: Array<{
-      __typename?: 'Vote';
-      id: number;
-      voteType: string;
-      user: {
-        __typename?: 'User';
-        id: number;
-        name: string;
-        profilePicture: { __typename?: 'Image'; id: number };
-      };
-    }>;
   }>;
 };
 

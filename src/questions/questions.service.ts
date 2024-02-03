@@ -131,6 +131,24 @@ export class QuestionsService {
     });
   }
 
+  async getQuestionnaireTicketVoteCount(questionnaireTicketId: number) {
+    return this.votesRepository.count({
+      where: { questionnaireTicketId },
+    });
+  }
+
+  async getQuestionnaireTicketComments(questionnaireTicketId: number) {
+    return this.commentRepository.find({
+      where: { questionnaireTicketId },
+    });
+  }
+
+  async getQuestionnaireTicketCommentCount(questionnaireTicketId: number) {
+    return this.commentRepository.count({
+      where: { questionnaireTicketId },
+    });
+  }
+
   async getQuestionnaireTicketUser(questionnaireTicketId: number) {
     const { user } = await this.questionnaireTicketRepository.findOneOrFail({
       where: { id: questionnaireTicketId },

@@ -1,12 +1,11 @@
 fragment QuestionnaireTicketCard on QuestionnaireTicket {
   id
   status
+  voteCount
+  commentCount
   createdAt
 
   user {
     ...UserAvatar
-  }
-  votes {
-    ...Vote
   }
 }

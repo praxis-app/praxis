@@ -51,6 +51,21 @@ export class QuestionnaireTicketsResolver {
     return this.questionsService.getQuestionnaireTicketVotes(id);
   }
 
+  @ResolveField(() => Int)
+  async voteCount(@Parent() { id }: QuestionnaireTicket) {
+    return this.questionsService.getQuestionnaireTicketVoteCount(id);
+  }
+
+  @ResolveField(() => [Comment])
+  async comments(@Parent() { id }: QuestionnaireTicket) {
+    return this.questionsService.getQuestionnaireTicketComments(id);
+  }
+
+  @ResolveField(() => Int)
+  async commentCount(@Parent() { id }: QuestionnaireTicket) {
+    return this.questionsService.getQuestionnaireTicketCommentCount(id);
+  }
+
   @ResolveField(() => User)
   async user(@Parent() { id }: QuestionnaireTicket) {
     return this.questionsService.getQuestionnaireTicketUser(id);

@@ -97,7 +97,7 @@ const ProposalCardFooter = ({
         },
       });
     }
-  }, [viewed, isLoggedIn, proposal, syncProposal, syncProposalCalled, t]);
+  }, [viewed, isLoggedIn, proposal, syncProposal, syncProposalCalled]);
 
   useEffect(() => {
     if (inModal || isProposalPage) {
@@ -117,9 +117,11 @@ const ProposalCardFooter = ({
     proposal,
   ]);
 
+  // TODO: Remove votes dependency from proposal card footer
+  const { voteCount, votes, commentCount, group, stage } = proposal;
+
   const me = proposalCommentsData?.me;
   const comments = proposalCommentsData?.proposal?.comments;
-  const { voteCount, votes, commentCount, group, stage } = proposal;
   const isDisabled = !!group && !group.isJoinedByMe;
   const isClosed = stage === ProposalStage.Closed;
 

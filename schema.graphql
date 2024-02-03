@@ -53,12 +53,15 @@ type Answer {
 type QuestionnaireTicket {
   id: Int!
   status: String!
+  comments: [Comment!]!
   createdAt: DateTime!
   updatedAt: DateTime!
   prompt: String
   questions: [Question!]!
   answers: [Answer!]!
   votes: [Vote!]!
+  voteCount: Int!
+  commentCount: Int!
   user: User!
   group: Group
 }
