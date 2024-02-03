@@ -1052,6 +1052,7 @@ input AnswerInput {
 
 input CreateVoteInput {
   proposalId: Int
+  questionnaireTicketId: Int
   voteType: String!
 }
 

@@ -5,6 +5,9 @@ export class CreateVoteInput {
   @Field(() => Int, { nullable: true })
   proposalId?: number;
 
+  @Field(() => Int, { nullable: true })
+  questionnaireTicketId?: number;
+
   @Field()
   voteType: string;
 }
