@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import QuestionnaireTicketCard from '../../components/Questions/QuestionnaireTicketCard';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
@@ -34,6 +34,23 @@ const ServerQuestionnaires = () => {
           questionnaireTicket={questionnaire}
         />
       ))}
+
+      {data.serverQuestionnaireTickets.length === 0 && (
+        <Card>
+          <CardContent
+            sx={{
+              '&:last-child': {
+                paddingBottom: 2.2,
+              },
+              textAlign: 'center',
+            }}
+          >
+            <Typography marginY={1.5}>
+              {t('questions.prompts.noQuestionnaires')}
+            </Typography>
+          </CardContent>
+        </Card>
+      )}
     </>
   );
 };

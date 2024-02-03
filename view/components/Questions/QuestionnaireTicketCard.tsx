@@ -8,7 +8,11 @@ import {
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MIDDOT_WITH_SPACES } from '../../constants/shared.constants';
+import { useLocation, useNavigate } from 'react-router-dom';
+import {
+  MIDDOT_WITH_SPACES,
+  NavigationPaths,
+} from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { QuestionnaireTicketCardFragment } from '../../graphql/questions/fragments/gen/QuestionnaireTicketCard.gen';
 import { useDeleteQuestionnaireTicketMutation } from '../../graphql/questions/mutations/gen/DeleteQuestionnaireTicket.gen';
@@ -39,17 +43,24 @@ interface Props {
 const QuestionnaireTicketCard = ({ questionnaireTicket }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [deleteQuestionnaireTicket] = useDeleteQuestionnaireTicketMutation();
+
+  const { pathname } = useLocation();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { id, createdAt, user } = questionnaireTicket;
   const questionnaireTicketPath = `/questionnaires/${id}`;
+  const isQuestionnaireTicketPage = pathname.includes(questionnaireTicketPath);
   const formattedDate = timeAgo(createdAt);
 
   const deleteInvitePrompt = t('prompts.deleteItem', {
     itemType: 'questionnaire ticket',
   });
 
-  const handleDelete = async () =>
+  const handleDelete = async () => {
+    if (isQuestionnaireTicketPage) {
+      navigate(NavigationPaths.ServerQuestionnaires);
+    }
     await deleteQuestionnaireTicket({
       variables: { id },
       update(cache) {
@@ -77,6 +88,7 @@ const QuestionnaireTicketCard = ({ questionnaireTicket }: Props) => {
         });
       },
     });
+  };
 
   const renderTitle = () => (
     <Link
