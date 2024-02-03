@@ -133,7 +133,7 @@ export class QuestionsService {
     questionnaireTicketId: number,
     userId: number,
   ) {
-    return this.votesRepository.find({
+    return this.votesRepository.findOne({
       where: { questionnaireTicketId, userId },
     });
   }
