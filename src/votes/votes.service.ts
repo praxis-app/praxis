@@ -33,24 +33,29 @@ export class VotesService {
       ...voteData,
       userId,
     });
-    const isProposalRatifiable =
-      await this.proposalsService.isProposalRatifiable(vote.proposalId);
-    if (isProposalRatifiable) {
-      await this.proposalsService.ratifyProposal(vote.proposalId);
-      await this.proposalsService.implementProposal(vote.proposalId);
-    }
 
-    const proposal = await this.proposalsService.getProposal(vote.proposalId);
+    if (vote.proposalId) {
+      const isProposalRatifiable =
+        await this.proposalsService.isProposalRatifiable(vote.proposalId);
+      if (isProposalRatifiable) {
+        await this.proposalsService.ratifyProposal(vote.proposalId);
+        await this.proposalsService.implementProposal(vote.proposalId);
+      }
 
-    if (vote.userId !== proposal.userId) {
-      const voteNotificationType = this.getVoteNotificationType(vote.voteType);
-      await this.notificationsService.createNotification({
-        notificationType: voteNotificationType,
-        otherUserId: vote.userId,
-        userId: proposal.userId,
-        proposalId: proposal.id,
-        voteId: vote.id,
-      });
+      const proposal = await this.proposalsService.getProposal(vote.proposalId);
+
+      if (vote.userId !== proposal.userId) {
+        const voteNotificationType = this.getVoteNotificationType(
+          vote.voteType,
+        );
+        await this.notificationsService.createNotification({
+          notificationType: voteNotificationType,
+          otherUserId: vote.userId,
+          userId: proposal.userId,
+          proposalId: proposal.id,
+          voteId: vote.id,
+        });
+      }
     }
 
     return { vote };

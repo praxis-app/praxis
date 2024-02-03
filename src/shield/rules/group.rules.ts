@@ -260,6 +260,9 @@ export const isProposalGroupJoinedByMe = rule({ cache: 'strict' })(async (
   if (!user) {
     return UNAUTHORIZED;
   }
+  if (!voteData.proposalId) {
+    return false;
+  }
   const { group } = await proposalsService.getProposal(voteData.proposalId, [
     'group',
   ]);

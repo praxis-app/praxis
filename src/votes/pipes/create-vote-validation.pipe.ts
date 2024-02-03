@@ -11,14 +11,14 @@ export class CreateVoteValidationPipe implements PipeTransform {
   constructor(private proposalsService: ProposalsService) {}
 
   async transform(value: any, metadata: ArgumentMetadata) {
-    if (metadata.metatype?.name === CreateVoteInput.name) {
-      await this.validateProposalStage(value);
+    if (metadata.metatype?.name === CreateVoteInput.name && value.proposalId) {
+      await this.validateProposalStage(value.proposalId);
     }
     return value;
   }
 
-  async validateProposalStage(value: CreateVoteInput) {
-    const proposal = await this.proposalsService.getProposal(value.proposalId);
+  async validateProposalStage(proposalId: number) {
+    const proposal = await this.proposalsService.getProposal(proposalId);
     if (proposal.stage === ProposalStage.Ratified) {
       throw new ValidationError(
         'Proposal has been ratified and can no longer be voted on',
