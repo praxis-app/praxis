@@ -509,6 +509,7 @@ export type Mutation = {
   deletePost: Scalars['Boolean']['output'];
   deleteProposal: Scalars['Boolean']['output'];
   deleteQuestion: Scalars['Boolean']['output'];
+  deleteQuestionnnaireTicket: Scalars['Boolean']['output'];
   deleteRule: Scalars['Boolean']['output'];
   deleteServerInvite: Scalars['Boolean']['output'];
   deleteServerRole: Scalars['Boolean']['output'];
@@ -656,6 +657,10 @@ export type MutationDeleteProposalArgs = {
 };
 
 export type MutationDeleteQuestionArgs = {
+  id: Scalars['Int']['input'];
+};
+
+export type MutationDeleteQuestionnnaireTicketArgs = {
   id: Scalars['Int']['input'];
 };
 
@@ -1179,6 +1184,7 @@ export type Rule = {
 
 export type ServerConfig = {
   __typename?: 'ServerConfig';
+  closingAt?: Maybe<Scalars['DateTime']['output']>;
   decisionMakingModel: Scalars['String']['output'];
   id: Scalars['Int']['output'];
   ratificationThreshold: Scalars['Int']['output'];

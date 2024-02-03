@@ -1,0 +1,3 @@
+mutation DeleteQuestionnaireTicket($id: Int!) {
+  deleteQuestionnnaireTicket(id: $id)
+}
