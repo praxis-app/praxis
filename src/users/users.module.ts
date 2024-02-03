@@ -6,6 +6,7 @@ import { Post } from '../posts/models/post.model';
 import { PostsModule } from '../posts/posts.module';
 import { Proposal } from '../proposals/models/proposal.model';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
+import { ServerConfigsModule } from '../server-configs/server-configs.module';
 import { ServerRolesModule } from '../server-roles/server-roles.module';
 import { User } from './models/user.model';
 import { UsersResolver } from './users.resolver';
@@ -14,14 +15,15 @@ import { UsersService } from './users.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      User,
       Image,
       Post,
       Proposal,
       QuestionnaireTicket,
+      User,
     ]),
     NotificationsModule,
     ServerRolesModule,
+    ServerConfigsModule,
     PostsModule,
   ],
   providers: [UsersService, UsersResolver],

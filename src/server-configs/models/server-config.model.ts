@@ -38,6 +38,10 @@ export class ServerConfig {
 
   @Column({ nullable: true })
   @Field({ nullable: true })
+  closingAt?: Date;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
   securityTxt?: string;
 
   @Column({ default: false })

@@ -16,6 +16,7 @@ type ServerConfig {
   reservationsLimit: Int!
   ratificationThreshold: Int!
   votingTimeLimit: Int!
+  closingAt: DateTime
   securityTxt: String
   showCanaryStatement: Boolean!
   serverQuestionsPrompt: String
@@ -473,6 +474,11 @@ type UpdatePostPayload {
   post: Post!
 }
 
+type UpdateServerConfigPayload {
+  serverConfig: ServerConfig!
+  canary: Canary!
+}
+
 type CreateServerRolePayload {
   serverRole: ServerRole!
 }
@@ -581,11 +587,6 @@ type AuthPayload {
   access_token: String!
 }
 
-type UpdateServerConfigPayload {
-  serverConfig: ServerConfig!
-  canary: Canary!
-}
-
 type CreateCommentPayload {
   comment: Comment!
 }
@@ -654,14 +655,14 @@ type Query {
   isFirstUser: Boolean!
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
+  serverConfig: ServerConfig!
+  canary: Canary!
+  publicCanary: Canary
   post(id: Int!): Post!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
   likes(postId: Int, commentId: Int): [Like!]!
   serverRules: [Rule!]!
-  canary: Canary!
-  publicCanary: Canary
-  serverConfig: ServerConfig!
   questionnaireTicket(questionnaireTicketId: Int!): QuestionnaireTicket!
   serverQuestionnaireTickets: [QuestionnaireTicket!]!
   serverQuestions: [Question!]!
@@ -712,6 +713,7 @@ type Mutation {
   updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
   deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
+  updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createPost(postData: CreatePostInput!): CreatePostPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
   deletePost(id: Int!): Boolean!
@@ -727,7 +729,6 @@ type Mutation {
   updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
   updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
   deleteRule(id: Int!): Boolean!
-  updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
   updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
   updateQuestionsPriority(questionsData: UpdateQuestionsPriorityInput!): Boolean!
@@ -952,6 +953,19 @@ input DeleteServerRoleMemberInput {
   userId: Int!
 }
 
+input UpdateServerConfigInput {
+  id: Int!
+  canaryStatement: String
+  showCanaryStatement: Boolean
+  securityTxt: String
+  serverQuestionsPrompt: String
+  decisionMakingModel: String
+  standAsidesLimit: Int
+  reservationsLimit: Int
+  ratificationThreshold: Int
+  votingTimeLimit: Int
+}
+
 input CreatePostInput {
   groupId: Int
   eventId: Int
@@ -1016,19 +1030,6 @@ input UpdateRulesPriorityInput {
 input UpdateRulePriorityInput {
   id: Int!
   priority: Int!
-}
-
-input UpdateServerConfigInput {
-  id: Int!
-  canaryStatement: String
-  showCanaryStatement: Boolean
-  securityTxt: String
-  serverQuestionsPrompt: String
-  decisionMakingModel: String
-  standAsidesLimit: Int
-  reservationsLimit: Int
-  ratificationThreshold: Int
-  votingTimeLimit: Int
 }
 
 input CreateQuestionInput {

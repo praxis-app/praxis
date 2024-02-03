@@ -13,17 +13,19 @@ import {
   saveImage,
 } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
+import { NotificationType } from '../notifications/notifications.constants';
+import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { Proposal } from '../proposals/models/proposal.model';
+import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
+import { ServerConfig } from '../server-configs/models/server-config.model';
+import { ServerConfigsService } from '../server-configs/server-configs.service';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { ServerRolesService } from '../server-roles/server-roles.service';
 import { initServerRolePermissions } from '../server-roles/server-roles.utils';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
-import { NotificationsService } from '../notifications/notifications.service';
-import { NotificationType } from '../notifications/notifications.constants';
-import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 
 @Injectable()
 export class UsersService {
@@ -46,6 +48,7 @@ export class UsersService {
     private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
 
     private notificationsService: NotificationsService,
+    private serverConfigsService: ServerConfigsService,
     private serverRolesService: ServerRolesService,
     private postsService: PostsService,
   ) {}
@@ -365,6 +368,28 @@ export class UsersService {
   async getQuestionnaireTicket(userId: number) {
     return this.questionnaireTicketRepository.findOneOrFail({
       where: { userId },
+    });
+  }
+
+  async createQuestionnaireTicket(userId: number) {
+    const serverConfig = await this.serverConfigsService.getServerConfig();
+
+    const serverClosingAt = serverConfig.votingTimeLimit
+      ? new Date(Date.now() + serverConfig.votingTimeLimit * 60 * 1000)
+      : undefined;
+
+    const config: Partial<ServerConfig> = {
+      decisionMakingModel: serverConfig.decisionMakingModel,
+      standAsidesLimit: serverConfig.standAsidesLimit,
+      reservationsLimit: serverConfig.reservationsLimit,
+      ratificationThreshold: serverConfig.ratificationThreshold,
+      votingTimeLimit: serverConfig.votingTimeLimit,
+      closingAt: serverClosingAt,
+    };
+
+    return this.questionnaireTicketRepository.save({
+      userId,
+      config,
     });
   }
 
