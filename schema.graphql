@@ -729,6 +729,7 @@ type Mutation {
   updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
   updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
   deleteRule(id: Int!): Boolean!
+  deleteQuestionnnaireTicket(id: Int!): Boolean!
   createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
   updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
   updateQuestionsPriority(questionsData: UpdateQuestionsPriorityInput!): Boolean!

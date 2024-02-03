@@ -294,4 +294,11 @@ export class QuestionsService {
 
     return true;
   }
+
+  async deleteQuestionnaireTicket(questionnaireTicketId: number) {
+    await this.questionnaireTicketRepository.delete({
+      id: questionnaireTicketId,
+    });
+    return true;
+  }
 }

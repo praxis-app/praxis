@@ -1,6 +1,7 @@
 import {
   Args,
   Int,
+  Mutation,
   Parent,
   Query,
   ResolveField,
@@ -12,9 +13,9 @@ import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { Answer } from '../models/answer.model';
 import { Question } from '../models/question.model';
+import { QuestionnaireTicketConfig } from '../models/questionnaire-ticket-config.model';
 import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
 import { QuestionsService } from '../questions.service';
-import { QuestionnaireTicketConfig } from '../models/questionnaire-ticket-config.model';
 
 @Resolver(() => QuestionnaireTicket)
 export class QuestionnaireTicketsResolver {
@@ -89,5 +90,12 @@ export class QuestionnaireTicketsResolver {
   @ResolveField(() => QuestionnaireTicketConfig)
   async config(@Parent() { id }: QuestionnaireTicket) {
     return this.questionsService.getQuestionnaireTicketConfig(id);
+  }
+
+  @Mutation(() => Boolean)
+  async deleteQuestionnnaireTicket(
+    @Args('id', { type: () => Int }) id: number,
+  ) {
+    return this.questionsService.deleteQuestionnaireTicket(id);
   }
 }
