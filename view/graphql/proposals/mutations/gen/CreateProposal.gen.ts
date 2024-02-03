@@ -153,6 +153,7 @@ export type CreateProposalMutation = {
         standAsidesLimit: number;
         closingAt?: any | null;
       };
+      myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
       user: {
         __typename?: 'User';
         id: number;

@@ -31,13 +31,12 @@ const ICON_STYLES = {
 };
 
 interface Props {
-  anchorEl: null | HTMLElement;
-  currentUserId: number;
-  onClose(): void;
   proposal: ProposalCardFragment;
+  anchorEl: null | HTMLElement;
+  onClose(): void;
 }
 
-const VoteMenu = ({ anchorEl, onClose, currentUserId, proposal }: Props) => {
+const VoteMenu = ({ anchorEl, onClose, proposal }: Props) => {
   const [createVote] = useCreateVoteMutation();
   const [deleteVote] = useDeleteVoteMutation();
   const [updateVote] = useUpdateVoteMutation();
@@ -48,15 +47,12 @@ const VoteMenu = ({ anchorEl, onClose, currentUserId, proposal }: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const voteByCurrentUser = proposal.votes.find(
-    (vote) => vote.user.id === currentUserId,
-  );
-
+  const { myVote } = proposal;
   const isMajorityVote =
     proposal.settings.decisionMakingModel === DecisionMakingModel.MajorityVote;
 
   const getMenuItemStyles = (voteType: string) => {
-    if (!voteByCurrentUser || voteByCurrentUser.voteType !== voteType) {
+    if (!myVote || myVote.voteType !== voteType) {
       return;
     }
     return { color: Blurple.Marina };
@@ -183,12 +179,12 @@ const VoteMenu = ({ anchorEl, onClose, currentUserId, proposal }: Props) => {
   const handleClick = (voteType: string) => async () => {
     onClose();
 
-    if (voteByCurrentUser && voteByCurrentUser.voteType !== voteType) {
-      await handleUpdate(voteByCurrentUser.id, voteType);
+    if (myVote && myVote.voteType !== voteType) {
+      await handleUpdate(myVote.id, voteType);
       return;
     }
-    if (voteByCurrentUser) {
-      await handleDelete(voteByCurrentUser.id);
+    if (myVote) {
+      await handleDelete(myVote.id);
       return;
     }
     await handleCreate(voteType);

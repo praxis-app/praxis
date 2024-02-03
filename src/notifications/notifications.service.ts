@@ -16,7 +16,7 @@ export class NotificationsService {
   ) {}
 
   async getNotification(where?: FindOptionsWhere<Notification>) {
-    return this.notificationRepository.findOneOrFail({ where });
+    return this.notificationRepository.findOne({ where });
   }
 
   async getNotifications(userId: number, offset?: number, limit?: number) {

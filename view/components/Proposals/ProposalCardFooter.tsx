@@ -117,8 +117,7 @@ const ProposalCardFooter = ({
     proposal,
   ]);
 
-  // TODO: Remove votes dependency from proposal card footer
-  const { voteCount, votes, commentCount, group, stage } = proposal;
+  const { voteCount, commentCount, group, stage, myVote } = proposal;
 
   const me = proposalCommentsData?.me;
   const comments = proposalCommentsData?.proposal?.comments;
@@ -131,9 +130,6 @@ const ProposalCardFooter = ({
 
   const canManageComments = !!(
     group?.myPermissions?.manageComments || me?.serverPermissions.manageComments
-  );
-  const voteByCurrentUser = votes.find(
-    (vote) => vote.user.id === currentUserId,
   );
 
   const commentCountStyles: SxProps = {
@@ -229,7 +225,7 @@ const ProposalCardFooter = ({
       <CardActions sx={{ justifyContent: 'space-around' }}>
         <CardFooterButton
           onClick={handleVoteButtonClick}
-          sx={voteByCurrentUser ? { color: Blurple.SavoryBlue } : {}}
+          sx={myVote ? { color: Blurple.SavoryBlue } : {}}
         >
           <HowToVote sx={ICON_STYLES} />
           {getVoteButtonLabel()}
@@ -280,7 +276,6 @@ const ProposalCardFooter = ({
       {currentUserId && (
         <VoteMenu
           anchorEl={menuAnchorEl}
-          currentUserId={currentUserId}
           onClose={handleVoteMenuClose}
           proposal={proposal}
         />

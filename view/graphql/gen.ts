@@ -242,7 +242,8 @@ export type CreateServerRolePayload = {
 };
 
 export type CreateVoteInput = {
-  proposalId: Scalars['Int']['input'];
+  proposalId?: InputMaybe<Scalars['Int']['input']>;
+  questionnaireTicketId?: InputMaybe<Scalars['Int']['input']>;
   voteType: Scalars['String']['input'];
 };
 
@@ -824,6 +825,7 @@ export type Proposal = {
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   images: Array<Image>;
+  myVote?: Maybe<Vote>;
   settings: ProposalConfig;
   stage: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -1141,6 +1143,7 @@ export type QuestionnaireTicket = {
   createdAt: Scalars['DateTime']['output'];
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
+  myVote?: Maybe<Vote>;
   prompt?: Maybe<Scalars['String']['output']>;
   questions: Array<Question>;
   status: Scalars['String']['output'];

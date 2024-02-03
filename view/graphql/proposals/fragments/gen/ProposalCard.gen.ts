@@ -147,6 +147,7 @@ export type ProposalCardFragment = {
     standAsidesLimit: number;
     closingAt?: any | null;
   };
+  myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
   user: {
     __typename?: 'User';
     id: number;
@@ -197,6 +198,9 @@ export const ProposalCardFragmentDoc = gql`
       standAsidesLimit
       closingAt
     }
+    myVote @include(if: $isLoggedIn) {
+      id
+    }
     user {
       ...UserAvatar
     }
@@ -210,11 +214,6 @@ export const ProposalCardFragmentDoc = gql`
     }
     images {
       ...AttachedImage
-    }
-    votes {
-      user {
-        id
-      }
     }
     ...VoteMenu
     ...VoteBadges

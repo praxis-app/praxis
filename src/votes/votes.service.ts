@@ -85,10 +85,12 @@ export class VotesService {
       userId: vote.proposal?.userId,
       voteId: vote.id,
     });
-    const notificationType = this.getVoteNotificationType(vote.voteType);
-    await this.notificationsService.updateNotification(notification.id, {
-      notificationType,
-    });
+    if (notification) {
+      const notificationType = this.getVoteNotificationType(vote.voteType);
+      await this.notificationsService.updateNotification(notification.id, {
+        notificationType,
+      });
+    }
 
     return { vote };
   }

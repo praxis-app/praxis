@@ -1,10 +1,7 @@
 fragment VoteMenu on Proposal {
   id
-  votes {
+  myVote @include(if: $isLoggedIn) {
     id
     voteType
-    user {
-      id
-    }
   }
 }
