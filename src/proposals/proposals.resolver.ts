@@ -60,6 +60,11 @@ export class ProposalsResolver {
     return loaders.proposalVoteCountLoader.load(id);
   }
 
+  @ResolveField(() => Vote, { nullable: true })
+  async myVote(@Parent() { id }: Proposal, @CurrentUser() user: User) {
+    return this.proposalsService.getProposalVote(id, user.id);
+  }
+
   @ResolveField(() => [Comment])
   async comments(@Parent() { id }: Proposal) {
     return this.proposalsService.getProposalComments(id);

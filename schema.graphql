@@ -61,6 +61,7 @@ type QuestionnaireTicket {
   answers: [Answer!]!
   votes: [Vote!]!
   voteCount: Int!
+  myVote: Vote
   commentCount: Int!
   user: User!
   group: Group
@@ -97,6 +98,7 @@ type Proposal {
   createdAt: DateTime!
   updatedAt: DateTime!
   voteCount: Int!
+  myVote: Vote
   commentCount: Int!
   settings: ProposalConfig!
   group: Group

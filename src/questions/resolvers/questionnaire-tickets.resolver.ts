@@ -6,6 +6,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { Group } from '../../groups/models/group.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
@@ -54,6 +55,14 @@ export class QuestionnaireTicketsResolver {
   @ResolveField(() => Int)
   async voteCount(@Parent() { id }: QuestionnaireTicket) {
     return this.questionsService.getQuestionnaireTicketVoteCount(id);
+  }
+
+  @ResolveField(() => Vote, { nullable: true })
+  async myVote(
+    @Parent() { id }: QuestionnaireTicket,
+    @CurrentUser() user: User,
+  ) {
+    return this.questionsService.getQuestionnaireTicketVote(id, user.id);
   }
 
   @ResolveField(() => [Comment])

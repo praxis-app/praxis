@@ -125,6 +125,15 @@ export class QuestionsService {
     });
   }
 
+  async getQuestionnaireTicketVote(
+    questionnaireTicketId: number,
+    userId: number,
+  ) {
+    return this.votesRepository.find({
+      where: { questionnaireTicketId, userId },
+    });
+  }
+
   async getQuestionnaireTicketVotes(questionnaireTicketId: number) {
     return this.votesRepository.find({
       where: { questionnaireTicketId },

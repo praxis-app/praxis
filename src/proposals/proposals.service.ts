@@ -97,9 +97,15 @@ export class ProposalsService {
     );
   }
 
+  async getProposalVote(proposalId: number, userId: number) {
+    return this.voteRepository.findOne({ where: { proposalId, userId } });
+  }
+
   async isOwnProposal(proposalId: number, userId: number) {
-    const proposal = await this.getProposal(proposalId);
-    return proposal.userId === userId;
+    const count = await this.proposalRepository.count({
+      where: { id: proposalId, userId },
+    });
+    return count > 0;
   }
 
   async hasNoVotes(proposalId: number) {
