@@ -148,10 +148,9 @@ const QuestionnaireTicketCardFooter = ({
         onClose={() => setIsModalOpen(false)}
       /> */}
 
-      {/* {currentUserId && (
+      {/* {myVote && (
         <VoteMenu
           anchorEl={menuAnchorEl}
-          currentUserId={currentUserId}
           onClose={handleVoteMenuClose}
           proposal={questionnaireTicket}
         />

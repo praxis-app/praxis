@@ -57,6 +57,7 @@ export type QuestionnairePageQuery = {
         profilePicture: { __typename?: 'Image'; id: number };
       };
     }>;
+    myVote?: { __typename?: 'Vote'; id: number } | null;
   };
 };
 
