@@ -281,6 +281,7 @@ export class GroupsService {
     return groupConfig.privacy === GroupPrivacy.Public;
   }
 
+  // TODO: Rename as `createGroupConfig`
   async initGroupConfig(groupId: number) {
     return this.groupConfigRepository.save({ groupId });
   }

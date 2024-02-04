@@ -57,7 +57,12 @@ export type QuestionnairePageQuery = {
         profilePicture: { __typename?: 'Image'; id: number };
       };
     }>;
-    myVote?: { __typename?: 'Vote'; id: number } | null;
+    settings: {
+      __typename?: 'QuestionnaireTicketConfig';
+      id: number;
+      decisionMakingModel: string;
+    };
+    myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
   };
 };
 

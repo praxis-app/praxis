@@ -411,15 +411,13 @@ export class UsersService {
       await this.saveDefaultProfilePicture(user.id);
     }
 
-    // Initialize questionnaire ticket for user
-    await this.questionnaireTicketRepository.save({
-      userId: user.id,
-    });
+    // Create questionnaire ticket for user
+    await this.createQuestionnaireTicket(user.id);
 
-    // Initialize admin role for first user
+    // Create admin role for first user
     const users = await this.getUsers();
     if (users.length === 1) {
-      await this.serverRolesService.initAdminServerRole(user.id);
+      await this.serverRolesService.createAdminServerRole(user.id);
     }
 
     return user;

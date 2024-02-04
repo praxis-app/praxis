@@ -6,10 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { isLoggedInVar } from '../../graphql/cache';
 import { useProposalCommentsLazyQuery } from '../../graphql/proposals/queries/gen/ProposalComments.gen';
 import { QuestionnaireTicketCardFragment } from '../../graphql/questions/fragments/gen/QuestionnaireTicketCard.gen';
+import { Blurple } from '../../styles/theme';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
+import VoteMenu from '../Votes/VoteMenu';
 
 const ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -21,7 +23,6 @@ const ROTATED_ICON_STYLES = {
 };
 
 interface Props {
-  currentUserId?: number;
   questionnaireTicket: QuestionnaireTicketCardFragment;
   inModal?: boolean;
 }
@@ -32,7 +33,7 @@ const QuestionnaireTicketCardFooter = ({
 }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [, setIsModalOpen] = useState(false);
-  const [, setMenuAnchorEl] = useState<HTMLElement | null>(null);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal);
 
   const [getProposalComments, { data: proposalCommentsData }] =
@@ -53,7 +54,7 @@ const QuestionnaireTicketCardFooter = ({
 
   const me = proposalCommentsData?.me;
   const comments = proposalCommentsData?.proposal?.comments;
-  const { voteCount, commentCount } = questionnaireTicket;
+  const { id, myVote, voteCount, commentCount, settings } = questionnaireTicket;
 
   const commentCountStyles: SxProps = {
     '&:hover': { textDecoration: 'underline' },
@@ -72,14 +73,14 @@ const QuestionnaireTicketCardFooter = ({
     setMenuAnchorEl(event.currentTarget);
   };
 
-  // const handleVoteMenuClose = () => setMenuAnchorEl(null);
+  const handleVoteMenuClose = () => setMenuAnchorEl(null);
 
   const handleCommentButtonClick = async () => {
     if (inModal) {
       return;
     }
     const { data } = await getProposalComments({
-      variables: { id: questionnaireTicket.id, isLoggedIn },
+      variables: { id, isLoggedIn },
     });
     const comments = data?.proposal.comments;
     if (comments && comments.length > 1) {
@@ -114,8 +115,7 @@ const QuestionnaireTicketCardFooter = ({
       <CardActions sx={{ justifyContent: 'space-around' }}>
         <CardFooterButton
           onClick={handleVoteButtonClick}
-          // TODO: Add voteByCurrentUser or similar field
-          // sx={voteByCurrentUser ? { color: Blurple.SavoryBlue } : {}}
+          sx={myVote ? { color: Blurple.SavoryBlue } : {}}
         >
           <HowToVote sx={ICON_STYLES} />
           {getVoteButtonLabel()}
@@ -134,10 +134,12 @@ const QuestionnaireTicketCardFooter = ({
             comments={comments || []}
             currentUserId={me?.id}
             marginBottom={inModal && !isLoggedIn ? 2.5 : undefined}
-            proposalId={questionnaireTicket.id}
+            // TODO: Ensure questionnaire ID is passed to CommentList
+            proposalId={id}
           />
           {!inModal && (
-            <CommentForm proposalId={questionnaireTicket.id} enableAutoFocus />
+            // TODO: Ensure questionnaire ID is passed to CommentForm
+            <CommentForm proposalId={id} enableAutoFocus />
           )}
         </Box>
       )}
@@ -148,13 +150,14 @@ const QuestionnaireTicketCardFooter = ({
         onClose={() => setIsModalOpen(false)}
       /> */}
 
-      {/* {myVote && (
-        <VoteMenu
-          anchorEl={menuAnchorEl}
-          onClose={handleVoteMenuClose}
-          proposal={questionnaireTicket}
-        />
-      )} */}
+      <VoteMenu
+        anchorEl={menuAnchorEl}
+        onClose={handleVoteMenuClose}
+        decisionMakingModel={settings.decisionMakingModel}
+        myVoteId={myVote?.id}
+        myVoteType={myVote?.voteType}
+        questionnaireTicketId={questionnaireTicket.id}
+      />
     </>
   );
 };

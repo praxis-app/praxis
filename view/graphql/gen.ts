@@ -1145,13 +1145,13 @@ export type QuestionnaireTicket = {
   answers: Array<Answer>;
   commentCount: Scalars['Int']['output'];
   comments: Array<Comment>;
-  config: QuestionnaireTicketConfig;
   createdAt: Scalars['DateTime']['output'];
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   myVote?: Maybe<Vote>;
   prompt?: Maybe<Scalars['String']['output']>;
   questions: Array<Question>;
+  settings: QuestionnaireTicketConfig;
   status: Scalars['String']['output'];
   user: User;
   voteCount: Scalars['Int']['output'];

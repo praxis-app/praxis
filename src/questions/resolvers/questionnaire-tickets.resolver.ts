@@ -88,7 +88,7 @@ export class QuestionnaireTicketsResolver {
   }
 
   @ResolveField(() => QuestionnaireTicketConfig)
-  async config(@Parent() { id }: QuestionnaireTicket) {
+  async settings(@Parent() { id }: QuestionnaireTicket) {
     return this.questionsService.getQuestionnaireTicketConfig(id);
   }
 

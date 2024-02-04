@@ -8,7 +8,12 @@ fragment QuestionnaireTicketCard on QuestionnaireTicket {
   user {
     ...UserAvatar
   }
+  settings {
+    id
+    decisionMakingModel
+  }
   myVote {
     id
+    voteType
   }
 }

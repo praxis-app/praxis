@@ -49,7 +49,7 @@ export class ServerRolesService {
     });
   }
 
-  async initAdminServerRole(userId: number) {
+  async createAdminServerRole(userId: number) {
     const permission = initServerRolePermissions(true);
     await this.serverRoleRepository.save({
       name: ADMIN_ROLE_NAME,

@@ -135,6 +135,7 @@ export class User {
   })
   notifications: Notification[];
 
+  // TODO: Convert to one to one relation
   @OneToMany(
     () => QuestionnaireTicket,
     (questionnaireTicket) => questionnaireTicket.user,

@@ -60,6 +60,7 @@ export class GroupRolesService {
     });
   }
 
+  // TODO: Rename as `createGroupAdminRole`
   async initGroupAdminRole(userId: number, groupId: number) {
     const permission = initGroupRolePermissions(true);
     await this.groupRoleRepository.save({

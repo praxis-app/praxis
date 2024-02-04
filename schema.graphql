@@ -74,7 +74,7 @@ type QuestionnaireTicket {
   commentCount: Int!
   user: User!
   group: Group
-  config: QuestionnaireTicketConfig!
+  settings: QuestionnaireTicketConfig!
 }
 
 type Vote {

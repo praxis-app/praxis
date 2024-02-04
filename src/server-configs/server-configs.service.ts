@@ -24,6 +24,7 @@ export class ServerConfigsService {
     return serverConfigs[0];
   }
 
+  // TODO: Rename as `createServerConfig`
   async initializeServerConfig() {
     return this.repository.save({});
   }

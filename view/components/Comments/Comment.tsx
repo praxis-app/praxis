@@ -19,6 +19,8 @@ import CommentForm from './CommentForm';
 import CommentLikeButton from './CommentLikeButton';
 import CommentLikeCount from './CommentLikeCount';
 
+// TODO: Add questionnaireTicketId to the Props interface
+
 interface Props {
   answerId?: number;
   canManageComments?: boolean;

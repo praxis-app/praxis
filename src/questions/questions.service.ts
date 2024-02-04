@@ -181,7 +181,7 @@ export class QuestionsService {
   async getQuestionnaireTicketConfig(questionnaireTicketId: number) {
     const config = await this.questionnaireTicketConfigRepository.findOneOrFail(
       {
-        where: { id: questionnaireTicketId },
+        where: { questionnaireTicketId },
       },
     );
     return config;

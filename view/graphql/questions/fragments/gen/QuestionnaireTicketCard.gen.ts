@@ -19,7 +19,12 @@ export type QuestionnaireTicketCardFragment = {
     name: string;
     profilePicture: { __typename?: 'Image'; id: number };
   };
-  myVote?: { __typename?: 'Vote'; id: number } | null;
+  settings: {
+    __typename?: 'QuestionnaireTicketConfig';
+    id: number;
+    decisionMakingModel: string;
+  };
+  myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
 };
 
 export const QuestionnaireTicketCardFragmentDoc = gql`
@@ -32,8 +37,13 @@ export const QuestionnaireTicketCardFragmentDoc = gql`
     user {
       ...UserAvatar
     }
+    settings {
+      id
+      decisionMakingModel
+    }
     myVote {
       id
+      voteType
     }
   }
   ${UserAvatarFragmentDoc}
