@@ -649,7 +649,8 @@
       "createQuestion": "Create Question",
       "updateQuestion": "Edit Question",
       "questionPriority": "Question {{priority}}",
-      "usersAnswer": "{{name}}'s Answer"
+      "usersAnswer": "{{name}}'s Answer",
+      "questionnaireTicket": "Questionnaire Ticket"
     },
     "errors": {
       "missingText": "Question text cannot be empty",

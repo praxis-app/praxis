@@ -13,6 +13,7 @@ import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import VoteBadges from '../Votes/VoteBadges';
 import VoteMenu from '../Votes/VoteMenu';
+import QuestionnaireTicketModal from './QuestionnaireTicketModal';
 
 const ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -33,7 +34,7 @@ const QuestionnaireTicketCardFooter = ({
   inModal,
 }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-  const [, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal);
 
@@ -150,11 +151,11 @@ const QuestionnaireTicketCardFooter = ({
         </Box>
       )}
 
-      {/* <ProposalModal
-        proposal={proposal}
-        open={isModalOpen}
+      <QuestionnaireTicketModal
+        questionnaireTicket={questionnaireTicket}
         onClose={() => setIsModalOpen(false)}
-      /> */}
+        open={isModalOpen}
+      />
 
       <VoteMenu
         anchorEl={menuAnchorEl}

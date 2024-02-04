@@ -38,9 +38,10 @@ const CardHeader = styled(MuiCardHeader)(() => ({
 
 interface Props {
   questionnaireTicket: QuestionnaireTicketCardFragment;
+  inModal?: boolean;
 }
 
-const QuestionnaireTicketCard = ({ questionnaireTicket }: Props) => {
+const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [deleteQuestionnaireTicket] = useDeleteQuestionnaireTicketMutation();
 
@@ -103,8 +104,8 @@ const QuestionnaireTicketCard = ({ questionnaireTicket }: Props) => {
     </Link>
   );
 
-  return (
-    <Card>
+  const renderQuestionnaireTicket = () => (
+    <>
       <CardHeader
         avatar={
           <UserAvatar user={user} href={questionnaireTicketPath} withLink />
@@ -126,9 +127,16 @@ const QuestionnaireTicketCard = ({ questionnaireTicket }: Props) => {
 
       <QuestionnaireTicketCardFooter
         questionnaireTicket={questionnaireTicket}
+        inModal={inModal}
       />
-    </Card>
+    </>
   );
+
+  if (inModal) {
+    return renderQuestionnaireTicket();
+  }
+
+  return <Card>{renderQuestionnaireTicket()}</Card>;
 };
 
 export default QuestionnaireTicketCard;
