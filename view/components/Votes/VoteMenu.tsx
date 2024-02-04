@@ -181,6 +181,7 @@ const VoteMenu = ({
             voteCount(existingCount: number) {
               return Math.max(0, existingCount - 1);
             },
+            myVote: () => null,
           },
         });
       },
