@@ -17,6 +17,8 @@ export const SERVER_PERMISSION_NAMES: (keyof ServerRolePermissionInput)[] = [
   'removeMembers',
   'removeProposals',
   'removeGroups',
+  'manageQuestions',
+  'manageQuestionnaireTickets',
 ];
 
 export const GROUP_PERMISSION_NAMES: (keyof GroupRolePermissionInput)[] = [

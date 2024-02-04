@@ -5,6 +5,8 @@ fragment ServerRolePermissions on ServerRolePermission {
   manageEvents
   manageInvites
   managePosts
+  manageQuestionnaireTickets
+  manageQuestions
   manageRoles
   manageRules
   manageSettings

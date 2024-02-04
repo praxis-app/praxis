@@ -34,4 +34,10 @@ export class ServerPermissions {
 
   @Field()
   manageRules: boolean;
+
+  @Field()
+  manageQuestions: boolean;
+
+  @Field()
+  manageQuestionnaireTickets: boolean;
 }

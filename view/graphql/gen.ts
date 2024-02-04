@@ -1215,6 +1215,8 @@ export type ServerPermissions = {
   manageEvents: Scalars['Boolean']['output'];
   manageInvites: Scalars['Boolean']['output'];
   managePosts: Scalars['Boolean']['output'];
+  manageQuestionnaireTickets: Scalars['Boolean']['output'];
+  manageQuestions: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
   manageRules: Scalars['Boolean']['output'];
   manageSettings: Scalars['Boolean']['output'];
@@ -1242,6 +1244,8 @@ export type ServerRolePermission = {
   manageEvents: Scalars['Boolean']['output'];
   manageInvites: Scalars['Boolean']['output'];
   managePosts: Scalars['Boolean']['output'];
+  manageQuestionnaireTickets: Scalars['Boolean']['output'];
+  manageQuestions: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
   manageRules: Scalars['Boolean']['output'];
   manageSettings: Scalars['Boolean']['output'];
@@ -1257,6 +1261,8 @@ export type ServerRolePermissionInput = {
   manageEvents?: InputMaybe<Scalars['Boolean']['input']>;
   manageInvites?: InputMaybe<Scalars['Boolean']['input']>;
   managePosts?: InputMaybe<Scalars['Boolean']['input']>;
+  manageQuestionnaireTickets?: InputMaybe<Scalars['Boolean']['input']>;
+  manageQuestions?: InputMaybe<Scalars['Boolean']['input']>;
   manageRoles?: InputMaybe<Scalars['Boolean']['input']>;
   manageRules?: InputMaybe<Scalars['Boolean']['input']>;
   manageSettings?: InputMaybe<Scalars['Boolean']['input']>;
