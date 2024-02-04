@@ -36,7 +36,7 @@ import {
   isPublicProposal,
   isPublicProposalAction,
   isPublicProposalImage,
-  isPublicVote,
+  isPublicProposalVote,
 } from './rules/proposal.rules';
 import {
   canCreateServerInvites,
@@ -194,7 +194,7 @@ export const shieldPermissions = shield(
     ProposalActionRole: or(isAuthenticated, isPublicProposalAction),
     ProposalActionRoleMember: or(isAuthenticated, isPublicProposalAction),
     ProposalActionGroupConfig: or(isAuthenticated, isPublicProposalAction),
-    Vote: or(isAuthenticated, isPublicVote),
+    Vote: or(isAuthenticated, isPublicProposalVote),
   },
   {
     fallbackRule: isAuthenticated,

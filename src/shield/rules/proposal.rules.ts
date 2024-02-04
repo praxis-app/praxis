@@ -122,7 +122,7 @@ export const isPublicProposalAction = rule({ cache: 'strict' })(async (
   return proposal.group?.config.privacy === GroupPrivacy.Public;
 });
 
-export const isPublicVote = rule({ cache: 'strict' })(async (
+export const isPublicProposalVote = rule({ cache: 'strict' })(async (
   parent: Vote,
   _args,
   { services: { proposalsService } }: Context,

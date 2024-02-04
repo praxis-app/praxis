@@ -51,6 +51,7 @@ export enum TypeNames {
   Post = 'Post',
   Proposal = 'Proposal',
   Question = 'Question',
+  QuestionnaireTicket = 'QuestionnaireTicket',
   ServerInvite = 'ServerInvite',
   ServerRole = 'ServerRole',
   User = 'User',
