@@ -170,6 +170,15 @@ export class QuestionsService {
     return user;
   }
 
+  async getQuestionnaireTicketConfig(questionnaireTicketId: number) {
+    const config = await this.questionnaireTicketConfigRepository.findOneOrFail(
+      {
+        where: { questionnaireTicketId },
+      },
+    );
+    return config;
+  }
+
   async getQuestionnaireTicketGroup(questionnaireTicketId: number) {
     const { group } = await this.questionnaireTicketRepository.findOneOrFail({
       where: { id: questionnaireTicketId },
@@ -178,13 +187,14 @@ export class QuestionsService {
     return group;
   }
 
-  async getQuestionnaireTicketConfig(questionnaireTicketId: number) {
-    const config = await this.questionnaireTicketConfigRepository.findOneOrFail(
-      {
-        where: { questionnaireTicketId },
+  async isServerQuestionnaireTicket(questionnaireTicketId: number) {
+    const count = await this.questionnaireTicketRepository.count({
+      where: {
+        id: questionnaireTicketId,
+        groupId: IsNull(),
       },
-    );
-    return config;
+    });
+    return count > 0;
   }
 
   async createQuestion(questionData: CreateQuestionInput) {

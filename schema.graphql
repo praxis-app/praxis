@@ -606,14 +606,6 @@ type CreateLikePayload {
   answer: Answer
 }
 
-type CreateRulePayload {
-  rule: Rule!
-}
-
-type UpdateRulePayload {
-  rule: Rule!
-}
-
 type AnswerQuestionsPayload {
   questionnaireTicket: QuestionnaireTicket!
 }
@@ -624,6 +616,14 @@ type CreateQuestionPayload {
 
 type UpdateQuestionPayload {
   question: Question!
+}
+
+type CreateRulePayload {
+  rule: Rule!
+}
+
+type UpdateRulePayload {
+  rule: Rule!
 }
 
 type CreateVotePayload {
@@ -666,11 +666,11 @@ type Query {
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
   likes(postId: Int, commentId: Int): [Like!]!
-  serverRules: [Rule!]!
   questionnaireTicket(questionnaireTicketId: Int!): QuestionnaireTicket!
   serverQuestionnaireTickets: [QuestionnaireTicket!]!
   serverQuestions: [Question!]!
   answer(id: Int!): Answer!
+  serverRules: [Rule!]!
 }
 
 input EventsInput {
@@ -729,16 +729,16 @@ type Mutation {
   deleteImage(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
-  createRule(ruleData: CreateRuleInput!): CreateRulePayload!
-  updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
-  updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
-  deleteRule(id: Int!): Boolean!
   deleteQuestionnnaireTicket(id: Int!): Boolean!
   createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
   updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
   updateQuestionsPriority(questionsData: UpdateQuestionsPriorityInput!): Boolean!
   answerQuestions(answersData: AnswerQuestionsInput!): AnswerQuestionsPayload!
   deleteQuestion(id: Int!): Boolean!
+  createRule(ruleData: CreateRuleInput!): CreateRulePayload!
+  updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
+  updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
+  deleteRule(id: Int!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -1017,28 +1017,6 @@ input DeleteLikeInput {
   answerId: Int
 }
 
-input CreateRuleInput {
-  groupId: Int
-  title: String!
-  description: String!
-}
-
-input UpdateRuleInput {
-  id: Int!
-  title: String
-  description: String
-  priority: Int
-}
-
-input UpdateRulesPriorityInput {
-  rules: [UpdateRulePriorityInput!]!
-}
-
-input UpdateRulePriorityInput {
-  id: Int!
-  priority: Int!
-}
-
 input CreateQuestionInput {
   groupId: Int
   text: String!
@@ -1067,6 +1045,28 @@ input AnswerQuestionsInput {
 input AnswerInput {
   questionId: Int!
   text: String!
+}
+
+input CreateRuleInput {
+  groupId: Int
+  title: String!
+  description: String!
+}
+
+input UpdateRuleInput {
+  id: Int!
+  title: String
+  description: String
+  priority: Int
+}
+
+input UpdateRulesPriorityInput {
+  rules: [UpdateRulePriorityInput!]!
+}
+
+input UpdateRulePriorityInput {
+  id: Int!
+  priority: Int!
 }
 
 input CreateVoteInput {

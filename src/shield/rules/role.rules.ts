@@ -1,5 +1,3 @@
-// TODO: Move rules below to their respective entity files
-
 import { rule } from 'graphql-shield';
 import { Context } from '../../context/context.types';
 import { hasServerPermission } from '../shield.utils';

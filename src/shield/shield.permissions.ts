@@ -46,6 +46,7 @@ import {
   isPublicProposalImage,
   isPublicProposalVote,
 } from './rules/proposal.rules';
+import { canManageQuestionnaireTickets } from './rules/question.rules';
 import { canManageServerRoles } from './rules/role.rules';
 import { canManageRules, isPublicRule } from './rules/rule.rules';
 import { canManageServerSettings } from './rules/server-config.rules';
@@ -89,10 +90,10 @@ export const shieldPermissions = shield(
       login: allow,
       logOut: allow,
       signUp: allow,
-      createVote: isProposalGroupJoinedByMe,
       updatePost: isOwnPost,
       deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
       deleteProposal: or(and(isOwnProposal, hasNoVotes), canRemoveProposals),
+      createVote: or(isProposalGroupJoinedByMe, canManageQuestionnaireTickets),
       createServerInvite: or(canCreateServerInvites, canManageServerInvites),
       deleteServerInvite: canManageServerInvites,
       updateServerConfig: canManageServerSettings,

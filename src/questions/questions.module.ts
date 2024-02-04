@@ -32,5 +32,6 @@ import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.
     QuestionsService,
     AnswersResolver,
   ],
+  exports: [QuestionsService],
 })
 export class QuestionsModule {}
