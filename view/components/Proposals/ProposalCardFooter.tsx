@@ -276,8 +276,11 @@ const ProposalCardFooter = ({
       {currentUserId && (
         <VoteMenu
           anchorEl={menuAnchorEl}
+          decisionMakingModel={proposal.settings.decisionMakingModel}
+          myVoteId={myVote?.id}
+          myVoteType={myVote?.voteType}
           onClose={handleVoteMenuClose}
-          proposal={proposal}
+          proposalId={proposal.id}
         />
       )}
     </Box>

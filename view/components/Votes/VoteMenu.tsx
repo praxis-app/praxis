@@ -3,8 +3,14 @@ import { PanTool, ThumbDown, ThumbsUpDown, ThumbUp } from '@mui/icons-material';
 import { Menu, MenuItem } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import {
+  DecisionMakingModel,
+  ProposalActionType,
+  ProposalStage,
+} from '../../constants/proposal.constants';
+import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
+import { VoteTypes } from '../../constants/vote.constants';
 import { toastVar } from '../../graphql/cache';
-import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { useRolesByGroupIdLazyQuery } from '../../graphql/roles/queries/gen/RolesByGroupId.gen';
 import {
   CreateVoteMutation,
@@ -15,13 +21,6 @@ import {
   UpdateVoteMutation,
   useUpdateVoteMutation,
 } from '../../graphql/votes/mutations/gen/UpdateVote.gen';
-import {
-  DecisionMakingModel,
-  ProposalActionType,
-  ProposalStage,
-} from '../../constants/proposal.constants';
-import { NavigationPaths } from '../../constants/shared.constants';
-import { VoteTypes } from '../../constants/vote.constants';
 import { Blurple } from '../../styles/theme';
 import { getGroupPath } from '../../utils/group.utils';
 
@@ -31,12 +30,23 @@ const ICON_STYLES = {
 };
 
 interface Props {
-  proposal: ProposalCardFragment;
   anchorEl: null | HTMLElement;
+  decisionMakingModel: string;
+  myVoteId?: number;
+  myVoteType?: string;
   onClose(): void;
+  proposalId?: number;
+  questionnaireTicketId?: number;
 }
 
-const VoteMenu = ({ anchorEl, onClose, proposal }: Props) => {
+const VoteMenu = ({
+  decisionMakingModel,
+  myVoteId,
+  myVoteType,
+  proposalId,
+  anchorEl,
+  onClose,
+}: Props) => {
   const [createVote] = useCreateVoteMutation();
   const [deleteVote] = useDeleteVoteMutation();
   const [updateVote] = useUpdateVoteMutation();
@@ -47,12 +57,11 @@ const VoteMenu = ({ anchorEl, onClose, proposal }: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { myVote } = proposal;
   const isMajorityVote =
-    proposal.settings.decisionMakingModel === DecisionMakingModel.MajorityVote;
+    decisionMakingModel === DecisionMakingModel.MajorityVote;
 
   const getMenuItemStyles = (voteType: string) => {
-    if (!myVote || myVote.voteType !== voteType) {
+    if (!myVoteType || myVoteType !== voteType) {
       return;
     }
     return { color: Blurple.Marina };
@@ -106,7 +115,7 @@ const VoteMenu = ({ anchorEl, onClose, proposal }: Props) => {
     await createVote({
       variables: {
         voteData: {
-          proposalId: proposal.id,
+          proposalId,
           voteType,
         },
       },
@@ -119,7 +128,10 @@ const VoteMenu = ({ anchorEl, onClose, proposal }: Props) => {
         } = data;
 
         cache.modify({
-          id: cache.identify(proposal),
+          id: cache.identify({
+            __typename: TypeNames.Proposal,
+            id: proposalId,
+          }),
           fields: {
             votes(existingVoteRefs: Reference[], { toReference }) {
               return [toReference(vote), ...existingVoteRefs];
@@ -155,7 +167,10 @@ const VoteMenu = ({ anchorEl, onClose, proposal }: Props) => {
       variables: { id },
       update(cache) {
         cache.modify({
-          id: cache.identify(proposal),
+          id: cache.identify({
+            __typename: TypeNames.Proposal,
+            id: proposalId,
+          }),
           fields: {
             votes(existingVoteRefs: Reference[], { readField }) {
               return existingVoteRefs.filter(
@@ -179,12 +194,12 @@ const VoteMenu = ({ anchorEl, onClose, proposal }: Props) => {
   const handleClick = (voteType: string) => async () => {
     onClose();
 
-    if (myVote && myVote.voteType !== voteType) {
-      await handleUpdate(myVote.id, voteType);
+    if (myVoteId && myVoteType !== voteType) {
+      await handleUpdate(myVoteId, voteType);
       return;
     }
-    if (myVote) {
-      await handleDelete(myVote.id);
+    if (myVoteId) {
+      await handleDelete(myVoteId);
       return;
     }
     await handleCreate(voteType);
