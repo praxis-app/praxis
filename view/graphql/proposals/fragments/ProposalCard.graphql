@@ -36,5 +36,5 @@ fragment ProposalCard on Proposal {
   }
 
   ...VoteMenu
-  ...VoteBadges
+  ...ProposalVoteBadges
 }

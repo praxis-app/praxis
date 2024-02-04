@@ -81,6 +81,7 @@ type Vote {
   id: Int!
   voteType: String!
   proposal: Proposal
+  questionnaireTicket: QuestionnaireTicket
   user: User!
 }
 

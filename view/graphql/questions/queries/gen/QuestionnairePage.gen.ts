@@ -3,8 +3,8 @@ import * as Types from '../../../gen';
 import { gql } from '@apollo/client';
 import { QuestionnaireTicketCardFragmentDoc } from '../../fragments/gen/QuestionnaireTicketCard.gen';
 import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.gen';
-import { AnsweredQuestionCardFragmentDoc } from '../../fragments/gen/AnsweredQuestionCard.gen';
 import { VoteFragmentDoc } from '../../../votes/fragments/gen/Vote.gen';
+import { AnsweredQuestionCardFragmentDoc } from '../../fragments/gen/AnsweredQuestionCard.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT

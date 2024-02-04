@@ -33,6 +33,17 @@ export type ServerQuestionnairesQuery = {
       decisionMakingModel: string;
     };
     myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
+    votes: Array<{
+      __typename?: 'Vote';
+      id: number;
+      voteType: string;
+      user: {
+        __typename?: 'User';
+        id: number;
+        name: string;
+        profilePicture: { __typename?: 'Image'; id: number };
+      };
+    }>;
   }>;
 };
 

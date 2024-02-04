@@ -1,7 +1,5 @@
-fragment VoteBadges on Proposal {
+fragment QuestionnaireTicketVoteBadges on QuestionnaireTicket {
   id
-  voteCount
-
   settings {
     id
     decisionMakingModel

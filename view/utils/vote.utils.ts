@@ -1,7 +1,13 @@
-import { VoteBadgesFragment } from '../graphql/votes/fragments/gen/VoteBadges.gen';
 import { VoteTypes } from '../constants/vote.constants';
+import { ProposalVoteBadgesFragment } from '../graphql/proposals/fragments/gen/ProposalVoteBadges.gen';
+import { QuestionnaireTicketVoteBadgesFragment } from '../graphql/questions/fragments/gen/QuestionnaireTicketVoteBadges.gen';
 
-export const filterVotesByType = (votes: VoteBadgesFragment['votes']) => {
+export const filterVotesByType = (
+  votes: (
+    | ProposalVoteBadgesFragment
+    | QuestionnaireTicketVoteBadgesFragment
+  )['votes'],
+) => {
   const agreements = votes.filter(
     (vote) => vote.voteType === VoteTypes.Agreement,
   );

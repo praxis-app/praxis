@@ -16,4 +16,5 @@ fragment QuestionnaireTicketCard on QuestionnaireTicket {
     id
     voteType
   }
+  ...QuestionnaireTicketVoteBadges
 }

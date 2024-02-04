@@ -1550,6 +1550,7 @@ export type Vote = {
   __typename?: 'Vote';
   id: Scalars['Int']['output'];
   proposal?: Maybe<Proposal>;
+  questionnaireTicket?: Maybe<QuestionnaireTicket>;
   user: User;
   voteType: Scalars['String']['output'];
 };

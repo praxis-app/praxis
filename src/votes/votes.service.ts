@@ -4,6 +4,7 @@ import { FindOptionsWhere, Repository } from 'typeorm';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ProposalsService } from '../proposals/proposals.service';
+import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { CreateVoteInput } from './models/create-vote.input';
 import { UpdateVoteInput } from './models/update-vote.input';
 import { Vote } from './models/vote.model';
@@ -13,23 +14,31 @@ import { VoteTypes } from './votes.constants';
 export class VotesService {
   constructor(
     @InjectRepository(Vote)
-    private repository: Repository<Vote>,
+    private voteRepository: Repository<Vote>,
+
+    @InjectRepository(QuestionnaireTicket)
+    private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
 
     private proposalsService: ProposalsService,
-
     private notificationsService: NotificationsService,
   ) {}
 
   async getVote(id: number, relations?: string[]) {
-    return this.repository.findOneOrFail({ where: { id }, relations });
+    return this.voteRepository.findOneOrFail({ where: { id }, relations });
   }
 
   async getVotes(where?: FindOptionsWhere<Vote>) {
-    return this.repository.find({ where });
+    return this.voteRepository.find({ where });
+  }
+
+  async getQuestionnaireTicket(questionnaireTicketId: number) {
+    return this.questionnaireTicketRepository.findOne({
+      where: { id: questionnaireTicketId },
+    });
   }
 
   async createVote(voteData: CreateVoteInput, userId: number) {
-    const vote = await this.repository.save({
+    const vote = await this.voteRepository.save({
       ...voteData,
       userId,
     });
@@ -75,7 +84,7 @@ export class VotesService {
   }
 
   async updateVote({ id, ...data }: UpdateVoteInput, userId: number) {
-    await this.repository.update(id, data);
+    await this.voteRepository.update(id, data);
     const vote = await this.getVote(id, ['proposal']);
 
     // TODO: Add support for notifications for questionnaire tickets
@@ -96,7 +105,7 @@ export class VotesService {
   }
 
   async deleteVote(voteId: number) {
-    await this.repository.delete(voteId);
+    await this.voteRepository.delete(voteId);
     return true;
   }
 }

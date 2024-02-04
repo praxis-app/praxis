@@ -6,7 +6,7 @@ import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.g
 import { AttachedImageFragmentDoc } from '../../../images/fragments/gen/AttachedImage.gen';
 import { GroupAvatarFragmentDoc } from '../../../groups/fragments/gen/GroupAvatar.gen';
 import { VoteMenuFragmentDoc } from '../../../votes/fragments/gen/VoteMenu.gen';
-import { VoteBadgesFragmentDoc } from '../../../votes/fragments/gen/VoteBadges.gen';
+import { ProposalVoteBadgesFragmentDoc } from './ProposalVoteBadges.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
@@ -216,12 +216,12 @@ export const ProposalCardFragmentDoc = gql`
       ...AttachedImage
     }
     ...VoteMenu
-    ...VoteBadges
+    ...ProposalVoteBadges
   }
   ${ProposalActionFragmentDoc}
   ${UserAvatarFragmentDoc}
   ${GroupAvatarFragmentDoc}
   ${AttachedImageFragmentDoc}
   ${VoteMenuFragmentDoc}
-  ${VoteBadgesFragmentDoc}
+  ${ProposalVoteBadgesFragmentDoc}
 `;

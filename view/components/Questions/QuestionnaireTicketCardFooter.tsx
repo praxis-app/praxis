@@ -11,6 +11,7 @@ import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
+import VoteBadges from '../Votes/VoteBadges';
 import VoteMenu from '../Votes/VoteMenu';
 
 const ICON_STYLES: SxProps = {
@@ -97,7 +98,9 @@ const QuestionnaireTicketCardFooter = ({
         paddingBottom={voteCount || commentCount ? 0.8 : 0}
         paddingX={inModal ? 0 : '16px'}
       >
-        {/* {!!voteCount && <VoteBadges proposal={questionnaireTicket} />} */}
+        {!!voteCount && (
+          <VoteBadges questionnaireTicket={questionnaireTicket} />
+        )}
 
         {!!commentCount && (
           <Typography

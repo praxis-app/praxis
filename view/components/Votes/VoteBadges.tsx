@@ -5,27 +5,34 @@ import {
   ThumbDown as StandAsideIcon,
 } from '@mui/icons-material';
 import { Typography } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { DecisionMakingModel } from '../../constants/proposal.constants';
 import { VoteTypes } from '../../constants/vote.constants';
-import { VoteBadgesFragment } from '../../graphql/votes/fragments/gen/VoteBadges.gen';
+import { ProposalVoteBadgesFragment } from '../../graphql/proposals/fragments/gen/ProposalVoteBadges.gen';
+import { QuestionnaireTicketVoteBadgesFragment } from '../../graphql/questions/fragments/gen/QuestionnaireTicketVoteBadges.gen';
 import { filterVotesByType } from '../../utils/vote.utils';
 import Flex from '../Shared/Flex';
 import VoteBadge from './VoteBadge';
 import VotesModal from './VotesModal';
 
 interface Props {
-  proposal: VoteBadgesFragment;
+  proposal?: ProposalVoteBadgesFragment;
+  questionnaireTicket?: QuestionnaireTicketVoteBadgesFragment;
 }
 
-const VoteBadges = ({ proposal: { votes, voteCount, settings } }: Props) => {
+const VoteBadges = ({ proposal, questionnaireTicket }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const settings = proposal?.settings || questionnaireTicket?.settings;
+  const votes = proposal?.votes || questionnaireTicket?.votes || [];
+  const voteCount = votes.length;
+
+  // TODO: Add fields to graph for all vote types to avoid filtering on FE
   const { agreements, disagreements, reservations, standAsides, blocks } =
-    useMemo(() => filterVotesByType(votes), [votes]);
+    filterVotesByType(votes);
 
   const isMajorityVote =
-    settings.decisionMakingModel === DecisionMakingModel.MajorityVote;
+    settings?.decisionMakingModel === DecisionMakingModel.MajorityVote;
 
   const agreementsBadge = {
     Icon: AgreementIcon,
