@@ -1,5 +1,5 @@
 query QuestionnairePage($questionnaireTicketId: Int!, $isLoggedIn: Boolean!) {
-  questionnaireTicket(questionnaireTicketId: $questionnaireTicketId) {
+  questionnaireTicket(id: $questionnaireTicketId) {
     ...QuestionnaireTicketCard
 
     questions {

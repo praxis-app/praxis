@@ -19,8 +19,6 @@ import CommentForm from './CommentForm';
 import CommentLikeButton from './CommentLikeButton';
 import CommentLikeCount from './CommentLikeCount';
 
-// TODO: Add questionnaireTicketId to the Props interface
-
 interface Props {
   answerId?: number;
   canManageComments?: boolean;
@@ -28,15 +26,17 @@ interface Props {
   currentUserId?: number;
   postId?: number;
   proposalId?: number;
+  questionnaireTicketId?: number;
 }
 
 const Comment = ({
   answerId,
-  comment,
   canManageComments,
+  comment,
   currentUserId,
   postId,
   proposalId,
+  questionnaireTicketId,
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showItemMenu, setShowItemMenu] = useState(false);
@@ -119,6 +119,19 @@ const Comment = ({
         if (answerId) {
           cache.modify({
             id: cache.identify({ id: answerId, __typename: TypeNames.Answer }),
+            fields: {
+              commentCount(existingCount: number) {
+                return Math.max(0, existingCount - 1);
+              },
+            },
+          });
+        }
+        if (questionnaireTicketId) {
+          cache.modify({
+            id: cache.identify({
+              id: questionnaireTicketId,
+              __typename: TypeNames.QuestionnaireTicket,
+            }),
             fields: {
               commentCount(existingCount: number) {
                 return Math.max(0, existingCount - 1);

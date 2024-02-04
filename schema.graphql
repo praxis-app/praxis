@@ -667,7 +667,7 @@ type Query {
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
   likes(postId: Int, commentId: Int): [Like!]!
-  questionnaireTicket(questionnaireTicketId: Int!): QuestionnaireTicket!
+  questionnaireTicket(id: Int!): QuestionnaireTicket!
   serverQuestionnaireTickets: [QuestionnaireTicket!]!
   serverQuestions: [Question!]!
   answer(id: Int!): Answer!
@@ -996,6 +996,7 @@ input CreateCommentInput {
   postId: Int
   proposalId: Int
   answerId: Int
+  questionnaireTicketId: Int
   body: String
   images: [Upload!]
 }

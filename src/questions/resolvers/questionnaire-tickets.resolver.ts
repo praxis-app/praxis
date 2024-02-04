@@ -22,11 +22,8 @@ export class QuestionnaireTicketsResolver {
   constructor(private questionsService: QuestionsService) {}
 
   @Query(() => QuestionnaireTicket)
-  async questionnaireTicket(
-    @Args('questionnaireTicketId', { type: () => Int })
-    questionnaireTicketId: number,
-  ) {
-    return this.questionsService.getQuestionnaireTicket(questionnaireTicketId);
+  async questionnaireTicket(@Args('id', { type: () => Int }) id: number) {
+    return this.questionsService.getQuestionnaireTicket(id);
   }
 
   @Query(() => [QuestionnaireTicket])

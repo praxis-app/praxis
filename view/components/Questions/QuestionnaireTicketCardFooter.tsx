@@ -4,8 +4,8 @@ import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isLoggedInVar } from '../../graphql/cache';
-import { useProposalCommentsLazyQuery } from '../../graphql/proposals/queries/gen/ProposalComments.gen';
 import { QuestionnaireTicketCardFragment } from '../../graphql/questions/fragments/gen/QuestionnaireTicketCard.gen';
+import { useQuestionnaireTicketCommentsLazyQuery } from '../../graphql/questions/queries/gen/QuestionnaireTicketComments.gen';
 import { Blurple } from '../../styles/theme';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
@@ -37,24 +37,29 @@ const QuestionnaireTicketCardFooter = ({
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal);
 
-  const [getProposalComments, { data: proposalCommentsData }] =
-    useProposalCommentsLazyQuery();
+  const [getQuestionnaireTicketComments, { data: commentsData }] =
+    useQuestionnaireTicketCommentsLazyQuery();
 
   const { t } = useTranslation();
 
   useEffect(() => {
     if (inModal) {
-      getProposalComments({
+      getQuestionnaireTicketComments({
         variables: {
           id: questionnaireTicket.id,
           isLoggedIn,
         },
       });
     }
-  }, [getProposalComments, inModal, isLoggedIn, questionnaireTicket]);
+  }, [
+    getQuestionnaireTicketComments,
+    inModal,
+    isLoggedIn,
+    questionnaireTicket,
+  ]);
 
-  const me = proposalCommentsData?.me;
-  const comments = proposalCommentsData?.proposal?.comments;
+  const me = commentsData?.me;
+  const comments = commentsData?.questionnaireTicket?.comments;
   const { id, myVote, voteCount, commentCount, settings } = questionnaireTicket;
 
   const commentCountStyles: SxProps = {
@@ -80,10 +85,10 @@ const QuestionnaireTicketCardFooter = ({
     if (inModal) {
       return;
     }
-    const { data } = await getProposalComments({
+    const { data } = await getQuestionnaireTicketComments({
       variables: { id, isLoggedIn },
     });
-    const comments = data?.proposal.comments;
+    const comments = data?.questionnaireTicket.comments;
     if (comments && comments.length > 1) {
       setIsModalOpen(true);
     } else {
@@ -137,12 +142,10 @@ const QuestionnaireTicketCardFooter = ({
             comments={comments || []}
             currentUserId={me?.id}
             marginBottom={inModal && !isLoggedIn ? 2.5 : undefined}
-            // TODO: Ensure questionnaire ID is passed to CommentList
-            proposalId={id}
+            questionnaireTicketId={id}
           />
           {!inModal && (
-            // TODO: Ensure questionnaire ID is passed to CommentForm
-            <CommentForm proposalId={id} enableAutoFocus />
+            <CommentForm questionnaireTicketId={id} enableAutoFocus />
           )}
         </Box>
       )}

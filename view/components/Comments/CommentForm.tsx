@@ -38,6 +38,7 @@ interface Props extends FormikFormProps {
   onSubmit?: () => void;
   postId?: number;
   proposalId?: number;
+  questionnaireTicketId?: number;
 }
 
 const CommentForm = ({
@@ -48,6 +49,7 @@ const CommentForm = ({
   onSubmit,
   postId,
   proposalId,
+  questionnaireTicketId,
   ...formProps
 }: Props) => {
   const [images, setImages] = useState<File[]>([]);
@@ -90,6 +92,9 @@ const CommentForm = ({
     if (proposalId) {
       return TypeNames.Proposal;
     }
+    if (questionnaireTicketId) {
+      return TypeNames.QuestionnaireTicket;
+    }
     return TypeNames.Post;
   };
 
@@ -104,10 +109,11 @@ const CommentForm = ({
       variables: {
         commentData: {
           ...formValues,
-          proposalId,
-          postId,
           answerId,
           images,
+          postId,
+          proposalId,
+          questionnaireTicketId,
         },
       },
       update(cache, { data }) {
@@ -120,13 +126,16 @@ const CommentForm = ({
 
         const cacheId = cache.identify({
           __typename: getTypeName(),
-          id: postId || proposalId || answerId,
+          id: postId || proposalId || answerId || questionnaireTicketId,
         });
         cache.modify({
           id: cacheId,
           fields: {
             comments(existingRefs, { toReference }) {
               return [...existingRefs, toReference(comment)];
+            },
+            commentCount(existingCount: number) {
+              return existingCount + 1;
             },
           },
         });

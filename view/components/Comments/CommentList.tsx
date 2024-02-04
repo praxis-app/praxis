@@ -4,6 +4,7 @@ import Comment from './Comment';
 
 interface Props extends BoxProps {
   answerId?: number;
+  questionnaireTicketId?: number;
   canManageComments?: boolean;
   comments: CommentFragment[];
   currentUserId?: number;
@@ -16,6 +17,7 @@ const CommentsList = ({
   canManageComments,
   comments,
   currentUserId,
+  questionnaireTicketId,
   postId,
   proposalId,
   ...boxProps
@@ -34,6 +36,7 @@ const CommentsList = ({
           currentUserId={currentUserId}
           postId={postId}
           proposalId={proposalId}
+          questionnaireTicketId={questionnaireTicketId}
         />
       ))}
     </Box>

@@ -68,7 +68,7 @@ export type QuestionnairePageQuery = {
 
 export const QuestionnairePageDocument = gql`
   query QuestionnairePage($questionnaireTicketId: Int!, $isLoggedIn: Boolean!) {
-    questionnaireTicket(questionnaireTicketId: $questionnaireTicketId) {
+    questionnaireTicket(id: $questionnaireTicketId) {
       ...QuestionnaireTicketCard
       questions {
         ...AnsweredQuestionCard

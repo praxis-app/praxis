@@ -99,6 +99,7 @@ export type CreateCommentInput = {
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
   postId?: InputMaybe<Scalars['Int']['input']>;
   proposalId?: InputMaybe<Scalars['Int']['input']>;
+  questionnaireTicketId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreateCommentPayload = {
@@ -1102,7 +1103,7 @@ export type QueryPublicGroupsFeedArgs = {
 };
 
 export type QueryQuestionnaireTicketArgs = {
-  questionnaireTicketId: Scalars['Int']['input'];
+  id: Scalars['Int']['input'];
 };
 
 export type QueryServerInviteArgs = {
