@@ -2,11 +2,13 @@ import { allow, and, or, shield } from 'graphql-shield';
 import { FORBIDDEN } from '../common/common.constants';
 import { isAuthenticated } from './rules/auth.rules';
 import {
+  canManageComments,
   isOwnComment,
   isPublicComment,
   isPublicCommentImage,
 } from './rules/comment.rules';
 import {
+  canManageEvents,
   isPublicEvent,
   isPublicEventImage,
   isPublicEventPost,
@@ -29,8 +31,14 @@ import {
 } from './rules/group.rules';
 import { isPublicLike } from './rules/like.rules';
 import { isOwnNotification } from './rules/notification.rules';
-import { isOwnPost, isPublicPost, isPublicPostImage } from './rules/post.rules';
 import {
+  canManagePosts,
+  isOwnPost,
+  isPublicPost,
+  isPublicPostImage,
+} from './rules/post.rules';
+import {
+  canRemoveProposals,
   hasNoVotes,
   isOwnProposal,
   isPublicProposal,
@@ -38,20 +46,18 @@ import {
   isPublicProposalImage,
   isPublicProposalVote,
 } from './rules/proposal.rules';
+import { canManageServerRoles } from './rules/role.rules';
+import { canManageRules, isPublicRule } from './rules/rule.rules';
+import { canManageServerSettings } from './rules/server-config.rules';
 import {
   canCreateServerInvites,
-  canManageComments,
-  canManageEvents,
-  canManagePosts,
-  canManageRules,
   canManageServerInvites,
-  canManageServerRoles,
-  canManageServerSettings,
+} from './rules/server-invite.rules';
+import {
   canRemoveMembers,
-  canRemoveProposals,
-} from './rules/role.rules';
-import { isPublicRule } from './rules/rule.rules';
-import { isPublicUserAvatar, isUserInPublicGroups } from './rules/user.rules';
+  isPublicUserAvatar,
+  isUserInPublicGroups,
+} from './rules/user.rules';
 
 export const shieldPermissions = shield(
   {

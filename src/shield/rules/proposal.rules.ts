@@ -13,6 +13,7 @@ import { ProposalActionRoleMember } from '../../proposals/proposal-actions/model
 import { ProposalActionRole } from '../../proposals/proposal-actions/models/proposal-action-role.model';
 import { ProposalAction } from '../../proposals/proposal-actions/models/proposal-action.model';
 import { Vote } from '../../votes/models/vote.model';
+import { hasServerPermission } from '../shield.utils';
 
 export const isOwnProposal = rule({ cache: 'strict' })(async (
   _parent,
@@ -135,3 +136,8 @@ export const isPublicProposalVote = rule({ cache: 'strict' })(async (
   ]);
   return group?.config.privacy === GroupPrivacy.Public;
 });
+
+export const canRemoveProposals = rule({ cache: 'contextual' })(
+  async (_parent, _args, { permissions }: Context) =>
+    hasServerPermission(permissions, 'removeProposals'),
+);

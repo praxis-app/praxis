@@ -4,6 +4,12 @@ import { UpdateCommentInput } from '../../comments/models/update-comment.input';
 import { UNAUTHORIZED } from '../../common/common.constants';
 import { Context } from '../../context/context.types';
 import { GroupPrivacy } from '../../groups/groups.constants';
+import { hasServerPermission } from '../shield.utils';
+
+export const canManageComments = rule({ cache: 'contextual' })(
+  async (_parent, _args, { permissions }: Context) =>
+    hasServerPermission(permissions, 'manageComments'),
+);
 
 export const isOwnComment = rule({ cache: 'strict' })(async (
   _parent,
