@@ -131,6 +131,11 @@ const Notification = ({
         name: otherUser?.name,
       });
     }
+    if (notificationType === NotificationType.QuestionnaireTicketComment) {
+      return _t('notifications.messages.questionnaireTicketComment', {
+        name: otherUser?.name,
+      });
+    }
     if (notificationType === NotificationType.AnswerComment) {
       return _t('notifications.messages.answerComment', {
         name: otherUser?.name,
@@ -200,9 +205,11 @@ const Notification = ({
     if (notificationType === NotificationType.GroupMemberRequestApproval) {
       return `${NavigationPaths.Groups}/${group?.name}`;
     }
+    // TODO: Ensure notifications work in both directions - for admins and new user
     if (
+      notificationType === NotificationType.AnswerLike ||
       notificationType === NotificationType.AnswerComment ||
-      notificationType === NotificationType.AnswerLike
+      notificationType === NotificationType.QuestionnaireTicketComment
     ) {
       return NavigationPaths.VibeCheck;
     }

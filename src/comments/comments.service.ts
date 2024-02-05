@@ -12,6 +12,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { Answer } from '../questions/models/answer.model';
+import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { User } from '../users/models/user.model';
 import { Comment } from './models/comment.model';
 import { CreateCommentInput } from './models/create-comment.input';
@@ -34,6 +35,9 @@ export class CommentsService {
 
     @InjectRepository(Answer)
     private answerRepository: Repository<Answer>,
+
+    @InjectRepository(QuestionnaireTicket)
+    private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
 
     private notificationsService: NotificationsService,
   ) {}
@@ -100,6 +104,13 @@ export class CommentsService {
       });
       return answer.questionnaireTicket.userId;
     }
+    if (comment.questionnaireTicketId) {
+      const questionnaireTicket =
+        await this.questionnaireTicketRepository.findOneOrFail({
+          where: { id: comment.questionnaireTicketId },
+        });
+      return questionnaireTicket.userId;
+    }
     const post = await this.postRepository.findOneOrFail({
       where: { id: comment.postId },
       relations: ['user'],
@@ -113,6 +124,9 @@ export class CommentsService {
     }
     if (comment.answerId) {
       return NotificationType.AnswerComment;
+    }
+    if (comment.questionnaireTicketId) {
+      return NotificationType.QuestionnaireTicketComment;
     }
     return NotificationType.PostComment;
   }
@@ -150,6 +164,7 @@ export class CommentsService {
         otherUserId: user.id,
         postId: comment.postId,
         proposalId: comment.proposalId,
+        questionnaireTicketId: comment.questionnaireTicketId,
         userId: commentedItemUserId,
         notificationType,
       });

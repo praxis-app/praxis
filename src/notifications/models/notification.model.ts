@@ -13,6 +13,7 @@ import { Like } from '../../likes/models/like.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
 import { Answer } from '../../questions/models/answer.model';
+import { QuestionnaireTicket } from '../../questions/models/questionnaire-ticket.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { NotificationStatus } from '../notifications.constants';
@@ -101,6 +102,18 @@ export class Notification {
 
   @Column({ nullable: true })
   answerId?: number;
+
+  @ManyToOne(
+    () => QuestionnaireTicket,
+    (questionnaireTicket) => questionnaireTicket.notifications,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  questionnaireTicket?: QuestionnaireTicket;
+
+  @Column({ nullable: true })
+  questionnaireTicketId?: number;
 
   @CreateDateColumn()
   @Field()

@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { Comment } from '../../comments/models/comment.model';
 import { Group } from '../../groups/models/group.model';
+import { Notification } from '../../notifications/models/notification.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { Answer } from './answer.model';
@@ -75,6 +76,12 @@ export class QuestionnaireTicket {
     },
   )
   config: QuestionnaireTicketConfig;
+
+  @OneToMany(
+    () => Notification,
+    (notification) => notification.questionnaireTicket,
+  )
+  notifications: Notification[];
 
   @CreateDateColumn()
   @Field()

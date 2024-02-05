@@ -18,4 +18,5 @@ export enum NotificationType {
   ProposalVoteBlock = 'proposal-vote-block',
   ProposalVoteReservations = 'proposal-vote-reservations',
   ProposalVoteStandAside = 'proposal-vote-stand-aside',
+  QuestionnaireTicketComment = 'questionnaire-ticket-comment',
 }
