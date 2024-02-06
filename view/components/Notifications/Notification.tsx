@@ -132,6 +132,11 @@ const Notification = ({
       });
     }
     if (notificationType === NotificationType.QuestionnaireTicketComment) {
+      if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
+        return _t('notifications.messages.ownQuestionnaireTicketComment', {
+          name: otherUser?.name,
+        });
+      }
       return _t('notifications.messages.questionnaireTicketComment', {
         name: otherUser?.name,
       });

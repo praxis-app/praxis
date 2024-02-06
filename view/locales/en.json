@@ -596,11 +596,12 @@
       "follow": "<b>{{name}}</b> followed you.",
       "groupMemberRequest": "<b>{{name}}</b> requested to join <b>{{groupName}}</b>.",
       "groupMemberRequestApproval": "Your request to join <b>{{groupName}}</b> was approved.",
+      "ownAnswerComment": "<b>{{name}}</b> commented on their answer.",
+      "ownQuestionnaireTicketComment": "<b>{{name}}</b> commented on their questionnaire ticket.",
       "postComment": "<b>{{name}}</b> commented on your post.",
       "postLike": "<b>{{name}}</b> liked your post.",
       "proposalComment": "<b>{{name}}</b> commented on your proposal.",
       "proposalRatification": "Your proposal was ratified in <b>{{groupName}}</b>.",
-      "ownAnswerComment": "<b>{{name}}</b> commented on their answer.",
       "proposalVote": "<b>{{name}}</b> voted on your proposal.",
       "questionnaireTicketComment": "<b>{{name}}</b> commented on your questionnaire ticket."
     },

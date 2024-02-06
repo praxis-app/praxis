@@ -93,9 +93,13 @@ export class CommentsService {
     });
   }
 
-  async getCommentedQuestionnaireTicket(questionnaireTicketId: number) {
+  async getCommentedQuestionnaireTicket(
+    questionnaireTicketId: number,
+    relations?: string[],
+  ) {
     return this.questionnaireTicketRepository.findOne({
       where: { id: questionnaireTicketId },
+      relations,
     });
   }
 
@@ -141,16 +145,6 @@ export class CommentsService {
     return NotificationType.PostComment;
   }
 
-  async getUsersWithAccessToQuestionnaireTicket() {
-    return this.userRepository.find({
-      where: {
-        serverRoles: {
-          permission: { manageQuestionnaireTickets: true },
-        },
-      },
-    });
-  }
-
   async createComment(
     { body, images, ...commentData }: CreateCommentInput,
     user: User,
@@ -190,11 +184,7 @@ export class CommentsService {
       });
     }
 
-    if (
-      comment.answerId &&
-      commentedItemUserId === user.id &&
-      notificationType === NotificationType.AnswerComment
-    ) {
+    if (comment.answerId && commentedItemUserId === user.id) {
       const answer = await this.getCommentedAnswer(comment.answerId, [
         'questionnaireTicket',
       ]);
@@ -211,6 +201,30 @@ export class CommentsService {
             notificationType: NotificationType.AnswerComment,
             otherUserId: comment.userId,
             answerId: comment.answerId,
+            commentId: comment.id,
+            userId: user.id,
+          });
+        }
+      }
+    }
+
+    if (comment.questionnaireTicketId && commentedItemUserId === user.id) {
+      const questionnaireTicket = await this.getCommentedQuestionnaireTicket(
+        comment.questionnaireTicketId,
+      );
+      const usersWithAccess = await this.userRepository.find({
+        where: {
+          serverRoles: {
+            permission: { manageQuestionnaireTickets: true },
+          },
+        },
+      });
+      if (questionnaireTicket?.groupId === null) {
+        for (const user of usersWithAccess) {
+          await this.notificationsService.createNotification({
+            notificationType: NotificationType.QuestionnaireTicketComment,
+            otherUserId: comment.userId,
+            questionnaireTicketId: comment.questionnaireTicketId,
             commentId: comment.id,
             userId: user.id,
           });
