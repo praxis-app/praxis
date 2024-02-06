@@ -1,8 +1,9 @@
 import {
   Box,
   Card,
-  CardContent,
+  CardContent as MuiCardContent,
   CardHeader as MuiCardHeader,
+  SxProps,
   styled,
 } from '@mui/material';
 import { produce } from 'immer';
@@ -36,6 +37,13 @@ const CardHeader = styled(MuiCardHeader)(() => ({
   },
 }));
 
+const CardContent = styled(MuiCardContent)(() => ({
+  paddingBottom: 0,
+  '&:last-child': {
+    paddingBottom: 0,
+  },
+}));
+
 interface Props {
   questionnaireTicket: QuestionnaireTicketCardFragment;
   inModal?: boolean;
@@ -57,6 +65,12 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
   const deleteInvitePrompt = t('prompts.deleteItem', {
     itemType: 'questionnaire ticket',
   });
+
+  const cardContentStyles: SxProps = {
+    paddingTop: 1.8,
+    paddingBottom: 0.6,
+    paddingX: inModal ? 0 : undefined,
+  };
 
   const handleDelete = async () => {
     if (isQuestionnaireTicketPage) {
@@ -120,8 +134,12 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
             canDelete
           />
         }
+        sx={{
+          paddingX: inModal ? 0 : undefined,
+          paddingTop: inModal ? 0 : undefined,
+        }}
       />
-      <CardContent sx={{ '&:last-child': { paddingBottom: 1.5 } }}>
+      <CardContent sx={cardContentStyles}>
         TODO: Add remaining layout
       </CardContent>
 
