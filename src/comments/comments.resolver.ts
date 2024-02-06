@@ -15,6 +15,7 @@ import { PostsService } from '../posts/posts.service';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalsService } from '../proposals/proposals.service';
 import { Answer } from '../questions/models/answer.model';
+import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { User } from '../users/models/user.model';
 import { CommentsService } from './comments.service';
 import { Comment } from './models/comment.model';
@@ -52,6 +53,16 @@ export class CommentsResolver {
   @ResolveField(() => Answer, { nullable: true })
   async answer(@Parent() { answerId }: Comment) {
     return answerId ? this.commentsService.getCommentedAnswer(answerId) : null;
+  }
+
+  @ResolveField(() => QuestionnaireTicket, { nullable: true })
+  async questionnaireTicket(@Parent() { questionnaireTicketId }: Comment) {
+    if (!questionnaireTicketId) {
+      return null;
+    }
+    return this.commentsService.getCommentedQuestionnaireTicket(
+      questionnaireTicketId,
+    );
   }
 
   @ResolveField(() => [Image])

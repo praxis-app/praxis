@@ -49,6 +49,12 @@ export type UpdateNotificationMutation = {
             __typename?: 'QuestionnaireTicket';
             id: number;
           };
+          user: { __typename?: 'User'; id: number };
+        } | null;
+        questionnaireTicket?: {
+          __typename?: 'QuestionnaireTicket';
+          id: number;
+          user: { __typename?: 'User'; id: number };
         } | null;
       } | null;
       answer?: { __typename?: 'Answer'; id: number; text: string } | null;

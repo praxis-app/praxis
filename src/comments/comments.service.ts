@@ -39,6 +39,9 @@ export class CommentsService {
     @InjectRepository(QuestionnaireTicket)
     private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
 
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+
     private notificationsService: NotificationsService,
   ) {}
 
@@ -83,9 +86,16 @@ export class CommentsService {
     );
   }
 
-  async getCommentedAnswer(answerId: number) {
+  async getCommentedAnswer(answerId: number, relations?: string[]) {
     return this.answerRepository.findOne({
       where: { id: answerId },
+      relations,
+    });
+  }
+
+  async getCommentedQuestionnaireTicket(questionnaireTicketId: number) {
+    return this.questionnaireTicketRepository.findOne({
+      where: { id: questionnaireTicketId },
     });
   }
 
@@ -131,6 +141,16 @@ export class CommentsService {
     return NotificationType.PostComment;
   }
 
+  async getUsersWithAccessToQuestionnaireTicket() {
+    return this.userRepository.find({
+      where: {
+        serverRoles: {
+          permission: { manageQuestionnaireTickets: true },
+        },
+      },
+    });
+  }
+
   async createComment(
     { body, images, ...commentData }: CreateCommentInput,
     user: User,
@@ -168,6 +188,34 @@ export class CommentsService {
         userId: commentedItemUserId,
         notificationType,
       });
+    }
+
+    if (
+      comment.answerId &&
+      commentedItemUserId === user.id &&
+      notificationType === NotificationType.AnswerComment
+    ) {
+      const answer = await this.getCommentedAnswer(comment.answerId, [
+        'questionnaireTicket',
+      ]);
+      if (answer?.questionnaireTicket.groupId === null) {
+        const usersWithAccess = await this.userRepository.find({
+          where: {
+            serverRoles: {
+              permission: { manageQuestionnaireTickets: true },
+            },
+          },
+        });
+        for (const user of usersWithAccess) {
+          await this.notificationsService.createNotification({
+            notificationType: NotificationType.AnswerComment,
+            otherUserId: comment.userId,
+            answerId: comment.answerId,
+            commentId: comment.id,
+            userId: user.id,
+          });
+        }
+      }
     }
 
     return { comment };

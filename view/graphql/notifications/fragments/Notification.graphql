@@ -32,6 +32,15 @@ fragment Notification on Notification {
       questionnaireTicket {
         id
       }
+      user {
+        id
+      }
+    }
+    questionnaireTicket {
+      id
+      user {
+        id
+      }
     }
   }
 

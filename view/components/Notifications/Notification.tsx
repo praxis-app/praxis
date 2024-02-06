@@ -137,6 +137,11 @@ const Notification = ({
       });
     }
     if (notificationType === NotificationType.AnswerComment) {
+      if (comment?.answer?.user.id === otherUser?.id) {
+        return _t('notifications.messages.ownAnswerComment', {
+          name: otherUser?.name,
+        });
+      }
       return _t('notifications.messages.answerComment', {
         name: otherUser?.name,
       });
@@ -205,12 +210,17 @@ const Notification = ({
     if (notificationType === NotificationType.GroupMemberRequestApproval) {
       return `${NavigationPaths.Groups}/${group?.name}`;
     }
-    // TODO: Ensure notifications work in both directions - for admins and new user
     if (
       notificationType === NotificationType.AnswerLike ||
       notificationType === NotificationType.AnswerComment ||
       notificationType === NotificationType.QuestionnaireTicketComment
     ) {
+      if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
+        return `${NavigationPaths.ServerQuestionnaires}/${comment?.questionnaireTicket?.id}`;
+      }
+      if (comment?.answer?.user.id === otherUser?.id) {
+        return `${NavigationPaths.ServerQuestionnaires}/${comment?.answer?.questionnaireTicket.id}`;
+      }
       return NavigationPaths.VibeCheck;
     }
     return NavigationPaths.Home;

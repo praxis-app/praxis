@@ -90,6 +90,7 @@ export type Comment = {
   likes: Array<Like>;
   post?: Maybe<Post>;
   proposal?: Maybe<Proposal>;
+  questionnaireTicket?: Maybe<QuestionnaireTicket>;
   user: User;
 };
 

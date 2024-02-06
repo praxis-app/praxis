@@ -424,6 +424,7 @@ type Comment {
   post: Post
   proposal: Proposal
   answer: Answer
+  questionnaireTicket: QuestionnaireTicket
   likes: [Like!]!
   likeCount: Int!
   isLikedByMe: Boolean!

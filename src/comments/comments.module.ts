@@ -8,6 +8,7 @@ import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalsModule } from '../proposals/proposals.module';
 import { Answer } from '../questions/models/answer.model';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
+import { User } from '../users/models/user.model';
 import { CommentsResolver } from './comments.resolver';
 import { CommentsService } from './comments.service';
 import { Comment } from './models/comment.model';
@@ -21,6 +22,7 @@ import { Comment } from './models/comment.model';
       Post,
       Proposal,
       QuestionnaireTicket,
+      User,
     ]),
     NotificationsModule,
     PostsModule,
