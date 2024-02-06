@@ -99,7 +99,7 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
   };
 
   return (
-    <Box marginTop={likeCount ? 1.25 : 2}>
+    <>
       <Box paddingX={inModal ? 0 : '16px'}>
         <Flex
           justifyContent={likeCount ? 'space-between' : 'end'}
@@ -179,7 +179,7 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-    </Box>
+    </>
   );
 };
 

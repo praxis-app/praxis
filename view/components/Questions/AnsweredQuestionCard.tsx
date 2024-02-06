@@ -1,4 +1,4 @@
-import { Card, CardContent, SxProps, Typography } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
 import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestionCard.gen';
@@ -18,12 +18,6 @@ const AnsweredQuestionCard = ({ question, inModal }: Props) => {
     priority: priority + 1,
   })}: ${text}`;
 
-  const cardContentStyles: SxProps = {
-    paddingTop: 1.8,
-    paddingBottom: 0.6,
-    paddingX: inModal ? 0 : undefined,
-  };
-
   const getAnswerText = () => {
     if ('myAnswer' in question) {
       return question.myAnswer?.text;
@@ -35,7 +29,12 @@ const AnsweredQuestionCard = ({ question, inModal }: Props) => {
 
   const renderAnsweredQuestion = () => (
     <>
-      <CardContent sx={cardContentStyles}>
+      <CardContent
+        sx={{
+          paddingY: 1.8,
+          paddingX: inModal ? 0 : undefined,
+        }}
+      >
         <Typography color="text.secondary" paddingBottom={1.2}>
           {questionText}
         </Typography>
