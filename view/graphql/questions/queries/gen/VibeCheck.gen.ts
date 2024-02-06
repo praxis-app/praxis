@@ -2,6 +2,7 @@ import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
 import { MyAnsweredQuestionCardFragmentDoc } from '../../fragments/gen/MyAnsweredQuestionCard.gen';
+import { CommentFragmentDoc } from '../../../comments/fragments/gen/Comment.gen';
 import { AnswerQuestionsFormFragmentDoc } from '../../fragments/gen/AnswerQuestionsForm.gen';
 import * as Apollo from '@apollo/client';
 
@@ -38,6 +39,21 @@ export type VibeCheckQuery = {
           user: { __typename?: 'User'; id: number; name: string };
         } | null;
       }>;
+      comments: Array<{
+        __typename?: 'Comment';
+        id: number;
+        body?: string | null;
+        likeCount: number;
+        createdAt: any;
+        isLikedByMe?: boolean;
+        images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
+        user: {
+          __typename?: 'User';
+          id: number;
+          name: string;
+          profilePicture: { __typename?: 'Image'; id: number };
+        };
+      }>;
     };
   };
 };
@@ -50,6 +66,9 @@ export const VibeCheckDocument = gql`
         questions {
           ...MyAnsweredQuestionCard
         }
+        comments {
+          ...Comment
+        }
         ...AnswerQuestionsForm
         status
         prompt
@@ -57,6 +76,7 @@ export const VibeCheckDocument = gql`
     }
   }
   ${MyAnsweredQuestionCardFragmentDoc}
+  ${CommentFragmentDoc}
   ${AnswerQuestionsFormFragmentDoc}
 `;
 

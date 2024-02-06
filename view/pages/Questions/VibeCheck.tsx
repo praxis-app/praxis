@@ -1,7 +1,15 @@
 import { useReactiveVar } from '@apollo/client';
-import { Card, CardContent, CircularProgress, Typography } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  CircularProgress,
+  Divider,
+  Typography,
+} from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import CommentForm from '../../components/Comments/CommentForm';
+import CommentsList from '../../components/Comments/CommentList';
 import AnswerQuestionsForm from '../../components/Questions/AnswerQuestionsForm';
 import AnsweredQuestionCard from '../../components/Questions/AnsweredQuestionCard';
 import Flex from '../../components/Shared/Flex';
@@ -83,8 +91,9 @@ const VibeCheck = () => {
     return null;
   }
 
-  const { questionnaireTicket } = vibeCheckData.me;
-  const { status, questions } = questionnaireTicket;
+  const { me } = vibeCheckData;
+  const { questionnaireTicket } = me;
+  const { id, prompt, status, questions, comments } = questionnaireTicket;
 
   return (
     <>
@@ -103,10 +112,10 @@ const VibeCheck = () => {
 
       {status === QuestionnaireTicketStatus.InProgress && (
         <>
-          {questionnaireTicket.prompt && (
+          {prompt && (
             <Card>
               <CardContent sx={{ '&:last-child': { paddingBottom: 2 } }}>
-                <Typography>{questionnaireTicket.prompt}</Typography>
+                <Typography>{prompt}</Typography>
               </CardContent>
             </Card>
           )}
@@ -125,8 +134,18 @@ const VibeCheck = () => {
       {status === QuestionnaireTicketStatus.Submitted && (
         <>
           <Card>
-            <CardContent sx={{ '&:last-child': { paddingBottom: 2 } }}>
+            <CardContent sx={{ '&:last-child': { paddingBottom: 0 } }}>
               <Typography>{t('questions.prompts.waitForResults')}</Typography>
+
+              <Divider sx={{ marginBottom: 2.5, marginTop: 2 }} />
+
+              <CommentsList
+                comments={comments || []}
+                currentUserId={me.id}
+                questionnaireTicketId={id}
+              />
+
+              <CommentForm questionnaireTicketId={id} enableAutoFocus />
             </CardContent>
           </Card>
 

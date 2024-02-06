@@ -5,6 +5,9 @@ query VibeCheck($isLoggedIn: Boolean!) {
       questions {
         ...MyAnsweredQuestionCard
       }
+      comments {
+        ...Comment
+      }
       ...AnswerQuestionsForm
       status
       prompt
