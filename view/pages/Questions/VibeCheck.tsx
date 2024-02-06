@@ -1,3 +1,4 @@
+import { useReactiveVar } from '@apollo/client';
 import { Card, CardContent, CircularProgress, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,9 +10,9 @@ import ProgressBar from '../../components/Shared/ProgressBar';
 import { QuestionnaireTicketStatus } from '../../constants/question.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { AnswerQuestionsInput } from '../../graphql/gen';
+import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestionCard.gen';
 import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/gen/AnswerQuestions.gen';
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
-import { useReactiveVar } from '@apollo/client';
 
 const VibeCheck = () => {
   const [errorsMap, setErrorsMap] = useState<Record<number, string>>({});
@@ -129,7 +130,7 @@ const VibeCheck = () => {
             </CardContent>
           </Card>
 
-          {questions.map((question: any) => (
+          {questions.map((question: MyAnsweredQuestionCardFragment) => (
             <AnsweredQuestionCard key={question.id} question={question} />
           ))}
         </>
