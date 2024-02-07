@@ -16,14 +16,13 @@ import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { QuestionnaireTicketStatus } from '../../constants/question.constants';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
-import { AnswerQuestionsInput } from '../../graphql/gen';
+import { isLoggedInVar } from '../../graphql/cache';
 import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestionCard.gen';
-import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/gen/AnswerQuestions.gen';
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
 
 const VibeCheck = () => {
   const [errorsMap, setErrorsMap] = useState<Record<number, string>>({});
+  const [isSavingProgress, setIsSavingProgress] = useState(false);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const {
@@ -32,52 +31,7 @@ const VibeCheck = () => {
     error: vibeCheckError,
   } = useVibeCheckQuery({ variables: { isLoggedIn } });
 
-  const [answerQuestions, { loading: answerQuestionsLoading }] =
-    useAnswerQuestionsMutation();
-
   const { t } = useTranslation();
-
-  const handleSubmit = async (answersData: AnswerQuestionsInput) => {
-    if (Object.values(errorsMap).some((error) => error)) {
-      return;
-    }
-    if (!window.confirm(t('questions.prompts.confirmSubmit'))) {
-      return;
-    }
-    await answerQuestions({
-      variables: {
-        answersData: { ...answersData, isSubmitting: true },
-        isLoggedIn,
-      },
-      onError(err) {
-        toastVar({
-          status: 'error',
-          title: err.message,
-        });
-      },
-    });
-  };
-
-  const handleSaveProgress = async (
-    answersData: AnswerQuestionsInput,
-    dirty: boolean,
-  ) => {
-    if (!dirty) {
-      return;
-    }
-    await answerQuestions({
-      variables: {
-        answersData,
-        isLoggedIn,
-      },
-      onError(err) {
-        toastVar({
-          status: 'error',
-          title: err.message,
-        });
-      },
-    });
-  };
 
   if (vibeCheckError) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
@@ -102,7 +56,7 @@ const VibeCheck = () => {
           {t('questions.labels.vibeCheck')}
         </LevelOneHeading>
 
-        {answerQuestionsLoading && (
+        {isSavingProgress && (
           <Typography alignSelf="start" paddingTop={0.3}>
             <CircularProgress size={12} sx={{ marginRight: 1 }} />
             {t('states.saving')}
@@ -122,11 +76,9 @@ const VibeCheck = () => {
 
           <AnswerQuestionsForm
             questionnaireTicket={questionnaireTicket}
-            isLoading={answerQuestionsLoading}
-            onSaveProgress={handleSaveProgress}
+            setIsSavingProgress={setIsSavingProgress}
             setErrorsMap={setErrorsMap}
             errorsMap={errorsMap}
-            onSubmit={handleSubmit}
           />
         </>
       )}

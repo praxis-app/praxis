@@ -21,6 +21,10 @@ export const AnswerQuestionsFormFragmentDoc = gql`
   fragment AnswerQuestionsForm on QuestionnaireTicket {
     id
     questions {
+      myAnswer {
+        id
+        text
+      }
       ...AnswerQuestionsFormField
     }
   }

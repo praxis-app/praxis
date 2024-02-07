@@ -1,3 +1,4 @@
+import { useReactiveVar } from '@apollo/client';
 import {
   Card,
   CardContent as MuiCardContent,
@@ -8,8 +9,10 @@ import {
 } from '@mui/material';
 import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { AnswerInput } from '../../graphql/gen';
 import { AnswerQuestionsFormFieldFragment } from '../../graphql/questions/fragments/gen/AnswerQuestionsFormField.gen';
+import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/gen/AnswerQuestions.gen';
 
 const ANSWERS_FIELD_NAME = 'answers';
 
@@ -26,23 +29,53 @@ const CardContent = styled(MuiCardContent)(() => ({
 }));
 
 interface Props {
-  question: AnswerQuestionsFormFieldFragment;
-  setFieldValue(name: string, value: AnswerInput[]): void;
   answers: AnswerInput[];
+  dirty: boolean;
   error?: string;
-  onBlur(): void;
+  question: AnswerQuestionsFormFieldFragment;
+  questionnaireTicketId: number;
+  setFieldValue(name: string, value: AnswerInput[]): void;
+  setIsSavingProgress(isSavingProgress: boolean): void;
 }
 
 const AnswerQuestionsFormField = ({
-  question: { id, text },
-  setFieldValue,
   answers,
+  dirty,
   error,
-  onBlur,
+  question: { id, text },
+  questionnaireTicketId,
+  setFieldValue,
+  setIsSavingProgress,
 }: Props) => {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const [answerQuestions] = useAnswerQuestionsMutation();
   const { t } = useTranslation();
 
   const answer = answers.find((answer) => answer.questionId === id);
+
+  const handleSaveProgress = async () => {
+    if (!dirty) {
+      return;
+    }
+    setIsSavingProgress(true);
+    await answerQuestions({
+      variables: {
+        answersData: {
+          questionnaireTicketId,
+          isSubmitting: false,
+          answers,
+        },
+        isLoggedIn,
+      },
+      onError(err) {
+        toastVar({
+          status: 'error',
+          title: err.message,
+        });
+      },
+    });
+    setIsSavingProgress(false);
+  };
 
   const handleTextFieldChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const newAnswers = answers.map((answer) => {
@@ -67,13 +100,13 @@ const AnswerQuestionsFormField = ({
       <CardContent>
         <TextField
           autoComplete="off"
-          label={t('questions.placeholders.writeAnswer')}
           defaultValue={answer?.text}
+          error={!!error}
+          label={t('questions.placeholders.writeAnswer')}
+          onBlur={handleSaveProgress}
           onChange={handleTextFieldChange}
           sx={{ width: '100%' }}
           variant="outlined"
-          error={!!error}
-          onBlur={onBlur}
           multiline
         />
 

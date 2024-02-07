@@ -1,8 +1,11 @@
+import { useReactiveVar } from '@apollo/client';
 import { Form, Formik } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { AnswerQuestionsInput } from '../../graphql/gen';
 import { AnswerQuestionsFormFragment } from '../../graphql/questions/fragments/gen/AnswerQuestionsForm.gen';
+import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/gen/AnswerQuestions.gen';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import AnswerQuestionsFormField from './AnswerQuestionsFormField';
@@ -10,20 +13,18 @@ import AnswerQuestionsFormField from './AnswerQuestionsFormField';
 interface Props {
   errorsMap: Record<number, string>;
   setErrorsMap: Dispatch<SetStateAction<Record<number, string>>>;
-  onSaveProgress(answersData: AnswerQuestionsInput, dirty: boolean): void;
-  onSubmit(answersData: AnswerQuestionsInput): void;
   questionnaireTicket: AnswerQuestionsFormFragment;
-  isLoading: boolean;
+  setIsSavingProgress(isSavingProgress: boolean): void;
 }
 
 const AnswerQuestionsForm = ({
   questionnaireTicket,
-  isLoading,
-  onSubmit,
-  onSaveProgress,
   errorsMap,
   setErrorsMap,
+  setIsSavingProgress,
 }: Props) => {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const [answerQuestions, { loading }] = useAnswerQuestionsMutation();
   const { t } = useTranslation();
 
   const { questions } = questionnaireTicket;
@@ -38,6 +39,27 @@ const AnswerQuestionsForm = ({
     questionnaireTicketId: questionnaireTicket.id,
     isSubmitting: false,
     answers,
+  };
+
+  const handleSubmit = async (answersData: AnswerQuestionsInput) => {
+    if (Object.values(errorsMap).some((error) => error)) {
+      return;
+    }
+    if (!window.confirm(t('questions.prompts.confirmSubmit'))) {
+      return;
+    }
+    await answerQuestions({
+      variables: {
+        answersData: { ...answersData, isSubmitting: true },
+        isLoggedIn,
+      },
+      onError(err) {
+        toastVar({
+          status: 'error',
+          title: err.message,
+        });
+      },
+    });
   };
 
   const validate = ({ answers }: AnswerQuestionsInput) => {
@@ -59,37 +81,29 @@ const AnswerQuestionsForm = ({
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       validate={validate}
       enableReinitialize
     >
-      {({
-        dirty,
-        isSubmitting,
-        resetForm,
-        setFieldValue,
-        submitCount,
-        values,
-      }) => (
+      {({ dirty, isSubmitting, setFieldValue, submitCount, values }) => (
         <Form>
           {questions.map((question) => (
             <AnswerQuestionsFormField
               key={question.id}
-              question={question}
               answers={values.answers}
-              setFieldValue={setFieldValue}
+              dirty={dirty}
               error={submitCount ? errorsMap[question.id] : undefined}
-              onBlur={() => {
-                onSaveProgress(values, dirty);
-                resetForm();
-              }}
+              question={question}
+              questionnaireTicketId={questionnaireTicket.id}
+              setFieldValue={setFieldValue}
+              setIsSavingProgress={setIsSavingProgress}
             />
           ))}
 
           <Flex justifyContent="flex-end" paddingTop={0.25}>
             <PrimaryActionButton
-              disabled={isSubmitting || isLoading}
-              isLoading={isSubmitting || isLoading}
+              disabled={isSubmitting || loading}
+              isLoading={isSubmitting || loading}
               type="submit"
             >
               {t('actions.submit')}
