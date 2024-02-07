@@ -2,6 +2,7 @@ import { Card, CardContent, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
 import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestionCard.gen';
+import { urlifyText } from '../../utils/shared.utils';
 import AnsweredQuestionCardFooter from './AnweredQuestionCardFooter';
 
 interface Props {
@@ -20,11 +21,12 @@ const AnsweredQuestionCard = ({ question, inModal }: Props) => {
 
   const getAnswerText = () => {
     if ('myAnswer' in question) {
-      return question.myAnswer?.text;
+      return urlifyText(question.myAnswer?.text || '');
     }
     if ('answer' in question) {
-      return question.answer?.text;
+      return urlifyText(question.answer?.text || '');
     }
+    return t('questions.labels.noAnswer');
   };
 
   const renderAnsweredQuestion = () => (
@@ -38,9 +40,11 @@ const AnsweredQuestionCard = ({ question, inModal }: Props) => {
         <Typography color="text.secondary" paddingBottom={1.2}>
           {questionText}
         </Typography>
-        <Typography>
-          {getAnswerText() || t('questions.labels.noAnswer')}
-        </Typography>
+
+        <Typography
+          dangerouslySetInnerHTML={{ __html: getAnswerText() }}
+          whiteSpace="pre-wrap"
+        />
       </CardContent>
 
       <AnsweredQuestionCardFooter question={question} inModal={inModal} />

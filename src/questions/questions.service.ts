@@ -197,9 +197,9 @@ export class QuestionsService {
     return count > 0;
   }
 
-  async createQuestion(questionData: CreateQuestionInput) {
+  async createQuestion({ text, groupId }: CreateQuestionInput) {
     const [lowestPriorityQuestion] = await this.questionRepository.find({
-      where: { groupId: questionData.groupId || IsNull() },
+      where: { groupId: groupId || IsNull() },
       order: { priority: 'DESC' },
       take: 1,
     });
@@ -207,7 +207,7 @@ export class QuestionsService {
       ? lowestPriorityQuestion.priority + 1
       : 0;
     const question = await this.questionRepository.save({
-      ...questionData,
+      text: sanitizeText(text.trim()),
       priority,
     });
     return { question };
