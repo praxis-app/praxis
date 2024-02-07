@@ -20,11 +20,11 @@ const AnsweredQuestionCard = ({ question, inModal }: Props) => {
   })}: ${text}`;
 
   const getAnswerText = () => {
-    if ('myAnswer' in question) {
-      return urlifyText(question.myAnswer?.text || '');
+    if ('myAnswer' in question && question.myAnswer?.text) {
+      return urlifyText(question.myAnswer.text);
     }
-    if ('answer' in question) {
-      return urlifyText(question.answer?.text || '');
+    if ('answer' in question && question.answer?.text) {
+      return urlifyText(question.answer.text);
     }
     return t('questions.labels.noAnswer');
   };
