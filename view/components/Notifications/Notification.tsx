@@ -199,6 +199,7 @@ const Notification = ({
   };
 
   const handleRead = () => {
+    setMenuAnchorEl(null);
     if (isRead) {
       return;
     }
@@ -219,7 +220,6 @@ const Notification = ({
         );
       },
     });
-    setMenuAnchorEl(null);
   };
 
   const renderIcon = () => {
