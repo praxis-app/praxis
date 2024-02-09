@@ -1,3 +1,5 @@
+// TODO: Make confirm dialog optional for deleteItem prop
+
 import { Delete, Edit, MoreHoriz } from '@mui/icons-material';
 import {
   IconButton,
