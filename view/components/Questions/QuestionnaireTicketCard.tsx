@@ -1,15 +1,17 @@
 import {
   Box,
   Card,
-  CardContent as MuiCardContent,
+  CardContent,
   CardHeader as MuiCardHeader,
   SxProps,
+  Typography,
   styled,
 } from '@mui/material';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { QuestionnaireTicketStatus } from '../../constants/question.constants';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -37,13 +39,6 @@ const CardHeader = styled(MuiCardHeader)(() => ({
   },
 }));
 
-const CardContent = styled(MuiCardContent)(() => ({
-  paddingBottom: 0,
-  '&:last-child': {
-    paddingBottom: 0,
-  },
-}));
-
 interface Props {
   questionnaireTicket: QuestionnaireTicketCardFragment;
   inModal?: boolean;
@@ -57,7 +52,7 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { id, createdAt, user } = questionnaireTicket;
+  const { id, status, user, createdAt } = questionnaireTicket;
   const questionnaireTicketPath = `/questionnaires/${id}`;
   const isQuestionnaireTicketPage = pathname.includes(questionnaireTicketPath);
   const formattedDate = timeAgo(createdAt);
@@ -67,9 +62,22 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
   });
 
   const cardContentStyles: SxProps = {
-    paddingTop: 1.8,
-    paddingBottom: 0.6,
+    paddingTop: 2.25,
+    paddingBottom: 2.5,
     paddingX: inModal ? 0 : undefined,
+  };
+
+  const getStatus = () => {
+    if (status === QuestionnaireTicketStatus.Submitted) {
+      return t('questions.labels.submitted');
+    }
+    if (status === QuestionnaireTicketStatus.Approved) {
+      return t('questions.labels.approved');
+    }
+    if (status === QuestionnaireTicketStatus.Denied) {
+      return t('questions.labels.denied');
+    }
+    return t('questions.labels.inProgress');
   };
 
   const handleDelete = async () => {
@@ -140,7 +148,9 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
         }}
       />
       <CardContent sx={cardContentStyles}>
-        TODO: Add remaining layout
+        <Typography>
+          {`${t('questions.labels.status')}: ${getStatus()}`}
+        </Typography>
       </CardContent>
 
       <QuestionnaireTicketCardFooter

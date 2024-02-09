@@ -640,13 +640,18 @@
       "saveProgress": "Save progress"
     },
     "labels": {
+      "answer": "Answer",
+      "approved": "Approved",
+      "denied": "Denied",
+      "inProgress": "In Progress",
       "membershipQuestions": "Membership Questions",
       "noAnswer": "No answer",
       "questionnaires": "Questionnaires",
       "questions": "Questions",
       "serverQuestions": "Server Questions",
-      "vibeCheck": "Vibe Check",
-      "answer": "Answer"
+      "status": "Status",
+      "submitted": "Submitted",
+      "vibeCheck": "Vibe Check"
     },
     "headers": {
       "createQuestion": "Create Question",
