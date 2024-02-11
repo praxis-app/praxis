@@ -69,7 +69,7 @@ const Notification = ({
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const isUnread = status === NotificationStatus.Unread;
+  const isRead = status === NotificationStatus.Read;
 
   const isProposalVote = [
     NotificationType.ProposalVoteAgreement,
@@ -199,6 +199,10 @@ const Notification = ({
   };
 
   const handleRead = () => {
+    setMenuAnchorEl(null);
+    if (isRead) {
+      return;
+    }
     updateNotification({
       variables: {
         notificationData: { id, status: NotificationStatus.Read },
@@ -216,7 +220,6 @@ const Notification = ({
         );
       },
     });
-    setMenuAnchorEl(null);
   };
 
   const renderIcon = () => {
@@ -263,7 +266,7 @@ const Notification = ({
       paddingBottom={isLast ? '16px' : '8px'}
       alignItems="center"
       justifyContent="space-between"
-      bgcolor={isUnread ? 'rgba(88, 101, 242, 0.1)' : 'transparent'}
+      bgcolor={isRead ? 'transparent' : 'rgba(88, 101, 242, 0.1)'}
     >
       <Link
         href={getPath()}
@@ -315,7 +318,7 @@ const Notification = ({
         prependChildren
         canDelete
       >
-        <MenuItem onClick={handleRead} disabled={!isUnread}>
+        <MenuItem onClick={handleRead} disabled={isRead}>
           <Check fontSize="small" sx={{ marginRight: 1 }} />
           {t('notifications.labels.markAsRead')}
         </MenuItem>
