@@ -55,7 +55,7 @@ const SliderInput = ({
           {...sliderProps}
         />
       </Grid>
-      <Grid item paddingRight="5px">
+      <Grid item xs={isDesktop ? 3.2 : 1.9} paddingRight="5px">
         <Input
           value={value}
           disabled={disabled}
@@ -68,7 +68,7 @@ const SliderInput = ({
         />
       </Grid>
       {showPercentSign && (
-        <Grid>
+        <Grid xs={1} item>
           <Typography paddingBottom={0.25}>%</Typography>
         </Grid>
       )}
