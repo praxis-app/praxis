@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import GroupCard from '../../components/Groups/GroupCard';
@@ -61,6 +61,16 @@ const GroupsList = () => {
         setPage={setPage}
         setRowsPerPage={setRowsPerPage}
       >
+        {data?.groupsCount === 0 && (
+          <Card>
+            <CardContent sx={{ '&:last-child': { paddingY: 5 } }}>
+              <Typography textAlign="center">
+                {t('groups.prompts.noGroups')}
+              </Typography>
+            </CardContent>
+          </Card>
+        )}
+
         {data?.groups.map((group) => (
           <GroupCard
             key={group.id}

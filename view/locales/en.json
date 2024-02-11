@@ -294,11 +294,12 @@
     },
     "prompts": {
       "confirmLeave": "Are you sure you want to leave the group?",
+      "confirmNoAdmin": "Are you sure you want to set this group to No Admin? All major changes to the group will have to be made via proposals. This includes changes to the group name, cover photo, settings, roles, events, and more.",
+      "noAboutText": "No about text",
+      "noGroups": "No groups yet.",
       "publicGroup": "Public Group: Anyone can view the group page and any content posted by group members.",
       "settingDisabledForConsent": "This setting is disabled for consent decision making.",
-      "settingDisabledForMajority": "This setting is disabled for majority vote.",
-      "confirmNoAdmin": "Are you sure you want to set this group to No Admin? All major changes to the group will have to be made via proposals. This includes changes to the group name, cover photo, settings, roles, events, and more.",
-      "noAboutText": "No about text"
+      "settingDisabledForMajority": "This setting is disabled for majority vote."
     },
     "tabs": {
       "about": "About",
