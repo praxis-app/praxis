@@ -12,6 +12,7 @@ import { FormikErrors } from 'formik';
 import { ReactNode } from 'react';
 import { GroupSettingsFieldName } from '../../constants/group.constants';
 import { useIsDesktop } from '../../hooks/shared.hooks';
+import { DarkMode } from '../../styles/theme';
 import Flex from '../Shared/Flex';
 
 const SETTING_DESCRIPTION_WIDTH = '60%';
@@ -70,8 +71,13 @@ const GroupSettingsSelect = ({
           width={isDesktop ? SETTING_DESCRIPTION_WIDTH : '100%'}
           marginBottom={isDesktop ? 0 : 3}
         >
-          <Typography>{label}</Typography>
-          <Typography fontSize={12} color="text.secondary">
+          <Typography color={disabled ? DarkMode.Griffin : undefined}>
+            {label}
+          </Typography>
+          <Typography
+            color={disabled ? DarkMode.Griffin : 'text.secondary'}
+            fontSize={12}
+          >
             {description}
           </Typography>
         </Box>
