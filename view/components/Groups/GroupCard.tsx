@@ -32,7 +32,7 @@ import { urlifyText } from '../../utils/shared.utils';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import GroupAvatar from './GroupAvatar';
-import JoinButton from './JoinButton';
+import JoinGroupButton from './JoinGroupButton';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
@@ -179,7 +179,7 @@ const GroupCard = ({
         </Box>
 
         {isLoggedIn && (
-          <JoinButton
+          <JoinGroupButton
             isGroupMember={isJoinedByMe}
             currentUserId={currentUserId}
             groupId={id}

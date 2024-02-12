@@ -30,7 +30,7 @@ interface Props {
   isGroupMember?: boolean;
 }
 
-const JoinButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
+const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
   const { data, loading } = useGroupMemberRequestQuery({
     variables: { groupId },
   });
@@ -178,4 +178,4 @@ const JoinButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
   );
 };
 
-export default JoinButton;
+export default JoinGroupButton;
