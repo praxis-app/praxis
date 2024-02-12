@@ -3,6 +3,7 @@ import { styled } from '@mui/material';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TypeNames } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { useCancelGroupMemberRequestMutation } from '../../graphql/groups/mutations/gen/CancelGroupMemberRequest.gen';
 import { useCreateGroupMemberRequestMutation } from '../../graphql/groups/mutations/gen/CreateGroupMemberRequest.gen';
@@ -16,7 +17,7 @@ import {
   MemberRequestsDocument,
   MemberRequestsQuery,
 } from '../../graphql/groups/queries/gen/MemberRequests.gen';
-import { TypeNames } from '../../constants/shared.constants';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import GhostButton from '../Shared/GhostButton';
 
 const Button = styled(GhostButton)(() => ({
@@ -42,6 +43,7 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
 
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
 
   if (!data) {
     return <Button disabled>{t('groups.actions.join')}</Button>;
@@ -147,7 +149,10 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
   const handleButtonClick = async () => {
     try {
       if (isGroupMember) {
-        await handleLeave();
+        const confirmed = window.confirm(t('groups.prompts.confirmLeave'));
+        if (confirmed) {
+          await handleLeave();
+        }
         return;
       }
       if (!groupMemberRequest) {
@@ -163,15 +168,26 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
     }
   };
 
-  const handleButtonClickWithConfirm = () =>
-    window.confirm(t('groups.prompts.confirmLeave')) && handleButtonClick();
+  const handleMouseEnter = () => {
+    if (!isDesktop) {
+      return;
+    }
+    setIsHovering(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (!isDesktop) {
+      return;
+    }
+    setIsHovering(false);
+  };
 
   return (
     <Button
       disabled={cancelLoading || createLoading || leaveGroupLoading || loading}
-      onClick={isGroupMember ? handleButtonClickWithConfirm : handleButtonClick}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
+      onClick={handleButtonClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {getButtonText()}
     </Button>
