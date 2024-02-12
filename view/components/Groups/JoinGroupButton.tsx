@@ -193,31 +193,13 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
     }
   };
 
-  const handleMenuClose = () => {
-    setMenuAnchorEl(null);
-  };
-
-  const handleMouseEnter = () => {
-    if (!isDesktop) {
-      return;
-    }
-    setIsHovering(true);
-  };
-
-  const handleMouseLeave = () => {
-    if (!isDesktop) {
-      return;
-    }
-    setIsHovering(false);
-  };
-
   return (
     <>
       <Button
         disabled={isDisabled}
         onClick={handleButtonClick}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={isDesktop ? () => setIsHovering(true) : undefined}
+        onMouseLeave={isDesktop ? () => setIsHovering(false) : undefined}
         endIcon={!isDesktop && isGroupMember ? <ArrowDropDown /> : null}
       >
         {getButtonText()}
@@ -225,8 +207,8 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
 
       <Menu
         anchorEl={menuAnchorEl}
-        onClick={handleMenuClose}
-        onClose={handleMenuClose}
+        onClick={() => setMenuAnchorEl(null)}
+        onClose={() => setMenuAnchorEl(null)}
         open={!!menuAnchorEl}
         anchorOrigin={{
           horizontal: 'right',
