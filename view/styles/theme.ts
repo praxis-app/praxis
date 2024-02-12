@@ -5,6 +5,7 @@ export enum DarkMode {
   Placebo = '#e4e6ea',
   NimbusCloud = '#d3d5d9',
   Casper = '#b1b3b8',
+  Griffin = '#8c8c8d',
   Liver = '#505051',
   DeadPixel = '#3a3b3c',
   PhantomShip = '#303233',
