@@ -36,9 +36,11 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
-  const { data, loading } = useGroupMemberRequestQuery({
-    variables: { groupId },
-  });
+  const { data: memberRequestData, loading: memberRequestLoading } =
+    useGroupMemberRequestQuery({
+      variables: { groupId },
+    });
+
   const [createMemberRequest, { loading: createLoading }] =
     useCreateGroupMemberRequestMutation();
   const [cancelMemberRequest, { loading: cancelLoading }] =
@@ -48,14 +50,14 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
-  if (!data) {
+  if (!memberRequestData) {
     return <Button disabled>{t('groups.actions.join')}</Button>;
   }
 
-  const { groupMemberRequest } = data;
+  const { groupMemberRequest } = memberRequestData;
 
   const isDisabled =
-    cancelLoading || createLoading || leaveGroupLoading || loading;
+    cancelLoading || createLoading || leaveGroupLoading || memberRequestLoading;
 
   const getButtonText = () => {
     if (isGroupMember) {
