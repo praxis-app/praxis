@@ -3,6 +3,7 @@ import { CheckCircle, Star } from '@mui/icons-material';
 import { ButtonProps, Stack, StackProps, styled } from '@mui/material';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toastVar } from '../../graphql/cache';
 import { EventAttendeeButtonsFragment } from '../../graphql/events/fragments/gen/EventAttendeeButtons.gen';
 import { useCreateEventAttendeeMutation } from '../../graphql/events/mutations/gen/CreateEventAttendee.gen';
 import { useDeleteEventAttendeeMutation } from '../../graphql/events/mutations/gen/DeleteEventAttendee.gen';
@@ -56,9 +57,6 @@ const EventAttendeeButtons = ({
   const isLoading =
     createAttendeeLoading || updateAttendeeLoading || deleteAttendeeLoading;
 
-  const isDisabled =
-    isLoading || isHosting || !!(event.group && !event.group.isJoinedByMe);
-
   const GoingButton = isGoing ? PrimaryButton : GhostButton;
   const InterestedButton = isInterested ? PrimaryButton : GhostButton;
 
@@ -75,6 +73,20 @@ const EventAttendeeButtons = ({
     };
 
   const handleInterestedButtonClick = async () => {
+    if (isHosting) {
+      toastVar({
+        title: t('events.prompts.alreadyHosting'),
+        status: 'info',
+      });
+      return;
+    }
+    if (event.group && !event.group.isJoinedByMe) {
+      toastVar({
+        title: t('events.prompts.joinGroupToAttend'),
+        status: 'info',
+      });
+      return;
+    }
     if (isInterested) {
       await deleteEventAttendee({
         variables: { eventId: event.id },
@@ -96,6 +108,20 @@ const EventAttendeeButtons = ({
   };
 
   const handleGoingButtonClick = async () => {
+    if (isHosting) {
+      toastVar({
+        title: t('events.prompts.alreadyHosting'),
+        status: 'info',
+      });
+      return;
+    }
+    if (event.group && !event.group.isJoinedByMe) {
+      toastVar({
+        title: t('events.prompts.joinGroupToAttend'),
+        status: 'info',
+      });
+      return;
+    }
     if (isGoing) {
       await deleteEventAttendee({
         variables: { eventId: event.id },
@@ -117,7 +143,7 @@ const EventAttendeeButtons = ({
   };
 
   const interestedButtonProps: ButtonProps = {
-    disabled: isDisabled,
+    disabled: isLoading,
     onClick: handleInterestedButtonClick,
     startIcon: <Star />,
   };
@@ -146,7 +172,7 @@ const EventAttendeeButtons = ({
       </InterestedButton>
 
       <GoingButton
-        disabled={isDisabled}
+        disabled={isLoading}
         onClick={handleGoingButtonClick}
         startIcon={<CheckCircle />}
       >

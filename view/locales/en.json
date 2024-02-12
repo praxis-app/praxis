@@ -381,6 +381,8 @@
       "editEvent": "Edit Event"
     },
     "prompts": {
+      "alreadyHosting": "You're already hosting this event.",
+      "joinGroupToAttend": "You need to be a group member to attend this event.",
       "noUpcomingEvents": "No upcoming events",
       "planVirtualEvent": "Plan a virtual event"
     },
