@@ -38,7 +38,7 @@ import CoverPhoto from '../Images/CoverPhoto';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
-import JoinButton from './JoinButton';
+import JoinGroupButton from './JoinGroupButton';
 
 const NameText = styled(Typography)(() => ({
   fontFamily: 'Inter Bold',
@@ -183,7 +183,7 @@ const GroupPageCard = ({
 
     return (
       <>
-        <JoinButton
+        <JoinGroupButton
           groupId={id}
           currentUserId={currentUserId}
           isGroupMember={group.isJoinedByMe}

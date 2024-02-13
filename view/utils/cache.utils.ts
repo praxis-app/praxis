@@ -79,6 +79,7 @@ export const removeGroup =
           }
           const index = draft.groups.findIndex((p) => p.id === id);
           draft.groups.splice(index, 1);
+          draft.groupsCount -= 1;
         }),
     );
     const cacheId = cache.identify({ id, __typename: TypeNames.Group });

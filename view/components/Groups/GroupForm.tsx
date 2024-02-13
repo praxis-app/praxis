@@ -74,12 +74,16 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
           },
           (groupsData) =>
             produce(groupsData, (draft) => {
-              draft?.groups.unshift({
+              if (!draft) {
+                return;
+              }
+              draft.groups.unshift({
                 ...createGroup.group,
                 isJoinedByMe: true,
                 memberCount: 1,
                 memberRequestCount: 0,
               });
+              draft.groupsCount = draft.groupsCount + 1;
             }),
         );
       },
