@@ -248,7 +248,8 @@
       "deny": "Deny",
       "edit": "Edit Group",
       "join": "Join",
-      "leave": "Leave"
+      "leave": "Leave",
+      "leaveGroup": "Leave group"
     },
     "form": {
       "name": "Name",

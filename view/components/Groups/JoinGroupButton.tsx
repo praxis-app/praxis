@@ -1,8 +1,10 @@
 import { Reference } from '@apollo/client';
-import { styled } from '@mui/material';
+import { ArrowDropDown, Logout } from '@mui/icons-material';
+import { Menu, MenuItem, styled } from '@mui/material';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TypeNames } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { useCancelGroupMemberRequestMutation } from '../../graphql/groups/mutations/gen/CancelGroupMemberRequest.gen';
 import { useCreateGroupMemberRequestMutation } from '../../graphql/groups/mutations/gen/CreateGroupMemberRequest.gen';
@@ -16,7 +18,7 @@ import {
   MemberRequestsDocument,
   MemberRequestsQuery,
 } from '../../graphql/groups/queries/gen/MemberRequests.gen';
-import { TypeNames } from '../../constants/shared.constants';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import GhostButton from '../Shared/GhostButton';
 
 const Button = styled(GhostButton)(() => ({
@@ -30,24 +32,32 @@ interface Props {
   isGroupMember?: boolean;
 }
 
-const JoinButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
-  const { data, loading } = useGroupMemberRequestQuery({
-    variables: { groupId },
-  });
+const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
+  const [isHovering, setIsHovering] = useState(false);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
+
+  const { data: memberRequestData, loading: memberRequestLoading } =
+    useGroupMemberRequestQuery({
+      variables: { groupId },
+    });
+
   const [createMemberRequest, { loading: createLoading }] =
     useCreateGroupMemberRequestMutation();
   const [cancelMemberRequest, { loading: cancelLoading }] =
     useCancelGroupMemberRequestMutation();
   const [leaveGroup, { loading: leaveGroupLoading }] = useLeaveGroupMutation();
-  const [isHovering, setIsHovering] = useState(false);
 
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
 
-  if (!data) {
+  if (!memberRequestData) {
     return <Button disabled>{t('groups.actions.join')}</Button>;
   }
 
-  const { groupMemberRequest } = data;
+  const { groupMemberRequest } = memberRequestData;
+
+  const isDisabled =
+    cancelLoading || createLoading || leaveGroupLoading || memberRequestLoading;
 
   const getButtonText = () => {
     if (isGroupMember) {
@@ -116,7 +126,11 @@ const JoinButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
       },
     });
 
-  const handleLeave = async () =>
+  const handleLeave = async () => {
+    const confirmed = window.confirm(t('groups.prompts.confirmLeave'));
+    if (!confirmed) {
+      return;
+    }
     await leaveGroup({
       variables: { id: groupId },
       update(cache) {
@@ -143,8 +157,15 @@ const JoinButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
         });
       },
     });
+  };
 
-  const handleButtonClick = async () => {
+  const handleButtonClick = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    if (!isDesktop && isGroupMember) {
+      setMenuAnchorEl(event.currentTarget);
+      return;
+    }
     try {
       if (isGroupMember) {
         await handleLeave();
@@ -163,19 +184,51 @@ const JoinButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
     }
   };
 
-  const handleButtonClickWithConfirm = () =>
-    window.confirm(t('groups.prompts.confirmLeave')) && handleButtonClick();
+  const handleLeaveButtonClick = async () => {
+    try {
+      await handleLeave();
+    } catch (err) {
+      toastVar({
+        status: 'error',
+        title: String(err),
+      });
+    }
+  };
 
   return (
-    <Button
-      disabled={cancelLoading || createLoading || leaveGroupLoading || loading}
-      onClick={isGroupMember ? handleButtonClickWithConfirm : handleButtonClick}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-    >
-      {getButtonText()}
-    </Button>
+    <>
+      <Button
+        disabled={isDisabled}
+        onClick={handleButtonClick}
+        onMouseEnter={isDesktop ? () => setIsHovering(true) : undefined}
+        onMouseLeave={isDesktop ? () => setIsHovering(false) : undefined}
+        endIcon={!isDesktop && isGroupMember ? <ArrowDropDown /> : null}
+      >
+        {getButtonText()}
+      </Button>
+
+      <Menu
+        anchorEl={menuAnchorEl}
+        onClick={() => setMenuAnchorEl(null)}
+        onClose={() => setMenuAnchorEl(null)}
+        open={!!menuAnchorEl}
+        anchorOrigin={{
+          horizontal: 'right',
+          vertical: 'bottom',
+        }}
+        transformOrigin={{
+          horizontal: 'right',
+          vertical: -5,
+        }}
+        keepMounted
+      >
+        <MenuItem onClick={handleLeaveButtonClick}>
+          <Logout sx={{ marginRight: '8px' }} />
+          {t('groups.actions.leaveGroup')}
+        </MenuItem>
+      </Menu>
+    </>
   );
 };
 
-export default JoinButton;
+export default JoinGroupButton;
