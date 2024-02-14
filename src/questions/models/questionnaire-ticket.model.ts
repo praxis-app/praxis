@@ -35,6 +35,7 @@ export class QuestionnaireTicket {
   @Field()
   status: string;
 
+  @Field(() => [QuestionnaireTicketQuestion])
   @OneToMany(
     () => QuestionnaireTicketQuestion,
     (questionnaireTicketQuestion) =>

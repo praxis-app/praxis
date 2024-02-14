@@ -57,13 +57,20 @@ type Answer {
   commentCount: Int!
 }
 
+type QuestionnaireTicketQuestion {
+  id: Int!
+  text: String!
+  priority: Int!
+  answer: Answer
+}
+
 type QuestionnaireTicket {
   id: Int!
   status: String!
+  questions: [QuestionnaireTicketQuestion!]!
   comments: [Comment!]!
   createdAt: DateTime!
   prompt: String
-  questions: [Question!]!
   votes: [Vote!]!
   voteCount: Int!
   myVote: Vote
@@ -604,6 +611,10 @@ type CreateLikePayload {
   answer: Answer
 }
 
+type AnswerQuestionsPayload {
+  questionnaireTicket: QuestionnaireTicket!
+}
+
 type CreateQuestionPayload {
   question: Question!
 }
@@ -660,10 +671,10 @@ type Query {
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
   likes(postId: Int, commentId: Int): [Like!]!
+  answer(id: Int!): Answer!
   questionnaireTicket(id: Int!): QuestionnaireTicket!
   serverQuestionnaireTickets: [QuestionnaireTicket!]!
   serverQuestions: [Question!]!
-  answer(id: Int!): Answer!
   serverRules: [Rule!]!
 }
 
@@ -724,6 +735,7 @@ type Mutation {
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
   deleteQuestionnnaireTicket(id: Int!): Boolean!
+  answerQuestions(answersData: AnswerQuestionsInput!): AnswerQuestionsPayload!
   createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
   updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
   updateQuestionsPriority(questionsData: UpdateQuestionsPriorityInput!): Boolean!
@@ -1009,6 +1021,17 @@ input DeleteLikeInput {
   postId: Int
   commentId: Int
   answerId: Int
+}
+
+input AnswerQuestionsInput {
+  questionnaireTicketId: Int!
+  answers: [AnswerInput!]!
+  isSubmitting: Boolean!
+}
+
+input AnswerInput {
+  questionId: Int!
+  text: String!
 }
 
 input CreateQuestionInput {
