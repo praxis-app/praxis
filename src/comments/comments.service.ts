@@ -186,7 +186,7 @@ export class CommentsService {
 
     if (comment.answerId && commentedItemUserId === user.id) {
       const answer = await this.getCommentedAnswer(comment.answerId, [
-        'questionnaireTicket',
+        'questionnaireTicketQuestion.questionnaireTicket',
       ]);
       if (
         answer?.questionnaireTicketQuestion.questionnaireTicket.groupId === null

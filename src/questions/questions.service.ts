@@ -119,9 +119,9 @@ export class QuestionsService {
     return serverQuestionsPrompt;
   }
 
-  async getQuestionnaireTicketQuestion(questionnaireTicketId: number) {
-    return this.questionnaireTicketQuestionRepository.findOne({
-      where: { questionnaireTicketId },
+  async getQuestionnaireTicketQuestion(questionnaireTicketQuestionId: number) {
+    return this.questionnaireTicketQuestionRepository.findOneOrFail({
+      where: { id: questionnaireTicketQuestionId },
     });
   }
 
