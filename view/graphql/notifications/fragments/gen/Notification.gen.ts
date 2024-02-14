@@ -36,7 +36,11 @@ export type NotificationFragment = {
     answer?: {
       __typename?: 'Answer';
       id: number;
-      questionnaireTicket: { __typename?: 'QuestionnaireTicket'; id: number };
+      question: {
+        __typename?: 'QuestionnaireTicketQuestion';
+        id: number;
+        questionnaireTicket: { __typename?: 'QuestionnaireTicket'; id: number };
+      };
       user: { __typename?: 'User'; id: number };
     } | null;
     questionnaireTicket?: {
@@ -77,8 +81,11 @@ export const NotificationFragmentDoc = gql`
       }
       answer {
         id
-        questionnaireTicket {
+        question {
           id
+          questionnaireTicket {
+            id
+          }
         }
         user {
           id

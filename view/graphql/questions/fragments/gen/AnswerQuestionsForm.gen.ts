@@ -10,10 +10,10 @@ export type AnswerQuestionsFormFragment = {
   __typename?: 'QuestionnaireTicket';
   id: number;
   questions: Array<{
-    __typename?: 'Question';
+    __typename?: 'QuestionnaireTicketQuestion';
     id: number;
     text: string;
-    myAnswer?: { __typename?: 'Answer'; id: number; text: string } | null;
+    answer?: { __typename?: 'Answer'; id: number; text: string } | null;
   }>;
 };
 
@@ -21,7 +21,7 @@ export const AnswerQuestionsFormFragmentDoc = gql`
   fragment AnswerQuestionsForm on QuestionnaireTicket {
     id
     questions {
-      myAnswer {
+      answer {
         id
         text
       }

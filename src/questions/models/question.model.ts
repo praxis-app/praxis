@@ -4,12 +4,10 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Group } from '../../groups/models/group.model';
-import { Answer } from './answer.model';
 
 @ObjectType()
 @Entity()
@@ -25,11 +23,6 @@ export class Question {
   @Column()
   @Field(() => Int)
   priority: number;
-
-  @OneToMany(() => Answer, (answer) => answer.question, {
-    cascade: true,
-  })
-  answers: Answer[];
 
   @ManyToOne(() => Group, (group) => group.rules, {
     onDelete: 'CASCADE',

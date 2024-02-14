@@ -5,19 +5,6 @@ mutation CreateComment(
   createComment(commentData: $commentData) {
     comment {
       ...Comment
-
-      post {
-        id
-        commentCount
-      }
-      proposal {
-        id
-        commentCount
-      }
-      answer {
-        id
-        commentCount
-      }
     }
   }
 }

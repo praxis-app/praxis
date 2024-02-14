@@ -31,26 +31,6 @@ type EventAttendee {
   updatedAt: DateTime!
 }
 
-type Question {
-  id: Int!
-  text: String!
-  priority: Int!
-  answer(questionnaireTicketId: Int!): Answer
-  myAnswer: Answer
-}
-
-type Answer {
-  id: Int!
-  text: String!
-  questionnaireTicket: QuestionnaireTicket!
-  likes: [Like!]!
-  user: User!
-  likeCount: Int!
-  isLikedByMe: Boolean!
-  comments: [Comment!]!
-  commentCount: Int!
-}
-
 type QuestionnaireTicketConfig {
   id: Int!
   decisionMakingModel: String!
@@ -60,14 +40,33 @@ type QuestionnaireTicketConfig {
   votingTimeLimit: Int!
 }
 
+type Answer {
+  id: Int!
+  text: String!
+  question: QuestionnaireTicketQuestion!
+  likes: [Like!]!
+  user: User!
+  likeCount: Int!
+  isLikedByMe: Boolean!
+  comments: [Comment!]!
+  commentCount: Int!
+}
+
+type QuestionnaireTicketQuestion {
+  id: Int!
+  text: String!
+  priority: Int!
+  answer: Answer
+  questionnaireTicket: QuestionnaireTicket!
+}
+
 type QuestionnaireTicket {
   id: Int!
   status: String!
+  questions: [QuestionnaireTicketQuestion!]!
   comments: [Comment!]!
   createdAt: DateTime!
   prompt: String
-  questions: [Question!]!
-  answers: [Answer!]!
   votes: [Vote!]!
   voteCount: Int!
   myVote: Vote
@@ -347,6 +346,12 @@ type Event {
   posts(offset: Int, limit: Int): [Post!]!
   postsCount: Int!
   coverPhoto: Image!
+}
+
+type Question {
+  id: Int!
+  text: String!
+  priority: Int!
 }
 
 type Rule {
@@ -668,10 +673,10 @@ type Query {
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
   likes(postId: Int, commentId: Int): [Like!]!
+  answer(id: Int!): Answer!
   questionnaireTicket(id: Int!): QuestionnaireTicket!
   serverQuestionnaireTickets: [QuestionnaireTicket!]!
   serverQuestions: [Question!]!
-  answer(id: Int!): Answer!
   serverRules: [Rule!]!
 }
 
@@ -732,10 +737,10 @@ type Mutation {
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
   deleteQuestionnnaireTicket(id: Int!): Boolean!
+  answerQuestions(answersData: AnswerQuestionsInput!): AnswerQuestionsPayload!
   createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
   updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
   updateQuestionsPriority(questionsData: UpdateQuestionsPriorityInput!): Boolean!
-  answerQuestions(answersData: AnswerQuestionsInput!): AnswerQuestionsPayload!
   deleteQuestion(id: Int!): Boolean!
   createRule(ruleData: CreateRuleInput!): CreateRulePayload!
   updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
@@ -1020,6 +1025,17 @@ input DeleteLikeInput {
   answerId: Int
 }
 
+input AnswerQuestionsInput {
+  questionnaireTicketId: Int!
+  answers: [AnswerInput!]!
+  isSubmitting: Boolean!
+}
+
+input AnswerInput {
+  questionnaireTicketQuestionId: Int!
+  text: String!
+}
+
 input CreateQuestionInput {
   groupId: Int
   text: String!
@@ -1037,17 +1053,6 @@ input UpdateQuestionsPriorityInput {
 input UpdateQuestionPriorityInput {
   id: Int!
   priority: Int!
-}
-
-input AnswerQuestionsInput {
-  questionnaireTicketId: Int!
-  answers: [AnswerInput!]!
-  isSubmitting: Boolean!
-}
-
-input AnswerInput {
-  questionId: Int!
-  text: String!
 }
 
 input CreateRuleInput {

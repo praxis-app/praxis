@@ -42,12 +42,7 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
 
   const { t } = useTranslation();
 
-  const answer =
-    'myAnswer' in question
-      ? question.myAnswer
-      : 'answer' in question
-      ? question.answer
-      : undefined;
+  const { answer } = question;
 
   useEffect(() => {
     if (!inModal || !answer || answerCommentsCalled) {

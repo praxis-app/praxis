@@ -11,8 +11,7 @@ import {
 import { Comment } from '../../comments/models/comment.model';
 import { Like } from '../../likes/models/like.model';
 import { Notification } from '../../notifications/models/notification.model';
-import { Question } from './question.model';
-import { QuestionnaireTicket } from './questionnaire-ticket.model';
+import { QuestionnaireTicketQuestion } from './questionnaire-ticket-question.model';
 
 @ObjectType()
 @Entity()
@@ -35,22 +34,14 @@ export class Answer {
   notifications: Notification[];
 
   @ManyToOne(
-    () => QuestionnaireTicket,
-    (questionnaireTicket) => questionnaireTicket.answers,
+    () => QuestionnaireTicketQuestion,
+    (questionnaireTicketQuestion) => questionnaireTicketQuestion.answers,
     { onDelete: 'CASCADE' },
   )
-  questionnaireTicket: QuestionnaireTicket;
+  questionnaireTicketQuestion: QuestionnaireTicketQuestion;
 
   @Column()
-  questionnaireTicketId: number;
-
-  @ManyToOne(() => Question, (question) => question.answers, {
-    onDelete: 'CASCADE',
-  })
-  question: Question;
-
-  @Column()
-  questionId: number;
+  questionnaireTicketQuestionId: number;
 
   @CreateDateColumn()
   createdAt: Date;

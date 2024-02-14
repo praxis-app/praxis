@@ -28,11 +28,11 @@ const AnswerQuestionsForm = ({
   const { t } = useTranslation();
 
   const { questions } = questionnaireTicket;
-  const answers = questions.map(({ id, myAnswer }) => {
-    if (!myAnswer) {
-      return { questionId: id, text: '' };
+  const answers = questions.map(({ id, answer }) => {
+    if (!answer) {
+      return { questionnaireTicketQuestionId: id, text: '' };
     }
-    return { questionId: id, text: myAnswer?.text };
+    return { questionnaireTicketQuestionId: id, text: answer.text };
   });
 
   const initialValues: AnswerQuestionsInput = {
@@ -67,12 +67,14 @@ const AnswerQuestionsForm = ({
       if (!answer.text.trim()) {
         setErrorsMap((prevErrorsMap) => ({
           ...prevErrorsMap,
-          [answer.questionId]: t('questions.errors.missingAnswer'),
+          [answer.questionnaireTicketQuestionId]: t(
+            'questions.errors.missingAnswer',
+          ),
         }));
       } else {
         setErrorsMap((prevErrorsMap) => ({
           ...prevErrorsMap,
-          [answer.questionId]: '',
+          [answer.questionnaireTicketQuestionId]: '',
         }));
       }
     }

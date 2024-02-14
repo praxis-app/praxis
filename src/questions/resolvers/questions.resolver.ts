@@ -1,17 +1,4 @@
-import {
-  Args,
-  Int,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
-import { User } from '../../users/models/user.model';
-import { AnswerQuestionsInput } from '../models/answer-questions.input';
-import { AnswerQuestionsPayload } from '../models/answer-questions.payload';
-import { Answer } from '../models/answer.model';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateQuestionInput } from '../models/create-question.input';
 import { CreateQuestionPayload } from '../models/create-question.payload';
 import { Question } from '../models/question.model';
@@ -27,29 +14,6 @@ export class QuestionsResolver {
   @Query(() => [Question])
   async serverQuestions() {
     return this.questionsService.getServerQuestions();
-  }
-
-  @ResolveField(() => Answer, { nullable: true })
-  async answer(
-    @Args('questionnaireTicketId', { type: () => Int })
-    questionnaireTicketId: number,
-    @Parent() { id }: Question,
-  ) {
-    return this.questionsService.getAnswer({
-      questionnaireTicketId,
-      questionId: id,
-    });
-  }
-
-  @ResolveField(() => Answer, { nullable: true })
-  async myAnswer(
-    @Parent() { id, groupId }: Question,
-    @CurrentUser() user: User,
-  ) {
-    return this.questionsService.getAnswer({
-      questionnaireTicket: { userId: user.id, groupId },
-      questionId: id,
-    });
   }
 
   @Mutation(() => CreateQuestionPayload)
@@ -71,14 +35,6 @@ export class QuestionsResolver {
     @Args('questionsData') questionsData: UpdateQuestionsPriorityInput,
   ) {
     return this.questionsService.updateQuestionsPriority(questionsData);
-  }
-
-  @Mutation(() => AnswerQuestionsPayload)
-  async answerQuestions(
-    @Args('answersData') answersData: AnswerQuestionsInput,
-    @CurrentUser() user: User,
-  ) {
-    return this.questionsService.answerQuestions(answersData, user);
   }
 
   @Mutation(() => Boolean)

@@ -11,19 +11,23 @@ import { AnswerQuestionsInput } from './models/answer-questions.input';
 import { Answer } from './models/answer.model';
 import { CreateQuestionInput } from './models/create-question.input';
 import { Question } from './models/question.model';
+import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
 import {
   QuestionnaireTicket,
   QuestionnaireTicketStatus,
 } from './models/questionnaire-ticket.model';
 import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
-import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
+import { QuestionnaireTicketQuestion } from './models/questionnaire-ticket-question.model';
 
 @Injectable()
 export class QuestionsService {
   constructor(
     @InjectRepository(QuestionnaireTicket)
     private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
+
+    @InjectRepository(QuestionnaireTicketQuestion)
+    private questionnaireTicketQuestionRepository: Repository<QuestionnaireTicketQuestion>,
 
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
@@ -82,9 +86,11 @@ export class QuestionsService {
   }
 
   async getAnswerUser(answerId: number) {
-    const { questionnaireTicket } = await this.anwersRepository.findOneOrFail({
+    const {
+      questionnaireTicketQuestion: { questionnaireTicket },
+    } = await this.anwersRepository.findOneOrFail({
       where: { id: answerId },
-      relations: ['questionnaireTicket.user'],
+      relations: ['questionnaireTicketQuestion.questionnaireTicket.user'],
     });
     return questionnaireTicket.user;
   }
@@ -113,18 +119,14 @@ export class QuestionsService {
     return serverQuestionsPrompt;
   }
 
-  async getQuestionnaireTicketQuestions(groupId?: number) {
-    if (groupId) {
-      return this.questionRepository.find({
-        where: { groupId },
-        order: { priority: 'ASC' },
-      });
-    }
-    return this.getServerQuestions();
+  async getQuestionnaireTicketQuestion(questionnaireTicketQuestionId: number) {
+    return this.questionnaireTicketQuestionRepository.findOneOrFail({
+      where: { id: questionnaireTicketQuestionId },
+    });
   }
 
-  async getQuestionnaireTicketAnswers(questionnaireTicketId: number) {
-    return this.anwersRepository.find({
+  async getQuestionnaireTicketQuestions(questionnaireTicketId: number) {
+    return this.questionnaireTicketQuestionRepository.find({
       where: { questionnaireTicketId },
     });
   }
@@ -248,18 +250,22 @@ export class QuestionsService {
     }
 
     const existingAnswers = await this.anwersRepository.find({
-      where: { questionnaireTicketId },
+      where: {
+        questionnaireTicketQuestion: {
+          questionnaireTicketId,
+        },
+      },
     });
     const newAnswers = answers.map((answer) => {
       const existingAnswer = existingAnswers.find(
-        (a) => a.questionId === answer.questionId,
+        (a) =>
+          a.questionnaireTicketQuestionId ===
+          answer.questionnaireTicketQuestionId,
       );
       return {
-        questionnaireTicketId,
         id: existingAnswer?.id,
-        questionId: answer.questionId,
+        questionnaireTicketQuestionId: answer.questionnaireTicketQuestionId,
         text: sanitizeText(answer.text),
-        userId: user.id,
       };
     });
     await this.anwersRepository.save(newAnswers);
@@ -269,7 +275,10 @@ export class QuestionsService {
       where: { groupId: IsNull() },
     });
     const answerCount = await this.anwersRepository.count({
-      where: { questionnaireTicketId, text: Not('') },
+      where: {
+        questionnaireTicketQuestion: { questionnaireTicketId },
+        text: Not(''),
+      },
     });
     if (questionCount === answerCount && isSubmitting) {
       await this.questionnaireTicketRepository.update(questionnaireTicketId, {

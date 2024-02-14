@@ -40,13 +40,13 @@ export type Answer = {
   isLikedByMe: Scalars['Boolean']['output'];
   likeCount: Scalars['Int']['output'];
   likes: Array<Like>;
-  questionnaireTicket: QuestionnaireTicket;
+  question: QuestionnaireTicketQuestion;
   text: Scalars['String']['output'];
   user: User;
 };
 
 export type AnswerInput = {
-  questionId: Scalars['Int']['input'];
+  questionnaireTicketQuestionId: Scalars['Int']['input'];
   text: Scalars['String']['input'];
 };
 
@@ -1131,20 +1131,13 @@ export type QueryUsersByIdsArgs = {
 
 export type Question = {
   __typename?: 'Question';
-  answer?: Maybe<Answer>;
   id: Scalars['Int']['output'];
-  myAnswer?: Maybe<Answer>;
   priority: Scalars['Int']['output'];
   text: Scalars['String']['output'];
 };
 
-export type QuestionAnswerArgs = {
-  questionnaireTicketId: Scalars['Int']['input'];
-};
-
 export type QuestionnaireTicket = {
   __typename?: 'QuestionnaireTicket';
-  answers: Array<Answer>;
   commentCount: Scalars['Int']['output'];
   comments: Array<Comment>;
   createdAt: Scalars['DateTime']['output'];
@@ -1152,7 +1145,7 @@ export type QuestionnaireTicket = {
   id: Scalars['Int']['output'];
   myVote?: Maybe<Vote>;
   prompt?: Maybe<Scalars['String']['output']>;
-  questions: Array<Question>;
+  questions: Array<QuestionnaireTicketQuestion>;
   settings: QuestionnaireTicketConfig;
   status: Scalars['String']['output'];
   user: User;
@@ -1168,6 +1161,15 @@ export type QuestionnaireTicketConfig = {
   reservationsLimit: Scalars['Int']['output'];
   standAsidesLimit: Scalars['Int']['output'];
   votingTimeLimit: Scalars['Int']['output'];
+};
+
+export type QuestionnaireTicketQuestion = {
+  __typename?: 'QuestionnaireTicketQuestion';
+  answer?: Maybe<Answer>;
+  id: Scalars['Int']['output'];
+  priority: Scalars['Int']['output'];
+  questionnaireTicket: QuestionnaireTicket;
+  text: Scalars['String']['output'];
 };
 
 export type ReadNotificationsPayload = {

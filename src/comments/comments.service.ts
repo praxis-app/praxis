@@ -114,9 +114,9 @@ export class CommentsService {
     if (comment.answerId) {
       const answer = await this.answerRepository.findOneOrFail({
         where: { id: comment.answerId },
-        relations: ['questionnaireTicket'],
+        relations: ['questionnaireTicketQuestion.questionnaireTicket'],
       });
-      return answer.questionnaireTicket.userId;
+      return answer.questionnaireTicketQuestion.questionnaireTicket.userId;
     }
     if (comment.questionnaireTicketId) {
       const questionnaireTicket =
@@ -186,9 +186,11 @@ export class CommentsService {
 
     if (comment.answerId && commentedItemUserId === user.id) {
       const answer = await this.getCommentedAnswer(comment.answerId, [
-        'questionnaireTicket',
+        'questionnaireTicketQuestion.questionnaireTicket',
       ]);
-      if (answer?.questionnaireTicket.groupId === null) {
+      if (
+        answer?.questionnaireTicketQuestion.questionnaireTicket.groupId === null
+      ) {
         const usersWithAccess = await this.userRepository.find({
           where: {
             serverRoles: {
