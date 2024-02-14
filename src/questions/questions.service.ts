@@ -125,14 +125,10 @@ export class QuestionsService {
     });
   }
 
-  async getQuestionnaireTicketQuestions(groupId?: number) {
-    if (groupId) {
-      return this.questionRepository.find({
-        where: { groupId },
-        order: { priority: 'ASC' },
-      });
-    }
-    return this.getServerQuestions();
+  async getQuestionnaireTicketQuestions(questionnaireTicketId: number) {
+    return this.questionnaireTicketQuestionRepository.find({
+      where: { questionnaireTicketId },
+    });
   }
 
   async getQuestionnaireTicketVote(

@@ -36,8 +36,8 @@ export class QuestionnaireTicketsResolver {
   }
 
   @ResolveField(() => [Question])
-  async questions(@Parent() { groupId }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketQuestions(groupId);
+  async questions(@Parent() { id }: QuestionnaireTicket) {
+    return this.questionsService.getQuestionnaireTicketQuestions(id);
   }
 
   @ResolveField(() => [Vote])
