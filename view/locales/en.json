@@ -674,8 +674,9 @@
     },
     "prompts": {
       "confirmSubmit": "Are you sure you want to submit your answers?",
-      "waitForResults": "You're answers are being reviewed and we'll notify you once there's any updates. Stay tuned!",
-      "noQuestionnaires": "No questionnaires"
+      "noQuestionnaires": "No questionnaires",
+      "noQuestions": "No questions yet",
+      "waitForResults": "You're answers are being reviewed and we'll notify you once there's any updates. Stay tuned!"
     }
   },
 

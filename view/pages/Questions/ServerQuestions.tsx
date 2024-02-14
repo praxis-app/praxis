@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Card, CardContent, Typography } from '@mui/material';
 import { useState } from 'react';
 import { DragDropContext, Draggable, DropResult } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
@@ -132,6 +132,16 @@ const ServerQuestions = () => {
           )}
         </Droppable>
       </DragDropContext>
+
+      {serverQuestions?.length === 0 && (
+        <Card>
+          <CardContent sx={{ '&:last-child': { paddingY: 4 } }}>
+            <Typography textAlign="center">
+              {t('questions.prompts.noQuestions')}
+            </Typography>
+          </CardContent>
+        </Card>
+      )}
 
       <QuestionFormModal
         isOpen={isModalOpen}
