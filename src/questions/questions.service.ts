@@ -82,9 +82,11 @@ export class QuestionsService {
   }
 
   async getAnswerUser(answerId: number) {
-    const { questionnaireTicket } = await this.anwersRepository.findOneOrFail({
+    const {
+      questionnaireTicketQuestion: { questionnaireTicket },
+    } = await this.anwersRepository.findOneOrFail({
       where: { id: answerId },
-      relations: ['questionnaireTicket.user'],
+      relations: ['questionnaireTicketQuestion.questionnaireTicket.user'],
     });
     return questionnaireTicket.user;
   }
@@ -121,12 +123,6 @@ export class QuestionsService {
       });
     }
     return this.getServerQuestions();
-  }
-
-  async getQuestionnaireTicketAnswers(questionnaireTicketId: number) {
-    return this.anwersRepository.find({
-      where: { questionnaireTicketId },
-    });
   }
 
   async getQuestionnaireTicketVote(
@@ -248,7 +244,11 @@ export class QuestionsService {
     }
 
     const existingAnswers = await this.anwersRepository.find({
-      where: { questionnaireTicketId },
+      where: {
+        questionnaireTicketQuestion: {
+          questionnaireTicketId,
+        },
+      },
     });
     const newAnswers = answers.map((answer) => {
       const existingAnswer = existingAnswers.find(
@@ -269,7 +269,10 @@ export class QuestionsService {
       where: { groupId: IsNull() },
     });
     const answerCount = await this.anwersRepository.count({
-      where: { questionnaireTicketId, text: Not('') },
+      where: {
+        questionnaireTicketQuestion: { questionnaireTicketId },
+        text: Not(''),
+      },
     });
     if (questionCount === answerCount && isSubmitting) {
       await this.questionnaireTicketRepository.update(questionnaireTicketId, {

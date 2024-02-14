@@ -74,7 +74,7 @@ export class LikesService {
     if (like.answerId) {
       return this.answerRepository.findOneOrFail({
         where: { id: like.answerId },
-        relations: ['questionnaireTicket'],
+        relations: ['questionnaireTicketQuestion.questionnaireTicket'],
       });
     }
     return this.postRepository.findOneOrFail({
@@ -84,7 +84,7 @@ export class LikesService {
 
   getLikedItemUserId(likedItem: Post | Comment | Answer) {
     if (likedItem instanceof Answer) {
-      return likedItem.questionnaireTicket.userId;
+      return likedItem.questionnaireTicketQuestion.questionnaireTicket.userId;
     }
     return likedItem.userId;
   }

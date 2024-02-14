@@ -11,7 +11,6 @@ import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { Group } from '../../groups/models/group.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
-import { Answer } from '../models/answer.model';
 import { Question } from '../models/question.model';
 import { QuestionnaireTicketConfig } from '../models/questionnaire-ticket-config.model';
 import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
@@ -39,11 +38,6 @@ export class QuestionnaireTicketsResolver {
   @ResolveField(() => [Question])
   async questions(@Parent() { groupId }: QuestionnaireTicket) {
     return this.questionsService.getQuestionnaireTicketQuestions(groupId);
-  }
-
-  @ResolveField(() => [Answer])
-  async answers(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketAnswers(id);
   }
 
   @ResolveField(() => [Vote])

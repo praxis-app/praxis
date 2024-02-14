@@ -31,26 +31,6 @@ type EventAttendee {
   updatedAt: DateTime!
 }
 
-type Question {
-  id: Int!
-  text: String!
-  priority: Int!
-  answer(questionnaireTicketId: Int!): Answer
-  myAnswer: Answer
-}
-
-type Answer {
-  id: Int!
-  text: String!
-  questionnaireTicket: QuestionnaireTicket!
-  likes: [Like!]!
-  user: User!
-  likeCount: Int!
-  isLikedByMe: Boolean!
-  comments: [Comment!]!
-  commentCount: Int!
-}
-
 type QuestionnaireTicketConfig {
   id: Int!
   decisionMakingModel: String!
@@ -60,6 +40,23 @@ type QuestionnaireTicketConfig {
   votingTimeLimit: Int!
 }
 
+type Question {
+  id: Int!
+  text: String!
+  priority: Int!
+}
+
+type Answer {
+  id: Int!
+  text: String!
+  likes: [Like!]!
+  user: User!
+  likeCount: Int!
+  isLikedByMe: Boolean!
+  comments: [Comment!]!
+  commentCount: Int!
+}
+
 type QuestionnaireTicket {
   id: Int!
   status: String!
@@ -67,7 +64,6 @@ type QuestionnaireTicket {
   createdAt: DateTime!
   prompt: String
   questions: [Question!]!
-  answers: [Answer!]!
   votes: [Vote!]!
   voteCount: Int!
   myVote: Vote
@@ -608,10 +604,6 @@ type CreateLikePayload {
   answer: Answer
 }
 
-type AnswerQuestionsPayload {
-  questionnaireTicket: QuestionnaireTicket!
-}
-
 type CreateQuestionPayload {
   question: Question!
 }
@@ -735,7 +727,6 @@ type Mutation {
   createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
   updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
   updateQuestionsPriority(questionsData: UpdateQuestionsPriorityInput!): Boolean!
-  answerQuestions(answersData: AnswerQuestionsInput!): AnswerQuestionsPayload!
   deleteQuestion(id: Int!): Boolean!
   createRule(ruleData: CreateRuleInput!): CreateRulePayload!
   updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
@@ -1037,17 +1028,6 @@ input UpdateQuestionsPriorityInput {
 input UpdateQuestionPriorityInput {
   id: Int!
   priority: Int!
-}
-
-input AnswerQuestionsInput {
-  questionnaireTicketId: Int!
-  answers: [AnswerInput!]!
-  isSubmitting: Boolean!
-}
-
-input AnswerInput {
-  questionId: Int!
-  text: String!
 }
 
 input CreateRuleInput {

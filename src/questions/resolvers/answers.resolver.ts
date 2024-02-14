@@ -13,7 +13,6 @@ import { Dataloaders } from '../../dataloader/dataloader.types';
 import { Like } from '../../likes/models/like.model';
 import { User } from '../../users/models/user.model';
 import { Answer } from '../models/answer.model';
-import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
 import { QuestionsService } from '../questions.service';
 
 @Resolver(() => Answer)
@@ -23,11 +22,6 @@ export class AnswersResolver {
   @Query(() => Answer)
   async answer(@Args('id', { type: () => Int }) id: number) {
     return this.questionsService.getAnswer({ id });
-  }
-
-  @ResolveField(() => QuestionnaireTicket)
-  async questionnaireTicket(@Parent() { questionnaireTicketId }: Answer) {
-    return this.questionsService.getQuestionnaireTicket(questionnaireTicketId);
   }
 
   @ResolveField(() => [Like])
