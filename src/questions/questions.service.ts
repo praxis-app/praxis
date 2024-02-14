@@ -270,7 +270,6 @@ export class QuestionsService {
         id: existingAnswer?.id,
         questionnaireTicketQuestionId: answer.questionnaireTicketQuestionId,
         text: sanitizeText(answer.text),
-        userId: user.id,
       };
     });
     await this.anwersRepository.save(newAnswers);
