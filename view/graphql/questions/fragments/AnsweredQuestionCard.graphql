@@ -1,8 +1,8 @@
-fragment AnsweredQuestionCard on Question {
+fragment AnsweredQuestionCard on QuestionnaireTicketQuestion {
   id
   text
   priority
-  answer(questionnaireTicketId: $questionnaireTicketId) {
+  answer {
     id
     text
     likeCount

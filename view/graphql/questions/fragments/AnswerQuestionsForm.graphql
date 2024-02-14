@@ -1,7 +1,7 @@
 fragment AnswerQuestionsForm on QuestionnaireTicket {
   id
   questions {
-    myAnswer {
+    answer {
       id
       text
     }

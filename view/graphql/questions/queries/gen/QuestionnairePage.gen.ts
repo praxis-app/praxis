@@ -26,7 +26,7 @@ export type QuestionnairePageQuery = {
     commentCount: number;
     createdAt: any;
     questions: Array<{
-      __typename?: 'Question';
+      __typename?: 'QuestionnaireTicketQuestion';
       id: number;
       text: string;
       priority: number;

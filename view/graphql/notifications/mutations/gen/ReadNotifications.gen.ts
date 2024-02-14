@@ -46,9 +46,13 @@ export type ReadNotificationsMutation = {
         answer?: {
           __typename?: 'Answer';
           id: number;
-          questionnaireTicket: {
-            __typename?: 'QuestionnaireTicket';
+          question: {
+            __typename?: 'QuestionnaireTicketQuestion';
             id: number;
+            questionnaireTicket: {
+              __typename?: 'QuestionnaireTicket';
+              id: number;
+            };
           };
           user: { __typename?: 'User'; id: number };
         } | null;

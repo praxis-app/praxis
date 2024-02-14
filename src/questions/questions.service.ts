@@ -18,12 +18,16 @@ import {
 } from './models/questionnaire-ticket.model';
 import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
+import { QuestionnaireTicketQuestion } from './models/questionnaire-ticket-question.model';
 
 @Injectable()
 export class QuestionsService {
   constructor(
     @InjectRepository(QuestionnaireTicket)
     private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
+
+    @InjectRepository(QuestionnaireTicketQuestion)
+    private questionnaireTicketQuestionRepository: Repository<QuestionnaireTicketQuestion>,
 
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
@@ -113,6 +117,12 @@ export class QuestionsService {
       await this.serverConfigsService.getServerConfig();
 
     return serverQuestionsPrompt;
+  }
+
+  async getQuestionnaireTicketQuestion(questionnaireTicketId: number) {
+    return this.questionnaireTicketQuestionRepository.findOne({
+      where: { questionnaireTicketId },
+    });
   }
 
   async getQuestionnaireTicketQuestions(groupId?: number) {

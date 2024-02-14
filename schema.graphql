@@ -43,6 +43,7 @@ type QuestionnaireTicketConfig {
 type Answer {
   id: Int!
   text: String!
+  question: QuestionnaireTicketQuestion!
   likes: [Like!]!
   user: User!
   likeCount: Int!
@@ -56,6 +57,7 @@ type QuestionnaireTicketQuestion {
   text: String!
   priority: Int!
   answer: Answer
+  questionnaireTicket: QuestionnaireTicket!
 }
 
 type QuestionnaireTicket {

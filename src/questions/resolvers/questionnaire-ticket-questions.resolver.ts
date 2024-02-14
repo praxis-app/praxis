@@ -11,6 +11,7 @@ import { AnswerQuestionsInput } from '../models/answer-questions.input';
 import { AnswerQuestionsPayload } from '../models/answer-questions.payload';
 import { Answer } from '../models/answer.model';
 import { QuestionnaireTicketQuestion } from '../models/questionnaire-ticket-question.model';
+import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
 import { QuestionsService } from '../questions.service';
 
 @Resolver(() => QuestionnaireTicketQuestion)
@@ -22,6 +23,13 @@ export class QuestionnnaireTicketQuestionsResolver {
     return this.questionsService.getAnswer({
       questionnaireTicketQuestionId: id,
     });
+  }
+
+  @ResolveField(() => QuestionnaireTicket)
+  async questionnaireTicket(
+    @Parent() { questionnaireTicketId }: QuestionnaireTicketQuestion,
+  ) {
+    return this.questionsService.getQuestionnaireTicket(questionnaireTicketId);
   }
 
   @Mutation(() => AnswerQuestionsPayload)

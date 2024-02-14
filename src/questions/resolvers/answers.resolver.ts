@@ -14,6 +14,7 @@ import { Like } from '../../likes/models/like.model';
 import { User } from '../../users/models/user.model';
 import { Answer } from '../models/answer.model';
 import { QuestionsService } from '../questions.service';
+import { QuestionnaireTicketQuestion } from '../models/questionnaire-ticket-question.model';
 
 @Resolver(() => Answer)
 export class AnswersResolver {
@@ -22,6 +23,13 @@ export class AnswersResolver {
   @Query(() => Answer)
   async answer(@Args('id', { type: () => Int }) id: number) {
     return this.questionsService.getAnswer({ id });
+  }
+
+  @ResolveField(() => QuestionnaireTicketQuestion)
+  async question(@Parent() { questionnaireTicketQuestionId }: Answer) {
+    return this.questionsService.getQuestionnaireTicketQuestion(
+      questionnaireTicketQuestionId,
+    );
   }
 
   @ResolveField(() => [Like])

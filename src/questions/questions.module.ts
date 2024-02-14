@@ -13,16 +13,18 @@ import { AnswersResolver } from './resolvers/answers.resolver';
 import { QuestionnnaireTicketQuestionsResolver } from './resolvers/questionnaire-ticket-questions.resolver';
 import { QuestionnaireTicketsResolver } from './resolvers/questionnaire-tickets.resolver';
 import { QuestionsResolver } from './resolvers/questions.resolver';
+import { QuestionnaireTicketQuestion } from './models/questionnaire-ticket-question.model';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      QuestionnaireTicket,
-      QuestionnaireTicketConfig,
-      Question,
       Answer,
       Comment,
       Like,
+      Question,
+      QuestionnaireTicket,
+      QuestionnaireTicketConfig,
+      QuestionnaireTicketQuestion,
       Vote,
     ]),
     ServerConfigsModule,
