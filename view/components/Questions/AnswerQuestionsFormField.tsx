@@ -51,7 +51,9 @@ const AnswerQuestionsFormField = ({
   const [answerQuestions] = useAnswerQuestionsMutation();
   const { t } = useTranslation();
 
-  const answer = answers.find((answer) => answer.questionId === id);
+  const answer = answers.find(
+    (answer) => answer.questionnaireTicketQuestionId === id,
+  );
 
   const handleSaveProgress = async () => {
     if (!dirty) {
@@ -79,7 +81,7 @@ const AnswerQuestionsFormField = ({
 
   const handleTextFieldChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const newAnswers = answers.map((answer) => {
-      if (answer.questionId !== id) {
+      if (answer.questionnaireTicketQuestionId !== id) {
         return answer;
       }
       return { ...answer, text: target.value };

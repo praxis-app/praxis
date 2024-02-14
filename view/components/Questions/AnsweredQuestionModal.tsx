@@ -20,18 +20,13 @@ const AnsweredQuestionModal = ({ question, open, onClose }: Props) => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
-  const answer =
-    'myAnswer' in question
-      ? question.myAnswer
-      : 'answer' in question
-      ? question.answer
-      : undefined;
-
   useEffect(() => {
     ref.current?.scrollIntoView();
-  }, [answer?.commentCount]);
+  }, [question.answer?.commentCount]);
 
+  const { answer } = question;
   const userName = answer?.user.name;
+
   const title = userName
     ? t('questions.headers.usersAnswer', {
         name: userName[0].toUpperCase() + userName.slice(1),
