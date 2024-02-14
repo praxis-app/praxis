@@ -40,12 +40,6 @@ type QuestionnaireTicketConfig {
   votingTimeLimit: Int!
 }
 
-type Question {
-  id: Int!
-  text: String!
-  priority: Int!
-}
-
 type Answer {
   id: Int!
   text: String!
@@ -350,6 +344,12 @@ type Event {
   posts(offset: Int, limit: Int): [Post!]!
   postsCount: Int!
   coverPhoto: Image!
+}
+
+type Question {
+  id: Int!
+  text: String!
+  priority: Int!
 }
 
 type Rule {
@@ -1030,7 +1030,7 @@ input AnswerQuestionsInput {
 }
 
 input AnswerInput {
-  questionId: Int!
+  questionnaireTicketQuestionId: Int!
   text: String!
 }
 

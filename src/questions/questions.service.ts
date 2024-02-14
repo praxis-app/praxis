@@ -11,13 +11,13 @@ import { AnswerQuestionsInput } from './models/answer-questions.input';
 import { Answer } from './models/answer.model';
 import { CreateQuestionInput } from './models/create-question.input';
 import { Question } from './models/question.model';
+import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
 import {
   QuestionnaireTicket,
   QuestionnaireTicketStatus,
 } from './models/questionnaire-ticket.model';
 import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
-import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
 
 @Injectable()
 export class QuestionsService {
@@ -252,12 +252,13 @@ export class QuestionsService {
     });
     const newAnswers = answers.map((answer) => {
       const existingAnswer = existingAnswers.find(
-        (a) => a.questionId === answer.questionId,
+        (a) =>
+          a.questionnaireTicketQuestionId ===
+          answer.questionnaireTicketQuestionId,
       );
       return {
-        questionnaireTicketId,
         id: existingAnswer?.id,
-        questionId: answer.questionId,
+        questionnaireTicketQuestionId: answer.questionnaireTicketQuestionId,
         text: sanitizeText(answer.text),
         userId: user.id,
       };

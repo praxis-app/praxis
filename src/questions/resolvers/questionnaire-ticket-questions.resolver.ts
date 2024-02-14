@@ -21,7 +21,6 @@ export class QuestionnnaireTicketQuestionsResolver {
   async answer(@Parent() { id }: QuestionnaireTicketQuestion) {
     return this.questionsService.getAnswer({
       questionnaireTicketQuestionId: id,
-      questionId: id,
     });
   }
 

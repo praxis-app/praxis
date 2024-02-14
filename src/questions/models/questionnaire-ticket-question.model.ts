@@ -26,7 +26,7 @@ export class QuestionnaireTicketQuestion {
   @Field(() => Int)
   priority: number;
 
-  @OneToMany(() => Answer, (answer) => answer.question, {
+  @OneToMany(() => Answer, (answer) => answer.questionnaireTicketQuestion, {
     cascade: true,
   })
   answers: Answer[];
