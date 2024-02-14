@@ -201,7 +201,7 @@ const Notification = ({
         return `${NavigationPaths.Posts}/${comment?.post?.id}`;
       }
       if (comment?.answer?.id) {
-        const { id } = comment.answer.questionnaireTicket;
+        const { id } = comment.answer.question.questionnaireTicket;
         return `${NavigationPaths.ServerQuestionnaires}/${id}`;
       }
       return `${NavigationPaths.Proposals}/${comment?.proposal?.id}`;
@@ -224,7 +224,8 @@ const Notification = ({
         return `${NavigationPaths.ServerQuestionnaires}/${comment?.questionnaireTicket?.id}`;
       }
       if (comment?.answer?.user.id === otherUser?.id) {
-        return `${NavigationPaths.ServerQuestionnaires}/${comment?.answer?.questionnaireTicket.id}`;
+        const id = comment?.answer?.question.questionnaireTicket.id;
+        return `${NavigationPaths.ServerQuestionnaires}/${id}`;
       }
       return NavigationPaths.VibeCheck;
     }
