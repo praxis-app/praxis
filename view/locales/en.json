@@ -653,11 +653,13 @@
       "questionnaires": "Questionnaires",
       "questionnaireSettings": "Questionnaire Settings",
       "questions": "Questions",
+      "questionsAnswered": "Questions answered",
       "serverQuestions": "Server Questions",
       "status": "Status",
       "submitted": "Submitted",
-      "ticketNumber": "Ticket #{{number}}",
-      "vibeCheck": "Vibe Check"
+      "ticketNumber": "Questionnaire Ticket #{{number}}",
+      "vibeCheck": "Vibe Check",
+      "votesNeeded": "Votes needed"
     },
     "headers": {
       "createQuestion": "Create Question",

@@ -88,6 +88,11 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
     paddingX: inModal ? 0 : undefined,
   };
 
+  const cardHeaderStyles: SxProps = {
+    paddingX: inModal ? 0 : undefined,
+    paddingTop: inModal ? 0 : undefined,
+  };
+
   const getStatus = () => {
     if (status === QuestionnaireTicketStatus.Submitted) {
       return t('questions.labels.submitted');
@@ -139,7 +144,7 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
     setMenuAnchorEl(null);
   };
 
-  const renderTitle = () => (
+  const renderSubheader = () => (
     <Link
       href={questionnaireTicketPath}
       sx={{ fontSize: 14, color: 'text.secondary' }}
@@ -176,13 +181,14 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
         avatar={
           <UserAvatar user={user} href={questionnaireTicketPath} withLink />
         }
-        title={t('questions.labels.ticketNumber', { number: id })}
-        subheader={renderTitle()}
+        title={
+          <Link href={questionnaireTicketPath}>
+            {t('questions.labels.ticketNumber', { number: id })}
+          </Link>
+        }
+        subheader={renderSubheader()}
         action={renderMenu()}
-        sx={{
-          paddingX: inModal ? 0 : undefined,
-          paddingTop: inModal ? 0 : undefined,
-        }}
+        sx={cardHeaderStyles}
       />
       <CardContent sx={cardContentStyles}>
         <Typography paddingBottom={2}>
@@ -190,23 +196,23 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
         </Typography>
 
         <Flex justifyContent="space-between">
-          <Typography>Questions answered</Typography>
+          <Typography>{t('questions.labels.questionsAnswered')}</Typography>
           <Typography>1 / 2</Typography>
         </Flex>
         <BorderLinearProgress
           sx={{ marginBottom: 3 }}
           variant="determinate"
-          value={50}
+          value={60}
         />
 
         <Flex justifyContent="space-between">
-          <Typography>Votes needed</Typography>
+          <Typography>{t('questions.labels.votesNeeded')}</Typography>
           <Typography>1 / 2</Typography>
         </Flex>
         <BorderLinearProgress
           sx={{ marginBottom: 1 }}
           variant="determinate"
-          value={50}
+          value={40}
         />
       </CardContent>
 
