@@ -3,10 +3,12 @@ import {
   Box,
   Card,
   CardContent,
+  LinearProgress,
   MenuItem,
   CardHeader as MuiCardHeader,
   SxProps,
   Typography,
+  linearProgressClasses,
   styled,
 } from '@mui/material';
 import { produce } from 'immer';
@@ -26,6 +28,7 @@ import {
   ServerQuestionnairesQuery,
 } from '../../graphql/questions/queries/gen/ServerQuestionnaires.gen';
 import { timeAgo } from '../../utils/time.utils';
+import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
@@ -39,6 +42,19 @@ const CardHeader = styled(MuiCardHeader)(() => ({
   },
   '& .MuiCardHeader-title': {
     fontSize: 15,
+  },
+}));
+
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+  height: 10,
+  borderRadius: 5,
+  [`&.${linearProgressClasses.colorPrimary}`]: {
+    backgroundColor:
+      theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+  },
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 5,
+    backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
   },
 }));
 
@@ -160,7 +176,8 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
         avatar={
           <UserAvatar user={user} href={questionnaireTicketPath} withLink />
         }
-        title={renderTitle()}
+        title={t('questions.labels.ticketNumber', { number: id })}
+        subheader={renderTitle()}
         action={renderMenu()}
         sx={{
           paddingX: inModal ? 0 : undefined,
@@ -168,9 +185,29 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
         }}
       />
       <CardContent sx={cardContentStyles}>
-        <Typography>
+        <Typography paddingBottom={2}>
           {`${t('questions.labels.status')}: ${getStatus()}`}
         </Typography>
+
+        <Flex justifyContent="space-between">
+          <Typography>Questions answered</Typography>
+          <Typography>1 / 2</Typography>
+        </Flex>
+        <BorderLinearProgress
+          sx={{ marginBottom: 3 }}
+          variant="determinate"
+          value={50}
+        />
+
+        <Flex justifyContent="space-between">
+          <Typography>Votes needed</Typography>
+          <Typography>1 / 2</Typography>
+        </Flex>
+        <BorderLinearProgress
+          sx={{ marginBottom: 1 }}
+          variant="determinate"
+          value={50}
+        />
       </CardContent>
 
       <QuestionnaireTicketCardFooter

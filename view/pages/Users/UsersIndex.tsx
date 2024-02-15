@@ -1,3 +1,5 @@
+// TODO: Remove bottom margin for last user entry
+
 import { Card, CardContent, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

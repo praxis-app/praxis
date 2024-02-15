@@ -656,6 +656,7 @@
       "serverQuestions": "Server Questions",
       "status": "Status",
       "submitted": "Submitted",
+      "ticketNumber": "Ticket #{{number}}",
       "vibeCheck": "Vibe Check"
     },
     "headers": {
