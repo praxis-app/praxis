@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { DecisionMakingModel } from '../../constants/proposal.constants';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { formatClosingTime } from '../../utils/proposal.utils';
-import GroupSetting from '../Groups/GroupSetting';
+import Setting from '../Settings/Setting';
 import Flex from '../Shared/Flex';
 import Modal from '../Shared/Modal';
 
@@ -82,19 +82,19 @@ const ProposalSettingsModal = ({
         </>
       )}
 
-      <GroupSetting
+      <Setting
         name={t('groups.settings.names.decisionMakingModel')}
         description={t('groups.settings.explanations.decisionMakingModel')}
         value={getDecisionMakingModelName(decisionMakingModel)}
       />
 
-      <GroupSetting
+      <Setting
         name={t('groups.settings.names.standAsidesLimit')}
         description={t('groups.settings.explanations.standAsidesLimit')}
         value={standAsidesLimit}
       />
 
-      <GroupSetting
+      <Setting
         name={t('groups.settings.names.reservationsLimit')}
         description={t('groups.settings.explanations.reservationsLimit')}
         value={reservationsLimit}
@@ -103,7 +103,7 @@ const ProposalSettingsModal = ({
 
       {showRatificationThreshold && (
         <>
-          <GroupSetting
+          <Setting
             name={t('groups.settings.names.ratificationThreshold')}
             description={t(
               'groups.settings.explanations.ratificationThreshold',

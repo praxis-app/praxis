@@ -7,9 +7,9 @@ import {
 } from '../../constants/proposal.constants';
 import { useGroupAboutTabQuery } from '../../graphql/groups/queries/gen/GroupAboutTab.gen';
 import { urlifyText } from '../../utils/shared.utils';
-import ProgressBar from '../Shared/ProgressBar';
-import GroupSetting from './GroupSetting';
+import Setting from '../Settings/Setting';
 import Flex from '../Shared/Flex';
+import ProgressBar from '../Shared/ProgressBar';
 
 interface Props {
   groupId: number;
@@ -107,13 +107,13 @@ const GroupAboutTab = ({ groupId }: Props) => {
           </Typography>
 
           <Flex flexDirection="column" gap={3}>
-            <GroupSetting
+            <Setting
               name={t('groups.settings.names.adminModel')}
               description={t('groups.settings.explanations.adminModel')}
               value={getAdminModel()}
             />
 
-            <GroupSetting
+            <Setting
               name={t('groups.settings.names.decisionMakingModel')}
               description={t(
                 'groups.settings.explanations.decisionMakingModel',
@@ -121,19 +121,19 @@ const GroupAboutTab = ({ groupId }: Props) => {
               value={getDecisionMakingModel()}
             />
 
-            <GroupSetting
+            <Setting
               name={t('groups.settings.names.standAsidesLimit')}
               description={t('groups.settings.explanations.standAsidesLimit')}
               value={settings.standAsidesLimit}
             />
 
-            <GroupSetting
+            <Setting
               name={t('groups.settings.names.reservationsLimit')}
               description={t('groups.settings.explanations.reservationsLimit')}
               value={settings.reservationsLimit}
             />
 
-            <GroupSetting
+            <Setting
               name={t('groups.settings.names.ratificationThreshold')}
               description={t(
                 'groups.settings.explanations.ratificationThreshold',
@@ -141,13 +141,13 @@ const GroupAboutTab = ({ groupId }: Props) => {
               value={`${settings.ratificationThreshold}%`}
             />
 
-            <GroupSetting
+            <Setting
               name={t('groups.settings.names.votingTimeLimit')}
               description={t('groups.settings.explanations.votingTimeLimit')}
               value={getVotingTimeLimit()}
             />
 
-            <GroupSetting
+            <Setting
               name={t('groups.settings.names.privacy')}
               description={t('groups.settings.explanations.privacy')}
               value={getPrivacy()}

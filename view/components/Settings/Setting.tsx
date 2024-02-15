@@ -1,5 +1,3 @@
-// TODO: Rename as Setting.tsx - move under Settings folder
-
 import { Box, Divider, Typography } from '@mui/material';
 import Flex from '../Shared/Flex';
 
@@ -12,7 +10,7 @@ interface Props {
   divider?: boolean;
 }
 
-const GroupSetting = ({ name, description, value, divider = true }: Props) => (
+const Setting = ({ name, description, value, divider = true }: Props) => (
   <>
     <Flex gap="40px">
       <Box width={SETTING_DESCRIPTION_WIDTH}>
@@ -40,4 +38,4 @@ const GroupSetting = ({ name, description, value, divider = true }: Props) => (
   </>
 );
 
-export default GroupSetting;
+export default Setting;
