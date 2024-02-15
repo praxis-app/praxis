@@ -385,7 +385,7 @@ export class UsersService {
 
     const serverConfig = await this.serverConfigsService.getServerConfig();
 
-    const serverClosingAt = serverConfig.votingTimeLimit
+    const closingAt = serverConfig.votingTimeLimit
       ? new Date(Date.now() + serverConfig.votingTimeLimit * 60 * 1000)
       : undefined;
 
@@ -394,8 +394,7 @@ export class UsersService {
       standAsidesLimit: serverConfig.standAsidesLimit,
       reservationsLimit: serverConfig.reservationsLimit,
       ratificationThreshold: serverConfig.ratificationThreshold,
-      votingTimeLimit: serverConfig.votingTimeLimit,
-      closingAt: serverClosingAt,
+      closingAt,
     };
 
     const questions = serverQuestions.map((question) => ({

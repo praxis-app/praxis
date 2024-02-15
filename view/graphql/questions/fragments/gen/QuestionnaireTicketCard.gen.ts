@@ -23,7 +23,11 @@ export type QuestionnaireTicketCardFragment = {
   settings: {
     __typename?: 'QuestionnaireTicketConfig';
     id: number;
+    closingAt?: any | null;
     decisionMakingModel: string;
+    ratificationThreshold: number;
+    reservationsLimit: number;
+    standAsidesLimit: number;
   };
   myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
   votes: Array<{
@@ -51,7 +55,11 @@ export const QuestionnaireTicketCardFragmentDoc = gql`
     }
     settings {
       id
+      closingAt
       decisionMakingModel
+      ratificationThreshold
+      reservationsLimit
+      standAsidesLimit
     }
     myVote {
       id

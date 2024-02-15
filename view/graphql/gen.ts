@@ -1155,12 +1155,12 @@ export type QuestionnaireTicket = {
 
 export type QuestionnaireTicketConfig = {
   __typename?: 'QuestionnaireTicketConfig';
+  closingAt?: Maybe<Scalars['DateTime']['output']>;
   decisionMakingModel: Scalars['String']['output'];
   id: Scalars['Int']['output'];
   ratificationThreshold: Scalars['Int']['output'];
   reservationsLimit: Scalars['Int']['output'];
   standAsidesLimit: Scalars['Int']['output'];
-  votingTimeLimit: Scalars['Int']['output'];
 };
 
 export type QuestionnaireTicketQuestion = {

@@ -1,7 +1,9 @@
+import { SettingsSuggest } from '@mui/icons-material';
 import {
   Box,
   Card,
   CardContent,
+  MenuItem,
   CardHeader as MuiCardHeader,
   SxProps,
   Typography,
@@ -28,6 +30,7 @@ import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 import QuestionnaireTicketCardFooter from './QuestionnaireTicketCardFooter';
+import QuestionnaireTicketSettingsModal from './QuestionnaireTicketSettingsModal';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
@@ -46,13 +49,15 @@ interface Props {
 
 const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+
   const [deleteQuestionnaireTicket] = useDeleteQuestionnaireTicketMutation();
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { id, status, user, createdAt } = questionnaireTicket;
+  const { id, status, user, settings, createdAt } = questionnaireTicket;
   const questionnaireTicketPath = `/questionnaires/${id}`;
   const isQuestionnaireTicketPage = pathname.includes(questionnaireTicketPath);
   const formattedDate = timeAgo(createdAt);
@@ -113,6 +118,11 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
     });
   };
 
+  const handleViewSettingsBtnClick = () => {
+    setShowSettingsModal(true);
+    setMenuAnchorEl(null);
+  };
+
   const renderTitle = () => (
     <Link
       href={questionnaireTicketPath}
@@ -126,6 +136,24 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
     </Link>
   );
 
+  const renderMenu = () => {
+    return (
+      <ItemMenu
+        anchorEl={menuAnchorEl}
+        deleteItem={handleDelete}
+        deletePrompt={deleteInvitePrompt}
+        setAnchorEl={setMenuAnchorEl}
+        prependChildren
+        canDelete
+      >
+        <MenuItem onClick={handleViewSettingsBtnClick}>
+          <SettingsSuggest fontSize="small" sx={{ marginRight: 1 }} />
+          {t('proposals.labels.viewSettings')}
+        </MenuItem>
+      </ItemMenu>
+    );
+  };
+
   const renderQuestionnaireTicket = () => (
     <>
       <CardHeader
@@ -133,15 +161,7 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
           <UserAvatar user={user} href={questionnaireTicketPath} withLink />
         }
         title={renderTitle()}
-        action={
-          <ItemMenu
-            anchorEl={menuAnchorEl}
-            deleteItem={handleDelete}
-            deletePrompt={deleteInvitePrompt}
-            setAnchorEl={setMenuAnchorEl}
-            canDelete
-          />
-        }
+        action={renderMenu()}
         sx={{
           paddingX: inModal ? 0 : undefined,
           paddingTop: inModal ? 0 : undefined,
@@ -156,6 +176,12 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
       <QuestionnaireTicketCardFooter
         questionnaireTicket={questionnaireTicket}
         inModal={inModal}
+      />
+
+      <QuestionnaireTicketSettingsModal
+        showSettingsModal={showSettingsModal}
+        setShowSettingsModal={setShowSettingsModal}
+        settings={settings}
       />
     </>
   );

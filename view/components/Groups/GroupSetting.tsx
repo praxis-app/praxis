@@ -1,3 +1,5 @@
+// TODO: Rename as Setting.tsx - move under Settings folder
+
 import { Box, Divider, Typography } from '@mui/material';
 import Flex from '../Shared/Flex';
 

@@ -10,7 +10,11 @@ fragment QuestionnaireTicketCard on QuestionnaireTicket {
   }
   settings {
     id
+    closingAt
     decisionMakingModel
+    ratificationThreshold
+    reservationsLimit
+    standAsidesLimit
   }
   myVote {
     id
