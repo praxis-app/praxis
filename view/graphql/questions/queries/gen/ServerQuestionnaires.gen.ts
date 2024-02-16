@@ -20,6 +20,8 @@ export type ServerQuestionnairesQuery = {
     status: string;
     voteCount: number;
     commentCount: number;
+    questionCount: number;
+    answerCount: number;
     createdAt: any;
     user: {
       __typename?: 'User';

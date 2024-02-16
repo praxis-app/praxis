@@ -1138,6 +1138,7 @@ export type Question = {
 
 export type QuestionnaireTicket = {
   __typename?: 'QuestionnaireTicket';
+  answerCount: Scalars['Int']['output'];
   commentCount: Scalars['Int']['output'];
   comments: Array<Comment>;
   createdAt: Scalars['DateTime']['output'];
@@ -1145,6 +1146,7 @@ export type QuestionnaireTicket = {
   id: Scalars['Int']['output'];
   myVote?: Maybe<Vote>;
   prompt?: Maybe<Scalars['String']['output']>;
+  questionCount: Scalars['Int']['output'];
   questions: Array<QuestionnaireTicketQuestion>;
   settings: QuestionnaireTicketConfig;
   status: Scalars['String']['output'];

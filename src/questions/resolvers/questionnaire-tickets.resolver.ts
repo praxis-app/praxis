@@ -40,6 +40,16 @@ export class QuestionnaireTicketsResolver {
     return this.questionsService.getQuestionnaireTicketQuestions(id);
   }
 
+  @ResolveField(() => Int)
+  async questionCount(@Parent() { id }: QuestionnaireTicket) {
+    return this.questionsService.getQuestionnaireTicketQuestionCount(id);
+  }
+
+  @ResolveField(() => Int)
+  async answerCount(@Parent() { id }: QuestionnaireTicket) {
+    return this.questionsService.getQuestionnaireTicketAnswerCount(id);
+  }
+
   @ResolveField(() => [Vote])
   async votes(@Parent() { id }: QuestionnaireTicket) {
     return this.questionsService.getQuestionnaireTicketVotes(id);

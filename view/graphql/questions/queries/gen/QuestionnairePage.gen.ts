@@ -24,6 +24,8 @@ export type QuestionnairePageQuery = {
     status: string;
     voteCount: number;
     commentCount: number;
+    questionCount: number;
+    answerCount: number;
     createdAt: any;
     questions: Array<{
       __typename?: 'QuestionnaireTicketQuestion';

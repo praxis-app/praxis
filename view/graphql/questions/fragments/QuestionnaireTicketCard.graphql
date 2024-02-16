@@ -3,6 +3,8 @@ fragment QuestionnaireTicketCard on QuestionnaireTicket {
   status
   voteCount
   commentCount
+  questionCount
+  answerCount
   createdAt
 
   user {

@@ -13,6 +13,8 @@ export type QuestionnaireTicketCardFragment = {
   status: string;
   voteCount: number;
   commentCount: number;
+  questionCount: number;
+  answerCount: number;
   createdAt: any;
   user: {
     __typename?: 'User';
@@ -49,6 +51,8 @@ export const QuestionnaireTicketCardFragmentDoc = gql`
     status
     voteCount
     commentCount
+    questionCount
+    answerCount
     createdAt
     user {
       ...UserAvatar

@@ -131,6 +131,21 @@ export class QuestionsService {
     });
   }
 
+  async getQuestionnaireTicketQuestionCount(questionnaireTicketId: number) {
+    return this.questionnaireTicketQuestionRepository.count({
+      where: { questionnaireTicketId },
+    });
+  }
+
+  async getQuestionnaireTicketAnswerCount(questionnaireTicketId: number) {
+    return this.anwersRepository.count({
+      where: {
+        questionnaireTicketQuestion: { questionnaireTicketId },
+        text: Not(''),
+      },
+    });
+  }
+
   async getQuestionnaireTicketVote(
     questionnaireTicketId: number,
     userId: number,

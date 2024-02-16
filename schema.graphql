@@ -67,6 +67,8 @@ type QuestionnaireTicket {
   comments: [Comment!]!
   createdAt: DateTime!
   prompt: String
+  questionCount: Int!
+  answerCount: Int!
   votes: [Vote!]!
   voteCount: Int!
   myVote: Vote
