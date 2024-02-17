@@ -1138,6 +1138,7 @@ export type Question = {
 
 export type QuestionnaireTicket = {
   __typename?: 'QuestionnaireTicket';
+  agreementVoteCount: Scalars['Int']['output'];
   answerCount: Scalars['Int']['output'];
   commentCount: Scalars['Int']['output'];
   comments: Array<Comment>;
@@ -1153,6 +1154,7 @@ export type QuestionnaireTicket = {
   user: User;
   voteCount: Scalars['Int']['output'];
   votes: Array<Vote>;
+  votesNeededToVerify: Scalars['Int']['output'];
 };
 
 export type QuestionnaireTicketConfig = {

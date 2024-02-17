@@ -73,8 +73,17 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { id, status, user, settings, questionCount, answerCount, createdAt } =
-    questionnaireTicket;
+  const {
+    id,
+    status,
+    answerCount,
+    questionCount,
+    settings,
+    agreementVoteCount,
+    votesNeededToVerify,
+    user,
+    createdAt,
+  } = questionnaireTicket;
 
   const questionnaireTicketPath = `/questionnaires/${id}`;
   const isQuestionnaireTicketPage = pathname.includes(questionnaireTicketPath);
@@ -211,12 +220,14 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
 
         <Flex justifyContent="space-between">
           <Typography>{t('questions.labels.votesNeeded')}</Typography>
-          <Typography>1 / 2</Typography>
+          <Typography>
+            {agreementVoteCount} / {votesNeededToVerify}
+          </Typography>
         </Flex>
         <BorderLinearProgress
           sx={{ marginBottom: 1 }}
           variant="determinate"
-          value={40}
+          value={(agreementVoteCount / votesNeededToVerify) * 100}
         />
       </CardContent>
 

@@ -12,13 +12,13 @@ import { Answer } from './models/answer.model';
 import { CreateQuestionInput } from './models/create-question.input';
 import { Question } from './models/question.model';
 import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
+import { QuestionnaireTicketQuestion } from './models/questionnaire-ticket-question.model';
 import {
   QuestionnaireTicket,
   QuestionnaireTicketStatus,
 } from './models/questionnaire-ticket.model';
 import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
-import { QuestionnaireTicketQuestion } from './models/questionnaire-ticket-question.model';
 
 @Injectable()
 export class QuestionsService {
@@ -28,6 +28,9 @@ export class QuestionsService {
 
     @InjectRepository(QuestionnaireTicketQuestion)
     private questionnaireTicketQuestionRepository: Repository<QuestionnaireTicketQuestion>,
+
+    @InjectRepository(QuestionnaireTicketConfig)
+    private questionnaireTicketConfigRepository: Repository<QuestionnaireTicketConfig>,
 
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
@@ -44,8 +47,8 @@ export class QuestionsService {
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
 
-    @InjectRepository(QuestionnaireTicketConfig)
-    private questionnaireTicketConfigRepository: Repository<QuestionnaireTicketConfig>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
 
     private serverConfigsService: ServerConfigsService,
   ) {}
@@ -161,10 +164,22 @@ export class QuestionsService {
     });
   }
 
-  async getQuestionnaireTicketVoteCount(questionnaireTicketId: number) {
-    return this.votesRepository.count({
-      where: { questionnaireTicketId },
+  async getQuestionnaireTicketVoteCount(where?: FindOptionsWhere<Vote>) {
+    return this.votesRepository.count({ where });
+  }
+
+  async getVotesNeededToVerify(questionnaireTicketId: number) {
+    const { ratificationThreshold } = await this.getQuestionnaireTicketConfig(
+      questionnaireTicketId,
+    );
+    const usersWithAccessCount = await this.userRepository.count({
+      where: {
+        serverRoles: {
+          permission: { manageQuestionnaireTickets: true },
+        },
+      },
     });
+    return Math.ceil(usersWithAccessCount * (ratificationThreshold * 0.01));
   }
 
   async getQuestionnaireTicketComments(questionnaireTicketId: number) {

@@ -22,10 +22,12 @@ export type QuestionnairePageQuery = {
     __typename?: 'QuestionnaireTicket';
     id: number;
     status: string;
-    voteCount: number;
+    answerCount: number;
     commentCount: number;
     questionCount: number;
-    answerCount: number;
+    voteCount: number;
+    votesNeededToVerify: number;
+    agreementVoteCount: number;
     createdAt: any;
     questions: Array<{
       __typename?: 'QuestionnaireTicketQuestion';

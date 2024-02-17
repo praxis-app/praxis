@@ -71,6 +71,8 @@ type QuestionnaireTicket {
   answerCount: Int!
   votes: [Vote!]!
   voteCount: Int!
+  agreementVoteCount: Int!
+  votesNeededToVerify: Int!
   myVote: Vote
   commentCount: Int!
   user: User!

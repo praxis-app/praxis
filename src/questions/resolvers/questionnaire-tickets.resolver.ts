@@ -11,6 +11,7 @@ import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 import { Group } from '../../groups/models/group.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
+import { VoteTypes } from '../../votes/votes.constants';
 import { Question } from '../models/question.model';
 import { QuestionnaireTicketConfig } from '../models/questionnaire-ticket-config.model';
 import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
@@ -57,7 +58,22 @@ export class QuestionnaireTicketsResolver {
 
   @ResolveField(() => Int)
   async voteCount(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketVoteCount(id);
+    return this.questionsService.getQuestionnaireTicketVoteCount({
+      questionnaireTicketId: id,
+    });
+  }
+
+  @ResolveField(() => Int)
+  async agreementVoteCount(@Parent() { id }: QuestionnaireTicket) {
+    return this.questionsService.getQuestionnaireTicketVoteCount({
+      questionnaireTicketId: id,
+      voteType: VoteTypes.Agreement,
+    });
+  }
+
+  @ResolveField(() => Int)
+  async votesNeededToVerify(@Parent() { id }: QuestionnaireTicket) {
+    return this.questionsService.getVotesNeededToVerify(id);
   }
 
   @ResolveField(() => Vote, { nullable: true })

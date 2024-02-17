@@ -1,10 +1,12 @@
 fragment QuestionnaireTicketCard on QuestionnaireTicket {
   id
   status
-  voteCount
+  answerCount
   commentCount
   questionCount
-  answerCount
+  voteCount
+  votesNeededToVerify
+  agreementVoteCount
   createdAt
 
   user {

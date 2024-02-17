@@ -11,10 +11,12 @@ export type QuestionnaireTicketCardFragment = {
   __typename?: 'QuestionnaireTicket';
   id: number;
   status: string;
-  voteCount: number;
+  answerCount: number;
   commentCount: number;
   questionCount: number;
-  answerCount: number;
+  voteCount: number;
+  votesNeededToVerify: number;
+  agreementVoteCount: number;
   createdAt: any;
   user: {
     __typename?: 'User';
@@ -49,10 +51,12 @@ export const QuestionnaireTicketCardFragmentDoc = gql`
   fragment QuestionnaireTicketCard on QuestionnaireTicket {
     id
     status
-    voteCount
+    answerCount
     commentCount
     questionCount
-    answerCount
+    voteCount
+    votesNeededToVerify
+    agreementVoteCount
     createdAt
     user {
       ...UserAvatar
