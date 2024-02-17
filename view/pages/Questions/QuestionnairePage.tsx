@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import AnsweredQuestionCard from '../../components/Questions/AnsweredQuestionCard';
 import QuestionnaireTicketCard from '../../components/Questions/QuestionnaireTicketCard';
+import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { useQuestionnairePageQuery } from '../../graphql/questions/queries/gen/QuestionnairePage.gen';
 
@@ -33,8 +35,22 @@ const QuestionnairePage = () => {
   const { questionnaireTicket } = data;
   const { questions } = questionnaireTicket;
 
+  const breadcrumbs = [
+    {
+      label: t('questions.labels.questionnaires'),
+      href: NavigationPaths.ServerQuestionnaires,
+    },
+    {
+      label: t('questions.labels.ticketNumber', {
+        number: questionnaireTicket.id,
+      }),
+    },
+  ];
+
   return (
     <>
+      <Breadcrumbs breadcrumbs={breadcrumbs} />
+
       <QuestionnaireTicketCard
         questionnaireTicket={questionnaireTicket}
         isTicketPage

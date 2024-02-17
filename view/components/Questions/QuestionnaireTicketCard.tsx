@@ -209,9 +209,11 @@ const QuestionnaireTicketCard = ({
           <UserAvatar user={user} href={questionnaireTicketPath} withLink />
         }
         title={
-          <Link href={questionnaireTicketPath}>
-            {t('questions.labels.ticketNumber', { number: id })}
-          </Link>
+          !isTicketPage && (
+            <Link href={questionnaireTicketPath}>
+              {t('questions.labels.ticketNumber', { number: id })}
+            </Link>
+          )
         }
         subheader={renderSubheader()}
         action={renderMenu()}
