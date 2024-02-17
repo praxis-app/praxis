@@ -251,7 +251,7 @@ const QuestionnaireTicketCard = ({
               </Typography>
             </Flex>
             <BorderLinearProgress
-              sx={{ marginBottom: 1 }}
+              sx={{ marginBottom: 3 }}
               variant="determinate"
               value={(agreementVoteCount / votesNeededToVerify) * 100}
             />
