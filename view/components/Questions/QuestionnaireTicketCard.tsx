@@ -27,7 +27,12 @@ import {
   ServerQuestionnairesDocument,
   ServerQuestionnairesQuery,
 } from '../../graphql/questions/queries/gen/ServerQuestionnaires.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import { timeAgo } from '../../utils/time.utils';
+import Accordion, {
+  AccordionDetails,
+  AccordionSummary,
+} from '../Shared/Accordion';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
@@ -66,11 +71,13 @@ interface Props {
 const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   const [deleteQuestionnaireTicket] = useDeleteQuestionnaireTicketMutation();
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
   const navigate = useNavigate();
 
   const {
@@ -98,10 +105,14 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
     paddingBottom: 2.5,
     paddingX: inModal ? 0 : undefined,
   };
-
   const cardHeaderStyles: SxProps = {
     paddingX: inModal ? 0 : undefined,
     paddingTop: inModal ? 0 : undefined,
+  };
+  const accordionStyles: SxProps = {
+    backgroundColor: 'rgb(0, 0, 0, 0.1)',
+    borderRadius: 2,
+    paddingX: 2,
   };
 
   const getStatus = () => {
@@ -202,33 +213,43 @@ const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
         sx={cardHeaderStyles}
       />
       <CardContent sx={cardContentStyles}>
-        <Typography paddingBottom={2}>
-          {`${t('questions.labels.status')}: ${getStatus()}`}
-        </Typography>
+        <Accordion
+          expanded={showDetails}
+          onChange={() => setShowDetails((prev) => !prev)}
+          sx={accordionStyles}
+        >
+          <AccordionSummary>
+            <Typography>
+              {`${t('questions.labels.status')}: ${getStatus()}`}
+            </Typography>
+          </AccordionSummary>
 
-        <Flex justifyContent="space-between">
-          <Typography>{t('questions.labels.questionsAnswered')}</Typography>
-          <Typography>
-            {answerCount} / {questionCount}
-          </Typography>
-        </Flex>
-        <BorderLinearProgress
-          sx={{ marginBottom: 3 }}
-          variant="determinate"
-          value={(answerCount / questionCount) * 100}
-        />
+          <AccordionDetails sx={{ marginBottom: isDesktop ? 2.5 : 3 }}>
+            <Flex justifyContent="space-between">
+              <Typography>{t('questions.labels.questionsAnswered')}</Typography>
+              <Typography>
+                {answerCount} / {questionCount}
+              </Typography>
+            </Flex>
+            <BorderLinearProgress
+              sx={{ marginBottom: 3 }}
+              variant="determinate"
+              value={(answerCount / questionCount) * 100}
+            />
 
-        <Flex justifyContent="space-between">
-          <Typography>{t('questions.labels.votesNeeded')}</Typography>
-          <Typography>
-            {agreementVoteCount} / {votesNeededToVerify}
-          </Typography>
-        </Flex>
-        <BorderLinearProgress
-          sx={{ marginBottom: 1 }}
-          variant="determinate"
-          value={(agreementVoteCount / votesNeededToVerify) * 100}
-        />
+            <Flex justifyContent="space-between">
+              <Typography>{t('questions.labels.votesNeeded')}</Typography>
+              <Typography>
+                {agreementVoteCount} / {votesNeededToVerify}
+              </Typography>
+            </Flex>
+            <BorderLinearProgress
+              sx={{ marginBottom: 1 }}
+              variant="determinate"
+              value={(agreementVoteCount / votesNeededToVerify) * 100}
+            />
+          </AccordionDetails>
+        </Accordion>
       </CardContent>
 
       <QuestionnaireTicketCardFooter
