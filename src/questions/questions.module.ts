@@ -6,7 +6,7 @@ import { ServerConfigsModule } from '../server-configs/server-configs.module';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 import { Answer } from './models/answer.model';
-import { Question } from './models/question.model';
+import { ServerQuestion } from './models/question.model';
 import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
 import { QuestionnaireTicketQuestion } from './models/questionnaire-ticket-question.model';
 import { QuestionnaireTicket } from './models/questionnaire-ticket.model';
@@ -22,7 +22,7 @@ import { QuestionsResolver } from './resolvers/questions.resolver';
       Answer,
       Comment,
       Like,
-      Question,
+      ServerQuestion,
       QuestionnaireTicket,
       QuestionnaireTicketConfig,
       QuestionnaireTicketQuestion,

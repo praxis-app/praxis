@@ -198,13 +198,12 @@ export type CreateProposalPayload = {
 };
 
 export type CreateQuestionInput = {
-  groupId?: InputMaybe<Scalars['Int']['input']>;
   text: Scalars['String']['input'];
 };
 
 export type CreateQuestionPayload = {
   __typename?: 'CreateQuestionPayload';
-  question: Question;
+  question: ServerQuestion;
 };
 
 export type CreateRuleInput = {
@@ -1030,7 +1029,7 @@ export type Query = {
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;
   serverQuestionnaireTickets: Array<QuestionnaireTicket>;
-  serverQuestions: Array<Question>;
+  serverQuestions: Array<ServerQuestion>;
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
   serverRules: Array<Rule>;
@@ -1127,13 +1126,6 @@ export type QueryUsersArgs = {
 
 export type QueryUsersByIdsArgs = {
   ids: Array<Scalars['Int']['input']>;
-};
-
-export type Question = {
-  __typename?: 'Question';
-  id: Scalars['Int']['output'];
-  priority: Scalars['Int']['output'];
-  text: Scalars['String']['output'];
 };
 
 export type QuestionnaireTicket = {
@@ -1236,6 +1228,13 @@ export type ServerPermissions = {
   removeGroups: Scalars['Boolean']['output'];
   removeMembers: Scalars['Boolean']['output'];
   removeProposals: Scalars['Boolean']['output'];
+};
+
+export type ServerQuestion = {
+  __typename?: 'ServerQuestion';
+  id: Scalars['Int']['output'];
+  priority: Scalars['Int']['output'];
+  text: Scalars['String']['output'];
 };
 
 export type ServerRole = {
@@ -1423,7 +1422,7 @@ export type UpdateQuestionInput = {
 
 export type UpdateQuestionPayload = {
   __typename?: 'UpdateQuestionPayload';
-  question: Question;
+  question: ServerQuestion;
 };
 
 export type UpdateQuestionPriorityInput = {

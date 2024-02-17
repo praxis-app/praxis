@@ -1,4 +1,4 @@
-fragment QuestionEditorCard on Question {
+fragment QuestionEditorCard on ServerQuestion {
   id
   text
   priority

@@ -7,14 +7,14 @@ import { QuestionFormModalFragmentDoc } from './QuestionFormModal.gen';
 /* eslint-disable */
 
 export type QuestionEditorCardFragment = {
-  __typename?: 'Question';
+  __typename?: 'ServerQuestion';
   id: number;
   text: string;
   priority: number;
 };
 
 export const QuestionEditorCardFragmentDoc = gql`
-  fragment QuestionEditorCard on Question {
+  fragment QuestionEditorCard on ServerQuestion {
     id
     text
     priority

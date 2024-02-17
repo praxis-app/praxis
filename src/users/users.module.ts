@@ -5,7 +5,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
 import { Post } from '../posts/models/post.model';
 import { PostsModule } from '../posts/posts.module';
 import { Proposal } from '../proposals/models/proposal.model';
-import { Question } from '../questions/models/question.model';
+import { ServerQuestion } from '../questions/models/question.model';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { ServerConfigsModule } from '../server-configs/server-configs.module';
 import { ServerRolesModule } from '../server-roles/server-roles.module';
@@ -19,7 +19,7 @@ import { UsersService } from './users.service';
       Image,
       Post,
       Proposal,
-      Question,
+      ServerQuestion,
       QuestionnaireTicket,
       User,
     ]),

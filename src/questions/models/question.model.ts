@@ -3,15 +3,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Group } from '../../groups/models/group.model';
 
 @ObjectType()
 @Entity()
-export class Question {
+export class ServerQuestion {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,14 +21,6 @@ export class Question {
   @Column()
   @Field(() => Int)
   priority: number;
-
-  @ManyToOne(() => Group, (group) => group.rules, {
-    onDelete: 'CASCADE',
-  })
-  group?: Group;
-
-  @Column({ nullable: true })
-  groupId?: number;
 
   @CreateDateColumn()
   createdAt: Date;

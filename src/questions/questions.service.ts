@@ -15,7 +15,7 @@ import {
 import { AnswerQuestionsInput } from './models/answer-questions.input';
 import { Answer } from './models/answer.model';
 import { CreateQuestionInput } from './models/create-question.input';
-import { Question } from './models/question.model';
+import { ServerQuestion } from './models/question.model';
 import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
 import { QuestionnaireTicketQuestion } from './models/questionnaire-ticket-question.model';
 import {
@@ -37,8 +37,8 @@ export class QuestionsService {
     @InjectRepository(QuestionnaireTicketConfig)
     private questionnaireTicketConfigRepository: Repository<QuestionnaireTicketConfig>,
 
-    @InjectRepository(Question)
-    private questionRepository: Repository<Question>,
+    @InjectRepository(ServerQuestion)
+    private serverQuestionRepository: Repository<ServerQuestion>,
 
     @InjectRepository(Answer)
     private anwersRepository: Repository<Answer>,
@@ -59,8 +59,7 @@ export class QuestionsService {
   ) {}
 
   async getServerQuestions() {
-    return this.questionRepository.find({
-      where: { groupId: IsNull() },
+    return this.serverQuestionRepository.find({
       order: { priority: 'ASC' },
     });
   }
@@ -334,16 +333,15 @@ export class QuestionsService {
     });
   }
 
-  async createQuestion({ text, groupId }: CreateQuestionInput) {
-    const [lowestPriorityQuestion] = await this.questionRepository.find({
-      where: { groupId: groupId || IsNull() },
+  async createQuestion({ text }: CreateQuestionInput) {
+    const [lowestPriorityQuestion] = await this.serverQuestionRepository.find({
       order: { priority: 'DESC' },
       take: 1,
     });
     const priority = lowestPriorityQuestion
       ? lowestPriorityQuestion.priority + 1
       : 0;
-    const question = await this.questionRepository.save({
+    const question = await this.serverQuestionRepository.save({
       text: sanitizeText(text.trim()),
       priority,
     });
@@ -352,17 +350,17 @@ export class QuestionsService {
 
   async updateQuestion({ id, text }: UpdateQuestionInput) {
     const sanitizedText = sanitizeText(text?.trim());
-    await this.questionRepository.update(id, {
+    await this.serverQuestionRepository.update(id, {
       text: sanitizedText,
     });
-    const question = await this.questionRepository.findOneOrFail({
+    const question = await this.serverQuestionRepository.findOneOrFail({
       where: { id },
     });
     return { question };
   }
 
   async updateQuestionsPriority({ questions }: UpdateQuestionsPriorityInput) {
-    await this.questionRepository.save(
+    await this.serverQuestionRepository.save(
       questions.map(({ id, priority }) => ({ id, priority })),
     );
     return true;
@@ -406,9 +404,7 @@ export class QuestionsService {
     await this.anwersRepository.save(newAnswers);
 
     // Mark as submitted if all questions have been answered
-    const questionCount = await this.questionRepository.count({
-      where: { groupId: IsNull() },
-    });
+    const questionCount = await this.serverQuestionRepository.count();
     const answerCount = await this.anwersRepository.count({
       where: {
         questionnaireTicketQuestion: { questionnaireTicketId },
@@ -431,17 +427,17 @@ export class QuestionsService {
 
   // TODO: Add support for group questions
   async deleteQuestion(questionId: number) {
-    const question = await this.questionRepository.findOneOrFail({
+    const question = await this.serverQuestionRepository.findOneOrFail({
       where: { id: questionId },
       select: ['priority'],
     });
 
-    await this.questionRepository.delete({
+    await this.serverQuestionRepository.delete({
       id: questionId,
     });
-    await this.questionRepository
+    await this.serverQuestionRepository
       .createQueryBuilder()
-      .update(Question)
+      .update(ServerQuestion)
       .set({ priority: () => 'priority - 1' })
       .where('priority > :priority', { priority: question.priority })
       .execute();

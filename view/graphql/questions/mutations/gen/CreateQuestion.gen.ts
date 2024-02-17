@@ -17,7 +17,7 @@ export type CreateQuestionMutation = {
   createQuestion: {
     __typename?: 'CreateQuestionPayload';
     question: {
-      __typename?: 'Question';
+      __typename?: 'ServerQuestion';
       id: number;
       text: string;
       priority: number;

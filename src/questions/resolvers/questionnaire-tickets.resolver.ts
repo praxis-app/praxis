@@ -12,7 +12,7 @@ import { Group } from '../../groups/models/group.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { VoteTypes } from '../../votes/votes.constants';
-import { Question } from '../models/question.model';
+import { ServerQuestion } from '../models/question.model';
 import { QuestionnaireTicketConfig } from '../models/questionnaire-ticket-config.model';
 import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
 import { QuestionsService } from '../questions.service';
@@ -36,7 +36,7 @@ export class QuestionnaireTicketsResolver {
     return this.questionsService.getQuestionnairePrompt(groupId);
   }
 
-  @ResolveField(() => [Question])
+  @ResolveField(() => [ServerQuestion])
   async questions(@Parent() { id }: QuestionnaireTicket) {
     return this.questionsService.getQuestionnaireTicketQuestions(id);
   }

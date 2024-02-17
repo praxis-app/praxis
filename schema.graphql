@@ -352,12 +352,6 @@ type Event {
   coverPhoto: Image!
 }
 
-type Question {
-  id: Int!
-  text: String!
-  priority: Int!
-}
-
 type Rule {
   id: Int!
   title: String!
@@ -485,6 +479,12 @@ type CreatePostPayload {
 
 type UpdatePostPayload {
   post: Post!
+}
+
+type ServerQuestion {
+  id: Int!
+  text: String!
+  priority: Int!
 }
 
 type UpdateServerConfigPayload {
@@ -622,11 +622,11 @@ type AnswerQuestionsPayload {
 }
 
 type CreateQuestionPayload {
-  question: Question!
+  question: ServerQuestion!
 }
 
 type UpdateQuestionPayload {
-  question: Question!
+  question: ServerQuestion!
 }
 
 type CreateRulePayload {
@@ -681,7 +681,7 @@ type Query {
   questionnaireTicket(id: Int!): QuestionnaireTicket!
   serverQuestionnaireTickets: [QuestionnaireTicket!]!
   question(id: Int!): QuestionnaireTicketQuestion!
-  serverQuestions: [Question!]!
+  serverQuestions: [ServerQuestion!]!
   serverRules: [Rule!]!
 }
 
@@ -1042,7 +1042,6 @@ input AnswerInput {
 }
 
 input CreateQuestionInput {
-  groupId: Int
   text: String!
 }
 

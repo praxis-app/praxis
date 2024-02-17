@@ -17,7 +17,6 @@ import { Image } from '../../images/models/image.model';
 import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
-import { Question } from '../../questions/models/question.model';
 import { QuestionnaireTicket } from '../../questions/models/questionnaire-ticket.model';
 import { Rule } from '../../rules/models/rule.model';
 import { User } from '../../users/models/user.model';
@@ -85,11 +84,6 @@ export class Group {
     cascade: true,
   })
   rules: Rule[];
-
-  @OneToMany(() => Question, (question) => question.group, {
-    cascade: true,
-  })
-  questions: Question[];
 
   @OneToMany(
     () => QuestionnaireTicket,

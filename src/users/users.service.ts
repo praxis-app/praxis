@@ -2,7 +2,7 @@ import { UserInputError } from '@nestjs/apollo';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, IsNull, Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { logTime, paginate, sanitizeText } from '../common/common.utils';
 import { GroupPermissionsMap } from '../groups/group-roles/models/group-permissions.type';
 import { GroupPrivacy } from '../groups/groups.constants';
@@ -18,7 +18,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { Proposal } from '../proposals/models/proposal.model';
-import { Question } from '../questions/models/question.model';
+import { ServerQuestion } from '../questions/models/question.model';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { ServerConfig } from '../server-configs/models/server-config.model';
 import { ServerConfigsService } from '../server-configs/server-configs.service';
@@ -45,8 +45,8 @@ export class UsersService {
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
-    @InjectRepository(Question)
-    private questionRepository: Repository<Question>,
+    @InjectRepository(ServerQuestion)
+    private serverQuestionRepository: Repository<ServerQuestion>,
 
     @InjectRepository(QuestionnaireTicket)
     private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
@@ -376,9 +376,7 @@ export class UsersService {
   }
 
   async createQuestionnaireTicket(userId: number) {
-    const serverQuestions = await this.questionRepository.find({
-      where: { groupId: IsNull() },
-    });
+    const serverQuestions = await this.serverQuestionRepository.find();
     if (serverQuestions.length === 0) {
       return;
     }
