@@ -194,6 +194,12 @@ const VoteMenu = ({
     });
 
   const handleClick = (voteType: string) => async () => {
+    if (questionnaireTicketId && voteType === VoteTypes.Block) {
+      const confirmed = window.confirm(t('questions.prompts.confirmBlock'));
+      if (!confirmed) {
+        return;
+      }
+    }
     onClose();
 
     if (myVoteId && myVoteType !== voteType) {

@@ -678,6 +678,7 @@
       "writeAnswer": "Write your answer..."
     },
     "prompts": {
+      "confirmBlock": "Are you sure you want to block verification for this new user? This will automatically mark their questionnaire ticket as denied.",
       "confirmSubmit": "Are you sure you want to submit your answers?",
       "noQuestionnaires": "No questionnaires",
       "noQuestions": "No questions yet",
