@@ -132,7 +132,10 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
   }: FormValues) => {
     const errors: FormikErrors<FormValues> = {};
 
-    if (decisionMakingModel === DecisionMakingModel.Consent) {
+    if (
+      decisionMakingModel === DecisionMakingModel.Consent ||
+      decisionMakingModel === DecisionMakingModel.MajorityVote
+    ) {
       errors.decisionMakingModel = t('prompts.inDev');
     }
     if (

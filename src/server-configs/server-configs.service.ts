@@ -38,6 +38,9 @@ export class ServerConfigsService {
     if (data.decisionMakingModel === DecisionMakingModel.Consent) {
       throw new Error('Consent model is not yet supported at server level');
     }
+    if (data.decisionMakingModel === DecisionMakingModel.MajorityVote) {
+      throw new Error('Majority vote is not yet supported at server level');
+    }
 
     await this.repository.update(id, data);
 
