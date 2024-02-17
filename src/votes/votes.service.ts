@@ -70,17 +70,23 @@ export class VotesService {
     }
 
     if (vote.questionnaireTicketId) {
-      const isVerifiable =
-        await this.questionsService.isQuestionnaireTicketVerifiable(
+      if (vote.voteType === VoteTypes.Block) {
+        await this.questionsService.denyQuestionnaireTicket(
           vote.questionnaireTicketId,
         );
-      if (isVerifiable) {
-        await this.questionsService.approveQuestionnaireTicket(
-          vote.questionnaireTicketId,
-        );
-        await this.questionsService.verifyQuestionnaireTicketUser(
-          vote.questionnaireTicketId,
-        );
+      } else {
+        const isVerifiable =
+          await this.questionsService.isQuestionnaireTicketVerifiable(
+            vote.questionnaireTicketId,
+          );
+        if (isVerifiable) {
+          await this.questionsService.approveQuestionnaireTicket(
+            vote.questionnaireTicketId,
+          );
+          await this.questionsService.verifyQuestionnaireTicketUser(
+            vote.questionnaireTicketId,
+          );
+        }
       }
     }
 
