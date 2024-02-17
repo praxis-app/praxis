@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { MyAnsweredQuestionCardFragmentDoc } from '../../fragments/gen/MyAnsweredQuestionCard.gen';
+import { AnsweredQuestionCardFragmentDoc } from '../../fragments/gen/AnsweredQuestionCard.gen';
 import { CommentFragmentDoc } from '../../../comments/fragments/gen/Comment.gen';
 import { AnswerQuestionsFormFragmentDoc } from '../../fragments/gen/AnswerQuestionsForm.gen';
 import * as Apollo from '@apollo/client';
@@ -29,13 +29,13 @@ export type VibeCheckQuery = {
         id: number;
         text: string;
         priority: number;
+        likeCount: number;
+        commentCount: number;
+        isLikedByMe?: boolean;
         answer?: {
           __typename?: 'Answer';
           id: number;
           text: string;
-          likeCount: number;
-          commentCount: number;
-          isLikedByMe?: boolean;
           user: { __typename?: 'User'; id: number; name: string };
         } | null;
       }>;
@@ -64,7 +64,7 @@ export const VibeCheckDocument = gql`
       id
       questionnaireTicket {
         questions {
-          ...MyAnsweredQuestionCard
+          ...AnsweredQuestionCard
         }
         comments {
           ...Comment
@@ -75,7 +75,7 @@ export const VibeCheckDocument = gql`
       }
     }
   }
-  ${MyAnsweredQuestionCardFragmentDoc}
+  ${AnsweredQuestionCardFragmentDoc}
   ${CommentFragmentDoc}
   ${AnswerQuestionsFormFragmentDoc}
 `;

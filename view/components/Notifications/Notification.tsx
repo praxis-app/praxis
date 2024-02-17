@@ -46,7 +46,7 @@ interface Props {
 const Notification = ({
   notification: {
     id,
-    answer,
+    question,
     comment,
     group,
     notificationType,
@@ -142,7 +142,7 @@ const Notification = ({
       });
     }
     if (notificationType === NotificationType.AnswerComment) {
-      if (comment?.answer?.user.id === otherUser?.id) {
+      if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
         return _t('notifications.messages.ownAnswerComment', {
           name: otherUser?.name,
         });
@@ -154,7 +154,7 @@ const Notification = ({
     if (notificationType === NotificationType.AnswerLike) {
       return _t('notifications.messages.answerLike', {
         name: otherUser?.name,
-        text: `"${truncate(answer?.text, { length: 30 })}"`,
+        text: `"${truncate(question?.answer?.text, { length: 30 })}"`,
       });
     }
     if (notificationType === NotificationType.CommentLike) {
@@ -200,8 +200,8 @@ const Notification = ({
       if (comment?.post?.id) {
         return `${NavigationPaths.Posts}/${comment?.post?.id}`;
       }
-      if (comment?.answer?.id) {
-        const { id } = comment.answer.question.questionnaireTicket;
+      if (comment?.question?.id) {
+        const { id } = comment.question.questionnaireTicket;
         return `${NavigationPaths.ServerQuestionnaires}/${id}`;
       }
       return `${NavigationPaths.Proposals}/${comment?.proposal?.id}`;
@@ -223,8 +223,8 @@ const Notification = ({
       if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
         return `${NavigationPaths.ServerQuestionnaires}/${comment?.questionnaireTicket?.id}`;
       }
-      if (comment?.answer?.user.id === otherUser?.id) {
-        const id = comment?.answer?.question.questionnaireTicket.id;
+      if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
+        const id = comment?.question?.questionnaireTicket.id;
         return `${NavigationPaths.ServerQuestionnaires}/${id}`;
       }
       return NavigationPaths.VibeCheck;

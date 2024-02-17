@@ -1,12 +1,11 @@
 import { Card, CardContent, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
-import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestionCard.gen';
 import { urlifyText } from '../../utils/shared.utils';
 import AnsweredQuestionCardFooter from './AnweredQuestionCardFooter';
 
 interface Props {
-  question: AnsweredQuestionCardFragment | MyAnsweredQuestionCardFragment;
+  question: AnsweredQuestionCardFragment;
   inModal?: boolean;
 }
 

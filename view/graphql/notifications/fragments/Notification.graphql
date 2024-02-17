@@ -27,16 +27,13 @@ fragment Notification on Notification {
     proposal {
       id
     }
-    answer {
+    question {
       id
-      question {
+      questionnaireTicket {
         id
-        questionnaireTicket {
+        user {
           id
         }
-      }
-      user {
-        id
       }
     }
     questionnaireTicket {
@@ -47,8 +44,11 @@ fragment Notification on Notification {
     }
   }
 
-  answer {
+  question {
     id
-    text
+    answer {
+      id
+      text
+    }
   }
 }

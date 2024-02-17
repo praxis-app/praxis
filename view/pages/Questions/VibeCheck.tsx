@@ -17,7 +17,7 @@ import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { QuestionnaireTicketStatus } from '../../constants/question.constants';
 import { isLoggedInVar } from '../../graphql/cache';
-import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestionCard.gen';
+import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
 
 const VibeCheck = () => {
@@ -101,7 +101,7 @@ const VibeCheck = () => {
             </CardContent>
           </Card>
 
-          {questions.map((question: MyAnsweredQuestionCardFragment) => (
+          {questions.map((question: AnsweredQuestionCardFragment) => (
             <AnsweredQuestionCard key={question.id} question={question} />
           ))}
         </>

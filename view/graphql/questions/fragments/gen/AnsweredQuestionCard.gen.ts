@@ -10,13 +10,13 @@ export type AnsweredQuestionCardFragment = {
   id: number;
   text: string;
   priority: number;
+  likeCount: number;
+  commentCount: number;
+  isLikedByMe?: boolean;
   answer?: {
     __typename?: 'Answer';
     id: number;
     text: string;
-    likeCount: number;
-    commentCount: number;
-    isLikedByMe?: boolean;
     user: { __typename?: 'User'; id: number; name: string };
   } | null;
 };
@@ -26,12 +26,12 @@ export const AnsweredQuestionCardFragmentDoc = gql`
     id
     text
     priority
+    likeCount
+    commentCount
+    isLikedByMe @include(if: $isLoggedIn)
     answer {
       id
       text
-      likeCount
-      commentCount
-      isLikedByMe @include(if: $isLoggedIn)
       user {
         id
         name

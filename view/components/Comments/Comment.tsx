@@ -20,23 +20,23 @@ import CommentLikeButton from './CommentLikeButton';
 import CommentLikeCount from './CommentLikeCount';
 
 interface Props {
-  answerId?: number;
   canManageComments?: boolean;
   comment: CommentFragment;
   currentUserId?: number;
   postId?: number;
   proposalId?: number;
   questionnaireTicketId?: number;
+  questionnaireTicketQuestionId?: number;
 }
 
 const Comment = ({
-  answerId,
   canManageComments,
   comment,
   currentUserId,
   postId,
   proposalId,
   questionnaireTicketId,
+  questionnaireTicketQuestionId,
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showItemMenu, setShowItemMenu] = useState(false);
@@ -116,9 +116,12 @@ const Comment = ({
             },
           });
         }
-        if (answerId) {
+        if (questionnaireTicketQuestionId) {
           cache.modify({
-            id: cache.identify({ id: answerId, __typename: TypeNames.Answer }),
+            id: cache.identify({
+              id: questionnaireTicketQuestionId,
+              __typename: TypeNames.QuestionnaireTicketQuestion,
+            }),
             fields: {
               commentCount(existingCount: number) {
                 return Math.max(0, existingCount - 1);

@@ -113,7 +113,7 @@ export class LikesService {
 
     if (likedItemUserId !== user.id) {
       await this.notificationsService.createNotification({
-        questionnaireTicketQuestionId: like.answerId,
+        questionnaireTicketQuestionId: like.questionnaireTicketQuestionId,
         commentId: like.commentId,
         userId: likedItemUserId,
         otherUserId: user.id,
@@ -126,8 +126,8 @@ export class LikesService {
     if (like.commentId) {
       return { like, comment: likedItem };
     }
-    if (like.answerId) {
-      return { like, answer: likedItem };
+    if (like.questionnaireTicketQuestionId) {
+      return { like, question: likedItem };
     }
     return { like, post: likedItem };
   }

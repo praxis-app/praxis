@@ -7,16 +7,15 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isLoggedInVar } from '../../graphql/cache';
 import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
-import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestionCard.gen';
-import { useAnswerCommentsLazyQuery } from '../../graphql/questions/queries/gen/AnswerComments.gen';
+import { useQuestionCommentsLazyQuery } from '../../graphql/questions/queries/gen/QuestionComments.gen';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import LikeBadge from '../Likes/LikeBadge';
 import LikesModal from '../Likes/LikesModal';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
-import AnsweredLikeButton from './AnswerLikeButton';
 import AnsweredQuestionModal from './AnsweredQuestionModal';
+import QuestionLikeButton from './QuestionLikeButton';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -24,7 +23,7 @@ const ROTATED_ICON_STYLES: SxProps = {
 };
 
 interface Props {
-  question: AnsweredQuestionCardFragment | MyAnsweredQuestionCardFragment;
+  question: AnsweredQuestionCardFragment;
   inModal?: boolean;
 }
 
@@ -36,28 +35,32 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const [
-    getAnswerComments,
-    { data: answerCommentsData, called: answerCommentsCalled },
-  ] = useAnswerCommentsLazyQuery();
+    getQuestionComments,
+    { data: questionCommentsData, called: questionCommentsCalled },
+  ] = useQuestionCommentsLazyQuery();
 
   const { t } = useTranslation();
 
-  const { answer } = question;
-
   useEffect(() => {
-    if (!inModal || !answer || answerCommentsCalled) {
+    if (!inModal || questionCommentsCalled) {
       return;
     }
-    getAnswerComments({
-      variables: { id: answer.id, isLoggedIn },
+    getQuestionComments({
+      variables: { id: question.id, isLoggedIn },
     });
-  }, [getAnswerComments, inModal, isLoggedIn, answer, answerCommentsCalled]);
+  }, [
+    inModal,
+    isLoggedIn,
+    questionCommentsCalled,
+    getQuestionComments,
+    question.id,
+  ]);
 
-  const likeCount = answer?.likeCount;
-  const commentCount = answer?.commentCount;
-  const comments = answerCommentsData?.answer.comments;
-  const me = answerCommentsData?.me;
-  const isLikedByMe = answer?.isLikedByMe;
+  const likeCount = question?.likeCount;
+  const isLikedByMe = question?.isLikedByMe;
+  const commentCount = question?.commentCount;
+  const comments = questionCommentsData?.question.comments;
+  const me = questionCommentsData?.me;
 
   const commentCountStyles: SxProps = {
     '&:hover': { textDecoration: 'underline' },
@@ -66,13 +69,13 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
   };
 
   const handleCommentButtonClick = async () => {
-    if (inModal || !answer) {
+    if (inModal) {
       return;
     }
-    const { data } = await getAnswerComments({
-      variables: { id: answer.id, isLoggedIn },
+    const { data } = await getQuestionComments({
+      variables: { id: question.id, isLoggedIn },
     });
-    const comments = data?.answer.comments;
+    const comments = data?.question.comments;
     if (comments && comments.length > 1) {
       setIsModalOpen(true);
     } else {
@@ -87,10 +90,15 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
   const handlePopoverClose = () => setAnchorEl(null);
 
   const renderCommentForm = () => {
-    if (!isLoggedIn || inModal || !answer) {
+    if (!isLoggedIn || inModal) {
       return null;
     }
-    return <CommentForm answerId={answer.id} enableAutoFocus />;
+    return (
+      <CommentForm
+        questionnaireTicketQuestionId={question.id}
+        enableAutoFocus
+      />
+    );
   };
 
   return (
@@ -147,9 +155,12 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
           paddingX: inModal ? 0 : undefined,
         }}
       >
-        <AnsweredLikeButton answerId={answer?.id} isLikedByMe={!!isLikedByMe} />
+        <QuestionLikeButton
+          questionnaireTicketQuestionId={question?.id}
+          isLikedByMe={!!isLikedByMe}
+        />
 
-        <CardFooterButton onClick={handleCommentButtonClick} disabled={!answer}>
+        <CardFooterButton onClick={handleCommentButtonClick}>
           <Comment sx={ROTATED_ICON_STYLES} />
           {t('actions.comment')}
         </CardFooterButton>
@@ -163,7 +174,7 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
             comments={comments || []}
             currentUserId={me?.id}
             marginBottom={inModal && !isLoggedIn ? 2.5 : undefined}
-            answerId={answer?.id}
+            questionnaireTicketQuestionId={question?.id}
           />
           {renderCommentForm()}
         </Box>

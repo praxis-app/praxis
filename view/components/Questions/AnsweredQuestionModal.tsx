@@ -2,14 +2,13 @@ import { Box, SxProps } from '@mui/material';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
-import { MyAnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/MyAnsweredQuestionCard.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import CommentForm from '../Comments/CommentForm';
 import Modal from '../Shared/Modal';
 import AnsweredQuestionCard from './AnsweredQuestionCard';
 
 interface Props {
-  question: AnsweredQuestionCardFragment | MyAnsweredQuestionCardFragment;
+  question: AnsweredQuestionCardFragment;
   open: boolean;
   onClose(): void;
 }
@@ -22,7 +21,7 @@ const AnsweredQuestionModal = ({ question, open, onClose }: Props) => {
 
   useEffect(() => {
     ref.current?.scrollIntoView();
-  }, [question.answer?.commentCount]);
+  }, [question?.commentCount]);
 
   const { answer } = question;
   const userName = answer?.user.name;
@@ -51,7 +50,7 @@ const AnsweredQuestionModal = ({ question, open, onClose }: Props) => {
           paddingX="16px"
           width="100%"
         >
-          <CommentForm answerId={answer?.id} expanded />
+          <CommentForm questionnaireTicketQuestionId={question.id} expanded />
         </Box>
       }
       maxWidth="md"

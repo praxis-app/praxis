@@ -45,7 +45,6 @@ type Answer {
   text: String!
   question: QuestionnaireTicketQuestion!
   user: User!
-  isLikedByMe: Boolean!
 }
 
 type QuestionnaireTicketQuestion {
@@ -56,6 +55,7 @@ type QuestionnaireTicketQuestion {
   questionnaireTicket: QuestionnaireTicket!
   likes: [Like!]!
   likeCount: Int!
+  isLikedByMe: Boolean!
   comments: [Comment!]!
   commentCount: Int!
 }
@@ -614,7 +614,7 @@ type CreateLikePayload {
   like: Like!
   post: Post
   comment: Comment
-  answer: Answer
+  question: QuestionnaireTicketQuestion
 }
 
 type AnswerQuestionsPayload {
@@ -680,6 +680,7 @@ type Query {
   answer(id: Int!): Answer!
   questionnaireTicket(id: Int!): QuestionnaireTicket!
   serverQuestionnaireTickets: [QuestionnaireTicket!]!
+  question(id: Int!): QuestionnaireTicketQuestion!
   serverQuestions: [Question!]!
   serverRules: [Rule!]!
 }
@@ -1020,13 +1021,13 @@ input UpdateCommentInput {
 input CreateLikeInput {
   postId: Int
   commentId: Int
-  answerId: Int
+  questionnaireTicketQuestionId: Int
 }
 
 input DeleteLikeInput {
   postId: Int
   commentId: Int
-  answerId: Int
+  questionnaireTicketQuestionId: Int
 }
 
 input AnswerQuestionsInput {
