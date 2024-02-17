@@ -657,7 +657,8 @@
       "serverQuestions": "Server Questions",
       "status": "Status",
       "submitted": "Submitted",
-      "ticketNumber": "Questionnaire Ticket #{{number}}",
+      "questionnaireTicketNumber": "Questionnaire Ticket #{{number}}",
+      "ticketNumber": "Ticket #{{number}}",
       "vibeCheck": "Vibe Check",
       "votesNeeded": "Votes needed"
     },

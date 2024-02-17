@@ -211,7 +211,7 @@ const QuestionnaireTicketCard = ({
         title={
           !isTicketPage && (
             <Link href={questionnaireTicketPath}>
-              {t('questions.labels.ticketNumber', { number: id })}
+              {t('questions.labels.questionnaireTicketNumber', { number: id })}
             </Link>
           )
         }
