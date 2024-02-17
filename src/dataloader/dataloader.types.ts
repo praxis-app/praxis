@@ -9,7 +9,7 @@ import { Like } from '../likes/models/like.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
-import { Answer } from '../questions/models/answer.model';
+import { QuestionnaireTicketQuestion } from '../questions/models/questionnaire-ticket-question.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
@@ -24,9 +24,9 @@ export interface IsCommentLikedByMeKey {
   commentId: number;
 }
 
-export interface IsAnswerLikedByMeKey {
+export interface IsQuestionnaireTicketQuestionLikedByMeKey {
   currentUserId: number;
-  answerId: number;
+  questionnaireTicketQuestionId: number;
 }
 
 export interface IsFollowedByMeKey {
@@ -90,8 +90,14 @@ export interface Dataloaders {
   goingCountLoader: DataLoader<number, number>;
 
   // Questions & Answers
-  answersLoader: DataLoader<number, Answer>;
-  isAnswerLikedByMeLoader: DataLoader<IsAnswerLikedByMeKey, boolean>;
+  questionnaireTicketQuestionsLoader: DataLoader<
+    number,
+    QuestionnaireTicketQuestion
+  >;
+  isAnswerLikedByMeLoader: DataLoader<
+    IsQuestionnaireTicketQuestionLikedByMeKey,
+    boolean
+  >;
 }
 
 export type ServerRoleWithMemberCount = ServerRole & { memberCount: number };

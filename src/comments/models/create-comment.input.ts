@@ -10,7 +10,7 @@ export class CreateCommentInput {
   proposalId?: number;
 
   @Field(() => Int, { nullable: true })
-  answerId?: number;
+  questionnaireTicketQuestionId?: number;
 
   @Field(() => Int, { nullable: true })
   questionnaireTicketId?: number;

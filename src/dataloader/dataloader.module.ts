@@ -9,7 +9,7 @@ import { Like } from '../likes/models/like.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
-import { Answer } from '../questions/models/answer.model';
+import { QuestionnaireTicketQuestion } from '../questions/models/questionnaire-ticket-question.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { UsersModule } from '../users/users.module';
 import { Vote } from '../votes/models/vote.model';
@@ -18,7 +18,7 @@ import { DataloaderService } from './dataloader.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Answer,
+      QuestionnaireTicketQuestion,
       Comment,
       Event,
       Group,

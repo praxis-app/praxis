@@ -13,7 +13,7 @@ import { Like } from '../../likes/models/like.model';
 import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
-import { Answer } from '../../questions/models/answer.model';
+import { QuestionnaireTicketQuestion } from '../../questions/models/questionnaire-ticket-question.model';
 import { QuestionnaireTicket } from '../../questions/models/questionnaire-ticket.model';
 import { User } from '../../users/models/user.model';
 
@@ -54,20 +54,20 @@ export class Comment {
   @Column({ nullable: true })
   proposalId?: number;
 
-  @ManyToOne(() => Answer, (answer) => answer.comments, {
-    onDelete: 'CASCADE',
-  })
-  answer?: Answer;
+  @ManyToOne(
+    () => QuestionnaireTicketQuestion,
+    (questionnaireTicketQuestion) => questionnaireTicketQuestion.comments,
+    { onDelete: 'CASCADE' },
+  )
+  questionnaireTicketQuestion?: QuestionnaireTicketQuestion;
 
   @Column({ nullable: true })
-  answerId?: number;
+  questionnaireTicketQuestionId?: number;
 
   @ManyToOne(
     () => QuestionnaireTicket,
     (questionnaireTicket) => questionnaireTicket.comments,
-    {
-      onDelete: 'CASCADE',
-    },
+    { onDelete: 'CASCADE' },
   )
   questionnaireTicket?: QuestionnaireTicket;
 

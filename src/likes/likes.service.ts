@@ -6,11 +6,11 @@ import { GroupPrivacy } from '../groups/groups.constants';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
+import { QuestionnaireTicketQuestion } from '../questions/models/questionnaire-ticket-question.model';
 import { User } from '../users/models/user.model';
 import { CreateLikeInput } from './models/create-like.input';
 import { DeleteLikeInput } from './models/delete-like.input';
 import { Like } from './models/like.model';
-import { Answer } from '../questions/models/answer.model';
 
 @Injectable()
 export class LikesService {
@@ -24,8 +24,8 @@ export class LikesService {
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
 
-    @InjectRepository(Answer)
-    private answerRepository: Repository<Answer>,
+    @InjectRepository(QuestionnaireTicketQuestion)
+    private questionnaireTicketQuestionRepository: Repository<QuestionnaireTicketQuestion>,
 
     private notificationsService: NotificationsService,
   ) {}
@@ -71,10 +71,10 @@ export class LikesService {
         where: { id: like.commentId },
       });
     }
-    if (like.answerId) {
-      return this.answerRepository.findOneOrFail({
-        where: { id: like.answerId },
-        relations: ['questionnaireTicketQuestion.questionnaireTicket'],
+    if (like.questionnaireTicketQuestionId) {
+      return this.questionnaireTicketQuestionRepository.findOneOrFail({
+        where: { id: like.questionnaireTicketQuestionId },
+        relations: ['questionnaireTicket'],
       });
     }
     return this.postRepository.findOneOrFail({
@@ -82,15 +82,17 @@ export class LikesService {
     });
   }
 
-  getLikedItemUserId(likedItem: Post | Comment | Answer) {
-    if (likedItem instanceof Answer) {
-      return likedItem.questionnaireTicketQuestion.questionnaireTicket.userId;
+  getLikedItemUserId(likedItem: Post | Comment | QuestionnaireTicketQuestion) {
+    if (likedItem instanceof QuestionnaireTicketQuestion) {
+      return likedItem.questionnaireTicket.userId;
     }
     return likedItem.userId;
   }
 
-  getLikedItemNotificationType(likedItem: Post | Comment | Answer) {
-    if (likedItem instanceof Answer) {
+  getLikedItemNotificationType(
+    likedItem: Post | Comment | QuestionnaireTicketQuestion,
+  ) {
+    if (likedItem instanceof QuestionnaireTicketQuestion) {
       return NotificationType.AnswerLike;
     }
     if (likedItem instanceof Comment) {
@@ -111,13 +113,13 @@ export class LikesService {
 
     if (likedItemUserId !== user.id) {
       await this.notificationsService.createNotification({
-        notificationType,
+        questionnaireTicketQuestionId: like.answerId,
         commentId: like.commentId,
         userId: likedItemUserId,
         otherUserId: user.id,
-        answerId: like.answerId,
         postId: like.postId,
         likeId: like.id,
+        notificationType,
       });
     }
 

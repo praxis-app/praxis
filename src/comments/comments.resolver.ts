@@ -14,7 +14,7 @@ import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalsService } from '../proposals/proposals.service';
-import { Answer } from '../questions/models/answer.model';
+import { QuestionnaireTicketQuestion } from '../questions/models/questionnaire-ticket-question.model';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { User } from '../users/models/user.model';
 import { CommentsService } from './comments.service';
@@ -50,9 +50,14 @@ export class CommentsResolver {
     return proposalId ? this.proposalsService.getProposal(proposalId) : null;
   }
 
-  @ResolveField(() => Answer, { nullable: true })
-  async answer(@Parent() { answerId }: Comment) {
-    return answerId ? this.commentsService.getCommentedAnswer(answerId) : null;
+  @ResolveField(() => QuestionnaireTicketQuestion, { nullable: true })
+  async question(@Parent() { questionnaireTicketQuestionId }: Comment) {
+    if (!questionnaireTicketQuestionId) {
+      return null;
+    }
+    return this.commentsService.getCommentedQuestion(
+      questionnaireTicketQuestionId,
+    );
   }
 
   @ResolveField(() => QuestionnaireTicket, { nullable: true })

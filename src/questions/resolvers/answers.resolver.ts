@@ -8,13 +8,11 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
-import { Comment } from '../../comments/models/comment.model';
 import { Dataloaders } from '../../dataloader/dataloader.types';
-import { Like } from '../../likes/models/like.model';
 import { User } from '../../users/models/user.model';
 import { Answer } from '../models/answer.model';
-import { QuestionsService } from '../questions.service';
 import { QuestionnaireTicketQuestion } from '../models/questionnaire-ticket-question.model';
+import { QuestionsService } from '../questions.service';
 
 @Resolver(() => Answer)
 export class AnswersResolver {
@@ -32,19 +30,9 @@ export class AnswersResolver {
     );
   }
 
-  @ResolveField(() => [Like])
-  async likes(@Parent() { id }: Answer) {
-    return this.questionsService.getAnswerLikes(id);
-  }
-
   @ResolveField(() => User)
   async user(@Parent() { id }: Answer) {
     return this.questionsService.getAnswerUser(id);
-  }
-
-  @ResolveField(() => Int)
-  async likeCount(@Parent() { id }: Answer) {
-    return this.questionsService.getAnswerLikeCount(id);
   }
 
   @ResolveField(() => Boolean)
@@ -55,17 +43,7 @@ export class AnswersResolver {
   ) {
     return loaders.isAnswerLikedByMeLoader.load({
       currentUserId: user.id,
-      answerId: id,
+      questionnaireTicketQuestionId: id,
     });
-  }
-
-  @ResolveField(() => [Comment])
-  async comments(@Parent() { id }: Answer) {
-    return this.questionsService.getAnswerComments(id);
-  }
-
-  @ResolveField(() => Int)
-  async commentCount(@Parent() { id }: Answer) {
-    return this.questionsService.getAnswerCommentCount(id);
   }
 }

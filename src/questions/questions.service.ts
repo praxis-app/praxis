@@ -69,30 +69,6 @@ export class QuestionsService {
     return this.anwersRepository.findOne({ where });
   }
 
-  async getAnswerLikes(answerId: number) {
-    return this.likeRepository.find({
-      where: { answerId },
-    });
-  }
-
-  async getAnswerLikeCount(answerId: number) {
-    return this.likeRepository.count({
-      where: { answerId },
-    });
-  }
-
-  async getAnswerComments(answerId: number) {
-    return this.commentRepository.find({
-      where: { answerId },
-    });
-  }
-
-  async getAnswerCommentCount(answerId: number) {
-    return this.commentRepository.count({
-      where: { answerId },
-    });
-  }
-
   async getAnswerUser(answerId: number) {
     const {
       questionnaireTicketQuestion: { questionnaireTicket },
@@ -146,6 +122,38 @@ export class QuestionsService {
   async getQuestionnaireTicketQuestionCount(questionnaireTicketId: number) {
     return this.questionnaireTicketQuestionRepository.count({
       where: { questionnaireTicketId },
+    });
+  }
+
+  async getQuestionnaireTicketQuestionLikes(
+    questionnaireTicketQuestionId: number,
+  ) {
+    return this.likeRepository.find({
+      where: { questionnaireTicketQuestionId },
+    });
+  }
+
+  async getQuestionnaireTicketQuestionLikeCount(
+    questionnaireTicketQuestionId: number,
+  ) {
+    return this.likeRepository.count({
+      where: { questionnaireTicketQuestionId },
+    });
+  }
+
+  async getQuestionnaireTicketQuestionComments(
+    questionnaireTicketQuestionId: number,
+  ) {
+    return this.commentRepository.find({
+      where: { questionnaireTicketQuestionId },
+    });
+  }
+
+  async getQuestionnaireTicketQuestionCommentCount(
+    questionnaireTicketQuestionId: number,
+  ) {
+    return this.commentRepository.count({
+      where: { questionnaireTicketQuestionId },
     });
   }
 

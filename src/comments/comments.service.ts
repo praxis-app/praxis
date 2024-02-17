@@ -11,7 +11,7 @@ import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
-import { Answer } from '../questions/models/answer.model';
+import { QuestionnaireTicketQuestion } from '../questions/models/questionnaire-ticket-question.model';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { User } from '../users/models/user.model';
 import { Comment } from './models/comment.model';
@@ -33,8 +33,8 @@ export class CommentsService {
     @InjectRepository(Proposal)
     private proposalRepository: Repository<Proposal>,
 
-    @InjectRepository(Answer)
-    private answerRepository: Repository<Answer>,
+    @InjectRepository(QuestionnaireTicketQuestion)
+    private questionnaireTicketQuestionRepository: Repository<QuestionnaireTicketQuestion>,
 
     @InjectRepository(QuestionnaireTicket)
     private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
@@ -86,8 +86,8 @@ export class CommentsService {
     );
   }
 
-  async getCommentedAnswer(answerId: number, relations?: string[]) {
-    return this.answerRepository.findOne({
+  async getCommentedQuestion(answerId: number, relations?: string[]) {
+    return this.questionnaireTicketQuestionRepository.findOne({
       where: { id: answerId },
       relations,
     });
@@ -111,12 +111,13 @@ export class CommentsService {
       });
       return proposal.user.id;
     }
-    if (comment.answerId) {
-      const answer = await this.answerRepository.findOneOrFail({
-        where: { id: comment.answerId },
-        relations: ['questionnaireTicketQuestion.questionnaireTicket'],
-      });
-      return answer.questionnaireTicketQuestion.questionnaireTicket.userId;
+    if (comment.questionnaireTicketQuestionId) {
+      const answer =
+        await this.questionnaireTicketQuestionRepository.findOneOrFail({
+          where: { id: comment.questionnaireTicketQuestionId },
+          relations: ['questionnaireTicket'],
+        });
+      return answer.questionnaireTicket.userId;
     }
     if (comment.questionnaireTicketId) {
       const questionnaireTicket =
@@ -136,7 +137,7 @@ export class CommentsService {
     if (comment.proposalId) {
       return NotificationType.ProposalComment;
     }
-    if (comment.answerId) {
+    if (comment.questionnaireTicketQuestionId) {
       return NotificationType.AnswerComment;
     }
     if (comment.questionnaireTicketId) {
@@ -173,7 +174,7 @@ export class CommentsService {
 
     if (commentedItemUserId !== user.id) {
       await this.notificationsService.createNotification({
-        answerId: comment.answerId,
+        questionnaireTicketQuestionId: comment.questionnaireTicketQuestionId,
         commentId: comment.id,
         otherUserId: user.id,
         postId: comment.postId,
@@ -184,13 +185,12 @@ export class CommentsService {
       });
     }
 
-    if (comment.answerId && commentedItemUserId === user.id) {
-      const answer = await this.getCommentedAnswer(comment.answerId, [
-        'questionnaireTicketQuestion.questionnaireTicket',
-      ]);
-      if (
-        answer?.questionnaireTicketQuestion.questionnaireTicket.groupId === null
-      ) {
+    if (comment.questionnaireTicketId && commentedItemUserId === user.id) {
+      const answer = await this.getCommentedQuestion(
+        comment.questionnaireTicketId,
+        ['questionnaireTicket'],
+      );
+      if (answer?.questionnaireTicket.groupId === null) {
         const usersWithAccess = await this.userRepository.find({
           where: {
             serverRoles: {
@@ -201,8 +201,8 @@ export class CommentsService {
         for (const user of usersWithAccess) {
           await this.notificationsService.createNotification({
             notificationType: NotificationType.AnswerComment,
+            questionnaireTicketId: comment.questionnaireTicketId,
             otherUserId: comment.userId,
-            answerId: comment.answerId,
             commentId: comment.id,
             userId: user.id,
           });

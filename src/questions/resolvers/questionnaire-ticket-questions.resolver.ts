@@ -1,11 +1,14 @@
 import {
   Args,
+  Int,
   Mutation,
   Parent,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { Comment } from '../../comments/models/comment.model';
+import { Like } from '../../likes/models/like.model';
 import { User } from '../../users/models/user.model';
 import { AnswerQuestionsInput } from '../models/answer-questions.input';
 import { AnswerQuestionsPayload } from '../models/answer-questions.payload';
@@ -30,6 +33,26 @@ export class QuestionnnaireTicketQuestionsResolver {
     @Parent() { questionnaireTicketId }: QuestionnaireTicketQuestion,
   ) {
     return this.questionsService.getQuestionnaireTicket(questionnaireTicketId);
+  }
+
+  @ResolveField(() => [Like])
+  async likes(@Parent() { id }: QuestionnaireTicketQuestion) {
+    return this.questionsService.getQuestionnaireTicketQuestionLikes(id);
+  }
+
+  @ResolveField(() => Int)
+  async likeCount(@Parent() { id }: QuestionnaireTicketQuestion) {
+    return this.questionsService.getQuestionnaireTicketQuestionLikeCount(id);
+  }
+
+  @ResolveField(() => [Comment])
+  async comments(@Parent() { id }: QuestionnaireTicketQuestion) {
+    return this.questionsService.getQuestionnaireTicketQuestionComments(id);
+  }
+
+  @ResolveField(() => Int)
+  async commentCount(@Parent() { id }: QuestionnaireTicketQuestion) {
+    return this.questionsService.getQuestionnaireTicketQuestionCommentCount(id);
   }
 
   @Mutation(() => AnswerQuestionsPayload)

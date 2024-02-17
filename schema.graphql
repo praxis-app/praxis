@@ -44,12 +44,8 @@ type Answer {
   id: Int!
   text: String!
   question: QuestionnaireTicketQuestion!
-  likes: [Like!]!
   user: User!
-  likeCount: Int!
   isLikedByMe: Boolean!
-  comments: [Comment!]!
-  commentCount: Int!
 }
 
 type QuestionnaireTicketQuestion {
@@ -58,6 +54,10 @@ type QuestionnaireTicketQuestion {
   priority: Int!
   answer: Answer
   questionnaireTicket: QuestionnaireTicket!
+  likes: [Like!]!
+  likeCount: Int!
+  comments: [Comment!]!
+  commentCount: Int!
 }
 
 type QuestionnaireTicket {
@@ -412,7 +412,7 @@ type Notification {
   proposal: Proposal
   post: Post
   comment: Comment
-  answer: Answer
+  question: QuestionnaireTicketQuestion
 }
 
 type Like {
@@ -432,7 +432,7 @@ type Comment {
   user: User!
   post: Post
   proposal: Proposal
-  answer: Answer
+  question: QuestionnaireTicketQuestion
   questionnaireTicket: QuestionnaireTicket
   likes: [Like!]!
   likeCount: Int!
@@ -1005,7 +1005,7 @@ input CreateServerInviteInput {
 input CreateCommentInput {
   postId: Int
   proposalId: Int
-  answerId: Int
+  questionnaireTicketQuestionId: Int
   questionnaireTicketId: Int
   body: String
   images: [Upload!]
