@@ -35,7 +35,10 @@ const QuestionnairePage = () => {
 
   return (
     <>
-      <QuestionnaireTicketCard questionnaireTicket={questionnaireTicket} />
+      <QuestionnaireTicketCard
+        questionnaireTicket={questionnaireTicket}
+        isTicketPage
+      />
 
       {questions.map((question) => (
         <AnsweredQuestionCard key={question.id} question={question} />

@@ -64,14 +64,19 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 }));
 
 interface Props {
-  questionnaireTicket: QuestionnaireTicketCardFragment;
   inModal?: boolean;
+  isTicketPage?: boolean;
+  questionnaireTicket: QuestionnaireTicketCardFragment;
 }
 
-const QuestionnaireTicketCard = ({ questionnaireTicket, inModal }: Props) => {
+const QuestionnaireTicketCard = ({
+  inModal,
+  isTicketPage,
+  questionnaireTicket,
+}: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
+  const [showDetails, setShowDetails] = useState(!!isTicketPage);
 
   const [deleteQuestionnaireTicket] = useDeleteQuestionnaireTicketMutation();
 
