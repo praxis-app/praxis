@@ -14,7 +14,7 @@ import { QuestionsService } from './questions.service';
 import { AnswersResolver } from './resolvers/answers.resolver';
 import { QuestionnnaireTicketQuestionsResolver } from './resolvers/questionnaire-ticket-questions.resolver';
 import { QuestionnaireTicketsResolver } from './resolvers/questionnaire-tickets.resolver';
-import { QuestionsResolver } from './resolvers/questions.resolver';
+import { ServerQuestionsResolver } from './resolvers/server-questions.resolver';
 
 @Module({
   imports: [
@@ -33,9 +33,9 @@ import { QuestionsResolver } from './resolvers/questions.resolver';
   ],
   providers: [
     AnswersResolver,
+    ServerQuestionsResolver,
     QuestionnaireTicketsResolver,
     QuestionnnaireTicketQuestionsResolver,
-    QuestionsResolver,
     QuestionsService,
   ],
   exports: [QuestionsService],

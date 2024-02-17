@@ -8,7 +8,7 @@ import { UpdateQuestionsPriorityInput } from '../models/update-questions-priorit
 import { QuestionsService } from '../questions.service';
 
 @Resolver(() => ServerQuestion)
-export class QuestionsResolver {
+export class ServerQuestionsResolver {
   constructor(private questionsService: QuestionsService) {}
 
   @Query(() => [ServerQuestion])
