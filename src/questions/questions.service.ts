@@ -4,9 +4,14 @@ import { FindOptionsWhere, IsNull, Not, Repository } from 'typeorm';
 import { Comment } from '../comments/models/comment.model';
 import { sanitizeText } from '../common/common.utils';
 import { Like } from '../likes/models/like.model';
+import { DecisionMakingModel } from '../proposals/proposals.constants';
 import { ServerConfigsService } from '../server-configs/server-configs.service';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
+import {
+  sortConsensusVotesByType,
+  sortMajorityVotesByType,
+} from '../votes/votes.utils';
 import { AnswerQuestionsInput } from './models/answer-questions.input';
 import { Answer } from './models/answer.model';
 import { CreateQuestionInput } from './models/create-question.input';
@@ -98,9 +103,13 @@ export class QuestionsService {
     return questionnaireTicket.user;
   }
 
-  async getQuestionnaireTicket(questionnaireTicketId: number) {
+  async getQuestionnaireTicket(
+    questionnaireTicketId: number,
+    relations?: string[],
+  ) {
     return this.questionnaireTicketRepository.findOneOrFail({
       where: { id: questionnaireTicketId },
+      relations,
     });
   }
 
@@ -227,6 +236,91 @@ export class QuestionsService {
       },
     });
     return count > 0;
+  }
+
+  async isQuestionnaireTicketVerifiable(questionnaireTicketId: number) {
+    const { status, config, votes } = await this.getQuestionnaireTicket(
+      questionnaireTicketId,
+      ['config', 'votes'],
+    );
+    if (status !== QuestionnaireTicketStatus.Submitted) {
+      return false;
+    }
+    const usersWithAccessCount = await this.userRepository.count({
+      where: {
+        serverRoles: {
+          permission: { manageQuestionnaireTickets: true },
+        },
+      },
+    });
+
+    if (config.decisionMakingModel === DecisionMakingModel.MajorityVote) {
+      return this.hasMajorityVote(votes, config, usersWithAccessCount);
+    }
+    if (config.decisionMakingModel === DecisionMakingModel.Consensus) {
+      return this.hasConsensus(votes, config, usersWithAccessCount);
+    }
+    return false;
+  }
+
+  async hasConsensus(
+    votes: Vote[],
+    {
+      ratificationThreshold,
+      reservationsLimit,
+      standAsidesLimit,
+      closingAt,
+    }: QuestionnaireTicketConfig,
+    usersWithAccessCount: number,
+  ) {
+    if (closingAt && Date.now() < Number(closingAt)) {
+      return false;
+    }
+
+    const { agreements, reservations, standAsides, blocks } =
+      sortConsensusVotesByType(votes);
+
+    return (
+      agreements.length >=
+        usersWithAccessCount * (ratificationThreshold * 0.01) &&
+      reservations.length <= reservationsLimit &&
+      standAsides.length <= standAsidesLimit &&
+      blocks.length === 0
+    );
+  }
+
+  async hasMajorityVote(
+    votes: Vote[],
+    { ratificationThreshold, closingAt }: QuestionnaireTicketConfig,
+    usersWithAccessCount: number,
+  ) {
+    if (closingAt && Date.now() < Number(closingAt)) {
+      return false;
+    }
+    const { agreements } = sortMajorityVotesByType(votes);
+
+    return (
+      agreements.length >= usersWithAccessCount * (ratificationThreshold * 0.01)
+    );
+  }
+
+  async approveQuestionnaireTicket(questionnaireTicketId: number) {
+    const questionnaireTicket = await this.getQuestionnaireTicket(
+      questionnaireTicketId,
+      ['user'],
+    );
+    await this.questionnaireTicketRepository.update(questionnaireTicketId, {
+      status: QuestionnaireTicketStatus.Approved,
+    });
+    await this.userRepository.update(questionnaireTicket.user.id, {
+      verified: true,
+    });
+  }
+
+  async denyQuestionnaireTicket(questionnaireTicketId: number) {
+    await this.questionnaireTicketRepository.update(questionnaireTicketId, {
+      status: QuestionnaireTicketStatus.Denied,
+    });
   }
 
   async createQuestion({ text, groupId }: CreateQuestionInput) {

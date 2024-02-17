@@ -28,7 +28,7 @@ export class UsersResolver {
   constructor(private usersService: UsersService) {}
 
   @Query(() => User)
-  me(@CurrentUser() { id }: User) {
+  async me(@CurrentUser() { id }: User) {
     return this.usersService.getUser({ id });
   }
 

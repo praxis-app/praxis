@@ -5,6 +5,7 @@ import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ProposalsService } from '../proposals/proposals.service';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
+import { QuestionsService } from '../questions/questions.service';
 import { CreateVoteInput } from './models/create-vote.input';
 import { UpdateVoteInput } from './models/update-vote.input';
 import { Vote } from './models/vote.model';
@@ -19,8 +20,9 @@ export class VotesService {
     @InjectRepository(QuestionnaireTicket)
     private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
 
-    private proposalsService: ProposalsService,
     private notificationsService: NotificationsService,
+    private proposalsService: ProposalsService,
+    private questionsService: QuestionsService,
   ) {}
 
   async getVote(id: number, relations?: string[]) {
@@ -64,6 +66,18 @@ export class VotesService {
           proposalId: proposal.id,
           voteId: vote.id,
         });
+      }
+    }
+
+    if (vote.questionnaireTicketId) {
+      const isVerifiable =
+        await this.questionsService.isQuestionnaireTicketVerifiable(
+          vote.questionnaireTicketId,
+        );
+      if (isVerifiable) {
+        await this.questionsService.approveQuestionnaireTicket(
+          vote.questionnaireTicketId,
+        );
       }
     }
 
