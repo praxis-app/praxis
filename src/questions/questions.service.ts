@@ -305,21 +305,24 @@ export class QuestionsService {
   }
 
   async approveQuestionnaireTicket(questionnaireTicketId: number) {
-    const questionnaireTicket = await this.getQuestionnaireTicket(
-      questionnaireTicketId,
-      ['user'],
-    );
     await this.questionnaireTicketRepository.update(questionnaireTicketId, {
       status: QuestionnaireTicketStatus.Approved,
-    });
-    await this.userRepository.update(questionnaireTicket.user.id, {
-      verified: true,
     });
   }
 
   async denyQuestionnaireTicket(questionnaireTicketId: number) {
     await this.questionnaireTicketRepository.update(questionnaireTicketId, {
       status: QuestionnaireTicketStatus.Denied,
+    });
+  }
+
+  async verifyQuestionnaireTicketUser(questionnaireTicketId: number) {
+    const questionnaireTicket = await this.getQuestionnaireTicket(
+      questionnaireTicketId,
+      ['user'],
+    );
+    await this.userRepository.update(questionnaireTicket.user.id, {
+      verified: true,
     });
   }
 
