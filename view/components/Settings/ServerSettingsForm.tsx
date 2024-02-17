@@ -129,16 +129,11 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
   const validateSettings = ({
     decisionMakingModel,
     ratificationThreshold,
-    votingTimeLimit,
   }: FormValues) => {
     const errors: FormikErrors<FormValues> = {};
-    if (
-      decisionMakingModel === DecisionMakingModel.Consent &&
-      votingTimeLimit === VotingTimeLimit.Unlimited
-    ) {
-      errors.votingTimeLimit = t(
-        'groups.errors.consentVotingTimeLimitRequired',
-      );
+
+    if (decisionMakingModel === DecisionMakingModel.Consent) {
+      errors.decisionMakingModel = t('prompts.inDev');
     }
     if (
       decisionMakingModel === DecisionMakingModel.MajorityVote &&

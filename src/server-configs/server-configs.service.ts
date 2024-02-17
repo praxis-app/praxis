@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CanariesService } from '../canaries/canaries.service';
 import { sanitizeText } from '../common/common.utils';
+import { DecisionMakingModel } from '../proposals/proposals.constants';
 import { ServerConfig } from './models/server-config.model';
 import { UpdateServerConfigInput } from './models/update-server-config.input';
 
@@ -34,6 +35,10 @@ export class ServerConfigsService {
     canaryStatement,
     ...data
   }: UpdateServerConfigInput) {
+    if (data.decisionMakingModel === DecisionMakingModel.Consent) {
+      throw new Error('Consent model is not yet supported at server level');
+    }
+
     await this.repository.update(id, data);
 
     if (canaryStatement) {
