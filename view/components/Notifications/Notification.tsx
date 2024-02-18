@@ -152,6 +152,11 @@ const Notification = ({
       });
     }
     if (notificationType === NotificationType.AnswerLike) {
+      if (!question?.answer?.text) {
+        return _t('notifications.messages.missingAnswerLike', {
+          name: otherUser?.name,
+        });
+      }
       return _t('notifications.messages.answerLike', {
         name: otherUser?.name,
         text: `"${truncate(question?.answer?.text, { length: 30 })}"`,
