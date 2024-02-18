@@ -21,7 +21,7 @@ import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
 import { QuestionsService } from '../questions.service';
 
 @Resolver(() => Question)
-export class QuestionnnaireTicketQuestionsResolver {
+export class QuestionsResolver {
   constructor(private questionsService: QuestionsService) {}
 
   @Query(() => Question)
