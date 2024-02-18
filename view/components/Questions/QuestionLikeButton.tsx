@@ -17,14 +17,11 @@ import { Blurple } from '../../styles/theme';
 import CardFooterButton from '../Shared/CardFooterButton';
 
 interface Props {
-  questionnaireTicketQuestionId?: number;
+  questionId?: number;
   isLikedByMe: boolean;
 }
 
-const QuestionLikeButton = ({
-  questionnaireTicketQuestionId,
-  isLikedByMe,
-}: Props) => {
+const QuestionLikeButton = ({ questionId, isLikedByMe }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const [likeQuestion, { loading: likeQuestionLoading }] =
@@ -43,7 +40,7 @@ const QuestionLikeButton = ({
 
   const handleLikeButtonClick = async () => {
     const variables = {
-      likeData: { questionnaireTicketQuestionId },
+      likeData: { questionId },
       isLoggedIn,
     };
     if (isLikedByMe) {
@@ -51,8 +48,8 @@ const QuestionLikeButton = ({
         variables,
         update(cache) {
           const cacheId = cache.identify({
-            __typename: TypeNames.QuestionnaireTicketQuestion,
-            id: questionnaireTicketQuestionId,
+            __typename: TypeNames.Question,
+            id: questionId,
           });
           cache.modify({
             id: cacheId,
@@ -63,12 +60,12 @@ const QuestionLikeButton = ({
           });
           const likesQuery = cache.readQuery({
             query: LikesPopoverDocument,
-            variables: { questionnaireTicketQuestionId },
+            variables: { questionId },
           });
           if (likesQuery) {
             cache.evict({
               fieldName: 'likes',
-              args: { questionnaireTicketQuestionId },
+              args: { questionId },
             });
           }
         },
@@ -84,7 +81,7 @@ const QuestionLikeButton = ({
         cache.updateQuery<LikesPopoverQuery>(
           {
             query: LikesPopoverDocument,
-            variables: { questionnaireTicketQuestionId },
+            variables: { questionId },
           },
           (likesData) =>
             produce(likesData, (draft) => {

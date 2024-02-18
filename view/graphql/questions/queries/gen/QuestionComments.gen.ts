@@ -16,7 +16,7 @@ export type QuestionCommentsQueryVariables = Types.Exact<{
 export type QuestionCommentsQuery = {
   __typename?: 'Query';
   question: {
-    __typename?: 'QuestionnaireTicketQuestion';
+    __typename?: 'Question';
     id: number;
     comments: Array<{
       __typename?: 'Comment';

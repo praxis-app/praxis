@@ -18,7 +18,7 @@ export type LikeQuestionMutation = {
   createLike: {
     __typename?: 'CreateLikePayload';
     question?: {
-      __typename?: 'QuestionnaireTicketQuestion';
+      __typename?: 'Question';
       id: number;
       likeCount: number;
       isLikedByMe?: boolean;

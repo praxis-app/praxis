@@ -10,7 +10,7 @@ export type AnswerQuestionsFormFragment = {
   __typename?: 'QuestionnaireTicket';
   id: number;
   questions: Array<{
-    __typename?: 'QuestionnaireTicketQuestion';
+    __typename?: 'Question';
     id: number;
     text: string;
     answer?: { __typename?: 'Answer'; id: number; text: string } | null;

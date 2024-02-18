@@ -11,7 +11,7 @@ import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
-import { QuestionnaireTicketQuestion } from '../questions/models/questionnaire-ticket-question.model';
+import { Question } from '../questions/models/question.model';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { User } from '../users/models/user.model';
 import { Comment } from './models/comment.model';
@@ -33,8 +33,8 @@ export class CommentsService {
     @InjectRepository(Proposal)
     private proposalRepository: Repository<Proposal>,
 
-    @InjectRepository(QuestionnaireTicketQuestion)
-    private questionnaireTicketQuestionRepository: Repository<QuestionnaireTicketQuestion>,
+    @InjectRepository(Question)
+    private questionRepository: Repository<Question>,
 
     @InjectRepository(QuestionnaireTicket)
     private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
@@ -87,7 +87,7 @@ export class CommentsService {
   }
 
   async getCommentedQuestion(answerId: number, relations?: string[]) {
-    return this.questionnaireTicketQuestionRepository.findOne({
+    return this.questionRepository.findOne({
       where: { id: answerId },
       relations,
     });
@@ -111,12 +111,11 @@ export class CommentsService {
       });
       return proposal.user.id;
     }
-    if (comment.questionnaireTicketQuestionId) {
-      const answer =
-        await this.questionnaireTicketQuestionRepository.findOneOrFail({
-          where: { id: comment.questionnaireTicketQuestionId },
-          relations: ['questionnaireTicket'],
-        });
+    if (comment.questionId) {
+      const answer = await this.questionRepository.findOneOrFail({
+        where: { id: comment.questionId },
+        relations: ['questionnaireTicket'],
+      });
       return answer.questionnaireTicket.userId;
     }
     if (comment.questionnaireTicketId) {
@@ -137,7 +136,7 @@ export class CommentsService {
     if (comment.proposalId) {
       return NotificationType.ProposalComment;
     }
-    if (comment.questionnaireTicketQuestionId) {
+    if (comment.questionId) {
       return NotificationType.AnswerComment;
     }
     if (comment.questionnaireTicketId) {
@@ -174,7 +173,7 @@ export class CommentsService {
 
     if (commentedItemUserId !== user.id) {
       await this.notificationsService.createNotification({
-        questionnaireTicketQuestionId: comment.questionnaireTicketQuestionId,
+        questionId: comment.questionId,
         commentId: comment.id,
         otherUserId: user.id,
         postId: comment.postId,

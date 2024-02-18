@@ -9,7 +9,7 @@ interface Props extends BoxProps {
   postId?: number;
   proposalId?: number;
   questionnaireTicketId?: number;
-  questionnaireTicketQuestionId?: number;
+  questionId?: number;
 }
 
 const CommentsList = ({
@@ -19,7 +19,7 @@ const CommentsList = ({
   postId,
   proposalId,
   questionnaireTicketId,
-  questionnaireTicketQuestionId,
+  questionId,
   ...boxProps
 }: Props) => {
   if (!comments.length) {
@@ -36,7 +36,7 @@ const CommentsList = ({
           postId={postId}
           proposalId={proposalId}
           questionnaireTicketId={questionnaireTicketId}
-          questionnaireTicketQuestionId={questionnaireTicketQuestionId}
+          questionId={questionId}
         />
       ))}
     </Box>

@@ -18,7 +18,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { Proposal } from '../proposals/models/proposal.model';
-import { ServerQuestion } from '../questions/models/question.model';
+import { ServerQuestion } from '../questions/models/server-question.model';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { ServerConfig } from '../server-configs/models/server-config.model';
 import { ServerConfigsService } from '../server-configs/server-configs.service';

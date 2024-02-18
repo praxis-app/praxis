@@ -9,5 +9,5 @@ export class DeleteLikeInput {
   commentId?: number;
 
   @Field(() => Int, { nullable: true })
-  questionnaireTicketQuestionId?: number;
+  questionId?: number;
 }

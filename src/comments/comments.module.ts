@@ -6,7 +6,7 @@ import { Post } from '../posts/models/post.model';
 import { PostsModule } from '../posts/posts.module';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalsModule } from '../proposals/proposals.module';
-import { QuestionnaireTicketQuestion } from '../questions/models/questionnaire-ticket-question.model';
+import { Question } from '../questions/models/question.model';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { User } from '../users/models/user.model';
 import { CommentsResolver } from './comments.resolver';
@@ -21,7 +21,7 @@ import { Comment } from './models/comment.model';
       Post,
       Proposal,
       QuestionnaireTicket,
-      QuestionnaireTicketQuestion,
+      Question,
       User,
     ]),
     NotificationsModule,

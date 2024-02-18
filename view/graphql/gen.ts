@@ -35,13 +35,13 @@ export type Scalars = {
 export type Answer = {
   __typename?: 'Answer';
   id: Scalars['Int']['output'];
-  question: QuestionnaireTicketQuestion;
+  question: Question;
   text: Scalars['String']['output'];
   user: User;
 };
 
 export type AnswerInput = {
-  questionnaireTicketQuestionId: Scalars['Int']['input'];
+  questionId: Scalars['Int']['input'];
   text: Scalars['String']['input'];
 };
 
@@ -84,7 +84,7 @@ export type Comment = {
   likes: Array<Like>;
   post?: Maybe<Post>;
   proposal?: Maybe<Proposal>;
-  question?: Maybe<QuestionnaireTicketQuestion>;
+  question?: Maybe<Question>;
   questionnaireTicket?: Maybe<QuestionnaireTicket>;
   user: User;
 };
@@ -94,8 +94,8 @@ export type CreateCommentInput = {
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
   postId?: InputMaybe<Scalars['Int']['input']>;
   proposalId?: InputMaybe<Scalars['Int']['input']>;
+  questionId?: InputMaybe<Scalars['Int']['input']>;
   questionnaireTicketId?: InputMaybe<Scalars['Int']['input']>;
-  questionnaireTicketQuestionId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreateCommentPayload = {
@@ -161,7 +161,7 @@ export type CreateGroupRolePayload = {
 export type CreateLikeInput = {
   commentId?: InputMaybe<Scalars['Int']['input']>;
   postId?: InputMaybe<Scalars['Int']['input']>;
-  questionnaireTicketQuestionId?: InputMaybe<Scalars['Int']['input']>;
+  questionId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreateLikePayload = {
@@ -169,7 +169,7 @@ export type CreateLikePayload = {
   comment?: Maybe<Comment>;
   like: Like;
   post?: Maybe<Post>;
-  question?: Maybe<QuestionnaireTicketQuestion>;
+  question?: Maybe<Question>;
 };
 
 export type CreatePostInput = {
@@ -261,7 +261,7 @@ export type DeleteGroupRoleMemberPayload = {
 export type DeleteLikeInput = {
   commentId?: InputMaybe<Scalars['Int']['input']>;
   postId?: InputMaybe<Scalars['Int']['input']>;
-  questionnaireTicketQuestionId?: InputMaybe<Scalars['Int']['input']>;
+  questionId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type DeleteServerRoleMemberInput = {
@@ -795,7 +795,7 @@ export type Notification = {
   otherUser?: Maybe<User>;
   post?: Maybe<Post>;
   proposal?: Maybe<Proposal>;
-  question?: Maybe<QuestionnaireTicketQuestion>;
+  question?: Maybe<Question>;
   status: Scalars['String']['output'];
 };
 
@@ -1023,7 +1023,7 @@ export type Query = {
   publicGroups: Array<Group>;
   publicGroupsCount: Scalars['Int']['output'];
   publicGroupsFeed: PublicFeedItemsConnection;
-  question: QuestionnaireTicketQuestion;
+  question: Question;
   questionnaireTicket: QuestionnaireTicket;
   serverConfig: ServerConfig;
   serverInvite: ServerInvite;
@@ -1128,6 +1128,20 @@ export type QueryUsersByIdsArgs = {
   ids: Array<Scalars['Int']['input']>;
 };
 
+export type Question = {
+  __typename?: 'Question';
+  answer?: Maybe<Answer>;
+  commentCount: Scalars['Int']['output'];
+  comments: Array<Comment>;
+  id: Scalars['Int']['output'];
+  isLikedByMe: Scalars['Boolean']['output'];
+  likeCount: Scalars['Int']['output'];
+  likes: Array<Like>;
+  priority: Scalars['Int']['output'];
+  questionnaireTicket: QuestionnaireTicket;
+  text: Scalars['String']['output'];
+};
+
 export type QuestionnaireTicket = {
   __typename?: 'QuestionnaireTicket';
   agreementVoteCount: Scalars['Int']['output'];
@@ -1140,7 +1154,7 @@ export type QuestionnaireTicket = {
   myVote?: Maybe<Vote>;
   prompt?: Maybe<Scalars['String']['output']>;
   questionCount: Scalars['Int']['output'];
-  questions: Array<QuestionnaireTicketQuestion>;
+  questions: Array<Question>;
   settings: QuestionnaireTicketConfig;
   status: Scalars['String']['output'];
   user: User;
@@ -1157,20 +1171,6 @@ export type QuestionnaireTicketConfig = {
   ratificationThreshold: Scalars['Int']['output'];
   reservationsLimit: Scalars['Int']['output'];
   standAsidesLimit: Scalars['Int']['output'];
-};
-
-export type QuestionnaireTicketQuestion = {
-  __typename?: 'QuestionnaireTicketQuestion';
-  answer?: Maybe<Answer>;
-  commentCount: Scalars['Int']['output'];
-  comments: Array<Comment>;
-  id: Scalars['Int']['output'];
-  isLikedByMe: Scalars['Boolean']['output'];
-  likeCount: Scalars['Int']['output'];
-  likes: Array<Like>;
-  priority: Scalars['Int']['output'];
-  questionnaireTicket: QuestionnaireTicket;
-  text: Scalars['String']['output'];
 };
 
 export type ReadNotificationsPayload = {

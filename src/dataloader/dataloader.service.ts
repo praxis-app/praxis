@@ -21,7 +21,7 @@ import { Like } from '../likes/models/like.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
-import { QuestionnaireTicketQuestion } from '../questions/models/questionnaire-ticket-question.model';
+import { Question } from '../questions/models/question.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
@@ -37,7 +37,7 @@ import {
   IsCommentLikedByMeKey,
   IsFollowedByMeKey,
   IsPostLikedByMeKey,
-  IsQuestionnaireTicketQuestionLikedByMeKey,
+  IsQuestionLikedByMeKey,
   MyGroupsKey,
   PostWithCommentCount,
   PostWithLikeCount,
@@ -87,8 +87,8 @@ export class DataloaderService {
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
 
-    @InjectRepository(QuestionnaireTicketQuestion)
-    private questionnaireTicketQuestionRepository: Repository<QuestionnaireTicketQuestion>,
+    @InjectRepository(Question)
+    private questionRepository: Repository<Question>,
 
     private usersService: UsersService,
   ) {}
@@ -145,8 +145,7 @@ export class DataloaderService {
       eventsLoader: this._createEventsLoader(),
 
       // Questions & Answers
-      questionnaireTicketQuestionsLoader:
-        this._createQuestionnaireTicketQuestionsLoader(),
+      questionsLoader: this._createQuestionsLoader(),
       isAnswerLikedByMeLoader: this._createIsAnswerLikedByMeLoader(),
     };
   }
@@ -822,48 +821,34 @@ export class DataloaderService {
   // Questions & Answers
   // -------------------------------------------------------------------------
 
-  private _createQuestionnaireTicketQuestionsLoader() {
-    return this._getDataLoader<number, QuestionnaireTicketQuestion>(
-      async (questionnaireTicketQuestionIds) => {
-        const answers = await this.questionnaireTicketQuestionRepository.find({
-          where: { id: In(questionnaireTicketQuestionIds) },
-        });
-        return questionnaireTicketQuestionIds.map(
-          (id) =>
-            answers.find(
-              (answer: QuestionnaireTicketQuestion) => answer.id === id,
-            ) || new Error(`Could not load answer: ${id}`),
-        );
-      },
-    );
+  private _createQuestionsLoader() {
+    return this._getDataLoader<number, Question>(async (questionIds) => {
+      const answers = await this.questionRepository.find({
+        where: { id: In(questionIds) },
+      });
+      return questionIds.map(
+        (id) =>
+          answers.find((answer: Question) => answer.id === id) ||
+          new Error(`Could not load answer: ${id}`),
+      );
+    });
   }
 
   private _createIsAnswerLikedByMeLoader() {
-    return this._getDataLoader<
-      IsQuestionnaireTicketQuestionLikedByMeKey,
-      boolean,
-      number
-    >(
+    return this._getDataLoader<IsQuestionLikedByMeKey, boolean, number>(
       async (keys) => {
-        const questionnaireTicketQuestionIds = keys.map(
-          ({ questionnaireTicketQuestionId }) => questionnaireTicketQuestionId,
-        );
+        const questionIds = keys.map(({ questionId }) => questionId);
         const likes = await this.likeRepository.find({
           where: {
-            questionnaireTicketQuestionId: In(questionnaireTicketQuestionIds),
+            questionId: In(questionIds),
             userId: keys[0].currentUserId,
           },
         });
-        return questionnaireTicketQuestionIds.map(
-          (questionnaireTicketQuestionId) =>
-            likes.some(
-              (like: Like) =>
-                like.questionnaireTicketQuestionId ===
-                questionnaireTicketQuestionId,
-            ),
+        return questionIds.map((questionId) =>
+          likes.some((like: Like) => like.questionId === questionId),
         );
       },
-      { cacheKeyFn: (key) => key.questionnaireTicketQuestionId },
+      { cacheKeyFn: (key) => key.questionId },
     );
   }
 }

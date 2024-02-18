@@ -8,7 +8,7 @@ import {
 } from '@nestjs/graphql';
 import { User } from '../../users/models/user.model';
 import { Answer } from '../models/answer.model';
-import { QuestionnaireTicketQuestion } from '../models/questionnaire-ticket-question.model';
+import { Question } from '../models/question.model';
 import { QuestionsService } from '../questions.service';
 
 @Resolver(() => Answer)
@@ -21,11 +21,9 @@ export class AnswersResolver {
     return this.questionsService.getAnswer({ id });
   }
 
-  @ResolveField(() => QuestionnaireTicketQuestion)
-  async question(@Parent() { questionnaireTicketQuestionId }: Answer) {
-    return this.questionsService.getQuestionnaireTicketQuestion(
-      questionnaireTicketQuestionId,
-    );
+  @ResolveField(() => Question)
+  async question(@Parent() { questionId }: Answer) {
+    return this.questionsService.getQuestion(questionId);
   }
 
   @ResolveField(() => User)

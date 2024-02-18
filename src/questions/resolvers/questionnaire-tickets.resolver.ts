@@ -12,7 +12,7 @@ import { Group } from '../../groups/models/group.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { VoteTypes } from '../../votes/votes.constants';
-import { ServerQuestion } from '../models/question.model';
+import { ServerQuestion } from '../models/server-question.model';
 import { QuestionnaireTicketConfig } from '../models/questionnaire-ticket-config.model';
 import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
 import { QuestionsService } from '../questions.service';
@@ -38,12 +38,12 @@ export class QuestionnaireTicketsResolver {
 
   @ResolveField(() => [ServerQuestion])
   async questions(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketQuestions(id);
+    return this.questionsService.getQuestions(id);
   }
 
   @ResolveField(() => Int)
   async questionCount(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketQuestionCount(id);
+    return this.questionsService.getQuestionCount(id);
   }
 
   @ResolveField(() => Int)

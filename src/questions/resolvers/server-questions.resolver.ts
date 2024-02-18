@@ -1,7 +1,7 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateQuestionInput } from '../models/create-question.input';
 import { CreateQuestionPayload } from '../models/create-question.payload';
-import { ServerQuestion } from '../models/question.model';
+import { ServerQuestion } from '../models/server-question.model';
 import { UpdateQuestionInput } from '../models/update-question.input';
 import { UpdateQuestionPayload } from '../models/update-question.payload';
 import { UpdateQuestionsPriorityInput } from '../models/update-questions-priority.input';

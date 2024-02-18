@@ -15,9 +15,9 @@ import {
 import { AnswerQuestionsInput } from './models/answer-questions.input';
 import { Answer } from './models/answer.model';
 import { CreateQuestionInput } from './models/create-question.input';
-import { ServerQuestion } from './models/question.model';
+import { ServerQuestion } from './models/server-question.model';
 import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
-import { QuestionnaireTicketQuestion } from './models/questionnaire-ticket-question.model';
+import { Question } from './models/question.model';
 import {
   QuestionnaireTicket,
   QuestionnaireTicketStatus,
@@ -31,8 +31,8 @@ export class QuestionsService {
     @InjectRepository(QuestionnaireTicket)
     private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
 
-    @InjectRepository(QuestionnaireTicketQuestion)
-    private questionnaireTicketQuestionRepository: Repository<QuestionnaireTicketQuestion>,
+    @InjectRepository(Question)
+    private questionRepository: Repository<Question>,
 
     @InjectRepository(QuestionnaireTicketConfig)
     private questionnaireTicketConfigRepository: Repository<QuestionnaireTicketConfig>,
@@ -70,10 +70,10 @@ export class QuestionsService {
 
   async getAnswerUser(answerId: number) {
     const {
-      questionnaireTicketQuestion: { questionnaireTicket },
+      question: { questionnaireTicket },
     } = await this.anwersRepository.findOneOrFail({
       where: { id: answerId },
-      relations: ['questionnaireTicketQuestion.questionnaireTicket.user'],
+      relations: ['question.questionnaireTicket.user'],
     });
     return questionnaireTicket.user;
   }
@@ -106,60 +106,52 @@ export class QuestionsService {
     return serverQuestionsPrompt;
   }
 
-  async getQuestionnaireTicketQuestion(questionnaireTicketQuestionId: number) {
-    return this.questionnaireTicketQuestionRepository.findOneOrFail({
-      where: { id: questionnaireTicketQuestionId },
+  async getQuestion(questionId: number) {
+    return this.questionRepository.findOneOrFail({
+      where: { id: questionId },
     });
   }
 
-  async getQuestionnaireTicketQuestions(questionnaireTicketId: number) {
-    return this.questionnaireTicketQuestionRepository.find({
+  async getQuestions(questionnaireTicketId: number) {
+    return this.questionRepository.find({
       where: { questionnaireTicketId },
     });
   }
 
-  async getQuestionnaireTicketQuestionCount(questionnaireTicketId: number) {
-    return this.questionnaireTicketQuestionRepository.count({
+  async getQuestionCount(questionnaireTicketId: number) {
+    return this.questionRepository.count({
       where: { questionnaireTicketId },
     });
   }
 
-  async getQuestionnaireTicketQuestionLikes(
-    questionnaireTicketQuestionId: number,
-  ) {
+  async getQuestionLikes(questionId: number) {
     return this.likeRepository.find({
-      where: { questionnaireTicketQuestionId },
+      where: { questionId },
     });
   }
 
-  async getQuestionnaireTicketQuestionLikeCount(
-    questionnaireTicketQuestionId: number,
-  ) {
+  async getQuestionLikeCount(questionId: number) {
     return this.likeRepository.count({
-      where: { questionnaireTicketQuestionId },
+      where: { questionId },
     });
   }
 
-  async getQuestionnaireTicketQuestionComments(
-    questionnaireTicketQuestionId: number,
-  ) {
+  async getQuestionComments(questionId: number) {
     return this.commentRepository.find({
-      where: { questionnaireTicketQuestionId },
+      where: { questionId },
     });
   }
 
-  async getQuestionnaireTicketQuestionCommentCount(
-    questionnaireTicketQuestionId: number,
-  ) {
+  async getQuestionCommentCount(questionId: number) {
     return this.commentRepository.count({
-      where: { questionnaireTicketQuestionId },
+      where: { questionId },
     });
   }
 
   async getQuestionnaireTicketAnswerCount(questionnaireTicketId: number) {
     return this.anwersRepository.count({
       where: {
-        questionnaireTicketQuestion: { questionnaireTicketId },
+        question: { questionnaireTicketId },
         text: Not(''),
       },
     });
@@ -384,20 +376,18 @@ export class QuestionsService {
 
     const existingAnswers = await this.anwersRepository.find({
       where: {
-        questionnaireTicketQuestion: {
+        question: {
           questionnaireTicketId,
         },
       },
     });
     const newAnswers = answers.map((answer) => {
       const existingAnswer = existingAnswers.find(
-        (a) =>
-          a.questionnaireTicketQuestionId ===
-          answer.questionnaireTicketQuestionId,
+        (a) => a.questionId === answer.questionId,
       );
       return {
         id: existingAnswer?.id,
-        questionnaireTicketQuestionId: answer.questionnaireTicketQuestionId,
+        questionId: answer.questionId,
         text: sanitizeText(answer.text),
       };
     });
@@ -407,7 +397,7 @@ export class QuestionsService {
     const questionCount = await this.serverQuestionRepository.count();
     const answerCount = await this.anwersRepository.count({
       where: {
-        questionnaireTicketQuestion: { questionnaireTicketId },
+        question: { questionnaireTicketId },
         text: Not(''),
       },
     });

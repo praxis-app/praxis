@@ -41,7 +41,7 @@ export type NotifiedSubscription = {
       post?: { __typename?: 'Post'; id: number } | null;
       proposal?: { __typename?: 'Proposal'; id: number } | null;
       question?: {
-        __typename?: 'QuestionnaireTicketQuestion';
+        __typename?: 'Question';
         id: number;
         questionnaireTicket: {
           __typename?: 'QuestionnaireTicket';
@@ -56,7 +56,7 @@ export type NotifiedSubscription = {
       } | null;
     } | null;
     question?: {
-      __typename?: 'QuestionnaireTicketQuestion';
+      __typename?: 'Question';
       id: number;
       answer?: { __typename?: 'Answer'; id: number; text: string } | null;
     } | null;

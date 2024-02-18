@@ -50,7 +50,7 @@ const AnsweredQuestionModal = ({ question, open, onClose }: Props) => {
           paddingX="16px"
           width="100%"
         >
-          <CommentForm questionnaireTicketQuestionId={question.id} expanded />
+          <CommentForm questionId={question.id} expanded />
         </Box>
       }
       maxWidth="md"

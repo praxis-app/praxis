@@ -6,7 +6,7 @@ import { gql } from '@apollo/client';
 /* eslint-disable */
 
 export type AnsweredQuestionCardFragment = {
-  __typename?: 'QuestionnaireTicketQuestion';
+  __typename?: 'Question';
   id: number;
   text: string;
   priority: number;
@@ -22,7 +22,7 @@ export type AnsweredQuestionCardFragment = {
 };
 
 export const AnsweredQuestionCardFragmentDoc = gql`
-  fragment AnsweredQuestionCard on QuestionnaireTicketQuestion {
+  fragment AnsweredQuestionCard on Question {
     id
     text
     priority

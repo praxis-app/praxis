@@ -93,12 +93,7 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
     if (!isLoggedIn || inModal) {
       return null;
     }
-    return (
-      <CommentForm
-        questionnaireTicketQuestionId={question.id}
-        enableAutoFocus
-      />
-    );
+    return <CommentForm questionId={question.id} enableAutoFocus />;
   };
 
   return (
@@ -156,7 +151,7 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
         }}
       >
         <QuestionLikeButton
-          questionnaireTicketQuestionId={question?.id}
+          questionId={question?.id}
           isLikedByMe={!!isLikedByMe}
         />
 
@@ -174,7 +169,7 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
             comments={comments || []}
             currentUserId={me?.id}
             marginBottom={inModal && !isLoggedIn ? 2.5 : undefined}
-            questionnaireTicketQuestionId={question?.id}
+            questionId={question?.id}
           />
           {renderCommentForm()}
         </Box>

@@ -26,7 +26,7 @@ interface Props {
   postId?: number;
   proposalId?: number;
   questionnaireTicketId?: number;
-  questionnaireTicketQuestionId?: number;
+  questionId?: number;
 }
 
 const Comment = ({
@@ -36,7 +36,7 @@ const Comment = ({
   postId,
   proposalId,
   questionnaireTicketId,
-  questionnaireTicketQuestionId,
+  questionId,
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showItemMenu, setShowItemMenu] = useState(false);
@@ -116,11 +116,11 @@ const Comment = ({
             },
           });
         }
-        if (questionnaireTicketQuestionId) {
+        if (questionId) {
           cache.modify({
             id: cache.identify({
-              id: questionnaireTicketQuestionId,
-              __typename: TypeNames.QuestionnaireTicketQuestion,
+              id: questionId,
+              __typename: TypeNames.Question,
             }),
             fields: {
               commentCount(existingCount: number) {

@@ -3,15 +3,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Question } from './question.model';
 
 @ObjectType()
 @Entity()
-export class Answer {
+export class ServerQuestion {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
   id: number;
@@ -20,13 +18,9 @@ export class Answer {
   @Field()
   text: string;
 
-  @ManyToOne(() => Question, (question) => question.answers, {
-    onDelete: 'CASCADE',
-  })
-  question: Question;
-
   @Column()
-  questionId: number;
+  @Field(() => Int)
+  priority: number;
 
   @CreateDateColumn()
   createdAt: Date;

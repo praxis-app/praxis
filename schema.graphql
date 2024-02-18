@@ -43,11 +43,11 @@ type QuestionnaireTicketConfig {
 type Answer {
   id: Int!
   text: String!
-  question: QuestionnaireTicketQuestion!
+  question: Question!
   user: User!
 }
 
-type QuestionnaireTicketQuestion {
+type Question {
   id: Int!
   text: String!
   priority: Int!
@@ -63,7 +63,7 @@ type QuestionnaireTicketQuestion {
 type QuestionnaireTicket {
   id: Int!
   status: String!
-  questions: [QuestionnaireTicketQuestion!]!
+  questions: [Question!]!
   comments: [Comment!]!
   createdAt: DateTime!
   prompt: String
@@ -406,7 +406,7 @@ type Notification {
   proposal: Proposal
   post: Post
   comment: Comment
-  question: QuestionnaireTicketQuestion
+  question: Question
 }
 
 type Like {
@@ -426,7 +426,7 @@ type Comment {
   user: User!
   post: Post
   proposal: Proposal
-  question: QuestionnaireTicketQuestion
+  question: Question
   questionnaireTicket: QuestionnaireTicket
   likes: [Like!]!
   likeCount: Int!
@@ -614,7 +614,7 @@ type CreateLikePayload {
   like: Like!
   post: Post
   comment: Comment
-  question: QuestionnaireTicketQuestion
+  question: Question
 }
 
 type AnswerQuestionsPayload {
@@ -681,7 +681,7 @@ type Query {
   serverQuestions: [ServerQuestion!]!
   questionnaireTicket(id: Int!): QuestionnaireTicket!
   serverQuestionnaireTickets: [QuestionnaireTicket!]!
-  question(id: Int!): QuestionnaireTicketQuestion!
+  question(id: Int!): Question!
   serverRules: [Rule!]!
 }
 
@@ -1006,7 +1006,7 @@ input CreateServerInviteInput {
 input CreateCommentInput {
   postId: Int
   proposalId: Int
-  questionnaireTicketQuestionId: Int
+  questionId: Int
   questionnaireTicketId: Int
   body: String
   images: [Upload!]
@@ -1021,13 +1021,13 @@ input UpdateCommentInput {
 input CreateLikeInput {
   postId: Int
   commentId: Int
-  questionnaireTicketQuestionId: Int
+  questionId: Int
 }
 
 input DeleteLikeInput {
   postId: Int
   commentId: Int
-  questionnaireTicketQuestionId: Int
+  questionId: Int
 }
 
 input CreateQuestionInput {
@@ -1055,7 +1055,7 @@ input AnswerQuestionsInput {
 }
 
 input AnswerInput {
-  questionnaireTicketQuestionId: Int!
+  questionId: Int!
   text: String!
 }
 

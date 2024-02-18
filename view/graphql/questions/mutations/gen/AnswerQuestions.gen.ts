@@ -23,7 +23,7 @@ export type AnswerQuestionsMutation = {
       status: string;
       id: number;
       questions: Array<{
-        __typename?: 'QuestionnaireTicketQuestion';
+        __typename?: 'Question';
         id: number;
         text: string;
         priority: number;

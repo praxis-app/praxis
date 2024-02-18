@@ -25,7 +25,7 @@ export type VibeCheckQuery = {
       prompt?: string | null;
       id: number;
       questions: Array<{
-        __typename?: 'QuestionnaireTicketQuestion';
+        __typename?: 'Question';
         id: number;
         text: string;
         priority: number;

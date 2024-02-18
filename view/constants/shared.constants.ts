@@ -52,7 +52,7 @@ export enum TypeNames {
   Proposal = 'Proposal',
   ServerQuestion = 'ServerQuestion',
   QuestionnaireTicket = 'QuestionnaireTicket',
-  QuestionnaireTicketQuestion = 'QuestionnaireTicketQuestion',
+  Question = 'Question',
   ServerInvite = 'ServerInvite',
   ServerRole = 'ServerRole',
   User = 'User',

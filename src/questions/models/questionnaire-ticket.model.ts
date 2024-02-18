@@ -15,7 +15,7 @@ import { Notification } from '../../notifications/models/notification.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { QuestionnaireTicketConfig } from './questionnaire-ticket-config.model';
-import { QuestionnaireTicketQuestion } from './questionnaire-ticket-question.model';
+import { Question } from './question.model';
 
 export enum QuestionnaireTicketStatus {
   InProgress = 'in-progress',
@@ -35,14 +35,11 @@ export class QuestionnaireTicket {
   @Field()
   status: string;
 
-  @Field(() => [QuestionnaireTicketQuestion])
-  @OneToMany(
-    () => QuestionnaireTicketQuestion,
-    (questionnaireTicketQuestion) =>
-      questionnaireTicketQuestion.questionnaireTicket,
-    { cascade: true },
-  )
-  questions: QuestionnaireTicketQuestion[];
+  @Field(() => [Question])
+  @OneToMany(() => Question, (question) => question.questionnaireTicket, {
+    cascade: true,
+  })
+  questions: Question[];
 
   @OneToMany(() => Vote, (vote) => vote.questionnaireTicket, {
     cascade: true,

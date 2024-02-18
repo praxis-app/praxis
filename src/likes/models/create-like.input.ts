@@ -9,5 +9,5 @@ export class CreateLikeInput {
   commentId?: number;
 
   @Field(() => Int, { nullable: true })
-  questionnaireTicketQuestionId?: number;
+  questionId?: number;
 }

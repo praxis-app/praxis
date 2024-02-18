@@ -31,7 +31,7 @@ import Flex from '../Shared/Flex';
 import UserAvatar from '../Users/UserAvatar';
 
 interface Props extends FormikFormProps {
-  questionnaireTicketQuestionId?: number;
+  questionId?: number;
   editComment?: CommentFormFragment;
   enableAutoFocus?: boolean;
   expanded?: boolean;
@@ -42,7 +42,7 @@ interface Props extends FormikFormProps {
 }
 
 const CommentForm = ({
-  questionnaireTicketQuestionId,
+  questionId,
   editComment,
   enableAutoFocus,
   expanded,
@@ -92,8 +92,8 @@ const CommentForm = ({
     if (questionnaireTicketId) {
       return TypeNames.QuestionnaireTicket;
     }
-    if (questionnaireTicketQuestionId) {
-      return TypeNames.QuestionnaireTicketQuestion;
+    if (questionId) {
+      return TypeNames.Question;
     }
     return TypeNames.Post;
   };
@@ -113,7 +113,7 @@ const CommentForm = ({
           postId,
           proposalId,
           questionnaireTicketId,
-          questionnaireTicketQuestionId,
+          questionId,
         },
       },
       update(cache, { data }) {
@@ -126,11 +126,7 @@ const CommentForm = ({
 
         const cacheId = cache.identify({
           __typename: getTypeName(),
-          id:
-            postId ||
-            proposalId ||
-            questionnaireTicketId ||
-            questionnaireTicketQuestionId,
+          id: postId || proposalId || questionnaireTicketId || questionId,
         });
         cache.modify({
           id: cacheId,

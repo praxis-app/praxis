@@ -30,7 +30,7 @@ export type QuestionnairePageQuery = {
     agreementVoteCount: number;
     createdAt: any;
     questions: Array<{
-      __typename?: 'QuestionnaireTicketQuestion';
+      __typename?: 'Question';
       id: number;
       text: string;
       priority: number;

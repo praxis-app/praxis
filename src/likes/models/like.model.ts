@@ -11,7 +11,7 @@ import {
 import { Comment } from '../../comments/models/comment.model';
 import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
-import { QuestionnaireTicketQuestion } from '../../questions/models/questionnaire-ticket-question.model';
+import { Question } from '../../questions/models/question.model';
 import { User } from '../../users/models/user.model';
 
 @Entity()
@@ -39,15 +39,13 @@ export class Like {
   @Column({ nullable: true })
   commentId?: number;
 
-  @ManyToOne(
-    () => QuestionnaireTicketQuestion,
-    (questionnaireTicketQuestion) => questionnaireTicketQuestion.likes,
-    { onDelete: 'CASCADE' },
-  )
-  questionnaireTicketQuestion?: QuestionnaireTicketQuestion;
+  @ManyToOne(() => Question, (question) => question.likes, {
+    onDelete: 'CASCADE',
+  })
+  question?: Question;
 
   @Column({ nullable: true })
-  questionnaireTicketQuestionId?: number;
+  questionId?: number;
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.likes, { onDelete: 'CASCADE' })

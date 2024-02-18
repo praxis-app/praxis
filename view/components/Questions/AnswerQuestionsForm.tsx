@@ -30,9 +30,9 @@ const AnswerQuestionsForm = ({
   const { questions } = questionnaireTicket;
   const answers = questions.map(({ id, answer }) => {
     if (!answer) {
-      return { questionnaireTicketQuestionId: id, text: '' };
+      return { questionId: id, text: '' };
     }
-    return { questionnaireTicketQuestionId: id, text: answer.text };
+    return { questionId: id, text: answer.text };
   });
 
   const initialValues: AnswerQuestionsInput = {
@@ -67,14 +67,12 @@ const AnswerQuestionsForm = ({
       if (!answer.text.trim()) {
         setErrorsMap((prevErrorsMap) => ({
           ...prevErrorsMap,
-          [answer.questionnaireTicketQuestionId]: t(
-            'questions.errors.missingAnswer',
-          ),
+          [answer.questionId]: t('questions.errors.missingAnswer'),
         }));
       } else {
         setErrorsMap((prevErrorsMap) => ({
           ...prevErrorsMap,
-          [answer.questionnaireTicketQuestionId]: '',
+          [answer.questionId]: '',
         }));
       }
     }
