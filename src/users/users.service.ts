@@ -413,10 +413,12 @@ export class UsersService {
     password: string,
     profilePicture?: Promise<FileUpload>,
   ) {
+    const isFirstUser = await this.isFirstUser();
     const user = await this.userRepository.save({
       name,
       email,
       password,
+      verified: isFirstUser,
     });
 
     if (profilePicture) {
@@ -425,13 +427,10 @@ export class UsersService {
       await this.saveDefaultProfilePicture(user.id);
     }
 
-    // Create questionnaire ticket for user
-    await this.createQuestionnaireTicket(user.id);
-
-    // Create admin role for first user
-    const users = await this.getUsers();
-    if (users.length === 1) {
+    if (isFirstUser) {
       await this.serverRolesService.createAdminServerRole(user.id);
+    } else {
+      await this.createQuestionnaireTicket(user.id);
     }
 
     return user;
