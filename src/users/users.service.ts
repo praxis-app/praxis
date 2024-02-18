@@ -84,6 +84,14 @@ export class UsersService {
     return userCount === 0;
   }
 
+  async isVerifiedUser(id: number) {
+    const { verified } = await this.userRepository.findOneOrFail({
+      where: { id },
+      select: { verified: true },
+    });
+    return verified;
+  }
+
   async isPublicUserAvatar(imageId: number) {
     const image = await this.imageRepository.findOneOrFail({
       where: { id: imageId },

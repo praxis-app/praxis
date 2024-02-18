@@ -309,6 +309,7 @@ type User {
   isFollowedByMe: Boolean!
   joinedGroups: [Group!]!
   serverPermissions: ServerPermissions!
+  isVerified: Boolean!
 }
 
 union FeedItem = Post | Proposal

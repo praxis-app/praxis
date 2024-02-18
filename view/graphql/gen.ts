@@ -1520,6 +1520,7 @@ export type User = {
   homeFeed: FeedItemsConnection;
   id: Scalars['Int']['output'];
   isFollowedByMe: Scalars['Boolean']['output'];
+  isVerified: Scalars['Boolean']['output'];
   joinedGroups: Array<Group>;
   likes: Array<Like>;
   name: Scalars['String']['output'];

@@ -162,6 +162,11 @@ export class UsersResolver {
     return serverPermissions;
   }
 
+  @ResolveField(() => Boolean)
+  async isVerified(@Parent() { id }: User) {
+    return this.usersService.isVerifiedUser(id);
+  }
+
   @Mutation(() => UpdateUserPayload)
   async updateUser(@Args('userData') userData: UpdateUserInput) {
     return this.usersService.updateUser(userData);
