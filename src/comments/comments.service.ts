@@ -86,9 +86,9 @@ export class CommentsService {
     );
   }
 
-  async getCommentedQuestion(answerId: number, relations?: string[]) {
+  async getCommentedQuestion(questionId: number, relations?: string[]) {
     return this.questionRepository.findOne({
-      where: { id: answerId },
+      where: { id: questionId },
       relations,
     });
   }
@@ -171,6 +171,7 @@ export class CommentsService {
     const commentedItemUserId = await this.getCommentedItemUserId(comment);
     const notificationType = this.getCommentedItemNotificationType(comment);
 
+    // Notify the user whose item was commented on
     if (commentedItemUserId !== user.id) {
       await this.notificationsService.createNotification({
         questionId: comment.questionId,
@@ -184,11 +185,11 @@ export class CommentsService {
       });
     }
 
-    if (comment.questionnaireTicketId && commentedItemUserId === user.id) {
-      const answer = await this.getCommentedQuestion(
-        comment.questionnaireTicketId,
-        ['questionnaireTicket'],
-      );
+    // Notify all users with access that a user left a comment on their own answer
+    if (comment.questionId && commentedItemUserId === user.id) {
+      const answer = await this.getCommentedQuestion(comment.questionId, [
+        'questionnaireTicket',
+      ]);
       if (answer?.questionnaireTicket.groupId === null) {
         const usersWithAccess = await this.userRepository.find({
           where: {
@@ -209,6 +210,7 @@ export class CommentsService {
       }
     }
 
+    // Notify all users with access that a user left a comment on their own questionnaire ticket
     if (comment.questionnaireTicketId && commentedItemUserId === user.id) {
       const questionnaireTicket = await this.getCommentedQuestionnaireTicket(
         comment.questionnaireTicketId,
