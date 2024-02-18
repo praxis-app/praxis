@@ -40,18 +40,14 @@ export type NotifiedSubscription = {
       body?: string | null;
       post?: { __typename?: 'Post'; id: number } | null;
       proposal?: { __typename?: 'Proposal'; id: number } | null;
-      answer?: {
-        __typename?: 'Answer';
+      question?: {
+        __typename?: 'Question';
         id: number;
-        question: {
-          __typename?: 'QuestionnaireTicketQuestion';
+        questionnaireTicket: {
+          __typename?: 'QuestionnaireTicket';
           id: number;
-          questionnaireTicket: {
-            __typename?: 'QuestionnaireTicket';
-            id: number;
-          };
+          user: { __typename?: 'User'; id: number };
         };
-        user: { __typename?: 'User'; id: number };
       } | null;
       questionnaireTicket?: {
         __typename?: 'QuestionnaireTicket';
@@ -59,7 +55,11 @@ export type NotifiedSubscription = {
         user: { __typename?: 'User'; id: number };
       } | null;
     } | null;
-    answer?: { __typename?: 'Answer'; id: number; text: string } | null;
+    question?: {
+      __typename?: 'Question';
+      id: number;
+      answer?: { __typename?: 'Answer'; id: number; text: string } | null;
+    } | null;
   };
 };
 

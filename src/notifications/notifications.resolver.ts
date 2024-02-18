@@ -17,7 +17,7 @@ import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
-import { Answer } from '../questions/models/answer.model';
+import { Question } from '../questions/models/question.model';
 import { User } from '../users/models/user.model';
 import { Notification } from './models/notification.model';
 import { ReadNotificationsPayload } from './models/read-notifications.payload';
@@ -95,12 +95,15 @@ export class NotificationsResolver {
     return commentId ? loaders.commentsLoader.load(commentId) : null;
   }
 
-  @ResolveField(() => Answer, { nullable: true })
-  answer(
+  @ResolveField(() => Question, { nullable: true })
+  question(
     @Context() { loaders }: { loaders: Dataloaders },
-    @Parent() { answerId }: Notification,
+    @Parent() { questionId }: Notification,
   ) {
-    return answerId ? loaders.answersLoader.load(answerId) : null;
+    if (!questionId) {
+      return null;
+    }
+    return loaders.questionsLoader.load(questionId);
   }
 
   @Mutation(() => UpdateNotificationPayload)

@@ -3,23 +3,23 @@ import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.ge
 import Comment from './Comment';
 
 interface Props extends BoxProps {
-  answerId?: number;
-  questionnaireTicketId?: number;
   canManageComments?: boolean;
   comments: CommentFragment[];
   currentUserId?: number;
   postId?: number;
   proposalId?: number;
+  questionnaireTicketId?: number;
+  questionId?: number;
 }
 
 const CommentsList = ({
-  answerId,
   canManageComments,
   comments,
   currentUserId,
-  questionnaireTicketId,
   postId,
   proposalId,
+  questionnaireTicketId,
+  questionId,
   ...boxProps
 }: Props) => {
   if (!comments.length) {
@@ -30,13 +30,13 @@ const CommentsList = ({
       {comments.map((comment) => (
         <Comment
           key={comment.id}
-          answerId={answerId}
           canManageComments={canManageComments}
           comment={comment}
           currentUserId={currentUserId}
           postId={postId}
           proposalId={proposalId}
           questionnaireTicketId={questionnaireTicketId}
+          questionId={questionId}
         />
       ))}
     </Box>

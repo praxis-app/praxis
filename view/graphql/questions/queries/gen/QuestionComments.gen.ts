@@ -8,15 +8,15 @@ import * as Apollo from '@apollo/client';
 /* eslint-disable */
 
 const defaultOptions = {} as const;
-export type AnswerCommentsQueryVariables = Types.Exact<{
+export type QuestionCommentsQueryVariables = Types.Exact<{
   id: Types.Scalars['Int']['input'];
   isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
-export type AnswerCommentsQuery = {
+export type QuestionCommentsQuery = {
   __typename?: 'Query';
-  answer: {
-    __typename?: 'Answer';
+  question: {
+    __typename?: 'Question';
     id: number;
     comments: Array<{
       __typename?: 'Comment';
@@ -37,9 +37,9 @@ export type AnswerCommentsQuery = {
   me: { __typename?: 'User'; id: number };
 };
 
-export const AnswerCommentsDocument = gql`
-  query AnswerComments($id: Int!, $isLoggedIn: Boolean!) {
-    answer(id: $id) {
+export const QuestionCommentsDocument = gql`
+  query QuestionComments($id: Int!, $isLoggedIn: Boolean!) {
+    question(id: $id) {
       id
       comments {
         ...Comment
@@ -53,53 +53,53 @@ export const AnswerCommentsDocument = gql`
 `;
 
 /**
- * __useAnswerCommentsQuery__
+ * __useQuestionCommentsQuery__
  *
- * To run a query within a React component, call `useAnswerCommentsQuery` and pass it any options that fit your needs.
- * When your component renders, `useAnswerCommentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useQuestionCommentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useQuestionCommentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useAnswerCommentsQuery({
+ * const { data, loading, error } = useQuestionCommentsQuery({
  *   variables: {
  *      id: // value for 'id'
  *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
-export function useAnswerCommentsQuery(
+export function useQuestionCommentsQuery(
   baseOptions: Apollo.QueryHookOptions<
-    AnswerCommentsQuery,
-    AnswerCommentsQueryVariables
+    QuestionCommentsQuery,
+    QuestionCommentsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<AnswerCommentsQuery, AnswerCommentsQueryVariables>(
-    AnswerCommentsDocument,
+  return Apollo.useQuery<QuestionCommentsQuery, QuestionCommentsQueryVariables>(
+    QuestionCommentsDocument,
     options,
   );
 }
-export function useAnswerCommentsLazyQuery(
+export function useQuestionCommentsLazyQuery(
   baseOptions?: Apollo.LazyQueryHookOptions<
-    AnswerCommentsQuery,
-    AnswerCommentsQueryVariables
+    QuestionCommentsQuery,
+    QuestionCommentsQueryVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<AnswerCommentsQuery, AnswerCommentsQueryVariables>(
-    AnswerCommentsDocument,
-    options,
-  );
+  return Apollo.useLazyQuery<
+    QuestionCommentsQuery,
+    QuestionCommentsQueryVariables
+  >(QuestionCommentsDocument, options);
 }
-export type AnswerCommentsQueryHookResult = ReturnType<
-  typeof useAnswerCommentsQuery
+export type QuestionCommentsQueryHookResult = ReturnType<
+  typeof useQuestionCommentsQuery
 >;
-export type AnswerCommentsLazyQueryHookResult = ReturnType<
-  typeof useAnswerCommentsLazyQuery
+export type QuestionCommentsLazyQueryHookResult = ReturnType<
+  typeof useQuestionCommentsLazyQuery
 >;
-export type AnswerCommentsQueryResult = Apollo.QueryResult<
-  AnswerCommentsQuery,
-  AnswerCommentsQueryVariables
+export type QuestionCommentsQueryResult = Apollo.QueryResult<
+  QuestionCommentsQuery,
+  QuestionCommentsQueryVariables
 >;

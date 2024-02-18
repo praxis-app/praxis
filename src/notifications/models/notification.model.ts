@@ -12,7 +12,7 @@ import { Group } from '../../groups/models/group.model';
 import { Like } from '../../likes/models/like.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
-import { Answer } from '../../questions/models/answer.model';
+import { Question } from '../../questions/models/question.model';
 import { QuestionnaireTicket } from '../../questions/models/questionnaire-ticket.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
@@ -95,13 +95,13 @@ export class Notification {
   @Column({ nullable: true })
   likeId?: number;
 
-  @ManyToOne(() => Answer, (answer) => answer.notifications, {
+  @ManyToOne(() => Question, (question) => question.notifications, {
     onDelete: 'CASCADE',
   })
-  answer?: Answer;
+  question?: Question;
 
   @Column({ nullable: true })
-  answerId?: number;
+  questionId?: number;
 
   @ManyToOne(
     () => QuestionnaireTicket,

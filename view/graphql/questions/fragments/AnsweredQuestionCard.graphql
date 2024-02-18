@@ -1,13 +1,14 @@
-fragment AnsweredQuestionCard on QuestionnaireTicketQuestion {
+fragment AnsweredQuestionCard on Question {
   id
   text
   priority
+  likeCount
+  commentCount
+  isLikedByMe @include(if: $isLoggedIn)
+
   answer {
     id
     text
-    likeCount
-    commentCount
-    isLikedByMe @include(if: $isLoggedIn)
     user {
       id
       name

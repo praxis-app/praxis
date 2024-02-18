@@ -6,11 +6,11 @@ import { GroupPrivacy } from '../groups/groups.constants';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
+import { Question } from '../questions/models/question.model';
 import { User } from '../users/models/user.model';
 import { CreateLikeInput } from './models/create-like.input';
 import { DeleteLikeInput } from './models/delete-like.input';
 import { Like } from './models/like.model';
-import { Answer } from '../questions/models/answer.model';
 
 @Injectable()
 export class LikesService {
@@ -24,8 +24,8 @@ export class LikesService {
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
 
-    @InjectRepository(Answer)
-    private answerRepository: Repository<Answer>,
+    @InjectRepository(Question)
+    private questionRepository: Repository<Question>,
 
     private notificationsService: NotificationsService,
   ) {}
@@ -71,10 +71,10 @@ export class LikesService {
         where: { id: like.commentId },
       });
     }
-    if (like.answerId) {
-      return this.answerRepository.findOneOrFail({
-        where: { id: like.answerId },
-        relations: ['questionnaireTicketQuestion.questionnaireTicket'],
+    if (like.questionId) {
+      return this.questionRepository.findOneOrFail({
+        where: { id: like.questionId },
+        relations: ['questionnaireTicket'],
       });
     }
     return this.postRepository.findOneOrFail({
@@ -82,15 +82,15 @@ export class LikesService {
     });
   }
 
-  getLikedItemUserId(likedItem: Post | Comment | Answer) {
-    if (likedItem instanceof Answer) {
-      return likedItem.questionnaireTicketQuestion.questionnaireTicket.userId;
+  getLikedItemUserId(likedItem: Post | Comment | Question) {
+    if (likedItem instanceof Question) {
+      return likedItem.questionnaireTicket.userId;
     }
     return likedItem.userId;
   }
 
-  getLikedItemNotificationType(likedItem: Post | Comment | Answer) {
-    if (likedItem instanceof Answer) {
+  getLikedItemNotificationType(likedItem: Post | Comment | Question) {
+    if (likedItem instanceof Question) {
       return NotificationType.AnswerLike;
     }
     if (likedItem instanceof Comment) {
@@ -111,21 +111,21 @@ export class LikesService {
 
     if (likedItemUserId !== user.id) {
       await this.notificationsService.createNotification({
-        notificationType,
+        questionId: like.questionId,
         commentId: like.commentId,
         userId: likedItemUserId,
         otherUserId: user.id,
-        answerId: like.answerId,
         postId: like.postId,
         likeId: like.id,
+        notificationType,
       });
     }
 
     if (like.commentId) {
       return { like, comment: likedItem };
     }
-    if (like.answerId) {
-      return { like, answer: likedItem };
+    if (like.questionId) {
+      return { like, question: likedItem };
     }
     return { like, post: likedItem };
   }

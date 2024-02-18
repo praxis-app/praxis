@@ -43,27 +43,27 @@ type QuestionnaireTicketConfig {
 type Answer {
   id: Int!
   text: String!
-  question: QuestionnaireTicketQuestion!
-  likes: [Like!]!
+  question: Question!
   user: User!
+}
+
+type Question {
+  id: Int!
+  text: String!
+  priority: Int!
+  answer: Answer
+  questionnaireTicket: QuestionnaireTicket!
+  likes: [Like!]!
   likeCount: Int!
   isLikedByMe: Boolean!
   comments: [Comment!]!
   commentCount: Int!
 }
 
-type QuestionnaireTicketQuestion {
-  id: Int!
-  text: String!
-  priority: Int!
-  answer: Answer
-  questionnaireTicket: QuestionnaireTicket!
-}
-
 type QuestionnaireTicket {
   id: Int!
   status: String!
-  questions: [QuestionnaireTicketQuestion!]!
+  questions: [Question!]!
   comments: [Comment!]!
   createdAt: DateTime!
   prompt: String
@@ -352,12 +352,6 @@ type Event {
   coverPhoto: Image!
 }
 
-type Question {
-  id: Int!
-  text: String!
-  priority: Int!
-}
-
 type Rule {
   id: Int!
   title: String!
@@ -412,7 +406,7 @@ type Notification {
   proposal: Proposal
   post: Post
   comment: Comment
-  answer: Answer
+  question: Question
 }
 
 type Like {
@@ -432,7 +426,7 @@ type Comment {
   user: User!
   post: Post
   proposal: Proposal
-  answer: Answer
+  question: Question
   questionnaireTicket: QuestionnaireTicket
   likes: [Like!]!
   likeCount: Int!
@@ -485,6 +479,12 @@ type CreatePostPayload {
 
 type UpdatePostPayload {
   post: Post!
+}
+
+type ServerQuestion {
+  id: Int!
+  text: String!
+  priority: Int!
 }
 
 type UpdateServerConfigPayload {
@@ -614,7 +614,7 @@ type CreateLikePayload {
   like: Like!
   post: Post
   comment: Comment
-  answer: Answer
+  question: Question
 }
 
 type AnswerQuestionsPayload {
@@ -622,11 +622,11 @@ type AnswerQuestionsPayload {
 }
 
 type CreateQuestionPayload {
-  question: Question!
+  question: ServerQuestion!
 }
 
 type UpdateQuestionPayload {
-  question: Question!
+  question: ServerQuestion!
 }
 
 type CreateRulePayload {
@@ -678,9 +678,10 @@ type Query {
   serverInvites: [ServerInvite!]!
   likes(postId: Int, commentId: Int): [Like!]!
   answer(id: Int!): Answer!
+  serverQuestions: [ServerQuestion!]!
   questionnaireTicket(id: Int!): QuestionnaireTicket!
   serverQuestionnaireTickets: [QuestionnaireTicket!]!
-  serverQuestions: [Question!]!
+  question(id: Int!): Question!
   serverRules: [Rule!]!
 }
 
@@ -740,12 +741,12 @@ type Mutation {
   deleteImage(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
-  deleteQuestionnnaireTicket(id: Int!): Boolean!
-  answerQuestions(answersData: AnswerQuestionsInput!): AnswerQuestionsPayload!
   createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
   updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
   updateQuestionsPriority(questionsData: UpdateQuestionsPriorityInput!): Boolean!
   deleteQuestion(id: Int!): Boolean!
+  deleteQuestionnnaireTicket(id: Int!): Boolean!
+  answerQuestions(answersData: AnswerQuestionsInput!): AnswerQuestionsPayload!
   createRule(ruleData: CreateRuleInput!): CreateRulePayload!
   updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
   updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
@@ -1005,7 +1006,7 @@ input CreateServerInviteInput {
 input CreateCommentInput {
   postId: Int
   proposalId: Int
-  answerId: Int
+  questionId: Int
   questionnaireTicketId: Int
   body: String
   images: [Upload!]
@@ -1020,28 +1021,16 @@ input UpdateCommentInput {
 input CreateLikeInput {
   postId: Int
   commentId: Int
-  answerId: Int
+  questionId: Int
 }
 
 input DeleteLikeInput {
   postId: Int
   commentId: Int
-  answerId: Int
-}
-
-input AnswerQuestionsInput {
-  questionnaireTicketId: Int!
-  answers: [AnswerInput!]!
-  isSubmitting: Boolean!
-}
-
-input AnswerInput {
-  questionnaireTicketQuestionId: Int!
-  text: String!
+  questionId: Int
 }
 
 input CreateQuestionInput {
-  groupId: Int
   text: String!
 }
 
@@ -1057,6 +1046,17 @@ input UpdateQuestionsPriorityInput {
 input UpdateQuestionPriorityInput {
   id: Int!
   priority: Int!
+}
+
+input AnswerQuestionsInput {
+  questionnaireTicketId: Int!
+  answers: [AnswerInput!]!
+  isSubmitting: Boolean!
+}
+
+input AnswerInput {
+  questionId: Int!
+  text: String!
 }
 
 input CreateRuleInput {

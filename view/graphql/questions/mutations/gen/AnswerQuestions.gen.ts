@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { MyAnsweredQuestionCardFragmentDoc } from '../../fragments/gen/MyAnsweredQuestionCard.gen';
+import { AnsweredQuestionCardFragmentDoc } from '../../fragments/gen/AnsweredQuestionCard.gen';
 import { AnswerQuestionsFormFragmentDoc } from '../../fragments/gen/AnswerQuestionsForm.gen';
 import * as Apollo from '@apollo/client';
 
@@ -23,17 +23,17 @@ export type AnswerQuestionsMutation = {
       status: string;
       id: number;
       questions: Array<{
-        __typename?: 'QuestionnaireTicketQuestion';
+        __typename?: 'Question';
         id: number;
         text: string;
         priority: number;
+        likeCount: number;
+        commentCount: number;
+        isLikedByMe?: boolean;
         answer?: {
           __typename?: 'Answer';
           id: number;
           text: string;
-          likeCount: number;
-          commentCount: number;
-          isLikedByMe?: boolean;
           user: { __typename?: 'User'; id: number; name: string };
         } | null;
       }>;
@@ -49,14 +49,14 @@ export const AnswerQuestionsDocument = gql`
     answerQuestions(answersData: $answersData) {
       questionnaireTicket {
         questions {
-          ...MyAnsweredQuestionCard
+          ...AnsweredQuestionCard
         }
         ...AnswerQuestionsForm
         status
       }
     }
   }
-  ${MyAnsweredQuestionCardFragmentDoc}
+  ${AnsweredQuestionCardFragmentDoc}
   ${AnswerQuestionsFormFragmentDoc}
 `;
 export type AnswerQuestionsMutationFn = Apollo.MutationFunction<

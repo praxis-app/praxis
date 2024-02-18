@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Question } from './question.model';
+import { ServerQuestion } from './server-question.model';
 
 @ObjectType()
 export class CreateQuestionPayload {
   @Field()
-  question: Question;
+  question: ServerQuestion;
 }

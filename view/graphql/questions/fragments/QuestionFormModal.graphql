@@ -1,4 +1,4 @@
-fragment QuestionFormModal on Question {
+fragment QuestionFormModal on ServerQuestion {
   id
   text
 }

@@ -3,7 +3,7 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 @InputType()
 class AnswerInput {
   @Field(() => Int)
-  questionnaireTicketQuestionId: number;
+  questionId: number;
 
   @Field()
   text: string;

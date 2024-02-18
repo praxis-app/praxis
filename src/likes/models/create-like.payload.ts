@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Comment } from '../../comments/models/comment.model';
 import { Post } from '../../posts/models/post.model';
-import { Answer } from '../../questions/models/answer.model';
+import { Question } from '../../questions/models/question.model';
 import { Like } from './like.model';
 
 @ObjectType()
@@ -16,5 +16,5 @@ export class CreateLikePayload {
   comment?: Comment;
 
   @Field({ nullable: true })
-  answer?: Answer;
+  question?: Question;
 }

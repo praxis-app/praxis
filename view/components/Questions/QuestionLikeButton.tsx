@@ -12,24 +12,26 @@ import {
   LikesPopoverDocument,
   LikesPopoverQuery,
 } from '../../graphql/likes/queries/gen/LikesPopover.gen';
-import { useLikeAnswerMutation } from '../../graphql/questions/mutations/gen/LikeAnswer.gen';
+import { useLikeQuestionMutation } from '../../graphql/questions/mutations/gen/LikeQuestion.gen';
 import { Blurple } from '../../styles/theme';
 import CardFooterButton from '../Shared/CardFooterButton';
 
 interface Props {
-  answerId?: number;
+  questionId?: number;
   isLikedByMe: boolean;
 }
 
-const AnsweredLikeButton = ({ answerId, isLikedByMe }: Props) => {
+const QuestionLikeButton = ({ questionId, isLikedByMe }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-  const [likeAnswer, { loading: likeAnswerLoading }] = useLikeAnswerMutation();
-  const [unlikeAnswer, { loading: unlikeAnswerLoading }] =
+
+  const [likeQuestion, { loading: likeQuestionLoading }] =
+    useLikeQuestionMutation();
+  const [unlikeQuestion, { loading: unlikeQuestionLoading }] =
     useDeleteLikeMutation();
 
   const { t } = useTranslation();
 
-  const isLoading = likeAnswerLoading || unlikeAnswerLoading;
+  const isLoading = likeQuestionLoading || unlikeQuestionLoading;
 
   const likeButtonIconStyles: SxProps = {
     color: isLikedByMe && !isLoading ? Blurple.Marina : undefined,
@@ -38,16 +40,16 @@ const AnsweredLikeButton = ({ answerId, isLikedByMe }: Props) => {
 
   const handleLikeButtonClick = async () => {
     const variables = {
-      likeData: { answerId },
+      likeData: { questionId },
       isLoggedIn,
     };
     if (isLikedByMe) {
-      unlikeAnswer({
+      unlikeQuestion({
         variables,
         update(cache) {
           const cacheId = cache.identify({
-            __typename: TypeNames.Answer,
-            id: answerId,
+            __typename: TypeNames.Question,
+            id: questionId,
           });
           cache.modify({
             id: cacheId,
@@ -58,19 +60,19 @@ const AnsweredLikeButton = ({ answerId, isLikedByMe }: Props) => {
           });
           const likesQuery = cache.readQuery({
             query: LikesPopoverDocument,
-            variables: { answerId },
+            variables: { questionId },
           });
           if (likesQuery) {
             cache.evict({
               fieldName: 'likes',
-              args: { answerId },
+              args: { questionId },
             });
           }
         },
       });
       return;
     }
-    await likeAnswer({
+    await likeQuestion({
       variables,
       update(cache, { data }) {
         if (!data) {
@@ -79,7 +81,7 @@ const AnsweredLikeButton = ({ answerId, isLikedByMe }: Props) => {
         cache.updateQuery<LikesPopoverQuery>(
           {
             query: LikesPopoverDocument,
-            variables: { answerId },
+            variables: { questionId },
           },
           (likesData) =>
             produce(likesData, (draft) => {
@@ -93,7 +95,7 @@ const AnsweredLikeButton = ({ answerId, isLikedByMe }: Props) => {
   return (
     <CardFooterButton
       sx={isLikedByMe ? { color: Blurple.SavoryBlue } : {}}
-      disabled={isLoading || !answerId}
+      disabled={isLoading}
       onClick={handleLikeButtonClick}
     >
       <LikeIcon sx={likeButtonIconStyles} />
@@ -102,4 +104,4 @@ const AnsweredLikeButton = ({ answerId, isLikedByMe }: Props) => {
   );
 };
 
-export default AnsweredLikeButton;
+export default QuestionLikeButton;

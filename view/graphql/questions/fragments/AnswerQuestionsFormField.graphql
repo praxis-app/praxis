@@ -1,4 +1,4 @@
-fragment AnswerQuestionsFormField on QuestionnaireTicketQuestion {
+fragment AnswerQuestionsFormField on Question {
   id
   text
 }

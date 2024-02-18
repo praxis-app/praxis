@@ -1,17 +1,17 @@
 import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CreateQuestionInput } from '../models/create-question.input';
 import { CreateQuestionPayload } from '../models/create-question.payload';
-import { Question } from '../models/question.model';
+import { ServerQuestion } from '../models/server-question.model';
 import { UpdateQuestionInput } from '../models/update-question.input';
 import { UpdateQuestionPayload } from '../models/update-question.payload';
 import { UpdateQuestionsPriorityInput } from '../models/update-questions-priority.input';
 import { QuestionsService } from '../questions.service';
 
-@Resolver(() => Question)
-export class QuestionsResolver {
+@Resolver(() => ServerQuestion)
+export class ServerQuestionsResolver {
   constructor(private questionsService: QuestionsService) {}
 
-  @Query(() => [Question])
+  @Query(() => [ServerQuestion])
   async serverQuestions() {
     return this.questionsService.getServerQuestions();
   }

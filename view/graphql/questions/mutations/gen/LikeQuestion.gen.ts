@@ -8,17 +8,17 @@ import * as Apollo from '@apollo/client';
 /* eslint-disable */
 
 const defaultOptions = {} as const;
-export type LikeAnswerMutationVariables = Types.Exact<{
+export type LikeQuestionMutationVariables = Types.Exact<{
   likeData: Types.CreateLikeInput;
   isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
-export type LikeAnswerMutation = {
+export type LikeQuestionMutation = {
   __typename?: 'Mutation';
   createLike: {
     __typename?: 'CreateLikePayload';
-    answer?: {
-      __typename?: 'Answer';
+    question?: {
+      __typename?: 'Question';
       id: number;
       likeCount: number;
       isLikedByMe?: boolean;
@@ -37,10 +37,10 @@ export type LikeAnswerMutation = {
   };
 };
 
-export const LikeAnswerDocument = gql`
-  mutation LikeAnswer($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
+export const LikeQuestionDocument = gql`
+  mutation LikeQuestion($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
     createLike(likeData: $likeData) {
-      answer {
+      question {
         id
         likeCount
         isLikedByMe @include(if: $isLoggedIn)
@@ -53,47 +53,47 @@ export const LikeAnswerDocument = gql`
   }
   ${LikeFragmentDoc}
 `;
-export type LikeAnswerMutationFn = Apollo.MutationFunction<
-  LikeAnswerMutation,
-  LikeAnswerMutationVariables
+export type LikeQuestionMutationFn = Apollo.MutationFunction<
+  LikeQuestionMutation,
+  LikeQuestionMutationVariables
 >;
 
 /**
- * __useLikeAnswerMutation__
+ * __useLikeQuestionMutation__
  *
- * To run a mutation, you first call `useLikeAnswerMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useLikeAnswerMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useLikeQuestionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikeQuestionMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [likeAnswerMutation, { data, loading, error }] = useLikeAnswerMutation({
+ * const [likeQuestionMutation, { data, loading, error }] = useLikeQuestionMutation({
  *   variables: {
  *      likeData: // value for 'likeData'
  *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
-export function useLikeAnswerMutation(
+export function useLikeQuestionMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    LikeAnswerMutation,
-    LikeAnswerMutationVariables
+    LikeQuestionMutation,
+    LikeQuestionMutationVariables
   >,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<LikeAnswerMutation, LikeAnswerMutationVariables>(
-    LikeAnswerDocument,
-    options,
-  );
+  return Apollo.useMutation<
+    LikeQuestionMutation,
+    LikeQuestionMutationVariables
+  >(LikeQuestionDocument, options);
 }
-export type LikeAnswerMutationHookResult = ReturnType<
-  typeof useLikeAnswerMutation
+export type LikeQuestionMutationHookResult = ReturnType<
+  typeof useLikeQuestionMutation
 >;
-export type LikeAnswerMutationResult =
-  Apollo.MutationResult<LikeAnswerMutation>;
-export type LikeAnswerMutationOptions = Apollo.BaseMutationOptions<
-  LikeAnswerMutation,
-  LikeAnswerMutationVariables
+export type LikeQuestionMutationResult =
+  Apollo.MutationResult<LikeQuestionMutation>;
+export type LikeQuestionMutationOptions = Apollo.BaseMutationOptions<
+  LikeQuestionMutation,
+  LikeQuestionMutationVariables
 >;

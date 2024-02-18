@@ -21,7 +21,7 @@ import { Like } from '../likes/models/like.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
-import { Answer } from '../questions/models/answer.model';
+import { Question } from '../questions/models/question.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
@@ -34,10 +34,10 @@ import {
   GroupRoleWithMemberCount,
   GroupWithMemberCount,
   GroupWithMemberRequestCount,
-  IsAnswerLikedByMeKey,
   IsCommentLikedByMeKey,
   IsFollowedByMeKey,
   IsPostLikedByMeKey,
+  IsQuestionLikedByMeKey,
   MyGroupsKey,
   PostWithCommentCount,
   PostWithLikeCount,
@@ -87,8 +87,8 @@ export class DataloaderService {
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
 
-    @InjectRepository(Answer)
-    private answerRepository: Repository<Answer>,
+    @InjectRepository(Question)
+    private questionRepository: Repository<Question>,
 
     private usersService: UsersService,
   ) {}
@@ -145,7 +145,7 @@ export class DataloaderService {
       eventsLoader: this._createEventsLoader(),
 
       // Questions & Answers
-      answersLoader: this._createAnswersLoader(),
+      questionsLoader: this._createQuestionsLoader(),
       isAnswerLikedByMeLoader: this._createIsAnswerLikedByMeLoader(),
     };
   }
@@ -821,34 +821,34 @@ export class DataloaderService {
   // Questions & Answers
   // -------------------------------------------------------------------------
 
-  private _createAnswersLoader() {
-    return this._getDataLoader<number, Answer>(async (answerIds) => {
-      const answers = await this.answerRepository.find({
-        where: { id: In(answerIds) },
+  private _createQuestionsLoader() {
+    return this._getDataLoader<number, Question>(async (questionIds) => {
+      const answers = await this.questionRepository.find({
+        where: { id: In(questionIds) },
       });
-      return answerIds.map(
+      return questionIds.map(
         (id) =>
-          answers.find((answer: Answer) => answer.id === id) ||
+          answers.find((answer: Question) => answer.id === id) ||
           new Error(`Could not load answer: ${id}`),
       );
     });
   }
 
   private _createIsAnswerLikedByMeLoader() {
-    return this._getDataLoader<IsAnswerLikedByMeKey, boolean, number>(
+    return this._getDataLoader<IsQuestionLikedByMeKey, boolean, number>(
       async (keys) => {
-        const answerIds = keys.map(({ answerId }) => answerId);
+        const questionIds = keys.map(({ questionId }) => questionId);
         const likes = await this.likeRepository.find({
           where: {
-            answerId: In(answerIds),
+            questionId: In(questionIds),
             userId: keys[0].currentUserId,
           },
         });
-        return answerIds.map((answerId) =>
-          likes.some((like: Like) => like.answerId === answerId),
+        return questionIds.map((questionId) =>
+          likes.some((like: Like) => like.questionId === questionId),
         );
       },
-      { cacheKeyFn: (key) => key.answerId },
+      { cacheKeyFn: (key) => key.questionId },
     );
   }
 }

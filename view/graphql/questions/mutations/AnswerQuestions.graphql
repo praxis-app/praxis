@@ -5,7 +5,7 @@ mutation AnswerQuestions(
   answerQuestions(answersData: $answersData) {
     questionnaireTicket {
       questions {
-        ...MyAnsweredQuestionCard
+        ...AnsweredQuestionCard
       }
       ...AnswerQuestionsForm
       status

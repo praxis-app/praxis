@@ -6,13 +6,13 @@ import { gql } from '@apollo/client';
 /* eslint-disable */
 
 export type QuestionFormModalFragment = {
-  __typename?: 'Question';
+  __typename?: 'ServerQuestion';
   id: number;
   text: string;
 };
 
 export const QuestionFormModalFragmentDoc = gql`
-  fragment QuestionFormModal on Question {
+  fragment QuestionFormModal on ServerQuestion {
     id
     text
   }

@@ -15,7 +15,7 @@ export type ServerQuestionsQueryVariables = Types.Exact<{
 export type ServerQuestionsQuery = {
   __typename?: 'Query';
   serverQuestions: Array<{
-    __typename?: 'Question';
+    __typename?: 'ServerQuestion';
     id: number;
     text: string;
     priority: number;
