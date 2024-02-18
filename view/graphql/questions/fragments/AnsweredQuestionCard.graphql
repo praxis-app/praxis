@@ -4,7 +4,7 @@ fragment AnsweredQuestionCard on Question {
   priority
   likeCount
   commentCount
-  isLikedByMe @include(if: $isLoggedIn)
+  isLikedByMe
 
   answer {
     id

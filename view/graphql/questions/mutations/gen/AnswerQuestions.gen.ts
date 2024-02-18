@@ -29,7 +29,7 @@ export type AnswerQuestionsMutation = {
         priority: number;
         likeCount: number;
         commentCount: number;
-        isLikedByMe?: boolean;
+        isLikedByMe: boolean;
         answer?: {
           __typename?: 'Answer';
           id: number;

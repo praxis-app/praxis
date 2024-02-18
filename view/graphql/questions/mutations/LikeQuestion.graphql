@@ -3,7 +3,7 @@ mutation LikeQuestion($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
     question {
       id
       likeCount
-      isLikedByMe @include(if: $isLoggedIn)
+      isLikedByMe
     }
     like {
       id

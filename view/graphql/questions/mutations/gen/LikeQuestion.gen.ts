@@ -21,7 +21,7 @@ export type LikeQuestionMutation = {
       __typename?: 'Question';
       id: number;
       likeCount: number;
-      isLikedByMe?: boolean;
+      isLikedByMe: boolean;
     } | null;
     like: {
       __typename?: 'Like';
@@ -43,7 +43,7 @@ export const LikeQuestionDocument = gql`
       question {
         id
         likeCount
-        isLikedByMe @include(if: $isLoggedIn)
+        isLikedByMe
       }
       like {
         id

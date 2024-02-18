@@ -12,7 +12,7 @@ export type AnsweredQuestionCardFragment = {
   priority: number;
   likeCount: number;
   commentCount: number;
-  isLikedByMe?: boolean;
+  isLikedByMe: boolean;
   answer?: {
     __typename?: 'Answer';
     id: number;
@@ -28,7 +28,7 @@ export const AnsweredQuestionCardFragmentDoc = gql`
     priority
     likeCount
     commentCount
-    isLikedByMe @include(if: $isLoggedIn)
+    isLikedByMe
     answer {
       id
       text
