@@ -1,8 +1,7 @@
-import { useReactiveVar } from '@apollo/client';
 import { Form, Formik } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { toastVar } from '../../graphql/cache';
 import { AnswerQuestionsInput } from '../../graphql/gen';
 import { AnswerQuestionsFormFragment } from '../../graphql/questions/fragments/gen/AnswerQuestionsForm.gen';
 import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/gen/AnswerQuestions.gen';
@@ -23,7 +22,6 @@ const AnswerQuestionsForm = ({
   setErrorsMap,
   setIsSavingProgress,
 }: Props) => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [answerQuestions, { loading }] = useAnswerQuestionsMutation();
   const { t } = useTranslation();
 
@@ -51,7 +49,6 @@ const AnswerQuestionsForm = ({
     await answerQuestions({
       variables: {
         answersData: { ...answersData, isSubmitting: true },
-        isLoggedIn,
       },
       onError(err) {
         toastVar({

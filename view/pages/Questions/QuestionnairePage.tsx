@@ -1,4 +1,3 @@
-import { useReactiveVar } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -7,14 +6,12 @@ import QuestionnaireTicketCard from '../../components/Questions/QuestionnaireTic
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { NavigationPaths } from '../../constants/shared.constants';
-import { isLoggedInVar } from '../../graphql/cache';
 import { useQuestionnairePageQuery } from '../../graphql/questions/queries/gen/QuestionnairePage.gen';
 
 const QuestionnairePage = () => {
   const { id } = useParams();
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const { data, loading, error } = useQuestionnairePageQuery({
-    variables: { questionnaireTicketId: parseInt(id || ''), isLoggedIn },
+    variables: { questionnaireTicketId: parseInt(id || '') },
     skip: !id,
   });
 

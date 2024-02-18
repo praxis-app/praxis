@@ -11,7 +11,6 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type AnswerQuestionsMutationVariables = Types.Exact<{
   answersData: Types.AnswerQuestionsInput;
-  isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
 export type AnswerQuestionsMutation = {
@@ -42,10 +41,7 @@ export type AnswerQuestionsMutation = {
 };
 
 export const AnswerQuestionsDocument = gql`
-  mutation AnswerQuestions(
-    $answersData: AnswerQuestionsInput!
-    $isLoggedIn: Boolean!
-  ) {
+  mutation AnswerQuestions($answersData: AnswerQuestionsInput!) {
     answerQuestions(answersData: $answersData) {
       questionnaireTicket {
         questions {
@@ -78,7 +74,6 @@ export type AnswerQuestionsMutationFn = Apollo.MutationFunction<
  * const [answerQuestionsMutation, { data, loading, error }] = useAnswerQuestionsMutation({
  *   variables: {
  *      answersData: // value for 'answersData'
- *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */

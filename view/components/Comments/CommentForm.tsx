@@ -8,7 +8,7 @@ import {
   Input,
   SxProps,
 } from '@mui/material';
-import { Form, Formik, FormikFormProps, FormikHelpers } from 'formik';
+import { Formik, FormikFormProps, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -271,7 +271,7 @@ const CommentForm = ({
       {...formProps}
     >
       {({ handleChange, values, submitForm, isSubmitting }) => (
-        <Form>
+        <Box>
           <FormGroup row>
             <UserAvatar size={35} sx={{ marginRight: 1 }} />
 
@@ -307,7 +307,7 @@ const CommentForm = ({
                 <IconButton
                   disabled={isSubmitting || (!values.body && !images?.length)}
                   sx={sendButtonStyles}
-                  type="submit"
+                  onClick={submitForm}
                   edge="end"
                   disableRipple
                 >
@@ -328,7 +328,7 @@ const CommentForm = ({
             selectedImages={images}
             sx={{ marginLeft: 5.5 }}
           />
-        </Form>
+        </Box>
       )}
     </Formik>
   );

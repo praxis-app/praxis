@@ -9,11 +9,19 @@ export type AnswerQuestionsFormFieldFragment = {
   __typename?: 'Question';
   id: number;
   text: string;
+  priority: number;
+  likeCount: number;
+  commentCount: number;
+  isLikedByMe: boolean;
 };
 
 export const AnswerQuestionsFormFieldFragmentDoc = gql`
   fragment AnswerQuestionsFormField on Question {
     id
     text
+    priority
+    likeCount
+    commentCount
+    isLikedByMe
   }
 `;

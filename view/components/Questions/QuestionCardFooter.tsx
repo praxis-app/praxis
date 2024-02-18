@@ -1,5 +1,3 @@
-// TODO: Add remaining layout and functionality. Below is a WIP
-
 import { useReactiveVar } from '@apollo/client';
 import { Comment } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
@@ -16,6 +14,9 @@ import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import AnsweredQuestionModal from './AnsweredQuestionModal';
 import QuestionLikeButton from './QuestionLikeButton';
+import { AnswerQuestionsFormFieldFragment } from '../../graphql/questions/fragments/gen/AnswerQuestionsFormField.gen';
+import QuestionModal from './QuestionModal';
+import { AnswerQuestionsFormFieldProps } from './AnswerQuestionsFormField';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -23,11 +24,16 @@ const ROTATED_ICON_STYLES: SxProps = {
 };
 
 interface Props {
-  question: AnsweredQuestionCardFragment;
+  question: AnsweredQuestionCardFragment | AnswerQuestionsFormFieldFragment;
+  answerQuestionsFormFieldProps?: AnswerQuestionsFormFieldProps;
   inModal?: boolean;
 }
 
-const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
+const QuestionCardFooter = ({
+  question,
+  inModal,
+  answerQuestionsFormFieldProps,
+}: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showComments, setShowComments] = useState(inModal);
@@ -94,6 +100,26 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
       return null;
     }
     return <CommentForm questionId={question.id} enableAutoFocus />;
+  };
+
+  const renderModal = () => {
+    if (answerQuestionsFormFieldProps) {
+      return (
+        <QuestionModal
+          question={question}
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          formFieldProps={answerQuestionsFormFieldProps}
+        />
+      );
+    }
+    return (
+      <AnsweredQuestionModal
+        question={question as AnsweredQuestionCardFragment}
+        onClose={() => setIsModalOpen(false)}
+        open={isModalOpen}
+      />
+    );
   };
 
   return (
@@ -175,13 +201,9 @@ const AnsweredQuestionCardFooter = ({ question, inModal }: Props) => {
         </Box>
       )}
 
-      <AnsweredQuestionModal
-        question={question}
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      {renderModal()}
     </>
   );
 };
 
-export default AnsweredQuestionCardFooter;
+export default QuestionCardFooter;

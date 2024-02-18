@@ -1,4 +1,3 @@
-import { useReactiveVar } from '@apollo/client';
 import {
   Card,
   CardContent as MuiCardContent,
@@ -9,10 +8,11 @@ import {
 } from '@mui/material';
 import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { toastVar } from '../../graphql/cache';
 import { AnswerInput } from '../../graphql/gen';
 import { AnswerQuestionsFormFieldFragment } from '../../graphql/questions/fragments/gen/AnswerQuestionsFormField.gen';
 import { useAnswerQuestionsMutation } from '../../graphql/questions/mutations/gen/AnswerQuestions.gen';
+import QuestionCardFooter from './QuestionCardFooter';
 
 const ANSWERS_FIELD_NAME = 'answers';
 
@@ -28,7 +28,7 @@ const CardContent = styled(MuiCardContent)(() => ({
   },
 }));
 
-interface Props {
+export interface AnswerQuestionsFormFieldProps {
   answers: AnswerInput[];
   dirty: boolean;
   error?: string;
@@ -36,22 +36,23 @@ interface Props {
   questionnaireTicketId: number;
   setFieldValue(name: string, value: AnswerInput[]): void;
   setIsSavingProgress(isSavingProgress: boolean): void;
+  inModal?: boolean;
 }
 
 const AnswerQuestionsFormField = ({
   answers,
   dirty,
   error,
-  question: { id, text },
+  question,
   questionnaireTicketId,
   setFieldValue,
   setIsSavingProgress,
-}: Props) => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  inModal,
+}: AnswerQuestionsFormFieldProps) => {
   const [answerQuestions] = useAnswerQuestionsMutation();
   const { t } = useTranslation();
 
-  const answer = answers.find((answer) => answer.questionId === id);
+  const answer = answers.find((answer) => answer.questionId === question.id);
 
   const handleSaveProgress = async () => {
     if (!dirty) {
@@ -65,7 +66,6 @@ const AnswerQuestionsFormField = ({
           isSubmitting: false,
           answers,
         },
-        isLoggedIn,
       },
       onError(err) {
         toastVar({
@@ -79,7 +79,7 @@ const AnswerQuestionsFormField = ({
 
   const handleTextFieldChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const newAnswers = answers.map((answer) => {
-      if (answer.questionId !== id) {
+      if (answer.questionId !== question.id) {
         return answer;
       }
       return { ...answer, text: target.value };
@@ -87,17 +87,23 @@ const AnswerQuestionsFormField = ({
     setFieldValue(ANSWERS_FIELD_NAME, newAnswers);
   };
 
-  return (
-    <Card>
+  const renderFormField = () => (
+    <>
       <CardHeader
         title={
           <Typography fontFamily="Inter Medium" fontSize="16px">
-            {text}
+            {question.text}
           </Typography>
         }
+        sx={{
+          paddingX: inModal ? 0 : undefined,
+          paddingTop: inModal ? 0 : undefined,
+        }}
       />
 
-      <CardContent>
+      <CardContent
+        sx={{ paddingX: inModal ? 0 : undefined, marginBottom: 0.4 }}
+      >
         <TextField
           autoComplete="off"
           defaultValue={answer?.text}
@@ -105,8 +111,9 @@ const AnswerQuestionsFormField = ({
           label={t('questions.placeholders.writeAnswer')}
           onBlur={handleSaveProgress}
           onChange={handleTextFieldChange}
-          sx={{ width: '100%' }}
-          variant="outlined"
+          sx={{ width: '100%', borderRadius: 8 }}
+          InputProps={{ disableUnderline: true, sx: { borderRadius: '4px' } }}
+          variant="filled"
           multiline
         />
 
@@ -116,8 +123,29 @@ const AnswerQuestionsFormField = ({
           </Typography>
         )}
       </CardContent>
-    </Card>
+
+      <QuestionCardFooter
+        question={question}
+        inModal={inModal}
+        answerQuestionsFormFieldProps={{
+          answers,
+          dirty,
+          error,
+          inModal,
+          question,
+          questionnaireTicketId,
+          setFieldValue,
+          setIsSavingProgress,
+        }}
+      />
+    </>
   );
+
+  if (inModal) {
+    return renderFormField();
+  }
+
+  return <Card>{renderFormField()}</Card>;
 };
 
 export default AnswerQuestionsFormField;

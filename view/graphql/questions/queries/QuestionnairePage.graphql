@@ -1,4 +1,4 @@
-query QuestionnairePage($questionnaireTicketId: Int!, $isLoggedIn: Boolean!) {
+query QuestionnairePage($questionnaireTicketId: Int!) {
   questionnaireTicket(id: $questionnaireTicketId) {
     ...QuestionnaireTicketCard
 

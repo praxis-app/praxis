@@ -13,6 +13,10 @@ export type AnswerQuestionsFormFragment = {
     __typename?: 'Question';
     id: number;
     text: string;
+    priority: number;
+    likeCount: number;
+    commentCount: number;
+    isLikedByMe: boolean;
     answer?: { __typename?: 'Answer'; id: number; text: string } | null;
   }>;
 };
