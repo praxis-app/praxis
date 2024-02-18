@@ -682,7 +682,8 @@
       "confirmSubmit": "Are you sure you want to submit your answers?",
       "noQuestionnaires": "No questionnaires",
       "noQuestions": "No questions yet",
-      "waitForResults": "You're answers are being reviewed and we'll notify you once there's any updates. Stay tuned!"
+      "waitForResults": "You're answers are being reviewed and we'll notify you once there's any updates. Stay tuned!",
+      "defaultQuestionnairePrompt": "Please answer the following questions to join the server."
     }
   },
 

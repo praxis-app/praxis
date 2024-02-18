@@ -49,6 +49,20 @@ const VibeCheck = () => {
   const { questionnaireTicket } = me;
   const { id, prompt, status, questions, comments } = questionnaireTicket;
 
+  const renderCommentSection = () => (
+    <>
+      <Divider sx={{ marginBottom: 2.5, marginTop: 2 }} />
+
+      <CommentsList
+        comments={comments || []}
+        currentUserId={me.id}
+        questionnaireTicketId={id}
+      />
+
+      <CommentForm questionnaireTicketId={id} enableAutoFocus />
+    </>
+  );
+
   return (
     <>
       <Flex justifyContent="space-between" alignItems="center">
@@ -66,13 +80,14 @@ const VibeCheck = () => {
 
       {status === QuestionnaireTicketStatus.InProgress && (
         <>
-          {prompt && (
-            <Card>
-              <CardContent sx={{ '&:last-child': { paddingBottom: 2 } }}>
-                <Typography>{prompt}</Typography>
-              </CardContent>
-            </Card>
-          )}
+          <Card>
+            <CardContent sx={{ '&:last-child': { paddingBottom: 0 } }}>
+              <Typography>
+                {prompt || t('questions.prompts.defaultQuestionnairePrompt')}
+              </Typography>
+              {renderCommentSection()}
+            </CardContent>
+          </Card>
 
           <AnswerQuestionsForm
             questionnaireTicket={questionnaireTicket}
@@ -88,16 +103,7 @@ const VibeCheck = () => {
           <Card>
             <CardContent sx={{ '&:last-child': { paddingBottom: 0 } }}>
               <Typography>{t('questions.prompts.waitForResults')}</Typography>
-
-              <Divider sx={{ marginBottom: 2.5, marginTop: 2 }} />
-
-              <CommentsList
-                comments={comments || []}
-                currentUserId={me.id}
-                questionnaireTicketId={id}
-              />
-
-              <CommentForm questionnaireTicketId={id} enableAutoFocus />
+              {renderCommentSection()}
             </CardContent>
           </Card>
 
