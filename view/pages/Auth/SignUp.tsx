@@ -20,8 +20,8 @@ const SignUp = () => {
 
   const {
     data,
-    loading: userCountLoading,
-    error: userCountError,
+    loading: isFirstUserLoading,
+    error: isFirstUserError,
   } = useIsFirstUserQuery({ skip: isLoggedIn });
 
   const { t } = useTranslation();
@@ -43,10 +43,10 @@ const SignUp = () => {
   if (serverInviteError) {
     return <Typography>{t('invites.prompts.expiredOrInvalid')}</Typography>;
   }
-  if (userCountError) {
+  if (isFirstUserError) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
-  if (serverInviteLoading || userCountLoading) {
+  if (serverInviteLoading || isFirstUserLoading) {
     return <ProgressBar />;
   }
   if (isLoggedIn) {
@@ -56,7 +56,7 @@ const SignUp = () => {
     return <Typography>{t('invites.prompts.inviteRequired')}</Typography>;
   }
 
-  return <SignUpForm />;
+  return <SignUpForm isFirstUser={!!data?.isFirstUser} />;
 };
 
 export default SignUp;

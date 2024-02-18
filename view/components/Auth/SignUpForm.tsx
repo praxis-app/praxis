@@ -31,7 +31,11 @@ import { isEntityTooLarge } from '../../utils/error.utils';
 import { validateImageInput } from '../../utils/image.utils';
 import { getRandomString } from '../../utils/shared.utils';
 
-const SignUpForm = () => {
+interface Props {
+  isFirstUser: boolean;
+}
+
+const SignUpForm = ({ isFirstUser }: Props) => {
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
   const [profilePicture, setProfilePicture] = useState<File>();
   const [imageInputKey, setImageInputKey] = useState('');
@@ -114,7 +118,12 @@ const SignUpForm = () => {
         setImageInputKey(getRandomString());
         localStorage.removeItem(LocalStorageKey.InviteToken);
         localStorage.setItem(LocalStorageKey.AccessToken, access_token);
-        navigate(NavigationPaths.VibeCheck);
+
+        if (isFirstUser) {
+          navigate(NavigationPaths.Home);
+        } else {
+          navigate(NavigationPaths.VibeCheck);
+        }
       },
       onError(err) {
         const title = isEntityTooLarge(err)
