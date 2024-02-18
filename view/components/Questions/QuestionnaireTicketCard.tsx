@@ -107,7 +107,7 @@ const QuestionnaireTicketCard = ({
 
   const cardContentStyles: SxProps = {
     paddingTop: 2.25,
-    paddingBottom: 2.5,
+    paddingBottom: 1.25,
     paddingX: inModal ? 0 : undefined,
   };
   const cardHeaderStyles: SxProps = {
