@@ -32,3 +32,7 @@
   background: black;
   color: white;
 }
+
+* {
+  scrollbar-color: #6b6b6b #2c2c2c;
+}
