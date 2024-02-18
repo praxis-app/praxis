@@ -677,7 +677,6 @@ type Query {
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
   likes(postId: Int, commentId: Int): [Like!]!
-  answer(id: Int!): Answer!
   serverQuestions: [ServerQuestion!]!
   questionnaireTicket(id: Int!): QuestionnaireTicket!
   serverQuestionnaireTickets: [QuestionnaireTicket!]!
