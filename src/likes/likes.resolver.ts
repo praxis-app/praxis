@@ -1,7 +1,6 @@
 import {
   Args,
   Context,
-  Int,
   Mutation,
   Parent,
   Query,
@@ -17,17 +16,15 @@ import { CreateLikeInput } from './models/create-like.input';
 import { CreateLikePayload } from './models/create-like.payload';
 import { DeleteLikeInput } from './models/delete-like.input';
 import { Like } from './models/like.model';
+import { LikesInput } from './models/likes.input';
 
 @Resolver(() => Like)
 export class LikesResolver {
   constructor(private likesService: LikesService) {}
 
   @Query(() => [Like])
-  async likes(
-    @Args('postId', { type: () => Int, nullable: true }) postId?: number,
-    @Args('commentId', { type: () => Int, nullable: true }) commentId?: number,
-  ) {
-    return this.likesService.getLikes({ postId, commentId });
+  async likes(@Args('likesData') likesData: LikesInput) {
+    return this.likesService.getLikes(likesData);
   }
 
   @ResolveField(() => User)

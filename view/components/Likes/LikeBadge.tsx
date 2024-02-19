@@ -7,6 +7,7 @@ import LikesPopover from './LikesPopover';
 interface Props extends BoxProps {
   postId?: number;
   commentId?: number;
+  questionId?: number;
   handlePopoverClose(): void;
   anchorEl: HTMLElement | null;
 }
@@ -14,6 +15,7 @@ interface Props extends BoxProps {
 const LikeBadge = ({
   postId,
   commentId,
+  questionId,
   handlePopoverClose,
   anchorEl,
   ...boxProps
@@ -45,6 +47,7 @@ const LikeBadge = ({
           anchorEl={anchorEl}
           postId={postId}
           commentId={commentId}
+          questionId={questionId}
           handlePopoverClose={handlePopoverClose}
         />
       )}

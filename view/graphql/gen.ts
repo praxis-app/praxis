@@ -468,6 +468,12 @@ export type Like = {
   user: User;
 };
 
+export type LikesInput = {
+  commentId?: InputMaybe<Scalars['Int']['input']>;
+  postId?: InputMaybe<Scalars['Int']['input']>;
+  questionId?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type LoginInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -1066,8 +1072,7 @@ export type QueryGroupsArgs = {
 };
 
 export type QueryLikesArgs = {
-  commentId?: InputMaybe<Scalars['Int']['input']>;
-  postId?: InputMaybe<Scalars['Int']['input']>;
+  likesData: LikesInput;
 };
 
 export type QueryNotificationsArgs = {

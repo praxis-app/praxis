@@ -30,12 +30,14 @@ export class LikesService {
     private notificationsService: NotificationsService,
   ) {}
 
-  async getLikes({ postId, commentId }: FindOptionsWhere<Like>) {
-    if (!postId && !commentId) {
-      throw new Error('Either postId or commentId must be provided');
+  async getLikes({ postId, commentId, questionId }: FindOptionsWhere<Like>) {
+    if (!postId && !commentId && !questionId) {
+      throw new Error(
+        'Either postId, commentId, or questionId must be provided',
+      );
     }
     return this.likeRepository.find({
-      where: { postId, commentId },
+      where: { postId, commentId, questionId },
     });
   }
 

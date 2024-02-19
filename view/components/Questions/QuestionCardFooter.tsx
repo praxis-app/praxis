@@ -137,9 +137,8 @@ const QuestionCardFooter = ({
                 onMouseLeave={handlePopoverClose}
                 sx={{ cursor: 'pointer' }}
               >
-                {/* TODO: Add answerId prop to LikeBadge */}
                 <LikeBadge
-                  postId={question.id}
+                  questionId={question.id}
                   anchorEl={anchorEl}
                   handlePopoverClose={handlePopoverClose}
                   marginRight="11px"
@@ -148,11 +147,10 @@ const QuestionCardFooter = ({
                 <Typography sx={{ userSelect: 'none' }}>{likeCount}</Typography>
               </Flex>
 
-              {/* TODO: Add answerId prop to LikesModal */}
               <LikesModal
                 open={showLikesModal}
                 onClose={() => setShowLikesModal(false)}
-                postId={question.id}
+                questionId={question.id}
               />
             </>
           )}

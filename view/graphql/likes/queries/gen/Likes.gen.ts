@@ -9,8 +9,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type LikesQueryVariables = Types.Exact<{
-  postId?: Types.InputMaybe<Types.Scalars['Int']['input']>;
-  commentId?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  likesData: Types.LikesInput;
   isLoggedIn: Types.Scalars['Boolean']['input'];
 }>;
 
@@ -31,8 +30,8 @@ export type LikesQuery = {
 };
 
 export const LikesDocument = gql`
-  query Likes($postId: Int, $commentId: Int, $isLoggedIn: Boolean!) {
-    likes(postId: $postId, commentId: $commentId) {
+  query Likes($likesData: LikesInput!, $isLoggedIn: Boolean!) {
+    likes(likesData: $likesData) {
       ...Like
     }
     me @include(if: $isLoggedIn) {
@@ -54,8 +53,7 @@ export const LikesDocument = gql`
  * @example
  * const { data, loading, error } = useLikesQuery({
  *   variables: {
- *      postId: // value for 'postId'
- *      commentId: // value for 'commentId'
+ *      likesData: // value for 'likesData'
  *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });

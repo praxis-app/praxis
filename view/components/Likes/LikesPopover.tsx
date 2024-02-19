@@ -5,16 +5,18 @@ import { useLikesPopoverLazyQuery } from '../../graphql/likes/queries/gen/LikesP
 
 interface Props {
   anchorEl: null | HTMLElement;
+  handlePopoverClose(): void;
   commentId?: number;
   postId?: number;
-  handlePopoverClose(): void;
+  questionId?: number;
 }
 
 const LikesPopover = ({
   anchorEl,
+  handlePopoverClose,
   commentId,
   postId,
-  handlePopoverClose,
+  questionId,
 }: Props) => {
   const [getLikes, { data, loading, called, error }] =
     useLikesPopoverLazyQuery();
@@ -22,14 +24,16 @@ const LikesPopover = ({
   const { t } = useTranslation();
 
   useEffect(() => {
-    const noId = !postId && !commentId;
+    const noId = !postId && !commentId && !questionId;
     if (!anchorEl || noId || called) {
       return;
     }
     getLikes({
-      variables: { postId, commentId },
+      variables: {
+        likesData: { postId, commentId, questionId },
+      },
     });
-  }, [anchorEl, postId, commentId, getLikes, called]);
+  }, [postId, commentId, questionId, anchorEl, getLikes, called]);
 
   const paperProps: PaperProps = {
     sx: {
