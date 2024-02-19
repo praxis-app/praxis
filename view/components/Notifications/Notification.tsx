@@ -206,10 +206,14 @@ const Notification = ({
     }
     if (notificationType === NotificationType.CommentLike) {
       if (comment?.post?.id) {
-        return `${NavigationPaths.Posts}/${comment?.post?.id}`;
+        return `${NavigationPaths.Posts}/${comment.post.id}`;
       }
-      if (comment?.question?.id) {
+      if (comment?.question) {
         const { id } = comment.question.questionnaireTicket;
+        return `${NavigationPaths.ServerQuestionnaires}/${id}`;
+      }
+      if (comment?.questionnaireTicket) {
+        const { id } = comment.questionnaireTicket;
         return `${NavigationPaths.ServerQuestionnaires}/${id}`;
       }
       return `${NavigationPaths.Proposals}/${comment?.proposal?.id}`;
