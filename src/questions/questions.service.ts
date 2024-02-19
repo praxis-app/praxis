@@ -4,6 +4,8 @@ import { FindOptionsWhere, IsNull, Not, Repository } from 'typeorm';
 import { Comment } from '../comments/models/comment.model';
 import { sanitizeText } from '../common/common.utils';
 import { Like } from '../likes/models/like.model';
+import { NotificationType } from '../notifications/notifications.constants';
+import { NotificationsService } from '../notifications/notifications.service';
 import { DecisionMakingModel } from '../proposals/proposals.constants';
 import { ServerConfigsService } from '../server-configs/server-configs.service';
 import { User } from '../users/models/user.model';
@@ -15,13 +17,13 @@ import {
 import { AnswerQuestionsInput } from './models/answer-questions.input';
 import { Answer } from './models/answer.model';
 import { CreateQuestionInput } from './models/create-question.input';
-import { ServerQuestion } from './models/server-question.model';
-import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
 import { Question } from './models/question.model';
+import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
 import {
   QuestionnaireTicket,
   QuestionnaireTicketStatus,
 } from './models/questionnaire-ticket.model';
+import { ServerQuestion } from './models/server-question.model';
 import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
 
@@ -56,6 +58,7 @@ export class QuestionsService {
     private userRepository: Repository<User>,
 
     private serverConfigsService: ServerConfigsService,
+    private notificationsService: NotificationsService,
   ) {}
 
   async getServerQuestions() {
@@ -315,13 +318,21 @@ export class QuestionsService {
     });
   }
 
-  async verifyQuestionnaireTicketUser(questionnaireTicketId: number) {
+  async verifyQuestionnaireTicketUser(
+    questionnaireTicketId: number,
+    otherUserId: number,
+  ) {
     const questionnaireTicket = await this.getQuestionnaireTicket(
       questionnaireTicketId,
       ['user'],
     );
     await this.userRepository.update(questionnaireTicket.user.id, {
       verified: true,
+    });
+    await this.notificationsService.createNotification({
+      notificationType: NotificationType.VerifyUser,
+      userId: questionnaireTicket.user.id,
+      otherUserId,
     });
   }
 

@@ -184,6 +184,9 @@ const Notification = ({
         groupName: group?.name,
       });
     }
+    if (notificationType === NotificationType.VerifyUser) {
+      return _t('notifications.messages.verifyUser');
+    }
     return _t('notifications.errors.invalidType');
   };
 

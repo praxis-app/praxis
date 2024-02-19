@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comment } from '../comments/models/comment.model';
 import { Like } from '../likes/models/like.model';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { ServerConfigsModule } from '../server-configs/server-configs.module';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
@@ -29,14 +30,15 @@ import { ServerQuestionsResolver } from './resolvers/server-questions.resolver';
       User,
       Vote,
     ]),
+    NotificationsModule,
     ServerConfigsModule,
   ],
   providers: [
     AnswersResolver,
-    ServerQuestionsResolver,
     QuestionnaireTicketsResolver,
     QuestionsResolver,
     QuestionsService,
+    ServerQuestionsResolver,
   ],
   exports: [QuestionsService],
 })

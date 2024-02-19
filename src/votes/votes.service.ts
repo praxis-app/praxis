@@ -85,6 +85,7 @@ export class VotesService {
           );
           await this.questionsService.verifyQuestionnaireTicketUser(
             vote.questionnaireTicketId,
+            vote.userId,
           );
         }
       }
