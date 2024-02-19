@@ -647,6 +647,7 @@
     },
     "labels": {
       "answer": "Answer",
+      "answers": "Answers",
       "approved": "Approved",
       "denied": "Denied",
       "inProgress": "In Progress",

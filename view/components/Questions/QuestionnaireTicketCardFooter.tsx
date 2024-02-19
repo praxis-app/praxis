@@ -1,8 +1,10 @@
 import { useReactiveVar } from '@apollo/client';
-import { Comment, HowToVote } from '@mui/icons-material';
+import { Comment, HowToVote, QuestionAnswer } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { QuestionnaireTicketCardFragment } from '../../graphql/questions/fragments/gen/QuestionnaireTicketCard.gen';
 import { useQuestionnaireTicketCommentsLazyQuery } from '../../graphql/questions/queries/gen/QuestionnaireTicketComments.gen';
@@ -42,6 +44,7 @@ const QuestionnaireTicketCardFooter = ({
     useQuestionnaireTicketCommentsLazyQuery();
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (inModal) {
@@ -97,6 +100,9 @@ const QuestionnaireTicketCardFooter = ({
     }
   };
 
+  const handleAnswersButtonClick = () =>
+    navigate(`${NavigationPaths.ServerQuestionnaires}/${id}`);
+
   return (
     <>
       <Flex
@@ -133,6 +139,11 @@ const QuestionnaireTicketCardFooter = ({
         <CardFooterButton onClick={handleCommentButtonClick}>
           <Comment sx={ROTATED_ICON_STYLES} />
           {t('actions.comment')}
+        </CardFooterButton>
+
+        <CardFooterButton onClick={handleAnswersButtonClick}>
+          <QuestionAnswer sx={ROTATED_ICON_STYLES} />
+          {t('questions.labels.answers')}
         </CardFooterButton>
       </CardActions>
 
