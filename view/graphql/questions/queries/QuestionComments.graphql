@@ -1,4 +1,4 @@
-query QuestionComments($id: Int!, $isLoggedIn: Boolean!) {
+query QuestionComments($id: Int!, $isLoggedIn: Boolean = true) {
   question(id: $id) {
     id
     comments {

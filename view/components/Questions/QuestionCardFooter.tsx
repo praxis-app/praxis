@@ -1,9 +1,10 @@
-import { useReactiveVar } from '@apollo/client';
 import { Comment } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isLoggedInVar } from '../../graphql/cache';
+import { useSearchParams } from 'react-router-dom';
+import { NotificationType } from '../../constants/notifications.constants';
+import { AnswerQuestionsFormFieldFragment } from '../../graphql/questions/fragments/gen/AnswerQuestionsFormField.gen';
 import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
 import { useQuestionCommentsLazyQuery } from '../../graphql/questions/queries/gen/QuestionComments.gen';
 import CommentForm from '../Comments/CommentForm';
@@ -12,11 +13,10 @@ import LikeBadge from '../Likes/LikeBadge';
 import LikesModal from '../Likes/LikesModal';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
+import { AnswerQuestionsFormFieldProps } from './AnswerQuestionsFormField';
 import AnsweredQuestionModal from './AnsweredQuestionModal';
 import QuestionLikeButton from './QuestionLikeButton';
-import { AnswerQuestionsFormFieldFragment } from '../../graphql/questions/fragments/gen/AnswerQuestionsFormField.gen';
 import QuestionModal from './QuestionModal';
-import { AnswerQuestionsFormFieldProps } from './AnswerQuestionsFormField';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -24,17 +24,16 @@ const ROTATED_ICON_STYLES: SxProps = {
 };
 
 interface Props {
-  question: AnsweredQuestionCardFragment | AnswerQuestionsFormFieldFragment;
   answerQuestionsFormFieldProps?: AnswerQuestionsFormFieldProps;
+  question: AnsweredQuestionCardFragment | AnswerQuestionsFormFieldFragment;
   inModal?: boolean;
 }
 
 const QuestionCardFooter = ({
+  answerQuestionsFormFieldProps,
   question,
   inModal,
-  answerQuestionsFormFieldProps,
 }: Props) => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showComments, setShowComments] = useState(inModal);
   const [showLikesModal, setShowLikesModal] = useState(false);
@@ -46,21 +45,49 @@ const QuestionCardFooter = ({
   ] = useQuestionCommentsLazyQuery();
 
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    if (!inModal || questionCommentsCalled) {
+  const isAnswerComment = !!searchParams.get(NotificationType.AnswerComment);
+  const questionIdQueryParam = searchParams.get('questionId');
+
+  const handleCommentButtonClick = useCallback(async () => {
+    if (inModal) {
       return;
     }
-    getQuestionComments({
-      variables: { id: question.id, isLoggedIn },
+    const { data } = await getQuestionComments({
+      variables: { id: question.id },
     });
+    const comments = data?.question.comments;
+    if (comments && comments.length > 1) {
+      setIsModalOpen(true);
+    } else {
+      setShowComments(true);
+    }
+  }, [getQuestionComments, inModal, question.id]);
+
+  useEffect(() => {
+    if (
+      !questionCommentsCalled &&
+      questionIdQueryParam === question.id.toString() &&
+      isAnswerComment
+    ) {
+      handleCommentButtonClick();
+    }
   }, [
-    inModal,
-    isLoggedIn,
+    handleCommentButtonClick,
+    isAnswerComment,
     questionCommentsCalled,
-    getQuestionComments,
+    questionIdQueryParam,
     question.id,
   ]);
+
+  useEffect(() => {
+    if (inModal && !questionCommentsCalled) {
+      getQuestionComments({
+        variables: { id: question.id },
+      });
+    }
+  }, [inModal, questionCommentsCalled, getQuestionComments, question.id]);
 
   const likeCount = question?.likeCount;
   const isLikedByMe = question?.isLikedByMe;
@@ -74,21 +101,6 @@ const QuestionCardFooter = ({
     cursor: 'pointer',
   };
 
-  const handleCommentButtonClick = async () => {
-    if (inModal) {
-      return;
-    }
-    const { data } = await getQuestionComments({
-      variables: { id: question.id, isLoggedIn },
-    });
-    const comments = data?.question.comments;
-    if (comments && comments.length > 1) {
-      setIsModalOpen(true);
-    } else {
-      setShowComments(true);
-    }
-  };
-
   const handlePopoverOpen = (
     event: React.MouseEvent<HTMLElement, MouseEvent>,
   ) => setAnchorEl(event.currentTarget);
@@ -96,7 +108,7 @@ const QuestionCardFooter = ({
   const handlePopoverClose = () => setAnchorEl(null);
 
   const renderCommentForm = () => {
-    if (!isLoggedIn || inModal) {
+    if (inModal) {
       return null;
     }
     return <CommentForm questionId={question.id} enableAutoFocus />;
@@ -192,7 +204,6 @@ const QuestionCardFooter = ({
           <CommentsList
             comments={comments || []}
             currentUserId={me?.id}
-            marginBottom={inModal && !isLoggedIn ? 2.5 : undefined}
             questionId={question?.id}
           />
           {renderCommentForm()}
