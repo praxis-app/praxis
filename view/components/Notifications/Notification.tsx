@@ -228,12 +228,12 @@ const Notification = ({
       return `${NavigationPaths.Groups}/${group?.name}`;
     }
     if (notificationType === NotificationType.QuestionnaireTicketComment) {
-      const queryParam = `${notificationType}=true`;
       if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
         const ticketId = comment?.questionnaireTicket?.id;
+        const queryParam = `${notificationType}=true`;
         return `${NavigationPaths.ServerQuestionnaires}/${ticketId}?${queryParam}`;
       }
-      return `${NavigationPaths.VibeCheck}?${queryParam}`;
+      return NavigationPaths.VibeCheck;
     }
     if (notificationType === NotificationType.AnswerComment) {
       const queryParams = `${notificationType}=true&questionId=${comment?.question?.id}`;
