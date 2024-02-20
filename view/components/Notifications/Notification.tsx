@@ -233,7 +233,8 @@ const Notification = ({
       notificationType === NotificationType.QuestionnaireTicketComment
     ) {
       if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
-        return `${NavigationPaths.ServerQuestionnaires}/${comment?.questionnaireTicket?.id}`;
+        const id = comment?.questionnaireTicket?.id;
+        return `${NavigationPaths.ServerQuestionnaires}/${id}`;
       }
       if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
         const id = comment?.question?.questionnaireTicket.id;
