@@ -228,21 +228,19 @@ const Notification = ({
       return `${NavigationPaths.Groups}/${group?.name}`;
     }
     if (notificationType === NotificationType.QuestionnaireTicketComment) {
+      const queryParam = `${notificationType}=true`;
       if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
-        const id = comment?.questionnaireTicket?.id;
-        const queryParam = `${notificationType}=true`;
-        return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParam}`;
+        const ticketId = comment?.questionnaireTicket?.id;
+        return `${NavigationPaths.ServerQuestionnaires}/${ticketId}?${queryParam}`;
       }
-      const queryParams = `${notificationType}=true`;
-      return `${NavigationPaths.VibeCheck}?${queryParams}`;
+      return `${NavigationPaths.VibeCheck}?${queryParam}`;
     }
     if (notificationType === NotificationType.AnswerComment) {
-      if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
-        const id = comment?.question?.questionnaireTicket.id;
-        const queryParams = `${notificationType}=true&questionId=${comment?.question?.id}`;
-        return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParams}`;
-      }
       const queryParams = `${notificationType}=true&questionId=${comment?.question?.id}`;
+      if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
+        const ticketId = comment?.question?.questionnaireTicket.id;
+        return `${NavigationPaths.ServerQuestionnaires}/${ticketId}?${queryParams}`;
+      }
       return `${NavigationPaths.VibeCheck}?${queryParams}`;
     }
     if (notificationType === NotificationType.AnswerLike) {
