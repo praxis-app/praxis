@@ -227,16 +227,20 @@ const Notification = ({
     if (notificationType === NotificationType.GroupMemberRequestApproval) {
       return `${NavigationPaths.Groups}/${group?.name}`;
     }
-    if (notificationType === NotificationType.AnswerLike) {
+    if (
+      notificationType === NotificationType.AnswerLike ||
+      notificationType === NotificationType.AnswerComment ||
+      notificationType === NotificationType.QuestionnaireTicketComment
+    ) {
+      if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
+        const id = comment?.questionnaireTicket?.id;
+        return `${NavigationPaths.ServerQuestionnaires}/${id}`;
+      }
+      if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
+        const id = comment?.question?.questionnaireTicket.id;
+        return `${NavigationPaths.ServerQuestionnaires}/${id}`;
+      }
       return NavigationPaths.VibeCheck;
-    }
-    if (notificationType === NotificationType.AnswerComment) {
-      const id = comment?.question?.questionnaireTicket.id;
-      return `${NavigationPaths.ServerQuestionnaires}/${id}`;
-    }
-    if (notificationType === NotificationType.QuestionnaireTicketComment) {
-      const id = comment?.questionnaireTicket?.id;
-      return `${NavigationPaths.ServerQuestionnaires}/${id}`;
     }
     return NavigationPaths.Home;
   };
