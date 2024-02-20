@@ -227,29 +227,25 @@ const Notification = ({
     if (notificationType === NotificationType.GroupMemberRequestApproval) {
       return `${NavigationPaths.Groups}/${group?.name}`;
     }
-    if (
-      notificationType === NotificationType.AnswerLike ||
-      notificationType === NotificationType.AnswerComment ||
-      notificationType === NotificationType.QuestionnaireTicketComment
-    ) {
+    if (notificationType === NotificationType.QuestionnaireTicketComment) {
       if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
         const id = comment?.questionnaireTicket?.id;
         const queryParam = `${notificationType}=true`;
         return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParam}`;
       }
+      const queryParams = `${notificationType}=true`;
+      return `${NavigationPaths.VibeCheck}?${queryParams}`;
+    }
+    if (notificationType === NotificationType.AnswerComment) {
       if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
         const id = comment?.question?.questionnaireTicket.id;
         const queryParams = `${notificationType}=true&questionId=${comment?.question?.id}`;
         return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParams}`;
       }
-      if (comment?.question?.id) {
-        const queryParams = `${notificationType}=true&questionId=${comment?.question?.id}`;
-        return `${NavigationPaths.VibeCheck}?${queryParams}`;
-      }
-      if (comment?.questionnaireTicket?.id) {
-        const queryParams = `${notificationType}=true`;
-        return `${NavigationPaths.VibeCheck}?${queryParams}`;
-      }
+      const queryParams = `${notificationType}=true&questionId=${comment?.question?.id}`;
+      return `${NavigationPaths.VibeCheck}?${queryParams}`;
+    }
+    if (notificationType === NotificationType.AnswerLike) {
       return NavigationPaths.VibeCheck;
     }
     return NavigationPaths.Home;
