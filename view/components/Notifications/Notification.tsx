@@ -242,6 +242,14 @@ const Notification = ({
         const queryParams = `${notificationType}=true&questionId=${comment?.question?.id}`;
         return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParams}`;
       }
+      if (comment?.question?.id) {
+        const queryParams = `${notificationType}=true&questionId=${comment?.question?.id}`;
+        return `${NavigationPaths.VibeCheck}?${queryParams}`;
+      }
+      if (comment?.questionnaireTicket?.id) {
+        const queryParams = `${notificationType}=true`;
+        return `${NavigationPaths.VibeCheck}?${queryParams}`;
+      }
       return NavigationPaths.VibeCheck;
     }
     return NavigationPaths.Home;
