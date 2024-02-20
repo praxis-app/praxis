@@ -1,11 +1,10 @@
-import { useReactiveVar } from '@apollo/client';
 import { Comment, HowToVote, QuestionAnswer } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { NotificationType } from '../../constants/notifications.constants';
 import { NavigationPaths } from '../../constants/shared.constants';
-import { isLoggedInVar } from '../../graphql/cache';
 import { QuestionnaireTicketCardFragment } from '../../graphql/questions/fragments/gen/QuestionnaireTicketCard.gen';
 import { useQuestionnaireTicketCommentsLazyQuery } from '../../graphql/questions/queries/gen/QuestionnaireTicketComments.gen';
 import { Blurple } from '../../styles/theme';
@@ -35,36 +34,26 @@ const QuestionnaireTicketCardFooter = ({
   questionnaireTicket,
   inModal,
 }: Props) => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal);
 
-  const [getQuestionnaireTicketComments, { data: commentsData }] =
-    useQuestionnaireTicketCommentsLazyQuery();
+  const [
+    getQuestionnaireTicketComments,
+    { data: commentsData, called: getCommentsCalled },
+  ] = useQuestionnaireTicketCommentsLazyQuery();
 
+  const [searchParams] = useSearchParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (inModal) {
-      getQuestionnaireTicketComments({
-        variables: {
-          id: questionnaireTicket.id,
-          isLoggedIn,
-        },
-      });
-    }
-  }, [
-    getQuestionnaireTicketComments,
-    inModal,
-    isLoggedIn,
-    questionnaireTicket,
-  ]);
+  const isTicketComment = !!searchParams.get(
+    NotificationType.QuestionnaireTicketComment,
+  );
 
-  const me = commentsData?.me;
-  const comments = commentsData?.questionnaireTicket?.comments;
   const { id, myVote, voteCount, commentCount, settings } = questionnaireTicket;
+  const comments = commentsData?.questionnaireTicket?.comments;
+  const me = commentsData?.me;
 
   const commentCountStyles: SxProps = {
     '&:hover': { textDecoration: 'underline' },
@@ -73,24 +62,12 @@ const QuestionnaireTicketCardFooter = ({
     height: '24px',
   };
 
-  const getVoteButtonLabel = () => {
-    return t('proposals.actions.vote');
-  };
-
-  const handleVoteButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
-    setMenuAnchorEl(event.currentTarget);
-  };
-
-  const handleVoteMenuClose = () => setMenuAnchorEl(null);
-
-  const handleCommentButtonClick = async () => {
+  const handleCommentButtonClick = useCallback(async () => {
     if (inModal) {
       return;
     }
     const { data } = await getQuestionnaireTicketComments({
-      variables: { id, isLoggedIn },
+      variables: { id },
     });
     const comments = data?.questionnaireTicket.comments;
     if (comments && comments.length > 1) {
@@ -98,7 +75,33 @@ const QuestionnaireTicketCardFooter = ({
     } else {
       setShowComments(true);
     }
-  };
+  }, [getQuestionnaireTicketComments, inModal, id]);
+
+  useEffect(() => {
+    if (!getCommentsCalled && isTicketComment) {
+      handleCommentButtonClick();
+    }
+  }, [handleCommentButtonClick, isTicketComment, getCommentsCalled]);
+
+  useEffect(() => {
+    if (inModal && !getCommentsCalled) {
+      getQuestionnaireTicketComments({
+        variables: {
+          id: questionnaireTicket.id,
+        },
+      });
+    }
+  }, [
+    getQuestionnaireTicketComments,
+    inModal,
+    questionnaireTicket,
+    getCommentsCalled,
+  ]);
+
+  const handleVoteButtonClick = (event: React.MouseEvent<HTMLButtonElement>) =>
+    setMenuAnchorEl(event.currentTarget);
+
+  const handleVoteMenuClose = () => setMenuAnchorEl(null);
 
   const handleAnswersButtonClick = () =>
     navigate(`${NavigationPaths.ServerQuestionnaires}/${id}`);
@@ -133,7 +136,7 @@ const QuestionnaireTicketCardFooter = ({
           sx={myVote ? { color: Blurple.SavoryBlue } : {}}
         >
           <HowToVote sx={ICON_STYLES} />
-          {getVoteButtonLabel()}
+          {t('proposals.actions.vote')}
         </CardFooterButton>
 
         <CardFooterButton onClick={handleCommentButtonClick}>
@@ -153,7 +156,6 @@ const QuestionnaireTicketCardFooter = ({
           <CommentsList
             comments={comments || []}
             currentUserId={me?.id}
-            marginBottom={inModal && !isLoggedIn ? 2.5 : undefined}
             questionnaireTicketId={id}
           />
           {!inModal && (

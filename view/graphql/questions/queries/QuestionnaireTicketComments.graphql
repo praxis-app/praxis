@@ -1,4 +1,4 @@
-query QuestionnaireTicketComments($id: Int!, $isLoggedIn: Boolean!) {
+query QuestionnaireTicketComments($id: Int!, $isLoggedIn: Boolean = true) {
   questionnaireTicket(id: $id) {
     id
     comments {

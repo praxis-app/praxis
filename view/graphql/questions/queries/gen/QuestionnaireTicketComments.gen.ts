@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type QuestionnaireTicketCommentsQueryVariables = Types.Exact<{
   id: Types.Scalars['Int']['input'];
-  isLoggedIn: Types.Scalars['Boolean']['input'];
+  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type QuestionnaireTicketCommentsQuery = {
@@ -38,7 +38,7 @@ export type QuestionnaireTicketCommentsQuery = {
 };
 
 export const QuestionnaireTicketCommentsDocument = gql`
-  query QuestionnaireTicketComments($id: Int!, $isLoggedIn: Boolean!) {
+  query QuestionnaireTicketComments($id: Int!, $isLoggedIn: Boolean = true) {
     questionnaireTicket(id: $id) {
       id
       comments {
