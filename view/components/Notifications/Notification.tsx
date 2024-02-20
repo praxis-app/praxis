@@ -234,11 +234,13 @@ const Notification = ({
     ) {
       if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
         const id = comment?.questionnaireTicket?.id;
-        return `${NavigationPaths.ServerQuestionnaires}/${id}`;
+        const queryParam = `${notificationType}=true`;
+        return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParam}`;
       }
       if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
         const id = comment?.question?.questionnaireTicket.id;
-        return `${NavigationPaths.ServerQuestionnaires}/${id}`;
+        const queryParams = `${notificationType}=true&questionId=${comment?.question?.id}`;
+        return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParams}`;
       }
       return NavigationPaths.VibeCheck;
     }
