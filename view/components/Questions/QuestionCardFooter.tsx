@@ -44,8 +44,8 @@ const QuestionCardFooter = ({
     { data: questionCommentsData, called: questionCommentsCalled },
   ] = useQuestionCommentsLazyQuery();
 
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useTranslation();
-  const [searchParams] = useSearchParams();
 
   const isAnswerComment = !!searchParams.get(NotificationType.AnswerComment);
   const questionIdQueryParam = searchParams.get('questionId');
@@ -107,6 +107,16 @@ const QuestionCardFooter = ({
 
   const handlePopoverClose = () => setAnchorEl(null);
 
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+
+    if (isAnswerComment) {
+      searchParams.delete(NotificationType.AnswerComment);
+      searchParams.delete('questionId');
+      setSearchParams(searchParams);
+    }
+  };
+
   const renderCommentForm = () => {
     if (inModal) {
       return null;
@@ -120,7 +130,7 @@ const QuestionCardFooter = ({
         <QuestionModal
           question={question}
           open={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={handleModalClose}
           formFieldProps={answerQuestionsFormFieldProps}
         />
       );
@@ -128,7 +138,7 @@ const QuestionCardFooter = ({
     return (
       <AnsweredQuestionModal
         question={question as AnsweredQuestionCardFragment}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleModalClose}
         open={isModalOpen}
       />
     );

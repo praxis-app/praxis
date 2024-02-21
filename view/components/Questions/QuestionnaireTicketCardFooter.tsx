@@ -43,7 +43,7 @@ const QuestionnaireTicketCardFooter = ({
     { data: commentsData, called: getCommentsCalled },
   ] = useQuestionnaireTicketCommentsLazyQuery();
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -102,6 +102,15 @@ const QuestionnaireTicketCardFooter = ({
     setMenuAnchorEl(event.currentTarget);
 
   const handleVoteMenuClose = () => setMenuAnchorEl(null);
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+
+    if (isTicketComment) {
+      searchParams.delete(NotificationType.QuestionnaireTicketComment);
+      setSearchParams(searchParams);
+    }
+  };
 
   const handleAnswersButtonClick = () =>
     navigate(`${NavigationPaths.ServerQuestionnaires}/${id}`);
@@ -166,7 +175,7 @@ const QuestionnaireTicketCardFooter = ({
 
       <QuestionnaireTicketModal
         questionnaireTicket={questionnaireTicket}
-        onClose={() => setIsModalOpen(false)}
+        onClose={handleModalClose}
         open={isModalOpen}
       />
 
