@@ -329,7 +329,7 @@
       },
       "explanations": {
         "adminModel": "No Admin groups rely on proposals, while Rotating Admin groups swap out new admins regularly, and standard groups can have multiple admins.",
-        "decisionMakingModel": "The process the group uses to make decisions together, which can be consensus or consent based.",
+        "decisionMakingModel": "The process the group uses to make decisions together, which can be based on consensus, consent, or majority vote.",
         "privacy": "Public groups are viewable to anyone, while private groups are only viewable to server members.",
         "ratificationThreshold": "The minimum percentage of positive votes required for a proposal to reach consensus.",
         "reservationsLimit": "The maximum number of reservations allowed for a proposal to still be able to pass.",
