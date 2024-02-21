@@ -84,19 +84,19 @@ const QuestionnaireTicketSettingsModal = ({
 
       <Setting
         name={t('groups.settings.names.decisionMakingModel')}
-        description={t('groups.settings.explanations.decisionMakingModel')}
+        description={t('questions.settings.explanations.decisionMakingModel')}
         value={getDecisionMakingModelName(decisionMakingModel)}
       />
 
       <Setting
         name={t('groups.settings.names.standAsidesLimit')}
-        description={t('groups.settings.explanations.standAsidesLimit')}
+        description={t('questions.settings.explanations.standAsidesLimit')}
         value={standAsidesLimit}
       />
 
       <Setting
         name={t('groups.settings.names.reservationsLimit')}
-        description={t('groups.settings.explanations.reservationsLimit')}
+        description={t('questions.settings.explanations.reservationsLimit')}
         value={reservationsLimit}
         divider={showRatificationThreshold}
       />
@@ -106,7 +106,7 @@ const QuestionnaireTicketSettingsModal = ({
           <Setting
             name={t('groups.settings.names.ratificationThreshold')}
             description={t(
-              'groups.settings.explanations.ratificationThreshold',
+              'questions.settings.explanations.ratificationThreshold',
             )}
             value={`${ratificationThreshold}%`}
             divider={false}

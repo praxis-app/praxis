@@ -688,6 +688,14 @@
       "noQuestions": "No questions yet",
       "waitForResults": "You're answers are being reviewed and we'll notify you once there's any updates. Stay tuned!",
       "defaultQuestionnairePrompt": "Please answer the following questions to join the server."
+    },
+    "settings": {
+      "explanations": {
+        "decisionMakingModel": "The process used to decide on new members, which can be based on consensus, consent, or majority vote.",
+        "standAsidesLimit": "The maximum number of stand asides allowed for a new member to still be verified.",
+        "reservationsLimit": "The maximum number of reservations allowed for a new member to still be verified.",
+        "ratificationThreshold": "The minimum percentage of positive votes required for a new member to be verified."
+      }
     }
   },
 
