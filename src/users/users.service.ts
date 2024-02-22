@@ -92,6 +92,13 @@ export class UsersService {
     return verified;
   }
 
+  async isOwnUserAvatar(userId: number, imageId: number) {
+    const count = await this.imageRepository.count({
+      where: { id: imageId, userId, imageType: ImageTypes.ProfilePicture },
+    });
+    return count > 0;
+  }
+
   async isPublicUserAvatar(imageId: number) {
     const image = await this.imageRepository.findOneOrFail({
       where: { id: imageId },

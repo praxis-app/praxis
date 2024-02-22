@@ -28,6 +28,17 @@ export const isVerified = rule({ cache: 'contextual' })(async (
   return user.verified;
 });
 
+export const isOwnUserAvatar = rule({ cache: 'strict' })(async (
+  parent: Image,
+  _args,
+  { user, services: { usersService } }: Context,
+) => {
+  if (!user) {
+    return UNAUTHORIZED;
+  }
+  return usersService.isOwnUserAvatar(user.id, parent.id);
+});
+
 export const isUserInPublicGroups = rule({ cache: 'strict' })(async (
   parent: User,
   _args,

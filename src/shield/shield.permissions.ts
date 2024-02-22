@@ -51,6 +51,8 @@ import {
   isOwnAnswer,
   isOwnQuestion,
   isOwnQuestionnaireTicket,
+  isOwnQuestionnaireTicketReviewer,
+  isOwnQuestionnaireTicketReviewerAvatar,
 } from './rules/question.rules';
 import { canManageServerRoles } from './rules/role.rules';
 import { canManageRules, isPublicRule } from './rules/rule.rules';
@@ -62,6 +64,7 @@ import {
 import {
   canRemoveMembers,
   isMe,
+  isOwnUserAvatar,
   isPublicUserAvatar,
   isUserInPublicGroups,
   isVerified,
@@ -129,9 +132,24 @@ export const shieldPermissions = shield(
       ),
     },
     User: {
-      id: or(isMe, isVerified, isUserInPublicGroups),
-      name: or(isVerified, isUserInPublicGroups),
-      profilePicture: or(isVerified, isUserInPublicGroups),
+      id: or(
+        isMe,
+        isVerified,
+        isUserInPublicGroups,
+        isOwnQuestionnaireTicketReviewer,
+      ),
+      name: or(
+        isMe,
+        isVerified,
+        isUserInPublicGroups,
+        isOwnQuestionnaireTicketReviewer,
+      ),
+      profilePicture: or(
+        isMe,
+        isVerified,
+        isUserInPublicGroups,
+        isOwnQuestionnaireTicketReviewer,
+      ),
       questionnaireTicket: isMe,
     },
     Group: {
@@ -164,13 +182,15 @@ export const shieldPermissions = shield(
     PublicFeedItemsConnection: allow,
     Image: {
       id: or(
-        isVerified,
+        isOwnQuestionnaireTicketReviewerAvatar,
+        isOwnUserAvatar,
         isPublicCommentImage,
         isPublicEventImage,
         isPublicGroupImage,
         isPublicPostImage,
         isPublicProposalImage,
         isPublicUserAvatar,
+        isVerified,
       ),
       filename: or(
         isVerified,
