@@ -77,11 +77,13 @@ export const shieldPermissions = shield(
       me: isAuthenticated,
       users: canRemoveMembers,
       isFirstUser: allow,
+      notifications: isAuthenticated,
+      notificationsCount: isAuthenticated,
+      unreadNotificationsCount: isAuthenticated,
       serverInvite: allow,
       serverInvites: or(canCreateServerInvites, canManageServerInvites),
       serverConfig: canManageServerSettings,
       post: or(isVerified, isPublicPost, isPublicEventPost),
-      likes: or(isVerified, isPublicComment, isPublicEventPost, isPublicPost),
       proposal: or(isVerified, isPublicProposal),
       group: or(isVerified, isPublicGroup),
       event: or(isVerified, isPublicEvent),
@@ -92,6 +94,12 @@ export const shieldPermissions = shield(
       publicCanary: allow,
       serverRules: allow,
       events: allow,
+      likes: or(
+        isAuthenticated,
+        isPublicComment,
+        isPublicEventPost,
+        isPublicPost,
+      ),
     },
     Mutation: {
       login: allow,
@@ -131,6 +139,9 @@ export const shieldPermissions = shield(
         canManageComments,
         canManageGroupComments,
       ),
+    },
+    Subscription: {
+      notification: isAuthenticated,
     },
     User: {
       id: or(
@@ -226,7 +237,7 @@ export const shieldPermissions = shield(
     Rule: or(isVerified, isPublicRule),
     Event: or(isVerified, isPublicEvent),
     Post: or(isVerified, isPublicPost, isPublicEventPost),
-    Like: or(isVerified, isPublicLike),
+    Like: or(isAuthenticated, isPublicLike),
     Comment: or(isVerified, isPublicComment, isOwnQuestionnaireTicket),
     Proposal: or(isVerified, isPublicProposal),
     ProposalConfig: or(isVerified, isPublicProposal),
