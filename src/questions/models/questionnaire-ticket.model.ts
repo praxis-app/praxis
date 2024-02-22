@@ -10,12 +10,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Comment } from '../../comments/models/comment.model';
-import { Group } from '../../groups/models/group.model';
 import { Notification } from '../../notifications/models/notification.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
-import { QuestionnaireTicketConfig } from './questionnaire-ticket-config.model';
 import { Question } from './question.model';
+import { QuestionnaireTicketConfig } from './questionnaire-ticket-config.model';
 
 export enum QuestionnaireTicketStatus {
   InProgress = 'in-progress',
@@ -59,14 +58,6 @@ export class QuestionnaireTicket {
 
   @Column()
   userId: number;
-
-  @ManyToOne(() => Group, (group) => group.questionnaireTickets, {
-    onDelete: 'CASCADE',
-  })
-  group?: Group;
-
-  @Column({ nullable: true })
-  groupId?: number;
 
   @OneToOne(
     () => QuestionnaireTicketConfig,
