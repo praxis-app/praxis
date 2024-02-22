@@ -267,7 +267,6 @@ export class QuestionsService {
   async isOwnQuestionnaireTicketReviewer(userId: number, reviewerId: number) {
     const ticketCount = await this.questionnaireTicketRepository.count({
       where: {
-        id: userId,
         user: { id: userId, verified: false },
       },
     });

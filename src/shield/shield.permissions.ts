@@ -162,6 +162,7 @@ export const shieldPermissions = shield(
         isUserInPublicGroups,
         isOwnQuestionnaireTicketReviewer,
       ),
+      isFollowedByMe: isOwnQuestionnaireTicketReviewer,
       questionnaireTicket: isMe,
       serverPermissions: isMe,
     },
