@@ -73,6 +73,7 @@ import {
 export const shieldPermissions = shield(
   {
     Query: {
+      authCheck: allow,
       me: isAuthenticated,
       users: canRemoveMembers,
       isFirstUser: allow,
