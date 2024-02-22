@@ -151,6 +151,7 @@ export const shieldPermissions = shield(
         isOwnQuestionnaireTicketReviewer,
       ),
       questionnaireTicket: isMe,
+      serverPermissions: isMe,
     },
     Group: {
       id: or(isVerified, isPublicGroup),
@@ -168,6 +169,7 @@ export const shieldPermissions = shield(
       roles: isGroupMember,
     },
     GroupConfig: or(isVerified, isPublicGroup),
+    ServerPermissions: isMe,
     GroupRole: {
       id: or(isVerified, isPublicGroupRole),
       name: or(isVerified, isPublicGroupRole),
