@@ -136,7 +136,7 @@ export const shieldPermissions = shield(
       updateRulesPriority: canManageRules,
       updateNotification: isOwnNotification,
       deleteNotification: isOwnNotification,
-      createComment: or(isVerified, isOwnQuestion),
+      createComment: or(isVerified, isOwnQuestion, isOwnQuestionnaireTicket),
       updateComment: isOwnComment,
       deleteComment: or(
         isOwnComment,

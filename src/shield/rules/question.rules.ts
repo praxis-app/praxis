@@ -18,12 +18,21 @@ export const canManageQuestionnaireTickets = rule({ cache: 'strict' })(
 );
 
 export const isOwnQuestionnaireTicket = rule({ cache: 'strict' })(async (
-  parent: QuestionnaireTicket,
-  _args,
+  parent: QuestionnaireTicket | undefined,
+  args: { commentData: CreateCommentInput } | object,
   { services: { questionsService }, user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
+  }
+  if ('commentData' in args && args.commentData.questionnaireTicketId) {
+    return questionsService.isOwnQuestionnaireTicket(
+      args.commentData.questionnaireTicketId,
+      user.id,
+    );
+  }
+  if (!parent) {
+    return false;
   }
   return questionsService.isOwnQuestionnaireTicket(parent.id, user.id);
 });
