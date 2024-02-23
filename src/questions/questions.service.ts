@@ -311,6 +311,18 @@ export class QuestionsService {
     return count > 0;
   }
 
+  async isOwnQuestionComment(commentId: number, userId: number) {
+    const count = await this.commentRepository.count({
+      where: {
+        id: commentId,
+        question: {
+          questionnaireTicket: { userId },
+        },
+      },
+    });
+    return count > 0;
+  }
+
   async isOwnAnswer(answerId: number, userId: number) {
     const count = await this.anwersRepository.count({
       where: {

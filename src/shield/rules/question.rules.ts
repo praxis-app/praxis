@@ -81,7 +81,10 @@ export const isOwnQuestionnaireTicketReviewerAvatar = rule({ cache: 'strict' })(
 
 export const isOwnQuestion = rule({ cache: 'strict' })(async (
   parent: Question | undefined,
-  args: { likeData: CreateLikeInput | DeleteLikeInput } | object,
+  args:
+    | { likeData: CreateLikeInput | DeleteLikeInput }
+    | { id: number }
+    | object,
   { services: { questionsService }, user }: Context,
 ) => {
   if (!user) {
@@ -90,10 +93,24 @@ export const isOwnQuestion = rule({ cache: 'strict' })(async (
   if ('likeData' in args && args.likeData.questionId) {
     return questionsService.isOwnQuestion(args.likeData.questionId, user.id);
   }
+  if ('id' in args) {
+    return questionsService.isOwnQuestion(args.id, user.id);
+  }
   if (!parent) {
     return false;
   }
   return questionsService.isOwnQuestion(parent.id, user.id);
+});
+
+export const isOwnQuestionComment = rule({ cache: 'strict' })(async (
+  parent: Question,
+  _args,
+  { services: { questionsService }, user }: Context,
+) => {
+  if (!user) {
+    return UNAUTHORIZED;
+  }
+  return questionsService.isOwnQuestionComment(parent.id, user.id);
 });
 
 export const isOwnAnswer = rule({ cache: 'strict' })(async (

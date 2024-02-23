@@ -50,6 +50,7 @@ import {
   canManageQuestionnaireTickets,
   isOwnAnswer,
   isOwnQuestion,
+  isOwnQuestionComment,
   isOwnQuestionnaireTicket,
   isOwnQuestionnaireTicketComment,
   isOwnQuestionnaireTicketReviewer,
@@ -94,6 +95,7 @@ export const shieldPermissions = shield(
       publicGroupsCount: allow,
       publicCanary: allow,
       serverRules: allow,
+      question: or(isOwnQuestion, canManageQuestionnaireTickets),
       events: allow,
       likes: or(
         isAuthenticated,
@@ -219,12 +221,18 @@ export const shieldPermissions = shield(
         isVerified,
       ),
       filename: or(
-        isVerified,
         isPublicCommentImage,
         isPublicPostImage,
         isPublicProposalImage,
+        isVerified,
       ),
     },
+    Comment: or(
+      isOwnQuestionComment,
+      isOwnQuestionnaireTicketComment,
+      isPublicComment,
+      isVerified,
+    ),
     ServerInvite: {
       id: allow,
       token: allow,
@@ -251,7 +259,6 @@ export const shieldPermissions = shield(
     Event: or(isVerified, isPublicEvent),
     Post: or(isVerified, isPublicPost, isPublicEventPost),
     Like: or(isAuthenticated, isPublicLike),
-    Comment: or(isVerified, isPublicComment, isOwnQuestionnaireTicketComment),
     Proposal: or(isVerified, isPublicProposal),
     ProposalConfig: or(isVerified, isPublicProposal),
     ProposalAction: or(isVerified, isPublicProposalAction),
