@@ -143,14 +143,16 @@ export const shieldPermissions = shield(
         canManageGroupComments,
       ),
       createLike: or(
-        isVerified,
         isOwnQuestion,
+        isOwnQuestionComment,
         isOwnQuestionnaireTicketComment,
+        isVerified,
       ),
       deleteLike: or(
-        isVerified,
         isOwnQuestion,
+        isOwnQuestionComment,
         isOwnQuestionnaireTicketComment,
+        isVerified,
       ),
     },
     Subscription: {

@@ -103,12 +103,21 @@ export const isOwnQuestion = rule({ cache: 'strict' })(async (
 });
 
 export const isOwnQuestionComment = rule({ cache: 'strict' })(async (
-  parent: Question,
-  _args,
+  parent: Question | undefined,
+  args: { likeData: CreateLikeInput | DeleteLikeInput } | object,
   { services: { questionsService }, user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
+  }
+  if ('likeData' in args && args.likeData.commentId) {
+    return questionsService.isOwnQuestionComment(
+      args.likeData.commentId,
+      user.id,
+    );
+  }
+  if (!parent) {
+    return false;
   }
   return questionsService.isOwnQuestionComment(parent.id, user.id);
 });
