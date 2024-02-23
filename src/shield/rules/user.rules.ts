@@ -6,7 +6,7 @@ import { Image } from '../../images/models/image.model';
 import { User } from '../../users/models/user.model';
 import { hasServerPermission } from '../shield.utils';
 
-export const isMe = rule({ cache: 'contextual' })(async (
+export const isMe = rule({ cache: 'strict' })(async (
   parent: User,
   _args,
   { user }: Context,
