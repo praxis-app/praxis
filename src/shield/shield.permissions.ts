@@ -134,7 +134,8 @@ export const shieldPermissions = shield(
       updateRulesPriority: canManageRules,
       updateNotification: isOwnNotification,
       deleteNotification: isOwnNotification,
-      // createLike: or(isVerified),
+      createLike: or(isVerified, isOwnQuestion),
+      deleteLike: or(isVerified, isOwnQuestion),
       updateComment: isOwnComment,
       deleteComment: or(
         isOwnComment,
@@ -164,7 +165,7 @@ export const shieldPermissions = shield(
         isUserInPublicGroups,
         isOwnQuestionnaireTicketReviewer,
       ),
-      isFollowedByMe: or(isVerified, isOwnQuestionnaireTicketReviewer),
+      isFollowedByMe: or(isMe, isVerified, isOwnQuestionnaireTicketReviewer),
       questionnaireTicket: isMe,
       serverPermissions: isMe,
     },
@@ -237,6 +238,7 @@ export const shieldPermissions = shield(
     AuthPayload: {
       access_token: allow,
     },
+    CreateLikePayload: isAuthenticated,
     Rule: or(isVerified, isPublicRule),
     Event: or(isVerified, isPublicEvent),
     Post: or(isVerified, isPublicPost, isPublicEventPost),

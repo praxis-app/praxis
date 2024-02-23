@@ -3,6 +3,8 @@ import { Comment } from '../../comments/models/comment.model';
 import { UNAUTHORIZED } from '../../common/common.constants';
 import { Context } from '../../context/context.types';
 import { Image } from '../../images/models/image.model';
+import { CreateLikeInput } from '../../likes/models/create-like.input';
+import { DeleteLikeInput } from '../../likes/models/delete-like.input';
 import { Answer } from '../../questions/models/answer.model';
 import { Question } from '../../questions/models/question.model';
 import { QuestionnaireTicket } from '../../questions/models/questionnaire-ticket.model';
@@ -69,12 +71,18 @@ export const isOwnQuestionnaireTicketReviewerAvatar = rule({ cache: 'strict' })(
 );
 
 export const isOwnQuestion = rule({ cache: 'strict' })(async (
-  parent: Question,
-  _args,
+  parent: Question | undefined,
+  args: { likeData: CreateLikeInput | DeleteLikeInput } | object,
   { services: { questionsService }, user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
+  }
+  if ('likeData' in args && args.likeData.questionId) {
+    return questionsService.isOwnQuestion(args.likeData.questionId, user.id);
+  }
+  if (!parent) {
+    return false;
   }
   return questionsService.isOwnQuestion(parent.id, user.id);
 });
