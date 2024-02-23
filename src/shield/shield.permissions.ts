@@ -198,7 +198,7 @@ export const shieldPermissions = shield(
       roles: isGroupMember,
     },
     GroupConfig: or(isVerified, isPublicGroup),
-    ServerPermissions: isMe,
+    ServerPermissions: isAuthenticated,
     GroupRole: {
       id: or(isVerified, isPublicGroupRole),
       name: or(isVerified, isPublicGroupRole),

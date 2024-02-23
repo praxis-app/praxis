@@ -4,10 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { logTime, paginate, sanitizeText } from '../common/common.utils';
-import {
-  GroupPermissions,
-  GroupPermissionsMap,
-} from '../groups/group-roles/models/group-permissions.type';
+import { GroupPermissionsMap } from '../groups/group-roles/models/group-permissions.type';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { ImageTypes } from '../images/image.constants';
 import {
@@ -320,7 +317,10 @@ export class UsersService {
     const serverPermissions = user.serverRoles.reduce<ServerPermissions>(
       (result, { permission }) => {
         for (const key in permission) {
-          if (permission[key] && ServerPermissions[key]) {
+          if (['id', 'serverRoleId', 'createdAt', 'updatedAt'].includes(key)) {
+            continue;
+          }
+          if (permission[key]) {
             result[key] = true;
           }
         }
@@ -334,7 +334,10 @@ export class UsersService {
           result[groupId] = permission;
         } else {
           for (const key in permission) {
-            if (permission[key] && GroupPermissions[key]) {
+            if (['id', 'groupRoleId', 'createdAt', 'updatedAt'].includes(key)) {
+              continue;
+            }
+            if (permission[key]) {
               result[key] = true;
             }
           }
