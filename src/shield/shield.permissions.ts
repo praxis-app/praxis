@@ -134,13 +134,21 @@ export const shieldPermissions = shield(
       updateRulesPriority: canManageRules,
       updateNotification: isOwnNotification,
       deleteNotification: isOwnNotification,
-      createLike: or(isVerified, isOwnQuestion),
-      deleteLike: or(isVerified, isOwnQuestion),
       updateComment: isOwnComment,
       deleteComment: or(
         isOwnComment,
         canManageComments,
         canManageGroupComments,
+      ),
+      createLike: or(
+        isVerified,
+        isOwnQuestion,
+        isOwnQuestionnaireTicketComment,
+      ),
+      deleteLike: or(
+        isVerified,
+        isOwnQuestion,
+        isOwnQuestionnaireTicketComment,
       ),
     },
     Subscription: {

@@ -28,12 +28,21 @@ export const isOwnQuestionnaireTicket = rule({ cache: 'strict' })(async (
 });
 
 export const isOwnQuestionnaireTicketComment = rule({ cache: 'strict' })(async (
-  parent: Comment,
-  _args,
+  parent: Comment | undefined,
+  args: { likeData: CreateLikeInput | DeleteLikeInput } | object,
   { services: { questionsService }, user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
+  }
+  if ('likeData' in args && args.likeData.commentId) {
+    return questionsService.isOwnQuestionnaireTicketComment(
+      args.likeData.commentId,
+      user.id,
+    );
+  }
+  if (!parent) {
+    return false;
   }
   return questionsService.isOwnQuestionnaireTicketComment(parent.id, user.id);
 });
