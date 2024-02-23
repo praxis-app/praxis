@@ -536,6 +536,19 @@ type UpdateUserPayload {
   user: User!
 }
 
+type GroupPermissions {
+  manageRoles: Boolean!
+  manageSettings: Boolean!
+  managePosts: Boolean!
+  manageComments: Boolean!
+  manageEvents: Boolean!
+  updateGroup: Boolean!
+  deleteGroup: Boolean!
+  createEvents: Boolean!
+  approveMemberRequests: Boolean!
+  removeMembers: Boolean!
+}
+
 type CreateGroupRolePayload {
   groupRole: GroupRole!
 }
@@ -563,19 +576,6 @@ type CreateGroupMemberRequestPayload {
 type PublicFeedItemsConnection {
   nodes: [FeedItem!]!
   totalCount: Int!
-}
-
-type GroupPermissions {
-  manageRoles: Boolean!
-  manageSettings: Boolean!
-  managePosts: Boolean!
-  manageComments: Boolean!
-  manageEvents: Boolean!
-  updateGroup: Boolean!
-  deleteGroup: Boolean!
-  createEvents: Boolean!
-  approveMemberRequests: Boolean!
-  removeMembers: Boolean!
 }
 
 type CreateGroupPayload {
