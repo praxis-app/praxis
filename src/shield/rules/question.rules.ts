@@ -1,5 +1,6 @@
 import { rule } from 'graphql-shield';
 import { Comment } from '../../comments/models/comment.model';
+import { CreateCommentInput } from '../../comments/models/create-comment.input';
 import { UNAUTHORIZED } from '../../common/common.constants';
 import { Context } from '../../context/context.types';
 import { Image } from '../../images/models/image.model';
@@ -83,12 +84,16 @@ export const isOwnQuestion = rule({ cache: 'strict' })(async (
   parent: Question | undefined,
   args:
     | { likeData: CreateLikeInput | DeleteLikeInput }
+    | { commentData: CreateCommentInput }
     | { id: number }
     | object,
   { services: { questionsService }, user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
+  }
+  if ('commentData' in args && args.commentData.questionId) {
+    return questionsService.isOwnQuestion(args.commentData.questionId, user.id);
   }
   if ('likeData' in args && args.likeData.questionId) {
     return questionsService.isOwnQuestion(args.likeData.questionId, user.id);
