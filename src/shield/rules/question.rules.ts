@@ -15,17 +15,25 @@ export const canManageQuestionnaireTickets = rule({ cache: 'strict' })(
 );
 
 export const isOwnQuestionnaireTicket = rule({ cache: 'strict' })(async (
-  parent: QuestionnaireTicket | Comment,
+  parent: QuestionnaireTicket,
   _args,
   { services: { questionsService }, user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
   }
-  if (parent instanceof Comment) {
-    return questionsService.isOwnQuestionnaireTicketComment(parent.id, user.id);
-  }
   return questionsService.isOwnQuestionnaireTicket(parent.id, user.id);
+});
+
+export const isOwnQuestionnaireTicketComment = rule({ cache: 'strict' })(async (
+  parent: Comment,
+  _args,
+  { services: { questionsService }, user }: Context,
+) => {
+  if (!user) {
+    return UNAUTHORIZED;
+  }
+  return questionsService.isOwnQuestionnaireTicketComment(parent.id, user.id);
 });
 
 export const isOwnQuestionnaireTicketReviewer = rule({ cache: 'strict' })(

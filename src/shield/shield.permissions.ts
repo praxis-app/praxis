@@ -51,6 +51,7 @@ import {
   isOwnAnswer,
   isOwnQuestion,
   isOwnQuestionnaireTicket,
+  isOwnQuestionnaireTicketComment,
   isOwnQuestionnaireTicketReviewer,
   isOwnQuestionnaireTicketReviewerAvatar,
 } from './rules/question.rules';
@@ -133,6 +134,7 @@ export const shieldPermissions = shield(
       updateRulesPriority: canManageRules,
       updateNotification: isOwnNotification,
       deleteNotification: isOwnNotification,
+      // createLike: or(isVerified),
       updateComment: isOwnComment,
       deleteComment: or(
         isOwnComment,
@@ -239,7 +241,7 @@ export const shieldPermissions = shield(
     Event: or(isVerified, isPublicEvent),
     Post: or(isVerified, isPublicPost, isPublicEventPost),
     Like: or(isAuthenticated, isPublicLike),
-    Comment: or(isVerified, isPublicComment, isOwnQuestionnaireTicket),
+    Comment: or(isVerified, isPublicComment, isOwnQuestionnaireTicketComment),
     Proposal: or(isVerified, isPublicProposal),
     ProposalConfig: or(isVerified, isPublicProposal),
     ProposalAction: or(isVerified, isPublicProposalAction),
