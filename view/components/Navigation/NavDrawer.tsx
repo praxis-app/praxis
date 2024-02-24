@@ -149,6 +149,8 @@ const NavDrawer = () => {
     const {
       createInvites,
       manageInvites,
+      manageQuestionnaireTickets,
+      manageQuestions,
       manageRoles,
       manageSettings,
       removeMembers,
@@ -197,23 +199,27 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
-        <ListItemButton
-          onClick={handleLinkClick(NavigationPaths.ServerQuestionnaires)}
-        >
-          <ListItemIcon>
-            <QuestionAnswer />
-          </ListItemIcon>
-          <ListItemText primary={t('questions.labels.questionnaires')} />
-        </ListItemButton>
+        {manageQuestionnaireTickets && (
+          <ListItemButton
+            onClick={handleLinkClick(NavigationPaths.ServerQuestionnaires)}
+          >
+            <ListItemIcon>
+              <QuestionAnswer />
+            </ListItemIcon>
+            <ListItemText primary={t('questions.labels.questionnaires')} />
+          </ListItemButton>
+        )}
 
-        <ListItemButton
-          onClick={handleLinkClick(NavigationPaths.ServerQuestions)}
-        >
-          <ListItemIcon>
-            <HowToReg />
-          </ListItemIcon>
-          <ListItemText primary={t('questions.labels.questions')} />
-        </ListItemButton>
+        {manageQuestions && (
+          <ListItemButton
+            onClick={handleLinkClick(NavigationPaths.ServerQuestions)}
+          >
+            <ListItemIcon>
+              <HowToReg />
+            </ListItemIcon>
+            <ListItemText primary={t('questions.labels.questions')} />
+          </ListItemButton>
+        )}
 
         {manageSettings && (
           <ListItemButton
