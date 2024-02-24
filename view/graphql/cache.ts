@@ -14,7 +14,8 @@ export const isNavDrawerOpenVar = makeVar(false);
 // Authentication state
 export const isLoggedInVar = makeVar(false);
 export const isAuthLoadingVar = makeVar(false);
-export const authFailedVar = makeVar(false);
+export const isAuthErrorVar = makeVar(false);
+export const isAuthDoneVar = makeVar(false);
 export const isVerifiedVar = makeVar(false);
 export const inviteTokenVar = makeVar(
   localStorage.getItem(LocalStorageKey.InviteToken),

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import GroupCard from '../../components/Groups/GroupCard';
 import GroupTipsCard from '../../components/Groups/GroupTipsCard';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
-import { authFailedVar } from '../../graphql/cache';
+import { isAuthErrorVar } from '../../graphql/cache';
 import { usePublicGroupsLazyQuery } from '../../graphql/groups/queries/gen/PublicGroups.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 import Pagination from '../Shared/Pagination';
@@ -14,7 +14,7 @@ const PublicGroupsList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
 
-  const authFailed = useReactiveVar(authFailedVar);
+  const isAuthError = useReactiveVar(isAuthErrorVar);
   const [getGroups, { data, loading, error }] = usePublicGroupsLazyQuery({
     errorPolicy: 'all',
   });
@@ -22,7 +22,7 @@ const PublicGroupsList = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (!authFailed) {
+    if (!isAuthError) {
       return;
     }
     getGroups({
@@ -31,7 +31,7 @@ const PublicGroupsList = () => {
         offset: page * rowsPerPage,
       },
     });
-  }, [rowsPerPage, page, getGroups, authFailed]);
+  }, [rowsPerPage, page, getGroups, isAuthError]);
 
   const onChangePage = async (newPage: number) => {
     await getGroups({

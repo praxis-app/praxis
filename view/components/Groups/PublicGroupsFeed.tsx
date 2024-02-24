@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
-import { authFailedVar } from '../../graphql/cache';
+import { isAuthDoneVar, isVerifiedVar } from '../../graphql/cache';
 import { usePublicGroupsFeedLazyQuery } from '../../graphql/groups/queries/gen/PublicGroupsFeed.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 import WelcomeCard from '../About/WelcomeCard';
@@ -13,7 +13,9 @@ const PublicGroupsFeed = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
 
-  const authFailed = useReactiveVar(authFailedVar);
+  const isAuthDone = useReactiveVar(isAuthDoneVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
+
   const [getPublicGroupsFeed, { data, loading, error }] =
     usePublicGroupsFeedLazyQuery({
       errorPolicy: 'all',
@@ -22,16 +24,15 @@ const PublicGroupsFeed = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (!authFailed) {
-      return;
+    if (isAuthDone && !isVerified) {
+      getPublicGroupsFeed({
+        variables: {
+          limit: rowsPerPage,
+          offset: page * rowsPerPage,
+        },
+      });
     }
-    getPublicGroupsFeed({
-      variables: {
-        limit: rowsPerPage,
-        offset: page * rowsPerPage,
-      },
-    });
-  }, [getPublicGroupsFeed, rowsPerPage, authFailed, page]);
+  }, [getPublicGroupsFeed, rowsPerPage, isAuthDone, isVerified, page]);
 
   const handleChangePage = async (newPage: number) => {
     await getPublicGroupsFeed({

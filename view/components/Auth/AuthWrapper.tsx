@@ -3,7 +3,8 @@
 import { ReactNode, useEffect } from 'react';
 import { useAuthWrapperQuery } from '../../graphql/auth/queries/gen/AuthWrapper.gen';
 import {
-  authFailedVar,
+  isAuthDoneVar,
+  isAuthErrorVar,
   isAuthLoadingVar,
   isLoggedInVar,
   isVerifiedVar,
@@ -15,20 +16,22 @@ interface Props {
 }
 
 const AuthWrapper = ({ children }: Props) => {
-  const { loading } = useAuthWrapperQuery({
+  const { loading, called } = useAuthWrapperQuery({
     onCompleted({ authCheck, me }) {
       isLoggedInVar(authCheck);
-      authFailedVar(!authCheck);
+      isAuthErrorVar(!authCheck);
       isVerifiedVar(me.isVerified);
+      isAuthDoneVar(true);
     },
     onError() {
-      authFailedVar(true);
+      isAuthErrorVar(true);
+      isAuthDoneVar(true);
     },
   });
 
   useEffect(() => {
     isAuthLoadingVar(loading);
-  }, [loading]);
+  }, [loading, called]);
 
   if (loading) {
     return <TopNav />;
