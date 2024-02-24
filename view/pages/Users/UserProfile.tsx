@@ -63,7 +63,7 @@ const UserProfile = () => {
     });
   };
 
-  if (!isVerified && data?.me.id !== data?.user.id) {
+  if (!isLoggedIn) {
     return (
       <>
         <Typography sx={{ color: theme.palette.text.secondary }} gutterBottom>
