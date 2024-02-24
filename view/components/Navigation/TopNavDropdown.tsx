@@ -1,3 +1,4 @@
+import { useReactiveVar } from '@apollo/client';
 import {
   AccountBox,
   ExitToApp,
@@ -14,7 +15,11 @@ import {
   NavigationPaths,
 } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
-import { isAuthLoadingVar, isLoggedInVar } from '../../graphql/cache';
+import {
+  isAuthLoadingVar,
+  isLoggedInVar,
+  isVerifiedVar,
+} from '../../graphql/cache';
 import { MeQuery } from '../../graphql/users/queries/gen/Me.gen';
 
 const ICON_PROPS: SvgIconProps = {
@@ -35,6 +40,9 @@ const TopNavDropdown = ({
   handleClose,
   me: { name, serverPermissions },
 }: Props) => {
+  const isVerified = useReactiveVar(isVerifiedVar);
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+
   const [logOut, { client }] = useLogOutMutation();
 
   const { t } = useTranslation();
@@ -106,6 +114,13 @@ const TopNavDropdown = ({
         <MenuItem onClick={() => navigate(NavigationPaths.ServerQuestions)}>
           <HowToReg {...ICON_PROPS} />
           {t('questions.labels.questions')}
+        </MenuItem>
+      )}
+
+      {isLoggedIn && !isVerified && (
+        <MenuItem onClick={() => navigate(NavigationPaths.VibeCheck)}>
+          <QuestionAnswer {...ICON_PROPS} />
+          {t('questions.labels.vibeCheck')}
         </MenuItem>
       )}
 
