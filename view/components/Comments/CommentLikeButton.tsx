@@ -2,7 +2,7 @@ import { useReactiveVar } from '@apollo/client';
 import { ButtonBase } from '@mui/material';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { CommentLikeButtonFragment } from '../../graphql/comments/fragments/gen/CommentLikeButton.gen';
 import { useLikeCommentMutation } from '../../graphql/comments/mutations/gen/LikeComment.gen';
 import { useDeleteLikeMutation } from '../../graphql/likes/mutations/gen/DeleteLike.gen';
@@ -15,12 +15,15 @@ import { Blurple } from '../../styles/theme';
 
 interface Props {
   comment: CommentLikeButtonFragment;
+  isVibeCheckComment?: boolean;
 }
 
 const CommentLikeButton = ({
   comment: { id, isLikedByMe, __typename },
+  isVibeCheckComment,
 }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
   const [likeComment, { loading: likeCommentLoading }] =
     useLikeCommentMutation();
@@ -35,6 +38,13 @@ const CommentLikeButton = ({
     if (!isLoggedIn) {
       toastVar({
         title: t('comments.prompts.loginToLike'),
+        status: 'info',
+      });
+      return;
+    }
+    if (!isVibeCheckComment && !isVerified) {
+      toastVar({
+        title: t('comments.prompts.verifyToLike'),
         status: 'info',
       });
       return;

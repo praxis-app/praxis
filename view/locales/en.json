@@ -157,7 +157,8 @@
     "prompts": {
       "writeComment": "Write a comment...",
       "joinToComment": "No comments yet. Join the group to comment.",
-      "loginToLike": "You need to be logged in to like this comment."
+      "loginToLike": "You need to be logged in to like this comment.",
+      "verifyToLike": "You must be verified to like comments."
     },
     "labels": {
       "xComments_one": "{{count}} comment",
