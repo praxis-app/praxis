@@ -257,7 +257,8 @@ const Comment = ({
           </Typography>
           <CommentLikeButton
             comment={comment}
-            isVibeCheckComment={!!(questionId || questionnaireTicketId)}
+            isPostComment={!!postId}
+            isProposalComment={!!proposalId}
           />
         </Flex>
       </Box>

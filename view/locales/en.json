@@ -79,6 +79,7 @@
       "joinGroupToVote": "You need to be a group member to vote on this proposal.",
       "loginToVote": "You need to be logged in to vote.",
       "verifiedOnlyVote": "You must be verified to vote on proposals.",
+      "verifyToLikeComments": "You must be verified to like proposal comments.",
       "cannotEditProposedRoles": "Editing of proposed roles is still in development.",
       "emptyPermsAndMembers": "No proposed permissions or role members."
     },
@@ -157,8 +158,7 @@
     "prompts": {
       "writeComment": "Write a comment...",
       "joinToComment": "No comments yet. Join the group to comment.",
-      "loginToLike": "You need to be logged in to like this comment.",
-      "verifyToLike": "You must be verified to like comments."
+      "loginToLike": "You need to be logged in to like this comment."
     },
     "labels": {
       "xComments_one": "{{count}} comment",
@@ -239,6 +239,7 @@
     "prompts": {
       "loginToLike": "You need to be logged in to like posts.",
       "verifyToLike": "You must be verified to like posts.",
+      "verifyToLikeComments": "You must be verified to like comments on posts.",
       "verifyToComment": "No comments yet. You must be verified to comment on posts."
     },
     "form": {

@@ -15,12 +15,14 @@ import { Blurple } from '../../styles/theme';
 
 interface Props {
   comment: CommentLikeButtonFragment;
-  isVibeCheckComment?: boolean;
+  isPostComment?: boolean;
+  isProposalComment?: boolean;
 }
 
 const CommentLikeButton = ({
   comment: { id, isLikedByMe, __typename },
-  isVibeCheckComment,
+  isPostComment,
+  isProposalComment,
 }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isVerified = useReactiveVar(isVerifiedVar);
@@ -42,9 +44,16 @@ const CommentLikeButton = ({
       });
       return;
     }
-    if (!isVibeCheckComment && !isVerified) {
+    if (isPostComment && !isVerified) {
       toastVar({
-        title: t('comments.prompts.verifyToLike'),
+        title: t('posts.prompts.verifyToLikeComments'),
+        status: 'info',
+      });
+      return;
+    }
+    if (isProposalComment && !isVerified) {
+      toastVar({
+        title: t('proposals.prompts.verifyToLikeComments'),
         status: 'info',
       });
       return;
