@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GroupAdminModel } from '../../constants/group.constants';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isVerifiedVar } from '../../graphql/cache';
 import { useGroupEventsTabQuery } from '../../graphql/groups/queries/gen/GroupEventsTab.gen';
 import { DarkMode } from '../../styles/theme';
 import EventCompact from '../Events/EventCompact';
@@ -19,10 +19,10 @@ interface Props {
 }
 
 const GroupEventsTab = ({ groupId }: Props) => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data, loading, error } = useGroupEventsTabQuery({
-    variables: { groupId, isLoggedIn },
+    variables: { groupId, isVerified },
   });
 
   const { t } = useTranslation();

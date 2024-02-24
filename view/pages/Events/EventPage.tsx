@@ -13,7 +13,7 @@ import EventPageCard from '../../components/Events/EventPageCard';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { TruncationSizes } from '../../constants/shared.constants';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar } from '../../graphql/cache';
 import { useEventPageLazyQuery } from '../../graphql/events/queries/gen/EventPage.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../utils/error.utils';
@@ -31,6 +31,7 @@ const EventPage = () => {
   const [tab, setTab] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
   const [getEvent, { data, loading, error }] = useEventPageLazyQuery({
     errorPolicy: 'all',
@@ -43,10 +44,10 @@ const EventPage = () => {
   useEffect(() => {
     if (id && !isDeleting) {
       getEvent({
-        variables: { id: parseInt(id), isLoggedIn },
+        variables: { id: parseInt(id), isLoggedIn, isVerified },
       });
     }
-  }, [id, getEvent, isDeleting, isLoggedIn]);
+  }, [id, getEvent, isDeleting, isLoggedIn, isVerified]);
 
   if (loading) {
     return <ProgressBar />;

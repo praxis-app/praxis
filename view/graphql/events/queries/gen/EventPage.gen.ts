@@ -11,6 +11,7 @@ const defaultOptions = {} as const;
 export type EventPageQueryVariables = Types.Exact<{
   id: Types.Scalars['Int']['input'];
   isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type EventPageQuery = {
@@ -52,7 +53,7 @@ export type EventPageQuery = {
 };
 
 export const EventPageDocument = gql`
-  query EventPage($id: Int!, $isLoggedIn: Boolean!) {
+  query EventPage($id: Int!, $isLoggedIn: Boolean!, $isVerified: Boolean!) {
     event(id: $id) {
       ...EventPageCard
       group {
@@ -84,6 +85,7 @@ export const EventPageDocument = gql`
  *   variables: {
  *      id: // value for 'id'
  *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

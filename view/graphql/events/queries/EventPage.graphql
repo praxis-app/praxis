@@ -1,4 +1,4 @@
-query EventPage($id: Int!, $isLoggedIn: Boolean!) {
+query EventPage($id: Int!, $isLoggedIn: Boolean!, $isVerified: Boolean!) {
   event(id: $id) {
     ...EventPageCard
 
