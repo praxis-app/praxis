@@ -10,7 +10,7 @@ fragment EventPageCard on Event {
   startsAt
   endsAt
 
-  ...EventAttendeeButtons @include(if: $isLoggedIn)
+  ...EventAttendeeButtons @include(if: $isVerified)
 
   host {
     id
@@ -22,7 +22,7 @@ fragment EventPageCard on Event {
   group {
     id
     name
-    myPermissions @include(if: $isLoggedIn) {
+    myPermissions @include(if: $isVerified) {
       manageEvents
     }
   }

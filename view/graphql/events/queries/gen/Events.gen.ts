@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type EventsQueryVariables = Types.Exact<{
   input: Types.EventsInput;
-  isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type EventsQuery = {
@@ -40,7 +40,7 @@ export type EventsQuery = {
 };
 
 export const EventsDocument = gql`
-  query Events($input: EventsInput!, $isLoggedIn: Boolean!) {
+  query Events($input: EventsInput!, $isVerified: Boolean!) {
     events(input: $input) {
       ...EventCompact
     }
@@ -61,7 +61,7 @@ export const EventsDocument = gql`
  * const { data, loading, error } = useEventsQuery({
  *   variables: {
  *      input: // value for 'input'
- *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

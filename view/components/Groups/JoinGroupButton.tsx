@@ -40,6 +40,7 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
   const { data: memberRequestData, loading: memberRequestLoading } =
     useGroupMemberRequestQuery({
       variables: { groupId },
+      skip: !isVerified,
     });
 
   const [createMemberRequest, { loading: createLoading }] =

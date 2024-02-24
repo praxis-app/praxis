@@ -1,10 +1,10 @@
-query GroupPage($name: String!, $isLoggedIn: Boolean!) {
+query GroupPage($name: String!, $isVerified: Boolean!) {
   group(name: $name) {
     ...GroupPageCard
     description
   }
 
-  me @include(if: $isLoggedIn) {
+  me @include(if: $isVerified) {
     id
     serverPermissions {
       removeGroups

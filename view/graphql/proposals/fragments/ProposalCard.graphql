@@ -17,7 +17,7 @@ fragment ProposalCard on Proposal {
     standAsidesLimit
     closingAt
   }
-  myVote @include(if: $isLoggedIn) {
+  myVote @include(if: $isVerified) {
     id
   }
   user {
@@ -25,8 +25,8 @@ fragment ProposalCard on Proposal {
   }
   group {
     id
-    isJoinedByMe @include(if: $isLoggedIn)
-    myPermissions @include(if: $isLoggedIn) {
+    isJoinedByMe @include(if: $isVerified)
+    myPermissions @include(if: $isVerified) {
       manageComments
     }
     ...GroupAvatar

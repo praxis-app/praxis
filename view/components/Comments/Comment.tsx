@@ -255,7 +255,11 @@ const Comment = ({
           <Typography fontSize="13px" color="text.secondary" lineHeight={1}>
             {formattedDate}
           </Typography>
-          <CommentLikeButton comment={comment} />
+          <CommentLikeButton
+            comment={comment}
+            isPostComment={!!postId}
+            isProposalComment={!!proposalId}
+          />
         </Flex>
       </Box>
     </Flex>

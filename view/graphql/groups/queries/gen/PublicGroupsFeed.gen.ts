@@ -12,6 +12,7 @@ export type PublicGroupsFeedQueryVariables = Types.Exact<{
   offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
+  isVerified?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type PublicGroupsFeedQuery = {
@@ -247,6 +248,7 @@ export const PublicGroupsFeedDocument = gql`
     $offset: Int
     $limit: Int
     $isLoggedIn: Boolean = false
+    $isVerified: Boolean = false
   ) {
     publicGroupsFeed(offset: $offset, limit: $limit) {
       nodes {
@@ -273,6 +275,7 @@ export const PublicGroupsFeedDocument = gql`
  *      offset: // value for 'offset'
  *      limit: // value for 'limit'
  *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

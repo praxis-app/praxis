@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type GroupEventsTabQueryVariables = Types.Exact<{
   groupId: Types.Scalars['Int']['input'];
-  isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type GroupEventsTabQuery = {
@@ -71,7 +71,7 @@ export type GroupEventsTabQuery = {
 };
 
 export const GroupEventsTabDocument = gql`
-  query GroupEventsTab($groupId: Int!, $isLoggedIn: Boolean!) {
+  query GroupEventsTab($groupId: Int!, $isVerified: Boolean!) {
     group(id: $groupId) {
       futureEvents {
         ...EventCompact
@@ -79,7 +79,7 @@ export const GroupEventsTabDocument = gql`
       pastEvents {
         ...EventCompact
       }
-      myPermissions @include(if: $isLoggedIn) {
+      myPermissions @include(if: $isVerified) {
         manageEvents
         createEvents
       }
@@ -105,7 +105,7 @@ export const GroupEventsTabDocument = gql`
  * const { data, loading, error } = useGroupEventsTabQuery({
  *   variables: {
  *      groupId: // value for 'groupId'
- *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

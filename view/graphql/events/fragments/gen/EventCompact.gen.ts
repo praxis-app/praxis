@@ -36,13 +36,13 @@ export const EventCompactFragmentDoc = gql`
     goingCount
     online
     location
-    ...EventAttendeeButtons @include(if: $isLoggedIn)
+    ...EventAttendeeButtons @include(if: $isVerified)
     coverPhoto {
       id
     }
     group {
       id
-      myPermissions @include(if: $isLoggedIn) {
+      myPermissions @include(if: $isVerified) {
         manageEvents
       }
     }

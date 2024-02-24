@@ -78,6 +78,8 @@
       "createProposal": "Create a proposal...",
       "joinGroupToVote": "You need to be a group member to vote on this proposal.",
       "loginToVote": "You need to be logged in to vote.",
+      "verifiedOnlyVote": "You must be verified to vote on proposals.",
+      "verifyToLikeComments": "You must be verified to like proposal comments.",
       "cannotEditProposedRoles": "Editing of proposed roles is still in development.",
       "emptyPermsAndMembers": "No proposed permissions or role members."
     },
@@ -235,7 +237,10 @@
       "likes": "Post Likes"
     },
     "prompts": {
-      "loginToLike": "You need to be logged in to like this post."
+      "loginToLike": "You need to be logged in to like posts.",
+      "verifyToLike": "You must be verified to like posts.",
+      "verifyToLikeComments": "You must be verified to like comments on posts.",
+      "verifyToComment": "No comments yet. You must be verified to comment on posts."
     },
     "form": {
       "body": "Body"

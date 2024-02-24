@@ -13,6 +13,7 @@ const defaultOptions = {} as const;
 export type UpdateGroupSettingsMutationVariables = Types.Exact<{
   groupConfigData: Types.UpdateGroupConfigInput;
   isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
+  isVerified?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type UpdateGroupSettingsMutation = {
@@ -61,6 +62,7 @@ export const UpdateGroupSettingsDocument = gql`
   mutation UpdateGroupSettings(
     $groupConfigData: UpdateGroupConfigInput!
     $isLoggedIn: Boolean = true
+    $isVerified: Boolean = true
   ) {
     updateGroupConfig(groupConfigData: $groupConfigData) {
       group {
@@ -95,6 +97,7 @@ export type UpdateGroupSettingsMutationFn = Apollo.MutationFunction<
  *   variables: {
  *      groupConfigData: // value for 'groupConfigData'
  *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

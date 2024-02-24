@@ -4,6 +4,6 @@ fragment EventAttendeeButtons on Event {
 
   group {
     id
-    isJoinedByMe @include(if: $isLoggedIn)
+    isJoinedByMe @include(if: $isVerified)
   }
 }

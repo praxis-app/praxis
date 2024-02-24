@@ -42,7 +42,7 @@ export const EventPageCardFragmentDoc = gql`
     goingCount
     startsAt
     endsAt
-    ...EventAttendeeButtons @include(if: $isLoggedIn)
+    ...EventAttendeeButtons @include(if: $isVerified)
     host {
       id
       name
@@ -53,7 +53,7 @@ export const EventPageCardFragmentDoc = gql`
     group {
       id
       name
-      myPermissions @include(if: $isLoggedIn) {
+      myPermissions @include(if: $isVerified) {
         manageEvents
       }
     }

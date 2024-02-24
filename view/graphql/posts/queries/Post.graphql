@@ -1,4 +1,4 @@
-query Post($id: Int!, $isLoggedIn: Boolean!) {
+query Post($id: Int!, $isVerified: Boolean!) {
   post(id: $id) {
     ...PostCard
   }
