@@ -272,13 +272,22 @@ const ProposalCardFooter = ({
           {!inModal && (!group || group.isJoinedByMe) && (
             <CommentForm proposalId={proposal.id} enableAutoFocus />
           )}
-          {group && !group.isJoinedByMe && !comments?.length && (
+          {group && !group.isJoinedByMe && !comments?.length && isVerified && (
             <Typography
               color="text.secondary"
               align="center"
               marginBottom={1.75}
             >
               {t('comments.prompts.joinToComment')}
+            </Typography>
+          )}
+          {!isVerified && !comments?.length && (
+            <Typography
+              color="text.secondary"
+              align="center"
+              marginBottom={1.75}
+            >
+              {t('proposals.prompts.verifyToComment')}
             </Typography>
           )}
         </Box>
