@@ -182,6 +182,7 @@ export const shieldPermissions = shield(
       isFollowedByMe: or(isMe, isVerified, isOwnQuestionnaireTicketReviewer),
       questionnaireTicket: isMe,
       serverPermissions: isMe,
+      isVerified: isMe,
     },
     Group: {
       id: or(isVerified, isPublicGroup),
