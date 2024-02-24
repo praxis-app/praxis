@@ -15,7 +15,7 @@ import {
 } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
 import { isAuthLoadingVar, isLoggedInVar } from '../../graphql/cache';
-import { TopNavDropdownFragment } from '../../graphql/users/fragments/gen/TopNavDropdown.gen';
+import { MeQuery } from '../../graphql/users/queries/gen/Me.gen';
 
 const ICON_PROPS: SvgIconProps = {
   fontSize: 'small',
@@ -27,13 +27,13 @@ const ICON_PROPS: SvgIconProps = {
 interface Props {
   anchorEl: null | HTMLElement;
   handleClose: () => void;
-  user: TopNavDropdownFragment;
+  me: MeQuery['me'];
 }
 
 const TopNavDropdown = ({
   anchorEl,
   handleClose,
-  user: { name, serverPermissions },
+  me: { name, serverPermissions },
 }: Props) => {
   const [logOut, { client }] = useLogOutMutation();
 
@@ -93,15 +93,21 @@ const TopNavDropdown = ({
         </MenuItem>
       )}
 
-      <MenuItem onClick={() => navigate(NavigationPaths.ServerQuestionnaires)}>
-        <QuestionAnswer {...ICON_PROPS} />
-        {t('questions.labels.questionnaires')}
-      </MenuItem>
+      {serverPermissions.manageQuestionnaireTickets && (
+        <MenuItem
+          onClick={() => navigate(NavigationPaths.ServerQuestionnaires)}
+        >
+          <QuestionAnswer {...ICON_PROPS} />
+          {t('questions.labels.questionnaires')}
+        </MenuItem>
+      )}
 
-      <MenuItem onClick={() => navigate(NavigationPaths.ServerQuestions)}>
-        <HowToReg {...ICON_PROPS} />
-        {t('questions.labels.questions')}
-      </MenuItem>
+      {serverPermissions.manageQuestions && (
+        <MenuItem onClick={() => navigate(NavigationPaths.ServerQuestions)}>
+          <HowToReg {...ICON_PROPS} />
+          {t('questions.labels.questions')}
+        </MenuItem>
+      )}
 
       <MenuItem onClick={handleLogOutButtonClick}>
         <ExitToApp {...ICON_PROPS} />
