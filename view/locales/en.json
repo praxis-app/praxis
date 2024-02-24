@@ -80,7 +80,7 @@
       "loginToVote": "You need to be logged in to vote.",
       "verifiedOnlyVote": "You must be verified to vote on proposals.",
       "verifyToLikeComments": "You must be verified to like proposal comments.",
-      "verifyToComment": "You must be verified to comment on proposals.",
+      "verifyToComment": "No comments yet. You must be verified to comment on proposals.",
       "cannotEditProposedRoles": "Editing of proposed roles is still in development.",
       "emptyPermsAndMembers": "No proposed permissions or role members."
     },
