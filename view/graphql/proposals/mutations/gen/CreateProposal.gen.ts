@@ -11,6 +11,7 @@ const defaultOptions = {} as const;
 export type CreateProposalMutationVariables = Types.Exact<{
   proposalData: Types.CreateProposalInput;
   isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
+  isVerified?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type CreateProposalMutation = {
@@ -191,6 +192,7 @@ export const CreateProposalDocument = gql`
   mutation CreateProposal(
     $proposalData: CreateProposalInput!
     $isLoggedIn: Boolean = true
+    $isVerified: Boolean = true
   ) {
     createProposal(proposalData: $proposalData) {
       proposal {
@@ -220,6 +222,7 @@ export type CreateProposalMutationFn = Apollo.MutationFunction<
  *   variables: {
  *      proposalData: // value for 'proposalData'
  *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

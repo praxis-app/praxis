@@ -1,6 +1,7 @@
 mutation CreateProposal(
   $proposalData: CreateProposalInput!
   $isLoggedIn: Boolean = true
+  $isVerified: Boolean = true
 ) {
   createProposal(proposalData: $proposalData) {
     proposal {

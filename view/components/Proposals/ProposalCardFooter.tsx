@@ -6,7 +6,7 @@ import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProposalStage } from '../../constants/proposal.constants';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { useSyncProposalMutation } from '../../graphql/proposals/mutations/gen/SyncProposal.gen';
 import { useProposalCommentsLazyQuery } from '../../graphql/proposals/queries/gen/ProposalComments.gen';
@@ -46,10 +46,12 @@ const ProposalCardFooter = ({
   isProposalPage,
   groupId,
 }: Props) => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal || isProposalPage);
+
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
   const [getProposalComments, { data: proposalCommentsData }] =
     useProposalCommentsLazyQuery();
@@ -60,7 +62,7 @@ const ProposalCardFooter = ({
   const ref = useRef<HTMLDivElement>(null);
   const [, viewed] = useInView(ref, '100px');
   const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
-    skip: !isLoggedIn || !viewed || proposal.stage === ProposalStage.Ratified,
+    skip: !isVerified || !viewed || proposal.stage === ProposalStage.Ratified,
     variables: { proposalId: proposal.id },
 
     onData: ({ data: { data }, client: { cache } }) => {
@@ -81,7 +83,7 @@ const ProposalCardFooter = ({
 
     if (
       !viewed ||
-      !isLoggedIn ||
+      !isVerified ||
       !isVotingStage ||
       !hasVotingTimeLimit ||
       syncProposalCalled
@@ -93,11 +95,19 @@ const ProposalCardFooter = ({
       syncProposal({
         variables: {
           proposalId: proposal.id,
+          isVerified,
           isLoggedIn,
         },
       });
     }
-  }, [viewed, isLoggedIn, proposal, syncProposal, syncProposalCalled]);
+  }, [
+    isLoggedIn,
+    isVerified,
+    proposal,
+    syncProposal,
+    syncProposalCalled,
+    viewed,
+  ]);
 
   useEffect(() => {
     if (inModal || isProposalPage) {
@@ -156,6 +166,13 @@ const ProposalCardFooter = ({
       toastVar({
         status: 'info',
         title: t('proposals.prompts.loginToVote'),
+      });
+      return;
+    }
+    if (!isVerified) {
+      toastVar({
+        status: 'info',
+        title: t('proposals.prompts.verifiedOnlyVote'),
       });
       return;
     }
@@ -249,7 +266,7 @@ const ProposalCardFooter = ({
             canManageComments={canManageComments}
             comments={comments || []}
             currentUserId={me?.id}
-            marginBottom={inModal && !isLoggedIn ? 2.5 : undefined}
+            marginBottom={inModal && !isVerified ? 2.5 : undefined}
             proposalId={proposal.id}
           />
           {!inModal && (!group || group.isJoinedByMe) && (

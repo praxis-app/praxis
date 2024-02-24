@@ -11,6 +11,7 @@ const defaultOptions = {} as const;
 export type ProposalQueryVariables = Types.Exact<{
   id: Types.Scalars['Int']['input'];
   isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type ProposalQuery = {
@@ -185,7 +186,7 @@ export type ProposalQuery = {
 };
 
 export const ProposalDocument = gql`
-  query Proposal($id: Int!, $isLoggedIn: Boolean!) {
+  query Proposal($id: Int!, $isLoggedIn: Boolean!, $isVerified: Boolean!) {
     proposal(id: $id) {
       ...ProposalCard
     }
@@ -207,6 +208,7 @@ export const ProposalDocument = gql`
  *   variables: {
  *      id: // value for 'id'
  *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */
