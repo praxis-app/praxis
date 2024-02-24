@@ -94,6 +94,12 @@ const UserProfile = () => {
     );
   }
 
+  if (!isVerified && !data?.user) {
+    return (
+      <Typography>{t('users.prompts.verifyToSeeOtherProfiles')}</Typography>
+    );
+  }
+
   if (error) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }

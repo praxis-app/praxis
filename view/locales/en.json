@@ -206,7 +206,8 @@
       "removeSelf": "Are you sure you want to permanently remove yourself from the server? You will lose all of your data and this cannot be undone.",
       "signInToPost": "Sign in to start posting...",
       "unfollow": "Are you sure you want to unfollow this person?",
-      "verifiedOnly": "You must be verified to use this feature."
+      "verifiedOnly": "You must be verified to use this feature.",
+      "verifyToSeeOtherProfiles": "You must be verified to see other user profiles."
     },
     "labels": {
       "followers_one": "{{count}} Follower",
