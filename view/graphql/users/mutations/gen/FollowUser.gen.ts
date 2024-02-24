@@ -11,6 +11,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type FollowUserMutationVariables = Types.Exact<{
   id: Types.Scalars['Int']['input'];
+  isVerified?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type FollowUserMutation = {
@@ -22,8 +23,8 @@ export type FollowUserMutation = {
       id: number;
       bio?: string | null;
       createdAt: any;
-      followerCount: number;
-      followingCount: number;
+      followerCount?: number;
+      followingCount?: number;
       name: string;
       isFollowedByMe: boolean;
       followers: Array<{
@@ -41,8 +42,8 @@ export type FollowUserMutation = {
       id: number;
       bio?: string | null;
       createdAt: any;
-      followerCount: number;
-      followingCount: number;
+      followerCount?: number;
+      followingCount?: number;
       name: string;
       isFollowedByMe: boolean;
       following: Array<{
@@ -59,7 +60,7 @@ export type FollowUserMutation = {
 };
 
 export const FollowUserDocument = gql`
-  mutation FollowUser($id: Int!) {
+  mutation FollowUser($id: Int!, $isVerified: Boolean = true) {
     followUser(id: $id) {
       followedUser {
         id
@@ -99,6 +100,7 @@ export type FollowUserMutationFn = Apollo.MutationFunction<
  * const [followUserMutation, { data, loading, error }] = useFollowUserMutation({
  *   variables: {
  *      id: // value for 'id'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

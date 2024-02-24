@@ -77,6 +77,7 @@ export const shieldPermissions = shield(
     Query: {
       authCheck: isAuthenticated,
       me: isAuthenticated,
+      user: or(isMe, isVerified),
       users: canRemoveMembers,
       isFirstUser: allow,
       notifications: isAuthenticated,
@@ -180,6 +181,9 @@ export const shieldPermissions = shield(
         isOwnQuestionnaireTicketReviewer,
       ),
       isFollowedByMe: or(isMe, isVerified, isOwnQuestionnaireTicketReviewer),
+      bio: or(isMe, isVerified),
+      coverPhoto: or(isMe, isVerified),
+      createdAt: or(isMe, isVerified),
       questionnaireTicket: isMe,
       serverPermissions: isMe,
       isVerified: isMe,

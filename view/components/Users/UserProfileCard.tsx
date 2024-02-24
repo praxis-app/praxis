@@ -1,3 +1,4 @@
+import { useReactiveVar } from '@apollo/client';
 import { DateRange as JoinDateIcon } from '@mui/icons-material';
 import {
   Box,
@@ -18,7 +19,12 @@ import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
 } from '../../constants/shared.constants';
-import { isAuthLoadingVar, isLoggedInVar, toastVar } from '../../graphql/cache';
+import {
+  isAuthLoadingVar,
+  isLoggedInVar,
+  isVerifiedVar,
+  toastVar,
+} from '../../graphql/cache';
 import { UserProfileCardFragment } from '../../graphql/users/fragments/gen/UserProfileCard.gen';
 import { useDeleteUserMutation } from '../../graphql/users/mutations/gen/DeleteUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
@@ -60,6 +66,7 @@ interface Props extends CardProps {
 
 const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
   const [deleteUser, { client }] = useDeleteUserMutation();
   const { data } = useMeQuery();
@@ -172,15 +179,17 @@ const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
           {t('users.profile.joinDate', { joinDate })}
         </Typography>
 
-        <Box>
-          <Link href={followersPath}>
-            {t('users.labels.followers', { count: followerCount })}
-          </Link>
-          {MIDDOT_WITH_SPACES}
-          <Link href={followingPath}>
-            {t('users.labels.following', { count: followingCount })}
-          </Link>
-        </Box>
+        {isVerified && (
+          <Box>
+            <Link href={followersPath}>
+              {t('users.labels.followers', { count: followerCount })}
+            </Link>
+            {MIDDOT_WITH_SPACES}
+            <Link href={followingPath}>
+              {t('users.labels.following', { count: followingCount })}
+            </Link>
+          </Box>
+        )}
       </CardContent>
     </Card>
   );

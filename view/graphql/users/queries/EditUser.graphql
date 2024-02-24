@@ -1,4 +1,4 @@
-query EditUser($name: String) {
+query EditUser($name: String, $isVerified: Boolean!) {
   user(name: $name) {
     ...UserProfileCard
   }

@@ -12,20 +12,25 @@ import {
   DEFAULT_PAGE_SIZE,
   NavigationPaths,
 } from '../../constants/shared.constants';
-import { inviteTokenVar, isLoggedInVar } from '../../graphql/cache';
+import {
+  inviteTokenVar,
+  isLoggedInVar,
+  isVerifiedVar,
+} from '../../graphql/cache';
 import { useUserProfileQuery } from '../../graphql/users/queries/gen/UserProfile.gen';
 import { useUserProfileFeedLazyQuery } from '../../graphql/users/queries/gen/UserProfileFeed.gen';
 
 const UserProfile = () => {
   const inviteToken = useReactiveVar(inviteTokenVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
 
   const { name } = useParams();
   const { data, loading, error } = useUserProfileQuery({
-    variables: { name },
+    variables: { name, isVerified },
     skip: !name || !isLoggedIn,
   });
 
@@ -36,31 +41,29 @@ const UserProfile = () => {
   const theme = useTheme();
 
   useEffect(() => {
-    if (!isLoggedIn || !name) {
+    if (!isVerified || !name) {
       return;
     }
     getFeed({
       variables: {
         limit: rowsPerPage,
         offset: page * rowsPerPage,
-        isLoggedIn,
         name,
       },
     });
-  }, [name, isLoggedIn, getFeed, rowsPerPage, page]);
+  }, [name, isVerified, getFeed, rowsPerPage, page]);
 
   const handleChangePage = async (newPage: number) => {
     await getFeed({
       variables: {
         limit: rowsPerPage,
         offset: newPage * rowsPerPage,
-        isLoggedIn,
         name,
       },
     });
   };
 
-  if (!isLoggedIn) {
+  if (!isVerified && data?.me.id !== data?.user.id) {
     return (
       <>
         <Typography sx={{ color: theme.palette.text.secondary }} gutterBottom>
@@ -109,21 +112,26 @@ const UserProfile = () => {
   return (
     <>
       <UserProfileCard
-        canRemoveMembers={me.serverPermissions.removeMembers}
+        canRemoveMembers={me?.serverPermissions?.removeMembers}
         user={user}
       />
-      {isMe && <ToggleForms me={me} />}
 
-      <Feed
-        feedItems={feedData?.user.profileFeed}
-        totalCount={feedData?.user.profileFeedCount}
-        isLoading={feedLoading}
-        onChangePage={handleChangePage}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        setPage={setPage}
-        setRowsPerPage={setRowsPerPage}
-      />
+      {isVerified && (
+        <>
+          {isMe && <ToggleForms me={me} />}
+
+          <Feed
+            feedItems={feedData?.user.profileFeed}
+            totalCount={feedData?.user.profileFeedCount}
+            isLoading={feedLoading}
+            onChangePage={handleChangePage}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            setPage={setPage}
+            setRowsPerPage={setRowsPerPage}
+          />
+        </>
+      )}
     </>
   );
 };

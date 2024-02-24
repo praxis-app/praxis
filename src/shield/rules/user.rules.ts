@@ -7,12 +7,21 @@ import { User } from '../../users/models/user.model';
 import { hasServerPermission } from '../shield.utils';
 
 export const isMe = rule({ cache: 'strict' })(async (
-  parent: User,
-  _args,
+  parent: User | undefined,
+  args: { id: number | undefined; name: string | undefined } | object,
   { user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
+  }
+  if ('id' in args) {
+    return args.id === user.id;
+  }
+  if ('name' in args) {
+    return args.name === user.name;
+  }
+  if (!parent) {
+    return false;
   }
   return parent.id === user.id;
 });

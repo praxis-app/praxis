@@ -1,4 +1,4 @@
-mutation FollowUser($id: Int!) {
+mutation FollowUser($id: Int!, $isVerified: Boolean = true) {
   followUser(id: $id) {
     followedUser {
       id
