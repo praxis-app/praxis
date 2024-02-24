@@ -205,16 +205,24 @@ const Notification = ({
       return `${NavigationPaths.Posts}/${post?.id}`;
     }
     if (notificationType === NotificationType.CommentLike) {
-      if (comment?.post?.id) {
-        return `${NavigationPaths.Posts}/${comment.post.id}`;
-      }
       if (comment?.question) {
-        const { id } = comment.question.questionnaireTicket;
-        return `${NavigationPaths.ServerQuestionnaires}/${id}`;
+        const queryParams = `${notificationType}=true&questionId=${comment.question.id}`;
+        if (comment.question.questionnaireTicket.user.id === otherUser?.id) {
+          const { id } = comment.question.questionnaireTicket;
+          return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParams}`;
+        }
+        return `${NavigationPaths.VibeCheck}?${queryParams}`;
       }
       if (comment?.questionnaireTicket) {
-        const { id } = comment.questionnaireTicket;
-        return `${NavigationPaths.ServerQuestionnaires}/${id}`;
+        if (comment.questionnaireTicket.user.id === otherUser?.id) {
+          const { id } = comment.questionnaireTicket;
+          const queryParam = `${notificationType}=true`;
+          return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParam}`;
+        }
+        return NavigationPaths.VibeCheck;
+      }
+      if (comment?.post?.id) {
+        return `${NavigationPaths.Posts}/${comment.post.id}`;
       }
       return `${NavigationPaths.Proposals}/${comment?.proposal?.id}`;
     }
