@@ -267,6 +267,7 @@ export const shieldPermissions = shield(
     },
     CreateLikePayload: isAuthenticated,
     CreateCommentPayload: isAuthenticated,
+    UpdateCommentPayload: isAuthenticated,
     AnswerQuestionsPayload: isAuthenticated,
     UpdateNotificationPayload: isAuthenticated,
     Rule: or(isVerified, isPublicRule),
