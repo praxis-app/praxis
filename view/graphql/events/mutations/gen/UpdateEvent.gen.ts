@@ -10,7 +10,6 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type UpdateEventMutationVariables = Types.Exact<{
   eventData: Types.UpdateEventInput;
-  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
   isVerified?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
@@ -50,7 +49,6 @@ export type UpdateEventMutation = {
 export const UpdateEventDocument = gql`
   mutation UpdateEvent(
     $eventData: UpdateEventInput!
-    $isLoggedIn: Boolean = true
     $isVerified: Boolean = true
   ) {
     updateEvent(eventData: $eventData) {
@@ -80,7 +78,6 @@ export type UpdateEventMutationFn = Apollo.MutationFunction<
  * const [updateEventMutation, { data, loading, error }] = useUpdateEventMutation({
  *   variables: {
  *      eventData: // value for 'eventData'
- *      isLoggedIn: // value for 'isLoggedIn'
  *      isVerified: // value for 'isVerified'
  *   },
  * });

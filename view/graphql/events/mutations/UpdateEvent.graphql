@@ -1,6 +1,5 @@
 mutation UpdateEvent(
   $eventData: UpdateEventInput!
-  $isLoggedIn: Boolean = true
   $isVerified: Boolean = true
 ) {
   updateEvent(eventData: $eventData) {
