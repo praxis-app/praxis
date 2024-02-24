@@ -11,6 +11,7 @@ const defaultOptions = {} as const;
 export type PostCommentsQueryVariables = Types.Exact<{
   id: Types.Scalars['Int']['input'];
   isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
   withGroup: Types.Scalars['Boolean']['input'];
   groupId?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   withEvent: Types.Scalars['Boolean']['input'];
@@ -74,6 +75,7 @@ export const PostCommentsDocument = gql`
   query PostComments(
     $id: Int!
     $isLoggedIn: Boolean!
+    $isVerified: Boolean!
     $withGroup: Boolean!
     $groupId: Int
     $withEvent: Boolean!
@@ -85,7 +87,7 @@ export const PostCommentsDocument = gql`
         ...Comment
       }
     }
-    me @include(if: $isLoggedIn) {
+    me @include(if: $isVerified) {
       id
       serverPermissions {
         manageComments
@@ -93,8 +95,8 @@ export const PostCommentsDocument = gql`
     }
     group(id: $groupId) @include(if: $withGroup) {
       id
-      isJoinedByMe @include(if: $isLoggedIn)
-      myPermissions @include(if: $isLoggedIn) {
+      isJoinedByMe @include(if: $isVerified)
+      myPermissions @include(if: $isVerified) {
         manageComments
       }
     }
@@ -102,8 +104,8 @@ export const PostCommentsDocument = gql`
       id
       group {
         id
-        isJoinedByMe @include(if: $isLoggedIn)
-        myPermissions @include(if: $isLoggedIn) {
+        isJoinedByMe @include(if: $isVerified)
+        myPermissions @include(if: $isVerified) {
           manageComments
         }
       }
@@ -126,6 +128,7 @@ export const PostCommentsDocument = gql`
  *   variables: {
  *      id: // value for 'id'
  *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *      withGroup: // value for 'withGroup'
  *      groupId: // value for 'groupId'
  *      withEvent: // value for 'withEvent'

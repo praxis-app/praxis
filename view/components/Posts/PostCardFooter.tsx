@@ -5,7 +5,7 @@ import { Comment, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar } from '../../graphql/cache';
 import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
 import { usePostCommentsLazyQuery } from '../../graphql/posts/queries/gen/PostComments.gen';
 import { inDevToast } from '../../utils/shared.utils';
@@ -38,11 +38,13 @@ const PostCardFooter = ({
   groupId,
   eventId,
 }: Props) => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showComments, setShowComments] = useState(inModal || isPostPage);
   const [showLikesModal, setShowLikesModal] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
   const [getPostComments, { data: postCommentsData }] =
     usePostCommentsLazyQuery();
@@ -59,6 +61,7 @@ const PostCardFooter = ({
           eventId,
           groupId,
           isLoggedIn,
+          isVerified,
         },
       });
     }
@@ -68,6 +71,7 @@ const PostCardFooter = ({
     groupId,
     inModal,
     isLoggedIn,
+    isVerified,
     isPostPage,
     post,
   ]);
@@ -105,6 +109,7 @@ const PostCardFooter = ({
         eventId,
         groupId,
         isLoggedIn,
+        isVerified,
         withEvent: !!eventId,
         withGroup: !!groupId,
       },
@@ -124,7 +129,7 @@ const PostCardFooter = ({
   const handlePopoverClose = () => setAnchorEl(null);
 
   const renderCommentForm = () => {
-    if (!isLoggedIn || inModal) {
+    if (!isVerified || inModal) {
       return null;
     }
     if (group && !group.isJoinedByMe) {
@@ -209,18 +214,28 @@ const PostCardFooter = ({
             canManageComments={canManageComments}
             comments={comments || []}
             currentUserId={me?.id}
-            marginBottom={inModal && !isLoggedIn ? 2.5 : undefined}
+            marginBottom={inModal && !isVerified ? 2.5 : undefined}
             postId={id}
           />
           {renderCommentForm()}
 
-          {showJoinToCommentPrompt && (
+          {showJoinToCommentPrompt && isVerified && (
             <Typography
               color="text.secondary"
               align="center"
               marginBottom={1.75}
             >
               {t('comments.prompts.joinToComment')}
+            </Typography>
+          )}
+
+          {!isVerified && !comments?.length && (
+            <Typography
+              color="text.secondary"
+              align="center"
+              marginBottom={1.75}
+            >
+              {t('posts.prompts.verifyToComment')}
             </Typography>
           )}
         </Box>

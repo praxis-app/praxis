@@ -238,7 +238,8 @@
     },
     "prompts": {
       "loginToLike": "You need to be logged in to like posts.",
-      "verifyToLike": "You must be verified to like posts."
+      "verifyToLike": "You must be verified to like posts.",
+      "verifyToComment": "No comments yet. You must be verified to comment on posts."
     },
     "form": {
       "body": "Body"
