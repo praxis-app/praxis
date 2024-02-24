@@ -236,7 +236,8 @@
       "likes": "Post Likes"
     },
     "prompts": {
-      "loginToLike": "You need to be logged in to like this post."
+      "loginToLike": "You need to be logged in to like posts.",
+      "verifyToLike": "You must be verified to like posts."
     },
     "form": {
       "body": "Body"
