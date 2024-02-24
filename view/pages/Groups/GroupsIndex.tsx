@@ -1,12 +1,12 @@
 import { useReactiveVar } from '@apollo/client';
-import { isLoggedInVar } from '../../graphql/cache';
 import GroupsList from '../../components/Groups/GroupsList';
 import PublicGroupsList from '../../components/Groups/PublicGroupsList';
+import { isVerifiedVar } from '../../graphql/cache';
 
 const GroupsIndex = () => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
-  if (!isLoggedIn) {
+  if (!isVerified) {
     return <PublicGroupsList />;
   }
   return <GroupsList />;
