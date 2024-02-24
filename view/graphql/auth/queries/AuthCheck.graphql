@@ -1,3 +1,0 @@
-query AuthCheck {
-  authCheck
-}

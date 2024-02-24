@@ -1,11 +1,12 @@
 // TODO: Refactor to avoid duplicating auth state
 
 import { ReactNode, useEffect } from 'react';
-import { useAuthCheckQuery } from '../../graphql/auth/queries/gen/AuthCheck.gen';
+import { useAuthWrapperQuery } from '../../graphql/auth/queries/gen/AuthWrapper.gen';
 import {
   authFailedVar,
   isAuthLoadingVar,
   isLoggedInVar,
+  isVerifiedVar,
 } from '../../graphql/cache';
 import TopNav from '../Navigation/TopNav';
 
@@ -14,10 +15,11 @@ interface Props {
 }
 
 const AuthWrapper = ({ children }: Props) => {
-  const { loading } = useAuthCheckQuery({
-    onCompleted({ authCheck }) {
+  const { loading } = useAuthWrapperQuery({
+    onCompleted({ authCheck, me }) {
       isLoggedInVar(authCheck);
       authFailedVar(!authCheck);
+      isVerifiedVar(me.isVerified);
     },
     onError() {
       authFailedVar(true);
