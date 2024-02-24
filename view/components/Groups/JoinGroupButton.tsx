@@ -1,11 +1,11 @@
-import { Reference } from '@apollo/client';
+import { Reference, useReactiveVar } from '@apollo/client';
 import { ArrowDropDown, Logout } from '@mui/icons-material';
 import { Menu, MenuItem, styled } from '@mui/material';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TypeNames } from '../../constants/shared.constants';
-import { toastVar } from '../../graphql/cache';
+import { isVerifiedVar, toastVar } from '../../graphql/cache';
 import { useCancelGroupMemberRequestMutation } from '../../graphql/groups/mutations/gen/CancelGroupMemberRequest.gen';
 import { useCreateGroupMemberRequestMutation } from '../../graphql/groups/mutations/gen/CreateGroupMemberRequest.gen';
 import { useLeaveGroupMutation } from '../../graphql/groups/mutations/gen/LeaveGroup.gen';
@@ -36,6 +36,7 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
+  const isVerified = useReactiveVar(isVerifiedVar);
   const { data: memberRequestData, loading: memberRequestLoading } =
     useGroupMemberRequestQuery({
       variables: { groupId },
@@ -49,6 +50,21 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+
+  if (!isVerified) {
+    return (
+      <Button
+        onClick={() =>
+          toastVar({
+            title: t('groups.prompts.verifiedOnly'),
+            status: 'info',
+          })
+        }
+      >
+        {t('groups.actions.join')}
+      </Button>
+    );
+  }
 
   if (!memberRequestData) {
     return <Button disabled>{t('groups.actions.join')}</Button>;
