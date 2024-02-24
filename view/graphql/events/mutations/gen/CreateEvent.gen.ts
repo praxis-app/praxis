@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type CreateEventMutationVariables = Types.Exact<{
   eventData: Types.CreateEventInput;
-  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
+  isVerified?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type CreateEventMutation = {
@@ -45,7 +45,7 @@ export type CreateEventMutation = {
 export const CreateEventDocument = gql`
   mutation CreateEvent(
     $eventData: CreateEventInput!
-    $isLoggedIn: Boolean = true
+    $isVerified: Boolean = true
   ) {
     createEvent(eventData: $eventData) {
       event {
@@ -74,7 +74,7 @@ export type CreateEventMutationFn = Apollo.MutationFunction<
  * const [createEventMutation, { data, loading, error }] = useCreateEventMutation({
  *   variables: {
  *      eventData: // value for 'eventData'
- *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

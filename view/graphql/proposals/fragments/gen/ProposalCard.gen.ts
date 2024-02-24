@@ -198,7 +198,7 @@ export const ProposalCardFragmentDoc = gql`
       standAsidesLimit
       closingAt
     }
-    myVote @include(if: $isLoggedIn) {
+    myVote @include(if: $isVerified) {
       id
     }
     user {
@@ -206,8 +206,8 @@ export const ProposalCardFragmentDoc = gql`
     }
     group {
       id
-      isJoinedByMe @include(if: $isLoggedIn)
-      myPermissions @include(if: $isLoggedIn) {
+      isJoinedByMe @include(if: $isVerified)
+      myPermissions @include(if: $isVerified) {
         manageComments
       }
       ...GroupAvatar

@@ -1,6 +1,6 @@
 mutation CreateEvent(
   $eventData: CreateEventInput!
-  $isLoggedIn: Boolean = true
+  $isVerified: Boolean = true
 ) {
   createEvent(eventData: $eventData) {
     event {

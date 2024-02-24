@@ -13,6 +13,7 @@ export type UserProfileFeedQueryVariables = Types.Exact<{
   offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
+  isVerified?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type UserProfileFeedQuery = {
@@ -250,6 +251,7 @@ export const UserProfileFeedDocument = gql`
     $offset: Int
     $limit: Int
     $isLoggedIn: Boolean = true
+    $isVerified: Boolean = true
   ) {
     user(name: $name) {
       id
@@ -278,6 +280,7 @@ export const UserProfileFeedDocument = gql`
  *      offset: // value for 'offset'
  *      limit: // value for 'limit'
  *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

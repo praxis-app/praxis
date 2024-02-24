@@ -32,7 +32,7 @@ import {
 } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
 import {
-  authFailedVar,
+  isAuthErrorVar,
   inviteTokenVar,
   isAuthLoadingVar,
   isLoggedInVar,
@@ -61,12 +61,12 @@ const ListItemText = styled(MuiListItemText)(({ theme }) => ({
 
 const NavDrawer = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-  const authFailed = useReactiveVar(authFailedVar);
+  const isAuthError = useReactiveVar(isAuthErrorVar);
   const inviteToken = useReactiveVar(inviteTokenVar);
   const open = useReactiveVar(isNavDrawerOpenVar);
 
   const { data: meData } = useMeQuery({ skip: !isLoggedIn });
-  const { data: isFirstUserData } = useIsFirstUserQuery({ skip: !authFailed });
+  const { data: isFirstUserData } = useIsFirstUserQuery({ skip: !isAuthError });
   const [logOut, { client }] = useLogOutMutation();
 
   const { t } = useTranslation();
@@ -149,6 +149,8 @@ const NavDrawer = () => {
     const {
       createInvites,
       manageInvites,
+      manageQuestionnaireTickets,
+      manageQuestions,
       manageRoles,
       manageSettings,
       removeMembers,
@@ -197,23 +199,27 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
-        <ListItemButton
-          onClick={handleLinkClick(NavigationPaths.ServerQuestionnaires)}
-        >
-          <ListItemIcon>
-            <QuestionAnswer />
-          </ListItemIcon>
-          <ListItemText primary={t('questions.labels.questionnaires')} />
-        </ListItemButton>
+        {manageQuestionnaireTickets && (
+          <ListItemButton
+            onClick={handleLinkClick(NavigationPaths.ServerQuestionnaires)}
+          >
+            <ListItemIcon>
+              <QuestionAnswer />
+            </ListItemIcon>
+            <ListItemText primary={t('questions.labels.questionnaires')} />
+          </ListItemButton>
+        )}
 
-        <ListItemButton
-          onClick={handleLinkClick(NavigationPaths.ServerQuestions)}
-        >
-          <ListItemIcon>
-            <HowToReg />
-          </ListItemIcon>
-          <ListItemText primary={t('questions.labels.questions')} />
-        </ListItemButton>
+        {manageQuestions && (
+          <ListItemButton
+            onClick={handleLinkClick(NavigationPaths.ServerQuestions)}
+          >
+            <ListItemIcon>
+              <HowToReg />
+            </ListItemIcon>
+            <ListItemText primary={t('questions.labels.questions')} />
+          </ListItemButton>
+        )}
 
         {manageSettings && (
           <ListItemButton

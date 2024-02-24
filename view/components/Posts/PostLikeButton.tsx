@@ -4,7 +4,7 @@ import { SxProps } from '@mui/material';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import { TypeNames } from '../../constants/shared.constants';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { useDeleteLikeMutation } from '../../graphql/likes/mutations/gen/DeleteLike.gen';
 import {
   LikesPopoverDocument,
@@ -21,6 +21,8 @@ interface Props {
 
 const PostLikeButton = ({ postId, isLikedByMe }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
+
   const [likePost, { loading: likePostLoading }] = useLikePostMutation();
   const [unlikePost, { loading: unlikePostLoading }] = useDeleteLikeMutation();
 
@@ -37,6 +39,13 @@ const PostLikeButton = ({ postId, isLikedByMe }: Props) => {
     if (!isLoggedIn) {
       toastVar({
         title: t('posts.prompts.loginToLike'),
+        status: 'info',
+      });
+      return;
+    }
+    if (!isVerified) {
+      toastVar({
+        title: t('posts.prompts.verifyToLike'),
         status: 'info',
       });
       return;

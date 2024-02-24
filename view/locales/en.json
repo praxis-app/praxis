@@ -78,6 +78,9 @@
       "createProposal": "Create a proposal...",
       "joinGroupToVote": "You need to be a group member to vote on this proposal.",
       "loginToVote": "You need to be logged in to vote.",
+      "verifiedOnlyVote": "You must be verified to vote on proposals.",
+      "verifyToLikeComments": "You must be verified to like proposal comments.",
+      "verifyToComment": "No comments yet. You must be verified to comment on proposals.",
       "cannotEditProposedRoles": "Editing of proposed roles is still in development.",
       "emptyPermsAndMembers": "No proposed permissions or role members."
     },
@@ -203,7 +206,9 @@
       "removeUser": "Are you sure you want to permanently remove this member from the server? They will lose all of their data and this cannot be undone.",
       "removeSelf": "Are you sure you want to permanently remove yourself from the server? You will lose all of your data and this cannot be undone.",
       "signInToPost": "Sign in to start posting...",
-      "unfollow": "Are you sure you want to unfollow this person?"
+      "unfollow": "Are you sure you want to unfollow this person?",
+      "verifiedOnly": "You must be verified to use this feature.",
+      "verifyToSeeOtherProfiles": "You must be verified to see other user profiles."
     },
     "labels": {
       "followers_one": "{{count}} Follower",
@@ -234,7 +239,10 @@
       "likes": "Post Likes"
     },
     "prompts": {
-      "loginToLike": "You need to be logged in to like this post."
+      "loginToLike": "You need to be logged in to like posts.",
+      "verifyToLike": "You must be verified to like posts.",
+      "verifyToLikeComments": "You must be verified to like comments on posts.",
+      "verifyToComment": "No comments yet. You must be verified to comment on posts."
     },
     "form": {
       "body": "Body"
@@ -300,7 +308,8 @@
       "noGroups": "No groups yet.",
       "publicGroup": "Public Group: Anyone can view the group page and any content posted by group members.",
       "settingDisabledForConsent": "This setting is disabled for consent decision making.",
-      "settingDisabledForMajority": "This setting is disabled for majority vote."
+      "settingDisabledForMajority": "This setting is disabled for majority vote.",
+      "verifiedOnly": "You must be verified to join groups."
     },
     "tabs": {
       "about": "About",

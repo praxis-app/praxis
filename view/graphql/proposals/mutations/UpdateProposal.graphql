@@ -1,6 +1,7 @@
 mutation UpdateProposal(
   $proposalData: UpdateProposalInput!
   $isLoggedIn: Boolean = true
+  $isVerified: Boolean = true
 ) {
   updateProposal(proposalData: $proposalData) {
     proposal {

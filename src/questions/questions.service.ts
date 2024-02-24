@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, IsNull, Not, Repository } from 'typeorm';
+import { FindOptionsWhere, Not, Repository } from 'typeorm';
 import { Comment } from '../comments/models/comment.model';
 import { sanitizeText } from '../common/common.utils';
+import { ImageTypes } from '../images/image.constants';
+import { Image } from '../images/models/image.model';
 import { Like } from '../likes/models/like.model';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -57,6 +59,9 @@ export class QuestionsService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
 
+    @InjectRepository(Image)
+    private imageRepository: Repository<Image>,
+
     private serverConfigsService: ServerConfigsService,
     private notificationsService: NotificationsService,
   ) {}
@@ -91,18 +96,13 @@ export class QuestionsService {
     });
   }
 
-  async getServerQuestionnaireTickets() {
+  async getQuestionnaireTickets() {
     return this.questionnaireTicketRepository.find({
-      where: { groupId: IsNull() },
       order: { createdAt: 'ASC' },
     });
   }
 
-  // TODO: Add support for group questions
-  async getQuestionnairePrompt(groupId?: number) {
-    if (groupId) {
-      throw new Error('Group questions are not supported yet');
-    }
+  async getQuestionnairePrompt() {
     const { serverQuestionsPrompt } =
       await this.serverConfigsService.getServerConfig();
 
@@ -222,24 +222,6 @@ export class QuestionsService {
     return config;
   }
 
-  async getQuestionnaireTicketGroup(questionnaireTicketId: number) {
-    const { group } = await this.questionnaireTicketRepository.findOneOrFail({
-      where: { id: questionnaireTicketId },
-      relations: ['group'],
-    });
-    return group;
-  }
-
-  async isServerQuestionnaireTicket(questionnaireTicketId: number) {
-    const count = await this.questionnaireTicketRepository.count({
-      where: {
-        id: questionnaireTicketId,
-        groupId: IsNull(),
-      },
-    });
-    return count > 0;
-  }
-
   async isQuestionnaireTicketVerifiable(questionnaireTicketId: number) {
     const { status, config, votes } = await this.getQuestionnaireTicket(
       questionnaireTicketId,
@@ -263,6 +245,94 @@ export class QuestionsService {
       return this.hasConsensus(votes, config, usersWithAccessCount);
     }
     return false;
+  }
+
+  async isOwnQuestionnaireTicket(
+    questionnaireTicketId: number,
+    userId: number,
+  ) {
+    const count = await this.questionnaireTicketRepository.count({
+      where: { id: questionnaireTicketId, userId },
+    });
+    return count > 0;
+  }
+
+  async isOwnQuestionnaireTicketComment(commentId: number, userId: number) {
+    const count = await this.questionnaireTicketRepository.count({
+      where: { userId, comments: { id: commentId } },
+    });
+    return count > 0;
+  }
+
+  async isOwnQuestionnaireTicketReviewer(userId: number, reviewerId: number) {
+    const ticketCount = await this.questionnaireTicketRepository.count({
+      where: {
+        user: { id: userId, verified: false },
+      },
+    });
+    const userCount = await this.userRepository.count({
+      where: {
+        id: reviewerId,
+        serverRoles: {
+          permission: { manageQuestionnaireTickets: true },
+        },
+      },
+    });
+    return ticketCount > 0 && userCount > 0;
+  }
+
+  async isOwnQuestionnaireTicketReviewerAvatar(
+    userId: number,
+    reviewerAvatarId: number,
+  ) {
+    const ticketCount = await this.questionnaireTicketRepository.count({
+      where: {
+        user: { id: userId, verified: false },
+      },
+    });
+    const userCount = await this.imageRepository.count({
+      where: {
+        id: reviewerAvatarId,
+        imageType: ImageTypes.ProfilePicture,
+        user: {
+          serverRoles: {
+            permission: { manageQuestionnaireTickets: true },
+          },
+        },
+      },
+    });
+    return ticketCount > 0 && userCount > 0;
+  }
+
+  async isOwnQuestion(questionId: number, userId: number) {
+    const count = await this.questionRepository.count({
+      where: { id: questionId, questionnaireTicket: { userId } },
+    });
+    return count > 0;
+  }
+
+  async isOwnQuestionComment(commentId: number, userId: number) {
+    const count = await this.commentRepository.count({
+      where: {
+        id: commentId,
+        question: {
+          questionnaireTicket: { userId },
+        },
+      },
+    });
+    return count > 0;
+  }
+
+  async isOwnAnswer(answerId: number, userId: number) {
+    const count = await this.anwersRepository.count({
+      where: {
+        id: answerId,
+        question: {
+          questionnaireTicket: { userId },
+        },
+      },
+    });
+    return count > 0;
   }
 
   async hasConsensus(

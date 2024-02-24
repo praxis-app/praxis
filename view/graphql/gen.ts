@@ -1149,7 +1149,6 @@ export type QuestionnaireTicket = {
   commentCount: Scalars['Int']['output'];
   comments: Array<Comment>;
   createdAt: Scalars['DateTime']['output'];
-  group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   myVote?: Maybe<Vote>;
   prompt?: Maybe<Scalars['String']['output']>;

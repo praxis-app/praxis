@@ -1,13 +1,13 @@
-query UserProfile($name: String) {
+query UserProfile($name: String, $isVerified: Boolean!) {
   user(name: $name) {
     ...UserProfileCard
   }
 
   me {
     id
-    serverPermissions {
+    serverPermissions @include(if: $isVerified) {
       removeMembers
     }
-    ...ToggleForms
+    ...ToggleForms @include(if: $isVerified)
   }
 }

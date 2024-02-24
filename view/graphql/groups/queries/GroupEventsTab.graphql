@@ -1,4 +1,4 @@
-query GroupEventsTab($groupId: Int!, $isLoggedIn: Boolean!) {
+query GroupEventsTab($groupId: Int!, $isVerified: Boolean!) {
   group(id: $groupId) {
     futureEvents {
       ...EventCompact
@@ -6,7 +6,7 @@ query GroupEventsTab($groupId: Int!, $isLoggedIn: Boolean!) {
     pastEvents {
       ...EventCompact
     }
-    myPermissions @include(if: $isLoggedIn) {
+    myPermissions @include(if: $isVerified) {
       manageEvents
       createEvents
     }

@@ -15,11 +15,13 @@ import { toastVar } from '../../graphql/cache';
 import {
   EventFeedDocument,
   EventFeedQuery,
+  EventFeedQueryVariables,
 } from '../../graphql/events/queries/gen/EventFeed.gen';
 import { CreatePostInput, UpdatePostInput } from '../../graphql/gen';
 import {
   GroupFeedDocument,
   GroupFeedQuery,
+  GroupFeedQueryVariables,
 } from '../../graphql/groups/queries/gen/GroupFeed.gen';
 import { useDeleteImageMutation } from '../../graphql/images/mutations/gen/DeleteImage.gen';
 import { PostFormFragment } from '../../graphql/posts/fragments/gen/PostForm.gen';
@@ -28,10 +30,12 @@ import { useUpdatePostMutation } from '../../graphql/posts/mutations/gen/UpdateP
 import {
   HomeFeedDocument,
   HomeFeedQuery,
+  HomeFeedQueryVariables,
 } from '../../graphql/users/queries/gen/HomeFeed.gen';
 import {
   UserProfileFeedDocument,
   UserProfileFeedQuery,
+  UserProfileFeedQueryVariables,
 } from '../../graphql/users/queries/gen/UserProfileFeed.gen';
 import { isEntityTooLarge } from '../../utils/error.utils';
 import { validateImageInput } from '../../utils/image.utils';
@@ -78,7 +82,7 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
         const {
           createPost: { post },
         } = data;
-        cache.updateQuery<HomeFeedQuery>(
+        cache.updateQuery<HomeFeedQuery, HomeFeedQueryVariables>(
           {
             query: HomeFeedDocument,
             variables: { limit: 10, offset: 0, isLoggedIn: true },
@@ -88,7 +92,7 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
               draft?.me?.homeFeed.nodes.unshift(post);
             }),
         );
-        cache.updateQuery<UserProfileFeedQuery>(
+        cache.updateQuery<UserProfileFeedQuery, UserProfileFeedQueryVariables>(
           {
             query: UserProfileFeedDocument,
             variables: {
@@ -104,12 +108,13 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
             }),
         );
         if (post.group) {
-          cache.updateQuery<GroupFeedQuery>(
+          cache.updateQuery<GroupFeedQuery, GroupFeedQueryVariables>(
             {
               query: GroupFeedDocument,
               variables: {
                 name: post.group.name,
                 isLoggedIn: true,
+                isVerified: true,
                 limit: 10,
                 offset: 0,
               },
@@ -121,12 +126,12 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
           );
         }
         if (post.event) {
-          cache.updateQuery<EventFeedQuery>(
+          cache.updateQuery<EventFeedQuery, EventFeedQueryVariables>(
             {
               query: EventFeedDocument,
               variables: {
                 eventId: post.event.id,
-                isLoggedIn: true,
+                isVerified: true,
                 limit: 10,
                 offset: 0,
               },

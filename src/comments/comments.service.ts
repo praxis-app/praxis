@@ -187,34 +187,6 @@ export class CommentsService {
 
     // Notify all users with access that a user left a comment on their own answer
     if (comment.questionId && commentedItemUserId === user.id) {
-      const answer = await this.getCommentedQuestion(comment.questionId, [
-        'questionnaireTicket',
-      ]);
-      if (answer?.questionnaireTicket.groupId === null) {
-        const usersWithAccess = await this.userRepository.find({
-          where: {
-            serverRoles: {
-              permission: { manageQuestionnaireTickets: true },
-            },
-          },
-        });
-        for (const user of usersWithAccess) {
-          await this.notificationsService.createNotification({
-            notificationType: NotificationType.AnswerComment,
-            questionnaireTicketId: comment.questionnaireTicketId,
-            otherUserId: comment.userId,
-            commentId: comment.id,
-            userId: user.id,
-          });
-        }
-      }
-    }
-
-    // Notify all users with access that a user left a comment on their own questionnaire ticket
-    if (comment.questionnaireTicketId && commentedItemUserId === user.id) {
-      const questionnaireTicket = await this.getCommentedQuestionnaireTicket(
-        comment.questionnaireTicketId,
-      );
       const usersWithAccess = await this.userRepository.find({
         where: {
           serverRoles: {
@@ -222,16 +194,34 @@ export class CommentsService {
           },
         },
       });
-      if (questionnaireTicket?.groupId === null) {
-        for (const user of usersWithAccess) {
-          await this.notificationsService.createNotification({
-            notificationType: NotificationType.QuestionnaireTicketComment,
-            otherUserId: comment.userId,
-            questionnaireTicketId: comment.questionnaireTicketId,
-            commentId: comment.id,
-            userId: user.id,
-          });
-        }
+      for (const user of usersWithAccess) {
+        await this.notificationsService.createNotification({
+          notificationType: NotificationType.AnswerComment,
+          questionnaireTicketId: comment.questionnaireTicketId,
+          otherUserId: comment.userId,
+          commentId: comment.id,
+          userId: user.id,
+        });
+      }
+    }
+
+    // Notify all users with access that a user left a comment on their own questionnaire ticket
+    if (comment.questionnaireTicketId && commentedItemUserId === user.id) {
+      const usersWithAccess = await this.userRepository.find({
+        where: {
+          serverRoles: {
+            permission: { manageQuestionnaireTickets: true },
+          },
+        },
+      });
+      for (const user of usersWithAccess) {
+        await this.notificationsService.createNotification({
+          notificationType: NotificationType.QuestionnaireTicketComment,
+          otherUserId: comment.userId,
+          questionnaireTicketId: comment.questionnaireTicketId,
+          commentId: comment.id,
+          userId: user.id,
+        });
       }
     }
 

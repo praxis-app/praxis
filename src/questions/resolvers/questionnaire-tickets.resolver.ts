@@ -8,11 +8,10 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
-import { Group } from '../../groups/models/group.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { VoteTypes } from '../../votes/votes.constants';
-import { ServerQuestion } from '../models/server-question.model';
+import { Question } from '../models/question.model';
 import { QuestionnaireTicketConfig } from '../models/questionnaire-ticket-config.model';
 import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
 import { QuestionsService } from '../questions.service';
@@ -28,15 +27,15 @@ export class QuestionnaireTicketsResolver {
 
   @Query(() => [QuestionnaireTicket])
   async serverQuestionnaireTickets() {
-    return this.questionsService.getServerQuestionnaireTickets();
+    return this.questionsService.getQuestionnaireTickets();
   }
 
   @ResolveField(() => String, { nullable: true })
-  async prompt(@Parent() { groupId }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnairePrompt(groupId);
+  async prompt() {
+    return this.questionsService.getQuestionnairePrompt();
   }
 
-  @ResolveField(() => [ServerQuestion])
+  @ResolveField(() => [Question])
   async questions(@Parent() { id }: QuestionnaireTicket) {
     return this.questionsService.getQuestions(id);
   }
@@ -97,11 +96,6 @@ export class QuestionnaireTicketsResolver {
   @ResolveField(() => User)
   async user(@Parent() { id }: QuestionnaireTicket) {
     return this.questionsService.getQuestionnaireTicketUser(id);
-  }
-
-  @ResolveField(() => Group, { nullable: true })
-  async group(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketGroup(id);
   }
 
   @ResolveField(() => QuestionnaireTicketConfig)

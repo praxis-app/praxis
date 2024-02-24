@@ -92,6 +92,13 @@ export class UsersService {
     return verified;
   }
 
+  async isOwnUserAvatar(userId: number, imageId: number) {
+    const count = await this.imageRepository.count({
+      where: { id: imageId, userId, imageType: ImageTypes.ProfilePicture },
+    });
+    return count > 0;
+  }
+
   async isPublicUserAvatar(imageId: number) {
     const image = await this.imageRepository.findOneOrFail({
       where: { id: imageId },
@@ -310,6 +317,9 @@ export class UsersService {
     const serverPermissions = user.serverRoles.reduce<ServerPermissions>(
       (result, { permission }) => {
         for (const key in permission) {
+          if (['id', 'serverRoleId', 'createdAt', 'updatedAt'].includes(key)) {
+            continue;
+          }
           if (permission[key]) {
             result[key] = true;
           }
@@ -324,6 +334,9 @@ export class UsersService {
           result[groupId] = permission;
         } else {
           for (const key in permission) {
+            if (['id', 'groupRoleId', 'createdAt', 'updatedAt'].includes(key)) {
+              continue;
+            }
             if (permission[key]) {
               result[key] = true;
             }

@@ -31,15 +31,6 @@ type EventAttendee {
   updatedAt: DateTime!
 }
 
-type QuestionnaireTicketConfig {
-  id: Int!
-  decisionMakingModel: String!
-  standAsidesLimit: Int!
-  reservationsLimit: Int!
-  ratificationThreshold: Int!
-  closingAt: DateTime
-}
-
 type Answer {
   id: Int!
   text: String!
@@ -60,6 +51,15 @@ type Question {
   commentCount: Int!
 }
 
+type QuestionnaireTicketConfig {
+  id: Int!
+  decisionMakingModel: String!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
+  closingAt: DateTime
+}
+
 type QuestionnaireTicket {
   id: Int!
   status: String!
@@ -76,7 +76,6 @@ type QuestionnaireTicket {
   myVote: Vote
   commentCount: Int!
   user: User!
-  group: Group
   settings: QuestionnaireTicketConfig!
 }
 

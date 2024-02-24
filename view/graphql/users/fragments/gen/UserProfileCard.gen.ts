@@ -12,8 +12,8 @@ export type UserProfileCardFragment = {
   id: number;
   bio?: string | null;
   createdAt: any;
-  followerCount: number;
-  followingCount: number;
+  followerCount?: number;
+  followingCount?: number;
   name: string;
   isFollowedByMe: boolean;
   coverPhoto?: { __typename?: 'Image'; id: number } | null;
@@ -25,13 +25,13 @@ export const UserProfileCardFragmentDoc = gql`
     id
     bio
     createdAt
-    followerCount
-    followingCount
+    followerCount @include(if: $isVerified)
+    followingCount @include(if: $isVerified)
     coverPhoto {
       id
     }
     ...UserAvatar
-    ...FollowButton
+    ...FollowButton @include(if: $isVerified)
   }
   ${UserAvatarFragmentDoc}
   ${FollowButtonFragmentDoc}

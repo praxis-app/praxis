@@ -10,9 +10,6 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { isLoggedInVar } from '../../graphql/cache';
-import { useEventsLazyQuery } from '../../graphql/events/queries/gen/Events.gen';
-import { EventsInput } from '../../graphql/gen';
 import EventCompact from '../../components/Events/EventCompact';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
@@ -20,6 +17,9 @@ import {
   NavigationPaths,
   TAB_QUERY_PARAM,
 } from '../../constants/shared.constants';
+import { isVerifiedVar } from '../../graphql/cache';
+import { useEventsLazyQuery } from '../../graphql/events/queries/gen/Events.gen';
+import { EventsInput } from '../../graphql/gen';
 
 enum EventTabs {
   Past = 'past',
@@ -35,7 +35,7 @@ const CardContent = styled(MuiCardContent)(() => ({
 }));
 
 const EventsIndex = () => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
   const [tab, setTab] = useState(0);
 
   const [getEvents, { data: data, loading: loading, error }] =
@@ -66,9 +66,9 @@ const EventsIndex = () => {
       setTab(3);
     }
     getEvents({
-      variables: { input, isLoggedIn },
+      variables: { input, isVerified },
     });
-  }, [tabParam, setTab, getEvents, isLoggedIn]);
+  }, [tabParam, setTab, getEvents, isVerified]);
 
   const events = data?.events || [];
   const pathPrefix = `${NavigationPaths.Events}${TAB_QUERY_PARAM}`;

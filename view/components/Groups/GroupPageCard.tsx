@@ -23,7 +23,7 @@ import {
   NavigationPaths,
   TAB_QUERY_PARAM,
 } from '../../constants/shared.constants';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { GroupPageCardFragment } from '../../graphql/groups/fragments/gen/GroupPageCard.gen';
 import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import { useAboveBreakpoint } from '../../hooks/shared.hooks';
@@ -73,6 +73,7 @@ const GroupPageCard = ({
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
   const [deleteGroup] = useDeleteGroupMutation();
 
   const { t } = useTranslation();
@@ -245,7 +246,7 @@ const GroupPageCard = ({
 
           {MIDDOT_WITH_SPACES}
 
-          <Link href={isLoggedIn ? groupMembersPath : groupPath}>
+          <Link href={isVerified ? groupMembersPath : groupPath}>
             {t('groups.labels.members', { count: memberCount })}
           </Link>
 
@@ -260,7 +261,7 @@ const GroupPageCard = ({
             )}
         </Box>
 
-        {isLoggedIn && !isAboveSmall && (
+        {isVerified && !isAboveSmall && (
           <Flex sx={{ justifyContent: 'right', marginTop: 2 }}>
             {renderCardActions()}
           </Flex>

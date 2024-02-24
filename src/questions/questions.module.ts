@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comment } from '../comments/models/comment.model';
+import { Image } from '../images/models/image.model';
 import { Like } from '../likes/models/like.model';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { ServerConfigsModule } from '../server-configs/server-configs.module';
@@ -22,11 +23,12 @@ import { ServerQuestionsResolver } from './resolvers/server-questions.resolver';
     TypeOrmModule.forFeature([
       Answer,
       Comment,
+      Image,
       Like,
-      ServerQuestion,
+      Question,
       QuestionnaireTicket,
       QuestionnaireTicketConfig,
-      Question,
+      ServerQuestion,
       User,
       Vote,
     ]),
