@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type UpdatePostMutationVariables = Types.Exact<{
   postData: Types.UpdatePostInput;
-  isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
+  isVerified?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type UpdatePostMutation = {
@@ -70,7 +70,7 @@ export type UpdatePostMutation = {
 export const UpdatePostDocument = gql`
   mutation UpdatePost(
     $postData: UpdatePostInput!
-    $isLoggedIn: Boolean = true
+    $isVerified: Boolean = true
   ) {
     updatePost(postData: $postData) {
       post {
@@ -99,7 +99,7 @@ export type UpdatePostMutationFn = Apollo.MutationFunction<
  * const [updatePostMutation, { data, loading, error }] = useUpdatePostMutation({
  *   variables: {
  *      postData: // value for 'postData'
- *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

@@ -60,7 +60,7 @@ export const PostCardFragmentDoc = gql`
     body
     likeCount
     commentCount
-    isLikedByMe @include(if: $isLoggedIn)
+    isLikedByMe @include(if: $isVerified)
     createdAt
     images {
       ...AttachedImage
@@ -70,14 +70,14 @@ export const PostCardFragmentDoc = gql`
     }
     group {
       ...GroupAvatar
-      myPermissions @include(if: $isLoggedIn) {
+      myPermissions @include(if: $isVerified) {
         ...GroupPermissions
       }
-      isJoinedByMe @include(if: $isLoggedIn)
+      isJoinedByMe @include(if: $isVerified)
     }
     event {
       ...EventAvatar
-      group @include(if: $isLoggedIn) {
+      group @include(if: $isVerified) {
         id
         isJoinedByMe
       }

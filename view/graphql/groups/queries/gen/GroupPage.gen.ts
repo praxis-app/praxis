@@ -11,7 +11,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type GroupPageQueryVariables = Types.Exact<{
   name: Types.Scalars['String']['input'];
-  isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type GroupPageQuery = {
@@ -66,12 +66,12 @@ export type GroupPageQuery = {
 };
 
 export const GroupPageDocument = gql`
-  query GroupPage($name: String!, $isLoggedIn: Boolean!) {
+  query GroupPage($name: String!, $isVerified: Boolean!) {
     group(name: $name) {
       ...GroupPageCard
       description
     }
-    me @include(if: $isLoggedIn) {
+    me @include(if: $isVerified) {
       id
       serverPermissions {
         removeGroups
@@ -96,7 +96,7 @@ export const GroupPageDocument = gql`
  * const { data, loading, error } = useGroupPageQuery({
  *   variables: {
  *      name: // value for 'name'
- *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

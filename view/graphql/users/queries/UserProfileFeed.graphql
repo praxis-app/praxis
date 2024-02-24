@@ -3,6 +3,7 @@ query UserProfileFeed(
   $offset: Int
   $limit: Int
   $isLoggedIn: Boolean = true
+  $isVerified: Boolean = true
 ) {
   user(name: $name) {
     id

@@ -12,7 +12,7 @@ export type EventFeedQueryVariables = Types.Exact<{
   eventId: Types.Scalars['Int']['input'];
   offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
-  isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type EventFeedQuery = {
@@ -76,7 +76,7 @@ export const EventFeedDocument = gql`
     $eventId: Int!
     $offset: Int
     $limit: Int
-    $isLoggedIn: Boolean!
+    $isVerified: Boolean!
   ) {
     event(id: $eventId) {
       id
@@ -104,7 +104,7 @@ export const EventFeedDocument = gql`
  *      eventId: // value for 'eventId'
  *      offset: // value for 'offset'
  *      limit: // value for 'limit'
- *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */
