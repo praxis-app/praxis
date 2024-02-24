@@ -48,6 +48,7 @@ const QuestionCardFooter = ({
   const { t } = useTranslation();
 
   const isAnswerComment = !!searchParams.get(NotificationType.AnswerComment);
+  const isCommentLike = !!searchParams.get(NotificationType.CommentLike);
   const questionIdQueryParam = searchParams.get('questionId');
 
   const handleCommentButtonClick = useCallback(async () => {
@@ -69,13 +70,14 @@ const QuestionCardFooter = ({
     if (
       !questionCommentsCalled &&
       questionIdQueryParam === question.id.toString() &&
-      isAnswerComment
+      (isAnswerComment || isCommentLike)
     ) {
       handleCommentButtonClick();
     }
   }, [
     handleCommentButtonClick,
     isAnswerComment,
+    isCommentLike,
     questionCommentsCalled,
     questionIdQueryParam,
     question.id,
@@ -110,8 +112,13 @@ const QuestionCardFooter = ({
   const handleModalClose = () => {
     setIsModalOpen(false);
 
-    if (isAnswerComment) {
-      searchParams.delete(NotificationType.AnswerComment);
+    if (questionIdQueryParam) {
+      if (isAnswerComment) {
+        searchParams.delete(NotificationType.AnswerComment);
+      }
+      if (isCommentLike) {
+        searchParams.delete(NotificationType.CommentLike);
+      }
       searchParams.delete('questionId');
       setSearchParams(searchParams);
     }
