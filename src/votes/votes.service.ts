@@ -111,18 +111,19 @@ export class VotesService {
     await this.voteRepository.update(id, data);
     const vote = await this.getVote(id, ['proposal']);
 
-    // TODO: Add support for notifications for questionnaire tickets
-    const notification = await this.notificationsService.getNotification({
-      otherUserId: userId,
-      proposalId: vote.proposalId,
-      userId: vote.proposal?.userId,
-      voteId: vote.id,
-    });
-    if (notification) {
-      const notificationType = this.getVoteNotificationType(vote.voteType);
-      await this.notificationsService.updateNotification(notification.id, {
-        notificationType,
+    if (vote.proposalId) {
+      const notification = await this.notificationsService.getNotification({
+        otherUserId: userId,
+        proposalId: vote.proposalId,
+        userId: vote.proposal?.userId,
+        voteId: vote.id,
       });
+      if (notification) {
+        const notificationType = this.getVoteNotificationType(vote.voteType);
+        await this.notificationsService.updateNotification(notification.id, {
+          notificationType,
+        });
+      }
     }
 
     return { vote };

@@ -238,7 +238,6 @@ const QuestionnaireTicketCard = ({
                 {answerCount} / {questionCount}
               </Typography>
             </Flex>
-            {/* TODO: Hide progress bar inner if value is 0 */}
             <BorderLinearProgress
               sx={{ marginBottom: 3 }}
               variant="determinate"
@@ -251,7 +250,6 @@ const QuestionnaireTicketCard = ({
                 {agreementVoteCount} / {votesNeededToVerify}
               </Typography>
             </Flex>
-            {/* TODO: Hide progress bar inner if value is 0 */}
             <BorderLinearProgress
               sx={{ marginBottom: 3 }}
               variant="determinate"

@@ -1,5 +1,3 @@
-// TODO: Add remaining layout and functionality. Below is a WIP
-
 import { useReactiveVar } from '@apollo/client';
 import { Favorite as LikeIcon } from '@mui/icons-material';
 import { SxProps } from '@mui/material';
