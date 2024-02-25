@@ -486,6 +486,23 @@ export class QuestionsService {
       await this.questionnaireTicketRepository.update(questionnaireTicketId, {
         status: QuestionnaireTicketStatus.Submitted,
       });
+
+      // Notify users with access that the questionnaire ticket has been submitted
+      const usersWithAccess = await this.userRepository.find({
+        where: {
+          serverRoles: {
+            permission: { manageQuestionnaireTickets: true },
+          },
+        },
+      });
+      for (const userWithAccess of usersWithAccess) {
+        await this.notificationsService.createNotification({
+          notificationType: NotificationType.QuestionnaireTicketSubmitted,
+          userId: userWithAccess.id,
+          otherUserId: user.id,
+          questionnaireTicketId,
+        });
+      }
     }
 
     const questionnaireTicket =

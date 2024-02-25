@@ -19,5 +19,6 @@ export enum NotificationType {
   ProposalVoteReservations = 'proposal-vote-reservations',
   ProposalVoteStandAside = 'proposal-vote-stand-aside',
   QuestionnaireTicketComment = 'questionnaire-ticket-comment',
+  QuestionnaireTicketSubmitted = 'questionnaire-ticket-submitted',
   VerifyUser = 'verify-user',
 }

@@ -48,6 +48,10 @@ export type NotificationFragment = {
       user: { __typename?: 'User'; id: number };
     } | null;
   } | null;
+  questionnaireTicket?: {
+    __typename?: 'QuestionnaireTicket';
+    id: number;
+  } | null;
   question?: {
     __typename?: 'Question';
     id: number;
@@ -97,6 +101,9 @@ export const NotificationFragmentDoc = gql`
           id
         }
       }
+    }
+    questionnaireTicket {
+      id
     }
     question {
       id

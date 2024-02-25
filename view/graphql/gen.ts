@@ -802,6 +802,7 @@ export type Notification = {
   post?: Maybe<Post>;
   proposal?: Maybe<Proposal>;
   question?: Maybe<Question>;
+  questionnaireTicket?: Maybe<QuestionnaireTicket>;
   status: Scalars['String']['output'];
 };
 

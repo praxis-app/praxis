@@ -6,6 +6,7 @@ import {
   HowToVote,
   PanTool,
   Person,
+  QuestionAnswer,
   ThumbDown,
   ThumbUp,
   ThumbsUpDown,
@@ -46,13 +47,14 @@ interface Props {
 const Notification = ({
   notification: {
     id,
-    question,
     comment,
     group,
     notificationType,
     otherUser,
     post,
     proposal,
+    question,
+    questionnaireTicket,
     status,
     createdAt,
     __typename,
@@ -138,6 +140,11 @@ const Notification = ({
         });
       }
       return _t('notifications.messages.questionnaireTicketComment', {
+        name: otherUser?.name,
+      });
+    }
+    if (notificationType === NotificationType.QuestionnaireTicketSubmitted) {
+      return _t('notifications.messages.questionnaireTicketSubmitted', {
         name: otherUser?.name,
       });
     }
@@ -243,6 +250,9 @@ const Notification = ({
       }
       return NavigationPaths.VibeCheck;
     }
+    if (notificationType === NotificationType.QuestionnaireTicketSubmitted) {
+      return `${NavigationPaths.ServerQuestionnaires}/${questionnaireTicket?.id}`;
+    }
     if (notificationType === NotificationType.AnswerComment) {
       const queryParams = `${notificationType}=true&questionId=${comment?.question?.id}`;
       if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
@@ -326,6 +336,9 @@ const Notification = ({
       notificationType === NotificationType.GroupMemberRequestApproval
     ) {
       return <Group sx={iconStyles} />;
+    }
+    if (notificationType === NotificationType.QuestionnaireTicketSubmitted) {
+      return <QuestionAnswer sx={{ ...iconStyles, marginTop: 0.65 }} />;
     }
     return <AutoAwesome sx={iconStyles} />;
   };

@@ -10,6 +10,7 @@ import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
 import { Question } from '../questions/models/question.model';
+import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
@@ -91,6 +92,7 @@ export interface Dataloaders {
 
   // Questions & Answers
   questionsLoader: DataLoader<number, Question>;
+  questionnaireTicketsLoader: DataLoader<number, QuestionnaireTicket>;
   isAnswerLikedByMeLoader: DataLoader<IsQuestionLikedByMeKey, boolean>;
 }
 

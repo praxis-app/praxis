@@ -22,6 +22,7 @@ import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
 import { Question } from '../questions/models/question.model';
+import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
@@ -90,6 +91,9 @@ export class DataloaderService {
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
 
+    @InjectRepository(QuestionnaireTicket)
+    private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
+
     private usersService: UsersService,
   ) {}
 
@@ -146,6 +150,7 @@ export class DataloaderService {
 
       // Questions & Answers
       questionsLoader: this._createQuestionsLoader(),
+      questionnaireTicketsLoader: this._createQuestionnaireTicketLoader(),
       isAnswerLikedByMeLoader: this._createIsAnswerLikedByMeLoader(),
     };
   }
@@ -832,6 +837,24 @@ export class DataloaderService {
           new Error(`Could not load answer: ${id}`),
       );
     });
+  }
+
+  private _createQuestionnaireTicketLoader() {
+    return this._getDataLoader<number, QuestionnaireTicket>(
+      async (questionnaireTicketIds) => {
+        const questionnaireTicket =
+          await this.questionnaireTicketRepository.find({
+            where: { id: In(questionnaireTicketIds) },
+          });
+        return questionnaireTicketIds.map(
+          (id) =>
+            questionnaireTicket.find(
+              (questionnaireTicket: QuestionnaireTicket) =>
+                questionnaireTicket.id === id,
+            ) || new Error(`Could not load questionnaire ticket: ${id}`),
+        );
+      },
+    );
   }
 
   private _createIsAnswerLikedByMeLoader() {

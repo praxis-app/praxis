@@ -55,6 +55,10 @@ export type NotifiedSubscription = {
         user: { __typename?: 'User'; id: number };
       } | null;
     } | null;
+    questionnaireTicket?: {
+      __typename?: 'QuestionnaireTicket';
+      id: number;
+    } | null;
     question?: {
       __typename?: 'Question';
       id: number;

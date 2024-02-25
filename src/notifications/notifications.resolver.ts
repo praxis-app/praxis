@@ -18,6 +18,7 @@ import { Group } from '../groups/models/group.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { Question } from '../questions/models/question.model';
+import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { User } from '../users/models/user.model';
 import { Notification } from './models/notification.model';
 import { ReadNotificationsPayload } from './models/read-notifications.payload';
@@ -104,6 +105,17 @@ export class NotificationsResolver {
       return null;
     }
     return loaders.questionsLoader.load(questionId);
+  }
+
+  @ResolveField(() => QuestionnaireTicket, { nullable: true })
+  questionnaireTicket(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { questionnaireTicketId }: Notification,
+  ) {
+    if (!questionnaireTicketId) {
+      return null;
+    }
+    return loaders.questionnaireTicketsLoader.load(questionnaireTicketId);
   }
 
   @Mutation(() => UpdateNotificationPayload)

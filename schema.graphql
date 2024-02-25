@@ -407,6 +407,7 @@ type Notification {
   post: Post
   comment: Comment
   question: Question
+  questionnaireTicket: QuestionnaireTicket
 }
 
 type Like {
