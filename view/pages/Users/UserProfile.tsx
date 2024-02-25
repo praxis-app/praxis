@@ -1,9 +1,11 @@
 import { useReactiveVar } from '@apollo/client';
-import { Typography, useTheme } from '@mui/material';
+import { TaskAlt } from '@mui/icons-material';
+import { Button, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Feed from '../../components/Shared/Feed';
+import Flex from '../../components/Shared/Flex';
 import Link from '../../components/Shared/Link';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import ToggleForms from '../../components/Shared/ToggleForms';
@@ -20,6 +22,7 @@ import {
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { useUserProfileQuery } from '../../graphql/users/queries/gen/UserProfile.gen';
 import { useUserProfileFeedLazyQuery } from '../../graphql/users/queries/gen/UserProfileFeed.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const UserProfile = () => {
   const inviteToken = useReactiveVar(inviteTokenVar);
@@ -60,6 +63,8 @@ const UserProfile = () => {
     useUserProfileFeedLazyQuery();
 
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
+  const navigate = useNavigate();
   const theme = useTheme();
 
   useEffect(() => {
@@ -122,7 +127,23 @@ const UserProfile = () => {
 
   if (!isVerified && meData && meData.me.name !== name) {
     return (
-      <Typography>{t('users.prompts.verifyToSeeOtherProfiles')}</Typography>
+      <Flex flexDirection="column">
+        <Typography paddingBottom={2.5}>
+          {t('users.prompts.verifyToSeeOtherProfiles')}
+        </Typography>
+
+        <Button
+          startIcon={<TaskAlt sx={{ marginRight: 0.25 }} />}
+          onClick={() => navigate(NavigationPaths.VibeCheck)}
+          sx={{
+            textTransform: 'none',
+            alignSelf: isDesktop ? 'flex-start' : 'center',
+          }}
+          variant="outlined"
+        >
+          {t('users.actions.getVerified')}
+        </Button>
+      </Flex>
     );
   }
 

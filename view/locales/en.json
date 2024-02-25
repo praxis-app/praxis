@@ -176,7 +176,8 @@
       "logOut": "Log Out",
       "passwordConfirm": "Confirm password",
       "signUp": "Sign Up",
-      "unfollow": "Unfollow"
+      "unfollow": "Unfollow",
+      "getVerified": "Get verified"
     },
     "errors": {
       "signUp": "There was an error creating your account.",
