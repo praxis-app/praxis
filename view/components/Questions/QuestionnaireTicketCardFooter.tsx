@@ -47,6 +47,7 @@ const QuestionnaireTicketCardFooter = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const isCommentLike = !!searchParams.get(NotificationType.CommentLike);
   const isTicketComment = !!searchParams.get(
     NotificationType.QuestionnaireTicketComment,
   );
@@ -78,10 +79,15 @@ const QuestionnaireTicketCardFooter = ({
   }, [getQuestionnaireTicketComments, inModal, id]);
 
   useEffect(() => {
-    if (!getCommentsCalled && isTicketComment) {
+    if (!getCommentsCalled && (isTicketComment || isCommentLike)) {
       handleCommentButtonClick();
     }
-  }, [handleCommentButtonClick, isTicketComment, getCommentsCalled]);
+  }, [
+    getCommentsCalled,
+    handleCommentButtonClick,
+    isCommentLike,
+    isTicketComment,
+  ]);
 
   useEffect(() => {
     if (inModal && !getCommentsCalled) {
@@ -106,6 +112,10 @@ const QuestionnaireTicketCardFooter = ({
   const handleModalClose = () => {
     setIsModalOpen(false);
 
+    if (isCommentLike) {
+      searchParams.delete(NotificationType.CommentLike);
+      setSearchParams(searchParams);
+    }
     if (isTicketComment) {
       searchParams.delete(NotificationType.QuestionnaireTicketComment);
       setSearchParams(searchParams);
