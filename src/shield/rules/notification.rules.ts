@@ -12,7 +12,7 @@ export const isOwnNotification = rule({ cache: 'strict' })(async (
   if (!user) {
     return UNAUTHORIZED;
   }
-  if (parent instanceof Notification) {
+  if (parent && 'id' in parent) {
     return notificationsService.isOwnNotification(parent.id, user.id);
   }
   if ('id' in args) {
