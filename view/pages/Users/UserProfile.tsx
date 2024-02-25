@@ -17,6 +17,7 @@ import {
   isLoggedInVar,
   isVerifiedVar,
 } from '../../graphql/cache';
+import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { useUserProfileQuery } from '../../graphql/users/queries/gen/UserProfile.gen';
 import { useUserProfileFeedLazyQuery } from '../../graphql/users/queries/gen/UserProfileFeed.gen';
 
@@ -28,10 +29,31 @@ const UserProfile = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
 
+  const {
+    data: meData,
+    loading: meLoading,
+    error: meError,
+  } = useMeQuery({ skip: !isLoggedIn });
+
   const { name } = useParams();
-  const { data, loading, error } = useUserProfileQuery({
+
+  const isSkipping = () => {
+    if (!meData?.me.name || !name || !isLoggedIn) {
+      return true;
+    }
+    if (!isVerified && meData.me.name !== name) {
+      return true;
+    }
+    return false;
+  };
+
+  const {
+    data: userProfileData,
+    loading: userProfileLoading,
+    error: userProfileError,
+  } = useUserProfileQuery({
     variables: { name, isVerified },
-    skip: !name || !isLoggedIn,
+    skip: isSkipping(),
   });
 
   const [getFeed, { data: feedData, loading: feedLoading }] =
@@ -94,25 +116,25 @@ const UserProfile = () => {
     );
   }
 
-  if (!isVerified && !data?.user) {
+  if (userProfileLoading || meLoading) {
+    return <ProgressBar />;
+  }
+
+  if (!isVerified && meData && meData.me.name !== name) {
     return (
       <Typography>{t('users.prompts.verifyToSeeOtherProfiles')}</Typography>
     );
   }
 
-  if (error) {
+  if (userProfileError || meError) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
-  if (loading) {
-    return <ProgressBar />;
-  }
-
-  if (!data) {
+  if (!userProfileData) {
     return null;
   }
 
-  const { me, user } = data;
+  const { me, user } = userProfileData;
   const isMe = me?.id === user.id;
 
   return (
