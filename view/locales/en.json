@@ -203,12 +203,14 @@
       "becomeAMember": "Become a Praxis Member",
       "logOut": "Are you sure you want to log out?",
       "permissionDenied": "Permission denied.",
-      "removeUser": "Are you sure you want to permanently remove this member from the server? They will lose all of their data and this cannot be undone.",
       "removeSelf": "Are you sure you want to permanently remove yourself from the server? You will lose all of your data and this cannot be undone.",
+      "removeUser": "Are you sure you want to permanently remove this member from the server? They will lose all of their data and this cannot be undone.",
       "signInToPost": "Sign in to start posting...",
       "unfollow": "Are you sure you want to unfollow this person?",
       "verifiedOnly": "You must be verified to use this feature.",
-      "verifyToSeeOtherProfiles": "You must be verified to see other user profiles."
+      "verifyToSeeOtherProfiles": "You must be verified to see other user profiles.",
+      "verifyToUpdateCoverPhoto": "You must be verified to update your cover photo.",
+      "verifyToUpdateProfilePicture": "You must be verified to update your profile picture."
     },
     "labels": {
       "followers_one": "{{count}} Follower",
