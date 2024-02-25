@@ -6,6 +6,7 @@ import {
   Person,
   QuestionAnswer,
   Settings,
+  TaskAlt,
 } from '@mui/icons-material';
 import { Menu, MenuItem, SvgIconProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -119,7 +120,7 @@ const TopNavDropdown = ({
 
       {isLoggedIn && !isVerified && (
         <MenuItem onClick={() => navigate(NavigationPaths.VibeCheck)}>
-          <QuestionAnswer {...ICON_PROPS} />
+          <TaskAlt {...ICON_PROPS} />
           {t('questions.labels.vibeCheck')}
         </MenuItem>
       )}

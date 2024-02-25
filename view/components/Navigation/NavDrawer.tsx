@@ -11,6 +11,7 @@ import {
   ExitToApp as SessionIcon,
   Settings,
   PersonAdd as SignUpIcon,
+  TaskAlt,
   SupervisedUserCircle as UsersIcon,
 } from '@mui/icons-material';
 import {
@@ -32,11 +33,12 @@ import {
 } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
 import {
-  isAuthErrorVar,
   inviteTokenVar,
+  isAuthErrorVar,
   isAuthLoadingVar,
   isLoggedInVar,
   isNavDrawerOpenVar,
+  isVerifiedVar,
 } from '../../graphql/cache';
 import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
@@ -61,6 +63,7 @@ const ListItemText = styled(MuiListItemText)(({ theme }) => ({
 
 const NavDrawer = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
   const isAuthError = useReactiveVar(isAuthErrorVar);
   const inviteToken = useReactiveVar(inviteTokenVar);
   const open = useReactiveVar(isNavDrawerOpenVar);
@@ -165,6 +168,15 @@ const NavDrawer = () => {
           <ListItemText primary={me.name} />
         </ListItemButton>
 
+        {isLoggedIn && !isVerified && (
+          <ListItemButton onClick={handleLinkClick(NavigationPaths.VibeCheck)}>
+            <ListItemIcon>
+              <TaskAlt />
+            </ListItemIcon>
+            <ListItemText primary={t('questions.labels.vibeCheck')} />
+          </ListItemButton>
+        )}
+
         <ListItemButton onClick={handleLinkClick(NavigationPaths.Events)}>
           <ListItemIcon>
             <EventNote />
@@ -232,6 +244,9 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
+        {renderRulesButton()}
+        {renderDocsButton()}
+
         <ListItemButton
           onClick={() =>
             window.confirm(t('users.prompts.logOut')) && handleLogOutClick()
@@ -242,9 +257,6 @@ const NavDrawer = () => {
           </ListItemIcon>
           <ListItemText primary={t('users.actions.logOut')} />
         </ListItemButton>
-
-        {renderRulesButton()}
-        {renderDocsButton()}
       </>
     );
   };
