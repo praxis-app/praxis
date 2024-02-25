@@ -936,7 +936,6 @@ input DeleteGroupRoleMemberInput {
 }
 
 input UpdateUserInput {
-  id: Int!
   name: String!
   bio: String!
   profilePicture: Upload

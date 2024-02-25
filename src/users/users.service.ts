@@ -457,29 +457,35 @@ export class UsersService {
     return user;
   }
 
-  async updateUser({
-    id,
-    bio,
-    coverPhoto,
-    profilePicture,
-    ...userData
-  }: UpdateUserInput) {
-    this.logger.log(`Updating user: ${JSON.stringify({ id, ...userData })}`);
+  async updateUser(
+    userId: number,
+    { bio, coverPhoto, profilePicture, ...userData }: UpdateUserInput,
+  ) {
+    this.logger.log(
+      `Updating user: ${JSON.stringify({ id: userId, ...userData })}`,
+    );
+
+    const isVerified = await this.isVerifiedUser(userId);
+    if (!isVerified && (profilePicture || coverPhoto)) {
+      throw new Error(
+        'Cannot update profile picture or cover photo for unverified users',
+      );
+    }
 
     const sanitizedBio = sanitizeText(bio.trim());
-    await this.userRepository.update(id, {
+    await this.userRepository.update(userId, {
       bio: sanitizedBio,
       ...userData,
     });
 
     if (profilePicture) {
-      await this.saveProfilePicture(id, profilePicture);
+      await this.saveProfilePicture(userId, profilePicture);
     }
     if (coverPhoto) {
-      await this.saveCoverPhoto(id, coverPhoto);
+      await this.saveCoverPhoto(userId, coverPhoto);
     }
 
-    const user = await this.getUser({ id });
+    const user = await this.getUser({ id: userId });
     return { user };
   }
 
@@ -487,7 +493,7 @@ export class UsersService {
     const user = await this.getUser({ id }, ['followers']);
     const follower = await this.getUser({ id: followerId }, ['following']);
     if (!user || !follower) {
-      throw new UserInputError('User not found');
+      throw new Error('User not found');
     }
     follower.following = [...follower.following, user];
     user.followers = [...user.followers, follower];

@@ -64,7 +64,6 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
       variables: {
         userData: {
           ...formValues,
-          id: user.id,
           name: formValues.name.trim(),
           profilePicture,
           coverPhoto,

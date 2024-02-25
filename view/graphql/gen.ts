@@ -1490,7 +1490,6 @@ export type UpdateServerRolePayload = {
 export type UpdateUserInput = {
   bio: Scalars['String']['input'];
   coverPhoto?: InputMaybe<Scalars['Upload']['input']>;
-  id: Scalars['Int']['input'];
   name: Scalars['String']['input'];
   profilePicture?: InputMaybe<Scalars['Upload']['input']>;
 };

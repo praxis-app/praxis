@@ -168,8 +168,11 @@ export class UsersResolver {
   }
 
   @Mutation(() => UpdateUserPayload)
-  async updateUser(@Args('userData') userData: UpdateUserInput) {
-    return this.usersService.updateUser(userData);
+  async updateUser(
+    @Args('userData') userData: UpdateUserInput,
+    @CurrentUser() currentUser: User,
+  ) {
+    return this.usersService.updateUser(currentUser.id, userData);
   }
 
   @Mutation(() => Boolean)

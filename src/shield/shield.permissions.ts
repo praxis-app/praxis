@@ -138,6 +138,7 @@ export const shieldPermissions = shield(
       updateRulesPriority: canManageRules,
       updateNotification: isOwnNotification,
       deleteNotification: isOwnNotification,
+      updateUser: isAuthenticated,
       createComment: or(isVerified, isOwnQuestion, isOwnQuestionnaireTicket),
       updateComment: isOwnComment,
       deleteComment: or(
@@ -270,6 +271,7 @@ export const shieldPermissions = shield(
     UpdateCommentPayload: isAuthenticated,
     AnswerQuestionsPayload: isAuthenticated,
     UpdateNotificationPayload: isAuthenticated,
+    UpdateUserPayload: isAuthenticated,
     Rule: or(isVerified, isPublicRule),
     Event: or(isVerified, isPublicEvent),
     Post: or(isVerified, isPublicPost, isPublicEventPost),
