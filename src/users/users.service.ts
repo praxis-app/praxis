@@ -396,12 +396,10 @@ export class UsersService {
     });
   }
 
-  async createQuestionnaireTicket(userId: number) {
-    const serverQuestions = await this.serverQuestionRepository.find();
-    if (serverQuestions.length === 0) {
-      return;
-    }
-
+  async createQuestionnaireTicket(
+    userId: number,
+    serverQuestions: ServerQuestion[],
+  ) {
     const serverConfig = await this.serverConfigsService.getServerConfig();
 
     const closingAt = serverConfig.votingTimeLimit
@@ -435,11 +433,14 @@ export class UsersService {
     profilePicture?: Promise<FileUpload>,
   ) {
     const isFirstUser = await this.isFirstUser();
+    const serverQuestions = await this.serverQuestionRepository.find();
+    const verified = isFirstUser || serverQuestions.length === 0;
+
     const user = await this.userRepository.save({
       name,
       email,
       password,
-      verified: isFirstUser,
+      verified,
     });
 
     if (profilePicture) {
@@ -450,8 +451,10 @@ export class UsersService {
 
     if (isFirstUser) {
       await this.serverRolesService.createAdminServerRole(user.id);
-    } else {
-      await this.createQuestionnaireTicket(user.id);
+    }
+
+    if (!isFirstUser && serverQuestions.length > 0) {
+      await this.createQuestionnaireTicket(user.id, serverQuestions);
     }
 
     return user;

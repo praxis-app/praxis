@@ -5,10 +5,17 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import SignUpForm from '../../components/Auth/SignUpForm';
 import ProgressBar from '../../components/Shared/ProgressBar';
-import { LocalStorageKey } from '../../constants/shared.constants';
-import { inviteTokenVar, isLoggedInVar } from '../../graphql/cache';
+import {
+  LocalStorageKey,
+  NavigationPaths,
+} from '../../constants/shared.constants';
+import {
+  inviteTokenVar,
+  isLoggedInVar,
+  isVerifiedVar,
+} from '../../graphql/cache';
 import { useServerInviteLazyQuery } from '../../graphql/invites/queries/gen/ServerInvite.gen';
-import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
+import { useIsVerifiedUserLazyQuery } from '../../graphql/users/queries/gen/IsVerifiedUser.gen';
 
 const SignUp = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -18,11 +25,7 @@ const SignUp = () => {
     { loading: serverInviteLoading, error: serverInviteError },
   ] = useServerInviteLazyQuery();
 
-  const {
-    data,
-    loading: isFirstUserLoading,
-    error: isFirstUserError,
-  } = useIsFirstUserQuery({ skip: isLoggedIn });
+  const [getIsVerifiedUser] = useIsVerifiedUserLazyQuery();
 
   const { t } = useTranslation();
   const { token } = useParams();
@@ -40,23 +43,35 @@ const SignUp = () => {
     }
   }, [token, navigate, getServerInvite]);
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      const handleRedirect = async () => {
+        const { data } = await getIsVerifiedUser();
+        if (data?.me.isVerified) {
+          isVerifiedVar(true);
+          navigate(NavigationPaths.Home);
+        } else {
+          navigate(NavigationPaths.VibeCheck);
+        }
+      };
+      handleRedirect();
+    }
+  }, [isLoggedIn, navigate, getIsVerifiedUser]);
+
   if (serverInviteError) {
     return <Typography>{t('invites.prompts.expiredOrInvalid')}</Typography>;
   }
-  if (isFirstUserError) {
-    return <Typography>{t('errors.somethingWentWrong')}</Typography>;
-  }
-  if (serverInviteLoading || isFirstUserLoading) {
+  if (serverInviteLoading || isLoggedIn) {
     return <ProgressBar />;
   }
   if (isLoggedIn) {
     return <Typography>{t('users.prompts.alreadyRegistered')}</Typography>;
   }
-  if (!token && !data?.isFirstUser) {
+  if (!token) {
     return <Typography>{t('invites.prompts.inviteRequired')}</Typography>;
   }
 
-  return <SignUpForm isFirstUser={!!data?.isFirstUser} />;
+  return <SignUpForm />;
 };
 
 export default SignUp;
