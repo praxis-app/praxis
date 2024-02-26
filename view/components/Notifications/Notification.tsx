@@ -281,6 +281,9 @@ const Notification = ({
     if (notificationType === NotificationType.AnswerLike) {
       return NavigationPaths.VibeCheck;
     }
+    if (notificationType === NotificationType.VerifyUser) {
+      return NavigationPaths.VibeCheck;
+    }
     return NavigationPaths.Home;
   };
 
