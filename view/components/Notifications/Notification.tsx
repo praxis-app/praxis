@@ -10,6 +10,7 @@ import {
   ThumbDown,
   ThumbUp,
   ThumbsUpDown,
+  Verified,
 } from '@mui/icons-material';
 import { Box, MenuItem, SxProps, Typography, useTheme } from '@mui/material';
 import { produce } from 'immer';
@@ -81,6 +82,13 @@ const Notification = ({
     NotificationType.ProposalVoteBlock,
   ].includes(notificationType as NotificationType);
 
+  const isQuestionnaireTicketVote = [
+    NotificationType.QuestionnaireTicketVoteAgreement,
+    NotificationType.QuestionnaireTicketVoteReservations,
+    NotificationType.QuestionnaireTicketVoteStandAside,
+    NotificationType.QuestionnaireTicketVoteBlock,
+  ].includes(notificationType as NotificationType);
+
   const iconContainerStyles: SxProps = {
     ...VOTE_BADGE_STYLES,
     border: `2px solid ${theme.palette.background.paper}`,
@@ -131,6 +139,12 @@ const Notification = ({
     if (notificationType === NotificationType.PostComment) {
       return _t('notifications.messages.postComment', {
         name: otherUser?.name,
+      });
+    }
+    if (isQuestionnaireTicketVote) {
+      return _t('notifications.messages.questionnaireTicketVote', {
+        name: otherUser?.name,
+        ticketNumber: questionnaireTicket?.id,
       });
     }
     if (notificationType === NotificationType.QuestionnaireTicketComment) {
@@ -250,7 +264,10 @@ const Notification = ({
       }
       return NavigationPaths.VibeCheck;
     }
-    if (notificationType === NotificationType.QuestionnaireTicketSubmitted) {
+    if (
+      notificationType === NotificationType.QuestionnaireTicketSubmitted ||
+      isQuestionnaireTicketVote
+    ) {
       return `${NavigationPaths.ServerQuestionnaires}/${questionnaireTicket?.id}`;
     }
     if (notificationType === NotificationType.AnswerComment) {
@@ -303,16 +320,26 @@ const Notification = ({
   };
 
   const renderIcon = () => {
-    if (notificationType === NotificationType.ProposalVoteReservations) {
-      return <ThumbsUpDown sx={iconStyles} />;
+    if (
+      notificationType === NotificationType.ProposalVoteReservations ||
+      notificationType === NotificationType.QuestionnaireTicketVoteReservations
+    ) {
+      return <ThumbsUpDown sx={{ ...iconStyles, marginTop: 0.55 }} />;
     }
-    if (notificationType === NotificationType.ProposalVoteStandAside) {
+    if (
+      notificationType === NotificationType.ProposalVoteStandAside ||
+      notificationType === NotificationType.QuestionnaireTicketVoteStandAside
+    ) {
       return <ThumbDown sx={iconStyles} />;
     }
-    if (notificationType === NotificationType.ProposalVoteBlock) {
+    if (
+      notificationType === NotificationType.ProposalVoteBlock ||
+      notificationType === NotificationType.QuestionnaireTicketVoteBlock
+    ) {
       return <PanTool sx={iconStyles} />;
     }
     if (
+      notificationType === NotificationType.QuestionnaireTicketVoteAgreement ||
       notificationType === NotificationType.ProposalVoteAgreement ||
       notificationType === NotificationType.CommentLike ||
       notificationType === NotificationType.AnswerLike ||
@@ -339,6 +366,9 @@ const Notification = ({
     }
     if (notificationType === NotificationType.QuestionnaireTicketSubmitted) {
       return <QuestionAnswer sx={{ ...iconStyles, marginTop: 0.65 }} />;
+    }
+    if (notificationType === NotificationType.VerifyUser) {
+      return <Verified sx={{ ...iconStyles, fontSize: 12, marginTop: 0.45 }} />;
     }
     return <AutoAwesome sx={iconStyles} />;
   };

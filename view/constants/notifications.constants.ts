@@ -20,5 +20,9 @@ export enum NotificationType {
   ProposalVoteStandAside = 'proposal-vote-stand-aside',
   QuestionnaireTicketComment = 'questionnaire-ticket-comment',
   QuestionnaireTicketSubmitted = 'questionnaire-ticket-submitted',
+  QuestionnaireTicketVoteAgreement = 'questionnaire-ticket-vote-agreement',
+  QuestionnaireTicketVoteBlock = 'questionnaire-ticket-vote-block',
+  QuestionnaireTicketVoteReservations = 'questionnaire-ticket-vote-reservations',
+  QuestionnaireTicketVoteStandAside = 'questionnaire-ticket-vote-stand-aside',
   VerifyUser = 'verify-user',
 }

@@ -4,13 +4,14 @@ import { NotificationsModule } from '../notifications/notifications.module';
 import { ProposalsModule } from '../proposals/proposals.module';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { QuestionsModule } from '../questions/questions.module';
+import { User } from '../users/models/user.model';
 import { Vote } from './models/vote.model';
 import { VotesResolver } from './votes.resolver';
 import { VotesService } from './votes.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Vote, QuestionnaireTicket]),
+    TypeOrmModule.forFeature([Vote, User, QuestionnaireTicket]),
     NotificationsModule,
     ProposalsModule,
     QuestionsModule,

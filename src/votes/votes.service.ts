@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, Not, Repository } from 'typeorm';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ProposalsService } from '../proposals/proposals.service';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
 import { QuestionsService } from '../questions/questions.service';
+import { User } from '../users/models/user.model';
 import { CreateVoteInput } from './models/create-vote.input';
 import { UpdateVoteInput } from './models/update-vote.input';
 import { Vote } from './models/vote.model';
@@ -19,6 +20,9 @@ export class VotesService {
 
     @InjectRepository(QuestionnaireTicket)
     private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
+
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
 
     private notificationsService: NotificationsService,
     private proposalsService: ProposalsService,
@@ -56,9 +60,7 @@ export class VotesService {
       const proposal = await this.proposalsService.getProposal(vote.proposalId);
 
       if (vote.userId !== proposal.userId) {
-        const voteNotificationType = this.getVoteNotificationType(
-          vote.voteType,
-        );
+        const voteNotificationType = this.getVoteNotificationType(vote);
         await this.notificationsService.createNotification({
           notificationType: voteNotificationType,
           otherUserId: vote.userId,
@@ -89,20 +91,51 @@ export class VotesService {
           );
         }
       }
+      // Notify other users with access that a ticket vote has been cast
+      const otherUsersWithAccess = await this.userRepository.find({
+        where: {
+          id: Not(vote.userId),
+          serverRoles: {
+            permission: { manageQuestionnaireTickets: true },
+          },
+        },
+      });
+      for (const user of otherUsersWithAccess) {
+        const notificationType = this.getVoteNotificationType(vote);
+        await this.notificationsService.createNotification({
+          questionnaireTicketId: vote.questionnaireTicketId,
+          otherUserId: vote.userId,
+          userId: user.id,
+          voteId: vote.id,
+          notificationType,
+        });
+      }
     }
 
     return { vote };
   }
 
-  getVoteNotificationType(voteType: string) {
+  getVoteNotificationType({ voteType, questionnaireTicketId }: Vote) {
     if (voteType === VoteTypes.Reservations) {
+      if (questionnaireTicketId) {
+        return NotificationType.QuestionnaireTicketVoteReservations;
+      }
       return NotificationType.ProposalVoteReservations;
     }
     if (voteType === VoteTypes.StandAside) {
+      if (questionnaireTicketId) {
+        return NotificationType.QuestionnaireTicketVoteStandAside;
+      }
       return NotificationType.ProposalVoteStandAside;
     }
     if (voteType === VoteTypes.Block) {
+      if (questionnaireTicketId) {
+        return NotificationType.QuestionnaireTicketVoteBlock;
+      }
       return NotificationType.ProposalVoteBlock;
+    }
+    if (questionnaireTicketId) {
+      return NotificationType.QuestionnaireTicketVoteAgreement;
     }
     return NotificationType.ProposalVoteAgreement;
   }
@@ -119,7 +152,7 @@ export class VotesService {
         voteId: vote.id,
       });
       if (notification) {
-        const notificationType = this.getVoteNotificationType(vote.voteType);
+        const notificationType = this.getVoteNotificationType(vote);
         await this.notificationsService.updateNotification(notification.id, {
           notificationType,
         });
