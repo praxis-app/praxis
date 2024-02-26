@@ -40,7 +40,11 @@ export class NotificationsResolver {
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
   ) {
-    return this.notificationsService.getNotifications(user.id, offset, limit);
+    return this.notificationsService.getNotificationsByUserId(
+      user.id,
+      offset,
+      limit,
+    );
   }
 
   @Query(() => Int)

@@ -144,6 +144,7 @@ export class VotesService {
     await this.voteRepository.update(id, data);
     const vote = await this.getVote(id, ['proposal']);
 
+    // Update notification for proposal owner
     if (vote.proposalId) {
       const notification = await this.notificationsService.getNotification({
         otherUserId: userId,
@@ -152,6 +153,22 @@ export class VotesService {
         voteId: vote.id,
       });
       if (notification) {
+        const notificationType = this.getVoteNotificationType(vote);
+        await this.notificationsService.updateNotification(notification.id, {
+          notificationType,
+        });
+      }
+    }
+
+    // Update notifications for other users with access to the questionnaire ticket
+    if (vote.questionnaireTicketId) {
+      const notifications = await this.notificationsService.getNotifications({
+        questionnaireTicketId: vote.questionnaireTicketId,
+        userId: Not(userId),
+        otherUserId: userId,
+        voteId: vote.id,
+      });
+      for (const notification of notifications) {
         const notificationType = this.getVoteNotificationType(vote);
         await this.notificationsService.updateNotification(notification.id, {
           notificationType,
