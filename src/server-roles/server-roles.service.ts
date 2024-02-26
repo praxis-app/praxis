@@ -45,7 +45,7 @@ export class ServerRolesService {
     const userIds = role.members.map(({ id }) => id);
 
     return this.userRepository.find({
-      where: { id: Not(In(userIds)) },
+      where: { id: Not(In(userIds)), verified: true },
     });
   }
 
@@ -88,7 +88,7 @@ export class ServerRolesService {
       'permission',
     ]);
     const newMembers = await this.userRepository.find({
-      where: { id: In(selectedUserIds) },
+      where: { id: In(selectedUserIds), verified: true },
     });
     const serverRole = await this.serverRoleRepository.save({
       ...roleWithRelations,
