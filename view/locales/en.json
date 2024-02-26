@@ -307,6 +307,7 @@
     "prompts": {
       "confirmLeave": "Are you sure you want to leave the group?",
       "confirmNoAdmin": "Are you sure you want to set this group to No Admin? All major changes to the group will have to be made via proposals. This includes changes to the group name, cover photo, settings, roles, events, and more.",
+      "exploreGroups": "Explore groups",
       "noAboutText": "No about text",
       "noGroups": "No groups yet.",
       "publicGroup": "Public Group: Anyone can view the group page and any content posted by group members.",
@@ -698,10 +699,12 @@
     "prompts": {
       "confirmBlock": "Are you sure you want to block verification for this new user? This will automatically mark their questionnaire ticket as denied.",
       "confirmSubmit": "Are you sure you want to submit your answers?",
+      "defaultQuestionnairePrompt": "Please answer the following questions to join the server.",
       "noQuestionnaires": "No questionnaires",
       "noQuestions": "No questions yet",
-      "waitForResults": "You're answers are being reviewed and we'll notify you once there's any updates. Stay tuned!",
-      "defaultQuestionnairePrompt": "Please answer the following questions to join the server."
+      "verificationDenied": "After careful consideration, we regret to inform you that your verification request has been denied.",
+      "verified": "You've been verified! Welcome to Praxis.",
+      "waitForResults": "You're answers are being reviewed and we'll notify you once there's any updates. Stay tuned!"
     },
     "settings": {
       "explanations": {

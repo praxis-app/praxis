@@ -1,5 +1,7 @@
 import { useReactiveVar } from '@apollo/client';
+import { Explore } from '@mui/icons-material';
 import {
+  Button,
   Card,
   CardContent,
   CircularProgress,
@@ -8,6 +10,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import CommentForm from '../../components/Comments/CommentForm';
 import CommentsList from '../../components/Comments/CommentList';
 import AnswerQuestionsForm from '../../components/Questions/AnswerQuestionsForm';
@@ -16,9 +19,11 @@ import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { QuestionnaireTicketStatus } from '../../constants/question.constants';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const VibeCheck = () => {
   const [errorsMap, setErrorsMap] = useState<Record<number, string>>({});
@@ -32,6 +37,8 @@ const VibeCheck = () => {
   } = useVibeCheckQuery({ variables: { isLoggedIn } });
 
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
+  const navigate = useNavigate();
 
   if (vibeCheckError) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
@@ -111,6 +118,42 @@ const VibeCheck = () => {
             <AnsweredQuestionCard key={question.id} question={question} />
           ))}
         </>
+      )}
+
+      {status === QuestionnaireTicketStatus.Approved && (
+        <Card>
+          <CardContent
+            sx={{
+              '&:last-child': { paddingBottom: 2.5 },
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <Typography paddingBottom={1.8}>
+              {t('questions.prompts.verified')}
+            </Typography>
+
+            <Button
+              startIcon={<Explore sx={{ marginRight: 0.25 }} />}
+              onClick={() => navigate(NavigationPaths.Groups)}
+              sx={{
+                textTransform: 'none',
+                alignSelf: isDesktop ? 'flex-start' : 'center',
+              }}
+              variant="outlined"
+            >
+              {t('groups.prompts.exploreGroups')}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {status === QuestionnaireTicketStatus.Denied && (
+        <Card>
+          <CardContent sx={{ '&:last-child': { paddingBottom: 2 } }}>
+            <Typography>{t('questions.prompts.verificationDenied')}</Typography>
+          </CardContent>
+        </Card>
       )}
     </>
   );
