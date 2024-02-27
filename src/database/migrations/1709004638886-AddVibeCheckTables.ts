@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddVibeCheckTables1709000954372 implements MigrationInterface {
-  name = 'AddVibeCheckTables1709000954372';
+export class AddVibeCheckTables1709004638886 implements MigrationInterface {
+  name = 'AddVibeCheckTables1709004638886';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TABLE "answer" ("id" SERIAL NOT NULL, "text" character varying NOT NULL, "questionId" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_9232db17b63fb1e94f97e5c224f" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "answer" ("id" SERIAL NOT NULL, "text" character varying NOT NULL, "questionId" integer NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "REL_a4013f10cd6924793fbd5f0d63" UNIQUE ("questionId"), CONSTRAINT "PK_9232db17b63fb1e94f97e5c224f" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "question" ("id" SERIAL NOT NULL, "text" character varying NOT NULL, "priority" integer NOT NULL, "questionnaireTicketId" integer, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_21e5786aa0ea704ae185a79b2d5" PRIMARY KEY ("id"))`,
@@ -56,9 +56,6 @@ export class AddVibeCheckTables1709000954372 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "server_config" ADD "votingTimeLimit" integer NOT NULL DEFAULT '0'`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "server_config" ADD "closingAt" TIMESTAMP`,
     );
     await queryRunner.query(
       `ALTER TABLE "server_config" ADD "serverQuestionsPrompt" character varying`,
@@ -146,9 +143,6 @@ export class AddVibeCheckTables1709000954372 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "server_config" DROP COLUMN "serverQuestionsPrompt"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "server_config" DROP COLUMN "closingAt"`,
     );
     await queryRunner.query(
       `ALTER TABLE "server_config" DROP COLUMN "votingTimeLimit"`,

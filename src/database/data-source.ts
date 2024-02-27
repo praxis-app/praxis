@@ -69,7 +69,7 @@ import { AddCascadeDeletesForUser1704254669247 } from './migrations/170425466924
 import { AddNotificationsTable1704767517224 } from './migrations/1704767517224-AddNotificationsTable';
 import { AddNotificationRelationColumns1705026747368 } from './migrations/1705026747368-AddNotificationRelationColumns';
 import { AddRuleTable1705711560882 } from './migrations/1705711560882-AddRuleTable';
-import { AddVibeCheckTables1709000954372 } from './migrations/1709000954372-AddVibeCheckTables';
+import { AddVibeCheckTables1709004638886 } from './migrations/1709004638886-AddVibeCheckTables';
 
 dotenv.config();
 
@@ -141,7 +141,7 @@ export default new DataSource({
     AddServerConfigTable1699135846939,
     AddServerInviteTable1677339785709,
     AddServerRolePermissionColumns1703978999070,
-    AddVibeCheckTables1709000954372,
+    AddVibeCheckTables1709004638886,
     CleanUpGroupMemberRequestTable1690168731029,
     DropGroupMemberEntityTable1681010509841,
     DropRoleMemberEntityTable1681173025669,
