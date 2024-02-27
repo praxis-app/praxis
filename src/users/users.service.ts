@@ -18,9 +18,9 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { Proposal } from '../proposals/models/proposal.model';
-import { ServerQuestion } from '../questions/models/server-question.model';
+import { QuestionnaireTicketConfig } from '../questions/models/questionnaire-ticket-config.model';
 import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
-import { ServerConfig } from '../server-configs/models/server-config.model';
+import { ServerQuestion } from '../questions/models/server-question.model';
 import { ServerConfigsService } from '../server-configs/server-configs.service';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { ServerRolesService } from '../server-roles/server-roles.service';
@@ -406,7 +406,7 @@ export class UsersService {
       ? new Date(Date.now() + serverConfig.votingTimeLimit * 60 * 1000)
       : undefined;
 
-    const config: Partial<ServerConfig> = {
+    const config: Partial<QuestionnaireTicketConfig> = {
       decisionMakingModel: serverConfig.decisionMakingModel,
       standAsidesLimit: serverConfig.standAsidesLimit,
       reservationsLimit: serverConfig.reservationsLimit,
