@@ -3,7 +3,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -20,9 +21,10 @@ export class Answer {
   @Field()
   text: string;
 
-  @ManyToOne(() => Question, (question) => question.answers, {
+  @OneToOne(() => Question, (question) => question.answers, {
     onDelete: 'CASCADE',
   })
+  @JoinColumn()
   question: Question;
 
   @Column()

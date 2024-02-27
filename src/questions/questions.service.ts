@@ -513,7 +513,6 @@ export class QuestionsService {
     return { questionnaireTicket };
   }
 
-  // TODO: Add support for group questions
   async deleteQuestion(questionId: number) {
     const question = await this.serverQuestionRepository.findOneOrFail({
       where: { id: questionId },

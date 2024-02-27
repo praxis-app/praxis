@@ -5,6 +5,7 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -29,8 +30,7 @@ export class Question {
   @Field(() => Int)
   priority: number;
 
-  // TODO: Convert to one to one relationship
-  @OneToMany(() => Answer, (answer) => answer.question, {
+  @OneToOne(() => Answer, (answer) => answer.question, {
     cascade: true,
   })
   answers: Answer[];
