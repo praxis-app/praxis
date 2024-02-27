@@ -56,6 +56,21 @@ const VibeCheck = () => {
   const { questionnaireTicket } = me;
   const { id, prompt, status, questions, comments } = questionnaireTicket;
 
+  const renderHeader = () => (
+    <Flex justifyContent="space-between" alignItems="center">
+      <LevelOneHeading header>
+        {t('questions.labels.vibeCheck')}
+      </LevelOneHeading>
+
+      {isSavingProgress && (
+        <Typography alignSelf="start" paddingTop={0.3}>
+          <CircularProgress size={12} sx={{ marginRight: 1 }} />
+          {t('states.saving')}
+        </Typography>
+      )}
+    </Flex>
+  );
+
   const renderCommentSection = () => (
     <>
       <Divider sx={{ marginBottom: 2.5, marginTop: 2 }} />
@@ -65,28 +80,16 @@ const VibeCheck = () => {
         currentUserId={me.id}
         questionnaireTicketId={id}
       />
-
       <CommentForm questionnaireTicketId={id} enableAutoFocus />
     </>
   );
 
   return (
     <>
-      <Flex justifyContent="space-between" alignItems="center">
-        <LevelOneHeading header>
-          {t('questions.labels.vibeCheck')}
-        </LevelOneHeading>
-
-        {isSavingProgress && (
-          <Typography alignSelf="start" paddingTop={0.3}>
-            <CircularProgress size={12} sx={{ marginRight: 1 }} />
-            {t('states.saving')}
-          </Typography>
-        )}
-      </Flex>
-
       {status === QuestionnaireTicketStatus.InProgress && (
         <>
+          {renderHeader()}
+
           <Card>
             <CardContent sx={{ '&:last-child': { paddingBottom: 0 } }}>
               <Typography>
@@ -107,6 +110,8 @@ const VibeCheck = () => {
 
       {status === QuestionnaireTicketStatus.Submitted && (
         <>
+          {renderHeader()}
+
           <Card>
             <CardContent sx={{ '&:last-child': { paddingBottom: 0 } }}>
               <Typography>{t('questions.prompts.waitForResults')}</Typography>
@@ -121,31 +126,26 @@ const VibeCheck = () => {
       )}
 
       {status === QuestionnaireTicketStatus.Approved && (
-        <Card>
-          <CardContent
-            sx={{
-              '&:last-child': { paddingBottom: 2.5 },
-              display: 'flex',
-              flexDirection: 'column',
-            }}
+        <Flex flexDirection="column">
+          <Typography
+            alignSelf={isDesktop ? 'flex-start' : 'center'}
+            paddingBottom={isDesktop ? 1.8 : 2.2}
           >
-            <Typography paddingBottom={1.8}>
-              {t('questions.prompts.verified')}
-            </Typography>
+            {t('questions.prompts.verified')}
+          </Typography>
 
-            <Button
-              startIcon={<Explore sx={{ marginRight: 0.25 }} />}
-              onClick={() => navigate(NavigationPaths.Groups)}
-              sx={{
-                textTransform: 'none',
-                alignSelf: isDesktop ? 'flex-start' : 'center',
-              }}
-              variant="outlined"
-            >
-              {t('groups.prompts.exploreGroups')}
-            </Button>
-          </CardContent>
-        </Card>
+          <Button
+            startIcon={<Explore sx={{ marginRight: 0.25 }} />}
+            onClick={() => navigate(NavigationPaths.Groups)}
+            sx={{
+              textTransform: 'none',
+              alignSelf: isDesktop ? 'flex-start' : 'center',
+            }}
+            variant="outlined"
+          >
+            {t('groups.prompts.exploreGroups')}
+          </Button>
+        </Flex>
       )}
 
       {status === QuestionnaireTicketStatus.Denied && (
