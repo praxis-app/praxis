@@ -9,11 +9,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Comment } from '../../comments/models/comment.model';
+import { Like } from '../../likes/models/like.model';
+import { Notification } from '../../notifications/models/notification.model';
 import { Answer } from './answer.model';
 import { QuestionnaireTicket } from './questionnaire-ticket.model';
-import { Like } from '../../likes/models/like.model';
-import { Comment } from '../../comments/models/comment.model';
-import { Notification } from '../../notifications/models/notification.model';
 
 @ObjectType()
 @Entity()
@@ -33,7 +33,7 @@ export class Question {
   @OneToOne(() => Answer, (answer) => answer.question, {
     cascade: true,
   })
-  answers: Answer[];
+  answer: Answer;
 
   @OneToMany(() => Comment, (comment) => comment.question)
   comments: Comment[];

@@ -21,7 +21,7 @@ export class Answer {
   @Field()
   text: string;
 
-  @OneToOne(() => Question, (question) => question.answers, {
+  @OneToOne(() => Question, (question) => question.answer, {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
