@@ -828,13 +828,13 @@ export class DataloaderService {
 
   private _createQuestionsLoader() {
     return this._getDataLoader<number, Question>(async (questionIds) => {
-      const answers = await this.questionRepository.find({
+      const questions = await this.questionRepository.find({
         where: { id: In(questionIds) },
       });
       return questionIds.map(
         (id) =>
-          answers.find((answer: Question) => answer.id === id) ||
-          new Error(`Could not load answer: ${id}`),
+          questions.find((question: Question) => question.id === id) ||
+          new Error(`Could not load question: ${id}`),
       );
     });
   }
