@@ -20,7 +20,7 @@ export const canManageQuestionnaireTickets = rule({ cache: 'strict' })(
 export const isOwnQuestionnaireTicket = rule({ cache: 'strict' })(async (
   parent: QuestionnaireTicket | undefined,
   args: { commentData: CreateCommentInput } | object,
-  { services: { vibeCheckService: vibeCheckService }, user }: Context,
+  { services: { vibeCheckService }, user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
@@ -40,7 +40,7 @@ export const isOwnQuestionnaireTicket = rule({ cache: 'strict' })(async (
 export const isOwnQuestionnaireTicketComment = rule({ cache: 'strict' })(async (
   parent: Comment | undefined,
   args: { likeData: CreateLikeInput | DeleteLikeInput } | object,
-  { services: { vibeCheckService: vibeCheckService }, user }: Context,
+  { services: { vibeCheckService }, user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
@@ -61,7 +61,7 @@ export const isOwnQuestionnaireTicketReviewer = rule({ cache: 'strict' })(
   async (
     parent: User,
     _args,
-    { services: { vibeCheckService: vibeCheckService }, user }: Context,
+    { services: { vibeCheckService }, user }: Context,
   ) => {
     if (!user) {
       return UNAUTHORIZED;
@@ -77,7 +77,7 @@ export const isOwnQuestionnaireTicketReviewerAvatar = rule({ cache: 'strict' })(
   async (
     parent: Image,
     _args,
-    { services: { vibeCheckService: vibeCheckService }, user }: Context,
+    { services: { vibeCheckService }, user }: Context,
   ) => {
     if (!user) {
       return UNAUTHORIZED;
@@ -96,7 +96,7 @@ export const isOwnQuestion = rule({ cache: 'strict' })(async (
     | { commentData: CreateCommentInput }
     | { id: number }
     | object,
-  { services: { vibeCheckService: vibeCheckService }, user }: Context,
+  { services: { vibeCheckService }, user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
@@ -119,7 +119,7 @@ export const isOwnQuestion = rule({ cache: 'strict' })(async (
 export const isOwnQuestionComment = rule({ cache: 'strict' })(async (
   parent: Question | undefined,
   args: { likeData: CreateLikeInput | DeleteLikeInput } | object,
-  { services: { vibeCheckService: vibeCheckService }, user }: Context,
+  { services: { vibeCheckService }, user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
@@ -139,7 +139,7 @@ export const isOwnQuestionComment = rule({ cache: 'strict' })(async (
 export const isOwnAnswer = rule({ cache: 'strict' })(async (
   parent: Answer,
   _args,
-  { services: { vibeCheckService: vibeCheckService }, user }: Context,
+  { services: { vibeCheckService }, user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
