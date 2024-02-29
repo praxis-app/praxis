@@ -396,10 +396,7 @@ export class UsersService {
     });
   }
 
-  async createQuestionnaireTicket(
-    userId: number,
-    serverQuestions: ServerQuestion[],
-  ) {
+  async createNewUserTicket(userId: number, serverQuestions: ServerQuestion[]) {
     const serverConfig = await this.serverConfigsService.getServerConfig();
 
     const closingAt = serverConfig.votingTimeLimit
@@ -454,7 +451,7 @@ export class UsersService {
     }
 
     if (!isFirstUser && serverQuestions.length > 0) {
-      await this.createQuestionnaireTicket(user.id, serverQuestions);
+      await this.createNewUserTicket(user.id, serverQuestions);
     }
 
     return user;
