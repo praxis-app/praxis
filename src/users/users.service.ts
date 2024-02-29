@@ -448,9 +448,7 @@ export class UsersService {
 
     if (isFirstUser) {
       await this.serverRolesService.createAdminServerRole(user.id);
-    }
-
-    if (!isFirstUser && serverQuestions.length > 0) {
+    } else if (serverQuestions.length > 0) {
       await this.createNewUserTicket(user.id, serverQuestions);
     }
 
