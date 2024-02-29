@@ -30,7 +30,7 @@ import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
 
 @Injectable()
-export class QuestionsService {
+export class VibeCheckService {
   constructor(
     @InjectRepository(QuestionnaireTicket)
     private questionnaireTicketRepository: Repository<QuestionnaireTicket>,

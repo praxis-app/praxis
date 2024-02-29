@@ -12,7 +12,7 @@ import { Question } from './models/question.model';
 import { QuestionnaireTicketConfig } from './models/questionnaire-ticket-config.model';
 import { QuestionnaireTicket } from './models/questionnaire-ticket.model';
 import { ServerQuestion } from './models/server-question.model';
-import { QuestionsService } from './questions.service';
+import { VibeCheckService } from './vibe-check.service';
 import { AnswersResolver } from './resolvers/answers.resolver';
 import { QuestionnaireTicketsResolver } from './resolvers/questionnaire-tickets.resolver';
 import { QuestionsResolver } from './resolvers/questions.resolver';
@@ -39,9 +39,9 @@ import { ServerQuestionsResolver } from './resolvers/server-questions.resolver';
     AnswersResolver,
     QuestionnaireTicketsResolver,
     QuestionsResolver,
-    QuestionsService,
+    VibeCheckService,
     ServerQuestionsResolver,
   ],
-  exports: [QuestionsService],
+  exports: [VibeCheckService],
 })
-export class QuestionsModule {}
+export class VibeCheckModule {}

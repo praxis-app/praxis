@@ -22,7 +22,7 @@ import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
 import { ProposalActionRoleMember } from '../../proposals/proposal-actions/models/proposal-action-role-member.model';
-import { QuestionnaireTicket } from '../../questions/models/questionnaire-ticket.model';
+import { QuestionnaireTicket } from '../../vibe-check/models/questionnaire-ticket.model';
 import { ServerInvite } from '../../server-invites/models/server-invite.model';
 import { ServerRole } from '../../server-roles/models/server-role.model';
 

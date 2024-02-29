@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Notification } from '../../notifications/models/notification.model';
 import { Proposal } from '../../proposals/models/proposal.model';
-import { QuestionnaireTicket } from '../../questions/models/questionnaire-ticket.model';
+import { QuestionnaireTicket } from '../../vibe-check/models/questionnaire-ticket.model';
 import { User } from '../../users/models/user.model';
 
 @Entity()

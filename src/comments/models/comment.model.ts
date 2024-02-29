@@ -13,8 +13,8 @@ import { Like } from '../../likes/models/like.model';
 import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
-import { Question } from '../../questions/models/question.model';
-import { QuestionnaireTicket } from '../../questions/models/questionnaire-ticket.model';
+import { Question } from '../../vibe-check/models/question.model';
+import { QuestionnaireTicket } from '../../vibe-check/models/questionnaire-ticket.model';
 import { User } from '../../users/models/user.model';
 
 @Entity()

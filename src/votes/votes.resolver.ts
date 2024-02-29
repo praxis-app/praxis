@@ -12,7 +12,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalsService } from '../proposals/proposals.service';
-import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { User } from '../users/models/user.model';
 import { CreateVoteInput } from './models/create-vote.input';
 import { CreateVotePayload } from './models/create-vote.payload';

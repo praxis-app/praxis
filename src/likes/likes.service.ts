@@ -6,7 +6,7 @@ import { GroupPrivacy } from '../groups/groups.constants';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
-import { Question } from '../questions/models/question.model';
+import { Question } from '../vibe-check/models/question.model';
 import { User } from '../users/models/user.model';
 import { CreateLikeInput } from './models/create-like.input';
 import { DeleteLikeInput } from './models/delete-like.input';

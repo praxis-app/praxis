@@ -14,57 +14,57 @@ import { VoteTypes } from '../../votes/votes.constants';
 import { Question } from '../models/question.model';
 import { QuestionnaireTicketConfig } from '../models/questionnaire-ticket-config.model';
 import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
-import { QuestionsService } from '../questions.service';
+import { VibeCheckService } from '../vibe-check.service';
 
 @Resolver(() => QuestionnaireTicket)
 export class QuestionnaireTicketsResolver {
-  constructor(private questionsService: QuestionsService) {}
+  constructor(private vibeCheckService: VibeCheckService) {}
 
   @Query(() => QuestionnaireTicket)
   async questionnaireTicket(@Args('id', { type: () => Int }) id: number) {
-    return this.questionsService.getQuestionnaireTicket(id);
+    return this.vibeCheckService.getQuestionnaireTicket(id);
   }
 
   @Query(() => [QuestionnaireTicket])
   async serverQuestionnaireTickets() {
-    return this.questionsService.getQuestionnaireTickets();
+    return this.vibeCheckService.getQuestionnaireTickets();
   }
 
   @ResolveField(() => String, { nullable: true })
   async prompt() {
-    return this.questionsService.getQuestionnairePrompt();
+    return this.vibeCheckService.getQuestionnairePrompt();
   }
 
   @ResolveField(() => [Question])
   async questions(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestions(id);
+    return this.vibeCheckService.getQuestions(id);
   }
 
   @ResolveField(() => Int)
   async questionCount(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionCount(id);
+    return this.vibeCheckService.getQuestionCount(id);
   }
 
   @ResolveField(() => Int)
   async answerCount(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketAnswerCount(id);
+    return this.vibeCheckService.getQuestionnaireTicketAnswerCount(id);
   }
 
   @ResolveField(() => [Vote])
   async votes(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketVotes(id);
+    return this.vibeCheckService.getQuestionnaireTicketVotes(id);
   }
 
   @ResolveField(() => Int)
   async voteCount(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketVoteCount({
+    return this.vibeCheckService.getQuestionnaireTicketVoteCount({
       questionnaireTicketId: id,
     });
   }
 
   @ResolveField(() => Int)
   async agreementVoteCount(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketVoteCount({
+    return this.vibeCheckService.getQuestionnaireTicketVoteCount({
       questionnaireTicketId: id,
       voteType: VoteTypes.Agreement,
     });
@@ -72,7 +72,7 @@ export class QuestionnaireTicketsResolver {
 
   @ResolveField(() => Int)
   async votesNeededToVerify(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getVotesNeededToVerify(id);
+    return this.vibeCheckService.getVotesNeededToVerify(id);
   }
 
   @ResolveField(() => Vote, { nullable: true })
@@ -80,33 +80,33 @@ export class QuestionnaireTicketsResolver {
     @Parent() { id }: QuestionnaireTicket,
     @CurrentUser() user: User,
   ) {
-    return this.questionsService.getQuestionnaireTicketVote(id, user.id);
+    return this.vibeCheckService.getQuestionnaireTicketVote(id, user.id);
   }
 
   @ResolveField(() => [Comment])
   async comments(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketComments(id);
+    return this.vibeCheckService.getQuestionnaireTicketComments(id);
   }
 
   @ResolveField(() => Int)
   async commentCount(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketCommentCount(id);
+    return this.vibeCheckService.getQuestionnaireTicketCommentCount(id);
   }
 
   @ResolveField(() => User)
   async user(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketUser(id);
+    return this.vibeCheckService.getQuestionnaireTicketUser(id);
   }
 
   @ResolveField(() => QuestionnaireTicketConfig)
   async settings(@Parent() { id }: QuestionnaireTicket) {
-    return this.questionsService.getQuestionnaireTicketConfig(id);
+    return this.vibeCheckService.getQuestionnaireTicketConfig(id);
   }
 
   @Mutation(() => Boolean)
   async deleteQuestionnnaireTicket(
     @Args('id', { type: () => Int }) id: number,
   ) {
-    return this.questionsService.deleteQuestionnaireTicket(id);
+    return this.vibeCheckService.deleteQuestionnaireTicket(id);
   }
 }

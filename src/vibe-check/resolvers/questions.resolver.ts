@@ -18,37 +18,37 @@ import { AnswerQuestionsPayload } from '../models/answer-questions.payload';
 import { Answer } from '../models/answer.model';
 import { Question } from '../models/question.model';
 import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
-import { QuestionsService } from '../questions.service';
+import { VibeCheckService } from '../vibe-check.service';
 
 @Resolver(() => Question)
 export class QuestionsResolver {
-  constructor(private questionsService: QuestionsService) {}
+  constructor(private vibeCheckService: VibeCheckService) {}
 
   @Query(() => Question)
   async question(@Args('id', { type: () => Int }) id: number) {
-    return this.questionsService.getQuestion(id);
+    return this.vibeCheckService.getQuestion(id);
   }
 
   @ResolveField(() => Answer, { nullable: true })
   async answer(@Parent() { id }: Question) {
-    return this.questionsService.getAnswer({
+    return this.vibeCheckService.getAnswer({
       questionId: id,
     });
   }
 
   @ResolveField(() => QuestionnaireTicket)
   async questionnaireTicket(@Parent() { questionnaireTicketId }: Question) {
-    return this.questionsService.getQuestionnaireTicket(questionnaireTicketId);
+    return this.vibeCheckService.getQuestionnaireTicket(questionnaireTicketId);
   }
 
   @ResolveField(() => [Like])
   async likes(@Parent() { id }: Question) {
-    return this.questionsService.getQuestionLikes(id);
+    return this.vibeCheckService.getQuestionLikes(id);
   }
 
   @ResolveField(() => Int)
   async likeCount(@Parent() { id }: Question) {
-    return this.questionsService.getQuestionLikeCount(id);
+    return this.vibeCheckService.getQuestionLikeCount(id);
   }
 
   @ResolveField(() => Boolean)
@@ -65,12 +65,12 @@ export class QuestionsResolver {
 
   @ResolveField(() => [Comment])
   async comments(@Parent() { id }: Question) {
-    return this.questionsService.getQuestionComments(id);
+    return this.vibeCheckService.getQuestionComments(id);
   }
 
   @ResolveField(() => Int)
   async commentCount(@Parent() { id }: Question) {
-    return this.questionsService.getQuestionCommentCount(id);
+    return this.vibeCheckService.getQuestionCommentCount(id);
   }
 
   @Mutation(() => AnswerQuestionsPayload)
@@ -78,6 +78,6 @@ export class QuestionsResolver {
     @Args('answersData') answersData: AnswerQuestionsInput,
     @CurrentUser() user: User,
   ) {
-    return this.questionsService.answerQuestions(answersData, user);
+    return this.vibeCheckService.answerQuestions(answersData, user);
   }
 }

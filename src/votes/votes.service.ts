@@ -4,8 +4,8 @@ import { FindOptionsWhere, Not, Repository } from 'typeorm';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ProposalsService } from '../proposals/proposals.service';
-import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
-import { QuestionsService } from '../questions/questions.service';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
+import { VibeCheckService } from '../vibe-check/vibe-check.service';
 import { User } from '../users/models/user.model';
 import { CreateVoteInput } from './models/create-vote.input';
 import { UpdateVoteInput } from './models/update-vote.input';
@@ -26,7 +26,7 @@ export class VotesService {
 
     private notificationsService: NotificationsService,
     private proposalsService: ProposalsService,
-    private questionsService: QuestionsService,
+    private vibeCheckService: VibeCheckService,
   ) {}
 
   async getVote(id: number, relations?: string[]) {
@@ -73,19 +73,19 @@ export class VotesService {
 
     if (vote.questionnaireTicketId) {
       if (vote.voteType === VoteTypes.Block) {
-        await this.questionsService.denyQuestionnaireTicket(
+        await this.vibeCheckService.denyQuestionnaireTicket(
           vote.questionnaireTicketId,
         );
       } else {
         const isVerifiable =
-          await this.questionsService.isQuestionnaireTicketVerifiable(
+          await this.vibeCheckService.isQuestionnaireTicketVerifiable(
             vote.questionnaireTicketId,
           );
         if (isVerifiable) {
-          await this.questionsService.approveQuestionnaireTicket(
+          await this.vibeCheckService.approveQuestionnaireTicket(
             vote.questionnaireTicketId,
           );
-          await this.questionsService.verifyQuestionnaireTicketUser(
+          await this.vibeCheckService.verifyQuestionnaireTicketUser(
             vote.questionnaireTicketId,
             vote.userId,
           );

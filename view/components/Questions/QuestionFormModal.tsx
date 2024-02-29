@@ -2,7 +2,7 @@ import { Button, FormGroup, SxProps } from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
-import { CreateQuestionInput } from '../../../src/questions/models/create-question.input';
+import { CreateQuestionInput } from '../../../src/vibe-check/models/create-question.input';
 import { toastVar } from '../../graphql/cache';
 import { QuestionFormModalFragment } from '../../graphql/questions/fragments/gen/QuestionFormModal.gen';
 import { useCreateQuestionMutation } from '../../graphql/questions/mutations/gen/CreateQuestion.gen';

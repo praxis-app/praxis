@@ -22,11 +22,11 @@ import { ProposalActionPermission } from '../proposals/proposal-actions/models/p
 import { ProposalActionRoleMember } from '../proposals/proposal-actions/models/proposal-action-role-member.model';
 import { ProposalActionRole } from '../proposals/proposal-actions/models/proposal-action-role.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
-import { Answer } from '../questions/models/answer.model';
-import { Question } from '../questions/models/question.model';
-import { QuestionnaireTicketConfig } from '../questions/models/questionnaire-ticket-config.model';
-import { QuestionnaireTicket } from '../questions/models/questionnaire-ticket.model';
-import { ServerQuestion } from '../questions/models/server-question.model';
+import { Answer } from '../vibe-check/models/answer.model';
+import { Question } from '../vibe-check/models/question.model';
+import { QuestionnaireTicketConfig } from '../vibe-check/models/questionnaire-ticket-config.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
+import { ServerQuestion } from '../vibe-check/models/server-question.model';
 import { Rule } from '../rules/models/rule.model';
 import { ServerConfig } from '../server-configs/models/server-config.model';
 import { ServerInvite } from '../server-invites/models/server-invite.model';
