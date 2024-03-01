@@ -678,7 +678,8 @@ type Query {
   serverInvites: [ServerInvite!]!
   likes(likesData: LikesInput!): [Like!]!
   questionnaireTicket(id: Int!): QuestionnaireTicket!
-  serverQuestionnaireTickets: [QuestionnaireTicket!]!
+  questionnaireTickets(input: QuestionnaireTicketsInput!): [QuestionnaireTicket!]!
+  questionnaireTicketCount(status: String!): Int!
   question(id: Int!): Question!
   serverQuestions: [ServerQuestion!]!
   serverRules: [Rule!]!
@@ -693,6 +694,12 @@ input LikesInput {
   postId: Int
   commentId: Int
   questionId: Int
+}
+
+input QuestionnaireTicketsInput {
+  status: String!
+  limit: Int
+  offset: Int
 }
 
 type Mutation {

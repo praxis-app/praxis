@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Not, Repository } from 'typeorm';
 import { Comment } from '../comments/models/comment.model';
-import { sanitizeText } from '../common/common.utils';
+import { paginate, sanitizeText } from '../common/common.utils';
 import { ImageTypes } from '../images/image.constants';
 import { Image } from '../images/models/image.model';
 import { Like } from '../likes/models/like.model';
@@ -25,6 +25,7 @@ import {
   QuestionnaireTicket,
   QuestionnaireTicketStatus,
 } from './models/questionnaire-ticket.model';
+import { QuestionnaireTicketsInput } from './models/questionnaire-tickets.input';
 import { ServerQuestion } from './models/server-question.model';
 import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
@@ -96,9 +97,23 @@ export class VibeCheckService {
     });
   }
 
-  async getQuestionnaireTickets() {
-    return this.questionnaireTicketRepository.find({
+  async getQuestionnaireTickets({
+    status,
+    limit,
+    offset,
+  }: QuestionnaireTicketsInput) {
+    const questionnaireTickets = await this.questionnaireTicketRepository.find({
       order: { createdAt: 'ASC' },
+      where: { status },
+    });
+    return offset !== undefined
+      ? paginate(questionnaireTickets, offset, limit)
+      : questionnaireTickets;
+  }
+
+  async getQuestionnaireTicketCount(status: string) {
+    return this.questionnaireTicketRepository.count({
+      where: { status },
     });
   }
 

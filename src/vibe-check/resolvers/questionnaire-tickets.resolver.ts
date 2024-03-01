@@ -14,6 +14,7 @@ import { VoteTypes } from '../../votes/votes.constants';
 import { Question } from '../models/question.model';
 import { QuestionnaireTicketConfig } from '../models/questionnaire-ticket-config.model';
 import { QuestionnaireTicket } from '../models/questionnaire-ticket.model';
+import { QuestionnaireTicketsInput } from '../models/questionnaire-tickets.input';
 import { VibeCheckService } from '../vibe-check.service';
 
 @Resolver(() => QuestionnaireTicket)
@@ -26,8 +27,13 @@ export class QuestionnaireTicketsResolver {
   }
 
   @Query(() => [QuestionnaireTicket])
-  async serverQuestionnaireTickets() {
-    return this.vibeCheckService.getQuestionnaireTickets();
+  async questionnaireTickets(@Args('input') input: QuestionnaireTicketsInput) {
+    return this.vibeCheckService.getQuestionnaireTickets(input);
+  }
+
+  @Query(() => Int)
+  async questionnaireTicketCount(@Args('status') status: string) {
+    return this.vibeCheckService.getQuestionnaireTicketCount(status);
   }
 
   @ResolveField(() => String, { nullable: true })

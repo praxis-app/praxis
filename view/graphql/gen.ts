@@ -1031,10 +1031,11 @@ export type Query = {
   publicGroupsFeed: PublicFeedItemsConnection;
   question: Question;
   questionnaireTicket: QuestionnaireTicket;
+  questionnaireTicketCount: Scalars['Int']['output'];
+  questionnaireTickets: Array<QuestionnaireTicket>;
   serverConfig: ServerConfig;
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;
-  serverQuestionnaireTickets: Array<QuestionnaireTicket>;
   serverQuestions: Array<ServerQuestion>;
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
@@ -1107,6 +1108,14 @@ export type QueryQuestionnaireTicketArgs = {
   id: Scalars['Int']['input'];
 };
 
+export type QueryQuestionnaireTicketCountArgs = {
+  status: Scalars['String']['input'];
+};
+
+export type QueryQuestionnaireTicketsArgs = {
+  input: QuestionnaireTicketsInput;
+};
+
 export type QueryServerInviteArgs = {
   token: Scalars['String']['input'];
 };
@@ -1173,6 +1182,12 @@ export type QuestionnaireTicketConfig = {
   standAsidesLimit: Scalars['Int']['output'];
 };
 
+export type QuestionnaireTicketsInput = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  status: Scalars['String']['input'];
+};
+
 export type ReadNotificationsPayload = {
   __typename?: 'ReadNotificationsPayload';
   notifications: Array<Notification>;
@@ -1189,7 +1204,6 @@ export type Rule = {
 
 export type ServerConfig = {
   __typename?: 'ServerConfig';
-  closingAt?: Maybe<Scalars['DateTime']['output']>;
   decisionMakingModel: Scalars['String']['output'];
   id: Scalars['Int']['output'];
   ratificationThreshold: Scalars['Int']['output'];

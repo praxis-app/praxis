@@ -700,8 +700,11 @@
       "confirmBlock": "Are you sure you want to block verification for this new user? This will automatically mark their questionnaire ticket as denied.",
       "confirmSubmit": "Are you sure you want to submit your answers?",
       "defaultQuestionnairePrompt": "Please answer the following questions to join the server.",
-      "noQuestionnaires": "No questionnaires",
+      "noApprovedQuestionnaires": "No approved questionnaires",
+      "noDeniedQuestionnaires": "No denied questionnaires",
+      "noInProgressQuestionnaires": "No questionnaires in progress",
       "noQuestions": "No questions yet",
+      "noSubmittedQuestionnaires": "No submitted questionnaires",
       "verificationDenied": "After careful consideration, we regret to inform you that your verification request has been denied.",
       "verified": "You've been verified! Welcome to Praxis.",
       "waitForResults": "You're answers are being reviewed and we'll notify you once there's any updates. Stay tuned!"

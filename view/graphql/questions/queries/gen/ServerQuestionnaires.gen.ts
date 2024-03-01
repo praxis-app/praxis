@@ -9,12 +9,15 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type ServerQuestionnairesQueryVariables = Types.Exact<{
-  [key: string]: never;
+  status: Types.Scalars['String']['input'];
+  offset: Types.Scalars['Int']['input'];
+  limit: Types.Scalars['Int']['input'];
 }>;
 
 export type ServerQuestionnairesQuery = {
   __typename?: 'Query';
-  serverQuestionnaireTickets: Array<{
+  questionnaireTicketCount: number;
+  questionnaireTickets: Array<{
     __typename?: 'QuestionnaireTicket';
     id: number;
     status: string;
@@ -56,10 +59,13 @@ export type ServerQuestionnairesQuery = {
 };
 
 export const ServerQuestionnairesDocument = gql`
-  query ServerQuestionnaires {
-    serverQuestionnaireTickets {
+  query ServerQuestionnaires($status: String!, $offset: Int!, $limit: Int!) {
+    questionnaireTickets(
+      input: { status: $status, offset: $offset, limit: $limit }
+    ) {
       ...QuestionnaireTicketCard
     }
+    questionnaireTicketCount(status: $status)
   }
   ${QuestionnaireTicketCardFragmentDoc}
 `;
@@ -76,11 +82,14 @@ export const ServerQuestionnairesDocument = gql`
  * @example
  * const { data, loading, error } = useServerQuestionnairesQuery({
  *   variables: {
+ *      status: // value for 'status'
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *   },
  * });
  */
 export function useServerQuestionnairesQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     ServerQuestionnairesQuery,
     ServerQuestionnairesQueryVariables
   >,
