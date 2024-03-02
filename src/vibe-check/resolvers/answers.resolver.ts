@@ -15,6 +15,6 @@ export class AnswersResolver {
 
   @ResolveField(() => User)
   async user(@Parent() { id }: Answer) {
-    return this.vibeCheckService.getAnswerUser(id);
+    return this.vibeCheckService.getUserByAnswerId(id);
   }
 }

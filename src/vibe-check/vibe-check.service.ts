@@ -77,7 +77,7 @@ export class VibeCheckService {
     return this.anwersRepository.findOne({ where });
   }
 
-  async getAnswerUser(answerId: number) {
+  async getUserByAnswerId(answerId: number) {
     const {
       question: { questionnaireTicket },
     } = await this.anwersRepository.findOneOrFail({
