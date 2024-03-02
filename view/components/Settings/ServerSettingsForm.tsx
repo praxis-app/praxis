@@ -170,9 +170,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
             <SettingsSelect
               fieldName={ServerSettingsFormFields.DecisionMakingModel}
               label={t('groups.settings.names.decisionMakingModel')}
-              description={t(
-                'groups.settings.descriptions.decisionMakingModel',
-              )}
+              description={t('settings.descriptions.decisionMakingModel')}
               errorMessageProps={{ sx: { marginTop: 1 } }}
               errors={errors}
               onChange={handleChange}

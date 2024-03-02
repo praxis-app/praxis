@@ -719,6 +719,12 @@
     }
   },
 
+  "settings": {
+    "descriptions": {
+      "decisionMakingModel": "Choose from consensus, consent, or majority vote to determine how decisions are made in the server."
+    }
+  },
+
   "pagination": {
     "of": "of",
     "moreThan": "more than",
