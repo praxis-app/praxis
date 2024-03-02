@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { QuestionnaireTicketStatus } from '../../constants/question.constants';
 import {
+  DEFAULT_PAGE_SIZE,
   MIDDOT_WITH_SPACES,
   NavigationPaths,
 } from '../../constants/shared.constants';
@@ -141,7 +142,10 @@ const QuestionnaireTicketCard = ({
       variables: { id },
       update(cache) {
         cache.updateQuery<ServerQuestionnairesQuery>(
-          { query: ServerQuestionnairesDocument },
+          {
+            query: ServerQuestionnairesDocument,
+            variables: { status, offset: 0, limit: DEFAULT_PAGE_SIZE },
+          },
           (serverQuestionnairesData) =>
             produce(serverQuestionnairesData, (draft) => {
               if (!draft) {
@@ -151,6 +155,7 @@ const QuestionnaireTicketCard = ({
                 (p) => p.id === id,
               );
               draft.questionnaireTickets.splice(index, 1);
+              draft.questionnaireTicketCount -= 1;
             }),
         );
         const cacheId = cache.identify(questionnaireTicket);
