@@ -1,5 +1,3 @@
-// TODO: Remove bottom margin for last user entry
-
 import { Card, CardContent, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -59,7 +57,7 @@ const UsersIndex = () => {
       >
         {data && (
           <Card>
-            <CardContent>
+            <CardContent sx={{ '&:last-child': { paddingBottom: 2 } }}>
               {data.users.map((user) => (
                 <UserEntry
                   key={user.id}

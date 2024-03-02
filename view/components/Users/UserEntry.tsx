@@ -1,4 +1,4 @@
-import { SxProps, Typography } from '@mui/material';
+import { Box, SxProps, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -32,8 +32,9 @@ const UserEntry = ({ user, currentUserId, canRemoveMembers }: Props) => {
   const isDesktop = useIsDesktop();
   const navigate = useNavigate();
 
-  const isMe = user.id === currentUserId;
-  const userProfilePath = getUserProfilePath(user.name);
+  const { id, name, isVerified } = user;
+  const isMe = id === currentUserId;
+  const userProfilePath = getUserProfilePath(name);
   const editUserPath = `${userProfilePath}${NavigationPaths.Edit}`;
 
   const deletePrompt = isMe
@@ -53,8 +54,8 @@ const UserEntry = ({ user, currentUserId, canRemoveMembers }: Props) => {
       navigate(NavigationPaths.Home);
     }
     await deleteUser({
-      variables: { id: user.id, isMe },
-      update: removeUser(user.id),
+      variables: { id, isMe },
+      update: removeUser(id),
       onCompleted() {
         if (isMe) {
           isLoggedInVar(false);
@@ -77,17 +78,31 @@ const UserEntry = ({ user, currentUserId, canRemoveMembers }: Props) => {
       <Link href={userProfilePath}>
         <Flex>
           <UserAvatar user={user} sx={{ marginRight: 1.5 }} />
-          <Typography
-            display="inline-block"
-            marginTop={1}
-            overflow="hidden"
-            textOverflow="ellipsis"
-            title={user.name}
-            whiteSpace="nowrap"
-            width={isDesktop ? '300px' : '120px'}
-          >
-            {user.name}
-          </Typography>
+          <Box>
+            <Typography
+              display="inline-block"
+              lineHeight={1}
+              overflow="hidden"
+              paddingTop={0.3}
+              textOverflow="ellipsis"
+              title={name}
+              whiteSpace="nowrap"
+              width={isDesktop ? '300px' : '120px'}
+            >
+              {name}
+            </Typography>
+
+            <Typography
+              color={isVerified ? 'text.secondary' : 'warning.light'}
+              fontSize="13px"
+              lineHeight={1}
+              marginTop={-0.3}
+            >
+              {isVerified
+                ? t('users.labels.verified')
+                : t('users.labels.unverified')}
+            </Typography>
+          </Box>
         </Flex>
       </Link>
 
