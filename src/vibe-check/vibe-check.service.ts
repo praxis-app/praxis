@@ -177,10 +177,10 @@ export class VibeCheckService {
 
   async getQuestionnaireTicketVote(
     questionnaireTicketId: number,
-    userId: number,
+    currentUserId: number,
   ) {
     return this.votesRepository.findOne({
-      where: { questionnaireTicketId, userId },
+      where: { questionnaireTicketId, userId: currentUserId },
     });
   }
 
