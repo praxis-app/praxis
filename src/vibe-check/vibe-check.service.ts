@@ -305,7 +305,7 @@ export class VibeCheckService {
         user: { id: userId, verified: false },
       },
     });
-    const userCount = await this.imageRepository.count({
+    const imageCount = await this.imageRepository.count({
       where: {
         id: reviewerAvatarId,
         imageType: ImageTypes.ProfilePicture,
@@ -316,7 +316,7 @@ export class VibeCheckService {
         },
       },
     });
-    return ticketCount > 0 && userCount > 0;
+    return ticketCount > 0 && imageCount > 0;
   }
 
   async isOwnQuestion(questionId: number, userId: number) {
