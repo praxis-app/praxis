@@ -1,4 +1,8 @@
-query Likes($likesData: LikesInput!, $isLoggedIn: Boolean!) {
+query Likes(
+  $likesData: LikesInput!
+  $isLoggedIn: Boolean!
+  $isVerified: Boolean!
+) {
   likes(likesData: $likesData) {
     ...Like
   }

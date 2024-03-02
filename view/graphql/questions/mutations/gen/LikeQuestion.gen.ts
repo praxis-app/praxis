@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type LikeQuestionMutationVariables = Types.Exact<{
   likeData: Types.CreateLikeInput;
-  isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type LikeQuestionMutation = {
@@ -38,7 +38,7 @@ export type LikeQuestionMutation = {
 };
 
 export const LikeQuestionDocument = gql`
-  mutation LikeQuestion($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
+  mutation LikeQuestion($likeData: CreateLikeInput!, $isVerified: Boolean!) {
     createLike(likeData: $likeData) {
       question {
         id
@@ -72,7 +72,7 @@ export type LikeQuestionMutationFn = Apollo.MutationFunction<
  * const [likeQuestionMutation, { data, loading, error }] = useLikeQuestionMutation({
  *   variables: {
  *      likeData: // value for 'likeData'
- *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

@@ -1,7 +1,9 @@
+import { useReactiveVar } from '@apollo/client';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TypeNames } from '../../constants/shared.constants';
+import { isVerifiedVar, toastVar } from '../../graphql/cache';
 import { FollowButtonFragment } from '../../graphql/users/fragments/gen/FollowButton.gen';
 import { useFollowUserMutation } from '../../graphql/users/mutations/gen/FollowUser.gen';
 import { useUnfollowUserMutation } from '../../graphql/users/mutations/gen/UnfollowUser.gen';
@@ -25,6 +27,8 @@ const FollowButton = ({
   currentUserId,
 }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
+  const isVerified = useReactiveVar(isVerifiedVar);
+
   const [followUser, { loading: followLoading }] = useFollowUserMutation();
   const [unfollowUser, { loading: unfollowLoading }] =
     useUnfollowUserMutation();
@@ -42,6 +46,13 @@ const FollowButton = ({
   };
 
   const handleClick = async () => {
+    if (!isVerified) {
+      toastVar({
+        title: t('users.prompts.verifyToFollow'),
+        status: 'info',
+      });
+      return;
+    }
     if (isFollowedByMe) {
       await unfollowUser({
         variables: { id },

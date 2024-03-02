@@ -2,7 +2,7 @@ import { useReactiveVar } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar } from '../../graphql/cache';
 import { useLikesLazyQuery } from '../../graphql/likes/queries/gen/Likes.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import Modal from '../Shared/Modal';
@@ -25,6 +25,7 @@ const LikesModal = ({
   onClose,
 }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
   const [getLikes, { data, loading, error }] = useLikesLazyQuery();
 
   const { t } = useTranslation();
@@ -39,9 +40,10 @@ const LikesModal = ({
       variables: {
         likesData: { postId, commentId, questionId },
         isLoggedIn,
+        isVerified,
       },
     });
-  }, [open, postId, commentId, questionId, isLoggedIn, getLikes]);
+  }, [open, postId, commentId, questionId, isLoggedIn, getLikes, isVerified]);
 
   const getTitle = () => {
     if (questionId) {

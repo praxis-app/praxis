@@ -1,4 +1,4 @@
-mutation LikeQuestion($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
+mutation LikeQuestion($likeData: CreateLikeInput!, $isVerified: Boolean!) {
   createLike(likeData: $likeData) {
     question {
       id

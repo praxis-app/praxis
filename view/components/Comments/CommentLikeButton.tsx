@@ -58,7 +58,11 @@ const CommentLikeButton = ({
       });
       return;
     }
-    const variables = { likeData: { commentId: id }, isLoggedIn };
+    const variables = {
+      likeData: { commentId: id },
+      isLoggedIn,
+      isVerified,
+    };
     if (isLikedByMe) {
       unlikeComment({
         variables,

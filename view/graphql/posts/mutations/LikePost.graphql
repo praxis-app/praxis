@@ -1,4 +1,8 @@
-mutation LikePost($likeData: CreateLikeInput!, $isLoggedIn: Boolean = true) {
+mutation LikePost(
+  $likeData: CreateLikeInput!
+  $isLoggedIn: Boolean = true
+  $isVerified: Boolean = true
+) {
   createLike(likeData: $likeData) {
     like {
       id

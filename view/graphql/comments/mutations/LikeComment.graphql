@@ -1,4 +1,8 @@
-mutation LikeComment($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
+mutation LikeComment(
+  $likeData: CreateLikeInput!
+  $isLoggedIn: Boolean!
+  $isVerified: Boolean!
+) {
   createLike(likeData: $likeData) {
     comment {
       id

@@ -4,7 +4,7 @@ import { SxProps } from '@mui/material';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import { TypeNames } from '../../constants/shared.constants';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar } from '../../graphql/cache';
 import { useDeleteLikeMutation } from '../../graphql/likes/mutations/gen/DeleteLike.gen';
 import {
   LikesPopoverDocument,
@@ -21,6 +21,7 @@ interface Props {
 
 const QuestionLikeButton = ({ questionId, isLikedByMe }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
   const [likeQuestion, { loading: likeQuestionLoading }] =
     useLikeQuestionMutation();
@@ -40,6 +41,7 @@ const QuestionLikeButton = ({ questionId, isLikedByMe }: Props) => {
     const variables = {
       likeData: { questionId },
       isLoggedIn,
+      isVerified,
     };
     if (isLikedByMe) {
       unlikeQuestion({

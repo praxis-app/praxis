@@ -11,6 +11,7 @@ const defaultOptions = {} as const;
 export type LikesQueryVariables = Types.Exact<{
   likesData: Types.LikesInput;
   isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type LikesQuery = {
@@ -30,7 +31,11 @@ export type LikesQuery = {
 };
 
 export const LikesDocument = gql`
-  query Likes($likesData: LikesInput!, $isLoggedIn: Boolean!) {
+  query Likes(
+    $likesData: LikesInput!
+    $isLoggedIn: Boolean!
+    $isVerified: Boolean!
+  ) {
     likes(likesData: $likesData) {
       ...Like
     }
@@ -55,6 +60,7 @@ export const LikesDocument = gql`
  *   variables: {
  *      likesData: // value for 'likesData'
  *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */
