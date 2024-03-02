@@ -86,7 +86,7 @@ export class UsersResolver {
     return this.usersService.getUserProfileFeedCount(id);
   }
 
-  @ResolveField(() => QuestionnaireTicket)
+  @ResolveField(() => QuestionnaireTicket, { nullable: true })
   async questionnaireTicket(@Parent() { id }: User) {
     return this.usersService.getQuestionnaireTicket(id);
   }

@@ -147,10 +147,10 @@ const QuestionnaireTicketCard = ({
               if (!draft) {
                 return;
               }
-              const index = draft.serverQuestionnaireTickets.findIndex(
+              const index = draft.questionnaireTickets.findIndex(
                 (p) => p.id === id,
               );
-              draft.serverQuestionnaireTickets.splice(index, 1);
+              draft.questionnaireTickets.splice(index, 1);
             }),
         );
         const cacheId = cache.identify(questionnaireTicket);

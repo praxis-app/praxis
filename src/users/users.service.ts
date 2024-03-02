@@ -391,7 +391,7 @@ export class UsersService {
   }
 
   async getQuestionnaireTicket(userId: number) {
-    return this.questionnaireTicketRepository.findOneOrFail({
+    return this.questionnaireTicketRepository.findOne({
       where: { userId },
     });
   }

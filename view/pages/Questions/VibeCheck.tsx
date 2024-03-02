@@ -11,8 +11,10 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import pageNotFoundGif from '../../assets/images/404.gif';
 import CommentForm from '../../components/Comments/CommentForm';
 import CommentsList from '../../components/Comments/CommentList';
+import LazyLoadImage from '../../components/Images/LazyLoadImage';
 import AnswerQuestionsForm from '../../components/Questions/AnswerQuestionsForm';
 import AnsweredQuestionCard from '../../components/Questions/AnsweredQuestionCard';
 import Flex from '../../components/Shared/Flex';
@@ -54,6 +56,19 @@ const VibeCheck = () => {
 
   const { me } = vibeCheckData;
   const { questionnaireTicket } = me;
+
+  if (!questionnaireTicket) {
+    return (
+      <LazyLoadImage
+        src={pageNotFoundGif}
+        alt={t('errors.pageNotFound')}
+        width="55%"
+        display="block"
+        margin="0 auto"
+      />
+    );
+  }
+
   const { id, prompt, status, questions, comments } = questionnaireTicket;
 
   const renderHeader = () => (

@@ -19,7 +19,7 @@ export type VibeCheckQuery = {
   me: {
     __typename?: 'User';
     id: number;
-    questionnaireTicket: {
+    questionnaireTicket?: {
       __typename?: 'QuestionnaireTicket';
       status: string;
       prompt?: string | null;
@@ -54,7 +54,7 @@ export type VibeCheckQuery = {
           profilePicture: { __typename?: 'Image'; id: number };
         };
       }>;
-    };
+    } | null;
   };
 };
 

@@ -1547,7 +1547,7 @@ export type User = {
   profileFeedCount: Scalars['Int']['output'];
   profilePicture: Image;
   proposals: Array<Proposal>;
-  questionnaireTicket: QuestionnaireTicket;
+  questionnaireTicket?: Maybe<QuestionnaireTicket>;
   serverPermissions: ServerPermissions;
   updatedAt: Scalars['DateTime']['output'];
 };

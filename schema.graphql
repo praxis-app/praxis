@@ -299,7 +299,7 @@ type User {
   homeFeed(offset: Int, limit: Int): FeedItemsConnection!
   profileFeed(offset: Int, limit: Int): [FeedItem!]!
   profileFeedCount: Int!
-  questionnaireTicket: QuestionnaireTicket!
+  questionnaireTicket: QuestionnaireTicket
   followers(offset: Int, limit: Int): [User!]!
   following(offset: Int, limit: Int): [User!]!
   followerCount: Int!
