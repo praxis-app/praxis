@@ -61,7 +61,7 @@ const WelcomeCard = () => {
           </Button>
         )}
 
-        {!isLoggedIn && (
+        {!isLoggedIn && !inviteToken && (
           <Button onClick={() => navigate(NavigationPaths.Groups)}>
             {t('groups.headers.exploreGroups')}
           </Button>
