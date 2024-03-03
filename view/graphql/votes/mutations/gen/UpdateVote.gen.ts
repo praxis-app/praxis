@@ -35,6 +35,12 @@ export type UpdateVoteMutation = {
           description: string;
         } | null;
       } | null;
+      questionnaireTicket?: {
+        __typename?: 'QuestionnaireTicket';
+        id: number;
+        status: string;
+        agreementVoteCount: number;
+      } | null;
     };
   };
 };
@@ -57,6 +63,11 @@ export const UpdateVoteDocument = gql`
             name
             description
           }
+        }
+        questionnaireTicket {
+          id
+          status
+          agreementVoteCount
         }
       }
     }

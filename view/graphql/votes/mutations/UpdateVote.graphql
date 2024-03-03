@@ -19,6 +19,12 @@ mutation UpdateVote($voteData: UpdateVoteInput!) {
           description
         }
       }
+
+      questionnaireTicket {
+        id
+        status
+        agreementVoteCount
+      }
     }
   }
 }
