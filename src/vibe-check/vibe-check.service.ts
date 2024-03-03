@@ -195,17 +195,13 @@ export class VibeCheckService {
   }
 
   async getVotesNeededToVerify(questionnaireTicketId: number) {
-    const { ratificationThreshold } = await this.getQuestionnaireTicketConfig(
+    const { config, initialMemberCount } = await this.getQuestionnaireTicket(
       questionnaireTicketId,
+      ['config'],
     );
-    const usersWithAccessCount = await this.userRepository.count({
-      where: {
-        serverRoles: {
-          permission: { manageQuestionnaireTickets: true },
-        },
-      },
-    });
-    return Math.ceil(usersWithAccessCount * (ratificationThreshold * 0.01));
+    return Math.ceil(
+      initialMemberCount * (config.ratificationThreshold * 0.01),
+    );
   }
 
   async getQuestionnaireTicketComments(questionnaireTicketId: number) {
@@ -238,26 +234,20 @@ export class VibeCheckService {
   }
 
   async isQuestionnaireTicketVerifiable(questionnaireTicketId: number) {
-    const { status, config, votes } = await this.getQuestionnaireTicket(
-      questionnaireTicketId,
-      ['config', 'votes'],
-    );
+    const { status, config, votes, initialMemberCount } =
+      await this.getQuestionnaireTicket(questionnaireTicketId, [
+        'config',
+        'votes',
+      ]);
     if (status !== QuestionnaireTicketStatus.Submitted) {
       return false;
     }
-    const usersWithAccessCount = await this.userRepository.count({
-      where: {
-        serverRoles: {
-          permission: { manageQuestionnaireTickets: true },
-        },
-      },
-    });
 
     if (config.decisionMakingModel === DecisionMakingModel.MajorityVote) {
-      return this.hasMajorityVote(votes, config, usersWithAccessCount);
+      return this.hasMajorityVote(votes, config, initialMemberCount);
     }
     if (config.decisionMakingModel === DecisionMakingModel.Consensus) {
-      return this.hasConsensus(votes, config, usersWithAccessCount);
+      return this.hasConsensus(votes, config, initialMemberCount);
     }
     return false;
   }
@@ -358,7 +348,7 @@ export class VibeCheckService {
       standAsidesLimit,
       closingAt,
     }: QuestionnaireTicketConfig,
-    usersWithAccessCount: number,
+    initialMemberCount: number,
   ) {
     if (closingAt && Date.now() < Number(closingAt)) {
       return false;
@@ -369,7 +359,7 @@ export class VibeCheckService {
 
     return (
       agreements.length >=
-        usersWithAccessCount * (ratificationThreshold * 0.01) &&
+        initialMemberCount * (ratificationThreshold * 0.01) &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
       blocks.length === 0
@@ -379,7 +369,7 @@ export class VibeCheckService {
   async hasMajorityVote(
     votes: Vote[],
     { ratificationThreshold, closingAt }: QuestionnaireTicketConfig,
-    usersWithAccessCount: number,
+    initialMemberCount: number,
   ) {
     if (closingAt && Date.now() < Number(closingAt)) {
       return false;
@@ -387,7 +377,7 @@ export class VibeCheckService {
     const { agreements } = sortMajorityVotesByType(votes);
 
     return (
-      agreements.length >= usersWithAccessCount * (ratificationThreshold * 0.01)
+      agreements.length >= initialMemberCount * (ratificationThreshold * 0.01)
     );
   }
 

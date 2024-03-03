@@ -23,8 +23,8 @@ export enum QuestionnaireTicketStatus {
   Denied = 'denied',
 }
 
-@ObjectType()
 @Entity()
+@ObjectType()
 export class QuestionnaireTicket {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
@@ -33,6 +33,9 @@ export class QuestionnaireTicket {
   @Column({ default: QuestionnaireTicketStatus.InProgress })
   @Field()
   status: string;
+
+  @Column()
+  initialMemberCount: number;
 
   @Field(() => [Question])
   @OneToMany(() => Question, (question) => question.questionnaireTicket, {

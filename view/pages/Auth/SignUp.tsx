@@ -16,9 +16,16 @@ import {
 } from '../../graphql/cache';
 import { useServerInviteLazyQuery } from '../../graphql/invites/queries/gen/ServerInvite.gen';
 import { useIsVerifiedUserLazyQuery } from '../../graphql/users/queries/gen/IsVerifiedUser.gen';
+import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 
 const SignUp = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+
+  const {
+    data,
+    loading: isFirstUserLoading,
+    error: isFirstUserError,
+  } = useIsFirstUserQuery({ skip: isLoggedIn });
 
   const [
     getServerInvite,
@@ -61,13 +68,20 @@ const SignUp = () => {
   if (serverInviteError) {
     return <Typography>{t('invites.prompts.expiredOrInvalid')}</Typography>;
   }
-  if (serverInviteLoading || isLoggedIn) {
+
+  if (isFirstUserError) {
+    return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+  }
+
+  if (serverInviteLoading || isFirstUserLoading || isLoggedIn) {
     return <ProgressBar />;
   }
+
   if (isLoggedIn) {
     return <Typography>{t('users.prompts.alreadyRegistered')}</Typography>;
   }
-  if (!token) {
+
+  if (!token && !data?.isFirstUser) {
     return <Typography>{t('invites.prompts.inviteRequired')}</Typography>;
   }
 

@@ -412,18 +412,13 @@ export class UsersService {
       closingAt,
     };
 
+    // Set snapshot of server questions for the new ticket
     const questions = serverQuestions.map((question) => ({
       text: question.text,
       priority: question.priority,
     }));
 
-    const questionnaireTicket = await this.questionnaireTicketRepository.save({
-      userId,
-      config,
-      questions,
-    });
-
-    // Notify users with access that a new ticket has been created
+    // Set a snapshot for number of members at the time of ticket creation
     const usersWithAccess = await this.userRepository.find({
       where: {
         serverRoles: {
@@ -431,6 +426,15 @@ export class UsersService {
         },
       },
     });
+
+    const questionnaireTicket = await this.questionnaireTicketRepository.save({
+      initialMemberCount: usersWithAccess.length,
+      questions,
+      config,
+      userId,
+    });
+
+    // Notify users with access that a new ticket has been created
     for (const user of usersWithAccess) {
       await this.notificationsService.createNotification({
         notificationType: NotificationType.NewQuestionnaireTicket,
