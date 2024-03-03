@@ -74,14 +74,14 @@ const ServerQuestionnaires = () => {
 
   const getNoQuestionnairesMessage = () => {
     switch (tabParam) {
-      case QuestionnaireTicketStatus.Submitted:
-        return t('questions.prompts.noSubmittedQuestionnaires');
       case QuestionnaireTicketStatus.InProgress:
         return t('questions.prompts.noInProgressQuestionnaires');
       case QuestionnaireTicketStatus.Approved:
         return t('questions.prompts.noApprovedQuestionnaires');
       case QuestionnaireTicketStatus.Denied:
         return t('questions.prompts.noDeniedQuestionnaires');
+      default:
+        return t('questions.prompts.noSubmittedQuestionnaires');
     }
   };
 
