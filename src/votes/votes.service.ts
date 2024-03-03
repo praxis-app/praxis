@@ -144,8 +144,15 @@ export class VotesService {
     await this.voteRepository.update(id, data);
     const vote = await this.getVote(id, ['proposal']);
 
-    // Update notification for proposal owner
     if (vote.proposalId) {
+      const isProposalRatifiable =
+        await this.proposalsService.isProposalRatifiable(vote.proposalId);
+      if (isProposalRatifiable) {
+        await this.proposalsService.ratifyProposal(vote.proposalId);
+        await this.proposalsService.implementProposal(vote.proposalId);
+      }
+
+      // Update notification for proposal owner
       const notification = await this.notificationsService.getNotification({
         otherUserId: userId,
         proposalId: vote.proposalId,
@@ -160,8 +167,28 @@ export class VotesService {
       }
     }
 
-    // Update notifications for other users with access to the questionnaire ticket
     if (vote.questionnaireTicketId) {
+      if (vote.voteType === VoteTypes.Block) {
+        await this.vibeCheckService.denyQuestionnaireTicket(
+          vote.questionnaireTicketId,
+        );
+      } else {
+        const isVerifiable =
+          await this.vibeCheckService.isQuestionnaireTicketVerifiable(
+            vote.questionnaireTicketId,
+          );
+        if (isVerifiable) {
+          await this.vibeCheckService.approveQuestionnaireTicket(
+            vote.questionnaireTicketId,
+          );
+          await this.vibeCheckService.verifyQuestionnaireTicketUser(
+            vote.questionnaireTicketId,
+            vote.userId,
+          );
+        }
+      }
+
+      // Update notifications for other users with access to the questionnaire ticket
       const notifications = await this.notificationsService.getNotifications({
         questionnaireTicketId: vote.questionnaireTicketId,
         userId: Not(userId),
