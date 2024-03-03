@@ -696,8 +696,10 @@
       "questionnaireTicket": "Questionnaire Ticket"
     },
     "errors": {
+      "missingAnswer": "Answer cannot be empty",
       "missingText": "Question text cannot be empty",
-      "missingAnswer": "Answer cannot be empty"
+      "ticketNotSubmitted": "Questionnaire ticket has not been submitted yet",
+      "votingEnded": "Questionnaire ticket can no longer be voted on"
     },
     "placeholders": {
       "text": "Question text",

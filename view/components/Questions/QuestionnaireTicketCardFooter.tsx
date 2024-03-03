@@ -4,7 +4,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { NotificationType } from '../../constants/notifications.constants';
+import { QuestionnaireTicketStatus } from '../../constants/question.constants';
 import { NavigationPaths } from '../../constants/shared.constants';
+import { toastVar } from '../../graphql/cache';
 import { QuestionnaireTicketCardFragment } from '../../graphql/questions/fragments/gen/QuestionnaireTicketCard.gen';
 import { useQuestionnaireTicketCommentsLazyQuery } from '../../graphql/questions/queries/gen/QuestionnaireTicketComments.gen';
 import { Blurple } from '../../styles/theme';
@@ -52,7 +54,9 @@ const QuestionnaireTicketCardFooter = ({
     NotificationType.QuestionnaireTicketComment,
   );
 
-  const { id, myVote, voteCount, commentCount, settings } = questionnaireTicket;
+  const { id, myVote, voteCount, commentCount, settings, status } =
+    questionnaireTicket;
+
   const comments = commentsData?.questionnaireTicket?.comments;
   const me = commentsData?.me;
 
@@ -104,8 +108,25 @@ const QuestionnaireTicketCardFooter = ({
     getCommentsCalled,
   ]);
 
-  const handleVoteButtonClick = (event: React.MouseEvent<HTMLButtonElement>) =>
+  const handleVoteButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    if (status === QuestionnaireTicketStatus.InProgress) {
+      toastVar({
+        title: t('questions.errors.ticketNotSubmitted'),
+        status: 'info',
+      });
+      return;
+    }
+    if (status !== QuestionnaireTicketStatus.Submitted) {
+      toastVar({
+        title: t('questions.errors.votingEnded'),
+        status: 'info',
+      });
+      return;
+    }
     setMenuAnchorEl(event.currentTarget);
+  };
 
   const handleVoteMenuClose = () => setMenuAnchorEl(null);
 
