@@ -166,7 +166,7 @@ const VoteMenu = ({
       },
     });
 
-  const handleDelete = async (id: number) =>
+  const handleDelete = async (id: number, voteType: string) =>
     await deleteVote({
       variables: { id },
       update(cache) {
@@ -179,6 +179,12 @@ const VoteMenu = ({
               );
             },
             voteCount(existingCount: number) {
+              return Math.max(0, existingCount - 1);
+            },
+            agreementVoteCount(existingCount: number) {
+              if (!questionnaireTicketId || voteType !== VoteTypes.Agreement) {
+                return existingCount;
+              }
               return Math.max(0, existingCount - 1);
             },
             myVote: () => null,
@@ -207,7 +213,7 @@ const VoteMenu = ({
       return;
     }
     if (myVoteId) {
-      await handleDelete(myVoteId);
+      await handleDelete(myVoteId, voteType);
       return;
     }
     await handleCreate(voteType);
