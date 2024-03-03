@@ -205,6 +205,11 @@ const Notification = ({
         groupName: group?.name,
       });
     }
+    if (notificationType === NotificationType.NewQuestionnaireTicket) {
+      return _t('notifications.messages.newQuestionnaireTicket', {
+        name: otherUser?.name,
+      });
+    }
     if (notificationType === NotificationType.VerifyUser) {
       return _t('notifications.messages.verifyUser');
     }
@@ -266,6 +271,7 @@ const Notification = ({
     }
     if (
       notificationType === NotificationType.QuestionnaireTicketSubmitted ||
+      notificationType === NotificationType.NewQuestionnaireTicket ||
       isQuestionnaireTicketVote
     ) {
       return `${NavigationPaths.ServerQuestionnaires}/${questionnaireTicket?.id}`;
@@ -367,7 +373,10 @@ const Notification = ({
     ) {
       return <Group sx={iconStyles} />;
     }
-    if (notificationType === NotificationType.QuestionnaireTicketSubmitted) {
+    if (
+      notificationType === NotificationType.QuestionnaireTicketSubmitted ||
+      notificationType === NotificationType.NewQuestionnaireTicket
+    ) {
       return <QuestionAnswer sx={{ ...iconStyles, marginTop: 0.65 }} />;
     }
     if (notificationType === NotificationType.VerifyUser) {

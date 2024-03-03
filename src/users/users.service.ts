@@ -403,6 +403,7 @@ export class UsersService {
       ? new Date(Date.now() + serverConfig.votingTimeLimit * 60 * 1000)
       : undefined;
 
+    // Set the config for new ticket with current server config
     const config: Partial<QuestionnaireTicketConfig> = {
       decisionMakingModel: serverConfig.decisionMakingModel,
       standAsidesLimit: serverConfig.standAsidesLimit,
@@ -416,11 +417,28 @@ export class UsersService {
       priority: question.priority,
     }));
 
-    await this.questionnaireTicketRepository.save({
+    const questionnaireTicket = await this.questionnaireTicketRepository.save({
       userId,
       config,
       questions,
     });
+
+    // Notify users with access that a new ticket has been created
+    const usersWithAccess = await this.userRepository.find({
+      where: {
+        serverRoles: {
+          permission: { manageQuestionnaireTickets: true },
+        },
+      },
+    });
+    for (const user of usersWithAccess) {
+      await this.notificationsService.createNotification({
+        notificationType: NotificationType.NewQuestionnaireTicket,
+        questionnaireTicketId: questionnaireTicket.id,
+        otherUserId: userId,
+        userId: user.id,
+      });
+    }
   }
 
   async createUser(
