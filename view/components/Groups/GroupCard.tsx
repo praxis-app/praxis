@@ -18,7 +18,7 @@ import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
 } from '../../constants/shared.constants';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { GroupCardFragment } from '../../graphql/groups/fragments/gen/GroupCard.gen';
 import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
 import { removeGroup } from '../../utils/cache.utils';
@@ -58,6 +58,8 @@ const GroupCard = ({
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
+
   const [deleteGroup] = useDeleteGroupMutation();
 
   const { t } = useTranslation();
@@ -163,7 +165,7 @@ const GroupCard = ({
         />
 
         <Box sx={{ marginBottom: isLoggedIn ? 1.75 : 0 }}>
-          <Link href={isLoggedIn ? groupMembersPath : groupPath}>
+          <Link href={isVerified ? groupMembersPath : groupPath}>
             {t('groups.labels.members', { count: memberCount })}
           </Link>
 
