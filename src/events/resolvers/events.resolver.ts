@@ -34,7 +34,7 @@ export class EventsResolver {
 
   @Query(() => [Event])
   async events(@Args('input') input: EventsInput, @CurrentUser() user: User) {
-    if (!user) {
+    if (!user.verified) {
       return this.eventsService.getPublicEvents(input);
     }
     return this.eventsService.getFilteredEvents(input);
