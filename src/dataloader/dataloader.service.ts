@@ -21,6 +21,8 @@ import { Like } from '../likes/models/like.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
+import { Question } from '../vibe-check/models/question.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
@@ -36,6 +38,7 @@ import {
   IsCommentLikedByMeKey,
   IsFollowedByMeKey,
   IsPostLikedByMeKey,
+  IsQuestionLikedByMeKey,
   MyGroupsKey,
   PostWithCommentCount,
   PostWithLikeCount,
@@ -84,6 +87,12 @@ export class DataloaderService {
 
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
+
+    @InjectRepository(Question)
+    private questionRepository: Repository<Question>,
+
+    @InjectRepository(QuestionnaireTicket)
+    private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
 
     private usersService: UsersService,
   ) {}
@@ -138,6 +147,11 @@ export class DataloaderService {
       interestedCountLoader: this._createInterestedCountLoader(),
       goingCountLoader: this._createGoingCountLoader(),
       eventsLoader: this._createEventsLoader(),
+
+      // Questions & Answers
+      questionsLoader: this._createQuestionsLoader(),
+      questionnaireTicketsLoader: this._createQuestionnaireTicketLoader(),
+      isAnswerLikedByMeLoader: this._createIsAnswerLikedByMeLoader(),
     };
   }
 
@@ -806,5 +820,58 @@ export class DataloaderService {
         return event.goingCount;
       });
     });
+  }
+
+  // -------------------------------------------------------------------------
+  // Questions & Answers
+  // -------------------------------------------------------------------------
+
+  private _createQuestionsLoader() {
+    return this._getDataLoader<number, Question>(async (questionIds) => {
+      const questions = await this.questionRepository.find({
+        where: { id: In(questionIds) },
+      });
+      return questionIds.map(
+        (id) =>
+          questions.find((question: Question) => question.id === id) ||
+          new Error(`Could not load question: ${id}`),
+      );
+    });
+  }
+
+  private _createQuestionnaireTicketLoader() {
+    return this._getDataLoader<number, QuestionnaireTicket>(
+      async (questionnaireTicketIds) => {
+        const questionnaireTicket =
+          await this.questionnaireTicketRepository.find({
+            where: { id: In(questionnaireTicketIds) },
+          });
+        return questionnaireTicketIds.map(
+          (id) =>
+            questionnaireTicket.find(
+              (questionnaireTicket: QuestionnaireTicket) =>
+                questionnaireTicket.id === id,
+            ) || new Error(`Could not load questionnaire ticket: ${id}`),
+        );
+      },
+    );
+  }
+
+  private _createIsAnswerLikedByMeLoader() {
+    return this._getDataLoader<IsQuestionLikedByMeKey, boolean, number>(
+      async (keys) => {
+        const questionIds = keys.map(({ questionId }) => questionId);
+        const likes = await this.likeRepository.find({
+          where: {
+            questionId: In(questionIds),
+            userId: keys[0].currentUserId,
+          },
+        });
+        return questionIds.map((questionId) =>
+          likes.some((like: Like) => like.questionId === questionId),
+        );
+      },
+      { cacheKeyFn: (key) => key.questionId },
+    );
   }
 }

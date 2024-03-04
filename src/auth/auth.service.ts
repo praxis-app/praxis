@@ -1,4 +1,3 @@
-import { UserInputError, ValidationError } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -38,39 +37,37 @@ export class AuthService {
   }
 
   async signUp({
-    inviteToken,
+    name,
+    email,
     password,
     confirmPassword,
     profilePicture,
-    ...userData
+    inviteToken,
   }: SignUpInput): Promise<AuthPayload> {
     const users = await this.usersService.getUsers();
     if (users.length && !inviteToken) {
-      throw new UserInputError('Missing invite token');
+      throw new Error('Missing invite token');
     }
     if (inviteToken) {
       await this.serverInvitesService.getValidServerInvite(inviteToken);
     }
 
-    const existingUser = await this.usersService.getUser({
-      email: userData.email,
-    });
+    const existingUser = await this.usersService.getUser({ email });
     if (existingUser) {
-      throw new UserInputError('User already exists');
+      throw new Error('User already exists');
     }
     if (password !== confirmPassword) {
-      throw new UserInputError('Passwords do not match');
+      throw new Error('Passwords do not match');
     }
 
     const passwordHash = await hash(password, SALT_ROUNDS);
-    const user = await this.usersService.createUser({
-      password: passwordHash,
-      ...userData,
-    });
+    const user = await this.usersService.createUser(
+      name,
+      email,
+      passwordHash,
+      profilePicture,
+    );
 
-    if (profilePicture) {
-      await this.usersService.saveProfilePicture(user.id, profilePicture);
-    }
     if (inviteToken) {
       await this.serverInvitesService.redeemServerInvite(inviteToken);
     }
@@ -86,18 +83,18 @@ export class AuthService {
     try {
       const user = await this.usersService.getUser({ email });
       if (!user) {
-        throw new ValidationError('User not found');
+        throw new Error('User not found');
       }
 
       const passwordMatch = await compare(password, user.password);
       if (!passwordMatch) {
-        throw new ValidationError('Incorrect username or password');
+        throw new Error('Incorrect username or password');
       }
 
       const { password: _password, ...result } = user;
       return result;
     } catch (err) {
-      throw new ValidationError(err);
+      throw new Error(err);
     }
   }
 

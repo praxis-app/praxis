@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import {
-  authFailedVar,
+  isAuthErrorVar,
   inviteTokenVar,
   isAuthLoadingVar,
   isLoggedInVar,
@@ -42,12 +42,12 @@ const TopNavDesktop = () => {
   const inviteToken = useReactiveVar(inviteTokenVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isAuthLoading = useReactiveVar(isAuthLoadingVar);
-  const authFailed = useReactiveVar(authFailedVar);
+  const isAuthError = useReactiveVar(isAuthErrorVar);
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
   const { data: isFirstUserData } = useIsFirstUserQuery({
-    skip: !authFailed,
+    skip: !isAuthError,
   });
   const { data: meData } = useMeQuery({
     skip: !isLoggedIn,
@@ -97,7 +97,7 @@ const TopNavDesktop = () => {
           <TopNavDropdown
             anchorEl={menuAnchorEl}
             handleClose={handleClose}
-            user={me}
+            me={me}
           />
         </Flex>
       )}

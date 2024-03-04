@@ -1,0 +1,10 @@
+fragment AnswerQuestionsForm on QuestionnaireTicket {
+  id
+  questions {
+    answer {
+      id
+      text
+    }
+    ...AnswerQuestionsFormField
+  }
+}

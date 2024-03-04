@@ -12,6 +12,8 @@ import { Group } from '../../groups/models/group.model';
 import { Like } from '../../likes/models/like.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
+import { Question } from '../../vibe-check/models/question.model';
+import { QuestionnaireTicket } from '../../vibe-check/models/questionnaire-ticket.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { NotificationStatus } from '../notifications.constants';
@@ -92,6 +94,26 @@ export class Notification {
 
   @Column({ nullable: true })
   likeId?: number;
+
+  @ManyToOne(() => Question, (question) => question.notifications, {
+    onDelete: 'CASCADE',
+  })
+  question?: Question;
+
+  @Column({ nullable: true })
+  questionId?: number;
+
+  @ManyToOne(
+    () => QuestionnaireTicket,
+    (questionnaireTicket) => questionnaireTicket.notifications,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  questionnaireTicket?: QuestionnaireTicket;
+
+  @Column({ nullable: true })
+  questionnaireTicketId?: number;
 
   @CreateDateColumn()
   @Field()

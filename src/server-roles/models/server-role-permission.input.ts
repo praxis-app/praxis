@@ -34,4 +34,10 @@ export class ServerRolePermissionInput {
 
   @Field({ nullable: true })
   manageRules?: boolean;
+
+  @Field({ nullable: true })
+  manageQuestions?: boolean;
+
+  @Field({ nullable: true })
+  manageQuestionnaireTickets?: boolean;
 }

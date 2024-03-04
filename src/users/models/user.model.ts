@@ -22,6 +22,7 @@ import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
 import { ProposalActionRoleMember } from '../../proposals/proposal-actions/models/proposal-action-role-member.model';
+import { QuestionnaireTicket } from '../../vibe-check/models/questionnaire-ticket.model';
 import { ServerInvite } from '../../server-invites/models/server-invite.model';
 import { ServerRole } from '../../server-roles/models/server-role.model';
 
@@ -46,6 +47,9 @@ export class User {
   @Column({ nullable: true })
   @Field({ nullable: true })
   bio: string;
+
+  @Column({ default: false })
+  verified: boolean;
 
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,
@@ -130,6 +134,13 @@ export class User {
     cascade: true,
   })
   notifications: Notification[];
+
+  @OneToMany(
+    () => QuestionnaireTicket,
+    (questionnaireTicket) => questionnaireTicket.user,
+    { cascade: true },
+  )
+  questionnaireTickets: QuestionnaireTicket[];
 
   @CreateDateColumn()
   @Field()

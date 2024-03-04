@@ -2,7 +2,7 @@ import { useReactiveVar } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar } from '../../graphql/cache';
 import { useLikesLazyQuery } from '../../graphql/likes/queries/gen/Likes.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import Modal from '../Shared/Modal';
@@ -12,37 +12,55 @@ import Like from './Like';
 interface Props {
   postId?: number;
   commentId?: number;
+  questionId?: number;
   onClose(): void;
   open: boolean;
 }
 
-const LikesModal = ({ postId, commentId, open, onClose }: Props) => {
+const LikesModal = ({
+  postId,
+  commentId,
+  questionId,
+  open,
+  onClose,
+}: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
   const [getLikes, { data, loading, error }] = useLikesLazyQuery();
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
-  const title = commentId
-    ? t('comments.labels.likes')
-    : t('posts.labels.likes');
-
   useEffect(() => {
-    const noId = !postId && !commentId;
+    const noId = !postId && !commentId && !questionId;
     if (!open || noId) {
       return;
     }
     getLikes({
-      variables: { postId, commentId, isLoggedIn },
+      variables: {
+        likesData: { postId, commentId, questionId },
+        isLoggedIn,
+        isVerified,
+      },
     });
-  }, [open, postId, commentId, isLoggedIn, getLikes]);
+  }, [open, postId, commentId, questionId, isLoggedIn, getLikes, isVerified]);
+
+  const getTitle = () => {
+    if (questionId) {
+      return t('questions.labels.likes');
+    }
+    if (commentId) {
+      return t('comments.labels.likes');
+    }
+    return t('posts.labels.likes');
+  };
 
   return (
     <Modal
       contentStyles={{ paddingTop: 5 }}
       onClose={onClose}
       open={open}
-      title={title}
+      title={getTitle()}
       topGap={isDesktop ? undefined : '18vh'}
       centeredTitle
     >

@@ -13,6 +13,7 @@ export type GroupFeedQueryVariables = Types.Exact<{
   offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type GroupFeedQuery = {
@@ -209,6 +210,7 @@ export type GroupFeedQuery = {
             standAsidesLimit: number;
             closingAt?: any | null;
           };
+          myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
           user: {
             __typename?: 'User';
             id: number;
@@ -249,6 +251,7 @@ export const GroupFeedDocument = gql`
     $offset: Int
     $limit: Int
     $isLoggedIn: Boolean!
+    $isVerified: Boolean!
   ) {
     group(name: $name) {
       id
@@ -277,6 +280,7 @@ export const GroupFeedDocument = gql`
  *      offset: // value for 'offset'
  *      limit: // value for 'limit'
  *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

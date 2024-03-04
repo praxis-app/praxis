@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CanariesService } from '../canaries/canaries.service';
 import { sanitizeText } from '../common/common.utils';
-import { ServerConfig } from './models/server-configs.model';
+import { DecisionMakingModel } from '../proposals/proposals.constants';
+import { ServerConfig } from './models/server-config.model';
 import { UpdateServerConfigInput } from './models/update-server-config.input';
 
 @Injectable()
@@ -24,6 +25,7 @@ export class ServerConfigsService {
     return serverConfigs[0];
   }
 
+  // TODO: Rename as `createServerConfig`
   async initializeServerConfig() {
     return this.repository.save({});
   }
@@ -33,6 +35,13 @@ export class ServerConfigsService {
     canaryStatement,
     ...data
   }: UpdateServerConfigInput) {
+    if (data.decisionMakingModel === DecisionMakingModel.Consent) {
+      throw new Error('Consent model is not yet supported at server level');
+    }
+    if (data.decisionMakingModel === DecisionMakingModel.MajorityVote) {
+      throw new Error('Majority vote is not yet supported at server level');
+    }
+
     await this.repository.update(id, data);
 
     if (canaryStatement) {

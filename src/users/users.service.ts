@@ -13,16 +13,20 @@ import {
   saveImage,
 } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
+import { NotificationType } from '../notifications/notifications.constants';
+import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { Proposal } from '../proposals/models/proposal.model';
+import { QuestionnaireTicketConfig } from '../vibe-check/models/questionnaire-ticket-config.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
+import { ServerQuestion } from '../vibe-check/models/server-question.model';
+import { ServerConfigsService } from '../server-configs/server-configs.service';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { ServerRolesService } from '../server-roles/server-roles.service';
 import { initServerRolePermissions } from '../server-roles/server-roles.utils';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
-import { NotificationsService } from '../notifications/notifications.service';
-import { NotificationType } from '../notifications/notifications.constants';
 
 @Injectable()
 export class UsersService {
@@ -41,7 +45,14 @@ export class UsersService {
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
 
+    @InjectRepository(ServerQuestion)
+    private serverQuestionRepository: Repository<ServerQuestion>,
+
+    @InjectRepository(QuestionnaireTicket)
+    private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
+
     private notificationsService: NotificationsService,
+    private serverConfigsService: ServerConfigsService,
     private serverRolesService: ServerRolesService,
     private postsService: PostsService,
   ) {}
@@ -71,6 +82,21 @@ export class UsersService {
   async isFirstUser() {
     const userCount = await this.userRepository.count();
     return userCount === 0;
+  }
+
+  async isVerifiedUser(id: number) {
+    const { verified } = await this.userRepository.findOneOrFail({
+      where: { id },
+      select: { verified: true },
+    });
+    return verified;
+  }
+
+  async isOwnUserAvatar(userId: number, imageId: number) {
+    const count = await this.imageRepository.count({
+      where: { id: imageId, userId, imageType: ImageTypes.ProfilePicture },
+    });
+    return count > 0;
   }
 
   async isPublicUserAvatar(imageId: number) {
@@ -291,6 +317,9 @@ export class UsersService {
     const serverPermissions = user.serverRoles.reduce<ServerPermissions>(
       (result, { permission }) => {
         for (const key in permission) {
+          if (['id', 'serverRoleId', 'createdAt', 'updatedAt'].includes(key)) {
+            continue;
+          }
           if (permission[key]) {
             result[key] = true;
           }
@@ -305,6 +334,9 @@ export class UsersService {
           result[groupId] = permission;
         } else {
           for (const key in permission) {
+            if (['id', 'groupRoleId', 'createdAt', 'updatedAt'].includes(key)) {
+              continue;
+            }
             if (permission[key]) {
               result[key] = true;
             }
@@ -358,51 +390,122 @@ export class UsersService {
     return post.userId === userId;
   }
 
-  async createUser({ bio, ...userData }: Partial<User>) {
-    const sanitizedBio = bio ? sanitizeText(bio.trim()) : undefined;
-    const user = await this.userRepository.save({
-      bio: sanitizedBio,
-      ...userData,
+  async getQuestionnaireTicket(userId: number) {
+    return this.questionnaireTicketRepository.findOne({
+      where: { userId },
+    });
+  }
+
+  async createNewUserTicket(userId: number, serverQuestions: ServerQuestion[]) {
+    const serverConfig = await this.serverConfigsService.getServerConfig();
+
+    const closingAt = serverConfig.votingTimeLimit
+      ? new Date(Date.now() + serverConfig.votingTimeLimit * 60 * 1000)
+      : undefined;
+
+    // Set the config for new ticket with current server config
+    const config: Partial<QuestionnaireTicketConfig> = {
+      decisionMakingModel: serverConfig.decisionMakingModel,
+      standAsidesLimit: serverConfig.standAsidesLimit,
+      reservationsLimit: serverConfig.reservationsLimit,
+      ratificationThreshold: serverConfig.ratificationThreshold,
+      closingAt,
+    };
+
+    // Set snapshot of server questions for the new ticket
+    const questions = serverQuestions.map((question) => ({
+      text: question.text,
+      priority: question.priority,
+    }));
+
+    // Set a snapshot for number of members at the time of ticket creation
+    const usersWithAccess = await this.userRepository.find({
+      where: {
+        serverRoles: {
+          permission: { manageQuestionnaireTickets: true },
+        },
+      },
     });
 
-    try {
-      const users = await this.getUsers();
+    const questionnaireTicket = await this.questionnaireTicketRepository.save({
+      initialMemberCount: usersWithAccess.length,
+      questions,
+      config,
+      userId,
+    });
 
-      if (users.length === 1) {
-        await this.serverRolesService.initAdminServerRole(user.id);
-      }
+    // Notify users with access that a new ticket has been created
+    for (const user of usersWithAccess) {
+      await this.notificationsService.createNotification({
+        notificationType: NotificationType.NewQuestionnaireTicket,
+        questionnaireTicketId: questionnaireTicket.id,
+        otherUserId: userId,
+        userId: user.id,
+      });
+    }
+  }
+
+  async createUser(
+    name: string,
+    email: string,
+    password: string,
+    profilePicture?: Promise<FileUpload>,
+  ) {
+    const isFirstUser = await this.isFirstUser();
+    const serverQuestions = await this.serverQuestionRepository.find();
+    const verified = isFirstUser || serverQuestions.length === 0;
+
+    const user = await this.userRepository.save({
+      name,
+      email,
+      password,
+      verified,
+    });
+
+    if (profilePicture) {
+      await this.saveProfilePicture(user.id, profilePicture);
+    } else {
       await this.saveDefaultProfilePicture(user.id);
-    } catch {
-      await this.deleteUser(user.id);
-      throw new Error('Could not create user');
+    }
+
+    if (isFirstUser) {
+      await this.serverRolesService.createAdminServerRole(user.id);
+    } else if (serverQuestions.length > 0) {
+      await this.createNewUserTicket(user.id, serverQuestions);
     }
 
     return user;
   }
 
-  async updateUser({
-    id,
-    bio,
-    coverPhoto,
-    profilePicture,
-    ...userData
-  }: UpdateUserInput) {
-    this.logger.log(`Updating user: ${JSON.stringify({ id, ...userData })}`);
+  async updateUser(
+    userId: number,
+    { bio, coverPhoto, profilePicture, ...userData }: UpdateUserInput,
+  ) {
+    this.logger.log(
+      `Updating user: ${JSON.stringify({ id: userId, ...userData })}`,
+    );
+
+    const isVerified = await this.isVerifiedUser(userId);
+    if (!isVerified && (profilePicture || coverPhoto)) {
+      throw new Error(
+        'Cannot update profile picture or cover photo for unverified users',
+      );
+    }
 
     const sanitizedBio = sanitizeText(bio.trim());
-    await this.userRepository.update(id, {
+    await this.userRepository.update(userId, {
       bio: sanitizedBio,
       ...userData,
     });
 
     if (profilePicture) {
-      await this.saveProfilePicture(id, profilePicture);
+      await this.saveProfilePicture(userId, profilePicture);
     }
     if (coverPhoto) {
-      await this.saveCoverPhoto(id, coverPhoto);
+      await this.saveCoverPhoto(userId, coverPhoto);
     }
 
-    const user = await this.getUser({ id });
+    const user = await this.getUser({ id: userId });
     return { user };
   }
 
@@ -410,7 +513,7 @@ export class UsersService {
     const user = await this.getUser({ id }, ['followers']);
     const follower = await this.getUser({ id: followerId }, ['following']);
     if (!user || !follower) {
-      throw new UserInputError('User not found');
+      throw new Error('User not found');
     }
     follower.following = [...follower.following, user];
     user.followers = [...user.followers, follower];

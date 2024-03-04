@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, Not, Repository } from 'typeorm';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { ProposalsService } from '../proposals/proposals.service';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
+import { VibeCheckService } from '../vibe-check/vibe-check.service';
+import { User } from '../users/models/user.model';
 import { CreateVoteInput } from './models/create-vote.input';
 import { UpdateVoteInput } from './models/update-vote.input';
 import { Vote } from './models/vote.model';
@@ -13,82 +16,198 @@ import { VoteTypes } from './votes.constants';
 export class VotesService {
   constructor(
     @InjectRepository(Vote)
-    private repository: Repository<Vote>,
+    private voteRepository: Repository<Vote>,
 
-    private proposalsService: ProposalsService,
+    @InjectRepository(QuestionnaireTicket)
+    private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
+
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
 
     private notificationsService: NotificationsService,
+    private proposalsService: ProposalsService,
+    private vibeCheckService: VibeCheckService,
   ) {}
 
   async getVote(id: number, relations?: string[]) {
-    return this.repository.findOneOrFail({ where: { id }, relations });
+    return this.voteRepository.findOneOrFail({ where: { id }, relations });
   }
 
   async getVotes(where?: FindOptionsWhere<Vote>) {
-    return this.repository.find({ where });
+    return this.voteRepository.find({ where });
+  }
+
+  async getQuestionnaireTicket(questionnaireTicketId: number) {
+    return this.questionnaireTicketRepository.findOne({
+      where: { id: questionnaireTicketId },
+    });
   }
 
   async createVote(voteData: CreateVoteInput, userId: number) {
-    const vote = await this.repository.save({
+    const vote = await this.voteRepository.save({
       ...voteData,
       userId,
     });
-    const isProposalRatifiable =
-      await this.proposalsService.isProposalRatifiable(vote.proposalId);
-    if (isProposalRatifiable) {
-      await this.proposalsService.ratifyProposal(vote.proposalId);
-      await this.proposalsService.implementProposal(vote.proposalId);
+
+    if (vote.proposalId) {
+      const isProposalRatifiable =
+        await this.proposalsService.isProposalRatifiable(vote.proposalId);
+      if (isProposalRatifiable) {
+        await this.proposalsService.ratifyProposal(vote.proposalId);
+        await this.proposalsService.implementProposal(vote.proposalId);
+      }
+
+      const proposal = await this.proposalsService.getProposal(vote.proposalId);
+
+      if (vote.userId !== proposal.userId) {
+        const voteNotificationType = this.getVoteNotificationType(vote);
+        await this.notificationsService.createNotification({
+          notificationType: voteNotificationType,
+          otherUserId: vote.userId,
+          userId: proposal.userId,
+          proposalId: proposal.id,
+          voteId: vote.id,
+        });
+      }
     }
 
-    const proposal = await this.proposalsService.getProposal(vote.proposalId);
-
-    if (vote.userId !== proposal.userId) {
-      const voteNotificationType = this.getVoteNotificationType(vote.voteType);
-      await this.notificationsService.createNotification({
-        notificationType: voteNotificationType,
-        otherUserId: vote.userId,
-        userId: proposal.userId,
-        proposalId: proposal.id,
-        voteId: vote.id,
+    if (vote.questionnaireTicketId) {
+      if (vote.voteType === VoteTypes.Block) {
+        await this.vibeCheckService.denyQuestionnaireTicket(
+          vote.questionnaireTicketId,
+        );
+      } else {
+        const isVerifiable =
+          await this.vibeCheckService.isQuestionnaireTicketVerifiable(
+            vote.questionnaireTicketId,
+          );
+        if (isVerifiable) {
+          await this.vibeCheckService.approveQuestionnaireTicket(
+            vote.questionnaireTicketId,
+          );
+          await this.vibeCheckService.verifyQuestionnaireTicketUser(
+            vote.questionnaireTicketId,
+            vote.userId,
+          );
+        }
+      }
+      // Notify other users with access that a ticket vote has been cast
+      const otherUsersWithAccess = await this.userRepository.find({
+        where: {
+          id: Not(vote.userId),
+          serverRoles: {
+            permission: { manageQuestionnaireTickets: true },
+          },
+        },
       });
+      for (const user of otherUsersWithAccess) {
+        const notificationType = this.getVoteNotificationType(vote);
+        await this.notificationsService.createNotification({
+          questionnaireTicketId: vote.questionnaireTicketId,
+          otherUserId: vote.userId,
+          userId: user.id,
+          voteId: vote.id,
+          notificationType,
+        });
+      }
     }
 
     return { vote };
   }
 
-  getVoteNotificationType(voteType: string) {
+  getVoteNotificationType({ voteType, questionnaireTicketId }: Vote) {
     if (voteType === VoteTypes.Reservations) {
+      if (questionnaireTicketId) {
+        return NotificationType.QuestionnaireTicketVoteReservations;
+      }
       return NotificationType.ProposalVoteReservations;
     }
     if (voteType === VoteTypes.StandAside) {
+      if (questionnaireTicketId) {
+        return NotificationType.QuestionnaireTicketVoteStandAside;
+      }
       return NotificationType.ProposalVoteStandAside;
     }
     if (voteType === VoteTypes.Block) {
+      if (questionnaireTicketId) {
+        return NotificationType.QuestionnaireTicketVoteBlock;
+      }
       return NotificationType.ProposalVoteBlock;
+    }
+    if (questionnaireTicketId) {
+      return NotificationType.QuestionnaireTicketVoteAgreement;
     }
     return NotificationType.ProposalVoteAgreement;
   }
 
   async updateVote({ id, ...data }: UpdateVoteInput, userId: number) {
-    await this.repository.update(id, data);
-
+    await this.voteRepository.update(id, data);
     const vote = await this.getVote(id, ['proposal']);
-    const notification = await this.notificationsService.getNotification({
-      otherUserId: userId,
-      proposalId: vote.proposalId,
-      userId: vote.proposal.userId,
-      voteId: vote.id,
-    });
-    const notificationType = this.getVoteNotificationType(vote.voteType);
-    await this.notificationsService.updateNotification(notification.id, {
-      notificationType,
-    });
+
+    if (vote.proposalId) {
+      const isProposalRatifiable =
+        await this.proposalsService.isProposalRatifiable(vote.proposalId);
+      if (isProposalRatifiable) {
+        await this.proposalsService.ratifyProposal(vote.proposalId);
+        await this.proposalsService.implementProposal(vote.proposalId);
+      }
+
+      // Update notification for proposal owner
+      const notification = await this.notificationsService.getNotification({
+        otherUserId: userId,
+        proposalId: vote.proposalId,
+        userId: vote.proposal?.userId,
+        voteId: vote.id,
+      });
+      if (notification) {
+        const notificationType = this.getVoteNotificationType(vote);
+        await this.notificationsService.updateNotification(notification.id, {
+          notificationType,
+        });
+      }
+    }
+
+    if (vote.questionnaireTicketId) {
+      if (vote.voteType === VoteTypes.Block) {
+        await this.vibeCheckService.denyQuestionnaireTicket(
+          vote.questionnaireTicketId,
+        );
+      } else {
+        const isVerifiable =
+          await this.vibeCheckService.isQuestionnaireTicketVerifiable(
+            vote.questionnaireTicketId,
+          );
+        if (isVerifiable) {
+          await this.vibeCheckService.approveQuestionnaireTicket(
+            vote.questionnaireTicketId,
+          );
+          await this.vibeCheckService.verifyQuestionnaireTicketUser(
+            vote.questionnaireTicketId,
+            vote.userId,
+          );
+        }
+      }
+
+      // Update notifications for other users with access to the questionnaire ticket
+      const notifications = await this.notificationsService.getNotifications({
+        questionnaireTicketId: vote.questionnaireTicketId,
+        userId: Not(userId),
+        otherUserId: userId,
+        voteId: vote.id,
+      });
+      for (const notification of notifications) {
+        const notificationType = this.getVoteNotificationType(vote);
+        await this.notificationsService.updateNotification(notification.id, {
+          notificationType,
+        });
+      }
+    }
 
     return { vote };
   }
 
   async deleteVote(voteId: number) {
-    await this.repository.delete(voteId);
+    await this.voteRepository.delete(voteId);
     return true;
   }
 }

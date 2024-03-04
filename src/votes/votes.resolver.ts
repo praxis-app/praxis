@@ -12,6 +12,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalsService } from '../proposals/proposals.service';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { User } from '../users/models/user.model';
 import { CreateVoteInput } from './models/create-vote.input';
 import { CreateVotePayload } from './models/create-vote.payload';
@@ -30,9 +31,17 @@ export class VotesResolver {
     private votesService: VotesService,
   ) {}
 
-  @ResolveField(() => Proposal)
+  @ResolveField(() => Proposal, { nullable: true })
   async proposal(@Parent() { proposalId }: Vote) {
-    return this.proposalsService.getProposal(proposalId);
+    return proposalId ? this.proposalsService.getProposal(proposalId) : null;
+  }
+
+  @ResolveField(() => QuestionnaireTicket, { nullable: true })
+  async questionnaireTicket(@Parent() { questionnaireTicketId }: Vote) {
+    if (!questionnaireTicketId) {
+      return null;
+    }
+    return this.votesService.getQuestionnaireTicket(questionnaireTicketId);
   }
 
   @ResolveField(() => User)

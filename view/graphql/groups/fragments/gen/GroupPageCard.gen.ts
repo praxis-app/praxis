@@ -40,9 +40,9 @@ export const GroupPageCardFragmentDoc = gql`
     id
     name
     memberCount
-    memberRequestCount @include(if: $isLoggedIn)
-    isJoinedByMe @include(if: $isLoggedIn)
-    myPermissions @include(if: $isLoggedIn) {
+    memberRequestCount @include(if: $isVerified)
+    isJoinedByMe @include(if: $isVerified)
+    myPermissions @include(if: $isVerified) {
       ...GroupPermissions
     }
     coverPhoto {

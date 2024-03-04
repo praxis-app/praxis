@@ -12,6 +12,7 @@ export type HomeFeedQueryVariables = Types.Exact<{
   offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
   isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
+  isVerified?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type HomeFeedQuery = {
@@ -214,6 +215,11 @@ export type HomeFeedQuery = {
               standAsidesLimit: number;
               closingAt?: any | null;
             };
+            myVote?: {
+              __typename?: 'Vote';
+              id: number;
+              voteType: string;
+            } | null;
             user: {
               __typename?: 'User';
               id: number;
@@ -254,7 +260,12 @@ export type HomeFeedQuery = {
 };
 
 export const HomeFeedDocument = gql`
-  query HomeFeed($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
+  query HomeFeed(
+    $offset: Int
+    $limit: Int
+    $isLoggedIn: Boolean = true
+    $isVerified: Boolean = true
+  ) {
     me {
       id
       homeFeed(offset: $offset, limit: $limit) {
@@ -283,6 +294,7 @@ export const HomeFeedDocument = gql`
  *      offset: // value for 'offset'
  *      limit: // value for 'limit'
  *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

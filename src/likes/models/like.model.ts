@@ -11,6 +11,7 @@ import {
 import { Comment } from '../../comments/models/comment.model';
 import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
+import { Question } from '../../vibe-check/models/question.model';
 import { User } from '../../users/models/user.model';
 
 @Entity()
@@ -37,6 +38,14 @@ export class Like {
 
   @Column({ nullable: true })
   commentId?: number;
+
+  @ManyToOne(() => Question, (question) => question.likes, {
+    onDelete: 'CASCADE',
+  })
+  question?: Question;
+
+  @Column({ nullable: true })
+  questionId?: number;
 
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.likes, { onDelete: 'CASCADE' })

@@ -22,7 +22,13 @@ import { ProposalActionPermission } from '../proposals/proposal-actions/models/p
 import { ProposalActionRoleMember } from '../proposals/proposal-actions/models/proposal-action-role-member.model';
 import { ProposalActionRole } from '../proposals/proposal-actions/models/proposal-action-role.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
-import { ServerConfig } from '../server-configs/models/server-configs.model';
+import { Answer } from '../vibe-check/models/answer.model';
+import { Question } from '../vibe-check/models/question.model';
+import { QuestionnaireTicketConfig } from '../vibe-check/models/questionnaire-ticket-config.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
+import { ServerQuestion } from '../vibe-check/models/server-question.model';
+import { Rule } from '../rules/models/rule.model';
+import { ServerConfig } from '../server-configs/models/server-config.model';
 import { ServerInvite } from '../server-invites/models/server-invite.model';
 import { ServerRolePermission } from '../server-roles/models/server-role-permission.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
@@ -62,8 +68,9 @@ import { AddServerRolePermissionColumns1703978999070 } from './migrations/170397
 import { AddCascadeDeletesForUser1704254669247 } from './migrations/1704254669247-AddCascadeDeletesForUser';
 import { AddNotificationsTable1704767517224 } from './migrations/1704767517224-AddNotificationsTable';
 import { AddNotificationRelationColumns1705026747368 } from './migrations/1705026747368-AddNotificationRelationColumns';
-import { Rule } from '../rules/models/rule.model';
 import { AddRuleTable1705711560882 } from './migrations/1705711560882-AddRuleTable';
+import { AddVibeCheckTables1709004638886 } from './migrations/1709004638886-AddVibeCheckTables';
+import { AddInitialMemberCountColumn1709498470199 } from './migrations/1709498470199-AddInitialMemberCountColumn';
 
 dotenv.config();
 
@@ -75,6 +82,7 @@ export default new DataSource({
   password: process.env.DB_PASSWORD,
   port: parseInt(process.env.DB_PORT as string),
   entities: [
+    Answer,
     Canary,
     Comment,
     Event,
@@ -97,9 +105,13 @@ export default new DataSource({
     ProposalActionRole,
     ProposalActionRoleMember,
     ProposalConfig,
+    Question,
+    QuestionnaireTicket,
+    QuestionnaireTicketConfig,
     Rule,
     ServerConfig,
     ServerInvite,
+    ServerQuestion,
     ServerRole,
     ServerRolePermission,
     User,
@@ -115,6 +127,7 @@ export default new DataSource({
     AddGroupConfigColumns1701548819916,
     AddGroupConfigTable1685746618239,
     AddGroupMemberLinkTable1681010227367,
+    AddInitialMemberCountColumn1709498470199,
     AddLikeTable1679157357262,
     AddNotificationRelationColumns1705026747368,
     AddNotificationsTable1704767517224,
@@ -130,6 +143,7 @@ export default new DataSource({
     AddServerConfigTable1699135846939,
     AddServerInviteTable1677339785709,
     AddServerRolePermissionColumns1703978999070,
+    AddVibeCheckTables1709004638886,
     CleanUpGroupMemberRequestTable1690168731029,
     DropGroupMemberEntityTable1681010509841,
     DropRoleMemberEntityTable1681173025669,

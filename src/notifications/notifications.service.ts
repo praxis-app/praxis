@@ -16,10 +16,18 @@ export class NotificationsService {
   ) {}
 
   async getNotification(where?: FindOptionsWhere<Notification>) {
-    return this.notificationRepository.findOneOrFail({ where });
+    return this.notificationRepository.findOne({ where });
   }
 
-  async getNotifications(userId: number, offset?: number, limit?: number) {
+  async getNotifications(where?: FindOptionsWhere<Notification>) {
+    return this.notificationRepository.find({ where });
+  }
+
+  async getNotificationsByUserId(
+    userId: number,
+    offset?: number,
+    limit?: number,
+  ) {
     const notifications = await this.notificationRepository.find({
       where: { userId },
     });

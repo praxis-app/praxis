@@ -11,8 +11,14 @@ scalar DateTime
 
 type ServerConfig {
   id: Int!
+  decisionMakingModel: String!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
+  votingTimeLimit: Int!
   securityTxt: String
   showCanaryStatement: Boolean!
+  serverQuestionsPrompt: String
 }
 
 type EventAttendee {
@@ -24,13 +30,60 @@ type EventAttendee {
   updatedAt: DateTime!
 }
 
+type Answer {
+  id: Int!
+  text: String!
+  question: Question!
+  user: User!
+}
+
+type Question {
+  id: Int!
+  text: String!
+  priority: Int!
+  answer: Answer
+  questionnaireTicket: QuestionnaireTicket!
+  likes: [Like!]!
+  likeCount: Int!
+  isLikedByMe: Boolean!
+  comments: [Comment!]!
+  commentCount: Int!
+}
+
+type QuestionnaireTicketConfig {
+  id: Int!
+  decisionMakingModel: String!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
+  closingAt: DateTime
+}
+
+type QuestionnaireTicket {
+  id: Int!
+  status: String!
+  questions: [Question!]!
+  comments: [Comment!]!
+  createdAt: DateTime!
+  prompt: String
+  questionCount: Int!
+  answerCount: Int!
+  votes: [Vote!]!
+  voteCount: Int!
+  agreementVoteCount: Int!
+  votesNeededToVerify: Int!
+  myVote: Vote
+  commentCount: Int!
+  user: User!
+  settings: QuestionnaireTicketConfig!
+}
+
 type Vote {
   id: Int!
   voteType: String!
-  proposal: Proposal!
+  proposal: Proposal
+  questionnaireTicket: QuestionnaireTicket
   user: User!
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type ProposalConfig {
@@ -57,6 +110,7 @@ type Proposal {
   createdAt: DateTime!
   updatedAt: DateTime!
   voteCount: Int!
+  myVote: Vote
   commentCount: Int!
   settings: ProposalConfig!
   group: Group
@@ -214,6 +268,8 @@ type ServerRolePermission {
   removeMembers: Boolean!
   removeProposals: Boolean!
   manageRules: Boolean!
+  manageQuestions: Boolean!
+  manageQuestionnaireTickets: Boolean!
   serverRole: ServerRole!
 }
 
@@ -243,6 +299,7 @@ type User {
   homeFeed(offset: Int, limit: Int): FeedItemsConnection!
   profileFeed(offset: Int, limit: Int): [FeedItem!]!
   profileFeedCount: Int!
+  questionnaireTicket: QuestionnaireTicket
   followers(offset: Int, limit: Int): [User!]!
   following(offset: Int, limit: Int): [User!]!
   followerCount: Int!
@@ -250,6 +307,7 @@ type User {
   isFollowedByMe: Boolean!
   joinedGroups: [Group!]!
   serverPermissions: ServerPermissions!
+  isVerified: Boolean!
 }
 
 union FeedItem = Post | Proposal
@@ -347,6 +405,8 @@ type Notification {
   proposal: Proposal
   post: Post
   comment: Comment
+  question: Question
+  questionnaireTicket: QuestionnaireTicket
 }
 
 type Like {
@@ -366,6 +426,8 @@ type Comment {
   user: User!
   post: Post
   proposal: Proposal
+  question: Question
+  questionnaireTicket: QuestionnaireTicket
   likes: [Like!]!
   likeCount: Int!
   isLikedByMe: Boolean!
@@ -419,6 +481,17 @@ type UpdatePostPayload {
   post: Post!
 }
 
+type ServerQuestion {
+  id: Int!
+  text: String!
+  priority: Int!
+}
+
+type UpdateServerConfigPayload {
+  serverConfig: ServerConfig!
+  canary: Canary!
+}
+
 type CreateServerRolePayload {
   serverRole: ServerRole!
 }
@@ -450,6 +523,8 @@ type ServerPermissions {
   removeGroups: Boolean!
   removeProposals: Boolean!
   manageRules: Boolean!
+  manageQuestions: Boolean!
+  manageQuestionnaireTickets: Boolean!
 }
 
 type FollowUserPayload {
@@ -527,11 +602,6 @@ type AuthPayload {
   access_token: String!
 }
 
-type UpdateServerConfigPayload {
-  serverConfig: ServerConfig!
-  canary: Canary!
-}
-
 type CreateCommentPayload {
   comment: Comment!
 }
@@ -544,6 +614,19 @@ type CreateLikePayload {
   like: Like!
   post: Post
   comment: Comment
+  question: Question
+}
+
+type AnswerQuestionsPayload {
+  questionnaireTicket: QuestionnaireTicket!
+}
+
+type CreateQuestionPayload {
+  question: ServerQuestion!
+}
+
+type UpdateQuestionPayload {
+  question: ServerQuestion!
 }
 
 type CreateRulePayload {
@@ -587,19 +670,36 @@ type Query {
   isFirstUser: Boolean!
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
+  serverConfig: ServerConfig!
+  canary: Canary!
+  publicCanary: Canary
   post(id: Int!): Post!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
-  likes(postId: Int, commentId: Int): [Like!]!
+  likes(likesData: LikesInput!): [Like!]!
+  questionnaireTicket(id: Int!): QuestionnaireTicket!
+  questionnaireTickets(input: QuestionnaireTicketsInput!): [QuestionnaireTicket!]!
+  questionnaireTicketCount(status: String!): Int!
+  question(id: Int!): Question!
+  serverQuestions: [ServerQuestion!]!
   serverRules: [Rule!]!
-  canary: Canary!
-  publicCanary: Canary
-  serverConfig: ServerConfig!
 }
 
 input EventsInput {
   timeFrame: String
   online: Boolean
+}
+
+input LikesInput {
+  postId: Int
+  commentId: Int
+  questionId: Int
+}
+
+input QuestionnaireTicketsInput {
+  status: String!
+  limit: Int
+  offset: Int
 }
 
 type Mutation {
@@ -641,6 +741,7 @@ type Mutation {
   updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
   deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
+  updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createPost(postData: CreatePostInput!): CreatePostPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
   deletePost(id: Int!): Boolean!
@@ -652,11 +753,16 @@ type Mutation {
   deleteImage(id: Int!): Boolean!
   createLike(likeData: CreateLikeInput!): CreateLikePayload!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
+  deleteQuestionnnaireTicket(id: Int!): Boolean!
+  answerQuestions(answersData: AnswerQuestionsInput!): AnswerQuestionsPayload!
+  createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
+  updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
+  updateQuestionsPriority(questionsData: UpdateQuestionsPriorityInput!): Boolean!
+  deleteQuestion(id: Int!): Boolean!
   createRule(ruleData: CreateRuleInput!): CreateRulePayload!
   updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
   updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
   deleteRule(id: Int!): Boolean!
-  updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -837,7 +943,6 @@ input DeleteGroupRoleMemberInput {
 }
 
 input UpdateUserInput {
-  id: Int!
   name: String!
   bio: String!
   profilePicture: Upload
@@ -869,11 +974,26 @@ input ServerRolePermissionInput {
   removeMembers: Boolean
   removeProposals: Boolean
   manageRules: Boolean
+  manageQuestions: Boolean
+  manageQuestionnaireTickets: Boolean
 }
 
 input DeleteServerRoleMemberInput {
   serverRoleId: Int!
   userId: Int!
+}
+
+input UpdateServerConfigInput {
+  id: Int!
+  canaryStatement: String
+  showCanaryStatement: Boolean
+  securityTxt: String
+  serverQuestionsPrompt: String
+  decisionMakingModel: String
+  standAsidesLimit: Int
+  reservationsLimit: Int
+  ratificationThreshold: Int
+  votingTimeLimit: Int
 }
 
 input CreatePostInput {
@@ -897,6 +1017,8 @@ input CreateServerInviteInput {
 input CreateCommentInput {
   postId: Int
   proposalId: Int
+  questionId: Int
+  questionnaireTicketId: Int
   body: String
   images: [Upload!]
 }
@@ -910,11 +1032,42 @@ input UpdateCommentInput {
 input CreateLikeInput {
   postId: Int
   commentId: Int
+  questionId: Int
 }
 
 input DeleteLikeInput {
   postId: Int
   commentId: Int
+  questionId: Int
+}
+
+input AnswerQuestionsInput {
+  questionnaireTicketId: Int!
+  answers: [AnswerInput!]!
+  isSubmitting: Boolean!
+}
+
+input AnswerInput {
+  questionId: Int!
+  text: String!
+}
+
+input CreateQuestionInput {
+  text: String!
+}
+
+input UpdateQuestionInput {
+  id: Int!
+  text: String!
+}
+
+input UpdateQuestionsPriorityInput {
+  questions: [UpdateQuestionPriorityInput!]!
+}
+
+input UpdateQuestionPriorityInput {
+  id: Int!
+  priority: Int!
 }
 
 input CreateRuleInput {
@@ -939,15 +1092,9 @@ input UpdateRulePriorityInput {
   priority: Int!
 }
 
-input UpdateServerConfigInput {
-  id: Int!
-  canaryStatement: String
-  showCanaryStatement: Boolean
-  securityTxt: String
-}
-
 input CreateVoteInput {
-  proposalId: Int!
+  proposalId: Int
+  questionnaireTicketId: Int
   voteType: String!
 }
 

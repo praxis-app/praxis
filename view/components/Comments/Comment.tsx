@@ -20,19 +20,23 @@ import CommentLikeButton from './CommentLikeButton';
 import CommentLikeCount from './CommentLikeCount';
 
 interface Props {
-  canManageComments: boolean;
+  canManageComments?: boolean;
   comment: CommentFragment;
   currentUserId?: number;
   postId?: number;
   proposalId?: number;
+  questionnaireTicketId?: number;
+  questionId?: number;
 }
 
 const Comment = ({
-  comment,
   canManageComments,
+  comment,
   currentUserId,
   postId,
   proposalId,
+  questionnaireTicketId,
+  questionId,
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showItemMenu, setShowItemMenu] = useState(false);
@@ -89,6 +93,19 @@ const Comment = ({
     await deleteComment({
       variables: { id },
       update(cache) {
+        if (proposalId) {
+          cache.modify({
+            id: cache.identify({
+              id: proposalId,
+              __typename: TypeNames.Proposal,
+            }),
+            fields: {
+              commentCount(existingCount: number) {
+                return Math.max(0, existingCount - 1);
+              },
+            },
+          });
+        }
         if (postId) {
           cache.modify({
             id: cache.identify({ id: postId, __typename: TypeNames.Post }),
@@ -99,11 +116,24 @@ const Comment = ({
             },
           });
         }
-        if (proposalId) {
+        if (questionId) {
           cache.modify({
             id: cache.identify({
-              id: proposalId,
-              __typename: TypeNames.Proposal,
+              id: questionId,
+              __typename: TypeNames.Question,
+            }),
+            fields: {
+              commentCount(existingCount: number) {
+                return Math.max(0, existingCount - 1);
+              },
+            },
+          });
+        }
+        if (questionnaireTicketId) {
+          cache.modify({
+            id: cache.identify({
+              id: questionnaireTicketId,
+              __typename: TypeNames.QuestionnaireTicket,
             }),
             fields: {
               commentCount(existingCount: number) {
@@ -225,7 +255,11 @@ const Comment = ({
           <Typography fontSize="13px" color="text.secondary" lineHeight={1}>
             {formattedDate}
           </Typography>
-          <CommentLikeButton comment={comment} />
+          <CommentLikeButton
+            comment={comment}
+            isPostComment={!!postId}
+            isProposalComment={!!proposalId}
+          />
         </Flex>
       </Box>
     </Flex>

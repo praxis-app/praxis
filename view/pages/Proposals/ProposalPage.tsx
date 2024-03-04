@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar } from '../../graphql/cache';
 import { useProposalLazyQuery } from '../../graphql/proposals/queries/gen/Proposal.gen';
 import ProposalCard from '../../components/Proposals/ProposalCard';
 import ProgressBar from '../../components/Shared/ProgressBar';
@@ -11,6 +11,7 @@ import { isDeniedAccess } from '../../utils/error.utils';
 
 const ProposalPage = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
   const [getProposal, { data, loading, error }] = useProposalLazyQuery();
 
   const { t } = useTranslation();
@@ -22,10 +23,11 @@ const ProposalPage = () => {
         variables: {
           id: parseInt(id),
           isLoggedIn,
+          isVerified,
         },
       });
     }
-  }, [id, isLoggedIn, getProposal]);
+  }, [id, isLoggedIn, isVerified, getProposal]);
 
   if (loading) {
     return <ProgressBar />;

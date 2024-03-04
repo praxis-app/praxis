@@ -8,23 +8,15 @@ import { gql } from '@apollo/client';
 export type VoteMenuFragment = {
   __typename?: 'Proposal';
   id: number;
-  votes: Array<{
-    __typename?: 'Vote';
-    id: number;
-    voteType: string;
-    user: { __typename?: 'User'; id: number };
-  }>;
+  myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
 };
 
 export const VoteMenuFragmentDoc = gql`
   fragment VoteMenu on Proposal {
     id
-    votes {
+    myVote @include(if: $isLoggedIn) {
       id
       voteType
-      user {
-        id
-      }
     }
   }
 `;

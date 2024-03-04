@@ -9,6 +9,8 @@ import { Like } from '../likes/models/like.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
+import { Question } from '../vibe-check/models/question.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
@@ -21,6 +23,11 @@ export interface IsPostLikedByMeKey {
 export interface IsCommentLikedByMeKey {
   currentUserId: number;
   commentId: number;
+}
+
+export interface IsQuestionLikedByMeKey {
+  currentUserId: number;
+  questionId: number;
 }
 
 export interface IsFollowedByMeKey {
@@ -82,6 +89,11 @@ export interface Dataloaders {
   eventsLoader: DataLoader<number, Event>;
   interestedCountLoader: DataLoader<number, number>;
   goingCountLoader: DataLoader<number, number>;
+
+  // Questions & Answers
+  questionsLoader: DataLoader<number, Question>;
+  questionnaireTicketsLoader: DataLoader<number, QuestionnaireTicket>;
+  isAnswerLikedByMeLoader: DataLoader<IsQuestionLikedByMeKey, boolean>;
 }
 
 export type ServerRoleWithMemberCount = ServerRole & { memberCount: number };

@@ -11,6 +11,8 @@ import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
+import { Question } from '../vibe-check/models/question.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { User } from '../users/models/user.model';
 import { Comment } from './models/comment.model';
 import { CreateCommentInput } from './models/create-comment.input';
@@ -30,6 +32,15 @@ export class CommentsService {
 
     @InjectRepository(Proposal)
     private proposalRepository: Repository<Proposal>,
+
+    @InjectRepository(Question)
+    private questionRepository: Repository<Question>,
+
+    @InjectRepository(QuestionnaireTicket)
+    private questionnaireTicketRepository: Repository<QuestionnaireTicket>,
+
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
 
     private notificationsService: NotificationsService,
   ) {}
@@ -75,6 +86,65 @@ export class CommentsService {
     );
   }
 
+  async getCommentedQuestion(questionId: number, relations?: string[]) {
+    return this.questionRepository.findOne({
+      where: { id: questionId },
+      relations,
+    });
+  }
+
+  async getCommentedQuestionnaireTicket(
+    questionnaireTicketId: number,
+    relations?: string[],
+  ) {
+    return this.questionnaireTicketRepository.findOne({
+      where: { id: questionnaireTicketId },
+      relations,
+    });
+  }
+
+  async getCommentedItemUserId(comment: Comment) {
+    if (comment.proposalId) {
+      const proposal = await this.proposalRepository.findOneOrFail({
+        where: { id: comment.proposalId },
+        relations: ['user'],
+      });
+      return proposal.user.id;
+    }
+    if (comment.questionId) {
+      const answer = await this.questionRepository.findOneOrFail({
+        where: { id: comment.questionId },
+        relations: ['questionnaireTicket'],
+      });
+      return answer.questionnaireTicket.userId;
+    }
+    if (comment.questionnaireTicketId) {
+      const questionnaireTicket =
+        await this.questionnaireTicketRepository.findOneOrFail({
+          where: { id: comment.questionnaireTicketId },
+        });
+      return questionnaireTicket.userId;
+    }
+    const post = await this.postRepository.findOneOrFail({
+      where: { id: comment.postId },
+      relations: ['user'],
+    });
+    return post.user.id;
+  }
+
+  getCommentedItemNotificationType(comment: Comment) {
+    if (comment.proposalId) {
+      return NotificationType.ProposalComment;
+    }
+    if (comment.questionId) {
+      return NotificationType.AnswerComment;
+    }
+    if (comment.questionnaireTicketId) {
+      return NotificationType.QuestionnaireTicketComment;
+    }
+    return NotificationType.PostComment;
+  }
+
   async createComment(
     { body, images, ...commentData }: CreateCommentInput,
     user: User,
@@ -98,29 +168,61 @@ export class CommentsService {
       }
     }
 
-    const {
-      user: { id: userId },
-    } = comment.postId
-      ? await this.postRepository.findOneOrFail({
-          where: { id: comment.postId },
-          relations: ['user'],
-        })
-      : await this.proposalRepository.findOneOrFail({
-          where: { id: comment.proposalId },
-          relations: ['user'],
-        });
+    const commentedItemUserId = await this.getCommentedItemUserId(comment);
+    const notificationType = this.getCommentedItemNotificationType(comment);
 
-    if (userId !== user.id) {
+    // Notify the user whose item was commented on
+    if (commentedItemUserId !== user.id) {
       await this.notificationsService.createNotification({
-        notificationType: comment.postId
-          ? NotificationType.PostComment
-          : NotificationType.ProposalComment,
-        proposalId: comment.proposalId,
-        postId: comment.postId,
-        otherUserId: user.id,
+        questionId: comment.questionId,
         commentId: comment.id,
-        userId,
+        otherUserId: user.id,
+        postId: comment.postId,
+        proposalId: comment.proposalId,
+        questionnaireTicketId: comment.questionnaireTicketId,
+        userId: commentedItemUserId,
+        notificationType,
       });
+    }
+
+    // Notify all users with access that a user left a comment on their own answer
+    if (comment.questionId && commentedItemUserId === user.id) {
+      const usersWithAccess = await this.userRepository.find({
+        where: {
+          serverRoles: {
+            permission: { manageQuestionnaireTickets: true },
+          },
+        },
+      });
+      for (const user of usersWithAccess) {
+        await this.notificationsService.createNotification({
+          notificationType: NotificationType.AnswerComment,
+          questionnaireTicketId: comment.questionnaireTicketId,
+          otherUserId: comment.userId,
+          commentId: comment.id,
+          userId: user.id,
+        });
+      }
+    }
+
+    // Notify all users with access that a user left a comment on their own questionnaire ticket
+    if (comment.questionnaireTicketId && commentedItemUserId === user.id) {
+      const usersWithAccess = await this.userRepository.find({
+        where: {
+          serverRoles: {
+            permission: { manageQuestionnaireTickets: true },
+          },
+        },
+      });
+      for (const user of usersWithAccess) {
+        await this.notificationsService.createNotification({
+          notificationType: NotificationType.QuestionnaireTicketComment,
+          otherUserId: comment.userId,
+          questionnaireTicketId: comment.questionnaireTicketId,
+          commentId: comment.id,
+          userId: user.id,
+        });
+      }
     }
 
     return { comment };

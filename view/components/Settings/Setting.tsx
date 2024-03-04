@@ -10,7 +10,7 @@ interface Props {
   divider?: boolean;
 }
 
-const GroupSetting = ({ name, description, value, divider = true }: Props) => (
+const Setting = ({ name, description, value, divider = true }: Props) => (
   <>
     <Flex gap="40px">
       <Box width={SETTING_DESCRIPTION_WIDTH}>
@@ -38,4 +38,4 @@ const GroupSetting = ({ name, description, value, divider = true }: Props) => (
   </>
 );
 
-export default GroupSetting;
+export default Setting;

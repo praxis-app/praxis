@@ -94,6 +94,16 @@ export const getPermissionText = (name: PermissionName): PermissionText => {
         displayName: _t('permissions.names.manageRules'),
         description: _t('permissions.descriptions.manageRules'),
       };
+    case 'manageQuestions':
+      return {
+        displayName: _t('permissions.names.manageQuestions'),
+        description: _t('permissions.descriptions.manageQuestions'),
+      };
+    case 'manageQuestionnaireTickets':
+      return {
+        displayName: _t('permissions.names.manageQuestionnaires'),
+        description: _t('permissions.descriptions.manageQuestionnaires'),
+      };
     default:
       return {
         displayName: null,

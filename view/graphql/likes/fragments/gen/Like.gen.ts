@@ -24,7 +24,7 @@ export const LikeFragmentDoc = gql`
     id
     user {
       ...UserAvatar
-      ...FollowButton @include(if: $isLoggedIn)
+      ...FollowButton @include(if: $isVerified)
     }
   }
   ${UserAvatarFragmentDoc}

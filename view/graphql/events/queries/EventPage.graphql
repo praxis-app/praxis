@@ -1,4 +1,4 @@
-query EventPage($id: Int!, $isLoggedIn: Boolean!) {
+query EventPage($id: Int!, $isVerified: Boolean!) {
   event(id: $id) {
     ...EventPageCard
 
@@ -7,7 +7,7 @@ query EventPage($id: Int!, $isLoggedIn: Boolean!) {
       name
     }
   }
-  me @include(if: $isLoggedIn) {
+  me @include(if: $isVerified) {
     id
     serverPermissions {
       manageEvents

@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type PostQueryVariables = Types.Exact<{
   id: Types.Scalars['Int']['input'];
-  isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type PostQuery = {
@@ -65,7 +65,7 @@ export type PostQuery = {
 };
 
 export const PostDocument = gql`
-  query Post($id: Int!, $isLoggedIn: Boolean!) {
+  query Post($id: Int!, $isVerified: Boolean!) {
     post(id: $id) {
       ...PostCard
     }
@@ -86,7 +86,7 @@ export const PostDocument = gql`
  * const { data, loading, error } = usePostQuery({
  *   variables: {
  *      id: // value for 'id'
- *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

@@ -8,14 +8,26 @@ import { gql } from '@apollo/client';
 export type ServerSettingsFormFragment = {
   __typename?: 'ServerConfig';
   id: number;
-  showCanaryStatement: boolean;
+  decisionMakingModel: string;
+  ratificationThreshold: number;
+  reservationsLimit: number;
   securityTxt?: string | null;
+  serverQuestionsPrompt?: string | null;
+  showCanaryStatement: boolean;
+  standAsidesLimit: number;
+  votingTimeLimit: number;
 };
 
 export const ServerSettingsFormFragmentDoc = gql`
   fragment ServerSettingsForm on ServerConfig {
     id
-    showCanaryStatement
+    decisionMakingModel
+    ratificationThreshold
+    reservationsLimit
     securityTxt
+    serverQuestionsPrompt
+    showCanaryStatement
+    standAsidesLimit
+    votingTimeLimit
   }
 `;

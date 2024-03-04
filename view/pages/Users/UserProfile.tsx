@@ -1,9 +1,11 @@
 import { useReactiveVar } from '@apollo/client';
-import { Typography, useTheme } from '@mui/material';
+import { TaskAlt } from '@mui/icons-material';
+import { Button, Typography, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Feed from '../../components/Shared/Feed';
+import Flex from '../../components/Shared/Flex';
 import Link from '../../components/Shared/Link';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import ToggleForms from '../../components/Shared/ToggleForms';
@@ -12,49 +14,77 @@ import {
   DEFAULT_PAGE_SIZE,
   NavigationPaths,
 } from '../../constants/shared.constants';
-import { inviteTokenVar, isLoggedInVar } from '../../graphql/cache';
+import {
+  inviteTokenVar,
+  isLoggedInVar,
+  isVerifiedVar,
+} from '../../graphql/cache';
+import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { useUserProfileQuery } from '../../graphql/users/queries/gen/UserProfile.gen';
 import { useUserProfileFeedLazyQuery } from '../../graphql/users/queries/gen/UserProfileFeed.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const UserProfile = () => {
   const inviteToken = useReactiveVar(inviteTokenVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
 
+  const {
+    data: meData,
+    loading: meLoading,
+    error: meError,
+  } = useMeQuery({ skip: !isLoggedIn });
+
   const { name } = useParams();
-  const { data, loading, error } = useUserProfileQuery({
-    variables: { name },
-    skip: !name || !isLoggedIn,
+
+  const isSkipping = () => {
+    if (!meData?.me.name || !name || !isLoggedIn) {
+      return true;
+    }
+    if (!isVerified && meData.me.name !== name) {
+      return true;
+    }
+    return false;
+  };
+
+  const {
+    data: userProfileData,
+    loading: userProfileLoading,
+    error: userProfileError,
+  } = useUserProfileQuery({
+    variables: { name, isVerified },
+    skip: isSkipping(),
   });
 
   const [getFeed, { data: feedData, loading: feedLoading }] =
     useUserProfileFeedLazyQuery();
 
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
+  const navigate = useNavigate();
   const theme = useTheme();
 
   useEffect(() => {
-    if (!isLoggedIn || !name) {
+    if (!isVerified || !name) {
       return;
     }
     getFeed({
       variables: {
         limit: rowsPerPage,
         offset: page * rowsPerPage,
-        isLoggedIn,
         name,
       },
     });
-  }, [name, isLoggedIn, getFeed, rowsPerPage, page]);
+  }, [name, isVerified, getFeed, rowsPerPage, page]);
 
   const handleChangePage = async (newPage: number) => {
     await getFeed({
       variables: {
         limit: rowsPerPage,
         offset: newPage * rowsPerPage,
-        isLoggedIn,
         name,
       },
     });
@@ -91,39 +121,66 @@ const UserProfile = () => {
     );
   }
 
-  if (error) {
-    return <Typography>{t('errors.somethingWentWrong')}</Typography>;
-  }
-
-  if (loading) {
+  if (userProfileLoading || meLoading) {
     return <ProgressBar />;
   }
 
-  if (!data) {
+  if (!isVerified && meData && meData.me.name !== name) {
+    return (
+      <Flex flexDirection="column">
+        <Typography paddingBottom={2.5}>
+          {t('users.prompts.verifyToSeeOtherProfiles')}
+        </Typography>
+
+        <Button
+          startIcon={<TaskAlt sx={{ marginRight: 0.25 }} />}
+          onClick={() => navigate(NavigationPaths.VibeCheck)}
+          sx={{
+            textTransform: 'none',
+            alignSelf: isDesktop ? 'flex-start' : 'center',
+          }}
+          variant="outlined"
+        >
+          {t('users.actions.getVerified')}
+        </Button>
+      </Flex>
+    );
+  }
+
+  if (userProfileError || meError) {
+    return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+  }
+
+  if (!userProfileData) {
     return null;
   }
 
-  const { me, user } = data;
+  const { me, user } = userProfileData;
   const isMe = me?.id === user.id;
 
   return (
     <>
       <UserProfileCard
-        canRemoveMembers={me.serverPermissions.removeMembers}
+        canRemoveMembers={me?.serverPermissions?.removeMembers}
         user={user}
       />
-      {isMe && <ToggleForms me={me} />}
 
-      <Feed
-        feedItems={feedData?.user.profileFeed}
-        totalCount={feedData?.user.profileFeedCount}
-        isLoading={feedLoading}
-        onChangePage={handleChangePage}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        setPage={setPage}
-        setRowsPerPage={setRowsPerPage}
-      />
+      {isVerified && (
+        <>
+          {isMe && <ToggleForms me={me} />}
+
+          <Feed
+            feedItems={feedData?.user.profileFeed}
+            totalCount={feedData?.user.profileFeedCount}
+            isLoading={feedLoading}
+            onChangePage={handleChangePage}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            setPage={setPage}
+            setRowsPerPage={setRowsPerPage}
+          />
+        </>
+      )}
     </>
   );
 };

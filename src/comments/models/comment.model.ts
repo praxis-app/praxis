@@ -13,6 +13,8 @@ import { Like } from '../../likes/models/like.model';
 import { Notification } from '../../notifications/models/notification.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
+import { Question } from '../../vibe-check/models/question.model';
+import { QuestionnaireTicket } from '../../vibe-check/models/questionnaire-ticket.model';
 import { User } from '../../users/models/user.model';
 
 @Entity()
@@ -51,6 +53,24 @@ export class Comment {
 
   @Column({ nullable: true })
   proposalId?: number;
+
+  @ManyToOne(() => Question, (question) => question.comments, {
+    onDelete: 'CASCADE',
+  })
+  question?: Question;
+
+  @Column({ nullable: true })
+  questionId?: number;
+
+  @ManyToOne(
+    () => QuestionnaireTicket,
+    (questionnaireTicket) => questionnaireTicket.comments,
+    { onDelete: 'CASCADE' },
+  )
+  questionnaireTicket?: QuestionnaireTicket;
+
+  @Column({ nullable: true })
+  questionnaireTicketId?: number;
 
   @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   user: User;

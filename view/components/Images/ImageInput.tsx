@@ -14,6 +14,7 @@ interface Props extends Omit<BoxProps, 'onChange'> {
   setImage?: (image: File) => void;
   setImages?: (images: File[]) => void;
   iconStyles?: SxProps;
+  disabled?: boolean;
 }
 
 const ImageInput = ({
@@ -25,6 +26,7 @@ const ImageInput = ({
   setImage,
   setImages,
   iconStyles,
+  disabled,
   ...boxProps
 }: Props) => {
   const imageInput = useRef<HTMLInputElement>(null);
@@ -45,6 +47,13 @@ const ImageInput = ({
     if (onChange) {
       onChange(files);
     }
+  };
+
+  const handleClick = () => {
+    if (disabled || !imageInput.current) {
+      return;
+    }
+    imageInput.current.click();
   };
 
   const renderContent = () => {
@@ -74,7 +83,7 @@ const ImageInput = ({
         style={{ display: 'none' }}
         type="file"
       />
-      <Box onClick={() => imageInput.current?.click()}>{renderContent()}</Box>
+      <Box onClick={handleClick}>{renderContent()}</Box>
     </Box>
   );
 };

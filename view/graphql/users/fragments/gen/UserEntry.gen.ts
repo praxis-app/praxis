@@ -10,6 +10,7 @@ import { FollowButtonFragmentDoc } from './FollowButton.gen';
 export type UserEntryFragment = {
   __typename?: 'User';
   id: number;
+  isVerified: boolean;
   name: string;
   isFollowedByMe: boolean;
   profilePicture: { __typename?: 'Image'; id: number };
@@ -18,6 +19,7 @@ export type UserEntryFragment = {
 export const UserEntryFragmentDoc = gql`
   fragment UserEntry on User {
     id
+    isVerified
     ...UserAvatar
     ...FollowButton
   }

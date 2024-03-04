@@ -1,4 +1,4 @@
-mutation UpdatePost($postData: UpdatePostInput!, $isLoggedIn: Boolean = true) {
+mutation UpdatePost($postData: UpdatePostInput!, $isVerified: Boolean = true) {
   updatePost(postData: $postData) {
     post {
       ...PostCard

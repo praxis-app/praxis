@@ -1,0 +1,15 @@
+query QuestionnairePage($questionnaireTicketId: Int!) {
+  questionnaireTicket(id: $questionnaireTicketId) {
+    ...QuestionnaireTicketCard
+
+    questions {
+      ...AnsweredQuestionCard
+    }
+    user {
+      ...UserAvatar
+    }
+    votes {
+      ...Vote
+    }
+  }
+}

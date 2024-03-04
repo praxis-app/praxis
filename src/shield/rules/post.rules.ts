@@ -4,6 +4,12 @@ import { Context } from '../../context/context.types';
 import { GroupPrivacy } from '../../groups/groups.constants';
 import { Post } from '../../posts/models/post.model';
 import { UpdatePostInput } from '../../posts/models/update-post.input';
+import { hasServerPermission } from '../shield.utils';
+
+export const canManagePosts = rule({ cache: 'contextual' })(
+  async (_parent, _args, { permissions }: Context) =>
+    hasServerPermission(permissions, 'managePosts'),
+);
 
 export const isOwnPost = rule({ cache: 'strict' })(async (
   _parent,

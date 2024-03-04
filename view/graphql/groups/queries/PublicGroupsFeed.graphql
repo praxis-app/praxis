@@ -2,6 +2,7 @@ query PublicGroupsFeed(
   $offset: Int
   $limit: Int
   $isLoggedIn: Boolean = false
+  $isVerified: Boolean = false
 ) {
   publicGroupsFeed(offset: $offset, limit: $limit) {
     nodes {

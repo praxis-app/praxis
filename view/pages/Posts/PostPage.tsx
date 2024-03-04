@@ -3,14 +3,14 @@ import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { isLoggedInVar } from '../../graphql/cache';
-import { usePostLazyQuery } from '../../graphql/posts/queries/gen/Post.gen';
 import PostCard from '../../components/Posts/PostCard';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { isVerifiedVar } from '../../graphql/cache';
+import { usePostLazyQuery } from '../../graphql/posts/queries/gen/Post.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 
 const PostPage = () => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
   const [getPost, { data, loading, error }] = usePostLazyQuery({});
 
   const { id } = useParams();
@@ -21,11 +21,11 @@ const PostPage = () => {
       getPost({
         variables: {
           id: parseInt(id),
-          isLoggedIn,
+          isVerified,
         },
       });
     }
-  }, [id, getPost, isLoggedIn]);
+  }, [id, getPost, isVerified]);
 
   if (loading) {
     return <ProgressBar />;

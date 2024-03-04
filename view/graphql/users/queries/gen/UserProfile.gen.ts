@@ -11,6 +11,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type UserProfileQueryVariables = Types.Exact<{
   name?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type UserProfileQuery = {
@@ -20,8 +21,8 @@ export type UserProfileQuery = {
     id: number;
     bio?: string | null;
     createdAt: any;
-    followerCount: number;
-    followingCount: number;
+    followerCount?: number;
+    followingCount?: number;
     name: string;
     isFollowedByMe: boolean;
     coverPhoto?: { __typename?: 'Image'; id: number } | null;
@@ -30,7 +31,7 @@ export type UserProfileQuery = {
   me: {
     __typename?: 'User';
     id: number;
-    serverPermissions: {
+    serverPermissions?: {
       __typename?: 'ServerPermissions';
       removeMembers: boolean;
     };
@@ -48,16 +49,16 @@ export type UserProfileQuery = {
 };
 
 export const UserProfileDocument = gql`
-  query UserProfile($name: String) {
+  query UserProfile($name: String, $isVerified: Boolean!) {
     user(name: $name) {
       ...UserProfileCard
     }
     me {
       id
-      serverPermissions {
+      serverPermissions @include(if: $isVerified) {
         removeMembers
       }
-      ...ToggleForms
+      ...ToggleForms @include(if: $isVerified)
     }
   }
   ${UserProfileCardFragmentDoc}
@@ -77,11 +78,12 @@ export const UserProfileDocument = gql`
  * const { data, loading, error } = useUserProfileQuery({
  *   variables: {
  *      name: // value for 'name'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */
 export function useUserProfileQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     UserProfileQuery,
     UserProfileQueryVariables
   >,

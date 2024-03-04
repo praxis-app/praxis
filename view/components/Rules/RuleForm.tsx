@@ -1,3 +1,5 @@
+// TODO: Convert to a modal since its only ever used in modals
+
 import { useReactiveVar } from '@apollo/client';
 import { Button, FormGroup } from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';
@@ -133,7 +135,7 @@ const RuleForm = ({ editRule, onSubmit, onCancel }: Props) => {
             />
           </FormGroup>
 
-          <Flex justifyContent="flex-end" gap="12px">
+          <Flex justifyContent="flex-end" gap="8px">
             <Button
               sx={{
                 marginTop: 1.5,

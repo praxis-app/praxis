@@ -8,6 +8,8 @@ export const initServerRolePermissions = (
   manageEvents: enabled,
   manageInvites: enabled,
   managePosts: enabled,
+  manageQuestionnaireTickets: enabled,
+  manageQuestions: enabled,
   manageRoles: enabled,
   manageRules: enabled,
   manageSettings: enabled,

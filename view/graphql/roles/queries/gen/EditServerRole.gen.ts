@@ -29,6 +29,8 @@ export type EditServerRoleQuery = {
       manageEvents: boolean;
       manageInvites: boolean;
       managePosts: boolean;
+      manageQuestionnaireTickets: boolean;
+      manageQuestions: boolean;
       manageRoles: boolean;
       manageRules: boolean;
       manageSettings: boolean;
@@ -59,6 +61,8 @@ export type EditServerRoleQuery = {
       manageEvents: boolean;
       manageInvites: boolean;
       managePosts: boolean;
+      manageQuestionnaireTickets: boolean;
+      manageQuestions: boolean;
       manageRoles: boolean;
       manageRules: boolean;
       manageSettings: boolean;

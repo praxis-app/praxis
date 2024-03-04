@@ -14,6 +14,8 @@ import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalsService } from '../proposals/proposals.service';
+import { Question } from '../vibe-check/models/question.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { User } from '../users/models/user.model';
 import { CommentsService } from './comments.service';
 import { Comment } from './models/comment.model';
@@ -46,6 +48,24 @@ export class CommentsResolver {
   @ResolveField(() => Proposal, { nullable: true })
   async proposal(@Parent() { proposalId }: Comment) {
     return proposalId ? this.proposalsService.getProposal(proposalId) : null;
+  }
+
+  @ResolveField(() => Question, { nullable: true })
+  async question(@Parent() { questionId }: Comment) {
+    if (!questionId) {
+      return null;
+    }
+    return this.commentsService.getCommentedQuestion(questionId);
+  }
+
+  @ResolveField(() => QuestionnaireTicket, { nullable: true })
+  async questionnaireTicket(@Parent() { questionnaireTicketId }: Comment) {
+    if (!questionnaireTicketId) {
+      return null;
+    }
+    return this.commentsService.getCommentedQuestionnaireTicket(
+      questionnaireTicketId,
+    );
   }
 
   @ResolveField(() => [Image])

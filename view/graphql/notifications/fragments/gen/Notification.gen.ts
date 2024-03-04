@@ -33,6 +33,29 @@ export type NotificationFragment = {
     body?: string | null;
     post?: { __typename?: 'Post'; id: number } | null;
     proposal?: { __typename?: 'Proposal'; id: number } | null;
+    question?: {
+      __typename?: 'Question';
+      id: number;
+      questionnaireTicket: {
+        __typename?: 'QuestionnaireTicket';
+        id: number;
+        user: { __typename?: 'User'; id: number };
+      };
+    } | null;
+    questionnaireTicket?: {
+      __typename?: 'QuestionnaireTicket';
+      id: number;
+      user: { __typename?: 'User'; id: number };
+    } | null;
+  } | null;
+  questionnaireTicket?: {
+    __typename?: 'QuestionnaireTicket';
+    id: number;
+  } | null;
+  question?: {
+    __typename?: 'Question';
+    id: number;
+    answer?: { __typename?: 'Answer'; id: number; text: string } | null;
   } | null;
 };
 
@@ -62,6 +85,31 @@ export const NotificationFragmentDoc = gql`
       }
       proposal {
         id
+      }
+      question {
+        id
+        questionnaireTicket {
+          id
+          user {
+            id
+          }
+        }
+      }
+      questionnaireTicket {
+        id
+        user {
+          id
+        }
+      }
+    }
+    questionnaireTicket {
+      id
+    }
+    question {
+      id
+      answer {
+        id
+        text
       }
     }
   }

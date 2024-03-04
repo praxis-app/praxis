@@ -45,11 +45,11 @@ export class ServerRolesService {
     const userIds = role.members.map(({ id }) => id);
 
     return this.userRepository.find({
-      where: { id: Not(In(userIds)) },
+      where: { id: Not(In(userIds)), verified: true },
     });
   }
 
-  async initAdminServerRole(userId: number) {
+  async createAdminServerRole(userId: number) {
     const permission = initServerRolePermissions(true);
     await this.serverRoleRepository.save({
       name: ADMIN_ROLE_NAME,
@@ -88,7 +88,7 @@ export class ServerRolesService {
       'permission',
     ]);
     const newMembers = await this.userRepository.find({
-      where: { id: In(selectedUserIds) },
+      where: { id: In(selectedUserIds), verified: true },
     });
     const serverRole = await this.serverRoleRepository.save({
       ...roleWithRelations,

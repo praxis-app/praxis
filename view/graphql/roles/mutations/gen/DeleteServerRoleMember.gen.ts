@@ -37,6 +37,8 @@ export type DeleteServerRoleMemberMutation = {
         manageEvents: boolean;
         manageInvites: boolean;
         managePosts: boolean;
+        manageQuestionnaireTickets: boolean;
+        manageQuestions: boolean;
         manageRoles: boolean;
         manageRules: boolean;
         manageSettings: boolean;

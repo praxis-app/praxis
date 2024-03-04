@@ -1,14 +1,17 @@
+import { useReactiveVar } from '@apollo/client';
 import { Divider, FormGroup, Typography } from '@mui/material';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { UserFieldNames } from '../../constants/user.constants';
-import { toastVar } from '../../graphql/cache';
+import { isVerifiedVar, toastVar } from '../../graphql/cache';
 import { UpdateUserInput } from '../../graphql/gen';
 import { EditProfileFormFragment } from '../../graphql/users/fragments/gen/EditProfileForm.gen';
 import { useUpdateUserMutation } from '../../graphql/users/mutations/gen/UpdateUser.gen';
+import { DarkMode } from '../../styles/theme';
 import { isEntityTooLarge } from '../../utils/error.utils';
+import { validateImageInput } from '../../utils/image.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import CoverPhoto from '../Images/CoverPhoto';
 import ImageInput from '../Images/ImageInput';
@@ -18,7 +21,6 @@ import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import { TextField } from '../Shared/TextField';
 import UserAvatar from './UserAvatar';
-import { validateImageInput } from '../../utils/image.utils';
 
 interface Props {
   user: EditProfileFormFragment;
@@ -26,9 +28,11 @@ interface Props {
 }
 
 const EditProfileForm = ({ user, submitButtonText }: Props) => {
-  const [updateUser] = useUpdateUserMutation();
   const [coverPhoto, setCoverPhoto] = useState<File>();
   const [profilePicture, setProfilePicture] = useState<File>();
+  const isVerified = useReactiveVar(isVerifiedVar);
+
+  const [updateUser] = useUpdateUserMutation();
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -64,7 +68,6 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
       variables: {
         userData: {
           ...formValues,
-          id: user.id,
           name: formValues.name.trim(),
           profilePicture,
           coverPhoto,
@@ -90,12 +93,22 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
     <Formik initialValues={initialValues} onSubmit={handleSubmit}>
       {({ isSubmitting, dirty }) => (
         <Form>
-          <Flex sx={{ justifyContent: 'space-between', marginBottom: 2 }}>
-            <Typography color="primary">
+          <Flex
+            sx={{ justifyContent: 'space-between', marginBottom: 2 }}
+            onClick={() => {
+              if (!isVerified) {
+                toastVar({
+                  status: 'info',
+                  title: t('users.prompts.verifyToUpdateProfilePicture'),
+                });
+              }
+            }}
+          >
+            <Typography color={isVerified ? 'primary' : DarkMode.Excalibur}>
               {t('users.form.profilePicture')}
             </Typography>
-            <ImageInput setImage={setProfilePicture}>
-              <CompactButton sx={{ marginTop: -0.5 }}>
+            <ImageInput setImage={setProfilePicture} disabled={!isVerified}>
+              <CompactButton sx={{ marginTop: -0.5 }} disabled={!isVerified}>
                 {t('actions.edit')}
               </CompactButton>
             </ImageInput>
@@ -111,12 +124,22 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
 
           <Divider sx={{ marginBottom: 1.5 }} />
 
-          <Flex sx={{ justifyContent: 'space-between', marginBottom: 1.25 }}>
-            <Typography color="primary">
+          <Flex
+            sx={{ justifyContent: 'space-between', marginBottom: 1.25 }}
+            onClick={() => {
+              if (!isVerified) {
+                toastVar({
+                  status: 'info',
+                  title: t('users.prompts.verifyToUpdateCoverPhoto'),
+                });
+              }
+            }}
+          >
+            <Typography color={isVerified ? 'primary' : DarkMode.Excalibur}>
               {t('users.form.coverPhoto')}
             </Typography>
-            <ImageInput setImage={setCoverPhoto}>
-              <CompactButton sx={{ marginTop: -0.5 }}>
+            <ImageInput setImage={setCoverPhoto} disabled={!isVerified}>
+              <CompactButton sx={{ marginTop: -0.5 }} disabled={!isVerified}>
                 {t('actions.edit')}
               </CompactButton>
             </ImageInput>

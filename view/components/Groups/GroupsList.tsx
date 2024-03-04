@@ -47,7 +47,7 @@ const GroupsList = () => {
   return (
     <>
       <LevelOneHeading header>
-        {t('groups.headers.discoverGroups')}
+        {t('groups.headers.exploreGroups')}
       </LevelOneHeading>
 
       <GroupForm />

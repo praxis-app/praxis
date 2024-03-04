@@ -15,6 +15,7 @@ import { FeedItemsConnection } from '../common/models/feed-items.connection';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { FollowUserPayload } from './models/follow-user.payload';
 import { UpdateUserInput } from './models/update-user.input';
@@ -27,7 +28,7 @@ export class UsersResolver {
   constructor(private usersService: UsersService) {}
 
   @Query(() => User)
-  me(@CurrentUser() { id }: User) {
+  async me(@CurrentUser() { id }: User) {
     return this.usersService.getUser({ id });
   }
 
@@ -83,6 +84,11 @@ export class UsersResolver {
   @ResolveField(() => Int)
   async profileFeedCount(@Parent() { id }: User) {
     return this.usersService.getUserProfileFeedCount(id);
+  }
+
+  @ResolveField(() => QuestionnaireTicket, { nullable: true })
+  async questionnaireTicket(@Parent() { id }: User) {
+    return this.usersService.getQuestionnaireTicket(id);
   }
 
   @ResolveField(() => Image)
@@ -156,9 +162,17 @@ export class UsersResolver {
     return serverPermissions;
   }
 
+  @ResolveField(() => Boolean)
+  async isVerified(@Parent() { id }: User) {
+    return this.usersService.isVerifiedUser(id);
+  }
+
   @Mutation(() => UpdateUserPayload)
-  async updateUser(@Args('userData') userData: UpdateUserInput) {
-    return this.usersService.updateUser(userData);
+  async updateUser(
+    @Args('userData') userData: UpdateUserInput,
+    @CurrentUser() currentUser: User,
+  ) {
+    return this.usersService.updateUser(currentUser.id, userData);
   }
 
   @Mutation(() => Boolean)

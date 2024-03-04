@@ -1,0 +1,8 @@
+query ServerQuestionnaires($status: String!, $offset: Int!, $limit: Int!) {
+  questionnaireTickets(
+    input: { status: $status, offset: $offset, limit: $limit }
+  ) {
+    ...QuestionnaireTicketCard
+  }
+  questionnaireTicketCount(status: $status)
+}

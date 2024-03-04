@@ -1,0 +1,11 @@
+query QuestionnaireTicketComments($id: Int!, $isLoggedIn: Boolean = true) {
+  questionnaireTicket(id: $id) {
+    id
+    comments {
+      ...Comment
+    }
+  }
+  me {
+    id
+  }
+}

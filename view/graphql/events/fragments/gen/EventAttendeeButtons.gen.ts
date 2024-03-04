@@ -18,7 +18,7 @@ export const EventAttendeeButtonsFragmentDoc = gql`
     attendingStatus
     group {
       id
-      isJoinedByMe @include(if: $isLoggedIn)
+      isJoinedByMe @include(if: $isVerified)
     }
   }
 `;

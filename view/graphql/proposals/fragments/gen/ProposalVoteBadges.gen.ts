@@ -1,16 +1,15 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { VoteFragmentDoc } from './Vote.gen';
-import { VoteBadgeFragmentDoc } from './VoteBadge.gen';
+import { VoteFragmentDoc } from '../../../votes/fragments/gen/Vote.gen';
+import { VoteBadgeFragmentDoc } from '../../../votes/fragments/gen/VoteBadge.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
 
-export type VoteBadgesFragment = {
+export type ProposalVoteBadgesFragment = {
   __typename?: 'Proposal';
   id: number;
-  voteCount: number;
   settings: {
     __typename?: 'ProposalConfig';
     id: number;
@@ -29,10 +28,9 @@ export type VoteBadgesFragment = {
   }>;
 };
 
-export const VoteBadgesFragmentDoc = gql`
-  fragment VoteBadges on Proposal {
+export const ProposalVoteBadgesFragmentDoc = gql`
+  fragment ProposalVoteBadges on Proposal {
     id
-    voteCount
     settings {
       id
       decisionMakingModel

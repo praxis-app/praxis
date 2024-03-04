@@ -1,0 +1,17 @@
+fragment AnsweredQuestionCard on Question {
+  id
+  text
+  priority
+  likeCount
+  commentCount
+  isLikedByMe
+
+  answer {
+    id
+    text
+    user {
+      id
+      name
+    }
+  }
+}

@@ -1,3 +1,5 @@
+// TODO: Move to app router since its only one route
+
 import { RouteObject } from 'react-router-dom';
 import ServerRules from '../pages/Rules/ServerRules';
 

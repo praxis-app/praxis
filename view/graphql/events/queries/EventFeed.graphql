@@ -2,7 +2,7 @@ query EventFeed(
   $eventId: Int!
   $offset: Int
   $limit: Int
-  $isLoggedIn: Boolean!
+  $isVerified: Boolean!
 ) {
   event(id: $eventId) {
     id

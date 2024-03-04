@@ -30,6 +30,7 @@ export class CanariesService {
     return this.getCanary();
   }
 
+  // TODO: Rename as `createCanary`
   async initializeCanary(): Promise<Canary> {
     return this.repository.save({ statement: '' });
   }

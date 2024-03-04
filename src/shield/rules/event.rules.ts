@@ -4,6 +4,12 @@ import { Event } from '../../events/models/event.model';
 import { GroupPrivacy } from '../../groups/groups.constants';
 import { Image } from '../../images/models/image.model';
 import { Post } from '../../posts/models/post.model';
+import { hasServerPermission } from '../shield.utils';
+
+export const canManageEvents = rule({ cache: 'contextual' })(
+  async (_parent, _args, { permissions }: Context) =>
+    hasServerPermission(permissions, 'manageEvents'),
+);
 
 export const isPublicEvent = rule({ cache: 'strict' })(async (
   parent: Event,

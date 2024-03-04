@@ -10,7 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type EventPageQueryVariables = Types.Exact<{
   id: Types.Scalars['Int']['input'];
-  isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type EventPageQuery = {
@@ -52,7 +52,7 @@ export type EventPageQuery = {
 };
 
 export const EventPageDocument = gql`
-  query EventPage($id: Int!, $isLoggedIn: Boolean!) {
+  query EventPage($id: Int!, $isVerified: Boolean!) {
     event(id: $id) {
       ...EventPageCard
       group {
@@ -60,7 +60,7 @@ export const EventPageDocument = gql`
         name
       }
     }
-    me @include(if: $isLoggedIn) {
+    me @include(if: $isVerified) {
       id
       serverPermissions {
         manageEvents
@@ -83,7 +83,7 @@ export const EventPageDocument = gql`
  * const { data, loading, error } = useEventPageQuery({
  *   variables: {
  *      id: // value for 'id'
- *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

@@ -10,7 +10,6 @@ import {
 } from '@mui/material';
 import { FormikErrors } from 'formik';
 import { ReactNode } from 'react';
-import { GroupSettingsFieldName } from '../../constants/group.constants';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { DarkMode } from '../../styles/theme';
 import Flex from '../Shared/Flex';
@@ -25,7 +24,7 @@ interface Props {
   dividerStyles?: SxProps;
   errorMessageProps?: TypographyProps;
   errors?: FormikErrors<any>;
-  fieldName: GroupSettingsFieldName;
+  fieldName: string;
   label: string;
   onChange: (event: SelectChangeEvent<any>, child: ReactNode) => void;
   onClick?: () => void;
@@ -33,7 +32,7 @@ interface Props {
   warningMessage?: string;
 }
 
-const GroupSettingsSelect = ({
+const SettingsSelect = ({
   children,
   description,
   disabled,
@@ -140,4 +139,4 @@ const GroupSettingsSelect = ({
   );
 };
 
-export default GroupSettingsSelect;
+export default SettingsSelect;

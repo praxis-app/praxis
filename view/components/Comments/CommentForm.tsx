@@ -8,7 +8,7 @@ import {
   Input,
   SxProps,
 } from '@mui/material';
-import { Form, Formik, FormikFormProps, FormikHelpers } from 'formik';
+import { Formik, FormikFormProps, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -31,21 +31,25 @@ import Flex from '../Shared/Flex';
 import UserAvatar from '../Users/UserAvatar';
 
 interface Props extends FormikFormProps {
+  questionId?: number;
   editComment?: CommentFormFragment;
   enableAutoFocus?: boolean;
   expanded?: boolean;
   onSubmit?: () => void;
   postId?: number;
   proposalId?: number;
+  questionnaireTicketId?: number;
 }
 
 const CommentForm = ({
+  questionId,
   editComment,
   enableAutoFocus,
   expanded,
   onSubmit,
   postId,
   proposalId,
+  questionnaireTicketId,
   ...formProps
 }: Props) => {
   const [images, setImages] = useState<File[]>([]);
@@ -81,6 +85,19 @@ const CommentForm = ({
     transform: 'translateY(5px)',
   };
 
+  const getTypeName = () => {
+    if (proposalId) {
+      return TypeNames.Proposal;
+    }
+    if (questionnaireTicketId) {
+      return TypeNames.QuestionnaireTicket;
+    }
+    if (questionId) {
+      return TypeNames.Question;
+    }
+    return TypeNames.Post;
+  };
+
   const handleCreate = async (
     formValues: CreateCommentInput,
     { resetForm, setSubmitting }: FormikHelpers<CreateCommentInput>,
@@ -92,9 +109,11 @@ const CommentForm = ({
       variables: {
         commentData: {
           ...formValues,
-          proposalId,
-          postId,
           images,
+          postId,
+          proposalId,
+          questionnaireTicketId,
+          questionId,
         },
       },
       update(cache, { data }) {
@@ -106,14 +125,17 @@ const CommentForm = ({
         } = data;
 
         const cacheId = cache.identify({
-          __typename: postId ? TypeNames.Post : TypeNames.Proposal,
-          id: postId || proposalId,
+          __typename: getTypeName(),
+          id: postId || proposalId || questionnaireTicketId || questionId,
         });
         cache.modify({
           id: cacheId,
           fields: {
             comments(existingRefs, { toReference }) {
               return [...existingRefs, toReference(comment)];
+            },
+            commentCount(existingCount: number) {
+              return existingCount + 1;
             },
           },
         });
@@ -249,7 +271,7 @@ const CommentForm = ({
       {...formProps}
     >
       {({ handleChange, values, submitForm, isSubmitting }) => (
-        <Form>
+        <Box>
           <FormGroup row>
             <UserAvatar size={35} sx={{ marginRight: 1 }} />
 
@@ -285,7 +307,7 @@ const CommentForm = ({
                 <IconButton
                   disabled={isSubmitting || (!values.body && !images?.length)}
                   sx={sendButtonStyles}
-                  type="submit"
+                  onClick={submitForm}
                   edge="end"
                   disableRipple
                 >
@@ -306,7 +328,7 @@ const CommentForm = ({
             selectedImages={images}
             sx={{ marginLeft: 5.5 }}
           />
-        </Form>
+        </Box>
       )}
     </Formik>
   );

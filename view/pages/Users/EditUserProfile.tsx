@@ -1,14 +1,17 @@
+import { useReactiveVar } from '@apollo/client';
 import { Card, CardContent, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { useEditUserQuery } from '../../graphql/users/queries/gen/EditUser.gen';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import EditProfileForm from '../../components/Users/EditProfileForm';
+import { isVerifiedVar } from '../../graphql/cache';
+import { useEditUserQuery } from '../../graphql/users/queries/gen/EditUser.gen';
 
 const EditUserProfile = () => {
   const { name } = useParams();
+  const isVerified = useReactiveVar(isVerifiedVar);
   const { data, loading, error } = useEditUserQuery({
-    variables: { name },
+    variables: { name, isVerified },
     skip: !name,
   });
 

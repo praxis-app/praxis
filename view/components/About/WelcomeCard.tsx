@@ -8,17 +8,26 @@ import {
   Typography,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { inviteTokenVar, isLoggedInVar } from '../../graphql/cache';
-import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
+import { useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
-import Link from '../Shared/Link';
+import {
+  inviteTokenVar,
+  isLoggedInVar,
+  isVerifiedVar,
+} from '../../graphql/cache';
+import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 
 const WelcomeCard = () => {
   const inviteToken = useReactiveVar(inviteTokenVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-  const { data } = useIsFirstUserQuery({ skip: isLoggedIn });
+  const isVerified = useReactiveVar(isVerifiedVar);
+
+  const { data } = useIsFirstUserQuery({
+    skip: isLoggedIn,
+  });
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const signUpPath = data?.isFirstUser
     ? NavigationPaths.SignUp
@@ -39,15 +48,29 @@ const WelcomeCard = () => {
         <Typography>{t('about.welcomeCard.inDev')}</Typography>
       </CardContent>
 
-      {inviteToken && (
-        <CardActions>
-          <Link href={signUpPath}>
-            <Button sx={{ color: 'text.primary' }}>
-              {t('users.actions.signUp')}
-            </Button>
-          </Link>
-        </CardActions>
-      )}
+      <CardActions>
+        {inviteToken && (
+          <Button onClick={() => navigate(signUpPath)}>
+            {t('users.actions.signUp')}
+          </Button>
+        )}
+
+        {isLoggedIn && !isVerified && (
+          <Button onClick={() => navigate(NavigationPaths.VibeCheck)}>
+            {t('users.actions.getVerified')}
+          </Button>
+        )}
+
+        {!isLoggedIn && !inviteToken && (
+          <Button onClick={() => navigate(NavigationPaths.Groups)}>
+            {t('groups.headers.exploreGroups')}
+          </Button>
+        )}
+
+        <Button onClick={() => navigate(NavigationPaths.Docs)}>
+          {t('about.actions.learnMore')}
+        </Button>
+      </CardActions>
     </Card>
   );
 };

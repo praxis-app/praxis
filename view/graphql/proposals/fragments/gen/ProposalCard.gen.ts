@@ -6,7 +6,7 @@ import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.g
 import { AttachedImageFragmentDoc } from '../../../images/fragments/gen/AttachedImage.gen';
 import { GroupAvatarFragmentDoc } from '../../../groups/fragments/gen/GroupAvatar.gen';
 import { VoteMenuFragmentDoc } from '../../../votes/fragments/gen/VoteMenu.gen';
-import { VoteBadgesFragmentDoc } from '../../../votes/fragments/gen/VoteBadges.gen';
+import { ProposalVoteBadgesFragmentDoc } from './ProposalVoteBadges.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
@@ -147,6 +147,7 @@ export type ProposalCardFragment = {
     standAsidesLimit: number;
     closingAt?: any | null;
   };
+  myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
   user: {
     __typename?: 'User';
     id: number;
@@ -197,13 +198,16 @@ export const ProposalCardFragmentDoc = gql`
       standAsidesLimit
       closingAt
     }
+    myVote @include(if: $isVerified) {
+      id
+    }
     user {
       ...UserAvatar
     }
     group {
       id
-      isJoinedByMe @include(if: $isLoggedIn)
-      myPermissions @include(if: $isLoggedIn) {
+      isJoinedByMe @include(if: $isVerified)
+      myPermissions @include(if: $isVerified) {
         manageComments
       }
       ...GroupAvatar
@@ -211,18 +215,13 @@ export const ProposalCardFragmentDoc = gql`
     images {
       ...AttachedImage
     }
-    votes {
-      user {
-        id
-      }
-    }
     ...VoteMenu
-    ...VoteBadges
+    ...ProposalVoteBadges
   }
   ${ProposalActionFragmentDoc}
   ${UserAvatarFragmentDoc}
   ${GroupAvatarFragmentDoc}
   ${AttachedImageFragmentDoc}
   ${VoteMenuFragmentDoc}
-  ${VoteBadgesFragmentDoc}
+  ${ProposalVoteBadgesFragmentDoc}
 `;

@@ -1,0 +1,6 @@
+query IsVerifiedUser {
+  me {
+    id
+    isVerified
+  }
+}

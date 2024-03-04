@@ -11,6 +11,7 @@ const defaultOptions = {} as const;
 export type LikeCommentMutationVariables = Types.Exact<{
   likeData: Types.CreateLikeInput;
   isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type LikeCommentMutation = {
@@ -38,7 +39,11 @@ export type LikeCommentMutation = {
 };
 
 export const LikeCommentDocument = gql`
-  mutation LikeComment($likeData: CreateLikeInput!, $isLoggedIn: Boolean!) {
+  mutation LikeComment(
+    $likeData: CreateLikeInput!
+    $isLoggedIn: Boolean!
+    $isVerified: Boolean!
+  ) {
     createLike(likeData: $likeData) {
       comment {
         id
@@ -73,6 +78,7 @@ export type LikeCommentMutationFn = Apollo.MutationFunction<
  *   variables: {
  *      likeData: // value for 'likeData'
  *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

@@ -19,6 +19,7 @@ export type UsersQuery = {
   users: Array<{
     __typename?: 'User';
     id: number;
+    isVerified: boolean;
     name: string;
     isFollowedByMe: boolean;
     profilePicture: { __typename?: 'Image'; id: number };

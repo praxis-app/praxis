@@ -2,12 +2,12 @@ fragment UserProfileCard on User {
   id
   bio
   createdAt
-  followerCount
-  followingCount
+  followerCount @include(if: $isVerified)
+  followingCount @include(if: $isVerified)
   coverPhoto {
     id
   }
 
   ...UserAvatar
-  ...FollowButton
+  ...FollowButton @include(if: $isVerified)
 }

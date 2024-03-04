@@ -7,4 +7,7 @@ export class CreateLikeInput {
 
   @Field(() => Int, { nullable: true })
   commentId?: number;
+
+  @Field(() => Int, { nullable: true })
+  questionId?: number;
 }

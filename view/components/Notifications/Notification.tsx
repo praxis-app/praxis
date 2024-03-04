@@ -6,9 +6,11 @@ import {
   HowToVote,
   PanTool,
   Person,
+  QuestionAnswer,
   ThumbDown,
   ThumbUp,
   ThumbsUpDown,
+  Verified,
 } from '@mui/icons-material';
 import { Box, MenuItem, SxProps, Typography, useTheme } from '@mui/material';
 import { produce } from 'immer';
@@ -46,13 +48,15 @@ interface Props {
 const Notification = ({
   notification: {
     id,
+    comment,
+    group,
     notificationType,
     otherUser,
-    status,
     post,
-    group,
-    comment,
     proposal,
+    question,
+    questionnaireTicket,
+    status,
     createdAt,
     __typename,
   },
@@ -76,6 +80,13 @@ const Notification = ({
     NotificationType.ProposalVoteReservations,
     NotificationType.ProposalVoteStandAside,
     NotificationType.ProposalVoteBlock,
+  ].includes(notificationType as NotificationType);
+
+  const isQuestionnaireTicketVote = [
+    NotificationType.QuestionnaireTicketVoteAgreement,
+    NotificationType.QuestionnaireTicketVoteReservations,
+    NotificationType.QuestionnaireTicketVoteStandAside,
+    NotificationType.QuestionnaireTicketVoteBlock,
   ].includes(notificationType as NotificationType);
 
   const iconContainerStyles: SxProps = {
@@ -130,6 +141,48 @@ const Notification = ({
         name: otherUser?.name,
       });
     }
+    if (isQuestionnaireTicketVote) {
+      return _t('notifications.messages.questionnaireTicketVote', {
+        name: otherUser?.name,
+        ticketNumber: questionnaireTicket?.id,
+      });
+    }
+    if (notificationType === NotificationType.QuestionnaireTicketComment) {
+      if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
+        return _t('notifications.messages.ownQuestionnaireTicketComment', {
+          name: otherUser?.name,
+        });
+      }
+      return _t('notifications.messages.questionnaireTicketComment', {
+        name: otherUser?.name,
+      });
+    }
+    if (notificationType === NotificationType.QuestionnaireTicketSubmitted) {
+      return _t('notifications.messages.questionnaireTicketSubmitted', {
+        name: otherUser?.name,
+      });
+    }
+    if (notificationType === NotificationType.AnswerComment) {
+      if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
+        return _t('notifications.messages.ownAnswerComment', {
+          name: otherUser?.name,
+        });
+      }
+      return _t('notifications.messages.answerComment', {
+        name: otherUser?.name,
+      });
+    }
+    if (notificationType === NotificationType.AnswerLike) {
+      if (!question?.answer?.text) {
+        return _t('notifications.messages.missingAnswerLike', {
+          name: otherUser?.name,
+        });
+      }
+      return _t('notifications.messages.answerLike', {
+        name: otherUser?.name,
+        text: `"${truncate(question?.answer?.text, { length: 30 })}"`,
+      });
+    }
     if (notificationType === NotificationType.CommentLike) {
       if (comment?.body) {
         return _t('notifications.messages.commentLikeWithText', {
@@ -152,6 +205,14 @@ const Notification = ({
         groupName: group?.name,
       });
     }
+    if (notificationType === NotificationType.NewQuestionnaireTicket) {
+      return _t('notifications.messages.newQuestionnaireTicket', {
+        name: otherUser?.name,
+      });
+    }
+    if (notificationType === NotificationType.VerifyUser) {
+      return _t('notifications.messages.verifyUser');
+    }
     return _t('notifications.errors.invalidType');
   };
 
@@ -170,8 +231,24 @@ const Notification = ({
       return `${NavigationPaths.Posts}/${post?.id}`;
     }
     if (notificationType === NotificationType.CommentLike) {
+      if (comment?.question) {
+        const queryParams = `${notificationType}=true&questionId=${comment.question.id}`;
+        if (comment.question.questionnaireTicket.user.id === otherUser?.id) {
+          const { id } = comment.question.questionnaireTicket;
+          return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParams}`;
+        }
+        return `${NavigationPaths.VibeCheck}?${queryParams}`;
+      }
+      if (comment?.questionnaireTicket) {
+        if (comment.questionnaireTicket.user.id === otherUser?.id) {
+          const { id } = comment.questionnaireTicket;
+          const queryParam = `${notificationType}=true`;
+          return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParam}`;
+        }
+        return NavigationPaths.VibeCheck;
+      }
       if (comment?.post?.id) {
-        return `${NavigationPaths.Posts}/${comment?.post?.id}`;
+        return `${NavigationPaths.Posts}/${comment.post.id}`;
       }
       return `${NavigationPaths.Proposals}/${comment?.proposal?.id}`;
     }
@@ -183,6 +260,35 @@ const Notification = ({
     }
     if (notificationType === NotificationType.GroupMemberRequestApproval) {
       return `${NavigationPaths.Groups}/${group?.name}`;
+    }
+    if (notificationType === NotificationType.QuestionnaireTicketComment) {
+      if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
+        const ticketId = comment?.questionnaireTicket?.id;
+        const queryParam = `${notificationType}=true`;
+        return `${NavigationPaths.ServerQuestionnaires}/${ticketId}?${queryParam}`;
+      }
+      return NavigationPaths.VibeCheck;
+    }
+    if (
+      notificationType === NotificationType.QuestionnaireTicketSubmitted ||
+      notificationType === NotificationType.NewQuestionnaireTicket ||
+      isQuestionnaireTicketVote
+    ) {
+      return `${NavigationPaths.ServerQuestionnaires}/${questionnaireTicket?.id}`;
+    }
+    if (notificationType === NotificationType.AnswerComment) {
+      const queryParams = `${notificationType}=true&questionId=${comment?.question?.id}`;
+      if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
+        const ticketId = comment?.question?.questionnaireTicket.id;
+        return `${NavigationPaths.ServerQuestionnaires}/${ticketId}?${queryParams}`;
+      }
+      return `${NavigationPaths.VibeCheck}?${queryParams}`;
+    }
+    if (notificationType === NotificationType.AnswerLike) {
+      return NavigationPaths.VibeCheck;
+    }
+    if (notificationType === NotificationType.VerifyUser) {
+      return NavigationPaths.VibeCheck;
     }
     return NavigationPaths.Home;
   };
@@ -223,18 +329,29 @@ const Notification = ({
   };
 
   const renderIcon = () => {
-    if (notificationType === NotificationType.ProposalVoteReservations) {
-      return <ThumbsUpDown sx={iconStyles} />;
+    if (
+      notificationType === NotificationType.ProposalVoteReservations ||
+      notificationType === NotificationType.QuestionnaireTicketVoteReservations
+    ) {
+      return <ThumbsUpDown sx={{ ...iconStyles, marginTop: 0.55 }} />;
     }
-    if (notificationType === NotificationType.ProposalVoteStandAside) {
+    if (
+      notificationType === NotificationType.ProposalVoteStandAside ||
+      notificationType === NotificationType.QuestionnaireTicketVoteStandAside
+    ) {
       return <ThumbDown sx={iconStyles} />;
     }
-    if (notificationType === NotificationType.ProposalVoteBlock) {
+    if (
+      notificationType === NotificationType.ProposalVoteBlock ||
+      notificationType === NotificationType.QuestionnaireTicketVoteBlock
+    ) {
       return <PanTool sx={iconStyles} />;
     }
     if (
+      notificationType === NotificationType.QuestionnaireTicketVoteAgreement ||
       notificationType === NotificationType.ProposalVoteAgreement ||
       notificationType === NotificationType.CommentLike ||
+      notificationType === NotificationType.AnswerLike ||
       notificationType === NotificationType.PostLike
     ) {
       return <ThumbUp sx={iconStyles} />;
@@ -255,6 +372,15 @@ const Notification = ({
       notificationType === NotificationType.GroupMemberRequestApproval
     ) {
       return <Group sx={iconStyles} />;
+    }
+    if (
+      notificationType === NotificationType.QuestionnaireTicketSubmitted ||
+      notificationType === NotificationType.NewQuestionnaireTicket
+    ) {
+      return <QuestionAnswer sx={{ ...iconStyles, marginTop: 0.65 }} />;
+    }
+    if (notificationType === NotificationType.VerifyUser) {
+      return <Verified sx={{ ...iconStyles, fontSize: 12, marginTop: 0.45 }} />;
     }
     return <AutoAwesome sx={iconStyles} />;
   };

@@ -11,6 +11,7 @@ const defaultOptions = {} as const;
 export type SyncProposalMutationVariables = Types.Exact<{
   proposalId: Types.Scalars['Int']['input'];
   isLoggedIn: Types.Scalars['Boolean']['input'];
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type SyncProposalMutation = {
@@ -153,6 +154,7 @@ export type SyncProposalMutation = {
         standAsidesLimit: number;
         closingAt?: any | null;
       };
+      myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
       user: {
         __typename?: 'User';
         id: number;
@@ -187,7 +189,11 @@ export type SyncProposalMutation = {
 };
 
 export const SyncProposalDocument = gql`
-  mutation SyncProposal($proposalId: Int!, $isLoggedIn: Boolean!) {
+  mutation SyncProposal(
+    $proposalId: Int!
+    $isLoggedIn: Boolean!
+    $isVerified: Boolean!
+  ) {
     synchronizeProposal(id: $proposalId) {
       proposal {
         id
@@ -217,6 +223,7 @@ export type SyncProposalMutationFn = Apollo.MutationFunction<
  *   variables: {
  *      proposalId: // value for 'proposalId'
  *      isLoggedIn: // value for 'isLoggedIn'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */

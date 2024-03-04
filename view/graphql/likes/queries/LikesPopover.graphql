@@ -1,5 +1,5 @@
-query LikesPopover($postId: Int, $commentId: Int) {
-  likes(postId: $postId, commentId: $commentId) {
+query LikesPopover($likesData: LikesInput!) {
+  likes(likesData: $likesData) {
     id
     user {
       id

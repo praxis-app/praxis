@@ -32,6 +32,30 @@ export type Scalars = {
   Upload: { input: any; output: any };
 };
 
+export type Answer = {
+  __typename?: 'Answer';
+  id: Scalars['Int']['output'];
+  question: Question;
+  text: Scalars['String']['output'];
+  user: User;
+};
+
+export type AnswerInput = {
+  questionId: Scalars['Int']['input'];
+  text: Scalars['String']['input'];
+};
+
+export type AnswerQuestionsInput = {
+  answers: Array<AnswerInput>;
+  isSubmitting: Scalars['Boolean']['input'];
+  questionnaireTicketId: Scalars['Int']['input'];
+};
+
+export type AnswerQuestionsPayload = {
+  __typename?: 'AnswerQuestionsPayload';
+  questionnaireTicket: QuestionnaireTicket;
+};
+
 export type ApproveGroupMemberRequestPayload = {
   __typename?: 'ApproveGroupMemberRequestPayload';
   groupMember: User;
@@ -60,6 +84,8 @@ export type Comment = {
   likes: Array<Like>;
   post?: Maybe<Post>;
   proposal?: Maybe<Proposal>;
+  question?: Maybe<Question>;
+  questionnaireTicket?: Maybe<QuestionnaireTicket>;
   user: User;
 };
 
@@ -68,6 +94,8 @@ export type CreateCommentInput = {
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
   postId?: InputMaybe<Scalars['Int']['input']>;
   proposalId?: InputMaybe<Scalars['Int']['input']>;
+  questionId?: InputMaybe<Scalars['Int']['input']>;
+  questionnaireTicketId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreateCommentPayload = {
@@ -133,6 +161,7 @@ export type CreateGroupRolePayload = {
 export type CreateLikeInput = {
   commentId?: InputMaybe<Scalars['Int']['input']>;
   postId?: InputMaybe<Scalars['Int']['input']>;
+  questionId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreateLikePayload = {
@@ -140,6 +169,7 @@ export type CreateLikePayload = {
   comment?: Maybe<Comment>;
   like: Like;
   post?: Maybe<Post>;
+  question?: Maybe<Question>;
 };
 
 export type CreatePostInput = {
@@ -165,6 +195,15 @@ export type CreateProposalInput = {
 export type CreateProposalPayload = {
   __typename?: 'CreateProposalPayload';
   proposal: Proposal;
+};
+
+export type CreateQuestionInput = {
+  text: Scalars['String']['input'];
+};
+
+export type CreateQuestionPayload = {
+  __typename?: 'CreateQuestionPayload';
+  question: ServerQuestion;
 };
 
 export type CreateRuleInput = {
@@ -199,7 +238,8 @@ export type CreateServerRolePayload = {
 };
 
 export type CreateVoteInput = {
-  proposalId: Scalars['Int']['input'];
+  proposalId?: InputMaybe<Scalars['Int']['input']>;
+  questionnaireTicketId?: InputMaybe<Scalars['Int']['input']>;
   voteType: Scalars['String']['input'];
 };
 
@@ -221,6 +261,7 @@ export type DeleteGroupRoleMemberPayload = {
 export type DeleteLikeInput = {
   commentId?: InputMaybe<Scalars['Int']['input']>;
   postId?: InputMaybe<Scalars['Int']['input']>;
+  questionId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type DeleteServerRoleMemberInput = {
@@ -427,6 +468,12 @@ export type Like = {
   user: User;
 };
 
+export type LikesInput = {
+  commentId?: InputMaybe<Scalars['Int']['input']>;
+  postId?: InputMaybe<Scalars['Int']['input']>;
+  questionId?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type LoginInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -434,6 +481,7 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  answerQuestions: AnswerQuestionsPayload;
   approveGroupMemberRequest: ApproveGroupMemberRequestPayload;
   cancelGroupMemberRequest: Scalars['Boolean']['output'];
   clearNotifications: Scalars['Boolean']['output'];
@@ -446,6 +494,7 @@ export type Mutation = {
   createLike: CreateLikePayload;
   createPost: CreatePostPayload;
   createProposal: CreateProposalPayload;
+  createQuestion: CreateQuestionPayload;
   createRule: CreateRulePayload;
   createServerInvite: CreateServerInvitePayload;
   createServerRole: CreateServerRolePayload;
@@ -461,6 +510,8 @@ export type Mutation = {
   deleteNotification: Scalars['Boolean']['output'];
   deletePost: Scalars['Boolean']['output'];
   deleteProposal: Scalars['Boolean']['output'];
+  deleteQuestion: Scalars['Boolean']['output'];
+  deleteQuestionnnaireTicket: Scalars['Boolean']['output'];
   deleteRule: Scalars['Boolean']['output'];
   deleteServerInvite: Scalars['Boolean']['output'];
   deleteServerRole: Scalars['Boolean']['output'];
@@ -485,12 +536,18 @@ export type Mutation = {
   updateNotification: UpdateNotificationPayload;
   updatePost: UpdatePostPayload;
   updateProposal: UpdateProposalPayload;
+  updateQuestion: UpdateQuestionPayload;
+  updateQuestionsPriority: Scalars['Boolean']['output'];
   updateRule: UpdateRulePayload;
   updateRulesPriority: Scalars['Boolean']['output'];
   updateServerConfig: UpdateServerConfigPayload;
   updateServerRole: UpdateServerRolePayload;
   updateUser: UpdateUserPayload;
   updateVote: UpdateVotePayload;
+};
+
+export type MutationAnswerQuestionsArgs = {
+  answersData: AnswerQuestionsInput;
 };
 
 export type MutationApproveGroupMemberRequestArgs = {
@@ -535,6 +592,10 @@ export type MutationCreatePostArgs = {
 
 export type MutationCreateProposalArgs = {
   proposalData: CreateProposalInput;
+};
+
+export type MutationCreateQuestionArgs = {
+  questionData: CreateQuestionInput;
 };
 
 export type MutationCreateRuleArgs = {
@@ -594,6 +655,14 @@ export type MutationDeletePostArgs = {
 };
 
 export type MutationDeleteProposalArgs = {
+  id: Scalars['Int']['input'];
+};
+
+export type MutationDeleteQuestionArgs = {
+  id: Scalars['Int']['input'];
+};
+
+export type MutationDeleteQuestionnnaireTicketArgs = {
   id: Scalars['Int']['input'];
 };
 
@@ -690,6 +759,14 @@ export type MutationUpdateProposalArgs = {
   proposalData: UpdateProposalInput;
 };
 
+export type MutationUpdateQuestionArgs = {
+  questionData: UpdateQuestionInput;
+};
+
+export type MutationUpdateQuestionsPriorityArgs = {
+  questionsData: UpdateQuestionsPriorityInput;
+};
+
 export type MutationUpdateRuleArgs = {
   ruleData: UpdateRuleInput;
 };
@@ -724,6 +801,8 @@ export type Notification = {
   otherUser?: Maybe<User>;
   post?: Maybe<Post>;
   proposal?: Maybe<Proposal>;
+  question?: Maybe<Question>;
+  questionnaireTicket?: Maybe<QuestionnaireTicket>;
   status: Scalars['String']['output'];
 };
 
@@ -754,6 +833,7 @@ export type Proposal = {
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   images: Array<Image>;
+  myVote?: Maybe<Vote>;
   settings: ProposalConfig;
   stage: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -949,9 +1029,14 @@ export type Query = {
   publicGroups: Array<Group>;
   publicGroupsCount: Scalars['Int']['output'];
   publicGroupsFeed: PublicFeedItemsConnection;
+  question: Question;
+  questionnaireTicket: QuestionnaireTicket;
+  questionnaireTicketCount: Scalars['Int']['output'];
+  questionnaireTickets: Array<QuestionnaireTicket>;
   serverConfig: ServerConfig;
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;
+  serverQuestions: Array<ServerQuestion>;
   serverRole: ServerRole;
   serverRoles: Array<ServerRole>;
   serverRules: Array<Rule>;
@@ -989,8 +1074,7 @@ export type QueryGroupsArgs = {
 };
 
 export type QueryLikesArgs = {
-  commentId?: InputMaybe<Scalars['Int']['input']>;
-  postId?: InputMaybe<Scalars['Int']['input']>;
+  likesData: LikesInput;
 };
 
 export type QueryNotificationsArgs = {
@@ -1016,6 +1100,22 @@ export type QueryPublicGroupsFeedArgs = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type QueryQuestionArgs = {
+  id: Scalars['Int']['input'];
+};
+
+export type QueryQuestionnaireTicketArgs = {
+  id: Scalars['Int']['input'];
+};
+
+export type QueryQuestionnaireTicketCountArgs = {
+  status: Scalars['String']['input'];
+};
+
+export type QueryQuestionnaireTicketsArgs = {
+  input: QuestionnaireTicketsInput;
+};
+
 export type QueryServerInviteArgs = {
   token: Scalars['String']['input'];
 };
@@ -1038,6 +1138,57 @@ export type QueryUsersByIdsArgs = {
   ids: Array<Scalars['Int']['input']>;
 };
 
+export type Question = {
+  __typename?: 'Question';
+  answer?: Maybe<Answer>;
+  commentCount: Scalars['Int']['output'];
+  comments: Array<Comment>;
+  id: Scalars['Int']['output'];
+  isLikedByMe: Scalars['Boolean']['output'];
+  likeCount: Scalars['Int']['output'];
+  likes: Array<Like>;
+  priority: Scalars['Int']['output'];
+  questionnaireTicket: QuestionnaireTicket;
+  text: Scalars['String']['output'];
+};
+
+export type QuestionnaireTicket = {
+  __typename?: 'QuestionnaireTicket';
+  agreementVoteCount: Scalars['Int']['output'];
+  answerCount: Scalars['Int']['output'];
+  commentCount: Scalars['Int']['output'];
+  comments: Array<Comment>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['Int']['output'];
+  initialMemberCount: Scalars['Int']['output'];
+  myVote?: Maybe<Vote>;
+  prompt?: Maybe<Scalars['String']['output']>;
+  questionCount: Scalars['Int']['output'];
+  questions: Array<Question>;
+  settings: QuestionnaireTicketConfig;
+  status: Scalars['String']['output'];
+  user: User;
+  voteCount: Scalars['Int']['output'];
+  votes: Array<Vote>;
+  votesNeededToVerify: Scalars['Int']['output'];
+};
+
+export type QuestionnaireTicketConfig = {
+  __typename?: 'QuestionnaireTicketConfig';
+  closingAt?: Maybe<Scalars['DateTime']['output']>;
+  decisionMakingModel: Scalars['String']['output'];
+  id: Scalars['Int']['output'];
+  ratificationThreshold: Scalars['Int']['output'];
+  reservationsLimit: Scalars['Int']['output'];
+  standAsidesLimit: Scalars['Int']['output'];
+};
+
+export type QuestionnaireTicketsInput = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  status: Scalars['String']['input'];
+};
+
 export type ReadNotificationsPayload = {
   __typename?: 'ReadNotificationsPayload';
   notifications: Array<Notification>;
@@ -1054,9 +1205,15 @@ export type Rule = {
 
 export type ServerConfig = {
   __typename?: 'ServerConfig';
+  decisionMakingModel: Scalars['String']['output'];
   id: Scalars['Int']['output'];
+  ratificationThreshold: Scalars['Int']['output'];
+  reservationsLimit: Scalars['Int']['output'];
   securityTxt?: Maybe<Scalars['String']['output']>;
+  serverQuestionsPrompt?: Maybe<Scalars['String']['output']>;
   showCanaryStatement: Scalars['Boolean']['output'];
+  standAsidesLimit: Scalars['Int']['output'];
+  votingTimeLimit: Scalars['Int']['output'];
 };
 
 export type ServerInvite = {
@@ -1078,12 +1235,21 @@ export type ServerPermissions = {
   manageEvents: Scalars['Boolean']['output'];
   manageInvites: Scalars['Boolean']['output'];
   managePosts: Scalars['Boolean']['output'];
+  manageQuestionnaireTickets: Scalars['Boolean']['output'];
+  manageQuestions: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
   manageRules: Scalars['Boolean']['output'];
   manageSettings: Scalars['Boolean']['output'];
   removeGroups: Scalars['Boolean']['output'];
   removeMembers: Scalars['Boolean']['output'];
   removeProposals: Scalars['Boolean']['output'];
+};
+
+export type ServerQuestion = {
+  __typename?: 'ServerQuestion';
+  id: Scalars['Int']['output'];
+  priority: Scalars['Int']['output'];
+  text: Scalars['String']['output'];
 };
 
 export type ServerRole = {
@@ -1105,6 +1271,8 @@ export type ServerRolePermission = {
   manageEvents: Scalars['Boolean']['output'];
   manageInvites: Scalars['Boolean']['output'];
   managePosts: Scalars['Boolean']['output'];
+  manageQuestionnaireTickets: Scalars['Boolean']['output'];
+  manageQuestions: Scalars['Boolean']['output'];
   manageRoles: Scalars['Boolean']['output'];
   manageRules: Scalars['Boolean']['output'];
   manageSettings: Scalars['Boolean']['output'];
@@ -1120,6 +1288,8 @@ export type ServerRolePermissionInput = {
   manageEvents?: InputMaybe<Scalars['Boolean']['input']>;
   manageInvites?: InputMaybe<Scalars['Boolean']['input']>;
   managePosts?: InputMaybe<Scalars['Boolean']['input']>;
+  manageQuestionnaireTickets?: InputMaybe<Scalars['Boolean']['input']>;
+  manageQuestions?: InputMaybe<Scalars['Boolean']['input']>;
   manageRoles?: InputMaybe<Scalars['Boolean']['input']>;
   manageRules?: InputMaybe<Scalars['Boolean']['input']>;
   manageSettings?: InputMaybe<Scalars['Boolean']['input']>;
@@ -1260,6 +1430,25 @@ export type UpdateProposalPayload = {
   proposal: Proposal;
 };
 
+export type UpdateQuestionInput = {
+  id: Scalars['Int']['input'];
+  text: Scalars['String']['input'];
+};
+
+export type UpdateQuestionPayload = {
+  __typename?: 'UpdateQuestionPayload';
+  question: ServerQuestion;
+};
+
+export type UpdateQuestionPriorityInput = {
+  id: Scalars['Int']['input'];
+  priority: Scalars['Int']['input'];
+};
+
+export type UpdateQuestionsPriorityInput = {
+  questions: Array<UpdateQuestionPriorityInput>;
+};
+
 export type UpdateRuleInput = {
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
@@ -1283,9 +1472,15 @@ export type UpdateRulesPriorityInput = {
 
 export type UpdateServerConfigInput = {
   canaryStatement?: InputMaybe<Scalars['String']['input']>;
+  decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Int']['input'];
+  ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
+  reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
   securityTxt?: InputMaybe<Scalars['String']['input']>;
+  serverQuestionsPrompt?: InputMaybe<Scalars['String']['input']>;
   showCanaryStatement?: InputMaybe<Scalars['Boolean']['input']>;
+  standAsidesLimit?: InputMaybe<Scalars['Int']['input']>;
+  votingTimeLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateServerConfigPayload = {
@@ -1311,7 +1506,6 @@ export type UpdateServerRolePayload = {
 export type UpdateUserInput = {
   bio: Scalars['String']['input'];
   coverPhoto?: InputMaybe<Scalars['Upload']['input']>;
-  id: Scalars['Int']['input'];
   name: Scalars['String']['input'];
   profilePicture?: InputMaybe<Scalars['Upload']['input']>;
 };
@@ -1345,6 +1539,7 @@ export type User = {
   homeFeed: FeedItemsConnection;
   id: Scalars['Int']['output'];
   isFollowedByMe: Scalars['Boolean']['output'];
+  isVerified: Scalars['Boolean']['output'];
   joinedGroups: Array<Group>;
   likes: Array<Like>;
   name: Scalars['String']['output'];
@@ -1353,6 +1548,7 @@ export type User = {
   profileFeedCount: Scalars['Int']['output'];
   profilePicture: Image;
   proposals: Array<Proposal>;
+  questionnaireTicket?: Maybe<QuestionnaireTicket>;
   serverPermissions: ServerPermissions;
   updatedAt: Scalars['DateTime']['output'];
 };
@@ -1379,10 +1575,9 @@ export type UserProfileFeedArgs = {
 
 export type Vote = {
   __typename?: 'Vote';
-  createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
-  proposal: Proposal;
-  updatedAt: Scalars['DateTime']['output'];
+  proposal?: Maybe<Proposal>;
+  questionnaireTicket?: Maybe<QuestionnaireTicket>;
   user: User;
   voteType: Scalars['String']['output'];
 };

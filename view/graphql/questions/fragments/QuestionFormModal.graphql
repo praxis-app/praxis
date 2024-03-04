@@ -1,0 +1,4 @@
+fragment QuestionFormModal on ServerQuestion {
+  id
+  text
+}

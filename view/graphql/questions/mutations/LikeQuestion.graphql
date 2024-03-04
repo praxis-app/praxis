@@ -1,0 +1,13 @@
+mutation LikeQuestion($likeData: CreateLikeInput!, $isVerified: Boolean!) {
+  createLike(likeData: $likeData) {
+    question {
+      id
+      likeCount
+      isLikedByMe
+    }
+    like {
+      id
+      ...Like
+    }
+  }
+}

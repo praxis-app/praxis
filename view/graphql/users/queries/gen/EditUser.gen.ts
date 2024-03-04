@@ -10,6 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type EditUserQueryVariables = Types.Exact<{
   name?: Types.InputMaybe<Types.Scalars['String']['input']>;
+  isVerified: Types.Scalars['Boolean']['input'];
 }>;
 
 export type EditUserQuery = {
@@ -19,8 +20,8 @@ export type EditUserQuery = {
     id: number;
     bio?: string | null;
     createdAt: any;
-    followerCount: number;
-    followingCount: number;
+    followerCount?: number;
+    followingCount?: number;
     name: string;
     isFollowedByMe: boolean;
     coverPhoto?: { __typename?: 'Image'; id: number } | null;
@@ -29,7 +30,7 @@ export type EditUserQuery = {
 };
 
 export const EditUserDocument = gql`
-  query EditUser($name: String) {
+  query EditUser($name: String, $isVerified: Boolean!) {
     user(name: $name) {
       ...UserProfileCard
     }
@@ -50,11 +51,12 @@ export const EditUserDocument = gql`
  * const { data, loading, error } = useEditUserQuery({
  *   variables: {
  *      name: // value for 'name'
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */
 export function useEditUserQuery(
-  baseOptions?: Apollo.QueryHookOptions<EditUserQuery, EditUserQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<EditUserQuery, EditUserQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<EditUserQuery, EditUserQueryVariables>(

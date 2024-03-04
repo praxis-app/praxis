@@ -4,11 +4,14 @@ import {
   Close,
   Article as DocsIcon,
   EventNote,
+  HowToReg,
   Link as InvitesIcon,
+  QuestionAnswer,
   Rule,
   ExitToApp as SessionIcon,
   Settings,
   PersonAdd as SignUpIcon,
+  TaskAlt,
   SupervisedUserCircle as UsersIcon,
 } from '@mui/icons-material';
 import {
@@ -30,11 +33,12 @@ import {
 } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
 import {
-  authFailedVar,
   inviteTokenVar,
+  isAuthErrorVar,
   isAuthLoadingVar,
   isLoggedInVar,
   isNavDrawerOpenVar,
+  isVerifiedVar,
 } from '../../graphql/cache';
 import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
@@ -59,12 +63,13 @@ const ListItemText = styled(MuiListItemText)(({ theme }) => ({
 
 const NavDrawer = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-  const authFailed = useReactiveVar(authFailedVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
+  const isAuthError = useReactiveVar(isAuthErrorVar);
   const inviteToken = useReactiveVar(inviteTokenVar);
   const open = useReactiveVar(isNavDrawerOpenVar);
 
   const { data: meData } = useMeQuery({ skip: !isLoggedIn });
-  const { data: isFirstUserData } = useIsFirstUserQuery({ skip: !authFailed });
+  const { data: isFirstUserData } = useIsFirstUserQuery({ skip: !isAuthError });
   const [logOut, { client }] = useLogOutMutation();
 
   const { t } = useTranslation();
@@ -147,6 +152,8 @@ const NavDrawer = () => {
     const {
       createInvites,
       manageInvites,
+      manageQuestionnaireTickets,
+      manageQuestions,
       manageRoles,
       manageSettings,
       removeMembers,
@@ -160,6 +167,15 @@ const NavDrawer = () => {
           </ListItemIcon>
           <ListItemText primary={me.name} />
         </ListItemButton>
+
+        {isLoggedIn && !isVerified && (
+          <ListItemButton onClick={handleLinkClick(NavigationPaths.VibeCheck)}>
+            <ListItemIcon>
+              <TaskAlt />
+            </ListItemIcon>
+            <ListItemText primary={t('questions.labels.vibeCheck')} />
+          </ListItemButton>
+        )}
 
         <ListItemButton onClick={handleLinkClick(NavigationPaths.Events)}>
           <ListItemIcon>
@@ -195,6 +211,28 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
+        {manageQuestionnaireTickets && (
+          <ListItemButton
+            onClick={handleLinkClick(NavigationPaths.ServerQuestionnaires)}
+          >
+            <ListItemIcon>
+              <QuestionAnswer />
+            </ListItemIcon>
+            <ListItemText primary={t('questions.labels.questionnaires')} />
+          </ListItemButton>
+        )}
+
+        {manageQuestions && (
+          <ListItemButton
+            onClick={handleLinkClick(NavigationPaths.ServerQuestions)}
+          >
+            <ListItemIcon>
+              <HowToReg />
+            </ListItemIcon>
+            <ListItemText primary={t('questions.labels.questions')} />
+          </ListItemButton>
+        )}
+
         {manageSettings && (
           <ListItemButton
             onClick={handleLinkClick(NavigationPaths.ServerSettings)}
@@ -206,6 +244,9 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
+        {renderRulesButton()}
+        {renderDocsButton()}
+
         <ListItemButton
           onClick={() =>
             window.confirm(t('users.prompts.logOut')) && handleLogOutClick()
@@ -216,9 +257,6 @@ const NavDrawer = () => {
           </ListItemIcon>
           <ListItemText primary={t('users.actions.logOut')} />
         </ListItemButton>
-
-        {renderRulesButton()}
-        {renderDocsButton()}
       </>
     );
   };

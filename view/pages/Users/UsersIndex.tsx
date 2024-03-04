@@ -57,7 +57,7 @@ const UsersIndex = () => {
       >
         {data && (
           <Card>
-            <CardContent>
+            <CardContent sx={{ '&:last-child': { paddingBottom: 2 } }}>
               {data.users.map((user) => (
                 <UserEntry
                   key={user.id}

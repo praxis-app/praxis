@@ -1,4 +1,13 @@
-import { AccountBox, ExitToApp, Person, Settings } from '@mui/icons-material';
+import { useReactiveVar } from '@apollo/client';
+import {
+  AccountBox,
+  ExitToApp,
+  HowToReg,
+  Person,
+  QuestionAnswer,
+  Settings,
+  TaskAlt,
+} from '@mui/icons-material';
 import { Menu, MenuItem, SvgIconProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -7,8 +16,12 @@ import {
   NavigationPaths,
 } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
-import { isAuthLoadingVar, isLoggedInVar } from '../../graphql/cache';
-import { TopNavDropdownFragment } from '../../graphql/users/fragments/gen/TopNavDropdown.gen';
+import {
+  isAuthLoadingVar,
+  isLoggedInVar,
+  isVerifiedVar,
+} from '../../graphql/cache';
+import { MeQuery } from '../../graphql/users/queries/gen/Me.gen';
 
 const ICON_PROPS: SvgIconProps = {
   fontSize: 'small',
@@ -20,14 +33,17 @@ const ICON_PROPS: SvgIconProps = {
 interface Props {
   anchorEl: null | HTMLElement;
   handleClose: () => void;
-  user: TopNavDropdownFragment;
+  me: MeQuery['me'];
 }
 
 const TopNavDropdown = ({
   anchorEl,
   handleClose,
-  user: { name, serverPermissions },
+  me: { name, serverPermissions },
 }: Props) => {
+  const isVerified = useReactiveVar(isVerifiedVar);
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+
   const [logOut, { client }] = useLogOutMutation();
 
   const { t } = useTranslation();
@@ -83,6 +99,29 @@ const TopNavDropdown = ({
         <MenuItem onClick={() => navigate(NavigationPaths.ServerSettings)}>
           <Settings {...ICON_PROPS} />
           {t('navigation.serverSettings')}
+        </MenuItem>
+      )}
+
+      {serverPermissions.manageQuestionnaireTickets && (
+        <MenuItem
+          onClick={() => navigate(NavigationPaths.ServerQuestionnaires)}
+        >
+          <QuestionAnswer {...ICON_PROPS} />
+          {t('questions.labels.questionnaires')}
+        </MenuItem>
+      )}
+
+      {serverPermissions.manageQuestions && (
+        <MenuItem onClick={() => navigate(NavigationPaths.ServerQuestions)}>
+          <HowToReg {...ICON_PROPS} />
+          {t('questions.labels.questions')}
+        </MenuItem>
+      )}
+
+      {isLoggedIn && !isVerified && (
+        <MenuItem onClick={() => navigate(NavigationPaths.VibeCheck)}>
+          <TaskAlt {...ICON_PROPS} />
+          {t('questions.labels.vibeCheck')}
         </MenuItem>
       )}
 

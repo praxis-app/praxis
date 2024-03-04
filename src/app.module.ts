@@ -25,6 +25,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { PostsModule } from './posts/posts.module';
 import { ProposalsModule } from './proposals/proposals.module';
 import { PubSubModule } from './pub-sub/pub-sub.module';
+import { VibeCheckModule } from './vibe-check/vibe-check.module';
 import { RulesModule } from './rules/rules.module';
 import { ServerConfigsModule } from './server-configs/server-configs.module';
 import { ServerInvitesModule } from './server-invites/server-invites.module';
@@ -77,6 +78,7 @@ const ViewModule = ServeStaticModule.forRoot({
     PostsModule,
     ProposalsModule,
     PubSubModule,
+    VibeCheckModule,
     RulesModule,
     ServerConfigsModule,
     ServerInvitesModule,

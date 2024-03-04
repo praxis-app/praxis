@@ -6,7 +6,7 @@ import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProposalStage } from '../../constants/proposal.constants';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { useSyncProposalMutation } from '../../graphql/proposals/mutations/gen/SyncProposal.gen';
 import { useProposalCommentsLazyQuery } from '../../graphql/proposals/queries/gen/ProposalComments.gen';
@@ -46,10 +46,12 @@ const ProposalCardFooter = ({
   isProposalPage,
   groupId,
 }: Props) => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal || isProposalPage);
+
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
   const [getProposalComments, { data: proposalCommentsData }] =
     useProposalCommentsLazyQuery();
@@ -60,7 +62,7 @@ const ProposalCardFooter = ({
   const ref = useRef<HTMLDivElement>(null);
   const [, viewed] = useInView(ref, '100px');
   const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
-    skip: !isLoggedIn || !viewed || proposal.stage === ProposalStage.Ratified,
+    skip: !isVerified || !viewed || proposal.stage === ProposalStage.Ratified,
     variables: { proposalId: proposal.id },
 
     onData: ({ data: { data }, client: { cache } }) => {
@@ -81,7 +83,7 @@ const ProposalCardFooter = ({
 
     if (
       !viewed ||
-      !isLoggedIn ||
+      !isVerified ||
       !isVotingStage ||
       !hasVotingTimeLimit ||
       syncProposalCalled
@@ -93,11 +95,19 @@ const ProposalCardFooter = ({
       syncProposal({
         variables: {
           proposalId: proposal.id,
+          isVerified,
           isLoggedIn,
         },
       });
     }
-  }, [viewed, isLoggedIn, proposal, syncProposal, syncProposalCalled, t]);
+  }, [
+    isLoggedIn,
+    isVerified,
+    proposal,
+    syncProposal,
+    syncProposalCalled,
+    viewed,
+  ]);
 
   useEffect(() => {
     if (inModal || isProposalPage) {
@@ -117,9 +127,10 @@ const ProposalCardFooter = ({
     proposal,
   ]);
 
+  const { voteCount, commentCount, group, stage, myVote } = proposal;
+
   const me = proposalCommentsData?.me;
   const comments = proposalCommentsData?.proposal?.comments;
-  const { voteCount, votes, commentCount, group, stage } = proposal;
   const isDisabled = !!group && !group.isJoinedByMe;
   const isClosed = stage === ProposalStage.Closed;
 
@@ -129,9 +140,6 @@ const ProposalCardFooter = ({
 
   const canManageComments = !!(
     group?.myPermissions?.manageComments || me?.serverPermissions.manageComments
-  );
-  const voteByCurrentUser = votes.find(
-    (vote) => vote.user.id === currentUserId,
   );
 
   const commentCountStyles: SxProps = {
@@ -158,6 +166,13 @@ const ProposalCardFooter = ({
       toastVar({
         status: 'info',
         title: t('proposals.prompts.loginToVote'),
+      });
+      return;
+    }
+    if (!isVerified) {
+      toastVar({
+        status: 'info',
+        title: t('proposals.prompts.verifiedOnlyVote'),
       });
       return;
     }
@@ -227,7 +242,7 @@ const ProposalCardFooter = ({
       <CardActions sx={{ justifyContent: 'space-around' }}>
         <CardFooterButton
           onClick={handleVoteButtonClick}
-          sx={voteByCurrentUser ? { color: Blurple.SavoryBlue } : {}}
+          sx={myVote ? { color: Blurple.SavoryBlue } : {}}
         >
           <HowToVote sx={ICON_STYLES} />
           {getVoteButtonLabel()}
@@ -251,19 +266,28 @@ const ProposalCardFooter = ({
             canManageComments={canManageComments}
             comments={comments || []}
             currentUserId={me?.id}
-            marginBottom={inModal && !isLoggedIn ? 2.5 : undefined}
+            marginBottom={inModal && !isVerified ? 2.5 : undefined}
             proposalId={proposal.id}
           />
           {!inModal && (!group || group.isJoinedByMe) && (
             <CommentForm proposalId={proposal.id} enableAutoFocus />
           )}
-          {group && !group.isJoinedByMe && !comments?.length && (
+          {group && !group.isJoinedByMe && !comments?.length && isVerified && (
             <Typography
               color="text.secondary"
               align="center"
               marginBottom={1.75}
             >
               {t('comments.prompts.joinToComment')}
+            </Typography>
+          )}
+          {!isVerified && !comments?.length && (
+            <Typography
+              color="text.secondary"
+              align="center"
+              marginBottom={1.75}
+            >
+              {t('proposals.prompts.verifyToComment')}
             </Typography>
           )}
         </Box>
@@ -278,9 +302,11 @@ const ProposalCardFooter = ({
       {currentUserId && (
         <VoteMenu
           anchorEl={menuAnchorEl}
-          currentUserId={currentUserId}
+          decisionMakingModel={proposal.settings.decisionMakingModel}
+          myVoteId={myVote?.id}
+          myVoteType={myVote?.voteType}
           onClose={handleVoteMenuClose}
-          proposal={proposal}
+          proposalId={proposal.id}
         />
       )}
     </Box>

@@ -10,16 +10,18 @@ import Feed from '../../components/Shared/Feed';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import ToggleForms from '../../components/Shared/ToggleForms';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar } from '../../graphql/cache';
 import { useGroupFeedLazyQuery } from '../../graphql/groups/queries/gen/GroupFeed.gen';
 import { useGroupPageLazyQuery } from '../../graphql/groups/queries/gen/GroupPage.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 
 const GroupPage = () => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
   const [tab, setTab] = useState(0);
+
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
   const [
     getGroupProfile,
@@ -39,10 +41,10 @@ const GroupPage = () => {
   useEffect(() => {
     if (name) {
       getGroupProfile({
-        variables: { name, isLoggedIn },
+        variables: { name, isVerified },
       });
     }
-  }, [name, isLoggedIn, getGroupProfile]);
+  }, [name, isVerified, getGroupProfile]);
 
   useEffect(() => {
     if (name) {
@@ -51,11 +53,12 @@ const GroupPage = () => {
           limit: rowsPerPage,
           offset: page * rowsPerPage,
           isLoggedIn,
+          isVerified,
           name,
         },
       });
     }
-  }, [name, isLoggedIn, getGroupFeed, page, rowsPerPage]);
+  }, [name, isLoggedIn, isVerified, getGroupFeed, page, rowsPerPage]);
 
   const handleChangePage = async (newPage: number) => {
     if (!name) {
@@ -66,6 +69,7 @@ const GroupPage = () => {
         limit: rowsPerPage,
         offset: newPage * rowsPerPage,
         isLoggedIn,
+        isVerified,
         name,
       },
     });

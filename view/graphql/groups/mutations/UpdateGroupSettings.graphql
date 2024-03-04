@@ -1,6 +1,7 @@
 mutation UpdateGroupSettings(
   $groupConfigData: UpdateGroupConfigInput!
   $isLoggedIn: Boolean = true
+  $isVerified: Boolean = true
 ) {
   updateGroupConfig(groupConfigData: $groupConfigData) {
     group {

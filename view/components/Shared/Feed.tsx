@@ -52,18 +52,6 @@ const Feed = ({
 }: Props) => {
   const { t } = useTranslation();
 
-  if (feedItems?.length === 0) {
-    return (
-      <Card>
-        <CardContent sx={CARD_CONTENT_STYLES}>
-          <Typography variant="body1" textAlign="center">
-            {t('prompts.noContent')}
-          </Typography>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <Box {...boxProps}>
       <Pagination
@@ -78,6 +66,16 @@ const Feed = ({
         {feedItems?.map((item) => (
           <FeedItem item={item} key={`${item.__typename}-${item.id}`} />
         ))}
+
+        {feedItems?.length === 0 && (
+          <Card>
+            <CardContent sx={CARD_CONTENT_STYLES}>
+              <Typography variant="body1" textAlign="center">
+                {t('prompts.noContent')}
+              </Typography>
+            </CardContent>
+          </Card>
+        )}
       </Pagination>
     </Box>
   );

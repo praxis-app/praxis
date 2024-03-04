@@ -1,0 +1,11 @@
+mutation AnswerQuestions($answersData: AnswerQuestionsInput!) {
+  answerQuestions(answersData: $answersData) {
+    questionnaireTicket {
+      questions {
+        ...AnsweredQuestionCard
+      }
+      ...AnswerQuestionsForm
+      status
+    }
+  }
+}

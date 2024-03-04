@@ -17,6 +17,8 @@ import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
+import { Question } from '../vibe-check/models/question.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { User } from '../users/models/user.model';
 import { Notification } from './models/notification.model';
 import { ReadNotificationsPayload } from './models/read-notifications.payload';
@@ -38,7 +40,11 @@ export class NotificationsResolver {
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
   ) {
-    return this.notificationsService.getNotifications(user.id, offset, limit);
+    return this.notificationsService.getNotificationsByUserId(
+      user.id,
+      offset,
+      limit,
+    );
   }
 
   @Query(() => Int)
@@ -92,6 +98,28 @@ export class NotificationsResolver {
     @Parent() { commentId }: Notification,
   ) {
     return commentId ? loaders.commentsLoader.load(commentId) : null;
+  }
+
+  @ResolveField(() => Question, { nullable: true })
+  question(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { questionId }: Notification,
+  ) {
+    if (!questionId) {
+      return null;
+    }
+    return loaders.questionsLoader.load(questionId);
+  }
+
+  @ResolveField(() => QuestionnaireTicket, { nullable: true })
+  questionnaireTicket(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { questionnaireTicketId }: Notification,
+  ) {
+    if (!questionnaireTicketId) {
+      return null;
+    }
+    return loaders.questionnaireTicketsLoader.load(questionnaireTicketId);
   }
 
   @Mutation(() => UpdateNotificationPayload)

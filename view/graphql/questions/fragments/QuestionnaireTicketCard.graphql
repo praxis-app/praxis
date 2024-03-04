@@ -1,0 +1,28 @@
+fragment QuestionnaireTicketCard on QuestionnaireTicket {
+  id
+  status
+  answerCount
+  commentCount
+  questionCount
+  voteCount
+  votesNeededToVerify
+  agreementVoteCount
+  createdAt
+
+  user {
+    ...UserAvatar
+  }
+  settings {
+    id
+    closingAt
+    decisionMakingModel
+    ratificationThreshold
+    reservationsLimit
+    standAsidesLimit
+  }
+  myVote {
+    id
+    voteType
+  }
+  ...QuestionnaireTicketVoteBadges
+}

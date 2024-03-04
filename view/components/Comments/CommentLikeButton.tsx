@@ -2,7 +2,7 @@ import { useReactiveVar } from '@apollo/client';
 import { ButtonBase } from '@mui/material';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { CommentLikeButtonFragment } from '../../graphql/comments/fragments/gen/CommentLikeButton.gen';
 import { useLikeCommentMutation } from '../../graphql/comments/mutations/gen/LikeComment.gen';
 import { useDeleteLikeMutation } from '../../graphql/likes/mutations/gen/DeleteLike.gen';
@@ -15,12 +15,17 @@ import { Blurple } from '../../styles/theme';
 
 interface Props {
   comment: CommentLikeButtonFragment;
+  isPostComment?: boolean;
+  isProposalComment?: boolean;
 }
 
 const CommentLikeButton = ({
   comment: { id, isLikedByMe, __typename },
+  isPostComment,
+  isProposalComment,
 }: Props) => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
   const [likeComment, { loading: likeCommentLoading }] =
     useLikeCommentMutation();
@@ -39,7 +44,25 @@ const CommentLikeButton = ({
       });
       return;
     }
-    const variables = { likeData: { commentId: id }, isLoggedIn };
+    if (isPostComment && !isVerified) {
+      toastVar({
+        title: t('posts.prompts.verifyToLikeComments'),
+        status: 'info',
+      });
+      return;
+    }
+    if (isProposalComment && !isVerified) {
+      toastVar({
+        title: t('proposals.prompts.verifyToLikeComments'),
+        status: 'info',
+      });
+      return;
+    }
+    const variables = {
+      likeData: { commentId: id },
+      isLoggedIn,
+      isVerified,
+    };
     if (isLikedByMe) {
       unlikeComment({
         variables,

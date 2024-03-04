@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import PostForm from '../../components/Posts/PostForm';
 import Feed from '../../components/Shared/Feed';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
-import { isLoggedInVar } from '../../graphql/cache';
+import { isVerifiedVar } from '../../graphql/cache';
 import { useEventFeedLazyQuery } from '../../graphql/events/queries/gen/EventFeed.gen';
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const EventDiscussionTab = ({ eventId }: Props) => {
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
 
@@ -23,18 +23,18 @@ const EventDiscussionTab = ({ eventId }: Props) => {
       variables: {
         limit: rowsPerPage,
         offset: page * rowsPerPage,
-        isLoggedIn,
+        isVerified,
         eventId,
       },
     });
-  }, [getEventFeed, eventId, rowsPerPage, isLoggedIn, page]);
+  }, [getEventFeed, eventId, rowsPerPage, isVerified, page]);
 
   const handleChangePage = async (newPage: number) => {
     await getEventFeed({
       variables: {
         limit: rowsPerPage,
         offset: newPage * rowsPerPage,
-        isLoggedIn,
+        isVerified,
         eventId,
       },
     });
@@ -42,7 +42,7 @@ const EventDiscussionTab = ({ eventId }: Props) => {
 
   return (
     <>
-      {isLoggedIn && (
+      {isVerified && (
         <Card>
           <CardContent
             sx={{

@@ -1,0 +1,8 @@
+query AuthWrapper {
+  authCheck
+
+  me {
+    id
+    isVerified
+  }
+}

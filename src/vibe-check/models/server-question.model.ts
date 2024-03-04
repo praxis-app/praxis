@@ -7,20 +7,20 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
 @ObjectType()
-export class ServerConfig {
-  @PrimaryGeneratedColumn()
+@Entity()
+export class ServerQuestion {
   @Field(() => Int)
+  @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  securityTxt?: string;
-
-  @Column({ default: false })
+  @Column()
   @Field()
-  showCanaryStatement: boolean;
+  text: string;
+
+  @Column()
+  @Field(() => Int)
+  priority: number;
 
   @CreateDateColumn()
   createdAt: Date;

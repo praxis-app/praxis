@@ -61,6 +61,14 @@ export class ServerRolePermission {
   @Field()
   manageRules: boolean;
 
+  @Column({ default: false })
+  @Field()
+  manageQuestions: boolean;
+
+  @Column({ default: false })
+  @Field()
+  manageQuestionnaireTickets: boolean;
+
   @Field(() => ServerRole)
   @OneToOne(() => ServerRole, (serverRole) => serverRole.permission, {
     onDelete: 'CASCADE',

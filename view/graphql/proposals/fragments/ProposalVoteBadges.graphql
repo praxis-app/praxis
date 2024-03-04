@@ -1,0 +1,12 @@
+fragment ProposalVoteBadges on Proposal {
+  id
+  settings {
+    id
+    decisionMakingModel
+  }
+
+  votes {
+    ...Vote
+    ...VoteBadge
+  }
+}

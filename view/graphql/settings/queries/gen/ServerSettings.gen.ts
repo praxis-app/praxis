@@ -17,8 +17,14 @@ export type ServerSettingsQuery = {
   serverConfig: {
     __typename?: 'ServerConfig';
     id: number;
-    showCanaryStatement: boolean;
+    decisionMakingModel: string;
+    ratificationThreshold: number;
+    reservationsLimit: number;
     securityTxt?: string | null;
+    serverQuestionsPrompt?: string | null;
+    showCanaryStatement: boolean;
+    standAsidesLimit: number;
+    votingTimeLimit: number;
   };
   canary: { __typename?: 'Canary'; id: number; statement: string };
 };

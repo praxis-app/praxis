@@ -8,8 +8,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type LikesPopoverQueryVariables = Types.Exact<{
-  postId?: Types.InputMaybe<Types.Scalars['Int']['input']>;
-  commentId?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  likesData: Types.LikesInput;
 }>;
 
 export type LikesPopoverQuery = {
@@ -22,8 +21,8 @@ export type LikesPopoverQuery = {
 };
 
 export const LikesPopoverDocument = gql`
-  query LikesPopover($postId: Int, $commentId: Int) {
-    likes(postId: $postId, commentId: $commentId) {
+  query LikesPopover($likesData: LikesInput!) {
+    likes(likesData: $likesData) {
       id
       user {
         id
@@ -45,13 +44,12 @@ export const LikesPopoverDocument = gql`
  * @example
  * const { data, loading, error } = useLikesPopoverQuery({
  *   variables: {
- *      postId: // value for 'postId'
- *      commentId: // value for 'commentId'
+ *      likesData: // value for 'likesData'
  *   },
  * });
  */
 export function useLikesPopoverQuery(
-  baseOptions?: Apollo.QueryHookOptions<
+  baseOptions: Apollo.QueryHookOptions<
     LikesPopoverQuery,
     LikesPopoverQueryVariables
   >,

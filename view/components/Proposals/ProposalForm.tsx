@@ -35,6 +35,7 @@ import {
 import {
   GroupFeedDocument,
   GroupFeedQuery,
+  GroupFeedQueryVariables,
 } from '../../graphql/groups/queries/gen/GroupFeed.gen';
 import { useDeleteImageMutation } from '../../graphql/images/mutations/gen/DeleteImage.gen';
 import { ProposalFormFragment } from '../../graphql/proposals/fragments/gen/ProposalForm.gen';
@@ -44,10 +45,12 @@ import { ToggleFormsFragment } from '../../graphql/users/fragments/gen/ToggleFor
 import {
   HomeFeedDocument,
   HomeFeedQuery,
+  HomeFeedQueryVariables,
 } from '../../graphql/users/queries/gen/HomeFeed.gen';
 import {
   UserProfileFeedDocument,
   UserProfileFeedQuery,
+  UserProfileFeedQueryVariables,
 } from '../../graphql/users/queries/gen/UserProfileFeed.gen';
 import { isEntityTooLarge } from '../../utils/error.utils';
 import { validateImageInput } from '../../utils/image.utils';
@@ -186,7 +189,7 @@ const ProposalForm = ({
         const {
           createProposal: { proposal },
         } = data;
-        cache.updateQuery<HomeFeedQuery>(
+        cache.updateQuery<HomeFeedQuery, HomeFeedQueryVariables>(
           {
             query: HomeFeedDocument,
             variables: { limit: 10, offset: 0, isLoggedIn: true },
@@ -196,7 +199,7 @@ const ProposalForm = ({
               draft?.me?.homeFeed.nodes.unshift(proposal);
             }),
         );
-        cache.updateQuery<UserProfileFeedQuery>(
+        cache.updateQuery<UserProfileFeedQuery, UserProfileFeedQueryVariables>(
           {
             query: UserProfileFeedDocument,
             variables: {
@@ -212,12 +215,13 @@ const ProposalForm = ({
             }),
         );
         if (proposal.group) {
-          cache.updateQuery<GroupFeedQuery>(
+          cache.updateQuery<GroupFeedQuery, GroupFeedQueryVariables>(
             {
               query: GroupFeedDocument,
               variables: {
                 name: proposal.group.name,
                 isLoggedIn: true,
+                isVerified: true,
                 limit: 10,
                 offset: 0,
               },

@@ -9,12 +9,9 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { DecisionMakingModel } from '../../proposals/proposals.constants';
+import { VotingTimeLimit } from '../../votes/votes.constants';
+import { GroupAdminModel, GroupPrivacy } from '../groups.constants';
 import { Group } from './group.model';
-import {
-  GroupAdminModel,
-  GroupPrivacy,
-  VotingTimeLimit,
-} from '../groups.constants';
 
 @Entity()
 @ObjectType()

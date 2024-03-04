@@ -1,0 +1,8 @@
+fragment AnswerQuestionsFormField on Question {
+  id
+  text
+  priority
+  likeCount
+  commentCount
+  isLikedByMe
+}

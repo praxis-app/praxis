@@ -1,6 +1,7 @@
 query PostComments(
   $id: Int!
   $isLoggedIn: Boolean!
+  $isVerified: Boolean!
   $withGroup: Boolean!
   $groupId: Int
   $withEvent: Boolean!
@@ -13,7 +14,7 @@ query PostComments(
     }
   }
 
-  me @include(if: $isLoggedIn) {
+  me @include(if: $isVerified) {
     id
     serverPermissions {
       manageComments
@@ -22,8 +23,8 @@ query PostComments(
 
   group(id: $groupId) @include(if: $withGroup) {
     id
-    isJoinedByMe @include(if: $isLoggedIn)
-    myPermissions @include(if: $isLoggedIn) {
+    isJoinedByMe @include(if: $isVerified)
+    myPermissions @include(if: $isVerified) {
       manageComments
     }
   }
@@ -32,8 +33,8 @@ query PostComments(
     id
     group {
       id
-      isJoinedByMe @include(if: $isLoggedIn)
-      myPermissions @include(if: $isLoggedIn) {
+      isJoinedByMe @include(if: $isVerified)
+      myPermissions @include(if: $isVerified) {
         manageComments
       }
     }

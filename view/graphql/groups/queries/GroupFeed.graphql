@@ -3,6 +3,7 @@ query GroupFeed(
   $offset: Int
   $limit: Int
   $isLoggedIn: Boolean!
+  $isVerified: Boolean!
 ) {
   group(name: $name) {
     id

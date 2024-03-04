@@ -26,6 +26,7 @@ import { CreateEventInput, UpdateEventInput } from '../../graphql/gen';
 import {
   GroupEventsTabDocument,
   GroupEventsTabQuery,
+  GroupEventsTabQueryVariables,
 } from '../../graphql/groups/queries/gen/GroupEventsTab.gen';
 import { useGroupMembersByGroupIdLazyQuery } from '../../graphql/groups/queries/gen/GroupMembersByGroupId.gen';
 import { isEntityTooLarge } from '../../utils/error.utils';
@@ -99,10 +100,10 @@ const EventForm = ({ editEvent, groupId }: Props) => {
           createEvent: { event },
         } = data;
         if (groupId) {
-          cache.updateQuery<GroupEventsTabQuery>(
+          cache.updateQuery<GroupEventsTabQuery, GroupEventsTabQueryVariables>(
             {
               query: GroupEventsTabDocument,
-              variables: { groupId, isLoggedIn: true },
+              variables: { groupId, isVerified: true },
             },
             (eventsData) =>
               produce(eventsData, (draft) => {

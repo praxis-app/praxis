@@ -30,12 +30,16 @@ export enum NavigationPaths {
   Proposals = '/proposals',
   Roles = '/roles',
   Rules = '/rules',
+  ServerQuestionnaires = '/questionnaires',
+  ServerQuestions = '/questions',
   ServerSettings = '/settings',
   SignUp = '/auth/signup',
   Users = '/users',
+  VibeCheck = '/vibe-check',
 }
 
 export enum TypeNames {
+  Answer = 'Answer',
   Event = 'Event',
   EventAttendee = 'EventAttendee',
   Group = 'Group',
@@ -46,6 +50,9 @@ export enum TypeNames {
   MemberRequest = 'MemberRequest',
   Post = 'Post',
   Proposal = 'Proposal',
+  ServerQuestion = 'ServerQuestion',
+  QuestionnaireTicket = 'QuestionnaireTicket',
+  Question = 'Question',
   ServerInvite = 'ServerInvite',
   ServerRole = 'ServerRole',
   User = 'User',

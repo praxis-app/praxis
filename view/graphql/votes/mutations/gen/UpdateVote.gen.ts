@@ -19,7 +19,7 @@ export type UpdateVoteMutation = {
       __typename?: 'Vote';
       id: number;
       voteType: string;
-      proposal: {
+      proposal?: {
         __typename?: 'Proposal';
         id: number;
         stage: string;
@@ -34,7 +34,13 @@ export type UpdateVoteMutation = {
           name: string;
           description: string;
         } | null;
-      };
+      } | null;
+      questionnaireTicket?: {
+        __typename?: 'QuestionnaireTicket';
+        id: number;
+        status: string;
+        agreementVoteCount: number;
+      } | null;
     };
   };
 };
@@ -57,6 +63,11 @@ export const UpdateVoteDocument = gql`
             name
             description
           }
+        }
+        questionnaireTicket {
+          id
+          status
+          agreementVoteCount
         }
       }
     }
