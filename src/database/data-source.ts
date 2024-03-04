@@ -70,6 +70,7 @@ import { AddNotificationsTable1704767517224 } from './migrations/1704767517224-A
 import { AddNotificationRelationColumns1705026747368 } from './migrations/1705026747368-AddNotificationRelationColumns';
 import { AddRuleTable1705711560882 } from './migrations/1705711560882-AddRuleTable';
 import { AddVibeCheckTables1709004638886 } from './migrations/1709004638886-AddVibeCheckTables';
+import { AddInitialMemberCountColumn1709498470199 } from './migrations/1709498470199-AddInitialMemberCountColumn';
 
 dotenv.config();
 
@@ -126,6 +127,7 @@ export default new DataSource({
     AddGroupConfigColumns1701548819916,
     AddGroupConfigTable1685746618239,
     AddGroupMemberLinkTable1681010227367,
+    AddInitialMemberCountColumn1709498470199,
     AddLikeTable1679157357262,
     AddNotificationRelationColumns1705026747368,
     AddNotificationsTable1704767517224,
