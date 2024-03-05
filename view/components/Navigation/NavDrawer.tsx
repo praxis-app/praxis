@@ -81,6 +81,7 @@ const NavDrawer = () => {
       onCompleted() {
         isLoggedInVar(false);
         isAuthLoadingVar(false);
+        isVerifiedVar(false);
         navigate(NavigationPaths.LogIn);
         localStorage.removeItem(LocalStorageKey.AccessToken);
         client.cache.reset();
