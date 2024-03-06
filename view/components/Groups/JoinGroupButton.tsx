@@ -4,6 +4,7 @@ import { Menu, MenuItem, styled } from '@mui/material';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GROUP_PERMISSION_NAMES } from '../../constants/role.constants';
 import { TypeNames } from '../../constants/shared.constants';
 import { isVerifiedVar, toastVar } from '../../graphql/cache';
 import { useCancelGroupMemberRequestMutation } from '../../graphql/groups/mutations/gen/CancelGroupMemberRequest.gen';
@@ -166,6 +167,15 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
             },
             memberCount(existingCount: number) {
               return Math.max(0, existingCount - 1);
+            },
+            myPermissions() {
+              return GROUP_PERMISSION_NAMES.reduce<Record<string, boolean>>(
+                (acc, permission) => {
+                  acc[permission] = false;
+                  return acc;
+                },
+                {},
+              );
             },
             isJoinedByMe() {
               return false;
