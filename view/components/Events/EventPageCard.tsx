@@ -116,7 +116,7 @@ const EventPageCard = ({
   const editEventPath = `${eventPagePath}/edit`;
   const groupEventsTabPath = getGroupEventsTabPath(group?.name || '');
   const discussionTabPath = `${eventPagePath}${TAB_QUERY_PARAM}${EventPageTabs.Discussion}`;
-  const hostPath = getUserProfilePath(host.name);
+  const hostPath = getUserProfilePath(host?.name || '');
 
   const startsAtFormatted = formatDateTime(startsAt);
   const endsAtFormatted = dayjs(endsAt).format(' [-] h:mm a');
@@ -247,13 +247,15 @@ const EventPageCard = ({
           </Typography>
         )}
 
-        <Typography color="text.secondary" gutterBottom>
-          <Person sx={iconStyles} />
-          {t('events.labels.host')}:
-          <Link href={hostPath} sx={{ marginLeft: '0.4ch' }}>
-            {host.name}
-          </Link>
-        </Typography>
+        {host && (
+          <Typography color="text.secondary" gutterBottom>
+            <Person sx={iconStyles} />
+            {t('events.labels.host')}:
+            <Link href={hostPath} sx={{ marginLeft: '0.4ch' }}>
+              {host.name}
+            </Link>
+          </Typography>
+        )}
 
         {location && (
           <Typography color="text.secondary" gutterBottom>

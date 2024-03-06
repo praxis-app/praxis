@@ -69,7 +69,7 @@ export class EventsResolver {
     return this.eventsService.getAttendingStatus(id, currentUserId);
   }
 
-  @ResolveField(() => User)
+  @ResolveField(() => User, { nullable: true })
   async host(@Parent() { id }: Event) {
     return this.eventsService.getEventHost(id);
   }

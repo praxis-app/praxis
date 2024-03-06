@@ -107,10 +107,7 @@ export class EventsService {
       { status: EventAttendeeStatus.Host, eventId: id },
       ['user'],
     );
-    if (!eventAttendee) {
-      throw new Error(`Could not find host for event: ${id}`);
-    }
-    return eventAttendee.user;
+    return eventAttendee?.user;
   }
 
   async getEventPosts(id: number, offset?: number, limit?: number) {

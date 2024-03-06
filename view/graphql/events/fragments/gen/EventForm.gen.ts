@@ -15,7 +15,7 @@ export type EventFormFragment = {
   location?: string | null;
   online: boolean;
   externalLink?: string | null;
-  host: { __typename?: 'User'; id: number };
+  host?: { __typename?: 'User'; id: number } | null;
 };
 
 export const EventFormFragmentDoc = gql`
