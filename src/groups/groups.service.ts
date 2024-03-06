@@ -260,6 +260,7 @@ export class GroupsService {
     const where = { group: { id }, userId };
     await this.deleteGroupMember(id, userId);
     await this.deleteGroupMemberRequest(where);
+    await this.groupRolesService.removeMemberFromAllGroupRoles(id, userId);
     return true;
   }
 
