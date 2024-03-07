@@ -59,11 +59,11 @@ const SignUpForm = () => {
     if (!name) {
       errors.name = t('signUp.errors.missingName');
     }
-    if (!email) {
-      errors.email = t('signUp.errors.missingEmail');
-    }
     if (!email.match(VALID_EMAIL_REGEX)) {
       errors.email = t('users.validation.invalidEmail');
+    }
+    if (!email) {
+      errors.email = t('signUp.errors.missingEmail');
     }
     if (!password) {
       errors.password = t('signUp.errors.missingPassword');
