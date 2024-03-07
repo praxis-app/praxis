@@ -11,7 +11,11 @@ import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import { TextField } from '../../components/Shared/TextField';
 import { LocalStorageKey } from '../../constants/shared.constants';
-import { UserFieldNames } from '../../constants/user.constants';
+import {
+  MIN_PASSWORD_LENGTH,
+  UserFieldNames,
+  VALID_EMAIL_REGEX,
+} from '../../constants/user.constants';
 import { useSignUpMutation } from '../../graphql/auth/mutations/gen/SignUp.gen';
 import {
   inviteTokenVar,
@@ -55,8 +59,14 @@ const SignUpForm = () => {
     if (!name) {
       errors.name = t('signUp.errors.missingName');
     }
+    if (!email.match(VALID_EMAIL_REGEX)) {
+      errors.email = t('users.validation.invalidEmail');
+    }
     if (!email) {
       errors.email = t('signUp.errors.missingEmail');
+    }
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      errors.password = t('signUp.errors.passwordLength');
     }
     if (!password) {
       errors.password = t('signUp.errors.missingPassword');

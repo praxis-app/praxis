@@ -558,7 +558,8 @@
       "confirmPassword": "Passwords do not match",
       "missingEmail": "Email cannot be empty",
       "missingName": "Name cannot be empty",
-      "missingPassword": "Password cannot be empty"
+      "missingPassword": "Password cannot be empty",
+      "passwordLength": "Password must be at least 12 characters long"
     }
   },
 

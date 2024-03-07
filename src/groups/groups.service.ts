@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { VALID_NAME_CHARACTERS } from '../common/common.constants';
+import { VALID_NAME_REGEX } from '../common/common.constants';
 import { paginate, sanitizeText } from '../common/common.utils';
 import { ImageTypes } from '../images/image.constants';
 import {
@@ -161,7 +161,7 @@ export class GroupsService {
     { name, description, coverPhoto, ...groupData }: CreateGroupInput,
     userId: number,
   ) {
-    const isValidName = VALID_NAME_CHARACTERS.test(name || '');
+    const isValidName = VALID_NAME_REGEX.test(name || '');
     if (!isValidName) {
       throw new Error('Group names cannot contain special characters');
     }
@@ -192,7 +192,7 @@ export class GroupsService {
     coverPhoto,
     ...groupData
   }: UpdateGroupInput) {
-    const isValidName = VALID_NAME_CHARACTERS.test(name || '');
+    const isValidName = VALID_NAME_REGEX.test(name || '');
     if (!isValidName) {
       throw new Error('Group names cannot contain special characters');
     }

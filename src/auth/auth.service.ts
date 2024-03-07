@@ -3,16 +3,19 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { Request } from 'express';
-import { VALID_NAME_CHARACTERS } from '../common/common.constants';
+import { VALID_NAME_REGEX } from '../common/common.constants';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
+import {
+  ACCESS_TOKEN_EXPIRES_IN,
+  MIN_PASSWORD_LENGTH,
+  SALT_ROUNDS,
+  VALID_EMAIL_REGEX,
+} from './auth.constants';
 import { AuthPayload } from './models/auth.payload';
 import { LoginInput } from './models/login.input';
 import { SignUpInput } from './models/sign-up.input';
-
-const ACCESS_TOKEN_EXPIRES_IN = 60 * 60 * 24 * 90;
-const SALT_ROUNDS = 10;
 
 export interface AccessTokenPayload {
   /**
@@ -32,6 +35,12 @@ export class AuthService {
   ) {}
 
   async login({ email, password }: LoginInput): Promise<AuthPayload> {
+    if (!email) {
+      throw new Error('Email is required');
+    }
+    if (!password) {
+      throw new Error('Password is required');
+    }
     const user = await this.validateUser(email, password);
     const access_token = await this.generateAccessToken(user.id);
     return { access_token };
@@ -45,9 +54,17 @@ export class AuthService {
     profilePicture,
     inviteToken,
   }: SignUpInput): Promise<AuthPayload> {
-    const isValidName = VALID_NAME_CHARACTERS.test(name);
-    if (!isValidName) {
+    if (!VALID_EMAIL_REGEX.test(email)) {
+      throw new Error('Invalid email address');
+    }
+    if (!VALID_NAME_REGEX.test(name)) {
       throw new Error('User names cannot contain special characters');
+    }
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      throw new Error('Password must be at least 12 characters long');
+    }
+    if (password !== confirmPassword) {
+      throw new Error('Passwords do not match');
     }
 
     const users = await this.usersService.getUsers();
@@ -61,9 +78,6 @@ export class AuthService {
     const existingUser = await this.usersService.getUser({ email });
     if (existingUser) {
       throw new Error('User already exists');
-    }
-    if (password !== confirmPassword) {
-      throw new Error('Passwords do not match');
     }
 
     const passwordHash = await hash(password, SALT_ROUNDS);
