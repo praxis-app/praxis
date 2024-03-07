@@ -29,6 +29,7 @@ import { validateImageInput } from '../../utils/image.utils';
 import { getRandomString } from '../../utils/shared.utils';
 
 const MIN_PASSWORD_LENGTH = 12;
+const VALID_EMAIL_REGEX = /^\S+@\S+\.\S+$/;
 
 const SignUpForm = () => {
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
@@ -59,6 +60,9 @@ const SignUpForm = () => {
     }
     if (!email) {
       errors.email = t('signUp.errors.missingEmail');
+    }
+    if (!email.match(VALID_EMAIL_REGEX)) {
+      errors.email = t('users.validation.invalidEmail');
     }
     if (!password) {
       errors.password = t('signUp.errors.missingPassword');
