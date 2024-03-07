@@ -1,6 +1,6 @@
 import { useReactiveVar } from '@apollo/client';
 import { Card, CardContent, FormGroup } from '@mui/material';
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
 import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
@@ -42,6 +42,17 @@ const LoginForm = () => {
       },
     });
 
+  const validate = ({ email, password }: LoginInput) => {
+    const errors: FormikErrors<LoginInput> = {};
+    if (!email) {
+      errors.email = t('signUp.errors.missingEmail');
+    }
+    if (!password) {
+      errors.password = t('signUp.errors.missingPassword');
+    }
+    return errors;
+  };
+
   return (
     <Card>
       <CardContent>
@@ -49,7 +60,11 @@ const LoginForm = () => {
           {t('users.prompts.signInToPost')}
         </LevelOneHeading>
 
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validate={validate}
+        >
           {({ isSubmitting }) => (
             <Form hidden={isNavDrawerOpen}>
               <FormGroup>

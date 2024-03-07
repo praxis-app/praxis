@@ -11,7 +11,11 @@ import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import { TextField } from '../../components/Shared/TextField';
 import { LocalStorageKey } from '../../constants/shared.constants';
-import { UserFieldNames } from '../../constants/user.constants';
+import {
+  MIN_PASSWORD_LENGTH,
+  UserFieldNames,
+  VALID_EMAIL_REGEX,
+} from '../../constants/user.constants';
 import { useSignUpMutation } from '../../graphql/auth/mutations/gen/SignUp.gen';
 import {
   inviteTokenVar,
@@ -27,9 +31,6 @@ import {
 import { isEntityTooLarge } from '../../utils/error.utils';
 import { validateImageInput } from '../../utils/image.utils';
 import { getRandomString } from '../../utils/shared.utils';
-
-const MIN_PASSWORD_LENGTH = 12;
-const VALID_EMAIL_REGEX = /^\S+@\S+\.\S+$/;
 
 const SignUpForm = () => {
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);

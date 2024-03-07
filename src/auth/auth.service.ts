@@ -35,6 +35,12 @@ export class AuthService {
   ) {}
 
   async login({ email, password }: LoginInput): Promise<AuthPayload> {
+    if (!email) {
+      throw new Error('Email is required');
+    }
+    if (!password) {
+      throw new Error('Password is required');
+    }
     const user = await this.validateUser(email, password);
     const access_token = await this.generateAccessToken(user.id);
     return { access_token };
