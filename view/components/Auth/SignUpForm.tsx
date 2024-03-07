@@ -65,14 +65,14 @@ const SignUpForm = () => {
     if (!email) {
       errors.email = t('signUp.errors.missingEmail');
     }
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      errors.password = t('signUp.errors.passwordLength');
+    }
     if (!password) {
       errors.password = t('signUp.errors.missingPassword');
     }
     if (password !== confirmPassword) {
       errors.confirmPassword = t('signUp.errors.confirmPassword');
-    }
-    if (password.length < MIN_PASSWORD_LENGTH) {
-      errors.password = t('signUp.errors.passwordLength');
     }
     return errors;
   };
