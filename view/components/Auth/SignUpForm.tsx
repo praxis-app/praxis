@@ -28,6 +28,8 @@ import { isEntityTooLarge } from '../../utils/error.utils';
 import { validateImageInput } from '../../utils/image.utils';
 import { getRandomString } from '../../utils/shared.utils';
 
+const MIN_PASSWORD_LENGTH = 12;
+
 const SignUpForm = () => {
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
   const [profilePicture, setProfilePicture] = useState<File>();
@@ -63,6 +65,9 @@ const SignUpForm = () => {
     }
     if (password !== confirmPassword) {
       errors.confirmPassword = t('signUp.errors.confirmPassword');
+    }
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      errors.password = t('signUp.errors.passwordLength');
     }
     return errors;
   };
