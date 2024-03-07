@@ -80,7 +80,7 @@ const EventForm = ({ editEvent, groupId }: Props) => {
     location: editEvent ? editEvent.location : '',
     online: editEvent ? editEvent.online : null,
     externalLink: editEvent ? editEvent.externalLink : '',
-    hostId: editEvent ? editEvent.host.id : 0,
+    hostId: editEvent?.host?.id || 0,
   };
 
   const handleCreate = async (formValues: CreateEventInput) =>

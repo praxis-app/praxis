@@ -1,7 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { Matches } from 'class-validator';
 import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
-import { VALID_NAME_CHARACTERS } from '../../common/common.constants';
 
 @InputType()
 export class UpdateGroupInput {
@@ -9,9 +7,6 @@ export class UpdateGroupInput {
   id: number;
 
   @Field({ nullable: true })
-  @Matches(VALID_NAME_CHARACTERS, {
-    message: 'Group names cannot contain special characters',
-  })
   name?: string;
 
   @Field({ nullable: true })

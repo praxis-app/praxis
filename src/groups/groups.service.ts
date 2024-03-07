@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import { VALID_NAME_CHARACTERS } from '../common/common.constants';
 import { paginate, sanitizeText } from '../common/common.utils';
 import { ImageTypes } from '../images/image.constants';
 import {
@@ -160,6 +161,11 @@ export class GroupsService {
     { name, description, coverPhoto, ...groupData }: CreateGroupInput,
     userId: number,
   ) {
+    const isValidName = VALID_NAME_CHARACTERS.test(name || '');
+    if (!isValidName) {
+      throw new Error('Group names cannot contain special characters');
+    }
+
     const sanitizedDescription = sanitizeText(description.trim());
     const group = await this.groupRepository.save({
       description: sanitizedDescription,
@@ -186,6 +192,11 @@ export class GroupsService {
     coverPhoto,
     ...groupData
   }: UpdateGroupInput) {
+    const isValidName = VALID_NAME_CHARACTERS.test(name || '');
+    if (!isValidName) {
+      throw new Error('Group names cannot contain special characters');
+    }
+
     const sanitizedDescription = description
       ? sanitizeText(description.trim())
       : undefined;
@@ -260,6 +271,7 @@ export class GroupsService {
     const where = { group: { id }, userId };
     await this.deleteGroupMember(id, userId);
     await this.deleteGroupMemberRequest(where);
+    await this.groupRolesService.removeMemberFromAllGroupRoles(id, userId);
     return true;
   }
 

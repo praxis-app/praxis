@@ -286,7 +286,7 @@ export type Event = {
   externalLink?: Maybe<Scalars['String']['output']>;
   goingCount: Scalars['Int']['output'];
   group?: Maybe<Group>;
-  host: User;
+  host?: Maybe<User>;
   id: Scalars['Int']['output'];
   images: Array<Image>;
   interestedCount: Scalars['Int']['output'];
@@ -1160,7 +1160,6 @@ export type QuestionnaireTicket = {
   comments: Array<Comment>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
-  initialMemberCount: Scalars['Int']['output'];
   myVote?: Maybe<Vote>;
   prompt?: Maybe<Scalars['String']['output']>;
   questionCount: Scalars['Int']['output'];

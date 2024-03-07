@@ -30,7 +30,7 @@ export type EditEventQuery = {
       name: string;
       myPermissions: { __typename?: 'GroupPermissions'; manageEvents: boolean };
     } | null;
-    host: { __typename?: 'User'; id: number };
+    host?: { __typename?: 'User'; id: number } | null;
   };
 };
 

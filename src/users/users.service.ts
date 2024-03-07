@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import { VALID_NAME_CHARACTERS } from '../common/common.constants';
 import { logTime, paginate, sanitizeText } from '../common/common.utils';
 import { GroupPermissionsMap } from '../groups/group-roles/models/group-permissions.type';
 import { GroupPrivacy } from '../groups/groups.constants';
@@ -18,13 +19,13 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { PostsService } from '../posts/posts.service';
 import { Proposal } from '../proposals/models/proposal.model';
-import { QuestionnaireTicketConfig } from '../vibe-check/models/questionnaire-ticket-config.model';
-import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
-import { ServerQuestion } from '../vibe-check/models/server-question.model';
 import { ServerConfigsService } from '../server-configs/server-configs.service';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { ServerRolesService } from '../server-roles/server-roles.service';
 import { initServerRolePermissions } from '../server-roles/server-roles.utils';
+import { QuestionnaireTicketConfig } from '../vibe-check/models/questionnaire-ticket-config.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
+import { ServerQuestion } from '../vibe-check/models/server-question.model';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
 
@@ -484,6 +485,11 @@ export class UsersService {
     this.logger.log(
       `Updating user: ${JSON.stringify({ id: userId, ...userData })}`,
     );
+
+    const isValidName = VALID_NAME_CHARACTERS.test(userData.name);
+    if (!isValidName) {
+      throw new Error('User names cannot contain special characters');
+    }
 
     const isVerified = await this.isVerifiedUser(userId);
     if (!isVerified && (profilePicture || coverPhoto)) {

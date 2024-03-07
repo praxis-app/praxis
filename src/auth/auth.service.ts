@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { Request } from 'express';
+import { VALID_NAME_CHARACTERS } from '../common/common.constants';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
@@ -44,6 +45,11 @@ export class AuthService {
     profilePicture,
     inviteToken,
   }: SignUpInput): Promise<AuthPayload> {
+    const isValidName = VALID_NAME_CHARACTERS.test(name);
+    if (!isValidName) {
+      throw new Error('User names cannot contain special characters');
+    }
+
     const users = await this.usersService.getUsers();
     if (users.length && !inviteToken) {
       throw new Error('Missing invite token');

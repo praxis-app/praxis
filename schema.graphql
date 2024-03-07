@@ -345,7 +345,7 @@ type Event {
   interestedCount: Int!
   goingCount: Int!
   attendingStatus: String
-  host: User!
+  host: User
   posts(offset: Int, limit: Int): [Post!]!
   postsCount: Int!
   coverPhoto: Image!

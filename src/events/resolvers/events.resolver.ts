@@ -34,7 +34,7 @@ export class EventsResolver {
 
   @Query(() => [Event])
   async events(@Args('input') input: EventsInput, @CurrentUser() user: User) {
-    if (!user.verified) {
+    if (!user?.verified) {
       return this.eventsService.getPublicEvents(input);
     }
     return this.eventsService.getFilteredEvents(input);
@@ -69,7 +69,7 @@ export class EventsResolver {
     return this.eventsService.getAttendingStatus(id, currentUserId);
   }
 
-  @ResolveField(() => User)
+  @ResolveField(() => User, { nullable: true })
   async host(@Parent() { id }: Event) {
     return this.eventsService.getEventHost(id);
   }

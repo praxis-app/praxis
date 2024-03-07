@@ -91,8 +91,14 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
         const groupPagePath = getGroupPath(group.name);
         navigate(groupPagePath);
       },
-      onError() {
-        throw new Error(t('groups.errors.couldNotCreate'));
+      onError(err) {
+        const title = isEntityTooLarge(err)
+          ? t('errors.imageTooLarge')
+          : err.message;
+        toastVar({
+          status: 'error',
+          title,
+        });
       },
     });
 
@@ -112,8 +118,14 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
         const groupPagePath = getGroupPath(group.name);
         navigate(groupPagePath);
       },
-      onError() {
-        throw new Error(t('groups.errors.couldNotUpdate'));
+      onError(err) {
+        const title = isEntityTooLarge(err)
+          ? t('errors.imageTooLarge')
+          : err.message;
+        toastVar({
+          status: 'error',
+          title,
+        });
       },
     });
 
@@ -137,12 +149,9 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
       }
       await handleCreate(values as CreateGroupInput);
     } catch (err) {
-      const title = isEntityTooLarge(err)
-        ? t('errors.imageTooLarge')
-        : String(err);
       toastVar({
         status: 'error',
-        title,
+        title: err.message,
       });
     }
   };

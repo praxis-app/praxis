@@ -34,9 +34,13 @@ export class GroupRolesService {
     return this.groupRoleRepository.findOneOrFail({ where, relations });
   }
 
-  async getGroupRoles(where?: FindOptionsWhere<GroupRole>) {
+  async getGroupRoles(
+    where?: FindOptionsWhere<GroupRole>,
+    relations?: string[],
+  ) {
     return this.groupRoleRepository.find({
       order: { updatedAt: 'DESC' },
+      relations,
       where,
     });
   }
@@ -134,6 +138,14 @@ export class GroupRolesService {
       (member) => !userIds.some((id) => member.id === id),
     );
     await this.groupRoleRepository.save(role);
+  }
+
+  async removeMemberFromAllGroupRoles(groupId: number, userId: number) {
+    const roles = await this.getGroupRoles({ groupId }, ['members']);
+    for (const role of roles) {
+      role.members = role.members.filter((member) => member.id !== userId);
+      await this.groupRoleRepository.save(role);
+    }
   }
 
   async getGroupRolePermission(groupRoleId: number) {
