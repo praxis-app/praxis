@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { Request } from 'express';
-import { VALID_NAME_CHARACTERS } from '../common/common.constants';
+import { VALID_NAME_REGEX } from '../common/common.constants';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
@@ -11,6 +11,7 @@ import {
   ACCESS_TOKEN_EXPIRES_IN,
   MIN_PASSWORD_LENGTH,
   SALT_ROUNDS,
+  VALID_EMAIL_REGEX,
 } from './auth.constants';
 import { AuthPayload } from './models/auth.payload';
 import { LoginInput } from './models/login.input';
@@ -47,8 +48,10 @@ export class AuthService {
     profilePicture,
     inviteToken,
   }: SignUpInput): Promise<AuthPayload> {
-    const isValidName = VALID_NAME_CHARACTERS.test(name);
-    if (!isValidName) {
+    if (!VALID_EMAIL_REGEX.test(email)) {
+      throw new Error('Invalid email address');
+    }
+    if (!VALID_NAME_REGEX.test(name)) {
       throw new Error('User names cannot contain special characters');
     }
     if (password.length < MIN_PASSWORD_LENGTH) {

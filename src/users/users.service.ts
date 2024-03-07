@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { VALID_NAME_CHARACTERS } from '../common/common.constants';
+import { VALID_NAME_REGEX } from '../common/common.constants';
 import { logTime, paginate, sanitizeText } from '../common/common.utils';
 import { GroupPermissionsMap } from '../groups/group-roles/models/group-permissions.type';
 import { GroupPrivacy } from '../groups/groups.constants';
@@ -486,7 +486,7 @@ export class UsersService {
       `Updating user: ${JSON.stringify({ id: userId, ...userData })}`,
     );
 
-    const isValidName = VALID_NAME_CHARACTERS.test(userData.name);
+    const isValidName = VALID_NAME_REGEX.test(userData.name);
     if (!isValidName) {
       throw new Error('User names cannot contain special characters');
     }
