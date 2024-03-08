@@ -1,4 +1,5 @@
 import { allow, and, or, shield } from 'graphql-shield';
+import * as hash from 'object-hash';
 import { FORBIDDEN } from '../common/common.constants';
 import { isAuthenticated } from './rules/auth.rules';
 import {
@@ -294,5 +295,15 @@ export const shieldPermissions = shield(
     fallbackRule: isVerified,
     fallbackError: FORBIDDEN,
     allowExternalErrors: true,
+
+    /**
+     * Convert `args` object to a string to avoid caching errors when
+     * some fields are promises. This is required because of how
+     * GraphQL Upload sends files as promises.
+     */
+    hashFunction: ({ parent, args }) => {
+      const argsString = JSON.stringify(args);
+      return hash({ parent, args: argsString });
+    },
   },
 );
