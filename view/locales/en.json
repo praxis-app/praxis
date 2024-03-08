@@ -61,7 +61,7 @@
     "profile": "Profile",
     "roles": "Roles",
     "rules": "Rules",
-    "serverSettings": "Server Settings",
+    "serverSettings": "Server settings",
     "settings": "Settings",
     "users": "Users"
   },
@@ -127,8 +127,8 @@
       "selectRoleToChange": "Choose a role",
       "settingChangesCount_one": "{{count}} setting change",
       "settingChangesCount_other": "{{count}} setting changes",
-      "usersProposal": "{{name}}'s Proposal",
-      "viewSettings": "View Settings"
+      "usersProposal": "{{name}}'s proposal",
+      "viewSettings": "View settings"
     },
     "toasts": {
       "noVotingAfterClose": "This proposal has been closed and can no longer be voted on.",
@@ -152,8 +152,8 @@
       "block": "Block",
       "disagree": "Disagree",
       "reservations": "Reservations",
-      "standAside": "Stand Aside",
-      "update": "Update Vote",
+      "standAside": "Stand aside",
+      "update": "Update vote",
       "vote": "Vote"
     }
   },
@@ -426,15 +426,15 @@
     "actions": {
       "add": "Add",
       "addMembers": "Add members",
-      "delete": "Delete Role",
-      "manageRoles": "Manage Roles"
+      "delete": "Delete role",
+      "manageRoles": "Manage roles"
     },
     "headers": {
       "serverRoles": "Server Roles"
     },
     "form": {
-      "colorPickerLabel": "Role Color",
-      "pickColor": "Pick a Color"
+      "colorPickerLabel": "Role color",
+      "pickColor": "Pick a color"
     },
     "labels": {
       "members": "Members",
@@ -650,9 +650,9 @@
       "confirmDelete": "Are you sure you want to delete this rule? This cannot be undone."
     },
     "labels": {
-      "create": "Create Rule",
-      "delete": "Delete Rule",
-      "edit": "Edit Rule"
+      "create": "Create rule",
+      "delete": "Delete rule",
+      "edit": "Edit rule"
     },
     "placeholders": {
       "title": "Title",
