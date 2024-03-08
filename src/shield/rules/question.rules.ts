@@ -17,7 +17,12 @@ export const canManageQuestionnaireTickets = rule({ cache: 'strict' })(
     hasServerPermission(permissions, 'manageQuestionnaireTickets'),
 );
 
-export const isOwnQuestionnaireTicket = rule({ cache: 'strict' })(async (
+/**
+ * TODO: Set caching to strict. Caching is currently set to `no_cache` to avoid
+ * issues image uploads. This is a temporary solution until we can figure out
+ * how to get caching to work with image uploads.
+ */
+export const isOwnQuestionnaireTicket = rule({ cache: 'no_cache' })(async (
   parent: QuestionnaireTicket | undefined,
   args: { commentData: CreateCommentInput } | object,
   { services: { vibeCheckService }, user }: Context,
