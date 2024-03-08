@@ -7,9 +7,9 @@ import {
   styled,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { inviteTokenVar } from '../../graphql/cache';
 import Link from '../../components/Shared/Link';
 import { NavigationPaths } from '../../constants/shared.constants';
+import { inviteTokenVar, isLoggedInVar } from '../../graphql/cache';
 
 const CardContent = styled(MuiCardContent)(() => ({
   '&:last-child': {
@@ -19,6 +19,7 @@ const CardContent = styled(MuiCardContent)(() => ({
 
 const GroupTipsCard = () => {
   const inviteToken = useReactiveVar(inviteTokenVar);
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const { t } = useTranslation();
 
   return (
@@ -39,20 +40,32 @@ const GroupTipsCard = () => {
             <>
               <Link
                 href={`${NavigationPaths.SignUp}/${inviteToken}`}
-                sx={{ marginRight: '0.5ch' }}
+                sx={{ marginRight: '0.5ch', fontFamily: 'Inter Bold' }}
               >
                 {t('users.actions.signUp')}
               </Link>
               or
             </>
           )}
-          <Link
-            href={NavigationPaths.LogIn}
-            sx={{ marginLeft: inviteToken ? '0.5ch' : 0 }}
-          >
-            {t('users.actions.logIn')}
-          </Link>{' '}
-          to explore groups
+          {isLoggedIn ? (
+            <Link
+              href={NavigationPaths.VibeCheck}
+              sx={{ fontFamily: 'Inter Bold' }}
+            >
+              {t('users.actions.getVerified')}
+            </Link>
+          ) : (
+            <Link
+              href={NavigationPaths.LogIn}
+              sx={{
+                marginLeft: inviteToken ? '0.5ch' : 0,
+                fontFamily: 'Inter Bold',
+              }}
+            >
+              {t('users.actions.logIn')}
+            </Link>
+          )}{' '}
+          to explore more groups
         </Typography>
       </CardContent>
     </Card>
