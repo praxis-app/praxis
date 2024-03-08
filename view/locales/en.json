@@ -173,12 +173,12 @@
 
   "users": {
     "actions": {
-      "editProfile": "Edit Profile",
+      "editProfile": "Edit profile",
       "follow": "Follow",
-      "logIn": "Log In",
-      "logOut": "Log Out",
+      "logIn": "Log in",
+      "logOut": "Log out",
       "passwordConfirm": "Confirm password",
-      "signUp": "Sign Up",
+      "signUp": "Sign up",
       "unfollow": "Unfollow",
       "getVerified": "Get verified"
     },
