@@ -89,6 +89,22 @@ export const isOwnQuestionnaireTicketReviewerAvatar = rule({ cache: 'strict' })(
   },
 );
 
+export const isOwnQuestionnaireTicketCommentImage = rule({ cache: 'strict' })(
+  async (
+    parent: Image,
+    _args,
+    { services: { vibeCheckService }, user }: Context,
+  ) => {
+    if (!user) {
+      return UNAUTHORIZED;
+    }
+    return vibeCheckService.isOwnQuestionnaireTicketCommentImage(
+      user.id,
+      parent.id,
+    );
+  },
+);
+
 export const isOwnQuestion = rule({ cache: 'strict' })(async (
   parent: Question | undefined,
   args:

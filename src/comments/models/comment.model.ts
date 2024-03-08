@@ -29,7 +29,7 @@ export class Comment {
   body?: string;
 
   @Field(() => [Image])
-  @OneToMany(() => Image, (image) => image.post)
+  @OneToMany(() => Image, (image) => image.comment)
   images: Image[];
 
   @OneToMany(() => Like, (like) => like.comment)
