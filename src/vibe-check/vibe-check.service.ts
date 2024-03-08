@@ -309,6 +309,16 @@ export class VibeCheckService {
     return ticketCount > 0 && imageCount > 0;
   }
 
+  async isOwnQuestionnaireTicketCommentImage(userId: number, imageId: number) {
+    const ticketCount = await this.questionnaireTicketRepository.count({
+      where: {
+        user: { id: userId, verified: false },
+        comments: { images: { id: imageId } },
+      },
+    });
+    return ticketCount > 0;
+  }
+
   async isOwnQuestion(questionId: number, userId: number) {
     const count = await this.questionRepository.count({
       where: { id: questionId, questionnaireTicket: { userId } },

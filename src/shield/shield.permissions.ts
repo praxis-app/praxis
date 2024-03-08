@@ -53,6 +53,7 @@ import {
   isOwnQuestionComment,
   isOwnQuestionnaireTicket,
   isOwnQuestionnaireTicketComment,
+  isOwnQuestionnaireTicketCommentImage,
   isOwnQuestionnaireTicketReviewer,
   isOwnQuestionnaireTicketReviewerAvatar,
 } from './rules/question.rules';
@@ -220,6 +221,7 @@ export const shieldPermissions = shield(
     PublicFeedItemsConnection: allow,
     Image: {
       id: or(
+        isOwnQuestionnaireTicketCommentImage,
         isOwnQuestionnaireTicketReviewerAvatar,
         isOwnUserAvatar,
         isPublicCommentImage,
@@ -231,6 +233,7 @@ export const shieldPermissions = shield(
         isVerified,
       ),
       filename: or(
+        isOwnQuestionnaireTicketCommentImage,
         isPublicCommentImage,
         isPublicPostImage,
         isPublicProposalImage,
