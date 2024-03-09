@@ -90,13 +90,13 @@ const Notifications = () => {
     await readNotifications({
       update(cache) {
         const pageCount = Math.ceil(data.notificationsCount / rowsPerPage);
-        for (let i = 0; i < pageCount; i++) {
+        for (let page = 0; page < pageCount; page++) {
           cache.updateQuery<NotificationsQuery, NotificationsQueryVariables>(
             {
               query: NotificationsDocument,
               variables: {
                 limit: rowsPerPage,
-                offset: i * rowsPerPage,
+                offset: page * rowsPerPage,
               },
             },
             (notificationsData) =>
@@ -124,13 +124,13 @@ const Notifications = () => {
     await clearNotifications({
       update(cache) {
         const pageCount = Math.ceil(data.notificationsCount / rowsPerPage);
-        for (let i = 0; i < pageCount; i++) {
+        for (let page = 0; page < pageCount; page++) {
           cache.updateQuery<NotificationsQuery, NotificationsQueryVariables>(
             {
               query: NotificationsDocument,
               variables: {
                 limit: rowsPerPage,
-                offset: i * rowsPerPage,
+                offset: page * rowsPerPage,
               },
             },
             (notificationsData) =>
