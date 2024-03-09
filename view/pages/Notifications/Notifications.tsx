@@ -117,22 +117,32 @@ const Notifications = () => {
   };
 
   const handleClearAll = async () => {
+    if (!data) {
+      return;
+    }
+    setPage(0);
     await clearNotifications({
       update(cache) {
-        cache.updateQuery<NotificationsQuery>(
-          {
-            query: NotificationsDocument,
-            variables: { limit: 10, offset: 0 },
-          },
-          (notificationsData) =>
-            produce(notificationsData, (draft) => {
-              if (!draft) {
-                return;
-              }
-              draft.notifications = [];
-              draft.notificationsCount = 0;
-            }),
-        );
+        const pageCount = Math.ceil(data.notificationsCount / rowsPerPage);
+        for (let i = 0; i < pageCount; i++) {
+          cache.updateQuery<NotificationsQuery, NotificationsQueryVariables>(
+            {
+              query: NotificationsDocument,
+              variables: {
+                limit: rowsPerPage,
+                offset: i * rowsPerPage,
+              },
+            },
+            (notificationsData) =>
+              produce(notificationsData, (draft) => {
+                if (!draft) {
+                  return;
+                }
+                draft.notifications = [];
+                draft.notificationsCount = 0;
+              }),
+          );
+        }
         resetUnreadCount(cache);
       },
     });
