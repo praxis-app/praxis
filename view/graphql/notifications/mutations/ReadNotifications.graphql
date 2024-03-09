@@ -1,7 +1,3 @@
-mutation ReadNotifications($offset: Int, $limit: Int) {
-  readNotifications(offset: $offset, limit: $limit) {
-    notifications {
-      ...Notification
-    }
-  }
+mutation ReadNotifications {
+  readNotifications
 }

@@ -65,17 +65,12 @@ export class NotificationsService {
     return { notification };
   }
 
-  async readNotifications(userId: number, offset?: number, limit?: number) {
+  async readNotifications(userId: number) {
     await this.notificationRepository.update(
       { userId },
       { status: NotificationStatus.Read },
     );
-    const notifications = await this.notificationRepository.find({
-      where: { userId },
-      skip: offset,
-      take: limit,
-    });
-    return { notifications };
+    return true;
   }
 
   async deleteNotification(notificationId: number) {

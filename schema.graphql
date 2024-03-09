@@ -465,10 +465,6 @@ type UpdateEventPayload {
   event: Event!
 }
 
-type ReadNotificationsPayload {
-  notifications: [Notification!]!
-}
-
 type UpdateNotificationPayload {
   notification: Notification!
 }
@@ -711,7 +707,7 @@ type Mutation {
   synchronizeProposal(id: Int!): SynchronizeProposalPayload!
   deleteProposal(id: Int!): Boolean!
   updateNotification(notificationData: UpdateNotificationInput!): UpdateNotificationPayload!
-  readNotifications(offset: Int, limit: Int): ReadNotificationsPayload!
+  readNotifications: Boolean!
   deleteNotification(id: Int!): Boolean!
   clearNotifications: Boolean!
   updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!

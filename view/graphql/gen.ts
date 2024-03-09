@@ -523,7 +523,7 @@ export type Mutation = {
   leaveGroup: Scalars['Boolean']['output'];
   logOut: Scalars['Boolean']['output'];
   login: AuthPayload;
-  readNotifications: ReadNotificationsPayload;
+  readNotifications: Scalars['Boolean']['output'];
   signUp: AuthPayload;
   synchronizeProposal: SynchronizeProposalPayload;
   unfollowUser: Scalars['Boolean']['output'];
@@ -704,11 +704,6 @@ export type MutationLeaveGroupArgs = {
 
 export type MutationLoginArgs = {
   input: LoginInput;
-};
-
-export type MutationReadNotificationsArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type MutationSignUpArgs = {
@@ -1186,11 +1181,6 @@ export type QuestionnaireTicketsInput = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   status: Scalars['String']['input'];
-};
-
-export type ReadNotificationsPayload = {
-  __typename?: 'ReadNotificationsPayload';
-  notifications: Array<Notification>;
 };
 
 export type Rule = {
