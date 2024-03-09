@@ -17,11 +17,10 @@ import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
+import { User } from '../users/models/user.model';
 import { Question } from '../vibe-check/models/question.model';
 import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
-import { User } from '../users/models/user.model';
 import { Notification } from './models/notification.model';
-import { ReadNotificationsPayload } from './models/read-notifications.payload';
 import { UpdateNotificationInput } from './models/update-notification.input';
 import { UpdateNotificationPayload } from './models/update-notification.payload';
 import { NotificationStatus } from './notifications.constants';
@@ -129,13 +128,9 @@ export class NotificationsResolver {
     return this.notificationsService.updateNotification(id, data);
   }
 
-  @Mutation(() => ReadNotificationsPayload)
-  readNotifications(
-    @CurrentUser() user: User,
-    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
-    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
-  ) {
-    return this.notificationsService.readNotifications(user.id, offset, limit);
+  @Mutation(() => Boolean)
+  readNotifications(@CurrentUser() user: User) {
+    return this.notificationsService.readNotifications(user.id);
   }
 
   @Mutation(() => Boolean)

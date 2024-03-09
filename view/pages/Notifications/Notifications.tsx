@@ -11,12 +11,14 @@ import ItemMenu from '../../components/Shared/ItemMenu';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import Pagination from '../../components/Shared/Pagination';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { NotificationStatus } from '../../constants/notifications.constants';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 import { useClearNotificationMutation } from '../../graphql/notifications/mutations/gen/ClearNotifications.gen';
 import { useReadNotificationsMutation } from '../../graphql/notifications/mutations/gen/ReadNotifications.gen';
 import {
   NotificationsDocument,
   NotificationsQuery,
+  NotificationsQueryVariables,
   useNotificationsLazyQuery,
 } from '../../graphql/notifications/queries/gen/Notifications.gen';
 import {
@@ -36,7 +38,7 @@ const Notifications = () => {
   ] = useNotificationsLazyQuery();
 
   const [
-    bulkUpdateNotifications,
+    readNotifications,
     { loading: readNotificationsLoading, error: readNotificationsError },
   ] = useReadNotificationsMutation();
 
@@ -81,37 +83,66 @@ const Notifications = () => {
     );
   };
 
-  const handleBulkUpdate = async () => {
+  const handleReadNotifications = async () => {
     if (!data) {
       return;
     }
-    await bulkUpdateNotifications({
-      variables: {
-        limit: rowsPerPage,
-        offset: page * rowsPerPage,
+    await readNotifications({
+      update(cache) {
+        const pageCount = Math.ceil(data.notificationsCount / rowsPerPage);
+        for (let page = 0; page < pageCount; page++) {
+          cache.updateQuery<NotificationsQuery, NotificationsQueryVariables>(
+            {
+              query: NotificationsDocument,
+              variables: {
+                limit: rowsPerPage,
+                offset: page * rowsPerPage,
+              },
+            },
+            (notificationsData) =>
+              produce(notificationsData, (draft) => {
+                if (!draft) {
+                  return;
+                }
+                draft.notifications.forEach((notification) => {
+                  notification.status = NotificationStatus.Read;
+                });
+              }),
+          );
+        }
+        resetUnreadCount(cache);
       },
-      update: resetUnreadCount,
     });
     setMenuAnchorEl(null);
   };
 
   const handleClearAll = async () => {
+    if (!data) {
+      return;
+    }
+    setPage(0);
     await clearNotifications({
       update(cache) {
-        cache.updateQuery<NotificationsQuery>(
-          {
-            query: NotificationsDocument,
-            variables: { limit: 10, offset: 0 },
-          },
-          (notificationsData) =>
-            produce(notificationsData, (draft) => {
-              if (!draft) {
-                return;
-              }
-              draft.notifications = [];
-              draft.notificationsCount = 0;
-            }),
-        );
+        const pageCount = Math.ceil(data.notificationsCount / rowsPerPage);
+        for (let page = 0; page < pageCount; page++) {
+          cache.updateQuery<NotificationsQuery, NotificationsQueryVariables>(
+            {
+              query: NotificationsDocument,
+              variables: {
+                limit: rowsPerPage,
+                offset: page * rowsPerPage,
+              },
+            },
+            (notificationsData) =>
+              produce(notificationsData, (draft) => {
+                if (!draft) {
+                  return;
+                }
+                draft.notifications = [];
+                draft.notificationsCount = 0;
+              }),
+          );
+        }
         resetUnreadCount(cache);
       },
     });
@@ -148,7 +179,7 @@ const Notifications = () => {
           prependChildren
           canDelete
         >
-          <MenuItem onClick={handleBulkUpdate}>
+          <MenuItem onClick={handleReadNotifications}>
             <Check fontSize="small" sx={{ marginRight: 1 }} />
             {t('notifications.labels.markAllAsRead')}
           </MenuItem>
