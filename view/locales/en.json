@@ -215,7 +215,8 @@
       "verifyToFollow": "You must be verified to follow other users.",
       "verifyToSeeOtherProfiles": "You must be verified to see other user profiles.",
       "verifyToUpdateCoverPhoto": "You must be verified to update your cover photo.",
-      "verifyToUpdateProfilePicture": "You must be verified to update your profile picture."
+      "verifyToUpdateProfilePicture": "You must be verified to update your profile picture.",
+      "readyToExplore": "Ready to explore?"
     },
     "labels": {
       "followers_one": "{{count}} Follower",

@@ -1,10 +1,14 @@
 import { Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
+import {
+  DEFAULT_PAGE_SIZE,
+  NavigationPaths,
+} from '../../constants/shared.constants';
 import { useHomeFeedLazyQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 import Feed from '../Shared/Feed';
+import Link from '../Shared/Link';
 
 const HomeFeed = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
@@ -46,6 +50,20 @@ const HomeFeed = () => {
       setPage={setPage}
       setRowsPerPage={setRowsPerPage}
       totalCount={data?.me.homeFeed.totalCount}
+      noContentMessage={
+        <>
+          <Typography variant="body1" textAlign="center">
+            {`${t('users.prompts.readyToExplore')} `}
+            <Link
+              href={NavigationPaths.Groups}
+              sx={{ fontFamily: 'Inter Bold', marginRight: '0.5ch' }}
+            >
+              Join groups
+            </Link>
+            to populate your feed.
+          </Typography>
+        </>
+      }
     />
   );
 };
