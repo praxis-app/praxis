@@ -490,7 +490,9 @@ export class VibeCheckService {
     await this.anwersRepository.save(newAnswers);
 
     // Mark as submitted if all questions have been answered
-    const questionCount = await this.serverQuestionRepository.count();
+    const questionCount = await this.questionRepository.count({
+      where: { questionnaireTicketId },
+    });
     const answerCount = await this.anwersRepository.count({
       where: {
         question: { questionnaireTicketId },
