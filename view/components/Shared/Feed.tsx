@@ -6,6 +6,7 @@ import {
   SxProps,
   Typography,
 } from '@mui/material';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FeedItemFragment } from '../../graphql/posts/fragments/gen/FeedItem.gen';
 import PostCard from '../Posts/PostCard';
@@ -27,6 +28,7 @@ interface Props extends BoxProps {
   setPage(page: number): void;
   setRowsPerPage: (rowsPerPage: number) => void;
   totalCount?: number;
+  noContentMessage?: ReactNode | string;
 }
 
 const FeedItem = ({ item }: { item: FeedItemFragment }) => {
@@ -42,6 +44,7 @@ const FeedItem = ({ item }: { item: FeedItemFragment }) => {
 const Feed = ({
   feedItems,
   isLoading,
+  noContentMessage,
   onChangePage,
   page,
   rowsPerPage,
@@ -51,6 +54,17 @@ const Feed = ({
   ...boxProps
 }: Props) => {
   const { t } = useTranslation();
+
+  const renderNoContentMessage = () => {
+    if (noContentMessage) {
+      return noContentMessage;
+    }
+    return (
+      <Typography variant="body1" textAlign="center">
+        {t('prompts.noContent')}
+      </Typography>
+    );
+  };
 
   return (
     <Box {...boxProps}>
@@ -70,9 +84,7 @@ const Feed = ({
         {feedItems?.length === 0 && (
           <Card>
             <CardContent sx={CARD_CONTENT_STYLES}>
-              <Typography variant="body1" textAlign="center">
-                {t('prompts.noContent')}
-              </Typography>
+              {renderNoContentMessage()}
             </CardContent>
           </Card>
         )}
