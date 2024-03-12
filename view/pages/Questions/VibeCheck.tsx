@@ -80,6 +80,11 @@ const VibeCheck = () => {
     </>
   );
 
+  const renderAnsweredQuestions = () =>
+    questions.map((question: AnsweredQuestionCardFragment) => (
+      <AnsweredQuestionCard key={question.id} question={question} />
+    ));
+
   return (
     <>
       <Flex justifyContent="space-between" alignItems="center">
@@ -123,10 +128,7 @@ const VibeCheck = () => {
               {renderCommentSection()}
             </CardContent>
           </Card>
-
-          {questions.map((question: AnsweredQuestionCardFragment) => (
-            <AnsweredQuestionCard key={question.id} question={question} />
-          ))}
+          {renderAnsweredQuestions()}
         </>
       )}
 
@@ -161,9 +163,7 @@ const VibeCheck = () => {
             </CardContent>
           </Card>
 
-          {questions.map((question: AnsweredQuestionCardFragment) => (
-            <AnsweredQuestionCard key={question.id} question={question} />
-          ))}
+          {renderAnsweredQuestions()}
         </>
       )}
 
@@ -179,9 +179,7 @@ const VibeCheck = () => {
             </CardContent>
           </Card>
 
-          {questions.map((question: AnsweredQuestionCardFragment) => (
-            <AnsweredQuestionCard key={question.id} question={question} />
-          ))}
+          {renderAnsweredQuestions()}
         </>
       )}
     </>
