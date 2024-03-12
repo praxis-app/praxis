@@ -7,6 +7,7 @@ export enum NotificationType {
   AnswerComment = 'answer-comment',
   AnswerLike = 'answer-like',
   CommentLike = 'comment-like',
+  DenyUserVerification = 'deny-user-verification',
   Follow = 'follow',
   GroupMemberRequest = 'group-member-request',
   GroupMemberRequestApproval = 'group-member-request-approval',

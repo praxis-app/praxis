@@ -397,9 +397,23 @@ export class VibeCheckService {
     });
   }
 
-  async denyQuestionnaireTicket(questionnaireTicketId: number) {
+  async denyQuestionnaireTicket(
+    questionnaireTicketId: number,
+    otherUserId: number,
+  ) {
     await this.questionnaireTicketRepository.update(questionnaireTicketId, {
       status: QuestionnaireTicketStatus.Denied,
+    });
+
+    // Notify the user that their verification has been denied
+    const { userId } = await this.questionnaireTicketRepository.findOneOrFail({
+      where: { id: questionnaireTicketId },
+      select: { userId: true },
+    });
+    await this.notificationsService.createNotification({
+      notificationType: NotificationType.DenyUserVerification,
+      otherUserId,
+      userId,
     });
   }
 
