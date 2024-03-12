@@ -26,6 +26,7 @@ import { CreateGroupPayload } from '../models/create-group.payload';
 import { GroupConfig } from '../models/group-config.model';
 import { GroupMemberRequest } from '../models/group-member-request.model';
 import { Group } from '../models/group.model';
+import { GroupsInput } from '../models/groups.input';
 import { UpdateGroupInput } from '../models/update-group.input';
 import { UpdateGroupPayload } from '../models/update-group.payload';
 
@@ -47,10 +48,18 @@ export class GroupsResolver {
 
   @Query(() => [Group])
   async groups(
-    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
-    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+    @CurrentUser() currentUser: User,
+    @Args('input') { myGroups, offset, limit }: GroupsInput,
   ) {
-    return this.groupsService.getPagedGroups({}, offset, limit);
+    return this.groupsService.getPagedGroups(
+      myGroups
+        ? {
+            members: { id: currentUser.id },
+          }
+        : undefined,
+      offset,
+      limit,
+    );
   }
 
   @Query(() => Int)

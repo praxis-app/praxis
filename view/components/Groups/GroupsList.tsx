@@ -22,8 +22,10 @@ const GroupsList = () => {
   useEffect(() => {
     getGroups({
       variables: {
-        limit: rowsPerPage,
-        offset: page * rowsPerPage,
+        input: {
+          limit: rowsPerPage,
+          offset: page * rowsPerPage,
+        },
       },
     });
   }, [rowsPerPage, page, getGroups]);
@@ -31,8 +33,10 @@ const GroupsList = () => {
   const onChangePage = async (newPage: number) => {
     await getGroups({
       variables: {
-        limit: rowsPerPage,
-        offset: newPage * rowsPerPage,
+        input: {
+          limit: rowsPerPage,
+          offset: newPage * rowsPerPage,
+        },
       },
     });
   };

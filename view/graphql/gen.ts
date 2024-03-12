@@ -441,6 +441,12 @@ export type GroupRolePermissionInput = {
   updateGroup?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export type GroupsInput = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  myGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type Image = {
   __typename?: 'Image';
   comment?: Maybe<Comment>;
@@ -1064,8 +1070,7 @@ export type QueryGroupRoleArgs = {
 };
 
 export type QueryGroupsArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
+  input: GroupsInput;
 };
 
 export type QueryLikesArgs = {

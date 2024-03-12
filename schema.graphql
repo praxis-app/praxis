@@ -649,7 +649,7 @@ type Query {
   unreadNotificationsCount: Int!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   group(id: Int, name: String): Group!
-  groups(offset: Int, limit: Int): [Group!]!
+  groups(input: GroupsInput!): [Group!]!
   groupsCount: Int!
   publicGroups(offset: Int, limit: Int): [Group!]!
   publicGroupsCount: Int!
@@ -679,6 +679,12 @@ type Query {
   question(id: Int!): Question!
   serverQuestions: [ServerQuestion!]!
   serverRules: [Rule!]!
+}
+
+input GroupsInput {
+  limit: Int
+  offset: Int
+  myGroups: Boolean
 }
 
 input EventsInput {
