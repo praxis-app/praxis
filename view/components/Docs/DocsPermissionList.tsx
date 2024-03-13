@@ -11,16 +11,19 @@ interface Props {
 }
 
 const DocsPermissionList = ({ permissionType }: Props) => {
-  const permissions =
-    permissionType === 'server'
-      ? SERVER_PERMISSION_NAMES
-      : GROUP_PERMISSION_NAMES;
+  const isGroup = permissionType === 'group';
+
+  const permissions = isGroup
+    ? GROUP_PERMISSION_NAMES
+    : SERVER_PERMISSION_NAMES;
 
   return (
     <Box component="ul" paddingLeft={3} marginBottom={3}>
       {permissions.map((permission: PermissionName) => {
-        const { displayName, description, inDev } =
-          getPermissionText(permission);
+        const { displayName, description, inDev } = getPermissionText(
+          permission,
+          isGroup,
+        );
         if (inDev || !displayName) {
           return null;
         }

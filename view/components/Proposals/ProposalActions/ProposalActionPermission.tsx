@@ -26,7 +26,7 @@ const ProposalActionPermission = ({
 }: Props) => {
   const theme = useTheme();
 
-  const { displayName } = getPermissionText(permissionName);
+  const { displayName } = getPermissionText(permissionName, true);
   const isChangingRole = actionType === ProposalActionType.ChangeRole;
   const isEnabled = permissions[permissionName];
 
