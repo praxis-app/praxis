@@ -75,6 +75,7 @@ export class VotesService {
       if (vote.voteType === VoteTypes.Block) {
         await this.vibeCheckService.denyQuestionnaireTicket(
           vote.questionnaireTicketId,
+          vote.userId,
         );
       } else {
         const isVerifiable =
@@ -171,6 +172,7 @@ export class VotesService {
       if (vote.voteType === VoteTypes.Block) {
         await this.vibeCheckService.denyQuestionnaireTicket(
           vote.questionnaireTicketId,
+          vote.userId,
         );
       } else {
         const isVerifiable =

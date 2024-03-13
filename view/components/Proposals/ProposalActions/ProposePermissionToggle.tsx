@@ -24,7 +24,10 @@ const ProposePermissionToggle = ({
   permissions,
   setFieldValue,
 }: Props) => {
-  const { displayName, description, inDev } = getPermissionText(permissionName);
+  const { displayName, description, inDev } = getPermissionText(
+    permissionName,
+    true,
+  );
   if (inDev) {
     return null;
   }

@@ -52,6 +52,7 @@ import {
   isOwnAnswer,
   isOwnQuestion,
   isOwnQuestionComment,
+  isOwnQuestionCommentImage,
   isOwnQuestionnaireTicket,
   isOwnQuestionnaireTicketComment,
   isOwnQuestionnaireTicketCommentImage,
@@ -224,6 +225,7 @@ export const shieldPermissions = shield(
     PublicFeedItemsConnection: allow,
     Image: {
       id: or(
+        isOwnQuestionCommentImage,
         isOwnQuestionnaireTicketCommentImage,
         isOwnQuestionnaireTicketReviewerAvatar,
         isOwnUserAvatar,
@@ -236,6 +238,7 @@ export const shieldPermissions = shield(
         isVerified,
       ),
       filename: or(
+        isOwnQuestionCommentImage,
         isOwnQuestionnaireTicketCommentImage,
         isPublicCommentImage,
         isPublicPostImage,

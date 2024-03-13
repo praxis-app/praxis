@@ -213,6 +213,9 @@ const Notification = ({
     if (notificationType === NotificationType.VerifyUser) {
       return _t('notifications.messages.verifyUser');
     }
+    if (notificationType === NotificationType.DenyUserVerification) {
+      return _t('notifications.messages.denyUserVerification');
+    }
     return _t('notifications.errors.invalidType');
   };
 
@@ -284,10 +287,11 @@ const Notification = ({
       }
       return `${NavigationPaths.VibeCheck}?${queryParams}`;
     }
-    if (notificationType === NotificationType.AnswerLike) {
-      return NavigationPaths.VibeCheck;
-    }
-    if (notificationType === NotificationType.VerifyUser) {
+    if (
+      notificationType === NotificationType.AnswerLike ||
+      notificationType === NotificationType.VerifyUser ||
+      notificationType === NotificationType.DenyUserVerification
+    ) {
       return NavigationPaths.VibeCheck;
     }
     return NavigationPaths.Home;
@@ -375,7 +379,8 @@ const Notification = ({
     }
     if (
       notificationType === NotificationType.QuestionnaireTicketSubmitted ||
-      notificationType === NotificationType.NewQuestionnaireTicket
+      notificationType === NotificationType.NewQuestionnaireTicket ||
+      notificationType === NotificationType.DenyUserVerification
     ) {
       return <QuestionAnswer sx={{ ...iconStyles, marginTop: 0.65 }} />;
     }

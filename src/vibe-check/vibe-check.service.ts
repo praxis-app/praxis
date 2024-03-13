@@ -338,6 +338,20 @@ export class VibeCheckService {
     return count > 0;
   }
 
+  async isOwnQuestionCommentImage(userId: number, imageId: number) {
+    const count = await this.questionRepository.count({
+      where: {
+        questionnaireTicket: {
+          user: { id: userId, verified: false },
+        },
+        comments: {
+          images: { id: imageId },
+        },
+      },
+    });
+    return count > 0;
+  }
+
   async isOwnAnswer(answerId: number, userId: number) {
     const count = await this.anwersRepository.count({
       where: {
@@ -397,9 +411,23 @@ export class VibeCheckService {
     });
   }
 
-  async denyQuestionnaireTicket(questionnaireTicketId: number) {
+  async denyQuestionnaireTicket(
+    questionnaireTicketId: number,
+    otherUserId: number,
+  ) {
     await this.questionnaireTicketRepository.update(questionnaireTicketId, {
       status: QuestionnaireTicketStatus.Denied,
+    });
+
+    // Notify the user that their verification has been denied
+    const { userId } = await this.questionnaireTicketRepository.findOneOrFail({
+      where: { id: questionnaireTicketId },
+      select: { userId: true },
+    });
+    await this.notificationsService.createNotification({
+      notificationType: NotificationType.DenyUserVerification,
+      otherUserId,
+      userId,
     });
   }
 

@@ -152,6 +152,17 @@ export const isOwnQuestionComment = rule({ cache: 'strict' })(async (
   return vibeCheckService.isOwnQuestionComment(parent.id, user.id);
 });
 
+export const isOwnQuestionCommentImage = rule({ cache: 'strict' })(async (
+  parent: Image,
+  _args,
+  { services: { vibeCheckService }, user }: Context,
+) => {
+  if (!user) {
+    return UNAUTHORIZED;
+  }
+  return vibeCheckService.isOwnQuestionCommentImage(user.id, parent.id);
+});
+
 export const isOwnAnswer = rule({ cache: 'strict' })(async (
   parent: Answer,
   _args,

@@ -24,6 +24,7 @@ const GroupPermissionToggle = ({
       permissionInput={permissionInput}
       setFieldValue={setFieldValue}
       isEnabled={isEnabled}
+      isGroup
     />
   );
 };
