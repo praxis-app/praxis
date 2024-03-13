@@ -484,6 +484,7 @@
       "manageQuestions": "Allows members to create, edit, or delete membership questions.",
       "manageRoles": "Allows members to create new roles as well as edit or delete other roles.",
       "manageRules": "Allows members to create, edit, or delete rules for the server.",
+      "manageServerSettings": "Allows members to make changes to the server's settings.",
       "removeGroups": "Allows members to remove groups from the server.",
       "removeMembers": "Allows members to remove other members from the server.",
       "removeProposals": "Allows members to remove proposals posted by other members.",

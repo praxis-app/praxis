@@ -16,7 +16,10 @@ interface PermissionText {
   inDev?: boolean;
 }
 
-export const getPermissionText = (name: PermissionName): PermissionText => {
+export const getPermissionText = (
+  name: PermissionName,
+  group = false,
+): PermissionText => {
   const _t: TFunction<Namespace<'ns1'>, undefined> = t;
   switch (name) {
     case 'approveMemberRequests':
@@ -37,7 +40,9 @@ export const getPermissionText = (name: PermissionName): PermissionText => {
     case 'manageSettings':
       return {
         displayName: _t('permissions.names.manageSettings'),
-        description: _t('permissions.descriptions.manageGroupSettings'),
+        description: group
+          ? _t('permissions.descriptions.manageGroupSettings')
+          : _t('permissions.descriptions.manageServerSettings'),
       };
     case 'createEvents':
       return {

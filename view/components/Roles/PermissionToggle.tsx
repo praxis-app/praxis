@@ -16,6 +16,7 @@ interface Props {
   setFieldValue(field: string, value?: boolean): void;
   permissionInput?: boolean | null;
   isEnabled: boolean;
+  isGroup?: boolean;
 }
 
 const PermissionToggle = ({
@@ -23,8 +24,12 @@ const PermissionToggle = ({
   setFieldValue,
   permissionInput,
   isEnabled,
+  isGroup,
 }: Props) => {
-  const { displayName, description, inDev } = getPermissionText(permissionName);
+  const { displayName, description, inDev } = getPermissionText(
+    permissionName,
+    isGroup,
+  );
   if (inDev) {
     return null;
   }
