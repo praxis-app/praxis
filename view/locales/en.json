@@ -326,7 +326,10 @@
       "about": "About",
       "events": "Events",
       "feed": "Feed",
-      "proposals": "Proposals"
+      "proposals": "Proposals",
+      "joined": "Joined",
+      "activity": "Activity",
+      "allGroups": "All Groups"
     },
     "settings": {
       "names": {
