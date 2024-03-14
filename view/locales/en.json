@@ -263,6 +263,7 @@
     "actions": {
       "approve": "Approve",
       "cancelRequest": "Cancel Request",
+      "create": "Create Group",
       "deny": "Deny",
       "edit": "Edit Group",
       "join": "Join",
@@ -274,7 +275,8 @@
       "description": "Description"
     },
     "headers": {
-      "exploreGroups": "Explore Groups",
+      "exploreGroups": "Discover Groups",
+      "findGroups": "Find Groups",
       "organizeWithGroups": "Organize Your Community with Groups"
     },
     "errors": {

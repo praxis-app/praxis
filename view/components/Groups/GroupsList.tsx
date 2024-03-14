@@ -11,6 +11,8 @@ import {
 import { useGroupsLazyQuery } from '../../graphql/groups/queries/gen/Groups.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../utils/error.utils';
+import Flex from '../Shared/Flex';
+import GhostButton from '../Shared/GhostButton';
 import LevelOneHeading from '../Shared/LevelOneHeading';
 import Pagination from '../Shared/Pagination';
 import GroupForm from './GroupForm';
@@ -88,9 +90,17 @@ const GroupsList = () => {
 
   return (
     <>
-      <LevelOneHeading header>
-        {t('groups.headers.exploreGroups')}
-      </LevelOneHeading>
+      <Flex justifyContent="space-between" alignItems="center">
+        <LevelOneHeading header>
+          {isDesktop
+            ? t('groups.headers.exploreGroups')
+            : t('groups.headers.findGroups')}
+        </LevelOneHeading>
+
+        <GhostButton sx={{ marginBottom: 3.5 }}>
+          {isDesktop ? t('groups.actions.create') : t('actions.create')}
+        </GhostButton>
+      </Flex>
 
       <Card>
         <Tabs sx={tabsStyles} textColor="inherit" value={tab} centered>
