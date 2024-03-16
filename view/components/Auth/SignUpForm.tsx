@@ -67,6 +67,9 @@ const SignUpForm = () => {
     if (password !== confirmPassword) {
       errors.confirmPassword = t('signUp.errors.confirmPassword');
     }
+    if (!confirmPassword) {
+      errors.confirmPassword = t('signUp.errors.missingConfirmPassword');
+    }
     return errors;
   };
 

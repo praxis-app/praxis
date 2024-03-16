@@ -558,6 +558,7 @@
   "signUp": {
     "errors": {
       "confirmPassword": "Passwords do not match",
+      "missingConfirmPassword": "Confirm password cannot be empty",
       "missingEmail": "Email cannot be empty",
       "missingName": "Name cannot be empty",
       "missingPassword": "Password cannot be empty",
