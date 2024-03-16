@@ -3,6 +3,7 @@ query Groups($input: GroupsInput!, $isLoggedIn: Boolean = true) {
     ...GroupCard
   }
   groupsCount
+  joinedGroupsCount
 
   me {
     id

@@ -40,6 +40,8 @@ const GroupsList = () => {
   const isDesktop = useIsDesktop();
 
   const tabParam = searchParams.get('tab');
+  const isJoinedTab = tabParam === GroupsPageTabs.Joined;
+  const isAllGroupsTab = tabParam === GroupsPageTabs.AllGroups;
 
   const pathPrefix = `${NavigationPaths.Groups}${TAB_QUERY_PARAM}`;
   const allGroupsTab = `${pathPrefix}${GroupsPageTabs.AllGroups}`;
@@ -55,10 +57,10 @@ const GroupsList = () => {
     if (!tabParam) {
       setTab(0);
     }
-    if (tabParam === GroupsPageTabs.AllGroups) {
+    if (isAllGroupsTab) {
       setTab(1);
     }
-    if (tabParam === GroupsPageTabs.Joined) {
+    if (isJoinedTab) {
       setTab(2);
     }
 
@@ -67,10 +69,21 @@ const GroupsList = () => {
         input: {
           limit: rowsPerPage,
           offset: page * rowsPerPage,
+          myGroups: isJoinedTab,
         },
       },
     });
-  }, [rowsPerPage, page, getGroups, tabParam]);
+  }, [rowsPerPage, page, getGroups, tabParam, isJoinedTab, isAllGroupsTab]);
+
+  const getCount = () => {
+    if (!data) {
+      return 0;
+    }
+    if (isJoinedTab) {
+      return data.joinedGroupsCount;
+    }
+    return data.groupsCount;
+  };
 
   const onChangePage = async (newPage: number) => {
     await getGroups({
@@ -136,7 +149,7 @@ const GroupsList = () => {
       </Modal>
 
       <Pagination
-        count={data?.groupsCount}
+        count={getCount()}
         isLoading={loading}
         onChangePage={onChangePage}
         page={page}
@@ -145,12 +158,34 @@ const GroupsList = () => {
         setRowsPerPage={setRowsPerPage}
         showTopPagination={false}
       >
-        {data?.groupsCount === 0 && (
+        {isAllGroupsTab && data?.groupsCount === 0 && (
           <Card>
             <CardContent sx={{ '&:last-child': { paddingY: 5 } }}>
               <Typography textAlign="center">
                 {t('groups.prompts.noGroups')}
               </Typography>
+            </CardContent>
+          </Card>
+        )}
+
+        {isJoinedTab && data?.joinedGroupsCount === 0 && (
+          <Card>
+            <CardContent
+              sx={{
+                '&:last-child': { paddingY: 4 },
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <Typography alignSelf="center" paddingBottom={2.5}>
+                {t('groups.prompts.noJoinedGroups')}
+              </Typography>
+              <GhostButton
+                onClick={() => navigate(allGroupsTab)}
+                sx={{ alignSelf: 'center' }}
+              >
+                {t('groups.actions.seeAllGroups')}
+              </GhostButton>
             </CardContent>
           </Card>
         )}

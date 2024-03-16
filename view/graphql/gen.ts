@@ -1020,6 +1020,7 @@ export type Query = {
   groups: Array<Group>;
   groupsCount: Scalars['Int']['output'];
   isFirstUser: Scalars['Boolean']['output'];
+  joinedGroupsCount: Scalars['Int']['output'];
   likes: Array<Like>;
   me: User;
   notifications: Array<Notification>;

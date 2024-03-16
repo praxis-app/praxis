@@ -651,6 +651,7 @@ type Query {
   group(id: Int, name: String): Group!
   groups(input: GroupsInput!): [Group!]!
   groupsCount: Int!
+  joinedGroupsCount: Int!
   publicGroups(offset: Int, limit: Int): [Group!]!
   publicGroupsCount: Int!
   publicGroupsFeed(offset: Int, limit: Int): PublicFeedItemsConnection!

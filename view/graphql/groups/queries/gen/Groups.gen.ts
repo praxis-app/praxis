@@ -16,6 +16,7 @@ export type GroupsQueryVariables = Types.Exact<{
 export type GroupsQuery = {
   __typename?: 'Query';
   groupsCount: number;
+  joinedGroupsCount: number;
   groups: Array<{
     __typename?: 'Group';
     description: string;
@@ -56,6 +57,7 @@ export const GroupsDocument = gql`
       ...GroupCard
     }
     groupsCount
+    joinedGroupsCount
     me {
       id
       serverPermissions {

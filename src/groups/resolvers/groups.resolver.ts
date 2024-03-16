@@ -67,6 +67,13 @@ export class GroupsResolver {
     return this.groupsService.getGroupsCount();
   }
 
+  @Query(() => Int)
+  async joinedGroupsCount(@CurrentUser() currentUser: User) {
+    return this.groupsService.getGroupsCount({
+      members: { id: currentUser.id },
+    });
+  }
+
   @Query(() => [Group])
   async publicGroups(
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
