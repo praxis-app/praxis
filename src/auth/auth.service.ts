@@ -51,7 +51,6 @@ export class AuthService {
     email,
     password,
     confirmPassword,
-    profilePicture,
     inviteToken,
   }: SignUpInput): Promise<AuthPayload> {
     if (!VALID_EMAIL_REGEX.test(email)) {
@@ -81,12 +80,7 @@ export class AuthService {
     }
 
     const passwordHash = await hash(password, SALT_ROUNDS);
-    const user = await this.usersService.createUser(
-      name,
-      email,
-      passwordHash,
-      profilePicture,
-    );
+    const user = await this.usersService.createUser(name, email, passwordHash);
 
     if (inviteToken) {
       await this.serverInvitesService.redeemServerInvite(inviteToken);
