@@ -101,6 +101,24 @@ export class GroupsResolver {
     return this.groupsService.getPublicGroupsFeed(offset, limit);
   }
 
+  @Query(() => [FeedItem])
+  async joinedGroupsFeed(
+    @CurrentUser() currentUser: User,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.groupsService.getJoinedGroupsFeed(
+      currentUser.id,
+      offset,
+      limit,
+    );
+  }
+
+  @Query(() => Int)
+  async joinedGroupsFeedCount(@CurrentUser() currentUser: User) {
+    return this.groupsService.getJoinedGroupsFeedCount(currentUser.id);
+  }
+
   @Query(() => GroupRole)
   async groupRole(@Args('id', { type: () => Int }) id: number) {
     return this.groupRolesService.getGroupRole({ id });

@@ -9,8 +9,10 @@ import {
   TAB_QUERY_PARAM,
 } from '../../constants/shared.constants';
 import { useGroupsLazyQuery } from '../../graphql/groups/queries/gen/Groups.gen';
+import { useJoinedGroupsFeedLazyQuery } from '../../graphql/groups/queries/gen/JoinedGroupsFeed.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../utils/error.utils';
+import Feed from '../Shared/Feed';
 import Flex from '../Shared/Flex';
 import GhostButton from '../Shared/GhostButton';
 import LevelOneHeading from '../Shared/LevelOneHeading';
@@ -30,9 +32,21 @@ const GroupsList = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
 
-  const [getGroups, { data, loading, error }] = useGroupsLazyQuery({
+  const [
+    getGroups,
+    { data: groupsData, loading: groupsLoading, error: groupsError },
+  ] = useGroupsLazyQuery({
     errorPolicy: 'all',
   });
+
+  const [
+    getActivityFeed,
+    {
+      data: activityFeedData,
+      loading: activityFeedLoading,
+      error: activityFeedError,
+    },
+  ] = useJoinedGroupsFeedLazyQuery();
 
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
@@ -63,26 +77,42 @@ const GroupsList = () => {
     if (isJoinedTab) {
       setTab(2);
     }
-
-    getGroups({
-      variables: {
-        input: {
-          limit: rowsPerPage,
-          offset: page * rowsPerPage,
-          myGroups: isJoinedTab,
+    if (tabParam) {
+      getGroups({
+        variables: {
+          input: {
+            limit: rowsPerPage,
+            offset: page * rowsPerPage,
+            myGroups: isJoinedTab,
+          },
         },
+      });
+      return;
+    }
+    getActivityFeed({
+      variables: {
+        limit: rowsPerPage,
+        offset: page * rowsPerPage,
       },
     });
-  }, [rowsPerPage, page, getGroups, tabParam, isJoinedTab, isAllGroupsTab]);
+  }, [
+    getActivityFeed,
+    getGroups,
+    isAllGroupsTab,
+    isJoinedTab,
+    page,
+    rowsPerPage,
+    tabParam,
+  ]);
 
   const getCount = () => {
-    if (!data) {
-      return 0;
-    }
     if (isJoinedTab) {
-      return data.joinedGroupsCount;
+      return groupsData?.joinedGroupsCount;
     }
-    return data.groupsCount;
+    if (!tabParam) {
+      return activityFeedData?.joinedGroupsFeedCount;
+    }
+    return groupsData?.groupsCount;
   };
 
   const onChangePage = async (newPage: number) => {
@@ -91,17 +121,92 @@ const GroupsList = () => {
         input: {
           limit: rowsPerPage,
           offset: newPage * rowsPerPage,
+          myGroups: isJoinedTab,
         },
       },
     });
   };
 
-  if (!data && error) {
-    if (isDeniedAccess(error)) {
+  const handleTabClick = (path: string) => {
+    navigate(path);
+    setPage(0);
+  };
+
+  if ((!groupsData && groupsError) || activityFeedError) {
+    if (isDeniedAccess(groupsError || activityFeedError)) {
       return <Typography>{t('prompts.permissionDenied')}</Typography>;
     }
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
+
+  const renderActivityFeed = () => (
+    <Feed
+      feedItems={activityFeedData?.joinedGroupsFeed}
+      totalCount={activityFeedData?.joinedGroupsFeedCount}
+      isLoading={activityFeedLoading}
+      onChangePage={onChangePage}
+      page={page}
+      rowsPerPage={rowsPerPage}
+      setPage={setPage}
+      setRowsPerPage={setRowsPerPage}
+      showTopPagination={false}
+    />
+  );
+
+  const renderGroupsLists = () => (
+    <Pagination
+      count={getCount()}
+      isLoading={groupsLoading}
+      onChangePage={onChangePage}
+      page={page}
+      rowsPerPage={rowsPerPage}
+      setPage={setPage}
+      setRowsPerPage={setRowsPerPage}
+      showTopPagination={false}
+    >
+      {isAllGroupsTab && groupsData?.groupsCount === 0 && (
+        <Card>
+          <CardContent sx={{ '&:last-child': { paddingY: 5 } }}>
+            <Typography textAlign="center">
+              {t('groups.prompts.noGroups')}
+            </Typography>
+          </CardContent>
+        </Card>
+      )}
+
+      {isJoinedTab && groupsData?.joinedGroupsCount === 0 && (
+        <Card>
+          <CardContent
+            sx={{
+              '&:last-child': { paddingY: 4 },
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            <Typography alignSelf="center" paddingBottom={2.5}>
+              {t('groups.prompts.noJoinedGroups')}
+            </Typography>
+            <GhostButton
+              onClick={() => navigate(allGroupsTab)}
+              sx={{ alignSelf: 'center' }}
+            >
+              {t('groups.actions.seeAllGroups')}
+            </GhostButton>
+          </CardContent>
+        </Card>
+      )}
+
+      {tabParam &&
+        groupsData?.groups.map((group) => (
+          <GroupCard
+            key={group.id}
+            canRemoveGroups={groupsData.me.serverPermissions.removeGroups}
+            currentUserId={groupsData.me.id}
+            group={group}
+          />
+        ))}
+    </Pagination>
+  );
 
   return (
     <>
@@ -124,15 +229,15 @@ const GroupsList = () => {
         <Tabs sx={tabsStyles} textColor="inherit" value={tab} centered>
           <Tab
             label={t('groups.tabs.activity')}
-            onClick={() => navigate(NavigationPaths.Groups)}
+            onClick={() => handleTabClick(NavigationPaths.Groups)}
           />
           <Tab
             label={t('groups.tabs.allGroups')}
-            onClick={() => navigate(allGroupsTab)}
+            onClick={() => handleTabClick(allGroupsTab)}
           />
           <Tab
             label={t('groups.tabs.joined')}
-            onClick={() => navigate(joinedTab)}
+            onClick={() => handleTabClick(joinedTab)}
           />
         </Tabs>
       </Card>
@@ -148,57 +253,7 @@ const GroupsList = () => {
         <GroupForm inModal />
       </Modal>
 
-      <Pagination
-        count={getCount()}
-        isLoading={loading}
-        onChangePage={onChangePage}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        setPage={setPage}
-        setRowsPerPage={setRowsPerPage}
-        showTopPagination={false}
-      >
-        {isAllGroupsTab && data?.groupsCount === 0 && (
-          <Card>
-            <CardContent sx={{ '&:last-child': { paddingY: 5 } }}>
-              <Typography textAlign="center">
-                {t('groups.prompts.noGroups')}
-              </Typography>
-            </CardContent>
-          </Card>
-        )}
-
-        {isJoinedTab && data?.joinedGroupsCount === 0 && (
-          <Card>
-            <CardContent
-              sx={{
-                '&:last-child': { paddingY: 4 },
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <Typography alignSelf="center" paddingBottom={2.5}>
-                {t('groups.prompts.noJoinedGroups')}
-              </Typography>
-              <GhostButton
-                onClick={() => navigate(allGroupsTab)}
-                sx={{ alignSelf: 'center' }}
-              >
-                {t('groups.actions.seeAllGroups')}
-              </GhostButton>
-            </CardContent>
-          </Card>
-        )}
-
-        {data?.groups.map((group) => (
-          <GroupCard
-            key={group.id}
-            canRemoveGroups={data.me.serverPermissions.removeGroups}
-            currentUserId={data.me.id}
-            group={group}
-          />
-        ))}
-      </Pagination>
+      {tabParam ? renderGroupsLists() : renderActivityFeed()}
     </>
   );
 };

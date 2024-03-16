@@ -22,13 +22,14 @@ const CARD_CONTENT_STYLES: SxProps = {
 interface Props extends BoxProps {
   feedItems?: FeedItemFragment[];
   isLoading: boolean;
+  noContentMessage?: ReactNode | string;
   onChangePage(page: number): void;
   page: number;
   rowsPerPage: number;
   setPage(page: number): void;
   setRowsPerPage: (rowsPerPage: number) => void;
+  showTopPagination?: boolean;
   totalCount?: number;
-  noContentMessage?: ReactNode | string;
 }
 
 const FeedItem = ({ item }: { item: FeedItemFragment }) => {
@@ -50,6 +51,7 @@ const Feed = ({
   rowsPerPage,
   setPage,
   setRowsPerPage,
+  showTopPagination,
   totalCount,
   ...boxProps
 }: Props) => {
@@ -76,6 +78,7 @@ const Feed = ({
         rowsPerPage={rowsPerPage}
         setPage={setPage}
         setRowsPerPage={setRowsPerPage}
+        showTopPagination={showTopPagination}
       >
         {feedItems?.map((item) => (
           <FeedItem item={item} key={`${item.__typename}-${item.id}`} />

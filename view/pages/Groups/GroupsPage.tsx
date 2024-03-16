@@ -3,7 +3,7 @@ import GroupsList from '../../components/Groups/GroupsList';
 import PublicGroupsList from '../../components/Groups/PublicGroupsList';
 import { isVerifiedVar } from '../../graphql/cache';
 
-const GroupsIndex = () => {
+const GroupsPage = () => {
   const isVerified = useReactiveVar(isVerifiedVar);
 
   if (!isVerified) {
@@ -12,4 +12,4 @@ const GroupsIndex = () => {
   return <GroupsList />;
 };
 
-export default GroupsIndex;
+export default GroupsPage;

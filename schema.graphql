@@ -655,6 +655,8 @@ type Query {
   publicGroups(offset: Int, limit: Int): [Group!]!
   publicGroupsCount: Int!
   publicGroupsFeed(offset: Int, limit: Int): PublicFeedItemsConnection!
+  joinedGroupsFeed(offset: Int, limit: Int): [FeedItem!]!
+  joinedGroupsFeedCount: Int!
   groupRole(id: Int!): GroupRole!
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!

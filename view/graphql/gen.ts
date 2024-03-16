@@ -1021,6 +1021,8 @@ export type Query = {
   groupsCount: Scalars['Int']['output'];
   isFirstUser: Scalars['Boolean']['output'];
   joinedGroupsCount: Scalars['Int']['output'];
+  joinedGroupsFeed: Array<FeedItem>;
+  joinedGroupsFeedCount: Scalars['Int']['output'];
   likes: Array<Like>;
   me: User;
   notifications: Array<Notification>;
@@ -1072,6 +1074,11 @@ export type QueryGroupRoleArgs = {
 
 export type QueryGroupsArgs = {
   input: GroupsInput;
+};
+
+export type QueryJoinedGroupsFeedArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type QueryLikesArgs = {
