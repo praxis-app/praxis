@@ -197,9 +197,10 @@ export class GroupsService {
       throw new Error('Group names cannot contain special characters');
     }
 
-    const sanitizedDescription = description
-      ? sanitizeText(description.trim())
-      : undefined;
+    const sanitizedDescription =
+      typeof description === 'string'
+        ? sanitizeText(description.trim())
+        : undefined;
     await this.groupRepository.update(id, {
       description: sanitizedDescription,
       name: name?.trim(),

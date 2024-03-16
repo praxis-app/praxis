@@ -14,6 +14,7 @@ import { isDeniedAccess } from '../../utils/error.utils';
 import Flex from '../Shared/Flex';
 import GhostButton from '../Shared/GhostButton';
 import LevelOneHeading from '../Shared/LevelOneHeading';
+import Modal from '../Shared/Modal';
 import Pagination from '../Shared/Pagination';
 import GroupForm from './GroupForm';
 
@@ -24,9 +25,10 @@ enum GroupsPageTabs {
 }
 
 const GroupsList = () => {
+  const [tab, setTab] = useState(0);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
-  const [tab, setTab] = useState(0);
 
   const [getGroups, { data, loading, error }] = useGroupsLazyQuery({
     errorPolicy: 'all',
@@ -97,7 +99,10 @@ const GroupsList = () => {
             : t('groups.headers.findGroups')}
         </LevelOneHeading>
 
-        <GhostButton sx={{ marginBottom: 3.5 }}>
+        <GhostButton
+          onClick={() => setIsCreateModalOpen((prev) => !prev)}
+          sx={{ marginBottom: 3.5 }}
+        >
           {isDesktop ? t('groups.actions.create') : t('actions.create')}
         </GhostButton>
       </Flex>
@@ -119,7 +124,16 @@ const GroupsList = () => {
         </Tabs>
       </Card>
 
-      <GroupForm />
+      <Modal
+        title={t('groups.actions.create')}
+        topGap={isDesktop ? undefined : '150px'}
+        contentStyles={{ minHeight: '150px' }}
+        onClose={() => setIsCreateModalOpen(false)}
+        open={isCreateModalOpen}
+        centeredTitle
+      >
+        <GroupForm inModal />
+      </Modal>
 
       <Pagination
         count={data?.groupsCount}
@@ -129,6 +143,7 @@ const GroupsList = () => {
         rowsPerPage={rowsPerPage}
         setPage={setPage}
         setRowsPerPage={setRowsPerPage}
+        showTopPagination={false}
       >
         {data?.groupsCount === 0 && (
           <Card>

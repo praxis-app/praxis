@@ -158,11 +158,13 @@ const GroupCard = ({
         title={<Link href={groupPath}>{name}</Link>}
       />
       <CardContent>
-        <Typography
-          dangerouslySetInnerHTML={{ __html: urlifyText(description) }}
-          whiteSpace="pre-wrap"
-          marginBottom={1.25}
-        />
+        {description && (
+          <Typography
+            dangerouslySetInnerHTML={{ __html: urlifyText(description) }}
+            whiteSpace="pre-wrap"
+            marginBottom={1.25}
+          />
+        )}
 
         <Box sx={{ marginBottom: isLoggedIn ? 1.75 : 0 }}>
           <Link href={isVerified ? groupMembersPath : groupPath}>

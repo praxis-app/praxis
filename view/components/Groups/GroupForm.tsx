@@ -19,6 +19,7 @@ import { useUpdateGroupMutation } from '../../graphql/groups/mutations/gen/Updat
 import {
   GroupsDocument,
   GroupsQuery,
+  GroupsQueryVariables,
 } from '../../graphql/groups/queries/gen/Groups.gen';
 import { isEntityTooLarge } from '../../utils/error.utils';
 import { getGroupPath } from '../../utils/group.utils';
@@ -38,9 +39,10 @@ const CardContent = styled(MuiCardContent)(() => ({
 
 interface Props extends CardProps {
   editGroup?: GroupFormFragment;
+  inModal?: boolean;
 }
 
-const GroupForm = ({ editGroup, ...cardProps }: Props) => {
+const GroupForm = ({ editGroup, inModal, ...cardProps }: Props) => {
   const [imageInputKey, setImageInputKey] = useState('');
   const [coverPhoto, setCoverPhoto] = useState<File>();
   const [createGroup] = useCreateGroupMutation();
@@ -67,10 +69,10 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
           return;
         }
         const { createGroup } = data;
-        cache.updateQuery<GroupsQuery>(
+        cache.updateQuery<GroupsQuery, GroupsQueryVariables>(
           {
             query: GroupsDocument,
-            variables: { limit: 10, offset: 0 },
+            variables: { input: { limit: 10, offset: 0 } },
           },
           (groupsData) =>
             produce(groupsData, (draft) => {
@@ -161,50 +163,53 @@ const GroupForm = ({ editGroup, ...cardProps }: Props) => {
     setImageInputKey(getRandomString());
   };
 
+  const renderForm = () => (
+    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+      {({ isSubmitting, dirty }) => (
+        <Form>
+          <FormGroup>
+            <TextField
+              autoComplete="off"
+              label={t('groups.form.name')}
+              name={FieldNames.Name}
+            />
+            <TextField
+              autoComplete="off"
+              label={t('groups.form.description')}
+              name={FieldNames.Description}
+              multiline
+            />
+            {coverPhoto && (
+              <AttachedImagePreview
+                handleRemove={handleRemoveSelectedImage}
+                selectedImages={[coverPhoto]}
+              />
+            )}
+          </FormGroup>
+
+          <Flex sx={{ justifyContent: 'space-between' }}>
+            <ImageInput refreshKey={imageInputKey} setImage={setCoverPhoto} />
+            <PrimaryActionButton
+              disabled={isSubmitting || (!dirty && !coverPhoto)}
+              isLoading={isSubmitting}
+              sx={{ marginTop: 1.5 }}
+              type="submit"
+            >
+              {editGroup ? t('actions.save') : t('actions.create')}
+            </PrimaryActionButton>
+          </Flex>
+        </Form>
+      )}
+    </Formik>
+  );
+
+  if (inModal) {
+    return renderForm();
+  }
+
   return (
     <Card {...cardProps}>
-      <CardContent>
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-          {({ isSubmitting, dirty }) => (
-            <Form>
-              <FormGroup>
-                <TextField
-                  autoComplete="off"
-                  label={t('groups.form.name')}
-                  name={FieldNames.Name}
-                />
-                <TextField
-                  autoComplete="off"
-                  label={t('groups.form.description')}
-                  name={FieldNames.Description}
-                  multiline
-                />
-                {coverPhoto && (
-                  <AttachedImagePreview
-                    handleRemove={handleRemoveSelectedImage}
-                    selectedImages={[coverPhoto]}
-                  />
-                )}
-              </FormGroup>
-
-              <Flex sx={{ justifyContent: 'space-between' }}>
-                <ImageInput
-                  refreshKey={imageInputKey}
-                  setImage={setCoverPhoto}
-                />
-                <PrimaryActionButton
-                  disabled={isSubmitting || (!dirty && !coverPhoto)}
-                  isLoading={isSubmitting}
-                  sx={{ marginTop: 1.5 }}
-                  type="submit"
-                >
-                  {editGroup ? t('actions.save') : t('actions.create')}
-                </PrimaryActionButton>
-              </Flex>
-            </Form>
-          )}
-        </Formik>
-      </CardContent>
+      <CardContent>{renderForm()}</CardContent>
     </Card>
   );
 };
