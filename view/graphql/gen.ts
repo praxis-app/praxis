@@ -1293,7 +1293,6 @@ export type SignUpInput = {
   inviteToken?: InputMaybe<Scalars['String']['input']>;
   name: Scalars['String']['input'];
   password: Scalars['String']['input'];
-  profilePicture?: InputMaybe<Scalars['Upload']['input']>;
 };
 
 export type Subscription = {

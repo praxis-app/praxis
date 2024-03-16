@@ -1,11 +1,8 @@
 import { useReactiveVar } from '@apollo/client';
 import { Card, CardContent, FormGroup } from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import AttachedImagePreview from '../../components/Images/AttachedImagePreview';
-import ImageInput from '../../components/Images/ImageInput';
 import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
@@ -29,13 +26,9 @@ import {
   IsFirstUserQuery,
 } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { isEntityTooLarge } from '../../utils/error.utils';
-import { validateImageInput } from '../../utils/image.utils';
-import { getRandomString } from '../../utils/shared.utils';
 
 const SignUpForm = () => {
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
-  const [profilePicture, setProfilePicture] = useState<File>();
-  const [imageInputKey, setImageInputKey] = useState('');
   const [signUp] = useSignUpMutation();
 
   const { token } = useParams();
@@ -77,32 +70,13 @@ const SignUpForm = () => {
     return errors;
   };
 
-  const validateImages = () => {
-    try {
-      if (profilePicture) {
-        validateImageInput(profilePicture);
-      }
-    } catch (err) {
-      toastVar({
-        status: 'error',
-        title: err.message,
-      });
-      return false;
-    }
-    return true;
-  };
-
   const handleSubmit = async (formValues: SignUpInput) => {
-    if (!validateImages()) {
-      return;
-    }
     await signUp({
       variables: {
         input: {
           ...formValues,
           name: formValues.name.trim(),
           email: formValues.email.trim(),
-          profilePicture,
         },
       },
       update(cache, { data }) {
@@ -117,7 +91,6 @@ const SignUpForm = () => {
       onCompleted({ signUp: { access_token } }) {
         inviteTokenVar('');
         isLoggedInVar(true);
-        setImageInputKey(getRandomString());
         localStorage.removeItem(LocalStorageKey.InviteToken);
         localStorage.setItem(LocalStorageKey.AccessToken, access_token);
       },
@@ -133,11 +106,6 @@ const SignUpForm = () => {
     });
   };
 
-  const handleRemoveSelectedImage = () => {
-    setProfilePicture(undefined);
-    setImageInputKey(getRandomString());
-  };
-
   return (
     <Card>
       <CardContent>
@@ -150,7 +118,7 @@ const SignUpForm = () => {
           onSubmit={handleSubmit}
           validate={validateSignUp}
         >
-          {({ isSubmitting, dirty }) => (
+          {({ isSubmitting }) => (
             <Form hidden={isNavDrawerOpen}>
               <FormGroup>
                 <TextField
@@ -171,22 +139,11 @@ const SignUpForm = () => {
                   name={UserFieldNames.ConfirmPassword}
                   type="password"
                 />
-                {profilePicture && (
-                  <AttachedImagePreview
-                    handleRemove={handleRemoveSelectedImage}
-                    selectedImages={[profilePicture]}
-                  />
-                )}
               </FormGroup>
 
-              <Flex sx={{ justifyContent: 'space-between' }}>
-                <ImageInput
-                  refreshKey={imageInputKey}
-                  setImage={setProfilePicture}
-                />
-
+              <Flex justifyContent="right">
                 <PrimaryActionButton
-                  disabled={isSubmitting || !dirty}
+                  disabled={isSubmitting}
                   isLoading={isSubmitting}
                   sx={{ marginTop: 1.85 }}
                   type="submit"
