@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import GroupCard from '../../components/Groups/GroupCard';
+import { GroupsPageTabs } from '../../constants/group.constants';
 import {
   DEFAULT_PAGE_SIZE,
   NavigationPaths,
@@ -16,15 +17,10 @@ import Feed from '../Shared/Feed';
 import Flex from '../Shared/Flex';
 import GhostButton from '../Shared/GhostButton';
 import LevelOneHeading from '../Shared/LevelOneHeading';
+import Link from '../Shared/Link';
 import Modal from '../Shared/Modal';
 import Pagination from '../Shared/Pagination';
 import GroupForm from './GroupForm';
-
-enum GroupsPageTabs {
-  Activity = 'activity',
-  AllGroups = 'all-groups',
-  Joined = 'joined',
-}
 
 const GroupsList = () => {
   const [tab, setTab] = useState(0);
@@ -150,6 +146,17 @@ const GroupsList = () => {
       setPage={setPage}
       setRowsPerPage={setRowsPerPage}
       showTopPagination={false}
+      noContentMessage={
+        <Typography textAlign="center">
+          <Link
+            href={allGroupsTab}
+            sx={{ fontFamily: 'Inter Bold', marginRight: '0.5ch' }}
+          >
+            Join groups
+          </Link>
+          to populate your feed.
+        </Typography>
+      }
     />
   );
 
