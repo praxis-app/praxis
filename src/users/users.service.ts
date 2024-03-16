@@ -446,12 +446,7 @@ export class UsersService {
     }
   }
 
-  async createUser(
-    name: string,
-    email: string,
-    password: string,
-    profilePicture?: Promise<FileUpload>,
-  ) {
+  async createUser(name: string, email: string, password: string) {
     const isFirstUser = await this.isFirstUser();
     const serverQuestions = await this.serverQuestionRepository.find();
     const verified = isFirstUser || serverQuestions.length === 0;
@@ -463,11 +458,7 @@ export class UsersService {
       verified,
     });
 
-    if (profilePicture) {
-      await this.saveProfilePicture(user.id, profilePicture);
-    } else {
-      await this.saveDefaultProfilePicture(user.id);
-    }
+    await this.saveDefaultProfilePicture(user.id);
 
     if (isFirstUser) {
       await this.serverRolesService.createAdminServerRole(user.id);

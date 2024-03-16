@@ -780,12 +780,8 @@ input SignUpInput {
   name: String!
   password: String!
   confirmPassword: String!
-  profilePicture: Upload
   inviteToken: String
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 input CreateProposalInput {
   groupId: Int
@@ -816,6 +812,9 @@ input ProposalActionEventInput {
   startsAt: DateTime!
   endsAt: DateTime
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 input ProposalActionRoleInput {
   roleToUpdateId: Int
