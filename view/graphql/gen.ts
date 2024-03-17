@@ -442,8 +442,8 @@ export type GroupRolePermissionInput = {
 };
 
 export type GroupsInput = {
+  joinedGroups?: InputMaybe<Scalars['Boolean']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
-  myGroups?: InputMaybe<Scalars['Boolean']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 

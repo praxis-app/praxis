@@ -687,7 +687,7 @@ type Query {
 input GroupsInput {
   limit: Int
   offset: Int
-  myGroups: Boolean
+  joinedGroups: Boolean
 }
 
 input EventsInput {

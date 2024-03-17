@@ -49,10 +49,10 @@ export class GroupsResolver {
   @Query(() => [Group])
   async groups(
     @CurrentUser() currentUser: User,
-    @Args('input') { myGroups, offset, limit }: GroupsInput,
+    @Args('input') { joinedGroups, offset, limit }: GroupsInput,
   ) {
     return this.groupsService.getPagedGroups(
-      myGroups
+      joinedGroups
         ? {
             members: { id: currentUser.id },
           }

@@ -79,7 +79,7 @@ const GroupsList = () => {
           input: {
             limit: rowsPerPage,
             offset: page * rowsPerPage,
-            myGroups: isJoinedTab,
+            joinedGroups: isJoinedTab,
           },
         },
       });
@@ -117,7 +117,7 @@ const GroupsList = () => {
         input: {
           limit: rowsPerPage,
           offset: newPage * rowsPerPage,
-          myGroups: isJoinedTab,
+          joinedGroups: isJoinedTab,
         },
       },
     });

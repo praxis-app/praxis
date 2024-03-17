@@ -9,5 +9,5 @@ export class GroupsInput {
   offset?: number;
 
   @Field(() => Boolean, { nullable: true })
-  myGroups?: boolean;
+  joinedGroups?: boolean;
 }
