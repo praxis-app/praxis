@@ -69,25 +69,33 @@ const GroupForm = ({ editGroup, inModal, ...cardProps }: Props) => {
           return;
         }
         const { createGroup } = data;
-        cache.updateQuery<GroupsQuery, GroupsQueryVariables>(
-          {
-            query: GroupsDocument,
-            variables: { input: { limit: 10, offset: 0 } },
-          },
-          (groupsData) =>
-            produce(groupsData, (draft) => {
-              if (!draft) {
-                return;
-              }
-              draft.groups.unshift({
-                ...createGroup.group,
-                isJoinedByMe: true,
-                memberCount: 1,
-                memberRequestCount: 0,
-              });
-              draft.groupsCount = draft.groupsCount + 1;
-            }),
-        );
+        for (const joinedGroupsArg of [true, false]) {
+          cache.updateQuery<GroupsQuery, GroupsQueryVariables>(
+            {
+              query: GroupsDocument,
+              variables: {
+                input: { limit: 10, offset: 0, joinedGroups: joinedGroupsArg },
+              },
+            },
+            (groupsData) =>
+              produce(groupsData, (draft) => {
+                if (!draft) {
+                  return;
+                }
+                draft.groups.unshift({
+                  ...createGroup.group,
+                  isJoinedByMe: true,
+                  memberCount: 1,
+                  memberRequestCount: 0,
+                });
+                if (joinedGroupsArg) {
+                  draft.joinedGroupsCount = draft.joinedGroupsCount + 1;
+                } else {
+                  draft.groupsCount = draft.groupsCount + 1;
+                }
+              }),
+          );
+        }
       },
       onCompleted({ createGroup: { group } }) {
         const groupPagePath = getGroupPath(group.name);
