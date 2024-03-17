@@ -244,8 +244,8 @@ export const JoinedGroupsFeedDocument = gql`
   query JoinedGroupsFeed(
     $offset: Int
     $limit: Int
-    $isLoggedIn: Boolean = false
-    $isVerified: Boolean = false
+    $isLoggedIn: Boolean = true
+    $isVerified: Boolean = true
   ) {
     joinedGroupsFeed(offset: $offset, limit: $limit) {
       ...FeedItem
