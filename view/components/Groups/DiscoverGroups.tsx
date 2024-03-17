@@ -2,7 +2,7 @@ import { Card, CardContent, Tab, Tabs, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import GroupCard from '../../components/Groups/GroupCard';
+import GroupCard from './GroupCard';
 import { GroupsPageTabs } from '../../constants/group.constants';
 import {
   DEFAULT_PAGE_SIZE,
@@ -22,7 +22,7 @@ import Modal from '../Shared/Modal';
 import Pagination from '../Shared/Pagination';
 import GroupForm from './GroupForm';
 
-const GroupsList = () => {
+const DiscoverGroups = () => {
   const [tab, setTab] = useState(0);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
@@ -220,7 +220,7 @@ const GroupsList = () => {
       <Flex justifyContent="space-between" alignItems="center">
         <LevelOneHeading header>
           {isDesktop
-            ? t('groups.headers.exploreGroups')
+            ? t('groups.headers.discoverGroups')
             : t('groups.headers.findGroups')}
         </LevelOneHeading>
 
@@ -265,4 +265,4 @@ const GroupsList = () => {
   );
 };
 
-export default GroupsList;
+export default DiscoverGroups;

@@ -276,7 +276,7 @@
       "description": "Description"
     },
     "headers": {
-      "exploreGroups": "Discover Groups",
+      "discoverGroups": "Discover Groups",
       "findGroups": "Find Groups",
       "organizeWithGroups": "Organize Your Community with Groups"
     },

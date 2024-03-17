@@ -1,5 +1,5 @@
 import { useReactiveVar } from '@apollo/client';
-import GroupsList from '../../components/Groups/GroupsList';
+import DiscoverGroups from '../../components/Groups/DiscoverGroups';
 import PublicGroupsList from '../../components/Groups/PublicGroupsList';
 import { isVerifiedVar } from '../../graphql/cache';
 
@@ -9,7 +9,7 @@ const GroupsPage = () => {
   if (!isVerified) {
     return <PublicGroupsList />;
   }
-  return <GroupsList />;
+  return <DiscoverGroups />;
 };
 
 export default GroupsPage;
