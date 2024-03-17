@@ -263,18 +263,21 @@
     "actions": {
       "approve": "Approve",
       "cancelRequest": "Cancel Request",
+      "create": "Create Group",
       "deny": "Deny",
       "edit": "Edit Group",
       "join": "Join",
       "leave": "Leave",
-      "leaveGroup": "Leave group"
+      "leaveGroup": "Leave group",
+      "seeAllGroups": "See all groups"
     },
     "form": {
       "name": "Name",
       "description": "Description"
     },
     "headers": {
-      "exploreGroups": "Explore Groups",
+      "discoverGroups": "Discover Groups",
+      "findGroups": "Find Groups",
       "organizeWithGroups": "Organize Your Community with Groups"
     },
     "errors": {
@@ -317,6 +320,7 @@
       "exploreGroups": "Explore groups",
       "noAboutText": "No about text",
       "noGroups": "No groups yet.",
+      "noJoinedGroups": "You haven't joined any groups yet.",
       "publicGroup": "Public Group: Anyone can view the group page and any content posted by group members.",
       "settingDisabledForConsent": "This setting is disabled for consent decision making.",
       "settingDisabledForMajority": "This setting is disabled for majority vote.",
@@ -326,7 +330,10 @@
       "about": "About",
       "events": "Events",
       "feed": "Feed",
-      "proposals": "Proposals"
+      "proposals": "Proposals",
+      "joined": "Joined",
+      "activity": "Activity",
+      "allGroups": "All Groups"
     },
     "settings": {
       "names": {

@@ -1,0 +1,11 @@
+query JoinedGroupsFeed(
+  $offset: Int
+  $limit: Int
+  $isLoggedIn: Boolean = true
+  $isVerified: Boolean = true
+) {
+  joinedGroupsFeed(offset: $offset, limit: $limit) {
+    ...FeedItem
+  }
+  joinedGroupsFeedCount
+}

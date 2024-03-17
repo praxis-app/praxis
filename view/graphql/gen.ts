@@ -441,6 +441,12 @@ export type GroupRolePermissionInput = {
   updateGroup?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export type GroupsInput = {
+  joinedGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type Image = {
   __typename?: 'Image';
   comment?: Maybe<Comment>;
@@ -1014,6 +1020,9 @@ export type Query = {
   groups: Array<Group>;
   groupsCount: Scalars['Int']['output'];
   isFirstUser: Scalars['Boolean']['output'];
+  joinedGroupsCount: Scalars['Int']['output'];
+  joinedGroupsFeed: Array<FeedItem>;
+  joinedGroupsFeedCount: Scalars['Int']['output'];
   likes: Array<Like>;
   me: User;
   notifications: Array<Notification>;
@@ -1064,6 +1073,10 @@ export type QueryGroupRoleArgs = {
 };
 
 export type QueryGroupsArgs = {
+  input: GroupsInput;
+};
+
+export type QueryJoinedGroupsFeedArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
 };

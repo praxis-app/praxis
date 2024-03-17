@@ -9,14 +9,14 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type GroupsQueryVariables = Types.Exact<{
-  offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
-  limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  input: Types.GroupsInput;
   isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
 
 export type GroupsQuery = {
   __typename?: 'Query';
   groupsCount: number;
+  joinedGroupsCount: number;
   groups: Array<{
     __typename?: 'Group';
     description: string;
@@ -52,11 +52,12 @@ export type GroupsQuery = {
 };
 
 export const GroupsDocument = gql`
-  query Groups($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
-    groups(offset: $offset, limit: $limit) {
+  query Groups($input: GroupsInput!, $isLoggedIn: Boolean = true) {
+    groups(input: $input) {
       ...GroupCard
     }
     groupsCount
+    joinedGroupsCount
     me {
       id
       serverPermissions {
@@ -79,14 +80,13 @@ export const GroupsDocument = gql`
  * @example
  * const { data, loading, error } = useGroupsQuery({
  *   variables: {
- *      offset: // value for 'offset'
- *      limit: // value for 'limit'
+ *      input: // value for 'input'
  *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
 export function useGroupsQuery(
-  baseOptions?: Apollo.QueryHookOptions<GroupsQuery, GroupsQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<GroupsQuery, GroupsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<GroupsQuery, GroupsQueryVariables>(

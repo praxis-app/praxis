@@ -1,8 +1,9 @@
-query Groups($offset: Int, $limit: Int, $isLoggedIn: Boolean = true) {
-  groups(offset: $offset, limit: $limit) {
+query Groups($input: GroupsInput!, $isLoggedIn: Boolean = true) {
+  groups(input: $input) {
     ...GroupCard
   }
   groupsCount
+  joinedGroupsCount
 
   me {
     id

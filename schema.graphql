@@ -649,11 +649,14 @@ type Query {
   unreadNotificationsCount: Int!
   groupMemberRequest(groupId: Int!): GroupMemberRequest
   group(id: Int, name: String): Group!
-  groups(offset: Int, limit: Int): [Group!]!
+  groups(input: GroupsInput!): [Group!]!
   groupsCount: Int!
+  joinedGroupsCount: Int!
   publicGroups(offset: Int, limit: Int): [Group!]!
   publicGroupsCount: Int!
   publicGroupsFeed(offset: Int, limit: Int): PublicFeedItemsConnection!
+  joinedGroupsFeed(offset: Int, limit: Int): [FeedItem!]!
+  joinedGroupsFeedCount: Int!
   groupRole(id: Int!): GroupRole!
   event(id: Int): Event!
   events(input: EventsInput!): [Event!]!
@@ -679,6 +682,12 @@ type Query {
   question(id: Int!): Question!
   serverQuestions: [ServerQuestion!]!
   serverRules: [Rule!]!
+}
+
+input GroupsInput {
+  limit: Int
+  offset: Int
+  joinedGroups: Boolean
 }
 
 input EventsInput {

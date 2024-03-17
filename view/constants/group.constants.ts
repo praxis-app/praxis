@@ -16,6 +16,12 @@ export const enum GroupTab {
   Proposals = 'proposals',
 }
 
+export enum GroupsPageTabs {
+  Activity = 'activity',
+  AllGroups = 'all-groups',
+  Joined = 'joined',
+}
+
 export const enum GroupSettingsFieldName {
   AdminModel = 'adminModel',
   DecisionMakingModel = 'decisionMakingModel',

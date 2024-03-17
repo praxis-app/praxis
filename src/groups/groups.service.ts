@@ -106,6 +106,47 @@ export class GroupsService {
     return postsCount + proposalsCount;
   }
 
+  async getJoinedGroupsFeed(userId: number, offset?: number, limit?: number) {
+    const groups = await this.getGroups({ members: { id: userId } }, [
+      'posts',
+      'proposals',
+      'events.posts',
+    ]);
+    const [posts, proposals] = groups.reduce<[Post[], Proposal[]]>(
+      (result, { posts, proposals, events }) => {
+        const eventPosts = events.reduce<Post[]>(
+          (res, { posts }) => [...res, ...posts],
+          [],
+        );
+        result[0].push(...posts, ...eventPosts);
+        result[1].push(...proposals);
+        return result;
+      },
+      [[], []],
+    );
+    const sortedFeed = [...posts, ...proposals].sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
+    return offset !== undefined
+      ? paginate(sortedFeed, offset, limit)
+      : sortedFeed;
+  }
+
+  async getJoinedGroupsFeedCount(userId: number) {
+    const postsCount = await this.postRepository.count({
+      where: { group: { members: { id: userId } } },
+    });
+    const eventPostsCount = await this.postRepository.count({
+      where: {
+        event: { group: { members: { id: userId } } },
+      },
+    });
+    const proposalsCount = await this.proposalRepository.count({
+      where: { group: { members: { id: userId } } },
+    });
+    return postsCount + eventPostsCount + proposalsCount;
+  }
+
   async getPublicGroupsFeed(offset?: number, limit?: number) {
     const publicGroups = await this.getGroups(
       { config: { privacy: GroupPrivacy.Public } },
@@ -197,9 +238,10 @@ export class GroupsService {
       throw new Error('Group names cannot contain special characters');
     }
 
-    const sanitizedDescription = description
-      ? sanitizeText(description.trim())
-      : undefined;
+    const sanitizedDescription =
+      typeof description === 'string'
+        ? sanitizeText(description.trim())
+        : undefined;
     await this.groupRepository.update(id, {
       description: sanitizedDescription,
       name: name?.trim(),
