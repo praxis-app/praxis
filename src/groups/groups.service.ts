@@ -234,7 +234,7 @@ export class GroupsService {
     ...groupData
   }: UpdateGroupInput) {
     const isValidName = VALID_NAME_REGEX.test(name || '');
-    if (!isValidName) {
+    if (name && !isValidName) {
       throw new Error('Group names cannot contain special characters');
     }
 
