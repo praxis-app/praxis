@@ -270,7 +270,7 @@ const ProposalForm = ({
         formValues.action.groupCoverPhoto,
       ].filter((image) => Boolean(image));
 
-      if (allImages) {
+      if (allImages.length) {
         validateImageInput(allImages);
       }
       if (editProposal) {
