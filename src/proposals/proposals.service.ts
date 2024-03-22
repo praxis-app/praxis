@@ -149,15 +149,15 @@ export class ProposalsService {
     });
 
     try {
-      if (images) {
-        await this.saveProposalImages(proposal.id, images);
-      }
       if (groupCoverPhoto) {
         await this.proposalActionsService.saveProposalActionImage(
           proposal.action.id,
           groupCoverPhoto,
           ImageTypes.CoverPhoto,
         );
+      }
+      if (images) {
+        await this.saveProposalImages(proposal.id, images);
       }
       if (role) {
         await this.proposalActionsService.createProposalActionRole(

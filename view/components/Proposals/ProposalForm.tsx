@@ -265,8 +265,13 @@ const ProposalForm = ({
       images,
     };
     try {
-      if (images) {
-        validateImageInput(images);
+      const allImages = [
+        ...(images || []),
+        formValues.action.groupCoverPhoto,
+      ].filter((image) => !!image);
+
+      if (allImages.length) {
+        validateImageInput(allImages);
       }
       if (editProposal) {
         await handleUpdate(values, editProposal);

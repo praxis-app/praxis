@@ -81,9 +81,7 @@ const UserEntry = ({ user, currentUserId, canRemoveMembers }: Props) => {
           <Box>
             <Typography
               display="inline-block"
-              lineHeight={1}
               overflow="hidden"
-              paddingTop={0.3}
               textOverflow="ellipsis"
               title={name}
               whiteSpace="nowrap"
@@ -96,7 +94,7 @@ const UserEntry = ({ user, currentUserId, canRemoveMembers }: Props) => {
               color={isVerified ? 'text.secondary' : 'warning.light'}
               fontSize="13px"
               lineHeight={1}
-              marginTop={-0.3}
+              marginTop={-0.8}
             >
               {isVerified
                 ? t('users.labels.verified')
