@@ -277,6 +277,7 @@
     },
     "headers": {
       "discoverGroups": "Discover Groups",
+      "exploreGroups": "Explore Groups",
       "findGroups": "Find Groups",
       "organizeWithGroups": "Organize Your Community with Groups"
     },
