@@ -144,6 +144,7 @@ export const shieldPermissions = shield(
       updateNotification: isOwnNotification,
       deleteNotification: isOwnNotification,
       updateUser: isAuthenticated,
+      deleteUser: or(isMe, canRemoveMembers),
       createComment: or(isVerified, isOwnQuestion, isOwnQuestionnaireTicket),
       updateComment: isOwnComment,
       deleteComment: or(
