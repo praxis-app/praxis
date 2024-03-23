@@ -2,19 +2,12 @@ import { Box, SxProps, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import {
-  LocalStorageKey,
-  NavigationPaths,
-} from '../../constants/shared.constants';
-import {
-  isAuthLoadingVar,
-  isLoggedInVar,
-  isVerifiedVar,
-  toastVar,
-} from '../../graphql/cache';
+import { NavigationPaths } from '../../constants/shared.constants';
+import { toastVar } from '../../graphql/cache';
 import { UserEntryFragment } from '../../graphql/users/fragments/gen/UserEntry.gen';
 import { useDeleteUserMutation } from '../../graphql/users/mutations/gen/DeleteUser.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
+import { logOutUser } from '../../utils/auth.utils';
 import { removeUser } from '../../utils/cache.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
@@ -31,7 +24,7 @@ interface Props {
 
 const UserEntry = ({ user, currentUserId, canRemoveMembers }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [deleteUser, { client }] = useDeleteUserMutation();
+  const [deleteUser] = useDeleteUserMutation();
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
@@ -63,11 +56,7 @@ const UserEntry = ({ user, currentUserId, canRemoveMembers }: Props) => {
       update: removeUser(id),
       onCompleted() {
         if (isMe) {
-          isLoggedInVar(false);
-          isAuthLoadingVar(false);
-          isVerifiedVar(false);
-          localStorage.removeItem(LocalStorageKey.AccessToken);
-          client.cache.reset();
+          logOutUser();
         }
       },
       onError() {

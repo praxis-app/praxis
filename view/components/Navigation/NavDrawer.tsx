@@ -27,21 +27,18 @@ import { SxProps, styled } from '@mui/material/styles';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  LocalStorageKey,
-  NavigationPaths,
-} from '../../constants/shared.constants';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
 import {
   inviteTokenVar,
   isAuthErrorVar,
-  isAuthLoadingVar,
   isLoggedInVar,
   isNavDrawerOpenVar,
   isVerifiedVar,
 } from '../../graphql/cache';
 import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
+import { logOutUser } from '../../utils/auth.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import Flex from '../Shared/Flex';
 import UserAvatar from '../Users/UserAvatar';
@@ -70,7 +67,7 @@ const NavDrawer = () => {
 
   const { data: meData } = useMeQuery({ skip: !isLoggedIn });
   const { data: isFirstUserData } = useIsFirstUserQuery({ skip: !isAuthError });
-  const [logOut, { client }] = useLogOutMutation();
+  const [logOut] = useLogOutMutation();
 
   const { t } = useTranslation();
   const { pathname } = useLocation();
@@ -79,12 +76,8 @@ const NavDrawer = () => {
   const handleLogOutClick = async () =>
     await logOut({
       onCompleted() {
-        isLoggedInVar(false);
-        isAuthLoadingVar(false);
-        isVerifiedVar(false);
         navigate(NavigationPaths.LogIn);
-        localStorage.removeItem(LocalStorageKey.AccessToken);
-        client.cache.reset();
+        logOutUser();
       },
     });
 
