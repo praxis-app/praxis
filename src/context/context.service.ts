@@ -46,7 +46,7 @@ export class ContextService {
     res,
     connectionParams,
   }: GetContextOptions): Promise<Context> {
-    const sub = await this.authService.getSub(req, connectionParams);
+    const sub = await this.authService.getSubClaim(req, connectionParams);
     const user = await this.getUser(sub);
     const permissions = await this.getUserPermisions(user);
     const loaders = this.dataloaderService.getLoaders();
