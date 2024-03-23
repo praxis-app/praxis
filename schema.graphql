@@ -33,6 +33,7 @@ type EventAttendee {
 type Answer {
   id: Int!
   text: String!
+  updatedAt: DateTime!
   question: Question!
   user: User!
 }

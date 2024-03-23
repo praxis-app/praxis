@@ -15,20 +15,15 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  LocalStorageKey,
   MIDDOT_WITH_SPACES,
   NavigationPaths,
 } from '../../constants/shared.constants';
-import {
-  isAuthLoadingVar,
-  isLoggedInVar,
-  isVerifiedVar,
-  toastVar,
-} from '../../graphql/cache';
+import { isVerifiedVar, toastVar } from '../../graphql/cache';
 import { UserProfileCardFragment } from '../../graphql/users/fragments/gen/UserProfileCard.gen';
 import { useDeleteUserMutation } from '../../graphql/users/mutations/gen/DeleteUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
+import { logOutUser } from '../../utils/auth.utils';
 import { removeUser } from '../../utils/cache.utils';
 import { urlifyText } from '../../utils/shared.utils';
 import { formatDate } from '../../utils/time.utils';
@@ -68,7 +63,7 @@ const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const isVerified = useReactiveVar(isVerifiedVar);
 
-  const [deleteUser, { client }] = useDeleteUserMutation();
+  const [deleteUser] = useDeleteUserMutation();
   const { data } = useMeQuery();
 
   const { pathname } = useLocation();
@@ -112,13 +107,9 @@ const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
       variables: { id, isMe },
       update: removeUser(id),
       onCompleted() {
-        if (!isMe) {
-          return;
+        if (isMe) {
+          logOutUser();
         }
-        isLoggedInVar(false);
-        isAuthLoadingVar(false);
-        localStorage.removeItem(LocalStorageKey.AccessToken);
-        client.cache.reset();
       },
       onError() {
         toastVar({

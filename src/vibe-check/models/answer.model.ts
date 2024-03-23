@@ -34,5 +34,6 @@ export class Answer {
   createdAt: Date;
 
   @UpdateDateColumn()
+  @Field()
   updatedAt: Date;
 }

@@ -9,6 +9,8 @@ fragment AnsweredQuestionCard on Question {
   answer {
     id
     text
+    updatedAt
+
     user {
       id
       name

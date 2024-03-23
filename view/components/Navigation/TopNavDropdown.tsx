@@ -11,17 +11,11 @@ import {
 import { Menu, MenuItem, SvgIconProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import {
-  LocalStorageKey,
-  NavigationPaths,
-} from '../../constants/shared.constants';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
-import {
-  isAuthLoadingVar,
-  isLoggedInVar,
-  isVerifiedVar,
-} from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar } from '../../graphql/cache';
 import { MeQuery } from '../../graphql/users/queries/gen/Me.gen';
+import { logOutUser } from '../../utils/auth.utils';
 
 const ICON_PROPS: SvgIconProps = {
   fontSize: 'small',
@@ -44,7 +38,7 @@ const TopNavDropdown = ({
   const isVerified = useReactiveVar(isVerifiedVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
-  const [logOut, { client }] = useLogOutMutation();
+  const [logOut] = useLogOutMutation();
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -53,14 +47,9 @@ const TopNavDropdown = ({
     window.confirm(t('users.prompts.logOut')) &&
     logOut({
       onCompleted() {
-        isLoggedInVar(false);
-        isAuthLoadingVar(false);
-        isVerifiedVar(false);
         navigate(NavigationPaths.LogIn);
-        localStorage.removeItem(LocalStorageKey.AccessToken);
-        client.cache.reset();
+        logOutUser();
       },
-      update: (cache) => cache.reset(),
     });
 
   const handleEditProfileButtonClick = () => {
