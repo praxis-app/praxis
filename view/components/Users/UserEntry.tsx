@@ -6,7 +6,12 @@ import {
   LocalStorageKey,
   NavigationPaths,
 } from '../../constants/shared.constants';
-import { isAuthLoadingVar, isLoggedInVar, toastVar } from '../../graphql/cache';
+import {
+  isAuthLoadingVar,
+  isLoggedInVar,
+  isVerifiedVar,
+  toastVar,
+} from '../../graphql/cache';
 import { UserEntryFragment } from '../../graphql/users/fragments/gen/UserEntry.gen';
 import { useDeleteUserMutation } from '../../graphql/users/mutations/gen/DeleteUser.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
@@ -60,6 +65,7 @@ const UserEntry = ({ user, currentUserId, canRemoveMembers }: Props) => {
         if (isMe) {
           isLoggedInVar(false);
           isAuthLoadingVar(false);
+          isVerifiedVar(false);
           localStorage.removeItem(LocalStorageKey.AccessToken);
           client.cache.reset();
         }

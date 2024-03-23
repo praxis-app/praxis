@@ -117,6 +117,7 @@ const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
         }
         isLoggedInVar(false);
         isAuthLoadingVar(false);
+        isVerifiedVar(false);
         localStorage.removeItem(LocalStorageKey.AccessToken);
         client.cache.reset();
       },

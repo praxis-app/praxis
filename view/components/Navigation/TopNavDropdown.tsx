@@ -60,7 +60,6 @@ const TopNavDropdown = ({
         localStorage.removeItem(LocalStorageKey.AccessToken);
         client.cache.reset();
       },
-      update: (cache) => cache.reset(),
     });
 
   const handleEditProfileButtonClick = () => {
