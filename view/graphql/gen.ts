@@ -37,6 +37,7 @@ export type Answer = {
   id: Scalars['Int']['output'];
   question: Question;
   text: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
   user: User;
 };
 

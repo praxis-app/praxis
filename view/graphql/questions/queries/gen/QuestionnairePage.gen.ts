@@ -40,6 +40,7 @@ export type QuestionnairePageQuery = {
         __typename?: 'Answer';
         id: number;
         text: string;
+        updatedAt: any;
         user: { __typename?: 'User'; id: number; name: string };
       } | null;
     }>;

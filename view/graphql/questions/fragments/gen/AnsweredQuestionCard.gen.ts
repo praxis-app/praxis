@@ -17,6 +17,7 @@ export type AnsweredQuestionCardFragment = {
     __typename?: 'Answer';
     id: number;
     text: string;
+    updatedAt: any;
     user: { __typename?: 'User'; id: number; name: string };
   } | null;
 };
@@ -32,6 +33,7 @@ export const AnsweredQuestionCardFragmentDoc = gql`
     answer {
       id
       text
+      updatedAt
       user {
         id
         name
