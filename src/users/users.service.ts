@@ -66,8 +66,8 @@ export class UsersService {
     return this.userRepository.find({ where, relations });
   }
 
-  async getUsersCount() {
-    return this.userRepository.count();
+  async getUsersCount(where?: FindOptionsWhere<User>) {
+    return this.userRepository.count({ where });
   }
 
   async getPagedUsers(offset?: number, limit?: number) {

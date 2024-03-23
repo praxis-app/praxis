@@ -74,9 +74,16 @@ export class AuthService {
       await this.serverInvitesService.getValidServerInvite(inviteToken);
     }
 
-    const existingUser = await this.usersService.getUser({ email });
-    if (existingUser) {
-      throw new Error('User already exists');
+    const existUsersWithEmail = await this.usersService.getUsersCount({
+      email,
+    });
+    if (existUsersWithEmail > 0) {
+      throw new Error('Email address is already in use');
+    }
+
+    const existUsersWithName = await this.usersService.getUsersCount({ name });
+    if (existUsersWithName > 0) {
+      throw new Error('Username is already in use');
     }
 
     const passwordHash = await hash(password, SALT_ROUNDS);
