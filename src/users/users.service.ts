@@ -66,8 +66,8 @@ export class UsersService {
     return this.userRepository.find({ where, relations });
   }
 
-  async getUsersCount() {
-    return this.userRepository.count();
+  async getUsersCount(where?: FindOptionsWhere<User>) {
+    return this.userRepository.count({ where });
   }
 
   async getPagedUsers(offset?: number, limit?: number) {
@@ -469,40 +469,44 @@ export class UsersService {
     return user;
   }
 
-  async updateUser(
-    userId: number,
-    { bio, coverPhoto, profilePicture, ...userData }: UpdateUserInput,
-  ) {
+  async updateUser(currentUser: User, input: UpdateUserInput) {
     this.logger.log(
-      `Updating user: ${JSON.stringify({ id: userId, ...userData })}`,
+      `Updating user: ${JSON.stringify({ id: currentUser.id, ...input })}`,
     );
 
-    const isValidName = VALID_NAME_REGEX.test(userData.name);
+    const { name, bio, profilePicture, coverPhoto } = input;
+    const isValidName = VALID_NAME_REGEX.test(name);
     if (!isValidName) {
       throw new Error('User names cannot contain special characters');
     }
 
-    const isVerified = await this.isVerifiedUser(userId);
+    const usersWithNameCount = await this.getUsersCount({ name });
+    if (currentUser.name !== name && usersWithNameCount > 0) {
+      throw new Error('Username is already in use');
+    }
+
+    const isVerified = await this.isVerifiedUser(currentUser.id);
     if (!isVerified && (profilePicture || coverPhoto)) {
       throw new Error(
         'Cannot update profile picture or cover photo for unverified users',
       );
     }
 
-    const sanitizedBio = sanitizeText(bio.trim());
-    await this.userRepository.update(userId, {
+    const sanitizedName = sanitizeText(name);
+    const sanitizedBio = sanitizeText(bio);
+    await this.userRepository.update(currentUser.id, {
+      name: sanitizedName,
       bio: sanitizedBio,
-      ...userData,
     });
 
     if (profilePicture) {
-      await this.saveProfilePicture(userId, profilePicture);
+      await this.saveProfilePicture(currentUser.id, profilePicture);
     }
     if (coverPhoto) {
-      await this.saveCoverPhoto(userId, coverPhoto);
+      await this.saveCoverPhoto(currentUser.id, coverPhoto);
     }
 
-    const user = await this.getUser({ id: userId });
+    const user = await this.getUser({ id: currentUser.id });
     return { user };
   }
 

@@ -35,24 +35,73 @@ export class AuthService {
   ) {}
 
   async login({ email, password }: LoginInput): Promise<AuthPayload> {
+    const user = await this.validateLogin(email, password);
+    const access_token = await this.generateAccessToken(user.id);
+    return { access_token };
+  }
+
+  async signUp(input: SignUpInput): Promise<AuthPayload> {
+    await this.validateSignUp(input);
+
+    const { name, email, password, inviteToken } = input;
+    const passwordHash = await hash(password, SALT_ROUNDS);
+    const user = await this.usersService.createUser(name, email, passwordHash);
+
+    if (inviteToken) {
+      await this.serverInvitesService.redeemServerInvite(inviteToken);
+    }
+
+    const access_token = await this.generateAccessToken(user.id);
+    return { access_token };
+  }
+
+  async getSubClaim(
+    request: Request | undefined,
+    connectionParams: { authorization: string } | undefined,
+  ) {
+    const authorization =
+      request?.headers.authorization || connectionParams?.authorization;
+
+    const [type, token] = authorization?.split(' ') ?? [];
+    const payload = await this.decodeToken(token);
+    if (type !== 'Bearer' || !payload) {
+      return null;
+    }
+    return payload.sub;
+  }
+
+  private async validateLogin(
+    email: string,
+    password: string,
+  ): Promise<Omit<User, 'password'>> {
     if (!email) {
       throw new Error('Email is required');
     }
     if (!password) {
       throw new Error('Password is required');
     }
-    const user = await this.validateUser(email, password);
-    const access_token = await this.generateAccessToken(user.id);
-    return { access_token };
+
+    const user = await this.usersService.getUser({ email });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const passwordMatch = await compare(password, user.password);
+    if (!passwordMatch) {
+      throw new Error('Incorrect username or password');
+    }
+
+    const { password: _password, ...result } = user;
+    return result;
   }
 
-  async signUp({
+  private async validateSignUp({
     name,
     email,
     password,
     confirmPassword,
     inviteToken,
-  }: SignUpInput): Promise<AuthPayload> {
+  }: SignUpInput) {
     if (!VALID_EMAIL_REGEX.test(email)) {
       throw new Error('Invalid email address');
     }
@@ -74,67 +123,27 @@ export class AuthService {
       await this.serverInvitesService.getValidServerInvite(inviteToken);
     }
 
-    const existingUser = await this.usersService.getUser({ email });
-    if (existingUser) {
-      throw new Error('User already exists');
+    const existUsersWithEmail = await this.usersService.getUsersCount({
+      email,
+    });
+    if (existUsersWithEmail > 0) {
+      throw new Error('Email address is already in use');
     }
 
-    const passwordHash = await hash(password, SALT_ROUNDS);
-    const user = await this.usersService.createUser(name, email, passwordHash);
-
-    if (inviteToken) {
-      await this.serverInvitesService.redeemServerInvite(inviteToken);
-    }
-
-    const access_token = await this.generateAccessToken(user.id);
-    return { access_token };
-  }
-
-  async validateUser(
-    email: string,
-    password: string,
-  ): Promise<Omit<User, 'password'>> {
-    try {
-      const user = await this.usersService.getUser({ email });
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      const passwordMatch = await compare(password, user.password);
-      if (!passwordMatch) {
-        throw new Error('Incorrect username or password');
-      }
-
-      const { password: _password, ...result } = user;
-      return result;
-    } catch (err) {
-      throw new Error(err);
+    const existUsersWithName = await this.usersService.getUsersCount({ name });
+    if (existUsersWithName > 0) {
+      throw new Error('Username is already in use');
     }
   }
 
-  async generateAccessToken(userId: number) {
+  private async generateAccessToken(userId: number) {
     const payload: AccessTokenPayload = { sub: userId };
     return this.jwtService.signAsync(payload, {
       expiresIn: ACCESS_TOKEN_EXPIRES_IN,
     });
   }
 
-  async getSub(
-    request: Request | undefined,
-    connectionParams: { authorization: string } | undefined,
-  ) {
-    const authorization =
-      request?.headers.authorization || connectionParams?.authorization;
-
-    const [type, token] = authorization?.split(' ') ?? [];
-    const payload = await this.decodeToken(token);
-    if (type !== 'Bearer' || !payload) {
-      return null;
-    }
-    return payload.sub;
-  }
-
-  async decodeToken(token: string) {
+  private async decodeToken(token: string) {
     try {
       const jwtKey = this.configService.get('JWT_KEY');
       const payload = await this.jwtService.verifyAsync<AccessTokenPayload>(
