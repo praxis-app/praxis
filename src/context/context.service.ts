@@ -11,10 +11,11 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { PostsService } from '../posts/posts.service';
 import { ProposalActionsService } from '../proposals/proposal-actions/proposal-actions.service';
 import { ProposalsService } from '../proposals/proposals.service';
-import { VibeCheckService } from '../vibe-check/vibe-check.service';
 import { RulesService } from '../rules/rules.service';
 import { ShieldService } from '../shield/shield.service';
+import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
+import { VibeCheckService } from '../vibe-check/vibe-check.service';
 import { Context, ContextServices, GetContextOptions } from './context.types';
 
 @Injectable()
@@ -47,7 +48,7 @@ export class ContextService {
   }: GetContextOptions): Promise<Context> {
     const sub = await this.authService.getSub(req, connectionParams);
     const user = await this.getUser(sub);
-    const permissions = await this.getUserPermisions(sub);
+    const permissions = await this.getUserPermisions(user);
     const loaders = this.dataloaderService.getLoaders();
 
     const services: ContextServices = {
@@ -81,7 +82,7 @@ export class ContextService {
     return userId ? this.usersService.getUser({ id: userId }) : null;
   }
 
-  private async getUserPermisions(userId: number | null) {
-    return userId ? this.usersService.getUserPermissions(userId) : null;
+  private async getUserPermisions(user: User | null) {
+    return user ? this.usersService.getUserPermissions(user.id) : null;
   }
 }
