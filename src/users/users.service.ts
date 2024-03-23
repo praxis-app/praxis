@@ -482,6 +482,13 @@ export class UsersService {
       throw new Error('User names cannot contain special characters');
     }
 
+    const usersWithNameCount = await this.getUsersCount({
+      name: userData.name,
+    });
+    if (usersWithNameCount > 0) {
+      throw new Error('Username is already in use');
+    }
+
     const isVerified = await this.isVerifiedUser(userId);
     if (!isVerified && (profilePicture || coverPhoto)) {
       throw new Error(
