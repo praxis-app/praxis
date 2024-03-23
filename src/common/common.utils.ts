@@ -22,7 +22,7 @@ export const logTime = (label: string, logger: Logger) => {
 };
 
 /**
- * Strip all HTML tags from a string
+ * Strip all HTML tags from a string and trim any whitespace
  */
 export const sanitizeText = (dirty?: string) =>
   sanitizeHtml(dirty?.trim() || '', { allowedTags: [] });

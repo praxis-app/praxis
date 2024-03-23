@@ -172,7 +172,7 @@ export class UsersResolver {
     @Args('userData') userData: UpdateUserInput,
     @CurrentUser() currentUser: User,
   ) {
-    return this.usersService.updateUser(currentUser.id, userData);
+    return this.usersService.updateUser(currentUser, userData);
   }
 
   @Mutation(() => Boolean)
