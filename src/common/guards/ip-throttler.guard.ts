@@ -16,6 +16,6 @@ export class IpThrottlerGuard extends ThrottlerGuard {
   }
 
   async getErrorMessage() {
-    return 'Too many requests - your client is temporarily blocked';
+    return 'Too many requests';
   }
 }
