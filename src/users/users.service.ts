@@ -553,6 +553,13 @@ export class UsersService {
     return true;
   }
 
+  async lockUserByEmail(email: string) {
+    await this.userRepository.update(
+      { email: email.trim().toLowerCase() },
+      { locked: true },
+    );
+  }
+
   async saveProfilePicture(
     userId: number,
     profilePicture: Promise<FileUpload>,

@@ -51,6 +51,9 @@ export class User {
   @Column({ default: false })
   verified: boolean;
 
+  @Column({ default: false })
+  locked: boolean;
+
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,
   })
