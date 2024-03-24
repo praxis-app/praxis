@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { GraphQLSchema } from 'graphql';
 import { applyMiddleware } from 'graphql-middleware';
 import { GraphQLUpload } from 'graphql-upload-ts';
@@ -25,7 +26,6 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { PostsModule } from './posts/posts.module';
 import { ProposalsModule } from './proposals/proposals.module';
 import { PubSubModule } from './pub-sub/pub-sub.module';
-import { VibeCheckModule } from './vibe-check/vibe-check.module';
 import { RulesModule } from './rules/rules.module';
 import { ServerConfigsModule } from './server-configs/server-configs.module';
 import { ServerInvitesModule } from './server-invites/server-invites.module';
@@ -33,6 +33,7 @@ import { ServerRolesModule } from './server-roles/server-roles.module';
 import { ShieldModule } from './shield/shield.module';
 import { shieldPermissions } from './shield/shield.permissions';
 import { UsersModule } from './users/users.module';
+import { VibeCheckModule } from './vibe-check/vibe-check.module';
 import { VotesModule } from './votes/votes.module';
 
 const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
@@ -63,6 +64,7 @@ const ViewModule = ServeStaticModule.forRoot({
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
     ScheduleModule.forRoot(),
     ApolloModule,
     AuthModule,
