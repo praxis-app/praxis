@@ -47,7 +47,7 @@ export class LoginThrottlerGuard extends ThrottlerGuard {
     const { email } = ctx.req.body.variables.input;
     await this.usersService.lockUserByEmail(email);
 
-    return 'Too many login attempts - your account has been locked';
+    return 'Too many login attempts';
   }
 
   private getContext(context: ExecutionContext) {
