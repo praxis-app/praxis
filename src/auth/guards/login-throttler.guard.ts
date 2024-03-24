@@ -46,6 +46,8 @@ export class LoginThrottlerGuard extends ThrottlerGuard {
   async getErrorMessage(context: ExecutionContext) {
     const ctx = this.getContext(context);
     const { email } = ctx.req.body.variables.input;
+
+    // Lock user out of their account - TODO: Add account recovery flow
     await this.usersService.lockUserByEmail(email);
 
     return 'Too many login attempts';
