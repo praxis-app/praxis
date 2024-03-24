@@ -81,7 +81,8 @@ export class AuthService {
       throw new Error('Password is required');
     }
 
-    const user = await this.usersService.getUser({ email });
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await this.usersService.getUser({ email: normalizedEmail });
     if (!user) {
       throw new Error('User not found');
     }

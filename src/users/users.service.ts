@@ -450,12 +450,13 @@ export class UsersService {
     const isFirstUser = await this.isFirstUser();
     const serverQuestions = await this.serverQuestionRepository.find();
     const verified = isFirstUser || serverQuestions.length === 0;
+    const normalizedEmail = email.trim().toLowerCase();
 
     const user = await this.userRepository.save({
-      name,
-      email,
+      email: normalizedEmail,
       password,
       verified,
+      name,
     });
 
     await this.saveDefaultProfilePicture(user.id);
