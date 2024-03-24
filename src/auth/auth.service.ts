@@ -85,6 +85,9 @@ export class AuthService {
     if (!user) {
       throw new Error('User not found');
     }
+    if (user.locked) {
+      throw new Error('User account is locked');
+    }
 
     const passwordMatch = await compare(password, user.password);
     if (!passwordMatch) {
