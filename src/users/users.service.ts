@@ -4,7 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { VALID_NAME_REGEX } from '../common/common.constants';
-import { logTime, paginate, sanitizeText } from '../common/common.utils';
+import {
+  logTime,
+  normalizeText,
+  paginate,
+  sanitizeText,
+} from '../common/common.utils';
 import { GroupPermissionsMap } from '../groups/group-roles/models/group-permissions.type';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { ImageTypes } from '../images/image.constants';
@@ -450,7 +455,7 @@ export class UsersService {
     const isFirstUser = await this.isFirstUser();
     const serverQuestions = await this.serverQuestionRepository.find();
     const verified = isFirstUser || serverQuestions.length === 0;
-    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedEmail = normalizeText(email);
 
     const user = await this.userRepository.save({
       email: normalizedEmail,
@@ -556,7 +561,7 @@ export class UsersService {
 
   async lockUserByEmail(email: string) {
     await this.userRepository.update(
-      { email: email.trim().toLowerCase() },
+      { email: normalizeText(email) },
       { locked: true },
     );
   }

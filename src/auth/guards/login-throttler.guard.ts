@@ -1,4 +1,5 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import {
   ThrottlerGuard,
@@ -7,8 +8,8 @@ import {
 } from '@nestjs/throttler';
 import { Request } from 'express';
 import { LoginInput } from '../../auth/models/login.input';
+import { normalizeText } from '../../common/common.utils';
 import { UsersService } from '../../users/users.service';
-import { Reflector } from '@nestjs/core';
 
 interface LoginRequest extends Request {
   body: {
@@ -39,7 +40,7 @@ export class LoginThrottlerGuard extends ThrottlerGuard {
 
   async getTracker({ body }: LoginRequest) {
     const { email } = body.variables.input;
-    return email.trim().toLowerCase();
+    return normalizeText(email);
   }
 
   async getErrorMessage(context: ExecutionContext) {

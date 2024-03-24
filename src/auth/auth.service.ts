@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { compare, hash } from 'bcrypt';
 import { Request } from 'express';
 import { VALID_NAME_REGEX } from '../common/common.constants';
+import { normalizeText } from '../common/common.utils';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
@@ -81,7 +82,7 @@ export class AuthService {
       throw new Error('Password is required');
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedEmail = normalizeText(email);
     const user = await this.usersService.getUser({ email: normalizedEmail });
     if (!user) {
       throw new Error('User not found');
