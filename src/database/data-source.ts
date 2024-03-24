@@ -22,17 +22,17 @@ import { ProposalActionPermission } from '../proposals/proposal-actions/models/p
 import { ProposalActionRoleMember } from '../proposals/proposal-actions/models/proposal-action-role-member.model';
 import { ProposalActionRole } from '../proposals/proposal-actions/models/proposal-action-role.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
-import { Answer } from '../vibe-check/models/answer.model';
-import { Question } from '../vibe-check/models/question.model';
-import { QuestionnaireTicketConfig } from '../vibe-check/models/questionnaire-ticket-config.model';
-import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
-import { ServerQuestion } from '../vibe-check/models/server-question.model';
 import { Rule } from '../rules/models/rule.model';
 import { ServerConfig } from '../server-configs/models/server-config.model';
 import { ServerInvite } from '../server-invites/models/server-invite.model';
 import { ServerRolePermission } from '../server-roles/models/server-role-permission.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
+import { Answer } from '../vibe-check/models/answer.model';
+import { Question } from '../vibe-check/models/question.model';
+import { QuestionnaireTicketConfig } from '../vibe-check/models/questionnaire-ticket-config.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
+import { ServerQuestion } from '../vibe-check/models/server-question.model';
 import { Vote } from '../votes/models/vote.model';
 import { Initial1675388391336 } from './migrations/1675388391336-Initial';
 import { AddServerInviteTable1677339785709 } from './migrations/1677339785709-AddServerInviteTable';
@@ -71,6 +71,7 @@ import { AddNotificationRelationColumns1705026747368 } from './migrations/170502
 import { AddRuleTable1705711560882 } from './migrations/1705711560882-AddRuleTable';
 import { AddVibeCheckTables1709004638886 } from './migrations/1709004638886-AddVibeCheckTables';
 import { AddInitialMemberCountColumn1709498470199 } from './migrations/1709498470199-AddInitialMemberCountColumn';
+import { AddUserLockedColumn1711324242919 } from './migrations/1711324242919-AddUserLockedColumn';
 
 dotenv.config();
 
@@ -143,6 +144,7 @@ export default new DataSource({
     AddServerConfigTable1699135846939,
     AddServerInviteTable1677339785709,
     AddServerRolePermissionColumns1703978999070,
+    AddUserLockedColumn1711324242919,
     AddVibeCheckTables1709004638886,
     CleanUpGroupMemberRequestTable1690168731029,
     DropGroupMemberEntityTable1681010509841,
