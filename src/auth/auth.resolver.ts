@@ -1,5 +1,7 @@
-import { UseInterceptors } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Throttle } from '@nestjs/throttler';
+import { GqlThrottlerGuard } from '../common/guards/gql-throttle.guard';
 import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
 import { AuthService } from './auth.service';
 import { ClearSiteDataInterceptor } from './interceptors/clear-site-data.interceptor';
@@ -12,6 +14,8 @@ export class AuthResolver {
   constructor(private authService: AuthService) {}
 
   @Mutation(() => AuthPayload)
+  @UseGuards(GqlThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 60000 * 10 } })
   async login(@Args('input') input: LoginInput) {
     return this.authService.login(input);
   }
