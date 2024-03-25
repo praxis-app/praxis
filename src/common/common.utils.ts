@@ -27,6 +27,13 @@ export const logTime = (label: string, logger: Logger) => {
 export const sanitizeText = (dirty?: string) =>
   sanitizeHtml(dirty?.trim() || '', { allowedTags: [] });
 
+/**
+ * Normalize text by trimming whitespace and converting to lowercase
+ */
+export const normalizeText = (text: string) => {
+  return text.trim().toLowerCase();
+};
+
 export const paginate = <T extends { createdAt: Date }>(
   array: T[],
   offset: number,
