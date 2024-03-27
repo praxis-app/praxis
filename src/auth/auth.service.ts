@@ -84,11 +84,8 @@ export class AuthService {
 
     const normalizedEmail = normalizeText(email);
     const user = await this.usersService.getUser({ email: normalizedEmail });
-    if (!user) {
-      throw new Error('User not found');
-    }
-    if (user.locked) {
-      throw new Error('User account is locked');
+    if (!user || user.locked) {
+      throw new Error('Incorrect username or password');
     }
 
     const passwordMatch = await compare(password, user.password);

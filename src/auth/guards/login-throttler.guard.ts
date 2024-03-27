@@ -50,7 +50,7 @@ export class LoginThrottlerGuard extends ThrottlerGuard {
     // Lock user out of their account - TODO: Add account recovery flow
     await this.usersService.lockUserByEmail(email);
 
-    return 'Too many login attempts';
+    return 'Incorrect username or password';
   }
 
   private getContext(context: ExecutionContext) {
