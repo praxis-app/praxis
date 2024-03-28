@@ -103,7 +103,7 @@ const Feed = ({
           <FeedItem item={item} key={`${item.__typename}-${item.id}`} />
         ))}
 
-        {getFeedItems().length === 0 && (
+        {!isLoading && getFeedItems().length === 0 && (
           <Card>
             <CardContent sx={CARD_CONTENT_STYLES}>
               {renderNoContentMessage()}
