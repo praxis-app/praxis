@@ -25,7 +25,10 @@ const HomeFeed = () => {
 
   useEffect(() => {
     getHomeFeed({
-      variables: { limit: rowsPerPage, offset: page * rowsPerPage },
+      variables: {
+        limit: rowsPerPage,
+        offset: page * rowsPerPage,
+      },
     });
   }, [getHomeFeed, rowsPerPage, page]);
 

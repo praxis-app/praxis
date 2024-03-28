@@ -85,12 +85,22 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
         cache.updateQuery<HomeFeedQuery, HomeFeedQueryVariables>(
           {
             query: HomeFeedDocument,
-            variables: { limit: 10, offset: 0, isLoggedIn: true },
+            variables: {
+              limit: 10,
+              offset: 0,
+              isLoggedIn: true,
+              isVerified: true,
+            },
           },
-          (homePageData) =>
-            produce(homePageData, (draft) => {
-              draft?.me?.homeFeed.nodes.unshift(post);
-            }),
+          (homePageData) => {
+            if (!homePageData) {
+              return;
+            }
+            return produce(homePageData, (draft) => {
+              draft.me.homeFeed.nodes.unshift(post);
+              draft.me.homeFeed.totalCount = draft.me.homeFeed.totalCount + 1;
+            });
+          },
         );
         cache.updateQuery<UserProfileFeedQuery, UserProfileFeedQueryVariables>(
           {
@@ -102,10 +112,15 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
               offset: 0,
             },
           },
-          (userProfileFeedData) =>
-            produce(userProfileFeedData, (draft) => {
-              draft?.user.profileFeed.unshift(post);
-            }),
+          (userProfileFeedData) => {
+            if (!userProfileFeedData) {
+              return;
+            }
+            return produce(userProfileFeedData, (draft) => {
+              draft.user.profileFeed.unshift(post);
+              draft.user.profileFeedCount++;
+            });
+          },
         );
         if (post.group) {
           cache.updateQuery<GroupFeedQuery, GroupFeedQueryVariables>(
@@ -119,10 +134,15 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
                 offset: 0,
               },
             },
-            (groupFeedData) =>
-              produce(groupFeedData, (draft) => {
-                draft?.group.feed.unshift(post);
-              }),
+            (groupFeedData) => {
+              if (!groupFeedData) {
+                return;
+              }
+              return produce(groupFeedData, (draft) => {
+                draft.group.feed.unshift(post);
+                draft.group.feedCount++;
+              });
+            },
           );
         }
         if (post.event) {
@@ -136,10 +156,15 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
                 offset: 0,
               },
             },
-            (groupFeedData) =>
-              produce(groupFeedData, (draft) => {
-                draft?.event.posts.unshift(post);
-              }),
+            (groupFeedData) => {
+              if (!groupFeedData) {
+                return;
+              }
+              return produce(groupFeedData, (draft) => {
+                draft.event.posts.unshift(post);
+                draft.event.postsCount++;
+              });
+            },
           );
         }
       },
