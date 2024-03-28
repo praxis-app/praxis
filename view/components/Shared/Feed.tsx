@@ -6,7 +6,7 @@ import {
   SxProps,
   Typography,
 } from '@mui/material';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FeedItemFragment } from '../../graphql/posts/fragments/gen/FeedItem.gen';
 import PostCard from '../Posts/PostCard';
@@ -55,7 +55,26 @@ const Feed = ({
   totalCount,
   ...boxProps
 }: Props) => {
+  const [prevPageItems, setPrevPageItems] = useState<FeedItemFragment[]>([]);
   const { t } = useTranslation();
+
+  const getFeedItems = () => {
+    if (!feedItems) {
+      return prevPageItems;
+    }
+    if (!feedItems) {
+      return [];
+    }
+    return feedItems;
+  };
+
+  const handleChangePage = (page: number) => {
+    if (!feedItems) {
+      return;
+    }
+    setPrevPageItems(feedItems);
+    onChangePage(page);
+  };
 
   const renderNoContentMessage = () => {
     if (noContentMessage) {
@@ -73,18 +92,18 @@ const Feed = ({
       <Pagination
         count={totalCount}
         isLoading={isLoading}
-        onChangePage={onChangePage}
+        onChangePage={handleChangePage}
         page={page}
         rowsPerPage={rowsPerPage}
         setPage={setPage}
         setRowsPerPage={setRowsPerPage}
         showTopPagination={showTopPagination}
       >
-        {feedItems?.map((item) => (
+        {getFeedItems().map((item) => (
           <FeedItem item={item} key={`${item.__typename}-${item.id}`} />
         ))}
 
-        {feedItems?.length === 0 && (
+        {getFeedItems().length === 0 && (
           <Card>
             <CardContent sx={CARD_CONTENT_STYLES}>
               {renderNoContentMessage()}
