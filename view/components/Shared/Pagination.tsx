@@ -81,7 +81,7 @@ const Pagination = ({
   };
 
   const renderPagination = (top = false) => {
-    if ((top && isLoading) || (!showTopPagination && top)) {
+    if ((top && isLoading && !page) || (!showTopPagination && top)) {
       return null;
     }
     return (
