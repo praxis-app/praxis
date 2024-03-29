@@ -56,16 +56,20 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   }),
 });
 
-const MailerModule = MailerModuleDefault.forRoot({
-  transport: {
-    host: String(process.env.MAIL_HOST),
-    port: Number(process.env.MAIL_PORT),
-    secure: false,
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
+const MailerModule = MailerModuleDefault.forRootAsync({
+  imports: [ConfigModule],
+  inject: [ConfigService],
+  useFactory: (configService: ConfigService) => ({
+    transport: {
+      host: configService.get('MAIL_HOST'),
+      port: configService.get('MAIL_PORT'),
+      secure: false,
+      auth: {
+        user: configService.get('MAIL_USER'),
+        pass: configService.get('MAIL_PASS'),
+      },
     },
-  },
+  }),
 });
 
 const ViewModule = ServeStaticModule.forRoot({

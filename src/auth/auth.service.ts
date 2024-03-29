@@ -1,3 +1,4 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
@@ -31,6 +32,7 @@ export class AuthService {
   constructor(
     private configService: ConfigService,
     private jwtService: JwtService,
+    private mailerService: MailerService,
     private serverInvitesService: ServerInvitesService,
     private usersService: UsersService,
   ) {}
@@ -69,6 +71,21 @@ export class AuthService {
       return null;
     }
     return payload.sub;
+  }
+
+  // TODO: Add remaining logic for password reset
+  async sendPasswordResetEmail() {
+    const mailSender = this.configService.get('MAIL_SENDER');
+    const result = await this.mailerService.sendMail({
+      to: mailSender,
+      from: 'praxis-dev@proton.me',
+      subject: 'Test subject',
+      text: 'Hello email!',
+      html: '<b>HTML test</b>',
+    });
+
+    // TODO: Remove when no longer needed for testing
+    console.log(result);
   }
 
   private async validateLogin(
