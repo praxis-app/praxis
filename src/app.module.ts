@@ -1,3 +1,4 @@
+import { MailerModule as MailerModuleDefault } from '@nestjs-modules/mailer';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -55,6 +56,18 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
   }),
 });
 
+const MailerModule = MailerModuleDefault.forRoot({
+  transport: {
+    host: String(process.env.MAIL_HOST),
+    port: Number(process.env.MAIL_PORT),
+    secure: false,
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+  },
+});
+
 const ViewModule = ServeStaticModule.forRoot({
   rootPath: join(__dirname, 'view'),
   exclude: ['/api/(.*)', '/security.txt'],
@@ -76,17 +89,18 @@ const ViewModule = ServeStaticModule.forRoot({
     GroupsModule,
     ImagesModule,
     LikesModule,
+    MailerModule,
     NotificationsModule,
     PostsModule,
     ProposalsModule,
     PubSubModule,
-    VibeCheckModule,
     RulesModule,
     ServerConfigsModule,
     ServerInvitesModule,
     ServerRolesModule,
     ShieldModule,
     UsersModule,
+    VibeCheckModule,
     ViewModule,
     VotesModule,
   ],
