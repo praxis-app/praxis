@@ -54,6 +54,9 @@ export class User {
   @Column({ default: false })
   locked: boolean;
 
+  @Column({ nullable: true })
+  resetPasswordToken: string;
+
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,
   })

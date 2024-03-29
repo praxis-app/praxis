@@ -2,8 +2,11 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
+import * as cryptoRandomString from 'crypto-random-string';
 import { Request } from 'express';
+import { Repository } from 'typeorm';
 import { VALID_NAME_REGEX } from '../common/common.constants';
 import { normalizeText } from '../common/common.utils';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
@@ -35,6 +38,9 @@ export class AuthService {
     private mailerService: MailerService,
     private serverInvitesService: ServerInvitesService,
     private usersService: UsersService,
+
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async login({ email, password }: LoginInput): Promise<AuthPayload> {
@@ -74,14 +80,21 @@ export class AuthService {
   }
 
   // TODO: Add remaining logic for password reset
-  async sendPasswordResetEmail() {
+  async sendPasswordResetEmail(user: User) {
+    const resetPasswordToken = cryptoRandomString({ length: 8 });
+    await this.userRepository.update(user.id, { resetPasswordToken });
+
     const mailSender = this.configService.get('MAIL_SENDER');
     const result = await this.mailerService.sendMail({
-      to: mailSender,
-      from: 'praxis-dev@proton.me',
-      subject: 'Test subject',
-      text: 'Hello email!',
-      html: '<b>HTML test</b>',
+      to: user.email,
+      from: mailSender,
+      subject: 'Your account has been locked',
+      html: `
+        <p>
+          Your account has been locked due to too many failed login attempts.
+          Please click the link below to reset your password.
+        </p>
+      `,
     });
 
     // TODO: Remove when no longer needed for testing
