@@ -50,25 +50,25 @@ const SignUpForm = () => {
   }: SignUpInput) => {
     const errors: FormikErrors<SignUpInput> = {};
     if (!name) {
-      errors.name = t('signUp.errors.missingName');
+      errors.name = t('users.errors.missingName');
     }
     if (!email.match(VALID_EMAIL_REGEX)) {
       errors.email = t('users.validation.invalidEmail');
     }
     if (!email) {
-      errors.email = t('signUp.errors.missingEmail');
+      errors.email = t('users.errors.missingEmail');
     }
     if (password.length < MIN_PASSWORD_LENGTH) {
-      errors.password = t('signUp.errors.passwordLength');
+      errors.password = t('users.errors.passwordLength');
     }
     if (!password) {
-      errors.password = t('signUp.errors.missingPassword');
+      errors.password = t('users.errors.missingPassword');
     }
     if (password !== confirmPassword) {
-      errors.confirmPassword = t('signUp.errors.confirmPassword');
+      errors.confirmPassword = t('users.errors.confirmPassword');
     }
     if (!confirmPassword) {
-      errors.confirmPassword = t('signUp.errors.missingConfirmPassword');
+      errors.confirmPassword = t('users.errors.missingConfirmPassword');
     }
     return errors;
   };

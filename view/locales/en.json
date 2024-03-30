@@ -175,26 +175,35 @@
     "actions": {
       "editProfile": "Edit profile",
       "follow": "Follow",
+      "getVerified": "Get verified",
       "logIn": "Log in",
       "logOut": "Log out",
       "passwordConfirm": "Confirm password",
+      "resetPassword": "Reset Password",
       "signUp": "Sign up",
-      "unfollow": "Unfollow",
-      "getVerified": "Get verified"
+      "unfollow": "Unfollow"
     },
     "errors": {
+      "confirmPassword": "Passwords do not match",
+      "missingConfirmPassword": "Confirm password cannot be empty",
+      "missingEmail": "Email cannot be empty",
+      "missingName": "Name cannot be empty",
+      "missingPassword": "Password cannot be empty",
+      "passwordLength": "Password must be at least 12 characters long",
+      "remove": "There was an error removing this member.",
       "signUp": "There was an error creating your account.",
-      "update": "There was an error updating your account.",
-      "remove": "There was an error removing this member."
+      "update": "There was an error updating your account."
     },
     "form": {
       "bio": "Bio",
-      "coverPhoto": "Cover Photo",
+      "coverPhoto": "Cover photo",
       "email": "Email",
       "name": "Name",
       "password": "Password",
-      "profilePicture": "Profile Picture",
-      "confirmPassword": "Confirm Password"
+      "newPassword": "New password",
+      "profilePicture": "Profile picture",
+      "confirmPassword": "Confirm password",
+      "confirmNewPassword": "Confirm new password"
     },
     "profile": {
       "following": "Following",
@@ -205,6 +214,7 @@
       "alreadyRegistered": "You have already created an account.",
       "authenticated": "You are authenticated.",
       "becomeAMember": "Become a Praxis Member",
+      "resetYourPassword": "Reset your password",
       "logOut": "Are you sure you want to log out?",
       "permissionDenied": "Permission denied.",
       "removeSelf": "Are you sure you want to permanently delete your account? All of your data will be deleted and this cannot be undone.",
@@ -560,17 +570,6 @@
     },
     "labels": {
       "usesWithColon": "Uses:"
-    }
-  },
-
-  "signUp": {
-    "errors": {
-      "confirmPassword": "Passwords do not match",
-      "missingConfirmPassword": "Confirm password cannot be empty",
-      "missingEmail": "Email cannot be empty",
-      "missingName": "Name cannot be empty",
-      "missingPassword": "Password cannot be empty",
-      "passwordLength": "Password must be at least 12 characters long"
     }
   },
 

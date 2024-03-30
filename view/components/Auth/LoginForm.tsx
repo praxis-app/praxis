@@ -45,10 +45,10 @@ const LoginForm = () => {
   const validate = ({ email, password }: LoginInput) => {
     const errors: FormikErrors<LoginInput> = {};
     if (!email) {
-      errors.email = t('signUp.errors.missingEmail');
+      errors.email = t('users.errors.missingEmail');
     }
     if (!password) {
-      errors.password = t('signUp.errors.missingPassword');
+      errors.password = t('users.errors.missingPassword');
     }
     return errors;
   };
