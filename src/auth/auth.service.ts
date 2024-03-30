@@ -87,20 +87,22 @@ export class AuthService {
     await this.userRepository.update(user.id, {
       password: passwordHash,
       resetPasswordToken: null,
+      locked: false,
     });
 
     const access_token = await this.generateAccessToken(user.id);
     return { access_token };
   }
 
-  // TODO: Add remaining logic for password reset
   async sendPasswordResetEmail(user: User) {
     const resetPasswordToken = cryptoRandomString({ length: 32 });
-    await this.userRepository.update(user.id, { resetPasswordToken });
+    await this.userRepository.update(user.id, {
+      resetPasswordToken,
+    });
 
     const mailSender = this.configService.get('MAIL_SENDER');
     const websiteUrl = this.configService.get('WEBSITE_URL');
-    const result = await this.mailerService.sendMail({
+    await this.mailerService.sendMail({
       to: user.email,
       from: mailSender,
       subject: 'Your account has been locked',
@@ -115,9 +117,6 @@ export class AuthService {
         </a>
       `,
     });
-
-    // TODO: Remove when no longer needed for testing
-    console.log(result);
   }
 
   async getSubClaim(
