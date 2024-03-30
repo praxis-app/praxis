@@ -559,11 +559,10 @@ export class UsersService {
     return true;
   }
 
-  async lockUserByEmail(email: string) {
-    await this.userRepository.update(
-      { email: normalizeText(email) },
-      { locked: true },
-    );
+  async lockUserAccount(userId: number) {
+    await this.userRepository.update(userId, {
+      locked: true,
+    });
   }
 
   async saveProfilePicture(

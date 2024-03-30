@@ -8,6 +8,7 @@ import { LoginThrottlerGuard } from './guards/login-throttler.guard';
 import { ClearSiteDataInterceptor } from './interceptors/clear-site-data.interceptor';
 import { AuthPayload } from './models/auth.payload';
 import { LoginInput } from './models/login.input';
+import { ResetPasswordInput } from './models/reset-password.input';
 import { SignUpInput } from './models/sign-up.input';
 
 @Resolver()
@@ -24,6 +25,11 @@ export class AuthResolver {
   @Mutation(() => AuthPayload)
   async signUp(@Args('input') input: SignUpInput) {
     return this.authService.signUp(input);
+  }
+
+  @Mutation(() => AuthPayload)
+  async resetPassword(@Args('input') input: ResetPasswordInput) {
+    return this.authService.resetPassword(input);
   }
 
   @Mutation(() => Boolean)

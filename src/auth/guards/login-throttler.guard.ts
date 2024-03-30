@@ -10,6 +10,7 @@ import { Request } from 'express';
 import { LoginInput } from '../../auth/models/login.input';
 import { normalizeText } from '../../common/common.utils';
 import { UsersService } from '../../users/users.service';
+import { AuthService } from '../auth.service';
 
 interface LoginRequest extends Request {
   body: {
@@ -28,6 +29,7 @@ export class LoginThrottlerGuard extends ThrottlerGuard {
     options: ThrottlerModuleOptions,
     storageService: ThrottlerStorage,
     private usersService: UsersService,
+    private authService: AuthService,
     reflector: Reflector,
   ) {
     super(options, storageService, reflector);
@@ -46,9 +48,12 @@ export class LoginThrottlerGuard extends ThrottlerGuard {
   async getErrorMessage(context: ExecutionContext) {
     const ctx = this.getContext(context);
     const { email } = ctx.req.body.variables.input;
+    const user = await this.usersService.getUser({ email });
 
-    // Lock user out of their account - TODO: Add account recovery flow
-    await this.usersService.lockUserByEmail(email);
+    if (user && !user.locked) {
+      await this.usersService.lockUserAccount(user.id);
+      await this.authService.sendPasswordResetEmail(user);
+    }
 
     return 'Incorrect username or password';
   }
