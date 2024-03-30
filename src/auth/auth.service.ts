@@ -110,7 +110,7 @@ export class AuthService {
           Please click the link below to reset your password.
         </p>
 
-        <a href="${websiteUrl}/reset-password/${resetPasswordToken}">
+        <a href="${websiteUrl}/auth/reset-password/${resetPasswordToken}">
           Reset Password
         </a>
       `,
