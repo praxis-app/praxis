@@ -65,7 +65,7 @@ export class AuthService {
     return { access_token };
   }
 
-  async resetPassword(input: ResetPasswordInput) {
+  async resetPassword(input: ResetPasswordInput, currentUser?: User) {
     const { password, confirmPassword, resetPasswordToken } = input;
     if (password !== confirmPassword) {
       throw new Error('Passwords do not match');
@@ -73,12 +73,14 @@ export class AuthService {
     if (password.length < MIN_PASSWORD_LENGTH) {
       throw new Error('Password must be at least 12 characters long');
     }
+    if (!currentUser && !resetPasswordToken) {
+      throw new Error('Missing password reset token');
+    }
 
-    const user = await this.userRepository.findOne({
-      where: { resetPasswordToken },
-    });
+    const where = currentUser ? { id: currentUser.id } : { resetPasswordToken };
+    const user = await this.userRepository.findOne({ where });
     if (!user) {
-      throw new Error('Invalid password reset token');
+      throw new Error('Password could not be reset');
     }
 
     const passwordHash = await hash(password, SALT_ROUNDS);

@@ -791,7 +791,7 @@ input SignUpInput {
 input ResetPasswordInput {
   password: String!
   confirmPassword: String!
-  resetPasswordToken: String!
+  resetPasswordToken: String
 }
 
 input CreateProposalInput {

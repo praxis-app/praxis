@@ -3,7 +3,9 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Throttle } from '@nestjs/throttler';
 import { IpThrottlerGuard } from '../common/guards/ip-throttler.guard';
 import { SynchronizeProposalsInterceptor } from '../proposals/interceptors/synchronize-proposals.interceptor';
+import { User } from '../users/models/user.model';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { LoginThrottlerGuard } from './guards/login-throttler.guard';
 import { ClearSiteDataInterceptor } from './interceptors/clear-site-data.interceptor';
 import { AuthPayload } from './models/auth.payload';
@@ -28,8 +30,11 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthPayload)
-  async resetPassword(@Args('input') input: ResetPasswordInput) {
-    return this.authService.resetPassword(input);
+  async resetPassword(
+    @Args('input') input: ResetPasswordInput,
+    @CurrentUser() currentUser?: User,
+  ) {
+    return this.authService.resetPassword(input, currentUser);
   }
 
   @Mutation(() => Boolean)

@@ -8,6 +8,6 @@ export class ResetPasswordInput {
   @Field()
   confirmPassword: string;
 
-  @Field()
-  resetPasswordToken: string;
+  @Field({ nullable: true })
+  resetPasswordToken?: string;
 }
