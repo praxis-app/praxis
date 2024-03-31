@@ -597,6 +597,7 @@ type CreateServerInvitePayload {
 
 type AuthPayload {
   access_token: String!
+  isVerified: Boolean!
 }
 
 type CreateCommentPayload {

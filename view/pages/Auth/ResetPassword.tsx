@@ -15,7 +15,7 @@ import {
   UserFieldNames,
 } from '../../constants/user.constants';
 import { useResetPasswordMutation } from '../../graphql/auth/mutations/gen/ResetPassword.gen';
-import { isLoggedInVar, toastVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { ResetPasswordInput } from '../../graphql/gen';
 
 const ResetPassword = () => {
@@ -39,13 +39,14 @@ const ResetPassword = () => {
           resetPasswordToken: token,
         },
       },
-      onCompleted({ resetPassword: { access_token } }) {
+      onCompleted({ resetPassword: { access_token, isVerified } }) {
         if (!token) {
           // TODO: Add support for resetting password for logged in users
           return;
         }
         navigate(NavigationPaths.Home);
         localStorage.setItem(LocalStorageKey.AccessToken, access_token);
+        isVerifiedVar(isVerified);
         isLoggedInVar(true);
       },
       onError(err) {

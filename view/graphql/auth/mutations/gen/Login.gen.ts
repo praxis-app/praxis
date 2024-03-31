@@ -13,13 +13,18 @@ export type LoginMutationVariables = Types.Exact<{
 
 export type LoginMutation = {
   __typename?: 'Mutation';
-  login: { __typename?: 'AuthPayload'; access_token: string };
+  login: {
+    __typename?: 'AuthPayload';
+    access_token: string;
+    isVerified: boolean;
+  };
 };
 
 export const LoginDocument = gql`
   mutation Login($input: LoginInput!) {
     login(input: $input) {
       access_token
+      isVerified
     }
   }
 `;

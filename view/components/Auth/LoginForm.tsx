@@ -16,6 +16,7 @@ import { useLoginMutation } from '../../graphql/auth/mutations/gen/Login.gen';
 import {
   isLoggedInVar,
   isNavDrawerOpenVar,
+  isVerifiedVar,
   toastVar,
 } from '../../graphql/cache';
 import { LoginInput } from '../../graphql/gen';
@@ -41,8 +42,9 @@ const LoginForm = () => {
   const handleSubmit = async (input: LoginInput) =>
     await login({
       variables: { input },
-      onCompleted({ login: { access_token } }) {
+      onCompleted({ login: { access_token, isVerified } }) {
         localStorage.setItem(LocalStorageKey.AccessToken, access_token);
+        isVerifiedVar(isVerified);
         isLoggedInVar(true);
       },
       onError(err) {

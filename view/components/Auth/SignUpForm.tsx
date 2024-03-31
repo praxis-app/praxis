@@ -18,6 +18,7 @@ import {
   inviteTokenVar,
   isLoggedInVar,
   isNavDrawerOpenVar,
+  isVerifiedVar,
   toastVar,
 } from '../../graphql/cache';
 import { SignUpInput } from '../../graphql/gen';
@@ -42,7 +43,44 @@ const SignUpForm = () => {
     inviteToken: token,
   };
 
-  const validateSignUp = ({
+  const handleSubmit = async (formValues: SignUpInput) => {
+    await signUp({
+      variables: {
+        input: {
+          ...formValues,
+          name: formValues.name.trim(),
+          email: formValues.email.trim(),
+        },
+      },
+      update(cache, { data }) {
+        if (!data?.signUp) {
+          return;
+        }
+        cache.writeQuery<IsFirstUserQuery>({
+          data: { isFirstUser: false },
+          query: IsFirstUserDocument,
+        });
+      },
+      onCompleted({ signUp: { access_token, isVerified } }) {
+        inviteTokenVar('');
+        isLoggedInVar(true);
+        isVerifiedVar(isVerified);
+        localStorage.removeItem(LocalStorageKey.InviteToken);
+        localStorage.setItem(LocalStorageKey.AccessToken, access_token);
+      },
+      onError(err) {
+        const title = isEntityTooLarge(err)
+          ? t('errors.imageTooLarge')
+          : err.message;
+        toastVar({
+          status: 'error',
+          title,
+        });
+      },
+    });
+  };
+
+  const validate = ({
     name,
     email,
     password,
@@ -73,42 +111,6 @@ const SignUpForm = () => {
     return errors;
   };
 
-  const handleSubmit = async (formValues: SignUpInput) => {
-    await signUp({
-      variables: {
-        input: {
-          ...formValues,
-          name: formValues.name.trim(),
-          email: formValues.email.trim(),
-        },
-      },
-      update(cache, { data }) {
-        if (!data?.signUp) {
-          return;
-        }
-        cache.writeQuery<IsFirstUserQuery>({
-          data: { isFirstUser: false },
-          query: IsFirstUserDocument,
-        });
-      },
-      onCompleted({ signUp: { access_token } }) {
-        inviteTokenVar('');
-        isLoggedInVar(true);
-        localStorage.removeItem(LocalStorageKey.InviteToken);
-        localStorage.setItem(LocalStorageKey.AccessToken, access_token);
-      },
-      onError(err) {
-        const title = isEntityTooLarge(err)
-          ? t('errors.imageTooLarge')
-          : err.message;
-        toastVar({
-          status: 'error',
-          title,
-        });
-      },
-    });
-  };
-
   return (
     <Card>
       <CardContent>
@@ -119,7 +121,7 @@ const SignUpForm = () => {
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
-          validate={validateSignUp}
+          validate={validate}
         >
           {({ isSubmitting }) => (
             <Form hidden={isNavDrawerOpen}>

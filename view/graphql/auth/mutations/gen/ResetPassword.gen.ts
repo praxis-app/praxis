@@ -13,13 +13,18 @@ export type ResetPasswordMutationVariables = Types.Exact<{
 
 export type ResetPasswordMutation = {
   __typename?: 'Mutation';
-  resetPassword: { __typename?: 'AuthPayload'; access_token: string };
+  resetPassword: {
+    __typename?: 'AuthPayload';
+    access_token: string;
+    isVerified: boolean;
+  };
 };
 
 export const ResetPasswordDocument = gql`
   mutation ResetPassword($input: ResetPasswordInput!) {
     resetPassword(input: $input) {
       access_token
+      isVerified
     }
   }
 `;
