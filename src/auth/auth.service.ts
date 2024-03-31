@@ -47,7 +47,7 @@ export class AuthService {
   async login({ email, password }: LoginInput): Promise<AuthPayload> {
     const user = await this.validateLogin(email, password);
     const access_token = await this.generateAccessToken(user.id);
-    return { access_token };
+    return { access_token, isVerified: user.verified };
   }
 
   async signUp(input: SignUpInput): Promise<AuthPayload> {
@@ -62,10 +62,13 @@ export class AuthService {
     }
 
     const access_token = await this.generateAccessToken(user.id);
-    return { access_token };
+    return { access_token, isVerified: user.verified };
   }
 
-  async resetPassword(input: ResetPasswordInput, currentUser?: User) {
+  async resetPassword(
+    input: ResetPasswordInput,
+    currentUser?: User,
+  ): Promise<AuthPayload> {
     const { password, confirmPassword, resetPasswordToken } = input;
     if (password !== confirmPassword) {
       throw new Error('Passwords do not match');
@@ -91,7 +94,7 @@ export class AuthService {
     });
 
     const access_token = await this.generateAccessToken(user.id);
-    return { access_token };
+    return { access_token, isVerified: user.verified };
   }
 
   async sendForgotPasswordEmail(email: string) {

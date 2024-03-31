@@ -275,9 +275,7 @@ export const shieldPermissions = shield(
     Question: or(isOwnQuestion, canManageQuestionnaireTickets),
     Answer: or(isOwnAnswer, canManageQuestionnaireTickets),
     Notification: isOwnNotification,
-    AuthPayload: {
-      access_token: allow,
-    },
+    AuthPayload: allow,
     AnswerQuestionsPayload: isAuthenticated,
     CreateCommentPayload: isAuthenticated,
     CreateLikePayload: isAuthenticated,

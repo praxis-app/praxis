@@ -65,6 +65,7 @@ export type ApproveGroupMemberRequestPayload = {
 export type AuthPayload = {
   __typename?: 'AuthPayload';
   access_token: Scalars['String']['output'];
+  isVerified: Scalars['Boolean']['output'];
 };
 
 export type Canary = {
