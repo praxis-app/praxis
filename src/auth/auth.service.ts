@@ -1,8 +1,12 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
+import * as cryptoRandomString from 'crypto-random-string';
 import { Request } from 'express';
+import { Repository } from 'typeorm';
 import { VALID_NAME_REGEX } from '../common/common.constants';
 import { normalizeText } from '../common/common.utils';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
@@ -17,6 +21,7 @@ import {
 import { AuthPayload } from './models/auth.payload';
 import { LoginInput } from './models/login.input';
 import { SignUpInput } from './models/sign-up.input';
+import { ResetPasswordInput } from './models/reset-password.input';
 
 export interface AccessTokenPayload {
   /**
@@ -31,8 +36,12 @@ export class AuthService {
   constructor(
     private configService: ConfigService,
     private jwtService: JwtService,
+    private mailerService: MailerService,
     private serverInvitesService: ServerInvitesService,
     private usersService: UsersService,
+
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async login({ email, password }: LoginInput): Promise<AuthPayload> {
@@ -54,6 +63,149 @@ export class AuthService {
 
     const access_token = await this.generateAccessToken(user.id);
     return { access_token };
+  }
+
+  async resetPassword(input: ResetPasswordInput, currentUser?: User) {
+    const { password, confirmPassword, resetPasswordToken } = input;
+    if (password !== confirmPassword) {
+      throw new Error('Passwords do not match');
+    }
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      throw new Error('Password must be at least 12 characters long');
+    }
+    if (!currentUser && !resetPasswordToken) {
+      throw new Error('Missing password reset token');
+    }
+
+    const where = currentUser ? { id: currentUser.id } : { resetPasswordToken };
+    const user = await this.userRepository.findOne({ where });
+    if (!user) {
+      throw new Error('Password could not be reset');
+    }
+
+    const passwordHash = await hash(password, SALT_ROUNDS);
+    await this.userRepository.update(user.id, {
+      password: passwordHash,
+      resetPasswordToken: null,
+      locked: false,
+    });
+
+    const access_token = await this.generateAccessToken(user.id);
+    return { access_token };
+  }
+
+  async sendForgotPasswordEmail(email: string) {
+    const user = await this.usersService.getUser({
+      email: normalizeText(email),
+    });
+    if (!user) {
+      return true;
+    }
+
+    const resetPasswordToken = cryptoRandomString({ length: 32 });
+    await this.userRepository.update(user.id, {
+      resetPasswordToken,
+    });
+
+    const mailSender = this.configService.get('MAIL_SENDER');
+    const websiteUrl = this.configService.get('WEBSITE_URL');
+    await this.mailerService.sendMail({
+      to: user.email,
+      from: mailSender,
+      subject: 'Reset your password',
+      html: `
+        <div style="font-family: Helvetica">
+          <p>Hello,</p>
+        
+          <p>
+            We've received a request to reset the password for your account. You can
+            reset your password by clicking the link below:
+          </p>
+        
+          <a
+            href="${websiteUrl}/auth/reset-password/${resetPasswordToken}"
+            style="
+              background-color: #5868cb;
+              border-radius: 5px;
+              color: #ffffff;
+              padding: 10px 20px;
+              text-decoration: none;
+              width: fit-content;
+              display: block;
+              margin: 0 auto;
+            "
+          >
+            Reset your password
+          </a>
+        
+          <p>
+            If you did not request this password reset or believe this action was taken
+            in error, please let us know by replying to this email.
+          </p>
+        
+          <p>
+            Thank you,<br />
+            <a href="${websiteUrl}">${websiteUrl}</a>
+          </p>
+        </div>
+      `,
+    });
+
+    return true;
+  }
+
+  async sendAccountLockedEmail(user: User) {
+    const resetPasswordToken = cryptoRandomString({ length: 32 });
+    await this.userRepository.update(user.id, {
+      resetPasswordToken,
+    });
+
+    const mailSender = this.configService.get('MAIL_SENDER');
+    const websiteUrl = this.configService.get('WEBSITE_URL');
+    await this.mailerService.sendMail({
+      to: user.email,
+      from: mailSender,
+      subject: 'Your account has been locked',
+      html: `
+        <div style="font-family: Helvetica">
+          <p>Hello,</p>
+        
+          <p>
+            We've noticed that there have been too many failed login attempts on your
+            account. To ensure the security of your account, we've temporarily locked
+            it.
+          </p>
+        
+          <p>You can reset your password by clicking the link below:</p>
+        
+          <a
+            href="${websiteUrl}/auth/reset-password/${resetPasswordToken}"
+            style="
+              background-color: #5868cb;
+              border-radius: 5px;
+              color: #ffffff;
+              padding: 10px 20px;
+              text-decoration: none;
+              width: fit-content;
+              display: block;
+              margin: 0 auto;
+            "
+          >
+            Reset your password
+          </a>
+        
+          <p>
+            If you did not request this password reset or believe this action was taken
+            in error, please let us know by replying to this email.
+          </p>
+        
+          <p>
+            Thank you,<br />
+            <a href="${websiteUrl}">${websiteUrl}</a>
+          </p>
+        </div>
+      `,
+    });
   }
 
   async getSubClaim(
@@ -110,11 +262,11 @@ export class AuthService {
     if (!VALID_NAME_REGEX.test(name)) {
       throw new Error('User names cannot contain special characters');
     }
-    if (password.length < MIN_PASSWORD_LENGTH) {
-      throw new Error('Password must be at least 12 characters long');
-    }
     if (password !== confirmPassword) {
       throw new Error('Passwords do not match');
+    }
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      throw new Error('Password must be at least 12 characters long');
     }
 
     const users = await this.usersService.getUsers();
@@ -125,15 +277,15 @@ export class AuthService {
       await this.serverInvitesService.getValidServerInvite(inviteToken);
     }
 
-    const existUsersWithEmail = await this.usersService.getUsersCount({
+    const usersWithEmailCount = await this.usersService.getUsersCount({
       email,
     });
-    if (existUsersWithEmail > 0) {
+    if (usersWithEmailCount > 0) {
       throw new Error('Email address is already in use');
     }
 
-    const existUsersWithName = await this.usersService.getUsersCount({ name });
-    if (existUsersWithName > 0) {
+    const usersWithNameCount = await this.usersService.getUsersCount({ name });
+    if (usersWithNameCount > 0) {
       throw new Error('Username is already in use');
     }
   }

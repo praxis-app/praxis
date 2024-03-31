@@ -112,6 +112,8 @@ export const shieldPermissions = shield(
       login: allow,
       logOut: allow,
       signUp: allow,
+      resetPassword: allow,
+      sendPasswordReset: allow,
       updatePost: isOwnPost,
       deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
       deleteProposal: or(and(isOwnProposal, hasNoVotes), canRemoveProposals),

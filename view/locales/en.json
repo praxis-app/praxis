@@ -175,65 +175,74 @@
     "actions": {
       "editProfile": "Edit profile",
       "follow": "Follow",
+      "getVerified": "Get verified",
       "logIn": "Log in",
       "logOut": "Log out",
       "passwordConfirm": "Confirm password",
+      "resetPassword": "Reset Password",
+      "sendEmail": "Send Email",
       "signUp": "Sign up",
-      "unfollow": "Unfollow",
-      "getVerified": "Get verified"
+      "unfollow": "Unfollow"
     },
     "errors": {
+      "confirmPassword": "Passwords do not match",
+      "invalidEmail": "Email is invalid.",
+      "missingConfirmPassword": "Confirm password cannot be empty",
+      "missingEmail": "Email cannot be empty",
+      "missingName": "Name cannot be empty",
+      "missingPassword": "Password cannot be empty",
+      "passwordLength": "Password must be at least 12 characters long",
+      "remove": "There was an error removing this member.",
       "signUp": "There was an error creating your account.",
-      "update": "There was an error updating your account.",
-      "remove": "There was an error removing this member."
+      "update": "There was an error updating your account."
     },
     "form": {
       "bio": "Bio",
-      "coverPhoto": "Cover Photo",
+      "confirmNewPassword": "Confirm new password",
+      "confirmPassword": "Confirm password",
+      "coverPhoto": "Cover photo",
       "email": "Email",
       "name": "Name",
+      "newPassword": "New password",
       "password": "Password",
-      "profilePicture": "Profile Picture",
-      "confirmPassword": "Confirm Password"
+      "profilePicture": "Profile picture",
+      "yourEmail": "Your email address"
     },
     "profile": {
       "following": "Following",
       "joinDate": "Joined {{joinDate}}"
+    },
+    "headers": {
+      "forgotPassword": "Forgot your password?"
     },
     "prompts": {
       "alreadyLoggedIn": "You're already signed in.",
       "alreadyRegistered": "You have already created an account.",
       "authenticated": "You are authenticated.",
       "becomeAMember": "Become a Praxis Member",
+      "enterEmailForReset": "Enter the email address associated with your account and we'll send you a link to reset your password.",
       "logOut": "Are you sure you want to log out?",
+      "passwordResetEmailSent": "Password reset email sent. Check your email for further instructions.",
       "permissionDenied": "Permission denied.",
+      "readyToExplore": "Ready to explore?",
       "removeSelf": "Are you sure you want to permanently delete your account? All of your data will be deleted and this cannot be undone.",
       "removeUser": "Are you sure you want to permanently delete this member's account? All of their data will be deleted and this cannot be undone.",
+      "resetYourPassword": "Reset your password",
       "signInToPost": "Sign in to start posting...",
       "unfollow": "Are you sure you want to unfollow this person?",
       "verifiedOnly": "You must be verified to use this feature.",
       "verifyToFollow": "You must be verified to follow other users.",
       "verifyToSeeOtherProfiles": "You must be verified to see other user profiles.",
       "verifyToUpdateCoverPhoto": "You must be verified to update your cover photo.",
-      "verifyToUpdateProfilePicture": "You must be verified to update your profile picture.",
-      "readyToExplore": "Ready to explore?"
+      "verifyToUpdateProfilePicture": "You must be verified to update your profile picture."
     },
     "labels": {
       "followers_one": "{{count}} Follower",
       "followers_other": "{{count}} Followers",
       "following": "{{count}} Following",
+      "forgotPassword": "Forgot your password?",
       "unverified": "Unverified",
       "verified": "Verified"
-    },
-    "validation": {
-      "emailExists": "Email already exists.",
-      "emailRequired": "Email is required.",
-      "invalidEmail": "Email is invalid.",
-      "nameRequired": "Name is required.",
-      "noUserWithEmail": "No user exists with that email.",
-      "passwordConfirmMatch": "Password and Confirm Password must match.",
-      "passwordRequired": "Password is required.",
-      "wrongPassword": "Wrong password. Please try again."
     }
   },
 
@@ -560,17 +569,6 @@
     },
     "labels": {
       "usesWithColon": "Uses:"
-    }
-  },
-
-  "signUp": {
-    "errors": {
-      "confirmPassword": "Passwords do not match",
-      "missingConfirmPassword": "Confirm password cannot be empty",
-      "missingEmail": "Email cannot be empty",
-      "missingName": "Name cannot be empty",
-      "missingPassword": "Password cannot be empty",
-      "passwordLength": "Password must be at least 12 characters long"
     }
   },
 

@@ -711,6 +711,8 @@ input QuestionnaireTicketsInput {
 type Mutation {
   login(input: LoginInput!): AuthPayload!
   signUp(input: SignUpInput!): AuthPayload!
+  resetPassword(input: ResetPasswordInput!): AuthPayload!
+  sendPasswordReset(email: String!): Boolean!
   logOut: Boolean!
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
@@ -785,6 +787,12 @@ input SignUpInput {
   password: String!
   confirmPassword: String!
   inviteToken: String
+}
+
+input ResetPasswordInput {
+  password: String!
+  confirmPassword: String!
+  resetPasswordToken: String
 }
 
 input CreateProposalInput {

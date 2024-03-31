@@ -1,12 +1,16 @@
 import { useReactiveVar } from '@apollo/client';
-import { Card, CardContent, FormGroup } from '@mui/material';
+import { Button, Card, CardContent, FormGroup, SxProps } from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import { TextField } from '../../components/Shared/TextField';
-import { LocalStorageKey } from '../../constants/shared.constants';
+import {
+  LocalStorageKey,
+  NavigationPaths,
+} from '../../constants/shared.constants';
 import { UserFieldNames } from '../../constants/user.constants';
 import { useLoginMutation } from '../../graphql/auth/mutations/gen/Login.gen';
 import {
@@ -21,10 +25,17 @@ const LoginForm = () => {
   const [login] = useLoginMutation();
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const initialValues: LoginInput = {
     email: '',
     password: '',
+  };
+
+  const forgotPasswordBtnStyles: SxProps = {
+    textTransform: 'none',
+    borderRadius: 9999,
+    paddingX: '4px',
   };
 
   const handleSubmit = async (input: LoginInput) =>
@@ -45,17 +56,17 @@ const LoginForm = () => {
   const validate = ({ email, password }: LoginInput) => {
     const errors: FormikErrors<LoginInput> = {};
     if (!email) {
-      errors.email = t('signUp.errors.missingEmail');
+      errors.email = t('users.errors.missingEmail');
     }
     if (!password) {
-      errors.password = t('signUp.errors.missingPassword');
+      errors.password = t('users.errors.missingPassword');
     }
     return errors;
   };
 
   return (
     <Card>
-      <CardContent>
+      <CardContent sx={{ '&:last-child': { paddingBottom: 2.5 } }}>
         <LevelOneHeading sx={{ marginBottom: 2 }}>
           {t('users.prompts.signInToPost')}
         </LevelOneHeading>
@@ -67,7 +78,7 @@ const LoginForm = () => {
         >
           {({ isSubmitting }) => (
             <Form hidden={isNavDrawerOpen}>
-              <FormGroup>
+              <FormGroup sx={{ marginBottom: 1 }}>
                 <TextField
                   label={t('users.form.email')}
                   name={UserFieldNames.Email}
@@ -80,7 +91,14 @@ const LoginForm = () => {
                 />
               </FormGroup>
 
-              <Flex flexEnd>
+              <Flex justifyContent="space-between">
+                <Button
+                  onClick={() => navigate(NavigationPaths.ForgotPassword)}
+                  sx={forgotPasswordBtnStyles}
+                >
+                  {t('users.labels.forgotPassword')}
+                </Button>
+
                 <PrimaryActionButton
                   disabled={isSubmitting}
                   isLoading={isSubmitting}

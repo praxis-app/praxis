@@ -72,6 +72,7 @@ import { AddRuleTable1705711560882 } from './migrations/1705711560882-AddRuleTab
 import { AddVibeCheckTables1709004638886 } from './migrations/1709004638886-AddVibeCheckTables';
 import { AddInitialMemberCountColumn1709498470199 } from './migrations/1709498470199-AddInitialMemberCountColumn';
 import { AddUserLockedColumn1711324242919 } from './migrations/1711324242919-AddUserLockedColumn';
+import { AddResetPasswordTokenColumn1711855441610 } from './migrations/1711855441610-AddResetPasswordTokenColumn';
 
 dotenv.config();
 
@@ -138,6 +139,7 @@ export default new DataSource({
     AddProposalActionRoleCascadeDelete1685748700121,
     AddProposalActionRoleTable1684893300206,
     AddProposalConfigTable1702843109428,
+    AddResetPasswordTokenColumn1711855441610,
     AddRoleMemberLinkTable1681172948650,
     AddRuleTable1705711560882,
     AddSecurityTxtColumn1702684900226,

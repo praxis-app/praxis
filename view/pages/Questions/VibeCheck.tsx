@@ -19,8 +19,12 @@ import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import Link from '../../components/Shared/Link';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { GroupsPageTabs } from '../../constants/group.constants';
 import { QuestionnaireTicketStatus } from '../../constants/question.constants';
-import { NavigationPaths } from '../../constants/shared.constants';
+import {
+  NavigationPaths,
+  TAB_QUERY_PARAM,
+} from '../../constants/shared.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
 import { useVibeCheckQuery } from '../../graphql/questions/queries/gen/VibeCheck.gen';
@@ -150,7 +154,7 @@ const VibeCheck = () => {
                 <Typography align="center">
                   Get started by
                   <Link
-                    href={NavigationPaths.Groups}
+                    href={`${NavigationPaths.Groups}${TAB_QUERY_PARAM}${GroupsPageTabs.AllGroups}`}
                     sx={{ fontFamily: 'Inter Bold', marginLeft: '0.5ch' }}
                   >
                     joining groups
