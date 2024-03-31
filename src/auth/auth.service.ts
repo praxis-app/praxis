@@ -107,14 +107,43 @@ export class AuthService {
       from: mailSender,
       subject: 'Your account has been locked',
       html: `
-        <p>
-          Your account has been locked due to too many failed login attempts.
-          Please click the link below to reset your password.
-        </p>
-
-        <a href="${websiteUrl}/auth/reset-password/${resetPasswordToken}">
-          Reset Password
-        </a>
+        <div style="font-family: Helvetica">
+          <p>Hello,</p>
+        
+          <p>
+            We've noticed that there have been too many failed login attempts on your
+            account. To ensure the security of your account, we've temporarily locked
+            it.
+          </p>
+        
+          <p>You can reset your password by clicking the link below:</p>
+        
+          <a
+            href="${websiteUrl}/auth/reset-password/${resetPasswordToken}"
+            style="
+              background-color: #5868cb;
+              border-radius: 5px;
+              color: #ffffff;
+              padding: 10px 20px;
+              text-decoration: none;
+              width: fit-content;
+              display: block;
+              margin: 0 auto;
+            "
+          >
+            Reset your password
+          </a>
+        
+          <p>
+            If you did not request this password reset or believe this action was taken
+            in error, please let us know by replying to this email.
+          </p>
+        
+          <p>
+            Thank you,<br />
+            <a href="${websiteUrl}">${websiteUrl}</a>
+          </p>
+        </div>
       `,
     });
   }
