@@ -1,9 +1,16 @@
-import { Card, CardContent, FormGroup, SxProps } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  FormGroup,
+  SxProps,
+  Typography,
+} from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
 import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
+import ProgressBar from '../../components/Shared/ProgressBar';
 import { TextField } from '../../components/Shared/TextField';
 import { UserFieldNames } from '../../constants/user.constants';
 import { useSendPasswordResetMutation } from '../../graphql/auth/mutations/gen/SendPasswordReset.gen';
@@ -11,7 +18,8 @@ import { toastVar } from '../../graphql/cache';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const ForgotPassword = () => {
-  const [sendPasswordReset] = useSendPasswordResetMutation();
+  const [sendPasswordReset, { data, loading, error }] =
+    useSendPasswordResetMutation();
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
@@ -46,6 +54,18 @@ const ForgotPassword = () => {
     }
     return errors;
   };
+
+  if (error) {
+    return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+  }
+
+  if (loading) {
+    return <ProgressBar />;
+  }
+
+  if (data) {
+    return <Typography>{t('users.prompts.passwordResetEmailSent')}</Typography>;
+  }
 
   return (
     <>
