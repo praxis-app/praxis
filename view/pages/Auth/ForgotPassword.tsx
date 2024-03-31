@@ -17,6 +17,10 @@ import { useSendPasswordResetMutation } from '../../graphql/auth/mutations/gen/S
 import { toastVar } from '../../graphql/cache';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
+interface FormValues {
+  email: string;
+}
+
 const ForgotPassword = () => {
   const [sendPasswordReset, { data, loading, error }] =
     useSendPasswordResetMutation();
@@ -24,7 +28,7 @@ const ForgotPassword = () => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
-  const initialValues = {
+  const initialValues: FormValues = {
     email: '',
   };
 
@@ -34,10 +38,9 @@ const ForgotPassword = () => {
     marginTop: -1,
   };
 
-  const handleSubmit = async (values: typeof initialValues) => {
+  const handleSubmit = async (values: FormValues) => {
     await sendPasswordReset({
       variables: values,
-      onCompleted() {},
       onError(err) {
         toastVar({
           status: 'error',
@@ -47,8 +50,8 @@ const ForgotPassword = () => {
     });
   };
 
-  const validate = ({ email }: typeof initialValues) => {
-    const errors: FormikErrors<typeof initialValues> = {};
+  const validate = ({ email }: FormValues) => {
+    const errors: FormikErrors<FormValues> = {};
     if (!email) {
       errors.email = t('users.errors.missingEmail');
     }
