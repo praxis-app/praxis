@@ -94,7 +94,67 @@ export class AuthService {
     return { access_token };
   }
 
-  async sendPasswordResetEmail(user: User) {
+  async sendForgotPasswordEmail(email: string) {
+    const user = await this.usersService.getUser({
+      email: normalizeText(email),
+    });
+    if (!user) {
+      return true;
+    }
+
+    const resetPasswordToken = cryptoRandomString({ length: 32 });
+    await this.userRepository.update(user.id, {
+      resetPasswordToken,
+    });
+
+    const mailSender = this.configService.get('MAIL_SENDER');
+    const websiteUrl = this.configService.get('WEBSITE_URL');
+    await this.mailerService.sendMail({
+      to: user.email,
+      from: mailSender,
+      subject: 'Reset your password',
+      html: `
+        <div style="font-family: Helvetica">
+          <p>Hello,</p>
+        
+          <p>
+            We've received a request to reset the password for your account. You can
+            reset your password by clicking the link below:
+          </p>
+        
+          <a
+            href="${websiteUrl}/auth/reset-password/${resetPasswordToken}"
+            style="
+              background-color: #5868cb;
+              border-radius: 5px;
+              color: #ffffff;
+              padding: 10px 20px;
+              text-decoration: none;
+              width: fit-content;
+              display: block;
+              margin: 0 auto;
+            "
+          >
+            Reset your password
+          </a>
+        
+          <p>
+            If you did not request this password reset or believe this action was taken
+            in error, please let us know by replying to this email.
+          </p>
+        
+          <p>
+            Thank you,<br />
+            <a href="${websiteUrl}">${websiteUrl}</a>
+          </p>
+        </div>
+      `,
+    });
+
+    return true;
+  }
+
+  async sendAccountLockedEmail(user: User) {
     const resetPasswordToken = cryptoRandomString({ length: 32 });
     await this.userRepository.update(user.id, {
       resetPasswordToken,

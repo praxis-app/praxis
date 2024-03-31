@@ -38,6 +38,11 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
+  async sendPasswordReset(@Args('email') email: string) {
+    return this.authService.sendForgotPasswordEmail(email);
+  }
+
+  @Mutation(() => Boolean)
   @UseInterceptors(ClearSiteDataInterceptor)
   async logOut() {
     return true;

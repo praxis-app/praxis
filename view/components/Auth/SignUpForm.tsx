@@ -53,7 +53,7 @@ const SignUpForm = () => {
       errors.name = t('users.errors.missingName');
     }
     if (!email.match(VALID_EMAIL_REGEX)) {
-      errors.email = t('users.validation.invalidEmail');
+      errors.email = t('users.errors.invalidEmail');
     }
     if (!email) {
       errors.email = t('users.errors.missingEmail');

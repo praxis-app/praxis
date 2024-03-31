@@ -52,7 +52,7 @@ export class LoginThrottlerGuard extends ThrottlerGuard {
 
     if (user && !user.locked) {
       await this.usersService.lockUserAccount(user.id);
-      await this.authService.sendPasswordResetEmail(user);
+      await this.authService.sendAccountLockedEmail(user);
     }
 
     return 'Incorrect username or password';

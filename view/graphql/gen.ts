@@ -532,6 +532,7 @@ export type Mutation = {
   login: AuthPayload;
   readNotifications: Scalars['Boolean']['output'];
   resetPassword: AuthPayload;
+  sendPasswordReset: Scalars['Boolean']['output'];
   signUp: AuthPayload;
   synchronizeProposal: SynchronizeProposalPayload;
   unfollowUser: Scalars['Boolean']['output'];
@@ -716,6 +717,10 @@ export type MutationLoginArgs = {
 
 export type MutationResetPasswordArgs = {
   input: ResetPasswordInput;
+};
+
+export type MutationSendPasswordResetArgs = {
+  email: Scalars['String']['input'];
 };
 
 export type MutationSignUpArgs = {
