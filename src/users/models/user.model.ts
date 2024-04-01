@@ -57,6 +57,10 @@ export class User {
   @Column({ nullable: true, type: 'varchar' })
   resetPasswordToken?: string | null;
 
+  // TODO: Verify that TypeORM generates the correct column type
+  @Column({ nullable: true, type: 'timestamp' })
+  resetPasswordSentAt?: Date | null;
+
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,
   })

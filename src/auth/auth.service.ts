@@ -86,10 +86,16 @@ export class AuthService {
       throw new Error('Password could not be reset');
     }
 
+    const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+    if (!currentUser && user.resetPasswordSentAt! < twoDaysAgo) {
+      throw new Error('Password reset token has expired');
+    }
+
     const passwordHash = await hash(password, SALT_ROUNDS);
     await this.userRepository.update(user.id, {
       password: passwordHash,
       resetPasswordToken: null,
+      resetPasswordSentAt: null,
       locked: false,
     });
 
@@ -101,7 +107,6 @@ export class AuthService {
     if (!VALID_EMAIL_REGEX.test(email)) {
       throw new Error('Invalid email address');
     }
-
     const user = await this.usersService.getUser({
       email: normalizeText(email),
     });
@@ -111,6 +116,7 @@ export class AuthService {
 
     const resetPasswordToken = cryptoRandomString({ length: 32 });
     await this.userRepository.update(user.id, {
+      resetPasswordSentAt: new Date(),
       resetPasswordToken,
     });
 
@@ -164,6 +170,7 @@ export class AuthService {
   async sendAccountLockedEmail(user: User) {
     const resetPasswordToken = cryptoRandomString({ length: 32 });
     await this.userRepository.update(user.id, {
+      resetPasswordSentAt: new Date(),
       resetPasswordToken,
     });
 
