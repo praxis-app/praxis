@@ -1,6 +1,7 @@
 import { useReactiveVar } from '@apollo/client';
 import { Button, Card, CardContent, FormGroup, SxProps } from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Flex from '../../components/Shared/Flex';
@@ -21,7 +22,10 @@ import {
 } from '../../graphql/cache';
 import { LoginInput } from '../../graphql/gen';
 
+const MAX_LOGIN_ATTEMPTS = 8;
+
 const LoginForm = () => {
+  const [errorCount, setErrorCount] = useState(0);
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
   const [login] = useLoginMutation();
 
@@ -39,7 +43,14 @@ const LoginForm = () => {
     paddingX: '4px',
   };
 
-  const handleSubmit = async (input: LoginInput) =>
+  const handleSubmit = async (input: LoginInput) => {
+    if (errorCount > MAX_LOGIN_ATTEMPTS) {
+      toastVar({
+        title: t('users.errors.tooManyLoginAttempts'),
+        status: 'error',
+      });
+      return;
+    }
     await login({
       variables: { input },
       onCompleted({ login: { access_token, isVerified } }) {
@@ -52,8 +63,10 @@ const LoginForm = () => {
           status: 'error',
           title: err.message,
         });
+        setErrorCount((prev) => prev + 1);
       },
     });
+  };
 
   const validate = ({ email, password }: LoginInput) => {
     const errors: FormikErrors<LoginInput> = {};

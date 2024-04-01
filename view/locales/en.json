@@ -184,30 +184,6 @@
       "signUp": "Sign up",
       "unfollow": "Unfollow"
     },
-    "errors": {
-      "confirmPassword": "Passwords do not match",
-      "invalidEmail": "Email is invalid.",
-      "missingConfirmPassword": "Confirm password cannot be empty",
-      "missingEmail": "Email cannot be empty",
-      "missingName": "Name cannot be empty",
-      "missingPassword": "Password cannot be empty",
-      "passwordLength": "Password must be at least 12 characters long",
-      "remove": "There was an error removing this member.",
-      "signUp": "There was an error creating your account.",
-      "update": "There was an error updating your account."
-    },
-    "form": {
-      "bio": "Bio",
-      "confirmNewPassword": "Confirm new password",
-      "confirmPassword": "Confirm password",
-      "coverPhoto": "Cover photo",
-      "email": "Email",
-      "name": "Name",
-      "newPassword": "New password",
-      "password": "Password",
-      "profilePicture": "Profile picture",
-      "yourEmail": "Your email address"
-    },
     "profile": {
       "following": "Following",
       "joinDate": "Joined {{joinDate}}"
@@ -243,6 +219,31 @@
       "forgotPassword": "Forgot your password?",
       "unverified": "Unverified",
       "verified": "Verified"
+    },
+    "form": {
+      "bio": "Bio",
+      "confirmNewPassword": "Confirm new password",
+      "confirmPassword": "Confirm password",
+      "coverPhoto": "Cover photo",
+      "email": "Email",
+      "name": "Name",
+      "newPassword": "New password",
+      "password": "Password",
+      "profilePicture": "Profile picture",
+      "yourEmail": "Your email address"
+    },
+    "errors": {
+      "confirmPassword": "Passwords do not match",
+      "invalidEmail": "Email is invalid.",
+      "missingConfirmPassword": "Confirm password cannot be empty",
+      "missingEmail": "Email cannot be empty",
+      "missingName": "Name cannot be empty",
+      "missingPassword": "Password cannot be empty",
+      "passwordLength": "Password must be at least 12 characters long",
+      "tooManyLoginAttempts": "Too many login attempts. You may have been sent an email with instructions on how to reset your password.",
+      "remove": "There was an error removing this member.",
+      "signUp": "There was an error creating your account.",
+      "update": "There was an error updating your account."
     }
   },
 
