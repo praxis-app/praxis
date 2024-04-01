@@ -98,6 +98,10 @@ export class AuthService {
   }
 
   async sendForgotPasswordEmail(email: string) {
+    if (!VALID_EMAIL_REGEX.test(email)) {
+      throw new Error('Invalid email address');
+    }
+
     const user = await this.usersService.getUser({
       email: normalizeText(email),
     });

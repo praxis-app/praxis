@@ -12,7 +12,10 @@ import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { TextField } from '../../components/Shared/TextField';
-import { UserFieldNames } from '../../constants/user.constants';
+import {
+  UserFieldNames,
+  VALID_EMAIL_REGEX,
+} from '../../constants/user.constants';
 import { useSendPasswordResetMutation } from '../../graphql/auth/mutations/gen/SendPasswordReset.gen';
 import { toastVar } from '../../graphql/cache';
 import { useIsDesktop } from '../../hooks/shared.hooks';
@@ -54,6 +57,9 @@ const ForgotPassword = () => {
     const errors: FormikErrors<FormValues> = {};
     if (!email) {
       errors.email = t('users.errors.missingEmail');
+    }
+    if (!email.match(VALID_EMAIL_REGEX)) {
+      errors.email = t('users.errors.invalidEmail');
     }
     return errors;
   };
