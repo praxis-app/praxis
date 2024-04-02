@@ -86,7 +86,7 @@ export class AuthService {
       throw new Error('Password could not be reset');
     }
 
-    const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+    const twoDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 2);
     if (!currentUser && user.resetPasswordSentAt! < twoDaysAgo) {
       throw new Error('Password reset token has expired');
     }
