@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
 import * as cryptoRandomString from 'crypto-random-string';
 import { Request } from 'express';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { VALID_NAME_REGEX } from '../common/common.constants';
 import { normalizeText } from '../common/common.utils';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
@@ -20,8 +20,8 @@ import {
 } from './auth.constants';
 import { AuthPayload } from './models/auth.payload';
 import { LoginInput } from './models/login.input';
-import { SignUpInput } from './models/sign-up.input';
 import { ResetPasswordInput } from './models/reset-password.input';
+import { SignUpInput } from './models/sign-up.input';
 
 export interface AccessTokenPayload {
   /**
@@ -220,6 +220,17 @@ export class AuthService {
         </div>
       `,
     });
+  }
+
+  async isValidResetPasswordToken(token: string) {
+    const twoDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 2);
+    const userCount = await this.userRepository.count({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordSentAt: MoreThan(twoDaysAgo),
+      },
+    });
+    return userCount > 0;
   }
 
   async getSubClaim(

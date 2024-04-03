@@ -1032,6 +1032,7 @@ export type Query = {
   groups: Array<Group>;
   groupsCount: Scalars['Int']['output'];
   isFirstUser: Scalars['Boolean']['output'];
+  isValidResetPasswordToken: Scalars['Boolean']['output'];
   joinedGroupsCount: Scalars['Int']['output'];
   joinedGroupsFeed: Array<FeedItem>;
   joinedGroupsFeedCount: Scalars['Int']['output'];
@@ -1086,6 +1087,10 @@ export type QueryGroupRoleArgs = {
 
 export type QueryGroupsArgs = {
   input: GroupsInput;
+};
+
+export type QueryIsValidResetPasswordTokenArgs = {
+  token: Scalars['String']['input'];
 };
 
 export type QueryJoinedGroupsFeedArgs = {

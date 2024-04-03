@@ -17,6 +17,17 @@ import { SignUpInput } from './models/sign-up.input';
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
+  @Query(() => Boolean)
+  @UseInterceptors(SynchronizeProposalsInterceptor)
+  async authCheck() {
+    return true;
+  }
+
+  @Query(() => Boolean)
+  async isValidResetPasswordToken(@Args('token') token: string) {
+    return this.authService.isValidResetPasswordToken(token);
+  }
+
   @Mutation(() => AuthPayload)
   @UseGuards(LoginThrottlerGuard, IpThrottlerGuard)
   @Throttle({ default: { limit: 5, ttl: 60000 * 10 } })
@@ -45,12 +56,6 @@ export class AuthResolver {
   @Mutation(() => Boolean)
   @UseInterceptors(ClearSiteDataInterceptor)
   async logOut() {
-    return true;
-  }
-
-  @Query(() => Boolean)
-  @UseInterceptors(SynchronizeProposalsInterceptor)
-  async authCheck() {
     return true;
   }
 }

@@ -243,7 +243,8 @@
       "tooManyLoginAttempts": "Too many login attempts. You may have been sent an email with instructions on how to reset your password.",
       "remove": "There was an error removing this member.",
       "signUp": "There was an error creating your account.",
-      "update": "There was an error updating your account."
+      "update": "There was an error updating your account.",
+      "invalidResetPasswordToken": "Password reset token is invalid or has expired."
     }
   },
 
