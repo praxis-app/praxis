@@ -88,14 +88,14 @@ const ResetPassword = () => {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
-  if (loading) {
-    return <ProgressBar />;
-  }
-
   if (data && !data.isValidResetPasswordToken) {
     return (
       <Typography>{t('users.errors.invalidResetPasswordToken')}</Typography>
     );
+  }
+
+  if (loading) {
+    return <ProgressBar />;
   }
 
   return (
