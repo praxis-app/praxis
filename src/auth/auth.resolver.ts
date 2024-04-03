@@ -13,6 +13,8 @@ import { LoginInput } from './models/login.input';
 import { ResetPasswordInput } from './models/reset-password.input';
 import { SignUpInput } from './models/sign-up.input';
 
+const THROTTLE_OPTIONS = { limit: 5, ttl: 60000 * 10 };
+
 @Resolver()
 export class AuthResolver {
   constructor(private authService: AuthService) {}
@@ -24,13 +26,15 @@ export class AuthResolver {
   }
 
   @Query(() => Boolean)
+  @UseGuards(IpThrottlerGuard)
+  @Throttle({ default: THROTTLE_OPTIONS })
   async isValidResetPasswordToken(@Args('token') token: string) {
     return this.authService.isValidResetPasswordToken(token);
   }
 
   @Mutation(() => AuthPayload)
   @UseGuards(LoginThrottlerGuard, IpThrottlerGuard)
-  @Throttle({ default: { limit: 5, ttl: 60000 * 10 } })
+  @Throttle({ default: THROTTLE_OPTIONS })
   async login(@Args('input') input: LoginInput) {
     return this.authService.login(input);
   }
@@ -41,6 +45,8 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthPayload)
+  @UseGuards(IpThrottlerGuard)
+  @Throttle({ default: THROTTLE_OPTIONS })
   async resetPassword(
     @Args('input') input: ResetPasswordInput,
     @CurrentUser() currentUser?: User,
