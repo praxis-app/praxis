@@ -1,10 +1,12 @@
-import { Card, CardContent, FormGroup } from '@mui/material';
+import { useReactiveVar } from '@apollo/client';
+import { Card, CardContent, FormGroup, Typography } from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
+import ProgressBar from '../../components/Shared/ProgressBar';
 import { TextField } from '../../components/Shared/TextField';
 import {
   LocalStorageKey,
@@ -15,13 +17,20 @@ import {
   UserFieldNames,
 } from '../../constants/user.constants';
 import { useResetPasswordMutation } from '../../graphql/auth/mutations/gen/ResetPassword.gen';
+import { useIsValidResetPasswordTokenQuery } from '../../graphql/auth/queries/gen/IsValidResetPasswordToken.gen';
 import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { ResetPasswordInput } from '../../graphql/gen';
 
 const ResetPassword = () => {
-  const [resetPassword] = useResetPasswordMutation();
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const { token } = useParams();
+  const [resetPassword] = useResetPasswordMutation();
+  const { data, loading, error } = useIsValidResetPasswordTokenQuery({
+    variables: { token: token || '' },
+    skip: !token,
+  });
+
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -74,6 +83,20 @@ const ResetPassword = () => {
     }
     return errors;
   };
+
+  if (error || (!isLoggedIn && !token)) {
+    return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+  }
+
+  if (data && !data.isValidResetPasswordToken) {
+    return (
+      <Typography>{t('users.errors.invalidResetPasswordToken')}</Typography>
+    );
+  }
+
+  if (loading) {
+    return <ProgressBar />;
+  }
 
   return (
     <Card>

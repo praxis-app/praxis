@@ -57,6 +57,9 @@ export class User {
   @Column({ nullable: true, type: 'varchar' })
   resetPasswordToken?: string | null;
 
+  @Column({ nullable: true, type: 'timestamp' })
+  resetPasswordSentAt?: Date | null;
+
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,
   })

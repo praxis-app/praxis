@@ -78,7 +78,6 @@ import {
 export const shieldPermissions = shield(
   {
     Query: {
-      authCheck: isAuthenticated,
       me: isAuthenticated,
       user: or(isMe, isVerified),
       users: canRemoveMembers,
@@ -86,6 +85,8 @@ export const shieldPermissions = shield(
       notifications: isAuthenticated,
       notificationsCount: isAuthenticated,
       unreadNotificationsCount: isAuthenticated,
+      isValidResetPasswordToken: allow,
+      authCheck: isAuthenticated,
       serverInvite: allow,
       serverInvites: or(canCreateServerInvites, canManageServerInvites),
       serverConfig: canManageServerSettings,

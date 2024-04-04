@@ -645,6 +645,7 @@ type UpdateVotePayload {
 
 type Query {
   authCheck: Boolean!
+  isValidResetPasswordToken(token: String!): Boolean!
   proposal(id: Int!): Proposal!
   notifications(offset: Int, limit: Int): [Notification!]!
   notificationsCount: Int!

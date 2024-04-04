@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { compare, hash } from 'bcrypt';
 import * as cryptoRandomString from 'crypto-random-string';
 import { Request } from 'express';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { VALID_NAME_REGEX } from '../common/common.constants';
 import { normalizeText } from '../common/common.utils';
 import { ServerInvitesService } from '../server-invites/server-invites.service';
@@ -20,8 +20,8 @@ import {
 } from './auth.constants';
 import { AuthPayload } from './models/auth.payload';
 import { LoginInput } from './models/login.input';
-import { SignUpInput } from './models/sign-up.input';
 import { ResetPasswordInput } from './models/reset-password.input';
+import { SignUpInput } from './models/sign-up.input';
 
 export interface AccessTokenPayload {
   /**
@@ -86,10 +86,16 @@ export class AuthService {
       throw new Error('Password could not be reset');
     }
 
+    const twoDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 2);
+    if (!currentUser && user.resetPasswordSentAt! < twoDaysAgo) {
+      throw new Error('Password reset token has expired');
+    }
+
     const passwordHash = await hash(password, SALT_ROUNDS);
     await this.userRepository.update(user.id, {
       password: passwordHash,
       resetPasswordToken: null,
+      resetPasswordSentAt: null,
       locked: false,
     });
 
@@ -101,7 +107,6 @@ export class AuthService {
     if (!VALID_EMAIL_REGEX.test(email)) {
       throw new Error('Invalid email address');
     }
-
     const user = await this.usersService.getUser({
       email: normalizeText(email),
     });
@@ -111,6 +116,7 @@ export class AuthService {
 
     const resetPasswordToken = cryptoRandomString({ length: 32 });
     await this.userRepository.update(user.id, {
+      resetPasswordSentAt: new Date(),
       resetPasswordToken,
     });
 
@@ -164,6 +170,7 @@ export class AuthService {
   async sendAccountLockedEmail(user: User) {
     const resetPasswordToken = cryptoRandomString({ length: 32 });
     await this.userRepository.update(user.id, {
+      resetPasswordSentAt: new Date(),
       resetPasswordToken,
     });
 
@@ -213,6 +220,17 @@ export class AuthService {
         </div>
       `,
     });
+  }
+
+  async isValidResetPasswordToken(token: string) {
+    const twoDaysAgo = new Date(Date.now() - 1000 * 60 * 60 * 24 * 2);
+    const userCount = await this.userRepository.count({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordSentAt: MoreThan(twoDaysAgo),
+      },
+    });
+    return userCount > 0;
   }
 
   async getSubClaim(
