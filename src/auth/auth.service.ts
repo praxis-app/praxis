@@ -14,6 +14,7 @@ import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
 import {
   ACCESS_TOKEN_EXPIRES_IN,
+  MAX_PASSWORD_LENGTH,
   MIN_PASSWORD_LENGTH,
   SALT_ROUNDS,
   VALID_EMAIL_REGEX,
@@ -291,7 +292,14 @@ export class AuthService {
       throw new Error('Passwords do not match');
     }
     if (password.length < MIN_PASSWORD_LENGTH) {
-      throw new Error('Password must be at least 12 characters long');
+      throw new Error(
+        `Password must be at least ${MIN_PASSWORD_LENGTH} characters long`,
+      );
+    }
+    if (password.length > MAX_PASSWORD_LENGTH) {
+      throw new Error(
+        `Password must be at most ${MAX_PASSWORD_LENGTH} characters long`,
+      );
     }
 
     const users = await this.usersService.getUsers();
