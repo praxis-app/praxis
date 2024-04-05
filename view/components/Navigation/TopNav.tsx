@@ -2,8 +2,9 @@ import { Search as SearchIcon } from '@mui/icons-material';
 import {
   AppBar,
   AppBarProps,
-  Collapse,
+  Box,
   IconButton,
+  Slide,
   SxProps,
   Toolbar,
   useTheme,
@@ -79,34 +80,33 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   };
 
   return (
-    <Collapse
-      in={scrollDirection !== 'down'}
-      sx={{ position: 'fixed', width: '100%', zIndex: 5 }}
-    >
-      <AppBar
-        role="banner"
-        position="relative"
-        sx={appBarStyles}
-        {...appBarProps}
-      >
-        <Toolbar sx={toolbarStyles}>
-          {renderBrand()}
+    <Box position="fixed" width="100%" zIndex={5}>
+      <Slide in={scrollDirection !== 'down'}>
+        <AppBar
+          role="banner"
+          position="relative"
+          sx={appBarStyles}
+          {...appBarProps}
+        >
+          <Toolbar sx={toolbarStyles}>
+            {renderBrand()}
 
-          {isDesktop ? (
-            <TopNavDesktop />
-          ) : (
-            <IconButton
-              aria-label={t('labels.menu')}
-              edge="end"
-              onClick={inDevToast}
-              size="large"
-            >
-              <SearchIcon />
-            </IconButton>
-          )}
-        </Toolbar>
-      </AppBar>
-    </Collapse>
+            {isDesktop ? (
+              <TopNavDesktop />
+            ) : (
+              <IconButton
+                aria-label={t('labels.menu')}
+                edge="end"
+                onClick={inDevToast}
+                size="large"
+              >
+                <SearchIcon />
+              </IconButton>
+            )}
+          </Toolbar>
+        </AppBar>
+      </Slide>
+    </Box>
   );
 };
 
