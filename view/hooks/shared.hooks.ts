@@ -2,10 +2,10 @@ import { Breakpoint, useMediaQuery, useTheme } from '@mui/material';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { BrowserEvents } from '../constants/shared.constants';
 
-export type ScrollDirection = 'up' | 'down' | undefined;
+export type ScrollDirection = 'up' | 'down' | null;
 
 export const useScrollDirection = () => {
-  const [direction, setDirection] = useState<ScrollDirection>();
+  const [direction, setDirection] = useState<ScrollDirection>(null);
   const previousScrollY = useRef(0);
 
   useEffect(() => {
@@ -18,7 +18,12 @@ export const useScrollDirection = () => {
         setDirection('down');
       }
       previousScrollY.current = window.scrollY;
+
+      if (window.scrollY < 50) {
+        setTimeout(() => setDirection(null), 700);
+      }
     };
+
     window.addEventListener(BrowserEvents.Scroll, handleScroll, {
       passive: true,
     });
