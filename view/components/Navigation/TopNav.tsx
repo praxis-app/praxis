@@ -13,7 +13,11 @@ import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
-import { ScrollDirection, useIsDesktop } from '../../hooks/shared.hooks';
+import {
+  ScrollDirection,
+  useAboveBreakpoint,
+  useIsDesktop,
+} from '../../hooks/shared.hooks';
 import { inDevToast } from '../../utils/shared.utils';
 import LevelOneHeading from '../Shared/LevelOneHeading';
 import Link from '../Shared/Link';
@@ -28,6 +32,7 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+  const isAboveSmall = useAboveBreakpoint('sm');
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -81,7 +86,7 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
 
   return (
     <Box position="fixed" width="100%" zIndex={5}>
-      <Slide in={scrollDirection !== 'down'}>
+      <Slide in={isAboveSmall || scrollDirection !== 'down'} appear={false}>
         <AppBar
           role="banner"
           position="relative"

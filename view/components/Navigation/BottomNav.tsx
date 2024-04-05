@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { isLoggedInVar, isNavDrawerOpenVar } from '../../graphql/cache';
-import { ScrollDirection } from '../../hooks/shared.hooks';
+import { ScrollDirection, useAboveBreakpoint } from '../../hooks/shared.hooks';
 import { scrollTop } from '../../utils/shared.utils';
 import NotificationCount from '../Notifications/NotificationCount';
 
@@ -42,6 +42,7 @@ const BottomNav = ({ scrollDirection }: Props) => {
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
+  const isAboveSmall = useAboveBreakpoint('sm');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -89,7 +90,7 @@ const BottomNav = ({ scrollDirection }: Props) => {
 
   return (
     <Paper sx={PAPER_STYLES}>
-      <Collapse in={scrollDirection !== 'down'}>
+      <Collapse in={isAboveSmall || scrollDirection !== 'down'}>
         <BottomNavigation
           onChange={handleNavChange}
           role="navigation"
