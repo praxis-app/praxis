@@ -1,5 +1,5 @@
 import { Breakpoint, useMediaQuery, useTheme } from '@mui/material';
-import { RefObject, useEffect, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import { BrowserEvents } from '../constants/shared.constants';
 
 export const useAboveBreakpoint = (breakpoint: Breakpoint) =>
@@ -25,6 +25,33 @@ export const useScrollPosition = () => {
   }, []);
 
   return scrollPosition;
+};
+
+export const useScrollDirection = () => {
+  const [direction, setDirection] = useState<'up' | 'down'>();
+  const previousScrollY = useRef(0);
+
+  useEffect(() => {
+    previousScrollY.current = window.scrollY;
+
+    const handleScroll = () => {
+      if (previousScrollY.current > window.scrollY) {
+        setDirection('up');
+      } else if (previousScrollY.current < window.scrollY) {
+        setDirection('down');
+      }
+      previousScrollY.current = window.scrollY;
+    };
+    window.addEventListener(BrowserEvents.Scroll, handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener(BrowserEvents.Scroll, handleScroll);
+    };
+  }, []);
+
+  return direction;
 };
 
 export const useInView = (ref: RefObject<HTMLElement>, rootMargin = '0px') => {
