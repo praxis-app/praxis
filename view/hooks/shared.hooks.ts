@@ -2,33 +2,10 @@ import { Breakpoint, useMediaQuery, useTheme } from '@mui/material';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { BrowserEvents } from '../constants/shared.constants';
 
-export const useAboveBreakpoint = (breakpoint: Breakpoint) =>
-  useMediaQuery(useTheme().breakpoints.up(breakpoint));
-
-export const useIsDesktop = () => useAboveBreakpoint('md');
-
-export const useScrollPosition = () => {
-  const [scrollPosition, setScrollPosition] = useState(0);
-
-  const handleScroll = () => {
-    const position = window.scrollY;
-    setScrollPosition(position);
-  };
-
-  useEffect(() => {
-    window.addEventListener(BrowserEvents.Scroll, handleScroll, {
-      passive: true,
-    });
-    return () => {
-      window.removeEventListener(BrowserEvents.Scroll, handleScroll);
-    };
-  }, []);
-
-  return scrollPosition;
-};
+export type ScrollDirection = 'up' | 'down' | undefined;
 
 export const useScrollDirection = () => {
-  const [direction, setDirection] = useState<'up' | 'down'>();
+  const [direction, setDirection] = useState<ScrollDirection>();
   const previousScrollY = useRef(0);
 
   useEffect(() => {
@@ -52,6 +29,26 @@ export const useScrollDirection = () => {
   }, []);
 
   return direction;
+};
+
+export const useScrollPosition = () => {
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  const handleScroll = () => {
+    const position = window.scrollY;
+    setScrollPosition(position);
+  };
+
+  useEffect(() => {
+    window.addEventListener(BrowserEvents.Scroll, handleScroll, {
+      passive: true,
+    });
+    return () => {
+      window.removeEventListener(BrowserEvents.Scroll, handleScroll);
+    };
+  }, []);
+
+  return scrollPosition;
 };
 
 export const useInView = (ref: RefObject<HTMLElement>, rootMargin = '0px') => {
@@ -87,3 +84,8 @@ export const useInView = (ref: RefObject<HTMLElement>, rootMargin = '0px') => {
 
   return [inView, viewed];
 };
+
+export const useAboveBreakpoint = (breakpoint: Breakpoint) =>
+  useMediaQuery(useTheme().breakpoints.up(breakpoint));
+
+export const useIsDesktop = () => useAboveBreakpoint('md');
