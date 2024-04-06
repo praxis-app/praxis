@@ -132,29 +132,19 @@ export class AuthService {
           <p>Hello,</p>
         
           <p>
-            We've received a request to reset the password for your account. You can
-            reset your password by clicking the link below:
+            We've received a request to reset the password for your account. Please note
+            that this link will expire in 24 hours.
           </p>
         
-          <a
-            href="${websiteUrl}/auth/reset-password/${resetPasswordToken}"
-            style="
-              background-color: #5868cb;
-              border-radius: 5px;
-              color: #ffffff;
-              padding: 10px 20px;
-              text-decoration: none;
-              width: fit-content;
-              display: block;
-              margin: 0 auto;
-            "
-          >
-            Reset your password
+          <p>To reset your password, simply click the link below:</p>
+        
+          <a href="${websiteUrl}/auth/reset-password/${resetPasswordToken}">
+            ${websiteUrl}/auth/reset-password/${resetPasswordToken}
           </a>
         
           <p>
             If you did not request this password reset or believe this action was taken
-            in error, please let us know by replying to this email.
+            in error, kindly inform us by replying to this email.
           </p>
         
           <p>
@@ -191,27 +181,15 @@ export class AuthService {
             it.
           </p>
         
-          <p>You can reset your password by clicking the link below:</p>
+          <p>To reset your password, simply click the link below:</p>
         
-          <a
-            href="${websiteUrl}/auth/reset-password/${resetPasswordToken}"
-            style="
-              background-color: #5868cb;
-              border-radius: 5px;
-              color: #ffffff;
-              padding: 10px 20px;
-              text-decoration: none;
-              width: fit-content;
-              display: block;
-              margin: 0 auto;
-            "
-          >
-            Reset your password
+          <a href="${websiteUrl}/auth/reset-password/${resetPasswordToken}">
+            ${websiteUrl}/auth/reset-password/${resetPasswordToken}
           </a>
         
           <p>
-            If you did not request this password reset or believe this action was taken
-            in error, please let us know by replying to this email.
+            If you were not the one who attempted to login or believe this action was
+            taken in error, kindly inform us by replying to this email.
           </p>
         
           <p>
