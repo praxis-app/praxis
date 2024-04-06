@@ -12,14 +12,15 @@ import {
   LocalStorageKey,
   NavigationPaths,
 } from '../../constants/shared.constants';
-import {
-  MIN_PASSWORD_LENGTH,
-  UserFieldNames,
-} from '../../constants/user.constants';
+import { UserFieldNames } from '../../constants/user.constants';
 import { useResetPasswordMutation } from '../../graphql/auth/mutations/gen/ResetPassword.gen';
 import { useIsValidResetPasswordTokenQuery } from '../../graphql/auth/queries/gen/IsValidResetPasswordToken.gen';
 import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { ResetPasswordInput } from '../../graphql/gen';
+import {
+  MAX_PASSWORD_LENGTH,
+  MIN_PASSWORD_LENGTH,
+} from '../../constants/auth.constants';
 
 const ResetPassword = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
@@ -70,7 +71,10 @@ const ResetPassword = () => {
   const validate = ({ password, confirmPassword }: ResetPasswordInput) => {
     const errors: FormikErrors<ResetPasswordInput> = {};
     if (password.length < MIN_PASSWORD_LENGTH) {
-      errors.password = t('users.errors.passwordLength');
+      errors.password = t('users.errors.passwordTooShort');
+    }
+    if (password.length > MAX_PASSWORD_LENGTH) {
+      errors.password = t('users.errors.passwordTooLong');
     }
     if (!password) {
       errors.password = t('users.errors.missingPassword');

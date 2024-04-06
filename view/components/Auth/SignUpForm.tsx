@@ -7,12 +7,13 @@ import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import { TextField } from '../../components/Shared/TextField';
-import { LocalStorageKey } from '../../constants/shared.constants';
 import {
+  MAX_PASSWORD_LENGTH,
   MIN_PASSWORD_LENGTH,
-  UserFieldNames,
   VALID_EMAIL_REGEX,
-} from '../../constants/user.constants';
+} from '../../constants/auth.constants';
+import { LocalStorageKey } from '../../constants/shared.constants';
+import { UserFieldNames } from '../../constants/user.constants';
 import { useSignUpMutation } from '../../graphql/auth/mutations/gen/SignUp.gen';
 import {
   inviteTokenVar,
@@ -97,7 +98,10 @@ const SignUpForm = () => {
       errors.email = t('users.errors.missingEmail');
     }
     if (password.length < MIN_PASSWORD_LENGTH) {
-      errors.password = t('users.errors.passwordLength');
+      errors.password = t('users.errors.passwordTooShort');
+    }
+    if (password.length > MAX_PASSWORD_LENGTH) {
+      errors.password = t('users.errors.passwordTooLong');
     }
     if (!password) {
       errors.password = t('users.errors.missingPassword');

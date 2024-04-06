@@ -12,10 +12,8 @@ import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { TextField } from '../../components/Shared/TextField';
-import {
-  UserFieldNames,
-  VALID_EMAIL_REGEX,
-} from '../../constants/user.constants';
+import { VALID_EMAIL_REGEX } from '../../constants/auth.constants';
+import { UserFieldNames } from '../../constants/user.constants';
 import { useSendPasswordResetMutation } from '../../graphql/auth/mutations/gen/SendPasswordReset.gen';
 import { toastVar } from '../../graphql/cache';
 import { useIsDesktop } from '../../hooks/shared.hooks';

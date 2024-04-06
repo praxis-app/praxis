@@ -1,7 +1,11 @@
 import { Container } from '@mui/material';
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { useAboveBreakpoint, useIsDesktop } from '../../hooks/shared.hooks';
+import {
+  useAboveBreakpoint,
+  useIsDesktop,
+  useScrollDirection,
+} from '../../hooks/shared.hooks';
 import AuthWrapper from '../Auth/AuthWrapper';
 import BottomNav from '../Navigation/BottomNav';
 import LeftNav from '../Navigation/LeftNav';
@@ -14,6 +18,7 @@ const Layout = () => {
   const { pathname } = useLocation();
   const isDesktop = useIsDesktop();
   const isLarge = useAboveBreakpoint('lg');
+  const scrollDirection = useScrollDirection();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -21,10 +26,10 @@ const Layout = () => {
 
   return (
     <AuthWrapper>
-      <TopNav />
-      <NavDrawer />
-      {!isLarge && <BottomNav />}
+      <TopNav scrollDirection={scrollDirection} />
+      {!isLarge && <BottomNav scrollDirection={scrollDirection} />}
       {isLarge && <LeftNav />}
+      <NavDrawer />
 
       <Container maxWidth="sm">
         <main role="main">
