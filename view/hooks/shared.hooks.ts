@@ -2,6 +2,9 @@ import { Breakpoint, useMediaQuery, useTheme } from '@mui/material';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { BrowserEvents } from '../constants/shared.constants';
 
+const RESET_SCROLL_DIRECTION_TIMEOUT = 700;
+const RESET_SCROLL_DIRECTION_THRESHOLD = 40;
+
 export type ScrollDirection = 'up' | 'down' | null;
 
 export const useScrollDirection = () => {
@@ -9,6 +12,7 @@ export const useScrollDirection = () => {
   const previousScrollY = useRef(0);
 
   useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
     previousScrollY.current = window.scrollY;
 
     const handleScroll = () => {
@@ -19,8 +23,11 @@ export const useScrollDirection = () => {
       }
       previousScrollY.current = window.scrollY;
 
-      if (window.scrollY < 50) {
-        setTimeout(() => setDirection(null), 700);
+      if (window.scrollY < RESET_SCROLL_DIRECTION_THRESHOLD) {
+        timeout = setTimeout(
+          () => setDirection(null),
+          RESET_SCROLL_DIRECTION_TIMEOUT,
+        );
       }
     };
 
@@ -30,6 +37,9 @@ export const useScrollDirection = () => {
 
     return () => {
       window.removeEventListener(BrowserEvents.Scroll, handleScroll);
+      if (timeout) {
+        clearTimeout(timeout);
+      }
     };
   }, []);
 
