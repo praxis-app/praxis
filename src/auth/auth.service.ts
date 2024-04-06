@@ -311,7 +311,7 @@ export class AuthService {
     }
 
     const usersWithEmailCount = await this.usersService.getUsersCount({
-      email,
+      email: normalizeText(email),
     });
     if (usersWithEmailCount > 0) {
       throw new Error('Email address is already in use');

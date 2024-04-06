@@ -2,7 +2,9 @@ import { Search as SearchIcon } from '@mui/icons-material';
 import {
   AppBar,
   AppBarProps,
+  Box,
   IconButton,
+  Slide,
   SxProps,
   Toolbar,
   useTheme,
@@ -11,7 +13,11 @@ import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
-import { useIsDesktop } from '../../hooks/shared.hooks';
+import {
+  ScrollDirection,
+  useAboveBreakpoint,
+  useIsDesktop,
+} from '../../hooks/shared.hooks';
 import { inDevToast } from '../../utils/shared.utils';
 import LevelOneHeading from '../Shared/LevelOneHeading';
 import Link from '../Shared/Link';
@@ -19,12 +25,14 @@ import TopNavDesktop from './TopNavDesktop';
 
 interface Props {
   appBarProps?: AppBarProps;
+  scrollDirection?: ScrollDirection;
 }
 
-const TopNav = ({ appBarProps }: Props) => {
+const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+  const isAboveSmall = useAboveBreakpoint('sm');
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -77,24 +85,37 @@ const TopNav = ({ appBarProps }: Props) => {
   };
 
   return (
-    <AppBar role="banner" position="fixed" sx={appBarStyles} {...appBarProps}>
-      <Toolbar sx={toolbarStyles}>
-        {renderBrand()}
+    <Box position="fixed" width="100%" zIndex={5}>
+      <Slide
+        in={isAboveSmall || scrollDirection !== 'down'}
+        appear={false}
+        timeout={220}
+      >
+        <AppBar
+          role="banner"
+          position="relative"
+          sx={appBarStyles}
+          {...appBarProps}
+        >
+          <Toolbar sx={toolbarStyles}>
+            {renderBrand()}
 
-        {isDesktop ? (
-          <TopNavDesktop />
-        ) : (
-          <IconButton
-            aria-label={t('labels.menu')}
-            edge="end"
-            onClick={inDevToast}
-            size="large"
-          >
-            <SearchIcon />
-          </IconButton>
-        )}
-      </Toolbar>
-    </AppBar>
+            {isDesktop ? (
+              <TopNavDesktop />
+            ) : (
+              <IconButton
+                aria-label={t('labels.menu')}
+                edge="end"
+                onClick={inDevToast}
+                size="large"
+              >
+                <SearchIcon />
+              </IconButton>
+            )}
+          </Toolbar>
+        </AppBar>
+      </Slide>
+    </Box>
   );
 };
 
