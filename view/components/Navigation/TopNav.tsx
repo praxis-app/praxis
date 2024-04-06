@@ -86,7 +86,11 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
 
   return (
     <Box position="fixed" width="100%" zIndex={5}>
-      <Slide in={isAboveSmall || scrollDirection !== 'down'} appear={false}>
+      <Slide
+        in={isAboveSmall || scrollDirection !== 'down'}
+        appear={false}
+        timeout={220}
+      >
         <AppBar
           role="banner"
           position="relative"

@@ -90,12 +90,12 @@ const BottomNav = ({ scrollDirection }: Props) => {
 
   return (
     <Paper sx={PAPER_STYLES}>
-      <Collapse in={isAboveSmall || scrollDirection !== 'down'}>
+      <Collapse in={isAboveSmall || scrollDirection !== 'down'} timeout={220}>
         <BottomNavigation
           onChange={handleNavChange}
           role="navigation"
-          showLabels
           value={value}
+          showLabels
         >
           <BottomNavigationAction
             icon={<Home />}
