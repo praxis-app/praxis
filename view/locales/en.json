@@ -198,7 +198,7 @@
       "becomeAMember": "Become a Praxis Member",
       "enterEmailForReset": "Enter the email address associated with your account and we'll send you a link to reset your password.",
       "logOut": "Are you sure you want to log out?",
-      "passwordResetEmailSent": "Password reset email sent. Check your email for further instructions.",
+      "passwordResetEmailSent": "An email to reset your password has been sent. Please check your inbox for further instructions. If you don't see the email, don't forget to look in your spam folder.",
       "permissionDenied": "Permission denied.",
       "readyToExplore": "Ready to explore?",
       "removeSelf": "Are you sure you want to permanently delete your account? All of your data will be deleted and this cannot be undone.",
