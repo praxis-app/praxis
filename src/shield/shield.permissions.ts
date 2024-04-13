@@ -2,6 +2,7 @@ import { allow, and, or, shield } from 'graphql-shield';
 import * as hash from 'object-hash';
 import { FORBIDDEN } from '../common/common.constants';
 import { authPermissions } from './permissions/auth.permissions';
+import { groupPermissions } from './permissions/group.permissions';
 import { userPermissions } from './permissions/user.permissions';
 import { isAuthenticated } from './rules/auth.rules';
 import {
@@ -17,20 +18,12 @@ import {
   isPublicEventPost,
 } from './rules/event.rules';
 import {
-  canApproveGroupMemberRequests,
   canCreateGroupEvents,
-  canDeleteGroup,
   canManageGroupComments,
   canManageGroupEvents,
   canManageGroupPosts,
-  canManageGroupRoles,
-  canManageGroupSettings,
-  canUpdateGroup,
-  isGroupMember,
   isProposalGroupJoinedByMe,
-  isPublicGroup,
   isPublicGroupImage,
-  isPublicGroupRole,
 } from './rules/group.rules';
 import { isPublicLike } from './rules/like.rules';
 import { isOwnNotification } from './rules/notification.rules';
@@ -76,8 +69,9 @@ import {
 export const shieldPermissions = shield(
   {
     Query: {
-      ...userPermissions.Query,
       ...authPermissions.Query,
+      ...groupPermissions.Query,
+      ...userPermissions.Query,
       notifications: isAuthenticated,
       notificationsCount: isAuthenticated,
       unreadNotificationsCount: isAuthenticated,
@@ -86,12 +80,7 @@ export const shieldPermissions = shield(
       serverConfig: canManageServerSettings,
       post: or(isVerified, isPublicPost, isPublicEventPost),
       proposal: or(isVerified, isPublicProposal),
-      group: or(isVerified, isPublicGroup),
       event: or(isVerified, isPublicEvent),
-      groupRole: isGroupMember,
-      publicGroupsFeed: allow,
-      publicGroups: allow,
-      publicGroupsCount: allow,
       publicCanary: allow,
       serverRules: allow,
       question: or(isOwnQuestion, canManageQuestionnaireTickets),
@@ -106,6 +95,7 @@ export const shieldPermissions = shield(
     Mutation: {
       ...userPermissions.Mutation,
       ...authPermissions.Mutation,
+      ...groupPermissions.Mutation,
       updatePost: isOwnPost,
       deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
       deleteProposal: or(and(isOwnProposal, hasNoVotes), canRemoveProposals),
@@ -117,16 +107,8 @@ export const shieldPermissions = shield(
       updateServerRole: canManageServerRoles,
       deleteServerRole: canManageServerRoles,
       deleteServerRoleMember: canManageServerRoles,
-      approveGroupMemberRequest: canApproveGroupMemberRequests,
       readNotifications: isAuthenticated,
       clearNotifications: isAuthenticated,
-      updateGroupConfig: canManageGroupSettings,
-      updateGroup: canUpdateGroup,
-      deleteGroup: canDeleteGroup,
-      createGroupRole: canManageGroupRoles,
-      updateGroupRole: canManageGroupRoles,
-      deleteGroupRole: canManageGroupRoles,
-      deleteGroupRoleMember: canManageGroupRoles,
       createEvent: or(canCreateGroupEvents, canManageGroupEvents),
       deleteEvent: or(canManageEvents, canManageGroupEvents),
       updateEvent: or(canManageEvents, canManageGroupEvents),
@@ -162,28 +144,8 @@ export const shieldPermissions = shield(
     },
     ...userPermissions.ObjectTypes,
     ...authPermissions.ObjectTypes,
-    Group: {
-      id: or(isVerified, isPublicGroup),
-      name: or(isVerified, isPublicGroup),
-      description: or(isVerified, isPublicGroup),
-      coverPhoto: or(isVerified, isPublicGroup),
-      settings: or(isVerified, isPublicGroup),
-      feed: or(isVerified, isPublicGroup),
-      feedCount: or(isVerified, isPublicGroup),
-      futureEvents: or(isVerified, isPublicGroup),
-      pastEvents: or(isVerified, isPublicGroup),
-      memberCount: or(isVerified, isPublicGroup),
-      memberRequests: canApproveGroupMemberRequests,
-      memberRequestCount: canApproveGroupMemberRequests,
-      roles: isGroupMember,
-    },
-    GroupConfig: or(isVerified, isPublicGroup),
+    ...groupPermissions.ObjectTypes,
     ServerPermissions: isAuthenticated,
-    GroupRole: {
-      id: or(isVerified, isPublicGroupRole),
-      name: or(isVerified, isPublicGroupRole),
-      color: or(isVerified, isPublicGroupRole),
-    },
     FeedItemsConnection: or(
       isVerified,
       isPublicEventPost,
