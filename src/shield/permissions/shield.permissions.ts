@@ -16,15 +16,11 @@ import {
   canCreateGroupEvents,
   canManageGroupComments,
   canManageGroupEvents,
-  canManageGroupPosts,
   isProposalGroupJoinedByMe,
 } from '../rules/group.rules';
 import { isPublicLike } from '../rules/like.rules';
-import { canManagePosts, isOwnPost, isPublicPost } from '../rules/post.rules';
-import {
-  isPublicProposal,
-  isPublicProposalVote,
-} from '../rules/proposal.rules';
+import { isPublicPost } from '../rules/post.rules';
+import { isPublicProposalVote } from '../rules/proposal.rules';
 import {
   canManageQuestionnaireTickets,
   isOwnAnswer,
@@ -35,13 +31,14 @@ import {
 } from '../rules/question.rules';
 import { canManageServerRoles } from '../rules/role.rules';
 import { canManageRules, isPublicRule } from '../rules/rule.rules';
-import { canManageServerSettings } from '../rules/server-config.rules';
 import { isVerified } from '../rules/user.rules';
 import { authPermissions } from './auth.permissions';
 import { groupPermissions } from './group.permissions';
 import { imagePermissions } from './image.permissions';
 import { notificationPermissions } from './notification.permissions';
+import { postPermissions } from './post.permissions';
 import { proposalPermissions } from './proposal.permissions';
+import { serverConfigPermissions } from './server-config.permissions';
 import { serverInvitePermissions } from './server-invite.permissions';
 import { userPermissions } from './user.permissions';
 
@@ -51,11 +48,11 @@ export const shieldPermissions = shield(
       ...authPermissions.Query,
       ...groupPermissions.Query,
       ...notificationPermissions.Query,
+      ...postPermissions.Query,
       ...proposalPermissions.Query,
+      ...serverConfigPermissions.Query,
       ...serverInvitePermissions.Query,
       ...userPermissions.Query,
-      serverConfig: canManageServerSettings,
-      post: or(isVerified, isPublicPost, isPublicEventPost),
       event: or(isVerified, isPublicEvent),
       publicCanary: allow,
       serverRules: allow,
@@ -72,13 +69,12 @@ export const shieldPermissions = shield(
       ...authPermissions.Mutation,
       ...groupPermissions.Mutation,
       ...notificationPermissions.Mutation,
+      ...postPermissions.Mutation,
       ...proposalPermissions.Mutation,
+      ...serverConfigPermissions.Mutation,
       ...serverInvitePermissions.Mutation,
       ...userPermissions.Mutation,
-      updatePost: isOwnPost,
-      deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
       createVote: or(isProposalGroupJoinedByMe, canManageQuestionnaireTickets),
-      updateServerConfig: canManageServerSettings,
       createServerRole: canManageServerRoles,
       updateServerRole: canManageServerRoles,
       deleteServerRole: canManageServerRoles,
@@ -115,17 +111,11 @@ export const shieldPermissions = shield(
     ...groupPermissions.ObjectTypes,
     ...imagePermissions.ObjectTypes,
     ...notificationPermissions.ObjectTypes,
+    ...postPermissions.ObjectTypes,
     ...proposalPermissions.ObjectTypes,
     ...serverInvitePermissions.ObjectTypes,
     ...userPermissions.ObjectTypes,
     ServerPermissions: isAuthenticated,
-    FeedItemsConnection: or(
-      isVerified,
-      isPublicEventPost,
-      isPublicProposal,
-      isPublicPost,
-    ),
-    PublicFeedItemsConnection: allow,
     Comment: or(
       isOwnQuestionComment,
       isOwnQuestionnaireTicketComment,
@@ -153,7 +143,6 @@ export const shieldPermissions = shield(
     UpdateCommentPayload: isAuthenticated,
     Rule: or(isVerified, isPublicRule),
     Event: or(isVerified, isPublicEvent),
-    Post: or(isVerified, isPublicPost, isPublicEventPost),
     Like: or(isAuthenticated, isPublicLike),
     Vote: or(isVerified, isPublicProposalVote),
   },
