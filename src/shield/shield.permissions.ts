@@ -1,8 +1,9 @@
-import { allow, and, or, shield } from 'graphql-shield';
+import { allow, or, shield } from 'graphql-shield';
 import * as hash from 'object-hash';
 import { FORBIDDEN } from '../common/common.constants';
 import { authPermissions } from './permissions/auth.permissions';
 import { groupPermissions } from './permissions/group.permissions';
+import { proposalPermissions } from './permissions/proposal.permissions';
 import { userPermissions } from './permissions/user.permissions';
 import { isAuthenticated } from './rules/auth.rules';
 import {
@@ -34,11 +35,7 @@ import {
   isPublicPostImage,
 } from './rules/post.rules';
 import {
-  canRemoveProposals,
-  hasNoVotes,
-  isOwnProposal,
   isPublicProposal,
-  isPublicProposalAction,
   isPublicProposalImage,
   isPublicProposalVote,
 } from './rules/proposal.rules';
@@ -71,6 +68,7 @@ export const shieldPermissions = shield(
     Query: {
       ...authPermissions.Query,
       ...groupPermissions.Query,
+      ...proposalPermissions.Query,
       ...userPermissions.Query,
       notifications: isAuthenticated,
       notificationsCount: isAuthenticated,
@@ -79,7 +77,6 @@ export const shieldPermissions = shield(
       serverInvites: or(canCreateServerInvites, canManageServerInvites),
       serverConfig: canManageServerSettings,
       post: or(isVerified, isPublicPost, isPublicEventPost),
-      proposal: or(isVerified, isPublicProposal),
       event: or(isVerified, isPublicEvent),
       publicCanary: allow,
       serverRules: allow,
@@ -96,9 +93,9 @@ export const shieldPermissions = shield(
       ...userPermissions.Mutation,
       ...authPermissions.Mutation,
       ...groupPermissions.Mutation,
+      ...proposalPermissions.Mutation,
       updatePost: isOwnPost,
       deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
-      deleteProposal: or(and(isOwnProposal, hasNoVotes), canRemoveProposals),
       createVote: or(isProposalGroupJoinedByMe, canManageQuestionnaireTickets),
       createServerInvite: or(canCreateServerInvites, canManageServerInvites),
       deleteServerInvite: canManageServerInvites,
@@ -142,9 +139,10 @@ export const shieldPermissions = shield(
     Subscription: {
       notification: isAuthenticated,
     },
-    ...userPermissions.ObjectTypes,
     ...authPermissions.ObjectTypes,
     ...groupPermissions.ObjectTypes,
+    ...proposalPermissions.ObjectTypes,
+    ...userPermissions.ObjectTypes,
     ServerPermissions: isAuthenticated,
     FeedItemsConnection: or(
       isVerified,
@@ -211,15 +209,6 @@ export const shieldPermissions = shield(
     Event: or(isVerified, isPublicEvent),
     Post: or(isVerified, isPublicPost, isPublicEventPost),
     Like: or(isAuthenticated, isPublicLike),
-    Proposal: or(isVerified, isPublicProposal),
-    ProposalConfig: or(isVerified, isPublicProposal),
-    ProposalAction: or(isVerified, isPublicProposalAction),
-    ProposalActionEvent: or(isVerified, isPublicProposalAction),
-    ProposalActionEventHost: or(isVerified, isPublicProposalAction),
-    ProposalActionPermission: or(isVerified, isPublicProposalAction),
-    ProposalActionRole: or(isVerified, isPublicProposalAction),
-    ProposalActionRoleMember: or(isVerified, isPublicProposalAction),
-    ProposalActionGroupConfig: or(isVerified, isPublicProposalAction),
     Vote: or(isVerified, isPublicProposalVote),
   },
   {
