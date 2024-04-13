@@ -1,33 +1,36 @@
 import { allow, or, shield } from 'graphql-shield';
 import * as hash from 'object-hash';
-import { FORBIDDEN } from '../common/common.constants';
-import { authPermissions } from './permissions/auth.permissions';
-import { groupPermissions } from './permissions/group.permissions';
-import { imagePermissions } from './permissions/image.permissions';
-import { proposalPermissions } from './permissions/proposal.permissions';
-import { userPermissions } from './permissions/user.permissions';
-import { isAuthenticated } from './rules/auth.rules';
+import { FORBIDDEN } from '../../common/common.constants';
+import { authPermissions } from './auth.permissions';
+import { groupPermissions } from './group.permissions';
+import { imagePermissions } from './image.permissions';
+import { proposalPermissions } from './proposal.permissions';
+import { userPermissions } from './user.permissions';
+import { isAuthenticated } from '../rules/auth.rules';
 import {
   canManageComments,
   isOwnComment,
   isPublicComment,
-} from './rules/comment.rules';
+} from '../rules/comment.rules';
 import {
   canManageEvents,
   isPublicEvent,
   isPublicEventPost,
-} from './rules/event.rules';
+} from '../rules/event.rules';
 import {
   canCreateGroupEvents,
   canManageGroupComments,
   canManageGroupEvents,
   canManageGroupPosts,
   isProposalGroupJoinedByMe,
-} from './rules/group.rules';
-import { isPublicLike } from './rules/like.rules';
-import { isOwnNotification } from './rules/notification.rules';
-import { canManagePosts, isOwnPost, isPublicPost } from './rules/post.rules';
-import { isPublicProposal, isPublicProposalVote } from './rules/proposal.rules';
+} from '../rules/group.rules';
+import { isPublicLike } from '../rules/like.rules';
+import { isOwnNotification } from '../rules/notification.rules';
+import { canManagePosts, isOwnPost, isPublicPost } from '../rules/post.rules';
+import {
+  isPublicProposal,
+  isPublicProposalVote,
+} from '../rules/proposal.rules';
 import {
   canManageQuestionnaireTickets,
   isOwnAnswer,
@@ -35,15 +38,15 @@ import {
   isOwnQuestionComment,
   isOwnQuestionnaireTicket,
   isOwnQuestionnaireTicketComment,
-} from './rules/question.rules';
-import { canManageServerRoles } from './rules/role.rules';
-import { canManageRules, isPublicRule } from './rules/rule.rules';
-import { canManageServerSettings } from './rules/server-config.rules';
+} from '../rules/question.rules';
+import { canManageServerRoles } from '../rules/role.rules';
+import { canManageRules, isPublicRule } from '../rules/rule.rules';
+import { canManageServerSettings } from '../rules/server-config.rules';
 import {
   canCreateServerInvites,
   canManageServerInvites,
-} from './rules/server-invite.rules';
-import { isVerified } from './rules/user.rules';
+} from '../rules/server-invite.rules';
+import { isVerified } from '../rules/user.rules';
 
 export const shieldPermissions = shield(
   {
