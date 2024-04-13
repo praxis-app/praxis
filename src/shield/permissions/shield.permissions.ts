@@ -7,13 +7,10 @@ import {
   isOwnComment,
   isPublicComment,
 } from '../rules/comment.rules';
-import { isPublicEventPost } from '../rules/event.rules';
 import {
   canManageGroupComments,
   isProposalGroupJoinedByMe,
 } from '../rules/group.rules';
-import { isPublicLike } from '../rules/like.rules';
-import { isPublicPost } from '../rules/post.rules';
 import { isPublicProposalVote } from '../rules/proposal.rules';
 import {
   canManageQuestionnaireTickets,
@@ -29,6 +26,7 @@ import { canaryPermissions } from './canary.permissions';
 import { eventPermissions } from './event.permissions';
 import { groupPermissions } from './group.permissions';
 import { imagePermissions } from './image.permissions';
+import { likePermissions } from './like.permissions';
 import { notificationPermissions } from './notification.permissions';
 import { postPermissions } from './post.permissions';
 import { proposalPermissions } from './proposal.permissions';
@@ -45,6 +43,7 @@ export const shieldPermissions = shield(
       ...canaryPermissions.Query,
       ...eventPermissions.Query,
       ...groupPermissions.Query,
+      ...likePermissions.Query,
       ...notificationPermissions.Query,
       ...postPermissions.Query,
       ...proposalPermissions.Query,
@@ -53,17 +52,12 @@ export const shieldPermissions = shield(
       ...serverInvitePermissions.Query,
       ...userPermissions.Query,
       ...vibeCheckPermissions.Query,
-      likes: or(
-        isAuthenticated,
-        isPublicComment,
-        isPublicEventPost,
-        isPublicPost,
-      ),
     },
     Mutation: {
       ...authPermissions.Mutation,
       ...eventPermissions.Mutation,
       ...groupPermissions.Mutation,
+      ...likePermissions.Mutation,
       ...notificationPermissions.Mutation,
       ...postPermissions.Mutation,
       ...proposalPermissions.Mutation,
@@ -84,24 +78,13 @@ export const shieldPermissions = shield(
         canManageComments,
         canManageGroupComments,
       ),
-      createLike: or(
-        isOwnQuestion,
-        isOwnQuestionComment,
-        isOwnQuestionnaireTicketComment,
-        isVerified,
-      ),
-      deleteLike: or(
-        isOwnQuestion,
-        isOwnQuestionComment,
-        isOwnQuestionnaireTicketComment,
-        isVerified,
-      ),
     },
     ...authPermissions.ObjectTypes,
     ...canaryPermissions.ObjectTypes,
     ...eventPermissions.ObjectTypes,
     ...groupPermissions.ObjectTypes,
     ...imagePermissions.ObjectTypes,
+    ...likePermissions.ObjectTypes,
     ...notificationPermissions.ObjectTypes,
     ...postPermissions.ObjectTypes,
     ...proposalPermissions.ObjectTypes,
@@ -117,9 +100,7 @@ export const shieldPermissions = shield(
       isVerified,
     ),
     CreateCommentPayload: isAuthenticated,
-    CreateLikePayload: isAuthenticated,
     UpdateCommentPayload: isAuthenticated,
-    Like: or(isAuthenticated, isPublicLike),
     Vote: or(isVerified, isPublicProposalVote),
   },
   {
