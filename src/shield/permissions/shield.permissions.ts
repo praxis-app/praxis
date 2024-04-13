@@ -7,15 +7,9 @@ import {
   isOwnComment,
   isPublicComment,
 } from '../rules/comment.rules';
+import { isPublicEventPost } from '../rules/event.rules';
 import {
-  canManageEvents,
-  isPublicEvent,
-  isPublicEventPost,
-} from '../rules/event.rules';
-import {
-  canCreateGroupEvents,
   canManageGroupComments,
-  canManageGroupEvents,
   isProposalGroupJoinedByMe,
 } from '../rules/group.rules';
 import { isPublicLike } from '../rules/like.rules';
@@ -33,6 +27,7 @@ import { canManageServerRoles } from '../rules/role.rules';
 import { canManageRules, isPublicRule } from '../rules/rule.rules';
 import { isVerified } from '../rules/user.rules';
 import { authPermissions } from './auth.permissions';
+import { eventPermissions } from './event.permissions';
 import { groupPermissions } from './group.permissions';
 import { imagePermissions } from './image.permissions';
 import { notificationPermissions } from './notification.permissions';
@@ -46,6 +41,7 @@ export const shieldPermissions = shield(
   {
     Query: {
       ...authPermissions.Query,
+      ...eventPermissions.Query,
       ...groupPermissions.Query,
       ...notificationPermissions.Query,
       ...postPermissions.Query,
@@ -53,11 +49,9 @@ export const shieldPermissions = shield(
       ...serverConfigPermissions.Query,
       ...serverInvitePermissions.Query,
       ...userPermissions.Query,
-      event: or(isVerified, isPublicEvent),
       publicCanary: allow,
       serverRules: allow,
       question: or(isOwnQuestion, canManageQuestionnaireTickets),
-      events: allow,
       likes: or(
         isAuthenticated,
         isPublicComment,
@@ -67,6 +61,7 @@ export const shieldPermissions = shield(
     },
     Mutation: {
       ...authPermissions.Mutation,
+      ...eventPermissions.Mutation,
       ...groupPermissions.Mutation,
       ...notificationPermissions.Mutation,
       ...postPermissions.Mutation,
@@ -79,9 +74,6 @@ export const shieldPermissions = shield(
       updateServerRole: canManageServerRoles,
       deleteServerRole: canManageServerRoles,
       deleteServerRoleMember: canManageServerRoles,
-      createEvent: or(canCreateGroupEvents, canManageGroupEvents),
-      deleteEvent: or(canManageEvents, canManageGroupEvents),
-      updateEvent: or(canManageEvents, canManageGroupEvents),
       answerQuestions: isAuthenticated,
       createRule: canManageRules,
       deleteRule: canManageRules,
@@ -108,6 +100,7 @@ export const shieldPermissions = shield(
       ),
     },
     ...authPermissions.ObjectTypes,
+    ...eventPermissions.ObjectTypes,
     ...groupPermissions.ObjectTypes,
     ...imagePermissions.ObjectTypes,
     ...notificationPermissions.ObjectTypes,
@@ -142,7 +135,6 @@ export const shieldPermissions = shield(
     CreateLikePayload: isAuthenticated,
     UpdateCommentPayload: isAuthenticated,
     Rule: or(isVerified, isPublicRule),
-    Event: or(isVerified, isPublicEvent),
     Like: or(isAuthenticated, isPublicLike),
     Vote: or(isVerified, isPublicProposalVote),
   },
