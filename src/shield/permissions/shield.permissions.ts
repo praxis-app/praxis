@@ -27,6 +27,7 @@ import { canManageServerRoles } from '../rules/role.rules';
 import { canManageRules, isPublicRule } from '../rules/rule.rules';
 import { isVerified } from '../rules/user.rules';
 import { authPermissions } from './auth.permissions';
+import { canaryPermissions } from './canary.permissions';
 import { eventPermissions } from './event.permissions';
 import { groupPermissions } from './group.permissions';
 import { imagePermissions } from './image.permissions';
@@ -41,6 +42,7 @@ export const shieldPermissions = shield(
   {
     Query: {
       ...authPermissions.Query,
+      ...canaryPermissions.Query,
       ...eventPermissions.Query,
       ...groupPermissions.Query,
       ...notificationPermissions.Query,
@@ -49,7 +51,6 @@ export const shieldPermissions = shield(
       ...serverConfigPermissions.Query,
       ...serverInvitePermissions.Query,
       ...userPermissions.Query,
-      publicCanary: allow,
       serverRules: allow,
       question: or(isOwnQuestion, canManageQuestionnaireTickets),
       likes: or(
@@ -100,6 +101,7 @@ export const shieldPermissions = shield(
       ),
     },
     ...authPermissions.ObjectTypes,
+    ...canaryPermissions.ObjectTypes,
     ...eventPermissions.ObjectTypes,
     ...groupPermissions.ObjectTypes,
     ...imagePermissions.ObjectTypes,
@@ -115,11 +117,6 @@ export const shieldPermissions = shield(
       isPublicComment,
       isVerified,
     ),
-    Canary: {
-      id: allow,
-      statement: allow,
-      updatedAt: allow,
-    },
     QuestionnaireTicket: {
       id: or(isOwnQuestionnaireTicket, canManageQuestionnaireTickets),
       prompt: or(isOwnQuestionnaireTicket, canManageQuestionnaireTickets),
