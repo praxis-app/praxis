@@ -3,6 +3,7 @@ import * as hash from 'object-hash';
 import { FORBIDDEN } from '../common/common.constants';
 import { authPermissions } from './permissions/auth.permissions';
 import { groupPermissions } from './permissions/group.permissions';
+import { imagePermissions } from './permissions/image.permissions';
 import { proposalPermissions } from './permissions/proposal.permissions';
 import { userPermissions } from './permissions/user.permissions';
 import { isAuthenticated } from './rules/auth.rules';
@@ -10,12 +11,10 @@ import {
   canManageComments,
   isOwnComment,
   isPublicComment,
-  isPublicCommentImage,
 } from './rules/comment.rules';
 import {
   canManageEvents,
   isPublicEvent,
-  isPublicEventImage,
   isPublicEventPost,
 } from './rules/event.rules';
 import {
@@ -24,31 +23,18 @@ import {
   canManageGroupEvents,
   canManageGroupPosts,
   isProposalGroupJoinedByMe,
-  isPublicGroupImage,
 } from './rules/group.rules';
 import { isPublicLike } from './rules/like.rules';
 import { isOwnNotification } from './rules/notification.rules';
-import {
-  canManagePosts,
-  isOwnPost,
-  isPublicPost,
-  isPublicPostImage,
-} from './rules/post.rules';
-import {
-  isPublicProposal,
-  isPublicProposalImage,
-  isPublicProposalVote,
-} from './rules/proposal.rules';
+import { canManagePosts, isOwnPost, isPublicPost } from './rules/post.rules';
+import { isPublicProposal, isPublicProposalVote } from './rules/proposal.rules';
 import {
   canManageQuestionnaireTickets,
   isOwnAnswer,
   isOwnQuestion,
   isOwnQuestionComment,
-  isOwnQuestionCommentImage,
   isOwnQuestionnaireTicket,
   isOwnQuestionnaireTicketComment,
-  isOwnQuestionnaireTicketCommentImage,
-  isOwnQuestionnaireTicketReviewerAvatar,
 } from './rules/question.rules';
 import { canManageServerRoles } from './rules/role.rules';
 import { canManageRules, isPublicRule } from './rules/rule.rules';
@@ -57,11 +43,7 @@ import {
   canCreateServerInvites,
   canManageServerInvites,
 } from './rules/server-invite.rules';
-import {
-  isOwnUserAvatar,
-  isPublicUserAvatar,
-  isVerified,
-} from './rules/user.rules';
+import { isVerified } from './rules/user.rules';
 
 export const shieldPermissions = shield(
   {
@@ -141,6 +123,7 @@ export const shieldPermissions = shield(
     },
     ...authPermissions.ObjectTypes,
     ...groupPermissions.ObjectTypes,
+    ...imagePermissions.ObjectTypes,
     ...proposalPermissions.ObjectTypes,
     ...userPermissions.ObjectTypes,
     ServerPermissions: isAuthenticated,
@@ -151,29 +134,6 @@ export const shieldPermissions = shield(
       isPublicPost,
     ),
     PublicFeedItemsConnection: allow,
-    Image: {
-      id: or(
-        isOwnQuestionCommentImage,
-        isOwnQuestionnaireTicketCommentImage,
-        isOwnQuestionnaireTicketReviewerAvatar,
-        isOwnUserAvatar,
-        isPublicCommentImage,
-        isPublicEventImage,
-        isPublicGroupImage,
-        isPublicPostImage,
-        isPublicProposalImage,
-        isPublicUserAvatar,
-        isVerified,
-      ),
-      filename: or(
-        isOwnQuestionCommentImage,
-        isOwnQuestionnaireTicketCommentImage,
-        isPublicCommentImage,
-        isPublicPostImage,
-        isPublicProposalImage,
-        isVerified,
-      ),
-    },
     Comment: or(
       isOwnQuestionComment,
       isOwnQuestionnaireTicketComment,
