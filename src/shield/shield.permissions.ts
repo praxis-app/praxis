@@ -1,6 +1,7 @@
 import { allow, and, or, shield } from 'graphql-shield';
 import * as hash from 'object-hash';
 import { FORBIDDEN } from '../common/common.constants';
+import { authPermissions } from './permissions/auth.permissions';
 import { userPermissions } from './permissions/user.permissions';
 import { isAuthenticated } from './rules/auth.rules';
 import {
@@ -76,11 +77,10 @@ export const shieldPermissions = shield(
   {
     Query: {
       ...userPermissions.Query,
+      ...authPermissions.Query,
       notifications: isAuthenticated,
       notificationsCount: isAuthenticated,
       unreadNotificationsCount: isAuthenticated,
-      isValidResetPasswordToken: allow,
-      authCheck: isAuthenticated,
       serverInvite: allow,
       serverInvites: or(canCreateServerInvites, canManageServerInvites),
       serverConfig: canManageServerSettings,
@@ -105,11 +105,7 @@ export const shieldPermissions = shield(
     },
     Mutation: {
       ...userPermissions.Mutation,
-      login: allow,
-      logOut: allow,
-      signUp: allow,
-      resetPassword: allow,
-      sendPasswordReset: allow,
+      ...authPermissions.Mutation,
       updatePost: isOwnPost,
       deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
       deleteProposal: or(and(isOwnProposal, hasNoVotes), canRemoveProposals),
@@ -165,6 +161,7 @@ export const shieldPermissions = shield(
       notification: isAuthenticated,
     },
     ...userPermissions.ObjectTypes,
+    ...authPermissions.ObjectTypes,
     Group: {
       id: or(isVerified, isPublicGroup),
       name: or(isVerified, isPublicGroup),
@@ -243,7 +240,6 @@ export const shieldPermissions = shield(
     Question: or(isOwnQuestion, canManageQuestionnaireTickets),
     Answer: or(isOwnAnswer, canManageQuestionnaireTickets),
     Notification: isOwnNotification,
-    AuthPayload: allow,
     AnswerQuestionsPayload: isAuthenticated,
     CreateCommentPayload: isAuthenticated,
     CreateLikePayload: isAuthenticated,
