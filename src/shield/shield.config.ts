@@ -1,42 +1,42 @@
 import { or, shield } from 'graphql-shield';
 import * as hash from 'object-hash';
-import { FORBIDDEN } from '../../common/common.constants';
-import { isAuthenticated } from '../rules/auth.rules';
+import { FORBIDDEN } from '../common/common.constants';
+import { isAuthenticated } from './rules/auth.rules';
 import {
   canManageComments,
   isOwnComment,
   isPublicComment,
-} from '../rules/comment.rules';
+} from './rules/comment.rules';
 import {
   canManageGroupComments,
   isProposalGroupJoinedByMe,
-} from '../rules/group.rules';
-import { isPublicProposalVote } from '../rules/proposal.rules';
+} from './rules/group.rules';
+import { isPublicProposalVote } from './rules/proposal.rules';
 import {
   canManageQuestionnaireTickets,
   isOwnQuestion,
   isOwnQuestionComment,
   isOwnQuestionnaireTicket,
   isOwnQuestionnaireTicketComment,
-} from '../rules/question.rules';
-import { canManageServerRoles } from '../rules/role.rules';
-import { isVerified } from '../rules/user.rules';
-import { authPermissions } from './auth.permissions';
-import { canaryPermissions } from './canary.permissions';
-import { eventPermissions } from './event.permissions';
-import { groupPermissions } from './group.permissions';
-import { imagePermissions } from './image.permissions';
-import { likePermissions } from './like.permissions';
-import { notificationPermissions } from './notification.permissions';
-import { postPermissions } from './post.permissions';
-import { proposalPermissions } from './proposal.permissions';
-import { rulePermissions } from './rule.permissions';
-import { serverConfigPermissions } from './server-config.permissions';
-import { serverInvitePermissions } from './server-invite.permissions';
-import { userPermissions } from './user.permissions';
-import { vibeCheckPermissions } from './vibe-check.permissions';
+} from './rules/question.rules';
+import { canManageServerRoles } from './rules/role.rules';
+import { isVerified } from './rules/user.rules';
+import { authPermissions } from './permissions/auth.permissions';
+import { canaryPermissions } from './permissions/canary.permissions';
+import { eventPermissions } from './permissions/event.permissions';
+import { groupPermissions } from './permissions/group.permissions';
+import { imagePermissions } from './permissions/image.permissions';
+import { likePermissions } from './permissions/like.permissions';
+import { notificationPermissions } from './permissions/notification.permissions';
+import { postPermissions } from './permissions/post.permissions';
+import { proposalPermissions } from './permissions/proposal.permissions';
+import { rulePermissions } from './permissions/rule.permissions';
+import { serverConfigPermissions } from './permissions/server-config.permissions';
+import { serverInvitePermissions } from './permissions/server-invite.permissions';
+import { userPermissions } from './permissions/user.permissions';
+import { vibeCheckPermissions } from './permissions/vibe-check.permissions';
 
-export const shieldPermissions = shield(
+export const shieldConfig = shield(
   {
     Query: {
       ...authPermissions.Query,
