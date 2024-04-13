@@ -1,6 +1,7 @@
 import { allow, and, or, shield } from 'graphql-shield';
 import * as hash from 'object-hash';
 import { FORBIDDEN } from '../common/common.constants';
+import { userPermissions } from './permissions/user.permissions';
 import { isAuthenticated } from './rules/auth.rules';
 import {
   canManageComments,
@@ -56,7 +57,6 @@ import {
   isOwnQuestionnaireTicket,
   isOwnQuestionnaireTicketComment,
   isOwnQuestionnaireTicketCommentImage,
-  isOwnQuestionnaireTicketReviewer,
   isOwnQuestionnaireTicketReviewerAvatar,
 } from './rules/question.rules';
 import { canManageServerRoles } from './rules/role.rules';
@@ -67,21 +67,15 @@ import {
   canManageServerInvites,
 } from './rules/server-invite.rules';
 import {
-  canRemoveMembers,
-  isMe,
   isOwnUserAvatar,
   isPublicUserAvatar,
-  isUserInPublicGroups,
   isVerified,
 } from './rules/user.rules';
 
 export const shieldPermissions = shield(
   {
     Query: {
-      me: isAuthenticated,
-      user: or(isMe, isVerified),
-      users: canRemoveMembers,
-      isFirstUser: allow,
+      ...userPermissions.Query,
       notifications: isAuthenticated,
       notificationsCount: isAuthenticated,
       unreadNotificationsCount: isAuthenticated,
@@ -110,6 +104,7 @@ export const shieldPermissions = shield(
       ),
     },
     Mutation: {
+      ...userPermissions.Mutation,
       login: allow,
       logOut: allow,
       signUp: allow,
@@ -146,8 +141,6 @@ export const shieldPermissions = shield(
       updateRulesPriority: canManageRules,
       updateNotification: isOwnNotification,
       deleteNotification: isOwnNotification,
-      updateUser: isAuthenticated,
-      deleteUser: or(isMe, canRemoveMembers),
       createComment: or(isVerified, isOwnQuestion, isOwnQuestionnaireTicket),
       updateComment: isOwnComment,
       deleteComment: or(
@@ -171,33 +164,7 @@ export const shieldPermissions = shield(
     Subscription: {
       notification: isAuthenticated,
     },
-    User: {
-      id: or(
-        isMe,
-        isVerified,
-        isUserInPublicGroups,
-        isOwnQuestionnaireTicketReviewer,
-      ),
-      name: or(
-        isMe,
-        isVerified,
-        isUserInPublicGroups,
-        isOwnQuestionnaireTicketReviewer,
-      ),
-      profilePicture: or(
-        isMe,
-        isVerified,
-        isUserInPublicGroups,
-        isOwnQuestionnaireTicketReviewer,
-      ),
-      bio: or(isMe, isVerified),
-      coverPhoto: or(isMe, isVerified),
-      createdAt: or(isMe, isVerified),
-      isFollowedByMe: or(isMe, isVerified, isOwnQuestionnaireTicketReviewer),
-      isVerified: or(isMe, canRemoveMembers),
-      questionnaireTicket: isMe,
-      serverPermissions: isMe,
-    },
+    ...userPermissions.ObjectTypes,
     Group: {
       id: or(isVerified, isPublicGroup),
       name: or(isVerified, isPublicGroup),
@@ -282,7 +249,6 @@ export const shieldPermissions = shield(
     CreateLikePayload: isAuthenticated,
     UpdateCommentPayload: isAuthenticated,
     UpdateNotificationPayload: isAuthenticated,
-    UpdateUserPayload: isAuthenticated,
     Rule: or(isVerified, isPublicRule),
     Event: or(isVerified, isPublicEvent),
     Post: or(isVerified, isPublicPost, isPublicEventPost),
