@@ -1,4 +1,4 @@
-import { allow, or, shield } from 'graphql-shield';
+import { or, shield } from 'graphql-shield';
 import * as hash from 'object-hash';
 import { FORBIDDEN } from '../../common/common.constants';
 import { isAuthenticated } from '../rules/auth.rules';
@@ -24,7 +24,6 @@ import {
   isOwnQuestionnaireTicketComment,
 } from '../rules/question.rules';
 import { canManageServerRoles } from '../rules/role.rules';
-import { canManageRules, isPublicRule } from '../rules/rule.rules';
 import { isVerified } from '../rules/user.rules';
 import { authPermissions } from './auth.permissions';
 import { canaryPermissions } from './canary.permissions';
@@ -34,6 +33,7 @@ import { imagePermissions } from './image.permissions';
 import { notificationPermissions } from './notification.permissions';
 import { postPermissions } from './post.permissions';
 import { proposalPermissions } from './proposal.permissions';
+import { rulePermissions } from './rule.permissions';
 import { serverConfigPermissions } from './server-config.permissions';
 import { serverInvitePermissions } from './server-invite.permissions';
 import { userPermissions } from './user.permissions';
@@ -48,10 +48,10 @@ export const shieldPermissions = shield(
       ...notificationPermissions.Query,
       ...postPermissions.Query,
       ...proposalPermissions.Query,
+      ...rulePermissions.Query,
       ...serverConfigPermissions.Query,
       ...serverInvitePermissions.Query,
       ...userPermissions.Query,
-      serverRules: allow,
       question: or(isOwnQuestion, canManageQuestionnaireTickets),
       likes: or(
         isAuthenticated,
@@ -67,6 +67,7 @@ export const shieldPermissions = shield(
       ...notificationPermissions.Mutation,
       ...postPermissions.Mutation,
       ...proposalPermissions.Mutation,
+      ...rulePermissions.Mutation,
       ...serverConfigPermissions.Mutation,
       ...serverInvitePermissions.Mutation,
       ...userPermissions.Mutation,
@@ -76,10 +77,6 @@ export const shieldPermissions = shield(
       deleteServerRole: canManageServerRoles,
       deleteServerRoleMember: canManageServerRoles,
       answerQuestions: isAuthenticated,
-      createRule: canManageRules,
-      deleteRule: canManageRules,
-      updateRule: canManageRules,
-      updateRulesPriority: canManageRules,
       createComment: or(isVerified, isOwnQuestion, isOwnQuestionnaireTicket),
       updateComment: isOwnComment,
       deleteComment: or(
@@ -108,6 +105,7 @@ export const shieldPermissions = shield(
     ...notificationPermissions.ObjectTypes,
     ...postPermissions.ObjectTypes,
     ...proposalPermissions.ObjectTypes,
+    ...rulePermissions.ObjectTypes,
     ...serverInvitePermissions.ObjectTypes,
     ...userPermissions.ObjectTypes,
     ServerPermissions: isAuthenticated,
@@ -131,7 +129,6 @@ export const shieldPermissions = shield(
     CreateCommentPayload: isAuthenticated,
     CreateLikePayload: isAuthenticated,
     UpdateCommentPayload: isAuthenticated,
-    Rule: or(isVerified, isPublicRule),
     Like: or(isAuthenticated, isPublicLike),
     Vote: or(isVerified, isPublicProposalVote),
   },
