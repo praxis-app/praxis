@@ -1,11 +1,6 @@
 import { allow, or, shield } from 'graphql-shield';
 import * as hash from 'object-hash';
 import { FORBIDDEN } from '../../common/common.constants';
-import { authPermissions } from './auth.permissions';
-import { groupPermissions } from './group.permissions';
-import { imagePermissions } from './image.permissions';
-import { proposalPermissions } from './proposal.permissions';
-import { userPermissions } from './user.permissions';
 import { isAuthenticated } from '../rules/auth.rules';
 import {
   canManageComments,
@@ -25,7 +20,6 @@ import {
   isProposalGroupJoinedByMe,
 } from '../rules/group.rules';
 import { isPublicLike } from '../rules/like.rules';
-import { isOwnNotification } from '../rules/notification.rules';
 import { canManagePosts, isOwnPost, isPublicPost } from '../rules/post.rules';
 import {
   isPublicProposal,
@@ -47,17 +41,21 @@ import {
   canManageServerInvites,
 } from '../rules/server-invite.rules';
 import { isVerified } from '../rules/user.rules';
+import { authPermissions } from './auth.permissions';
+import { groupPermissions } from './group.permissions';
+import { imagePermissions } from './image.permissions';
+import { notificationPermissions } from './notification.permissions';
+import { proposalPermissions } from './proposal.permissions';
+import { userPermissions } from './user.permissions';
 
 export const shieldPermissions = shield(
   {
     Query: {
       ...authPermissions.Query,
       ...groupPermissions.Query,
+      ...notificationPermissions.Query,
       ...proposalPermissions.Query,
       ...userPermissions.Query,
-      notifications: isAuthenticated,
-      notificationsCount: isAuthenticated,
-      unreadNotificationsCount: isAuthenticated,
       serverInvite: allow,
       serverInvites: or(canCreateServerInvites, canManageServerInvites),
       serverConfig: canManageServerSettings,
@@ -75,10 +73,11 @@ export const shieldPermissions = shield(
       ),
     },
     Mutation: {
-      ...userPermissions.Mutation,
       ...authPermissions.Mutation,
       ...groupPermissions.Mutation,
+      ...notificationPermissions.Mutation,
       ...proposalPermissions.Mutation,
+      ...userPermissions.Mutation,
       updatePost: isOwnPost,
       deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
       createVote: or(isProposalGroupJoinedByMe, canManageQuestionnaireTickets),
@@ -89,8 +88,6 @@ export const shieldPermissions = shield(
       updateServerRole: canManageServerRoles,
       deleteServerRole: canManageServerRoles,
       deleteServerRoleMember: canManageServerRoles,
-      readNotifications: isAuthenticated,
-      clearNotifications: isAuthenticated,
       createEvent: or(canCreateGroupEvents, canManageGroupEvents),
       deleteEvent: or(canManageEvents, canManageGroupEvents),
       updateEvent: or(canManageEvents, canManageGroupEvents),
@@ -99,8 +96,6 @@ export const shieldPermissions = shield(
       deleteRule: canManageRules,
       updateRule: canManageRules,
       updateRulesPriority: canManageRules,
-      updateNotification: isOwnNotification,
-      deleteNotification: isOwnNotification,
       createComment: or(isVerified, isOwnQuestion, isOwnQuestionnaireTicket),
       updateComment: isOwnComment,
       deleteComment: or(
@@ -121,12 +116,10 @@ export const shieldPermissions = shield(
         isVerified,
       ),
     },
-    Subscription: {
-      notification: isAuthenticated,
-    },
     ...authPermissions.ObjectTypes,
     ...groupPermissions.ObjectTypes,
     ...imagePermissions.ObjectTypes,
+    ...notificationPermissions.ObjectTypes,
     ...proposalPermissions.ObjectTypes,
     ...userPermissions.ObjectTypes,
     ServerPermissions: isAuthenticated,
@@ -162,12 +155,10 @@ export const shieldPermissions = shield(
     },
     Question: or(isOwnQuestion, canManageQuestionnaireTickets),
     Answer: or(isOwnAnswer, canManageQuestionnaireTickets),
-    Notification: isOwnNotification,
     AnswerQuestionsPayload: isAuthenticated,
     CreateCommentPayload: isAuthenticated,
     CreateLikePayload: isAuthenticated,
     UpdateCommentPayload: isAuthenticated,
-    UpdateNotificationPayload: isAuthenticated,
     Rule: or(isVerified, isPublicRule),
     Event: or(isVerified, isPublicEvent),
     Post: or(isVerified, isPublicPost, isPublicEventPost),
