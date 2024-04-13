@@ -133,6 +133,7 @@ export class VibeCheckService {
   async getQuestions(questionnaireTicketId: number) {
     return this.questionRepository.find({
       where: { questionnaireTicketId },
+      order: { priority: 'ASC' },
     });
   }
 

@@ -7,6 +7,7 @@ import Breadcrumbs from '../../components/Shared/Breadcrumbs';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { useQuestionnairePageQuery } from '../../graphql/questions/queries/gen/QuestionnairePage.gen';
+import { isDeniedAccess } from '../../utils/error.utils';
 
 const QuestionnairePage = () => {
   const { id } = useParams();
@@ -16,6 +17,10 @@ const QuestionnairePage = () => {
   });
 
   const { t } = useTranslation();
+
+  if (isDeniedAccess(error)) {
+    return <Typography>{t('prompts.permissionDenied')}</Typography>;
+  }
 
   if (error) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
