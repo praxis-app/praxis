@@ -1,8 +1,9 @@
-import { or, shield } from 'graphql-shield';
+import { shield } from 'graphql-shield';
 import * as hash from 'object-hash';
 import { FORBIDDEN } from '../common/common.constants';
 import { authPermissions } from './permissions/auth.permissions';
 import { canaryPermissions } from './permissions/canary.permissions';
+import { commentPermissions } from './permissions/comment.permissions';
 import { eventPermissions } from './permissions/event.permissions';
 import { groupPermissions } from './permissions/group.permissions';
 import { imagePermissions } from './permissions/image.permissions';
@@ -17,19 +18,6 @@ import { serverRolePermissions } from './permissions/server-role.permissions';
 import { userPermissions } from './permissions/user.permissions';
 import { vibeCheckPermissions } from './permissions/vibe-check.permissions';
 import { votePermissions } from './permissions/vote.permissions';
-import { isAuthenticated } from './rules/auth.rules';
-import {
-  canManageComments,
-  isOwnComment,
-  isPublicComment,
-} from './rules/comment.rules';
-import { canManageGroupComments } from './rules/group.rules';
-import {
-  isOwnQuestion,
-  isOwnQuestionComment,
-  isOwnQuestionnaireTicket,
-  isOwnQuestionnaireTicketComment,
-} from './rules/question.rules';
 import { isVerified } from './rules/user.rules';
 
 export const shieldConfig = shield(
@@ -51,6 +39,7 @@ export const shieldConfig = shield(
     },
     Mutation: {
       ...authPermissions.Mutation,
+      ...commentPermissions.Mutation,
       ...eventPermissions.Mutation,
       ...groupPermissions.Mutation,
       ...likePermissions.Mutation,
@@ -64,16 +53,10 @@ export const shieldConfig = shield(
       ...userPermissions.Mutation,
       ...vibeCheckPermissions.Mutation,
       ...votePermissions.Mutation,
-      createComment: or(isVerified, isOwnQuestion, isOwnQuestionnaireTicket),
-      updateComment: isOwnComment,
-      deleteComment: or(
-        isOwnComment,
-        canManageComments,
-        canManageGroupComments,
-      ),
     },
     ...authPermissions.ObjectTypes,
     ...canaryPermissions.ObjectTypes,
+    ...commentPermissions.ObjectTypes,
     ...eventPermissions.ObjectTypes,
     ...groupPermissions.ObjectTypes,
     ...imagePermissions.ObjectTypes,
@@ -87,14 +70,6 @@ export const shieldConfig = shield(
     ...userPermissions.ObjectTypes,
     ...vibeCheckPermissions.ObjectTypes,
     ...votePermissions.ObjectTypes,
-    Comment: or(
-      isOwnQuestionComment,
-      isOwnQuestionnaireTicketComment,
-      isPublicComment,
-      isVerified,
-    ),
-    CreateCommentPayload: isAuthenticated,
-    UpdateCommentPayload: isAuthenticated,
   },
   {
     fallbackRule: isVerified,
