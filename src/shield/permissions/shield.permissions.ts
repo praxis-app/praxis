@@ -36,16 +36,13 @@ import {
 import { canManageServerRoles } from '../rules/role.rules';
 import { canManageRules, isPublicRule } from '../rules/rule.rules';
 import { canManageServerSettings } from '../rules/server-config.rules';
-import {
-  canCreateServerInvites,
-  canManageServerInvites,
-} from '../rules/server-invite.rules';
 import { isVerified } from '../rules/user.rules';
 import { authPermissions } from './auth.permissions';
 import { groupPermissions } from './group.permissions';
 import { imagePermissions } from './image.permissions';
 import { notificationPermissions } from './notification.permissions';
 import { proposalPermissions } from './proposal.permissions';
+import { serverInvitePermissions } from './server-invite.permissions';
 import { userPermissions } from './user.permissions';
 
 export const shieldPermissions = shield(
@@ -55,9 +52,8 @@ export const shieldPermissions = shield(
       ...groupPermissions.Query,
       ...notificationPermissions.Query,
       ...proposalPermissions.Query,
+      ...serverInvitePermissions.Query,
       ...userPermissions.Query,
-      serverInvite: allow,
-      serverInvites: or(canCreateServerInvites, canManageServerInvites),
       serverConfig: canManageServerSettings,
       post: or(isVerified, isPublicPost, isPublicEventPost),
       event: or(isVerified, isPublicEvent),
@@ -77,12 +73,11 @@ export const shieldPermissions = shield(
       ...groupPermissions.Mutation,
       ...notificationPermissions.Mutation,
       ...proposalPermissions.Mutation,
+      ...serverInvitePermissions.Mutation,
       ...userPermissions.Mutation,
       updatePost: isOwnPost,
       deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
       createVote: or(isProposalGroupJoinedByMe, canManageQuestionnaireTickets),
-      createServerInvite: or(canCreateServerInvites, canManageServerInvites),
-      deleteServerInvite: canManageServerInvites,
       updateServerConfig: canManageServerSettings,
       createServerRole: canManageServerRoles,
       updateServerRole: canManageServerRoles,
@@ -121,6 +116,7 @@ export const shieldPermissions = shield(
     ...imagePermissions.ObjectTypes,
     ...notificationPermissions.ObjectTypes,
     ...proposalPermissions.ObjectTypes,
+    ...serverInvitePermissions.ObjectTypes,
     ...userPermissions.ObjectTypes,
     ServerPermissions: isAuthenticated,
     FeedItemsConnection: or(
@@ -136,10 +132,6 @@ export const shieldPermissions = shield(
       isPublicComment,
       isVerified,
     ),
-    ServerInvite: {
-      id: allow,
-      token: allow,
-    },
     Canary: {
       id: allow,
       statement: allow,
