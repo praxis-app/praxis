@@ -17,7 +17,6 @@ import { isPublicPost } from '../rules/post.rules';
 import { isPublicProposalVote } from '../rules/proposal.rules';
 import {
   canManageQuestionnaireTickets,
-  isOwnAnswer,
   isOwnQuestion,
   isOwnQuestionComment,
   isOwnQuestionnaireTicket,
@@ -37,6 +36,7 @@ import { rulePermissions } from './rule.permissions';
 import { serverConfigPermissions } from './server-config.permissions';
 import { serverInvitePermissions } from './server-invite.permissions';
 import { userPermissions } from './user.permissions';
+import { vibeCheckPermissions } from './vibe-check.permissions';
 
 export const shieldPermissions = shield(
   {
@@ -52,7 +52,7 @@ export const shieldPermissions = shield(
       ...serverConfigPermissions.Query,
       ...serverInvitePermissions.Query,
       ...userPermissions.Query,
-      question: or(isOwnQuestion, canManageQuestionnaireTickets),
+      ...vibeCheckPermissions.Query,
       likes: or(
         isAuthenticated,
         isPublicComment,
@@ -71,12 +71,12 @@ export const shieldPermissions = shield(
       ...serverConfigPermissions.Mutation,
       ...serverInvitePermissions.Mutation,
       ...userPermissions.Mutation,
+      ...vibeCheckPermissions.Mutation,
       createVote: or(isProposalGroupJoinedByMe, canManageQuestionnaireTickets),
       createServerRole: canManageServerRoles,
       updateServerRole: canManageServerRoles,
       deleteServerRole: canManageServerRoles,
       deleteServerRoleMember: canManageServerRoles,
-      answerQuestions: isAuthenticated,
       createComment: or(isVerified, isOwnQuestion, isOwnQuestionnaireTicket),
       updateComment: isOwnComment,
       deleteComment: or(
@@ -108,6 +108,7 @@ export const shieldPermissions = shield(
     ...rulePermissions.ObjectTypes,
     ...serverInvitePermissions.ObjectTypes,
     ...userPermissions.ObjectTypes,
+    ...vibeCheckPermissions.ObjectTypes,
     ServerPermissions: isAuthenticated,
     Comment: or(
       isOwnQuestionComment,
@@ -115,17 +116,6 @@ export const shieldPermissions = shield(
       isPublicComment,
       isVerified,
     ),
-    QuestionnaireTicket: {
-      id: or(isOwnQuestionnaireTicket, canManageQuestionnaireTickets),
-      prompt: or(isOwnQuestionnaireTicket, canManageQuestionnaireTickets),
-      questions: or(isOwnQuestionnaireTicket, canManageQuestionnaireTickets),
-      comments: or(isOwnQuestionnaireTicket, canManageQuestionnaireTickets),
-      status: or(isOwnQuestionnaireTicket, canManageQuestionnaireTickets),
-      user: or(isOwnQuestionnaireTicket, canManageQuestionnaireTickets),
-    },
-    Question: or(isOwnQuestion, canManageQuestionnaireTickets),
-    Answer: or(isOwnAnswer, canManageQuestionnaireTickets),
-    AnswerQuestionsPayload: isAuthenticated,
     CreateCommentPayload: isAuthenticated,
     CreateLikePayload: isAuthenticated,
     UpdateCommentPayload: isAuthenticated,
