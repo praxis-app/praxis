@@ -13,6 +13,7 @@ import { proposalPermissions } from './permissions/proposal.permissions';
 import { rulePermissions } from './permissions/rule.permissions';
 import { serverConfigPermissions } from './permissions/server-config.permissions';
 import { serverInvitePermissions } from './permissions/server-invite.permissions';
+import { serverRolePermissions } from './permissions/server-role.permissions';
 import { userPermissions } from './permissions/user.permissions';
 import { vibeCheckPermissions } from './permissions/vibe-check.permissions';
 import { votePermissions } from './permissions/vote.permissions';
@@ -29,7 +30,6 @@ import {
   isOwnQuestionnaireTicket,
   isOwnQuestionnaireTicketComment,
 } from './rules/question.rules';
-import { canManageServerRoles } from './rules/role.rules';
 import { isVerified } from './rules/user.rules';
 
 export const shieldConfig = shield(
@@ -60,13 +60,10 @@ export const shieldConfig = shield(
       ...rulePermissions.Mutation,
       ...serverConfigPermissions.Mutation,
       ...serverInvitePermissions.Mutation,
+      ...serverRolePermissions.Mutation,
       ...userPermissions.Mutation,
       ...vibeCheckPermissions.Mutation,
       ...votePermissions.Mutation,
-      createServerRole: canManageServerRoles,
-      updateServerRole: canManageServerRoles,
-      deleteServerRole: canManageServerRoles,
-      deleteServerRoleMember: canManageServerRoles,
       createComment: or(isVerified, isOwnQuestion, isOwnQuestionnaireTicket),
       updateComment: isOwnComment,
       deleteComment: or(
@@ -86,10 +83,10 @@ export const shieldConfig = shield(
     ...proposalPermissions.ObjectTypes,
     ...rulePermissions.ObjectTypes,
     ...serverInvitePermissions.ObjectTypes,
+    ...serverRolePermissions.ObjectTypes,
     ...userPermissions.ObjectTypes,
     ...vibeCheckPermissions.ObjectTypes,
     ...votePermissions.ObjectTypes,
-    ServerPermissions: isAuthenticated,
     Comment: or(
       isOwnQuestionComment,
       isOwnQuestionnaireTicketComment,
