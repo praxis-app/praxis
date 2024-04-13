@@ -1,26 +1,6 @@
 import { or, shield } from 'graphql-shield';
 import * as hash from 'object-hash';
 import { FORBIDDEN } from '../common/common.constants';
-import { isAuthenticated } from './rules/auth.rules';
-import {
-  canManageComments,
-  isOwnComment,
-  isPublicComment,
-} from './rules/comment.rules';
-import {
-  canManageGroupComments,
-  isProposalGroupJoinedByMe,
-} from './rules/group.rules';
-import { isPublicProposalVote } from './rules/proposal.rules';
-import {
-  canManageQuestionnaireTickets,
-  isOwnQuestion,
-  isOwnQuestionComment,
-  isOwnQuestionnaireTicket,
-  isOwnQuestionnaireTicketComment,
-} from './rules/question.rules';
-import { canManageServerRoles } from './rules/role.rules';
-import { isVerified } from './rules/user.rules';
 import { authPermissions } from './permissions/auth.permissions';
 import { canaryPermissions } from './permissions/canary.permissions';
 import { eventPermissions } from './permissions/event.permissions';
@@ -35,6 +15,22 @@ import { serverConfigPermissions } from './permissions/server-config.permissions
 import { serverInvitePermissions } from './permissions/server-invite.permissions';
 import { userPermissions } from './permissions/user.permissions';
 import { vibeCheckPermissions } from './permissions/vibe-check.permissions';
+import { votePermissions } from './permissions/vote.permissions';
+import { isAuthenticated } from './rules/auth.rules';
+import {
+  canManageComments,
+  isOwnComment,
+  isPublicComment,
+} from './rules/comment.rules';
+import { canManageGroupComments } from './rules/group.rules';
+import {
+  isOwnQuestion,
+  isOwnQuestionComment,
+  isOwnQuestionnaireTicket,
+  isOwnQuestionnaireTicketComment,
+} from './rules/question.rules';
+import { canManageServerRoles } from './rules/role.rules';
+import { isVerified } from './rules/user.rules';
 
 export const shieldConfig = shield(
   {
@@ -66,7 +62,7 @@ export const shieldConfig = shield(
       ...serverInvitePermissions.Mutation,
       ...userPermissions.Mutation,
       ...vibeCheckPermissions.Mutation,
-      createVote: or(isProposalGroupJoinedByMe, canManageQuestionnaireTickets),
+      ...votePermissions.Mutation,
       createServerRole: canManageServerRoles,
       updateServerRole: canManageServerRoles,
       deleteServerRole: canManageServerRoles,
@@ -92,6 +88,7 @@ export const shieldConfig = shield(
     ...serverInvitePermissions.ObjectTypes,
     ...userPermissions.ObjectTypes,
     ...vibeCheckPermissions.ObjectTypes,
+    ...votePermissions.ObjectTypes,
     ServerPermissions: isAuthenticated,
     Comment: or(
       isOwnQuestionComment,
@@ -101,7 +98,6 @@ export const shieldConfig = shield(
     ),
     CreateCommentPayload: isAuthenticated,
     UpdateCommentPayload: isAuthenticated,
-    Vote: or(isVerified, isPublicProposalVote),
   },
   {
     fallbackRule: isVerified,
