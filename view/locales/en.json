@@ -748,6 +748,12 @@
     }
   },
 
+  "privacyPolicy": {
+    "headers": {
+      "privacyPolicy": "Privacy Policy"
+    }
+  },
+
   "pagination": {
     "of": "of",
     "moreThan": "more than",
