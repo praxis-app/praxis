@@ -93,6 +93,14 @@ const PrivacyPolicy = () => {
         release your information when we believe it is necessary to enforce our
         site policies or to protect our rights, the rights of others, or safety.
       </Typography>
+
+      <DocsSubheading>Site usage by children</DocsSubheading>
+
+      <Typography marginBottom={3}>
+        Usage of our site, products, and services is strictly limited to
+        individuals who are 18 years of age or older. If you are under the age
+        of 18, please do not use this site.
+      </Typography>
     </>
   );
 };
