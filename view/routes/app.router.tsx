@@ -19,6 +19,7 @@ import questionnairesRouter from './questionnaires.router';
 import rolesRouter from './roles.router';
 import rulesRouter from './rules.router';
 import usersRouter from './users.router';
+import PrivacyPolicy from '../pages/Settings/PrivacyPolicy';
 
 const appRouter = createBrowserRouter([
   {
@@ -44,6 +45,10 @@ const appRouter = createBrowserRouter([
       {
         path: 'settings',
         element: <ServerSettings />,
+      },
+      {
+        path: 'privacy-policy',
+        element: <PrivacyPolicy />,
       },
       {
         path: 'canary',

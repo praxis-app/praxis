@@ -38,10 +38,6 @@ export class ServerConfig {
 
   @Column({ nullable: true })
   @Field({ nullable: true })
-  privacyPolicy?: string;
-
-  @Column({ nullable: true })
-  @Field({ nullable: true })
   securityTxt?: string;
 
   @Column({ default: false })
