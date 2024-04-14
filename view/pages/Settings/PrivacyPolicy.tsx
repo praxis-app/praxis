@@ -70,6 +70,16 @@ const PrivacyPolicy = () => {
           password resets, or to respond to inquiries.
         </DocsDefinitionListItem>
       </Box>
+
+      <DocsSubheading>How do we protect your information?</DocsSubheading>
+
+      <Typography marginBottom={3}>
+        We implement a variety of security measures to maintain the safety of
+        your personal information when you enter, submit, or access your
+        personal information. Among other things, your browser session, as well
+        as the traffic between your applications and the API, are secured with
+        SSL, and your password is hashed using a strong one-way algorithm.
+      </Typography>
     </>
   );
 };
