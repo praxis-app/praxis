@@ -80,6 +80,19 @@ const PrivacyPolicy = () => {
         as the traffic between your applications and the API, are secured with
         SSL, and your password is hashed using a strong one-way algorithm.
       </Typography>
+
+      <DocsSubheading>
+        Do we disclose any information to outside parties?
+      </DocsSubheading>
+
+      <Typography marginBottom={3}>
+        We do not sell, trade, or otherwise transfer to outside parties your
+        personally identifiable information. This does not include trusted third
+        parties who assist us in operating our site or servicing you, so long as
+        those parties agree to keep this information confidential. We may also
+        release your information when we believe it is necessary to enforce our
+        site policies or to protect our rights, the rights of others, or safety.
+      </Typography>
     </>
   );
 };
