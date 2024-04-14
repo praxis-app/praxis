@@ -32,7 +32,7 @@ import { ServerConfigsModule } from './server-configs/server-configs.module';
 import { ServerInvitesModule } from './server-invites/server-invites.module';
 import { ServerRolesModule } from './server-roles/server-roles.module';
 import { ShieldModule } from './shield/shield.module';
-import { shieldPermissions } from './shield/shield.permissions';
+import { shieldConfig } from './shield/shield.config';
 import { UsersModule } from './users/users.module';
 import { VibeCheckModule } from './vibe-check/vibe-check.module';
 import { VotesModule } from './votes/votes.module';
@@ -52,7 +52,7 @@ const ApolloModule = GraphQLModule.forRootAsync<ApolloDriverConfig>({
     resolvers: { Upload: GraphQLUpload },
     subscriptions: { 'graphql-ws': { path: '/subscriptions' } },
     transformSchema: (schema: GraphQLSchema) =>
-      applyMiddleware(schema, shieldPermissions),
+      applyMiddleware(schema, shieldConfig),
   }),
 });
 
