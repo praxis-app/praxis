@@ -16,6 +16,7 @@ type ServerConfig {
   reservationsLimit: Int!
   ratificationThreshold: Int!
   votingTimeLimit: Int!
+  privacyPolicy: String
   securityTxt: String
   showCanaryStatement: Boolean!
   serverQuestionsPrompt: String
