@@ -101,6 +101,15 @@ const PrivacyPolicy = () => {
         individuals who are 18 years of age or older. If you are under the age
         of 18, please do not use this site.
       </Typography>
+
+      <DocsSubheading>Work in progress</DocsSubheading>
+
+      <Typography marginBottom={3}>
+        This privacy policy is subject to change as the project is still in its
+        early stages. If you have any questions or feedback regarding the
+        policy, please contact us at {process.env.MAIL_ADDRESS}. Your feedback
+        is greatly appreciated.
+      </Typography>
     </>
   );
 };
