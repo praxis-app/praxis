@@ -1,13 +1,16 @@
 // TODO: Move text to en.json once privacy policy is finalized
 
+import { Box, Divider, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import LevelOneHeading from '../../components/Shared/LevelOneHeading';
-import { Box, Typography } from '@mui/material';
-import DocsSubheading from '../../components/Docs/DocsSubheading';
 import DocsDefinitionListItem from '../../components/Docs/DocsDefinitionListItem';
+import DocsLink from '../../components/Docs/DocsLink';
+import DocsSubheading from '../../components/Docs/DocsSubheading';
+import LevelOneHeading from '../../components/Shared/LevelOneHeading';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const PrivacyPolicy = () => {
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
 
   const instanceName = process.env.WEBSITE_URL?.replace(
     /^(https?:\/\/)?(www\.)?/,
@@ -15,7 +18,7 @@ const PrivacyPolicy = () => {
   );
 
   return (
-    <>
+    <Box marginBottom={15} marginTop={isDesktop ? 0 : 1}>
       <LevelOneHeading header>
         {t('privacyPolicy.headers.privacyPolicy')}
       </LevelOneHeading>
@@ -110,7 +113,19 @@ const PrivacyPolicy = () => {
         policy, please contact us at {process.env.MAIL_ADDRESS}. Your feedback
         is greatly appreciated.
       </Typography>
-    </>
+
+      <Divider sx={{ marginBottom: 2.5 }} />
+
+      <Typography>
+        This document is CC-BY-SA. Originally adapted from the{' '}
+        <DocsLink
+          href="https://github.com/mastodon/mastodon"
+          text="Mastodon privacy policy"
+          external
+        />
+        .
+      </Typography>
+    </Box>
   );
 };
 
