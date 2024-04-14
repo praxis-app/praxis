@@ -1,6 +1,8 @@
+// TODO: Move text to en.json once privacy policy is finalized
+
 import { useTranslation } from 'react-i18next';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import DocsSubheading from '../../components/Docs/DocsSubheading';
 import DocsDefinitionListItem from '../../components/Docs/DocsDefinitionListItem';
 
@@ -28,22 +30,46 @@ const PrivacyPolicy = () => {
 
       <DocsSubheading>What information do we collect?</DocsSubheading>
 
-      <DocsDefinitionListItem name="Basic account information">
-        If you register on this server, you may be asked to enter a username, an
-        e-mail address and a password. You may also enter additional profile
-        information such as a biography, a profile picture, and cover photo. The
-        username, biography, profile picture, and cover photo are shown publicly
-        if the user joins any public groups.
-      </DocsDefinitionListItem>
+      <Box component="ul" paddingLeft={3} marginBottom={3}>
+        <DocsDefinitionListItem name="Basic account information">
+          If you register on this server, you may be asked to enter a username,
+          an e-mail address and a password. You may also enter additional
+          profile information such as a biography, a profile picture, and cover
+          photo. The username, biography, profile picture, and cover photo are
+          shown publicly if the user joins any public groups.
+        </DocsDefinitionListItem>
 
-      <DocsDefinitionListItem name="Posts, following and other public information">
-        The list of people you follow is visible to other verified users, just
-        like your list of followers. Only posts in public groups are accessible
-        to the public. Any interactions with these public group posts, such as
-        comments, likes, or votes, are also visible to the public. However,
-        posts in private groups and user profile posts are only accessible to
-        other verified users.
-      </DocsDefinitionListItem>
+        <DocsDefinitionListItem name="Posts, following and other public information">
+          The list of people you follow is visible to other verified users, just
+          like your list of followers. Only posts in public groups are
+          accessible to the public. Any interactions with these public group
+          posts, such as comments, likes, or votes, are also visible to the
+          public. However, posts in private groups and user profile posts are
+          only accessible to other verified users.
+        </DocsDefinitionListItem>
+      </Box>
+
+      <DocsSubheading>What do we use your information for?</DocsSubheading>
+
+      <Typography marginBottom={1.5}>
+        Any of the information we collect from you may be used in the following
+        ways:
+      </Typography>
+
+      <Box component="ul" paddingLeft={3} marginBottom={1.5}>
+        <DocsDefinitionListItem>
+          To provide the core functionality of Praxis. You can only interact
+          with other people's content and post your own content when you are
+          logged in. For example, you may follow other people to view their
+          combined posts in your own personalized home timeline.
+        </DocsDefinitionListItem>
+
+        <DocsDefinitionListItem>
+          The email address you provide may be used to send you information,
+          notifications about other people interacting with your content,
+          password resets, or to respond to inquiries.
+        </DocsDefinitionListItem>
+      </Box>
     </>
   );
 };
