@@ -59,7 +59,7 @@ const PrivacyPolicy = () => {
         ways:
       </Typography>
 
-      <Box component="ul" paddingLeft={3} marginBottom={1.5}>
+      <Box component="ul" paddingLeft={3} marginBottom={3}>
         <DocsDefinitionListItem>
           To provide the core functionality of Praxis. You can only interact
           with other people's content and post your own content when you are
@@ -114,7 +114,7 @@ const PrivacyPolicy = () => {
         is greatly appreciated.
       </Typography>
 
-      <Divider sx={{ marginBottom: 2.5 }} />
+      <Divider sx={{ marginBottom: 3 }} />
 
       <Typography>
         This document is CC-BY-SA. Originally adapted from the{' '}
