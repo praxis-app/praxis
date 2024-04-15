@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
 import { sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
@@ -24,10 +24,6 @@ export class PostsService {
 
   async getPost(id: number, relations?: string[]) {
     return this.postRepository.findOneOrFail({ where: { id }, relations });
-  }
-
-  async getPosts(where?: FindOptionsWhere<Post>) {
-    return this.postRepository.find({ where, order: { createdAt: 'DESC' } });
   }
 
   async getPostComments(postId: number) {
