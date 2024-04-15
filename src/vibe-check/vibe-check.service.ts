@@ -208,6 +208,7 @@ export class VibeCheckService {
   async getQuestionnaireTicketComments(questionnaireTicketId: number) {
     return this.commentRepository.find({
       where: { questionnaireTicketId },
+      order: { createdAt: 'ASC' },
     });
   }
 
