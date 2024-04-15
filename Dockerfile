@@ -19,6 +19,8 @@ RUN npm ci
 
 ARG NODE_ENV
 ARG SERVER_PORT
+ARG WEBSITE_URL
+ARG MAIL_ADDRESS
 
 RUN npm run build
 RUN npm run build:client --mode ${NODE_ENV}
