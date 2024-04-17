@@ -751,6 +751,9 @@
   "privacyPolicy": {
     "headers": {
       "privacyPolicy": "Privacy Policy"
+    },
+    "labels": {
+      "privacyPolicy": "Privacy policy"
     }
   },
 
