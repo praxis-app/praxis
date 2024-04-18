@@ -1,3 +1,5 @@
+// TODO: Extract email templates as util functions
+
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';

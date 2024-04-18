@@ -9,8 +9,6 @@ services:
       args:
         - NODE_ENV=${NODE_ENV}
         - SERVER_PORT=${SERVER_PORT}
-        - WEBSITE_URL=${WEBSITE_URL}
-        - MAIL_ADDRESS=${MAIL_ADDRESS}
     volumes:
       - content:/app/content
       - logs:/app/logs
