@@ -1230,6 +1230,7 @@ export type Rule = {
 
 export type ServerConfig = {
   __typename?: 'ServerConfig';
+  contactEmail: Scalars['String']['output'];
   decisionMakingModel: Scalars['String']['output'];
   id: Scalars['Int']['output'];
   ratificationThreshold: Scalars['Int']['output'];
@@ -1239,6 +1240,7 @@ export type ServerConfig = {
   showCanaryStatement: Scalars['Boolean']['output'];
   standAsidesLimit: Scalars['Int']['output'];
   votingTimeLimit: Scalars['Int']['output'];
+  websiteURL: Scalars['String']['output'];
 };
 
 export type ServerInvite = {

@@ -65,6 +65,7 @@ export const shieldConfig = shield(
     ...postPermissions.ObjectTypes,
     ...proposalPermissions.ObjectTypes,
     ...rulePermissions.ObjectTypes,
+    ...serverConfigPermissions.ObjectTypes,
     ...serverInvitePermissions.ObjectTypes,
     ...serverRolePermissions.ObjectTypes,
     ...userPermissions.ObjectTypes,

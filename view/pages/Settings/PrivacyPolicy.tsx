@@ -6,16 +6,30 @@ import DocsDefinitionListItem from '../../components/Docs/DocsDefinitionListItem
 import DocsLink from '../../components/Docs/DocsLink';
 import DocsSubheading from '../../components/Docs/DocsSubheading';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
+import ProgressBar from '../../components/Shared/ProgressBar';
+import { usePrivacyPolicyQuery } from '../../graphql/settings/queries/gen/PrivacyPolicy.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const PrivacyPolicy = () => {
+  const { data, loading, error } = usePrivacyPolicyQuery();
+
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
-  const instanceName = process.env.WEBSITE_URL?.replace(
+  const serverConfig = data?.serverConfig;
+  const contactEmail = serverConfig?.contactEmail;
+  const instanceName = serverConfig?.websiteURL?.replace(
     /^(https?:\/\/)?(www\.)?/,
     '',
   );
+
+  if (loading) {
+    return <ProgressBar />;
+  }
+
+  if (error) {
+    return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+  }
 
   return (
     <Box marginBottom={15} marginTop={isDesktop ? 0 : 1}>
@@ -110,8 +124,8 @@ const PrivacyPolicy = () => {
       <Typography marginBottom={3}>
         This privacy policy is subject to change as the project is still in its
         early stages. If you have any questions or feedback regarding the
-        policy, please contact us at {process.env.MAIL_ADDRESS}. Your feedback
-        is greatly appreciated.
+        policy, please contact us at {contactEmail}. Your feedback is greatly
+        appreciated.
       </Typography>
 
       <Divider sx={{ marginBottom: 3 }} />
