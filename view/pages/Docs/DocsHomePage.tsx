@@ -166,6 +166,26 @@ const DocsHomePage = () => {
 
       <DocsPermissionList permissionType="group" />
 
+      <DocsSubheading>User Privacy</DocsSubheading>
+
+      <Typography marginBottom={1.5}>
+        All user data is kept private and only shared with other verified users
+        on the server by default. However, groups are free to set their own
+        privacy policies and can choose to make group data public if they wish.
+        This includes things like posts, comments, likes, and votes, which can
+        also include the usernames and avatars of group members. Please keep
+        this in mind when joining any public groups.
+      </Typography>
+
+      <Typography marginBottom={3}>
+        Read the full
+        <DocsLink
+          href={NavigationPaths.PrivacyPolicy}
+          text="Privacy Policy here"
+        />
+        .
+      </Typography>
+
       <DocsSubheading>Canary Statement</DocsSubheading>
 
       <Typography marginBottom={1.5}>
