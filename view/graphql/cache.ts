@@ -67,7 +67,7 @@ const cache = new InMemoryCache({
             return incoming;
           },
         },
-        serverQuestionnaireTickets: {
+        questionnaireTickets: {
           merge(_, incoming) {
             return incoming;
           },
