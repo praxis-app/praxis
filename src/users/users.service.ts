@@ -483,7 +483,13 @@ export class UsersService {
     const { name, displayName, bio, profilePicture, coverPhoto } = input;
     const isValidName = VALID_NAME_REGEX.test(name);
     if (!isValidName) {
-      throw new Error('User names cannot contain special characters');
+      throw new Error('Usernames cannot contain special characters');
+    }
+    if (displayName && displayName.length < 4) {
+      throw new Error('Display name must be at least 4 characters');
+    }
+    if (displayName && displayName.length > 30) {
+      throw new Error('Display name cannot exceed 30 characters');
     }
 
     const usersWithNameCount = await this.getUsersCount({ name });
