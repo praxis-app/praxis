@@ -19,6 +19,8 @@ type ServerConfig {
   securityTxt: String
   showCanaryStatement: Boolean!
   serverQuestionsPrompt: String
+  websiteURL: String!
+  contactEmail: String!
 }
 
 type EventAttendee {

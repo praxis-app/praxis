@@ -38,9 +38,10 @@ const LoginForm = () => {
   };
 
   const forgotPasswordBtnStyles: SxProps = {
-    textTransform: 'none',
     borderRadius: 9999,
+    color: 'text.secondary',
     paddingX: '4px',
+    textTransform: 'none',
   };
 
   const handleSubmit = async (input: LoginInput) => {

@@ -28,6 +28,7 @@ export enum NavigationPaths {
   Invites = '/invites',
   LogIn = '/auth/login',
   Posts = '/posts',
+  PrivacyPolicy = '/privacy-policy',
   Proposals = '/proposals',
   ResetPassword = '/auth/reset-password',
   Roles = '/roles',

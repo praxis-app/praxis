@@ -36,3 +36,12 @@
 * {
   scrollbar-color: #6b6b6b #2c2c2c;
 }
+
+/* Set background and text color for autocomplete fields in Chrome */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 20px #242526 inset;
+  -webkit-text-fill-color: #e4e6ea;
+}

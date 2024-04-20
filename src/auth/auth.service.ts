@@ -1,3 +1,5 @@
+// TODO: Extract email templates as util functions
+
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -121,7 +123,7 @@ export class AuthService {
       resetPasswordToken,
     });
 
-    const mailSender = this.configService.get('MAIL_SENDER');
+    const mailSender = this.configService.get('MAIL_ADDRESS');
     const websiteUrl = this.configService.get('WEBSITE_URL');
     await this.mailerService.sendMail({
       to: user.email,
@@ -165,7 +167,7 @@ export class AuthService {
       resetPasswordToken,
     });
 
-    const mailSender = this.configService.get('MAIL_SENDER');
+    const mailSender = this.configService.get('MAIL_ADDRESS');
     const websiteUrl = this.configService.get('WEBSITE_URL');
     await this.mailerService.sendMail({
       to: user.email,

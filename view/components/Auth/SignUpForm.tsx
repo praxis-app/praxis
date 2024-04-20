@@ -1,8 +1,8 @@
 import { useReactiveVar } from '@apollo/client';
-import { Card, CardContent, FormGroup } from '@mui/material';
+import { Button, Card, CardContent, FormGroup, SxProps } from '@mui/material';
 import { Form, Formik, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import PrimaryActionButton from '../../components/Shared/PrimaryActionButton';
@@ -12,7 +12,10 @@ import {
   MIN_PASSWORD_LENGTH,
   VALID_EMAIL_REGEX,
 } from '../../constants/auth.constants';
-import { LocalStorageKey } from '../../constants/shared.constants';
+import {
+  LocalStorageKey,
+  NavigationPaths,
+} from '../../constants/shared.constants';
 import { UserFieldNames } from '../../constants/user.constants';
 import { useSignUpMutation } from '../../graphql/auth/mutations/gen/SignUp.gen';
 import {
@@ -35,6 +38,7 @@ const SignUpForm = () => {
 
   const { token } = useParams();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const initialValues: SignUpInput = {
     email: '',
@@ -42,6 +46,13 @@ const SignUpForm = () => {
     password: '',
     confirmPassword: '',
     inviteToken: token,
+  };
+
+  const privacyPolicyBtnStyles: SxProps = {
+    borderRadius: 9999,
+    color: 'text.secondary',
+    paddingX: '4px',
+    textTransform: 'none',
   };
 
   const handleSubmit = async (formValues: SignUpInput) => {
@@ -129,7 +140,7 @@ const SignUpForm = () => {
         >
           {({ isSubmitting }) => (
             <Form hidden={isNavDrawerOpen}>
-              <FormGroup>
+              <FormGroup sx={{ marginBottom: 1.25 }}>
                 <TextField
                   label={t('users.form.email')}
                   name={UserFieldNames.Email}
@@ -150,11 +161,18 @@ const SignUpForm = () => {
                 />
               </FormGroup>
 
-              <Flex justifyContent="right">
+              <Flex justifyContent="space-between">
+                <Button
+                  onClick={() => navigate(NavigationPaths.PrivacyPolicy)}
+                  sx={privacyPolicyBtnStyles}
+                >
+                  {t('privacyPolicy.labels.readPrivacyPolicy')}
+                </Button>
+
                 <PrimaryActionButton
                   disabled={isSubmitting}
                   isLoading={isSubmitting}
-                  sx={{ marginTop: 1.85 }}
+                  sx={{ minWidth: '100px' }}
                   type="submit"
                 >
                   {t('users.actions.signUp')}

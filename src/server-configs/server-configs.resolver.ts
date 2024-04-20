@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { ServerConfig } from './models/server-config.model';
 import { UpdateServerConfigInput } from './models/update-server-config.input';
 import { UpdateServerConfigPayload } from './models/update-server-config.payload';
@@ -11,6 +11,16 @@ export class ServerConfigsResolver {
   @Query(() => ServerConfig)
   async serverConfig() {
     return this.serverConfigsService.getServerConfig();
+  }
+
+  @ResolveField(() => String)
+  async websiteURL() {
+    return this.serverConfigsService.getWebsiteURL();
+  }
+
+  @ResolveField(() => String)
+  async contactEmail() {
+    return this.serverConfigsService.getContactEmail();
   }
 
   @Mutation(() => UpdateServerConfigPayload)

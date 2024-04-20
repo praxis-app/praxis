@@ -1,4 +1,5 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CanariesService } from '../canaries/canaries.service';
@@ -15,6 +16,7 @@ export class ServerConfigsService {
 
     @Inject(forwardRef(() => CanariesService))
     private canariesService: CanariesService,
+    private configService: ConfigService,
   ) {}
 
   async getServerConfig() {
@@ -23,6 +25,14 @@ export class ServerConfigsService {
       return this.initializeServerConfig();
     }
     return serverConfigs[0];
+  }
+
+  async getWebsiteURL() {
+    return this.configService.get('WEBSITE_URL');
+  }
+
+  async getContactEmail() {
+    return this.configService.get('MAIL_ADDRESS');
   }
 
   // TODO: Rename as `createServerConfig`
