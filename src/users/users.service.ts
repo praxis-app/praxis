@@ -485,6 +485,12 @@ export class UsersService {
     if (!isValidName) {
       throw new Error('Usernames cannot contain special characters');
     }
+    if (name && name.length < 2) {
+      throw new Error('Username must be at least 2 characters');
+    }
+    if (name && name.length > 15) {
+      throw new Error('Username cannot exceed 15 characters');
+    }
     if (displayName && displayName.length < 4) {
       throw new Error('Display name must be at least 4 characters');
     }
