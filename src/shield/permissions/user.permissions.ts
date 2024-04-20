@@ -33,6 +33,12 @@ export const userPermissions = {
         isUserInPublicGroups,
         isOwnQuestionnaireTicketReviewer,
       ),
+      displayName: or(
+        isMe,
+        isVerified,
+        isUserInPublicGroups,
+        isOwnQuestionnaireTicketReviewer,
+      ),
       profilePicture: or(
         isMe,
         isVerified,
