@@ -51,9 +51,9 @@ const PrivacyPolicy = () => {
         <DocsDefinitionListItem name="Basic account information">
           If you register on this server, you may be asked to enter a username,
           an e-mail address, and a password. You may also enter additional
-          profile information such as a biography, a profile picture, and cover
-          photo. The username, profile picture, and cover photo are shown
-          publicly if the user joins any public groups.
+          profile information such as a display name, biography, a profile
+          picture, and cover photo. The username, profile picture, and cover
+          photo are shown publicly if the user joins any public groups.
         </DocsDefinitionListItem>
 
         <DocsDefinitionListItem name="Posts, following and other public information">
