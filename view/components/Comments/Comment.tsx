@@ -198,7 +198,7 @@ const Comment = ({
             ref={ref}
           >
             <Link href={userPath} sx={{ fontFamily: 'Inter Medium' }}>
-              {user.name}
+              {user.displayName || user.name}
             </Link>
 
             {body && (

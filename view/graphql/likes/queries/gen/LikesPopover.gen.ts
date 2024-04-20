@@ -16,7 +16,12 @@ export type LikesPopoverQuery = {
   likes: Array<{
     __typename?: 'Like';
     id: number;
-    user: { __typename?: 'User'; id: number; name: string };
+    user: {
+      __typename?: 'User';
+      id: number;
+      name: string;
+      displayName?: string | null;
+    };
   }>;
 };
 
@@ -27,6 +32,7 @@ export const LikesPopoverDocument = gql`
       user {
         id
         name
+        displayName
       }
     }
   }

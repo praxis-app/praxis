@@ -26,11 +26,13 @@ export type FollowUserMutation = {
       followerCount?: number;
       followingCount?: number;
       name: string;
+      displayName?: string | null;
       isFollowedByMe: boolean;
       followers: Array<{
         __typename?: 'User';
         id: number;
         name: string;
+        displayName?: string | null;
         isFollowedByMe: boolean;
         profilePicture: { __typename?: 'Image'; id: number };
       }>;
@@ -45,11 +47,13 @@ export type FollowUserMutation = {
       followerCount?: number;
       followingCount?: number;
       name: string;
+      displayName?: string | null;
       isFollowedByMe: boolean;
       following: Array<{
         __typename?: 'User';
         id: number;
         name: string;
+        displayName?: string | null;
         isFollowedByMe: boolean;
         profilePicture: { __typename?: 'Image'; id: number };
       }>;

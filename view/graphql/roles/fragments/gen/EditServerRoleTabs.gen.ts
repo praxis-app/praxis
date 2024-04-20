@@ -36,12 +36,14 @@ export type EditServerRoleTabsFragment = {
     __typename?: 'User';
     id: number;
     name: string;
+    displayName?: string | null;
     profilePicture: { __typename?: 'Image'; id: number };
   }>;
   members: Array<{
     __typename?: 'User';
     id: number;
     name: string;
+    displayName?: string | null;
     profilePicture: { __typename?: 'Image'; id: number };
   }>;
 };

@@ -66,7 +66,7 @@ const LikesPopover = ({
       {error && <Typography>{t('errors.somethingWentWrong')}</Typography>}
 
       {data?.likes.map(({ id, user }) => (
-        <Typography key={id}>{user.name}</Typography>
+        <Typography key={id}>{user.displayName || user.name}</Typography>
       ))}
     </Popover>
   );

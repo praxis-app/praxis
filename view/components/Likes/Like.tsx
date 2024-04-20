@@ -54,7 +54,9 @@ const Like = ({ like: { user }, currentUserId }: Props) => {
               <ThumbUp sx={iconStyles} />
             </Box>
           </Box>
-          <Typography sx={{ marginTop: 1 }}>{user.name}</Typography>
+          <Typography sx={{ marginTop: 1 }}>
+            {user.displayName || user.name}
+          </Typography>
         </Flex>
       </Link>
 

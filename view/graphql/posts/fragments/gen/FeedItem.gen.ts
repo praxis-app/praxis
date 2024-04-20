@@ -20,6 +20,7 @@ export type FeedItem_Post_Fragment = {
     __typename?: 'User';
     id: number;
     name: string;
+    displayName?: string | null;
     profilePicture: { __typename?: 'Image'; id: number };
   };
   group?: {
@@ -121,6 +122,7 @@ export type FeedItem_Proposal_Fragment = {
         __typename?: 'User';
         id: number;
         name: string;
+        displayName?: string | null;
         profilePicture: { __typename?: 'Image'; id: number };
       };
       proposalAction: {
@@ -162,6 +164,7 @@ export type FeedItem_Proposal_Fragment = {
           __typename?: 'User';
           id: number;
           name: string;
+          displayName?: string | null;
           profilePicture: { __typename?: 'Image'; id: number };
         };
       }> | null;
@@ -192,6 +195,7 @@ export type FeedItem_Proposal_Fragment = {
     __typename?: 'User';
     id: number;
     name: string;
+    displayName?: string | null;
     profilePicture: { __typename?: 'Image'; id: number };
   };
   group?: {
@@ -214,6 +218,7 @@ export type FeedItem_Proposal_Fragment = {
       __typename?: 'User';
       id: number;
       name: string;
+      displayName?: string | null;
       profilePicture: { __typename?: 'Image'; id: number };
     };
   }>;

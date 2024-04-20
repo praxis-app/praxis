@@ -86,6 +86,7 @@ export type ProposalQuery = {
           __typename?: 'User';
           id: number;
           name: string;
+          displayName?: string | null;
           profilePicture: { __typename?: 'Image'; id: number };
         };
         proposalAction: {
@@ -127,6 +128,7 @@ export type ProposalQuery = {
             __typename?: 'User';
             id: number;
             name: string;
+            displayName?: string | null;
             profilePicture: { __typename?: 'Image'; id: number };
           };
         }> | null;
@@ -157,6 +159,7 @@ export type ProposalQuery = {
       __typename?: 'User';
       id: number;
       name: string;
+      displayName?: string | null;
       profilePicture: { __typename?: 'Image'; id: number };
     };
     group?: {
@@ -179,6 +182,7 @@ export type ProposalQuery = {
         __typename?: 'User';
         id: number;
         name: string;
+        displayName?: string | null;
         profilePicture: { __typename?: 'Image'; id: number };
       };
     }>;

@@ -30,6 +30,7 @@ export type CreatePostMutation = {
         __typename?: 'User';
         id: number;
         name: string;
+        displayName?: string | null;
         profilePicture: { __typename?: 'Image'; id: number };
       };
       group?: {

@@ -20,6 +20,7 @@ export type CommentFragment = {
     __typename?: 'User';
     id: number;
     name: string;
+    displayName?: string | null;
     profilePicture: { __typename?: 'Image'; id: number };
   };
 };

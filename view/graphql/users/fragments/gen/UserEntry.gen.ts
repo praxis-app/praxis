@@ -12,6 +12,7 @@ export type UserEntryFragment = {
   id: number;
   isVerified: boolean;
   name: string;
+  displayName?: string | null;
   isFollowedByMe: boolean;
   profilePicture: { __typename?: 'Image'; id: number };
 };

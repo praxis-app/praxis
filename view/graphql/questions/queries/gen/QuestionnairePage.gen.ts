@@ -48,6 +48,7 @@ export type QuestionnairePageQuery = {
       __typename?: 'User';
       id: number;
       name: string;
+      displayName?: string | null;
       profilePicture: { __typename?: 'Image'; id: number };
     };
     votes: Array<{
@@ -58,6 +59,7 @@ export type QuestionnairePageQuery = {
         __typename?: 'User';
         id: number;
         name: string;
+        displayName?: string | null;
         profilePicture: { __typename?: 'Image'; id: number };
       };
     }>;

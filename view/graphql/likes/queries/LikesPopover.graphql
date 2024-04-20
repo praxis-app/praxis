@@ -4,6 +4,7 @@ query LikesPopover($likesData: LikesInput!) {
     user {
       id
       name
+      displayName
     }
   }
 }
