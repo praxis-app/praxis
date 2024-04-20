@@ -36,7 +36,7 @@ const RoleMemberOption = ({ handleChange, user, checked }: Props) => (
     <Flex>
       <UserAvatar user={user} sx={{ marginRight: 1.5 }} />
       <Typography color="primary" sx={{ marginTop: 1, userSelect: 'none' }}>
-        {user.name}
+        {user.displayName || user.name}
       </Typography>
     </Flex>
 

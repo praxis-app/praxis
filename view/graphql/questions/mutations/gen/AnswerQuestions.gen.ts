@@ -34,7 +34,12 @@ export type AnswerQuestionsMutation = {
           id: number;
           text: string;
           updatedAt: any;
-          user: { __typename?: 'User'; id: number; name: string };
+          user: {
+            __typename?: 'User';
+            id: number;
+            name: string;
+            displayName?: string | null;
+          };
         } | null;
       }>;
     };

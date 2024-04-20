@@ -66,7 +66,7 @@ const Vote = ({ vote: { user, voteType } }: Props) => {
           <Box sx={voteBadgeStyles}>{renderVoteIcon()}</Box>
         </Box>
 
-        <Typography marginTop={1}>{user.name}</Typography>
+        <Typography marginTop={1}>{user.displayName || user.name}</Typography>
       </Flex>
     </Link>
   );

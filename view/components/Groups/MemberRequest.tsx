@@ -113,7 +113,9 @@ const MemberRequest = ({
       <Link href={getUserProfilePath(user.name)}>
         <Flex>
           <UserAvatar user={user} sx={{ marginRight: 1.5 }} />
-          <Typography sx={{ marginTop: 1 }}>{user.name}</Typography>
+          <Typography sx={{ marginTop: 1 }}>
+            {user.displayName || user.name}
+          </Typography>
         </Flex>
       </Link>
 

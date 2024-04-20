@@ -124,7 +124,7 @@ const ServerInviteCard = ({
             size={24}
             sx={{ marginRight: 1.5, marginBottom: 0.25 }}
           />
-          <Box>{user.name}</Box>
+          <Box>{user.displayName || user.name}</Box>
         </Link>
 
         <Typography>{usesText}</Typography>

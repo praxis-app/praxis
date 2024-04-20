@@ -65,7 +65,7 @@ const ProposalActionRoleMember = ({
           }}
         />
         <Typography color="primary" fontSize="inherit">
-          {user.name}
+          {user.displayName || user.name}
         </Typography>
       </Flex>
     </Link>
