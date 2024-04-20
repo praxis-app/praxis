@@ -146,7 +146,7 @@ const SignUpForm = () => {
                   name={UserFieldNames.Email}
                 />
                 <TextField
-                  label={t('users.form.name')}
+                  label={t('users.form.username')}
                   name={UserFieldNames.Name}
                 />
                 <TextField

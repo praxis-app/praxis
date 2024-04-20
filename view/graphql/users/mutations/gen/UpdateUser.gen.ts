@@ -18,8 +18,9 @@ export type UpdateUserMutation = {
     user: {
       __typename?: 'User';
       id: number;
-      name: string;
       bio?: string | null;
+      name: string;
+      displayName?: string | null;
       profilePicture: { __typename?: 'Image'; id: number };
       coverPhoto?: { __typename?: 'Image'; id: number } | null;
     };
@@ -31,8 +32,9 @@ export const UpdateUserDocument = gql`
     updateUser(userData: $userData) {
       user {
         id
-        name
         bio
+        name
+        displayName
         profilePicture {
           id
         }

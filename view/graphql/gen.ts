@@ -1532,6 +1532,7 @@ export type UpdateServerRolePayload = {
 export type UpdateUserInput = {
   bio: Scalars['String']['input'];
   coverPhoto?: InputMaybe<Scalars['Upload']['input']>;
+  displayName: Scalars['String']['input'];
   name: Scalars['String']['input'];
   profilePicture?: InputMaybe<Scalars['Upload']['input']>;
 };
@@ -1557,6 +1558,7 @@ export type User = {
   comments: Array<Comment>;
   coverPhoto?: Maybe<Image>;
   createdAt: Scalars['DateTime']['output'];
+  displayName?: Maybe<Scalars['String']['output']>;
   email: Scalars['String']['output'];
   followerCount: Scalars['Int']['output'];
   followers: Array<User>;

@@ -1,5 +1,5 @@
-query EditUser($name: String, $isVerified: Boolean!) {
+query EditUser($name: String) {
   user(name: $name) {
-    ...UserProfileCard
+    ...EditProfileForm
   }
 }

@@ -10,6 +10,7 @@ export type EditProfileFormFragment = {
   id: number;
   bio?: string | null;
   name: string;
+  displayName?: string | null;
   profilePicture: { __typename?: 'Image'; id: number };
   coverPhoto?: { __typename?: 'Image'; id: number } | null;
 };
@@ -19,6 +20,7 @@ export const EditProfileFormFragmentDoc = gql`
     id
     bio
     name
+    displayName
     profilePicture {
       id
     }
