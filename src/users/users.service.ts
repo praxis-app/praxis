@@ -480,7 +480,7 @@ export class UsersService {
       `Updating user: ${JSON.stringify({ id: currentUser.id, ...input })}`,
     );
 
-    const { name, bio, profilePicture, coverPhoto } = input;
+    const { name, displayName, bio, profilePicture, coverPhoto } = input;
     const isValidName = VALID_NAME_REGEX.test(name);
     if (!isValidName) {
       throw new Error('User names cannot contain special characters');
@@ -498,11 +498,10 @@ export class UsersService {
       );
     }
 
-    const sanitizedName = sanitizeText(name);
-    const sanitizedBio = sanitizeText(bio);
     await this.userRepository.update(currentUser.id, {
-      name: sanitizedName,
-      bio: sanitizedBio,
+      displayName: sanitizeText(displayName),
+      name: sanitizeText(name),
+      bio: sanitizeText(bio),
     });
 
     if (profilePicture) {

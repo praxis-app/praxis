@@ -962,6 +962,7 @@ input DeleteGroupRoleMemberInput {
 
 input UpdateUserInput {
   name: String!
+  displayName: String!
   bio: String!
   profilePicture: Upload
   coverPhoto: Upload

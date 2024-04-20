@@ -7,6 +7,9 @@ export class UpdateUserInput {
   name: string;
 
   @Field()
+  displayName: string;
+
+  @Field()
   bio: string;
 
   @Field(() => GraphQLUpload, { nullable: true })
