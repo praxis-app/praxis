@@ -74,6 +74,7 @@ import { AddInitialMemberCountColumn1709498470199 } from './migrations/170949847
 import { AddUserLockedColumn1711324242919 } from './migrations/1711324242919-AddUserLockedColumn';
 import { AddResetPasswordTokenColumn1711855441610 } from './migrations/1711855441610-AddResetPasswordTokenColumn';
 import { AddResetPasswordSentAtColumn1712112839181 } from './migrations/1712112839181-AddResetPasswordSentAtColumn';
+import { AddUserDisplayNameColumn1713640882734 } from './migrations/1713640882734-AddUserDisplayNameColumn';
 
 dotenv.config();
 
@@ -148,6 +149,7 @@ export default new DataSource({
     AddServerConfigTable1699135846939,
     AddServerInviteTable1677339785709,
     AddServerRolePermissionColumns1703978999070,
+    AddUserDisplayNameColumn1713640882734,
     AddUserLockedColumn1711324242919,
     AddVibeCheckTables1709004638886,
     CleanUpGroupMemberRequestTable1690168731029,
