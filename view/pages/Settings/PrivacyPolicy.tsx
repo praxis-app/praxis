@@ -18,7 +18,7 @@ const PrivacyPolicy = () => {
 
   const serverConfig = data?.serverConfig;
   const contactEmail = serverConfig?.contactEmail;
-  const instanceName = serverConfig?.websiteURL?.replace(
+  const serverName = serverConfig?.websiteURL?.replace(
     /^(https?:\/\/)?(www\.)?/,
     '',
   );
@@ -38,9 +38,9 @@ const PrivacyPolicy = () => {
       </LevelOneHeading>
 
       <Typography marginBottom={3}>
-        This privacy policy describes how {instanceName} collects, protects and
+        This privacy policy describes how {serverName} collects, protects and
         uses the personally identifiable information you may provide through the
-        {' ' + instanceName} website or its API. The policy also describes the
+        {' ' + serverName} website or its API. The policy also describes the
         choices available to you regarding our use of your personal information
         and how you can access and update this information.
       </Typography>
@@ -50,10 +50,10 @@ const PrivacyPolicy = () => {
       <Box component="ul" paddingLeft={3} marginBottom={3}>
         <DocsDefinitionListItem name="Basic account information">
           If you register on this server, you may be asked to enter a username,
-          an e-mail address and a password. You may also enter additional
+          an e-mail address, and a password. You may also enter additional
           profile information such as a biography, a profile picture, and cover
-          photo. The username, biography, profile picture, and cover photo are
-          shown publicly if the user joins any public groups.
+          photo. The username, profile picture, and cover photo are shown
+          publicly if the user joins any public groups.
         </DocsDefinitionListItem>
 
         <DocsDefinitionListItem name="Posts, following and other public information">
@@ -116,7 +116,9 @@ const PrivacyPolicy = () => {
       <Typography marginBottom={3}>
         Usage of our site, products, and services is strictly limited to
         individuals who are 18 years of age or older. If you are under the age
-        of 18, please do not use this site.
+        of 18, please do not use this site. If you are a parent and you are
+        aware that your child has provided us with personal information, please
+        contact us so that we can take appropriate action.
       </Typography>
 
       <DocsSubheading>Work in progress</DocsSubheading>
