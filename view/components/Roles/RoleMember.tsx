@@ -137,7 +137,7 @@ const RoleMember = ({ roleMember, roleId }: Props) => {
         <Flex>
           <UserAvatar user={roleMember} sx={{ marginRight: 1.5 }} />
           <Typography color="primary" sx={{ marginTop: 1 }}>
-            {roleMember.name}
+            {roleMember.displayName || roleMember.name}
           </Typography>
         </Flex>
       </Link>

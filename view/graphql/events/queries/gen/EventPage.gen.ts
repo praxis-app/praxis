@@ -38,7 +38,12 @@ export type EventPageQuery = {
         manageEvents: boolean;
       };
     } | null;
-    host?: { __typename?: 'User'; id: number; name: string } | null;
+    host?: {
+      __typename?: 'User';
+      id: number;
+      name: string;
+      displayName?: string | null;
+    } | null;
     coverPhoto: { __typename?: 'Image'; id: number };
   };
   me?: {

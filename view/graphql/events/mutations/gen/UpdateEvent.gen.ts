@@ -30,7 +30,12 @@ export type UpdateEventMutation = {
       startsAt: any;
       endsAt?: any | null;
       attendingStatus?: string | null;
-      host?: { __typename?: 'User'; id: number; name: string } | null;
+      host?: {
+        __typename?: 'User';
+        id: number;
+        name: string;
+        displayName?: string | null;
+      } | null;
       coverPhoto: { __typename?: 'Image'; id: number };
       group?: {
         __typename?: 'Group';
