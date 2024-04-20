@@ -74,6 +74,7 @@ const Notification = ({
   const theme = useTheme();
 
   const isRead = status === NotificationStatus.Read;
+  const otherUserName = otherUser?.displayName || otherUser?.name;
 
   const isProposalVote = [
     NotificationType.ProposalVoteAgreement,
@@ -113,17 +114,17 @@ const Notification = ({
 
     if (notificationType === NotificationType.Follow) {
       return _t('notifications.messages.follow', {
-        name: otherUser?.name,
+        name: otherUserName,
       });
     }
     if (notificationType === NotificationType.PostLike) {
       return _t('notifications.messages.postLike', {
-        name: otherUser?.name,
+        name: otherUserName,
       });
     }
     if (isProposalVote) {
       return _t('notifications.messages.proposalVote', {
-        name: otherUser?.name,
+        name: otherUserName,
       });
     }
     if (notificationType === NotificationType.ProposalRatification) {
@@ -133,70 +134,70 @@ const Notification = ({
     }
     if (notificationType === NotificationType.ProposalComment) {
       return _t('notifications.messages.proposalComment', {
-        name: otherUser?.name,
+        name: otherUserName,
       });
     }
     if (notificationType === NotificationType.PostComment) {
       return _t('notifications.messages.postComment', {
-        name: otherUser?.name,
+        name: otherUserName,
       });
     }
     if (isQuestionnaireTicketVote) {
       return _t('notifications.messages.questionnaireTicketVote', {
-        name: otherUser?.name,
+        name: otherUserName,
         ticketNumber: questionnaireTicket?.id,
       });
     }
     if (notificationType === NotificationType.QuestionnaireTicketComment) {
       if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
         return _t('notifications.messages.ownQuestionnaireTicketComment', {
-          name: otherUser?.name,
+          name: otherUserName,
         });
       }
       return _t('notifications.messages.questionnaireTicketComment', {
-        name: otherUser?.name,
+        name: otherUserName,
       });
     }
     if (notificationType === NotificationType.QuestionnaireTicketSubmitted) {
       return _t('notifications.messages.questionnaireTicketSubmitted', {
-        name: otherUser?.name,
+        name: otherUserName,
       });
     }
     if (notificationType === NotificationType.AnswerComment) {
       if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
         return _t('notifications.messages.ownAnswerComment', {
-          name: otherUser?.name,
+          name: otherUserName,
         });
       }
       return _t('notifications.messages.answerComment', {
-        name: otherUser?.name,
+        name: otherUserName,
       });
     }
     if (notificationType === NotificationType.AnswerLike) {
       if (!question?.answer?.text) {
         return _t('notifications.messages.missingAnswerLike', {
-          name: otherUser?.name,
+          name: otherUserName,
         });
       }
       return _t('notifications.messages.answerLike', {
-        name: otherUser?.name,
+        name: otherUserName,
         text: `"${truncate(question?.answer?.text, { length: 30 })}"`,
       });
     }
     if (notificationType === NotificationType.CommentLike) {
       if (comment?.body) {
         return _t('notifications.messages.commentLikeWithText', {
-          name: otherUser?.name,
+          name: otherUserName,
           text: `"${truncate(comment?.body, { length: 30 })}"`,
         });
       }
       return _t('notifications.messages.commentLike', {
-        name: otherUser?.name,
+        name: otherUserName,
       });
     }
     if (notificationType === NotificationType.GroupMemberRequest) {
       return _t('notifications.messages.groupMemberRequest', {
-        name: otherUser?.name,
+        name: otherUserName,
         groupName: group?.name,
       });
     }
@@ -207,7 +208,7 @@ const Notification = ({
     }
     if (notificationType === NotificationType.NewQuestionnaireTicket) {
       return _t('notifications.messages.newQuestionnaireTicket', {
-        name: otherUser?.name,
+        name: otherUserName,
       });
     }
     if (notificationType === NotificationType.VerifyUser) {
@@ -256,7 +257,7 @@ const Notification = ({
       return `${NavigationPaths.Proposals}/${comment?.proposal?.id}`;
     }
     if (notificationType === NotificationType.Follow) {
-      return `${NavigationPaths.Users}/${otherUser?.name}`;
+      return `${NavigationPaths.Users}/${otherUserName}`;
     }
     if (notificationType === NotificationType.GroupMemberRequest) {
       return getMemberRequestsPath(group?.name as string);
