@@ -257,7 +257,7 @@ const Notification = ({
       return `${NavigationPaths.Proposals}/${comment?.proposal?.id}`;
     }
     if (notificationType === NotificationType.Follow) {
-      return `${NavigationPaths.Users}/${otherUserName}`;
+      return `${NavigationPaths.Users}/${otherUser?.name}`;
     }
     if (notificationType === NotificationType.GroupMemberRequest) {
       return getMemberRequestsPath(group?.name as string);

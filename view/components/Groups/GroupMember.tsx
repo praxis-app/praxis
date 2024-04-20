@@ -23,7 +23,9 @@ const GroupMember = ({ member, currentUserId }: Props) => (
     <Link href={getUserProfilePath(member.name)}>
       <Flex>
         <UserAvatar user={member} sx={{ marginRight: 1.5 }} />
-        <Typography sx={{ marginTop: 1 }}>{member.name}</Typography>
+        <Typography sx={{ marginTop: 1 }}>
+          {member.displayName || member.name}
+        </Typography>
       </Flex>
     </Link>
 
