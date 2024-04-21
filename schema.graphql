@@ -23,6 +23,12 @@ type ServerConfig {
   contactEmail: String!
 }
 
+type Conversation {
+  id: Int!
+  name: String
+  createdAt: DateTime!
+}
+
 type Post {
   id: Int!
   body: String
@@ -685,6 +691,7 @@ type Query {
   question(id: Int!): Question!
   serverQuestions: [ServerQuestion!]!
   serverRules: [Rule!]!
+  conversation(id: Int!): Conversation!
 }
 
 input GroupsInput {
