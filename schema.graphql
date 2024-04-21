@@ -27,6 +27,7 @@ type Conversation {
   id: Int!
   name: String
   createdAt: DateTime!
+  messages: [Message!]!
 }
 
 type Post {
