@@ -441,16 +441,6 @@ type Image {
   id: Int!
   filename: String!
   imageType: String!
-  post: Post
-  comment: Comment
-  user: User
-  group: Group
-  event: Event
-  proposal: Proposal
-  proposalAction: ProposalAction
-  proposalActionEvent: ProposalActionEvent
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type CreateEventAttendeePayload {

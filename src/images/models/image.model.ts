@@ -12,8 +12,8 @@ import { Event } from '../../events/models/event.model';
 import { Group } from '../../groups/models/group.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
-import { ProposalAction } from '../../proposals/proposal-actions/models/proposal-action.model';
 import { ProposalActionEvent } from '../../proposals/proposal-actions/models/proposal-action-event.model';
+import { ProposalAction } from '../../proposals/proposal-actions/models/proposal-action.model';
 import { User } from '../../users/models/user.model';
 
 @ObjectType()
@@ -31,7 +31,6 @@ export class Image {
   @Field()
   imageType: string;
 
-  @Field(() => Post, { nullable: true })
   @ManyToOne(() => Post, (post) => post.images, {
     onDelete: 'CASCADE',
   })
@@ -40,7 +39,6 @@ export class Image {
   @Column({ nullable: true })
   postId?: number;
 
-  @Field(() => Comment, { nullable: true })
   @ManyToOne(() => Comment, (comment) => comment.images, {
     onDelete: 'CASCADE',
   })
@@ -49,7 +47,6 @@ export class Image {
   @Column({ nullable: true })
   commentId?: number;
 
-  @Field(() => User, { nullable: true })
   @ManyToOne(() => User, (user) => user.images, {
     onDelete: 'CASCADE',
   })
@@ -58,7 +55,6 @@ export class Image {
   @Column({ nullable: true })
   userId?: number;
 
-  @Field(() => Group, { nullable: true })
   @ManyToOne(() => Group, (group) => group.images, {
     onDelete: 'CASCADE',
   })
@@ -67,7 +63,6 @@ export class Image {
   @Column({ nullable: true })
   groupId?: number;
 
-  @Field(() => Event, { nullable: true })
   @ManyToOne(() => Event, (event) => event.images, {
     onDelete: 'CASCADE',
   })
@@ -76,7 +71,6 @@ export class Image {
   @Column({ nullable: true })
   eventId?: number;
 
-  @Field(() => Proposal, { nullable: true })
   @ManyToOne(() => Proposal, (proposal) => proposal.images, {
     onDelete: 'CASCADE',
   })
@@ -85,7 +79,6 @@ export class Image {
   @Column({ nullable: true })
   proposalId?: number;
 
-  @Field(() => ProposalAction, { nullable: true })
   @ManyToOne(() => ProposalAction, (proposalAction) => proposalAction.images, {
     onDelete: 'CASCADE',
   })
@@ -94,7 +87,6 @@ export class Image {
   @Column({ nullable: true })
   proposalActionId?: number;
 
-  @Field(() => ProposalActionEvent, { nullable: true })
   @ManyToOne(
     () => ProposalActionEvent,
     (proposalActionEvent) => proposalActionEvent.images,
@@ -108,10 +100,8 @@ export class Image {
   proposalActionEventId?: number;
 
   @CreateDateColumn()
-  @Field()
   createdAt: Date;
 
-  @Field()
   @UpdateDateColumn()
   updatedAt: Date;
 }

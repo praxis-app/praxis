@@ -451,19 +451,9 @@ export type GroupsInput = {
 
 export type Image = {
   __typename?: 'Image';
-  comment?: Maybe<Comment>;
-  createdAt: Scalars['DateTime']['output'];
-  event?: Maybe<Event>;
   filename: Scalars['String']['output'];
-  group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   imageType: Scalars['String']['output'];
-  post?: Maybe<Post>;
-  proposal?: Maybe<Proposal>;
-  proposalAction?: Maybe<ProposalAction>;
-  proposalActionEvent?: Maybe<ProposalActionEvent>;
-  updatedAt: Scalars['DateTime']['output'];
-  user?: Maybe<User>;
 };
 
 export type Like = {
