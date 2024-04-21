@@ -82,7 +82,7 @@ const TopNavDesktop = () => {
               sx={PROFILE_BTN_STYLES}
             >
               <UserAvatar user={me} sx={USER_AVATAR_STYLES} />
-              {me.name}
+              {me.displayName || me.name}
             </Button>
           </Link>
 

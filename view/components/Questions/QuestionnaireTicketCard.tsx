@@ -181,7 +181,7 @@ const QuestionnaireTicketCard = ({
       href={questionnaireTicketPath}
       sx={{ fontSize: 14, color: 'text.secondary' }}
     >
-      <Box component="span">{user.name}</Box>
+      <Box component="span">{user.displayName || user.name}</Box>
       {MIDDOT_WITH_SPACES}
       <Box color="inherit" component="span" fontSize={13}>
         {formattedDate}

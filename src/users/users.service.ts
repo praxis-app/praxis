@@ -480,10 +480,22 @@ export class UsersService {
       `Updating user: ${JSON.stringify({ id: currentUser.id, ...input })}`,
     );
 
-    const { name, bio, profilePicture, coverPhoto } = input;
+    const { name, displayName, bio, profilePicture, coverPhoto } = input;
     const isValidName = VALID_NAME_REGEX.test(name);
     if (!isValidName) {
-      throw new Error('User names cannot contain special characters');
+      throw new Error('Usernames cannot contain special characters');
+    }
+    if (name && name.length < 2) {
+      throw new Error('Username must be at least 2 characters');
+    }
+    if (name && name.length > 15) {
+      throw new Error('Username cannot exceed 15 characters');
+    }
+    if (displayName && displayName.length < 4) {
+      throw new Error('Display name must be at least 4 characters');
+    }
+    if (displayName && displayName.length > 30) {
+      throw new Error('Display name cannot exceed 30 characters');
     }
 
     const usersWithNameCount = await this.getUsersCount({ name });
@@ -498,11 +510,10 @@ export class UsersService {
       );
     }
 
-    const sanitizedName = sanitizeText(name);
-    const sanitizedBio = sanitizeText(bio);
     await this.userRepository.update(currentUser.id, {
-      name: sanitizedName,
-      bio: sanitizedBio,
+      displayName: sanitizeText(displayName),
+      name: sanitizeText(name),
+      bio: sanitizeText(bio),
     });
 
     if (profilePicture) {

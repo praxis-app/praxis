@@ -15,6 +15,7 @@ fragment EventPageCard on Event {
   host {
     id
     name
+    displayName
   }
   coverPhoto {
     id

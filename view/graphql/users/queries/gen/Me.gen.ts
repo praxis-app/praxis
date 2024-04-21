@@ -17,6 +17,7 @@ export type MeQuery = {
     __typename?: 'User';
     id: number;
     name: string;
+    displayName?: string | null;
     serverPermissions: {
       __typename?: 'ServerPermissions';
       createInvites: boolean;

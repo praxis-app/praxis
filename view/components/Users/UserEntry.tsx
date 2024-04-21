@@ -30,7 +30,7 @@ const UserEntry = ({ user, currentUserId, canRemoveMembers }: Props) => {
   const isDesktop = useIsDesktop();
   const navigate = useNavigate();
 
-  const { id, name, isVerified } = user;
+  const { id, name, displayName, isVerified } = user;
   const isMe = id === currentUserId;
   const userProfilePath = getUserProfilePath(name);
   const editUserPath = `${userProfilePath}${NavigationPaths.Edit}`;
@@ -78,11 +78,11 @@ const UserEntry = ({ user, currentUserId, canRemoveMembers }: Props) => {
               display="inline-block"
               overflow="hidden"
               textOverflow="ellipsis"
-              title={name}
+              title={displayName || name}
               whiteSpace="nowrap"
               width={isDesktop ? '300px' : '120px'}
             >
-              {name}
+              {displayName || name}
             </Typography>
 
             <Typography

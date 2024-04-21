@@ -71,6 +71,7 @@ export type ProposalActionFragment = {
       __typename?: 'User';
       id: number;
       name: string;
+      displayName?: string | null;
       profilePicture: { __typename?: 'Image'; id: number };
     };
     proposalAction: {
@@ -112,6 +113,7 @@ export type ProposalActionFragment = {
         __typename?: 'User';
         id: number;
         name: string;
+        displayName?: string | null;
         profilePicture: { __typename?: 'Image'; id: number };
       };
     }> | null;

@@ -24,6 +24,7 @@ export type MemberRequestsQuery = {
         __typename?: 'User';
         id: number;
         name: string;
+        displayName?: string | null;
         profilePicture: { __typename?: 'Image'; id: number };
       };
       group: { __typename?: 'Group'; id: number };

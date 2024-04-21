@@ -31,6 +31,7 @@ export type LikePostMutation = {
         __typename?: 'User';
         id: number;
         name: string;
+        displayName?: string | null;
         isFollowedByMe: boolean;
         profilePicture: { __typename?: 'Image'; id: number };
       };

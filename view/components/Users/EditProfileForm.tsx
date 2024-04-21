@@ -38,8 +38,9 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
   const navigate = useNavigate();
 
   const initialValues: Omit<UpdateUserInput, 'id'> = {
-    bio: user.bio || '',
+    displayName: user.displayName || '',
     name: user.name || '',
+    bio: user.bio || '',
   };
 
   const validateImages = () => {
@@ -157,8 +158,13 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
           <FormGroup>
             <TextField
               autoComplete="off"
-              label={t('users.form.name')}
+              label={t('users.form.username')}
               name={UserFieldNames.Name}
+            />
+            <TextField
+              autoComplete="off"
+              label={t('users.form.displayName')}
+              name={UserFieldNames.DisplayName}
             />
             <TextField
               autoComplete="off"

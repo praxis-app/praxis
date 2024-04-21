@@ -233,9 +233,9 @@ const ProposeEventModal = ({
                     onChange={handleChange}
                     value={values.hostId || ''}
                   >
-                    {data.group.members.map(({ id, name }) => (
+                    {data.group.members.map(({ id, name, displayName }) => (
                       <MenuItem value={id} key={id}>
-                        {name}
+                        {displayName || name}
                       </MenuItem>
                     ))}
                   </Select>

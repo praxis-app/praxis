@@ -2,6 +2,7 @@ fragment EditProfileForm on User {
   id
   bio
   name
+  displayName
   profilePicture {
     id
   }

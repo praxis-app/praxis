@@ -37,7 +37,12 @@ export type VibeCheckQuery = {
           id: number;
           text: string;
           updatedAt: any;
-          user: { __typename?: 'User'; id: number; name: string };
+          user: {
+            __typename?: 'User';
+            id: number;
+            name: string;
+            displayName?: string | null;
+          };
         } | null;
       }>;
       comments: Array<{
@@ -52,6 +57,7 @@ export type VibeCheckQuery = {
           __typename?: 'User';
           id: number;
           name: string;
+          displayName?: string | null;
           profilePicture: { __typename?: 'Image'; id: number };
         };
       }>;

@@ -1,7 +1,8 @@
 export enum UserFieldNames {
-  Bio = 'bio',
   Email = 'email',
+  DisplayName = 'displayName',
   Name = 'name',
+  Bio = 'bio',
   Password = 'password',
   ConfirmPassword = 'confirmPassword',
 }

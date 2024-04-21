@@ -41,13 +41,19 @@ export type QuestionnairePageQuery = {
         id: number;
         text: string;
         updatedAt: any;
-        user: { __typename?: 'User'; id: number; name: string };
+        user: {
+          __typename?: 'User';
+          id: number;
+          name: string;
+          displayName?: string | null;
+        };
       } | null;
     }>;
     user: {
       __typename?: 'User';
       id: number;
       name: string;
+      displayName?: string | null;
       profilePicture: { __typename?: 'Image'; id: number };
     };
     votes: Array<{
@@ -58,6 +64,7 @@ export type QuestionnairePageQuery = {
         __typename?: 'User';
         id: number;
         name: string;
+        displayName?: string | null;
         profilePicture: { __typename?: 'Image'; id: number };
       };
     }>;

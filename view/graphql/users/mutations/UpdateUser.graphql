@@ -2,8 +2,9 @@ mutation UpdateUser($userData: UpdateUserInput!) {
   updateUser(userData: $userData) {
     user {
       id
-      name
       bio
+      name
+      displayName
       profilePicture {
         id
       }

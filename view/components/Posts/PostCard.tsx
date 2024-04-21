@@ -126,7 +126,7 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
             href={userProfilePath}
             sx={showGroup ? { color: 'inherit' } : undefined}
           >
-            {user?.name}
+            {user.displayName || user.name}
           </Link>
           {MIDDOT_WITH_SPACES}
           <Link href={postPath} sx={{ color: 'inherit', fontSize: 13 }}>

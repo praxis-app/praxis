@@ -160,7 +160,7 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
             href={userProfilePath}
             sx={showGroup ? { color: 'inherit' } : undefined}
           >
-            {user?.name}
+            {user.displayName || user.name}
           </Link>
           {MIDDOT_WITH_SPACES}
 

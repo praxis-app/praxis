@@ -32,6 +32,7 @@ export type ServerQuestionnairesQuery = {
       __typename?: 'User';
       id: number;
       name: string;
+      displayName?: string | null;
       profilePicture: { __typename?: 'Image'; id: number };
     };
     settings: {
@@ -52,6 +53,7 @@ export type ServerQuestionnairesQuery = {
         __typename?: 'User';
         id: number;
         name: string;
+        displayName?: string | null;
         profilePicture: { __typename?: 'Image'; id: number };
       };
     }>;

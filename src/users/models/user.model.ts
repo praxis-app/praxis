@@ -37,6 +37,10 @@ export class User {
   @Field()
   name: string;
 
+  @Column({ nullable: true, type: 'varchar' })
+  @Field(() => String, { nullable: true })
+  displayName: string | null;
+
   @Column({ unique: true })
   @Field()
   email: string;
@@ -55,10 +59,10 @@ export class User {
   locked: boolean;
 
   @Column({ nullable: true, type: 'varchar' })
-  resetPasswordToken?: string | null;
+  resetPasswordToken: string | null;
 
   @Column({ nullable: true, type: 'timestamp' })
-  resetPasswordSentAt?: Date | null;
+  resetPasswordSentAt: Date | null;
 
   @OneToMany(() => Post, (post) => post.user, {
     cascade: true,

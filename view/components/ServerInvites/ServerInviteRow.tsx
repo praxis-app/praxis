@@ -73,7 +73,7 @@ const ServerInviteRow = ({
       <TableCell>
         <Link href={getUserProfilePath(user.name)} sx={{ display: 'flex' }}>
           <UserAvatar user={user} size={24} sx={{ marginRight: 1.5 }} />
-          <Box marginTop={0.25}>{user.name}</Box>
+          <Box marginTop={0.25}>{user.displayName || user.name}</Box>
         </Link>
       </TableCell>
 

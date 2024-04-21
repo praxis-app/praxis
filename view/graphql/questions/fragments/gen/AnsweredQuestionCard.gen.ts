@@ -18,7 +18,12 @@ export type AnsweredQuestionCardFragment = {
     id: number;
     text: string;
     updatedAt: any;
-    user: { __typename?: 'User'; id: number; name: string };
+    user: {
+      __typename?: 'User';
+      id: number;
+      name: string;
+      displayName?: string | null;
+    };
   } | null;
 };
 
@@ -37,6 +42,7 @@ export const AnsweredQuestionCardFragmentDoc = gql`
       user {
         id
         name
+        displayName
       }
     }
   }

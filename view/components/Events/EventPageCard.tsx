@@ -252,7 +252,7 @@ const EventPageCard = ({
             <Person sx={iconStyles} />
             {t('events.labels.host')}:
             <Link href={hostPath} sx={{ marginLeft: '0.4ch' }}>
-              {host.name}
+              {host.displayName || host.name}
             </Link>
           </Typography>
         )}

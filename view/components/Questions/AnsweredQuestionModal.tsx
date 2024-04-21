@@ -23,8 +23,8 @@ const AnsweredQuestionModal = ({ question, open, onClose }: Props) => {
     ref.current?.scrollIntoView();
   }, [question?.commentCount]);
 
-  const { answer } = question;
-  const userName = answer?.user.name;
+  const user = question.answer?.user;
+  const userName = user?.displayName || user?.name;
 
   const title = userName
     ? t('questions.headers.usersAnswer', {

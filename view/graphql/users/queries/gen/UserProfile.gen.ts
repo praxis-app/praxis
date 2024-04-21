@@ -24,6 +24,7 @@ export type UserProfileQuery = {
     followerCount?: number;
     followingCount?: number;
     name: string;
+    displayName?: string | null;
     isFollowedByMe: boolean;
     coverPhoto?: { __typename?: 'Image'; id: number } | null;
     profilePicture: { __typename?: 'Image'; id: number };

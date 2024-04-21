@@ -75,6 +75,7 @@ const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
   const {
     id,
     bio,
+    displayName,
     coverPhoto,
     createdAt,
     followerCount,
@@ -154,7 +155,7 @@ const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
 
       <CardContent>
         <Typography color="primary" sx={USER_NAME_STYLES}>
-          {name}
+          {displayName || name}
         </Typography>
 
         {bio && (
