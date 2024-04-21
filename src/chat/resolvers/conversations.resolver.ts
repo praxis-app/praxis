@@ -6,6 +6,7 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { User } from '../../users/models/user.model';
 import { ChatService } from '../chat.service';
 import { Conversation } from '../models/conversation.model';
 import { Message } from '../models/message.model';
@@ -22,5 +23,10 @@ export class ConversationsResolver {
   @ResolveField(() => [Message])
   async messages(@Parent() { id }: Conversation) {
     return this.chatService.getConversationMessages(id);
+  }
+
+  @ResolveField(() => [User])
+  async members(@Parent() { id }: Conversation) {
+    return this.chatService.getConversationMembers(id);
   }
 }

@@ -7,11 +7,11 @@ import { Message } from './models/message.model';
 @Injectable()
 export class ChatService {
   constructor(
-    @InjectRepository(Conversation)
-    private conversationRepository: Repository<Conversation>,
-
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,
+
+    @InjectRepository(Conversation)
+    private conversationRepository: Repository<Conversation>,
   ) {}
 
   async getConversation(conversationId: number) {
@@ -24,5 +24,13 @@ export class ChatService {
     return this.messageRepository.find({
       where: { conversationId },
     });
+  }
+
+  async getConversationMembers(conversationId: number) {
+    const { members } = await this.conversationRepository.findOneOrFail({
+      where: { id: conversationId },
+      relations: ['members'],
+    });
+    return members;
   }
 }

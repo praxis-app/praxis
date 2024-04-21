@@ -28,6 +28,7 @@ type Conversation {
   name: String
   createdAt: DateTime!
   messages: [Message!]!
+  members: [User!]!
 }
 
 type Post {
