@@ -9,8 +9,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Image } from '../../images/models/image.model';
-import { Like } from '../../likes/models/like.model';
-import { Notification } from '../../notifications/models/notification.model';
 import { User } from '../../users/models/user.model';
 
 @Entity()
@@ -24,16 +22,10 @@ export class Message {
   @Field(() => String, { nullable: true })
   body: string;
 
-  @OneToMany(() => Image, (image) => image.comment)
+  @OneToMany(() => Image, (image) => image.message)
   images: Image[];
 
-  @OneToMany(() => Like, (like) => like.comment)
-  likes: Like[];
-
-  @OneToMany(() => Notification, (notification) => notification.comment)
-  notifications: Notification[];
-
-  @ManyToOne(() => User, (user) => user.comments, {
+  @ManyToOne(() => User, (user) => user.messages, {
     onDelete: 'CASCADE',
   })
   user: User;

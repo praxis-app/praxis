@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Message } from '../../chat/models/message.model';
 import { Comment } from '../../comments/models/comment.model';
 import { Event } from '../../events/models/event.model';
 import { Group } from '../../groups/models/group.model';
@@ -46,6 +47,14 @@ export class Image {
 
   @Column({ nullable: true })
   commentId?: number;
+
+  @ManyToOne(() => Message, (message) => message.images, {
+    onDelete: 'CASCADE',
+  })
+  message?: Comment;
+
+  @Column({ nullable: true })
+  messageId?: number;
 
   @ManyToOne(() => User, (user) => user.images, {
     onDelete: 'CASCADE',
