@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Conversation } from '../../chat/models/conversation.model';
 import { Message } from '../../chat/models/message.model';
 import { Comment } from '../../comments/models/comment.model';
 import { EventAttendee } from '../../events/models/event-attendee.model';
@@ -112,6 +113,11 @@ export class User {
 
   @ManyToMany(() => User, (user) => user.followers, { onDelete: 'CASCADE' })
   following: User[];
+
+  @ManyToMany(() => Conversation, (conversation) => conversation.members, {
+    onDelete: 'CASCADE',
+  })
+  conversations: Conversation[];
 
   @ManyToMany(() => Group, (group) => group.members, { onDelete: 'CASCADE' })
   groups: Group[];

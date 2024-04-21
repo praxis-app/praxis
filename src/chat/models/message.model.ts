@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Image } from '../../images/models/image.model';
 import { User } from '../../users/models/user.model';
+import { Conversation } from './conversation.model';
 
 @Entity()
 @ObjectType()
@@ -20,7 +21,7 @@ export class Message {
 
   @Column({ nullable: true, type: 'varchar' })
   @Field(() => String, { nullable: true })
-  body: string;
+  body: string | null;
 
   @OneToMany(() => Image, (image) => image.message)
   images: Image[];
@@ -32,6 +33,14 @@ export class Message {
 
   @Column()
   userId: number;
+
+  @ManyToOne(() => Conversation, (conversation) => conversation.messages, {
+    onDelete: 'CASCADE',
+  })
+  conversation: Conversation;
+
+  @Column()
+  conversationId: number;
 
   @CreateDateColumn()
   @Field()
