@@ -608,6 +608,10 @@ type AuthPayload {
   isVerified: Boolean!
 }
 
+type SendMessagePayload {
+  message: Message!
+}
+
 type CreateCommentPayload {
   comment: Comment!
 }
@@ -782,6 +786,7 @@ type Mutation {
   updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
   updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
   deleteRule(id: Int!): Boolean!
+  sendMessage(messageData: SendMessageInput!): SendMessagePayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -1115,6 +1120,12 @@ input UpdateRulesPriorityInput {
 input UpdateRulePriorityInput {
   id: Int!
   priority: Int!
+}
+
+input SendMessageInput {
+  conversationId: Int!
+  body: String
+  images: [Upload!]
 }
 
 input CreateVoteInput {
