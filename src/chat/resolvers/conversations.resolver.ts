@@ -20,6 +20,11 @@ export class ConversationsResolver {
     return this.chatService.getConversation(id);
   }
 
+  @Query(() => Conversation)
+  async vibeChat() {
+    return this.chatService.getVibeChat();
+  }
+
   @ResolveField(() => [Message])
   async messages(@Parent() { id }: Conversation) {
     return this.chatService.getConversationMessages(id);

@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { sanitizeText } from '../common/common.utils';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
+import { ServerConfig } from '../server-configs/models/server-config.model';
+import { ServerConfigsService } from '../server-configs/server-configs.service';
 import { User } from '../users/models/user.model';
 import { Conversation } from './models/conversation.model';
 import { Message } from './models/message.model';
@@ -22,6 +24,11 @@ export class ChatService {
 
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
+
+    @InjectRepository(ServerConfig)
+    private serverConfigRepository: Repository<ServerConfig>,
+
+    private serverConfigsService: ServerConfigsService,
   ) {}
 
   async getMessage(messageId: number) {
@@ -48,6 +55,26 @@ export class ChatService {
       relations: ['members'],
     });
     return members;
+  }
+
+  async getVibeChat() {
+    const { id, vibeChatId } =
+      await this.serverConfigsService.getServerConfig();
+
+    if (!vibeChatId) {
+      const vibeChat = await this.conversationRepository.save({
+        name: 'Vibe Chat',
+      });
+      await this.serverConfigRepository.update(id, {
+        vibeChatId: vibeChat.id,
+      });
+      return { vibeChat };
+    }
+
+    const vibeChat = await this.conversationRepository.findOneOrFail({
+      where: { id: vibeChatId },
+    });
+    return { vibeChat };
   }
 
   async sendMessage(

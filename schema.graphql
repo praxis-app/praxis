@@ -702,6 +702,7 @@ type Query {
   serverQuestions: [ServerQuestion!]!
   serverRules: [Rule!]!
   conversation(id: Int!): Conversation!
+  vibeChat: Conversation!
 }
 
 input GroupsInput {
