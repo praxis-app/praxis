@@ -9,6 +9,7 @@ import { User } from '../users/models/user.model';
 import { Conversation } from './models/conversation.model';
 import { Message } from './models/message.model';
 import { SendMessageInput } from './models/send-message.input';
+import { UpdateMessageInput } from './models/update-message.input';
 
 @Injectable()
 export class ChatService {
@@ -22,6 +23,12 @@ export class ChatService {
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
   ) {}
+
+  async getMessage(messageId: number) {
+    return this.messageRepository.findOneOrFail({
+      where: { id: messageId },
+    });
+  }
 
   async getConversation(conversationId: number) {
     return this.conversationRepository.findOneOrFail({
@@ -72,6 +79,18 @@ export class ChatService {
       const filename = await saveImage(image);
       await this.imageRepository.save({ messageId, filename });
     }
+  }
+
+  async updateMessage({ id, body, images }: UpdateMessageInput) {
+    const sanitizedBody = body ? sanitizeText(body) : undefined;
+    await this.messageRepository.update(id, {
+      body: sanitizedBody,
+    });
+    if (images) {
+      await this.saveMessageImages(id, images);
+    }
+    const message = await this.getMessage(id);
+    return { message };
   }
 
   async deleteMessage(messageId: number) {

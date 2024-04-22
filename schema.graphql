@@ -612,6 +612,10 @@ type SendMessagePayload {
   message: Message!
 }
 
+type UpdateMessagePayload {
+  message: Message!
+}
+
 type CreateCommentPayload {
   comment: Comment!
 }
@@ -787,6 +791,8 @@ type Mutation {
   updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
   deleteRule(id: Int!): Boolean!
   sendMessage(messageData: SendMessageInput!): SendMessagePayload!
+  updateMessage(messageData: UpdateMessageInput!): UpdateMessagePayload!
+  deleteMessage(messageId: Int!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -1124,6 +1130,12 @@ input UpdateRulePriorityInput {
 
 input SendMessageInput {
   conversationId: Int!
+  body: String
+  images: [Upload!]
+}
+
+input UpdateMessageInput {
+  id: Int!
   body: String
   images: [Upload!]
 }
