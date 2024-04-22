@@ -68,13 +68,12 @@ export class ChatService {
       await this.serverConfigRepository.update(id, {
         vibeChatId: vibeChat.id,
       });
-      return { vibeChat };
+      return vibeChat;
     }
 
-    const vibeChat = await this.conversationRepository.findOneOrFail({
+    return this.conversationRepository.findOneOrFail({
       where: { id: vibeChatId },
     });
-    return { vibeChat };
   }
 
   async sendMessage(

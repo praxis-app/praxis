@@ -91,6 +91,15 @@ export type Comment = {
   user: User;
 };
 
+export type Conversation = {
+  __typename?: 'Conversation';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['Int']['output'];
+  members: Array<User>;
+  messages: Array<Message>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 export type CreateCommentInput = {
   body?: InputMaybe<Scalars['String']['input']>;
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
@@ -477,6 +486,13 @@ export type LoginInput = {
   password: Scalars['String']['input'];
 };
 
+export type Message = {
+  __typename?: 'Message';
+  body?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['Int']['output'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   answerQuestions: AnswerQuestionsPayload;
@@ -505,6 +521,7 @@ export type Mutation = {
   deleteGroupRoleMember: DeleteGroupRoleMemberPayload;
   deleteImage: Scalars['Boolean']['output'];
   deleteLike: Scalars['Boolean']['output'];
+  deleteMessage: Scalars['Boolean']['output'];
   deleteNotification: Scalars['Boolean']['output'];
   deletePost: Scalars['Boolean']['output'];
   deleteProposal: Scalars['Boolean']['output'];
@@ -523,6 +540,7 @@ export type Mutation = {
   login: AuthPayload;
   readNotifications: Scalars['Boolean']['output'];
   resetPassword: AuthPayload;
+  sendMessage: SendMessagePayload;
   sendPasswordReset: Scalars['Boolean']['output'];
   signUp: AuthPayload;
   synchronizeProposal: SynchronizeProposalPayload;
@@ -533,6 +551,7 @@ export type Mutation = {
   updateGroup: UpdateGroupPayload;
   updateGroupConfig: UpdateGroupPayload;
   updateGroupRole: UpdateGroupRolePayload;
+  updateMessage: UpdateMessagePayload;
   updateNotification: UpdateNotificationPayload;
   updatePost: UpdatePostPayload;
   updateProposal: UpdateProposalPayload;
@@ -646,6 +665,10 @@ export type MutationDeleteLikeArgs = {
   likeData: DeleteLikeInput;
 };
 
+export type MutationDeleteMessageArgs = {
+  messageId: Scalars['Int']['input'];
+};
+
 export type MutationDeleteNotificationArgs = {
   id: Scalars['Int']['input'];
 };
@@ -710,6 +733,10 @@ export type MutationResetPasswordArgs = {
   input: ResetPasswordInput;
 };
 
+export type MutationSendMessageArgs = {
+  messageData: SendMessageInput;
+};
+
 export type MutationSendPasswordResetArgs = {
   email: Scalars['String']['input'];
 };
@@ -748,6 +775,10 @@ export type MutationUpdateGroupConfigArgs = {
 
 export type MutationUpdateGroupRoleArgs = {
   groupRoleData: UpdateGroupRoleInput;
+};
+
+export type MutationUpdateMessageArgs = {
+  messageData: UpdateMessageInput;
 };
 
 export type MutationUpdateNotificationArgs = {
@@ -1013,6 +1044,7 @@ export type Query = {
   __typename?: 'Query';
   authCheck: Scalars['Boolean']['output'];
   canary: Canary;
+  conversation: Conversation;
   event: Event;
   events: Array<Event>;
   group: Group;
@@ -1052,6 +1084,11 @@ export type Query = {
   users: Array<User>;
   usersByIds: Array<User>;
   usersCount: Scalars['Int']['output'];
+  vibeChat: Conversation;
+};
+
+export type QueryConversationArgs = {
+  id: Scalars['Int']['input'];
 };
 
 export type QueryEventArgs = {
@@ -1216,6 +1253,17 @@ export type Rule = {
   priority: Scalars['Int']['output'];
   title: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type SendMessageInput = {
+  body?: InputMaybe<Scalars['String']['input']>;
+  conversationId: Scalars['Int']['input'];
+  images?: InputMaybe<Array<Scalars['Upload']['input']>>;
+};
+
+export type SendMessagePayload = {
+  __typename?: 'SendMessagePayload';
+  message: Message;
 };
 
 export type ServerConfig = {
@@ -1413,6 +1461,17 @@ export type UpdateGroupRolePayload = {
   groupRole: GroupRole;
 };
 
+export type UpdateMessageInput = {
+  body?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['Int']['input'];
+  images?: InputMaybe<Array<Scalars['Upload']['input']>>;
+};
+
+export type UpdateMessagePayload = {
+  __typename?: 'UpdateMessagePayload';
+  message: Message;
+};
+
 export type UpdateNotificationInput = {
   id: Scalars['Int']['input'];
   status: Scalars['String']['input'];
@@ -1560,6 +1619,7 @@ export type User = {
   isVerified: Scalars['Boolean']['output'];
   joinedGroups: Array<Group>;
   likes: Array<Like>;
+  messages: Array<Message>;
   name: Scalars['String']['output'];
   posts: Array<Post>;
   profileFeed: Array<FeedItem>;

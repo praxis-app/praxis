@@ -1,0 +1,14 @@
+query VibeChat {
+  vibeChat {
+    id
+    name
+    members {
+      id
+      name
+    }
+    messages {
+      id
+      body
+    }
+  }
+}
