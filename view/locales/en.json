@@ -700,6 +700,7 @@
       "status": "Status",
       "submitted": "Submitted",
       "ticketNumber": "Ticket #{{number}}",
+      "vibeChat": "Vibe Chat",
       "vibeCheck": "Vibe Check",
       "votesNeeded": "Votes needed"
     },

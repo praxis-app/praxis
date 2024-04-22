@@ -1,6 +1,7 @@
 import { useReactiveVar } from '@apollo/client';
 import {
   AccountBox,
+  Chat,
   ExitToApp,
   HowToReg,
   Person,
@@ -93,12 +94,19 @@ const TopNavDropdown = ({
       )}
 
       {serverPermissions.manageQuestionnaireTickets && (
-        <MenuItem
-          onClick={() => navigate(NavigationPaths.ServerQuestionnaires)}
-        >
-          <QuestionAnswer {...ICON_PROPS} />
-          {t('questions.labels.questionnaires')}
-        </MenuItem>
+        <>
+          <MenuItem
+            onClick={() => navigate(NavigationPaths.ServerQuestionnaires)}
+          >
+            <QuestionAnswer {...ICON_PROPS} />
+            {t('questions.labels.questionnaires')}
+          </MenuItem>
+
+          <MenuItem onClick={() => navigate(NavigationPaths.VibeChat)}>
+            <Chat {...ICON_PROPS} />
+            {t('questions.labels.vibeChat')}
+          </MenuItem>
+        </>
       )}
 
       {serverPermissions.manageQuestions && (

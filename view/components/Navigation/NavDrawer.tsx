@@ -1,6 +1,7 @@
 import { useReactiveVar } from '@apollo/client';
 import {
   AccountBox,
+  Chat,
   Close,
   Article as DocsIcon,
   EventNote,
@@ -206,14 +207,23 @@ const NavDrawer = () => {
         )}
 
         {manageQuestionnaireTickets && (
-          <ListItemButton
-            onClick={handleLinkClick(NavigationPaths.ServerQuestionnaires)}
-          >
-            <ListItemIcon>
-              <QuestionAnswer />
-            </ListItemIcon>
-            <ListItemText primary={t('questions.labels.questionnaires')} />
-          </ListItemButton>
+          <>
+            <ListItemButton
+              onClick={handleLinkClick(NavigationPaths.ServerQuestionnaires)}
+            >
+              <ListItemIcon>
+                <QuestionAnswer />
+              </ListItemIcon>
+              <ListItemText primary={t('questions.labels.questionnaires')} />
+            </ListItemButton>
+
+            <ListItemButton onClick={handleLinkClick(NavigationPaths.VibeChat)}>
+              <ListItemIcon>
+                <Chat />
+              </ListItemIcon>
+              <ListItemText primary={t('questions.labels.vibeChat')} />
+            </ListItemButton>
+          </>
         )}
 
         {manageQuestions && (
