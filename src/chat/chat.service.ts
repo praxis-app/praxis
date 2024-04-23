@@ -12,6 +12,7 @@ import { Conversation } from './models/conversation.model';
 import { Message } from './models/message.model';
 import { SendMessageInput } from './models/send-message.input';
 import { UpdateMessageInput } from './models/update-message.input';
+import { ServerRole } from '../server-roles/models/server-role.model';
 
 @Injectable()
 export class ChatService {
@@ -27,6 +28,9 @@ export class ChatService {
 
     @InjectRepository(ServerConfig)
     private serverConfigRepository: Repository<ServerConfig>,
+
+    @InjectRepository(ServerRole)
+    private serverRoleRepository: Repository<ServerRole>,
 
     private serverConfigsService: ServerConfigsService,
   ) {}
@@ -117,6 +121,40 @@ export class ChatService {
     }
     const message = await this.getMessage(id);
     return { message };
+  }
+
+  async syncVibeChatMembers() {
+    const vibeChat = await this.getVibeChat();
+    const chatMembers = await this.getConversationMembers(vibeChat.id);
+    const vibeCheckerRole = await this.serverRoleRepository.findOneOrFail({
+      where: { permission: { manageQuestionnaireTickets: true } },
+      relations: ['members'],
+      select: ['members'],
+    });
+
+    const chatMemberIds = chatMembers.map(({ id }) => id);
+    const vibeCheckerIds = vibeCheckerRole.members.map(({ id }) => id);
+    const membersToAdd = vibeCheckerIds.filter(
+      (id) => !chatMemberIds.includes(id),
+    );
+    const membersToRemove = chatMemberIds.filter(
+      (id) => !vibeCheckerIds.includes(id),
+    );
+
+    if (membersToAdd.length) {
+      await this.conversationRepository
+        .createQueryBuilder()
+        .relation(Conversation, 'members')
+        .of(vibeChat)
+        .add(membersToAdd);
+    }
+    if (membersToRemove.length) {
+      await this.conversationRepository
+        .createQueryBuilder()
+        .relation(Conversation, 'members')
+        .of(vibeChat)
+        .remove(membersToRemove);
+    }
   }
 
   async deleteMessage(messageId: number) {
