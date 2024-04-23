@@ -123,7 +123,7 @@ export class ChatService {
     return { message };
   }
 
-  async syncVibeChatMembers() {
+  async syncVibeChatMembersWithRoles() {
     const vibeChat = await this.getVibeChat();
     const chatMembers = await this.getConversationMembers(vibeChat.id);
     const vibeCheckerRole = await this.serverRoleRepository.findOneOrFail({

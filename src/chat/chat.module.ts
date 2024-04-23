@@ -22,5 +22,6 @@ import { MessagesResolver } from './resolvers/messages.resolver';
     ServerConfigsModule,
   ],
   providers: [ChatService, MessagesResolver, ConversationsResolver],
+  exports: [ChatService],
 })
 export class ChatModule {}

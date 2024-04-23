@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, FindOptionsWhere, In, Not, Repository } from 'typeorm';
+import { ChatService } from '../chat/chat.service';
 import { User } from '../users/models/user.model';
 import { ServerRolePermission } from './models/server-role-permission.model';
 import { ServerRole } from './models/server-role.model';
@@ -19,6 +20,8 @@ export class ServerRolesService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    private chatService: ChatService,
   ) {}
 
   async getServerRole(
@@ -90,17 +93,21 @@ export class ServerRolesService {
     const newMembers = await this.userRepository.find({
       where: { id: In(selectedUserIds), verified: true },
     });
+
     const serverRole = await this.serverRoleRepository.save({
       ...roleWithRelations,
       ...roleData,
       members: [...roleWithRelations.members, ...newMembers],
       permission: { ...roleWithRelations.permission, ...permissions },
     });
+    await this.chatService.syncVibeChatMembersWithRoles();
+
     return { serverRole, me };
   }
 
   async deleteServerRole(id: number) {
     await this.serverRoleRepository.delete(id);
+    await this.chatService.syncVibeChatMembersWithRoles();
     return true;
   }
 
@@ -110,6 +117,7 @@ export class ServerRolesService {
       (member) => member.id !== userId,
     );
     await this.serverRoleRepository.save(serverRole);
+    await this.chatService.syncVibeChatMembersWithRoles();
 
     return { serverRole, me };
   }

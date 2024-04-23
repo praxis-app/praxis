@@ -497,6 +497,14 @@ type UpdateServerConfigPayload {
   canary: Canary!
 }
 
+type SendMessagePayload {
+  message: Message!
+}
+
+type UpdateMessagePayload {
+  message: Message!
+}
+
 type CreateServerRolePayload {
   serverRole: ServerRole!
 }
@@ -608,14 +616,6 @@ type AuthPayload {
   isVerified: Boolean!
 }
 
-type SendMessagePayload {
-  message: Message!
-}
-
-type UpdateMessagePayload {
-  message: Message!
-}
-
 type CreateCommentPayload {
   comment: Comment!
 }
@@ -688,6 +688,8 @@ type Query {
   isFirstUser: Boolean!
   serverRole(id: Int!): ServerRole!
   serverRoles: [ServerRole!]!
+  conversation(id: Int!): Conversation!
+  vibeChat: Conversation!
   serverConfig: ServerConfig!
   canary: Canary!
   publicCanary: Canary
@@ -701,8 +703,6 @@ type Query {
   question(id: Int!): Question!
   serverQuestions: [ServerQuestion!]!
   serverRules: [Rule!]!
-  conversation(id: Int!): Conversation!
-  vibeChat: Conversation!
 }
 
 input GroupsInput {
@@ -769,6 +769,9 @@ type Mutation {
   updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
   deleteServerRole(id: Int!): Boolean!
   deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
+  sendMessage(messageData: SendMessageInput!): SendMessagePayload!
+  updateMessage(messageData: UpdateMessageInput!): UpdateMessagePayload!
+  deleteMessage(messageId: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createPost(postData: CreatePostInput!): CreatePostPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
@@ -791,9 +794,6 @@ type Mutation {
   updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
   updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
   deleteRule(id: Int!): Boolean!
-  sendMessage(messageData: SendMessageInput!): SendMessagePayload!
-  updateMessage(messageData: UpdateMessageInput!): UpdateMessagePayload!
-  deleteMessage(messageId: Int!): Boolean!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
   deleteVote(id: Int!): Boolean!
@@ -1020,6 +1020,18 @@ input DeleteServerRoleMemberInput {
   userId: Int!
 }
 
+input SendMessageInput {
+  conversationId: Int!
+  body: String
+  images: [Upload!]
+}
+
+input UpdateMessageInput {
+  id: Int!
+  body: String
+  images: [Upload!]
+}
+
 input UpdateServerConfigInput {
   id: Int!
   canaryStatement: String
@@ -1127,18 +1139,6 @@ input UpdateRulesPriorityInput {
 input UpdateRulePriorityInput {
   id: Int!
   priority: Int!
-}
-
-input SendMessageInput {
-  conversationId: Int!
-  body: String
-  images: [Upload!]
-}
-
-input UpdateMessageInput {
-  id: Int!
-  body: String
-  images: [Upload!]
 }
 
 input CreateVoteInput {
