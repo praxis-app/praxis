@@ -7,8 +7,7 @@ query VibeChat {
       name
     }
     messages {
-      id
-      body
+      ...Message
     }
   }
 }
