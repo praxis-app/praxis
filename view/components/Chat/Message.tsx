@@ -15,7 +15,7 @@ const Message = ({ message: { user, body, createdAt } }: Props) => {
   const formattedDate = timeAgo(createdAt);
 
   return (
-    <Flex gap={2}>
+    <Flex gap={2} paddingBottom={2}>
       <UserAvatar user={user} sx={{ marginTop: 0.5 }} withLink />
 
       <Box>
