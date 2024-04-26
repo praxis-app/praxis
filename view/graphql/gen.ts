@@ -491,6 +491,8 @@ export type Message = {
   body?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['DateTime']['output'];
   id: Scalars['Int']['output'];
+  images: Array<Image>;
+  user: User;
 };
 
 export type Mutation = {

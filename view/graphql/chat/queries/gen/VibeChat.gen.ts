@@ -21,6 +21,15 @@ export type VibeChatQuery = {
       __typename?: 'Message';
       id: number;
       body?: string | null;
+      createdAt: any;
+      user: {
+        __typename?: 'User';
+        id: number;
+        name: string;
+        displayName?: string | null;
+        profilePicture: { __typename?: 'Image'; id: number };
+      };
+      images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
     }>;
   };
 };

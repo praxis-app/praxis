@@ -42,6 +42,9 @@ const MessageForm = ({ conversationId }: Props) => {
   const containerStyles: SxProps = {
     position: 'fixed',
     bottom: '0px',
+    [theme.breakpoints.up('sm')]: {
+      paddingX: 0,
+    },
     [theme.breakpoints.up('md')]: {
       paddingBottom: '100px',
     },
@@ -54,7 +57,7 @@ const MessageForm = ({ conversationId }: Props) => {
     bottom: isDesktop ? undefined : '65px',
     left: isDesktop ? undefined : '0px',
     width: '100%',
-    maxWidth: isDesktop ? 680 : '100%',
+    maxWidth: isDesktop ? undefined : '100%',
     bgcolor: 'background.paper',
     paddingTop: isDesktop ? '16px' : '10px',
     paddingX: isDesktop ? '16px' : 1,

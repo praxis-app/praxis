@@ -1,4 +1,12 @@
 fragment Message on Message {
   id
   body
+  createdAt
+
+  user {
+    ...UserAvatar
+  }
+  images {
+    ...AttachedImage
+  }
 }

@@ -450,6 +450,8 @@ type Message {
   id: Int!
   body: String
   createdAt: DateTime!
+  user: User!
+  images: [Image!]!
 }
 
 type Image {
