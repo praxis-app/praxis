@@ -52,7 +52,7 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
       paddingX: 0,
     },
     [theme.breakpoints.up('md')]: {
-      paddingBottom: '100px',
+      paddingBottom: '85px',
     },
     [theme.breakpoints.up('lg')]: {
       paddingBottom: '30px',

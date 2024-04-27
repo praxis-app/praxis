@@ -16,10 +16,17 @@ const MessageFeed = ({ messages }: Props) => {
       paddingX: 0,
       paddingTop: '30px',
       paddingBottom: '12px',
+      top: '55px',
+      bottom: '155px',
     },
     [theme.breakpoints.up('md')]: {
       paddingTop: '45px',
-      paddingBottom: '18px',
+      paddingBottom: '12px',
+      top: '60px',
+      bottom: '175px',
+    },
+    [theme.breakpoints.up('lg')]: {
+      bottom: '120px',
     },
     position: 'fixed',
     top: isDesktop ? '60px' : '55px',
