@@ -1,4 +1,5 @@
 import { Box, Container, SxProps, useTheme } from '@mui/material';
+import { useEffect, useRef } from 'react';
 import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
 import Message from './Message';
 
@@ -7,7 +8,14 @@ interface Props {
 }
 
 const MessageFeed = ({ messages }: Props) => {
+  const ref = useRef<HTMLDivElement>(null);
   const theme = useTheme();
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.scrollIntoView();
+    }
+  }, [messages]);
 
   const feedStyles: SxProps = {
     overflowY: 'scroll',
@@ -52,6 +60,7 @@ const MessageFeed = ({ messages }: Props) => {
 
   return (
     <Box sx={feedStyles}>
+      <Box ref={ref} />
       <Container maxWidth="sm" sx={containerStyles}>
         <Box>
           {messages.map((message) => (
