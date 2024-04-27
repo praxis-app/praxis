@@ -1,9 +1,7 @@
 mutation SendMessage($messageData: SendMessageInput!) {
   sendMessage(messageData: $messageData) {
     message {
-      id
-      body
-      createdAt
+      ...Message
     }
   }
 }

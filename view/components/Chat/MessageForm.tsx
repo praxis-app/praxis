@@ -10,10 +10,15 @@ import {
   useTheme,
 } from '@mui/material';
 import { Formik } from 'formik';
+import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FieldNames } from '../../constants/shared.constants';
 import { useSendMessageMutation } from '../../graphql/chat/mutations/gen/SendMessage.gen';
+import {
+  VibeChatDocument,
+  VibeChatQuery,
+} from '../../graphql/chat/queries/gen/VibeChat.gen';
 import { SendMessageInput } from '../../graphql/gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { getRandomString } from '../../utils/shared.utils';
@@ -23,9 +28,10 @@ import Flex from '../Shared/Flex';
 
 interface Props {
   conversationId: number;
+  vibeChat?: boolean;
 }
 
-const MessageForm = ({ conversationId }: Props) => {
+const MessageForm = ({ conversationId, vibeChat }: Props) => {
   const [images, setImages] = useState<File[]>([]);
   const [imagesInputKey, setImagesInputKey] = useState('');
   const [sendMessage, { loading }] = useSendMessageMutation();
@@ -78,6 +84,33 @@ const MessageForm = ({ conversationId }: Props) => {
     await sendMessage({
       variables: {
         messageData: { ...values, images },
+      },
+      update(cache, { data }) {
+        if (!data) {
+          return;
+        }
+        const {
+          sendMessage: { message },
+        } = data;
+        if (vibeChat) {
+          cache.updateQuery<VibeChatQuery>(
+            {
+              query: VibeChatDocument,
+            },
+            (vibeChatData) => {
+              if (!vibeChatData) {
+                return;
+              }
+              return produce(vibeChatData, (draft) => {
+                draft.vibeChat.messages.push(message);
+              });
+            },
+          );
+        }
+      },
+      onCompleted() {
+        setImages([]);
+        setImagesInputKey(getRandomString());
       },
     });
 

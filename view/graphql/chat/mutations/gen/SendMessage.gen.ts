@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { MessageFragmentDoc } from '../../fragments/gen/Message.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -20,6 +21,14 @@ export type SendMessageMutation = {
       id: number;
       body?: string | null;
       createdAt: any;
+      user: {
+        __typename?: 'User';
+        id: number;
+        name: string;
+        displayName?: string | null;
+        profilePicture: { __typename?: 'Image'; id: number };
+      };
+      images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
     };
   };
 };
@@ -28,12 +37,11 @@ export const SendMessageDocument = gql`
   mutation SendMessage($messageData: SendMessageInput!) {
     sendMessage(messageData: $messageData) {
       message {
-        id
-        body
-        createdAt
+        ...Message
       }
     }
   }
+  ${MessageFragmentDoc}
 `;
 export type SendMessageMutationFn = Apollo.MutationFunction<
   SendMessageMutation,

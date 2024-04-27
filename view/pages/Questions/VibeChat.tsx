@@ -24,7 +24,7 @@ const VibeChat = () => {
   return (
     <>
       <MessageFeed messages={data.vibeChat.messages} />
-      {data && <MessageForm conversationId={data.vibeChat.id} />}
+      {data && <MessageForm conversationId={data.vibeChat.id} vibeChat />}
     </>
   );
 };
