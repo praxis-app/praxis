@@ -9,11 +9,11 @@ import {
   SxProps,
   useTheme,
 } from '@mui/material';
-import { Formik } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FieldNames } from '../../constants/shared.constants';
+import { FieldNames, KeyCodes } from '../../constants/shared.constants';
 import { useSendMessageMutation } from '../../graphql/chat/mutations/gen/SendMessage.gen';
 import {
   VibeChatDocument,
@@ -80,7 +80,10 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
     transform: 'translateY(5px)',
   };
 
-  const handleSubmit = async (values: SendMessageInput) =>
+  const handleSubmit = async (
+    values: SendMessageInput,
+    { resetForm }: FormikHelpers<SendMessageInput>,
+  ) =>
     await sendMessage({
       variables: {
         messageData: { ...values, images },
@@ -109,10 +112,25 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
         }
       },
       onCompleted() {
+        resetForm();
         setImages([]);
         setImagesInputKey(getRandomString());
       },
     });
+
+  const handleFilledInputKeyDown = (
+    e: React.KeyboardEvent,
+    submitForm: () => void,
+  ) => {
+    if (e.code !== KeyCodes.Enter) {
+      return;
+    }
+    if (e.shiftKey) {
+      return;
+    }
+    e.preventDefault();
+    submitForm();
+  };
 
   const handleRemoveSelectedImage = (imageName: string) => {
     setImages(images.filter((image) => image.name !== imageName));
@@ -141,6 +159,7 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
                     autoComplete="off"
                     name={FieldNames.Body}
                     onChange={handleChange}
+                    onKeyDown={(e) => handleFilledInputKeyDown(e, submitForm)}
                     placeholder={t('chat.prompts.sendAMessage')}
                     sx={inputStyles}
                     value={values.body || ''}

@@ -23,8 +23,10 @@ const ProposalModal = ({ proposal, open, onClose }: Props) => {
     ref.current?.scrollIntoView();
   }, [proposal.commentCount]);
 
+  const { user } = proposal;
+  const userName = user.displayName || user.name;
   const title = t('proposals.labels.usersProposal', {
-    name: proposal.user.name[0].toUpperCase() + proposal.user.name.slice(1),
+    name: userName[0].toUpperCase() + userName.slice(1),
   });
 
   const contentStyles: SxProps = {

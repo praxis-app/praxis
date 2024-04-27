@@ -23,8 +23,10 @@ const PostModal = ({ post, open, onClose }: Props) => {
     ref.current?.scrollIntoView();
   }, [post.commentCount]);
 
+  const { user } = post;
+  const userName = user.displayName || user.name;
   const title = t('posts.labels.usersPost', {
-    name: post.user.name[0].toUpperCase() + post.user.name.slice(1),
+    name: userName[0].toUpperCase() + userName.slice(1),
   });
 
   const contentStyles: SxProps = {
