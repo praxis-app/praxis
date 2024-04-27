@@ -47,7 +47,10 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
 
   const containerStyles: SxProps = {
     position: 'fixed',
-    bottom: '0px',
+    bottom: 0,
+    [theme.breakpoints.up('xs')]: {
+      paddingTop: 0,
+    },
     [theme.breakpoints.up('sm')]: {
       paddingX: 0,
     },
@@ -61,13 +64,22 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
   const formStyles: SxProps = {
     position: isDesktop ? undefined : 'fixed',
     bottom: isDesktop ? undefined : '65px',
-    left: isDesktop ? undefined : '0px',
+    left: isDesktop ? undefined : 0,
     bgcolor: 'background.paper',
     paddingY: isDesktop ? 0.6 : 1,
     paddingX: isDesktop ? 0.5 : 0.9,
     borderRadius: isDesktop ? 4 : 0,
     maxWidth: isDesktop ? undefined : '100%',
     width: '100%',
+  };
+  const hiderStyles: SxProps = {
+    bgcolor: 'background.default',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 50,
+    zIndex: -1,
   };
   const inputStyles: SxProps = {
     borderRadius: 8,
@@ -208,6 +220,7 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
             </Box>
           )}
         </Formik>
+        {isDesktop && <Box sx={hiderStyles} />}
       </Box>
     </Container>
   );

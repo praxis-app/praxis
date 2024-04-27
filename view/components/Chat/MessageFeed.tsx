@@ -29,7 +29,7 @@ const MessageFeed = ({ messages }: Props) => {
       bottom: '170px',
     },
     [theme.breakpoints.up('lg')]: {
-      bottom: '105px',
+      bottom: 0,
     },
   };
 
@@ -46,7 +46,7 @@ const MessageFeed = ({ messages }: Props) => {
       paddingBottom: '8px',
     },
     [theme.breakpoints.up('lg')]: {
-      paddingBottom: '6px',
+      paddingBottom: '112px',
     },
   };
 
