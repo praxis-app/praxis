@@ -78,7 +78,7 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
     bottom: 0,
     left: 0,
     right: 0,
-    height: 50,
+    height: '100px',
     zIndex: -1,
   };
   const inputStyles: SxProps = {
