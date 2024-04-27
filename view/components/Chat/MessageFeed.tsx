@@ -15,14 +15,15 @@ const MessageFeed = ({ messages }: Props) => {
     [theme.breakpoints.up('xs')]: {
       paddingX: 0,
       paddingTop: '30px',
-      paddingBottom: isDesktop ? '6px' : '12px',
+      paddingBottom: '12px',
     },
     [theme.breakpoints.up('md')]: {
       paddingTop: '45px',
+      paddingBottom: '18px',
     },
     position: 'fixed',
     top: isDesktop ? '60px' : '55px',
-    bottom: isDesktop ? '190px' : '155px',
+    bottom: isDesktop ? '110px' : '155px',
     display: 'flex',
     flexDirection: 'column-reverse',
     overflowY: 'scroll',
