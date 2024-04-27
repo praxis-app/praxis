@@ -19,6 +19,11 @@ const MessageFeed = ({ messages }: Props) => {
       top: '55px',
       bottom: '155px',
     },
+    [theme.breakpoints.up('sm')]: {
+      paddingBottom: '6px',
+      bottom: '162px',
+      top: '63px',
+    },
     [theme.breakpoints.up('md')]: {
       paddingTop: '45px',
       paddingBottom: '8px',
