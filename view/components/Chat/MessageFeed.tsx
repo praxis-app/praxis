@@ -1,6 +1,5 @@
 import { Box, Container, SxProps, useTheme } from '@mui/material';
 import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
-import { useIsDesktop } from '../../hooks/shared.hooks';
 import Message from './Message';
 
 interface Props {
@@ -8,7 +7,6 @@ interface Props {
 }
 
 const MessageFeed = ({ messages }: Props) => {
-  const isDesktop = useIsDesktop();
   const theme = useTheme();
 
   const containerStyles: SxProps = {
@@ -35,8 +33,6 @@ const MessageFeed = ({ messages }: Props) => {
       bottom: '105px',
     },
     position: 'fixed',
-    top: isDesktop ? '60px' : '55px',
-    bottom: isDesktop ? '110px' : '155px',
     display: 'flex',
     flexDirection: 'column-reverse',
     overflowY: 'scroll',
