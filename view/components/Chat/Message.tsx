@@ -11,6 +11,7 @@ interface Props {
 }
 
 const Message = ({ message: { user, body, createdAt } }: Props) => {
+  const userName = user.displayName || user.name;
   const userPath = getUserProfilePath(user.name);
   const formattedDate = timeAgo(createdAt);
 
@@ -21,7 +22,7 @@ const Message = ({ message: { user, body, createdAt } }: Props) => {
       <Box>
         <Flex gap={1}>
           <Link href={userPath}>
-            <Typography fontFamily="Inter Bold">{user.name}</Typography>
+            <Typography fontFamily="Inter Bold">{userName}</Typography>
           </Link>
           <Typography
             color="text.secondary"
