@@ -18,11 +18,11 @@ const MessageFeed = ({ messages }: Props) => {
       paddingBottom: isDesktop ? '6px' : '12px',
     },
     [theme.breakpoints.up('md')]: {
-      paddingTop: '55px',
+      paddingTop: '45px',
     },
     position: 'fixed',
     top: isDesktop ? '60px' : '55px',
-    bottom: isDesktop ? '215px' : '100px',
+    bottom: isDesktop ? '190px' : '155px',
     display: 'flex',
     flexDirection: 'column-reverse',
     overflowY: 'scroll',
