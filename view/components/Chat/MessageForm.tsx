@@ -62,12 +62,12 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
     position: isDesktop ? undefined : 'fixed',
     bottom: isDesktop ? undefined : '65px',
     left: isDesktop ? undefined : '0px',
-    width: '100%',
-    maxWidth: isDesktop ? undefined : '100%',
     bgcolor: 'background.paper',
     paddingY: isDesktop ? 0.6 : 1,
     paddingX: isDesktop ? 0.5 : 0.9,
     borderRadius: isDesktop ? 4 : 0,
+    maxWidth: isDesktop ? undefined : '100%',
+    width: '100%',
   };
   const inputStyles: SxProps = {
     borderRadius: 8,
