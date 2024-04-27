@@ -9,43 +9,57 @@ interface Props {
 const MessageFeed = ({ messages }: Props) => {
   const theme = useTheme();
 
-  const containerStyles: SxProps = {
+  const feedStyles: SxProps = {
+    overflowY: 'scroll',
+    position: 'fixed',
+    left: 0,
+    right: 0,
+    display: 'flex',
+    flexDirection: 'column-reverse',
     [theme.breakpoints.up('xs')]: {
-      paddingX: 0,
-      paddingTop: '30px',
-      paddingBottom: '12px',
       top: '55px',
-      bottom: '155px',
+      bottom: '162px',
     },
     [theme.breakpoints.up('sm')]: {
-      paddingBottom: '6px',
       bottom: '162px',
       top: '63px',
     },
     [theme.breakpoints.up('md')]: {
-      paddingTop: '45px',
-      paddingBottom: '8px',
       top: '60px',
       bottom: '170px',
     },
     [theme.breakpoints.up('lg')]: {
-      paddingBottom: '6px',
       bottom: '105px',
     },
-    position: 'fixed',
-    display: 'flex',
-    flexDirection: 'column-reverse',
-    overflowY: 'scroll',
+  };
+
+  const containerStyles: SxProps = {
+    [theme.breakpoints.up('xs')]: {
+      paddingTop: '30px',
+      paddingBottom: '12px',
+    },
+    [theme.breakpoints.up('sm')]: {
+      paddingBottom: '6px',
+    },
+    [theme.breakpoints.up('md')]: {
+      paddingTop: '45px',
+      paddingBottom: '8px',
+    },
+    [theme.breakpoints.up('lg')]: {
+      paddingBottom: '6px',
+    },
   };
 
   return (
-    <Container maxWidth="sm" sx={containerStyles}>
-      <Box>
-        {messages.map((message) => (
-          <Message key={message.id} message={message} />
-        ))}
-      </Box>
-    </Container>
+    <Box sx={feedStyles}>
+      <Container maxWidth="sm" sx={containerStyles}>
+        <Box>
+          {messages.map((message) => (
+            <Message key={message.id} message={message} />
+          ))}
+        </Box>
+      </Container>
+    </Box>
   );
 };
 
