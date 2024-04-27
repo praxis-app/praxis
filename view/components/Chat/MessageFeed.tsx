@@ -21,12 +21,13 @@ const MessageFeed = ({ messages }: Props) => {
     },
     [theme.breakpoints.up('md')]: {
       paddingTop: '45px',
-      paddingBottom: '12px',
+      paddingBottom: '8px',
       top: '60px',
-      bottom: '175px',
+      bottom: '170px',
     },
     [theme.breakpoints.up('lg')]: {
-      bottom: '120px',
+      paddingBottom: '6px',
+      bottom: '105px',
     },
     position: 'fixed',
     top: isDesktop ? '60px' : '55px',

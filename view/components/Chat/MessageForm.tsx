@@ -52,10 +52,10 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
       paddingX: 0,
     },
     [theme.breakpoints.up('md')]: {
-      paddingBottom: '85px',
+      paddingBottom: '80px',
     },
     [theme.breakpoints.up('lg')]: {
-      paddingBottom: '30px',
+      paddingBottom: '14px',
     },
   };
   const formStyles: SxProps = {
