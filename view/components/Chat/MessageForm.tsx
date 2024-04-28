@@ -32,7 +32,7 @@ interface Props {
 }
 
 const MessageForm = ({ conversationId, vibeChat }: Props) => {
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [images, setImages] = useState<File[]>([]);
   const [imagesInputKey, setImagesInputKey] = useState('');
   const [sendMessage, { loading }] = useSendMessageMutation();
 
@@ -98,7 +98,7 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
   ) =>
     await sendMessage({
       variables: {
-        messageData: { ...values, images: selectedImages },
+        messageData: { ...values, images },
       },
       update(cache, { data }) {
         if (!data) {
@@ -125,7 +125,7 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
       },
       onCompleted() {
         resetForm();
-        setSelectedImages([]);
+        setImages([]);
         setImagesInputKey(getRandomString());
       },
     });
@@ -145,9 +145,7 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
   };
 
   const handleRemoveSelectedImage = (imageName: string) => {
-    setSelectedImages(
-      selectedImages.filter((image) => image.name !== imageName),
-    );
+    setImages(images.filter((image) => image.name !== imageName));
     setImagesInputKey(getRandomString());
   };
 
@@ -183,7 +181,7 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
 
                   <Flex justifyContent="space-between">
                     <ImageInput
-                      setImages={setSelectedImages}
+                      setImages={setImages}
                       refreshKey={imagesInputKey}
                       iconStyles={{ color: 'text.secondary', fontSize: 25 }}
                       multiple
@@ -191,8 +189,7 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
 
                     <IconButton
                       disabled={
-                        isSubmitting ||
-                        (!values.body && !selectedImages?.length)
+                        isSubmitting || (!values.body && !images?.length)
                       }
                       sx={sendButtonStyles}
                       onClick={submitForm}
@@ -211,9 +208,9 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
 
               <AttachedImagePreview
                 handleRemove={handleRemoveSelectedImage}
-                selectedImages={selectedImages}
+                selectedImages={images}
                 sx={{
-                  marginTop: selectedImages.length ? 2.5 : 0,
+                  marginTop: images.length ? 2.5 : 0,
                   marginLeft: 1.5,
                 }}
               />
