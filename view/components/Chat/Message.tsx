@@ -3,6 +3,7 @@ import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
 import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
+import AttachedImageList from '../Images/AttachedImageList';
 import Flex from '../Shared/Flex';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
@@ -11,7 +12,7 @@ interface Props {
   message: MessageFragment;
 }
 
-const Message = ({ message: { user, body, createdAt } }: Props) => {
+const Message = ({ message: { user, body, images, createdAt } }: Props) => {
   const userName = user.displayName || user.name;
   const userPath = getUserProfilePath(user.name);
   const formattedDate = timeAgo(createdAt);
@@ -40,6 +41,15 @@ const Message = ({ message: { user, body, createdAt } }: Props) => {
             whiteSpace="pre-wrap"
             lineHeight={1.2}
             paddingBottom={0.4}
+          />
+        )}
+
+        {!!images.length && (
+          <AttachedImageList
+            images={images}
+            width={350}
+            paddingX={2}
+            paddingTop={0.7}
           />
         )}
       </Box>

@@ -1,5 +1,7 @@
+import { useReactiveVar } from '@apollo/client';
 import { Box, Container, SxProps, useTheme } from '@mui/material';
 import { useEffect, useRef } from 'react';
+import { imagesVar } from '../../graphql/cache';
 import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
 import Message from './Message';
 
@@ -8,6 +10,7 @@ interface Props {
 }
 
 const MessageFeed = ({ messages }: Props) => {
+  const imagesCache = useReactiveVar(imagesVar);
   const ref = useRef<HTMLDivElement>(null);
   const theme = useTheme();
 
@@ -15,7 +18,7 @@ const MessageFeed = ({ messages }: Props) => {
     if (ref.current) {
       ref.current.scrollIntoView();
     }
-  }, [messages]);
+  }, [messages, imagesCache]);
 
   const feedStyles: SxProps = {
     overflowY: 'scroll',
