@@ -79,6 +79,9 @@ export interface Dataloaders {
   followingCountLoader: DataLoader<number, number>;
   usersLoader: DataLoader<number, User>;
 
+  // Chat
+  messageImagesLoader: DataLoader<number, Image[]>;
+
   // Roles & Permissions
   groupRoleMemberCountLoader: DataLoader<number, number>;
   serverRoleMemberCountLoader: DataLoader<number, number>;

@@ -137,6 +137,9 @@ export class DataloaderService {
       profilePicturesLoader: this._createProfilePicturesLoader(),
       usersLoader: this._createUsersLoader(),
 
+      // Chat
+      messageImagesLoader: this._createMessageImagesLoader(),
+
       // Roles & Permissions
       groupRoleMemberCountLoader: this._createGroupRoleMemberCountLoader(),
       serverRoleMemberCountLoader: this._createServerRoleMemberCountLoader(),
@@ -669,6 +672,23 @@ export class DataloaderService {
           profilePictures.find(
             (profilePicture: Image) => profilePicture.userId === id,
           ) || new Error(`Could not load profile picture: ${id}`),
+      );
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // Chat
+  // -------------------------------------------------------------------------
+
+  private _createMessageImagesLoader() {
+    return this._getDataLoader<number, Image[]>(async (messageIds) => {
+      const images = await this.imageRepository.find({
+        where: { messageId: In(messageIds) },
+      });
+      return messageIds.map(
+        (id) =>
+          images.filter((image: Image) => image.messageId === id) ||
+          new Error(`Could not load images for message: ${id}`),
       );
     });
   }

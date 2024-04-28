@@ -1,5 +1,6 @@
 import {
   Args,
+  Context,
   Int,
   Mutation,
   Parent,
@@ -7,6 +8,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { Dataloaders } from '../../dataloader/dataloader.types';
 import { Image } from '../../images/models/image.model';
 import { User } from '../../users/models/user.model';
 import { ChatService } from '../chat.service';
@@ -21,13 +23,19 @@ export class MessagesResolver {
   constructor(private chatService: ChatService) {}
 
   @ResolveField(() => User)
-  async user(@Parent() { id }: Message) {
-    return this.chatService.getMessageSender(id);
+  async user(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { userId }: Message,
+  ) {
+    return loaders.usersLoader.load(userId);
   }
 
   @ResolveField(() => [Image])
-  async images(@Parent() { id }: Message) {
-    return this.chatService.getMessageImages(id);
+  async images(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Message,
+  ) {
+    return loaders.messageImagesLoader.load(id);
   }
 
   @Mutation(() => SendMessagePayload)
