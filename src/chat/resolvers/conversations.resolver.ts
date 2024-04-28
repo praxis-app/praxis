@@ -43,12 +43,12 @@ export class ConversationsResolver {
   }
 
   @Subscription(() => Message)
-  messageSent(
+  newMessage(
     @Args('conversationId', { type: () => Int }) conversationId: number,
     @CurrentUser() currentUser: User,
   ) {
     return this.pubSub.asyncIterator(
-      `message-sent-${conversationId}-${currentUser.id}`,
+      `new-message-${conversationId}-${currentUser.id}`,
     );
   }
 }

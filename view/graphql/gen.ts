@@ -1376,11 +1376,16 @@ export type SignUpInput = {
 export type Subscription = {
   __typename?: 'Subscription';
   isProposalRatified: Scalars['Boolean']['output'];
+  newMessage: Message;
   notification: Notification;
 };
 
 export type SubscriptionIsProposalRatifiedArgs = {
   id: Scalars['Int']['input'];
+};
+
+export type SubscriptionNewMessageArgs = {
+  conversationId: Scalars['Int']['input'];
 };
 
 export type SynchronizeProposalPayload = {

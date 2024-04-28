@@ -127,8 +127,8 @@ export class ChatService {
       if (member.id === currentUser.id) {
         continue;
       }
-      await this.pubSub.publish(`message-sent-${conversationId}-${member.id}`, {
-        message,
+      await this.pubSub.publish(`new-message-${conversationId}-${member.id}`, {
+        newMessage: message,
       });
     }
 
