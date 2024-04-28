@@ -11,9 +11,13 @@ import UserAvatar from '../Users/UserAvatar';
 
 interface Props {
   message: MessageFragment;
+  onImageLoad(): void;
 }
 
-const Message = ({ message: { user, body, images, createdAt } }: Props) => {
+const Message = ({
+  message: { user, body, images, createdAt },
+  onImageLoad,
+}: Props) => {
   const userName = user.displayName || user.name;
   const userPath = getUserProfilePath(user.name);
   const formattedDate = timeAgo(createdAt);
@@ -50,10 +54,11 @@ const Message = ({ message: { user, body, images, createdAt } }: Props) => {
         {!!images.length && (
           <AttachedImageList
             images={images}
-            width={isDesktop ? 350 : '100%'}
-            paddingX={2}
-            paddingTop={0.7}
+            onImageLoad={onImageLoad}
             imageSx={{ borderRadius: 2 }}
+            width={isDesktop ? 350 : '100%'}
+            paddingTop={0.7}
+            paddingX={2}
           />
         )}
       </Box>

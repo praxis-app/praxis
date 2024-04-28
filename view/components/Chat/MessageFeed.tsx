@@ -1,21 +1,20 @@
 import { Box, Container, SxProps, useTheme } from '@mui/material';
-import { useEffect, useRef } from 'react';
+import { RefObject, UIEvent } from 'react';
 import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
 import Message from './Message';
 
 interface Props {
   messages: MessageFragment[];
+
+  // TODO: Check if special hook is needed for this
+  feedRef: RefObject<HTMLDivElement>;
+
+  onScroll(e: UIEvent<HTMLDivElement>): void;
+  onImageLoad(): void;
 }
 
-const MessageFeed = ({ messages }: Props) => {
-  const ref = useRef<HTMLDivElement>(null);
+const MessageFeed = ({ messages, feedRef, onScroll, onImageLoad }: Props) => {
   const theme = useTheme();
-
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.scrollIntoView();
-    }
-  }, [messages]);
 
   const feedStyles: SxProps = {
     overflowY: 'scroll',
@@ -59,12 +58,16 @@ const MessageFeed = ({ messages }: Props) => {
   };
 
   return (
-    <Box sx={feedStyles}>
-      <Box ref={ref} />
+    <Box onScroll={onScroll} sx={feedStyles}>
+      <Box ref={feedRef} />
       <Container maxWidth="sm" sx={containerStyles}>
         <Box>
           {messages.map((message) => (
-            <Message key={message.id} message={message} />
+            <Message
+              key={message.id}
+              message={message}
+              onImageLoad={onImageLoad}
+            />
           ))}
         </Box>
       </Container>

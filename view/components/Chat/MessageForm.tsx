@@ -29,9 +29,10 @@ import Flex from '../Shared/Flex';
 interface Props {
   conversationId: number;
   vibeChat?: boolean;
+  onSubmit?(): void;
 }
 
-const MessageForm = ({ conversationId, vibeChat }: Props) => {
+const MessageForm = ({ conversationId, vibeChat, onSubmit }: Props) => {
   const [images, setImages] = useState<File[]>([]);
   const [imagesInputKey, setImagesInputKey] = useState('');
   const [sendMessage, { loading }] = useSendMessageMutation();
@@ -124,6 +125,9 @@ const MessageForm = ({ conversationId, vibeChat }: Props) => {
         }
       },
       onCompleted() {
+        if (onSubmit) {
+          onSubmit();
+        }
         resetForm();
         setImages([]);
         setImagesInputKey(getRandomString());

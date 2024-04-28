@@ -1,5 +1,6 @@
 import { Reference } from '@apollo/client';
 import { Typography } from '@mui/material';
+import { UIEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageFeed from '../../components/Chat/MessageFeed';
 import MessageForm from '../../components/Chat/MessageForm';
@@ -8,6 +9,7 @@ import { useVibeChatQuery } from '../../graphql/chat/queries/gen/VibeChat.gen';
 import { useNewMessageSubscription } from '../../graphql/chat/subscriptions/gen/NewMessage.gen';
 
 const VibeChat = () => {
+  const [feedScrollPosition, setFeedScrollPosition] = useState(0);
   const { data, loading, error } = useVibeChatQuery();
 
   useNewMessageSubscription({
@@ -42,6 +44,26 @@ const VibeChat = () => {
   });
 
   const { t } = useTranslation();
+  const feedRef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = (e: UIEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLDivElement;
+    setFeedScrollPosition(target.scrollTop);
+  };
+
+  // TODO: Add check for scroll direction
+  // TODO: Add cache var for scroll direction
+  const handleImageLoad = () => {
+    if (feedRef.current && feedScrollPosition > -100) {
+      feedRef.current.scrollIntoView();
+    }
+  };
+
+  const handleSubmit = () => {
+    if (feedRef.current) {
+      feedRef.current.scrollIntoView();
+    }
+  };
 
   if (error) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
@@ -57,8 +79,20 @@ const VibeChat = () => {
 
   return (
     <>
-      <MessageFeed messages={data.vibeChat.messages} />
-      {data && <MessageForm conversationId={data.vibeChat.id} vibeChat />}
+      <MessageFeed
+        feedRef={feedRef}
+        messages={data.vibeChat.messages}
+        onImageLoad={handleImageLoad}
+        onScroll={handleScroll}
+      />
+
+      {data && (
+        <MessageForm
+          conversationId={data.vibeChat.id}
+          onSubmit={handleSubmit}
+          vibeChat
+        />
+      )}
     </>
   );
 };

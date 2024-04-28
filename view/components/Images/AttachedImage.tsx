@@ -9,12 +9,14 @@ interface Props extends BoxProps {
   image: AttachedImageFragment;
   marginBottom?: string | number;
   width?: string | number;
+  onImageLoad?(): void;
 }
 
 const AttachedImage = ({
   image,
   marginBottom,
   width = '100%',
+  onImageLoad,
   ...boxProps
 }: Props) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -25,13 +27,18 @@ const AttachedImage = ({
   const loadingHeight = isDesktop ? '400px' : '200px';
   const height = isLoaded ? 'auto' : loadingHeight;
 
+  const handleLoad = () => {
+    onImageLoad?.();
+    setIsLoaded(true);
+  };
+
   return (
     <LazyLoadImage
       imageId={image.id}
       alt={t('images.labels.attachedImage')}
       width={width}
       height={height}
-      onLoad={() => setIsLoaded(true)}
+      onLoad={handleLoad}
       marginBottom={marginBottom}
       {...boxProps}
     />
