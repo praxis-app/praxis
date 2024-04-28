@@ -1,3 +1,4 @@
+import { Reference } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import MessageFeed from '../../components/Chat/MessageFeed';
@@ -20,7 +21,14 @@ const VibeChat = () => {
       cache.modify({
         id: cache.identify(data.vibeChat),
         fields: {
-          messages(existingRefs, { toReference }) {
+          messages(existingRefs, { toReference, readField }) {
+            const alreadyReceived = existingRefs.some(
+              (ref: Reference) =>
+                readField('id', ref) === newMessageData.newMessage.id,
+            );
+            if (alreadyReceived) {
+              return existingRefs;
+            }
             return [...existingRefs, toReference(newMessageData.newMessage)];
           },
         },

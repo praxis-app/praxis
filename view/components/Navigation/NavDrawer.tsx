@@ -160,7 +160,7 @@ const NavDrawer = () => {
           <ListItemIcon>
             <UserAvatar user={me} sx={USER_AVATAR_STYLES} />
           </ListItemIcon>
-          <ListItemText primary={me.name} />
+          <ListItemText primary={me.displayName || me.name} />
         </ListItemButton>
 
         {isLoggedIn && !isVerified && (
