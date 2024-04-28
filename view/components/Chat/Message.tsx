@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
@@ -16,6 +17,8 @@ const Message = ({ message: { user, body, images, createdAt } }: Props) => {
   const userName = user.displayName || user.name;
   const userPath = getUserProfilePath(user.name);
   const formattedDate = timeAgo(createdAt);
+
+  const isDesktop = useIsDesktop();
 
   return (
     <Flex gap={2} paddingBottom={2}>
@@ -47,9 +50,10 @@ const Message = ({ message: { user, body, images, createdAt } }: Props) => {
         {!!images.length && (
           <AttachedImageList
             images={images}
-            width={350}
+            width={isDesktop ? 350 : '100%'}
             paddingX={2}
             paddingTop={0.7}
+            attachedImageSx={{ borderRadius: 2 }}
           />
         )}
       </Box>
