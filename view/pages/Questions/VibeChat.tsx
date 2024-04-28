@@ -22,14 +22,18 @@ const VibeChat = () => {
         id: cache.identify(data.vibeChat),
         fields: {
           messages(existingRefs, { toReference, readField }) {
+            const { newMessage } = newMessageData;
             const alreadyReceived = existingRefs.some(
-              (ref: Reference) =>
-                readField('id', ref) === newMessageData.newMessage.id,
+              (ref: Reference) => readField('id', ref) === newMessage.id,
             );
             if (alreadyReceived) {
               return existingRefs;
             }
-            return [...existingRefs, toReference(newMessageData.newMessage)];
+            return [...existingRefs, toReference(newMessage)].sort((a, b) => {
+              const aCreatedAt = new Date(readField('createdAt', a) as Date);
+              const bCreatedAt = new Date(readField('createdAt', b) as Date);
+              return aCreatedAt.getTime() - bCreatedAt.getTime();
+            });
           },
         },
       });
