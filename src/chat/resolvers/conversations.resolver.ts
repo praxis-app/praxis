@@ -1,3 +1,4 @@
+import { Inject } from '@nestjs/common';
 import {
   Args,
   Int,
@@ -5,15 +6,21 @@ import {
   Query,
   ResolveField,
   Resolver,
+  Subscription,
 } from '@nestjs/graphql';
+import { PubSub } from 'graphql-subscriptions';
 import { User } from '../../users/models/user.model';
 import { ChatService } from '../chat.service';
 import { Conversation } from '../models/conversation.model';
 import { Message } from '../models/message.model';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 
 @Resolver(() => Conversation)
 export class ConversationsResolver {
-  constructor(private chatService: ChatService) {}
+  constructor(
+    @Inject('PUB_SUB') private pubSub: PubSub,
+    private chatService: ChatService,
+  ) {}
 
   @Query(() => Conversation)
   async conversation(@Args('id', { type: () => Int }) id: number) {
@@ -33,5 +40,15 @@ export class ConversationsResolver {
   @ResolveField(() => [User])
   async members(@Parent() { id }: Conversation) {
     return this.chatService.getConversationMembers(id);
+  }
+
+  @Subscription(() => Message)
+  messageSent(
+    @Args('conversationId', { type: () => Int }) conversationId: number,
+    @CurrentUser() currentUser: User,
+  ) {
+    return this.pubSub.asyncIterator(
+      `message-sent-${conversationId}-${currentUser.id}`,
+    );
   }
 }

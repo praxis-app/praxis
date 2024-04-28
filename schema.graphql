@@ -1157,4 +1157,5 @@ input UpdateVoteInput {
 type Subscription {
   isProposalRatified(id: Int!): Boolean!
   notification: Notification!
+  messageSent(conversationId: Int!): Message!
 }

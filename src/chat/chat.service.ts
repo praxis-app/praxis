@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { Repository } from 'typeorm';
@@ -13,10 +13,13 @@ import { Message } from './models/message.model';
 import { SendMessageInput } from './models/send-message.input';
 import { UpdateMessageInput } from './models/update-message.input';
 import { ServerRole } from '../server-roles/models/server-role.model';
+import { PubSub } from 'graphql-subscriptions';
 
 @Injectable()
 export class ChatService {
   constructor(
+    @Inject('PUB_SUB') private pubSub: PubSub,
+
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,
 
@@ -117,6 +120,18 @@ export class ChatService {
         throw new Error(err.message);
       }
     }
+
+    // Send the message to all conversation members except the sender
+    const members = await this.getConversationMembers(conversationId);
+    for (const member of members) {
+      if (member.id === currentUser.id) {
+        continue;
+      }
+      await this.pubSub.publish(`message-sent-${conversationId}-${member.id}`, {
+        message,
+      });
+    }
+
     return { message };
   }
 
