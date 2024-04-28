@@ -53,7 +53,7 @@ const Message = ({ message: { user, body, images, createdAt } }: Props) => {
             width={isDesktop ? 350 : '100%'}
             paddingX={2}
             paddingTop={0.7}
-            attachedImageSx={{ borderRadius: 2 }}
+            imageSx={{ borderRadius: 2 }}
           />
         )}
       </Box>
