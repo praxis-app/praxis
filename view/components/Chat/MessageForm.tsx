@@ -75,6 +75,8 @@ const MessageForm = ({ conversationId, vibeChat, onSubmit }: Props) => {
   };
   const hiderStyles: SxProps = {
     bgcolor: 'background.default',
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
     position: 'absolute',
     bottom: 0,
     left: 0,
