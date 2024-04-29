@@ -49,6 +49,8 @@ const MessageForm = ({ conversationId, vibeChat, onSubmit }: Props) => {
   const containerStyles: SxProps = {
     position: 'fixed',
     bottom: 0,
+    left: 0,
+    right: 0,
     [theme.breakpoints.up('xs')]: {
       paddingTop: 0,
     },

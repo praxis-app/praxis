@@ -47,6 +47,7 @@ const MessageFeed = ({ messages, feedRef, onScroll, onImageLoad }: Props) => {
     },
     [theme.breakpoints.up('sm')]: {
       paddingBottom: '6px',
+      paddingX: '8px',
     },
     [theme.breakpoints.up('md')]: {
       paddingTop: '45px',
