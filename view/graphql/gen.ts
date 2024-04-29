@@ -100,6 +100,11 @@ export type Conversation = {
   name?: Maybe<Scalars['String']['output']>;
 };
 
+export type ConversationMessagesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type CreateCommentInput = {
   body?: InputMaybe<Scalars['String']['input']>;
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;

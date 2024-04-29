@@ -8,7 +8,10 @@ import * as Apollo from '@apollo/client';
 /* eslint-disable */
 
 const defaultOptions = {} as const;
-export type VibeChatQueryVariables = Types.Exact<{ [key: string]: never }>;
+export type VibeChatQueryVariables = Types.Exact<{
+  offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+}>;
 
 export type VibeChatQuery = {
   __typename?: 'Query';
@@ -35,7 +38,7 @@ export type VibeChatQuery = {
 };
 
 export const VibeChatDocument = gql`
-  query VibeChat {
+  query VibeChat($offset: Int = 0, $limit: Int = 20) {
     vibeChat {
       id
       name
@@ -43,7 +46,7 @@ export const VibeChatDocument = gql`
         id
         name
       }
-      messages {
+      messages(offset: $offset, limit: $limit) {
         ...Message
       }
     }
@@ -63,6 +66,8 @@ export const VibeChatDocument = gql`
  * @example
  * const { data, loading, error } = useVibeChatQuery({
  *   variables: {
+ *      offset: // value for 'offset'
+ *      limit: // value for 'limit'
  *   },
  * });
  */

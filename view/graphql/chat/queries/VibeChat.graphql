@@ -1,4 +1,4 @@
-query VibeChat {
+query VibeChat($offset: Int = 0, $limit: Int = 20) {
   vibeChat {
     id
     name
@@ -6,7 +6,7 @@ query VibeChat {
       id
       name
     }
-    messages {
+    messages(offset: $offset, limit: $limit) {
       ...Message
     }
   }

@@ -33,8 +33,12 @@ export class ConversationsResolver {
   }
 
   @ResolveField(() => [Message])
-  async messages(@Parent() { id }: Conversation) {
-    return this.chatService.getConversationMessages(id);
+  async messages(
+    @Parent() { id }: Conversation,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.chatService.getConversationMessages(id, offset, limit);
   }
 
   @ResolveField(() => [User])

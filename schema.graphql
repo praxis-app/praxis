@@ -27,7 +27,7 @@ type Conversation {
   id: Int!
   name: String
   createdAt: DateTime!
-  messages: [Message!]!
+  messages(offset: Int, limit: Int): [Message!]!
   members: [User!]!
 }
 

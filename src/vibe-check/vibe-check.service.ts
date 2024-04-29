@@ -205,6 +205,7 @@ export class VibeCheckService {
     );
   }
 
+  // TODO: Only return most recent comments instead of all - add pagination later
   async getQuestionnaireTicketComments(questionnaireTicketId: number) {
     return this.commentRepository.find({
       where: { questionnaireTicketId },

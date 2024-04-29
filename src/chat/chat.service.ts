@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { Repository } from 'typeorm';
-import { sanitizeText } from '../common/common.utils';
+import { paginate, sanitizeText } from '../common/common.utils';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
 import { ServerConfig } from '../server-configs/models/server-config.model';
@@ -66,10 +66,20 @@ export class ChatService {
     });
   }
 
-  async getConversationMessages(conversationId: number) {
-    return this.messageRepository.find({
+  async getConversationMessages(
+    conversationId: number,
+    offset?: number,
+    limit?: number,
+  ) {
+    const messages = await this.messageRepository.find({
       where: { conversationId },
+      order: { createdAt: 'DESC' },
     });
+    if (offset === undefined) {
+      return messages.reverse();
+    }
+    const paginatedMessages = paginate(messages, offset, limit);
+    return paginatedMessages.reverse();
   }
 
   async getConversationMembers(conversationId: number) {
