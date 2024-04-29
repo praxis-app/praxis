@@ -54,9 +54,6 @@ const MessageForm = ({ conversationId, vibeChat, onSubmit }: Props) => {
     [theme.breakpoints.up('xs')]: {
       paddingTop: 0,
     },
-    [theme.breakpoints.up('sm')]: {
-      paddingX: 0,
-    },
     [theme.breakpoints.up('md')]: {
       paddingBottom: '80px',
     },
@@ -77,13 +74,14 @@ const MessageForm = ({ conversationId, vibeChat, onSubmit }: Props) => {
   };
   const hiderStyles: SxProps = {
     bgcolor: 'background.default',
-    borderTopLeftRadius: 4,
-    borderTopRightRadius: 4,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    marginX: 3,
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: '100px',
+    height: '90px',
     zIndex: -1,
   };
   const inputStyles: SxProps = {
