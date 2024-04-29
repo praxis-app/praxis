@@ -21,6 +21,7 @@ const MessageFeed = ({ messages, feedRef, onScroll, onImageLoad }: Props) => {
     position: 'fixed',
     left: 0,
     right: 0,
+    zIndex: -1,
     display: 'flex',
     flexDirection: 'column-reverse',
     [theme.breakpoints.up('xs')]: {
