@@ -1,6 +1,7 @@
 import { InMemoryCache, makeVar } from '@apollo/client';
 import { AlertColor } from '@mui/material';
 import { LocalStorageKey } from '../constants/shared.constants';
+import { ScrollDirection } from '../hooks/shared.hooks';
 
 interface ToastNotification {
   status: AlertColor;
@@ -8,8 +9,9 @@ interface ToastNotification {
 }
 
 // App state
-export const toastVar = makeVar<ToastNotification | null>(null);
 export const isNavDrawerOpenVar = makeVar(false);
+export const scrollDirectionVar = makeVar<ScrollDirection>(null);
+export const toastVar = makeVar<ToastNotification | null>(null);
 
 // Authentication state
 export const isLoggedInVar = makeVar(false);

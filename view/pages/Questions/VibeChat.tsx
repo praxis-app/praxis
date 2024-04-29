@@ -1,15 +1,17 @@
-import { Reference } from '@apollo/client';
+import { Reference, useReactiveVar } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { UIEvent, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import MessageFeed from '../../components/Chat/MessageFeed';
 import MessageForm from '../../components/Chat/MessageForm';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { scrollDirectionVar } from '../../graphql/cache';
 import { useVibeChatQuery } from '../../graphql/chat/queries/gen/VibeChat.gen';
 import { useNewMessageSubscription } from '../../graphql/chat/subscriptions/gen/NewMessage.gen';
 
 const VibeChat = () => {
   const [feedScrollPosition, setFeedScrollPosition] = useState(0);
+  const scrollPosition = useReactiveVar(scrollDirectionVar);
   const { data, loading, error } = useVibeChatQuery();
 
   useNewMessageSubscription({
@@ -51,10 +53,12 @@ const VibeChat = () => {
     setFeedScrollPosition(target.scrollTop);
   };
 
-  // TODO: Add check for scroll direction
-  // TODO: Add cache var for scroll direction
   const handleImageLoad = () => {
-    if (feedRef.current && feedScrollPosition > -100) {
+    if (
+      feedRef.current &&
+      feedScrollPosition > -100 &&
+      scrollPosition !== 'up'
+    ) {
       feedRef.current.scrollIntoView();
     }
   };
