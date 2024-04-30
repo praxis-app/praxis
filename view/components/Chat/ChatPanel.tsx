@@ -13,7 +13,7 @@ interface Props {
 
 const ChatPanel = ({ conversationId, messages, vibeChat }: Props) => {
   const [feedScrollPosition, setFeedScrollPosition] = useState(0);
-  const scrollPosition = useReactiveVar(scrollDirectionVar);
+  const scrollDirection = useReactiveVar(scrollDirectionVar);
   const feedRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
@@ -25,7 +25,7 @@ const ChatPanel = ({ conversationId, messages, vibeChat }: Props) => {
     if (
       feedRef.current &&
       feedScrollPosition > -100 &&
-      scrollPosition !== 'up'
+      scrollDirection !== 'up'
     ) {
       feedRef.current.scrollIntoView();
     }
