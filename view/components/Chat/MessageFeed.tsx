@@ -1,20 +1,40 @@
 import { Box, Container, SxProps, useTheme } from '@mui/material';
-import { RefObject, UIEvent } from 'react';
+import { RefObject, UIEvent, useEffect, useRef } from 'react';
 import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
+import { useInView } from '../../hooks/shared.hooks';
 import Message from './Message';
 
 interface Props {
   messages: MessageFragment[];
+  onImageLoad(): void;
+  onLoadMore(): Promise<void>;
+  onScroll(e: UIEvent<HTMLDivElement>): void;
 
   // TODO: Check if special hook is needed for this
-  feedRef: RefObject<HTMLDivElement>;
-
-  onScroll(e: UIEvent<HTMLDivElement>): void;
-  onImageLoad(): void;
+  feedBottomRef: RefObject<HTMLDivElement>;
 }
 
-const MessageFeed = ({ messages, feedRef, onScroll, onImageLoad }: Props) => {
+const MessageFeed = ({
+  messages,
+  feedBottomRef,
+  onScroll,
+  onImageLoad,
+  onLoadMore,
+}: Props) => {
+  const feedTopRef = useRef<HTMLDivElement>(null);
+  const { viewed, setViewed } = useInView(feedTopRef, '50px');
   const theme = useTheme();
+
+  useEffect(() => {
+    if (!viewed) {
+      return;
+    }
+    const handleViewed = async () => {
+      await onLoadMore();
+      setViewed(false);
+    };
+    handleViewed();
+  }, [viewed, onLoadMore, setViewed]);
 
   const feedStyles: SxProps = {
     overflowY: 'scroll',
@@ -61,8 +81,9 @@ const MessageFeed = ({ messages, feedRef, onScroll, onImageLoad }: Props) => {
 
   return (
     <Box onScroll={onScroll} sx={feedStyles}>
-      <Box ref={feedRef} />
+      <Box ref={feedBottomRef} />
       <Container maxWidth="sm" sx={containerStyles}>
+        <Box ref={feedTopRef} />
         <Box>
           {messages.map((message) => (
             <Message

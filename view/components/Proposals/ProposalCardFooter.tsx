@@ -60,7 +60,7 @@ const ProposalCardFooter = ({
     useSyncProposalMutation();
 
   const ref = useRef<HTMLDivElement>(null);
-  const [, viewed] = useInView(ref, '100px');
+  const { viewed } = useInView(ref, '100px');
   const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
     skip: !isVerified || !viewed || proposal.stage === ProposalStage.Ratified,
     variables: { proposalId: proposal.id },

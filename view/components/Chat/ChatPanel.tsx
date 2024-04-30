@@ -9,12 +9,18 @@ interface Props {
   conversationId: number;
   messages: MessageFragment[];
   vibeChat?: boolean;
+  onLoadMore(): Promise<void>;
 }
 
-const ChatPanel = ({ conversationId, messages, vibeChat }: Props) => {
+const ChatPanel = ({
+  conversationId,
+  messages,
+  vibeChat,
+  onLoadMore,
+}: Props) => {
   const [feedScrollPosition, setFeedScrollPosition] = useState(0);
   const scrollDirection = useReactiveVar(scrollDirectionVar);
-  const feedRef = useRef<HTMLDivElement>(null);
+  const feedBottomRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
@@ -23,26 +29,27 @@ const ChatPanel = ({ conversationId, messages, vibeChat }: Props) => {
 
   const handleImageLoad = () => {
     if (
-      feedRef.current &&
+      feedBottomRef.current &&
       feedScrollPosition > -100 &&
       scrollDirection !== 'up'
     ) {
-      feedRef.current.scrollIntoView();
+      feedBottomRef.current.scrollIntoView();
     }
   };
 
   const handleSubmit = () => {
-    if (feedRef.current) {
-      feedRef.current.scrollIntoView();
+    if (feedBottomRef.current) {
+      feedBottomRef.current.scrollIntoView();
     }
   };
 
   return (
     <>
       <MessageFeed
-        feedRef={feedRef}
+        feedBottomRef={feedBottomRef}
         messages={messages}
         onImageLoad={handleImageLoad}
+        onLoadMore={onLoadMore}
         onScroll={handleScroll}
       />
       <MessageForm

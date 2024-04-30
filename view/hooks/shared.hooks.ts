@@ -99,7 +99,7 @@ export const useInView = (ref: RefObject<HTMLElement>, rootMargin = '0px') => {
     };
   }, [ref, rootMargin]);
 
-  return [inView, viewed];
+  return { inView, setInView, viewed, setViewed };
 };
 
 export const useAboveBreakpoint = (breakpoint: Breakpoint) =>

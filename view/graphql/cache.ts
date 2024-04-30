@@ -165,6 +165,16 @@ const cache = new InMemoryCache({
         },
       },
     },
+    Conversation: {
+      fields: {
+        messages: {
+          merge(existing = [], incoming) {
+            return [...incoming, ...existing];
+          },
+          keyArgs: false,
+        },
+      },
+    },
   },
 });
 

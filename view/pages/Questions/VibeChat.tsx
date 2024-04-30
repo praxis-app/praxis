@@ -7,7 +7,7 @@ import { useVibeChatQuery } from '../../graphql/chat/queries/gen/VibeChat.gen';
 import { useNewMessageSubscription } from '../../graphql/chat/subscriptions/gen/NewMessage.gen';
 
 const VibeChat = () => {
-  const { data, loading, error } = useVibeChatQuery();
+  const { data, loading, error, fetchMore } = useVibeChatQuery();
 
   useNewMessageSubscription({
     variables: {
@@ -42,6 +42,17 @@ const VibeChat = () => {
 
   const { t } = useTranslation();
 
+  const handleLoadMore = async () => {
+    if (!data) {
+      return;
+    }
+    await fetchMore({
+      variables: {
+        offset: data.vibeChat.messages.length,
+      },
+    });
+  };
+
   if (error) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
@@ -58,6 +69,7 @@ const VibeChat = () => {
     <ChatPanel
       conversationId={data.vibeChat.id}
       messages={data.vibeChat.messages}
+      onLoadMore={handleLoadMore}
       vibeChat
     />
   );
