@@ -7,14 +7,15 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Conversation } from '../../chat/models/conversation.model';
 import { Comment } from '../../comments/models/comment.model';
 import { Group } from '../../groups/models/group.model';
 import { Like } from '../../likes/models/like.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
+import { User } from '../../users/models/user.model';
 import { Question } from '../../vibe-check/models/question.model';
 import { QuestionnaireTicket } from '../../vibe-check/models/questionnaire-ticket.model';
-import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { NotificationStatus } from '../notifications.constants';
 
@@ -94,6 +95,14 @@ export class Notification {
 
   @Column({ nullable: true, type: 'int' })
   likeId: number | null;
+
+  @ManyToOne(() => Conversation, (conversation) => conversation.notifications, {
+    onDelete: 'CASCADE',
+  })
+  conversation: Conversation | null;
+
+  @Column({ nullable: true, type: 'int' })
+  conversationId: number | null;
 
   @ManyToOne(() => Question, (question) => question.notifications, {
     onDelete: 'CASCADE',

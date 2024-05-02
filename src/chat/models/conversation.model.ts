@@ -9,8 +9,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Message } from './message.model';
+import { Notification } from '../../notifications/models/notification.model';
 import { User } from '../../users/models/user.model';
+import { Message } from './message.model';
 
 @Entity()
 @ObjectType()
@@ -29,6 +30,9 @@ export class Conversation {
   @ManyToMany(() => User, (user) => user.conversations)
   @JoinTable()
   members: User[];
+
+  @OneToMany(() => Notification, (notification) => notification.conversation)
+  notifications: Notification[];
 
   @CreateDateColumn()
   @Field()
