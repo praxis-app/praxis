@@ -42,66 +42,66 @@ export class Notification {
   @ManyToOne(() => User, (otherUser) => otherUser.notifications, {
     onDelete: 'CASCADE',
   })
-  otherUser?: User;
+  otherUser: User | null;
 
-  @Column({ nullable: true })
-  otherUserId?: number;
+  @Column({ nullable: true, type: 'int' })
+  otherUserId: number | null;
 
   @ManyToOne(() => Group, (group) => group.notifications, {
     onDelete: 'CASCADE',
   })
-  group?: Group;
+  group: Group | null;
 
-  @Column({ nullable: true })
-  groupId?: number;
+  @Column({ nullable: true, type: 'int' })
+  groupId: number | null;
 
   @ManyToOne(() => Proposal, (proposal) => proposal.notifications, {
     onDelete: 'CASCADE',
   })
-  proposal?: Proposal;
+  proposal: Proposal | null;
 
-  @Column({ nullable: true })
-  proposalId?: number;
+  @Column({ nullable: true, type: 'int' })
+  proposalId: number | null;
 
   @ManyToOne(() => Post, (post) => post.notifications, {
     onDelete: 'CASCADE',
   })
-  post?: Post;
+  post: Post | null;
 
-  @Column({ nullable: true })
-  postId?: number;
+  @Column({ nullable: true, type: 'int' })
+  postId: number | null;
 
   @ManyToOne(() => Comment, (comment) => comment.notifications, {
     onDelete: 'CASCADE',
   })
-  comment?: Comment;
+  comment: Comment | null;
 
-  @Column({ nullable: true })
-  commentId?: number;
+  @Column({ nullable: true, type: 'int' })
+  commentId: number | null;
 
   @ManyToOne(() => Vote, (vote) => vote.notifications, {
     onDelete: 'CASCADE',
   })
-  vote?: Vote;
+  vote: Vote | null;
 
-  @Column({ nullable: true })
-  voteId?: number;
+  @Column({ nullable: true, type: 'int' })
+  voteId: number | null;
 
   @ManyToOne(() => Like, (like) => like.notifications, {
     onDelete: 'CASCADE',
   })
-  like?: Like;
+  like: Like | null;
 
-  @Column({ nullable: true })
-  likeId?: number;
+  @Column({ nullable: true, type: 'int' })
+  likeId: number | null;
 
   @ManyToOne(() => Question, (question) => question.notifications, {
     onDelete: 'CASCADE',
   })
-  question?: Question;
+  question: Question | null;
 
-  @Column({ nullable: true })
-  questionId?: number;
+  @Column({ nullable: true, type: 'int' })
+  questionId: number | null;
 
   @ManyToOne(
     () => QuestionnaireTicket,
@@ -110,10 +110,10 @@ export class Notification {
       onDelete: 'CASCADE',
     },
   )
-  questionnaireTicket?: QuestionnaireTicket;
+  questionnaireTicket: QuestionnaireTicket | null;
 
-  @Column({ nullable: true })
-  questionnaireTicketId?: number;
+  @Column({ nullable: true, type: 'int' })
+  questionnaireTicketId: number | null;
 
   @CreateDateColumn()
   @Field()
