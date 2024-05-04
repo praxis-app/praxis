@@ -59,6 +59,7 @@ const Notification = ({
     question,
     questionnaireTicket,
     status,
+    unreadMessageCount,
     createdAt,
     __typename,
   },
@@ -117,7 +118,7 @@ const Notification = ({
     if (notificationType === NotificationType.NewMessage) {
       return _t('notifications.messages.newMessage', {
         chatName: conversation?.name,
-        count: conversation?.unreadMessageCount,
+        count: Number(unreadMessageCount),
       });
     }
     if (notificationType === NotificationType.Follow) {

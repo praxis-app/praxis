@@ -10,8 +10,9 @@ import { GroupAvatarFragmentDoc } from '../../../groups/fragments/gen/GroupAvata
 export type NotificationFragment = {
   __typename?: 'Notification';
   id: number;
-  notificationType: string;
   status: string;
+  notificationType: string;
+  unreadMessageCount?: number | null;
   createdAt: any;
   otherUser?: {
     __typename?: 'User';
@@ -32,7 +33,6 @@ export type NotificationFragment = {
     __typename?: 'Conversation';
     id: number;
     name?: string | null;
-    unreadMessageCount: number;
   } | null;
   comment?: {
     __typename?: 'Comment';
@@ -69,8 +69,9 @@ export type NotificationFragment = {
 export const NotificationFragmentDoc = gql`
   fragment Notification on Notification {
     id
-    notificationType
     status
+    notificationType
+    unreadMessageCount
     createdAt
     otherUser {
       ...UserAvatar
@@ -87,7 +88,6 @@ export const NotificationFragmentDoc = gql`
     conversation {
       id
       name
-      unreadMessageCount
     }
     comment {
       id

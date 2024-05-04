@@ -193,21 +193,30 @@ export class ChatService {
         newMessage: message,
       });
 
-      // Notify conversation member of new message if they
-      // haven't been notified in the last week
-      const recentNotificationCount =
-        await this.notificationsService.getNotificationsCount({
+      // Notify conversation member of new message
+      const recentNotification =
+        await this.notificationsService.getNotification({
           createdAt: MoreThan(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
           notificationType: NotificationType.NewMessage,
           status: NotificationStatus.Unread,
           userId: member.id,
           conversationId,
         });
-      if (recentNotificationCount === 0) {
+      const unreadMessageCount = await this.getUnreadMessageCount(
+        conversationId,
+        member.id,
+      );
+      if (recentNotification) {
+        await this.notificationsService.updateNotification(
+          recentNotification.id,
+          { unreadMessageCount },
+        );
+      } else {
         await this.notificationsService.createNotification({
           notificationType: NotificationType.NewMessage,
           otherUserId: currentUser.id,
           userId: member.id,
+          unreadMessageCount,
           conversationId,
         });
       }

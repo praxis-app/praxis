@@ -19,8 +19,9 @@ export type NotificationsQuery = {
   notifications: Array<{
     __typename?: 'Notification';
     id: number;
-    notificationType: string;
     status: string;
+    notificationType: string;
+    unreadMessageCount?: number | null;
     createdAt: any;
     otherUser?: {
       __typename?: 'User';
@@ -41,7 +42,6 @@ export type NotificationsQuery = {
       __typename?: 'Conversation';
       id: number;
       name?: string | null;
-      unreadMessageCount: number;
     } | null;
     comment?: {
       __typename?: 'Comment';

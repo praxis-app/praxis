@@ -360,6 +360,7 @@ type Notification {
   id: Int!
   notificationType: String!
   status: String!
+  unreadMessageCount: Int
   createdAt: DateTime!
   otherUser: User
   group: Group

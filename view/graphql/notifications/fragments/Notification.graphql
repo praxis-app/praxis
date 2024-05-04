@@ -1,7 +1,8 @@
 fragment Notification on Notification {
   id
-  notificationType
   status
+  notificationType
+  unreadMessageCount
   createdAt
 
   otherUser {
@@ -19,7 +20,6 @@ fragment Notification on Notification {
   conversation {
     id
     name
-    unreadMessageCount
   }
 
   comment {

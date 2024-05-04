@@ -847,6 +847,7 @@ export type Notification = {
   question?: Maybe<Question>;
   questionnaireTicket?: Maybe<QuestionnaireTicket>;
   status: Scalars['String']['output'];
+  unreadMessageCount?: Maybe<Scalars['Int']['output']>;
 };
 
 export type Post = {

@@ -104,6 +104,10 @@ export class Notification {
   @Column({ nullable: true, type: 'int' })
   conversationId: number | null;
 
+  @Column({ nullable: true, type: 'int' })
+  @Field(() => Int, { nullable: true })
+  unreadMessageCount: number | null;
+
   @ManyToOne(() => Question, (question) => question.notifications, {
     onDelete: 'CASCADE',
   })
