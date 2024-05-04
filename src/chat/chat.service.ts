@@ -1,19 +1,24 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { paginate, sanitizeText } from '../common/common.utils';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
+import {
+  NotificationStatus,
+  NotificationType,
+} from '../notifications/notifications.constants';
+import { NotificationsService } from '../notifications/notifications.service';
 import { ServerConfig } from '../server-configs/models/server-config.model';
 import { ServerConfigsService } from '../server-configs/server-configs.service';
+import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { Conversation } from './models/conversation.model';
 import { Message } from './models/message.model';
 import { SendMessageInput } from './models/send-message.input';
 import { UpdateMessageInput } from './models/update-message.input';
-import { ServerRole } from '../server-roles/models/server-role.model';
-import { PubSub } from 'graphql-subscriptions';
 
 @Injectable()
 export class ChatService {
@@ -36,6 +41,7 @@ export class ChatService {
     private serverRoleRepository: Repository<ServerRole>,
 
     private serverConfigsService: ServerConfigsService,
+    private notificationsService: NotificationsService,
   ) {}
 
   async getMessage(messageId: number) {
@@ -140,6 +146,25 @@ export class ChatService {
       await this.pubSub.publish(`new-message-${conversationId}-${member.id}`, {
         newMessage: message,
       });
+
+      // Notify conversation member of new message if they
+      // haven't been notified in the last week
+      const recentNotificationCount =
+        await this.notificationsService.getNotificationsCount({
+          createdAt: MoreThan(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
+          notificationType: NotificationType.NewMessage,
+          status: NotificationStatus.Unread,
+          userId: member.id,
+          conversationId,
+        });
+      if (recentNotificationCount === 0) {
+        await this.notificationsService.createNotification({
+          notificationType: NotificationType.NewMessage,
+          otherUserId: currentUser.id,
+          userId: member.id,
+          conversationId,
+        });
+      }
     }
 
     return { message };

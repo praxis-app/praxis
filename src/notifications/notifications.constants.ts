@@ -11,6 +11,7 @@ export enum NotificationType {
   Follow = 'follow',
   GroupMemberRequest = 'group-member-request',
   GroupMemberRequestApproval = 'group-member-request-approval',
+  NewMessage = 'new-message',
   NewQuestionnaireTicket = 'new-questionnaire-ticket',
   PostComment = 'post-comment',
   PostLike = 'post-like',
