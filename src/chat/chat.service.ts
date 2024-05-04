@@ -81,7 +81,6 @@ export class ChatService {
     });
   }
 
-  // TODO: Determine wheather reverse() is necessary
   async getConversationMessages(
     conversationId: number,
     currentUserId: number,
