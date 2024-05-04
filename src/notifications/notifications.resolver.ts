@@ -12,6 +12,7 @@ import {
 } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Conversation } from '../chat/models/conversation.model';
 import { Comment } from '../comments/models/comment.model';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
@@ -64,7 +65,10 @@ export class NotificationsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { otherUserId }: Notification,
   ) {
-    return otherUserId ? loaders.usersLoader.load(otherUserId) : null;
+    if (!otherUserId) {
+      return null;
+    }
+    return loaders.usersLoader.load(otherUserId);
   }
 
   @ResolveField(() => Group, { nullable: true })
@@ -72,7 +76,10 @@ export class NotificationsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { groupId }: Notification,
   ) {
-    return groupId ? loaders.groupsLoader.load(groupId) : null;
+    if (!groupId) {
+      return null;
+    }
+    return loaders.groupsLoader.load(groupId);
   }
 
   @ResolveField(() => Proposal, { nullable: true })
@@ -80,7 +87,10 @@ export class NotificationsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { proposalId }: Notification,
   ) {
-    return proposalId ? loaders.proposalsLoader.load(proposalId) : null;
+    if (!proposalId) {
+      return null;
+    }
+    return loaders.proposalsLoader.load(proposalId);
   }
 
   @ResolveField(() => Post, { nullable: true })
@@ -88,7 +98,10 @@ export class NotificationsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { postId }: Notification,
   ) {
-    return postId ? loaders.postsLoader.load(postId) : null;
+    if (!postId) {
+      return null;
+    }
+    return loaders.postsLoader.load(postId);
   }
 
   @ResolveField(() => Comment, { nullable: true })
@@ -96,7 +109,21 @@ export class NotificationsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { commentId }: Notification,
   ) {
-    return commentId ? loaders.commentsLoader.load(commentId) : null;
+    if (!commentId) {
+      return null;
+    }
+    return loaders.commentsLoader.load(commentId);
+  }
+
+  @ResolveField(() => Conversation, { nullable: true })
+  conversation(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { conversationId }: Notification,
+  ) {
+    if (!conversationId) {
+      return null;
+    }
+    return loaders.conversationsLoader.load(conversationId);
   }
 
   @ResolveField(() => Question, { nullable: true })

@@ -7,6 +7,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as DataLoader from 'dataloader';
 import { In, Repository } from 'typeorm';
+import { Conversation } from '../chat/models/conversation.model';
 import { Comment } from '../comments/models/comment.model';
 import { EventAttendeeStatus } from '../events/models/event-attendee.model';
 import { Event } from '../events/models/event.model';
@@ -21,11 +22,11 @@ import { Like } from '../likes/models/like.model';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { ProposalAction } from '../proposals/proposal-actions/models/proposal-action.model';
-import { Question } from '../vibe-check/models/question.model';
-import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
+import { Question } from '../vibe-check/models/question.model';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { Vote } from '../votes/models/vote.model';
 import {
   CommentWithLikeCount,
@@ -88,6 +89,9 @@ export class DataloaderService {
     @InjectRepository(Comment)
     private commentRepository: Repository<Comment>,
 
+    @InjectRepository(Conversation)
+    private conversationRepository: Repository<Conversation>,
+
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
 
@@ -138,6 +142,7 @@ export class DataloaderService {
       usersLoader: this._createUsersLoader(),
 
       // Chat
+      conversationsLoader: this._createConversationsLoader(),
       messageImagesLoader: this._createMessageImagesLoader(),
 
       // Roles & Permissions
@@ -679,6 +684,22 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
   // Chat
   // -------------------------------------------------------------------------
+
+  private _createConversationsLoader() {
+    return this._getDataLoader<number, Conversation>(
+      async (conversationIds) => {
+        const conversations = await this.conversationRepository.find({
+          where: { id: In(conversationIds) },
+        });
+        return conversationIds.map(
+          (id) =>
+            conversations.find(
+              (conversation: Conversation) => conversation.id === id,
+            ) || new Error(`Could not load conversation: ${id}`),
+        );
+      },
+    );
+  }
 
   private _createMessageImagesLoader() {
     return this._getDataLoader<number, Image[]>(async (messageIds) => {

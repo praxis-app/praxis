@@ -366,6 +366,7 @@ type Notification {
   proposal: Proposal
   post: Post
   comment: Comment
+  conversation: Conversation
   question: Question
   questionnaireTicket: QuestionnaireTicket
 }
