@@ -11,8 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Conversation } from '../../chat/models/conversation.model';
-import { MessageRead } from '../../chat/models/message-read.model';
+import { ConversationMember } from '../../chat/models/conversation-member.model';
 import { Message } from '../../chat/models/message.model';
 import { Comment } from '../../comments/models/comment.model';
 import { EventAttendee } from '../../events/models/event-attendee.model';
@@ -97,15 +96,12 @@ export class User {
   @Field(() => [Message])
   messages: Message[];
 
-  @OneToMany(() => MessageRead, (messageRead) => messageRead.user, {
-    cascade: true,
-  })
-  messageReads: MessageRead[];
-
-  @ManyToMany(() => Conversation, (conversation) => conversation.members, {
-    onDelete: 'CASCADE',
-  })
-  conversations: Conversation[];
+  @OneToMany(
+    () => ConversationMember,
+    (conversationMember) => conversationMember.user,
+    { cascade: true },
+  )
+  conversationMembers: ConversationMember[];
 
   @OneToMany(() => Image, (image) => image.user, {
     cascade: true,

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
-import { MoreThan, Not, Repository } from 'typeorm';
+import { In, MoreThan, Not, Repository } from 'typeorm';
 import { paginate, sanitizeText } from '../common/common.utils';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
@@ -15,6 +15,7 @@ import { ServerConfig } from '../server-configs/models/server-config.model';
 import { ServerConfigsService } from '../server-configs/server-configs.service';
 import { ServerRole } from '../server-roles/models/server-role.model';
 import { User } from '../users/models/user.model';
+import { ConversationMember } from './models/conversation-member.model';
 import { Conversation } from './models/conversation.model';
 import { Message } from './models/message.model';
 import { SendMessageInput } from './models/send-message.input';
@@ -32,6 +33,12 @@ export class ChatService {
 
     @InjectRepository(Conversation)
     private conversationRepository: Repository<Conversation>,
+
+    @InjectRepository(ConversationMember)
+    private conversationMemberRepository: Repository<ConversationMember>,
+
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
 
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
@@ -74,6 +81,7 @@ export class ChatService {
     });
   }
 
+  // TODO: Determine wheather reverse() is necessary
   async getConversationMessages(
     conversationId: number,
     currentUserId: number,
@@ -84,25 +92,51 @@ export class ChatService {
       where: { conversationId },
       order: { createdAt: 'DESC' },
     });
+
+    // Set the last read message ID for the current user
+    if (messages.length > 0) {
+      const filteredMessages = messages.filter(
+        (message) => message.userId !== currentUserId,
+      );
+      if (filteredMessages.length > 0) {
+        await this.conversationMemberRepository.update(
+          { conversationId, userId: currentUserId },
+          { lastMessageReadId: messages[0].id },
+        );
+      }
+    }
+
     if (offset === undefined) {
       return messages.reverse();
     }
+
     const paginatedMessages = paginate(messages, offset, limit);
     return paginatedMessages.reverse();
   }
 
   async getConversationMembers(conversationId: number) {
-    const { members } = await this.conversationRepository.findOneOrFail({
-      where: { id: conversationId },
-      relations: ['members'],
+    return this.userRepository.find({
+      where: {
+        conversationMembers: { conversationId },
+      },
     });
-    return members;
   }
 
   async getUnreadMessageCount(conversationId: number, userId: number) {
+    const conversationMember =
+      await this.conversationMemberRepository.findOneOrFail({
+        where: { conversationId, userId },
+      });
+
+    if (!conversationMember.lastMessageReadId) {
+      return this.messageRepository.count({
+        where: { conversationId, userId: Not(userId) },
+      });
+    }
     return this.messageRepository.count({
       where: {
-        reads: { userId: Not(userId) },
+        id: MoreThan(conversationMember.lastMessageReadId),
+        userId: Not(userId),
         conversationId,
       },
     });
@@ -220,18 +254,18 @@ export class ChatService {
     );
 
     if (membersToAdd.length) {
-      await this.conversationRepository
-        .createQueryBuilder()
-        .relation(Conversation, 'members')
-        .of(vibeChat)
-        .add(membersToAdd);
+      await this.conversationMemberRepository.save(
+        membersToAdd.map((userId) => ({
+          conversationId: vibeChat.id,
+          userId,
+        })),
+      );
     }
     if (membersToRemove.length) {
-      await this.conversationRepository
-        .createQueryBuilder()
-        .relation(Conversation, 'members')
-        .of(vibeChat)
-        .remove(membersToRemove);
+      await this.conversationMemberRepository.delete({
+        conversationId: vibeChat.id,
+        userId: In(membersToRemove),
+      });
     }
   }
 

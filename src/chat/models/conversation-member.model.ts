@@ -5,18 +5,22 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../../users/models/user.model';
-import { Message } from './message.model';
+import { Conversation } from './conversation.model';
 
 @Entity()
 @ObjectType()
-export class MessageRead {
+export class ConversationMember {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
   id: number;
 
-  @ManyToOne(() => User, (user) => user.messageReads, {
+  @Column({ nullable: true, type: 'int' })
+  lastMessageReadId: number | null;
+
+  @ManyToOne(() => User, (user) => user.conversationMembers, {
     onDelete: 'CASCADE',
   })
   user: User;
@@ -24,15 +28,17 @@ export class MessageRead {
   @Column()
   userId: number;
 
-  @ManyToOne(() => Message, (message) => message.reads, {
+  @ManyToOne(() => Conversation, (conversation) => conversation.members, {
     onDelete: 'CASCADE',
   })
-  message: Message;
+  conversation: Conversation;
 
   @Column()
-  messageId: number;
+  conversationId: number;
 
   @CreateDateColumn()
-  @Field()
   createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

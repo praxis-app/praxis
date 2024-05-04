@@ -11,7 +11,6 @@ import {
 import { Image } from '../../images/models/image.model';
 import { User } from '../../users/models/user.model';
 import { Conversation } from './conversation.model';
-import { MessageRead } from './message-read.model';
 
 @Entity()
 @ObjectType()
@@ -42,9 +41,6 @@ export class Message {
 
   @Column()
   conversationId: number;
-
-  @OneToMany(() => MessageRead, (messageRead) => messageRead.message)
-  reads: MessageRead[];
 
   @CreateDateColumn()
   @Field()

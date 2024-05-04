@@ -3,14 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Notification } from '../../notifications/models/notification.model';
-import { User } from '../../users/models/user.model';
+import { ConversationMember } from './conversation-member.model';
 import { Message } from './message.model';
 
 @Entity()
@@ -27,9 +25,8 @@ export class Conversation {
   @OneToMany(() => Message, (message) => message.conversation)
   messages: Message[];
 
-  @ManyToMany(() => User, (user) => user.conversations)
-  @JoinTable()
-  members: User[];
+  @OneToMany(() => ConversationMember, (member) => member.conversation)
+  members: ConversationMember[];
 
   @OneToMany(() => Notification, (notification) => notification.conversation)
   notifications: Notification[];
