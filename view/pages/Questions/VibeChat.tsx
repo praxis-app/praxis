@@ -1,5 +1,6 @@
 import { Reference } from '@apollo/client';
 import { Typography } from '@mui/material';
+import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import ChatPanel from '../../components/Chat/ChatPanel';
 import ProgressBar from '../../components/Shared/ProgressBar';
@@ -50,6 +51,11 @@ const VibeChat = () => {
       variables: {
         offset: data.vibeChat.messages.length,
       },
+      updateQuery: (previousResult, { fetchMoreResult }) =>
+        produce(previousResult, (draft) => {
+          const { vibeChat } = fetchMoreResult;
+          draft.vibeChat.messages.unshift(...vibeChat.messages);
+        }),
     });
   };
 
