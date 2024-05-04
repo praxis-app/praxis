@@ -230,6 +230,10 @@ const Notification = ({
   };
 
   const getPath = () => {
+    // TODO: Update to point to sepcific chat after adding full chat functionality
+    if (notificationType === NotificationType.NewMessage) {
+      return NavigationPaths.VibeChat;
+    }
     if (
       isProposalVote ||
       notificationType === NotificationType.ProposalComment ||
