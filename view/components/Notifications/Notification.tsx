@@ -1,9 +1,10 @@
 import {
   AutoAwesome,
   Check,
-  Comment,
+  CommentSharp,
   Group,
   HowToVote,
+  MessageRounded,
   PanTool,
   Person,
   QuestionAnswer,
@@ -112,6 +113,9 @@ const Notification = ({
   const getNotificationMessage = () => {
     const _t: TFunction<Namespace<'ns1'>, undefined> = t;
 
+    if (notificationType === NotificationType.NewMessage) {
+      // TODO: Add message text
+    }
     if (notificationType === NotificationType.Follow) {
       return _t('notifications.messages.follow', {
         name: otherUserName,
@@ -367,7 +371,10 @@ const Notification = ({
       );
     }
     if (notificationType.includes('comment')) {
-      return <Comment sx={{ ...iconStyles, marginTop: 0.6 }} />;
+      return <CommentSharp sx={{ ...iconStyles, marginTop: 0.6 }} />;
+    }
+    if (notificationType === NotificationType.NewMessage) {
+      return <MessageRounded sx={{ ...iconStyles, marginTop: 0.6 }} />;
     }
     if (notificationType === NotificationType.Follow) {
       return <Person sx={iconStyles} />;
