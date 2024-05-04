@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
-import { MoreThan, Repository } from 'typeorm';
+import { MoreThan, Not, Repository } from 'typeorm';
 import { paginate, sanitizeText } from '../common/common.utils';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
@@ -19,6 +19,8 @@ import { Conversation } from './models/conversation.model';
 import { Message } from './models/message.model';
 import { SendMessageInput } from './models/send-message.input';
 import { UpdateMessageInput } from './models/update-message.input';
+
+const VIBE_CHAT_NAME = 'Vibe Chat';
 
 @Injectable()
 export class ChatService {
@@ -74,6 +76,7 @@ export class ChatService {
 
   async getConversationMessages(
     conversationId: number,
+    currentUserId: number,
     offset?: number,
     limit?: number,
   ) {
@@ -96,13 +99,22 @@ export class ChatService {
     return members;
   }
 
+  async getUnreadMessageCount(conversationId: number, userId: number) {
+    return this.messageRepository.count({
+      where: {
+        reads: { userId: Not(userId) },
+        conversationId,
+      },
+    });
+  }
+
   async getVibeChat() {
     const { id, vibeChatId } =
       await this.serverConfigsService.getServerConfig();
 
     if (!vibeChatId) {
       const vibeChat = await this.conversationRepository.save({
-        name: 'Vibe Chat',
+        name: VIBE_CHAT_NAME,
       });
       await this.serverConfigRepository.update(id, {
         vibeChatId: vibeChat.id,

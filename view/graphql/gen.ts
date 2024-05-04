@@ -98,6 +98,7 @@ export type Conversation = {
   members: Array<User>;
   messages: Array<Message>;
   name?: Maybe<Scalars['String']['output']>;
+  unreadMessageCount: Scalars['Int']['output'];
 };
 
 export type ConversationMessagesArgs = {
@@ -835,6 +836,7 @@ export type MutationUpdateVoteArgs = {
 export type Notification = {
   __typename?: 'Notification';
   comment?: Maybe<Comment>;
+  conversation?: Maybe<Conversation>;
   createdAt: Scalars['DateTime']['output'];
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];

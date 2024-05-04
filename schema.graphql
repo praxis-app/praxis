@@ -376,6 +376,7 @@ type Conversation {
   name: String
   createdAt: DateTime!
   messages(offset: Int, limit: Int): [Message!]!
+  unreadMessageCount: Int!
   members: [User!]!
 }
 

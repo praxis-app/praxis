@@ -50,6 +50,7 @@ const Notification = ({
   notification: {
     id,
     comment,
+    conversation,
     group,
     notificationType,
     otherUser,
@@ -114,7 +115,10 @@ const Notification = ({
     const _t: TFunction<Namespace<'ns1'>, undefined> = t;
 
     if (notificationType === NotificationType.NewMessage) {
-      // TODO: Add message text
+      return _t('notifications.messages.newMessage', {
+        chatName: conversation?.name,
+        count: conversation?.unreadMessageCount,
+      });
     }
     if (notificationType === NotificationType.Follow) {
       return _t('notifications.messages.follow', {

@@ -7,14 +7,19 @@ fragment Notification on Notification {
   otherUser {
     ...UserAvatar
   }
-  group {
-    ...GroupAvatar
+  post {
+    id
   }
   proposal {
     id
   }
-  post {
+  group {
+    ...GroupAvatar
+  }
+  conversation {
     id
+    name
+    unreadMessageCount
   }
 
   comment {

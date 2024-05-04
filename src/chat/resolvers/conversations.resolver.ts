@@ -34,11 +34,25 @@ export class ConversationsResolver {
 
   @ResolveField(() => [Message])
   async messages(
-    @Parent() { id }: Conversation,
+    @Parent() conversation: Conversation,
+    @CurrentUser() currentUser: User,
     @Args('offset', { type: () => Int, nullable: true }) offset?: number,
     @Args('limit', { type: () => Int, nullable: true }) limit?: number,
   ) {
-    return this.chatService.getConversationMessages(id, offset, limit);
+    return this.chatService.getConversationMessages(
+      conversation.id,
+      currentUser.id,
+      offset,
+      limit,
+    );
+  }
+
+  @ResolveField(() => Int)
+  async unreadMessageCount(
+    @CurrentUser() currentUser: User,
+    @Parent() { id }: Conversation,
+  ) {
+    return this.chatService.getUnreadMessageCount(id, currentUser.id);
   }
 
   @ResolveField(() => [User])

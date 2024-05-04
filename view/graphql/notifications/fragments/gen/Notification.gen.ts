@@ -20,14 +20,20 @@ export type NotificationFragment = {
     displayName?: string | null;
     profilePicture: { __typename?: 'Image'; id: number };
   } | null;
+  post?: { __typename?: 'Post'; id: number } | null;
+  proposal?: { __typename?: 'Proposal'; id: number } | null;
   group?: {
     __typename?: 'Group';
     id: number;
     name: string;
     coverPhoto?: { __typename?: 'Image'; id: number } | null;
   } | null;
-  proposal?: { __typename?: 'Proposal'; id: number } | null;
-  post?: { __typename?: 'Post'; id: number } | null;
+  conversation?: {
+    __typename?: 'Conversation';
+    id: number;
+    name?: string | null;
+    unreadMessageCount: number;
+  } | null;
   comment?: {
     __typename?: 'Comment';
     id: number;
@@ -69,14 +75,19 @@ export const NotificationFragmentDoc = gql`
     otherUser {
       ...UserAvatar
     }
-    group {
-      ...GroupAvatar
+    post {
+      id
     }
     proposal {
       id
     }
-    post {
+    group {
+      ...GroupAvatar
+    }
+    conversation {
       id
+      name
+      unreadMessageCount
     }
     comment {
       id
