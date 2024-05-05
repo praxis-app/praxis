@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PubSub } from 'graphql-subscriptions';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, IsNull, Not, Repository } from 'typeorm';
-import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
+import { PageSize } from '../common/common.constants';
 import { logTime, sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { GroupsService } from '../groups/groups.service';
@@ -92,7 +92,7 @@ export class ProposalsService {
 
     // TODO: Update once pagination has been implemented
     return comments.slice(
-      comments.length - Math.min(comments.length, DEFAULT_PAGE_SIZE),
+      comments.length - Math.min(comments.length, PageSize.Large),
       comments.length,
     );
   }

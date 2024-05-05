@@ -8,7 +8,7 @@ import {
   MoreThan,
   Repository,
 } from 'typeorm';
-import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
+import { PageSize } from '../common/common.constants';
 import { paginate, sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { ImageTypes } from '../images/image.constants';
@@ -83,7 +83,7 @@ export class EventsService {
     const sortedEvents = events.sort(
       (a, b) => a.startsAt.getTime() - b.startsAt.getTime(),
     );
-    return sortedEvents.slice(0, DEFAULT_PAGE_SIZE);
+    return sortedEvents.slice(0, PageSize.Default);
   }
 
   async getPublicEvents(input: EventsInput) {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { Repository } from 'typeorm';
-import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
+import { PageSize } from '../common/common.constants';
 import { sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
@@ -31,7 +31,7 @@ export class PostsService {
 
     // TODO: Update once pagination has been implemented
     return comments.slice(
-      comments.length - Math.min(comments.length, DEFAULT_PAGE_SIZE),
+      comments.length - Math.min(comments.length, PageSize.Large),
       comments.length,
     );
   }

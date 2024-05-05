@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Not, Repository } from 'typeorm';
 import { Comment } from '../comments/models/comment.model';
-import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
+import { PageSize } from '../common/common.constants';
 import { paginate, sanitizeText } from '../common/common.utils';
 import { ImageTypes } from '../images/image.constants';
 import { Image } from '../images/models/image.model';
@@ -162,7 +162,7 @@ export class VibeCheckService {
       order: { createdAt: 'ASC' },
     });
     // TODO: Update once pagination has been implemented
-    return comments.slice(comments.length - DEFAULT_PAGE_SIZE, comments.length);
+    return comments.slice(comments.length - PageSize.Large, comments.length);
   }
 
   async getQuestionCommentCount(questionId: number) {
@@ -215,7 +215,7 @@ export class VibeCheckService {
       order: { createdAt: 'ASC' },
     });
     // TODO: Update once pagination has been implemented
-    return comments.slice(comments.length - DEFAULT_PAGE_SIZE, comments.length);
+    return comments.slice(comments.length - PageSize.Large, comments.length);
   }
 
   async getQuestionnaireTicketCommentCount(questionnaireTicketId: number) {
