@@ -430,7 +430,6 @@ type User {
   proposals: [Proposal!]!
   comments: [Comment!]!
   likes: [Like!]!
-  messages: [Message!]!
   profilePicture: Image!
   coverPhoto: Image
   createdAt: DateTime!

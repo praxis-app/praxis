@@ -1613,7 +1613,6 @@ export type User = {
   isVerified: Scalars['Boolean']['output'];
   joinedGroups: Array<Group>;
   likes: Array<Like>;
-  messages: Array<Message>;
   name: Scalars['String']['output'];
   posts: Array<Post>;
   profileFeed: Array<FeedItem>;

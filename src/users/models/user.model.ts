@@ -93,7 +93,6 @@ export class User {
   @OneToMany(() => Message, (message) => message.user, {
     cascade: true,
   })
-  @Field(() => [Message])
   messages: Message[];
 
   @OneToMany(
