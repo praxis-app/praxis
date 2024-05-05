@@ -53,22 +53,6 @@ export class ChatService {
     private notificationsService: NotificationsService,
   ) {}
 
-  async getMessageSender(messageId: number) {
-    const { user } = await this.messageRepository.findOneOrFail({
-      where: { id: messageId },
-      relations: ['user'],
-    });
-    return user;
-  }
-
-  async getMessageImages(messageId: number) {
-    const { images } = await this.messageRepository.findOneOrFail({
-      where: { id: messageId },
-      relations: ['images'],
-    });
-    return images;
-  }
-
   async getConversation(conversationId: number) {
     return this.conversationRepository.findOneOrFail({
       where: { id: conversationId },
