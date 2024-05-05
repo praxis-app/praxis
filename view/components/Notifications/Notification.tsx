@@ -158,6 +158,9 @@ const Notification = ({
       });
     }
     if (notificationType === NotificationType.QuestionnaireTicketComment) {
+      if (!comment?.questionnaireTicket?.id) {
+        return _t('notifications.errors.accessDenied');
+      }
       if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
         return _t('notifications.messages.ownQuestionnaireTicketComment', {
           name: otherUserName,

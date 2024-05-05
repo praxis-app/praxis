@@ -56,6 +56,10 @@ export const shieldConfig = shield(
       ...vibeCheckPermissions.Mutation,
       ...votePermissions.Mutation,
     },
+    Subscription: {
+      ...conversationPermissions.Subscription,
+      ...notificationPermissions.Subscription,
+    },
     ...authPermissions.ObjectTypes,
     ...canaryPermissions.ObjectTypes,
     ...commentPermissions.ObjectTypes,

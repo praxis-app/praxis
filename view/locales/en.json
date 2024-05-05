@@ -657,7 +657,8 @@
       "verifyUser": "You've been verified. Welcome to Praxis!"
     },
     "errors": {
-      "invalidType": "Invalid notification type"
+      "invalidType": "Invalid notification type",
+      "accessDenied": "You no longer have access to this notification."
     }
   },
 
