@@ -48,7 +48,6 @@ export class ServerConfig {
   @Field({ nullable: true })
   serverQuestionsPrompt?: string;
 
-  // TODO: Verify that type is correct in migration
   @Column({ nullable: true, type: 'int' })
   vibeChatId: number | null;
 
