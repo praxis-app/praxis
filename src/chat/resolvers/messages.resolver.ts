@@ -1,7 +1,6 @@
 import {
   Args,
   Context,
-  Int,
   Mutation,
   Parent,
   ResolveField,
@@ -15,8 +14,6 @@ import { ChatService } from '../chat.service';
 import { Message } from '../models/message.model';
 import { SendMessageInput } from '../models/send-message.input';
 import { SendMessagePayload } from '../models/send-message.payload';
-import { UpdateMessageInput } from '../models/update-message.input';
-import { UpdateMessagePayload } from '../models/update-message.payload';
 
 @Resolver(() => Message)
 export class MessagesResolver {
@@ -44,17 +41,5 @@ export class MessagesResolver {
     @CurrentUser() currentUser: User,
   ) {
     return this.chatService.sendMessage(messageData, currentUser);
-  }
-
-  @Mutation(() => UpdateMessagePayload)
-  async updateMessage(@Args('messageData') messageData: UpdateMessageInput) {
-    return this.chatService.updateMessage(messageData);
-  }
-
-  @Mutation(() => Boolean)
-  async deleteMessage(
-    @Args('messageId', { type: () => Int }) messageId: number,
-  ) {
-    return this.chatService.deleteMessage(messageId);
   }
 }

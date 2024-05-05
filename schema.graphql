@@ -506,10 +506,6 @@ type SendMessagePayload {
   message: Message!
 }
 
-type UpdateMessagePayload {
-  message: Message!
-}
-
 type CreateServerRolePayload {
   serverRole: ServerRole!
 }
@@ -775,8 +771,6 @@ type Mutation {
   deleteServerRole(id: Int!): Boolean!
   deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
   sendMessage(messageData: SendMessageInput!): SendMessagePayload!
-  updateMessage(messageData: UpdateMessageInput!): UpdateMessagePayload!
-  deleteMessage(messageId: Int!): Boolean!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
   createPost(postData: CreatePostInput!): CreatePostPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
@@ -1027,12 +1021,6 @@ input DeleteServerRoleMemberInput {
 
 input SendMessageInput {
   conversationId: Int!
-  body: String
-  images: [Upload!]
-}
-
-input UpdateMessageInput {
-  id: Int!
   body: String
   images: [Upload!]
 }

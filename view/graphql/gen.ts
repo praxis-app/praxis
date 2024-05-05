@@ -529,7 +529,6 @@ export type Mutation = {
   deleteGroupRoleMember: DeleteGroupRoleMemberPayload;
   deleteImage: Scalars['Boolean']['output'];
   deleteLike: Scalars['Boolean']['output'];
-  deleteMessage: Scalars['Boolean']['output'];
   deleteNotification: Scalars['Boolean']['output'];
   deletePost: Scalars['Boolean']['output'];
   deleteProposal: Scalars['Boolean']['output'];
@@ -559,7 +558,6 @@ export type Mutation = {
   updateGroup: UpdateGroupPayload;
   updateGroupConfig: UpdateGroupPayload;
   updateGroupRole: UpdateGroupRolePayload;
-  updateMessage: UpdateMessagePayload;
   updateNotification: UpdateNotificationPayload;
   updatePost: UpdatePostPayload;
   updateProposal: UpdateProposalPayload;
@@ -673,10 +671,6 @@ export type MutationDeleteLikeArgs = {
   likeData: DeleteLikeInput;
 };
 
-export type MutationDeleteMessageArgs = {
-  messageId: Scalars['Int']['input'];
-};
-
 export type MutationDeleteNotificationArgs = {
   id: Scalars['Int']['input'];
 };
@@ -783,10 +777,6 @@ export type MutationUpdateGroupConfigArgs = {
 
 export type MutationUpdateGroupRoleArgs = {
   groupRoleData: UpdateGroupRoleInput;
-};
-
-export type MutationUpdateMessageArgs = {
-  messageData: UpdateMessageInput;
 };
 
 export type MutationUpdateNotificationArgs = {
@@ -1474,17 +1464,6 @@ export type UpdateGroupRoleInput = {
 export type UpdateGroupRolePayload = {
   __typename?: 'UpdateGroupRolePayload';
   groupRole: GroupRole;
-};
-
-export type UpdateMessageInput = {
-  body?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['Int']['input'];
-  images?: InputMaybe<Array<Scalars['Upload']['input']>>;
-};
-
-export type UpdateMessagePayload = {
-  __typename?: 'UpdateMessagePayload';
-  message: Message;
 };
 
 export type UpdateNotificationInput = {
