@@ -5,21 +5,19 @@ import { useInView } from '../../hooks/shared.hooks';
 import Message from './Message';
 
 interface Props {
+  feedBottomRef: RefObject<HTMLDivElement>;
   messages: MessageFragment[];
   onImageLoad(): void;
   onLoadMore(): Promise<void>;
   onScroll(e: UIEvent<HTMLDivElement>): void;
-
-  // TODO: Check if special hook is needed for this
-  feedBottomRef: RefObject<HTMLDivElement>;
 }
 
 const MessageFeed = ({
-  messages,
   feedBottomRef,
-  onScroll,
+  messages,
   onImageLoad,
   onLoadMore,
+  onScroll,
 }: Props) => {
   const feedTopRef = useRef<HTMLDivElement>(null);
   const { viewed, setViewed } = useInView(feedTopRef, '50px');
