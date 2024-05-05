@@ -6,6 +6,7 @@ import ChatPanel from '../../components/Chat/ChatPanel';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useVibeChatQuery } from '../../graphql/chat/queries/gen/VibeChat.gen';
 import { useNewMessageSubscription } from '../../graphql/chat/subscriptions/gen/NewMessage.gen';
+import { isDeniedAccess } from '../../utils/error.utils';
 
 const VibeChat = () => {
   const { data, loading, error, fetchMore } = useVibeChatQuery();
@@ -58,6 +59,10 @@ const VibeChat = () => {
         }),
     });
   };
+
+  if (isDeniedAccess(error)) {
+    return <Typography>{t('prompts.permissionDenied')}</Typography>;
+  }
 
   if (error) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
