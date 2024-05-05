@@ -6,6 +6,9 @@ export const conversationPermissions = {
     vibeChat: canManageQuestionnaireTickets,
     conversation: isConversationMember,
   },
+  Subscription: {
+    newMessage: isConversationMember,
+  },
   // Mutation: {},
   // ObjectTypes: {},
 };

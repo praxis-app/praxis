@@ -4,11 +4,14 @@ import { Context } from '../../context/context.types';
 
 export const isConversationMember = rule({ cache: 'strict' })(async (
   _parent,
-  args: { id: number },
+  args: { id?: number; conversationId?: number },
   { services: { chatService }, user }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
   }
-  return chatService.isConversationMember(args.id, user.id);
+  return chatService.isConversationMember(
+    args.id || args.conversationId!,
+    user.id,
+  );
 });
