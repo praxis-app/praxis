@@ -23,6 +23,9 @@ export const inviteTokenVar = makeVar(
   localStorage.getItem(LocalStorageKey.InviteToken),
 );
 
+// Chat state
+export const isChatPanelOpenVar = makeVar(false);
+
 // Image state
 export const imagesVar = makeVar<Record<number, string>>({});
 

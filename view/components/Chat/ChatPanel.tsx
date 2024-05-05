@@ -1,8 +1,8 @@
 import { useReactiveVar } from '@apollo/client';
-import { UIEvent, useRef, useState } from 'react';
+import { UIEvent, useEffect, useRef, useState } from 'react';
 import MessageFeed from '../../components/Chat/MessageFeed';
 import MessageForm from '../../components/Chat/MessageForm';
-import { scrollDirectionVar } from '../../graphql/cache';
+import { isChatPanelOpenVar, scrollDirectionVar } from '../../graphql/cache';
 import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
 
 interface Props {
@@ -21,6 +21,13 @@ const ChatPanel = ({
   const [feedScrollPosition, setFeedScrollPosition] = useState(0);
   const scrollDirection = useReactiveVar(scrollDirectionVar);
   const feedBottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    isChatPanelOpenVar(true);
+    return () => {
+      isChatPanelOpenVar(false);
+    };
+  }, []);
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
