@@ -17,8 +17,10 @@ import { ShieldService } from '../shield/shield.service';
 import { User } from '../users/models/user.model';
 import { UserPermissions } from '../users/user.types';
 import { UsersService } from '../users/users.service';
+import { ChatService } from '../chat/chat.service';
 
 export interface ContextServices {
+  chatService: ChatService;
   commentsService: CommentsService;
   eventsService: EventsService;
   groupRolesService: GroupRolesService;

@@ -137,6 +137,12 @@ export class ChatService {
     });
   }
 
+  async isConversationMember(conversationId: number, userId: number) {
+    return this.conversationMemberRepository.exist({
+      where: { conversationId, userId },
+    });
+  }
+
   async sendMessage(
     { conversationId, body, images }: SendMessageInput,
     currentUser: User,
