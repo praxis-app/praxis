@@ -116,6 +116,9 @@ const Notification = ({
     const _t: TFunction<Namespace<'ns1'>, undefined> = t;
 
     if (notificationType === NotificationType.NewMessage) {
+      if (!conversation?.name) {
+        return _t('notifications.errors.accessDenied');
+      }
       return _t('notifications.messages.newMessage', {
         chatName: conversation?.name,
         count: Number(unreadMessageCount),

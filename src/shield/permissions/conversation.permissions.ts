@@ -9,6 +9,7 @@ export const conversationPermissions = {
   Subscription: {
     newMessage: isConversationMember,
   },
-  // Mutation: {},
-  // ObjectTypes: {},
+  ObjectTypes: {
+    Conversation: isConversationMember,
+  },
 };

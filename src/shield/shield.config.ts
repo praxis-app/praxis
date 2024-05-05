@@ -63,6 +63,7 @@ export const shieldConfig = shield(
     ...authPermissions.ObjectTypes,
     ...canaryPermissions.ObjectTypes,
     ...commentPermissions.ObjectTypes,
+    ...conversationPermissions.ObjectTypes,
     ...eventPermissions.ObjectTypes,
     ...groupPermissions.ObjectTypes,
     ...imagePermissions.ObjectTypes,
