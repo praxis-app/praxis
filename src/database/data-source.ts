@@ -1,6 +1,9 @@
 import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 import { Canary } from '../canaries/models/canary.model';
+import { ConversationMember } from '../chat/models/conversation-member.model';
+import { Conversation } from '../chat/models/conversation.model';
+import { Message } from '../chat/models/message.model';
 import { Comment } from '../comments/models/comment.model';
 import { EventAttendee } from '../events/models/event-attendee.model';
 import { Event } from '../events/models/event.model';
@@ -75,6 +78,7 @@ import { AddUserLockedColumn1711324242919 } from './migrations/1711324242919-Add
 import { AddResetPasswordTokenColumn1711855441610 } from './migrations/1711855441610-AddResetPasswordTokenColumn';
 import { AddResetPasswordSentAtColumn1712112839181 } from './migrations/1712112839181-AddResetPasswordSentAtColumn';
 import { AddUserDisplayNameColumn1713640882734 } from './migrations/1713640882734-AddUserDisplayNameColumn';
+import { AddChatTables1714930094485 } from './migrations/1714930094485-AddChatTables';
 
 dotenv.config();
 
@@ -89,6 +93,8 @@ export default new DataSource({
     Answer,
     Canary,
     Comment,
+    Conversation,
+    ConversationMember,
     Event,
     EventAttendee,
     Group,
@@ -98,6 +104,7 @@ export default new DataSource({
     GroupRolePermission,
     Image,
     Like,
+    Message,
     Notification,
     Post,
     Proposal,
@@ -125,6 +132,7 @@ export default new DataSource({
     AddAdminModelColumns1703454648429,
     AddCanaryTable1699136722535,
     AddCascadeDeletesForUser1704254669247,
+    AddChatTables1714930094485,
     AddCommentTable1693003196421,
     AddEventTables1690147636077,
     AddFollowTable1679778147216,
