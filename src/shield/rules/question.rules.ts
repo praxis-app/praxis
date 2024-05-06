@@ -6,13 +6,13 @@ import { Context } from '../../context/context.types';
 import { Image } from '../../images/models/image.model';
 import { CreateLikeInput } from '../../likes/models/create-like.input';
 import { DeleteLikeInput } from '../../likes/models/delete-like.input';
+import { User } from '../../users/models/user.model';
 import { Answer } from '../../vibe-check/models/answer.model';
 import { Question } from '../../vibe-check/models/question.model';
 import { QuestionnaireTicket } from '../../vibe-check/models/questionnaire-ticket.model';
-import { User } from '../../users/models/user.model';
 import { hasServerPermission } from '../shield.utils';
 
-export const canManageQuestionnaireTickets = rule({ cache: 'strict' })(
+export const canManageQuestionnaireTickets = rule({ cache: 'contextual' })(
   async (_parent, _args, { permissions }: Context) =>
     hasServerPermission(permissions, 'manageQuestionnaireTickets'),
 );

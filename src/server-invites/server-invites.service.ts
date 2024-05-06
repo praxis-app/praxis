@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as cryptoRandomString from 'crypto-random-string';
 import { Repository } from 'typeorm';
-import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
+import { PageSize } from '../common/common.constants';
 import { User } from '../users/models/user.model';
 import { CreateServerInviteInput } from './models/create-server-invite.input';
 import { ServerInvite } from './models/server-invite.model';
@@ -39,7 +39,7 @@ export class ServerInvitesService {
     );
 
     // TODO: Update once pagination has been implemented
-    return validServerInvites.slice(0, DEFAULT_PAGE_SIZE);
+    return validServerInvites.slice(0, PageSize.Large);
   }
 
   async createServerInvite(

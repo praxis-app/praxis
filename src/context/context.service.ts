@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
+import { ChatService } from '../chat/chat.service';
 import { CommentsService } from '../comments/comments.service';
 import { DataloaderService } from '../dataloader/dataloader.service';
 import { EventsService } from '../events/events.service';
@@ -24,6 +25,7 @@ export class ContextService {
 
   constructor(
     private authService: AuthService,
+    private chatService: ChatService,
     private commentsService: CommentsService,
     private dataloaderService: DataloaderService,
     private eventsService: EventsService,
@@ -52,6 +54,7 @@ export class ContextService {
     const loaders = this.dataloaderService.getLoaders();
 
     const services: ContextServices = {
+      chatService: this.chatService,
       commentsService: this.commentsService,
       eventsService: this.eventsService,
       groupRolesService: this.groupRolesService,
@@ -62,10 +65,10 @@ export class ContextService {
       postsService: this.postsService,
       proposalActionsService: this.proposalActionsService,
       proposalsService: this.proposalsService,
-      vibeCheckService: this.vibeCheckService,
       rulesService: this.rulesService,
       shieldService: this.shieldService,
       usersService: this.usersService,
+      vibeCheckService: this.vibeCheckService,
     };
 
     return {

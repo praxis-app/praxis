@@ -1,20 +1,25 @@
 fragment Notification on Notification {
   id
-  notificationType
   status
+  notificationType
+  unreadMessageCount
   createdAt
 
   otherUser {
     ...UserAvatar
   }
-  group {
-    ...GroupAvatar
+  post {
+    id
   }
   proposal {
     id
   }
-  post {
+  group {
+    ...GroupAvatar
+  }
+  conversation {
     id
+    name
   }
 
   comment {

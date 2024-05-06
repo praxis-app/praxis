@@ -35,7 +35,7 @@ const Notifications = () => {
   const [
     getNotifications,
     { data, loading: notificationsLoading, error: notificationsError },
-  ] = useNotificationsLazyQuery();
+  ] = useNotificationsLazyQuery({ errorPolicy: 'all' });
 
   const [
     readNotifications,
@@ -153,14 +153,18 @@ const Notifications = () => {
     window.confirm(t('notifications.prompts.confirmClearAll')) &&
     handleClearAll();
 
-  if (isDeniedAccess(error)) {
-    return <Typography>{t('prompts.permissionDenied')}</Typography>;
-  }
-  if (error) {
-    return <Typography>{t('errors.somethingWentWrong')}</Typography>;
-  }
   if (notificationsLoading) {
     return <ProgressBar />;
+  }
+
+  if (!data) {
+    if (isDeniedAccess(error)) {
+      return <Typography>{t('prompts.permissionDenied')}</Typography>;
+    }
+    if (error) {
+      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+    }
+    return null;
   }
 
   return (

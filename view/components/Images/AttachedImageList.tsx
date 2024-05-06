@@ -4,15 +4,27 @@ import AttachedImage from './AttachedImage';
 
 interface Props extends Omit<BoxProps, 'children'> {
   images: AttachedImageFragment[];
+  imageSx?: BoxProps['sx'];
+  onImageLoad?(): void;
 }
 
-const AttachedImageList = ({ images, sx, ...boxProps }: Props) => (
+const AttachedImageList = ({
+  images,
+  sx,
+  imageSx,
+  onImageLoad,
+  ...boxProps
+}: Props) => (
   <Box sx={{ marginX: -2, ...sx }} {...boxProps}>
     {images.map((image, index) => (
       <AttachedImage
-        image={image}
         key={image.id}
-        marginBottom={index + 1 === images.length ? undefined : 2}
+        image={image}
+        onImageLoad={onImageLoad}
+        sx={{
+          marginBottom: index + 1 === images.length ? undefined : 2,
+          ...imageSx,
+        }}
       />
     ))}
   </Box>

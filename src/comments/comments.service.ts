@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, Repository } from 'typeorm';
-import { DEFAULT_PAGE_SIZE } from '../common/common.constants';
+import { Repository } from 'typeorm';
 import { sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
@@ -11,9 +10,9 @@ import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
+import { User } from '../users/models/user.model';
 import { Question } from '../vibe-check/models/question.model';
 import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
-import { User } from '../users/models/user.model';
 import { Comment } from './models/comment.model';
 import { CreateCommentInput } from './models/create-comment.input';
 import { UpdateCommentInput } from './models/update-comment.input';
@@ -47,18 +46,6 @@ export class CommentsService {
 
   async getComment(id: number, relations?: string[]) {
     return this.commentRepository.findOneOrFail({ where: { id }, relations });
-  }
-
-  async getComments(where: FindOptionsWhere<Comment>) {
-    const comments = await this.commentRepository.find({
-      order: { createdAt: 'ASC' },
-      where,
-    });
-    // TODO: Update once pagination has been implemented
-    return comments.slice(
-      comments.length - Math.min(comments.length, DEFAULT_PAGE_SIZE),
-      comments.length,
-    );
   }
 
   async getCommentProposalId(commentId: number) {

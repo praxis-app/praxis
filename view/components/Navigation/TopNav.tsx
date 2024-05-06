@@ -22,6 +22,8 @@ import { inDevToast } from '../../utils/shared.utils';
 import LevelOneHeading from '../Shared/LevelOneHeading';
 import Link from '../Shared/Link';
 import TopNavDesktop from './TopNavDesktop';
+import { useReactiveVar } from '@apollo/client';
+import { isChatPanelOpenVar } from '../../graphql/cache';
 
 interface Props {
   appBarProps?: AppBarProps;
@@ -29,10 +31,12 @@ interface Props {
 }
 
 const TopNav = ({ appBarProps, scrollDirection }: Props) => {
+  const isChatPanelOpen = useReactiveVar(isChatPanelOpenVar);
+
   const { pathname } = useLocation();
   const { t } = useTranslation();
-  const isDesktop = useIsDesktop();
   const isAboveSmall = useAboveBreakpoint('sm');
+  const isDesktop = useIsDesktop();
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -87,7 +91,7 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   return (
     <Box position="fixed" width="100%" zIndex={5}>
       <Slide
-        in={isAboveSmall || scrollDirection !== 'down'}
+        in={isAboveSmall || isChatPanelOpen || scrollDirection !== 'down'}
         appear={false}
         timeout={220}
       >

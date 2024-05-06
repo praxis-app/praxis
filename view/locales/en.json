@@ -520,6 +520,12 @@
     }
   },
 
+  "chat": {
+    "prompts": {
+      "sendAMessage": "Send a message..."
+    }
+  },
+
   "images": {
     "labels": {
       "attachedImage": "Attached image",
@@ -635,6 +641,8 @@
       "groupMemberRequest": "<b>{{name}}</b> requested to join <b>{{groupName}}</b>.",
       "groupMemberRequestApproval": "Your request to join <b>{{groupName}}</b> was approved.",
       "missingAnswerLike": "<b>{{name}}</b> likes your answer.",
+      "newMessage_one": "You have {{count}} new message in {{chatName}}",
+      "newMessage_other": "You have {{count}} new messages in {{chatName}}",
       "newQuestionnaireTicket": "A new questionnaire ticket was created for <b>{{name}}</b>.",
       "ownAnswerComment": "<b>{{name}}</b> commented on their answer.",
       "ownQuestionnaireTicketComment": "<b>{{name}}</b> commented on their questionnaire ticket.",
@@ -649,7 +657,8 @@
       "verifyUser": "You've been verified. Welcome to Praxis!"
     },
     "errors": {
-      "invalidType": "Invalid notification type"
+      "invalidType": "Invalid notification type",
+      "accessDenied": "You no longer have access to this notification."
     }
   },
 
@@ -700,6 +709,7 @@
       "status": "Status",
       "submitted": "Submitted",
       "ticketNumber": "Ticket #{{number}}",
+      "vibeChat": "Vibe Chat",
       "vibeCheck": "Vibe Check",
       "votesNeeded": "Votes needed"
     },

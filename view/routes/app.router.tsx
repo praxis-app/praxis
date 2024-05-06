@@ -8,7 +8,9 @@ import ServerInvites from '../pages/Invites/ServerInvites';
 import Notifications from '../pages/Notifications/Notifications';
 import ServerQuestions from '../pages/Questions/ServerQuestions';
 import VibeCheck from '../pages/Questions/VibeCheck';
+import VibeChat from '../pages/Questions/VibeChat';
 import CanaryPage from '../pages/Settings/CanaryPage';
+import PrivacyPolicy from '../pages/Settings/PrivacyPolicy';
 import ServerSettings from '../pages/Settings/ServerSettings';
 import authRouter from './auth.router';
 import eventsRouter from './events.router';
@@ -19,7 +21,6 @@ import questionnairesRouter from './questionnaires.router';
 import rolesRouter from './roles.router';
 import rulesRouter from './rules.router';
 import usersRouter from './users.router';
-import PrivacyPolicy from '../pages/Settings/PrivacyPolicy';
 
 const appRouter = createBrowserRouter([
   {
@@ -57,6 +58,10 @@ const appRouter = createBrowserRouter([
       {
         path: 'vibe-check',
         element: <VibeCheck />,
+      },
+      {
+        path: 'vibe-chat',
+        element: <VibeChat />,
       },
       {
         path: 'questions',

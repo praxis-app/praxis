@@ -1,9 +1,10 @@
 import {
   AutoAwesome,
   Check,
-  Comment,
+  CommentSharp,
   Group,
   HowToVote,
+  MessageRounded,
   PanTool,
   Person,
   QuestionAnswer,
@@ -49,6 +50,7 @@ const Notification = ({
   notification: {
     id,
     comment,
+    conversation,
     group,
     notificationType,
     otherUser,
@@ -57,6 +59,7 @@ const Notification = ({
     question,
     questionnaireTicket,
     status,
+    unreadMessageCount,
     createdAt,
     __typename,
   },
@@ -112,6 +115,15 @@ const Notification = ({
   const getNotificationMessage = () => {
     const _t: TFunction<Namespace<'ns1'>, undefined> = t;
 
+    if (notificationType === NotificationType.NewMessage) {
+      if (!conversation?.name) {
+        return _t('notifications.errors.accessDenied');
+      }
+      return _t('notifications.messages.newMessage', {
+        chatName: conversation?.name,
+        count: Number(unreadMessageCount),
+      });
+    }
     if (notificationType === NotificationType.Follow) {
       return _t('notifications.messages.follow', {
         name: otherUserName,
@@ -149,6 +161,9 @@ const Notification = ({
       });
     }
     if (notificationType === NotificationType.QuestionnaireTicketComment) {
+      if (!comment?.questionnaireTicket?.id) {
+        return _t('notifications.errors.accessDenied');
+      }
       if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
         return _t('notifications.messages.ownQuestionnaireTicketComment', {
           name: otherUserName,
@@ -221,6 +236,10 @@ const Notification = ({
   };
 
   const getPath = () => {
+    // TODO: Update to point to sepcific chat after adding full chat functionality
+    if (notificationType === NotificationType.NewMessage) {
+      return NavigationPaths.VibeChat;
+    }
     if (
       isProposalVote ||
       notificationType === NotificationType.ProposalComment ||
@@ -367,7 +386,10 @@ const Notification = ({
       );
     }
     if (notificationType.includes('comment')) {
-      return <Comment sx={{ ...iconStyles, marginTop: 0.6 }} />;
+      return <CommentSharp sx={{ ...iconStyles, marginTop: 0.6 }} />;
+    }
+    if (notificationType === NotificationType.NewMessage) {
+      return <MessageRounded sx={{ ...iconStyles, marginTop: 0.6 }} />;
     }
     if (notificationType === NotificationType.Follow) {
       return <Person sx={iconStyles} />;

@@ -1,0 +1,5 @@
+subscription NewMessage($conversationId: Int!) {
+  newMessage(conversationId: $conversationId) {
+    ...Message
+  }
+}

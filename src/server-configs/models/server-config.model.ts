@@ -48,6 +48,9 @@ export class ServerConfig {
   @Field({ nullable: true })
   serverQuestionsPrompt?: string;
 
+  @Column({ nullable: true, type: 'int' })
+  vibeChatId: number | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

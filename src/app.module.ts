@@ -13,6 +13,7 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { CanariesModule } from './canaries/canaries.module';
+import { ChatModule } from './chat/chat.module';
 import { CommentsModule } from './comments/comments.module';
 import { Environment } from './common/common.constants';
 import { ContextModule } from './context/context.module';
@@ -31,8 +32,8 @@ import { RulesModule } from './rules/rules.module';
 import { ServerConfigsModule } from './server-configs/server-configs.module';
 import { ServerInvitesModule } from './server-invites/server-invites.module';
 import { ServerRolesModule } from './server-roles/server-roles.module';
-import { ShieldModule } from './shield/shield.module';
 import { shieldConfig } from './shield/shield.config';
+import { ShieldModule } from './shield/shield.module';
 import { UsersModule } from './users/users.module';
 import { VibeCheckModule } from './vibe-check/vibe-check.module';
 import { VotesModule } from './votes/votes.module';
@@ -86,6 +87,7 @@ const ViewModule = ServeStaticModule.forRoot({
     ApolloModule,
     AuthModule,
     CanariesModule,
+    ChatModule,
     CommentsModule,
     DatabaseModule,
     DataloaderModule,

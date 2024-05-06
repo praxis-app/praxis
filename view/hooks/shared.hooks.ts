@@ -1,6 +1,8 @@
+import { useReactiveVar } from '@apollo/client';
 import { Breakpoint, useMediaQuery, useTheme } from '@mui/material';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { BrowserEvents } from '../constants/shared.constants';
+import { scrollDirectionVar } from '../graphql/cache';
 
 const RESET_SCROLL_DIRECTION_TIMEOUT = 700;
 const RESET_SCROLL_DIRECTION_THRESHOLD = 40;
@@ -8,7 +10,7 @@ const RESET_SCROLL_DIRECTION_THRESHOLD = 40;
 export type ScrollDirection = 'up' | 'down' | null;
 
 export const useScrollDirection = () => {
-  const [direction, setDirection] = useState<ScrollDirection>(null);
+  const scrollPosition = useReactiveVar(scrollDirectionVar);
   const previousScrollY = useRef(0);
 
   useEffect(() => {
@@ -17,15 +19,15 @@ export const useScrollDirection = () => {
 
     const handleScroll = () => {
       if (previousScrollY.current > window.scrollY) {
-        setDirection('up');
+        scrollDirectionVar('up');
       } else if (previousScrollY.current < window.scrollY) {
-        setDirection('down');
+        scrollDirectionVar('down');
       }
       previousScrollY.current = window.scrollY;
 
       if (window.scrollY < RESET_SCROLL_DIRECTION_THRESHOLD) {
         timeout = setTimeout(
-          () => setDirection(null),
+          () => scrollDirectionVar(null),
           RESET_SCROLL_DIRECTION_TIMEOUT,
         );
       }
@@ -43,7 +45,7 @@ export const useScrollDirection = () => {
     };
   }, []);
 
-  return direction;
+  return scrollPosition;
 };
 
 export const useScrollPosition = () => {
@@ -97,7 +99,7 @@ export const useInView = (ref: RefObject<HTMLElement>, rootMargin = '0px') => {
     };
   }, [ref, rootMargin]);
 
-  return [inView, viewed];
+  return { inView, setInView, viewed, setViewed };
 };
 
 export const useAboveBreakpoint = (breakpoint: Breakpoint) =>

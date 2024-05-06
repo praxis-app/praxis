@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Not, Repository } from 'typeorm';
 import { Comment } from '../comments/models/comment.model';
+import { PageSize } from '../common/common.constants';
 import { paginate, sanitizeText } from '../common/common.utils';
 import { ImageTypes } from '../images/image.constants';
 import { Image } from '../images/models/image.model';
@@ -156,9 +157,12 @@ export class VibeCheckService {
   }
 
   async getQuestionComments(questionId: number) {
-    return this.commentRepository.find({
+    const comments = await this.commentRepository.find({
       where: { questionId },
+      order: { createdAt: 'ASC' },
     });
+    // TODO: Update once pagination has been implemented
+    return comments.slice(comments.length - PageSize.Large, comments.length);
   }
 
   async getQuestionCommentCount(questionId: number) {
@@ -206,10 +210,12 @@ export class VibeCheckService {
   }
 
   async getQuestionnaireTicketComments(questionnaireTicketId: number) {
-    return this.commentRepository.find({
+    const comments = await this.commentRepository.find({
       where: { questionnaireTicketId },
       order: { createdAt: 'ASC' },
     });
+    // TODO: Update once pagination has been implemented
+    return comments.slice(comments.length - PageSize.Large, comments.length);
   }
 
   async getQuestionnaireTicketCommentCount(questionnaireTicketId: number) {

@@ -7,14 +7,15 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Conversation } from '../../chat/models/conversation.model';
 import { Comment } from '../../comments/models/comment.model';
 import { Group } from '../../groups/models/group.model';
 import { Like } from '../../likes/models/like.model';
 import { Post } from '../../posts/models/post.model';
 import { Proposal } from '../../proposals/models/proposal.model';
+import { User } from '../../users/models/user.model';
 import { Question } from '../../vibe-check/models/question.model';
 import { QuestionnaireTicket } from '../../vibe-check/models/questionnaire-ticket.model';
-import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { NotificationStatus } from '../notifications.constants';
 
@@ -42,66 +43,78 @@ export class Notification {
   @ManyToOne(() => User, (otherUser) => otherUser.notifications, {
     onDelete: 'CASCADE',
   })
-  otherUser?: User;
+  otherUser: User | null;
 
-  @Column({ nullable: true })
-  otherUserId?: number;
+  @Column({ nullable: true, type: 'int' })
+  otherUserId: number | null;
 
   @ManyToOne(() => Group, (group) => group.notifications, {
     onDelete: 'CASCADE',
   })
-  group?: Group;
+  group: Group | null;
 
-  @Column({ nullable: true })
-  groupId?: number;
+  @Column({ nullable: true, type: 'int' })
+  groupId: number | null;
 
   @ManyToOne(() => Proposal, (proposal) => proposal.notifications, {
     onDelete: 'CASCADE',
   })
-  proposal?: Proposal;
+  proposal: Proposal | null;
 
-  @Column({ nullable: true })
-  proposalId?: number;
+  @Column({ nullable: true, type: 'int' })
+  proposalId: number | null;
 
   @ManyToOne(() => Post, (post) => post.notifications, {
     onDelete: 'CASCADE',
   })
-  post?: Post;
+  post: Post | null;
 
-  @Column({ nullable: true })
-  postId?: number;
+  @Column({ nullable: true, type: 'int' })
+  postId: number | null;
 
   @ManyToOne(() => Comment, (comment) => comment.notifications, {
     onDelete: 'CASCADE',
   })
-  comment?: Comment;
+  comment: Comment | null;
 
-  @Column({ nullable: true })
-  commentId?: number;
+  @Column({ nullable: true, type: 'int' })
+  commentId: number | null;
 
   @ManyToOne(() => Vote, (vote) => vote.notifications, {
     onDelete: 'CASCADE',
   })
-  vote?: Vote;
+  vote: Vote | null;
 
-  @Column({ nullable: true })
-  voteId?: number;
+  @Column({ nullable: true, type: 'int' })
+  voteId: number | null;
 
   @ManyToOne(() => Like, (like) => like.notifications, {
     onDelete: 'CASCADE',
   })
-  like?: Like;
+  like: Like | null;
 
-  @Column({ nullable: true })
-  likeId?: number;
+  @Column({ nullable: true, type: 'int' })
+  likeId: number | null;
+
+  @ManyToOne(() => Conversation, (conversation) => conversation.notifications, {
+    onDelete: 'CASCADE',
+  })
+  conversation: Conversation | null;
+
+  @Column({ nullable: true, type: 'int' })
+  conversationId: number | null;
+
+  @Column({ nullable: true, type: 'int' })
+  @Field(() => Int, { nullable: true })
+  unreadMessageCount: number | null;
 
   @ManyToOne(() => Question, (question) => question.notifications, {
     onDelete: 'CASCADE',
   })
-  question?: Question;
+  question: Question | null;
 
-  @Column({ nullable: true })
-  questionId?: number;
+  @Column({ nullable: true, type: 'int' })
+  questionId: number | null;
 
   @ManyToOne(
     () => QuestionnaireTicket,
@@ -110,10 +123,10 @@ export class Notification {
       onDelete: 'CASCADE',
     },
   )
-  questionnaireTicket?: QuestionnaireTicket;
+  questionnaireTicket: QuestionnaireTicket | null;
 
-  @Column({ nullable: true })
-  questionnaireTicketId?: number;
+  @Column({ nullable: true, type: 'int' })
+  questionnaireTicketId: number | null;
 
   @CreateDateColumn()
   @Field()

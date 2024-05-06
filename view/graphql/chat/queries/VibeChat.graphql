@@ -1,0 +1,8 @@
+query VibeChat($offset: Int = 0, $limit: Int = 20) {
+  vibeChat {
+    id
+    messages(offset: $offset, limit: $limit) {
+      ...Message
+    }
+  }
+}

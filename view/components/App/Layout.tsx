@@ -1,6 +1,8 @@
+import { useReactiveVar } from '@apollo/client';
 import { Container } from '@mui/material';
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import { isChatPanelOpenVar } from '../../graphql/cache';
 import {
   useAboveBreakpoint,
   useIsDesktop,
@@ -15,6 +17,8 @@ import TopNav from '../Navigation/TopNav';
 import Toast from '../Shared/Toast';
 
 const Layout = () => {
+  const isChatPanelOpen = useReactiveVar(isChatPanelOpenVar);
+
   const { pathname } = useLocation();
   const isDesktop = useIsDesktop();
   const isLarge = useAboveBreakpoint('lg');
@@ -24,6 +28,21 @@ const Layout = () => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
+  const renderMain = () => (
+    <main role="main">
+      <Outlet />
+      <Toast />
+      {isDesktop && <ScrollToTop />}
+    </main>
+  );
+
+  const renderContent = () => {
+    if (isChatPanelOpen) {
+      return renderMain();
+    }
+    return <Container maxWidth="sm">{renderMain()}</Container>;
+  };
+
   return (
     <AuthWrapper>
       <TopNav scrollDirection={scrollDirection} />
@@ -31,13 +50,7 @@ const Layout = () => {
       {isLarge && <LeftNav />}
       <NavDrawer />
 
-      <Container maxWidth="sm">
-        <main role="main">
-          <Outlet />
-          <Toast />
-          {isDesktop && <ScrollToTop />}
-        </main>
-      </Container>
+      {renderContent()}
     </AuthWrapper>
   );
 };

@@ -4,6 +4,7 @@ import { FORBIDDEN } from '../common/common.constants';
 import { authPermissions } from './permissions/auth.permissions';
 import { canaryPermissions } from './permissions/canary.permissions';
 import { commentPermissions } from './permissions/comment.permissions';
+import { conversationPermissions } from './permissions/conversation.permissions';
 import { eventPermissions } from './permissions/event.permissions';
 import { groupPermissions } from './permissions/group.permissions';
 import { imagePermissions } from './permissions/image.permissions';
@@ -25,6 +26,7 @@ export const shieldConfig = shield(
     Query: {
       ...authPermissions.Query,
       ...canaryPermissions.Query,
+      ...conversationPermissions.Query,
       ...eventPermissions.Query,
       ...groupPermissions.Query,
       ...likePermissions.Query,
@@ -54,9 +56,14 @@ export const shieldConfig = shield(
       ...vibeCheckPermissions.Mutation,
       ...votePermissions.Mutation,
     },
+    Subscription: {
+      ...conversationPermissions.Subscription,
+      ...notificationPermissions.Subscription,
+    },
     ...authPermissions.ObjectTypes,
     ...canaryPermissions.ObjectTypes,
     ...commentPermissions.ObjectTypes,
+    ...conversationPermissions.ObjectTypes,
     ...eventPermissions.ObjectTypes,
     ...groupPermissions.ObjectTypes,
     ...imagePermissions.ObjectTypes,

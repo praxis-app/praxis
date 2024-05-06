@@ -91,6 +91,21 @@ export type Comment = {
   user: User;
 };
 
+export type Conversation = {
+  __typename?: 'Conversation';
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['Int']['output'];
+  members: Array<User>;
+  messages: Array<Message>;
+  name?: Maybe<Scalars['String']['output']>;
+  unreadMessageCount: Scalars['Int']['output'];
+};
+
+export type ConversationMessagesArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type CreateCommentInput = {
   body?: InputMaybe<Scalars['String']['input']>;
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
@@ -451,19 +466,9 @@ export type GroupsInput = {
 
 export type Image = {
   __typename?: 'Image';
-  comment?: Maybe<Comment>;
-  createdAt: Scalars['DateTime']['output'];
-  event?: Maybe<Event>;
   filename: Scalars['String']['output'];
-  group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   imageType: Scalars['String']['output'];
-  post?: Maybe<Post>;
-  proposal?: Maybe<Proposal>;
-  proposalAction?: Maybe<ProposalAction>;
-  proposalActionEvent?: Maybe<ProposalActionEvent>;
-  updatedAt: Scalars['DateTime']['output'];
-  user?: Maybe<User>;
 };
 
 export type Like = {
@@ -485,6 +490,15 @@ export type LikesInput = {
 export type LoginInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
+};
+
+export type Message = {
+  __typename?: 'Message';
+  body?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['DateTime']['output'];
+  id: Scalars['Int']['output'];
+  images: Array<Image>;
+  user: User;
 };
 
 export type Mutation = {
@@ -533,6 +547,7 @@ export type Mutation = {
   login: AuthPayload;
   readNotifications: Scalars['Boolean']['output'];
   resetPassword: AuthPayload;
+  sendMessage: SendMessagePayload;
   sendPasswordReset: Scalars['Boolean']['output'];
   signUp: AuthPayload;
   synchronizeProposal: SynchronizeProposalPayload;
@@ -720,6 +735,10 @@ export type MutationResetPasswordArgs = {
   input: ResetPasswordInput;
 };
 
+export type MutationSendMessageArgs = {
+  messageData: SendMessageInput;
+};
+
 export type MutationSendPasswordResetArgs = {
   email: Scalars['String']['input'];
 };
@@ -807,6 +826,7 @@ export type MutationUpdateVoteArgs = {
 export type Notification = {
   __typename?: 'Notification';
   comment?: Maybe<Comment>;
+  conversation?: Maybe<Conversation>;
   createdAt: Scalars['DateTime']['output'];
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
@@ -817,6 +837,7 @@ export type Notification = {
   question?: Maybe<Question>;
   questionnaireTicket?: Maybe<QuestionnaireTicket>;
   status: Scalars['String']['output'];
+  unreadMessageCount?: Maybe<Scalars['Int']['output']>;
 };
 
 export type Post = {
@@ -1023,6 +1044,7 @@ export type Query = {
   __typename?: 'Query';
   authCheck: Scalars['Boolean']['output'];
   canary: Canary;
+  conversation: Conversation;
   event: Event;
   events: Array<Event>;
   group: Group;
@@ -1062,6 +1084,11 @@ export type Query = {
   users: Array<User>;
   usersByIds: Array<User>;
   usersCount: Scalars['Int']['output'];
+  vibeChat: Conversation;
+};
+
+export type QueryConversationArgs = {
+  id: Scalars['Int']['input'];
 };
 
 export type QueryEventArgs = {
@@ -1228,6 +1255,17 @@ export type Rule = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type SendMessageInput = {
+  body?: InputMaybe<Scalars['String']['input']>;
+  conversationId: Scalars['Int']['input'];
+  images?: InputMaybe<Array<Scalars['Upload']['input']>>;
+};
+
+export type SendMessagePayload = {
+  __typename?: 'SendMessagePayload';
+  message: Message;
+};
+
 export type ServerConfig = {
   __typename?: 'ServerConfig';
   contactEmail: Scalars['String']['output'];
@@ -1336,11 +1374,16 @@ export type SignUpInput = {
 export type Subscription = {
   __typename?: 'Subscription';
   isProposalRatified: Scalars['Boolean']['output'];
+  newMessage: Message;
   notification: Notification;
 };
 
 export type SubscriptionIsProposalRatifiedArgs = {
   id: Scalars['Int']['input'];
+};
+
+export type SubscriptionNewMessageArgs = {
+  conversationId: Scalars['Int']['input'];
 };
 
 export type SynchronizeProposalPayload = {

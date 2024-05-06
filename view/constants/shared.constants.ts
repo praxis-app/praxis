@@ -38,6 +38,7 @@ export enum NavigationPaths {
   ServerSettings = '/settings',
   SignUp = '/auth/signup',
   Users = '/users',
+  VibeChat = '/vibe-chat',
   VibeCheck = '/vibe-check',
 }
 

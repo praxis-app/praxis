@@ -19,8 +19,9 @@ export type NotificationsQuery = {
   notifications: Array<{
     __typename?: 'Notification';
     id: number;
-    notificationType: string;
     status: string;
+    notificationType: string;
+    unreadMessageCount?: number | null;
     createdAt: any;
     otherUser?: {
       __typename?: 'User';
@@ -29,14 +30,19 @@ export type NotificationsQuery = {
       displayName?: string | null;
       profilePicture: { __typename?: 'Image'; id: number };
     } | null;
+    post?: { __typename?: 'Post'; id: number } | null;
+    proposal?: { __typename?: 'Proposal'; id: number } | null;
     group?: {
       __typename?: 'Group';
       id: number;
       name: string;
       coverPhoto?: { __typename?: 'Image'; id: number } | null;
     } | null;
-    proposal?: { __typename?: 'Proposal'; id: number } | null;
-    post?: { __typename?: 'Post'; id: number } | null;
+    conversation?: {
+      __typename?: 'Conversation';
+      id: number;
+      name?: string | null;
+    } | null;
     comment?: {
       __typename?: 'Comment';
       id: number;

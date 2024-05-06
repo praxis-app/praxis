@@ -52,6 +52,7 @@ export class ServerConfigsService {
       throw new Error('Majority vote is not yet supported at server level');
     }
 
+    // TODO: Fetch server config before updating to ensure it exists
     await this.repository.update(id, data);
 
     if (canaryStatement) {
