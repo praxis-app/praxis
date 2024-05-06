@@ -217,14 +217,16 @@ export class ChatService {
   async syncVibeChatMembersWithRoles() {
     const vibeChat = await this.getVibeChat();
     const chatMembers = await this.getConversationMembers(vibeChat.id);
-    const vibeCheckerRole = await this.serverRoleRepository.findOneOrFail({
+    const vibeCheckerRoles = await this.serverRoleRepository.find({
       where: { permission: { manageQuestionnaireTickets: true } },
       relations: ['members'],
       select: ['members'],
     });
 
     const chatMemberIds = chatMembers.map(({ id }) => id);
-    const vibeCheckerIds = vibeCheckerRole.members.map(({ id }) => id);
+    const vibeCheckerIds = vibeCheckerRoles.reduce((result, { members }) => {
+      return [...result, ...members.map(({ id }) => id)];
+    }, []);
     const membersToAdd = vibeCheckerIds.filter(
       (id) => !chatMemberIds.includes(id),
     );
