@@ -18,7 +18,11 @@ import { SyntheticEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
-import { isLoggedInVar, isNavDrawerOpenVar } from '../../graphql/cache';
+import {
+  isChatPanelOpenVar,
+  isLoggedInVar,
+  isNavDrawerOpenVar,
+} from '../../graphql/cache';
 import { ScrollDirection, useAboveBreakpoint } from '../../hooks/shared.hooks';
 import { scrollTop } from '../../utils/shared.utils';
 import NotificationCount from '../Notifications/NotificationCount';
@@ -39,6 +43,7 @@ const BottomNav = ({ scrollDirection }: Props) => {
   const [value, setValue] = useState(0);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
+  const isChatPanelOpen = useReactiveVar(isChatPanelOpenVar);
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
@@ -90,7 +95,10 @@ const BottomNav = ({ scrollDirection }: Props) => {
 
   return (
     <Paper sx={PAPER_STYLES}>
-      <Collapse in={isAboveSmall || scrollDirection !== 'down'} timeout={220}>
+      <Collapse
+        in={isAboveSmall || isChatPanelOpen || scrollDirection !== 'down'}
+        timeout={220}
+      >
         <BottomNavigation
           onChange={handleNavChange}
           role="navigation"
