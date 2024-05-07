@@ -49,6 +49,7 @@ const QuestionnaireTicketCardFooter = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const isQuestion = !!searchParams.get('questionId');
   const isCommentLike = !!searchParams.get(NotificationType.CommentLike);
   const isTicketComment = !!searchParams.get(
     NotificationType.QuestionnaireTicketComment,
@@ -83,13 +84,18 @@ const QuestionnaireTicketCardFooter = ({
   }, [getQuestionnaireTicketComments, inModal, id]);
 
   useEffect(() => {
-    if (!getCommentsCalled && (isTicketComment || isCommentLike)) {
+    if (
+      (isTicketComment || isCommentLike) &&
+      !getCommentsCalled &&
+      !isQuestion
+    ) {
       handleCommentButtonClick();
     }
   }, [
     getCommentsCalled,
     handleCommentButtonClick,
     isCommentLike,
+    isQuestion,
     isTicketComment,
   ]);
 
