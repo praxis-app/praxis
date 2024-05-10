@@ -69,6 +69,8 @@ const Comment = ({
   const itemMenuStyles: SxProps = {
     alignSelf: 'center',
     marginLeft: 0.5,
+    position: 'absolute',
+    right: -47,
     width: 40,
     height: 40,
   };
@@ -186,7 +188,7 @@ const Comment = ({
       />
 
       <Box maxWidth={isDesktop ? 'calc(100% - 90px)' : undefined}>
-        <Flex>
+        <Flex position="relative">
           <Box
             bgcolor="background.secondary"
             borderRadius={4}
