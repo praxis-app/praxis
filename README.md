@@ -1,6 +1,8 @@
 ## Praxis
 
-Praxis is an open source social network designed for collaborative decision making. Proposals take center stage, offering a diverse range of voting models, with consensus as the default. With Praxis, you can establish groups that empower members to collectively shape crucial aspects such as group identity, settings, roles, or the planning of real world events. This flexibility allows for the creation of diverse and dynamic social structures tailored to the specific needs of your community as it evolves over time.
+Praxis is an open source social network designed for collaborative decision making. Proposals take center stage, offering a diverse range of voting models, with consensus as the default.
+
+With Praxis, you can create groups that empower members to collectively shape crucial aspects such as group name, settings, roles, or the planning of real world events. This flexibility allows for the creation of diverse and dynamic social structures tailored to meet the specific needs of your community as it evolves over time.
 
 Praxis is free and open source software, as specified by the GNU General Public License.
 
