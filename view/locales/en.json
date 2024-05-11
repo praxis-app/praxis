@@ -68,7 +68,8 @@
 
   "about": {
     "welcomeCard": {
-      "projectDescription": "Praxis is an open source social network with features for collaborative decision making. Proposals are the main focus and come with a wide variety of voting features, with consensus as the default. Create a group and set it to no-admin, allowing group members to create proposals and democratically decide on settings, name, theme, or planning of real world events.",
+      "projectDescription1": "Praxis is an open source social network designed for collaborative decision making. Proposals take center stage, offering a diverse range of voting models, with consensus as the default.",
+      "projectDescription2": "With Praxis, you can create groups that empower members to collectively shape crucial aspects such as settings, roles, or the planning of real world events. This flexibility allows for the creation of diverse and dynamic social structures tailored to the specific needs of your community as it evolves over time.",
       "inDev": "This project is still in development and is not yet intended for serious use outside of testing or research purposes."
     },
     "actions": {
