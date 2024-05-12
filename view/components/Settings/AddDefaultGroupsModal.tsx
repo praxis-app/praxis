@@ -1,11 +1,11 @@
 import { Typography } from '@mui/material';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { toastVar } from '../../graphql/cache';
 import {
   UpdateDefaultGroupInput,
   UpdateDefaultGroupsInput,
-} from '../../../src/server-configs/models/update-default-groups.input';
-import { toastVar } from '../../graphql/cache';
+} from '../../graphql/gen';
 import { useUpdateDefaultGroupsMutation } from '../../graphql/settings/mutations/gen/UpdateDefaultGroups.gen';
 import { useAddDefaultGroupsModalQuery } from '../../graphql/settings/queries/gen/AddDefaultGroupsModal.gen';
 import Modal from '../Shared/Modal';

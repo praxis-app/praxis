@@ -1,5 +1,5 @@
 import { CardActionArea, Checkbox, SxProps, Typography } from '@mui/material';
-import { UpdateDefaultGroupsInput } from '../../../src/server-configs/models/update-default-groups.input';
+import { UpdateDefaultGroupsInput } from '../../graphql/gen';
 import { AddDefaultGroupsOptionFragment } from '../../graphql/settings/fragments/gen/AddDefaultGroupsOption.gen';
 import GroupAvatar from '../Groups/GroupAvatar';
 import Flex from '../Shared/Flex';
