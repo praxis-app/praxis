@@ -274,6 +274,7 @@ type Group {
   id: Int!
   name: String!
   description: String!
+  default: Boolean!
   members: [User!]!
   memberRequests: [GroupMemberRequest!]
   roles: [GroupRole!]!

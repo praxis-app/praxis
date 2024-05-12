@@ -38,6 +38,10 @@ export class Group {
   @Field()
   description: string;
 
+  @Column({ default: false })
+  @Field()
+  default: boolean;
+
   @OneToMany(() => Post, (post) => post.group, {
     cascade: true,
   })
