@@ -597,6 +597,9 @@
     },
     "lables": {
       "setDefaultGroups": "Set default groups"
+    },
+    "prompts": {
+      "updatedDefaultGroups": "Default groups have been updated."
     }
   },
 

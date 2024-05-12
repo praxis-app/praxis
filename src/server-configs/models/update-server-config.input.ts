@@ -2,10 +2,6 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 
 @InputType()
 export class UpdateServerConfigInput {
-  // TODO: Remove id from input type - there can only be one server config
-  @Field(() => Int)
-  id: number;
-
   @Field({ nullable: true })
   canaryStatement?: string;
 

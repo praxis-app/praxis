@@ -9,18 +9,20 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-type ServerConfig {
+type Post {
   id: Int!
-  decisionMakingModel: String!
-  standAsidesLimit: Int!
-  reservationsLimit: Int!
-  ratificationThreshold: Int!
-  votingTimeLimit: Int!
-  securityTxt: String
-  showCanaryStatement: Boolean!
-  serverQuestionsPrompt: String
-  websiteURL: String!
-  contactEmail: String!
+  body: String
+  images: [Image!]!
+  comments: [Comment!]!
+  likes: [Like!]!
+  user: User!
+  group: Group
+  event: Event
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  commentCount: Int!
+  likeCount: Int!
+  isLikedByMe: Boolean!
 }
 
 type Answer {
@@ -28,55 +30,6 @@ type Answer {
   text: String!
   updatedAt: DateTime!
   question: Question!
-  user: User!
-}
-
-type Question {
-  id: Int!
-  text: String!
-  priority: Int!
-  answer: Answer
-  questionnaireTicket: QuestionnaireTicket!
-  likes: [Like!]!
-  likeCount: Int!
-  isLikedByMe: Boolean!
-  comments: [Comment!]!
-  commentCount: Int!
-}
-
-type QuestionnaireTicketConfig {
-  id: Int!
-  decisionMakingModel: String!
-  standAsidesLimit: Int!
-  reservationsLimit: Int!
-  ratificationThreshold: Int!
-  closingAt: DateTime
-}
-
-type QuestionnaireTicket {
-  id: Int!
-  status: String!
-  questions: [Question!]!
-  comments: [Comment!]!
-  createdAt: DateTime!
-  prompt: String
-  questionCount: Int!
-  answerCount: Int!
-  votes: [Vote!]!
-  voteCount: Int!
-  agreementVoteCount: Int!
-  votesNeededToVerify: Int!
-  myVote: Vote
-  commentCount: Int!
-  user: User!
-  settings: QuestionnaireTicketConfig!
-}
-
-type Vote {
-  id: Int!
-  voteType: String!
-  proposal: Proposal
-  questionnaireTicket: QuestionnaireTicket
   user: User!
 }
 
@@ -239,98 +192,53 @@ type Proposal {
   group: Group
 }
 
-type Rule {
+type Vote {
   id: Int!
-  title: String!
-  description: String!
-  priority: Int!
-  updatedAt: DateTime!
+  voteType: String!
+  proposal: Proposal
+  questionnaireTicket: QuestionnaireTicket
+  user: User!
 }
 
-type GroupConfig {
+type QuestionnaireTicketConfig {
   id: Int!
-  adminModel: String!
   decisionMakingModel: String!
   standAsidesLimit: Int!
   reservationsLimit: Int!
   ratificationThreshold: Int!
-  votingTimeLimit: Int!
-  privacy: String!
-  group: Group!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  isPublic: Boolean!
+  closingAt: DateTime
 }
 
-type GroupMemberRequest {
+type QuestionnaireTicket {
   id: Int!
-  user: User!
-  group: Group!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type Group {
-  id: Int!
-  name: String!
-  description: String!
-  default: Boolean!
-  members: [User!]!
-  memberRequests: [GroupMemberRequest!]
-  roles: [GroupRole!]!
-  coverPhoto: Image
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  feed(offset: Int, limit: Int): [FeedItem!]!
-  feedCount: Int!
-  memberCount: Int!
-  memberRequestCount: Int
-  isJoinedByMe: Boolean!
-  futureEvents: [Event!]!
-  pastEvents: [Event!]!
-  myPermissions: GroupPermissions!
-  settings: GroupConfig!
-}
-
-union FeedItem = Post | Proposal
-
-type Event {
-  id: Int!
-  name: String!
-  description: String!
-  location: String
-  online: Boolean!
-  externalLink: String
-  attendees: [EventAttendee!]!
-  images: [Image!]!
-  group: Group
-  startsAt: DateTime!
-  endsAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  interestedCount: Int!
-  goingCount: Int!
-  attendingStatus: String
-  host: User
-  posts(offset: Int, limit: Int): [Post!]!
-  postsCount: Int!
-  coverPhoto: Image!
-}
-
-type Post {
-  id: Int!
-  body: String
-  images: [Image!]!
+  status: String!
+  questions: [Question!]!
   comments: [Comment!]!
-  likes: [Like!]!
-  user: User!
-  group: Group
-  event: Event
   createdAt: DateTime!
-  updatedAt: DateTime!
+  prompt: String
+  questionCount: Int!
+  answerCount: Int!
+  votes: [Vote!]!
+  voteCount: Int!
+  agreementVoteCount: Int!
+  votesNeededToVerify: Int!
+  myVote: Vote
   commentCount: Int!
+  user: User!
+  settings: QuestionnaireTicketConfig!
+}
+
+type Question {
+  id: Int!
+  text: String!
+  priority: Int!
+  answer: Answer
+  questionnaireTicket: QuestionnaireTicket!
+  likes: [Like!]!
   likeCount: Int!
   isLikedByMe: Boolean!
+  comments: [Comment!]!
+  commentCount: Int!
 }
 
 type Like {
@@ -380,6 +288,14 @@ type Conversation {
   messages(offset: Int, limit: Int): [Message!]!
   unreadMessageCount: Int!
   members: [User!]!
+}
+
+type GroupMemberRequest {
+  id: Int!
+  user: User!
+  group: Group!
+  createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type ServerInvite {
@@ -449,6 +365,8 @@ type User {
   isVerified: Boolean!
 }
 
+union FeedItem = Post | Proposal
+
 type Message {
   id: Int!
   body: String
@@ -461,6 +379,88 @@ type Image {
   id: Int!
   filename: String!
   imageType: String!
+}
+
+type Event {
+  id: Int!
+  name: String!
+  description: String!
+  location: String
+  online: Boolean!
+  externalLink: String
+  attendees: [EventAttendee!]!
+  images: [Image!]!
+  group: Group
+  startsAt: DateTime!
+  endsAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  interestedCount: Int!
+  goingCount: Int!
+  attendingStatus: String
+  host: User
+  posts(offset: Int, limit: Int): [Post!]!
+  postsCount: Int!
+  coverPhoto: Image!
+}
+
+type Rule {
+  id: Int!
+  title: String!
+  description: String!
+  priority: Int!
+  updatedAt: DateTime!
+}
+
+type GroupConfig {
+  id: Int!
+  adminModel: String!
+  decisionMakingModel: String!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
+  votingTimeLimit: Int!
+  privacy: String!
+  group: Group!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  isPublic: Boolean!
+}
+
+type Group {
+  id: Int!
+  name: String!
+  description: String!
+  defaultGroup: Boolean!
+  members: [User!]!
+  memberRequests: [GroupMemberRequest!]
+  roles: [GroupRole!]!
+  coverPhoto: Image
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  feed(offset: Int, limit: Int): [FeedItem!]!
+  feedCount: Int!
+  memberCount: Int!
+  memberRequestCount: Int
+  isJoinedByMe: Boolean!
+  futureEvents: [Event!]!
+  pastEvents: [Event!]!
+  myPermissions: GroupPermissions!
+  settings: GroupConfig!
+}
+
+type ServerConfig {
+  id: Int!
+  decisionMakingModel: String!
+  standAsidesLimit: Int!
+  reservationsLimit: Int!
+  ratificationThreshold: Int!
+  votingTimeLimit: Int!
+  securityTxt: String
+  showCanaryStatement: Boolean!
+  serverQuestionsPrompt: String
+  websiteURL: String!
+  contactEmail: String!
 }
 
 type CreateEventAttendeePayload {
@@ -495,6 +495,10 @@ type ServerQuestion {
   id: Int!
   text: String!
   priority: Int!
+}
+
+type UpdateDefaultGroupsPayload {
+  groups: [Group!]!
 }
 
 type UpdateServerConfigPayload {
@@ -772,6 +776,7 @@ type Mutation {
   deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
   sendMessage(messageData: SendMessageInput!): SendMessagePayload!
   updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
+  updateDefaultGroups(defaultGroupsData: UpdateDefaultGroupsInput!): UpdateDefaultGroupsPayload!
   createPost(postData: CreatePostInput!): CreatePostPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
   deletePost(id: Int!): Boolean!
@@ -1026,7 +1031,6 @@ input SendMessageInput {
 }
 
 input UpdateServerConfigInput {
-  id: Int!
   canaryStatement: String
   showCanaryStatement: Boolean
   securityTxt: String
@@ -1036,6 +1040,15 @@ input UpdateServerConfigInput {
   reservationsLimit: Int
   ratificationThreshold: Int
   votingTimeLimit: Int
+}
+
+input UpdateDefaultGroupsInput {
+  groups: [UpdateDefaultGroupInput!]!
+}
+
+input UpdateDefaultGroupInput {
+  groupId: Int!
+  defaultGroup: Boolean!
 }
 
 input CreatePostInput {

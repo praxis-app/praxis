@@ -1,3 +1,4 @@
+import { SxProps } from '@mui/material';
 import { GroupAvatarFragment } from '../../graphql/groups/fragments/gen/GroupAvatar.gen';
 import { getGroupPath } from '../../utils/group.utils';
 import LazyLoadImage from '../Images/LazyLoadImage';
@@ -7,13 +8,14 @@ import Link from '../Shared/Link';
 interface Props {
   group: GroupAvatarFragment;
   withLink?: boolean;
+  sx: SxProps;
 }
 
-const GroupAvatar = ({ group, withLink = true }: Props) => {
+const GroupAvatar = ({ group, sx, withLink = true }: Props) => {
   const groupPagePath = getGroupPath(group.name);
 
   const renderAvatar = () => (
-    <Flex borderRadius="50%" width={40} height={40}>
+    <Flex borderRadius="50%" width={40} height={40} sx={sx}>
       <LazyLoadImage
         imageId={group.coverPhoto?.id}
         alt={group.name}

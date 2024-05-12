@@ -1,0 +1,5 @@
+query AddDefaultGroupsModal($input: GroupsInput!) {
+  groups(input: $input) {
+    ...AddDefaultGroupsOption
+  }
+}
