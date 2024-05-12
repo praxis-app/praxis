@@ -35,7 +35,6 @@ export class ServerConfigsService {
     return this.configService.get('MAIL_ADDRESS');
   }
 
-  // TODO: Rename as `createServerConfig`
   async initializeServerConfig() {
     return this.repository.save({});
   }
@@ -52,7 +51,6 @@ export class ServerConfigsService {
       throw new Error('Majority vote is not yet supported at server level');
     }
 
-    // TODO: Fetch server config before updating to ensure it exists
     await this.repository.update(id, data);
 
     if (canaryStatement) {
