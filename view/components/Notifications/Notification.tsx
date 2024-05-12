@@ -221,6 +221,11 @@ const Notification = ({
         groupName: group?.name,
       });
     }
+    if (notificationType === NotificationType.AddToDefaultGroup) {
+      return _t('notifications.messages.addToDefaultGroup', {
+        groupName: group?.name,
+      });
+    }
     if (notificationType === NotificationType.NewQuestionnaireTicket) {
       return _t('notifications.messages.newQuestionnaireTicket', {
         name: otherUserName,
@@ -281,7 +286,10 @@ const Notification = ({
     if (notificationType === NotificationType.GroupMemberRequest) {
       return getMemberRequestsPath(group?.name as string);
     }
-    if (notificationType === NotificationType.GroupMemberRequestApproval) {
+    if (
+      notificationType === NotificationType.GroupMemberRequestApproval ||
+      notificationType === NotificationType.AddToDefaultGroup
+    ) {
       return `${NavigationPaths.Groups}/${group?.name}`;
     }
     if (notificationType === NotificationType.QuestionnaireTicketComment) {
@@ -395,6 +403,7 @@ const Notification = ({
       return <Person sx={iconStyles} />;
     }
     if (
+      notificationType === NotificationType.AddToDefaultGroup ||
       notificationType === NotificationType.GroupMemberRequest ||
       notificationType === NotificationType.GroupMemberRequestApproval
     ) {
@@ -410,7 +419,7 @@ const Notification = ({
     if (notificationType === NotificationType.VerifyUser) {
       return <Verified sx={{ ...iconStyles, fontSize: 12, marginTop: 0.45 }} />;
     }
-    return <AutoAwesome sx={iconStyles} />;
+    return <AutoAwesome sx={{ ...iconStyles, marginTop: 0.55 }} />;
   };
 
   return (

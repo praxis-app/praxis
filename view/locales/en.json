@@ -661,6 +661,7 @@
       "ownAnswerComment": "<b>{{name}}</b> commented on their answer.",
       "ownQuestionnaireTicketComment": "<b>{{name}}</b> commented on their questionnaire ticket.",
       "postComment": "<b>{{name}}</b> commented on your post.",
+      "addToDefaultGroup": "You've been added to <b>{{groupName}}</b>.",
       "postLike": "<b>{{name}}</b> liked your post.",
       "proposalComment": "<b>{{name}}</b> commented on your proposal.",
       "proposalRatification": "Your proposal was ratified in <b>{{groupName}}</b>.",

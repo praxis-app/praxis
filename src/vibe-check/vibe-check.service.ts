@@ -455,7 +455,7 @@ export class VibeCheckService {
       verified: true,
     });
 
-    // Add the verified user to all default groups
+    // Add verified user to all default groups
     const defaultGroups = await this.groupRepository.find({
       where: { isDefault: true },
       relations: ['members'],
@@ -466,8 +466,16 @@ export class VibeCheckService {
         members: [...group.members, questionnaireTicket.user],
         id: group.id,
       });
+
+      // Notify user that they've been added to a default group
+      await this.notificationsService.createNotification({
+        notificationType: NotificationType.AddToDefaultGroup,
+        userId: questionnaireTicket.user.id,
+        groupId: group.id,
+      });
     }
 
+    // Notify user that their verification has been approved
     await this.notificationsService.createNotification({
       notificationType: NotificationType.VerifyUser,
       userId: questionnaireTicket.user.id,
