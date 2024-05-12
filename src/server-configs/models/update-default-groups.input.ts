@@ -6,7 +6,7 @@ export class UpdateDefaultGroupInput {
   groupId: number;
 
   @Field()
-  defaultGroup: boolean;
+  isDefault: boolean;
 }
 
 @InputType()

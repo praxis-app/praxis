@@ -8,7 +8,7 @@ import Link from '../Shared/Link';
 interface Props {
   group: GroupAvatarFragment;
   withLink?: boolean;
-  sx: SxProps;
+  sx?: SxProps;
 }
 
 const GroupAvatar = ({ group, sx, withLink = true }: Props) => {

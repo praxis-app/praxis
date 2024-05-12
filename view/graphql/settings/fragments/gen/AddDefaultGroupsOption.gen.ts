@@ -9,7 +9,7 @@ import { GroupAvatarFragmentDoc } from '../../../groups/fragments/gen/GroupAvata
 export type AddDefaultGroupsOptionFragment = {
   __typename?: 'Group';
   id: number;
-  defaultGroup: boolean;
+  isDefault: boolean;
   name: string;
   coverPhoto?: { __typename?: 'Image'; id: number } | null;
 };
@@ -18,7 +18,7 @@ export const AddDefaultGroupsOptionFragmentDoc = gql`
   fragment AddDefaultGroupsOption on Group {
     id
     ...GroupAvatar
-    defaultGroup
+    isDefault
   }
   ${GroupAvatarFragmentDoc}
 `;

@@ -74,8 +74,8 @@ export class ServerConfigsService {
   }
 
   async updateDefaultGroups({ groups }: UpdateDefaultGroupsInput) {
-    for (const { groupId, defaultGroup } of groups) {
-      await this.groupRepository.update(groupId, { defaultGroup });
+    for (const { groupId, isDefault } of groups) {
+      await this.groupRepository.update(groupId, { isDefault });
     }
     const updatedGroups = await this.groupRepository.find({
       where: { id: In(groups.map(({ groupId }) => groupId)) },

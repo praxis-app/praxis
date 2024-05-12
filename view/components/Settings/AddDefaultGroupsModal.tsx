@@ -65,7 +65,7 @@ const AddDefaultGroupsModal = ({ isOpen, onClose }: Props) => {
       return;
     }
     const isDefault = groupsData.groups.some(
-      (group) => group.id === groupId && group.defaultGroup,
+      (group) => group.id === groupId && group.isDefault,
     );
     const selectedGroup = values.groups.find(
       (group) => group.groupId === groupId,
@@ -81,7 +81,7 @@ const AddDefaultGroupsModal = ({ isOpen, onClose }: Props) => {
       ...values.groups,
       {
         groupId,
-        defaultGroup: !isDefault,
+        isDefault: !isDefault,
       },
     ]);
   };

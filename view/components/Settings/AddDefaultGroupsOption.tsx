@@ -23,9 +23,9 @@ const AddDefaultGroupsOption = ({ group, formValues, onClick }: Props) => {
   const isSelected = () => {
     const selectedGroup = formValues.groups.find((g) => g.groupId === group.id);
     if (selectedGroup) {
-      return selectedGroup.defaultGroup;
+      return selectedGroup.isDefault;
     }
-    return group.defaultGroup;
+    return group.isDefault;
   };
 
   return (

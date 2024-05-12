@@ -354,12 +354,12 @@ export type Group = {
   __typename?: 'Group';
   coverPhoto?: Maybe<Image>;
   createdAt: Scalars['DateTime']['output'];
-  defaultGroup: Scalars['Boolean']['output'];
   description: Scalars['String']['output'];
   feed: Array<FeedItem>;
   feedCount: Scalars['Int']['output'];
   futureEvents: Array<Event>;
   id: Scalars['Int']['output'];
+  isDefault: Scalars['Boolean']['output'];
   isJoinedByMe: Scalars['Boolean']['output'];
   memberCount: Scalars['Int']['output'];
   memberRequestCount?: Maybe<Scalars['Int']['output']>;
@@ -1409,8 +1409,8 @@ export type UpdateCommentPayload = {
 };
 
 export type UpdateDefaultGroupInput = {
-  defaultGroup: Scalars['Boolean']['input'];
   groupId: Scalars['Int']['input'];
+  isDefault: Scalars['Boolean']['input'];
 };
 
 export type UpdateDefaultGroupsInput = {

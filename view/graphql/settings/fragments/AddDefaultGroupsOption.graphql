@@ -1,5 +1,5 @@
 fragment AddDefaultGroupsOption on Group {
   id
   ...GroupAvatar
-  defaultGroup
+  isDefault
 }

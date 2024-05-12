@@ -40,7 +40,7 @@ export class Group {
 
   @Column({ default: false })
   @Field()
-  defaultGroup: boolean;
+  isDefault: boolean;
 
   @OneToMany(() => Post, (post) => post.group, {
     cascade: true,

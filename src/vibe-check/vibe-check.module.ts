@@ -17,12 +17,14 @@ import { AnswersResolver } from './resolvers/answers.resolver';
 import { QuestionnaireTicketsResolver } from './resolvers/questionnaire-tickets.resolver';
 import { QuestionsResolver } from './resolvers/questions.resolver';
 import { ServerQuestionsResolver } from './resolvers/server-questions.resolver';
+import { Group } from '../groups/models/group.model';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Answer,
       Comment,
+      Group,
       Image,
       Like,
       Question,

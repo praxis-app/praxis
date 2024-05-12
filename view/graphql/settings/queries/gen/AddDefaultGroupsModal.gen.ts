@@ -17,7 +17,7 @@ export type AddDefaultGroupsModalQuery = {
   groups: Array<{
     __typename?: 'Group';
     id: number;
-    defaultGroup: boolean;
+    isDefault: boolean;
     name: string;
     coverPhoto?: { __typename?: 'Image'; id: number } | null;
   }>;

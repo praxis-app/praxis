@@ -431,7 +431,7 @@ type Group {
   id: Int!
   name: String!
   description: String!
-  defaultGroup: Boolean!
+  isDefault: Boolean!
   members: [User!]!
   memberRequests: [GroupMemberRequest!]
   roles: [GroupRole!]!
@@ -1048,7 +1048,7 @@ input UpdateDefaultGroupsInput {
 
 input UpdateDefaultGroupInput {
   groupId: Int!
-  defaultGroup: Boolean!
+  isDefault: Boolean!
 }
 
 input CreatePostInput {

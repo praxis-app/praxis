@@ -71,15 +71,12 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
   };
 
   const handleSubmit = async (
-    values: FormValues,
+    serverConfigData: FormValues,
     { setSubmitting, resetForm }: FormikHelpers<FormValues>,
   ) =>
     await updateServerSettings({
       variables: {
-        serverConfigData: {
-          id: serverSettings.id,
-          ...values,
-        },
+        serverConfigData,
       },
       onCompleted() {
         setSubmitting(false);
