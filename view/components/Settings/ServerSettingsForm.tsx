@@ -9,20 +9,21 @@ import {
 } from '@mui/material';
 import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { toastVar } from '../../graphql/cache';
-import { UpdateServerConfigInput } from '../../graphql/gen';
-import { ServerSettingsFormFragment } from '../../graphql/settings/fragments/gen/ServerSettingsForm.gen';
-import { useUpdateServerSettingsMutation } from '../../graphql/settings/mutations/gen/UpdateServerSettings.gen';
-import Flex from '../Shared/Flex';
-import PrimaryActionButton from '../Shared/PrimaryActionButton';
-import { TextField } from '../Shared/TextField';
-import SettingsSelect from './SettingsSelect';
 import {
   DecisionMakingModel,
   VotingTimeLimit,
 } from '../../constants/proposal.constants';
+import { toastVar } from '../../graphql/cache';
+import { UpdateServerConfigInput } from '../../graphql/gen';
+import { ServerSettingsFormFragment } from '../../graphql/settings/fragments/gen/ServerSettingsForm.gen';
+import { useUpdateServerSettingsMutation } from '../../graphql/settings/mutations/gen/UpdateServerSettings.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
+import Flex from '../Shared/Flex';
+import GhostButton from '../Shared/GhostButton';
+import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import SliderInput from '../Shared/SliderInput';
+import { TextField } from '../Shared/TextField';
+import SettingsSelect from './SettingsSelect';
 
 const SETTING_DESCRIPTION_WIDTH = '60%';
 
@@ -336,6 +337,26 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
                 {t('groups.labels.unlimited')}
               </MenuItem>
             </SettingsSelect>
+
+            <Box justifyContent="space-between" marginBottom={2}>
+              <Typography>
+                {t('serverSettings.headers.defaultGroups')}
+              </Typography>
+
+              <Typography
+                fontSize={12}
+                sx={{ color: theme.palette.text.secondary }}
+                marginBottom={2}
+              >
+                {t('serverSettings.descriptions.defaultGroups')}
+              </Typography>
+
+              <GhostButton fullWidth={!isDesktop}>
+                {t('serverSettings.lables.setDefaultGroups')}
+              </GhostButton>
+            </Box>
+
+            <Divider sx={{ marginTop: isDesktop ? 1 : 1.2, marginBottom: 3 }} />
 
             <Flex justifyContent="space-between" marginBottom={2}>
               <Box>

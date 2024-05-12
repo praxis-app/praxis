@@ -587,6 +587,15 @@
     "placeholders": {
       "securityTxt": "security.txt",
       "serverQuestionsPrompt": "Explain the questionnaire process"
+    },
+    "headers": {
+      "defaultGroups": "Default Groups"
+    },
+    "descriptions": {
+      "defaultGroups": "Choose which groups new members will automatically join upon verification. If no groups are selected, new members will not be added to any groups by default."
+    },
+    "lables": {
+      "setDefaultGroups": "Set default groups"
     }
   },
 
