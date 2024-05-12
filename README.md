@@ -1,16 +1,8 @@
 ## Praxis
 
-Praxis is an open source social network with features for collaborative decision making. Proposals are the main focus and come with a wide variety of voting models, with consensus as the default. Create a group and set it to no-admin, allowing group members to create proposals and democratically decide on name, settings, roles, or planning of real world events.
+Praxis is an open source social network designed for collaborative decision making. Proposals take center stage, offering a diverse range of voting models, with consensus as the default.
 
-While model of consensus is the default, group members will also be able to use regular majority vote, and have the ability to create and assign new roles with various permissions. All of this can be tailored in group settings to meet the specific needs of your community, either by a groups admin, or by proposals as a group evolves over time.
-
-The tech stack includes:
-
-- Vite
-- NestJS
-- GraphQL
-- TypeORM
-- TypeScript
+With Praxis, you can create groups that empower members to collectively shape crucial aspects such as group name, settings, roles, or the planning of real world events. This flexibility allows for the creation of diverse and dynamic social structures tailored to meet the specific needs of your community as it evolves over time.
 
 Praxis is free and open source software, as specified by the GNU General Public License.
 

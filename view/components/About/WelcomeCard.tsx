@@ -41,8 +41,12 @@ const WelcomeCard = () => {
       />
 
       <CardContent>
+        <Typography sx={{ marginBottom: 1.5 }}>
+          {t('about.welcomeCard.projectDescription1')}
+        </Typography>
+
         <Typography sx={{ marginBottom: 3 }}>
-          {t('about.welcomeCard.projectDescription')}
+          {t('about.welcomeCard.projectDescription2')}
         </Typography>
 
         <Typography>{t('about.welcomeCard.inDev')}</Typography>
