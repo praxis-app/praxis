@@ -8,6 +8,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   DecisionMakingModel,
@@ -23,6 +24,7 @@ import GhostButton from '../Shared/GhostButton';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import SliderInput from '../Shared/SliderInput';
 import { TextField } from '../Shared/TextField';
+import AddDefaultGroupsModal from './AddDefaultGroupsModal';
 import SettingsSelect from './SettingsSelect';
 
 const SETTING_DESCRIPTION_WIDTH = '60%';
@@ -47,6 +49,9 @@ interface Props {
 }
 
 const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
+  const [isDefaultGroupsModalOpen, setIsDefaultGroupsModalOpen] =
+    useState(false);
+
   const [updateServerSettings] = useUpdateServerSettingsMutation();
 
   const { t } = useTranslation();
@@ -351,9 +356,17 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
                 {t('serverSettings.descriptions.defaultGroups')}
               </Typography>
 
-              <GhostButton fullWidth={!isDesktop}>
+              <GhostButton
+                fullWidth={!isDesktop}
+                onClick={() => setIsDefaultGroupsModalOpen(true)}
+              >
                 {t('serverSettings.lables.setDefaultGroups')}
               </GhostButton>
+
+              <AddDefaultGroupsModal
+                isOpen={isDefaultGroupsModalOpen}
+                onClose={() => setIsDefaultGroupsModalOpen(false)}
+              />
             </Box>
 
             <Divider sx={{ marginTop: isDesktop ? 1 : 1.2, marginBottom: 3 }} />
