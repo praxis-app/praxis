@@ -298,6 +298,7 @@ type Group {
   feedCount: Int!
   futureEvents: [Event!]!
   id: Int!
+  isDefault: Boolean!
   isJoinedByMe: Boolean!
   memberCount: Int!
   memberRequestCount: Int
@@ -434,9 +435,7 @@ type Mutation {
   clearNotifications: Boolean!
   createComment(commentData: CreateCommentInput!): CreateCommentPayload!
   createEvent(eventData: CreateEventInput!): CreateEventPayload!
-  createEventAttendee(
-    eventAttendeeData: CreateEventAttendeeInput!
-  ): CreateEventAttendeePayload!
+  createEventAttendee(eventAttendeeData: CreateEventAttendeeInput!): CreateEventAttendeePayload!
   createGroup(groupData: CreateGroupInput!): CreateGroupPayload!
   createGroupMemberRequest(groupId: Int!): CreateGroupMemberRequestPayload!
   createGroupRole(groupRoleData: CreateGroupRoleInput!): CreateGroupRolePayload!
@@ -445,21 +444,15 @@ type Mutation {
   createProposal(proposalData: CreateProposalInput!): CreateProposalPayload!
   createQuestion(questionData: CreateQuestionInput!): CreateQuestionPayload!
   createRule(ruleData: CreateRuleInput!): CreateRulePayload!
-  createServerInvite(
-    serverInviteData: CreateServerInviteInput!
-  ): CreateServerInvitePayload!
-  createServerRole(
-    serverRoleData: CreateServerRoleInput!
-  ): CreateServerRolePayload!
+  createServerInvite(serverInviteData: CreateServerInviteInput!): CreateServerInvitePayload!
+  createServerRole(serverRoleData: CreateServerRoleInput!): CreateServerRolePayload!
   createVote(voteData: CreateVoteInput!): CreateVotePayload!
   deleteComment(id: Int!): Boolean!
   deleteEvent(id: Int!): Boolean!
   deleteEventAttendee(eventId: Int!): Boolean!
   deleteGroup(id: Int!): Boolean!
   deleteGroupRole(id: Int!): Boolean!
-  deleteGroupRoleMember(
-    groupRoleMemberData: DeleteGroupRoleMemberInput!
-  ): DeleteGroupRoleMemberPayload!
+  deleteGroupRoleMember(groupRoleMemberData: DeleteGroupRoleMemberInput!): DeleteGroupRoleMemberPayload!
   deleteImage(id: Int!): Boolean!
   deleteLike(likeData: DeleteLikeInput!): Boolean!
   deleteNotification(id: Int!): Boolean!
@@ -470,9 +463,7 @@ type Mutation {
   deleteRule(id: Int!): Boolean!
   deleteServerInvite(id: Int!): Boolean!
   deleteServerRole(id: Int!): Boolean!
-  deleteServerRoleMember(
-    serverRoleMemberData: DeleteServerRoleMemberInput!
-  ): DeleteServerRoleMemberPayload!
+  deleteServerRoleMember(serverRoleMemberData: DeleteServerRoleMemberInput!): DeleteServerRoleMemberPayload!
   deleteUser(id: Int!): Boolean!
   deleteVote(id: Int!): Boolean!
   denyGroupMemberRequest(id: Int!): Boolean!
@@ -488,32 +479,21 @@ type Mutation {
   synchronizeProposal(id: Int!): SynchronizeProposalPayload!
   unfollowUser(id: Int!): Boolean!
   updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
+  updateDefaultGroups(defaultGroupsData: UpdateDefaultGroupsInput!): UpdateDefaultGroupsPayload!
   updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
-  updateEventAttendee(
-    eventAttendeeData: UpdateEventAttendeeInput!
-  ): UpdateEventAttendeePayload!
+  updateEventAttendee(eventAttendeeData: UpdateEventAttendeeInput!): UpdateEventAttendeePayload!
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
-  updateGroupConfig(
-    groupConfigData: UpdateGroupConfigInput!
-  ): UpdateGroupPayload!
+  updateGroupConfig(groupConfigData: UpdateGroupConfigInput!): UpdateGroupPayload!
   updateGroupRole(groupRoleData: UpdateGroupRoleInput!): UpdateGroupRolePayload!
-  updateNotification(
-    notificationData: UpdateNotificationInput!
-  ): UpdateNotificationPayload!
+  updateNotification(notificationData: UpdateNotificationInput!): UpdateNotificationPayload!
   updatePost(postData: UpdatePostInput!): UpdatePostPayload!
   updateProposal(proposalData: UpdateProposalInput!): UpdateProposalPayload!
   updateQuestion(questionData: UpdateQuestionInput!): UpdateQuestionPayload!
-  updateQuestionsPriority(
-    questionsData: UpdateQuestionsPriorityInput!
-  ): Boolean!
+  updateQuestionsPriority(questionsData: UpdateQuestionsPriorityInput!): Boolean!
   updateRule(ruleData: UpdateRuleInput!): UpdateRulePayload!
   updateRulesPriority(rulesData: UpdateRulesPriorityInput!): Boolean!
-  updateServerConfig(
-    serverConfigData: UpdateServerConfigInput!
-  ): UpdateServerConfigPayload!
-  updateServerRole(
-    serverRoleData: UpdateServerRoleInput!
-  ): UpdateServerRolePayload!
+  updateServerConfig(serverConfigData: UpdateServerConfigInput!): UpdateServerConfigPayload!
+  updateServerRole(serverRoleData: UpdateServerRoleInput!): UpdateServerRolePayload!
   updateUser(userData: UpdateUserInput!): UpdateUserPayload!
   updateVote(voteData: UpdateVoteInput!): UpdateVotePayload!
 }
@@ -753,9 +733,7 @@ type Query {
   question(id: Int!): Question!
   questionnaireTicket(id: Int!): QuestionnaireTicket!
   questionnaireTicketCount(status: String!): Int!
-  questionnaireTickets(
-    input: QuestionnaireTicketsInput!
-  ): [QuestionnaireTicket!]!
+  questionnaireTickets(input: QuestionnaireTicketsInput!): [QuestionnaireTicket!]!
   serverConfig: ServerConfig!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
@@ -961,6 +939,19 @@ type UpdateCommentPayload {
   comment: Comment!
 }
 
+input UpdateDefaultGroupInput {
+  groupId: Int!
+  isDefault: Boolean!
+}
+
+input UpdateDefaultGroupsInput {
+  groups: [UpdateDefaultGroupInput!]!
+}
+
+type UpdateDefaultGroupsPayload {
+  groups: [Group!]!
+}
+
 input UpdateEventAttendeeInput {
   eventId: Int!
   status: String!
@@ -1092,7 +1083,6 @@ input UpdateRulesPriorityInput {
 input UpdateServerConfigInput {
   canaryStatement: String
   decisionMakingModel: String
-  id: Int!
   ratificationThreshold: Int
   reservationsLimit: Int
   securityTxt: String
@@ -1141,9 +1131,7 @@ type UpdateVotePayload {
   vote: Vote!
 }
 
-"""
-The `Upload` scalar type represents a file upload.
-"""
+"""The `Upload` scalar type represents a file upload."""
 scalar Upload
 
 type User {
