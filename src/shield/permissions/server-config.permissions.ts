@@ -7,6 +7,7 @@ export const serverConfigPermissions = {
   },
   Mutation: {
     updateServerConfig: canManageServerSettings,
+    updateDefaultGroups: canManageServerSettings,
   },
   ObjectTypes: {
     ServerConfig: {
