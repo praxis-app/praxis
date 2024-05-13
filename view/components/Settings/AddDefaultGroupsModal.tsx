@@ -36,6 +36,11 @@ const AddDefaultGroupsModal = ({ isOpen, onClose }: Props) => {
     groups: [],
   };
 
+  const groups = groupsData ? [...groupsData.groups] : [];
+  const sortedGroups = groups.sort((a, b) => {
+    return Number(b.isDefault) - Number(a.isDefault);
+  });
+
   const handleSubmit = async (defaultGroupsData: UpdateDefaultGroupsInput) =>
     await updateDefaultGroups({
       variables: {
@@ -111,7 +116,7 @@ const AddDefaultGroupsModal = ({ isOpen, onClose }: Props) => {
         >
           {groupsLoading && <ProgressBar />}
 
-          {groupsData?.groups.map((group) => (
+          {sortedGroups.map((group) => (
             <AddDefaultGroupsOption
               key={group.id}
               onClick={() => handleGroupClick(group.id, setFieldValue, values)}
