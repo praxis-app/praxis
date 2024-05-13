@@ -359,6 +359,7 @@ export type Group = {
   feedCount: Scalars['Int']['output'];
   futureEvents: Array<Event>;
   id: Scalars['Int']['output'];
+  isDefault: Scalars['Boolean']['output'];
   isJoinedByMe: Scalars['Boolean']['output'];
   memberCount: Scalars['Int']['output'];
   memberRequestCount?: Maybe<Scalars['Int']['output']>;
@@ -553,6 +554,7 @@ export type Mutation = {
   synchronizeProposal: SynchronizeProposalPayload;
   unfollowUser: Scalars['Boolean']['output'];
   updateComment: UpdateCommentPayload;
+  updateDefaultGroups: UpdateDefaultGroupsPayload;
   updateEvent: UpdateEventPayload;
   updateEventAttendee: UpdateEventAttendeePayload;
   updateGroup: UpdateGroupPayload;
@@ -757,6 +759,10 @@ export type MutationUnfollowUserArgs = {
 
 export type MutationUpdateCommentArgs = {
   commentData: UpdateCommentInput;
+};
+
+export type MutationUpdateDefaultGroupsArgs = {
+  defaultGroupsData: UpdateDefaultGroupsInput;
 };
 
 export type MutationUpdateEventArgs = {
@@ -1402,6 +1408,20 @@ export type UpdateCommentPayload = {
   comment: Comment;
 };
 
+export type UpdateDefaultGroupInput = {
+  groupId: Scalars['Int']['input'];
+  isDefault: Scalars['Boolean']['input'];
+};
+
+export type UpdateDefaultGroupsInput = {
+  groups: Array<UpdateDefaultGroupInput>;
+};
+
+export type UpdateDefaultGroupsPayload = {
+  __typename?: 'UpdateDefaultGroupsPayload';
+  groups: Array<Group>;
+};
+
 export type UpdateEventAttendeeInput = {
   eventId: Scalars['Int']['input'];
   status: Scalars['String']['input'];
@@ -1542,7 +1562,6 @@ export type UpdateRulesPriorityInput = {
 export type UpdateServerConfigInput = {
   canaryStatement?: InputMaybe<Scalars['String']['input']>;
   decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
-  id: Scalars['Int']['input'];
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
   reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
   securityTxt?: InputMaybe<Scalars['String']['input']>;

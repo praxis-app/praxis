@@ -1,5 +1,7 @@
 import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { ServerConfig } from './models/server-config.model';
+import { UpdateDefaultGroupsInput } from './models/update-default-groups.input';
+import { UpdateDefaultGroupsPayload } from './models/update-default-groups.payload';
 import { UpdateServerConfigInput } from './models/update-server-config.input';
 import { UpdateServerConfigPayload } from './models/update-server-config.payload';
 import { ServerConfigsService } from './server-configs.service';
@@ -28,5 +30,12 @@ export class ServerConfigsResolver {
     @Args('serverConfigData') serverConfigData: UpdateServerConfigInput,
   ) {
     return this.serverConfigsService.updateServerConfig(serverConfigData);
+  }
+
+  @Mutation(() => UpdateDefaultGroupsPayload)
+  async updateDefaultGroups(
+    @Args('defaultGroupsData') defaultGroupsData: UpdateDefaultGroupsInput,
+  ) {
+    return this.serverConfigsService.updateDefaultGroups(defaultGroupsData);
   }
 }

@@ -25,13 +25,14 @@ interface Props {
   closingAction?(): void;
   contentStyles?: SxProps;
   footerContent?: ReactNode;
+  isClosingActionDisabled?: boolean;
+  isLoading?: boolean;
   maxWidth?: DialogProps['maxWidth'];
   onClose(): void;
   open: boolean;
   subtext?: string;
   title?: string;
   topGap?: string | number;
-  isLoading?: boolean;
 }
 
 const Modal = ({
@@ -42,12 +43,13 @@ const Modal = ({
   closingAction,
   contentStyles,
   footerContent,
+  isClosingActionDisabled,
+  isLoading,
   maxWidth,
   onClose,
   open,
   subtext,
   title,
-  isLoading,
   topGap,
 }: Props) => {
   const isDesktop = useIsDesktop();
@@ -124,7 +126,7 @@ const Modal = ({
         </Box>
         {closingAction && actionLabel && (
           <Button
-            disabled={isLoading}
+            disabled={isClosingActionDisabled || isLoading}
             onClick={closingAction}
             startIcon={
               isLoading && (

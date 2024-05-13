@@ -1,18 +1,23 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CanariesService } from '../canaries/canaries.service';
 import { sanitizeText } from '../common/common.utils';
+import { Group } from '../groups/models/group.model';
 import { DecisionMakingModel } from '../proposals/proposals.constants';
 import { ServerConfig } from './models/server-config.model';
+import { UpdateDefaultGroupsInput } from './models/update-default-groups.input';
 import { UpdateServerConfigInput } from './models/update-server-config.input';
 
 @Injectable()
 export class ServerConfigsService {
   constructor(
     @InjectRepository(ServerConfig)
-    private repository: Repository<ServerConfig>,
+    private serverConfigRepository: Repository<ServerConfig>,
+
+    @InjectRepository(Group)
+    private groupRepository: Repository<Group>,
 
     @Inject(forwardRef(() => CanariesService))
     private canariesService: CanariesService,
@@ -20,7 +25,7 @@ export class ServerConfigsService {
   ) {}
 
   async getServerConfig() {
-    const serverConfigs = await this.repository.find();
+    const serverConfigs = await this.serverConfigRepository.find();
     if (!serverConfigs.length) {
       return this.initializeServerConfig();
     }
@@ -35,13 +40,11 @@ export class ServerConfigsService {
     return this.configService.get('MAIL_ADDRESS');
   }
 
-  // TODO: Rename as `createServerConfig`
   async initializeServerConfig() {
-    return this.repository.save({});
+    return this.serverConfigRepository.save({});
   }
 
   async updateServerConfig({
-    id,
     canaryStatement,
     ...data
   }: UpdateServerConfigInput) {
@@ -52,8 +55,8 @@ export class ServerConfigsService {
       throw new Error('Majority vote is not yet supported at server level');
     }
 
-    // TODO: Fetch server config before updating to ensure it exists
-    await this.repository.update(id, data);
+    let serverConfig = await this.getServerConfig();
+    await this.serverConfigRepository.update(serverConfig.id, data);
 
     if (canaryStatement) {
       const canary = await this.canariesService.getCanary();
@@ -65,8 +68,18 @@ export class ServerConfigsService {
       });
     }
 
-    const serverConfig = await this.getServerConfig();
     const canary = await this.canariesService.getCanary();
-    return { serverConfig, canary };
+    serverConfig = await this.getServerConfig();
+    return { canary, serverConfig };
+  }
+
+  async updateDefaultGroups({ groups }: UpdateDefaultGroupsInput) {
+    for (const { groupId, isDefault } of groups) {
+      await this.groupRepository.update(groupId, { isDefault });
+    }
+    const updatedGroups = await this.groupRepository.find({
+      where: { id: In(groups.map(({ groupId }) => groupId)) },
+    });
+    return { groups: updatedGroups };
   }
 }

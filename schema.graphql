@@ -298,6 +298,7 @@ type Group {
   feedCount: Int!
   futureEvents: [Event!]!
   id: Int!
+  isDefault: Boolean!
   isJoinedByMe: Boolean!
   memberCount: Int!
   memberRequestCount: Int
@@ -478,6 +479,7 @@ type Mutation {
   synchronizeProposal(id: Int!): SynchronizeProposalPayload!
   unfollowUser(id: Int!): Boolean!
   updateComment(commentData: UpdateCommentInput!): UpdateCommentPayload!
+  updateDefaultGroups(defaultGroupsData: UpdateDefaultGroupsInput!): UpdateDefaultGroupsPayload!
   updateEvent(eventData: UpdateEventInput!): UpdateEventPayload!
   updateEventAttendee(eventAttendeeData: UpdateEventAttendeeInput!): UpdateEventAttendeePayload!
   updateGroup(groupData: UpdateGroupInput!): UpdateGroupPayload!
@@ -937,6 +939,19 @@ type UpdateCommentPayload {
   comment: Comment!
 }
 
+input UpdateDefaultGroupInput {
+  groupId: Int!
+  isDefault: Boolean!
+}
+
+input UpdateDefaultGroupsInput {
+  groups: [UpdateDefaultGroupInput!]!
+}
+
+type UpdateDefaultGroupsPayload {
+  groups: [Group!]!
+}
+
 input UpdateEventAttendeeInput {
   eventId: Int!
   status: String!
@@ -1068,7 +1083,6 @@ input UpdateRulesPriorityInput {
 input UpdateServerConfigInput {
   canaryStatement: String
   decisionMakingModel: String
-  id: Int!
   ratificationThreshold: Int
   reservationsLimit: Int
   securityTxt: String

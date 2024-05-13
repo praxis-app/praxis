@@ -4,6 +4,7 @@ export enum NotificationStatus {
 }
 
 export enum NotificationType {
+  AddToDefaultGroup = 'add-to-default-group',
   AnswerComment = 'answer-comment',
   AnswerLike = 'answer-like',
   CommentLike = 'comment-like',

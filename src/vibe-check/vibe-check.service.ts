@@ -30,6 +30,7 @@ import { QuestionnaireTicketsInput } from './models/questionnaire-tickets.input'
 import { ServerQuestion } from './models/server-question.model';
 import { UpdateQuestionInput } from './models/update-question.input';
 import { UpdateQuestionsPriorityInput } from './models/update-questions-priority.input';
+import { Group } from '../groups/models/group.model';
 
 @Injectable()
 export class VibeCheckService {
@@ -60,6 +61,9 @@ export class VibeCheckService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    @InjectRepository(Group)
+    private groupRepository: Repository<Group>,
 
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
@@ -450,6 +454,28 @@ export class VibeCheckService {
     await this.userRepository.update(questionnaireTicket.user.id, {
       verified: true,
     });
+
+    // Add verified user to all default groups
+    const defaultGroups = await this.groupRepository.find({
+      where: { isDefault: true },
+      relations: ['members'],
+      select: ['id', 'members'],
+    });
+    for (const group of defaultGroups) {
+      await this.groupRepository.save({
+        members: [...group.members, questionnaireTicket.user],
+        id: group.id,
+      });
+
+      // Notify user that they've been added to a default group
+      await this.notificationsService.createNotification({
+        notificationType: NotificationType.AddToDefaultGroup,
+        userId: questionnaireTicket.user.id,
+        groupId: group.id,
+      });
+    }
+
+    // Notify user that their verification has been approved
     await this.notificationsService.createNotification({
       notificationType: NotificationType.VerifyUser,
       userId: questionnaireTicket.user.id,

@@ -1,0 +1,5 @@
+fragment AddDefaultGroupsOption on Group {
+  id
+  ...GroupAvatar
+  isDefault
+}

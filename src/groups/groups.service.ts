@@ -81,9 +81,10 @@ export class GroupsService {
     const sortedFeed = groups.sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
     );
-    return offset !== undefined
-      ? paginate(sortedFeed, offset, limit)
-      : sortedFeed;
+    if (typeof offset !== 'number') {
+      return sortedFeed;
+    }
+    return paginate(sortedFeed, offset, limit);
   }
 
   async getGroupFeed(id: number, offset?: number, limit?: number) {
