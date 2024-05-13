@@ -85,8 +85,8 @@ const AddDefaultGroupsModal = ({ isOpen, onClose }: Props) => {
     setFieldValue('groups', [
       ...values.groups,
       {
-        groupId,
         isDefault: !isDefault,
+        groupId,
       },
     ]);
   };
