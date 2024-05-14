@@ -88,7 +88,7 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
 
   const me = data && data.me;
   const isMe = me?.id === user.id;
-  const isGroupPage = pathname.includes(NavigationPaths.Groups);
+  const isGroupPage = pathname.includes(`${NavigationPaths.Groups}/`);
   const isProposalPage = pathname.includes(NavigationPaths.Proposals);
 
   const hasMedia =
