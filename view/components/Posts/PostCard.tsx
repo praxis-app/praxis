@@ -75,7 +75,7 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
 
   const groupPath = getGroupPath(group?.name || '');
   const isEventPage = pathname.includes(NavigationPaths.Events);
-  const isGroupPage = pathname.includes(NavigationPaths.Groups);
+  const isGroupPage = pathname.includes(`${NavigationPaths.Groups}/`);
   const isPostPage = pathname.includes(NavigationPaths.Posts);
   const postPath = `${NavigationPaths.Posts}/${id}`;
   const userProfilePath = getUserProfilePath(user?.name);
