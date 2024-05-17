@@ -352,6 +352,7 @@ export type FollowUserPayload = {
 
 export type Group = {
   __typename?: 'Group';
+  chat: Conversation;
   coverPhoto?: Maybe<Image>;
   createdAt: Scalars['DateTime']['output'];
   description: Scalars['String']['output'];

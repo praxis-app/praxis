@@ -33,7 +33,6 @@ export class Conversation {
   @OneToMany(() => Notification, (notification) => notification.conversation)
   notifications: Notification[];
 
-  @Field(() => Group, { nullable: true })
   @ManyToOne(() => Group, (group) => group.conversations, {
     onDelete: 'CASCADE',
   })

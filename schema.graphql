@@ -291,6 +291,7 @@ type FollowUserPayload {
 }
 
 type Group {
+  chat: Conversation!
   coverPhoto: Image
   createdAt: DateTime!
   description: String!

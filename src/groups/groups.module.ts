@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Conversation } from '../chat/models/conversation.model';
 import { EventsModule } from '../events/events.module';
 import { Image } from '../images/models/image.model';
 import { NotificationsModule } from '../notifications/notifications.module';
@@ -18,6 +19,7 @@ import { GroupsResolver } from './resolvers/groups.resolver';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      Conversation,
       Group,
       GroupConfig,
       GroupMemberRequest,

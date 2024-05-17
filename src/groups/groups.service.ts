@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import { Conversation } from '../chat/models/conversation.model';
 import { VALID_NAME_REGEX } from '../common/common.constants';
 import { paginate, sanitizeText } from '../common/common.utils';
 import { ImageTypes } from '../images/image.constants';
@@ -50,6 +51,9 @@ export class GroupsService {
 
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
+
+    @InjectRepository(Conversation)
+    private conversationRepository: Repository<Conversation>,
 
     private notificationsService: NotificationsService,
     private groupRolesService: GroupRolesService,
@@ -197,6 +201,16 @@ export class GroupsService {
   async isNoAdminGroup(groupId: number) {
     const config = await this.getGroupConfig({ groupId });
     return config.adminModel === GroupAdminModel.NoAdmin;
+  }
+
+  async getGroupChat(groupId: number) {
+    const chat = await this.conversationRepository.findOne({
+      where: { groupId },
+    });
+    if (!chat) {
+      return this.conversationRepository.save({ groupId });
+    }
+    return chat;
   }
 
   async createGroup(
