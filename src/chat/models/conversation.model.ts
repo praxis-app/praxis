@@ -3,10 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Group } from '../../groups/models/group.model';
 import { Notification } from '../../notifications/models/notification.model';
 import { ConversationMember } from './conversation-member.model';
 import { Message } from './message.model';
@@ -30,6 +32,15 @@ export class Conversation {
 
   @OneToMany(() => Notification, (notification) => notification.conversation)
   notifications: Notification[];
+
+  @Field(() => Group, { nullable: true })
+  @ManyToOne(() => Group, (group) => group.conversations, {
+    onDelete: 'CASCADE',
+  })
+  group: Group | null;
+
+  @Column({ type: 'int', nullable: true })
+  groupId: number | null;
 
   @CreateDateColumn()
   @Field()
