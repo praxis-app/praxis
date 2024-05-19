@@ -1,5 +1,5 @@
 import { useReactiveVar } from '@apollo/client';
-import { ExpandMore, Notifications } from '@mui/icons-material';
+import { Chat, ExpandMore, Notifications } from '@mui/icons-material';
 import { Box, Button, IconButton, SxProps, useTheme } from '@mui/material';
 import { MouseEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -57,7 +57,7 @@ const TopNavDesktop = () => {
     width: 50,
     height: 50,
   };
-  const showMenuIconWrapperStyles: SxProps = {
+  const showMenuBadgeStyles: SxProps = {
     bgcolor: 'background.secondary',
     border: `2px solid ${theme.palette.background.paper}`,
     borderRadius: 9999,
@@ -70,13 +70,18 @@ const TopNavDesktop = () => {
     top: 30,
     right: 2,
   };
-  const activityIconWrapperStyles: SxProps = {
+  const iconWrapperStyles: SxProps = {
     bgcolor: 'background.secondary',
     minWidth: 40,
     minHeight: 40,
     borderRadius: 9999,
     alignItems: 'center',
     justifyContent: 'center',
+  };
+  const chatIconStyles: SxProps = {
+    marginTop: 0.2,
+    marginLeft: 0.05,
+    fontSize: 20,
   };
 
   const handleMenuButtonClick = (event: MouseEvent<HTMLButtonElement>) =>
@@ -90,11 +95,22 @@ const TopNavDesktop = () => {
 
       {me && (
         <Flex alignSelf="center">
+          {me.serverPermissions.manageQuestionnaireTickets && (
+            <IconButton
+              sx={{ width: 50, height: 50 }}
+              onClick={() => navigate(NavigationPaths.VibeChat)}
+            >
+              <Flex sx={iconWrapperStyles}>
+                <Chat sx={chatIconStyles} />
+              </Flex>
+            </IconButton>
+          )}
+
           <IconButton
             sx={{ width: 50, height: 50 }}
             onClick={() => navigate(NavigationPaths.Activity)}
           >
-            <Flex sx={activityIconWrapperStyles}>
+            <Flex sx={iconWrapperStyles}>
               <Notifications sx={{ marginBottom: 0.3 }} />
               <NotificationCount bottom={31} left={31} size="17px" />
             </Flex>
@@ -106,8 +122,7 @@ const TopNavDesktop = () => {
             sx={showMenuBtnStyles}
           >
             <UserAvatar user={me} size={40} />
-
-            <Box sx={showMenuIconWrapperStyles}>
+            <Box sx={showMenuBadgeStyles}>
               <ExpandMore sx={{ fontSize: 15, marginTop: 0.05 }} />
             </Box>
           </IconButton>
