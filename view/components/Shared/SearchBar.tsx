@@ -12,7 +12,7 @@ import { inDevToast } from '../../utils/shared.utils';
 const SearchInput = styled(InputBase)(({ theme }) => ({
   '& .MuiInputBase-input': {
     color: theme.palette.common.white,
-    padding: theme.spacing(0.5, 1, 0, 1),
+    padding: theme.spacing(1.1, 1, 0, 1),
     transition: theme.transitions.create('width'),
     width: 230,
     [theme.breakpoints.down('lg')]: {
@@ -39,15 +39,15 @@ const SearchBar = () => {
 
   const searchBarStyles: SxProps = {
     backgroundColor: theme.palette.background.secondary,
-    borderRadius: '8px',
-    marginTop: 0.5,
-    height: 35,
+    borderRadius: 9999,
+    marginTop: 0.2,
+    height: 40,
   };
   const searchIconBoxStyles: SxProps = {
     color: focused ? grey[100] : 'rgba(255, 255, 255, 0.40)',
     display: 'inline-block',
     height: '100%',
-    paddingLeft: 2,
+    paddingLeft: 1.8,
     pointerEvents: 'none',
   };
 
