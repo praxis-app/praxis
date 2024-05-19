@@ -80,12 +80,12 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   };
 
   const handleBrandClick = () => {
-    if (pathname !== NavigationPaths.Home) {
-      navigate(NavigationPaths.Home);
-      return;
-    }
     if (scrollPosition > window.document.body.offsetHeight * 0.025) {
       scrollTop();
+      return;
+    }
+    if (pathname !== NavigationPaths.Home) {
+      navigate(NavigationPaths.Home);
       return;
     }
     navigate(0);
