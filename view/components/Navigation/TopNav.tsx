@@ -1,3 +1,4 @@
+import { useReactiveVar } from '@apollo/client';
 import { Search as SearchIcon } from '@mui/icons-material';
 import {
   AppBar,
@@ -12,18 +13,20 @@ import {
 import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import appIconImg from '../../assets/images/app-icon.png';
 import { NavigationPaths } from '../../constants/shared.constants';
+import { isChatPanelOpenVar } from '../../graphql/cache';
 import {
   ScrollDirection,
   useAboveBreakpoint,
   useIsDesktop,
+  useScrollPosition,
 } from '../../hooks/shared.hooks';
-import { inDevToast } from '../../utils/shared.utils';
+import { inDevToast, scrollTop } from '../../utils/shared.utils';
+import LazyLoadImage from '../Images/LazyLoadImage';
+import Flex from '../Shared/Flex';
 import LevelOneHeading from '../Shared/LevelOneHeading';
-import Link from '../Shared/Link';
 import TopNavDesktop from './TopNavDesktop';
-import { useReactiveVar } from '@apollo/client';
-import { isChatPanelOpenVar } from '../../graphql/cache';
 
 interface Props {
   appBarProps?: AppBarProps;
@@ -33,11 +36,13 @@ interface Props {
 const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   const isChatPanelOpen = useReactiveVar(isChatPanelOpenVar);
 
-  const { pathname } = useLocation();
   const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const scrollPosition = useScrollPosition();
   const isAboveSmall = useAboveBreakpoint('sm');
   const isDesktop = useIsDesktop();
-  const navigate = useNavigate();
   const theme = useTheme();
 
   const appBarStyles: SxProps = {
@@ -60,8 +65,7 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   };
 
   const desktopToolbarStyles: SxProps = {
-    alignSelf: 'center',
-    width: 'calc(100% - 200px)',
+    width: '100%',
     [theme.breakpoints.up('sm')]: {
       minHeight: 60,
     },
@@ -70,22 +74,22 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   const toolbarStyles: SxProps = {
     display: 'flex',
     justifyContent: 'space-between',
+    [theme.breakpoints.up('md')]: {
+      paddingX: '14px',
+    },
     ...(isDesktop ? desktopToolbarStyles : {}),
   };
 
-  const renderBrand = () => {
-    if (pathname === NavigationPaths.Home) {
-      return (
-        <LevelOneHeading onClick={() => navigate(0)} sx={brandStyles}>
-          {t('brand')}
-        </LevelOneHeading>
-      );
+  const handleBrandClick = () => {
+    if (scrollPosition > window.document.body.offsetHeight * 0.025) {
+      scrollTop();
+      return;
     }
-    return (
-      <Link href={NavigationPaths.Home}>
-        <LevelOneHeading sx={brandStyles}>{t('brand')}</LevelOneHeading>
-      </Link>
-    );
+    if (pathname !== NavigationPaths.Home) {
+      navigate(NavigationPaths.Home);
+      return;
+    }
+    navigate(0);
   };
 
   return (
@@ -102,7 +106,20 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
           {...appBarProps}
         >
           <Toolbar sx={toolbarStyles}>
-            {renderBrand()}
+            <Flex alignItems="center" onClick={handleBrandClick}>
+              {isDesktop ? (
+                <LazyLoadImage
+                  alt="App icon"
+                  width="42px"
+                  height="auto"
+                  src={appIconImg}
+                  sx={{ cursor: 'pointer' }}
+                  skipAnimation
+                />
+              ) : (
+                <LevelOneHeading sx={brandStyles}>{t('brand')}</LevelOneHeading>
+              )}
+            </Flex>
 
             {isDesktop ? (
               <TopNavDesktop />

@@ -5,7 +5,6 @@ import {
   Group as GroupsIcon,
   Home as HomeIcon,
   Link as InvitesIcon,
-  Notifications,
   AccountBox as RolesIcon,
   Rule,
   SupervisedUserCircle as UsersIcon,
@@ -23,7 +22,6 @@ import { useLocation } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
-import NotificationCount from '../Notifications/NotificationCount';
 import Link from '../Shared/Link';
 
 interface ListItemTextProps extends MuiListItemTextProps {
@@ -93,21 +91,6 @@ const LeftNav = () => {
           />
         </ListItemButton>
       </Link>
-
-      {isLoggedIn && (
-        <Link href={NavigationPaths.Activity}>
-          <ListItemButton>
-            <ListItemIcon sx={{ position: 'relative' }}>
-              <NotificationCount size="20px" bottom="11px" left="17px" />
-              <Notifications />
-            </ListItemIcon>
-            <ListItemText
-              isActive={isActive(NavigationPaths.Activity)}
-              primary={t('navigation.activity')}
-            />
-          </ListItemButton>
-        </Link>
-      )}
 
       <Link href={NavigationPaths.Groups}>
         <ListItemButton>

@@ -59,8 +59,8 @@ const UserAvatar = ({
           imageId={profilePicture?.id}
           src={getImageFileSrc()}
           borderRadius="50%"
-          width="100%"
-          height="100%"
+          minWidth="100%"
+          minHeight="100%"
         />
       </Flex>
     );
