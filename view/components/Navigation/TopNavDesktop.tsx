@@ -1,5 +1,5 @@
 import { useReactiveVar } from '@apollo/client';
-import { ExpandMore } from '@mui/icons-material';
+import { ExpandMore, Notifications } from '@mui/icons-material';
 import { Box, Button, IconButton, SxProps, useTheme } from '@mui/material';
 import { MouseEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +13,7 @@ import {
 } from '../../graphql/cache';
 import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
+import NotificationCount from '../Notifications/NotificationCount';
 import Flex from '../Shared/Flex';
 import SearchBar from '../Shared/SearchBar';
 import UserAvatar from '../Users/UserAvatar';
@@ -45,20 +46,18 @@ const TopNavDesktop = () => {
     ? NavigationPaths.SignUp
     : `${NavigationPaths.SignUp}/${inviteToken}`;
 
-  const flexStyles: SxProps = {
+  const rootStyles: SxProps = {
     flexGrow: 1,
     justifyContent: 'space-between',
     height: 41.75,
     marginLeft: 3,
   };
-
-  const iconBtnStyles: SxProps = {
+  const showMenuBtnStyles: SxProps = {
     position: 'relative',
     width: 50,
     height: 50,
   };
-
-  const iconWrapperStyles: SxProps = {
+  const showMenuIconWrapperStyles: SxProps = {
     bgcolor: 'background.secondary',
     border: `2px solid ${theme.palette.background.paper}`,
     borderRadius: 9999,
@@ -71,6 +70,14 @@ const TopNavDesktop = () => {
     top: 30,
     right: 2,
   };
+  const activityIconWrapperStyles: SxProps = {
+    bgcolor: 'background.secondary',
+    minWidth: 40,
+    minHeight: 40,
+    borderRadius: 9999,
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
 
   const handleMenuButtonClick = (event: MouseEvent<HTMLButtonElement>) =>
     setMenuAnchorEl(event.currentTarget);
@@ -78,20 +85,30 @@ const TopNavDesktop = () => {
   const handleClose = () => setMenuAnchorEl(null);
 
   return (
-    <Flex sx={flexStyles}>
+    <Flex sx={rootStyles}>
       <SearchBar />
 
       {me && (
-        <Box alignSelf="center">
+        <Flex alignSelf="center">
+          <IconButton
+            sx={{ width: 50, height: 50 }}
+            onClick={() => navigate(NavigationPaths.Activity)}
+          >
+            <Flex sx={activityIconWrapperStyles}>
+              <Notifications sx={{ marginBottom: 0.3 }} />
+              <NotificationCount bottom={31} left={31} size="17px" />
+            </Flex>
+          </IconButton>
+
           <IconButton
             aria-label={t('labels.menuButton')}
             edge="end"
             onClick={handleMenuButtonClick}
-            sx={iconBtnStyles}
+            sx={showMenuBtnStyles}
           >
             <UserAvatar user={me} size={40} />
 
-            <Box sx={iconWrapperStyles}>
+            <Box sx={showMenuIconWrapperStyles}>
               <ExpandMore sx={{ fontSize: 15, marginTop: 0.05 }} />
             </Box>
           </IconButton>
@@ -101,7 +118,7 @@ const TopNavDesktop = () => {
             handleClose={handleClose}
             me={me}
           />
-        </Box>
+        </Flex>
       )}
 
       {showAuthButtons && (
