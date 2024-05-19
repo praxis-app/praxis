@@ -20,8 +20,9 @@ import {
   ScrollDirection,
   useAboveBreakpoint,
   useIsDesktop,
+  useScrollPosition,
 } from '../../hooks/shared.hooks';
-import { inDevToast } from '../../utils/shared.utils';
+import { inDevToast, scrollTop } from '../../utils/shared.utils';
 import LazyLoadImage from '../Images/LazyLoadImage';
 import LevelOneHeading from '../Shared/LevelOneHeading';
 import TopNavDesktop from './TopNavDesktop';
@@ -34,11 +35,13 @@ interface Props {
 const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   const isChatPanelOpen = useReactiveVar(isChatPanelOpenVar);
 
-  const { pathname } = useLocation();
   const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const scrollPosition = useScrollPosition();
   const isAboveSmall = useAboveBreakpoint('sm');
   const isDesktop = useIsDesktop();
-  const navigate = useNavigate();
   const theme = useTheme();
 
   const appBarStyles: SxProps = {
@@ -79,6 +82,10 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   const handleBrandClick = () => {
     if (pathname !== NavigationPaths.Home) {
       navigate(NavigationPaths.Home);
+      return;
+    }
+    if (scrollPosition > window.document.body.offsetHeight * 0.025) {
+      scrollTop();
       return;
     }
     navigate(0);
