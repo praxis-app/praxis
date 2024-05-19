@@ -1,3 +1,4 @@
+import { useReactiveVar } from '@apollo/client';
 import { Search as SearchIcon } from '@mui/icons-material';
 import {
   AppBar,
@@ -12,18 +13,19 @@ import {
 import { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import appIconImg from '../../assets/images/app-icon.png';
 import { NavigationPaths } from '../../constants/shared.constants';
+import { isChatPanelOpenVar } from '../../graphql/cache';
 import {
   ScrollDirection,
   useAboveBreakpoint,
   useIsDesktop,
 } from '../../hooks/shared.hooks';
 import { inDevToast } from '../../utils/shared.utils';
+import LazyLoadImage from '../Images/LazyLoadImage';
 import LevelOneHeading from '../Shared/LevelOneHeading';
 import Link from '../Shared/Link';
 import TopNavDesktop from './TopNavDesktop';
-import { useReactiveVar } from '@apollo/client';
-import { isChatPanelOpenVar } from '../../graphql/cache';
 
 interface Props {
   appBarProps?: AppBarProps;
@@ -69,15 +71,48 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   const toolbarStyles: SxProps = {
     display: 'flex',
     justifyContent: 'space-between',
+    [theme.breakpoints.up('md')]: {
+      paddingX: '14px',
+    },
     ...(isDesktop ? desktopToolbarStyles : {}),
   };
 
   const renderBrand = () => {
     if (pathname === NavigationPaths.Home) {
+      if (isDesktop) {
+        return (
+          <LazyLoadImage
+            alt="App icon"
+            width="42px"
+            height="auto"
+            src={appIconImg}
+            sx={{ cursor: 'pointer' }}
+            onClick={() => navigate(0)}
+            skipAnimation
+          />
+        );
+      }
       return (
         <LevelOneHeading onClick={() => navigate(0)} sx={brandStyles}>
           {t('brand')}
         </LevelOneHeading>
+      );
+    }
+    if (isDesktop) {
+      return (
+        <Link
+          href={NavigationPaths.Home}
+          sx={{ display: 'flex', alignItems: 'center' }}
+        >
+          <LazyLoadImage
+            alt="App icon"
+            width="42px"
+            height="auto"
+            src={appIconImg}
+            sx={{ cursor: 'pointer' }}
+            skipAnimation
+          />
+        </Link>
       );
     }
     return (

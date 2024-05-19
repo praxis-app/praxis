@@ -39,7 +39,7 @@ const SearchBar = () => {
 
   const searchBarStyles: SxProps = {
     backgroundColor: theme.palette.background.secondary,
-    borderRadius: '8px',
+    borderRadius: 9999,
     marginTop: 0.5,
     height: 35,
   };

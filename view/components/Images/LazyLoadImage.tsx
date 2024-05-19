@@ -6,12 +6,14 @@ import { useImageSrc } from '../../hooks/image.hooks';
 
 interface Props extends BoxProps {
   alt: string;
+  skipAnimation?: boolean;
   imageId?: number;
   src?: string;
 }
 
 const LazyLoadImage = ({
   alt,
+  skipAnimation = false,
   imageId,
   onLoad,
   src,
@@ -25,11 +27,15 @@ const LazyLoadImage = ({
   const ref = useRef<HTMLDivElement>(null);
   const srcFromImageId = useImageSrc(imageId, ref);
 
-  const imageStyles: SxProps = {
-    objectFit: 'cover',
+  const animationStyles: SxProps = {
     transition: 'filter 0.3s, opacity 0.3s',
     filter: loaded ? 'blur(0)' : 'blur(15px)',
     opacity: loaded ? 1 : 0,
+  };
+
+  const imageStyles: SxProps = {
+    objectFit: 'cover',
+    ...(!skipAnimation && animationStyles),
     ...sx,
   };
 

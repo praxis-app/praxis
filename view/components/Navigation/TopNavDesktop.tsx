@@ -50,7 +50,7 @@ const TopNavDesktop = () => {
     flexGrow: 1,
     justifyContent: 'space-between',
     height: 41.75,
-    marginLeft: 3,
+    marginLeft: 1.5,
   };
   const showMenuBtnStyles: SxProps = {
     position: 'relative',
@@ -102,7 +102,6 @@ const TopNavDesktop = () => {
 
           <IconButton
             aria-label={t('labels.menuButton')}
-            edge="end"
             onClick={handleMenuButtonClick}
             sx={showMenuBtnStyles}
           >
