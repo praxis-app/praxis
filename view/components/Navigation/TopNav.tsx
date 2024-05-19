@@ -24,6 +24,7 @@ import {
 } from '../../hooks/shared.hooks';
 import { inDevToast, scrollTop } from '../../utils/shared.utils';
 import LazyLoadImage from '../Images/LazyLoadImage';
+import Flex from '../Shared/Flex';
 import LevelOneHeading from '../Shared/LevelOneHeading';
 import TopNavDesktop from './TopNavDesktop';
 
@@ -105,7 +106,7 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
           {...appBarProps}
         >
           <Toolbar sx={toolbarStyles}>
-            <Box onClick={handleBrandClick}>
+            <Flex alignItems="center" onClick={handleBrandClick}>
               {isDesktop ? (
                 <LazyLoadImage
                   alt="App icon"
@@ -118,7 +119,7 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
               ) : (
                 <LevelOneHeading sx={brandStyles}>{t('brand')}</LevelOneHeading>
               )}
-            </Box>
+            </Flex>
 
             {isDesktop ? (
               <TopNavDesktop />
