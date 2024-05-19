@@ -9,7 +9,7 @@ import {
   Settings,
   TaskAlt,
 } from '@mui/icons-material';
-import { Menu, MenuItem, SvgIconProps } from '@mui/material';
+import { Menu, MenuItem, SvgIconProps, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
@@ -17,6 +17,8 @@ import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
 import { isLoggedInVar, isVerifiedVar } from '../../graphql/cache';
 import { MeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { logOutUser } from '../../utils/auth.utils';
+import { getUserProfilePath } from '../../utils/user.utils';
+import UserAvatar from '../Users/UserAvatar';
 
 const ICON_PROPS: SvgIconProps = {
   fontSize: 'small',
@@ -31,11 +33,7 @@ interface Props {
   me: MeQuery['me'];
 }
 
-const TopNavDropdown = ({
-  anchorEl,
-  handleClose,
-  me: { name, serverPermissions },
-}: Props) => {
+const TopNavDropdown = ({ anchorEl, handleClose, me }: Props) => {
   const isVerified = useReactiveVar(isVerifiedVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
 
@@ -44,7 +42,10 @@ const TopNavDropdown = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const handleLogOutButtonClick = () =>
+  const { name, displayName, serverPermissions } = me;
+  const userName = displayName || name;
+
+  const handleLogOutBtnClick = () =>
     window.confirm(t('users.prompts.logOut')) &&
     logOut({
       onCompleted() {
@@ -53,7 +54,12 @@ const TopNavDropdown = ({
       },
     });
 
-  const handleEditProfileButtonClick = () => {
+  const handleProfileBtnClick = () => {
+    const userProfilePath = getUserProfilePath(name);
+    navigate(userProfilePath);
+  };
+
+  const handleEditProfileBtnClick = () => {
     const path = `${NavigationPaths.Users}/${name}/edit`;
     navigate(path);
   };
@@ -74,7 +80,12 @@ const TopNavDropdown = ({
       }}
       keepMounted
     >
-      <MenuItem onClick={handleEditProfileButtonClick}>
+      <MenuItem onClick={handleProfileBtnClick} sx={{ gap: 1 }}>
+        <UserAvatar size={20} />
+        <Typography>{userName}</Typography>
+      </MenuItem>
+
+      <MenuItem onClick={handleEditProfileBtnClick}>
         <Person {...ICON_PROPS} />
         {t('users.actions.editProfile')}
       </MenuItem>
@@ -123,7 +134,7 @@ const TopNavDropdown = ({
         </MenuItem>
       )}
 
-      <MenuItem onClick={handleLogOutButtonClick}>
+      <MenuItem onClick={handleLogOutBtnClick}>
         <ExitToApp {...ICON_PROPS} />
         {t('users.actions.logOut')}
       </MenuItem>
