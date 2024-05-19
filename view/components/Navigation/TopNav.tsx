@@ -24,7 +24,6 @@ import {
 import { inDevToast } from '../../utils/shared.utils';
 import LazyLoadImage from '../Images/LazyLoadImage';
 import LevelOneHeading from '../Shared/LevelOneHeading';
-import Link from '../Shared/Link';
 import TopNavDesktop from './TopNavDesktop';
 
 interface Props {
@@ -77,49 +76,12 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
     ...(isDesktop ? desktopToolbarStyles : {}),
   };
 
-  const renderBrand = () => {
-    if (pathname === NavigationPaths.Home) {
-      if (isDesktop) {
-        return (
-          <LazyLoadImage
-            alt="App icon"
-            width="42px"
-            height="auto"
-            src={appIconImg}
-            sx={{ cursor: 'pointer' }}
-            onClick={() => navigate(0)}
-            skipAnimation
-          />
-        );
-      }
-      return (
-        <LevelOneHeading onClick={() => navigate(0)} sx={brandStyles}>
-          {t('brand')}
-        </LevelOneHeading>
-      );
+  const handleBrandClick = () => {
+    if (pathname !== NavigationPaths.Home) {
+      navigate(NavigationPaths.Home);
+      return;
     }
-    if (isDesktop) {
-      return (
-        <Link
-          href={NavigationPaths.Home}
-          sx={{ display: 'flex', alignItems: 'center' }}
-        >
-          <LazyLoadImage
-            alt="App icon"
-            width="42px"
-            height="auto"
-            src={appIconImg}
-            sx={{ cursor: 'pointer' }}
-            skipAnimation
-          />
-        </Link>
-      );
-    }
-    return (
-      <Link href={NavigationPaths.Home}>
-        <LevelOneHeading sx={brandStyles}>{t('brand')}</LevelOneHeading>
-      </Link>
-    );
+    navigate(0);
   };
 
   return (
@@ -136,7 +98,20 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
           {...appBarProps}
         >
           <Toolbar sx={toolbarStyles}>
-            {renderBrand()}
+            <Box onClick={handleBrandClick}>
+              {isDesktop ? (
+                <LazyLoadImage
+                  alt="App icon"
+                  width="42px"
+                  height="auto"
+                  src={appIconImg}
+                  sx={{ cursor: 'pointer' }}
+                  skipAnimation
+                />
+              ) : (
+                <LevelOneHeading sx={brandStyles}>{t('brand')}</LevelOneHeading>
+              )}
+            </Box>
 
             {isDesktop ? (
               <TopNavDesktop />
