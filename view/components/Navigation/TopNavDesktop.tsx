@@ -50,7 +50,7 @@ const TopNavDesktop = () => {
     flexGrow: 1,
     justifyContent: 'space-between',
     height: 41.75,
-    marginLeft: 1.5,
+    marginLeft: 1.4,
   };
   const showMenuBtnStyles: SxProps = {
     position: 'relative',
