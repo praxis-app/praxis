@@ -1,5 +1,5 @@
 import { useReactiveVar } from '@apollo/client';
-import { Search as SearchIcon } from '@mui/icons-material';
+import { ArrowBack, Search as SearchIcon, Tag } from '@mui/icons-material';
 import {
   AppBar,
   AppBarProps,
@@ -8,6 +8,7 @@ import {
   Slide,
   SxProps,
   Toolbar,
+  Typography,
   useTheme,
 } from '@mui/material';
 import { CSSProperties } from 'react';
@@ -122,6 +123,25 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
                     {t('brand')}
                   </LevelOneHeading>
                 )}
+              </Flex>
+            )}
+
+            {activeChat && !isDesktop && (
+              <Flex alignSelf="center" alignItems="center">
+                <IconButton
+                  onClick={() => navigate(-1)}
+                  sx={{ marginRight: 0.5 }}
+                  edge="start"
+                >
+                  <ArrowBack />
+                </IconButton>
+                <Tag
+                  sx={{ marginRight: '0.25ch', color: 'text.secondary' }}
+                  fontSize="small"
+                />
+                <Typography fontFamily="Inter Bold" fontSize="15px">
+                  {activeChat.name}
+                </Typography>
               </Flex>
             )}
 
