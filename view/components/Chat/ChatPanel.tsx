@@ -1,26 +1,40 @@
 import { useReactiveVar } from '@apollo/client';
-import { UIEvent, useRef, useState } from 'react';
+import { UIEvent, useEffect, useRef, useState } from 'react';
 import MessageFeed from '../../components/Chat/MessageFeed';
 import MessageForm from '../../components/Chat/MessageForm';
-import { scrollDirectionVar } from '../../graphql/cache';
+import { activeChatVar, scrollDirectionVar } from '../../graphql/cache';
 import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
 
 interface Props {
   conversationId: number;
+  conversationName?: string | null;
   messages: MessageFragment[];
-  vibeChat?: boolean;
   onLoadMore(): Promise<void>;
+  vibeChat?: boolean;
 }
 
 const ChatPanel = ({
   conversationId,
+  conversationName,
   messages,
-  vibeChat,
   onLoadMore,
+  vibeChat,
 }: Props) => {
   const [feedScrollPosition, setFeedScrollPosition] = useState(0);
   const scrollDirection = useReactiveVar(scrollDirectionVar);
   const feedBottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (conversationId && conversationName) {
+      activeChatVar({
+        id: conversationId,
+        name: conversationName,
+      });
+    }
+    return () => {
+      activeChatVar(null);
+    };
+  }, [conversationId, conversationName]);
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
