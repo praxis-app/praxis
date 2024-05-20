@@ -106,20 +106,24 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
           {...appBarProps}
         >
           <Toolbar sx={toolbarStyles}>
-            <Flex alignItems="center" onClick={handleBrandClick}>
-              {isDesktop ? (
-                <LazyLoadImage
-                  alt="App icon"
-                  width="42px"
-                  height="auto"
-                  src={appIconImg}
-                  sx={{ cursor: 'pointer' }}
-                  skipAnimation
-                />
-              ) : (
-                <LevelOneHeading sx={brandStyles}>{t('brand')}</LevelOneHeading>
-              )}
-            </Flex>
+            {!activeChat && (
+              <Flex alignItems="center" onClick={handleBrandClick}>
+                {isDesktop ? (
+                  <LazyLoadImage
+                    alt="App icon"
+                    width="42px"
+                    height="auto"
+                    src={appIconImg}
+                    sx={{ cursor: 'pointer' }}
+                    skipAnimation
+                  />
+                ) : (
+                  <LevelOneHeading sx={brandStyles}>
+                    {t('brand')}
+                  </LevelOneHeading>
+                )}
+              </Flex>
+            )}
 
             {isDesktop ? (
               <TopNavDesktop />
