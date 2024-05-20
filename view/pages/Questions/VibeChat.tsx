@@ -1,9 +1,11 @@
 import { Reference } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { produce } from 'immer';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import ChatPanel from '../../components/Chat/ChatPanel';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { activeChatVar } from '../../graphql/cache';
 import { useVibeChatQuery } from '../../graphql/chat/queries/gen/VibeChat.gen';
 import { useNewMessageSubscription } from '../../graphql/chat/subscriptions/gen/NewMessage.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
@@ -43,6 +45,18 @@ const VibeChat = () => {
   });
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (data) {
+      activeChatVar({
+        id: data.vibeChat.id,
+        name: data.vibeChat.name,
+      });
+    }
+    return () => {
+      activeChatVar(null);
+    };
+  }, [data]);
 
   const handleLoadMore = async () => {
     if (!data) {

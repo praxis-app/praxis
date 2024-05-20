@@ -19,7 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import {
-  isChatPanelOpenVar,
+  activeChatVar,
   isLoggedInVar,
   isNavDrawerOpenVar,
 } from '../../graphql/cache';
@@ -43,7 +43,7 @@ const BottomNav = ({ scrollDirection }: Props) => {
   const [value, setValue] = useState(0);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isNavDrawerOpen = useReactiveVar(isNavDrawerOpenVar);
-  const isChatPanelOpen = useReactiveVar(isChatPanelOpenVar);
+  const activeChat = useReactiveVar(activeChatVar);
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
@@ -96,7 +96,7 @@ const BottomNav = ({ scrollDirection }: Props) => {
   return (
     <Paper sx={PAPER_STYLES}>
       <Collapse
-        in={isAboveSmall || isChatPanelOpen || scrollDirection !== 'down'}
+        in={!!activeChat || isAboveSmall || scrollDirection !== 'down'}
         timeout={220}
       >
         <BottomNavigation

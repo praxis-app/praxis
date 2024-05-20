@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import appIconImg from '../../assets/images/app-icon.png';
 import { NavigationPaths } from '../../constants/shared.constants';
-import { isChatPanelOpenVar } from '../../graphql/cache';
+import { activeChatVar } from '../../graphql/cache';
 import {
   ScrollDirection,
   useAboveBreakpoint,
@@ -34,7 +34,7 @@ interface Props {
 }
 
 const TopNav = ({ appBarProps, scrollDirection }: Props) => {
-  const isChatPanelOpen = useReactiveVar(isChatPanelOpenVar);
+  const activeChat = useReactiveVar(activeChatVar);
 
   const { t } = useTranslation();
   const { pathname } = useLocation();
@@ -95,7 +95,7 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   return (
     <Box position="fixed" width="100%" zIndex={5}>
       <Slide
-        in={isAboveSmall || isChatPanelOpen || scrollDirection !== 'down'}
+        in={!!activeChat || isAboveSmall || scrollDirection !== 'down'}
         appear={false}
         timeout={220}
       >

@@ -18,6 +18,7 @@ export type VibeChatQuery = {
   vibeChat: {
     __typename?: 'Conversation';
     id: number;
+    name?: string | null;
     messages: Array<{
       __typename?: 'Message';
       id: number;
@@ -39,6 +40,7 @@ export const VibeChatDocument = gql`
   query VibeChat($offset: Int = 0, $limit: Int = 20) {
     vibeChat {
       id
+      name
       messages(offset: $offset, limit: $limit) {
         ...Message
       }

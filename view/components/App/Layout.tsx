@@ -2,7 +2,7 @@ import { useReactiveVar } from '@apollo/client';
 import { Container } from '@mui/material';
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { isChatPanelOpenVar } from '../../graphql/cache';
+import { activeChatVar } from '../../graphql/cache';
 import {
   useAboveBreakpoint,
   useIsDesktop,
@@ -17,7 +17,7 @@ import TopNav from '../Navigation/TopNav';
 import Toast from '../Shared/Toast';
 
 const Layout = () => {
-  const isChatPanelOpen = useReactiveVar(isChatPanelOpenVar);
+  const activeChat = useReactiveVar(activeChatVar);
 
   const { pathname } = useLocation();
   const isDesktop = useIsDesktop();
@@ -37,7 +37,7 @@ const Layout = () => {
   );
 
   const renderContent = () => {
-    if (isChatPanelOpen) {
+    if (activeChat) {
       return renderMain();
     }
     return <Container maxWidth="sm">{renderMain()}</Container>;
