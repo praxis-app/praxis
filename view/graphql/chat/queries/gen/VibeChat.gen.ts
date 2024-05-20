@@ -18,7 +18,7 @@ export type VibeChatQuery = {
   vibeChat: {
     __typename?: 'Conversation';
     id: number;
-    name?: string | null;
+    name: string;
     messages: Array<{
       __typename?: 'Message';
       id: number;

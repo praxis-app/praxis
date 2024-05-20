@@ -97,7 +97,7 @@ export type Conversation = {
   id: Scalars['Int']['output'];
   members: Array<User>;
   messages: Array<Message>;
-  name?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
   unreadMessageCount: Scalars['Int']['output'];
 };
 

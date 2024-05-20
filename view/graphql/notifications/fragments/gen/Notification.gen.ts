@@ -32,7 +32,7 @@ export type NotificationFragment = {
   conversation?: {
     __typename?: 'Conversation';
     id: number;
-    name?: string | null;
+    name: string;
   } | null;
   comment?: {
     __typename?: 'Comment';

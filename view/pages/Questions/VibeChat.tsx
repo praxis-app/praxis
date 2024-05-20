@@ -80,7 +80,7 @@ const VibeChat = () => {
     <ChatPanel
       conversationId={data.vibeChat.id}
       messages={data.vibeChat.messages}
-      conversationName={data.vibeChat.name || ''}
+      conversationName={data.vibeChat.name}
       onLoadMore={handleLoadMore}
       vibeChat
     />

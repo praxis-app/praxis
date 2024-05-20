@@ -20,9 +20,9 @@ export class Conversation {
   @Field(() => Int)
   id: number;
 
-  @Column({ nullable: true, type: 'varchar' })
-  @Field(() => String, { nullable: true })
-  name: string | null;
+  @Column()
+  @Field()
+  name: string;
 
   @OneToMany(() => Message, (message) => message.conversation)
   messages: Message[];

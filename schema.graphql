@@ -62,7 +62,7 @@ type Conversation {
   id: Int!
   members: [User!]!
   messages(limit: Int, offset: Int): [Message!]!
-  name: String
+  name: String!
   unreadMessageCount: Int!
 }
 
