@@ -27,7 +27,9 @@ export class Conversation {
   @OneToMany(() => Message, (message) => message.conversation)
   messages: Message[];
 
-  @OneToMany(() => ConversationMember, (member) => member.conversation)
+  @OneToMany(() => ConversationMember, (member) => member.conversation, {
+    cascade: true,
+  })
   members: ConversationMember[];
 
   @OneToMany(() => Notification, (notification) => notification.conversation)

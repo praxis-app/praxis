@@ -2,7 +2,8 @@ import { UserInputError } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { ConversationMember } from '../chat/models/conversation-member.model';
 import { Conversation } from '../chat/models/conversation.model';
 import { VALID_NAME_REGEX } from '../common/common.constants';
 import { paginate, sanitizeText } from '../common/common.utils';
@@ -18,6 +19,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { Post } from '../posts/models/post.model';
 import { Proposal } from '../proposals/models/proposal.model';
 import { DecisionMakingModel } from '../proposals/proposals.constants';
+import { User } from '../users/models/user.model';
 import { UsersService } from '../users/users.service';
 import { GroupRolesService } from './group-roles/group-roles.service';
 import { GroupAdminModel, GroupPrivacy } from './groups.constants';
@@ -54,6 +56,12 @@ export class GroupsService {
 
     @InjectRepository(Conversation)
     private conversationRepository: Repository<Conversation>,
+
+    @InjectRepository(ConversationMember)
+    private conversationMemberRepository: Repository<ConversationMember>,
+
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
 
     private notificationsService: NotificationsService,
     private groupRolesService: GroupRolesService,
@@ -208,9 +216,60 @@ export class GroupsService {
       where: { groupId },
     });
     if (!chat) {
-      return this.conversationRepository.save({ groupId });
+      return this.initializeGroupChat(groupId);
     }
     return chat;
+  }
+
+  async initializeGroupChat(groupId: number) {
+    const group = await this.getGroup({ id: groupId }, ['members']);
+    const chatMembers = group.members.map(({ id }) => ({ userId: id }));
+    const groupChat: Conversation = await this.conversationRepository.save({
+      name: `${group.name} chat`,
+      members: chatMembers,
+      groupId,
+    });
+    return groupChat;
+  }
+
+  async syncGroupChatMembers(groupId: number) {
+    const vibeChat = await this.getGroupChat(groupId);
+    const chatMembers = await this.userRepository.find({
+      where: {
+        conversationMembers: {
+          conversation: { groupId },
+        },
+      },
+    });
+    const { members: groupMembers } = await this.groupRepository.findOneOrFail({
+      where: { id: groupId },
+      relations: ['members'],
+      select: ['members'],
+    });
+
+    const chatMemberIds = chatMembers.map(({ id }) => id);
+    const groupMemberIds = groupMembers.map(({ id }) => id);
+    const membersToAdd = groupMemberIds.filter(
+      (id) => !chatMemberIds.includes(id),
+    );
+    const membersToRemove = chatMemberIds.filter(
+      (id) => !groupMemberIds.includes(id),
+    );
+
+    if (membersToAdd.length) {
+      await this.conversationMemberRepository.save(
+        membersToAdd.map((userId) => ({
+          conversationId: vibeChat.id,
+          userId,
+        })),
+      );
+    }
+    if (membersToRemove.length) {
+      await this.conversationMemberRepository.delete({
+        conversationId: vibeChat.id,
+        userId: In(membersToRemove),
+      });
+    }
   }
 
   async createGroup(

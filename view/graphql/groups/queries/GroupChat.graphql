@@ -1,0 +1,12 @@
+query GroupChat($name: String!, $offset: Int = 0, $limit: Int = 20) {
+  group(name: $name) {
+    id
+    chat {
+      id
+      name
+      messages(offset: $offset, limit: $limit) {
+        ...Message
+      }
+    }
+  }
+}

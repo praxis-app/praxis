@@ -8,6 +8,7 @@ import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
 interface Props {
   conversationId: number;
   conversationName: string;
+  groupName?: string;
   messages: MessageFragment[];
   onLoadMore(): Promise<void>;
   vibeChat?: boolean;
@@ -16,6 +17,7 @@ interface Props {
 const ChatPanel = ({
   conversationId,
   conversationName,
+  groupName,
   messages,
   onLoadMore,
   vibeChat,
@@ -70,6 +72,7 @@ const ChatPanel = ({
         conversationId={conversationId}
         onSubmit={handleSubmit}
         vibeChat={vibeChat}
+        groupName={groupName}
       />
     </>
   );

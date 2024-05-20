@@ -20,6 +20,11 @@ import {
   VibeChatQuery,
 } from '../../graphql/chat/queries/gen/VibeChat.gen';
 import { SendMessageInput } from '../../graphql/gen';
+import {
+  GroupChatDocument,
+  GroupChatQuery,
+  GroupChatQueryVariables,
+} from '../../graphql/groups/queries/gen/GroupChat.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
@@ -28,11 +33,17 @@ import Flex from '../Shared/Flex';
 
 interface Props {
   conversationId: number;
-  vibeChat?: boolean;
+  groupName?: string;
   onSubmit?(): void;
+  vibeChat?: boolean;
 }
 
-const MessageForm = ({ conversationId, vibeChat, onSubmit }: Props) => {
+const MessageForm = ({
+  conversationId,
+  groupName,
+  vibeChat,
+  onSubmit,
+}: Props) => {
   const [images, setImages] = useState<File[]>([]);
   const [imagesInputKey, setImagesInputKey] = useState('');
   const [sendMessage, { loading }] = useSendMessageMutation();
@@ -110,6 +121,22 @@ const MessageForm = ({ conversationId, vibeChat, onSubmit }: Props) => {
         const {
           sendMessage: { message },
         } = data;
+        if (groupName) {
+          cache.updateQuery<GroupChatQuery, GroupChatQueryVariables>(
+            {
+              query: GroupChatDocument,
+              variables: { name: groupName },
+            },
+            (groupChatData) => {
+              if (!groupChatData) {
+                return;
+              }
+              return produce(groupChatData, (draft) => {
+                draft.group.chat.messages.push(message);
+              });
+            },
+          );
+        }
         if (vibeChat) {
           cache.updateQuery<VibeChatQuery>(
             {
