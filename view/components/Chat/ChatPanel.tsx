@@ -7,7 +7,7 @@ import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
 
 interface Props {
   conversationId: number;
-  conversationName?: string | null;
+  conversationName: string;
   messages: MessageFragment[];
   onLoadMore(): Promise<void>;
   vibeChat?: boolean;
