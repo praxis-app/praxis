@@ -6,6 +6,7 @@ import Message from './Message';
 
 interface Props {
   feedBottomRef: RefObject<HTMLDivElement>;
+  formHeightDiff: number;
   messages: MessageFragment[];
   onImageLoad(): void;
   onLoadMore(): Promise<void>;
@@ -14,6 +15,7 @@ interface Props {
 
 const MessageFeed = ({
   feedBottomRef,
+  formHeightDiff,
   messages,
   onImageLoad,
   onLoadMore,
@@ -42,20 +44,21 @@ const MessageFeed = ({
     zIndex: -1,
     display: 'flex',
     flexDirection: 'column-reverse',
+
     [theme.breakpoints.up('xs')]: {
       top: '55px',
-      bottom: '162px',
+      bottom: 155 + formHeightDiff,
     },
     [theme.breakpoints.up('sm')]: {
-      bottom: '162px',
       top: '63px',
+      bottom: 163 + formHeightDiff,
     },
     [theme.breakpoints.up('md')]: {
       top: '60px',
-      bottom: '68px',
+      bottom: 68 + formHeightDiff,
     },
     [theme.breakpoints.up('lg')]: {
-      bottom: 0,
+      bottom: formHeightDiff,
     },
   };
 
