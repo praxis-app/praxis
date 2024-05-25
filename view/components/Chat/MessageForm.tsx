@@ -190,12 +190,15 @@ const MessageForm = ({
                   <Input
                     autoComplete="off"
                     name={FieldNames.Body}
-                    onChange={handleChange}
                     onKeyDown={(e) => handleFilledInputKeyDown(e, submitForm)}
                     onKeyUp={handleFormHeightChange}
                     placeholder={t('chat.prompts.sendAMessage')}
                     sx={inputStyles}
                     value={values.body || ''}
+                    onChange={(e) => {
+                      handleFormHeightChange();
+                      handleChange(e);
+                    }}
                     disableUnderline
                     multiline
                   />
