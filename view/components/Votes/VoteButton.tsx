@@ -263,14 +263,8 @@ const VoteButton = ({
 
       <Menu
         anchorEl={menuAnchorEl}
-        anchorOrigin={{
-          horizontal: 'left',
-          vertical: 'bottom',
-        }}
-        transformOrigin={{
-          horizontal: 'left',
-          vertical: 'top',
-        }}
+        anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: 'left', vertical: 'top' }}
         onClose={() => setMenuAnchorEl(null)}
         open={!!menuAnchorEl}
         keepMounted
