@@ -1,12 +1,22 @@
-mutation CreateVote($voteData: CreateVoteInput!) {
+mutation CreateVote($voteData: CreateVoteInput!, $isLoggedIn: Boolean! = true) {
   createVote(voteData: $voteData) {
     vote {
       id
       voteType
 
+      user {
+        ...UserAvatar
+      }
+
       proposal {
         id
         stage
+        voteCount
+
+        myVote @include(if: $isLoggedIn) {
+          id
+          voteType
+        }
 
         action {
           id

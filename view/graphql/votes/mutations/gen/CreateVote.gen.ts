@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -9,6 +10,7 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type CreateVoteMutationVariables = Types.Exact<{
   voteData: Types.CreateVoteInput;
+  isLoggedIn?: Types.Scalars['Boolean']['input'];
 }>;
 
 export type CreateVoteMutation = {
@@ -19,10 +21,19 @@ export type CreateVoteMutation = {
       __typename?: 'Vote';
       id: number;
       voteType: string;
+      user: {
+        __typename?: 'User';
+        id: number;
+        name: string;
+        displayName?: string | null;
+        profilePicture: { __typename?: 'Image'; id: number };
+      };
       proposal?: {
         __typename?: 'Proposal';
         id: number;
         stage: string;
+        voteCount: number;
+        myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
         action: {
           __typename?: 'ProposalAction';
           id: number;
@@ -40,14 +51,25 @@ export type CreateVoteMutation = {
 };
 
 export const CreateVoteDocument = gql`
-  mutation CreateVote($voteData: CreateVoteInput!) {
+  mutation CreateVote(
+    $voteData: CreateVoteInput!
+    $isLoggedIn: Boolean! = true
+  ) {
     createVote(voteData: $voteData) {
       vote {
         id
         voteType
+        user {
+          ...UserAvatar
+        }
         proposal {
           id
           stage
+          voteCount
+          myVote @include(if: $isLoggedIn) {
+            id
+            voteType
+          }
           action {
             id
             actionType
@@ -61,6 +83,7 @@ export const CreateVoteDocument = gql`
       }
     }
   }
+  ${UserAvatarFragmentDoc}
 `;
 export type CreateVoteMutationFn = Apollo.MutationFunction<
   CreateVoteMutation,
@@ -81,6 +104,7 @@ export type CreateVoteMutationFn = Apollo.MutationFunction<
  * const [createVoteMutation, { data, loading, error }] = useCreateVoteMutation({
  *   variables: {
  *      voteData: // value for 'voteData'
+ *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
