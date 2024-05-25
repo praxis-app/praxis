@@ -1,5 +1,5 @@
 import { useReactiveVar } from '@apollo/client';
-import { AccountBox, Lock, Public, Settings } from '@mui/icons-material';
+import { AccountBox, Chat, Lock, Public, Settings } from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -26,7 +26,7 @@ import {
 import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { GroupPageCardFragment } from '../../graphql/groups/fragments/gen/GroupPageCard.gen';
 import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
-import { useAboveBreakpoint } from '../../hooks/shared.hooks';
+import { useAboveBreakpoint, useIsDesktop } from '../../hooks/shared.hooks';
 import { removeGroup } from '../../utils/cache.utils';
 import {
   getEditGroupPath,
@@ -39,6 +39,7 @@ import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import JoinGroupButton from './JoinGroupButton';
+import GhostButton from '../Shared/GhostButton';
 
 const NameText = styled(Typography)(() => ({
   fontFamily: 'Inter Bold',
@@ -80,6 +81,7 @@ const GroupPageCard = ({
   const [searchParams] = useSearchParams();
   const isAboveMedium = useAboveBreakpoint('md');
   const isAboveSmall = useAboveBreakpoint('sm');
+  const isDesktop = useIsDesktop();
   const navigate = useNavigate();
 
   const tabParam = searchParams.get('tab');
@@ -184,6 +186,12 @@ const GroupPageCard = ({
 
     return (
       <>
+        {group.isJoinedByMe && !isDesktop && (
+          <GhostButton startIcon={<Chat />} sx={{ marginRight: '8px' }}>
+            {t('chat.labels.chat')}
+          </GhostButton>
+        )}
+
         <JoinGroupButton
           groupId={id}
           currentUserId={currentUserId}
