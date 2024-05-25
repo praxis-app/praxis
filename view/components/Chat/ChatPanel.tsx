@@ -5,6 +5,8 @@ import MessageForm from '../../components/Chat/MessageForm';
 import { isChatPanelOpenVar, scrollDirectionVar } from '../../graphql/cache';
 import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
 
+const DEFAULT_CHAT_FORM_HEIGHT = 92;
+
 interface Props {
   conversationId: number;
   messages: MessageFragment[];
@@ -18,9 +20,11 @@ const ChatPanel = ({
   vibeChat,
   onLoadMore,
 }: Props) => {
+  const [formHeight, setFormHeight] = useState(DEFAULT_CHAT_FORM_HEIGHT);
   const [feedScrollPosition, setFeedScrollPosition] = useState(0);
   const scrollDirection = useReactiveVar(scrollDirectionVar);
   const feedBottomRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     isChatPanelOpenVar(true);
@@ -54,6 +58,7 @@ const ChatPanel = ({
     <>
       <MessageFeed
         feedBottomRef={feedBottomRef}
+        formHeightDiff={formHeight - DEFAULT_CHAT_FORM_HEIGHT}
         messages={messages}
         onImageLoad={handleImageLoad}
         onLoadMore={onLoadMore}
@@ -61,7 +66,9 @@ const ChatPanel = ({
       />
       <MessageForm
         conversationId={conversationId}
+        formRef={formRef}
         onSubmit={handleSubmit}
+        setFormHeight={setFormHeight}
         vibeChat={vibeChat}
       />
     </>

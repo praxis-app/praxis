@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Formik, FormikHelpers } from 'formik';
 import { produce } from 'immer';
-import { useState } from 'react';
+import { RefObject, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FieldNames, KeyCodes } from '../../constants/shared.constants';
 import { useSendMessageMutation } from '../../graphql/chat/mutations/gen/SendMessage.gen';
@@ -28,11 +28,19 @@ import Flex from '../Shared/Flex';
 
 interface Props {
   conversationId: number;
-  vibeChat?: boolean;
+  formRef: RefObject<HTMLDivElement>;
   onSubmit?(): void;
+  vibeChat?: boolean;
+  setFormHeight(height: number): void;
 }
 
-const MessageForm = ({ conversationId, vibeChat, onSubmit }: Props) => {
+const MessageForm = ({
+  conversationId,
+  formRef,
+  onSubmit,
+  setFormHeight,
+  vibeChat,
+}: Props) => {
   const [images, setImages] = useState<File[]>([]);
   const [imagesInputKey, setImagesInputKey] = useState('');
   const [sendMessage, { loading }] = useSendMessageMutation();
@@ -74,14 +82,12 @@ const MessageForm = ({ conversationId, vibeChat, onSubmit }: Props) => {
   };
   const hiderStyles: SxProps = {
     bgcolor: 'background.default',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
     marginX: 3,
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: '90px',
+    height: '95px',
     zIndex: -1,
   };
   const inputStyles: SxProps = {
@@ -150,6 +156,14 @@ const MessageForm = ({ conversationId, vibeChat, onSubmit }: Props) => {
     submitForm();
   };
 
+  const handleInputKeyUp = () => {
+    if (!formRef.current) {
+      return;
+    }
+    const { clientHeight } = formRef.current;
+    setFormHeight(clientHeight || 0);
+  };
+
   const handleRemoveSelectedImage = (imageName: string) => {
     setImages(images.filter((image) => image.name !== imageName));
     setImagesInputKey(getRandomString());
@@ -157,7 +171,7 @@ const MessageForm = ({ conversationId, vibeChat, onSubmit }: Props) => {
 
   return (
     <Container maxWidth="sm" sx={containerStyles}>
-      <Box sx={formStyles}>
+      <Box sx={formStyles} ref={formRef}>
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
@@ -178,6 +192,7 @@ const MessageForm = ({ conversationId, vibeChat, onSubmit }: Props) => {
                     name={FieldNames.Body}
                     onChange={handleChange}
                     onKeyDown={(e) => handleFilledInputKeyDown(e, submitForm)}
+                    onKeyUp={handleInputKeyUp}
                     placeholder={t('chat.prompts.sendAMessage')}
                     sx={inputStyles}
                     value={values.body || ''}
