@@ -35,6 +35,10 @@ fragment ProposalCard on Proposal {
     ...AttachedImage
   }
 
-  ...VoteMenu
+  myVote @include(if: $isLoggedIn) {
+    id
+    voteType
+  }
+
   ...ProposalVoteBadges
 }
