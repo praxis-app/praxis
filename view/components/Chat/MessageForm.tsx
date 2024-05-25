@@ -156,7 +156,7 @@ const MessageForm = ({
     submitForm();
   };
 
-  const handleInputKeyUp = () => {
+  const handleFormHeightChange = () => {
     if (!formRef.current) {
       return;
     }
@@ -192,7 +192,7 @@ const MessageForm = ({
                     name={FieldNames.Body}
                     onChange={handleChange}
                     onKeyDown={(e) => handleFilledInputKeyDown(e, submitForm)}
-                    onKeyUp={handleInputKeyUp}
+                    onKeyUp={handleFormHeightChange}
                     placeholder={t('chat.prompts.sendAMessage')}
                     sx={inputStyles}
                     value={values.body || ''}
