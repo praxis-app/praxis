@@ -1,4 +1,4 @@
-import { Comment, HowToVote, QuestionAnswer } from '@mui/icons-material';
+import { Comment, QuestionAnswer } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,13 +9,12 @@ import { NavigationPaths } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { QuestionnaireTicketCardFragment } from '../../graphql/questions/fragments/gen/QuestionnaireTicketCard.gen';
 import { useQuestionnaireTicketCommentsLazyQuery } from '../../graphql/questions/queries/gen/QuestionnaireTicketComments.gen';
-import { Blurple } from '../../styles/theme';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import VoteBadges from '../Votes/VoteBadges';
-import VoteMenu from '../Votes/VoteMenu';
+import VoteButton from '../Votes/VoteButton';
 import QuestionnaireTicketModal from './QuestionnaireTicketModal';
 
 const ICON_STYLES: SxProps = {
@@ -54,6 +53,11 @@ const QuestionnaireTicketCardFooter = ({
   const isTicketComment = !!searchParams.get(
     NotificationType.QuestionnaireTicketComment,
   );
+
+  const isRatified = [
+    QuestionnaireTicketStatus.Approved,
+    QuestionnaireTicketStatus.Denied,
+  ].includes(questionnaireTicket.status as QuestionnaireTicketStatus);
 
   const { id, myVote, voteCount, commentCount, settings, status } =
     questionnaireTicket;
@@ -134,8 +138,6 @@ const QuestionnaireTicketCardFooter = ({
     setMenuAnchorEl(event.currentTarget);
   };
 
-  const handleVoteMenuClose = () => setMenuAnchorEl(null);
-
   const handleModalClose = () => {
     setIsModalOpen(false);
 
@@ -177,13 +179,16 @@ const QuestionnaireTicketCardFooter = ({
       <Divider sx={{ margin: inModal ? 0 : '0 16px' }} />
 
       <CardActions sx={{ justifyContent: 'space-around' }}>
-        <CardFooterButton
+        <VoteButton
+          isRatified={isRatified}
+          menuAnchorEl={menuAnchorEl}
+          myVoteId={myVote?.id}
+          myVoteType={myVote?.voteType}
           onClick={handleVoteButtonClick}
-          sx={myVote ? { color: Blurple.SavoryBlue } : {}}
-        >
-          <HowToVote sx={ICON_STYLES} />
-          {t('proposals.actions.vote')}
-        </CardFooterButton>
+          questionnaireTicketId={questionnaireTicket.id}
+          setMenuAnchorEl={setMenuAnchorEl}
+          decisionMakingModel={settings.decisionMakingModel}
+        />
 
         <CardFooterButton onClick={handleCommentButtonClick}>
           <Comment sx={ROTATED_ICON_STYLES} />
@@ -214,15 +219,6 @@ const QuestionnaireTicketCardFooter = ({
         questionnaireTicket={questionnaireTicket}
         onClose={handleModalClose}
         open={isModalOpen}
-      />
-
-      <VoteMenu
-        anchorEl={menuAnchorEl}
-        onClose={handleVoteMenuClose}
-        decisionMakingModel={settings.decisionMakingModel}
-        myVoteId={myVote?.id}
-        myVoteType={myVote?.voteType}
-        questionnaireTicketId={questionnaireTicket.id}
       />
     </>
   );
