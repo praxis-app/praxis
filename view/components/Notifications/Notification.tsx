@@ -336,14 +336,14 @@ const Notification = ({
     });
   };
 
-  const handleRead = () => {
+  const handleRead = async () => {
     setMenuAnchorEl(null);
     if (isRead) {
       return;
     }
 
-    const { cache } = client;
-    cache.updateQuery<UnreadNotificationsQuery>(
+    // Update cache optimistically
+    client.cache.updateQuery<UnreadNotificationsQuery>(
       { query: UnreadNotificationsDocument },
       (notificationsData) =>
         produce(notificationsData, (draft) => {
@@ -353,7 +353,8 @@ const Notification = ({
           draft.unreadNotificationsCount -= 1;
         }),
     );
-    updateNotification({
+
+    await updateNotification({
       variables: {
         notificationData: { id, status: NotificationStatus.Read },
       },
