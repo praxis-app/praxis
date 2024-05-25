@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Formik, FormikHelpers } from 'formik';
 import { produce } from 'immer';
-import { RefObject, useState } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FieldNames, KeyCodes } from '../../constants/shared.constants';
 import { useSendMessageMutation } from '../../graphql/chat/mutations/gen/SendMessage.gen';
@@ -53,6 +53,20 @@ const MessageForm = ({
     [FieldNames.Body]: '',
     conversationId,
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!formRef.current) {
+        return;
+      }
+      const { clientHeight } = formRef.current;
+      setFormHeight(clientHeight);
+    }, 1);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [images, formRef, setFormHeight]);
 
   const containerStyles: SxProps = {
     position: 'fixed',
