@@ -32,7 +32,9 @@ mutation CreateVote($voteData: CreateVoteInput!) {
 
       questionnaireTicket {
         id
+        status
         voteCount
+        agreementVoteCount
 
         myVote {
           id

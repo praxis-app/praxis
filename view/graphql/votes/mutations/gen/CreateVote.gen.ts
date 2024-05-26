@@ -48,7 +48,9 @@ export type CreateVoteMutation = {
       questionnaireTicket?: {
         __typename?: 'QuestionnaireTicket';
         id: number;
+        status: string;
         voteCount: number;
+        agreementVoteCount: number;
         myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
       } | null;
     };
@@ -84,7 +86,9 @@ export const CreateVoteDocument = gql`
         }
         questionnaireTicket {
           id
+          status
           voteCount
+          agreementVoteCount
           myVote {
             id
             voteType
