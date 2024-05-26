@@ -2,15 +2,27 @@ import { useReactiveVar } from '@apollo/client';
 import { Close } from '@mui/icons-material';
 import { Alert, IconButton, Snackbar, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { toastVar } from '../../graphql/cache';
+import {
+  isChatPanelOpenVar,
+  scrollDirectionVar,
+  toastVar,
+} from '../../graphql/cache';
+import { useAboveBreakpoint } from '../../hooks/shared.hooks';
 
 const AUTO_HIDE_DURATION = 6000;
 
 const Toast = () => {
+  const isChatPanelOpen = useReactiveVar(isChatPanelOpenVar);
+  const scrollDirection = useReactiveVar(scrollDirectionVar);
   const toastNotification = useReactiveVar(toastVar);
   const [open, setOpen] = useState(false);
 
+  const isAboveSmall = useAboveBreakpoint('sm');
   const theme = useTheme();
+
+  const isNavHidden =
+    !isAboveSmall && !isChatPanelOpen && scrollDirection === 'down';
+  const distanceFromBottom = isNavHidden ? 12 : 80;
 
   useEffect(() => {
     if (toastNotification) {
@@ -36,10 +48,10 @@ const Toast = () => {
 
   return (
     <Snackbar
+      sx={{ bottom: distanceFromBottom }}
       anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
       autoHideDuration={AUTO_HIDE_DURATION}
       onClose={handleClose}
-      sx={{ bottom: 80 }}
       open={open}
     >
       <Alert
