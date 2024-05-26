@@ -121,7 +121,7 @@ const TopNavDesktop = () => {
             onClick={handleMenuButtonClick}
             sx={showMenuBtnStyles}
           >
-            <UserAvatar user={me} size={40} />
+            <UserAvatar user={me} minWidth={40} minHeight={40} />
             <Box sx={showMenuBadgeStyles}>
               <ExpandMore sx={{ fontSize: 15, marginTop: 0.05 }} />
             </Box>
