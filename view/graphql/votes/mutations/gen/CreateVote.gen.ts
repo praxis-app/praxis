@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -19,10 +20,19 @@ export type CreateVoteMutation = {
       __typename?: 'Vote';
       id: number;
       voteType: string;
+      user: {
+        __typename?: 'User';
+        id: number;
+        name: string;
+        displayName?: string | null;
+        profilePicture: { __typename?: 'Image'; id: number };
+      };
       proposal?: {
         __typename?: 'Proposal';
         id: number;
         stage: string;
+        voteCount: number;
+        myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
         action: {
           __typename?: 'ProposalAction';
           id: number;
@@ -35,6 +45,14 @@ export type CreateVoteMutation = {
           description: string;
         } | null;
       } | null;
+      questionnaireTicket?: {
+        __typename?: 'QuestionnaireTicket';
+        id: number;
+        status: string;
+        voteCount: number;
+        agreementVoteCount: number;
+        myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
+      } | null;
     };
   };
 };
@@ -45,9 +63,17 @@ export const CreateVoteDocument = gql`
       vote {
         id
         voteType
+        user {
+          ...UserAvatar
+        }
         proposal {
           id
           stage
+          voteCount
+          myVote {
+            id
+            voteType
+          }
           action {
             id
             actionType
@@ -58,9 +84,20 @@ export const CreateVoteDocument = gql`
             description
           }
         }
+        questionnaireTicket {
+          id
+          status
+          voteCount
+          agreementVoteCount
+          myVote {
+            id
+            voteType
+          }
+        }
       }
     }
   }
+  ${UserAvatarFragmentDoc}
 `;
 export type CreateVoteMutationFn = Apollo.MutationFunction<
   CreateVoteMutation,

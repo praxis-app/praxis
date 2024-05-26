@@ -1,7 +1,7 @@
 // TODO: Add basic functionality for sharing - below is a WIP
 
 import { useReactiveVar } from '@apollo/client';
-import { Comment, HowToVote, Reply } from '@mui/icons-material';
+import { Comment, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,14 +12,13 @@ import { useSyncProposalMutation } from '../../graphql/proposals/mutations/gen/S
 import { useProposalCommentsLazyQuery } from '../../graphql/proposals/queries/gen/ProposalComments.gen';
 import { useIsProposalRatifiedSubscription } from '../../graphql/proposals/subscriptions/gen/IsProposalRatified.gen';
 import { useInView } from '../../hooks/shared.hooks';
-import { Blurple } from '../../styles/theme';
 import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import VoteBadges from '../Votes/VoteBadges';
-import VoteMenu from '../Votes/VoteMenu';
+import VoteButton from '../Votes/VoteButton';
 import ProposalModal from './ProposalModal';
 
 const ICON_STYLES: SxProps = {
@@ -127,11 +126,11 @@ const ProposalCardFooter = ({
     proposal,
   ]);
 
-  const { voteCount, commentCount, group, stage, myVote } = proposal;
+  const { voteCount, commentCount, group, stage, myVote, settings } = proposal;
 
   const me = proposalCommentsData?.me;
   const comments = proposalCommentsData?.proposal?.comments;
-  const isDisabled = !!group && !group.isJoinedByMe;
+  const isVoteBtnDisabled = (!!group && !group.isJoinedByMe) || !currentUserId;
   const isClosed = stage === ProposalStage.Closed;
 
   const isRatified =
@@ -147,16 +146,6 @@ const ProposalCardFooter = ({
     transform: 'translateY(3px)',
     cursor: 'pointer',
     height: '24px',
-  };
-
-  const getVoteButtonLabel = () => {
-    if (isRatified) {
-      return t('proposals.labels.ratified');
-    }
-    if (isClosed) {
-      return t('proposals.labels.closed');
-    }
-    return t('proposals.actions.vote');
   };
 
   const handleVoteButtonClick = (
@@ -176,7 +165,7 @@ const ProposalCardFooter = ({
       });
       return;
     }
-    if (isDisabled) {
+    if (isVoteBtnDisabled) {
       toastVar({
         status: 'info',
         title: t('proposals.prompts.joinGroupToVote'),
@@ -199,8 +188,6 @@ const ProposalCardFooter = ({
     }
     setMenuAnchorEl(event.currentTarget);
   };
-
-  const handleVoteMenuClose = () => setMenuAnchorEl(null);
 
   const handleCommentButtonClick = async () => {
     if (inModal || isProposalPage) {
@@ -240,13 +227,17 @@ const ProposalCardFooter = ({
       <Divider sx={{ margin: inModal ? 0 : '0 16px' }} />
 
       <CardActions sx={{ justifyContent: 'space-around' }}>
-        <CardFooterButton
+        <VoteButton
+          isClosed={isClosed}
+          isRatified={isRatified}
+          menuAnchorEl={menuAnchorEl}
+          myVoteId={myVote?.id}
+          myVoteType={myVote?.voteType}
           onClick={handleVoteButtonClick}
-          sx={myVote ? { color: Blurple.SavoryBlue } : {}}
-        >
-          <HowToVote sx={ICON_STYLES} />
-          {getVoteButtonLabel()}
-        </CardFooterButton>
+          proposalId={proposal.id}
+          setMenuAnchorEl={setMenuAnchorEl}
+          decisionMakingModel={settings.decisionMakingModel}
+        />
 
         <CardFooterButton onClick={handleCommentButtonClick}>
           <Comment sx={ROTATED_ICON_STYLES} />
@@ -298,17 +289,6 @@ const ProposalCardFooter = ({
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
-
-      {currentUserId && (
-        <VoteMenu
-          anchorEl={menuAnchorEl}
-          decisionMakingModel={proposal.settings.decisionMakingModel}
-          myVoteId={myVote?.id}
-          myVoteType={myVote?.voteType}
-          onClose={handleVoteMenuClose}
-          proposalId={proposal.id}
-        />
-      )}
     </Box>
   );
 };

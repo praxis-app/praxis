@@ -5,7 +5,6 @@ import { ProposalActionFragmentDoc } from './ProposalAction.gen';
 import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.gen';
 import { AttachedImageFragmentDoc } from '../../../images/fragments/gen/AttachedImage.gen';
 import { GroupAvatarFragmentDoc } from '../../../groups/fragments/gen/GroupAvatar.gen';
-import { VoteMenuFragmentDoc } from '../../../votes/fragments/gen/VoteMenu.gen';
 import { ProposalVoteBadgesFragmentDoc } from './ProposalVoteBadges.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -219,13 +218,15 @@ export const ProposalCardFragmentDoc = gql`
     images {
       ...AttachedImage
     }
-    ...VoteMenu
+    myVote @include(if: $isLoggedIn) {
+      id
+      voteType
+    }
     ...ProposalVoteBadges
   }
   ${ProposalActionFragmentDoc}
   ${UserAvatarFragmentDoc}
   ${GroupAvatarFragmentDoc}
   ${AttachedImageFragmentDoc}
-  ${VoteMenuFragmentDoc}
   ${ProposalVoteBadgesFragmentDoc}
 `;

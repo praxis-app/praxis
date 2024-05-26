@@ -1,6 +1,13 @@
 import { Reference } from '@apollo/client';
-import { PanTool, ThumbDown, ThumbUp, ThumbsUpDown } from '@mui/icons-material';
+import {
+  HowToVote,
+  PanTool,
+  ThumbDown,
+  ThumbUp,
+  ThumbsUpDown,
+} from '@mui/icons-material';
 import { Menu, MenuItem } from '@mui/material';
+import { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -23,6 +30,7 @@ import {
 } from '../../graphql/votes/mutations/gen/UpdateVote.gen';
 import { Blurple } from '../../styles/theme';
 import { getGroupPath } from '../../utils/group.utils';
+import CardFooterButton from '../Shared/CardFooterButton';
 
 const ICON_STYLES = {
   fontSize: 20,
@@ -30,29 +38,36 @@ const ICON_STYLES = {
 };
 
 interface Props {
-  anchorEl: null | HTMLElement;
   decisionMakingModel: string;
+  isClosed?: boolean;
+  isRatified: boolean;
+  menuAnchorEl: HTMLElement | null;
   myVoteId?: number;
   myVoteType?: string;
-  onClose(): void;
+  onClick(e: MouseEvent<HTMLButtonElement>): void;
   proposalId?: number;
   questionnaireTicketId?: number;
+  setMenuAnchorEl: (el: HTMLElement | null) => void;
 }
 
-const VoteMenu = ({
+const VoteButton = ({
   decisionMakingModel,
+  isClosed,
+  isRatified,
+  menuAnchorEl,
   myVoteId,
   myVoteType,
+  onClick,
   proposalId,
   questionnaireTicketId,
-  anchorEl,
-  onClose,
+  setMenuAnchorEl,
 }: Props) => {
-  const [createVote] = useCreateVoteMutation();
-  const [deleteVote] = useDeleteVoteMutation();
-  const [updateVote] = useUpdateVoteMutation();
+  const [createVote, { loading: createVoteLoading }] = useCreateVoteMutation();
+  const [updateVote, { loading: updateVoteLoading }] = useUpdateVoteMutation();
+  const [deleteVote, { loading: deleteVoteLoading }] = useDeleteVoteMutation();
 
-  const [getGroupRoles] = useRolesByGroupIdLazyQuery();
+  const [getGroupRoles, { loading: groupRolesLoading }] =
+    useRolesByGroupIdLazyQuery();
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
@@ -64,6 +79,22 @@ const VoteMenu = ({
   const cacheReference = {
     __typename: proposalId ? TypeNames.Proposal : TypeNames.QuestionnaireTicket,
     id: proposalId || questionnaireTicketId,
+  };
+
+  const isDisabled =
+    createVoteLoading ||
+    updateVoteLoading ||
+    deleteVoteLoading ||
+    groupRolesLoading;
+
+  const getVoteButtonLabel = () => {
+    if (isRatified) {
+      return t('proposals.labels.ratified');
+    }
+    if (isClosed) {
+      return t('proposals.labels.closed');
+    }
+    return t('proposals.actions.vote');
   };
 
   const getMenuItemStyles = (voteType: string) => {
@@ -199,14 +230,14 @@ const VoteMenu = ({
       },
     });
 
-  const handleClick = (voteType: string) => async () => {
+  const handleClickMenuItem = (voteType: string) => async () => {
     if (questionnaireTicketId && voteType === VoteTypes.Block) {
       const confirmed = window.confirm(t('questions.prompts.confirmBlock'));
       if (!confirmed) {
         return;
       }
     }
-    onClose();
+    setMenuAnchorEl(null);
 
     if (myVoteId && myVoteType !== voteType) {
       await handleUpdate(myVoteId, voteType);
@@ -220,68 +251,73 @@ const VoteMenu = ({
   };
 
   return (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        horizontal: 'left',
-        vertical: 'bottom',
-      }}
-      transformOrigin={{
-        horizontal: 'left',
-        vertical: 'top',
-      }}
-      onClose={onClose}
-      open={!!anchorEl}
-      keepMounted
-    >
-      <MenuItem
-        onClick={handleClick(VoteTypes.Agreement)}
-        sx={getMenuItemStyles(VoteTypes.Agreement)}
+    <>
+      <CardFooterButton
+        onClick={onClick}
+        disabled={isDisabled}
+        sx={myVoteId ? { color: Blurple.SavoryBlue } : {}}
       >
-        <ThumbUp sx={ICON_STYLES} />
-        {t('votes.actions.agree')}
-      </MenuItem>
+        <HowToVote sx={{ marginRight: '0.4ch' }} />
+        {getVoteButtonLabel()}
+      </CardFooterButton>
 
-      {isMajorityVote ? (
+      <Menu
+        anchorEl={menuAnchorEl}
+        anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+        onClose={() => setMenuAnchorEl(null)}
+        open={!!menuAnchorEl}
+        keepMounted
+      >
         <MenuItem
-          onClick={handleClick(VoteTypes.Disagreement)}
-          sx={getMenuItemStyles(VoteTypes.Disagreement)}
+          onClick={handleClickMenuItem(VoteTypes.Agreement)}
+          sx={getMenuItemStyles(VoteTypes.Agreement)}
         >
-          <ThumbDown sx={ICON_STYLES} />
-          {t('votes.actions.disagree')}
+          <ThumbUp sx={ICON_STYLES} />
+          {t('votes.actions.agree')}
         </MenuItem>
-      ) : (
-        [
+
+        {isMajorityVote ? (
           <MenuItem
-            key={VoteTypes.StandAside}
-            onClick={handleClick(VoteTypes.StandAside)}
-            sx={getMenuItemStyles(VoteTypes.StandAside)}
+            onClick={handleClickMenuItem(VoteTypes.Disagreement)}
+            sx={getMenuItemStyles(VoteTypes.Disagreement)}
           >
             <ThumbDown sx={ICON_STYLES} />
-            {t('votes.actions.standAside')}
-          </MenuItem>,
+            {t('votes.actions.disagree')}
+          </MenuItem>
+        ) : (
+          [
+            <MenuItem
+              key={VoteTypes.StandAside}
+              onClick={handleClickMenuItem(VoteTypes.StandAside)}
+              sx={getMenuItemStyles(VoteTypes.StandAside)}
+            >
+              <ThumbDown sx={ICON_STYLES} />
+              {t('votes.actions.standAside')}
+            </MenuItem>,
 
-          <MenuItem
-            key={VoteTypes.Reservations}
-            onClick={handleClick(VoteTypes.Reservations)}
-            sx={getMenuItemStyles(VoteTypes.Reservations)}
-          >
-            <ThumbsUpDown sx={ICON_STYLES} />
-            {t('votes.actions.reservations')}
-          </MenuItem>,
+            <MenuItem
+              key={VoteTypes.Reservations}
+              onClick={handleClickMenuItem(VoteTypes.Reservations)}
+              sx={getMenuItemStyles(VoteTypes.Reservations)}
+            >
+              <ThumbsUpDown sx={ICON_STYLES} />
+              {t('votes.actions.reservations')}
+            </MenuItem>,
 
-          <MenuItem
-            key={VoteTypes.Block}
-            onClick={handleClick(VoteTypes.Block)}
-            sx={getMenuItemStyles(VoteTypes.Block)}
-          >
-            <PanTool sx={ICON_STYLES} />
-            {t('votes.actions.block')}
-          </MenuItem>,
-        ]
-      )}
-    </Menu>
+            <MenuItem
+              key={VoteTypes.Block}
+              onClick={handleClickMenuItem(VoteTypes.Block)}
+              sx={getMenuItemStyles(VoteTypes.Block)}
+            >
+              <PanTool sx={ICON_STYLES} />
+              {t('votes.actions.block')}
+            </MenuItem>,
+          ]
+        )}
+      </Menu>
+    </>
   );
 };
 
-export default VoteMenu;
+export default VoteButton;
