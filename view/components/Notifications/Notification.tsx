@@ -241,9 +241,12 @@ const Notification = ({
   };
 
   const getPath = () => {
-    // TODO: Update to point to sepcific chat after adding full chat functionality
     if (notificationType === NotificationType.NewMessage) {
-      return NavigationPaths.VibeChat;
+      if (!conversation?.group) {
+        return NavigationPaths.VibeChat;
+      }
+      const { group } = conversation;
+      return `${NavigationPaths.Groups}/${group.name}${NavigationPaths.Chat}`;
     }
     if (
       isProposalVote ||

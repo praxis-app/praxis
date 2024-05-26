@@ -27,6 +27,7 @@ import {
 } from '../../graphql/cache';
 import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
+import { useAboveBreakpoint } from '../../hooks/shared.hooks';
 import NotificationCount from '../Notifications/NotificationCount';
 import Flex from '../Shared/Flex';
 import SearchBar from '../Shared/SearchBar';
@@ -50,6 +51,7 @@ const TopNavDesktop = () => {
   });
 
   const { t } = useTranslation();
+  const isAboveLarge = useAboveBreakpoint('lg');
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -135,15 +137,17 @@ const TopNavDesktop = () => {
             </IconButton>
           )}
 
-          <IconButton
-            sx={{ width: 50, height: 50 }}
-            onClick={() => navigate(NavigationPaths.Activity)}
-          >
-            <Flex sx={iconWrapperStyles}>
-              <Notifications sx={{ marginBottom: 0.3 }} />
-              <NotificationCount bottom={31} left={31} size="17px" />
-            </Flex>
-          </IconButton>
+          {isAboveLarge && (
+            <IconButton
+              sx={{ width: 50, height: 50 }}
+              onClick={() => navigate(NavigationPaths.Activity)}
+            >
+              <Flex sx={iconWrapperStyles}>
+                <Notifications sx={{ marginBottom: 0.3 }} />
+                <NotificationCount bottom={31} left={31} size="17px" />
+              </Flex>
+            </IconButton>
+          )}
 
           <IconButton
             aria-label={t('labels.menuButton')}
