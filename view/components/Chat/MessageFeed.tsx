@@ -44,6 +44,7 @@ const MessageFeed = ({
     zIndex: -1,
     display: 'flex',
     flexDirection: 'column-reverse',
+    transition: 'bottom 0.3s ease-in-out',
 
     [theme.breakpoints.up('xs')]: {
       top: '55px',

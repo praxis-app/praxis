@@ -25,7 +25,7 @@ import {
   GroupChatQuery,
   GroupChatQueryVariables,
 } from '../../graphql/groups/queries/gen/GroupChat.gen';
-import { useIsDesktop } from '../../hooks/shared.hooks';
+import { useIsDesktop, useWindowSize } from '../../hooks/shared.hooks';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
 import ImageInput from '../Images/ImageInput';
@@ -53,6 +53,7 @@ const MessageForm = ({
   const [sendMessage, { loading }] = useSendMessageMutation();
 
   const { t } = useTranslation();
+  const [windowWidth] = useWindowSize();
   const isDesktop = useIsDesktop();
   const theme = useTheme();
 
@@ -73,7 +74,7 @@ const MessageForm = ({
     return () => {
       clearTimeout(timer);
     };
-  }, [images, formRef, setFormHeight]);
+  }, [images, formRef, setFormHeight, windowWidth]);
 
   const containerStyles: SxProps = {
     position: 'fixed',
