@@ -48,7 +48,10 @@ const Toast = () => {
 
   return (
     <Snackbar
-      sx={{ bottom: distanceFromBottom, transition: 'bottom 220ms' }}
+      sx={{
+        bottom: distanceFromBottom,
+        transition: 'bottom 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+      }}
       anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
       autoHideDuration={AUTO_HIDE_DURATION}
       onClose={handleClose}
