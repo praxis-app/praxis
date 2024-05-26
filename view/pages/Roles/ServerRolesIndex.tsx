@@ -16,7 +16,7 @@ const ServerRolesIndex = () => {
 
   const { t } = useTranslation();
 
-  if (isDeniedAccess(error) || !canManageRoles) {
+  if (isDeniedAccess(error) || (permissions && !canManageRoles)) {
     return <Typography>{t('prompts.permissionDenied')}</Typography>;
   }
 

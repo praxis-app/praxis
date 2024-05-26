@@ -68,7 +68,7 @@ const Notification = ({
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
-  const [updateNotification, { loading: updateLoading }] =
+  const [updateNotification, { loading: updateLoading, client }] =
     useUpdateNotificationMutation();
   const [deleteNotification, { loading: deleteLoading }] =
     useDeleteNotificationMutation();
@@ -336,26 +336,27 @@ const Notification = ({
     });
   };
 
-  const handleRead = () => {
+  const handleRead = async () => {
     setMenuAnchorEl(null);
     if (isRead) {
       return;
     }
-    updateNotification({
+
+    // Update cache optimistically
+    client.cache.updateQuery<UnreadNotificationsQuery>(
+      { query: UnreadNotificationsDocument },
+      (notificationsData) =>
+        produce(notificationsData, (draft) => {
+          if (!draft) {
+            return;
+          }
+          draft.unreadNotificationsCount -= 1;
+        }),
+    );
+
+    await updateNotification({
       variables: {
         notificationData: { id, status: NotificationStatus.Read },
-      },
-      update(cache) {
-        cache.updateQuery<UnreadNotificationsQuery>(
-          { query: UnreadNotificationsDocument },
-          (notificationsData) =>
-            produce(notificationsData, (draft) => {
-              if (!draft) {
-                return;
-              }
-              draft.unreadNotificationsCount -= 1;
-            }),
-        );
       },
     });
   };

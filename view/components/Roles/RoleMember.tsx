@@ -2,7 +2,12 @@
 
 import { ApolloCache, ApolloError, Reference } from '@apollo/client';
 import { RemoveCircle } from '@mui/icons-material';
-import { IconButton, Typography, styled } from '@mui/material';
+import {
+  CircularProgress,
+  IconButton,
+  Typography,
+  styled,
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { toastVar } from '../../graphql/cache';
@@ -40,8 +45,13 @@ const RoleMember = ({ roleMember, roleId }: Props) => {
   const isGroupRole = pathname.includes(NavigationPaths.Groups);
   const userProfilePath = getUserProfilePath(roleMember.name);
 
-  const [deleteServerRoleMember] = useDeleteServerRoleMemberMutation();
-  const [deleteGroupRoleMember] = useDeleteGroupRoleMemberMutation();
+  const [deleteServerRoleMember, { loading: deleteServerRoleMemberLoading }] =
+    useDeleteServerRoleMemberMutation();
+  const [deleteGroupRoleMember, { loading: deleteGroupRoleMemberLoading }] =
+    useDeleteGroupRoleMemberMutation();
+
+  const isLoading =
+    deleteServerRoleMemberLoading || deleteGroupRoleMemberLoading;
 
   const updateCache = (
     cache: ApolloCache<any>,
@@ -142,9 +152,16 @@ const RoleMember = ({ roleMember, roleId }: Props) => {
         </Flex>
       </Link>
 
-      <IconButton onClick={handleClickWithConfirm}>
-        <RemoveCircle />
-      </IconButton>
+      {isLoading ? (
+        <CircularProgress
+          size={12}
+          sx={{ alignSelf: 'center', margin: '14px' }}
+        />
+      ) : (
+        <IconButton onClick={handleClickWithConfirm}>
+          <RemoveCircle />
+        </IconButton>
+      )}
     </OuterFlex>
   );
 };

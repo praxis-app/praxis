@@ -4,9 +4,19 @@ mutation CreateVote($voteData: CreateVoteInput!) {
       id
       voteType
 
+      user {
+        ...UserAvatar
+      }
+
       proposal {
         id
         stage
+        voteCount
+
+        myVote {
+          id
+          voteType
+        }
 
         action {
           id
@@ -17,6 +27,18 @@ mutation CreateVote($voteData: CreateVoteInput!) {
           id
           name
           description
+        }
+      }
+
+      questionnaireTicket {
+        id
+        status
+        voteCount
+        agreementVoteCount
+
+        myVote {
+          id
+          voteType
         }
       }
     }

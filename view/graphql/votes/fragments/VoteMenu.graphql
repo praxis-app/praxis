@@ -1,7 +1,0 @@
-fragment VoteMenu on Proposal {
-  id
-  myVote @include(if: $isLoggedIn) {
-    id
-    voteType
-  }
-}

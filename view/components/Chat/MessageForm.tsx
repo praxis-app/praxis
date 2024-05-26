@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Formik, FormikHelpers } from 'formik';
 import { produce } from 'immer';
-import { useState } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FieldNames, KeyCodes } from '../../constants/shared.constants';
 import { useSendMessageMutation } from '../../graphql/chat/mutations/gen/SendMessage.gen';
@@ -33,16 +33,20 @@ import Flex from '../Shared/Flex';
 
 interface Props {
   conversationId: number;
+  formRef: RefObject<HTMLDivElement>;
   groupName?: string;
   onSubmit?(): void;
+  setFormHeight(height: number): void;
   vibeChat?: boolean;
 }
 
 const MessageForm = ({
   conversationId,
+  formRef,
   groupName,
-  vibeChat,
   onSubmit,
+  setFormHeight,
+  vibeChat,
 }: Props) => {
   const [images, setImages] = useState<File[]>([]);
   const [imagesInputKey, setImagesInputKey] = useState('');
@@ -56,6 +60,20 @@ const MessageForm = ({
     [FieldNames.Body]: '',
     conversationId,
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!formRef.current) {
+        return;
+      }
+      const { clientHeight } = formRef.current;
+      setFormHeight(clientHeight);
+    }, 1);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [images, formRef, setFormHeight]);
 
   const containerStyles: SxProps = {
     position: 'fixed',
@@ -85,14 +103,12 @@ const MessageForm = ({
   };
   const hiderStyles: SxProps = {
     bgcolor: 'background.default',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
     marginX: 3,
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: '90px',
+    height: '95px',
     zIndex: -1,
   };
   const inputStyles: SxProps = {
@@ -177,6 +193,14 @@ const MessageForm = ({
     submitForm();
   };
 
+  const handleFormHeightChange = () => {
+    if (!formRef.current) {
+      return;
+    }
+    const { clientHeight } = formRef.current;
+    setFormHeight(clientHeight || 0);
+  };
+
   const handleRemoveSelectedImage = (imageName: string) => {
     setImages(images.filter((image) => image.name !== imageName));
     setImagesInputKey(getRandomString());
@@ -184,7 +208,7 @@ const MessageForm = ({
 
   return (
     <Container maxWidth="sm" sx={containerStyles}>
-      <Box sx={formStyles}>
+      <Box sx={formStyles} ref={formRef}>
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
@@ -203,11 +227,15 @@ const MessageForm = ({
                   <Input
                     autoComplete="off"
                     name={FieldNames.Body}
-                    onChange={handleChange}
                     onKeyDown={(e) => handleFilledInputKeyDown(e, submitForm)}
+                    onKeyUp={handleFormHeightChange}
                     placeholder={t('chat.prompts.sendAMessage')}
                     sx={inputStyles}
                     value={values.body || ''}
+                    onChange={(e) => {
+                      handleFormHeightChange();
+                      handleChange(e);
+                    }}
                     disableUnderline
                     multiline
                   />
