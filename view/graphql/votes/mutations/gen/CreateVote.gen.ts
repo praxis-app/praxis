@@ -10,7 +10,6 @@ import * as Apollo from '@apollo/client';
 const defaultOptions = {} as const;
 export type CreateVoteMutationVariables = Types.Exact<{
   voteData: Types.CreateVoteInput;
-  isLoggedIn?: Types.Scalars['Boolean']['input'];
 }>;
 
 export type CreateVoteMutation = {
@@ -46,15 +45,18 @@ export type CreateVoteMutation = {
           description: string;
         } | null;
       } | null;
+      questionnaireTicket?: {
+        __typename?: 'QuestionnaireTicket';
+        id: number;
+        voteCount: number;
+        myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
+      } | null;
     };
   };
 };
 
 export const CreateVoteDocument = gql`
-  mutation CreateVote(
-    $voteData: CreateVoteInput!
-    $isLoggedIn: Boolean! = true
-  ) {
+  mutation CreateVote($voteData: CreateVoteInput!) {
     createVote(voteData: $voteData) {
       vote {
         id
@@ -66,7 +68,7 @@ export const CreateVoteDocument = gql`
           id
           stage
           voteCount
-          myVote @include(if: $isLoggedIn) {
+          myVote {
             id
             voteType
           }
@@ -78,6 +80,14 @@ export const CreateVoteDocument = gql`
             id
             name
             description
+          }
+        }
+        questionnaireTicket {
+          id
+          voteCount
+          myVote {
+            id
+            voteType
           }
         }
       }
@@ -104,7 +114,6 @@ export type CreateVoteMutationFn = Apollo.MutationFunction<
  * const [createVoteMutation, { data, loading, error }] = useCreateVoteMutation({
  *   variables: {
  *      voteData: // value for 'voteData'
- *      isLoggedIn: // value for 'isLoggedIn'
  *   },
  * });
  */
