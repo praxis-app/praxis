@@ -20,6 +20,11 @@ fragment Notification on Notification {
   conversation {
     id
     name
+
+    group {
+      id
+      name
+    }
   }
 
   comment {

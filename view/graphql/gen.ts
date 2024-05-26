@@ -94,6 +94,7 @@ export type Comment = {
 export type Conversation = {
   __typename?: 'Conversation';
   createdAt: Scalars['DateTime']['output'];
+  group?: Maybe<Group>;
   id: Scalars['Int']['output'];
   members: Array<User>;
   messages: Array<Message>;

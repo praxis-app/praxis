@@ -120,7 +120,7 @@ const Notification = ({
         return _t('notifications.errors.accessDenied');
       }
       return _t('notifications.messages.newMessage', {
-        chatName: conversation?.name,
+        chatName: conversation.group?.name || conversation?.name,
         count: Number(unreadMessageCount),
       });
     }

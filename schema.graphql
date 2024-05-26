@@ -59,6 +59,7 @@ type Comment {
 
 type Conversation {
   createdAt: DateTime!
+  group: Group
   id: Int!
   members: [User!]!
   messages(limit: Int, offset: Int): [Message!]!
