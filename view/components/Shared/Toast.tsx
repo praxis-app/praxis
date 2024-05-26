@@ -22,7 +22,7 @@ const Toast = () => {
 
   const isNavHidden =
     !isAboveSmall && !isChatPanelOpen && scrollDirection === 'down';
-  const distanceFromBottom = isNavHidden ? 12 : 80;
+  const distanceFromBottom = isNavHidden ? 22 : 80;
 
   useEffect(() => {
     if (toastNotification) {
