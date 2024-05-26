@@ -121,6 +121,7 @@ const GroupPageCard = ({
   const groupPagePath = `${NavigationPaths.Groups}/${name}`;
   const aboutTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTab.About}`;
   const eventsTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTab.Events}`;
+  const groupChatPath = `${groupPagePath}${NavigationPaths.Chat}`;
 
   const getNameTextWidth = () => {
     if (isAboveMedium) {
@@ -187,7 +188,11 @@ const GroupPageCard = ({
     return (
       <>
         {group.isJoinedByMe && !isDesktop && (
-          <GhostButton startIcon={<Chat />} sx={{ marginRight: '8px' }}>
+          <GhostButton
+            onClick={() => navigate(groupChatPath)}
+            sx={{ marginRight: '8px' }}
+            startIcon={<Chat />}
+          >
             {t('chat.labels.chat')}
           </GhostButton>
         )}

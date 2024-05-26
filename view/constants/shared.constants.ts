@@ -17,6 +17,7 @@ export enum NavigationPaths {
   About = '/about',
   Activity = '/activity',
   Canary = '/canary',
+  Chat = '/chat',
   Docs = '/docs',
   Edit = '/edit',
   Events = '/events',
