@@ -522,6 +522,9 @@
   },
 
   "chat": {
+    "headers": {
+      "chats": "Chats"
+    },
     "prompts": {
       "sendAMessage": "Send a message..."
     },

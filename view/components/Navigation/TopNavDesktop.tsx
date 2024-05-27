@@ -129,7 +129,7 @@ const TopNavDesktop = () => {
           {me.serverPermissions.manageQuestionnaireTickets && (
             <IconButton
               sx={{ width: 50, height: 50 }}
-              onClick={() => navigate(NavigationPaths.VibeChat)}
+              onClick={() => navigate(NavigationPaths.Chats)}
             >
               <Flex sx={iconWrapperStyles}>
                 <Chat sx={chatIconStyles} />
