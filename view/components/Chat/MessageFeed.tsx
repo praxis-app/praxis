@@ -48,7 +48,7 @@ const MessageFeed = ({
 
     [theme.breakpoints.up('xs')]: {
       top: '55px',
-      bottom: 155 + formHeightDiff,
+      bottom: 153 + formHeightDiff,
     },
     [theme.breakpoints.up('sm')]: {
       top: '63px',
