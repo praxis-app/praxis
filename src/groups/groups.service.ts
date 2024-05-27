@@ -216,12 +216,12 @@ export class GroupsService {
       where: { groupId },
     });
     if (!chat) {
-      return this.initializeGroupChat(groupId);
+      return this.initGroupChat(groupId);
     }
     return chat;
   }
 
-  async initializeGroupChat(groupId: number) {
+  async initGroupChat(groupId: number) {
     const group = await this.getGroup({ id: groupId }, ['members']);
     const chatMembers = group.members.map(({ id }) => ({ userId: id }));
     const groupChat: Conversation = await this.conversationRepository.save({
@@ -294,6 +294,7 @@ export class GroupsService {
     } else {
       await this.saveDefaultGroupCoverPhoto(group.id);
     }
+    await this.initGroupChat(group.id);
     await this.initGroupConfig(group.id);
     await this.groupRolesService.initGroupAdminRole(userId, group.id);
 
