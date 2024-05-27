@@ -58,6 +58,11 @@ export class ConversationsResolver {
     return this.chatService.getUnreadMessageCount(id, currentUser.id);
   }
 
+  @ResolveField(() => Message, { nullable: true })
+  async lastMessageSent(@Parent() { id }: Conversation) {
+    return this.chatService.getLastMessageSent(id);
+  }
+
   @ResolveField(() => [User])
   async members(@Parent() { id }: Conversation) {
     return this.chatService.getConversationMembers(id);

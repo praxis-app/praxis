@@ -118,6 +118,13 @@ export class ChatService {
     });
   }
 
+  async getLastMessageSent(conversationId: number) {
+    return this.messageRepository.findOne({
+      where: { conversationId },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   async getVibeChat() {
     const { id, vibeChatId } =
       await this.serverConfigsService.getServerConfig();

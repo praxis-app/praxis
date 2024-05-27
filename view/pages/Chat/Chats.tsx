@@ -15,10 +15,10 @@ import { useChatsQuery } from '../../graphql/chat/queries/gen/Chats.gen';
 const CardContent = styled(MuiCardContent)(() => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: 16,
+  gap: 12,
 
   '&:last-child': {
-    paddingBottom: 16,
+    paddingBottom: 14,
   },
 }));
 

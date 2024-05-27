@@ -24,8 +24,15 @@ export type ChatsQuery = {
       id: number;
       name: string;
       unreadMessageCount: number;
+      lastMessageSent?: {
+        __typename?: 'Message';
+        id: number;
+        body?: string | null;
+        user: { __typename?: 'User'; id: number; name: string };
+      } | null;
       group?: {
         __typename?: 'Group';
+        description: string;
         id: number;
         name: string;
         coverPhoto?: { __typename?: 'Image'; id: number } | null;

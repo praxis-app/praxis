@@ -96,6 +96,7 @@ export type Conversation = {
   createdAt: Scalars['DateTime']['output'];
   group?: Maybe<Group>;
   id: Scalars['Int']['output'];
+  lastMessageSent?: Maybe<Message>;
   members: Array<User>;
   messages: Array<Message>;
   name: Scalars['String']['output'];

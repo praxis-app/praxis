@@ -3,7 +3,17 @@ fragment Chat on Conversation {
   name
   unreadMessageCount
 
+  lastMessageSent {
+    id
+    body
+    user {
+      id
+      name
+    }
+  }
+
   group {
     ...GroupAvatar
+    description
   }
 }
