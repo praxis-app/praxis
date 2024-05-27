@@ -13,6 +13,10 @@ import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 import { useChatsQuery } from '../../graphql/chat/queries/gen/Chats.gen';
 
 const CardContent = styled(MuiCardContent)(() => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 16,
+
   '&:last-child': {
     paddingBottom: 16,
   },

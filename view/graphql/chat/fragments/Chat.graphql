@@ -4,7 +4,6 @@ fragment Chat on Conversation {
   unreadMessageCount
 
   group {
-    id
-    name
+    ...GroupAvatar
   }
 }
