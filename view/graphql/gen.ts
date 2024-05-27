@@ -1619,6 +1619,8 @@ export type UpdateVotePayload = {
 export type User = {
   __typename?: 'User';
   bio?: Maybe<Scalars['String']['output']>;
+  chatCount: Scalars['Int']['output'];
+  chats: Array<Conversation>;
   comments: Array<Comment>;
   coverPhoto?: Maybe<Image>;
   createdAt: Scalars['DateTime']['output'];
@@ -1643,6 +1645,11 @@ export type User = {
   questionnaireTicket?: Maybe<QuestionnaireTicket>;
   serverPermissions: ServerPermissions;
   updatedAt: Scalars['DateTime']['output'];
+};
+
+export type UserChatsArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UserFollowersArgs = {

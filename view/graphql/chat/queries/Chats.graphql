@@ -1,0 +1,9 @@
+query Chats($offset: Int = 0, $limit: Int = 20) {
+  me {
+    id
+    chats(offset: $offset, limit: $limit) {
+      ...Chat
+    }
+    chatCount
+  }
+}

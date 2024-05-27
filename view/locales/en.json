@@ -526,7 +526,8 @@
       "chats": "Chats"
     },
     "prompts": {
-      "sendAMessage": "Send a message..."
+      "sendAMessage": "Send a message...",
+      "noChatsYet": "No chats yet. Join groups to start chatting with other members."
     },
     "labels": {
       "chat": "Chat"

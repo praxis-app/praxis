@@ -1138,6 +1138,8 @@ scalar Upload
 
 type User {
   bio: String
+  chatCount: Int!
+  chats(limit: Int, offset: Int): [Conversation!]!
   comments: [Comment!]!
   coverPhoto: Image
   createdAt: DateTime!

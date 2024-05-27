@@ -1,0 +1,10 @@
+fragment Chat on Conversation {
+  id
+  name
+  unreadMessageCount
+
+  group {
+    id
+    name
+  }
+}

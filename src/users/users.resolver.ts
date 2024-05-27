@@ -10,13 +10,14 @@ import {
 } from '@nestjs/graphql';
 import { In } from 'typeorm';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Conversation } from '../chat/models/conversation.model';
 import { FeedItem } from '../common/models/feed-item.union';
 import { FeedItemsConnection } from '../common/models/feed-items.connection';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
-import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { FollowUserPayload } from './models/follow-user.payload';
 import { UpdateUserInput } from './models/update-user.input';
 import { UpdateUserPayload } from './models/update-user.payload';
@@ -153,6 +154,20 @@ export class UsersResolver {
   @ResolveField(() => [Group])
   async joinedGroups(@Parent() { id }: User) {
     return this.usersService.getJoinedGroups(id);
+  }
+
+  @ResolveField(() => [Conversation])
+  async chats(
+    @Parent() { id }: User,
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.usersService.getUserChats(id, offset, limit);
+  }
+
+  @ResolveField(() => Int)
+  async chatCount(@Parent() { id }: User) {
+    return this.usersService.getUserChatCount(id);
   }
 
   @ResolveField(() => ServerPermissions)

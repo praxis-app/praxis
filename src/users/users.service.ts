@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, Repository } from 'typeorm';
+import { Conversation } from '../chat/models/conversation.model';
 import { VALID_NAME_REGEX } from '../common/common.constants';
 import {
   logTime,
@@ -50,6 +51,9 @@ export class UsersService {
 
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
+
+    @InjectRepository(Conversation)
+    private conversationRepository: Repository<Conversation>,
 
     @InjectRepository(ServerQuestion)
     private serverQuestionRepository: Repository<ServerQuestion>,
@@ -394,6 +398,24 @@ export class UsersService {
   async isUsersPost(postId: number, userId: number) {
     const post = await this.postsService.getPost(postId);
     return post.userId === userId;
+  }
+
+  async getUserChats(userId: number, offset?: number, limit?: number) {
+    const chats = await this.conversationRepository.find({
+      where: { members: { userId } },
+    });
+    const sortedChats = chats.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
+    return offset !== undefined
+      ? paginate(sortedChats, offset, limit)
+      : sortedChats;
+  }
+
+  async getUserChatCount(userId: number) {
+    return this.conversationRepository.count({
+      where: { members: { userId } },
+    });
   }
 
   async getQuestionnaireTicket(userId: number) {
