@@ -1,5 +1,5 @@
 import { useReactiveVar } from '@apollo/client';
-import { AccountBox, Settings } from '@mui/icons-material';
+import { AccountBox, Chat, Settings } from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -29,6 +29,8 @@ import {
   getMemberRequestsPath,
 } from '../../utils/group.utils';
 import { urlifyText } from '../../utils/shared.utils';
+import Flex from '../Shared/Flex';
+import GhostButton from '../Shared/GhostButton';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import GroupAvatar from './GroupAvatar';
@@ -82,6 +84,7 @@ const GroupCard = ({
   const editGroupPath = getEditGroupPath(name);
   const groupMembersPath = getGroupMembersPath(name);
   const groupPath = getGroupPath(name);
+  const groupChatPath = `${groupPath}${NavigationPaths.Chat}`;
   const memberRequestsPath = getMemberRequestsPath(name);
 
   const handleDelete = async () =>
@@ -183,11 +186,22 @@ const GroupCard = ({
         </Box>
 
         {isLoggedIn && (
-          <JoinGroupButton
-            isGroupMember={isJoinedByMe}
-            currentUserId={currentUserId}
-            groupId={id}
-          />
+          <Flex>
+            <JoinGroupButton
+              isGroupMember={isJoinedByMe}
+              currentUserId={currentUserId}
+              groupId={id}
+            />
+
+            {isJoinedByMe && (
+              <GhostButton
+                onClick={() => navigate(groupChatPath)}
+                startIcon={<Chat />}
+              >
+                {t('chat.labels.chat')}
+              </GhostButton>
+            )}
+          </Flex>
         )}
       </CardContent>
     </Card>
