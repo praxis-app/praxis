@@ -6,7 +6,7 @@ import {
   Groups,
   Logout,
 } from '@mui/icons-material';
-import { Menu, MenuItem, styled } from '@mui/material';
+import { Menu, MenuItem, SxProps, styled } from '@mui/material';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -37,9 +37,15 @@ interface Props {
   groupId: number;
   currentUserId?: number;
   isGroupMember?: boolean;
+  sx?: SxProps;
 }
 
-const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
+const JoinGroupButton = ({
+  groupId,
+  currentUserId,
+  isGroupMember,
+  sx,
+}: Props) => {
   const [isHovering, setIsHovering] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -250,6 +256,7 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
         onMouseLeave={isDesktop ? () => setIsHovering(false) : undefined}
         endIcon={!isDesktop && isGroupMember ? <ArrowDropDown /> : null}
         startIcon={renderBtnStartIcon()}
+        sx={sx}
       >
         {getButtonText()}
       </Button>

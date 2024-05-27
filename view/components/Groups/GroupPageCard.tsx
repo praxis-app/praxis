@@ -46,8 +46,8 @@ const NameText = styled(Typography)(() => ({
   marginBottom: 7.5,
 }));
 const CardHeader = styled(MuiCardHeader)(() => ({
-  marginTop: 7.5,
   paddingBottom: 0,
+  paddingTop: 14,
   paddingRight: 22,
 }));
 const CardContent = styled(MuiCardContent)(() => ({
@@ -136,7 +136,7 @@ const GroupPageCard = ({
   const nameTextStyles: SxProps = {
     width: getNameTextWidth(),
     fontSize: isAboveSmall ? 25 : 23,
-    marginTop: showCardHeader ? -7 : -0.3,
+    marginTop: showCardHeader ? -6 : -0.3,
     marginBottom: 1,
   };
   const iconStyles: SxProps = {
@@ -173,7 +173,7 @@ const GroupPageCard = ({
   const handleTabsChange = (_: React.SyntheticEvent, newValue: number) =>
     setTab(newValue);
 
-  const renderCardActions = () => {
+  const renderItemMenu = () => {
     const isNoAdmin = settings.adminModel === GroupAdminModel.NoAdmin;
     const canManageRoles = !isNoAdmin && myPermissions?.manageRoles;
     const canManageSettings = !isNoAdmin && myPermissions?.manageSettings;
@@ -185,58 +185,42 @@ const GroupPageCard = ({
     const showMenuButton =
       canDeleteGroup || canUpdateGroup || canManageRoles || canManageSettings;
 
+    if (!showMenuButton) {
+      return null;
+    }
+
     return (
-      <>
-        {group.isJoinedByMe && !isDesktop && (
-          <GhostButton
-            onClick={() => navigate(groupChatPath)}
-            sx={{ marginRight: '8px' }}
-            startIcon={<Chat />}
-          >
-            {t('chat.labels.chat')}
-          </GhostButton>
+      <ItemMenu
+        anchorEl={menuAnchorEl}
+        buttonStyles={{ paddingX: 0, minWidth: 38 }}
+        canDelete={canDeleteGroup}
+        canUpdate={canUpdateGroup}
+        deleteItem={handleDelete}
+        deletePrompt={deleteGroupPrompt}
+        editPath={editGroupPath}
+        setAnchorEl={setMenuAnchorEl}
+        variant={isDesktop ? 'default' : 'ghost'}
+      >
+        {canManageSettings && (
+          <MenuItem onClick={handleSettingsButtonClick}>
+            <Settings fontSize="small" sx={{ marginRight: 1 }} />
+            {t('groups.labels.settings')}
+          </MenuItem>
         )}
-
-        <JoinGroupButton
-          groupId={id}
-          currentUserId={currentUserId}
-          isGroupMember={group.isJoinedByMe}
-        />
-
-        {showMenuButton && (
-          <ItemMenu
-            anchorEl={menuAnchorEl}
-            buttonStyles={{ paddingX: 0, minWidth: 38 }}
-            canDelete={canDeleteGroup}
-            canUpdate={canUpdateGroup}
-            deleteItem={handleDelete}
-            deletePrompt={deleteGroupPrompt}
-            editPath={editGroupPath}
-            setAnchorEl={setMenuAnchorEl}
-            variant="ghost"
-          >
-            {canManageSettings && (
-              <MenuItem onClick={handleSettingsButtonClick}>
-                <Settings fontSize="small" sx={{ marginRight: 1 }} />
-                {t('groups.labels.settings')}
-              </MenuItem>
-            )}
-            {canManageRoles && (
-              <MenuItem onClick={handleRolesButtonClick}>
-                <AccountBox fontSize="small" sx={{ marginRight: 1 }} />
-                {t('roles.actions.manageRoles')}
-              </MenuItem>
-            )}
-          </ItemMenu>
+        {canManageRoles && (
+          <MenuItem onClick={handleRolesButtonClick}>
+            <AccountBox fontSize="small" sx={{ marginRight: 1 }} />
+            {t('roles.actions.manageRoles')}
+          </MenuItem>
         )}
-      </>
+      </ItemMenu>
     );
   };
 
   return (
     <Card {...cardProps}>
       <CoverPhoto imageId={coverPhoto?.id} />
-      {showCardHeader && <CardHeader action={renderCardActions()} />}
+      {showCardHeader && <CardHeader action={renderItemMenu()} />}
       <CardContent>
         <NameText color="primary" variant="h2" sx={nameTextStyles}>
           {name}
@@ -274,9 +258,26 @@ const GroupPageCard = ({
             )}
         </Box>
 
-        {isVerified && !isAboveSmall && (
-          <Flex sx={{ justifyContent: 'right', marginTop: 2 }}>
-            {renderCardActions()}
+        {isVerified && (
+          <Flex sx={{ marginTop: 2, marginBottom: 0.5 }}>
+            <JoinGroupButton
+              groupId={id}
+              currentUserId={currentUserId}
+              isGroupMember={group.isJoinedByMe}
+              sx={{ flex: isDesktop ? undefined : 1 }}
+            />
+
+            {group.isJoinedByMe && (
+              <GhostButton
+                onClick={() => navigate(groupChatPath)}
+                sx={{ marginRight: '8px', flex: isDesktop ? undefined : 1 }}
+                startIcon={<Chat />}
+              >
+                {t('chat.labels.chat')}
+              </GhostButton>
+            )}
+
+            {!isDesktop && renderItemMenu()}
           </Flex>
         )}
       </CardContent>
