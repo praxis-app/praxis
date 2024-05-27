@@ -52,7 +52,7 @@ const MessageFeed = ({
     },
     [theme.breakpoints.up('sm')]: {
       top: '63px',
-      bottom: 163 + formHeightDiff,
+      bottom: 160 + formHeightDiff,
     },
     [theme.breakpoints.up('md')]: {
       top: '60px',
