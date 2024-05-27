@@ -2,13 +2,16 @@ fragment Chat on Conversation {
   id
   name
   unreadMessageCount
+  createdAt
 
   lastMessageSent {
     id
     body
+    createdAt
     user {
       id
       name
+      displayName
     }
   }
 

@@ -172,6 +172,15 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
+        {isVerified && (
+          <ListItemButton onClick={handleLinkClick(NavigationPaths.Chats)}>
+            <ListItemIcon>
+              <Chat />
+            </ListItemIcon>
+            <ListItemText primary={t('chat.headers.chats')} />
+          </ListItemButton>
+        )}
+
         <ListItemButton onClick={handleLinkClick(NavigationPaths.Events)}>
           <ListItemIcon>
             <EventNote />
@@ -207,23 +216,14 @@ const NavDrawer = () => {
         )}
 
         {manageQuestionnaireTickets && (
-          <>
-            <ListItemButton
-              onClick={handleLinkClick(NavigationPaths.ServerQuestionnaires)}
-            >
-              <ListItemIcon>
-                <QuestionAnswer />
-              </ListItemIcon>
-              <ListItemText primary={t('questions.labels.questionnaires')} />
-            </ListItemButton>
-
-            <ListItemButton onClick={handleLinkClick(NavigationPaths.VibeChat)}>
-              <ListItemIcon>
-                <Chat />
-              </ListItemIcon>
-              <ListItemText primary={t('questions.labels.vibeChat')} />
-            </ListItemButton>
-          </>
+          <ListItemButton
+            onClick={handleLinkClick(NavigationPaths.ServerQuestionnaires)}
+          >
+            <ListItemIcon>
+              <QuestionAnswer />
+            </ListItemIcon>
+            <ListItemText primary={t('questions.labels.questionnaires')} />
+          </ListItemButton>
         )}
 
         {manageQuestions && (

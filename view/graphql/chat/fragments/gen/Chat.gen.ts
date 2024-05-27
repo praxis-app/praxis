@@ -11,11 +11,18 @@ export type ChatFragment = {
   id: number;
   name: string;
   unreadMessageCount: number;
+  createdAt: any;
   lastMessageSent?: {
     __typename?: 'Message';
     id: number;
     body?: string | null;
-    user: { __typename?: 'User'; id: number; name: string };
+    createdAt: any;
+    user: {
+      __typename?: 'User';
+      id: number;
+      name: string;
+      displayName?: string | null;
+    };
   } | null;
   group?: {
     __typename?: 'Group';
@@ -31,12 +38,15 @@ export const ChatFragmentDoc = gql`
     id
     name
     unreadMessageCount
+    createdAt
     lastMessageSent {
       id
       body
+      createdAt
       user {
         id
         name
+        displayName
       }
     }
     group {

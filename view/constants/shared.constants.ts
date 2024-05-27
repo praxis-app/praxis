@@ -113,8 +113,9 @@ export enum Time {
 }
 
 export enum TruncationSizes {
-  ExtraSmall = 25,
-  Small = 40,
-  Medium = 65,
-  Large = 175,
+  ExtraSmall = 16,
+  Small = 25,
+  Medium = 40,
+  Large = 65,
+  ExtraLarge = 175,
 }
