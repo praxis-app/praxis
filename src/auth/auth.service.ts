@@ -268,6 +268,12 @@ export class AuthService {
     if (!VALID_NAME_REGEX.test(name)) {
       throw new Error('User names cannot contain special characters');
     }
+    if (name.length < 2) {
+      throw new Error('Username must be at least 2 characters');
+    }
+    if (name.length > 15) {
+      throw new Error('Username cannot exceed 15 characters');
+    }
     if (password !== confirmPassword) {
       throw new Error('Passwords do not match');
     }

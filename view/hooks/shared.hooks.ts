@@ -10,7 +10,7 @@ const RESET_SCROLL_DIRECTION_THRESHOLD = 40;
 export type ScrollDirection = 'up' | 'down' | null;
 
 export const useScrollDirection = () => {
-  const scrollPosition = useReactiveVar(scrollDirectionVar);
+  const scrollDirection = useReactiveVar(scrollDirectionVar);
   const previousScrollY = useRef(0);
 
   useEffect(() => {
@@ -45,7 +45,7 @@ export const useScrollDirection = () => {
     };
   }, []);
 
-  return scrollPosition;
+  return scrollDirection;
 };
 
 export const useScrollPosition = () => {
