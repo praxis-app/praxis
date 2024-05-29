@@ -50,7 +50,7 @@ const Chat = ({ chat }: Props) => {
     if (!lastMessageSent?.body) {
       if (group?.description) {
         const truncatedDescription = truncate(group.description, {
-          length: isDesktop ? TruncationSizes.Large : 30,
+          length: isDesktop ? TruncationSizes.Medium : TruncationSizes.Small,
         });
         return truncatedDescription;
       }
