@@ -1,7 +1,9 @@
+import { useApolloClient } from '@apollo/client';
 import { Chat as ChatIcon } from '@mui/icons-material';
 import { Box, SxProps, Typography } from '@mui/material';
 import { truncate } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -13,17 +15,19 @@ import { Blurple } from '../../styles/theme';
 import { getGroupPath } from '../../utils/group.utils';
 import { timeAgo } from '../../utils/time.utils';
 import GroupAvatar from '../Groups/GroupAvatar';
-import Link from '../Shared/Link';
+import Flex from '../Shared/Flex';
 
 interface Props {
   chat: ChatFragment;
 }
 
-const Chat = ({
-  chat: { name, group, lastMessageSent, createdAt, unreadMessageCount },
-}: Props) => {
+const Chat = ({ chat }: Props) => {
+  const { cache } = useApolloClient();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+  const navigate = useNavigate();
+
+  const { name, group, lastMessageSent, createdAt, unreadMessageCount } = chat;
 
   const groupPath = getGroupPath(group?.name || '');
   const groupChatPath = `${groupPath}${NavigationPaths.Chat}`;
@@ -63,10 +67,21 @@ const Chat = ({
     return `${truncatedName}: ${truncatedBody}`;
   };
 
+  const handleClick = () => {
+    // TODO: Consider moving this to chat panel
+    cache.modify({
+      id: cache.identify(chat),
+      fields: { unreadMessageCount: () => 0 },
+    });
+    navigate(chatPath);
+  };
+
   return (
-    <Link
-      href={chatPath}
-      sx={{ display: 'flex', gap: '12px', alignItems: 'center' }}
+    <Flex
+      gap="12px"
+      alignItems="center"
+      onClick={handleClick}
+      sx={{ cursor: 'pointer' }}
     >
       {group ? (
         <GroupAvatar
@@ -97,7 +112,7 @@ const Chat = ({
           <Box component="span">{`${MIDDOT_WITH_SPACES}${formattedDate}`}</Box>
         </Typography>
       </Box>
-    </Link>
+    </Flex>
   );
 };
 
