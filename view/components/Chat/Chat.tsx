@@ -42,7 +42,7 @@ const Chat = ({ chat: { name, group, lastMessageSent, createdAt } }: Props) => {
 
   const getSubText = () => {
     if (!lastMessageSent?.body) {
-      if (group) {
+      if (group?.description) {
         const truncatedDescription = truncate(group.description, {
           length: isDesktop ? TruncationSizes.Large : 30,
         });
