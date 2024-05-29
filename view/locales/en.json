@@ -528,7 +528,7 @@
     "prompts": {
       "sendAMessage": "Send a message...",
       "noChatsYet": "No chats yet. Join groups to start chatting with other members.",
-      "noMessagesYet": "No messages yet. Start the conversation!"
+      "noMessagesYet": "No messages yet"
     },
     "labels": {
       "chat": "Chat"
