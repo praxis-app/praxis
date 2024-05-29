@@ -19,7 +19,9 @@ interface Props {
   chat: ChatFragment;
 }
 
-const Chat = ({ chat: { name, group, lastMessageSent, createdAt } }: Props) => {
+const Chat = ({
+  chat: { name, group, lastMessageSent, createdAt, unreadMessageCount },
+}: Props) => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
@@ -79,9 +81,19 @@ const Chat = ({ chat: { name, group, lastMessageSent, createdAt } }: Props) => {
       )}
 
       <Box alignSelf="center" paddingTop={0.9}>
-        <Typography>{chatName}</Typography>
+        <Typography
+          fontFamily={unreadMessageCount ? 'Inter Bold' : 'Inter Medium'}
+        >
+          {chatName}
+        </Typography>
         <Typography color="text.secondary">
-          <Box component="span">{getSubText()}</Box>
+          <Box
+            component="span"
+            fontFamily={unreadMessageCount ? 'Inter Bold' : undefined}
+            color={unreadMessageCount ? 'text.primary' : undefined}
+          >
+            {getSubText()}
+          </Box>
           <Box component="span">{`${MIDDOT_WITH_SPACES}${formattedDate}`}</Box>
         </Typography>
       </Box>
