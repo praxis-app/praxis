@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import Chat from '../../components/Chat/Chat';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import Pagination from '../../components/Shared/Pagination';
+import ProgressBar from '../../components/Shared/ProgressBar';
 import { DEFAULT_PAGE_SIZE } from '../../constants/shared.constants';
 import { useChatsQuery } from '../../graphql/chat/queries/gen/Chats.gen';
 
@@ -41,13 +42,16 @@ const Chats = () => {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
+  if (loading) {
+    return <ProgressBar />;
+  }
+
   return (
     <>
       <LevelOneHeading header>{t('chat.headers.chats')}</LevelOneHeading>
 
       <Pagination
         count={data?.me.chatCount}
-        isLoading={loading}
         onChangePage={onChangePage}
         page={page}
         rowsPerPage={rowsPerPage}
