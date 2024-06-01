@@ -13,12 +13,14 @@ import { ServerQuestion } from '../vibe-check/models/server-question.model';
 import { User } from './models/user.model';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
+import { Message } from '../chat/models/message.model';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Conversation,
       Image,
+      Message,
       Post,
       Proposal,
       QuestionnaireTicket,

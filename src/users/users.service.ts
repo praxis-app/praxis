@@ -34,6 +34,7 @@ import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.m
 import { ServerQuestion } from '../vibe-check/models/server-question.model';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
+import { Message } from '../chat/models/message.model';
 
 @Injectable()
 export class UsersService {
@@ -51,6 +52,9 @@ export class UsersService {
 
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
+
+    @InjectRepository(Message)
+    private messageRepository: Repository<Message>,
 
     @InjectRepository(Conversation)
     private conversationRepository: Repository<Conversation>,
@@ -404,9 +408,30 @@ export class UsersService {
     const chats = await this.conversationRepository.find({
       where: { members: { userId } },
     });
-    const sortedChats = chats.sort(
-      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+
+    const lastMessages = await Promise.all(
+      chats.map(async (chat) => {
+        return this.messageRepository.findOne({
+          where: { conversationId: chat.id },
+          order: { createdAt: 'DESC' },
+        });
+      }),
     );
+
+    // TODO: Refactor to use a hash map
+    const sortedChats = chats.sort((a, b) => {
+      const lastMessageA = lastMessages.find(
+        (message) => message?.conversationId === a.id,
+      );
+      const lastMessageB = lastMessages.find(
+        (message) => message?.conversationId === b.id,
+      );
+      return (
+        (lastMessageB?.createdAt.getTime() || 0) -
+        (lastMessageA?.createdAt.getTime() || 0)
+      );
+    });
+
     return offset !== undefined
       ? paginate(sortedChats, offset, limit)
       : sortedChats;
