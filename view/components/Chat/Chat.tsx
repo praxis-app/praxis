@@ -56,6 +56,9 @@ const Chat = ({ chat }: Props) => {
   };
 
   const renderSubText = () => {
+    const mobileWidth = unreadMessageCount ? '100px' : '225px';
+    const desktopWidth = unreadMessageCount ? '450px' : '480px';
+
     if (!lastMessageSent?.body) {
       if (group?.description) {
         return (
@@ -63,7 +66,7 @@ const Chat = ({ chat }: Props) => {
             overflow="hidden"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
-            maxWidth={isDesktop ? '480px' : '225px'}
+            maxWidth={isDesktop ? desktopWidth : mobileWidth}
           >
             {group.description}
           </Box>
@@ -80,7 +83,7 @@ const Chat = ({ chat }: Props) => {
     });
 
     return (
-      <Flex maxWidth={isDesktop ? '480px' : '225px'}>
+      <Flex maxWidth={isDesktop ? desktopWidth : mobileWidth}>
         <Box whiteSpace="nowrap">{truncatedName}</Box>
         <Box paddingRight="0.5ch">:</Box>
         <Box overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
@@ -124,6 +127,15 @@ const Chat = ({ chat }: Props) => {
           <Box>{`${MIDDOT_WITH_SPACES}${formattedDate}`}</Box>
         </Flex>
       </Box>
+
+      {unreadMessageCount > 0 && (
+        <Box
+          bgcolor={Blurple.Marina}
+          borderRadius="50%"
+          minWidth="12px"
+          minHeight="12px"
+        />
+      )}
     </Flex>
   );
 };
