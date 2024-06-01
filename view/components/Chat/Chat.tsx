@@ -56,7 +56,7 @@ const Chat = ({ chat }: Props) => {
   };
 
   const renderSubText = () => {
-    const mobileWidth = unreadMessageCount ? '100px' : '225px';
+    const mobileWidth = unreadMessageCount ? '210px' : '225px';
     const desktopWidth = unreadMessageCount ? '450px' : '480px';
 
     if (!lastMessageSent?.body) {
