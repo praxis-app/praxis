@@ -56,13 +56,21 @@ const Chat = ({ chat }: Props) => {
       }
       return t('chat.prompts.noMessagesYet');
     }
+
+    // Get truncated username
     const { user } = lastMessageSent;
     const userName = user.displayName || user.name;
     const truncatedName = truncate(userName, {
       length: isDesktop ? TruncationSizes.Small : TruncationSizes.ExtraSmall,
     });
+
+    // Take name length into account when truncating body
+    const bodyTruncationLength = isDesktop
+      ? TruncationSizes.Medium - truncatedName.length - 2
+      : TruncationSizes.Small - truncatedName.length - 2;
+
     const truncatedBody = truncate(lastMessageSent.body, {
-      length: isDesktop ? TruncationSizes.Medium : TruncationSizes.ExtraSmall,
+      length: bodyTruncationLength,
     });
     return `${truncatedName}: ${truncatedBody}`;
   };
@@ -107,7 +115,7 @@ const Chat = ({ chat }: Props) => {
             fontFamily={unreadMessageCount ? 'Inter Bold' : undefined}
             color={unreadMessageCount ? 'text.primary' : undefined}
           >
-            {getSubText()}
+            {getSubText()} {getSubText().length}
           </Box>
           <Box component="span">{`${MIDDOT_WITH_SPACES}${formattedDate}`}</Box>
         </Typography>
