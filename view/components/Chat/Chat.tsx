@@ -1,11 +1,13 @@
 import { useApolloClient } from '@apollo/client';
 import { Chat as ChatIcon } from '@mui/icons-material';
 import { Box, SxProps } from '@mui/material';
+import { truncate } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
+  TruncationSizes,
 } from '../../constants/shared.constants';
 import { ChatFragment } from '../../graphql/chat/fragments/gen/Chat.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
@@ -61,7 +63,7 @@ const Chat = ({ chat }: Props) => {
             overflow="hidden"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
-            maxWidth={isDesktop ? '500px' : '240px'}
+            maxWidth={isDesktop ? '480px' : '225px'}
           >
             {group.description}
           </Box>
@@ -70,28 +72,18 @@ const Chat = ({ chat }: Props) => {
       return <Box>{t('chat.prompts.noMessagesYet')}</Box>;
     }
 
+    // Get truncated username
     const { user } = lastMessageSent;
     const userName = user.displayName || user.name;
+    const truncatedName = truncate(userName, {
+      length: isDesktop ? TruncationSizes.Small : TruncationSizes.ExtraSmall,
+    });
 
     return (
-      <Flex>
-        <Box
-          overflow="hidden"
-          textOverflow="ellipsis"
-          whiteSpace="nowrap"
-          maxWidth={isDesktop ? '125px' : '90px'}
-        >
-          {userName}
-        </Box>
-        <Box component="span" display="inline-block" paddingRight="0.5ch">
-          :
-        </Box>
-        <Box
-          overflow="hidden"
-          textOverflow="ellipsis"
-          whiteSpace="nowrap"
-          maxWidth={isDesktop ? '350px' : '120px'}
-        >
+      <Flex maxWidth={isDesktop ? '480px' : '225px'}>
+        <Box whiteSpace="nowrap">{truncatedName}</Box>
+        <Box paddingRight="0.5ch">:</Box>
+        <Box overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
           {lastMessageSent.body}
         </Box>
       </Flex>
