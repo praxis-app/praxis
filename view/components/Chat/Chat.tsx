@@ -58,8 +58,6 @@ const Chat = ({ chat }: Props) => {
       if (group?.description) {
         return (
           <Box
-            component="span"
-            display="inline-block"
             overflow="hidden"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
@@ -69,22 +67,15 @@ const Chat = ({ chat }: Props) => {
           </Box>
         );
       }
-
-      return (
-        <Box component="span" display="inline-block">
-          {t('chat.prompts.noMessagesYet')}
-        </Box>
-      );
+      return <Box>{t('chat.prompts.noMessagesYet')}</Box>;
     }
 
     const { user } = lastMessageSent;
     const userName = user.displayName || user.name;
 
     return (
-      <Flex component="span">
+      <Flex>
         <Box
-          component="span"
-          display="inline-block"
           overflow="hidden"
           textOverflow="ellipsis"
           whiteSpace="nowrap"
@@ -96,8 +87,6 @@ const Chat = ({ chat }: Props) => {
           :
         </Box>
         <Box
-          component="span"
-          display="inline-block"
           overflow="hidden"
           textOverflow="ellipsis"
           whiteSpace="nowrap"
@@ -132,21 +121,16 @@ const Chat = ({ chat }: Props) => {
         <Box fontFamily={unreadMessageCount ? 'Inter Bold' : 'Inter Medium'}>
           {chatName}
         </Box>
-        <Box color="text.secondary">
+        <Flex color="text.secondary">
           <Box
-            component="span"
-            display="inline-block"
             paddingRight="0.5ch"
             fontFamily={unreadMessageCount ? 'Inter Bold' : undefined}
             color={unreadMessageCount ? 'text.primary' : undefined}
           >
             {renderSubText()}
           </Box>
-          <Box
-            component="span"
-            display="inline-block"
-          >{`${MIDDOT_WITH_SPACES}${formattedDate}`}</Box>
-        </Box>
+          <Box>{`${MIDDOT_WITH_SPACES}${formattedDate}`}</Box>
+        </Flex>
       </Box>
     </Flex>
   );
