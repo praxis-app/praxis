@@ -1,13 +1,11 @@
 import { useApolloClient } from '@apollo/client';
 import { Chat as ChatIcon } from '@mui/icons-material';
-import { Box, SxProps, Typography } from '@mui/material';
-import { truncate } from 'lodash';
+import { Box, SxProps } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
-  TruncationSizes,
 } from '../../constants/shared.constants';
 import { ChatFragment } from '../../graphql/chat/fragments/gen/Chat.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
@@ -46,35 +44,6 @@ const Chat = ({ chat }: Props) => {
     borderRadius: '50%',
   };
 
-  const getSubText = () => {
-    if (!lastMessageSent?.body) {
-      if (group?.description) {
-        const truncatedDescription = truncate(group.description, {
-          length: isDesktop ? TruncationSizes.Medium : TruncationSizes.Small,
-        });
-        return truncatedDescription;
-      }
-      return t('chat.prompts.noMessagesYet');
-    }
-
-    // Get truncated username
-    const { user } = lastMessageSent;
-    const userName = user.displayName || user.name;
-    const truncatedName = truncate(userName, {
-      length: isDesktop ? TruncationSizes.Small : TruncationSizes.ExtraSmall,
-    });
-
-    // Take name length into account when truncating body
-    const bodyTruncationLength = isDesktop
-      ? TruncationSizes.Medium - truncatedName.length - 2
-      : TruncationSizes.Small - truncatedName.length - 2;
-
-    const truncatedBody = truncate(lastMessageSent.body, {
-      length: bodyTruncationLength,
-    });
-    return `${truncatedName}: ${truncatedBody}`;
-  };
-
   const handleClick = () => {
     // TODO: Consider moving this to chat panel
     cache.modify({
@@ -82,6 +51,62 @@ const Chat = ({ chat }: Props) => {
       fields: { unreadMessageCount: () => 0 },
     });
     navigate(chatPath);
+  };
+
+  const renderSubText = () => {
+    if (!lastMessageSent?.body) {
+      if (group?.description) {
+        return (
+          <Box
+            component="span"
+            display="inline-block"
+            overflow="hidden"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
+            maxWidth={isDesktop ? '500px' : '240px'}
+          >
+            {group.description}
+          </Box>
+        );
+      }
+
+      return (
+        <Box component="span" display="inline-block">
+          {t('chat.prompts.noMessagesYet')}
+        </Box>
+      );
+    }
+
+    const { user } = lastMessageSent;
+    const userName = user.displayName || user.name;
+
+    return (
+      <Flex component="span">
+        <Box
+          component="span"
+          display="inline-block"
+          overflow="hidden"
+          textOverflow="ellipsis"
+          whiteSpace="nowrap"
+          maxWidth={isDesktop ? '125px' : '90px'}
+        >
+          {userName}
+        </Box>
+        <Box component="span" display="inline-block" paddingRight="0.5ch">
+          :
+        </Box>
+        <Box
+          component="span"
+          display="inline-block"
+          overflow="hidden"
+          textOverflow="ellipsis"
+          whiteSpace="nowrap"
+          maxWidth={isDesktop ? '350px' : '120px'}
+        >
+          {lastMessageSent.body}
+        </Box>
+      </Flex>
+    );
   };
 
   return (
@@ -104,21 +129,24 @@ const Chat = ({ chat }: Props) => {
       )}
 
       <Box alignSelf="center" paddingTop={0.9}>
-        <Typography
-          fontFamily={unreadMessageCount ? 'Inter Bold' : 'Inter Medium'}
-        >
+        <Box fontFamily={unreadMessageCount ? 'Inter Bold' : 'Inter Medium'}>
           {chatName}
-        </Typography>
-        <Typography color="text.secondary">
+        </Box>
+        <Box color="text.secondary">
           <Box
             component="span"
+            display="inline-block"
+            paddingRight="0.5ch"
             fontFamily={unreadMessageCount ? 'Inter Bold' : undefined}
             color={unreadMessageCount ? 'text.primary' : undefined}
           >
-            {getSubText()} {getSubText().length}
+            {renderSubText()}
           </Box>
-          <Box component="span">{`${MIDDOT_WITH_SPACES}${formattedDate}`}</Box>
-        </Typography>
+          <Box
+            component="span"
+            display="inline-block"
+          >{`${MIDDOT_WITH_SPACES}${formattedDate}`}</Box>
+        </Box>
       </Box>
     </Flex>
   );
