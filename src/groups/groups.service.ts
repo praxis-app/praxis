@@ -499,11 +499,17 @@ export class GroupsService {
       memberRequest.groupId,
       memberRequest.userId,
     );
+
+    // Add new member to group chat
+    await this.syncGroupChatMembers(memberRequest.groupId);
+
+    // Notify new member that their request was approved
     await this.notificationsService.createNotification({
       notificationType: NotificationType.GroupMemberRequestApproval,
       groupId: memberRequest.groupId,
       userId: memberRequest.userId,
     });
+
     return { groupMember };
   }
 
