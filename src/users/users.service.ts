@@ -428,7 +428,7 @@ export class UsersService {
       const lastMessageB = chatToLastMessageMap[chatB.id];
       const createdAtA = lastMessageA?.createdAt || chatA.createdAt;
       const createdAtB = lastMessageB?.createdAt || chatB.createdAt;
-      return (createdAtB.getTime() || 0) - (createdAtA.getTime() || 0);
+      return createdAtB.getTime() - createdAtA.getTime();
     });
 
     return offset !== undefined
