@@ -4,8 +4,10 @@ import MessageFeed from '../../components/Chat/MessageFeed';
 import MessageForm from '../../components/Chat/MessageForm';
 import { activeChatVar, scrollDirectionVar } from '../../graphql/cache';
 import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 
-const DEFAULT_CHAT_FORM_HEIGHT = 92;
+const CHAT_FORM_HEIGHT = 99;
+const CHAT_FORM_HEIGHT_DESKTOP = 92;
 
 interface Props {
   conversationId: number;
@@ -24,9 +26,15 @@ const ChatPanel = ({
   onLoadMore,
   vibeChat,
 }: Props) => {
-  const [formHeight, setFormHeight] = useState(DEFAULT_CHAT_FORM_HEIGHT);
+  const isDesktop = useIsDesktop();
+  const initialFormHeight = isDesktop
+    ? CHAT_FORM_HEIGHT_DESKTOP
+    : CHAT_FORM_HEIGHT;
+
+  const [formHeight, setFormHeight] = useState(initialFormHeight);
   const [feedScrollPosition, setFeedScrollPosition] = useState(0);
   const scrollDirection = useReactiveVar(scrollDirectionVar);
+
   const feedBottomRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -67,7 +75,7 @@ const ChatPanel = ({
     <>
       <MessageFeed
         feedBottomRef={feedBottomRef}
-        formHeightDiff={formHeight - DEFAULT_CHAT_FORM_HEIGHT}
+        formHeightDiff={formHeight - initialFormHeight}
         messages={messages}
         onImageLoad={handleImageLoad}
         onLoadMore={onLoadMore}
