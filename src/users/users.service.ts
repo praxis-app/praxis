@@ -408,7 +408,6 @@ export class UsersService {
     const chats = await this.conversationRepository.find({
       where: { members: { userId } },
     });
-
     const lastMessages = await Promise.all(
       chats.map(async (chat) => {
         return this.messageRepository.findOne({
@@ -419,17 +418,16 @@ export class UsersService {
     );
 
     // TODO: Refactor to use a hash map
-    const sortedChats = chats.sort((a, b) => {
+    const sortedChats = chats.sort((chatA, chatB) => {
       const lastMessageA = lastMessages.find(
-        (message) => message?.conversationId === a.id,
+        (message) => message?.conversationId === chatA.id,
       );
       const lastMessageB = lastMessages.find(
-        (message) => message?.conversationId === b.id,
+        (message) => message?.conversationId === chatB.id,
       );
-      return (
-        (lastMessageB?.createdAt.getTime() || 0) -
-        (lastMessageA?.createdAt.getTime() || 0)
-      );
+      const createdAtA = lastMessageA?.createdAt || chatA.createdAt;
+      const createdAtB = lastMessageB?.createdAt || chatB.createdAt;
+      return (createdAtB.getTime() || 0) - (createdAtA.getTime() || 0);
     });
 
     return offset !== undefined
