@@ -86,36 +86,39 @@ const Chat = ({ chat }: Props) => {
     <Flex
       gap="12px"
       alignItems="center"
+      justifyContent="space-between"
       onClick={() => navigate(chatPath)}
       sx={{ cursor: 'pointer' }}
     >
-      {group ? (
-        <GroupAvatar
-          group={group}
-          withLink={false}
-          sx={{ width: '50px', height: '50px' }}
-        />
-      ) : (
-        <Box sx={vibeChatBadgeStyles}>
-          <ChatIcon sx={{ alignSelf: 'center', marginTop: 0.35 }} />
-        </Box>
-      )}
-
-      <Box alignSelf="center" paddingTop={0.9}>
-        <Box fontFamily={unreadMessageCount ? 'Inter Bold' : 'Inter Medium'}>
-          {chatName}
-        </Box>
-        <Flex color="text.secondary">
-          <Box
-            paddingRight="0.5ch"
-            fontFamily={unreadMessageCount ? 'Inter Bold' : undefined}
-            color={unreadMessageCount ? 'text.primary' : undefined}
-          >
-            {renderSubText()}
+      <Flex gap="12px" alignItems="center">
+        {group ? (
+          <GroupAvatar
+            group={group}
+            withLink={false}
+            sx={{ width: '50px', height: '50px' }}
+          />
+        ) : (
+          <Box sx={vibeChatBadgeStyles}>
+            <ChatIcon sx={{ alignSelf: 'center', marginTop: 0.35 }} />
           </Box>
-          <Box>{`${MIDDOT_WITH_SPACES}${formattedDate}`}</Box>
-        </Flex>
-      </Box>
+        )}
+
+        <Box alignSelf="center" paddingTop={0.9}>
+          <Box fontFamily={unreadMessageCount ? 'Inter Bold' : 'Inter Medium'}>
+            {chatName}
+          </Box>
+          <Flex color="text.secondary">
+            <Box
+              paddingRight="0.5ch"
+              fontFamily={unreadMessageCount ? 'Inter Bold' : undefined}
+              color={unreadMessageCount ? 'text.primary' : undefined}
+            >
+              {renderSubText()}
+            </Box>
+            <Box>{`${MIDDOT_WITH_SPACES}${formattedDate}`}</Box>
+          </Flex>
+        </Box>
+      </Flex>
 
       {unreadMessageCount > 0 && (
         <Box
