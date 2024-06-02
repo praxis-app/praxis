@@ -129,7 +129,13 @@ export class ChatService {
     const { id, vibeChatId } =
       await this.serverConfigsService.getServerConfig();
 
-    if (!vibeChatId) {
+    const vibeChat = vibeChatId
+      ? await this.conversationRepository.findOne({
+          where: { id: vibeChatId },
+        })
+      : null;
+
+    if (!vibeChat) {
       const vibeChat = await this.conversationRepository.save({
         name: VIBE_CHAT_NAME,
       });
@@ -139,9 +145,7 @@ export class ChatService {
       return vibeChat;
     }
 
-    return this.conversationRepository.findOneOrFail({
-      where: { id: vibeChatId },
-    });
+    return vibeChat;
   }
 
   async isConversationMember(conversationId: number, userId: number) {
