@@ -416,15 +416,16 @@ export class UsersService {
         });
       }),
     );
+    const chatToLastMessageMap = lastMessages.reduce((result, message) => {
+      if (message) {
+        result[message.conversationId] = message;
+      }
+      return result;
+    }, {});
 
-    // TODO: Refactor to use a hash map
     const sortedChats = chats.sort((chatA, chatB) => {
-      const lastMessageA = lastMessages.find(
-        (message) => message?.conversationId === chatA.id,
-      );
-      const lastMessageB = lastMessages.find(
-        (message) => message?.conversationId === chatB.id,
-      );
+      const lastMessageA = chatToLastMessageMap[chatA.id];
+      const lastMessageB = chatToLastMessageMap[chatB.id];
       const createdAtA = lastMessageA?.createdAt || chatA.createdAt;
       const createdAtB = lastMessageB?.createdAt || chatB.createdAt;
       return (createdAtB.getTime() || 0) - (createdAtA.getTime() || 0);
