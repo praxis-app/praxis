@@ -385,11 +385,10 @@ export class GroupsService {
   }
 
   async leaveGroup(groupId: number, userId: number) {
-    const where = { group: { id: groupId }, userId };
     await this.deleteGroupMember(groupId, userId);
-    await this.deleteGroupMemberRequest(where);
-    await this.syncGroupChatMembers(groupId);
+    await this.deleteGroupMemberRequest({ group: { id: groupId }, userId });
     await this.groupRolesService.removeMemberFromAllGroupRoles(groupId, userId);
+    await this.syncGroupChatMembers(groupId);
     return true;
   }
 
