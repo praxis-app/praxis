@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { MessageFragmentDoc } from '../../../chat/fragments/gen/Message.gen';
+import { ChatPanelFragmentDoc } from '../../../chat/fragments/gen/ChatPanel.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -46,15 +46,11 @@ export const GroupChatDocument = gql`
     group(name: $name) {
       id
       chat {
-        id
-        name
-        messages(offset: $offset, limit: $limit) {
-          ...Message
-        }
+        ...ChatPanel
       }
     }
   }
-  ${MessageFragmentDoc}
+  ${ChatPanelFragmentDoc}
 `;
 
 /**

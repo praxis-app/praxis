@@ -77,13 +77,7 @@ const VibeChat = () => {
   }
 
   return (
-    <ChatPanel
-      conversationId={data.vibeChat.id}
-      messages={data.vibeChat.messages}
-      conversationName={data.vibeChat.name}
-      onLoadMore={handleLoadMore}
-      vibeChat
-    />
+    <ChatPanel chat={data.vibeChat} onLoadMore={handleLoadMore} vibeChat />
   );
 };
 

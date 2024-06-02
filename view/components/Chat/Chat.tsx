@@ -1,4 +1,3 @@
-import { useApolloClient } from '@apollo/client';
 import { Chat as ChatIcon } from '@mui/icons-material';
 import { Box, SxProps } from '@mui/material';
 import { truncate } from 'lodash';
@@ -22,7 +21,6 @@ interface Props {
 }
 
 const Chat = ({ chat }: Props) => {
-  const { cache } = useApolloClient();
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
   const navigate = useNavigate();
@@ -44,15 +42,6 @@ const Chat = ({ chat }: Props) => {
     justifyContent: 'center',
     backgroundColor: Blurple.Marina,
     borderRadius: '50%',
-  };
-
-  const handleClick = () => {
-    // TODO: Consider moving this to chat panel
-    cache.modify({
-      id: cache.identify(chat),
-      fields: { unreadMessageCount: () => 0 },
-    });
-    navigate(chatPath);
   };
 
   const renderSubText = () => {
@@ -97,7 +86,7 @@ const Chat = ({ chat }: Props) => {
     <Flex
       gap="12px"
       alignItems="center"
-      onClick={handleClick}
+      onClick={() => navigate(chatPath)}
       sx={{ cursor: 'pointer' }}
     >
       {group ? (

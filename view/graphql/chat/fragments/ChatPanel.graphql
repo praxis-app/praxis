@@ -1,0 +1,7 @@
+fragment ChatPanel on Conversation {
+  id
+  name
+  messages(offset: $offset, limit: $limit) {
+    ...Message
+  }
+}

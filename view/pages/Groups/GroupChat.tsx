@@ -81,18 +81,12 @@ const GroupChat = () => {
     return <ProgressBar />;
   }
 
-  if (!data) {
+  if (!chat) {
     return null;
   }
 
   return (
-    <ChatPanel
-      conversationId={data.group.chat.id}
-      messages={data.group.chat.messages}
-      conversationName={data.group.chat.name}
-      onLoadMore={handleLoadMore}
-      groupName={name || ''}
-    />
+    <ChatPanel chat={chat} onLoadMore={handleLoadMore} groupName={name || ''} />
   );
 };
 

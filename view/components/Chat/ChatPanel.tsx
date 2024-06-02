@@ -1,31 +1,22 @@
-import { useReactiveVar } from '@apollo/client';
+import { useApolloClient, useReactiveVar } from '@apollo/client';
 import { UIEvent, useEffect, useRef, useState } from 'react';
 import MessageFeed from '../../components/Chat/MessageFeed';
 import MessageForm from '../../components/Chat/MessageForm';
 import { activeChatVar, scrollDirectionVar } from '../../graphql/cache';
-import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
+import { ChatPanelFragment } from '../../graphql/chat/fragments/gen/ChatPanel.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const CHAT_FORM_HEIGHT = 99;
 const CHAT_FORM_HEIGHT_DESKTOP = 92;
 
 interface Props {
-  conversationId: number;
-  conversationName: string;
+  chat: ChatPanelFragment;
   groupName?: string;
-  messages: MessageFragment[];
   onLoadMore(): Promise<void>;
   vibeChat?: boolean;
 }
 
-const ChatPanel = ({
-  conversationId,
-  conversationName,
-  groupName,
-  messages,
-  onLoadMore,
-  vibeChat,
-}: Props) => {
+const ChatPanel = ({ groupName, chat, onLoadMore, vibeChat }: Props) => {
   const isDesktop = useIsDesktop();
   const initialFormHeight = isDesktop
     ? CHAT_FORM_HEIGHT_DESKTOP
@@ -35,20 +26,23 @@ const ChatPanel = ({
   const [feedScrollPosition, setFeedScrollPosition] = useState(0);
   const scrollDirection = useReactiveVar(scrollDirectionVar);
 
+  const { cache } = useApolloClient();
   const feedBottomRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (conversationId && conversationName) {
-      activeChatVar({
-        id: conversationId,
-        name: conversationName,
-      });
-    }
+    activeChatVar({
+      id: chat.id,
+      name: chat.name,
+    });
+    cache.modify({
+      id: cache.identify(chat),
+      fields: { unreadMessageCount: () => 0 },
+    });
     return () => {
       activeChatVar(null);
     };
-  }, [conversationId, conversationName]);
+  }, [chat, cache]);
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
@@ -76,13 +70,13 @@ const ChatPanel = ({
       <MessageFeed
         feedBottomRef={feedBottomRef}
         formHeightDiff={formHeight - initialFormHeight}
-        messages={messages}
+        messages={chat.messages}
         onImageLoad={handleImageLoad}
         onLoadMore={onLoadMore}
         onScroll={handleScroll}
       />
       <MessageForm
-        conversationId={conversationId}
+        conversationId={chat.id}
         formRef={formRef}
         groupName={groupName}
         onSubmit={handleSubmit}
