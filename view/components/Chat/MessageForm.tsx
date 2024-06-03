@@ -20,7 +20,12 @@ import {
   VibeChatQuery,
 } from '../../graphql/chat/queries/gen/VibeChat.gen';
 import { SendMessageInput } from '../../graphql/gen';
-import { useIsDesktop } from '../../hooks/shared.hooks';
+import {
+  GroupChatDocument,
+  GroupChatQuery,
+  GroupChatQueryVariables,
+} from '../../graphql/groups/queries/gen/GroupChat.gen';
+import { useIsDesktop, useWindowSize } from '../../hooks/shared.hooks';
 import { getRandomString } from '../../utils/shared.utils';
 import AttachedImagePreview from '../Images/AttachedImagePreview';
 import ImageInput from '../Images/ImageInput';
@@ -29,14 +34,16 @@ import Flex from '../Shared/Flex';
 interface Props {
   conversationId: number;
   formRef: RefObject<HTMLDivElement>;
+  groupName?: string;
   onSubmit?(): void;
-  vibeChat?: boolean;
   setFormHeight(height: number): void;
+  vibeChat?: boolean;
 }
 
 const MessageForm = ({
   conversationId,
   formRef,
+  groupName,
   onSubmit,
   setFormHeight,
   vibeChat,
@@ -46,6 +53,7 @@ const MessageForm = ({
   const [sendMessage, { loading }] = useSendMessageMutation();
 
   const { t } = useTranslation();
+  const [windowWidth] = useWindowSize();
   const isDesktop = useIsDesktop();
   const theme = useTheme();
 
@@ -66,7 +74,7 @@ const MessageForm = ({
     return () => {
       clearTimeout(timer);
     };
-  }, [images, formRef, setFormHeight]);
+  }, [images, formRef, setFormHeight, windowWidth]);
 
   const containerStyles: SxProps = {
     position: 'fixed',
@@ -130,6 +138,22 @@ const MessageForm = ({
         const {
           sendMessage: { message },
         } = data;
+        if (groupName) {
+          cache.updateQuery<GroupChatQuery, GroupChatQueryVariables>(
+            {
+              query: GroupChatDocument,
+              variables: { name: groupName },
+            },
+            (groupChatData) => {
+              if (!groupChatData) {
+                return;
+              }
+              return produce(groupChatData, (draft) => {
+                draft.group.chat.messages.push(message);
+              });
+            },
+          );
+        }
         if (vibeChat) {
           cache.updateQuery<VibeChatQuery>(
             {

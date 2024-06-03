@@ -59,10 +59,12 @@ type Comment {
 
 type Conversation {
   createdAt: DateTime!
+  group: Group
   id: Int!
+  lastMessageSent: Message
   members: [User!]!
   messages(limit: Int, offset: Int): [Message!]!
-  name: String
+  name: String!
   unreadMessageCount: Int!
 }
 
@@ -291,6 +293,7 @@ type FollowUserPayload {
 }
 
 type Group {
+  chat: Conversation!
   coverPhoto: Image
   createdAt: DateTime!
   description: String!
@@ -1136,6 +1139,8 @@ scalar Upload
 
 type User {
   bio: String
+  chatCount: Int!
+  chats(limit: Int, offset: Int): [Conversation!]!
   comments: [Comment!]!
   coverPhoto: Image
   createdAt: DateTime!

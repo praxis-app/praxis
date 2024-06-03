@@ -44,14 +44,15 @@ const MessageFeed = ({
     zIndex: -1,
     display: 'flex',
     flexDirection: 'column-reverse',
+    transition: 'bottom 0.3s ease-in-out',
 
     [theme.breakpoints.up('xs')]: {
       top: '55px',
-      bottom: 155 + formHeightDiff,
+      bottom: 153 + formHeightDiff,
     },
     [theme.breakpoints.up('sm')]: {
       top: '63px',
-      bottom: 163 + formHeightDiff,
+      bottom: 160 + formHeightDiff,
     },
     [theme.breakpoints.up('md')]: {
       top: '60px',

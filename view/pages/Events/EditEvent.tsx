@@ -52,13 +52,13 @@ const EditEvent = () => {
   const breadcrumbs = [
     {
       label: truncate(group.name, {
-        length: isDesktop ? TruncationSizes.Small : TruncationSizes.ExtraSmall,
+        length: isDesktop ? TruncationSizes.Medium : TruncationSizes.Small,
       }),
       href: getGroupEventsTabPath(group.name),
     },
     {
       label: truncate(event.name, {
-        length: isDesktop ? TruncationSizes.Small : TruncationSizes.ExtraSmall,
+        length: isDesktop ? TruncationSizes.Medium : TruncationSizes.Small,
       }),
       href: getEventPath(event.id),
     },

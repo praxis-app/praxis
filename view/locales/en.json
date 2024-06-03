@@ -276,10 +276,10 @@
   "groups": {
     "actions": {
       "approve": "Approve",
-      "cancelRequest": "Cancel Request",
-      "create": "Create Group",
+      "cancelRequest": "Cancel request",
+      "create": "Create group",
       "deny": "Deny",
-      "edit": "Edit Group",
+      "edit": "Edit group",
       "join": "Join",
       "leave": "Leave",
       "leaveGroup": "Leave group",
@@ -522,8 +522,16 @@
   },
 
   "chat": {
+    "headers": {
+      "chats": "Chats"
+    },
     "prompts": {
-      "sendAMessage": "Send a message..."
+      "sendAMessage": "Send a message...",
+      "noChatsYet": "No chats yet. Join groups to start chatting with other members.",
+      "noMessagesYet": "No messages yet"
+    },
+    "labels": {
+      "chat": "Chat"
     }
   },
 
@@ -655,8 +663,8 @@
       "groupMemberRequest": "<b>{{name}}</b> requested to join <b>{{groupName}}</b>.",
       "groupMemberRequestApproval": "Your request to join <b>{{groupName}}</b> was approved.",
       "missingAnswerLike": "<b>{{name}}</b> likes your answer.",
-      "newMessage_one": "You have {{count}} new message in {{chatName}}",
-      "newMessage_other": "You have {{count}} new messages in {{chatName}}",
+      "newMessage_one": "You have {{count}} new message in <b>{{chatName}}</b>.",
+      "newMessage_other": "You have {{count}} new messages in <b>{{chatName}}</b>.",
       "newQuestionnaireTicket": "A new questionnaire ticket was created for <b>{{name}}</b>.",
       "ownAnswerComment": "<b>{{name}}</b> commented on their answer.",
       "ownQuestionnaireTicketComment": "<b>{{name}}</b> commented on their questionnaire ticket.",

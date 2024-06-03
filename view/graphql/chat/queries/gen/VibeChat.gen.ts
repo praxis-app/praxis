@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { MessageFragmentDoc } from '../../fragments/gen/Message.gen';
+import { ChatPanelFragmentDoc } from '../../fragments/gen/ChatPanel.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -18,6 +18,7 @@ export type VibeChatQuery = {
   vibeChat: {
     __typename?: 'Conversation';
     id: number;
+    name: string;
     messages: Array<{
       __typename?: 'Message';
       id: number;
@@ -38,13 +39,10 @@ export type VibeChatQuery = {
 export const VibeChatDocument = gql`
   query VibeChat($offset: Int = 0, $limit: Int = 20) {
     vibeChat {
-      id
-      messages(offset: $offset, limit: $limit) {
-        ...Message
-      }
+      ...ChatPanel
     }
   }
-  ${MessageFragmentDoc}
+  ${ChatPanelFragmentDoc}
 `;
 
 /**

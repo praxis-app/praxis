@@ -1,11 +1,25 @@
 import { useReactiveVar } from '@apollo/client';
-import { Chat, ExpandMore, Notifications } from '@mui/icons-material';
-import { Box, Button, IconButton, SxProps, useTheme } from '@mui/material';
+import {
+  ArrowBack,
+  Chat,
+  ExpandMore,
+  Notifications,
+  Tag,
+} from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  IconButton,
+  SxProps,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { MouseEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import {
+  activeChatVar,
   inviteTokenVar,
   isAuthErrorVar,
   isAuthLoadingVar,
@@ -13,6 +27,7 @@ import {
 } from '../../graphql/cache';
 import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
+import { useAboveBreakpoint } from '../../hooks/shared.hooks';
 import NotificationCount from '../Notifications/NotificationCount';
 import Flex from '../Shared/Flex';
 import SearchBar from '../Shared/SearchBar';
@@ -20,10 +35,11 @@ import UserAvatar from '../Users/UserAvatar';
 import TopNavDropdown from './TopNavDropdown';
 
 const TopNavDesktop = () => {
+  const activeChat = useReactiveVar(activeChatVar);
   const inviteToken = useReactiveVar(inviteTokenVar);
-  const isLoggedIn = useReactiveVar(isLoggedInVar);
-  const isAuthLoading = useReactiveVar(isAuthLoadingVar);
   const isAuthError = useReactiveVar(isAuthErrorVar);
+  const isAuthLoading = useReactiveVar(isAuthLoadingVar);
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -35,6 +51,7 @@ const TopNavDesktop = () => {
   });
 
   const { t } = useTranslation();
+  const isAboveLarge = useAboveBreakpoint('lg');
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -91,14 +108,28 @@ const TopNavDesktop = () => {
 
   return (
     <Flex sx={rootStyles}>
-      <SearchBar />
+      {!activeChat && <SearchBar />}
+
+      {activeChat && (
+        <Flex alignSelf="center" alignItems="center">
+          <IconButton
+            onClick={() => navigate(-1)}
+            sx={{ marginRight: 1.25 }}
+            edge="start"
+          >
+            <ArrowBack />
+          </IconButton>
+          <Tag sx={{ marginRight: '0.25ch', color: 'text.secondary' }} />
+          <Typography fontFamily="Inter Bold">{activeChat.name}</Typography>
+        </Flex>
+      )}
 
       {me && (
         <Flex alignSelf="center">
           {me.serverPermissions.manageQuestionnaireTickets && (
             <IconButton
               sx={{ width: 50, height: 50 }}
-              onClick={() => navigate(NavigationPaths.VibeChat)}
+              onClick={() => navigate(NavigationPaths.Chats)}
             >
               <Flex sx={iconWrapperStyles}>
                 <Chat sx={chatIconStyles} />
@@ -106,15 +137,17 @@ const TopNavDesktop = () => {
             </IconButton>
           )}
 
-          <IconButton
-            sx={{ width: 50, height: 50 }}
-            onClick={() => navigate(NavigationPaths.Activity)}
-          >
-            <Flex sx={iconWrapperStyles}>
-              <Notifications sx={{ marginBottom: 0.3 }} />
-              <NotificationCount bottom={31} left={31} size="17px" />
-            </Flex>
-          </IconButton>
+          {isAboveLarge && (
+            <IconButton
+              sx={{ width: 50, height: 50 }}
+              onClick={() => navigate(NavigationPaths.Activity)}
+            >
+              <Flex sx={iconWrapperStyles}>
+                <Notifications sx={{ marginBottom: 0.3 }} />
+                <NotificationCount bottom={31} left={31} size="17px" />
+              </Flex>
+            </IconButton>
+          )}
 
           <IconButton
             aria-label={t('labels.menuButton')}

@@ -32,7 +32,8 @@ export type NotificationFragment = {
   conversation?: {
     __typename?: 'Conversation';
     id: number;
-    name?: string | null;
+    name: string;
+    group?: { __typename?: 'Group'; id: number; name: string } | null;
   } | null;
   comment?: {
     __typename?: 'Comment';
@@ -88,6 +89,10 @@ export const NotificationFragmentDoc = gql`
     conversation {
       id
       name
+      group {
+        id
+        name
+      }
     }
     comment {
       id

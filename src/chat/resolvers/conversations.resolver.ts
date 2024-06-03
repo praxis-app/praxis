@@ -1,6 +1,7 @@
 import { Inject } from '@nestjs/common';
 import {
   Args,
+  Context,
   Int,
   Parent,
   Query,
@@ -9,11 +10,13 @@ import {
   Subscription,
 } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { Dataloaders } from '../../dataloader/dataloader.types';
+import { Group } from '../../groups/models/group.model';
 import { User } from '../../users/models/user.model';
 import { ChatService } from '../chat.service';
 import { Conversation } from '../models/conversation.model';
 import { Message } from '../models/message.model';
-import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 
 @Resolver(() => Conversation)
 export class ConversationsResolver {
@@ -47,6 +50,7 @@ export class ConversationsResolver {
     );
   }
 
+  // TODO: Add dataloader for unreadMessageCount
   @ResolveField(() => Int)
   async unreadMessageCount(
     @CurrentUser() currentUser: User,
@@ -55,9 +59,26 @@ export class ConversationsResolver {
     return this.chatService.getUnreadMessageCount(id, currentUser.id);
   }
 
+  // TODO: Add dataloader for lastMessageSent
+  @ResolveField(() => Message, { nullable: true })
+  async lastMessageSent(@Parent() { id }: Conversation) {
+    return this.chatService.getLastMessageSent(id);
+  }
+
   @ResolveField(() => [User])
   async members(@Parent() { id }: Conversation) {
     return this.chatService.getConversationMembers(id);
+  }
+
+  @ResolveField(() => Group, { nullable: true })
+  async group(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { groupId }: Conversation,
+  ) {
+    if (!groupId) {
+      return null;
+    }
+    return loaders.groupsLoader.load(groupId);
   }
 
   @Subscription(() => Message)

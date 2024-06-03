@@ -3,7 +3,7 @@ import { Close } from '@mui/icons-material';
 import { Alert, IconButton, Snackbar, useTheme } from '@mui/material';
 import { useEffect, useState } from 'react';
 import {
-  isChatPanelOpenVar,
+  activeChatVar,
   scrollDirectionVar,
   toastVar,
 } from '../../graphql/cache';
@@ -12,7 +12,7 @@ import { useAboveBreakpoint } from '../../hooks/shared.hooks';
 const AUTO_HIDE_DURATION = 6000;
 
 const Toast = () => {
-  const isChatPanelOpen = useReactiveVar(isChatPanelOpenVar);
+  const activeChat = useReactiveVar(activeChatVar);
   const scrollDirection = useReactiveVar(scrollDirectionVar);
   const toastNotification = useReactiveVar(toastVar);
   const [open, setOpen] = useState(false);
@@ -21,7 +21,7 @@ const Toast = () => {
   const theme = useTheme();
 
   const isNavHidden =
-    !isAboveSmall && !isChatPanelOpen && scrollDirection === 'down';
+    !isAboveSmall && !activeChat && scrollDirection === 'down';
   const distanceFromBottom = isNavHidden ? 22 : 80;
 
   useEffect(() => {

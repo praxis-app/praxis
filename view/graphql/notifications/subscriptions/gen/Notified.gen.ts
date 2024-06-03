@@ -39,7 +39,8 @@ export type NotifiedSubscription = {
     conversation?: {
       __typename?: 'Conversation';
       id: number;
-      name?: string | null;
+      name: string;
+      group?: { __typename?: 'Group'; id: number; name: string } | null;
     } | null;
     comment?: {
       __typename?: 'Comment';

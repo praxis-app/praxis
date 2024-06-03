@@ -56,7 +56,7 @@ const GroupMembers = () => {
   const breadcrumbs = [
     {
       label: truncate(name, {
-        length: isDesktop ? TruncationSizes.Small : TruncationSizes.ExtraSmall,
+        length: isDesktop ? TruncationSizes.Medium : TruncationSizes.Small,
       }),
       href: getGroupPath(name || ''),
     },

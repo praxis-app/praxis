@@ -1,26 +1,30 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Conversation } from '../chat/models/conversation.model';
 import { Image } from '../images/models/image.model';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { Post } from '../posts/models/post.model';
 import { PostsModule } from '../posts/posts.module';
 import { Proposal } from '../proposals/models/proposal.model';
-import { ServerQuestion } from '../vibe-check/models/server-question.model';
-import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { ServerConfigsModule } from '../server-configs/server-configs.module';
 import { ServerRolesModule } from '../server-roles/server-roles.module';
+import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
+import { ServerQuestion } from '../vibe-check/models/server-question.model';
 import { User } from './models/user.model';
 import { UsersResolver } from './users.resolver';
 import { UsersService } from './users.service';
+import { Message } from '../chat/models/message.model';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      Conversation,
       Image,
+      Message,
       Post,
       Proposal,
-      ServerQuestion,
       QuestionnaireTicket,
+      ServerQuestion,
       User,
     ]),
     NotificationsModule,

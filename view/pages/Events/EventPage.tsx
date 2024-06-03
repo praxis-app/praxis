@@ -71,9 +71,7 @@ const EventPage = () => {
     ? [
         {
           label: truncate(event.group.name, {
-            length: isDesktop
-              ? TruncationSizes.Small
-              : TruncationSizes.ExtraSmall,
+            length: isDesktop ? TruncationSizes.Medium : TruncationSizes.Small,
           }),
           href: getGroupEventsTabPath(event.group.name),
         },

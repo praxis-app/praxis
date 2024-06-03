@@ -9,6 +9,7 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { Conversation } from '../../chat/models/conversation.model';
 import { FeedItem } from '../../common/models/feed-item.union';
 import { PublicFeedItemsConnection } from '../../common/models/public-feed-items.connection';
 import { Dataloaders } from '../../dataloader/dataloader.types';
@@ -186,6 +187,11 @@ export class GroupsResolver {
       currentUserId: currentUser.id,
       groupId: group.id,
     });
+  }
+
+  @ResolveField(() => Conversation)
+  async chat(@Parent() { id }: Group) {
+    return this.groupsService.getGroupChat(id);
   }
 
   @ResolveField(() => [Event])

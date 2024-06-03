@@ -1,7 +1,8 @@
-import { ApolloCache, FetchResult } from '@apollo/client';
+import { ApolloCache, FetchResult, Reference } from '@apollo/client';
 import { produce } from 'immer';
 import { TypeNames } from '../constants/shared.constants';
 import { toastVar } from '../graphql/cache';
+import { MessageFragment } from '../graphql/chat/fragments/gen/Message.gen';
 import { DeleteGroupMutation } from '../graphql/groups/mutations/gen/DeleteGroup.gen';
 import {
   GroupsDocument,
@@ -22,6 +23,61 @@ import {
 import { NotifiedSubscription } from '../graphql/notifications/subscriptions/gen/Notified.gen';
 import { DeletePostMutation } from '../graphql/posts/mutations/gen/DeletePost.gen';
 import { DeleteUserMutation } from '../graphql/users/mutations/gen/DeleteUser.gen';
+
+export const addNotification = (
+  cache: ApolloCache<any>,
+  data: NotifiedSubscription,
+) => {
+  cache.updateQuery<NotificationsQuery>(
+    {
+      query: NotificationsDocument,
+      variables: { limit: 10, offset: 0 },
+    },
+    (notificationsData) =>
+      produce(notificationsData, (draft) => {
+        if (!draft) {
+          return;
+        }
+        draft.notifications.unshift(data.notification);
+        draft.notificationsCount += 1;
+      }),
+  );
+  cache.updateQuery<UnreadNotificationsQuery>(
+    { query: UnreadNotificationsDocument },
+    (notificationsData) =>
+      produce(notificationsData, (draft) => {
+        if (!draft) {
+          return;
+        }
+        draft.unreadNotificationsCount += 1;
+      }),
+  );
+};
+
+export const addNewMessage = (
+  cache: ApolloCache<object>,
+  newMessage: MessageFragment,
+  chatId: number,
+) => {
+  cache.modify({
+    id: cache.identify({ id: chatId, __typename: TypeNames.Conversation }),
+    fields: {
+      messages(existingRefs, { toReference, readField }) {
+        const alreadyReceived = existingRefs.some(
+          (ref: Reference) => readField('id', ref) === newMessage.id,
+        );
+        if (alreadyReceived) {
+          return existingRefs;
+        }
+        return [...existingRefs, toReference(newMessage)].sort((a, b) => {
+          const aCreatedAt = new Date(readField('createdAt', a) as Date);
+          const bCreatedAt = new Date(readField('createdAt', b) as Date);
+          return aCreatedAt.getTime() - bCreatedAt.getTime();
+        });
+      },
+    },
+  });
+};
 
 export const removeUser =
   (id: number) =>
@@ -102,34 +158,4 @@ export const removeServerInvite = (id: number) => (cache: ApolloCache<any>) => {
   const cacheId = cache.identify({ id, __typename: TypeNames.ServerInvite });
   cache.evict({ id: cacheId });
   cache.gc();
-};
-
-export const addNotification = (
-  cache: ApolloCache<any>,
-  data: NotifiedSubscription,
-) => {
-  cache.updateQuery<NotificationsQuery>(
-    {
-      query: NotificationsDocument,
-      variables: { limit: 10, offset: 0 },
-    },
-    (notificationsData) =>
-      produce(notificationsData, (draft) => {
-        if (!draft) {
-          return;
-        }
-        draft.notifications.unshift(data.notification);
-        draft.notificationsCount += 1;
-      }),
-  );
-  cache.updateQuery<UnreadNotificationsQuery>(
-    { query: UnreadNotificationsDocument },
-    (notificationsData) =>
-      produce(notificationsData, (draft) => {
-        if (!draft) {
-          return;
-        }
-        draft.unreadNotificationsCount += 1;
-      }),
-  );
 };

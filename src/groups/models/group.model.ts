@@ -22,6 +22,7 @@ import { User } from '../../users/models/user.model';
 import { GroupRole } from '../group-roles/models/group-role.model';
 import { GroupConfig } from './group-config.model';
 import { GroupMemberRequest } from './group-member-request.model';
+import { Conversation } from '../../chat/models/conversation.model';
 
 @Entity()
 @ObjectType()
@@ -73,6 +74,11 @@ export class Group {
     cascade: true,
   })
   memberRequests: GroupMemberRequest[];
+
+  @OneToMany(() => Conversation, (conversation) => conversation.group, {
+    cascade: true,
+  })
+  conversations: Conversation[];
 
   @Field(() => [GroupRole])
   @OneToMany(() => GroupRole, (role) => role.group, {

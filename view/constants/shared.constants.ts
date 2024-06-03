@@ -17,6 +17,8 @@ export enum NavigationPaths {
   About = '/about',
   Activity = '/activity',
   Canary = '/canary',
+  Chat = '/chat',
+  Chats = '/chats',
   Docs = '/docs',
   Edit = '/edit',
   Events = '/events',
@@ -44,6 +46,7 @@ export enum NavigationPaths {
 
 export enum TypeNames {
   Answer = 'Answer',
+  Conversation = 'Conversation',
   Event = 'Event',
   EventAttendee = 'EventAttendee',
   Group = 'Group',
@@ -111,8 +114,9 @@ export enum Time {
 }
 
 export enum TruncationSizes {
-  ExtraSmall = 25,
-  Small = 40,
-  Medium = 65,
-  Large = 175,
+  ExtraSmall = 16,
+  Small = 25,
+  Medium = 40,
+  Large = 65,
+  ExtraLarge = 175,
 }

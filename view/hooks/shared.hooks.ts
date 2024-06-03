@@ -102,6 +102,27 @@ export const useInView = (ref: RefObject<HTMLElement>, rootMargin = '0px') => {
   return { inView, setInView, viewed, setViewed };
 };
 
+export const useWindowSize = () => {
+  const { clientWidth, clientHeight } = document.body;
+  const [windowWidth, setWindowWidth] = useState(clientWidth);
+  const [windowHeight, setWindowHeight] = useState(clientHeight);
+
+  useEffect(() => {
+    const handleWindowResize = () => {
+      setWindowWidth(document.body.clientWidth);
+      setWindowHeight(document.body.clientHeight);
+    };
+
+    window.addEventListener(BrowserEvents.Resize, handleWindowResize);
+
+    return () => {
+      window.removeEventListener(BrowserEvents.Resize, handleWindowResize);
+    };
+  }, []);
+
+  return [windowWidth, windowHeight];
+};
+
 export const useAboveBreakpoint = (breakpoint: Breakpoint) =>
   useMediaQuery(useTheme().breakpoints.up(breakpoint));
 

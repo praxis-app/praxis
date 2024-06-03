@@ -120,7 +120,7 @@ const Notification = ({
         return _t('notifications.errors.accessDenied');
       }
       return _t('notifications.messages.newMessage', {
-        chatName: conversation?.name,
+        chatName: conversation.group?.name || conversation?.name,
         count: Number(unreadMessageCount),
       });
     }
@@ -241,9 +241,12 @@ const Notification = ({
   };
 
   const getPath = () => {
-    // TODO: Update to point to sepcific chat after adding full chat functionality
     if (notificationType === NotificationType.NewMessage) {
-      return NavigationPaths.VibeChat;
+      if (!conversation?.group) {
+        return NavigationPaths.VibeChat;
+      }
+      const { group } = conversation;
+      return `${NavigationPaths.Groups}/${group.name}${NavigationPaths.Chat}`;
     }
     if (
       isProposalVote ||

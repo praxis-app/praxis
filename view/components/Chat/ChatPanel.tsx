@@ -1,37 +1,48 @@
-import { useReactiveVar } from '@apollo/client';
+import { useApolloClient, useReactiveVar } from '@apollo/client';
 import { UIEvent, useEffect, useRef, useState } from 'react';
 import MessageFeed from '../../components/Chat/MessageFeed';
 import MessageForm from '../../components/Chat/MessageForm';
-import { isChatPanelOpenVar, scrollDirectionVar } from '../../graphql/cache';
-import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
+import { activeChatVar, scrollDirectionVar } from '../../graphql/cache';
+import { ChatPanelFragment } from '../../graphql/chat/fragments/gen/ChatPanel.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 
-const DEFAULT_CHAT_FORM_HEIGHT = 92;
+const CHAT_FORM_HEIGHT = 99;
+const CHAT_FORM_HEIGHT_DESKTOP = 92;
 
 interface Props {
-  conversationId: number;
-  messages: MessageFragment[];
-  vibeChat?: boolean;
+  chat: ChatPanelFragment;
+  groupName?: string;
   onLoadMore(): Promise<void>;
+  vibeChat?: boolean;
 }
 
-const ChatPanel = ({
-  conversationId,
-  messages,
-  vibeChat,
-  onLoadMore,
-}: Props) => {
-  const [formHeight, setFormHeight] = useState(DEFAULT_CHAT_FORM_HEIGHT);
+const ChatPanel = ({ groupName, chat, onLoadMore, vibeChat }: Props) => {
+  const isDesktop = useIsDesktop();
+  const initialFormHeight = isDesktop
+    ? CHAT_FORM_HEIGHT_DESKTOP
+    : CHAT_FORM_HEIGHT;
+
+  const [formHeight, setFormHeight] = useState(initialFormHeight);
   const [feedScrollPosition, setFeedScrollPosition] = useState(0);
   const scrollDirection = useReactiveVar(scrollDirectionVar);
+
+  const { cache } = useApolloClient();
   const feedBottomRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    isChatPanelOpenVar(true);
+    activeChatVar({
+      id: chat.id,
+      name: chat.name,
+    });
+    cache.modify({
+      id: cache.identify(chat),
+      fields: { unreadMessageCount: () => 0 },
+    });
     return () => {
-      isChatPanelOpenVar(false);
+      activeChatVar(null);
     };
-  }, []);
+  }, [chat, cache]);
 
   const handleScroll = (e: UIEvent<HTMLDivElement>) => {
     const target = e.target as HTMLDivElement;
@@ -58,15 +69,16 @@ const ChatPanel = ({
     <>
       <MessageFeed
         feedBottomRef={feedBottomRef}
-        formHeightDiff={formHeight - DEFAULT_CHAT_FORM_HEIGHT}
-        messages={messages}
+        formHeightDiff={formHeight - initialFormHeight}
+        messages={chat.messages}
         onImageLoad={handleImageLoad}
         onLoadMore={onLoadMore}
         onScroll={handleScroll}
       />
       <MessageForm
-        conversationId={conversationId}
+        conversationId={chat.id}
         formRef={formRef}
+        groupName={groupName}
         onSubmit={handleSubmit}
         setFormHeight={setFormHeight}
         vibeChat={vibeChat}

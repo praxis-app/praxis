@@ -1,5 +1,5 @@
 import { useReactiveVar } from '@apollo/client';
-import { AccountBox, Lock, Public, Settings } from '@mui/icons-material';
+import { AccountBox, Chat, Lock, Public, Settings } from '@mui/icons-material';
 import {
   Box,
   Card,
@@ -26,7 +26,7 @@ import {
 import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { GroupPageCardFragment } from '../../graphql/groups/fragments/gen/GroupPageCard.gen';
 import { useDeleteGroupMutation } from '../../graphql/groups/mutations/gen/DeleteGroup.gen';
-import { useAboveBreakpoint } from '../../hooks/shared.hooks';
+import { useAboveBreakpoint, useIsDesktop } from '../../hooks/shared.hooks';
 import { removeGroup } from '../../utils/cache.utils';
 import {
   getEditGroupPath,
@@ -39,14 +39,15 @@ import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import JoinGroupButton from './JoinGroupButton';
+import GhostButton from '../Shared/GhostButton';
 
 const NameText = styled(Typography)(() => ({
   fontFamily: 'Inter Bold',
   marginBottom: 7.5,
 }));
 const CardHeader = styled(MuiCardHeader)(() => ({
-  marginTop: 7.5,
   paddingBottom: 0,
+  paddingTop: 14,
   paddingRight: 22,
 }));
 const CardContent = styled(MuiCardContent)(() => ({
@@ -80,6 +81,7 @@ const GroupPageCard = ({
   const [searchParams] = useSearchParams();
   const isAboveMedium = useAboveBreakpoint('md');
   const isAboveSmall = useAboveBreakpoint('sm');
+  const isDesktop = useIsDesktop();
   const navigate = useNavigate();
 
   const tabParam = searchParams.get('tab');
@@ -119,6 +121,7 @@ const GroupPageCard = ({
   const groupPagePath = `${NavigationPaths.Groups}/${name}`;
   const aboutTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTab.About}`;
   const eventsTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTab.Events}`;
+  const groupChatPath = `${groupPagePath}${NavigationPaths.Chat}`;
 
   const getNameTextWidth = () => {
     if (isAboveMedium) {
@@ -133,7 +136,7 @@ const GroupPageCard = ({
   const nameTextStyles: SxProps = {
     width: getNameTextWidth(),
     fontSize: isAboveSmall ? 25 : 23,
-    marginTop: showCardHeader ? -7 : -0.3,
+    marginTop: showCardHeader ? -6 : -0.3,
     marginBottom: 1,
   };
   const iconStyles: SxProps = {
@@ -170,7 +173,7 @@ const GroupPageCard = ({
   const handleTabsChange = (_: React.SyntheticEvent, newValue: number) =>
     setTab(newValue);
 
-  const renderCardActions = () => {
+  const renderItemMenu = () => {
     const isNoAdmin = settings.adminModel === GroupAdminModel.NoAdmin;
     const canManageRoles = !isNoAdmin && myPermissions?.manageRoles;
     const canManageSettings = !isNoAdmin && myPermissions?.manageSettings;
@@ -182,48 +185,42 @@ const GroupPageCard = ({
     const showMenuButton =
       canDeleteGroup || canUpdateGroup || canManageRoles || canManageSettings;
 
-    return (
-      <>
-        <JoinGroupButton
-          groupId={id}
-          currentUserId={currentUserId}
-          isGroupMember={group.isJoinedByMe}
-        />
+    if (!showMenuButton) {
+      return null;
+    }
 
-        {showMenuButton && (
-          <ItemMenu
-            anchorEl={menuAnchorEl}
-            buttonStyles={{ paddingX: 0, minWidth: 38 }}
-            canDelete={canDeleteGroup}
-            canUpdate={canUpdateGroup}
-            deleteItem={handleDelete}
-            deletePrompt={deleteGroupPrompt}
-            editPath={editGroupPath}
-            setAnchorEl={setMenuAnchorEl}
-            variant="ghost"
-          >
-            {canManageSettings && (
-              <MenuItem onClick={handleSettingsButtonClick}>
-                <Settings fontSize="small" sx={{ marginRight: 1 }} />
-                {t('groups.labels.settings')}
-              </MenuItem>
-            )}
-            {canManageRoles && (
-              <MenuItem onClick={handleRolesButtonClick}>
-                <AccountBox fontSize="small" sx={{ marginRight: 1 }} />
-                {t('roles.actions.manageRoles')}
-              </MenuItem>
-            )}
-          </ItemMenu>
+    return (
+      <ItemMenu
+        anchorEl={menuAnchorEl}
+        buttonStyles={{ paddingX: 0, minWidth: 38 }}
+        canDelete={canDeleteGroup}
+        canUpdate={canUpdateGroup}
+        deleteItem={handleDelete}
+        deletePrompt={deleteGroupPrompt}
+        editPath={editGroupPath}
+        setAnchorEl={setMenuAnchorEl}
+        variant={isDesktop ? 'default' : 'ghost'}
+      >
+        {canManageSettings && (
+          <MenuItem onClick={handleSettingsButtonClick}>
+            <Settings fontSize="small" sx={{ marginRight: 1 }} />
+            {t('groups.labels.settings')}
+          </MenuItem>
         )}
-      </>
+        {canManageRoles && (
+          <MenuItem onClick={handleRolesButtonClick}>
+            <AccountBox fontSize="small" sx={{ marginRight: 1 }} />
+            {t('roles.actions.manageRoles')}
+          </MenuItem>
+        )}
+      </ItemMenu>
     );
   };
 
   return (
     <Card {...cardProps}>
       <CoverPhoto imageId={coverPhoto?.id} />
-      {showCardHeader && <CardHeader action={renderCardActions()} />}
+      {showCardHeader && <CardHeader action={renderItemMenu()} />}
       <CardContent>
         <NameText color="primary" variant="h2" sx={nameTextStyles}>
           {name}
@@ -261,9 +258,26 @@ const GroupPageCard = ({
             )}
         </Box>
 
-        {isVerified && !isAboveSmall && (
-          <Flex sx={{ justifyContent: 'right', marginTop: 2 }}>
-            {renderCardActions()}
+        {isVerified && (
+          <Flex sx={{ marginTop: 2, marginBottom: 0.5 }}>
+            <JoinGroupButton
+              groupId={id}
+              currentUserId={currentUserId}
+              isGroupMember={group.isJoinedByMe}
+              sx={{ flex: isDesktop ? undefined : 1 }}
+            />
+
+            {group.isJoinedByMe && (
+              <GhostButton
+                onClick={() => navigate(groupChatPath)}
+                sx={{ marginRight: '8px', flex: isDesktop ? undefined : 1 }}
+                startIcon={<Chat />}
+              >
+                {t('chat.labels.chat')}
+              </GhostButton>
+            )}
+
+            {!isDesktop && renderItemMenu()}
           </Flex>
         )}
       </CardContent>

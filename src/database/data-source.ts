@@ -80,6 +80,7 @@ import { AddResetPasswordSentAtColumn1712112839181 } from './migrations/17121128
 import { AddUserDisplayNameColumn1713640882734 } from './migrations/1713640882734-AddUserDisplayNameColumn';
 import { AddChatTables1714930094485 } from './migrations/1714930094485-AddChatTables';
 import { AddIsDefaultColumnToGroupTable1715555522528 } from './migrations/1715555522528-AddIsDefaultColumnToGroupTable';
+import { AddGroupIdToConversationTable1717305686166 } from './migrations/1717305686166-AddGroupIdToConversationTable';
 
 dotenv.config();
 
@@ -139,6 +140,7 @@ export default new DataSource({
     AddFollowTable1679778147216,
     AddGroupConfigColumns1701548819916,
     AddGroupConfigTable1685746618239,
+    AddGroupIdToConversationTable1717305686166,
     AddGroupMemberLinkTable1681010227367,
     AddInitialMemberCountColumn1709498470199,
     AddIsDefaultColumnToGroupTable1715555522528,

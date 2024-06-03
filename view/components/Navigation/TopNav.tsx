@@ -1,5 +1,5 @@
 import { useReactiveVar } from '@apollo/client';
-import { Search as SearchIcon } from '@mui/icons-material';
+import { ArrowBack, Search as SearchIcon, Tag } from '@mui/icons-material';
 import {
   AppBar,
   AppBarProps,
@@ -8,6 +8,7 @@ import {
   Slide,
   SxProps,
   Toolbar,
+  Typography,
   useTheme,
 } from '@mui/material';
 import { CSSProperties } from 'react';
@@ -15,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import appIconImg from '../../assets/images/app-icon.png';
 import { NavigationPaths } from '../../constants/shared.constants';
-import { isChatPanelOpenVar } from '../../graphql/cache';
+import { activeChatVar } from '../../graphql/cache';
 import {
   ScrollDirection,
   useAboveBreakpoint,
@@ -34,7 +35,7 @@ interface Props {
 }
 
 const TopNav = ({ appBarProps, scrollDirection }: Props) => {
-  const isChatPanelOpen = useReactiveVar(isChatPanelOpenVar);
+  const activeChat = useReactiveVar(activeChatVar);
 
   const { t } = useTranslation();
   const { pathname } = useLocation();
@@ -95,7 +96,7 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
   return (
     <Box position="fixed" width="100%" zIndex={5}>
       <Slide
-        in={isAboveSmall || isChatPanelOpen || scrollDirection !== 'down'}
+        in={!!activeChat || isAboveSmall || scrollDirection !== 'down'}
         appear={false}
         timeout={220}
       >
@@ -106,20 +107,43 @@ const TopNav = ({ appBarProps, scrollDirection }: Props) => {
           {...appBarProps}
         >
           <Toolbar sx={toolbarStyles}>
-            <Flex alignItems="center" onClick={handleBrandClick}>
-              {isDesktop ? (
-                <LazyLoadImage
-                  alt="App icon"
-                  width="42px"
-                  height="auto"
-                  src={appIconImg}
-                  sx={{ cursor: 'pointer' }}
-                  skipAnimation
+            {!activeChat && (
+              <Flex alignItems="center" onClick={handleBrandClick}>
+                {isDesktop ? (
+                  <LazyLoadImage
+                    alt="App icon"
+                    width="42px"
+                    height="auto"
+                    src={appIconImg}
+                    sx={{ cursor: 'pointer' }}
+                    skipAnimation
+                  />
+                ) : (
+                  <LevelOneHeading sx={brandStyles}>
+                    {t('brand')}
+                  </LevelOneHeading>
+                )}
+              </Flex>
+            )}
+
+            {activeChat && !isDesktop && (
+              <Flex alignSelf="center" alignItems="center">
+                <IconButton
+                  onClick={() => navigate(-1)}
+                  sx={{ marginRight: 0.5 }}
+                  edge="start"
+                >
+                  <ArrowBack />
+                </IconButton>
+                <Tag
+                  sx={{ marginRight: '0.25ch', color: 'text.secondary' }}
+                  fontSize="small"
                 />
-              ) : (
-                <LevelOneHeading sx={brandStyles}>{t('brand')}</LevelOneHeading>
-              )}
-            </Flex>
+                <Typography fontFamily="Inter Bold" fontSize="15px">
+                  {activeChat.name}
+                </Typography>
+              </Flex>
+            )}
 
             {isDesktop ? (
               <TopNavDesktop />

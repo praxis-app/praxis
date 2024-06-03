@@ -3,10 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Group } from '../../groups/models/group.model';
 import { Notification } from '../../notifications/models/notification.model';
 import { ConversationMember } from './conversation-member.model';
 import { Message } from './message.model';
@@ -18,18 +20,28 @@ export class Conversation {
   @Field(() => Int)
   id: number;
 
-  @Column({ nullable: true, type: 'varchar' })
-  @Field(() => String, { nullable: true })
-  name: string | null;
+  @Column()
+  @Field()
+  name: string;
 
   @OneToMany(() => Message, (message) => message.conversation)
   messages: Message[];
 
-  @OneToMany(() => ConversationMember, (member) => member.conversation)
+  @OneToMany(() => ConversationMember, (member) => member.conversation, {
+    cascade: true,
+  })
   members: ConversationMember[];
 
   @OneToMany(() => Notification, (notification) => notification.conversation)
   notifications: Notification[];
+
+  @ManyToOne(() => Group, (group) => group.conversations, {
+    onDelete: 'CASCADE',
+  })
+  group: Group | null;
+
+  @Column({ type: 'int', nullable: true })
+  groupId: number | null;
 
   @CreateDateColumn()
   @Field()

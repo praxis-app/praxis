@@ -2,6 +2,9 @@ import { InMemoryCache, makeVar } from '@apollo/client';
 import { AlertColor } from '@mui/material';
 import { LocalStorageKey } from '../constants/shared.constants';
 import { ScrollDirection } from '../hooks/shared.hooks';
+import { Conversation } from './gen';
+
+type ActiveChat = Pick<Conversation, 'id' | 'name'> | null;
 
 interface ToastNotification {
   status: AlertColor;
@@ -9,9 +12,11 @@ interface ToastNotification {
 }
 
 // App state
-export const isNavDrawerOpenVar = makeVar(false);
+export const activeChatVar = makeVar<ActiveChat>(null);
+export const imagesVar = makeVar<Record<number, string>>({});
 export const scrollDirectionVar = makeVar<ScrollDirection>(null);
 export const toastVar = makeVar<ToastNotification | null>(null);
+export const isNavDrawerOpenVar = makeVar(false);
 
 // Authentication state
 export const isLoggedInVar = makeVar(false);
@@ -22,12 +27,6 @@ export const isVerifiedVar = makeVar(false);
 export const inviteTokenVar = makeVar(
   localStorage.getItem(LocalStorageKey.InviteToken),
 );
-
-// Chat state
-export const isChatPanelOpenVar = makeVar(false);
-
-// Image state
-export const imagesVar = makeVar<Record<number, string>>({});
 
 const cache = new InMemoryCache({
   possibleTypes: {

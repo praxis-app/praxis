@@ -2,13 +2,14 @@ import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/App/Layout';
 import HomePage from '../pages/App/HomePage';
 import PageNotFound from '../pages/App/PageNotFound';
+import Chats from '../pages/Chat/Chats';
+import VibeChat from '../pages/Chat/VibeChat';
 import DocsHomePage from '../pages/Docs/DocsHomePage';
 import ServerInvite from '../pages/Invites/ServerInvite';
 import ServerInvites from '../pages/Invites/ServerInvites';
 import Notifications from '../pages/Notifications/Notifications';
 import ServerQuestions from '../pages/Questions/ServerQuestions';
 import VibeCheck from '../pages/Questions/VibeCheck';
-import VibeChat from '../pages/Questions/VibeChat';
 import CanaryPage from '../pages/Settings/CanaryPage';
 import PrivacyPolicy from '../pages/Settings/PrivacyPolicy';
 import ServerSettings from '../pages/Settings/ServerSettings';
@@ -48,20 +49,16 @@ const appRouter = createBrowserRouter([
         element: <ServerSettings />,
       },
       {
-        path: 'privacy-policy',
-        element: <PrivacyPolicy />,
-      },
-      {
-        path: 'canary',
-        element: <CanaryPage />,
-      },
-      {
-        path: 'vibe-check',
-        element: <VibeCheck />,
+        path: 'chats',
+        element: <Chats />,
       },
       {
         path: 'vibe-chat',
         element: <VibeChat />,
+      },
+      {
+        path: 'vibe-check',
+        element: <VibeCheck />,
       },
       {
         path: 'questions',
@@ -70,6 +67,14 @@ const appRouter = createBrowserRouter([
       {
         path: 'activity',
         element: <Notifications />,
+      },
+      {
+        path: 'privacy-policy',
+        element: <PrivacyPolicy />,
+      },
+      {
+        path: 'canary',
+        element: <CanaryPage />,
       },
       {
         path: 'docs',

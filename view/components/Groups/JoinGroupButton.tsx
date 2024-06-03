@@ -1,6 +1,12 @@
 import { Reference, useReactiveVar } from '@apollo/client';
-import { ArrowDropDown, Logout } from '@mui/icons-material';
-import { Menu, MenuItem, styled } from '@mui/material';
+import {
+  ArrowDropDown,
+  GroupAdd,
+  GroupRemove,
+  Groups,
+  Logout,
+} from '@mui/icons-material';
+import { Menu, MenuItem, SxProps, styled } from '@mui/material';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,16 +30,22 @@ import GhostButton from '../Shared/GhostButton';
 
 const Button = styled(GhostButton)(() => ({
   marginRight: 8,
-  minWidth: 80,
+  minWidth: 110,
 }));
 
 interface Props {
   groupId: number;
   currentUserId?: number;
   isGroupMember?: boolean;
+  sx?: SxProps;
 }
 
-const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
+const JoinGroupButton = ({
+  groupId,
+  currentUserId,
+  isGroupMember,
+  sx,
+}: Props) => {
   const [isHovering, setIsHovering] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -222,6 +234,19 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
     }
   };
 
+  const renderBtnStartIcon = () => {
+    if (isGroupMember) {
+      if (isHovering) {
+        return <GroupRemove />;
+      }
+      return <Groups />;
+    }
+    if (groupMemberRequest) {
+      return null;
+    }
+    return <GroupAdd />;
+  };
+
   return (
     <>
       <Button
@@ -230,6 +255,8 @@ const JoinGroupButton = ({ groupId, currentUserId, isGroupMember }: Props) => {
         onMouseEnter={isDesktop ? () => setIsHovering(true) : undefined}
         onMouseLeave={isDesktop ? () => setIsHovering(false) : undefined}
         endIcon={!isDesktop && isGroupMember ? <ArrowDropDown /> : null}
+        startIcon={renderBtnStartIcon()}
+        sx={sx}
       >
         {getButtonText()}
       </Button>
