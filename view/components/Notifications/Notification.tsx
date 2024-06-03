@@ -24,6 +24,8 @@ import {
 } from '../../constants/notifications.constants';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { VOTE_BADGE_STYLES } from '../../constants/vote.constants';
+import { VibeChatDocument } from '../../graphql/chat/queries/gen/VibeChat.gen';
+import { GroupChatDocument } from '../../graphql/groups/queries/gen/GroupChat.gen';
 import { NotificationFragment } from '../../graphql/notifications/fragments/gen/Notification.gen';
 import { useDeleteNotificationMutation } from '../../graphql/notifications/mutations/gen/DeleteNotification.gen';
 import { useUpdateNotificationMutation } from '../../graphql/notifications/mutations/gen/UpdateNotification.gen';
@@ -328,17 +330,6 @@ const Notification = ({
     return NavigationPaths.Home;
   };
 
-  const handleDelete = () => {
-    deleteNotification({
-      variables: { id },
-      update(cache) {
-        const cacheId = cache.identify({ id, __typename });
-        cache.evict({ id: cacheId });
-        cache.gc();
-      },
-    });
-  };
-
   const handleRead = async () => {
     setMenuAnchorEl(null);
     if (isRead) {
@@ -362,6 +353,44 @@ const Notification = ({
         notificationData: { id, status: NotificationStatus.Read },
       },
     });
+  };
+
+  const handleDelete = () => {
+    deleteNotification({
+      variables: { id },
+      update(cache) {
+        const cacheId = cache.identify({ id, __typename });
+        cache.evict({ id: cacheId });
+        cache.gc();
+      },
+    });
+  };
+
+  const refetchQueries = async () => {
+    if (notificationType === NotificationType.NewMessage) {
+      if (conversation?.group) {
+        const groupChat = client.cache.readQuery({
+          query: GroupChatDocument,
+          variables: { limit: 10, offset: 0, name: conversation.group.name },
+        });
+        if (groupChat) {
+          await client.refetchQueries({ include: [GroupChatDocument] });
+        }
+        return;
+      }
+      const vibeChat = client.cache.readQuery({
+        query: VibeChatDocument,
+        variables: { limit: 10, offset: 0 },
+      });
+      if (vibeChat) {
+        await client.refetchQueries({ include: [VibeChatDocument] });
+      }
+    }
+  };
+
+  const handleClick = async () => {
+    await refetchQueries();
+    await handleRead();
   };
 
   const renderIcon = () => {
@@ -437,7 +466,7 @@ const Notification = ({
     >
       <Link
         href={getPath()}
-        onClick={handleRead}
+        onClick={handleClick}
         sx={{
           marginRight: '5px',
           display: 'flex',
