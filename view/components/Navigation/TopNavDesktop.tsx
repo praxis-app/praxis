@@ -126,16 +126,14 @@ const TopNavDesktop = () => {
 
       {me && (
         <Flex alignSelf="center">
-          {me.serverPermissions.manageQuestionnaireTickets && (
-            <IconButton
-              sx={{ width: 50, height: 50 }}
-              onClick={() => navigate(NavigationPaths.Chats)}
-            >
-              <Flex sx={iconWrapperStyles}>
-                <Chat sx={chatIconStyles} />
-              </Flex>
-            </IconButton>
-          )}
+          <IconButton
+            sx={{ width: 50, height: 50 }}
+            onClick={() => navigate(NavigationPaths.Chats)}
+          >
+            <Flex sx={iconWrapperStyles}>
+              <Chat sx={chatIconStyles} />
+            </Flex>
+          </IconButton>
 
           {isAboveLarge && (
             <IconButton
