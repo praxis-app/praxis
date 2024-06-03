@@ -1,4 +1,4 @@
-query Chats($offset: Int = 0, $limit: Int = 20) {
+query Chats($offset: Int!, $limit: Int!) {
   me {
     id
     chats(offset: $offset, limit: $limit) {

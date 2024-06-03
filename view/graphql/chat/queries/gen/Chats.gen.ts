@@ -9,8 +9,8 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type ChatsQueryVariables = Types.Exact<{
-  offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
-  limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  offset: Types.Scalars['Int']['input'];
+  limit: Types.Scalars['Int']['input'];
 }>;
 
 export type ChatsQuery = {
@@ -49,7 +49,7 @@ export type ChatsQuery = {
 };
 
 export const ChatsDocument = gql`
-  query Chats($offset: Int = 0, $limit: Int = 20) {
+  query Chats($offset: Int!, $limit: Int!) {
     me {
       id
       chats(offset: $offset, limit: $limit) {
@@ -79,7 +79,7 @@ export const ChatsDocument = gql`
  * });
  */
 export function useChatsQuery(
-  baseOptions?: Apollo.QueryHookOptions<ChatsQuery, ChatsQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<ChatsQuery, ChatsQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<ChatsQuery, ChatsQueryVariables>(

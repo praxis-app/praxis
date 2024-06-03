@@ -27,7 +27,12 @@ const Chats = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
 
-  const { data, loading, error, refetch } = useChatsQuery();
+  const { data, loading, error, refetch } = useChatsQuery({
+    variables: {
+      limit: rowsPerPage,
+      offset: page * rowsPerPage,
+    },
+  });
 
   const { t } = useTranslation();
 

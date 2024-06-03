@@ -24,12 +24,12 @@
 }
 
 ::selection {
-  background: black;
+  background: #5868cb;
   color: white;
 }
 
 ::-moz-selection {
-  background: black;
+  background: #5868cb;
   color: white;
 }
 
