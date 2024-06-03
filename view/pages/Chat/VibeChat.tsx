@@ -1,4 +1,3 @@
-import { Reference } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +5,7 @@ import ChatPanel from '../../components/Chat/ChatPanel';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useVibeChatQuery } from '../../graphql/chat/queries/gen/VibeChat.gen';
 import { useNewMessageSubscription } from '../../graphql/chat/subscriptions/gen/NewMessage.gen';
+import { addNewMessage } from '../../utils/cache.utils';
 import { isDeniedAccess } from '../../utils/error.utils';
 
 const VibeChat = () => {
@@ -19,25 +19,7 @@ const VibeChat = () => {
       if (!newMessageData?.newMessage || !data?.vibeChat) {
         return;
       }
-      cache.modify({
-        id: cache.identify(data.vibeChat),
-        fields: {
-          messages(existingRefs, { toReference, readField }) {
-            const { newMessage } = newMessageData;
-            const alreadyReceived = existingRefs.some(
-              (ref: Reference) => readField('id', ref) === newMessage.id,
-            );
-            if (alreadyReceived) {
-              return existingRefs;
-            }
-            return [...existingRefs, toReference(newMessage)].sort((a, b) => {
-              const aCreatedAt = new Date(readField('createdAt', a) as Date);
-              const bCreatedAt = new Date(readField('createdAt', b) as Date);
-              return aCreatedAt.getTime() - bCreatedAt.getTime();
-            });
-          },
-        },
-      });
+      addNewMessage(cache, newMessageData.newMessage, data.vibeChat.id);
     },
     skip: !data,
   });

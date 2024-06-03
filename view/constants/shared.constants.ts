@@ -46,6 +46,7 @@ export enum NavigationPaths {
 
 export enum TypeNames {
   Answer = 'Answer',
+  Conversation = 'Conversation',
   Event = 'Event',
   EventAttendee = 'EventAttendee',
   Group = 'Group',

@@ -1,4 +1,3 @@
-import { Reference } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +6,7 @@ import ChatPanel from '../../components/Chat/ChatPanel';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useNewMessageSubscription } from '../../graphql/chat/subscriptions/gen/NewMessage.gen';
 import { useGroupChatQuery } from '../../graphql/groups/queries/gen/GroupChat.gen';
+import { addNewMessage } from '../../utils/cache.utils';
 import { isDeniedAccess } from '../../utils/error.utils';
 
 const GroupChat = () => {
@@ -19,7 +19,6 @@ const GroupChat = () => {
   });
   const chat = data?.group.chat;
 
-  // TODO: Extract onData handler to a separate function
   useNewMessageSubscription({
     variables: {
       conversationId: chat?.id || 0,
@@ -28,25 +27,7 @@ const GroupChat = () => {
       if (!newMessageData?.newMessage || !chat) {
         return;
       }
-      cache.modify({
-        id: cache.identify(chat),
-        fields: {
-          messages(existingRefs, { toReference, readField }) {
-            const { newMessage } = newMessageData;
-            const alreadyReceived = existingRefs.some(
-              (ref: Reference) => readField('id', ref) === newMessage.id,
-            );
-            if (alreadyReceived) {
-              return existingRefs;
-            }
-            return [...existingRefs, toReference(newMessage)].sort((a, b) => {
-              const aCreatedAt = new Date(readField('createdAt', a) as Date);
-              const bCreatedAt = new Date(readField('createdAt', b) as Date);
-              return aCreatedAt.getTime() - bCreatedAt.getTime();
-            });
-          },
-        },
-      });
+      addNewMessage(cache, newMessageData.newMessage, chat.id);
     },
     skip: !data,
   });
