@@ -367,8 +367,6 @@ const Notification = ({
   };
 
   const refetchQueries = async () => {
-    // If the notification is a new message,
-    // refetch the conversation if already opened
     if (notificationType === NotificationType.NewMessage) {
       if (conversation?.group) {
         const groupChat = client.cache.readQuery({
@@ -380,8 +378,13 @@ const Notification = ({
         }
         return;
       }
-      // If group is not present, refetch vibe chat
-      await client.refetchQueries({ include: [VibeChatDocument] });
+      const vibeChat = client.cache.readQuery({
+        query: VibeChatDocument,
+        variables: { limit: 10, offset: 0 },
+      });
+      if (vibeChat) {
+        await client.refetchQueries({ include: [VibeChatDocument] });
+      }
     }
   };
 
