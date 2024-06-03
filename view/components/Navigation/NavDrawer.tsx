@@ -36,6 +36,7 @@ import {
   isLoggedInVar,
   isNavDrawerOpenVar,
   isVerifiedVar,
+  toastVar,
 } from '../../graphql/cache';
 import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
@@ -85,6 +86,17 @@ const NavDrawer = () => {
   const handleLinkClick = (path: string) => () => {
     handleClose();
     navigate(path);
+  };
+
+  const handleChatsBtnClick = () => {
+    if (!isVerified) {
+      toastVar({
+        title: t('chat.prompts.verifyToChat'),
+        status: 'info',
+      });
+      return;
+    }
+    handleLinkClick(NavigationPaths.Chats)();
   };
 
   const handleClose = () => isNavDrawerOpenVar(false);
@@ -172,8 +184,8 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
-        {isVerified && (
-          <ListItemButton onClick={handleLinkClick(NavigationPaths.Chats)}>
+        {isLoggedIn && (
+          <ListItemButton onClick={handleChatsBtnClick}>
             <ListItemIcon>
               <Chat />
             </ListItemIcon>
