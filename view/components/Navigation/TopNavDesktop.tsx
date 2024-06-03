@@ -24,6 +24,8 @@ import {
   isAuthErrorVar,
   isAuthLoadingVar,
   isLoggedInVar,
+  isVerifiedVar,
+  toastVar,
 } from '../../graphql/cache';
 import { useIsFirstUserQuery } from '../../graphql/users/queries/gen/IsFirstUser.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
@@ -40,6 +42,7 @@ const TopNavDesktop = () => {
   const isAuthError = useReactiveVar(isAuthErrorVar);
   const isAuthLoading = useReactiveVar(isAuthLoadingVar);
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const isVerified = useReactiveVar(isVerifiedVar);
 
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -101,6 +104,17 @@ const TopNavDesktop = () => {
     fontSize: 20,
   };
 
+  const handleChatsBtnClick = () => {
+    if (!isVerified) {
+      toastVar({
+        title: t('chat.prompts.verifyToChat'),
+        status: 'info',
+      });
+      return;
+    }
+    navigate(NavigationPaths.Chats);
+  };
+
   const handleMenuButtonClick = (event: MouseEvent<HTMLButtonElement>) =>
     setMenuAnchorEl(event.currentTarget);
 
@@ -128,7 +142,7 @@ const TopNavDesktop = () => {
         <Flex alignSelf="center">
           <IconButton
             sx={{ width: 50, height: 50 }}
-            onClick={() => navigate(NavigationPaths.Chats)}
+            onClick={handleChatsBtnClick}
           >
             <Flex sx={iconWrapperStyles}>
               <Chat sx={chatIconStyles} />

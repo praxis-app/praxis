@@ -528,7 +528,8 @@
     "prompts": {
       "sendAMessage": "Send a message...",
       "noChatsYet": "No chats yet. Join groups to start chatting with other members.",
-      "noMessagesYet": "No messages yet"
+      "noMessagesYet": "No messages yet",
+      "verifyToChat": "You must be verified to chat with other members."
     },
     "labels": {
       "chat": "Chat"
