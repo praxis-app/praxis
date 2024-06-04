@@ -45,7 +45,13 @@ const GroupChat = () => {
       updateQuery: (previousResult, { fetchMoreResult }) =>
         produce(previousResult, (draft) => {
           const { group } = fetchMoreResult;
-          draft.group.chat.messages.unshift(...group.chat.messages);
+          const filteredMessages = group.chat.messages.filter(
+            (message) =>
+              !draft.group.chat.messages.some(
+                (existingMessage) => existingMessage.id === message.id,
+              ),
+          );
+          draft.group.chat.messages.unshift(...filteredMessages);
         }),
     });
   };
