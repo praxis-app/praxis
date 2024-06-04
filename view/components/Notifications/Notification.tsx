@@ -371,7 +371,7 @@ const Notification = ({
       if (conversation?.group) {
         const groupChat = client.cache.readQuery({
           query: GroupChatDocument,
-          variables: { limit: 10, offset: 0, name: conversation.group.name },
+          variables: { limit: 20, offset: 0, name: conversation.group.name },
         });
         if (groupChat) {
           await client.refetchQueries({ include: [GroupChatDocument] });
@@ -380,7 +380,7 @@ const Notification = ({
       }
       const vibeChat = client.cache.readQuery({
         query: VibeChatDocument,
-        variables: { limit: 10, offset: 0 },
+        variables: { limit: 20, offset: 0 },
       });
       if (vibeChat) {
         await client.refetchQueries({ include: [VibeChatDocument] });
