@@ -37,7 +37,13 @@ const VibeChat = () => {
       updateQuery: (previousResult, { fetchMoreResult }) =>
         produce(previousResult, (draft) => {
           const { vibeChat } = fetchMoreResult;
-          draft.vibeChat.messages.unshift(...vibeChat.messages);
+          const filteredMessages = vibeChat.messages.filter(
+            (message) =>
+              !draft.vibeChat.messages.some(
+                (existingMessage) => existingMessage.id === message.id,
+              ),
+          );
+          draft.vibeChat.messages.unshift(...filteredMessages);
         }),
     });
   };
