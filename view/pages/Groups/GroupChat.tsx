@@ -55,7 +55,7 @@ const GroupChat = () => {
           draft.group.chat.messages.unshift(...filteredMessages);
         }),
     });
-  }, 250);
+  }, 50);
 
   if (isDeniedAccess(error)) {
     return <Typography>{t('prompts.permissionDenied')}</Typography>;
