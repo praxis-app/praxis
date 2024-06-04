@@ -70,6 +70,7 @@ const ChatPanel = ({ groupName, chat, onLoadMore, vibeChat }: Props) => {
       <MessageFeed
         feedBottomRef={feedBottomRef}
         formHeightDiff={formHeight - initialFormHeight}
+        scrollPosition={feedScrollPosition}
         messages={chat.messages}
         onImageLoad={handleImageLoad}
         onLoadMore={onLoadMore}

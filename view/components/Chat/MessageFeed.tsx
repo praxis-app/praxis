@@ -11,6 +11,7 @@ interface Props {
   onImageLoad(): void;
   onLoadMore(): Promise<void>;
   onScroll(e: UIEvent<HTMLDivElement>): void;
+  scrollPosition: number;
 }
 
 const MessageFeed = ({
@@ -20,13 +21,14 @@ const MessageFeed = ({
   onImageLoad,
   onLoadMore,
   onScroll,
+  scrollPosition,
 }: Props) => {
   const feedTopRef = useRef<HTMLDivElement>(null);
   const { viewed, setViewed } = useInView(feedTopRef, '50px');
   const theme = useTheme();
 
   useEffect(() => {
-    if (!viewed) {
+    if (!viewed || scrollPosition > -50) {
       return;
     }
     const handleViewed = async () => {
@@ -34,7 +36,7 @@ const MessageFeed = ({
       setViewed(false);
     };
     handleViewed();
-  }, [viewed, onLoadMore, setViewed]);
+  }, [viewed, onLoadMore, setViewed, scrollPosition]);
 
   const feedStyles: SxProps = {
     overflowY: 'scroll',
