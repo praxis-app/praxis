@@ -2,6 +2,7 @@ import { Typography } from '@mui/material';
 import { produce } from 'immer';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
+import { debounce } from 'lodash';
 import ChatPanel from '../../components/Chat/ChatPanel';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useNewMessageSubscription } from '../../graphql/chat/subscriptions/gen/NewMessage.gen';
@@ -34,7 +35,7 @@ const GroupChat = () => {
 
   const { t } = useTranslation();
 
-  const handleLoadMore = async () => {
+  const handleLoadMore = debounce(async () => {
     if (!chat) {
       return;
     }
@@ -54,7 +55,7 @@ const GroupChat = () => {
           draft.group.chat.messages.unshift(...filteredMessages);
         }),
     });
-  };
+  }, 250);
 
   if (isDeniedAccess(error)) {
     return <Typography>{t('prompts.permissionDenied')}</Typography>;

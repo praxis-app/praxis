@@ -1,5 +1,6 @@
 import { Typography } from '@mui/material';
 import { produce } from 'immer';
+import { debounce } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import ChatPanel from '../../components/Chat/ChatPanel';
 import ProgressBar from '../../components/Shared/ProgressBar';
@@ -26,7 +27,7 @@ const VibeChat = () => {
 
   const { t } = useTranslation();
 
-  const handleLoadMore = async () => {
+  const handleLoadMore = debounce(async () => {
     if (!data) {
       return;
     }
@@ -46,7 +47,7 @@ const VibeChat = () => {
           draft.vibeChat.messages.unshift(...filteredMessages);
         }),
     });
-  };
+  }, 250);
 
   if (isDeniedAccess(error)) {
     return <Typography>{t('prompts.permissionDenied')}</Typography>;
