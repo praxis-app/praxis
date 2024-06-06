@@ -1,4 +1,5 @@
 import { Box, Container, SxProps, useTheme } from '@mui/material';
+import { DebouncedFunc } from 'lodash';
 import { RefObject, UIEvent, useEffect, useRef } from 'react';
 import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
 import { useInView } from '../../hooks/shared.hooks';
@@ -9,8 +10,9 @@ interface Props {
   formHeightDiff: number;
   messages: MessageFragment[];
   onImageLoad(): void;
-  onLoadMore(): Promise<void>;
+  onLoadMore: DebouncedFunc<() => Promise<void>>;
   onScroll(e: UIEvent<HTMLDivElement>): void;
+  scrollPosition: number;
 }
 
 const MessageFeed = ({
@@ -20,13 +22,14 @@ const MessageFeed = ({
   onImageLoad,
   onLoadMore,
   onScroll,
+  scrollPosition,
 }: Props) => {
   const feedTopRef = useRef<HTMLDivElement>(null);
   const { viewed, setViewed } = useInView(feedTopRef, '50px');
   const theme = useTheme();
 
   useEffect(() => {
-    if (!viewed) {
+    if (!viewed || scrollPosition > -50) {
       return;
     }
     const handleViewed = async () => {
@@ -34,7 +37,7 @@ const MessageFeed = ({
       setViewed(false);
     };
     handleViewed();
-  }, [viewed, onLoadMore, setViewed]);
+  }, [viewed, onLoadMore, setViewed, scrollPosition]);
 
   const feedStyles: SxProps = {
     overflowY: 'scroll',

@@ -1,4 +1,5 @@
 import { useApolloClient, useReactiveVar } from '@apollo/client';
+import { DebouncedFunc } from 'lodash';
 import { UIEvent, useEffect, useRef, useState } from 'react';
 import MessageFeed from '../../components/Chat/MessageFeed';
 import MessageForm from '../../components/Chat/MessageForm';
@@ -12,7 +13,7 @@ const CHAT_FORM_HEIGHT_DESKTOP = 92;
 interface Props {
   chat: ChatPanelFragment;
   groupName?: string;
-  onLoadMore(): Promise<void>;
+  onLoadMore: DebouncedFunc<() => Promise<void>>;
   vibeChat?: boolean;
 }
 
@@ -70,6 +71,7 @@ const ChatPanel = ({ groupName, chat, onLoadMore, vibeChat }: Props) => {
       <MessageFeed
         feedBottomRef={feedBottomRef}
         formHeightDiff={formHeight - initialFormHeight}
+        scrollPosition={feedScrollPosition}
         messages={chat.messages}
         onImageLoad={handleImageLoad}
         onLoadMore={onLoadMore}
