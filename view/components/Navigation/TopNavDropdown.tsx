@@ -10,6 +10,7 @@ import {
 } from '@mui/icons-material';
 import { Menu, MenuItem, SvgIconProps, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { truncate } from 'lodash';
 import { useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
@@ -42,7 +43,10 @@ const TopNavDropdown = ({ anchorEl, handleClose, me }: Props) => {
   const navigate = useNavigate();
 
   const { name, displayName, serverPermissions } = me;
-  const userName = displayName || name;
+  const username = displayName || name;
+  const truncatedUsername = truncate(username, {
+    length: 20,
+  });
 
   const handleLogOutBtnClick = () =>
     window.confirm(t('users.prompts.logOut')) &&
@@ -81,7 +85,7 @@ const TopNavDropdown = ({ anchorEl, handleClose, me }: Props) => {
     >
       <MenuItem onClick={handleProfileBtnClick} sx={{ gap: 1 }}>
         <UserAvatar size={20} />
-        <Typography>{userName}</Typography>
+        <Typography>{truncatedUsername}</Typography>
       </MenuItem>
 
       <MenuItem onClick={handleEditProfileBtnClick}>
