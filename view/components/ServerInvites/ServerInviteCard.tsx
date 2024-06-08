@@ -9,6 +9,7 @@ import {
   Typography,
   styled,
 } from '@mui/material';
+import { truncate } from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../graphql/cache';
@@ -46,6 +47,9 @@ const ServerInviteCard = ({
   const [deleteInvite] = useDeleteServerInviteMutation();
 
   const { t } = useTranslation();
+
+  const username = user.displayName || user.name;
+  const truncatedUsername = truncate(username, { length: 25 });
 
   const usesText = `${t('invites.labels.usesWithColon')} ${
     uses + (maxUses ? `/${maxUses}` : '')
@@ -124,7 +128,7 @@ const ServerInviteCard = ({
             size={24}
             sx={{ marginRight: 1.5, marginBottom: 0.25 }}
           />
-          <Box>{user.displayName || user.name}</Box>
+          <Box>{truncatedUsername}</Box>
         </Link>
 
         <Typography>{usesText}</Typography>
