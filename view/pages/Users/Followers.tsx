@@ -35,6 +35,25 @@ const Followers = () => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
+  const username = data?.user.displayName || name;
+  const truncatedUsername = truncate(username, {
+    length: isDesktop ? TruncationSizes.Medium : TruncationSizes.Small,
+  });
+
+  const breadcrumbs = [
+    {
+      label: truncatedUsername,
+      href: getUserProfilePath(name),
+    },
+    {
+      label: data
+        ? t('users.labels.followers', {
+            count: data.user.followerCount,
+          })
+        : t('pagination.loading'),
+    },
+  ];
+
   useEffect(() => {
     if (name) {
       getFollowers({
@@ -63,22 +82,6 @@ const Followers = () => {
   if (error) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
-
-  const breadcrumbs = [
-    {
-      label: truncate(name, {
-        length: isDesktop ? TruncationSizes.Medium : TruncationSizes.Small,
-      }),
-      href: getUserProfilePath(name),
-    },
-    {
-      label: data
-        ? t('users.labels.followers', {
-            count: data.user.followerCount,
-          })
-        : t('pagination.loading'),
-    },
-  ];
 
   return (
     <>

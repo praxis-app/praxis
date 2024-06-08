@@ -1,6 +1,7 @@
 query Following($name: String!, $offset: Int, $limit: Int) {
   user(name: $name) {
     id
+    displayName
     following(offset: $offset, limit: $limit) {
       ...Follow
     }
