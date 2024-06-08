@@ -3,6 +3,7 @@ import {
   Box,
   Card,
   CardContent,
+  Divider,
   CardHeader as MuiCardHeader,
   Typography,
   styled,
@@ -11,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { ServerRoleViewFragment } from '../../../graphql/roles/fragments/gen/ServerRoleView.gen';
 import { PermissionName, getPermissionText } from '../../../utils/role.utils';
 import Flex from '../../Shared/Flex';
+import { useIsDesktop } from '../../../hooks/shared.hooks';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
@@ -22,6 +24,7 @@ interface Props {
 
 const ServerRoleView = ({ role }: Props) => {
   const { t } = useTranslation();
+  const isDesktop = useIsDesktop();
 
   const grantedPermissions = Object.entries(role.permissions).reduce<string[]>(
     (result, [key, value]) => {
@@ -58,20 +61,31 @@ const ServerRoleView = ({ role }: Props) => {
         }
       />
       <CardContent>
+        <Divider sx={{ marginBottom: 2.1 }} />
+
         <Typography
-          fontSize="18px"
-          fontFamily="Inter Medium"
-          marginBottom={0.5}
+          fontFamily="Inter Bold"
+          marginBottom={0.75}
+          textTransform="uppercase"
         >
           {t('permissions.headers.grantedPermissions')}
         </Typography>
-        <Flex flexDirection="column" gap={0.5} marginBottom={1.25}>
+        <Flex
+          flexDirection={isDesktop ? 'row' : 'column'}
+          flexWrap={isDesktop ? 'wrap' : 'nowrap'}
+          gap={0.5}
+          marginBottom={1.25}
+        >
           {grantedPermissions.map((permission) => {
             const { displayName } = getPermissionText(
               permission as PermissionName,
             );
             return (
-              <Flex gap={1} key={permission}>
+              <Flex
+                gap={1}
+                key={permission}
+                width={isDesktop ? '240px' : '100%'}
+              >
                 <Check sx={{ color: '#50a561' }} /> {displayName}
               </Flex>
             );
@@ -81,9 +95,9 @@ const ServerRoleView = ({ role }: Props) => {
         {deniedPermissions.length > 0 && (
           <>
             <Typography
-              fontSize="18px"
-              fontFamily="Inter Medium"
-              marginBottom={0.5}
+              fontFamily="Inter Bold"
+              marginBottom={0.75}
+              textTransform="uppercase"
             >
               {t('permissions.headers.deniedPermissions')}
             </Typography>
