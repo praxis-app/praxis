@@ -1,0 +1,15 @@
+query ViewServerRoles {
+  serverRoles {
+    id
+    name
+    color
+
+    permissions {
+      ...ServerRolePermissions
+    }
+
+    members {
+      ...UserAvatar
+    }
+  }
+}
