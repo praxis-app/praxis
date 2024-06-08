@@ -107,13 +107,22 @@ const ServerRoleView = ({ role }: Props) => {
             >
               {t('permissions.headers.deniedPermissions')}
             </Typography>
-            <Flex flexDirection="column" gap={0.5} marginBottom={1}>
+            <Flex
+              flexDirection={isDesktop ? 'row' : 'column'}
+              flexWrap={isDesktop ? 'wrap' : 'nowrap'}
+              gap={0.5}
+              marginBottom={1.25}
+            >
               {deniedPermissions.map((permission) => {
                 const { displayName } = getPermissionText(
                   permission as PermissionName,
                 );
                 return (
-                  <Flex gap={1} key={permission}>
+                  <Flex
+                    gap={1}
+                    key={permission}
+                    width={isDesktop ? '240px' : '100%'}
+                  >
                     <Close sx={{ color: '#e04f4a' }} /> {displayName}
                   </Flex>
                 );
