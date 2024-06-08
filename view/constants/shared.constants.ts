@@ -42,6 +42,7 @@ export enum NavigationPaths {
   Users = '/users',
   VibeChat = '/vibe-chat',
   VibeCheck = '/vibe-check',
+  ViewRoles = '/roles/view',
 }
 
 export enum TypeNames {

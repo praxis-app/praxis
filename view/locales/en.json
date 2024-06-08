@@ -450,7 +450,8 @@
       "add": "Add",
       "addMembers": "Add members",
       "delete": "Delete role",
-      "manageRoles": "Manage roles"
+      "manageRoles": "Manage roles",
+      "viewRoles": "View roles"
     },
     "headers": {
       "serverRoles": "Server Roles"
