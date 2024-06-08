@@ -463,7 +463,8 @@
     "labels": {
       "members": "Members",
       "membersCount_one": "{{count}} Member",
-      "membersCount_other": "{{count}} Members"
+      "membersCount_other": "{{count}} Members",
+      "quickView": "Quick view"
     },
     "tabs": {
       "display": "Display",
