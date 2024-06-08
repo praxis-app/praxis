@@ -10,11 +10,13 @@ import {
   styled,
 } from '@mui/material';
 import { useState } from 'react';
+import { truncate } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
+  TruncationSizes,
 } from '../../constants/shared.constants';
 import { isLoggedInVar } from '../../graphql/cache';
 import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
@@ -32,6 +34,7 @@ import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 import PostCardFooter from './PostCardFooter';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
@@ -67,6 +70,7 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const isDesktop = useIsDesktop();
 
   const { id, body, images, user, group, event, createdAt } = post;
   const me = data && data.me;
@@ -112,6 +116,11 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
 
   const renderTitle = () => {
     const showGroup = group && !isGroupPage;
+    const username = user.displayName || user.name;
+    const truncatedUsername = truncate(username, {
+      length: isDesktop ? TruncationSizes.Medium : 20,
+    });
+
     return (
       <Box marginBottom={showGroup ? -0.5 : 0}>
         {showGroup && (
@@ -124,9 +133,9 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
         <Box fontSize={14} sx={{ color: 'text.secondary' }}>
           <Link
             href={userProfilePath}
-            sx={showGroup ? { color: 'inherit' } : undefined}
+            sx={{ color: showGroup ? 'inherit' : undefined }}
           >
-            {user.displayName || user.name}
+            {truncatedUsername}
           </Link>
           {MIDDOT_WITH_SPACES}
           <Link href={postPath} sx={{ color: 'inherit', fontSize: 13 }}>

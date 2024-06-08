@@ -1,5 +1,6 @@
 import { Assignment } from '@mui/icons-material';
 import { Box, MenuItem, SxProps, TableRow } from '@mui/material';
+import { truncate } from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toastVar } from '../../graphql/cache';
@@ -68,12 +69,15 @@ const ServerInviteRow = ({
     serverPermissions: { manageInvites },
   } = me;
 
+  const username = user.displayName || user.name;
+  const truncatedUsername = truncate(username, { length: 18 });
+
   return (
     <TableRow sx={tableRowStyles}>
       <TableCell>
         <Link href={getUserProfilePath(user.name)} sx={{ display: 'flex' }}>
           <UserAvatar user={user} size={24} sx={{ marginRight: 1.5 }} />
-          <Box marginTop={0.25}>{user.displayName || user.name}</Box>
+          <Box marginTop={0.25}>{truncatedUsername}</Box>
         </Link>
       </TableCell>
 

@@ -19,6 +19,7 @@ export type FollowingQuery = {
   user: {
     __typename?: 'User';
     id: number;
+    displayName?: string | null;
     followingCount: number;
     following: Array<{
       __typename?: 'User';
@@ -36,6 +37,7 @@ export const FollowingDocument = gql`
   query Following($name: String!, $offset: Int, $limit: Int) {
     user(name: $name) {
       id
+      displayName
       following(offset: $offset, limit: $limit) {
         ...Follow
       }

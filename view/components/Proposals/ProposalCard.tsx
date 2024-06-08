@@ -10,6 +10,7 @@ import {
   Typography,
   styled,
 } from '@mui/material';
+import { truncate } from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -17,11 +18,13 @@ import { ProposalStage } from '../../constants/proposal.constants';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
+  TruncationSizes,
 } from '../../constants/shared.constants';
 import { isLoggedInVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { useDeleteProposalMutation } from '../../graphql/proposals/mutations/gen/DeleteProposal.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import { removeProposal } from '../../utils/cache.utils';
 import { getGroupPath } from '../../utils/group.utils';
 import { getProposalActionLabel } from '../../utils/proposal.utils';
@@ -72,6 +75,7 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const isDesktop = useIsDesktop();
 
   const {
     id,
@@ -146,6 +150,11 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
     const actionLabel = getProposalActionLabel(action.actionType, t);
     const showGroup = group && !isGroupPage;
 
+    const username = user.displayName || user.name;
+    const truncatedUsername = truncate(username, {
+      length: isDesktop ? TruncationSizes.Medium : 20,
+    });
+
     return (
       <Box marginBottom={showGroup ? -0.5 : 0}>
         {showGroup && (
@@ -160,7 +169,7 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
             href={userProfilePath}
             sx={showGroup ? { color: 'inherit' } : undefined}
           >
-            {user.displayName || user.name}
+            {truncatedUsername}
           </Link>
           {MIDDOT_WITH_SPACES}
 

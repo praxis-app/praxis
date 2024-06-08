@@ -15,6 +15,7 @@ import {
   TaskAlt,
   SupervisedUserCircle as UsersIcon,
 } from '@mui/icons-material';
+import { truncate } from 'lodash';
 import {
   Divider,
   Drawer,
@@ -156,6 +157,11 @@ const NavDrawer = () => {
     const { me } = meData;
     const userProfilePath = getUserProfilePath(me.name);
 
+    const username = me.displayName || me.name;
+    const truncatedUsername = truncate(username, {
+      length: 18,
+    });
+
     const {
       createInvites,
       manageInvites,
@@ -172,7 +178,7 @@ const NavDrawer = () => {
           <ListItemIcon>
             <UserAvatar user={me} sx={USER_AVATAR_STYLES} />
           </ListItemIcon>
-          <ListItemText primary={me.displayName || me.name} />
+          <ListItemText primary={truncatedUsername} />
         </ListItemButton>
 
         {isLoggedIn && !isVerified && (

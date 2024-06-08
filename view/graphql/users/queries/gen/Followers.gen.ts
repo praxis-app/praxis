@@ -19,6 +19,7 @@ export type FollowersQuery = {
   user: {
     __typename?: 'User';
     id: number;
+    displayName?: string | null;
     followerCount: number;
     followers: Array<{
       __typename?: 'User';
@@ -36,6 +37,7 @@ export const FollowersDocument = gql`
   query Followers($name: String!, $offset: Int, $limit: Int) {
     user(name: $name) {
       id
+      displayName
       followers(offset: $offset, limit: $limit) {
         ...Follow
       }
