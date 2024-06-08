@@ -73,6 +73,7 @@ const ServerRoleView = ({ role }: Props) => {
           fontFamily="Inter Bold"
           marginBottom={0.75}
           textTransform="uppercase"
+          fontSize={15}
         >
           {t('permissions.headers.grantedPermissions')}
         </Typography>
@@ -104,6 +105,7 @@ const ServerRoleView = ({ role }: Props) => {
               fontFamily="Inter Bold"
               marginBottom={0.75}
               textTransform="uppercase"
+              fontSize={15}
             >
               {t('permissions.headers.deniedPermissions')}
             </Typography>
