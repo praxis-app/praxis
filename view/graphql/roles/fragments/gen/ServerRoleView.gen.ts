@@ -7,7 +7,7 @@ import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.g
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
 
-export type RoleViewFragment = {
+export type ServerRoleViewFragment = {
   __typename?: 'ServerRole';
   id: number;
   name: string;
@@ -38,8 +38,8 @@ export type RoleViewFragment = {
   }>;
 };
 
-export const RoleViewFragmentDoc = gql`
-  fragment RoleView on ServerRole {
+export const ServerRoleViewFragmentDoc = gql`
+  fragment ServerRoleView on ServerRole {
     id
     name
     color

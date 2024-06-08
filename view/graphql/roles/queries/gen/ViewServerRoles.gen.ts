@@ -1,7 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { RoleViewFragmentDoc } from '../../fragments/gen/RoleView.gen';
+import { ServerRoleViewFragmentDoc } from '../../fragments/gen/ServerRoleView.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -49,10 +49,10 @@ export type ViewServerRolesQuery = {
 export const ViewServerRolesDocument = gql`
   query ViewServerRoles {
     serverRoles {
-      ...RoleView
+      ...ServerRoleView
     }
   }
-  ${RoleViewFragmentDoc}
+  ${ServerRoleViewFragmentDoc}
 `;
 
 /**

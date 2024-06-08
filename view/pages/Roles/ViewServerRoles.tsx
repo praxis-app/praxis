@@ -1,9 +1,9 @@
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import ServerRoleView from '../../components/Roles/ServerRoles/ServerRoleView';
+import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useViewServerRolesQuery } from '../../graphql/roles/queries/gen/ViewServerRoles.gen';
-import LevelOneHeading from '../../components/Shared/LevelOneHeading';
-import RoleView from '../../components/Roles/RoleView';
 
 const ViewServerRoles = () => {
   const { data, loading, error } = useViewServerRolesQuery();
@@ -33,7 +33,7 @@ const ViewServerRoles = () => {
       </Typography>
 
       {data.serverRoles.map((role) => (
-        <RoleView key={role.id} role={role} />
+        <ServerRoleView key={role.id} role={role} />
       ))}
     </>
   );

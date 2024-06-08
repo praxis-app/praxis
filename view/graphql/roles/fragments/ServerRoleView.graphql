@@ -1,4 +1,4 @@
-fragment RoleView on ServerRole {
+fragment ServerRoleView on ServerRole {
   id
   name
   color
