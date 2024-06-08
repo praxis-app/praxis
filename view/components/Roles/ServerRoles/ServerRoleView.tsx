@@ -2,7 +2,7 @@ import { Check, Close } from '@mui/icons-material';
 import {
   Box,
   Card,
-  CardContent,
+  CardContent as MuiCardContent,
   Divider,
   CardHeader as MuiCardHeader,
   Typography,
@@ -16,6 +16,12 @@ import { useIsDesktop } from '../../../hooks/shared.hooks';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
+}));
+
+const CardContent = styled(MuiCardContent)(() => ({
+  '&:last-child': {
+    paddingBottom: 14,
+  },
 }));
 
 interface Props {
