@@ -454,7 +454,11 @@
       "viewRoles": "View roles"
     },
     "headers": {
-      "serverRoles": "Server Roles"
+      "serverRoles": "Server Roles",
+      "viewServerRoles": "Roles Overview"
+    },
+    "subheaders": {
+      "viewServerRoles": "Explore server roles transparently, see who holds them, and understand their permissions."
     },
     "form": {
       "colorPickerLabel": "Role color",

@@ -1,0 +1,13 @@
+fragment RoleView on ServerRole {
+  id
+  name
+  color
+
+  permissions {
+    ...ServerRolePermissions
+  }
+
+  members {
+    ...UserAvatar
+  }
+}

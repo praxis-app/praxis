@@ -1,8 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { ServerRolePermissionsFragmentDoc } from '../../fragments/gen/ServerRolePermissions.gen';
-import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.gen';
+import { RoleViewFragmentDoc } from '../../fragments/gen/RoleView.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -50,19 +49,10 @@ export type ViewServerRolesQuery = {
 export const ViewServerRolesDocument = gql`
   query ViewServerRoles {
     serverRoles {
-      id
-      name
-      color
-      permissions {
-        ...ServerRolePermissions
-      }
-      members {
-        ...UserAvatar
-      }
+      ...RoleView
     }
   }
-  ${ServerRolePermissionsFragmentDoc}
-  ${UserAvatarFragmentDoc}
+  ${RoleViewFragmentDoc}
 `;
 
 /**
