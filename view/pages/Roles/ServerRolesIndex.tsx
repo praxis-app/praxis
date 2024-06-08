@@ -1,3 +1,4 @@
+import { Visibility } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -41,6 +42,7 @@ const ServerRolesIndex = () => {
         </LevelOneHeading>
 
         <GhostButton
+          startIcon={<Visibility sx={{ marginRight: '2px' }} />}
           onClick={() => navigate(NavigationPaths.ViewRoles)}
           sx={{ marginBottom: 3.5 }}
         >
