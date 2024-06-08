@@ -524,6 +524,10 @@
     },
     "labels": {
       "permissions": "Permissions"
+    },
+    "headers": {
+      "grantedPermissions": "Granted permissions",
+      "deniedPermissions": "Denied permissions"
     }
   },
 
