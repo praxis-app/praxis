@@ -67,7 +67,7 @@ const ServerRoleView = ({ role }: Props) => {
         }
       />
       <CardContent>
-        <Divider sx={{ marginBottom: 2.1 }} />
+        <Divider sx={{ marginBottom: 2.4 }} />
 
         <Typography
           fontFamily="Inter Bold"
