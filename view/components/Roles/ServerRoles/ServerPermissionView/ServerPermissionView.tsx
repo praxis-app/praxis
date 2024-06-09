@@ -55,6 +55,7 @@ const ServerPermissionView = ({ permission, enabled }: Props) => {
       </Flex>
 
       <ServerPermissionViewModal
+        permissionName={permission}
         displayName={displayName}
         description={description}
         setIsOpen={setIsModalOpen}

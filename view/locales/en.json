@@ -527,8 +527,9 @@
       "permissions": "Permissions"
     },
     "headers": {
-      "grantedPermissions": "Granted permissions",
       "deniedPermissions": "Denied permissions",
+      "grantedPermissions": "Granted permissions",
+      "membersWithPermission": "Members with permission",
       "permission": "Permission"
     }
   },

@@ -31,16 +31,22 @@ export class ServerRolesService {
     return this.serverRoleRepository.findOneOrFail({ where, relations });
   }
 
-  async getServerRoles(permissionName?: string) {
+  async getServerRoles(where?: FindOptionsWhere<ServerRole>) {
     return this.serverRoleRepository.find({
-      where: permissionName ? { [permissionName]: true } : {},
       order: { updatedAt: 'DESC' },
+      where,
     });
   }
 
-  async getServerRoleMembers(where?: FindOptionsWhere<ServerRole>) {
-    const { members } = await this.getServerRole(where, ['members']);
-    return members;
+  async getServerRoleMembers(roleId?: number, permissionName?: string) {
+    return this.userRepository.find({
+      where: {
+        serverRoles: {
+          id: roleId,
+          permission: permissionName ? { [permissionName]: true } : undefined,
+        },
+      },
+    });
   }
 
   async getAvailableUsersToAdd(id: number) {

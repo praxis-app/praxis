@@ -1,0 +1,10 @@
+query ServerPermissionViewModal($permissionName: String!) {
+  serverRoles(permissionName: $permissionName) {
+    id
+    name
+    color
+  }
+  membersWithPermission(permissionName: $permissionName) {
+    ...UserAvatar
+  }
+}
