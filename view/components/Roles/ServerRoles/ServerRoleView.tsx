@@ -16,7 +16,7 @@ import { getUserProfilePath } from '../../../utils/user.utils';
 import Flex from '../../Shared/Flex';
 import Link from '../../Shared/Link';
 import UserAvatar from '../../Users/UserAvatar';
-import ServerPermissionView from './ServerPermissionView';
+import ServerPermissionView from './ServerPermissionView/ServerPermissionView';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,

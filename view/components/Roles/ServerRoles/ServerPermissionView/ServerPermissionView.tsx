@@ -1,11 +1,13 @@
 import { Check, Close } from '@mui/icons-material';
-import { useIsDesktop } from '../../../hooks/shared.hooks';
-import { PermissionName, getPermissionText } from '../../../utils/role.utils';
-import Flex from '../../Shared/Flex';
 import { Box, PaperProps, Popover, SxProps, Typography } from '@mui/material';
 import { MouseEvent, useState } from 'react';
-import Modal from '../../Shared/Modal';
-import { useTranslation } from 'react-i18next';
+import { useIsDesktop } from '../../../../hooks/shared.hooks';
+import {
+  PermissionName,
+  getPermissionText,
+} from '../../../../utils/role.utils';
+import Flex from '../../../Shared/Flex';
+import ServerPermissionViewModal from './ServerPermissionViewModal';
 
 interface Props {
   permission: string;
@@ -15,8 +17,6 @@ interface Props {
 const ServerPermissionView = ({ permission, enabled }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
   const Icon = enabled ? Check : Close;
@@ -54,19 +54,12 @@ const ServerPermissionView = ({ permission, enabled }: Props) => {
         <Icon sx={iconStyles} /> {displayName}
       </Flex>
 
-      <Modal
-        title={t('permissions.headers.permission')}
-        onClose={() => setIsModalOpen(false)}
-        open={isModalOpen}
-        centeredTitle
-      >
-        <Typography>
-          <Box component="span" fontFamily="Inter Bold">
-            {displayName}
-          </Box>{' '}
-          - {description}
-        </Typography>
-      </Modal>
+      <ServerPermissionViewModal
+        displayName={displayName}
+        description={description}
+        setIsOpen={setIsModalOpen}
+        isOpen={isModalOpen}
+      />
 
       <Popover
         anchorEl={anchorEl}

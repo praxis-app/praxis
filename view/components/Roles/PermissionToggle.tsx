@@ -26,13 +26,10 @@ const PermissionToggle = ({
   isEnabled,
   isGroup,
 }: Props) => {
-  const { displayName, description, inDev } = getPermissionText(
+  const { displayName, description } = getPermissionText(
     permissionName,
     isGroup,
   );
-  if (inDev) {
-    return null;
-  }
 
   const isChecked = !!(permissionInput !== undefined
     ? permissionInput

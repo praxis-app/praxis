@@ -9,11 +9,8 @@ export type PermissionName = keyof Omit<
 >;
 
 interface PermissionText {
-  displayName: string | null;
-  description: string | null;
-
-  // TODO: Remove once all permissions are implemented
-  inDev?: boolean;
+  displayName: string;
+  description: string;
 }
 
 export const getPermissionText = (
@@ -108,11 +105,6 @@ export const getPermissionText = (
       return {
         displayName: _t('permissions.names.manageQuestionnaires'),
         description: _t('permissions.descriptions.manageQuestionnaires'),
-      };
-    default:
-      return {
-        displayName: null,
-        description: null,
       };
   }
 };
