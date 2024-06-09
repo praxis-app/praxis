@@ -528,7 +528,8 @@
     },
     "headers": {
       "grantedPermissions": "Granted permissions",
-      "deniedPermissions": "Denied permissions"
+      "deniedPermissions": "Denied permissions",
+      "permission": "Permission"
     }
   },
 

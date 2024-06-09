@@ -4,6 +4,8 @@ import { PermissionName, getPermissionText } from '../../../utils/role.utils';
 import Flex from '../../Shared/Flex';
 import { Box, PaperProps, Popover, SxProps, Typography } from '@mui/material';
 import { MouseEvent, useState } from 'react';
+import Modal from '../../Shared/Modal';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   permission: string;
@@ -12,6 +14,9 @@ interface Props {
 
 const ServerPermissionView = ({ permission, enabled }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
   const Icon = enabled ? Check : Close;
@@ -40,12 +45,28 @@ const ServerPermissionView = ({ permission, enabled }: Props) => {
     <>
       <Flex
         gap={1}
-        width={isDesktop ? '240px' : '100%'}
+        onClick={() => setIsModalOpen(true)}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={() => setAnchorEl(null)}
+        width={isDesktop ? '240px' : '100%'}
+        sx={{ cursor: 'pointer' }}
       >
         <Icon sx={iconStyles} /> {displayName}
       </Flex>
+
+      <Modal
+        title={t('permissions.headers.permission')}
+        onClose={() => setIsModalOpen(false)}
+        open={isModalOpen}
+        centeredTitle
+      >
+        <Typography>
+          <Box component="span" fontFamily="Inter Bold">
+            {displayName}
+          </Box>{' '}
+          - {description}
+        </Typography>
+      </Modal>
 
       <Popover
         anchorEl={anchorEl}
