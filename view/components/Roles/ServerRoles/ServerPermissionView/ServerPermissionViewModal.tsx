@@ -44,20 +44,18 @@ const ServerPermissionViewModal = ({
       open={isOpen}
       centeredTitle
     >
-      {data && (
-        <Typography marginBottom={2}>
-          <Box component="span" fontFamily="Inter Bold">
-            {displayName}
-          </Box>{' '}
-          - {description}
-        </Typography>
-      )}
-
       {error && <Typography>{t('errors.somethingWentWrong')}</Typography>}
       {loading && <ProgressBar />}
 
       {data && (
         <>
+          <Typography marginBottom={2}>
+            <Box component="span" fontFamily="Inter Bold">
+              {displayName}
+            </Box>{' '}
+            - {description}
+          </Typography>
+
           <Typography
             fontFamily="Inter Bold"
             marginBottom={0.75}
