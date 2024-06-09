@@ -1,24 +1,31 @@
+import { useReactiveVar } from '@apollo/client';
 import { Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import ServerRoleView from '../../components/Roles/ServerRoles/ServerRoleView';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { isVerifiedVar } from '../../graphql/cache';
 import { useViewServerRolesQuery } from '../../graphql/roles/queries/gen/ViewServerRoles.gen';
 
 const ViewServerRoles = () => {
-  const { data, loading, error } = useViewServerRolesQuery();
+  const isVerified = useReactiveVar(isVerifiedVar);
+  const { data, loading, error } = useViewServerRolesQuery({
+    skip: !isVerified,
+  });
 
   const { t } = useTranslation();
-
-  if (error) {
-    return <Typography>{t('errors.somethingWentWrong')}</Typography>;
-  }
 
   if (loading) {
     return <ProgressBar />;
   }
 
   if (!data) {
+    if (!isVerified) {
+      return <Typography>{t('prompts.permissionDenied')}</Typography>;
+    }
+    if (error) {
+      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+    }
     return null;
   }
 
