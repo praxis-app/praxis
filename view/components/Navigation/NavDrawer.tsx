@@ -6,6 +6,7 @@ import {
   Article as DocsIcon,
   EventNote,
   HowToReg,
+  Info,
   Link as InvitesIcon,
   QuestionAnswer,
   Rule,
@@ -125,6 +126,15 @@ const NavDrawer = () => {
     </ListItemButton>
   );
 
+  const renderAboutButton = () => (
+    <ListItemButton onClick={handleLinkClick(NavigationPaths.About)}>
+      <ListItemIcon>
+        <Info />
+      </ListItemIcon>
+      <ListItemText primary={t('navigation.about')} />
+    </ListItemButton>
+  );
+
   const renderList = () => {
     if (!meData?.me) {
       const signUpPath = isFirstUserData?.isFirstUser
@@ -135,6 +145,7 @@ const NavDrawer = () => {
         <>
           {renderRulesButton()}
           {renderDocsButton()}
+          {renderAboutButton()}
 
           <ListItemButton onClick={handleLinkClick(NavigationPaths.LogIn)}>
             <ListItemIcon>
@@ -276,6 +287,7 @@ const NavDrawer = () => {
 
         {renderRulesButton()}
         {renderDocsButton()}
+        {renderAboutButton()}
 
         <ListItemButton
           onClick={() =>

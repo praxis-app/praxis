@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from '../components/App/Layout';
+import About from '../pages/App/About';
 import HomePage from '../pages/App/HomePage';
 import PageNotFound from '../pages/App/PageNotFound';
 import Chats from '../pages/Chat/Chats';
@@ -35,6 +36,10 @@ const appRouter = createBrowserRouter([
       {
         path: '*',
         element: <PageNotFound />,
+      },
+      {
+        path: 'about',
+        element: <About />,
       },
       {
         path: 'invites',

@@ -51,6 +51,7 @@
 
   "navigation": {
     "activity": "Activity",
+    "about": "About",
     "docs": "Docs",
     "events": "Events",
     "groups": "Groups",
