@@ -530,7 +530,8 @@
       "deniedPermissions": "Denied permissions",
       "grantedPermissions": "Granted permissions",
       "membersWithPermission": "Members with permission",
-      "permission": "Permission"
+      "permission": "Permission",
+      "rolesWithPermission": "Roles with permission"
     }
   },
 
