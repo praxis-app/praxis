@@ -8,9 +8,11 @@ import {
   styled,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { NavigationPaths } from '../../../constants/shared.constants';
 import { ServerRoleViewFragment } from '../../../graphql/roles/fragments/gen/ServerRoleView.gen';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import Flex from '../../Shared/Flex';
+import Link from '../../Shared/Link';
 import ServerPermissionView from './ServerPermissionView/ServerPermissionView';
 import ServerRoleMembersView from './ServerRoleMembersView';
 
@@ -26,11 +28,14 @@ const CardContent = styled(MuiCardContent)(() => ({
 
 interface Props {
   role: ServerRoleViewFragment;
+  canManageRoles: boolean;
 }
 
-const ServerRoleView = ({ role }: Props) => {
+const ServerRoleView = ({ role, canManageRoles }: Props) => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+
+  const editRolePath = `${NavigationPaths.Roles}/${role.id}/edit`;
 
   const grantedPermissions = Object.entries(role.permissions).reduce<string[]>(
     (result, [key, value]) => {
@@ -55,7 +60,10 @@ const ServerRoleView = ({ role }: Props) => {
     <Card>
       <CardHeader
         title={
-          <Flex gap="10px" alignItems="center">
+          <Link
+            href={canManageRoles ? editRolePath : '#'}
+            sx={{ display: 'flex', gap: '10px', alignItems: 'center' }}
+          >
             <Box
               bgcolor={role.color}
               width="20px"
@@ -63,7 +71,7 @@ const ServerRoleView = ({ role }: Props) => {
               borderRadius={9999}
             />
             <Box>{role.name}</Box>
-          </Flex>
+          </Link>
         }
       />
       <CardContent>

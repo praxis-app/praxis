@@ -22,6 +22,9 @@ const ViewServerRoles = () => {
     return null;
   }
 
+  const { serverRoles, me } = data;
+  const { manageRoles } = me.serverPermissions;
+
   return (
     <>
       <LevelOneHeading header sx={{ marginBottom: 1 }}>
@@ -32,8 +35,12 @@ const ViewServerRoles = () => {
         {t('roles.subheaders.viewServerRoles')}
       </Typography>
 
-      {data.serverRoles.map((role) => (
-        <ServerRoleView key={role.id} role={role} />
+      {serverRoles.map((role) => (
+        <ServerRoleView
+          key={role.id}
+          canManageRoles={manageRoles}
+          role={role}
+        />
       ))}
     </>
   );

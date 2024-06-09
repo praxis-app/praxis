@@ -44,12 +44,26 @@ export type ViewServerRolesQuery = {
       profilePicture: { __typename?: 'Image'; id: number };
     }>;
   }>;
+  me: {
+    __typename?: 'User';
+    id: number;
+    serverPermissions: {
+      __typename?: 'ServerPermissions';
+      manageRoles: boolean;
+    };
+  };
 };
 
 export const ViewServerRolesDocument = gql`
   query ViewServerRoles {
     serverRoles {
       ...ServerRoleView
+    }
+    me {
+      id
+      serverPermissions {
+        manageRoles
+      }
     }
   }
   ${ServerRoleViewFragmentDoc}
