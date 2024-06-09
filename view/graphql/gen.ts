@@ -1086,6 +1086,7 @@ export type Query = {
   serverInvites: Array<ServerInvite>;
   serverQuestions: Array<ServerQuestion>;
   serverRole: ServerRole;
+  serverRoleMembers: Array<User>;
   serverRoles: Array<ServerRole>;
   serverRules: Array<Rule>;
   unreadNotificationsCount: Scalars['Int']['output'];
@@ -1183,6 +1184,14 @@ export type QueryServerInviteArgs = {
 
 export type QueryServerRoleArgs = {
   id: Scalars['Int']['input'];
+};
+
+export type QueryServerRoleMembersArgs = {
+  permissionName?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type QueryServerRolesArgs = {
+  permissionName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type QueryUserArgs = {

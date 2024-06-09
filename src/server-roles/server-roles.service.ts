@@ -31,15 +31,15 @@ export class ServerRolesService {
     return this.serverRoleRepository.findOneOrFail({ where, relations });
   }
 
-  async getServerRoles(where?: FindOptionsWhere<ServerRole>) {
+  async getServerRoles(permissionName?: string) {
     return this.serverRoleRepository.find({
+      where: permissionName ? { [permissionName]: true } : {},
       order: { updatedAt: 'DESC' },
-      where,
     });
   }
 
-  async getServerRoleMembers(id: number) {
-    const { members } = await this.getServerRole({ id }, ['members']);
+  async getServerRoleMembers(where?: FindOptionsWhere<ServerRole>) {
+    const { members } = await this.getServerRole(where, ['members']);
     return members;
   }
 

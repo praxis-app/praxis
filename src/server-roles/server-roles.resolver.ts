@@ -31,8 +31,25 @@ export class ServerRolesResolver {
   }
 
   @Query(() => [ServerRole])
-  async serverRoles() {
-    return this.serverRolesService.getServerRoles();
+  async serverRoles(
+    @Args('permissionName', { type: () => String, nullable: true })
+    permissionName?: string,
+  ) {
+    return this.serverRolesService.getServerRoles(permissionName);
+  }
+
+  @Query(() => [User])
+  async serverRoleMembers(
+    @Args('permissionName', { type: () => String, nullable: true })
+    permissionName?: string,
+  ) {
+    return this.serverRolesService.getServerRoleMembers(
+      permissionName
+        ? {
+            permission: { [permissionName]: true },
+          }
+        : undefined,
+    );
   }
 
   @ResolveField(() => ServerRolePermission)
@@ -42,7 +59,7 @@ export class ServerRolesResolver {
 
   @ResolveField(() => [User])
   async members(@Parent() { id }: ServerRole) {
-    return this.serverRolesService.getServerRoleMembers(id);
+    return this.serverRolesService.getServerRoleMembers({ id });
   }
 
   @ResolveField(() => Int)

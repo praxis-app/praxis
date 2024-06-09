@@ -742,7 +742,8 @@ type Query {
   serverInvites: [ServerInvite!]!
   serverQuestions: [ServerQuestion!]!
   serverRole(id: Int!): ServerRole!
-  serverRoles: [ServerRole!]!
+  serverRoleMembers(permissionName: String): [User!]!
+  serverRoles(permissionName: String): [ServerRole!]!
   serverRules: [Rule!]!
   unreadNotificationsCount: Int!
   user(id: Int, name: String): User!
