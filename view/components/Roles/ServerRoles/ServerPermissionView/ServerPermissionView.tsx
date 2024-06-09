@@ -1,12 +1,11 @@
 import { Check, Close } from '@mui/icons-material';
-import { Box, PaperProps, Popover, SxProps, Typography } from '@mui/material';
-import { MouseEvent, useState } from 'react';
+import { Button, SxProps } from '@mui/material';
+import { useState } from 'react';
 import { useIsDesktop } from '../../../../hooks/shared.hooks';
 import {
   PermissionName,
   getPermissionText,
 } from '../../../../utils/role.utils';
-import Flex from '../../../Shared/Flex';
 import ServerPermissionViewModal from './ServerPermissionViewModal';
 
 interface Props {
@@ -15,7 +14,6 @@ interface Props {
 }
 
 const ServerPermissionView = ({ permission, enabled }: Props) => {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const isDesktop = useIsDesktop();
 
@@ -26,33 +24,21 @@ const ServerPermissionView = ({ permission, enabled }: Props) => {
     permission as PermissionName,
   );
 
-  const paperProps: PaperProps = {
-    sx: {
-      paddingX: 1.75,
-      paddingY: 1.25,
-      maxWidth: '400px',
-    },
-  };
-
-  const handlePopoverOpen = (event: MouseEvent<HTMLDivElement>) => {
-    if (!isDesktop) {
-      return;
-    }
-    setAnchorEl(event.currentTarget);
-  };
-
   return (
     <>
-      <Flex
-        gap={1}
+      <Button
         onClick={() => setIsModalOpen(true)}
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={() => setAnchorEl(null)}
-        width={isDesktop ? '240px' : '100%'}
-        sx={{ cursor: 'pointer' }}
+        startIcon={<Icon sx={iconStyles} />}
+        sx={{
+          width: isDesktop ? '225px' : '100%',
+          textTransform: 'none',
+          justifyContent: 'start',
+          paddingY: '1px',
+          fontSize: '16px',
+        }}
       >
-        <Icon sx={iconStyles} /> {displayName}
-      </Flex>
+        {displayName}
+      </Button>
 
       <ServerPermissionViewModal
         permissionName={permission}
@@ -61,29 +47,6 @@ const ServerPermissionView = ({ permission, enabled }: Props) => {
         setIsOpen={setIsModalOpen}
         isOpen={isModalOpen}
       />
-
-      <Popover
-        anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
-        open={!!anchorEl}
-        slotProps={{ paper: paperProps }}
-        sx={{ pointerEvents: 'none' }}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-      >
-        <Typography>
-          <Box component="span" fontFamily="Inter Bold">
-            {displayName}
-          </Box>{' '}
-          - {description}
-        </Typography>
-      </Popover>
     </>
   );
 };

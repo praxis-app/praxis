@@ -80,7 +80,7 @@ const ServerRoleView = ({ role }: Props) => {
         <Flex
           flexDirection={isDesktop ? 'row' : 'column'}
           flexWrap={isDesktop ? 'wrap' : 'nowrap'}
-          gap={0.5}
+          gap={isDesktop ? '5px 22px' : 0.5}
           marginBottom={1.25}
         >
           {grantedPermissions.map((permission) => (
@@ -105,7 +105,7 @@ const ServerRoleView = ({ role }: Props) => {
             <Flex
               flexDirection={isDesktop ? 'row' : 'column'}
               flexWrap={isDesktop ? 'wrap' : 'nowrap'}
-              gap={0.5}
+              gap={isDesktop ? '5px 22px' : 0.5}
               marginBottom={1.25}
             >
               {deniedPermissions.map((permission) => (
