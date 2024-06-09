@@ -18,11 +18,15 @@ const ServerPermissionView = ({ permission, enabled }: Props) => {
   const isDesktop = useIsDesktop();
 
   const Icon = enabled ? Check : Close;
-  const iconStyles: SxProps = { color: enabled ? '#50a561' : '#e04f4a' };
-
   const { displayName, description } = getPermissionText(
     permission as PermissionName,
   );
+
+  const iconStyles: SxProps = {
+    color: enabled ? '#50a561' : '#e04f4a',
+    width: '25px',
+    height: '25px',
+  };
 
   return (
     <>
