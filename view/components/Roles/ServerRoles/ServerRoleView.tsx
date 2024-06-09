@@ -7,11 +7,13 @@ import {
   Typography,
   styled,
 } from '@mui/material';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavigationPaths } from '../../../constants/shared.constants';
 import { ServerRoleViewFragment } from '../../../graphql/roles/fragments/gen/ServerRoleView.gen';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import Flex from '../../Shared/Flex';
+import ItemMenu from '../../Shared/ItemMenu';
 import Link from '../../Shared/Link';
 import ServerPermissionView from './ServerPermissionView/ServerPermissionView';
 import ServerRoleMembersView from './ServerRoleMembersView';
@@ -32,6 +34,8 @@ interface Props {
 }
 
 const ServerRoleView = ({ role, canManageRoles }: Props) => {
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
@@ -72,6 +76,14 @@ const ServerRoleView = ({ role, canManageRoles }: Props) => {
             />
             <Box>{role.name}</Box>
           </Link>
+        }
+        action={
+          <ItemMenu
+            anchorEl={menuAnchorEl}
+            editPath={editRolePath}
+            setAnchorEl={setMenuAnchorEl}
+            canUpdate={canManageRoles}
+          />
         }
       />
       <CardContent>
