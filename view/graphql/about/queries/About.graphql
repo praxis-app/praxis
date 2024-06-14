@@ -1,0 +1,6 @@
+query About {
+  serverConfig {
+    id
+    about
+  }
+}
