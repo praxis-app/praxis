@@ -3,6 +3,9 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 @InputType()
 export class UpdateServerConfigInput {
   @Field({ nullable: true })
+  about?: string;
+
+  @Field({ nullable: true })
   canaryStatement?: string;
 
   @Field({ nullable: true })

@@ -30,6 +30,7 @@ import SettingsSelect from './SettingsSelect';
 const SETTING_DESCRIPTION_WIDTH = '60%';
 
 enum ServerSettingsFormFields {
+  About = 'about',
   CanaryStatement = 'canaryStatement',
   DecisionMakingModel = 'decisionMakingModel',
   RatificationThreshold = 'ratificationThreshold',
@@ -59,6 +60,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
   const theme = useTheme();
 
   const initialValues: FormValues = {
+    about: serverSettings.about,
     decisionMakingModel: serverSettings.decisionMakingModel,
     ratificationThreshold: serverSettings.ratificationThreshold,
     reservationsLimit: serverSettings.reservationsLimit,
@@ -391,6 +393,15 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
             </Flex>
 
             <Divider sx={{ marginTop: isDesktop ? 1 : 1.2, marginBottom: 3 }} />
+
+            <TextField
+              autoComplete="off"
+              value={values.about || ''}
+              label={t('serverSettings.placeholders.aboutText')}
+              name={ServerSettingsFormFields.About}
+              sx={{ marginBottom: 2 }}
+              multiline
+            />
 
             <TextField
               autoComplete="off"

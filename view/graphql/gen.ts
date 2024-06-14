@@ -1286,6 +1286,7 @@ export type SendMessagePayload = {
 
 export type ServerConfig = {
   __typename?: 'ServerConfig';
+  about?: Maybe<Scalars['String']['output']>;
   contactEmail: Scalars['String']['output'];
   decisionMakingModel: Scalars['String']['output'];
   id: Scalars['Int']['output'];
@@ -1572,6 +1573,7 @@ export type UpdateRulesPriorityInput = {
 };
 
 export type UpdateServerConfigInput = {
+  about?: InputMaybe<Scalars['String']['input']>;
   canaryStatement?: InputMaybe<Scalars['String']['input']>;
   decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;

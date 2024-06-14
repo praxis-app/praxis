@@ -19,6 +19,7 @@ export type UpdateServerSettingsMutation = {
     serverConfig: {
       __typename?: 'ServerConfig';
       id: number;
+      about?: string | null;
       decisionMakingModel: string;
       ratificationThreshold: number;
       reservationsLimit: number;

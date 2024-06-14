@@ -609,6 +609,7 @@
 
   "serverSettings": {
     "placeholders": {
+      "aboutText": "About",
       "securityTxt": "security.txt",
       "serverQuestionsPrompt": "Explain the questionnaire process"
     },
