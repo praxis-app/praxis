@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Divider, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ServerRoleView from '../../components/Roles/ServerRoles/ServerRoleView';
@@ -118,9 +118,11 @@ const About = () => {
         </AccordionSummary>
 
         <AccordionDetails sx={{ paddingBottom: 0.8 }}>
-          <Typography marginBottom={3}>
+          <Typography marginBottom={2.2}>
             {t('roles.subheaders.viewServerRoles')}
           </Typography>
+
+          <Divider sx={{ marginBottom: 3.2 }} />
 
           {serverRoles.map((role, index) => (
             <ServerRoleView
