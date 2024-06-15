@@ -1,8 +1,19 @@
-import { Typography } from '@mui/material';
+import {
+  Card,
+  CardContent as MuiCardContent,
+  Typography,
+  styled,
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useAboutQuery } from '../../graphql/about/queries/gen/About.gen';
+
+const CardContent = styled(MuiCardContent)(() => ({
+  '&:last-child': {
+    paddingBottom: 16,
+  },
+}));
 
 const About = () => {
   const { data, loading, error } = useAboutQuery();
@@ -31,7 +42,11 @@ const About = () => {
     <>
       <LevelOneHeading header>{serverName}</LevelOneHeading>
 
-      <Typography>{data.serverConfig.about}</Typography>
+      <Card>
+        <CardContent>
+          <Typography>{data.serverConfig.about}</Typography>
+        </CardContent>
+      </Card>
     </>
   );
 };
