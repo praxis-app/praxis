@@ -15,6 +15,7 @@ export type AboutQuery = {
     __typename?: 'ServerConfig';
     id: number;
     about?: string | null;
+    websiteURL: string;
   };
 };
 
@@ -23,6 +24,7 @@ export const AboutDocument = gql`
     serverConfig {
       id
       about
+      websiteURL
     }
   }
 `;

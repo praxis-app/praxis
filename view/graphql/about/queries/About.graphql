@@ -2,5 +2,6 @@ query About {
   serverConfig {
     id
     about
+    websiteURL
   }
 }
