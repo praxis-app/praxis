@@ -473,6 +473,7 @@
       "roleMembers": "Role Members",
       "membersCount_one": "{{count}} Member",
       "membersCount_other": "{{count}} Members",
+      "serverRoles": "Roles and permissions",
       "quickView": "Quick view"
     },
     "tabs": {

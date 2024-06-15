@@ -1,6 +1,7 @@
 import { Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import ServerRoleView from '../../components/Roles/ServerRoles/ServerRoleView';
 import Rule from '../../components/Rules/Rule';
 import Accordion, {
   AccordionDetails,
@@ -18,6 +19,7 @@ import {
 const About = () => {
   const [showAboutText, setShowAboutText] = useState(true);
   const [showServerRules, setShowServerRules] = useState(true);
+  const [showServerRoles, setShowServerRoles] = useState(false);
   const [formattedAboutText, setFormattedAboutText] = useState<string>();
 
   const { data, loading, error } = useAboutQuery();
@@ -26,6 +28,7 @@ const About = () => {
 
   const serverConfig = data?.serverConfig;
   const serverRules = data?.serverRules;
+  const serverRoles = data?.serverRoles;
 
   const aboutText = serverConfig?.about;
   const serverName = serverConfig?.websiteURL?.replace(
@@ -54,7 +57,7 @@ const About = () => {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
-  if (!serverRules || !formattedAboutText) {
+  if (!serverRules || !serverRoles || !formattedAboutText) {
     return null;
   }
 
@@ -98,6 +101,29 @@ const About = () => {
               key={rule.id}
               rule={rule}
               isLast={index + 1 !== serverRules.length}
+            />
+          ))}
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion
+        expanded={showServerRoles}
+        onChange={() => setShowServerRoles(!showServerRoles)}
+        sx={{ borderRadius: 2, paddingX: 2, marginBottom: 2 }}
+      >
+        <AccordionSummary>
+          <Typography fontFamily="Inter Bold">
+            {t('roles.labels.serverRoles')}
+          </Typography>
+        </AccordionSummary>
+
+        <AccordionDetails sx={{ paddingBottom: 0.8 }}>
+          {serverRoles.map((role, index) => (
+            <ServerRoleView
+              key={role.id}
+              role={role}
+              withCard={false}
+              isLast={index + 1 === serverRoles.length}
             />
           ))}
         </AccordionDetails>

@@ -2,6 +2,7 @@ import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
 import { RuleFragmentDoc } from '../../../rules/fragments/gen/Rule.gen';
+import { ServerRoleViewFragmentDoc } from '../../../roles/fragments/gen/ServerRoleView.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -26,6 +27,36 @@ export type AboutQuery = {
     priority: number;
     updatedAt: any;
   }>;
+  serverRoles: Array<{
+    __typename?: 'ServerRole';
+    id: number;
+    name: string;
+    color: string;
+    permissions: {
+      __typename?: 'ServerRolePermission';
+      id: number;
+      createInvites: boolean;
+      manageComments: boolean;
+      manageEvents: boolean;
+      manageInvites: boolean;
+      managePosts: boolean;
+      manageQuestionnaireTickets: boolean;
+      manageQuestions: boolean;
+      manageRoles: boolean;
+      manageRules: boolean;
+      manageSettings: boolean;
+      removeGroups: boolean;
+      removeMembers: boolean;
+      removeProposals: boolean;
+    };
+    members: Array<{
+      __typename?: 'User';
+      id: number;
+      name: string;
+      displayName?: string | null;
+      profilePicture: { __typename?: 'Image'; id: number };
+    }>;
+  }>;
 };
 
 export const AboutDocument = gql`
@@ -38,8 +69,12 @@ export const AboutDocument = gql`
     serverRules {
       ...Rule
     }
+    serverRoles {
+      ...ServerRoleView
+    }
   }
   ${RuleFragmentDoc}
+  ${ServerRoleViewFragmentDoc}
 `;
 
 /**

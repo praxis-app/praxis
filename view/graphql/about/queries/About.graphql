@@ -7,4 +7,7 @@ query About {
   serverRules {
     ...Rule
   }
+  serverRoles {
+    ...ServerRoleView
+  }
 }

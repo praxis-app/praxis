@@ -39,10 +39,17 @@ const CardContent = styled(MuiCardContent)(() => ({
 
 interface Props {
   role: ServerRoleViewFragment;
-  canManageRoles: boolean;
+  canManageRoles?: boolean;
+  withCard?: boolean;
+  isLast?: boolean;
 }
 
-const ServerRoleView = ({ role, canManageRoles }: Props) => {
+const ServerRoleView = ({
+  withCard = true,
+  canManageRoles,
+  isLast,
+  role,
+}: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteRole] = useDeleteServerRoleMutation();
 
@@ -99,20 +106,104 @@ const ServerRoleView = ({ role, canManageRoles }: Props) => {
       },
     });
 
+  const renderTitle = () => (
+    <Flex
+      gap="10px"
+      alignItems="center"
+      marginBottom={withCard ? 0 : 1.8}
+      bgcolor={withCard ? 'none' : 'rgb(255, 255, 255, 0.05)'}
+      paddingX={withCard ? 0 : 1.5}
+      width="fit-content"
+      borderRadius="8px"
+    >
+      <Box
+        bgcolor={role.color}
+        width="20px"
+        height="20px"
+        borderRadius={9999}
+      />
+      <Box fontSize={withCard ? 'inherit' : '28px'}>{role.name}</Box>
+    </Flex>
+  );
+
+  const renderRole = () => (
+    <>
+      {grantedPermissions.length > 0 && (
+        <>
+          <Typography
+            fontFamily="Inter Bold"
+            marginBottom={0.75}
+            textTransform="uppercase"
+            fontSize={15}
+          >
+            {t('permissions.headers.grantedPermissions')}
+          </Typography>
+          <Flex
+            flexDirection={isDesktop ? 'row' : 'column'}
+            flexWrap={isDesktop ? 'wrap' : 'nowrap'}
+            gap={isDesktop ? '5px 22px' : 0.5}
+            marginBottom={1.25}
+          >
+            {grantedPermissions.map((permission) => (
+              <ServerPermissionView
+                key={permission}
+                permission={permission}
+                enabled
+              />
+            ))}
+          </Flex>
+        </>
+      )}
+
+      {deniedPermissions.length > 0 && (
+        <>
+          <Typography
+            fontFamily="Inter Bold"
+            marginBottom={0.75}
+            textTransform="uppercase"
+            fontSize={15}
+          >
+            {t('permissions.headers.deniedPermissions')}
+          </Typography>
+          <Flex
+            flexDirection={isDesktop ? 'row' : 'column'}
+            flexWrap={isDesktop ? 'wrap' : 'nowrap'}
+            gap={isDesktop ? '5px 22px' : 0.5}
+            marginBottom={1.25}
+          >
+            {deniedPermissions.map((permission) => (
+              <ServerPermissionView
+                key={permission}
+                permission={permission}
+                enabled={false}
+              />
+            ))}
+          </Flex>
+        </>
+      )}
+
+      <ServerRoleMembersView
+        header={t('roles.labels.roleMembers')}
+        members={role.members}
+      />
+    </>
+  );
+
+  if (!withCard) {
+    return (
+      <Box marginBottom={3}>
+        {renderTitle()}
+        {renderRole()}
+
+        {!isLast && <Divider sx={{ marginTop: 3 }} />}
+      </Box>
+    );
+  }
+
   return (
     <Card>
       <CardHeader
-        title={
-          <Flex gap="10px" alignItems="center">
-            <Box
-              bgcolor={role.color}
-              width="20px"
-              height="20px"
-              borderRadius={9999}
-            />
-            <Box>{role.name}</Box>
-          </Flex>
-        }
+        title={renderTitle()}
         action={
           <ItemMenu
             anchorEl={menuAnchorEl}
@@ -127,65 +218,7 @@ const ServerRoleView = ({ role, canManageRoles }: Props) => {
       />
       <CardContent>
         <Divider sx={{ marginBottom: 2.4 }} />
-
-        {grantedPermissions.length > 0 && (
-          <>
-            <Typography
-              fontFamily="Inter Bold"
-              marginBottom={0.75}
-              textTransform="uppercase"
-              fontSize={15}
-            >
-              {t('permissions.headers.grantedPermissions')}
-            </Typography>
-            <Flex
-              flexDirection={isDesktop ? 'row' : 'column'}
-              flexWrap={isDesktop ? 'wrap' : 'nowrap'}
-              gap={isDesktop ? '5px 22px' : 0.5}
-              marginBottom={1.25}
-            >
-              {grantedPermissions.map((permission) => (
-                <ServerPermissionView
-                  key={permission}
-                  permission={permission}
-                  enabled
-                />
-              ))}
-            </Flex>
-          </>
-        )}
-
-        {deniedPermissions.length > 0 && (
-          <>
-            <Typography
-              fontFamily="Inter Bold"
-              marginBottom={0.75}
-              textTransform="uppercase"
-              fontSize={15}
-            >
-              {t('permissions.headers.deniedPermissions')}
-            </Typography>
-            <Flex
-              flexDirection={isDesktop ? 'row' : 'column'}
-              flexWrap={isDesktop ? 'wrap' : 'nowrap'}
-              gap={isDesktop ? '5px 22px' : 0.5}
-              marginBottom={1.25}
-            >
-              {deniedPermissions.map((permission) => (
-                <ServerPermissionView
-                  key={permission}
-                  permission={permission}
-                  enabled={false}
-                />
-              ))}
-            </Flex>
-          </>
-        )}
-
-        <ServerRoleMembersView
-          header={t('roles.labels.roleMembers')}
-          members={role.members}
-        />
+        {renderRole()}
       </CardContent>
     </Card>
   );
