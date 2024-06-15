@@ -118,6 +118,10 @@ const About = () => {
         </AccordionSummary>
 
         <AccordionDetails sx={{ paddingBottom: 0.8 }}>
+          <Typography marginBottom={3}>
+            {t('roles.subheaders.viewServerRoles')}
+          </Typography>
+
           {serverRoles.map((role, index) => (
             <ServerRoleView
               key={role.id}
