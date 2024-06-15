@@ -1,11 +1,10 @@
-import {
-  Card,
-  CardContent as MuiCardContent,
-  Typography,
-  styled,
-} from '@mui/material';
+import { Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Accordion, {
+  AccordionDetails,
+  AccordionSummary,
+} from '../../components/Shared/Accordion';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { useAboutQuery } from '../../graphql/about/queries/gen/About.gen';
@@ -15,14 +14,10 @@ import {
   urlifyText,
 } from '../../utils/shared.utils';
 
-const CardContent = styled(MuiCardContent)(() => ({
-  '&:last-child': {
-    paddingBottom: 16,
-  },
-}));
-
 const About = () => {
+  const [showAboutText, setShowAboutText] = useState(true);
   const [formattedAboutText, setFormattedAboutText] = useState<string>();
+
   const { data, loading, error } = useAboutQuery();
 
   const { t } = useTranslation();
@@ -63,14 +58,24 @@ const About = () => {
     <>
       <LevelOneHeading header>{serverName}</LevelOneHeading>
 
-      <Card>
-        <CardContent>
+      <Accordion
+        expanded={showAboutText}
+        onChange={() => setShowAboutText(!showAboutText)}
+        sx={{ borderRadius: 2, paddingX: 2 }}
+      >
+        <AccordionSummary>
+          <Typography fontFamily="Inter Bold">
+            {t('about.labels.about')}
+          </Typography>
+        </AccordionSummary>
+
+        <AccordionDetails sx={{ paddingBottom: 2.25 }}>
           <Typography
             dangerouslySetInnerHTML={{ __html: formattedAboutText }}
             whiteSpace="pre-wrap"
           />
-        </CardContent>
-      </Card>
+        </AccordionDetails>
+      </Accordion>
     </>
   );
 };
