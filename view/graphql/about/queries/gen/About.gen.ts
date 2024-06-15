@@ -1,6 +1,7 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
+import { RuleFragmentDoc } from '../../../rules/fragments/gen/Rule.gen';
 import * as Apollo from '@apollo/client';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
@@ -17,6 +18,14 @@ export type AboutQuery = {
     about?: string | null;
     websiteURL: string;
   };
+  serverRules: Array<{
+    __typename?: 'Rule';
+    id: number;
+    title: string;
+    description: string;
+    priority: number;
+    updatedAt: any;
+  }>;
 };
 
 export const AboutDocument = gql`
@@ -26,7 +35,11 @@ export const AboutDocument = gql`
       about
       websiteURL
     }
+    serverRules {
+      ...Rule
+    }
   }
+  ${RuleFragmentDoc}
 `;
 
 /**

@@ -4,4 +4,7 @@ query About {
     about
     websiteURL
   }
+  serverRules {
+    ...Rule
+  }
 }

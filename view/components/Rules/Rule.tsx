@@ -25,10 +25,10 @@ import Modal from '../Shared/Modal';
 import RuleForm from './RuleForm';
 
 interface Props {
-  canManageRules: boolean;
-  isDragging: boolean;
+  canManageRules?: boolean;
+  isDragging?: boolean;
   isLast: boolean;
-  isLoading: boolean;
+  isLoading?: boolean;
   rule: RuleFragment;
 }
 

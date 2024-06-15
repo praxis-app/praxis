@@ -1,6 +1,7 @@
 import { Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import Rule from '../../components/Rules/Rule';
 import Accordion, {
   AccordionDetails,
   AccordionSummary,
@@ -16,6 +17,7 @@ import {
 
 const About = () => {
   const [showAboutText, setShowAboutText] = useState(true);
+  const [showServerRules, setShowServerRules] = useState(true);
   const [formattedAboutText, setFormattedAboutText] = useState<string>();
 
   const { data, loading, error } = useAboutQuery();
@@ -23,6 +25,8 @@ const About = () => {
   const { t } = useTranslation();
 
   const serverConfig = data?.serverConfig;
+  const serverRules = data?.serverRules;
+
   const aboutText = serverConfig?.about;
   const serverName = serverConfig?.websiteURL?.replace(
     /^(https?:\/\/)?(www\.)?/,
@@ -50,7 +54,7 @@ const About = () => {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
-  if (!data || !formattedAboutText) {
+  if (!serverRules || !formattedAboutText) {
     return null;
   }
 
@@ -61,7 +65,7 @@ const About = () => {
       <Accordion
         expanded={showAboutText}
         onChange={() => setShowAboutText(!showAboutText)}
-        sx={{ borderRadius: 2, paddingX: 2 }}
+        sx={{ borderRadius: 2, paddingX: 2, marginBottom: 2 }}
       >
         <AccordionSummary>
           <Typography fontFamily="Inter Bold">
@@ -74,6 +78,28 @@ const About = () => {
             dangerouslySetInnerHTML={{ __html: formattedAboutText }}
             whiteSpace="pre-wrap"
           />
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion
+        expanded={showServerRules}
+        onChange={() => setShowServerRules(!showServerRules)}
+        sx={{ borderRadius: 2, paddingX: 2, marginBottom: 2 }}
+      >
+        <AccordionSummary>
+          <Typography fontFamily="Inter Bold">
+            {t('rules.labels.serverRules')}
+          </Typography>
+        </AccordionSummary>
+
+        <AccordionDetails sx={{ paddingBottom: 2.25 }}>
+          {serverRules.map((rule, index) => (
+            <Rule
+              key={rule.id}
+              rule={rule}
+              isLast={index + 1 !== serverRules.length}
+            />
+          ))}
         </AccordionDetails>
       </Accordion>
     </>

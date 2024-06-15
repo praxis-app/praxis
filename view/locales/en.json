@@ -718,7 +718,8 @@
     "labels": {
       "create": "Create rule",
       "delete": "Delete rule",
-      "edit": "Edit rule"
+      "edit": "Edit rule",
+      "serverRules": "Server rules"
     },
     "placeholders": {
       "title": "Title",
