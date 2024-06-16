@@ -6,6 +6,7 @@ import {
   Article as DocsIcon,
   EventNote,
   HowToReg,
+  Info,
   Link as InvitesIcon,
   QuestionAnswer,
   Rule,
@@ -14,9 +15,7 @@ import {
   PersonAdd as SignUpIcon,
   TaskAlt,
   SupervisedUserCircle as UsersIcon,
-  Visibility,
 } from '@mui/icons-material';
-import { truncate } from 'lodash';
 import {
   Divider,
   Drawer,
@@ -27,6 +26,7 @@ import {
   ListItemText as MuiListItemText,
 } from '@mui/material';
 import { SxProps, styled } from '@mui/material/styles';
+import { truncate } from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -116,12 +116,12 @@ const NavDrawer = () => {
     </ListItemButton>
   );
 
-  const renderRulesButton = () => (
-    <ListItemButton onClick={handleLinkClick(NavigationPaths.Rules)}>
+  const renderAboutButton = () => (
+    <ListItemButton onClick={handleLinkClick(NavigationPaths.About)}>
       <ListItemIcon>
-        <Rule />
+        <Info />
       </ListItemIcon>
-      <ListItemText primary={t('navigation.rules')} />
+      <ListItemText primary={t('navigation.about')} />
     </ListItemButton>
   );
 
@@ -133,8 +133,8 @@ const NavDrawer = () => {
 
       return (
         <>
-          {renderRulesButton()}
           {renderDocsButton()}
+          {renderAboutButton()}
 
           <ListItemButton onClick={handleLinkClick(NavigationPaths.LogIn)}>
             <ListItemIcon>
@@ -169,6 +169,7 @@ const NavDrawer = () => {
       manageQuestionnaireTickets,
       manageQuestions,
       manageRoles,
+      manageRules,
       manageSettings,
       removeMembers,
     } = me.serverPermissions;
@@ -216,28 +217,32 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
-        {removeMembers && (
-          <ListItemButton onClick={handleLinkClick(NavigationPaths.Users)}>
-            <ListItemIcon>
-              <UsersIcon />
-            </ListItemIcon>
-            <ListItemText primary={t('navigation.users')} />
-          </ListItemButton>
-        )}
-
-        {manageRoles ? (
+        {manageRoles && (
           <ListItemButton onClick={handleLinkClick(NavigationPaths.Roles)}>
             <ListItemIcon>
               <AccountBox />
             </ListItemIcon>
-            <ListItemText primary={t('roles.actions.manageRoles')} />
+            <ListItemText primary={t('roles.labels.serverRoles')} />
           </ListItemButton>
-        ) : (
-          <ListItemButton onClick={handleLinkClick(NavigationPaths.ViewRoles)}>
+        )}
+
+        {manageRules && (
+          <ListItemButton onClick={handleLinkClick(NavigationPaths.Rules)}>
             <ListItemIcon>
-              <Visibility />
+              <Rule />
             </ListItemIcon>
-            <ListItemText primary={t('roles.actions.viewRoles')} />
+            <ListItemText primary={t('rules.labels.manageRules')} />
+          </ListItemButton>
+        )}
+
+        {manageSettings && (
+          <ListItemButton
+            onClick={handleLinkClick(NavigationPaths.ServerSettings)}
+          >
+            <ListItemIcon>
+              <Settings />
+            </ListItemIcon>
+            <ListItemText primary={t('navigation.serverSettings')} />
           </ListItemButton>
         )}
 
@@ -263,18 +268,16 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
-        {manageSettings && (
-          <ListItemButton
-            onClick={handleLinkClick(NavigationPaths.ServerSettings)}
-          >
+        {removeMembers && (
+          <ListItemButton onClick={handleLinkClick(NavigationPaths.Users)}>
             <ListItemIcon>
-              <Settings />
+              <UsersIcon />
             </ListItemIcon>
-            <ListItemText primary={t('navigation.settings')} />
+            <ListItemText primary={t('navigation.users')} />
           </ListItemButton>
         )}
 
-        {renderRulesButton()}
+        {renderAboutButton()}
         {renderDocsButton()}
 
         <ListItemButton

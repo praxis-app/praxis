@@ -8,6 +8,7 @@ import { gql } from '@apollo/client';
 export type ServerSettingsFormFragment = {
   __typename?: 'ServerConfig';
   id: number;
+  about?: string | null;
   decisionMakingModel: string;
   ratificationThreshold: number;
   reservationsLimit: number;
@@ -21,6 +22,7 @@ export type ServerSettingsFormFragment = {
 export const ServerSettingsFormFragmentDoc = gql`
   fragment ServerSettingsForm on ServerConfig {
     id
+    about
     decisionMakingModel
     ratificationThreshold
     reservationsLimit

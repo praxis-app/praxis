@@ -44,6 +44,11 @@ export class ProposalsResolver {
     return this.proposalsService.getProposal(id);
   }
 
+  @Query(() => Int)
+  async ratifiedProposalCount() {
+    return this.proposalsService.getRatifiedProposalCount();
+  }
+
   @ResolveField(() => [Vote])
   async votes(
     @Context() { loaders }: { loaders: Dataloaders },

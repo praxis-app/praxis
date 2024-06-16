@@ -1,5 +1,6 @@
 fragment ServerSettingsForm on ServerConfig {
   id
+  about
   decisionMakingModel
   ratificationThreshold
   reservationsLimit

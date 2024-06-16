@@ -81,6 +81,7 @@ import { AddUserDisplayNameColumn1713640882734 } from './migrations/171364088273
 import { AddChatTables1714930094485 } from './migrations/1714930094485-AddChatTables';
 import { AddIsDefaultColumnToGroupTable1715555522528 } from './migrations/1715555522528-AddIsDefaultColumnToGroupTable';
 import { AddGroupIdToConversationTable1717305686166 } from './migrations/1717305686166-AddGroupIdToConversationTable';
+import { AddAboutColumnToServerConfig1718497442403 } from './migrations/1718497442403-AddAboutColumnToServerConfig';
 
 dotenv.config();
 
@@ -131,6 +132,7 @@ export default new DataSource({
     Vote,
   ],
   migrations: [
+    AddAboutColumnToServerConfig1718497442403,
     AddAdminModelColumns1703454648429,
     AddCanaryTable1699136722535,
     AddCascadeDeletesForUser1704254669247,

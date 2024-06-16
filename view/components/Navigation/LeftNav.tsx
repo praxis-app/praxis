@@ -4,6 +4,7 @@ import {
   EventNote as EventsIcon,
   Group as GroupsIcon,
   Home as HomeIcon,
+  Info,
   Link as InvitesIcon,
   AccountBox as RolesIcon,
   Rule,
@@ -62,6 +63,7 @@ const LeftNav = () => {
   const canManageRoles = me?.serverPermissions.manageRoles;
   const canCreateInvites = me?.serverPermissions.createInvites;
   const canManageInvites = me?.serverPermissions.manageInvites;
+  const canManageRules = me?.serverPermissions.manageRules;
 
   const listStyles: SxProps = {
     position: 'fixed',
@@ -158,14 +160,28 @@ const LeftNav = () => {
         </Link>
       )}
 
-      <Link href={NavigationPaths.Rules}>
+      {canManageRules && (
+        <Link href={NavigationPaths.Rules}>
+          <ListItemButton>
+            <ListItemIcon>
+              <Rule />
+            </ListItemIcon>
+            <ListItemText
+              isActive={isActive(NavigationPaths.Rules)}
+              primary={t('navigation.rules')}
+            />
+          </ListItemButton>
+        </Link>
+      )}
+
+      <Link href={NavigationPaths.About}>
         <ListItemButton>
           <ListItemIcon>
-            <Rule />
+            <Info />
           </ListItemIcon>
           <ListItemText
-            isActive={isActive(NavigationPaths.Rules)}
-            primary={t('navigation.rules')}
+            isActive={isActive(NavigationPaths.About)}
+            primary={t('navigation.about')}
           />
         </ListItemButton>
       </Link>

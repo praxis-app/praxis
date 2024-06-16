@@ -1,4 +1,4 @@
-import { and, or } from 'graphql-shield';
+import { allow, and, or } from 'graphql-shield';
 import {
   canRemoveProposals,
   hasNoVotes,
@@ -11,6 +11,7 @@ import { isVerified } from '../rules/user.rules';
 export const proposalPermissions = {
   Query: {
     proposal: or(isVerified, isPublicProposal),
+    ratifiedProposalCount: allow,
   },
   Mutation: {
     deleteProposal: or(and(isOwnProposal, hasNoVotes), canRemoveProposals),

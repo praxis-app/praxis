@@ -16,6 +16,10 @@ export class ServerConfig {
   @Field(() => Int)
   id: number;
 
+  @Column({ type: 'varchar', nullable: true })
+  @Field(() => String, { nullable: true })
+  about: string | null;
+
   @Column({ default: DecisionMakingModel.Consensus })
   @Field()
   decisionMakingModel: string;

@@ -1,0 +1,22 @@
+query About($isVerified: Boolean!) {
+  serverConfig {
+    id
+    about
+    websiteURL
+  }
+  serverRules {
+    ...Rule
+  }
+  serverRoles @include(if: $isVerified) {
+    ...ServerRoleView
+  }
+  me @include(if: $isVerified) {
+    id
+    serverPermissions {
+      manageRoles
+    }
+  }
+  ratifiedProposalCount
+  groupsCount
+  voteCount
+}

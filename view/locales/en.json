@@ -51,6 +51,7 @@
 
   "navigation": {
     "activity": "Activity",
+    "about": "About",
     "docs": "Docs",
     "events": "Events",
     "groups": "Groups",
@@ -73,7 +74,23 @@
       "inDev": "This project is still in development and is not yet intended for serious use outside of testing or research purposes."
     },
     "actions": {
-      "learnMore": "Learn more"
+      "learnMore": "Learn more",
+      "viewAllPermissions": "View all {{count}} permissions",
+      "viewAllMembers": "View all {{count}} members",
+      "seeRolesOverview": "See roles overview"
+    },
+    "labels": {
+      "about": "About",
+      "groupsCreated_one": "group",
+      "groupsCreated_other": "groups",
+      "ratifiedProposals_one": "ratified proposal",
+      "ratifiedProposals_other": "ratified proposals",
+      "serverStats": "Server stats",
+      "votesCast_one": "vote cast",
+      "votesCast_other": "votes cast"
+    },
+    "prompts": {
+      "noAboutText": "This server hasn't set a description yet."
     }
   },
 
@@ -469,6 +486,8 @@
       "roleMembers": "Role Members",
       "membersCount_one": "{{count}} Member",
       "membersCount_other": "{{count}} Members",
+      "serverRoles": "Server roles",
+      "rolesAndPermissions": "Roles and permissions",
       "quickView": "Quick view"
     },
     "tabs": {
@@ -608,6 +627,7 @@
 
   "serverSettings": {
     "placeholders": {
+      "aboutText": "About",
       "securityTxt": "security.txt",
       "serverQuestionsPrompt": "Explain the questionnaire process"
     },
@@ -713,7 +733,9 @@
     "labels": {
       "create": "Create rule",
       "delete": "Delete rule",
-      "edit": "Edit rule"
+      "edit": "Edit rule",
+      "serverRules": "Server rules",
+      "manageRules": "Manage rules"
     },
     "placeholders": {
       "title": "Title",
@@ -809,7 +831,9 @@
   "pagination": {
     "of": "of",
     "moreThan": "more than",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "loadMore": "Load more...",
+    "showLess": "Show less"
   },
 
   "time": {
