@@ -1,4 +1,4 @@
-import { Button, Divider, Typography } from '@mui/material';
+import { Box, Button, Divider, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -20,10 +20,11 @@ import {
 } from '../../utils/shared.utils';
 
 const About = () => {
-  const [showAboutText, setShowAboutText] = useState(true);
-  const [showServerRules, setShowServerRules] = useState(true);
-  const [showServerRoles, setShowServerRoles] = useState(false);
   const [formattedAboutText, setFormattedAboutText] = useState<string>();
+  const [showServerRoles, setShowServerRoles] = useState(false);
+  const [showServerRules, setShowServerRules] = useState(true);
+  const [showAboutText, setShowAboutText] = useState(true);
+  const [showStats, setShowStats] = useState(false);
 
   const { data, loading, error } = useAboutQuery();
 
@@ -153,6 +154,47 @@ const About = () => {
               isLast={index + 1 === serverRoles.length}
             />
           ))}
+        </AccordionDetails>
+      </Accordion>
+
+      <Accordion
+        expanded={showStats}
+        onChange={() => setShowStats(!showStats)}
+        sx={{ borderRadius: 2, paddingX: 2, marginBottom: 2 }}
+      >
+        <AccordionSummary>
+          <Typography fontFamily="Inter Bold">
+            {t('about.labels.serverStats')}
+          </Typography>
+        </AccordionSummary>
+
+        <AccordionDetails sx={{ paddingBottom: 2.25 }}>
+          <Typography gutterBottom>
+            <Box component="span" fontFamily="Inter Bold" marginRight="0.5ch">
+              {data.ratifiedProposalCount}
+            </Box>
+            {t('about.labels.ratifiedProposals', {
+              count: data.ratifiedProposalCount,
+            })}
+          </Typography>
+
+          <Typography gutterBottom>
+            <Box component="span" fontFamily="Inter Bold" marginRight="0.5ch">
+              {data.voteCount}
+            </Box>
+            {t('about.labels.votesCast', {
+              count: data.voteCount,
+            })}
+          </Typography>
+
+          <Typography>
+            <Box component="span" fontFamily="Inter Bold" marginRight="0.5ch">
+              {data.groupsCount}
+            </Box>
+            {t('about.labels.groupsCreated', {
+              count: data.groupsCount,
+            })}
+          </Typography>
         </AccordionDetails>
       </Accordion>
     </>

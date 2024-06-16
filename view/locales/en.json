@@ -77,7 +77,14 @@
       "learnMore": "Learn more"
     },
     "labels": {
-      "about": "About"
+      "about": "About",
+      "groupsCreated_one": "group",
+      "groupsCreated_other": "groups",
+      "ratifiedProposals_one": "ratified proposal",
+      "ratifiedProposals_other": "ratified proposals",
+      "serverStats": "Community insights",
+      "votesCast_one": "vote cast",
+      "votesCast_other": "votes cast"
     },
     "prompts": {
       "noAboutText": "This server hasn't set a description yet."

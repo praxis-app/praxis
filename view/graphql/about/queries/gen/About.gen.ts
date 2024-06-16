@@ -13,6 +13,9 @@ export type AboutQueryVariables = Types.Exact<{ [key: string]: never }>;
 
 export type AboutQuery = {
   __typename?: 'Query';
+  ratifiedProposalCount: number;
+  groupsCount: number;
+  voteCount: number;
   serverConfig: {
     __typename?: 'ServerConfig';
     id: number;
@@ -72,6 +75,9 @@ export const AboutDocument = gql`
     serverRoles {
       ...ServerRoleView
     }
+    ratifiedProposalCount
+    groupsCount
+    voteCount
   }
   ${RuleFragmentDoc}
   ${ServerRoleViewFragmentDoc}

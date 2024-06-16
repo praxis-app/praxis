@@ -10,4 +10,7 @@ query About {
   serverRoles {
     ...ServerRoleView
   }
+  ratifiedProposalCount
+  groupsCount
+  voteCount
 }
