@@ -38,6 +38,7 @@ export const shieldConfig = shield(
       ...serverInvitePermissions.Query,
       ...userPermissions.Query,
       ...vibeCheckPermissions.Query,
+      ...votePermissions.Query,
     },
     Mutation: {
       ...authPermissions.Mutation,

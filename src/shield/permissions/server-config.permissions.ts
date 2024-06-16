@@ -14,6 +14,7 @@ export const serverConfigPermissions = {
       id: allow,
       websiteURL: allow,
       contactEmail: allow,
+      about: allow,
     },
   },
 };

@@ -9,7 +9,9 @@ import * as Apollo from '@apollo/client';
 /* eslint-disable */
 
 const defaultOptions = {} as const;
-export type AboutQueryVariables = Types.Exact<{ [key: string]: never }>;
+export type AboutQueryVariables = Types.Exact<{
+  isVerified: Types.Scalars['Boolean']['input'];
+}>;
 
 export type AboutQuery = {
   __typename?: 'Query';
@@ -30,7 +32,7 @@ export type AboutQuery = {
     priority: number;
     updatedAt: any;
   }>;
-  serverRoles: Array<{
+  serverRoles?: Array<{
     __typename?: 'ServerRole';
     id: number;
     name: string;
@@ -63,7 +65,7 @@ export type AboutQuery = {
 };
 
 export const AboutDocument = gql`
-  query About {
+  query About($isVerified: Boolean!) {
     serverConfig {
       id
       about
@@ -72,7 +74,7 @@ export const AboutDocument = gql`
     serverRules {
       ...Rule
     }
-    serverRoles {
+    serverRoles @include(if: $isVerified) {
       ...ServerRoleView
     }
     ratifiedProposalCount
@@ -95,11 +97,12 @@ export const AboutDocument = gql`
  * @example
  * const { data, loading, error } = useAboutQuery({
  *   variables: {
+ *      isVerified: // value for 'isVerified'
  *   },
  * });
  */
 export function useAboutQuery(
-  baseOptions?: Apollo.QueryHookOptions<AboutQuery, AboutQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<AboutQuery, AboutQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<AboutQuery, AboutQueryVariables>(

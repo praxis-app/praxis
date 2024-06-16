@@ -18,6 +18,7 @@ export const groupPermissions = {
     publicGroups: allow,
     publicGroupsCount: allow,
     publicGroupsFeed: allow,
+    groupsCount: allow,
   },
   Mutation: {
     approveGroupMemberRequest: canApproveGroupMemberRequests,

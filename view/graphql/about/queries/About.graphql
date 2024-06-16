@@ -1,4 +1,4 @@
-query About {
+query About($isVerified: Boolean!) {
   serverConfig {
     id
     about
@@ -7,7 +7,7 @@ query About {
   serverRules {
     ...Rule
   }
-  serverRoles {
+  serverRoles @include(if: $isVerified) {
     ...ServerRoleView
   }
   ratifiedProposalCount

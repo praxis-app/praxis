@@ -1,3 +1,4 @@
+import { useReactiveVar } from '@apollo/client';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +14,7 @@ import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { useAboutQuery } from '../../graphql/about/queries/gen/About.gen';
+import { isAuthDoneVar, isVerifiedVar } from '../../graphql/cache';
 import {
   convertBoldToSpan,
   parseMarkdownText,
@@ -26,7 +28,12 @@ const About = () => {
   const [showAboutText, setShowAboutText] = useState(true);
   const [showStats, setShowStats] = useState(false);
 
-  const { data, loading, error } = useAboutQuery();
+  const isVerified = useReactiveVar(isVerifiedVar);
+  const isAuthDone = useReactiveVar(isAuthDoneVar);
+  const { data, loading, error } = useAboutQuery({
+    variables: { isVerified },
+    skip: !isAuthDone,
+  });
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -62,7 +69,7 @@ const About = () => {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
-  if (!serverRules || !serverRoles) {
+  if (!data) {
     return null;
   }
 
@@ -118,7 +125,7 @@ const About = () => {
         </AccordionSummary>
 
         <AccordionDetails sx={{ paddingBottom: 2.25 }}>
-          {serverRules.map((rule, index) => (
+          {serverRules?.map((rule, index) => (
             <Rule
               key={rule.id}
               rule={rule}
@@ -128,34 +135,36 @@ const About = () => {
         </AccordionDetails>
       </Accordion>
 
-      <Accordion
-        expanded={showServerRoles}
-        onChange={() => setShowServerRoles(!showServerRoles)}
-        sx={{ borderRadius: 2, paddingX: 2, marginBottom: 2 }}
-      >
-        <AccordionSummary>
-          <Typography fontFamily="Inter Bold">
-            {t('roles.labels.rolesAndPermissions')}
-          </Typography>
-        </AccordionSummary>
+      {isVerified && (
+        <Accordion
+          expanded={showServerRoles}
+          onChange={() => setShowServerRoles(!showServerRoles)}
+          sx={{ borderRadius: 2, paddingX: 2, marginBottom: 2 }}
+        >
+          <AccordionSummary>
+            <Typography fontFamily="Inter Bold">
+              {t('roles.labels.rolesAndPermissions')}
+            </Typography>
+          </AccordionSummary>
 
-        <AccordionDetails sx={{ paddingBottom: 0.8 }}>
-          <Typography marginBottom={2.2}>
-            {t('roles.subheaders.viewServerRoles')}
-          </Typography>
+          <AccordionDetails sx={{ paddingBottom: 0.8 }}>
+            <Typography marginBottom={2.2}>
+              {t('roles.subheaders.viewServerRoles')}
+            </Typography>
 
-          <Divider sx={{ marginBottom: 3.2 }} />
+            <Divider sx={{ marginBottom: 3.2 }} />
 
-          {serverRoles.map((role, index) => (
-            <ServerRoleView
-              key={role.id}
-              role={role}
-              withCard={false}
-              isLast={index + 1 === serverRoles.length}
-            />
-          ))}
-        </AccordionDetails>
-      </Accordion>
+            {serverRoles?.map((role, index) => (
+              <ServerRoleView
+                key={role.id}
+                role={role}
+                withCard={false}
+                isLast={index + 1 === serverRoles.length}
+              />
+            ))}
+          </AccordionDetails>
+        </Accordion>
+      )}
 
       <Accordion
         expanded={showStats}
