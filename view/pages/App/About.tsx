@@ -61,12 +61,12 @@ const About = () => {
     formatDescription();
   }, [aboutText]);
 
-  if (loading) {
-    return <ProgressBar />;
-  }
-
   if (error) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+  }
+
+  if (loading) {
+    return <ProgressBar />;
   }
 
   if (!data) {
