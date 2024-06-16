@@ -9,6 +9,7 @@ import {
   Info,
   Link as InvitesIcon,
   QuestionAnswer,
+  Rule,
   ExitToApp as SessionIcon,
   Settings,
   PersonAdd as SignUpIcon,
@@ -168,6 +169,7 @@ const NavDrawer = () => {
       manageQuestionnaireTickets,
       manageQuestions,
       manageRoles,
+      manageRules,
       manageSettings,
       removeMembers,
     } = me.serverPermissions;
@@ -215,21 +217,21 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
-        {removeMembers && (
-          <ListItemButton onClick={handleLinkClick(NavigationPaths.Users)}>
-            <ListItemIcon>
-              <UsersIcon />
-            </ListItemIcon>
-            <ListItemText primary={t('navigation.users')} />
-          </ListItemButton>
-        )}
-
         {manageRoles && (
           <ListItemButton onClick={handleLinkClick(NavigationPaths.Roles)}>
             <ListItemIcon>
               <AccountBox />
             </ListItemIcon>
-            <ListItemText primary={t('roles.actions.manageRoles')} />
+            <ListItemText primary={t('roles.labels.serverRoles')} />
+          </ListItemButton>
+        )}
+
+        {manageRules && (
+          <ListItemButton onClick={handleLinkClick(NavigationPaths.Rules)}>
+            <ListItemIcon>
+              <Rule />
+            </ListItemIcon>
+            <ListItemText primary={t('rules.labels.manageRules')} />
           </ListItemButton>
         )}
 
@@ -263,6 +265,15 @@ const NavDrawer = () => {
               <HowToReg />
             </ListItemIcon>
             <ListItemText primary={t('questions.labels.questions')} />
+          </ListItemButton>
+        )}
+
+        {removeMembers && (
+          <ListItemButton onClick={handleLinkClick(NavigationPaths.Users)}>
+            <ListItemIcon>
+              <UsersIcon />
+            </ListItemIcon>
+            <ListItemText primary={t('navigation.users')} />
           </ListItemButton>
         )}
 

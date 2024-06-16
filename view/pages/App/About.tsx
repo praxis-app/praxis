@@ -134,7 +134,7 @@ const About = () => {
       >
         <AccordionSummary>
           <Typography fontFamily="Inter Bold">
-            {t('roles.labels.serverRoles')}
+            {t('roles.labels.rolesAndPermissions')}
           </Typography>
         </AccordionSummary>
 
