@@ -179,7 +179,11 @@ const About = () => {
 
         <AccordionDetails sx={{ paddingBottom: 2.25 }}>
           <Typography gutterBottom>
-            <Box component="span" fontFamily="Inter Bold" marginRight="0.5ch">
+            <Box
+              component="span"
+              fontFamily="Inter Extra Bold"
+              marginRight="0.5ch"
+            >
               {data.ratifiedProposalCount}
             </Box>
             {t('about.labels.ratifiedProposals', {
@@ -188,7 +192,11 @@ const About = () => {
           </Typography>
 
           <Typography gutterBottom>
-            <Box component="span" fontFamily="Inter Bold" marginRight="0.5ch">
+            <Box
+              component="span"
+              fontFamily="Inter Extra Bold"
+              marginRight="0.5ch"
+            >
               {data.voteCount}
             </Box>
             {t('about.labels.votesCast', {
@@ -197,7 +205,11 @@ const About = () => {
           </Typography>
 
           <Typography>
-            <Box component="span" fontFamily="Inter Bold" marginRight="0.5ch">
+            <Box
+              component="span"
+              fontFamily="Inter Extra Bold"
+              marginRight="0.5ch"
+            >
               {data.groupsCount}
             </Box>
             {t('about.labels.groupsCreated', {
