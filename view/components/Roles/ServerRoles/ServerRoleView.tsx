@@ -240,7 +240,7 @@ const ServerRoleView = ({
 
   if (!withCard) {
     return (
-      <Box marginBottom={3}>
+      <Box marginBottom={3.5}>
         {renderTitle()}
         {renderRole()}
 

@@ -33,6 +33,7 @@ const ServerRoleMembersView = ({ members, header }: Props) => {
     color: 'text.secondary',
     fontFamily: 'Inter Bold',
     marginTop: 0.5,
+    marginBottom: -0.5,
   };
   const linkStyles: SxProps = {
     width: isDesktop ? '235px' : '100%',
