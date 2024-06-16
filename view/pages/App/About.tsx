@@ -1,14 +1,17 @@
-import { Divider, Typography } from '@mui/material';
+import { Button, Divider, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import ServerRoleView from '../../components/Roles/ServerRoles/ServerRoleView';
 import Rule from '../../components/Rules/Rule';
 import Accordion, {
   AccordionDetails,
   AccordionSummary,
 } from '../../components/Shared/Accordion';
+import Flex from '../../components/Shared/Flex';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
+import { NavigationPaths } from '../../constants/shared.constants';
 import { useAboutQuery } from '../../graphql/about/queries/gen/About.gen';
 import {
   convertBoldToSpan,
@@ -25,6 +28,7 @@ const About = () => {
   const { data, loading, error } = useAboutQuery();
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const serverConfig = data?.serverConfig;
   const serverRules = data?.serverRules;
@@ -80,7 +84,18 @@ const About = () => {
           <Typography
             dangerouslySetInnerHTML={{ __html: formattedAboutText }}
             whiteSpace="pre-wrap"
+            paddingBottom={2.2}
           />
+
+          <Flex marginLeft={-1}>
+            <Button onClick={() => navigate(NavigationPaths.Docs)}>
+              {t('about.actions.learnMore')}
+            </Button>
+
+            <Button onClick={() => navigate(NavigationPaths.PrivacyPolicy)}>
+              {t('privacyPolicy.headers.privacyPolicy')}
+            </Button>
+          </Flex>
         </AccordionDetails>
       </Accordion>
 
