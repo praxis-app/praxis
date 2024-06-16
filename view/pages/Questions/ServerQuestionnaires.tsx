@@ -54,7 +54,7 @@ const ServerQuestionnaires = () => {
     });
   }, [tabParam, setTab, getQuestionnaires]);
 
-  const pathPrefix = `${NavigationPaths.ServerQuestionnaires}${TAB_QUERY_PARAM}`;
+  const pathPrefix = `${NavigationPaths.VibeChecks}${TAB_QUERY_PARAM}`;
   const inProgressTab = `${pathPrefix}${QuestionnaireTicketStatus.InProgress}`;
   const approvedTab = `${pathPrefix}${QuestionnaireTicketStatus.Approved}`;
   const deniedTab = `${pathPrefix}${QuestionnaireTicketStatus.Denied}`;
@@ -92,14 +92,14 @@ const ServerQuestionnaires = () => {
   return (
     <>
       <LevelOneHeading header>
-        {t('questions.labels.questionnaires')}
+        {t('questions.labels.vibeChecks')}
       </LevelOneHeading>
 
       <Card>
         <Tabs textColor="inherit" value={tab}>
           <Tab
             label={t('questions.labels.submitted')}
-            onClick={() => navigate(NavigationPaths.ServerQuestionnaires)}
+            onClick={() => navigate(NavigationPaths.VibeChecks)}
           />
           <Tab
             label={t('questions.labels.inProgress')}

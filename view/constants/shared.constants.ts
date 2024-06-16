@@ -35,13 +35,13 @@ export enum NavigationPaths {
   ResetPassword = '/auth/reset-password',
   Roles = '/roles',
   Rules = '/rules',
-  ServerQuestionnaires = '/questionnaires',
   ServerQuestions = '/questions',
   ServerSettings = '/settings',
   SignUp = '/auth/signup',
   Users = '/users',
   VibeChat = '/vibe-chat',
   VibeCheck = '/vibe-check',
+  VibeChecks = '/vibe-checks',
   ViewRoles = '/roles/view',
 }
 

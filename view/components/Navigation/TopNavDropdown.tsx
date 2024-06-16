@@ -108,11 +108,9 @@ const TopNavDropdown = ({ anchorEl, handleClose, me }: Props) => {
       )}
 
       {serverPermissions.manageQuestionnaireTickets && (
-        <MenuItem
-          onClick={() => navigate(NavigationPaths.ServerQuestionnaires)}
-        >
+        <MenuItem onClick={() => navigate(NavigationPaths.VibeChecks)}>
           <QuestionAnswer {...ICON_PROPS} />
-          {t('questions.labels.questionnaires')}
+          {t('questions.labels.vibeChecks')}
         </MenuItem>
       )}
 

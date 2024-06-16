@@ -247,13 +247,11 @@ const NavDrawer = () => {
         )}
 
         {manageQuestionnaireTickets && (
-          <ListItemButton
-            onClick={handleLinkClick(NavigationPaths.ServerQuestionnaires)}
-          >
+          <ListItemButton onClick={handleLinkClick(NavigationPaths.VibeChecks)}>
             <ListItemIcon>
               <QuestionAnswer />
             </ListItemIcon>
-            <ListItemText primary={t('questions.labels.questionnaires')} />
+            <ListItemText primary={t('questions.labels.vibeChecks')} />
           </ListItemButton>
         )}
 

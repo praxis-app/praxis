@@ -771,6 +771,7 @@
       "ticketNumber": "Ticket #{{number}}",
       "vibeChat": "Vibe Chat",
       "vibeCheck": "Vibe Check",
+      "vibeChecks": "Vibe Checks",
       "votesNeeded": "Votes needed"
     },
     "headers": {

@@ -268,7 +268,7 @@ const Notification = ({
         const queryParams = `${notificationType}=true&questionId=${comment.question.id}`;
         if (comment.question.questionnaireTicket.user.id === otherUser?.id) {
           const { id } = comment.question.questionnaireTicket;
-          return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParams}`;
+          return `${NavigationPaths.VibeChecks}/${id}?${queryParams}`;
         }
         return `${NavigationPaths.VibeCheck}?${queryParams}`;
       }
@@ -276,7 +276,7 @@ const Notification = ({
         if (comment.questionnaireTicket.user.id === otherUser?.id) {
           const { id } = comment.questionnaireTicket;
           const queryParam = `${notificationType}=true`;
-          return `${NavigationPaths.ServerQuestionnaires}/${id}?${queryParam}`;
+          return `${NavigationPaths.VibeChecks}/${id}?${queryParam}`;
         }
         return NavigationPaths.VibeCheck;
       }
@@ -301,7 +301,7 @@ const Notification = ({
       if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
         const ticketId = comment?.questionnaireTicket?.id;
         const queryParam = `${notificationType}=true`;
-        return `${NavigationPaths.ServerQuestionnaires}/${ticketId}?${queryParam}`;
+        return `${NavigationPaths.VibeChecks}/${ticketId}?${queryParam}`;
       }
       return NavigationPaths.VibeCheck;
     }
@@ -310,13 +310,13 @@ const Notification = ({
       notificationType === NotificationType.NewQuestionnaireTicket ||
       isQuestionnaireTicketVote
     ) {
-      return `${NavigationPaths.ServerQuestionnaires}/${questionnaireTicket?.id}`;
+      return `${NavigationPaths.VibeChecks}/${questionnaireTicket?.id}`;
     }
     if (notificationType === NotificationType.AnswerComment) {
       const queryParams = `${notificationType}=true&questionId=${comment?.question?.id}`;
       if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
         const ticketId = comment?.question?.questionnaireTicket.id;
-        return `${NavigationPaths.ServerQuestionnaires}/${ticketId}?${queryParams}`;
+        return `${NavigationPaths.VibeChecks}/${ticketId}?${queryParams}`;
       }
       return `${NavigationPaths.VibeCheck}?${queryParams}`;
     }
