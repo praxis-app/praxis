@@ -9,15 +9,12 @@ import {
   Info,
   Link as InvitesIcon,
   QuestionAnswer,
-  Rule,
   ExitToApp as SessionIcon,
   Settings,
   PersonAdd as SignUpIcon,
   TaskAlt,
   SupervisedUserCircle as UsersIcon,
-  Visibility,
 } from '@mui/icons-material';
-import { truncate } from 'lodash';
 import {
   Divider,
   Drawer,
@@ -28,6 +25,7 @@ import {
   ListItemText as MuiListItemText,
 } from '@mui/material';
 import { SxProps, styled } from '@mui/material/styles';
+import { truncate } from 'lodash';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -117,15 +115,6 @@ const NavDrawer = () => {
     </ListItemButton>
   );
 
-  const renderRulesButton = () => (
-    <ListItemButton onClick={handleLinkClick(NavigationPaths.Rules)}>
-      <ListItemIcon>
-        <Rule />
-      </ListItemIcon>
-      <ListItemText primary={t('navigation.rules')} />
-    </ListItemButton>
-  );
-
   const renderAboutButton = () => (
     <ListItemButton onClick={handleLinkClick(NavigationPaths.About)}>
       <ListItemIcon>
@@ -143,7 +132,6 @@ const NavDrawer = () => {
 
       return (
         <>
-          {renderRulesButton()}
           {renderDocsButton()}
           {renderAboutButton()}
 
@@ -236,19 +224,23 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
-        {manageRoles ? (
+        {manageRoles && (
           <ListItemButton onClick={handleLinkClick(NavigationPaths.Roles)}>
             <ListItemIcon>
               <AccountBox />
             </ListItemIcon>
             <ListItemText primary={t('roles.actions.manageRoles')} />
           </ListItemButton>
-        ) : (
-          <ListItemButton onClick={handleLinkClick(NavigationPaths.ViewRoles)}>
+        )}
+
+        {manageSettings && (
+          <ListItemButton
+            onClick={handleLinkClick(NavigationPaths.ServerSettings)}
+          >
             <ListItemIcon>
-              <Visibility />
+              <Settings />
             </ListItemIcon>
-            <ListItemText primary={t('roles.actions.viewRoles')} />
+            <ListItemText primary={t('navigation.serverSettings')} />
           </ListItemButton>
         )}
 
@@ -274,20 +266,8 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
-        {manageSettings && (
-          <ListItemButton
-            onClick={handleLinkClick(NavigationPaths.ServerSettings)}
-          >
-            <ListItemIcon>
-              <Settings />
-            </ListItemIcon>
-            <ListItemText primary={t('navigation.settings')} />
-          </ListItemButton>
-        )}
-
-        {renderRulesButton()}
-        {renderDocsButton()}
         {renderAboutButton()}
+        {renderDocsButton()}
 
         <ListItemButton
           onClick={() =>
