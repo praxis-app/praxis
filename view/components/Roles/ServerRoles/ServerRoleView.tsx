@@ -132,23 +132,25 @@ const ServerRoleView = ({
     });
 
   const renderTitle = () => (
-    <Flex
-      gap="10px"
-      alignItems="center"
-      marginBottom={withCard ? 0 : 1.8}
-      bgcolor={withCard ? 'none' : 'rgb(255, 255, 255, 0.05)'}
-      paddingX={withCard ? 0 : 1.5}
-      width="fit-content"
-      borderRadius="8px"
-    >
-      <Box
-        bgcolor={role.color}
-        width="20px"
-        height="20px"
-        borderRadius={9999}
-      />
-      <Box fontSize={withCard ? 'inherit' : '28px'}>{role.name}</Box>
-    </Flex>
+    <Link href={canManageRoles ? editRolePath : '#'}>
+      <Flex
+        gap="10px"
+        alignItems="center"
+        marginBottom={withCard ? 0 : 1.8}
+        bgcolor={withCard ? 'none' : 'rgb(255, 255, 255, 0.05)'}
+        paddingX={withCard ? 0 : 1.5}
+        width="fit-content"
+        borderRadius="8px"
+      >
+        <Box
+          bgcolor={role.color}
+          width="20px"
+          height="20px"
+          borderRadius={9999}
+        />
+        <Box fontSize={withCard ? 'inherit' : '28px'}>{role.name}</Box>
+      </Flex>
+    </Link>
   );
 
   const renderRole = () => (
@@ -238,15 +240,12 @@ const ServerRoleView = ({
 
   if (!withCard) {
     return (
-      <Link
-        href={canManageRoles ? editRolePath : '#'}
-        sx={{ marginBottom: 3, display: 'inline-block' }}
-      >
+      <Box marginBottom={3}>
         {renderTitle()}
         {renderRole()}
 
         {!isLast && <Divider sx={{ marginTop: 3 }} />}
-      </Link>
+      </Box>
     );
   }
 
