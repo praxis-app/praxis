@@ -75,7 +75,8 @@
     },
     "actions": {
       "learnMore": "Learn more",
-      "viewAllPermissions": "View all {{count}} permissions"
+      "viewAllPermissions": "View all {{count}} permissions",
+      "viewAllMembers": "View all {{count}} members"
     },
     "labels": {
       "about": "About",
