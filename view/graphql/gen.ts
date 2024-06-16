@@ -1069,6 +1069,7 @@ export type Query = {
   joinedGroupsFeedCount: Scalars['Int']['output'];
   likes: Array<Like>;
   me: User;
+  membersWithPermission: Array<User>;
   notifications: Array<Notification>;
   notificationsCount: Scalars['Int']['output'];
   post: Post;
@@ -1138,6 +1139,10 @@ export type QueryLikesArgs = {
   likesData: LikesInput;
 };
 
+export type QueryMembersWithPermissionArgs = {
+  permissionName: Scalars['String']['input'];
+};
+
 export type QueryNotificationsArgs = {
   limit?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
@@ -1183,6 +1188,10 @@ export type QueryServerInviteArgs = {
 
 export type QueryServerRoleArgs = {
   id: Scalars['Int']['input'];
+};
+
+export type QueryServerRolesArgs = {
+  permissionName?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type QueryUserArgs = {

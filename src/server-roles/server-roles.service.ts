@@ -38,9 +38,15 @@ export class ServerRolesService {
     });
   }
 
-  async getServerRoleMembers(id: number) {
-    const { members } = await this.getServerRole({ id }, ['members']);
-    return members;
+  async getServerRoleMembers(roleId?: number, permissionName?: string) {
+    return this.userRepository.find({
+      where: {
+        serverRoles: {
+          id: roleId,
+          permission: permissionName ? { [permissionName]: true } : undefined,
+        },
+      },
+    });
   }
 
   async getAvailableUsersToAdd(id: number) {

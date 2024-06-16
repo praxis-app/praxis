@@ -31,8 +31,24 @@ export class ServerRolesResolver {
   }
 
   @Query(() => [ServerRole])
-  async serverRoles() {
-    return this.serverRolesService.getServerRoles();
+  async serverRoles(
+    @Args('permissionName', { type: () => String, nullable: true })
+    permissionName?: string,
+  ) {
+    return this.serverRolesService.getServerRoles({
+      permission: permissionName ? { [permissionName]: true } : undefined,
+    });
+  }
+
+  @Query(() => [User])
+  async membersWithPermission(
+    @Args('permissionName', { type: () => String })
+    permissionName: string,
+  ) {
+    return this.serverRolesService.getServerRoleMembers(
+      undefined,
+      permissionName,
+    );
   }
 
   @ResolveField(() => ServerRolePermission)

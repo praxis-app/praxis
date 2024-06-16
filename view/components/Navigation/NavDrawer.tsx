@@ -14,6 +14,7 @@ import {
   PersonAdd as SignUpIcon,
   TaskAlt,
   SupervisedUserCircle as UsersIcon,
+  Visibility,
 } from '@mui/icons-material';
 import { truncate } from 'lodash';
 import {
@@ -215,21 +216,28 @@ const NavDrawer = () => {
           </ListItemButton>
         )}
 
-        {manageRoles && (
-          <ListItemButton onClick={handleLinkClick(NavigationPaths.Roles)}>
-            <ListItemIcon>
-              <AccountBox />
-            </ListItemIcon>
-            <ListItemText primary={t('navigation.roles')} />
-          </ListItemButton>
-        )}
-
         {removeMembers && (
           <ListItemButton onClick={handleLinkClick(NavigationPaths.Users)}>
             <ListItemIcon>
               <UsersIcon />
             </ListItemIcon>
             <ListItemText primary={t('navigation.users')} />
+          </ListItemButton>
+        )}
+
+        {manageRoles ? (
+          <ListItemButton onClick={handleLinkClick(NavigationPaths.Roles)}>
+            <ListItemIcon>
+              <AccountBox />
+            </ListItemIcon>
+            <ListItemText primary={t('roles.actions.manageRoles')} />
+          </ListItemButton>
+        ) : (
+          <ListItemButton onClick={handleLinkClick(NavigationPaths.ViewRoles)}>
+            <ListItemIcon>
+              <Visibility />
+            </ListItemIcon>
+            <ListItemText primary={t('roles.actions.viewRoles')} />
           </ListItemButton>
         )}
 

@@ -725,6 +725,7 @@ type Query {
   joinedGroupsFeedCount: Int!
   likes(likesData: LikesInput!): [Like!]!
   me: User!
+  membersWithPermission(permissionName: String!): [User!]!
   notifications(limit: Int, offset: Int): [Notification!]!
   notificationsCount: Int!
   post(id: Int!): Post!
@@ -742,7 +743,7 @@ type Query {
   serverInvites: [ServerInvite!]!
   serverQuestions: [ServerQuestion!]!
   serverRole(id: Int!): ServerRole!
-  serverRoles: [ServerRole!]!
+  serverRoles(permissionName: String): [ServerRole!]!
   serverRules: [Rule!]!
   unreadNotificationsCount: Int!
   user(id: Int, name: String): User!

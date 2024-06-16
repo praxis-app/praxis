@@ -1,4 +1,4 @@
-import { Typography, TypographyProps } from '@mui/material';
+import { SxProps, Typography, TypographyProps } from '@mui/material';
 
 interface Props extends TypographyProps {
   header?: boolean;
@@ -10,7 +10,7 @@ const LevelOneHeading = ({
   sx,
   ...typographyProps
 }: Props) => {
-  const getStyles = () => {
+  const getStyles = (): SxProps => {
     const defaultStyles = {
       fontSize: 16,
       margin: 0,
@@ -24,6 +24,7 @@ const LevelOneHeading = ({
       fontSize: 35,
       marginBottom: 3,
       marginTop: -1,
+      ...sx,
     };
   };
 

@@ -20,11 +20,11 @@ const DocsPermissionList = ({ permissionType }: Props) => {
   return (
     <Box component="ul" paddingLeft={3} marginBottom={3}>
       {permissions.map((permission: PermissionName) => {
-        const { displayName, description, inDev } = getPermissionText(
+        const { displayName, description } = getPermissionText(
           permission,
           isGroup,
         );
-        if (inDev || !displayName) {
+        if (!displayName) {
           return null;
         }
         return (
