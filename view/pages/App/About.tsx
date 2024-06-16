@@ -61,7 +61,7 @@ const About = () => {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
-  if (!serverRules || !serverRoles || !formattedAboutText) {
+  if (!serverRules || !serverRoles) {
     return null;
   }
 
@@ -81,11 +81,17 @@ const About = () => {
         </AccordionSummary>
 
         <AccordionDetails sx={{ paddingBottom: 2.25 }}>
-          <Typography
-            dangerouslySetInnerHTML={{ __html: formattedAboutText }}
-            whiteSpace="pre-wrap"
-            paddingBottom={2.2}
-          />
+          {formattedAboutText ? (
+            <Typography
+              dangerouslySetInnerHTML={{ __html: formattedAboutText }}
+              whiteSpace="pre-wrap"
+              paddingBottom={2.2}
+            />
+          ) : (
+            <Typography paddingBottom={2.2}>
+              {t('about.prompts.noAboutText')}
+            </Typography>
+          )}
 
           <Flex marginLeft={-1}>
             <Button onClick={() => navigate(NavigationPaths.Docs)}>

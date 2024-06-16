@@ -78,6 +78,9 @@
     },
     "labels": {
       "about": "About"
+    },
+    "prompts": {
+      "noAboutText": "This server hasn't set a description yet."
     }
   },
 
