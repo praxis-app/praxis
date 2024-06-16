@@ -38,6 +38,7 @@ const About = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const canManageRoles = data?.me?.serverPermissions.manageRoles;
   const serverConfig = data?.serverConfig;
   const serverRules = data?.serverRules;
   const serverRoles = data?.serverRoles;
@@ -160,6 +161,7 @@ const About = () => {
                 role={role}
                 withCard={false}
                 isLast={index + 1 === serverRoles.length}
+                canManageRoles={canManageRoles}
               />
             ))}
           </AccordionDetails>

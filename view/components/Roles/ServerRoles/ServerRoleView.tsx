@@ -28,6 +28,7 @@ import {
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import Flex from '../../Shared/Flex';
 import ItemMenu from '../../Shared/ItemMenu';
+import Link from '../../Shared/Link';
 import ServerPermissionView from './ServerPermissionView/ServerPermissionView';
 import ServerRoleMembersView from './ServerRoleMembersView';
 
@@ -88,6 +89,8 @@ const ServerRoleView = ({
   const deniedPermissionsShown = showMoreDenied
     ? deniedPermissions
     : deniedPermissions.slice(0, DEFAULT_PERMISSIONS_SHOWN);
+
+  const editRolePath = `${NavigationPaths.Roles}/${role.id}/edit`;
 
   const viewMoreBtnStyles: SxProps = {
     textTransform: 'none',
@@ -235,12 +238,15 @@ const ServerRoleView = ({
 
   if (!withCard) {
     return (
-      <Box marginBottom={3}>
+      <Link
+        href={canManageRoles ? editRolePath : '#'}
+        sx={{ marginBottom: 3, display: 'inline-block' }}
+      >
         {renderTitle()}
         {renderRole()}
 
         {!isLast && <Divider sx={{ marginTop: 3 }} />}
-      </Box>
+      </Link>
     );
   }
 

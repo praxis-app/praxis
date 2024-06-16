@@ -10,6 +10,12 @@ query About($isVerified: Boolean!) {
   serverRoles @include(if: $isVerified) {
     ...ServerRoleView
   }
+  me @include(if: $isVerified) {
+    id
+    serverPermissions {
+      manageRoles
+    }
+  }
   ratifiedProposalCount
   groupsCount
   voteCount

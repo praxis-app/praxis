@@ -62,6 +62,14 @@ export type AboutQuery = {
       profilePicture: { __typename?: 'Image'; id: number };
     }>;
   }>;
+  me?: {
+    __typename?: 'User';
+    id: number;
+    serverPermissions: {
+      __typename?: 'ServerPermissions';
+      manageRoles: boolean;
+    };
+  };
 };
 
 export const AboutDocument = gql`
@@ -76,6 +84,12 @@ export const AboutDocument = gql`
     }
     serverRoles @include(if: $isVerified) {
       ...ServerRoleView
+    }
+    me @include(if: $isVerified) {
+      id
+      serverPermissions {
+        manageRoles
+      }
     }
     ratifiedProposalCount
     groupsCount
