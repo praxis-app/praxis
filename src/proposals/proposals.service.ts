@@ -101,6 +101,12 @@ export class ProposalsService {
     return this.voteRepository.findOne({ where: { proposalId, userId } });
   }
 
+  async getRatifiedProposalCount() {
+    return this.proposalRepository.count({
+      where: { stage: ProposalStage.Ratified },
+    });
+  }
+
   async isOwnProposal(proposalId: number, userId: number) {
     const count = await this.proposalRepository.count({
       where: { id: proposalId, userId },

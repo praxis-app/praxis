@@ -43,6 +43,10 @@ export class VotesService {
     });
   }
 
+  async getVoteCount() {
+    return this.voteRepository.count();
+  }
+
   async createVote(voteData: CreateVoteInput, userId: number) {
     const vote = await this.voteRepository.save({
       ...voteData,

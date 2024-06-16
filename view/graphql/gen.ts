@@ -1082,6 +1082,7 @@ export type Query = {
   questionnaireTicket: QuestionnaireTicket;
   questionnaireTicketCount: Scalars['Int']['output'];
   questionnaireTickets: Array<QuestionnaireTicket>;
+  ratifiedProposalCount: Scalars['Int']['output'];
   serverConfig: ServerConfig;
   serverInvite: ServerInvite;
   serverInvites: Array<ServerInvite>;
@@ -1095,6 +1096,7 @@ export type Query = {
   usersByIds: Array<User>;
   usersCount: Scalars['Int']['output'];
   vibeChat: Conversation;
+  voteCount: Scalars['Int']['output'];
 };
 
 export type QueryConversationArgs = {

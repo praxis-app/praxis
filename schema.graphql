@@ -738,6 +738,7 @@ type Query {
   questionnaireTicket(id: Int!): QuestionnaireTicket!
   questionnaireTicketCount(status: String!): Int!
   questionnaireTickets(input: QuestionnaireTicketsInput!): [QuestionnaireTicket!]!
+  ratifiedProposalCount: Int!
   serverConfig: ServerConfig!
   serverInvite(token: String!): ServerInvite!
   serverInvites: [ServerInvite!]!
@@ -751,6 +752,7 @@ type Query {
   usersByIds(ids: [Int!]!): [User!]!
   usersCount: Int!
   vibeChat: Conversation!
+  voteCount: Int!
 }
 
 type Question {
