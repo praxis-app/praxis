@@ -57,7 +57,7 @@ const ServerRoleMembersView = ({ members, header }: Props) => {
       </Typography>
 
       <Flex
-        paddingLeft={isDesktop ? 0.1 : 0.5}
+        paddingLeft={1.1}
         flexDirection={isDesktop ? 'row' : 'column'}
         flexWrap={isDesktop ? 'wrap' : 'nowrap'}
         gap={isDesktop ? 1.6 : 1.4}
