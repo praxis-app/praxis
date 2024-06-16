@@ -270,7 +270,7 @@ const Notification = ({
           const { id } = comment.question.questionnaireTicket;
           return `${NavigationPaths.VibeChecks}/${id}?${queryParams}`;
         }
-        return `${NavigationPaths.VibeCheck}?${queryParams}`;
+        return `${NavigationPaths.MyVibeCheck}?${queryParams}`;
       }
       if (comment?.questionnaireTicket) {
         if (comment.questionnaireTicket.user.id === otherUser?.id) {
@@ -278,7 +278,7 @@ const Notification = ({
           const queryParam = `${notificationType}=true`;
           return `${NavigationPaths.VibeChecks}/${id}?${queryParam}`;
         }
-        return NavigationPaths.VibeCheck;
+        return NavigationPaths.MyVibeCheck;
       }
       if (comment?.post?.id) {
         return `${NavigationPaths.Posts}/${comment.post.id}`;
@@ -303,7 +303,7 @@ const Notification = ({
         const queryParam = `${notificationType}=true`;
         return `${NavigationPaths.VibeChecks}/${ticketId}?${queryParam}`;
       }
-      return NavigationPaths.VibeCheck;
+      return NavigationPaths.MyVibeCheck;
     }
     if (
       notificationType === NotificationType.QuestionnaireTicketSubmitted ||
@@ -318,14 +318,14 @@ const Notification = ({
         const ticketId = comment?.question?.questionnaireTicket.id;
         return `${NavigationPaths.VibeChecks}/${ticketId}?${queryParams}`;
       }
-      return `${NavigationPaths.VibeCheck}?${queryParams}`;
+      return `${NavigationPaths.MyVibeCheck}?${queryParams}`;
     }
     if (
       notificationType === NotificationType.AnswerLike ||
       notificationType === NotificationType.VerifyUser ||
       notificationType === NotificationType.DenyUserVerification
     ) {
-      return NavigationPaths.VibeCheck;
+      return NavigationPaths.MyVibeCheck;
     }
     return NavigationPaths.Home;
   };

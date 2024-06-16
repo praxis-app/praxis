@@ -122,7 +122,7 @@ const TopNavDropdown = ({ anchorEl, handleClose, me }: Props) => {
       )}
 
       {isLoggedIn && !isVerified && (
-        <MenuItem onClick={() => navigate(NavigationPaths.VibeCheck)}>
+        <MenuItem onClick={() => navigate(NavigationPaths.MyVibeCheck)}>
           <TaskAlt {...ICON_PROPS} />
           {t('questions.labels.vibeCheck')}
         </MenuItem>

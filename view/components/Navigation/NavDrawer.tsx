@@ -184,7 +184,9 @@ const NavDrawer = () => {
         </ListItemButton>
 
         {isLoggedIn && !isVerified && (
-          <ListItemButton onClick={handleLinkClick(NavigationPaths.VibeCheck)}>
+          <ListItemButton
+            onClick={handleLinkClick(NavigationPaths.MyVibeCheck)}
+          >
             <ListItemIcon>
               <TaskAlt />
             </ListItemIcon>
