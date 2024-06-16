@@ -74,7 +74,7 @@ const About = () => {
   }
 
   return (
-    <>
+    <Box paddingBottom={10}>
       <LevelOneHeading header>{serverName}</LevelOneHeading>
 
       <Accordion
@@ -218,7 +218,7 @@ const About = () => {
           </Typography>
         </AccordionDetails>
       </Accordion>
-    </>
+    </Box>
   );
 };
 

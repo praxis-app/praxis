@@ -1,9 +1,11 @@
 import {
   Box,
+  Button,
   Card,
   Divider,
   CardContent as MuiCardContent,
   CardHeader as MuiCardHeader,
+  SxProps,
   Typography,
   styled,
 } from '@mui/material';
@@ -29,6 +31,8 @@ import ItemMenu from '../../Shared/ItemMenu';
 import ServerPermissionView from './ServerPermissionView/ServerPermissionView';
 import ServerRoleMembersView from './ServerRoleMembersView';
 
+const DEFAULT_PERMISSIONS_SHOWN = 4;
+
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
 }));
@@ -51,6 +55,8 @@ const ServerRoleView = ({
   role,
 }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [showMoreGranted, setShowMoreGranted] = useState(false);
+  const [showMoreDenied, setShowMoreDenied] = useState(false);
   const [deleteRole] = useDeleteServerRoleMutation();
 
   const { t } = useTranslation();
@@ -74,6 +80,22 @@ const ServerRoleView = ({
     },
     [],
   );
+
+  const grantedPermissionsShown = showMoreGranted
+    ? grantedPermissions
+    : grantedPermissions.slice(0, DEFAULT_PERMISSIONS_SHOWN);
+
+  const deniedPermissionsShown = showMoreDenied
+    ? deniedPermissions
+    : deniedPermissions.slice(0, DEFAULT_PERMISSIONS_SHOWN);
+
+  const viewMoreBtnStyles: SxProps = {
+    textTransform: 'none',
+    paddingY: 0.2,
+    color: 'text.secondary',
+    fontFamily: 'Inter Bold',
+    marginTop: 0.5,
+  };
 
   const handleDeleteBtnClick = async () =>
     await deleteRole({
@@ -129,7 +151,7 @@ const ServerRoleView = ({
   const renderRole = () => (
     <>
       {grantedPermissions.length > 0 && (
-        <>
+        <Box marginBottom={1.25}>
           <Typography
             fontFamily="Inter Bold"
             marginBottom={0.75}
@@ -142,9 +164,8 @@ const ServerRoleView = ({
             flexDirection={isDesktop ? 'row' : 'column'}
             flexWrap={isDesktop ? 'wrap' : 'nowrap'}
             gap={isDesktop ? '5px 22px' : 0.5}
-            marginBottom={1.25}
           >
-            {grantedPermissions.map((permission) => (
+            {grantedPermissionsShown.map((permission) => (
               <ServerPermissionView
                 key={permission}
                 permission={permission}
@@ -152,11 +173,23 @@ const ServerRoleView = ({
               />
             ))}
           </Flex>
-        </>
+
+          {grantedPermissions.length > DEFAULT_PERMISSIONS_SHOWN &&
+            !showMoreGranted && (
+              <Button
+                onClick={() => setShowMoreGranted(!showMoreGranted)}
+                sx={viewMoreBtnStyles}
+              >
+                {t('about.actions.viewAllPermissions', {
+                  count: grantedPermissions.length,
+                })}
+              </Button>
+            )}
+        </Box>
       )}
 
       {deniedPermissions.length > 0 && (
-        <>
+        <Box marginBottom={1.25}>
           <Typography
             fontFamily="Inter Bold"
             marginBottom={0.75}
@@ -169,9 +202,8 @@ const ServerRoleView = ({
             flexDirection={isDesktop ? 'row' : 'column'}
             flexWrap={isDesktop ? 'wrap' : 'nowrap'}
             gap={isDesktop ? '5px 22px' : 0.5}
-            marginBottom={1.25}
           >
-            {deniedPermissions.map((permission) => (
+            {deniedPermissionsShown.map((permission) => (
               <ServerPermissionView
                 key={permission}
                 permission={permission}
@@ -179,7 +211,19 @@ const ServerRoleView = ({
               />
             ))}
           </Flex>
-        </>
+
+          {deniedPermissions.length > DEFAULT_PERMISSIONS_SHOWN &&
+            !showMoreDenied && (
+              <Button
+                onClick={() => setShowMoreDenied(!showMoreDenied)}
+                sx={viewMoreBtnStyles}
+              >
+                {t('about.actions.viewAllPermissions', {
+                  count: deniedPermissions.length,
+                })}
+              </Button>
+            )}
+        </Box>
       )}
 
       <ServerRoleMembersView

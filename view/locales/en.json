@@ -74,7 +74,8 @@
       "inDev": "This project is still in development and is not yet intended for serious use outside of testing or research purposes."
     },
     "actions": {
-      "learnMore": "Learn more"
+      "learnMore": "Learn more",
+      "viewAllPermissions": "View all {{count}} permissions"
     },
     "labels": {
       "about": "About",
@@ -828,7 +829,9 @@
   "pagination": {
     "of": "of",
     "moreThan": "more than",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "loadMore": "Load more...",
+    "showLess": "Show less"
   },
 
   "time": {
