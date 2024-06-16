@@ -7,6 +7,7 @@ import {
   Info,
   Link as InvitesIcon,
   AccountBox as RolesIcon,
+  Rule,
   SupervisedUserCircle as UsersIcon,
 } from '@mui/icons-material';
 import {
@@ -62,6 +63,7 @@ const LeftNav = () => {
   const canManageRoles = me?.serverPermissions.manageRoles;
   const canCreateInvites = me?.serverPermissions.createInvites;
   const canManageInvites = me?.serverPermissions.manageInvites;
+  const canManageRules = me?.serverPermissions.manageRules;
 
   const listStyles: SxProps = {
     position: 'fixed',
@@ -153,6 +155,20 @@ const LeftNav = () => {
             <ListItemText
               isActive={isActive(NavigationPaths.Invites)}
               primary={t('navigation.invites')}
+            />
+          </ListItemButton>
+        </Link>
+      )}
+
+      {canManageRules && (
+        <Link href={NavigationPaths.Rules}>
+          <ListItemButton>
+            <ListItemIcon>
+              <Rule />
+            </ListItemIcon>
+            <ListItemText
+              isActive={isActive(NavigationPaths.Rules)}
+              primary={t('navigation.rules')}
             />
           </ListItemButton>
         </Link>
