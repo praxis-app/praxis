@@ -76,7 +76,8 @@
     "actions": {
       "learnMore": "Learn more",
       "viewAllPermissions": "View all {{count}} permissions",
-      "viewAllMembers": "View all {{count}} members"
+      "viewAllMembers": "View all {{count}} members",
+      "seeRolesOverview": "See roles overview"
     },
     "labels": {
       "about": "About",

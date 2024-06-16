@@ -148,7 +148,7 @@ const About = () => {
             </Typography>
           </AccordionSummary>
 
-          <AccordionDetails sx={{ paddingBottom: 0.8 }}>
+          <AccordionDetails sx={{ paddingBottom: 2 }}>
             <Typography marginBottom={2.2}>
               {t('roles.subheaders.viewServerRoles')}
             </Typography>
@@ -164,6 +164,16 @@ const About = () => {
                 canManageRoles={canManageRoles}
               />
             ))}
+
+            <Divider sx={{ marginBottom: 2.1 }} />
+
+            <Button
+              onClick={() => navigate(NavigationPaths.ViewRoles)}
+              sx={{ textTransform: 'none' }}
+              fullWidth
+            >
+              {t('about.actions.seeRolesOverview')}
+            </Button>
           </AccordionDetails>
         </Accordion>
       )}
