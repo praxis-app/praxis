@@ -5,7 +5,6 @@ import {
   Close,
   Article as DocsIcon,
   EventNote,
-  HowToReg,
   Info,
   Link as InvitesIcon,
   QuestionAnswer,
@@ -167,7 +166,6 @@ const NavDrawer = () => {
       createInvites,
       manageInvites,
       manageQuestionnaireTickets,
-      manageQuestions,
       manageRoles,
       manageRules,
       manageSettings,
@@ -254,17 +252,6 @@ const NavDrawer = () => {
               <QuestionAnswer />
             </ListItemIcon>
             <ListItemText primary={t('questions.labels.vibeChecks')} />
-          </ListItemButton>
-        )}
-
-        {manageQuestions && (
-          <ListItemButton
-            onClick={handleLinkClick(NavigationPaths.ServerQuestions)}
-          >
-            <ListItemIcon>
-              <HowToReg />
-            </ListItemIcon>
-            <ListItemText primary={t('questions.labels.questions')} />
           </ListItemButton>
         )}
 

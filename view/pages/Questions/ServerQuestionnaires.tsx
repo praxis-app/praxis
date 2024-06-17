@@ -1,8 +1,18 @@
-import { Card, CardContent, Tab, Tabs, Typography } from '@mui/material';
+import { Settings } from '@mui/icons-material';
+import {
+  Card,
+  CardContent,
+  MenuItem,
+  Tab,
+  Tabs,
+  Typography,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import QuestionnaireTicketCard from '../../components/Questions/QuestionnaireTicketCard';
+import Flex from '../../components/Shared/Flex';
+import ItemMenu from '../../components/Shared/ItemMenu';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import Pagination from '../../components/Shared/Pagination';
 import { QuestionnaireTicketStatus } from '../../constants/question.constants';
@@ -14,6 +24,7 @@ import {
 import { useServerQuestionnairesLazyQuery } from '../../graphql/questions/queries/gen/ServerQuestionnaires.gen';
 
 const ServerQuestionnaires = () => {
+  const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
   const [tab, setTab] = useState(0);
@@ -91,9 +102,23 @@ const ServerQuestionnaires = () => {
 
   return (
     <>
-      <LevelOneHeading header>
-        {t('questions.labels.vibeChecks')}
-      </LevelOneHeading>
+      <Flex justifyContent="space-between" alignItems="center">
+        <LevelOneHeading header>
+          {t('questions.labels.vibeChecks')}
+        </LevelOneHeading>
+
+        <ItemMenu
+          anchorEl={menuAnchorEl}
+          buttonStyles={{ marginBottom: '24px', width: '72px' }}
+          setAnchorEl={setMenuAnchorEl}
+          variant="ghost"
+        >
+          <MenuItem onClick={() => navigate(NavigationPaths.ServerQuestions)}>
+            <Settings fontSize="small" sx={{ marginRight: 1 }} />
+            {t('questions.actions.manageQuestions')}
+          </MenuItem>
+        </ItemMenu>
+      </Flex>
 
       <Card>
         <Tabs textColor="inherit" value={tab}>

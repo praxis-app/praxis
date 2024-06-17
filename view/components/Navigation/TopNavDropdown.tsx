@@ -2,15 +2,14 @@ import { useReactiveVar } from '@apollo/client';
 import {
   AccountBox,
   ExitToApp,
-  HowToReg,
   Person,
   QuestionAnswer,
   Settings,
   TaskAlt,
 } from '@mui/icons-material';
 import { Menu, MenuItem, SvgIconProps, Typography } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 import { truncate } from 'lodash';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { useLogOutMutation } from '../../graphql/auth/mutations/gen/LogOut.gen';
@@ -111,13 +110,6 @@ const TopNavDropdown = ({ anchorEl, handleClose, me }: Props) => {
         <MenuItem onClick={() => navigate(NavigationPaths.VibeChecks)}>
           <QuestionAnswer {...ICON_PROPS} />
           {t('questions.labels.vibeChecks')}
-        </MenuItem>
-      )}
-
-      {serverPermissions.manageQuestions && (
-        <MenuItem onClick={() => navigate(NavigationPaths.ServerQuestions)}>
-          <HowToReg {...ICON_PROPS} />
-          {t('questions.labels.questions')}
         </MenuItem>
       )}
 

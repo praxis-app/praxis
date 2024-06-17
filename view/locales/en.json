@@ -749,7 +749,8 @@
 
   "questions": {
     "actions": {
-      "saveProgress": "Save progress"
+      "saveProgress": "Save progress",
+      "manageQuestions": "Manage questions"
     },
     "labels": {
       "answer": "Answer",
