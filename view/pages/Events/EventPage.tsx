@@ -15,14 +15,9 @@ import ProgressBar from '../../components/Shared/ProgressBar';
 import { TruncationSizes } from '../../constants/shared.constants';
 import { isVerifiedVar } from '../../graphql/cache';
 import { useEventPageLazyQuery } from '../../graphql/events/queries/gen/EventPage.gen';
-import { useIsDesktop } from '../../hooks/shared.hooks';
+import { useFormattedText, useIsDesktop } from '../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../utils/error.utils';
 import { getGroupEventsTabPath } from '../../utils/group.utils';
-import {
-  convertBoldToSpan,
-  parseMarkdownText,
-  urlifyText,
-} from '../../utils/shared.utils';
 import EventDiscussionTab from './EventDiscussionTab';
 
 const CardContent = styled(MuiCardContent)(() => ({
@@ -33,7 +28,6 @@ const CardContent = styled(MuiCardContent)(() => ({
 
 const EventPage = () => {
   const [tab, setTab] = useState(0);
-  const [formattedDescription, setFormattedDescription] = useState<string>();
   const [isDeleting, setIsDeleting] = useState(false);
   const isVerified = useReactiveVar(isVerifiedVar);
 
@@ -47,6 +41,7 @@ const EventPage = () => {
 
   const event = data?.event;
   const description = event?.description;
+  const formattedDescription = useFormattedText(description);
   const canManageAllEvents = !!data?.me?.serverPermissions.manageEvents;
 
   useEffect(() => {
@@ -56,22 +51,6 @@ const EventPage = () => {
       });
     }
   }, [id, getEvent, isDeleting, isVerified]);
-
-  useEffect(() => {
-    if (!description) {
-      return;
-    }
-    const formatDescription = async () => {
-      const linkSize = isDesktop
-        ? TruncationSizes.ExtraLarge
-        : TruncationSizes.Medium;
-      const urlified = urlifyText(description, linkSize);
-      const markdown = await parseMarkdownText(urlified);
-      const formatted = convertBoldToSpan(markdown);
-      setFormattedDescription(formatted);
-    };
-    formatDescription();
-  }, [description, isDesktop]);
 
   if (loading) {
     return <ProgressBar />;

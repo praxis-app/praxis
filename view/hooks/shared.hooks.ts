@@ -1,8 +1,13 @@
 import { useReactiveVar } from '@apollo/client';
 import { Breakpoint, useMediaQuery, useTheme } from '@mui/material';
 import { RefObject, useEffect, useRef, useState } from 'react';
-import { BrowserEvents } from '../constants/shared.constants';
+import { BrowserEvents, TruncationSizes } from '../constants/shared.constants';
 import { scrollDirectionVar } from '../graphql/cache';
+import {
+  convertBoldToSpan,
+  parseMarkdownText,
+  urlifyText,
+} from '../utils/shared.utils';
 
 const RESET_SCROLL_DIRECTION_TIMEOUT = 700;
 const RESET_SCROLL_DIRECTION_THRESHOLD = 40;
@@ -121,6 +126,33 @@ export const useWindowSize = () => {
   }, []);
 
   return [windowWidth, windowHeight];
+};
+
+export const useFormattedText = (
+  text?: string | null,
+  urlTrimSize?: number,
+) => {
+  const [formattedText, setFormattedText] = useState('');
+  const isDesktop = useIsDesktop();
+
+  useEffect(() => {
+    if (!text) {
+      return;
+    }
+    const formatText = async () => {
+      const urlSize =
+        urlTrimSize || isDesktop
+          ? TruncationSizes.ExtraLarge
+          : TruncationSizes.Medium;
+      const urlified = urlifyText(text, urlSize);
+      const markdown = await parseMarkdownText(urlified);
+      const formatted = convertBoldToSpan(markdown);
+      setFormattedText(formatted);
+    };
+    formatText();
+  }, [text, isDesktop, urlTrimSize]);
+
+  return formattedText;
 };
 
 export const useAboveBreakpoint = (breakpoint: Breakpoint) =>
