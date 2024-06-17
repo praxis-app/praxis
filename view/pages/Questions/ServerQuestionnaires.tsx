@@ -104,7 +104,7 @@ const ServerQuestionnaires = () => {
     <>
       <Flex justifyContent="space-between" alignItems="center">
         <LevelOneHeading header>
-          {t('questions.labels.vibeChecks')}
+          {t('questions.headers.vibeChecks')}
         </LevelOneHeading>
 
         <ItemMenu

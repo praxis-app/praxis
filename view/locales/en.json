@@ -772,7 +772,7 @@
       "ticketNumber": "Ticket #{{number}}",
       "vibeChat": "Vibe Chat",
       "vibeCheck": "Vibe Check",
-      "vibeChecks": "Vibe Checks",
+      "vibeChecks": "Vibe checks",
       "votesNeeded": "Votes needed"
     },
     "headers": {
@@ -780,7 +780,8 @@
       "updateQuestion": "Edit Question",
       "questionPriority": "Question {{priority}}",
       "usersAnswer": "{{name}}'s Answer",
-      "questionnaireTicket": "Questionnaire Ticket"
+      "questionnaireTicket": "Questionnaire Ticket",
+      "vibeChecks": "Vibe Checks"
     },
     "errors": {
       "missingAnswer": "Answer cannot be empty",
