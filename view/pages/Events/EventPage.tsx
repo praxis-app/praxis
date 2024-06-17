@@ -18,7 +18,11 @@ import { useEventPageLazyQuery } from '../../graphql/events/queries/gen/EventPag
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../utils/error.utils';
 import { getGroupEventsTabPath } from '../../utils/group.utils';
-import { urlifyText } from '../../utils/shared.utils';
+import {
+  convertBoldToSpan,
+  parseMarkdownText,
+  urlifyText,
+} from '../../utils/shared.utils';
 import EventDiscussionTab from './EventDiscussionTab';
 
 const CardContent = styled(MuiCardContent)(() => ({
@@ -29,6 +33,7 @@ const CardContent = styled(MuiCardContent)(() => ({
 
 const EventPage = () => {
   const [tab, setTab] = useState(0);
+  const [formattedDescription, setFormattedDescription] = useState<string>();
   const [isDeleting, setIsDeleting] = useState(false);
   const isVerified = useReactiveVar(isVerifiedVar);
 
@@ -40,6 +45,10 @@ const EventPage = () => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
 
+  const event = data?.event;
+  const description = event?.description;
+  const canManageAllEvents = !!data?.me?.serverPermissions.manageEvents;
+
   useEffect(() => {
     if (id && !isDeleting) {
       getEvent({
@@ -48,11 +57,27 @@ const EventPage = () => {
     }
   }, [id, getEvent, isDeleting, isVerified]);
 
+  useEffect(() => {
+    if (!description) {
+      return;
+    }
+    const formatDescription = async () => {
+      const linkSize = isDesktop
+        ? TruncationSizes.ExtraLarge
+        : TruncationSizes.Medium;
+      const urlified = urlifyText(description, linkSize);
+      const markdown = await parseMarkdownText(urlified);
+      const formatted = convertBoldToSpan(markdown);
+      setFormattedDescription(formatted);
+    };
+    formatDescription();
+  }, [description, isDesktop]);
+
   if (loading) {
     return <ProgressBar />;
   }
 
-  if (!data || !id) {
+  if (!event || !id) {
     if (isDeniedAccess(error)) {
       return <Typography>{t('prompts.permissionDenied')}</Typography>;
     }
@@ -62,10 +87,6 @@ const EventPage = () => {
     }
     return null;
   }
-
-  const { event, me } = data;
-  const description = urlifyText(event.description);
-  const canManageAllEvents = !!me?.serverPermissions.manageEvents;
 
   const breadcrumbs = event.group
     ? [
@@ -100,10 +121,12 @@ const EventPage = () => {
               {t('events.headers.whatToExpect')}
             </Typography>
 
-            <Typography
-              dangerouslySetInnerHTML={{ __html: description }}
-              whiteSpace="pre-wrap"
-            />
+            {formattedDescription && (
+              <Typography
+                dangerouslySetInnerHTML={{ __html: formattedDescription }}
+                whiteSpace="pre-wrap"
+              />
+            )}
           </CardContent>
         </Card>
       )}

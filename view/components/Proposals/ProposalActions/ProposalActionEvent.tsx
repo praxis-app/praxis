@@ -5,6 +5,7 @@ import humanizeDuration from 'humanize-duration';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { TruncationSizes } from '../../../constants/shared.constants';
 import { ProposalActionEventInput } from '../../../graphql/gen';
 import { ProposalActionEventFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionEvent.gen';
 import { useUserByUserIdLazyQuery } from '../../../graphql/users/queries/gen/UserByUserId.gen';
@@ -104,13 +105,16 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
       return;
     }
     const formatDescription = async () => {
-      const urlified = urlifyText(description, true);
+      const linkSize = isDesktop
+        ? TruncationSizes.ExtraLarge
+        : TruncationSizes.Medium;
+      const urlified = urlifyText(description, linkSize);
       const markdown = await parseMarkdownText(urlified);
       const formatted = convertBoldToSpan(markdown);
       setFormattedDescription(formatted);
     };
     formatDescription();
-  }, [description]);
+  }, [description, isDesktop]);
 
   const getNameTextWidth = () => {
     if (isDesktop) {
