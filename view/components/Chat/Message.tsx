@@ -1,11 +1,11 @@
 import { Box, Typography } from '@mui/material';
 import { MessageFragment } from '../../graphql/chat/fragments/gen/Message.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
-import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import AttachedImageList from '../Images/AttachedImageList';
 import Flex from '../Shared/Flex';
+import FormattedText from '../Shared/FormattedText';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 
@@ -42,14 +42,7 @@ const Message = ({
           </Typography>
         </Flex>
 
-        {body && (
-          <Typography
-            dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
-            whiteSpace="pre-wrap"
-            lineHeight={1.2}
-            paddingBottom={0.4}
-          />
-        )}
+        <FormattedText text={body} lineHeight={1.2} paddingBottom={0.4} />
 
         {!!images.length && (
           <AttachedImageList
