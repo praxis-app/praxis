@@ -9,7 +9,7 @@ import {
 } from '../../utils/shared.utils';
 
 interface Props extends TypographyProps {
-  text?: string;
+  text?: string | null;
   urlTrimSize?: number;
 }
 
