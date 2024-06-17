@@ -6,12 +6,12 @@ import { toastVar } from '../../graphql/cache';
 import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.gen';
 import { useDeleteCommentMutation } from '../../graphql/comments/mutations/gen/DeleteComment.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
-import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import AttachedImageList from '../Images/AttachedImageList';
 import LikesModal from '../Likes/LikesModal';
 import Flex from '../Shared/Flex';
+import FormattedText from '../Shared/FormattedText';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
@@ -62,12 +62,10 @@ const Comment = ({
   }, [likeCount, ref.current?.offsetWidth]);
 
   const isMe = user.id === currentUserId;
+  const urlTrimSize = isDesktop ? TruncationSizes.ExtraLarge : 35;
   const deleteCommentPrompt = t('prompts.deleteItem', { itemType: 'comment' });
   const userPath = getUserProfilePath(user.name);
   const formattedDate = timeAgo(createdAt);
-
-  const urlTrimSize = isDesktop ? TruncationSizes.ExtraLarge : 35;
-  const formattedBody = urlifyText(body || '', urlTrimSize);
 
   const itemMenuStyles: SxProps = {
     alignSelf: 'center',
@@ -206,14 +204,12 @@ const Comment = ({
               {user.displayName || user.name}
             </Link>
 
-            {body && (
-              <Typography
-                dangerouslySetInnerHTML={{ __html: formattedBody }}
-                whiteSpace="pre-wrap"
-                lineHeight={1.2}
-                paddingY={0.4}
-              />
-            )}
+            <FormattedText
+              text={body}
+              urlTrimSize={urlTrimSize}
+              lineHeight={1.2}
+              paddingY={0.4}
+            />
 
             {!!images.length && (
               <AttachedImageList
