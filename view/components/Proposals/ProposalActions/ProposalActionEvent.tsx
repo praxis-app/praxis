@@ -10,6 +10,11 @@ import { ProposalActionEventFragment } from '../../../graphql/proposals/fragment
 import { useUserByUserIdLazyQuery } from '../../../graphql/users/queries/gen/UserByUserId.gen';
 import { useAboveBreakpoint, useIsDesktop } from '../../../hooks/shared.hooks';
 import { getGroupEventsTabPath } from '../../../utils/group.utils';
+import {
+  convertBoldToSpan,
+  parseMarkdownText,
+  urlifyText,
+} from '../../../utils/shared.utils';
 import { formatDateTime } from '../../../utils/time.utils';
 import { getUserProfilePath } from '../../../utils/user.utils';
 import EventAvatar from '../../Events/EventAvatar';
@@ -31,6 +36,7 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
   const { pathname } = useLocation();
   const isProposalPage = pathname.includes('/proposals/');
   const [showEvent, setShowEvent] = useState(!!preview || isProposalPage);
+  const [formattedDescription, setFormattedDescription] = useState<string>();
 
   const [getUserByUserId, { data }] = useUserByUserIdLazyQuery();
 
@@ -92,6 +98,19 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
     marginRight: 0.7,
     marginLeft: 0.2,
   };
+
+  useEffect(() => {
+    if (!description) {
+      return;
+    }
+    const formatDescription = async () => {
+      const urlified = urlifyText(description, true);
+      const markdown = await parseMarkdownText(urlified);
+      const formatted = convertBoldToSpan(markdown);
+      setFormattedDescription(formatted);
+    };
+    formatDescription();
+  }, [description]);
 
   const getNameTextWidth = () => {
     if (isDesktop) {
@@ -209,7 +228,12 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
             {t('events.headers.whatToExpect')}
           </Typography>
 
-          <Typography>{description}</Typography>
+          {formattedDescription && (
+            <Typography
+              dangerouslySetInnerHTML={{ __html: formattedDescription }}
+              whiteSpace="pre-wrap"
+            />
+          )}
         </AccordionDetails>
       </Accordion>
     </Box>

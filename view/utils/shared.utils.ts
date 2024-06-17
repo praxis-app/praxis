@@ -2,8 +2,13 @@ import { t } from 'i18next';
 import { marked } from 'marked';
 import { isValidElement, ReactNode } from 'react';
 import { animateScroll } from 'react-scroll';
-import { SCROLL_DURATION, URL_REGEX } from '../constants/shared.constants';
+import {
+  SCROLL_DURATION,
+  TruncationSizes,
+  URL_REGEX,
+} from '../constants/shared.constants';
 import { toastVar } from '../graphql/cache';
+import { truncate } from 'lodash';
 
 /**
  * Returns whether or not a given node can be successfully rendered.
@@ -34,13 +39,17 @@ export const isValidUrl = (str: string) => {
   return url.protocol === 'http:' || url.protocol === 'https:';
 };
 
-export const urlifyText = (text: string) =>
+export const urlifyText = (text: string, truncateText = false) =>
   text.replace(URL_REGEX, (url) => {
+    const truncatedURL = truncate(url, {
+      length: TruncationSizes.Medium,
+    });
+
     return (
       '<a href="' +
       url +
       '" rel="noopener noreferrer" target="_blank" style="color:#e4e6ea;">' +
-      url +
+      (truncateText ? truncatedURL : url) +
       '</a>'
     );
   });
