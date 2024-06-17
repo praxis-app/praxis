@@ -9,6 +9,7 @@ import { useGroupAboutTabQuery } from '../../graphql/groups/queries/gen/GroupAbo
 import { urlifyText } from '../../utils/shared.utils';
 import Setting from '../Settings/Setting';
 import Flex from '../Shared/Flex';
+import FormattedText from '../Shared/FormattedText';
 import ProgressBar from '../Shared/ProgressBar';
 
 interface Props {
@@ -91,11 +92,8 @@ const GroupAboutTab = ({ groupId }: Props) => {
             {t('groups.tabs.about')}
           </Typography>
 
-          <Typography
-            dangerouslySetInnerHTML={{
-              __html: description || t('groups.prompts.noAboutText'),
-            }}
-            whiteSpace="pre-wrap"
+          <FormattedText
+            text={description || t('groups.prompts.noAboutText')}
           />
         </CardContent>
       </Card>
