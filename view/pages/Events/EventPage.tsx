@@ -11,11 +11,12 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import EventPageCard from '../../components/Events/EventPageCard';
 import Breadcrumbs from '../../components/Shared/Breadcrumbs';
+import FormattedText from '../../components/Shared/FormattedText';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { TruncationSizes } from '../../constants/shared.constants';
 import { isVerifiedVar } from '../../graphql/cache';
 import { useEventPageLazyQuery } from '../../graphql/events/queries/gen/EventPage.gen';
-import { useFormattedText, useIsDesktop } from '../../hooks/shared.hooks';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import { isDeniedAccess } from '../../utils/error.utils';
 import { getGroupEventsTabPath } from '../../utils/group.utils';
 import EventDiscussionTab from './EventDiscussionTab';
@@ -41,7 +42,6 @@ const EventPage = () => {
 
   const event = data?.event;
   const description = event?.description;
-  const formattedDescription = useFormattedText(description);
   const canManageAllEvents = !!data?.me?.serverPermissions.manageEvents;
 
   useEffect(() => {
@@ -100,12 +100,7 @@ const EventPage = () => {
               {t('events.headers.whatToExpect')}
             </Typography>
 
-            {formattedDescription && (
-              <Typography
-                dangerouslySetInnerHTML={{ __html: formattedDescription }}
-                whiteSpace="pre-wrap"
-              />
-            )}
+            <FormattedText text={description} />
           </CardContent>
         </Card>
       )}

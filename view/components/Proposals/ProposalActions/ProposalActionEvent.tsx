@@ -8,11 +8,7 @@ import { useLocation } from 'react-router-dom';
 import { ProposalActionEventInput } from '../../../graphql/gen';
 import { ProposalActionEventFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionEvent.gen';
 import { useUserByUserIdLazyQuery } from '../../../graphql/users/queries/gen/UserByUserId.gen';
-import {
-  useAboveBreakpoint,
-  useFormattedText,
-  useIsDesktop,
-} from '../../../hooks/shared.hooks';
+import { useAboveBreakpoint, useIsDesktop } from '../../../hooks/shared.hooks';
 import { getGroupEventsTabPath } from '../../../utils/group.utils';
 import { formatDateTime } from '../../../utils/time.utils';
 import { getUserProfilePath } from '../../../utils/user.utils';
@@ -24,6 +20,7 @@ import Accordion, {
 } from '../../Shared/Accordion';
 import ExternalLink from '../../Shared/ExternalLink';
 import Link from '../../Shared/Link';
+import FormattedText from '../../Shared/FormattedText';
 
 interface Props {
   event: ProposalActionEventFragment | ProposalActionEventInput;
@@ -51,10 +48,17 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
   const isAboveSmall = useAboveBreakpoint('sm');
-  const formattedDescription = useFormattedText(event.description);
 
-  const { name, externalLink, location, online, endsAt, startsAt, coverPhoto } =
-    event;
+  const {
+    name,
+    description,
+    externalLink,
+    location,
+    online,
+    endsAt,
+    startsAt,
+    coverPhoto,
+  } = event;
 
   const group =
     'proposalAction' in event ? event.proposalAction.proposal.group : undefined;
@@ -206,12 +210,7 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
             {t('events.headers.whatToExpect')}
           </Typography>
 
-          {formattedDescription && (
-            <Typography
-              dangerouslySetInnerHTML={{ __html: formattedDescription }}
-              whiteSpace="pre-wrap"
-            />
-          )}
+          <FormattedText text={description} />
         </AccordionDetails>
       </Accordion>
     </Box>
