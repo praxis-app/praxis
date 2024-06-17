@@ -134,7 +134,7 @@ const UserProfile = () => {
 
         <Button
           startIcon={<TaskAlt sx={{ marginRight: 0.25 }} />}
-          onClick={() => navigate(NavigationPaths.VibeCheck)}
+          onClick={() => navigate(NavigationPaths.MyVibeCheck)}
           sx={{
             textTransform: 'none',
             alignSelf: isDesktop ? 'flex-start' : 'center',

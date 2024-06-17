@@ -49,7 +49,7 @@ const GroupTipsCard = () => {
           )}
           {isLoggedIn ? (
             <Link
-              href={NavigationPaths.VibeCheck}
+              href={NavigationPaths.MyVibeCheck}
               sx={{ fontFamily: 'Inter Bold' }}
             >
               {t('users.actions.getVerified')}

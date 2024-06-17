@@ -39,8 +39,8 @@ const QuestionnairePage = () => {
 
   const breadcrumbs = [
     {
-      label: t('questions.labels.questionnaires'),
-      href: NavigationPaths.ServerQuestionnaires,
+      label: t('questions.labels.vibeChecks'),
+      href: NavigationPaths.VibeChecks,
     },
     {
       label: t('questions.labels.ticketNumber', {

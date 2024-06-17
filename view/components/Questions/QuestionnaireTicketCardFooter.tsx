@@ -152,7 +152,7 @@ const QuestionnaireTicketCardFooter = ({
   };
 
   const handleAnswersButtonClick = () =>
-    navigate(`${NavigationPaths.ServerQuestionnaires}/${id}`);
+    navigate(`${NavigationPaths.VibeChecks}/${id}`);
 
   return (
     <>

@@ -60,7 +60,7 @@ const WelcomeCard = () => {
         )}
 
         {isLoggedIn && !isVerified && (
-          <Button onClick={() => navigate(NavigationPaths.VibeCheck)}>
+          <Button onClick={() => navigate(NavigationPaths.MyVibeCheck)}>
             {t('users.actions.getVerified')}
           </Button>
         )}

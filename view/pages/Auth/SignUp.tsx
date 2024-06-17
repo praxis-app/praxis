@@ -58,7 +58,7 @@ const SignUp = () => {
           isVerifiedVar(true);
           navigate(NavigationPaths.Home);
         } else {
-          navigate(NavigationPaths.VibeCheck);
+          navigate(NavigationPaths.MyVibeCheck);
         }
       };
       handleRedirect();

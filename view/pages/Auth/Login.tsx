@@ -20,7 +20,7 @@ const Login = () => {
         if (data?.me.isVerified) {
           navigate(NavigationPaths.Home);
         } else {
-          navigate(NavigationPaths.VibeCheck);
+          navigate(NavigationPaths.MyVibeCheck);
         }
       };
       handleRedirect();

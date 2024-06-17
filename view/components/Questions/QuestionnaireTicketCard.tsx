@@ -98,7 +98,7 @@ const QuestionnaireTicketCard = ({
     createdAt,
   } = questionnaireTicket;
 
-  const questionnaireTicketPath = `/questionnaires/${id}`;
+  const questionnaireTicketPath = `${NavigationPaths.VibeChecks}/${id}`;
   const isQuestionnaireTicketPage = pathname.includes(questionnaireTicketPath);
   const formattedDate = timeAgo(createdAt);
 
@@ -136,7 +136,7 @@ const QuestionnaireTicketCard = ({
 
   const handleDelete = async () => {
     if (isQuestionnaireTicketPage) {
-      navigate(NavigationPaths.ServerQuestionnaires);
+      navigate(NavigationPaths.VibeChecks);
     }
     await deleteQuestionnaireTicket({
       variables: { id },
