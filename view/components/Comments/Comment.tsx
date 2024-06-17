@@ -1,7 +1,7 @@
 import { Box, SxProps, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TypeNames } from '../../constants/shared.constants';
+import { TruncationSizes, TypeNames } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.gen';
 import { useDeleteCommentMutation } from '../../graphql/comments/mutations/gen/DeleteComment.gen';
@@ -65,6 +65,9 @@ const Comment = ({
   const deleteCommentPrompt = t('prompts.deleteItem', { itemType: 'comment' });
   const userPath = getUserProfilePath(user.name);
   const formattedDate = timeAgo(createdAt);
+
+  const urlTrimSize = isDesktop ? TruncationSizes.ExtraLarge : 35;
+  const formattedBody = urlifyText(body || '', urlTrimSize);
 
   const itemMenuStyles: SxProps = {
     alignSelf: 'center',
@@ -205,7 +208,7 @@ const Comment = ({
 
             {body && (
               <Typography
-                dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
+                dangerouslySetInnerHTML={{ __html: formattedBody }}
                 whiteSpace="pre-wrap"
                 lineHeight={1.2}
                 paddingY={0.4}
