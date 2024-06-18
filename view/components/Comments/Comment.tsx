@@ -1,7 +1,7 @@
 import { Box, SxProps, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TruncationSizes, TypeNames } from '../../constants/shared.constants';
+import { TypeNames } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { CommentFragment } from '../../graphql/comments/fragments/gen/Comment.gen';
 import { useDeleteCommentMutation } from '../../graphql/comments/mutations/gen/DeleteComment.gen';
@@ -62,7 +62,6 @@ const Comment = ({
   }, [likeCount, ref.current?.offsetWidth]);
 
   const isMe = user.id === currentUserId;
-  const urlTrimSize = isDesktop ? TruncationSizes.ExtraLarge : 35;
   const deleteCommentPrompt = t('prompts.deleteItem', { itemType: 'comment' });
   const userPath = getUserProfilePath(user.name);
   const formattedDate = timeAgo(createdAt);
@@ -204,12 +203,7 @@ const Comment = ({
               {user.displayName || user.name}
             </Link>
 
-            <FormattedText
-              text={body}
-              urlTrimSize={urlTrimSize}
-              lineHeight={1.2}
-              paddingY={0.4}
-            />
+            <FormattedText text={body} lineHeight={1.2} paddingY={0.4} />
 
             {!!images.length && (
               <AttachedImageList
