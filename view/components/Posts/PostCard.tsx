@@ -9,8 +9,8 @@ import {
   Typography,
   styled,
 } from '@mui/material';
-import { useState } from 'react';
 import { truncate } from 'lodash';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -22,19 +22,19 @@ import { isLoggedInVar } from '../../graphql/cache';
 import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
 import { useDeletePostMutation } from '../../graphql/posts/mutations/gen/DeletePost.gen';
 import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
+import { useIsDesktop } from '../../hooks/shared.hooks';
 import { removePost } from '../../utils/cache.utils';
 import { getGroupPath } from '../../utils/group.utils';
-import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import EventItemAvatar from '../Events/EventItemAvatar';
 import GroupItemAvatar from '../Groups/GroupItemAvatar';
 import AttachedImageList from '../Images/AttachedImageList';
+import FormattedText from '../Shared/FormattedText';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 import PostCardFooter from './PostCardFooter';
-import { useIsDesktop } from '../../hooks/shared.hooks';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
@@ -180,12 +180,7 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
       />
 
       <CardContent sx={cardContentStyles}>
-        {body && (
-          <Typography
-            dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
-            sx={bodyStyles}
-          />
-        )}
+        <FormattedText text={body} sx={bodyStyles} />
 
         {!!images.length && (
           <Link aria-label={t('images.labels.attachedImages')} href={postPath}>

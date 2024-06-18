@@ -23,12 +23,6 @@ const PostModal = ({ post, open, onClose }: Props) => {
     ref.current?.scrollIntoView();
   }, [post.commentCount]);
 
-  const { user } = post;
-  const userName = user.displayName || user.name;
-  const title = t('posts.labels.usersPost', {
-    name: userName[0].toUpperCase() + userName.slice(1),
-  });
-
   const contentStyles: SxProps = {
     width: isDesktop ? '700px' : '100%',
     paddingBottom: 0,
@@ -58,12 +52,12 @@ const PostModal = ({ post, open, onClose }: Props) => {
 
   return (
     <Modal
+      title={t('posts.labels.post')}
       contentStyles={contentStyles}
       footerContent={renderCommentForm()}
       maxWidth="md"
       onClose={onClose}
       open={open}
-      title={title}
       centeredTitle
     >
       <PostCard post={post} inModal />

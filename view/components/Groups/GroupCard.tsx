@@ -7,7 +7,6 @@ import {
   MenuItem,
   CardContent as MuiCardContent,
   CardHeader as MuiCardHeader,
-  Typography,
   styled,
 } from '@mui/material';
 import { useState } from 'react';
@@ -28,8 +27,8 @@ import {
   getGroupPath,
   getMemberRequestsPath,
 } from '../../utils/group.utils';
-import { urlifyText } from '../../utils/shared.utils';
 import Flex from '../Shared/Flex';
+import FormattedText from '../Shared/FormattedText';
 import GhostButton from '../Shared/GhostButton';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
@@ -161,13 +160,7 @@ const GroupCard = ({
         title={<Link href={groupPath}>{name}</Link>}
       />
       <CardContent>
-        {description && (
-          <Typography
-            dangerouslySetInnerHTML={{ __html: urlifyText(description) }}
-            whiteSpace="pre-wrap"
-            marginBottom={1.25}
-          />
-        )}
+        <FormattedText text={description} marginBottom={1.25} />
 
         <Box sx={{ marginBottom: isLoggedIn ? 1.75 : 0 }}>
           <Link href={isVerified ? groupMembersPath : groupPath}>

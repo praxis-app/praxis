@@ -1,4 +1,5 @@
 import { t } from 'i18next';
+import { truncate } from 'lodash';
 import { marked } from 'marked';
 import { isValidElement, ReactNode } from 'react';
 import { animateScroll } from 'react-scroll';
@@ -34,13 +35,17 @@ export const isValidUrl = (str: string) => {
   return url.protocol === 'http:' || url.protocol === 'https:';
 };
 
-export const urlifyText = (text: string) =>
+export const urlifyText = (text: string, urlTrimSize?: number) =>
   text.replace(URL_REGEX, (url) => {
+    const truncatedURL = truncate(url, {
+      length: urlTrimSize,
+    });
+
     return (
       '<a href="' +
       url +
       '" rel="noopener noreferrer" target="_blank" style="color:#e4e6ea;">' +
-      url +
+      (urlTrimSize ? truncatedURL : url) +
       '</a>'
     );
   });

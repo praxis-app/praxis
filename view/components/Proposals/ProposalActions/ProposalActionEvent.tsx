@@ -20,6 +20,7 @@ import Accordion, {
 } from '../../Shared/Accordion';
 import ExternalLink from '../../Shared/ExternalLink';
 import Link from '../../Shared/Link';
+import FormattedText from '../../Shared/FormattedText';
 
 interface Props {
   event: ProposalActionEventFragment | ProposalActionEventInput;
@@ -209,7 +210,7 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
             {t('events.headers.whatToExpect')}
           </Typography>
 
-          <Typography>{description}</Typography>
+          <FormattedText text={description} />
         </AccordionDetails>
       </Accordion>
     </Box>

@@ -1,8 +1,8 @@
 import { Card, CardContent, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { AnsweredQuestionCardFragment } from '../../graphql/questions/fragments/gen/AnsweredQuestionCard.gen';
-import { urlifyText } from '../../utils/shared.utils';
 import { formatDateTime } from '../../utils/time.utils';
+import FormattedText from '../Shared/FormattedText';
 import QuestionCardFooter from './QuestionCardFooter';
 
 interface Props {
@@ -14,19 +14,11 @@ const AnsweredQuestionCard = ({ question, inModal }: Props) => {
   const { t } = useTranslation();
 
   const { text, priority, answer } = question;
-
   const questionText = `${t('questions.headers.questionPriority', {
     priority: priority + 1,
   })}: ${text}`;
 
-  const getAnswerText = () => {
-    if (!answer?.text) {
-      return t('questions.labels.noAnswer');
-    }
-    return urlifyText(answer.text);
-  };
-
-  const getTitle = () => {
+  const getTitleAttr = () => {
     if (!answer?.updatedAt || !answer.text) {
       return t('questions.labels.noAnswer');
     }
@@ -40,10 +32,9 @@ const AnsweredQuestionCard = ({ question, inModal }: Props) => {
           {questionText}
         </Typography>
 
-        <Typography
-          title={getTitle()}
-          dangerouslySetInnerHTML={{ __html: getAnswerText() }}
-          whiteSpace="pre-wrap"
+        <FormattedText
+          text={answer?.text || t('questions.labels.noAnswer')}
+          title={getTitleAttr()}
         />
       </CardContent>
 

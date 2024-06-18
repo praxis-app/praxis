@@ -13,13 +13,9 @@ import {
   ServerRulesQuery,
 } from '../../graphql/rules/queries/gen/ServerRules.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
-import {
-  convertBoldToSpan,
-  parseMarkdownText,
-  urlifyText,
-} from '../../utils/shared.utils';
 import { formatDateTime } from '../../utils/time.utils';
 import Flex from '../Shared/Flex';
+import FormattedText from '../Shared/FormattedText';
 import ItemMenu from '../Shared/ItemMenu';
 import Modal from '../Shared/Modal';
 import RuleForm from './RuleForm';
@@ -42,7 +38,6 @@ const Rule = ({
   const [isGrabbing, setIsGrabbing] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
-  const [formattedDescription, setFormattedDescription] = useState<string>();
 
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const [deleteRule, { loading: deleteLoading }] = useDeleteRuleMutation();
@@ -55,16 +50,6 @@ const Rule = ({
   const backgroundColor = isDragging
     ? 'rgba(255,255,255,0.025)'
     : 'transparent';
-
-  useEffect(() => {
-    const formatDescription = async () => {
-      const urlified = urlifyText(description);
-      const markdown = await parseMarkdownText(urlified);
-      const formatted = convertBoldToSpan(markdown);
-      setFormattedDescription(formatted);
-    };
-    formatDescription();
-  }, [description]);
 
   useEffect(() => {
     const handleMouseUp = () => setIsGrabbing(false);
@@ -139,10 +124,6 @@ const Rule = ({
     setIsUpdateModalOpen(false);
   };
 
-  if (!formattedDescription) {
-    return null;
-  }
-
   return (
     <>
       <Flex
@@ -165,11 +146,10 @@ const Rule = ({
           <Box title={formatDateTime(updatedAt)}>
             <Typography>{title}</Typography>
 
-            <Typography
-              fontSize="12px"
+            <FormattedText
+              text={description}
               color="text.secondary"
-              dangerouslySetInnerHTML={{ __html: formattedDescription }}
-              whiteSpace="pre-wrap"
+              fontSize="12px"
             />
           </Box>
         </Flex>

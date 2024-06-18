@@ -1,6 +1,6 @@
 import { useReactiveVar } from '@apollo/client';
 import { Box, Button, Divider, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import ServerRoleView from '../../components/Roles/ServerRoles/ServerRoleView';
@@ -10,19 +10,14 @@ import Accordion, {
   AccordionSummary,
 } from '../../components/Shared/Accordion';
 import Flex from '../../components/Shared/Flex';
+import FormattedText from '../../components/Shared/FormattedText';
 import LevelOneHeading from '../../components/Shared/LevelOneHeading';
 import ProgressBar from '../../components/Shared/ProgressBar';
 import { NavigationPaths } from '../../constants/shared.constants';
 import { useAboutQuery } from '../../graphql/about/queries/gen/About.gen';
 import { isAuthDoneVar, isVerifiedVar } from '../../graphql/cache';
-import {
-  convertBoldToSpan,
-  parseMarkdownText,
-  urlifyText,
-} from '../../utils/shared.utils';
 
 const About = () => {
-  const [formattedAboutText, setFormattedAboutText] = useState<string>();
   const [showServerRoles, setShowServerRoles] = useState(false);
   const [showServerRules, setShowServerRules] = useState(true);
   const [showAboutText, setShowAboutText] = useState(true);
@@ -48,19 +43,6 @@ const About = () => {
     /^(https?:\/\/)?(www\.)?/,
     '',
   );
-
-  useEffect(() => {
-    if (!aboutText) {
-      return;
-    }
-    const formatDescription = async () => {
-      const urlified = urlifyText(aboutText);
-      const markdown = await parseMarkdownText(urlified);
-      const formatted = convertBoldToSpan(markdown);
-      setFormattedAboutText(formatted);
-    };
-    formatDescription();
-  }, [aboutText]);
 
   if (error) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
@@ -90,17 +72,10 @@ const About = () => {
         </AccordionSummary>
 
         <AccordionDetails sx={{ paddingBottom: 2.25 }}>
-          {formattedAboutText ? (
-            <Typography
-              dangerouslySetInnerHTML={{ __html: formattedAboutText }}
-              whiteSpace="pre-wrap"
-              paddingBottom={2.2}
-            />
-          ) : (
-            <Typography paddingBottom={2.2}>
-              {t('about.prompts.noAboutText')}
-            </Typography>
-          )}
+          <FormattedText
+            text={aboutText || t('about.prompts.noAboutText')}
+            paddingBottom={2.2}
+          />
 
           <Flex marginLeft={-1}>
             <Button onClick={() => navigate(NavigationPaths.Docs)}>

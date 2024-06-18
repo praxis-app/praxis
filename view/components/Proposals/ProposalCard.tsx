@@ -28,11 +28,11 @@ import { useIsDesktop } from '../../hooks/shared.hooks';
 import { removeProposal } from '../../utils/cache.utils';
 import { getGroupPath } from '../../utils/group.utils';
 import { getProposalActionLabel } from '../../utils/proposal.utils';
-import { urlifyText } from '../../utils/shared.utils';
 import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import GroupItemAvatar from '../Groups/GroupItemAvatar';
 import AttachedImageList from '../Images/AttachedImageList';
+import FormattedText from '../Shared/FormattedText';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
@@ -228,12 +228,7 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
       />
 
       <CardContent sx={cardContentStyles}>
-        {body && (
-          <Typography
-            dangerouslySetInnerHTML={{ __html: urlifyText(body) }}
-            sx={bodyStyles}
-          />
-        )}
+        <FormattedText text={body} sx={bodyStyles} />
 
         <Link href={proposalPath}>
           {!!images.length && (

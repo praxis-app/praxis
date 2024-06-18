@@ -133,6 +133,7 @@
       "name": "Name",
       "newGroupDescription": "New group description",
       "newGroupName": "New group name",
+      "proposal": "Proposal",
       "proposalSettings": "Proposal Settings",
       "proposedGroupCoverPhoto": "Proposed group cover photo",
       "proposedGroupDescription": "Proposed group description",
@@ -275,6 +276,7 @@
     "labels": {
       "addImages": "Add images",
       "addPost": "Add post",
+      "post": "Post",
       "posts": "Posts",
       "usersPost": "{{name}}'s Post",
       "likes": "Post Likes"

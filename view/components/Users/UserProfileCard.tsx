@@ -25,9 +25,9 @@ import { useMeQuery } from '../../graphql/users/queries/gen/Me.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { logOutUser } from '../../utils/auth.utils';
 import { removeUser } from '../../utils/cache.utils';
-import { urlifyText } from '../../utils/shared.utils';
 import { formatDate } from '../../utils/time.utils';
 import CoverPhoto from '../Images/CoverPhoto';
+import FormattedText from '../Shared/FormattedText';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import FollowButton from './FollowButton';
@@ -158,13 +158,7 @@ const UserProfileCard = ({ user, canRemoveMembers, ...cardProps }: Props) => {
           {displayName || name}
         </Typography>
 
-        {bio && (
-          <Typography
-            dangerouslySetInnerHTML={{ __html: urlifyText(bio) }}
-            whiteSpace="pre-wrap"
-            marginBottom={1.4}
-          />
-        )}
+        <FormattedText text={bio} marginBottom={1.4} />
 
         <Typography sx={JOIN_DATE_STYLES}>
           <JoinDateIcon fontSize="small" sx={JOIN_DATE_ICON_STYLES} />
