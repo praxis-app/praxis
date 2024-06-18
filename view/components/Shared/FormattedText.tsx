@@ -24,7 +24,7 @@ const FormattedText = ({ text, urlTrimSize, ...typographyProps }: Props) => {
     const formatText = async () => {
       const urlSize =
         urlTrimSize || isDesktop
-          ? TruncationSizes.ExtraLarge
+          ? TruncationSizes.Large
           : TruncationSizes.Medium;
       const urlified = urlifyText(text, urlSize);
       const markdown = await parseMarkdownText(urlified);
