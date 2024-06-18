@@ -35,17 +35,17 @@ export const isValidUrl = (str: string) => {
   return url.protocol === 'http:' || url.protocol === 'https:';
 };
 
-export const urlifyText = (text: string, truncateLength?: number) =>
+export const urlifyText = (text: string, urlTrimSize?: number) =>
   text.replace(URL_REGEX, (url) => {
     const truncatedURL = truncate(url, {
-      length: truncateLength,
+      length: urlTrimSize,
     });
 
     return (
       '<a href="' +
       url +
       '" rel="noopener noreferrer" target="_blank" style="color:#e4e6ea;">' +
-      (truncateLength ? truncatedURL : url) +
+      (urlTrimSize ? truncatedURL : url) +
       '</a>'
     );
   });

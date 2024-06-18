@@ -23,12 +23,6 @@ const ProposalModal = ({ proposal, open, onClose }: Props) => {
     ref.current?.scrollIntoView();
   }, [proposal.commentCount]);
 
-  const { user } = proposal;
-  const userName = user.displayName || user.name;
-  const title = t('proposals.labels.usersProposal', {
-    name: userName[0].toUpperCase() + userName.slice(1),
-  });
-
   const contentStyles: SxProps = {
     width: isDesktop ? '700px' : '100%',
     paddingBottom: 0,
@@ -55,12 +49,12 @@ const ProposalModal = ({ proposal, open, onClose }: Props) => {
 
   return (
     <Modal
+      title={t('proposals.labels.proposal')}
       contentStyles={contentStyles}
       footerContent={renderCommentForm()}
       maxWidth="md"
       onClose={onClose}
       open={open}
-      title={title}
       centeredTitle
     >
       <ProposalCard proposal={proposal} inModal />
