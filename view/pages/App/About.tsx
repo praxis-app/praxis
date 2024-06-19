@@ -1,6 +1,6 @@
 import { useReactiveVar } from '@apollo/client';
 import { Box, Button, Divider, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import ServerRoleView from '../../components/Roles/ServerRoles/ServerRoleView';
@@ -24,9 +24,9 @@ import {
 } from '../../graphql/cache';
 
 const About = () => {
-  const [showServerRoles, setShowServerRoles] = useState(false);
-  const [showServerRules, setShowServerRules] = useState(true);
   const [showAboutText, setShowAboutText] = useState(true);
+  const [showServerRoles, setShowServerRoles] = useState(false);
+  const [showServerRules, setShowServerRules] = useState(false);
   const [showStats, setShowStats] = useState(false);
 
   const inviteToken = useReactiveVar(inviteTokenVar);
@@ -53,6 +53,17 @@ const About = () => {
     '',
   );
 
+  useEffect(() => {
+    if (!isAuthDone) {
+      return;
+    }
+    if (isVerified) {
+      setShowServerRoles(true);
+    } else {
+      setShowServerRules(true);
+    }
+  }, [isVerified, isAuthDone]);
+
   if (error) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
@@ -64,6 +75,87 @@ const About = () => {
   if (!data) {
     return null;
   }
+
+  const renderRolesSection = () => (
+    <Accordion
+      expanded={showServerRoles}
+      onChange={() => setShowServerRoles(!showServerRoles)}
+      sx={{ borderRadius: 2, paddingX: 2, marginBottom: 2 }}
+    >
+      <AccordionSummary>
+        <Typography fontFamily="Inter Bold">
+          {t('roles.labels.rolesAndPermissions')}
+        </Typography>
+      </AccordionSummary>
+
+      <AccordionDetails sx={{ paddingBottom: 2 }}>
+        {isVerified ? (
+          <>
+            <Typography marginBottom={2.2}>
+              {t('roles.subheaders.viewServerRoles')}
+            </Typography>
+
+            <Divider sx={{ marginBottom: 3.2 }} />
+
+            {serverRoles?.map((role, index) => (
+              <ServerRoleView
+                key={role.id}
+                role={role}
+                withCard={false}
+                isLast={index + 1 === serverRoles.length}
+                canManageRoles={canManageRoles}
+              />
+            ))}
+
+            <Divider sx={{ marginBottom: 2.1 }} />
+
+            <Button
+              onClick={() => navigate(NavigationPaths.ViewRoles)}
+              sx={{ textTransform: 'none' }}
+              fullWidth
+            >
+              {t('about.actions.seeRolesOverview')}
+            </Button>
+          </>
+        ) : (
+          <>
+            <Typography>
+              {inviteToken && (
+                <>
+                  <Link
+                    href={`${NavigationPaths.SignUp}/${inviteToken}`}
+                    sx={{ marginRight: '0.5ch', fontFamily: 'Inter Bold' }}
+                  >
+                    {t('users.actions.signUp')}
+                  </Link>
+                  or
+                </>
+              )}
+              {isLoggedIn ? (
+                <Link
+                  href={NavigationPaths.MyVibeCheck}
+                  sx={{ fontFamily: 'Inter Bold' }}
+                >
+                  {t('users.actions.getVerified')}
+                </Link>
+              ) : (
+                <Link
+                  href={NavigationPaths.LogIn}
+                  sx={{
+                    marginLeft: inviteToken ? '0.5ch' : 0,
+                    fontFamily: 'Inter Bold',
+                  }}
+                >
+                  {t('users.actions.logIn')}
+                </Link>
+              )}{' '}
+              to view roles and permissions
+            </Typography>
+          </>
+        )}
+      </AccordionDetails>
+    </Accordion>
+  );
 
   return (
     <Box paddingBottom={10}>
@@ -98,6 +190,8 @@ const About = () => {
         </AccordionDetails>
       </Accordion>
 
+      {isVerified && renderRolesSection()}
+
       <Accordion
         expanded={showServerRules}
         onChange={() => setShowServerRules(!showServerRules)}
@@ -120,84 +214,7 @@ const About = () => {
         </AccordionDetails>
       </Accordion>
 
-      <Accordion
-        expanded={showServerRoles}
-        onChange={() => setShowServerRoles(!showServerRoles)}
-        sx={{ borderRadius: 2, paddingX: 2, marginBottom: 2 }}
-      >
-        <AccordionSummary>
-          <Typography fontFamily="Inter Bold">
-            {t('roles.labels.rolesAndPermissions')}
-          </Typography>
-        </AccordionSummary>
-
-        <AccordionDetails sx={{ paddingBottom: 2 }}>
-          {isVerified ? (
-            <>
-              <Typography marginBottom={2.2}>
-                {t('roles.subheaders.viewServerRoles')}
-              </Typography>
-
-              <Divider sx={{ marginBottom: 3.2 }} />
-
-              {serverRoles?.map((role, index) => (
-                <ServerRoleView
-                  key={role.id}
-                  role={role}
-                  withCard={false}
-                  isLast={index + 1 === serverRoles.length}
-                  canManageRoles={canManageRoles}
-                />
-              ))}
-
-              <Divider sx={{ marginBottom: 2.1 }} />
-
-              <Button
-                onClick={() => navigate(NavigationPaths.ViewRoles)}
-                sx={{ textTransform: 'none' }}
-                fullWidth
-              >
-                {t('about.actions.seeRolesOverview')}
-              </Button>
-            </>
-          ) : (
-            <>
-              <Typography>
-                {inviteToken && (
-                  <>
-                    <Link
-                      href={`${NavigationPaths.SignUp}/${inviteToken}`}
-                      sx={{ marginRight: '0.5ch', fontFamily: 'Inter Bold' }}
-                    >
-                      {t('users.actions.signUp')}
-                    </Link>
-                    or
-                  </>
-                )}
-                {isLoggedIn ? (
-                  <Link
-                    href={NavigationPaths.MyVibeCheck}
-                    sx={{ fontFamily: 'Inter Bold' }}
-                  >
-                    {t('users.actions.getVerified')}
-                  </Link>
-                ) : (
-                  <Link
-                    href={NavigationPaths.LogIn}
-                    sx={{
-                      marginLeft: inviteToken ? '0.5ch' : 0,
-                      fontFamily: 'Inter Bold',
-                    }}
-                  >
-                    {t('users.actions.logIn')}
-                  </Link>
-                )}{' '}
-                to view roles and permissions
-              </Typography>
-            </>
-          )}
-        </AccordionDetails>
-      </Accordion>
+      {!isVerified && renderRolesSection()}
 
       <Accordion
         expanded={showStats}
