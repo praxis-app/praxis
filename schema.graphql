@@ -149,6 +149,7 @@ input CreatePostInput {
   eventId: Int
   groupId: Int
   images: [Upload!]
+  sharedPostId: Int
 }
 
 type CreatePostPayload {

@@ -4,13 +4,16 @@ import { FileUpload, GraphQLUpload } from 'graphql-upload-ts';
 @InputType()
 export class CreatePostInput {
   @Field(() => Int, { nullable: true })
-  groupId: number;
+  groupId?: number;
 
   @Field(() => Int, { nullable: true })
-  eventId: number;
+  eventId?: number;
+
+  @Field(() => Int, { nullable: true })
+  sharedPostId?: number;
 
   @Field({ nullable: true })
-  body: string;
+  body?: string;
 
   @Field(() => [GraphQLUpload], { nullable: true })
   images?: Promise<FileUpload>[];

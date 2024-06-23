@@ -49,7 +49,7 @@ export class PostsService {
 
   async createPost({ images, body, ...postData }: CreatePostInput, user: User) {
     const post = await this.postRepository.save({
-      body: sanitizeText(body.trim()),
+      body: sanitizeText(body),
       userId: user.id,
       ...postData,
     });
