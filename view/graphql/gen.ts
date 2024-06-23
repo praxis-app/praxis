@@ -863,6 +863,7 @@ export type Post = {
   isLikedByMe: Scalars['Boolean']['output'];
   likeCount: Scalars['Int']['output'];
   likes: Array<Like>;
+  sharedPost?: Maybe<Post>;
   user: User;
 };
 

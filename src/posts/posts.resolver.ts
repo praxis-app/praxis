@@ -107,6 +107,14 @@ export class PostsResolver {
     return eventId ? loaders.eventsLoader.load(eventId) : null;
   }
 
+  @ResolveField(() => Post, { nullable: true })
+  async sharedPost(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { sharedPostId }: Post,
+  ) {
+    return sharedPostId ? loaders.postsLoader.load(sharedPostId) : null;
+  }
+
   @Mutation(() => CreatePostPayload)
   async createPost(
     @Args('postData') postData: CreatePostInput,
