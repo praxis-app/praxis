@@ -25,9 +25,9 @@ export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  body?: string;
+  @Column({ type: 'varchar', nullable: true })
+  @Field(() => String, { nullable: true })
+  body: string | null;
 
   @Field(() => [Image])
   @OneToMany(() => Image, (image) => image.post)
@@ -53,26 +53,26 @@ export class Post {
 
   @Field(() => Group, { nullable: true })
   @ManyToOne(() => Group, (group) => group.posts, { onDelete: 'CASCADE' })
-  group?: Group;
+  group: Group | null;
 
-  @Column({ nullable: true })
-  groupId: number;
+  @Column({ type: 'int', nullable: true })
+  groupId: number | null;
 
   @Field(() => Event, { nullable: true })
   @ManyToOne(() => Event, (event) => event.posts, { onDelete: 'CASCADE' })
-  event?: Event;
+  event: Event | null;
 
-  @Column({ nullable: true })
-  eventId: number;
+  @Column({ type: 'int', nullable: true })
+  eventId: number | null;
 
   @OneToMany(() => Post, (post) => post.sharedPost)
   shares: Post[];
 
   @ManyToOne(() => Post, (post) => post.shares, { onDelete: 'CASCADE' })
-  sharedPost?: Post;
+  sharedPost: Post | null;
 
-  @Column({ nullable: true })
-  sharedPostId?: number;
+  @Column({ type: 'int', nullable: true })
+  sharedPostId: number | null;
 
   @CreateDateColumn()
   @Field()
