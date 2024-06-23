@@ -72,7 +72,7 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
   const navigate = useNavigate();
   const isDesktop = useIsDesktop();
 
-  const { id, body, images, user, group, event, createdAt } = post;
+  const { id, body, images, user, group, event, sharedPost, createdAt } = post;
   const me = data && data.me;
   const isMe = me?.id === user.id;
   const formattedDate = timeAgo(createdAt);
@@ -187,6 +187,8 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
             <AttachedImageList images={images} />
           </Link>
         )}
+
+        {sharedPost && <>{sharedPost.id}</>}
       </CardContent>
 
       <PostCardFooter

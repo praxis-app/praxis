@@ -53,6 +53,20 @@ export type PostCardFragment = {
     group?: { __typename?: 'Group'; id: number; isJoinedByMe: boolean } | null;
     coverPhoto: { __typename?: 'Image'; id: number };
   } | null;
+  sharedPost?: {
+    __typename?: 'Post';
+    id: number;
+    body?: string | null;
+    createdAt: any;
+    images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
+    user: {
+      __typename?: 'User';
+      id: number;
+      name: string;
+      displayName?: string | null;
+      profilePicture: { __typename?: 'Image'; id: number };
+    };
+  } | null;
 };
 
 export const PostCardFragmentDoc = gql`
@@ -81,6 +95,17 @@ export const PostCardFragmentDoc = gql`
       group @include(if: $isVerified) {
         id
         isJoinedByMe
+      }
+    }
+    sharedPost {
+      id
+      body
+      createdAt
+      images {
+        ...AttachedImage
+      }
+      user {
+        ...UserAvatar
       }
     }
   }

@@ -26,4 +26,16 @@ fragment PostCard on Post {
       isJoinedByMe
     }
   }
+
+  sharedPost {
+    id
+    body
+    createdAt
+    images {
+      ...AttachedImage
+    }
+    user {
+      ...UserAvatar
+    }
+  }
 }

@@ -50,6 +50,20 @@ export type FeedItem_Post_Fragment = {
     group?: { __typename?: 'Group'; id: number; isJoinedByMe: boolean } | null;
     coverPhoto: { __typename?: 'Image'; id: number };
   } | null;
+  sharedPost?: {
+    __typename?: 'Post';
+    id: number;
+    body?: string | null;
+    createdAt: any;
+    images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
+    user: {
+      __typename?: 'User';
+      id: number;
+      name: string;
+      displayName?: string | null;
+      profilePicture: { __typename?: 'Image'; id: number };
+    };
+  } | null;
 };
 
 export type FeedItem_Proposal_Fragment = {

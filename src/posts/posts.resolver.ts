@@ -96,7 +96,10 @@ export class PostsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { groupId }: Post,
   ) {
-    return groupId ? loaders.groupsLoader.load(groupId) : null;
+    if (!groupId) {
+      return null;
+    }
+    return loaders.groupsLoader.load(groupId);
   }
 
   @ResolveField(() => Event, { nullable: true })
@@ -104,7 +107,10 @@ export class PostsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { eventId }: Post,
   ) {
-    return eventId ? loaders.eventsLoader.load(eventId) : null;
+    if (!eventId) {
+      return null;
+    }
+    return loaders.eventsLoader.load(eventId);
   }
 
   @ResolveField(() => Post, { nullable: true })
@@ -112,7 +118,10 @@ export class PostsResolver {
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { sharedPostId }: Post,
   ) {
-    return sharedPostId ? loaders.postsLoader.load(sharedPostId) : null;
+    if (!sharedPostId) {
+      return null;
+    }
+    return loaders.postsLoader.load(sharedPostId);
   }
 
   @Mutation(() => CreatePostPayload)
