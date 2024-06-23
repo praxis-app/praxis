@@ -90,7 +90,7 @@ export class PostsResolver {
     return loaders.usersLoader.load(userId);
   }
 
-  @ResolveField(() => Group)
+  @ResolveField(() => Group, { nullable: true })
   async group(
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { groupId }: Post,
@@ -98,7 +98,7 @@ export class PostsResolver {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
   }
 
-  @ResolveField(() => Event)
+  @ResolveField(() => Event, { nullable: true })
   async event(
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { eventId }: Post,
