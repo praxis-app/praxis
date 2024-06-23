@@ -53,7 +53,6 @@ export class Post {
   @Column({ type: 'int', nullable: true })
   groupId: number | null;
 
-  @Field(() => Event, { nullable: true })
   @ManyToOne(() => Event, (event) => event.posts, { onDelete: 'CASCADE' })
   event: Event | null;
 

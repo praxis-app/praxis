@@ -13,6 +13,7 @@ import {
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Comment } from '../comments/models/comment.model';
 import { Dataloaders } from '../dataloader/dataloader.types';
+import { Event } from '../events/models/event.model';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
 import { Like } from '../likes/models/like.model';
