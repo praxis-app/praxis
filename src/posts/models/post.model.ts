@@ -29,22 +29,18 @@ export class Post {
   @Field(() => String, { nullable: true })
   body: string | null;
 
-  @Field(() => [Image])
   @OneToMany(() => Image, (image) => image.post)
   images: Image[];
 
-  @Field(() => [Comment])
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];
 
-  @Field(() => [Like])
   @OneToMany(() => Like, (like) => like.post)
   likes: Like[];
 
   @OneToMany(() => Notification, (notification) => notification.post)
   notifications: Notification[];
 
-  @Field(() => User)
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   user: User;
 
@@ -78,7 +74,6 @@ export class Post {
   @Field()
   createdAt: Date;
 
-  @Field()
   @UpdateDateColumn()
   updatedAt: Date;
 }

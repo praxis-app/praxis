@@ -863,7 +863,6 @@ export type Post = {
   isLikedByMe: Scalars['Boolean']['output'];
   likeCount: Scalars['Int']['output'];
   likes: Array<Like>;
-  updatedAt: Scalars['DateTime']['output'];
   user: User;
 };
 
