@@ -65,6 +65,15 @@ export class Post {
   @Column({ nullable: true })
   eventId: number;
 
+  @OneToMany(() => Post, (post) => post.sharedPost)
+  shares: Post[];
+
+  @ManyToOne(() => Post, (post) => post.shares, { onDelete: 'CASCADE' })
+  sharedPost?: Post;
+
+  @Column({ nullable: true })
+  sharedPostId?: number;
+
   @CreateDateColumn()
   @Field()
   createdAt: Date;
