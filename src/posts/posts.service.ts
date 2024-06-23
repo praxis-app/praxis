@@ -48,6 +48,9 @@ export class PostsService {
   }
 
   async createPost({ images, body, ...postData }: CreatePostInput, user: User) {
+    if (postData.sharedPostId && images?.length) {
+      throw new Error('Shared posts cannot have images');
+    }
     const post = await this.postRepository.save({
       body: sanitizeText(body),
       userId: user.id,
