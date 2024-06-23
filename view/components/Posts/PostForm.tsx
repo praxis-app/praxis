@@ -48,11 +48,18 @@ import TextFieldWithAvatar from '../Shared/TextFieldWithAvatar';
 
 interface Props extends FormikFormProps {
   editPost?: PostFormFragment;
-  groupId?: number;
   eventId?: number;
+  groupId?: number;
+  sharedPostId?: number;
 }
 
-const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
+const PostForm = ({
+  editPost,
+  eventId,
+  groupId,
+  sharedPostId,
+  ...formProps
+}: Props) => {
   const [imagesInputKey, setImagesInputKey] = useState('');
   const [images, setImages] = useState<File[]>([]);
 
@@ -65,8 +72,29 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
 
   const initialValues: CreatePostInput = {
     body: editPost?.body || '',
+    sharedPostId,
     eventId,
     groupId,
+  };
+
+  const getSubmitBtnLabel = () => {
+    if (sharedPostId) {
+      return t('posts.actions.sharePost');
+    }
+    if (editPost) {
+      return t('actions.save');
+    }
+    return t('actions.post');
+  };
+
+  const isSubtmitBtnDisabled = (isSubmitting: boolean, dirty: boolean) => {
+    if (isSubmitting) {
+      return true;
+    }
+    if (sharedPostId) {
+      return false;
+    }
+    return !dirty && !images.length;
   };
 
   const handleCreate = async (
@@ -253,7 +281,11 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
               autoComplete="off"
               name={FieldNames.Body}
               onChange={handleChange}
-              placeholder={t('prompts.whatsHappening')}
+              placeholder={
+                sharedPostId
+                  ? t('posts.form.saySomething')
+                  : t('prompts.whatsHappening')
+              }
               value={values.body}
               multiline
             />
@@ -268,20 +300,22 @@ const PostForm = ({ editPost, groupId, eventId, ...formProps }: Props) => {
 
           <Divider sx={{ marginBottom: 1.3 }} />
 
-          <Flex sx={{ justifyContent: 'space-between' }}>
-            <ImageInput
-              refreshKey={imagesInputKey}
-              setImages={setImages}
-              multiple
-            />
+          <Flex sx={{ justifyContent: sharedPostId ? 'end' : 'space-between' }}>
+            {!sharedPostId && (
+              <ImageInput
+                refreshKey={imagesInputKey}
+                setImages={setImages}
+                multiple
+              />
+            )}
 
             <PrimaryActionButton
-              disabled={isSubmitting || (!dirty && !images.length)}
+              disabled={isSubtmitBtnDisabled(isSubmitting, dirty)}
               isLoading={isSubmitting}
               sx={{ marginTop: 1.5 }}
               type="submit"
             >
-              {t(editPost ? 'actions.save' : 'actions.post')}
+              {getSubmitBtnLabel()}
             </PrimaryActionButton>
           </Flex>
         </Form>

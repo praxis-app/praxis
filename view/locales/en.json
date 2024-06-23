@@ -271,7 +271,8 @@
 
   "posts": {
     "actions": {
-      "deletePost": "Delete Post"
+      "deletePost": "Delete post",
+      "sharePost": "Share post"
     },
     "labels": {
       "addImages": "Add images",
@@ -288,7 +289,8 @@
       "verifyToComment": "No comments yet. You must be verified to comment on posts."
     },
     "form": {
-      "body": "Body"
+      "body": "Body",
+      "saySomething": "Say something about this..."
     }
   },
 

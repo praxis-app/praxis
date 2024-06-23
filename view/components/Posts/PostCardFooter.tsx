@@ -1,5 +1,3 @@
-// TODO: Add basic functionality for sharing. Below is a WIP
-
 import { useReactiveVar } from '@apollo/client';
 import { Comment, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
@@ -8,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { isLoggedInVar, isVerifiedVar } from '../../graphql/cache';
 import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
 import { usePostCommentsLazyQuery } from '../../graphql/posts/queries/gen/PostComments.gen';
-import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import LikeBadge from '../Likes/LikeBadge';
@@ -17,6 +14,7 @@ import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import PostLikeButton from './PostLikeButton';
 import PostModal from './PostModal';
+import SharePostModal from './SharePostModal';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -38,10 +36,11 @@ const PostCardFooter = ({
   groupId,
   eventId,
 }: Props) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [showComments, setShowComments] = useState(inModal || isPostPage);
   const [showLikesModal, setShowLikesModal] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isVerified = useReactiveVar(isVerifiedVar);
@@ -116,7 +115,7 @@ const PostCardFooter = ({
     });
     const comments = data?.post.comments;
     if (comments && comments.length > 1) {
-      setIsModalOpen(true);
+      setIsPostModalOpen(true);
     } else {
       setShowComments(true);
     }
@@ -200,7 +199,7 @@ const PostCardFooter = ({
           {t('actions.comment')}
         </CardFooterButton>
 
-        <CardFooterButton onClick={inDevToast}>
+        <CardFooterButton onClick={() => setIsShareModalOpen(true)}>
           <Reply sx={ROTATED_ICON_STYLES} />
           {t('actions.share')}
         </CardFooterButton>
@@ -243,8 +242,14 @@ const PostCardFooter = ({
 
       <PostModal
         post={post}
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        open={isPostModalOpen}
+        onClose={() => setIsPostModalOpen(false)}
+      />
+
+      <SharePostModal
+        sharedPostId={post.id}
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
       />
     </Box>
   );
