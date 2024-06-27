@@ -48,6 +48,7 @@ const SharedPost = ({ post: { id, body, images, user, createdAt } }: Props) => {
       >
         <Flex marginBottom={0.8}>
           <UserAvatar user={user} size={32.5} sx={{ marginRight: 1.3 }} />
+
           <Flex flexDirection="column">
             <Link
               href={userProfilePath}
@@ -63,7 +64,10 @@ const SharedPost = ({ post: { id, body, images, user, createdAt } }: Props) => {
             </Link>
           </Flex>
         </Flex>
-        <FormattedText text={body} />
+
+        <Link href={postPath}>
+          <FormattedText text={body} />
+        </Link>
       </Box>
     </Box>
   );
