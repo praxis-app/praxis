@@ -232,7 +232,11 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
 
         <Link href={proposalPath}>
           {!!images.length && (
-            <AttachedImageList images={images} marginBottom={me ? 1.9 : 0} />
+            <AttachedImageList
+              images={images}
+              marginBottom={me ? 1.9 : 0}
+              fillCard
+            />
           )}
         </Link>
 

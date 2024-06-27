@@ -1,0 +1,11 @@
+fragment SharedPost on Post {
+  id
+  body
+  createdAt
+  images {
+    ...AttachedImage
+  }
+  user {
+    ...UserAvatar
+  }
+}

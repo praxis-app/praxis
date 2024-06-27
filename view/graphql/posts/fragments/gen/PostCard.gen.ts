@@ -6,6 +6,7 @@ import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.g
 import { GroupAvatarFragmentDoc } from '../../../groups/fragments/gen/GroupAvatar.gen';
 import { GroupPermissionsFragmentDoc } from '../../../groups/fragments/gen/GroupPermissions.gen';
 import { EventAvatarFragmentDoc } from '../../../events/fragments/gen/EventAvatar.gen';
+import { SharedPostFragmentDoc } from './SharedPost.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
@@ -98,15 +99,7 @@ export const PostCardFragmentDoc = gql`
       }
     }
     sharedPost {
-      id
-      body
-      createdAt
-      images {
-        ...AttachedImage
-      }
-      user {
-        ...UserAvatar
-      }
+      ...SharedPost
     }
   }
   ${AttachedImageFragmentDoc}
@@ -114,4 +107,5 @@ export const PostCardFragmentDoc = gql`
   ${GroupAvatarFragmentDoc}
   ${GroupPermissionsFragmentDoc}
   ${EventAvatarFragmentDoc}
+  ${SharedPostFragmentDoc}
 `;

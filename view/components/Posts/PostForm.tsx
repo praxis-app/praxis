@@ -51,6 +51,7 @@ interface Props extends FormikFormProps {
   eventId?: number;
   groupId?: number;
   sharedPostId?: number;
+  onSubmit?(): void;
 }
 
 const PostForm = ({
@@ -58,6 +59,7 @@ const PostForm = ({
   eventId,
   groupId,
   sharedPostId,
+  onSubmit,
   ...formProps
 }: Props) => {
   const [imagesInputKey, setImagesInputKey] = useState('');
@@ -245,6 +247,8 @@ const PostForm = ({
         status: 'error',
         title,
       });
+    } finally {
+      onSubmit?.();
     }
   };
 

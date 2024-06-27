@@ -35,6 +35,7 @@ import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 import PostCardFooter from './PostCardFooter';
+import SharedPost from './SharedPost';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
@@ -184,11 +185,11 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
 
         {!!images.length && (
           <Link aria-label={t('images.labels.attachedImages')} href={postPath}>
-            <AttachedImageList images={images} />
+            <AttachedImageList images={images} fillCard />
           </Link>
         )}
 
-        {sharedPost && <>{sharedPost.id}</>}
+        {sharedPost && <SharedPost post={sharedPost} />}
       </CardContent>
 
       <PostCardFooter

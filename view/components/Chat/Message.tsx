@@ -51,7 +51,6 @@ const Message = ({
             imageSx={{ borderRadius: 2 }}
             width={isDesktop ? 350 : '100%'}
             paddingTop={0.7}
-            paddingX={2}
           />
         )}
       </Box>

@@ -20,7 +20,7 @@ const SharePostModal = ({ sharedPostId, isOpen, onClose }: Props) => {
       open={isOpen}
       centeredTitle
     >
-      <PostForm sharedPostId={sharedPostId} />
+      <PostForm sharedPostId={sharedPostId} onSubmit={onClose} />
     </Modal>
   );
 };
