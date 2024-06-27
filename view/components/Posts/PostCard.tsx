@@ -126,7 +126,12 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
       <Box marginBottom={showGroup ? -0.5 : 0}>
         {showGroup && (
           <Link href={groupPath}>
-            <Typography color="primary" lineHeight={1} fontSize={15}>
+            <Typography
+              fontFamily="Inter Medium"
+              color="primary"
+              lineHeight={1}
+              fontSize={15}
+            >
               {group.name}
             </Typography>
           </Link>
@@ -134,7 +139,10 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
         <Box fontSize={14} sx={{ color: 'text.secondary' }}>
           <Link
             href={userProfilePath}
-            sx={{ color: showGroup ? 'inherit' : undefined }}
+            sx={{
+              color: showGroup ? 'inherit' : undefined,
+              fontFamily: showGroup ? undefined : 'Inter Medium',
+            }}
           >
             {truncatedUsername}
           </Link>
