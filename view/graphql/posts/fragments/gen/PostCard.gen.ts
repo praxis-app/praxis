@@ -17,6 +17,7 @@ export type PostCardFragment = {
   body?: string | null;
   likeCount: number;
   commentCount: number;
+  shareCount: number;
   isLikedByMe?: boolean;
   hasMissingSharedPost: boolean;
   createdAt: any;
@@ -77,6 +78,7 @@ export const PostCardFragmentDoc = gql`
     body
     likeCount
     commentCount
+    shareCount
     isLikedByMe @include(if: $isVerified)
     hasMissingSharedPost
     createdAt

@@ -277,10 +277,12 @@
     "labels": {
       "addImages": "Add images",
       "addPost": "Add post",
+      "likes": "Post Likes",
       "post": "Post",
       "posts": "Posts",
       "usersPost": "{{name}}'s Post",
-      "likes": "Post Likes"
+      "xShares_one": "{{count}} share",
+      "xShares_other": "{{count}} shares"
     },
     "prompts": {
       "loginToLike": "You need to be logged in to like posts.",

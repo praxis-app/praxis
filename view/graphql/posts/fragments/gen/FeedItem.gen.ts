@@ -13,6 +13,7 @@ export type FeedItem_Post_Fragment = {
   body?: string | null;
   likeCount: number;
   commentCount: number;
+  shareCount: number;
   isLikedByMe?: boolean;
   hasMissingSharedPost: boolean;
   createdAt: any;

@@ -130,6 +130,14 @@ export class PostsResolver {
     return this.postsService.hasMissingSharedPost(sharedPostId);
   }
 
+  @ResolveField(() => Int)
+  async shareCount(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Post,
+  ) {
+    return loaders.postShareCountLoader.load(id);
+  }
+
   @Mutation(() => CreatePostPayload)
   async createPost(
     @Args('postData') postData: CreatePostInput,

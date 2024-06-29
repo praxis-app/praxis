@@ -532,6 +532,7 @@ type Post {
   isLikedByMe: Boolean!
   likeCount: Int!
   likes: [Like!]!
+  shareCount: Int!
   sharedPost: Post
   user: User!
 }

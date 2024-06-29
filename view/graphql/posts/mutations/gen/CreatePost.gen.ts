@@ -23,6 +23,7 @@ export type CreatePostMutation = {
       body?: string | null;
       likeCount: number;
       commentCount: number;
+      shareCount: number;
       isLikedByMe?: boolean;
       hasMissingSharedPost: boolean;
       createdAt: any;

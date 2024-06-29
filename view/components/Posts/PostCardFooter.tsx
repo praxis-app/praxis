@@ -76,8 +76,14 @@ const PostCardFooter = ({
     post,
   ]);
 
-  const { id, likeCount, commentCount, isLikedByMe, hasMissingSharedPost } =
-    post;
+  const {
+    id,
+    likeCount,
+    commentCount,
+    shareCount,
+    isLikedByMe,
+    hasMissingSharedPost,
+  } = post;
 
   const comments = postCommentsData?.post.comments;
   const group = postCommentsData?.group;
@@ -95,7 +101,7 @@ const PostCardFooter = ({
   const showJoinToCommentPrompt =
     (notInGroup || notInEventGroup) && !comments?.length;
 
-  const commentCountStyles: SxProps = {
+  const postStatStyles: SxProps = {
     '&:hover': { textDecoration: 'underline' },
     transform: 'translateY(3px)',
     cursor: 'pointer',
@@ -190,14 +196,24 @@ const PostCardFooter = ({
             </>
           )}
 
-          {!!commentCount && (
-            <Typography
-              color="text.secondary"
-              onClick={handleCommentButtonClick}
-              sx={commentCountStyles}
-            >
-              {t('comments.labels.xComments', { count: commentCount })}
-            </Typography>
+          {!!(commentCount + shareCount) && (
+            <Flex sx={postStatStyles}>
+              {!!commentCount && (
+                <Typography
+                  color="text.secondary"
+                  onClick={handleCommentButtonClick}
+                  marginRight={shareCount ? 1.5 : 0}
+                >
+                  {t('comments.labels.xComments', { count: commentCount })}
+                </Typography>
+              )}
+
+              {!!shareCount && (
+                <Typography color="text.secondary">
+                  {t('posts.labels.xShares', { count: shareCount })}
+                </Typography>
+              )}
+            </Flex>
           )}
         </Flex>
         <Divider />

@@ -3,6 +3,7 @@ fragment PostCard on Post {
   body
   likeCount
   commentCount
+  shareCount
   isLikedByMe @include(if: $isVerified)
   hasMissingSharedPost
   createdAt

@@ -43,6 +43,7 @@ import {
   MyGroupsKey,
   PostWithCommentCount,
   PostWithLikeCount,
+  PostWithShareCount,
   ProposalWithCommentCount,
   ProposalWithVoteCount,
   ServerRoleWithMemberCount,
@@ -112,12 +113,13 @@ export class DataloaderService {
       proposalCommentCountLoader: this._createProposalCommentCountLoader(),
 
       // Posts
-      postsLoader: this._createPostsLoader(),
       isPostLikedByMeLoader: this._createIsPostLikedByMeLoader(),
       postCommentCountLoader: this._createPostCommentCountLoader(),
       postImagesLoader: this._createPostImagesLoader(),
       postLikeCountLoader: this._createPostLikeCountLoader(),
       postLikesLoader: this._createPostLikesLoader(),
+      postShareCountLoader: this._createPostShareCountLoader(),
+      postsLoader: this._createPostsLoader(),
 
       // Comments
       commentsLoader: this._createCommentsLoader(),
@@ -381,6 +383,26 @@ export class DataloaderService {
           return new Error(`Could not load comment count for post: ${id}`);
         }
         return post.commentCount;
+      });
+    });
+  }
+
+  private _createPostShareCountLoader() {
+    return this._getDataLoader<number, number>(async (postIds) => {
+      const posts = (await this.postRepository
+        .createQueryBuilder('post')
+        .leftJoinAndSelect('post.shares', 'share')
+        .loadRelationCountAndMap('post.shareCount', 'post.shares')
+        .select(['post.id'])
+        .whereInIds(postIds)
+        .getMany()) as PostWithShareCount[];
+
+      return postIds.map((id) => {
+        const post = posts.find((post: Post) => post.id === id);
+        if (!post) {
+          return new Error(`Could not load share count for post: ${id}`);
+        }
+        return post.shareCount;
       });
     });
   }
