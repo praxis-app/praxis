@@ -15,6 +15,7 @@ import Flex from '../Shared/Flex';
 import PostLikeButton from './PostLikeButton';
 import PostModal from './PostModal';
 import SharePostModal from './SharePostModal';
+import { inDevToast } from '../../utils/shared.utils';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -127,6 +128,13 @@ const PostCardFooter = ({
 
   const handlePopoverClose = () => setAnchorEl(null);
 
+  const handleShareBtnClick = () => {
+    if (!isVerified) {
+      return inDevToast();
+    }
+    setIsShareModalOpen(true);
+  };
+
   const renderCommentForm = () => {
     if (!isVerified || inModal) {
       return null;
@@ -199,7 +207,7 @@ const PostCardFooter = ({
           {t('actions.comment')}
         </CardFooterButton>
 
-        <CardFooterButton onClick={() => setIsShareModalOpen(true)}>
+        <CardFooterButton onClick={handleShareBtnClick}>
           <Reply sx={ROTATED_ICON_STYLES} />
           {t('actions.share')}
         </CardFooterButton>
