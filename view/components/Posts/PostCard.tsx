@@ -106,12 +106,12 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
   const bodyStyles: SxProps = {
     lineHeight: 1.25,
     whiteSpace: 'pre-wrap',
-    marginBottom: images.length ? 2.5 : 3.5,
+    marginBottom: 2.1,
     fontSize: isSmallTextOnly ? 22 : 16,
   };
 
   const cardContentStyles: SxProps = {
-    paddingTop: images.length && !body ? 2.5 : 3,
+    paddingTop: 2.1,
     paddingX: inModal ? 0 : undefined,
   };
 

@@ -95,14 +95,6 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
   const isGroupPage = pathname.includes(`${NavigationPaths.Groups}/`);
   const isProposalPage = pathname.includes(NavigationPaths.Proposals);
 
-  const hasMedia =
-    action.event ||
-    action.groupCoverPhoto ||
-    action.groupDescription ||
-    action.groupName ||
-    action.role ||
-    images.length;
-
   const groupPath = getGroupPath(group?.name || '');
   const proposalPath = `${NavigationPaths.Proposals}/${id}`;
   const userProfilePath = getUserProfilePath(user?.name);
@@ -111,10 +103,10 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
   const bodyStyles = {
     lineHeight: 1.25,
     whiteSpace: 'pre-wrap',
-    marginBottom: hasMedia ? 2.5 : 3.5,
+    marginBottom: 2.1,
   };
   const cardContentStyles = {
-    paddingTop: images.length && !body ? 2.5 : 3,
+    paddingTop: 2.1,
     paddingX: inModal ? 0 : undefined,
   };
 
