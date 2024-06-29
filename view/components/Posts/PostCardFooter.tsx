@@ -247,9 +247,9 @@ const PostCardFooter = ({
       />
 
       <SharePostModal
-        sharedPostId={post.id}
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
+        sharedPostId={post.sharedPost?.id || post.id}
       />
     </Box>
   );
