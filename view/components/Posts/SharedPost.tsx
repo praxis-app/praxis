@@ -81,12 +81,18 @@ const SharedPost = ({ post }: Props) => {
 
         {!post && (
           <Flex gap={1.2}>
-            <BrokenImage fontSize="large" />
+            <BrokenImage sx={{ fontSize: isDesktop ? '32px' : '30px' }} />
             <Box>
-              <Typography fontSize="17px" fontFamily="Inter Medium">
+              <Typography
+                fontSize={isDesktop ? '17px' : '16px'}
+                fontFamily="Inter Medium"
+                marginBottom={isDesktop ? 0.2 : 0.1}
+              >
                 {t('posts.noContent.header')}
               </Typography>
-              <Typography>{t('posts.noContent.message')}</Typography>
+              <Typography color="text.secondary">
+                {t('posts.noContent.message')}
+              </Typography>
             </Box>
           </Flex>
         )}
