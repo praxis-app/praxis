@@ -12,6 +12,9 @@ export class CreatePostInput {
   @Field(() => Int, { nullable: true })
   sharedPostId?: number;
 
+  @Field(() => Int, { nullable: true })
+  sharedFromUserId?: number;
+
   @Field({ nullable: true })
   body?: string;
 

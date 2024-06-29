@@ -50,16 +50,18 @@ interface Props extends FormikFormProps {
   editPost?: PostFormFragment;
   eventId?: number;
   groupId?: number;
-  sharedPostId?: number;
   onSubmit?(): void;
+  sharedFromUserId?: number;
+  sharedPostId?: number;
 }
 
 const PostForm = ({
   editPost,
   eventId,
   groupId,
-  sharedPostId,
   onSubmit,
+  sharedFromUserId,
+  sharedPostId,
   ...formProps
 }: Props) => {
   const [imagesInputKey, setImagesInputKey] = useState('');
@@ -74,6 +76,7 @@ const PostForm = ({
 
   const initialValues: CreatePostInput = {
     body: editPost?.body || '',
+    sharedFromUserId,
     sharedPostId,
     eventId,
     groupId,

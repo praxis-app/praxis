@@ -3,24 +3,34 @@ import Modal from '../Shared/Modal';
 import PostForm from './PostForm';
 
 interface Props {
-  sharedPostId: number;
   isOpen: boolean;
   onClose(): void;
+  sharedFromUserId: number;
+  sharedPostId: number;
 }
 
-const SharePostModal = ({ sharedPostId, isOpen, onClose }: Props) => {
+const SharePostModal = ({
+  isOpen,
+  onClose,
+  sharedFromUserId,
+  sharedPostId,
+}: Props) => {
   const { t } = useTranslation();
 
   return (
     <Modal
+      contentStyles={{ paddingTop: 3, minHeight: 'fit-content' }}
       title={t('actions.share')}
       maxWidth="md"
       onClose={onClose}
-      contentStyles={{ paddingTop: 3, minHeight: 'fit-content' }}
       open={isOpen}
       centeredTitle
     >
-      <PostForm sharedPostId={sharedPostId} onSubmit={onClose} />
+      <PostForm
+        onSubmit={onClose}
+        sharedPostId={sharedPostId}
+        sharedFromUserId={sharedFromUserId}
+      />
     </Modal>
   );
 };

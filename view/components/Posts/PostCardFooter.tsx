@@ -3,9 +3,10 @@ import { Comment, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isLoggedInVar, isVerifiedVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
 import { usePostCommentsLazyQuery } from '../../graphql/posts/queries/gen/PostComments.gen';
+import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import LikeBadge from '../Likes/LikeBadge';
@@ -15,7 +16,6 @@ import Flex from '../Shared/Flex';
 import PostLikeButton from './PostLikeButton';
 import PostModal from './PostModal';
 import SharePostModal from './SharePostModal';
-import { inDevToast } from '../../utils/shared.utils';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -76,7 +76,9 @@ const PostCardFooter = ({
     post,
   ]);
 
-  const { id, likeCount, commentCount, isLikedByMe } = post;
+  const { id, likeCount, commentCount, isLikedByMe, hasMissingSharedPost } =
+    post;
+
   const comments = postCommentsData?.post.comments;
   const group = postCommentsData?.group;
   const event = postCommentsData?.event;
@@ -129,6 +131,13 @@ const PostCardFooter = ({
   const handlePopoverClose = () => setAnchorEl(null);
 
   const handleShareBtnClick = () => {
+    if (hasMissingSharedPost) {
+      toastVar({
+        title: t('posts.errors.missingContentShare'),
+        status: 'info',
+      });
+      return;
+    }
     if (!isVerified) {
       return inDevToast();
     }
@@ -258,6 +267,7 @@ const PostCardFooter = ({
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
         sharedPostId={post.sharedPost?.id || post.id}
+        sharedFromUserId={post.user.id}
       />
     </Box>
   );

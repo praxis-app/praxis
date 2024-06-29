@@ -196,6 +196,7 @@ export type CreatePostInput = {
   eventId?: InputMaybe<Scalars['Int']['input']>;
   groupId?: InputMaybe<Scalars['Int']['input']>;
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
+  sharedFromUserId?: InputMaybe<Scalars['Int']['input']>;
   sharedPostId?: InputMaybe<Scalars['Int']['input']>;
 };
 
