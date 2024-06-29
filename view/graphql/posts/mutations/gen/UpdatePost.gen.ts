@@ -24,6 +24,7 @@ export type UpdatePostMutation = {
       likeCount: number;
       commentCount: number;
       isLikedByMe?: boolean;
+      hasMissingSharedPost: boolean;
       createdAt: any;
       images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
       user: {

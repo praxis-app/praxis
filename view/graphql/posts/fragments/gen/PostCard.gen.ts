@@ -18,6 +18,7 @@ export type PostCardFragment = {
   likeCount: number;
   commentCount: number;
   isLikedByMe?: boolean;
+  hasMissingSharedPost: boolean;
   createdAt: any;
   images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
   user: {
@@ -77,6 +78,7 @@ export const PostCardFragmentDoc = gql`
     likeCount
     commentCount
     isLikedByMe @include(if: $isVerified)
+    hasMissingSharedPost
     createdAt
     images {
       ...AttachedImage

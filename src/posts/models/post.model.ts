@@ -62,7 +62,9 @@ export class Post {
   @OneToMany(() => Post, (post) => post.sharedPost)
   shares: Post[];
 
-  @ManyToOne(() => Post, (post) => post.shares, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Post, (post) => post.shares, {
+    createForeignKeyConstraints: false,
+  })
   sharedPost: Post | null;
 
   @Column({ type: 'int', nullable: true })

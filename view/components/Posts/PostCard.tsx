@@ -73,7 +73,18 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
   const navigate = useNavigate();
   const isDesktop = useIsDesktop();
 
-  const { id, body, images, user, group, event, sharedPost, createdAt } = post;
+  const {
+    id,
+    body,
+    images,
+    user,
+    group,
+    event,
+    sharedPost,
+    hasMissingSharedPost,
+    createdAt,
+  } = post;
+
   const me = data && data.me;
   const isMe = me?.id === user.id;
   const formattedDate = timeAgo(createdAt);
@@ -197,7 +208,9 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
           </Link>
         )}
 
-        {sharedPost && <SharedPost post={sharedPost} />}
+        {(sharedPost || hasMissingSharedPost) && (
+          <SharedPost post={sharedPost} />
+        )}
       </CardContent>
 
       <PostCardFooter

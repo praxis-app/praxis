@@ -291,14 +291,12 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
 
   private _createPostsLoader() {
-    return this._getDataLoader<number, Post>(async (postIds) => {
+    return this._getDataLoader<number, Post | null>(async (postIds) => {
       const posts = await this.postRepository.find({
         where: { id: In(postIds) },
       });
       return postIds.map(
-        (id) =>
-          posts.find((post: Post) => post.id === id) ||
-          new Error(`Could not load post: ${id}`),
+        (id) => posts.find((post: Post) => post.id === id) || null,
       );
     });
   }

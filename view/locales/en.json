@@ -291,6 +291,10 @@
     "form": {
       "body": "Body",
       "saySomething": "Say something about this..."
+    },
+    "noContent": {
+      "header": "This content is no longer available",
+      "message": "When this happens, it's generally because the author removed it, or it may have been taken down by a moderator."
     }
   },
 

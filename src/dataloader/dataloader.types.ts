@@ -51,7 +51,7 @@ export interface Dataloaders {
   proposalVotesLoader: DataLoader<number, Vote[]>;
 
   // Posts
-  postsLoader: DataLoader<number, Post>;
+  postsLoader: DataLoader<number, Post | null>;
   isPostLikedByMeLoader: DataLoader<IsPostLikedByMeKey, boolean>;
   postCommentCountLoader: DataLoader<number, number>;
   postImagesLoader: DataLoader<number, Image[]>;

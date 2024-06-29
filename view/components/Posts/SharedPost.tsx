@@ -1,4 +1,5 @@
-import { Box, useTheme } from '@mui/material';
+import { BrokenImage } from '@mui/icons-material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { truncate } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,58 +17,79 @@ import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 
 interface Props {
-  post: SharedPostFragment;
+  post?: SharedPostFragment | null;
 }
 
-const SharedPost = ({ post: { id, body, images, user, createdAt } }: Props) => {
+const SharedPost = ({ post }: Props) => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
   const theme = useTheme();
 
-  const username = user.displayName || user.name;
+  const user = post?.user;
+  const username = user?.displayName || user?.name;
   const truncatedUsername = truncate(username, {
     length: isDesktop ? TruncationSizes.Medium : 20,
   });
 
-  const userProfilePath = getUserProfilePath(user.name);
-  const postPath = `${NavigationPaths.Posts}/${id}`;
-  const formattedDate = timeAgo(createdAt);
+  const userProfilePath = getUserProfilePath(user?.name);
+  const postPath = `${NavigationPaths.Posts}/${post?.id}`;
+  const formattedDate = timeAgo(post?.createdAt);
 
   return (
     <Box borderRadius="8px" border={`1px solid ${theme.palette.divider}`}>
-      {!!images.length && (
+      {!!post?.images.length && (
         <Link aria-label={t('images.labels.attachedImages')} href={postPath}>
-          <AttachedImageList images={images} topRounded />
+          <AttachedImageList images={post.images} topRounded />
         </Link>
       )}
 
       <Box
         paddingX="12px"
         paddingBottom="8px"
-        paddingTop={images.length ? '6px' : '10px'}
+        paddingTop={post?.images.length ? '6px' : '10px'}
       >
-        <Flex marginBottom={0.8}>
-          <UserAvatar user={user} size={32.5} sx={{ marginRight: 1.3 }} />
+        {post && (
+          <Flex marginBottom={0.8}>
+            <UserAvatar user={user} size={32.5} sx={{ marginRight: 1.3 }} />
 
-          <Flex flexDirection="column">
-            <Link
-              href={userProfilePath}
-              sx={{ fontFamily: 'Inter Medium', fontSize: 14, lineHeight: 1.2 }}
-            >
-              {truncatedUsername}
-            </Link>
-            <Link
-              href={postPath}
-              sx={{ color: 'text.secondary', lineHeight: 1.2, fontSize: 13 }}
-            >
-              {formattedDate}
-            </Link>
+            <Flex flexDirection="column">
+              <Link
+                href={userProfilePath}
+                sx={{
+                  fontFamily: 'Inter Medium',
+                  fontSize: 14,
+                  lineHeight: 1.2,
+                }}
+              >
+                {truncatedUsername}
+              </Link>
+              <Link
+                href={postPath}
+                sx={{ color: 'text.secondary', lineHeight: 1.2, fontSize: 13 }}
+              >
+                {formattedDate}
+              </Link>
+            </Flex>
           </Flex>
-        </Flex>
+        )}
 
-        <Link href={postPath}>
-          <FormattedText text={body} />
-        </Link>
+        {post?.body && (
+          <Link href={postPath}>
+            <FormattedText text={post.body} />
+          </Link>
+        )}
+
+        {!post && (
+          <Flex gap={1.2}>
+            <BrokenImage fontSize="large" />
+            <Box>
+              <Typography fontSize="17px" fontFamily="Inter Medium">
+                {t('posts.noContent.header')}
+              </Typography>
+              <Typography>{t('posts.noContent.message')}</Typography>
+            </Box>
+          </Flex>
+        )}
       </Box>
     </Box>
   );

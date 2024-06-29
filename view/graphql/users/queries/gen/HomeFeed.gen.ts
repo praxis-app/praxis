@@ -31,6 +31,7 @@ export type HomeFeedQuery = {
             likeCount: number;
             commentCount: number;
             isLikedByMe?: boolean;
+            hasMissingSharedPost: boolean;
             createdAt: any;
             images: Array<{
               __typename?: 'Image';

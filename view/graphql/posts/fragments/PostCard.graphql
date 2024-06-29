@@ -4,6 +4,7 @@ fragment PostCard on Post {
   likeCount
   commentCount
   isLikedByMe @include(if: $isVerified)
+  hasMissingSharedPost
   createdAt
 
   images {

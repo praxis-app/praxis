@@ -858,6 +858,7 @@ export type Post = {
   createdAt: Scalars['DateTime']['output'];
   event?: Maybe<Event>;
   group?: Maybe<Group>;
+  hasMissingSharedPost: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
   images: Array<Image>;
   isLikedByMe: Scalars['Boolean']['output'];

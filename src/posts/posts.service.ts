@@ -47,6 +47,16 @@ export class PostsService {
     );
   }
 
+  async hasMissingSharedPost(sharedPostId: number | null) {
+    if (!sharedPostId) {
+      return false;
+    }
+    const sharedPostExists = await this.postRepository.exist({
+      where: { id: sharedPostId },
+    });
+    return !sharedPostExists;
+  }
+
   async createPost({ images, body, ...postData }: CreatePostInput, user: User) {
     if (!body?.trim() && !images?.length && !postData.sharedPostId) {
       throw new Error('Posts must include some content');

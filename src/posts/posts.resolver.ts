@@ -124,6 +124,12 @@ export class PostsResolver {
     return loaders.postsLoader.load(sharedPostId);
   }
 
+  // TODO: Determine whether a data loader should be used here
+  @ResolveField(() => Boolean)
+  async hasMissingSharedPost(@Parent() { sharedPostId }: Post) {
+    return this.postsService.hasMissingSharedPost(sharedPostId);
+  }
+
   @Mutation(() => CreatePostPayload)
   async createPost(
     @Args('postData') postData: CreatePostInput,
