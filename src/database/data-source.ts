@@ -82,6 +82,7 @@ import { AddChatTables1714930094485 } from './migrations/1714930094485-AddChatTa
 import { AddIsDefaultColumnToGroupTable1715555522528 } from './migrations/1715555522528-AddIsDefaultColumnToGroupTable';
 import { AddGroupIdToConversationTable1717305686166 } from './migrations/1717305686166-AddGroupIdToConversationTable';
 import { AddAboutColumnToServerConfig1718497442403 } from './migrations/1718497442403-AddAboutColumnToServerConfig';
+import { AddSharedPostIdToPostTable1719688685494 } from './migrations/1719688685494-AddSharedPostIdToPostTable';
 
 dotenv.config();
 
@@ -163,6 +164,7 @@ export default new DataSource({
     AddServerConfigTable1699135846939,
     AddServerInviteTable1677339785709,
     AddServerRolePermissionColumns1703978999070,
+    AddSharedPostIdToPostTable1719688685494,
     AddUserDisplayNameColumn1713640882734,
     AddUserLockedColumn1711324242919,
     AddVibeCheckTables1709004638886,
