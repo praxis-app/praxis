@@ -14,7 +14,10 @@ import { truncate } from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ProposalStage } from '../../constants/proposal.constants';
+import {
+  ProposalActionType,
+  ProposalStage,
+} from '../../constants/proposal.constants';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -100,10 +103,17 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
   const userProfilePath = getUserProfilePath(user?.name);
   const formattedDate = timeAgo(createdAt);
 
+  const isSmallTextOnly =
+    body &&
+    body.length < 85 &&
+    !images.length &&
+    action.actionType === ProposalActionType.Test;
+
   const bodyStyles = {
     lineHeight: 1.25,
     whiteSpace: 'pre-wrap',
     marginBottom: 2.1,
+    fontSize: isSmallTextOnly ? 22 : 16,
   };
   const cardContentStyles = {
     paddingTop: 2.1,
