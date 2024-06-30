@@ -288,9 +288,10 @@ const PostCardFooter = ({
       />
 
       <PostSharesModal
-        post={post}
+        postId={id}
         isOpen={isPostSharesModalOpen}
         onClose={() => setIsPostSharesModalOpen(false)}
+        isVerified={isVerified}
       />
     </Box>
   );

@@ -1,0 +1,20 @@
+fragment PostShareCompact on Post {
+  id
+  likeCount
+  shareCount
+  isLikedByMe @include(if: $isVerified)
+  createdAt
+
+  user {
+    ...UserAvatar
+  }
+  user {
+    ...UserAvatar
+  }
+  group {
+    ...GroupAvatar
+  }
+  event {
+    ...EventAvatar
+  }
+}

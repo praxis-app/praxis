@@ -272,7 +272,8 @@
   "posts": {
     "actions": {
       "deletePost": "Delete post",
-      "sharePost": "Share post"
+      "sharePost": "Share post",
+      "showAttachment": "Show Attachment"
     },
     "labels": {
       "addImages": "Add images",
