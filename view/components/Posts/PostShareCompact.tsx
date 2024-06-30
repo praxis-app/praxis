@@ -3,12 +3,11 @@ import {
   Box,
   Button,
   CardActions,
+  CardContent,
+  CardHeader,
   Divider,
-  CardContent as MuiCardContent,
-  CardHeader as MuiCardHeader,
   SxProps,
   Typography,
-  styled,
   useTheme,
 } from '@mui/material';
 import { truncate } from 'lodash';
@@ -42,17 +41,6 @@ const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
   transform: 'rotateY(180deg)',
 };
-
-const CardHeader = styled(MuiCardHeader)(() => ({
-  paddingBottom: 0,
-}));
-
-const CardContent = styled(MuiCardContent)(() => ({
-  '&:last-child': {
-    paddingBottom: 16,
-    paddingTop: 0,
-  },
-}));
 
 interface Props {
   post: PostShareCompactFragment;
@@ -175,9 +163,12 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
         action={renderMenu()}
         avatar={renderAvatar()}
         title={renderTitle()}
+        sx={{ paddingBottom: 0 }}
       />
 
-      <CardContent sx={{ display: 'flex', justifyContent: 'center' }}>
+      <CardContent
+        sx={{ display: 'flex', justifyContent: 'center', paddingY: 0 }}
+      >
         <Button sx={{ textTransform: 'none', paddingX: 2 }}>
           {t('posts.actions.showAttachment')}
         </Button>
