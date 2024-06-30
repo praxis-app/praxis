@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
 import { usePostCommentsLazyQuery } from '../../graphql/posts/queries/gen/PostComments.gen';
-import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import LikeBadge from '../Likes/LikeBadge';
@@ -141,7 +140,11 @@ const PostCardFooter = ({
       return;
     }
     if (!isVerified) {
-      return inDevToast();
+      toastVar({
+        title: t('posts.prompts.verifyToShare'),
+        status: 'info',
+      });
+      return;
     }
     setIsShareModalOpen(true);
   };
