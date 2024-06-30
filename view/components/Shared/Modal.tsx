@@ -17,21 +17,17 @@ import { KeyboardEvent, ReactNode } from 'react';
 import { KeyCodes } from '../../constants/shared.constants';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 
-interface Props {
+interface Props extends DialogProps {
   actionLabel?: string;
   appBarContent?: ReactNode;
   centeredTitle?: boolean;
-  children: ReactNode;
   closingAction?(): void;
   contentStyles?: SxProps;
   footerContent?: ReactNode;
   isClosingActionDisabled?: boolean;
   isLoading?: boolean;
-  maxWidth?: DialogProps['maxWidth'];
   onClose(): void;
-  open: boolean;
   subtext?: string;
-  title?: string;
   topGap?: string | number;
 }
 
@@ -51,6 +47,7 @@ const Modal = ({
   subtext,
   title,
   topGap,
+  ...dialogProps
 }: Props) => {
   const isDesktop = useIsDesktop();
   const theme = useTheme();
@@ -155,6 +152,7 @@ const Modal = ({
       slotProps={{ backdrop: { onClick: onClose } }}
       // Required for desktop
       onClose={onClose}
+      {...dialogProps}
     >
       <AppBar sx={appBarStyles}>{renderAppBarContent()}</AppBar>
       <DialogContent sx={dialogContentStyles}>{children}</DialogContent>
