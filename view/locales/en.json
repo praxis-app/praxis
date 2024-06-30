@@ -284,6 +284,9 @@
       "xShares_one": "{{count}} share",
       "xShares_other": "{{count}} shares"
     },
+    "headers": {
+      "peopleWhoShared": "People who shared this"
+    },
     "prompts": {
       "loginToLike": "You need to be logged in to like posts.",
       "verifyToLike": "You must be verified to like posts.",

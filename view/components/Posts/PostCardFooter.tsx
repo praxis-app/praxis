@@ -15,6 +15,7 @@ import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import PostLikeButton from './PostLikeButton';
 import PostModal from './PostModal';
+import PostSharesModal from './PostSharesModal';
 import SharePostModal from './SharePostModal';
 
 const ROTATED_ICON_STYLES: SxProps = {
@@ -39,6 +40,7 @@ const PostCardFooter = ({
 }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [isPostSharesModalOpen, setIsPostSharesModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [showComments, setShowComments] = useState(inModal || isPostPage);
   const [showLikesModal, setShowLikesModal] = useState(false);
@@ -207,6 +209,7 @@ const PostCardFooter = ({
                 <Typography
                   color="text.secondary"
                   sx={{ '&:hover': { textDecoration: 'underline' } }}
+                  onClick={() => setIsPostSharesModalOpen(true)}
                 >
                   {t('posts.labels.xShares', { count: shareCount })}
                 </Typography>
@@ -282,6 +285,12 @@ const PostCardFooter = ({
         onClose={() => setIsShareModalOpen(false)}
         sharedPostId={post.sharedPost?.id || post.id}
         sharedFromUserId={post.user.id}
+      />
+
+      <PostSharesModal
+        post={post}
+        isOpen={isPostSharesModalOpen}
+        onClose={() => setIsPostSharesModalOpen(false)}
       />
     </Box>
   );

@@ -1,8 +1,9 @@
 import * as Types from '../../../gen';
 
 import { gql } from '@apollo/client';
-import { AttachedImageFragmentDoc } from '../../../images/fragments/gen/AttachedImage.gen';
+import { PostSharesModalFragmentDoc } from './PostSharesModal.gen';
 import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.gen';
+import { AttachedImageFragmentDoc } from '../../../images/fragments/gen/AttachedImage.gen';
 import { GroupAvatarFragmentDoc } from '../../../groups/fragments/gen/GroupAvatar.gen';
 import { GroupPermissionsFragmentDoc } from '../../../groups/fragments/gen/GroupPermissions.gen';
 import { EventAvatarFragmentDoc } from '../../../events/fragments/gen/EventAvatar.gen';
@@ -70,6 +71,21 @@ export type PostCardFragment = {
       profilePicture: { __typename?: 'Image'; id: number };
     };
   } | null;
+  shares: Array<{
+    __typename?: 'Post';
+    id: number;
+    likeCount: number;
+    shareCount: number;
+    isLikedByMe?: boolean;
+    createdAt: any;
+    user: {
+      __typename?: 'User';
+      id: number;
+      name: string;
+      displayName?: string | null;
+      profilePicture: { __typename?: 'Image'; id: number };
+    };
+  }>;
 };
 
 export const PostCardFragmentDoc = gql`
@@ -82,6 +98,7 @@ export const PostCardFragmentDoc = gql`
     isLikedByMe @include(if: $isVerified)
     hasMissingSharedPost
     createdAt
+    ...PostSharesModal
     images {
       ...AttachedImage
     }
@@ -106,6 +123,7 @@ export const PostCardFragmentDoc = gql`
       ...SharedPost
     }
   }
+  ${PostSharesModalFragmentDoc}
   ${AttachedImageFragmentDoc}
   ${UserAvatarFragmentDoc}
   ${GroupAvatarFragmentDoc}

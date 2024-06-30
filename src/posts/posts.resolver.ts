@@ -113,6 +113,11 @@ export class PostsResolver {
     return loaders.eventsLoader.load(eventId);
   }
 
+  @ResolveField(() => [Post])
+  async shares(@Parent() { id }: Post) {
+    return this.postsService.getPostShares(id);
+  }
+
   @ResolveField(() => Post, { nullable: true })
   async sharedPost(
     @Context() { loaders }: { loaders: Dataloaders },

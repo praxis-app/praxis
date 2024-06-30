@@ -84,6 +84,21 @@ export type EventFeedQuery = {
           profilePicture: { __typename?: 'Image'; id: number };
         };
       } | null;
+      shares: Array<{
+        __typename?: 'Post';
+        id: number;
+        likeCount: number;
+        shareCount: number;
+        isLikedByMe?: boolean;
+        createdAt: any;
+        user: {
+          __typename?: 'User';
+          id: number;
+          name: string;
+          displayName?: string | null;
+          profilePicture: { __typename?: 'Image'; id: number };
+        };
+      }>;
     }>;
   };
 };

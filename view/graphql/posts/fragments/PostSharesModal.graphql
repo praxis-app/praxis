@@ -1,0 +1,14 @@
+fragment PostSharesModal on Post {
+  id
+  shares {
+    id
+    likeCount
+    shareCount
+    isLikedByMe @include(if: $isVerified)
+    createdAt
+
+    user {
+      ...UserAvatar
+    }
+  }
+}

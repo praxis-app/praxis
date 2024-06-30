@@ -33,10 +33,20 @@ export class PostsService {
   async getPostComments(postId: number) {
     const { comments } = await this.getPost(postId, ['comments']);
 
-    // TODO: Update once pagination has been implemented
+    // TODO: Replace with pagination
     return comments.slice(
       comments.length - Math.min(comments.length, PageSize.Large),
       comments.length,
+    );
+  }
+
+  async getPostShares(postId: number) {
+    const { shares } = await this.getPost(postId, ['shares']);
+
+    // TODO: Replace with pagination
+    return shares.slice(
+      shares.length - Math.min(shares.length, PageSize.Large),
+      shares.length,
     );
   }
 
