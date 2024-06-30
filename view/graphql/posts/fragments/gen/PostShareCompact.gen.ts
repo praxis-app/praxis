@@ -46,9 +46,6 @@ export const PostShareCompactFragmentDoc = gql`
     user {
       ...UserAvatar
     }
-    user {
-      ...UserAvatar
-    }
     group {
       ...GroupAvatar
     }
