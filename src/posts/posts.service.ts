@@ -103,21 +103,26 @@ export class PostsService {
     }
 
     if (postData.sharedPostId) {
-      const { userId } = await this.postRepository.findOneOrFail({
+      const { userId: authorId } = await this.postRepository.findOneOrFail({
         where: { id: postData.sharedPostId },
         select: ['userId'],
       });
+
+      // Skip notifications if the user is sharing their own post
+      if (authorId === user.id) {
+        return { post };
+      }
 
       // Notify the original author of the shared post
       await this.notificationsService.createNotification({
         notificationType: NotificationType.PostShare,
         otherUserId: user.id,
         postId: post.id,
-        userId,
+        userId: authorId,
       });
 
       // Notify the post sharer if they are not the original author
-      if (sharedFromUserId !== userId) {
+      if (sharedFromUserId !== authorId) {
         await this.notificationsService.createNotification({
           notificationType: NotificationType.PostShare,
           userId: sharedFromUserId,
