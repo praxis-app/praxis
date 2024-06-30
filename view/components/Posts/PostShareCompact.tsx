@@ -21,6 +21,7 @@ import {
 } from '../../constants/shared.constants';
 import { PostShareCompactFragment } from '../../graphql/posts/fragments/gen/PostShareCompact.gen';
 import { useDeletePostMutation } from '../../graphql/posts/mutations/gen/DeletePost.gen';
+import { useSharedPostAttachmentLazyQuery } from '../../graphql/posts/queries/gen/SharedPostAttachment.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import { removePost } from '../../utils/cache.utils';
 import { getGroupPath } from '../../utils/group.utils';
@@ -34,8 +35,10 @@ import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
+import Spinner from '../Shared/Spinner';
 import UserAvatar from '../Users/UserAvatar';
 import PostLikeButton from './PostLikeButton';
+import SharedPost from './SharedPost';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -54,6 +57,9 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
     null,
   );
   const [showLikesModal, setShowLikesModal] = useState(false);
+
+  const [getSharedPost, { data, loading, error }] =
+    useSharedPostAttachmentLazyQuery();
   const [deletePost] = useDeletePostMutation();
 
   const { t } = useTranslation();
@@ -65,6 +71,7 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
   const { id, createdAt, user, group, event, isLikedByMe, likeCount } = post;
   const isMe = currentUserId === user.id;
   const formattedDate = timeAgo(createdAt);
+  const sharedPost = data?.post.sharedPost;
 
   const isEventPage = pathname.includes(NavigationPaths.Events);
   const isGroupPage = pathname.includes(`${NavigationPaths.Groups}/`);
@@ -167,11 +174,27 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
       />
 
       <CardContent
-        sx={{ display: 'flex', justifyContent: 'center', paddingY: 0 }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          paddingY: data ? undefined : 0,
+        }}
       >
-        <Button sx={{ textTransform: 'none', paddingX: 2 }}>
-          {t('posts.actions.showAttachment')}
-        </Button>
+        {data ? (
+          <SharedPost post={sharedPost} width="100%" />
+        ) : (
+          <Button
+            sx={{ textTransform: 'none', paddingX: 2 }}
+            onClick={() => getSharedPost({ variables: { postId: id } })}
+            startIcon={
+              loading && <Spinner size={13} sx={{ marginTop: -0.12 }} />
+            }
+            disabled={loading}
+          >
+            {t('posts.actions.showAttachment')}
+          </Button>
+        )}
+        {error && <Typography>{t('errors.somethingWentWrong')}</Typography>}
       </CardContent>
 
       {!!likeCount && (

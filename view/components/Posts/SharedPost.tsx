@@ -1,5 +1,5 @@
 import { BrokenImage } from '@mui/icons-material';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, BoxProps, Typography, useTheme } from '@mui/material';
 import { truncate } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,11 +16,11 @@ import FormattedText from '../Shared/FormattedText';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 
-interface Props {
+interface Props extends BoxProps {
   post?: SharedPostFragment | null;
 }
 
-const SharedPost = ({ post }: Props) => {
+const SharedPost = ({ post, ...boxProps }: Props) => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
   const theme = useTheme();
@@ -36,7 +36,11 @@ const SharedPost = ({ post }: Props) => {
   const formattedDate = timeAgo(post?.createdAt);
 
   return (
-    <Box borderRadius="8px" border={`1px solid ${theme.palette.divider}`}>
+    <Box
+      borderRadius="8px"
+      border={`1px solid ${theme.palette.divider}`}
+      {...boxProps}
+    >
       {!!post?.images.length && (
         <Link aria-label={t('images.labels.attachedImages')} href={postPath}>
           <AttachedImageList images={post.images} topRounded />

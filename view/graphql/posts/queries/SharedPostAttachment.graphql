@@ -1,0 +1,8 @@
+query SharedPostAttachment($postId: Int!) {
+  post(id: $postId) {
+    id
+    sharedPost {
+      ...SharedPost
+    }
+  }
+}
