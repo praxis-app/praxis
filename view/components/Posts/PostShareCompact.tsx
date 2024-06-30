@@ -19,6 +19,7 @@ import {
   NavigationPaths,
   TruncationSizes,
 } from '../../constants/shared.constants';
+import { toastVar } from '../../graphql/cache';
 import { PostShareCompactFragment } from '../../graphql/posts/fragments/gen/PostShareCompact.gen';
 import { useDeletePostMutation } from '../../graphql/posts/mutations/gen/DeletePost.gen';
 import { useSharedPostAttachmentLazyQuery } from '../../graphql/posts/queries/gen/SharedPostAttachment.gen';
@@ -38,6 +39,7 @@ import Link from '../Shared/Link';
 import Spinner from '../Shared/Spinner';
 import UserAvatar from '../Users/UserAvatar';
 import PostLikeButton from './PostLikeButton';
+import SharePostModal from './SharePostModal';
 import SharedPost from './SharedPost';
 
 const ROTATED_ICON_STYLES: SxProps = {
@@ -49,14 +51,21 @@ interface Props {
   post: PostShareCompactFragment;
   currentUserId?: number;
   canManagePosts?: boolean;
+  isVerified: boolean;
+  isLast: boolean;
 }
 
-const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
+const PostShareCompact = ({
+  post,
+  currentUserId,
+  canManagePosts,
+  isVerified,
+  isLast,
+}: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [popoverAnchorEl, setPopoverAnchorEl] = useState<null | HTMLElement>(
-    null,
-  );
-  const [showLikesModal, setShowLikesModal] = useState(false);
+  const [likesAnchorEl, setLikesAnchorEl] = useState<null | HTMLElement>(null);
+  const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const [getSharedPost, { data, loading, error }] =
     useSharedPostAttachmentLazyQuery();
@@ -81,6 +90,17 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
   const postPath = `${NavigationPaths.Posts}/${id}`;
   const userProfilePath = getUserProfilePath(user?.name);
 
+  const handleShareBtnClick = () => {
+    if (!isVerified) {
+      toastVar({
+        title: t('posts.prompts.verifyToShare'),
+        status: 'info',
+      });
+      return;
+    }
+    setIsShareModalOpen(true);
+  };
+
   const handleDelete = async () => {
     if (isPostPage) {
       navigate(NavigationPaths.Home);
@@ -93,7 +113,7 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
 
   const handlePopoverOpen = (
     event: React.MouseEvent<HTMLElement, MouseEvent>,
-  ) => setPopoverAnchorEl(event.currentTarget);
+  ) => setLikesAnchorEl(event.currentTarget);
 
   const renderAvatar = () => {
     if (group && !isGroupPage) {
@@ -165,7 +185,11 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
   };
 
   return (
-    <Box borderRadius="8px" border={`1px solid ${theme.palette.divider}`}>
+    <Box
+      borderRadius="8px"
+      border={`1px solid ${theme.palette.divider}`}
+      marginBottom={isLast ? 0 : '12px'}
+    >
       <CardHeader
         action={renderMenu()}
         avatar={renderAvatar()}
@@ -202,15 +226,15 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
         <Box paddingX={2}>
           <Flex
             onMouseEnter={handlePopoverOpen}
-            onMouseLeave={() => setPopoverAnchorEl(null)}
-            onClick={() => setShowLikesModal(true)}
+            onMouseLeave={() => setLikesAnchorEl(null)}
+            onClick={() => setIsLikesModalOpen(true)}
             paddingBottom={0.8}
             sx={{ cursor: 'pointer' }}
           >
             <LikeBadge
               postId={id}
-              anchorEl={popoverAnchorEl}
-              handlePopoverClose={() => setPopoverAnchorEl(null)}
+              anchorEl={likesAnchorEl}
+              handlePopoverClose={() => setLikesAnchorEl(null)}
               marginRight="11px"
             />
 
@@ -218,8 +242,8 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
           </Flex>
 
           <LikesModal
-            open={showLikesModal}
-            onClose={() => setShowLikesModal(false)}
+            open={isLikesModalOpen}
+            onClose={() => setIsLikesModalOpen(false)}
             postId={id}
           />
 
@@ -230,11 +254,20 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
       <CardActions sx={{ justifyContent: 'space-around' }}>
         <PostLikeButton postId={id} isLikedByMe={!!isLikedByMe} />
 
-        <CardFooterButton>
+        <CardFooterButton onClick={handleShareBtnClick}>
           <Reply sx={ROTATED_ICON_STYLES} />
           {t('actions.share')}
         </CardFooterButton>
       </CardActions>
+
+      {sharedPost && (
+        <SharePostModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          sharedPostId={sharedPost.id}
+          sharedFromUserId={post.user.id}
+        />
+      )}
     </Box>
   );
 };

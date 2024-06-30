@@ -37,12 +37,14 @@ const PostSharesModal = ({ postId, isOpen, onClose, isVerified }: Props) => {
       {error && <Typography>{t('errors.somethingWentWrong')}</Typography>}
       {loading && <ProgressBar />}
 
-      {shares?.map((share) => (
+      {shares?.map((share, index) => (
         <PostShareCompact
           key={share.id}
           post={share}
           currentUserId={me?.id}
           canManagePosts={canManagePosts}
+          isVerified={isVerified}
+          isLast={index === shares.length - 1}
         />
       ))}
     </Modal>
