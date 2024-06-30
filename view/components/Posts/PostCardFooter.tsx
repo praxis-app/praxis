@@ -168,7 +168,7 @@ const PostCardFooter = ({
       <Box paddingX={inModal ? 0 : '16px'}>
         <Flex
           justifyContent={likeCount ? 'space-between' : 'end'}
-          marginBottom={likeCount || commentCount ? 0.8 : 0}
+          marginBottom={likeCount || commentCount || shareCount ? 0.8 : 0}
         >
           {!!likeCount && (
             <>
