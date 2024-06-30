@@ -102,7 +102,7 @@ const PostCardFooter = ({
   const showJoinToCommentPrompt =
     (notInGroup || notInEventGroup) && !comments?.length;
 
-  const handleCommentButtonClick = async () => {
+  const handleCommentBtnClick = async () => {
     if (inModal || isPostPage) {
       return;
     }
@@ -200,7 +200,7 @@ const PostCardFooter = ({
               {!!commentCount && (
                 <Typography
                   color="text.secondary"
-                  onClick={handleCommentButtonClick}
+                  onClick={handleCommentBtnClick}
                   marginRight={shareCount ? 1.5 : 0}
                   sx={{ '&:hover': { textDecoration: 'underline' } }}
                 >
@@ -231,7 +231,7 @@ const PostCardFooter = ({
       >
         <PostLikeButton postId={id} isLikedByMe={!!isLikedByMe} />
 
-        <CardFooterButton onClick={handleCommentButtonClick}>
+        <CardFooterButton onClick={handleCommentBtnClick}>
           <Comment sx={ROTATED_ICON_STYLES} />
           {t('actions.comment')}
         </CardFooterButton>
