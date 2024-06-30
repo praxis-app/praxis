@@ -177,7 +177,8 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
         sx={{
           display: 'flex',
           justifyContent: 'center',
-          paddingY: data ? undefined : 0,
+          paddingTop: data ? undefined : 0,
+          paddingBottom: data && likeCount ? undefined : 0,
         }}
       >
         {data ? (
