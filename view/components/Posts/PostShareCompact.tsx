@@ -1,7 +1,9 @@
+import { Reply } from '@mui/icons-material';
 import {
   Box,
   Button,
   CardActions,
+  Divider,
   CardContent as MuiCardContent,
   CardHeader as MuiCardHeader,
   SxProps,
@@ -27,12 +29,14 @@ import { timeAgo } from '../../utils/time.utils';
 import { getUserProfilePath } from '../../utils/user.utils';
 import EventItemAvatar from '../Events/EventItemAvatar';
 import GroupItemAvatar from '../Groups/GroupItemAvatar';
+import LikeBadge from '../Likes/LikeBadge';
+import LikesModal from '../Likes/LikesModal';
+import CardFooterButton from '../Shared/CardFooterButton';
+import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 import PostLikeButton from './PostLikeButton';
-import CardFooterButton from '../Shared/CardFooterButton';
-import { Reply } from '@mui/icons-material';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -58,6 +62,10 @@ interface Props {
 
 const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [popoverAnchorEl, setPopoverAnchorEl] = useState<null | HTMLElement>(
+    null,
+  );
+  const [showLikesModal, setShowLikesModal] = useState(false);
   const [deletePost] = useDeletePostMutation();
 
   const { t } = useTranslation();
@@ -66,7 +74,7 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
   const navigate = useNavigate();
   const isDesktop = useIsDesktop();
 
-  const { id, createdAt, user, group, event, isLikedByMe } = post;
+  const { id, createdAt, user, group, event, isLikedByMe, likeCount } = post;
   const isMe = currentUserId === user.id;
   const formattedDate = timeAgo(createdAt);
 
@@ -87,6 +95,10 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
       update: removePost(id),
     });
   };
+
+  const handlePopoverOpen = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
+  ) => setPopoverAnchorEl(event.currentTarget);
 
   const renderAvatar = () => {
     if (group && !isGroupPage) {
@@ -170,6 +182,35 @@ const PostShareCompact = ({ post, currentUserId, canManagePosts }: Props) => {
           {t('posts.actions.showAttachment')}
         </Button>
       </CardContent>
+
+      {!!likeCount && (
+        <Box paddingX={2}>
+          <Flex
+            onMouseEnter={handlePopoverOpen}
+            onMouseLeave={() => setPopoverAnchorEl(null)}
+            onClick={() => setShowLikesModal(true)}
+            paddingBottom={0.8}
+            sx={{ cursor: 'pointer' }}
+          >
+            <LikeBadge
+              postId={id}
+              anchorEl={popoverAnchorEl}
+              handlePopoverClose={() => setPopoverAnchorEl(null)}
+              marginRight="11px"
+            />
+
+            <Typography sx={{ userSelect: 'none' }}>{likeCount}</Typography>
+          </Flex>
+
+          <LikesModal
+            open={showLikesModal}
+            onClose={() => setShowLikesModal(false)}
+            postId={id}
+          />
+
+          <Divider />
+        </Box>
+      )}
 
       <CardActions sx={{ justifyContent: 'space-around' }}>
         <PostLikeButton postId={id} isLikedByMe={!!isLikedByMe} />
