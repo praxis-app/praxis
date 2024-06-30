@@ -292,6 +292,7 @@
       "loginToLike": "You need to be logged in to like posts.",
       "verifyToLike": "You must be verified to like posts.",
       "verifyToShare": "You must be verified to share posts.",
+      "verifyToViewShares": "You must be verified to see who shared this post.",
       "verifyToLikeComments": "You must be verified to like comments on posts.",
       "verifyToComment": "No comments yet. You must be verified to comment on posts."
     },

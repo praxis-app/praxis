@@ -125,6 +125,17 @@ const PostCardFooter = ({
     }
   };
 
+  const handleViewSharesBtnClick = () => {
+    if (!isVerified) {
+      toastVar({
+        title: t('posts.prompts.verifyToViewShares'),
+        status: 'info',
+      });
+      return;
+    }
+    setIsPostSharesModalOpen(true);
+  };
+
   const handlePopoverOpen = (
     event: React.MouseEvent<HTMLElement, MouseEvent>,
   ) => setAnchorEl(event.currentTarget);
@@ -212,7 +223,7 @@ const PostCardFooter = ({
                 <Typography
                   color="text.secondary"
                   sx={{ '&:hover': { textDecoration: 'underline' } }}
-                  onClick={() => setIsPostSharesModalOpen(true)}
+                  onClick={handleViewSharesBtnClick}
                 >
                   {t('posts.labels.xShares', { count: shareCount })}
                 </Typography>
