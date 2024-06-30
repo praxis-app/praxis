@@ -28,6 +28,7 @@ const PostSharesModal = ({ postId, isOpen, onClose, isVerified }: Props) => {
   return (
     <Modal
       title={t('posts.headers.peopleWhoShared')}
+      contentStyles={{ minHeight: 'fit-content' }}
       maxWidth="md"
       onClose={onClose}
       open={isOpen}
