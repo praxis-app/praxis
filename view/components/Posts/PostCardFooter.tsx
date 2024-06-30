@@ -101,12 +101,6 @@ const PostCardFooter = ({
   const showJoinToCommentPrompt =
     (notInGroup || notInEventGroup) && !comments?.length;
 
-  const postStatStyles: SxProps = {
-    '&:hover': { textDecoration: 'underline' },
-    transform: 'translateY(3px)',
-    cursor: 'pointer',
-  };
-
   const handleCommentButtonClick = async () => {
     if (inModal || isPostPage) {
       return;
@@ -197,19 +191,23 @@ const PostCardFooter = ({
           )}
 
           {!!(commentCount + shareCount) && (
-            <Flex sx={postStatStyles}>
+            <Flex sx={{ transform: 'translateY(3px)', cursor: 'pointer' }}>
               {!!commentCount && (
                 <Typography
                   color="text.secondary"
                   onClick={handleCommentButtonClick}
                   marginRight={shareCount ? 1.5 : 0}
+                  sx={{ '&:hover': { textDecoration: 'underline' } }}
                 >
                   {t('comments.labels.xComments', { count: commentCount })}
                 </Typography>
               )}
 
               {!!shareCount && (
-                <Typography color="text.secondary">
+                <Typography
+                  color="text.secondary"
+                  sx={{ '&:hover': { textDecoration: 'underline' } }}
+                >
                   {t('posts.labels.xShares', { count: shareCount })}
                 </Typography>
               )}
