@@ -49,6 +49,7 @@ export interface Dataloaders {
   proposalImagesLoader: DataLoader<number, Image[]>;
   proposalVoteCountLoader: DataLoader<number, number>;
   proposalVotesLoader: DataLoader<number, Vote[]>;
+  proposalShareCountLoader: DataLoader<number, number>;
 
   // Posts
   postsLoader: DataLoader<number, Post | null>;
@@ -109,6 +110,7 @@ export type UserWithFollowingCount = User & { followingCount: number };
 
 export type ProposalWithVoteCount = Proposal & { voteCount: number };
 export type ProposalWithCommentCount = Proposal & { commentCount: number };
+export type ProposalWithShareCount = Proposal & { shareCount: number };
 
 export type CommentWithLikeCount = Comment & { likeCount: number };
 export type PostWithCommentCount = Post & { commentCount: number };

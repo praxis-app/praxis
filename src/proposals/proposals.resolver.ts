@@ -122,8 +122,16 @@ export class ProposalsResolver {
   }
 
   @ResolveField(() => [Post])
-  async shares(@Parent() { id }: Post) {
+  async shares(@Parent() { id }: Proposal) {
     return this.proposalsService.getProposalShares(id);
+  }
+
+  @ResolveField(() => Int)
+  async shareCount(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Proposal,
+  ) {
+    return loaders.proposalShareCountLoader.load(id);
   }
 
   @Mutation(() => CreateProposalPayload)

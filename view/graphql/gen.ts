@@ -884,6 +884,7 @@ export type Proposal = {
   images: Array<Image>;
   myVote?: Maybe<Vote>;
   settings: ProposalConfig;
+  shareCount: Scalars['Int']['output'];
   shares: Array<Post>;
   stage: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];

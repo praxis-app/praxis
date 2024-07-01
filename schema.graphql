@@ -550,6 +550,7 @@ type Proposal {
   images: [Image!]!
   myVote: Vote
   settings: ProposalConfig!
+  shareCount: Int!
   shares: [Post!]!
   stage: String!
   updatedAt: DateTime!
