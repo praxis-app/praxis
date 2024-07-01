@@ -96,14 +96,16 @@
 
   "proposals": {
     "prompts": {
+      "cannotEditProposedRoles": "Editing of proposed roles is still in development.",
       "createProposal": "Create a proposal...",
+      "emptyPermsAndMembers": "No proposed permissions or role members.",
       "joinGroupToVote": "You need to be a group member to vote on this proposal.",
       "loginToVote": "You need to be logged in to vote.",
       "verifiedOnlyVote": "You must be verified to vote on proposals.",
-      "verifyToLikeComments": "You must be verified to like proposal comments.",
       "verifyToComment": "No comments yet. You must be verified to comment on proposals.",
-      "cannotEditProposedRoles": "Editing of proposed roles is still in development.",
-      "emptyPermsAndMembers": "No proposed permissions or role members."
+      "verifyToLikeComments": "You must be verified to like proposal comments.",
+      "verifyToShare": "You must be verified to share proposals.",
+      "verifyToViewShares": "You must be verified to see who shared this proposal."
     },
     "actions": {
       "attachNewCoverPhoto": "Attach new cover photo",
