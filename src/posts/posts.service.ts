@@ -120,59 +120,38 @@ export class PostsService {
       }
     }
 
-    if (postData.sharedPostId) {
-      const { userId: authorId } = await this.postRepository.findOneOrFail({
-        where: { id: postData.sharedPostId },
-        select: ['userId'],
-      });
+    if (postData.sharedPostId || postData.sharedProposalId) {
+      const { userId: authorId } = postData.sharedPostId
+        ? await this.postRepository.findOneOrFail({
+            where: { id: postData.sharedPostId },
+            select: ['userId'],
+          })
+        : await this.proposalRepository.findOneOrFail({
+            where: { id: postData.sharedProposalId },
+            select: ['userId'],
+          });
 
-      // Skip notifications if the user is sharing their own post
+      // Skip notifications if the user is sharing their own content
       if (authorId === user.id) {
         return { post };
       }
 
-      // Notify the original author of the shared post
+      // Notify the original author of the shared content
       await this.notificationsService.createNotification({
-        notificationType: NotificationType.PostShare,
+        notificationType: postData.sharedPostId
+          ? NotificationType.PostShare
+          : NotificationType.ProposalShare,
         otherUserId: user.id,
         postId: post.id,
         userId: authorId,
       });
 
-      // Notify the post sharer if they are not the original author
+      // Notify the sharer if they are not the original author
       if (sharedFromUserId !== authorId) {
         await this.notificationsService.createNotification({
-          notificationType: NotificationType.PostShare,
-          userId: sharedFromUserId,
-          otherUserId: user.id,
-          postId: post.id,
-        });
-      }
-    }
-
-    if (postData.sharedProposalId) {
-      const { userId: authorId } = await this.proposalRepository.findOneOrFail({
-        where: { id: postData.sharedProposalId },
-        select: ['userId'],
-      });
-
-      // Skip notifications if the user is sharing their own proposal
-      if (authorId === user.id) {
-        return { post };
-      }
-
-      // Notify the original author of the shared proposal
-      await this.notificationsService.createNotification({
-        notificationType: NotificationType.ProposalShare,
-        otherUserId: user.id,
-        postId: post.id,
-        userId: authorId,
-      });
-
-      // Notify the proposal sharer if they are not the original author
-      if (sharedFromUserId !== authorId) {
-        await this.notificationsService.createNotification({
-          notificationType: NotificationType.ProposalShare,
+          notificationType: postData.sharedPostId
+            ? NotificationType.PostShare
+            : NotificationType.ProposalShare,
           userId: sharedFromUserId,
           otherUserId: user.id,
           postId: post.id,
