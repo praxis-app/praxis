@@ -135,7 +135,11 @@ export class PostsResolver {
     return this.postsService.hasMissingSharedPost(sharedPostId);
   }
 
-  // TODO: Add hasMissingSharedProposal field
+  // TODO: Determine whether a data loader should be used here
+  @ResolveField(() => Boolean)
+  async hasMissingSharedProposal(@Parent() { sharedProposalId }: Post) {
+    return this.postsService.hasMissingSharedProposal(sharedProposalId);
+  }
 
   @ResolveField(() => Int)
   async shareCount(

@@ -75,6 +75,16 @@ export class PostsService {
     return !sharedPostExists;
   }
 
+  async hasMissingSharedProposal(sharedProposalId: number | null) {
+    if (!sharedProposalId) {
+      return false;
+    }
+    const sharedProposalExists = await this.proposalRepository.exist({
+      where: { id: sharedProposalId },
+    });
+    return !sharedProposalExists;
+  }
+
   async createPost(
     { images, body, sharedFromUserId, ...postData }: CreatePostInput,
     user: User,
