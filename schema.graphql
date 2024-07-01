@@ -151,6 +151,7 @@ input CreatePostInput {
   images: [Upload!]
   sharedFromUserId: Int
   sharedPostId: Int
+  sharedProposalId: Int
 }
 
 type CreatePostPayload {
@@ -549,6 +550,7 @@ type Proposal {
   images: [Image!]!
   myVote: Vote
   settings: ProposalConfig!
+  shares: [Post!]!
   stage: String!
   updatedAt: DateTime!
   user: User!

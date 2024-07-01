@@ -135,6 +135,8 @@ export class PostsResolver {
     return this.postsService.hasMissingSharedPost(sharedPostId);
   }
 
+  // TODO: Add hasMissingSharedProposal field
+
   @ResolveField(() => Int)
   async shareCount(
     @Context() { loaders }: { loaders: Dataloaders },

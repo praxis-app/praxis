@@ -16,6 +16,7 @@ import { Comment } from '../comments/models/comment.model';
 import { Dataloaders } from '../dataloader/dataloader.types';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
+import { Post } from '../posts/models/post.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 import { SynchronizeProposalsInterceptor } from './interceptors/synchronize-proposals.interceptor';
@@ -118,6 +119,11 @@ export class ProposalsResolver {
     @Parent() { groupId }: Proposal,
   ) {
     return groupId ? loaders.groupsLoader.load(groupId) : null;
+  }
+
+  @ResolveField(() => [Post])
+  async shares(@Parent() { id }: Post) {
+    return this.proposalsService.getProposalShares(id);
   }
 
   @Mutation(() => CreateProposalPayload)

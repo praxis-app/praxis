@@ -198,6 +198,7 @@ export type CreatePostInput = {
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
   sharedFromUserId?: InputMaybe<Scalars['Int']['input']>;
   sharedPostId?: InputMaybe<Scalars['Int']['input']>;
+  sharedProposalId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreatePostPayload = {
@@ -883,6 +884,7 @@ export type Proposal = {
   images: Array<Image>;
   myVote?: Maybe<Vote>;
   settings: ProposalConfig;
+  shares: Array<Post>;
   stage: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   user: User;

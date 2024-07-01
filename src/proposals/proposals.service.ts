@@ -119,6 +119,16 @@ export class ProposalsService {
     return votes.length === 0;
   }
 
+  async getProposalShares(proposalId: number) {
+    const { shares } = await this.getProposal(proposalId, ['shares']);
+
+    // TODO: Replace with pagination
+    return shares.slice(
+      shares.length - Math.min(shares.length, PageSize.Large),
+      shares.length,
+    );
+  }
+
   async createProposal(
     {
       body,
