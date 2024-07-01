@@ -128,6 +128,9 @@ export const canManageGroupPosts = rule({ cache: 'strict' })(async (
   { permissions, services: { postsService } }: Context,
 ) => {
   const { groupId } = await postsService.getPost(args.id);
+  if (!groupId) {
+    return false;
+  }
   return hasGroupPermission(permissions, 'managePosts', groupId);
 });
 

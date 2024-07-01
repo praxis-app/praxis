@@ -8,6 +8,7 @@ import {
   PanTool,
   Person,
   QuestionAnswer,
+  Reply,
   ThumbDown,
   ThumbUp,
   ThumbsUpDown,
@@ -136,6 +137,11 @@ const Notification = ({
         name: otherUserName,
       });
     }
+    if (notificationType === NotificationType.PostShare) {
+      return _t('notifications.messages.postShare', {
+        name: otherUserName,
+      });
+    }
     if (isProposalVote) {
       return _t('notifications.messages.proposalVote', {
         name: otherUserName,
@@ -148,6 +154,11 @@ const Notification = ({
     }
     if (notificationType === NotificationType.ProposalComment) {
       return _t('notifications.messages.proposalComment', {
+        name: otherUserName,
+      });
+    }
+    if (notificationType === NotificationType.ProposalShare) {
+      return _t('notifications.messages.proposalShare', {
         name: otherUserName,
       });
     }
@@ -260,7 +271,10 @@ const Notification = ({
     if (notificationType === NotificationType.PostComment) {
       return `${NavigationPaths.Posts}/${post?.id}`;
     }
-    if (notificationType === NotificationType.PostLike) {
+    if (
+      notificationType === NotificationType.PostLike ||
+      notificationType === NotificationType.PostShare
+    ) {
       return `${NavigationPaths.Posts}/${post?.id}`;
     }
     if (notificationType === NotificationType.CommentLike) {
@@ -428,6 +442,21 @@ const Notification = ({
     }
     if (notificationType.includes('comment')) {
       return <CommentSharp sx={{ ...iconStyles, marginTop: 0.6 }} />;
+    }
+    if (
+      notificationType === NotificationType.PostShare ||
+      notificationType === NotificationType.ProposalShare
+    ) {
+      return (
+        <Reply
+          sx={{
+            ...iconStyles,
+            transform: 'rotateY(180deg)',
+            fontSize: 13,
+            marginTop: 0.3,
+          }}
+        />
+      );
     }
     if (notificationType === NotificationType.NewMessage) {
       return <MessageRounded sx={{ ...iconStyles, marginTop: 0.6 }} />;

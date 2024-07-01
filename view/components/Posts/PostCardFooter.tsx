@@ -1,14 +1,11 @@
-// TODO: Add basic functionality for sharing. Below is a WIP
-
 import { useReactiveVar } from '@apollo/client';
 import { Comment, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isLoggedInVar, isVerifiedVar } from '../../graphql/cache';
+import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { PostCardFragment } from '../../graphql/posts/fragments/gen/PostCard.gen';
 import { usePostCommentsLazyQuery } from '../../graphql/posts/queries/gen/PostComments.gen';
-import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
 import LikeBadge from '../Likes/LikeBadge';
@@ -17,6 +14,8 @@ import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import PostLikeButton from './PostLikeButton';
 import PostModal from './PostModal';
+import PostSharesModal from './PostSharesModal';
+import SharePostModal from './SharePostModal';
 
 const ROTATED_ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -38,10 +37,12 @@ const PostCardFooter = ({
   groupId,
   eventId,
 }: Props) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [isPostSharesModalOpen, setIsPostSharesModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [showComments, setShowComments] = useState(inModal || isPostPage);
   const [showLikesModal, setShowLikesModal] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isVerified = useReactiveVar(isVerifiedVar);
@@ -76,7 +77,15 @@ const PostCardFooter = ({
     post,
   ]);
 
-  const { id, likeCount, commentCount, isLikedByMe } = post;
+  const {
+    id,
+    likeCount,
+    commentCount,
+    shareCount,
+    isLikedByMe,
+    hasMissingSharedPost,
+  } = post;
+
   const comments = postCommentsData?.post.comments;
   const group = postCommentsData?.group;
   const event = postCommentsData?.event;
@@ -93,13 +102,7 @@ const PostCardFooter = ({
   const showJoinToCommentPrompt =
     (notInGroup || notInEventGroup) && !comments?.length;
 
-  const commentCountStyles: SxProps = {
-    '&:hover': { textDecoration: 'underline' },
-    transform: 'translateY(3px)',
-    cursor: 'pointer',
-  };
-
-  const handleCommentButtonClick = async () => {
+  const handleCommentBtnClick = async () => {
     if (inModal || isPostPage) {
       return;
     }
@@ -116,10 +119,21 @@ const PostCardFooter = ({
     });
     const comments = data?.post.comments;
     if (comments && comments.length > 1) {
-      setIsModalOpen(true);
+      setIsPostModalOpen(true);
     } else {
       setShowComments(true);
     }
+  };
+
+  const handleViewSharesBtnClick = () => {
+    if (!isVerified) {
+      toastVar({
+        title: t('posts.prompts.verifyToViewShares'),
+        status: 'info',
+      });
+      return;
+    }
+    setIsPostSharesModalOpen(true);
   };
 
   const handlePopoverOpen = (
@@ -127,6 +141,24 @@ const PostCardFooter = ({
   ) => setAnchorEl(event.currentTarget);
 
   const handlePopoverClose = () => setAnchorEl(null);
+
+  const handleShareBtnClick = () => {
+    if (hasMissingSharedPost) {
+      toastVar({
+        title: t('posts.errors.missingContentShare'),
+        status: 'info',
+      });
+      return;
+    }
+    if (!isVerified) {
+      toastVar({
+        title: t('posts.prompts.verifyToShare'),
+        status: 'info',
+      });
+      return;
+    }
+    setIsShareModalOpen(true);
+  };
 
   const renderCommentForm = () => {
     if (!isVerified || inModal) {
@@ -146,7 +178,7 @@ const PostCardFooter = ({
       <Box paddingX={inModal ? 0 : '16px'}>
         <Flex
           justifyContent={likeCount ? 'space-between' : 'end'}
-          marginBottom={likeCount || commentCount ? 0.8 : 0}
+          marginBottom={likeCount || commentCount || shareCount ? 0.8 : 0}
         >
           {!!likeCount && (
             <>
@@ -174,14 +206,29 @@ const PostCardFooter = ({
             </>
           )}
 
-          {!!commentCount && (
-            <Typography
-              color="text.secondary"
-              onClick={handleCommentButtonClick}
-              sx={commentCountStyles}
-            >
-              {t('comments.labels.xComments', { count: commentCount })}
-            </Typography>
+          {!!(commentCount + shareCount) && (
+            <Flex sx={{ transform: 'translateY(3px)', cursor: 'pointer' }}>
+              {!!commentCount && (
+                <Typography
+                  color="text.secondary"
+                  onClick={handleCommentBtnClick}
+                  marginRight={shareCount ? 1.5 : 0}
+                  sx={{ '&:hover': { textDecoration: 'underline' } }}
+                >
+                  {t('comments.labels.xComments', { count: commentCount })}
+                </Typography>
+              )}
+
+              {!!shareCount && (
+                <Typography
+                  color="text.secondary"
+                  sx={{ '&:hover': { textDecoration: 'underline' } }}
+                  onClick={handleViewSharesBtnClick}
+                >
+                  {t('posts.labels.xShares', { count: shareCount })}
+                </Typography>
+              )}
+            </Flex>
           )}
         </Flex>
         <Divider />
@@ -195,12 +242,12 @@ const PostCardFooter = ({
       >
         <PostLikeButton postId={id} isLikedByMe={!!isLikedByMe} />
 
-        <CardFooterButton onClick={handleCommentButtonClick}>
+        <CardFooterButton onClick={handleCommentBtnClick}>
           <Comment sx={ROTATED_ICON_STYLES} />
           {t('actions.comment')}
         </CardFooterButton>
 
-        <CardFooterButton onClick={inDevToast}>
+        <CardFooterButton onClick={handleShareBtnClick}>
           <Reply sx={ROTATED_ICON_STYLES} />
           {t('actions.share')}
         </CardFooterButton>
@@ -243,8 +290,22 @@ const PostCardFooter = ({
 
       <PostModal
         post={post}
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        open={isPostModalOpen}
+        onClose={() => setIsPostModalOpen(false)}
+      />
+
+      <SharePostModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        sharedPostId={post.sharedPost?.id || post.id}
+        sharedFromUserId={post.user.id}
+      />
+
+      <PostSharesModal
+        postId={id}
+        isOpen={isPostSharesModalOpen}
+        onClose={() => setIsPostSharesModalOpen(false)}
+        isVerified={isVerified}
       />
     </Box>
   );

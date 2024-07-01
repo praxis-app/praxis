@@ -149,6 +149,8 @@ input CreatePostInput {
   eventId: Int
   groupId: Int
   images: [Upload!]
+  sharedFromUserId: Int
+  sharedPostId: Int
 }
 
 type CreatePostPayload {
@@ -524,12 +526,15 @@ type Post {
   createdAt: DateTime!
   event: Event
   group: Group
+  hasMissingSharedPost: Boolean!
   id: Int!
   images: [Image!]!
   isLikedByMe: Boolean!
   likeCount: Int!
   likes: [Like!]!
-  updatedAt: DateTime!
+  shareCount: Int!
+  sharedPost: Post
+  shares: [Post!]!
   user: User!
 }
 

@@ -14,7 +14,10 @@ import { truncate } from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ProposalStage } from '../../constants/proposal.constants';
+import {
+  ProposalActionType,
+  ProposalStage,
+} from '../../constants/proposal.constants';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -95,26 +98,25 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
   const isGroupPage = pathname.includes(`${NavigationPaths.Groups}/`);
   const isProposalPage = pathname.includes(NavigationPaths.Proposals);
 
-  const hasMedia =
-    action.event ||
-    action.groupCoverPhoto ||
-    action.groupDescription ||
-    action.groupName ||
-    action.role ||
-    images.length;
-
   const groupPath = getGroupPath(group?.name || '');
   const proposalPath = `${NavigationPaths.Proposals}/${id}`;
   const userProfilePath = getUserProfilePath(user?.name);
   const formattedDate = timeAgo(createdAt);
 
+  const isSmallTextOnly =
+    body &&
+    body.length < 85 &&
+    !images.length &&
+    action.actionType === ProposalActionType.Test;
+
   const bodyStyles = {
     lineHeight: 1.25,
     whiteSpace: 'pre-wrap',
-    marginBottom: hasMedia ? 2.5 : 3.5,
+    marginBottom: 2.1,
+    fontSize: isSmallTextOnly ? 22 : 16,
   };
   const cardContentStyles = {
-    paddingTop: images.length && !body ? 2.5 : 3,
+    paddingTop: 2.1,
     paddingX: inModal ? 0 : undefined,
   };
 
@@ -159,7 +161,12 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
       <Box marginBottom={showGroup ? -0.5 : 0}>
         {showGroup && (
           <Link href={groupPath}>
-            <Typography color="primary" lineHeight={1} fontSize={15}>
+            <Typography
+              fontFamily="Inter Medium"
+              color="primary"
+              lineHeight={1}
+              fontSize={15}
+            >
               {group.name}
             </Typography>
           </Link>
@@ -167,7 +174,10 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
         <Box fontSize={14} sx={{ color: 'text.secondary' }}>
           <Link
             href={userProfilePath}
-            sx={showGroup ? { color: 'inherit' } : undefined}
+            sx={{
+              color: showGroup ? 'inherit' : undefined,
+              fontFamily: showGroup ? undefined : 'Inter Medium',
+            }}
           >
             {truncatedUsername}
           </Link>
@@ -232,7 +242,11 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
 
         <Link href={proposalPath}>
           {!!images.length && (
-            <AttachedImageList images={images} marginBottom={me ? 1.9 : 0} />
+            <AttachedImageList
+              images={images}
+              marginBottom={me ? 1.9 : 0}
+              fillCard
+            />
           )}
         </Link>
 

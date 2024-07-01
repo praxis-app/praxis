@@ -209,7 +209,6 @@ const Comment = ({
               <AttachedImageList
                 images={images}
                 width={250}
-                paddingX={2}
                 paddingBottom={1}
                 paddingTop={1.5}
               />

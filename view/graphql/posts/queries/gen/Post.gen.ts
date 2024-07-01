@@ -21,7 +21,9 @@ export type PostQuery = {
     body?: string | null;
     likeCount: number;
     commentCount: number;
+    shareCount: number;
     isLikedByMe?: boolean;
+    hasMissingSharedPost: boolean;
     createdAt: any;
     images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
     user: {
@@ -61,6 +63,20 @@ export type PostQuery = {
         isJoinedByMe: boolean;
       } | null;
       coverPhoto: { __typename?: 'Image'; id: number };
+    } | null;
+    sharedPost?: {
+      __typename?: 'Post';
+      id: number;
+      body?: string | null;
+      createdAt: any;
+      images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
+      user: {
+        __typename?: 'User';
+        id: number;
+        name: string;
+        displayName?: string | null;
+        profilePicture: { __typename?: 'Image'; id: number };
+      };
     } | null;
   };
 };

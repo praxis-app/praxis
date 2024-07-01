@@ -151,6 +151,7 @@ export class UsersService {
         'userPost.groupId',
         'userPost.eventId',
         'userPost.userId',
+        'userPost.sharedPostId',
         'userPost.body',
         'userPost.createdAt',
       ])
@@ -167,6 +168,7 @@ export class UsersService {
         'followingPost.userId',
         'followingPost.eventId',
         'followingPost.groupId',
+        'followingPost.sharedPostId',
         'followingPost.body',
         'followingPost.createdAt',
       ])
@@ -195,6 +197,7 @@ export class UsersService {
         'groupPost.groupId',
         'groupPost.eventId',
         'groupPost.userId',
+        'groupPost.sharedPostId',
         'groupPost.body',
         'groupPost.createdAt',
       ])
@@ -235,6 +238,7 @@ export class UsersService {
         'groupEventPost.id',
         'groupEventPost.userId',
         'groupEventPost.eventId',
+        'groupEventPost.sharedPostId',
         'groupEventPost.body',
         'groupEventPost.createdAt',
       ])

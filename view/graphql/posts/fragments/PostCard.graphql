@@ -3,7 +3,9 @@ fragment PostCard on Post {
   body
   likeCount
   commentCount
+  shareCount
   isLikedByMe @include(if: $isVerified)
+  hasMissingSharedPost
   createdAt
 
   images {
@@ -25,5 +27,8 @@ fragment PostCard on Post {
       id
       isJoinedByMe
     }
+  }
+  sharedPost {
+    ...SharedPost
   }
 }

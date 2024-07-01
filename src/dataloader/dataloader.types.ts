@@ -51,12 +51,13 @@ export interface Dataloaders {
   proposalVotesLoader: DataLoader<number, Vote[]>;
 
   // Posts
-  postsLoader: DataLoader<number, Post>;
+  postsLoader: DataLoader<number, Post | null>;
   isPostLikedByMeLoader: DataLoader<IsPostLikedByMeKey, boolean>;
   postCommentCountLoader: DataLoader<number, number>;
   postImagesLoader: DataLoader<number, Image[]>;
   postLikeCountLoader: DataLoader<number, number>;
   postLikesLoader: DataLoader<number, Like[]>;
+  postShareCountLoader: DataLoader<number, number>;
 
   // Comments
   commentsLoader: DataLoader<number, Comment>;
@@ -112,6 +113,7 @@ export type ProposalWithCommentCount = Proposal & { commentCount: number };
 export type CommentWithLikeCount = Comment & { likeCount: number };
 export type PostWithCommentCount = Post & { commentCount: number };
 export type PostWithLikeCount = Post & { likeCount: number };
+export type PostWithShareCount = Post & { shareCount: number };
 
 export type EventWithInterestedCount = Event & { interestedCount: number };
 export type EventWithGoingCount = Event & { goingCount: number };

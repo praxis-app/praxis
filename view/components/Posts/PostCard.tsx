@@ -35,6 +35,7 @@ import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 import PostCardFooter from './PostCardFooter';
+import SharedPost from './SharedPost';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
@@ -72,7 +73,18 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
   const navigate = useNavigate();
   const isDesktop = useIsDesktop();
 
-  const { id, body, images, user, group, event, createdAt } = post;
+  const {
+    id,
+    body,
+    images,
+    user,
+    group,
+    event,
+    sharedPost,
+    hasMissingSharedPost,
+    createdAt,
+  } = post;
+
   const me = data && data.me;
   const isMe = me?.id === user.id;
   const formattedDate = timeAgo(createdAt);
@@ -84,13 +96,22 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
   const postPath = `${NavigationPaths.Posts}/${id}`;
   const userProfilePath = getUserProfilePath(user?.name);
 
+  const isSmallTextOnly =
+    body &&
+    body.length < 85 &&
+    !images.length &&
+    !sharedPost &&
+    !hasMissingSharedPost;
+
   const bodyStyles: SxProps = {
     lineHeight: 1.25,
     whiteSpace: 'pre-wrap',
-    marginBottom: images.length ? 2.5 : 3.5,
+    marginBottom: 2.1,
+    fontSize: isSmallTextOnly ? 22 : 16,
   };
+
   const cardContentStyles: SxProps = {
-    paddingTop: images.length && !body ? 2.5 : 3,
+    paddingTop: 2.1,
     paddingX: inModal ? 0 : undefined,
   };
 
@@ -125,7 +146,12 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
       <Box marginBottom={showGroup ? -0.5 : 0}>
         {showGroup && (
           <Link href={groupPath}>
-            <Typography color="primary" lineHeight={1} fontSize={15}>
+            <Typography
+              fontFamily="Inter Medium"
+              color="primary"
+              lineHeight={1}
+              fontSize={15}
+            >
               {group.name}
             </Typography>
           </Link>
@@ -133,7 +159,10 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
         <Box fontSize={14} sx={{ color: 'text.secondary' }}>
           <Link
             href={userProfilePath}
-            sx={{ color: showGroup ? 'inherit' : undefined }}
+            sx={{
+              color: showGroup ? 'inherit' : undefined,
+              fontFamily: showGroup ? undefined : 'Inter Medium',
+            }}
           >
             {truncatedUsername}
           </Link>
@@ -184,8 +213,12 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
 
         {!!images.length && (
           <Link aria-label={t('images.labels.attachedImages')} href={postPath}>
-            <AttachedImageList images={images} />
+            <AttachedImageList images={images} fillCard />
           </Link>
+        )}
+
+        {(sharedPost || hasMissingSharedPost) && (
+          <SharedPost post={sharedPost} />
         )}
       </CardContent>
 

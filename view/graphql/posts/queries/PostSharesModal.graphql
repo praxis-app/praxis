@@ -1,0 +1,14 @@
+query PostSharesModal($postId: Int!, $isVerified: Boolean!) {
+  post(id: $postId) {
+    id
+    shares {
+      ...PostShareCompact
+    }
+  }
+  me {
+    id
+    serverPermissions {
+      managePosts
+    }
+  }
+}

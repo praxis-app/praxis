@@ -1,6 +1,8 @@
+import { useReactiveVar } from '@apollo/client';
 import { BoxProps } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { imagesVar } from '../../graphql/cache';
 import { AttachedImageFragment } from '../../graphql/images/fragments/gen/AttachedImage.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import LazyLoadImage from './LazyLoadImage';
@@ -19,7 +21,9 @@ const AttachedImage = ({
   onImageLoad,
   ...boxProps
 }: Props) => {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const images = useReactiveVar(imagesVar);
+  const alreadyLoadedSrc = !!(image.id && images[image.id]);
+  const [isLoaded, setIsLoaded] = useState(alreadyLoadedSrc);
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();

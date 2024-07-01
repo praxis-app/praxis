@@ -196,6 +196,8 @@ export type CreatePostInput = {
   eventId?: InputMaybe<Scalars['Int']['input']>;
   groupId?: InputMaybe<Scalars['Int']['input']>;
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
+  sharedFromUserId?: InputMaybe<Scalars['Int']['input']>;
+  sharedPostId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreatePostPayload = {
@@ -857,12 +859,15 @@ export type Post = {
   createdAt: Scalars['DateTime']['output'];
   event?: Maybe<Event>;
   group?: Maybe<Group>;
+  hasMissingSharedPost: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
   images: Array<Image>;
   isLikedByMe: Scalars['Boolean']['output'];
   likeCount: Scalars['Int']['output'];
   likes: Array<Like>;
-  updatedAt: Scalars['DateTime']['output'];
+  shareCount: Scalars['Int']['output'];
+  sharedPost?: Maybe<Post>;
+  shares: Array<Post>;
   user: User;
 };
 

@@ -7,6 +7,8 @@ import { sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
+import { NotificationType } from '../notifications/notifications.constants';
+import { NotificationsService } from '../notifications/notifications.service';
 import { User } from '../users/models/user.model';
 import { CreatePostInput } from './models/create-post.input';
 import { Post } from './models/post.model';
@@ -20,6 +22,8 @@ export class PostsService {
 
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
+
+    private notificationsService: NotificationsService,
   ) {}
 
   async getPost(id: number, relations?: string[]) {
@@ -29,10 +33,20 @@ export class PostsService {
   async getPostComments(postId: number) {
     const { comments } = await this.getPost(postId, ['comments']);
 
-    // TODO: Update once pagination has been implemented
+    // TODO: Replace with pagination
     return comments.slice(
       comments.length - Math.min(comments.length, PageSize.Large),
       comments.length,
+    );
+  }
+
+  async getPostShares(postId: number) {
+    const { shares } = await this.getPost(postId, ['shares']);
+
+    // TODO: Replace with pagination
+    return shares.slice(
+      shares.length - Math.min(shares.length, PageSize.Large),
+      shares.length,
     );
   }
 
@@ -47,9 +61,34 @@ export class PostsService {
     );
   }
 
-  async createPost({ images, body, ...postData }: CreatePostInput, user: User) {
+  async hasMissingSharedPost(sharedPostId: number | null) {
+    if (!sharedPostId) {
+      return false;
+    }
+    const sharedPostExists = await this.postRepository.exist({
+      where: { id: sharedPostId },
+    });
+    return !sharedPostExists;
+  }
+
+  async createPost(
+    { images, body, sharedFromUserId, ...postData }: CreatePostInput,
+    user: User,
+  ) {
+    if (!body?.trim() && !images?.length && !postData.sharedPostId) {
+      throw new Error('Posts must include some content');
+    }
+    if (postData.sharedPostId && images?.length) {
+      throw new Error('Shared posts cannot have images');
+    }
+    if (sharedFromUserId && !postData.sharedPostId) {
+      throw new Error('Shared posts must include the original poster ID');
+    }
+    if (!sharedFromUserId && postData.sharedPostId) {
+      throw new Error('Shared posts must include the sharer ID');
+    }
     const post = await this.postRepository.save({
-      body: sanitizeText(body.trim()),
+      body: sanitizeText(body),
       userId: user.id,
       ...postData,
     });
@@ -62,6 +101,37 @@ export class PostsService {
         throw new Error(err.message);
       }
     }
+
+    if (postData.sharedPostId) {
+      const { userId: authorId } = await this.postRepository.findOneOrFail({
+        where: { id: postData.sharedPostId },
+        select: ['userId'],
+      });
+
+      // Skip notifications if the user is sharing their own post
+      if (authorId === user.id) {
+        return { post };
+      }
+
+      // Notify the original author of the shared post
+      await this.notificationsService.createNotification({
+        notificationType: NotificationType.PostShare,
+        otherUserId: user.id,
+        postId: post.id,
+        userId: authorId,
+      });
+
+      // Notify the post sharer if they are not the original author
+      if (sharedFromUserId !== authorId) {
+        await this.notificationsService.createNotification({
+          notificationType: NotificationType.PostShare,
+          userId: sharedFromUserId,
+          otherUserId: user.id,
+          postId: post.id,
+        });
+      }
+    }
+
     return { post };
   }
 

@@ -13,6 +13,7 @@ import {
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Comment } from '../comments/models/comment.model';
 import { Dataloaders } from '../dataloader/dataloader.types';
+import { Event } from '../events/models/event.model';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
 import { Like } from '../likes/models/like.model';
@@ -90,20 +91,56 @@ export class PostsResolver {
     return loaders.usersLoader.load(userId);
   }
 
-  @ResolveField(() => Group)
+  @ResolveField(() => Group, { nullable: true })
   async group(
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { groupId }: Post,
   ) {
-    return groupId ? loaders.groupsLoader.load(groupId) : null;
+    if (!groupId) {
+      return null;
+    }
+    return loaders.groupsLoader.load(groupId);
   }
 
-  @ResolveField(() => Event)
+  @ResolveField(() => Event, { nullable: true })
   async event(
     @Context() { loaders }: { loaders: Dataloaders },
     @Parent() { eventId }: Post,
   ) {
-    return eventId ? loaders.eventsLoader.load(eventId) : null;
+    if (!eventId) {
+      return null;
+    }
+    return loaders.eventsLoader.load(eventId);
+  }
+
+  @ResolveField(() => [Post])
+  async shares(@Parent() { id }: Post) {
+    return this.postsService.getPostShares(id);
+  }
+
+  @ResolveField(() => Post, { nullable: true })
+  async sharedPost(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { sharedPostId }: Post,
+  ) {
+    if (!sharedPostId) {
+      return null;
+    }
+    return loaders.postsLoader.load(sharedPostId);
+  }
+
+  // TODO: Determine whether a data loader should be used here
+  @ResolveField(() => Boolean)
+  async hasMissingSharedPost(@Parent() { sharedPostId }: Post) {
+    return this.postsService.hasMissingSharedPost(sharedPostId);
+  }
+
+  @ResolveField(() => Int)
+  async shareCount(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { id }: Post,
+  ) {
+    return loaders.postShareCountLoader.load(id);
   }
 
   @Mutation(() => CreatePostPayload)
