@@ -528,6 +528,7 @@ type Post {
   event: Event
   group: Group
   hasMissingSharedPost: Boolean!
+  hasMissingSharedProposal: Boolean!
   id: Int!
   images: [Image!]!
   isLikedByMe: Boolean!
@@ -535,6 +536,7 @@ type Post {
   likes: [Like!]!
   shareCount: Int!
   sharedPost: Post
+  sharedProposal: Proposal
   shares: [Post!]!
   user: User!
 }

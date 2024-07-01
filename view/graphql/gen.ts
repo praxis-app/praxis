@@ -861,6 +861,7 @@ export type Post = {
   event?: Maybe<Event>;
   group?: Maybe<Group>;
   hasMissingSharedPost: Scalars['Boolean']['output'];
+  hasMissingSharedProposal: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
   images: Array<Image>;
   isLikedByMe: Scalars['Boolean']['output'];
@@ -868,6 +869,7 @@ export type Post = {
   likes: Array<Like>;
   shareCount: Scalars['Int']['output'];
   sharedPost?: Maybe<Post>;
+  sharedProposal?: Maybe<Proposal>;
   shares: Array<Post>;
   user: User;
 };

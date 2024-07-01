@@ -17,6 +17,7 @@ import { Event } from '../events/models/event.model';
 import { Group } from '../groups/models/group.model';
 import { Image } from '../images/models/image.model';
 import { Like } from '../likes/models/like.model';
+import { Proposal } from '../proposals/models/proposal.model';
 import { User } from '../users/models/user.model';
 import { CreatePostInput } from './models/create-post.input';
 import { CreatePostPayload } from './models/create-post.payload';
@@ -127,6 +128,17 @@ export class PostsResolver {
       return null;
     }
     return loaders.postsLoader.load(sharedPostId);
+  }
+
+  @ResolveField(() => Proposal, { nullable: true })
+  async sharedProposal(
+    @Context() { loaders }: { loaders: Dataloaders },
+    @Parent() { sharedProposalId }: Post,
+  ) {
+    if (!sharedProposalId) {
+      return null;
+    }
+    return loaders.proposalsLoader.load(sharedProposalId);
   }
 
   // TODO: Determine whether a data loader should be used here
