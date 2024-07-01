@@ -13,6 +13,9 @@ export class CreatePostInput {
   sharedPostId?: number;
 
   @Field(() => Int, { nullable: true })
+  sharedProposalId?: number;
+
+  @Field(() => Int, { nullable: true })
   sharedFromUserId?: number;
 
   @Field({ nullable: true })

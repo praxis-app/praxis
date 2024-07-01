@@ -9,6 +9,7 @@ import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
+import { Proposal } from '../proposals/models/proposal.model';
 import { User } from '../users/models/user.model';
 import { CreatePostInput } from './models/create-post.input';
 import { Post } from './models/post.model';
@@ -22,6 +23,9 @@ export class PostsService {
 
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
+
+    @InjectRepository(Proposal)
+    private proposalRepository: Repository<Proposal>,
 
     private notificationsService: NotificationsService,
   ) {}
@@ -75,16 +79,30 @@ export class PostsService {
     { images, body, sharedFromUserId, ...postData }: CreatePostInput,
     user: User,
   ) {
-    if (!body?.trim() && !images?.length && !postData.sharedPostId) {
+    if (
+      !body?.trim() &&
+      !images?.length &&
+      !postData.sharedPostId &&
+      !postData.sharedProposalId
+    ) {
       throw new Error('Posts must include some content');
     }
     if (postData.sharedPostId && images?.length) {
-      throw new Error('Shared posts cannot have images');
+      throw new Error('Shared posts cannot include images');
+    }
+    if (postData.sharedProposalId && images?.length) {
+      throw new Error('Shared proposals cannot include images');
     }
     if (sharedFromUserId && !postData.sharedPostId) {
-      throw new Error('Shared posts must include the original poster ID');
+      throw new Error('Shared posts must include the original post ID');
     }
-    if (!sharedFromUserId && postData.sharedPostId) {
+    if (sharedFromUserId && !postData.sharedProposalId) {
+      throw new Error('Shared proposals must include the proposal ID');
+    }
+    if (
+      !sharedFromUserId &&
+      (postData.sharedPostId || postData.sharedProposalId)
+    ) {
       throw new Error('Shared posts must include the sharer ID');
     }
     const post = await this.postRepository.save({
@@ -125,6 +143,36 @@ export class PostsService {
       if (sharedFromUserId !== authorId) {
         await this.notificationsService.createNotification({
           notificationType: NotificationType.PostShare,
+          userId: sharedFromUserId,
+          otherUserId: user.id,
+          postId: post.id,
+        });
+      }
+    }
+
+    if (postData.sharedProposalId) {
+      const { userId: authorId } = await this.proposalRepository.findOneOrFail({
+        where: { id: postData.sharedProposalId },
+        select: ['userId'],
+      });
+
+      // Skip notifications if the user is sharing their own proposal
+      if (authorId === user.id) {
+        return { post };
+      }
+
+      // Notify the original author of the shared proposal
+      await this.notificationsService.createNotification({
+        notificationType: NotificationType.ProposalShare,
+        otherUserId: user.id,
+        postId: post.id,
+        userId: authorId,
+      });
+
+      // Notify the proposal sharer if they are not the original author
+      if (sharedFromUserId !== authorId) {
+        await this.notificationsService.createNotification({
+          notificationType: NotificationType.ProposalShare,
           userId: sharedFromUserId,
           otherUserId: user.id,
           postId: post.id,
