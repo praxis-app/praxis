@@ -70,6 +70,7 @@ const ProposalAction = ({
     return (
       <ProposalActionRole
         actionType={actionType}
+        isShared={isShared}
         ratified={ratified}
         role={role}
       />

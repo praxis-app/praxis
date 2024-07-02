@@ -40,13 +40,15 @@ type RoleMember =
 interface Props extends Omit<BoxProps, 'role'> {
   role: ProposalActionRoleFragment | ProposalActionRoleInput;
   actionType: ProposalActionType;
-  ratified?: boolean;
+  isShared?: boolean;
   preview?: boolean;
+  ratified?: boolean;
 }
 
 // TODO: Rename as ProposedRole
 const ProposalActionRole = ({
   actionType,
+  isShared,
   preview,
   ratified,
   role,
@@ -126,7 +128,7 @@ const ProposalActionRole = ({
     : t('proposals.labels.roleChangeProposal');
 
   const accordionStyles: SxProps = {
-    backgroundColor: 'rgb(0, 0, 0, 0.1)',
+    backgroundColor: isShared ? undefined : 'rgb(0, 0, 0, 0.1)',
     borderRadius: 2,
     paddingX: 2,
   };
@@ -157,7 +159,7 @@ const ProposalActionRole = ({
   };
 
   return (
-    <Box marginBottom={preview ? 0 : 2.5} {...boxProps}>
+    <Box marginBottom={preview || isShared ? 0 : 2.5} {...boxProps}>
       <Accordion
         expanded={showRole}
         onChange={() => setShowRole(!showRole)}
@@ -265,6 +267,10 @@ const ProposalActionRole = ({
           </Grid>
         </AccordionDetails>
       </Accordion>
+
+      {isShared && (
+        <Divider sx={{ marginX: 2, marginBottom: showRole ? 1.5 : 1 }} />
+      )}
     </Box>
   );
 };
