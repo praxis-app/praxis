@@ -32,6 +32,7 @@ export type HomeFeedQuery = {
             commentCount: number;
             shareCount: number;
             isLikedByMe?: boolean;
+            hasMissingSharedProposal: boolean;
             hasMissingSharedPost: boolean;
             createdAt: any;
             images: Array<{
@@ -95,6 +96,24 @@ export type HomeFeedQuery = {
                 profilePicture: { __typename?: 'Image'; id: number };
               };
             } | null;
+            sharedProposal?: {
+              __typename?: 'Proposal';
+              id: number;
+              body?: string | null;
+              createdAt: any;
+              images: Array<{
+                __typename?: 'Image';
+                id: number;
+                filename: string;
+              }>;
+              user: {
+                __typename?: 'User';
+                id: number;
+                name: string;
+                displayName?: string | null;
+                profilePicture: { __typename?: 'Image'; id: number };
+              };
+            } | null;
           }
         | {
             __typename?: 'Proposal';
@@ -103,6 +122,7 @@ export type HomeFeedQuery = {
             stage: string;
             voteCount: number;
             commentCount: number;
+            shareCount: number;
             createdAt: any;
             action: {
               __typename?: 'ProposalAction';

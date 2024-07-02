@@ -17,6 +17,7 @@ export type ProposalCardFragment = {
   stage: string;
   voteCount: number;
   commentCount: number;
+  shareCount: number;
   createdAt: any;
   action: {
     __typename?: 'ProposalAction';
@@ -189,6 +190,7 @@ export const ProposalCardFragmentDoc = gql`
     stage
     voteCount
     commentCount
+    shareCount
     createdAt
     action {
       ...ProposalAction

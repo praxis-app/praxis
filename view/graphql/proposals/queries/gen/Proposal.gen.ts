@@ -23,6 +23,7 @@ export type ProposalQuery = {
     stage: string;
     voteCount: number;
     commentCount: number;
+    shareCount: number;
     createdAt: any;
     action: {
       __typename?: 'ProposalAction';

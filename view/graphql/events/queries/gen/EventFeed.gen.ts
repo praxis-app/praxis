@@ -29,6 +29,7 @@ export type EventFeedQuery = {
       commentCount: number;
       shareCount: number;
       isLikedByMe?: boolean;
+      hasMissingSharedProposal: boolean;
       hasMissingSharedPost: boolean;
       createdAt: any;
       images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
@@ -72,6 +73,20 @@ export type EventFeedQuery = {
       } | null;
       sharedPost?: {
         __typename?: 'Post';
+        id: number;
+        body?: string | null;
+        createdAt: any;
+        images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
+        user: {
+          __typename?: 'User';
+          id: number;
+          name: string;
+          displayName?: string | null;
+          profilePicture: { __typename?: 'Image'; id: number };
+        };
+      } | null;
+      sharedProposal?: {
+        __typename?: 'Proposal';
         id: number;
         body?: string | null;
         createdAt: any;

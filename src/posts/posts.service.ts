@@ -103,11 +103,12 @@ export class PostsService {
     if (postData.sharedProposalId && images?.length) {
       throw new Error('Shared proposals cannot include images');
     }
-    if (sharedFromUserId && !postData.sharedPostId) {
+    if (
+      sharedFromUserId &&
+      !postData.sharedPostId &&
+      !postData.sharedProposalId
+    ) {
       throw new Error('Shared posts must include the original post ID');
-    }
-    if (sharedFromUserId && !postData.sharedProposalId) {
-      throw new Error('Shared proposals must include the proposal ID');
     }
     if (
       !sharedFromUserId &&

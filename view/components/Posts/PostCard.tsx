@@ -36,6 +36,7 @@ import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
 import PostCardFooter from './PostCardFooter';
 import SharedPost from './SharedPost';
+import SharedProposal from '../Proposals/SharedProposal';
 
 const CardHeader = styled(MuiCardHeader)(() => ({
   paddingBottom: 0,
@@ -81,6 +82,8 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
     group,
     event,
     sharedPost,
+    sharedProposal,
+    hasMissingSharedProposal,
     hasMissingSharedPost,
     createdAt,
   } = post;
@@ -219,6 +222,10 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
 
         {(sharedPost || hasMissingSharedPost) && (
           <SharedPost post={sharedPost} />
+        )}
+
+        {(sharedProposal || hasMissingSharedProposal) && (
+          <SharedProposal proposal={sharedProposal} />
         )}
       </CardContent>
 

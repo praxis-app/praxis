@@ -19,6 +19,7 @@ import Flex from '../Shared/Flex';
 import VoteBadges from '../Votes/VoteBadges';
 import VoteButton from '../Votes/VoteButton';
 import ProposalModal from './ProposalModal';
+import SharePostModal from '../Posts/SharePostModal';
 
 const ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -47,6 +48,7 @@ const ProposalCardFooter = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal || isProposalPage);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isVerified = useReactiveVar(isVerifiedVar);
@@ -202,13 +204,6 @@ const ProposalCardFooter = ({
   };
 
   const handleShareBtnClick = () => {
-    // if (hasMissingSharedPost) {
-    //   toastVar({
-    //     title: t('posts.errors.missingContentShare'),
-    //     status: 'info',
-    //   });
-    //   return;
-    // }
     if (!isVerified) {
       toastVar({
         title: t('posts.prompts.verifyToShare'),
@@ -216,7 +211,7 @@ const ProposalCardFooter = ({
       });
       return;
     }
-    // setIsShareModalOpen(true);
+    setIsShareModalOpen(true);
   };
 
   return (
@@ -303,6 +298,13 @@ const ProposalCardFooter = ({
         proposal={proposal}
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+      />
+
+      <SharePostModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        sharedFromUserId={proposal.user.id}
+        sharedProposalId={proposal.id}
       />
     </Box>
   );
