@@ -223,7 +223,9 @@ const ProposalActionEvent = ({
         </AccordionDetails>
       </Accordion>
 
-      {isShared && <Divider sx={{ marginX: 2, marginBottom: 1 }} />}
+      {isShared && (
+        <Divider sx={{ marginX: 2, marginBottom: showEvent ? 1.5 : 1 }} />
+      )}
     </Box>
   );
 };

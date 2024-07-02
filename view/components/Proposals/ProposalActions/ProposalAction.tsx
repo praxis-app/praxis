@@ -40,6 +40,7 @@ const ProposalAction = ({
       <ProposalActionGroupSettings
         groupSettings={groupSettings}
         ratified={ratified}
+        isShared={isShared}
       />
     );
   }

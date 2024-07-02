@@ -1,4 +1,4 @@
-import { Box, Grid, SxProps, Typography } from '@mui/material';
+import { Box, Divider, Grid, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -27,6 +27,7 @@ interface Props {
   groupId?: number | null;
   preview?: boolean;
   ratified?: boolean;
+  isShared?: boolean;
 }
 
 const ProposalActionGroupSettings = ({
@@ -34,6 +35,7 @@ const ProposalActionGroupSettings = ({
   preview,
   ratified,
   groupId,
+  isShared,
 }: Props) => {
   const { pathname } = useLocation();
   const isProposalPage = pathname.includes('/proposals/');
@@ -126,7 +128,7 @@ const ProposalActionGroupSettings = ({
   );
 
   const accordionStyles: SxProps = {
-    backgroundColor: 'rgb(0, 0, 0, 0.1)',
+    backgroundColor: isShared ? undefined : 'rgb(0, 0, 0, 0.1)',
     borderRadius: 2,
     paddingX: 2,
   };
@@ -211,7 +213,10 @@ const ProposalActionGroupSettings = ({
   };
 
   return (
-    <Box marginBottom={preview ? 0 : 2.5} marginTop={preview ? 2 : 0}>
+    <Box
+      marginBottom={preview || isShared ? 0 : 2.5}
+      marginTop={preview ? 2 : 0}
+    >
       <Accordion
         expanded={showDetails}
         onChange={() => setShowDetails(!showDetails)}
@@ -309,6 +314,10 @@ const ProposalActionGroupSettings = ({
           </Grid>
         </AccordionDetails>
       </Accordion>
+
+      {isShared && (
+        <Divider sx={{ marginX: 2, marginBottom: showDetails ? 1.5 : 1 }} />
+      )}
     </Box>
   );
 };
