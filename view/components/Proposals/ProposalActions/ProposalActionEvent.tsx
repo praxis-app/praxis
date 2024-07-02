@@ -19,16 +19,22 @@ import Accordion, {
   AccordionSummary,
 } from '../../Shared/Accordion';
 import ExternalLink from '../../Shared/ExternalLink';
-import Link from '../../Shared/Link';
 import FormattedText from '../../Shared/FormattedText';
+import Link from '../../Shared/Link';
 
 interface Props {
   event: ProposalActionEventFragment | ProposalActionEventInput;
   coverPhotoFile?: File;
+  isShared?: boolean;
   preview?: boolean;
 }
 
-const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
+const ProposalActionEvent = ({
+  event,
+  coverPhotoFile,
+  preview,
+  isShared,
+}: Props) => {
   const { pathname } = useLocation();
   const isProposalPage = pathname.includes('/proposals/');
   const [showEvent, setShowEvent] = useState(!!preview || isProposalPage);
@@ -79,7 +85,7 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
     .replace(/minutes|minute/g, t('time.min'));
 
   const accordionStyles: SxProps = {
-    backgroundColor: 'rgb(0, 0, 0, 0.1)',
+    backgroundColor: isShared ? undefined : 'rgb(0, 0, 0, 0.1)',
     borderRadius: 2,
     paddingX: 2,
   };
@@ -105,7 +111,10 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
   };
 
   return (
-    <Box marginBottom={preview ? 0 : 2.5} marginTop={preview ? 2 : 0}>
+    <Box
+      marginBottom={preview || isShared ? 0 : 2.5}
+      marginTop={preview ? 2 : 0}
+    >
       <Accordion
         expanded={showEvent}
         onChange={() => setShowEvent(!showEvent)}
@@ -213,6 +222,8 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
           <FormattedText text={description} />
         </AccordionDetails>
       </Accordion>
+
+      {isShared && <Divider sx={{ marginX: 2, marginBottom: 1 }} />}
     </Box>
   );
 };

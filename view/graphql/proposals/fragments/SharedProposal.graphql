@@ -1,7 +1,12 @@
 fragment SharedProposal on Proposal {
   id
   body
+  stage
   createdAt
+
+  action {
+    ...ProposalAction
+  }
   images {
     ...AttachedImage
   }

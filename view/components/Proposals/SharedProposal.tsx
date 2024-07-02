@@ -2,6 +2,7 @@ import { BrokenImage } from '@mui/icons-material';
 import { Box, BoxProps, Typography, useTheme } from '@mui/material';
 import { truncate } from 'lodash';
 import { useTranslation } from 'react-i18next';
+import { ProposalStage } from '../../constants/proposal.constants';
 import {
   NavigationPaths,
   TruncationSizes,
@@ -15,6 +16,7 @@ import Flex from '../Shared/Flex';
 import FormattedText from '../Shared/FormattedText';
 import Link from '../Shared/Link';
 import UserAvatar from '../Users/UserAvatar';
+import ProposalAction from './ProposalActions/ProposalAction';
 
 interface Props extends BoxProps {
   proposal?: SharedProposalFragment | null;
@@ -48,6 +50,14 @@ const SharedProposal = ({ proposal, ...boxProps }: Props) => {
         >
           <AttachedImageList images={proposal.images} topRounded />
         </Link>
+      )}
+
+      {proposal?.action && (
+        <ProposalAction
+          action={proposal.action}
+          ratified={proposal.stage === ProposalStage.Ratified}
+          isShared
+        />
       )}
 
       <Box

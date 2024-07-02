@@ -102,7 +102,7 @@ const PostForm = ({
     if (isSubmitting) {
       return true;
     }
-    if (sharedPostId) {
+    if (sharedPostId || sharedProposalId) {
       return false;
     }
     return !dirty && !images.length;

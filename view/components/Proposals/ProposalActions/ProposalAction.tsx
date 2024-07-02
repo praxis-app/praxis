@@ -9,6 +9,7 @@ import ProposalActionRole from './ProposalActionRole';
 
 interface Props {
   action: ProposalActionFragment;
+  isShared?: boolean;
   ratified: boolean;
 }
 
@@ -23,6 +24,7 @@ const ProposalAction = ({
     role,
   },
   ratified,
+  isShared,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -50,7 +52,7 @@ const ProposalAction = ({
         </Typography>
       );
     }
-    return <ProposalActionEvent event={event} />;
+    return <ProposalActionEvent event={event} isShared={isShared} />;
   }
 
   if (
