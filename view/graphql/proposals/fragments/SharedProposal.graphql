@@ -1,0 +1,11 @@
+fragment SharedProposal on Proposal {
+  id
+  body
+  createdAt
+  images {
+    ...AttachedImage
+  }
+  user {
+    ...UserAvatar
+  }
+}

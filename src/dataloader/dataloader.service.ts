@@ -45,6 +45,7 @@ import {
   PostWithLikeCount,
   PostWithShareCount,
   ProposalWithCommentCount,
+  ProposalWithShareCount,
   ProposalWithVoteCount,
   ServerRoleWithMemberCount,
   UserWithFollowerCount,
@@ -111,6 +112,7 @@ export class DataloaderService {
       proposalVoteCountLoader: this._createProposalVoteCountLoader(),
       proposalVotesLoader: this._createProposalVotesLoader(),
       proposalCommentCountLoader: this._createProposalCommentCountLoader(),
+      proposalShareCountLoader: this._createProposalShareCountLoader(),
 
       // Posts
       isPostLikedByMeLoader: this._createIsPostLikedByMeLoader(),
@@ -284,6 +286,28 @@ export class DataloaderService {
           return new Error(`Could not load comment count for proposal: ${id}`);
         }
         return proposal.commentCount;
+      });
+    });
+  }
+
+  private _createProposalShareCountLoader() {
+    return this._getDataLoader<number, number>(async (proposalIds) => {
+      const proposals = (await this.proposalRepository
+        .createQueryBuilder('proposal')
+        .leftJoinAndSelect('proposal.shares', 'share')
+        .loadRelationCountAndMap('proposal.shareCount', 'proposal.shares')
+        .select(['proposal.id'])
+        .whereInIds(proposalIds)
+        .getMany()) as ProposalWithShareCount[];
+
+      return proposalIds.map((id) => {
+        const proposal = proposals.find(
+          (proposal: Proposal) => proposal.id === id,
+        );
+        if (!proposal) {
+          return new Error(`Could not load share count for proposal: ${id}`);
+        }
+        return proposal.shareCount;
       });
     });
   }

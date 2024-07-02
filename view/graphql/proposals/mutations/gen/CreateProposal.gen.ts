@@ -25,6 +25,7 @@ export type CreateProposalMutation = {
       stage: string;
       voteCount: number;
       commentCount: number;
+      shareCount: number;
       createdAt: any;
       action: {
         __typename?: 'ProposalAction';

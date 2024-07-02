@@ -7,6 +7,7 @@ import { GroupAvatarFragmentDoc } from '../../../groups/fragments/gen/GroupAvata
 import { GroupPermissionsFragmentDoc } from '../../../groups/fragments/gen/GroupPermissions.gen';
 import { EventAvatarFragmentDoc } from '../../../events/fragments/gen/EventAvatar.gen';
 import { SharedPostFragmentDoc } from './SharedPost.gen';
+import { SharedProposalFragmentDoc } from '../../../proposals/fragments/gen/SharedProposal.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
@@ -19,6 +20,7 @@ export type PostCardFragment = {
   commentCount: number;
   shareCount: number;
   isLikedByMe?: boolean;
+  hasMissingSharedProposal: boolean;
   hasMissingSharedPost: boolean;
   createdAt: any;
   images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
@@ -70,6 +72,20 @@ export type PostCardFragment = {
       profilePicture: { __typename?: 'Image'; id: number };
     };
   } | null;
+  sharedProposal?: {
+    __typename?: 'Proposal';
+    id: number;
+    body?: string | null;
+    createdAt: any;
+    images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
+    user: {
+      __typename?: 'User';
+      id: number;
+      name: string;
+      displayName?: string | null;
+      profilePicture: { __typename?: 'Image'; id: number };
+    };
+  } | null;
 };
 
 export const PostCardFragmentDoc = gql`
@@ -80,6 +96,7 @@ export const PostCardFragmentDoc = gql`
     commentCount
     shareCount
     isLikedByMe @include(if: $isVerified)
+    hasMissingSharedProposal
     hasMissingSharedPost
     createdAt
     images {
@@ -105,6 +122,9 @@ export const PostCardFragmentDoc = gql`
     sharedPost {
       ...SharedPost
     }
+    sharedProposal {
+      ...SharedProposal
+    }
   }
   ${AttachedImageFragmentDoc}
   ${UserAvatarFragmentDoc}
@@ -112,4 +132,5 @@ export const PostCardFragmentDoc = gql`
   ${GroupPermissionsFragmentDoc}
   ${EventAvatarFragmentDoc}
   ${SharedPostFragmentDoc}
+  ${SharedProposalFragmentDoc}
 `;

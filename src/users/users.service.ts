@@ -152,6 +152,7 @@ export class UsersService {
         'userPost.eventId',
         'userPost.userId',
         'userPost.sharedPostId',
+        'userPost.sharedProposalId',
         'userPost.body',
         'userPost.createdAt',
       ])
@@ -169,6 +170,7 @@ export class UsersService {
         'followingPost.eventId',
         'followingPost.groupId',
         'followingPost.sharedPostId',
+        'followingPost.sharedProposalId',
         'followingPost.body',
         'followingPost.createdAt',
       ])
@@ -198,6 +200,7 @@ export class UsersService {
         'groupPost.eventId',
         'groupPost.userId',
         'groupPost.sharedPostId',
+        'groupPost.sharedProposalId',
         'groupPost.body',
         'groupPost.createdAt',
       ])
@@ -239,6 +242,7 @@ export class UsersService {
         'groupEventPost.userId',
         'groupEventPost.eventId',
         'groupEventPost.sharedPostId',
+        'groupEventPost.sharedProposalId',
         'groupEventPost.body',
         'groupEventPost.createdAt',
       ])

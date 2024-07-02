@@ -5,6 +5,7 @@ fragment PostCard on Post {
   commentCount
   shareCount
   isLikedByMe @include(if: $isVerified)
+  hasMissingSharedProposal
   hasMissingSharedPost
   createdAt
 
@@ -30,5 +31,8 @@ fragment PostCard on Post {
   }
   sharedPost {
     ...SharedPost
+  }
+  sharedProposal {
+    ...SharedProposal
   }
 }

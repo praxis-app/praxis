@@ -9,6 +9,7 @@ import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
+import { Proposal } from '../proposals/models/proposal.model';
 import { User } from '../users/models/user.model';
 import { CreatePostInput } from './models/create-post.input';
 import { Post } from './models/post.model';
@@ -22,6 +23,9 @@ export class PostsService {
 
     @InjectRepository(Image)
     private imageRepository: Repository<Image>,
+
+    @InjectRepository(Proposal)
+    private proposalRepository: Repository<Proposal>,
 
     private notificationsService: NotificationsService,
   ) {}
@@ -71,20 +75,45 @@ export class PostsService {
     return !sharedPostExists;
   }
 
+  async hasMissingSharedProposal(sharedProposalId: number | null) {
+    if (!sharedProposalId) {
+      return false;
+    }
+    const sharedProposalExists = await this.proposalRepository.exist({
+      where: { id: sharedProposalId },
+    });
+    return !sharedProposalExists;
+  }
+
   async createPost(
     { images, body, sharedFromUserId, ...postData }: CreatePostInput,
     user: User,
   ) {
-    if (!body?.trim() && !images?.length && !postData.sharedPostId) {
+    if (
+      !body?.trim() &&
+      !images?.length &&
+      !postData.sharedPostId &&
+      !postData.sharedProposalId
+    ) {
       throw new Error('Posts must include some content');
     }
     if (postData.sharedPostId && images?.length) {
-      throw new Error('Shared posts cannot have images');
+      throw new Error('Shared posts cannot include images');
     }
-    if (sharedFromUserId && !postData.sharedPostId) {
-      throw new Error('Shared posts must include the original poster ID');
+    if (postData.sharedProposalId && images?.length) {
+      throw new Error('Shared proposals cannot include images');
     }
-    if (!sharedFromUserId && postData.sharedPostId) {
+    if (
+      sharedFromUserId &&
+      !postData.sharedPostId &&
+      !postData.sharedProposalId
+    ) {
+      throw new Error('Shared posts must include the original post ID');
+    }
+    if (
+      !sharedFromUserId &&
+      (postData.sharedPostId || postData.sharedProposalId)
+    ) {
       throw new Error('Shared posts must include the sharer ID');
     }
     const post = await this.postRepository.save({
@@ -102,29 +131,38 @@ export class PostsService {
       }
     }
 
-    if (postData.sharedPostId) {
-      const { userId: authorId } = await this.postRepository.findOneOrFail({
-        where: { id: postData.sharedPostId },
-        select: ['userId'],
-      });
+    if (postData.sharedPostId || postData.sharedProposalId) {
+      const { userId: authorId } = postData.sharedPostId
+        ? await this.postRepository.findOneOrFail({
+            where: { id: postData.sharedPostId },
+            select: ['userId'],
+          })
+        : await this.proposalRepository.findOneOrFail({
+            where: { id: postData.sharedProposalId },
+            select: ['userId'],
+          });
 
-      // Skip notifications if the user is sharing their own post
+      // Skip notifications if the user is sharing their own content
       if (authorId === user.id) {
         return { post };
       }
 
-      // Notify the original author of the shared post
+      // Notify the original author of the shared content
       await this.notificationsService.createNotification({
-        notificationType: NotificationType.PostShare,
+        notificationType: postData.sharedPostId
+          ? NotificationType.PostShare
+          : NotificationType.ProposalShare,
         otherUserId: user.id,
         postId: post.id,
         userId: authorId,
       });
 
-      // Notify the post sharer if they are not the original author
+      // Notify the sharer if they are not the original author
       if (sharedFromUserId !== authorId) {
         await this.notificationsService.createNotification({
-          notificationType: NotificationType.PostShare,
+          notificationType: postData.sharedPostId
+            ? NotificationType.PostShare
+            : NotificationType.ProposalShare,
           userId: sharedFromUserId,
           otherUserId: user.id,
           postId: post.id,

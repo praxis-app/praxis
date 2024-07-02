@@ -4,6 +4,7 @@ fragment ProposalCard on Proposal {
   stage
   voteCount
   commentCount
+  shareCount
   createdAt
 
   action {

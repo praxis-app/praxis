@@ -6,7 +6,8 @@ interface Props {
   isOpen: boolean;
   onClose(): void;
   sharedFromUserId: number;
-  sharedPostId: number;
+  sharedPostId?: number;
+  sharedProposalId?: number;
 }
 
 const SharePostModal = ({
@@ -14,6 +15,7 @@ const SharePostModal = ({
   onClose,
   sharedFromUserId,
   sharedPostId,
+  sharedProposalId,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -28,8 +30,9 @@ const SharePostModal = ({
     >
       <PostForm
         onSubmit={onClose}
-        sharedPostId={sharedPostId}
         sharedFromUserId={sharedFromUserId}
+        sharedProposalId={sharedProposalId}
+        sharedPostId={sharedPostId}
       />
     </Modal>
   );
