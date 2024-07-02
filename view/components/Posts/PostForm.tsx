@@ -89,6 +89,9 @@ const PostForm = ({
     if (sharedPostId) {
       return t('posts.actions.sharePost');
     }
+    if (sharedProposalId) {
+      return t('proposals.actions.shareProposal');
+    }
     if (editPost) {
       return t('actions.save');
     }
@@ -292,7 +295,7 @@ const PostForm = ({
               name={FieldNames.Body}
               onChange={handleChange}
               placeholder={
-                sharedPostId
+                sharedPostId || sharedProposalId
                   ? t('posts.form.saySomething')
                   : t('prompts.whatsHappening')
               }

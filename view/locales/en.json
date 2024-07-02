@@ -112,6 +112,7 @@
       "changeGroupRole": "Propose a role change",
       "createGroupRole": "Propose a new group role",
       "createProposal": "Create Proposal",
+      "shareProposal": "Share proposal",
       "vote": "Vote"
     },
     "actionTypes": {
