@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { ProposalActionType } from '../../../constants/proposal.constants';
 import { ProposalActionFragment } from '../../../graphql/proposals/fragments/gen/ProposalAction.gen';
@@ -107,14 +107,17 @@ const ProposalAction = ({
     }
     return (
       <Box
-        marginBottom="20px"
-        marginTop={isShared ? 0.8 : 0}
-        paddingLeft={isShared ? 1.5 : 0}
+        marginBottom={isShared ? 0 : '20px'}
+        marginTop={isShared ? 1 : 0}
+        paddingLeft={isShared ? 2 : 0}
+        paddingRight={isShared ? 2 : 0}
       >
         <Typography gutterBottom fontSize={14}>
           {t('proposals.labels.proposedGroupCoverPhoto')}:
         </Typography>
         <AttachedImage image={groupCoverPhoto} width="55%" />
+
+        {isShared && <Divider sx={{ marginY: 0.8 }} />}
       </Box>
     );
   }
