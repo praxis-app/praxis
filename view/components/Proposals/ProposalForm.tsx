@@ -545,6 +545,9 @@ const ProposalForm = ({
             <ImageInput
               key={values.images?.length}
               onChange={handleImageInputChange(setFieldValue)}
+              disabled={
+                values.action.actionType === ProposalActionType.ChangeCoverPhoto
+              }
               multiple
             />
 

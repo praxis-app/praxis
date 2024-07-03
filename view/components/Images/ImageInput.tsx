@@ -63,6 +63,7 @@ const ImageInput = ({
     return (
       <IconButton
         aria-label={t('images.labels.attachImages')}
+        disabled={disabled}
         disableRipple
         edge="start"
       >
