@@ -79,17 +79,41 @@ const ProposalAction = ({
 
   if (actionType === ProposalActionType.ChangeName) {
     return (
-      <Typography marginBottom={3.5}>
-        {t('proposals.labels.newGroupName')}: {groupName}
-      </Typography>
+      <Box
+        marginBottom={isShared ? 0 : 3.5}
+        marginTop={isShared ? 1.5 : 0}
+        paddingLeft={isShared ? 2 : 0}
+        paddingRight={isShared ? 2 : 0}
+      >
+        <Typography>
+          <Box component="span" fontFamily="Inter Medium" marginRight="0.5ch">
+            {t('proposals.labels.newGroupName')}:
+          </Box>
+          {groupName}
+        </Typography>
+
+        {isShared && <Divider sx={{ marginTop: 1.5, marginBottom: 1 }} />}
+      </Box>
     );
   }
 
   if (actionType === ProposalActionType.ChangeDescription) {
     return (
-      <Typography marginBottom={3.5}>
-        {t('proposals.labels.newGroupDescription')}: {groupDescription}
-      </Typography>
+      <Box
+        marginBottom={isShared ? 0 : 3.5}
+        marginTop={isShared ? 1.5 : 0}
+        paddingLeft={isShared ? 2 : 0}
+        paddingRight={isShared ? 2 : 0}
+      >
+        <Typography>
+          <Box component="span" fontFamily="Inter Medium" marginRight="0.5ch">
+            {t('proposals.labels.newGroupDescription')}:
+          </Box>
+          {groupDescription}
+        </Typography>
+
+        {isShared && <Divider sx={{ marginTop: 1.5, marginBottom: 1 }} />}
+      </Box>
     );
   }
 
@@ -112,7 +136,7 @@ const ProposalAction = ({
         paddingLeft={isShared ? 2 : 0}
         paddingRight={isShared ? 2 : 0}
       >
-        <Typography gutterBottom fontSize={14}>
+        <Typography fontSize={14} fontFamily="Inter Medium" gutterBottom>
           {t('proposals.labels.proposedGroupCoverPhoto')}:
         </Typography>
         <AttachedImage image={groupCoverPhoto} width="55%" />
