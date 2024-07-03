@@ -96,13 +96,21 @@ const ProposalAction = ({
   if (actionType === ProposalActionType.ChangeCoverPhoto) {
     if (!groupCoverPhoto) {
       return (
-        <Typography marginBottom={3.5}>
+        <Typography
+          marginBottom={3.5}
+          marginTop={isShared ? 0.8 : 0}
+          paddingLeft={isShared ? 1.5 : 0}
+        >
           {t('errors.somethingWentWrong')}
         </Typography>
       );
     }
     return (
-      <Box marginBottom="20px">
+      <Box
+        marginBottom="20px"
+        marginTop={isShared ? 0.8 : 0}
+        paddingLeft={isShared ? 1.5 : 0}
+      >
         <Typography gutterBottom fontSize={14}>
           {t('proposals.labels.proposedGroupCoverPhoto')}:
         </Typography>
