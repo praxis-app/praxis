@@ -109,9 +109,6 @@ const GroupPageCard = ({
     settings,
   } = group;
 
-  const canApproveMemberRequests = myPermissions?.approveMemberRequests;
-  const showCardHeader = isLoggedIn && isAboveSmall;
-
   const groupPath = getGroupPath(name);
   const editGroupPath = getEditGroupPath(name);
   const groupMembersPath = getGroupMembersPath(name);
@@ -122,6 +119,20 @@ const GroupPageCard = ({
   const aboutTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTab.About}`;
   const eventsTabPath = `${groupPagePath}${TAB_QUERY_PARAM}${GroupTab.Events}`;
   const groupChatPath = `${groupPagePath}${NavigationPaths.Chat}`;
+
+  const isNoAdmin = settings.adminModel === GroupAdminModel.NoAdmin;
+  const canApproveMemberRequests = myPermissions?.approveMemberRequests;
+  const canManageRoles = !isNoAdmin && myPermissions?.manageRoles;
+  const canManageSettings = !isNoAdmin && myPermissions?.manageSettings;
+  const canUpdateGroup = !isNoAdmin && myPermissions?.updateGroup;
+
+  const canDeleteGroup =
+    (!isNoAdmin && myPermissions?.deleteGroup) || canRemoveGroups;
+
+  const showMenuButton =
+    canDeleteGroup || canUpdateGroup || canManageRoles || canManageSettings;
+
+  const showCardHeader = isLoggedIn && isAboveSmall && showMenuButton;
 
   const getNameTextWidth = () => {
     if (isAboveMedium) {
@@ -174,17 +185,6 @@ const GroupPageCard = ({
     setTab(newValue);
 
   const renderItemMenu = () => {
-    const isNoAdmin = settings.adminModel === GroupAdminModel.NoAdmin;
-    const canManageRoles = !isNoAdmin && myPermissions?.manageRoles;
-    const canManageSettings = !isNoAdmin && myPermissions?.manageSettings;
-    const canUpdateGroup = !isNoAdmin && myPermissions?.updateGroup;
-
-    const canDeleteGroup =
-      (!isNoAdmin && myPermissions?.deleteGroup) || canRemoveGroups;
-
-    const showMenuButton =
-      canDeleteGroup || canUpdateGroup || canManageRoles || canManageSettings;
-
     if (!showMenuButton) {
       return null;
     }
