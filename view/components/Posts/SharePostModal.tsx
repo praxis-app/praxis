@@ -2,9 +2,11 @@ import { Box, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useIsPostShareableQuery } from '../../graphql/posts/queries/gen/IsPostShareable.gen';
 import { useIsProposalShareableQuery } from '../../graphql/proposals/queries/gen/IsProposalShareable.gen';
-import GroupAvatar from '../Groups/GroupAvatar';
+import { useIsDesktop } from '../../hooks/shared.hooks';
+import { getGroupPath } from '../../utils/group.utils';
 import JoinGroupButton from '../Groups/JoinGroupButton';
-import Flex from '../Shared/Flex';
+import CoverPhoto from '../Images/CoverPhoto';
+import Link from '../Shared/Link';
 import Modal from '../Shared/Modal';
 import ProgressBar from '../Shared/ProgressBar';
 import PostForm from './PostForm';
@@ -46,8 +48,10 @@ const SharePostModal = ({
 
   const { t } = useTranslation();
   const theme = useTheme();
+  const isDesktop = useIsDesktop();
 
   const group = postData?.post.group || proposalData?.proposal.group;
+  const groupPath = getGroupPath(group?.name || '');
   const canShareContent = group?.isJoinedByMe;
 
   const isLoading = postLoading || proposalLoading;
@@ -80,39 +84,35 @@ const SharePostModal = ({
             {t('posts.prompts.joinToShare', { groupName: group?.name })}
           </Typography>
 
-          <Box
-            border={`1px solid ${theme.palette.divider}`}
-            borderRadius="8px"
-            padding={2}
-          >
-            <Flex alignItems="center" gap={2.5} paddingBottom={2}>
-              <GroupAvatar
-                group={group}
-                imageStyles={{
-                  borderRadius: '8px',
-                }}
-                sx={{
-                  borderRadius: '8px',
-                  width: '80px',
-                  height: '80px',
-                }}
+          <Box border={`1px solid ${theme.palette.divider}`} borderRadius="8px">
+            <Link href={groupPath}>
+              <CoverPhoto
+                imageId={group.coverPhoto?.id}
+                sx={{ height: isDesktop ? 120 : 110 }}
+                topRounded
               />
-              <Box>
-                <Typography variant="h5">{group.name}</Typography>
+            </Link>
+
+            <Box padding={2} paddingTop={1.2}>
+              <Link href={groupPath}>
+                <Typography fontFamily="Inter Medium" fontSize={22}>
+                  {group.name}
+                </Typography>
 
                 {group.description && (
                   <Typography>{group.description}</Typography>
                 )}
-              </Box>
-            </Flex>
+              </Link>
 
-            <JoinGroupButton
-              groupId={group.id}
-              currentUserId={currentUserId}
-              isGroupMember={group.isJoinedByMe}
-              fullWidth
-              isPrimary
-            />
+              <JoinGroupButton
+                groupId={group.id}
+                currentUserId={currentUserId}
+                isGroupMember={group.isJoinedByMe}
+                sx={{ marginTop: 1, borderRadius: '8px' }}
+                fullWidth
+                isPrimary
+              />
+            </Box>
           </Box>
         </>
       )}
