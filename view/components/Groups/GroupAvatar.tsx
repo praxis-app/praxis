@@ -9,9 +9,10 @@ interface Props {
   group: GroupAvatarFragment;
   withLink?: boolean;
   sx?: SxProps;
+  imageStyles?: SxProps;
 }
 
-const GroupAvatar = ({ group, sx, withLink = true }: Props) => {
+const GroupAvatar = ({ group, sx, withLink = true, imageStyles }: Props) => {
   const groupPagePath = getGroupPath(group.name);
 
   const renderAvatar = () => (
@@ -22,6 +23,7 @@ const GroupAvatar = ({ group, sx, withLink = true }: Props) => {
         width="100%"
         height="100%"
         borderRadius="50%"
+        sx={imageStyles}
       />
     </Flex>
   );

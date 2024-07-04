@@ -300,12 +300,15 @@ const ProposalCardFooter = ({
         onClose={() => setIsModalOpen(false)}
       />
 
-      <SharePostModal
-        isOpen={isShareModalOpen}
-        onClose={() => setIsShareModalOpen(false)}
-        sharedFromUserId={proposal.user.id}
-        sharedProposalId={proposal.id}
-      />
+      {!!currentUserId && (
+        <SharePostModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          sharedFromUserId={proposal.user.id}
+          sharedProposalId={proposal.id}
+          currentUserId={currentUserId}
+        />
+      )}
     </Box>
   );
 };

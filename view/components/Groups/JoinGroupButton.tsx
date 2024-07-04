@@ -6,7 +6,7 @@ import {
   Groups,
   Logout,
 } from '@mui/icons-material';
-import { Menu, MenuItem, SxProps, styled } from '@mui/material';
+import { ButtonProps, Menu, MenuItem, styled } from '@mui/material';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,24 +27,26 @@ import {
 } from '../../graphql/groups/queries/gen/MemberRequests.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
 import GhostButton from '../Shared/GhostButton';
+import PrimaryActionButton from '../Shared/PrimaryActionButton';
 
-const Button = styled(GhostButton)(() => ({
+const StyledGhostButton = styled(GhostButton)(() => ({
   marginRight: 8,
   minWidth: 110,
 }));
 
-interface Props {
+interface Props extends ButtonProps {
   groupId: number;
   currentUserId?: number;
   isGroupMember?: boolean;
-  sx?: SxProps;
+  isPrimary?: boolean;
 }
 
 const JoinGroupButton = ({
   groupId,
   currentUserId,
   isGroupMember,
-  sx,
+  isPrimary,
+  ...buttonProps
 }: Props) => {
   const [isHovering, setIsHovering] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
@@ -64,6 +66,8 @@ const JoinGroupButton = ({
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
+
+  const Button = isPrimary ? PrimaryActionButton : StyledGhostButton;
 
   if (!isVerified) {
     return (
@@ -256,7 +260,7 @@ const JoinGroupButton = ({
         onMouseLeave={isDesktop ? () => setIsHovering(false) : undefined}
         endIcon={!isDesktop && isGroupMember ? <ArrowDropDown /> : null}
         startIcon={renderBtnStartIcon()}
-        sx={sx}
+        {...buttonProps}
       >
         {getButtonText()}
       </Button>
