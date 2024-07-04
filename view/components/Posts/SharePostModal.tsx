@@ -80,7 +80,7 @@ const SharePostModal = ({
 
       {group && !canShareContent && (
         <>
-          <Typography marginBottom={2}>
+          <Typography>
             {t(
               sharedPostId
                 ? 'posts.prompts.joinToShare'
@@ -89,7 +89,13 @@ const SharePostModal = ({
             )}
           </Typography>
 
-          <Box border={`1px solid ${theme.palette.divider}`} borderRadius="8px">
+          <Box
+            border={`1px solid ${theme.palette.divider}`}
+            borderRadius="8px"
+            marginBottom={isDesktop ? 2.5 : 0}
+            marginTop={isDesktop ? 3.5 : 0}
+            marginX={isDesktop ? 3 : 0}
+          >
             <Link href={groupPath}>
               <CoverPhoto
                 imageId={group.coverPhoto?.id}
