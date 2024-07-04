@@ -56,6 +56,7 @@ const SharedProposal = ({ proposal, ...boxProps }: Props) => {
         <ProposalAction
           action={proposal.action}
           ratified={proposal.stage === ProposalStage.Ratified}
+          proposalId={proposal.id}
           isShared
         />
       )}

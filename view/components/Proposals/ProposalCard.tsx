@@ -253,6 +253,7 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
         <ProposalAction
           action={action}
           ratified={stage === ProposalStage.Ratified}
+          proposalId={id}
         />
       </CardContent>
 
