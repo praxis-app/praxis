@@ -23,19 +23,21 @@ const ROTATED_ICON_STYLES: SxProps = {
 };
 
 interface Props {
-  post: PostCardFragment;
+  currentUserId?: number;
+  eventId?: number;
+  groupId?: number;
   inModal: boolean;
   isPostPage: boolean;
-  groupId?: number;
-  eventId?: number;
+  post: PostCardFragment;
 }
 
 const PostCardFooter = ({
-  post,
+  currentUserId,
+  eventId,
+  groupId,
   inModal,
   isPostPage,
-  groupId,
-  eventId,
+  post,
 }: Props) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
@@ -89,12 +91,12 @@ const PostCardFooter = ({
   const comments = postCommentsData?.post.comments;
   const group = postCommentsData?.group;
   const event = postCommentsData?.event;
-  const me = postCommentsData?.me;
+  const serverPerms = postCommentsData?.me?.serverPermissions;
 
   const canManageComments = !!(
     event?.group?.myPermissions?.manageComments ||
     group?.myPermissions?.manageComments ||
-    me?.serverPermissions.manageComments
+    serverPerms?.manageComments
   );
 
   const notInGroup = group && !group.isJoinedByMe;
@@ -260,7 +262,7 @@ const PostCardFooter = ({
           <CommentsList
             canManageComments={canManageComments}
             comments={comments || []}
-            currentUserId={me?.id}
+            currentUserId={currentUserId}
             marginBottom={inModal && !isVerified ? 2.5 : undefined}
             postId={id}
           />
@@ -294,14 +296,14 @@ const PostCardFooter = ({
         onClose={() => setIsPostModalOpen(false)}
       />
 
-      {me && (
+      {currentUserId && (
         <SharePostModal
           isOpen={isShareModalOpen}
           onClose={() => setIsShareModalOpen(false)}
           sharedPostId={post.sharedPost?.id || post.id}
           sharedProposalId={post.sharedProposal?.id}
           sharedFromUserId={post.user.id}
-          currentUserId={me.id}
+          currentUserId={currentUserId}
         />
       )}
 

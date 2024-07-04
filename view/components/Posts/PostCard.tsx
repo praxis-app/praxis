@@ -232,6 +232,7 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
       </CardContent>
 
       <PostCardFooter
+        currentUserId={me?.id}
         eventId={event?.id}
         groupId={group?.id}
         inModal={inModal}
