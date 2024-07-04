@@ -81,7 +81,12 @@ const SharePostModal = ({
       {group && !canShareContent && (
         <>
           <Typography marginBottom={2}>
-            {t('posts.prompts.joinToShare', { groupName: group?.name })}
+            {t(
+              sharedPostId
+                ? 'posts.prompts.joinToShare'
+                : 'proposals.prompts.joinToShare',
+              { groupName: group?.name },
+            )}
           </Typography>
 
           <Box border={`1px solid ${theme.palette.divider}`} borderRadius="8px">
