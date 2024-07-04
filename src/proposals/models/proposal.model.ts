@@ -29,9 +29,9 @@ export class Proposal {
   @Field(() => Int)
   id: number;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  body?: string;
+  @Column({ type: 'varchar', nullable: true })
+  @Field(() => String, { nullable: true })
+  body: string | null;
 
   @Column({ default: ProposalStage.Voting })
   @Field()
@@ -80,10 +80,10 @@ export class Proposal {
   userId: number;
 
   @ManyToOne(() => Group, (group) => group.proposals, { onDelete: 'CASCADE' })
-  group?: Group;
+  group: Group | null;
 
-  @Column({ nullable: true })
-  groupId?: number;
+  @Column({ type: 'int', nullable: true })
+  groupId: number | null;
 
   @CreateDateColumn()
   @Field()

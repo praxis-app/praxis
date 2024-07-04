@@ -12,6 +12,7 @@ import { Group } from '../../groups/models/group.model';
 import { UpdateGroupConfigInput } from '../../groups/models/update-group-config.input';
 import { UpdateGroupInput } from '../../groups/models/update-group.input';
 import { Image } from '../../images/models/image.model';
+import { CreatePostInput } from '../../posts/models/create-post.input';
 import { CreateVoteInput } from '../../votes/models/create-vote.input';
 import { hasGroupPermission, hasServerPermission } from '../shield.utils';
 
@@ -203,14 +204,41 @@ export const canManageGroupEvents = rule()(async (
 
 export const isGroupMember = rule({ cache: 'strict' })(async (
   parent: Group | undefined,
-  args: { id: number },
-  { user, services: { groupsService, groupRolesService } }: Context,
+  args: { id: number } | { postData: CreatePostInput },
+  {
+    user,
+    services: {
+      groupRolesService,
+      groupsService,
+      postsService,
+      proposalsService,
+    },
+  }: Context,
 ) => {
   if (!user) {
     return UNAUTHORIZED;
   }
   if (parent) {
     return groupsService.isGroupMember(parent.id, user.id);
+  }
+  if ('postData' in args) {
+    const { sharedPostId, sharedProposalId } = args.postData;
+    let groupId = args.postData.groupId || null;
+
+    if (sharedPostId) {
+      const sharedPost = await postsService.getPost(sharedPostId);
+      groupId = sharedPost.groupId;
+    }
+    if (sharedProposalId) {
+      const proposal = await proposalsService.getProposal(sharedProposalId);
+      groupId = proposal.groupId;
+    }
+
+    // If the post is not associated with a group, allow access
+    if (!groupId) {
+      return true;
+    }
+    return groupsService.isGroupMember(groupId, user.id);
   }
   const { groupId } = await groupRolesService.getGroupRole({
     id: args.id,

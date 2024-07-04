@@ -1,6 +1,6 @@
 import { allow, or } from 'graphql-shield';
 import { isPublicEventPost } from '../rules/event.rules';
-import { canManageGroupPosts } from '../rules/group.rules';
+import { canManageGroupPosts, isGroupMember } from '../rules/group.rules';
 import { canManagePosts, isOwnPost, isPublicPost } from '../rules/post.rules';
 import { isPublicProposal } from '../rules/proposal.rules';
 import { isVerified } from '../rules/user.rules';
@@ -10,6 +10,7 @@ export const postPermissions = {
     post: or(isVerified, isPublicPost, isPublicEventPost),
   },
   Mutation: {
+    createPost: isGroupMember,
     updatePost: isOwnPost,
     deletePost: or(isOwnPost, canManagePosts, canManageGroupPosts),
   },
