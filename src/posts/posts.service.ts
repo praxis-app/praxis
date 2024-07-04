@@ -160,9 +160,8 @@ export class PostsService {
       // Notify the sharer if they are not the original author
       if (sharedFromUserId !== authorId) {
         await this.notificationsService.createNotification({
-          notificationType: postData.sharedPostId
-            ? NotificationType.PostShare
-            : NotificationType.ProposalShare,
+          // All shared or boosted content is created as a post
+          notificationType: NotificationType.PostShare,
           userId: sharedFromUserId,
           otherUserId: user.id,
           postId: post.id,
