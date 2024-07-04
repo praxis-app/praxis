@@ -142,20 +142,17 @@ export class PostsService {
             select: ['userId'],
           });
 
-      // Skip notifications if the user is sharing their own content
-      if (authorId === user.id) {
-        return { post };
+      // Notify the original author if they are not the sharer
+      if (authorId !== user.id) {
+        await this.notificationsService.createNotification({
+          notificationType: postData.sharedPostId
+            ? NotificationType.PostShare
+            : NotificationType.ProposalShare,
+          otherUserId: user.id,
+          postId: post.id,
+          userId: authorId,
+        });
       }
-
-      // Notify the original author of the shared content
-      await this.notificationsService.createNotification({
-        notificationType: postData.sharedPostId
-          ? NotificationType.PostShare
-          : NotificationType.ProposalShare,
-        otherUserId: user.id,
-        postId: post.id,
-        userId: authorId,
-      });
 
       // Notify the sharer if they are not the original author
       if (sharedFromUserId !== authorId) {
