@@ -31,8 +31,8 @@ const SharePostModal = ({
       <PostForm
         onSubmit={onClose}
         sharedFromUserId={sharedFromUserId}
+        sharedPostId={sharedProposalId ? undefined : sharedPostId}
         sharedProposalId={sharedProposalId}
-        sharedPostId={sharedPostId}
       />
     </Modal>
   );

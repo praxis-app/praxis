@@ -298,6 +298,7 @@ const PostCardFooter = ({
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
         sharedPostId={post.sharedPost?.id || post.id}
+        sharedProposalId={post.sharedProposal?.id}
         sharedFromUserId={post.user.id}
       />
 

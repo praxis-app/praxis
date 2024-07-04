@@ -104,7 +104,9 @@ const PostCard = ({ post, inModal = false, ...cardProps }: Props) => {
     body.length < 85 &&
     !images.length &&
     !sharedPost &&
-    !hasMissingSharedPost;
+    !hasMissingSharedPost &&
+    !sharedProposal &&
+    !hasMissingSharedProposal;
 
   const bodyStyles: SxProps = {
     lineHeight: 1.25,
