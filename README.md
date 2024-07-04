@@ -83,4 +83,4 @@ Once the extension is installed, open up Chrome DevTools, and navigate to the "a
 
 Praxis is open to contributions. Please read [CONTRIBUTING.md](https://github.com/praxis-app/praxis/blob/main/CONTRIBUTING.md) for more details.
 
-Message **xtal_nomad** on Discord if you'd like to get involved or collaborate.
+To get more involved or learn more about the project, join us on Discord: https://discord.gg/s5MxNBehxS
