@@ -145,16 +145,16 @@ const PostCardFooter = ({
   const handlePopoverClose = () => setAnchorEl(null);
 
   const handleShareBtnClick = () => {
-    if (hasMissingSharedPost) {
+    if (!isVerified) {
       toastVar({
-        title: t('posts.errors.missingContentShare'),
+        title: t('posts.prompts.verifyToShare'),
         status: 'info',
       });
       return;
     }
-    if (!isVerified) {
+    if (hasMissingSharedPost) {
       toastVar({
-        title: t('posts.prompts.verifyToShare'),
+        title: t('posts.errors.missingContentShare'),
         status: 'info',
       });
       return;
