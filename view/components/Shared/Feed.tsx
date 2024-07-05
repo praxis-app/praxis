@@ -30,6 +30,7 @@ interface Props extends BoxProps {
   setRowsPerPage: (rowsPerPage: number) => void;
   showTopPagination?: boolean;
   totalCount?: number;
+  tabs?: ReactNode;
 }
 
 const FeedItem = ({ item }: { item: FeedItemFragment }) => {
@@ -50,6 +51,7 @@ const Feed = ({
   page,
   rowsPerPage,
   setPage,
+  tabs,
   setRowsPerPage,
   showTopPagination,
   totalCount,
@@ -99,6 +101,8 @@ const Feed = ({
         setRowsPerPage={setRowsPerPage}
         showTopPagination={showTopPagination}
       >
+        {tabs}
+
         {getFeedItems().map((item) => (
           <FeedItem item={item} key={`${item.__typename}-${item.id}`} />
         ))}

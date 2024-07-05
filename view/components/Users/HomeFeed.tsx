@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Card, Tab, Tabs, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GroupsPageTabs } from '../../constants/group.constants';
@@ -49,30 +49,41 @@ const HomeFeed = () => {
   }
 
   return (
-    <Feed
-      feedItems={data?.me.homeFeed.nodes}
-      isLoading={loading}
-      onChangePage={handleChangePage}
-      page={page}
-      rowsPerPage={rowsPerPage}
-      setPage={setPage}
-      setRowsPerPage={setRowsPerPage}
-      totalCount={data?.me.homeFeed.totalCount}
-      noContentMessage={
-        <>
-          <Typography variant="body1" textAlign="center">
-            {`${t('users.prompts.readyToExplore')} `}
-            <Link
-              href={allGroupsTab}
-              sx={{ fontFamily: 'Inter Bold', marginRight: '0.5ch' }}
-            >
-              Join groups
-            </Link>
-            to populate your feed.
-          </Typography>
-        </>
-      }
-    />
+    <>
+      <Feed
+        feedItems={data?.me.homeFeed.nodes}
+        isLoading={loading}
+        onChangePage={handleChangePage}
+        page={page}
+        rowsPerPage={rowsPerPage}
+        setPage={setPage}
+        setRowsPerPage={setRowsPerPage}
+        totalCount={data?.me.homeFeed.totalCount}
+        tabs={
+          <Card>
+            <Tabs textColor="inherit" value={0} centered>
+              <Tab label="Your feed" />
+              <Tab label="Proposals" />
+              <Tab label="Following" />
+            </Tabs>
+          </Card>
+        }
+        noContentMessage={
+          <>
+            <Typography variant="body1" textAlign="center">
+              {`${t('users.prompts.readyToExplore')} `}
+              <Link
+                href={allGroupsTab}
+                sx={{ fontFamily: 'Inter Bold', marginRight: '0.5ch' }}
+              >
+                Join groups
+              </Link>
+              to populate your feed.
+            </Typography>
+          </>
+        }
+      />
+    </>
   );
 };
 
