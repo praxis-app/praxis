@@ -76,16 +76,14 @@ const SharePostModal = ({
       {isError && <Typography>{t('errors.somethingWentWrong')}</Typography>}
       {isLoading && <ProgressBar />}
 
-      {canShareContent && (
+      {canShareContent ? (
         <PostForm
           onSubmit={onClose}
           sharedFromUserId={sharedFromUserId}
           sharedPostId={sharedProposalId ? undefined : sharedPostId}
           sharedProposalId={sharedProposalId}
         />
-      )}
-
-      {group && !canShareContent && (
+      ) : (
         <>
           <Typography>{joinToSharePrompt}</Typography>
 
