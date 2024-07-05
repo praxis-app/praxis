@@ -160,6 +160,9 @@ const ProposalActionRole = ({
         }
         return '330px';
       }
+      if (isCompact) {
+        return '330px';
+      }
       return '390px';
     }
     if (isRoleChange) {
@@ -168,7 +171,10 @@ const ProposalActionRole = ({
       }
       return '80px';
     }
-    return '120px';
+    if (isCompact) {
+      return '120px';
+    }
+    return '130px';
   };
 
   return (
