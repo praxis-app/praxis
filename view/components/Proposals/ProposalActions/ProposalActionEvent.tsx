@@ -25,19 +25,26 @@ import Link from '../../Shared/Link';
 interface Props {
   event: ProposalActionEventFragment | ProposalActionEventInput;
   coverPhotoFile?: File;
+  isCompact?: boolean;
   isShared?: boolean;
   preview?: boolean;
+  proposalId?: number;
 }
 
 const ProposalActionEvent = ({
   event,
   coverPhotoFile,
-  preview,
+  isCompact,
   isShared,
+  preview,
+  proposalId,
 }: Props) => {
   const { pathname } = useLocation();
-  const isProposalPage = pathname.includes('/proposals/');
-  const [showEvent, setShowEvent] = useState(!!preview || isProposalPage);
+  const isPostPage = pathname.includes('/posts/');
+  const isProposalPage = pathname.includes(`/proposals/${proposalId}`);
+  const [showEvent, setShowEvent] = useState(
+    !!(preview || isProposalPage || isPostPage) && !isCompact,
+  );
 
   const [getUserByUserId, { data }] = useUserByUserIdLazyQuery();
 
@@ -110,6 +117,19 @@ const ProposalActionEvent = ({
     return '100%';
   };
 
+  const getSummaryTextWidth = () => {
+    if (isDesktop) {
+      if (isCompact) {
+        return '310px';
+      }
+      return '380px';
+    }
+    if (isCompact) {
+      return '100px';
+    }
+    return '120px';
+  };
+
   return (
     <Box
       marginBottom={preview || isShared ? 0 : 2.5}
@@ -132,7 +152,7 @@ const ProposalActionEvent = ({
             overflow="hidden"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
-            width={isDesktop ? '380px' : '120px'}
+            width={getSummaryTextWidth()}
           >
             {name}
           </Typography>

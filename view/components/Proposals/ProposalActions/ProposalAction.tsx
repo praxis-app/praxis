@@ -63,7 +63,14 @@ const ProposalAction = ({
         </Typography>
       );
     }
-    return <ProposalActionEvent event={event} isShared={isShared} />;
+    return (
+      <ProposalActionEvent
+        event={event}
+        isShared={isShared}
+        isCompact={isCompact}
+        proposalId={proposalId}
+      />
+    );
   }
 
   if (
