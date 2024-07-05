@@ -86,10 +86,12 @@ const ProposalAction = ({
     }
     return (
       <ProposalActionRole
-        actionType={actionType}
-        isShared={isShared}
-        ratified={ratified}
         role={role}
+        actionType={actionType}
+        isCompact={isCompact}
+        isShared={isShared}
+        proposalId={proposalId}
+        ratified={ratified}
       />
     );
   }

@@ -40,23 +40,31 @@ type RoleMember =
 interface Props extends Omit<BoxProps, 'role'> {
   role: ProposalActionRoleFragment | ProposalActionRoleInput;
   actionType: ProposalActionType;
+  isCompact?: boolean;
   isShared?: boolean;
   preview?: boolean;
+  proposalId?: number;
   ratified?: boolean;
 }
 
 // TODO: Rename as ProposedRole
 const ProposalActionRole = ({
+  role,
   actionType,
+  isCompact,
   isShared,
   preview,
+  proposalId,
   ratified,
-  role,
   ...boxProps
 }: Props) => {
   const { pathname } = useLocation();
-  const isProposalPage = pathname.includes('/proposals/');
-  const [showRole, setShowRole] = useState(!!preview || isProposalPage);
+  const isPostPage = pathname.includes('/posts/');
+  const isProposalPage = pathname.includes(`/proposals/${proposalId}`);
+
+  const [showRole, setShowRole] = useState(
+    !!(preview || isProposalPage || isPostPage) && !isCompact,
+  );
 
   const [
     getSelectedRole,
@@ -147,12 +155,17 @@ const ProposalActionRole = ({
   const getRoleNameTextWidth = () => {
     if (isDesktop) {
       if (isRoleChange) {
+        if (isCompact) {
+          return '260px';
+        }
         return '330px';
       }
       return '390px';
     }
-
     if (isRoleChange) {
+      if (isCompact) {
+        return '60px';
+      }
       return '80px';
     }
     return '120px';
