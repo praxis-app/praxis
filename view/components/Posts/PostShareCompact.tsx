@@ -271,11 +271,12 @@ const PostShareCompact = ({
         </CardFooterButton>
       </CardActions>
 
-      {currentUserId && sharedPost && (
+      {currentUserId && (
         <SharePostModal
           isOpen={isShareModalOpen}
           onClose={() => setIsShareModalOpen(false)}
-          sharedPostId={sharedPost.id}
+          sharedPostId={sharedPost?.id}
+          sharedProposalId={sharedProposal?.id}
           sharedFromUserId={post.user.id}
           currentUserId={currentUserId}
         />
