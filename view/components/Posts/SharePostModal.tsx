@@ -54,6 +54,13 @@ const SharePostModal = ({
   const groupPath = getGroupPath(group?.name || '');
   const canShareContent = group?.isJoinedByMe;
 
+  const joinToSharePrompt = t(
+    sharedPostId
+      ? 'posts.prompts.joinToShare'
+      : 'proposals.prompts.joinToShare',
+    { groupName: group?.name },
+  );
+
   const isLoading = postLoading || proposalLoading;
   const isError = postError || proposalError;
 
@@ -80,14 +87,7 @@ const SharePostModal = ({
 
       {group && !canShareContent && (
         <>
-          <Typography>
-            {t(
-              sharedPostId
-                ? 'posts.prompts.joinToShare'
-                : 'proposals.prompts.joinToShare',
-              { groupName: group?.name },
-            )}
-          </Typography>
+          <Typography>{joinToSharePrompt}</Typography>
 
           <Box
             border={`1px solid ${theme.palette.divider}`}
