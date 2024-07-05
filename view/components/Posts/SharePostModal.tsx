@@ -52,7 +52,7 @@ const SharePostModal = ({
 
   const group = postData?.post.group || proposalData?.proposal.group;
   const groupPath = getGroupPath(group?.name || '');
-  const canShareContent = group?.isJoinedByMe;
+  const canShareContent = !group || group.isJoinedByMe;
 
   const joinToSharePrompt = t(
     sharedPostId
