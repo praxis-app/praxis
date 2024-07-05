@@ -50,6 +50,9 @@ const SharePostModal = ({
   const theme = useTheme();
   const isDesktop = useIsDesktop();
 
+  const isLoading = postLoading || proposalLoading;
+  const isError = postError || proposalError;
+
   const group = postData?.post.group || proposalData?.proposal.group;
   const groupPath = getGroupPath(group?.name || '');
   const canShareContent = !group || group.isJoinedByMe;
@@ -61,29 +64,16 @@ const SharePostModal = ({
     { groupName: group?.name },
   );
 
-  const isLoading = postLoading || proposalLoading;
-  const isError = postError || proposalError;
+  const renderModalContent = () => {
+    if (isError) {
+      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+    }
+    if (isLoading) {
+      return <ProgressBar />;
+    }
 
-  return (
-    <Modal
-      contentStyles={{ paddingTop: 3, minHeight: 'fit-content' }}
-      title={t('actions.share')}
-      maxWidth="md"
-      onClose={onClose}
-      open={isOpen}
-      centeredTitle
-    >
-      {isError && <Typography>{t('errors.somethingWentWrong')}</Typography>}
-      {isLoading && <ProgressBar />}
-
-      {canShareContent ? (
-        <PostForm
-          onSubmit={onClose}
-          sharedFromUserId={sharedFromUserId}
-          sharedPostId={sharedProposalId ? undefined : sharedPostId}
-          sharedProposalId={sharedProposalId}
-        />
-      ) : (
+    if (!canShareContent) {
+      return (
         <>
           <Typography>{joinToSharePrompt}</Typography>
 
@@ -124,7 +114,29 @@ const SharePostModal = ({
             </Box>
           </Box>
         </>
-      )}
+      );
+    }
+
+    return (
+      <PostForm
+        onSubmit={onClose}
+        sharedFromUserId={sharedFromUserId}
+        sharedPostId={sharedProposalId ? undefined : sharedPostId}
+        sharedProposalId={sharedProposalId}
+      />
+    );
+  };
+
+  return (
+    <Modal
+      contentStyles={{ paddingTop: 3, minHeight: 'fit-content' }}
+      title={t('actions.share')}
+      maxWidth="md"
+      onClose={onClose}
+      open={isOpen}
+      centeredTitle
+    >
+      {renderModalContent()}
     </Modal>
   );
 };
