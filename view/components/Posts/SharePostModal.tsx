@@ -34,7 +34,7 @@ const SharePostModal = ({
     error: postError,
   } = useIsPostShareableQuery({
     variables: { postId: sharedPostId! },
-    skip: !sharedPostId,
+    skip: !sharedPostId || !isOpen,
   });
 
   const {
@@ -43,7 +43,7 @@ const SharePostModal = ({
     error: proposalError,
   } = useIsProposalShareableQuery({
     variables: { proposalId: sharedProposalId! },
-    skip: !sharedProposalId,
+    skip: !sharedProposalId || !isOpen,
   });
 
   const { t } = useTranslation();
