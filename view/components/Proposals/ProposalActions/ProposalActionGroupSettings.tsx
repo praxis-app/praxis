@@ -25,22 +25,27 @@ interface Props {
     | ProposalActionGroupSettingsFragment
     | ProposalActionGroupConfigInput;
   groupId?: number | null;
-  preview?: boolean;
-  ratified?: boolean;
+  isCompact?: boolean;
   isShared?: boolean;
+  preview?: boolean;
+  proposalId?: number;
+  ratified?: boolean;
 }
 
 const ProposalActionGroupSettings = ({
-  groupSettings,
-  preview,
-  ratified,
   groupId,
+  groupSettings,
+  isCompact,
   isShared,
+  preview,
+  proposalId,
+  ratified,
 }: Props) => {
   const { pathname } = useLocation();
-  const isProposalPage = pathname.includes('/proposals/');
+  const isProposalPage = pathname.includes(`/proposals/${proposalId}`);
+  const isPostPage = pathname.includes('/posts/');
   const [showDetails, setShowDetails] = useState(
-    !isShared && (!!preview || isProposalPage),
+    !!(preview || isProposalPage || isPostPage) && !isCompact,
   );
 
   const { t } = useTranslation();

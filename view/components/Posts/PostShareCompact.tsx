@@ -202,7 +202,9 @@ const PostShareCompact = ({
       );
     }
     if (sharedProposal) {
-      return <SharedProposal proposal={sharedProposal} width="100%" />;
+      return (
+        <SharedProposal proposal={sharedProposal} width="100%" isCompact />
+      );
     }
     return <SharedPost post={sharedPost} width="100%" />;
   };

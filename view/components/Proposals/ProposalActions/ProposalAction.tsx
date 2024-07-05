@@ -13,6 +13,7 @@ interface Props {
   action: ProposalActionFragment;
   proposalId: number;
   isShared?: boolean;
+  isCompact?: boolean;
   ratified: boolean;
 }
 
@@ -28,6 +29,7 @@ const ProposalAction = ({
   },
   ratified,
   proposalId,
+  isCompact,
   isShared,
 }: Props) => {
   const { t } = useTranslation();
@@ -47,6 +49,8 @@ const ProposalAction = ({
         groupSettings={groupSettings}
         ratified={ratified}
         isShared={isShared}
+        isCompact={isCompact}
+        proposalId={proposalId}
       />
     );
   }

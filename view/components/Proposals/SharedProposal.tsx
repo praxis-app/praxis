@@ -20,9 +20,10 @@ import ProposalAction from './ProposalActions/ProposalAction';
 
 interface Props extends BoxProps {
   proposal?: SharedProposalFragment | null;
+  isCompact?: boolean;
 }
 
-const SharedProposal = ({ proposal, ...boxProps }: Props) => {
+const SharedProposal = ({ proposal, isCompact, ...boxProps }: Props) => {
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
   const theme = useTheme();
@@ -57,6 +58,7 @@ const SharedProposal = ({ proposal, ...boxProps }: Props) => {
           action={proposal.action}
           ratified={proposal.stage === ProposalStage.Ratified}
           proposalId={proposal.id}
+          isCompact={isCompact}
           isShared
         />
       )}
