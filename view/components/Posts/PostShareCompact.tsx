@@ -68,7 +68,7 @@ const PostShareCompact = ({
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
-  const [getSharedContent, { data, loading, error }] =
+  const [getSharedContent, { data, loading, error, called }] =
     useSharedPostAttachmentLazyQuery();
   const [deletePost] = useDeletePostMutation();
 
@@ -92,13 +92,18 @@ const PostShareCompact = ({
   const postPath = `${NavigationPaths.Posts}/${id}`;
   const userProfilePath = getUserProfilePath(user?.name);
 
-  const handleShareBtnClick = () => {
+  const handleShareBtnClick = async () => {
     if (!isVerified) {
       toastVar({
         title: t('posts.prompts.verifyToShare'),
         status: 'info',
       });
       return;
+    }
+    if (!called) {
+      await getSharedContent({
+        variables: { postId: id },
+      });
     }
     setIsShareModalOpen(true);
   };
