@@ -32,6 +32,7 @@ import EventItemAvatar from '../Events/EventItemAvatar';
 import GroupItemAvatar from '../Groups/GroupItemAvatar';
 import LikeBadge from '../Likes/LikeBadge';
 import LikesModal from '../Likes/LikesModal';
+import SharedProposal from '../Proposals/SharedProposal';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import ItemMenu from '../Shared/ItemMenu';
@@ -67,7 +68,7 @@ const PostShareCompact = ({
   const [isLikesModalOpen, setIsLikesModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
-  const [getSharedPost, { data, loading, error }] =
+  const [getSharedContent, { data, loading, error }] =
     useSharedPostAttachmentLazyQuery();
   const [deletePost] = useDeletePostMutation();
 
@@ -81,6 +82,7 @@ const PostShareCompact = ({
   const isMe = currentUserId === user.id;
   const formattedDate = timeAgo(createdAt);
   const sharedPost = data?.post.sharedPost;
+  const sharedProposal = data?.post.sharedProposal;
 
   const isEventPage = pathname.includes(NavigationPaths.Events);
   const isGroupPage = pathname.includes(`${NavigationPaths.Groups}/`);
@@ -168,7 +170,6 @@ const PostShareCompact = ({
   const renderMenu = () => {
     const editPostPath = `${NavigationPaths.Posts}/${id}${NavigationPaths.Edit}`;
     const deletePostPrompt = t('prompts.deleteItem', { itemType: 'post' });
-
     const canDelete = canManagePosts || isMe;
 
     return (
@@ -182,6 +183,28 @@ const PostShareCompact = ({
         setAnchorEl={setMenuAnchorEl}
       />
     );
+  };
+
+  const renderCardContent = () => {
+    if (error) {
+      return <Typography>{t('errors.somethingWentWrong')}</Typography>;
+    }
+    if (!data) {
+      return (
+        <Button
+          sx={{ textTransform: 'none', paddingX: 2 }}
+          onClick={() => getSharedContent({ variables: { postId: id } })}
+          startIcon={loading && <Spinner size={13} sx={{ marginTop: -0.12 }} />}
+          disabled={loading}
+        >
+          {t('posts.actions.showAttachment')}
+        </Button>
+      );
+    }
+    if (sharedProposal) {
+      return <SharedProposal proposal={sharedProposal} width="100%" />;
+    }
+    return <SharedPost post={sharedPost} width="100%" />;
   };
 
   return (
@@ -205,21 +228,7 @@ const PostShareCompact = ({
           paddingBottom: data && likeCount ? undefined : 0,
         }}
       >
-        {data ? (
-          <SharedPost post={sharedPost} width="100%" />
-        ) : (
-          <Button
-            sx={{ textTransform: 'none', paddingX: 2 }}
-            onClick={() => getSharedPost({ variables: { postId: id } })}
-            startIcon={
-              loading && <Spinner size={13} sx={{ marginTop: -0.12 }} />
-            }
-            disabled={loading}
-          >
-            {t('posts.actions.showAttachment')}
-          </Button>
-        )}
-        {error && <Typography>{t('errors.somethingWentWrong')}</Typography>}
+        {renderCardContent()}
       </CardContent>
 
       {!!likeCount && (
@@ -260,12 +269,13 @@ const PostShareCompact = ({
         </CardFooterButton>
       </CardActions>
 
-      {sharedPost && (
+      {currentUserId && sharedPost && (
         <SharePostModal
           isOpen={isShareModalOpen}
           onClose={() => setIsShareModalOpen(false)}
           sharedPostId={sharedPost.id}
           sharedFromUserId={post.user.id}
+          currentUserId={currentUserId}
         />
       )}
     </Box>

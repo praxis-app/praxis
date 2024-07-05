@@ -14,12 +14,13 @@ import { useIsProposalRatifiedSubscription } from '../../graphql/proposals/subsc
 import { useInView } from '../../hooks/shared.hooks';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
+import SharePostModal from '../Posts/SharePostModal';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import VoteBadges from '../Votes/VoteBadges';
 import VoteButton from '../Votes/VoteButton';
 import ProposalModal from './ProposalModal';
-import SharePostModal from '../Posts/SharePostModal';
+import ProposalSharesModal from './ProposalSharesModal';
 
 const ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -49,6 +50,8 @@ const ProposalCardFooter = ({
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal || isProposalPage);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isProposalSharesModalOpen, setIsProposalSharesModalOpen] =
+    useState(false);
 
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isVerified = useReactiveVar(isVerifiedVar);
@@ -127,7 +130,15 @@ const ProposalCardFooter = ({
     proposal,
   ]);
 
-  const { voteCount, commentCount, group, stage, myVote, settings } = proposal;
+  const {
+    group,
+    myVote,
+    settings,
+    shareCount,
+    commentCount,
+    voteCount,
+    stage,
+  } = proposal;
 
   const me = proposalCommentsData?.me;
   const comments = proposalCommentsData?.proposal?.comments;
@@ -141,13 +152,6 @@ const ProposalCardFooter = ({
   const canManageComments = !!(
     group?.myPermissions?.manageComments || me?.serverPermissions.manageComments
   );
-
-  const commentCountStyles: SxProps = {
-    '&:hover': { textDecoration: 'underline' },
-    transform: 'translateY(3px)',
-    cursor: 'pointer',
-    height: '24px',
-  };
 
   const handleVoteBtnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!isLoggedIn) {
@@ -214,23 +218,49 @@ const ProposalCardFooter = ({
     setIsShareModalOpen(true);
   };
 
+  const handleViewSharesBtnClick = () => {
+    if (!isVerified) {
+      toastVar({
+        title: t('posts.prompts.verifyToViewShares'),
+        status: 'info',
+      });
+      return;
+    }
+    setIsProposalSharesModalOpen(true);
+  };
+
   return (
     <Box ref={ref}>
       <Flex
         justifyContent={voteCount ? 'space-between' : 'end'}
-        paddingBottom={voteCount || commentCount ? 0.8 : 0}
+        paddingBottom={voteCount || commentCount || shareCount ? 0.8 : 0}
         paddingX={inModal ? 0 : '16px'}
       >
         {!!voteCount && <VoteBadges proposal={proposal} />}
 
-        {!!commentCount && (
-          <Typography
-            color="text.secondary"
-            onClick={handleCommentBtnClick}
-            sx={commentCountStyles}
-          >
-            {t('comments.labels.xComments', { count: commentCount })}
-          </Typography>
+        {!!(commentCount + shareCount) && (
+          <Flex sx={{ transform: 'translateY(3px)', cursor: 'pointer' }}>
+            {!!commentCount && (
+              <Typography
+                color="text.secondary"
+                onClick={handleCommentBtnClick}
+                marginRight={shareCount ? 1.5 : 0}
+                sx={{ '&:hover': { textDecoration: 'underline' } }}
+              >
+                {t('comments.labels.xComments', { count: commentCount })}
+              </Typography>
+            )}
+
+            {!!shareCount && (
+              <Typography
+                color="text.secondary"
+                sx={{ '&:hover': { textDecoration: 'underline' } }}
+                onClick={handleViewSharesBtnClick}
+              >
+                {t('posts.labels.xShares', { count: shareCount })}
+              </Typography>
+            )}
+          </Flex>
         )}
       </Flex>
 
@@ -309,6 +339,13 @@ const ProposalCardFooter = ({
           currentUserId={currentUserId}
         />
       )}
+
+      <ProposalSharesModal
+        proposalId={proposal.id}
+        isOpen={isProposalSharesModalOpen}
+        onClose={() => setIsProposalSharesModalOpen(false)}
+        isVerified={isVerified}
+      />
     </Box>
   );
 };

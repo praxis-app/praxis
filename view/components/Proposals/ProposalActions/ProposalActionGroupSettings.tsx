@@ -39,7 +39,9 @@ const ProposalActionGroupSettings = ({
 }: Props) => {
   const { pathname } = useLocation();
   const isProposalPage = pathname.includes('/proposals/');
-  const [showDetails, setShowDetails] = useState(!!preview || isProposalPage);
+  const [showDetails, setShowDetails] = useState(
+    !isShared && (!!preview || isProposalPage),
+  );
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
@@ -239,7 +241,7 @@ const ProposalActionGroupSettings = ({
             overflow="hidden"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
-            width={isDesktop ? '330px' : '140px'}
+            width={isDesktop && !isShared ? '330px' : '140px'}
           >
             {getSettingsChanges()}
           </Typography>
