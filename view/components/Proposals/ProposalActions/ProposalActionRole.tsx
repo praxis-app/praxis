@@ -201,7 +201,7 @@ const ProposalActionRole = ({
           </Box>
         </AccordionSummary>
 
-        <AccordionDetails sx={{ marginBottom: isDesktop ? 2 : 3 }}>
+        <AccordionDetails sx={{ marginBottom: 2 }}>
           {!isRoleChange && !members?.length && !hasPermissions && (
             <Typography>
               {t('proposals.prompts.emptyPermsAndMembers')}
