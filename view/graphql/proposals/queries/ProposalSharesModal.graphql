@@ -1,0 +1,14 @@
+query ProposalSharesModal($proposalId: Int!, $isVerified: Boolean!) {
+  proposal(id: $proposalId) {
+    id
+    shares {
+      ...PostShareCompact
+    }
+  }
+  me {
+    id
+    serverPermissions {
+      managePosts
+    }
+  }
+}

@@ -40,21 +40,31 @@ type RoleMember =
 interface Props extends Omit<BoxProps, 'role'> {
   role: ProposalActionRoleFragment | ProposalActionRoleInput;
   actionType: ProposalActionType;
-  ratified?: boolean;
+  isCompact?: boolean;
+  isShared?: boolean;
   preview?: boolean;
+  proposalId?: number;
+  ratified?: boolean;
 }
 
 // TODO: Rename as ProposedRole
 const ProposalActionRole = ({
-  actionType,
-  preview,
-  ratified,
   role,
+  actionType,
+  isCompact,
+  isShared,
+  preview,
+  proposalId,
+  ratified,
   ...boxProps
 }: Props) => {
   const { pathname } = useLocation();
-  const isProposalPage = pathname.includes('/proposals/');
-  const [showRole, setShowRole] = useState(!!preview || isProposalPage);
+  const isPostPage = pathname.includes('/posts/');
+  const isProposalPage = pathname.includes(`/proposals/${proposalId}`);
+
+  const [showRole, setShowRole] = useState(
+    !!(preview || isProposalPage || isPostPage) && !isCompact,
+  );
 
   const [
     getSelectedRole,
@@ -126,7 +136,7 @@ const ProposalActionRole = ({
     : t('proposals.labels.roleChangeProposal');
 
   const accordionStyles: SxProps = {
-    backgroundColor: 'rgb(0, 0, 0, 0.1)',
+    backgroundColor: isShared ? undefined : 'rgb(0, 0, 0, 0.1)',
     borderRadius: 2,
     paddingX: 2,
   };
@@ -145,19 +155,30 @@ const ProposalActionRole = ({
   const getRoleNameTextWidth = () => {
     if (isDesktop) {
       if (isRoleChange) {
+        if (isCompact) {
+          return '260px';
+        }
+        return '330px';
+      }
+      if (isCompact) {
         return '330px';
       }
       return '390px';
     }
-
     if (isRoleChange) {
+      if (isCompact) {
+        return '60px';
+      }
       return '80px';
     }
-    return '120px';
+    if (isCompact) {
+      return '120px';
+    }
+    return '130px';
   };
 
   return (
-    <Box marginBottom={preview ? 0 : 2.5} {...boxProps}>
+    <Box marginBottom={preview || isShared ? 0 : 2.5} {...boxProps}>
       <Accordion
         expanded={showRole}
         onChange={() => setShowRole(!showRole)}
@@ -180,7 +201,7 @@ const ProposalActionRole = ({
           </Box>
         </AccordionSummary>
 
-        <AccordionDetails sx={{ marginBottom: isDesktop ? 2 : 3 }}>
+        <AccordionDetails sx={{ marginBottom: 2 }}>
           {!isRoleChange && !members?.length && !hasPermissions && (
             <Typography>
               {t('proposals.prompts.emptyPermsAndMembers')}
@@ -265,6 +286,10 @@ const ProposalActionRole = ({
           </Grid>
         </AccordionDetails>
       </Accordion>
+
+      {isShared && (
+        <Divider sx={{ marginX: 2, marginBottom: showRole ? 1.5 : 1 }} />
+      )}
     </Box>
   );
 };

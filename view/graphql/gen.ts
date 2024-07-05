@@ -198,6 +198,7 @@ export type CreatePostInput = {
   images?: InputMaybe<Array<Scalars['Upload']['input']>>;
   sharedFromUserId?: InputMaybe<Scalars['Int']['input']>;
   sharedPostId?: InputMaybe<Scalars['Int']['input']>;
+  sharedProposalId?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreatePostPayload = {
@@ -860,6 +861,7 @@ export type Post = {
   event?: Maybe<Event>;
   group?: Maybe<Group>;
   hasMissingSharedPost: Scalars['Boolean']['output'];
+  hasMissingSharedProposal: Scalars['Boolean']['output'];
   id: Scalars['Int']['output'];
   images: Array<Image>;
   isLikedByMe: Scalars['Boolean']['output'];
@@ -867,6 +869,7 @@ export type Post = {
   likes: Array<Like>;
   shareCount: Scalars['Int']['output'];
   sharedPost?: Maybe<Post>;
+  sharedProposal?: Maybe<Proposal>;
   shares: Array<Post>;
   user: User;
 };
@@ -883,6 +886,8 @@ export type Proposal = {
   images: Array<Image>;
   myVote?: Maybe<Vote>;
   settings: ProposalConfig;
+  shareCount: Scalars['Int']['output'];
+  shares: Array<Post>;
   stage: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   user: User;

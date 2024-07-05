@@ -268,12 +268,11 @@ const Notification = ({
     ) {
       return `${NavigationPaths.Proposals}/${proposal?.id}`;
     }
-    if (notificationType === NotificationType.PostComment) {
-      return `${NavigationPaths.Posts}/${post?.id}`;
-    }
     if (
       notificationType === NotificationType.PostLike ||
-      notificationType === NotificationType.PostShare
+      notificationType === NotificationType.PostShare ||
+      notificationType === NotificationType.PostComment ||
+      notificationType === NotificationType.ProposalShare
     ) {
       return `${NavigationPaths.Posts}/${post?.id}`;
     }

@@ -96,20 +96,24 @@
 
   "proposals": {
     "prompts": {
+      "cannotEditProposedRoles": "Editing of proposed roles is still in development.",
       "createProposal": "Create a proposal...",
+      "emptyPermsAndMembers": "No proposed permissions or role members.",
       "joinGroupToVote": "You need to be a group member to vote on this proposal.",
       "loginToVote": "You need to be logged in to vote.",
       "verifiedOnlyVote": "You must be verified to vote on proposals.",
-      "verifyToLikeComments": "You must be verified to like proposal comments.",
       "verifyToComment": "No comments yet. You must be verified to comment on proposals.",
-      "cannotEditProposedRoles": "Editing of proposed roles is still in development.",
-      "emptyPermsAndMembers": "No proposed permissions or role members."
+      "verifyToLikeComments": "You must be verified to like proposal comments.",
+      "verifyToShare": "You must be verified to share proposals.",
+      "verifyToViewShares": "You must be verified to see who shared this proposal.",
+      "joinToShare": "You must be a member of {{groupName}} to share this proposal."
     },
     "actions": {
       "attachNewCoverPhoto": "Attach new cover photo",
       "changeGroupRole": "Propose a role change",
       "createGroupRole": "Propose a new group role",
       "createProposal": "Create Proposal",
+      "shareProposal": "Share proposal",
       "vote": "Vote"
     },
     "actionTypes": {
@@ -294,7 +298,8 @@
       "verifyToShare": "You must be verified to share posts.",
       "verifyToViewShares": "You must be verified to see who shared this post.",
       "verifyToLikeComments": "You must be verified to like comments on posts.",
-      "verifyToComment": "No comments yet. You must be verified to comment on posts."
+      "verifyToComment": "No comments yet. You must be verified to comment on posts.",
+      "joinToShare": "You need to be a member of {{groupName}} to share this post."
     },
     "errors": {
       "missingContentShare": "We're unable to share this post as the original content has been deleted."

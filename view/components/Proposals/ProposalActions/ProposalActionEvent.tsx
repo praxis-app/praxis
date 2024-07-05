@@ -19,19 +19,32 @@ import Accordion, {
   AccordionSummary,
 } from '../../Shared/Accordion';
 import ExternalLink from '../../Shared/ExternalLink';
-import Link from '../../Shared/Link';
 import FormattedText from '../../Shared/FormattedText';
+import Link from '../../Shared/Link';
 
 interface Props {
   event: ProposalActionEventFragment | ProposalActionEventInput;
   coverPhotoFile?: File;
+  isCompact?: boolean;
+  isShared?: boolean;
   preview?: boolean;
+  proposalId?: number;
 }
 
-const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
+const ProposalActionEvent = ({
+  event,
+  coverPhotoFile,
+  isCompact,
+  isShared,
+  preview,
+  proposalId,
+}: Props) => {
   const { pathname } = useLocation();
-  const isProposalPage = pathname.includes('/proposals/');
-  const [showEvent, setShowEvent] = useState(!!preview || isProposalPage);
+  const isPostPage = pathname.includes('/posts/');
+  const isProposalPage = pathname.includes(`/proposals/${proposalId}`);
+  const [showEvent, setShowEvent] = useState(
+    !!(preview || isProposalPage || isPostPage) && !isCompact,
+  );
 
   const [getUserByUserId, { data }] = useUserByUserIdLazyQuery();
 
@@ -79,7 +92,7 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
     .replace(/minutes|minute/g, t('time.min'));
 
   const accordionStyles: SxProps = {
-    backgroundColor: 'rgb(0, 0, 0, 0.1)',
+    backgroundColor: isShared ? undefined : 'rgb(0, 0, 0, 0.1)',
     borderRadius: 2,
     paddingX: 2,
   };
@@ -104,8 +117,24 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
     return '100%';
   };
 
+  const getSummaryTextWidth = () => {
+    if (isDesktop) {
+      if (isCompact) {
+        return '310px';
+      }
+      return '380px';
+    }
+    if (isCompact) {
+      return '100px';
+    }
+    return '120px';
+  };
+
   return (
-    <Box marginBottom={preview ? 0 : 2.5} marginTop={preview ? 2 : 0}>
+    <Box
+      marginBottom={preview || isShared ? 0 : 2.5}
+      marginTop={preview ? 2 : 0}
+    >
       <Accordion
         expanded={showEvent}
         onChange={() => setShowEvent(!showEvent)}
@@ -123,7 +152,7 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
             overflow="hidden"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
-            width={isDesktop ? '380px' : '120px'}
+            width={getSummaryTextWidth()}
           >
             {name}
           </Typography>
@@ -213,6 +242,10 @@ const ProposalActionEvent = ({ event, coverPhotoFile, preview }: Props) => {
           <FormattedText text={description} />
         </AccordionDetails>
       </Accordion>
+
+      {isShared && (
+        <Divider sx={{ marginX: 2, marginBottom: showEvent ? 1.5 : 1 }} />
+      )}
     </Box>
   );
 };

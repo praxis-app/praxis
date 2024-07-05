@@ -1,14 +1,19 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { ProposalActionType } from '../../../constants/proposal.constants';
+import { NavigationPaths } from '../../../constants/shared.constants';
 import { ProposalActionFragment } from '../../../graphql/proposals/fragments/gen/ProposalAction.gen';
 import AttachedImage from '../../Images/AttachedImage';
+import Link from '../../Shared/Link';
 import ProposalActionEvent from './ProposalActionEvent';
 import ProposalActionGroupSettings from './ProposalActionGroupSettings';
 import ProposalActionRole from './ProposalActionRole';
 
 interface Props {
   action: ProposalActionFragment;
+  proposalId: number;
+  isShared?: boolean;
+  isCompact?: boolean;
   ratified: boolean;
 }
 
@@ -23,8 +28,13 @@ const ProposalAction = ({
     role,
   },
   ratified,
+  proposalId,
+  isCompact,
+  isShared,
 }: Props) => {
   const { t } = useTranslation();
+
+  const proposalPath = `${NavigationPaths.Proposals}/${proposalId}`;
 
   if (actionType === ProposalActionType.ChangeSettings) {
     if (!groupSettings) {
@@ -38,6 +48,9 @@ const ProposalAction = ({
       <ProposalActionGroupSettings
         groupSettings={groupSettings}
         ratified={ratified}
+        isShared={isShared}
+        isCompact={isCompact}
+        proposalId={proposalId}
       />
     );
   }
@@ -50,7 +63,14 @@ const ProposalAction = ({
         </Typography>
       );
     }
-    return <ProposalActionEvent event={event} />;
+    return (
+      <ProposalActionEvent
+        event={event}
+        isShared={isShared}
+        isCompact={isCompact}
+        proposalId={proposalId}
+      />
+    );
   }
 
   if (
@@ -66,43 +86,87 @@ const ProposalAction = ({
     }
     return (
       <ProposalActionRole
-        actionType={actionType}
-        ratified={ratified}
         role={role}
+        actionType={actionType}
+        isCompact={isCompact}
+        isShared={isShared}
+        proposalId={proposalId}
+        ratified={ratified}
       />
     );
   }
 
   if (actionType === ProposalActionType.ChangeName) {
     return (
-      <Typography marginBottom={3.5}>
-        {t('proposals.labels.newGroupName')}: {groupName}
-      </Typography>
+      <Box
+        marginBottom={isShared ? 0 : 3.5}
+        marginTop={isShared ? 1.5 : 0}
+        paddingLeft={isShared ? 2 : 0}
+        paddingRight={isShared ? 2 : 0}
+      >
+        <Link href={proposalPath}>
+          <Box component="span" fontFamily="Inter Medium" marginRight="0.5ch">
+            {t('proposals.labels.newGroupName')}:
+          </Box>
+          {groupName}
+        </Link>
+
+        {isShared && <Divider sx={{ marginTop: 1.5, marginBottom: 1 }} />}
+      </Box>
     );
   }
 
   if (actionType === ProposalActionType.ChangeDescription) {
     return (
-      <Typography marginBottom={3.5}>
-        {t('proposals.labels.newGroupDescription')}: {groupDescription}
-      </Typography>
+      <Box
+        marginBottom={isShared ? 0 : 3.5}
+        marginTop={isShared ? 1.5 : 0}
+        paddingLeft={isShared ? 2 : 0}
+        paddingRight={isShared ? 2 : 0}
+      >
+        <Link href={proposalPath}>
+          <Box component="span" fontFamily="Inter Medium" marginRight="0.5ch">
+            {t('proposals.labels.newGroupDescription')}:
+          </Box>
+          {groupDescription}
+        </Link>
+
+        {isShared && <Divider sx={{ marginTop: 1.5, marginBottom: 1 }} />}
+      </Box>
     );
   }
 
   if (actionType === ProposalActionType.ChangeCoverPhoto) {
     if (!groupCoverPhoto) {
       return (
-        <Typography marginBottom={3.5}>
+        <Link
+          href={proposalPath}
+          sx={{
+            display: 'block',
+            marginBottom: 3.5,
+            marginTop: isShared ? 0.8 : 0,
+            paddingLeft: isShared ? 1.5 : 0,
+          }}
+        >
           {t('errors.somethingWentWrong')}
-        </Typography>
+        </Link>
       );
     }
     return (
-      <Box marginBottom="20px">
-        <Typography gutterBottom fontSize={14}>
-          {t('proposals.labels.proposedGroupCoverPhoto')}:
-        </Typography>
-        <AttachedImage image={groupCoverPhoto} width="55%" />
+      <Box
+        marginBottom={isShared ? 0 : '20px'}
+        marginTop={isShared ? 1 : 0}
+        paddingLeft={isShared ? 2 : 0}
+        paddingRight={isShared ? 2 : 0}
+      >
+        <Link href={proposalPath}>
+          <Typography fontSize={14} fontFamily="Inter Medium" gutterBottom>
+            {t('proposals.labels.proposedGroupCoverPhoto')}:
+          </Typography>
+          <AttachedImage image={groupCoverPhoto} width="55%" />
+        </Link>
+
+        {isShared && <Divider sx={{ marginY: 0.8 }} />}
       </Box>
     );
   }

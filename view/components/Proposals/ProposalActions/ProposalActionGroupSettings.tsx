@@ -1,4 +1,4 @@
-import { Box, Grid, SxProps, Typography } from '@mui/material';
+import { Box, Divider, Grid, SxProps, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -25,19 +25,28 @@ interface Props {
     | ProposalActionGroupSettingsFragment
     | ProposalActionGroupConfigInput;
   groupId?: number | null;
+  isCompact?: boolean;
+  isShared?: boolean;
   preview?: boolean;
+  proposalId?: number;
   ratified?: boolean;
 }
 
 const ProposalActionGroupSettings = ({
-  groupSettings,
-  preview,
-  ratified,
   groupId,
+  groupSettings,
+  isCompact,
+  isShared,
+  preview,
+  proposalId,
+  ratified,
 }: Props) => {
   const { pathname } = useLocation();
-  const isProposalPage = pathname.includes('/proposals/');
-  const [showDetails, setShowDetails] = useState(!!preview || isProposalPage);
+  const isProposalPage = pathname.includes(`/proposals/${proposalId}`);
+  const isPostPage = pathname.includes('/posts/');
+  const [showDetails, setShowDetails] = useState(
+    !!(preview || isProposalPage || isPostPage) && !isCompact,
+  );
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
@@ -126,7 +135,7 @@ const ProposalActionGroupSettings = ({
   );
 
   const accordionStyles: SxProps = {
-    backgroundColor: 'rgb(0, 0, 0, 0.1)',
+    backgroundColor: isShared ? undefined : 'rgb(0, 0, 0, 0.1)',
     borderRadius: 2,
     paddingX: 2,
   };
@@ -211,7 +220,10 @@ const ProposalActionGroupSettings = ({
   };
 
   return (
-    <Box marginBottom={preview ? 0 : 2.5} marginTop={preview ? 2 : 0}>
+    <Box
+      marginBottom={preview || isShared ? 0 : 2.5}
+      marginTop={preview ? 2 : 0}
+    >
       <Accordion
         expanded={showDetails}
         onChange={() => setShowDetails(!showDetails)}
@@ -234,7 +246,7 @@ const ProposalActionGroupSettings = ({
             overflow="hidden"
             textOverflow="ellipsis"
             whiteSpace="nowrap"
-            width={isDesktop ? '330px' : '140px'}
+            width={isDesktop && !isShared ? '330px' : '140px'}
           >
             {getSettingsChanges()}
           </Typography>
@@ -309,6 +321,10 @@ const ProposalActionGroupSettings = ({
           </Grid>
         </AccordionDetails>
       </Accordion>
+
+      {isShared && (
+        <Divider sx={{ marginX: 2, marginBottom: showDetails ? 1.5 : 1 }} />
+      )}
     </Box>
   );
 };

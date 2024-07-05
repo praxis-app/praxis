@@ -15,6 +15,7 @@ import { Comment } from '../../comments/models/comment.model';
 import { Group } from '../../groups/models/group.model';
 import { Image } from '../../images/models/image.model';
 import { Notification } from '../../notifications/models/notification.model';
+import { Post } from '../../posts/models/post.model';
 import { User } from '../../users/models/user.model';
 import { Vote } from '../../votes/models/vote.model';
 import { ProposalAction } from '../proposal-actions/models/proposal-action.model';
@@ -28,9 +29,9 @@ export class Proposal {
   @Field(() => Int)
   id: number;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  body?: string;
+  @Column({ type: 'varchar', nullable: true })
+  @Field(() => String, { nullable: true })
+  body: string | null;
 
   @Column({ default: ProposalStage.Voting })
   @Field()
@@ -65,6 +66,9 @@ export class Proposal {
   @Field(() => [Image])
   images: Image[];
 
+  @OneToMany(() => Post, (post) => post.sharedProposal)
+  shares: Post[];
+
   @OneToMany(() => Notification, (notification) => notification.proposal)
   notifications: Notification[];
 
@@ -76,10 +80,10 @@ export class Proposal {
   userId: number;
 
   @ManyToOne(() => Group, (group) => group.proposals, { onDelete: 'CASCADE' })
-  group?: Group;
+  group: Group | null;
 
-  @Column({ nullable: true })
-  groupId?: number;
+  @Column({ type: 'int', nullable: true })
+  groupId: number | null;
 
   @CreateDateColumn()
   @Field()

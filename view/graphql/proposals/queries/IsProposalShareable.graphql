@@ -1,0 +1,12 @@
+query IsProposalShareable($proposalId: Int!) {
+  proposal(id: $proposalId) {
+    id
+    group {
+      id
+      name
+      description
+      isJoinedByMe
+      ...GroupAvatar
+    }
+  }
+}

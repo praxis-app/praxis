@@ -1,0 +1,12 @@
+query IsPostShareable($postId: Int!) {
+  post(id: $postId) {
+    id
+    group {
+      id
+      name
+      description
+      isJoinedByMe
+      ...GroupAvatar
+    }
+  }
+}

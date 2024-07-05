@@ -16,6 +16,7 @@ import { Group } from '../../groups/models/group.model';
 import { Image } from '../../images/models/image.model';
 import { Like } from '../../likes/models/like.model';
 import { Notification } from '../../notifications/models/notification.model';
+import { Proposal } from '../../proposals/models/proposal.model';
 import { User } from '../../users/models/user.model';
 
 @ObjectType()
@@ -69,6 +70,14 @@ export class Post {
 
   @Column({ type: 'int', nullable: true })
   sharedPostId: number | null;
+
+  @ManyToOne(() => Proposal, (proposal) => proposal.shares, {
+    createForeignKeyConstraints: false,
+  })
+  sharedProposal: Proposal | null;
+
+  @Column({ type: 'int', nullable: true })
+  sharedProposalId: number | null;
 
   @CreateDateColumn()
   @Field()

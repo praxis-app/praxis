@@ -4,20 +4,15 @@ import { gql } from '@apollo/client';
 import { ProposalActionFragmentDoc } from './ProposalAction.gen';
 import { UserAvatarFragmentDoc } from '../../../users/fragments/gen/UserAvatar.gen';
 import { AttachedImageFragmentDoc } from '../../../images/fragments/gen/AttachedImage.gen';
-import { GroupAvatarFragmentDoc } from '../../../groups/fragments/gen/GroupAvatar.gen';
-import { ProposalVoteBadgesFragmentDoc } from './ProposalVoteBadges.gen';
 
 // THIS FILE IS GENERATED, DO NOT EDIT
 /* eslint-disable */
 
-export type ProposalCardFragment = {
+export type SharedProposalFragment = {
   __typename?: 'Proposal';
   id: number;
   body?: string | null;
   stage: string;
-  voteCount: number;
-  commentCount: number;
-  shareCount: number;
   createdAt: any;
   action: {
     __typename?: 'ProposalAction';
@@ -140,16 +135,7 @@ export type ProposalCardFragment = {
       filename: string;
     } | null;
   };
-  settings: {
-    __typename?: 'ProposalConfig';
-    id: number;
-    decisionMakingModel: string;
-    ratificationThreshold: number;
-    reservationsLimit: number;
-    standAsidesLimit: number;
-    closingAt?: any | null;
-  };
-  myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
+  images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
   user: {
     __typename?: 'User';
     id: number;
@@ -157,78 +143,25 @@ export type ProposalCardFragment = {
     displayName?: string | null;
     profilePicture: { __typename?: 'Image'; id: number };
   };
-  group?: {
-    __typename?: 'Group';
-    id: number;
-    isJoinedByMe?: boolean;
-    name: string;
-    myPermissions?: {
-      __typename?: 'GroupPermissions';
-      manageComments: boolean;
-    };
-    coverPhoto?: { __typename?: 'Image'; id: number } | null;
-  } | null;
-  images: Array<{ __typename?: 'Image'; id: number; filename: string }>;
-  votes: Array<{
-    __typename?: 'Vote';
-    id: number;
-    voteType: string;
-    user: {
-      __typename?: 'User';
-      id: number;
-      name: string;
-      displayName?: string | null;
-      profilePicture: { __typename?: 'Image'; id: number };
-    };
-  }>;
 };
 
-export const ProposalCardFragmentDoc = gql`
-  fragment ProposalCard on Proposal {
+export const SharedProposalFragmentDoc = gql`
+  fragment SharedProposal on Proposal {
     id
     body
     stage
-    voteCount
-    commentCount
-    shareCount
     createdAt
     action {
       ...ProposalAction
     }
-    settings {
-      id
-      decisionMakingModel
-      ratificationThreshold
-      reservationsLimit
-      standAsidesLimit
-      closingAt
-    }
-    myVote @include(if: $isVerified) {
-      id
+    images {
+      ...AttachedImage
     }
     user {
       ...UserAvatar
     }
-    group {
-      id
-      isJoinedByMe @include(if: $isVerified)
-      myPermissions @include(if: $isVerified) {
-        manageComments
-      }
-      ...GroupAvatar
-    }
-    images {
-      ...AttachedImage
-    }
-    myVote @include(if: $isLoggedIn) {
-      id
-      voteType
-    }
-    ...ProposalVoteBadges
   }
   ${ProposalActionFragmentDoc}
-  ${UserAvatarFragmentDoc}
-  ${GroupAvatarFragmentDoc}
   ${AttachedImageFragmentDoc}
-  ${ProposalVoteBadgesFragmentDoc}
+  ${UserAvatarFragmentDoc}
 `;

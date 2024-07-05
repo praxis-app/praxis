@@ -12,14 +12,15 @@ import { useSyncProposalMutation } from '../../graphql/proposals/mutations/gen/S
 import { useProposalCommentsLazyQuery } from '../../graphql/proposals/queries/gen/ProposalComments.gen';
 import { useIsProposalRatifiedSubscription } from '../../graphql/proposals/subscriptions/gen/IsProposalRatified.gen';
 import { useInView } from '../../hooks/shared.hooks';
-import { inDevToast } from '../../utils/shared.utils';
 import CommentForm from '../Comments/CommentForm';
 import CommentsList from '../Comments/CommentList';
+import SharePostModal from '../Posts/SharePostModal';
 import CardFooterButton from '../Shared/CardFooterButton';
 import Flex from '../Shared/Flex';
 import VoteBadges from '../Votes/VoteBadges';
 import VoteButton from '../Votes/VoteButton';
 import ProposalModal from './ProposalModal';
+import ProposalSharesModal from './ProposalSharesModal';
 
 const ICON_STYLES: SxProps = {
   marginRight: '0.4ch',
@@ -48,6 +49,9 @@ const ProposalCardFooter = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<HTMLElement | null>(null);
   const [showComments, setShowComments] = useState(inModal || isProposalPage);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isProposalSharesModalOpen, setIsProposalSharesModalOpen] =
+    useState(false);
 
   const isLoggedIn = useReactiveVar(isLoggedInVar);
   const isVerified = useReactiveVar(isVerifiedVar);
@@ -126,7 +130,15 @@ const ProposalCardFooter = ({
     proposal,
   ]);
 
-  const { voteCount, commentCount, group, stage, myVote, settings } = proposal;
+  const {
+    group,
+    myVote,
+    settings,
+    shareCount,
+    commentCount,
+    voteCount,
+    stage,
+  } = proposal;
 
   const me = proposalCommentsData?.me;
   const comments = proposalCommentsData?.proposal?.comments;
@@ -141,16 +153,7 @@ const ProposalCardFooter = ({
     group?.myPermissions?.manageComments || me?.serverPermissions.manageComments
   );
 
-  const commentCountStyles: SxProps = {
-    '&:hover': { textDecoration: 'underline' },
-    transform: 'translateY(3px)',
-    cursor: 'pointer',
-    height: '24px',
-  };
-
-  const handleVoteButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
+  const handleVoteBtnClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!isLoggedIn) {
       toastVar({
         status: 'info',
@@ -189,7 +192,7 @@ const ProposalCardFooter = ({
     setMenuAnchorEl(event.currentTarget);
   };
 
-  const handleCommentButtonClick = async () => {
+  const handleCommentBtnClick = async () => {
     if (inModal || isProposalPage) {
       return;
     }
@@ -204,23 +207,60 @@ const ProposalCardFooter = ({
     }
   };
 
+  const handleShareBtnClick = () => {
+    if (!isVerified) {
+      toastVar({
+        title: t('posts.prompts.verifyToShare'),
+        status: 'info',
+      });
+      return;
+    }
+    setIsShareModalOpen(true);
+  };
+
+  const handleViewSharesBtnClick = () => {
+    if (!isVerified) {
+      toastVar({
+        title: t('posts.prompts.verifyToViewShares'),
+        status: 'info',
+      });
+      return;
+    }
+    setIsProposalSharesModalOpen(true);
+  };
+
   return (
     <Box ref={ref}>
       <Flex
         justifyContent={voteCount ? 'space-between' : 'end'}
-        paddingBottom={voteCount || commentCount ? 0.8 : 0}
+        paddingBottom={voteCount || commentCount || shareCount ? 0.8 : 0}
         paddingX={inModal ? 0 : '16px'}
       >
         {!!voteCount && <VoteBadges proposal={proposal} />}
 
-        {!!commentCount && (
-          <Typography
-            color="text.secondary"
-            onClick={handleCommentButtonClick}
-            sx={commentCountStyles}
-          >
-            {t('comments.labels.xComments', { count: commentCount })}
-          </Typography>
+        {!!(commentCount + shareCount) && (
+          <Flex sx={{ transform: 'translateY(3px)', cursor: 'pointer' }}>
+            {!!commentCount && (
+              <Typography
+                color="text.secondary"
+                onClick={handleCommentBtnClick}
+                marginRight={shareCount ? 1.5 : 0}
+                sx={{ '&:hover': { textDecoration: 'underline' } }}
+              >
+                {t('comments.labels.xComments', { count: commentCount })}
+              </Typography>
+            )}
+
+            {!!shareCount && (
+              <Typography
+                color="text.secondary"
+                sx={{ '&:hover': { textDecoration: 'underline' } }}
+                onClick={handleViewSharesBtnClick}
+              >
+                {t('posts.labels.xShares', { count: shareCount })}
+              </Typography>
+            )}
+          </Flex>
         )}
       </Flex>
 
@@ -233,18 +273,18 @@ const ProposalCardFooter = ({
           menuAnchorEl={menuAnchorEl}
           myVoteId={myVote?.id}
           myVoteType={myVote?.voteType}
-          onClick={handleVoteButtonClick}
+          onClick={handleVoteBtnClick}
           proposalId={proposal.id}
           setMenuAnchorEl={setMenuAnchorEl}
           decisionMakingModel={settings.decisionMakingModel}
         />
 
-        <CardFooterButton onClick={handleCommentButtonClick}>
+        <CardFooterButton onClick={handleCommentBtnClick}>
           <Comment sx={ROTATED_ICON_STYLES} />
           {t('actions.comment')}
         </CardFooterButton>
 
-        <CardFooterButton onClick={inDevToast}>
+        <CardFooterButton onClick={handleShareBtnClick}>
           <Reply sx={ROTATED_ICON_STYLES} />
           {t('actions.share')}
         </CardFooterButton>
@@ -288,6 +328,23 @@ const ProposalCardFooter = ({
         proposal={proposal}
         open={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+      />
+
+      {!!currentUserId && (
+        <SharePostModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          sharedFromUserId={proposal.user.id}
+          sharedProposalId={proposal.id}
+          currentUserId={currentUserId}
+        />
+      )}
+
+      <ProposalSharesModal
+        proposalId={proposal.id}
+        isOpen={isProposalSharesModalOpen}
+        onClose={() => setIsProposalSharesModalOpen(false)}
+        isVerified={isVerified}
       />
     </Box>
   );

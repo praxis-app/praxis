@@ -53,6 +53,7 @@ interface Props extends FormikFormProps {
   onSubmit?(): void;
   sharedFromUserId?: number;
   sharedPostId?: number;
+  sharedProposalId?: number;
 }
 
 const PostForm = ({
@@ -62,6 +63,7 @@ const PostForm = ({
   onSubmit,
   sharedFromUserId,
   sharedPostId,
+  sharedProposalId,
   ...formProps
 }: Props) => {
   const [imagesInputKey, setImagesInputKey] = useState('');
@@ -77,6 +79,7 @@ const PostForm = ({
   const initialValues: CreatePostInput = {
     body: editPost?.body || '',
     sharedFromUserId,
+    sharedProposalId,
     sharedPostId,
     eventId,
     groupId,
@@ -85,6 +88,9 @@ const PostForm = ({
   const getSubmitBtnLabel = () => {
     if (sharedPostId) {
       return t('posts.actions.sharePost');
+    }
+    if (sharedProposalId) {
+      return t('proposals.actions.shareProposal');
     }
     if (editPost) {
       return t('actions.save');
@@ -96,7 +102,7 @@ const PostForm = ({
     if (isSubmitting) {
       return true;
     }
-    if (sharedPostId) {
+    if (sharedPostId || sharedProposalId) {
       return false;
     }
     return !dirty && !images.length;
@@ -289,7 +295,7 @@ const PostForm = ({
               name={FieldNames.Body}
               onChange={handleChange}
               placeholder={
-                sharedPostId
+                sharedPostId || sharedProposalId
                   ? t('posts.form.saySomething')
                   : t('prompts.whatsHappening')
               }

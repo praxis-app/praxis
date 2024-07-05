@@ -4,5 +4,8 @@ query SharedPostAttachment($postId: Int!) {
     sharedPost {
       ...SharedPost
     }
+    sharedProposal {
+      ...SharedProposal
+    }
   }
 }
