@@ -1,5 +1,5 @@
 import { Card, Tab, Tabs, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GroupsPageTabs } from '../../constants/group.constants';
 import {
@@ -7,6 +7,7 @@ import {
   NavigationPaths,
   TAB_QUERY_PARAM,
 } from '../../constants/shared.constants';
+import { HomeFeedType } from '../../graphql/gen';
 import { useHomeFeedLazyQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 import Feed from '../Shared/Feed';
@@ -15,6 +16,7 @@ import Link from '../Shared/Link';
 const HomeFeed = () => {
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_PAGE_SIZE);
   const [page, setPage] = useState(0);
+  const [tab, setTab] = useState(0);
 
   const [getHomeFeed, { data, loading, error }] = useHomeFeedLazyQuery();
 
@@ -23,17 +25,28 @@ const HomeFeed = () => {
   const groupsPathPrefix = `${NavigationPaths.Groups}${TAB_QUERY_PARAM}`;
   const allGroupsTab = `${groupsPathPrefix}${GroupsPageTabs.AllGroups}`;
 
+  const getFeedType = useCallback((): HomeFeedType => {
+    switch (tab) {
+      case 1:
+        return 'PROPOSALS';
+      case 2:
+        return 'FOLLOWING';
+      default:
+        return 'YOUR_FEED';
+    }
+  }, [tab]);
+
   useEffect(() => {
     getHomeFeed({
       variables: {
         input: {
           limit: rowsPerPage,
           offset: page * rowsPerPage,
-          feedType: 'YOUR_FEED',
+          feedType: getFeedType(),
         },
       },
     });
-  }, [getHomeFeed, rowsPerPage, page]);
+  }, [getHomeFeed, rowsPerPage, page, getFeedType]);
 
   const handleChangePage = async (newPage: number) => {
     await getHomeFeed({
@@ -41,7 +54,7 @@ const HomeFeed = () => {
         input: {
           limit: rowsPerPage,
           offset: newPage * rowsPerPage,
-          feedType: 'YOUR_FEED',
+          feedType: getFeedType(),
         },
       },
     });
@@ -67,7 +80,12 @@ const HomeFeed = () => {
         totalCount={data?.me.homeFeed.totalCount}
         tabs={
           <Card>
-            <Tabs textColor="inherit" value={0} centered>
+            <Tabs
+              onChange={(_, n) => setTab(n)}
+              textColor="inherit"
+              value={tab}
+              centered
+            >
               <Tab label="Your feed" />
               <Tab label="Proposals" />
               <Tab label="Following" />
