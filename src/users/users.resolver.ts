@@ -19,6 +19,7 @@ import { Image } from '../images/models/image.model';
 import { ServerPermissions } from '../server-roles/models/server-permissions.type';
 import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { FollowUserPayload } from './models/follow-user.payload';
+import { HomeFeedInput } from './models/home-feed.input';
 import { UpdateUserInput } from './models/update-user.input';
 import { UpdateUserPayload } from './models/update-user.payload';
 import { User } from './models/user.model';
@@ -67,10 +68,10 @@ export class UsersResolver {
   @ResolveField(() => FeedItemsConnection)
   async homeFeed(
     @Parent() { id }: User,
-    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
-    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+    @Args('input', { type: () => HomeFeedInput, nullable: true })
+    input?: HomeFeedInput,
   ) {
-    return this.usersService.getUserFeed(id, offset, limit);
+    return this.usersService.getUserFeed(id, input);
   }
 
   @ResolveField(() => [FeedItem])

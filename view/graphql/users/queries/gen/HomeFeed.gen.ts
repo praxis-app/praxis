@@ -9,8 +9,7 @@ import * as Apollo from '@apollo/client';
 
 const defaultOptions = {} as const;
 export type HomeFeedQueryVariables = Types.Exact<{
-  offset?: Types.InputMaybe<Types.Scalars['Int']['input']>;
-  limit?: Types.InputMaybe<Types.Scalars['Int']['input']>;
+  input: Types.HomeFeedInput;
   isLoggedIn?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
   isVerified?: Types.InputMaybe<Types.Scalars['Boolean']['input']>;
 }>;
@@ -432,14 +431,13 @@ export type HomeFeedQuery = {
 
 export const HomeFeedDocument = gql`
   query HomeFeed(
-    $offset: Int
-    $limit: Int
+    $input: HomeFeedInput!
     $isLoggedIn: Boolean = true
     $isVerified: Boolean = true
   ) {
     me {
       id
-      homeFeed(offset: $offset, limit: $limit) {
+      homeFeed(input: $input) {
         nodes {
           ...FeedItem
         }
@@ -462,15 +460,14 @@ export const HomeFeedDocument = gql`
  * @example
  * const { data, loading, error } = useHomeFeedQuery({
  *   variables: {
- *      offset: // value for 'offset'
- *      limit: // value for 'limit'
+ *      input: // value for 'input'
  *      isLoggedIn: // value for 'isLoggedIn'
  *      isVerified: // value for 'isVerified'
  *   },
  * });
  */
 export function useHomeFeedQuery(
-  baseOptions?: Apollo.QueryHookOptions<HomeFeedQuery, HomeFeedQueryVariables>,
+  baseOptions: Apollo.QueryHookOptions<HomeFeedQuery, HomeFeedQueryVariables>,
 ) {
   const options = { ...defaultOptions, ...baseOptions };
   return Apollo.useQuery<HomeFeedQuery, HomeFeedQueryVariables>(

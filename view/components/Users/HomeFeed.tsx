@@ -7,6 +7,7 @@ import {
   NavigationPaths,
   TAB_QUERY_PARAM,
 } from '../../constants/shared.constants';
+import { HomeFeedType } from '../../graphql/gen';
 import { useHomeFeedLazyQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 import Feed from '../Shared/Feed';
@@ -26,8 +27,11 @@ const HomeFeed = () => {
   useEffect(() => {
     getHomeFeed({
       variables: {
-        limit: rowsPerPage,
-        offset: page * rowsPerPage,
+        input: {
+          limit: rowsPerPage,
+          offset: page * rowsPerPage,
+          feedType: HomeFeedType.YourFeed,
+        },
       },
     });
   }, [getHomeFeed, rowsPerPage, page]);
@@ -35,8 +39,11 @@ const HomeFeed = () => {
   const handleChangePage = async (newPage: number) => {
     await getHomeFeed({
       variables: {
-        limit: rowsPerPage,
-        offset: newPage * rowsPerPage,
+        input: {
+          limit: rowsPerPage,
+          offset: newPage * rowsPerPage,
+          feedType: HomeFeedType.YourFeed,
+        },
       },
     });
   };

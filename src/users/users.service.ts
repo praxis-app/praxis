@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Conversation } from '../chat/models/conversation.model';
+import { Message } from '../chat/models/message.model';
 import { VALID_NAME_REGEX } from '../common/common.constants';
 import {
   logTime,
@@ -32,9 +33,9 @@ import { initServerRolePermissions } from '../server-roles/server-roles.utils';
 import { QuestionnaireTicketConfig } from '../vibe-check/models/questionnaire-ticket-config.model';
 import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { ServerQuestion } from '../vibe-check/models/server-question.model';
+import { HomeFeedInput } from './models/home-feed.input';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
-import { Message } from '../chat/models/message.model';
 
 @Injectable()
 export class UsersService {
@@ -259,13 +260,14 @@ export class UsersService {
     return extractedEvents.flatMap((event) => event.posts);
   }
 
-  async getUserFeed(id: number, offset?: number, limit?: number) {
-    const logTimeMessage = `Fetching home feed for user with ID ${id}`;
+  async getUserFeed(userId: number, input?: HomeFeedInput) {
+    const logTimeMessage = `Fetching home feed for user with ID ${userId}`;
     logTime(logTimeMessage, this.logger);
 
-    const userFeed = await this.getBaseUserFeed(id);
-    const eventPosts = await this.getUserFeedEventPosts(id);
-    const { groupPosts, groupProposals } = await this.getJoinedGroupsFeed(id);
+    const userFeed = await this.getBaseUserFeed(userId);
+    const eventPosts = await this.getUserFeedEventPosts(userId);
+    const { groupPosts, groupProposals } =
+      await this.getJoinedGroupsFeed(userId);
     const { posts, proposals, following } = userFeed;
 
     // Initialize maps with posts and proposals by this user
@@ -299,7 +301,9 @@ export class UsersService {
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     const nodes =
-      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
+      input?.offset !== undefined
+        ? paginate(sortedFeed, input.offset, input.limit)
+        : sortedFeed;
     logTime(logTimeMessage, this.logger);
 
     return { nodes, totalCount: sortedFeed.length };
