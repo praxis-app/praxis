@@ -260,7 +260,7 @@ export class UsersService {
     return extractedEvents.flatMap((event) => event.posts);
   }
 
-  async getUserFeed(userId: number, input?: HomeFeedInput) {
+  async getUserFeed(userId: number, input: HomeFeedInput) {
     const logTimeMessage = `Fetching home feed for user with ID ${userId}`;
     logTime(logTimeMessage, this.logger);
 
@@ -301,7 +301,7 @@ export class UsersService {
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     const nodes =
-      input?.offset !== undefined
+      input.offset !== undefined
         ? paginate(sortedFeed, input.offset, input.limit)
         : sortedFeed;
     logTime(logTimeMessage, this.logger);

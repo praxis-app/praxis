@@ -125,8 +125,7 @@ const PostForm = ({
           {
             query: HomeFeedDocument,
             variables: {
-              limit: 10,
-              offset: 0,
+              input: { limit: 10, offset: 0, feedType: 'YOUR_FEED' },
               isLoggedIn: true,
               isVerified: true,
             },

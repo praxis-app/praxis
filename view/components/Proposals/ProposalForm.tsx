@@ -192,7 +192,10 @@ const ProposalForm = ({
         cache.updateQuery<HomeFeedQuery, HomeFeedQueryVariables>(
           {
             query: HomeFeedDocument,
-            variables: { limit: 10, offset: 0, isLoggedIn: true },
+            variables: {
+              input: { limit: 10, offset: 0, feedType: 'YOUR_FEED' },
+              isLoggedIn: true,
+            },
           },
           (homePageData) =>
             produce(homePageData, (draft) => {

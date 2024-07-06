@@ -68,8 +68,8 @@ export class UsersResolver {
   @ResolveField(() => FeedItemsConnection)
   async homeFeed(
     @Parent() { id }: User,
-    @Args('input', { type: () => HomeFeedInput, nullable: true })
-    input?: HomeFeedInput,
+    @Args('input', { type: () => HomeFeedInput })
+    input: HomeFeedInput,
   ) {
     return this.usersService.getUserFeed(id, input);
   }

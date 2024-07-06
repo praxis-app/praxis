@@ -401,9 +401,9 @@ input GroupsInput {
 }
 
 input HomeFeedInput {
-  feedType: HomeFeedType
-  limit: Int
-  offset: Int
+  feedType: HomeFeedType!
+  limit: Int!
+  offset: Int!
 }
 
 enum HomeFeedType {
@@ -1177,7 +1177,7 @@ type User {
   followers(limit: Int, offset: Int): [User!]!
   following(limit: Int, offset: Int): [User!]!
   followingCount: Int!
-  homeFeed(input: HomeFeedInput): FeedItemsConnection!
+  homeFeed(input: HomeFeedInput!): FeedItemsConnection!
   id: Int!
   isFollowedByMe: Boolean!
   isVerified: Boolean!

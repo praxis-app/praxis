@@ -472,9 +472,9 @@ export type GroupsInput = {
 };
 
 export type HomeFeedInput = {
-  feedType?: InputMaybe<HomeFeedType>;
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
+  feedType: HomeFeedType;
+  limit: Scalars['Int']['input'];
+  offset: Scalars['Int']['input'];
 };
 
 export type HomeFeedType = 'FOLLOWING' | 'PROPOSALS' | 'YOUR_FEED';
@@ -1695,7 +1695,7 @@ export type UserFollowingArgs = {
 };
 
 export type UserHomeFeedArgs = {
-  input?: InputMaybe<HomeFeedInput>;
+  input: HomeFeedInput;
 };
 
 export type UserProfileFeedArgs = {

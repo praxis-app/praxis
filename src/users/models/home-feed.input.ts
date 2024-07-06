@@ -12,12 +12,12 @@ registerEnumType(HomeFeedType, {
 
 @InputType()
 export class HomeFeedInput {
-  @Field(() => Int, { nullable: true })
-  offset?: number;
+  @Field(() => Int)
+  offset: number;
 
-  @Field(() => Int, { nullable: true })
-  limit?: number;
+  @Field(() => Int)
+  limit: number;
 
-  @Field(() => HomeFeedType, { nullable: true })
-  feedType?: HomeFeedType;
+  @Field(() => HomeFeedType)
+  feedType: HomeFeedType;
 }
