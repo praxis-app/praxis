@@ -17,6 +17,9 @@ const config = {
   generates: {
     'view/graphql/gen.ts': {
       plugins: [DO_NOT_EDIT_PLUGIN, 'typescript'],
+      config: {
+        enumsAsTypes: true,
+      },
     },
 
     'view/graphql/': {

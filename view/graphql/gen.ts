@@ -477,11 +477,7 @@ export type HomeFeedInput = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
-export enum HomeFeedType {
-  Following = 'FOLLOWING',
-  Proposals = 'PROPOSALS',
-  YourFeed = 'YOUR_FEED',
-}
+export type HomeFeedType = 'FOLLOWING' | 'PROPOSALS' | 'YOUR_FEED';
 
 export type Image = {
   __typename?: 'Image';

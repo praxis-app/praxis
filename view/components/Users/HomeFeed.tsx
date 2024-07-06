@@ -7,7 +7,6 @@ import {
   NavigationPaths,
   TAB_QUERY_PARAM,
 } from '../../constants/shared.constants';
-import { HomeFeedType } from '../../graphql/gen';
 import { useHomeFeedLazyQuery } from '../../graphql/users/queries/gen/HomeFeed.gen';
 import { isDeniedAccess } from '../../utils/error.utils';
 import Feed from '../Shared/Feed';
@@ -30,7 +29,7 @@ const HomeFeed = () => {
         input: {
           limit: rowsPerPage,
           offset: page * rowsPerPage,
-          feedType: HomeFeedType.YourFeed,
+          feedType: 'YOUR_FEED',
         },
       },
     });
@@ -42,7 +41,7 @@ const HomeFeed = () => {
         input: {
           limit: rowsPerPage,
           offset: newPage * rowsPerPage,
-          feedType: HomeFeedType.YourFeed,
+          feedType: 'YOUR_FEED',
         },
       },
     });
