@@ -11,6 +11,7 @@ import { EventAvatarFragmentDoc } from '../../../events/fragments/gen/EventAvata
 export type PostShareCompactFragment = {
   __typename?: 'Post';
   id: number;
+  body?: string | null;
   likeCount: number;
   shareCount: number;
   isLikedByMe?: boolean;
@@ -39,6 +40,7 @@ export type PostShareCompactFragment = {
 export const PostShareCompactFragmentDoc = gql`
   fragment PostShareCompact on Post {
     id
+    body
     likeCount
     shareCount
     isLikedByMe @include(if: $isVerified)

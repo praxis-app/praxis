@@ -1,5 +1,6 @@
 fragment PostShareCompact on Post {
   id
+  body
   likeCount
   shareCount
   isLikedByMe @include(if: $isVerified)

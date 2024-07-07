@@ -21,6 +21,7 @@ export type PostSharesModalQuery = {
     shares: Array<{
       __typename?: 'Post';
       id: number;
+      body?: string | null;
       likeCount: number;
       shareCount: number;
       isLikedByMe?: boolean;
