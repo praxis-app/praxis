@@ -140,26 +140,36 @@ export class UsersService {
       // Posts from followed users
       userFeedQuery.leftJoinAndSelect('user.following', 'userFollowing');
       userFeedQuery.leftJoinAndSelect('userFollowing.posts', 'followingPost');
-      // Posts from this user
-      userFeedQuery.leftJoinAndSelect('user.posts', 'userPost');
+
+      if (feedType !== HomeFeedType.FOLLOWING) {
+        // Posts from this user
+        userFeedQuery.leftJoinAndSelect('user.posts', 'userPost');
+      }
     }
-    // Proposals from this user
-    userFeedQuery.leftJoinAndSelect('user.proposals', 'userProposal');
+
+    if (feedType !== HomeFeedType.FOLLOWING) {
+      // Proposals from this user
+      userFeedQuery.leftJoinAndSelect('user.proposals', 'userProposal');
+    }
 
     // Only select required fields
     userFeedQuery.select('user.id');
     if (feedType !== HomeFeedType.PROPOSALS) {
       userFeedQuery.addSelect('userFollowing.id');
-      userFeedQuery.addSelect([
-        'userPost.id',
-        'userPost.groupId',
-        'userPost.eventId',
-        'userPost.userId',
-        'userPost.sharedPostId',
-        'userPost.sharedProposalId',
-        'userPost.body',
-        'userPost.createdAt',
-      ]);
+
+      if (feedType !== HomeFeedType.FOLLOWING) {
+        userFeedQuery.addSelect([
+          'userPost.id',
+          'userPost.groupId',
+          'userPost.eventId',
+          'userPost.userId',
+          'userPost.sharedPostId',
+          'userPost.sharedProposalId',
+          'userPost.body',
+          'userPost.createdAt',
+        ]);
+      }
+
       userFeedQuery.addSelect([
         'followingPost.id',
         'followingPost.userId',
@@ -171,14 +181,17 @@ export class UsersService {
         'followingPost.createdAt',
       ]);
     }
-    userFeedQuery.addSelect([
-      'userProposal.id',
-      'userProposal.groupId',
-      'userProposal.userId',
-      'userProposal.stage',
-      'userProposal.body',
-      'userProposal.createdAt',
-    ]);
+
+    if (feedType !== HomeFeedType.FOLLOWING) {
+      userFeedQuery.addSelect([
+        'userProposal.id',
+        'userProposal.groupId',
+        'userProposal.userId',
+        'userProposal.stage',
+        'userProposal.body',
+        'userProposal.createdAt',
+      ]);
+    }
 
     userFeedQuery.where('user.id = :id', { id });
     const userFeed = await userFeedQuery.getOne();
@@ -194,6 +207,10 @@ export class UsersService {
   }
 
   async getJoinedGroupsFeed(userId: number, feedType: HomeFeedType) {
+    if (feedType === HomeFeedType.FOLLOWING) {
+      return { groupPosts: [], groupProposals: [] };
+    }
+
     const joinedGroupsFeedQuery =
       this.userRepository.createQueryBuilder('user');
 
