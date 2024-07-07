@@ -41,6 +41,7 @@ const HomeFeed = () => {
 
   useEffect(() => {
     let feedType: HomeFeedType = 'YOUR_FEED';
+    setPage(0);
 
     if (!tabParam) {
       setTab(0);
