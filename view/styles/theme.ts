@@ -23,6 +23,9 @@ export enum Blurple {
 }
 
 declare module '@mui/material/styles/createPalette' {
+  interface TypeText {
+    tertiary: string;
+  }
   interface TypeBackground {
     secondary: string;
   }
@@ -41,6 +44,7 @@ const initialTheme = createTheme({
     text: {
       primary: DarkMode.Placebo,
       secondary: DarkMode.Casper,
+      tertiary: Blurple.SkyDancer,
     },
     background: {
       default: DarkMode.PianoBlack,
