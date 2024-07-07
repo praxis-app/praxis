@@ -193,18 +193,36 @@ export class UsersService {
     };
   }
 
-  async getJoinedGroupsFeed(id: number) {
-    const joinedGroupsFeedQuery = this.userRepository
-      .createQueryBuilder('user')
+  async getJoinedGroupsFeed(userId: number, feedType: HomeFeedType) {
+    const joinedGroupsFeedQuery =
+      this.userRepository.createQueryBuilder('user');
 
-      // Posts and proposals from joined groups
-      .leftJoinAndSelect('user.groups', 'userGroup')
-      .leftJoinAndSelect('userGroup.posts', 'groupPost')
-      .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
+    const isYourFeed = feedType === HomeFeedType.YOUR_FEED;
 
-      // Only select required fields
-      .select(['user.id', 'userGroup.id'])
-      .addSelect([
+    // Proposals from joined groups
+    joinedGroupsFeedQuery.leftJoinAndSelect('user.groups', 'userGroup');
+    joinedGroupsFeedQuery.leftJoinAndSelect(
+      'userGroup.proposals',
+      'groupProposal',
+    );
+
+    // Include posts from joined groups depending on feed type
+    if (isYourFeed) {
+      joinedGroupsFeedQuery.leftJoinAndSelect('userGroup.posts', 'groupPost');
+    }
+
+    // Only select required fields
+    joinedGroupsFeedQuery.select(['user.id', 'userGroup.id']);
+    joinedGroupsFeedQuery.addSelect([
+      'groupProposal.id',
+      'groupProposal.groupId',
+      'groupProposal.stage',
+      'groupProposal.userId',
+      'groupProposal.body',
+      'groupProposal.createdAt',
+    ]);
+    if (isYourFeed) {
+      joinedGroupsFeedQuery.addSelect([
         'groupPost.id',
         'groupPost.groupId',
         'groupPost.eventId',
@@ -213,16 +231,13 @@ export class UsersService {
         'groupPost.sharedProposalId',
         'groupPost.body',
         'groupPost.createdAt',
-      ])
-      .addSelect([
-        'groupProposal.id',
-        'groupProposal.groupId',
-        'groupProposal.stage',
-        'groupProposal.userId',
-        'groupProposal.body',
-        'groupProposal.createdAt',
-      ])
-      .where('user.id = :id', { id });
+      ]);
+    }
+
+    // Scope by current user
+    joinedGroupsFeedQuery.where('user.id = :id', {
+      id: userId,
+    });
 
     const joinedGroupsFeed = await joinedGroupsFeedQuery.getOne();
     if (!joinedGroupsFeed) {
@@ -230,13 +245,16 @@ export class UsersService {
     }
 
     const { groups } = joinedGroupsFeed;
-    const groupPosts = groups.flatMap((group) => group.posts);
     const groupProposals = groups.flatMap((group) => group.proposals);
+    const groupPosts = isYourFeed ? groups.flatMap((group) => group.posts) : [];
 
     return { groupPosts, groupProposals };
   }
 
-  async getUserFeedEventPosts(id: number) {
+  async getUserFeedEventPosts(id: number, feedType: HomeFeedType) {
+    if (feedType !== HomeFeedType.YOUR_FEED) {
+      return [];
+    }
     const eventPostsQuery = this.userRepository
       .createQueryBuilder('user')
 
@@ -269,17 +287,22 @@ export class UsersService {
     return extractedEvents.flatMap((event) => event.posts);
   }
 
-  async getUserFeed(userId: number, input: HomeFeedInput) {
+  async getUserFeed(
+    { feedType, offset, limit }: HomeFeedInput,
+    userId: number,
+  ) {
     const logTimeMessage = `Fetching home feed for user with ID ${userId}`;
     logTime(logTimeMessage, this.logger);
 
-    const userFeed = await this.getBaseUserFeed(userId, input.feedType);
-    const eventPosts = await this.getUserFeedEventPosts(userId);
-    const { groupPosts, groupProposals } =
-      await this.getJoinedGroupsFeed(userId);
-    const { posts, proposals, following } = userFeed;
+    const userFeed = await this.getBaseUserFeed(userId, feedType);
+    const eventPosts = await this.getUserFeedEventPosts(userId, feedType);
+    const { groupPosts, groupProposals } = await this.getJoinedGroupsFeed(
+      userId,
+      feedType,
+    );
 
     // Initialize maps with posts and proposals by this user
+    const { posts, proposals, following } = userFeed;
     const postMap = posts.reduce<Record<number, Post>>((result, post) => {
       result[post.id] = post;
       return result;
@@ -310,9 +333,7 @@ export class UsersService {
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     const nodes =
-      input.offset !== undefined
-        ? paginate(sortedFeed, input.offset, input.limit)
-        : sortedFeed;
+      offset !== undefined ? paginate(sortedFeed, offset, limit) : sortedFeed;
     logTime(logTimeMessage, this.logger);
 
     return { nodes, totalCount: sortedFeed.length };

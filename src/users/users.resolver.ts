@@ -71,7 +71,7 @@ export class UsersResolver {
     @Args('input', { type: () => HomeFeedInput })
     input: HomeFeedInput,
   ) {
-    return this.usersService.getUserFeed(id, input);
+    return this.usersService.getUserFeed(input, id);
   }
 
   @ResolveField(() => [FeedItem])
