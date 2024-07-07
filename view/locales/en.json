@@ -241,6 +241,7 @@
       "following": "{{count}} Following",
       "forgotPassword": "Forgot your password?",
       "unverified": "Unverified",
+      "yourFeed": "Your Feed",
       "verified": "Verified"
     },
     "form": {
