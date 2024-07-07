@@ -101,7 +101,7 @@ const Feed = ({
         setRowsPerPage={setRowsPerPage}
         showTopPagination={showTopPagination}
       >
-        {tabs}
+        {!!getFeedItems().length && tabs}
 
         {getFeedItems().map((item) => (
           <FeedItem item={item} key={`${item.__typename}-${item.id}`} />
