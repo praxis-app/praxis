@@ -20,6 +20,7 @@ export enum Blurple {
   PoolWater = '#3b86f7',
   SavoryBlue = '#6573CF',
   SkyDancer = '#588cf2',
+  Neptune = '#7D95E3',
 }
 
 declare module '@mui/material/styles/createPalette' {
@@ -44,7 +45,7 @@ const initialTheme = createTheme({
     text: {
       primary: DarkMode.Placebo,
       secondary: DarkMode.Casper,
-      tertiary: Blurple.SkyDancer,
+      tertiary: Blurple.Neptune,
     },
     background: {
       default: DarkMode.PianoBlack,
