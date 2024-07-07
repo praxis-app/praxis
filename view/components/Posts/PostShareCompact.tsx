@@ -34,7 +34,9 @@ import LikeBadge from '../Likes/LikeBadge';
 import LikesModal from '../Likes/LikesModal';
 import SharedProposal from '../Proposals/SharedProposal';
 import CardFooterButton from '../Shared/CardFooterButton';
+import Center from '../Shared/Center';
 import Flex from '../Shared/Flex';
+import FormattedText from '../Shared/FormattedText';
 import ItemMenu from '../Shared/ItemMenu';
 import Link from '../Shared/Link';
 import Spinner from '../Shared/Spinner';
@@ -78,7 +80,8 @@ const PostShareCompact = ({
   const navigate = useNavigate();
   const isDesktop = useIsDesktop();
 
-  const { id, createdAt, user, group, event, isLikedByMe, likeCount } = post;
+  const { id, body, createdAt, user, group, event, isLikedByMe, likeCount } =
+    post;
   const isMe = currentUserId === user.id;
   const formattedDate = timeAgo(createdAt);
   const sharedPost = data?.post.sharedPost;
@@ -91,6 +94,13 @@ const PostShareCompact = ({
   const groupPath = getGroupPath(group?.name || '');
   const postPath = `${NavigationPaths.Posts}/${id}`;
   const userProfilePath = getUserProfilePath(user?.name);
+
+  const bodyStyles: SxProps = {
+    lineHeight: 1.25,
+    whiteSpace: 'pre-wrap',
+    marginBottom: data ? 1.5 : 0.8,
+    fontSize: 16,
+  };
 
   const handleShareBtnClick = async () => {
     if (!isVerified) {
@@ -196,22 +206,40 @@ const PostShareCompact = ({
     }
     if (!data) {
       return (
-        <Button
-          sx={{ textTransform: 'none', paddingX: 2 }}
-          onClick={() => getSharedContent({ variables: { postId: id } })}
-          startIcon={loading && <Spinner size={13} sx={{ marginTop: -0.12 }} />}
-          disabled={loading}
-        >
-          {t('posts.actions.showAttachment')}
-        </Button>
+        <Box>
+          <FormattedText text={body} sx={bodyStyles} />
+
+          <Center>
+            <Button
+              sx={{
+                textTransform: 'none',
+                paddingX: 2,
+                alignSelf: 'center',
+                color: 'text.tertiary',
+              }}
+              onClick={() => getSharedContent({ variables: { postId: id } })}
+              startIcon={
+                loading && <Spinner size={13} sx={{ marginTop: -0.12 }} />
+              }
+              disabled={loading}
+            >
+              {t('posts.actions.showAttachment')}
+            </Button>
+          </Center>
+        </Box>
       );
     }
-    if (sharedProposal) {
-      return (
-        <SharedProposal proposal={sharedProposal} width="100%" isCompact />
-      );
-    }
-    return <SharedPost post={sharedPost} width="100%" />;
+    return (
+      <Box>
+        <FormattedText text={body} sx={bodyStyles} />
+
+        {sharedProposal ? (
+          <SharedProposal proposal={sharedProposal} width="100%" isCompact />
+        ) : (
+          <SharedPost post={sharedPost} width="100%" />
+        )}
+      </Box>
+    );
   };
 
   return (
@@ -229,9 +257,7 @@ const PostShareCompact = ({
 
       <CardContent
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          paddingTop: data ? undefined : 0,
+          paddingTop: data || body ? undefined : 0,
           paddingBottom: data && likeCount ? undefined : 0,
         }}
       >
