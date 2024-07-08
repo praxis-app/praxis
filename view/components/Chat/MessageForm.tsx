@@ -126,7 +126,11 @@ const MessageForm = ({
   const handleSubmit = async (
     values: SendMessageInput,
     { resetForm }: FormikHelpers<SendMessageInput>,
-  ) =>
+  ) => {
+    const noContent = !values.body && !images.length;
+    if (noContent || loading) {
+      return;
+    }
     await sendMessage({
       variables: {
         messageData: { ...values, images },
@@ -179,6 +183,7 @@ const MessageForm = ({
         setImagesInputKey(getRandomString());
       },
     });
+  };
 
   const handleFilledInputKeyDown = (
     e: React.KeyboardEvent,
