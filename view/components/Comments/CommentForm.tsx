@@ -102,7 +102,7 @@ const CommentForm = ({
     formValues: CreateCommentInput,
     { resetForm, setSubmitting }: FormikHelpers<CreateCommentInput>,
   ) => {
-    const noContent = !formValues.body && !images?.length;
+    const noContent = !formValues.body && !images.length;
     if (noContent || createCommentLoading) {
       return;
     }
