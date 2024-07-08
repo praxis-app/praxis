@@ -34,7 +34,6 @@ const NotificationCount = ({
     if (!document || !count) {
       return;
     }
-
     // Set document title to reflect unread count
     document.title = `(${count}) ${t('brand')}`;
   }, [count, t]);
