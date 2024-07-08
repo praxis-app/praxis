@@ -137,16 +137,28 @@ export class EventsService {
   }
 
   async createEvent({
+    name,
     coverPhoto,
     description,
     externalLink,
     hostId,
     ...eventData
   }: CreateEventInput) {
+    if (name.length < 5) {
+      throw new Error('Event name must be at least 5 characters');
+    }
+    if (name.length > 25) {
+      throw new Error('Event name cannot exceed 25 characters');
+    }
+    if (description.length > 1000) {
+      throw new Error('Event description cannot exceed 1000 characters');
+    }
+
     const sanitizedDescription = sanitizeText(description.trim());
     const event = await this.eventRepository.save({
       externalLink: externalLink?.trim().toLowerCase(),
       description: sanitizedDescription,
+      name: name.trim(),
       ...eventData,
     });
     await this.eventAttendeeRepository.save({
@@ -166,6 +178,7 @@ export class EventsService {
 
   async updateEvent({
     id,
+    name,
     coverPhoto,
     description,
     externalLink,
@@ -175,9 +188,21 @@ export class EventsService {
     const sanitizedDescription = description
       ? sanitizeText(description.trim())
       : undefined;
+
+    if (name && name.length < 5) {
+      throw new Error('Event name must be at least 5 characters');
+    }
+    if (name && name.length > 25) {
+      throw new Error('Event name cannot exceed 25 characters');
+    }
+    if (sanitizedDescription && sanitizedDescription.length > 1000) {
+      throw new Error('Event description cannot exceed 1000 characters');
+    }
+
     await this.eventRepository.update(id, {
       externalLink: externalLink?.trim().toLowerCase(),
       description: sanitizedDescription,
+      name: name?.trim(),
       ...eventData,
     });
 

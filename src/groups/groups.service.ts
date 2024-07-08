@@ -286,6 +286,9 @@ export class GroupsService {
     if (name.length > 25) {
       throw new Error('Group name cannot exceed 25 characters');
     }
+    if (description.length > 1000) {
+      throw new Error('Group description cannot exceed 1000 characters');
+    }
 
     const sanitizedDescription = sanitizeText(description.trim());
     const group = await this.groupRepository.save({
@@ -317,6 +320,18 @@ export class GroupsService {
     const isValidName = VALID_NAME_REGEX.test(name || '');
     if (name && !isValidName) {
       throw new Error('Group names cannot contain special characters');
+    }
+    if (!isValidName) {
+      throw new Error('Group names cannot contain special characters');
+    }
+    if (name && name.length < 5) {
+      throw new Error('Group name must be at least 5 characters');
+    }
+    if (name && name.length > 25) {
+      throw new Error('Group name cannot exceed 25 characters');
+    }
+    if (description && description.length > 1000) {
+      throw new Error('Group description cannot exceed 1000 characters');
     }
 
     const sanitizedDescription =
