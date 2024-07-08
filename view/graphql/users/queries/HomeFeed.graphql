@@ -1,12 +1,11 @@
 query HomeFeed(
-  $offset: Int
-  $limit: Int
+  $input: HomeFeedInput!
   $isLoggedIn: Boolean = true
   $isVerified: Boolean = true
 ) {
   me {
     id
-    homeFeed(offset: $offset, limit: $limit) {
+    homeFeed(input: $input) {
       nodes {
         ...FeedItem
       }

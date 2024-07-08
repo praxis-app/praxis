@@ -471,6 +471,14 @@ export type GroupsInput = {
   offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type HomeFeedInput = {
+  feedType: HomeFeedType;
+  limit: Scalars['Int']['input'];
+  offset: Scalars['Int']['input'];
+};
+
+export type HomeFeedType = 'FOLLOWING' | 'PROPOSALS' | 'YOUR_FEED';
+
 export type Image = {
   __typename?: 'Image';
   filename: Scalars['String']['output'];
@@ -1687,8 +1695,7 @@ export type UserFollowingArgs = {
 };
 
 export type UserHomeFeedArgs = {
-  limit?: InputMaybe<Scalars['Int']['input']>;
-  offset?: InputMaybe<Scalars['Int']['input']>;
+  input: HomeFeedInput;
 };
 
 export type UserProfileFeedArgs = {

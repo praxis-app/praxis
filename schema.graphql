@@ -400,6 +400,18 @@ input GroupsInput {
   offset: Int
 }
 
+input HomeFeedInput {
+  feedType: HomeFeedType!
+  limit: Int!
+  offset: Int!
+}
+
+enum HomeFeedType {
+  FOLLOWING
+  PROPOSALS
+  YOUR_FEED
+}
+
 type Image {
   filename: String!
   id: Int!
@@ -1165,7 +1177,7 @@ type User {
   followers(limit: Int, offset: Int): [User!]!
   following(limit: Int, offset: Int): [User!]!
   followingCount: Int!
-  homeFeed(limit: Int, offset: Int): FeedItemsConnection!
+  homeFeed(input: HomeFeedInput!): FeedItemsConnection!
   id: Int!
   isFollowedByMe: Boolean!
   isVerified: Boolean!

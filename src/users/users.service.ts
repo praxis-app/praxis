@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FileUpload } from 'graphql-upload-ts';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { Conversation } from '../chat/models/conversation.model';
+import { Message } from '../chat/models/message.model';
 import { VALID_NAME_REGEX } from '../common/common.constants';
 import {
   logTime,
@@ -32,9 +33,9 @@ import { initServerRolePermissions } from '../server-roles/server-roles.utils';
 import { QuestionnaireTicketConfig } from '../vibe-check/models/questionnaire-ticket-config.model';
 import { QuestionnaireTicket } from '../vibe-check/models/questionnaire-ticket.model';
 import { ServerQuestion } from '../vibe-check/models/server-question.model';
+import { HomeFeedInput, HomeFeedType } from './models/home-feed.input';
 import { UpdateUserInput } from './models/update-user.input';
 import { User } from './models/user.model';
-import { Message } from '../chat/models/message.model';
 
 @Injectable()
 export class UsersService {
@@ -132,39 +133,44 @@ export class UsersService {
     });
   }
 
-  async getBaseUserFeed(id: number) {
-    const userFeedQuery = this.userRepository
-      .createQueryBuilder('user')
+  async getBaseUserFeed(id: number, feedType: HomeFeedType) {
+    const userFeedQuery = this.userRepository.createQueryBuilder('user');
 
+    if (feedType !== HomeFeedType.PROPOSALS) {
       // Posts from followed users
-      .leftJoinAndSelect('user.following', 'userFollowing')
-      .leftJoinAndSelect('userFollowing.posts', 'followingPost')
+      userFeedQuery.leftJoinAndSelect('user.following', 'userFollowing');
+      userFeedQuery.leftJoinAndSelect('userFollowing.posts', 'followingPost');
 
-      // Posts and proposals from this user
-      .leftJoinAndSelect('user.proposals', 'userProposal')
-      .leftJoinAndSelect('user.posts', 'userPost')
+      if (feedType !== HomeFeedType.FOLLOWING) {
+        // Posts from this user
+        userFeedQuery.leftJoinAndSelect('user.posts', 'userPost');
+      }
+    }
 
-      // Only select required fields
-      .select(['user.id', 'userFollowing.id'])
-      .addSelect([
-        'userPost.id',
-        'userPost.groupId',
-        'userPost.eventId',
-        'userPost.userId',
-        'userPost.sharedPostId',
-        'userPost.sharedProposalId',
-        'userPost.body',
-        'userPost.createdAt',
-      ])
-      .addSelect([
-        'userProposal.id',
-        'userProposal.groupId',
-        'userProposal.userId',
-        'userProposal.stage',
-        'userProposal.body',
-        'userProposal.createdAt',
-      ])
-      .addSelect([
+    if (feedType !== HomeFeedType.FOLLOWING) {
+      // Proposals from this user
+      userFeedQuery.leftJoinAndSelect('user.proposals', 'userProposal');
+    }
+
+    // Only select required fields
+    userFeedQuery.select('user.id');
+    if (feedType !== HomeFeedType.PROPOSALS) {
+      userFeedQuery.addSelect('userFollowing.id');
+
+      if (feedType !== HomeFeedType.FOLLOWING) {
+        userFeedQuery.addSelect([
+          'userPost.id',
+          'userPost.groupId',
+          'userPost.eventId',
+          'userPost.userId',
+          'userPost.sharedPostId',
+          'userPost.sharedProposalId',
+          'userPost.body',
+          'userPost.createdAt',
+        ]);
+      }
+
+      userFeedQuery.addSelect([
         'followingPost.id',
         'followingPost.userId',
         'followingPost.eventId',
@@ -173,28 +179,67 @@ export class UsersService {
         'followingPost.sharedProposalId',
         'followingPost.body',
         'followingPost.createdAt',
-      ])
-      .where('user.id = :id', { id });
+      ]);
+    }
 
+    if (feedType !== HomeFeedType.FOLLOWING) {
+      userFeedQuery.addSelect([
+        'userProposal.id',
+        'userProposal.groupId',
+        'userProposal.userId',
+        'userProposal.stage',
+        'userProposal.body',
+        'userProposal.createdAt',
+      ]);
+    }
+
+    userFeedQuery.where('user.id = :id', { id });
     const userFeed = await userFeedQuery.getOne();
     if (!userFeed) {
       throw new UserInputError('User not found');
     }
-    return userFeed;
+
+    return {
+      posts: userFeed.posts || [],
+      proposals: userFeed.proposals || [],
+      following: userFeed.following || [],
+    };
   }
 
-  async getJoinedGroupsFeed(id: number) {
-    const joinedGroupsFeedQuery = this.userRepository
-      .createQueryBuilder('user')
+  async getJoinedGroupsFeed(userId: number, feedType: HomeFeedType) {
+    if (feedType === HomeFeedType.FOLLOWING) {
+      return { groupPosts: [], groupProposals: [] };
+    }
 
-      // Posts and proposals from joined groups
-      .leftJoinAndSelect('user.groups', 'userGroup')
-      .leftJoinAndSelect('userGroup.posts', 'groupPost')
-      .leftJoinAndSelect('userGroup.proposals', 'groupProposal')
+    const joinedGroupsFeedQuery =
+      this.userRepository.createQueryBuilder('user');
 
-      // Only select required fields
-      .select(['user.id', 'userGroup.id'])
-      .addSelect([
+    const isYourFeed = feedType === HomeFeedType.YOUR_FEED;
+
+    // Proposals from joined groups
+    joinedGroupsFeedQuery.leftJoinAndSelect('user.groups', 'userGroup');
+    joinedGroupsFeedQuery.leftJoinAndSelect(
+      'userGroup.proposals',
+      'groupProposal',
+    );
+
+    // Include posts from joined groups depending on feed type
+    if (isYourFeed) {
+      joinedGroupsFeedQuery.leftJoinAndSelect('userGroup.posts', 'groupPost');
+    }
+
+    // Only select required fields
+    joinedGroupsFeedQuery.select(['user.id', 'userGroup.id']);
+    joinedGroupsFeedQuery.addSelect([
+      'groupProposal.id',
+      'groupProposal.groupId',
+      'groupProposal.stage',
+      'groupProposal.userId',
+      'groupProposal.body',
+      'groupProposal.createdAt',
+    ]);
+    if (isYourFeed) {
+      joinedGroupsFeedQuery.addSelect([
         'groupPost.id',
         'groupPost.groupId',
         'groupPost.eventId',
@@ -203,16 +248,13 @@ export class UsersService {
         'groupPost.sharedProposalId',
         'groupPost.body',
         'groupPost.createdAt',
-      ])
-      .addSelect([
-        'groupProposal.id',
-        'groupProposal.groupId',
-        'groupProposal.stage',
-        'groupProposal.userId',
-        'groupProposal.body',
-        'groupProposal.createdAt',
-      ])
-      .where('user.id = :id', { id });
+      ]);
+    }
+
+    // Scope by current user
+    joinedGroupsFeedQuery.where('user.id = :id', {
+      id: userId,
+    });
 
     const joinedGroupsFeed = await joinedGroupsFeedQuery.getOne();
     if (!joinedGroupsFeed) {
@@ -220,13 +262,16 @@ export class UsersService {
     }
 
     const { groups } = joinedGroupsFeed;
-    const groupPosts = groups.flatMap((group) => group.posts);
     const groupProposals = groups.flatMap((group) => group.proposals);
+    const groupPosts = isYourFeed ? groups.flatMap((group) => group.posts) : [];
 
     return { groupPosts, groupProposals };
   }
 
-  async getUserFeedEventPosts(id: number) {
+  async getUserFeedEventPosts(id: number, feedType: HomeFeedType) {
+    if (feedType !== HomeFeedType.YOUR_FEED) {
+      return [];
+    }
     const eventPostsQuery = this.userRepository
       .createQueryBuilder('user')
 
@@ -259,16 +304,22 @@ export class UsersService {
     return extractedEvents.flatMap((event) => event.posts);
   }
 
-  async getUserFeed(id: number, offset?: number, limit?: number) {
-    const logTimeMessage = `Fetching home feed for user with ID ${id}`;
+  async getUserFeed(
+    { feedType, offset, limit }: HomeFeedInput,
+    userId: number,
+  ) {
+    const logTimeMessage = `Fetching home feed for user with ID ${userId}`;
     logTime(logTimeMessage, this.logger);
 
-    const userFeed = await this.getBaseUserFeed(id);
-    const eventPosts = await this.getUserFeedEventPosts(id);
-    const { groupPosts, groupProposals } = await this.getJoinedGroupsFeed(id);
-    const { posts, proposals, following } = userFeed;
+    const userFeed = await this.getBaseUserFeed(userId, feedType);
+    const eventPosts = await this.getUserFeedEventPosts(userId, feedType);
+    const { groupPosts, groupProposals } = await this.getJoinedGroupsFeed(
+      userId,
+      feedType,
+    );
 
     // Initialize maps with posts and proposals by this user
+    const { posts, proposals, following } = userFeed;
     const postMap = posts.reduce<Record<number, Post>>((result, post) => {
       result[post.id] = post;
       return result;
