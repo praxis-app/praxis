@@ -1,4 +1,5 @@
 import { ApolloCache, FetchResult, Reference } from '@apollo/client';
+import { t } from 'i18next';
 import { produce } from 'immer';
 import { TypeNames } from '../constants/shared.constants';
 import { toastVar } from '../graphql/cache';
@@ -50,6 +51,7 @@ export const addNotification = (
           return;
         }
         draft.unreadNotificationsCount += 1;
+        document.title = `(${draft.unreadNotificationsCount}) ${t('brand')}`;
       }),
   );
 };
