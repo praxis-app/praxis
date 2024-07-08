@@ -1,4 +1,6 @@
 import { BoxProps, Typography } from '@mui/material';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useUnreadNotificationsQuery } from '../../graphql/notifications/queries/gen/UnreadNotifications.gen';
 import { useNotifiedSubscription } from '../../graphql/notifications/subscriptions/gen/Notified.gen';
 import { Blurple } from '../../styles/theme';
@@ -25,6 +27,16 @@ const NotificationCount = ({
       addNotification(cache, data);
     },
   });
+
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!document || !count) {
+      return;
+    }
+    // Set document title to reflect unread count
+    document.title = `(${count}) ${t('brand')}`;
+  }, [count, t]);
 
   const getCountText = () => {
     if (count > 99) {

@@ -358,6 +358,15 @@ const Notification = ({
             return;
           }
           draft.unreadNotificationsCount -= 1;
+
+          // Set document title to reflect unread count
+          if (draft.unreadNotificationsCount === 0) {
+            document.title = t('brand');
+          } else {
+            document.title = `(${draft.unreadNotificationsCount}) ${t(
+              'brand',
+            )}`;
+          }
         }),
     );
 
