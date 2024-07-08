@@ -79,6 +79,7 @@ const Notifications = () => {
             return;
           }
           draft.unreadNotificationsCount = 0;
+          document.title = t('brand');
         }),
     );
   };

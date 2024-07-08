@@ -51,6 +51,7 @@ export const addNotification = (
           return;
         }
         draft.unreadNotificationsCount += 1;
+        // Set document title to reflect unread count
         document.title = `(${draft.unreadNotificationsCount}) ${t('brand')}`;
       }),
   );
