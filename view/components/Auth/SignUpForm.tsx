@@ -108,6 +108,9 @@ const SignUpForm = () => {
     if (!email) {
       errors.email = t('users.errors.missingEmail');
     }
+    if (email.length > 254) {
+      errors.email = t('users.errors.longEmail');
+    }
     if (password.length < MIN_PASSWORD_LENGTH) {
       errors.password = t('users.errors.passwordTooShort');
     }
