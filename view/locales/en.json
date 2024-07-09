@@ -490,7 +490,9 @@
       "missingLocation": "Location cannot be empty for in person events",
       "missingName": "Event name cannot be empty",
       "onlineOrOffline": "Event must be either virtual or in person",
-      "invalidLink": "External link must be a valid URL"
+      "invalidLink": "External link must be a valid URL",
+      "longExternalLink": "External link cannot exceed 2048 characters",
+      "longLocation": "Location cannot exceed 255 characters"
     },
     "tabs": {
       "about": "About",

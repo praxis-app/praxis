@@ -227,6 +227,12 @@ const EventForm = ({ editEvent, groupId }: Props) => {
     if (externalLink && !isValidUrl(externalLink)) {
       errors.externalLink = t('events.errors.invalidLink');
     }
+    if (externalLink && externalLink.length > 2048) {
+      errors.externalLink = t('events.errors.longExternalLink');
+    }
+    if (location && location.length > 255) {
+      errors.location = t('events.errors.longLocation');
+    }
     if (!hostId) {
       errors.hostId = t('events.errors.missingHost');
     }
