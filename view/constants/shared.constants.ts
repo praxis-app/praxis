@@ -10,6 +10,7 @@ export const MIDDOT_WITH_SPACES = ' · ';
 export const SCROLL_DURATION = 250;
 
 export const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+export const VALID_NAME_REGEX = /^[A-Za-z0-9 ]+$/;
 
 export const DEFAULT_PAGE_SIZE = 10;
 

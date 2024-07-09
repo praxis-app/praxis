@@ -265,6 +265,9 @@ export class AuthService {
     if (!VALID_EMAIL_REGEX.test(email)) {
       throw new Error('Invalid email address');
     }
+    if (email.length > 254) {
+      throw new Error('Email address cannot exceed 254 characters');
+    }
     if (!VALID_NAME_REGEX.test(name)) {
       throw new Error('User names cannot contain special characters');
     }

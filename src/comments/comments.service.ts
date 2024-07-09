@@ -136,10 +136,15 @@ export class CommentsService {
     { body, images, ...commentData }: CreateCommentInput,
     user: User,
   ) {
+    const sanitizedBody = sanitizeText(body);
+
     if (!body && !images?.length) {
       throw new Error('Comments must include text or images');
     }
-    const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
+    if (body && sanitizedBody.length > 6000) {
+      throw new Error('Comments must be 6000 characters or less');
+    }
+
     const comment = await this.commentRepository.save({
       ...commentData,
       userId: user.id,
@@ -221,7 +226,11 @@ export class CommentsService {
     images,
     ...commentData
   }: UpdateCommentInput) {
-    const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
+    const sanitizedBody = sanitizeText(body);
+    if (body && sanitizedBody.length > 6000) {
+      throw new Error('Comments must be 6000 characters or less');
+    }
+
     await this.commentRepository.update(id, {
       body: sanitizedBody,
       ...commentData,

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, FindOptionsWhere, In, Not, Repository } from 'typeorm';
 import { ChatService } from '../chat/chat.service';
+import { sanitizeText } from '../common/common.utils';
 import { User } from '../users/models/user.model';
 import { ServerRolePermission } from './models/server-role-permission.model';
 import { ServerRole } from './models/server-role.model';
@@ -69,16 +70,24 @@ export class ServerRolesService {
   }
 
   async createServerRole(
-    roleData: DeepPartial<ServerRole>,
+    { name, ...roleData }: DeepPartial<ServerRole>,
     fromProposalAction = false,
   ) {
+    const santizedName = sanitizeText(name);
+    if (!santizedName) {
+      throw new Error('Role name is required');
+    }
+    if (santizedName.length > 25) {
+      throw new Error('Role name cannot be longer than 25 characters');
+    }
     if (fromProposalAction) {
       return this.serverRoleRepository.save(roleData);
     }
     const permission = initServerRolePermissions();
     const serverRole = await this.serverRoleRepository.save({
-      ...roleData,
+      name: santizedName,
       permission,
+      ...roleData,
     });
     return { serverRole };
   }
@@ -86,12 +95,20 @@ export class ServerRolesService {
   async updateServerRole(
     {
       id,
+      name,
       selectedUserIds = [],
       permissions,
       ...roleData
     }: UpdateServerRoleInput,
     me: User,
   ) {
+    const santizedName = sanitizeText(name);
+    if (typeof name === 'string' && !santizedName) {
+      throw new Error('Role name is required');
+    }
+    if (name && santizedName.length > 25) {
+      throw new Error('Role name cannot be longer than 25 characters');
+    }
     const roleWithRelations = await this.getServerRole({ id }, [
       'members',
       'permission',
@@ -103,6 +120,7 @@ export class ServerRolesService {
     const serverRole = await this.serverRoleRepository.save({
       ...roleWithRelations,
       ...roleData,
+      name: santizedName,
       members: [...roleWithRelations.members, ...newMembers],
       permission: { ...roleWithRelations.permission, ...permissions },
     });

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeepPartial, FindOptionsWhere, In, Not, Repository } from 'typeorm';
+import { sanitizeText } from '../../common/common.utils';
 import {
   ADMIN_ROLE_NAME,
   DEFAULT_ROLE_COLOR,
@@ -77,27 +78,37 @@ export class GroupRolesService {
   }
 
   async createGroupRole(
-    roleData: DeepPartial<GroupRole>,
+    { name, ...roleData }: DeepPartial<GroupRole>,
     fromProposalAction = false,
   ) {
+    const santizedName = sanitizeText(name);
+    if (name && santizedName.length > 25) {
+      throw new Error('Role name cannot be longer than 25 characters');
+    }
     if (fromProposalAction) {
       const permission = cleanGroupPermissions(roleData.permission);
       return this.groupRoleRepository.save({ ...roleData, permission });
     }
     const permission = initGroupRolePermissions();
     const groupRole = await this.groupRoleRepository.save({
-      ...roleData,
+      name: santizedName,
       permission,
+      ...roleData,
     });
     return { groupRole };
   }
 
   async updateGroupRole({
     id,
+    name,
     selectedUserIds = [],
     permissions,
     ...roleData
   }: UpdateGroupRoleInput) {
+    const santizedName = sanitizeText(name);
+    if (name && santizedName.length > 25) {
+      throw new Error('Role name cannot be longer than 25 characters');
+    }
     const roleWithRelations = await this.getGroupRole({ id }, [
       'members',
       'permission',
@@ -110,6 +121,7 @@ export class GroupRolesService {
     const groupRole = await this.groupRoleRepository.save({
       ...roleWithRelations,
       ...roleData,
+      name: santizedName,
       members: [...roleWithRelations.members, ...newMembers],
       permission: { ...roleWithRelations.permission, ...cleanedPermissions },
     });

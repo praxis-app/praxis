@@ -72,6 +72,7 @@ import ProposeRoleModal from './ProposalActions/ProposeRoleModal';
 
 type ProposalFormErrors = {
   action: FormikErrors<ProposalActionInput>;
+  body?: string;
   groupId?: string;
 };
 
@@ -128,10 +129,13 @@ const ProposalForm = ({
     return dayjs().add(votingTimeLimit, 'minutes');
   };
 
-  const validateProposal = ({ action, groupId }: CreateProposalInput) => {
+  const validateProposal = ({ body, action, groupId }: CreateProposalInput) => {
     const errors: ProposalFormErrors = {
       action: {},
     };
+    if (body && body.length > 6000) {
+      errors.body = t('proposals.errors.longBody');
+    }
     if (!action.actionType) {
       errors.action.actionType = t('proposals.errors.missingActionType');
     }

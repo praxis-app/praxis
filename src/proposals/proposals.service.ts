@@ -139,6 +139,11 @@ export class ProposalsService {
     }: CreateProposalInput,
     user: User,
   ) {
+    const sanitizedBody = sanitizeText(body);
+    if (body && body.length > 8000) {
+      throw new Error('Proposals must be 8000 characters or less');
+    }
+
     const { config } = await this.groupsService.getGroup(
       { id: proposalData.groupId },
       ['config'],
@@ -155,7 +160,6 @@ export class ProposalsService {
       closingAt: closingAt || groupClosingAt,
     };
 
-    const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
     const proposal = await this.proposalRepository.save({
       ...proposalData,
       body: sanitizedBody,
@@ -207,7 +211,11 @@ export class ProposalsService {
     action: { groupCoverPhoto, ...action },
     ...data
   }: UpdateProposalInput) {
-    const sanitizedBody = body ? sanitizeText(body.trim()) : undefined;
+    const sanitizedBody = sanitizeText(body);
+    if (body && body.length > 8000) {
+      throw new Error('Proposals must be 8000 characters or less');
+    }
+
     const proposalWithAction = await this.getProposal(id, ['action']);
     const newAction = {
       ...proposalWithAction.action,
