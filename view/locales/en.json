@@ -606,6 +606,10 @@
       "noMessagesYet": "No messages yet",
       "verifyToChat": "You must be verified to chat with other members."
     },
+    "errors": {
+      "longBody": "Message body cannot exceed 6000 characters",
+      "couldNotSend": "Message could not be sent"
+    },
     "labels": {
       "chat": "Chat"
     }
