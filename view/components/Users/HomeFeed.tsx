@@ -41,7 +41,6 @@ const HomeFeed = () => {
 
   useEffect(() => {
     let feedType: HomeFeedType = 'YOUR_FEED';
-    setPage(0);
 
     if (!tabParam) {
       setTab(0);
@@ -88,6 +87,11 @@ const HomeFeed = () => {
     });
   };
 
+  const handleTabClick = (path: string) => {
+    setPage(0);
+    navigate(path);
+  };
+
   if (isDeniedAccess(error)) {
     return <Typography>{t('prompts.permissionDenied')}</Typography>;
   }
@@ -111,15 +115,15 @@ const HomeFeed = () => {
             <Tabs textColor="inherit" value={tab} centered>
               <Tab
                 label={t('users.labels.yourFeed')}
-                onClick={() => navigate(NavigationPaths.Home)}
+                onClick={() => handleTabClick(NavigationPaths.Home)}
               />
               <Tab
                 label={t('groups.tabs.proposals')}
-                onClick={() => navigate(proposalsTab)}
+                onClick={() => handleTabClick(proposalsTab)}
               />
               <Tab
                 label={t('users.profile.following')}
-                onClick={() => navigate(followingTab)}
+                onClick={() => handleTabClick(followingTab)}
               />
             </Tabs>
           </Card>
