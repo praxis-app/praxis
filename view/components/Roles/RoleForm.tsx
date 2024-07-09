@@ -5,7 +5,7 @@ import {
   CardContent as MuiCardContent,
   styled,
 } from '@mui/material';
-import { Form, Formik, FormikHelpers } from 'formik';
+import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import { ColorResult } from 'react-color';
 import { useTranslation } from 'react-i18next';
 import { FieldNames } from '../../constants/shared.constants';
@@ -70,10 +70,22 @@ const RoleForm = ({
     return !dirty;
   };
 
+  const validate = ({ name }: InitialValues) => {
+    const errors: FormikErrors<InitialValues> = {};
+    if (name.length > 25) {
+      errors.name = t('roles.errors.longName');
+    }
+    return errors;
+  };
+
   return (
     <Card {...cardProps}>
       <CardContent>
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validate={validate}
+        >
           {({ isSubmitting, dirty }) => (
             <Form>
               <FormGroup>

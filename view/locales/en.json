@@ -523,6 +523,9 @@
       "colorPickerLabel": "Role color",
       "pickColor": "Pick a color"
     },
+    "errors": {
+      "longName": "Role name cannot exceed 25 characters"
+    },
     "labels": {
       "members": "Members",
       "roleMembers": "Role Members",
