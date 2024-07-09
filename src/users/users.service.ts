@@ -595,20 +595,20 @@ export class UsersService {
     if (!isValidName) {
       throw new Error('Usernames cannot contain special characters');
     }
-    if (sanitizedName.length < 2) {
+    if (name && sanitizedName.length < 2) {
       throw new Error('Username must be at least 2 characters');
     }
     if (sanitizedName.length > 15) {
       throw new Error('Username cannot exceed 15 characters');
     }
-    if (sanitizedDisplayName.length < 4) {
+    if (displayName && sanitizedDisplayName.length < 4) {
       throw new Error('Display name must be at least 4 characters');
     }
     if (sanitizedDisplayName.length > 30) {
       throw new Error('Display name cannot exceed 30 characters');
     }
-    if (sanitizedBio.length > 250) {
-      throw new Error('Bio cannot exceed 250 characters');
+    if (sanitizedBio.length > 500) {
+      throw new Error('Bio cannot exceed 500 characters');
     }
 
     const usersWithNameCount = await this.getUsersCount({ name });
