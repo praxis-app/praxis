@@ -68,7 +68,7 @@ Praxis takes advantage of code generation based on the current GraphQL schema. T
 
 ```bash
 # Keep generated types and hooks in sync with the current schema
-$ npn run gen
+$ npm run gen
 ```
 
 Read more about [GraphQL Code Generator](https://www.the-guild.dev/graphql/codegen/docs/getting-started).
