@@ -1,7 +1,13 @@
 // TODO: Utilize Formik for image input
 
-import { Divider, FormGroup } from '@mui/material';
-import { Form, Formik, FormikFormProps, FormikHelpers } from 'formik';
+import { Divider, FormGroup, Typography } from '@mui/material';
+import {
+  Form,
+  Formik,
+  FormikErrors,
+  FormikFormProps,
+  FormikHelpers,
+} from 'formik';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -45,6 +51,8 @@ import ImageInput from '../Images/ImageInput';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import TextFieldWithAvatar from '../Shared/TextFieldWithAvatar';
+
+type PostInput = CreatePostInput | UpdatePostInput;
 
 interface Props extends FormikFormProps {
   editPost?: PostFormFragment;
@@ -231,8 +239,8 @@ const PostForm = ({
   };
 
   const handleSubmit = async (
-    { body, ...formValues }: CreatePostInput | UpdatePostInput,
-    formikHelpers: FormikHelpers<CreatePostInput | UpdatePostInput>,
+    { body, ...formValues }: PostInput,
+    formikHelpers: FormikHelpers<PostInput>,
   ) => {
     const values = {
       ...formValues,
@@ -279,14 +287,23 @@ const PostForm = ({
     setImagesInputKey(getRandomString());
   };
 
+  const validate = ({ body }: PostInput) => {
+    const errors: FormikErrors<PostInput> = {};
+    if (body && body.length > 6000) {
+      errors.body = t('posts.errors.longBody');
+    }
+    return errors;
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
+      validate={validate}
       enableReinitialize
       {...formProps}
     >
-      {({ isSubmitting, dirty, handleChange, values }) => (
+      {({ isSubmitting, dirty, handleChange, values, errors }) => (
         <Form>
           <FormGroup>
             <TextFieldWithAvatar
@@ -301,6 +318,12 @@ const PostForm = ({
               value={values.body}
               multiline
             />
+
+            {!!errors.body && (
+              <Typography color="error" fontSize="small">
+                {errors.body}
+              </Typography>
+            )}
 
             <AttachedImagePreview
               handleDelete={handleDeleteSavedImage}

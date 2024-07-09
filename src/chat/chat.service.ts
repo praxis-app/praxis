@@ -158,10 +158,14 @@ export class ChatService {
     { conversationId, body, images }: SendMessageInput,
     currentUser: User,
   ) {
-    if (!body && !images?.length) {
+    const sanitizedBody = sanitizeText(body);
+    if (!sanitizedBody && !images?.length) {
       throw new Error('Message body or images are required');
     }
-    const sanitizedBody = body ? sanitizeText(body) : undefined;
+    if (body && sanitizedBody.length > 6000) {
+      throw new Error('Message body must be 6000 characters or less');
+    }
+
     const message: Message = await this.messageRepository.save({
       userId: currentUser.id,
       body: sanitizedBody,

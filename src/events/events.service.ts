@@ -9,7 +9,7 @@ import {
   Repository,
 } from 'typeorm';
 import { PageSize } from '../common/common.constants';
-import { paginate, sanitizeText } from '../common/common.utils';
+import { normalizeText, paginate, sanitizeText } from '../common/common.utils';
 import { GroupPrivacy } from '../groups/groups.constants';
 import { ImageTypes } from '../images/image.constants';
 import {
@@ -137,16 +137,43 @@ export class EventsService {
   }
 
   async createEvent({
+    name,
     coverPhoto,
     description,
+    location,
     externalLink,
     hostId,
     ...eventData
   }: CreateEventInput) {
-    const sanitizedDescription = sanitizeText(description.trim());
+    const sanitizedName = sanitizeText(name);
+    const sanitizedDescription = sanitizeText(description);
+    const sanitizedLocation = sanitizeText(location);
+    const normalizedExternalLink = normalizeText(externalLink);
+
+    if (sanitizedName.length < 5) {
+      throw new Error('Event name must be at least 5 characters');
+    }
+    if (sanitizedName.length > 25) {
+      throw new Error('Event name cannot exceed 25 characters');
+    }
+    if (!sanitizedDescription) {
+      throw new Error('Event description is required');
+    }
+    if (sanitizedDescription.length > 1000) {
+      throw new Error('Event description cannot exceed 1000 characters');
+    }
+    if (normalizedExternalLink.length > 2048) {
+      throw new Error('Event external link cannot exceed 2048 characters');
+    }
+    if (sanitizedLocation.length > 255) {
+      throw new Error('Event location cannot exceed 255 characters');
+    }
+
     const event = await this.eventRepository.save({
-      externalLink: externalLink?.trim().toLowerCase(),
+      externalLink: normalizedExternalLink,
       description: sanitizedDescription,
+      location: sanitizedLocation,
+      name: sanitizedName,
       ...eventData,
     });
     await this.eventAttendeeRepository.save({
@@ -166,18 +193,43 @@ export class EventsService {
 
   async updateEvent({
     id,
+    name,
     coverPhoto,
     description,
     externalLink,
+    location,
     hostId,
     ...eventData
   }: UpdateEventInput) {
-    const sanitizedDescription = description
-      ? sanitizeText(description.trim())
-      : undefined;
+    const sanitizedName = sanitizeText(name);
+    const sanitizedDescription = sanitizeText(description);
+    const sanitizedLocation = sanitizeText(location);
+    const normalizedExternalLink = normalizeText(externalLink);
+
+    if (name && sanitizedName.length < 5) {
+      throw new Error('Event name must be at least 5 characters');
+    }
+    if (sanitizedName.length > 25) {
+      throw new Error('Event name cannot exceed 25 characters');
+    }
+    if (typeof description !== 'undefined' && !sanitizedDescription) {
+      throw new Error('Event description is required');
+    }
+    if (sanitizedDescription.length > 1000) {
+      throw new Error('Event description cannot exceed 1000 characters');
+    }
+    if (normalizedExternalLink.length > 2048) {
+      throw new Error('Event external link cannot exceed 2048 characters');
+    }
+    if (sanitizedLocation.length > 255) {
+      throw new Error('Event location cannot exceed 255 characters');
+    }
+
     await this.eventRepository.update(id, {
-      externalLink: externalLink?.trim().toLowerCase(),
+      externalLink: normalizedExternalLink,
       description: sanitizedDescription,
+      location: sanitizedLocation,
+      name: sanitizedName,
       ...eventData,
     });
 

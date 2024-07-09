@@ -165,6 +165,7 @@
       "missingGroupDescription": "Proposals to change group description must include a description field",
       "missingGroupId": "Only group proposals are supported at this time",
       "missingGroupName": "Proposals to change group name must include a name field",
+      "longBody": "Proposal body cannot exceed 8000 characters",
       "missingRole": "Proposals to change or add group roles must include a role"
     }
   },
@@ -186,6 +187,9 @@
       "writeComment": "Write a comment...",
       "joinToComment": "No comments yet. Join the group to comment.",
       "loginToLike": "You need to be logged in to like this comment."
+    },
+    "errors": {
+      "longBody": "Comment body cannot exceed 6000 characters"
     },
     "labels": {
       "xComments_one": "{{count}} comment",
@@ -262,7 +266,14 @@
       "invalidEmail": "Email is invalid.",
       "missingConfirmPassword": "Confirm password cannot be empty",
       "missingEmail": "Email cannot be empty",
-      "missingName": "Name cannot be empty",
+      "missingName": "Username cannot be empty",
+      "invalidName": "Usernames cannot contain special characters",
+      "shortName": "Username must be at least 2 characters",
+      "longName": "Username cannot exceed 15 characters",
+      "longEmail": "Email cannot exceed 254 characters",
+      "shortDisplayName": "Display name must be at least 4 characters",
+      "longDisplayName": "Display name cannot exceed 30 characters",
+      "longBio": "Bio cannot exceed 500 characters",
       "missingPassword": "Password cannot be empty",
       "passwordTooShort": "Password must be at least 8 characters long",
       "passwordTooLong": "Password must be at most 64 characters long",
@@ -303,7 +314,8 @@
       "joinToShare": "You need to be a member of {{groupName}} to share this post."
     },
     "errors": {
-      "missingContentShare": "We're unable to share this post as the original content has been deleted."
+      "missingContentShare": "We're unable to share this post as the original content has been deleted.",
+      "longBody": "Post body cannot exceed 6000 characters"
     },
     "form": {
       "body": "Body",
@@ -340,10 +352,14 @@
     "errors": {
       "consentVotingTimeLimitRequired": "Voting time limit is required for consent decision making.",
       "couldNotCreate": "Group could not be created",
-      "couldNotUpdate": "Group could not be updated",
       "couldNotDelete": "Group could not be deleted",
+      "couldNotUpdate": "Group could not be updated",
       "couldNotUpdateSettings": "Could not update group settings",
-      "majorityVoteRatificationThreshold": "Ratification threshold must be greater than 50% for majority vote."
+      "invalidName": "Group names cannot contain special characters",
+      "longDescription": "Group description cannot exceed 1000 characters",
+      "longName": "Group name cannot exceed 25 characters",
+      "majorityVoteRatificationThreshold": "Ratification threshold must be greater than 50% for majority vote.",
+      "shortName": "Group name must be at least 5 characters"
     },
     "labels": {
       "consensus": "Consensus",
@@ -479,7 +495,9 @@
       "missingLocation": "Location cannot be empty for in person events",
       "missingName": "Event name cannot be empty",
       "onlineOrOffline": "Event must be either virtual or in person",
-      "invalidLink": "External link must be a valid URL"
+      "invalidLink": "External link must be a valid URL",
+      "longExternalLink": "External link cannot exceed 2048 characters",
+      "longLocation": "Location cannot exceed 255 characters"
     },
     "tabs": {
       "about": "About",
@@ -505,6 +523,9 @@
     "form": {
       "colorPickerLabel": "Role color",
       "pickColor": "Pick a color"
+    },
+    "errors": {
+      "longName": "Role name cannot exceed 25 characters"
     },
     "labels": {
       "members": "Members",
@@ -588,6 +609,10 @@
       "noChatsYet": "No chats yet. Join groups to start chatting with other members.",
       "noMessagesYet": "No messages yet",
       "verifyToChat": "You must be verified to chat with other members."
+    },
+    "errors": {
+      "longBody": "Message body cannot exceed 6000 characters",
+      "couldNotSend": "Message could not be sent"
     },
     "labels": {
       "chat": "Chat"

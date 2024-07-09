@@ -587,20 +587,28 @@ export class UsersService {
 
     const { name, displayName, bio, profilePicture, coverPhoto } = input;
     const isValidName = VALID_NAME_REGEX.test(name);
+
+    const sanitizedName = sanitizeText(name);
+    const sanitizedDisplayName = sanitizeText(displayName);
+    const sanitizedBio = sanitizeText(bio);
+
     if (!isValidName) {
       throw new Error('Usernames cannot contain special characters');
     }
-    if (name && name.length < 2) {
+    if (name && sanitizedName.length < 2) {
       throw new Error('Username must be at least 2 characters');
     }
-    if (name && name.length > 15) {
+    if (sanitizedName.length > 15) {
       throw new Error('Username cannot exceed 15 characters');
     }
-    if (displayName && displayName.length < 4) {
+    if (displayName && sanitizedDisplayName.length < 4) {
       throw new Error('Display name must be at least 4 characters');
     }
-    if (displayName && displayName.length > 30) {
+    if (sanitizedDisplayName.length > 30) {
       throw new Error('Display name cannot exceed 30 characters');
+    }
+    if (sanitizedBio.length > 500) {
+      throw new Error('Bio cannot exceed 500 characters');
     }
 
     const usersWithNameCount = await this.getUsersCount({ name });
@@ -616,9 +624,9 @@ export class UsersService {
     }
 
     await this.userRepository.update(currentUser.id, {
-      displayName: sanitizeText(displayName),
-      name: sanitizeText(name),
-      bio: sanitizeText(bio),
+      displayName: sanitizedDisplayName,
+      name: sanitizedName,
+      bio: sanitizedBio,
     });
 
     if (profilePicture) {

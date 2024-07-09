@@ -7,13 +7,15 @@ import {
   IconButton,
   Input,
   SxProps,
+  Typography,
   useTheme,
 } from '@mui/material';
-import { Formik, FormikHelpers } from 'formik';
+import { Formik, FormikErrors, FormikHelpers } from 'formik';
 import { produce } from 'immer';
 import { RefObject, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FieldNames, KeyCodes } from '../../constants/shared.constants';
+import { toastVar } from '../../graphql/cache';
 import { useSendMessageMutation } from '../../graphql/chat/mutations/gen/SendMessage.gen';
 import {
   VibeChatDocument,
@@ -174,6 +176,12 @@ const MessageForm = ({
           );
         }
       },
+      onError() {
+        toastVar({
+          status: 'error',
+          title: t('chat.errors.couldNotSend'),
+        });
+      },
       onCompleted() {
         if (onSubmit) {
           onSubmit();
@@ -212,15 +220,24 @@ const MessageForm = ({
     setImagesInputKey(getRandomString());
   };
 
+  const validate = ({ body }: SendMessageInput) => {
+    const errors: FormikErrors<SendMessageInput> = {};
+    if (body && body.length > 6000) {
+      errors.body = t('chat.errors.longBody');
+    }
+    return errors;
+  };
+
   return (
     <Container maxWidth="sm" sx={containerStyles}>
       <Box sx={formStyles} ref={formRef}>
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
+          validate={validate}
           enableReinitialize
         >
-          {({ handleChange, values, submitForm, isSubmitting }) => (
+          {({ handleChange, values, submitForm, isSubmitting, errors }) => (
             <Box>
               <FormGroup row>
                 <Box
@@ -245,6 +262,12 @@ const MessageForm = ({
                     disableUnderline
                     multiline
                   />
+
+                  {!!errors.body && (
+                    <Typography color="error" fontSize="small">
+                      {errors.body}
+                    </Typography>
+                  )}
 
                   <Flex justifyContent="space-between">
                     <ImageInput

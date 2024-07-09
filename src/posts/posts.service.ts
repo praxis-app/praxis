@@ -89,13 +89,17 @@ export class PostsService {
     { images, body, sharedFromUserId, ...postData }: CreatePostInput,
     user: User,
   ) {
+    const sanitizedBody = sanitizeText(body);
     if (
-      !body?.trim() &&
+      !sanitizedBody &&
       !images?.length &&
       !postData.sharedPostId &&
       !postData.sharedProposalId
     ) {
       throw new Error('Posts must include some content');
+    }
+    if (body && sanitizedBody.length > 6000) {
+      throw new Error('Posts must be 6000 characters or less');
     }
     if (postData.sharedPostId && images?.length) {
       throw new Error('Shared posts cannot include images');
@@ -117,7 +121,7 @@ export class PostsService {
       throw new Error('Shared posts must include the sharer ID');
     }
     const post = await this.postRepository.save({
-      body: sanitizeText(body),
+      body: sanitizedBody,
       userId: user.id,
       ...postData,
     });
@@ -171,6 +175,9 @@ export class PostsService {
   }
 
   async updatePost({ id, images, body, ...postData }: UpdatePostInput) {
+    if (body && body.length > 6000) {
+      throw new Error('Posts must be 6000 characters or less');
+    }
     await this.postRepository.update(id, {
       body: sanitizeText(body.trim()),
       ...postData,

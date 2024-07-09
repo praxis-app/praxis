@@ -7,8 +7,9 @@ import {
   IconButton,
   Input,
   SxProps,
+  Typography,
 } from '@mui/material';
-import { Formik, FormikFormProps, FormikHelpers } from 'formik';
+import { Formik, FormikErrors, FormikFormProps, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -238,6 +239,14 @@ const CommentForm = ({
     input.focus();
   };
 
+  const validate = ({ body }: CreateCommentInput | UpdateCommentInput) => {
+    const errors: FormikErrors<CreateCommentInput | UpdateCommentInput> = {};
+    if (body && body.length > 6000) {
+      errors.body = t('comments.errors.longBody');
+    }
+    return errors;
+  };
+
   if (!showForm) {
     return (
       <Flex>
@@ -268,10 +277,11 @@ const CommentForm = ({
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
+      validate={validate}
       enableReinitialize
       {...formProps}
     >
-      {({ handleChange, values, submitForm, isSubmitting }) => (
+      {({ handleChange, values, submitForm, isSubmitting, errors }) => (
         <Box>
           <FormGroup row>
             <UserAvatar size={35} sx={{ marginRight: 1 }} />
@@ -296,6 +306,12 @@ const CommentForm = ({
                 disableUnderline
                 multiline
               />
+
+              {!!errors.body && (
+                <Typography color="error" fontSize="small">
+                  {errors.body}
+                </Typography>
+              )}
 
               <Flex justifyContent="space-between">
                 <ImageInput

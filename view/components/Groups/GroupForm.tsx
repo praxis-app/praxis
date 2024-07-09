@@ -5,12 +5,12 @@ import {
   CardContent as MuiCardContent,
   styled,
 } from '@mui/material';
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikErrors } from 'formik';
 import { produce } from 'immer';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { FieldNames } from '../../constants/shared.constants';
+import { FieldNames, VALID_NAME_REGEX } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
 import { CreateGroupInput, UpdateGroupInput } from '../../graphql/gen';
 import { GroupFormFragment } from '../../graphql/groups/fragments/gen/GroupForm.gen';
@@ -166,13 +166,38 @@ const GroupForm = ({ editGroup, inModal, ...cardProps }: Props) => {
     }
   };
 
+  const validate = ({
+    name,
+    description,
+  }: CreateGroupInput | UpdateGroupInput) => {
+    const errors: FormikErrors<CreateGroupInput | UpdateGroupInput> = {};
+
+    if (name && !VALID_NAME_REGEX.test(name)) {
+      errors.name = t('groups.errors.invalidName');
+    }
+    if (name && name.length < 5) {
+      errors.name = t('groups.errors.shortName');
+    }
+    if (name && name.length > 25) {
+      errors.name = t('groups.errors.longName');
+    }
+    if (description && description.length > 1000) {
+      errors.description = t('groups.errors.longDescription');
+    }
+    return errors;
+  };
+
   const handleRemoveSelectedImage = () => {
     setCoverPhoto(undefined);
     setImageInputKey(getRandomString());
   };
 
   const renderForm = () => (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validate={validate}
+    >
       {({ isSubmitting, dirty }) => (
         <Form>
           <FormGroup>
