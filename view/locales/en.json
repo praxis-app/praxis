@@ -310,7 +310,8 @@
       "joinToShare": "You need to be a member of {{groupName}} to share this post."
     },
     "errors": {
-      "missingContentShare": "We're unable to share this post as the original content has been deleted."
+      "missingContentShare": "We're unable to share this post as the original content has been deleted.",
+      "longBody": "Post body cannot exceed 6000 characters"
     },
     "form": {
       "body": "Body",
