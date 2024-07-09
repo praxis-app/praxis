@@ -276,27 +276,29 @@ export class GroupsService {
     { name, description, coverPhoto, ...groupData }: CreateGroupInput,
     userId: number,
   ) {
-    if (!name) {
+    const santizedName = sanitizeText(name);
+    const sanitizedDescription = sanitizeText(description);
+    const isValidName = VALID_NAME_REGEX.test(name || '');
+
+    if (!santizedName) {
       throw new Error('Group name is required');
     }
-    const isValidName = VALID_NAME_REGEX.test(name || '');
     if (!isValidName) {
       throw new Error('Group names cannot contain special characters');
     }
-    if (name.length < 5) {
+    if (santizedName.length < 5) {
       throw new Error('Group name must be at least 5 characters');
     }
-    if (name.length > 25) {
+    if (santizedName.length > 25) {
       throw new Error('Group name cannot exceed 25 characters');
     }
-    if (description.length > 1000) {
+    if (sanitizedDescription.length > 1000) {
       throw new Error('Group description cannot exceed 1000 characters');
     }
 
-    const sanitizedDescription = sanitizeText(description.trim());
     const group = await this.groupRepository.save({
       description: sanitizedDescription,
-      name: name.trim(),
+      name: santizedName,
       ...groupData,
     });
     await this.createGroupMember(group.id, userId);
@@ -320,30 +322,29 @@ export class GroupsService {
     coverPhoto,
     ...groupData
   }: UpdateGroupInput) {
+    const santizedName = sanitizeText(name);
+    const sanitizedDescription = sanitizeText(description);
     const isValidName = VALID_NAME_REGEX.test(name || '');
+
     if (name && !isValidName) {
       throw new Error('Group names cannot contain special characters');
     }
     if (!isValidName) {
       throw new Error('Group names cannot contain special characters');
     }
-    if (name && name.length < 5) {
+    if (name && santizedName.length < 5) {
       throw new Error('Group name must be at least 5 characters');
     }
-    if (name && name.length > 25) {
+    if (name && santizedName.length > 25) {
       throw new Error('Group name cannot exceed 25 characters');
     }
-    if (description && description.length > 1000) {
+    if (description && sanitizedDescription.length > 1000) {
       throw new Error('Group description cannot exceed 1000 characters');
     }
 
-    const sanitizedDescription =
-      typeof description === 'string'
-        ? sanitizeText(description.trim())
-        : undefined;
     await this.groupRepository.update(id, {
       description: sanitizedDescription,
-      name: name?.trim(),
+      name: santizedName,
       ...groupData,
     });
 

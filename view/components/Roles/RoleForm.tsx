@@ -5,12 +5,12 @@ import {
   CardContent as MuiCardContent,
   styled,
 } from '@mui/material';
-import { Form, Formik, FormikHelpers, FormikProps } from 'formik';
+import { Form, Formik, FormikHelpers } from 'formik';
 import { ColorResult } from 'react-color';
 import { useTranslation } from 'react-i18next';
+import { FieldNames } from '../../constants/shared.constants';
 import { GroupRoleFragment } from '../../graphql/groups/fragments/gen/GroupRole.gen';
 import { ServerRoleFragment } from '../../graphql/roles/fragments/gen/ServerRole.gen';
-import { FieldNames } from '../../constants/shared.constants';
 import ColorPicker from '../Shared/ColorPicker';
 import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
@@ -60,10 +60,7 @@ const RoleForm = ({
     return editRole.color !== color;
   };
 
-  const isSubmitButtonDisabled = ({
-    dirty,
-    isSubmitting,
-  }: FormikProps<InitialValues>) => {
+  const isSubmitButtonDisabled = (isSubmitting: boolean, dirty: boolean) => {
     if (isSubmitting) {
       return true;
     }
@@ -77,7 +74,7 @@ const RoleForm = ({
     <Card {...cardProps}>
       <CardContent>
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-          {(formik) => (
+          {({ isSubmitting, dirty }) => (
             <Form>
               <FormGroup>
                 <TextField
@@ -97,8 +94,8 @@ const RoleForm = ({
 
               <Flex justifyContent="end">
                 <PrimaryActionButton
-                  disabled={isSubmitButtonDisabled(formik)}
-                  isLoading={formik.isSubmitting}
+                  disabled={isSubmitButtonDisabled(isSubmitting, dirty)}
+                  isLoading={isSubmitting}
                   sx={{ marginTop: 1.5 }}
                   type="submit"
                 >
