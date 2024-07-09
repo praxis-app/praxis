@@ -187,6 +187,9 @@
       "joinToComment": "No comments yet. Join the group to comment.",
       "loginToLike": "You need to be logged in to like this comment."
     },
+    "errors": {
+      "longBody": "Comment body cannot exceed 6000 characters"
+    },
     "labels": {
       "xComments_one": "{{count}} comment",
       "xComments_other": "{{count}} comments",
