@@ -74,7 +74,10 @@ export class ServerRolesService {
     fromProposalAction = false,
   ) {
     const santizedName = sanitizeText(name);
-    if (name && santizedName.length > 25) {
+    if (!santizedName) {
+      throw new Error('Role name is required');
+    }
+    if (santizedName.length > 25) {
       throw new Error('Role name cannot be longer than 25 characters');
     }
     if (fromProposalAction) {
@@ -100,6 +103,9 @@ export class ServerRolesService {
     me: User,
   ) {
     const santizedName = sanitizeText(name);
+    if (typeof name === 'string' && !santizedName) {
+      throw new Error('Role name is required');
+    }
     if (name && santizedName.length > 25) {
       throw new Error('Role name cannot be longer than 25 characters');
     }
