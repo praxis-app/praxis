@@ -276,6 +276,9 @@ export class GroupsService {
     { name, description, coverPhoto, ...groupData }: CreateGroupInput,
     userId: number,
   ) {
+    if (!name) {
+      throw new Error('Group name is required');
+    }
     const isValidName = VALID_NAME_REGEX.test(name || '');
     if (!isValidName) {
       throw new Error('Group names cannot contain special characters');

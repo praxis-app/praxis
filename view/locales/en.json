@@ -347,10 +347,14 @@
     "errors": {
       "consentVotingTimeLimitRequired": "Voting time limit is required for consent decision making.",
       "couldNotCreate": "Group could not be created",
-      "couldNotUpdate": "Group could not be updated",
       "couldNotDelete": "Group could not be deleted",
+      "couldNotUpdate": "Group could not be updated",
       "couldNotUpdateSettings": "Could not update group settings",
-      "majorityVoteRatificationThreshold": "Ratification threshold must be greater than 50% for majority vote."
+      "invalidName": "Group names cannot contain special characters",
+      "longDescription": "Group description cannot exceed 1000 characters",
+      "longName": "Group name cannot exceed 25 characters",
+      "majorityVoteRatificationThreshold": "Ratification threshold must be greater than 50% for majority vote.",
+      "shortName": "Group name must be at least 5 characters"
     },
     "labels": {
       "consensus": "Consensus",
