@@ -1,6 +1,6 @@
 import { useReactiveVar } from '@apollo/client';
 import { Divider, FormGroup, Typography } from '@mui/material';
-import { Form, Formik } from 'formik';
+import { Form, Formik, FormikErrors } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +21,7 @@ import Flex from '../Shared/Flex';
 import PrimaryActionButton from '../Shared/PrimaryActionButton';
 import { TextField } from '../Shared/TextField';
 import UserAvatar from './UserAvatar';
+import { VALID_NAME_REGEX } from '../../constants/shared.constants';
 
 interface Props {
   user: EditProfileFormFragment;
@@ -41,6 +42,32 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
     displayName: user.displayName || '',
     name: user.name || '',
     bio: user.bio || '',
+  };
+
+  const validate = ({ name, displayName, bio }: UpdateUserInput) => {
+    const errors: FormikErrors<UpdateUserInput> = {};
+    if (!name) {
+      errors.name = t('users.errors.missingName');
+    }
+    if (!VALID_NAME_REGEX.test(name)) {
+      errors.name = t('users.errors.invalidName');
+    }
+    if (name.length < 2) {
+      errors.name = t('users.errors.shortName');
+    }
+    if (name.length > 15) {
+      errors.name = t('users.errors.longName');
+    }
+    if (displayName && displayName.length < 4) {
+      errors.displayName = t('users.errors.shortDisplayName');
+    }
+    if (displayName.length > 30) {
+      errors.displayName = t('users.errors.longDisplayName');
+    }
+    if (bio && bio.length > 500) {
+      errors.bio = t('users.errors.longBio');
+    }
+    return errors;
   };
 
   const validateImages = () => {
@@ -91,7 +118,11 @@ const EditProfileForm = ({ user, submitButtonText }: Props) => {
   };
 
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validate={validate}
+    >
       {({ isSubmitting, dirty }) => (
         <Form>
           <Flex
