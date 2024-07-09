@@ -280,9 +280,6 @@ export class GroupsService {
     const sanitizedDescription = sanitizeText(description);
     const isValidName = VALID_NAME_REGEX.test(name || '');
 
-    if (!santizedName) {
-      throw new Error('Group name is required');
-    }
     if (!isValidName) {
       throw new Error('Group names cannot contain special characters');
     }
