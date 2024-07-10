@@ -33,7 +33,8 @@ export default defineConfig({
         manualChunks(id) {
           if (
             id.includes('node_modules') &&
-            !id.includes('node_modules/@apollo')
+            !id.includes('node_modules/@apollo') &&
+            !id.includes('node_modules/@mui')
           ) {
             return id
               .toString()
