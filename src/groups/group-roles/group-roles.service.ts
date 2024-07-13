@@ -109,6 +109,9 @@ export class GroupRolesService {
     if (name && sanitizedName.length > 25) {
       throw new Error('Role name cannot be longer than 25 characters');
     }
+    if (name && sanitizedName.length > 25) {
+      throw new Error('Role name cannot be longer than 25 characters');
+    }
     const roleWithRelations = await this.getGroupRole({ id }, [
       'members',
       'permission',
@@ -121,7 +124,7 @@ export class GroupRolesService {
     const groupRole = await this.groupRoleRepository.save({
       ...roleWithRelations,
       ...roleData,
-      name: sanitizedName,
+      name: sanitizedName || roleWithRelations.name,
       members: [...roleWithRelations.members, ...newMembers],
       permission: { ...roleWithRelations.permission, ...cleanedPermissions },
     });
