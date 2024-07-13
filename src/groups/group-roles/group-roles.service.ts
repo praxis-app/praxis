@@ -81,8 +81,8 @@ export class GroupRolesService {
     { name, ...roleData }: DeepPartial<GroupRole>,
     fromProposalAction = false,
   ) {
-    const santizedName = sanitizeText(name);
-    if (name && santizedName.length > 25) {
+    const sanitizedName = sanitizeText(name);
+    if (name && sanitizedName.length > 25) {
       throw new Error('Role name cannot be longer than 25 characters');
     }
     if (fromProposalAction) {
@@ -91,7 +91,7 @@ export class GroupRolesService {
     }
     const permission = initGroupRolePermissions();
     const groupRole = await this.groupRoleRepository.save({
-      name: santizedName,
+      name: sanitizedName,
       permission,
       ...roleData,
     });
@@ -105,8 +105,8 @@ export class GroupRolesService {
     permissions,
     ...roleData
   }: UpdateGroupRoleInput) {
-    const santizedName = sanitizeText(name);
-    if (name && santizedName.length > 25) {
+    const sanitizedName = sanitizeText(name);
+    if (name && sanitizedName.length > 25) {
       throw new Error('Role name cannot be longer than 25 characters');
     }
     const roleWithRelations = await this.getGroupRole({ id }, [
@@ -121,7 +121,7 @@ export class GroupRolesService {
     const groupRole = await this.groupRoleRepository.save({
       ...roleWithRelations,
       ...roleData,
-      name: santizedName,
+      name: sanitizedName,
       members: [...roleWithRelations.members, ...newMembers],
       permission: { ...roleWithRelations.permission, ...cleanedPermissions },
     });
