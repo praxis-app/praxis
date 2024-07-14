@@ -12,6 +12,7 @@ import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
+import { ServerConfig } from '../server-configs/models/server-config.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 import {
@@ -47,6 +48,9 @@ export class ProposalsService {
 
     @InjectRepository(Vote)
     private voteRepository: Repository<Vote>,
+
+    @InjectRepository(ServerConfig)
+    private serverConfigRepository: Repository<ServerConfig>,
 
     private groupsService: GroupsService,
     private notificationsService: NotificationsService,
@@ -85,6 +89,16 @@ export class ProposalsService {
     return this.proposalConfigRepository.findOneOrFail({
       where: { proposalId },
     });
+  }
+
+  async getConfigForNewProposal(groupId?: number) {
+    if (groupId) {
+      const { config } = await this.groupsService.getGroup({ id: groupId }, [
+        'config',
+      ]);
+      return config;
+    }
+    return this.getServerConfig();
   }
 
   async getProposalComments(proposalId: number) {
@@ -129,6 +143,14 @@ export class ProposalsService {
     );
   }
 
+  async getServerConfig() {
+    const serverConfigs = await this.serverConfigRepository.find();
+    if (!serverConfigs.length) {
+      return this.serverConfigRepository.save({});
+    }
+    return serverConfigs[0];
+  }
+
   async createProposal(
     {
       body,
@@ -144,11 +166,8 @@ export class ProposalsService {
       throw new Error('Proposals must be 8000 characters or less');
     }
 
-    const { config } = await this.groupsService.getGroup(
-      { id: proposalData.groupId },
-      ['config'],
-    );
-    const groupClosingAt = config.votingTimeLimit
+    const config = await this.getConfigForNewProposal(proposalData.groupId);
+    const configClosingAt = config.votingTimeLimit
       ? new Date(Date.now() + config.votingTimeLimit * 60 * 1000)
       : undefined;
 
@@ -157,7 +176,7 @@ export class ProposalsService {
       ratificationThreshold: config.ratificationThreshold,
       reservationsLimit: config.reservationsLimit,
       standAsidesLimit: config.standAsidesLimit,
-      closingAt: closingAt || groupClosingAt,
+      closingAt: closingAt || configClosingAt,
     };
 
     const proposal = await this.proposalRepository.save({
