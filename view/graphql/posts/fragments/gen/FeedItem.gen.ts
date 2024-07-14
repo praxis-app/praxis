@@ -76,7 +76,7 @@ export type FeedItem_Post_Fragment = {
     action: {
       __typename?: 'ProposalAction';
       id: number;
-      actionType: string;
+      actionType: Types.ProposalActionType;
       groupDescription?: string | null;
       groupName?: string | null;
       groupSettings?: {
@@ -217,7 +217,7 @@ export type FeedItem_Proposal_Fragment = {
   action: {
     __typename?: 'ProposalAction';
     id: number;
-    actionType: string;
+    actionType: Types.ProposalActionType;
     groupDescription?: string | null;
     groupName?: string | null;
     groupSettings?: {

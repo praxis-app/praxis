@@ -26,7 +26,7 @@ export type UpdateVoteMutation = {
         action: {
           __typename?: 'ProposalAction';
           id: number;
-          actionType: string;
+          actionType: Types.ProposalActionType;
         };
         group?: {
           __typename?: 'Group';

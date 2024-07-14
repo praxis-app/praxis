@@ -10,10 +10,10 @@ import {
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { ProposalActionType } from '../../../constants/proposal.constants';
 import {
   ProposalActionRoleInput,
   ProposalActionRoleMemberInput,
+  ProposalActionType,
 } from '../../../graphql/gen';
 import { useGroupRoleByRoleIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRoleByRoleId.gen';
 import { ProposalActionRoleFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionRole.gen';
@@ -122,8 +122,8 @@ const ProposalActionRole = ({
   const oldColor =
     ratified && 'oldColor' in role ? role.oldColor : roleToChange?.color;
 
-  const isRoleChange = actionType === ProposalActionType.ChangeRole;
-  const isAddingRole = actionType === ProposalActionType.CreateRole;
+  const isRoleChange = actionType === 'CHANGE_GROUP_ROLE';
+  const isAddingRole = actionType === 'CREATE_GROUP_ROLE';
   const isChangingName = isRoleChange && name && name !== oldName;
   const isChangingColor = isRoleChange && color && color !== oldColor;
 

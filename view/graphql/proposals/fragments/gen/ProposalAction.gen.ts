@@ -12,7 +12,7 @@ import { AttachedImageFragmentDoc } from '../../../images/fragments/gen/Attached
 export type ProposalActionFragment = {
   __typename?: 'ProposalAction';
   id: number;
-  actionType: string;
+  actionType: Types.ProposalActionType;
   groupDescription?: string | null;
   groupName?: string | null;
   groupSettings?: {
