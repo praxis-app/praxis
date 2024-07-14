@@ -190,14 +190,13 @@ export class DataloaderService {
   // -------------------------------------------------------------------------
 
   private _createProposalsLoader() {
-    return this._getDataLoader<number, Proposal>(async (proposalIds) => {
+    return this._getDataLoader<number, Proposal | null>(async (proposalIds) => {
       const proposals = await this.proposalRepository.find({
         where: { id: In(proposalIds) },
       });
       return proposalIds.map(
         (id) =>
-          proposals.find((proposal: Proposal) => proposal.id === id) ||
-          new Error(`Could not load proposal: ${id}`),
+          proposals.find((proposal: Proposal) => proposal.id === id) || null,
       );
     });
   }
