@@ -319,6 +319,10 @@ export class ProposalsService {
       await this.proposalActionsService.implementChangeServerRole(id);
       return;
     }
+    if (actionType === ProposalActionType.CreateServerRole) {
+      await this.proposalActionsService.implementCreateServerRole(id);
+      return;
+    }
     if (!groupId) {
       return;
     }

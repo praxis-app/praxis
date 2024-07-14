@@ -135,6 +135,28 @@ export class ProposalActionsService {
     }
   }
 
+  // TODO: Reduce duplication between this and group role method
+  async implementCreateServerRole(proposalActionId: number) {
+    const role = await this.getProposalActionRole({ proposalActionId }, [
+      'permission',
+      'members',
+    ]);
+    if (!role) {
+      throw new UserInputError('Could not find proposal action role');
+    }
+    const { name, color, permission } = role;
+    const members = role.members?.map(({ userId }) => ({ id: userId }));
+    await this.serverRolesService.createServerRole(
+      {
+        name,
+        color,
+        permission,
+        members,
+      },
+      true,
+    );
+  }
+
   async implementGroupEvent(proposalActionId: number, groupId: number) {
     const event = await this.getProposalActionEvent({ proposalActionId }, [
       'hosts',

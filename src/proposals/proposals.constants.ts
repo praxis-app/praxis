@@ -12,6 +12,7 @@ export enum ProposalActionType {
   ChangeGroupSettings = 'change-settings',
   ChangeServerRole = 'change-server-role',
   CreateGroupRole = 'create-role',
+  CreateServerRole = 'create-server-role',
   PlanGroupEvent = 'plan-event',
   Test = 'test',
 }
