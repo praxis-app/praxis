@@ -52,6 +52,9 @@ export class ProposalsService {
     @InjectRepository(ServerConfig)
     private serverConfigRepository: Repository<ServerConfig>,
 
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+
     private groupsService: GroupsService,
     private notificationsService: NotificationsService,
     private proposalActionsService: ProposalActionsService,
@@ -297,6 +300,15 @@ export class ProposalsService {
     });
   }
 
+  async getProposalMembers(groupId: number | null) {
+    if (groupId) {
+      return this.groupsService.getGroupMembers(groupId);
+    }
+    return this.userRepository.find({
+      where: { verified: true },
+    });
+  }
+
   async implementProposal(proposalId: number) {
     const {
       action: { id, actionType, groupDescription, groupName },
@@ -344,28 +356,23 @@ export class ProposalsService {
   }
 
   async isProposalRatifiable(proposalId: number) {
-    const { votes, stage, group, config } = await this.getProposal(proposalId, [
-      'group.members',
-      'config',
-      'votes',
-    ]);
-
-    // TODO: Add support for server proposals
-    if (!group) {
-      return false;
-    }
+    const { votes, stage, config, groupId } = await this.getProposal(
+      proposalId,
+      ['config', 'votes'],
+    );
+    const members = await this.getProposalMembers(groupId);
 
     if (stage !== ProposalStage.Voting) {
       return false;
     }
     if (config.decisionMakingModel === DecisionMakingModel.Consensus) {
-      return this.hasConsensus(votes, config, group.members);
+      return this.hasConsensus(votes, config, members);
     }
     if (config.decisionMakingModel === DecisionMakingModel.Consent) {
       return this.hasConsent(votes, config);
     }
     if (config.decisionMakingModel === DecisionMakingModel.MajorityVote) {
-      return this.hasMajorityVote(votes, config, group.members);
+      return this.hasMajorityVote(votes, config, members);
     }
     return false;
   }
