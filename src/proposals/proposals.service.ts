@@ -230,7 +230,7 @@ export class ProposalsService {
 
     if (
       groupCoverPhoto &&
-      proposal.action.actionType === ProposalActionType.ChangeGroupCoverPhoto
+      proposal.action.actionType === ProposalActionType.CHANGE_GROUP_COVER_PHOTO
     ) {
       await this.proposalActionsService.deleteProposalActionImage(
         proposal.action.id,
@@ -289,34 +289,34 @@ export class ProposalsService {
       return;
     }
 
-    if (actionType === ProposalActionType.PlanGroupEvent) {
+    if (actionType === ProposalActionType.PLAN_GROUP_EVENT) {
       await this.proposalActionsService.implementGroupEvent(id, groupId);
       return;
     }
-    if (actionType === ProposalActionType.CreateGroupRole) {
+    if (actionType === ProposalActionType.CREATE_GROUP_ROLE) {
       await this.proposalActionsService.implementCreateGroupRole(id, groupId);
       return;
     }
-    if (actionType === ProposalActionType.ChangeGroupRole) {
+    if (actionType === ProposalActionType.CHANGE_GROUP_ROLE) {
       await this.proposalActionsService.implementChangeGroupRole(id);
       return;
     }
-    if (actionType === ProposalActionType.ChangeGroupSettings) {
+    if (actionType === ProposalActionType.CHANGE_GROUP_SETTINGS) {
       await this.proposalActionsService.implementChangeGroupConfig(id, groupId);
       return;
     }
-    if (actionType === ProposalActionType.ChangeGroupName) {
+    if (actionType === ProposalActionType.CHANGE_GROUP_NAME) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
       return;
     }
-    if (actionType === ProposalActionType.ChangeGroupDescription) {
+    if (actionType === ProposalActionType.CHANGE_GROUP_DESCRIPTION) {
       await this.groupsService.updateGroup({
         description: groupDescription,
         id: groupId,
       });
       return;
     }
-    if (actionType === ProposalActionType.ChangeGroupCoverPhoto) {
+    if (actionType === ProposalActionType.CHANGE_GROUP_COVER_PHOTO) {
       await this.proposalActionsService.implementChangeGroupCoverPhoto(
         id,
         groupId,

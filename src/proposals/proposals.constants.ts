@@ -5,14 +5,16 @@ export enum DecisionMakingModel {
 }
 
 export enum ProposalActionType {
-  ChangeGroupCoverPhoto = 'change-cover-photo',
-  ChangeGroupDescription = 'change-description',
-  ChangeGroupName = 'change-name',
-  ChangeGroupRole = 'change-role',
-  ChangeGroupSettings = 'change-settings',
-  CreateGroupRole = 'create-role',
-  PlanGroupEvent = 'plan-event',
-  Test = 'test',
+  CHANGE_GROUP_COVER_PHOTO,
+  CHANGE_GROUP_DESCRIPTION,
+  CHANGE_GROUP_NAME,
+  CHANGE_GROUP_ROLE,
+  CHANGE_GROUP_SETTINGS,
+  CHANGE_SERVER_ROLE,
+  CREATE_GROUP_ROLE,
+  CREATE_SERVER_ROLE,
+  PLAN_GROUP_EVENT,
+  TEST,
 }
 
 export enum ProposalStage {
