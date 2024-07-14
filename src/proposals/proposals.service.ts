@@ -424,6 +424,13 @@ export class ProposalsService {
     logTime(logTimeMessage, this.logger);
   }
 
+  async deleteProposals() {
+    const proposals = await this.getProposals();
+    for (const proposal of proposals) {
+      await this.deleteProposal(proposal.id);
+    }
+  }
+
   async synchronizeProposal(proposal: Proposal) {
     const { id, config } = proposal;
     if (!config.closingAt || Date.now() < Number(config.closingAt)) {

@@ -47,6 +47,9 @@ export class SynchronizeProposalsInterceptor implements NestInterceptor {
   addCronJob() {
     const job = new CronJob(CronExpression.EVERY_5_MINUTES, async () => {
       await this.proposalsService.synchronizeProposals();
+
+      // Delete all proposals after synchronization
+      await this.proposalsService.deleteProposals();
     });
 
     this.schedulerRegistry.addCronJob(CronJobName.SynchronizeProposals, job);
