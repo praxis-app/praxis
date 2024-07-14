@@ -276,17 +276,17 @@ export class GroupsService {
     { name, description, coverPhoto, ...groupData }: CreateGroupInput,
     userId: number,
   ) {
-    const santizedName = sanitizeText(name);
+    const sanitizedName = sanitizeText(name);
     const sanitizedDescription = sanitizeText(description);
     const isValidName = VALID_NAME_REGEX.test(name || '');
 
     if (!isValidName) {
       throw new Error('Group names cannot contain special characters');
     }
-    if (santizedName.length < 5) {
+    if (sanitizedName.length < 5) {
       throw new Error('Group name must be at least 5 characters');
     }
-    if (santizedName.length > 25) {
+    if (sanitizedName.length > 25) {
       throw new Error('Group name cannot exceed 25 characters');
     }
     if (sanitizedDescription.length > 1000) {
@@ -295,7 +295,7 @@ export class GroupsService {
 
     const group = await this.groupRepository.save({
       description: sanitizedDescription,
-      name: santizedName,
+      name: sanitizedName,
       ...groupData,
     });
     await this.createGroupMember(group.id, userId);
@@ -319,7 +319,7 @@ export class GroupsService {
     coverPhoto,
     ...groupData
   }: UpdateGroupInput) {
-    const santizedName = sanitizeText(name);
+    const sanitizedName = sanitizeText(name);
     const sanitizedDescription = sanitizeText(description);
     const isValidName = VALID_NAME_REGEX.test(name || '');
 
@@ -329,10 +329,10 @@ export class GroupsService {
     if (!isValidName) {
       throw new Error('Group names cannot contain special characters');
     }
-    if (name && santizedName.length < 5) {
+    if (name && sanitizedName.length < 5) {
       throw new Error('Group name must be at least 5 characters');
     }
-    if (name && santizedName.length > 25) {
+    if (name && sanitizedName.length > 25) {
       throw new Error('Group name cannot exceed 25 characters');
     }
     if (description && sanitizedDescription.length > 1000) {
@@ -341,7 +341,7 @@ export class GroupsService {
 
     await this.groupRepository.update(id, {
       description: sanitizedDescription,
-      name: santizedName,
+      name: sanitizedName,
       ...groupData,
     });
 

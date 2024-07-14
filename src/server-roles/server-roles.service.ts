@@ -73,11 +73,11 @@ export class ServerRolesService {
     { name, ...roleData }: DeepPartial<ServerRole>,
     fromProposalAction = false,
   ) {
-    const santizedName = sanitizeText(name);
-    if (!santizedName) {
+    const sanitizedName = sanitizeText(name);
+    if (!sanitizedName) {
       throw new Error('Role name is required');
     }
-    if (santizedName.length > 25) {
+    if (sanitizedName.length > 25) {
       throw new Error('Role name cannot be longer than 25 characters');
     }
     if (fromProposalAction) {
@@ -85,7 +85,7 @@ export class ServerRolesService {
     }
     const permission = initServerRolePermissions();
     const serverRole = await this.serverRoleRepository.save({
-      name: santizedName,
+      name: sanitizedName,
       permission,
       ...roleData,
     });
@@ -102,11 +102,11 @@ export class ServerRolesService {
     }: UpdateServerRoleInput,
     me: User,
   ) {
-    const santizedName = sanitizeText(name);
-    if (typeof name === 'string' && !santizedName) {
+    const sanitizedName = sanitizeText(name);
+    if (typeof name === 'string' && !sanitizedName) {
       throw new Error('Role name is required');
     }
-    if (name && santizedName.length > 25) {
+    if (name && sanitizedName.length > 25) {
       throw new Error('Role name cannot be longer than 25 characters');
     }
     const roleWithRelations = await this.getServerRole({ id }, [
@@ -120,7 +120,7 @@ export class ServerRolesService {
     const serverRole = await this.serverRoleRepository.save({
       ...roleWithRelations,
       ...roleData,
-      name: santizedName,
+      name: sanitizedName || roleWithRelations.name,
       members: [...roleWithRelations.members, ...newMembers],
       permission: { ...roleWithRelations.permission, ...permissions },
     });
