@@ -117,16 +117,15 @@ export class ServerRolesService {
       where: { id: In(selectedUserIds), verified: true },
     });
 
-    await this.serverRoleRepository.save({
+    const serverRole = await this.serverRoleRepository.save({
       ...roleWithRelations,
       ...roleData,
-      name: sanitizedName || undefined,
+      name: sanitizedName || roleWithRelations.name,
       members: [...roleWithRelations.members, ...newMembers],
       permission: { ...roleWithRelations.permission, ...permissions },
     });
     await this.chatService.syncVibeChatMembersWithRoles();
 
-    const serverRole = await this.getServerRole({ id });
     return { serverRole, me };
   }
 
