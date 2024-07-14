@@ -106,8 +106,8 @@ export class GroupRolesService {
     ...roleData
   }: UpdateGroupRoleInput) {
     const sanitizedName = sanitizeText(name);
-    if (name && sanitizedName.length > 25) {
-      throw new Error('Role name cannot be longer than 25 characters');
+    if (typeof name === 'string' && !sanitizedName) {
+      throw new Error('Role name is required');
     }
     if (name && sanitizedName.length > 25) {
       throw new Error('Role name cannot be longer than 25 characters');
