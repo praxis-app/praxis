@@ -122,8 +122,8 @@ const ProposalActionRole = ({
   const oldColor =
     ratified && 'oldColor' in role ? role.oldColor : roleToChange?.color;
 
-  const isRoleChange = actionType === ProposalActionType.ChangeRole;
-  const isAddingRole = actionType === ProposalActionType.CreateRole;
+  const isRoleChange = actionType === ProposalActionType.ChangeGroupRole;
+  const isAddingRole = actionType === ProposalActionType.CreateGroupRole;
   const isChangingName = isRoleChange && name && name !== oldName;
   const isChangingColor = isRoleChange && color && color !== oldColor;
 

@@ -7,31 +7,31 @@ export const getProposalActionTypeOptions = (
 ) => [
   {
     message: t('proposals.actionTypes.planEvent'),
-    value: ProposalActionType.PlanEvent,
+    value: ProposalActionType.PlanGroupEvent,
   },
   {
     message: t('proposals.actionTypes.changeName'),
-    value: ProposalActionType.ChangeName,
+    value: ProposalActionType.ChangeGroupName,
   },
   {
     message: t('proposals.actionTypes.changeDescription'),
-    value: ProposalActionType.ChangeDescription,
+    value: ProposalActionType.ChangeGroupDescription,
   },
   {
     message: t('proposals.actionTypes.changeSettings'),
-    value: ProposalActionType.ChangeSettings,
+    value: ProposalActionType.ChangeGroupSettings,
   },
   {
     message: t('proposals.actionTypes.changeCoverPhoto'),
-    value: ProposalActionType.ChangeCoverPhoto,
+    value: ProposalActionType.ChangeGroupCoverPhoto,
   },
   {
     message: t('proposals.actionTypes.changeRole'),
-    value: ProposalActionType.ChangeRole,
+    value: ProposalActionType.ChangeGroupRole,
   },
   {
     message: t('proposals.actionTypes.createRole'),
-    value: ProposalActionType.CreateRole,
+    value: ProposalActionType.CreateGroupRole,
   },
   {
     message: t('proposals.actionTypes.test'),
@@ -44,19 +44,19 @@ export const getProposalActionLabel = (
   t: TFunction<Namespace<'ns1'>, undefined>,
 ): string => {
   switch (actionType) {
-    case ProposalActionType.PlanEvent:
+    case ProposalActionType.PlanGroupEvent:
       return t('proposals.actionTypes.planEvent');
-    case ProposalActionType.ChangeName:
+    case ProposalActionType.ChangeGroupName:
       return t('proposals.actionTypes.changeName');
-    case ProposalActionType.ChangeCoverPhoto:
+    case ProposalActionType.ChangeGroupCoverPhoto:
       return t('proposals.actionTypes.changeCoverPhoto');
-    case ProposalActionType.ChangeDescription:
+    case ProposalActionType.ChangeGroupDescription:
       return t('proposals.actionTypes.changeDescription');
-    case ProposalActionType.ChangeSettings:
+    case ProposalActionType.ChangeGroupSettings:
       return t('proposals.actionTypes.changeSettings');
-    case ProposalActionType.CreateRole:
+    case ProposalActionType.CreateGroupRole:
       return t('proposals.actionTypes.createRole');
-    case ProposalActionType.ChangeRole:
+    case ProposalActionType.ChangeGroupRole:
       return t('proposals.actionTypes.changeRole');
     case ProposalActionType.Test:
       return t('proposals.actionTypes.test');

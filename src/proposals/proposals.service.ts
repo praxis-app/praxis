@@ -315,7 +315,10 @@ export class ProposalsService {
       groupId,
     } = await this.getProposal(proposalId, ['action']);
 
-    // TODO: Add support for server proposals
+    if (actionType === ProposalActionType.ChangeServerRole) {
+      await this.proposalActionsService.implementChangeServerRole(id);
+      return;
+    }
     if (!groupId) {
       return;
     }

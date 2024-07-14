@@ -31,7 +31,7 @@ const ProposalActionFields = ({
 }: Props) => {
   const { t } = useTranslation();
 
-  if (values.action.actionType === ProposalActionType.ChangeName) {
+  if (values.action.actionType === ProposalActionType.ChangeGroupName) {
     const isInvalid = !!errors.action?.groupName && touched.action?.groupName;
     return (
       <TextField
@@ -43,7 +43,7 @@ const ProposalActionFields = ({
     );
   }
 
-  if (values.action.actionType === ProposalActionType.ChangeDescription) {
+  if (values.action.actionType === ProposalActionType.ChangeGroupDescription) {
     const isInvalid =
       !!errors.action?.groupDescription && touched.action?.groupDescription;
     return (
@@ -56,7 +56,7 @@ const ProposalActionFields = ({
     );
   }
 
-  if (values.action.actionType === ProposalActionType.ChangeCoverPhoto) {
+  if (values.action.actionType === ProposalActionType.ChangeGroupCoverPhoto) {
     const isInvalid = !!(errors.action?.groupCoverPhoto && submitCount);
     const savedImage =
       editProposal?.action.groupCoverPhoto && !values.action.groupCoverPhoto

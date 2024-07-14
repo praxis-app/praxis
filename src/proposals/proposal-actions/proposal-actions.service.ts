@@ -18,6 +18,7 @@ import {
   saveImage,
 } from '../../images/image.utils';
 import { Image } from '../../images/models/image.model';
+import { ServerRolesService } from '../../server-roles/server-roles.service';
 import { ProposalActionEventHost } from './models/proposal-action-event-host.model';
 import { ProposalActionEventInput } from './models/proposal-action-event.input';
 import { ProposalActionEvent } from './models/proposal-action-event.model';
@@ -68,6 +69,7 @@ export class ProposalActionsService {
     private imageRepository: Repository<Image>,
 
     private groupRolesService: GroupRolesService,
+    private serverRolesService: ServerRolesService,
     private groupsService: GroupsService,
   ) {}
 
@@ -90,6 +92,47 @@ export class ProposalActionsService {
       (image) => image.imageType === ImageTypes.CoverPhoto,
     );
     return groupCoverPhoto;
+  }
+
+  async implementChangeServerRole(proposalActionId: number) {
+    const actionRole = await this.getProposalActionRole({ proposalActionId }, [
+      'permission',
+      'members',
+    ]);
+    if (!actionRole?.serverRoleId) {
+      throw new UserInputError('Could not find proposal action role');
+    }
+    const roleToUpdate = await this.serverRolesService.getServerRole({
+      id: actionRole.serverRoleId,
+    });
+
+    const userIdsToAdd = actionRole.members
+      ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Add)
+      .map(({ userId }) => userId);
+
+    const userIdsToRemove = actionRole.members
+      ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Remove)
+      .map(({ userId }) => userId);
+
+    await this.serverRolesService.updateServerRole({
+      id: roleToUpdate.id,
+      name: actionRole.name,
+      color: actionRole.color,
+      selectedUserIds: userIdsToAdd,
+      permissions: actionRole.permission,
+    });
+    if (userIdsToRemove?.length) {
+      await this.serverRolesService.deleteServerRoleMembers(
+        roleToUpdate.id,
+        userIdsToRemove,
+      );
+    }
+    if (actionRole.name || actionRole.color) {
+      await this.updateProposalActionRole(actionRole.id, {
+        oldName: actionRole.name ? roleToUpdate.name : undefined,
+        oldColor: actionRole.color ? roleToUpdate.color : undefined,
+      });
+    }
   }
 
   async implementGroupEvent(proposalActionId: number, groupId: number) {

@@ -123,8 +123,8 @@ const VoteButton = ({
 
     if (isRatified) {
       const isRoleProposal =
-        actionType === ProposalActionType.CreateRole ||
-        actionType === ProposalActionType.ChangeRole;
+        actionType === ProposalActionType.CreateGroupRole ||
+        actionType === ProposalActionType.ChangeGroupRole;
 
       // Load group roles if a role was added or changed
       if (isRoleProposal && group) {
@@ -139,7 +139,7 @@ const VoteButton = ({
 
     if (
       pathname.includes(NavigationPaths.Groups) &&
-      actionType === ProposalActionType.ChangeName &&
+      actionType === ProposalActionType.ChangeGroupName &&
       isRatified &&
       group
     ) {

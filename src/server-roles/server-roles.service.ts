@@ -100,7 +100,7 @@ export class ServerRolesService {
       permissions,
       ...roleData
     }: UpdateServerRoleInput,
-    me: User,
+    me?: User,
   ) {
     const sanitizedName = sanitizeText(name);
     if (typeof name === 'string' && !sanitizedName) {
@@ -144,6 +144,15 @@ export class ServerRolesService {
     await this.chatService.syncVibeChatMembersWithRoles();
 
     return { serverRole, me };
+  }
+
+  async deleteServerRoleMembers(id: number, userIds: number[]) {
+    const role = await this.getServerRole({ id }, ['members']);
+
+    role.members = role.members.filter(
+      (member) => !userIds.some((id) => member.id === id),
+    );
+    await this.serverRoleRepository.save(role);
   }
 
   async getServerRolePermission(serverRoleId: number) {

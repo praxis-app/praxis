@@ -27,7 +27,7 @@ const ProposalActionPermission = ({
   const theme = useTheme();
 
   const { displayName } = getPermissionText(permissionName, true);
-  const isChangingRole = actionType === ProposalActionType.ChangeRole;
+  const isChangingRole = actionType === ProposalActionType.ChangeGroupRole;
   const isEnabled = permissions[permissionName];
 
   const permissionStyles: SxProps = {

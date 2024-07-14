@@ -36,7 +36,7 @@ const ProposalAction = ({
 
   const proposalPath = `${NavigationPaths.Proposals}/${proposalId}`;
 
-  if (actionType === ProposalActionType.ChangeSettings) {
+  if (actionType === ProposalActionType.ChangeGroupSettings) {
     if (!groupSettings) {
       return (
         <Typography marginBottom={3.5}>
@@ -55,7 +55,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === ProposalActionType.PlanEvent) {
+  if (actionType === ProposalActionType.PlanGroupEvent) {
     if (!event) {
       return (
         <Typography marginBottom={3.5}>
@@ -74,8 +74,8 @@ const ProposalAction = ({
   }
 
   if (
-    actionType === ProposalActionType.CreateRole ||
-    actionType === ProposalActionType.ChangeRole
+    actionType === ProposalActionType.CreateGroupRole ||
+    actionType === ProposalActionType.ChangeGroupRole
   ) {
     if (!role) {
       return (
@@ -96,7 +96,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === ProposalActionType.ChangeName) {
+  if (actionType === ProposalActionType.ChangeGroupName) {
     return (
       <Box
         marginBottom={isShared ? 0 : 3.5}
@@ -116,7 +116,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === ProposalActionType.ChangeDescription) {
+  if (actionType === ProposalActionType.ChangeGroupDescription) {
     return (
       <Box
         marginBottom={isShared ? 0 : 3.5}
@@ -136,7 +136,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === ProposalActionType.ChangeCoverPhoto) {
+  if (actionType === ProposalActionType.ChangeGroupCoverPhoto) {
     if (!groupCoverPhoto) {
       return (
         <Link

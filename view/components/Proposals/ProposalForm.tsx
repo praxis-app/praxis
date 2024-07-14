@@ -140,13 +140,13 @@ const ProposalForm = ({
       errors.action.actionType = t('proposals.errors.missingActionType');
     }
     if (
-      action.actionType === ProposalActionType.ChangeName &&
+      action.actionType === ProposalActionType.ChangeGroupName &&
       !action.groupName
     ) {
       errors.action.groupName = t('proposals.errors.missingGroupName');
     }
     if (
-      action.actionType === ProposalActionType.ChangeDescription &&
+      action.actionType === ProposalActionType.ChangeGroupDescription &&
       !action.groupDescription
     ) {
       errors.action.groupDescription = t(
@@ -154,7 +154,7 @@ const ProposalForm = ({
       );
     }
     if (
-      action.actionType === ProposalActionType.ChangeCoverPhoto &&
+      action.actionType === ProposalActionType.ChangeGroupCoverPhoto &&
       !editProposal?.action.groupCoverPhoto &&
       !action.groupCoverPhoto
     ) {
@@ -163,8 +163,8 @@ const ProposalForm = ({
       );
     }
     if (
-      (action.actionType === ProposalActionType.CreateRole ||
-        action.actionType === ProposalActionType.ChangeRole) &&
+      (action.actionType === ProposalActionType.CreateGroupRole ||
+        action.actionType === ProposalActionType.ChangeGroupRole) &&
       !action.role
     ) {
       errors.action.role = t('proposals.errors.missingRole');
@@ -553,7 +553,8 @@ const ProposalForm = ({
               key={values.images?.length}
               onChange={handleImageInputChange(setFieldValue)}
               disabled={
-                values.action.actionType === ProposalActionType.ChangeCoverPhoto
+                values.action.actionType ===
+                ProposalActionType.ChangeGroupCoverPhoto
               }
               multiple
             />

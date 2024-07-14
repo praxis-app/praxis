@@ -68,7 +68,7 @@ const ProposeEventModal = ({
   }, [groupId, getGroupMembers]);
 
   useEffect(() => {
-    if (groupId && actionType === ProposalActionType.PlanEvent) {
+    if (groupId && actionType === ProposalActionType.PlanGroupEvent) {
       setOpen(true);
     }
   }, [groupId, actionType]);

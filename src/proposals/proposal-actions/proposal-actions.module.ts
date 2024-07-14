@@ -5,6 +5,7 @@ import { Event } from '../../events/models/event.model';
 import { GroupRolesModule } from '../../groups/group-roles/group-roles.module';
 import { GroupsModule } from '../../groups/groups.module';
 import { Image } from '../../images/models/image.model';
+import { ServerRolesModule } from '../../server-roles/server-roles.module';
 import { ProposalsModule } from '../proposals.module';
 import { ProposalActionEventHost } from './models/proposal-action-event-host.model';
 import { ProposalActionEvent } from './models/proposal-action-event.model';
@@ -38,6 +39,7 @@ import { ProposalActionsResolver } from './resolvers/proposal-actions.resolver';
     forwardRef(() => ProposalsModule),
     GroupsModule,
     GroupRolesModule,
+    ServerRolesModule,
   ],
   providers: [
     ProposalActionEventHostsResolver,

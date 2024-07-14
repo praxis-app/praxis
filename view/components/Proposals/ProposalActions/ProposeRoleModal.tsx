@@ -109,8 +109,8 @@ const ProposeRoleModal = ({
 
   const { t } = useTranslation();
 
-  const isCreateRole = actionType === ProposalActionType.CreateRole;
-  const isChangeRole = actionType === ProposalActionType.ChangeRole;
+  const isCreateRole = actionType === ProposalActionType.CreateGroupRole;
+  const isChangeRole = actionType === ProposalActionType.ChangeGroupRole;
 
   useEffect(() => {
     if (!groupId) {

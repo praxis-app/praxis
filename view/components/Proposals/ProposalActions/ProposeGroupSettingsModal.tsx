@@ -52,7 +52,7 @@ const ProposeGroupSettingsModal = ({
   const isDesktop = useIsDesktop();
 
   useEffect(() => {
-    if (groupId && actionType === ProposalActionType.ChangeSettings) {
+    if (groupId && actionType === ProposalActionType.ChangeGroupSettings) {
       getGroupSettings({ variables: { groupId } });
       setOpen(true);
     }

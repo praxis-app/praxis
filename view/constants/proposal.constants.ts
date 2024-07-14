@@ -17,13 +17,14 @@ export enum VotingTimeLimit {
 }
 
 export enum ProposalActionType {
-  ChangeCoverPhoto = 'change-cover-photo',
-  ChangeDescription = 'change-description',
-  ChangeName = 'change-name',
-  ChangeRole = 'change-role',
-  ChangeSettings = 'change-settings',
-  CreateRole = 'create-role',
-  PlanEvent = 'plan-event',
+  ChangeGroupCoverPhoto = 'change-cover-photo',
+  ChangeGroupDescription = 'change-description',
+  ChangeGroupName = 'change-name',
+  ChangeGroupRole = 'change-role',
+  ChangeGroupSettings = 'change-settings',
+  ChangeServerRole = 'change-server-role',
+  CreateGroupRole = 'create-role',
+  PlanGroupEvent = 'plan-event',
   Test = 'test',
 }
 
