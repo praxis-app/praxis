@@ -1,4 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
+import { DecisionMakingModel } from '../../proposals/proposals.constants';
 
 @InputType()
 export class UpdateServerConfigInput {
@@ -17,8 +18,8 @@ export class UpdateServerConfigInput {
   @Field({ nullable: true })
   serverQuestionsPrompt?: string;
 
-  @Field({ nullable: true })
-  decisionMakingModel?: string;
+  @Field(() => DecisionMakingModel, { nullable: true })
+  decisionMakingModel?: DecisionMakingModel;
 
   @Field(() => Int, { nullable: true })
   standAsidesLimit?: number;

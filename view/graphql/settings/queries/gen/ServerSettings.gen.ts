@@ -18,7 +18,7 @@ export type ServerSettingsQuery = {
     __typename?: 'ServerConfig';
     id: number;
     about?: string | null;
-    decisionMakingModel: string;
+    decisionMakingModel: Types.DecisionMakingModel;
     ratificationThreshold: number;
     reservationsLimit: number;
     securityTxt?: string | null;

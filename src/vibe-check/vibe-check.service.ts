@@ -255,10 +255,10 @@ export class VibeCheckService {
       return false;
     }
 
-    if (config.decisionMakingModel === DecisionMakingModel.MajorityVote) {
+    if (config.decisionMakingModel === DecisionMakingModel.MAJORITY_VOTE) {
       return this.hasMajorityVote(votes, config, initialMemberCount);
     }
-    if (config.decisionMakingModel === DecisionMakingModel.Consensus) {
+    if (config.decisionMakingModel === DecisionMakingModel.CONSENSUS) {
       return this.hasConsensus(votes, config, initialMemberCount);
     }
     return false;

@@ -29,8 +29,7 @@ const QuestionnaireTicketSettingsModal = ({
   const { t } = useTranslation();
 
   const isClosed = closingAt && dayjs() > dayjs(closingAt);
-  const showRatificationThreshold =
-    decisionMakingModel !== DecisionMakingModel.Consent;
+  const showRatificationThreshold = decisionMakingModel !== 'CONSENT';
 
   const closingTimeLabel = t(
     isClosed ? 'proposals.labels.closedAt' : 'proposals.labels.closing',

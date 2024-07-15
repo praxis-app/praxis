@@ -270,6 +270,8 @@ export type CreateVotePayload = {
   vote: Vote;
 };
 
+export type DecisionMakingModel = 'CONSENSUS' | 'CONSENT' | 'MAJORITY_VOTE';
+
 export type DeleteGroupRoleMemberInput = {
   groupRoleId: Scalars['Int']['input'];
   userId: Scalars['Int']['input'];
@@ -388,7 +390,7 @@ export type GroupConfig = {
   __typename?: 'GroupConfig';
   adminModel: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
-  decisionMakingModel: Scalars['String']['output'];
+  decisionMakingModel: DecisionMakingModel;
   group: Group;
   id: Scalars['Int']['output'];
   isPublic: Scalars['Boolean']['output'];
@@ -959,10 +961,10 @@ export type ProposalActionEventInput = {
 export type ProposalActionGroupConfig = {
   __typename?: 'ProposalActionGroupConfig';
   adminModel?: Maybe<Scalars['String']['output']>;
-  decisionMakingModel?: Maybe<Scalars['String']['output']>;
+  decisionMakingModel?: Maybe<DecisionMakingModel>;
   id: Scalars['Int']['output'];
   oldAdminModel?: Maybe<Scalars['String']['output']>;
-  oldDecisionMakingModel?: Maybe<Scalars['String']['output']>;
+  oldDecisionMakingModel?: Maybe<DecisionMakingModel>;
   oldPrivacy?: Maybe<Scalars['String']['output']>;
   oldRatificationThreshold?: Maybe<Scalars['Int']['output']>;
   oldReservationsLimit?: Maybe<Scalars['Int']['output']>;
@@ -978,7 +980,7 @@ export type ProposalActionGroupConfig = {
 
 export type ProposalActionGroupConfigInput = {
   adminModel?: InputMaybe<Scalars['String']['input']>;
-  decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
+  decisionMakingModel?: InputMaybe<DecisionMakingModel>;
   privacy?: InputMaybe<Scalars['String']['input']>;
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
   reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
@@ -1062,7 +1064,7 @@ export type ProposalConfig = {
   __typename?: 'ProposalConfig';
   closingAt?: Maybe<Scalars['DateTime']['output']>;
   createdAt: Scalars['DateTime']['output'];
-  decisionMakingModel: Scalars['String']['output'];
+  decisionMakingModel: DecisionMakingModel;
   id: Scalars['Int']['output'];
   proposal: Proposal;
   ratificationThreshold: Scalars['Int']['output'];
@@ -1275,7 +1277,7 @@ export type QuestionnaireTicket = {
 export type QuestionnaireTicketConfig = {
   __typename?: 'QuestionnaireTicketConfig';
   closingAt?: Maybe<Scalars['DateTime']['output']>;
-  decisionMakingModel: Scalars['String']['output'];
+  decisionMakingModel: DecisionMakingModel;
   id: Scalars['Int']['output'];
   ratificationThreshold: Scalars['Int']['output'];
   reservationsLimit: Scalars['Int']['output'];
@@ -1318,7 +1320,7 @@ export type ServerConfig = {
   __typename?: 'ServerConfig';
   about?: Maybe<Scalars['String']['output']>;
   contactEmail: Scalars['String']['output'];
-  decisionMakingModel: Scalars['String']['output'];
+  decisionMakingModel: DecisionMakingModel;
   id: Scalars['Int']['output'];
   ratificationThreshold: Scalars['Int']['output'];
   reservationsLimit: Scalars['Int']['output'];
@@ -1495,7 +1497,7 @@ export type UpdateEventPayload = {
 
 export type UpdateGroupConfigInput = {
   adminModel?: InputMaybe<Scalars['String']['input']>;
-  decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
+  decisionMakingModel?: InputMaybe<DecisionMakingModel>;
   groupId: Scalars['Int']['input'];
   privacy?: InputMaybe<Scalars['String']['input']>;
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
@@ -1605,7 +1607,7 @@ export type UpdateRulesPriorityInput = {
 export type UpdateServerConfigInput = {
   about?: InputMaybe<Scalars['String']['input']>;
   canaryStatement?: InputMaybe<Scalars['String']['input']>;
-  decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
+  decisionMakingModel?: InputMaybe<DecisionMakingModel>;
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
   reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
   securityTxt?: InputMaybe<Scalars['String']['input']>;

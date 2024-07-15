@@ -447,7 +447,7 @@ export class GroupsService {
     });
     const newConfig = { ...group.config, ...groupConfigData };
     if (
-      newConfig.decisionMakingModel === DecisionMakingModel.Consent &&
+      newConfig.decisionMakingModel === DecisionMakingModel.CONSENT &&
       newConfig.votingTimeLimit === 0
     ) {
       throw new Error(
@@ -455,7 +455,7 @@ export class GroupsService {
       );
     }
     if (
-      newConfig.decisionMakingModel === DecisionMakingModel.MajorityVote &&
+      newConfig.decisionMakingModel === DecisionMakingModel.MAJORITY_VOTE &&
       newConfig.ratificationThreshold <= 50
     ) {
       throw new Error(

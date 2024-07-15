@@ -132,7 +132,7 @@ const ProposeGroupSettingsModal = ({
   }: ProposalActionGroupConfigInput) => {
     const errors: FormikErrors<ProposalActionGroupConfigInput> = {};
     if (
-      decisionMakingModel === DecisionMakingModel.Consent &&
+      decisionMakingModel === 'CONSENT' &&
       votingTimeLimit === VotingTimeLimit.Unlimited
     ) {
       errors.votingTimeLimit = t(
@@ -140,7 +140,7 @@ const ProposeGroupSettingsModal = ({
       );
     }
     if (
-      decisionMakingModel === DecisionMakingModel.MajorityVote &&
+      decisionMakingModel === 'MAJORITY_VOTE' &&
       ratificationThreshold &&
       ratificationThreshold <= 50
     ) {
@@ -222,10 +222,7 @@ const ProposeGroupSettingsModal = ({
                 <SettingsSelect
                   fieldName={GroupSettingsFieldName.StandAsidesLimit}
                   label={t('groups.settings.names.standAsidesLimit')}
-                  disabled={
-                    values.decisionMakingModel ===
-                    DecisionMakingModel.MajorityVote
-                  }
+                  disabled={values.decisionMakingModel === 'MAJORITY_VOTE'}
                   description={t(
                     'groups.settings.descriptions.standAsidesLimit',
                   )}
@@ -255,10 +252,7 @@ const ProposeGroupSettingsModal = ({
                 <SettingsSelect
                   fieldName={GroupSettingsFieldName.ReservationsLimit}
                   label={t('groups.settings.names.reservationsLimit')}
-                  disabled={
-                    values.decisionMakingModel ===
-                    DecisionMakingModel.MajorityVote
-                  }
+                  disabled={values.decisionMakingModel === 'MAJORITY_VOTE'}
                   description={t(
                     'groups.settings.descriptions.reservationsLimit',
                   )}
@@ -318,9 +312,7 @@ const ProposeGroupSettingsModal = ({
 
                   <SliderInput
                     marks={!isDesktop}
-                    disabled={
-                      values.decisionMakingModel === DecisionMakingModel.Consent
-                    }
+                    disabled={values.decisionMakingModel === 'CONSENT'}
                     name={GroupSettingsFieldName.RatificationThreshold}
                     onClick={() =>
                       handleSliderInputClick(values.decisionMakingModel)

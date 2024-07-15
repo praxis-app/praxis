@@ -48,10 +48,10 @@ export class ServerConfigsService {
     canaryStatement,
     ...data
   }: UpdateServerConfigInput) {
-    if (data.decisionMakingModel === DecisionMakingModel.Consent) {
+    if (data.decisionMakingModel === DecisionMakingModel.CONSENT) {
       throw new Error('Consent model is not yet supported at server level');
     }
-    if (data.decisionMakingModel === DecisionMakingModel.MajorityVote) {
+    if (data.decisionMakingModel === DecisionMakingModel.MAJORITY_VOTE) {
       throw new Error('Majority vote is not yet supported at server level');
     }
 

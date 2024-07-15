@@ -1,10 +1,7 @@
 import { Card, CardContent, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { GroupAdminModel, GroupPrivacy } from '../../constants/group.constants';
-import {
-  DecisionMakingModel,
-  VotingTimeLimit,
-} from '../../constants/proposal.constants';
+import { VotingTimeLimit } from '../../constants/proposal.constants';
 import { useGroupAboutTabQuery } from '../../graphql/groups/queries/gen/GroupAboutTab.gen';
 import { urlifyText } from '../../utils/shared.utils';
 import Setting from '../Settings/Setting';
@@ -43,10 +40,10 @@ const GroupAboutTab = ({ groupId }: Props) => {
   };
 
   const getDecisionMakingModel = () => {
-    if (settings.decisionMakingModel === DecisionMakingModel.Consent) {
+    if (settings.decisionMakingModel === 'CONSENT') {
       return t('groups.labels.consent');
     }
-    if (settings.decisionMakingModel === DecisionMakingModel.MajorityVote) {
+    if (settings.decisionMakingModel === 'MAJORITY_VOTE') {
       return t('groups.labels.majority');
     }
     return t('groups.labels.consensus');

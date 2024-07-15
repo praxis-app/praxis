@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Proposal } from './proposal.model';
+import { DecisionMakingModel } from '../proposals.constants';
 
 @Entity()
 @ObjectType()
@@ -17,9 +18,9 @@ export class ProposalConfig {
   @Field(() => Int)
   id: number;
 
-  @Column()
-  @Field()
-  decisionMakingModel: string;
+  @Column({ type: 'int', default: DecisionMakingModel.CONSENSUS })
+  @Field(() => DecisionMakingModel)
+  decisionMakingModel: DecisionMakingModel;
 
   @Column()
   @Field(() => Int)

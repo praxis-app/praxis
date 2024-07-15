@@ -138,13 +138,13 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
     const errors: FormikErrors<FormValues> = {};
 
     if (
-      decisionMakingModel === DecisionMakingModel.Consent ||
-      decisionMakingModel === DecisionMakingModel.MajorityVote
+      decisionMakingModel === 'CONSENT' ||
+      decisionMakingModel === 'MAJORITY_VOTE'
     ) {
       errors.decisionMakingModel = t('prompts.inDev');
     }
     if (
-      decisionMakingModel === DecisionMakingModel.MajorityVote &&
+      decisionMakingModel === 'MAJORITY_VOTE' &&
       ratificationThreshold &&
       ratificationThreshold <= 50
     ) {
@@ -194,9 +194,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
 
             <SettingsSelect
               description={t('groups.settings.descriptions.standAsidesLimit')}
-              disabled={
-                values.decisionMakingModel === DecisionMakingModel.MajorityVote
-              }
+              disabled={values.decisionMakingModel === 'MAJORITY_VOTE'}
               fieldName={ServerSettingsFormFields.StandAsidesLimit}
               label={t('groups.settings.names.standAsidesLimit')}
               onChange={handleChange}
@@ -224,9 +222,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
 
             <SettingsSelect
               description={t('groups.settings.descriptions.reservationsLimit')}
-              disabled={
-                values.decisionMakingModel === DecisionMakingModel.MajorityVote
-              }
+              disabled={values.decisionMakingModel === 'MAJORITY_VOTE'}
               fieldName={ServerSettingsFormFields.ReservationsLimit}
               label={t('groups.settings.names.reservationsLimit')}
               onClick={() =>
@@ -284,9 +280,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               </Box>
 
               <SliderInput
-                disabled={
-                  values.decisionMakingModel === DecisionMakingModel.Consent
-                }
+                disabled={values.decisionMakingModel === 'CONSENT'}
                 name={ServerSettingsFormFields.RatificationThreshold}
                 onInputChange={handleChange}
                 onSliderChange={handleChange}

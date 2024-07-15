@@ -24,9 +24,9 @@ export class GroupConfig {
   @Field()
   adminModel: string;
 
-  @Column({ default: DecisionMakingModel.Consensus })
-  @Field()
-  decisionMakingModel: string;
+  @Column({ type: 'int', default: DecisionMakingModel.CONSENSUS })
+  @Field(() => DecisionMakingModel)
+  decisionMakingModel: DecisionMakingModel;
 
   @Column({ default: 2 })
   @Field(() => Int)

@@ -88,14 +88,14 @@ export type PostCardFragment = {
         __typename?: 'ProposalActionGroupConfig';
         id: number;
         adminModel?: string | null;
-        decisionMakingModel?: string | null;
+        decisionMakingModel?: Types.DecisionMakingModel | null;
         ratificationThreshold?: number | null;
         reservationsLimit?: number | null;
         standAsidesLimit?: number | null;
         votingTimeLimit?: number | null;
         privacy?: string | null;
         oldAdminModel?: string | null;
-        oldDecisionMakingModel?: string | null;
+        oldDecisionMakingModel?: Types.DecisionMakingModel | null;
         oldRatificationThreshold?: number | null;
         oldReservationsLimit?: number | null;
         oldStandAsidesLimit?: number | null;
@@ -114,7 +114,7 @@ export type PostCardFragment = {
                 __typename?: 'GroupConfig';
                 id: number;
                 adminModel: string;
-                decisionMakingModel: string;
+                decisionMakingModel: Types.DecisionMakingModel;
                 ratificationThreshold: number;
                 reservationsLimit: number;
                 standAsidesLimit: number;
