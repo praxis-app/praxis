@@ -6,11 +6,11 @@ import {
   GroupAdminModel,
   GroupPrivacy,
 } from '../../../constants/group.constants';
+import { VotingTimeLimit } from '../../../constants/proposal.constants';
 import {
   DecisionMakingModel,
-  VotingTimeLimit,
-} from '../../../constants/proposal.constants';
-import { ProposalActionGroupConfigInput } from '../../../graphql/gen';
+  ProposalActionGroupConfigInput,
+} from '../../../graphql/gen';
 import { useGroupSettingsByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupSettingsByGroupId.gen';
 import { ProposalActionGroupSettingsFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionGroupSettings.gen';
 import { useIsDesktop } from '../../../hooks/shared.hooks';

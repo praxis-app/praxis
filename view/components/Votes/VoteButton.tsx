@@ -10,13 +10,11 @@ import { Menu, MenuItem } from '@mui/material';
 import { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  DecisionMakingModel,
-  ProposalStage,
-} from '../../constants/proposal.constants';
+import { ProposalStage } from '../../constants/proposal.constants';
 import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
 import { VoteTypes } from '../../constants/vote.constants';
 import { toastVar } from '../../graphql/cache';
+import { DecisionMakingModel } from '../../graphql/gen';
 import { useRolesByGroupIdLazyQuery } from '../../graphql/roles/queries/gen/RolesByGroupId.gen';
 import {
   CreateVoteMutation,
@@ -37,7 +35,7 @@ const ICON_STYLES = {
 };
 
 interface Props {
-  decisionMakingModel: string;
+  decisionMakingModel: DecisionMakingModel;
   isClosed?: boolean;
   isRatified: boolean;
   menuAnchorEl: HTMLElement | null;

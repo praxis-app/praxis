@@ -270,8 +270,14 @@ export type CreateVotePayload = {
   vote: Vote;
 };
 
-export type DecisionMakingModel = 'CONSENSUS' | 'CONSENT' | 'MAJORITY_VOTE';
+export const DecisionMakingModel = {
+  Consensus: 'CONSENSUS',
+  Consent: 'CONSENT',
+  MajorityVote: 'MAJORITY_VOTE',
+} as const;
 
+export type DecisionMakingModel =
+  (typeof DecisionMakingModel)[keyof typeof DecisionMakingModel];
 export type DeleteGroupRoleMemberInput = {
   groupRoleId: Scalars['Int']['input'];
   userId: Scalars['Int']['input'];
@@ -479,8 +485,13 @@ export type HomeFeedInput = {
   offset: Scalars['Int']['input'];
 };
 
-export type HomeFeedType = 'FOLLOWING' | 'PROPOSALS' | 'YOUR_FEED';
+export const HomeFeedType = {
+  Following: 'FOLLOWING',
+  Proposals: 'PROPOSALS',
+  YourFeed: 'YOUR_FEED',
+} as const;
 
+export type HomeFeedType = (typeof HomeFeedType)[keyof typeof HomeFeedType];
 export type Image = {
   __typename?: 'Image';
   filename: Scalars['String']['output'];
@@ -1050,16 +1061,19 @@ export type ProposalActionRoleMemberInput = {
   userId: Scalars['Int']['input'];
 };
 
-export type ProposalActionType =
-  | 'CHANGE_COVER_PHOTO'
-  | 'CHANGE_DESCRIPTION'
-  | 'CHANGE_NAME'
-  | 'CHANGE_ROLE'
-  | 'CHANGE_SETTINGS'
-  | 'CREATE_ROLE'
-  | 'PLAN_EVENT'
-  | 'TEST';
+export const ProposalActionType = {
+  ChangeCoverPhoto: 'CHANGE_COVER_PHOTO',
+  ChangeDescription: 'CHANGE_DESCRIPTION',
+  ChangeName: 'CHANGE_NAME',
+  ChangeRole: 'CHANGE_ROLE',
+  ChangeSettings: 'CHANGE_SETTINGS',
+  CreateRole: 'CREATE_ROLE',
+  PlanEvent: 'PLAN_EVENT',
+  Test: 'TEST',
+} as const;
 
+export type ProposalActionType =
+  (typeof ProposalActionType)[keyof typeof ProposalActionType];
 export type ProposalConfig = {
   __typename?: 'ProposalConfig';
   closingAt?: Maybe<Scalars['DateTime']['output']>;

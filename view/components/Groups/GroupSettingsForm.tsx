@@ -13,12 +13,9 @@ import {
   GroupPrivacy,
   GroupSettingsFieldName,
 } from '../../constants/group.constants';
-import {
-  DecisionMakingModel,
-  VotingTimeLimit,
-} from '../../constants/proposal.constants';
+import { VotingTimeLimit } from '../../constants/proposal.constants';
 import { toastVar } from '../../graphql/cache';
-import { UpdateGroupConfigInput } from '../../graphql/gen';
+import { DecisionMakingModel, UpdateGroupConfigInput } from '../../graphql/gen';
 import { GroupSettingsFormFragment } from '../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
 import { useUpdateGroupSettingsMutation } from '../../graphql/groups/mutations/gen/UpdateGroupSettings.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';

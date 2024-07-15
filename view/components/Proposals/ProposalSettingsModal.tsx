@@ -2,7 +2,7 @@ import { Schedule } from '@mui/icons-material';
 import { Divider, SxProps, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { DecisionMakingModel } from '../../constants/proposal.constants';
+import { DecisionMakingModel } from '../../graphql/gen';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { formatClosingTime } from '../../utils/proposal.utils';
 import Setting from '../Settings/Setting';

@@ -10,12 +10,12 @@ import {
 import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { VotingTimeLimit } from '../../constants/proposal.constants';
+import { toastVar } from '../../graphql/cache';
 import {
   DecisionMakingModel,
-  VotingTimeLimit,
-} from '../../constants/proposal.constants';
-import { toastVar } from '../../graphql/cache';
-import { UpdateServerConfigInput } from '../../graphql/gen';
+  UpdateServerConfigInput,
+} from '../../graphql/gen';
 import { ServerSettingsFormFragment } from '../../graphql/settings/fragments/gen/ServerSettingsForm.gen';
 import { useUpdateServerSettingsMutation } from '../../graphql/settings/mutations/gen/UpdateServerSettings.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';

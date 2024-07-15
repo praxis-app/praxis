@@ -8,12 +8,14 @@ import {
   GroupSettingsFieldName,
 } from '../../../constants/group.constants';
 import {
-  DecisionMakingModel,
   ProposalActionFieldName,
   VotingTimeLimit,
 } from '../../../constants/proposal.constants';
 import { toastVar } from '../../../graphql/cache';
-import { ProposalActionGroupConfigInput } from '../../../graphql/gen';
+import {
+  DecisionMakingModel,
+  ProposalActionGroupConfigInput,
+} from '../../../graphql/gen';
 import { useGroupSettingsByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupSettingsByGroupId.gen';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import SettingsSelect from '../../Settings/SettingsSelect';

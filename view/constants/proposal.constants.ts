@@ -1,9 +1,3 @@
-export enum DecisionMakingModel {
-  Consensus = 'consensus',
-  Consent = 'consent',
-  MajorityVote = 'majority-vote',
-}
-
 export enum VotingTimeLimit {
   Unlimited = 0,
   OneMinute = 1,
