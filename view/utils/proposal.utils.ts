@@ -1,5 +1,4 @@
 import { Namespace, TFunction } from 'react-i18next';
-import { ProposalActionType } from '../constants/proposal.constants';
 import dayjs from 'dayjs';
 
 export const getProposalActionTypeOptions = (
@@ -7,35 +6,35 @@ export const getProposalActionTypeOptions = (
 ) => [
   {
     message: t('proposals.actionTypes.planEvent'),
-    value: ProposalActionType.PlanEvent,
+    value: 'PLAN_EVENT',
   },
   {
     message: t('proposals.actionTypes.changeName'),
-    value: ProposalActionType.ChangeName,
+    value: 'CHANGE_NAME',
   },
   {
     message: t('proposals.actionTypes.changeDescription'),
-    value: ProposalActionType.ChangeDescription,
+    value: 'CHANGE_DESCRIPTION',
   },
   {
     message: t('proposals.actionTypes.changeSettings'),
-    value: ProposalActionType.ChangeSettings,
+    value: 'CHANGE_SETTINGS',
   },
   {
     message: t('proposals.actionTypes.changeCoverPhoto'),
-    value: ProposalActionType.ChangeCoverPhoto,
+    value: 'CHANGE_COVER_PHOTO',
   },
   {
     message: t('proposals.actionTypes.changeRole'),
-    value: ProposalActionType.ChangeRole,
+    value: 'CHANGE_ROLE',
   },
   {
     message: t('proposals.actionTypes.createRole'),
-    value: ProposalActionType.CreateRole,
+    value: 'CREATE_ROLE',
   },
   {
     message: t('proposals.actionTypes.test'),
-    value: ProposalActionType.Test,
+    value: 'TEST',
   },
 ];
 
@@ -44,21 +43,21 @@ export const getProposalActionLabel = (
   t: TFunction<Namespace<'ns1'>, undefined>,
 ): string => {
   switch (actionType) {
-    case ProposalActionType.PlanEvent:
+    case 'PLAN_EVENT':
       return t('proposals.actionTypes.planEvent');
-    case ProposalActionType.ChangeName:
+    case 'CHANGE_NAME':
       return t('proposals.actionTypes.changeName');
-    case ProposalActionType.ChangeCoverPhoto:
+    case 'CHANGE_COVER_PHOTO':
       return t('proposals.actionTypes.changeCoverPhoto');
-    case ProposalActionType.ChangeDescription:
+    case 'CHANGE_DESCRIPTION':
       return t('proposals.actionTypes.changeDescription');
-    case ProposalActionType.ChangeSettings:
+    case 'CHANGE_SETTINGS':
       return t('proposals.actionTypes.changeSettings');
-    case ProposalActionType.CreateRole:
+    case 'CREATE_ROLE':
       return t('proposals.actionTypes.createRole');
-    case ProposalActionType.ChangeRole:
+    case 'CHANGE_ROLE':
       return t('proposals.actionTypes.changeRole');
-    case ProposalActionType.Test:
+    case 'TEST':
       return t('proposals.actionTypes.test');
     default:
       return '';

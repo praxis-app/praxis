@@ -29,7 +29,7 @@ const ProposalActionPermission = ({
   const theme = useTheme();
 
   const { displayName } = getPermissionText(permissionName, true);
-  const isChangingRole = actionType === 'CHANGE_GROUP_ROLE';
+  const isChangingRole = actionType === 'CHANGE_ROLE';
   const isEnabled = permissions[permissionName];
 
   const permissionStyles: SxProps = {

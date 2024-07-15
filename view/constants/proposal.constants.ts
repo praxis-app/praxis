@@ -16,17 +16,6 @@ export enum VotingTimeLimit {
   TwoWeeks = 60 * 24 * 14,
 }
 
-export enum ProposalActionType {
-  ChangeCoverPhoto = 'change-cover-photo',
-  ChangeDescription = 'change-description',
-  ChangeName = 'change-name',
-  ChangeRole = 'change-role',
-  ChangeSettings = 'change-settings',
-  CreateRole = 'create-role',
-  PlanEvent = 'plan-event',
-  Test = 'test',
-}
-
 export enum ProposalStage {
   Voting = 'voting',
   Ratified = 'ratified',

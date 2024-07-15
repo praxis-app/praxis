@@ -1,6 +1,5 @@
 import { Box, Divider, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ProposalActionType } from '../../../constants/proposal.constants';
 import { NavigationPaths } from '../../../constants/shared.constants';
 import { ProposalActionFragment } from '../../../graphql/proposals/fragments/gen/ProposalAction.gen';
 import AttachedImage from '../../Images/AttachedImage';
@@ -36,7 +35,7 @@ const ProposalAction = ({
 
   const proposalPath = `${NavigationPaths.Proposals}/${proposalId}`;
 
-  if (actionType === ProposalActionType.ChangeSettings) {
+  if (actionType === 'CHANGE_SETTINGS') {
     if (!groupSettings) {
       return (
         <Typography marginBottom={3.5}>
@@ -55,7 +54,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === ProposalActionType.PlanEvent) {
+  if (actionType === 'PLAN_EVENT') {
     if (!event) {
       return (
         <Typography marginBottom={3.5}>
@@ -73,10 +72,7 @@ const ProposalAction = ({
     );
   }
 
-  if (
-    actionType === ProposalActionType.CreateRole ||
-    actionType === ProposalActionType.ChangeRole
-  ) {
+  if (actionType === 'CREATE_ROLE' || actionType === 'CHANGE_ROLE') {
     if (!role) {
       return (
         <Typography marginBottom={3.5}>
@@ -96,7 +92,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === ProposalActionType.ChangeName) {
+  if (actionType === 'CHANGE_NAME') {
     return (
       <Box
         marginBottom={isShared ? 0 : 3.5}
@@ -116,7 +112,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === ProposalActionType.ChangeDescription) {
+  if (actionType === 'CHANGE_DESCRIPTION') {
     return (
       <Box
         marginBottom={isShared ? 0 : 3.5}
@@ -136,7 +132,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === ProposalActionType.ChangeCoverPhoto) {
+  if (actionType === 'CHANGE_COVER_PHOTO') {
     if (!groupCoverPhoto) {
       return (
         <Link

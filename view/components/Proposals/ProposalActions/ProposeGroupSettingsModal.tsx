@@ -10,7 +10,6 @@ import {
 import {
   DecisionMakingModel,
   ProposalActionFieldName,
-  ProposalActionType,
   VotingTimeLimit,
 } from '../../../constants/proposal.constants';
 import { toastVar } from '../../../graphql/cache';
@@ -52,7 +51,7 @@ const ProposeGroupSettingsModal = ({
   const isDesktop = useIsDesktop();
 
   useEffect(() => {
-    if (groupId && actionType === ProposalActionType.ChangeSettings) {
+    if (groupId && actionType === 'CHANGE_SETTINGS') {
       getGroupSettings({ variables: { groupId } });
       setOpen(true);
     }

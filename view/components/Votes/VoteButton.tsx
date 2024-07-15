@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   DecisionMakingModel,
-  ProposalActionType,
   ProposalStage,
 } from '../../constants/proposal.constants';
 import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
@@ -123,8 +122,7 @@ const VoteButton = ({
 
     if (isRatified) {
       const isRoleProposal =
-        actionType === ProposalActionType.CreateRole ||
-        actionType === ProposalActionType.ChangeRole;
+        actionType === 'CREATE_ROLE' || actionType === 'CHANGE_ROLE';
 
       // Load group roles if a role was added or changed
       if (isRoleProposal && group) {
@@ -139,7 +137,7 @@ const VoteButton = ({
 
     if (
       pathname.includes(NavigationPaths.Groups) &&
-      actionType === ProposalActionType.ChangeName &&
+      actionType === 'CHANGE_NAME' &&
       isRatified &&
       group
     ) {

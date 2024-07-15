@@ -4,10 +4,7 @@ import { FormikErrors, FormikTouched } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalInput } from '../../../graphql/gen';
 import { ProposalFormFragment } from '../../../graphql/proposals/fragments/gen/ProposalForm.gen';
-import {
-  ProposalActionFieldName,
-  ProposalActionType,
-} from '../../../constants/proposal.constants';
+import { ProposalActionFieldName } from '../../../constants/proposal.constants';
 import AttachedImagePreview from '../../Images/AttachedImagePreview';
 import ImageInput from '../../Images/ImageInput';
 import { TextField } from '../../Shared/TextField';
@@ -31,7 +28,7 @@ const ProposalActionFields = ({
 }: Props) => {
   const { t } = useTranslation();
 
-  if (values.action.actionType === ProposalActionType.ChangeName) {
+  if (values.action.actionType === 'CHANGE_NAME') {
     const isInvalid = !!errors.action?.groupName && touched.action?.groupName;
     return (
       <TextField
@@ -43,7 +40,7 @@ const ProposalActionFields = ({
     );
   }
 
-  if (values.action.actionType === ProposalActionType.ChangeDescription) {
+  if (values.action.actionType === 'CHANGE_DESCRIPTION') {
     const isInvalid =
       !!errors.action?.groupDescription && touched.action?.groupDescription;
     return (
@@ -56,7 +53,7 @@ const ProposalActionFields = ({
     );
   }
 
-  if (values.action.actionType === ProposalActionType.ChangeCoverPhoto) {
+  if (values.action.actionType === 'CHANGE_COVER_PHOTO') {
     const isInvalid = !!(errors.action?.groupCoverPhoto && submitCount);
     const savedImage =
       editProposal?.action.groupCoverPhoto && !values.action.groupCoverPhoto

@@ -230,7 +230,7 @@ export class ProposalsService {
 
     if (
       groupCoverPhoto &&
-      proposal.action.actionType === ProposalActionType.CHANGE_GROUP_COVER_PHOTO
+      proposal.action.actionType === ProposalActionType.CHANGE_COVER_PHOTO
     ) {
       await this.proposalActionsService.deleteProposalActionImage(
         proposal.action.id,
@@ -289,34 +289,34 @@ export class ProposalsService {
       return;
     }
 
-    if (actionType === ProposalActionType.PLAN_GROUP_EVENT) {
+    if (actionType === ProposalActionType.PLAN_EVENT) {
       await this.proposalActionsService.implementGroupEvent(id, groupId);
       return;
     }
-    if (actionType === ProposalActionType.CREATE_GROUP_ROLE) {
+    if (actionType === ProposalActionType.CREATE_ROLE) {
       await this.proposalActionsService.implementCreateGroupRole(id, groupId);
       return;
     }
-    if (actionType === ProposalActionType.CHANGE_GROUP_ROLE) {
+    if (actionType === ProposalActionType.CHANGE_ROLE) {
       await this.proposalActionsService.implementChangeGroupRole(id);
       return;
     }
-    if (actionType === ProposalActionType.CHANGE_GROUP_SETTINGS) {
+    if (actionType === ProposalActionType.CHANGE_SETTINGS) {
       await this.proposalActionsService.implementChangeGroupConfig(id, groupId);
       return;
     }
-    if (actionType === ProposalActionType.CHANGE_GROUP_NAME) {
+    if (actionType === ProposalActionType.CHANGE_NAME) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
       return;
     }
-    if (actionType === ProposalActionType.CHANGE_GROUP_DESCRIPTION) {
+    if (actionType === ProposalActionType.CHANGE_DESCRIPTION) {
       await this.groupsService.updateGroup({
         description: groupDescription,
         id: groupId,
       });
       return;
     }
-    if (actionType === ProposalActionType.CHANGE_GROUP_COVER_PHOTO) {
+    if (actionType === ProposalActionType.CHANGE_COVER_PHOTO) {
       await this.proposalActionsService.implementChangeGroupCoverPhoto(
         id,
         groupId,

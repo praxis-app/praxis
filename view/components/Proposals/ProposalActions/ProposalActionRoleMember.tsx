@@ -34,7 +34,7 @@ const ProposalActionRoleMember = ({
     return null;
   }
 
-  const isChangingRole = actionType === 'CHANGE_GROUP_ROLE';
+  const isChangingRole = actionType === 'CHANGE_ROLE';
   const isRemovingMember = member.changeType === ChangeType.Remove;
 
   const memberStyles: SxProps = {

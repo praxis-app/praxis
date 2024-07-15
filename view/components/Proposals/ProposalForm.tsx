@@ -139,11 +139,11 @@ const ProposalForm = ({
     if (!action.actionType) {
       errors.action.actionType = t('proposals.errors.missingActionType');
     }
-    if (action.actionType === 'CHANGE_GROUP_NAME' && !action.groupName) {
+    if (action.actionType === 'CHANGE_NAME' && !action.groupName) {
       errors.action.groupName = t('proposals.errors.missingGroupName');
     }
     if (
-      action.actionType === 'CHANGE_GROUP_DESCRIPTION' &&
+      action.actionType === 'CHANGE_DESCRIPTION' &&
       !action.groupDescription
     ) {
       errors.action.groupDescription = t(
@@ -151,7 +151,7 @@ const ProposalForm = ({
       );
     }
     if (
-      action.actionType === 'CHANGE_GROUP_COVER_PHOTO' &&
+      action.actionType === 'CHANGE_COVER_PHOTO' &&
       !editProposal?.action.groupCoverPhoto &&
       !action.groupCoverPhoto
     ) {
@@ -160,8 +160,8 @@ const ProposalForm = ({
       );
     }
     if (
-      (action.actionType === 'CREATE_GROUP_ROLE' ||
-        action.actionType === 'CHANGE_GROUP_ROLE') &&
+      (action.actionType === 'CREATE_ROLE' ||
+        action.actionType === 'CHANGE_ROLE') &&
       !action.role
     ) {
       errors.action.role = t('proposals.errors.missingRole');
@@ -549,7 +549,7 @@ const ProposalForm = ({
             <ImageInput
               key={values.images?.length}
               onChange={handleImageInputChange(setFieldValue)}
-              disabled={values.action.actionType === 'CHANGE_GROUP_COVER_PHOTO'}
+              disabled={values.action.actionType === 'CHANGE_COVER_PHOTO'}
               multiple
             />
 

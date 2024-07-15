@@ -27,7 +27,6 @@ import { useGroupRoleByRoleIdLazyQuery } from '../../../graphql/groups/queries/g
 import { useGroupRolesByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRolesByGroupId.gen';
 import {
   ProposalActionFieldName,
-  ProposalActionType,
   ProposeRoleModalFieldName,
 } from '../../../constants/proposal.constants';
 import {
@@ -109,8 +108,8 @@ const ProposeRoleModal = ({
 
   const { t } = useTranslation();
 
-  const isCreateRole = actionType === ProposalActionType.CreateRole;
-  const isChangeRole = actionType === ProposalActionType.ChangeRole;
+  const isCreateRole = actionType === 'CREATE_ROLE';
+  const isChangeRole = actionType === 'CHANGE_ROLE';
 
   useEffect(() => {
     if (!groupId) {

@@ -16,10 +16,7 @@ import {
   EventFormFieldName,
   SHOW_ENDS_AT_BUTTON_STYLES,
 } from '../../../constants/event.constants';
-import {
-  ProposalActionFieldName,
-  ProposalActionType,
-} from '../../../constants/proposal.constants';
+import { ProposalActionFieldName } from '../../../constants/proposal.constants';
 import { ProposalActionEventInput } from '../../../graphql/gen';
 import { useGroupMembersByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupMembersByGroupId.gen';
 import { getRandomString, isValidUrl } from '../../../utils/shared.utils';
@@ -68,7 +65,7 @@ const ProposeEventModal = ({
   }, [groupId, getGroupMembers]);
 
   useEffect(() => {
-    if (groupId && actionType === ProposalActionType.PlanEvent) {
+    if (groupId && actionType === 'PLAN_EVENT') {
       setOpen(true);
     }
   }, [groupId, actionType]);
