@@ -100,7 +100,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   };
 
   const handleSliderInputClick = (decisionMakingModel?: string | null) => {
-    if (decisionMakingModel === 'CONSENT') {
+    if (decisionMakingModel === 'Consent') {
       toastVar({
         status: 'info',
         title: t('groups.prompts.settingDisabledForConsent'),
@@ -109,7 +109,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   };
 
   const handleConsensusLimitClick = (decisionMakingModel?: string | null) => {
-    if (decisionMakingModel === 'MAJORITY_VOTE') {
+    if (decisionMakingModel === 'MajorityVote') {
       toastVar({
         status: 'info',
         title: t('groups.prompts.settingDisabledForMajority'),
@@ -125,7 +125,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   }: FormValues) => {
     const errors: FormikErrors<FormValues> = {};
     if (
-      decisionMakingModel === 'CONSENT' &&
+      decisionMakingModel === 'Consent' &&
       votingTimeLimit === VotingTimeLimit.Unlimited
     ) {
       errors.votingTimeLimit = t(
@@ -133,7 +133,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
       );
     }
     if (
-      decisionMakingModel === 'MAJORITY_VOTE' &&
+      decisionMakingModel === 'MajorityVote' &&
       ratificationThreshold &&
       ratificationThreshold <= 50
     ) {
@@ -208,7 +208,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
 
             <SettingsSelect
               description={t('groups.settings.descriptions.standAsidesLimit')}
-              disabled={values.decisionMakingModel === 'MAJORITY_VOTE'}
+              disabled={values.decisionMakingModel === 'MajorityVote'}
               fieldName={GroupSettingsFieldName.StandAsidesLimit}
               label={t('groups.settings.names.standAsidesLimit')}
               onChange={handleChange}
@@ -236,7 +236,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
 
             <SettingsSelect
               description={t('groups.settings.descriptions.reservationsLimit')}
-              disabled={values.decisionMakingModel === 'MAJORITY_VOTE'}
+              disabled={values.decisionMakingModel === 'MajorityVote'}
               fieldName={GroupSettingsFieldName.ReservationsLimit}
               label={t('groups.settings.names.reservationsLimit')}
               onClick={() =>
@@ -295,7 +295,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
 
               <SliderInput
                 marks={!isDesktop}
-                disabled={values.decisionMakingModel === 'CONSENT'}
+                disabled={values.decisionMakingModel === 'Consent'}
                 name={GroupSettingsFieldName.RatificationThreshold}
                 onInputChange={handleChange}
                 onSliderChange={handleChange}

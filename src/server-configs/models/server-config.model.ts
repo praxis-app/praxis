@@ -24,7 +24,7 @@ export class ServerConfig {
   @Field(() => String, { nullable: true })
   about: string | null;
 
-  @Column({ type: 'int', default: DecisionMakingModel.CONSENSUS })
+  @Column({ type: 'varchar', default: DecisionMakingModel.Consensus })
   @Field(() => DecisionMakingModel)
   decisionMakingModel: DecisionMakingModel;
 

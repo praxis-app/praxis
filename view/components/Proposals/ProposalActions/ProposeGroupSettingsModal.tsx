@@ -134,7 +134,7 @@ const ProposeGroupSettingsModal = ({
   }: ProposalActionGroupConfigInput) => {
     const errors: FormikErrors<ProposalActionGroupConfigInput> = {};
     if (
-      decisionMakingModel === 'CONSENT' &&
+      decisionMakingModel === 'Consent' &&
       votingTimeLimit === VotingTimeLimit.Unlimited
     ) {
       errors.votingTimeLimit = t(
@@ -142,7 +142,7 @@ const ProposeGroupSettingsModal = ({
       );
     }
     if (
-      decisionMakingModel === 'MAJORITY_VOTE' &&
+      decisionMakingModel === 'MajorityVote' &&
       ratificationThreshold &&
       ratificationThreshold <= 50
     ) {
@@ -224,7 +224,7 @@ const ProposeGroupSettingsModal = ({
                 <SettingsSelect
                   fieldName={GroupSettingsFieldName.StandAsidesLimit}
                   label={t('groups.settings.names.standAsidesLimit')}
-                  disabled={values.decisionMakingModel === 'MAJORITY_VOTE'}
+                  disabled={values.decisionMakingModel === 'MajorityVote'}
                   description={t(
                     'groups.settings.descriptions.standAsidesLimit',
                   )}
@@ -254,7 +254,7 @@ const ProposeGroupSettingsModal = ({
                 <SettingsSelect
                   fieldName={GroupSettingsFieldName.ReservationsLimit}
                   label={t('groups.settings.names.reservationsLimit')}
-                  disabled={values.decisionMakingModel === 'MAJORITY_VOTE'}
+                  disabled={values.decisionMakingModel === 'MajorityVote'}
                   description={t(
                     'groups.settings.descriptions.reservationsLimit',
                   )}
@@ -314,7 +314,7 @@ const ProposeGroupSettingsModal = ({
 
                   <SliderInput
                     marks={!isDesktop}
-                    disabled={values.decisionMakingModel === 'CONSENT'}
+                    disabled={values.decisionMakingModel === 'Consent'}
                     name={GroupSettingsFieldName.RatificationThreshold}
                     onClick={() =>
                       handleSliderInputClick(values.decisionMakingModel)

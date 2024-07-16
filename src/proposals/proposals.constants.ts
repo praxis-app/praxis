@@ -1,7 +1,7 @@
 export enum DecisionMakingModel {
-  CONSENT,
-  CONSENSUS,
-  MAJORITY_VOTE,
+  Consent = 'consent',
+  Consensus = 'consensus',
+  MajorityVote = 'majority-vote',
 }
 
 export enum ProposalActionType {

@@ -23,7 +23,7 @@ const VoteBadges = ({ proposal, questionnaireTicket }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const settings = proposal?.settings || questionnaireTicket?.settings;
-  const isMajorityVote = settings?.decisionMakingModel === 'MAJORITY_VOTE';
+  const isMajorityVote = settings?.decisionMakingModel === 'MajorityVote';
   const votes = proposal?.votes || questionnaireTicket?.votes || [];
   const voteCount = votes.length;
 

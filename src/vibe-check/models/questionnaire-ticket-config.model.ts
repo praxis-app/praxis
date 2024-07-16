@@ -18,7 +18,7 @@ export class QuestionnaireTicketConfig {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'int', default: DecisionMakingModel.CONSENSUS })
+  @Column({ type: 'varchar' })
   @Field(() => DecisionMakingModel)
   decisionMakingModel: DecisionMakingModel;
 

@@ -138,13 +138,13 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
     const errors: FormikErrors<FormValues> = {};
 
     if (
-      decisionMakingModel === 'CONSENT' ||
-      decisionMakingModel === 'MAJORITY_VOTE'
+      decisionMakingModel === 'Consent' ||
+      decisionMakingModel === 'MajorityVote'
     ) {
       errors.decisionMakingModel = t('prompts.inDev');
     }
     if (
-      decisionMakingModel === 'MAJORITY_VOTE' &&
+      decisionMakingModel === 'MajorityVote' &&
       ratificationThreshold &&
       ratificationThreshold <= 50
     ) {
@@ -194,7 +194,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
 
             <SettingsSelect
               description={t('groups.settings.descriptions.standAsidesLimit')}
-              disabled={values.decisionMakingModel === 'MAJORITY_VOTE'}
+              disabled={values.decisionMakingModel === 'MajorityVote'}
               fieldName={ServerSettingsFormFields.StandAsidesLimit}
               label={t('groups.settings.names.standAsidesLimit')}
               onChange={handleChange}
@@ -222,7 +222,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
 
             <SettingsSelect
               description={t('groups.settings.descriptions.reservationsLimit')}
-              disabled={values.decisionMakingModel === 'MAJORITY_VOTE'}
+              disabled={values.decisionMakingModel === 'MajorityVote'}
               fieldName={ServerSettingsFormFields.ReservationsLimit}
               label={t('groups.settings.names.reservationsLimit')}
               onClick={() =>
@@ -280,7 +280,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               </Box>
 
               <SliderInput
-                disabled={values.decisionMakingModel === 'CONSENT'}
+                disabled={values.decisionMakingModel === 'Consent'}
                 name={ServerSettingsFormFields.RatificationThreshold}
                 onInputChange={handleChange}
                 onSliderChange={handleChange}

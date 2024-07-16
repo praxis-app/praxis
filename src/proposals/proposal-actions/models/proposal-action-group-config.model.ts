@@ -30,7 +30,7 @@ export class ProposalActionGroupConfig {
   @Field({ nullable: true })
   adminModel?: string;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   @Field(() => DecisionMakingModel, { nullable: true })
   decisionMakingModel?: DecisionMakingModel;
 
@@ -62,7 +62,7 @@ export class ProposalActionGroupConfig {
   @Field({ nullable: true })
   oldAdminModel?: string;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   @Field(() => DecisionMakingModel, { nullable: true })
   oldDecisionMakingModel?: DecisionMakingModel;
 

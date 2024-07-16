@@ -271,9 +271,9 @@ export type CreateVotePayload = {
 };
 
 export const DecisionMakingModel = {
-  Consensus: 'CONSENSUS',
-  Consent: 'CONSENT',
-  MajorityVote: 'MAJORITY_VOTE',
+  Consensus: 'Consensus',
+  Consent: 'Consent',
+  MajorityVote: 'MajorityVote',
 } as const;
 
 export type DecisionMakingModel =

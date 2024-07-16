@@ -339,13 +339,13 @@ export class ProposalsService {
     if (stage !== ProposalStage.Voting) {
       return false;
     }
-    if (config.decisionMakingModel === DecisionMakingModel.CONSENSUS) {
+    if (config.decisionMakingModel === DecisionMakingModel.Consensus) {
       return this.hasConsensus(votes, config, group.members);
     }
-    if (config.decisionMakingModel === DecisionMakingModel.CONSENT) {
+    if (config.decisionMakingModel === DecisionMakingModel.Consent) {
       return this.hasConsent(votes, config);
     }
-    if (config.decisionMakingModel === DecisionMakingModel.MAJORITY_VOTE) {
+    if (config.decisionMakingModel === DecisionMakingModel.MajorityVote) {
       return this.hasMajorityVote(votes, config, group.members);
     }
     return false;

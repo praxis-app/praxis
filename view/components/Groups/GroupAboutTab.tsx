@@ -40,10 +40,10 @@ const GroupAboutTab = ({ groupId }: Props) => {
   };
 
   const getDecisionMakingModel = () => {
-    if (settings.decisionMakingModel === 'CONSENT') {
+    if (settings.decisionMakingModel === 'Consent') {
       return t('groups.labels.consent');
     }
-    if (settings.decisionMakingModel === 'MAJORITY_VOTE') {
+    if (settings.decisionMakingModel === 'MajorityVote') {
       return t('groups.labels.majority');
     }
     return t('groups.labels.consensus');

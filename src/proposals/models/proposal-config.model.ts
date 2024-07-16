@@ -18,7 +18,7 @@ export class ProposalConfig {
   @Field(() => Int)
   id: number;
 
-  @Column({ type: 'int', default: DecisionMakingModel.CONSENSUS })
+  @Column({ type: 'varchar' })
   @Field(() => DecisionMakingModel)
   decisionMakingModel: DecisionMakingModel;
 
