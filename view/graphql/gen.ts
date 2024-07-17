@@ -486,9 +486,9 @@ export type HomeFeedInput = {
 };
 
 export const HomeFeedType = {
-  Following: 'FOLLOWING',
-  Proposals: 'PROPOSALS',
-  YourFeed: 'YOUR_FEED',
+  Following: 'Following',
+  Proposals: 'Proposals',
+  YourFeed: 'YourFeed',
 } as const;
 
 export type HomeFeedType = (typeof HomeFeedType)[keyof typeof HomeFeedType];

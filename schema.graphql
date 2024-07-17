@@ -413,9 +413,9 @@ input HomeFeedInput {
 }
 
 enum HomeFeedType {
-  FOLLOWING
-  PROPOSALS
-  YOUR_FEED
+  Following
+  Proposals
+  YourFeed
 }
 
 type Image {

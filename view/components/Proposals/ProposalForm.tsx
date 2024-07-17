@@ -191,7 +191,7 @@ const ProposalForm = ({
           {
             query: HomeFeedDocument,
             variables: {
-              input: { limit: 10, offset: 0, feedType: 'YOUR_FEED' },
+              input: { limit: 10, offset: 0, feedType: 'YourFeed' },
               isLoggedIn: true,
             },
           },
