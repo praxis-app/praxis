@@ -17,7 +17,10 @@ import {
   SHOW_ENDS_AT_BUTTON_STYLES,
 } from '../../../constants/event.constants';
 import { ProposalActionFieldName } from '../../../constants/proposal.constants';
-import { ProposalActionEventInput } from '../../../graphql/gen';
+import {
+  ProposalActionEventInput,
+  ProposalActionType,
+} from '../../../graphql/gen';
 import { useGroupMembersByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupMembersByGroupId.gen';
 import { getRandomString, isValidUrl } from '../../../utils/shared.utils';
 import { startOfNextHour } from '../../../utils/time.utils';
@@ -31,7 +34,7 @@ import ProgressBar from '../../Shared/ProgressBar';
 import { TextField } from '../../Shared/TextField';
 
 interface Props {
-  actionType?: string;
+  actionType?: ProposalActionType;
   groupId?: number | null;
   currentUserId: number;
   setFieldValue: (
@@ -65,7 +68,7 @@ const ProposeEventModal = ({
   }, [groupId, getGroupMembers]);
 
   useEffect(() => {
-    if (groupId && actionType === 'PLAN_EVENT') {
+    if (groupId && actionType === 'PlanEvent') {
       setOpen(true);
     }
   }, [groupId, actionType]);
