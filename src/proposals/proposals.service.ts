@@ -230,7 +230,7 @@ export class ProposalsService {
 
     if (
       groupCoverPhoto &&
-      proposal.action.actionType === ProposalActionType.CHANGE_COVER_PHOTO
+      proposal.action.actionType === ProposalActionType.ChangeCoverPhoto
     ) {
       await this.proposalActionsService.deleteProposalActionImage(
         proposal.action.id,
@@ -289,34 +289,34 @@ export class ProposalsService {
       return;
     }
 
-    if (actionType === ProposalActionType.PLAN_EVENT) {
+    if (actionType === ProposalActionType.PlanEvent) {
       await this.proposalActionsService.implementGroupEvent(id, groupId);
       return;
     }
-    if (actionType === ProposalActionType.CREATE_ROLE) {
+    if (actionType === ProposalActionType.CreateRole) {
       await this.proposalActionsService.implementCreateGroupRole(id, groupId);
       return;
     }
-    if (actionType === ProposalActionType.CHANGE_ROLE) {
+    if (actionType === ProposalActionType.ChangeRole) {
       await this.proposalActionsService.implementChangeGroupRole(id);
       return;
     }
-    if (actionType === ProposalActionType.CHANGE_SETTINGS) {
+    if (actionType === ProposalActionType.ChangeSettings) {
       await this.proposalActionsService.implementChangeGroupConfig(id, groupId);
       return;
     }
-    if (actionType === ProposalActionType.CHANGE_NAME) {
+    if (actionType === ProposalActionType.ChangeName) {
       await this.groupsService.updateGroup({ id: groupId, name: groupName });
       return;
     }
-    if (actionType === ProposalActionType.CHANGE_DESCRIPTION) {
+    if (actionType === ProposalActionType.ChangeDescription) {
       await this.groupsService.updateGroup({
         description: groupDescription,
         id: groupId,
       });
       return;
     }
-    if (actionType === ProposalActionType.CHANGE_COVER_PHOTO) {
+    if (actionType === ProposalActionType.ChangeCoverPhoto) {
       await this.proposalActionsService.implementChangeGroupCoverPhoto(
         id,
         groupId,

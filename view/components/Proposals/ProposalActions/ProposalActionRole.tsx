@@ -122,8 +122,8 @@ const ProposalActionRole = ({
   const oldColor =
     ratified && 'oldColor' in role ? role.oldColor : roleToChange?.color;
 
-  const isRoleChange = actionType === 'CHANGE_ROLE';
-  const isAddingRole = actionType === 'CREATE_ROLE';
+  const isRoleChange = actionType === 'ChangeRole';
+  const isAddingRole = actionType === 'CreateRole';
   const isChangingName = isRoleChange && name && name !== oldName;
   const isChangingColor = isRoleChange && color && color !== oldColor;
 

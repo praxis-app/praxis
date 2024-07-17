@@ -27,7 +27,7 @@ export class ProposalAction {
   @Field(() => Int)
   id: number;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'varchar' })
   @Field(() => ProposalActionType)
   actionType: ProposalActionType;
 

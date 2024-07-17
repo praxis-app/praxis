@@ -1062,14 +1062,14 @@ export type ProposalActionRoleMemberInput = {
 };
 
 export const ProposalActionType = {
-  ChangeCoverPhoto: 'CHANGE_COVER_PHOTO',
-  ChangeDescription: 'CHANGE_DESCRIPTION',
-  ChangeName: 'CHANGE_NAME',
-  ChangeRole: 'CHANGE_ROLE',
-  ChangeSettings: 'CHANGE_SETTINGS',
-  CreateRole: 'CREATE_ROLE',
-  PlanEvent: 'PLAN_EVENT',
-  Test: 'TEST',
+  ChangeCoverPhoto: 'ChangeCoverPhoto',
+  ChangeDescription: 'ChangeDescription',
+  ChangeName: 'ChangeName',
+  ChangeRole: 'ChangeRole',
+  ChangeSettings: 'ChangeSettings',
+  CreateRole: 'CreateRole',
+  PlanEvent: 'PlanEvent',
+  Test: 'Test',
 } as const;
 
 export type ProposalActionType =

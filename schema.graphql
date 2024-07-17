@@ -718,14 +718,14 @@ input ProposalActionRoleMemberInput {
 }
 
 enum ProposalActionType {
-  CHANGE_COVER_PHOTO
-  CHANGE_DESCRIPTION
-  CHANGE_NAME
-  CHANGE_ROLE
-  CHANGE_SETTINGS
-  CREATE_ROLE
-  PLAN_EVENT
-  TEST
+  ChangeCoverPhoto
+  ChangeDescription
+  ChangeName
+  ChangeRole
+  ChangeSettings
+  CreateRole
+  PlanEvent
+  Test
 }
 
 type ProposalConfig {

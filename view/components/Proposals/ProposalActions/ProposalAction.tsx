@@ -35,7 +35,7 @@ const ProposalAction = ({
 
   const proposalPath = `${NavigationPaths.Proposals}/${proposalId}`;
 
-  if (actionType === 'CHANGE_SETTINGS') {
+  if (actionType === 'ChangeSettings') {
     if (!groupSettings) {
       return (
         <Typography marginBottom={3.5}>
@@ -54,7 +54,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === 'PLAN_EVENT') {
+  if (actionType === 'PlanEvent') {
     if (!event) {
       return (
         <Typography marginBottom={3.5}>
@@ -72,7 +72,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === 'CREATE_ROLE' || actionType === 'CHANGE_ROLE') {
+  if (actionType === 'CreateRole' || actionType === 'ChangeRole') {
     if (!role) {
       return (
         <Typography marginBottom={3.5}>
@@ -92,7 +92,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === 'CHANGE_NAME') {
+  if (actionType === 'ChangeName') {
     return (
       <Box
         marginBottom={isShared ? 0 : 3.5}
@@ -112,7 +112,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === 'CHANGE_DESCRIPTION') {
+  if (actionType === 'ChangeDescription') {
     return (
       <Box
         marginBottom={isShared ? 0 : 3.5}
@@ -132,7 +132,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === 'CHANGE_COVER_PHOTO') {
+  if (actionType === 'ChangeCoverPhoto') {
     if (!groupCoverPhoto) {
       return (
         <Link

@@ -5,14 +5,14 @@ export enum DecisionMakingModel {
 }
 
 export enum ProposalActionType {
-  CHANGE_COVER_PHOTO,
-  CHANGE_DESCRIPTION,
-  CHANGE_NAME,
-  CHANGE_ROLE,
-  CHANGE_SETTINGS,
-  CREATE_ROLE,
-  PLAN_EVENT,
-  TEST,
+  ChangeCoverPhoto = 'change-cover-photo',
+  ChangeDescription = 'change-description',
+  ChangeName = 'change-name',
+  ChangeRole = 'change-role',
+  ChangeSettings = 'change-settings',
+  CreateRole = 'create-role',
+  PlanEvent = 'plan-event',
+  Test = 'test',
 }
 
 export enum ProposalStage {

@@ -22,13 +22,13 @@ export class CreateProposalValidationPipe implements PipeTransform {
     }
     const { actionType, groupCoverPhoto, groupDescription, groupName, role } =
       action;
-    if (actionType === ProposalActionType.CHANGE_NAME && !groupName) {
+    if (actionType === ProposalActionType.ChangeName && !groupName) {
       throw new Error(
         'Proposals to change group name must include a name field',
       );
     }
     if (
-      actionType === ProposalActionType.CHANGE_DESCRIPTION &&
+      actionType === ProposalActionType.ChangeDescription &&
       !groupDescription
     ) {
       throw new Error(
@@ -36,7 +36,7 @@ export class CreateProposalValidationPipe implements PipeTransform {
       );
     }
     if (
-      actionType === ProposalActionType.CHANGE_COVER_PHOTO &&
+      actionType === ProposalActionType.ChangeCoverPhoto &&
       !groupCoverPhoto
     ) {
       throw new Error(
@@ -45,8 +45,8 @@ export class CreateProposalValidationPipe implements PipeTransform {
     }
     if (
       !role &&
-      (actionType === ProposalActionType.CREATE_ROLE ||
-        actionType === ProposalActionType.CHANGE_ROLE)
+      (actionType === ProposalActionType.CreateRole ||
+        actionType === ProposalActionType.ChangeRole)
     ) {
       throw new Error(
         'Proposals to change or add group roles must include a role',

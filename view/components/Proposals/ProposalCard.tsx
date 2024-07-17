@@ -101,7 +101,7 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
   const formattedDate = timeAgo(createdAt);
 
   const isSmallTextOnly =
-    body && body.length < 85 && !images.length && action.actionType === 'TEST';
+    body && body.length < 85 && !images.length && action.actionType === 'Test';
 
   const bodyStyles = {
     lineHeight: 1.25,
