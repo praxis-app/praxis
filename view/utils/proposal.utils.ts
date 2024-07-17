@@ -1,5 +1,5 @@
-import { Namespace, TFunction } from 'react-i18next';
 import dayjs from 'dayjs';
+import { Namespace, TFunction } from 'react-i18next';
 import { ProposalActionType } from '../graphql/gen';
 
 interface ProposalActionTypeOption {
@@ -45,25 +45,25 @@ export const getProposalActionTypeOptions = (
 ];
 
 export const getProposalActionLabel = (
-  actionType: string,
+  actionType: ProposalActionType,
   t: TFunction<Namespace<'ns1'>, undefined>,
 ): string => {
   switch (actionType) {
-    case 'PLAN_EVENT':
+    case 'PlanEvent':
       return t('proposals.actionTypes.planEvent');
-    case 'CHANGE_NAME':
+    case 'ChangeName':
       return t('proposals.actionTypes.changeName');
-    case 'CHANGE_COVER_PHOTO':
+    case 'ChangeCoverPhoto':
       return t('proposals.actionTypes.changeCoverPhoto');
-    case 'CHANGE_DESCRIPTION':
+    case 'ChangeDescription':
       return t('proposals.actionTypes.changeDescription');
-    case 'CHANGE_SETTINGS':
+    case 'ChangeSettings':
       return t('proposals.actionTypes.changeSettings');
-    case 'CREATE_ROLE':
+    case 'CreateRole':
       return t('proposals.actionTypes.createRole');
-    case 'CHANGE_ROLE':
+    case 'ChangeRole':
       return t('proposals.actionTypes.changeRole');
-    case 'TEST':
+    case 'Test':
       return t('proposals.actionTypes.test');
     default:
       return '';
