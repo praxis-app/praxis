@@ -1,40 +1,46 @@
 import { Namespace, TFunction } from 'react-i18next';
 import dayjs from 'dayjs';
+import { ProposalActionType } from '../graphql/gen';
+
+interface ProposalActionTypeOption {
+  message: string;
+  value: ProposalActionType;
+}
 
 export const getProposalActionTypeOptions = (
   t: TFunction<Namespace<'ns1'>, undefined>,
-) => [
+): ProposalActionTypeOption[] => [
   {
     message: t('proposals.actionTypes.planEvent'),
-    value: 'PLAN_EVENT',
+    value: 'PlanEvent',
   },
   {
     message: t('proposals.actionTypes.changeName'),
-    value: 'CHANGE_NAME',
+    value: 'ChangeName',
   },
   {
     message: t('proposals.actionTypes.changeDescription'),
-    value: 'CHANGE_DESCRIPTION',
+    value: 'ChangeDescription',
   },
   {
     message: t('proposals.actionTypes.changeSettings'),
-    value: 'CHANGE_SETTINGS',
+    value: 'ChangeSettings',
   },
   {
     message: t('proposals.actionTypes.changeCoverPhoto'),
-    value: 'CHANGE_COVER_PHOTO',
+    value: 'ChangeCoverPhoto',
   },
   {
     message: t('proposals.actionTypes.changeRole'),
-    value: 'CHANGE_ROLE',
+    value: 'ChangeRole',
   },
   {
     message: t('proposals.actionTypes.createRole'),
-    value: 'CREATE_ROLE',
+    value: 'CreateRole',
   },
   {
     message: t('proposals.actionTypes.test'),
-    value: 'TEST',
+    value: 'Test',
   },
 ];
 
