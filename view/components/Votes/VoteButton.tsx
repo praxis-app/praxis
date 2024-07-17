@@ -10,7 +10,6 @@ import { Menu, MenuItem } from '@mui/material';
 import { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ProposalStage } from '../../constants/proposal.constants';
 import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
 import { VoteTypes } from '../../constants/vote.constants';
 import { toastVar } from '../../graphql/cache';
@@ -116,7 +115,7 @@ const VoteButton = ({
       stage,
     } = proposal;
 
-    const isRatified = stage === ProposalStage.Ratified;
+    const isRatified = stage === 'Ratified';
 
     if (isRatified) {
       const isRoleProposal =

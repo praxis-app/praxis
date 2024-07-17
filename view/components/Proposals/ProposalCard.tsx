@@ -14,7 +14,6 @@ import { truncate } from 'lodash';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ProposalStage } from '../../constants/proposal.constants';
 import {
   MIDDOT_WITH_SPACES,
   NavigationPaths,
@@ -246,7 +245,7 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
 
         <ProposalAction
           action={action}
-          ratified={stage === ProposalStage.Ratified}
+          ratified={stage === 'Ratified'}
           proposalId={id}
         />
       </CardContent>

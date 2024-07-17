@@ -1,6 +1,6 @@
 // Used for reference: https://github.com/forrestwilkins/anrcho/blob/master/app/models/proposal.rb
 
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -22,6 +22,10 @@ import { ProposalAction } from '../proposal-actions/models/proposal-action.model
 import { ProposalStage } from '../proposals.constants';
 import { ProposalConfig } from './proposal-config.model';
 
+registerEnumType(ProposalStage, {
+  name: 'ProposalStage',
+});
+
 @Entity()
 @ObjectType()
 export class Proposal {
@@ -33,9 +37,9 @@ export class Proposal {
   @Field(() => String, { nullable: true })
   body: string | null;
 
-  @Column({ default: ProposalStage.Voting })
-  @Field()
-  stage: string;
+  @Column({ type: 'varchar', default: ProposalStage.Voting })
+  @Field(() => ProposalStage)
+  stage: ProposalStage;
 
   @OneToOne(() => ProposalAction, (action) => action.proposal, {
     cascade: true,

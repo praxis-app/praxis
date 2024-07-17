@@ -95,7 +95,7 @@ export type UserProfileFeedQuery = {
             __typename?: 'Proposal';
             id: number;
             body?: string | null;
-            stage: string;
+            stage: Types.ProposalStage;
             createdAt: any;
             action: {
               __typename?: 'ProposalAction';
@@ -240,7 +240,7 @@ export type UserProfileFeedQuery = {
           __typename?: 'Proposal';
           id: number;
           body?: string | null;
-          stage: string;
+          stage: Types.ProposalStage;
           voteCount: number;
           commentCount: number;
           shareCount: number;

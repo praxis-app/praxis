@@ -10,13 +10,6 @@ export enum VotingTimeLimit {
   TwoWeeks = 60 * 24 * 14,
 }
 
-export enum ProposalStage {
-  Voting = 'voting',
-  Ratified = 'ratified',
-  Revision = 'revision',
-  Closed = 'closed',
-}
-
 export enum ProposalFormFieldName {
   Action = 'action',
   Body = 'body',

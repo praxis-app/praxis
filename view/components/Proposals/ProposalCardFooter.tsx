@@ -5,7 +5,6 @@ import { Comment, Reply } from '@mui/icons-material';
 import { Box, CardActions, Divider, SxProps, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProposalStage } from '../../constants/proposal.constants';
 import { isLoggedInVar, isVerifiedVar, toastVar } from '../../graphql/cache';
 import { ProposalCardFragment } from '../../graphql/proposals/fragments/gen/ProposalCard.gen';
 import { useSyncProposalMutation } from '../../graphql/proposals/mutations/gen/SyncProposal.gen';
@@ -65,14 +64,14 @@ const ProposalCardFooter = ({
   const ref = useRef<HTMLDivElement>(null);
   const { viewed } = useInView(ref, '100px');
   const { data: isProposalRatifiedData } = useIsProposalRatifiedSubscription({
-    skip: !isVerified || !viewed || proposal.stage === ProposalStage.Ratified,
+    skip: !isVerified || !viewed || proposal.stage === 'Ratified',
     variables: { proposalId: proposal.id },
 
     onData: ({ data: { data }, client: { cache } }) => {
       if (data?.isProposalRatified) {
         cache.modify({
           id: cache.identify(proposal),
-          fields: { stage: () => ProposalStage.Ratified },
+          fields: { stage: () => 'Ratified' },
         });
       }
     },
@@ -82,7 +81,7 @@ const ProposalCardFooter = ({
 
   useEffect(() => {
     const hasVotingTimeLimit = !!proposal.settings.closingAt;
-    const isVotingStage = proposal.stage === ProposalStage.Voting;
+    const isVotingStage = proposal.stage === 'Voting';
 
     if (
       !viewed ||
@@ -143,11 +142,10 @@ const ProposalCardFooter = ({
   const me = proposalCommentsData?.me;
   const comments = proposalCommentsData?.proposal?.comments;
   const isVoteBtnDisabled = (!!group && !group.isJoinedByMe) || !currentUserId;
-  const isClosed = stage === ProposalStage.Closed;
+  const isClosed = stage === 'Closed';
 
   const isRatified =
-    isProposalRatifiedData?.isProposalRatified ||
-    stage === ProposalStage.Ratified;
+    isProposalRatifiedData?.isProposalRatified || stage === 'Ratified';
 
   const canManageComments = !!(
     group?.myPermissions?.manageComments || me?.serverPermissions.manageComments

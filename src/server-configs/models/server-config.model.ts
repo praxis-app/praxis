@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -8,10 +8,6 @@ import {
 } from 'typeorm';
 import { DecisionMakingModel } from '../../proposals/proposals.constants';
 import { VotingTimeLimit } from '../../votes/votes.constants';
-
-registerEnumType(DecisionMakingModel, {
-  name: 'DecisionMakingModel',
-});
 
 @Entity()
 @ObjectType()

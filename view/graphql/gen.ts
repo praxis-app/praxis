@@ -909,7 +909,7 @@ export type Proposal = {
   settings: ProposalConfig;
   shareCount: Scalars['Int']['output'];
   shares: Array<Post>;
-  stage: Scalars['String']['output'];
+  stage: ProposalStage;
   updatedAt: Scalars['DateTime']['output'];
   user: User;
   voteCount: Scalars['Int']['output'];
@@ -1087,6 +1087,14 @@ export type ProposalConfig = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export const ProposalStage = {
+  Closed: 'Closed',
+  Ratified: 'Ratified',
+  Revision: 'Revision',
+  Voting: 'Voting',
+} as const;
+
+export type ProposalStage = (typeof ProposalStage)[keyof typeof ProposalStage];
 export type PublicFeedItemsConnection = {
   __typename?: 'PublicFeedItemsConnection';
   nodes: Array<FeedItem>;

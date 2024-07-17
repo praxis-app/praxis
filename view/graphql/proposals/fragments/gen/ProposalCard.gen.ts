@@ -14,7 +14,7 @@ export type ProposalCardFragment = {
   __typename?: 'Proposal';
   id: number;
   body?: string | null;
-  stage: string;
+  stage: Types.ProposalStage;
   voteCount: number;
   commentCount: number;
   shareCount: number;
