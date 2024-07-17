@@ -15,6 +15,7 @@ import { toastVar } from '../../../graphql/cache';
 import {
   DecisionMakingModel,
   ProposalActionGroupConfigInput,
+  ProposalActionType,
 } from '../../../graphql/gen';
 import { useGroupSettingsByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupSettingsByGroupId.gen';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
@@ -28,7 +29,7 @@ import SliderInput from '../../Shared/SliderInput';
 const SETTING_DESCRIPTION_WIDTH = '60%';
 
 interface Props {
-  actionType?: string;
+  actionType?: ProposalActionType;
   groupId?: number | null;
   currentUserId: number;
   onClose(): void;
@@ -53,7 +54,7 @@ const ProposeGroupSettingsModal = ({
   const isDesktop = useIsDesktop();
 
   useEffect(() => {
-    if (groupId && actionType === 'CHANGE_SETTINGS') {
+    if (groupId && actionType === 'ChangeSettings') {
       getGroupSettings({ variables: { groupId } });
       setOpen(true);
     }

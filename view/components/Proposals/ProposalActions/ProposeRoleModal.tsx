@@ -18,14 +18,6 @@ import {
 import { ColorResult } from 'react-color';
 import { useTranslation } from 'react-i18next';
 import {
-  GroupRolePermissionInput,
-  ProposalActionRoleInput,
-  ProposalActionRoleMemberInput,
-} from '../../../graphql/gen';
-import { useGroupMembersByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupMembersByGroupId.gen';
-import { useGroupRoleByRoleIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRoleByRoleId.gen';
-import { useGroupRolesByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRolesByGroupId.gen';
-import {
   ProposalActionFieldName,
   ProposeRoleModalFieldName,
 } from '../../../constants/proposal.constants';
@@ -34,6 +26,15 @@ import {
   GROUP_PERMISSION_NAMES,
 } from '../../../constants/role.constants';
 import { FieldNames } from '../../../constants/shared.constants';
+import {
+  GroupRolePermissionInput,
+  ProposalActionRoleInput,
+  ProposalActionRoleMemberInput,
+  ProposalActionType,
+} from '../../../graphql/gen';
+import { useGroupMembersByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupMembersByGroupId.gen';
+import { useGroupRoleByRoleIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRoleByRoleId.gen';
+import { useGroupRolesByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRolesByGroupId.gen';
 import { initGroupRolePermissions } from '../../../utils/role.utils';
 import Accordion, {
   AccordionDetails,
@@ -55,7 +56,7 @@ export interface ProposeRoleModalValues {
 }
 
 interface Props {
-  actionType?: string;
+  actionType?: ProposalActionType;
   groupId?: number | null;
   setFieldValue: (
     field: ProposalActionFieldName,
@@ -108,8 +109,8 @@ const ProposeRoleModal = ({
 
   const { t } = useTranslation();
 
-  const isCreateRole = actionType === 'CREATE_ROLE';
-  const isChangeRole = actionType === 'CHANGE_ROLE';
+  const isCreateRole = actionType === 'CreateRole';
+  const isChangeRole = actionType === 'ChangeRole';
 
   useEffect(() => {
     if (!groupId) {
