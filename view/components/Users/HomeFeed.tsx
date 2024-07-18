@@ -40,17 +40,17 @@ const HomeFeed = () => {
   const tabParam = searchParams.get('tab');
 
   useEffect(() => {
-    let feedType: HomeFeedType = 'YOUR_FEED';
+    let feedType: HomeFeedType = 'YourFeed';
 
     if (!tabParam) {
       setTab(0);
     }
     if (tabParam === HomeFeedTabs.Proposals) {
-      feedType = 'PROPOSALS';
+      feedType = 'Proposals';
       setTab(1);
     }
     if (tabParam === HomeFeedTabs.Following) {
-      feedType = 'FOLLOWING';
+      feedType = 'Following';
       setTab(2);
     }
     getHomeFeed({
@@ -67,11 +67,11 @@ const HomeFeed = () => {
   const getFeedType = (): HomeFeedType => {
     switch (tab) {
       case 1:
-        return 'PROPOSALS';
+        return 'Proposals';
       case 2:
-        return 'FOLLOWING';
+        return 'Following';
       default:
-        return 'YOUR_FEED';
+        return 'YourFeed';
     }
   };
 

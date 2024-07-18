@@ -1,9 +1,3 @@
-export enum DecisionMakingModel {
-  Consensus = 'consensus',
-  Consent = 'consent',
-  MajorityVote = 'majority-vote',
-}
-
 export enum VotingTimeLimit {
   Unlimited = 0,
   OneMinute = 1,
@@ -14,25 +8,6 @@ export enum VotingTimeLimit {
   ThreeDays = 60 * 24 * 3,
   OneWeek = 60 * 24 * 7,
   TwoWeeks = 60 * 24 * 14,
-}
-
-export enum ProposalActionType {
-  ChangeGroupCoverPhoto = 'change-cover-photo',
-  ChangeGroupDescription = 'change-description',
-  ChangeGroupName = 'change-name',
-  ChangeGroupRole = 'change-role',
-  ChangeGroupSettings = 'change-settings',
-  ChangeServerRole = 'change-server-role',
-  CreateGroupRole = 'create-role',
-  PlanGroupEvent = 'plan-event',
-  Test = 'test',
-}
-
-export enum ProposalStage {
-  Voting = 'voting',
-  Ratified = 'ratified',
-  Revision = 'revision',
-  Closed = 'closed',
 }
 
 export enum ProposalFormFieldName {

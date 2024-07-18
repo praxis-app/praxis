@@ -2,7 +2,7 @@ import { Schedule } from '@mui/icons-material';
 import { Divider, SxProps, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { DecisionMakingModel } from '../../constants/proposal.constants';
+import { DecisionMakingModel } from '../../graphql/gen';
 import { QuestionnaireTicketCardFragment } from '../../graphql/questions/fragments/gen/QuestionnaireTicketCard.gen';
 import { formatClosingTime } from '../../utils/proposal.utils';
 import Setting from '../Settings/Setting';
@@ -29,8 +29,7 @@ const QuestionnaireTicketSettingsModal = ({
   const { t } = useTranslation();
 
   const isClosed = closingAt && dayjs() > dayjs(closingAt);
-  const showRatificationThreshold =
-    decisionMakingModel !== DecisionMakingModel.Consent;
+  const showRatificationThreshold = decisionMakingModel !== 'Consent';
 
   const closingTimeLabel = t(
     isClosed ? 'proposals.labels.closedAt' : 'proposals.labels.closing',

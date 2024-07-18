@@ -13,12 +13,9 @@ import {
   GroupPrivacy,
   GroupSettingsFieldName,
 } from '../../constants/group.constants';
-import {
-  DecisionMakingModel,
-  VotingTimeLimit,
-} from '../../constants/proposal.constants';
+import { VotingTimeLimit } from '../../constants/proposal.constants';
 import { toastVar } from '../../graphql/cache';
-import { UpdateGroupConfigInput } from '../../graphql/gen';
+import { DecisionMakingModel, UpdateGroupConfigInput } from '../../graphql/gen';
 import { GroupSettingsFormFragment } from '../../graphql/groups/fragments/gen/GroupSettingsForm.gen';
 import { useUpdateGroupSettingsMutation } from '../../graphql/groups/mutations/gen/UpdateGroupSettings.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
@@ -103,7 +100,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   };
 
   const handleSliderInputClick = (decisionMakingModel?: string | null) => {
-    if (decisionMakingModel === DecisionMakingModel.Consent) {
+    if (decisionMakingModel === 'Consent') {
       toastVar({
         status: 'info',
         title: t('groups.prompts.settingDisabledForConsent'),
@@ -112,7 +109,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   };
 
   const handleConsensusLimitClick = (decisionMakingModel?: string | null) => {
-    if (decisionMakingModel === DecisionMakingModel.MajorityVote) {
+    if (decisionMakingModel === 'MajorityVote') {
       toastVar({
         status: 'info',
         title: t('groups.prompts.settingDisabledForMajority'),
@@ -128,7 +125,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
   }: FormValues) => {
     const errors: FormikErrors<FormValues> = {};
     if (
-      decisionMakingModel === DecisionMakingModel.Consent &&
+      decisionMakingModel === 'Consent' &&
       votingTimeLimit === VotingTimeLimit.Unlimited
     ) {
       errors.votingTimeLimit = t(
@@ -136,7 +133,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
       );
     }
     if (
-      decisionMakingModel === DecisionMakingModel.MajorityVote &&
+      decisionMakingModel === 'MajorityVote' &&
       ratificationThreshold &&
       ratificationThreshold <= 50
     ) {
@@ -211,9 +208,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
 
             <SettingsSelect
               description={t('groups.settings.descriptions.standAsidesLimit')}
-              disabled={
-                values.decisionMakingModel === DecisionMakingModel.MajorityVote
-              }
+              disabled={values.decisionMakingModel === 'MajorityVote'}
               fieldName={GroupSettingsFieldName.StandAsidesLimit}
               label={t('groups.settings.names.standAsidesLimit')}
               onChange={handleChange}
@@ -241,9 +236,7 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
 
             <SettingsSelect
               description={t('groups.settings.descriptions.reservationsLimit')}
-              disabled={
-                values.decisionMakingModel === DecisionMakingModel.MajorityVote
-              }
+              disabled={values.decisionMakingModel === 'MajorityVote'}
               fieldName={GroupSettingsFieldName.ReservationsLimit}
               label={t('groups.settings.names.reservationsLimit')}
               onClick={() =>
@@ -301,15 +294,13 @@ const GroupSettingsForm = ({ group: { id, settings } }: Props) => {
               </Box>
 
               <SliderInput
-                disabled={
-                  values.decisionMakingModel === DecisionMakingModel.Consent
-                }
+                marks={!isDesktop}
+                disabled={values.decisionMakingModel === 'Consent'}
                 name={GroupSettingsFieldName.RatificationThreshold}
                 onInputChange={handleChange}
                 onSliderChange={handleChange}
                 value={values.ratificationThreshold}
                 width={isDesktop ? 200 : '100%'}
-                marks={!isDesktop}
                 onInputBlur={() =>
                   handleSliderInputBlur(
                     setFieldValue,

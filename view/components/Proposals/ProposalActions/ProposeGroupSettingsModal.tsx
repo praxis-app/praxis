@@ -8,13 +8,15 @@ import {
   GroupSettingsFieldName,
 } from '../../../constants/group.constants';
 import {
-  DecisionMakingModel,
   ProposalActionFieldName,
-  ProposalActionType,
   VotingTimeLimit,
 } from '../../../constants/proposal.constants';
 import { toastVar } from '../../../graphql/cache';
-import { ProposalActionGroupConfigInput } from '../../../graphql/gen';
+import {
+  DecisionMakingModel,
+  ProposalActionGroupConfigInput,
+  ProposalActionType,
+} from '../../../graphql/gen';
 import { useGroupSettingsByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupSettingsByGroupId.gen';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import SettingsSelect from '../../Settings/SettingsSelect';
@@ -27,7 +29,7 @@ import SliderInput from '../../Shared/SliderInput';
 const SETTING_DESCRIPTION_WIDTH = '60%';
 
 interface Props {
-  actionType?: string;
+  actionType?: ProposalActionType;
   groupId?: number | null;
   currentUserId: number;
   onClose(): void;
@@ -52,7 +54,7 @@ const ProposeGroupSettingsModal = ({
   const isDesktop = useIsDesktop();
 
   useEffect(() => {
-    if (groupId && actionType === ProposalActionType.ChangeGroupSettings) {
+    if (groupId && actionType === 'ChangeSettings') {
       getGroupSettings({ variables: { groupId } });
       setOpen(true);
     }
@@ -133,7 +135,7 @@ const ProposeGroupSettingsModal = ({
   }: ProposalActionGroupConfigInput) => {
     const errors: FormikErrors<ProposalActionGroupConfigInput> = {};
     if (
-      decisionMakingModel === DecisionMakingModel.Consent &&
+      decisionMakingModel === 'Consent' &&
       votingTimeLimit === VotingTimeLimit.Unlimited
     ) {
       errors.votingTimeLimit = t(
@@ -141,7 +143,7 @@ const ProposeGroupSettingsModal = ({
       );
     }
     if (
-      decisionMakingModel === DecisionMakingModel.MajorityVote &&
+      decisionMakingModel === 'MajorityVote' &&
       ratificationThreshold &&
       ratificationThreshold <= 50
     ) {
@@ -223,10 +225,7 @@ const ProposeGroupSettingsModal = ({
                 <SettingsSelect
                   fieldName={GroupSettingsFieldName.StandAsidesLimit}
                   label={t('groups.settings.names.standAsidesLimit')}
-                  disabled={
-                    values.decisionMakingModel ===
-                    DecisionMakingModel.MajorityVote
-                  }
+                  disabled={values.decisionMakingModel === 'MajorityVote'}
                   description={t(
                     'groups.settings.descriptions.standAsidesLimit',
                   )}
@@ -256,10 +255,7 @@ const ProposeGroupSettingsModal = ({
                 <SettingsSelect
                   fieldName={GroupSettingsFieldName.ReservationsLimit}
                   label={t('groups.settings.names.reservationsLimit')}
-                  disabled={
-                    values.decisionMakingModel ===
-                    DecisionMakingModel.MajorityVote
-                  }
+                  disabled={values.decisionMakingModel === 'MajorityVote'}
                   description={t(
                     'groups.settings.descriptions.reservationsLimit',
                   )}
@@ -319,9 +315,7 @@ const ProposeGroupSettingsModal = ({
 
                   <SliderInput
                     marks={!isDesktop}
-                    disabled={
-                      values.decisionMakingModel === DecisionMakingModel.Consent
-                    }
+                    disabled={values.decisionMakingModel === 'Consent'}
                     name={GroupSettingsFieldName.RatificationThreshold}
                     onClick={() =>
                       handleSliderInputClick(values.decisionMakingModel)

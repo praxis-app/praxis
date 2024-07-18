@@ -2,7 +2,6 @@ import { BrokenImage } from '@mui/icons-material';
 import { Box, BoxProps, Typography, useTheme } from '@mui/material';
 import { truncate } from 'lodash';
 import { useTranslation } from 'react-i18next';
-import { ProposalStage } from '../../constants/proposal.constants';
 import {
   NavigationPaths,
   TruncationSizes,
@@ -56,7 +55,7 @@ const SharedProposal = ({ proposal, isCompact, ...boxProps }: Props) => {
       {proposal?.action && (
         <ProposalAction
           action={proposal.action}
-          ratified={proposal.stage === ProposalStage.Ratified}
+          ratified={proposal.stage === 'Ratified'}
           proposalId={proposal.id}
           isCompact={isCompact}
           isShared

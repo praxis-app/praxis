@@ -29,13 +29,13 @@ export class UpdateProposalValidationPipe implements PipeTransform {
     id,
     action: { actionType, groupName, groupDescription, groupCoverPhoto },
   }: UpdateProposalInput) {
-    if (actionType === ProposalActionType.ChangeGroupName && !groupName) {
+    if (actionType === ProposalActionType.ChangeName && !groupName) {
       throw new ValidationError(
         'Proposals to change group name must include a name field',
       );
     }
     if (
-      actionType === ProposalActionType.ChangeGroupDescription &&
+      actionType === ProposalActionType.ChangeDescription &&
       !groupDescription
     ) {
       throw new ValidationError(
@@ -43,7 +43,7 @@ export class UpdateProposalValidationPipe implements PipeTransform {
       );
     }
     if (
-      actionType === ProposalActionType.ChangeGroupCoverPhoto &&
+      actionType === ProposalActionType.ChangeCoverPhoto &&
       !groupCoverPhoto
     ) {
       const proposal = await this.proposalsService.getProposal(id, [

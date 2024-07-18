@@ -14,7 +14,7 @@ export type ProposalCardFragment = {
   __typename?: 'Proposal';
   id: number;
   body?: string | null;
-  stage: string;
+  stage: Types.ProposalStage;
   voteCount: number;
   commentCount: number;
   shareCount: number;
@@ -22,21 +22,21 @@ export type ProposalCardFragment = {
   action: {
     __typename?: 'ProposalAction';
     id: number;
-    actionType: string;
+    actionType: Types.ProposalActionType;
     groupDescription?: string | null;
     groupName?: string | null;
     groupSettings?: {
       __typename?: 'ProposalActionGroupConfig';
       id: number;
       adminModel?: string | null;
-      decisionMakingModel?: string | null;
+      decisionMakingModel?: Types.DecisionMakingModel | null;
       ratificationThreshold?: number | null;
       reservationsLimit?: number | null;
       standAsidesLimit?: number | null;
       votingTimeLimit?: number | null;
       privacy?: string | null;
       oldAdminModel?: string | null;
-      oldDecisionMakingModel?: string | null;
+      oldDecisionMakingModel?: Types.DecisionMakingModel | null;
       oldRatificationThreshold?: number | null;
       oldReservationsLimit?: number | null;
       oldStandAsidesLimit?: number | null;
@@ -55,7 +55,7 @@ export type ProposalCardFragment = {
               __typename?: 'GroupConfig';
               id: number;
               adminModel: string;
-              decisionMakingModel: string;
+              decisionMakingModel: Types.DecisionMakingModel;
               ratificationThreshold: number;
               reservationsLimit: number;
               standAsidesLimit: number;
@@ -143,7 +143,7 @@ export type ProposalCardFragment = {
   settings: {
     __typename?: 'ProposalConfig';
     id: number;
-    decisionMakingModel: string;
+    decisionMakingModel: Types.DecisionMakingModel;
     ratificationThreshold: number;
     reservationsLimit: number;
     standAsidesLimit: number;

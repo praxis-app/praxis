@@ -13,7 +13,7 @@ export type QuestionnaireTicketVoteBadgesFragment = {
   settings: {
     __typename?: 'QuestionnaireTicketConfig';
     id: number;
-    decisionMakingModel: string;
+    decisionMakingModel: Types.DecisionMakingModel;
   };
   votes: Array<{
     __typename?: 'Vote';

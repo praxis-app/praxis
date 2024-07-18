@@ -6,7 +6,6 @@ import {
 } from '@mui/icons-material';
 import { Typography } from '@mui/material';
 import { useState } from 'react';
-import { DecisionMakingModel } from '../../constants/proposal.constants';
 import { VoteTypes } from '../../constants/vote.constants';
 import { ProposalVoteBadgesFragment } from '../../graphql/proposals/fragments/gen/ProposalVoteBadges.gen';
 import { QuestionnaireTicketVoteBadgesFragment } from '../../graphql/questions/fragments/gen/QuestionnaireTicketVoteBadges.gen';
@@ -24,15 +23,13 @@ const VoteBadges = ({ proposal, questionnaireTicket }: Props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const settings = proposal?.settings || questionnaireTicket?.settings;
+  const isMajorityVote = settings?.decisionMakingModel === 'MajorityVote';
   const votes = proposal?.votes || questionnaireTicket?.votes || [];
   const voteCount = votes.length;
 
   // TODO: Add fields to graph for all vote types to avoid filtering on FE
   const { agreements, disagreements, reservations, standAsides, blocks } =
     filterVotesByType(votes);
-
-  const isMajorityVote =
-    settings?.decisionMakingModel === DecisionMakingModel.MajorityVote;
 
   const agreementsBadge = {
     Icon: AgreementIcon,

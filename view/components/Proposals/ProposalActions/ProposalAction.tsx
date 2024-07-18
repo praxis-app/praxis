@@ -1,6 +1,5 @@
 import { Box, Divider, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ProposalActionType } from '../../../constants/proposal.constants';
 import { NavigationPaths } from '../../../constants/shared.constants';
 import { ProposalActionFragment } from '../../../graphql/proposals/fragments/gen/ProposalAction.gen';
 import AttachedImage from '../../Images/AttachedImage';
@@ -36,7 +35,7 @@ const ProposalAction = ({
 
   const proposalPath = `${NavigationPaths.Proposals}/${proposalId}`;
 
-  if (actionType === ProposalActionType.ChangeGroupSettings) {
+  if (actionType === 'ChangeSettings') {
     if (!groupSettings) {
       return (
         <Typography marginBottom={3.5}>
@@ -55,7 +54,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === ProposalActionType.PlanGroupEvent) {
+  if (actionType === 'PlanEvent') {
     if (!event) {
       return (
         <Typography marginBottom={3.5}>
@@ -73,10 +72,7 @@ const ProposalAction = ({
     );
   }
 
-  if (
-    actionType === ProposalActionType.CreateGroupRole ||
-    actionType === ProposalActionType.ChangeGroupRole
-  ) {
+  if (actionType === 'CreateRole' || actionType === 'ChangeRole') {
     if (!role) {
       return (
         <Typography marginBottom={3.5}>
@@ -96,7 +92,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === ProposalActionType.ChangeGroupName) {
+  if (actionType === 'ChangeName') {
     return (
       <Box
         marginBottom={isShared ? 0 : 3.5}
@@ -116,7 +112,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === ProposalActionType.ChangeGroupDescription) {
+  if (actionType === 'ChangeDescription') {
     return (
       <Box
         marginBottom={isShared ? 0 : 3.5}
@@ -136,7 +132,7 @@ const ProposalAction = ({
     );
   }
 
-  if (actionType === ProposalActionType.ChangeGroupCoverPhoto) {
+  if (actionType === 'ChangeCoverPhoto') {
     if (!groupCoverPhoto) {
       return (
         <Link

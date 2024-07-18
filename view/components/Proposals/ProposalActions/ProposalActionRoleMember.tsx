@@ -1,7 +1,9 @@
 import { SxProps, Typography, useTheme } from '@mui/material';
-import { ProposalActionType } from '../../../constants/proposal.constants';
 import { ChangeType } from '../../../constants/shared.constants';
-import { ProposalActionRoleMemberInput } from '../../../graphql/gen';
+import {
+  ProposalActionRoleMemberInput,
+  ProposalActionType,
+} from '../../../graphql/gen';
 import { ProposalActionRoleMemberFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionRoleMember.gen';
 import { UserAvatarFragment } from '../../../graphql/users/fragments/gen/UserAvatar.gen';
 import { getUserProfilePath } from '../../../utils/user.utils';
@@ -32,7 +34,7 @@ const ProposalActionRoleMember = ({
     return null;
   }
 
-  const isChangingRole = actionType === ProposalActionType.ChangeGroupRole;
+  const isChangingRole = actionType === 'ChangeRole';
   const isRemovingMember = member.changeType === ChangeType.Remove;
 
   const memberStyles: SxProps = {

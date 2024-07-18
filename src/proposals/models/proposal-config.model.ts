@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -8,7 +8,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { DecisionMakingModel } from '../proposals.constants';
 import { Proposal } from './proposal.model';
+
+registerEnumType(DecisionMakingModel, {
+  name: 'DecisionMakingModel',
+});
 
 @Entity()
 @ObjectType()
@@ -17,9 +22,9 @@ export class ProposalConfig {
   @Field(() => Int)
   id: number;
 
-  @Column()
-  @Field()
-  decisionMakingModel: string;
+  @Column({ type: 'varchar' })
+  @Field(() => DecisionMakingModel)
+  decisionMakingModel: DecisionMakingModel;
 
   @Column()
   @Field(() => Int)

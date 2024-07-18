@@ -270,6 +270,14 @@ export type CreateVotePayload = {
   vote: Vote;
 };
 
+export const DecisionMakingModel = {
+  Consensus: 'Consensus',
+  Consent: 'Consent',
+  MajorityVote: 'MajorityVote',
+} as const;
+
+export type DecisionMakingModel =
+  (typeof DecisionMakingModel)[keyof typeof DecisionMakingModel];
 export type DeleteGroupRoleMemberInput = {
   groupRoleId: Scalars['Int']['input'];
   userId: Scalars['Int']['input'];
@@ -388,7 +396,7 @@ export type GroupConfig = {
   __typename?: 'GroupConfig';
   adminModel: Scalars['String']['output'];
   createdAt: Scalars['DateTime']['output'];
-  decisionMakingModel: Scalars['String']['output'];
+  decisionMakingModel: DecisionMakingModel;
   group: Group;
   id: Scalars['Int']['output'];
   isPublic: Scalars['Boolean']['output'];
@@ -477,8 +485,13 @@ export type HomeFeedInput = {
   offset: Scalars['Int']['input'];
 };
 
-export type HomeFeedType = 'FOLLOWING' | 'PROPOSALS' | 'YOUR_FEED';
+export const HomeFeedType = {
+  Following: 'Following',
+  Proposals: 'Proposals',
+  YourFeed: 'YourFeed',
+} as const;
 
+export type HomeFeedType = (typeof HomeFeedType)[keyof typeof HomeFeedType];
 export type Image = {
   __typename?: 'Image';
   filename: Scalars['String']['output'];
@@ -896,7 +909,7 @@ export type Proposal = {
   settings: ProposalConfig;
   shareCount: Scalars['Int']['output'];
   shares: Array<Post>;
-  stage: Scalars['String']['output'];
+  stage: ProposalStage;
   updatedAt: Scalars['DateTime']['output'];
   user: User;
   voteCount: Scalars['Int']['output'];
@@ -905,7 +918,7 @@ export type Proposal = {
 
 export type ProposalAction = {
   __typename?: 'ProposalAction';
-  actionType: Scalars['String']['output'];
+  actionType: ProposalActionType;
   createdAt: Scalars['DateTime']['output'];
   event?: Maybe<ProposalActionEvent>;
   groupCoverPhoto?: Maybe<Image>;
@@ -959,10 +972,10 @@ export type ProposalActionEventInput = {
 export type ProposalActionGroupConfig = {
   __typename?: 'ProposalActionGroupConfig';
   adminModel?: Maybe<Scalars['String']['output']>;
-  decisionMakingModel?: Maybe<Scalars['String']['output']>;
+  decisionMakingModel?: Maybe<DecisionMakingModel>;
   id: Scalars['Int']['output'];
   oldAdminModel?: Maybe<Scalars['String']['output']>;
-  oldDecisionMakingModel?: Maybe<Scalars['String']['output']>;
+  oldDecisionMakingModel?: Maybe<DecisionMakingModel>;
   oldPrivacy?: Maybe<Scalars['String']['output']>;
   oldRatificationThreshold?: Maybe<Scalars['Int']['output']>;
   oldReservationsLimit?: Maybe<Scalars['Int']['output']>;
@@ -978,7 +991,7 @@ export type ProposalActionGroupConfig = {
 
 export type ProposalActionGroupConfigInput = {
   adminModel?: InputMaybe<Scalars['String']['input']>;
-  decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
+  decisionMakingModel?: InputMaybe<DecisionMakingModel>;
   privacy?: InputMaybe<Scalars['String']['input']>;
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
   reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
@@ -987,7 +1000,7 @@ export type ProposalActionGroupConfigInput = {
 };
 
 export type ProposalActionInput = {
-  actionType: Scalars['String']['input'];
+  actionType: ProposalActionType;
   event?: InputMaybe<ProposalActionEventInput>;
   groupCoverPhoto?: InputMaybe<Scalars['Upload']['input']>;
   groupDescription?: InputMaybe<Scalars['String']['input']>;
@@ -1023,6 +1036,7 @@ export type ProposalActionRole = {
   oldName?: Maybe<Scalars['String']['output']>;
   permissions: ProposalActionPermission;
   proposalAction: ProposalAction;
+  serverRole?: Maybe<ServerRole>;
 };
 
 export type ProposalActionRoleInput = {
@@ -1048,11 +1062,24 @@ export type ProposalActionRoleMemberInput = {
   userId: Scalars['Int']['input'];
 };
 
+export const ProposalActionType = {
+  ChangeCoverPhoto: 'ChangeCoverPhoto',
+  ChangeDescription: 'ChangeDescription',
+  ChangeName: 'ChangeName',
+  ChangeRole: 'ChangeRole',
+  ChangeSettings: 'ChangeSettings',
+  CreateRole: 'CreateRole',
+  PlanEvent: 'PlanEvent',
+  Test: 'Test',
+} as const;
+
+export type ProposalActionType =
+  (typeof ProposalActionType)[keyof typeof ProposalActionType];
 export type ProposalConfig = {
   __typename?: 'ProposalConfig';
   closingAt?: Maybe<Scalars['DateTime']['output']>;
   createdAt: Scalars['DateTime']['output'];
-  decisionMakingModel: Scalars['String']['output'];
+  decisionMakingModel: DecisionMakingModel;
   id: Scalars['Int']['output'];
   proposal: Proposal;
   ratificationThreshold: Scalars['Int']['output'];
@@ -1061,6 +1088,14 @@ export type ProposalConfig = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export const ProposalStage = {
+  Closed: 'Closed',
+  Ratified: 'Ratified',
+  Revision: 'Revision',
+  Voting: 'Voting',
+} as const;
+
+export type ProposalStage = (typeof ProposalStage)[keyof typeof ProposalStage];
 export type PublicFeedItemsConnection = {
   __typename?: 'PublicFeedItemsConnection';
   nodes: Array<FeedItem>;
@@ -1265,7 +1300,7 @@ export type QuestionnaireTicket = {
 export type QuestionnaireTicketConfig = {
   __typename?: 'QuestionnaireTicketConfig';
   closingAt?: Maybe<Scalars['DateTime']['output']>;
-  decisionMakingModel: Scalars['String']['output'];
+  decisionMakingModel: DecisionMakingModel;
   id: Scalars['Int']['output'];
   ratificationThreshold: Scalars['Int']['output'];
   reservationsLimit: Scalars['Int']['output'];
@@ -1308,7 +1343,7 @@ export type ServerConfig = {
   __typename?: 'ServerConfig';
   about?: Maybe<Scalars['String']['output']>;
   contactEmail: Scalars['String']['output'];
-  decisionMakingModel: Scalars['String']['output'];
+  decisionMakingModel: DecisionMakingModel;
   id: Scalars['Int']['output'];
   ratificationThreshold: Scalars['Int']['output'];
   reservationsLimit: Scalars['Int']['output'];
@@ -1365,6 +1400,7 @@ export type ServerRole = {
   members: Array<User>;
   name: Scalars['String']['output'];
   permissions: ServerRolePermission;
+  proposalActionRoles: Array<ProposalActionRole>;
 };
 
 export type ServerRolePermission = {
@@ -1485,7 +1521,7 @@ export type UpdateEventPayload = {
 
 export type UpdateGroupConfigInput = {
   adminModel?: InputMaybe<Scalars['String']['input']>;
-  decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
+  decisionMakingModel?: InputMaybe<DecisionMakingModel>;
   groupId: Scalars['Int']['input'];
   privacy?: InputMaybe<Scalars['String']['input']>;
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
@@ -1595,7 +1631,7 @@ export type UpdateRulesPriorityInput = {
 export type UpdateServerConfigInput = {
   about?: InputMaybe<Scalars['String']['input']>;
   canaryStatement?: InputMaybe<Scalars['String']['input']>;
-  decisionMakingModel?: InputMaybe<Scalars['String']['input']>;
+  decisionMakingModel?: InputMaybe<DecisionMakingModel>;
   ratificationThreshold?: InputMaybe<Scalars['Int']['input']>;
   reservationsLimit?: InputMaybe<Scalars['Int']['input']>;
   securityTxt?: InputMaybe<Scalars['String']['input']>;

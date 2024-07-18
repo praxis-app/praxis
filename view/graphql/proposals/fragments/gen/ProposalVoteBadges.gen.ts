@@ -13,7 +13,7 @@ export type ProposalVoteBadgesFragment = {
   settings: {
     __typename?: 'ProposalConfig';
     id: number;
-    decisionMakingModel: string;
+    decisionMakingModel: Types.DecisionMakingModel;
   };
   votes: Array<{
     __typename?: 'Vote';

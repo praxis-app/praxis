@@ -39,7 +39,7 @@ export type ServerQuestionnairesQuery = {
       __typename?: 'QuestionnaireTicketConfig';
       id: number;
       closingAt?: any | null;
-      decisionMakingModel: string;
+      decisionMakingModel: Types.DecisionMakingModel;
       ratificationThreshold: number;
       reservationsLimit: number;
       standAsidesLimit: number;

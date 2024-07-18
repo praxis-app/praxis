@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { DecisionMakingModel } from '../../proposals/proposals.constants';
 import { QuestionnaireTicket } from './questionnaire-ticket.model';
 
 @ObjectType()
@@ -17,9 +18,9 @@ export class QuestionnaireTicketConfig {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  @Field()
-  decisionMakingModel: string;
+  @Column({ type: 'varchar' })
+  @Field(() => DecisionMakingModel)
+  decisionMakingModel: DecisionMakingModel;
 
   @Column()
   @Field(() => Int)

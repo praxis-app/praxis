@@ -78,6 +78,13 @@ const Feed = ({
     onChangePage(page);
   };
 
+  const renderTabs = () => {
+    if (!getFeedItems().length && isLoading) {
+      return null;
+    }
+    return tabs;
+  };
+
   const renderNoContentMessage = () => {
     if (noContentMessage) {
       return noContentMessage;
@@ -101,7 +108,7 @@ const Feed = ({
         setRowsPerPage={setRowsPerPage}
         showTopPagination={showTopPagination}
       >
-        {!!getFeedItems().length && tabs}
+        {renderTabs()}
 
         {getFeedItems().map((item) => (
           <FeedItem item={item} key={`${item.__typename}-${item.id}`} />

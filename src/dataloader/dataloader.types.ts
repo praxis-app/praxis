@@ -43,7 +43,7 @@ export interface MyGroupsKey {
 
 export interface Dataloaders {
   // Proposals & Votes
-  proposalsLoader: DataLoader<number, Proposal>;
+  proposalsLoader: DataLoader<number, Proposal | null>;
   proposalActionsLoader: DataLoader<number, ProposalAction>;
   proposalCommentCountLoader: DataLoader<number, number>;
   proposalImagesLoader: DataLoader<number, Image[]>;

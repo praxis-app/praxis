@@ -1,4 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
+import { DecisionMakingModel } from '../../proposals.constants';
 
 @InputType()
 export class ProposalActionGroupConfigInput {
@@ -8,8 +9,8 @@ export class ProposalActionGroupConfigInput {
   @Field({ nullable: true })
   adminModel?: string;
 
-  @Field({ nullable: true })
-  decisionMakingModel?: string;
+  @Field(() => DecisionMakingModel, { nullable: true })
+  decisionMakingModel?: DecisionMakingModel;
 
   @Field(() => Int, { nullable: true })
   standAsidesLimit?: number;
