@@ -475,7 +475,7 @@ export class ProposalsService {
   }
 
   async synchronizeProposalById(id: number) {
-    const proposal = await this.getProposal(id, ['group.config']);
+    const proposal = await this.getProposal(id, ['config']);
     const syncedProposal = await this.synchronizeProposal(proposal);
     return { proposal: syncedProposal };
   }
