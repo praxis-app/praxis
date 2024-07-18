@@ -221,6 +221,12 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+enum DecisionMakingModel {
+  Consensus
+  Consent
+  MajorityVote
+}
+
 input DeleteGroupRoleMemberInput {
   groupRoleId: Int!
   userId: Int!
@@ -321,7 +327,7 @@ type Group {
 type GroupConfig {
   adminModel: String!
   createdAt: DateTime!
-  decisionMakingModel: String!
+  decisionMakingModel: DecisionMakingModel!
   group: Group!
   id: Int!
   isPublic: Boolean!
@@ -407,9 +413,9 @@ input HomeFeedInput {
 }
 
 enum HomeFeedType {
-  FOLLOWING
-  PROPOSALS
-  YOUR_FEED
+  Following
+  Proposals
+  YourFeed
 }
 
 type Image {
@@ -566,7 +572,7 @@ type Proposal {
   settings: ProposalConfig!
   shareCount: Int!
   shares: [Post!]!
-  stage: String!
+  stage: ProposalStage!
   updatedAt: DateTime!
   user: User!
   voteCount: Int!
@@ -574,7 +580,7 @@ type Proposal {
 }
 
 type ProposalAction {
-  actionType: String!
+  actionType: ProposalActionType!
   createdAt: DateTime!
   event: ProposalActionEvent
   groupCoverPhoto: Image
@@ -625,10 +631,10 @@ input ProposalActionEventInput {
 
 type ProposalActionGroupConfig {
   adminModel: String
-  decisionMakingModel: String
+  decisionMakingModel: DecisionMakingModel
   id: Int!
   oldAdminModel: String
-  oldDecisionMakingModel: String
+  oldDecisionMakingModel: DecisionMakingModel
   oldPrivacy: String
   oldRatificationThreshold: Int
   oldReservationsLimit: Int
@@ -644,7 +650,7 @@ type ProposalActionGroupConfig {
 
 input ProposalActionGroupConfigInput {
   adminModel: String
-  decisionMakingModel: String
+  decisionMakingModel: DecisionMakingModel
   privacy: String
   ratificationThreshold: Int
   reservationsLimit: Int
@@ -653,7 +659,7 @@ input ProposalActionGroupConfigInput {
 }
 
 input ProposalActionInput {
-  actionType: String!
+  actionType: ProposalActionType!
   event: ProposalActionEventInput
   groupCoverPhoto: Upload
   groupDescription: String
@@ -711,16 +717,34 @@ input ProposalActionRoleMemberInput {
   userId: Int!
 }
 
+enum ProposalActionType {
+  ChangeCoverPhoto
+  ChangeDescription
+  ChangeName
+  ChangeRole
+  ChangeSettings
+  CreateRole
+  PlanEvent
+  Test
+}
+
 type ProposalConfig {
   closingAt: DateTime
   createdAt: DateTime!
-  decisionMakingModel: String!
+  decisionMakingModel: DecisionMakingModel!
   id: Int!
   proposal: Proposal!
   ratificationThreshold: Int!
   reservationsLimit: Int!
   standAsidesLimit: Int!
   updatedAt: DateTime!
+}
+
+enum ProposalStage {
+  Closed
+  Ratified
+  Revision
+  Voting
 }
 
 type PublicFeedItemsConnection {
@@ -811,7 +835,7 @@ type QuestionnaireTicket {
 
 type QuestionnaireTicketConfig {
   closingAt: DateTime
-  decisionMakingModel: String!
+  decisionMakingModel: DecisionMakingModel!
   id: Int!
   ratificationThreshold: Int!
   reservationsLimit: Int!
@@ -851,7 +875,7 @@ type SendMessagePayload {
 type ServerConfig {
   about: String
   contactEmail: String!
-  decisionMakingModel: String!
+  decisionMakingModel: DecisionMakingModel!
   id: Int!
   ratificationThreshold: Int!
   reservationsLimit: Int!
@@ -1009,7 +1033,7 @@ type UpdateEventPayload {
 
 input UpdateGroupConfigInput {
   adminModel: String
-  decisionMakingModel: String
+  decisionMakingModel: DecisionMakingModel
   groupId: Int!
   privacy: String
   ratificationThreshold: Int
@@ -1112,7 +1136,7 @@ input UpdateRulesPriorityInput {
 input UpdateServerConfigInput {
   about: String
   canaryStatement: String
-  decisionMakingModel: String
+  decisionMakingModel: DecisionMakingModel
   ratificationThreshold: Int
   reservationsLimit: Int
   securityTxt: String

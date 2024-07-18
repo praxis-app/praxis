@@ -22,11 +22,11 @@ export type UpdateVoteMutation = {
       proposal?: {
         __typename?: 'Proposal';
         id: number;
-        stage: string;
+        stage: Types.ProposalStage;
         action: {
           __typename?: 'ProposalAction';
           id: number;
-          actionType: string;
+          actionType: Types.ProposalActionType;
         };
         group?: {
           __typename?: 'Group';

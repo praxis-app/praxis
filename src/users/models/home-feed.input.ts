@@ -1,9 +1,9 @@
 import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql';
 
 export enum HomeFeedType {
-  YOUR_FEED,
-  PROPOSALS,
-  FOLLOWING,
+  YourFeed = 'your-feed',
+  Proposals = 'proposals',
+  Following = 'following',
 }
 
 registerEnumType(HomeFeedType, {

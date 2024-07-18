@@ -13,7 +13,7 @@ export type ProposalFormFragment = {
   action: {
     __typename?: 'ProposalAction';
     id: number;
-    actionType: string;
+    actionType: Types.ProposalActionType;
     groupDescription?: string | null;
     groupName?: string | null;
     groupCoverPhoto?: {

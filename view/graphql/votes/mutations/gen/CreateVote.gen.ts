@@ -30,13 +30,13 @@ export type CreateVoteMutation = {
       proposal?: {
         __typename?: 'Proposal';
         id: number;
-        stage: string;
+        stage: Types.ProposalStage;
         voteCount: number;
         myVote?: { __typename?: 'Vote'; id: number; voteType: string } | null;
         action: {
           __typename?: 'ProposalAction';
           id: number;
-          actionType: string;
+          actionType: Types.ProposalActionType;
         };
         group?: {
           __typename?: 'Group';

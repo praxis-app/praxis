@@ -136,28 +136,28 @@ export class UsersService {
   async getBaseUserFeed(id: number, feedType: HomeFeedType) {
     const userFeedQuery = this.userRepository.createQueryBuilder('user');
 
-    if (feedType !== HomeFeedType.PROPOSALS) {
+    if (feedType !== HomeFeedType.Proposals) {
       // Posts from followed users
       userFeedQuery.leftJoinAndSelect('user.following', 'userFollowing');
       userFeedQuery.leftJoinAndSelect('userFollowing.posts', 'followingPost');
 
-      if (feedType !== HomeFeedType.FOLLOWING) {
+      if (feedType !== HomeFeedType.Following) {
         // Posts from this user
         userFeedQuery.leftJoinAndSelect('user.posts', 'userPost');
       }
     }
 
-    if (feedType !== HomeFeedType.FOLLOWING) {
+    if (feedType !== HomeFeedType.Following) {
       // Proposals from this user
       userFeedQuery.leftJoinAndSelect('user.proposals', 'userProposal');
     }
 
     // Only select required fields
     userFeedQuery.select('user.id');
-    if (feedType !== HomeFeedType.PROPOSALS) {
+    if (feedType !== HomeFeedType.Proposals) {
       userFeedQuery.addSelect('userFollowing.id');
 
-      if (feedType !== HomeFeedType.FOLLOWING) {
+      if (feedType !== HomeFeedType.Following) {
         userFeedQuery.addSelect([
           'userPost.id',
           'userPost.groupId',
@@ -182,7 +182,7 @@ export class UsersService {
       ]);
     }
 
-    if (feedType !== HomeFeedType.FOLLOWING) {
+    if (feedType !== HomeFeedType.Following) {
       userFeedQuery.addSelect([
         'userProposal.id',
         'userProposal.groupId',
@@ -207,14 +207,14 @@ export class UsersService {
   }
 
   async getJoinedGroupsFeed(userId: number, feedType: HomeFeedType) {
-    if (feedType === HomeFeedType.FOLLOWING) {
+    if (feedType === HomeFeedType.Following) {
       return { groupPosts: [], groupProposals: [] };
     }
 
     const joinedGroupsFeedQuery =
       this.userRepository.createQueryBuilder('user');
 
-    const isYourFeed = feedType === HomeFeedType.YOUR_FEED;
+    const isYourFeed = feedType === HomeFeedType.YourFeed;
 
     // Proposals from joined groups
     joinedGroupsFeedQuery.leftJoinAndSelect('user.groups', 'userGroup');
@@ -269,7 +269,7 @@ export class UsersService {
   }
 
   async getUserFeedEventPosts(id: number, feedType: HomeFeedType) {
-    if (feedType !== HomeFeedType.YOUR_FEED) {
+    if (feedType !== HomeFeedType.YourFeed) {
       return [];
     }
     const eventPostsQuery = this.userRepository

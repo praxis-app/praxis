@@ -20,7 +20,7 @@ export type GroupSettingsByGroupIdQuery = {
       __typename?: 'GroupConfig';
       id: number;
       adminModel: string;
-      decisionMakingModel: string;
+      decisionMakingModel: Types.DecisionMakingModel;
       ratificationThreshold: number;
       reservationsLimit: number;
       standAsidesLimit: number;

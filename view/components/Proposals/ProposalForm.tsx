@@ -22,7 +22,6 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   ProposalActionFieldName,
-  ProposalActionType,
   ProposalFormFieldName,
 } from '../../constants/proposal.constants';
 import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
@@ -30,6 +29,7 @@ import { toastVar } from '../../graphql/cache';
 import {
   CreateProposalInput,
   ProposalActionInput,
+  ProposalActionType,
   UpdateProposalInput,
 } from '../../graphql/gen';
 import {
@@ -102,7 +102,7 @@ const ProposalForm = ({
   const navigate = useNavigate();
 
   const action: ProposalActionInput = {
-    actionType: editProposal?.action.actionType || '',
+    actionType: editProposal?.action.actionType || ('' as ProposalActionType),
     groupDescription: editProposal?.action.groupDescription || '',
     groupName: editProposal?.action.groupName || '',
   };
@@ -139,22 +139,16 @@ const ProposalForm = ({
     if (!action.actionType) {
       errors.action.actionType = t('proposals.errors.missingActionType');
     }
-    if (
-      action.actionType === ProposalActionType.ChangeName &&
-      !action.groupName
-    ) {
+    if (action.actionType === 'ChangeName' && !action.groupName) {
       errors.action.groupName = t('proposals.errors.missingGroupName');
     }
-    if (
-      action.actionType === ProposalActionType.ChangeDescription &&
-      !action.groupDescription
-    ) {
+    if (action.actionType === 'ChangeDescription' && !action.groupDescription) {
       errors.action.groupDescription = t(
         'proposals.errors.missingGroupDescription',
       );
     }
     if (
-      action.actionType === ProposalActionType.ChangeCoverPhoto &&
+      action.actionType === 'ChangeCoverPhoto' &&
       !editProposal?.action.groupCoverPhoto &&
       !action.groupCoverPhoto
     ) {
@@ -163,8 +157,8 @@ const ProposalForm = ({
       );
     }
     if (
-      (action.actionType === ProposalActionType.CreateRole ||
-        action.actionType === ProposalActionType.ChangeRole) &&
+      (action.actionType === 'CreateRole' ||
+        action.actionType === 'ChangeRole') &&
       !action.role
     ) {
       errors.action.role = t('proposals.errors.missingRole');
@@ -197,7 +191,7 @@ const ProposalForm = ({
           {
             query: HomeFeedDocument,
             variables: {
-              input: { limit: 10, offset: 0, feedType: 'YOUR_FEED' },
+              input: { limit: 10, offset: 0, feedType: 'YourFeed' },
               isLoggedIn: true,
             },
           },
@@ -471,7 +465,7 @@ const ProposalForm = ({
 
                 {values.action.role && (
                   <ProposalActionRole
-                    actionType={values.action.actionType as ProposalActionType}
+                    actionType={values.action.actionType}
                     role={values.action.role}
                     marginTop={3}
                     preview
@@ -552,9 +546,7 @@ const ProposalForm = ({
             <ImageInput
               key={values.images?.length}
               onChange={handleImageInputChange(setFieldValue)}
-              disabled={
-                values.action.actionType === ProposalActionType.ChangeCoverPhoto
-              }
+              disabled={values.action.actionType === 'ChangeCoverPhoto'}
               multiple
             />
 

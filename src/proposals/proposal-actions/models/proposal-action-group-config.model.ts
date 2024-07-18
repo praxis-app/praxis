@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ProposalAction } from './proposal-action.model';
+import { DecisionMakingModel } from '../../proposals.constants';
 
 @Entity()
 @ObjectType()
@@ -29,9 +30,9 @@ export class ProposalActionGroupConfig {
   @Field({ nullable: true })
   adminModel?: string;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  decisionMakingModel?: string;
+  @Column({ type: 'varchar', nullable: true })
+  @Field(() => DecisionMakingModel, { nullable: true })
+  decisionMakingModel?: DecisionMakingModel;
 
   @Column({ nullable: true })
   @Field(() => Int, { nullable: true })
@@ -61,9 +62,9 @@ export class ProposalActionGroupConfig {
   @Field({ nullable: true })
   oldAdminModel?: string;
 
-  @Column({ nullable: true })
-  @Field({ nullable: true })
-  oldDecisionMakingModel?: string;
+  @Column({ type: 'varchar', nullable: true })
+  @Field(() => DecisionMakingModel, { nullable: true })
+  oldDecisionMakingModel?: DecisionMakingModel;
 
   @Column({ nullable: true })
   @Field(() => Int, { nullable: true })

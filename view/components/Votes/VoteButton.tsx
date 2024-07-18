@@ -10,14 +10,10 @@ import { Menu, MenuItem } from '@mui/material';
 import { MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import {
-  DecisionMakingModel,
-  ProposalActionType,
-  ProposalStage,
-} from '../../constants/proposal.constants';
 import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
 import { VoteTypes } from '../../constants/vote.constants';
 import { toastVar } from '../../graphql/cache';
+import { DecisionMakingModel } from '../../graphql/gen';
 import { useRolesByGroupIdLazyQuery } from '../../graphql/roles/queries/gen/RolesByGroupId.gen';
 import {
   CreateVoteMutation,
@@ -38,7 +34,7 @@ const ICON_STYLES = {
 };
 
 interface Props {
-  decisionMakingModel: string;
+  decisionMakingModel: DecisionMakingModel;
   isClosed?: boolean;
   isRatified: boolean;
   menuAnchorEl: HTMLElement | null;
@@ -119,12 +115,11 @@ const VoteButton = ({
       stage,
     } = proposal;
 
-    const isRatified = stage === ProposalStage.Ratified;
+    const isRatified = stage === 'Ratified';
 
     if (isRatified) {
       const isRoleProposal =
-        actionType === ProposalActionType.CreateRole ||
-        actionType === ProposalActionType.ChangeRole;
+        actionType === 'CreateRole' || actionType === 'ChangeRole';
 
       // Load group roles if a role was added or changed
       if (isRoleProposal && group) {
@@ -139,7 +134,7 @@ const VoteButton = ({
 
     if (
       pathname.includes(NavigationPaths.Groups) &&
-      actionType === ProposalActionType.ChangeName &&
+      actionType === 'ChangeName' &&
       isRatified &&
       group
     ) {

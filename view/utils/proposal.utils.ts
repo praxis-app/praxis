@@ -1,64 +1,69 @@
-import { Namespace, TFunction } from 'react-i18next';
-import { ProposalActionType } from '../constants/proposal.constants';
 import dayjs from 'dayjs';
+import { Namespace, TFunction } from 'react-i18next';
+import { ProposalActionType } from '../graphql/gen';
+
+interface ProposalActionTypeOption {
+  message: string;
+  value: ProposalActionType;
+}
 
 export const getProposalActionTypeOptions = (
   t: TFunction<Namespace<'ns1'>, undefined>,
-) => [
+): ProposalActionTypeOption[] => [
   {
     message: t('proposals.actionTypes.planEvent'),
-    value: ProposalActionType.PlanEvent,
+    value: 'PlanEvent',
   },
   {
     message: t('proposals.actionTypes.changeName'),
-    value: ProposalActionType.ChangeName,
+    value: 'ChangeName',
   },
   {
     message: t('proposals.actionTypes.changeDescription'),
-    value: ProposalActionType.ChangeDescription,
+    value: 'ChangeDescription',
   },
   {
     message: t('proposals.actionTypes.changeSettings'),
-    value: ProposalActionType.ChangeSettings,
+    value: 'ChangeSettings',
   },
   {
     message: t('proposals.actionTypes.changeCoverPhoto'),
-    value: ProposalActionType.ChangeCoverPhoto,
+    value: 'ChangeCoverPhoto',
   },
   {
     message: t('proposals.actionTypes.changeRole'),
-    value: ProposalActionType.ChangeRole,
+    value: 'ChangeRole',
   },
   {
     message: t('proposals.actionTypes.createRole'),
-    value: ProposalActionType.CreateRole,
+    value: 'CreateRole',
   },
   {
     message: t('proposals.actionTypes.test'),
-    value: ProposalActionType.Test,
+    value: 'Test',
   },
 ];
 
 export const getProposalActionLabel = (
-  actionType: string,
+  actionType: ProposalActionType,
   t: TFunction<Namespace<'ns1'>, undefined>,
 ): string => {
   switch (actionType) {
-    case ProposalActionType.PlanEvent:
+    case 'PlanEvent':
       return t('proposals.actionTypes.planEvent');
-    case ProposalActionType.ChangeName:
+    case 'ChangeName':
       return t('proposals.actionTypes.changeName');
-    case ProposalActionType.ChangeCoverPhoto:
+    case 'ChangeCoverPhoto':
       return t('proposals.actionTypes.changeCoverPhoto');
-    case ProposalActionType.ChangeDescription:
+    case 'ChangeDescription':
       return t('proposals.actionTypes.changeDescription');
-    case ProposalActionType.ChangeSettings:
+    case 'ChangeSettings':
       return t('proposals.actionTypes.changeSettings');
-    case ProposalActionType.CreateRole:
+    case 'CreateRole':
       return t('proposals.actionTypes.createRole');
-    case ProposalActionType.ChangeRole:
+    case 'ChangeRole':
       return t('proposals.actionTypes.changeRole');
-    case ProposalActionType.Test:
+    case 'Test':
       return t('proposals.actionTypes.test');
     default:
       return '';

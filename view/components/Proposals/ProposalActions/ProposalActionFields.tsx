@@ -2,12 +2,9 @@ import { CropOriginal } from '@mui/icons-material';
 import { Box, Typography } from '@mui/material';
 import { FormikErrors, FormikTouched } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { ProposalActionFieldName } from '../../../constants/proposal.constants';
 import { CreateProposalInput } from '../../../graphql/gen';
 import { ProposalFormFragment } from '../../../graphql/proposals/fragments/gen/ProposalForm.gen';
-import {
-  ProposalActionFieldName,
-  ProposalActionType,
-} from '../../../constants/proposal.constants';
 import AttachedImagePreview from '../../Images/AttachedImagePreview';
 import ImageInput from '../../Images/ImageInput';
 import { TextField } from '../../Shared/TextField';
@@ -31,7 +28,7 @@ const ProposalActionFields = ({
 }: Props) => {
   const { t } = useTranslation();
 
-  if (values.action.actionType === ProposalActionType.ChangeName) {
+  if (values.action.actionType === 'ChangeName') {
     const isInvalid = !!errors.action?.groupName && touched.action?.groupName;
     return (
       <TextField
@@ -43,7 +40,7 @@ const ProposalActionFields = ({
     );
   }
 
-  if (values.action.actionType === ProposalActionType.ChangeDescription) {
+  if (values.action.actionType === 'ChangeDescription') {
     const isInvalid =
       !!errors.action?.groupDescription && touched.action?.groupDescription;
     return (
@@ -56,7 +53,7 @@ const ProposalActionFields = ({
     );
   }
 
-  if (values.action.actionType === ProposalActionType.ChangeCoverPhoto) {
+  if (values.action.actionType === 'ChangeCoverPhoto') {
     const isInvalid = !!(errors.action?.groupCoverPhoto && submitCount);
     const savedImage =
       editProposal?.action.groupCoverPhoto && !values.action.groupCoverPhoto

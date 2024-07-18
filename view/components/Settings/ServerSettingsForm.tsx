@@ -10,12 +10,12 @@ import {
 import { Form, Formik, FormikErrors, FormikHelpers } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { VotingTimeLimit } from '../../constants/proposal.constants';
+import { toastVar } from '../../graphql/cache';
 import {
   DecisionMakingModel,
-  VotingTimeLimit,
-} from '../../constants/proposal.constants';
-import { toastVar } from '../../graphql/cache';
-import { UpdateServerConfigInput } from '../../graphql/gen';
+  UpdateServerConfigInput,
+} from '../../graphql/gen';
 import { ServerSettingsFormFragment } from '../../graphql/settings/fragments/gen/ServerSettingsForm.gen';
 import { useUpdateServerSettingsMutation } from '../../graphql/settings/mutations/gen/UpdateServerSettings.gen';
 import { useIsDesktop } from '../../hooks/shared.hooks';
@@ -138,13 +138,13 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
     const errors: FormikErrors<FormValues> = {};
 
     if (
-      decisionMakingModel === DecisionMakingModel.Consent ||
-      decisionMakingModel === DecisionMakingModel.MajorityVote
+      decisionMakingModel === 'Consent' ||
+      decisionMakingModel === 'MajorityVote'
     ) {
       errors.decisionMakingModel = t('prompts.inDev');
     }
     if (
-      decisionMakingModel === DecisionMakingModel.MajorityVote &&
+      decisionMakingModel === 'MajorityVote' &&
       ratificationThreshold &&
       ratificationThreshold <= 50
     ) {
@@ -194,9 +194,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
 
             <SettingsSelect
               description={t('groups.settings.descriptions.standAsidesLimit')}
-              disabled={
-                values.decisionMakingModel === DecisionMakingModel.MajorityVote
-              }
+              disabled={values.decisionMakingModel === 'MajorityVote'}
               fieldName={ServerSettingsFormFields.StandAsidesLimit}
               label={t('groups.settings.names.standAsidesLimit')}
               onChange={handleChange}
@@ -224,9 +222,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
 
             <SettingsSelect
               description={t('groups.settings.descriptions.reservationsLimit')}
-              disabled={
-                values.decisionMakingModel === DecisionMakingModel.MajorityVote
-              }
+              disabled={values.decisionMakingModel === 'MajorityVote'}
               fieldName={ServerSettingsFormFields.ReservationsLimit}
               label={t('groups.settings.names.reservationsLimit')}
               onClick={() =>
@@ -284,9 +280,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               </Box>
 
               <SliderInput
-                disabled={
-                  values.decisionMakingModel === DecisionMakingModel.Consent
-                }
+                disabled={values.decisionMakingModel === 'Consent'}
                 name={ServerSettingsFormFields.RatificationThreshold}
                 onInputChange={handleChange}
                 onSliderChange={handleChange}
