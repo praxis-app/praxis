@@ -70,6 +70,11 @@ import ProposeEventModal from './ProposalActions/ProposeEventModal';
 import ProposeGroupSettingsModal from './ProposalActions/ProposeGroupSettingsModal';
 import ProposeRoleModal from './ProposalActions/ProposeRoleModal';
 
+enum ProposalScope {
+  Group = 'group',
+  Server = 'server',
+}
+
 type ProposalFormErrors = {
   action: FormikErrors<ProposalActionInput>;
   body?: string;
@@ -92,6 +97,7 @@ const ProposalForm = ({
 }: Props) => {
   const [clicked, setClicked] = useState(false);
   const [selectInputsKey, setSelectInputsKey] = useState('');
+  const [scope, setScope] = useState<ProposalScope | ''>('');
 
   const [createProposal] = useCreateProposalMutation();
   const [updateProposal] = useUpdateProposalMutation();
@@ -409,39 +415,58 @@ const ProposalForm = ({
                   )}
                 </FormControl>
 
-                {joinedGroups && !editProposal && !isGroupPage && (
-                  <FormControl
-                    error={!!(errors.groupId && touched.groupId)}
-                    sx={{ marginBottom: 1 }}
-                    variant="standard"
+                <FormControl sx={{ marginBottom: 1 }} variant="standard">
+                  <InputLabel>{t('proposals.labels.scope')}</InputLabel>
+                  <Select
+                    key={selectInputsKey}
+                    onChange={(e) => setScope(e.target.value as ProposalScope)}
+                    value={scope}
                   >
-                    <InputLabel>{t('groups.labels.group')}</InputLabel>
-                    <Select
-                      key={selectInputsKey}
-                      name="groupId"
-                      onChange={(event) =>
-                        handleGroupSelectChange(event, setFieldValue)
-                      }
-                      value={values.groupId || ''}
+                    <MenuItem value={ProposalScope.Server}>
+                      {t('proposals.labels.server')}
+                    </MenuItem>
+                    <MenuItem value={ProposalScope.Group}>
+                      {t('groups.labels.group')}
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+
+                {joinedGroups &&
+                  !editProposal &&
+                  !isGroupPage &&
+                  scope === ProposalScope.Group && (
+                    <FormControl
+                      error={!!(errors.groupId && touched.groupId)}
+                      sx={{ marginBottom: 1 }}
+                      variant="standard"
                     >
-                      {joinedGroups.map(({ id, name }) => (
-                        <MenuItem value={id} key={id}>
-                          {name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {!!(errors.groupId && submitCount) && (
-                      <Typography
-                        color="error"
-                        fontSize="small"
-                        marginTop={0.5}
-                        gutterBottom
+                      <InputLabel>{t('groups.labels.group')}</InputLabel>
+                      <Select
+                        key={selectInputsKey}
+                        name="groupId"
+                        onChange={(event) =>
+                          handleGroupSelectChange(event, setFieldValue)
+                        }
+                        value={values.groupId || ''}
                       >
-                        {t('proposals.errors.missingGroupId')}
-                      </Typography>
-                    )}
-                  </FormControl>
-                )}
+                        {joinedGroups.map(({ id, name }) => (
+                          <MenuItem value={id} key={id}>
+                            {name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                      {!!(errors.groupId && submitCount) && (
+                        <Typography
+                          color="error"
+                          fontSize="small"
+                          marginTop={0.5}
+                          gutterBottom
+                        >
+                          {t('proposals.errors.missingGroupId')}
+                        </Typography>
+                      )}
+                    </FormControl>
+                  )}
 
                 <DateTimePicker
                   label={t('proposals.labels.closingTime')}
