@@ -120,6 +120,12 @@ const ProposalForm = ({
   const actionTypeOptions = getProposalActionTypeOptions(t);
   const isGroupPage = pathname.includes(NavigationPaths.Groups);
 
+  const showGroupSelect =
+    !editProposal &&
+    !isGroupPage &&
+    joinedGroups &&
+    scope === ProposalScope.Group;
+
   const getSelectedGroupVotingTimeLimit = (
     groupId: number | null | undefined,
   ) => {
@@ -431,42 +437,39 @@ const ProposalForm = ({
                   </Select>
                 </FormControl>
 
-                {joinedGroups &&
-                  !editProposal &&
-                  !isGroupPage &&
-                  scope === ProposalScope.Group && (
-                    <FormControl
-                      error={!!(errors.groupId && touched.groupId)}
-                      sx={{ marginBottom: 1 }}
-                      variant="standard"
+                {showGroupSelect && (
+                  <FormControl
+                    error={!!(errors.groupId && touched.groupId)}
+                    sx={{ marginBottom: 1 }}
+                    variant="standard"
+                  >
+                    <InputLabel>{t('groups.labels.group')}</InputLabel>
+                    <Select
+                      key={selectInputsKey}
+                      name="groupId"
+                      onChange={(event) =>
+                        handleGroupSelectChange(event, setFieldValue)
+                      }
+                      value={values.groupId || ''}
                     >
-                      <InputLabel>{t('groups.labels.group')}</InputLabel>
-                      <Select
-                        key={selectInputsKey}
-                        name="groupId"
-                        onChange={(event) =>
-                          handleGroupSelectChange(event, setFieldValue)
-                        }
-                        value={values.groupId || ''}
+                      {joinedGroups.map(({ id, name }) => (
+                        <MenuItem value={id} key={id}>
+                          {name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                    {!!(errors.groupId && submitCount) && (
+                      <Typography
+                        color="error"
+                        fontSize="small"
+                        marginTop={0.5}
+                        gutterBottom
                       >
-                        {joinedGroups.map(({ id, name }) => (
-                          <MenuItem value={id} key={id}>
-                            {name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                      {!!(errors.groupId && submitCount) && (
-                        <Typography
-                          color="error"
-                          fontSize="small"
-                          marginTop={0.5}
-                          gutterBottom
-                        >
-                          {t('proposals.errors.missingGroupId')}
-                        </Typography>
-                      )}
-                    </FormControl>
-                  )}
+                        {t('proposals.errors.missingGroupId')}
+                      </Typography>
+                    )}
+                  </FormControl>
+                )}
 
                 <DateTimePicker
                   label={t('proposals.labels.closingTime')}
