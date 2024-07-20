@@ -9,40 +9,49 @@ interface ProposalActionTypeOption {
 
 export const getProposalActionTypeOptions = (
   t: TFunction<Namespace<'ns1'>, undefined>,
-): ProposalActionTypeOption[] => [
-  {
-    message: t('proposals.actionTypes.planEvent'),
-    value: 'PlanEvent',
-  },
-  {
-    message: t('proposals.actionTypes.changeName'),
-    value: 'ChangeName',
-  },
-  {
-    message: t('proposals.actionTypes.changeDescription'),
-    value: 'ChangeDescription',
-  },
-  {
-    message: t('proposals.actionTypes.changeSettings'),
-    value: 'ChangeSettings',
-  },
-  {
-    message: t('proposals.actionTypes.changeCoverPhoto'),
-    value: 'ChangeCoverPhoto',
-  },
-  {
-    message: t('proposals.actionTypes.changeRole'),
-    value: 'ChangeRole',
-  },
-  {
-    message: t('proposals.actionTypes.createRole'),
-    value: 'CreateRole',
-  },
-  {
-    message: t('proposals.actionTypes.test'),
-    value: 'Test',
-  },
-];
+  isGroupProposal = true,
+): ProposalActionTypeOption[] => {
+  const sharedOptions: ProposalActionTypeOption[] = [
+    {
+      message: t('proposals.actionTypes.changeRole'),
+      value: 'ChangeRole',
+    },
+    {
+      message: t('proposals.actionTypes.createRole'),
+      value: 'CreateRole',
+    },
+    {
+      message: t('proposals.actionTypes.test'),
+      value: 'Test',
+    },
+  ];
+  if (!isGroupProposal) {
+    return sharedOptions;
+  }
+  return [
+    {
+      message: t('proposals.actionTypes.planEvent'),
+      value: 'PlanEvent',
+    },
+    {
+      message: t('proposals.actionTypes.changeName'),
+      value: 'ChangeName',
+    },
+    {
+      message: t('proposals.actionTypes.changeDescription'),
+      value: 'ChangeDescription',
+    },
+    {
+      message: t('proposals.actionTypes.changeSettings'),
+      value: 'ChangeSettings',
+    },
+    {
+      message: t('proposals.actionTypes.changeCoverPhoto'),
+      value: 'ChangeCoverPhoto',
+    },
+    ...sharedOptions,
+  ];
+};
 
 export const getProposalActionLabel = (
   actionType: ProposalActionType,

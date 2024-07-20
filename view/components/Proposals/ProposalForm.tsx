@@ -117,14 +117,15 @@ const ProposalForm = ({
     action,
     groupId,
   };
-  const actionTypeOptions = getProposalActionTypeOptions(t);
+
+  const isGroupProposal = scope === ProposalScope.Group;
   const isGroupPage = pathname.includes(NavigationPaths.Groups);
 
+  const showGroupActions = isGroupProposal || !scope;
+  const actionTypeOptions = getProposalActionTypeOptions(t, showGroupActions);
+
   const showGroupSelect =
-    !editProposal &&
-    !isGroupPage &&
-    joinedGroups &&
-    scope === ProposalScope.Group;
+    !editProposal && !isGroupPage && joinedGroups && isGroupProposal;
 
   const getSelectedGroupVotingTimeLimit = (
     groupId: number | null | undefined,
@@ -352,6 +353,22 @@ const ProposalForm = ({
     setFieldValue(ProposalFormFieldName.GroupId, target.value);
   };
 
+  const handleScopeSelectChange = (
+    e: SelectChangeEvent,
+    actionType: ProposalActionType,
+    setFieldValue: (field: ProposalActionFieldName, value: string) => void,
+  ) => {
+    const isValidForServerScope =
+      actionType === 'ChangeRole' ||
+      actionType === 'CreateRole' ||
+      actionType === 'Test';
+
+    if (e.target.value === ProposalScope.Server && !isValidForServerScope) {
+      setFieldValue(ProposalActionFieldName.ActionType, '');
+    }
+    setScope(e.target.value as ProposalScope);
+  };
+
   const handleModalClose = (
     setFieldValue: (field: string, value: ProposalActionInput | null) => void,
   ) => {
@@ -425,7 +442,13 @@ const ProposalForm = ({
                   <InputLabel>{t('proposals.labels.scope')}</InputLabel>
                   <Select
                     key={selectInputsKey}
-                    onChange={(e) => setScope(e.target.value as ProposalScope)}
+                    onChange={(e) =>
+                      handleScopeSelectChange(
+                        e,
+                        values.action.actionType,
+                        setFieldValue,
+                      )
+                    }
                     value={scope}
                   >
                     <MenuItem value={ProposalScope.Server}>
