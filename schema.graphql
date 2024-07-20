@@ -683,6 +683,26 @@ type ProposalActionPermission {
   updateGroup: Boolean
 }
 
+input ProposalActionPermissionInput {
+  approveMemberRequests: Boolean
+  createEvents: Boolean
+  createInvites: Boolean
+  deleteGroup: Boolean
+  manageComments: Boolean
+  manageEvents: Boolean
+  manageInvites: Boolean
+  managePosts: Boolean
+  manageQuestionnaireTickets: Boolean
+  manageQuestions: Boolean
+  manageRoles: Boolean
+  manageRules: Boolean
+  manageSettings: Boolean
+  removeGroups: Boolean
+  removeMembers: Boolean
+  removeProposals: Boolean
+  updateGroup: Boolean
+}
+
 type ProposalActionRole {
   color: String
   groupRole: GroupRole
@@ -700,7 +720,7 @@ input ProposalActionRoleInput {
   color: String
   members: [ProposalActionRoleMemberInput!]
   name: String
-  permissions: GroupRolePermissionInput
+  permissions: ProposalActionPermissionInput
   roleToUpdateId: Int
 }
 

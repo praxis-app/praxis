@@ -1025,6 +1025,26 @@ export type ProposalActionPermission = {
   updateGroup?: Maybe<Scalars['Boolean']['output']>;
 };
 
+export type ProposalActionPermissionInput = {
+  approveMemberRequests?: InputMaybe<Scalars['Boolean']['input']>;
+  createEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  createInvites?: InputMaybe<Scalars['Boolean']['input']>;
+  deleteGroup?: InputMaybe<Scalars['Boolean']['input']>;
+  manageComments?: InputMaybe<Scalars['Boolean']['input']>;
+  manageEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  manageInvites?: InputMaybe<Scalars['Boolean']['input']>;
+  managePosts?: InputMaybe<Scalars['Boolean']['input']>;
+  manageQuestionnaireTickets?: InputMaybe<Scalars['Boolean']['input']>;
+  manageQuestions?: InputMaybe<Scalars['Boolean']['input']>;
+  manageRoles?: InputMaybe<Scalars['Boolean']['input']>;
+  manageRules?: InputMaybe<Scalars['Boolean']['input']>;
+  manageSettings?: InputMaybe<Scalars['Boolean']['input']>;
+  removeGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  removeMembers?: InputMaybe<Scalars['Boolean']['input']>;
+  removeProposals?: InputMaybe<Scalars['Boolean']['input']>;
+  updateGroup?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type ProposalActionRole = {
   __typename?: 'ProposalActionRole';
   color?: Maybe<Scalars['String']['output']>;
@@ -1043,7 +1063,7 @@ export type ProposalActionRoleInput = {
   color?: InputMaybe<Scalars['String']['input']>;
   members?: InputMaybe<Array<ProposalActionRoleMemberInput>>;
   name?: InputMaybe<Scalars['String']['input']>;
-  permissions?: InputMaybe<GroupRolePermissionInput>;
+  permissions?: InputMaybe<ProposalActionPermissionInput>;
   roleToUpdateId?: InputMaybe<Scalars['Int']['input']>;
 };
 
