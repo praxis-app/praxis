@@ -142,7 +142,7 @@ const ProposalForm = ({
     return dayjs().add(votingTimeLimit, 'minutes');
   };
 
-  const validateProposal = ({ body, action, groupId }: CreateProposalInput) => {
+  const validateProposal = ({ body, action }: CreateProposalInput) => {
     const errors: ProposalFormErrors = {
       action: {},
     };
@@ -175,9 +175,6 @@ const ProposalForm = ({
       !action.role
     ) {
       errors.action.role = t('proposals.errors.missingRole');
-    }
-    if (!groupId && !editProposal) {
-      errors.groupId = t('proposals.errors.missingGroupId');
     }
     if (!Object.keys(errors.action).length && !errors.groupId) {
       return {};
@@ -481,16 +478,6 @@ const ProposalForm = ({
                         </MenuItem>
                       ))}
                     </Select>
-                    {!!(errors.groupId && submitCount) && (
-                      <Typography
-                        color="error"
-                        fontSize="small"
-                        marginTop={0.5}
-                        gutterBottom
-                      >
-                        {t('proposals.errors.missingGroupId')}
-                      </Typography>
-                    )}
                   </FormControl>
                 )}
 

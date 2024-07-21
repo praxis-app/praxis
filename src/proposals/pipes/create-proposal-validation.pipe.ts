@@ -17,7 +17,6 @@ export class CreateProposalValidationPipe implements PipeTransform {
     if (metadata.metatype?.name === CreateProposalInput.name) {
       await this.validateProposalAction(value);
       await this.validateClosingAt(value);
-      await this.validateGroupId(value);
     }
     return value;
   }
@@ -86,13 +85,6 @@ export class CreateProposalValidationPipe implements PipeTransform {
     }
     if (groupClosingAt && closingAt < groupClosingAt) {
       throw new Error('Voting time limit must not be shorter than group limit');
-    }
-  }
-
-  // TODO: Remove once support for server proposals has been added
-  async validateGroupId({ groupId }: CreateProposalInput) {
-    if (!groupId) {
-      throw new Error('Only group proposals are supported at this time');
     }
   }
 }

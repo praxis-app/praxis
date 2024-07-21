@@ -165,7 +165,6 @@
       "missingActionType": "Proposals must include an action",
       "missingGroupCoverPhoto": "Proposals to change group cover photo must include an image",
       "missingGroupDescription": "Proposals to change group description must include a description field",
-      "missingGroupId": "Only group proposals are supported at this time",
       "missingGroupName": "Proposals to change group name must include a name field",
       "longBody": "Proposal body cannot exceed 8000 characters",
       "missingRole": "Proposals to change or add group roles must include a role"
