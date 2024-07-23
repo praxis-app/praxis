@@ -9,7 +9,7 @@ interface ProposalActionTypeOption {
 
 export const getProposalActionTypeOptions = (
   t: TFunction<Namespace<'ns1'>, undefined>,
-  isGroupProposal = true,
+  isGroup = true,
 ): ProposalActionTypeOption[] => {
   const sharedOptions: ProposalActionTypeOption[] = [
     {
@@ -25,7 +25,7 @@ export const getProposalActionTypeOptions = (
       value: 'Test',
     },
   ];
-  if (!isGroupProposal) {
+  if (!isGroup) {
     return sharedOptions;
   }
   return [

@@ -818,6 +818,7 @@ type Query {
   users(limit: Int, offset: Int): [User!]!
   usersByIds(ids: [Int!]!): [User!]!
   usersCount: Int!
+  verifiedUsers(limit: Int, offset: Int): [User!]!
   vibeChat: Conversation!
   voteCount: Int!
 }

@@ -94,6 +94,18 @@ export class UsersService {
       : sortedUsers;
   }
 
+  async getVerifiedUsers(offset?: number, limit?: number) {
+    const users = await this.userRepository.find({
+      where: { verified: true },
+    });
+    const sortedUsers = users.sort(
+      (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+    );
+    return offset !== undefined
+      ? paginate(sortedUsers, offset, limit)
+      : sortedUsers;
+  }
+
   async isFirstUser() {
     const userCount = await this.userRepository.count();
     return userCount === 0;

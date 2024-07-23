@@ -10,6 +10,12 @@ export enum VotingTimeLimit {
   TwoWeeks = 60 * 24 * 14,
 }
 
+// TODO: Consider adding as graph enum
+export enum ProposalScope {
+  Group = 'group',
+  Server = 'server',
+}
+
 export enum ProposalFormFieldName {
   Action = 'action',
   Body = 'body',

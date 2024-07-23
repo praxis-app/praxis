@@ -23,6 +23,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {
   ProposalActionFieldName,
   ProposalFormFieldName,
+  ProposalScope,
 } from '../../constants/proposal.constants';
 import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
@@ -69,11 +70,6 @@ import ProposalActionRole from './ProposalActions/ProposalActionRole';
 import ProposeEventModal from './ProposalActions/ProposeEventModal';
 import ProposeGroupSettingsModal from './ProposalActions/ProposeGroupSettingsModal';
 import ProposeRoleModal from './ProposalActions/ProposeRoleModal';
-
-enum ProposalScope {
-  Group = 'group',
-  Server = 'server',
-}
 
 type ProposalFormErrors = {
   action: FormikErrors<ProposalActionInput>;
@@ -560,6 +556,7 @@ const ProposalForm = ({
             key={`${values.action.actionType}-${values.groupId}`}
             actionType={values.action.actionType}
             groupId={values.groupId}
+            isServerScope={scope === ProposalScope.Server}
             onClose={() => handleModalClose(setFieldValue)}
             setFieldValue={setFieldValue}
           />

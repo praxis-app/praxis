@@ -1168,6 +1168,7 @@ export type Query = {
   users: Array<User>;
   usersByIds: Array<User>;
   usersCount: Scalars['Int']['output'];
+  verifiedUsers: Array<User>;
   vibeChat: Conversation;
   voteCount: Scalars['Int']['output'];
 };
@@ -1281,6 +1282,11 @@ export type QueryUsersArgs = {
 
 export type QueryUsersByIdsArgs = {
   ids: Array<Scalars['Int']['input']>;
+};
+
+export type QueryVerifiedUsersArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type Question = {
