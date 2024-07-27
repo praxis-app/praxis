@@ -513,11 +513,13 @@ export class ProposalActionsService {
   async createProposalActionRole(
     proposalActionId: number,
     { roleToUpdateId, ...role }: ProposalActionRoleInput,
+    isServerScope: boolean,
   ) {
     await this.proposalActionRoleRepository.save({
       ...role,
       permission: role.permissions,
-      groupRoleId: roleToUpdateId,
+      groupRoleId: isServerScope ? undefined : roleToUpdateId,
+      serverRoleId: isServerScope ? roleToUpdateId : undefined,
       proposalActionId,
     });
   }

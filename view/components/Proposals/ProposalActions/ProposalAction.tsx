@@ -14,6 +14,7 @@ interface Props {
   isShared?: boolean;
   isCompact?: boolean;
   ratified: boolean;
+  isServerScope?: boolean;
 }
 
 const ProposalAction = ({
@@ -30,6 +31,7 @@ const ProposalAction = ({
   proposalId,
   isCompact,
   isShared,
+  isServerScope,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -85,6 +87,7 @@ const ProposalAction = ({
         role={role}
         actionType={actionType}
         isCompact={isCompact}
+        isServerScope={isServerScope}
         isShared={isShared}
         proposalId={proposalId}
         ratified={ratified}

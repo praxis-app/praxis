@@ -17,6 +17,7 @@ import {
 } from '../../../graphql/gen';
 import { useGroupRoleByRoleIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRoleByRoleId.gen';
 import { ProposalActionRoleFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionRole.gen';
+import { useServerRoleByIdLazyQuery } from '../../../graphql/roles/queries/gen/ServerRoleById.gen';
 import { useUsersByIdsLazyQuery } from '../../../graphql/users/queries/gen/UsersByIds.gen';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import { cleanPermissions } from '../../../utils/role.utils';
@@ -41,6 +42,7 @@ interface Props extends Omit<BoxProps, 'role'> {
   role: ProposalActionRoleFragment | ProposalActionRoleInput;
   actionType: ProposalActionType;
   isCompact?: boolean;
+  isServerScope?: boolean;
   isShared?: boolean;
   preview?: boolean;
   proposalId?: number;
@@ -52,6 +54,7 @@ const ProposalActionRole = ({
   role,
   actionType,
   isCompact,
+  isServerScope,
   isShared,
   preview,
   proposalId,
@@ -67,13 +70,22 @@ const ProposalActionRole = ({
   );
 
   const [
-    getSelectedRole,
+    getSelectedGroupRole,
     {
-      data: selectedRoleData,
-      loading: selectedRoleLoading,
-      error: selectedRoleError,
+      data: selectedGroupRoleData,
+      loading: selectedGroupRoleLoading,
+      error: selectedGroupRoleError,
     },
   ] = useGroupRoleByRoleIdLazyQuery();
+
+  const [
+    getSelectedServerRole,
+    {
+      data: selectedServerRoleData,
+      loading: selectedServerRoleLoading,
+      error: selectedServerRoleError,
+    },
+  ] = useServerRoleByIdLazyQuery();
 
   const [
     getSelectedUsers,
@@ -99,23 +111,52 @@ const ProposalActionRole = ({
       variables: { userIds },
     });
     if ('roleToUpdateId' in role && role.roleToUpdateId) {
-      getSelectedRole({
+      if (isServerScope) {
+        getSelectedServerRole({
+          variables: { id: role.roleToUpdateId },
+        });
+        return;
+      }
+      getSelectedGroupRole({
         variables: { id: role.roleToUpdateId },
       });
     }
-  }, [preview, getSelectedUsers, getSelectedRole, role]);
+  }, [
+    getSelectedGroupRole,
+    getSelectedServerRole,
+    getSelectedUsers,
+    isServerScope,
+    preview,
+    role,
+  ]);
 
-  if (selectedRoleError || selectedUsersError) {
+  if (selectedGroupRoleError || selectedServerRoleError || selectedUsersError) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
-  if (selectedRoleLoading || selectedUsersLoading) {
+  if (
+    selectedGroupRoleLoading ||
+    selectedServerRoleLoading ||
+    selectedUsersLoading
+  ) {
     return <ProgressBar />;
   }
 
+  const getRoleToChange = () => {
+    if (isServerScope) {
+      if ('serverRole' in role) {
+        return role.serverRole;
+      }
+      return selectedServerRoleData?.serverRole;
+    }
+    if ('groupRole' in role) {
+      return role.groupRole;
+    }
+    return selectedGroupRoleData?.groupRole;
+  };
+
   const { name, color, permissions, members } = role;
-  const roleToChange =
-    'groupRole' in role ? role.groupRole : selectedRoleData?.groupRole;
+  const roleToChange = getRoleToChange();
 
   const oldName =
     ratified && 'oldName' in role ? role.oldName : roleToChange?.name;

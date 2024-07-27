@@ -671,14 +671,21 @@ input ProposalActionInput {
 type ProposalActionPermission {
   approveMemberRequests: Boolean
   createEvents: Boolean
+  createInvites: Boolean
   deleteGroup: Boolean
   id: Int!
   manageComments: Boolean
   manageEvents: Boolean
+  manageInvites: Boolean
   managePosts: Boolean
+  manageQuestionnaireTickets: Boolean
+  manageQuestions: Boolean
   manageRoles: Boolean
+  manageRules: Boolean
   manageSettings: Boolean
+  removeGroups: Boolean
   removeMembers: Boolean
+  removeProposals: Boolean
   role: ProposalActionRole!
   updateGroup: Boolean
 }

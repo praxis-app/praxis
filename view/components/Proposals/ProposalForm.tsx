@@ -244,6 +244,7 @@ const ProposalForm = ({
         resetForm();
         setClicked(false);
         setSubmitting(false);
+        setScope('');
       },
     });
 
@@ -500,6 +501,7 @@ const ProposalForm = ({
                 {values.action.role && (
                   <ProposalActionRole
                     actionType={values.action.actionType}
+                    isServerScope={scope === ProposalScope.Server}
                     role={values.action.role}
                     marginTop={3}
                     preview

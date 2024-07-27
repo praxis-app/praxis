@@ -333,7 +333,7 @@ const ProposeRoleModal = ({
                     )}
                     value={values.roleToUpdateId || ''}
                   >
-                    {roles.map((role) => (
+                    {roles.map((role: { id: number; name: string }) => (
                       <MenuItem value={role.id} key={role.id}>
                         {role.name}
                       </MenuItem>

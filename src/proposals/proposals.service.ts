@@ -160,7 +160,7 @@ export class ProposalsService {
       images,
       closingAt,
       action: { groupCoverPhoto, role, event, groupSettings, ...action },
-      ...proposalData
+      groupId,
     }: CreateProposalInput,
     user: User,
   ) {
@@ -169,7 +169,7 @@ export class ProposalsService {
       throw new Error('Proposals must be 8000 characters or less');
     }
 
-    const config = await this.getConfigForNewProposal(proposalData.groupId);
+    const config = await this.getConfigForNewProposal(groupId);
     const configClosingAt = config.votingTimeLimit
       ? new Date(Date.now() + config.votingTimeLimit * 60 * 1000)
       : undefined;
@@ -183,10 +183,10 @@ export class ProposalsService {
     };
 
     const proposal = await this.proposalRepository.save({
-      ...proposalData,
       body: sanitizedBody,
       config: proposalConfig,
       userId: user.id,
+      groupId,
       action,
     });
 
@@ -205,6 +205,7 @@ export class ProposalsService {
         await this.proposalActionsService.createProposalActionRole(
           proposal.action.id,
           role,
+          !groupId,
         );
       }
       if (event) {
