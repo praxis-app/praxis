@@ -19,6 +19,7 @@ import {
 } from '../../images/image.utils';
 import { Image } from '../../images/models/image.model';
 import { ServerRolesService } from '../../server-roles/server-roles.service';
+import { cleanPermissions } from '../../server-roles/server-roles.utils';
 import { ProposalActionEventHost } from './models/proposal-action-event-host.model';
 import { ProposalActionEventInput } from './models/proposal-action-event.input';
 import { ProposalActionEvent } from './models/proposal-action-event.model';
@@ -114,12 +115,14 @@ export class ProposalActionsService {
       ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Remove)
       .map(({ userId }) => userId);
 
+    const permissions = cleanPermissions(actionRole.permission);
+
     await this.serverRolesService.updateServerRole({
       id: roleToUpdate.id,
       name: actionRole.name,
       color: actionRole.color,
       selectedUserIds: userIdsToAdd,
-      permissions: actionRole.permission,
+      permissions,
     });
     if (userIdsToRemove?.length) {
       await this.serverRolesService.deleteServerRoleMembers(
