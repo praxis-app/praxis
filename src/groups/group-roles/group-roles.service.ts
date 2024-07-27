@@ -6,11 +6,9 @@ import {
   ADMIN_ROLE_NAME,
   DEFAULT_ROLE_COLOR,
 } from '../../server-roles/server-roles.constants';
+import { cleanPermissions } from '../../server-roles/server-roles.utils';
 import { User } from '../../users/models/user.model';
-import {
-  cleanGroupPermissions,
-  initGroupRolePermissions,
-} from './group-role.utils';
+import { initGroupRolePermissions } from './group-role.utils';
 import { GroupRolePermission } from './models/group-role-permission.model';
 import { GroupRole } from './models/group-role.model';
 import { UpdateGroupRoleInput } from './models/update-group-role.input';
@@ -77,6 +75,7 @@ export class GroupRolesService {
     });
   }
 
+  // TODO: Resolve issue with null name
   async createGroupRole(
     { name, ...roleData }: DeepPartial<GroupRole>,
     fromProposalAction = false,
@@ -86,7 +85,7 @@ export class GroupRolesService {
       throw new Error('Role name cannot be longer than 25 characters');
     }
     if (fromProposalAction) {
-      const permission = cleanGroupPermissions(roleData.permission);
+      const permission = cleanPermissions(roleData.permission);
       return this.groupRoleRepository.save({ ...roleData, permission });
     }
     const permission = initGroupRolePermissions();
@@ -119,7 +118,7 @@ export class GroupRolesService {
     const newMembers = await this.userRepository.find({
       where: { id: In(selectedUserIds) },
     });
-    const cleanedPermissions = cleanGroupPermissions(permissions);
+    const cleanedPermissions = cleanPermissions(permissions);
 
     const groupRole = await this.groupRoleRepository.save({
       ...roleWithRelations,
