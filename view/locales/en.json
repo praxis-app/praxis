@@ -117,12 +117,12 @@
       "vote": "Vote"
     },
     "actionTypes": {
-      "changeDescription": "Change Group Description",
       "changeCoverPhoto": "Change Cover Photo",
+      "changeDescription": "Change Group Description",
       "changeName": "Change Group Name",
-      "changeRole": "Change Group Role",
-      "changeSettings": "Change Group Settings",
-      "createRole": "Add Group Role",
+      "changeRole": "Change Role",
+      "changeSettings": "Change Settings",
+      "createRole": "Add Role",
       "planEvent": "Plan Event",
       "test": "QA Test"
     },

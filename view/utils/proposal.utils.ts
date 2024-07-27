@@ -42,12 +42,12 @@ export const getProposalActionTypeOptions = (
       value: 'ChangeDescription',
     },
     {
-      message: t('proposals.actionTypes.changeSettings'),
-      value: 'ChangeSettings',
-    },
-    {
       message: t('proposals.actionTypes.changeCoverPhoto'),
       value: 'ChangeCoverPhoto',
+    },
+    {
+      message: t('proposals.actionTypes.changeSettings'),
+      value: 'ChangeSettings',
     },
     ...sharedOptions,
   ];
