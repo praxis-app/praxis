@@ -90,7 +90,6 @@ const ProposalAction = ({
         isServerScope={isServerScope}
         isShared={isShared}
         proposalId={proposalId}
-        ratified={ratified}
       />
     );
   }

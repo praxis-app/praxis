@@ -46,7 +46,6 @@ interface Props extends Omit<BoxProps, 'role'> {
   isShared?: boolean;
   preview?: boolean;
   proposalId?: number;
-  ratified?: boolean;
 }
 
 // TODO: Rename as ProposedRole
@@ -58,7 +57,6 @@ const ProposalActionRole = ({
   isShared,
   preview,
   proposalId,
-  ratified,
   ...boxProps
 }: Props) => {
   const { pathname } = useLocation();
@@ -158,10 +156,8 @@ const ProposalActionRole = ({
   const { name, color, permissions, members } = role;
   const roleToChange = getRoleToChange();
 
-  const oldName =
-    ratified && 'oldName' in role ? role.oldName : roleToChange?.name;
-  const oldColor =
-    ratified && 'oldColor' in role ? role.oldColor : roleToChange?.color;
+  const oldName = roleToChange?.name;
+  const oldColor = roleToChange?.color;
 
   const isRoleChange = actionType === 'ChangeRole';
   const isAddingRole = actionType === 'CreateRole';
