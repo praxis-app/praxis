@@ -155,18 +155,25 @@ const ProposalActionRole = ({
     return selectedGroupRoleData?.groupRole;
   };
 
+  const getOldName = () => {
+    if (ratified && 'oldName' in role && role.oldName) {
+      return role.oldName;
+    }
+    return getRoleToChange()?.name;
+  };
+
+  const getOldColor = () => {
+    if (ratified && 'oldColor' in role && role.oldColor) {
+      return role.oldColor;
+    }
+    return getRoleToChange()?.color;
+  };
+
   const { name, color, permissions, members } = role;
-  const roleToChange = getRoleToChange();
-
-  const oldName =
-    ratified && 'oldName' in role ? role.oldName : roleToChange?.name;
-  const oldColor =
-    ratified && 'oldColor' in role ? role.oldColor : roleToChange?.color;
-
   const isRoleChange = actionType === 'ChangeRole';
   const isAddingRole = actionType === 'CreateRole';
-  const isChangingName = isRoleChange && name && name !== oldName;
-  const isChangingColor = isRoleChange && color && color !== oldColor;
+  const isChangingName = isRoleChange && name && name !== getOldName();
+  const isChangingColor = isRoleChange && color && color !== getOldColor();
 
   const includedPermissions = cleanPermissions(permissions) || {};
   const includedPermissionNames = getTypedKeys(includedPermissions);
@@ -182,7 +189,7 @@ const ProposalActionRole = ({
     paddingX: 2,
   };
   const circleIconStyles: SxProps = {
-    color: isChangingColor ? oldColor : color,
+    color: isChangingColor ? getOldColor() : color,
     marginTop: 0.5,
     fontSize: 16,
   };
@@ -238,7 +245,7 @@ const ProposalActionRole = ({
             whiteSpace="nowrap"
             width={getRoleNameTextWidth()}
           >
-            {isChangingName ? oldName : name}
+            {isChangingName ? getOldName() : name}
           </Box>
         </AccordionSummary>
 
@@ -261,7 +268,7 @@ const ProposalActionRole = ({
                   <ChangeDelta
                     label={t('proposals.labels.name')}
                     proposedValue={name}
-                    oldValue={oldName}
+                    oldValue={getOldName()}
                   />
                 )}
 
@@ -269,7 +276,7 @@ const ProposalActionRole = ({
                   <ChangeDelta
                     label={t('proposals.labels.color')}
                     proposedValue={color}
-                    oldValue={oldColor}
+                    oldValue={getOldColor()}
                     oldValueIcon={<Circle sx={colorChangeIconStyles} />}
                     proposedValueIcon={
                       <Circle sx={{ ...colorChangeIconStyles, color }} />
