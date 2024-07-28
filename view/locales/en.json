@@ -760,7 +760,7 @@
       "postLike": "<b>{{name}}</b> liked your post.",
       "postShare": "<b>{{name}}</b> shared your post.",
       "proposalComment": "<b>{{name}}</b> commented on your proposal.",
-      "proposalRatified": "Your proposal was ratified.",
+      "proposalRatified": "Your proposal has been ratified by the server.",
       "proposalShare": "<b>{{name}}</b> shared your proposal.",
       "proposalVote": "<b>{{name}}</b> voted on your proposal.",
       "questionnaireTicketComment": "<b>{{name}}</b> commented on your questionnaire ticket.",
