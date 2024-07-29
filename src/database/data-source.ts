@@ -85,6 +85,7 @@ import { AddAboutColumnToServerConfig1718497442403 } from './migrations/17184974
 import { AddSharedPostIdToPostTable1719688685494 } from './migrations/1719688685494-AddSharedPostIdToPostTable';
 import { AddSharedProposalIdToPostTable1720116996240 } from './migrations/1720116996240-AddSharedProposalIdToPostTable';
 import { AddServerRoleProposalColumns1722201841114 } from './migrations/1722201841114-AddServerRoleProposalColumns';
+import { VerificationThresholdColumn1722222659235 } from './migrations/1722222659235-VerificationThresholdColumn';
 
 dotenv.config();
 
@@ -183,5 +184,6 @@ export default new DataSource({
     RenameGroupMemberRequestTable1688348341669,
     SetDefaultForGroupMemberRequestTable1690333204053,
     UpdateVotingTimeLimitDefault1703118466924,
+    VerificationThresholdColumn1722222659235,
   ],
 });
