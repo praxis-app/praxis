@@ -531,7 +531,7 @@ export class UsersService {
       decisionMakingModel: serverConfig.decisionMakingModel,
       standAsidesLimit: serverConfig.standAsidesLimit,
       reservationsLimit: serverConfig.reservationsLimit,
-      ratificationThreshold: serverConfig.ratificationThreshold,
+      verificationThreshold: serverConfig.verificationThreshold,
       closingAt,
     };
 
