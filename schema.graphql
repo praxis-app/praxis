@@ -912,6 +912,7 @@ type ServerConfig {
   serverQuestionsPrompt: String
   showCanaryStatement: Boolean!
   standAsidesLimit: Int!
+  verificationThreshold: Int!
   votingTimeLimit: Int!
   websiteURL: String!
 }
@@ -1173,6 +1174,7 @@ input UpdateServerConfigInput {
   serverQuestionsPrompt: String
   showCanaryStatement: Boolean
   standAsidesLimit: Int
+  verificationThreshold: Int
   votingTimeLimit: Int
 }
 

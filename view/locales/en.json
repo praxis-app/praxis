@@ -871,8 +871,12 @@
   },
 
   "settings": {
+    "names": {
+      "verificationThreshold": "Verification Threshold"
+    },
     "descriptions": {
-      "decisionMakingModel": "Choose from consensus, consent, or majority vote to determine how decisions are made in the server."
+      "decisionMakingModel": "Choose from consensus, consent, or majority vote to determine how decisions are made in the server.",
+      "verificationThreshold": "Set the minimum percentage of positive votes required for a new member to be verified."
     }
   },
 

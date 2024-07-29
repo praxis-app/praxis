@@ -1384,6 +1384,7 @@ export type ServerConfig = {
   serverQuestionsPrompt?: Maybe<Scalars['String']['output']>;
   showCanaryStatement: Scalars['Boolean']['output'];
   standAsidesLimit: Scalars['Int']['output'];
+  verificationThreshold: Scalars['Int']['output'];
   votingTimeLimit: Scalars['Int']['output'];
   websiteURL: Scalars['String']['output'];
 };
@@ -1671,6 +1672,7 @@ export type UpdateServerConfigInput = {
   serverQuestionsPrompt?: InputMaybe<Scalars['String']['input']>;
   showCanaryStatement?: InputMaybe<Scalars['Boolean']['input']>;
   standAsidesLimit?: InputMaybe<Scalars['Int']['input']>;
+  verificationThreshold?: InputMaybe<Scalars['Int']['input']>;
   votingTimeLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
