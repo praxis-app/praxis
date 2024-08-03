@@ -865,7 +865,7 @@
         "decisionMakingModel": "The process used to decide on new members, which can be based on consensus, consent, or majority vote.",
         "standAsidesLimit": "The maximum number of stand asides allowed for a new member to still be verified.",
         "reservationsLimit": "The maximum number of reservations allowed for a new member to still be verified.",
-        "ratificationThreshold": "The minimum percentage of positive votes required for a new member to be verified."
+        "verificationThreshold": "The minimum percentage of positive votes required for a new member to be verified."
       }
     }
   },

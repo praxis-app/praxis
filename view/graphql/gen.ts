@@ -1335,9 +1335,9 @@ export type QuestionnaireTicketConfig = {
   closingAt?: Maybe<Scalars['DateTime']['output']>;
   decisionMakingModel: DecisionMakingModel;
   id: Scalars['Int']['output'];
-  ratificationThreshold: Scalars['Int']['output'];
   reservationsLimit: Scalars['Int']['output'];
   standAsidesLimit: Scalars['Int']['output'];
+  verificationThreshold: Scalars['Int']['output'];
 };
 
 export type QuestionnaireTicketsInput = {

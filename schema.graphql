@@ -866,9 +866,9 @@ type QuestionnaireTicketConfig {
   closingAt: DateTime
   decisionMakingModel: DecisionMakingModel!
   id: Int!
-  ratificationThreshold: Int!
   reservationsLimit: Int!
   standAsidesLimit: Int!
+  verificationThreshold: Int!
 }
 
 input QuestionnaireTicketsInput {
