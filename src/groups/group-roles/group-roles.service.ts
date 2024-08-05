@@ -75,18 +75,24 @@ export class GroupRolesService {
     });
   }
 
-  // TODO: Resolve issue with null name
   async createGroupRole(
     { name, ...roleData }: DeepPartial<GroupRole>,
     fromProposalAction = false,
   ) {
     const sanitizedName = sanitizeText(name);
-    if (name && sanitizedName.length > 25) {
+    if (!sanitizedName) {
+      throw new Error('Role name is required');
+    }
+    if (sanitizedName.length > 25) {
       throw new Error('Role name cannot be longer than 25 characters');
     }
     if (fromProposalAction) {
       const permission = cleanPermissions(roleData.permission);
-      return this.groupRoleRepository.save({ ...roleData, permission });
+      return this.groupRoleRepository.save({
+        ...roleData,
+        name: sanitizedName,
+        permission,
+      });
     }
     const permission = initGroupRolePermissions();
     const groupRole = await this.groupRoleRepository.save({
