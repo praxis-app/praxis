@@ -321,7 +321,7 @@ export class ProposalsService {
         await this.proposalActionsService.implementChangeServerRole(id);
       }
       if (actionType === ProposalActionType.CreateRole) {
-        await this.proposalActionsService.implementCreateServerRole(id);
+        await this.proposalActionsService.implementCreateRole(id);
       }
       return;
     }
@@ -331,7 +331,7 @@ export class ProposalsService {
       return;
     }
     if (actionType === ProposalActionType.CreateRole) {
-      await this.proposalActionsService.implementCreateGroupRole(id, groupId);
+      await this.proposalActionsService.implementCreateRole(id, groupId);
       return;
     }
     if (actionType === ProposalActionType.ChangeRole) {

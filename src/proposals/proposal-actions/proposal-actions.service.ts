@@ -138,8 +138,7 @@ export class ProposalActionsService {
     }
   }
 
-  // TODO: Reduce duplication between this and group role method
-  async implementCreateServerRole(proposalActionId: number) {
+  async implementCreateRole(proposalActionId: number, groupId?: number) {
     const role = await this.getProposalActionRole({ proposalActionId }, [
       'permission',
       'members',
@@ -149,12 +148,18 @@ export class ProposalActionsService {
     }
     const { name, color, permission } = role;
     const members = role.members?.map(({ userId }) => ({ id: userId }));
-    await this.serverRolesService.createServerRole(
+
+    const createRole = groupId
+      ? this.groupRolesService.createGroupRole
+      : this.serverRolesService.createServerRole;
+
+    await createRole(
       {
         name,
         color,
         permission,
         members,
+        groupId,
       },
       true,
     );
@@ -175,28 +180,6 @@ export class ProposalActionsService {
       throw new UserInputError('Could not find proposal action event host');
     }
     await this.createEventFromProposalAction(event, groupId, host.userId);
-  }
-
-  async implementCreateGroupRole(proposalActionId: number, groupId: number) {
-    const role = await this.getProposalActionRole({ proposalActionId }, [
-      'permission',
-      'members',
-    ]);
-    if (!role) {
-      throw new UserInputError('Could not find proposal action role');
-    }
-    const { name, color, permission } = role;
-    const members = role.members?.map(({ userId }) => ({ id: userId }));
-    await this.groupRolesService.createGroupRole(
-      {
-        name,
-        color,
-        permission,
-        groupId,
-        members,
-      },
-      true,
-    );
   }
 
   async implementChangeGroupRole(proposalActionId: number) {
