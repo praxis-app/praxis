@@ -1,0 +1,6 @@
+query VerifiedServerMembers {
+  verifiedUsers {
+    id
+    ...UserAvatar
+  }
+}

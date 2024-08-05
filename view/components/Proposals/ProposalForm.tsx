@@ -23,6 +23,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import {
   ProposalActionFieldName,
   ProposalFormFieldName,
+  ProposalScope,
 } from '../../constants/proposal.constants';
 import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
 import { toastVar } from '../../graphql/cache';
@@ -92,6 +93,7 @@ const ProposalForm = ({
 }: Props) => {
   const [clicked, setClicked] = useState(false);
   const [selectInputsKey, setSelectInputsKey] = useState('');
+  const [scope, setScope] = useState<ProposalScope | ''>('');
 
   const [createProposal] = useCreateProposalMutation();
   const [updateProposal] = useUpdateProposalMutation();
@@ -111,8 +113,15 @@ const ProposalForm = ({
     action,
     groupId,
   };
-  const actionTypeOptions = getProposalActionTypeOptions(t);
+
+  const isGroupProposal = scope === ProposalScope.Group;
   const isGroupPage = pathname.includes(NavigationPaths.Groups);
+
+  const showGroupActions = isGroupProposal || !scope;
+  const actionTypeOptions = getProposalActionTypeOptions(t, showGroupActions);
+
+  const showGroupSelect =
+    !editProposal && !isGroupPage && joinedGroups && isGroupProposal;
 
   const getSelectedGroupVotingTimeLimit = (
     groupId: number | null | undefined,
@@ -129,7 +138,7 @@ const ProposalForm = ({
     return dayjs().add(votingTimeLimit, 'minutes');
   };
 
-  const validateProposal = ({ body, action, groupId }: CreateProposalInput) => {
+  const validateProposal = ({ body, action }: CreateProposalInput) => {
     const errors: ProposalFormErrors = {
       action: {},
     };
@@ -162,9 +171,6 @@ const ProposalForm = ({
       !action.role
     ) {
       errors.action.role = t('proposals.errors.missingRole');
-    }
-    if (!groupId && !editProposal) {
-      errors.groupId = t('proposals.errors.missingGroupId');
     }
     if (!Object.keys(errors.action).length && !errors.groupId) {
       return {};
@@ -238,6 +244,7 @@ const ProposalForm = ({
         resetForm();
         setClicked(false);
         setSubmitting(false);
+        setScope('');
       },
     });
 
@@ -340,6 +347,22 @@ const ProposalForm = ({
     setFieldValue(ProposalFormFieldName.GroupId, target.value);
   };
 
+  const handleScopeSelectChange = (
+    e: SelectChangeEvent,
+    actionType: ProposalActionType,
+    setFieldValue: (field: ProposalActionFieldName, value: string) => void,
+  ) => {
+    const isValidForServerScope =
+      actionType === 'ChangeRole' ||
+      actionType === 'CreateRole' ||
+      actionType === 'Test';
+
+    if (e.target.value === ProposalScope.Server && !isValidForServerScope) {
+      setFieldValue(ProposalActionFieldName.ActionType, '');
+    }
+    setScope(e.target.value as ProposalScope);
+  };
+
   const handleModalClose = (
     setFieldValue: (field: string, value: ProposalActionInput | null) => void,
   ) => {
@@ -409,7 +432,29 @@ const ProposalForm = ({
                   )}
                 </FormControl>
 
-                {joinedGroups && !editProposal && !isGroupPage && (
+                <FormControl sx={{ marginBottom: 1 }} variant="standard">
+                  <InputLabel>{t('proposals.labels.scope')}</InputLabel>
+                  <Select
+                    key={selectInputsKey}
+                    onChange={(e) =>
+                      handleScopeSelectChange(
+                        e,
+                        values.action.actionType,
+                        setFieldValue,
+                      )
+                    }
+                    value={scope}
+                  >
+                    <MenuItem value={ProposalScope.Server}>
+                      {t('proposals.labels.server')}
+                    </MenuItem>
+                    <MenuItem value={ProposalScope.Group}>
+                      {t('groups.labels.group')}
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+
+                {showGroupSelect && (
                   <FormControl
                     error={!!(errors.groupId && touched.groupId)}
                     sx={{ marginBottom: 1 }}
@@ -430,16 +475,6 @@ const ProposalForm = ({
                         </MenuItem>
                       ))}
                     </Select>
-                    {!!(errors.groupId && submitCount) && (
-                      <Typography
-                        color="error"
-                        fontSize="small"
-                        marginTop={0.5}
-                        gutterBottom
-                      >
-                        {t('proposals.errors.missingGroupId')}
-                      </Typography>
-                    )}
                   </FormControl>
                 )}
 
@@ -466,6 +501,7 @@ const ProposalForm = ({
                 {values.action.role && (
                   <ProposalActionRole
                     actionType={values.action.actionType}
+                    isServerScope={scope === ProposalScope.Server}
                     role={values.action.role}
                     marginTop={3}
                     preview
@@ -522,6 +558,7 @@ const ProposalForm = ({
             key={`${values.action.actionType}-${values.groupId}`}
             actionType={values.action.actionType}
             groupId={values.groupId}
+            isServerScope={scope === ProposalScope.Server}
             onClose={() => handleModalClose(setFieldValue)}
             setFieldValue={setFieldValue}
           />

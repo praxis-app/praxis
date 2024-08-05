@@ -32,7 +32,7 @@ export class QuestionnaireTicketConfig {
 
   @Column()
   @Field(() => Int)
-  ratificationThreshold: number;
+  verificationThreshold: number;
 
   @Column({ nullable: true })
   @Field({ nullable: true })

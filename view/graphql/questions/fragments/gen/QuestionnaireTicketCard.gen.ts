@@ -30,7 +30,7 @@ export type QuestionnaireTicketCardFragment = {
     id: number;
     closingAt?: any | null;
     decisionMakingModel: Types.DecisionMakingModel;
-    ratificationThreshold: number;
+    verificationThreshold: number;
     reservationsLimit: number;
     standAsidesLimit: number;
   };
@@ -67,7 +67,7 @@ export const QuestionnaireTicketCardFragmentDoc = gql`
       id
       closingAt
       decisionMakingModel
-      ratificationThreshold
+      verificationThreshold
       reservationsLimit
       standAsidesLimit
     }

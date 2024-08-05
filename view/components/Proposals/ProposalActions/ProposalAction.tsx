@@ -10,9 +10,10 @@ import ProposalActionRole from './ProposalActionRole';
 
 interface Props {
   action: ProposalActionFragment;
-  proposalId: number;
-  isShared?: boolean;
   isCompact?: boolean;
+  isServerScope?: boolean;
+  isShared?: boolean;
+  proposalId: number;
   ratified: boolean;
 }
 
@@ -20,16 +21,17 @@ const ProposalAction = ({
   action: {
     actionType,
     event,
-    groupSettings,
     groupCoverPhoto,
     groupDescription,
     groupName,
+    groupSettings,
     role,
   },
-  ratified,
-  proposalId,
   isCompact,
+  isServerScope,
   isShared,
+  proposalId,
+  ratified,
 }: Props) => {
   const { t } = useTranslation();
 
@@ -85,6 +87,7 @@ const ProposalAction = ({
         role={role}
         actionType={actionType}
         isCompact={isCompact}
+        isServerScope={isServerScope}
         isShared={isShared}
         proposalId={proposalId}
         ratified={ratified}

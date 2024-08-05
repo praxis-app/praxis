@@ -1,10 +1,14 @@
 import { t } from 'i18next';
 import { Namespace, TFunction } from 'react-i18next';
-import { GroupPermissionsFragment } from '../graphql/groups/fragments/gen/GroupPermissions.gen';
-import { ServerRolePermissionInput } from '../graphql/gen';
+import {
+  GroupPermissions,
+  GroupRolePermissionInput,
+  ServerPermissions,
+  ServerRolePermissionInput,
+} from '../graphql/gen';
 
 export type PermissionName = keyof Omit<
-  ServerRolePermissionInput & GroupPermissionsFragment,
+  ServerRolePermissionInput & GroupRolePermissionInput,
   '__typename'
 >;
 
@@ -111,7 +115,7 @@ export const getPermissionText = (
 
 export const initGroupRolePermissions = (
   enabled = false,
-): Omit<GroupPermissionsFragment, '__typename'> => ({
+): Omit<GroupPermissions, '__typename'> => ({
   approveMemberRequests: enabled,
   createEvents: enabled,
   deleteGroup: enabled,
@@ -122,6 +126,24 @@ export const initGroupRolePermissions = (
   manageSettings: enabled,
   removeMembers: enabled,
   updateGroup: enabled,
+});
+
+export const initServerRolePermissions = (
+  enabled = false,
+): Omit<ServerPermissions, '__typename'> => ({
+  createInvites: enabled,
+  manageComments: enabled,
+  manageEvents: enabled,
+  manageInvites: enabled,
+  managePosts: enabled,
+  manageQuestionnaireTickets: enabled,
+  manageQuestions: enabled,
+  manageRoles: enabled,
+  manageRules: enabled,
+  manageSettings: enabled,
+  removeGroups: enabled,
+  removeMembers: enabled,
+  removeProposals: enabled,
 });
 
 export const cleanPermissions = <T>(object: T): Partial<T> => {

@@ -209,7 +209,7 @@ export class VibeCheckService {
       ['config'],
     );
     return Math.ceil(
-      initialMemberCount * (config.ratificationThreshold * 0.01),
+      initialMemberCount * (config.verificationThreshold * 0.01),
     );
   }
 
@@ -379,7 +379,7 @@ export class VibeCheckService {
   async hasConsensus(
     votes: Vote[],
     {
-      ratificationThreshold,
+      verificationThreshold,
       reservationsLimit,
       standAsidesLimit,
       closingAt,
@@ -395,7 +395,7 @@ export class VibeCheckService {
 
     return (
       agreements.length >=
-        initialMemberCount * (ratificationThreshold * 0.01) &&
+        initialMemberCount * (verificationThreshold * 0.01) &&
       reservations.length <= reservationsLimit &&
       standAsides.length <= standAsidesLimit &&
       blocks.length === 0
@@ -404,7 +404,7 @@ export class VibeCheckService {
 
   async hasMajorityVote(
     votes: Vote[],
-    { ratificationThreshold, closingAt }: QuestionnaireTicketConfig,
+    { verificationThreshold, closingAt }: QuestionnaireTicketConfig,
     initialMemberCount: number,
   ) {
     if (closingAt && Date.now() < Number(closingAt)) {
@@ -413,7 +413,7 @@ export class VibeCheckService {
     const { agreements } = sortMajorityVotesByType(votes);
 
     return (
-      agreements.length >= initialMemberCount * (ratificationThreshold * 0.01)
+      agreements.length >= initialMemberCount * (verificationThreshold * 0.01)
     );
   }
 

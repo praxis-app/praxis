@@ -17,6 +17,7 @@ import {
 } from '../../../graphql/gen';
 import { useGroupRoleByRoleIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRoleByRoleId.gen';
 import { ProposalActionRoleFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionRole.gen';
+import { useServerRoleByIdLazyQuery } from '../../../graphql/roles/queries/gen/ServerRoleById.gen';
 import { useUsersByIdsLazyQuery } from '../../../graphql/users/queries/gen/UsersByIds.gen';
 import { useIsDesktop } from '../../../hooks/shared.hooks';
 import { cleanPermissions } from '../../../utils/role.utils';
@@ -41,6 +42,7 @@ interface Props extends Omit<BoxProps, 'role'> {
   role: ProposalActionRoleFragment | ProposalActionRoleInput;
   actionType: ProposalActionType;
   isCompact?: boolean;
+  isServerScope?: boolean;
   isShared?: boolean;
   preview?: boolean;
   proposalId?: number;
@@ -52,6 +54,7 @@ const ProposalActionRole = ({
   role,
   actionType,
   isCompact,
+  isServerScope,
   isShared,
   preview,
   proposalId,
@@ -67,13 +70,22 @@ const ProposalActionRole = ({
   );
 
   const [
-    getSelectedRole,
+    getSelectedGroupRole,
     {
-      data: selectedRoleData,
-      loading: selectedRoleLoading,
-      error: selectedRoleError,
+      data: selectedGroupRoleData,
+      loading: selectedGroupRoleLoading,
+      error: selectedGroupRoleError,
     },
   ] = useGroupRoleByRoleIdLazyQuery();
+
+  const [
+    getSelectedServerRole,
+    {
+      data: selectedServerRoleData,
+      loading: selectedServerRoleLoading,
+      error: selectedServerRoleError,
+    },
+  ] = useServerRoleByIdLazyQuery();
 
   const [
     getSelectedUsers,
@@ -99,33 +111,69 @@ const ProposalActionRole = ({
       variables: { userIds },
     });
     if ('roleToUpdateId' in role && role.roleToUpdateId) {
-      getSelectedRole({
+      if (isServerScope) {
+        getSelectedServerRole({
+          variables: { id: role.roleToUpdateId },
+        });
+        return;
+      }
+      getSelectedGroupRole({
         variables: { id: role.roleToUpdateId },
       });
     }
-  }, [preview, getSelectedUsers, getSelectedRole, role]);
+  }, [
+    getSelectedGroupRole,
+    getSelectedServerRole,
+    getSelectedUsers,
+    isServerScope,
+    preview,
+    role,
+  ]);
 
-  if (selectedRoleError || selectedUsersError) {
+  if (selectedGroupRoleError || selectedServerRoleError || selectedUsersError) {
     return <Typography>{t('errors.somethingWentWrong')}</Typography>;
   }
 
-  if (selectedRoleLoading || selectedUsersLoading) {
+  if (
+    selectedGroupRoleLoading ||
+    selectedServerRoleLoading ||
+    selectedUsersLoading
+  ) {
     return <ProgressBar />;
   }
 
+  const getRoleToChange = () => {
+    if (isServerScope) {
+      if ('serverRole' in role) {
+        return role.serverRole;
+      }
+      return selectedServerRoleData?.serverRole;
+    }
+    if ('groupRole' in role) {
+      return role.groupRole;
+    }
+    return selectedGroupRoleData?.groupRole;
+  };
+
+  const getOldName = () => {
+    if (ratified && 'oldName' in role && role.oldName) {
+      return role.oldName;
+    }
+    return getRoleToChange()?.name;
+  };
+
+  const getOldColor = () => {
+    if (ratified && 'oldColor' in role && role.oldColor) {
+      return role.oldColor;
+    }
+    return getRoleToChange()?.color;
+  };
+
   const { name, color, permissions, members } = role;
-  const roleToChange =
-    'groupRole' in role ? role.groupRole : selectedRoleData?.groupRole;
-
-  const oldName =
-    ratified && 'oldName' in role ? role.oldName : roleToChange?.name;
-  const oldColor =
-    ratified && 'oldColor' in role ? role.oldColor : roleToChange?.color;
-
   const isRoleChange = actionType === 'ChangeRole';
   const isAddingRole = actionType === 'CreateRole';
-  const isChangingName = isRoleChange && name && name !== oldName;
-  const isChangingColor = isRoleChange && color && color !== oldColor;
+  const isChangingName = isRoleChange && name && name !== getOldName();
+  const isChangingColor = isRoleChange && color && color !== getOldColor();
 
   const includedPermissions = cleanPermissions(permissions) || {};
   const includedPermissionNames = getTypedKeys(includedPermissions);
@@ -141,7 +189,7 @@ const ProposalActionRole = ({
     paddingX: 2,
   };
   const circleIconStyles: SxProps = {
-    color: isChangingColor ? oldColor : color,
+    color: isChangingColor ? getOldColor() : color,
     marginTop: 0.5,
     fontSize: 16,
   };
@@ -197,7 +245,7 @@ const ProposalActionRole = ({
             whiteSpace="nowrap"
             width={getRoleNameTextWidth()}
           >
-            {isChangingName ? oldName : name}
+            {isChangingName ? getOldName() : name}
           </Box>
         </AccordionSummary>
 
@@ -220,7 +268,7 @@ const ProposalActionRole = ({
                   <ChangeDelta
                     label={t('proposals.labels.name')}
                     proposedValue={name}
-                    oldValue={oldName}
+                    oldValue={getOldName()}
                   />
                 )}
 
@@ -228,7 +276,7 @@ const ProposalActionRole = ({
                   <ChangeDelta
                     label={t('proposals.labels.color')}
                     proposedValue={color}
-                    oldValue={oldColor}
+                    oldValue={getOldColor()}
                     oldValueIcon={<Circle sx={colorChangeIconStyles} />}
                     proposedValueIcon={
                       <Circle sx={{ ...colorChangeIconStyles, color }} />

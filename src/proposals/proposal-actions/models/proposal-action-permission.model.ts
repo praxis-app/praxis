@@ -57,6 +57,34 @@ export class ProposalActionPermission {
   @Field({ nullable: true })
   removeMembers?: boolean;
 
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  manageInvites?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  createInvites?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  removeGroups?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  removeProposals?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  manageRules?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  manageQuestions?: boolean;
+
+  @Column({ nullable: true })
+  @Field({ nullable: true })
+  manageQuestionnaireTickets?: boolean;
+
   @Field(() => ProposalActionRole, { name: 'role' })
   @OneToOne(
     () => ProposalActionRole,

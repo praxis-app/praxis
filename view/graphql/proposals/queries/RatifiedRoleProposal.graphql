@@ -1,0 +1,17 @@
+query RatifiedRoleProposal($proposalId: Int!) {
+  proposal(id: $proposalId) {
+    id
+    action {
+      id
+      role {
+        ...ProposalActionRole
+        serverRole {
+          ...ServerRoleView
+        }
+        groupRole {
+          ...EditGroupRoleTabs
+        }
+      }
+    }
+  }
+}

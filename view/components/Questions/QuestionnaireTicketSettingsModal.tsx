@@ -19,7 +19,7 @@ const QuestionnaireTicketSettingsModal = ({
   settings: {
     closingAt,
     decisionMakingModel,
-    ratificationThreshold,
+    verificationThreshold,
     reservationsLimit,
     standAsidesLimit,
   },
@@ -103,11 +103,11 @@ const QuestionnaireTicketSettingsModal = ({
       {showRatificationThreshold && (
         <>
           <Setting
-            name={t('groups.settings.names.ratificationThreshold')}
+            name={t('settings.names.verificationThreshold')}
             description={t(
-              'questions.settings.explanations.ratificationThreshold',
+              'questions.settings.explanations.verificationThreshold',
             )}
-            value={`${ratificationThreshold}%`}
+            value={`${verificationThreshold}%`}
             divider={false}
           />
         </>

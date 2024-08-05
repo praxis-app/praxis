@@ -31,5 +31,8 @@ export class UpdateServerConfigInput {
   ratificationThreshold?: number;
 
   @Field(() => Int, { nullable: true })
+  verificationThreshold?: number;
+
+  @Field(() => Int, { nullable: true })
   votingTimeLimit?: number;
 }

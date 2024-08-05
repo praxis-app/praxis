@@ -2,12 +2,19 @@ fragment ProposalActionPermission on ProposalActionPermission {
   id
   approveMemberRequests
   createEvents
+  createInvites
   deleteGroup
   manageComments
   manageEvents
+  manageInvites
   managePosts
+  manageQuestionnaireTickets
+  manageQuestions
   manageRoles
+  manageRules
   manageSettings
+  removeGroups
   removeMembers
+  removeProposals
   updateGroup
 }

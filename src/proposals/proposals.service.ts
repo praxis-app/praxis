@@ -12,6 +12,7 @@ import { deleteImageFile, saveImage } from '../images/image.utils';
 import { Image } from '../images/models/image.model';
 import { NotificationType } from '../notifications/notifications.constants';
 import { NotificationsService } from '../notifications/notifications.service';
+import { ServerConfig } from '../server-configs/models/server-config.model';
 import { User } from '../users/models/user.model';
 import { Vote } from '../votes/models/vote.model';
 import {
@@ -47,6 +48,12 @@ export class ProposalsService {
 
     @InjectRepository(Vote)
     private voteRepository: Repository<Vote>,
+
+    @InjectRepository(ServerConfig)
+    private serverConfigRepository: Repository<ServerConfig>,
+
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
 
     private groupsService: GroupsService,
     private notificationsService: NotificationsService,
@@ -85,6 +92,16 @@ export class ProposalsService {
     return this.proposalConfigRepository.findOneOrFail({
       where: { proposalId },
     });
+  }
+
+  async getConfigForNewProposal(groupId?: number) {
+    if (groupId) {
+      const { config } = await this.groupsService.getGroup({ id: groupId }, [
+        'config',
+      ]);
+      return config;
+    }
+    return this.getServerConfig();
   }
 
   async getProposalComments(proposalId: number) {
@@ -129,13 +146,21 @@ export class ProposalsService {
     );
   }
 
+  async getServerConfig() {
+    const serverConfigs = await this.serverConfigRepository.find();
+    if (!serverConfigs.length) {
+      return this.serverConfigRepository.save({});
+    }
+    return serverConfigs[0];
+  }
+
   async createProposal(
     {
       body,
       images,
       closingAt,
       action: { groupCoverPhoto, role, event, groupSettings, ...action },
-      ...proposalData
+      groupId,
     }: CreateProposalInput,
     user: User,
   ) {
@@ -144,11 +169,8 @@ export class ProposalsService {
       throw new Error('Proposals must be 8000 characters or less');
     }
 
-    const { config } = await this.groupsService.getGroup(
-      { id: proposalData.groupId },
-      ['config'],
-    );
-    const groupClosingAt = config.votingTimeLimit
+    const config = await this.getConfigForNewProposal(groupId);
+    const configClosingAt = config.votingTimeLimit
       ? new Date(Date.now() + config.votingTimeLimit * 60 * 1000)
       : undefined;
 
@@ -157,14 +179,14 @@ export class ProposalsService {
       ratificationThreshold: config.ratificationThreshold,
       reservationsLimit: config.reservationsLimit,
       standAsidesLimit: config.standAsidesLimit,
-      closingAt: closingAt || groupClosingAt,
+      closingAt: closingAt || configClosingAt,
     };
 
     const proposal = await this.proposalRepository.save({
-      ...proposalData,
       body: sanitizedBody,
       config: proposalConfig,
       userId: user.id,
+      groupId,
       action,
     });
 
@@ -183,6 +205,7 @@ export class ProposalsService {
         await this.proposalActionsService.createProposalActionRole(
           proposal.action.id,
           role,
+          !groupId,
         );
       }
       if (event) {
@@ -278,14 +301,28 @@ export class ProposalsService {
     });
   }
 
+  async getProposalMembers(groupId: number | null) {
+    if (groupId) {
+      return this.groupsService.getGroupMembers(groupId);
+    }
+    return this.userRepository.find({
+      where: { verified: true },
+    });
+  }
+
   async implementProposal(proposalId: number) {
     const {
       action: { id, actionType, groupDescription, groupName },
       groupId,
     } = await this.getProposal(proposalId, ['action']);
 
-    // TODO: Add support for server proposals
     if (!groupId) {
+      if (actionType === ProposalActionType.ChangeRole) {
+        await this.proposalActionsService.implementChangeServerRole(id);
+      }
+      if (actionType === ProposalActionType.CreateRole) {
+        await this.proposalActionsService.implementCreateRole(id);
+      }
       return;
     }
 
@@ -294,7 +331,7 @@ export class ProposalsService {
       return;
     }
     if (actionType === ProposalActionType.CreateRole) {
-      await this.proposalActionsService.implementCreateGroupRole(id, groupId);
+      await this.proposalActionsService.implementCreateRole(id, groupId);
       return;
     }
     if (actionType === ProposalActionType.ChangeRole) {
@@ -325,28 +362,23 @@ export class ProposalsService {
   }
 
   async isProposalRatifiable(proposalId: number) {
-    const { votes, stage, group, config } = await this.getProposal(proposalId, [
-      'group.members',
-      'config',
-      'votes',
-    ]);
-
-    // TODO: Add support for server proposals
-    if (!group) {
-      return false;
-    }
+    const { votes, stage, config, groupId } = await this.getProposal(
+      proposalId,
+      ['config', 'votes'],
+    );
+    const members = await this.getProposalMembers(groupId);
 
     if (stage !== ProposalStage.Voting) {
       return false;
     }
     if (config.decisionMakingModel === DecisionMakingModel.Consensus) {
-      return this.hasConsensus(votes, config, group.members);
+      return this.hasConsensus(votes, config, members);
     }
     if (config.decisionMakingModel === DecisionMakingModel.Consent) {
       return this.hasConsent(votes, config);
     }
     if (config.decisionMakingModel === DecisionMakingModel.MajorityVote) {
-      return this.hasMajorityVote(votes, config, group.members);
+      return this.hasMajorityVote(votes, config, members);
     }
     return false;
   }
@@ -444,7 +476,7 @@ export class ProposalsService {
   }
 
   async synchronizeProposalById(id: number) {
-    const proposal = await this.getProposal(id, ['group.config']);
+    const proposal = await this.getProposal(id, ['config']);
     const syncedProposal = await this.synchronizeProposal(proposal);
     return { proposal: syncedProposal };
   }

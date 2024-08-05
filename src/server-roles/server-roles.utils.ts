@@ -17,3 +17,12 @@ export const initServerRolePermissions = (
   removeMembers: enabled,
   removeProposals: enabled,
 });
+
+export const cleanPermissions = <T>(permissions?: Partial<T>): Partial<T> => {
+  if (!permissions) {
+    return {};
+  }
+  return Object.entries(permissions)
+    .filter(([_, value]) => typeof value === 'boolean')
+    .reduce((result, [key, value]) => ({ ...result, [key]: value }), {});
+};

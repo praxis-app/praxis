@@ -40,7 +40,7 @@ export type ServerQuestionnairesQuery = {
       id: number;
       closingAt?: any | null;
       decisionMakingModel: Types.DecisionMakingModel;
-      ratificationThreshold: number;
+      verificationThreshold: number;
       reservationsLimit: number;
       standAsidesLimit: number;
     };

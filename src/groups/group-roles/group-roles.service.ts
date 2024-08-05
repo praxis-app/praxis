@@ -6,11 +6,9 @@ import {
   ADMIN_ROLE_NAME,
   DEFAULT_ROLE_COLOR,
 } from '../../server-roles/server-roles.constants';
+import { cleanPermissions } from '../../server-roles/server-roles.utils';
 import { User } from '../../users/models/user.model';
-import {
-  cleanGroupPermissions,
-  initGroupRolePermissions,
-} from './group-role.utils';
+import { initGroupRolePermissions } from './group-role.utils';
 import { GroupRolePermission } from './models/group-role-permission.model';
 import { GroupRole } from './models/group-role.model';
 import { UpdateGroupRoleInput } from './models/update-group-role.input';
@@ -82,12 +80,19 @@ export class GroupRolesService {
     fromProposalAction = false,
   ) {
     const sanitizedName = sanitizeText(name);
-    if (name && sanitizedName.length > 25) {
+    if (!sanitizedName) {
+      throw new Error('Role name is required');
+    }
+    if (sanitizedName.length > 25) {
       throw new Error('Role name cannot be longer than 25 characters');
     }
     if (fromProposalAction) {
-      const permission = cleanGroupPermissions(roleData.permission);
-      return this.groupRoleRepository.save({ ...roleData, permission });
+      const permission = cleanPermissions(roleData.permission);
+      return this.groupRoleRepository.save({
+        ...roleData,
+        name: sanitizedName,
+        permission,
+      });
     }
     const permission = initGroupRolePermissions();
     const groupRole = await this.groupRoleRepository.save({
@@ -119,7 +124,7 @@ export class GroupRolesService {
     const newMembers = await this.userRepository.find({
       where: { id: In(selectedUserIds) },
     });
-    const cleanedPermissions = cleanGroupPermissions(permissions);
+    const cleanedPermissions = cleanPermissions(permissions);
 
     const groupRole = await this.groupRoleRepository.save({
       ...roleWithRelations,

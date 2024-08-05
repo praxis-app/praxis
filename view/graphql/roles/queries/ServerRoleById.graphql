@@ -1,0 +1,19 @@
+query ServerRoleById($id: Int!) {
+  serverRole(id: $id) {
+    id
+    name
+    color
+
+    permissions {
+      ...ServerRolePermissions
+    }
+
+    members {
+      ...UserAvatar
+    }
+
+    availableUsersToAdd {
+      ...UserAvatar
+    }
+  }
+}

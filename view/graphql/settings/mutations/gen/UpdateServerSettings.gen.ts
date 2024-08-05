@@ -27,6 +27,7 @@ export type UpdateServerSettingsMutation = {
       serverQuestionsPrompt?: string | null;
       showCanaryStatement: boolean;
       standAsidesLimit: number;
+      verificationThreshold: number;
       votingTimeLimit: number;
     };
     canary: {

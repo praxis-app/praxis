@@ -16,6 +16,7 @@ export type ServerSettingsFormFragment = {
   serverQuestionsPrompt?: string | null;
   showCanaryStatement: boolean;
   standAsidesLimit: number;
+  verificationThreshold: number;
   votingTimeLimit: number;
 };
 
@@ -30,6 +31,7 @@ export const ServerSettingsFormFragmentDoc = gql`
     serverQuestionsPrompt
     showCanaryStatement
     standAsidesLimit
+    verificationThreshold
     votingTimeLimit
   }
 `;

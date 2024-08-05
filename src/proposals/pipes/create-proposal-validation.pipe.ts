@@ -3,6 +3,12 @@ import { GroupsService } from '../../groups/groups.service';
 import { CreateProposalInput } from '../models/create-proposal.input';
 import { ProposalActionType } from '../proposals.constants';
 
+const VALID_SERVER_ACTIONS = [
+  ProposalActionType.CreateRole,
+  ProposalActionType.ChangeRole,
+  ProposalActionType.Test,
+];
+
 @Injectable()
 export class CreateProposalValidationPipe implements PipeTransform {
   constructor(private groupsService: GroupsService) {}
@@ -11,17 +17,23 @@ export class CreateProposalValidationPipe implements PipeTransform {
     if (metadata.metatype?.name === CreateProposalInput.name) {
       await this.validateProposalAction(value);
       await this.validateClosingAt(value);
-      await this.validateGroupId(value);
     }
     return value;
   }
 
-  async validateProposalAction({ action }: CreateProposalInput) {
+  async validateProposalAction({ action, groupId }: CreateProposalInput) {
     if (!action) {
       throw new Error('Proposals must include an action');
     }
     const { actionType, groupCoverPhoto, groupDescription, groupName, role } =
       action;
+
+    // Validate that the action type is valid for proposal scope
+    if (!groupId && !VALID_SERVER_ACTIONS.includes(actionType)) {
+      throw new Error(`Invalid action type for server proposal: ${actionType}`);
+    }
+
+    // Validate that required fields are present for all actions
     if (actionType === ProposalActionType.ChangeName && !groupName) {
       throw new Error(
         'Proposals to change group name must include a name field',
@@ -73,13 +85,6 @@ export class CreateProposalValidationPipe implements PipeTransform {
     }
     if (groupClosingAt && closingAt < groupClosingAt) {
       throw new Error('Voting time limit must not be shorter than group limit');
-    }
-  }
-
-  // TODO: Remove once support for server proposals has been added
-  async validateGroupId({ groupId }: CreateProposalInput) {
-    if (!groupId) {
-      throw new Error('Only group proposals are supported at this time');
     }
   }
 }

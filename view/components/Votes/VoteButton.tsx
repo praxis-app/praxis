@@ -14,7 +14,7 @@ import { NavigationPaths, TypeNames } from '../../constants/shared.constants';
 import { VoteTypes } from '../../constants/vote.constants';
 import { toastVar } from '../../graphql/cache';
 import { DecisionMakingModel } from '../../graphql/gen';
-import { useRolesByGroupIdLazyQuery } from '../../graphql/roles/queries/gen/RolesByGroupId.gen';
+import { useRatifiedRoleProposalLazyQuery } from '../../graphql/proposals/queries/gen/RatifiedRoleProposal.gen';
 import {
   CreateVoteMutation,
   useCreateVoteMutation,
@@ -61,9 +61,7 @@ const VoteButton = ({
   const [createVote, { loading: createVoteLoading }] = useCreateVoteMutation();
   const [updateVote, { loading: updateVoteLoading }] = useUpdateVoteMutation();
   const [deleteVote, { loading: deleteVoteLoading }] = useDeleteVoteMutation();
-
-  const [getGroupRoles, { loading: groupRolesLoading }] =
-    useRolesByGroupIdLazyQuery();
+  const [getRatifiedRoleProposalDetails] = useRatifiedRoleProposalLazyQuery();
 
   const { pathname } = useLocation();
   const { t } = useTranslation();
@@ -78,10 +76,7 @@ const VoteButton = ({
   };
 
   const isDisabled =
-    createVoteLoading ||
-    updateVoteLoading ||
-    deleteVoteLoading ||
-    groupRolesLoading;
+    createVoteLoading || updateVoteLoading || deleteVoteLoading;
 
   const getVoteButtonLabel = () => {
     if (isRatified) {
@@ -106,36 +101,33 @@ const VoteButton = ({
     const {
       vote: { proposal },
     } = 'createVote' in data ? data.createVote : data.updateVote;
-    if (!proposal) {
+    if (!proposal || proposal.stage !== 'Ratified') {
       return;
     }
+
+    toastVar({
+      status: 'info',
+      title: t('proposals.toasts.ratifiedSuccess'),
+    });
+
     const {
       action: { actionType },
       group,
-      stage,
     } = proposal;
 
-    const isRatified = stage === 'Ratified';
-
-    if (isRatified) {
-      const isRoleProposal =
-        actionType === 'CreateRole' || actionType === 'ChangeRole';
-
-      // Load group roles if a role was added or changed
-      if (isRoleProposal && group) {
-        await getGroupRoles({ variables: { id: group.id } });
-      }
-
-      toastVar({
-        status: 'info',
-        title: t('proposals.toasts.ratifiedSuccess'),
+    if (actionType === 'CreateRole' || actionType === 'ChangeRole') {
+      await getRatifiedRoleProposalDetails({
+        variables: { proposalId: proposal.id },
       });
     }
 
+    /**
+     * TODO: Determine whether a redirect is still needed here
+     * A modal might be a better solution for this
+     */
     if (
       pathname.includes(NavigationPaths.Groups) &&
       actionType === 'ChangeName' &&
-      isRatified &&
       group
     ) {
       const groupPath = getGroupPath(group.name);

@@ -25,6 +25,7 @@ export type ServerSettingsQuery = {
     serverQuestionsPrompt?: string | null;
     showCanaryStatement: boolean;
     standAsidesLimit: number;
+    verificationThreshold: number;
     votingTimeLimit: number;
   };
   canary: { __typename?: 'Canary'; id: number; statement: string };

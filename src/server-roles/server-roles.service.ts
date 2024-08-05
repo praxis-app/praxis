@@ -8,7 +8,10 @@ import { ServerRolePermission } from './models/server-role-permission.model';
 import { ServerRole } from './models/server-role.model';
 import { UpdateServerRoleInput } from './models/update-server-role.input';
 import { ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR } from './server-roles.constants';
-import { initServerRolePermissions } from './server-roles.utils';
+import {
+  cleanPermissions,
+  initServerRolePermissions,
+} from './server-roles.utils';
 
 @Injectable()
 export class ServerRolesService {
@@ -81,7 +84,12 @@ export class ServerRolesService {
       throw new Error('Role name cannot be longer than 25 characters');
     }
     if (fromProposalAction) {
-      return this.serverRoleRepository.save(roleData);
+      const permission = cleanPermissions(roleData.permission);
+      return this.serverRoleRepository.save({
+        ...roleData,
+        name: sanitizedName,
+        permission,
+      });
     }
     const permission = initServerRolePermissions();
     const serverRole = await this.serverRoleRepository.save({
@@ -100,7 +108,7 @@ export class ServerRolesService {
       permissions,
       ...roleData
     }: UpdateServerRoleInput,
-    me: User,
+    me?: User,
   ) {
     const sanitizedName = sanitizeText(name);
     if (typeof name === 'string' && !sanitizedName) {
@@ -144,6 +152,15 @@ export class ServerRolesService {
     await this.chatService.syncVibeChatMembersWithRoles();
 
     return { serverRole, me };
+  }
+
+  async deleteServerRoleMembers(id: number, userIds: number[]) {
+    const role = await this.getServerRole({ id }, ['members']);
+
+    role.members = role.members.filter(
+      (member) => !userIds.some((id) => member.id === id),
+    );
+    await this.serverRoleRepository.save(role);
   }
 
   async getServerRolePermission(serverRoleId: number) {

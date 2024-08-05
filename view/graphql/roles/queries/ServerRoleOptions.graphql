@@ -1,0 +1,6 @@
+query ServerRoleOptions {
+  serverRoles {
+    id
+    name
+  }
+}

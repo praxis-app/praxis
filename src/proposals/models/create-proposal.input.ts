@@ -5,7 +5,7 @@ import { ProposalActionInput } from '../proposal-actions/models/proposal-action.
 @InputType()
 export class CreateProposalInput {
   @Field(() => Int, { nullable: true })
-  groupId: number;
+  groupId?: number;
 
   @Field({ nullable: true })
   body?: string;

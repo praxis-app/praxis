@@ -671,15 +671,42 @@ input ProposalActionInput {
 type ProposalActionPermission {
   approveMemberRequests: Boolean
   createEvents: Boolean
+  createInvites: Boolean
   deleteGroup: Boolean
   id: Int!
   manageComments: Boolean
   manageEvents: Boolean
+  manageInvites: Boolean
   managePosts: Boolean
+  manageQuestionnaireTickets: Boolean
+  manageQuestions: Boolean
   manageRoles: Boolean
+  manageRules: Boolean
   manageSettings: Boolean
+  removeGroups: Boolean
   removeMembers: Boolean
+  removeProposals: Boolean
   role: ProposalActionRole!
+  updateGroup: Boolean
+}
+
+input ProposalActionPermissionInput {
+  approveMemberRequests: Boolean
+  createEvents: Boolean
+  createInvites: Boolean
+  deleteGroup: Boolean
+  manageComments: Boolean
+  manageEvents: Boolean
+  manageInvites: Boolean
+  managePosts: Boolean
+  manageQuestionnaireTickets: Boolean
+  manageQuestions: Boolean
+  manageRoles: Boolean
+  manageRules: Boolean
+  manageSettings: Boolean
+  removeGroups: Boolean
+  removeMembers: Boolean
+  removeProposals: Boolean
   updateGroup: Boolean
 }
 
@@ -693,13 +720,14 @@ type ProposalActionRole {
   oldName: String
   permissions: ProposalActionPermission!
   proposalAction: ProposalAction!
+  serverRole: ServerRole
 }
 
 input ProposalActionRoleInput {
   color: String
   members: [ProposalActionRoleMemberInput!]
   name: String
-  permissions: GroupRolePermissionInput
+  permissions: ProposalActionPermissionInput
   roleToUpdateId: Int
 }
 
@@ -797,6 +825,7 @@ type Query {
   users(limit: Int, offset: Int): [User!]!
   usersByIds(ids: [Int!]!): [User!]!
   usersCount: Int!
+  verifiedUsers(limit: Int, offset: Int): [User!]!
   vibeChat: Conversation!
   voteCount: Int!
 }
@@ -837,9 +866,9 @@ type QuestionnaireTicketConfig {
   closingAt: DateTime
   decisionMakingModel: DecisionMakingModel!
   id: Int!
-  ratificationThreshold: Int!
   reservationsLimit: Int!
   standAsidesLimit: Int!
+  verificationThreshold: Int!
 }
 
 input QuestionnaireTicketsInput {
@@ -883,6 +912,7 @@ type ServerConfig {
   serverQuestionsPrompt: String
   showCanaryStatement: Boolean!
   standAsidesLimit: Int!
+  verificationThreshold: Int!
   votingTimeLimit: Int!
   websiteURL: String!
 }
@@ -928,6 +958,7 @@ type ServerRole {
   members: [User!]!
   name: String!
   permissions: ServerRolePermission!
+  proposalActionRoles: [ProposalActionRole!]!
 }
 
 type ServerRolePermission {
@@ -1143,6 +1174,7 @@ input UpdateServerConfigInput {
   serverQuestionsPrompt: String
   showCanaryStatement: Boolean
   standAsidesLimit: Int
+  verificationThreshold: Int
   votingTimeLimit: Int
 }
 

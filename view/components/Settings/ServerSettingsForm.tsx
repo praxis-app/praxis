@@ -29,7 +29,7 @@ import SettingsSelect from './SettingsSelect';
 
 const SETTING_DESCRIPTION_WIDTH = '60%';
 
-enum ServerSettingsFormFields {
+enum ServerSettingsFormField {
   About = 'about',
   CanaryStatement = 'canaryStatement',
   DecisionMakingModel = 'decisionMakingModel',
@@ -39,6 +39,7 @@ enum ServerSettingsFormFields {
   ServerQuestionsPrompt = 'serverQuestionsPrompt',
   ShowCanaryStatement = 'showCanaryStatement',
   StandAsidesLimit = 'standAsidesLimit',
+  VerificationThreshold = 'verificationThreshold',
   VotingTimeLimit = 'votingTimeLimit',
 }
 
@@ -68,6 +69,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
     serverQuestionsPrompt: serverSettings.serverQuestionsPrompt,
     showCanaryStatement: serverSettings.showCanaryStatement,
     standAsidesLimit: serverSettings.standAsidesLimit,
+    verificationThreshold: serverSettings.verificationThreshold,
     votingTimeLimit: serverSettings.votingTimeLimit,
     canaryStatement,
   };
@@ -94,9 +96,9 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
 
   const handleSliderInputBlur = (
     setFieldValue: (field: string, value: number) => void,
+    fieldName: ServerSettingsFormField,
     value?: number | null,
   ) => {
-    const fieldName = ServerSettingsFormFields.RatificationThreshold;
     if (value === undefined || value === null) {
       return;
     }
@@ -137,10 +139,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
   }: FormValues) => {
     const errors: FormikErrors<FormValues> = {};
 
-    if (
-      decisionMakingModel === 'Consent' ||
-      decisionMakingModel === 'MajorityVote'
-    ) {
+    if (decisionMakingModel !== 'Consensus') {
       errors.decisionMakingModel = t('prompts.inDev');
     }
     if (
@@ -173,7 +172,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
         <Form>
           <FormGroup sx={{ marginBottom: 1.5 }}>
             <SettingsSelect
-              fieldName={ServerSettingsFormFields.DecisionMakingModel}
+              fieldName={ServerSettingsFormField.DecisionMakingModel}
               label={t('groups.settings.names.decisionMakingModel')}
               description={t('settings.descriptions.decisionMakingModel')}
               errorMessageProps={{ sx: { marginTop: 1 } }}
@@ -195,7 +194,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
             <SettingsSelect
               description={t('groups.settings.descriptions.standAsidesLimit')}
               disabled={values.decisionMakingModel === 'MajorityVote'}
-              fieldName={ServerSettingsFormFields.StandAsidesLimit}
+              fieldName={ServerSettingsFormField.StandAsidesLimit}
               label={t('groups.settings.names.standAsidesLimit')}
               onChange={handleChange}
               onClick={() =>
@@ -223,7 +222,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
             <SettingsSelect
               description={t('groups.settings.descriptions.reservationsLimit')}
               disabled={values.decisionMakingModel === 'MajorityVote'}
-              fieldName={ServerSettingsFormFields.ReservationsLimit}
+              fieldName={ServerSettingsFormField.ReservationsLimit}
               label={t('groups.settings.names.reservationsLimit')}
               onClick={() =>
                 handleConsensusLimitClick(values.decisionMakingModel)
@@ -281,7 +280,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
 
               <SliderInput
                 disabled={values.decisionMakingModel === 'Consent'}
-                name={ServerSettingsFormFields.RatificationThreshold}
+                name={ServerSettingsFormField.RatificationThreshold}
                 onInputChange={handleChange}
                 onSliderChange={handleChange}
                 value={values.ratificationThreshold}
@@ -290,6 +289,62 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
                 onInputBlur={() =>
                   handleSliderInputBlur(
                     setFieldValue,
+                    ServerSettingsFormField.RatificationThreshold,
+                    values.ratificationThreshold,
+                  )
+                }
+                onClick={() =>
+                  handleSliderInputClick(values.decisionMakingModel)
+                }
+                showPercentSign
+              />
+            </Flex>
+
+            <Divider sx={{ marginTop: isDesktop ? 3 : 1.2, marginBottom: 3 }} />
+
+            <Flex
+              justifyContent="space-between"
+              flexDirection={isDesktop ? 'row' : 'column'}
+            >
+              <Box width={isDesktop ? SETTING_DESCRIPTION_WIDTH : undefined}>
+                <Typography>
+                  {t('settings.names.verificationThreshold')}
+                </Typography>
+
+                <Typography
+                  fontSize={12}
+                  sx={{
+                    color: theme.palette.text.secondary,
+                    paddingBottom: isDesktop ? 0 : 1.25,
+                  }}
+                >
+                  {t('settings.descriptions.verificationThreshold')}
+                </Typography>
+
+                {!!errors.verificationThreshold && (
+                  <Typography
+                    color="error"
+                    fontSize={12}
+                    marginTop={isDesktop ? 1 : 0}
+                    marginBottom={isDesktop ? 1.5 : 0.25}
+                  >
+                    {errors.verificationThreshold}
+                  </Typography>
+                )}
+              </Box>
+
+              <SliderInput
+                disabled={values.decisionMakingModel === 'Consent'}
+                name={ServerSettingsFormField.VerificationThreshold}
+                onInputChange={handleChange}
+                onSliderChange={handleChange}
+                value={values.verificationThreshold}
+                width={isDesktop ? 200 : '100%'}
+                marks={!isDesktop}
+                onInputBlur={() =>
+                  handleSliderInputBlur(
+                    setFieldValue,
+                    ServerSettingsFormField.VerificationThreshold,
                     values.ratificationThreshold,
                   )
                 }
@@ -303,7 +358,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
             <Divider sx={{ marginTop: isDesktop ? 3 : 1.2, marginBottom: 3 }} />
 
             <SettingsSelect
-              fieldName={ServerSettingsFormFields.VotingTimeLimit}
+              fieldName={ServerSettingsFormField.VotingTimeLimit}
               label={t('groups.settings.names.votingTimeLimit')}
               description={t('groups.settings.descriptions.votingTimeLimit')}
               value={values.votingTimeLimit}
@@ -380,7 +435,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
 
               <Switch
                 checked={values.showCanaryStatement || false}
-                name={ServerSettingsFormFields.ShowCanaryStatement}
+                name={ServerSettingsFormField.ShowCanaryStatement}
                 onChange={handleChange}
                 sx={{ alignSelf: 'center' }}
               />
@@ -392,7 +447,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               autoComplete="off"
               value={values.about || ''}
               label={t('serverSettings.placeholders.aboutText')}
-              name={ServerSettingsFormFields.About}
+              name={ServerSettingsFormField.About}
               sx={{ marginBottom: 2 }}
               multiline
             />
@@ -402,7 +457,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               value={values.canaryStatement || ''}
               disabled={!values.showCanaryStatement}
               label={t('canary.placeholders.canaryStatement')}
-              name={ServerSettingsFormFields.CanaryStatement}
+              name={ServerSettingsFormField.CanaryStatement}
               sx={{ marginBottom: 2 }}
               multiline
             />
@@ -411,7 +466,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               autoComplete="off"
               value={values.securityTxt || ''}
               label={t('serverSettings.placeholders.securityTxt')}
-              name={ServerSettingsFormFields.SecurityText}
+              name={ServerSettingsFormField.SecurityText}
               sx={{ marginBottom: 1.5 }}
               multiline
             />
@@ -420,7 +475,7 @@ const ServerSettingsForm = ({ serverSettings, canaryStatement }: Props) => {
               autoComplete="off"
               value={values.serverQuestionsPrompt || ''}
               label={t('serverSettings.placeholders.serverQuestionsPrompt')}
-              name={ServerSettingsFormFields.ServerQuestionsPrompt}
+              name={ServerSettingsFormField.ServerQuestionsPrompt}
               sx={{ marginBottom: 1.5 }}
               multiline
             />

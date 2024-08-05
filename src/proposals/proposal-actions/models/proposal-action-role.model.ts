@@ -11,9 +11,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { GroupRole } from '../../../groups/group-roles/models/group-role.model';
-import { ProposalAction } from './proposal-action.model';
+import { ServerRole } from '../../../server-roles/models/server-role.model';
 import { ProposalActionPermission } from './proposal-action-permission.model';
 import { ProposalActionRoleMember } from './proposal-action-role-member.model';
+import { ProposalAction } from './proposal-action.model';
 
 @Entity()
 @ObjectType()
@@ -68,6 +69,16 @@ export class ProposalActionRole {
 
   @Column()
   proposalActionId: number;
+
+  @Field(() => ServerRole, { nullable: true })
+  @ManyToOne(() => ServerRole, (serverRole) => serverRole.proposalActionRoles, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
+  serverRole?: ServerRole;
+
+  @Column({ nullable: true })
+  serverRoleId?: number;
 
   @Field(() => GroupRole, { nullable: true })
   @ManyToOne(() => GroupRole, (groupRole) => groupRole.proposalActionRoles, {
