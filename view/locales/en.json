@@ -117,12 +117,12 @@
       "vote": "Vote"
     },
     "actionTypes": {
-      "changeDescription": "Change Group Description",
       "changeCoverPhoto": "Change Cover Photo",
+      "changeDescription": "Change Group Description",
       "changeName": "Change Group Name",
-      "changeRole": "Change Group Role",
-      "changeSettings": "Change Group Settings",
-      "createRole": "Add Group Role",
+      "changeRole": "Change Role",
+      "changeSettings": "Change Settings",
+      "createRole": "Add Role",
       "planEvent": "Plan Event",
       "test": "QA Test"
     },
@@ -147,7 +147,9 @@
       "ratified": "Ratified",
       "roleChangeProposal": "Role change proposal",
       "roleProposal": "Role proposal",
+      "scope": "Scope",
       "selectRoleToChange": "Choose a role",
+      "server": "Server",
       "settingChangesCount_one": "{{count}} setting change",
       "settingChangesCount_other": "{{count}} setting changes",
       "usersProposal": "{{name}}'s proposal",
@@ -163,7 +165,6 @@
       "missingActionType": "Proposals must include an action",
       "missingGroupCoverPhoto": "Proposals to change group cover photo must include an image",
       "missingGroupDescription": "Proposals to change group description must include a description field",
-      "missingGroupId": "Only group proposals are supported at this time",
       "missingGroupName": "Proposals to change group name must include a name field",
       "longBody": "Proposal body cannot exceed 8000 characters",
       "missingRole": "Proposals to change or add group roles must include a role"
@@ -748,6 +749,7 @@
       "follow": "<b>{{name}}</b> followed you.",
       "groupMemberRequest": "<b>{{name}}</b> requested to join <b>{{groupName}}</b>.",
       "groupMemberRequestApproval": "Your request to join <b>{{groupName}}</b> was approved.",
+      "groupProposalRatified": "Your proposal was ratified in <b>{{groupName}}</b>.",
       "missingAnswerLike": "<b>{{name}}</b> likes your answer.",
       "newMessage_one": "You have {{count}} new message in <b>{{chatName}}</b>.",
       "newMessage_other": "You have {{count}} new messages in <b>{{chatName}}</b>.",
@@ -758,7 +760,7 @@
       "postLike": "<b>{{name}}</b> liked your post.",
       "postShare": "<b>{{name}}</b> shared your post.",
       "proposalComment": "<b>{{name}}</b> commented on your proposal.",
-      "proposalRatification": "Your proposal was ratified in <b>{{groupName}}</b>.",
+      "proposalRatified": "Your proposal has been ratified by the server.",
       "proposalShare": "<b>{{name}}</b> shared your proposal.",
       "proposalVote": "<b>{{name}}</b> voted on your proposal.",
       "questionnaireTicketComment": "<b>{{name}}</b> commented on your questionnaire ticket.",
@@ -863,14 +865,18 @@
         "decisionMakingModel": "The process used to decide on new members, which can be based on consensus, consent, or majority vote.",
         "standAsidesLimit": "The maximum number of stand asides allowed for a new member to still be verified.",
         "reservationsLimit": "The maximum number of reservations allowed for a new member to still be verified.",
-        "ratificationThreshold": "The minimum percentage of positive votes required for a new member to be verified."
+        "verificationThreshold": "The minimum percentage of positive votes required for a new member to be verified."
       }
     }
   },
 
   "settings": {
+    "names": {
+      "verificationThreshold": "Verification Threshold"
+    },
     "descriptions": {
-      "decisionMakingModel": "Choose from consensus, consent, or majority vote to determine how decisions are made in the server."
+      "decisionMakingModel": "Choose from consensus, consent, or majority vote to determine how decisions are made in the server.",
+      "verificationThreshold": "Set the minimum percentage of positive votes required for a new member to be verified."
     }
   },
 

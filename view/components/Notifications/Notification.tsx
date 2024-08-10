@@ -18,7 +18,7 @@ import { Box, MenuItem, SxProps, Typography, useTheme } from '@mui/material';
 import { produce } from 'immer';
 import { truncate } from 'lodash';
 import { useState } from 'react';
-import { Namespace, TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import {
   NotificationStatus,
   NotificationType,
@@ -116,141 +116,142 @@ const Notification = ({
   };
 
   const getNotificationMessage = () => {
-    const _t: TFunction<Namespace<'ns1'>, undefined> = t;
-
     if (notificationType === NotificationType.NewMessage) {
       if (!conversation?.name) {
-        return _t('notifications.errors.accessDenied');
+        return t('notifications.errors.accessDenied');
       }
-      return _t('notifications.messages.newMessage', {
+      return t('notifications.messages.newMessage', {
         chatName: conversation.group?.name || conversation?.name,
         count: Number(unreadMessageCount),
       });
     }
     if (notificationType === NotificationType.Follow) {
-      return _t('notifications.messages.follow', {
+      return t('notifications.messages.follow', {
         name: otherUserName,
       });
     }
     if (notificationType === NotificationType.PostLike) {
-      return _t('notifications.messages.postLike', {
+      return t('notifications.messages.postLike', {
         name: otherUserName,
       });
     }
     if (notificationType === NotificationType.PostShare) {
-      return _t('notifications.messages.postShare', {
+      return t('notifications.messages.postShare', {
         name: otherUserName,
       });
     }
     if (isProposalVote) {
-      return _t('notifications.messages.proposalVote', {
+      return t('notifications.messages.proposalVote', {
         name: otherUserName,
       });
     }
     if (notificationType === NotificationType.ProposalRatification) {
-      return _t('notifications.messages.proposalRatification', {
-        groupName: group?.name,
+      if (!group) {
+        return t('notifications.messages.proposalRatified');
+      }
+      return t('notifications.messages.groupProposalRatified', {
+        groupName: group.name,
       });
     }
     if (notificationType === NotificationType.ProposalComment) {
-      return _t('notifications.messages.proposalComment', {
+      return t('notifications.messages.proposalComment', {
         name: otherUserName,
       });
     }
     if (notificationType === NotificationType.ProposalShare) {
-      return _t('notifications.messages.proposalShare', {
+      return t('notifications.messages.proposalShare', {
         name: otherUserName,
       });
     }
     if (notificationType === NotificationType.PostComment) {
-      return _t('notifications.messages.postComment', {
+      return t('notifications.messages.postComment', {
         name: otherUserName,
       });
     }
     if (isQuestionnaireTicketVote) {
-      return _t('notifications.messages.questionnaireTicketVote', {
+      return t('notifications.messages.questionnaireTicketVote', {
         name: otherUserName,
         ticketNumber: questionnaireTicket?.id,
       });
     }
     if (notificationType === NotificationType.QuestionnaireTicketComment) {
       if (!comment?.questionnaireTicket?.id) {
-        return _t('notifications.errors.accessDenied');
+        return t('notifications.errors.accessDenied');
       }
       if (comment?.questionnaireTicket?.user.id === otherUser?.id) {
-        return _t('notifications.messages.ownQuestionnaireTicketComment', {
+        return t('notifications.messages.ownQuestionnaireTicketComment', {
           name: otherUserName,
         });
       }
-      return _t('notifications.messages.questionnaireTicketComment', {
+      return t('notifications.messages.questionnaireTicketComment', {
         name: otherUserName,
       });
     }
     if (notificationType === NotificationType.QuestionnaireTicketSubmitted) {
-      return _t('notifications.messages.questionnaireTicketSubmitted', {
+      return t('notifications.messages.questionnaireTicketSubmitted', {
         name: otherUserName,
       });
     }
     if (notificationType === NotificationType.AnswerComment) {
       if (comment?.question?.questionnaireTicket?.user.id === otherUser?.id) {
-        return _t('notifications.messages.ownAnswerComment', {
+        return t('notifications.messages.ownAnswerComment', {
           name: otherUserName,
         });
       }
-      return _t('notifications.messages.answerComment', {
+      return t('notifications.messages.answerComment', {
         name: otherUserName,
       });
     }
     if (notificationType === NotificationType.AnswerLike) {
       if (!question?.answer?.text) {
-        return _t('notifications.messages.missingAnswerLike', {
+        return t('notifications.messages.missingAnswerLike', {
           name: otherUserName,
         });
       }
-      return _t('notifications.messages.answerLike', {
+      return t('notifications.messages.answerLike', {
         name: otherUserName,
         text: `"${truncate(question?.answer?.text, { length: 30 })}"`,
       });
     }
     if (notificationType === NotificationType.CommentLike) {
       if (comment?.body) {
-        return _t('notifications.messages.commentLikeWithText', {
+        return t('notifications.messages.commentLikeWithText', {
           name: otherUserName,
           text: `"${truncate(comment?.body, { length: 30 })}"`,
         });
       }
-      return _t('notifications.messages.commentLike', {
+      return t('notifications.messages.commentLike', {
         name: otherUserName,
       });
     }
     if (notificationType === NotificationType.GroupMemberRequest) {
-      return _t('notifications.messages.groupMemberRequest', {
+      return t('notifications.messages.groupMemberRequest', {
         name: otherUserName,
         groupName: group?.name,
       });
     }
     if (notificationType === NotificationType.GroupMemberRequestApproval) {
-      return _t('notifications.messages.groupMemberRequestApproval', {
+      return t('notifications.messages.groupMemberRequestApproval', {
         groupName: group?.name,
       });
     }
     if (notificationType === NotificationType.AddToDefaultGroup) {
-      return _t('notifications.messages.addToDefaultGroup', {
+      return t('notifications.messages.addToDefaultGroup', {
         groupName: group?.name,
       });
     }
     if (notificationType === NotificationType.NewQuestionnaireTicket) {
-      return _t('notifications.messages.newQuestionnaireTicket', {
+      return t('notifications.messages.newQuestionnaireTicket', {
         name: otherUserName,
       });
     }
     if (notificationType === NotificationType.VerifyUser) {
-      return _t('notifications.messages.verifyUser');
+      return t('notifications.messages.verifyUser');
     }
     if (notificationType === NotificationType.DenyUserVerification) {
-      return _t('notifications.messages.denyUserVerification');
+      return t('notifications.messages.denyUserVerification');
     }
-    return _t('notifications.errors.invalidType');
+    return t('notifications.errors.invalidType');
   };
 
   const getPath = () => {
@@ -492,6 +493,16 @@ const Notification = ({
     return <AutoAwesome sx={{ ...iconStyles, marginTop: 0.55 }} />;
   };
 
+  const renderAvatar = () => {
+    if (otherUser) {
+      return <UserAvatar user={otherUser} />;
+    }
+    if (group) {
+      return <GroupAvatar group={group} withLink={false} />;
+    }
+    return <UserAvatar />;
+  };
+
   return (
     <Flex
       paddingX="16px"
@@ -511,19 +522,10 @@ const Notification = ({
           flex: 1,
         }}
       >
-        {otherUser && (
-          <Box position="relative">
-            <UserAvatar user={otherUser} />
-            <Box sx={iconContainerStyles}>{renderIcon()}</Box>
-          </Box>
-        )}
-
-        {group && !otherUser && (
-          <Box position="relative">
-            <GroupAvatar group={group} withLink={false} />
-            <Box sx={iconContainerStyles}>{renderIcon()}</Box>
-          </Box>
-        )}
+        <Box position="relative">
+          {renderAvatar()}
+          <Box sx={iconContainerStyles}>{renderIcon()}</Box>
+        </Box>
 
         <Box>
           <Typography

@@ -8,12 +8,15 @@ fragment ProposalActionRole on ProposalActionRole {
   permissions {
     ...ProposalActionPermission
   }
-
   members {
     ...ProposalActionRoleMember
   }
-
   groupRole {
+    id
+    name
+    color
+  }
+  serverRole {
     id
     name
     color

@@ -3,18 +3,17 @@ import { t } from 'i18next';
 import { ChangeEvent } from 'react';
 import {
   GroupRolePermission,
-  GroupRolePermissionInput,
   ProposalActionRoleInput,
+  ServerRolePermission,
 } from '../../../graphql/gen';
-import { GroupPermissionsFragment } from '../../../graphql/groups/fragments/gen/GroupPermissions.gen';
 import theme from '../../../styles/theme';
-import { getPermissionText } from '../../../utils/role.utils';
+import { PermissionName, getPermissionText } from '../../../utils/role.utils';
 import Flex from '../../Shared/Flex';
 
 interface Props {
   formValues: ProposalActionRoleInput;
-  permissionName: keyof GroupRolePermissionInput;
-  permissions: GroupPermissionsFragment | GroupRolePermission;
+  permissionName: PermissionName;
+  permissions: Partial<GroupRolePermission | ServerRolePermission>;
   setFieldValue(field: string, value?: boolean): void;
 }
 

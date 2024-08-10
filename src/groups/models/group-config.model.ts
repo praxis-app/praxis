@@ -36,7 +36,7 @@ export class GroupConfig {
   @Field(() => Int)
   reservationsLimit: number;
 
-  @Column({ default: 50 })
+  @Column({ default: 51 })
   @Field(() => Int)
   ratificationThreshold: number;
 

@@ -14,14 +14,3 @@ export const initGroupRolePermissions = (
   removeMembers: enabled,
   updateGroup: enabled,
 });
-
-export const cleanGroupPermissions = (
-  permissions?: Partial<GroupPermissions>,
-): Partial<GroupPermissions> => {
-  if (!permissions) {
-    return {};
-  }
-  return Object.entries(permissions)
-    .filter(([_, value]) => typeof value === 'boolean')
-    .reduce((result, [key, value]) => ({ ...result, [key]: value }), {});
-};

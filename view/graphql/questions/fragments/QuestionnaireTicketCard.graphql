@@ -16,7 +16,7 @@ fragment QuestionnaireTicketCard on QuestionnaireTicket {
     id
     closingAt
     decisionMakingModel
-    ratificationThreshold
+    verificationThreshold
     reservationsLimit
     standAsidesLimit
   }

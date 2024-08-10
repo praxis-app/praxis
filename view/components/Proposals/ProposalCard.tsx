@@ -246,6 +246,7 @@ const ProposalCard = ({ proposal, inModal, ...cardProps }: Props) => {
         <ProposalAction
           action={action}
           ratified={stage === 'Ratified'}
+          isServerScope={!group}
           proposalId={id}
         />
       </CardContent>

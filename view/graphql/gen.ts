@@ -1013,16 +1013,43 @@ export type ProposalActionPermission = {
   __typename?: 'ProposalActionPermission';
   approveMemberRequests?: Maybe<Scalars['Boolean']['output']>;
   createEvents?: Maybe<Scalars['Boolean']['output']>;
+  createInvites?: Maybe<Scalars['Boolean']['output']>;
   deleteGroup?: Maybe<Scalars['Boolean']['output']>;
   id: Scalars['Int']['output'];
   manageComments?: Maybe<Scalars['Boolean']['output']>;
   manageEvents?: Maybe<Scalars['Boolean']['output']>;
+  manageInvites?: Maybe<Scalars['Boolean']['output']>;
   managePosts?: Maybe<Scalars['Boolean']['output']>;
+  manageQuestionnaireTickets?: Maybe<Scalars['Boolean']['output']>;
+  manageQuestions?: Maybe<Scalars['Boolean']['output']>;
   manageRoles?: Maybe<Scalars['Boolean']['output']>;
+  manageRules?: Maybe<Scalars['Boolean']['output']>;
   manageSettings?: Maybe<Scalars['Boolean']['output']>;
+  removeGroups?: Maybe<Scalars['Boolean']['output']>;
   removeMembers?: Maybe<Scalars['Boolean']['output']>;
+  removeProposals?: Maybe<Scalars['Boolean']['output']>;
   role: ProposalActionRole;
   updateGroup?: Maybe<Scalars['Boolean']['output']>;
+};
+
+export type ProposalActionPermissionInput = {
+  approveMemberRequests?: InputMaybe<Scalars['Boolean']['input']>;
+  createEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  createInvites?: InputMaybe<Scalars['Boolean']['input']>;
+  deleteGroup?: InputMaybe<Scalars['Boolean']['input']>;
+  manageComments?: InputMaybe<Scalars['Boolean']['input']>;
+  manageEvents?: InputMaybe<Scalars['Boolean']['input']>;
+  manageInvites?: InputMaybe<Scalars['Boolean']['input']>;
+  managePosts?: InputMaybe<Scalars['Boolean']['input']>;
+  manageQuestionnaireTickets?: InputMaybe<Scalars['Boolean']['input']>;
+  manageQuestions?: InputMaybe<Scalars['Boolean']['input']>;
+  manageRoles?: InputMaybe<Scalars['Boolean']['input']>;
+  manageRules?: InputMaybe<Scalars['Boolean']['input']>;
+  manageSettings?: InputMaybe<Scalars['Boolean']['input']>;
+  removeGroups?: InputMaybe<Scalars['Boolean']['input']>;
+  removeMembers?: InputMaybe<Scalars['Boolean']['input']>;
+  removeProposals?: InputMaybe<Scalars['Boolean']['input']>;
+  updateGroup?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type ProposalActionRole = {
@@ -1036,13 +1063,14 @@ export type ProposalActionRole = {
   oldName?: Maybe<Scalars['String']['output']>;
   permissions: ProposalActionPermission;
   proposalAction: ProposalAction;
+  serverRole?: Maybe<ServerRole>;
 };
 
 export type ProposalActionRoleInput = {
   color?: InputMaybe<Scalars['String']['input']>;
   members?: InputMaybe<Array<ProposalActionRoleMemberInput>>;
   name?: InputMaybe<Scalars['String']['input']>;
-  permissions?: InputMaybe<GroupRolePermissionInput>;
+  permissions?: InputMaybe<ProposalActionPermissionInput>;
   roleToUpdateId?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -1147,6 +1175,7 @@ export type Query = {
   users: Array<User>;
   usersByIds: Array<User>;
   usersCount: Scalars['Int']['output'];
+  verifiedUsers: Array<User>;
   vibeChat: Conversation;
   voteCount: Scalars['Int']['output'];
 };
@@ -1262,6 +1291,11 @@ export type QueryUsersByIdsArgs = {
   ids: Array<Scalars['Int']['input']>;
 };
 
+export type QueryVerifiedUsersArgs = {
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+};
+
 export type Question = {
   __typename?: 'Question';
   answer?: Maybe<Answer>;
@@ -1301,9 +1335,9 @@ export type QuestionnaireTicketConfig = {
   closingAt?: Maybe<Scalars['DateTime']['output']>;
   decisionMakingModel: DecisionMakingModel;
   id: Scalars['Int']['output'];
-  ratificationThreshold: Scalars['Int']['output'];
   reservationsLimit: Scalars['Int']['output'];
   standAsidesLimit: Scalars['Int']['output'];
+  verificationThreshold: Scalars['Int']['output'];
 };
 
 export type QuestionnaireTicketsInput = {
@@ -1350,6 +1384,7 @@ export type ServerConfig = {
   serverQuestionsPrompt?: Maybe<Scalars['String']['output']>;
   showCanaryStatement: Scalars['Boolean']['output'];
   standAsidesLimit: Scalars['Int']['output'];
+  verificationThreshold: Scalars['Int']['output'];
   votingTimeLimit: Scalars['Int']['output'];
   websiteURL: Scalars['String']['output'];
 };
@@ -1399,6 +1434,7 @@ export type ServerRole = {
   members: Array<User>;
   name: Scalars['String']['output'];
   permissions: ServerRolePermission;
+  proposalActionRoles: Array<ProposalActionRole>;
 };
 
 export type ServerRolePermission = {
@@ -1636,6 +1672,7 @@ export type UpdateServerConfigInput = {
   serverQuestionsPrompt?: InputMaybe<Scalars['String']['input']>;
   showCanaryStatement?: InputMaybe<Scalars['Boolean']['input']>;
   standAsidesLimit?: InputMaybe<Scalars['Int']['input']>;
+  verificationThreshold?: InputMaybe<Scalars['Int']['input']>;
   votingTimeLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 

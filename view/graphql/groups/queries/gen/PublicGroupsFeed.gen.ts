@@ -186,13 +186,20 @@ export type PublicGroupsFeedQuery = {
                   id: number;
                   approveMemberRequests?: boolean | null;
                   createEvents?: boolean | null;
+                  createInvites?: boolean | null;
                   deleteGroup?: boolean | null;
                   manageComments?: boolean | null;
                   manageEvents?: boolean | null;
+                  manageInvites?: boolean | null;
                   managePosts?: boolean | null;
+                  manageQuestionnaireTickets?: boolean | null;
+                  manageQuestions?: boolean | null;
                   manageRoles?: boolean | null;
+                  manageRules?: boolean | null;
                   manageSettings?: boolean | null;
+                  removeGroups?: boolean | null;
                   removeMembers?: boolean | null;
+                  removeProposals?: boolean | null;
                   updateGroup?: boolean | null;
                 };
                 members?: Array<{
@@ -209,6 +216,12 @@ export type PublicGroupsFeedQuery = {
                 }> | null;
                 groupRole?: {
                   __typename?: 'GroupRole';
+                  id: number;
+                  name: string;
+                  color: string;
+                } | null;
+                serverRole?: {
+                  __typename?: 'ServerRole';
                   id: number;
                   name: string;
                   color: string;
@@ -334,13 +347,20 @@ export type PublicGroupsFeedQuery = {
                 id: number;
                 approveMemberRequests?: boolean | null;
                 createEvents?: boolean | null;
+                createInvites?: boolean | null;
                 deleteGroup?: boolean | null;
                 manageComments?: boolean | null;
                 manageEvents?: boolean | null;
+                manageInvites?: boolean | null;
                 managePosts?: boolean | null;
+                manageQuestionnaireTickets?: boolean | null;
+                manageQuestions?: boolean | null;
                 manageRoles?: boolean | null;
+                manageRules?: boolean | null;
                 manageSettings?: boolean | null;
+                removeGroups?: boolean | null;
                 removeMembers?: boolean | null;
+                removeProposals?: boolean | null;
                 updateGroup?: boolean | null;
               };
               members?: Array<{
@@ -357,6 +377,12 @@ export type PublicGroupsFeedQuery = {
               }> | null;
               groupRole?: {
                 __typename?: 'GroupRole';
+                id: number;
+                name: string;
+                color: string;
+              } | null;
+              serverRole?: {
+                __typename?: 'ServerRole';
                 id: number;
                 name: string;
                 color: string;

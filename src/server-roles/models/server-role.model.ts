@@ -5,10 +5,12 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { ProposalActionRole } from '../../proposals/proposal-actions/models/proposal-action-role.model';
 import { User } from '../../users/models/user.model';
 import { ServerRolePermission } from './server-role-permission.model';
 
@@ -36,6 +38,13 @@ export class ServerRole {
   @ManyToMany(() => User, (user) => user.serverRoles)
   @JoinTable()
   members: User[];
+
+  @Field(() => [ProposalActionRole])
+  @OneToMany(
+    () => ProposalActionRole,
+    (proposalActionRole) => proposalActionRole.serverRole,
+  )
+  proposalActionRoles: ProposalActionRole[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -32,9 +32,13 @@ export class ServerConfig {
   @Field(() => Int)
   reservationsLimit: number;
 
-  @Column({ default: 50 })
+  @Column({ default: 51 })
   @Field(() => Int)
   ratificationThreshold: number;
+
+  @Column({ default: 51 })
+  @Field(() => Int)
+  verificationThreshold: number;
 
   @Column({ default: VotingTimeLimit.Unlimited })
   @Field(() => Int)
