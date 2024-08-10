@@ -34,10 +34,17 @@ import {
 } from '../../../graphql/gen';
 import { useGroupMembersByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupMembersByGroupId.gen';
 import { useGroupRoleByRoleIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRoleByRoleId.gen';
-import { useGroupRolesByGroupIdLazyQuery } from '../../../graphql/groups/queries/gen/GroupRolesByGroupId.gen';
+import {
+  GroupRolesByGroupIdQuery,
+  useGroupRolesByGroupIdLazyQuery,
+} from '../../../graphql/groups/queries/gen/GroupRolesByGroupId.gen';
 import { useServerRoleByIdLazyQuery } from '../../../graphql/roles/queries/gen/ServerRoleById.gen';
-import { useServerRoleOptionsLazyQuery } from '../../../graphql/roles/queries/gen/ServerRoleOptions.gen';
+import {
+  ServerRoleOptionsQuery,
+  useServerRoleOptionsLazyQuery,
+} from '../../../graphql/roles/queries/gen/ServerRoleOptions.gen';
 import { useVerifiedServerMembersLazyQuery } from '../../../graphql/users/queries/gen/VerifiedServerMembers.gen';
+import { UnwrapArray } from '../../../types/shared.types';
 import {
   PermissionName,
   initGroupRolePermissions,
@@ -55,6 +62,10 @@ import ProgressBar from '../../Shared/ProgressBar';
 import { TextField } from '../../Shared/TextField';
 import ProposePermissionToggle from './ProposePermissionToggle';
 import ProposeRoleMemberOption from './ProposeRoleMemberOption';
+
+type RoleOption =
+  | UnwrapArray<ServerRoleOptionsQuery['serverRoles']>
+  | UnwrapArray<GroupRolesByGroupIdQuery['group']['roles']>;
 
 interface Props {
   actionType?: ProposalActionType;
@@ -333,7 +344,7 @@ const ProposeRoleModal = ({
                     )}
                     value={values.roleToUpdateId || ''}
                   >
-                    {roles.map((role: { id: number; name: string }) => (
+                    {roles.map((role: RoleOption) => (
                       <MenuItem value={role.id} key={role.id}>
                         {role.name}
                       </MenuItem>
