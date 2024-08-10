@@ -470,6 +470,15 @@ export class GroupsService {
     return { group };
   }
 
+  async getGroupMembers(groupId: number) {
+    const { members } = await this.groupRepository.findOneOrFail({
+      where: { id: groupId },
+      relations: ['members'],
+      select: ['members'],
+    });
+    return members;
+  }
+
   async getGroupMemberRequest(
     where: FindOptionsWhere<GroupMemberRequest>,
     relations?: string[],

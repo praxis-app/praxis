@@ -18,6 +18,8 @@ import {
   saveImage,
 } from '../../images/image.utils';
 import { Image } from '../../images/models/image.model';
+import { ServerRolesService } from '../../server-roles/server-roles.service';
+import { cleanPermissions } from '../../server-roles/server-roles.utils';
 import { ProposalActionEventHost } from './models/proposal-action-event-host.model';
 import { ProposalActionEventInput } from './models/proposal-action-event.input';
 import { ProposalActionEvent } from './models/proposal-action-event.model';
@@ -68,6 +70,7 @@ export class ProposalActionsService {
     private imageRepository: Repository<Image>,
 
     private groupRolesService: GroupRolesService,
+    private serverRolesService: ServerRolesService,
     private groupsService: GroupsService,
   ) {}
 
@@ -92,6 +95,76 @@ export class ProposalActionsService {
     return groupCoverPhoto;
   }
 
+  async implementChangeServerRole(proposalActionId: number) {
+    const actionRole = await this.getProposalActionRole({ proposalActionId }, [
+      'permission',
+      'members',
+    ]);
+    if (!actionRole?.serverRoleId) {
+      throw new UserInputError('Could not find proposal action role');
+    }
+    const roleToUpdate = await this.serverRolesService.getServerRole({
+      id: actionRole.serverRoleId,
+    });
+
+    const userIdsToAdd = actionRole.members
+      ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Add)
+      .map(({ userId }) => userId);
+
+    const userIdsToRemove = actionRole.members
+      ?.filter(({ changeType }) => changeType === RoleMemberChangeType.Remove)
+      .map(({ userId }) => userId);
+
+    const permissions = cleanPermissions(actionRole.permission);
+
+    await this.serverRolesService.updateServerRole({
+      id: roleToUpdate.id,
+      name: actionRole.name,
+      color: actionRole.color,
+      selectedUserIds: userIdsToAdd,
+      permissions,
+    });
+    if (userIdsToRemove?.length) {
+      await this.serverRolesService.deleteServerRoleMembers(
+        roleToUpdate.id,
+        userIdsToRemove,
+      );
+    }
+    if (actionRole.name || actionRole.color) {
+      await this.updateProposalActionRole(actionRole.id, {
+        oldName: actionRole.name ? roleToUpdate.name : undefined,
+        oldColor: actionRole.color ? roleToUpdate.color : undefined,
+      });
+    }
+  }
+
+  async implementCreateRole(proposalActionId: number, groupId?: number) {
+    const role = await this.getProposalActionRole({ proposalActionId }, [
+      'permission',
+      'members',
+    ]);
+    if (!role) {
+      throw new UserInputError('Could not find proposal action role');
+    }
+    const { name, color, permission } = role;
+    const members = role.members?.map(({ userId }) => ({ id: userId }));
+
+    const createRole = groupId
+      ? this.groupRolesService.createGroupRole
+      : this.serverRolesService.createServerRole;
+
+    await createRole(
+      {
+        name,
+        color,
+        permission,
+        members,
+        groupId,
+      },
+      true,
+    );
+  }
+
   async implementGroupEvent(proposalActionId: number, groupId: number) {
     const event = await this.getProposalActionEvent({ proposalActionId }, [
       'hosts',
@@ -107,28 +180,6 @@ export class ProposalActionsService {
       throw new UserInputError('Could not find proposal action event host');
     }
     await this.createEventFromProposalAction(event, groupId, host.userId);
-  }
-
-  async implementCreateGroupRole(proposalActionId: number, groupId: number) {
-    const role = await this.getProposalActionRole({ proposalActionId }, [
-      'permission',
-      'members',
-    ]);
-    if (!role) {
-      throw new UserInputError('Could not find proposal action role');
-    }
-    const { name, color, permission } = role;
-    const members = role.members?.map(({ userId }) => ({ id: userId }));
-    await this.groupRolesService.createGroupRole(
-      {
-        name,
-        color,
-        permission,
-        groupId,
-        members,
-      },
-      true,
-    );
   }
 
   async implementChangeGroupRole(proposalActionId: number) {
@@ -448,11 +499,13 @@ export class ProposalActionsService {
   async createProposalActionRole(
     proposalActionId: number,
     { roleToUpdateId, ...role }: ProposalActionRoleInput,
+    isServerScope: boolean,
   ) {
     await this.proposalActionRoleRepository.save({
       ...role,
       permission: role.permissions,
-      groupRoleId: roleToUpdateId,
+      groupRoleId: isServerScope ? undefined : roleToUpdateId,
+      serverRoleId: isServerScope ? roleToUpdateId : undefined,
       proposalActionId,
     });
   }

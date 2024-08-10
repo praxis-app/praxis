@@ -19,13 +19,20 @@ export type ProposalActionRoleFragment = {
     id: number;
     approveMemberRequests?: boolean | null;
     createEvents?: boolean | null;
+    createInvites?: boolean | null;
     deleteGroup?: boolean | null;
     manageComments?: boolean | null;
     manageEvents?: boolean | null;
+    manageInvites?: boolean | null;
     managePosts?: boolean | null;
+    manageQuestionnaireTickets?: boolean | null;
+    manageQuestions?: boolean | null;
     manageRoles?: boolean | null;
+    manageRules?: boolean | null;
     manageSettings?: boolean | null;
+    removeGroups?: boolean | null;
     removeMembers?: boolean | null;
+    removeProposals?: boolean | null;
     updateGroup?: boolean | null;
   };
   members?: Array<{
@@ -46,6 +53,12 @@ export type ProposalActionRoleFragment = {
     name: string;
     color: string;
   } | null;
+  serverRole?: {
+    __typename?: 'ServerRole';
+    id: number;
+    name: string;
+    color: string;
+  } | null;
 };
 
 export const ProposalActionRoleFragmentDoc = gql`
@@ -62,6 +75,11 @@ export const ProposalActionRoleFragmentDoc = gql`
       ...ProposalActionRoleMember
     }
     groupRole {
+      id
+      name
+      color
+    }
+    serverRole {
       id
       name
       color

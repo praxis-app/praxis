@@ -50,6 +50,14 @@ export class UsersResolver {
     return this.usersService.getPagedUsers(offset, limit);
   }
 
+  @Query(() => [User])
+  async verifiedUsers(
+    @Args('offset', { type: () => Int, nullable: true }) offset?: number,
+    @Args('limit', { type: () => Int, nullable: true }) limit?: number,
+  ) {
+    return this.usersService.getVerifiedUsers(offset, limit);
+  }
+
   @Query(() => Int)
   async usersCount() {
     return this.usersService.getUsersCount();

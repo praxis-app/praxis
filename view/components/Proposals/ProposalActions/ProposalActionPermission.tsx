@@ -1,11 +1,12 @@
 import { CheckBox } from '@mui/icons-material';
 import { SxProps, Typography, useTheme } from '@mui/material';
+import { ChangeType } from '../../../constants/shared.constants';
 import {
   GroupRolePermissionInput,
   ProposalActionType,
+  ServerRolePermissionInput,
 } from '../../../graphql/gen';
 import { ProposalActionPermissionFragment } from '../../../graphql/proposals/fragments/gen/ProposalActionPermission.gen';
-import { ChangeType } from '../../../constants/shared.constants';
 import { getPermissionText } from '../../../utils/role.utils';
 import ChangeIcon from './ChangeIcon';
 
@@ -17,7 +18,9 @@ const CHECK_BOX_ICON_STYLES: SxProps = {
 
 interface Props {
   actionType: ProposalActionType;
-  permissionName: keyof GroupRolePermissionInput;
+  permissionName:
+    | keyof GroupRolePermissionInput
+    | keyof ServerRolePermissionInput;
   permissions: ProposalActionPermissionFragment | GroupRolePermissionInput;
 }
 

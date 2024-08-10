@@ -84,6 +84,8 @@ import { AddGroupIdToConversationTable1717305686166 } from './migrations/1717305
 import { AddAboutColumnToServerConfig1718497442403 } from './migrations/1718497442403-AddAboutColumnToServerConfig';
 import { AddSharedPostIdToPostTable1719688685494 } from './migrations/1719688685494-AddSharedPostIdToPostTable';
 import { AddSharedProposalIdToPostTable1720116996240 } from './migrations/1720116996240-AddSharedProposalIdToPostTable';
+import { AddServerRoleProposalColumns1722201841114 } from './migrations/1722201841114-AddServerRoleProposalColumns';
+import { VerificationThresholdColumn1722222659235 } from './migrations/1722222659235-VerificationThresholdColumn';
 
 dotenv.config();
 
@@ -165,6 +167,7 @@ export default new DataSource({
     AddServerConfigTable1699135846939,
     AddServerInviteTable1677339785709,
     AddServerRolePermissionColumns1703978999070,
+    AddServerRoleProposalColumns1722201841114,
     AddSharedPostIdToPostTable1719688685494,
     AddSharedProposalIdToPostTable1720116996240,
     AddUserDisplayNameColumn1713640882734,
@@ -181,5 +184,6 @@ export default new DataSource({
     RenameGroupMemberRequestTable1688348341669,
     SetDefaultForGroupMemberRequestTable1690333204053,
     UpdateVotingTimeLimitDefault1703118466924,
+    VerificationThresholdColumn1722222659235,
   ],
 });
