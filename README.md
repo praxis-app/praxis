@@ -16,6 +16,8 @@ Core features currently in development:
 - Plan real world events via proposals and voting
 - Federation with ActivityPub
 
+We’re also exploring a new approach with [Rhizome](https://github.com/praxis-app/rhizome), which focuses on seamless integration with existing platforms while maintaining a flexible, standalone foundation. It emphasizes chat-based decision-making, a hybrid platform/utility model, and a modular, interoperable architecture. Learn more here: https://github.com/praxis-app/rhizome
+
 ## Installation
 
 Ensure that you're using Node v18.17.1 before proceeding.
