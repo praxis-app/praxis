@@ -6,6 +6,8 @@ With Praxis, you can create groups that empower members to collectively shape cr
 
 Praxis is free and open source software, as specified by the GNU General Public License.
 
+Join Praxis: https://praxis-app.org/i/4efdc9de
+
 ## Work in Progress
 
 You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground. Please bear in mind that Praxis is not yet intended for serious use outside of testing or research purposes. Your feedback is highly welcome.
