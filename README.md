@@ -18,9 +18,12 @@ Core features currently in development:
 - Plan real world events via proposals and voting
 - Federation with ActivityPub
 
-We’re also exploring a new approach with [Rhizome](https://github.com/praxis-app/rhizome), which focuses on seamless integration with existing platforms while maintaining a flexible, standalone foundation. It emphasizes chat-based decision-making, a hybrid platform/utility model, and a modular, interoperable architecture.
+We're also exploring a new experimental approach built on the Matrix protocol, which focuses on chat-based collaborative decision-making that seamlessly blends informal discussion with structured democratic processes. This approach emphasizes federated, decentralized communication while allowing groups to transition smoothly from conversation to decision-making without breaking flow.
 
-Learn more here: https://github.com/praxis-app/rhizome
+Learn more about this new approach in the following repositories:
+
+- [Praxis Matrix Client](https://github.com/praxis-app/praxis-matrix-client)
+- [Praxis CDM Service](https://github.com/praxis-app/praxis-cdm-service)
 
 ## Installation
 
