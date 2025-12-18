@@ -18,7 +18,7 @@ Core features currently in development:
 
 We're also exploring an experimental chat-based approach to collaborative decision-making that seamlessly blends informal discussion with structured democratic processes, allowing groups to move smoothly from conversation to proposals and voting without breaking flow.
 
-Learn more about this new approach here: [Praxis Chat](https://github.com/praxis-app/praxis-chat).
+Learn more about this new approach at https://github.com/praxis-app/praxis-chat.
 
 ## Installation
 
