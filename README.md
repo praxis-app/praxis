@@ -16,7 +16,7 @@ Core features currently in development:
 - Plan real world events via proposals and voting
 - Federation with ActivityPub
 
-We're also exploring a new experimental approach built on the Matrix protocol, which focuses on chat-based collaborative decision-making that seamlessly blends informal discussion with structured democratic processes. This approach emphasizes federated, decentralized communication while allowing groups to transition smoothly from conversation to decision-making without breaking flow.
+We're also exploring an experimental chat-based approach to collaborative decision-making that seamlessly blends informal discussion with structured democratic processes, allowing groups to move smoothly from conversation to proposals and voting without breaking flow.
 
 Learn more about this new approach here: [Praxis Chat](https://github.com/praxis-app/praxis-chat).
 
