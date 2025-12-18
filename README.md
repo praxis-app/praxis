@@ -18,10 +18,7 @@ Core features currently in development:
 
 We're also exploring a new experimental approach built on the Matrix protocol, which focuses on chat-based collaborative decision-making that seamlessly blends informal discussion with structured democratic processes. This approach emphasizes federated, decentralized communication while allowing groups to transition smoothly from conversation to decision-making without breaking flow.
 
-Learn more about this new approach in the following repositories:
-
-- [Praxis Matrix Client](https://github.com/praxis-app/praxis-matrix-client)
-- [Praxis CDM Service](https://github.com/praxis-app/praxis-cdm-service)
+Learn more about this new approach here: [Praxis Chat](https://github.com/praxis-app/praxis-chat).
 
 ## Installation
 
