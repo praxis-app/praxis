@@ -18,8 +18,8 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git \
     --mount=type=cache,target=/app/target \
     find api cli entity migrations src -name '*.rs' -exec touch {} + \
-    && cargo build --release -p praxis-live \
-    && cp /app/target/release/praxis-live /praxis-live
+    && cargo build --release -p praxis \
+    && cp /app/target/release/praxis /praxis
 
 # Frontend build stage
 FROM node:24.18.0-bookworm-slim AS frontend-builder
@@ -48,12 +48,12 @@ COPY content ./content
 
 ENV FRONTEND_DIST_DIR=/app/static
 
-CMD ["./praxis-live"]
+CMD ["./praxis"]
 
 # E2E image built from the current Rust and Vite source
 FROM runtime AS e2e
 
-COPY --from=backend-builder /praxis-live ./
+COPY --from=backend-builder /praxis ./
 COPY --from=frontend-builder /app/view/dist ./static
 
 # Verify the artifact against the source without compiling on the VPS
@@ -86,5 +86,5 @@ RUN bash scripts/check-backend-artifact.sh
 # Production image built from the tracked Linux and frontend artifacts
 FROM runtime AS production
 
-COPY --from=backend-verified /app/deploy/artifacts/linux-x86_64/praxis-live ./
+COPY --from=backend-verified /app/deploy/artifacts/linux-x86_64/praxis ./
 COPY --from=frontend-verified /app/deploy/artifacts/frontend-dist ./static

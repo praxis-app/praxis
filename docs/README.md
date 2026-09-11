@@ -1,6 +1,6 @@
 # Praxis Documentation
 
-This directory contains tracked Praxis Live documentation and the preserved
+This directory contains tracked Praxis documentation and the preserved
 original project proposal. The current application uses a Rust/Axum API and a
 React/Vite client built into one deployable application.
 

@@ -1,6 +1,6 @@
-# Praxis Live CLI
+# Praxis CLI
 
-Read-only developer and operations utilities for Praxis Live. The CLI can inspect decision activity, print database schema details, and list the Axum route surface without starting the API server.
+Read-only developer and operations utilities for Praxis. The CLI can inspect decision activity, print database schema details, and list the Axum route surface without starting the API server.
 
 ## Quick start
 
@@ -51,7 +51,7 @@ The CLI is designed to expand with additional utilities for:
 ## Environment variables
 
 - `DATABASE_URL` – full PostgreSQL connection string.
-- `DB_USERNAME`, `DB_PASSWORD`, `DB_SCHEMA`, `DB_HOST`, `DB_PORT` – same variables used by the rest of the Praxis Live stack when `DATABASE_URL` is not set.
+- `DB_USERNAME`, `DB_PASSWORD`, `DB_SCHEMA`, `DB_HOST`, `DB_PORT` – same variables used by the rest of the Praxis stack when `DATABASE_URL` is not set.
 
 ## Sample invocations
 

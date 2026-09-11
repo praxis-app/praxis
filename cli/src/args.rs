@@ -3,9 +3,9 @@ use uuid::Uuid;
 
 #[derive(Parser, Debug)]
 #[command(
-    name = "praxis-live-cli",
+    name = "praxis-cli",
     version,
-    about = "Read-only developer utilities for Praxis Live",
+    about = "Read-only developer utilities for Praxis",
     arg_required_else_help = true
 )]
 pub(super) struct Cli {

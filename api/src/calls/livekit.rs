@@ -70,7 +70,7 @@ pub(super) async fn ensure_livekit_available(
         &livekit.api_key,
         &livekit.api_secret,
     )
-    .list_rooms(vec!["praxis-live-health-check".to_owned()])
+    .list_rooms(vec!["praxis-health-check".to_owned()])
     .await
     .map(|_| ())
     .map_err(livekit_unavailable)
