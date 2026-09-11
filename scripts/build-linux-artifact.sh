@@ -14,6 +14,6 @@ docker buildx build \
   .
 
 mkdir -p "$artifact_dir"
-cp "$temporary_dir/praxis-live" "$artifact_dir/praxis-live"
+cp "$temporary_dir/praxis" "$artifact_dir/praxis"
 cp "$temporary_dir/.source-checksum" "$artifact_dir/.source-checksum"
-chmod +x "$artifact_dir/praxis-live"
+chmod +x "$artifact_dir/praxis"

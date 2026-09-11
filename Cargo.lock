@@ -2462,14 +2462,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "praxis-live"
+name = "praxis"
 version = "0.1.0"
 dependencies = [
  "api",
 ]
 
 [[package]]
-name = "praxis-live-cli"
+name = "praxis-cli"
 version = "0.1.0"
 dependencies = [
  "anyhow",

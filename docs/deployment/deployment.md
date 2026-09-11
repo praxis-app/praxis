@@ -2,7 +2,7 @@
 
 Praxis uses the repository's shared `Dockerfile` and `docker-compose.yml`. The
 production image copies the tracked Linux x86_64 (`linux/amd64`) Rust binary
-from `deploy/artifacts/linux-x86_64/praxis-live` and the tracked Vite frontend
+from `deploy/artifacts/linux-x86_64/praxis` and the tracked Vite frontend
 build from `deploy/artifacts/frontend-dist`. The VPS never compiles Rust or
 runs `npm run build`, which keeps deploys viable on resource-constrained
 hosts.
@@ -12,8 +12,8 @@ hosts.
 Use a Linux x86_64 host with Docker Compose and a TLS reverse proxy:
 
 ```bash
-git clone git@github.com:praxis-app/praxis-live.git
-cd praxis-live
+git clone git@github.com:praxis-app/praxis.git
+cd praxis
 cp .env.example .env
 ```
 

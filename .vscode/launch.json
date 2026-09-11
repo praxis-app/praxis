@@ -19,9 +19,9 @@
       "request": "launch",
       "preLaunchTask": "Build Server",
       "cargo": {
-        "args": ["build", "--bin", "praxis-live"],
+        "args": ["build", "--bin", "praxis"],
         "filter": {
-          "name": "praxis-live",
+          "name": "praxis",
           "kind": "bin"
         }
       },

@@ -147,7 +147,7 @@ impl TestApp {
         fields: HashMap<String, MultipartField>,
     ) -> Response<Body> {
         let boundary =
-            format!("praxis-live-boundary-{}", unique_database_name());
+            format!("praxis-boundary-{}", unique_database_name());
         let body = multipart_body(&boundary, fields);
 
         let request = Request::builder()
@@ -386,5 +386,5 @@ fn unique_database_name() -> String {
         .as_nanos() as u64;
     let sequence = NEXT_DATABASE_ID.fetch_add(1, Ordering::Relaxed);
 
-    format!("praxis_live_test_{}_{}_{}", process::id(), now, sequence)
+    format!("praxis_test_{}_{}_{}", process::id(), now, sequence)
 }

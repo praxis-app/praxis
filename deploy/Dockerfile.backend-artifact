@@ -17,9 +17,9 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/usr/local/cargo/git \
     --mount=type=cache,target=/app/target \
     find api cli entity migrations src -type f -exec touch {} + \
-    && cargo build --release -p praxis-live \
+    && cargo build --release -p praxis \
     && mkdir /artifact \
-    && cp /app/target/release/praxis-live /artifact/praxis-live \
+    && cp /app/target/release/praxis /artifact/praxis \
     && bash scripts/check-backend-artifact.sh write /artifact
 
 FROM scratch

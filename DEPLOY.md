@@ -1,4 +1,4 @@
-# Deploy Praxis Live
+# Deploy Praxis
 
 The repository contains the prebuilt Linux x86_64 backend binary and the
 prebuilt Vite frontend used by the Docker image. On the VPS, clone the

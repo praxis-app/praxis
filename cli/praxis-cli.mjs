@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Thin helper that shells into the Rust Praxis Live CLI so developers can run
+ * Thin helper that shells into the Rust Praxis CLI so developers can run
  * `npm run cli -- ...` without remembering the cargo path.
  */
 
