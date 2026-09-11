@@ -1,9 +1,0 @@
-query Chats($offset: Int!, $limit: Int!) {
-  me {
-    id
-    chats(offset: $offset, limit: $limit) {
-      ...Chat
-    }
-    chatCount
-  }
-}

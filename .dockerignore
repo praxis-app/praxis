@@ -1,0 +1,12 @@
+**/node_modules/
+**/target/
+**/dist/
+**/coverage/
+**/.DS_Store
+**/*.tsbuildinfo
+.git/
+.gitignore
+.env
+.env.*
+.claude/
+.docs/

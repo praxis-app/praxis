@@ -1,0 +1,26 @@
+FROM rust:1.97.0-slim-bookworm AS builder
+
+WORKDIR /app
+
+# Copy needed config files for building the backend and CLI
+COPY Cargo.toml Cargo.lock rust-toolchain.toml .dockerignore ./
+COPY api ./api
+COPY cli ./cli
+COPY entity ./entity
+COPY migrations ./migrations
+COPY src ./src
+COPY deploy/Dockerfile.backend-artifact ./deploy/Dockerfile.backend-artifact
+COPY scripts/check-backend-artifact.sh ./scripts/check-backend-artifact.sh
+
+# Refresh timestamps so Cargo cannot reuse stale cached workspace code
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
+    --mount=type=cache,target=/app/target \
+    find api cli entity migrations src -type f -exec touch {} + \
+    && cargo build --release -p praxis-live \
+    && mkdir /artifact \
+    && cp /app/target/release/praxis-live /artifact/praxis-live \
+    && bash scripts/check-backend-artifact.sh write /artifact
+
+FROM scratch
+COPY --from=builder /artifact/ /

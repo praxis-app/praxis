@@ -1,88 +1,46 @@
-## Praxis
+# Praxis Live - Chat-Based CDM
 
-Praxis is an open source social network designed for collaborative decision making. Proposals take center stage, offering a diverse range of voting models, with consensus as the default.
+Praxis Live is a chat-based collaborative decision-making (CDM) app with support for video calling. Groups can transition smoothly between messaging, live conversation, and structured decision-making without breaking flow or losing context.
 
-With Praxis, you can create groups that empower members to collectively shape crucial aspects such as group name, settings, roles, or the planning of real world events. This flexibility allows for the creation of diverse and dynamic social structures tailored to meet the specific needs of your community as it evolves over time.
+Designed for organizations, teams, and communities that need robust group decision-making capabilities, it combines the familiarity of chat and video calls with flexible decision-making tools, multiple voting models, and forum style organization when needed.
+
+**Tech Stack**:
+
+- Rust v1.97.0
+- Node v24.18.0
+- React/Vite
+- TypeScript
+- PostgreSQL
 
 Praxis is free and open source software, as specified by the GNU General Public License.
 
-## Work in Progress
+## Work in progress
 
-You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground. Please bear in mind that Praxis is not yet intended for serious use outside of testing or research purposes. Your feedback is highly welcome.
+You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground. Your feedback is highly welcome.
 
-Core features currently in development:
+Please note that this is also an experimental approach within the Praxis project. The main repository is located at https://github.com/praxis-app/praxis.
 
-- Change group roles, permissions, and settings all via proposals
-- Plan real world events via proposals and voting
-- Federation with ActivityPub
+## Integration tests
 
-We're also exploring an experimental chat-based approach to collaborative decision-making that seamlessly blends informal discussion with structured democratic processes, allowing groups to move smoothly from conversation to proposals and voting without breaking flow.
+The Rust API route integration tests live in `api/tests/http_routes/` and use a real local Postgres server with temporary per-test databases. They assume Postgres is already running locally and create/drop temporary databases inside that existing server during the test run.
 
-Learn more about this new approach at https://github.com/praxis-app/praxis-chat.
+Recommended commands:
 
-## Installation
+- `npm run test:api:integration`
+- `cargo test -p api --test http_routes`
 
-Ensure that you're using Node v18.17.1 before proceeding.
+These commands intentionally run only the `http_routes` integration-test target.
 
-```bash
-# Install project dependencies
-$ npm install
+## CLI
 
-# Add .env file and edit as needed
-$ cp .env.example .env
-```
-
-## Running the app
+The project includes a Rust-based CLI tool for both development and production operations.
 
 ```bash
-# Start server for development
-$ npm run start:dev
+# Example: view poll and proposal stats
+npm run cli -- poll-stats --days 14
 
-# Start client for development
-$ npm run start:client
-
-# Start app for production
-$ npm run start:prod
+# Example: print database schema
+npm run cli -- schema
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to view and interact with the UI.
-
-## Docker
-
-Ensure that you have [Docker](https://docs.docker.com/engine/install) installed to use the following commands.
-
-```bash
-# Start app in a container
-$ docker compose up -d
-
-# Build and restart app after making changes
-$ docker compose up -d --build
-```
-
-## ESLint and Prettier
-
-```bash
-# Enable pre-commit hook with Husky
-$ npx husky install && npx husky add .husky/pre-commit "npx lint-staged"
-```
-
-## GraphQL Code Generator
-
-Praxis takes advantage of code generation based on the current GraphQL schema. The generator should be run after any changes to GraphQL documents, as well as after any changes to the schema.
-
-```bash
-# Keep generated types and hooks in sync with the current schema
-$ npm run gen
-```
-
-Read more about [GraphQL Code Generator](https://www.the-guild.dev/graphql/codegen/docs/getting-started).
-
-## Accessibility
-
-Install the following Chrome extension provided by Deque Systems: [axe DevTools - Web Accessibility Testing](https://chrome.google.com/webstore/detail/axe-devtools-web-accessib/lhdoppojpmngadmnindnejefpokejbdd?hl=en-US)
-
-Once the extension is installed, open up Chrome DevTools, and navigate to the "axe DevTools" tab. Here you can click the "Scan ALL of my page" button to check for any accessibility issues.
-
-## Contributions
-
-Praxis is open to contributions. Please read [CONTRIBUTING.md](https://github.com/praxis-app/praxis/blob/main/CONTRIBUTING.md) for more details.
+See the [CLI README](cli/README.md) for full documentation.

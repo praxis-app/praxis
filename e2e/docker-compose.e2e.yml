@@ -1,0 +1,78 @@
+name: praxis-live-e2e
+
+services:
+  database:
+    image: postgres:16
+    ports:
+      - '55432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -p 5432']
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+  web:
+    build:
+      context: ..
+      target: e2e
+    ports:
+      - '3210:3210'
+    environment:
+      VITE_SERVER_PORT: 3210
+      UPLOAD_ROOT: /tmp/praxis-live-e2e-uploads
+      AUTH_TOKEN_SECRET: e2e-secret
+      CHANNEL_KEY_MASTER: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+      POLL_CLOSURE_INTERVAL_SECONDS: 1
+      PROPOSAL_SYNC_INTERVAL_SECONDS: 1
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_SCHEMA: postgres
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_MIGRATIONS: true
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      LIVEKIT_URL: ws://127.0.0.1:37880
+      LIVEKIT_API_URL: http://livekit:7880
+      LIVEKIT_HOST: livekit
+      LIVEKIT_PORT: 7880
+      LIVEKIT_API_KEY: devkey
+      LIVEKIT_API_SECRET: secret
+      VIDEO_CALLS_ENABLED: true
+      STALE_CALL_CLEANUP_INTERVAL_SECONDS: 5
+    depends_on:
+      database:
+        condition: service_healthy
+      cache:
+        condition: service_started
+      livekit:
+        condition: service_started
+
+  cache:
+    image: redis:8.4.0
+
+  livekit:
+    image: livekit/livekit-server:v1.11
+    environment:
+      LIVEKIT_CONFIG: |
+        port: 7880
+        rtc:
+          tcp_port: 37881
+          udp_port: 37882
+          use_external_ip: false
+          node_ip: 127.0.0.1
+        keys:
+          devkey: secret
+        webhook:
+          api_key: devkey
+          urls:
+            - http://web:3210/api/livekit/webhook
+    ports:
+      - '37880:7880'
+      - '37881:37881'
+      - '37882:37882/udp'
+    command: --dev --bind 0.0.0.0

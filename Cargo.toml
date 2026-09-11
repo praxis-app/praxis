@@ -1,0 +1,45 @@
+[workspace]
+members = ["api", "cli", "entity", "migrations"]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+rust-version = "1.97"
+version = "0.1.0"
+
+[package]
+name = "praxis-live"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[workspace.dependencies]
+anyhow = "1"
+axum = "0.8"
+base64 = "0.22"
+casbin = "2"
+clap = { version = "4", features = ["derive"] }
+chrono = { version = "0.4", default-features = false, features = ["clock", "serde"] }
+dashmap = "6"
+dotenv = "0.15"
+jsonwebtoken = "9"
+image = { version = "0.25", default-features = false, features = ["gif", "jpeg", "png", "webp"] }
+livekit-api = { version = "0.4.19", default-features = false, features = ["services-tokio", "access-token", "webhooks", "rustls-tls-native-roots"] }
+mime_guess = "2"
+password-auth = "1"
+owo-colors = "4"
+redis = "0.27"
+ring = "0.17"
+sea-orm = { version = "1.1", default-features = false, features = ["macros", "runtime-tokio-rustls", "sqlx-postgres", "with-chrono", "with-uuid"] }
+sea-orm-migration = { version = "1.1", default-features = false, features = ["runtime-tokio-rustls", "sqlx-postgres", "with-chrono", "with-uuid"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["full"] }
+tower-http = { version = "0.6", features = ["cors", "fs", "trace"] }
+tracing = "0.1"
+tracing-appender = "0.2"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1", features = ["serde", "v4"] }
+
+[dependencies]
+api = { path = "./api" }

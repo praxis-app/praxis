@@ -1,5 +1,0 @@
-query Proposal($id: Int!, $isLoggedIn: Boolean!, $isVerified: Boolean!) {
-  proposal(id: $id) {
-    ...ProposalCard
-  }
-}

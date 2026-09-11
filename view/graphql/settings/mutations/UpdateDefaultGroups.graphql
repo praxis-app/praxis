@@ -1,7 +1,0 @@
-mutation UpdateDefaultGroups($defaultGroupsData: UpdateDefaultGroupsInput!) {
-  updateDefaultGroups(defaultGroupsData: $defaultGroupsData) {
-    groups {
-      ...AddDefaultGroupsOption
-    }
-  }
-}

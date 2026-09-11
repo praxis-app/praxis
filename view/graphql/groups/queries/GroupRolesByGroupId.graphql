@@ -1,9 +1,0 @@
-query GroupRolesByGroupId($groupId: Int!) {
-  group(id: $groupId) {
-    id
-    roles {
-      id
-      name
-    }
-  }
-}

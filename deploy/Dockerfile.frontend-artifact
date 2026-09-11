@@ -1,0 +1,18 @@
+FROM node:24.18.0-bookworm-slim AS builder
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY tsconfig.json tsconfig.app.json tsconfig.node.json tsconfig.e2e.json ./
+COPY vite.config.ts components.json ./
+COPY view ./view
+COPY .dockerignore ./
+COPY deploy/Dockerfile.frontend-artifact ./deploy/Dockerfile.frontend-artifact
+COPY scripts/check-frontend-artifact.sh ./scripts/check-frontend-artifact.sh
+
+RUN npm run build && bash scripts/check-frontend-artifact.sh write view/dist
+
+FROM scratch
+COPY --from=builder /app/view/dist /

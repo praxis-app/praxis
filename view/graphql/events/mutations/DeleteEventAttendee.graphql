@@ -1,3 +1,0 @@
-mutation DeleteEventAttendee($eventId: Int!) {
-  deleteEventAttendee(eventId: $eventId)
-}

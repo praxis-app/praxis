@@ -1,5 +1,0 @@
-query Events($input: EventsInput!, $isVerified: Boolean!) {
-  events(input: $input) {
-    ...EventCompact
-  }
-}

@@ -1,5 +1,0 @@
-query EditUser($name: String) {
-  user(name: $name) {
-    ...EditProfileForm
-  }
-}

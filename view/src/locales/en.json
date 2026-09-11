@@ -1,0 +1,1286 @@
+{
+  "actions": {
+    "add": "Add",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "copy": "Copy",
+    "create": "Create",
+    "delete": "Delete",
+    "disabled": "Disabled",
+    "edit": "Edit",
+    "enabled": "Enabled",
+    "goToHome": "Back to home",
+    "loading": "Loading...",
+    "next": "Next",
+    "previous": "Previous",
+    "refresh": "Refresh",
+    "remove": "Remove",
+    "resizeChannelsPanel": "Resize channels panel",
+    "resizeRightPanel": "Resize right panel",
+    "save": "Save",
+    "search": "Search",
+    "submit": "Submit"
+  },
+
+  "states": {
+    "saving": "Saving...",
+    "deleting": "Deleting..."
+  },
+
+  "prompts": {
+    "deleteItem": "Are you sure you want to delete this {{itemType}}?",
+    "inDev": "This feature is still in development.",
+    "loading": "Loading...",
+    "noContent": "No content to display.",
+    "tryAgain": "Please try again.",
+    "welcomeToPraxis": "Welcome to Praxis",
+    "accessDenied": "Access denied."
+  },
+
+  "errors": {
+    "pageNotFound": "Page not found.",
+    "somethingWentWrong": "Something went wrong.",
+    "fieldRequired": "This field is required."
+  },
+
+  "notifications": {
+    "title": "Notifications",
+    "actions": {
+      "open": "Open notifications, {{count}} unread",
+      "openMenu": "Open notification actions",
+      "close": "Close notifications",
+      "markRead": "Mark as read",
+      "markUnread": "Mark as unread",
+      "markAllRead": "Mark all read",
+      "delete": "Delete notification",
+      "clearAll": "Clear all notifications",
+      "settings": "Notification settings"
+    },
+    "labels": {
+      "system": "Praxis",
+      "unavailable": "This item is no longer available",
+      "unreadCount_one": "{{count}} unread",
+      "unreadCount_other": "{{count}} unread"
+    },
+    "items": {
+      "new_message_one": "{{actor}} sent a new message in #{{channel}}",
+      "new_message_other": "{{actor}} sent {{count}} new messages in #{{channel}}",
+      "new_message_forum_one": "{{actor}} created a new post in #{{channel}}",
+      "new_message_forum_other": "{{actor}} created {{count}} new posts in #{{channel}}",
+    "new_proposal": "{{actor}} created a new proposal in #{{channel}}",
+      "message_reply": "{{actor}} replied to a conversation in #{{channel}}",
+      "message_reply_message": "{{actor}} replied to your message in #{{channel}}",
+      "message_reply_poll": "{{actor}} replied to your poll in #{{channel}}",
+      "message_reply_proposal": "{{actor}} replied to your proposal in #{{channel}}",
+      "forum_reply": "{{actor}} replied to your forum post in #{{channel}}",
+      "proposal_vote": "{{actor}} voted {{vote}} on your proposal in #{{channel}}",
+      "proposal_ratified": "Your proposal in #{{channel}} was ratified",
+      "proposal_closed": "Your proposal in #{{channel}} closed",
+      "server_role_granted": "You were granted the {{role}} role",
+    "event_created": "{{event}} was scheduled by a ratified proposal"
+    },
+    "votes": {
+      "agree": "agree",
+      "disagree": "disagree",
+      "abstain": "abstain",
+      "block": "block"
+    },
+    "empty": {
+      "title": "You're all caught up",
+      "description": "Mentions, replies, proposal updates, and role changes will appear here."
+    },
+    "errors": {
+      "load": "Notifications could not be loaded."
+    }
+  },
+
+  "auth": {
+    "labels": {
+      "email": "Email address",
+      "password": "Password",
+      "username": "Username",
+      "confirmPassword": "Confirm password"
+    },
+    "placeholders": {
+      "email": "name@example.com",
+      "username": "Choose a username",
+      "confirmPassword": "Confirm your password"
+    },
+    "prompts": {
+      "alreadyHaveAccount": "Already have an account?",
+      "alreadyLoggedIn": "You're already signed in.",
+      "alreadyRegistered": "You have already created an account.",
+      "authenticated": "You are authenticated.",
+      "chooseAuthFlow": "You can send this message anonymously right now or create an account to unlock more features. Which would you prefer to do?",
+      "signUpToChat": "Log in or sign up to chat and make decisions with other members of this server.",
+      "createAccount": "Create an account",
+      "createPassword": "Create a strong password",
+      "dontHaveAccount": "Don't have an account?",
+      "enterCredentials": "Enter your email and password to access your account",
+      "enterDetails": "Enter your details to create your new account",
+      "logOut": "Are you sure you want to log out?",
+      "upgradeAccount": "Turn your anonymous session into a permanent account"
+    },
+    "actions": {
+      "logIn": "Log in",
+      "logOut": "Log out",
+      "signUp": "Sign up",
+      "signIn": "Sign in",
+      "createAccount": "Create account",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "descriptions": {
+      "confirmLogOut": "Use this dialog to log out of your account."
+    },
+    "errors": {
+      "invalidEmail": "Email is invalid.",
+      "longEmail": "Email cannot exceed 254 characters",
+      "longName": "Username cannot exceed 15 characters",
+      "missingEmail": "Email cannot be empty",
+      "missingName": "Username cannot be empty",
+      "missingPassword": "Password cannot be empty",
+      "passwordsDoNotMatch": "Passwords do not match",
+      "passwordTooLong": "Password must be at most 64 characters long",
+      "passwordTooShort": "Password must be at least 8 characters long",
+      "shortName": "Username must be at least 2 characters"
+    }
+  },
+
+  "users": {
+    "presence": {
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "actions": {
+      "editProfile": "Edit profile",
+      "save": "Save changes",
+      "changePicture": "Change picture",
+      "selectPicture": "Select picture",
+      "changeCoverPhoto": "Change cover photo",
+      "selectCoverPhoto": "Select cover photo",
+      "profileUpdated": "Profile updated successfully"
+    },
+    "form": {
+      "name": "Username",
+      "displayName": "Display name",
+      "bio": "Bio",
+      "profilePicture": "Profile picture",
+      "coverPhoto": "Cover photo"
+    },
+    "placeholders": {
+      "name": "Enter your username",
+      "displayName": "Enter your display name",
+      "bio": "Tell us about yourself...",
+      "profilePicture": "Upload a profile picture",
+      "coverPhoto": "Upload a cover photo"
+    },
+    "errors": {
+      "shortName": "Username must be at least 3 characters",
+      "longName": "Username cannot exceed 15 characters",
+      "invalidName": "Username can only contain lowercase letters, numbers, and underscores",
+      "shortDisplayName": "Display name must be at least 4 characters",
+      "longDisplayName": "Display name cannot exceed 30 characters",
+      "longBio": "Bio cannot exceed 500 characters"
+    },
+    "headers": {
+      "editProfile": "Edit Profile",
+      "editProfileDescription": "Update your profile information."
+    },
+    "prompts": {
+      "viewProfile": "View profile for {{name}}",
+      "logInToViewProfile": "Log in or sign up to view profiles",
+      "registerToViewOtherProfiles": "You need to register to view other user profiles"
+    }
+  },
+
+  "proposals": {
+    "labels": {
+      "actionType": "Action",
+      "active": "Active",
+      "body": "Proposal",
+      "closed": "Closed",
+      "callEnded": "Call ended",
+      "consensus": "Consensus",
+      "consensusProposal": "Consensus Proposal",
+      "consentProposal": "Consent Proposal",
+      "majorityProposal": "Majority Vote Proposal",
+      "consent": "Consent",
+      "majority": "Majority vote",
+      "majorityShort": "Majority",
+      "proposedSettings": "Settings proposal",
+      "settingsChangeProposal": "Settings change proposal",
+      "settingChangesCount_one": "{{count}} setting change",
+      "settingChangesCount_other": "{{count}} setting changes",
+      "ratified": "Ratified",
+      "revision": "Revision",
+      "roleChanges": "Role changes",
+      "roleChangeProposal": "Role change proposal",
+      "roleColorChange": "Role color",
+      "color": "Color",
+      "name": "Name",
+      "roleNameChange": "Role name",
+      "roleProposal": "Role proposal",
+      "roleSelection": "Role selection",
+      "totalVotes_one": "{{count}} vote",
+      "totalVotes_other": "{{count}} votes",
+      "quorumProgress": "Participation",
+      "quorumMet": "Met",
+      "quorumNotMet": "Not met",
+      "thresholdProgress": "Approval",
+      "thresholdMet": "Met",
+      "thresholdNotMet": "Not met",
+      "disagreementLimit": "Disagreement limit",
+      "abstentionLimit": "Abstention limit",
+      "blockStatus": "Blocks",
+      "approval": "approval threshold",
+      "quorum": "quorum",
+      "disagreements": "disagreement limit",
+      "abstentions": "abstention limit",
+      "blocks": "block present",
+      "ignoredBlocks": "Blocks no longer counted",
+      "limitReached": "Limit reached",
+      "voting": "Voting",
+      "createdInCall": "Created in-call",
+      "createdInThisCall": "Created in this call",
+      "createdInAnotherCall": "Created in another call",
+      "createdInChannel": "Created in channel",
+      "votingDeadline": "Voting deadline",
+      "deadline": "voting deadline",
+      "plannedEvent": "Planned event: {{name}}",
+      "eventProposal": "Event proposal",
+      "blocking": "Blocking",
+      "blockingOpenToAll": "Anyone",
+      "blockingPermittedRoles": "With permission"
+    },
+    "headers": {
+      "availableRoles": "Available Roles",
+      "basicInfo": "Basic Information",
+      "create": "Create a New Proposal",
+      "currentRoleInfo": "Current Role Information",
+      "memberChanges": "Member Changes",
+      "permissions": "Permissions",
+      "review": "Review Proposal",
+      "roleAttributes": "Role Attributes",
+      "roleAttributesChanges": "Role Attributes Changes",
+      "roleAttributesTitle": "Role Name and Color",
+      "roleMembers": "Role Members",
+      "rolesPermissions": "Roles and Permissions",
+      "searchMembers": "Search Members",
+      "selectRole": "Select Role",
+      "selectedRole": "Selected Role",
+      "selectedRoleInfo": "Selected Role Information",
+      "voteProgress": "Vote Progress",
+      "proposalSettings": "Proposal Settings",
+      "planEvent": "Plan Event",
+      "confirmRatifyingVote": "Your vote may ratify this proposal",
+      "confirmBlockingVote": "Confirm blocking vote"
+    },
+    "placeholders": {
+      "action": "Select an action type",
+      "body": "Enter your proposal details...",
+      "searchMembersPlaceholder": "Search members...",
+      "selectRolePlaceholder": "Select a role..."
+    },
+    "actions": {
+      "abstain": "Abstain",
+      "agree": "Agree",
+      "block": "Block",
+      "castBlockingVote": "Cast blocking vote",
+      "castRatifyingVote": "Cast ratifying vote",
+      "create": "Create proposal",
+      "disagree": "Disagree",
+      "moveToForum": "Move to forum",
+      "openMenu": "Open proposal menu",
+      "viewCall": "View call",
+      "viewSettings": "View settings"
+    },
+    "descriptions": {
+      "actionType": "The type of change or decision this proposal represents.",
+      "changeSettings": "Choose the server settings this proposal should change.",
+      "basicInfoDescription": "Provide the basic details for your proposal",
+      "body": "Enter your proposal",
+      "create": "Submit a proposal to discuss and vote on.",
+      "approvalStatus": "{{agreements}} of {{count}} participants agree so far ({{threshold}}% required)",
+      "approvalNoVotes": "No participants yet ({{threshold}}% required)",
+      "approvalParticipantNote": "The participant total changes as voting progresses",
+      "quorumStatus": "{{current}} of {{required}} responses required",
+      "quorumRequirement": "{{threshold}}% quorum across {{memberCount}} eligible channel members",
+      "voteLimitStatus": "{{current}} of {{limit}} allowed",
+      "blockStatus": "{{count}} block vote(s)",
+      "reviewDescription": "Review your proposal before submitting",
+      "roleAttributesDescription": "Modify the role's name and color",
+      "roleMembersDescription": "Add or remove members from the role",
+      "rolesPermissionsDescription": "Configure the roles and permissions changes",
+      "selectRoleDescription": "Choose the role you want to modify",
+      "proposalSettings": "The decision rules captured when this proposal was created.",
+      "votingDeadline": "The date and time when voting ends.",
+      "consentRules": "Consent is decided when voting closes. Disagreements and abstentions count against their limits, and a single block from a member with permission stops the proposal.",
+      "consensusRules": "Consensus passes when the required share of participating members agree, and disagreements and abstentions stay within their limits. A single block from a member with permission stops the proposal.",
+      "blocksRoleRestricted": "Blocking is restricted to certain roles on this server, so the block option is unavailable to you. Disagree still counts against the disagreement limit.",
+      "ignoredBlocks_one": "{{count}} block is still on record but no longer carries veto weight, because the member who cast it no longer holds a role that allows blocking.",
+      "ignoredBlocks_other": "{{count}} blocks are still on record but no longer carry veto weight, because the members who cast them no longer hold a role that allows blocking.",
+      "confirmBlockingVote": "A blocking vote prevents this proposal from ratifying. Only continue if you intend to stop the proposal from passing.",
+      "confirmRatifyingVote": "Based on the current vote count, this vote is likely to ratify the proposal and put its action into effect.",
+      "planEvent": "Set the event details and choose at least one host. The event will be automatically created if this proposal passes."
+    },
+    "actionTypes": {
+      "changeRole": "Change role",
+      "changeSettings": "Change settings",
+      "createRole": "Create role",
+      "planEvent": "Plan event",
+      "general": "General decision",
+      "generalShort": "General",
+      "test": "Test"
+    },
+    "prompts": {
+      "noUsersFound": "No users found",
+      "noVotingAfterClose": "This proposal has been closed and can no longer be voted on.",
+      "noVotingAfterRatification": "This proposal has been ratified and can no longer be voted on.",
+      "noVotingAfterDeadline": "The voting deadline has passed.",
+      "noVotingDuringRevision": "This proposal is in revision and cannot be voted on.",
+      "noVotingAfterCallEnd": "Call has ended. Votes can no longer be changed.",
+      "ratifiedSuccess": "This proposal has been ratified! 🎉",
+      "signInToVote": "Sign in to vote on proposals",
+      "votingUnavailable": "Voting is not available for this proposal right now."
+    },
+    "outcomes": {
+      "ratified": "Ratified — the proposal passed.",
+      "closedWithoutConsensus": "Closed without consensus.",
+      "eventStartElapsed": "This proposal expired because the event start time passed.",
+      "eventHostIneligible": "This proposal expired because a proposed event host is no longer a server member.",
+      "failedRules": "Failed conditions: {{rules}}.",
+      "finalizing": "Voting has ended. Finalizing the result…",
+      "eligibleAtDeadline": "All conditions are met. Eligible to pass when voting closes.",
+      "eligibleNow": "All conditions are met. Finalizing ratification…",
+      "waitingForDeadline": "Voting is open. Decision conditions are not yet met.",
+      "votingInProgress": "Voting is open. Conditions are not yet met."
+    },
+    "errors": {
+      "registerToCreateNonTestProposals": "Anonymous users can only create test proposals. Please register to create other proposal types.",
+      "changeRoleRequiresChanges": "Proposals to change roles must include at least 1 change to the selected role.",
+      "changeSettingsRequiresChanges": "Change settings proposals require at least one change.",
+      "errorCreatingProposal": "Error creating proposal",
+      "longBody": "Proposal body cannot exceed 6000 characters",
+      "testProposalRequiresBody": "Test proposals must include a body",
+      "generalProposalRequiresBody": "General proposals must include a body",
+      "eventRequired": "This event field is required",
+      "eventLocationRequired": "Add a location for an in-person event",
+      "eventHostRequired": "Choose at least one event host",
+      "eventEndAfterStart": "The event must end after it starts",
+      "eventDateTimeInvalid": "Choose a valid date and time",
+      "eventStartFuture": "Choose a start time in the future",
+      "eventLinkInvalid": "Enter a valid http or https link"
+    }
+  },
+
+  "events": {
+    "title": "Events",
+    "actions": {
+      "previous": "Previous",
+      "next": "Next",
+      "today": "Today",
+      "clear": "Clear",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "viewEvent": "View event",
+      "interested": "Interested",
+      "going": "Going",
+      "uploadCoverPhoto": "Upload cover photo",
+      "addEndDateTime": "Add end date and time",
+      "removeEndDateTime": "Remove end date and time"
+    },
+    "views": {
+      "month": "Month",
+      "week": "Week",
+      "list": "List"
+    },
+    "labels": {
+      "name": "Event name",
+      "description": "Description",
+      "startsAt": "Starts",
+      "endsAt": "Ends (optional)",
+      "startDate": "Start Date",
+      "startTime": "Start Time",
+      "endDate": "End Date (optional)",
+      "endTime": "End Time",
+      "duration": "Duration",
+      "eventType": "Event type",
+      "online": "Online",
+      "inPerson": "In person",
+      "location": "Location",
+      "externalLink": "Online event link (optional)",
+      "hosts": "Hosts",
+      "hostedBy": "Hosted by {{names}}",
+      "hosting": "Hosting",
+      "hostRsvp": "Hosts are automatically attending this event.",
+      "going": "Going",
+      "goingCount": "{{count}} going",
+      "interested": "Interested",
+      "more": "+{{count}} more",
+      "coverPhoto": "Cover photo (optional)"
+    },
+    "list": {
+      "count_one": "{{count}} event",
+      "count_other": "{{count}} events"
+    },
+    "headers": {
+      "whatToExpect": "What to Expect"
+    },
+    "placeholders": {
+      "name": "e.g. Monthly community meetup",
+      "description": "Share the agenda, goals, and anything attendees should know.",
+      "location": "e.g. Community center, Room 2",
+      "externalLink": "https://meet.example.com/...",
+      "hosts": "Type a member's name to add hosts...",
+      "selectDate": "Select date",
+      "selectTime": "Select time"
+    },
+    "empty": {
+      "title": "No events here",
+      "description": "Try another month or filter.",
+      "attendees": "No one yet."
+    },
+    "prompts": {
+      "signInToAttend": "You need to sign in or sign up to attend events."
+    },
+    "errors": {
+      "load": "Events could not be loaded.",
+      "loadDetail": "This event could not be loaded.",
+      "rsvp": "Your RSVP could not be updated."
+    }
+  },
+
+  "polls": {
+    "headers": {
+      "create": "Create a Poll",
+      "voteBreakdown": "Vote Breakdown"
+    },
+    "descriptions": {
+      "create": "Create a poll for your group to vote on."
+    },
+    "labels": {
+      "question": "Question",
+      "answers": "Answers",
+      "duration": "Duration",
+      "allowMultipleAnswers": "Allow multiple answers",
+      "poll": "Poll",
+      "selectOne": "Select one answer",
+      "selectMultiple": "Select one or more answers",
+      "totalVotes_one": "{{count}} vote",
+      "totalVotes_other": "{{count}} votes",
+      "noVotesYet": "No votes yet",
+      "closed": "Poll closed",
+      "closedAt": "Closed at {{date}}"
+    },
+    "placeholders": {
+      "question": "What question do you want to ask?",
+      "answer": "Answer {{number}}",
+      "duration": "Select a duration"
+    },
+    "actions": {
+      "addAnswer": "Add another answer",
+      "createPoll": "Create poll",
+      "openMenu": "Open poll menu",
+      "vote": "Vote",
+      "removeVote": "Remove vote"
+    },
+    "errors": {
+      "questionRequired": "Question is required",
+      "answerRequired": "Answer is required",
+      "minAnswersRequired": "At least 2 answers are required",
+      "selectAtLeastOne": "Please select at least one option"
+    }
+  },
+
+  "messages": {
+    "actions": {
+      "sendAnonymous": "Send anonymously",
+      "dismissMessage": "Dismiss message",
+      "openMessageActions": "Open message actions",
+      "openMenu": "Open message menu",
+      "copyLink": "Copy link",
+      "copyText": "Copy text",
+      "reply": "Reply"
+    },
+    "labels": {
+      "replies": "Replies",
+      "replyCount_one": "{{count}} reply",
+      "replyCount_other": "{{count}} replies",
+      "lastReplyToday": "Last reply today at {{time}}",
+      "lastReplyYesterday": "Last reply yesterday at {{time}}",
+      "lastReplyOn": "Last reply {{date}} at {{time}}"
+    },
+    "placeholders": {
+      "sendMessage": "Send a message...",
+      "sendThreadReply": "Reply to thread..."
+    },
+    "prompts": {
+      "sendAMessage": "Send a message...",
+      "noMessagesYet": "No messages yet",
+      "onlyVisibleToYou": "Only visible to you",
+      "inviteRequired": "You need to be invited or logged in before you can send messages.",
+      "processingCommand": "Processing your command...",
+      "linkCopied": "Link copied to clipboard",
+      "textCopied": "Message copied to clipboard"
+    },
+    "errors": {
+      "longBody": "Message body cannot exceed 6000 characters",
+      "errorSendingMessage": "Error sending message"
+    },
+    "names": {
+      "praxisBot": "praxis-bot"
+    },
+    "threads": {
+      "title": "Thread",
+      "channel": "In #{{channel}}",
+      "back": "Back to channel",
+      "close": "Close thread",
+      "loading": "Loading thread...",
+      "jumpToLatest": "Jump to latest replies",
+      "loadOlder": "Load older replies",
+      "loadingOlder": "Loading older replies...",
+      "empty": "No replies yet. Start the conversation here.",
+      "notFoundTitle": "Thread not available",
+      "notFoundDescription": "This message may have moved, or you may not have access to it."
+    }
+  },
+
+  "channels": {
+    "actions": {
+      "create": "Create channel",
+      "delete": "Delete channel",
+      "jumpToLatest": "Jump to latest",
+      "loadingNewer": "Loading newer messages..."
+    },
+    "form": {
+      "name": "Name",
+      "description": "Description",
+      "type": "Channel type"
+    },
+    "descriptions": {
+      "noDescription": "This channel doesn't have a description yet. Propose one!",
+      "textChannel": "Send messages, images, polls, proposals, and more.",
+      "forumChannel": "Turn casual chats into structured group decisions."
+    },
+    "headers": {
+      "channelSettings": "Channel Settings",
+      "channelSettingsDescription": "Edit the settings for this channel."
+    },
+    "labels": {
+      "channel": "Channel",
+      "channelSettings": "Channel settings",
+      "textChannel": "Text",
+      "forumChannel": "Forum"
+    },
+    "prompts": {
+      "createChannel": "Create a new channel",
+      "creatingChannel": "Creating...",
+      "startConversation": "Start a conversation around a topic or idea."
+    }
+  },
+
+  "decisions": {
+    "actions": {
+      "closePanel": "Close active decisions",
+      "openDecision": "Open {{type}} in {{channel}}",
+      "panel": "Decisions",
+      "togglePanel": "Toggle active decisions"
+    },
+    "errors": {
+      "loadTitle": "Could not load decisions",
+      "loadDescription": "Refresh to try again."
+    },
+    "headers": {
+      "active": "Active decisions"
+    },
+    "labels": {
+      "noDeadline": "No deadline",
+      "poll": "Poll",
+      "proposal": "Proposal",
+      "responded": "Responded",
+      "responses": "Responses",
+      "untitled": "Untitled decision"
+    },
+    "prompts": {
+      "emptyTitle": "No active decisions",
+      "emptyDescription": "Open proposals and polls will appear here.",
+      "loading": "Loading decisions...",
+      "loadingMore": "Loading more..."
+    }
+  },
+
+  "forums": {
+    "actions": {
+      "allPosts": "All posts",
+      "back": "Back",
+      "closePost": "Close post",
+      "closePostPane": "Close post pane",
+      "createPost": "Create post",
+      "createDiscussion": "Create discussion",
+      "creatingPost": "Creating...",
+      "createProposal": "Create proposal",
+      "createProposalFromDiscussion": "Create proposal from discussion",
+      "createWithProposal": "Create with proposal",
+      "moveProposal": "Move proposal",
+      "movingProposal": "Moving...",
+      "newPost": "New post",
+      "openPostMenu": "Open post menu",
+      "post": "Post",
+      "reopenPost": "Reopen post",
+      "reply": "Reply",
+      "saveProposal": "Save association",
+      "viewProposalSettings": "View proposal settings",
+      "viewPost": "View in forum"
+    },
+    "descriptions": {
+      "channel": "Start a focused discussion with a forum post.",
+      "createPost": "Give the discussion a clear title and opening message."
+    },
+    "filters": {
+      "all": "All posts",
+      "closed": "Closed",
+      "open": "Open"
+    },
+    "form": {
+      "body": "Message",
+      "proposal": "Proposal (optional)",
+      "destinationChannel": "Forum channel",
+      "title": "Title"
+    },
+    "labels": {
+      "active": "Active {{time}}",
+      "closed": "Closed",
+      "discussion": "Discussion",
+      "filter": "Filter posts",
+      "noProposal": "No proposal",
+      "proposal": "Proposal",
+      "replies_one": "{{count}} reply",
+      "replies_other": "{{count}} replies",
+      "replyCount_one": "{{count}} reply",
+      "replyCount_other": "{{count}} replies",
+      "sort": "Sort posts",
+      "untitledProposal": "Untitled proposal"
+    },
+    "prompts": {
+      "closedPost": "This post is closed.",
+      "noPosts": "No forum posts match these filters.",
+      "noProposal": "No proposal is associated with this post.",
+      "noReplies": "No replies yet.",
+      "movedProposal": "Moved this proposal to a forum channel.",
+      "movedProposalWithChannel": "Moved this proposal to <channelLink>#{{channelName}}</channelLink>.",
+      "movedProposalDiscussion": "Continue the discussion for this proposal.",
+      "moveProposal": "Choose a forum channel and review the new post before moving this proposal.",
+      "noForumChannels": "You do not have access to a forum channel.",
+      "reply": "Write a reply..."
+    },
+    "sort": {
+      "newest": "Newest",
+      "recent": "Recent activity"
+    }
+  },
+
+  "calls": {
+    "actions": {
+      "call": "Call",
+      "joinActiveVideo": "Join active video",
+      "joinCall": "Join call",
+      "joinNow": "Join now",
+      "viewDetails": "View details"
+    },
+    "headers": {
+      "channelCall": "Call in #{{channelName}}",
+      "activeDecision": "Active Decision",
+      "callHistory": "Call history",
+      "inCallChat": "In-call chat"
+    },
+    "labels": {
+      "leaveCall": "Leave call",
+      "decisionInProgress": "Decision in progress",
+      "closeActiveDecision": "Close active decision panel",
+      "muteMicrophone": "Mute microphone",
+      "openChannelChat": "Open call chat",
+      "openDecisions": "Decisions",
+      "participantCount_one": "{{count}} participant",
+      "participantCount_other": "{{count}} participants",
+      "selectCamera": "Select camera",
+      "selectMicrophone": "Select microphone",
+      "turnCameraOff": "Turn camera off",
+      "useCamera": "Use camera",
+      "useMicrophone": "Use microphone"
+    },
+    "descriptions": {
+      "status": "{{participants}}",
+      "statusWithServer": "Server: {{serverName}} - {{participants}}",
+      "callHistory": "Read-only history of this call. Joining is not required.",
+      "inCallChat": "Messages for this call."
+    },
+    "preJoin": {
+      "camera": "Camera",
+      "cameraOff": "Camera is off",
+      "cameraUnavailable": "Camera unavailable",
+      "checkSetup": "Check your setup",
+      "description": "Make sure your camera and microphone are ready before you enter.",
+      "joinNow": "Join now",
+      "joining": "Joining...",
+      "mediaUnsupported": "This browser does not support camera or microphone preview.",
+      "microphone": "Microphone",
+      "microphoneLevel": "Microphone input level",
+      "off": "Off",
+      "on": "On",
+      "ready": "Ready when you are.",
+      "readyWithServer": "{{serverName}} - Ready when you are.",
+      "selectingCamera": "Selecting camera...",
+      "selectingMicrophone": "Selecting microphone...",
+      "title": "Join #{{channelName}}",
+      "unavailable": "Unavailable"
+    },
+    "decisions": {
+      "noActiveTitle": "No active decision",
+      "noActiveDescription": "Create or respond to channel decisions without leaving the call.",
+      "recentResultDescription": "The latest channel decision result is shown below."
+    },
+    "artifact": {
+      "activeTitle": "Call is active",
+      "decisionCount_one": "{{count}} decision",
+      "decisionCount_other": "{{count}} decisions",
+      "detailsDescription": "{{participants}} - {{duration}}",
+      "detailsTitle": "Call details",
+      "duration": "Duration {{duration}}",
+      "endedAt": "Ended {{time}}",
+      "endedTitle": "Call ended",
+      "messageCount_one": "{{count}} message",
+      "messageCount_other": "{{count}} messages",
+      "messages_one": "Message",
+      "messages_other": "Messages",
+      "participants": "Participants",
+      "polls_one": "Poll",
+      "polls_other": "Polls",
+      "proposals_one": "Proposal",
+      "proposals_other": "Proposals",
+      "startedAgo": "Started {{time}} ago",
+      "startedAt": "Started {{time}}",
+      "startedBy": "Started by {{name}}",
+      "timeRange": "{{startedAt}}-{{endedAt}}",
+      "times": "Times"
+    },
+    "errors": {
+      "cameraUnavailable": "Unable to use the camera.",
+      "joinFailed": "Unable to join the call.",
+      "microphoneUnavailable": "Unable to use the microphone.",
+      "unavailable": "Calls are currently unavailable."
+    }
+  },
+
+  "images": {
+    "labels": {
+      "attachedImage": "Attached image",
+      "attachedImagePreview": "Attached image preview",
+      "attachedImages": "Attached images",
+      "attachImages": "Attach images",
+      "coverPhoto": "Cover photo",
+      "profilePicture": "Profile picture",
+      "removeImage": "Remove image",
+      "uploadingImage": "Uploading image"
+    },
+    "errors": {
+      "unsupportedFormat": "{{format}} images are not supported.",
+      "imageTooLarge": "Image is too large. Maximum file size is 20MB.",
+      "tooManyImages": "You can upload a maximum of 4 images.",
+      "fileMissing": "Image file is missing."
+    },
+    "descriptions": {
+      "attachedImage": "This is an attached image enlarged for viewing."
+    }
+  },
+
+  "roles": {
+    "actions": {
+      "add": "Add",
+      "addMembers": "Add members",
+      "delete": "Delete role",
+      "manageServerRoles": "Manage roles",
+      "viewRoles": "View roles"
+    },
+    "prompts": {
+      "removeRoleMember": "Remove role member?"
+    },
+    "headers": {
+      "serverRoles": "Roles",
+      "instanceRoles": "Instance Roles",
+      "viewServerRoles": "Roles Overview"
+    },
+    "descriptions": {
+      "addMembers": "Add members to the role."
+    },
+    "form": {
+      "name": "Name",
+      "colorPickerLabel": "Role color",
+      "pickColor": "Pick a color"
+    },
+    "errors": {
+      "longName": "Role name cannot exceed 25 characters"
+    },
+    "labels": {
+      "members": "Members",
+      "roleMembers": "Role members",
+      "membersCount_one": "{{count}} Member",
+      "membersCount_other": "{{count}} Members",
+      "serverRoles": "Server roles",
+      "rolesAndPermissions": "Roles and permissions",
+      "quickView": "Quick view"
+    },
+    "tabs": {
+      "display": "Display",
+      "members": "Members",
+      "permissions": "Permissions"
+    }
+  },
+
+  "permissions": {
+    "names": {
+      "blockProposals": "Block proposals",
+      "createEvents": "Create events",
+      "createInvites": "Create invites",
+      "manageChannels": "Manage channels",
+      "manageEvents": "Manage events",
+      "manageInstanceRoles": "Manage instance roles",
+      "manageInstanceSettings": "Manage instance settings",
+      "manageInvites": "Manage invites",
+      "managePosts": "Manage posts",
+      "manageQuestions": "Manage questions",
+      "manageRules": "Manage rules",
+      "manageServerRoles": "Manage roles",
+      "manageServerSettings": "Manage settings",
+      "manageServers": "Manage servers",
+      "removeMembers": "Remove members",
+      "removeProposals": "Remove proposals"
+    },
+    "descriptions": {
+      "blockProposals": "Allows members to cast a blocking vote on proposals when blocking is restricted on this server.",
+      "createEvents": "Allows members to create and plan events.",
+      "createInvites": "Allows members to invite new people to the server.",
+      "manageChannels": "Allows members to create, edit, or delete channels.",
+      "manageComments": "Allows members to remove or hide comments by other members.",
+      "manageEvents": "Allows members to remove or edit events created by other members.",
+      "manageInstanceRoles": "Allows members to create new instance roles as well as edit or delete other instance roles.",
+      "manageInstanceSettings": "Allows members to make changes to the instance's settings.",
+      "manageInvites": "Allows members to create or delete invite links for the server.",
+      "managePosts": "Allows members to remove or hide posts by other members.",
+      "manageQuestions": "Allows members to create, edit, or delete membership questions.",
+      "manageRules": "Allows members to create, edit, or delete rules for the server.",
+      "manageServerRoles": "Allows members to create new roles as well as edit or delete other roles.",
+      "manageServerSettings": "Allows members to make changes to the server's settings.",
+      "manageServers": "Allows members to create new servers as well as edit or delete other servers.",
+      "removeMembers": "Allows members to remove other members from the server.",
+      "removeProposals": "Allows members to remove proposals posted by other members."
+    },
+    "states": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "labels": {
+      "permissions": "Permissions"
+    },
+    "headers": {
+      "deniedPermissions": "Denied Permissions",
+      "grantedPermissions": "Granted Permissions",
+      "membersWithPermission": "Members with Permission",
+      "permission": "Permission",
+      "rolesWithPermission": "Roles with Permission"
+    }
+  },
+
+  "settings": {
+    "headers": {
+      "manageServers": "Manage Servers",
+      "userSettings": "User Settings"
+    },
+    "names": {
+      "decisionMakingModel": "Decision making model",
+      "agreementThreshold": "Agreement threshold",
+      "quorumEnabled": "Require quorum",
+      "quorumThreshold": "Quorum threshold",
+      "disagreementsLimit": "Disagreements limit",
+      "abstainsLimit": "Abstains limit",
+      "votingTimeLimit": "Voting time limit",
+      "blocksOpenToAll": "Anyone can block",
+      "anonymousUsersEnabled": "Anonymous users",
+      "messageNotificationsEnabled": "New messages",
+      "replyNotificationsEnabled": "Replies",
+      "proposalNotificationsEnabled": "Proposals",
+      "roleNotificationsEnabled": "Roles"
+    },
+    "descriptions": {
+      "profileSection": "Update how you appear to others, including your name, photos, and bio.",
+      "notificationSection": "Choose which notifications you receive across every server.",
+      "serverSection": "Manage settings for the current server, including proposals, invites, and roles.",
+      "instanceSection": "Manage settings across the entire instance, including instance roles and servers.",
+      "decisionMakingModel": "Choose from consensus, consent, or majority vote to determine how decisions are made in the server.",
+      "agreementThreshold": "Set the minimum percentage of participating members who must agree.",
+      "quorumEnabled": "Require a minimum number of eligible channel members to participate before a proposal can pass.",
+      "quorumThreshold": "Set the minimum percentage of eligible channel members who must cast any vote.",
+      "disagreementsLimit": "Set a limit for the acceptable number of disagreements allowed for a proposal to still be able to pass.",
+      "abstainsLimit": "Set a limit for the acceptable number of abstains allowed for a proposal to still be able to pass.",
+      "majorityVoteLimitsDisabled": "Disagreement and abstention limits do not apply to majority vote, which is determined by the agreement threshold and quorum.",
+      "consentThresholdsDisabled": "Quorum and agreement threshold do not apply to consent, which passes at the voting deadline when disagreements and abstentions stay within their limits and nobody blocks.",
+      "votingTimeLimit": "Set a time limit for how long proposals can be voted on before they're closed or ratified.",
+      "blocksOpenToAll": "When off, blocking needs a role that grants it. Everyone else can still disagree, which counts against the disagreement limit.",
+      "anonymousUsersEnabled": "Allow users to participate without creating an account or providing personal information.",
+      "messageNotificationsEnabled": "Get notified when someone posts in a channel you've joined.",
+      "replyNotificationsEnabled": "Get notified when someone replies to your messages or forum posts.",
+      "proposalNotificationsEnabled": "Get notified about new proposals, votes on your proposals, their outcomes, and scheduled events.",
+      "roleNotificationsEnabled": "Get notified when you're granted a server role."
+    },
+    "prompts": {
+      "sectionLinkCopied": "Link copied to clipboard"
+    },
+    "explanations": {
+      "decisionMakingModel": "The process used to make decisions in the server, which can be based on consensus, consent, or majority vote.",
+      "agreementThreshold": "The minimum percentage of participating members who must agree.",
+      "quorumEnabled": "Whether a minimum participation threshold is required for proposals to be valid.",
+      "quorumThreshold": "The minimum percentage of eligible channel members who must cast any vote.",
+      "disagreementsLimit": "The maximum number of disagreements allowed for a proposal to still be able to pass.",
+      "abstainsLimit": "The maximum number of abstains allowed for a proposal to still be able to pass.",
+      "votingTimeLimit": "The minimum amount of time proposals can be voted on before they're closed or ratified.",
+      "blocksOpenToAll": "Whether any member can block this proposal, or only members with a role that grants it."
+    },
+    "errors": {
+      "consentVotingTimeLimitRequired": "Voting time limit is required for consent decision making.",
+      "majorityVoteAgreementThreshold": "Agreement threshold must be greater than 50% for majority vote."
+    }
+  },
+
+  "servers": {
+    "headers": {
+      "create": "Create Server",
+      "edit": "Edit Server",
+      "details": "Server details",
+      "profile": "Server profile",
+      "access": "Access"
+    },
+    "actions": {
+      "addMembers": "Add members",
+      "deleteServer": "Delete Server",
+      "manage": "Manage server",
+      "switchTo": "Switch to server",
+      "selectImage": "Select server image",
+      "changeImage": "Change server image"
+    },
+    "labels": {
+      "current": "Current server",
+      "default": "Default"
+    },
+    "form": {
+      "name": "Name",
+      "slug": "Slug",
+      "description": "Description",
+      "image": "Server image",
+      "defaultServer": "Default server",
+      "defaultServerDescription": "New visitors and users without an invite start here."
+    },
+    "descriptions": {
+      "addMembers": "Add members to this server.",
+      "currentServer": "About the server you're viewing.",
+      "noDescription": "No description provided.",
+      "profile": "Choose how this server is named and represented throughout Praxis.",
+      "access": "Control who can enter and participate in this server."
+    },
+    "tabs": {
+      "properties": "Properties",
+      "members": "Members"
+    },
+    "prompts": {
+      "creating": "Creating server...",
+      "removeMember": "Remove server member?",
+      "switchServersDescription": "Choose another server to explore.",
+      "noServersAvailable": "No other servers available."
+    },
+    "errors": {
+      "nameLength": "Name must be between 2 and 30 characters.",
+      "slugLength": "Slug must be between 2 and 30 characters.",
+      "invalidSlug": "Slug can only contain lowercase letters, numbers, and hyphens, and cannot start or end with a hyphen.",
+      "descriptionLength": "Description must be at most 255 characters.",
+      "noServersFound": "No servers found.",
+      "noServersFoundDescription": "You don't belong to any servers yet."
+    }
+  },
+
+  "invites": {
+    "actions": {
+      "generateLink": "Generate a new link",
+      "acceptInvite": "Accept Invite",
+      "joinServer": "Join Server"
+    },
+    "prompts": {
+      "alreadySignedUp": "You've already signed up.",
+      "copiedToClipboard": "Copied to clipboard",
+      "expiredOrInvalid": "Your invite link is either expired or invalid.",
+      "inviteRequired": "You need to be invited in order to sign up.",
+      "joinServerToStart": "Join this server to start chatting, making decisions, and organizing with other members.",
+      "noInvites": "No invites have been created yet.",
+      "youHaveBeenInvited": "You've been invited"
+    },
+    "headers": {
+      "serverInvites": "Invites",
+      "invitedToJoin": "Invited to join {{serverName}}"
+    },
+    "form": {
+      "expiresAtOptions": {
+        "never": "Never (default)",
+        "oneDay": "1 day",
+        "oneMonth": "1 month",
+        "sevenDays": "7 days"
+      },
+      "maxUsesOptions": {
+        "noLimit": "No limit (default)",
+        "xUses_one": "{{uses}} use",
+        "xUses_other": "{{uses}} uses"
+      },
+      "labels": {
+        "expiresAt": "Expires after",
+        "maxUses": "Max number of uses"
+      }
+    },
+    "columnNames": {
+      "code": "Code",
+      "expires": "Expires",
+      "inviter": "Inviter",
+      "uses": "Uses"
+    },
+    "labels": {
+      "usesWithColon": "Uses:"
+    }
+  },
+
+  "welcome": {
+    "messages": {
+      "projectDescription1": "Praxis is an open source messaging platform designed for collaborative decision making. Proposals take center stage, offering a diverse range of voting models, with consensus as the default.",
+      "projectDescription2": "With Praxis, communities are empowered to collectively shape crucial aspects such as server name, settings, roles, and the planning of real-world events. This flexibility allows for diverse and dynamic social structures tailored to meet the specific needs of your community as it evolves over time.",
+      "inDev": "This project is still in development and is not yet intended for serious use outside of testing or research purposes."
+    }
+  },
+
+  "landing": {
+    "brandName": "praxis",
+    "actions": {
+      "acceptInvite": "Accept invite",
+      "backToLanding": "About Praxis",
+      "explore": "Explore Praxis",
+      "logIn": "Log in",
+      "openPraxis": "Open Praxis",
+      "signUp": "Sign up"
+    },
+    "navigation": {
+      "label": "Public navigation"
+    },
+    "hero": {
+      "eyebrow": "Conversation with a way forward",
+      "title": "Turn the conversation into a decision.",
+      "description": "Praxis keeps chat, calls, proposals, votes, and collective decisions in one connected flow, so your group can move forward without losing the context that got you there.",
+      "openSource": "Free and open source software for groups that decide together."
+    },
+    "mobileHero": {
+      "description": "Keep your group's conversations, focused discussion, and decisions together without losing the context that moves you forward.",
+      "visualTitle": "Your group, in one flow",
+      "online": "12 online",
+      "conversationTitle": "Talk it through",
+      "conversationDescription": "Chat and calls keep everyone connected to the context.",
+      "decisionTitle": "Move forward together",
+      "decisionDescription": "Turn the discussion into a clear collective decision."
+    },
+    "bridge": "Start with the way your group already talks. Add structure only when the moment calls for it.",
+    "developmentStatus": {
+      "title": "Praxis is still experimental.",
+      "description": "Praxis is under active development and intended only for testing and research."
+    },
+    "chat": {
+      "eyebrow": "Talk naturally",
+      "title": "Familiar chat, with calls right where the conversation lives.",
+      "description": "Keep everyday coordination easy with messages and calls organized by topic. When a conversation needs more attention, the people and context are already in the same place."
+    },
+    "forums": {
+      "eyebrow": "Focus the discussion",
+      "title": "Give important questions room to become clear.",
+      "description": "Move from the fast pace of chat into forum discussions that gather replies around one topic. Your group can deliberate without starting over or scattering context across tools."
+    },
+    "decisions": {
+      "eyebrow": "Decide together",
+      "title": "Shape a proposal, choose the rules, and ratify the result.",
+      "description": "Use polls and proposals with configurable voting models to turn deliberation into a clear collective outcome. Decisions stay connected to the discussion that produced them."
+    },
+    "proposal": {
+      "openAppToVote": "Open Praxis to vote on proposals.",
+      "signUpToVote": "Sign up to vote on proposals."
+    },
+    "visuals": {
+      "flow": {
+        "channel": "community",
+        "online": "12 online",
+        "conversationTitle": "Talk it through",
+        "conversationDescription": "Chat naturally, share context, and jump into a channel call.",
+        "decisionTitle": "Decide together",
+        "decisionDescription": "Focus the discussion, propose a path, vote, and ratify the result."
+      },
+      "conversation": {
+        "channel": "phonebank",
+        "joinCall": "Join call",
+        "firstMessage": "We still need six volunteers for Saturday morning. Who can make calls?",
+        "secondMessage": "I can take the first shift and help train new callers.",
+        "messagePrompt": "Message #{{channel}}"
+      },
+      "forum": {
+        "status": "Open discussion",
+        "title": "Saturday phone bank plan",
+        "body": "We still need to fill the afternoon shifts, divide up the call list, and make sure new volunteers are trained before Saturday. What can everyone take on?",
+        "replies": "8 replies",
+        "activity": "Active now"
+      },
+      "proposal": {
+        "timestamp": "just now",
+        "body": "Rename the Outreach Volunteer role to Phone Bank Coordinator and update its access.",
+        "actionTitle": "Role change proposal:",
+        "nameLabel": "Name",
+        "permissionsLabel": "Permissions",
+        "previousRoleName": "Outreach volunteer",
+        "roleName": "Phone bank coordinator",
+        "manageChannels": "Manage channels",
+        "createInvites": "Create invites",
+        "noDeadline": "∞"
+      }
+    },
+    "finalCta": {
+      "title": "Keep the flow. Make the decision.",
+      "description": "Bring your group's conversations, deliberation, and collective action together in Praxis."
+    },
+    "footer": {
+      "description": "Praxis is free and open source software.",
+      "viewSource": "View the project on GitHub"
+    }
+  },
+
+  "navigation": {
+    "actions": {
+      "closeNavSheet": "Close navigation",
+      "openNavSheet": "Open navigation"
+    },
+    "titles": {
+      "navDrawer": "Navigation drawer"
+    },
+    "subheaders": {
+      "serverSettings": "Server settings",
+      "instanceSettings": "Instance settings",
+      "manageServers": "Instance settings · Manage servers",
+      "instanceRoles": "Instance settings · Instance roles"
+    },
+    "headers": {
+      "settings": "Settings",
+      "serverSettings": "Server Settings",
+      "instanceSettings": "Instance Settings"
+    },
+    "labels": {
+      "general": "General",
+      "settings": "Manage Settings",
+      "serverSettings": "Server settings",
+      "serverRoles": "Server Roles",
+      "instanceSettings": "Instance settings",
+      "switchServers": "Switch servers",
+      "instanceRoles": "Instance Roles",
+      "proposals": "Proposals",
+      "invites": "Invite Links",
+      "roles": "Roles",
+      "events": "Events",
+      "notifications": "Notifications",
+      "profile": "Profile",
+      "userSettings": "Settings"
+    },
+    "descriptions": {
+      "navDrawer": "View server details and available server actions.",
+      "navSheet": "Navigate to your rooms, profile, and more."
+    }
+  },
+
+  "time": {
+    "days": "{{days}}d",
+    "daysEnded_one": "Ended {{days}} day ago",
+    "daysEnded_other": "Ended {{days}} days ago",
+    "daysEndsIn_one": "Ends in {{days}} day",
+    "daysEndsIn_other": "Ends in {{days}} days",
+    "daysFull_one": "{{count}} day",
+    "daysFull_other": "{{count}} days",
+    "ended": "Ended",
+    "dateAtTime": "{{date}} at {{time}}",
+    "endedOn": "Ended on {{date}}",
+    "hours": "{{hours}}h",
+    "hoursEnded_one": "Ended {{hours}} hour ago",
+    "hoursEnded_other": "Ended {{hours}} hours ago",
+    "hoursEndsIn_one": "Ends in {{hours}} hour",
+    "hoursEndsIn_other": "Ends in {{hours}} hours",
+    "hoursFull_one": "{{count}} hour",
+    "hoursFull_other": "{{count}} hours",
+    "hr": "hr",
+    "infinity": "∞",
+    "min": "min",
+    "minutes": "{{minutes}}m",
+    "minutesEnded_one": "Ended {{minutes}} minute ago",
+    "minutesEnded_other": "Ended {{minutes}} minutes ago",
+    "minutesEndsIn_one": "Ends in {{minutes}} minute",
+    "minutesEndsIn_other": "Ends in {{minutes}} minutes",
+    "minutesFull_one": "{{count}} minute",
+    "minutesFull_other": "{{count}} minutes",
+    "never": "Never",
+    "seconds": "{{seconds}}s",
+    "unlimited": "Unlimited",
+    "weeks_one": "{{count}} week",
+    "weeks_other": "{{count}} weeks",
+    "weeksEndsIn_one": "Ends in {{weeks}} week",
+    "weeksEndsIn_other": "Ends in {{weeks}} weeks"
+  },
+  "search": {
+    "actions": {
+      "clear": "Clear search",
+      "close": "Close search",
+      "loadMore": "Show more results",
+      "loadingMore": "Loading more results..."
+    },
+    "coverage": {
+      "window": "Searched {{start}} through {{end}}."
+    },
+    "descriptions": {
+      "boundedRecent": "Searches recent content in this server."
+    },
+    "errors": {
+      "accessChanged": "Your access changed, so these results were cleared.",
+      "unavailable": "Search is unavailable right now."
+    },
+    "filters": {
+      "allChannels": "All channels",
+      "allKinds": "All content types"
+    },
+    "headers": {
+      "title": "Search"
+    },
+    "kinds": {
+      "callMessage": "Call message",
+      "forumPost": "Forum post",
+      "forumReply": "Forum reply",
+      "message": "Message",
+      "poll": "Poll",
+      "proposal": "Proposal",
+      "threadReply": "Thread reply"
+    },
+    "labels": {
+      "channelFilter": "Filter by channel",
+      "inCall": "In call",
+      "kindFilter": "Filter by content type",
+      "queryInput": "Search this server"
+    },
+    "placeholders": {
+      "query": "Search messages, decisions, and posts"
+    },
+    "prompts": {
+      "minLength": "Type at least {{count}} characters to search.",
+      "noResults": "No matches in the searched window."
+    }
+  }
+}

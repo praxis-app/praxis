@@ -1,7 +1,0 @@
-mutation UpdatePost($postData: UpdatePostInput!, $isVerified: Boolean = true) {
-  updatePost(postData: $postData) {
-    post {
-      ...PostCard
-    }
-  }
-}

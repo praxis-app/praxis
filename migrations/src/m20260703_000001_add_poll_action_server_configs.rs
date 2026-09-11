@@ -1,0 +1,185 @@
+use sea_orm_migration::prelude::*;
+
+#[derive(DeriveMigrationName)]
+pub(crate) struct Migration;
+
+#[async_trait::async_trait]
+impl MigrationTrait for Migration {
+    async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .create_table(
+                Table::create()
+                    .table(PollActionServerConfigs::Table)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(PollActionServerConfigs::Id)
+                            .uuid()
+                            .not_null()
+                            .primary_key(),
+                    )
+                    .col(
+                        ColumnDef::new(PollActionServerConfigs::PollActionId)
+                            .uuid()
+                            .not_null()
+                            .unique_key(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::AnonymousUsersEnabled,
+                        )
+                        .boolean(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::PrevAnonymousUsersEnabled,
+                        )
+                        .boolean(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::DecisionMakingModel,
+                        )
+                        .string(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::PrevDecisionMakingModel,
+                        )
+                        .string(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::DisagreementsLimit,
+                        )
+                        .integer(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::PrevDisagreementsLimit,
+                        )
+                        .integer(),
+                    )
+                    .col(
+                        ColumnDef::new(PollActionServerConfigs::AbstainsLimit)
+                            .integer(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::PrevAbstainsLimit,
+                        )
+                        .integer(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::AgreementThreshold,
+                        )
+                        .integer(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::PrevAgreementThreshold,
+                        )
+                        .integer(),
+                    )
+                    .col(
+                        ColumnDef::new(PollActionServerConfigs::QuorumEnabled)
+                            .boolean(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::PrevQuorumEnabled,
+                        )
+                        .boolean(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::QuorumThreshold,
+                        )
+                        .integer(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::PrevQuorumThreshold,
+                        )
+                        .integer(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::VotingTimeLimit,
+                        )
+                        .integer(),
+                    )
+                    .col(
+                        ColumnDef::new(
+                            PollActionServerConfigs::PrevVotingTimeLimit,
+                        )
+                        .integer(),
+                    )
+                    .col(
+                        ColumnDef::new(PollActionServerConfigs::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(PollActionServerConfigs::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .from(
+                                PollActionServerConfigs::Table,
+                                PollActionServerConfigs::PollActionId,
+                            )
+                            .to(PollActions::Table, PollActions::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
+                    .to_owned(),
+            )
+            .await
+    }
+
+    async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .drop_table(
+                Table::drop()
+                    .table(PollActionServerConfigs::Table)
+                    .to_owned(),
+            )
+            .await
+    }
+}
+
+#[derive(DeriveIden)]
+enum PollActionServerConfigs {
+    Table,
+    Id,
+    PollActionId,
+    AnonymousUsersEnabled,
+    PrevAnonymousUsersEnabled,
+    DecisionMakingModel,
+    PrevDecisionMakingModel,
+    DisagreementsLimit,
+    PrevDisagreementsLimit,
+    AbstainsLimit,
+    PrevAbstainsLimit,
+    AgreementThreshold,
+    PrevAgreementThreshold,
+    QuorumEnabled,
+    PrevQuorumEnabled,
+    QuorumThreshold,
+    PrevQuorumThreshold,
+    VotingTimeLimit,
+    PrevVotingTimeLimit,
+    CreatedAt,
+    UpdatedAt,
+}
+
+#[derive(DeriveIden)]
+enum PollActions {
+    Table,
+    Id,
+}

@@ -1,3 +1,0 @@
-mutation DeleteRule($id: Int!) {
-  deleteRule(id: $id)
-}

@@ -1,5 +1,0 @@
-query EditProposal($id: Int!) {
-  proposal(id: $id) {
-    ...ProposalForm
-  }
-}

@@ -1,0 +1,89 @@
+@theme inline {
+  --color-event-accent: #dd3f4f;
+}
+
+.events-calendar {
+  --events-calendar-event-hover: color-mix(
+    in oklab,
+    var(--secondary-foreground) 12%,
+    var(--secondary)
+  );
+  --fc-classic-background: transparent;
+  --fc-classic-faint: color-mix(in oklab, var(--muted) 45%, transparent);
+  --fc-classic-muted: var(--muted);
+  --fc-classic-foreground: var(--foreground);
+  --fc-classic-faint-foreground: var(--muted-foreground);
+  --fc-classic-muted-foreground: var(--muted-foreground);
+  --fc-classic-border: var(--border);
+  --fc-classic-strong-border: var(--border);
+  --fc-classic-event: var(--secondary);
+  --fc-classic-event-contrast: var(--secondary-foreground);
+  --fc-classic-today: color-mix(in oklab, var(--accent) 65%, transparent);
+  --fc-border-color: var(--border);
+  --fc-page-bg-color: transparent;
+  --fc-neutral-bg-color: color-mix(in oklab, var(--muted) 45%, transparent);
+  --fc-neutral-text-color: var(--muted-foreground);
+  --fc-today-bg-color: color-mix(in oklab, var(--accent) 65%, transparent);
+  --fc-event-bg-color: var(--secondary);
+  --fc-event-border-color: var(--border);
+  --fc-event-text-color: var(--secondary-foreground);
+  --fc-more-link-bg-color: var(--muted);
+  --fc-more-link-text-color: var(--foreground);
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+}
+
+.events-calendar::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border: 1px solid var(--border);
+  border-radius: inherit;
+  pointer-events: none;
+  content: '';
+}
+
+.events-calendar .fc-scrollgrid {
+  border: 0;
+}
+
+.events-calendar .fc-col-header-cell-cushion {
+  padding: 0.5rem;
+  color: var(--foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.events-calendar .events-calendar-day-top {
+  padding: 0.075rem 0.075rem 0;
+}
+
+.events-calendar .events-calendar-day-number {
+  padding: 0;
+  color: var(--foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.events-calendar .fc-daygrid-day-frame {
+  min-height: 7rem;
+}
+
+.events-calendar .fc-event,
+.events-calendar .events-calendar-event {
+  margin-inline: 0.2rem;
+  border-radius: calc(var(--radius-sm) - 1px);
+  font-size: 0.75rem;
+}
+
+.events-calendar .events-calendar-event,
+.events-calendar .events-calendar-event * {
+  cursor: pointer;
+}
+
+.events-calendar .fc-event:hover,
+.events-calendar .events-calendar-event:hover,
+.events-calendar .events-calendar-event.is-hovered {
+  background: var(--events-calendar-event-hover);
+}

@@ -1,6 +1,0 @@
-query PublicGroups($offset: Int, $limit: Int, $isLoggedIn: Boolean = false) {
-  publicGroups(offset: $offset, limit: $limit) {
-    ...GroupCard
-  }
-  publicGroupsCount
-}

@@ -1,5 +1,0 @@
-fragment CanaryStatement on Canary {
-  id
-  statement
-  updatedAt
-}

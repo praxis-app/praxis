@@ -1,5 +1,0 @@
-query Post($id: Int!, $isVerified: Boolean!) {
-  post(id: $id) {
-    ...PostCard
-  }
-}

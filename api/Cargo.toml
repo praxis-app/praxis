@@ -1,0 +1,37 @@
+[package]
+name = "api"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+axum = { workspace = true, features = ["multipart", "ws"] }
+base64.workspace = true
+chrono.workspace = true
+dashmap.workspace = true
+dotenv.workspace = true
+entity = { path = "../entity" }
+image.workspace = true
+jsonwebtoken.workspace = true
+livekit-api.workspace = true
+migrations = { path = "../migrations" }
+mime_guess.workspace = true
+password-auth.workspace = true
+redis = { workspace = true, features = ["aio", "tokio-comp"] }
+ring.workspace = true
+sea-orm.workspace = true
+sea-orm-migration.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+tower-http.workspace = true
+tracing.workspace = true
+tracing-appender.workspace = true
+tracing-subscriber.workspace = true
+uuid.workspace = true
+
+[dev-dependencies]
+http-body-util = "0.1"
+sea-orm = { workspace = true, features = ["proxy"] }
+serde_json.workspace = true
+tower = { version = "0.5", features = ["util"] }

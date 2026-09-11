@@ -1,7 +1,0 @@
-fragment CommentForm on Comment {
-  id
-  body
-  images {
-    ...AttachedImage
-  }
-}

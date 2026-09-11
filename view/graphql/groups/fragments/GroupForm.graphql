@@ -1,5 +1,0 @@
-fragment GroupForm on Group {
-  id
-  name
-  description
-}

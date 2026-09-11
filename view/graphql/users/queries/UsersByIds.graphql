@@ -1,6 +1,0 @@
-query UsersByIds($userIds: [Int!]!) {
-  usersByIds(ids: $userIds) {
-    id
-    ...UserAvatar
-  }
-}

@@ -1,39 +1,52 @@
-# Compiled output
-/dist
-/node_modules
+target/
+tmp/
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+node_modules/
+dist/
+dist-ssr/
+*.local
 
-# Logs
-/logs/*
-!/logs/README.md
-
-# OS
-.DS_Store
-
-# Tests
-/coverage
-/.nyc_output
-
-# Linting and formatting
-.husky
-
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-.settings/
-*.sublime-workspace
-
-# IDE - VSCode
+# Project
+.claude
+content/*
+!content/README.md
+AGENTS.md
+.idea
 .vscode/*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+playwright-report/
+test-results/
+.playwright-cli/
+output/playwright/
+CLAUDE.md
+.fallow
 
-# Environment
+# Local only files
+.docs
+.scripts
+.misc
+.logs
+.tmp
+
+# Docker workspace
+/workspace/*
+!/workspace/.gitkeep
+
+# Environment variables
 .env
-.nvmrc
 
-# Uploaded content
-/content/*
-!/content/README.md
+# Mac OS
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

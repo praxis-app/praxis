@@ -1,0 +1,16 @@
+@layer base {
+  /* Chrome paints a light autofill background regardless of theme, which
+     breaks dark mode and hides controls overlaid on the field. Clipping that
+     background to the text removes it while leaving the field's own styles,
+     box-shadow, and focus ring intact. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active,
+  input:autofill {
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: var(--foreground);
+    caret-color: var(--foreground);
+  }
+}

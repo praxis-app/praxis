@@ -1,6 +1,0 @@
-mutation SignUp($input: SignUpInput!) {
-  signUp(input: $input) {
-    access_token
-    isVerified
-  }
-}

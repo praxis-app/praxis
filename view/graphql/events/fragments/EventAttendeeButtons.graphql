@@ -1,9 +1,0 @@
-fragment EventAttendeeButtons on Event {
-  id
-  attendingStatus
-
-  group {
-    id
-    isJoinedByMe @include(if: $isVerified)
-  }
-}

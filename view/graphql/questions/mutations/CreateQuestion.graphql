@@ -1,7 +1,0 @@
-mutation CreateQuestion($questionData: CreateQuestionInput!) {
-  createQuestion(questionData: $questionData) {
-    question {
-      ...QuestionEditorCard
-    }
-  }
-}

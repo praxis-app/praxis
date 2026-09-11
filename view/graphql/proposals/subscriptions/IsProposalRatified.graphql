@@ -1,3 +1,0 @@
-subscription IsProposalRatified($proposalId: Int!) {
-  isProposalRatified(id: $proposalId)
-}

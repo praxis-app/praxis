@@ -1,8 +1,0 @@
-query MemberRequests($groupName: String!) {
-  group(name: $groupName) {
-    id
-    memberRequests {
-      ...MemberRequest
-    }
-  }
-}

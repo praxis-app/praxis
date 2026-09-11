@@ -1,0 +1,13 @@
+[package]
+name = "migrations"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "migrations"
+path = "src/lib.rs"
+
+[dependencies]
+sea-orm.workspace = true
+sea-orm-migration.workspace = true

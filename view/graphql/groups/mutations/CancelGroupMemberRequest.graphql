@@ -1,3 +1,0 @@
-mutation CancelGroupMemberRequest($id: Int!) {
-  cancelGroupMemberRequest(id: $id)
-}

@@ -1,4 +1,0 @@
-fragment CommentLikeButton on Comment {
-  id
-  isLikedByMe @include(if: $isLoggedIn)
-}

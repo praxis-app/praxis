@@ -1,0 +1,4 @@
+[jobs.run]
+command = ["cargo", "run"]
+watch = ["src"]
+need_stdout = true

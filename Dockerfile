@@ -1,40 +1,90 @@
-FROM node:18.17.1-alpine AS build_stage
+# syntax=docker/dockerfile:1
 
-RUN apk add --update python3 build-base
-
-COPY src /app/src
-COPY view /app/view
-COPY content /app/content
-COPY logs /app/logs
-
-COPY package.json /app
-COPY package-lock.json /app
-COPY tsconfig.json /app
-COPY tsconfig.build.json /app
-COPY nest-cli.json /app
+# Backend build stage used by the E2E image
+FROM rust:1.97.0-slim-bookworm AS backend-builder
 
 WORKDIR /app
 
+COPY Cargo.toml Cargo.lock ./
+COPY api ./api
+COPY cli ./cli
+COPY entity ./entity
+COPY migrations ./migrations
+COPY src ./src
+
+# Copied files keep old timestamps, so cargo can miss changes and reuse the
+# cached build. Touching them first makes sure changed code is rebuilt.
+RUN --mount=type=cache,target=/usr/local/cargo/registry \
+    --mount=type=cache,target=/usr/local/cargo/git \
+    --mount=type=cache,target=/app/target \
+    find api cli entity migrations src -name '*.rs' -exec touch {} + \
+    && cargo build --release -p praxis-live \
+    && cp /app/target/release/praxis-live /praxis-live
+
+# Frontend build stage
+FROM node:24.18.0-bookworm-slim AS frontend-builder
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
 RUN npm ci
 
-ARG NODE_ENV
-ARG SERVER_PORT
+COPY tsconfig.json tsconfig.app.json tsconfig.node.json tsconfig.e2e.json ./
+COPY vite.config.ts components.json ./
+COPY view ./view
 
 RUN npm run build
-RUN npm run build:client --mode ${NODE_ENV}
 
-# Include image assets in dist folder
-RUN npm run copy:assets
+# Shared runtime stage
+FROM debian:bookworm-slim AS runtime
 
-# Prep for runtime image
-RUN rm -rf node_modules
-RUN rm -rf test
-RUN npm ci --only=production
-RUN rm -rf src
-RUN rm -rf view
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-FROM node:18.17.1-alpine AS runtime_stage
+WORKDIR /app
 
-COPY --from=build_stage /app /app
+COPY content ./content
 
-CMD [ "node", "/app/dist/main.js" ]
+ENV FRONTEND_DIST_DIR=/app/static
+
+CMD ["./praxis-live"]
+
+# E2E image built from the current Rust and Vite source
+FROM runtime AS e2e
+
+COPY --from=backend-builder /praxis-live ./
+COPY --from=frontend-builder /app/view/dist ./static
+
+# Verify the artifact against the source without compiling on the VPS
+FROM runtime AS frontend-verified
+
+# Copy needed config files
+COPY package.json package-lock.json tsconfig.json tsconfig.app.json tsconfig.node.json tsconfig.e2e.json ./
+COPY vite.config.ts components.json .dockerignore ./
+COPY view ./view
+COPY deploy/Dockerfile.frontend-artifact ./deploy/Dockerfile.frontend-artifact
+COPY scripts/check-frontend-artifact.sh ./scripts/check-frontend-artifact.sh
+COPY deploy/artifacts/frontend-dist ./deploy/artifacts/frontend-dist
+
+RUN bash scripts/check-frontend-artifact.sh
+
+FROM runtime AS backend-verified
+
+COPY Cargo.toml Cargo.lock rust-toolchain.toml .dockerignore ./
+COPY api ./api
+COPY cli ./cli
+COPY entity ./entity
+COPY migrations ./migrations
+COPY src ./src
+COPY deploy/Dockerfile.backend-artifact ./deploy/Dockerfile.backend-artifact
+COPY scripts/check-backend-artifact.sh ./scripts/check-backend-artifact.sh
+COPY deploy/artifacts/linux-x86_64 ./deploy/artifacts/linux-x86_64
+
+RUN bash scripts/check-backend-artifact.sh
+
+# Production image built from the tracked Linux and frontend artifacts
+FROM runtime AS production
+
+COPY --from=backend-verified /app/deploy/artifacts/linux-x86_64/praxis-live ./
+COPY --from=frontend-verified /app/deploy/artifacts/frontend-dist ./static

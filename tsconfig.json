@@ -1,23 +1,13 @@
 {
+  "files": [],
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "./",
-    "declaration": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": false,
-    "incremental": true,
-    "jsx": "react-jsx",
-    "module": "commonjs",
-    "noFallthroughCasesInSwitch": false,
-    "noImplicitAny": false,
-    "outDir": "./dist",
-    "removeComments": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "strictBindCallApply": false,
-    "strictNullChecks": true,
-    "target": "ES2021"
-  }
+    "paths": {
+      "@/*": ["./view/src/*"]
+    }
+  },
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" },
+    { "path": "./tsconfig.e2e.json" }
+  ]
 }

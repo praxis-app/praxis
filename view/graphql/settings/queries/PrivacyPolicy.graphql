@@ -1,7 +1,0 @@
-query PrivacyPolicy {
-  serverConfig {
-    id
-    websiteURL
-    contactEmail
-  }
-}

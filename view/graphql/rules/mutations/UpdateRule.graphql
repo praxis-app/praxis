@@ -1,7 +1,0 @@
-mutation UpdateRule($ruleData: UpdateRuleInput!) {
-  updateRule(ruleData: $ruleData) {
-    rule {
-      ...Rule
-    }
-  }
-}

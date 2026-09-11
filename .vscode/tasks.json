@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Server",
+      "type": "shell",
+      "command": "cargo build --bin praxis-live",
+      "group": "build",
+      "problemMatcher": ["$rustc"]
+    }
+  ]
+}

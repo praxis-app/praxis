@@ -1,7 +1,0 @@
-fragment QuestionEditorCard on ServerQuestion {
-  id
-  text
-  priority
-
-  ...QuestionFormModal
-}

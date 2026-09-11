@@ -1,3 +1,0 @@
-mutation DeleteServerInvite($id: Int!) {
-  deleteServerInvite(id: $id)
-}

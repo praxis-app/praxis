@@ -1,3 +1,0 @@
-mutation LeaveGroup($id: Int!) {
-  leaveGroup(id: $id)
-}

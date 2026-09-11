@@ -1,6 +1,0 @@
-fragment UserEntry on User {
-  id
-  isVerified
-  ...UserAvatar
-  ...FollowButton
-}

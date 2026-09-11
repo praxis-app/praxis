@@ -1,9 +1,0 @@
-query GroupMembersByGroupId($groupId: Int!) {
-  group(id: $groupId) {
-    id
-    members {
-      id
-      ...UserAvatar
-    }
-  }
-}

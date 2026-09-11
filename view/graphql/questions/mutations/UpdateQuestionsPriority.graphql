@@ -1,5 +1,0 @@
-mutation UpdateQuestionsPriority(
-  $questionsData: UpdateQuestionsPriorityInput!
-) {
-  updateQuestionsPriority(questionsData: $questionsData)
-}

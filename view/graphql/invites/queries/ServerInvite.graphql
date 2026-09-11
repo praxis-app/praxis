@@ -1,6 +1,0 @@
-query ServerInvite($token: String!) {
-  serverInvite(token: $token) {
-    id
-    token
-  }
-}

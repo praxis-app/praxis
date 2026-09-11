@@ -1,5 +1,0 @@
-fragment GroupMember on User {
-  id
-  ...UserAvatar
-  ...FollowButton
-}
