@@ -23,7 +23,7 @@ services:
       - '3210:3210'
     environment:
       VITE_SERVER_PORT: 3210
-      UPLOAD_ROOT: /tmp/praxis-e2e-uploads
+      CONTENT_ROOT: /tmp/praxis-e2e-content
       AUTH_TOKEN_SECRET: e2e-secret
       CHANNEL_KEY_MASTER: MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
       POLL_CLOSURE_INTERVAL_SECONDS: 1
