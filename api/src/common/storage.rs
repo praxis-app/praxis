@@ -1,7 +1,6 @@
 use std::path::{Path, PathBuf};
 
 pub(crate) fn upload_root() -> PathBuf {
-    // Default to the project's content directory when CONTENT_ROOT is unset
     std::env::var("CONTENT_ROOT")
         .map(PathBuf::from)
         .unwrap_or_else(|_| {
