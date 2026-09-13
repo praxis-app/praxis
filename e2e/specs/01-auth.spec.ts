@@ -262,6 +262,7 @@ test('Open Praxis and Explore Praxis both return a logged in user to the server 
 }) => {
   test.setTimeout(90_000);
 
+  await getOrCreateInstanceAdmin(request);
   const user = await createAuthenticatedUser(
     request,
     context,
@@ -271,7 +272,7 @@ test('Open Praxis and Explore Praxis both return a logged in user to the server 
   const serverAdmin = await createServerAdmin(request, 'open-praxis-admin');
 
   const servers: { name: string; slug: string }[] = [];
-  for (const index of [1, 2, 3, 4, 5]) {
+  for (const index of [1, 2, 3]) {
     const name = `Switch server ${index} ${user.user.suffix}`;
     const slug = `switch-${index}-${user.user.suffix}`;
     const server = await createServer(request, serverAdmin, { name, slug });

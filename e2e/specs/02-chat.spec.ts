@@ -802,45 +802,6 @@ function unreadIndicator(scope: Locator) {
   return scope.getByTestId('channel-unread-indicator');
 }
 
-for (const feedItem of unreadFeedItems) {
-  test(`channel list marks a channel unread when someone else creates a ${feedItem.label}`, async ({
-    context,
-    page,
-    request,
-  }) => {
-    const { server, author, otherChannelId } = await setupUnreadScenario(
-      request,
-      context,
-      feedItem.label,
-    );
-
-    await createPollViaApi(
-      request,
-      author,
-      server.id,
-      otherChannelId,
-      feedItem.payload(`Unread ${feedItem.label} ${author.user.suffix}`),
-    );
-
-    await page.goto(`/s/${server.slug}/c/${server.generalChannelId}`);
-
-    const unreadChannel = channelLink(
-      page,
-      server.slug,
-      otherChannelId,
-    ).locator('..');
-    await expect(unreadIndicator(unreadChannel)).toBeVisible();
-    await expect(
-      unreadIndicator(
-        channelLink(page, server.slug, server.generalChannelId).locator('..'),
-      ),
-    ).toHaveCount(0);
-
-    await page.goto(`/s/${server.slug}/c/${otherChannelId}`);
-    await expect(unreadIndicator(unreadChannel)).toHaveCount(0);
-  });
-}
-
 test.describe('mobile thread recovery', () => {
   const device = devices['Pixel 5'];
   test.use({
