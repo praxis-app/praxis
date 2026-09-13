@@ -115,9 +115,7 @@ export async function confirmRatifyingVote(page: Page) {
     name: 'Your vote may ratify this proposal',
   });
   await expect(dialog).toBeVisible();
-  await dialog
-    .getByRole('button', { name: 'Cast ratifying vote' })
-    .click();
+  await dialog.getByRole('button', { name: 'Cast ratifying vote' }).click();
 }
 
 export function getPollVoteSummary(pollId: string) {

@@ -1,13 +1,7 @@
 import { api } from '@/client/api-client';
 import { useAuthData } from '@/hooks/use-auth-data';
-import {
-  isSearchQueryValid,
-  normalizeSearchQuery,
-} from '@/lib/search.utils';
-import {
-  type SearchFilters,
-  type SearchPageRes,
-} from '@/types/search.types';
+import { isSearchQueryValid, normalizeSearchQuery } from '@/lib/search.utils';
+import { type SearchFilters, type SearchPageRes } from '@/types/search.types';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';

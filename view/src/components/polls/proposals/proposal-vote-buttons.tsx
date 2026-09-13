@@ -288,12 +288,12 @@ export const ProposalVoteButtons = ({
         voteType === 'block'
           ? 'blocking'
           : wouldVoteRatifyProposal(
-              votes,
-              config,
-              memberCount,
-              myVote,
-              voteType,
-            )
+                votes,
+                config,
+                memberCount,
+                myVote,
+                voteType,
+              )
             ? 'ratifying'
             : null;
       if (confirmationType) {

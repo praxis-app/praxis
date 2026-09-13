@@ -780,10 +780,7 @@ test('active decision opens fully in view across channels and feed pages', async
   page.off('response', recordFeedPageResponse);
   expect(feedContextTargets).toEqual([poll.id]);
   expect(feedPageCursors).toHaveLength(0);
-  await expect(focusedDecision).toHaveAttribute(
-    'data-focus-highlight',
-    'true',
-  );
+  await expect(focusedDecision).toHaveAttribute('data-focus-highlight', 'true');
   await feed.evaluate(
     (element) =>
       new Promise<void>((resolve) => {
@@ -2082,9 +2079,7 @@ test('vote progress separates participant approval from member-based quorum', as
   await proposal.getByRole('button', { name: '1 vote' }).click();
   await expect(progressDialog).toBeVisible();
   await expect(
-    progressDialog.getByText(
-      '1 of 1 participants agree so far (51% required)',
-    ),
+    progressDialog.getByText('1 of 1 participants agree so far (51% required)'),
   ).toBeVisible();
   await expect(
     progressDialog.getByText('1 of 2 responses required'),
