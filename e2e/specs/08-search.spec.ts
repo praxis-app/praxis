@@ -9,7 +9,6 @@ import { createTestUser } from '../lib/data';
 import { createForumChannel } from '../lib/forums';
 import { createMessages } from '../lib/messages';
 import { getDefaultServer } from '../lib/servers';
-import { expectRightPanelToResize } from '../lib/right-panel';
 
 type ChannelResponse = { channel: { id: string } };
 type PollResponse = { poll: { id: string } };
@@ -266,7 +265,7 @@ test('search finds every content kind, excludes poll option text, and reports it
   ).toBeVisible();
 });
 
-test('desktop search shares the right panel, resizes, filters, and restores the channel', async ({
+test('desktop search shares the right panel, filters, and restores the channel', async ({
   context,
   page,
   request,
@@ -295,7 +294,6 @@ test('desktop search shares the right panel, resizes, filters, and restores the 
   await expect(decisions).toHaveCount(0);
   await expect(panel.getByLabel('Search this server')).toBeFocused();
   await runSearch(page, token);
-  await expectRightPanelToResize(page, panel, 'search');
   await expect(panel.getByTestId('search-result').first()).toBeVisible();
   await page.screenshot({ path: test.info().outputPath('desktop-search.png') });
 

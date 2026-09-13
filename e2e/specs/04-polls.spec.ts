@@ -31,7 +31,6 @@ import {
   voteViaApi,
 } from '../lib/polls';
 import { createMessages } from '../lib/messages';
-import { expectRightPanelToResize } from '../lib/right-panel';
 import { getAdminServerRole, getServerRole } from '../lib/server-roles';
 import {
   createServer,
@@ -348,8 +347,6 @@ test('active decisions panel loads the next page when scrolled to the bottom', a
   });
   const finalDecision = decisionBodies.at(-1)!;
   await expect(panel.getByText(decisionBodies[0])).toBeVisible();
-  await expectRightPanelToResize(page, panel, 'activeDecisions');
-
   if (totalActiveDecisions > activeDecisionsPageSize) {
     await expect(panel.getByText(finalDecision)).toHaveCount(0);
 

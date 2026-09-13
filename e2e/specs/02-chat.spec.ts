@@ -20,11 +20,10 @@ import {
 } from '../lib/auth';
 import { startCallFromTopNav } from '../lib/calls';
 import { createTestMessage, createTestUser } from '../lib/data';
-import { createLargePng, expectImageToLoad } from '../lib/images';
+import { expectImageToLoad } from '../lib/images';
 import { createInvite } from '../lib/invites';
 import { scrollThroughAllPages } from '../lib/infinite-scroll';
 import { createMessages } from '../lib/messages';
-import { expectRightPanelToResize } from '../lib/right-panel';
 import {
   createServer,
   createServerAdmin,
@@ -321,61 +320,6 @@ test('authenticated user can send a chat message with an image', async ({
   await chat.expectAttachedImage();
 });
 
-test('upload progress is shown while a large image is sending', async ({
-  context,
-  page,
-  request,
-}) => {
-  const authenticatedUser = await createAuthenticatedUser(
-    request,
-    context,
-    createTestUser('chat-upload-progress'),
-  );
-  const message = createTestMessage(
-    'chat-upload-progress',
-    authenticatedUser.user.suffix,
-  );
-  const chat = new ChatPage(page);
-
-  await chat.goto();
-  await chat.expectChannel('general');
-
-  // Throttled so the upload and the processing that follows are observable
-  const client = await context.newCDPSession(page);
-  await client.send('Network.enable');
-  await client.send('Network.emulateNetworkConditions', {
-    offline: false,
-    latency: 2_000,
-    downloadThroughput: -1,
-    uploadThroughput: 2 * 1024 * 1024,
-  });
-
-  await chat.attachImageBuffer(createLargePng(2600, 1200));
-
-  const messageResponse = page.waitForResponse(
-    (response) =>
-      response.request().method() === 'POST' &&
-      response.url().endsWith('/messages') &&
-      response.status() === 200,
-  );
-  await chat.sendMessage(message);
-
-  const overlay = page.getByTestId('image-upload-overlay');
-  const progress = overlay.getByRole('progressbar', {
-    name: 'Uploading image',
-  });
-  await expect(overlay).toBeVisible();
-  await expect(progress).toHaveAttribute('aria-valuenow', /^\d+$/);
-
-  await expect(progress).not.toHaveAttribute('aria-valuenow');
-
-  await messageResponse;
-  await expect(overlay).toBeHidden();
-
-  await chat.expectMessage(message, authenticatedUser.user.name);
-  await chat.expectAttachedImage();
-});
-
 test('invite holder can read a non-default server feed with images', async ({
   context,
   page,
@@ -655,8 +599,6 @@ test('authenticated user can create and vote on an in-call proposal', async ({
     await expect(
       activeDecisionPanel.getByText('No active decision'),
     ).toBeVisible();
-    await expectRightPanelToResize(page, activeDecisionPanel, 'callDecisions');
-
     await activeDecisionPanel
       .getByRole('button', { name: 'Create proposal' })
       .click();

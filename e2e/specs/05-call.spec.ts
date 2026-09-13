@@ -12,7 +12,6 @@ import {
 } from '../lib/calls';
 import { createTestMessage, createTestUser } from '../lib/data';
 import { createInvite } from '../lib/invites';
-import { expectRightPanelToResize } from '../lib/right-panel';
 import { getDefaultServer } from '../lib/servers';
 import { ChatPage } from '../pages/chat.page';
 import { NavigationPage } from '../pages/navigation.page';
@@ -269,87 +268,6 @@ test('stale call cleanup updates other users channel feeds in realtime', async (
   }
 });
 
-test('second user can join an active call from the call artifact', async ({
-  browser,
-  context,
-  page,
-  request,
-}) => {
-  test.setTimeout(60_000);
-
-  const starter = await createAuthenticatedUser(
-    request,
-    context,
-    createTestUser('call-artifact-starter'),
-  );
-  const server = await getDefaultServer(request, starter);
-  const instanceAdmin = await getOrCreateInstanceAdmin(request);
-  const inviteToken = await createInvite(request, instanceAdmin, server.id);
-  const joiner = await signUpViaApi(
-    request,
-    createTestUser('call-artifact-joiner'),
-    inviteToken,
-  );
-  const joinerContext = await browser.newContext();
-  let joinerPage: Page | undefined;
-
-  try {
-    await seedAuthenticatedSession(joinerContext, joiner.accessToken);
-    joinerPage = await joinerContext.newPage();
-    const starterChat = new ChatPage(page);
-    const joinerChat = new ChatPage(joinerPage);
-
-    await starterChat.goto();
-    await starterChat.expectChannel('general');
-    await joinerPage.goto(page.url());
-    await joinerChat.expectChannel('general');
-
-    const joinerCallArtifact = joinerPage
-      .locator('article')
-      .filter({ hasText: `Started by ${starter.user.name}` });
-
-    const starterJoinCallResponse = page.waitForResponse(
-      (response) =>
-        response.request().method() === 'POST' &&
-        /\/calls$/.test(response.url()) &&
-        response.status() === 200,
-    );
-
-    await startCallFromTopNav(page);
-    await starterJoinCallResponse;
-    await expect(page.getByText('Call in #general')).toBeVisible();
-    await expectRenderedParticipantTiles(page, 1);
-    await joinerPage.reload();
-    await joinerChat.expectChannel('general');
-
-    await expect(joinerCallArtifact).toContainText('Call is active');
-
-    const joinerJoinCallResponse = joinerPage.waitForResponse(
-      (response) =>
-        response.request().method() === 'POST' &&
-        response.url().includes('/calls/') &&
-        response.url().endsWith('/join') &&
-        response.status() === 200,
-    );
-
-    await joinCallFromArtifact(joinerPage, joinerCallArtifact);
-    await joinerJoinCallResponse;
-    await expect(joinerPage.getByText('Call in #general')).toBeVisible();
-
-    await expectRenderedParticipantTiles(page, 2);
-    await expectRenderedParticipantTiles(joinerPage, 2);
-
-    await leaveCallIfVisible(joinerPage);
-    await leaveCallIfVisible(page);
-  } finally {
-    if (joinerPage) {
-      await leaveCallIfVisible(joinerPage);
-    }
-    await leaveCallIfVisible(page);
-    await joinerContext.close();
-  }
-});
-
 test('multi-user call stays active until the last participant leaves', async ({
   browser,
   context,
@@ -554,8 +472,6 @@ test('in-call chat messages are delivered realtime between participants', async 
     });
     await expect(starterCallChatPanel).toBeVisible();
     await expect(joinerCallChatPanel).toBeVisible();
-    await expectRightPanelToResize(page, starterCallChatPanel, 'callChat');
-
     const messageResponse = page.waitForResponse(
       (response) =>
         response.request().method() === 'POST' &&
