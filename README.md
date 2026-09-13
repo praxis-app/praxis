@@ -18,8 +18,6 @@ Praxis is free and open source software, as specified by the GNU General Public 
 
 You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground. Your feedback is highly welcome.
 
-Please note that this is also an experimental approach within the Praxis project. The main repository is located at https://github.com/praxis-app/praxis.
-
 ## Installation
 
 Use Rust **1.98.1**, Node **24.21.0**, PostgreSQL **16**, and Redis **8.4**. The frontend uses React, TypeScript, and Vite. `rust-toolchain.toml` selects the Rust version through rustup. E2E tests and artifact builds require Docker with Compose and Buildx.
