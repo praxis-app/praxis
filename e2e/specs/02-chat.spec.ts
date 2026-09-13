@@ -950,7 +950,6 @@ test.describe('mobile thread recovery', () => {
         bodies: [regularBody],
       });
       await expect.poll(() => missedReplies).toBeGreaterThan(0);
-      await page.waitForTimeout(15_000);
       away = false;
       await cdp.send('Page.setWebLifecycleState', { state: 'active' });
       await page.bringToFront();
