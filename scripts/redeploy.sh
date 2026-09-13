@@ -2,17 +2,17 @@
 #
 # One-time Ubuntu VPS cutover: praxis-live → praxis, preserving DB/images/secrets.
 #
-# First complete prod steps 1–5 in .docs/deploy/rename-praxis-startup-checklist.md:
+# First complete steps 1–5 in .docs/deploy/rename-praxis-startup-checklist.md:
 # off-server backups, rebuilt artifacts, new checkout and matching production .env.
 #
-# Run from the new checkout: bash scripts/redeploy-prod.sh OLD_CHECKOUT HEALTH_URL
+# Run from the new checkout: bash scripts/redeploy.sh OLD_CHECKOUT HEALTH_URL
 # Copies stopped volumes; leaves originals intact. Refuses existing destinations.
 
 set -euo pipefail
 
 if [[ ${1:-} == --help || $# != 2 ]]; then
 	# Show the required checkout and public health endpoint.
-	echo 'Usage: bash scripts/redeploy-prod.sh /path/to/praxis-live https://YOUR_DOMAIN/api/health'
+	echo 'Usage: bash scripts/redeploy.sh /path/to/praxis-live https://YOUR_DOMAIN/api/health'
 	[[ ${1:-} == --help ]] && exit 0
 	exit 2
 fi
@@ -36,6 +36,8 @@ new=(sudo docker compose --project-directory "$new_dir" -f "$new_dir/docker-comp
 for pair in database:postgres_data web:uploads cache:cache; do
 	service=${pair%%:*}
 	volume=${pair#*:}
+	destination=$volume
+	[[ "$volume" != uploads ]] || destination=content
 
 	# Confirm the running old service actually mounts the expected source volume.
 	container=$("${old[@]}" ps -q "$service")
@@ -58,8 +60,8 @@ for pair in database:postgres_data web:uploads cache:cache; do
 	fi
 
 	# Refuse to merge with existing or partially copied data.
-	if sudo docker volume inspect "praxis_$volume" >/dev/null 2>&1; then
-		echo "Destination already exists: praxis_$volume; resolve it before running." >&2
+	if sudo docker volume inspect "praxis_$destination" >/dev/null 2>&1; then
+		echo "Destination already exists: praxis_$destination; resolve it before running." >&2
 		exit 1
 	fi
 done
@@ -68,11 +70,11 @@ done
 sed -i '/^COMPOSE_PROJECT_NAME=/d; /^DB_MIGRATIONS=/d' "$new_dir/.env"
 printf '\nCOMPOSE_PROJECT_NAME=praxis\nDB_MIGRATIONS=true\n' >>"$new_dir/.env"
 
-# Validate configuration and build the artifact-based web image while prod stays online.
+# Validate configuration and build the artifact-based web image while the site stays online.
 "${new[@]}" config --quiet
 "${new[@]}" build web
 
-# Download service images and the volume-copy helper before stopping prod.
+# Download service images and the volume-copy helper before stopping the site.
 "${new[@]}" pull database cache
 "${new[@]}" --profile livekit pull livekit
 sudo docker pull alpine
@@ -83,10 +85,13 @@ trap 'echo "Cutover incomplete. Old volumes are retained; inspect Compose logs a
 # Stop the old stack cleanly; never remove its volumes.
 "${old[@]}" down
 for volume in postgres_data uploads cache; do
+	# Map the old uploads volume to the new content volume.
+	destination=$volume
+	[[ "$volume" != uploads ]] || destination=content
 	# Create an empty destination, then preserve file ownership while copying.
-	sudo docker volume create "praxis_$volume" >/dev/null
+	sudo docker volume create "praxis_$destination" >/dev/null
 	sudo docker run --rm --mount "type=volume,src=praxis-live_$volume,dst=/from,readonly" \
-		--mount "type=volume,src=praxis_$volume,dst=/to" alpine sh -c 'cp -a /from/. /to/'
+		--mount "type=volume,src=praxis_$destination,dst=/to" alpine sh -c 'cp -a /from/. /to/'
 done
 
 # Start from prepared images; no builds or downloads during cutover.

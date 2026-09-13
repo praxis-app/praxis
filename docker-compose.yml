@@ -11,9 +11,9 @@ services:
       LIVEKIT_API_URL: http://livekit:${LIVEKIT_PORT}
       LIVEKIT_HOST: livekit
       VIDEO_CALLS_ENABLED: ${COMPOSE_PROFILES:+true}
-      UPLOAD_ROOT: /app/uploads
+      CONTENT_ROOT: /app/content
     volumes:
-      - uploads:/app/uploads
+      - content:/app/content
     depends_on:
       database:
         condition: service_healthy
@@ -80,4 +80,4 @@ services:
 volumes:
   postgres_data:
   cache:
-  uploads:
+  content:
