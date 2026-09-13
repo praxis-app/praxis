@@ -21,6 +21,7 @@ const cleanup = () => {
 const waitForAppReady = async (timeoutMs: number) => {
   const deadline = Date.now() + timeoutMs;
 
+  // Polls until the deadline; `timeoutMs` bounds it even if the app never starts
   while (Date.now() < deadline) {
     try {
       const response = await fetch(appUrl);

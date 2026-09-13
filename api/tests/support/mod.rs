@@ -146,8 +146,7 @@ impl TestApp {
         token: &str,
         fields: HashMap<String, MultipartField>,
     ) -> Response<Body> {
-        let boundary =
-            format!("praxis-boundary-{}", unique_database_name());
+        let boundary = format!("praxis-boundary-{}", unique_database_name());
         let body = multipart_body(&boundary, fields);
 
         let request = Request::builder()

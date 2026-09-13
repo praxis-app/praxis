@@ -336,7 +336,7 @@ fn replied_to(
     let poll = message
         .thread_poll_id
         .and_then(|poll_id| context.polls.get(&poll_id))?;
-    (poll.user_id == viewer_id).then(|| match poll.poll_type {
+    (poll.user_id == viewer_id).then_some(match poll.poll_type {
         PollType::Proposal => "proposal",
         _ => "poll",
     })

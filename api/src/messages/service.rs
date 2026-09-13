@@ -24,7 +24,8 @@ use uuid::Uuid as NativeUuid;
 
 pub(super) use super::replies::{broadcast_reply, create_reply, list_replies};
 use super::types::{
-    serialize_timestamp, CreateMessageRequest, ImageResponse, MessageResponse,
+    serialize_timestamp, CallMessageImagePath, CreateCallMessageContext,
+    CreateMessageRequest, ImageResponse, MessageImagePath, MessageResponse,
     MessageUser, StoredImage,
 };
 use crate::{
@@ -226,13 +227,16 @@ pub(super) async fn create_message(
 pub(super) async fn create_call_message(
     database: &DatabaseConnection,
     upload_root: &Path,
-    server_id: Uuid,
-    channel_id: Uuid,
-    call_id: Uuid,
-    user_id: Uuid,
+    context: CreateCallMessageContext,
     request: CreateMessageRequest,
     images: Vec<Vec<u8>>,
 ) -> AppResult<MessageResponse> {
+    let CreateCallMessageContext {
+        server_id,
+        channel_id,
+        call_id,
+        user_id,
+    } = context;
     crate::calls::service::get_call(database, server_id, channel_id, call_id)
         .await?;
     create_message_record(
@@ -581,13 +585,16 @@ async fn cleanup_image_paths(paths: Vec<PathBuf>) {
 pub(super) async fn get_message_image(
     database: &DatabaseConnection,
     upload_root: &Path,
-    server_id: Uuid,
-    channel_id: Uuid,
-    message_id: Uuid,
-    image_id: Uuid,
+    path: MessageImagePath,
     user_id: Option<Uuid>,
     invite_token: Option<&str>,
 ) -> AppResult<StoredImage> {
+    let MessageImagePath {
+        server_id,
+        channel_id,
+        message_id,
+        image_id,
+    } = path;
     let message = messages::Entity::find_by_id(message_id)
         .one(database)
         .await
@@ -643,14 +650,17 @@ async fn load_message_image(
 pub(super) async fn get_call_message_image(
     database: &DatabaseConnection,
     upload_root: &Path,
-    server_id: Uuid,
-    channel_id: Uuid,
-    call_id: Uuid,
-    message_id: Uuid,
-    image_id: Uuid,
+    path: CallMessageImagePath,
     user_id: Option<Uuid>,
     invite_token: Option<&str>,
 ) -> AppResult<StoredImage> {
+    let CallMessageImagePath {
+        server_id,
+        channel_id,
+        call_id,
+        message_id,
+        image_id,
+    } = path;
     load_call_message(database, server_id, channel_id, call_id, message_id)
         .await?;
     channels::can_read_channel(

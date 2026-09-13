@@ -24,14 +24,15 @@ use super::{
     creation::prepare_poll_creation,
     types::{
         ActiveDecisionResponse, ActiveDecisionsResponse, CallDecisionResponse,
-        CreatePollRequest, PollConfigResponse, PollImageResponse,
+        CreatePollContext, CreatePollRequest, PollActionEventCoverPhotoPath,
+        PollConfigResponse, PollImagePath, PollImageResponse,
         PollOptionResponse, PollResponse, PollUserResponse, StoredPollImage,
     },
 };
 pub(crate) use super::{
     creation::{
         attach_poll_creation_images, commit_creation, insert_prepared_poll,
-        prepare_forum_proposal,
+        prepare_forum_proposal, CreationUploads,
     },
     outcome::{
         finalize_ratifiable_proposal, is_poll_ratifiable, ProposalFinalization,
@@ -56,38 +57,27 @@ use crate::{
 pub(super) async fn create_poll(
     database: &DatabaseConnection,
     upload_root: &Path,
-    server_id: Uuid,
-    channel_id: Uuid,
-    user_id: Uuid,
+    context: CreatePollContext,
     request: CreatePollRequest,
-    images: Vec<Vec<u8>>,
-    cover_photo: Option<Vec<u8>>,
+    uploads: CreationUploads,
 ) -> AppResult<WithNotifications<PollResponse>> {
-    create_poll_record(
-        database,
-        upload_root,
-        server_id,
-        channel_id,
-        None,
-        user_id,
-        request,
-        images,
-        cover_photo,
-    )
-    .await
+    create_poll_record(database, upload_root, context, None, request, uploads)
+        .await
 }
 
 async fn create_poll_record(
     database: &DatabaseConnection,
     upload_root: &Path,
-    server_id: Uuid,
-    channel_id: Uuid,
+    context: CreatePollContext,
     call_id: Option<Uuid>,
-    user_id: Uuid,
     request: CreatePollRequest,
-    images: Vec<Vec<u8>>,
-    cover_photo: Option<Vec<u8>>,
+    uploads: CreationUploads,
 ) -> AppResult<WithNotifications<PollResponse>> {
+    let CreatePollContext {
+        server_id,
+        channel_id,
+        user_id,
+    } = context;
     let prepared = prepare_poll_creation(
         database, server_id, channel_id, user_id, request, false,
     )
@@ -99,8 +89,7 @@ async fn create_poll_record(
         &transaction,
         upload_root,
         poll.id,
-        images,
-        cover_photo,
+        uploads,
     )
     .await?;
     // TODO: polls and call decisions notify nobody yet, only channel proposals
@@ -162,26 +151,25 @@ where
 pub(super) async fn create_call_poll(
     database: &DatabaseConnection,
     upload_root: &Path,
-    server_id: Uuid,
-    channel_id: Uuid,
+    context: CreatePollContext,
     call_id: Uuid,
-    user_id: Uuid,
     request: CreatePollRequest,
-    images: Vec<Vec<u8>>,
-    cover_photo: Option<Vec<u8>>,
+    uploads: CreationUploads,
 ) -> AppResult<PollResponse> {
-    crate::calls::service::get_call(database, server_id, channel_id, call_id)
-        .await?;
+    crate::calls::service::get_call(
+        database,
+        context.server_id,
+        context.channel_id,
+        call_id,
+    )
+    .await?;
     let created = create_poll_record(
         database,
         upload_root,
-        server_id,
-        channel_id,
+        context,
         Some(call_id),
-        user_id,
         request,
-        images,
-        cover_photo,
+        uploads,
     )
     .await?;
 
@@ -358,13 +346,16 @@ pub(super) async fn get_call_decision(
 pub(super) async fn get_poll_action_event_cover_photo(
     database: &DatabaseConnection,
     upload_root: &Path,
-    server_id: Uuid,
-    channel_id: Uuid,
-    poll_id: Uuid,
-    image_id: Uuid,
+    path: PollActionEventCoverPhotoPath,
     user_id: Option<Uuid>,
     invite_token: Option<&str>,
 ) -> AppResult<StoredPollImage> {
+    let PollActionEventCoverPhotoPath {
+        server_id,
+        channel_id,
+        poll_id,
+        image_id,
+    } = path;
     load_poll(database, server_id, channel_id, poll_id).await?;
     channels::can_read_channel(
         database,
@@ -392,13 +383,16 @@ pub(super) async fn get_poll_action_event_cover_photo(
 pub(super) async fn get_poll_image(
     database: &DatabaseConnection,
     upload_root: &Path,
-    server_id: Uuid,
-    channel_id: Uuid,
-    poll_id: Uuid,
-    image_id: Uuid,
+    path: PollImagePath,
     user_id: Option<Uuid>,
     invite_token: Option<&str>,
 ) -> AppResult<StoredPollImage> {
+    let PollImagePath {
+        server_id,
+        channel_id,
+        poll_id,
+        image_id,
+    } = path;
     load_poll(database, server_id, channel_id, poll_id).await?;
     channels::can_read_channel(
         database,

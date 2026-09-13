@@ -30,6 +30,14 @@ pub(super) struct ForumReplyPath {
     pub(super) reply_id: Uuid,
 }
 
+#[derive(Debug)]
+pub(super) struct CreateForumProposalContext {
+    pub(super) server_id: Uuid,
+    pub(super) channel_id: Uuid,
+    pub(super) post_id: Uuid,
+    pub(super) user_id: Uuid,
+}
+
 #[derive(Debug, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(super) struct ListForumPostsQuery {

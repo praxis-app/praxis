@@ -387,6 +387,9 @@ async fn handle_socket(state: PubSubState, mut socket: WebSocket) {
     let (sender, mut outbound) = mpsc::unbounded_channel();
     state.service.register(socket_id, sender);
 
+    // Runs for the life of the connection. Exits when the client closes or
+    // errors (`socket.recv()` stops yielding `Ok`), a send fails, or a message
+    // asks to disconnect. Both branches await, so an idle socket just waits
     loop {
         tokio::select! {
             Some(message) = outbound.recv() => {

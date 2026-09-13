@@ -17,9 +17,10 @@ use super::{
         shape_forum_post, shape_forum_post_with_replies, shape_post_summaries,
     },
     types::{
-        CreateForumPostRequest, CreateForumReplyRequest, CreatedForumReply,
-        ForumPostContextResponse, ForumPostResponse, ForumPostSummaryResponse,
-        ForumPostsResponse, UpdateForumPostRequest,
+        CreateForumPostRequest, CreateForumProposalContext,
+        CreateForumReplyRequest, CreatedForumReply, ForumPostContextResponse,
+        ForumPostResponse, ForumPostSummaryResponse, ForumPostsResponse,
+        UpdateForumPostRequest,
     },
 };
 use crate::{
@@ -116,8 +117,7 @@ pub(super) async fn create_forum_post(
     channel_id: Uuid,
     user_id: Uuid,
     request: CreateForumPostRequest,
-    images: Vec<Vec<u8>>,
-    cover_photo: Option<Vec<u8>>,
+    uploads: polls_service::CreationUploads,
 ) -> AppResult<WithNotifications<ForumPostResponse>> {
     let title = validate_title(&request.title)?;
     let body = validate_body(&request.body, "A forum post body is required.")?;
@@ -193,8 +193,7 @@ pub(super) async fn create_forum_post(
                 &transaction,
                 upload_root,
                 proposal.id,
-                images,
-                cover_photo,
+                uploads,
             )
             .await?
         }
@@ -384,14 +383,16 @@ pub(super) async fn update_forum_post(
 pub(super) async fn create_forum_post_proposal(
     database: &DatabaseConnection,
     upload_root: &std::path::Path,
-    server_id: Uuid,
-    channel_id: Uuid,
-    post_id: Uuid,
-    user_id: Uuid,
+    context: CreateForumProposalContext,
     request: crate::polls::types::CreatePollRequest,
-    images: Vec<Vec<u8>>,
-    cover_photo: Option<Vec<u8>>,
+    uploads: polls_service::CreationUploads,
 ) -> AppResult<WithNotifications<ForumPostResponse>> {
+    let CreateForumProposalContext {
+        server_id,
+        channel_id,
+        post_id,
+        user_id,
+    } = context;
     let post = load_post(database, channel_id, post_id).await?;
     ensure_post_accepts_proposal(&post, user_id)?;
     let prepared = polls_service::prepare_forum_proposal(
@@ -416,8 +417,7 @@ pub(super) async fn create_forum_post_proposal(
         &transaction,
         upload_root,
         proposal.id,
-        images,
-        cover_photo,
+        uploads,
     )
     .await?;
     let notifications = polls_service::notify_new_proposal(
