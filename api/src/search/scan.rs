@@ -164,7 +164,7 @@ async fn scan_messages(
 
     let thread_root_ids: Vec<Uuid> =
         rows.iter().filter_map(|row| row.thread_root_id).collect();
-    let posts_by_root = load_posts_by_root(database, thread_root_ids).await?;
+    let posts_by_root = get_posts_by_root(database, thread_root_ids).await?;
     let frontier = rows.last().filter(|_| coverage.truncated).map(|row| {
         let is_forum_reply = row
             .thread_root_id
@@ -285,7 +285,7 @@ async fn scan_polls(
     .await?;
 
     let poll_ids: Vec<Uuid> = rows.iter().map(|row| row.id).collect();
-    let posts_by_poll = load_posts_by_poll(database, poll_ids).await?;
+    let posts_by_poll = get_posts_by_poll(database, poll_ids).await?;
     let frontier =
         rows.last()
             .filter(|_| coverage.truncated)
@@ -461,7 +461,7 @@ fn encrypted_message_field(
     })
 }
 
-async fn load_posts_by_root(
+async fn get_posts_by_root(
     database: &DatabaseConnection,
     root_message_ids: Vec<Uuid>,
 ) -> AppResult<HashMap<Uuid, forum_posts::Model>> {
@@ -479,7 +479,7 @@ async fn load_posts_by_root(
         .collect())
 }
 
-async fn load_posts_by_poll(
+async fn get_posts_by_poll(
     database: &DatabaseConnection,
     poll_ids: Vec<Uuid>,
 ) -> AppResult<HashMap<Uuid, Uuid>> {

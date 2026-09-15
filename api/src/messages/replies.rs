@@ -207,7 +207,7 @@ pub(super) async fn list_replies(
     page: ListRepliesPage,
 ) -> AppResult<ThreadResponse> {
     ensure_text_channel(database, server_id, channel_id).await?;
-    let root = load_thread_root(database, channel_id, root_message_id).await?;
+    let root = get_thread_root(database, channel_id, root_message_id).await?;
 
     let replies = match page.around {
         Some(target_id) => {
@@ -217,7 +217,7 @@ pub(super) async fn list_replies(
                     "Use around on its own, without before or after.",
                 ));
             }
-            let target = load_thread_reply(
+            let target = get_thread_reply(
                 database,
                 channel_id,
                 root_message_id,
@@ -265,7 +265,7 @@ pub(super) async fn list_replies(
     })
 }
 
-async fn load_thread_reply(
+async fn get_thread_reply(
     database: &DatabaseConnection,
     channel_id: Uuid,
     root_message_id: Uuid,
@@ -320,7 +320,7 @@ pub(super) async fn create_reply(
     };
 
     let transaction = database.begin().await.map_err(internal_error)?;
-    load_thread_root(&transaction, context.channel_id, context.root_message_id)
+    get_thread_root(&transaction, context.channel_id, context.root_message_id)
         .await?;
     let parent_message_id =
         request.parent_message_id.unwrap_or(context.root_message_id);
@@ -365,7 +365,7 @@ pub(super) async fn create_reply(
     commit_message_creation(transaction, image_paths).await?;
 
     let (reply_count, latest_reply_at) =
-        load_reply_summaries(database, vec![context.root_message_id])
+        get_reply_summaries(database, vec![context.root_message_id])
             .await?
             .remove(&context.root_message_id)
             .ok_or_else(|| {
@@ -461,7 +461,7 @@ pub(super) async fn broadcast_reply(
     Ok(())
 }
 
-pub(super) async fn load_reply_summaries(
+pub(super) async fn get_reply_summaries(
     database: &DatabaseConnection,
     root_ids: Vec<Uuid>,
 ) -> AppResult<HashMap<Uuid, (usize, DateTimeWithTimeZone)>> {
@@ -492,7 +492,7 @@ pub(super) async fn load_reply_summaries(
         .collect())
 }
 
-pub(super) async fn load_reply_participants(
+pub(super) async fn get_reply_participants(
     database: &DatabaseConnection,
     root_ids: Vec<Uuid>,
 ) -> AppResult<HashMap<Uuid, Vec<Uuid>>> {
@@ -533,7 +533,7 @@ pub(super) async fn load_reply_participants(
     Ok(participants_by_root)
 }
 
-pub(crate) async fn load_poll_reply_summaries(
+pub(crate) async fn get_poll_reply_summaries(
     database: &DatabaseConnection,
     poll_ids: Vec<Uuid>,
 ) -> AppResult<HashMap<Uuid, (usize, DateTimeWithTimeZone)>> {
@@ -564,7 +564,7 @@ pub(crate) async fn load_poll_reply_summaries(
         .collect())
 }
 
-pub(crate) async fn load_poll_reply_participants(
+pub(crate) async fn get_poll_reply_participants(
     database: &DatabaseConnection,
     poll_ids: Vec<Uuid>,
 ) -> AppResult<HashMap<Uuid, Vec<Uuid>>> {
@@ -620,7 +620,7 @@ async fn ensure_text_channel(
     Ok(())
 }
 
-async fn load_thread_root<C>(
+async fn get_thread_root<C>(
     database: &C,
     channel_id: Uuid,
     root_message_id: Uuid,

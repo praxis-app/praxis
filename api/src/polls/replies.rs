@@ -55,7 +55,7 @@ pub(super) async fn list_replies(
 ) -> AppResult<PollThreadLookup> {
     ensure_text_channel(database, context.server_id, context.channel_id)
         .await?;
-    if let Some(moved_to) = load_moved_poll_thread_destination(
+    if let Some(moved_to) = get_moved_poll_thread_destination(
         database,
         context.channel_id,
         context.poll_id,
@@ -67,7 +67,7 @@ pub(super) async fn list_replies(
             moved_to,
         }));
     }
-    load_poll_thread_root(database, context.channel_id, context.poll_id, false)
+    get_poll_thread_root(database, context.channel_id, context.poll_id, false)
         .await?;
 
     let replies_page = match page.around {
@@ -78,7 +78,7 @@ pub(super) async fn list_replies(
                     "Use around on its own, without before or after.",
                 ));
             }
-            let target = load_poll_reply(
+            let target = get_poll_reply(
                 database,
                 context.channel_id,
                 context.poll_id,
@@ -125,7 +125,7 @@ pub(super) async fn list_replies(
     })))
 }
 
-async fn load_poll_reply(
+async fn get_poll_reply(
     database: &DatabaseConnection,
     channel_id: Uuid,
     poll_id: Uuid,
@@ -183,7 +183,7 @@ pub(super) async fn create_reply(
     };
 
     let transaction = database.begin().await.map_err(internal_error)?;
-    load_poll_thread_root(
+    get_poll_thread_root(
         &transaction,
         context.channel_id,
         context.poll_id,
@@ -233,7 +233,7 @@ pub(super) async fn create_reply(
     message_service::commit_message_creation(transaction, image_paths).await?;
 
     let (reply_count, latest_reply_at) =
-        message_service::load_poll_reply_summaries(
+        message_service::get_poll_reply_summaries(
             database,
             vec![context.poll_id],
         )
@@ -346,7 +346,7 @@ async fn ensure_text_channel(
     }
 }
 
-async fn load_poll_thread_root<C>(
+async fn get_poll_thread_root<C>(
     database: &C,
     channel_id: Uuid,
     poll_id: Uuid,
@@ -377,7 +377,7 @@ where
     Ok(poll)
 }
 
-async fn load_moved_poll_thread_destination<C>(
+async fn get_moved_poll_thread_destination<C>(
     database: &C,
     source_channel_id: Uuid,
     poll_id: Uuid,

@@ -41,7 +41,7 @@ pub(super) async fn get_server_role(
     server_id: Uuid,
     role_id: Uuid,
 ) -> AppResult<ServerRoleResponse> {
-    let role = load_server_role(database, server_id, role_id).await?;
+    let role = get_server_role_model(database, server_id, role_id).await?;
     shape_server_role(database, role).await
 }
 
@@ -177,7 +177,7 @@ pub(super) async fn get_users_eligible_for_server_role(
     server_id: Uuid,
     role_id: Uuid,
 ) -> AppResult<Vec<UserResponse>> {
-    load_server_role(database, server_id, role_id).await?;
+    get_server_role_model(database, server_id, role_id).await?;
     let memberships = server_role_members::Entity::find()
         .filter(server_role_members::Column::ServerRoleId.eq(role_id))
         .all(database)
@@ -291,7 +291,7 @@ pub(super) async fn update_server_role(
     request: RoleRequest,
 ) -> AppResult<()> {
     let (name, color) = validate_role_request(request)?;
-    let role = load_server_role(database, server_id, role_id).await?;
+    let role = get_server_role_model(database, server_id, role_id).await?;
     let mut active = role.into_active_model();
     active.name = Set(name);
     active.color = Set(color);
@@ -306,7 +306,7 @@ pub(super) async fn update_server_role_permissions(
     permissions: Vec<PermissionRule>,
 ) -> AppResult<()> {
     validate_permissions(&permissions, SERVER_SUBJECTS)?;
-    load_server_role(database, server_id, role_id).await?;
+    get_server_role_model(database, server_id, role_id).await?;
     set_permissions(database, role_id, &permissions).await
 }
 
@@ -317,7 +317,7 @@ pub(super) async fn add_server_role_members(
     actor_user_id: Uuid,
     user_ids: &[Uuid],
 ) -> AppResult<Vec<notifications::Model>> {
-    load_server_role(database, server_id, role_id).await?;
+    get_server_role_model(database, server_id, role_id).await?;
     let mut granted_user_ids = Vec::new();
     for user_id in user_ids {
         if users::Entity::find_by_id(*user_id)
@@ -367,7 +367,7 @@ pub(super) async fn remove_server_role_member(
     role_id: Uuid,
     user_id: Uuid,
 ) -> AppResult<()> {
-    load_server_role(database, server_id, role_id).await?;
+    get_server_role_model(database, server_id, role_id).await?;
     server_role_members::Entity::delete_many()
         .filter(server_role_members::Column::ServerRoleId.eq(role_id))
         .filter(server_role_members::Column::UserId.eq(user_id))
@@ -382,7 +382,7 @@ pub(super) async fn delete_server_role(
     server_id: Uuid,
     role_id: Uuid,
 ) -> AppResult<()> {
-    let role = load_server_role(database, server_id, role_id).await?;
+    let role = get_server_role_model(database, server_id, role_id).await?;
     server_roles::Entity::delete_by_id(role.id)
         .exec(database)
         .await
@@ -536,7 +536,7 @@ where
     Ok(true)
 }
 
-async fn load_server_role(
+async fn get_server_role_model(
     database: &DatabaseConnection,
     server_id: Uuid,
     role_id: Uuid,

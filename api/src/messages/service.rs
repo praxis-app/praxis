@@ -428,10 +428,9 @@ pub(crate) async fn shape_messages(
         .map(|message| message.id)
         .collect::<Vec<_>>();
     let reply_summaries =
-        super::replies::load_reply_summaries(database, root_ids.clone())
-            .await?;
+        super::replies::get_reply_summaries(database, root_ids.clone()).await?;
     let reply_participants =
-        super::replies::load_reply_participants(database, root_ids).await?;
+        super::replies::get_reply_participants(database, root_ids).await?;
 
     let mut user_ids: Vec<Uuid> =
         messages.iter().map(|message| message.user_id).collect();
@@ -616,10 +615,10 @@ pub(super) async fn get_message_image(
     )
     .await?;
 
-    load_message_image(database, upload_root, message_id, image_id).await
+    get_stored_message_image(database, upload_root, message_id, image_id).await
 }
 
-async fn load_message_image(
+async fn get_stored_message_image(
     database: &DatabaseConnection,
     upload_root: &Path,
     message_id: Uuid,
@@ -661,7 +660,7 @@ pub(super) async fn get_call_message_image(
         message_id,
         image_id,
     } = path;
-    load_call_message(database, server_id, channel_id, call_id, message_id)
+    get_call_message(database, server_id, channel_id, call_id, message_id)
         .await?;
     channels::can_read_channel(
         database,
@@ -671,10 +670,10 @@ pub(super) async fn get_call_message_image(
         invite_token,
     )
     .await?;
-    load_message_image(database, upload_root, message_id, image_id).await
+    get_stored_message_image(database, upload_root, message_id, image_id).await
 }
 
-pub(super) async fn load_message(
+pub(super) async fn get_message(
     database: &DatabaseConnection,
     server_id: Uuid,
     channel_id: Uuid,
@@ -697,7 +696,7 @@ pub(super) async fn load_message(
     Ok(message)
 }
 
-pub(super) async fn load_call_message(
+pub(super) async fn get_call_message(
     database: &DatabaseConnection,
     server_id: Uuid,
     channel_id: Uuid,
@@ -707,7 +706,7 @@ pub(super) async fn load_call_message(
     crate::calls::service::get_call(database, server_id, channel_id, call_id)
         .await?;
     let message =
-        load_message(database, server_id, channel_id, message_id).await?;
+        get_message(database, server_id, channel_id, message_id).await?;
 
     if message.call_id != Some(call_id) {
         return Err(ApiError::new(StatusCode::NOT_FOUND, "Message not found."));

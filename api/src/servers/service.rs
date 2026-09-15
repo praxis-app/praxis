@@ -879,7 +879,7 @@ fn shape_user(
     }
 }
 
-pub(crate) async fn load_server<C>(
+pub(crate) async fn get_server<C>(
     database: &C,
     server_id: Uuid,
 ) -> AppResult<servers::Model>
@@ -899,17 +899,7 @@ pub(crate) async fn ensure_server(
     database: &DatabaseConnection,
     server_id: Uuid,
 ) -> AppResult<()> {
-    load_server(database, server_id).await.map(|_| ())
-}
-
-async fn get_server<C>(
-    database: &C,
-    server_id: Uuid,
-) -> AppResult<servers::Model>
-where
-    C: ConnectionTrait,
-{
-    load_server(database, server_id).await
+    get_server(database, server_id).await.map(|_| ())
 }
 
 async fn set_default_server(

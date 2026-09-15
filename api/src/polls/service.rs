@@ -356,7 +356,7 @@ pub(super) async fn get_poll_action_event_cover_photo(
         poll_id,
         image_id,
     } = path;
-    load_poll(database, server_id, channel_id, poll_id).await?;
+    get_poll(database, server_id, channel_id, poll_id).await?;
     channels::can_read_channel(
         database,
         server_id,
@@ -365,7 +365,7 @@ pub(super) async fn get_poll_action_event_cover_photo(
         invite_token,
     )
     .await?;
-    let image = poll_actions::service::load_event_cover_photo(
+    let image = poll_actions::service::get_proposed_event_cover_photo(
         database, poll_id, image_id,
     )
     .await?;
@@ -393,7 +393,7 @@ pub(super) async fn get_poll_image(
         poll_id,
         image_id,
     } = path;
-    load_poll(database, server_id, channel_id, poll_id).await?;
+    get_poll(database, server_id, channel_id, poll_id).await?;
     channels::can_read_channel(
         database,
         server_id,
@@ -485,12 +485,12 @@ pub(crate) async fn is_public_channel_poll(
     channel_id: Uuid,
     poll_id: Uuid,
 ) -> AppResult<bool> {
-    load_poll(database, server_id, channel_id, poll_id).await?;
+    get_poll(database, server_id, channel_id, poll_id).await?;
     let default_server_id = servers::default_server_id(database).await?;
     Ok(default_server_id == server_id)
 }
 
-pub(crate) async fn load_poll(
+pub(crate) async fn get_poll(
     database: &DatabaseConnection,
     server_id: Uuid,
     channel_id: Uuid,
@@ -514,7 +514,7 @@ pub(crate) async fn get_poll_response(
     poll_id: Uuid,
     current_user_id: Option<Uuid>,
 ) -> AppResult<PollResponse> {
-    let poll = load_poll(database, server_id, channel_id, poll_id).await?;
+    let poll = get_poll(database, server_id, channel_id, poll_id).await?;
     shape_poll(database, poll, current_user_id).await
 }
 
@@ -789,9 +789,9 @@ async fn shape_polls(
 
     let poll_ids: Vec<Uuid> = polls.iter().map(|poll| poll.id).collect();
     let reply_summaries =
-        crate::messages::load_poll_reply_summaries(database, poll_ids.clone())
+        crate::messages::get_poll_reply_summaries(database, poll_ids.clone())
             .await?;
-    let reply_participants = crate::messages::load_poll_reply_participants(
+    let reply_participants = crate::messages::get_poll_reply_participants(
         database,
         poll_ids.clone(),
     )

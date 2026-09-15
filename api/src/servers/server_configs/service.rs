@@ -113,7 +113,7 @@ pub(crate) async fn ensure_server_config(
     database: &DatabaseConnection,
     server_id: Uuid,
 ) -> AppResult<server_configs::Model> {
-    crate::servers::load_server(database, server_id).await?;
+    crate::servers::get_server(database, server_id).await?;
 
     if let Some(config) = server_configs::Entity::find()
         .filter(server_configs::Column::ServerId.eq(server_id))

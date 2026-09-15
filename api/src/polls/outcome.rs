@@ -82,7 +82,7 @@ where
         return Ok(false);
     }
     let (votes, member_count) =
-        load_votes_with_member_count(database, poll).await?;
+        get_votes_with_member_count(database, poll).await?;
 
     let ignored_blockers =
         get_ineligible_block_voters(database, poll, config, &votes).await?;
@@ -283,7 +283,7 @@ where
     .await
 }
 
-async fn load_votes_with_member_count<C>(
+async fn get_votes_with_member_count<C>(
     database: &C,
     poll: &polls::Model,
 ) -> AppResult<(Vec<votes::Model>, usize)>
