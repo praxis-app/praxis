@@ -12,8 +12,9 @@ use entity::{
     notifications, poll_configs, polls, votes,
 };
 use sea_orm::{
-    prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait, EntityTrait,
-    IntoActiveModel, PaginatorTrait, QueryFilter, Set,
+    prelude::Uuid, sea_query::Query, ActiveModelTrait, ColumnTrait,
+    ConnectionTrait, EntityTrait, IntoActiveModel, PaginatorTrait, QueryFilter,
+    Set,
 };
 use std::collections::HashSet;
 
@@ -78,8 +79,14 @@ where
     if poll.stage != PollStage::Voting {
         return Ok(false);
     }
+    let current_channel_member_ids = Query::select()
+        .column(channel_members::Column::UserId)
+        .from(channel_members::Entity)
+        .and_where(channel_members::Column::ChannelId.eq(poll.channel_id))
+        .to_owned();
     let votes = votes::Entity::find()
         .filter(votes::Column::PollId.eq(poll.id))
+        .filter(votes::Column::UserId.in_subquery(current_channel_member_ids))
         .all(database)
         .await
         .map_err(internal_error)?;

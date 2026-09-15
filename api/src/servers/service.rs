@@ -2,7 +2,8 @@ use axum::http::StatusCode;
 use chrono::Utc;
 use entity::{
     channel_members, channels, event_attendees, events, instance_configs,
-    server_images, server_members, servers, users,
+    server_images, server_members, server_role_members, server_roles, servers,
+    users,
 };
 use sea_orm::{
     prelude::Uuid,
@@ -612,6 +613,21 @@ pub(super) async fn remove_server_members(
             .await
             .map_err(internal_error)?;
     }
+
+    let server_role_ids = Query::select()
+        .column(server_roles::Column::Id)
+        .from(server_roles::Entity)
+        .and_where(server_roles::Column::ServerId.eq(server_id))
+        .to_owned();
+    server_role_members::Entity::delete_many()
+        .filter(
+            server_role_members::Column::ServerRoleId
+                .in_subquery(server_role_ids),
+        )
+        .filter(server_role_members::Column::UserId.is_in(user_ids.to_vec()))
+        .exec(&transaction)
+        .await
+        .map_err(internal_error)?;
 
     // Attendance is membership owned: departed hosts are removed too, while
     // the ratified event itself remains available to the server

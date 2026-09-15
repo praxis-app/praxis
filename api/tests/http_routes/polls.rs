@@ -251,6 +251,49 @@ async fn a_block_stops_counting_once_its_voter_loses_the_permission() {
 }
 
 #[tokio::test]
+async fn votes_from_removed_members_stop_counting_toward_the_outcome() {
+    let app = TestApp::new().await;
+    let proposer = signup_user(&app, "proposer@example.com", "Proposer").await;
+    let departed = signup_user(&app, "departed@example.com", "Departed").await;
+    let voter = signup_user(&app, "voter@example.com", "Voter").await;
+    let (server_id, channel_id) = default_server_channel(&app).await;
+    set_consensus_config(&app, &proposer, &server_id, true).await;
+
+    let poll_id =
+        create_proposal(&app, &proposer, &server_id, &channel_id).await;
+    assert_eq!(
+        vote(
+            &app,
+            &departed,
+            &server_id,
+            &channel_id,
+            &poll_id,
+            "disagree"
+        )
+        .await
+        .status(),
+        StatusCode::OK
+    );
+
+    let removal = app
+        .delete_json_with_bearer(
+            &format!("/api/servers/{server_id}/members"),
+            &json!({ "userIds": [departed.user_id] }),
+            &proposer.token,
+        )
+        .await;
+    assert_eq!(removal.status(), StatusCode::OK);
+
+    let response =
+        vote(&app, &voter, &server_id, &channel_id, &poll_id, "agree").await;
+    assert_eq!(response.status(), StatusCode::OK);
+    assert!(json_body(response).await["vote"]["isRatifyingVote"]
+        .as_bool()
+        .unwrap());
+    assert_eq!(poll_stage(&app, &poll_id).await, "ratified");
+}
+
+#[tokio::test]
 async fn withdrawing_a_vote_retracts_the_notification_it_created() {
     let app = TestApp::new().await;
     let author = signup_user(&app, "author@example.com", "Author").await;

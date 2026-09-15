@@ -1,8 +1,8 @@
 use axum::http::StatusCode;
 use entity::{
     enums::{NotificationKind, ServerAbilitySubject, ServerRoleAbilityAction},
-    notifications, server_role_members, server_role_permissions, server_roles,
-    users,
+    notifications, server_members, server_role_members,
+    server_role_permissions, server_roles, users,
 };
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
@@ -109,6 +109,16 @@ pub(crate) async fn get_permissions_by_users<C: ConnectionTrait>(
         .await
         .map_err(internal_error)?;
 
+    let current_memberships: HashSet<(Uuid, Uuid)> =
+        server_members::Entity::find()
+            .filter(server_members::Column::UserId.is_in(user_ids.to_vec()))
+            .all(database)
+            .await
+            .map_err(internal_error)?
+            .into_iter()
+            .map(|member| (member.user_id, member.server_id))
+            .collect();
+
     let role_server_ids: BTreeMap<Uuid, Uuid> = roles
         .into_iter()
         .map(|role| (role.id, role.server_id))
@@ -133,6 +143,9 @@ pub(crate) async fn get_permissions_by_users<C: ConnectionTrait>(
         else {
             continue;
         };
+        if !current_memberships.contains(&(membership.user_id, *server_id)) {
+            continue;
+        }
         let Some(permissions) =
             permissions_by_role.get(&membership.server_role_id)
         else {

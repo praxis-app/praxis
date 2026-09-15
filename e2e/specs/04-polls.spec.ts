@@ -1642,6 +1642,85 @@ test('consensus enforces quorum, limits, and blocks at its deadline', async ({
   ).toBeVisible();
 });
 
+test('votes from removed members stop counting toward a proposal outcome', async ({
+  context,
+  page,
+  request,
+}) => {
+  const serverAdmin = await createServerAdmin(request, 'departed-vote-admin');
+  const createdServer = await createServer(request, serverAdmin, {
+    name: `Departed votes ${serverAdmin.user.suffix}`,
+    slug: `departed-votes-${serverAdmin.user.suffix}`,
+  });
+  const invite = await createInvite(request, serverAdmin, createdServer.id);
+  const proposer = await createAuthenticatedUser(
+    request,
+    context,
+    createTestUser('departed-vote-proposer'),
+    invite,
+  );
+  const departed = await signUpViaApi(
+    request,
+    createTestUser('departed-voter'),
+    invite,
+  );
+  const voter = await signUpViaApi(
+    request,
+    createTestUser('remaining-voter'),
+    invite,
+  );
+  const server = await getServerBySlug(request, proposer, createdServer.slug);
+  await updateServerConfig(request, serverAdmin, server.id, {
+    decisionMakingModel: 'consensus',
+    agreementThreshold: 51,
+    quorumEnabled: false,
+    disagreementsLimit: 2,
+    abstainsLimit: 2,
+    blocksOpenToAll: true,
+    votingTimeLimit: 0,
+    anonymousUsersEnabled: false,
+  });
+
+  const chat = new ChatPage(page);
+  await page.goto(`/s/${server.slug}/c/${server.generalChannelId}`);
+  await chat.expectChannel('general');
+
+  const body = `Departed vote ${proposer.user.suffix}`;
+  const poll = await createTestProposal(page, server.generalChannelId, body);
+  const proposal = page.getByRole('article', {
+    name: `Consensus Proposal: ${body}`,
+  });
+  await expect(proposal).toBeVisible();
+
+  await voteViaApi(
+    request,
+    departed,
+    server.id,
+    server.generalChannelId,
+    poll.id,
+    'disagree',
+  );
+  const removeMemberResponse = await request.delete(
+    `/api/servers/${server.id}/members`,
+    {
+      headers: authorizationHeaders(serverAdmin),
+      data: { userIds: [departed.userId] },
+    },
+  );
+  await expect(removeMemberResponse).toBeOK();
+
+  await voteViaApi(
+    request,
+    voter,
+    server.id,
+    server.generalChannelId,
+    poll.id,
+    'agree',
+  );
+
+  await expect(proposal.getByText('Ratified', { exact: true })).toBeVisible();
+});
+
 test('consensus proposals ratify when quorum is disabled', async ({
   context,
   page,
