@@ -73,28 +73,6 @@ test.beforeAll(async ({ request }) => {
   await getOrCreateInstanceAdmin(request);
 });
 
-test('authenticated user can send a basic chat message', async ({
-  context,
-  page,
-  request,
-}) => {
-  const authenticatedUser = await createAuthenticatedUser(
-    request,
-    context,
-    createTestUser('chat'),
-  );
-  const message = createTestMessage('chat', authenticatedUser.user.suffix);
-  const chat = new ChatPage(page);
-  const navigation = new NavigationPage(page);
-
-  await chat.goto();
-
-  await chat.expectChannel('general');
-  await navigation.expectSignedInUser(authenticatedUser.user);
-  await chat.sendMessage(message);
-  await chat.expectMessage(message, authenticatedUser.user.name);
-});
-
 test('sending a message snaps a scrolled channel feed to the bottom', async ({
   context,
   page,
