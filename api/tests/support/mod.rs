@@ -96,6 +96,19 @@ impl TestApp {
             .await
     }
 
+    pub(crate) async fn delete_json_with_bearer<T: Serialize>(
+        &self,
+        uri: &str,
+        payload: &T,
+        token: &str,
+    ) -> Response<Body> {
+        let body = serde_json::to_vec(payload)
+            .expect("expected request body serialization");
+
+        self.request(Method::DELETE, uri, Body::from(body), Some(token))
+            .await
+    }
+
     pub(crate) async fn post_json<T: Serialize>(
         &self,
         uri: &str,
@@ -146,8 +159,7 @@ impl TestApp {
         token: &str,
         fields: HashMap<String, MultipartField>,
     ) -> Response<Body> {
-        let boundary =
-            format!("praxis-boundary-{}", unique_database_name());
+        let boundary = format!("praxis-boundary-{}", unique_database_name());
         let body = multipart_body(&boundary, fields);
 
         let request = Request::builder()

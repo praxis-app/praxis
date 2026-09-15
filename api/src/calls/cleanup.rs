@@ -53,6 +53,9 @@ pub(crate) fn spawn_stale_call_cleaner(
         ));
         interval.set_missed_tick_behavior(MissedTickBehavior::Skip);
 
+        // Intentionally infinite: this task lives as long as the server. Each
+        // pass awaits the interval tick and only logs errors, so a failing
+        // pass waits for the next tick instead of spinning
         loop {
             interval.tick().await;
 

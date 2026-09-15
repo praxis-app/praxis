@@ -74,7 +74,7 @@ pub(super) async fn create_poll_action_role<C: ConnectionTrait>(
         .transpose()?;
 
     let role_to_update = if let Some(server_role_id) = server_role_id {
-        Some(load_server_role(database, server_id, server_role_id).await?)
+        Some(get_server_role_model(database, server_id, server_role_id).await?)
     } else {
         None
     };
@@ -151,7 +151,7 @@ pub(super) async fn implement_change_server_role(
     poll_id: Uuid,
     poll_action_id: Uuid,
 ) -> AppResult<Vec<notifications::Model>> {
-    let action_role = load_action_role(database, poll_action_id).await?;
+    let action_role = get_action_role(database, poll_action_id).await?;
     let role_id = action_role.server_role_id.ok_or_else(|| {
         ApiError::new(
             StatusCode::UNPROCESSABLE_ENTITY,
@@ -163,7 +163,7 @@ pub(super) async fn implement_change_server_role(
     // role id, so a ratified proposal can only ever change a role in the
     // server it was proposed in
     let server_id = poll_server_id(database, poll_id).await?;
-    let role = load_server_role(database, server_id, role_id).await?;
+    let role = get_server_role_model(database, server_id, role_id).await?;
 
     if action_role.name.is_some() || action_role.color.is_some() {
         let mut active = role.clone().into_active_model();
@@ -185,7 +185,7 @@ pub(super) async fn implement_create_server_role(
     poll_id: Uuid,
     poll_action_id: Uuid,
 ) -> AppResult<Vec<notifications::Model>> {
-    let action_role = load_action_role(database, poll_action_id).await?;
+    let action_role = get_action_role(database, poll_action_id).await?;
     let server_id = poll_server_id(database, poll_id).await?;
     let name = action_role.name.ok_or_else(|| {
         ApiError::new(
@@ -238,7 +238,7 @@ async fn poll_server_id<C: ConnectionTrait>(
     Ok(channel.server_id)
 }
 
-async fn load_server_role<C: ConnectionTrait>(
+async fn get_server_role_model<C: ConnectionTrait>(
     database: &C,
     server_id: Uuid,
     server_role_id: Uuid,
@@ -253,7 +253,7 @@ async fn load_server_role<C: ConnectionTrait>(
         })
 }
 
-async fn load_action_role(
+async fn get_action_role(
     database: &DatabaseTransaction,
     poll_action_id: Uuid,
 ) -> AppResult<poll_action_roles::Model> {

@@ -62,6 +62,14 @@ pub(super) struct CreateReplyContext {
     pub(super) user_id: Uuid,
 }
 
+#[derive(Debug)]
+pub(super) struct CreateCallMessageContext {
+    pub(super) server_id: Uuid,
+    pub(super) channel_id: Uuid,
+    pub(super) call_id: Uuid,
+    pub(super) user_id: Uuid,
+}
+
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub(super) struct ImageResponse {

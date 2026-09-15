@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Backend build stage used by the E2E image
-FROM rust:1.97.0-slim-bookworm AS backend-builder
+FROM rust:1.98.1-slim-bookworm AS backend-builder
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ RUN --mount=type=cache,target=/usr/local/cargo/registry \
     && cp /app/target/release/praxis /praxis
 
 # Frontend build stage
-FROM node:24.18.0-bookworm-slim AS frontend-builder
+FROM node:24.21.0-bookworm-slim AS frontend-builder
 
 WORKDIR /app
 

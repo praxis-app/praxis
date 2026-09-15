@@ -101,6 +101,8 @@ const createLink = (url: string, urlTrimSize?: number) => {
 const urlifyTextNodes = (root: DocumentFragment, urlTrimSize?: number) => {
   const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   const textNodes: Text[] = [];
+  // TreeWalker has no iterator, and nodes are only collected here, not
+  // modified, so the walk ends at the last text node
   while (walker.nextNode()) {
     const node = walker.currentNode as Text;
     if (!node.parentElement?.closest('a')) {

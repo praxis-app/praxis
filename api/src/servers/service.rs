@@ -2,7 +2,8 @@ use axum::http::StatusCode;
 use chrono::Utc;
 use entity::{
     channel_members, channels, event_attendees, events, instance_configs,
-    server_images, server_members, servers, users,
+    server_images, server_members, server_role_members, server_roles, servers,
+    users,
 };
 use sea_orm::{
     prelude::Uuid,
@@ -613,6 +614,21 @@ pub(super) async fn remove_server_members(
             .map_err(internal_error)?;
     }
 
+    let server_role_ids = Query::select()
+        .column(server_roles::Column::Id)
+        .from(server_roles::Entity)
+        .and_where(server_roles::Column::ServerId.eq(server_id))
+        .to_owned();
+    server_role_members::Entity::delete_many()
+        .filter(
+            server_role_members::Column::ServerRoleId
+                .in_subquery(server_role_ids),
+        )
+        .filter(server_role_members::Column::UserId.is_in(user_ids.to_vec()))
+        .exec(&transaction)
+        .await
+        .map_err(internal_error)?;
+
     // Attendance is membership owned: departed hosts are removed too, while
     // the ratified event itself remains available to the server
     let server_event_ids = Query::select()
@@ -863,7 +879,7 @@ fn shape_user(
     }
 }
 
-pub(crate) async fn load_server<C>(
+pub(crate) async fn get_server<C>(
     database: &C,
     server_id: Uuid,
 ) -> AppResult<servers::Model>
@@ -883,17 +899,7 @@ pub(crate) async fn ensure_server(
     database: &DatabaseConnection,
     server_id: Uuid,
 ) -> AppResult<()> {
-    load_server(database, server_id).await.map(|_| ())
-}
-
-async fn get_server<C>(
-    database: &C,
-    server_id: Uuid,
-) -> AppResult<servers::Model>
-where
-    C: ConnectionTrait,
-{
-    load_server(database, server_id).await
+    get_server(database, server_id).await.map(|_| ())
 }
 
 async fn set_default_server(

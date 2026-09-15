@@ -29,7 +29,7 @@ pub(super) async fn get_channels(
     database: &DatabaseConnection,
     server_id: Uuid,
 ) -> AppResult<Vec<ChannelResponse>> {
-    let server = servers_service::load_server(database, server_id).await?;
+    let server = servers_service::get_server(database, server_id).await?;
     let channels = channels::Entity::find()
         .filter(channels::Column::ServerId.eq(server_id))
         .order_by_asc(channels::Column::SortOrder)
@@ -51,7 +51,7 @@ pub(super) async fn get_joined_channels(
 ) -> AppResult<Vec<ChannelResponse>> {
     servers_service::ensure_server(database, server_id).await?;
 
-    let server = servers_service::load_server(database, server_id).await?;
+    let server = servers_service::get_server(database, server_id).await?;
     let memberships = channel_members::Entity::find()
         .filter(channel_members::Column::UserId.eq(user_id))
         .all(database)
@@ -219,7 +219,7 @@ pub(super) async fn get_channel_with_server(
     server_id: Uuid,
     channel_id: Uuid,
 ) -> AppResult<ChannelResponse> {
-    let server = servers_service::load_server(database, server_id).await?;
+    let server = servers_service::get_server(database, server_id).await?;
     let channel = get_channel(database, server_id, channel_id).await?;
     Ok(shape_channel(channel, &server))
 }
@@ -229,7 +229,7 @@ pub(super) async fn create_channel(
     server_id: Uuid,
     request: ChannelRequest,
 ) -> AppResult<ChannelResponse> {
-    let server = servers_service::load_server(database, server_id).await?;
+    let server = servers_service::get_server(database, server_id).await?;
     let (name, description, channel_type) = validate_channel_request(request)?;
     let sort_order = next_sort_order(database, server_id).await?;
 

@@ -55,7 +55,7 @@ pub(super) async fn list_events(
         .order_by_asc(events::Column::Id);
 
     let events = event_query.all(database).await.map_err(internal_error)?;
-    let context = load_attendee_context(database, &events).await?;
+    let context = get_attendee_context(database, &events).await?;
     let events = events
         .into_iter()
         .map(|event| shape_event(event, user_id, &context))
@@ -73,7 +73,7 @@ pub(super) async fn get_event(
 ) -> AppResult<EventDetailResponse> {
     servers::is_server_audience(database, server_id, user_id, invite_token)
         .await?;
-    let event = load_event(database, server_id, event_id).await?;
+    let event = get_event_model(database, server_id, event_id).await?;
     shape_event_detail(database, event, user_id).await
 }
 
@@ -93,8 +93,7 @@ pub(super) async fn upsert_rsvp(
     }
 
     let transaction = database.begin().await.map_err(internal_error)?;
-    let event =
-        load_event_for_update(&transaction, server_id, event_id).await?;
+    let event = get_event_for_update(&transaction, server_id, event_id).await?;
     let existing = event_attendees::Entity::find()
         .filter(event_attendees::Column::EventId.eq(event_id))
         .filter(event_attendees::Column::UserId.eq(user_id))
@@ -133,8 +132,7 @@ pub(super) async fn clear_rsvp(
 ) -> AppResult<EventDetailResponse> {
     ensure_server_member(database, server_id, user_id).await?;
     let transaction = database.begin().await.map_err(internal_error)?;
-    let event =
-        load_event_for_update(&transaction, server_id, event_id).await?;
+    let event = get_event_for_update(&transaction, server_id, event_id).await?;
     let existing = event_attendees::Entity::find()
         .filter(event_attendees::Column::EventId.eq(event_id))
         .filter(event_attendees::Column::UserId.eq(user_id))
@@ -165,7 +163,7 @@ pub(super) async fn get_event_cover_photo(
 ) -> AppResult<StoredEventCoverPhoto> {
     servers::is_server_audience(database, server_id, user_id, invite_token)
         .await?;
-    load_event(database, server_id, event_id).await?;
+    get_event_model(database, server_id, event_id).await?;
     let image = event_cover_photos::Entity::find_by_id(image_id)
         .filter(event_cover_photos::Column::EventId.eq(event_id))
         .one(database)
@@ -215,7 +213,7 @@ fn validate_date_range(
     Ok(())
 }
 
-async fn load_event<C: ConnectionTrait>(
+async fn get_event_model<C: ConnectionTrait>(
     database: &C,
     server_id: Uuid,
     event_id: Uuid,
@@ -228,7 +226,7 @@ async fn load_event<C: ConnectionTrait>(
         .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "Event not found."))
 }
 
-async fn load_event_for_update<C: ConnectionTrait>(
+async fn get_event_for_update<C: ConnectionTrait>(
     database: &C,
     server_id: Uuid,
     event_id: Uuid,
@@ -259,7 +257,7 @@ async fn shape_event_detail(
     user_id: Option<Uuid>,
 ) -> AppResult<EventDetailResponse> {
     let context =
-        load_attendee_context(database, std::slice::from_ref(&event)).await?;
+        get_attendee_context(database, std::slice::from_ref(&event)).await?;
     let attendees = context
         .attendees_by_event
         .get(&event.id)
@@ -294,7 +292,7 @@ struct AttendeeContext {
     cover_photos: HashMap<Uuid, event_cover_photos::Model>,
 }
 
-async fn load_attendee_context(
+async fn get_attendee_context(
     database: &DatabaseConnection,
     events: &[events::Model],
 ) -> AppResult<AttendeeContext> {

@@ -42,7 +42,7 @@ pub(super) async fn shape_notifications(
         return Ok(Vec::new());
     }
     let context =
-        load_notification_context(database, &[viewer_id], &rows).await?;
+        get_notification_context(database, &[viewer_id], &rows).await?;
 
     Ok(rows
         .into_iter()
@@ -59,7 +59,7 @@ pub(super) async fn shape_notifications_for_recipients(
     }
     let viewer_ids = unique(rows.iter().map(|row| row.recipient_user_id));
     let context =
-        load_notification_context(database, &viewer_ids, &rows).await?;
+        get_notification_context(database, &viewer_ids, &rows).await?;
 
     Ok(rows
         .into_iter()
@@ -70,7 +70,7 @@ pub(super) async fn shape_notifications_for_recipients(
         .collect())
 }
 
-async fn load_notification_context(
+async fn get_notification_context(
     database: &DatabaseConnection,
     viewer_ids: &[Uuid],
     rows: &[notifications::Model],
@@ -81,7 +81,7 @@ async fn load_notification_context(
     let role_ids = unique(rows.iter().filter_map(|row| row.server_role_id));
     let event_ids = unique(rows.iter().filter_map(|row| row.event_id));
 
-    let actors = load_by_id(
+    let actors = get_all_by_ids(
         users::Entity::find(),
         users::Column::Id,
         &actor_ids,
@@ -95,7 +95,7 @@ async fn load_notification_context(
         users_service::get_user_profile_pictures_map(database, &actor_ids)
             .await?;
 
-    let mut messages = load_by_id(
+    let mut messages = get_all_by_ids(
         messages::Entity::find(),
         messages::Column::Id,
         &message_ids,
@@ -111,7 +111,7 @@ async fn load_notification_context(
             .into_iter()
             .flatten()
     }));
-    for message in load_by_id(
+    for message in get_all_by_ids(
         messages::Entity::find(),
         messages::Column::Id,
         &replied_to_ids,
@@ -128,7 +128,7 @@ async fn load_notification_context(
             .copied()
             .chain(messages.values().filter_map(|m| m.thread_poll_id)),
     );
-    let polls = load_by_id(
+    let polls = get_all_by_ids(
         polls::Entity::find(),
         polls::Column::Id,
         &poll_ids,
@@ -139,7 +139,7 @@ async fn load_notification_context(
     .map(|poll| (poll.id, poll))
     .collect::<HashMap<Uuid, polls::Model>>();
 
-    let server_roles = load_by_id(
+    let server_roles = get_all_by_ids(
         server_roles::Entity::find(),
         server_roles::Column::Id,
         &role_ids,
@@ -150,7 +150,7 @@ async fn load_notification_context(
     .map(|role| (role.id, role))
     .collect();
 
-    let events = load_by_id(
+    let events = get_all_by_ids(
         events::Entity::find(),
         events::Column::Id,
         &event_ids,
@@ -168,7 +168,7 @@ async fn load_notification_context(
             .into_iter()
             .flatten()
     }));
-    let forum_posts_by_root = load_by_id(
+    let forum_posts_by_root = get_all_by_ids(
         forum_posts::Entity::find(),
         forum_posts::Column::RootMessageId,
         &root_message_ids,
@@ -180,7 +180,7 @@ async fn load_notification_context(
     .collect();
 
     // A forum-hosted proposal is read through its post, not a channel feed
-    let forum_posts_by_poll = load_by_id(
+    let forum_posts_by_poll = get_all_by_ids(
         forum_posts::Entity::find(),
         forum_posts::Column::PollId,
         &poll_ids,
@@ -197,7 +197,7 @@ async fn load_notification_context(
             .chain(messages.values().map(|message| message.channel_id))
             .chain(polls.values().map(|poll| poll.channel_id)),
     );
-    let channels = load_by_id(
+    let channels = get_all_by_ids(
         channels::Entity::find(),
         channels::Column::Id,
         &channel_ids,
@@ -336,7 +336,7 @@ fn replied_to(
     let poll = message
         .thread_poll_id
         .and_then(|poll_id| context.polls.get(&poll_id))?;
-    (poll.user_id == viewer_id).then(|| match poll.poll_type {
+    (poll.user_id == viewer_id).then_some(match poll.poll_type {
         PollType::Proposal => "proposal",
         _ => "poll",
     })
@@ -486,7 +486,7 @@ fn channel_is_in_server(
         .is_some_and(|channel| channel.server_id == server_id)
 }
 
-async fn load_by_id<E, C>(
+async fn get_all_by_ids<E, C>(
     select: sea_orm::Select<E>,
     column: C,
     ids: &[Uuid],

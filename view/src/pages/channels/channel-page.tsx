@@ -8,9 +8,7 @@ import {
 import { useAuthData } from '@/hooks/use-auth-data';
 import { useServerData } from '@/hooks/use-server-data';
 import { useUnreadChannels } from '@/hooks/use-unread-channels';
-import {
-  withoutSearchPanel,
-} from '@/lib/search.utils';
+import { withoutSearchPanel } from '@/lib/search.utils';
 import {
   type RightPanel,
   type StandaloneRightPanel,

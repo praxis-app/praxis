@@ -46,7 +46,7 @@ impl FromRequestParts<PollsState> for VoteRouteContext {
             .await
             .map_err(|_| invalid_route_path())?;
 
-        load_authenticated_vote_route_context(
+        get_authenticated_vote_route_context(
             parts,
             state,
             path.server_id,
@@ -68,7 +68,7 @@ impl FromRequestParts<PollsState> for VoteMutationContext {
             .await
             .map_err(|_| invalid_route_path())?;
 
-        let route = load_authenticated_vote_route_context(
+        let route = get_authenticated_vote_route_context(
             parts,
             state,
             path.server_id,
@@ -118,7 +118,7 @@ impl FromRequestParts<PollsState> for ReadablePollOptionContext {
             invite_token.as_deref(),
         )
         .await?;
-        polls_service::load_poll(
+        polls_service::get_poll(
             &state.database,
             path.server_id,
             path.channel_id,
@@ -139,7 +139,7 @@ impl FromRequestParts<PollsState> for ReadablePollOptionContext {
     }
 }
 
-async fn load_authenticated_vote_route_context(
+async fn get_authenticated_vote_route_context(
     parts: &mut Parts,
     state: &PollsState,
     server_id: Uuid,
@@ -149,18 +149,17 @@ async fn load_authenticated_vote_route_context(
     let AuthenticatedUser(user_id) =
         AuthenticatedUser::from_request_parts(parts, state).await?;
 
-    load_vote_route_context(state, server_id, channel_id, poll_id, user_id)
-        .await
+    get_vote_route_context(state, server_id, channel_id, poll_id, user_id).await
 }
 
-async fn load_vote_route_context(
+async fn get_vote_route_context(
     state: &PollsState,
     server_id: Uuid,
     channel_id: Uuid,
     poll_id: Uuid,
     user_id: Uuid,
 ) -> Result<VoteRouteContext, ApiError> {
-    let poll = polls_service::load_poll(
+    let poll = polls_service::get_poll(
         &state.database,
         server_id,
         channel_id,

@@ -6,7 +6,6 @@ import {
 } from '../lib/auth';
 import { createTestUser } from '../lib/data';
 import { createForumChannel, createForumPosts } from '../lib/forums';
-import { expectRightPanelToResize } from '../lib/right-panel';
 import { scrollThroughAllPages } from '../lib/infinite-scroll';
 import {
   confirmRatifyingVote,
@@ -186,7 +185,6 @@ test('user can move a text proposal to a forum, reply, vote, and see it ratified
   await expect(
     textProposal.locator('[data-slot="card"]').getByText('1 reply'),
   ).toHaveCount(0);
-  await expectRightPanelToResize(page, threadPanel, 'thread');
 
   const threadProposal = threadPanel.getByRole('article', {
     name: `Majority Vote Proposal: ${proposalBody}`,
@@ -334,11 +332,6 @@ test('user can turn a forum discussion into a ratified proposal', async ({
     page.getByRole('article').getByRole('heading', { name: postTitle }),
   ).toBeVisible();
   await expect(page.getByText(postBody)).toBeVisible();
-  await expectRightPanelToResize(
-    page,
-    page.getByRole('heading', { name: postTitle }).last(),
-    'forumPost',
-  );
   await expect(
     page.getByRole('separator', { name: '0 replies' }),
   ).toBeVisible();

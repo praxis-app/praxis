@@ -68,7 +68,7 @@ pub(crate) async fn move_proposal_to_forum(
         user_id,
     )
     .await?;
-    let existing_poll = polls_service::load_poll(
+    let existing_poll = polls_service::get_poll(
         database,
         server_id,
         source_channel_id,
@@ -127,14 +127,14 @@ pub(crate) async fn move_proposal_to_forum(
     let root_message_id = NativeUuid::new_v4();
 
     let transaction = database.begin().await.map_err(internal_error)?;
-    let source_channel = load_channel_for_move(
+    let source_channel = get_channel_for_move(
         &transaction,
         server_id,
         source_channel_id,
         "Source channel not found.",
     )
     .await?;
-    let destination_channel = load_channel_for_move(
+    let destination_channel = get_channel_for_move(
         &transaction,
         server_id,
         destination_channel_id,
@@ -212,7 +212,7 @@ pub(crate) async fn move_proposal_to_forum(
         ));
     }
 
-    let thread_replies = load_thread_replies_for_move(
+    let thread_replies = get_thread_replies_for_move(
         &transaction,
         source_channel_id,
         destination_channel_id,
@@ -474,7 +474,7 @@ fn proposal_reference_cursor_condition(
     )
 }
 
-async fn load_channel_for_move<C>(
+async fn get_channel_for_move<C>(
     database: &C,
     server_id: Uuid,
     channel_id: Uuid,
@@ -533,7 +533,7 @@ fn reencrypt_body(
     }
 }
 
-async fn load_thread_replies_for_move<C>(
+async fn get_thread_replies_for_move<C>(
     database: &C,
     source_channel_id: Uuid,
     destination_channel_id: Uuid,

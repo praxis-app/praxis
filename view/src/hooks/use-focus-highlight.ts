@@ -80,12 +80,5 @@ export const useFocusHighlight = ({
       resizeObserver.disconnect();
       mutationObserver.disconnect();
     };
-  }, [
-    block,
-    containerRef,
-    onHandled,
-    requestKey,
-    revision,
-    targetSelector,
-  ]);
+  }, [block, containerRef, onHandled, requestKey, revision, targetSelector]);
 };
