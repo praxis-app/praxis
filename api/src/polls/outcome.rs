@@ -12,8 +12,10 @@ use entity::{
     notifications, poll_configs, polls, votes,
 };
 use sea_orm::{
-    prelude::Uuid, sea_query::Query, ActiveModelTrait, ColumnTrait,
-    ConnectionTrait, EntityTrait, IntoActiveModel, PaginatorTrait, QueryFilter,
+    prelude::Uuid,
+    sea_query::{Query, SimpleExpr},
+    ActiveModelTrait, ColumnTrait, ConnectionTrait, EntityTrait,
+    FromQueryResult, IntoActiveModel, QueryFilter, QuerySelect, QueryTrait,
     Set,
 };
 use std::collections::HashSet;
@@ -79,17 +81,8 @@ where
     if poll.stage != PollStage::Voting {
         return Ok(false);
     }
-    let current_channel_member_ids = Query::select()
-        .column(channel_members::Column::UserId)
-        .from(channel_members::Entity)
-        .and_where(channel_members::Column::ChannelId.eq(poll.channel_id))
-        .to_owned();
-    let votes = votes::Entity::find()
-        .filter(votes::Column::PollId.eq(poll.id))
-        .filter(votes::Column::UserId.in_subquery(current_channel_member_ids))
-        .all(database)
-        .await
-        .map_err(internal_error)?;
+    let (votes, member_count) =
+        load_votes_with_member_count(database, poll).await?;
 
     let ignored_blockers =
         get_ineligible_block_voters(database, poll, config, &votes).await?;
@@ -97,16 +90,12 @@ where
 
     match config.decision_making_model {
         Some(PollDecisionMakingModel::Consensus) => {
-            let member_count =
-                get_channel_member_count(database, poll.channel_id).await?;
             has_consensus(&votes, config, member_count, now)
         }
         Some(PollDecisionMakingModel::Consent) => {
             has_consent(&votes, config, now)
         }
         Some(PollDecisionMakingModel::MajorityVote) => {
-            let member_count =
-                get_channel_member_count(database, poll.channel_id).await?;
             has_majority_vote(&votes, config, member_count, now)
         }
         None => Ok(false),
@@ -294,19 +283,52 @@ where
     .await
 }
 
-async fn get_channel_member_count<C>(
+async fn load_votes_with_member_count<C>(
     database: &C,
-    channel_id: Uuid,
-) -> AppResult<usize>
+    poll: &polls::Model,
+) -> AppResult<(Vec<votes::Model>, usize)>
 where
     C: ConnectionTrait,
 {
-    channel_members::Entity::find()
-        .filter(channel_members::Column::ChannelId.eq(channel_id))
-        .count(database)
+    let current_channel_member_ids = Query::select()
+        .column(channel_members::Column::UserId)
+        .from(channel_members::Entity)
+        .and_where(channel_members::Column::ChannelId.eq(poll.channel_id))
+        .to_owned();
+    let member_count_query = Query::select()
+        .expr(channel_members::Column::Id.count())
+        .from(channel_members::Entity)
+        .and_where(channel_members::Column::ChannelId.eq(poll.channel_id))
+        .to_owned();
+    let statement = votes::Entity::find()
+        .filter(votes::Column::PollId.eq(poll.id))
+        .filter(votes::Column::UserId.in_subquery(current_channel_member_ids))
+        .column_as(
+            SimpleExpr::SubQuery(
+                None,
+                Box::new(member_count_query.into_sub_query_statement()),
+            ),
+            "member_count",
+        )
+        .build(database.get_database_backend());
+    let rows = database
+        .query_all(statement)
         .await
-        .map(|count| count as usize)
-        .map_err(internal_error)
+        .map_err(internal_error)?;
+
+    let member_count = match rows.first() {
+        Some(row) => row
+            .try_get::<i64>("", "member_count")
+            .map_err(internal_error)? as usize,
+        None => 0,
+    };
+    let votes = rows
+        .iter()
+        .map(|row| votes::Model::from_query_result(row, ""))
+        .collect::<Result<Vec<_>, _>>()
+        .map_err(internal_error)?;
+
+    Ok((votes, member_count))
 }
 
 fn has_consensus(

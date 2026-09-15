@@ -3,7 +3,10 @@ use entity::{
     enums::{NotificationKind, VoteType},
     notifications, poll_actions, polls, server_roles, votes,
 };
-use sea_orm::{ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter};
+use sea_orm::{
+    ColumnTrait, ConnectionTrait, DbBackend, EntityTrait, PaginatorTrait,
+    QueryFilter, Statement, TransactionTrait,
+};
 use serde_json::{json, Value};
 use uuid::Uuid;
 
@@ -294,6 +297,92 @@ async fn votes_from_removed_members_stop_counting_toward_the_outcome() {
 }
 
 #[tokio::test]
+async fn a_member_removed_mid_evaluation_does_not_mix_electorates() {
+    let app = TestApp::new().await;
+    let proposer = signup_user(&app, "proposer@example.com", "Proposer").await;
+    let blocker = signup_user(&app, "blocker@example.com", "Blocker").await;
+    let departed = signup_user(&app, "departed@example.com", "Departed").await;
+    let voter = signup_user(&app, "voter@example.com", "Voter").await;
+    let (server_id, channel_id) = default_server_channel(&app).await;
+
+    let config_response = app
+        .put_json_with_bearer(
+            &format!("/api/servers/{server_id}/configs"),
+            &json!({
+                "decisionMakingModel": "consensus",
+                "agreementThreshold": 51,
+                "disagreementsLimit": 2,
+                "abstainsLimit": 2,
+                "quorumEnabled": true,
+                "quorumThreshold": 60,
+                "votingTimeLimit": 0,
+                "blocksOpenToAll": false,
+            }),
+            &proposer.token,
+        )
+        .await;
+    assert_eq!(config_response.status(), StatusCode::OK);
+    let role_id =
+        grant_proposal_block(&app, &proposer, &server_id, &blocker).await;
+
+    let poll_id =
+        create_proposal(&app, &proposer, &server_id, &channel_id).await;
+    assert_eq!(
+        block(&app, &blocker, &server_id, &channel_id, &poll_id)
+            .await
+            .status(),
+        StatusCode::OK
+    );
+    assert_eq!(
+        vote(&app, &departed, &server_id, &channel_id, &poll_id, "agree")
+            .await
+            .status(),
+        StatusCode::OK
+    );
+    let revoke_block = app
+        .delete_with_bearer(
+            &format!(
+                "/api/servers/{server_id}/roles/{role_id}/members/{}",
+                blocker.user_id
+            ),
+            &proposer.token,
+        )
+        .await;
+    assert_eq!(revoke_block.status(), StatusCode::OK);
+
+    let role_members_lock = app.database().begin().await.unwrap();
+    role_members_lock
+        .execute_unprepared(
+            "LOCK TABLE server_role_members IN ACCESS EXCLUSIVE MODE",
+        )
+        .await
+        .unwrap();
+
+    let remove_departed_during_evaluation = async {
+        wait_for_lock_waiter(&app, "server_role_members").await;
+        app.database()
+            .execute_unprepared(&format!(
+                "DELETE FROM channel_members WHERE user_id = '{0}';
+                 DELETE FROM server_members WHERE user_id = '{0}';",
+                departed.user_id
+            ))
+            .await
+            .unwrap();
+        role_members_lock.commit().await.unwrap();
+    };
+    let (response, ()) = tokio::join!(
+        vote(&app, &voter, &server_id, &channel_id, &poll_id, "agree"),
+        remove_departed_during_evaluation,
+    );
+
+    assert_eq!(response.status(), StatusCode::OK);
+    assert!(!json_body(response).await["vote"]["isRatifyingVote"]
+        .as_bool()
+        .unwrap());
+    assert_eq!(poll_stage(&app, &poll_id).await, "voting");
+}
+
+#[tokio::test]
 async fn withdrawing_a_vote_retracts_the_notification_it_created() {
     let app = TestApp::new().await;
     let author = signup_user(&app, "author@example.com", "Author").await;
@@ -503,6 +592,25 @@ async fn vote(
         &voter.token,
     )
     .await
+}
+
+async fn wait_for_lock_waiter(app: &TestApp, table: &str) {
+    let statement = Statement::from_sql_and_values(
+        DbBackend::Postgres,
+        "SELECT COUNT(*) AS waiting FROM pg_locks \
+         JOIN pg_class ON pg_class.oid = pg_locks.relation \
+         WHERE pg_class.relname = $1 AND NOT pg_locks.granted",
+        [table.into()],
+    );
+    for _ in 0..500 {
+        let row = app.database().query_one(statement.clone()).await.unwrap();
+        let waiting: i64 = row.unwrap().try_get("", "waiting").unwrap();
+        if waiting > 0 {
+            return;
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+    }
+    panic!("expected a query to wait on the {table} lock");
 }
 
 async fn poll_stage(app: &TestApp, poll_id: &str) -> String {
