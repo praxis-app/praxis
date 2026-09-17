@@ -121,3 +121,7 @@ docker compose up -d --build
 Production requires Linux x86_64 and a configured `.env`. Do not run `docker compose down --volumes`, since production data and uploads use named volumes.
 
 See the [deployment instructions](docs/deployment/deployment.md), [quick deployment reference](DEPLOY.md), [documentation index](docs/README.md), and [original app proposal](docs/project-proposals/praxis-chat-app-proposal.md).
+
+## Contributions
+
+Praxis is open to contributions. Please read [CONTRIBUTING.md](https://github.com/praxis-app/praxis/blob/main/CONTRIBUTING.md) for more details.
