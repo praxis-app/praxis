@@ -1,57 +1,82 @@
 # Contributing to Praxis
 
-We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
+Praxis is open to contributions, whether that means reporting a bug, discussing
+the state of the code, submitting a fix, or proposing a feature.
 
-- Reporting a bug
-- Discussing the current state of the code
-- Submitting a fix
-- Proposing new features
-- Becoming a maintainer
+## Getting set up
 
-## We Develop with Github
+The [README](README.md) covers installation and running the app. In short, you
+need the Rust and Node versions pinned in `rust-toolchain.toml` and `.nvmrc`,
+PostgreSQL 16, and Redis 8.4. Docker with Compose and Buildx is required for
+end-to-end tests and artifact builds.
 
-We use github to host code, to track issues and feature requests, as well as accept pull requests.
+## Pull requests
 
-## We Use [Github Flow](https://guides.github.com/introduction/flow/index.html), So All Code Changes Happen Through Pull Requests
-
-Pull requests are the best way to propose changes to the codebase (we use [Github Flow](https://guides.github.com/introduction/flow/index.html)). We actively welcome your pull requests:
+Changes happen through pull requests, following
+[GitHub flow](https://docs.github.com/en/get-started/using-github/github-flow):
 
 1. Fork the repo and create your branch from `main`.
-2. If you've added code that should be tested, add tests.
-3. If you've changed APIs, update the documentation.
-4. Ensure the test suite passes.
-5. Make sure your code lints.
-6. Issue that pull request!
+2. Add tests for code that should be tested.
+3. Update documentation when behavior or APIs change.
+4. Run the checks below.
+5. Open the pull request.
 
-## Any contributions you make will be under the GNU General Public License
+## Checks
 
-In short, when you submit code changes, your submissions are understood to be under the same [GNU General Public License](https://www.gnu.org/licenses/gpl-3.0.en.html) that covers the project.
+Run what your change touches. Everything must pass before a pull request is
+ready:
 
-## Report bugs using Github's [issues](https://github.com/praxis-app/praxis/issues)
+```bash
+# Frontend and shared TypeScript
+npm run check
+npm run test
 
-We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/praxis-app/praxis/issues/new); it's that easy!
+# Rust
+cargo fmt --all --check
+cargo clippy --workspace --all-targets
+npm run test:rust
 
-## Write bug reports with detail, background, and sample code
+# End-to-end, Docker backed and slower
+npm run test:e2e
+```
 
-[This is an example](http://stackoverflow.com/q/12488905/180626) of a bug report. Here's [another example from Craig Hockenberry](http://www.openradar.me/11905408), a well respected app developer.
+`npm run check` runs TypeScript, ESLint, and `npm audit`. `npm run test-all`
+runs the frontend, Rust, and end-to-end suites in sequence. The API integration
+tests create temporary databases on your local PostgreSQL, so they need `psql`
+and permission to create and drop databases.
 
-**Great Bug Reports** tend to have:
+## Code style
 
-- A quick summary and/or background
-- Steps to reproduce
-  - Be specific!
-  - Give sample code if you can. [This stackoverflow question](http://stackoverflow.com/q/12488905/180626) includes sample code that _anyone_ with a base R setup can run to reproduce what they were seeing
-- What you expected would happen
-- What actually happens
-- Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
+ESLint and Prettier cover TypeScript, configured in `eslint.config.js` and
+`.prettierrc`. Rust formatting follows `rustfmt.toml` through `cargo fmt`. Note
+that `npm run lint` reports problems rather than fixing them; run Prettier from
+your editor or with `npx prettier --write <paths>`.
 
-## Use a Consistent Coding Style
+`CLAUDE.md` and `AGENTS.md` at the repo root describe the conventions this
+codebase follows, including backend module layout, frontend component
+structure, and when comments are wanted.
 
-We're currently using ESlint and Prettier which you can find configuration files for in the project's root directory (`eslint.config.js` and `.prettierrc`).
+## Commit messages
 
-- You can try running `npm run lint` for style unification
-- Use Visual Studio Code with the Prettier extension installed (optional)
+Commits use a short type prefix, such as `feat:`, `fix:`, `chore:`, `docs:`,
+`refactor:`, `perf:`, `style:`, or `test:`, followed by a concise description
+written in the imperative mood.
+
+## Reporting bugs
+
+Bugs are tracked in [GitHub issues](https://github.com/praxis-app/praxis/issues).
+[Open a new issue](https://github.com/praxis-app/praxis/issues/new) with:
+
+- A quick summary and any relevant background
+- Specific steps to reproduce, with sample code where it helps
+- What you expected to happen, and what happened instead
+- Your environment: operating system, Rust and Node versions, and whether you
+  were running through Docker
+- Anything you already tried, and what you suspect is going on
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under its GNU General Public License.
+Praxis is licensed under the
+[GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
+By contributing, you agree that your contributions are licensed under it as
+well.

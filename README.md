@@ -124,4 +124,4 @@ See the [deployment instructions](docs/deployment/deployment.md), [quick deploym
 
 ## Contributions
 
-Praxis is open to contributions. Please read [CONTRIBUTING.md](https://github.com/praxis-app/praxis/blob/main/CONTRIBUTING.md) for more details.
+Praxis is open to contributions. Please read [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
