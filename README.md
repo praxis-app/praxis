@@ -104,7 +104,7 @@ npm run build:rust
 npm run build:frontend
 ```
 
-Docker Buildx uses the pinned Rust and Node images. The backend targets `linux/amd64`, including on ARM Macs. Each build updates the tracked artifact and its `.source-checksum`. Include those files in your release.
+Builds use the pinned Rust and Node images. The backend targets `linux/amd64`, including on ARM Macs. Each build updates the tracked artifact and its `.source-checksum`. Include those files in your release.
 
 ## Docker and deployment
 
