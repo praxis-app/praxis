@@ -46,6 +46,7 @@ pub(super) async fn create_vote(
     let transaction = database.begin().await.map_err(internal_error)?;
     let (poll, config) =
         lock_poll_for_vote_mutation(&transaction, poll.id).await?;
+    lock_voter_membership(&transaction, &poll, user_id).await?;
     validate_vote_request(
         &transaction,
         server_id,
@@ -170,6 +171,7 @@ pub(super) async fn update_vote(
 
     let (poll, config) =
         lock_poll_for_vote_mutation(&transaction, poll.id).await?;
+    lock_voter_membership(&transaction, &poll, user_id).await?;
     validate_vote_request(
         &transaction,
         server_id,
@@ -524,6 +526,18 @@ where
 
     let config = ensure_poll_accepts_vote_mutations(database, &poll).await?;
     Ok((poll, config))
+}
+
+async fn lock_voter_membership<C>(
+    database: &C,
+    poll: &polls::Model,
+    user_id: Uuid,
+) -> AppResult<()>
+where
+    C: ConnectionTrait,
+{
+    channels::lock_channel_electorate(database, poll.channel_id).await?;
+    channels::ensure_channel_member(database, poll.channel_id, user_id).await
 }
 
 async fn ensure_poll_accepts_vote_mutations<C>(

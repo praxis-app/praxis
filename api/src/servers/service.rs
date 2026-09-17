@@ -1,9 +1,8 @@
 use axum::http::StatusCode;
 use chrono::Utc;
 use entity::{
-    channel_members, channels, event_attendees, events, instance_configs,
-    server_images, server_members, server_role_members, server_roles, servers,
-    users,
+    channel_members, event_attendees, events, instance_configs, server_images,
+    server_members, server_role_members, server_roles, servers, users,
 };
 use sea_orm::{
     prelude::Uuid,
@@ -503,7 +502,19 @@ pub(super) async fn get_users_eligible_for_server(
         .collect())
 }
 
-pub(super) async fn add_server_members<C>(
+pub(super) async fn add_server_members(
+    database: &DatabaseConnection,
+    server_id: Uuid,
+    user_ids: &[Uuid],
+) -> AppResult<()> {
+    let transaction = database.begin().await.map_err(internal_error)?;
+    add_server_members_in_transaction(&transaction, server_id, user_ids)
+        .await?;
+    transaction.commit().await.map_err(internal_error)?;
+    Ok(())
+}
+
+async fn add_server_members_in_transaction<C>(
     database: &C,
     server_id: Uuid,
     user_ids: &[Uuid],
@@ -589,6 +600,9 @@ pub(super) async fn remove_server_members(
     }
 
     let transaction = database.begin().await.map_err(internal_error)?;
+    let channel_ids =
+        channels_service::lock_server_electorate(&transaction, server_id)
+            .await?;
 
     server_members::Entity::delete_many()
         .filter(server_members::Column::ServerId.eq(server_id))
@@ -596,14 +610,6 @@ pub(super) async fn remove_server_members(
         .exec(&transaction)
         .await
         .map_err(internal_error)?;
-
-    let server_channels = channels::Entity::find()
-        .filter(channels::Column::ServerId.eq(server_id))
-        .all(&transaction)
-        .await
-        .map_err(internal_error)?;
-    let channel_ids: Vec<Uuid> =
-        server_channels.iter().map(|channel| channel.id).collect();
 
     if !channel_ids.is_empty() {
         channel_members::Entity::delete_many()
@@ -667,7 +673,8 @@ pub(super) async fn join_server(
     // caller that loses the race for the last use still end up a member
     let transaction = database.begin().await.map_err(internal_error)?;
     crate::invites::service::redeem_invite(&transaction, invite_token).await?;
-    add_server_members(&transaction, server_id, &[user_id]).await?;
+    add_server_members_in_transaction(&transaction, server_id, &[user_id])
+        .await?;
     transaction.commit().await.map_err(internal_error)?;
 
     Ok(())

@@ -7,7 +7,8 @@ use entity::{
 use sea_orm::{
     prelude::Uuid,
     sea_query::{
-        Alias, BinOper, DynIden, Expr, IntoIden, Query, SelectStatement,
+        Alias, BinOper, DynIden, Expr, IntoIden, LockType, Query,
+        SelectStatement,
     },
     ActiveModelTrait, ColumnTrait, Condition, ConnectionTrait,
     DatabaseConnection, EntityTrait, IntoActiveModel, ModelTrait, QueryFilter,
@@ -373,6 +374,41 @@ where
     Ok(membership.is_some())
 }
 
+pub(crate) async fn lock_channel_electorate<C>(
+    database: &C,
+    channel_id: Uuid,
+) -> AppResult<()>
+where
+    C: ConnectionTrait,
+{
+    channels::Entity::find_by_id(channel_id)
+        .lock(LockType::Share)
+        .one(database)
+        .await
+        .map_err(internal_error)?
+        .ok_or_else(|| {
+            ApiError::new(StatusCode::NOT_FOUND, "Channel not found.")
+        })?;
+    Ok(())
+}
+
+pub(crate) async fn lock_server_electorate<C>(
+    database: &C,
+    server_id: Uuid,
+) -> AppResult<Vec<Uuid>>
+where
+    C: ConnectionTrait,
+{
+    let channels = channels::Entity::find()
+        .filter(channels::Column::ServerId.eq(server_id))
+        .order_by_asc(channels::Column::Id)
+        .lock(LockType::NoKeyUpdate)
+        .all(database)
+        .await
+        .map_err(internal_error)?;
+    Ok(channels.into_iter().map(|channel| channel.id).collect())
+}
+
 pub(crate) async fn ensure_channel_member<C>(
     database: &C,
     channel_id: Uuid,
@@ -449,14 +485,7 @@ pub(crate) async fn add_member_to_all_server_channels<C>(
 where
     C: ConnectionTrait,
 {
-    let server_channels = channels::Entity::find()
-        .filter(channels::Column::ServerId.eq(server_id))
-        .all(database)
-        .await
-        .map_err(internal_error)?;
-    let channel_ids: Vec<Uuid> =
-        server_channels.iter().map(|channel| channel.id).collect();
-
+    let channel_ids = lock_server_electorate(database, server_id).await?;
     if channel_ids.is_empty() {
         return Ok(());
     }
@@ -473,14 +502,14 @@ where
             .map(|membership| membership.channel_id)
             .collect();
 
-    for channel in server_channels {
-        if existing_channel_ids.contains(&channel.id) {
+    for channel_id in channel_ids {
+        if existing_channel_ids.contains(&channel_id) {
             continue;
         }
 
         channel_members::ActiveModel {
             id: Set(NativeUuid::new_v4()),
-            channel_id: Set(channel.id),
+            channel_id: Set(channel_id),
             user_id: Set(user_id),
             ..Default::default()
         }

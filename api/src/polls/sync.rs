@@ -26,6 +26,7 @@ use super::{
     service::broadcast_stored_poll_update,
 };
 use crate::{
+    channels as channels_service,
     common::{ApiError, AppResult},
     notifications as notifications_service, poll_actions,
     pub_sub::PubSubService,
@@ -440,6 +441,11 @@ async fn synchronize_proposal(
         transaction.commit().await.map_err(internal_error)?;
         return Ok(ProposalSyncAction::None);
     }
+    channels_service::lock_channel_electorate(
+        &transaction,
+        locked_poll.channel_id,
+    )
+    .await?;
 
     let now = Utc::now().fixed_offset();
     let action = proposal_sync_action(
