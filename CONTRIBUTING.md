@@ -3,6 +3,66 @@
 Praxis is open to contributions, whether that means reporting a bug, discussing
 the state of the code, submitting a fix, or proposing a feature.
 
+## Skills and contribution areas
+
+You do not need experience in every part of the project to contribute. Praxis
+can use help in several areas:
+
+- **Frontend development:** React, TypeScript, responsive interfaces, state and
+  data fetching, accessibility, and browser behavior
+
+- **Backend development:** Rust, Axum, SeaORM, PostgreSQL, API design,
+  concurrency, and background tasks
+
+- **Security and privacy:** authentication, authorization, permissions, threat
+  modeling, encrypted content, and secure file handling
+
+- **UI and UX:** interaction design, user research, accessibility, information
+  architecture, visual design, and interface copy
+
+- **Testing and quality:** Playwright, Vitest, Rust integration tests,
+  exploratory testing, bug reproduction, and regression analysis
+
+- **Infrastructure and operations:** Docker, Redis, LiveKit, deployment,
+  observability, and release workflows
+
+- **Documentation and community:** setup guides, feature documentation, issue
+  triage, contributor support, and translating technical decisions for users
+
+- **Collaborative decision-making:** facilitation, community governance, group
+  decision processes, and feedback on how proposals and voting work in practice
+
+Domain knowledge, careful testing, clear writing, and useful bug reports are as
+valuable as writing production code.
+
+## Getting involved
+
+The goal is to give each contributor a clear, useful piece of work without
+duplicating someone else's effort:
+
+1. Choose a contribution area that matches your interests or something you
+   want to learn.
+
+2. Review the open issues. If the work is not represented, open an issue that
+   explains the problem, the desired outcome, and any relevant context.
+
+3. Comment before starting substantial work. A maintainer can confirm the
+   scope, identify dependencies, and make sure someone is available to review
+   it. Small fixes can usually move directly to a pull request.
+
+4. Agree on a manageable first step. New contributors should start with a
+   focused issue or one part of a larger feature, with a clear result and a way
+   to verify it.
+
+5. Create a branch, make the change, and run the checks relevant to it. Ask for
+   help early if the task grows beyond the agreed scope.
+
+6. Open a pull request that links the issue and explains the change, how it was
+   tested, and anything still unresolved.
+
+7. Address feedback with the maintainers. Ask questions when anything is
+   unclear, and work together on any agreed upon changes.
+
 ## Getting set up
 
 The [README](README.md) covers installation and running the app. In short, you
