@@ -11,7 +11,8 @@ when preparing and reviewing a contribution.
 ## Getting involved
 
 The goal is to give each contributor a clear, useful piece of work without
-duplicating someone else's effort:
+duplicating someone else's effort. These steps offer a starting point, but you
+can ask a maintainer for help at any point:
 
 1. Choose a contribution area that matches your interests or something you
    want to learn.
