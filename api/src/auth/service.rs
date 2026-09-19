@@ -34,6 +34,10 @@ pub(super) fn issue_access_token(
     .map_err(internal_error)
 }
 
+// TODO: Argon2 hashing and verification run synchronously in async signup,
+// login, and account-upgrade requests. Repeated public requests can occupy all
+// Tokio workers and stall unrelated API and background work. Move password work
+// to bounded spawn_blocking tasks and rate-limit public auth routes
 pub(super) async fn signup(
     database: &DatabaseConnection,
     payload: SignupRequest,

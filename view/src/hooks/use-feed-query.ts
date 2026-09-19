@@ -27,6 +27,9 @@ interface Options {
   fetchPage: (cursor: FeedCursorParams, limit: number) => Promise<FeedPageRes>;
 }
 
+// Catch-up pages fetched on resume before falling back to a full refetch
+const MAX_SYNC_PAGES = 20;
+
 const feedItemKey = (item: FeedItemRes) => `${item.type}:${item.id}`;
 
 export const feedQueryKeyFor = anchoredQueryKey;
@@ -81,17 +84,30 @@ export const useFeedQuery = ({
     }
 
     const newItems: FeedItemRes[] = [];
-    let after = newestCursor;
     let latestCursor = newestCursor;
-    let hasMore = true;
+    let caughtUp = false;
 
-    while (hasMore) {
-      const page = await fetchPage({ after }, pageSize);
+    // Bounded instead of `while (hasMoreNewer)`, which never ended if the
+    // server kept reporting newer pages or handed back the same cursor
+    for (let pageCount = 0; pageCount < MAX_SYNC_PAGES; pageCount++) {
+      const page = await fetchPage({ after: latestCursor }, pageSize);
       newItems.push(...page.feed);
-      if (!page.startCursor) break;
+      if (!page.startCursor) {
+        caughtUp = true;
+        break;
+      }
+      if (page.startCursor === latestCursor) break;
       latestCursor = page.startCursor;
-      after = page.startCursor;
-      hasMore = page.hasMoreNewer;
+      if (!page.hasMoreNewer) {
+        caughtUp = true;
+        break;
+      }
+    }
+
+    // Too far behind to patch in place, or the cursor stalled
+    if (!caughtUp) {
+      await query.refetch();
+      return;
     }
 
     if (newItems.length === 0) return;

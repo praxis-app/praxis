@@ -5,7 +5,7 @@ mod service;
 pub(crate) mod types;
 
 pub(crate) use replies::{
-    load_poll_reply_participants, load_poll_reply_summaries, paginate_replies,
+    get_poll_reply_participants, get_poll_reply_summaries, paginate_replies,
     paginate_replies_around, reply_recipient_ids, CreatedReply,
 };
 pub(crate) use routes::{call_messages_router, router};

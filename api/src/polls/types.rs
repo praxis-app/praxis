@@ -34,6 +34,13 @@ pub(super) struct PollActionEventCoverPhotoPath {
     pub(super) image_id: Uuid,
 }
 
+#[derive(Debug)]
+pub(super) struct CreatePollContext {
+    pub(super) server_id: Uuid,
+    pub(super) channel_id: Uuid,
+    pub(super) user_id: Uuid,
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct CreatePollRequest {

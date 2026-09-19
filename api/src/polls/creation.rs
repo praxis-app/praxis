@@ -222,13 +222,22 @@ pub(crate) async fn insert_prepared_poll<C: ConnectionTrait>(
     Ok(poll)
 }
 
+/// Files uploaded alongside a new poll or proposal
+pub(crate) struct CreationUploads {
+    pub(crate) images: Vec<Vec<u8>>,
+    pub(crate) cover_photo: Option<Vec<u8>>,
+}
+
 pub(crate) async fn attach_poll_creation_images<C: ConnectionTrait>(
     database: &C,
     upload_root: &Path,
     poll_id: Uuid,
-    images: Vec<Vec<u8>>,
-    cover_photo: Option<Vec<u8>>,
+    uploads: CreationUploads,
 ) -> AppResult<Vec<PathBuf>> {
+    let CreationUploads {
+        images,
+        cover_photo,
+    } = uploads;
     if images.len() > MAX_ATTACHMENT_FILES {
         return Err(ApiError::new(
             StatusCode::UNPROCESSABLE_ENTITY,

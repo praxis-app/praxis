@@ -9,9 +9,10 @@ use std::{path::PathBuf, sync::Arc};
 use super::{
     service,
     types::{
-        CallMessageImagePath, CreateMessageRequest, CreateReplyContext,
-        CreateReplyRequest, ListRepliesPage, ListRepliesQuery,
-        MessageImagePath, MessagePayload, ThreadPath, ThreadResponse,
+        CallMessageImagePath, CreateCallMessageContext, CreateMessageRequest,
+        CreateReplyContext, CreateReplyRequest, ListRepliesPage,
+        ListRepliesQuery, MessageImagePath, MessagePayload, ThreadPath,
+        ThreadResponse,
     },
 };
 use crate::{
@@ -186,10 +187,12 @@ pub(super) async fn create_call_message(
     let message = service::create_call_message(
         &chat_state.database,
         &chat_state.upload_root,
-        context.server_id,
-        context.channel_id,
-        context.call_id,
-        context.user_id,
+        CreateCallMessageContext {
+            server_id: context.server_id,
+            channel_id: context.channel_id,
+            call_id: context.call_id,
+            user_id: context.user_id,
+        },
         payload,
         images,
     )
@@ -220,10 +223,7 @@ pub(super) async fn get_message_image(
     let image = service::get_message_image(
         &chat_state.database,
         &chat_state.upload_root,
-        path.server_id,
-        path.channel_id,
-        path.message_id,
-        path.image_id,
+        path,
         user_id,
         invite_token.as_deref(),
     )
@@ -240,11 +240,7 @@ pub(super) async fn get_call_message_image(
     let image = service::get_call_message_image(
         &chat_state.database,
         &chat_state.upload_root,
-        path.server_id,
-        path.channel_id,
-        path.call_id,
-        path.message_id,
-        path.image_id,
+        path,
         user_id,
         invite_token.as_deref(),
     )

@@ -57,13 +57,15 @@ pub(crate) async fn run(
 
     print_report(
         &args,
-        overview,
-        type_counts,
-        stage_counts,
-        vote_mix,
-        trend,
-        active_polls,
-        top_channels,
+        PollStatsReport {
+            overview,
+            type_counts,
+            stage_counts,
+            vote_mix,
+            trend,
+            active_polls,
+            top_channels,
+        },
     );
 
     Ok(())
@@ -342,8 +344,7 @@ where
     .await?)
 }
 
-fn print_report(
-    args: &PollStatsArgs,
+struct PollStatsReport {
     overview: Overview,
     type_counts: Vec<LabelCount>,
     stage_counts: Vec<LabelCount>,
@@ -351,7 +352,18 @@ fn print_report(
     trend: Vec<TrendRow>,
     active_polls: Vec<ActivePoll>,
     top_channels: Vec<TopChannel>,
-) {
+}
+
+fn print_report(args: &PollStatsArgs, report: PollStatsReport) {
+    let PollStatsReport {
+        overview,
+        type_counts,
+        stage_counts,
+        vote_mix,
+        trend,
+        active_polls,
+        top_channels,
+    } = report;
     let since = Utc::now() - chrono::Duration::days(args.days);
     println!(
         "\n{} {}",
@@ -538,11 +550,11 @@ fn print_top_channels(rows: &[TopChannel]) {
 fn format_number(value: i64) -> String {
     let sign = if value < 0 { "-" } else { "" };
     let mut digits: Vec<char> = value.abs().to_string().chars().collect();
-    let mut i = digits.len() as isize - 3;
+    let len = digits.len();
 
-    while i > 0 {
-        digits.insert(i as usize, ',');
-        i -= 3;
+    // Insert right to left so earlier positions stay valid
+    for offset in (3..len).step_by(3) {
+        digits.insert(len - offset, ',');
     }
 
     format!("{sign}{}", digits.into_iter().collect::<String>())

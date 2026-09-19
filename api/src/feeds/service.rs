@@ -90,7 +90,7 @@ pub(crate) async fn get_channel_feed_around(
     target_id: Uuid,
     user_id: Option<Uuid>,
 ) -> AppResult<(Vec<FeedItem>, bool, bool)> {
-    let target = load_channel_feed_target(
+    let target = get_channel_feed_target(
         database, server_id, channel_id, target_id, user_id,
     )
     .await?;
@@ -182,7 +182,7 @@ pub(crate) async fn get_call_feed_around(
     Ok((feed, has_more, has_more_newer))
 }
 
-async fn load_channel_feed_target(
+async fn get_channel_feed_target(
     database: &sea_orm::DatabaseConnection,
     server_id: Uuid,
     channel_id: Uuid,

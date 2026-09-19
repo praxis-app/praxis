@@ -5,13 +5,7 @@ import { useInfiniteScroll } from '@/hooks/use-infinite-scroll';
 import { useNotifications } from '@/hooks/use-notifications';
 import { type NotificationRes } from '@/types/notification.types';
 import { useTranslation } from 'react-i18next';
-import {
-  LuBell,
-  LuRefreshCw,
-  LuSettings,
-  LuTrash2,
-  LuX,
-} from 'react-icons/lu';
+import { LuBell, LuRefreshCw, LuSettings, LuTrash2, LuX } from 'react-icons/lu';
 
 interface Props {
   onSelect: (notification: NotificationRes) => void;

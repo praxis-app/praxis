@@ -336,6 +336,8 @@ fn extract_calls(content: &str, marker: &str) -> Vec<String> {
     let mut calls = Vec::new();
     let mut offset = 0;
 
+    // Terminates: each match moves `offset` past its closing paren, and an
+    // unmatched paren breaks out
     while let Some(relative_start) = content[offset..].find(marker) {
         let open = offset + relative_start + marker.len() - 1;
         if let Some(close) = matching_paren(content, open) {
@@ -452,9 +454,10 @@ fn string_literal(input: &str) -> Option<String> {
 fn extract_methods(input: &str) -> Vec<(String, String)> {
     let mut methods = Vec::new();
     let method_names = ["get", "post", "put", "delete", "patch"];
-    let bytes = input.as_bytes();
     let mut idx = 0;
 
+    // Terminates: every branch either breaks or moves `idx` past a paren that
+    // sits at or after the current position
     while idx < input.len() {
         let Some((method, name_start)) =
             find_next_method(input, idx, &method_names)
@@ -477,10 +480,6 @@ fn extract_methods(input: &str) -> Vec<(String, String)> {
 
         methods.push((method.to_uppercase(), handler));
         idx = close + 1;
-
-        while idx < bytes.len() && bytes[idx].is_ascii_whitespace() {
-            idx += 1;
-        }
     }
 
     methods
@@ -594,15 +593,13 @@ fn join_paths(prefix: &str, path: &str) -> String {
 }
 
 fn normalize_path(path: &str) -> String {
-    let mut normalized = path.replace("//", "/");
-    while normalized.len() > 1 && normalized.ends_with('/') {
-        normalized.pop();
-    }
+    let collapsed = path.replace("//", "/");
+    let normalized = collapsed.trim_end_matches('/');
 
     if normalized.is_empty() {
         "/".to_owned()
     } else {
-        rust_params_to_legacy(&normalized)
+        rust_params_to_legacy(normalized)
     }
 }
 
@@ -756,6 +753,8 @@ fn rust_params_to_legacy(path: &str) -> String {
     let mut converted = String::with_capacity(path.len());
     let mut chars = path.chars().peekable();
 
+    // `while let` because the body also advances the iterator; it still ends
+    // once every character is consumed
     while let Some(ch) = chars.next() {
         if ch == '{' {
             converted.push(':');
