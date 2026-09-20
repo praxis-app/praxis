@@ -42,7 +42,7 @@ can ask a maintainer for help at any point:
 The [README](README.md) covers installation and running the app. In short, you
 need the Rust and Node versions pinned in `rust-toolchain.toml` and `.nvmrc`,
 PostgreSQL 16, and Redis 8.4. Docker with Compose and Buildx is required for
-end-to-end tests and artifact builds.
+running E2E tests and artifact builds.
 
 ## Skills and contribution areas
 
