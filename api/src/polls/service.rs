@@ -21,7 +21,7 @@ use std::{
 };
 
 use super::{
-    creation::prepare_poll_creation,
+    creation::prepare_poll,
     types::{
         ActiveDecisionResponse, ActiveDecisionsResponse, CallDecisionResponse,
         CreatePollContext, CreatePollRequest, PollActionEventCoverPhotoPath,
@@ -31,7 +31,7 @@ use super::{
 };
 pub(crate) use super::{
     creation::{
-        attach_poll_creation_images, commit_creation, insert_prepared_poll,
+        attach_poll_images, commit_with_image_cleanup, insert_prepared_poll,
         prepare_forum_proposal, PollImageUploads,
     },
     outcome::{
@@ -78,20 +78,16 @@ async fn create_poll_record(
         channel_id,
         user_id,
     } = context;
-    let prepared = prepare_poll_creation(
-        database, server_id, channel_id, user_id, request, false,
-    )
-    .await?;
+    let prepared =
+        prepare_poll(database, server_id, channel_id, user_id, request, false)
+            .await?;
+
     let transaction = database.begin().await.map_err(internal_error)?;
     let poll =
         insert_prepared_poll(&transaction, call_id, user_id, prepared).await?;
-    let image_paths = attach_poll_creation_images(
-        &transaction,
-        upload_root,
-        poll.id,
-        uploads,
-    )
-    .await?;
+    let image_paths =
+        attach_poll_images(&transaction, upload_root, poll.id, uploads).await?;
+
     // TODO: polls and call decisions notify nobody yet, only channel proposals
     let notifications =
         if poll.poll_type == PollType::Proposal && call_id.is_none() {
@@ -106,7 +102,7 @@ async fn create_poll_record(
         } else {
             Vec::new()
         };
-    commit_creation(transaction, image_paths).await?;
+    commit_with_image_cleanup(transaction, image_paths).await?;
     let poll = get_poll_response(
         database,
         server_id,

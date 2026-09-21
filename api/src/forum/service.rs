@@ -189,7 +189,7 @@ pub(super) async fn create_forum_post(
     .map_err(internal_error)?;
     let image_paths = match proposal.as_ref() {
         Some(proposal) => {
-            polls_service::attach_poll_creation_images(
+            polls_service::attach_poll_images(
                 &transaction,
                 upload_root,
                 proposal.id,
@@ -222,7 +222,7 @@ pub(super) async fn create_forum_post(
             .await?
         }
     };
-    polls_service::commit_creation(transaction, image_paths).await?;
+    polls_service::commit_with_image_cleanup(transaction, image_paths).await?;
 
     let post =
         get_forum_post(database, channel_id, post_id, Some(user_id)).await?;
@@ -413,7 +413,7 @@ pub(super) async fn create_forum_post_proposal(
     active.poll_id = Set(Some(proposal.id));
     active.updated_at = Set(Utc::now().fixed_offset());
     active.update(&transaction).await.map_err(internal_error)?;
-    let image_paths = polls_service::attach_poll_creation_images(
+    let image_paths = polls_service::attach_poll_images(
         &transaction,
         upload_root,
         proposal.id,
@@ -428,7 +428,7 @@ pub(super) async fn create_forum_post_proposal(
         proposal.id,
     )
     .await?;
-    polls_service::commit_creation(transaction, image_paths).await?;
+    polls_service::commit_with_image_cleanup(transaction, image_paths).await?;
 
     let post =
         get_forum_post(database, channel_id, post_id, Some(user_id)).await?;
