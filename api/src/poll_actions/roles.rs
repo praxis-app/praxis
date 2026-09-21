@@ -29,6 +29,7 @@ use super::types::{
 };
 use crate::{
     common::{request::parse_uuid, ApiError, AppResult},
+    servers::server_roles::service::get_server_role_record,
     users as users_service,
 };
 
@@ -236,21 +237,6 @@ async fn poll_server_id<C: ConnectionTrait>(
         })?;
 
     Ok(channel.server_id)
-}
-
-async fn get_server_role_record<C: ConnectionTrait>(
-    database: &C,
-    server_id: Uuid,
-    server_role_id: Uuid,
-) -> AppResult<server_roles::Model> {
-    server_roles::Entity::find_by_id(server_role_id)
-        .filter(server_roles::Column::ServerId.eq(server_id))
-        .one(database)
-        .await
-        .map_err(internal_error)?
-        .ok_or_else(|| {
-            ApiError::new(StatusCode::NOT_FOUND, "Server role not found.")
-        })
 }
 
 async fn get_action_role(

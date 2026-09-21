@@ -536,8 +536,8 @@ where
     Ok(true)
 }
 
-async fn get_server_role_record(
-    database: &DatabaseConnection,
+pub(crate) async fn get_server_role_record<C: ConnectionTrait>(
+    database: &C,
     server_id: Uuid,
     role_id: Uuid,
 ) -> AppResult<server_roles::Model> {
