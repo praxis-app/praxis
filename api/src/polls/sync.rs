@@ -107,7 +107,6 @@ pub(crate) fn spawn_expired_poll_closer(
         ));
         interval.set_missed_tick_behavior(MissedTickBehavior::Skip);
 
-        // Intentionally infinite, same as the proposal synchronizer above
         loop {
             interval.tick().await;
 
@@ -139,10 +138,6 @@ async fn synchronize_proposals(
     let now = Utc::now().fixed_offset();
     let mut cursor = None;
 
-    // Keyset pagination with no known page count. Terminates because the
-    // cursor always moves to the last id and the next query asks for ids
-    // strictly greater. Dropping that `gt` filter, or skipping the cursor
-    // update, would refetch the same batch forever
     loop {
         let mut query = polls::Entity::find()
             .filter(polls::Column::PollType.eq(PollType::Proposal))
@@ -256,7 +251,6 @@ async fn expire_stale_event_proposals(
         .to_owned();
     let mut cursor = None;
 
-    // Keyset pagination; see `synchronize_proposals` for why this terminates
     loop {
         let mut query = polls::Entity::find()
             .join(JoinType::InnerJoin, polls::Relation::Action.def())
@@ -369,7 +363,6 @@ async fn close_expired_polls(
     let mut summary = ExpiredPollClosureSummary::default();
     let mut cursor = None;
 
-    // Keyset pagination; see `synchronize_proposals` for why this terminates
     loop {
         let mut query = polls::Entity::find()
             .join(JoinType::InnerJoin, polls::Relation::Config.def())
