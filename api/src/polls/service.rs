@@ -32,7 +32,7 @@ use super::{
 pub(crate) use super::{
     creation::{
         attach_poll_creation_images, commit_creation, insert_prepared_poll,
-        prepare_forum_proposal, CreationUploads,
+        prepare_forum_proposal, PollImageUploads,
     },
     outcome::{
         finalize_ratifiable_proposal, is_poll_ratifiable, ProposalFinalization,
@@ -59,7 +59,7 @@ pub(super) async fn create_poll(
     upload_root: &Path,
     context: CreatePollContext,
     request: CreatePollRequest,
-    uploads: CreationUploads,
+    uploads: PollImageUploads,
 ) -> AppResult<WithNotifications<PollResponse>> {
     create_poll_record(database, upload_root, context, None, request, uploads)
         .await
@@ -71,7 +71,7 @@ async fn create_poll_record(
     context: CreatePollContext,
     call_id: Option<Uuid>,
     request: CreatePollRequest,
-    uploads: CreationUploads,
+    uploads: PollImageUploads,
 ) -> AppResult<WithNotifications<PollResponse>> {
     let CreatePollContext {
         server_id,
@@ -154,7 +154,7 @@ pub(super) async fn create_call_poll(
     context: CreatePollContext,
     call_id: Uuid,
     request: CreatePollRequest,
-    uploads: CreationUploads,
+    uploads: PollImageUploads,
 ) -> AppResult<PollResponse> {
     crate::calls::service::get_call(
         database,

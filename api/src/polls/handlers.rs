@@ -11,7 +11,7 @@ use std::{path::PathBuf, sync::Arc};
 
 use super::{
     extractors::PollDeleteContext,
-    service::{self, CreationUploads},
+    service::{self, PollImageUploads},
     types::{
         ActiveDecisionsResponse, CallDecisionResponse, CreatePollContext,
         CreatePollRequest, DeletePollResponse, ListActiveDecisionsQuery,
@@ -89,7 +89,7 @@ pub(super) async fn create_poll(
             user_id: context.user_id,
         },
         payload,
-        CreationUploads {
+        PollImageUploads {
             images,
             cover_photo,
         },
@@ -274,7 +274,7 @@ pub(super) async fn create_call_poll(
         },
         context.call_id,
         payload,
-        CreationUploads {
+        PollImageUploads {
             images,
             cover_photo,
         },

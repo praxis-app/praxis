@@ -29,7 +29,7 @@ use crate::{
         AppResult,
     },
     messages::types::ListRepliesPage,
-    polls::{self, service::CreationUploads, types::CreatePollRequest},
+    polls::{self, service::PollImageUploads, types::CreatePollRequest},
     pub_sub::PubSubService,
 };
 
@@ -99,7 +99,7 @@ pub(super) async fn create_forum_post(
         context.channel_id,
         context.user_id,
         payload,
-        CreationUploads {
+        PollImageUploads {
             images,
             cover_photo,
         },
@@ -159,7 +159,7 @@ pub(super) async fn create_forum_post_proposal(
             user_id: context.user_id,
         },
         payload,
-        CreationUploads {
+        PollImageUploads {
             images,
             cover_photo,
         },

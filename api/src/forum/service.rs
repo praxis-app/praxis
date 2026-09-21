@@ -117,7 +117,7 @@ pub(super) async fn create_forum_post(
     channel_id: Uuid,
     user_id: Uuid,
     request: CreateForumPostRequest,
-    uploads: polls_service::CreationUploads,
+    uploads: polls_service::PollImageUploads,
 ) -> AppResult<WithNotifications<ForumPostResponse>> {
     let title = validate_title(&request.title)?;
     let body = validate_body(&request.body, "A forum post body is required.")?;
@@ -385,7 +385,7 @@ pub(super) async fn create_forum_post_proposal(
     upload_root: &std::path::Path,
     context: CreateForumProposalContext,
     request: crate::polls::types::CreatePollRequest,
-    uploads: polls_service::CreationUploads,
+    uploads: polls_service::PollImageUploads,
 ) -> AppResult<WithNotifications<ForumPostResponse>> {
     let CreateForumProposalContext {
         server_id,

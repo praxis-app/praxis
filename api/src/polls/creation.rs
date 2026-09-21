@@ -223,7 +223,7 @@ pub(crate) async fn insert_prepared_poll<C: ConnectionTrait>(
 }
 
 /// Files uploaded alongside a new poll or proposal
-pub(crate) struct CreationUploads {
+pub(crate) struct PollImageUploads {
     pub(crate) images: Vec<Vec<u8>>,
     pub(crate) cover_photo: Option<Vec<u8>>,
 }
@@ -232,9 +232,9 @@ pub(crate) async fn attach_poll_creation_images<C: ConnectionTrait>(
     database: &C,
     upload_root: &Path,
     poll_id: Uuid,
-    uploads: CreationUploads,
+    uploads: PollImageUploads,
 ) -> AppResult<Vec<PathBuf>> {
-    let CreationUploads {
+    let PollImageUploads {
         images,
         cover_photo,
     } = uploads;
