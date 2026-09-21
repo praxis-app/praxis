@@ -7,8 +7,6 @@ pub(crate) fn sanitize_text(value: &str) -> String {
 fn strip_tags(value: &str) -> String {
     let mut sanitized = String::with_capacity(value.len());
     let mut characters = value.trim().chars().peekable();
-    // `while let` rather than `for` because the body also advances the
-    // iterator; it still ends once every character is consumed
     while let Some(character) = characters.next() {
         if character != '<' {
             sanitized.push(character);
