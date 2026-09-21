@@ -74,7 +74,7 @@ pub(super) async fn create_poll_action_role<C: ConnectionTrait>(
         .transpose()?;
 
     let role_to_update = if let Some(server_role_id) = server_role_id {
-        Some(get_server_role_model(database, server_id, server_role_id).await?)
+        Some(get_server_role_record(database, server_id, server_role_id).await?)
     } else {
         None
     };
@@ -163,7 +163,7 @@ pub(super) async fn implement_change_server_role(
     // role id, so a ratified proposal can only ever change a role in the
     // server it was proposed in
     let server_id = poll_server_id(database, poll_id).await?;
-    let role = get_server_role_model(database, server_id, role_id).await?;
+    let role = get_server_role_record(database, server_id, role_id).await?;
 
     if action_role.name.is_some() || action_role.color.is_some() {
         let mut active = role.clone().into_active_model();
@@ -238,7 +238,7 @@ async fn poll_server_id<C: ConnectionTrait>(
     Ok(channel.server_id)
 }
 
-async fn get_server_role_model<C: ConnectionTrait>(
+async fn get_server_role_record<C: ConnectionTrait>(
     database: &C,
     server_id: Uuid,
     server_role_id: Uuid,
