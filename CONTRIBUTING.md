@@ -67,7 +67,8 @@ can use help in several areas:
   triage, contributor support, and translating technical decisions for users
 
 - **Collaborative decision-making:** facilitation, community governance, group
-  decision processes, and feedback on how proposals and voting work in practice
+  decision processes, and feedback on how proposals and voting should work
+  in practice
 
 Domain knowledge, careful testing, clear writing, and useful bug reports are as
 valuable as writing production code.
