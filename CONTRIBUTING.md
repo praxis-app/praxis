@@ -115,10 +115,6 @@ ESLint and Prettier cover TypeScript, configured in `eslint.config.js` and
 that `npm run lint` reports problems rather than fixing them; run Prettier from
 your editor or with `npx prettier --write <paths>`.
 
-`CLAUDE.md` and `AGENTS.md` at the repo root describe the conventions this
-codebase follows, including backend module layout, frontend component
-structure, and when comments are wanted.
-
 ## Commit messages
 
 Commits use a short type prefix, such as `feat:`, `fix:`, `chore:`, `docs:`,
