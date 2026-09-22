@@ -18,6 +18,10 @@ Praxis is free and open source software, as specified by the GNU General Public 
 
 You are entering a construction yard. Things are going to change and break regularly as the project is still getting off the ground. Your feedback is highly welcome.
 
+## Documentation
+
+Browse the [documentation index](docs/README.md) for deployment guidance and project background.
+
 ## Installation
 
 Use the Rust and Node versions listed above, PostgreSQL 16, and Redis 8.4. `rust-toolchain.toml` and `.nvmrc` pin the language runtimes. E2E tests and artifact builds require Docker with Compose and Buildx.
@@ -119,8 +123,6 @@ docker compose up -d --build
 ```
 
 Production requires Linux x86_64 and a configured `.env`. Do not run `docker compose down --volumes`, since production data and uploads use named volumes.
-
-See the [deployment instructions](docs/deployment/deployment.md), [quick deployment reference](DEPLOY.md), [documentation index](docs/README.md), and [original app proposal](docs/project-proposals/praxis-chat-app-proposal.md).
 
 ## Contributions
 
