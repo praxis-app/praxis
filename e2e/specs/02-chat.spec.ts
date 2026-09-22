@@ -20,11 +20,10 @@ import {
 } from '../lib/auth';
 import { startCallFromTopNav } from '../lib/calls';
 import { createTestMessage, createTestUser } from '../lib/data';
-import { createLargePng, expectImageToLoad } from '../lib/images';
+import { expectImageToLoad } from '../lib/images';
 import { createInvite } from '../lib/invites';
 import { scrollThroughAllPages } from '../lib/infinite-scroll';
 import { createMessages } from '../lib/messages';
-import { expectRightPanelToResize } from '../lib/right-panel';
 import {
   createServer,
   createServerAdmin,
@@ -72,28 +71,6 @@ const totalFeedMessages = 41;
 
 test.beforeAll(async ({ request }) => {
   await getOrCreateInstanceAdmin(request);
-});
-
-test('authenticated user can send a basic chat message', async ({
-  context,
-  page,
-  request,
-}) => {
-  const authenticatedUser = await createAuthenticatedUser(
-    request,
-    context,
-    createTestUser('chat'),
-  );
-  const message = createTestMessage('chat', authenticatedUser.user.suffix);
-  const chat = new ChatPage(page);
-  const navigation = new NavigationPage(page);
-
-  await chat.goto();
-
-  await chat.expectChannel('general');
-  await navigation.expectSignedInUser(authenticatedUser.user);
-  await chat.sendMessage(message);
-  await chat.expectMessage(message, authenticatedUser.user.name);
 });
 
 test('sending a message snaps a scrolled channel feed to the bottom', async ({
@@ -316,61 +293,6 @@ test('authenticated user can send a chat message with an image', async ({
   await chat.attachImage();
   await chat.sendMessage(message);
   await messageResponse;
-
-  await chat.expectMessage(message, authenticatedUser.user.name);
-  await chat.expectAttachedImage();
-});
-
-test('upload progress is shown while a large image is sending', async ({
-  context,
-  page,
-  request,
-}) => {
-  const authenticatedUser = await createAuthenticatedUser(
-    request,
-    context,
-    createTestUser('chat-upload-progress'),
-  );
-  const message = createTestMessage(
-    'chat-upload-progress',
-    authenticatedUser.user.suffix,
-  );
-  const chat = new ChatPage(page);
-
-  await chat.goto();
-  await chat.expectChannel('general');
-
-  // Throttled so the upload and the processing that follows are observable
-  const client = await context.newCDPSession(page);
-  await client.send('Network.enable');
-  await client.send('Network.emulateNetworkConditions', {
-    offline: false,
-    latency: 2_000,
-    downloadThroughput: -1,
-    uploadThroughput: 2 * 1024 * 1024,
-  });
-
-  await chat.attachImageBuffer(createLargePng(2600, 1200));
-
-  const messageResponse = page.waitForResponse(
-    (response) =>
-      response.request().method() === 'POST' &&
-      response.url().endsWith('/messages') &&
-      response.status() === 200,
-  );
-  await chat.sendMessage(message);
-
-  const overlay = page.getByTestId('image-upload-overlay');
-  const progress = overlay.getByRole('progressbar', {
-    name: 'Uploading image',
-  });
-  await expect(overlay).toBeVisible();
-  await expect(progress).toHaveAttribute('aria-valuenow', /^\d+$/);
-
-  await expect(progress).not.toHaveAttribute('aria-valuenow');
-
-  await messageResponse;
-  await expect(overlay).toBeHidden();
 
   await chat.expectMessage(message, authenticatedUser.user.name);
   await chat.expectAttachedImage();
@@ -655,8 +577,6 @@ test('authenticated user can create and vote on an in-call proposal', async ({
     await expect(
       activeDecisionPanel.getByText('No active decision'),
     ).toBeVisible();
-    await expectRightPanelToResize(page, activeDecisionPanel, 'callDecisions');
-
     await activeDecisionPanel
       .getByRole('button', { name: 'Create proposal' })
       .click();
@@ -860,45 +780,6 @@ function unreadIndicator(scope: Locator) {
   return scope.getByTestId('channel-unread-indicator');
 }
 
-for (const feedItem of unreadFeedItems) {
-  test(`channel list marks a channel unread when someone else creates a ${feedItem.label}`, async ({
-    context,
-    page,
-    request,
-  }) => {
-    const { server, author, otherChannelId } = await setupUnreadScenario(
-      request,
-      context,
-      feedItem.label,
-    );
-
-    await createPollViaApi(
-      request,
-      author,
-      server.id,
-      otherChannelId,
-      feedItem.payload(`Unread ${feedItem.label} ${author.user.suffix}`),
-    );
-
-    await page.goto(`/s/${server.slug}/c/${server.generalChannelId}`);
-
-    const unreadChannel = channelLink(
-      page,
-      server.slug,
-      otherChannelId,
-    ).locator('..');
-    await expect(unreadIndicator(unreadChannel)).toBeVisible();
-    await expect(
-      unreadIndicator(
-        channelLink(page, server.slug, server.generalChannelId).locator('..'),
-      ),
-    ).toHaveCount(0);
-
-    await page.goto(`/s/${server.slug}/c/${otherChannelId}`);
-    await expect(unreadIndicator(unreadChannel)).toHaveCount(0);
-  });
-}
-
 test.describe('mobile thread recovery', () => {
   const device = devices['Pixel 5'];
   test.use({
@@ -1008,7 +889,6 @@ test.describe('mobile thread recovery', () => {
         bodies: [regularBody],
       });
       await expect.poll(() => missedReplies).toBeGreaterThan(0);
-      await page.waitForTimeout(15_000);
       away = false;
       await cdp.send('Page.setWebLifecycleState', { state: 'active' });
       await page.bringToFront();

@@ -220,7 +220,8 @@ export const MessageForm = ({
         bot: null,
         createdAt: new Date().toISOString(),
         commandStatus: null,
-        threadRootId: thread?.rootKind === 'message' ? thread.rootId : undefined,
+        threadRootId:
+          thread?.rootKind === 'message' ? thread.rootId : undefined,
         threadPollId: thread?.rootKind === 'poll' ? thread.rootId : undefined,
         parentMessageId:
           thread?.rootKind === 'message' ? thread.rootId : undefined,

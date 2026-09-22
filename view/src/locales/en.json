@@ -67,7 +67,7 @@
       "new_message_other": "{{actor}} sent {{count}} new messages in #{{channel}}",
       "new_message_forum_one": "{{actor}} created a new post in #{{channel}}",
       "new_message_forum_other": "{{actor}} created {{count}} new posts in #{{channel}}",
-    "new_proposal": "{{actor}} created a new proposal in #{{channel}}",
+      "new_proposal": "{{actor}} created a new proposal in #{{channel}}",
       "message_reply": "{{actor}} replied to a conversation in #{{channel}}",
       "message_reply_message": "{{actor}} replied to your message in #{{channel}}",
       "message_reply_poll": "{{actor}} replied to your poll in #{{channel}}",
@@ -77,7 +77,7 @@
       "proposal_ratified": "Your proposal in #{{channel}} was ratified",
       "proposal_closed": "Your proposal in #{{channel}} closed",
       "server_role_granted": "You were granted the {{role}} role",
-    "event_created": "{{event}} was scheduled by a ratified proposal"
+      "event_created": "{{event}} was scheduled by a ratified proposal"
     },
     "votes": {
       "agree": "agree",

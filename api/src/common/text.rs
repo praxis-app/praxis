@@ -34,6 +34,7 @@ fn sanitize_markdown_links(value: &str) -> String {
     let mut sanitized = String::with_capacity(value.len());
     let mut rest = value;
 
+    // Terminates: `rest` shrinks past each "](" match
     while let Some(offset) = rest.find("](") {
         let (head, destination) = rest.split_at(offset + 2);
         sanitized.push_str(head);

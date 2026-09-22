@@ -83,7 +83,7 @@ pub(super) async fn search(
         .into_iter()
         .flat_map(|scan| scan.candidates.into_iter())
         .collect();
-    let keys = load_readable_channel_keys(
+    let keys = get_readable_channel_keys(
         database,
         &scope.scanned_channel_ids,
         &candidates,
@@ -139,7 +139,7 @@ async fn authorize(
         ));
     }
 
-    let server = servers_service::load_server(database, server_id)
+    let server = servers_service::get_server(database, server_id)
         .await
         .map_err(|_| not_found())?;
     if !servers_service::is_server_member(database, server_id, user_id).await? {
@@ -232,7 +232,7 @@ impl SearchWindow {
     }
 }
 
-async fn load_readable_channel_keys(
+async fn get_readable_channel_keys(
     database: &DatabaseConnection,
     channel_ids: &[Uuid],
     candidates: &[Candidate],

@@ -13,10 +13,10 @@ use super::{
     },
     service,
     types::{
-        CreateForumPostRequest, CreateForumReplyRequest,
-        ForumPostContextResponse, ForumPostPayload, ForumPostsResponse,
-        ForumReplyPayload, ListForumPostsQuery, ListForumRepliesQuery,
-        UpdateForumPostRequest,
+        CreateForumPostRequest, CreateForumProposalContext,
+        CreateForumReplyRequest, ForumPostContextResponse, ForumPostPayload,
+        ForumPostsResponse, ForumReplyPayload, ListForumPostsQuery,
+        ListForumRepliesQuery, UpdateForumPostRequest,
     },
 };
 use crate::{
@@ -29,7 +29,7 @@ use crate::{
         AppResult,
     },
     messages::types::ListRepliesPage,
-    polls::{self, types::CreatePollRequest},
+    polls::{self, service::PollImageUploads, types::CreatePollRequest},
     pub_sub::PubSubService,
 };
 
@@ -99,8 +99,10 @@ pub(super) async fn create_forum_post(
         context.channel_id,
         context.user_id,
         payload,
-        images,
-        cover_photo,
+        PollImageUploads {
+            images,
+            cover_photo,
+        },
     )
     .await?;
     let post = created.value;
@@ -150,13 +152,17 @@ pub(super) async fn create_forum_post_proposal(
     let created = service::create_forum_post_proposal(
         &state.database,
         &state.upload_root,
-        context.server_id,
-        context.channel_id,
-        context.post_id,
-        context.user_id,
+        CreateForumProposalContext {
+            server_id: context.server_id,
+            channel_id: context.channel_id,
+            post_id: context.post_id,
+            user_id: context.user_id,
+        },
         payload,
-        images,
-        cover_photo,
+        PollImageUploads {
+            images,
+            cover_photo,
+        },
     )
     .await?;
     let post = created.value;

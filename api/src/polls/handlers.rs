@@ -11,10 +11,10 @@ use std::{path::PathBuf, sync::Arc};
 
 use super::{
     extractors::PollDeleteContext,
-    service,
+    service::{self, PollImageUploads},
     types::{
-        ActiveDecisionsResponse, CallDecisionResponse, CreatePollRequest,
-        DeletePollResponse, ListActiveDecisionsQuery,
+        ActiveDecisionsResponse, CallDecisionResponse, CreatePollContext,
+        CreatePollRequest, DeletePollResponse, ListActiveDecisionsQuery,
         PollActionEventCoverPhotoPath, PollImagePath, PollPath, PollPayload,
     },
 };
@@ -83,12 +83,16 @@ pub(super) async fn create_poll(
     let created = service::create_poll(
         &state.database,
         &state.upload_root,
-        context.server_id,
-        context.channel_id,
-        context.user_id,
+        CreatePollContext {
+            server_id: context.server_id,
+            channel_id: context.channel_id,
+            user_id: context.user_id,
+        },
         payload,
-        images,
-        cover_photo,
+        PollImageUploads {
+            images,
+            cover_photo,
+        },
     )
     .await?;
     let poll = created.value;
@@ -263,13 +267,17 @@ pub(super) async fn create_call_poll(
     let poll = service::create_call_poll(
         &state.database,
         &state.upload_root,
-        context.server_id,
-        context.channel_id,
+        CreatePollContext {
+            server_id: context.server_id,
+            channel_id: context.channel_id,
+            user_id: context.user_id,
+        },
         context.call_id,
-        context.user_id,
         payload,
-        images,
-        cover_photo,
+        PollImageUploads {
+            images,
+            cover_photo,
+        },
     )
     .await?;
 
@@ -335,10 +343,7 @@ pub(super) async fn get_poll_action_event_cover_photo(
     let image = service::get_poll_action_event_cover_photo(
         &state.database,
         &state.upload_root,
-        path.server_id,
-        path.channel_id,
-        path.poll_id,
-        path.image_id,
+        path,
         user_id,
         invite_token.as_deref(),
     )
@@ -356,10 +361,7 @@ pub(super) async fn get_poll_image(
     let image = service::get_poll_image(
         &state.database,
         &state.upload_root,
-        path.server_id,
-        path.channel_id,
-        path.poll_id,
-        path.image_id,
+        path,
         user_id,
         invite_token.as_deref(),
     )

@@ -983,10 +983,7 @@ class ApiClient {
     return this.executeRequest<NotificationPayload>('put', path);
   };
 
-  markNotificationUnread = async (
-    serverId: string,
-    notificationId: string,
-  ) => {
+  markNotificationUnread = async (serverId: string, notificationId: string) => {
     const path = `/servers/${serverId}/notifications/${notificationId}/unread`;
     return this.executeRequest<NotificationPayload>('put', path);
   };

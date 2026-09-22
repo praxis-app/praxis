@@ -29,7 +29,7 @@ pub(super) async fn get_instance_role(
     database: &DatabaseConnection,
     role_id: Uuid,
 ) -> AppResult<InstanceRoleResponse> {
-    let role = load_instance_role(database, role_id).await?;
+    let role = get_instance_role_record(database, role_id).await?;
     shape_instance_role(database, role).await
 }
 
@@ -79,7 +79,7 @@ pub(super) async fn get_users_eligible_for_instance_role(
     database: &DatabaseConnection,
     role_id: Uuid,
 ) -> AppResult<Vec<UserResponse>> {
-    load_instance_role(database, role_id).await?;
+    get_instance_role_record(database, role_id).await?;
     let memberships = instance_role_members::Entity::find()
         .filter(instance_role_members::Column::InstanceRoleId.eq(role_id))
         .all(database)
@@ -174,7 +174,7 @@ pub(super) async fn update_instance_role(
     request: RoleRequest,
 ) -> AppResult<()> {
     let (name, color) = validate_role_request(request)?;
-    let role = load_instance_role(database, role_id).await?;
+    let role = get_instance_role_record(database, role_id).await?;
     let mut active = role.into_active_model();
     active.name = Set(name);
     active.color = Set(color);
@@ -188,7 +188,7 @@ pub(super) async fn update_instance_role_permissions(
     permissions: Vec<PermissionRule>,
 ) -> AppResult<()> {
     validate_permissions(&permissions, INSTANCE_SUBJECTS)?;
-    load_instance_role(database, role_id).await?;
+    get_instance_role_record(database, role_id).await?;
     set_permissions(database, role_id, &permissions).await
 }
 
@@ -197,7 +197,7 @@ pub(super) async fn add_instance_role_members(
     role_id: Uuid,
     user_ids: &[Uuid],
 ) -> AppResult<()> {
-    load_instance_role(database, role_id).await?;
+    get_instance_role_record(database, role_id).await?;
     for user_id in user_ids {
         if users::Entity::find_by_id(*user_id)
             .one(database)
@@ -216,7 +216,7 @@ pub(super) async fn remove_instance_role_member(
     role_id: Uuid,
     user_id: Uuid,
 ) -> AppResult<()> {
-    load_instance_role(database, role_id).await?;
+    get_instance_role_record(database, role_id).await?;
     instance_role_members::Entity::delete_many()
         .filter(instance_role_members::Column::InstanceRoleId.eq(role_id))
         .filter(instance_role_members::Column::UserId.eq(user_id))
@@ -230,7 +230,7 @@ pub(super) async fn delete_instance_role(
     database: &DatabaseConnection,
     role_id: Uuid,
 ) -> AppResult<()> {
-    let role = load_instance_role(database, role_id).await?;
+    let role = get_instance_role_record(database, role_id).await?;
     instance_roles::Entity::delete_by_id(role.id)
         .exec(database)
         .await
@@ -384,7 +384,7 @@ where
     Ok(())
 }
 
-async fn load_instance_role(
+async fn get_instance_role_record(
     database: &DatabaseConnection,
     role_id: Uuid,
 ) -> AppResult<instance_roles::Model> {

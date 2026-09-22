@@ -44,8 +44,14 @@ pub(super) async fn create_vote(
     request: VoteRequest,
 ) -> AppResult<WithNotifications<CreateVoteResponse>> {
     let transaction = database.begin().await.map_err(internal_error)?;
+
+    // Lock the poll and electorate, then recheck the voter and request
     let (poll, config) =
         lock_poll_for_vote_mutation(&transaction, poll.id).await?;
+    channels::lock_channel_electorate(&transaction, poll.channel_id).await?;
+    channels::ensure_channel_member(&transaction, poll.channel_id, user_id)
+        .await?;
+
     validate_vote_request(
         &transaction,
         server_id,
@@ -56,6 +62,7 @@ pub(super) async fn create_vote(
     )
     .await?;
 
+    // Each member gets one vote per poll
     if vote_entities::Entity::find()
         .filter(vote_entities::Column::PollId.eq(poll.id))
         .filter(vote_entities::Column::UserId.eq(user_id))
@@ -70,6 +77,7 @@ pub(super) async fn create_vote(
         ));
     }
 
+    // Save the vote and any selected poll options
     let poll_option_ids = parse_poll_option_ids(&request)?;
     validate_poll_option_ids(&transaction, poll.id, &poll_option_ids).await?;
     let vote = vote_entities::ActiveModel {
@@ -85,6 +93,8 @@ pub(super) async fn create_vote(
 
     save_poll_option_selections(&transaction, vote.id, &poll_option_ids)
         .await?;
+
+    // Notify the proposer and finalize the proposal if this vote decides it
     let mut notifications =
         notify_proposal_vote(&transaction, &poll, &vote).await?;
     let finalization =
@@ -97,6 +107,8 @@ pub(super) async fn create_vote(
     .await?;
 
     transaction.commit().await.map_err(internal_error)?;
+
+    // Report whether this vote ratified or closed the proposal
     let is_ratifying_vote = matches!(
         finalization.as_ref().map(|outcome| outcome.value),
         Some(polls_service::ProposalFinalization::Ratified)
@@ -168,8 +180,13 @@ pub(super) async fn update_vote(
 ) -> AppResult<WithNotifications<UpdateVoteResponse>> {
     let transaction = database.begin().await.map_err(internal_error)?;
 
+    // Lock the poll and electorate, then recheck the voter and request
     let (poll, config) =
         lock_poll_for_vote_mutation(&transaction, poll.id).await?;
+    channels::lock_channel_electorate(&transaction, poll.channel_id).await?;
+    channels::ensure_channel_member(&transaction, poll.channel_id, user_id)
+        .await?;
+
     validate_vote_request(
         &transaction,
         server_id,
@@ -180,6 +197,7 @@ pub(super) async fn update_vote(
     )
     .await?;
 
+    // Only the voter can change their own vote
     let vote = vote_entities::Entity::find_by_id(vote_id)
         .filter(vote_entities::Column::PollId.eq(poll.id))
         .one(&transaction)
@@ -192,6 +210,7 @@ pub(super) async fn update_vote(
         return Err(ApiError::new(StatusCode::FORBIDDEN, "Forbidden."));
     }
 
+    // Update the vote and replace its selected poll options
     let poll_option_ids = parse_poll_option_ids(&request)?;
     validate_poll_option_ids(&transaction, poll.id, &poll_option_ids).await?;
     let mut active = vote.into_active_model();
@@ -208,6 +227,7 @@ pub(super) async fn update_vote(
     save_poll_option_selections(&transaction, vote_id, &poll_option_ids)
         .await?;
 
+    // Notify the proposer and finalize the proposal if this vote decides it
     let mut notifications =
         notify_proposal_vote(&transaction, &poll, &vote).await?;
     let finalization =
@@ -220,6 +240,7 @@ pub(super) async fn update_vote(
     .await?;
     transaction.commit().await.map_err(internal_error)?;
 
+    // Report whether this vote ratified or closed the proposal
     let is_ratifying_vote = matches!(
         finalization.as_ref().map(|outcome| outcome.value),
         Some(polls_service::ProposalFinalization::Ratified)

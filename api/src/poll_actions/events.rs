@@ -230,7 +230,7 @@ pub(crate) async fn attach_event_cover_photo<C: ConnectionTrait>(
     Ok(destination)
 }
 
-pub(crate) async fn load_event_cover_photo<C: ConnectionTrait>(
+pub(crate) async fn get_proposed_event_cover_photo<C: ConnectionTrait>(
     database: &C,
     poll_id: Uuid,
     image_id: Uuid,

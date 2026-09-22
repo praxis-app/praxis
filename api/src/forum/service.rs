@@ -17,9 +17,10 @@ use super::{
         shape_forum_post, shape_forum_post_with_replies, shape_post_summaries,
     },
     types::{
-        CreateForumPostRequest, CreateForumReplyRequest, CreatedForumReply,
-        ForumPostContextResponse, ForumPostResponse, ForumPostSummaryResponse,
-        ForumPostsResponse, UpdateForumPostRequest,
+        CreateForumPostRequest, CreateForumProposalContext,
+        CreateForumReplyRequest, CreatedForumReply, ForumPostContextResponse,
+        ForumPostResponse, ForumPostSummaryResponse, ForumPostsResponse,
+        UpdateForumPostRequest,
     },
 };
 use crate::{
@@ -116,8 +117,7 @@ pub(super) async fn create_forum_post(
     channel_id: Uuid,
     user_id: Uuid,
     request: CreateForumPostRequest,
-    images: Vec<Vec<u8>>,
-    cover_photo: Option<Vec<u8>>,
+    uploads: polls_service::PollImageUploads,
 ) -> AppResult<WithNotifications<ForumPostResponse>> {
     let title = validate_title(&request.title)?;
     let body = validate_body(&request.body, "A forum post body is required.")?;
@@ -189,12 +189,11 @@ pub(super) async fn create_forum_post(
     .map_err(internal_error)?;
     let image_paths = match proposal.as_ref() {
         Some(proposal) => {
-            polls_service::attach_poll_creation_images(
+            polls_service::attach_poll_images(
                 &transaction,
                 upload_root,
                 proposal.id,
-                images,
-                cover_photo,
+                uploads,
             )
             .await?
         }
@@ -223,7 +222,7 @@ pub(super) async fn create_forum_post(
             .await?
         }
     };
-    polls_service::commit_creation(transaction, image_paths).await?;
+    polls_service::commit_with_image_cleanup(transaction, image_paths).await?;
 
     let post =
         get_forum_post(database, channel_id, post_id, Some(user_id)).await?;
@@ -238,7 +237,7 @@ pub(super) async fn get_forum_post(
 ) -> AppResult<ForumPostResponse> {
     shape_forum_post(
         database,
-        load_post(database, channel_id, post_id).await?,
+        get_post(database, channel_id, post_id).await?,
         user_id,
     )
     .await
@@ -252,7 +251,7 @@ pub(super) async fn get_forum_post_replies(
     page: ListRepliesPage,
     user_id: Option<Uuid>,
 ) -> AppResult<ForumPostContextResponse> {
-    let post = load_post(database, channel_id, post_id).await?;
+    let post = get_post(database, channel_id, post_id).await?;
     let root_message_id = post.root_message_id;
     let replies_query = || {
         messages::Entity::find()
@@ -345,7 +344,7 @@ pub(super) async fn update_forum_post(
     };
 
     let transaction = database.begin().await.map_err(internal_error)?;
-    let post = load_post_for_update(&transaction, channel_id, post_id).await?;
+    let post = get_post_for_update(&transaction, channel_id, post_id).await?;
     ensure_owner(post.user_id, user_id, "Only the post author can edit it.")?;
     ensure_post_is_open(&post, "Closed forum posts cannot be edited.")?;
     let root_message_id = post.root_message_id;
@@ -384,22 +383,24 @@ pub(super) async fn update_forum_post(
 pub(super) async fn create_forum_post_proposal(
     database: &DatabaseConnection,
     upload_root: &std::path::Path,
-    server_id: Uuid,
-    channel_id: Uuid,
-    post_id: Uuid,
-    user_id: Uuid,
+    context: CreateForumProposalContext,
     request: crate::polls::types::CreatePollRequest,
-    images: Vec<Vec<u8>>,
-    cover_photo: Option<Vec<u8>>,
+    uploads: polls_service::PollImageUploads,
 ) -> AppResult<WithNotifications<ForumPostResponse>> {
-    let post = load_post(database, channel_id, post_id).await?;
+    let CreateForumProposalContext {
+        server_id,
+        channel_id,
+        post_id,
+        user_id,
+    } = context;
+    let post = get_post(database, channel_id, post_id).await?;
     ensure_post_accepts_proposal(&post, user_id)?;
     let prepared = polls_service::prepare_forum_proposal(
         database, server_id, channel_id, user_id, request,
     )
     .await?;
     let transaction = database.begin().await.map_err(internal_error)?;
-    let post = load_post_for_update(&transaction, channel_id, post_id).await?;
+    let post = get_post_for_update(&transaction, channel_id, post_id).await?;
     ensure_post_accepts_proposal(&post, user_id)?;
     let proposal = polls_service::insert_prepared_poll(
         &transaction,
@@ -412,12 +413,11 @@ pub(super) async fn create_forum_post_proposal(
     active.poll_id = Set(Some(proposal.id));
     active.updated_at = Set(Utc::now().fixed_offset());
     active.update(&transaction).await.map_err(internal_error)?;
-    let image_paths = polls_service::attach_poll_creation_images(
+    let image_paths = polls_service::attach_poll_images(
         &transaction,
         upload_root,
         proposal.id,
-        images,
-        cover_photo,
+        uploads,
     )
     .await?;
     let notifications = polls_service::notify_new_proposal(
@@ -428,7 +428,7 @@ pub(super) async fn create_forum_post_proposal(
         proposal.id,
     )
     .await?;
-    polls_service::commit_creation(transaction, image_paths).await?;
+    polls_service::commit_with_image_cleanup(transaction, image_paths).await?;
 
     let post =
         get_forum_post(database, channel_id, post_id, Some(user_id)).await?;
@@ -478,7 +478,7 @@ async fn set_forum_post_status(
     owner_error: &'static str,
 ) -> AppResult<ForumPostResponse> {
     let transaction = database.begin().await.map_err(internal_error)?;
-    let post = load_post_for_update(&transaction, channel_id, post_id).await?;
+    let post = get_post_for_update(&transaction, channel_id, post_id).await?;
     ensure_owner(post.user_id, user_id, owner_error)?;
     if status == ForumPostStatus::Closed {
         ensure_post_can_close(&transaction, &post).await?;
@@ -521,7 +521,7 @@ pub(super) async fn create_forum_reply(
     let now = Utc::now().fixed_offset();
 
     let transaction = database.begin().await.map_err(internal_error)?;
-    let post = load_post_for_update(&transaction, channel_id, post_id).await?;
+    let post = get_post_for_update(&transaction, channel_id, post_id).await?;
     if post.status == ForumPostStatus::Closed {
         return Err(ApiError::new(
             StatusCode::CONFLICT,
@@ -586,7 +586,7 @@ pub(super) async fn create_forum_reply(
         .into_iter()
         .next()
         .ok_or_else(|| internal_consistency_error("Reply not found."))?;
-    let post = load_post(database, channel_id, post_id).await?;
+    let post = get_post(database, channel_id, post_id).await?;
     let summary = shape_post_summaries(database, vec![post])
         .await?
         .into_iter()
@@ -646,7 +646,7 @@ pub(super) async fn delete_forum_reply(
     user_id: Uuid,
 ) -> AppResult<ForumPostSummaryResponse> {
     let transaction = database.begin().await.map_err(internal_error)?;
-    let post = load_post_for_update(&transaction, channel_id, post_id).await?;
+    let post = get_post_for_update(&transaction, channel_id, post_id).await?;
     ensure_post_is_open(
         &post,
         "Replies cannot be deleted from closed forum posts.",
@@ -670,7 +670,7 @@ pub(super) async fn delete_forum_reply(
     refresh_forum_post_activity(&transaction, post).await?;
     transaction.commit().await.map_err(internal_error)?;
 
-    let post = load_post(database, channel_id, post_id).await?;
+    let post = get_post(database, channel_id, post_id).await?;
     shape_post_summaries(database, vec![post])
         .await?
         .into_iter()
@@ -763,7 +763,7 @@ fn latest_forum_activity(
         .expect("post creation always provides forum activity")
 }
 
-async fn load_post<C>(
+async fn get_post<C>(
     database: &C,
     channel_id: Uuid,
     post_id: Uuid,
@@ -779,7 +779,7 @@ where
         .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "Post not found."))
 }
 
-async fn load_post_for_update<C>(
+async fn get_post_for_update<C>(
     database: &C,
     channel_id: Uuid,
     post_id: Uuid,

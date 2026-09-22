@@ -29,7 +29,7 @@ impl FromRequestParts<PollsState> for PollDeleteContext {
             })?;
         let AuthenticatedUser(user_id) =
             AuthenticatedUser::from_request_parts(parts, state).await?;
-        let poll = service::load_poll(
+        let poll = service::get_poll(
             &state.database,
             path.server_id,
             path.channel_id,

@@ -3,11 +3,17 @@ use entity::{
     enums::{NotificationKind, VoteType},
     notifications, poll_actions, polls, server_roles, votes,
 };
-use sea_orm::{ColumnTrait, EntityTrait, PaginatorTrait, QueryFilter};
+use sea_orm::{
+    ColumnTrait, ConnectionTrait, DbBackend, EntityTrait, PaginatorTrait,
+    QueryFilter, Statement, TransactionTrait,
+};
 use serde_json::{json, Value};
 use uuid::Uuid;
 
 use crate::support::{json_body, TestApp};
+
+const LOCK_WAIT_GRACE: std::time::Duration =
+    std::time::Duration::from_millis(500);
 
 struct TestUser {
     token: String,
@@ -251,6 +257,270 @@ async fn a_block_stops_counting_once_its_voter_loses_the_permission() {
 }
 
 #[tokio::test]
+async fn votes_from_removed_members_stop_counting_toward_the_outcome() {
+    let app = TestApp::new().await;
+    let proposer = signup_user(&app, "proposer@example.com", "Proposer").await;
+    let departed = signup_user(&app, "departed@example.com", "Departed").await;
+    let voter = signup_user(&app, "voter@example.com", "Voter").await;
+    let (server_id, channel_id) = default_server_channel(&app).await;
+    set_consensus_config(&app, &proposer, &server_id, true).await;
+
+    let poll_id =
+        create_proposal(&app, &proposer, &server_id, &channel_id).await;
+    assert_eq!(
+        vote(
+            &app,
+            &departed,
+            &server_id,
+            &channel_id,
+            &poll_id,
+            "disagree"
+        )
+        .await
+        .status(),
+        StatusCode::OK
+    );
+
+    let removal = app
+        .delete_json_with_bearer(
+            &format!("/api/servers/{server_id}/members"),
+            &json!({ "userIds": [departed.user_id] }),
+            &proposer.token,
+        )
+        .await;
+    assert_eq!(removal.status(), StatusCode::OK);
+
+    let response =
+        vote(&app, &voter, &server_id, &channel_id, &poll_id, "agree").await;
+    assert_eq!(response.status(), StatusCode::OK);
+    assert!(json_body(response).await["vote"]["isRatifyingVote"]
+        .as_bool()
+        .unwrap());
+    assert_eq!(poll_stage(&app, &poll_id).await, "ratified");
+}
+
+#[tokio::test]
+async fn quorum_counts_votes_and_members_from_one_snapshot() {
+    let app = TestApp::new().await;
+    let proposer = signup_user(&app, "proposer@example.com", "Proposer").await;
+    let blocker = signup_user(&app, "blocker@example.com", "Blocker").await;
+    let departed = signup_user(&app, "departed@example.com", "Departed").await;
+    let voter = signup_user(&app, "voter@example.com", "Voter").await;
+    let (server_id, channel_id) = default_server_channel(&app).await;
+
+    let config_response = app
+        .put_json_with_bearer(
+            &format!("/api/servers/{server_id}/configs"),
+            &json!({
+                "decisionMakingModel": "consensus",
+                "agreementThreshold": 51,
+                "disagreementsLimit": 2,
+                "abstainsLimit": 2,
+                "quorumEnabled": true,
+                "quorumThreshold": 60,
+                "votingTimeLimit": 0,
+                "blocksOpenToAll": false,
+            }),
+            &proposer.token,
+        )
+        .await;
+    assert_eq!(config_response.status(), StatusCode::OK);
+    let role_id =
+        grant_proposal_block(&app, &proposer, &server_id, &blocker).await;
+
+    let poll_id =
+        create_proposal(&app, &proposer, &server_id, &channel_id).await;
+    assert_eq!(
+        block(&app, &blocker, &server_id, &channel_id, &poll_id)
+            .await
+            .status(),
+        StatusCode::OK
+    );
+    assert_eq!(
+        vote(&app, &departed, &server_id, &channel_id, &poll_id, "agree")
+            .await
+            .status(),
+        StatusCode::OK
+    );
+    let revoke_block = app
+        .delete_with_bearer(
+            &format!(
+                "/api/servers/{server_id}/roles/{role_id}/members/{}",
+                blocker.user_id
+            ),
+            &proposer.token,
+        )
+        .await;
+    assert_eq!(revoke_block.status(), StatusCode::OK);
+
+    let role_members_lock = app.database().begin().await.unwrap();
+    role_members_lock
+        .execute_unprepared(
+            "LOCK TABLE server_role_members IN ACCESS EXCLUSIVE MODE",
+        )
+        .await
+        .unwrap();
+
+    let remove_departed_during_evaluation = async {
+        wait_for_lock_waiter(&app, "server_role_members").await;
+        app.database()
+            .execute_unprepared(&format!(
+                "DELETE FROM channel_members WHERE user_id = '{0}';
+                 DELETE FROM server_members WHERE user_id = '{0}';",
+                departed.user_id
+            ))
+            .await
+            .unwrap();
+        role_members_lock.commit().await.unwrap();
+    };
+    let (response, ()) = tokio::join!(
+        vote(&app, &voter, &server_id, &channel_id, &poll_id, "agree"),
+        remove_departed_during_evaluation,
+    );
+
+    assert_eq!(response.status(), StatusCode::OK);
+    assert!(!json_body(response).await["vote"]["isRatifyingVote"]
+        .as_bool()
+        .unwrap());
+    assert_eq!(poll_stage(&app, &poll_id).await, "voting");
+}
+
+#[tokio::test]
+async fn electorate_changes_wait_for_an_in_flight_proposal_finalization() {
+    let app = TestApp::new().await;
+    let proposer = signup_user(&app, "proposer@example.com", "Proposer").await;
+    let departed = signup_user(&app, "departed@example.com", "Departed").await;
+    let voter = signup_user(&app, "voter@example.com", "Voter").await;
+    let joiner = signup_user(&app, "joiner@example.com", "Joiner").await;
+    let (server_id, channel_id) = default_server_channel(&app).await;
+    set_consensus_config(&app, &proposer, &server_id, true).await;
+    app.database()
+        .execute_unprepared(&format!(
+            "DELETE FROM channel_members WHERE user_id = '{0}';
+             DELETE FROM server_members WHERE user_id = '{0}';",
+            joiner.user_id
+        ))
+        .await
+        .unwrap();
+
+    let poll_id =
+        create_proposal(&app, &proposer, &server_id, &channel_id).await;
+    assert_eq!(
+        vote(
+            &app,
+            &proposer,
+            &server_id,
+            &channel_id,
+            &poll_id,
+            "disagree"
+        )
+        .await
+        .status(),
+        StatusCode::OK
+    );
+    assert_eq!(
+        vote(&app, &departed, &server_id, &channel_id, &poll_id, "agree")
+            .await
+            .status(),
+        StatusCode::OK
+    );
+
+    let poll_actions_lock = app.database().begin().await.unwrap();
+    poll_actions_lock
+        .execute_unprepared("LOCK TABLE poll_actions IN ACCESS EXCLUSIVE MODE")
+        .await
+        .unwrap();
+
+    let change_electorate_during_finalization = async {
+        wait_for_lock_waiter(&app, "poll_actions").await;
+        let members_uri = format!("/api/servers/{server_id}/members");
+        let removal_body = json!({ "userIds": [departed.user_id] });
+        let addition_body = json!({ "userIds": [joiner.user_id] });
+        let removal = app.delete_json_with_bearer(
+            &members_uri,
+            &removal_body,
+            &proposer.token,
+        );
+        let addition = app.post_json_with_bearer(
+            &members_uri,
+            &addition_body,
+            &proposer.token,
+        );
+        tokio::pin!(removal, addition);
+        let removed_mid_finalization =
+            tokio::time::timeout(LOCK_WAIT_GRACE, &mut removal)
+                .await
+                .is_ok();
+        let added_mid_finalization =
+            tokio::time::timeout(LOCK_WAIT_GRACE, &mut addition)
+                .await
+                .is_ok();
+        poll_actions_lock.commit().await.unwrap();
+        if !removed_mid_finalization {
+            assert_eq!(removal.await.status(), StatusCode::OK);
+        }
+        if !added_mid_finalization {
+            assert_eq!(addition.await.status(), StatusCode::OK);
+        }
+        (removed_mid_finalization, added_mid_finalization)
+    };
+    let (response, (removed_mid_finalization, added_mid_finalization)) = tokio::join!(
+        vote(&app, &voter, &server_id, &channel_id, &poll_id, "agree"),
+        change_electorate_during_finalization,
+    );
+
+    assert_eq!(response.status(), StatusCode::OK);
+    assert!(!removed_mid_finalization);
+    assert!(!added_mid_finalization);
+    assert_eq!(poll_stage(&app, &poll_id).await, "ratified");
+}
+
+#[tokio::test]
+async fn a_member_removed_after_vote_authorization_cannot_vote() {
+    let app = TestApp::new().await;
+    let proposer = signup_user(&app, "proposer@example.com", "Proposer").await;
+    let departed = signup_user(&app, "departed@example.com", "Departed").await;
+    let (server_id, channel_id) = default_server_channel(&app).await;
+    set_consensus_config(&app, &proposer, &server_id, true).await;
+    let poll_id =
+        create_proposal(&app, &proposer, &server_id, &channel_id).await;
+
+    let polls_lock = app.database().begin().await.unwrap();
+    polls_lock
+        .execute_unprepared("LOCK TABLE polls IN EXCLUSIVE MODE")
+        .await
+        .unwrap();
+
+    let remove_departed_after_authorization = async {
+        wait_for_lock_waiter(&app, "polls").await;
+        app.database()
+            .execute_unprepared(&format!(
+                "DELETE FROM channel_members WHERE user_id = '{0}';
+                 DELETE FROM server_members WHERE user_id = '{0}';",
+                departed.user_id
+            ))
+            .await
+            .unwrap();
+        polls_lock.commit().await.unwrap();
+    };
+    let (response, ()) = tokio::join!(
+        vote(&app, &departed, &server_id, &channel_id, &poll_id, "agree"),
+        remove_departed_after_authorization,
+    );
+
+    assert_eq!(response.status(), StatusCode::FORBIDDEN);
+    let departed_votes = votes::Entity::find()
+        .filter(
+            votes::Column::UserId
+                .eq(Uuid::parse_str(&departed.user_id).unwrap()),
+        )
+        .count(app.database())
+        .await
+        .unwrap();
+    assert_eq!(departed_votes, 0);
+}
+
+#[tokio::test]
 async fn withdrawing_a_vote_retracts_the_notification_it_created() {
     let app = TestApp::new().await;
     let author = signup_user(&app, "author@example.com", "Author").await;
@@ -460,6 +730,25 @@ async fn vote(
         &voter.token,
     )
     .await
+}
+
+async fn wait_for_lock_waiter(app: &TestApp, table: &str) {
+    let statement = Statement::from_sql_and_values(
+        DbBackend::Postgres,
+        "SELECT COUNT(*) AS waiting FROM pg_locks \
+         JOIN pg_class ON pg_class.oid = pg_locks.relation \
+         WHERE pg_class.relname = $1 AND NOT pg_locks.granted",
+        [table.into()],
+    );
+    for _ in 0..500 {
+        let row = app.database().query_one(statement.clone()).await.unwrap();
+        let waiting: i64 = row.unwrap().try_get("", "waiting").unwrap();
+        if waiting > 0 {
+            return;
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(10)).await;
+    }
+    panic!("expected a query to wait on the {table} lock");
 }
 
 async fn poll_stage(app: &TestApp, poll_id: &str) -> String {

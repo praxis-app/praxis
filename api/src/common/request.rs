@@ -127,6 +127,8 @@ async fn multipart_file(
     mut multipart: Multipart,
     field_name: &str,
 ) -> AppResult<Option<MultipartFile>> {
+    // Multipart is an async stream with no iterator; it ends at the body's
+    // final boundary, and body size is capped by the request limit
     while let Some(field) =
         multipart.next_field().await.map_err(internal_error)?
     {

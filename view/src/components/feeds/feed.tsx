@@ -206,7 +206,8 @@ export const Feed = ({
                 }
                 onCopyThreadLink={
                   onOpenThread &&
-                  (() => copyLinkToThread({ rootKind: 'poll', rootId: item.id }))
+                  (() =>
+                    copyLinkToThread({ rootKind: 'poll', rootId: item.id }))
                 }
               />
             );
@@ -268,7 +269,8 @@ export const Feed = ({
             me={me}
             onOpenThread={
               onOpenThread &&
-              ((rootId: string) => onOpenThread({ rootKind: 'message', rootId }))
+              ((rootId: string) =>
+                onOpenThread({ rootKind: 'message', rootId }))
             }
             onCopyThreadLink={
               onOpenThread &&

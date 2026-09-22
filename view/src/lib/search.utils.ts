@@ -133,6 +133,8 @@ export const splitExcerptForHighlight = (
   const segments: ExcerptSegment[] = [];
   let cursor = 0;
 
+  // Terminates because the early return above guarantees a non-empty needle,
+  // so each match moves the cursor forward
   while (cursor < excerpt.length) {
     const matchIndex = haystack.indexOf(needle, cursor);
     if (matchIndex === -1) {

@@ -315,9 +315,7 @@ export const PollSettingsForm = ({
               render={({ field }) => (
                 <FormItem className="flex items-center justify-between gap-4 md:gap-16">
                   <div className="space-y-1">
-                    <FormLabel>
-                      {t('settings.names.blocksOpenToAll')}
-                    </FormLabel>
+                    <FormLabel>{t('settings.names.blocksOpenToAll')}</FormLabel>
                     <FormDescription>
                       {t('settings.descriptions.blocksOpenToAll')}
                     </FormDescription>

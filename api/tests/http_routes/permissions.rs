@@ -701,6 +701,43 @@ async fn a_role_holding_the_all_subject_keeps_blocking() {
     assert_eq!(response.status(), StatusCode::OK);
 }
 
+#[tokio::test]
+async fn removed_members_lose_their_server_role_permissions() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let member = signup(&app, "member@example.com", "Member Example").await;
+    let server_id = default_server_id(&app).await;
+    let uri = format!("/api/servers/{server_id}/channels");
+    grant_all_subject(&app, &admin, &server_id, &member).await;
+
+    let before_removal = app
+        .post_json_with_bearer(
+            &uri,
+            &json!({ "name": "before-removal" }),
+            &member.token,
+        )
+        .await;
+    assert_eq!(before_removal.status(), StatusCode::OK);
+
+    let removal = app
+        .delete_json_with_bearer(
+            &format!("/api/servers/{server_id}/members"),
+            &json!({ "userIds": [member.user_id] }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(removal.status(), StatusCode::OK);
+
+    let after_removal = app
+        .post_json_with_bearer(
+            &uri,
+            &json!({ "name": "after-removal" }),
+            &member.token,
+        )
+        .await;
+    assert_eq!(after_removal.status(), StatusCode::FORBIDDEN);
+}
+
 async fn restrict_blocks(app: &TestApp, admin: &TestUser, server_id: &str) {
     let response = app
         .put_json_with_bearer(

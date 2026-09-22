@@ -1,7 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import {
-  splitExcerptForHighlight,
-} from '@/lib/search.utils';
+import { splitExcerptForHighlight } from '@/lib/search.utils';
 import { formatDate } from '@/lib/time.utils';
 import { type SearchResultRes } from '@/types/search.types';
 import { useTranslation } from 'react-i18next';

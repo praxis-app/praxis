@@ -27,7 +27,7 @@ use crate::{
 };
 
 const MAX_POLL_BODY_LENGTH: usize = 8_000;
-pub(crate) struct PreparedPollCreation {
+pub(crate) struct PreparedPoll {
     request: CreatePollRequest,
     server_id: Uuid,
     channel_id: Uuid,
@@ -43,28 +43,25 @@ pub(crate) async fn prepare_forum_proposal(
     channel_id: Uuid,
     user_id: Uuid,
     request: CreatePollRequest,
-) -> AppResult<PreparedPollCreation> {
+) -> AppResult<PreparedPoll> {
     if request.poll_type != PollType::Proposal {
         return Err(ApiError::new(
             StatusCode::UNPROCESSABLE_ENTITY,
             "A forum post can only include a proposal.",
         ));
     }
-    prepare_poll_creation(
-        database, server_id, channel_id, user_id, request, true,
-    )
-    .await
+    prepare_poll(database, server_id, channel_id, user_id, request, true).await
 }
 
-pub(super) async fn prepare_poll_creation(
+pub(super) async fn prepare_poll(
     database: &DatabaseConnection,
     server_id: Uuid,
     channel_id: Uuid,
     user_id: Uuid,
     request: CreatePollRequest,
     allow_forum_proposal: bool,
-) -> AppResult<PreparedPollCreation> {
-    validate_create_poll(&request)?;
+) -> AppResult<PreparedPoll> {
+    validate_poll_request(&request)?;
 
     let body = request
         .body
@@ -126,7 +123,7 @@ pub(super) async fn prepare_poll_creation(
         None => None,
     };
 
-    Ok(PreparedPollCreation {
+    Ok(PreparedPoll {
         request,
         server_id,
         channel_id,
@@ -141,9 +138,9 @@ pub(crate) async fn insert_prepared_poll<C: ConnectionTrait>(
     database: &C,
     call_id: Option<Uuid>,
     user_id: Uuid,
-    prepared: PreparedPollCreation,
+    prepared: PreparedPoll,
 ) -> AppResult<polls::Model> {
-    let PreparedPollCreation {
+    let PreparedPoll {
         request,
         server_id,
         channel_id,
@@ -222,13 +219,22 @@ pub(crate) async fn insert_prepared_poll<C: ConnectionTrait>(
     Ok(poll)
 }
 
-pub(crate) async fn attach_poll_creation_images<C: ConnectionTrait>(
+/// Files uploaded alongside a new poll or proposal
+pub(crate) struct PollImageUploads {
+    pub(crate) images: Vec<Vec<u8>>,
+    pub(crate) cover_photo: Option<Vec<u8>>,
+}
+
+pub(crate) async fn attach_poll_images<C: ConnectionTrait>(
     database: &C,
     upload_root: &Path,
     poll_id: Uuid,
-    images: Vec<Vec<u8>>,
-    cover_photo: Option<Vec<u8>>,
+    uploads: PollImageUploads,
 ) -> AppResult<Vec<PathBuf>> {
+    let PollImageUploads {
+        images,
+        cover_photo,
+    } = uploads;
     if images.len() > MAX_ATTACHMENT_FILES {
         return Err(ApiError::new(
             StatusCode::UNPROCESSABLE_ENTITY,
@@ -312,7 +318,7 @@ async fn attach_poll_image<C: ConnectionTrait>(
     Ok(destination)
 }
 
-pub(crate) async fn commit_creation(
+pub(crate) async fn commit_with_image_cleanup(
     transaction: sea_orm::DatabaseTransaction,
     image_paths: Vec<PathBuf>,
 ) -> AppResult<()> {
@@ -372,7 +378,7 @@ fn resolve_poll_closing_at(
         .then(|| now + Duration::minutes(i64::from(voting_time_limit)))
 }
 
-fn validate_create_poll(request: &CreatePollRequest) -> AppResult<()> {
+fn validate_poll_request(request: &CreatePollRequest) -> AppResult<()> {
     if request
         .body
         .as_ref()

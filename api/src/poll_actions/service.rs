@@ -21,7 +21,7 @@ use super::{
 pub(crate) use super::{
     events::{
         attach_event_cover_photo, event_cover_photo_storage_key,
-        load_event_cover_photo, plan_event_closed_reason,
+        get_proposed_event_cover_photo, plan_event_closed_reason,
     },
     settings::validate_server_config_change,
 };
