@@ -52,7 +52,7 @@ can use help in several areas:
   concurrency, and background tasks
 
 - **Security:** authentication, authorization, permissions, threat
-  modeling, encrypted content, and secure file handling
+  modeling, encrypted content, secure file handling, and security testing
 
 - **UI/UX:** interaction design, user research, accessibility, information
   architecture, visual design, and interface copy
@@ -124,6 +124,11 @@ written in the imperative mood.
 ## Reporting bugs
 
 Bugs are tracked in [GitHub issues](https://github.com/praxis-app/praxis/issues).
+
+If you believe you've found a security vulnerability, please do not open a
+public issue. Follow the reporting instructions in [SECURITY.md](SECURITY.md)
+instead.
+
 [Open a new issue](https://github.com/praxis-app/praxis/issues/new) with:
 
 - A quick summary and any relevant background
