@@ -51,10 +51,10 @@ can use help in several areas:
 - **Backend development:** Rust, Axum, SeaORM, PostgreSQL, API design,
   concurrency, and background tasks
 
-- **Security and privacy:** authentication, authorization, permissions, threat
+- **Security:** authentication, authorization, permissions, threat
   modeling, encrypted content, and secure file handling
 
-- **UI and UX:** interaction design, user research, accessibility, information
+- **UI/UX:** interaction design, user research, accessibility, information
   architecture, visual design, and interface copy
 
 - **Testing and quality:** Playwright, Vitest, Rust integration tests,
