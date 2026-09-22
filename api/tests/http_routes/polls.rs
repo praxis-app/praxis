@@ -300,7 +300,7 @@ async fn votes_from_removed_members_stop_counting_toward_the_outcome() {
 }
 
 #[tokio::test]
-async fn a_member_removed_mid_evaluation_does_not_mix_electorates() {
+async fn quorum_counts_votes_and_members_from_one_snapshot() {
     let app = TestApp::new().await;
     let proposer = signup_user(&app, "proposer@example.com", "Proposer").await;
     let blocker = signup_user(&app, "blocker@example.com", "Blocker").await;
