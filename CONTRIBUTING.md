@@ -11,31 +11,27 @@ when preparing and reviewing a contribution.
 ## Getting involved
 
 The goal is to give each contributor a clear, useful piece of work without
-duplicating someone else's effort. These steps offer a starting point, but you
-can ask a maintainer for help at any point:
+duplicating someone else's effort. These steps are a good place to start, and
+you can ask a maintainer for help at any point:
 
-1. Choose a contribution area that matches your interests or something you
-   want to learn.
+1. Find an open issue that matches your interests or something you want to
+   learn. If you're new to the project, a small, focused issue is usually the
+   best place to start.
 
-2. Review the open issues. If the work is not represented, open an issue that
-   explains the problem, the desired outcome, and any relevant context.
+2. If the work is not already represented, open an issue describing the
+   problem or idea and the desired outcome. Before starting substantial work,
+   comment on the issue so a maintainer can confirm the scope and help avoid
+   duplicated effort. Small fixes can usually go directly to a pull request.
 
-3. Comment before starting substantial work. A maintainer can confirm the
-   scope, identify dependencies, and make sure someone is available to review
-   it. Small fixes can usually move directly to a pull request.
+3. Create a branch, make the change, and run the checks relevant to it. Keep
+   the change focused, and ask for help if the work grows beyond the original
+   scope.
 
-4. Agree on a manageable first step. New contributors should start with a
-   focused issue or one part of a larger feature, with a clear result and a way
-   to verify it.
+4. Open a pull request that links the issue and explains what changed, how it
+   was tested, and anything still unresolved.
 
-5. Create a branch, make the change, and run the checks relevant to it. Ask for
-   help early if the task grows beyond the agreed scope.
-
-6. Open a pull request that links the issue and explains the change, how it was
-   tested, and anything still unresolved.
-
-7. Address feedback with the maintainers. Ask questions when anything is
-   unclear, and work together on any agreed upon changes.
+5. Work with the maintainers to address review feedback. Ask questions when
+   anything is unclear, and update the pull request as needed.
 
 ## Getting set up
 
