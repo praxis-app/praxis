@@ -2,7 +2,7 @@
 
 Praxis is open to contributions of all kinds. Because the project is still
 taking shape, contributors can help shape both the codebase and the app itself.
-That might mean reporting a bug, discussing the state of the code, improving
+That might mean reporting a bug, providing feedback on the codebase, improving
 documentation or design, submitting a fix, or proposing a feature.
 
 This guide covers how to get involved, where help is needed, and what to expect
@@ -16,7 +16,8 @@ you can ask a maintainer for help at any point:
 
 1. Find an open issue that matches your interests or something you want to
    learn. If you're new to the project, a small, focused issue is usually the
-   best place to start.
+   best place to start. If an issue is already assigned or someone has said
+   they're working on it, check in before starting overlapping work.
 
 2. If the work is not already represented, open an issue describing the
    problem or idea and the desired outcome. Before starting substantial work,
@@ -86,8 +87,8 @@ Changes happen through pull requests, following
 
 ## Checks
 
-Run the checks relevant to your change. Those checks should pass before
-a pull request is ready for review:
+Run the checks relevant to your change. Those checks should pass before a
+pull request is ready for review:
 
 ```bash
 # Frontend and shared TypeScript
@@ -136,7 +137,7 @@ instead.
 - What you expected to happen, and what happened instead
 - Your environment: operating system, Rust and Node versions, and whether you
   were running through Docker
-- Anything you already tried, and what you suspect is going on
+- Anything you've already tried, and any suspected cause
 
 ## Code of conduct
 
