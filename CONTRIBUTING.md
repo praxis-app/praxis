@@ -78,7 +78,7 @@ valuable as writing production code.
 Changes happen through pull requests, following
 [GitHub flow](https://docs.github.com/en/get-started/using-github/github-flow):
 
-1. Fork the repo and create your branch from `main`.
+1. Fork the repo, or create a branch if you have write access, starting from `main`.
 2. Add tests for code that should be tested.
 3. Update documentation when behavior or APIs change.
 4. Run the checks below.
@@ -86,8 +86,8 @@ Changes happen through pull requests, following
 
 ## Checks
 
-Run what your change touches. Everything must pass before a pull request is
-ready:
+Run the checks relevant to your change. Those checks should pass before
+a pull request is ready for review:
 
 ```bash
 # Frontend and shared TypeScript
@@ -132,6 +132,10 @@ Bugs are tracked in [GitHub issues](https://github.com/praxis-app/praxis/issues)
 - Your environment: operating system, Rust and Node versions, and whether you
   were running through Docker
 - Anything you already tried, and what you suspect is going on
+
+## Code of conduct
+
+All contributors are expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ## License
 
