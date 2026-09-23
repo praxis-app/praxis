@@ -43,11 +43,7 @@
   "compounds": [
     {
       "name": "Debug App",
-      "configurations": [
-        "Debug Server",
-        "Debug Client",
-        "LiveKit Server"
-      ],
+      "configurations": ["Debug Server", "Debug Client", "LiveKit Server"],
       "stopAll": true
     }
   ]

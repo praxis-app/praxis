@@ -12,7 +12,7 @@ when preparing and reviewing a contribution.
 
 The goal is to give each contributor a clear, useful piece of work without
 duplicating someone else's effort. These steps are a good place to start, and
-you can ask a maintainer for help at any point:
+you can ask a maintainer for help in the relevant issue at any point:
 
 1. Find an open issue that matches your interests or something you want to
    learn. If you're new to the project, a small, focused issue is usually the
@@ -21,18 +21,12 @@ you can ask a maintainer for help at any point:
 
 2. If the work is not already represented, open an issue describing the
    problem or idea and the desired outcome. Before starting substantial work,
-   comment on the issue so a maintainer can confirm the scope and help avoid
-   duplicated effort. Small fixes can usually go directly to a pull request.
+   note in the issue that you'd like to work on it so a maintainer can confirm
+   the scope and help avoid duplicated effort. Small fixes can usually go
+   directly to a pull request.
 
-3. Create a branch, make the change, and run the checks relevant to it. Keep
-   the change focused, and ask for help if the work grows beyond the original
-   scope.
-
-4. Open a pull request that links the issue and explains what changed, how it
-   was tested, and anything still unresolved.
-
-5. Work with the maintainers to address review feedback. Ask questions when
-   anything is unclear, and update the pull request as needed.
+3. Keep the work focused on the agreed scope, and ask for help if it grows
+   beyond it.
 
 ## Getting set up
 
@@ -79,11 +73,15 @@ valuable as writing production code.
 Changes happen through pull requests, following
 [GitHub flow](https://docs.github.com/en/get-started/using-github/github-flow):
 
-1. Fork the repo, or create a branch if you have write access, starting from `main`.
+1. Fork the repo, or create a branch if you have write access, starting from
+   `main`.
 2. Add tests for code that should be tested.
 3. Update documentation when behavior or APIs change.
 4. Run the checks below.
-5. Open the pull request.
+5. Open a pull request that links the issue and explains what changed, how it
+   was tested, and anything still unresolved.
+6. Work with the maintainers to address review feedback. Ask questions when
+   anything is unclear, and update the pull request as needed.
 
 ## Checks
 
@@ -104,17 +102,18 @@ npm run test:rust
 npm run test:e2e
 ```
 
-`npm run check` runs TypeScript, ESLint, and `npm audit`. `npm run test-all`
-runs the frontend, Rust, and end-to-end suites in sequence. The API integration
-tests create temporary databases on your local PostgreSQL, so they need `psql`
-and permission to create and drop databases.
+`npm run check` runs TypeScript, ESLint, Prettier, and `npm audit`.
+`npm run test-all` runs the frontend, Rust, and end-to-end suites in sequence.
+The API integration tests create temporary databases on your local PostgreSQL,
+so they need `psql` and permission to create and drop databases.
 
 ## Code style
 
 ESLint and Prettier cover TypeScript, configured in `eslint.config.js` and
-`.prettierrc`. Rust formatting follows `rustfmt.toml` through `cargo fmt`. Note
-that `npm run lint` reports problems rather than fixing them; run Prettier from
-your editor or with `npx prettier --write <paths>`.
+`.prettierrc`. Rust formatting follows `rustfmt.toml` through `cargo fmt`.
+Both `npm run lint` and `npm run format:check` report problems without changing
+files. To apply Prettier formatting, use your editor or run
+`npx prettier --write <paths>`.
 
 ## Commit messages
 
@@ -135,8 +134,8 @@ instead.
 - A quick summary and any relevant background
 - Specific steps to reproduce, with sample code where it helps
 - What you expected to happen, and what happened instead
-- Your environment: operating system, Rust and Node versions, and whether you
-  were running through Docker
+- Your environment: operating system, browser and version, Rust and Node
+  versions, and whether you were running through Docker
 - Anything you've already tried, and any suspected cause
 
 ## Code of conduct
@@ -145,7 +144,6 @@ All contributors are expected to follow the [Code of Conduct](CODE_OF_CONDUCT.md
 
 ## License
 
-Praxis is licensed under the
-[GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
+Praxis is licensed under the [GNU General Public License v3](LICENSE).
 By contributing, you agree that your contributions are licensed under it as
 well.
