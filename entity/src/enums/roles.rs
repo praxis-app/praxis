@@ -75,6 +75,10 @@ pub enum ServerAbilitySubject {
     ServerRole,
     #[sea_orm(string_value = "ProposalBlock")]
     ProposalBlock,
+    #[sea_orm(string_value = "ServerMember")]
+    ServerMember,
+    #[sea_orm(string_value = "Call")]
+    Call,
     #[sea_orm(string_value = "all")]
     All,
 }
@@ -86,6 +90,8 @@ impl_enum_string_conversions!(ServerAbilitySubject {
     Message => "Message",
     ServerRole => "ServerRole",
     ProposalBlock => "ProposalBlock",
+    ServerMember => "ServerMember",
+    Call => "Call",
     All => "all",
 });
 
@@ -102,6 +108,12 @@ pub enum InstanceAbilitySubject {
     InstanceRole,
     #[sea_orm(string_value = "Server")]
     Server,
+    #[sea_orm(string_value = "Message")]
+    Message,
+    #[sea_orm(string_value = "Call")]
+    Call,
+    #[sea_orm(string_value = "User")]
+    User,
     #[sea_orm(string_value = "all")]
     All,
 }
@@ -110,5 +122,8 @@ impl_enum_string_conversions!(InstanceAbilitySubject {
     InstanceConfig => "InstanceConfig",
     InstanceRole => "InstanceRole",
     Server => "Server",
+    Message => "Message",
+    Call => "Call",
+    User => "User",
     All => "all",
 });

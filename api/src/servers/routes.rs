@@ -6,12 +6,13 @@ use sea_orm::DatabaseConnection;
 
 use super::{
     handlers::{
-        add_server_members, create_server, delete_server, get_default_server,
-        get_server_by_id, get_server_by_invite_token, get_server_by_slug,
-        get_server_config, get_server_image, get_server_members, get_servers,
+        add_server_members, ban_server_member, create_server, delete_server,
+        get_default_server, get_server_bans, get_server_by_id,
+        get_server_by_invite_token, get_server_by_slug, get_server_config,
+        get_server_image, get_server_members, get_servers,
         get_users_eligible_for_server, is_anonymous_users_enabled, join_server,
-        remove_server_members, set_current_server, update_server,
-        update_server_config, ServersState,
+        remove_server_member, remove_server_members, set_current_server,
+        unban_server_member, update_server, update_server_config, ServersState,
     },
     server_roles,
 };
@@ -52,6 +53,19 @@ pub(crate) fn router(
             "/servers/{serverId}/members/eligible",
             get(get_users_eligible_for_server),
         )
+        .route(
+            "/servers/{serverId}/members/{userId}/remove",
+            post(remove_server_member),
+        )
+        .route(
+            "/servers/{serverId}/members/{userId}/ban",
+            post(ban_server_member),
+        )
+        .route(
+            "/servers/{serverId}/members/{userId}/ban",
+            delete(unban_server_member),
+        )
+        .route("/servers/{serverId}/bans", get(get_server_bans))
         .route("/servers/{serverId}/configs", get(get_server_config))
         .route("/servers/{serverId}/configs", put(update_server_config))
         .route(
@@ -62,6 +76,8 @@ pub(crate) fn router(
             database.clone(),
             jwt_secret.clone(),
             cache_service,
+            pub_sub_service.clone(),
+            livekit.clone(),
         ));
 
     servers_router

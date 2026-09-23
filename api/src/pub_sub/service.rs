@@ -301,6 +301,40 @@ impl PubSubService {
         Ok(())
     }
 
+    pub(crate) async fn revoke_server_subscriptions(
+        &self,
+        server_id: Uuid,
+        user_id: Uuid,
+    ) {
+        let revoked = self
+            .registry
+            .socket_channels
+            .iter()
+            .flat_map(|entry| {
+                let socket_id = *entry.key();
+                entry
+                    .value()
+                    .iter()
+                    .filter(|channel| {
+                        PubSubTopic::parse(channel).is_some_and(|topic| {
+                            topic.server_id == server_id
+                                && topic.user_id == user_id
+                        })
+                    })
+                    .map(|channel| (socket_id, channel.clone()))
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>();
+
+        for (socket_id, channel) in revoked {
+            if let Err(error) = self.unsubscribe(socket_id, &channel).await {
+                tracing::warn!(
+                    "failed to revoke websocket subscription: {error}"
+                );
+            }
+        }
+    }
+
     async fn disconnect(&self, socket_id: Uuid) {
         self.registry.subscribers.remove(&socket_id);
 

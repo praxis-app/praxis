@@ -11,7 +11,8 @@ use std::collections::{BTreeSet, HashMap};
 use super::{
     livekit::{
         create_livekit_token, ensure_livekit_available,
-        settled_livekit_room_participant_count, LiveKitConfig,
+        remove_livekit_participant, settled_livekit_room_participant_count,
+        LiveKitConfig,
     },
     types::{
         CallArtifactResponse, CallResponse, CallSummaryResponse,
@@ -203,6 +204,35 @@ pub(crate) async fn get_call_statuses(
         .collect();
 
     Ok(statuses)
+}
+
+pub(crate) async fn disconnect_user_from_server_calls(
+    database: &DatabaseConnection,
+    livekit: Option<&LiveKitConfig>,
+    server_id: uuid::Uuid,
+    user_id: uuid::Uuid,
+) -> AppResult<()> {
+    let Some(livekit) = livekit else {
+        return Ok(());
+    };
+
+    let active_calls = calls::Entity::find()
+        .filter(calls::Column::ServerId.eq(server_id))
+        .filter(calls::Column::Status.is_in(ACTIVE_STATUSES))
+        .all(database)
+        .await
+        .map_err(internal_error)?;
+
+    for call in active_calls {
+        remove_livekit_participant(
+            livekit,
+            &call.livekit_room,
+            &user_id.to_string(),
+        )
+        .await?;
+    }
+
+    Ok(())
 }
 
 pub(crate) async fn get_call(

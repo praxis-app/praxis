@@ -11,6 +11,13 @@ pub(crate) struct ServerPath {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub(super) struct ServerMemberPath {
+    pub(super) server_id: Uuid,
+    pub(super) user_id: Uuid,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub(super) struct ServerImagePath {
     pub(super) server_id: Uuid,
     pub(super) image_id: Uuid,
@@ -88,6 +95,18 @@ pub(crate) struct UserResponse {
 #[derive(Debug, Serialize)]
 pub(crate) struct UsersPayload {
     pub(crate) users: Vec<UserResponse>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct ServerBanResponse {
+    pub(super) user: UserResponse,
+    pub(super) created_at: String,
+}
+
+#[derive(Debug, Serialize)]
+pub(super) struct ServerBansPayload {
+    pub(super) bans: Vec<ServerBanResponse>,
 }
 
 #[derive(Debug, Deserialize)]

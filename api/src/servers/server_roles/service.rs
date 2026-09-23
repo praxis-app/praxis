@@ -15,8 +15,8 @@ use uuid::Uuid as NativeUuid;
 use super::types::{RoleRequest, ServerRoleResponse};
 use crate::{
     authz::{
-        validate_permissions, PermissionMap, PermissionRule, ADMIN_ROLE_NAME,
-        DEFAULT_ROLE_COLOR,
+        self, validate_permissions, PermissionMap, PermissionRule,
+        ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR,
     },
     common::{text::sanitize_text, ApiError, AppResult},
     notifications as notifications_service,
@@ -33,6 +33,8 @@ const SERVER_SUBJECTS: &[&str] = &[
     "Message",
     "ServerRole",
     "ProposalBlock",
+    "ServerMember",
+    "Call",
     "all",
 ];
 
@@ -305,7 +307,11 @@ pub(super) async fn update_server_role_permissions(
     role_id: Uuid,
     permissions: Vec<PermissionRule>,
 ) -> AppResult<()> {
-    validate_permissions(&permissions, SERVER_SUBJECTS)?;
+    validate_permissions(
+        &permissions,
+        SERVER_SUBJECTS,
+        authz::SERVER_CAPABILITY_ACTIONS,
+    )?;
     get_server_role_record(database, server_id, role_id).await?;
     set_permissions(database, role_id, &permissions).await
 }

@@ -12,6 +12,7 @@ mod instance;
 mod invites;
 mod logging;
 mod messages;
+mod moderation;
 mod notifications;
 mod poll_actions;
 mod polls;
