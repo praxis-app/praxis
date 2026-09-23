@@ -398,12 +398,17 @@ async fn scan_forum_posts(
     let candidates = rows
         .into_iter()
         .map(|row| {
-            let mut fields = vec![EncryptedField {
-                ciphertext: row.ciphertext,
-                iv: row.iv,
-                tag: row.tag,
-                key_id: row.key_id,
-            }];
+            let mut fields = Vec::new();
+            if let (Some(ciphertext), Some(iv), Some(tag)) =
+                (row.ciphertext, row.iv, row.tag)
+            {
+                fields.push(EncryptedField {
+                    ciphertext,
+                    iv,
+                    tag,
+                    key_id: row.key_id,
+                });
+            }
             if let Some(field) = roots
                 .get(&row.root_message_id)
                 .and_then(encrypted_message_field)

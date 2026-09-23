@@ -175,12 +175,13 @@ pub(super) async fn create_forum_post(
         user_id: Set(user_id),
         root_message_id: Set(root_message_id),
         poll_id: Set(proposal.as_ref().map(|proposal| proposal.id)),
-        ciphertext: Set(encrypted_title.ciphertext),
-        iv: Set(encrypted_title.iv),
-        tag: Set(encrypted_title.tag),
+        ciphertext: Set(Some(encrypted_title.ciphertext)),
+        iv: Set(Some(encrypted_title.iv)),
+        tag: Set(Some(encrypted_title.tag)),
         key_id: Set(key.id),
         status: Set(ForumPostStatus::Open),
         latest_activity_at: Set(now),
+        moderated_at: Set(None),
         created_at: Set(now),
         updated_at: Set(now),
     }
@@ -352,9 +353,9 @@ pub(super) async fn update_forum_post(
     let mut active = post.into_active_model();
     if let Some((key_id, Some(encrypted_title), _)) = encrypted.as_ref() {
         active.key_id = Set(*key_id);
-        active.ciphertext = Set(encrypted_title.ciphertext.clone());
-        active.iv = Set(encrypted_title.iv.clone());
-        active.tag = Set(encrypted_title.tag.clone());
+        active.ciphertext = Set(Some(encrypted_title.ciphertext.clone()));
+        active.iv = Set(Some(encrypted_title.iv.clone()));
+        active.tag = Set(Some(encrypted_title.tag.clone()));
     }
     active.updated_at = Set(now);
     active.update(&transaction).await.map_err(internal_error)?;
