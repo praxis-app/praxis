@@ -23,7 +23,7 @@ you can ask a maintainer for help in the relevant issue at any point:
    problem or idea and the desired outcome. Before starting substantial work,
    note in the issue that you'd like to work on it so a maintainer can confirm
    the scope and help avoid duplicated effort. Small fixes can usually go
-   directly to a pull request.
+   directly to a [pull request](#pull-requests).
 
 3. Keep the work focused on the agreed scope, and ask for help if it grows
    beyond it.
