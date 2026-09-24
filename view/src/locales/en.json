@@ -799,6 +799,7 @@
       "add": "Add",
       "addMembers": "Add members",
       "delete": "Delete role",
+      "manageServerMembers": "Manage members",
       "manageServerRoles": "Manage roles",
       "viewRoles": "View roles"
     },
@@ -850,6 +851,7 @@
       "managePosts": "Manage posts",
       "manageQuestions": "Manage questions",
       "manageRules": "Manage rules",
+      "manageServerMembers": "Manage members",
       "manageServerRoles": "Manage roles",
       "manageServerSettings": "Manage settings",
       "manageServers": "Manage servers",
@@ -869,6 +871,7 @@
       "managePosts": "Allows members to remove or hide posts by other members.",
       "manageQuestions": "Allows members to create, edit, or delete membership questions.",
       "manageRules": "Allows members to create, edit, or delete rules for the server.",
+      "manageServerMembers": "Allows members to remove, ban, or unban other members of the server.",
       "manageServerRoles": "Allows members to create new roles as well as edit or delete other roles.",
       "manageServerSettings": "Allows members to make changes to the server's settings.",
       "manageServers": "Allows members to create new servers as well as edit or delete other servers.",
@@ -957,19 +960,33 @@
       "edit": "Edit Server",
       "details": "Server details",
       "profile": "Server profile",
-      "access": "Access"
+      "access": "Access",
+      "members": "Members"
     },
     "actions": {
       "addMembers": "Add members",
+      "ban": "Ban",
+      "banMember": "Ban member",
       "deleteServer": "Delete Server",
+      "memberActions": "Actions for {{name}}",
+      "removeMember": "Remove member",
+      "unban": "Unban",
       "manage": "Manage server",
       "switchTo": "Switch to server",
       "selectImage": "Select server image",
       "changeImage": "Change server image"
     },
     "labels": {
+      "bannedOn": "Banned on {{date}}",
+      "bannedUsers": "Banned users",
       "current": "Current server",
-      "default": "Default"
+      "default": "Default",
+      "membersCount_one": "{{count}} member",
+      "membersCount_other": "{{count}} members",
+      "reason": "Reason (optional)"
+    },
+    "placeholders": {
+      "reason": "Add a note for the moderation log"
     },
     "form": {
       "name": "Name",
@@ -992,7 +1009,10 @@
     },
     "prompts": {
       "creating": "Creating server...",
+      "banMember": "Ban server member?",
+      "noBans": "No banned users.",
       "removeMember": "Remove server member?",
+      "unbanMember": "Unban this user?",
       "switchServersDescription": "Choose another server to explore.",
       "noServersAvailable": "No other servers available."
     },
@@ -1188,6 +1208,7 @@
       "instanceRoles": "Instance Roles",
       "proposals": "Proposals",
       "invites": "Invite Links",
+      "members": "Members",
       "roles": "Roles",
       "events": "Events",
       "notifications": "Notifications",

@@ -19,6 +19,9 @@ export const getSettingsAccess = (
 ) => {
   const canManageServerSettings = serverAbility.can('manage', 'ServerConfig');
   const canManageServerRoles = serverAbility.can('manage', 'ServerRole');
+  const canManageServerMembers =
+    serverAbility.can('manage', 'ServerMember') ||
+    instanceAbility.can('manage', 'all');
   const canManageInstanceRoles = instanceAbility.can('manage', 'InstanceRole');
   const canManageServers = instanceAbility.can('manage', 'Server');
 
@@ -27,13 +30,17 @@ export const getSettingsAccess = (
     serverAbility.can('manage', 'Invite');
 
   const hasServerSettingsAccess =
-    canManageServerSettings || canManageServerRoles || canAccessInvites;
+    canManageServerSettings ||
+    canManageServerRoles ||
+    canManageServerMembers ||
+    canAccessInvites;
   const hasInstanceSettingsAccess = canManageInstanceRoles || canManageServers;
 
   return {
     canAccessInvites,
     canManageInstanceRoles,
     canManageServers,
+    canManageServerMembers,
     canManageServerRoles,
     canManageServerSettings,
     hasInstanceSettingsAccess,
@@ -64,6 +71,14 @@ export const getServerPermissionValues = (permissions: ServerPermission[]) =>
       return {
         value: permissions.some(
           (p) => p.subject === 'ServerRole' && p.action.includes('manage'),
+        ),
+        name,
+      };
+    }
+    if (name === 'manageServerMembers') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'ServerMember' && p.action.includes('manage'),
         ),
         name,
       };

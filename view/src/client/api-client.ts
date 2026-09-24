@@ -70,7 +70,12 @@ import {
   type SearchPageRes,
   type SearchQueryParams,
 } from '@/types/search.types';
-import { type ServerReq, type ServerRes } from '@/types/server.types';
+import {
+  type ServerBanRes,
+  type ServerMemberModerationReq,
+  type ServerReq,
+  type ServerRes,
+} from '@/types/server.types';
 import {
   type CurrentUserRes,
   type UpdateUserProfileReq,
@@ -740,6 +745,34 @@ class ApiClient {
     return this.executeRequest<void>('delete', path, {
       data: { userIds },
     });
+  };
+
+  removeServerMember = async (
+    serverId: string,
+    userId: string,
+    data: ServerMemberModerationReq,
+  ) => {
+    const path = `/servers/${serverId}/members/${userId}/remove`;
+    return this.executeRequest<void>('post', path, { data });
+  };
+
+  banServerMember = async (
+    serverId: string,
+    userId: string,
+    data: ServerMemberModerationReq,
+  ) => {
+    const path = `/servers/${serverId}/members/${userId}/ban`;
+    return this.executeRequest<void>('post', path, { data });
+  };
+
+  unbanServerMember = async (serverId: string, userId: string) => {
+    const path = `/servers/${serverId}/members/${userId}/ban`;
+    return this.executeRequest<void>('delete', path);
+  };
+
+  getServerBans = async (serverId: string) => {
+    const path = `/servers/${serverId}/bans`;
+    return this.executeRequest<{ bans: ServerBanRes[] }>('get', path);
   };
 
   joinServer = async (serverId: string, inviteToken: string) => {

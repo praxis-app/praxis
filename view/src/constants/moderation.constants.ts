@@ -1,0 +1,1 @@
+export const MAX_MODERATION_REASON_LENGTH = 500;

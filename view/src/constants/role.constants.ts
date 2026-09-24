@@ -13,6 +13,7 @@ export const SERVER_ROLE_ABILITY_SUBJECTS = [
   'Message',
   'ServerRole',
   'ProposalBlock',
+  'ServerMember',
   'all',
 ] as const;
 
@@ -32,6 +33,7 @@ export const SERVER_PERMISSION_KEYS = [
   'createInvites',
   'manageInvites',
   'manageServerRoles',
+  'manageServerMembers',
   'blockProposals',
 ] as const;
 
