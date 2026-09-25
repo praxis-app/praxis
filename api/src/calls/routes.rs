@@ -3,7 +3,8 @@ use sea_orm::DatabaseConnection;
 
 use super::{
     handlers::{
-        join_call, leave_call, livekit_webhook, start_call, CallsState,
+        end_call, join_call, leave_call, livekit_webhook, remove_participant,
+        start_call, CallsState,
     },
     livekit::LiveKitConfig,
 };
@@ -29,6 +30,11 @@ pub(crate) fn router(
         .route("/", post(start_call))
         .route("/{callId}/join", post(join_call))
         .route("/{callId}/leave", post(leave_call))
+        .route("/{callId}/end", post(end_call))
+        .route(
+            "/{callId}/participants/{userId}/remove",
+            post(remove_participant),
+        )
         .with_state(CallsState::new(
             database.clone(),
             jwt_secret.clone(),

@@ -165,6 +165,7 @@ pub(super) async fn shape_post_summaries(
                     .copied()
                     .unwrap_or_default(),
                 latest_activity_at: post.latest_activity_at.to_rfc3339(),
+                moderated_at: post.moderated_at.map(|value| value.to_rfc3339()),
                 created_at: post.created_at.to_rfc3339(),
                 updated_at: post.updated_at.to_rfc3339(),
             })

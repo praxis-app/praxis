@@ -7,16 +7,16 @@ use sea_orm::DatabaseConnection;
 use std::{path::PathBuf, sync::Arc};
 
 use super::{
-    service,
+    moderation, service,
     types::{
-        CallMessageImagePath, CreateCallMessageContext, CreateMessageRequest,
-        CreateReplyContext, CreateReplyRequest, ListRepliesPage,
-        ListRepliesQuery, MessageImagePath, MessagePayload, ThreadPath,
-        ThreadResponse,
+        CallMessageImagePath, CallMessagePath, CreateCallMessageContext,
+        CreateMessageRequest, CreateReplyContext, CreateReplyRequest,
+        ListRepliesPage, ListRepliesQuery, MessageImagePath, MessagePath,
+        MessagePayload, RemoveMessageRequest, ThreadPath, ThreadResponse,
     },
 };
 use crate::{
-    auth::{AuthenticatedUserOptional, HasJwtSecret},
+    auth::{AuthenticatedUser, AuthenticatedUserOptional, HasJwtSecret},
     calls::extractors::CallWriteContext,
     channels::{
         self,
@@ -29,6 +29,7 @@ use crate::{
         AppResult,
     },
     invites::InviteAccessToken,
+    moderation::ModerationReasonRequest,
     notifications,
     pub_sub::PubSubService,
 };
@@ -246,4 +247,70 @@ pub(super) async fn get_call_message_image(
     )
     .await?;
     safe_image_response(image.bytes)
+}
+
+pub(super) async fn remove_message(
+    State(chat_state): State<ChatState>,
+    Path(path): Path<MessagePath>,
+    AuthenticatedUser(user_id): AuthenticatedUser,
+    payload: Option<Json<ModerationReasonRequest>>,
+) -> AppResult<Json<MessagePayload>> {
+    remove_and_broadcast(
+        &chat_state,
+        RemoveMessageRequest {
+            server_id: path.server_id,
+            channel_id: path.channel_id,
+            call_id: None,
+            message_id: path.message_id,
+            actor_user_id: user_id,
+            reason: payload.and_then(|Json(payload)| payload.reason),
+        },
+    )
+    .await
+}
+
+pub(super) async fn remove_call_message(
+    State(chat_state): State<ChatState>,
+    Path(path): Path<CallMessagePath>,
+    AuthenticatedUser(user_id): AuthenticatedUser,
+    payload: Option<Json<ModerationReasonRequest>>,
+) -> AppResult<Json<MessagePayload>> {
+    remove_and_broadcast(
+        &chat_state,
+        RemoveMessageRequest {
+            server_id: path.server_id,
+            channel_id: path.channel_id,
+            call_id: Some(path.call_id),
+            message_id: path.message_id,
+            actor_user_id: user_id,
+            reason: payload.and_then(|Json(payload)| payload.reason),
+        },
+    )
+    .await
+}
+
+async fn remove_and_broadcast(
+    chat_state: &ChatState,
+    request: RemoveMessageRequest,
+) -> AppResult<Json<MessagePayload>> {
+    let removed = moderation::remove_message(
+        &chat_state.database,
+        &chat_state.upload_root,
+        &request,
+    )
+    .await?;
+    if let Err(error) = moderation::broadcast_removed_message(
+        &chat_state.database,
+        &chat_state.pub_sub_service,
+        &request,
+        &removed,
+    )
+    .await
+    {
+        tracing::warn!("failed to broadcast removed message: {error}");
+    }
+
+    Ok(Json(MessagePayload {
+        message: removed.message,
+    }))
 }

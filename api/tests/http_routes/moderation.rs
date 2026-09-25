@@ -1,10 +1,12 @@
 use axum::http::StatusCode;
 use entity::{
-    channel_members, channels,
+    calls, channel_members, channels,
     enums::{ModerationAction, ModerationTargetKind},
-    moderation_actions, server_bans, server_members,
+    messages, moderation_actions, server_bans, server_members, users,
 };
-use sea_orm::{ColumnTrait, EntityTrait, QueryFilter, QueryOrder};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QueryOrder, Set,
+};
 use serde_json::json;
 use uuid::Uuid;
 
@@ -223,7 +225,7 @@ async fn moderators_cannot_target_themselves_or_other_member_managers() {
     let peer_response = app
         .post_json_with_bearer(
             &member_uri(&server_id, &other_moderator, "remove"),
-            &json!({}),
+            &json!({ "reason": "Repeated harassment" }),
             &moderator.token,
         )
         .await;
@@ -232,7 +234,7 @@ async fn moderators_cannot_target_themselves_or_other_member_managers() {
     let admin_response = app
         .post_json_with_bearer(
             &member_uri(&server_id, &other_moderator, "remove"),
-            &json!({}),
+            &json!({ "reason": "Repeated harassment" }),
             &admin.token,
         )
         .await;
@@ -295,7 +297,9 @@ async fn banned_users_cannot_rejoin_until_unbanned() {
     assert!(!is_member(&app, &server_id, &member).await);
 
     for _ in 0..2 {
-        let unban = app.delete_with_bearer(&ban_uri, &admin.token).await;
+        let unban = app
+            .delete_json_with_bearer(&ban_uri, &json!({}), &admin.token)
+            .await;
         assert_eq!(unban.status(), StatusCode::OK);
     }
     let rejoin = join_server(&app, &member, &server_id, &invite_token).await;
@@ -326,7 +330,7 @@ async fn bans_require_a_reason_within_the_length_bounds() {
         json!({}),
         json!({ "reason": null }),
         json!({ "reason": "   " }),
-        json!({ "reason": "spam" }),
+        json!({ "reason": "abc" }),
         json!({ "reason": "a".repeat(501) }),
     ] {
         let response = app
@@ -646,4 +650,519 @@ async fn create_instance_role(
         .as_str()
         .unwrap()
         .to_owned()
+}
+
+#[tokio::test]
+async fn suspended_accounts_lose_access_until_restored() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    let suspend_uri = format!("/api/users/{}/suspend", member.user_id);
+
+    let missing_reason = app
+        .post_json_with_bearer(&suspend_uri, &json!({}), &admin.token)
+        .await;
+    assert_eq!(missing_reason.status(), StatusCode::UNPROCESSABLE_ENTITY);
+    let denied = app
+        .post_json_with_bearer(
+            &format!("/api/users/{}/suspend", admin.user_id),
+            &json!({ "reason": "Repeated harassment" }),
+            &member.token,
+        )
+        .await;
+    assert_eq!(denied.status(), StatusCode::FORBIDDEN);
+    let own_account = app
+        .post_json_with_bearer(
+            &format!("/api/users/{}/suspend", admin.user_id),
+            &json!({ "reason": "Repeated harassment" }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(own_account.status(), StatusCode::BAD_REQUEST);
+
+    for _ in 0..2 {
+        let response = app
+            .post_json_with_bearer(
+                &suspend_uri,
+                &json!({ "reason": "Repeated harassment" }),
+                &admin.token,
+            )
+            .await;
+        assert_eq!(response.status(), StatusCode::OK);
+    }
+
+    let me = app.get_with_bearer("/api/users/me", &member.token).await;
+    assert_eq!(me.status(), StatusCode::UNAUTHORIZED);
+    let optional_auth = app
+        .get_with_bearer(
+            &format!("/api/users/{}/profile", admin.user_id),
+            &member.token,
+        )
+        .await;
+    assert_eq!(optional_auth.status(), StatusCode::UNAUTHORIZED);
+    assert_eq!(
+        login(&app, "member@example.com").await,
+        StatusCode::UNAUTHORIZED
+    );
+
+    let users = app.get_with_bearer("/api/users", &admin.token).await;
+    assert_eq!(users.status(), StatusCode::OK);
+    let users = json_body(users).await;
+    let listed = users["users"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|user| user["id"] == json!(member.user_id))
+        .cloned()
+        .unwrap();
+    assert_eq!(listed["locked"], true);
+
+    let restore = app
+        .post_json_with_bearer(
+            &format!("/api/users/{}/restore", member.user_id),
+            &json!({}),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(restore.status(), StatusCode::OK);
+    let me = app.get_with_bearer("/api/users/me", &member.token).await;
+    assert_eq!(me.status(), StatusCode::OK);
+    assert_eq!(login(&app, "member@example.com").await, StatusCode::OK);
+
+    let actions = moderation_rows(&app, &member)
+        .await
+        .into_iter()
+        .map(|row| (row.action, row.server_id))
+        .collect::<Vec<_>>();
+    assert_eq!(
+        actions,
+        vec![
+            (ModerationAction::SuspendUser, None),
+            (ModerationAction::RestoreUser, None),
+        ]
+    );
+}
+
+#[tokio::test]
+async fn account_moderators_cannot_target_instance_administrators() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let moderator = signup(&app, "mod@example.com", "Moderator").await;
+    grant_instance_permission(&app, &admin, &moderator, "User", "update").await;
+
+    let response = app
+        .post_json_with_bearer(
+            &format!("/api/users/{}/suspend", admin.user_id),
+            &json!({ "reason": "Repeated harassment" }),
+            &moderator.token,
+        )
+        .await;
+    assert_eq!(response.status(), StatusCode::FORBIDDEN);
+
+    let delete = app
+        .delete_json_with_bearer(
+            &format!("/api/users/{}", admin.user_id),
+            &json!({ "reason": "Repeated harassment" }),
+            &moderator.token,
+        )
+        .await;
+    assert_eq!(delete.status(), StatusCode::FORBIDDEN);
+}
+
+#[tokio::test]
+async fn deleting_an_account_anonymizes_it_and_erases_its_content() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    let server_id = default_server_id(&app).await;
+    let channel_id = general_channel_id(&app, &server_id).await;
+    let message_id =
+        create_message(&app, &member, &server_id, &channel_id, "secret").await;
+    let delete_uri = format!("/api/users/{}", member.user_id);
+
+    for _ in 0..2 {
+        let response = app
+            .delete_json_with_bearer(
+                &delete_uri,
+                &json!({ "reason": "Account owner request" }),
+                &admin.token,
+            )
+            .await;
+        assert_eq!(response.status(), StatusCode::OK);
+    }
+
+    let me = app.get_with_bearer("/api/users/me", &member.token).await;
+    assert_eq!(me.status(), StatusCode::UNAUTHORIZED);
+    assert!(!is_member(&app, &server_id, &member).await);
+    assert_eq!(channel_membership_count(&app, &member).await, 0);
+
+    let user = users::Entity::find_by_id(user_uuid(&member))
+        .one(app.database())
+        .await
+        .unwrap()
+        .unwrap();
+    assert!(user.deleted_at.is_some());
+    assert!(user.locked);
+    assert_eq!(user.email, None);
+    assert_eq!(user.password, None);
+    assert_eq!(user.display_name.as_deref(), Some("Deleted user"));
+
+    let message =
+        messages::Entity::find_by_id(Uuid::parse_str(&message_id).unwrap())
+            .one(app.database())
+            .await
+            .unwrap()
+            .unwrap();
+    assert!(message.moderated_at.is_some());
+    assert_eq!(message.ciphertext, None);
+
+    let feed =
+        feed_message(&app, &admin, &server_id, &channel_id, &message_id).await;
+    assert!(feed["body"].is_null());
+    assert!(feed["moderatedAt"].is_string());
+    assert_eq!(feed["user"]["displayName"], "Deleted user");
+
+    let actions = moderation_rows(&app, &member).await;
+    assert_eq!(actions.len(), 1);
+    assert_eq!(actions[0].action, ModerationAction::DeleteUser);
+    assert_eq!(actions[0].reason.as_deref(), Some("Account owner request"));
+}
+
+#[tokio::test]
+async fn content_moderators_leave_tombstones_in_place_of_messages() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let moderator = signup(&app, "mod@example.com", "Moderator").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    let server_id = default_server_id(&app).await;
+    let channel_id = general_channel_id(&app, &server_id).await;
+    let message_id =
+        create_message(&app, &member, &server_id, &channel_id, "spam").await;
+    let remove_uri = format!(
+        "/api/servers/{server_id}/channels/{channel_id}/messages/{message_id}/remove"
+    );
+
+    let denied = app
+        .post_json_with_bearer(&remove_uri, &json!({}), &member.token)
+        .await;
+    assert_eq!(denied.status(), StatusCode::FORBIDDEN);
+
+    grant_server_permission(
+        &app, &admin, &server_id, &moderator, "Message", "delete",
+    )
+    .await;
+    let other_server_id = create_server(&app, &admin, "Other", "other").await;
+    let out_of_scope = app
+        .post_json_with_bearer(
+            &format!(
+                "/api/servers/{other_server_id}/channels/{channel_id}/messages/{message_id}/remove"
+            ),
+            &json!({}),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(out_of_scope.status(), StatusCode::NOT_FOUND);
+
+    for _ in 0..2 {
+        let response = app
+            .post_json_with_bearer(
+                &remove_uri,
+                &json!({ "reason": "Spam links" }),
+                &moderator.token,
+            )
+            .await;
+        assert_eq!(response.status(), StatusCode::OK);
+        let body = json_body(response).await;
+        assert!(body["message"]["body"].is_null());
+        assert!(body["message"]["moderatedAt"].is_string());
+        assert_eq!(body["message"]["user"]["id"], json!(member.user_id));
+    }
+
+    let feed =
+        feed_message(&app, &admin, &server_id, &channel_id, &message_id).await;
+    assert!(feed["body"].is_null());
+    assert!(feed["moderatedAt"].is_string());
+
+    let rows = moderation_actions::Entity::find()
+        .filter(
+            moderation_actions::Column::TargetId
+                .eq(Uuid::parse_str(&message_id).unwrap()),
+        )
+        .all(app.database())
+        .await
+        .unwrap();
+    assert_eq!(rows.len(), 1);
+    assert_eq!(rows[0].action, ModerationAction::RemoveMessage);
+    assert_eq!(rows[0].actor_user_id.to_string(), moderator.user_id);
+}
+
+#[tokio::test]
+async fn instance_content_moderators_remove_forum_posts_but_keep_replies() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let moderator = signup(&app, "mod@example.com", "Moderator").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    let server_id = default_server_id(&app).await;
+    grant_instance_permission(&app, &admin, &moderator, "Message", "delete")
+        .await;
+    let forum_id = create_forum_channel(&app, &admin, &server_id).await;
+    let posts_uri =
+        format!("/api/servers/{server_id}/channels/{forum_id}/forum/posts");
+    let post = app
+        .post_json_with_bearer(
+            &posts_uri,
+            &json!({ "title": "Off topic", "body": "Buy now" }),
+            &member.token,
+        )
+        .await;
+    assert_eq!(post.status(), StatusCode::OK);
+    let post_id = json_body(post).await["post"]["id"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let reply = app
+        .post_json_with_bearer(
+            &format!("{posts_uri}/{post_id}/replies"),
+            &json!({ "body": "Please stop" }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(reply.status(), StatusCode::OK);
+    let reply_id = json_body(reply).await["reply"]["id"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+
+    let removed = app
+        .post_json_with_bearer(
+            &format!("{posts_uri}/{post_id}/remove"),
+            &json!({}),
+            &moderator.token,
+        )
+        .await;
+    assert_eq!(removed.status(), StatusCode::OK);
+    let removed = json_body(removed).await;
+    assert_eq!(removed["post"]["title"], "");
+    assert_eq!(removed["post"]["body"], "");
+    assert!(removed["post"]["moderatedAt"].is_string());
+    assert_eq!(removed["post"]["replyCount"], 1);
+    assert_eq!(removed["post"]["replies"][0]["body"], "Please stop");
+
+    let edit = app
+        .put_json_with_bearer(
+            &format!("{posts_uri}/{post_id}"),
+            &json!({ "title": "Restored" }),
+            &member.token,
+        )
+        .await;
+    assert_eq!(edit.status(), StatusCode::CONFLICT);
+
+    let removed_reply = app
+        .post_json_with_bearer(
+            &format!("{posts_uri}/{post_id}/replies/{reply_id}/remove"),
+            &json!({}),
+            &moderator.token,
+        )
+        .await;
+    assert_eq!(removed_reply.status(), StatusCode::OK);
+    assert!(json_body(removed_reply).await["reply"]["body"].is_null());
+
+    let message_route = app
+        .post_json_with_bearer(
+            &format!(
+                "/api/servers/{server_id}/channels/{forum_id}/messages/{reply_id}/remove"
+            ),
+            &json!({}),
+            &moderator.token,
+        )
+        .await;
+    assert_eq!(message_route.status(), StatusCode::NOT_FOUND);
+}
+
+#[tokio::test]
+async fn call_managers_end_calls_once_and_block_further_writes() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let moderator = signup(&app, "mod@example.com", "Moderator").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    let server_id = default_server_id(&app).await;
+    let channel_id = general_channel_id(&app, &server_id).await;
+    let call_id =
+        insert_active_call(&app, &server_id, &channel_id, &member).await;
+    let call_uri = format!(
+        "/api/servers/{server_id}/channels/{channel_id}/calls/{call_id}"
+    );
+
+    let denied = app
+        .post_json_with_bearer(
+            &format!("{call_uri}/end"),
+            &json!({}),
+            &member.token,
+        )
+        .await;
+    assert_eq!(denied.status(), StatusCode::FORBIDDEN);
+
+    grant_server_permission(
+        &app, &admin, &server_id, &moderator, "Call", "manage",
+    )
+    .await;
+    for _ in 0..2 {
+        let response = app
+            .post_json_with_bearer(
+                &format!("{call_uri}/end"),
+                &json!({ "reason": "Disruptive call" }),
+                &moderator.token,
+            )
+            .await;
+        assert_eq!(response.status(), StatusCode::OK);
+        let body = json_body(response).await;
+        assert_eq!(body["call"]["status"], "ended");
+        assert!(body["call"]["participants"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|participant| participant["id"] != json!(moderator.user_id)));
+    }
+
+    let rows = moderation_actions::Entity::find()
+        .filter(moderation_actions::Column::TargetId.eq(call_id))
+        .all(app.database())
+        .await
+        .unwrap();
+    assert_eq!(rows.len(), 1);
+    assert_eq!(rows[0].action, ModerationAction::EndCall);
+    assert_eq!(rows[0].target_kind, ModerationTargetKind::Call);
+
+    let message = app
+        .post_json_with_bearer(
+            &format!("{call_uri}/messages"),
+            &json!({ "body": "still here" }),
+            &member.token,
+        )
+        .await;
+    assert_eq!(message.status(), StatusCode::CONFLICT);
+}
+
+async fn login(app: &TestApp, email: &str) -> StatusCode {
+    app.post_json(
+        "/api/auth/login",
+        &json!({ "email": email, "password": "correct horse battery staple" }),
+    )
+    .await
+    .status()
+}
+
+async fn create_message(
+    app: &TestApp,
+    author: &TestUser,
+    server_id: &str,
+    channel_id: &str,
+    body: &str,
+) -> String {
+    let response = app
+        .post_json_with_bearer(
+            &format!("/api/servers/{server_id}/channels/{channel_id}/messages"),
+            &json!({ "body": body }),
+            &author.token,
+        )
+        .await;
+    assert_eq!(response.status(), StatusCode::OK);
+    json_body(response).await["message"]["id"]
+        .as_str()
+        .unwrap()
+        .to_owned()
+}
+
+async fn feed_message(
+    app: &TestApp,
+    viewer: &TestUser,
+    server_id: &str,
+    channel_id: &str,
+    message_id: &str,
+) -> serde_json::Value {
+    let response = app
+        .get_with_bearer(
+            &format!("/api/servers/{server_id}/channels/{channel_id}/feed"),
+            &viewer.token,
+        )
+        .await;
+    assert_eq!(response.status(), StatusCode::OK);
+    json_body(response).await["feed"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|item| item["id"] == json!(message_id))
+        .cloned()
+        .expect("expected the message in the feed")
+}
+
+async fn create_forum_channel(
+    app: &TestApp,
+    admin: &TestUser,
+    server_id: &str,
+) -> String {
+    let response = app
+        .post_json_with_bearer(
+            &format!("/api/servers/{server_id}/channels"),
+            &json!({ "name": "forum", "channelType": "forum" }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(response.status(), StatusCode::OK);
+    json_body(response).await["channel"]["id"]
+        .as_str()
+        .unwrap()
+        .to_owned()
+}
+
+async fn insert_active_call(
+    app: &TestApp,
+    server_id: &str,
+    channel_id: &str,
+    starter: &TestUser,
+) -> Uuid {
+    let call_id = Uuid::new_v4();
+    calls::ActiveModel {
+        id: Set(call_id),
+        server_id: Set(Uuid::parse_str(server_id).unwrap()),
+        channel_id: Set(Uuid::parse_str(channel_id).unwrap()),
+        livekit_room: Set(format!("test-room-{call_id}")),
+        status: Set("active".to_owned()),
+        started_by: Set(user_uuid(starter)),
+        ..Default::default()
+    }
+    .insert(app.database())
+    .await
+    .unwrap();
+    call_id
+}
+
+async fn grant_server_permission(
+    app: &TestApp,
+    granter: &TestUser,
+    server_id: &str,
+    user: &TestUser,
+    subject: &str,
+    action: &str,
+) {
+    let role_id = create_server_role(app, granter, server_id, subject).await;
+    let permissions = app
+        .put_json_with_bearer(
+            &format!("/api/servers/{server_id}/roles/{role_id}/permissions"),
+            &json!({
+                "permissions": [{ "subject": subject, "action": [action] }],
+            }),
+            &granter.token,
+        )
+        .await;
+    assert_eq!(permissions.status(), StatusCode::OK);
+
+    let members = app
+        .post_json_with_bearer(
+            &format!("/api/servers/{server_id}/roles/{role_id}/members"),
+            &json!({ "userIds": [user.user_id] }),
+            &granter.token,
+        )
+        .await;
+    assert_eq!(members.status(), StatusCode::OK);
 }

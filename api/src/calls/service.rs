@@ -31,6 +31,7 @@ use crate::{
 };
 
 pub(crate) const ACTIVE_STATUSES: [&str; 2] = ["starting", "active"];
+pub(super) const MODERATOR_ENDED_REASON: &str = "ended_by_moderator";
 
 pub(super) async fn start_channel_call(
     database: &DatabaseConnection,
@@ -206,22 +207,22 @@ pub(crate) async fn get_call_statuses(
     Ok(statuses)
 }
 
-pub(crate) async fn disconnect_user_from_server_calls(
+pub(crate) async fn disconnect_user_from_calls(
     database: &DatabaseConnection,
     livekit: Option<&LiveKitConfig>,
-    server_id: uuid::Uuid,
+    server_id: Option<uuid::Uuid>,
     user_id: uuid::Uuid,
 ) -> AppResult<()> {
     let Some(livekit) = livekit else {
         return Ok(());
     };
 
-    let active_calls = calls::Entity::find()
-        .filter(calls::Column::ServerId.eq(server_id))
-        .filter(calls::Column::Status.is_in(ACTIVE_STATUSES))
-        .all(database)
-        .await
-        .map_err(internal_error)?;
+    let mut query = calls::Entity::find()
+        .filter(calls::Column::Status.is_in(ACTIVE_STATUSES));
+    if let Some(server_id) = server_id {
+        query = query.filter(calls::Column::ServerId.eq(server_id));
+    }
+    let active_calls = query.all(database).await.map_err(internal_error)?;
 
     for call in active_calls {
         remove_livekit_participant(
@@ -233,6 +234,20 @@ pub(crate) async fn disconnect_user_from_server_calls(
     }
 
     Ok(())
+}
+
+pub(crate) async fn get_active_call(
+    database: &DatabaseConnection,
+    server_id: uuid::Uuid,
+    channel_id: uuid::Uuid,
+    call_id: uuid::Uuid,
+) -> AppResult<calls::Model> {
+    let call = get_call(database, server_id, channel_id, call_id).await?;
+    if is_active_status(&call.status) {
+        Ok(call)
+    } else {
+        Err(ApiError::new(StatusCode::CONFLICT, "Call has ended."))
+    }
 }
 
 pub(crate) async fn get_call(
@@ -322,13 +337,82 @@ pub(super) async fn broadcast_call(
     sender_id: Option<uuid::Uuid>,
     call: &CallArtifactResponse,
 ) -> AppResult<()> {
+    publish_call_event(
+        database,
+        pub_sub_service,
+        server_id,
+        channel_id,
+        sender_id,
+        serde_json::json!({
+            "type": "call",
+            "call": call,
+        }),
+    )
+    .await
+}
+
+pub(super) async fn broadcast_moderated_call(
+    database: &DatabaseConnection,
+    pub_sub_service: Option<&PubSubService>,
+    moderator_id: uuid::Uuid,
+    call: &CallArtifactResponse,
+) -> AppResult<()> {
+    let (Ok(server_id), Ok(channel_id)) =
+        (call.server_id.parse(), call.channel_id.parse())
+    else {
+        return Err(internal_error("call artifact has invalid ids"));
+    };
+    publish_call_event(
+        database,
+        pub_sub_service,
+        server_id,
+        channel_id,
+        Some(moderator_id),
+        serde_json::json!({
+            "type": "call",
+            "action": "ended",
+            "call": call,
+        }),
+    )
+    .await
+}
+
+pub(super) async fn notify_removed_participant(
+    pub_sub_service: Option<&PubSubService>,
+    server_id: uuid::Uuid,
+    channel_id: uuid::Uuid,
+    participant_id: uuid::Uuid,
+    call: &CallArtifactResponse,
+) -> AppResult<()> {
     let Some(pub_sub_service) = pub_sub_service else {
         return Ok(());
     };
-    let body = serde_json::json!({
-        "type": "call",
-        "call": call,
-    });
+    let topic = PubSubTopic::new_call(server_id, channel_id, participant_id)
+        .to_string();
+    pub_sub_service
+        .publish(
+            &topic,
+            serde_json::json!({
+                "type": "call",
+                "action": "participantRemoved",
+                "userId": participant_id,
+                "call": call,
+            }),
+        )
+        .await
+}
+
+async fn publish_call_event(
+    database: &DatabaseConnection,
+    pub_sub_service: Option<&PubSubService>,
+    server_id: uuid::Uuid,
+    channel_id: uuid::Uuid,
+    sender_id: Option<uuid::Uuid>,
+    body: serde_json::Value,
+) -> AppResult<()> {
+    let Some(pub_sub_service) = pub_sub_service else {
+        return Ok(());
+    };
     let members =
         channels::get_channel_member_user_ids(database, channel_id).await?;
 
@@ -572,7 +656,9 @@ pub(super) async fn shape_call_artifact(
 
     let mut participant_ids = BTreeSet::new();
     participant_ids.insert(call.started_by);
-    if let Some(ended_by) = call.ended_by {
+    if let Some(ended_by) = call.ended_by.filter(|_| {
+        call.ended_reason.as_deref() != Some(MODERATOR_ENDED_REASON)
+    }) {
         participant_ids.insert(ended_by);
     }
     participant_ids.extend(call_messages.iter().map(|message| message.user_id));

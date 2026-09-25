@@ -348,6 +348,7 @@ pub(super) async fn update_forum_post(
     let post = get_post_for_update(&transaction, channel_id, post_id).await?;
     ensure_owner(post.user_id, user_id, "Only the post author can edit it.")?;
     ensure_post_is_open(&post, "Closed forum posts cannot be edited.")?;
+    ensure_post_not_moderated(&post)?;
     let root_message_id = post.root_message_id;
     let now = Utc::now().fixed_offset();
     let mut active = post.into_active_model();
@@ -764,7 +765,7 @@ fn latest_forum_activity(
         .expect("post creation always provides forum activity")
 }
 
-async fn get_post<C>(
+pub(super) async fn get_post<C>(
     database: &C,
     channel_id: Uuid,
     post_id: Uuid,
@@ -780,7 +781,7 @@ where
         .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "Post not found."))
 }
 
-async fn get_post_for_update<C>(
+pub(super) async fn get_post_for_update<C>(
     database: &C,
     channel_id: Uuid,
     post_id: Uuid,
@@ -875,6 +876,17 @@ fn ensure_post_is_open(
     }
 }
 
+fn ensure_post_not_moderated(post: &forum_posts::Model) -> AppResult<()> {
+    if post.moderated_at.is_none() {
+        Ok(())
+    } else {
+        Err(ApiError::new(
+            StatusCode::CONFLICT,
+            "Removed forum posts cannot be changed.",
+        ))
+    }
+}
+
 async fn ensure_post_can_close<C>(
     database: &C,
     post: &forum_posts::Model,
@@ -910,6 +922,7 @@ fn ensure_post_accepts_proposal(
         user_id,
         "Only the post author can create its proposal.",
     )?;
+    ensure_post_not_moderated(post)?;
     if post.status == ForumPostStatus::Closed {
         return Err(ApiError::new(
             StatusCode::CONFLICT,

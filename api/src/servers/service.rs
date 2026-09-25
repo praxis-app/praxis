@@ -644,7 +644,7 @@ pub(super) async fn remove_server_members(
     Ok(())
 }
 
-pub(super) async fn remove_server_members_in_transaction<C>(
+pub(crate) async fn remove_server_members_in_transaction<C>(
     database: &C,
     server_id: Uuid,
     user_ids: &[Uuid],

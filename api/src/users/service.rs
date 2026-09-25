@@ -142,6 +142,21 @@ pub(crate) async fn is_anonymous_user(
     Ok(user.anonymous)
 }
 
+pub(crate) async fn is_active_user<C>(
+    database: &C,
+    user_id: Uuid,
+) -> AppResult<bool>
+where
+    C: ConnectionTrait,
+{
+    let user = users::Entity::find_by_id(user_id)
+        .one(database)
+        .await
+        .map_err(internal_error)?;
+
+    Ok(user.is_some_and(|user| !user.locked))
+}
+
 pub(crate) async fn authenticate(
     database: &DatabaseConnection,
     email: String,
@@ -672,7 +687,7 @@ fn api_error_to_create_user_error(error: ApiError) -> CreateUserError {
     CreateUserError::Database(DbErr::Custom(error.to_string()))
 }
 
-fn internal_error(error: impl std::fmt::Display) -> ApiError {
+pub(super) fn internal_error(error: impl std::fmt::Display) -> ApiError {
     tracing::error!("users request failed: {error}");
     ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "Internal server error.")
 }

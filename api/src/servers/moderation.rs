@@ -47,8 +47,11 @@ pub(super) async fn evict_server_member(
     pub_sub_service
         .revoke_server_subscriptions(server_id, user_id)
         .await;
-    if let Err(error) = calls::service::disconnect_user_from_server_calls(
-        database, livekit, server_id, user_id,
+    if let Err(error) = calls::service::disconnect_user_from_calls(
+        database,
+        livekit,
+        Some(server_id),
+        user_id,
     )
     .await
     {

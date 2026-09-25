@@ -6,7 +6,10 @@ use entity::{
 use sea_orm::{prelude::Uuid, ActiveModelTrait, ConnectionTrait, Set};
 use uuid::Uuid as NativeUuid;
 
-use crate::common::{text::sanitize_text, ApiError, AppResult};
+use crate::{
+    authz::{self, PermissionScope},
+    common::{text::sanitize_text, ApiError, AppResult},
+};
 
 const MIN_REASON_LENGTH: usize = 4;
 const MAX_REASON_LENGTH: usize = 500;
@@ -18,6 +21,36 @@ pub(crate) struct ModerationRecord {
     pub(crate) target_id: Uuid,
     pub(crate) server_id: Option<Uuid>,
     pub(crate) reason: Option<String>,
+}
+
+pub(crate) async fn can_moderate_content<C: ConnectionTrait>(
+    database: &C,
+    user_id: Uuid,
+    server_id: Uuid,
+) -> AppResult<()> {
+    authz::can(
+        database,
+        user_id,
+        "delete",
+        "Message",
+        PermissionScope::ServerOrInstance(server_id),
+    )
+    .await
+}
+
+pub(crate) async fn can_manage_calls<C: ConnectionTrait>(
+    database: &C,
+    user_id: Uuid,
+    server_id: Uuid,
+) -> AppResult<()> {
+    authz::can(
+        database,
+        user_id,
+        "manage",
+        "Call",
+        PermissionScope::ServerOrInstance(server_id),
+    )
+    .await
 }
 
 pub(crate) async fn record_action<C>(

@@ -1,6 +1,6 @@
 use axum::{
     extract::FromRequestParts,
-    http::{header, request::Parts, StatusCode},
+    http::{header, request::Parts, HeaderMap, StatusCode},
 };
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use sea_orm::prelude::Uuid;
@@ -28,7 +28,7 @@ where
         parts: &mut Parts,
         state: &S,
     ) -> Result<Self, Self::Rejection> {
-        let token = bearer_token(parts).ok_or_else(|| {
+        let token = bearer_token(&parts.headers).ok_or_else(|| {
             ApiError::new(StatusCode::UNAUTHORIZED, "Authentication required.")
         })?;
 
@@ -46,7 +46,7 @@ where
         parts: &mut Parts,
         state: &S,
     ) -> Result<Self, Self::Rejection> {
-        let Some(token) = bearer_token(parts) else {
+        let Some(token) = bearer_token(&parts.headers) else {
             return Ok(Self(None));
         };
 
@@ -73,9 +73,8 @@ pub(crate) fn authenticate_token(
     })
 }
 
-fn bearer_token(parts: &Parts) -> Option<&str> {
-    let header_value =
-        parts.headers.get(header::AUTHORIZATION)?.to_str().ok()?;
+pub(super) fn bearer_token(headers: &HeaderMap) -> Option<&str> {
+    let header_value = headers.get(header::AUTHORIZATION)?.to_str().ok()?;
     let (scheme, token) = header_value.split_once(' ')?;
 
     if scheme.eq_ignore_ascii_case("Bearer") && !token.is_empty() {

@@ -355,6 +355,7 @@ async fn scan_forum_posts(
                 .is_in(scope.scanned_channel_ids.clone()),
         )
         .filter(window.condition(forum_posts::Column::CreatedAt))
+        .filter(forum_posts::Column::ModeratedAt.is_null())
         .order_by_desc(forum_posts::Column::CreatedAt)
         .order_by_desc(forum_posts::Column::Id);
     let rows = query
@@ -440,6 +441,7 @@ async fn scan_forum_posts(
 
 fn encrypted_message_condition() -> Condition {
     Condition::all()
+        .add(messages::Column::ModeratedAt.is_null())
         .add(messages::Column::Ciphertext.is_not_null())
         .add(messages::Column::Iv.is_not_null())
         .add(messages::Column::Tag.is_not_null())

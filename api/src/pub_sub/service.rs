@@ -306,6 +306,28 @@ impl PubSubService {
         server_id: Uuid,
         user_id: Uuid,
     ) {
+        self.revoke_subscriptions(|topic| {
+            topic.server_id == server_id && topic.user_id == user_id
+        })
+        .await;
+    }
+
+    pub(crate) async fn evict_user(&self, user_id: Uuid) {
+        let socket_ids = self
+            .revoke_subscriptions(|topic| topic.user_id == user_id)
+            .await;
+
+        for socket_id in socket_ids {
+            if let Some(sender) = self.registry.subscribers.get(&socket_id) {
+                let _ = sender.send(Message::Close(None));
+            }
+        }
+    }
+
+    async fn revoke_subscriptions(
+        &self,
+        matches: impl Fn(&PubSubTopic) -> bool,
+    ) -> HashSet<Uuid> {
         let revoked = self
             .registry
             .socket_channels
@@ -316,23 +338,24 @@ impl PubSubService {
                     .value()
                     .iter()
                     .filter(|channel| {
-                        PubSubTopic::parse(channel).is_some_and(|topic| {
-                            topic.server_id == server_id
-                                && topic.user_id == user_id
-                        })
+                        PubSubTopic::parse(channel)
+                            .is_some_and(|topic| matches(&topic))
                     })
                     .map(|channel| (socket_id, channel.clone()))
                     .collect::<Vec<_>>()
             })
             .collect::<Vec<_>>();
 
+        let mut socket_ids = HashSet::new();
         for (socket_id, channel) in revoked {
+            socket_ids.insert(socket_id);
             if let Err(error) = self.unsubscribe(socket_id, &channel).await {
                 tracing::warn!(
                     "failed to revoke websocket subscription: {error}"
                 );
             }
         }
+        socket_ids
     }
 
     async fn disconnect(&self, socket_id: Uuid) {
@@ -614,6 +637,13 @@ async fn is_authorized(
     access: &ChannelAccess,
     user_id: Uuid,
 ) -> bool {
+    if !users::is_active_user(&state.database, user_id)
+        .await
+        .unwrap_or(false)
+    {
+        return false;
+    }
+
     if access.registered_only
         && users::is_anonymous_user(&state.database, user_id)
             .await

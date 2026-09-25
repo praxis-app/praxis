@@ -31,6 +31,15 @@ pub(super) struct ForumReplyPath {
 }
 
 #[derive(Debug)]
+pub(super) struct RemoveForumContentRequest {
+    pub(super) server_id: Uuid,
+    pub(super) channel_id: Uuid,
+    pub(super) post_id: Uuid,
+    pub(super) actor_user_id: Uuid,
+    pub(super) reason: Option<String>,
+}
+
+#[derive(Debug)]
 pub(super) struct CreateForumProposalContext {
     pub(super) server_id: Uuid,
     pub(super) channel_id: Uuid,
@@ -97,6 +106,8 @@ pub(super) struct ForumPostSummaryResponse {
     pub(super) user: MessageUser,
     pub(super) reply_count: usize,
     pub(super) latest_activity_at: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(super) moderated_at: Option<String>,
     pub(super) created_at: String,
     pub(super) updated_at: String,
 }
