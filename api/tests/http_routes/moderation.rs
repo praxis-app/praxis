@@ -124,7 +124,7 @@ async fn member_managers_can_remove_members_once() {
         let response = app
             .post_json_with_bearer(
                 &uri,
-                &json!({ "reason": "  spam  " }),
+                &json!({ "reason": "  spamming  " }),
                 &moderator.token,
             )
             .await;
@@ -142,7 +142,7 @@ async fn member_managers_can_remove_members_once() {
         actions[0].server_id.map(|id| id.to_string()),
         Some(server_id)
     );
-    assert_eq!(actions[0].reason.as_deref(), Some("spam"));
+    assert_eq!(actions[0].reason.as_deref(), Some("spamming"));
 }
 
 #[tokio::test]
@@ -154,6 +154,8 @@ async fn members_without_member_management_cannot_moderate_members() {
     let server_id = default_server_id(&app).await;
     let server_manager =
         signup(&app, "servers@example.com", "Server Manager").await;
+    let instance_admin =
+        signup(&app, "instance@example.com", "Instance Admin").await;
     grant_instance_permission(
         &app,
         &admin,
@@ -162,8 +164,10 @@ async fn members_without_member_management_cannot_moderate_members() {
         "manage",
     )
     .await;
+    grant_instance_permission(&app, &admin, &instance_admin, "all", "manage")
+        .await;
 
-    for actor in [&member, &server_manager] {
+    for actor in [&member, &server_manager, &instance_admin] {
         for (action, expected) in [
             ("remove", StatusCode::FORBIDDEN),
             ("ban", StatusCode::FORBIDDEN),
@@ -179,13 +183,15 @@ async fn members_without_member_management_cannot_moderate_members() {
         }
     }
 
-    let bans = app
-        .get_with_bearer(
-            &format!("/api/servers/{server_id}/bans"),
-            &member.token,
-        )
-        .await;
-    assert_eq!(bans.status(), StatusCode::FORBIDDEN);
+    for actor in [&member, &instance_admin] {
+        let bans = app
+            .get_with_bearer(
+                &format!("/api/servers/{server_id}/bans"),
+                &actor.token,
+            )
+            .await;
+        assert_eq!(bans.status(), StatusCode::FORBIDDEN);
+    }
     assert!(is_member(&app, &server_id, &other).await);
 }
 
@@ -208,7 +214,7 @@ async fn moderators_cannot_target_themselves_or_other_member_managers() {
     let self_response = app
         .post_json_with_bearer(
             &member_uri(&server_id, &moderator, "ban"),
-            &json!({}),
+            &json!({ "reason": "Repeated harassment" }),
             &moderator.token,
         )
         .await;
@@ -248,7 +254,7 @@ async fn banned_users_cannot_rejoin_until_unbanned() {
         let response = app
             .post_json_with_bearer(
                 &ban_uri,
-                &json!({ "reason": null }),
+                &json!({ "reason": "Repeated harassment" }),
                 &admin.token,
             )
             .await;
@@ -308,6 +314,41 @@ async fn banned_users_cannot_rejoin_until_unbanned() {
 }
 
 #[tokio::test]
+async fn bans_require_a_reason_within_the_length_bounds() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    let server_id = create_server(&app, &admin, "Other", "other").await;
+    add_server_member(&app, &admin, &server_id, &member).await;
+    let ban_uri = member_uri(&server_id, &member, "ban");
+
+    for body in [
+        json!({}),
+        json!({ "reason": null }),
+        json!({ "reason": "   " }),
+        json!({ "reason": "spam" }),
+        json!({ "reason": "a".repeat(501) }),
+    ] {
+        let response = app
+            .post_json_with_bearer(&ban_uri, &body, &admin.token)
+            .await;
+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+    }
+    assert!(is_member(&app, &server_id, &member).await);
+    assert_eq!(ban_count(&app, &server_id).await, 0);
+
+    let response = app
+        .post_json_with_bearer(
+            &ban_uri,
+            &json!({ "reason": "Repeated harassment" }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(response.status(), StatusCode::OK);
+    assert!(!is_member(&app, &server_id, &member).await);
+}
+
+#[tokio::test]
 async fn moderating_an_unknown_user_returns_not_found() {
     let app = TestApp::new().await;
     let admin = signup(&app, "admin@example.com", "Admin Example").await;
@@ -320,7 +361,7 @@ async fn moderating_an_unknown_user_returns_not_found() {
     let response = app
         .post_json_with_bearer(
             &member_uri(&server_id, &ghost, "ban"),
-            &json!({}),
+            &json!({ "reason": "Repeated harassment" }),
             &admin.token,
         )
         .await;

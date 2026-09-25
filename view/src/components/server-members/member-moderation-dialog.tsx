@@ -19,6 +19,8 @@ interface Props {
   title: string;
   memberName: string;
   confirmLabel: string;
+  isReasonOptional?: boolean;
+  isDestructive?: boolean;
   isPending: boolean;
   onConfirm: (reason?: string) => void;
 }
@@ -29,6 +31,8 @@ export const MemberModerationDialog = ({
   title,
   memberName,
   confirmLabel,
+  isReasonOptional = false,
+  isDestructive = true,
   isPending,
   onConfirm,
 }: Props) => {
@@ -59,7 +63,11 @@ export const MemberModerationDialog = ({
         </DialogHeader>
 
         <div className="flex flex-col gap-2">
-          <Label htmlFor={reasonId}>{t('servers.labels.reason')}</Label>
+          <Label htmlFor={reasonId}>
+            {isReasonOptional
+              ? t('servers.labels.reasonOptional')
+              : t('servers.labels.reason')}
+          </Label>
           <Textarea
             id={reasonId}
             value={reason}
@@ -74,7 +82,7 @@ export const MemberModerationDialog = ({
             {t('actions.cancel')}
           </Button>
           <Button
-            variant="destructive"
+            variant={isDestructive ? 'destructive' : 'default'}
             onClick={handleConfirm}
             disabled={isPending}
           >

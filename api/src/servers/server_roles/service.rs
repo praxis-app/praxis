@@ -279,6 +279,10 @@ where
                 subject: "ServerRole".to_owned(),
                 action: vec!["manage".to_owned()],
             },
+            PermissionRule {
+                subject: "ServerMember".to_owned(),
+                action: vec!["manage".to_owned()],
+            },
         ],
     )
     .await?;

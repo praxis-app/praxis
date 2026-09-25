@@ -1,13 +1,5 @@
 import { api } from '@/client/api-client';
 import { Button } from '@/components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { UserAvatar } from '@/components/users/user-avatar';
 import { handleError } from '@/lib/error.utils';
 import { invalidateServerMemberQueries } from '@/lib/server-member.utils';
@@ -16,6 +8,7 @@ import { type ServerBanRes } from '@/types/server.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { MemberModerationDialog } from './member-moderation-dialog';
 
 interface Props {
   serverId: string;
@@ -29,7 +22,8 @@ export const ServerBan = ({ serverId, ban: { user, createdAt } }: Props) => {
   const queryClient = useQueryClient();
 
   const { mutate: unbanMember, isPending } = useMutation({
-    mutationFn: () => api.unbanServerMember(serverId, user.id),
+    mutationFn: (reason?: string) =>
+      api.unbanServerMember(serverId, user.id, { reason }),
     onSuccess: () => {
       setIsConfirmOpen(false);
       invalidateServerMemberQueries(queryClient, serverId);
@@ -64,24 +58,17 @@ export const ServerBan = ({ serverId, ban: { user, createdAt } }: Props) => {
         {t('servers.actions.unban')}
       </Button>
 
-      <Dialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
-        <DialogContent className="md:min-w-sm">
-          <DialogHeader className="pt-3">
-            <DialogTitle className="text-left">
-              {t('servers.prompts.unbanMember')}
-            </DialogTitle>
-            <DialogDescription className="text-left">{name}</DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex flex-row justify-end gap-2">
-            <Button variant="outline" onClick={() => setIsConfirmOpen(false)}>
-              {t('actions.cancel')}
-            </Button>
-            <Button onClick={() => unbanMember()} disabled={isPending}>
-              {t('servers.actions.unban')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <MemberModerationDialog
+        open={isConfirmOpen}
+        onOpenChange={setIsConfirmOpen}
+        title={t('servers.prompts.unbanMember')}
+        memberName={name}
+        confirmLabel={t('servers.actions.unban')}
+        isReasonOptional
+        isDestructive={false}
+        isPending={isPending}
+        onConfirm={(reason) => unbanMember(reason)}
+      />
     </div>
   );
 };

@@ -305,10 +305,12 @@ pub(super) async fn ban_server_member(
 pub(super) async fn unban_server_member(
     State(state): State<ServersState>,
     context: CanModerateServerMemberContext,
+    payload: Option<Json<ModerationReasonRequest>>,
 ) -> AppResult<Json<EmptyResponse>> {
+    let reason = payload.and_then(|Json(payload)| payload.reason);
     moderation::unban_member(
         &state.database,
-        member_moderation(&context, None),
+        member_moderation(&context, reason),
     )
     .await?;
     Ok(Json(EmptyResponse {}))

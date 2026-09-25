@@ -8,6 +8,7 @@ use uuid::Uuid as NativeUuid;
 
 use crate::common::{text::sanitize_text, ApiError, AppResult};
 
+const MIN_REASON_LENGTH: usize = 4;
 const MAX_REASON_LENGTH: usize = 500;
 
 pub(crate) struct ModerationRecord {
@@ -54,11 +55,15 @@ pub(crate) fn normalize_reason(
             StatusCode::UNPROCESSABLE_ENTITY,
             "A reason is required.",
         )),
-        Some(value) if value.chars().count() > MAX_REASON_LENGTH => {
+        Some(value)
+            if !(MIN_REASON_LENGTH..=MAX_REASON_LENGTH)
+                .contains(&value.chars().count()) =>
+        {
             Err(ApiError::new(
                 StatusCode::UNPROCESSABLE_ENTITY,
                 format!(
-                    "Reason must be at most {MAX_REASON_LENGTH} characters."
+                    "Reason must be between {MIN_REASON_LENGTH} and \
+                     {MAX_REASON_LENGTH} characters."
                 ),
             ))
         }
@@ -81,14 +86,20 @@ mod tests {
         assert_eq!(normalize_reason(None, false).unwrap(), None);
         assert!(normalize_reason(Some(" "), true).is_err());
         assert_eq!(
-            normalize_reason(Some("  spam  "), true).unwrap().as_deref(),
-            Some("spam")
+            normalize_reason(Some("  spamming  "), true)
+                .unwrap()
+                .as_deref(),
+            Some("spamming")
         );
     }
 
     #[test]
-    fn long_reasons_are_rejected() {
-        let reason = "a".repeat(MAX_REASON_LENGTH + 1);
-        assert!(normalize_reason(Some(&reason), false).is_err());
+    fn reasons_outside_the_length_bounds_are_rejected() {
+        let short = "a".repeat(MIN_REASON_LENGTH - 1);
+        let long = "a".repeat(MAX_REASON_LENGTH + 1);
+        assert!(normalize_reason(Some(&short), false).is_err());
+        assert!(normalize_reason(Some(&long), true).is_err());
+        assert!(normalize_reason(Some(&"a".repeat(MIN_REASON_LENGTH)), true)
+            .is_ok());
     }
 }

@@ -983,7 +983,8 @@
       "default": "Default",
       "membersCount_one": "{{count}} member",
       "membersCount_other": "{{count}} members",
-      "reason": "Reason (optional)"
+      "reason": "Reason",
+      "reasonOptional": "Reason (optional)"
     },
     "placeholders": {
       "reason": "Add a note for the moderation log"

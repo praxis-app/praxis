@@ -765,9 +765,13 @@ class ApiClient {
     return this.executeRequest<void>('post', path, { data });
   };
 
-  unbanServerMember = async (serverId: string, userId: string) => {
+  unbanServerMember = async (
+    serverId: string,
+    userId: string,
+    data: ServerMemberModerationReq,
+  ) => {
     const path = `/servers/${serverId}/members/${userId}/ban`;
-    return this.executeRequest<void>('delete', path);
+    return this.executeRequest<void>('delete', path, { data });
   };
 
   getServerBans = async (serverId: string) => {

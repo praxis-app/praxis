@@ -65,7 +65,7 @@ pub(super) async fn can_manage_server_members(
         user_id,
         "manage",
         "ServerMember",
-        PermissionScope::ServerOrInstance(server_id),
+        PermissionScope::Server(server_id),
     )
     .await
 }
@@ -74,8 +74,7 @@ pub(super) async fn remove_member(
     database: &DatabaseConnection,
     request: MemberModeration,
 ) -> AppResult<()> {
-    let reason =
-        moderation::normalize_reason(request.reason.as_deref(), false)?;
+    let reason = moderation::normalize_reason(request.reason.as_deref(), true)?;
     ensure_member_can_be_moderated(database, &request).await?;
 
     let transaction = database.begin().await.map_err(internal_error)?;
@@ -101,8 +100,7 @@ pub(super) async fn ban_member(
     database: &DatabaseConnection,
     request: MemberModeration,
 ) -> AppResult<()> {
-    let reason =
-        moderation::normalize_reason(request.reason.as_deref(), false)?;
+    let reason = moderation::normalize_reason(request.reason.as_deref(), true)?;
     ensure_member_can_be_moderated(database, &request).await?;
 
     let transaction = database.begin().await.map_err(internal_error)?;
