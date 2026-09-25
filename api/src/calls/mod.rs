@@ -2,6 +2,7 @@ mod cleanup;
 pub(crate) mod extractors;
 mod handlers;
 mod livekit;
+mod moderation;
 mod routes;
 pub(crate) mod service;
 pub(crate) mod types;

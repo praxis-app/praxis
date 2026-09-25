@@ -1,6 +1,7 @@
 mod events;
 pub mod forums;
 mod macros;
+pub mod moderation;
 pub mod notifications;
 pub mod poll_actions;
 pub mod polls;
@@ -9,6 +10,7 @@ pub mod votes;
 
 pub use events::EventAttendeeStatus;
 pub use forums::{ChannelType, ForumPostStatus};
+pub use moderation::{ModerationAction, ModerationTargetKind};
 pub use notifications::NotificationKind;
 
 pub use poll_actions::{

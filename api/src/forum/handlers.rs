@@ -1,5 +1,5 @@
 use axum::{
-    extract::{Query, State},
+    extract::{Path, Query, State},
     response::Json,
 };
 use sea_orm::DatabaseConnection;
@@ -11,16 +11,17 @@ use super::{
         ForumAccessContext, ForumPostAccessContext, ForumPostReadContext,
         ForumReadContext, ForumReplyAccessContext,
     },
-    service,
+    moderation, service,
     types::{
         CreateForumPostRequest, CreateForumProposalContext,
-        CreateForumReplyRequest, ForumPostContextResponse, ForumPostPayload,
-        ForumPostsResponse, ForumReplyPayload, ListForumPostsQuery,
-        ListForumRepliesQuery, UpdateForumPostRequest,
+        CreateForumReplyRequest, ForumPostContextResponse, ForumPostPath,
+        ForumPostPayload, ForumPostsResponse, ForumReplyPath,
+        ForumReplyPayload, ListForumPostsQuery, ListForumRepliesQuery,
+        RemoveForumContentRequest, UpdateForumPostRequest,
     },
 };
 use crate::{
-    auth::HasJwtSecret,
+    auth::{AuthenticatedUser, HasJwtSecret},
     channels::extractors::HasDatabase,
     common::{
         request::{parse_uuid, JsonOrMultipartFiles},
@@ -29,6 +30,7 @@ use crate::{
         AppResult,
     },
     messages::types::ListRepliesPage,
+    moderation::ModerationReasonRequest,
     polls::{self, service::PollImageUploads, types::CreatePollRequest},
     pub_sub::PubSubService,
 };
@@ -369,4 +371,74 @@ pub(super) async fn delete_forum_reply(
     )
     .await;
     Ok(Json(EmptyResponse {}))
+}
+
+pub(super) async fn remove_forum_post(
+    State(state): State<ForumState>,
+    Path(path): Path<ForumPostPath>,
+    AuthenticatedUser(user_id): AuthenticatedUser,
+    payload: Option<Json<ModerationReasonRequest>>,
+) -> AppResult<Json<ForumPostPayload>> {
+    let request = RemoveForumContentRequest {
+        server_id: path.server_id,
+        channel_id: path.channel_id,
+        post_id: path.post_id,
+        actor_user_id: user_id,
+        reason: payload.and_then(|Json(payload)| payload.reason),
+    };
+    let post = moderation::remove_forum_post(
+        &state.database,
+        &state.upload_root,
+        &request,
+    )
+    .await?;
+    events::broadcast_forum_post(
+        &state.database,
+        &state.pub_sub_service,
+        request.server_id,
+        request.channel_id,
+        user_id,
+        "removed",
+        &post,
+    )
+    .await;
+    Ok(Json(ForumPostPayload { post }))
+}
+
+pub(super) async fn remove_forum_reply(
+    State(state): State<ForumState>,
+    Path(path): Path<ForumReplyPath>,
+    AuthenticatedUser(user_id): AuthenticatedUser,
+    payload: Option<Json<ModerationReasonRequest>>,
+) -> AppResult<Json<ForumReplyPayload>> {
+    let request = RemoveForumContentRequest {
+        server_id: path.server_id,
+        channel_id: path.channel_id,
+        post_id: path.post_id,
+        actor_user_id: user_id,
+        reason: payload.and_then(|Json(payload)| payload.reason),
+    };
+    let removed = moderation::remove_forum_reply(
+        &state.database,
+        &state.upload_root,
+        &request,
+        path.reply_id,
+    )
+    .await?;
+    events::broadcast_forum_reply(
+        &state.database,
+        &state.pub_sub_service,
+        request.server_id,
+        request.channel_id,
+        user_id,
+        "removed",
+        request.post_id,
+        Some(&removed.reply),
+        Some(path.reply_id),
+        &removed.summary,
+    )
+    .await;
+    Ok(Json(ForumReplyPayload {
+        reply: removed.reply,
+    }))
 }

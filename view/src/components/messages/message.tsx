@@ -3,6 +3,7 @@ import { FormattedText } from '@/components/shared/formatted-text';
 import { MessageContextMenu } from '@/components/messages/message-context-menu';
 import { MessageMenu } from '@/components/messages/message-menu';
 import { MessageThreadSummary } from '@/components/messages/message-thread-summary';
+import { RemoveContentDialog } from '@/components/moderation/remove-content-dialog';
 import { UserAvatar } from '@/components/users/user-avatar';
 import { UserProfileDrawer } from '@/components/users/user-profile-drawer';
 import { FOCUS_HIGHLIGHT_TARGET_CLASS_NAME } from '@/constants/style.constants';
@@ -12,6 +13,7 @@ import { copyMessageText } from '@/lib/message.utils';
 import { cn } from '@/lib/shared.utils';
 import { timeAgo } from '@/lib/time.utils';
 import { type MessageRes } from '@/types/message.types';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { truncate } from '../../lib/text.utils';
 import { type CurrentUser } from '../../types/user.types';
@@ -23,6 +25,7 @@ interface Props {
   channelId?: string;
   onOpenThread?: (rootMessageId: string) => void;
   onCopyThreadLink?: (rootMessageId: string) => void;
+  onRemove?: (reason?: string) => Promise<unknown>;
   onImageLoad?: () => void;
 }
 
@@ -36,14 +39,18 @@ export const Message = ({
     replyCount,
     replyUsers,
     latestReplyAt,
+    moderatedAt,
   },
   serverId,
   channelId,
   me,
   onOpenThread,
   onCopyThreadLink,
+  onRemove,
   onImageLoad,
 }: Props) => {
+  const [isRemoveOpen, setIsRemoveOpen] = useState(false);
+
   const isDesktop = useIsDesktop();
   const { isPressed, pressHandlers } = usePressHighlight();
 
@@ -54,16 +61,24 @@ export const Message = ({
   }
 
   const formattedDate = timeAgo(createdAt);
-  const showImages = !!images?.length;
+  const isRemoved = !!moderatedAt;
+  const showImages = !isRemoved && !!images?.length;
 
   const name = user.displayName || user.name;
   const truncatedUsername = truncate(name, 18);
   const hasThreadActions = !!onOpenThread && !!onCopyThreadLink;
+  const hasMenuActions = hasThreadActions || !!onRemove;
   // The long press that opens the menu is the same gesture the browser uses to
   // start a text selection, so selection is turned off where that menu lives.
   // Radix already suppresses the iOS callout on its trigger
-  const usesLongPressMenu = hasThreadActions && !isDesktop;
-  const copyText = body ? () => copyMessageText(body) : undefined;
+  const usesLongPressMenu = hasMenuActions && !isDesktop;
+  const copyText = body && !isRemoved ? () => copyMessageText(body) : undefined;
+  const menuActions = {
+    onOpenThread: hasThreadActions ? () => onOpenThread(id) : undefined,
+    onCopyThreadLink: hasThreadActions ? () => onCopyThreadLink(id) : undefined,
+    onCopyText: copyText,
+    onRemove: onRemove ? () => setIsRemoveOpen(true) : undefined,
+  };
 
   const message = (
     <div
@@ -77,13 +92,7 @@ export const Message = ({
         usesLongPressMenu && 'select-none',
       )}
     >
-      {hasThreadActions && isDesktop && (
-        <MessageMenu
-          onOpenThread={() => onOpenThread(id)}
-          onCopyThreadLink={() => onCopyThreadLink(id)}
-          onCopyText={copyText}
-        />
-      )}
+      {hasMenuActions && isDesktop && <MessageMenu {...menuActions} />}
 
       <UserProfileDrawer
         name={truncatedUsername}
@@ -118,8 +127,14 @@ export const Message = ({
           </div>
         </div>
 
+        {isRemoved && (
+          <div className="text-muted-foreground text-sm italic">
+            {t('moderation.labels.removedByModerator')}
+          </div>
+        )}
+
         {/* TODO: Truncate message body if it exceeds a certain length */}
-        {body && <FormattedText text={body} />}
+        {body && !isRemoved && <FormattedText text={body} />}
 
         {/* TODO: Enable navigation between images in modal */}
         {showImages && (
@@ -134,7 +149,7 @@ export const Message = ({
           />
         )}
 
-        {!body && !showImages && (
+        {!isRemoved && !body && !showImages && (
           <div className="text-muted-foreground text-sm">
             {t('prompts.noContent')}
           </div>
@@ -152,19 +167,30 @@ export const Message = ({
     </div>
   );
 
+  const removeDialog = onRemove && (
+    <RemoveContentDialog
+      open={isRemoveOpen}
+      onOpenChange={setIsRemoveOpen}
+      title={t('moderation.prompts.removeMessage')}
+      onRemove={onRemove}
+    />
+  );
+
   // Touch devices get the same actions through a long press instead of a
   // permanently visible trigger on every message
-  if (!hasThreadActions || isDesktop) {
-    return message;
+  if (!hasMenuActions || isDesktop) {
+    return (
+      <>
+        {message}
+        {removeDialog}
+      </>
+    );
   }
 
   return (
-    <MessageContextMenu
-      onOpenThread={() => onOpenThread(id)}
-      onCopyThreadLink={() => onCopyThreadLink(id)}
-      onCopyText={copyText}
-    >
-      {message}
-    </MessageContextMenu>
+    <>
+      <MessageContextMenu {...menuActions}>{message}</MessageContextMenu>
+      {removeDialog}
+    </>
   );
 };

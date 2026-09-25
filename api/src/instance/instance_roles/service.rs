@@ -14,7 +14,7 @@ use uuid::Uuid as NativeUuid;
 use super::types::{InstanceRoleResponse, RoleRequest};
 use crate::{
     authz::{
-        validate_permissions, PermissionRule, ADMIN_ROLE_NAME,
+        self, validate_permissions, PermissionRule, ADMIN_ROLE_NAME,
         DEFAULT_ROLE_COLOR,
     },
     common::{text::sanitize_text, ApiError, AppResult},
@@ -22,8 +22,15 @@ use crate::{
     users as users_service,
 };
 
-const INSTANCE_SUBJECTS: &[&str] =
-    &["InstanceConfig", "InstanceRole", "Server", "all"];
+const INSTANCE_SUBJECTS: &[&str] = &[
+    "InstanceConfig",
+    "InstanceRole",
+    "Server",
+    "Message",
+    "Call",
+    "User",
+    "all",
+];
 
 pub(super) async fn get_instance_role(
     database: &DatabaseConnection,
@@ -187,7 +194,11 @@ pub(super) async fn update_instance_role_permissions(
     role_id: Uuid,
     permissions: Vec<PermissionRule>,
 ) -> AppResult<()> {
-    validate_permissions(&permissions, INSTANCE_SUBJECTS)?;
+    validate_permissions(
+        &permissions,
+        INSTANCE_SUBJECTS,
+        authz::INSTANCE_CAPABILITY_ACTIONS,
+    )?;
     get_instance_role_record(database, role_id).await?;
     set_permissions(database, role_id, &permissions).await
 }

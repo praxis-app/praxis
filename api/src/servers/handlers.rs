@@ -8,23 +8,30 @@ use std::{path::PathBuf, sync::Arc};
 
 use super::{
     extractors::{
-        CanManageServersContext, CanReadServerContext, CanUpdateServerContext,
+        CanManageServerMembersContext, CanManageServersContext,
+        CanModerateServerMemberContext, CanReadServerContext,
+        CanUpdateServerContext,
     },
+    moderation::{self, MemberModeration},
     service,
     types::{
-        AnonymousUsersEnabledResponse, JoinServerRequest, ServerConfigPayload,
-        ServerConfigRequest, ServerImagePath, ServerMembersRequest, ServerPath,
-        ServerPayload, ServerRequest, ServersPayload, UsersPayload,
+        AnonymousUsersEnabledResponse, JoinServerRequest, ServerAccessPayload,
+        ServerBansPayload, ServerConfigPayload, ServerConfigRequest,
+        ServerImagePath, ServerMembersRequest, ServerPath, ServerPayload,
+        ServerRequest, ServersPayload, UsersPayload,
     },
 };
 use crate::{
     auth::{AuthenticatedUser, AuthenticatedUserOptional, HasJwtSecret},
     cache::CacheService,
+    calls::LiveKitConfig,
     common::{
         request::JsonOrMultipartFiles, response::EmptyResponse,
         storage::upload_root, ApiError, AppResult,
     },
     invites::InviteAccessToken,
+    moderation::ModerationReasonRequest,
+    pub_sub::PubSubService,
 };
 
 #[derive(Clone, Debug)]
@@ -33,6 +40,8 @@ pub(super) struct ServersState {
     jwt_secret: Arc<str>,
     upload_root: Arc<PathBuf>,
     cache_service: CacheService,
+    pub_sub_service: PubSubService,
+    livekit: Option<LiveKitConfig>,
 }
 
 impl ServersState {
@@ -40,12 +49,16 @@ impl ServersState {
         database: DatabaseConnection,
         jwt_secret: String,
         cache_service: CacheService,
+        pub_sub_service: PubSubService,
+        livekit: Option<LiveKitConfig>,
     ) -> Self {
         Self {
             database,
             jwt_secret: Arc::<str>::from(jwt_secret),
             upload_root: Arc::new(upload_root()),
             cache_service,
+            pub_sub_service,
+            livekit,
         }
     }
 }
@@ -91,6 +104,16 @@ pub(super) async fn get_server_by_slug(
     )
     .await?;
     Ok(Json(ServerPayload { server }))
+}
+
+pub(super) async fn get_server_access(
+    State(state): State<ServersState>,
+    Path(slug): Path<String>,
+    AuthenticatedUser(user_id): AuthenticatedUser,
+) -> AppResult<Json<ServerAccessPayload>> {
+    let access =
+        moderation::get_server_access(&state.database, &slug, user_id).await?;
+    Ok(Json(ServerAccessPayload { access }))
 }
 
 // Records the current server as a separate write, so the read above
@@ -247,6 +270,72 @@ pub(super) async fn remove_server_members(
     Ok(Json(EmptyResponse {}))
 }
 
+pub(super) async fn remove_server_member(
+    State(state): State<ServersState>,
+    context: CanModerateServerMemberContext,
+    Json(payload): Json<ModerationReasonRequest>,
+) -> AppResult<Json<EmptyResponse>> {
+    moderation::remove_member(
+        &state.database,
+        member_moderation(&context, payload.reason),
+    )
+    .await?;
+    moderation::evict_server_member(
+        &state.database,
+        &state.pub_sub_service,
+        state.livekit.as_ref(),
+        context.path.server_id,
+        context.path.user_id,
+    )
+    .await;
+    Ok(Json(EmptyResponse {}))
+}
+
+pub(super) async fn ban_server_member(
+    State(state): State<ServersState>,
+    context: CanModerateServerMemberContext,
+    Json(payload): Json<ModerationReasonRequest>,
+) -> AppResult<Json<EmptyResponse>> {
+    moderation::ban_member(
+        &state.database,
+        member_moderation(&context, payload.reason),
+    )
+    .await?;
+    moderation::evict_server_member(
+        &state.database,
+        &state.pub_sub_service,
+        state.livekit.as_ref(),
+        context.path.server_id,
+        context.path.user_id,
+    )
+    .await;
+    Ok(Json(EmptyResponse {}))
+}
+
+pub(super) async fn unban_server_member(
+    State(state): State<ServersState>,
+    context: CanModerateServerMemberContext,
+    payload: Option<Json<ModerationReasonRequest>>,
+) -> AppResult<Json<EmptyResponse>> {
+    let reason = payload.and_then(|Json(payload)| payload.reason);
+    moderation::unban_member(
+        &state.database,
+        member_moderation(&context, reason),
+    )
+    .await?;
+    Ok(Json(EmptyResponse {}))
+}
+
+pub(super) async fn get_server_bans(
+    State(state): State<ServersState>,
+    context: CanManageServerMembersContext,
+) -> AppResult<Json<ServerBansPayload>> {
+    let bans =
+        moderation::get_server_bans(&state.database, context.path.server_id)
+            .await?;
+    Ok(Json(ServerBansPayload { bans }))
+}
+
 pub(super) async fn join_server(
     State(state): State<ServersState>,
     Path(path): Path<ServerPath>,
@@ -297,6 +386,18 @@ pub(super) async fn update_server_config(
     )
     .await?;
     Ok(Json(EmptyResponse {}))
+}
+
+fn member_moderation(
+    context: &CanModerateServerMemberContext,
+    reason: Option<String>,
+) -> MemberModeration {
+    MemberModeration {
+        server_id: context.path.server_id,
+        actor_user_id: context.user_id,
+        target_user_id: context.path.user_id,
+        reason,
+    }
 }
 
 fn parse_user_ids(values: &[String]) -> AppResult<Vec<Uuid>> {

@@ -12,6 +12,7 @@ pub struct Model {
     pub bio: Option<String>,
     pub anonymous: bool,
     pub locked: bool,
+    pub deleted_at: Option<DateTimeWithTimeZone>,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }

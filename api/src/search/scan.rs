@@ -355,6 +355,7 @@ async fn scan_forum_posts(
                 .is_in(scope.scanned_channel_ids.clone()),
         )
         .filter(window.condition(forum_posts::Column::CreatedAt))
+        .filter(forum_posts::Column::ModeratedAt.is_null())
         .order_by_desc(forum_posts::Column::CreatedAt)
         .order_by_desc(forum_posts::Column::Id);
     let rows = query
@@ -398,12 +399,17 @@ async fn scan_forum_posts(
     let candidates = rows
         .into_iter()
         .map(|row| {
-            let mut fields = vec![EncryptedField {
-                ciphertext: row.ciphertext,
-                iv: row.iv,
-                tag: row.tag,
-                key_id: row.key_id,
-            }];
+            let mut fields = Vec::new();
+            if let (Some(ciphertext), Some(iv), Some(tag)) =
+                (row.ciphertext, row.iv, row.tag)
+            {
+                fields.push(EncryptedField {
+                    ciphertext,
+                    iv,
+                    tag,
+                    key_id: row.key_id,
+                });
+            }
             if let Some(field) = roots
                 .get(&row.root_message_id)
                 .and_then(encrypted_message_field)
@@ -435,6 +441,7 @@ async fn scan_forum_posts(
 
 fn encrypted_message_condition() -> Condition {
     Condition::all()
+        .add(messages::Column::ModeratedAt.is_null())
         .add(messages::Column::Ciphertext.is_not_null())
         .add(messages::Column::Iv.is_not_null())
         .add(messages::Column::Tag.is_not_null())

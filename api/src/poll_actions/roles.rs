@@ -28,6 +28,7 @@ use super::types::{
     PollActionUserResponse,
 };
 use crate::{
+    authz,
     common::{request::parse_uuid, ApiError, AppResult},
     servers::server_roles::service::get_server_role_record,
     users as users_service,
@@ -110,6 +111,16 @@ pub(super) async fn create_poll_action_role<C: ConnectionTrait>(
     if let Some(permissions) = request.permissions {
         for permission in permissions {
             for action in permission.actions {
+                if !authz::is_valid_action(
+                    &permission.subject,
+                    &action.action,
+                    authz::SERVER_CAPABILITY_ACTIONS,
+                ) {
+                    return Err(ApiError::new(
+                        StatusCode::UNPROCESSABLE_ENTITY,
+                        "Action is invalid.",
+                    ));
+                }
                 poll_action_permissions::ActiveModel {
                     id: Set(NativeUuid::new_v4()),
                     poll_action_role_id: Set(role.id),

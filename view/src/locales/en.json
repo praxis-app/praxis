@@ -40,6 +40,7 @@
   "errors": {
     "pageNotFound": "Page not found.",
     "somethingWentWrong": "Something went wrong.",
+    "forbidden": "You don't have permission to do that.",
     "fieldRequired": "This field is required."
   },
 
@@ -134,6 +135,7 @@
       "confirmLogOut": "Use this dialog to log out of your account."
     },
     "errors": {
+      "accountSuspended": "This account has been suspended.",
       "invalidEmail": "Email is invalid.",
       "longEmail": "Email cannot exceed 254 characters",
       "longName": "Username cannot exceed 15 characters",
@@ -799,6 +801,7 @@
       "add": "Add",
       "addMembers": "Add members",
       "delete": "Delete role",
+      "manageServerMembers": "Manage members",
       "manageServerRoles": "Manage roles",
       "viewRoles": "View roles"
     },
@@ -837,11 +840,66 @@
     }
   },
 
+  "moderation": {
+    "actions": {
+      "delete": "Delete",
+      "deleteUser": "Delete account",
+      "endCall": "End call for everyone",
+      "loadMore": "Load more",
+      "moderateCall": "Moderate call",
+      "remove": "Remove",
+      "removeFromCall": "Remove {{name}} from call",
+      "removeMessage": "Remove message",
+      "removePost": "Remove post",
+      "restore": "Restore",
+      "restoreUser": "Restore account",
+      "suspend": "Suspend",
+      "suspendUser": "Suspend account",
+      "userActions": "Actions for {{name}}"
+    },
+    "explanations": {
+      "deleteUser": "This can't be undone. Their profile, sign-in details, memberships, roles, messages, and forum posts are permanently erased, and they'll appear as a deleted user. Their votes, proposals, polls, and events stay.",
+      "endCall": "Everyone is disconnected and no one can rejoin. The call's messages, proposals, and decisions are kept.",
+      "removeContent": "The content and any attached images are permanently erased. A notice that a moderator removed it stays in its place, and any replies are kept.",
+      "removeParticipant": "They're disconnected from this call but remain a member of the server.",
+      "restoreUser": "They'll be able to sign in again. Anything removed while they were suspended stays removed.",
+      "suspendUser": "They're signed out everywhere and can't sign back in until the account is restored. Their content, votes, and memberships stay."
+    },
+    "labels": {
+      "anonymous": "Anonymous",
+      "deleted": "Deleted",
+      "reason": "Reason",
+      "reasonOptional": "Reason (optional)",
+      "removedByModerator": "Removed by a moderator",
+      "suspended": "Suspended"
+    },
+    "placeholders": {
+      "reason": "Add a note for the moderation log"
+    },
+    "prompts": {
+      "deleteUser": "Permanently delete this account?",
+      "endCall": "End this call?",
+      "noUsers": "No users found.",
+      "reasonRequired": "Enter a reason of at least {{count}} characters.",
+      "removeMessage": "Remove this message?",
+      "removeParticipant": "Remove from call?",
+      "removePost": "Remove this post?",
+      "restoreUser": "Restore this account?",
+      "suspendUser": "Suspend this account?"
+    },
+    "toasts": {
+      "callEnded": "A moderator ended the call.",
+      "removedFromCall": "A moderator removed you from the call."
+    }
+  },
+
   "permissions": {
     "names": {
       "blockProposals": "Block proposals",
       "createEvents": "Create events",
       "createInvites": "Create invites",
+      "deleteUsers": "Delete users",
+      "manageCalls": "Manage calls",
       "manageChannels": "Manage channels",
       "manageEvents": "Manage events",
       "manageInstanceRoles": "Manage instance roles",
@@ -850,16 +908,21 @@
       "managePosts": "Manage posts",
       "manageQuestions": "Manage questions",
       "manageRules": "Manage rules",
+      "manageServerMembers": "Manage members",
       "manageServerRoles": "Manage roles",
       "manageServerSettings": "Manage settings",
       "manageServers": "Manage servers",
+      "moderateContent": "Moderate content",
       "removeMembers": "Remove members",
-      "removeProposals": "Remove proposals"
+      "removeProposals": "Remove proposals",
+      "suspendUsers": "Suspend users"
     },
     "descriptions": {
       "blockProposals": "Allows members to cast a blocking vote on proposals when blocking is restricted on this server.",
       "createEvents": "Allows members to create and plan events.",
       "createInvites": "Allows members to invite new people to the server.",
+      "deleteUsers": "Allows members to permanently delete accounts on this instance. Deleted accounts lose their profile and conversation content, but their votes and proposals stay.",
+      "manageCalls": "Allows members to remove participants from calls or end a call for everyone.",
       "manageChannels": "Allows members to create, edit, or delete channels.",
       "manageComments": "Allows members to remove or hide comments by other members.",
       "manageEvents": "Allows members to remove or edit events created by other members.",
@@ -869,11 +932,14 @@
       "managePosts": "Allows members to remove or hide posts by other members.",
       "manageQuestions": "Allows members to create, edit, or delete membership questions.",
       "manageRules": "Allows members to create, edit, or delete rules for the server.",
+      "manageServerMembers": "Allows members to remove, ban, or unban other members of the server.",
       "manageServerRoles": "Allows members to create new roles as well as edit or delete other roles.",
       "manageServerSettings": "Allows members to make changes to the server's settings.",
       "manageServers": "Allows members to create new servers as well as edit or delete other servers.",
+      "moderateContent": "Allows members to permanently remove messages, forum posts, and replies by other members.",
       "removeMembers": "Allows members to remove other members from the server.",
-      "removeProposals": "Allows members to remove proposals posted by other members."
+      "removeProposals": "Allows members to remove proposals posted by other members.",
+      "suspendUsers": "Allows members to suspend or restore accounts on this instance. Suspended users are signed out and can't sign back in."
     },
     "states": {
       "enabled": "Enabled",
@@ -957,19 +1023,36 @@
       "edit": "Edit Server",
       "details": "Server details",
       "profile": "Server profile",
-      "access": "Access"
+      "access": "Access",
+      "members": "Members"
     },
     "actions": {
       "addMembers": "Add members",
+      "ban": "Ban",
+      "banMember": "Ban member",
       "deleteServer": "Delete Server",
+      "memberActions": "Actions for {{name}}",
+      "removeMember": "Remove member",
+      "unban": "Unban",
       "manage": "Manage server",
       "switchTo": "Switch to server",
       "selectImage": "Select server image",
       "changeImage": "Change server image"
     },
     "labels": {
+      "bannedOn": "Banned on {{date}}",
+      "bannedUsers": "Banned users",
       "current": "Current server",
-      "default": "Default"
+      "default": "Default",
+      "membersCount_one": "{{count}} member",
+      "membersCount_other": "{{count}} members"
+    },
+    "moderationExplanations": {
+      "removeEffects": "Removing them ends their access to this server and its channels and disconnects them from any call here. Their roles and event RSVPs in this server are removed as well.",
+      "removeRejoin": "Anything they've already contributed stays, including messages, proposals, and votes on decided proposals, though their votes on proposals still open stop counting. They can rejoin with an invite link and will see the reason you give, but not who removed them.",
+      "banEffects": "Banning them ends their access to this server and its channels, disconnects them from any call here, and removes their roles and event RSVPs in this server. Their messages, proposals, and votes on decided proposals stay, though their votes on proposals still open stop counting.",
+      "banRejoin": "They can't rejoin, even with an invite link, until the ban is lifted. They'll see the reason you give, but not who banned them.",
+      "unban": "This lets them rejoin with an invite link. It won't add them back to the server or restore the roles and RSVPs they had before."
     },
     "form": {
       "name": "Name",
@@ -992,9 +1075,24 @@
     },
     "prompts": {
       "creating": "Creating server...",
+      "banMember": "Ban server member?",
+      "noBans": "No banned users.",
       "removeMember": "Remove server member?",
+      "unbanMember": "Unban this user?",
       "switchServersDescription": "Choose another server to explore.",
       "noServersAvailable": "No other servers available."
+    },
+    "access": {
+      "bannedTitle": "You've been banned from {{serverName}}",
+      "bannedDescription": "A moderator banned you from this server. You won't be able to rejoin unless the ban is lifted.",
+      "removedTitle": "You've been removed from {{serverName}}",
+      "removedDescription": "A moderator removed you from this server. You can rejoin if someone sends you a new invite.",
+      "noAccessTitle": "You're not a member of this server",
+      "noAccessDescription": "You'll need an invite link to join this server.",
+      "reasonLabel": "Reason given",
+      "redirectedBanned": "You were banned from {{serverName}}.",
+      "redirectedRemoved": "You were removed from {{serverName}}.",
+      "redirectedNoAccess": "You're not a member of that server."
     },
     "errors": {
       "nameLength": "Name must be between 2 and 30 characters.",
@@ -1188,11 +1286,13 @@
       "instanceRoles": "Instance Roles",
       "proposals": "Proposals",
       "invites": "Invite Links",
+      "members": "Members",
       "roles": "Roles",
       "events": "Events",
       "notifications": "Notifications",
       "profile": "Profile",
-      "userSettings": "Settings"
+      "userSettings": "Settings",
+      "users": "Users"
     },
     "descriptions": {
       "navDrawer": "View server details and available server actions.",

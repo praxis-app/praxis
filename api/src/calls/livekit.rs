@@ -95,6 +95,45 @@ pub(super) async fn livekit_room_participant_count(
     }
 }
 
+pub(super) async fn remove_livekit_participant(
+    livekit: &LiveKitConfig,
+    room_name: &str,
+    identity: &str,
+) -> AppResult<bool> {
+    let removed = RoomClient::with_api_key(
+        &livekit.api_url,
+        &livekit.api_key,
+        &livekit.api_secret,
+    )
+    .remove_participant(room_name, identity)
+    .await;
+
+    match removed {
+        Ok(()) => Ok(true),
+        Err(error) if is_livekit_not_found(&error) => Ok(false),
+        Err(error) => Err(livekit_unavailable(error)),
+    }
+}
+
+pub(super) async fn delete_livekit_room(
+    livekit: &LiveKitConfig,
+    room_name: &str,
+) -> AppResult<()> {
+    let deleted = RoomClient::with_api_key(
+        &livekit.api_url,
+        &livekit.api_key,
+        &livekit.api_secret,
+    )
+    .delete_room(room_name)
+    .await;
+
+    match deleted {
+        Ok(()) => Ok(()),
+        Err(error) if is_livekit_not_found(&error) => Ok(()),
+        Err(error) => Err(livekit_unavailable(error)),
+    }
+}
+
 pub(super) async fn settled_livekit_room_participant_count(
     livekit: &LiveKitConfig,
     room_name: &str,
@@ -200,4 +239,83 @@ fn internal_error(error: impl std::fmt::Display) -> ApiError {
 fn livekit_unavailable(error: impl std::fmt::Display) -> ApiError {
     tracing::warn!("LiveKit is unavailable: {error}");
     ApiError::new(StatusCode::SERVICE_UNAVAILABLE, "LiveKit is unavailable.")
+}
+
+#[cfg(test)]
+mod tests {
+    use axum::{response::IntoResponse, Json, Router};
+    use tokio::net::TcpListener;
+
+    use super::*;
+
+    async fn mock_livekit(status: StatusCode) -> LiveKitConfig {
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let address = listener.local_addr().unwrap();
+        let router = Router::new().fallback(move || async move {
+            match status {
+                StatusCode::OK => StatusCode::OK.into_response(),
+                StatusCode::NOT_FOUND => (
+                    status,
+                    Json(serde_json::json!({
+                        "code": TwirpErrorCode::NOT_FOUND,
+                        "msg": "not found",
+                    })),
+                )
+                    .into_response(),
+                _ => (
+                    status,
+                    Json(serde_json::json!({
+                        "code": TwirpErrorCode::INTERNAL,
+                        "msg": "unavailable",
+                    })),
+                )
+                    .into_response(),
+            }
+        });
+        tokio::spawn(async move {
+            axum::serve(listener, router).await.unwrap();
+        });
+
+        LiveKitConfig {
+            url: format!("ws://{address}"),
+            api_url: format!("http://{address}"),
+            api_key: "test-key".to_owned(),
+            api_secret: "test-secret".to_owned(),
+        }
+    }
+
+    #[tokio::test]
+    async fn removing_a_participant_reports_whether_one_was_removed() {
+        let present = mock_livekit(StatusCode::OK).await;
+        assert!(remove_livekit_participant(&present, "room", "user")
+            .await
+            .unwrap());
+
+        let absent = mock_livekit(StatusCode::NOT_FOUND).await;
+        assert!(!remove_livekit_participant(&absent, "room", "user")
+            .await
+            .unwrap());
+    }
+
+    #[tokio::test]
+    async fn deleting_a_room_settles_when_the_room_is_already_gone() {
+        let present = mock_livekit(StatusCode::OK).await;
+        assert!(delete_livekit_room(&present, "room").await.is_ok());
+
+        let absent = mock_livekit(StatusCode::NOT_FOUND).await;
+        assert!(delete_livekit_room(&absent, "room").await.is_ok());
+    }
+
+    #[tokio::test]
+    async fn livekit_failures_surface_as_unavailable() {
+        let failing = mock_livekit(StatusCode::INTERNAL_SERVER_ERROR).await;
+
+        let removal = remove_livekit_participant(&failing, "room", "user")
+            .await
+            .unwrap_err();
+        assert_eq!(removal.status(), StatusCode::SERVICE_UNAVAILABLE);
+
+        let deletion = delete_livekit_room(&failing, "room").await.unwrap_err();
+        assert_eq!(deletion.status(), StatusCode::SERVICE_UNAVAILABLE);
+    }
 }

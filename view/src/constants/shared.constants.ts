@@ -32,6 +32,8 @@ export enum NavigationPaths {
   GeneralSettings = '/settings/general',
   Invites = '/settings/invites',
   ManageServers = '/settings/servers',
+  ManageUsers = '/settings/users',
+  Members = '/settings/members',
   ProposalSettings = '/settings/proposals',
   Roles = '/settings/roles',
   Settings = '/settings',
