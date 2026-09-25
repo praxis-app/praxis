@@ -2,6 +2,7 @@ use sea_orm::entity::prelude::*;
 
 use super::macros::impl_enum_string_conversions;
 
+/// Every supported moderation action
 #[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter, DeriveActiveEnum)]
 #[sea_orm(
     rs_type = "String",
