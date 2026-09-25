@@ -15,10 +15,10 @@ use super::{
     moderation::{self, MemberModeration},
     service,
     types::{
-        AnonymousUsersEnabledResponse, JoinServerRequest, ServerBansPayload,
-        ServerConfigPayload, ServerConfigRequest, ServerImagePath,
-        ServerMembersRequest, ServerPath, ServerPayload, ServerRequest,
-        ServersPayload, UsersPayload,
+        AnonymousUsersEnabledResponse, JoinServerRequest, ServerAccessPayload,
+        ServerBansPayload, ServerConfigPayload, ServerConfigRequest,
+        ServerImagePath, ServerMembersRequest, ServerPath, ServerPayload,
+        ServerRequest, ServersPayload, UsersPayload,
     },
 };
 use crate::{
@@ -104,6 +104,16 @@ pub(super) async fn get_server_by_slug(
     )
     .await?;
     Ok(Json(ServerPayload { server }))
+}
+
+pub(super) async fn get_server_access(
+    State(state): State<ServersState>,
+    Path(slug): Path<String>,
+    AuthenticatedUser(user_id): AuthenticatedUser,
+) -> AppResult<Json<ServerAccessPayload>> {
+    let access =
+        moderation::get_server_access(&state.database, &slug, user_id).await?;
+    Ok(Json(ServerAccessPayload { access }))
 }
 
 // Records the current server as a separate write, so the read above

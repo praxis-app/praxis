@@ -51,6 +51,15 @@ export interface ServerRes {
   updatedAt: Date;
 }
 
+export type ServerAccessStatus = 'member' | 'banned' | 'removed' | 'none';
+
+export interface ServerAccessRes {
+  status: ServerAccessStatus;
+  serverName: string | null;
+  reason: string | null;
+  moderatedAt: string | null;
+}
+
 export interface ServerBanRes {
   user: UserRes;
   createdAt: string;

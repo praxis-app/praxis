@@ -40,6 +40,7 @@
   "errors": {
     "pageNotFound": "Page not found.",
     "somethingWentWrong": "Something went wrong.",
+    "forbidden": "You don't have permission to do that.",
     "fieldRequired": "This field is required."
   },
 
@@ -1016,6 +1017,18 @@
       "unbanMember": "Unban this user?",
       "switchServersDescription": "Choose another server to explore.",
       "noServersAvailable": "No other servers available."
+    },
+    "access": {
+      "bannedTitle": "You've been banned from {{serverName}}",
+      "bannedDescription": "A moderator banned you from this server. You won't be able to rejoin unless the ban is lifted.",
+      "removedTitle": "You've been removed from {{serverName}}",
+      "removedDescription": "A moderator removed you from this server. You can rejoin if someone sends you a new invite.",
+      "noAccessTitle": "You're not a member of this server",
+      "noAccessDescription": "You'll need an invite link to join this server.",
+      "reasonLabel": "Reason given",
+      "redirectedBanned": "You were banned from {{serverName}}.",
+      "redirectedRemoved": "You were removed from {{serverName}}.",
+      "redirectedNoAccess": "You're not a member of that server."
     },
     "errors": {
       "nameLength": "Name must be between 2 and 30 characters.",

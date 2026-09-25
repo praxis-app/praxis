@@ -39,7 +39,7 @@ export const getUnreadNotificationCountQueryKey = (
 
 export const useNotifications = () => {
   const { isRegistered, me } = useAuthData();
-  const { serverId } = useServerData();
+  const { serverId, currentUserHasNoServers } = useServerData();
   const queryClient = useQueryClient();
 
   const listKey = useMemo(
@@ -120,7 +120,8 @@ export const useNotifications = () => {
     ]);
   }, [invalidateUnreadCount, listKey, queryClient, serverId, setListData]);
 
-  const enabled = isRegistered && !!me && !!serverId;
+  const enabled =
+    isRegistered && !!me && !!serverId && !currentUserHasNoServers;
 
   const notificationsQuery = useInfiniteQuery({
     queryKey: listKey,

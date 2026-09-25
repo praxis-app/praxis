@@ -1,7 +1,7 @@
 use axum::http::StatusCode;
 use entity::{
     enums::{ModerationAction, ModerationTargetKind},
-    server_bans, users,
+    moderation_actions, server_bans, servers, users,
 };
 use sea_orm::{
     prelude::Uuid, sea_query::OnConflict, ColumnTrait, ConnectionTrait,
@@ -13,10 +13,13 @@ use uuid::Uuid as NativeUuid;
 
 use super::{
     service::{
-        get_server, internal_error, remove_server_members_in_transaction,
-        shape_user,
+        get_server, internal_error, is_banned_from_server, is_server_member,
+        remove_server_members_in_transaction, shape_user,
     },
-    types::{serialize_timestamp, ServerBanResponse},
+    types::{
+        serialize_timestamp, ServerAccessResponse, ServerAccessStatus,
+        ServerBanResponse,
+    },
 };
 use crate::{
     authz::{self, PermissionScope},
@@ -210,6 +213,72 @@ pub(super) async fn get_server_bans(
             })
         })
         .collect())
+}
+
+pub(super) async fn get_server_access(
+    database: &DatabaseConnection,
+    slug: &str,
+    user_id: Uuid,
+) -> AppResult<ServerAccessResponse> {
+    let server = servers::Entity::find()
+        .filter(servers::Column::Slug.eq(slug))
+        .one(database)
+        .await
+        .map_err(internal_error)?
+        .ok_or_else(|| {
+            ApiError::new(StatusCode::NOT_FOUND, "Server not found.")
+        })?;
+
+    if is_server_member(database, server.id, user_id).await? {
+        return Ok(ServerAccessResponse {
+            status: ServerAccessStatus::Member,
+            server_name: None,
+            reason: None,
+            moderated_at: None,
+        });
+    }
+
+    let latest_action = moderation_actions::Entity::find()
+        .filter(moderation_actions::Column::ServerId.eq(server.id))
+        .filter(
+            moderation_actions::Column::TargetKind
+                .eq(ModerationTargetKind::User),
+        )
+        .filter(moderation_actions::Column::TargetId.eq(user_id))
+        .filter(moderation_actions::Column::Action.is_in([
+            ModerationAction::RemoveMember,
+            ModerationAction::BanMember,
+            ModerationAction::UnbanMember,
+        ]))
+        .order_by_desc(moderation_actions::Column::CreatedAt)
+        .one(database)
+        .await
+        .map_err(internal_error)?;
+
+    let status = if is_banned_from_server(database, server.id, user_id).await? {
+        ServerAccessStatus::Banned
+    } else if latest_action
+        .as_ref()
+        .is_some_and(|action| action.action == ModerationAction::RemoveMember)
+    {
+        ServerAccessStatus::Removed
+    } else {
+        ServerAccessStatus::None
+    };
+
+    let moderation = match status {
+        ServerAccessStatus::Banned | ServerAccessStatus::Removed => {
+            latest_action
+        }
+        _ => None,
+    };
+    Ok(ServerAccessResponse {
+        server_name: moderation.as_ref().map(|_| server.name),
+        reason: moderation.as_ref().and_then(|action| action.reason.clone()),
+        moderated_at: moderation
+            .map(|action| serialize_timestamp(action.created_at)),
+        status,
+    })
 }
 
 async fn ensure_member_can_be_moderated(

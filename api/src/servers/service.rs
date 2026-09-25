@@ -219,22 +219,30 @@ pub(crate) async fn get_current_server(
 ) -> AppResult<Option<ServerResponse>> {
     let default_server_id = default_server_id(database).await?;
 
-    let server_id =
+    let cached_server_id =
         match cached_current_server_id(cache_service, user_id).await {
-            Some(server_id) => Some(server_id),
-            None => server_members::Entity::find()
-                .filter(server_members::Column::UserId.eq(user_id))
-                .order_by_with_nulls(
-                    server_members::Column::LastActiveAt,
-                    Order::Desc,
-                    NullOrdering::Last,
-                )
-                .one(database)
-                .await
-                .map_err(internal_error)?
-                .map(|membership| membership.server_id),
-        }
-        .unwrap_or(default_server_id);
+            Some(server_id)
+                if is_server_member(database, server_id, user_id).await? =>
+            {
+                Some(server_id)
+            }
+            _ => None,
+        };
+    let server_id = match cached_server_id {
+        Some(server_id) => Some(server_id),
+        None => server_members::Entity::find()
+            .filter(server_members::Column::UserId.eq(user_id))
+            .order_by_with_nulls(
+                server_members::Column::LastActiveAt,
+                Order::Desc,
+                NullOrdering::Last,
+            )
+            .one(database)
+            .await
+            .map_err(internal_error)?
+            .map(|membership| membership.server_id),
+    }
+    .unwrap_or(default_server_id);
 
     let Some(server) = servers::Entity::find_by_id(server_id)
         .one(database)

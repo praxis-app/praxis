@@ -105,6 +105,29 @@ pub(super) struct ServerBanResponse {
 }
 
 #[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) enum ServerAccessStatus {
+    Member,
+    Banned,
+    Removed,
+    None,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct ServerAccessResponse {
+    pub(super) status: ServerAccessStatus,
+    pub(super) server_name: Option<String>,
+    pub(super) reason: Option<String>,
+    pub(super) moderated_at: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
+pub(super) struct ServerAccessPayload {
+    pub(super) access: ServerAccessResponse,
+}
+
+#[derive(Debug, Serialize)]
 pub(super) struct ServerBansPayload {
     pub(super) bans: Vec<ServerBanResponse>,
 }

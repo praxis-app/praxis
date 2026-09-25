@@ -71,6 +71,7 @@ import {
   type SearchQueryParams,
 } from '@/types/search.types';
 import {
+  type ServerAccessRes,
   type ServerBanRes,
   type ServerMemberModerationReq,
   type ServerReq,
@@ -660,6 +661,11 @@ class ApiClient {
   getServerBySlug = async (slug: string) => {
     const path = `/servers/slug/${slug}`;
     return this.executeRequest<{ server: ServerRes }>('get', path);
+  };
+
+  getServerAccess = async (slug: string) => {
+    const path = `/servers/slug/${slug}/access`;
+    return this.executeRequest<{ access: ServerAccessRes }>('get', path);
   };
 
   getDefaultServer = async () => {
