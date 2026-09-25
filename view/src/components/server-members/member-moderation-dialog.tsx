@@ -19,6 +19,7 @@ interface Props {
   title: string;
   memberName: string;
   confirmLabel: string;
+  explanation: string[];
   isReasonOptional?: boolean;
   isDestructive?: boolean;
   isPending: boolean;
@@ -31,6 +32,7 @@ export const MemberModerationDialog = ({
   title,
   memberName,
   confirmLabel,
+  explanation,
   isReasonOptional = false,
   isDestructive = true,
   isPending,
@@ -61,6 +63,12 @@ export const MemberModerationDialog = ({
             {memberName}
           </DialogDescription>
         </DialogHeader>
+
+        <div className="text-muted-foreground space-y-2 text-sm">
+          {explanation.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
 
         <div className="flex flex-col gap-2">
           <Label htmlFor={reasonId}>

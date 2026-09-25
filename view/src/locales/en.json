@@ -990,6 +990,13 @@
     "placeholders": {
       "reason": "Add a note for the moderation log"
     },
+    "moderationExplanations": {
+      "removeEffects": "Removing them ends their access to this server and its channels and disconnects them from any call here. Their roles and event RSVPs in this server are removed as well.",
+      "removeRejoin": "Anything they've already contributed stays, including messages, proposals, and votes on decided proposals, though their votes on proposals still open stop counting. They can rejoin with an invite link and will see the reason you give, but not who removed them.",
+      "banEffects": "Banning them ends their access to this server and its channels, disconnects them from any call here, and removes their roles and event RSVPs in this server. Their messages, proposals, and votes on decided proposals stay, though their votes on proposals still open stop counting.",
+      "banRejoin": "They can't rejoin, even with an invite link, until the ban is lifted. They'll see the reason you give, but not who banned them.",
+      "unban": "This lets them rejoin with an invite link. It won't add them back to the server or restore the roles and RSVPs they had before."
+    },
     "form": {
       "name": "Name",
       "slug": "Slug",

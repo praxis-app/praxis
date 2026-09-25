@@ -113,6 +113,17 @@ export const ManagedServerMember = ({
             ? t('servers.actions.ban')
             : t('actions.remove')
         }
+        explanation={
+          pendingAction === 'ban'
+            ? [
+                t('servers.moderationExplanations.banEffects'),
+                t('servers.moderationExplanations.banRejoin'),
+              ]
+            : [
+                t('servers.moderationExplanations.removeEffects'),
+                t('servers.moderationExplanations.removeRejoin'),
+              ]
+        }
         isPending={isPending}
         onConfirm={(reason) => {
           if (pendingAction) {
