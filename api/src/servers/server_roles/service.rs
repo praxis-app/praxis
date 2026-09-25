@@ -283,6 +283,14 @@ where
                 subject: "ServerMember".to_owned(),
                 action: vec!["manage".to_owned()],
             },
+            PermissionRule {
+                subject: "Message".to_owned(),
+                action: vec!["delete".to_owned()],
+            },
+            PermissionRule {
+                subject: "Call".to_owned(),
+                action: vec!["manage".to_owned()],
+            },
         ],
     )
     .await?;

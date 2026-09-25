@@ -26,7 +26,7 @@ use crate::{
     calls::{self, LiveKitConfig},
     common::{ApiError, AppResult},
     moderation::{self, ModerationRecord},
-    pub_sub::PubSubService,
+    pub_sub::{PubSubService, PubSubTopic},
     users as users_service,
 };
 
@@ -44,6 +44,19 @@ pub(super) async fn evict_server_member(
     server_id: Uuid,
     user_id: Uuid,
 ) {
+    let topic = PubSubTopic::notification(server_id, user_id).to_string();
+    if let Err(error) = pub_sub_service
+        .publish(
+            &topic,
+            serde_json::json!({
+                "type": "server-access-revoked",
+                "serverId": server_id,
+            }),
+        )
+        .await
+    {
+        tracing::warn!("failed to notify removed member: {error}");
+    }
     pub_sub_service
         .revoke_server_subscriptions(server_id, user_id)
         .await;

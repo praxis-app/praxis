@@ -8,18 +8,20 @@ import {
 import { useDeferredMenuAction } from '@/hooks/use-deferred-menu-action';
 import { useTranslation } from 'react-i18next';
 import { LuCopy, LuReply } from 'react-icons/lu';
-import { MdLink, MdMoreHoriz } from 'react-icons/md';
+import { MdDeleteOutline, MdLink, MdMoreHoriz } from 'react-icons/md';
 
 interface Props {
-  onOpenThread: () => void;
-  onCopyThreadLink: () => void;
+  onOpenThread?: () => void;
+  onCopyThreadLink?: () => void;
   onCopyText?: () => void;
+  onRemove?: () => void;
 }
 
 export const MessageMenu = ({
   onOpenThread,
   onCopyThreadLink,
   onCopyText,
+  onRemove,
 }: Props) => {
   const { deferUntilClosed, runPendingAction } = useDeferredMenuAction();
 
@@ -39,20 +41,33 @@ export const MessageMenu = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" onCloseAutoFocus={runPendingAction}>
-        <DropdownMenuItem onSelect={deferUntilClosed(onOpenThread)}>
-          <LuReply />
-          {t('messages.actions.reply')}
-        </DropdownMenuItem>
+        {onOpenThread && (
+          <DropdownMenuItem onSelect={deferUntilClosed(onOpenThread)}>
+            <LuReply />
+            {t('messages.actions.reply')}
+          </DropdownMenuItem>
+        )}
         {onCopyText && (
           <DropdownMenuItem onSelect={onCopyText}>
             <LuCopy />
             {t('messages.actions.copyText')}
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem onSelect={onCopyThreadLink}>
-          <MdLink />
-          {t('messages.actions.copyLink')}
-        </DropdownMenuItem>
+        {onCopyThreadLink && (
+          <DropdownMenuItem onSelect={onCopyThreadLink}>
+            <MdLink />
+            {t('messages.actions.copyLink')}
+          </DropdownMenuItem>
+        )}
+        {onRemove && (
+          <DropdownMenuItem
+            variant="destructive"
+            onSelect={deferUntilClosed(onRemove)}
+          >
+            <MdDeleteOutline />
+            {t('moderation.actions.removeMessage')}
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

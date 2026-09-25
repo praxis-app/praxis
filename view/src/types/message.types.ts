@@ -24,6 +24,7 @@ export interface MessageRes {
   replyCount: number;
   replyUsers?: UserRes[];
   latestReplyAt: string | null;
+  moderatedAt?: string;
   createdAt: string;
 }
 

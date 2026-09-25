@@ -8,7 +8,7 @@ import { type ServerBanRes } from '@/types/server.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MemberModerationDialog } from './member-moderation-dialog';
+import { ModerationReasonDialog } from '@/components/moderation/moderation-reason-dialog';
 
 interface Props {
   serverId: string;
@@ -58,11 +58,11 @@ export const ServerBan = ({ serverId, ban: { user, createdAt } }: Props) => {
         {t('servers.actions.unban')}
       </Button>
 
-      <MemberModerationDialog
+      <ModerationReasonDialog
         open={isConfirmOpen}
         onOpenChange={setIsConfirmOpen}
         title={t('servers.prompts.unbanMember')}
-        memberName={name}
+        description={name}
         confirmLabel={t('servers.actions.unban')}
         explanation={[t('servers.moderationExplanations.unban')]}
         isReasonOptional

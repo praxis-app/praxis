@@ -12,6 +12,7 @@ import { type ChannelRes } from '@/types/channel.types';
 import { LiveKitRoom, RoomAudioRenderer } from '@livekit/components-react';
 import {
   ConnectionError,
+  DisconnectReason,
   type AudioCaptureOptions,
   type VideoCaptureOptions,
 } from 'livekit-client';
@@ -146,7 +147,15 @@ export const ChannelCallButton = ({
 
         toast(t('calls.errors.unavailable'), { id: 'calls-unavailable' });
       }}
-      onDisconnected={onLeave}
+      onDisconnected={(reason) => {
+        if (reason === DisconnectReason.ROOM_DELETED) {
+          toast(t('moderation.toasts.callEnded'));
+        }
+        if (reason === DisconnectReason.PARTICIPANT_REMOVED) {
+          toast(t('moderation.toasts.removedFromCall'));
+        }
+        void onLeave();
+      }}
     >
       <RoomAudioRenderer />
       <CallPanel

@@ -13,6 +13,7 @@ import {
   MdEmojiPeople,
   MdGroups,
   MdLink,
+  MdManageAccounts,
   MdPeople,
   MdSettings,
 } from 'react-icons/md';
@@ -29,6 +30,7 @@ export const Settings = () => {
     canManageServerMembers,
     canManageServerRoles,
     canManageServerSettings,
+    canManageUsers,
     hasInstanceSettingsAccess,
     hasServerSettingsAccess,
     hasSettingsAccess,
@@ -127,6 +129,13 @@ export const Settings = () => {
                   Icon={MdGroups}
                   label={t('settings.headers.manageServers')}
                   to={NavigationPaths.ManageServers}
+                />
+              )}
+              {canManageUsers && (
+                <SettingsNavItem
+                  Icon={MdManageAccounts}
+                  label={t('navigation.labels.users')}
+                  to={NavigationPaths.ManageUsers}
                 />
               )}
             </div>

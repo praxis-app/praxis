@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { Navigate, Outlet, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ServerAccessDenied } from './server-access-denied';
+import { ServerAccessListener } from './server-access-listener';
 
 const SERVER_ACCESS_REDIRECT_TOAST_ID = 'server-access-redirect';
 
@@ -62,7 +63,12 @@ export const ServerAccessGuard = () => {
   }, [isDenied, access, fallbackServer, queryClient]);
 
   if (!isDenied) {
-    return <Outlet />;
+    return (
+      <>
+        <ServerAccessListener />
+        <Outlet />
+      </>
+    );
   }
   if (fallbackServer) {
     return <Navigate to={`/s/${fallbackServer.slug}`} replace />;

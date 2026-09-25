@@ -14,6 +14,7 @@ export const SERVER_ROLE_ABILITY_SUBJECTS = [
   'ServerRole',
   'ProposalBlock',
   'ServerMember',
+  'Call',
   'all',
 ] as const;
 
@@ -21,6 +22,9 @@ export const INSTANCE_ROLE_ABILITY_SUBJECTS = [
   'InstanceConfig',
   'InstanceRole',
   'Server',
+  'Message',
+  'Call',
+  'User',
   'all',
 ] as const;
 
@@ -34,6 +38,8 @@ export const SERVER_PERMISSION_KEYS = [
   'manageInvites',
   'manageServerRoles',
   'manageServerMembers',
+  'moderateContent',
+  'manageCalls',
   'blockProposals',
 ] as const;
 
@@ -41,6 +47,10 @@ export const INSTANCE_PERMISSION_KEYS = [
   'manageInstanceSettings',
   'manageInstanceRoles',
   'manageServers',
+  'moderateContent',
+  'manageCalls',
+  'suspendUsers',
+  'deleteUsers',
 ] as const;
 
 export const ROLE_COLOR_OPTIONS = [

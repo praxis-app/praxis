@@ -8,13 +8,14 @@ import { useDeferredMenuAction } from '@/hooks/use-deferred-menu-action';
 import { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuCopy, LuReply } from 'react-icons/lu';
-import { MdLink } from 'react-icons/md';
+import { MdDeleteOutline, MdLink } from 'react-icons/md';
 
 interface Props {
   children: ReactNode;
-  onOpenThread: () => void;
-  onCopyThreadLink: () => void;
+  onOpenThread?: () => void;
+  onCopyThreadLink?: () => void;
   onCopyText?: () => void;
+  onRemove?: () => void;
 }
 
 export const MessageContextMenu = ({
@@ -22,6 +23,7 @@ export const MessageContextMenu = ({
   onOpenThread,
   onCopyThreadLink,
   onCopyText,
+  onRemove,
 }: Props) => {
   const { deferUntilClosed, runPendingAction } = useDeferredMenuAction();
 
@@ -31,20 +33,33 @@ export const MessageContextMenu = ({
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
       <ContextMenuContent onCloseAutoFocus={runPendingAction}>
-        <ContextMenuItem onSelect={deferUntilClosed(onOpenThread)}>
-          <LuReply />
-          {t('messages.actions.reply')}
-        </ContextMenuItem>
+        {onOpenThread && (
+          <ContextMenuItem onSelect={deferUntilClosed(onOpenThread)}>
+            <LuReply />
+            {t('messages.actions.reply')}
+          </ContextMenuItem>
+        )}
         {onCopyText && (
           <ContextMenuItem onSelect={onCopyText}>
             <LuCopy />
             {t('messages.actions.copyText')}
           </ContextMenuItem>
         )}
-        <ContextMenuItem onSelect={onCopyThreadLink}>
-          <MdLink />
-          {t('messages.actions.copyLink')}
-        </ContextMenuItem>
+        {onCopyThreadLink && (
+          <ContextMenuItem onSelect={onCopyThreadLink}>
+            <MdLink />
+            {t('messages.actions.copyLink')}
+          </ContextMenuItem>
+        )}
+        {onRemove && (
+          <ContextMenuItem
+            variant="destructive"
+            onSelect={deferUntilClosed(onRemove)}
+          >
+            <MdDeleteOutline />
+            {t('moderation.actions.removeMessage')}
+          </ContextMenuItem>
+        )}
       </ContextMenuContent>
     </ContextMenu>
   );

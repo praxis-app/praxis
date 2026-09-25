@@ -14,7 +14,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MdBlock, MdMoreHoriz, MdPersonRemove } from 'react-icons/md';
-import { MemberModerationDialog } from './member-moderation-dialog';
+import { ModerationReasonDialog } from '@/components/moderation/moderation-reason-dialog';
 
 type ModerationAction = 'remove' | 'ban';
 
@@ -99,7 +99,7 @@ export const ManagedServerMember = ({
         </DropdownMenu>
       )}
 
-      <MemberModerationDialog
+      <ModerationReasonDialog
         open={!!pendingAction}
         onOpenChange={(open) => !open && setPendingAction(null)}
         title={
@@ -107,7 +107,7 @@ export const ManagedServerMember = ({
             ? t('servers.prompts.banMember')
             : t('servers.prompts.removeMember')
         }
-        memberName={name}
+        description={name}
         confirmLabel={
           pendingAction === 'ban'
             ? t('servers.actions.ban')
@@ -124,6 +124,7 @@ export const ManagedServerMember = ({
                 t('servers.moderationExplanations.removeRejoin'),
               ]
         }
+        isReasonRequired
         isPending={isPending}
         onConfirm={(reason) => {
           if (pendingAction) {

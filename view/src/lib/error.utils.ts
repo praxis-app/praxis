@@ -1,11 +1,19 @@
 import { AxiosError } from 'axios';
 import { toast } from 'sonner';
+import {
+  isAccountSuspendedError,
+  notifyAccountSuspended,
+} from './auth-error.utils';
 import { queryClient } from './query-client';
 import { t } from './shared.utils';
 
 const FORBIDDEN = 'Forbidden.';
 
 export const handleError = (error: Error) => {
+  if (isAccountSuspendedError(error)) {
+    notifyAccountSuspended();
+    return;
+  }
   if (error instanceof AxiosError && error.response?.data) {
     const data = error.response.data;
     const message =

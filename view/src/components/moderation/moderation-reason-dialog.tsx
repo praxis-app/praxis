@@ -9,7 +9,10 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { MAX_MODERATION_REASON_LENGTH } from '@/constants/moderation.constants';
+import {
+  MAX_MODERATION_REASON_LENGTH,
+  MIN_MODERATION_REASON_LENGTH,
+} from '@/constants/moderation.constants';
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -17,23 +20,25 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  memberName: string;
+  description: string;
   confirmLabel: string;
-  explanation: string[];
+  explanation?: string[];
   isReasonOptional?: boolean;
+  isReasonRequired?: boolean;
   isDestructive?: boolean;
   isPending: boolean;
   onConfirm: (reason?: string) => void;
 }
 
-export const MemberModerationDialog = ({
+export const ModerationReasonDialog = ({
   open,
   onOpenChange,
   title,
-  memberName,
+  description,
   confirmLabel,
-  explanation,
+  explanation = [],
   isReasonOptional = false,
+  isReasonRequired = false,
   isDestructive = true,
   isPending,
   onConfirm,
@@ -43,6 +48,10 @@ export const MemberModerationDialog = ({
   const { t } = useTranslation();
   const reasonId = useId();
 
+  const trimmedReason = reason.trim();
+  const isReasonMissing =
+    isReasonRequired && trimmedReason.length < MIN_MODERATION_REASON_LENGTH;
+
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
       setReason('');
@@ -51,7 +60,7 @@ export const MemberModerationDialog = ({
   };
 
   const handleConfirm = () => {
-    onConfirm(reason.trim() || undefined);
+    onConfirm(trimmedReason || undefined);
   };
 
   return (
@@ -60,29 +69,38 @@ export const MemberModerationDialog = ({
         <DialogHeader className="pt-3">
           <DialogTitle className="text-left">{title}</DialogTitle>
           <DialogDescription className="text-left">
-            {memberName}
+            {description}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="text-muted-foreground space-y-2 text-sm">
-          {explanation.map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-        </div>
+        {!!explanation.length && (
+          <div className="text-muted-foreground space-y-2 text-sm">
+            {explanation.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        )}
 
         <div className="flex flex-col gap-2">
           <Label htmlFor={reasonId}>
             {isReasonOptional
-              ? t('servers.labels.reasonOptional')
-              : t('servers.labels.reason')}
+              ? t('moderation.labels.reasonOptional')
+              : t('moderation.labels.reason')}
           </Label>
           <Textarea
             id={reasonId}
             value={reason}
             maxLength={MAX_MODERATION_REASON_LENGTH}
-            placeholder={t('servers.placeholders.reason')}
+            placeholder={t('moderation.placeholders.reason')}
             onChange={(e) => setReason(e.target.value)}
           />
+          {isReasonRequired && (
+            <p className="text-muted-foreground text-xs">
+              {t('moderation.prompts.reasonRequired', {
+                count: MIN_MODERATION_REASON_LENGTH,
+              })}
+            </p>
+          )}
         </div>
 
         <DialogFooter className="flex flex-row justify-end gap-2">
@@ -92,7 +110,7 @@ export const MemberModerationDialog = ({
           <Button
             variant={isDestructive ? 'destructive' : 'default'}
             onClick={handleConfirm}
-            disabled={isPending}
+            disabled={isPending || isReasonMissing}
           >
             {confirmLabel}
           </Button>

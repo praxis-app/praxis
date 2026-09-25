@@ -2,15 +2,24 @@ use axum::http::StatusCode;
 use entity::{
     calls, channel_members, channels,
     enums::{ModerationAction, ModerationTargetKind},
-    messages, moderation_actions, server_bans, server_members, users,
+    message_images, messages, moderation_actions, polls, server_bans,
+    server_members, users, votes,
 };
+use futures_util::{SinkExt, StreamExt};
 use sea_orm::{
     ActiveModelTrait, ColumnTrait, EntityTrait, QueryFilter, QueryOrder, Set,
 };
 use serde_json::json;
+use std::{collections::HashMap, io::Cursor, path::PathBuf, time::Duration};
+use tokio_tungstenite::{
+    connect_async, tungstenite::Message as SocketMessage, MaybeTlsStream,
+    WebSocketStream,
+};
 use uuid::Uuid;
 
-use crate::support::{json_body, TestApp};
+use crate::support::{json_body, MultipartField, TestApp};
+
+type TestSocket = WebSocketStream<MaybeTlsStream<tokio::net::TcpStream>>;
 
 struct TestUser {
     token: String,
@@ -1101,18 +1110,7 @@ async fn create_forum_channel(
     admin: &TestUser,
     server_id: &str,
 ) -> String {
-    let response = app
-        .post_json_with_bearer(
-            &format!("/api/servers/{server_id}/channels"),
-            &json!({ "name": "forum", "channelType": "forum" }),
-            &admin.token,
-        )
-        .await;
-    assert_eq!(response.status(), StatusCode::OK);
-    json_body(response).await["channel"]["id"]
-        .as_str()
-        .unwrap()
-        .to_owned()
+    create_channel(app, admin, server_id, "forum", "forum").await
 }
 
 async fn insert_active_call(
@@ -1165,4 +1163,451 @@ async fn grant_server_permission(
         )
         .await;
     assert_eq!(members.status(), StatusCode::OK);
+}
+
+#[tokio::test]
+async fn removed_messages_erase_images_and_leave_search_results() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    let server_id = default_server_id(&app).await;
+    let channel_id = general_channel_id(&app, &server_id).await;
+    let message_id = create_image_message(
+        &app,
+        &member,
+        &server_id,
+        &channel_id,
+        "findable spam",
+    )
+    .await;
+    let message_uuid = Uuid::parse_str(&message_id).unwrap();
+    let images = message_images::Entity::find()
+        .filter(message_images::Column::MessageId.eq(message_uuid))
+        .all(app.database())
+        .await
+        .unwrap();
+    assert_eq!(images.len(), 1);
+    let image_id = images[0].id;
+    let stored_file =
+        content_root().join(images[0].storage_key.as_ref().unwrap());
+    assert!(stored_file.exists());
+    assert_eq!(
+        search_ids(&app, &admin, &server_id, "findable").await,
+        vec![message_id.clone()]
+    );
+
+    let removed = app
+        .post_json_with_bearer(
+            &format!(
+                "/api/servers/{server_id}/channels/{channel_id}/messages/{message_id}/remove"
+            ),
+            &json!({}),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(removed.status(), StatusCode::OK);
+    let removed = json_body(removed).await;
+    assert!(removed["message"]["body"].is_null());
+    assert!(removed["message"]["images"]
+        .as_array()
+        .is_none_or(|images| images.is_empty()));
+
+    let remaining_images = message_images::Entity::find()
+        .filter(message_images::Column::MessageId.eq(message_uuid))
+        .all(app.database())
+        .await
+        .unwrap();
+    assert!(remaining_images.is_empty());
+    assert!(!stored_file.exists());
+    let image = app
+        .get_with_bearer(
+            &format!(
+                "/api/servers/{server_id}/channels/{channel_id}/messages/{message_id}/images/{image_id}"
+            ),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(image.status(), StatusCode::NOT_FOUND);
+    assert!(search_ids(&app, &admin, &server_id, "findable")
+        .await
+        .is_empty());
+}
+
+#[tokio::test]
+async fn content_removal_is_scoped_to_the_target_channel() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let moderator = signup(&app, "mod@example.com", "Moderator").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    let server_id = default_server_id(&app).await;
+    let channel_id = general_channel_id(&app, &server_id).await;
+    let other_channel_id =
+        create_channel(&app, &admin, &server_id, "other", "text").await;
+    let message_id =
+        create_message(&app, &member, &server_id, &channel_id, "spam").await;
+    grant_instance_permission(&app, &admin, &moderator, "all", "manage").await;
+
+    let wrong_channel = app
+        .post_json_with_bearer(
+            &format!(
+                "/api/servers/{server_id}/channels/{other_channel_id}/messages/{message_id}/remove"
+            ),
+            &json!({}),
+            &moderator.token,
+        )
+        .await;
+    assert_eq!(wrong_channel.status(), StatusCode::NOT_FOUND);
+
+    let removed = app
+        .post_json_with_bearer(
+            &format!(
+                "/api/servers/{server_id}/channels/{channel_id}/messages/{message_id}/remove"
+            ),
+            &json!({ "reason": "Spam links" }),
+            &moderator.token,
+        )
+        .await;
+    assert_eq!(removed.status(), StatusCode::OK);
+
+    let rows = moderation_actions::Entity::find()
+        .filter(
+            moderation_actions::Column::TargetId
+                .eq(Uuid::parse_str(&message_id).unwrap()),
+        )
+        .all(app.database())
+        .await
+        .unwrap();
+    assert_eq!(rows.len(), 1);
+    assert_eq!(rows[0].actor_user_id.to_string(), moderator.user_id);
+    assert_eq!(rows[0].server_id.map(|id| id.to_string()), Some(server_id));
+    assert_eq!(rows[0].reason.as_deref(), Some("Spam links"));
+}
+
+#[tokio::test]
+async fn proposal_linked_forum_posts_cannot_be_removed() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let server_id = default_server_id(&app).await;
+    let forum_id = create_forum_channel(&app, &admin, &server_id).await;
+    let posts_uri =
+        format!("/api/servers/{server_id}/channels/{forum_id}/forum/posts");
+    let post = app
+        .post_json_with_bearer(
+            &posts_uri,
+            &json!({
+                "title": "Adopt a code of conduct",
+                "body": "Let's decide together",
+                "proposal": {
+                    "body": "Adopt the draft",
+                    "pollType": "proposal",
+                    "action": { "actionType": "general" },
+                },
+            }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(post.status(), StatusCode::OK);
+    let post_id = json_body(post).await["post"]["id"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+
+    let removed = app
+        .post_json_with_bearer(
+            &format!("{posts_uri}/{post_id}/remove"),
+            &json!({}),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(removed.status(), StatusCode::CONFLICT);
+    let rows = moderation_actions::Entity::find()
+        .filter(
+            moderation_actions::Column::TargetId
+                .eq(Uuid::parse_str(&post_id).unwrap()),
+        )
+        .all(app.database())
+        .await
+        .unwrap();
+    assert!(rows.is_empty());
+}
+
+#[tokio::test]
+async fn member_and_account_moderation_preserve_votes_and_outcomes() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    let server_id = default_server_id(&app).await;
+    let channel_id = general_channel_id(&app, &server_id).await;
+    let proposal = app
+        .post_json_with_bearer(
+            &format!("/api/servers/{server_id}/channels/{channel_id}/polls"),
+            &json!({
+                "body": "Keep the garden open late",
+                "pollType": "proposal",
+                "action": { "actionType": "general" },
+            }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(proposal.status(), StatusCode::OK);
+    let poll_id = json_body(proposal).await["poll"]["id"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let vote = app
+        .post_json_with_bearer(
+            &format!(
+                "/api/servers/{server_id}/channels/{channel_id}/polls/{poll_id}/votes"
+            ),
+            &json!({ "voteType": "agree" }),
+            &member.token,
+        )
+        .await;
+    assert_eq!(vote.status(), StatusCode::OK);
+    let poll_uuid = Uuid::parse_str(&poll_id).unwrap();
+    let before = poll_history(&app, poll_uuid).await;
+
+    let ban = app
+        .post_json_with_bearer(
+            &member_uri(&server_id, &member, "ban"),
+            &json!({ "reason": "Repeated harassment" }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(ban.status(), StatusCode::OK);
+    assert_eq!(poll_history(&app, poll_uuid).await, before);
+
+    let delete = app
+        .delete_json_with_bearer(
+            &format!("/api/users/{}", member.user_id),
+            &json!({ "reason": "Account owner request" }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(delete.status(), StatusCode::OK);
+    assert_eq!(poll_history(&app, poll_uuid).await, before);
+}
+
+#[tokio::test]
+async fn bans_notify_and_revoke_the_members_open_sockets() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    let server_id = default_server_id(&app).await;
+    let topic = format!("notification:{server_id}:{}", member.user_id);
+    let mut socket = open_socket(&app).await;
+    subscribe(&mut socket, &topic, &member.token).await;
+    assert_eq!(next_json(&mut socket).await["request"], json!("SUBSCRIBE"));
+
+    let ban = app
+        .post_json_with_bearer(
+            &member_uri(&server_id, &member, "ban"),
+            &json!({ "reason": "Repeated harassment" }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(ban.status(), StatusCode::OK);
+    let revoked = next_json(&mut socket).await;
+    assert_eq!(revoked["channel"], json!(topic));
+    assert_eq!(revoked["body"]["type"], "server-access-revoked");
+
+    subscribe(&mut socket, &topic, &member.token).await;
+    assert_eq!(next_json(&mut socket).await["error"]["code"], "FORBIDDEN");
+}
+
+#[tokio::test]
+async fn suspending_an_account_closes_its_open_sockets() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    let server_id = default_server_id(&app).await;
+    let channel_id = general_channel_id(&app, &server_id).await;
+    let topic =
+        format!("new-message:{server_id}:{channel_id}:{}", member.user_id);
+    let mut socket = open_socket(&app).await;
+    subscribe(&mut socket, &topic, &member.token).await;
+    assert_eq!(next_json(&mut socket).await["request"], json!("SUBSCRIBE"));
+
+    let suspend = app
+        .post_json_with_bearer(
+            &format!("/api/users/{}/suspend", member.user_id),
+            &json!({ "reason": "Repeated harassment" }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(suspend.status(), StatusCode::OK);
+    let closed = tokio::time::timeout(Duration::from_secs(5), socket.next())
+        .await
+        .expect("expected the socket to close");
+    assert!(matches!(
+        closed,
+        None | Some(Ok(SocketMessage::Close(_))) | Some(Err(_))
+    ));
+
+    let mut socket = open_socket(&app).await;
+    subscribe(&mut socket, &topic, &member.token).await;
+    assert_eq!(next_json(&mut socket).await["error"]["code"], "FORBIDDEN");
+}
+
+async fn open_socket(app: &TestApp) -> TestSocket {
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let address = listener.local_addr().unwrap();
+    let router = app.app.clone();
+    tokio::spawn(async move {
+        axum::serve(listener, router).await.unwrap();
+    });
+    let (socket, _) = connect_async(format!("ws://{address}/ws"))
+        .await
+        .expect("expected the websocket to connect");
+    socket
+}
+
+async fn subscribe(socket: &mut TestSocket, channel: &str, token: &str) {
+    let request = json!({
+        "type": "REQUEST",
+        "request": "SUBSCRIBE",
+        "channel": channel,
+        "token": token,
+    });
+    socket
+        .send(SocketMessage::Text(request.to_string().into()))
+        .await
+        .unwrap();
+}
+
+async fn next_json(socket: &mut TestSocket) -> serde_json::Value {
+    loop {
+        let message =
+            tokio::time::timeout(Duration::from_secs(5), socket.next())
+                .await
+                .expect("expected a websocket message")
+                .expect("expected the websocket to stay open")
+                .unwrap();
+        if let SocketMessage::Text(text) = message {
+            return serde_json::from_str(&text).unwrap();
+        }
+    }
+}
+
+async fn poll_history(
+    app: &TestApp,
+    poll_id: Uuid,
+) -> (String, Vec<(Uuid, Option<String>)>) {
+    let stage = polls::Entity::find_by_id(poll_id)
+        .one(app.database())
+        .await
+        .unwrap()
+        .unwrap()
+        .stage
+        .to_string();
+    let votes = votes::Entity::find()
+        .filter(votes::Column::PollId.eq(poll_id))
+        .order_by_asc(votes::Column::Id)
+        .all(app.database())
+        .await
+        .unwrap()
+        .into_iter()
+        .map(|vote| {
+            (vote.user_id, vote.vote_type.map(|value| value.to_string()))
+        })
+        .collect();
+    (stage, votes)
+}
+
+async fn search_ids(
+    app: &TestApp,
+    viewer: &TestUser,
+    server_id: &str,
+    query: &str,
+) -> Vec<String> {
+    let response = app
+        .get_with_bearer(
+            &format!("/api/servers/{server_id}/search?q={query}"),
+            &viewer.token,
+        )
+        .await;
+    assert_eq!(response.status(), StatusCode::OK);
+    json_body(response).await["results"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|result| result["id"].as_str().unwrap().to_owned())
+        .collect()
+}
+
+async fn create_image_message(
+    app: &TestApp,
+    author: &TestUser,
+    server_id: &str,
+    channel_id: &str,
+    body: &str,
+) -> String {
+    let mut png = Cursor::new(Vec::new());
+    image::DynamicImage::new_rgba8(1, 1)
+        .write_to(&mut png, image::ImageFormat::Png)
+        .unwrap();
+    let fields = HashMap::from([
+        (
+            "files".to_owned(),
+            MultipartField {
+                name: "files".to_owned(),
+                filename: Some("pixel.png".to_owned()),
+                content_type: Some("image/png".to_owned()),
+                bytes: png.into_inner(),
+            },
+        ),
+        (
+            "payload".to_owned(),
+            MultipartField {
+                name: "payload".to_owned(),
+                filename: None,
+                content_type: Some("application/json".to_owned()),
+                bytes: serde_json::to_vec(&json!({ "body": body })).unwrap(),
+            },
+        ),
+    ]);
+    let response = app
+        .post_multipart_with_bearer(
+            &format!("/api/servers/{server_id}/channels/{channel_id}/messages"),
+            &author.token,
+            fields,
+        )
+        .await;
+    assert_eq!(response.status(), StatusCode::OK);
+    json_body(response).await["message"]["id"]
+        .as_str()
+        .unwrap()
+        .to_owned()
+}
+
+async fn create_channel(
+    app: &TestApp,
+    admin: &TestUser,
+    server_id: &str,
+    name: &str,
+    channel_type: &str,
+) -> String {
+    let response = app
+        .post_json_with_bearer(
+            &format!("/api/servers/{server_id}/channels"),
+            &json!({ "name": name, "channelType": channel_type }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(response.status(), StatusCode::OK);
+    json_body(response).await["channel"]["id"]
+        .as_str()
+        .unwrap()
+        .to_owned()
+}
+
+fn content_root() -> PathBuf {
+    std::env::var("CONTENT_ROOT")
+        .map(PathBuf::from)
+        .unwrap_or_else(|_| {
+            PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("content")
+        })
 }

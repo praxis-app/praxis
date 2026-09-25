@@ -33,7 +33,16 @@ export const ForumPostListItem = ({ post, postPath, isSelected }: Props) => {
       />
       <div className="min-w-0 flex-1">
         <div className="flex items-start justify-between gap-3">
-          <h2 className="truncate font-medium">{post.title}</h2>
+          <h2
+            className={cn(
+              'truncate font-medium',
+              post.moderatedAt && 'text-muted-foreground italic',
+            )}
+          >
+            {post.moderatedAt
+              ? t('moderation.labels.removedByModerator')
+              : post.title}
+          </h2>
           {post.status === 'closed' && (
             <span className="text-muted-foreground flex shrink-0 items-center gap-1 text-xs">
               <MdLockOutline />
