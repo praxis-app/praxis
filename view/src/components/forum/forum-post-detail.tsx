@@ -3,6 +3,7 @@ import { ForumPostMenu } from '@/components/forum/forum-post-menu';
 import { ForumProposalPresentation } from '@/components/forum/forum-proposal-presentation';
 import { Message } from '@/components/messages/message';
 import { MessageForm } from '@/components/messages/message-form';
+import { RemovedContentNotice } from '@/components/moderation/removed-content-notice';
 import { ProposalSettingsDialog } from '@/components/polls/proposals/proposal-settings-dialog';
 import { FormattedText } from '@/components/shared/formatted-text';
 import { Button } from '@/components/ui/button';
@@ -242,14 +243,9 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <h1
-                  className={cn(
-                    'text-xl font-semibold',
-                    isRemoved && 'text-muted-foreground italic',
-                  )}
-                >
-                  {postTitle}
-                </h1>
+                {!isRemoved && (
+                  <h1 className="text-xl font-semibold">{postTitle}</h1>
+                )}
                 <p className="text-muted-foreground text-sm">
                   {author} · {timeAgo(post.createdAt)}
                 </p>
@@ -275,7 +271,9 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
             </div>
           </div>
         </div>
-        {!isRemoved && (
+        {isRemoved ? (
+          <RemovedContentNotice className="mt-4 sm:ml-13" />
+        ) : (
           <FormattedText text={post.body} className="mt-4 sm:ml-13" />
         )}
         {post.proposal && (

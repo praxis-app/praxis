@@ -4,6 +4,7 @@ import { MessageContextMenu } from '@/components/messages/message-context-menu';
 import { MessageMenu } from '@/components/messages/message-menu';
 import { MessageThreadSummary } from '@/components/messages/message-thread-summary';
 import { RemoveContentDialog } from '@/components/moderation/remove-content-dialog';
+import { RemovedContentNotice } from '@/components/moderation/removed-content-notice';
 import { UserAvatar } from '@/components/users/user-avatar';
 import { UserProfileDrawer } from '@/components/users/user-profile-drawer';
 import { FOCUS_HIGHLIGHT_TARGET_CLASS_NAME } from '@/constants/style.constants';
@@ -127,11 +128,7 @@ export const Message = ({
           </div>
         </div>
 
-        {isRemoved && (
-          <div className="text-muted-foreground text-sm italic">
-            {t('moderation.labels.removedByModerator')}
-          </div>
-        )}
+        {isRemoved && <RemovedContentNotice className="mt-1.5" />}
 
         {/* TODO: Truncate message body if it exceeds a certain length */}
         {body && !isRemoved && <FormattedText text={body} />}

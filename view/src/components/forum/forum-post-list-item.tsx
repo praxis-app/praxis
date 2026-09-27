@@ -36,7 +36,7 @@ export const ForumPostListItem = ({ post, postPath, isSelected }: Props) => {
           <h2
             className={cn(
               'truncate font-medium',
-              post.moderatedAt && 'text-muted-foreground italic',
+              post.moderatedAt && 'text-muted-foreground',
             )}
           >
             {post.moderatedAt
