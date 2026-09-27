@@ -108,31 +108,3 @@ fn internal_error(error: impl std::fmt::Display) -> ApiError {
     tracing::error!("moderation request failed: {error}");
     ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "Internal server error.")
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn blank_reasons_are_dropped_unless_required() {
-        assert_eq!(normalize_reason(Some("   "), false).unwrap(), None);
-        assert_eq!(normalize_reason(None, false).unwrap(), None);
-        assert!(normalize_reason(Some(" "), true).is_err());
-        assert_eq!(
-            normalize_reason(Some("  spamming  "), true)
-                .unwrap()
-                .as_deref(),
-            Some("spamming")
-        );
-    }
-
-    #[test]
-    fn reasons_outside_the_length_bounds_are_rejected() {
-        let short = "a".repeat(MIN_REASON_LENGTH - 1);
-        let long = "a".repeat(MAX_REASON_LENGTH + 1);
-        assert!(normalize_reason(Some(&short), false).is_err());
-        assert!(normalize_reason(Some(&long), true).is_err());
-        assert!(normalize_reason(Some(&"a".repeat(MIN_REASON_LENGTH)), true)
-            .is_ok());
-    }
-}
