@@ -1,3 +1,6 @@
+//! Rejects requests from suspended accounts on every API route. A router layer
+//! runs the check once per request, so no handler can skip it
+
 use axum::{
     extract::{Request, State},
     middleware::Next,
