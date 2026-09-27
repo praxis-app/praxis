@@ -213,7 +213,7 @@ pub(crate) async fn remove_participant(
     AuthenticatedUser(user_id): AuthenticatedUser,
     payload: Option<Json<ModerationReasonRequest>>,
 ) -> AppResult<Json<CallArtifactPayload>> {
-    let call = moderation::remove_call_participant(
+    let removed = moderation::remove_call_participant(
         &state.database,
         state.livekit.as_ref(),
         &CallModeration {
@@ -231,14 +231,24 @@ pub(crate) async fn remove_participant(
         path.server_id,
         path.channel_id,
         path.user_id,
-        &call,
+        &removed.value,
     )
     .await
     {
         tracing::warn!("failed to notify removed call participant: {error}");
     }
+    if let Some(pub_sub_service) = state.pub_sub_service.as_ref() {
+        crate::notifications::publish_notifications(
+            &state.database,
+            pub_sub_service,
+            &removed.notifications,
+        )
+        .await;
+    }
 
-    Ok(Json(CallArtifactPayload { call }))
+    Ok(Json(CallArtifactPayload {
+        call: removed.value,
+    }))
 }
 
 // TODO: Rename to handle_livekit_webhook

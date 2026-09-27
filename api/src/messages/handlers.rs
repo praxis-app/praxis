@@ -309,6 +309,12 @@ async fn remove_and_broadcast(
     {
         tracing::warn!("failed to broadcast removed message: {error}");
     }
+    notifications::publish_notifications(
+        &chat_state.database,
+        &chat_state.pub_sub_service,
+        &removed.notifications,
+    )
+    .await;
 
     Ok(Json(MessagePayload {
         message: removed.message,

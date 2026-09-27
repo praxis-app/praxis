@@ -1,7 +1,7 @@
 use axum::http::StatusCode;
 use entity::{
     calls,
-    enums::{ModerationAction, ModerationTargetKind},
+    enums::{ModerationAction, ModerationTargetKind, NotificationKind},
     users,
 };
 use sea_orm::{
@@ -19,7 +19,8 @@ use super::{
 };
 use crate::{
     common::{ApiError, AppResult},
-    moderation::{self, ModerationRecord},
+    moderation::{self, ModerationNotice, ModerationRecord},
+    notifications::WithNotifications,
 };
 
 pub(super) struct CallModeration {
@@ -93,7 +94,7 @@ pub(super) async fn remove_call_participant(
     livekit: Option<&LiveKitConfig>,
     request: &CallModeration,
     participant_id: Uuid,
-) -> AppResult<CallArtifactResponse> {
+) -> AppResult<WithNotifications<CallArtifactResponse>> {
     let reason = authorize(database, request).await?;
     let livekit = livekit.ok_or_else(|| {
         ApiError::new(
@@ -123,9 +124,10 @@ pub(super) async fn remove_call_participant(
             &participant_id.to_string(),
         )
         .await?;
-    if removed {
-        moderation::record_action(
-            database,
+    let notifications = if removed {
+        let transaction = database.begin().await.map_err(internal_error)?;
+        let moderation_action_id = moderation::record_action(
+            &transaction,
             ModerationRecord {
                 actor_user_id: request.actor_user_id,
                 action: ModerationAction::RemoveCallParticipant,
@@ -136,9 +138,26 @@ pub(super) async fn remove_call_participant(
             },
         )
         .await?;
-    }
+        let notifications = moderation::notify_moderated_user(
+            &transaction,
+            ModerationNotice {
+                kind: NotificationKind::CallParticipantRemoved,
+                server_id: request.server_id,
+                channel_id: Some(request.channel_id),
+                moderation_action_id,
+                actor_user_id: request.actor_user_id,
+                recipient_user_id: participant_id,
+            },
+        )
+        .await?;
+        transaction.commit().await.map_err(internal_error)?;
+        notifications
+    } else {
+        vec![]
+    };
 
-    super::service::shape_call_artifact(database, call).await
+    let call = super::service::shape_call_artifact(database, call).await?;
+    Ok(WithNotifications::new(call, notifications))
 }
 
 async fn authorize(

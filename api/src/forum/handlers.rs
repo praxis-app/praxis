@@ -386,7 +386,7 @@ pub(super) async fn remove_forum_post(
         actor_user_id: user_id,
         reason: payload.and_then(|Json(payload)| payload.reason),
     };
-    let post = moderation::remove_forum_post(
+    let removed = moderation::remove_forum_post(
         &state.database,
         &state.upload_root,
         &request,
@@ -399,10 +399,18 @@ pub(super) async fn remove_forum_post(
         request.channel_id,
         user_id,
         "removed",
-        &post,
+        &removed.value,
     )
     .await;
-    Ok(Json(ForumPostPayload { post }))
+    crate::notifications::publish_notifications(
+        &state.database,
+        &state.pub_sub_service,
+        &removed.notifications,
+    )
+    .await;
+    Ok(Json(ForumPostPayload {
+        post: removed.value,
+    }))
 }
 
 pub(super) async fn remove_forum_reply(
@@ -433,12 +441,18 @@ pub(super) async fn remove_forum_reply(
         user_id,
         "removed",
         request.post_id,
-        Some(&removed.reply),
+        Some(&removed.value.reply),
         Some(path.reply_id),
-        &removed.summary,
+        &removed.value.summary,
+    )
+    .await;
+    crate::notifications::publish_notifications(
+        &state.database,
+        &state.pub_sub_service,
+        &removed.notifications,
     )
     .await;
     Ok(Json(ForumReplyPayload {
-        reply: removed.reply,
+        reply: removed.value.reply,
     }))
 }

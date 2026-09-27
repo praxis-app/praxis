@@ -1,8 +1,8 @@
 use axum::http::StatusCode;
 use chrono::Utc;
 use entity::{
-    enums::{ModerationAction, ModerationTargetKind},
-    forum_posts, message_images, messages,
+    enums::{ModerationAction, ModerationTargetKind, NotificationKind},
+    forum_posts, message_images, messages, notifications,
 };
 use sea_orm::{
     prelude::Uuid,
@@ -23,12 +23,13 @@ use super::{
 use crate::{
     calls, channels,
     common::{storage::remove_stored_files, ApiError, AppResult},
-    moderation::{self, ModerationRecord},
+    moderation::{self, ModerationNotice, ModerationRecord},
     pub_sub::{PubSubService, PubSubTopic},
 };
 
 pub(super) struct RemovedMessage {
     pub(super) message: MessageResponse,
+    pub(super) notifications: Vec<notifications::Model>,
     thread: Option<ThreadSummary>,
 }
 
@@ -146,9 +147,9 @@ pub(super) async fn remove_message(
         .ok_or_else(message_not_found)?;
     ensure_removable_message(&transaction, &message, request.call_id).await?;
 
-    let storage_keys = if message.moderated_at.is_none() {
+    let (storage_keys, notifications) = if message.moderated_at.is_none() {
         let storage_keys = erase_messages(&transaction, &[message.id]).await?;
-        moderation::record_action(
+        let moderation_action_id = moderation::record_action(
             &transaction,
             ModerationRecord {
                 actor_user_id: request.actor_user_id,
@@ -160,9 +161,21 @@ pub(super) async fn remove_message(
             },
         )
         .await?;
-        storage_keys
+        let notifications = moderation::notify_moderated_user(
+            &transaction,
+            ModerationNotice {
+                kind: NotificationKind::MessageRemoved,
+                server_id: request.server_id,
+                channel_id: Some(request.channel_id),
+                moderation_action_id,
+                actor_user_id: request.actor_user_id,
+                recipient_user_id: message.user_id,
+            },
+        )
+        .await?;
+        (storage_keys, notifications)
     } else {
-        vec![]
+        (vec![], vec![])
     };
     transaction.commit().await.map_err(internal_error)?;
     remove_stored_files(upload_root, &storage_keys).await;
@@ -184,7 +197,11 @@ pub(super) async fn remove_message(
         None => None,
     };
 
-    Ok(RemovedMessage { message, thread })
+    Ok(RemovedMessage {
+        message,
+        notifications,
+        thread,
+    })
 }
 
 pub(super) async fn broadcast_removed_message(

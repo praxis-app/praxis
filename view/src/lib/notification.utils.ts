@@ -18,7 +18,7 @@ export const getNotificationTargetRoute = (
   serverSlug: string,
 ): NotificationTargetRoute | null => {
   const { target } = notification;
-  if (!target.available) return null;
+  if (!target.available || target.kind === 'server') return null;
 
   if (target.kind === 'serverRole') {
     return { path: `/s/${serverSlug}` };

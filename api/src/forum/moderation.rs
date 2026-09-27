@@ -1,7 +1,9 @@
 use axum::http::StatusCode;
 use chrono::Utc;
 use entity::{
-    enums::{ChannelType, ModerationAction, ModerationTargetKind},
+    enums::{
+        ChannelType, ModerationAction, ModerationTargetKind, NotificationKind,
+    },
     forum_posts, messages,
 };
 use sea_orm::{
@@ -20,7 +22,8 @@ use crate::{
     channels,
     common::{storage::remove_stored_files, ApiError, AppResult},
     messages as messages_service,
-    moderation::{self, ModerationRecord},
+    moderation::{self, ModerationNotice, ModerationRecord},
+    notifications::WithNotifications,
 };
 
 pub(crate) async fn erase_user_forum_posts<C>(
@@ -53,7 +56,7 @@ pub(super) async fn remove_forum_post(
     database: &DatabaseConnection,
     upload_root: &Path,
     request: &RemoveForumContentRequest,
-) -> AppResult<ForumPostResponse> {
+) -> AppResult<WithNotifications<ForumPostResponse>> {
     let reason = authorize_removal(database, request).await?;
 
     let transaction = database.begin().await.map_err(internal_error)?;
@@ -67,8 +70,9 @@ pub(super) async fn remove_forum_post(
         ));
     }
 
-    let storage_keys = if post.moderated_at.is_none() {
+    let (storage_keys, notifications) = if post.moderated_at.is_none() {
         let root_message_id = post.root_message_id;
+        let author_id = post.user_id;
         let now = Utc::now().fixed_offset();
         let mut active = post.into_active_model();
         active.ciphertext = Set(None);
@@ -80,7 +84,7 @@ pub(super) async fn remove_forum_post(
         let storage_keys =
             messages_service::erase_messages(&transaction, &[root_message_id])
                 .await?;
-        moderation::record_action(
+        let moderation_action_id = moderation::record_action(
             &transaction,
             ModerationRecord {
                 actor_user_id: request.actor_user_id,
@@ -92,20 +96,33 @@ pub(super) async fn remove_forum_post(
             },
         )
         .await?;
-        storage_keys
+        let notifications = moderation::notify_moderated_user(
+            &transaction,
+            ModerationNotice {
+                kind: NotificationKind::ForumPostRemoved,
+                server_id: request.server_id,
+                channel_id: Some(request.channel_id),
+                moderation_action_id,
+                actor_user_id: request.actor_user_id,
+                recipient_user_id: author_id,
+            },
+        )
+        .await?;
+        (storage_keys, notifications)
     } else {
-        vec![]
+        (vec![], vec![])
     };
     transaction.commit().await.map_err(internal_error)?;
     remove_stored_files(upload_root, &storage_keys).await;
 
-    get_forum_post(
+    let post = get_forum_post(
         database,
         request.channel_id,
         request.post_id,
         Some(request.actor_user_id),
     )
-    .await
+    .await?;
+    Ok(WithNotifications::new(post, notifications))
 }
 
 pub(super) async fn remove_forum_reply(
@@ -113,7 +130,7 @@ pub(super) async fn remove_forum_reply(
     upload_root: &Path,
     request: &RemoveForumContentRequest,
     reply_id: Uuid,
-) -> AppResult<CreatedForumReply> {
+) -> AppResult<WithNotifications<CreatedForumReply>> {
     let reason = authorize_removal(database, request).await?;
 
     let transaction = database.begin().await.map_err(internal_error)?;
@@ -131,10 +148,10 @@ pub(super) async fn remove_forum_reply(
             ApiError::new(StatusCode::NOT_FOUND, "Reply not found.")
         })?;
 
-    let storage_keys = if reply.moderated_at.is_none() {
+    let (storage_keys, notifications) = if reply.moderated_at.is_none() {
         let storage_keys =
             messages_service::erase_messages(&transaction, &[reply.id]).await?;
-        moderation::record_action(
+        let moderation_action_id = moderation::record_action(
             &transaction,
             ModerationRecord {
                 actor_user_id: request.actor_user_id,
@@ -146,9 +163,21 @@ pub(super) async fn remove_forum_reply(
             },
         )
         .await?;
-        storage_keys
+        let notifications = moderation::notify_moderated_user(
+            &transaction,
+            ModerationNotice {
+                kind: NotificationKind::MessageRemoved,
+                server_id: request.server_id,
+                channel_id: Some(request.channel_id),
+                moderation_action_id,
+                actor_user_id: request.actor_user_id,
+                recipient_user_id: reply.user_id,
+            },
+        )
+        .await?;
+        (storage_keys, notifications)
     } else {
-        vec![]
+        (vec![], vec![])
     };
     transaction.commit().await.map_err(internal_error)?;
     remove_stored_files(upload_root, &storage_keys).await;
@@ -172,7 +201,10 @@ pub(super) async fn remove_forum_reply(
         .next()
         .ok_or_else(|| internal_error("forum post was not shaped"))?;
 
-    Ok(CreatedForumReply { reply, summary })
+    Ok(WithNotifications::new(
+        CreatedForumReply { reply, summary },
+        notifications,
+    ))
 }
 
 async fn authorize_removal(

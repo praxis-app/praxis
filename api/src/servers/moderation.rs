@@ -1,7 +1,7 @@
 use axum::http::StatusCode;
 use entity::{
-    enums::{ModerationAction, ModerationTargetKind},
-    moderation_actions, server_bans, servers, users,
+    enums::{ModerationAction, ModerationTargetKind, NotificationKind},
+    moderation_actions, notifications, server_bans, servers, users,
 };
 use sea_orm::{
     prelude::Uuid, sea_query::OnConflict, ColumnTrait, ConnectionTrait,
@@ -25,7 +25,7 @@ use crate::{
     authz::{self, PermissionScope},
     calls::{self, LiveKitConfig},
     common::{ApiError, AppResult},
-    moderation::{self, ModerationRecord},
+    moderation::{self, ModerationNotice, ModerationRecord},
     pub_sub::{PubSubService, PubSubTopic},
     users as users_service,
 };
@@ -92,7 +92,7 @@ pub(super) async fn can_manage_server_members(
 pub(super) async fn remove_member(
     database: &DatabaseConnection,
     request: MemberModeration,
-) -> AppResult<()> {
+) -> AppResult<Vec<notifications::Model>> {
     let reason = moderation::normalize_reason(request.reason.as_deref(), true)?;
     ensure_member_can_be_moderated(database, &request).await?;
 
@@ -103,22 +103,31 @@ pub(super) async fn remove_member(
         &[request.target_user_id],
     )
     .await?;
-    if removed > 0 {
-        moderation::record_action(
+    let notifications = if removed > 0 {
+        let moderation_action_id = moderation::record_action(
             &transaction,
             member_record(&request, ModerationAction::RemoveMember, reason),
         )
         .await?;
-    }
+        notify_member(
+            &transaction,
+            &request,
+            NotificationKind::MemberRemoved,
+            moderation_action_id,
+        )
+        .await?
+    } else {
+        vec![]
+    };
     transaction.commit().await.map_err(internal_error)?;
 
-    Ok(())
+    Ok(notifications)
 }
 
 pub(super) async fn ban_member(
     database: &DatabaseConnection,
     request: MemberModeration,
-) -> AppResult<()> {
+) -> AppResult<Vec<notifications::Model>> {
     let reason = moderation::normalize_reason(request.reason.as_deref(), true)?;
     ensure_member_can_be_moderated(database, &request).await?;
 
@@ -147,16 +156,25 @@ pub(super) async fn ban_member(
     .exec_without_returning(&transaction)
     .await
     .map_err(internal_error)?;
-    if banned > 0 {
-        moderation::record_action(
+    let notifications = if banned > 0 {
+        let moderation_action_id = moderation::record_action(
             &transaction,
             member_record(&request, ModerationAction::BanMember, reason),
         )
         .await?;
-    }
+        notify_member(
+            &transaction,
+            &request,
+            NotificationKind::MemberBanned,
+            moderation_action_id,
+        )
+        .await?
+    } else {
+        vec![]
+    };
     transaction.commit().await.map_err(internal_error)?;
 
-    Ok(())
+    Ok(notifications)
 }
 
 pub(super) async fn unban_member(
@@ -361,6 +379,29 @@ where
         .map_err(internal_error)?
         .map(|_| ())
         .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "User not found."))
+}
+
+async fn notify_member<C>(
+    database: &C,
+    request: &MemberModeration,
+    kind: NotificationKind,
+    moderation_action_id: Uuid,
+) -> AppResult<Vec<notifications::Model>>
+where
+    C: ConnectionTrait,
+{
+    moderation::notify_moderated_user(
+        database,
+        ModerationNotice {
+            kind,
+            server_id: request.server_id,
+            channel_id: None,
+            moderation_action_id,
+            actor_user_id: request.actor_user_id,
+            recipient_user_id: request.target_user_id,
+        },
+    )
+    .await
 }
 
 fn member_record(

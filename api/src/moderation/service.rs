@@ -1,7 +1,7 @@
 use axum::http::StatusCode;
 use entity::{
-    enums::{ModerationAction, ModerationTargetKind},
-    moderation_actions,
+    enums::{ModerationAction, ModerationTargetKind, NotificationKind},
+    moderation_actions, notifications,
 };
 use sea_orm::{prelude::Uuid, ActiveModelTrait, ConnectionTrait, Set};
 use uuid::Uuid as NativeUuid;
@@ -9,6 +9,10 @@ use uuid::Uuid as NativeUuid;
 use crate::{
     authz::{self, PermissionScope},
     common::{text::sanitize_text, ApiError, AppResult},
+    notifications::{
+        self as notifications_service, CreateNotificationsRequest,
+        NotificationTarget,
+    },
 };
 
 const MIN_REASON_LENGTH: usize = 4;
@@ -21,6 +25,15 @@ pub(crate) struct ModerationRecord {
     pub(crate) target_id: Uuid,
     pub(crate) server_id: Option<Uuid>,
     pub(crate) reason: Option<String>,
+}
+
+pub(crate) struct ModerationNotice {
+    pub(crate) kind: NotificationKind,
+    pub(crate) server_id: Uuid,
+    pub(crate) channel_id: Option<Uuid>,
+    pub(crate) moderation_action_id: Uuid,
+    pub(crate) actor_user_id: Uuid,
+    pub(crate) recipient_user_id: Uuid,
 }
 
 pub(crate) async fn can_moderate_content<C: ConnectionTrait>(
@@ -56,11 +69,11 @@ pub(crate) async fn can_manage_calls<C: ConnectionTrait>(
 pub(crate) async fn record_action<C>(
     database: &C,
     record: ModerationRecord,
-) -> AppResult<()>
+) -> AppResult<Uuid>
 where
     C: ConnectionTrait,
 {
-    moderation_actions::ActiveModel {
+    let action = moderation_actions::ActiveModel {
         id: Set(NativeUuid::new_v4()),
         actor_user_id: Set(record.actor_user_id),
         action: Set(record.action),
@@ -74,7 +87,35 @@ where
     .await
     .map_err(internal_error)?;
 
-    Ok(())
+    Ok(action.id)
+}
+
+pub(crate) async fn notify_moderated_user<C>(
+    database: &C,
+    notice: ModerationNotice,
+) -> AppResult<Vec<notifications::Model>>
+where
+    C: ConnectionTrait,
+{
+    if notice.recipient_user_id == notice.actor_user_id {
+        return Ok(Vec::new());
+    }
+
+    notifications_service::create_notifications(
+        database,
+        CreateNotificationsRequest {
+            kind: notice.kind,
+            server_id: notice.server_id,
+            channel_id: notice.channel_id,
+            actor_user_id: None,
+            target: NotificationTarget::ModerationAction(
+                notice.moderation_action_id,
+            ),
+            vote_type: None,
+            recipient_ids: vec![notice.recipient_user_id],
+        },
+    )
+    .await
 }
 
 pub(crate) fn normalize_reason(

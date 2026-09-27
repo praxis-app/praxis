@@ -19,6 +19,19 @@ const ACTIONS: [&str; 10] = [
 
 const TARGET_KINDS: [&str; 4] = ["message", "forum_post", "user", "call"];
 
+const NOTIFICATION_KINDS: [&str; 5] = [
+    "message_removed",
+    "forum_post_removed",
+    "member_removed",
+    "member_banned",
+    "call_participant_removed",
+];
+const NOTIFICATION_TARGET_CHECK: &str = "notifications_one_target_check";
+const NOTIFICATION_MODERATION_ACTION_KEY: &str =
+    "notifications-moderation-action-key";
+const NOTIFICATION_MODERATION_ACTION_INDEX: &str =
+    "notifications-moderation-action-id-idx";
+
 const SERVER_SUBJECTS: [&str; 7] = [
     "ServerConfig",
     "Channel",
@@ -59,10 +72,12 @@ impl MigrationTrait for Migration {
         create_server_bans(manager).await?;
         create_moderation_enums(manager).await?;
         create_moderation_actions(manager).await?;
-        add_moderation_columns(manager).await
+        add_moderation_columns(manager).await?;
+        add_moderation_notifications(manager).await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        drop_moderation_notifications(manager).await?;
         drop_moderation_columns(manager).await?;
         manager
             .drop_table(
@@ -467,6 +482,102 @@ async fn drop_moderation_columns(
                 .to_owned(),
         )
         .await
+}
+
+async fn add_moderation_notifications(
+    manager: &SchemaManager<'_>,
+) -> Result<(), DbErr> {
+    if manager.get_database_backend() != DbBackend::Postgres {
+        return Ok(());
+    }
+
+    let connection = manager.get_connection();
+    for kind in NOTIFICATION_KINDS {
+        connection
+            .execute_unprepared(&format!(
+                r#"ALTER TYPE notifications_kind_enum ADD VALUE IF NOT EXISTS '{kind}'"#
+            ))
+            .await?;
+    }
+    connection
+        .execute_unprepared(
+            r#"ALTER TABLE notifications ADD COLUMN moderation_action_id uuid"#,
+        )
+        .await?;
+    connection
+        .execute_unprepared(
+            r#"ALTER TABLE notifications ADD CONSTRAINT "notifications-moderation-action-id-fkey" FOREIGN KEY (moderation_action_id) REFERENCES moderation_actions (id) ON DELETE CASCADE ON UPDATE CASCADE"#,
+        )
+        .await?;
+    connection
+        .execute_unprepared(&format!(
+            r#"CREATE INDEX "{NOTIFICATION_MODERATION_ACTION_INDEX}" ON notifications (moderation_action_id)"#
+        ))
+        .await?;
+    connection
+        .execute_unprepared(&format!(
+            r#"CREATE UNIQUE INDEX "{NOTIFICATION_MODERATION_ACTION_KEY}" ON notifications (recipient_user_id, moderation_action_id) WHERE moderation_action_id IS NOT NULL"#
+        ))
+        .await?;
+    replace_notification_target_check(
+        manager,
+        "num_nonnulls(message_id, poll_id, server_role_id, event_id, moderation_action_id) = 1",
+    )
+    .await
+}
+
+async fn drop_moderation_notifications(
+    manager: &SchemaManager<'_>,
+) -> Result<(), DbErr> {
+    if manager.get_database_backend() != DbBackend::Postgres {
+        return Ok(());
+    }
+
+    let connection = manager.get_connection();
+    connection
+        .execute_unprepared(
+            r#"DELETE FROM notifications WHERE moderation_action_id IS NOT NULL"#,
+        )
+        .await?;
+    replace_notification_target_check(
+        manager,
+        "num_nonnulls(message_id, poll_id, server_role_id, event_id) = 1",
+    )
+    .await?;
+    for index in [
+        NOTIFICATION_MODERATION_ACTION_KEY,
+        NOTIFICATION_MODERATION_ACTION_INDEX,
+    ] {
+        connection
+            .execute_unprepared(&format!(r#"DROP INDEX IF EXISTS "{index}""#))
+            .await?;
+    }
+    connection
+        .execute_unprepared(
+            r#"ALTER TABLE notifications DROP COLUMN moderation_action_id"#,
+        )
+        .await?;
+
+    Ok(())
+}
+
+async fn replace_notification_target_check(
+    manager: &SchemaManager<'_>,
+    check: &str,
+) -> Result<(), DbErr> {
+    let connection = manager.get_connection();
+    connection
+        .execute_unprepared(&format!(
+            r#"ALTER TABLE notifications DROP CONSTRAINT IF EXISTS {NOTIFICATION_TARGET_CHECK}"#
+        ))
+        .await?;
+    connection
+        .execute_unprepared(&format!(
+            r#"ALTER TABLE notifications ADD CONSTRAINT {NOTIFICATION_TARGET_CHECK} CHECK ({check})"#
+        ))
+        .await?;
+
+    Ok(())
 }
 
 fn timestamp<T>(column: T) -> ColumnDef

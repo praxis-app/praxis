@@ -275,7 +275,7 @@ pub(super) async fn remove_server_member(
     context: CanModerateServerMemberContext,
     Json(payload): Json<ModerationReasonRequest>,
 ) -> AppResult<Json<EmptyResponse>> {
-    moderation::remove_member(
+    let notifications = moderation::remove_member(
         &state.database,
         member_moderation(&context, payload.reason),
     )
@@ -288,6 +288,12 @@ pub(super) async fn remove_server_member(
         context.path.user_id,
     )
     .await;
+    crate::notifications::publish_notifications(
+        &state.database,
+        &state.pub_sub_service,
+        &notifications,
+    )
+    .await;
     Ok(Json(EmptyResponse {}))
 }
 
@@ -296,7 +302,7 @@ pub(super) async fn ban_server_member(
     context: CanModerateServerMemberContext,
     Json(payload): Json<ModerationReasonRequest>,
 ) -> AppResult<Json<EmptyResponse>> {
-    moderation::ban_member(
+    let notifications = moderation::ban_member(
         &state.database,
         member_moderation(&context, payload.reason),
     )
@@ -307,6 +313,12 @@ pub(super) async fn ban_server_member(
         state.livekit.as_ref(),
         context.path.server_id,
         context.path.user_id,
+    )
+    .await;
+    crate::notifications::publish_notifications(
+        &state.database,
+        &state.pub_sub_service,
+        &notifications,
     )
     .await;
     Ok(Json(EmptyResponse {}))

@@ -59,6 +59,7 @@
     },
     "labels": {
       "system": "Praxis",
+      "moderationReason": "Reason: {{reason}}",
       "unavailable": "This item is no longer available",
       "unreadCount_one": "{{count}} unread",
       "unreadCount_other": "{{count}} unread"
@@ -78,7 +79,13 @@
       "proposal_ratified": "Your proposal in #{{channel}} was ratified",
       "proposal_closed": "Your proposal in #{{channel}} closed",
       "server_role_granted": "You were granted the {{role}} role",
-      "event_created": "{{event}} was scheduled by a ratified proposal"
+      "event_created": "{{event}} was scheduled by a ratified proposal",
+      "message_removed": "A moderator removed your message in #{{channel}}",
+      "message_removed_reply": "A moderator removed your reply in #{{channel}}",
+      "forum_post_removed": "A moderator removed your forum post in #{{channel}}",
+      "member_removed": "A moderator removed you from {{server}}",
+      "member_banned": "A moderator banned you from {{server}}. You can't rejoin unless the ban is lifted.",
+      "call_participant_removed": "A moderator removed you from a call in #{{channel}}"
     },
     "votes": {
       "agree": "agree",
