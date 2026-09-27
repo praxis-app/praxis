@@ -184,7 +184,7 @@ test.beforeAll(async ({ request }) => {
   await getOrCreateInstanceAdmin(request);
 });
 
-test('content moderators replace chat and forum items with live tombstones', async ({
+test('moderator can remove messages and forum posts for everyone in realtime', async ({
   browser,
   request,
 }) => {
@@ -284,7 +284,7 @@ test('content moderators replace chat and forum items with live tombstones', asy
   }
 });
 
-test('member managers remove and ban members who then lose the server', async ({
+test('moderator can remove and ban server members', async ({
   browser,
   request,
 }) => {
@@ -354,10 +354,7 @@ test('member managers remove and ban members who then lose the server', async ({
   }
 });
 
-test('account moderators suspend a signed-in user out of the app', async ({
-  browser,
-  request,
-}) => {
+test('moderator can suspend a signed in user', async ({ browser, request }) => {
   const admin = await getOrCreateInstanceAdmin(request);
   const server = await createModerationServer(request, admin);
   const accountModerator = await signUpViaApi(
@@ -423,7 +420,7 @@ test('account moderators suspend a signed-in user out of the app', async ({
   }
 });
 
-test('call managers end a call while another user is connected', async ({
+test('moderator can end an active call for all participants', async ({
   browser,
   request,
 }) => {
