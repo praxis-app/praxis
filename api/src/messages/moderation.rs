@@ -123,8 +123,7 @@ pub(super) async fn remove_message(
         request.server_id,
     )
     .await?;
-    let reason =
-        moderation::normalize_reason(request.reason.as_deref(), false)?;
+    let reason = moderation::normalize_reason(request.reason.as_deref(), true)?;
     channels::get_channel(database, request.server_id, request.channel_id)
         .await?;
     if let Some(call_id) = request.call_id {

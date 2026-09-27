@@ -31,9 +31,9 @@ export const RemoveContentDialog = ({
       title={title}
       description={t('moderation.explanations.removeContent')}
       confirmLabel={t('moderation.actions.remove')}
-      isReasonOptional
       isPending={isPending}
       onConfirm={(reason) => remove(reason)}
+      isReasonRequired
     />
   );
 };

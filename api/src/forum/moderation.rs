@@ -185,8 +185,7 @@ async fn authorize_removal(
         request.server_id,
     )
     .await?;
-    let reason =
-        moderation::normalize_reason(request.reason.as_deref(), false)?;
+    let reason = moderation::normalize_reason(request.reason.as_deref(), true)?;
     let channel =
         channels::get_channel(database, request.server_id, request.channel_id)
             .await?;
