@@ -1,6 +1,12 @@
 //! Rejects requests from suspended accounts on every API route. A router layer
 //! runs the check once per request, so no handler can skip it
 
+// TODO: Examine whether other modules warrant their own `middleware.rs`
+//
+// Use an extractor when a handler needs its result or the check varies by
+// route. Use middleware when a check applies to every route under a router
+// and hands the handler nothing
+
 use axum::{
     extract::{Request, State},
     middleware::Next,
