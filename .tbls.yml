@@ -1,0 +1,4 @@
+dsn: ${DATABASE_URL}
+docPath: .docs/db
+er:
+  format: mermaid
