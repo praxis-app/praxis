@@ -79,6 +79,8 @@ pub enum ServerAbilitySubject {
     ServerMember,
     #[sea_orm(string_value = "Call")]
     Call,
+    #[sea_orm(string_value = "AuditLog")]
+    AuditLog,
     #[sea_orm(string_value = "all")]
     All,
 }
@@ -92,6 +94,7 @@ impl_enum_string_conversions!(ServerAbilitySubject {
     ProposalBlock => "ProposalBlock",
     ServerMember => "ServerMember",
     Call => "Call",
+    AuditLog => "AuditLog",
     All => "all",
 });
 
@@ -114,6 +117,8 @@ pub enum InstanceAbilitySubject {
     Call,
     #[sea_orm(string_value = "User")]
     User,
+    #[sea_orm(string_value = "AuditLog")]
+    AuditLog,
     #[sea_orm(string_value = "all")]
     All,
 }
@@ -125,5 +130,6 @@ impl_enum_string_conversions!(InstanceAbilitySubject {
     Message => "Message",
     Call => "Call",
     User => "User",
+    AuditLog => "AuditLog",
     All => "all",
 });

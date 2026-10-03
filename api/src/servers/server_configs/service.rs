@@ -1,13 +1,20 @@
 use axum::http::StatusCode;
-use entity::{enums::ServerDecisionMakingModel, server_configs};
+use entity::{
+    enums::{
+        ModerationAction, ModerationTargetKind, ServerDecisionMakingModel,
+    },
+    server_configs,
+};
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
     DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter, Set,
+    TransactionTrait,
 };
 use uuid::Uuid as NativeUuid;
 
 use crate::{
     common::{ApiError, AppResult},
+    moderation::{self, ModerationRecord},
     servers::types::{
         serialize_timestamp, ServerConfigRequest, ServerConfigResponse,
     },
@@ -32,42 +39,40 @@ pub(crate) async fn is_anonymous_users_enabled(
 pub(crate) async fn update_server_config(
     database: &DatabaseConnection,
     server_id: Uuid,
+    actor_user_id: Uuid,
     request: ServerConfigRequest,
 ) -> AppResult<()> {
-    let config = ensure_server_config(database, server_id).await?;
+    let transaction = database.begin().await.map_err(internal_error)?;
+    let config = ensure_server_config(&transaction, server_id).await?;
     validate_server_config_request(&request, &config)?;
-    let mut active = config.into_active_model();
-
-    if let Some(value) = request.anonymous_users_enabled {
-        active.anonymous_users_enabled = Set(value);
+    let before = config_snapshot(&config);
+    let config_id = config.id;
+    apply_server_config(&transaction, config, &request).await?;
+    let updated = server_configs::Entity::find_by_id(config_id)
+        .one(&transaction)
+        .await
+        .map_err(internal_error)?
+        .ok_or_else(|| {
+            ApiError::new(StatusCode::NOT_FOUND, "Server config not found.")
+        })?;
+    let after = config_snapshot(&updated);
+    if before != after {
+        moderation::record_action(
+            &transaction,
+            ModerationRecord::direct(
+                actor_user_id,
+                ModerationAction::UpdateServerConfig,
+                ModerationTargetKind::ServerConfig,
+                config_id,
+                Some(server_id),
+                None,
+            )
+            .with_target_label("Server settings")
+            .with_values(Some(before), Some(after)),
+        )
+        .await?;
     }
-    if let Some(value) = request.decision_making_model {
-        active.decision_making_model =
-            Set(parse_decision_making_model(&value)?);
-    }
-    if let Some(value) = request.disagreements_limit {
-        active.disagreements_limit = Set(value);
-    }
-    if let Some(value) = request.abstains_limit {
-        active.abstains_limit = Set(value);
-    }
-    if let Some(value) = request.agreement_threshold {
-        active.agreement_threshold = Set(value);
-    }
-    if let Some(value) = request.quorum_enabled {
-        active.quorum_enabled = Set(value);
-    }
-    if let Some(value) = request.quorum_threshold {
-        active.quorum_threshold = Set(value);
-    }
-    if let Some(value) = request.voting_time_limit {
-        active.voting_time_limit = Set(value);
-    }
-    if let Some(value) = request.blocks_open_to_all {
-        active.blocks_open_to_all = Set(value);
-    }
-
-    active.update(database).await.map_err(internal_error)?;
+    transaction.commit().await.map_err(internal_error)?;
     Ok(())
 }
 
@@ -109,8 +114,8 @@ pub(crate) async fn apply_server_config<C: ConnectionTrait>(
     Ok(())
 }
 
-pub(crate) async fn ensure_server_config(
-    database: &DatabaseConnection,
+pub(crate) async fn ensure_server_config<C: ConnectionTrait>(
+    database: &C,
     server_id: Uuid,
 ) -> AppResult<server_configs::Model> {
     crate::servers::get_server(database, server_id).await?;
@@ -132,6 +137,22 @@ pub(crate) async fn ensure_server_config(
     .insert(database)
     .await
     .map_err(internal_error)
+}
+
+pub(crate) fn config_snapshot(
+    config: &server_configs::Model,
+) -> serde_json::Value {
+    serde_json::json!({
+        "anonymousUsersEnabled": config.anonymous_users_enabled,
+        "decisionMakingModel": config.decision_making_model.to_string(),
+        "disagreementsLimit": config.disagreements_limit,
+        "abstainsLimit": config.abstains_limit,
+        "agreementThreshold": config.agreement_threshold,
+        "quorumEnabled": config.quorum_enabled,
+        "quorumThreshold": config.quorum_threshold,
+        "votingTimeLimit": config.voting_time_limit,
+        "blocksOpenToAll": config.blocks_open_to_all,
+    })
 }
 
 fn shape_server_config(config: server_configs::Model) -> ServerConfigResponse {

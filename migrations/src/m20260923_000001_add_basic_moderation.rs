@@ -5,7 +5,7 @@ const ACTION_ENUM: &str = "moderation_actions_action_enum";
 const ORIGIN_ENUM: &str = "moderation_actions_origin_enum";
 const TARGET_KIND_ENUM: &str = "moderation_actions_target_kind_enum";
 
-const ACTIONS: [&str; 18] = [
+const ACTIONS: [&str; 20] = [
     "remove_message",
     "remove_forum_post",
     "remove_member",
@@ -22,7 +22,9 @@ const ACTIONS: [&str; 18] = [
     "delete_role",
     "add_role_members",
     "remove_role_member",
+    "create_server",
     "update_server",
+    "delete_server",
     "update_server_config",
 ];
 
@@ -61,11 +63,12 @@ const SERVER_SUBJECTS: [&str; 7] = [
     "ProposalBlock",
     "all",
 ];
-const NEW_SERVER_SUBJECTS: [&str; 2] = ["ServerMember", "Call"];
+const NEW_SERVER_SUBJECTS: [&str; 3] = ["ServerMember", "Call", "AuditLog"];
 
 const INSTANCE_SUBJECTS: [&str; 4] =
     ["InstanceConfig", "InstanceRole", "Server", "all"];
-const NEW_INSTANCE_SUBJECTS: [&str; 3] = ["Message", "Call", "User"];
+const NEW_INSTANCE_SUBJECTS: [&str; 4] =
+    ["Message", "Call", "User", "AuditLog"];
 
 const SERVER_SUBJECT_ENUMS: [(&str, &str); 2] = [
     (
@@ -450,6 +453,51 @@ async fn create_moderation_actions(
                 .col(ModerationActions::ServerId)
                 .col((ModerationActions::CreatedAt, IndexOrder::Desc))
                 .col((ModerationActions::Id, IndexOrder::Desc))
+                .to_owned(),
+        )
+        .await?;
+
+    manager
+        .create_index(
+            Index::create()
+                .name("moderation-actions-target-created-at-id-idx")
+                .table(ModerationActions::Table)
+                .col(ModerationActions::TargetKind)
+                .col(ModerationActions::TargetId)
+                .col((ModerationActions::CreatedAt, IndexOrder::Desc))
+                .col((ModerationActions::Id, IndexOrder::Desc))
+                .to_owned(),
+        )
+        .await?;
+
+    manager
+        .create_index(
+            Index::create()
+                .name("moderation-actions-actor-created-at-id-idx")
+                .table(ModerationActions::Table)
+                .col(ModerationActions::ActorUserId)
+                .col((ModerationActions::CreatedAt, IndexOrder::Desc))
+                .col((ModerationActions::Id, IndexOrder::Desc))
+                .to_owned(),
+        )
+        .await?;
+
+    manager
+        .create_index(
+            Index::create()
+                .name("moderation-actions-proposal-id-idx")
+                .table(ModerationActions::Table)
+                .col(ModerationActions::ProposalId)
+                .to_owned(),
+        )
+        .await?;
+
+    manager
+        .create_index(
+            Index::create()
+                .name("moderation-actions-channel-id-idx")
+                .table(ModerationActions::Table)
+                .col(ModerationActions::ChannelId)
                 .to_owned(),
         )
         .await

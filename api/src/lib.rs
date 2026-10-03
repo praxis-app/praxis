@@ -135,6 +135,7 @@ fn build_router_with_pub_sub(
             jwt_secret.clone(),
             livekit_config.is_some(),
         ))
+        .merge(moderation::router(database.clone(), jwt_secret.clone()))
         .merge(servers::router(
             database.clone(),
             jwt_secret.clone(),

@@ -109,6 +109,8 @@ pub enum PollActionPermissionSubject {
     ServerMember,
     #[sea_orm(string_value = "Call")]
     Call,
+    #[sea_orm(string_value = "AuditLog")]
+    AuditLog,
     #[sea_orm(string_value = "all")]
     All,
 }
@@ -122,6 +124,7 @@ impl_enum_string_conversions!(PollActionPermissionSubject {
     ProposalBlock => "ProposalBlock",
     ServerMember => "ServerMember",
     Call => "Call",
+    AuditLog => "AuditLog",
     All => "all",
 });
 
@@ -136,6 +139,7 @@ impl From<PollActionPermissionSubject> for ServerAbilitySubject {
             PollActionPermissionSubject::ProposalBlock => Self::ProposalBlock,
             PollActionPermissionSubject::ServerMember => Self::ServerMember,
             PollActionPermissionSubject::Call => Self::Call,
+            PollActionPermissionSubject::AuditLog => Self::AuditLog,
             PollActionPermissionSubject::All => Self::All,
         }
     }

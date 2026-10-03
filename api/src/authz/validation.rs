@@ -9,13 +9,17 @@ const ABILITY_ACTIONS: &[&str] =
 pub(crate) type CapabilityActions =
     &'static [(&'static str, &'static [&'static str])];
 
-pub(crate) const SERVER_CAPABILITY_ACTIONS: CapabilityActions =
-    &[("ServerMember", &["manage"]), ("Call", &["manage"])];
+pub(crate) const SERVER_CAPABILITY_ACTIONS: CapabilityActions = &[
+    ("ServerMember", &["manage"]),
+    ("Call", &["manage"]),
+    ("AuditLog", &["read"]),
+];
 
 pub(crate) const INSTANCE_CAPABILITY_ACTIONS: CapabilityActions = &[
     ("Message", &["delete"]),
     ("Call", &["manage"]),
     ("User", &["update", "delete"]),
+    ("AuditLog", &["read"]),
 ];
 
 pub(crate) fn validate_permissions(

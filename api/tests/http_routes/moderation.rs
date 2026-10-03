@@ -69,6 +69,55 @@ async fn general_channel_id(app: &TestApp, server_id: &str) -> String {
 }
 
 #[tokio::test]
+async fn audit_log_routes_require_permission_and_return_moderation_entries() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    let server_id = default_server_id(&app).await;
+
+    let denied_server = app
+        .get_with_bearer(
+            &format!("/api/servers/{server_id}/audit-log"),
+            &member.token,
+        )
+        .await;
+    assert_eq!(denied_server.status(), StatusCode::FORBIDDEN);
+    let denied_instance =
+        app.get_with_bearer("/api/audit-log", &member.token).await;
+    assert_eq!(denied_instance.status(), StatusCode::FORBIDDEN);
+
+    let ban = app
+        .post_json_with_bearer(
+            &member_uri(&server_id, &member, "ban"),
+            &json!({ "reason": "Repeated harassment" }),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(ban.status(), StatusCode::OK);
+
+    let server_log = app
+        .get_with_bearer(
+            &format!("/api/servers/{server_id}/audit-log"),
+            &admin.token,
+        )
+        .await;
+    assert_eq!(server_log.status(), StatusCode::OK);
+    let body = json_body(server_log).await;
+    assert_eq!(body["entries"][0]["action"], "ban_member");
+    assert_eq!(body["entries"][0]["origin"], "direct");
+    assert_eq!(body["entries"][0]["target"]["label"], "Member");
+    assert_eq!(body["entries"][0]["scope"]["serverId"], server_id);
+
+    let instance_log =
+        app.get_with_bearer("/api/audit-log", &admin.token).await;
+    assert_eq!(instance_log.status(), StatusCode::OK);
+    assert_eq!(
+        json_body(instance_log).await["entries"][0]["action"],
+        "ban_member"
+    );
+}
+
+#[tokio::test]
 async fn bans_notify_and_revoke_the_members_open_sockets() {
     let app = TestApp::new().await;
     let admin = signup(&app, "admin@example.com", "Admin Example").await;

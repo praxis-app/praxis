@@ -151,14 +151,16 @@ pub(super) async fn remove_message(
         let storage_keys = erase_messages(&transaction, &[message.id]).await?;
         let moderation_action_id = moderation::record_action(
             &transaction,
-            ModerationRecord {
-                actor_user_id: request.actor_user_id,
-                action: ModerationAction::RemoveMessage,
-                target_kind: ModerationTargetKind::Message,
-                target_id: message.id,
-                server_id: Some(request.server_id),
+            ModerationRecord::direct(
+                request.actor_user_id,
+                ModerationAction::RemoveMessage,
+                ModerationTargetKind::Message,
+                message.id,
+                Some(request.server_id),
                 reason,
-            },
+            )
+            .with_channel(request.channel_id)
+            .with_target_label("Message"),
         )
         .await?;
         let notifications = moderation::notify_moderated_user(

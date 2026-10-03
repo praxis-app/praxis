@@ -212,10 +212,15 @@ pub(super) async fn get_server_image(
 pub(super) async fn delete_server(
     State(state): State<ServersState>,
     Path(path): Path<ServerPath>,
-    _: CanManageServersContext,
+    context: CanManageServersContext,
 ) -> AppResult<Json<EmptyResponse>> {
-    service::delete_server(&state.database, &state.upload_root, path.server_id)
-        .await?;
+    service::delete_server(
+        &state.database,
+        &state.upload_root,
+        path.server_id,
+        context.user_id,
+    )
+    .await?;
     Ok(Json(EmptyResponse {}))
 }
 
@@ -394,6 +399,7 @@ pub(super) async fn update_server_config(
     service::update_server_config(
         &state.database,
         context.path.server_id,
+        context.user_id,
         payload,
     )
     .await?;

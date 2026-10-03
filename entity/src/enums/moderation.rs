@@ -74,9 +74,17 @@ pub enum ModerationAction {
     #[sea_orm(string_value = "remove_role_member")]
     RemoveRoleMember,
 
+    /// Creates a server
+    #[sea_orm(string_value = "create_server")]
+    CreateServer,
+
     /// Changes a server's name, description, or other properties
     #[sea_orm(string_value = "update_server")]
     UpdateServer,
+
+    /// Deletes a server
+    #[sea_orm(string_value = "delete_server")]
+    DeleteServer,
 
     /// Changes a server's configuration
     #[sea_orm(string_value = "update_server_config")]
@@ -100,7 +108,9 @@ impl_enum_string_conversions!(ModerationAction {
     DeleteRole => "delete_role",
     AddRoleMembers => "add_role_members",
     RemoveRoleMember => "remove_role_member",
+    CreateServer => "create_server",
     UpdateServer => "update_server",
+    DeleteServer => "delete_server",
     UpdateServerConfig => "update_server_config",
 });
 

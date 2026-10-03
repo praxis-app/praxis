@@ -409,12 +409,12 @@ fn member_record(
     action: ModerationAction,
     reason: Option<String>,
 ) -> ModerationRecord {
-    ModerationRecord {
-        actor_user_id: request.actor_user_id,
+    ModerationRecord::direct(
+        request.actor_user_id,
         action,
-        target_kind: ModerationTargetKind::User,
-        target_id: request.target_user_id,
-        server_id: Some(request.server_id),
+        ModerationTargetKind::User,
+        request.target_user_id,
+        Some(request.server_id),
         reason,
-    }
+    )
 }

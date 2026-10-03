@@ -209,6 +209,7 @@ pub(super) async fn delete_user(
     }
     ensure_not_last_active_admin(&transaction, user.id).await?;
 
+    let target_label = user.display_name.clone().unwrap_or(user.name.clone());
     let mut storage_keys =
         messages::erase_user_messages(&transaction, user.id).await?;
     forum::moderation::erase_user_forum_posts(&transaction, user.id).await?;
@@ -229,7 +230,8 @@ pub(super) async fn delete_user(
     active.update(&transaction).await.map_err(internal_error)?;
     moderation::record_action(
         &transaction,
-        account_record(&request, ModerationAction::DeleteUser, reason),
+        account_record(&request, ModerationAction::DeleteUser, reason)
+            .with_target_label(target_label),
     )
     .await?;
     transaction.commit().await.map_err(internal_error)?;
@@ -460,12 +462,12 @@ fn account_record(
     action: ModerationAction,
     reason: Option<String>,
 ) -> ModerationRecord {
-    ModerationRecord {
-        actor_user_id: request.actor_user_id,
+    ModerationRecord::direct(
+        request.actor_user_id,
         action,
-        target_kind: ModerationTargetKind::User,
-        target_id: request.target_user_id,
-        server_id: None,
+        ModerationTargetKind::User,
+        request.target_user_id,
+        None,
         reason,
-    }
+    )
 }

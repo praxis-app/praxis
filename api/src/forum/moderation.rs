@@ -86,14 +86,16 @@ pub(super) async fn remove_forum_post(
                 .await?;
         let moderation_action_id = moderation::record_action(
             &transaction,
-            ModerationRecord {
-                actor_user_id: request.actor_user_id,
-                action: ModerationAction::RemoveForumPost,
-                target_kind: ModerationTargetKind::ForumPost,
-                target_id: request.post_id,
-                server_id: Some(request.server_id),
+            ModerationRecord::direct(
+                request.actor_user_id,
+                ModerationAction::RemoveForumPost,
+                ModerationTargetKind::ForumPost,
+                request.post_id,
+                Some(request.server_id),
                 reason,
-            },
+            )
+            .with_channel(request.channel_id)
+            .with_target_label("Forum post"),
         )
         .await?;
         let notifications = moderation::notify_moderated_user(
@@ -153,14 +155,16 @@ pub(super) async fn remove_forum_reply(
             messages_service::erase_messages(&transaction, &[reply.id]).await?;
         let moderation_action_id = moderation::record_action(
             &transaction,
-            ModerationRecord {
-                actor_user_id: request.actor_user_id,
-                action: ModerationAction::RemoveMessage,
-                target_kind: ModerationTargetKind::Message,
-                target_id: reply.id,
-                server_id: Some(request.server_id),
+            ModerationRecord::direct(
+                request.actor_user_id,
+                ModerationAction::RemoveMessage,
+                ModerationTargetKind::Message,
+                reply.id,
+                Some(request.server_id),
                 reason,
-            },
+            )
+            .with_channel(request.channel_id)
+            .with_target_label("Forum reply"),
         )
         .await?;
         let notifications = moderation::notify_moderated_user(
