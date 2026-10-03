@@ -93,7 +93,9 @@ export const Message = ({
         usesLongPressMenu && 'select-none',
       )}
     >
-      {hasMenuActions && isDesktop && <MessageMenu {...menuActions} />}
+      {hasMenuActions && isDesktop && !isRemoved && (
+        <MessageMenu {...menuActions} />
+      )}
 
       <UserProfileDrawer
         name={truncatedUsername}
@@ -128,7 +130,15 @@ export const Message = ({
           </div>
         </div>
 
-        {isRemoved && <RemovedContentNotice className="mt-1.5" />}
+        {isRemoved && (
+          <RemovedContentNotice
+            className="mt-1.5"
+            menu={
+              hasMenuActions &&
+              isDesktop && <MessageMenu {...menuActions} variant="card" />
+            }
+          />
+        )}
 
         {/* TODO: Truncate message body if it exceeds a certain length */}
         {body && !isRemoved && <FormattedText text={body} />}
