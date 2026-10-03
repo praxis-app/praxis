@@ -13,11 +13,11 @@ dist-ssr/
 *.local
 
 # Project
+.idea
 .claude
 content/*
 !content/README.md
 AGENTS.md
-.idea
 .vscode/*
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -26,8 +26,6 @@ playwright-report/
 test-results/
 .playwright-cli/
 output/playwright/
-CLAUDE.md
-.fallow
 
 # Local only files
 .docs
