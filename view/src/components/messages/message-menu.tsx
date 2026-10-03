@@ -45,12 +45,12 @@ export const MessageMenu = ({
         ) : (
           <Button
             type="button"
-            variant="outline"
+            variant="ghost"
             size="icon"
             aria-label={t('messages.actions.openMenu')}
-            className="bg-background/95 absolute -top-1 right-0 z-10 size-8 opacity-0 shadow-sm transition-opacity group-hover/message:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100 motion-reduce:transition-none"
+            className="text-muted-foreground hover:text-muted-foreground absolute -top-1 right-4 z-10 size-8 opacity-0 transition-opacity group-hover/message:opacity-100 hover:bg-transparent focus-visible:opacity-100 data-[state=open]:opacity-100 motion-reduce:transition-none dark:hover:bg-transparent"
           >
-            <MdMoreHoriz className="text-muted-foreground size-5" />
+            <MdMoreHoriz className="size-5" />
           </Button>
         )}
       </DropdownMenuTrigger>
