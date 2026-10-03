@@ -142,12 +142,12 @@ pub(super) async fn shape_post_summaries(
             let key = key_map.get(&post.key_id).ok_or_else(|| {
                 internal_consistency_error("Post encryption key not found.")
             })?;
-            let title = encryption::decrypt_text(
-                &post.ciphertext,
-                &post.iv,
-                &post.tag,
-                key,
-            )?;
+            let title = match (&post.ciphertext, &post.iv, &post.tag) {
+                (Some(ciphertext), Some(iv), Some(tag)) => {
+                    encryption::decrypt_text(ciphertext, iv, tag, key)?
+                }
+                _ => String::new(),
+            };
             Ok(ForumPostSummaryResponse {
                 id: post.id.to_string(),
                 title,
@@ -165,6 +165,7 @@ pub(super) async fn shape_post_summaries(
                     .copied()
                     .unwrap_or_default(),
                 latest_activity_at: post.latest_activity_at.to_rfc3339(),
+                moderated_at: post.moderated_at.map(|value| value.to_rfc3339()),
                 created_at: post.created_at.to_rfc3339(),
                 updated_at: post.updated_at.to_rfc3339(),
             })

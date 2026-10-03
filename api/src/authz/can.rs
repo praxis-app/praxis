@@ -26,6 +26,7 @@ impl<const N: usize> Actions for [&str; N] {
 pub(crate) enum PermissionScope {
     Instance,
     Server(Uuid),
+    ServerOrInstance(Uuid),
 }
 
 /// If multiple `actions` are given, all of them must be granted
@@ -47,22 +48,18 @@ pub(crate) async fn can<C: ConnectionTrait>(
 
     let allowed = match scope {
         PermissionScope::Instance => {
-            let rules =
-                crate::instance::instance_roles::service::get_permissions_by_user(
-                    database, user_id,
-                )
-                .await?;
-            granted(&rules)
+            granted(&instance_rules(database, user_id).await?)
         }
         PermissionScope::Server(server_id) => {
-            let permissions =
-                crate::servers::server_roles::service::get_permissions_by_user(
-                    database, user_id,
-                )
-                .await?;
-            permissions
-                .get(&server_id.to_string())
-                .is_some_and(|rules: &Vec<_>| granted(rules))
+            server_rules(database, user_id, server_id)
+                .await?
+                .is_some_and(|rules| granted(&rules))
+        }
+        PermissionScope::ServerOrInstance(server_id) => {
+            server_rules(database, user_id, server_id)
+                .await?
+                .is_some_and(|rules| granted(&rules))
+                || granted(&instance_rules(database, user_id).await?)
         }
     };
 
@@ -71,6 +68,29 @@ pub(crate) async fn can<C: ConnectionTrait>(
     } else {
         Err(ApiError::new(StatusCode::FORBIDDEN, "Forbidden."))
     }
+}
+
+async fn instance_rules<C: ConnectionTrait>(
+    database: &C,
+    user_id: Uuid,
+) -> AppResult<Vec<PermissionRule>> {
+    crate::instance::instance_roles::service::get_permissions_by_user(
+        database, user_id,
+    )
+    .await
+}
+
+async fn server_rules<C: ConnectionTrait>(
+    database: &C,
+    user_id: Uuid,
+    server_id: Uuid,
+) -> AppResult<Option<Vec<PermissionRule>>> {
+    let mut permissions =
+        crate::servers::server_roles::service::get_permissions_by_user(
+            database, user_id,
+        )
+        .await?;
+    Ok(permissions.remove(&server_id.to_string()))
 }
 
 pub(crate) async fn filter_users_who_can<C: ConnectionTrait>(

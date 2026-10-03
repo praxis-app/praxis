@@ -95,6 +95,45 @@ pub(super) async fn livekit_room_participant_count(
     }
 }
 
+pub(super) async fn remove_livekit_participant(
+    livekit: &LiveKitConfig,
+    room_name: &str,
+    identity: &str,
+) -> AppResult<bool> {
+    let removed = RoomClient::with_api_key(
+        &livekit.api_url,
+        &livekit.api_key,
+        &livekit.api_secret,
+    )
+    .remove_participant(room_name, identity)
+    .await;
+
+    match removed {
+        Ok(()) => Ok(true),
+        Err(error) if is_livekit_not_found(&error) => Ok(false),
+        Err(error) => Err(livekit_unavailable(error)),
+    }
+}
+
+pub(super) async fn delete_livekit_room(
+    livekit: &LiveKitConfig,
+    room_name: &str,
+) -> AppResult<()> {
+    let deleted = RoomClient::with_api_key(
+        &livekit.api_url,
+        &livekit.api_key,
+        &livekit.api_secret,
+    )
+    .delete_room(room_name)
+    .await;
+
+    match deleted {
+        Ok(()) => Ok(()),
+        Err(error) if is_livekit_not_found(&error) => Ok(()),
+        Err(error) => Err(livekit_unavailable(error)),
+    }
+}
+
 pub(super) async fn settled_livekit_room_participant_count(
     livekit: &LiveKitConfig,
     room_name: &str,

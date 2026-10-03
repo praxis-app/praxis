@@ -521,8 +521,8 @@ where
     Ok(())
 }
 
-pub(crate) async fn create_general_channel(
-    database: &DatabaseConnection,
+pub(crate) async fn create_general_channel<C: ConnectionTrait>(
+    database: &C,
     server_id: Uuid,
 ) -> AppResult<()> {
     let existing = channels::Entity::find()
@@ -662,8 +662,8 @@ where
     Ok(result)
 }
 
-async fn create_channel_key(
-    database: &DatabaseConnection,
+async fn create_channel_key<C: ConnectionTrait>(
+    database: &C,
     channel_id: Uuid,
 ) -> AppResult<channel_keys::Model> {
     let encrypted = encryption::generate_channel_key()?;

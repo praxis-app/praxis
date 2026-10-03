@@ -25,6 +25,7 @@ use crate::{
 
 pub(super) struct CanManageServerRolesContext {
     pub(super) server_id: Uuid,
+    pub(super) user_id: Uuid,
 }
 
 pub(super) struct CanManageServerRoleContext {
@@ -37,6 +38,7 @@ pub(super) struct CanManageServerRoleMemberContext {
     pub(super) server_id: Uuid,
     pub(super) server_role_id: Uuid,
     pub(super) member_user_id: Uuid,
+    pub(super) user_id: Uuid,
 }
 
 impl FromRequestParts<ServerRolesState> for CanManageServerRolesContext {
@@ -56,6 +58,7 @@ impl FromRequestParts<ServerRolesState> for CanManageServerRolesContext {
 
         Ok(Self {
             server_id: path.server_id,
+            user_id,
         })
     }
 }
@@ -104,6 +107,7 @@ impl FromRequestParts<ServerRolesState> for CanManageServerRoleMemberContext {
             server_id: path.server_id,
             server_role_id: path.server_role_id,
             member_user_id: path.user_id,
+            user_id,
         })
     }
 }

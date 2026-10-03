@@ -14,7 +14,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { RemoveContentDialog } from '@/components/moderation/remove-content-dialog';
 import { Separator } from '@/components/ui/separator';
+import { useModerationAccess } from '@/hooks/use-moderation-access';
 import { useServerData } from '@/hooks/use-server-data';
 import { handleError } from '@/lib/error.utils';
 import { type ChannelRes } from '@/types/channel.types';
@@ -25,6 +27,7 @@ import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuListTodo } from 'react-icons/lu';
 import {
+  MdDeleteOutline,
   MdLockOpen,
   MdLockOutline,
   MdMoreHoriz,
@@ -46,9 +49,11 @@ export const ForumPostMenu = ({
 }: Props) => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isRemoveOpen, setIsRemoveOpen] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const { serverId } = useServerData();
+  const { canModerateContent } = useModerationAccess();
 
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -58,6 +63,8 @@ export const ForumPostMenu = ({
 
   const showCreateProposalButton =
     isAuthor && post.status === 'open' && !post.proposal;
+
+  const showRemovePostButton = canModerateContent && !post.pollId;
 
   const invalidateForum = () =>
     queryClient.invalidateQueries({
@@ -76,6 +83,12 @@ export const ForumPostMenu = ({
       onError: handleError,
     },
   );
+
+  const removePost = async (reason?: string) => {
+    if (!serverId) throw new Error('Server ID is required');
+    await api.removeForumPost(serverId, channel.id, post.id, { reason });
+    await invalidateForum();
+  };
 
   const createProposal = async (
     request: CreatePollReq,
@@ -148,8 +161,24 @@ export const ForumPostMenu = ({
               {t('forums.actions.reopenPost')}
             </DropdownMenuItem>
           )}
+          {showRemovePostButton && (
+            <DropdownMenuItem
+              variant="destructive"
+              onSelect={() => setIsRemoveOpen(true)}
+            >
+              <MdDeleteOutline />
+              {t('moderation.actions.removePost')}
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <RemoveContentDialog
+        open={isRemoveOpen}
+        onOpenChange={setIsRemoveOpen}
+        title={t('moderation.prompts.removePost')}
+        onRemove={removePost}
+      />
 
       <Dialog
         open={post.status === 'open' && isCreateOpen}

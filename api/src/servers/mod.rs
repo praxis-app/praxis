@@ -1,5 +1,6 @@
 mod extractors;
 mod handlers;
+mod moderation;
 mod routes;
 pub(crate) mod server_configs;
 pub(crate) mod server_roles;

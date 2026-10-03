@@ -54,6 +54,33 @@ pub(crate) struct CreateReplyRequest {
     pub(crate) parent_message_id: Option<Uuid>,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct MessagePath {
+    pub(super) server_id: Uuid,
+    pub(super) channel_id: Uuid,
+    pub(super) message_id: Uuid,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct CallMessagePath {
+    pub(super) server_id: Uuid,
+    pub(super) channel_id: Uuid,
+    pub(super) call_id: Uuid,
+    pub(super) message_id: Uuid,
+}
+
+#[derive(Debug)]
+pub(super) struct RemoveMessageRequest {
+    pub(super) server_id: Uuid,
+    pub(super) channel_id: Uuid,
+    pub(super) call_id: Option<Uuid>,
+    pub(super) message_id: Uuid,
+    pub(super) actor_user_id: Uuid,
+    pub(super) reason: Option<String>,
+}
+
 #[derive(Debug)]
 pub(super) struct CreateReplyContext {
     pub(super) server_id: Uuid,
@@ -110,6 +137,8 @@ pub(crate) struct MessageResponse {
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub(crate) reply_users: Vec<MessageUser>,
     pub(crate) latest_reply_at: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) moderated_at: Option<String>,
     pub(crate) created_at: String,
 }
 

@@ -9,6 +9,20 @@ pub(crate) struct CallPath {
     pub(crate) call_id: Uuid,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct CallParticipantPath {
+    pub(super) server_id: Uuid,
+    pub(super) channel_id: Uuid,
+    pub(super) call_id: Uuid,
+    pub(super) user_id: Uuid,
+}
+
+#[derive(Debug, Serialize)]
+pub(super) struct CallArtifactPayload {
+    pub(super) call: CallArtifactResponse,
+}
+
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub(super) struct JoinCallResponse {

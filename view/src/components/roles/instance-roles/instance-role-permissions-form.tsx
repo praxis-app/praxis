@@ -50,6 +50,18 @@ export const InstanceRolePermissionsForm = ({ instanceRole }: Props) => {
           if (permission.name === 'manageServers') {
             result.push({ subject: 'Server', action: ['manage'] });
           }
+          if (permission.name === 'moderateContent') {
+            result.push({ subject: 'Message', action: ['delete'] });
+          }
+          if (permission.name === 'manageCalls') {
+            result.push({ subject: 'Call', action: ['manage'] });
+          }
+          if (permission.name === 'suspendUsers') {
+            result.push({ subject: 'User', action: ['update'] });
+          }
+          if (permission.name === 'deleteUsers') {
+            result.push({ subject: 'User', action: ['delete'] });
+          }
           return result;
         },
         [],

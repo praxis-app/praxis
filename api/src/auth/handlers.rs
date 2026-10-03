@@ -4,8 +4,8 @@ use std::sync::Arc;
 
 use super::{
     service::{
-        create_anon_session as create_anon_session_user, internal_error,
-        issue_access_token, signup as signup_user,
+        create_anon_session as create_anon_session_user, ensure_account_active,
+        internal_error, issue_access_token, signup as signup_user,
         upgrade_anon_session as upgrade_anon_session_user, validate_login,
     },
     types::{
@@ -73,6 +73,7 @@ pub(super) async fn login(
                     "Invalid email or password.",
                 )
             })?;
+    ensure_account_active(&user)?;
 
     let access_token = issue_access_token(&auth_state, user.id)?;
 

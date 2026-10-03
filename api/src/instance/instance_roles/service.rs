@@ -1,12 +1,15 @@
 use axum::http::StatusCode;
 use entity::{
-    enums::{InstanceAbilitySubject, InstanceRoleAbilityAction},
+    enums::{
+        InstanceAbilitySubject, InstanceRoleAbilityAction, ModerationAction,
+        ModerationTargetKind,
+    },
     instance_role_members, instance_role_permissions, instance_roles, users,
 };
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
     DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter, QueryOrder,
-    Set, SqlErr,
+    Set, SqlErr, TransactionTrait,
 };
 use std::collections::BTreeMap;
 use uuid::Uuid as NativeUuid;
@@ -14,16 +17,25 @@ use uuid::Uuid as NativeUuid;
 use super::types::{InstanceRoleResponse, RoleRequest};
 use crate::{
     authz::{
-        validate_permissions, PermissionRule, ADMIN_ROLE_NAME,
+        self, validate_permissions, PermissionRule, ADMIN_ROLE_NAME,
         DEFAULT_ROLE_COLOR,
     },
     common::{text::sanitize_text, ApiError, AppResult},
+    moderation::{self, ModerationRecord},
     servers::types::UserResponse,
     users as users_service,
 };
 
-const INSTANCE_SUBJECTS: &[&str] =
-    &["InstanceConfig", "InstanceRole", "Server", "all"];
+const INSTANCE_SUBJECTS: &[&str] = &[
+    "InstanceConfig",
+    "InstanceRole",
+    "Server",
+    "Message",
+    "Call",
+    "User",
+    "AuditLog",
+    "all",
+];
 
 pub(super) async fn get_instance_role(
     database: &DatabaseConnection,
@@ -110,18 +122,35 @@ pub(super) async fn get_users_eligible_for_instance_role(
 
 pub(super) async fn create_instance_role(
     database: &DatabaseConnection,
+    actor_user_id: Uuid,
     request: RoleRequest,
 ) -> AppResult<InstanceRoleResponse> {
     let (name, color) = validate_role_request(request)?;
+    let transaction = database.begin().await.map_err(internal_error)?;
     let role = instance_roles::ActiveModel {
         id: Set(NativeUuid::new_v4()),
-        name: Set(name),
-        color: Set(color),
+        name: Set(name.clone()),
+        color: Set(color.clone()),
         ..Default::default()
     }
-    .insert(database)
+    .insert(&transaction)
     .await
     .map_err(map_write_error)?;
+    moderation::record_action(
+        &transaction,
+        ModerationRecord::direct(
+            actor_user_id,
+            ModerationAction::CreateRole,
+            ModerationTargetKind::InstanceRole,
+            role.id,
+            None,
+            None,
+        )
+        .with_target_label(name.clone())
+        .with_values(None, Some(role_snapshot(&name, &color))),
+    )
+    .await?;
+    transaction.commit().await.map_err(internal_error)?;
     shape_instance_role(database, role).await
 }
 
@@ -165,49 +194,124 @@ where
         ],
     )
     .await?;
-    add_member(database, role.id, user_id).await
+    add_member(database, role.id, user_id).await?;
+    Ok(())
 }
 
 pub(super) async fn update_instance_role(
     database: &DatabaseConnection,
     role_id: Uuid,
+    actor_user_id: Uuid,
     request: RoleRequest,
 ) -> AppResult<()> {
     let (name, color) = validate_role_request(request)?;
-    let role = get_instance_role_record(database, role_id).await?;
-    let mut active = role.into_active_model();
-    active.name = Set(name);
-    active.color = Set(color);
-    active.update(database).await.map_err(map_write_error)?;
+    let transaction = database.begin().await.map_err(internal_error)?;
+    let role = get_instance_role_record(&transaction, role_id).await?;
+    if role.name != name || role.color != color {
+        let before = role_snapshot(&role.name, &role.color);
+        let target_label = role.name.clone();
+        let mut active = role.into_active_model();
+        active.name = Set(name.clone());
+        active.color = Set(color.clone());
+        active.update(&transaction).await.map_err(map_write_error)?;
+        moderation::record_action(
+            &transaction,
+            ModerationRecord::direct(
+                actor_user_id,
+                ModerationAction::UpdateRole,
+                ModerationTargetKind::InstanceRole,
+                role_id,
+                None,
+                None,
+            )
+            .with_target_label(target_label)
+            .with_values(Some(before), Some(role_snapshot(&name, &color))),
+        )
+        .await?;
+    }
+    transaction.commit().await.map_err(internal_error)?;
     Ok(())
 }
 
 pub(super) async fn update_instance_role_permissions(
     database: &DatabaseConnection,
     role_id: Uuid,
+    actor_user_id: Uuid,
     permissions: Vec<PermissionRule>,
 ) -> AppResult<()> {
-    validate_permissions(&permissions, INSTANCE_SUBJECTS)?;
-    get_instance_role_record(database, role_id).await?;
-    set_permissions(database, role_id, &permissions).await
+    validate_permissions(
+        &permissions,
+        INSTANCE_SUBJECTS,
+        authz::INSTANCE_CAPABILITY_ACTIONS,
+    )?;
+    let transaction = database.begin().await.map_err(internal_error)?;
+    let role = get_instance_role_record(&transaction, role_id).await?;
+    let before = get_role_permissions(&transaction, role_id).await?;
+    if normalized_permissions(&before) != normalized_permissions(&permissions) {
+        set_permissions(&transaction, role_id, &permissions).await?;
+        moderation::record_action(
+            &transaction,
+            ModerationRecord::direct(
+                actor_user_id,
+                ModerationAction::UpdateRolePermissions,
+                ModerationTargetKind::InstanceRole,
+                role_id,
+                None,
+                None,
+            )
+            .with_target_label(role.name)
+            .with_values(
+                Some(permissions_snapshot(before)),
+                Some(permissions_snapshot(permissions)),
+            ),
+        )
+        .await?;
+    }
+    transaction.commit().await.map_err(internal_error)?;
+    Ok(())
 }
 
 pub(super) async fn add_instance_role_members(
     database: &DatabaseConnection,
     role_id: Uuid,
+    actor_user_id: Uuid,
     user_ids: &[Uuid],
 ) -> AppResult<()> {
-    get_instance_role_record(database, role_id).await?;
+    let transaction = database.begin().await.map_err(internal_error)?;
+    let role = get_instance_role_record(&transaction, role_id).await?;
+    let before = get_role_member_ids(&transaction, role_id).await?;
+    let mut changed = false;
     for user_id in user_ids {
         if users::Entity::find_by_id(*user_id)
-            .one(database)
+            .one(&transaction)
             .await
             .map_err(internal_error)?
             .is_some()
         {
-            add_member(database, role_id, *user_id).await?;
+            changed |= add_member(&transaction, role_id, *user_id).await?;
         }
     }
+    if changed {
+        let after = get_role_member_ids(&transaction, role_id).await?;
+        moderation::record_action(
+            &transaction,
+            ModerationRecord::direct(
+                actor_user_id,
+                ModerationAction::AddRoleMembers,
+                ModerationTargetKind::InstanceRole,
+                role_id,
+                None,
+                None,
+            )
+            .with_target_label(role.name)
+            .with_values(
+                Some(member_snapshot(before)),
+                Some(member_snapshot(after)),
+            ),
+        )
+        .await?;
+    }
+    transaction.commit().await.map_err(internal_error)?;
     Ok(())
 }
 
@@ -215,26 +319,76 @@ pub(super) async fn remove_instance_role_member(
     database: &DatabaseConnection,
     role_id: Uuid,
     user_id: Uuid,
+    actor_user_id: Uuid,
 ) -> AppResult<()> {
-    get_instance_role_record(database, role_id).await?;
-    instance_role_members::Entity::delete_many()
+    let transaction = database.begin().await.map_err(internal_error)?;
+    let role = get_instance_role_record(&transaction, role_id).await?;
+    let before = get_role_member_ids(&transaction, role_id).await?;
+    let result = instance_role_members::Entity::delete_many()
         .filter(instance_role_members::Column::InstanceRoleId.eq(role_id))
         .filter(instance_role_members::Column::UserId.eq(user_id))
-        .exec(database)
+        .exec(&transaction)
         .await
         .map_err(internal_error)?;
+    if result.rows_affected > 0 {
+        let after = get_role_member_ids(&transaction, role_id).await?;
+        moderation::record_action(
+            &transaction,
+            ModerationRecord::direct(
+                actor_user_id,
+                ModerationAction::RemoveRoleMember,
+                ModerationTargetKind::InstanceRole,
+                role_id,
+                None,
+                None,
+            )
+            .with_target_label(role.name)
+            .with_values(
+                Some(member_snapshot(before)),
+                Some(member_snapshot(after)),
+            ),
+        )
+        .await?;
+    }
+    transaction.commit().await.map_err(internal_error)?;
     Ok(())
 }
 
 pub(super) async fn delete_instance_role(
     database: &DatabaseConnection,
     role_id: Uuid,
+    actor_user_id: Uuid,
 ) -> AppResult<()> {
-    let role = get_instance_role_record(database, role_id).await?;
+    let transaction = database.begin().await.map_err(internal_error)?;
+    let role = get_instance_role_record(&transaction, role_id).await?;
+    let permissions = get_role_permissions(&transaction, role_id).await?;
+    let members = get_role_member_ids(&transaction, role_id).await?;
+    let target_label = role.name.clone();
+    let before = serde_json::json!({
+        "name": role.name.clone(),
+        "color": role.color.clone(),
+        "permissions": normalized_permissions(&permissions),
+        "memberIds": sorted_ids(members),
+    });
     instance_roles::Entity::delete_by_id(role.id)
-        .exec(database)
+        .exec(&transaction)
         .await
         .map_err(internal_error)?;
+    moderation::record_action(
+        &transaction,
+        ModerationRecord::direct(
+            actor_user_id,
+            ModerationAction::DeleteRole,
+            ModerationTargetKind::InstanceRole,
+            role_id,
+            None,
+            None,
+        )
+        .with_target_label(target_label)
+        .with_values(Some(before), None),
+    )
+    .await?;
+    transaction.commit().await.map_err(internal_error)?;
     Ok(())
 }
 
@@ -357,7 +511,7 @@ async fn add_member<C>(
     database: &C,
     role_id: Uuid,
     user_id: Uuid,
-) -> AppResult<()>
+) -> AppResult<bool>
 where
     C: ConnectionTrait,
 {
@@ -369,7 +523,7 @@ where
         .map_err(internal_error)?
         .is_some();
     if exists {
-        return Ok(());
+        return Ok(false);
     }
 
     instance_role_members::ActiveModel {
@@ -381,11 +535,76 @@ where
     .insert(database)
     .await
     .map_err(internal_error)?;
-    Ok(())
+    Ok(true)
 }
 
-async fn get_instance_role_record(
-    database: &DatabaseConnection,
+async fn get_role_permissions<C: ConnectionTrait>(
+    database: &C,
+    role_id: Uuid,
+) -> AppResult<Vec<PermissionRule>> {
+    Ok(group_permissions(
+        instance_role_permissions::Entity::find()
+            .filter(
+                instance_role_permissions::Column::InstanceRoleId.eq(role_id),
+            )
+            .all(database)
+            .await
+            .map_err(internal_error)?,
+    ))
+}
+
+async fn get_role_member_ids<C: ConnectionTrait>(
+    database: &C,
+    role_id: Uuid,
+) -> AppResult<Vec<Uuid>> {
+    Ok(instance_role_members::Entity::find()
+        .filter(instance_role_members::Column::InstanceRoleId.eq(role_id))
+        .all(database)
+        .await
+        .map_err(internal_error)?
+        .into_iter()
+        .map(|membership| membership.user_id)
+        .collect())
+}
+
+fn role_snapshot(name: &str, color: &str) -> serde_json::Value {
+    serde_json::json!({ "name": name, "color": color })
+}
+
+fn normalized_permissions(
+    permissions: &[PermissionRule],
+) -> Vec<PermissionRule> {
+    // Combine actions from rules that share the same subject
+    let mut grouped = BTreeMap::<String, Vec<String>>::new();
+    for permission in permissions {
+        let actions = grouped.entry(permission.subject.clone()).or_default();
+        actions.extend(permission.action.iter().cloned());
+    }
+    grouped
+        .into_iter()
+        .map(|(subject, mut action)| {
+            action.sort();
+            action.dedup();
+            PermissionRule { subject, action }
+        })
+        .collect()
+}
+
+fn permissions_snapshot(permissions: Vec<PermissionRule>) -> serde_json::Value {
+    serde_json::json!({ "permissions": normalized_permissions(&permissions) })
+}
+
+fn sorted_ids(mut ids: Vec<Uuid>) -> Vec<String> {
+    ids.sort();
+    ids.into_iter().map(|id| id.to_string()).collect()
+}
+
+fn member_snapshot(ids: Vec<Uuid>) -> serde_json::Value {
+    serde_json::json!({ "memberIds": sorted_ids(ids) })
+}
+
+async fn get_instance_role_record<C: ConnectionTrait>(
+    database: &C,
     role_id: Uuid,
 ) -> AppResult<instance_roles::Model> {
     instance_roles::Entity::find_by_id(role_id)

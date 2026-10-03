@@ -1,7 +1,9 @@
 use axum::http::StatusCode;
 use chrono::Utc;
 use entity::{
-    channel_members, event_attendees, events, instance_configs, server_images,
+    channel_members,
+    enums::{ModerationAction, ModerationTargetKind},
+    event_attendees, events, instance_configs, server_bans, server_images,
     server_members, server_role_members, server_roles, servers, users,
 };
 use sea_orm::{
@@ -23,7 +25,9 @@ use crate::{
     cache::CacheService,
     channels as channels_service,
     common::{ApiError, AppResult},
-    instance, users as users_service,
+    instance,
+    moderation::{self, ModerationRecord},
+    users as users_service,
 };
 
 // Time-to-live for the cached current-server value. Chosen generously since
@@ -101,6 +105,9 @@ pub(crate) async fn is_server_audience(
     if let Some(user_id) = user_id {
         if is_server_member(database, server_id, user_id).await? {
             return Ok(());
+        }
+        if is_banned_from_server(database, server_id, user_id).await? {
+            return Err(ApiError::new(StatusCode::FORBIDDEN, "Forbidden."));
         }
     }
 
@@ -215,22 +222,30 @@ pub(crate) async fn get_current_server(
 ) -> AppResult<Option<ServerResponse>> {
     let default_server_id = default_server_id(database).await?;
 
-    let server_id =
+    let cached_server_id =
         match cached_current_server_id(cache_service, user_id).await {
-            Some(server_id) => Some(server_id),
-            None => server_members::Entity::find()
-                .filter(server_members::Column::UserId.eq(user_id))
-                .order_by_with_nulls(
-                    server_members::Column::LastActiveAt,
-                    Order::Desc,
-                    NullOrdering::Last,
-                )
-                .one(database)
-                .await
-                .map_err(internal_error)?
-                .map(|membership| membership.server_id),
-        }
-        .unwrap_or(default_server_id);
+            Some(server_id)
+                if is_server_member(database, server_id, user_id).await? =>
+            {
+                Some(server_id)
+            }
+            _ => None,
+        };
+    let server_id = match cached_server_id {
+        Some(server_id) => Some(server_id),
+        None => server_members::Entity::find()
+            .filter(server_members::Column::UserId.eq(user_id))
+            .order_by_with_nulls(
+                server_members::Column::LastActiveAt,
+                Order::Desc,
+                NullOrdering::Last,
+            )
+            .one(database)
+            .await
+            .map_err(internal_error)?
+            .map(|membership| membership.server_id),
+    }
+    .unwrap_or(default_server_id);
 
     let Some(server) = servers::Entity::find_by_id(server_id)
         .one(database)
@@ -316,31 +331,61 @@ pub(super) async fn create_server(
     let image = normalize_server_image(image).await?;
     let (name, slug, description) = validate_server_request(&request)?;
     let server_id = NativeUuid::new_v4();
-
+    let is_default_server = request.is_default_server.unwrap_or(false);
+    let transaction = database.begin().await.map_err(internal_error)?;
     let server = servers::ActiveModel {
         id: Set(server_id),
-        name: Set(name),
-        slug: Set(slug),
-        description: Set(description),
+        name: Set(name.clone()),
+        slug: Set(slug.clone()),
+        description: Set(description.clone()),
         ..Default::default()
     }
-    .insert(database)
+    .insert(&transaction)
     .await
     .map_err(map_write_error)?;
 
-    ensure_server_config(database, server.id).await?;
-    add_server_members(database, server.id, &[current_user_id]).await?;
+    ensure_server_config(&transaction, server.id).await?;
+    add_server_members_in_transaction(
+        &transaction,
+        server.id,
+        &[current_user_id],
+    )
+    .await?;
     super::server_roles::service::create_admin_server_role(
-        database,
+        &transaction,
         server.id,
         current_user_id,
     )
     .await?;
-    channels_service::create_general_channel(database, server.id).await?;
+    channels_service::create_general_channel(&transaction, server.id).await?;
 
-    if request.is_default_server.unwrap_or(false) {
-        set_default_server(database, server.id).await?;
+    if is_default_server {
+        set_default_server(&transaction, server.id).await?;
     }
+
+    moderation::record_action(
+        &transaction,
+        ModerationRecord::direct(
+            current_user_id,
+            ModerationAction::CreateServer,
+            ModerationTargetKind::Server,
+            server.id,
+            Some(server.id),
+            None,
+        )
+        .with_target_label(name.clone())
+        .with_values(
+            None,
+            Some(server_snapshot(
+                &name,
+                &slug,
+                description.as_deref(),
+                is_default_server,
+            )),
+        ),
+    )
+    .await?;
+    transaction.commit().await.map_err(internal_error)?;
 
     if let Some(image) = image {
         store_server_image(database, upload_root, server.id, image).await?;
@@ -366,16 +411,50 @@ pub(super) async fn update_server(
 
     let image = normalize_server_image(image).await?;
     let (name, slug, description) = validate_server_request(&request)?;
-    let server = get_server(database, server_id).await?;
+    let was_default_server = default_server_id(database).await? == server_id;
+    let transaction = database.begin().await.map_err(internal_error)?;
+    let server = get_server(&transaction, server_id).await?;
+    let before = server_snapshot(
+        &server.name,
+        &server.slug,
+        server.description.as_deref(),
+        was_default_server,
+    );
+    let target_label = server.name.clone();
     let mut active = server.into_active_model();
-    active.name = Set(name);
-    active.slug = Set(slug);
-    active.description = Set(description);
-    let server = active.update(database).await.map_err(map_write_error)?;
+    active.name = Set(name.clone());
+    active.slug = Set(slug.clone());
+    active.description = Set(description.clone());
+    let server = active.update(&transaction).await.map_err(map_write_error)?;
 
+    let is_default_server =
+        was_default_server || request.is_default_server.unwrap_or(false);
     if request.is_default_server.unwrap_or(false) {
-        set_default_server(database, server.id).await?;
+        set_default_server(&transaction, server.id).await?;
     }
+    let after = server_snapshot(
+        &name,
+        &slug,
+        description.as_deref(),
+        is_default_server,
+    );
+    if before != after {
+        moderation::record_action(
+            &transaction,
+            ModerationRecord::direct(
+                user_id,
+                ModerationAction::UpdateServer,
+                ModerationTargetKind::Server,
+                server.id,
+                Some(server.id),
+                None,
+            )
+            .with_target_label(target_label)
+            .with_values(Some(before), Some(after)),
+        )
+        .await?;
+    }
+    transaction.commit().await.map_err(internal_error)?;
 
     if let Some(image) = image {
         store_server_image(database, upload_root, server.id, image).await?;
@@ -389,6 +468,7 @@ pub(super) async fn delete_server(
     database: &DatabaseConnection,
     upload_root: &Path,
     server_id: Uuid,
+    actor_user_id: Uuid,
 ) -> AppResult<()> {
     let server = get_server(database, server_id).await?;
     let server_count = servers::Entity::find()
@@ -414,7 +494,31 @@ pub(super) async fn delete_server(
         .all(database)
         .await
         .map_err(internal_error)?;
-    server.delete(database).await.map_err(internal_error)?;
+    let transaction = database.begin().await.map_err(internal_error)?;
+    let server = get_server(&transaction, server_id).await?;
+    let before = server_snapshot(
+        &server.name,
+        &server.slug,
+        server.description.as_deref(),
+        false,
+    );
+    let target_label = server.name.clone();
+    moderation::record_action(
+        &transaction,
+        ModerationRecord::direct(
+            actor_user_id,
+            ModerationAction::DeleteServer,
+            ModerationTargetKind::Server,
+            server_id,
+            Some(server_id),
+            None,
+        )
+        .with_target_label(target_label)
+        .with_values(Some(before), None),
+    )
+    .await?;
+    server.delete(&transaction).await.map_err(internal_error)?;
+    transaction.commit().await.map_err(internal_error)?;
     cleanup_server_image_files(upload_root, &images).await;
     Ok(())
 }
@@ -572,8 +676,16 @@ pub(crate) async fn add_member_to_server<C>(
 where
     C: ConnectionTrait,
 {
+    channels_service::lock_server_electorate(database, server_id).await?;
+
     if is_server_member(database, server_id, user_id).await? {
         return Ok(());
+    }
+    if is_banned_from_server(database, server_id, user_id).await? {
+        return Err(ApiError::new(
+            StatusCode::FORBIDDEN,
+            "User is banned from this server.",
+        ));
     }
 
     server_members::ActiveModel {
@@ -589,6 +701,24 @@ where
     Ok(())
 }
 
+pub(crate) async fn is_banned_from_server<C>(
+    database: &C,
+    server_id: Uuid,
+    user_id: Uuid,
+) -> AppResult<bool>
+where
+    C: ConnectionTrait,
+{
+    let ban = server_bans::Entity::find()
+        .filter(server_bans::Column::ServerId.eq(server_id))
+        .filter(server_bans::Column::UserId.eq(user_id))
+        .one(database)
+        .await
+        .map_err(internal_error)?;
+
+    Ok(ban.is_some())
+}
+
 pub(super) async fn remove_server_members(
     database: &DatabaseConnection,
     server_id: Uuid,
@@ -600,22 +730,36 @@ pub(super) async fn remove_server_members(
     }
 
     let transaction = database.begin().await.map_err(internal_error)?;
-    let channel_ids =
-        channels_service::lock_server_electorate(&transaction, server_id)
-            .await?;
+    remove_server_members_in_transaction(&transaction, server_id, user_ids)
+        .await?;
+    transaction.commit().await.map_err(internal_error)?;
+    Ok(())
+}
 
-    server_members::Entity::delete_many()
+pub(crate) async fn remove_server_members_in_transaction<C>(
+    database: &C,
+    server_id: Uuid,
+    user_ids: &[Uuid],
+) -> AppResult<u64>
+where
+    C: ConnectionTrait,
+{
+    let channel_ids =
+        channels_service::lock_server_electorate(database, server_id).await?;
+
+    let removed = server_members::Entity::delete_many()
         .filter(server_members::Column::ServerId.eq(server_id))
         .filter(server_members::Column::UserId.is_in(user_ids.to_vec()))
-        .exec(&transaction)
+        .exec(database)
         .await
-        .map_err(internal_error)?;
+        .map_err(internal_error)?
+        .rows_affected;
 
     if !channel_ids.is_empty() {
         channel_members::Entity::delete_many()
             .filter(channel_members::Column::ChannelId.is_in(channel_ids))
             .filter(channel_members::Column::UserId.is_in(user_ids.to_vec()))
-            .exec(&transaction)
+            .exec(database)
             .await
             .map_err(internal_error)?;
     }
@@ -631,7 +775,7 @@ pub(super) async fn remove_server_members(
                 .in_subquery(server_role_ids),
         )
         .filter(server_role_members::Column::UserId.is_in(user_ids.to_vec()))
-        .exec(&transaction)
+        .exec(database)
         .await
         .map_err(internal_error)?;
 
@@ -645,12 +789,11 @@ pub(super) async fn remove_server_members(
     event_attendees::Entity::delete_many()
         .filter(event_attendees::Column::EventId.in_subquery(server_event_ids))
         .filter(event_attendees::Column::UserId.is_in(user_ids.to_vec()))
-        .exec(&transaction)
+        .exec(database)
         .await
         .map_err(internal_error)?;
 
-    transaction.commit().await.map_err(internal_error)?;
-    Ok(())
+    Ok(removed)
 }
 
 pub(super) async fn join_server(
@@ -874,7 +1017,7 @@ fn shape_server_image(image: &server_images::Model) -> ServerImageRef {
     }
 }
 
-fn shape_user(
+pub(super) fn shape_user(
     user: users::Model,
     profile_picture: Option<users_service::UserImageRef>,
 ) -> UserResponse {
@@ -902,15 +1045,15 @@ where
         })
 }
 
-pub(crate) async fn ensure_server(
-    database: &DatabaseConnection,
+pub(crate) async fn ensure_server<C: ConnectionTrait>(
+    database: &C,
     server_id: Uuid,
 ) -> AppResult<()> {
     get_server(database, server_id).await.map(|_| ())
 }
 
-async fn set_default_server(
-    database: &DatabaseConnection,
+async fn set_default_server<C: ConnectionTrait>(
+    database: &C,
     server_id: Uuid,
 ) -> AppResult<()> {
     get_server(database, server_id).await?;
@@ -1042,6 +1185,20 @@ fn current_server_write_throttle_key(server_id: Uuid, user_id: Uuid) -> String {
     format!("current-server-write:{server_id}:{user_id}")
 }
 
+fn server_snapshot(
+    name: &str,
+    slug: &str,
+    description: Option<&str>,
+    is_default_server: bool,
+) -> serde_json::Value {
+    serde_json::json!({
+        "name": name,
+        "slug": slug,
+        "description": description,
+        "isDefaultServer": is_default_server,
+    })
+}
+
 fn validate_server_request(
     request: &ServerRequest,
 ) -> AppResult<(String, String, Option<String>)> {
@@ -1098,7 +1255,7 @@ fn map_write_error(error: sea_orm::DbErr) -> ApiError {
     internal_error(error)
 }
 
-fn internal_error(error: impl std::fmt::Display) -> ApiError {
+pub(super) fn internal_error(error: impl std::fmt::Display) -> ApiError {
     tracing::error!("server request failed: {error}");
     ApiError::new(StatusCode::INTERNAL_SERVER_ERROR, "Internal server error.")
 }

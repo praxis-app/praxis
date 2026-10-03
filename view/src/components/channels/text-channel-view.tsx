@@ -35,12 +35,16 @@ import { type PollRes } from '@/types/poll.types';
 import { type ProposalForumReferenceRes } from '@/types/forum.types';
 import { type PubSubMessage } from '@/types/shared.types';
 import { type RightPanel } from '@/types/right-panel.types';
-import { PubSubMessageType } from '@/constants/pub-sub.constants';
+import {
+  PubSubMessageAction,
+  PubSubMessageType,
+} from '@/constants/pub-sub.constants';
 import {
   preserveFeedImages,
   preserveFeedItemImages,
   replaceProposalWithForumReference,
 } from '@/lib/feed.utils';
+import { patchRemovedMessage } from '@/lib/moderation.utils';
 import { channelPubSubTopic } from '@/lib/pub-sub.utils';
 import { cn } from '@/lib/shared.utils';
 import { useQueryClient } from '@tanstack/react-query';
@@ -50,11 +54,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 interface NewMessagePayload {
   type: PubSubMessageType.MESSAGE;
+  action?: PubSubMessageAction;
   message: MessageRes;
 }
 
 interface ThreadReplyPayload {
   type: PubSubMessageType.THREAD_REPLY;
+  action?: PubSubMessageAction;
   rootKind?: ThreadRootKind;
   rootId?: string;
   rootMessageId?: string;
@@ -331,6 +337,18 @@ export const TextChannelView = ({
         const { body }: PubSubMessage<NewMessagePayload | ThreadReplyPayload> =
           JSON.parse(event.data);
         if (!body) {
+          return;
+        }
+
+        if (body.action === PubSubMessageAction.REMOVED) {
+          patchRemovedMessage(
+            queryClient,
+            serverId,
+            channel?.id,
+            body.type === PubSubMessageType.THREAD_REPLY
+              ? body.reply
+              : body.message,
+          );
           return;
         }
 

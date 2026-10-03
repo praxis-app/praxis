@@ -1,6 +1,8 @@
 use entity::{
-    channel_members, channels, enums::PollType, events, forum_posts, messages,
-    notifications, polls, server_roles, users,
+    channel_members, channels,
+    enums::{ModerationTargetKind, NotificationKind, PollType},
+    events, forum_posts, messages, moderation_actions, notifications, polls,
+    server_roles, servers, users,
 };
 use sea_orm::{
     prelude::Uuid, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter,
@@ -31,6 +33,9 @@ struct NotificationContext {
     polls: HashMap<Uuid, polls::Model>,
     server_roles: HashMap<Uuid, server_roles::Model>,
     events: HashMap<Uuid, events::Model>,
+    moderation_actions: HashMap<Uuid, moderation_actions::Model>,
+    forum_posts: HashMap<Uuid, forum_posts::Model>,
+    servers: HashMap<Uuid, servers::Model>,
 }
 
 pub(super) async fn shape_notifications(
@@ -81,6 +86,15 @@ async fn get_notification_context(
     let role_ids = unique(rows.iter().filter_map(|row| row.server_role_id));
     let event_ids = unique(rows.iter().filter_map(|row| row.event_id));
 
+    let moderation_action_ids =
+        unique(rows.iter().filter_map(|row| row.moderation_action_id));
+
+    let server_ids = unique(
+        rows.iter()
+            .filter(|row| row.moderation_action_id.is_some())
+            .map(|row| row.server_id),
+    );
+
     let actors = get_all_by_ids(
         users::Entity::find(),
         users::Column::Id,
@@ -94,6 +108,52 @@ async fn get_notification_context(
     let profile_pictures =
         users_service::get_user_profile_pictures_map(database, &actor_ids)
             .await?;
+
+    let moderation_actions = get_all_by_ids(
+        moderation_actions::Entity::find(),
+        moderation_actions::Column::Id,
+        &moderation_action_ids,
+        database,
+    )
+    .await?
+    .into_iter()
+    .map(|action| (action.id, action))
+    .collect::<HashMap<Uuid, moderation_actions::Model>>();
+    let moderated_target_ids = |kind: ModerationTargetKind| {
+        unique(
+            moderation_actions
+                .values()
+                .filter(|action| action.target_kind == kind)
+                .map(|action| action.target_id),
+        )
+    };
+    let forum_posts = get_all_by_ids(
+        forum_posts::Entity::find(),
+        forum_posts::Column::Id,
+        &moderated_target_ids(ModerationTargetKind::ForumPost),
+        database,
+    )
+    .await?
+    .into_iter()
+    .map(|post| (post.id, post))
+    .collect::<HashMap<Uuid, forum_posts::Model>>();
+    let message_ids = unique(
+        message_ids
+            .iter()
+            .copied()
+            .chain(moderated_target_ids(ModerationTargetKind::Message))
+            .chain(forum_posts.values().map(|post| post.root_message_id)),
+    );
+    let servers = get_all_by_ids(
+        servers::Entity::find(),
+        servers::Column::Id,
+        &server_ids,
+        database,
+    )
+    .await?
+    .into_iter()
+    .map(|server| (server.id, server))
+    .collect();
 
     let mut messages = get_all_by_ids(
         messages::Entity::find(),
@@ -221,6 +281,9 @@ async fn get_notification_context(
         polls,
         server_roles,
         events,
+        moderation_actions,
+        forum_posts,
+        servers,
     })
 }
 
@@ -251,6 +314,10 @@ fn shape_notification(
         channel_id: row.channel_id.map(|id| id.to_string()),
         actor,
         vote_type: row.vote_type.map(|vote_type| vote_type.as_str()),
+        moderation_reason: row
+            .moderation_action_id
+            .and_then(|action_id| context.moderation_actions.get(&action_id))
+            .and_then(|action| action.reason.clone()),
         unread_count: row.unread_count,
         read_at: row.read_at.map(serialize_timestamp),
         created_at: serialize_timestamp(row.created_at),
@@ -275,7 +342,87 @@ fn shape_target(
     if let Some(event_id) = row.event_id {
         return shape_event_target(row, event_id, context);
     }
+    if let Some(action_id) = row.moderation_action_id {
+        return shape_moderation_target(row, action_id, viewer_id, context);
+    }
     unavailable()
+}
+
+fn shape_moderation_target(
+    row: &notifications::Model,
+    action_id: Uuid,
+    viewer_id: Uuid,
+    context: &NotificationContext,
+) -> NotificationTargetResponse {
+    let Some(action) = context
+        .moderation_actions
+        .get(&action_id)
+        .filter(|action| action.server_id == Some(row.server_id))
+    else {
+        return unavailable();
+    };
+
+    match row.kind {
+        NotificationKind::MessageRemoved => {
+            let in_call = context
+                .messages
+                .get(&action.target_id)
+                .is_some_and(|message| message.call_id.is_some());
+            if in_call {
+                return shape_channel_target(row, viewer_id, context);
+            }
+            shape_message_target(row, action.target_id, viewer_id, context)
+        }
+        NotificationKind::ForumPostRemoved => {
+            match context.forum_posts.get(&action.target_id) {
+                Some(post) => shape_message_target(
+                    row,
+                    post.root_message_id,
+                    viewer_id,
+                    context,
+                ),
+                None => unavailable(),
+            }
+        }
+        NotificationKind::CallParticipantRemoved => {
+            shape_channel_target(row, viewer_id, context)
+        }
+        NotificationKind::MemberRemoved | NotificationKind::MemberBanned => {
+            match context.servers.get(&row.server_id) {
+                Some(server) => NotificationTargetResponse {
+                    kind: "server",
+                    available: true,
+                    server_name: Some(server.name.clone()),
+                    ..Default::default()
+                },
+                None => unavailable(),
+            }
+        }
+        _ => unavailable(),
+    }
+}
+
+fn shape_channel_target(
+    row: &notifications::Model,
+    viewer_id: Uuid,
+    context: &NotificationContext,
+) -> NotificationTargetResponse {
+    let Some(channel_id) = row.channel_id else {
+        return unavailable();
+    };
+    if !channel_is_in_server(channel_id, row.server_id, context)
+        || !viewer_can_read_channel(viewer_id, channel_id, context)
+    {
+        return unavailable();
+    }
+
+    NotificationTargetResponse {
+        kind: "channel",
+        available: true,
+        channel_id: Some(channel_id.to_string()),
+        channel_name: channel_name(channel_id, context),
+        ..Default::default()
+    }
 }
 
 fn shape_message_target(

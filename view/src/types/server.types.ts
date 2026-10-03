@@ -1,5 +1,6 @@
 import { ServerErrorKeys } from '@/constants/server.constants';
 import * as zod from 'zod';
+import { type UserRes } from './user.types';
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -30,6 +31,10 @@ export interface ServerReq {
   isDefaultServer?: boolean;
 }
 
+export interface ServerMemberModerationReq {
+  reason?: string;
+}
+
 export interface ServerRes {
   id: string;
   name: string;
@@ -44,4 +49,18 @@ export interface ServerRes {
   memberCount?: number;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export type ServerAccessStatus = 'member' | 'banned' | 'removed' | 'none';
+
+export interface ServerAccessRes {
+  status: ServerAccessStatus;
+  serverName: string | null;
+  reason: string | null;
+  moderatedAt: string | null;
+}
+
+export interface ServerBanRes {
+  user: UserRes;
+  createdAt: string;
 }

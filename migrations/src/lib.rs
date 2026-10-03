@@ -22,6 +22,7 @@ mod m20260830_000001_add_restricted_block_votes;
 mod m20260901_000001_rename_blocks_restricted;
 mod m20260907_000001_add_proposal_and_event_notifications;
 mod m20260908_000001_add_channel_member_read_timestamps;
+mod m20260923_000001_add_basic_moderation;
 
 pub struct Migrator;
 
@@ -59,6 +60,7 @@ impl MigratorTrait for Migrator {
             Box::new(
                 m20260908_000001_add_channel_member_read_timestamps::Migration,
             ),
+            Box::new(m20260923_000001_add_basic_moderation::Migration),
         ]
     }
 }
