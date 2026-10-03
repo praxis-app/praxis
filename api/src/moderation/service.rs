@@ -75,7 +75,7 @@ where
 {
     let action = moderation_actions::ActiveModel {
         id: Set(NativeUuid::new_v4()),
-        actor_user_id: Set(record.actor_user_id),
+        actor_user_id: Set(Some(record.actor_user_id)),
         action: Set(record.action),
         target_kind: Set(record.target_kind),
         target_id: Set(record.target_id),

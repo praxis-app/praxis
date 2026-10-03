@@ -2,9 +2,10 @@ use sea_orm::{sea_query::Expr, ConnectionTrait, DbBackend};
 use sea_orm_migration::prelude::{sea_query::extension::postgres::Type, *};
 
 const ACTION_ENUM: &str = "moderation_actions_action_enum";
+const ORIGIN_ENUM: &str = "moderation_actions_origin_enum";
 const TARGET_KIND_ENUM: &str = "moderation_actions_target_kind_enum";
 
-const ACTIONS: [&str; 10] = [
+const ACTIONS: [&str; 18] = [
     "remove_message",
     "remove_forum_post",
     "remove_member",
@@ -15,9 +16,28 @@ const ACTIONS: [&str; 10] = [
     "delete_user",
     "remove_call_participant",
     "end_call",
+    "create_role",
+    "update_role",
+    "update_role_permissions",
+    "delete_role",
+    "add_role_members",
+    "remove_role_member",
+    "update_server",
+    "update_server_config",
 ];
 
-const TARGET_KINDS: [&str; 4] = ["message", "forum_post", "user", "call"];
+const ORIGINS: [&str; 3] = ["direct", "proposal", "system"];
+
+const TARGET_KINDS: [&str; 8] = [
+    "message",
+    "forum_post",
+    "user",
+    "call",
+    "server",
+    "server_config",
+    "server_role",
+    "instance_role",
+];
 
 const NOTIFICATION_KINDS: [&str; 5] = [
     "message_removed",
@@ -266,6 +286,15 @@ async fn create_moderation_enums(
     manager
         .create_type(
             Type::create()
+                .as_enum(Alias::new(ORIGIN_ENUM))
+                .values(ORIGINS.map(Alias::new))
+                .to_owned(),
+        )
+        .await?;
+
+    manager
+        .create_type(
+            Type::create()
                 .as_enum(Alias::new(TARGET_KIND_ENUM))
                 .values(TARGET_KINDS.map(Alias::new))
                 .to_owned(),
@@ -282,6 +311,9 @@ async fn drop_moderation_enums(
 
     manager
         .drop_type(Type::drop().name(Alias::new(TARGET_KIND_ENUM)).to_owned())
+        .await?;
+    manager
+        .drop_type(Type::drop().name(Alias::new(ORIGIN_ENUM)).to_owned())
         .await?;
     manager
         .drop_type(Type::drop().name(Alias::new(ACTION_ENUM)).to_owned())
@@ -305,7 +337,7 @@ async fn create_moderation_actions(
                 .col(
                     ColumnDef::new(ModerationActions::ActorUserId)
                         .uuid()
-                        .not_null(),
+                        .null(),
                 )
                 .col(
                     ColumnDef::new(ModerationActions::Action)
@@ -314,6 +346,15 @@ async fn create_moderation_actions(
                             ACTIONS.map(Alias::new),
                         )
                         .not_null(),
+                )
+                .col(
+                    ColumnDef::new(ModerationActions::Origin)
+                        .enumeration(
+                            Alias::new(ORIGIN_ENUM),
+                            ORIGINS.map(Alias::new),
+                        )
+                        .not_null()
+                        .default("direct"),
                 )
                 .col(
                     ColumnDef::new(ModerationActions::TargetKind)
@@ -329,6 +370,17 @@ async fn create_moderation_actions(
                         .not_null(),
                 )
                 .col(ColumnDef::new(ModerationActions::ServerId).uuid())
+                .col(ColumnDef::new(ModerationActions::ProposalId).uuid())
+                .col(ColumnDef::new(ModerationActions::ChannelId).uuid())
+                .col(ColumnDef::new(ModerationActions::TargetLabel).text())
+                .col(ColumnDef::new(ModerationActions::ServerLabel).text())
+                .col(
+                    ColumnDef::new(ModerationActions::BeforeValue)
+                        .json_binary(),
+                )
+                .col(
+                    ColumnDef::new(ModerationActions::AfterValue).json_binary(),
+                )
                 .col(ColumnDef::new(ModerationActions::Reason).text())
                 .col(timestamp(ModerationActions::CreatedAt))
                 .foreign_key(
@@ -339,7 +391,7 @@ async fn create_moderation_actions(
                             ModerationActions::ActorUserId,
                         )
                         .to(Users::Table, Users::Id)
-                        .on_delete(ForeignKeyAction::Cascade)
+                        .on_delete(ForeignKeyAction::SetNull)
                         .on_update(ForeignKeyAction::Cascade),
                 )
                 .foreign_key(
@@ -350,7 +402,29 @@ async fn create_moderation_actions(
                             ModerationActions::ServerId,
                         )
                         .to(Servers::Table, Servers::Id)
-                        .on_delete(ForeignKeyAction::Cascade)
+                        .on_delete(ForeignKeyAction::SetNull)
+                        .on_update(ForeignKeyAction::Cascade),
+                )
+                .foreign_key(
+                    ForeignKey::create()
+                        .name("moderation-actions-proposal-id-fkey")
+                        .from(
+                            ModerationActions::Table,
+                            ModerationActions::ProposalId,
+                        )
+                        .to(Polls::Table, Polls::Id)
+                        .on_delete(ForeignKeyAction::SetNull)
+                        .on_update(ForeignKeyAction::Cascade),
+                )
+                .foreign_key(
+                    ForeignKey::create()
+                        .name("moderation-actions-channel-id-fkey")
+                        .from(
+                            ModerationActions::Table,
+                            ModerationActions::ChannelId,
+                        )
+                        .to(Channels::Table, Channels::Id)
+                        .on_delete(ForeignKeyAction::SetNull)
                         .on_update(ForeignKeyAction::Cascade),
                 )
                 .to_owned(),
@@ -360,10 +434,10 @@ async fn create_moderation_actions(
     manager
         .create_index(
             Index::create()
-                .name("moderation-actions-server-id-created-at-idx")
+                .name("moderation-actions-created-at-id-idx")
                 .table(ModerationActions::Table)
-                .col(ModerationActions::ServerId)
                 .col((ModerationActions::CreatedAt, IndexOrder::Desc))
+                .col((ModerationActions::Id, IndexOrder::Desc))
                 .to_owned(),
         )
         .await?;
@@ -371,10 +445,11 @@ async fn create_moderation_actions(
     manager
         .create_index(
             Index::create()
-                .name("moderation-actions-target-idx")
+                .name("moderation-actions-server-id-created-at-id-idx")
                 .table(ModerationActions::Table)
-                .col(ModerationActions::TargetKind)
-                .col(ModerationActions::TargetId)
+                .col(ModerationActions::ServerId)
+                .col((ModerationActions::CreatedAt, IndexOrder::Desc))
+                .col((ModerationActions::Id, IndexOrder::Desc))
                 .to_owned(),
         )
         .await
@@ -608,9 +683,16 @@ enum ModerationActions {
     Id,
     ActorUserId,
     Action,
+    Origin,
     TargetKind,
     TargetId,
     ServerId,
+    ProposalId,
+    ChannelId,
+    TargetLabel,
+    ServerLabel,
+    BeforeValue,
+    AfterValue,
     Reason,
     CreatedAt,
 }
@@ -639,6 +721,18 @@ enum Users {
 
 #[derive(DeriveIden)]
 enum Servers {
+    Table,
+    Id,
+}
+
+#[derive(DeriveIden)]
+enum Polls {
+    Table,
+    Id,
+}
+
+#[derive(DeriveIden)]
+enum Channels {
     Table,
     Id,
 }

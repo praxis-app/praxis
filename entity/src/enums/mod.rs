@@ -10,7 +10,7 @@ pub mod votes;
 
 pub use events::EventAttendeeStatus;
 pub use forums::{ChannelType, ForumPostStatus};
-pub use moderation::{ModerationAction, ModerationTargetKind};
+pub use moderation::{AuditLogOrigin, ModerationAction, ModerationTargetKind};
 pub use notifications::NotificationKind;
 
 pub use poll_actions::{

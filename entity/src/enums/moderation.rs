@@ -49,6 +49,38 @@ pub enum ModerationAction {
     /// Ends an active call for all participants
     #[sea_orm(string_value = "end_call")]
     EndCall,
+
+    /// Creates a server or instance role
+    #[sea_orm(string_value = "create_role")]
+    CreateRole,
+
+    /// Changes a server or instance role's name or color
+    #[sea_orm(string_value = "update_role")]
+    UpdateRole,
+
+    /// Changes the permissions granted by a server or instance role
+    #[sea_orm(string_value = "update_role_permissions")]
+    UpdateRolePermissions,
+
+    /// Deletes a server or instance role
+    #[sea_orm(string_value = "delete_role")]
+    DeleteRole,
+
+    /// Adds one or more users to a server or instance role
+    #[sea_orm(string_value = "add_role_members")]
+    AddRoleMembers,
+
+    /// Removes a user from a server or instance role
+    #[sea_orm(string_value = "remove_role_member")]
+    RemoveRoleMember,
+
+    /// Changes a server's name, description, or other properties
+    #[sea_orm(string_value = "update_server")]
+    UpdateServer,
+
+    /// Changes a server's configuration
+    #[sea_orm(string_value = "update_server_config")]
+    UpdateServerConfig,
 }
 
 impl_enum_string_conversions!(ModerationAction {
@@ -62,6 +94,35 @@ impl_enum_string_conversions!(ModerationAction {
     DeleteUser => "delete_user",
     RemoveCallParticipant => "remove_call_participant",
     EndCall => "end_call",
+    CreateRole => "create_role",
+    UpdateRole => "update_role",
+    UpdateRolePermissions => "update_role_permissions",
+    DeleteRole => "delete_role",
+    AddRoleMembers => "add_role_members",
+    RemoveRoleMember => "remove_role_member",
+    UpdateServer => "update_server",
+    UpdateServerConfig => "update_server_config",
+});
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter, DeriveActiveEnum)]
+#[sea_orm(
+    rs_type = "String",
+    db_type = "Enum",
+    enum_name = "moderation_actions_origin_enum"
+)]
+pub enum AuditLogOrigin {
+    #[sea_orm(string_value = "direct")]
+    Direct,
+    #[sea_orm(string_value = "proposal")]
+    Proposal,
+    #[sea_orm(string_value = "system")]
+    System,
+}
+
+impl_enum_string_conversions!(AuditLogOrigin {
+    Direct => "direct",
+    Proposal => "proposal",
+    System => "system",
 });
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter, DeriveActiveEnum)]
@@ -79,6 +140,14 @@ pub enum ModerationTargetKind {
     User,
     #[sea_orm(string_value = "call")]
     Call,
+    #[sea_orm(string_value = "server")]
+    Server,
+    #[sea_orm(string_value = "server_config")]
+    ServerConfig,
+    #[sea_orm(string_value = "server_role")]
+    ServerRole,
+    #[sea_orm(string_value = "instance_role")]
+    InstanceRole,
 }
 
 impl_enum_string_conversions!(ModerationTargetKind {
@@ -86,4 +155,8 @@ impl_enum_string_conversions!(ModerationTargetKind {
     ForumPost => "forum_post",
     User => "user",
     Call => "call",
+    Server => "server",
+    ServerConfig => "server_config",
+    ServerRole => "server_role",
+    InstanceRole => "instance_role",
 });
