@@ -62,6 +62,9 @@ export const InstanceRolePermissionsForm = ({ instanceRole }: Props) => {
           if (permission.name === 'deleteUsers') {
             result.push({ subject: 'User', action: ['delete'] });
           }
+          if (permission.name === 'viewAuditLog') {
+            result.push({ subject: 'AuditLog', action: ['read'] });
+          }
           return result;
         },
         [],

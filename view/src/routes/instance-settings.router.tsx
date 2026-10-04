@@ -1,6 +1,7 @@
 import { EditInstanceRolePage } from '@/pages/settings/instance-settings/edit-instance-role-page';
 import { EditServerPage } from '@/pages/settings/instance-settings/edit-server-page';
 import { InstanceRoles } from '@/pages/settings/instance-settings/instance-roles';
+import { InstanceAuditLog } from '@/pages/settings/instance-settings/instance-audit-log';
 import { ManageServers } from '@/pages/settings/instance-settings/manage-servers';
 import { ManageUsers } from '@/pages/settings/instance-settings/manage-users';
 import { Settings } from '@/pages/settings/settings';
@@ -12,6 +13,10 @@ export const instanceSettingsRouter: RouteObject = {
     {
       index: true,
       element: <Settings />,
+    },
+    {
+      path: 'audit-log',
+      element: <InstanceAuditLog />,
     },
     {
       path: 'servers',

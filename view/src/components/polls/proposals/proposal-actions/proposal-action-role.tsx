@@ -103,6 +103,12 @@ export const ProposalActionRole = ({ action }: { action: PollActionRes }) => {
               permission.subject === 'ProposalBlock' &&
               permission.action.includes('create'),
           );
+        case 'viewAuditLog':
+          return permissions.filter(
+            (permission) =>
+              permission.subject === 'AuditLog' &&
+              permission.action.includes('read'),
+          );
       }
     })();
 

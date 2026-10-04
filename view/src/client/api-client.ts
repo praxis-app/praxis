@@ -75,6 +75,8 @@ import {
   type SearchQueryParams,
 } from '@/types/search.types';
 import {
+  type AuditLogFilters,
+  type AuditLogRes,
   type InstanceUsersRes,
   type ModerationReasonReq,
 } from '@/types/moderation.types';
@@ -1145,6 +1147,25 @@ class ApiClient {
   clearNotifications = async (serverId: string) => {
     const path = `/servers/${serverId}/notifications`;
     return this.executeRequest<void>('delete', path);
+  };
+
+  getInstanceAuditLog = async (
+    params: AuditLogFilters & { cursor?: string; limit?: number },
+  ) => {
+    return this.executeRequest<AuditLogRes>('get', '/audit-log', {
+      params: { ...params },
+    });
+  };
+
+  getServerAuditLog = async (
+    serverId: string,
+    params: AuditLogFilters & { cursor?: string; limit?: number },
+  ) => {
+    return this.executeRequest<AuditLogRes>(
+      'get',
+      `/servers/${serverId}/audit-log`,
+      { params: { ...params } },
+    );
   };
 
   // -------------------------------------------------------------------------

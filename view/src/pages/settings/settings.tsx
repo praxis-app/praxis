@@ -9,6 +9,7 @@ import { getSettingsAccess } from '@/lib/role.utils';
 import { useTranslation } from 'react-i18next';
 import {
   MdAdminPanelSettings,
+  MdHistory,
   MdClose,
   MdEmojiPeople,
   MdGroups,
@@ -31,6 +32,8 @@ export const Settings = () => {
     canManageServerRoles,
     canManageServerSettings,
     canManageUsers,
+    canViewInstanceAuditLog,
+    canViewServerAuditLog,
     hasInstanceSettingsAccess,
     hasServerSettingsAccess,
     hasSettingsAccess,
@@ -101,6 +104,13 @@ export const Settings = () => {
                   to={`${serverPath}${NavigationPaths.Invites}`}
                 />
               )}
+              {canViewServerAuditLog && (
+                <SettingsNavItem
+                  Icon={MdHistory}
+                  label={t('navigation.labels.auditLog')}
+                  to={`${serverPath}${NavigationPaths.AuditLog}`}
+                />
+              )}
             </div>
           </section>
         )}
@@ -136,6 +146,13 @@ export const Settings = () => {
                   Icon={MdManageAccounts}
                   label={t('navigation.labels.users')}
                   to={NavigationPaths.ManageUsers}
+                />
+              )}
+              {canViewInstanceAuditLog && (
+                <SettingsNavItem
+                  Icon={MdHistory}
+                  label={t('navigation.labels.auditLog')}
+                  to={NavigationPaths.AuditLog}
                 />
               )}
             </div>

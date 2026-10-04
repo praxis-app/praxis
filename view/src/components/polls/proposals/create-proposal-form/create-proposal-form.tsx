@@ -284,6 +284,17 @@ export const CreateProposalForm = ({
               ],
             });
             break;
+          case 'viewAuditLog':
+            result.push({
+              subject: 'AuditLog',
+              actions: [
+                {
+                  action: 'read',
+                  changeType: permissionValue ? 'add' : 'remove',
+                },
+              ],
+            });
+            break;
         }
         return result;
       }, []);

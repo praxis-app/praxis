@@ -25,6 +25,9 @@ export const getSettingsAccess = (
   const canManageUsers =
     instanceAbility.can('update', 'User') ||
     instanceAbility.can('delete', 'User');
+  const canViewInstanceAuditLog = instanceAbility.can('read', 'AuditLog');
+  const canViewServerAuditLog =
+    serverAbility.can('read', 'AuditLog') || canViewInstanceAuditLog;
 
   const canAccessInvites =
     serverAbility.can('create', 'Invite') ||
@@ -34,9 +37,13 @@ export const getSettingsAccess = (
     canManageServerSettings ||
     canManageServerRoles ||
     canManageServerMembers ||
-    canAccessInvites;
+    canAccessInvites ||
+    canViewServerAuditLog;
   const hasInstanceSettingsAccess =
-    canManageInstanceRoles || canManageServers || canManageUsers;
+    canManageInstanceRoles ||
+    canManageServers ||
+    canManageUsers ||
+    canViewInstanceAuditLog;
 
   return {
     canAccessInvites,
@@ -46,6 +53,8 @@ export const getSettingsAccess = (
     canManageServerRoles,
     canManageServerSettings,
     canManageUsers,
+    canViewInstanceAuditLog,
+    canViewServerAuditLog,
     hasInstanceSettingsAccess,
     hasServerSettingsAccess,
     hasSettingsAccess: hasServerSettingsAccess || hasInstanceSettingsAccess,
@@ -126,6 +135,14 @@ export const getServerPermissionValues = (permissions: ServerPermission[]) =>
         name,
       };
     }
+    if (name === 'viewAuditLog') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'AuditLog' && p.action.includes('read'),
+        ),
+        name,
+      };
+    }
     return {
       value: false,
       name,
@@ -188,6 +205,14 @@ export const getInstancePermissionValues = (
       return {
         value: permissions.some(
           (p) => p.subject === 'User' && p.action.includes('delete'),
+        ),
+        name,
+      };
+    }
+    if (name === 'viewAuditLog') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'AuditLog' && p.action.includes('read'),
         ),
         name,
       };

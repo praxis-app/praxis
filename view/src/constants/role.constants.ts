@@ -15,6 +15,7 @@ export const SERVER_ROLE_ABILITY_SUBJECTS = [
   'ProposalBlock',
   'ServerMember',
   'Call',
+  'AuditLog',
   'all',
 ] as const;
 
@@ -25,6 +26,7 @@ export const INSTANCE_ROLE_ABILITY_SUBJECTS = [
   'Message',
   'Call',
   'User',
+  'AuditLog',
   'all',
 ] as const;
 
@@ -41,6 +43,7 @@ export const SERVER_PERMISSION_KEYS = [
   'moderateContent',
   'manageCalls',
   'blockProposals',
+  'viewAuditLog',
 ] as const;
 
 export const INSTANCE_PERMISSION_KEYS = [
@@ -51,6 +54,7 @@ export const INSTANCE_PERMISSION_KEYS = [
   'manageCalls',
   'suspendUsers',
   'deleteUsers',
+  'viewAuditLog',
 ] as const;
 
 export const ROLE_COLOR_OPTIONS = [

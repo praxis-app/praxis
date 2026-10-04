@@ -44,6 +44,74 @@
     "fieldRequired": "This field is required."
   },
 
+  "auditLog": {
+    "headers": {
+      "server": "Server Audit Log",
+      "instance": "Instance Audit Log"
+    },
+    "actions": {
+      "loadMore": "Load more",
+      "clearFilters": "Clear filters",
+      "remove_message": "Removed message",
+      "remove_forum_post": "Removed forum post",
+      "remove_member": "Removed member",
+      "ban_member": "Banned member",
+      "unban_member": "Unbanned member",
+      "suspend_user": "Suspended user",
+      "restore_user": "Restored user",
+      "delete_user": "Deleted user",
+      "remove_call_participant": "Removed call participant",
+      "end_call": "Ended call",
+      "create_role": "Created role",
+      "update_role": "Updated role",
+      "update_role_permissions": "Updated role permissions",
+      "delete_role": "Deleted role",
+      "add_role_members": "Added role members",
+      "remove_role_member": "Removed role member",
+      "create_server": "Created server",
+      "update_server": "Updated server",
+      "delete_server": "Deleted server",
+      "update_server_config": "Updated server settings"
+    },
+    "filters": {
+      "all": "All",
+      "action": "Action",
+      "actor": "Actor",
+      "targetKind": "Target type",
+      "targetId": "Target ID",
+      "server": "Server",
+      "from": "From",
+      "to": "To"
+    },
+    "labels": {
+      "after": "After",
+      "before": "Before",
+      "instance": "Instance",
+      "reason": "Reason",
+      "unavailable": "Unavailable item"
+    },
+    "origins": {
+      "proposal": "Approved proposal",
+      "system": "System",
+      "unknownActor": "Unavailable user"
+    },
+    "states": {
+      "empty": "No audit log entries match these filters.",
+      "error": "The audit log couldn't be loaded.",
+      "loading": "Loading audit log..."
+    },
+    "targets": {
+      "message": "Message",
+      "forum_post": "Forum post",
+      "user": "User",
+      "call": "Call",
+      "server": "Server",
+      "server_config": "Server settings",
+      "server_role": "Server role",
+      "instance_role": "Instance role"
+    }
+  },
+
   "notifications": {
     "title": "Notifications",
     "actions": {
@@ -922,7 +990,8 @@
       "moderateContent": "Moderate content",
       "removeMembers": "Remove members",
       "removeProposals": "Remove proposals",
-      "suspendUsers": "Suspend users"
+      "suspendUsers": "Suspend users",
+      "viewAuditLog": "View Audit Log"
     },
     "descriptions": {
       "blockProposals": "Allows members to cast a blocking vote on proposals when blocking is restricted on this server.",
@@ -946,7 +1015,8 @@
       "moderateContent": "Allows members to permanently remove messages, forum posts, and replies by other members.",
       "removeMembers": "Allows members to remove other members from the server.",
       "removeProposals": "Allows members to remove proposals posted by other members.",
-      "suspendUsers": "Allows members to suspend or restore accounts on this instance. Suspended users are signed out and can't sign back in."
+      "suspendUsers": "Allows members to suspend or restore accounts on this instance. Suspended users are signed out and can't sign back in.",
+      "viewAuditLog": "Allows members to view consequential moderation and administrative changes."
     },
     "states": {
       "enabled": "Enabled",
@@ -1284,6 +1354,7 @@
       "instanceSettings": "Instance Settings"
     },
     "labels": {
+      "auditLog": "Audit Log",
       "general": "General",
       "settings": "Manage Settings",
       "serverSettings": "Server settings",

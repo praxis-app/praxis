@@ -72,6 +72,9 @@ export const ServerRolePermissionsForm = ({ serverRole }: Props) => {
           if (permission.name === 'blockProposals') {
             result.push({ subject: 'ProposalBlock', action: ['create'] });
           }
+          if (permission.name === 'viewAuditLog') {
+            result.push({ subject: 'AuditLog', action: ['read'] });
+          }
           return result;
         },
         [],
