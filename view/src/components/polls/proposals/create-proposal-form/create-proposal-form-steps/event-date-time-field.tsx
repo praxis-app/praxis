@@ -1,6 +1,6 @@
 import { Label } from '@/components/ui/label';
 import { useEffect, useId, useState } from 'react';
-import { EventDatePicker } from './event-date-picker';
+import { DatePicker } from '@/components/shared/date-picker';
 import { EventTimePicker } from './event-time-picker';
 
 interface Props {
@@ -50,7 +50,7 @@ export const EventDateTimeField = ({
         <Label htmlFor={`${id}-date`} className="text-sm font-semibold">
           {dateLabel}
         </Label>
-        <EventDatePicker
+        <DatePicker
           id={`${id}-date`}
           label={dateLabel}
           placeholder={datePlaceholder}

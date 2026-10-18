@@ -3,7 +3,7 @@ import {
   type AuditLogFilters,
   type AuditLogScope,
 } from '@/types/moderation.types';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query';
 
 const AUDIT_LOG_PAGE_SIZE = 50;
 
@@ -43,5 +43,6 @@ export const useAuditLogQuery = ({
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
       lastPage.hasMore ? lastPage.nextCursor || undefined : undefined,
+    placeholderData: keepPreviousData,
     enabled: enabled && (scope === 'instance' || !!serverId),
   });

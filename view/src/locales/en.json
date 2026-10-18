@@ -52,6 +52,7 @@
     "actions": {
       "loadMore": "Load more",
       "clearFilters": "Clear filters",
+      "retry": "Try again",
       "remove_message": "Removed message",
       "remove_forum_post": "Removed forum post",
       "remove_member": "Removed member",
@@ -74,14 +75,16 @@
       "update_server_config": "Updated server settings"
     },
     "filters": {
+      "heading": "Filters",
+      "activeCount": "({{count}} active)",
       "all": "All",
       "action": "Action",
       "actor": "Actor",
       "targetKind": "Target type",
       "targetId": "Target ID",
       "server": "Server",
-      "from": "From",
-      "to": "To"
+      "startDate": "Start date",
+      "endDate": "End date"
     },
     "labels": {
       "after": "After",
@@ -96,9 +99,11 @@
       "unknownActor": "Unavailable user"
     },
     "states": {
-      "empty": "No audit log entries match these filters.",
+      "empty": "No audit log entries yet.",
+      "emptyFiltered": "No audit log entries match these filters.",
       "error": "The audit log couldn't be loaded.",
-      "loading": "Loading audit log..."
+      "loading": "Loading audit log...",
+      "loadingMore": "Loading..."
     },
     "targets": {
       "message": "Message",

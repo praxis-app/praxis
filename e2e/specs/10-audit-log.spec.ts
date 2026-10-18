@@ -136,7 +136,10 @@ test('server and instance viewers see only their authorized audit scope and can 
   const instanceEntries = instanceSession.page.locator('[data-slot="card"]');
   await expect(instanceEntries.getByText(serverA.name).first()).toBeVisible();
   await expect(instanceEntries.getByText(serverB.name).first()).toBeVisible();
-  await instanceSession.page.getByLabel('Server').selectOption(serverB.id);
+  await instanceSession.page.getByRole('combobox', { name: /^Server/ }).click();
+  await instanceSession.page
+    .getByRole('option', { name: serverB.name, exact: true })
+    .click();
   await expect(instanceEntries.getByText(serverB.name).first()).toBeVisible();
   await expect(instanceEntries.getByText(serverA.name)).toHaveCount(0);
 
