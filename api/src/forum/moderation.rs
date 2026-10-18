@@ -22,7 +22,7 @@ use crate::{
     channels,
     common::{storage::remove_stored_files, ApiError, AppResult},
     messages as messages_service,
-    moderation::{self, ModerationNotice, ModerationRecord},
+    moderation::{self, ModerationRecord},
     notifications::WithNotifications,
 };
 
@@ -84,7 +84,7 @@ pub(super) async fn remove_forum_post(
         let storage_keys =
             messages_service::erase_messages(&transaction, &[root_message_id])
                 .await?;
-        let moderation_action_id = moderation::record_action(
+        let notifications = moderation::record_and_notify(
             &transaction,
             ModerationRecord::direct(
                 request.actor_user_id,
@@ -96,18 +96,8 @@ pub(super) async fn remove_forum_post(
             )
             .with_channel(request.channel_id)
             .with_target_label("Forum post"),
-        )
-        .await?;
-        let notifications = moderation::notify_moderated_user(
-            &transaction,
-            ModerationNotice {
-                kind: NotificationKind::ForumPostRemoved,
-                server_id: request.server_id,
-                channel_id: Some(request.channel_id),
-                moderation_action_id,
-                actor_user_id: request.actor_user_id,
-                recipient_user_id: author_id,
-            },
+            NotificationKind::ForumPostRemoved,
+            author_id,
         )
         .await?;
         (storage_keys, notifications)
@@ -153,7 +143,7 @@ pub(super) async fn remove_forum_reply(
     let (storage_keys, notifications) = if reply.moderated_at.is_none() {
         let storage_keys =
             messages_service::erase_messages(&transaction, &[reply.id]).await?;
-        let moderation_action_id = moderation::record_action(
+        let notifications = moderation::record_and_notify(
             &transaction,
             ModerationRecord::direct(
                 request.actor_user_id,
@@ -165,18 +155,8 @@ pub(super) async fn remove_forum_reply(
             )
             .with_channel(request.channel_id)
             .with_target_label("Forum reply"),
-        )
-        .await?;
-        let notifications = moderation::notify_moderated_user(
-            &transaction,
-            ModerationNotice {
-                kind: NotificationKind::MessageRemoved,
-                server_id: request.server_id,
-                channel_id: Some(request.channel_id),
-                moderation_action_id,
-                actor_user_id: request.actor_user_id,
-                recipient_user_id: reply.user_id,
-            },
+            NotificationKind::MessageRemoved,
+            reply.user_id,
         )
         .await?;
         (storage_keys, notifications)

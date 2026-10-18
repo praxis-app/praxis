@@ -65,7 +65,6 @@ export const ServerBan = ({ serverId, ban: { user, createdAt } }: Props) => {
         description={name}
         confirmLabel={t('servers.actions.unban')}
         explanation={[t('servers.moderationExplanations.unban')]}
-        isReasonOptional
         isDestructive={false}
         isPending={isPending}
         onConfirm={(reason) => unbanMember(reason)}

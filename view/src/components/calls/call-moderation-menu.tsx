@@ -128,7 +128,6 @@ export const CallModerationMenu = ({ serverId, channelId, callId }: Props) => {
             ? t('moderation.explanations.endCall')
             : t('moderation.explanations.removeParticipant'),
         ]}
-        isReasonOptional
         isPending={isPending}
         onConfirm={(reason) => {
           if (pendingAction) {

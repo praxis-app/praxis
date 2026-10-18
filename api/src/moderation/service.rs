@@ -12,13 +12,15 @@ use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ColumnTrait, Condition, ConnectionTrait,
     DatabaseConnection, EntityTrait, QueryFilter, QueryOrder, QuerySelect, Set,
 };
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+use std::collections::{HashMap, HashSet};
 use uuid::Uuid as NativeUuid;
 
 use crate::{
     authz::{self, PermissionScope},
     common::{
-        pagination::PaginationCursor, text::sanitize_text, ApiError, AppResult,
+        pagination::{finish_page, older_than_cursor, PaginationCursor},
+        text::sanitize_text,
+        ApiError, AppResult,
     },
     notifications::{
         self as notifications_service, CreateNotificationsRequest,
@@ -125,15 +127,6 @@ impl ModerationRecord {
         self.after_value = after_value;
         self
     }
-}
-
-pub(crate) struct ModerationNotice {
-    pub(crate) kind: NotificationKind,
-    pub(crate) server_id: Uuid,
-    pub(crate) channel_id: Option<Uuid>,
-    pub(crate) moderation_action_id: Uuid,
-    pub(crate) actor_user_id: Uuid,
-    pub(crate) recipient_user_id: Uuid,
 }
 
 pub(crate) async fn can_moderate_content<C: ConnectionTrait>(
@@ -284,20 +277,11 @@ pub(super) async fn get_audit_log(
             records_query.filter(moderation_actions::Column::CreatedAt.lte(to));
     }
     if let Some(cursor) = cursor {
-        records_query = records_query.filter(
-            Condition::any()
-                .add(
-                    moderation_actions::Column::CreatedAt.lt(cursor.created_at),
-                )
-                .add(
-                    Condition::all()
-                        .add(
-                            moderation_actions::Column::CreatedAt
-                                .eq(cursor.created_at),
-                        )
-                        .add(moderation_actions::Column::Id.lt(cursor.id)),
-                ),
-        );
+        records_query = records_query.filter(older_than_cursor(
+            moderation_actions::Column::CreatedAt,
+            moderation_actions::Column::Id,
+            cursor,
+        ));
     }
 
     let mut records = records_query
@@ -307,28 +291,20 @@ pub(super) async fn get_audit_log(
         .all(database)
         .await
         .map_err(internal_error)?;
-    let has_more = records.len() > limit as usize;
-    records.truncate(limit as usize);
-    let next_cursor =
-        has_more.then(|| records.last()).flatten().map(|record| {
-            PaginationCursor {
-                created_at: record.created_at,
-                id: record.id,
-            }
-            .encode()
+    let (next_cursor, has_more) =
+        finish_page(&mut records, limit, |record| PaginationCursor {
+            created_at: record.created_at,
+            id: record.id,
         });
 
     let filter_values = load_filter_values(database, server_scope).await?;
-    let mut response = shape_audit_log_response(
-        database,
-        user_id,
-        records,
+    let entries = shape_audit_log_entries(database, user_id, records).await?;
+    Ok(AuditLogResponse {
+        entries,
         next_cursor,
         has_more,
-    )
-    .await?;
-    response.filter_values = filter_values;
-    Ok(response)
+        filter_values,
+    })
 }
 
 async fn authorize_audit_log(
@@ -361,13 +337,11 @@ async fn authorize_audit_log(
     }
 }
 
-async fn shape_audit_log_response(
+async fn shape_audit_log_entries(
     database: &DatabaseConnection,
     user_id: Uuid,
     records: Vec<moderation_actions::Model>,
-    next_cursor: Option<String>,
-    has_more: bool,
-) -> AppResult<AuditLogResponse> {
+) -> AppResult<Vec<AuditLogEntryResponse>> {
     let actor_ids = records
         .iter()
         .filter_map(|record| record.actor_user_id)
@@ -399,18 +373,11 @@ async fn shape_audit_log_response(
         .map(|membership| membership.server_id)
         .collect::<HashSet<_>>();
 
-    let mut filter_actors = BTreeMap::new();
-    let mut filter_servers = BTreeMap::new();
-    let mut actions = BTreeSet::new();
-    let mut target_kinds = BTreeSet::new();
-    let entries = records
+    Ok(records
         .into_iter()
         .map(|record| {
             let actor =
                 record.actor_user_id.and_then(|id| actors.get(&id)).cloned();
-            if let Some(actor) = actor.clone() {
-                filter_actors.insert(actor.id.clone(), actor.clone());
-            }
 
             let server = record.server_id.and_then(|id| servers.get(&id));
             let server_label = record
@@ -422,12 +389,6 @@ async fn shape_audit_log_response(
                 server_label,
                 channel_id: record.channel_id.map(|id| id.to_string()),
             };
-            if let Some(server_id) = scope.server_id.clone() {
-                filter_servers.insert(server_id, scope.clone());
-            }
-
-            actions.insert(record.action.to_string());
-            target_kinds.insert(record.target_kind.to_string());
             let application_path = application_path(
                 &record,
                 server,
@@ -453,19 +414,7 @@ async fn shape_audit_log_response(
                 application_path,
             }
         })
-        .collect();
-
-    Ok(AuditLogResponse {
-        entries,
-        next_cursor,
-        has_more,
-        filter_values: AuditLogFilterValues {
-            actors: filter_actors.into_values().collect(),
-            servers: filter_servers.into_values().collect(),
-            actions: actions.into_iter().collect(),
-            target_kinds: target_kinds.into_iter().collect(),
-        },
-    })
+        .collect())
 }
 
 async fn load_filter_values(
@@ -639,25 +588,20 @@ fn application_path(
     if !member_server_ids.contains(&server.id) {
         return None;
     }
+    let post_path = |post: &forum_posts::Model| {
+        format!("/s/{}/c/{}/posts/{}", server.slug, post.channel_id, post.id)
+    };
     if let Some(proposal_id) = record.proposal_id {
-        let post = forum_posts
+        return forum_posts
             .iter()
-            .find(|post| post.poll_id == Some(proposal_id))?;
-        return Some(format!(
-            "/s/{}/c/{}/posts/{}",
-            server.slug, post.channel_id, post.id
-        ));
+            .find(|post| post.poll_id == Some(proposal_id))
+            .map(post_path);
     }
     match record.target_kind {
         ModerationTargetKind::ForumPost => forum_posts
             .iter()
             .find(|post| post.id == record.target_id)
-            .map(|post| {
-                format!(
-                    "/s/{}/c/{}/posts/{}",
-                    server.slug, post.channel_id, post.id
-                )
-            }),
+            .map(post_path),
         ModerationTargetKind::Message => record
             .channel_id
             .map(|channel_id| format!("/s/{}/c/{channel_id}", server.slug)),
@@ -710,29 +654,35 @@ fn parse_optional_date(
         .transpose()
 }
 
-pub(crate) async fn notify_moderated_user<C>(
+pub(crate) async fn record_and_notify<C>(
     database: &C,
-    notice: ModerationNotice,
+    record: ModerationRecord,
+    kind: NotificationKind,
+    recipient_user_id: Uuid,
 ) -> AppResult<Vec<notifications::Model>>
 where
     C: ConnectionTrait,
 {
-    if notice.recipient_user_id == notice.actor_user_id {
+    let actor_user_id = record.actor_user_id;
+    let server_id = record
+        .server_id
+        .ok_or_else(|| internal_error("moderation notice has no server"))?;
+    let channel_id = record.channel_id;
+    let moderation_action_id = record_action(database, record).await?;
+    if actor_user_id == Some(recipient_user_id) {
         return Ok(Vec::new());
     }
 
     notifications_service::create_notifications(
         database,
         CreateNotificationsRequest {
-            kind: notice.kind,
-            server_id: notice.server_id,
-            channel_id: notice.channel_id,
+            kind,
+            server_id,
+            channel_id,
             actor_user_id: None,
-            target: NotificationTarget::ModerationAction(
-                notice.moderation_action_id,
-            ),
+            target: NotificationTarget::ModerationAction(moderation_action_id),
             vote_type: None,
-            recipient_ids: vec![notice.recipient_user_id],
+            recipient_ids: vec![recipient_user_id],
         },
     )
     .await

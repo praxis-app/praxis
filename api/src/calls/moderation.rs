@@ -19,7 +19,7 @@ use super::{
 };
 use crate::{
     common::{ApiError, AppResult},
-    moderation::{self, ModerationNotice, ModerationRecord},
+    moderation::{self, ModerationRecord},
     notifications::WithNotifications,
 };
 
@@ -128,7 +128,7 @@ pub(super) async fn remove_call_participant(
         .await?;
     let notifications = if removed {
         let transaction = database.begin().await.map_err(internal_error)?;
-        let moderation_action_id = moderation::record_action(
+        let notifications = moderation::record_and_notify(
             &transaction,
             ModerationRecord::direct(
                 request.actor_user_id,
@@ -139,18 +139,8 @@ pub(super) async fn remove_call_participant(
                 reason,
             )
             .with_channel(request.channel_id),
-        )
-        .await?;
-        let notifications = moderation::notify_moderated_user(
-            &transaction,
-            ModerationNotice {
-                kind: NotificationKind::CallParticipantRemoved,
-                server_id: request.server_id,
-                channel_id: Some(request.channel_id),
-                moderation_action_id,
-                actor_user_id: request.actor_user_id,
-                recipient_user_id: participant_id,
-            },
+            NotificationKind::CallParticipantRemoved,
+            participant_id,
         )
         .await?;
         transaction.commit().await.map_err(internal_error)?;

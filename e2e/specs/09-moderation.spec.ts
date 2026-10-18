@@ -169,15 +169,17 @@ const moderateMemberFromSettings = async (
 const expectServerAccessLost = async (
   page: Page,
   action: 'removed' | 'banned',
-  serverName: string,
+  server: ModerationServer,
 ) => {
   await expect(
     page
       .getByText(
-        new RegExp(`(You were|You've been) ${action} from ${serverName}`),
+        new RegExp(`(You were|You've been) ${action} from ${server.name}`),
       )
       .first(),
   ).toBeVisible();
+  await expect(page.getByText('Repeated spam').first()).toBeVisible();
+  await expect(page).not.toHaveURL(new RegExp(`/s/${server.slug}(/|$)`));
 };
 
 test.beforeAll(async ({ request }) => {
@@ -271,6 +273,7 @@ test('moderator can remove messages and forum posts for everyone in realtime', a
       'Remove this post?',
       'Remove',
       /\/forum\/posts\/[^/]+\/remove$/,
+      'Commercial spam',
     );
 
     await expect(
@@ -323,6 +326,8 @@ test('moderator can remove and ban server members', async ({
       'Remove',
       /\/members\/[^/]+\/remove$/,
     );
+    await expectServerAccessLost(removedPage, 'removed', server);
+
     await moderateMemberFromSettings(
       managerPage,
       banned,
@@ -331,10 +336,7 @@ test('moderator can remove and ban server members', async ({
       'Ban',
       /\/members\/[^/]+\/ban$/,
     );
-
-    await expectServerAccessLost(removedPage, 'removed', server.name);
-    await expectServerAccessLost(bannedPage, 'banned', server.name);
-    await expect(bannedPage.getByText('Repeated spam').first()).toBeVisible();
+    await expectServerAccessLost(bannedPage, 'banned', server);
 
     await expect(managerPage.getByText('Banned users')).toBeVisible();
     await expect(

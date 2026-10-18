@@ -10,7 +10,7 @@ use entity::{
     user_images, users,
 };
 use sea_orm::{
-    prelude::Uuid, ActiveModelTrait, ColumnTrait, Condition, ConnectionTrait,
+    prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
     DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter, QueryOrder,
     QuerySelect, Set, TransactionTrait,
 };
@@ -24,8 +24,9 @@ use crate::{
     authz::{self, PermissionScope},
     calls::{self, LiveKitConfig},
     common::{
-        pagination::PaginationCursor, storage::remove_stored_files, ApiError,
-        AppResult,
+        pagination::{finish_page, older_than_cursor, PaginationCursor},
+        storage::remove_stored_files,
+        ApiError, AppResult,
     },
     forum, messages,
     moderation::{self, ModerationRecord},
@@ -63,7 +64,9 @@ pub(super) async fn can_moderate_accounts(
 ) -> AppResult<()> {
     let can_suspend = can_perform(database, user_id, AccountAction::Suspend);
     let can_delete = can_perform(database, user_id, AccountAction::Delete);
-    if granted(can_suspend.await)? || granted(can_delete.await)? {
+    if authz::is_granted(can_suspend.await)?
+        || authz::is_granted(can_delete.await)?
+    {
         Ok(())
     } else {
         Err(ApiError::new(StatusCode::FORBIDDEN, "Forbidden."))
@@ -82,15 +85,11 @@ pub(super) async fn list_instance_users(
 
     let mut query = users::Entity::find();
     if let Some(cursor) = cursor {
-        query = query.filter(
-            Condition::any()
-                .add(users::Column::CreatedAt.lt(cursor.created_at))
-                .add(
-                    Condition::all()
-                        .add(users::Column::CreatedAt.eq(cursor.created_at))
-                        .add(users::Column::Id.lt(cursor.id)),
-                ),
-        );
+        query = query.filter(older_than_cursor(
+            users::Column::CreatedAt,
+            users::Column::Id,
+            cursor,
+        ));
     }
     let mut records = query
         .order_by_desc(users::Column::CreatedAt)
@@ -99,16 +98,11 @@ pub(super) async fn list_instance_users(
         .all(database)
         .await
         .map_err(internal_error)?;
-    let has_more = records.len() > limit as usize;
-    records.truncate(limit as usize);
-
-    let next_cursor = has_more.then(|| records.last()).flatten().map(|user| {
-        PaginationCursor {
+    let (next_cursor, has_more) =
+        finish_page(&mut records, limit, |user| PaginationCursor {
             created_at: user.created_at,
             id: user.id,
-        }
-        .encode()
-    });
+        });
     let user_ids = records.iter().map(|user| user.id).collect::<Vec<_>>();
     let profile_pictures =
         get_user_profile_pictures_map(database, &user_ids).await?;
@@ -277,15 +271,19 @@ async fn ensure_account_can_be_moderated(
         ));
     }
 
-    let target_is_moderator =
-        granted(can_moderate_accounts(database, request.target_user_id).await)?;
-    let target_is_admin =
-        granted(is_instance_admin(database, request.target_user_id).await)?;
+    let target_is_moderator = authz::is_granted(
+        can_moderate_accounts(database, request.target_user_id).await,
+    )?;
+    let target_is_admin = authz::is_granted(
+        is_instance_admin(database, request.target_user_id).await,
+    )?;
     if !target_is_moderator && !target_is_admin {
         return Ok(());
     }
 
-    if granted(is_instance_admin(database, request.actor_user_id).await)? {
+    if authz::is_granted(
+        is_instance_admin(database, request.actor_user_id).await,
+    )? {
         Ok(())
     } else {
         Err(ApiError::new(
@@ -447,14 +445,6 @@ where
         .map_err(internal_error)?;
 
     Ok(())
-}
-
-fn granted(result: AppResult<()>) -> AppResult<bool> {
-    match result {
-        Ok(()) => Ok(true),
-        Err(error) if error.status() == StatusCode::FORBIDDEN => Ok(false),
-        Err(error) => Err(error),
-    }
 }
 
 fn account_record(

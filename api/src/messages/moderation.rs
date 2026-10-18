@@ -23,7 +23,7 @@ use super::{
 use crate::{
     calls, channels,
     common::{storage::remove_stored_files, ApiError, AppResult},
-    moderation::{self, ModerationNotice, ModerationRecord},
+    moderation::{self, ModerationRecord},
     pub_sub::{PubSubService, PubSubTopic},
 };
 
@@ -149,7 +149,7 @@ pub(super) async fn remove_message(
 
     let (storage_keys, notifications) = if message.moderated_at.is_none() {
         let storage_keys = erase_messages(&transaction, &[message.id]).await?;
-        let moderation_action_id = moderation::record_action(
+        let notifications = moderation::record_and_notify(
             &transaction,
             ModerationRecord::direct(
                 request.actor_user_id,
@@ -161,18 +161,8 @@ pub(super) async fn remove_message(
             )
             .with_channel(request.channel_id)
             .with_target_label("Message"),
-        )
-        .await?;
-        let notifications = moderation::notify_moderated_user(
-            &transaction,
-            ModerationNotice {
-                kind: NotificationKind::MessageRemoved,
-                server_id: request.server_id,
-                channel_id: Some(request.channel_id),
-                moderation_action_id,
-                actor_user_id: request.actor_user_id,
-                recipient_user_id: message.user_id,
-            },
+            NotificationKind::MessageRemoved,
+            message.user_id,
         )
         .await?;
         (storage_keys, notifications)

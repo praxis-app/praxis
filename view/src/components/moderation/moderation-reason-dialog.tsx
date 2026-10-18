@@ -23,7 +23,6 @@ interface Props {
   description: string;
   confirmLabel: string;
   explanation?: string[];
-  isReasonOptional?: boolean;
   isReasonRequired?: boolean;
   isDestructive?: boolean;
   isPending: boolean;
@@ -37,7 +36,6 @@ export const ModerationReasonDialog = ({
   description,
   confirmLabel,
   explanation = [],
-  isReasonOptional = false,
   isReasonRequired = false,
   isDestructive = true,
   isPending,
@@ -83,9 +81,9 @@ export const ModerationReasonDialog = ({
 
         <div className="flex flex-col gap-2">
           <Label htmlFor={reasonId}>
-            {isReasonOptional
-              ? t('moderation.labels.reasonOptional')
-              : t('moderation.labels.reason')}
+            {isReasonRequired
+              ? t('moderation.labels.reason')
+              : t('moderation.labels.reasonOptional')}
           </Label>
           <Textarea
             id={reasonId}

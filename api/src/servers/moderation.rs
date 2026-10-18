@@ -25,7 +25,7 @@ use crate::{
     authz::{self, PermissionScope},
     calls::{self, LiveKitConfig},
     common::{ApiError, AppResult},
-    moderation::{self, ModerationNotice, ModerationRecord},
+    moderation::{self, ModerationRecord},
     pub_sub::{PubSubService, PubSubTopic},
     users as users_service,
 };
@@ -104,16 +104,11 @@ pub(super) async fn remove_member(
     )
     .await?;
     let notifications = if removed > 0 {
-        let moderation_action_id = moderation::record_action(
+        moderation::record_and_notify(
             &transaction,
             member_record(&request, ModerationAction::RemoveMember, reason),
-        )
-        .await?;
-        notify_member(
-            &transaction,
-            &request,
             NotificationKind::MemberRemoved,
-            moderation_action_id,
+            request.target_user_id,
         )
         .await?
     } else {
@@ -157,16 +152,11 @@ pub(super) async fn ban_member(
     .await
     .map_err(internal_error)?;
     let notifications = if banned > 0 {
-        let moderation_action_id = moderation::record_action(
+        moderation::record_and_notify(
             &transaction,
             member_record(&request, ModerationAction::BanMember, reason),
-        )
-        .await?;
-        notify_member(
-            &transaction,
-            &request,
             NotificationKind::MemberBanned,
-            moderation_action_id,
+            request.target_user_id,
         )
         .await?
     } else {
@@ -329,7 +319,7 @@ async fn ensure_member_can_be_moderated(
         ));
     }
 
-    let target_is_moderator = granted(
+    let target_is_moderator = authz::is_granted(
         can_manage_server_members(
             database,
             request.target_user_id,
@@ -341,7 +331,7 @@ async fn ensure_member_can_be_moderated(
         return Ok(());
     }
 
-    let actor_is_instance_admin = granted(
+    let actor_is_instance_admin = authz::is_granted(
         authz::can(
             database,
             request.actor_user_id,
@@ -361,14 +351,6 @@ async fn ensure_member_can_be_moderated(
     }
 }
 
-fn granted(result: AppResult<()>) -> AppResult<bool> {
-    match result {
-        Ok(()) => Ok(true),
-        Err(error) if error.status() == StatusCode::FORBIDDEN => Ok(false),
-        Err(error) => Err(error),
-    }
-}
-
 async fn get_target_user<C>(database: &C, user_id: Uuid) -> AppResult<()>
 where
     C: ConnectionTrait,
@@ -379,29 +361,6 @@ where
         .map_err(internal_error)?
         .map(|_| ())
         .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "User not found."))
-}
-
-async fn notify_member<C>(
-    database: &C,
-    request: &MemberModeration,
-    kind: NotificationKind,
-    moderation_action_id: Uuid,
-) -> AppResult<Vec<notifications::Model>>
-where
-    C: ConnectionTrait,
-{
-    moderation::notify_moderated_user(
-        database,
-        ModerationNotice {
-            kind,
-            server_id: request.server_id,
-            channel_id: None,
-            moderation_action_id,
-            actor_user_id: request.actor_user_id,
-            recipient_user_id: request.target_user_id,
-        },
-    )
-    .await
 }
 
 fn member_record(

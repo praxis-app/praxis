@@ -1,20 +1,12 @@
 import { api } from '@/client/api-client';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { ModerationActionMenu } from '@/components/moderation/moderation-action-menu';
 import { UserAvatar } from '@/components/users/user-avatar';
 import { handleError } from '@/lib/error.utils';
 import { invalidateServerMemberQueries } from '@/lib/server-member.utils';
 import { type UserRes } from '@/types/user.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MdBlock, MdMoreHoriz, MdPersonRemove } from 'react-icons/md';
-import { ModerationReasonDialog } from '@/components/moderation/moderation-reason-dialog';
+import { MdBlock, MdPersonRemove } from 'react-icons/md';
 
 type ModerationAction = 'remove' | 'ban';
 
@@ -29,10 +21,6 @@ export const ManagedServerMember = ({
   member,
   canModerate,
 }: Props) => {
-  const [pendingAction, setPendingAction] = useState<ModerationAction | null>(
-    null,
-  );
-
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
@@ -50,10 +38,7 @@ export const ManagedServerMember = ({
         await api.removeServerMember(serverId, member.id, { reason });
       }
     },
-    onSuccess: () => {
-      setPendingAction(null);
-      invalidateServerMemberQueries(queryClient, serverId);
-    },
+    onSuccess: () => invalidateServerMemberQueries(queryClient, serverId),
     onError: handleError,
   });
 
@@ -70,67 +55,44 @@ export const ManagedServerMember = ({
         <span className="truncate">{name}</span>
       </div>
 
-      {canModerate && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              aria-label={t('servers.actions.memberActions', { name })}
-              className="size-9 p-0"
-              variant="ghost"
-              size="icon"
-              disabled={isPending}
-            >
-              <MdMoreHoriz className="size-6" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onSelect={() => setPendingAction('remove')}>
-              <MdPersonRemove className="size-4" />
-              {t('servers.actions.removeMember')}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              variant="destructive"
-              onSelect={() => setPendingAction('ban')}
-            >
-              <MdBlock className="size-4" />
-              {t('servers.actions.banMember')}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
-
-      <ModerationReasonDialog
-        open={!!pendingAction}
-        onOpenChange={(open) => !open && setPendingAction(null)}
-        title={
-          pendingAction === 'ban'
-            ? t('servers.prompts.banMember')
-            : t('servers.prompts.removeMember')
-        }
-        description={name}
-        confirmLabel={
-          pendingAction === 'ban'
-            ? t('servers.actions.ban')
-            : t('actions.remove')
-        }
-        explanation={
-          pendingAction === 'ban'
-            ? [
-                t('servers.moderationExplanations.banEffects'),
-                t('servers.moderationExplanations.banRejoin'),
-              ]
-            : [
-                t('servers.moderationExplanations.removeEffects'),
-                t('servers.moderationExplanations.removeRejoin'),
-              ]
-        }
-        isReasonRequired
+      <ModerationActionMenu<ModerationAction>
+        targetName={name}
+        triggerLabel={t('servers.actions.memberActions', { name })}
         isPending={isPending}
-        onConfirm={(reason) => {
-          if (pendingAction) {
-            moderateMember({ action: pendingAction, reason });
-          }
-        }}
+        onConfirm={(action, reason, onSuccess) =>
+          moderateMember({ action, reason }, { onSuccess })
+        }
+        actions={
+          canModerate
+            ? [
+                {
+                  key: 'remove',
+                  Icon: MdPersonRemove,
+                  menuLabel: t('servers.actions.removeMember'),
+                  dialogTitle: t('servers.prompts.removeMember'),
+                  confirmLabel: t('actions.remove'),
+                  explanation: [
+                    t('servers.moderationExplanations.removeEffects'),
+                    t('servers.moderationExplanations.removeRejoin'),
+                  ],
+                  isReasonRequired: true,
+                },
+                {
+                  key: 'ban',
+                  Icon: MdBlock,
+                  menuLabel: t('servers.actions.banMember'),
+                  dialogTitle: t('servers.prompts.banMember'),
+                  confirmLabel: t('servers.actions.ban'),
+                  explanation: [
+                    t('servers.moderationExplanations.banEffects'),
+                    t('servers.moderationExplanations.banRejoin'),
+                  ],
+                  isReasonRequired: true,
+                  isMenuItemDestructive: true,
+                },
+              ]
+            : []
+        }
       />
     </div>
   );

@@ -22,7 +22,10 @@ use crate::{
         ADMIN_ROLE_NAME, DEFAULT_ROLE_COLOR,
     },
     common::{text::sanitize_text, ApiError, AppResult},
-    moderation::{self, ModerationRecord},
+    moderation::{
+        self, deleted_role_snapshot, member_snapshot, normalized_permissions,
+        permissions_snapshot, role_snapshot, ModerationRecord,
+    },
     notifications as notifications_service,
     servers::{self, types::UserResponse},
     users as users_service,
@@ -524,12 +527,8 @@ pub(super) async fn delete_server_role(
     let permissions = get_role_permissions(&transaction, role_id).await?;
     let members = get_role_member_ids(&transaction, role_id).await?;
     let target_label = role.name.clone();
-    let before = serde_json::json!({
-        "name": role.name.clone(),
-        "color": role.color.clone(),
-        "permissions": normalized_permissions(&permissions),
-        "memberIds": sorted_ids(members),
-    });
+    let before =
+        deleted_role_snapshot(&role.name, &role.color, &permissions, members);
     server_roles::Entity::delete_by_id(role.id)
         .exec(&transaction)
         .await
@@ -723,42 +722,6 @@ async fn get_role_member_ids<C: ConnectionTrait>(
         .into_iter()
         .map(|membership| membership.user_id)
         .collect())
-}
-
-fn role_snapshot(name: &str, color: &str) -> serde_json::Value {
-    serde_json::json!({ "name": name, "color": color })
-}
-
-fn normalized_permissions(
-    permissions: &[PermissionRule],
-) -> Vec<PermissionRule> {
-    // Combine actions from rules that share the same subject
-    let mut grouped = BTreeMap::<String, Vec<String>>::new();
-    for permission in permissions {
-        let actions = grouped.entry(permission.subject.clone()).or_default();
-        actions.extend(permission.action.iter().cloned());
-    }
-    grouped
-        .into_iter()
-        .map(|(subject, mut action)| {
-            action.sort();
-            action.dedup();
-            PermissionRule { subject, action }
-        })
-        .collect()
-}
-
-fn permissions_snapshot(permissions: Vec<PermissionRule>) -> serde_json::Value {
-    serde_json::json!({ "permissions": normalized_permissions(&permissions) })
-}
-
-fn sorted_ids(mut ids: Vec<Uuid>) -> Vec<String> {
-    ids.sort();
-    ids.into_iter().map(|id| id.to_string()).collect()
-}
-
-fn member_snapshot(ids: Vec<Uuid>) -> serde_json::Value {
-    serde_json::json!({ "memberIds": sorted_ids(ids) })
 }
 
 pub(crate) async fn get_server_role_record<C: ConnectionTrait>(

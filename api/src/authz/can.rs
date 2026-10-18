@@ -29,6 +29,14 @@ pub(crate) enum PermissionScope {
     ServerOrInstance(Uuid),
 }
 
+pub(crate) fn is_granted(result: AppResult<()>) -> AppResult<bool> {
+    match result {
+        Ok(()) => Ok(true),
+        Err(error) if error.status() == StatusCode::FORBIDDEN => Ok(false),
+        Err(error) => Err(error),
+    }
+}
+
 /// If multiple `actions` are given, all of them must be granted
 /// (not just one). An empty list always denies
 pub(crate) async fn can<C: ConnectionTrait>(
