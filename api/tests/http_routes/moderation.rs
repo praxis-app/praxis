@@ -600,6 +600,35 @@ async fn audit_records_for_server(
 }
 
 #[tokio::test]
+async fn instance_admins_without_a_server_role_can_moderate_its_members() {
+    let app = TestApp::new().await;
+    let admin = signup(&app, "admin@example.com", "Admin Example").await;
+    let owner = signup(&app, "owner@example.com", "Owner").await;
+    let member = signup(&app, "member@example.com", "Member").await;
+    grant_instance_permission(&app, &admin, &owner, "Server", "manage").await;
+    let server_id = create_server(&app, &owner, "Owned", "owned").await;
+    let added = app
+        .post_json_with_bearer(
+            &format!("/api/servers/{server_id}/members"),
+            &json!({ "userIds": [admin.user_id, member.user_id] }),
+            &owner.token,
+        )
+        .await;
+    assert_eq!(added.status(), StatusCode::OK);
+
+    for target in [&member, &owner] {
+        let removal = app
+            .post_json_with_bearer(
+                &member_uri(&server_id, target, "remove"),
+                &json!({ "reason": "Instance policy" }),
+                &admin.token,
+            )
+            .await;
+        assert_eq!(removal.status(), StatusCode::OK);
+    }
+}
+
+#[tokio::test]
 async fn bans_notify_and_revoke_the_members_open_sockets() {
     let app = TestApp::new().await;
     let admin = signup(&app, "admin@example.com", "Admin Example").await;

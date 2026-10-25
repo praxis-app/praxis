@@ -19,7 +19,9 @@ export const getSettingsAccess = (
 ) => {
   const canManageServerSettings = serverAbility.can('manage', 'ServerConfig');
   const canManageServerRoles = serverAbility.can('manage', 'ServerRole');
-  const canManageServerMembers = serverAbility.can('manage', 'ServerMember');
+  const canManageServerMembers =
+    serverAbility.can('manage', 'ServerMember') ||
+    instanceAbility.can('manage', 'all');
   const canManageInstanceRoles = instanceAbility.can('manage', 'InstanceRole');
   const canManageServers = instanceAbility.can('manage', 'Server');
   const canManageUsers =

@@ -260,21 +260,6 @@ pub(super) async fn add_server_members(
     Ok(Json(EmptyResponse {}))
 }
 
-pub(super) async fn remove_server_members(
-    State(state): State<ServersState>,
-    context: CanUpdateServerContext,
-    Json(payload): Json<ServerMembersRequest>,
-) -> AppResult<Json<EmptyResponse>> {
-    let user_ids = parse_user_ids(&payload.user_ids)?;
-    service::remove_server_members(
-        &state.database,
-        context.path.server_id,
-        &user_ids,
-    )
-    .await?;
-    Ok(Json(EmptyResponse {}))
-}
-
 pub(super) async fn remove_server_member(
     State(state): State<ServersState>,
     context: CanModerateServerMemberContext,

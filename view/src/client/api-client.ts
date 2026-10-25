@@ -849,13 +849,6 @@ class ApiClient {
     });
   };
 
-  removeServerMembers = async (serverId: string, userIds: string[]) => {
-    const path = `/servers/${serverId}/members`;
-    return this.executeRequest<void>('delete', path, {
-      data: { userIds },
-    });
-  };
-
   removeServerMember = async (
     serverId: string,
     userId: string,

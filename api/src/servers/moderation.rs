@@ -84,7 +84,7 @@ pub(super) async fn can_manage_server_members(
         user_id,
         "manage",
         "ServerMember",
-        PermissionScope::Server(server_id),
+        PermissionScope::ServerOrInstance(server_id),
     )
     .await
 }

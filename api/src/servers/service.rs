@@ -719,23 +719,6 @@ where
     Ok(ban.is_some())
 }
 
-pub(super) async fn remove_server_members(
-    database: &DatabaseConnection,
-    server_id: Uuid,
-    user_ids: &[Uuid],
-) -> AppResult<()> {
-    get_server(database, server_id).await?;
-    if user_ids.is_empty() {
-        return Ok(());
-    }
-
-    let transaction = database.begin().await.map_err(internal_error)?;
-    remove_server_members_in_transaction(&transaction, server_id, user_ids)
-        .await?;
-    transaction.commit().await.map_err(internal_error)?;
-    Ok(())
-}
-
 pub(crate) async fn remove_server_members_in_transaction<C>(
     database: &C,
     server_id: Uuid,

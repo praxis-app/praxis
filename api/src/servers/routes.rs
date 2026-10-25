@@ -11,8 +11,8 @@ use super::{
         get_server_by_id, get_server_by_invite_token, get_server_by_slug,
         get_server_config, get_server_image, get_server_members, get_servers,
         get_users_eligible_for_server, is_anonymous_users_enabled, join_server,
-        remove_server_member, remove_server_members, set_current_server,
-        unban_server_member, update_server, update_server_config, ServersState,
+        remove_server_member, set_current_server, unban_server_member,
+        update_server, update_server_config, ServersState,
     },
     server_roles,
 };
@@ -49,7 +49,6 @@ pub(crate) fn router(
         .route("/servers/{serverId}/join", post(join_server))
         .route("/servers/{serverId}/members", get(get_server_members))
         .route("/servers/{serverId}/members", post(add_server_members))
-        .route("/servers/{serverId}/members", delete(remove_server_members))
         .route(
             "/servers/{serverId}/members/eligible",
             get(get_users_eligible_for_server),

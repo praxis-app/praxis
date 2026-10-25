@@ -53,17 +53,19 @@ test('removed server members lose the permissions their roles granted', async ({
   await seedAuthenticatedSession(context, instanceAdmin.accessToken);
   await page.goto(`/settings/servers/${server.id}/edit?tab=members`);
   await page
-    .getByText(member.user.name, { exact: true })
-    .locator('xpath=ancestor::div[contains(@class, "justify-between")][1]')
-    .getByRole('button')
+    .getByRole('button', { name: `Actions for ${member.user.name}` })
     .click();
+  await page.getByRole('menuitem', { name: 'Remove member' }).click();
   const dialog = page.getByRole('dialog', { name: 'Remove server member?' });
+  await dialog.getByRole('textbox').fill('No longer active');
   const removeMemberResponse = page.waitForResponse(
     (response) =>
-      response.request().method() === 'DELETE' &&
-      response.url().endsWith(`/api/servers/${server.id}/members`),
+      response.request().method() === 'POST' &&
+      response
+        .url()
+        .endsWith(`/api/servers/${server.id}/members/${member.userId}/remove`),
   );
-  await dialog.getByRole('button', { name: 'Remove' }).click();
+  await dialog.getByRole('button', { name: 'Remove', exact: true }).click();
   expect((await removeMemberResponse).ok()).toBe(true);
   await expect(page.getByText(member.user.name, { exact: true })).toHaveCount(
     0,
