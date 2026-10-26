@@ -11,7 +11,7 @@ pub(crate) use service::{
     record_and_notify, ModerationRecord,
 };
 pub(crate) use snapshots::{
-    deleted_role_snapshot, member_snapshot, normalized_permissions,
-    permissions_snapshot, role_snapshot,
+    deleted_role_snapshot, member_labels, member_snapshot,
+    normalized_permissions, permissions_snapshot, role_snapshot,
 };
 pub(crate) use types::ModerationReasonRequest;

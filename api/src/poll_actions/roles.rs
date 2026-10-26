@@ -310,21 +310,21 @@ async fn role_state_snapshot<C: ConnectionTrait>(
         })
         .collect::<Vec<_>>();
 
-    let mut member_ids = server_role_members::Entity::find()
+    let member_ids = server_role_members::Entity::find()
         .filter(server_role_members::Column::ServerRoleId.eq(role.id))
         .all(database)
         .await
         .map_err(internal_error)?
         .into_iter()
-        .map(|membership| membership.user_id.to_string())
+        .map(|membership| membership.user_id)
         .collect::<Vec<_>>();
-    member_ids.sort();
+    let members = moderation::member_labels(database, &member_ids).await?;
 
     Ok(serde_json::json!({
         "name": role.name,
         "color": role.color,
         "permissions": moderation::normalized_permissions(&permissions),
-        "memberIds": member_ids,
+        "members": members,
     }))
 }
 

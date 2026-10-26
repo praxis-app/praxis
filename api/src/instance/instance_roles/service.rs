@@ -22,8 +22,9 @@ use crate::{
     },
     common::{text::sanitize_text, ApiError, AppResult},
     moderation::{
-        self, deleted_role_snapshot, member_snapshot, normalized_permissions,
-        permissions_snapshot, role_snapshot, ModerationRecord,
+        self, deleted_role_snapshot, member_labels, member_snapshot,
+        normalized_permissions, permissions_snapshot, role_snapshot,
+        ModerationRecord,
     },
     servers::types::UserResponse,
     users as users_service,
@@ -282,20 +283,20 @@ pub(super) async fn add_instance_role_members(
 ) -> AppResult<()> {
     let transaction = database.begin().await.map_err(internal_error)?;
     let role = lock_instance_role_record(&transaction, role_id).await?;
-    let before = get_role_member_ids(&transaction, role_id).await?;
-    let mut changed = false;
+    let mut added_user_ids = Vec::new();
     for user_id in user_ids {
         if users::Entity::find_by_id(*user_id)
             .one(&transaction)
             .await
             .map_err(internal_error)?
             .is_some()
+            && add_member(&transaction, role_id, *user_id).await?
         {
-            changed |= add_member(&transaction, role_id, *user_id).await?;
+            added_user_ids.push(*user_id);
         }
     }
-    if changed {
-        let after = get_role_member_ids(&transaction, role_id).await?;
+    if !added_user_ids.is_empty() {
+        let added = member_labels(&transaction, &added_user_ids).await?;
         moderation::record_action(
             &transaction,
             ModerationRecord::direct(
@@ -308,8 +309,8 @@ pub(super) async fn add_instance_role_members(
             )
             .with_target_label(role.name)
             .with_values(
-                Some(member_snapshot(before)),
-                Some(member_snapshot(after)),
+                Some(member_snapshot(serde_json::json!([]))),
+                Some(member_snapshot(added)),
             ),
         )
         .await?;
@@ -326,7 +327,6 @@ pub(super) async fn remove_instance_role_member(
 ) -> AppResult<()> {
     let transaction = database.begin().await.map_err(internal_error)?;
     let role = lock_instance_role_record(&transaction, role_id).await?;
-    let before = get_role_member_ids(&transaction, role_id).await?;
     let result = instance_role_members::Entity::delete_many()
         .filter(instance_role_members::Column::InstanceRoleId.eq(role_id))
         .filter(instance_role_members::Column::UserId.eq(user_id))
@@ -334,7 +334,7 @@ pub(super) async fn remove_instance_role_member(
         .await
         .map_err(internal_error)?;
     if result.rows_affected > 0 {
-        let after = get_role_member_ids(&transaction, role_id).await?;
+        let removed = member_labels(&transaction, &[user_id]).await?;
         moderation::record_action(
             &transaction,
             ModerationRecord::direct(
@@ -347,8 +347,8 @@ pub(super) async fn remove_instance_role_member(
             )
             .with_target_label(role.name)
             .with_values(
-                Some(member_snapshot(before)),
-                Some(member_snapshot(after)),
+                Some(member_snapshot(removed)),
+                Some(member_snapshot(serde_json::json!([]))),
             ),
         )
         .await?;
@@ -365,7 +365,8 @@ pub(super) async fn delete_instance_role(
     let transaction = database.begin().await.map_err(internal_error)?;
     let role = lock_instance_role_record(&transaction, role_id).await?;
     let permissions = get_role_permissions(&transaction, role_id).await?;
-    let members = get_role_member_ids(&transaction, role_id).await?;
+    let member_ids = get_role_member_ids(&transaction, role_id).await?;
+    let members = member_labels(&transaction, &member_ids).await?;
     let target_label = role.name.clone();
     let before =
         deleted_role_snapshot(&role.name, &role.color, &permissions, members);

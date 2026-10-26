@@ -90,20 +90,16 @@
       "color": "Color",
       "description": "Description",
       "isDefaultServer": "Default server",
-      "memberIds": "Members",
       "name": "Name",
-      "permissions": "Permissions",
       "slug": "URL slug"
     },
     "labels": {
-      "changedTo": "changed to",
       "instance": "Instance",
+      "none": "None",
       "reason": "Reason",
       "unavailable": "Unavailable item"
     },
     "permissions": {
-      "changeCount_one": "{{count}} change",
-      "changeCount_other": "{{count}} changes",
       "fullAccess": "Full access"
     },
     "origins": {
