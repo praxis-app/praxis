@@ -8,9 +8,8 @@ use entity::{
     poll_action_server_configs, polls, server_configs,
 };
 use sea_orm::{
-    prelude::Uuid, sea_query::LockType, ActiveModelTrait, ColumnTrait,
-    ConnectionTrait, DatabaseConnection, DatabaseTransaction, EntityTrait,
-    QueryFilter, QuerySelect, Set,
+    prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
+    DatabaseConnection, DatabaseTransaction, EntityTrait, QueryFilter, Set,
 };
 use std::collections::HashMap;
 use uuid::Uuid as NativeUuid;
@@ -181,15 +180,11 @@ pub(super) async fn implement_change_server_config(
         .ok_or_else(|| {
             ApiError::new(StatusCode::NOT_FOUND, "Channel not found.")
         })?;
-    let config = server_configs::Entity::find()
-        .filter(server_configs::Column::ServerId.eq(channel.server_id))
-        .lock(LockType::Update)
-        .one(database)
-        .await
-        .map_err(internal_error)?
-        .ok_or_else(|| {
-            ApiError::new(StatusCode::NOT_FOUND, "Server config not found.")
-        })?;
+    let config = servers::server_configs::service::lock_server_config(
+        database,
+        channel.server_id,
+    )
+    .await?;
     let request = crate::servers::types::ServerConfigRequest {
         anonymous_users_enabled: change.anonymous_users_enabled,
         decision_making_model: change.decision_making_model,

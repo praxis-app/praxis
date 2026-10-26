@@ -7,8 +7,8 @@ use entity::{
 };
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
-    DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter, Set,
-    TransactionTrait,
+    DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter, QuerySelect,
+    Set, TransactionTrait,
 };
 use uuid::Uuid as NativeUuid;
 
@@ -43,7 +43,8 @@ pub(crate) async fn update_server_config(
     request: ServerConfigRequest,
 ) -> AppResult<()> {
     let transaction = database.begin().await.map_err(internal_error)?;
-    let config = ensure_server_config(&transaction, server_id).await?;
+    ensure_server_config(&transaction, server_id).await?;
+    let config = lock_server_config(&transaction, server_id).await?;
     validate_server_config_request(&request, &config)?;
     let before = config_snapshot(&config);
     let config_id = config.id;
@@ -112,6 +113,21 @@ pub(crate) async fn apply_server_config<C: ConnectionTrait>(
     }
     active.update(database).await.map_err(internal_error)?;
     Ok(())
+}
+
+pub(crate) async fn lock_server_config<C: ConnectionTrait>(
+    database: &C,
+    server_id: Uuid,
+) -> AppResult<server_configs::Model> {
+    server_configs::Entity::find()
+        .filter(server_configs::Column::ServerId.eq(server_id))
+        .lock_exclusive()
+        .one(database)
+        .await
+        .map_err(internal_error)?
+        .ok_or_else(|| {
+            ApiError::new(StatusCode::NOT_FOUND, "Server config not found.")
+        })
 }
 
 pub(crate) async fn ensure_server_config<C: ConnectionTrait>(

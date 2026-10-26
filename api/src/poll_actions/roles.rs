@@ -31,7 +31,9 @@ use crate::{
     authz,
     common::{request::parse_uuid, ApiError, AppResult},
     moderation::{self, ModerationRecord},
-    servers::server_roles::service::get_server_role_record,
+    servers::server_roles::service::{
+        get_server_role_record, lock_server_role_record,
+    },
     users as users_service,
 };
 
@@ -176,7 +178,7 @@ pub(super) async fn implement_change_server_role(
     // role id, so a ratified proposal can only ever change a role in the
     // server it was proposed in
     let (server_id, channel_id) = poll_scope(database, poll_id).await?;
-    let role = get_server_role_record(database, server_id, role_id).await?;
+    let role = lock_server_role_record(database, server_id, role_id).await?;
     let target_label = role.name.clone();
     let before = role_state_snapshot(database, &role).await?;
 

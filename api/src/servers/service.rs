@@ -11,7 +11,7 @@ use sea_orm::{
     sea_query::{Expr, NullOrdering, Query},
     ActiveModelTrait, ColumnTrait, ConnectionTrait, DatabaseConnection,
     EntityTrait, IntoActiveModel, ModelTrait, Order, PaginatorTrait,
-    QueryFilter, QueryOrder, Set, SqlErr, TransactionTrait,
+    QueryFilter, QueryOrder, QuerySelect, Set, SqlErr, TransactionTrait,
 };
 use std::{path::Path, time::Duration};
 use uuid::Uuid as NativeUuid;
@@ -413,7 +413,7 @@ pub(super) async fn update_server(
     let (name, slug, description) = validate_server_request(&request)?;
     let was_default_server = default_server_id(database).await? == server_id;
     let transaction = database.begin().await.map_err(internal_error)?;
-    let server = get_server(&transaction, server_id).await?;
+    let server = lock_server(&transaction, server_id).await?;
     let before = server_snapshot(
         &server.name,
         &server.slug,
@@ -495,7 +495,7 @@ pub(super) async fn delete_server(
         .await
         .map_err(internal_error)?;
     let transaction = database.begin().await.map_err(internal_error)?;
-    let server = get_server(&transaction, server_id).await?;
+    let server = lock_server(&transaction, server_id).await?;
     let before = server_snapshot(
         &server.name,
         &server.slug,
@@ -729,6 +729,8 @@ where
 {
     let channel_ids =
         channels_service::lock_server_electorate(database, server_id).await?;
+    super::server_roles::service::lock_server_roles(database, server_id)
+        .await?;
 
     let removed = server_members::Entity::delete_many()
         .filter(server_members::Column::ServerId.eq(server_id))
@@ -1020,6 +1022,20 @@ where
     C: ConnectionTrait,
 {
     servers::Entity::find_by_id(server_id)
+        .one(database)
+        .await
+        .map_err(internal_error)?
+        .ok_or_else(|| {
+            ApiError::new(StatusCode::NOT_FOUND, "Server not found.")
+        })
+}
+
+async fn lock_server<C: ConnectionTrait>(
+    database: &C,
+    server_id: Uuid,
+) -> AppResult<servers::Model> {
+    servers::Entity::find_by_id(server_id)
+        .lock_exclusive()
         .one(database)
         .await
         .map_err(internal_error)?

@@ -24,7 +24,16 @@ export const AuditLogEntry = ({ entry }: { entry: AuditLogEntryRes }) => {
               {t(`auditLog.actions.${entry.action}`)}
             </div>
             <div className="text-muted-foreground text-sm">
-              {originLabel}
+              {entry.proposalPath ? (
+                <Link
+                  className="text-primary underline-offset-4 hover:underline"
+                  to={entry.proposalPath}
+                >
+                  {originLabel}
+                </Link>
+              ) : (
+                originLabel
+              )}
               <span aria-hidden="true"> · </span>
               {entry.scope.serverLabel || t('auditLog.labels.instance')}
             </div>

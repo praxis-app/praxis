@@ -28,7 +28,7 @@ use crate::{
         storage::remove_stored_files,
         ApiError, AppResult,
     },
-    forum, messages,
+    forum, instance, messages,
     moderation::{self, ModerationRecord},
     pub_sub::PubSubService,
     servers,
@@ -438,6 +438,10 @@ where
         .exec(database)
         .await
         .map_err(internal_error)?;
+    instance::instance_roles::service::lock_member_instance_roles(
+        database, user_id,
+    )
+    .await?;
     instance_role_members::Entity::delete_many()
         .filter(instance_role_members::Column::UserId.eq(user_id))
         .exec(database)

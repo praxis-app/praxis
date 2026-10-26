@@ -91,6 +91,7 @@ export interface AuditLogEntryRes {
   afterValue: unknown | null;
   createdAt: string;
   applicationPath: string | null;
+  proposalPath: string | null;
 }
 
 export interface AuditLogFilterValuesRes {

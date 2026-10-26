@@ -7,9 +7,9 @@ use entity::{
     instance_role_members, instance_role_permissions, instance_roles, users,
 };
 use sea_orm::{
-    prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
-    DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter, QueryOrder,
-    Set, SqlErr, TransactionTrait,
+    prelude::Uuid, sea_query::Query, ActiveModelTrait, ColumnTrait,
+    ConnectionTrait, DatabaseConnection, EntityTrait, IntoActiveModel,
+    QueryFilter, QueryOrder, QuerySelect, Set, SqlErr, TransactionTrait,
 };
 use std::collections::BTreeMap;
 use uuid::Uuid as NativeUuid;
@@ -209,7 +209,7 @@ pub(super) async fn update_instance_role(
 ) -> AppResult<()> {
     let (name, color) = validate_role_request(request)?;
     let transaction = database.begin().await.map_err(internal_error)?;
-    let role = get_instance_role_record(&transaction, role_id).await?;
+    let role = lock_instance_role_record(&transaction, role_id).await?;
     if role.name != name || role.color != color {
         let before = role_snapshot(&role.name, &role.color);
         let target_label = role.name.clone();
@@ -248,7 +248,7 @@ pub(super) async fn update_instance_role_permissions(
         authz::INSTANCE_CAPABILITY_ACTIONS,
     )?;
     let transaction = database.begin().await.map_err(internal_error)?;
-    let role = get_instance_role_record(&transaction, role_id).await?;
+    let role = lock_instance_role_record(&transaction, role_id).await?;
     let before = get_role_permissions(&transaction, role_id).await?;
     if normalized_permissions(&before) != normalized_permissions(&permissions) {
         set_permissions(&transaction, role_id, &permissions).await?;
@@ -281,7 +281,7 @@ pub(super) async fn add_instance_role_members(
     user_ids: &[Uuid],
 ) -> AppResult<()> {
     let transaction = database.begin().await.map_err(internal_error)?;
-    let role = get_instance_role_record(&transaction, role_id).await?;
+    let role = lock_instance_role_record(&transaction, role_id).await?;
     let before = get_role_member_ids(&transaction, role_id).await?;
     let mut changed = false;
     for user_id in user_ids {
@@ -325,7 +325,7 @@ pub(super) async fn remove_instance_role_member(
     actor_user_id: Uuid,
 ) -> AppResult<()> {
     let transaction = database.begin().await.map_err(internal_error)?;
-    let role = get_instance_role_record(&transaction, role_id).await?;
+    let role = lock_instance_role_record(&transaction, role_id).await?;
     let before = get_role_member_ids(&transaction, role_id).await?;
     let result = instance_role_members::Entity::delete_many()
         .filter(instance_role_members::Column::InstanceRoleId.eq(role_id))
@@ -363,7 +363,7 @@ pub(super) async fn delete_instance_role(
     actor_user_id: Uuid,
 ) -> AppResult<()> {
     let transaction = database.begin().await.map_err(internal_error)?;
-    let role = get_instance_role_record(&transaction, role_id).await?;
+    let role = lock_instance_role_record(&transaction, role_id).await?;
     let permissions = get_role_permissions(&transaction, role_id).await?;
     let members = get_role_member_ids(&transaction, role_id).await?;
     let target_label = role.name.clone();
@@ -577,6 +577,39 @@ async fn get_instance_role_record<C: ConnectionTrait>(
         .ok_or_else(|| {
             ApiError::new(StatusCode::NOT_FOUND, "Instance role not found.")
         })
+}
+
+async fn lock_instance_role_record<C: ConnectionTrait>(
+    database: &C,
+    role_id: Uuid,
+) -> AppResult<instance_roles::Model> {
+    instance_roles::Entity::find_by_id(role_id)
+        .lock_exclusive()
+        .one(database)
+        .await
+        .map_err(internal_error)?
+        .ok_or_else(|| {
+            ApiError::new(StatusCode::NOT_FOUND, "Instance role not found.")
+        })
+}
+
+pub(crate) async fn lock_member_instance_roles<C: ConnectionTrait>(
+    database: &C,
+    user_id: Uuid,
+) -> AppResult<()> {
+    let member_role_ids = Query::select()
+        .column(instance_role_members::Column::InstanceRoleId)
+        .from(instance_role_members::Entity)
+        .and_where(instance_role_members::Column::UserId.eq(user_id))
+        .to_owned();
+    instance_roles::Entity::find()
+        .filter(instance_roles::Column::Id.in_subquery(member_role_ids))
+        .order_by_asc(instance_roles::Column::Id)
+        .lock_exclusive()
+        .all(database)
+        .await
+        .map_err(internal_error)?;
+    Ok(())
 }
 
 fn validate_role_request(request: RoleRequest) -> AppResult<(String, String)> {

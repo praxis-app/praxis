@@ -5,8 +5,8 @@ use entity::{
         AuditLogOrigin, ModerationAction, ModerationTargetKind,
         NotificationKind,
     },
-    forum_posts, moderation_actions, notifications, server_members, servers,
-    users,
+    forum_posts, moderation_actions, notifications, polls, server_members,
+    servers, users,
 };
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ColumnTrait, Condition, ConnectionTrait,
@@ -364,6 +364,7 @@ async fn shape_audit_log_entries(
     let servers = load_servers(database, &server_ids).await?;
     let forum_posts =
         load_forum_posts(database, &proposal_ids, &forum_post_ids).await?;
+    let proposals = load_proposals(database, &proposal_ids).await?;
     let member_server_ids = server_members::Entity::find()
         .filter(server_members::Column::UserId.eq(user_id))
         .all(database)
@@ -395,6 +396,13 @@ async fn shape_audit_log_entries(
                 &member_server_ids,
                 &forum_posts,
             );
+            let proposal_path = proposal_path(
+                &record,
+                server,
+                &member_server_ids,
+                &proposals,
+                &forum_posts,
+            );
             AuditLogEntryResponse {
                 id: record.id.to_string(),
                 actor,
@@ -412,6 +420,7 @@ async fn shape_audit_log_entries(
                 after_value: record.after_value,
                 created_at: record.created_at.to_rfc3339(),
                 application_path,
+                proposal_path,
             }
         })
         .collect())
@@ -578,30 +587,70 @@ async fn load_forum_posts(
         .map_err(internal_error)
 }
 
+async fn load_proposals(
+    database: &DatabaseConnection,
+    proposal_ids: &HashSet<Uuid>,
+) -> AppResult<HashMap<Uuid, polls::Model>> {
+    if proposal_ids.is_empty() {
+        return Ok(HashMap::new());
+    }
+    Ok(polls::Entity::find()
+        .filter(polls::Column::Id.is_in(proposal_ids.iter().copied()))
+        .all(database)
+        .await
+        .map_err(internal_error)?
+        .into_iter()
+        .map(|poll| (poll.id, poll))
+        .collect())
+}
+
+fn readable_server<'a>(
+    server: Option<&'a servers::Model>,
+    member_server_ids: &HashSet<Uuid>,
+) -> Option<&'a servers::Model> {
+    server.filter(|server| member_server_ids.contains(&server.id))
+}
+
+fn forum_post_path(
+    server: &servers::Model,
+    post: &forum_posts::Model,
+) -> String {
+    format!("/s/{}/c/{}/posts/{}", server.slug, post.channel_id, post.id)
+}
+
+fn proposal_path(
+    record: &moderation_actions::Model,
+    server: Option<&servers::Model>,
+    member_server_ids: &HashSet<Uuid>,
+    proposals: &HashMap<Uuid, polls::Model>,
+    forum_posts: &[forum_posts::Model],
+) -> Option<String> {
+    let server = readable_server(server, member_server_ids)?;
+    let proposal = proposals.get(&record.proposal_id?)?;
+    if let Some(post) = forum_posts
+        .iter()
+        .find(|post| post.poll_id == Some(proposal.id))
+    {
+        return Some(forum_post_path(server, post));
+    }
+    Some(format!(
+        "/s/{}/c/{}?poll={}",
+        server.slug, proposal.channel_id, proposal.id
+    ))
+}
+
 fn application_path(
     record: &moderation_actions::Model,
     server: Option<&servers::Model>,
     member_server_ids: &HashSet<Uuid>,
     forum_posts: &[forum_posts::Model],
 ) -> Option<String> {
-    let server = server?;
-    if !member_server_ids.contains(&server.id) {
-        return None;
-    }
-    let post_path = |post: &forum_posts::Model| {
-        format!("/s/{}/c/{}/posts/{}", server.slug, post.channel_id, post.id)
-    };
-    if let Some(proposal_id) = record.proposal_id {
-        return forum_posts
-            .iter()
-            .find(|post| post.poll_id == Some(proposal_id))
-            .map(post_path);
-    }
+    let server = readable_server(server, member_server_ids)?;
     match record.target_kind {
         ModerationTargetKind::ForumPost => forum_posts
             .iter()
             .find(|post| post.id == record.target_id)
-            .map(post_path),
+            .map(|post| forum_post_path(server, post)),
         ModerationTargetKind::Message => record
             .channel_id
             .map(|channel_id| format!("/s/{}/c/{channel_id}", server.slug)),

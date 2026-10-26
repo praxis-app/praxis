@@ -45,6 +45,7 @@ pub(super) struct AuditLogEntryResponse {
     pub(super) after_value: Option<Value>,
     pub(super) created_at: String,
     pub(super) application_path: Option<String>,
+    pub(super) proposal_path: Option<String>,
 }
 
 #[derive(Clone, Debug, Serialize)]

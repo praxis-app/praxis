@@ -13,6 +13,7 @@ import {
 } from '../lib/auth';
 import { createTestUser } from '../lib/data';
 import { grantInstancePermissions } from '../lib/instance-roles';
+import { createForumChannel, createForumPostWithProposal } from '../lib/forums';
 import { createInvite } from '../lib/invites';
 import { INSTANCE_PERMISSIONS, SERVER_PERMISSIONS } from '../lib/permissions';
 import { makeProposalsRatifyWithOneAgreeVote, voteViaApi } from '../lib/polls';
@@ -118,6 +119,33 @@ test('server and instance viewers see only their authorized audit scope and can 
   const proposal = (await proposalResponse.json()).poll;
   await voteViaApi(request, admin, serverA.id, channelId, proposal.id, 'agree');
 
+  const forum = await createForumChannel(
+    request,
+    admin,
+    serverA.id,
+    `audit-forum-${suffix}`,
+  );
+  const forumPost = await createForumPostWithProposal(
+    request,
+    admin,
+    serverA.id,
+    forum.id,
+    `Audit forum proposal ${suffix}`,
+    'Disable anonymous access for audit coverage',
+    {
+      actionType: 'change-settings',
+      serverConfig: { anonymousUsersEnabled: false },
+    },
+  );
+  await voteViaApi(
+    request,
+    admin,
+    serverA.id,
+    forum.id,
+    forumPost.proposal.id,
+    'agree',
+  );
+
   const serverSession = await openPageAs(
     browser,
     serverViewer,
@@ -125,8 +153,21 @@ test('server and instance viewers see only their authorized audit scope and can 
   );
   const serverEntries = serverSession.page.locator('[data-slot="card"]');
   await expect(serverEntries.getByText('Banned member')).toBeVisible();
-  await expect(serverEntries.getByText('Approved proposal')).toBeVisible();
   await expect(serverEntries.getByText(serverB.name)).toHaveCount(0);
+
+  const proposalLinks = serverEntries.getByRole('link', {
+    name: 'Approved proposal',
+  });
+  await expect(proposalLinks).toHaveCount(2);
+  const proposalHrefs = await proposalLinks.evaluateAll((links) =>
+    links.map((link) => link.getAttribute('href')),
+  );
+  expect(proposalHrefs).toEqual(
+    expect.arrayContaining([
+      `/s/${serverA.slug}/c/${channelId}?poll=${proposal.id}`,
+      `/s/${serverA.slug}/c/${forum.id}/posts/${forumPost.id}`,
+    ]),
+  );
 
   const instanceSession = await openPageAs(
     browser,

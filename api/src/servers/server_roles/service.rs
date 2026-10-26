@@ -10,7 +10,7 @@ use entity::{
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
     DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter, QueryOrder,
-    Set, SqlErr, TransactionTrait,
+    QuerySelect, Set, SqlErr, TransactionTrait,
 };
 use std::collections::{BTreeMap, HashSet};
 use uuid::Uuid as NativeUuid;
@@ -335,7 +335,8 @@ pub(super) async fn update_server_role(
 ) -> AppResult<()> {
     let (name, color) = validate_role_request(request)?;
     let transaction = database.begin().await.map_err(internal_error)?;
-    let role = get_server_role_record(&transaction, server_id, role_id).await?;
+    let role =
+        lock_server_role_record(&transaction, server_id, role_id).await?;
     if role.name != name || role.color != color {
         let before = role_snapshot(&role.name, &role.color);
         let target_label = role.name.clone();
@@ -375,7 +376,8 @@ pub(super) async fn update_server_role_permissions(
         authz::SERVER_CAPABILITY_ACTIONS,
     )?;
     let transaction = database.begin().await.map_err(internal_error)?;
-    let role = get_server_role_record(&transaction, server_id, role_id).await?;
+    let role =
+        lock_server_role_record(&transaction, server_id, role_id).await?;
     let before = get_role_permissions(&transaction, role_id).await?;
     if normalized_permissions(&before) != normalized_permissions(&permissions) {
         set_permissions(&transaction, role_id, &permissions).await?;
@@ -409,7 +411,8 @@ pub(super) async fn add_server_role_members(
     user_ids: &[Uuid],
 ) -> AppResult<Vec<notifications::Model>> {
     let transaction = database.begin().await.map_err(internal_error)?;
-    let role = get_server_role_record(&transaction, server_id, role_id).await?;
+    let role =
+        lock_server_role_record(&transaction, server_id, role_id).await?;
     let before = get_role_member_ids(&transaction, role_id).await?;
     let mut granted_user_ids = Vec::new();
     for user_id in user_ids {
@@ -484,7 +487,8 @@ pub(super) async fn remove_server_role_member(
     actor_user_id: Uuid,
 ) -> AppResult<()> {
     let transaction = database.begin().await.map_err(internal_error)?;
-    let role = get_server_role_record(&transaction, server_id, role_id).await?;
+    let role =
+        lock_server_role_record(&transaction, server_id, role_id).await?;
     let before = get_role_member_ids(&transaction, role_id).await?;
     let result = server_role_members::Entity::delete_many()
         .filter(server_role_members::Column::ServerRoleId.eq(role_id))
@@ -523,7 +527,8 @@ pub(super) async fn delete_server_role(
     actor_user_id: Uuid,
 ) -> AppResult<()> {
     let transaction = database.begin().await.map_err(internal_error)?;
-    let role = get_server_role_record(&transaction, server_id, role_id).await?;
+    let role =
+        lock_server_role_record(&transaction, server_id, role_id).await?;
     let permissions = get_role_permissions(&transaction, role_id).await?;
     let members = get_role_member_ids(&transaction, role_id).await?;
     let target_label = role.name.clone();
@@ -737,6 +742,36 @@ pub(crate) async fn get_server_role_record<C: ConnectionTrait>(
         .ok_or_else(|| {
             ApiError::new(StatusCode::NOT_FOUND, "Server role not found.")
         })
+}
+
+pub(crate) async fn lock_server_role_record<C: ConnectionTrait>(
+    database: &C,
+    server_id: Uuid,
+    role_id: Uuid,
+) -> AppResult<server_roles::Model> {
+    server_roles::Entity::find_by_id(role_id)
+        .filter(server_roles::Column::ServerId.eq(server_id))
+        .lock_exclusive()
+        .one(database)
+        .await
+        .map_err(internal_error)?
+        .ok_or_else(|| {
+            ApiError::new(StatusCode::NOT_FOUND, "Server role not found.")
+        })
+}
+
+pub(crate) async fn lock_server_roles<C: ConnectionTrait>(
+    database: &C,
+    server_id: Uuid,
+) -> AppResult<()> {
+    server_roles::Entity::find()
+        .filter(server_roles::Column::ServerId.eq(server_id))
+        .order_by_asc(server_roles::Column::Id)
+        .lock_exclusive()
+        .all(database)
+        .await
+        .map_err(internal_error)?;
+    Ok(())
 }
 
 fn validate_role_request(request: RoleRequest) -> AppResult<(String, String)> {
