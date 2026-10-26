@@ -74,6 +74,7 @@ export const AuditLogEntry = ({ entry }: { entry: AuditLogEntryRes }) => {
         <AuditLogDetails
           beforeValue={entry.beforeValue}
           afterValue={entry.afterValue}
+          targetKind={entry.target.kind}
         />
       </CardContent>
     </Card>

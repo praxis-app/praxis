@@ -298,20 +298,18 @@ async fn role_state_snapshot<C: ConnectionTrait>(
     database: &C,
     role: &server_roles::Model,
 ) -> AppResult<serde_json::Value> {
-    let mut permissions = server_role_permissions::Entity::find()
+    let permissions = server_role_permissions::Entity::find()
         .filter(server_role_permissions::Column::ServerRoleId.eq(role.id))
         .all(database)
         .await
         .map_err(internal_error)?
         .into_iter()
-        .map(|permission| {
-            (
-                permission.subject.to_string(),
-                permission.action.to_string(),
-            )
+        .map(|permission| authz::PermissionRule {
+            subject: permission.subject.to_string(),
+            action: vec![permission.action.to_string()],
         })
         .collect::<Vec<_>>();
-    permissions.sort();
+
     let mut member_ids = server_role_members::Entity::find()
         .filter(server_role_members::Column::ServerRoleId.eq(role.id))
         .all(database)
@@ -321,12 +319,11 @@ async fn role_state_snapshot<C: ConnectionTrait>(
         .map(|membership| membership.user_id.to_string())
         .collect::<Vec<_>>();
     member_ids.sort();
+
     Ok(serde_json::json!({
         "name": role.name,
         "color": role.color,
-        "permissions": permissions.into_iter().map(|(subject, action)| {
-            serde_json::json!({ "subject": subject, "action": action })
-        }).collect::<Vec<_>>(),
+        "permissions": moderation::normalized_permissions(&permissions),
         "memberIds": member_ids,
     }))
 }

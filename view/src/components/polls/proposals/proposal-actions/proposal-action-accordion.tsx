@@ -4,11 +4,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { cn } from '@/lib/shared.utils';
 import { type ReactNode } from 'react';
 
 interface Props {
   ariaLabel?: string;
   children: ReactNode;
+  className?: string;
   summary: ReactNode;
   value: string;
 }
@@ -16,13 +18,17 @@ interface Props {
 export const ProposalActionAccordion = ({
   ariaLabel,
   children,
+  className,
   summary,
   value,
 }: Props) => (
   <Accordion
     type="single"
     collapsible
-    className="mb-2.5 max-w-full min-w-0 overflow-hidden rounded-lg bg-black/2 px-4 dark:bg-black/10"
+    className={cn(
+      'mb-2.5 max-w-full min-w-0 overflow-hidden rounded-lg bg-black/2 px-4 dark:bg-black/10',
+      className,
+    )}
   >
     <AccordionItem value={value} className="min-w-0">
       <AccordionTrigger

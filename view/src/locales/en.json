@@ -86,12 +86,25 @@
       "startDate": "Start date",
       "endDate": "End date"
     },
+    "fields": {
+      "color": "Color",
+      "description": "Description",
+      "isDefaultServer": "Default server",
+      "memberIds": "Members",
+      "name": "Name",
+      "permissions": "Permissions",
+      "slug": "URL slug"
+    },
     "labels": {
-      "after": "After",
-      "before": "Before",
+      "changedTo": "changed to",
       "instance": "Instance",
       "reason": "Reason",
       "unavailable": "Unavailable item"
+    },
+    "permissions": {
+      "changeCount_one": "{{count}} change",
+      "changeCount_other": "{{count}} changes",
+      "fullAccess": "Full access"
     },
     "origins": {
       "proposal": "Approved proposal",
