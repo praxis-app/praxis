@@ -1,7 +1,8 @@
 use axum::http::StatusCode;
 use entity::instance_configs;
 use sea_orm::{
-    ActiveModelTrait, DatabaseConnection, EntityTrait, QueryOrder, Set,
+    ActiveModelTrait, ConnectionTrait, DatabaseConnection, EntityTrait,
+    QueryOrder, Set,
 };
 use uuid::Uuid as NativeUuid;
 
@@ -27,8 +28,8 @@ pub(crate) async fn get_config_safely(
     initialize_config(database).await
 }
 
-pub(crate) async fn get_config(
-    database: &DatabaseConnection,
+pub(crate) async fn get_config<C: ConnectionTrait>(
+    database: &C,
 ) -> AppResult<Option<instance_configs::Model>> {
     instance_configs::Entity::find()
         .order_by_asc(instance_configs::Column::CreatedAt)

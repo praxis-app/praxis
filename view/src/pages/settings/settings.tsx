@@ -9,10 +9,13 @@ import { getSettingsAccess } from '@/lib/role.utils';
 import { useTranslation } from 'react-i18next';
 import {
   MdAdminPanelSettings,
+  MdHistory,
   MdClose,
   MdEmojiPeople,
   MdGroups,
   MdLink,
+  MdManageAccounts,
+  MdPeople,
   MdSettings,
 } from 'react-icons/md';
 
@@ -25,8 +28,12 @@ export const Settings = () => {
     canAccessInvites,
     canManageInstanceRoles,
     canManageServers,
+    canManageServerMembers,
     canManageServerRoles,
     canManageServerSettings,
+    canManageUsers,
+    canViewInstanceAuditLog,
+    canViewServerAuditLog,
     hasInstanceSettingsAccess,
     hasServerSettingsAccess,
     hasSettingsAccess,
@@ -83,11 +90,25 @@ export const Settings = () => {
                   to={`${serverPath}${NavigationPaths.Roles}`}
                 />
               )}
+              {canManageServerMembers && (
+                <SettingsNavItem
+                  Icon={MdPeople}
+                  label={t('navigation.labels.members')}
+                  to={`${serverPath}${NavigationPaths.Members}`}
+                />
+              )}
               {canAccessInvites && (
                 <SettingsNavItem
                   Icon={MdLink}
                   label={t('navigation.labels.invites')}
                   to={`${serverPath}${NavigationPaths.Invites}`}
+                />
+              )}
+              {canViewServerAuditLog && (
+                <SettingsNavItem
+                  Icon={MdHistory}
+                  label={t('navigation.labels.auditLog')}
+                  to={`${serverPath}${NavigationPaths.AuditLog}`}
                 />
               )}
             </div>
@@ -118,6 +139,20 @@ export const Settings = () => {
                   Icon={MdGroups}
                   label={t('settings.headers.manageServers')}
                   to={NavigationPaths.ManageServers}
+                />
+              )}
+              {canManageUsers && (
+                <SettingsNavItem
+                  Icon={MdManageAccounts}
+                  label={t('navigation.labels.users')}
+                  to={NavigationPaths.ManageUsers}
+                />
+              )}
+              {canViewInstanceAuditLog && (
+                <SettingsNavItem
+                  Icon={MdHistory}
+                  label={t('navigation.labels.auditLog')}
+                  to={NavigationPaths.AuditLog}
                 />
               )}
             </div>

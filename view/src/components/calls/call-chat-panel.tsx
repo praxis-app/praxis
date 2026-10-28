@@ -2,8 +2,12 @@ import { api } from '@/client/api-client';
 import { Feed } from '@/components/feeds/feed';
 import { MessageForm } from '@/components/messages/message-form';
 import { MESSAGES_PAGE_SIZE } from '@/constants/message.constants';
-import { PubSubMessageType } from '@/constants/pub-sub.constants';
+import {
+  PubSubMessageAction,
+  PubSubMessageType,
+} from '@/constants/pub-sub.constants';
 import { preserveFeedImages, preserveFeedItemImages } from '@/lib/feed.utils';
+import { patchRemovedMessage } from '@/lib/moderation.utils';
 import { callPubSubTopic } from '@/lib/pub-sub.utils';
 import { useAuthData } from '@/hooks/use-auth-data';
 import { feedQueryKeyFor, useFeedQuery } from '@/hooks/use-feed-query';
@@ -18,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 
 interface NewMessagePayload {
   type: PubSubMessageType.MESSAGE;
+  action?: PubSubMessageAction;
   message: MessageRes;
 }
 
@@ -156,6 +161,11 @@ export const CallChatPanel = ({
           return;
         }
 
+        if (body.action === PubSubMessageAction.REMOVED) {
+          patchRemovedMessage(queryClient, serverId, channel.id, body.message);
+          return;
+        }
+
         if (body.type === PubSubMessageType.MESSAGE) {
           const messagePayload = body.message;
           const incomingFeedItem = {
@@ -227,6 +237,7 @@ export const CallChatPanel = ({
       </div>
       <Feed
         channel={channel}
+        callId={callId}
         feedBoxRef={feedBoxRef}
         onLoadMore={fetchNextPage}
         feed={feed}

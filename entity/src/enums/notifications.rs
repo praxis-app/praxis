@@ -45,6 +45,26 @@ pub enum NotificationKind {
     /// A ratified proposal scheduled an event
     #[sea_orm(string_value = "event_created")]
     EventCreated,
+
+    /// A moderator removed your message or reply
+    #[sea_orm(string_value = "message_removed")]
+    MessageRemoved,
+
+    /// A moderator removed your forum post
+    #[sea_orm(string_value = "forum_post_removed")]
+    ForumPostRemoved,
+
+    /// A moderator removed you from a server
+    #[sea_orm(string_value = "member_removed")]
+    MemberRemoved,
+
+    /// A moderator banned you from a server
+    #[sea_orm(string_value = "member_banned")]
+    MemberBanned,
+
+    /// A moderator removed you from a call
+    #[sea_orm(string_value = "call_participant_removed")]
+    CallParticipantRemoved,
 }
 
 impl_enum_string_conversions!(NotificationKind {
@@ -57,4 +77,9 @@ impl_enum_string_conversions!(NotificationKind {
     ProposalClosed => "proposal_closed",
     ServerRoleGranted => "server_role_granted",
     EventCreated => "event_created",
+    MessageRemoved => "message_removed",
+    ForumPostRemoved => "forum_post_removed",
+    MemberRemoved => "member_removed",
+    MemberBanned => "member_banned",
+    CallParticipantRemoved => "call_participant_removed",
 });

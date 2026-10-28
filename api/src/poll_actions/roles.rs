@@ -5,10 +5,10 @@ use axum::http::StatusCode;
 use entity::{
     channels,
     enums::{
-        NotificationKind, PollActionPermissionAbilityAction,
-        PollActionPermissionChangeType, PollActionPermissionSubject,
-        PollActionRoleMemberChangeType, ServerAbilitySubject,
-        ServerRoleAbilityAction,
+        ModerationAction, ModerationTargetKind, NotificationKind,
+        PollActionPermissionAbilityAction, PollActionPermissionChangeType,
+        PollActionPermissionSubject, PollActionRoleMemberChangeType,
+        ServerAbilitySubject, ServerRoleAbilityAction,
     },
     notifications, poll_action_permissions, poll_action_role_members,
     poll_action_roles, polls, server_members, server_role_members,
@@ -28,8 +28,12 @@ use super::types::{
     PollActionUserResponse,
 };
 use crate::{
+    authz,
     common::{request::parse_uuid, ApiError, AppResult},
-    servers::server_roles::service::get_server_role_record,
+    moderation::{self, ModerationRecord},
+    servers::server_roles::service::{
+        get_server_role_record, lock_server_role_record,
+    },
     users as users_service,
 };
 
@@ -110,6 +114,16 @@ pub(super) async fn create_poll_action_role<C: ConnectionTrait>(
     if let Some(permissions) = request.permissions {
         for permission in permissions {
             for action in permission.actions {
+                if !authz::is_valid_action(
+                    &permission.subject,
+                    &action.action,
+                    authz::SERVER_CAPABILITY_ACTIONS,
+                ) {
+                    return Err(ApiError::new(
+                        StatusCode::UNPROCESSABLE_ENTITY,
+                        "Action is invalid.",
+                    ));
+                }
                 poll_action_permissions::ActiveModel {
                     id: Set(NativeUuid::new_v4()),
                     poll_action_role_id: Set(role.id),
@@ -163,8 +177,10 @@ pub(super) async fn implement_change_server_role(
     // Re-derive the server from the poll rather than trusting the stored
     // role id, so a ratified proposal can only ever change a role in the
     // server it was proposed in
-    let server_id = poll_server_id(database, poll_id).await?;
-    let role = get_server_role_record(database, server_id, role_id).await?;
+    let (server_id, channel_id) = poll_scope(database, poll_id).await?;
+    let role = lock_server_role_record(database, server_id, role_id).await?;
+    let target_label = role.name.clone();
+    let before = role_state_snapshot(database, &role).await?;
 
     if action_role.name.is_some() || action_role.color.is_some() {
         let mut active = role.clone().into_active_model();
@@ -178,7 +194,28 @@ pub(super) async fn implement_change_server_role(
     }
 
     apply_permission_changes(database, role_id, action_role.id).await?;
-    apply_member_changes(database, server_id, role_id, action_role.id).await
+    let notifications =
+        apply_member_changes(database, server_id, role_id, action_role.id)
+            .await?;
+    let updated = get_server_role_record(database, server_id, role_id).await?;
+    let after = role_state_snapshot(database, &updated).await?;
+    if before != after {
+        moderation::record_action(
+            database,
+            ModerationRecord::proposal(
+                poll_id,
+                ModerationAction::UpdateRole,
+                ModerationTargetKind::ServerRole,
+                role_id,
+                server_id,
+            )
+            .with_channel(channel_id)
+            .with_target_label(target_label)
+            .with_values(Some(before), Some(after)),
+        )
+        .await?;
+    }
+    Ok(notifications)
 }
 
 pub(super) async fn implement_create_server_role(
@@ -187,7 +224,7 @@ pub(super) async fn implement_create_server_role(
     poll_action_id: Uuid,
 ) -> AppResult<Vec<notifications::Model>> {
     let action_role = get_action_role(database, poll_action_id).await?;
-    let server_id = poll_server_id(database, poll_id).await?;
+    let (server_id, channel_id) = poll_scope(database, poll_id).await?;
     let name = action_role.name.ok_or_else(|| {
         ApiError::new(
             StatusCode::UNPROCESSABLE_ENTITY,
@@ -212,15 +249,33 @@ pub(super) async fn implement_create_server_role(
     .map_err(internal_error)?;
 
     copy_action_permissions(database, role.id, action_role.id).await?;
-    apply_member_changes(database, server_id, role.id, action_role.id).await
+    let notifications =
+        apply_member_changes(database, server_id, role.id, action_role.id)
+            .await?;
+    let after = role_state_snapshot(database, &role).await?;
+    moderation::record_action(
+        database,
+        ModerationRecord::proposal(
+            poll_id,
+            ModerationAction::CreateRole,
+            ModerationTargetKind::ServerRole,
+            role.id,
+            server_id,
+        )
+        .with_channel(channel_id)
+        .with_target_label(role.name)
+        .with_values(None, Some(after)),
+    )
+    .await?;
+    Ok(notifications)
 }
 
 // Resolves the server a poll belongs to through its channel. Poll actions
 // derive their scope from this rather than from client-supplied ids
-async fn poll_server_id<C: ConnectionTrait>(
+async fn poll_scope<C: ConnectionTrait>(
     database: &C,
     poll_id: Uuid,
-) -> AppResult<Uuid> {
+) -> AppResult<(Uuid, Uuid)> {
     let poll = polls::Entity::find_by_id(poll_id)
         .one(database)
         .await
@@ -236,7 +291,41 @@ async fn poll_server_id<C: ConnectionTrait>(
             ApiError::new(StatusCode::NOT_FOUND, "Channel not found.")
         })?;
 
-    Ok(channel.server_id)
+    Ok((channel.server_id, channel.id))
+}
+
+async fn role_state_snapshot<C: ConnectionTrait>(
+    database: &C,
+    role: &server_roles::Model,
+) -> AppResult<serde_json::Value> {
+    let permissions = server_role_permissions::Entity::find()
+        .filter(server_role_permissions::Column::ServerRoleId.eq(role.id))
+        .all(database)
+        .await
+        .map_err(internal_error)?
+        .into_iter()
+        .map(|permission| authz::PermissionRule {
+            subject: permission.subject.to_string(),
+            action: vec![permission.action.to_string()],
+        })
+        .collect::<Vec<_>>();
+
+    let member_ids = server_role_members::Entity::find()
+        .filter(server_role_members::Column::ServerRoleId.eq(role.id))
+        .all(database)
+        .await
+        .map_err(internal_error)?
+        .into_iter()
+        .map(|membership| membership.user_id)
+        .collect::<Vec<_>>();
+    let members = moderation::member_labels(database, &member_ids).await?;
+
+    Ok(serde_json::json!({
+        "name": role.name,
+        "color": role.color,
+        "permissions": moderation::normalized_permissions(&permissions),
+        "members": members,
+    }))
 }
 
 async fn get_action_role(

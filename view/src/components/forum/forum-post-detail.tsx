@@ -3,6 +3,7 @@ import { ForumPostMenu } from '@/components/forum/forum-post-menu';
 import { ForumProposalPresentation } from '@/components/forum/forum-proposal-presentation';
 import { Message } from '@/components/messages/message';
 import { MessageForm } from '@/components/messages/message-form';
+import { RemovedContentNotice } from '@/components/moderation/removed-content-notice';
 import { ProposalSettingsDialog } from '@/components/polls/proposals/proposal-settings-dialog';
 import { FormattedText } from '@/components/shared/formatted-text';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,8 @@ import { Separator } from '@/components/ui/separator';
 import { UserAvatar } from '@/components/users/user-avatar';
 import { useAuthData } from '@/hooks/use-auth-data';
 import { useFocusHighlight } from '@/hooks/use-focus-highlight';
+import { useMessageRemoval } from '@/hooks/use-message-removal';
+import { useModerationAccess } from '@/hooks/use-moderation-access';
 import { useScrollToBottom } from '@/hooks/use-scroll-to-bottom';
 import { useServerData } from '@/hooks/use-server-data';
 import { anchoredQueryKey } from '@/lib/query.utils';
@@ -36,6 +39,11 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
 
   const { inviteToken, me } = useAuthData();
   const { serverId, serverPath } = useServerData();
+  const getRemoveHandler = useMessageRemoval({
+    channelId: channel.id,
+    forumPostId: postId,
+  });
+  const { canModerateContent } = useModerationAccess();
 
   const { t } = useTranslation();
 
@@ -191,8 +199,15 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
     count: post.replyCount,
   });
 
+  const isRemoved = !!post.moderatedAt;
+  const postTitle = isRemoved
+    ? t('moderation.labels.removedByModerator')
+    : post.title;
   const showForumPostMenu =
-    post.proposal || (isAuthor && (post.status === 'open' || !post.proposal));
+    !isRemoved &&
+    (post.proposal ||
+      (canModerateContent && !post.pollId) ||
+      (isAuthor && (post.status === 'open' || !post.proposal)));
 
   const replyForm = (
     <MessageForm
@@ -228,7 +243,9 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <h1 className="text-xl font-semibold">{post.title}</h1>
+                {!isRemoved && (
+                  <h1 className="text-xl font-semibold">{postTitle}</h1>
+                )}
                 <p className="text-muted-foreground text-sm">
                   {author} · {timeAgo(post.createdAt)}
                 </p>
@@ -254,7 +271,11 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
             </div>
           </div>
         </div>
-        <FormattedText text={post.body} className="mt-4 sm:ml-13" />
+        {isRemoved ? (
+          <RemovedContentNotice className="mt-4 sm:ml-13" />
+        ) : (
+          <FormattedText text={post.body} className="mt-4 sm:ml-13" />
+        )}
         {post.proposal && (
           <div className="sm:ml-13">
             <ForumProposalPresentation
@@ -306,6 +327,7 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
             key={reply.id}
             message={reply}
             me={me}
+            onRemove={getRemoveHandler(reply)}
             serverId={serverId}
             channelId={channel.id}
             onImageLoad={handleContentLoad}
@@ -335,7 +357,7 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
     return (
       <aside className="bg-background flex h-full min-w-0 flex-1 flex-col">
         <header className="flex h-13.75 shrink-0 items-center justify-between gap-3 border-b px-4">
-          <h2 className="truncate font-medium">{post.title}</h2>
+          <h2 className="truncate font-medium">{postTitle}</h2>
           <Button variant="ghost" size="icon" asChild>
             <Link
               to={`${serverPath}/c/${channel.id}`}

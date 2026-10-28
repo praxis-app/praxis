@@ -17,6 +17,7 @@ pub struct Model {
     pub thread_root_id: Option<Uuid>,
     pub thread_poll_id: Option<Uuid>,
     pub parent_message_id: Option<Uuid>,
+    pub moderated_at: Option<DateTimeWithTimeZone>,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }

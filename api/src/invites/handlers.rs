@@ -82,6 +82,7 @@ pub(super) async fn delete_invite(
         &state.database,
         context.server_id,
         context.invite_id,
+        context.user_id,
     )
     .await?;
     Ok(Json(EmptyResponse {}))

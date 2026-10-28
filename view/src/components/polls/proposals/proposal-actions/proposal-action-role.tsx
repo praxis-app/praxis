@@ -66,6 +66,24 @@ export const ProposalActionRole = ({ action }: { action: PollActionRes }) => {
               permission.subject === 'ServerRole' &&
               permission.action.includes('manage'),
           );
+        case 'manageServerMembers':
+          return permissions.filter(
+            (permission) =>
+              permission.subject === 'ServerMember' &&
+              permission.action.includes('manage'),
+          );
+        case 'moderateContent':
+          return permissions.filter(
+            (permission) =>
+              permission.subject === 'Message' &&
+              permission.action.includes('delete'),
+          );
+        case 'manageCalls':
+          return permissions.filter(
+            (permission) =>
+              permission.subject === 'Call' &&
+              permission.action.includes('manage'),
+          );
         case 'createInvites':
           return permissions.filter(
             (permission) =>
@@ -84,6 +102,12 @@ export const ProposalActionRole = ({ action }: { action: PollActionRes }) => {
             (permission) =>
               permission.subject === 'ProposalBlock' &&
               permission.action.includes('create'),
+          );
+        case 'viewAuditLog':
+          return permissions.filter(
+            (permission) =>
+              permission.subject === 'AuditLog' &&
+              permission.action.includes('read'),
           );
       }
     })();

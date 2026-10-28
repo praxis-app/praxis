@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { useAuthData } from '@/hooks/use-auth-data';
 import { useFocusHighlight } from '@/hooks/use-focus-highlight';
 import { useIsDesktop } from '@/hooks/use-is-desktop';
+import { useMessageRemoval } from '@/hooks/use-message-removal';
 import { useScrollToBottom } from '@/hooks/use-scroll-to-bottom';
 import { useServerData } from '@/hooks/use-server-data';
 import { subscribeToBrowserResume } from '@/lib/browser.utils';
@@ -70,6 +71,7 @@ export const ThreadPanel = ({
 
   const { inviteToken, me } = useAuthData();
   const { server, serverId } = useServerData();
+  const getRemoveHandler = useMessageRemoval({ channelId: channel.id });
 
   const { t } = useTranslation();
   const isDesktop = useIsDesktop();
@@ -312,6 +314,7 @@ export const ThreadPanel = ({
               <Message
                 message={root as MessageRes}
                 me={me}
+                onRemove={getRemoveHandler(root as MessageRes)}
                 serverId={serverId}
                 channelId={channel.id}
                 onImageLoad={handleContentLoad}
@@ -365,6 +368,7 @@ export const ThreadPanel = ({
                   key={reply.id}
                   message={reply}
                   me={me}
+                  onRemove={getRemoveHandler(reply)}
                   serverId={serverId}
                   channelId={channel.id}
                   onImageLoad={handleContentLoad}

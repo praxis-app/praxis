@@ -720,9 +720,12 @@ async fn removed_members_lose_their_server_role_permissions() {
     assert_eq!(before_removal.status(), StatusCode::OK);
 
     let removal = app
-        .delete_json_with_bearer(
-            &format!("/api/servers/{server_id}/members"),
-            &json!({ "userIds": [member.user_id] }),
+        .post_json_with_bearer(
+            &format!(
+                "/api/servers/{server_id}/members/{}/remove",
+                member.user_id
+            ),
+            &json!({ "reason": "Removed" }),
             &admin.token,
         )
         .await;

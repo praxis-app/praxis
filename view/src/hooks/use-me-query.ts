@@ -1,5 +1,9 @@
 import { api } from '@/client/api-client';
 import { LocalStorageKeys } from '@/constants/shared.constants';
+import {
+  isAccountSuspendedError,
+  notifyAccountSuspended,
+} from '@/lib/auth-error.utils';
 import { useAppStore } from '@/store/app.store';
 import { useAuthStore } from '@/store/auth.store';
 import { type CurrentUser } from '@/types/user.types';
@@ -56,6 +60,9 @@ export const useMeQuery = (options?: UseMeQueryOptions) => {
         };
       } catch (error) {
         if ((error as AxiosError).response?.status === 401) {
+          if (isAccountSuspendedError(error as AxiosError)) {
+            notifyAccountSuspended();
+          }
           localStorage.removeItem(LocalStorageKeys.AccessToken);
           setAccessToken(null);
           setIsLoggedIn(false);

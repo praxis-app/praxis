@@ -1,4 +1,5 @@
 import { LocalStorageKeys } from '@/constants/shared.constants';
+import { queryClient } from '@/lib/query-client';
 import { getWebSocketURL } from '@/lib/shared.utils';
 import { useAuthStore } from '@/store/auth.store';
 import {
@@ -57,6 +58,10 @@ const useSubscriptionInternal = (
     shouldReconnect: () => isLoggedIn,
     onClose: (event) => {
       if (event.wasClean) {
+        void queryClient.invalidateQueries(
+          { queryKey: ['me'], exact: true },
+          { cancelRefetch: false },
+        );
         return;
       }
       console.warn('WebSocket connection closed', {

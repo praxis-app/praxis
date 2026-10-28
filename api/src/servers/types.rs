@@ -11,6 +11,13 @@ pub(crate) struct ServerPath {
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
+pub(super) struct ServerMemberPath {
+    pub(super) server_id: Uuid,
+    pub(super) user_id: Uuid,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub(super) struct ServerImagePath {
     pub(super) server_id: Uuid,
     pub(super) image_id: Uuid,
@@ -88,6 +95,41 @@ pub(crate) struct UserResponse {
 #[derive(Debug, Serialize)]
 pub(crate) struct UsersPayload {
     pub(crate) users: Vec<UserResponse>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct ServerBanResponse {
+    pub(super) user: UserResponse,
+    pub(super) created_at: String,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) enum ServerAccessStatus {
+    Member,
+    Banned,
+    Removed,
+    None,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct ServerAccessResponse {
+    pub(super) status: ServerAccessStatus,
+    pub(super) server_name: Option<String>,
+    pub(super) reason: Option<String>,
+    pub(super) moderated_at: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
+pub(super) struct ServerAccessPayload {
+    pub(super) access: ServerAccessResponse,
+}
+
+#[derive(Debug, Serialize)]
+pub(super) struct ServerBansPayload {
+    pub(super) bans: Vec<ServerBanResponse>,
 }
 
 #[derive(Debug, Deserialize)]

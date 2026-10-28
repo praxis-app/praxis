@@ -214,6 +214,39 @@ export const CreateProposalForm = ({
               ],
             });
             break;
+          case 'manageServerMembers':
+            result.push({
+              subject: 'ServerMember',
+              actions: [
+                {
+                  action: 'manage',
+                  changeType: permissionValue ? 'add' : 'remove',
+                },
+              ],
+            });
+            break;
+          case 'moderateContent':
+            result.push({
+              subject: 'Message',
+              actions: [
+                {
+                  action: 'delete',
+                  changeType: permissionValue ? 'add' : 'remove',
+                },
+              ],
+            });
+            break;
+          case 'manageCalls':
+            result.push({
+              subject: 'Call',
+              actions: [
+                {
+                  action: 'manage',
+                  changeType: permissionValue ? 'add' : 'remove',
+                },
+              ],
+            });
+            break;
           case 'createInvites':
             result.push({
               subject: 'Invite',
@@ -246,6 +279,17 @@ export const CreateProposalForm = ({
               actions: [
                 {
                   action: 'create',
+                  changeType: permissionValue ? 'add' : 'remove',
+                },
+              ],
+            });
+            break;
+          case 'viewAuditLog':
+            result.push({
+              subject: 'AuditLog',
+              actions: [
+                {
+                  action: 'read',
                   changeType: permissionValue ? 'add' : 'remove',
                 },
               ],

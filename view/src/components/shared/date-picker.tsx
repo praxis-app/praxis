@@ -22,6 +22,8 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   minDate?: Date;
+  maxDate?: Date;
+  className?: string;
 }
 
 const weekdays = Array.from({ length: 7 }, (_, index) =>
@@ -30,13 +32,15 @@ const weekdays = Array.from({ length: 7 }, (_, index) =>
   ),
 );
 
-export const EventDatePicker = ({
+export const DatePicker = ({
   id,
   label,
   placeholder,
   value,
   onChange,
   minDate,
+  maxDate,
+  className,
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [visibleMonth, setVisibleMonth] = useState(
@@ -50,6 +54,10 @@ export const EventDatePicker = ({
   }).format(visibleMonth);
   const calendarDays = getCalendarDays(visibleMonth);
   const minDateValue = minDate ? toDateValue(minDate) : undefined;
+  const maxDateValue = maxDate ? toDateValue(maxDate) : undefined;
+  const isOutOfRange = (dateValue: string) =>
+    (!!minDateValue && dateValue < minDateValue) ||
+    (!!maxDateValue && dateValue > maxDateValue);
 
   const changeMonth = (offset: number) => {
     setVisibleMonth(
@@ -75,7 +83,10 @@ export const EventDatePicker = ({
           type="button"
           variant="outline"
           aria-label={label}
-          className="bg-muted/30 hover:bg-muted/50 h-12 w-full justify-start rounded-xl px-4 text-base font-normal sm:h-14"
+          className={cn(
+            'bg-muted/30 hover:bg-muted/50 h-12 w-full justify-start rounded-xl px-4 text-base font-normal sm:h-14',
+            className,
+          )}
         >
           <span className={cn('truncate', !value && 'text-muted-foreground')}>
             {formatDateValue(value) || placeholder}
@@ -128,7 +139,7 @@ export const EventDatePicker = ({
                 dateStyle: 'full',
               }).format(day.date)}
               aria-pressed={day.value === value}
-              disabled={!!minDateValue && day.value < minDateValue}
+              disabled={isOutOfRange(day.value)}
               onClick={() => selectDate(day.value)}
               className={cn(
                 'hover:bg-accent focus-visible:ring-ring flex aspect-square items-center justify-center rounded-md text-sm font-medium outline-none focus-visible:ring-2',
@@ -157,7 +168,7 @@ export const EventDatePicker = ({
             type="button"
             variant="ghost"
             size="sm"
-            disabled={!!minDateValue && todayValue < minDateValue}
+            disabled={isOutOfRange(todayValue)}
             onClick={() => selectDate(todayValue)}
           >
             {t('events.actions.today')}

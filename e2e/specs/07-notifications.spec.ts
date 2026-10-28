@@ -225,11 +225,11 @@ test('event proposals that expire early notify their author', async ({
 
   // Losing its proposed host makes the proposal stale, so the synchronizer
   // closes it early
-  const removeHostResponse = await request.delete(
-    `/api/servers/${server.id}/members`,
+  const removeHostResponse = await request.post(
+    `/api/servers/${server.id}/members/${host.userId}/remove`,
     {
       headers: authorizationHeaders(instanceAdmin),
-      data: { userIds: [host.userId] },
+      data: { reason: 'Left the server' },
     },
   );
   await expect(removeHostResponse).toBeOK();

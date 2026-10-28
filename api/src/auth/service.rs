@@ -176,6 +176,17 @@ pub(super) async fn upgrade_anon_session(
     .map_err(map_create_user_error)
 }
 
+pub(super) fn ensure_account_active(user: &UserRecord) -> AppResult<()> {
+    if user.locked {
+        return Err(account_suspended());
+    }
+    Ok(())
+}
+
+pub(crate) fn account_suspended() -> ApiError {
+    ApiError::new(StatusCode::UNAUTHORIZED, "This account is suspended.")
+}
+
 pub(super) fn validate_signup(
     mut input: SignupRequest,
 ) -> AppResult<SignupRequest> {

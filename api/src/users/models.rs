@@ -9,6 +9,7 @@ pub(crate) struct UserRecord {
     pub(crate) display_name: Option<String>,
     pub(crate) password_hash: Option<String>,
     pub(crate) anonymous: bool,
+    pub(crate) locked: bool,
 }
 
 impl From<users::Model> for UserRecord {
@@ -20,6 +21,7 @@ impl From<users::Model> for UserRecord {
             display_name: user.display_name,
             password_hash: user.password,
             anonymous: user.anonymous,
+            locked: user.locked,
         }
     }
 }

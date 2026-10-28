@@ -19,23 +19,44 @@ export const getSettingsAccess = (
 ) => {
   const canManageServerSettings = serverAbility.can('manage', 'ServerConfig');
   const canManageServerRoles = serverAbility.can('manage', 'ServerRole');
+  const canManageServerMembers =
+    serverAbility.can('manage', 'ServerMember') ||
+    instanceAbility.can('manage', 'all');
   const canManageInstanceRoles = instanceAbility.can('manage', 'InstanceRole');
   const canManageServers = instanceAbility.can('manage', 'Server');
+  const canManageUsers =
+    instanceAbility.can('update', 'User') ||
+    instanceAbility.can('delete', 'User');
+  const canViewInstanceAuditLog = instanceAbility.can('read', 'AuditLog');
+  const canViewServerAuditLog =
+    serverAbility.can('read', 'AuditLog') || canViewInstanceAuditLog;
 
   const canAccessInvites =
     serverAbility.can('create', 'Invite') ||
     serverAbility.can('manage', 'Invite');
 
   const hasServerSettingsAccess =
-    canManageServerSettings || canManageServerRoles || canAccessInvites;
-  const hasInstanceSettingsAccess = canManageInstanceRoles || canManageServers;
+    canManageServerSettings ||
+    canManageServerRoles ||
+    canManageServerMembers ||
+    canAccessInvites ||
+    canViewServerAuditLog;
+  const hasInstanceSettingsAccess =
+    canManageInstanceRoles ||
+    canManageServers ||
+    canManageUsers ||
+    canViewInstanceAuditLog;
 
   return {
     canAccessInvites,
     canManageInstanceRoles,
     canManageServers,
+    canManageServerMembers,
     canManageServerRoles,
     canManageServerSettings,
+    canManageUsers,
+    canViewInstanceAuditLog,
+    canViewServerAuditLog,
     hasInstanceSettingsAccess,
     hasServerSettingsAccess,
     hasSettingsAccess: hasServerSettingsAccess || hasInstanceSettingsAccess,
@@ -68,6 +89,30 @@ export const getServerPermissionValues = (permissions: ServerPermission[]) =>
         name,
       };
     }
+    if (name === 'manageServerMembers') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'ServerMember' && p.action.includes('manage'),
+        ),
+        name,
+      };
+    }
+    if (name === 'moderateContent') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'Message' && p.action.includes('delete'),
+        ),
+        name,
+      };
+    }
+    if (name === 'manageCalls') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'Call' && p.action.includes('manage'),
+        ),
+        name,
+      };
+    }
     if (name === 'createInvites') {
       return {
         value: permissions.some(
@@ -88,6 +133,14 @@ export const getServerPermissionValues = (permissions: ServerPermission[]) =>
       return {
         value: permissions.some(
           (p) => p.subject === 'ProposalBlock' && p.action.includes('create'),
+        ),
+        name,
+      };
+    }
+    if (name === 'viewAuditLog') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'AuditLog' && p.action.includes('read'),
         ),
         name,
       };
@@ -122,6 +175,46 @@ export const getInstancePermissionValues = (
       return {
         value: permissions.some(
           (p) => p.subject === 'Server' && p.action.includes('manage'),
+        ),
+        name,
+      };
+    }
+    if (name === 'moderateContent') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'Message' && p.action.includes('delete'),
+        ),
+        name,
+      };
+    }
+    if (name === 'manageCalls') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'Call' && p.action.includes('manage'),
+        ),
+        name,
+      };
+    }
+    if (name === 'suspendUsers') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'User' && p.action.includes('update'),
+        ),
+        name,
+      };
+    }
+    if (name === 'deleteUsers') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'User' && p.action.includes('delete'),
+        ),
+        name,
+      };
+    }
+    if (name === 'viewAuditLog') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'AuditLog' && p.action.includes('read'),
         ),
         name,
       };

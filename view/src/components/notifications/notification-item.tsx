@@ -20,8 +20,11 @@ import {
   LuCircleMinus,
   LuEllipsis,
   LuMessageCircle,
+  LuPhoneOff,
   LuReply,
+  LuShieldAlert,
   LuTrash2,
+  LuUserX,
 } from 'react-icons/lu';
 import {
   MdFrontHand,
@@ -43,6 +46,7 @@ interface Props {
 type NotificationItemKey =
   | NotificationKind
   | 'new_message_forum'
+  | 'message_removed_reply'
   | 'message_reply_message'
   | 'message_reply_poll'
   | 'message_reply_proposal';
@@ -64,6 +68,9 @@ const getNotificationItemKey = (
   }
   if (kind === 'message_reply' && target.repliedTo) {
     return REPLY_KEYS[target.repliedTo];
+  }
+  if (kind === 'message_removed' && target.threadRootId) {
+    return 'message_removed_reply';
   }
   return kind;
 };
@@ -106,6 +113,14 @@ const getIcon = (notification: NotificationRes, className: string) => {
       );
     case 'event_created':
       return <LuCalendar className={className} />;
+    case 'message_removed':
+    case 'forum_post_removed':
+      return <LuShieldAlert className={className} />;
+    case 'member_removed':
+    case 'member_banned':
+      return <LuUserX className={className} />;
+    case 'call_participant_removed':
+      return <LuPhoneOff className={className} />;
     default:
       return <LuMessageCircle className={className} />;
   }
@@ -137,6 +152,7 @@ export const NotificationItem = ({
     channel: notification.target.channelName,
     role: notification.target.serverRoleName,
     event: notification.target.eventName,
+    server: notification.target.serverName,
     vote: notification.voteType
       ? t(`notifications.votes.${notification.voteType}`)
       : undefined,
@@ -184,6 +200,13 @@ export const NotificationItem = ({
         <p className={cn('text-sm leading-5', isUnread && 'font-medium')}>
           {description}
         </p>
+        {notification.moderationReason && (
+          <p className="text-muted-foreground mt-0.5 text-xs wrap-break-word">
+            {t('notifications.labels.moderationReason', {
+              reason: notification.moderationReason,
+            })}
+          </p>
+        )}
         <p className="text-muted-foreground mt-0.5 text-xs">
           {isAvailable
             ? timeAgo(notification.createdAt)

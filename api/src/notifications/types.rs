@@ -22,10 +22,20 @@ impl<T> WithNotifications<T> {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum NotificationTarget {
+    /// A message or reply, including a forum post's root message
     Message(Uuid),
+
+    /// A poll or proposal
     Poll(Uuid),
+
+    /// A server role granted to the recipient
     ServerRole(Uuid),
+
+    /// An event scheduled by a ratified proposal
     Event(Uuid),
+
+    /// A moderation action, which also supplies the reason for it
+    ModerationAction(Uuid),
 }
 
 #[derive(Clone, Debug)]
@@ -91,6 +101,8 @@ pub(super) struct NotificationTargetResponse {
     pub(super) event_id: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(super) event_name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(super) server_name: Option<String>,
 }
 
 #[derive(Debug, Serialize)]
@@ -102,6 +114,7 @@ pub(super) struct NotificationResponse {
     pub(super) channel_id: Option<String>,
     pub(super) actor: Option<NotificationUserResponse>,
     pub(super) vote_type: Option<&'static str>,
+    pub(super) moderation_reason: Option<String>,
     pub(super) unread_count: Option<i32>,
     pub(super) read_at: Option<String>,
     pub(super) created_at: String,

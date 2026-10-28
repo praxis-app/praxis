@@ -152,7 +152,7 @@ pub(super) async fn create_call_poll(
     request: CreatePollRequest,
     uploads: PollImageUploads,
 ) -> AppResult<PollResponse> {
-    crate::calls::service::get_call(
+    crate::calls::service::get_active_call(
         database,
         context.server_id,
         context.channel_id,

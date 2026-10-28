@@ -795,11 +795,11 @@ test('event proposal expires when a proposed host leaves the server', async ({
     },
   });
 
-  const removeHostResponse = await request.delete(
-    `/api/servers/${server.id}/members`,
+  const removeHostResponse = await request.post(
+    `/api/servers/${server.id}/members/${host.userId}/remove`,
     {
       headers: authorizationHeaders(instanceAdmin),
-      data: { userIds: [host.userId] },
+      data: { reason: 'Left the server' },
     },
   );
   await expect(removeHostResponse).toBeOK();

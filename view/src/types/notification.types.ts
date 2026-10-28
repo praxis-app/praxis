@@ -9,7 +9,12 @@ export type NotificationKind =
   | 'proposal_ratified'
   | 'proposal_closed'
   | 'server_role_granted'
-  | 'event_created';
+  | 'event_created'
+  | 'message_removed'
+  | 'forum_post_removed'
+  | 'member_removed'
+  | 'member_banned'
+  | 'call_participant_removed';
 
 export type NotificationVoteType = 'agree' | 'disagree' | 'abstain' | 'block';
 
@@ -21,7 +26,14 @@ export interface NotificationActor {
 }
 
 export interface NotificationTarget {
-  kind: 'message' | 'poll' | 'serverRole' | 'event' | 'unavailable';
+  kind:
+    | 'message'
+    | 'poll'
+    | 'serverRole'
+    | 'event'
+    | 'channel'
+    | 'server'
+    | 'unavailable';
   available: boolean;
   channelId?: string;
   channelName?: string;
@@ -37,6 +49,7 @@ export interface NotificationTarget {
   serverRoleName?: string;
   eventId?: string;
   eventName?: string;
+  serverName?: string;
 }
 
 export interface NotificationRes {
@@ -46,6 +59,7 @@ export interface NotificationRes {
   channelId: string | null;
   actor: NotificationActor | null;
   voteType: NotificationVoteType | null;
+  moderationReason: string | null;
   unreadCount: number | null;
   readAt: string | null;
   createdAt: string;

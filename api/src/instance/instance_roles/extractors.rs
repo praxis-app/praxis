@@ -31,15 +31,19 @@ struct InstanceRoleMemberPath {
     user_id: Uuid,
 }
 
-pub(super) struct CanManageInstanceRolesContext;
+pub(super) struct CanManageInstanceRolesContext {
+    pub(super) user_id: Uuid,
+}
 
 pub(super) struct CanManageInstanceRoleContext {
     pub(super) instance_role_id: Uuid,
+    pub(super) user_id: Uuid,
 }
 
 pub(super) struct CanManageInstanceRoleMemberContext {
     pub(super) instance_role_id: Uuid,
     pub(super) member_user_id: Uuid,
+    pub(super) user_id: Uuid,
 }
 
 impl FromRequestParts<InstanceRolesState> for CanManageInstanceRolesContext {
@@ -49,8 +53,8 @@ impl FromRequestParts<InstanceRolesState> for CanManageInstanceRolesContext {
         parts: &mut Parts,
         state: &InstanceRolesState,
     ) -> Result<Self, Self::Rejection> {
-        can_manage_instance_roles(parts, state).await?;
-        Ok(Self)
+        let user_id = can_manage_instance_roles(parts, state).await?;
+        Ok(Self { user_id })
     }
 }
 
@@ -65,10 +69,11 @@ impl FromRequestParts<InstanceRolesState> for CanManageInstanceRoleContext {
             Path::<InstanceRolePath>::from_request_parts(parts, state)
                 .await
                 .map_err(|_| invalid_route_path())?;
-        can_manage_instance_roles(parts, state).await?;
+        let user_id = can_manage_instance_roles(parts, state).await?;
 
         Ok(Self {
             instance_role_id: path.instance_role_id,
+            user_id,
         })
     }
 }
@@ -86,11 +91,12 @@ impl FromRequestParts<InstanceRolesState>
             Path::<InstanceRoleMemberPath>::from_request_parts(parts, state)
                 .await
                 .map_err(|_| invalid_route_path())?;
-        can_manage_instance_roles(parts, state).await?;
+        let user_id = can_manage_instance_roles(parts, state).await?;
 
         Ok(Self {
             instance_role_id: path.instance_role_id,
             member_user_id: path.user_id,
+            user_id,
         })
     }
 }
@@ -98,7 +104,7 @@ impl FromRequestParts<InstanceRolesState>
 async fn can_manage_instance_roles(
     parts: &mut Parts,
     state: &InstanceRolesState,
-) -> Result<(), ApiError> {
+) -> Result<Uuid, ApiError> {
     let AuthenticatedUser(user_id) =
         AuthenticatedUser::from_request_parts(parts, state).await?;
 
@@ -109,7 +115,8 @@ async fn can_manage_instance_roles(
         "InstanceRole",
         PermissionScope::Instance,
     )
-    .await
+    .await?;
+    Ok(user_id)
 }
 
 fn invalid_route_path() -> ApiError {
