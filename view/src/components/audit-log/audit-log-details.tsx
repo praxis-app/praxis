@@ -1,4 +1,5 @@
 import { AuditLogFieldChange } from '@/components/audit-log/audit-log-field-change';
+import { AuditLogInviteDetails } from '@/components/audit-log/audit-log-invite-details';
 import { AuditLogMemberChanges } from '@/components/audit-log/audit-log-member-changes';
 import { AuditLogPermissionChanges } from '@/components/audit-log/audit-log-permission-changes';
 import { getAuditChanges } from '@/lib/audit-log.utils';
@@ -13,6 +14,15 @@ export const AuditLogDetails = ({
   afterValue,
   targetKind,
 }: Props) => {
+  if (targetKind === 'invite') {
+    return (
+      <AuditLogInviteDetails
+        beforeValue={beforeValue}
+        afterValue={afterValue}
+      />
+    );
+  }
+
   const { fields, permissions, members, count } = getAuditChanges(
     beforeValue,
     afterValue,

@@ -5,7 +5,7 @@ const ACTION_ENUM: &str = "moderation_actions_action_enum";
 const ORIGIN_ENUM: &str = "moderation_actions_origin_enum";
 const TARGET_KIND_ENUM: &str = "moderation_actions_target_kind_enum";
 
-const ACTIONS: [&str; 20] = [
+const ACTIONS: [&str; 22] = [
     "remove_message",
     "remove_forum_post",
     "remove_member",
@@ -26,11 +26,13 @@ const ACTIONS: [&str; 20] = [
     "update_server",
     "delete_server",
     "update_server_config",
+    "create_invite",
+    "delete_invite",
 ];
 
 const ORIGINS: [&str; 3] = ["direct", "proposal", "system"];
 
-const TARGET_KINDS: [&str; 8] = [
+const TARGET_KINDS: [&str; 9] = [
     "message",
     "forum_post",
     "user",
@@ -39,6 +41,7 @@ const TARGET_KINDS: [&str; 8] = [
     "server_config",
     "server_role",
     "instance_role",
+    "invite",
 ];
 
 const NOTIFICATION_KINDS: [&str; 5] = [

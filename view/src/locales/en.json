@@ -72,7 +72,9 @@
       "create_server": "Created server",
       "update_server": "Updated server",
       "delete_server": "Deleted server",
-      "update_server_config": "Updated server settings"
+      "update_server_config": "Updated server settings",
+      "create_invite": "Created invite link",
+      "delete_invite": "Deleted invite link"
     },
     "filters": {
       "heading": "Filters",
@@ -93,8 +95,18 @@
       "name": "Name",
       "slug": "URL slug"
     },
+    "invite": {
+      "expires": "Expires {{date}}",
+      "maxUses_one": "Up to {{count}} use",
+      "maxUses_other": "Up to {{count}} uses",
+      "neverExpires": "Never expires",
+      "noUseLimit": "No use limit",
+      "uses_one": "Used {{count}} time",
+      "uses_other": "Used {{count}} times"
+    },
     "labels": {
       "instance": "Instance",
+      "inviteCreatedBy": "Invite link created by",
       "none": "None",
       "reason": "Reason",
       "unavailable": "Unavailable item"
@@ -122,7 +134,8 @@
       "server": "Server",
       "server_config": "Server settings",
       "server_role": "Server role",
-      "instance_role": "Instance role"
+      "instance_role": "Instance role",
+      "invite": "Invite link"
     }
   },
 

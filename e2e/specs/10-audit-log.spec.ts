@@ -256,6 +256,12 @@ test('every audit log entry type renders readable details', async ({
   await send('delete', `${rolePath}/members/${member.userId}`);
   await send('delete', rolePath);
 
+  const { invite } = await send('post', `${serverPath}/invites`, {
+    maxUses: 5,
+    expiresAt: null,
+  });
+  await send('delete', `${serverPath}/invites/${invite.id}`);
+
   await makeProposalsRatifyWithOneAgreeVote(request, admin, server.id);
   const { poll: roleProposal } = await send('post', `${channelPath}/polls`, {
     body: 'Create a role for audit display coverage',
@@ -407,6 +413,8 @@ test('every audit log entry type renders readable details', async ({
     'Updated server',
     'Deleted server',
     'Updated server settings',
+    'Created invite link',
+    'Deleted invite link',
     'Created role',
     'Updated role',
     'Updated role permissions',
@@ -438,6 +446,8 @@ test('every audit log entry type renders readable details', async ({
   }
 
   await expect(entries.getByText('60%').first()).toBeVisible();
+  await expect(entries.getByText('Up to 5 uses').first()).toBeVisible();
+  await expect(entries.getByText('Never expires').first()).toBeVisible();
   await expect(entries.getByText('Majority vote').first()).toBeVisible();
   await expect(entries.getByText('#2196f3').first()).toBeVisible();
   await expect(entries.getByText('View Audit Log').first()).toBeVisible();

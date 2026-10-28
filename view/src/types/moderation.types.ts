@@ -42,7 +42,9 @@ export type AuditLogAction =
   | 'create_server'
   | 'update_server'
   | 'delete_server'
-  | 'update_server_config';
+  | 'update_server_config'
+  | 'create_invite'
+  | 'delete_invite';
 export type AuditLogTargetKind =
   | 'message'
   | 'forum_post'
@@ -51,7 +53,8 @@ export type AuditLogTargetKind =
   | 'server'
   | 'server_config'
   | 'server_role'
-  | 'instance_role';
+  | 'instance_role'
+  | 'invite';
 
 export interface AuditLogFilters {
   action?: AuditLogAction;

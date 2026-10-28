@@ -48,7 +48,9 @@ export const AuditLogEntry = ({ entry }: { entry: AuditLogEntryRes }) => {
 
         <div className="text-sm">
           <span className="text-muted-foreground">
-            {t(`auditLog.targets.${entry.target.kind}`)}:{' '}
+            {entry.target.kind === 'invite'
+              ? t('auditLog.labels.inviteCreatedBy')
+              : `${t(`auditLog.targets.${entry.target.kind}`)}:`}{' '}
           </span>
           {entry.applicationPath ? (
             <Link

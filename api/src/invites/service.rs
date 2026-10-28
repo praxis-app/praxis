@@ -1,16 +1,21 @@
 use axum::http::StatusCode;
 use chrono::Utc;
-use entity::{invites, users};
+use entity::{
+    enums::{ModerationAction, ModerationTargetKind},
+    invites, users,
+};
 use sea_orm::{
     prelude::Uuid, sea_query::Expr, ActiveModelTrait, ColumnTrait, Condition,
     ConnectionTrait, DatabaseConnection, EntityTrait, QueryFilter, QueryOrder,
-    Set,
+    QuerySelect, Set, TransactionTrait,
 };
+use serde_json::{json, Value};
 use uuid::Uuid as NativeUuid;
 
 use super::types::{InviteRequest, InviteResponse, InviteUserResponse};
 use crate::{
     common::{ApiError, AppResult},
+    moderation::{self, ModerationRecord},
     servers, users as users_service,
 };
 
@@ -116,8 +121,9 @@ pub(super) async fn create_invite(
     request: InviteRequest,
 ) -> AppResult<InviteResponse> {
     servers::ensure_server(database, server_id).await?;
-    ensure_user(database, user_id).await?;
+    let user = get_user(database, user_id).await?;
 
+    let transaction = database.begin().await.map_err(internal_error)?;
     let token = generate_token();
     let invite = invites::ActiveModel {
         id: Set(NativeUuid::new_v4()),
@@ -129,9 +135,30 @@ pub(super) async fn create_invite(
         expires_at: Set(request.expires_at),
         ..Default::default()
     }
-    .insert(database)
+    .insert(&transaction)
     .await
     .map_err(internal_error)?;
+    moderation::record_action(
+        &transaction,
+        ModerationRecord::direct(
+            user_id,
+            ModerationAction::CreateInvite,
+            ModerationTargetKind::Invite,
+            invite.id,
+            Some(server_id),
+            None,
+        )
+        .with_target_label(display_name(user))
+        .with_values(
+            None,
+            Some(json!({
+                "maxUses": invite.max_uses,
+                "expiresAt": invite.expires_at.map(|value| value.to_rfc3339()),
+            })),
+        ),
+    )
+    .await?;
+    transaction.commit().await.map_err(internal_error)?;
 
     shape_invite(database, invite).await
 }
@@ -176,14 +203,52 @@ pub(super) async fn delete_invite(
     database: &DatabaseConnection,
     server_id: Uuid,
     invite_id: Uuid,
+    actor_user_id: Uuid,
 ) -> AppResult<()> {
-    invites::Entity::delete_many()
-        .filter(invites::Column::Id.eq(invite_id))
+    let transaction = database.begin().await.map_err(internal_error)?;
+    let Some(invite) = invites::Entity::find_by_id(invite_id)
         .filter(invites::Column::ServerId.eq(server_id))
-        .exec(database)
+        .lock_exclusive()
+        .one(&transaction)
+        .await
+        .map_err(internal_error)?
+    else {
+        return Ok(());
+    };
+    let inviter = get_user(&transaction, invite.user_id).await?;
+    let before = invite_snapshot(&invite);
+    invites::Entity::delete_by_id(invite.id)
+        .exec(&transaction)
         .await
         .map_err(internal_error)?;
+    moderation::record_action(
+        &transaction,
+        ModerationRecord::direct(
+            actor_user_id,
+            ModerationAction::DeleteInvite,
+            ModerationTargetKind::Invite,
+            invite.id,
+            Some(server_id),
+            None,
+        )
+        .with_target_label(display_name(inviter))
+        .with_values(Some(before), None),
+    )
+    .await?;
+    transaction.commit().await.map_err(internal_error)?;
     Ok(())
+}
+
+fn invite_snapshot(invite: &invites::Model) -> Value {
+    json!({
+        "maxUses": invite.max_uses,
+        "expiresAt": invite.expires_at.map(|value| value.to_rfc3339()),
+        "uses": invite.uses,
+    })
+}
+
+fn display_name(user: users::Model) -> String {
+    user.display_name.unwrap_or(user.name)
 }
 
 fn validate_invite(invite: &invites::Model) -> bool {
@@ -228,15 +293,14 @@ async fn shape_invite(
     })
 }
 
-async fn ensure_user(
-    database: &DatabaseConnection,
+async fn get_user<C: ConnectionTrait>(
+    database: &C,
     user_id: Uuid,
-) -> AppResult<()> {
+) -> AppResult<users::Model> {
     users::Entity::find_by_id(user_id)
         .one(database)
         .await
         .map_err(internal_error)?
-        .map(|_| ())
         .ok_or_else(|| ApiError::new(StatusCode::NOT_FOUND, "User not found."))
 }
 

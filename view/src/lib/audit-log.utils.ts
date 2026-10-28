@@ -159,6 +159,25 @@ export const getAuditChanges = (
   };
 };
 
+export const getAuditInviteSettings = (
+  beforeValue: unknown,
+  afterValue: unknown,
+) => {
+  const value = isRecord(afterValue)
+    ? afterValue
+    : isRecord(beforeValue)
+      ? beforeValue
+      : {};
+  const toNumber = (field: unknown) =>
+    typeof field === 'number' ? field : null;
+  return {
+    isDeleted: !isRecord(afterValue),
+    maxUses: toNumber(value.maxUses),
+    expiresAt: typeof value.expiresAt === 'string' ? value.expiresAt : null,
+    uses: toNumber(value.uses),
+  };
+};
+
 export const getAuditFieldLabel = (key: string) => {
   if (key in translation.auditLog.fields) {
     return t(

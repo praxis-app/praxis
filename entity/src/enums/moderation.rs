@@ -89,6 +89,12 @@ pub enum ModerationAction {
     /// Changes a server's configuration
     #[sea_orm(string_value = "update_server_config")]
     UpdateServerConfig,
+
+    #[sea_orm(string_value = "create_invite")]
+    CreateInvite,
+
+    #[sea_orm(string_value = "delete_invite")]
+    DeleteInvite,
 }
 
 impl_enum_string_conversions!(ModerationAction {
@@ -112,6 +118,8 @@ impl_enum_string_conversions!(ModerationAction {
     UpdateServer => "update_server",
     DeleteServer => "delete_server",
     UpdateServerConfig => "update_server_config",
+    CreateInvite => "create_invite",
+    DeleteInvite => "delete_invite",
 });
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, EnumIter, DeriveActiveEnum)]
@@ -158,6 +166,8 @@ pub enum ModerationTargetKind {
     ServerRole,
     #[sea_orm(string_value = "instance_role")]
     InstanceRole,
+    #[sea_orm(string_value = "invite")]
+    Invite,
 }
 
 impl_enum_string_conversions!(ModerationTargetKind {
@@ -169,4 +179,5 @@ impl_enum_string_conversions!(ModerationTargetKind {
     ServerConfig => "server_config",
     ServerRole => "server_role",
     InstanceRole => "instance_role",
+    Invite => "invite",
 });
