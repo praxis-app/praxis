@@ -1,15 +1,27 @@
 import { type ServerAccessRes } from '@/types/server.types';
 import { t } from './shared.utils';
 
-export const getServerAccessRedirectMessage = ({
+export const isModeratedServerAccess = ({ status }: ServerAccessRes) =>
+  status === 'banned' || status === 'removed';
+
+export const getServerAccessCopy = ({
   status,
   serverName,
 }: ServerAccessRes) => {
   if (status === 'banned') {
-    return t('servers.access.redirectedBanned', { serverName });
+    return {
+      title: t('servers.access.bannedTitle', { serverName }),
+      description: t('servers.access.bannedDescription'),
+    };
   }
   if (status === 'removed') {
-    return t('servers.access.redirectedRemoved', { serverName });
+    return {
+      title: t('servers.access.removedTitle', { serverName }),
+      description: t('servers.access.removedDescription'),
+    };
   }
-  return t('servers.access.redirectedNoAccess');
+  return {
+    title: t('servers.access.noAccessTitle'),
+    description: t('servers.access.noAccessDescription'),
+  };
 };

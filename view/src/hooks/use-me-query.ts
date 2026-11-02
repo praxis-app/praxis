@@ -1,8 +1,8 @@
 import { api } from '@/client/api-client';
 import { LocalStorageKeys } from '@/constants/shared.constants';
 import {
-  isAccountSuspendedError,
-  notifyAccountSuspended,
+  isUnauthorizedError,
+  notifyIfAccountRevoked,
 } from '@/lib/auth-error.utils';
 import { useAppStore } from '@/store/app.store';
 import { useAuthStore } from '@/store/auth.store';
@@ -15,6 +15,8 @@ type UseMeQueryOptions = Omit<
   'queryKey'
 >;
 
+const DEFAULT_ME_QUERY_RETRIES = 2;
+
 export const useMeQuery = (options?: UseMeQueryOptions) => {
   const { accessToken, setIsLoggedIn, setAccessToken } = useAuthStore();
   const { setIsAppLoading } = useAppStore();
@@ -23,14 +25,19 @@ export const useMeQuery = (options?: UseMeQueryOptions) => {
     staleTime: 1000 * 60 * 30,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
-    retry: 2,
   };
 
   const enabled = !!accessToken && (options?.enabled ?? true);
+  const maxRetries =
+    typeof options?.retry === 'number'
+      ? options.retry
+      : DEFAULT_ME_QUERY_RETRIES;
   const resolvedOptions: UseMeQueryOptions = {
     ...defaultOptions,
     ...options,
     enabled,
+    retry: (failureCount, error) =>
+      !isUnauthorizedError(error) && failureCount < maxRetries,
   };
 
   const result = useQuery({
@@ -60,9 +67,7 @@ export const useMeQuery = (options?: UseMeQueryOptions) => {
         };
       } catch (error) {
         if ((error as AxiosError).response?.status === 401) {
-          if (isAccountSuspendedError(error as AxiosError)) {
-            notifyAccountSuspended();
-          }
+          notifyIfAccountRevoked(error as AxiosError);
           localStorage.removeItem(LocalStorageKeys.AccessToken);
           setAccessToken(null);
           setIsLoggedIn(false);

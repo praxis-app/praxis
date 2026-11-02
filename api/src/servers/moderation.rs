@@ -44,16 +44,13 @@ pub(super) async fn evict_server_member(
     server_id: Uuid,
     user_id: Uuid,
 ) {
-    let topic = PubSubTopic::notification(server_id, user_id).to_string();
-    if let Err(error) = pub_sub_service
-        .publish(
-            &topic,
-            serde_json::json!({
-                "type": "server-access-revoked",
-                "serverId": server_id,
-            }),
-        )
-        .await
+    if let Err(error) = notify_server_access_revoked(
+        database,
+        pub_sub_service,
+        server_id,
+        user_id,
+    )
+    .await
     {
         tracing::warn!("failed to notify removed member: {error}");
     }
@@ -72,6 +69,25 @@ pub(super) async fn evict_server_member(
             "failed to disconnect removed member from calls: {error}"
         );
     }
+}
+
+async fn notify_server_access_revoked(
+    database: &DatabaseConnection,
+    pub_sub_service: &PubSubService,
+    server_id: Uuid,
+    user_id: Uuid,
+) -> AppResult<()> {
+    let server = get_server(database, server_id).await?;
+    pub_sub_service
+        .publish(
+            &PubSubTopic::account(user_id).to_string(),
+            serde_json::json!({
+                "type": "server-access-revoked",
+                "serverId": server_id,
+                "serverSlug": server.slug,
+            }),
+        )
+        .await
 }
 
 pub(super) async fn can_manage_server_members(

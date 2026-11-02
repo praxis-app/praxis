@@ -187,6 +187,10 @@ pub(crate) fn account_suspended() -> ApiError {
     ApiError::new(StatusCode::UNAUTHORIZED, "This account is suspended.")
 }
 
+pub(crate) fn account_deleted() -> ApiError {
+    ApiError::new(StatusCode::UNAUTHORIZED, "This account has been deleted.")
+}
+
 pub(super) fn validate_signup(
     mut input: SignupRequest,
 ) -> AppResult<SignupRequest> {

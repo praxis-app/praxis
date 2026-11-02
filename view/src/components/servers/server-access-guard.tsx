@@ -1,7 +1,9 @@
 import { api } from '@/client/api-client';
 import { useMeQuery } from '@/hooks/use-me-query';
-import { getServerAccessRedirectMessage } from '@/lib/server-access.utils';
+import { t } from '@/lib/shared.utils';
+import { isModeratedServerAccess } from '@/lib/server-access.utils';
 import { useAuthStore } from '@/store/auth.store';
+import { useServerAccessStore } from '@/store/server-access.store';
 import { type InstanceAbility } from '@/types/role.types';
 import { createMongoAbility } from '@casl/ability';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -9,12 +11,10 @@ import { useEffect } from 'react';
 import { Navigate, Outlet, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ServerAccessDenied } from './server-access-denied';
-import { ServerAccessListener } from './server-access-listener';
-
-const SERVER_ACCESS_REDIRECT_TOAST_ID = 'server-access-redirect';
 
 export const ServerAccessGuard = () => {
   const { isLoggedIn, inviteToken } = useAuthStore();
+  const addNotice = useServerAccessStore((state) => state.addNotice);
 
   const { serverSlug } = useParams();
   const queryClient = useQueryClient();
@@ -55,20 +55,16 @@ export const ServerAccessGuard = () => {
     if (!isDenied || !access || !fallbackServer) {
       return;
     }
-    toast(getServerAccessRedirectMessage(access), {
-      id: SERVER_ACCESS_REDIRECT_TOAST_ID,
-      description: access.reason ?? undefined,
-    });
+    if (serverSlug && isModeratedServerAccess(access)) {
+      addNotice({ serverSlug, access });
+    } else {
+      toast(t('servers.access.redirectedNoAccess'));
+    }
     queryClient.invalidateQueries({ queryKey: ['me'] });
-  }, [isDenied, access, fallbackServer, queryClient]);
+  }, [addNotice, isDenied, access, fallbackServer, queryClient, serverSlug]);
 
   if (!isDenied) {
-    return (
-      <>
-        <ServerAccessListener />
-        <Outlet />
-      </>
-    );
+    return <Outlet />;
   }
   if (fallbackServer) {
     return <Navigate to={`/s/${fallbackServer.slug}`} replace />;

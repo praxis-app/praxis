@@ -21,10 +21,12 @@ import { grantInstancePermissions } from '../lib/instance-roles';
 import { createInvite } from '../lib/invites';
 import { type PermissionRule } from '../lib/permissions';
 import { grantServerPermissions } from '../lib/server-roles';
-import { createServer, joinServer } from '../lib/servers';
+import { createServer, enableAnonymousUsers, joinServer } from '../lib/servers';
+import { AuthPage } from '../pages/auth.page';
 import { NavigationPage } from '../pages/navigation.page';
 
 const TOMBSTONE = 'Removed by a moderator';
+const TOAST_LIFETIME_MS = 5_000;
 
 const PIXEL_PNG = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
@@ -131,6 +133,7 @@ const confirmModeration = async (
   confirmLabel: string,
   endpoint: RegExp,
   reason?: string,
+  method = 'POST',
 ) => {
   const dialog = page.getByRole('dialog', { name: dialogName });
   if (reason) {
@@ -138,7 +141,7 @@ const confirmModeration = async (
   }
   const moderationResponse = page.waitForResponse(
     (response) =>
-      response.request().method() === 'POST' && endpoint.test(response.url()),
+      response.request().method() === method && endpoint.test(response.url()),
   );
   await dialog.getByRole('button', { name: confirmLabel, exact: true }).click();
   expect((await moderationResponse).ok()).toBe(true);
@@ -166,19 +169,127 @@ const moderateMemberFromSettings = async (
   );
 };
 
+const addMemberManager = (
+  request: APIRequestContext,
+  admin: AuthenticatedUser,
+  server: ModerationServer,
+) =>
+  addServerMember(request, admin, server, 'manager', [
+    { subject: 'ServerMember', action: ['manage'] },
+  ]);
+
+const joinModerationServer = async (
+  request: APIRequestContext,
+  admin: AuthenticatedUser,
+  server: ModerationServer,
+  member: AuthenticatedUser,
+) => {
+  const inviteToken = await createInvite(request, admin, server.id);
+  await joinServer(request, member, server.id, inviteToken);
+};
+
+const addAccountModerator = async (request: APIRequestContext) => {
+  const moderator = await signUpViaApi(request, createTestUser('accounts'));
+  await grantInstancePermissions(
+    request,
+    moderator,
+    [{ subject: 'User', action: ['update', 'delete'] }],
+    'accounts',
+  );
+  return moderator;
+};
+
+const suspendFromSettings = async (page: Page, target: AuthenticatedUser) => {
+  await page
+    .getByRole('button', { name: `Actions for ${target.user.name}` })
+    .click();
+  await page.getByRole('menuitem', { name: 'Suspend account' }).click();
+  await confirmModeration(
+    page,
+    'Suspend this account?',
+    'Suspend',
+    /\/users\/[^/]+\/suspend$/,
+    'Repeated harassment',
+  );
+};
+
+const deleteFromSettings = async (page: Page, target: AuthenticatedUser) => {
+  await page
+    .getByRole('button', { name: `Actions for ${target.user.name}` })
+    .click();
+  await page.getByRole('menuitem', { name: 'Delete account' }).click();
+  await confirmModeration(
+    page,
+    'Delete this account?',
+    'Delete',
+    /\/users\/[^/]+$/,
+    'Repeated harassment',
+    'DELETE',
+  );
+};
+
+const expectSessionEnded = async (
+  page: Page,
+  message: string,
+  server: ModerationServer,
+) => {
+  await expect(page.getByText(message)).toBeVisible();
+  await new NavigationPage(page).expectAccessTokenCleared();
+  await expect(page).not.toHaveURL(new RegExp(`/s/${server.slug}(/|$)`));
+  await expect(page.getByRole('link', { name: 'Log in' })).toBeVisible();
+};
+
+const expectNoticeStaysUntilDismissed = async (page: Page, message: string) => {
+  await page.bringToFront();
+  await page.waitForTimeout(TOAST_LIFETIME_MS);
+  const notice = page.getByText(message);
+  await expect(notice).toBeVisible();
+  await page.getByRole('button', { name: 'Close toast' }).click();
+  await expect(notice).toHaveCount(0);
+};
+
+const serverAccessNotice = (
+  page: Page,
+  action: 'removed' | 'banned',
+  server: ModerationServer,
+) =>
+  page.getByRole('dialog', {
+    name: `You've been ${action} from ${server.name}`,
+  });
+
+const expectServerAccessNotice = async (
+  page: Page,
+  action: 'removed' | 'banned',
+  server: ModerationServer,
+) => {
+  await page.bringToFront();
+  const notice = serverAccessNotice(page, action, server);
+  await expect(notice).toBeVisible();
+  await expect(notice).toContainText('Repeated spam');
+};
+
+const dismissServerAccessNotice = async (
+  page: Page,
+  action: 'removed' | 'banned',
+  server: ModerationServer,
+) => {
+  const notice = serverAccessNotice(page, action, server);
+  await notice.getByRole('button', { name: 'OK', exact: true }).click();
+  await expect(notice).toHaveCount(0);
+};
+
 const expectServerAccessLost = async (
   page: Page,
   action: 'removed' | 'banned',
   server: ModerationServer,
 ) => {
-  await expect(
-    page
-      .getByText(
-        new RegExp(`(You were|You've been) ${action} from ${server.name}`),
-      )
-      .first(),
-  ).toBeVisible();
-  await expect(page.getByText('Repeated spam').first()).toBeVisible();
+  await expectServerAccessNotice(page, action, server);
+  await page.waitForTimeout(TOAST_LIFETIME_MS);
+  await expect(serverAccessNotice(page, action, server)).toBeVisible();
+  await expect(page.getByText(`You were ${action} from`)).toHaveCount(0);
+  await page.mouse.click(5, 5);
+  await expect(serverAccessNotice(page, action, server)).toBeVisible();
+  await dismissServerAccessNotice(page, action, server);
   await expect(page).not.toHaveURL(new RegExp(`/s/${server.slug}(/|$)`));
 };
 
@@ -488,5 +599,432 @@ test('moderator can end an active call for all participants', async ({
   } finally {
     await participantPage.context().close();
     await managerPage.context().close();
+  }
+});
+
+test('members are told right away when moderated in a server they are not viewing', async ({
+  browser,
+  request,
+}) => {
+  test.setTimeout(60_000);
+
+  const admin = await getOrCreateInstanceAdmin(request);
+  const viewedServer = await createModerationServer(request, admin);
+  const removedFrom = await createModerationServer(request, admin);
+  const bannedFrom = await createModerationServer(request, admin);
+  const member = await addServerMember(
+    request,
+    admin,
+    viewedServer,
+    'elsewhere',
+  );
+  await joinModerationServer(request, admin, removedFrom, member);
+  await joinModerationServer(request, admin, bannedFrom, member);
+  const removingManager = await addMemberManager(request, admin, removedFrom);
+  const banningManager = await addMemberManager(request, admin, bannedFrom);
+
+  const viewedPath = `/s/${viewedServer.slug}/c/${viewedServer.generalChannelId}`;
+  const memberPage = await openPageAs(browser, member, viewedPath);
+  const removingPage = await openPageAs(
+    browser,
+    removingManager,
+    `/s/${removedFrom.slug}/settings/members`,
+  );
+  const banningPage = await openPageAs(
+    browser,
+    banningManager,
+    `/s/${bannedFrom.slug}/settings/members`,
+  );
+
+  try {
+    await expect(
+      memberPage.getByPlaceholder('Send a message...'),
+    ).toBeVisible();
+
+    await moderateMemberFromSettings(
+      removingPage,
+      member,
+      'Remove member',
+      'Remove server member?',
+      'Remove',
+      /\/members\/[^/]+\/remove$/,
+    );
+    await expectServerAccessNotice(memberPage, 'removed', removedFrom);
+
+    await moderateMemberFromSettings(
+      banningPage,
+      member,
+      'Ban member',
+      'Ban server member?',
+      'Ban',
+      /\/members\/[^/]+\/ban$/,
+    );
+    await dismissServerAccessNotice(memberPage, 'removed', removedFrom);
+    await expectServerAccessNotice(memberPage, 'banned', bannedFrom);
+    await dismissServerAccessNotice(memberPage, 'banned', bannedFrom);
+
+    await expect(memberPage).toHaveURL(new RegExp(viewedPath));
+    await expect(
+      memberPage.getByPlaceholder('Send a message...'),
+    ).toBeVisible();
+  } finally {
+    await memberPage.context().close();
+    await removingPage.context().close();
+    await banningPage.context().close();
+  }
+});
+
+test('members are told right away when moderated from a page outside the server', async ({
+  browser,
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const manager = await addMemberManager(request, admin, server);
+  const member = await addServerMember(request, admin, server, 'outside');
+
+  const memberPage = await openPageAs(
+    browser,
+    member,
+    `/s/${server.slug}/c/${server.generalChannelId}`,
+  );
+  const managerPage = await openPageAs(
+    browser,
+    manager,
+    `/s/${server.slug}/settings/members`,
+  );
+
+  try {
+    await expect(
+      memberPage.getByPlaceholder('Send a message...'),
+    ).toBeVisible();
+    await memberPage.goto('/users/settings');
+    await expect(memberPage.getByRole('textbox').first()).toBeVisible();
+
+    await moderateMemberFromSettings(
+      managerPage,
+      member,
+      'Ban member',
+      'Ban server member?',
+      'Ban',
+      /\/members\/[^/]+\/ban$/,
+    );
+
+    await expectServerAccessNotice(memberPage, 'banned', server);
+    await dismissServerAccessNotice(memberPage, 'banned', server);
+    await expect(memberPage).toHaveURL(/\/users\/settings$/);
+
+    await memberPage.goto(`/s/${server.slug}`);
+    await expectServerAccessLost(memberPage, 'banned', server);
+  } finally {
+    await memberPage.context().close();
+    await managerPage.context().close();
+  }
+});
+
+test('anonymous members lose server access right away when moderated', async ({
+  browser,
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const manager = await addMemberManager(request, admin, server);
+  await enableAnonymousUsers(request, admin, server.id);
+  const inviteToken = await createInvite(request, admin, server.id);
+  const anonResponse = await request.post('/api/auth/anon', {
+    data: { inviteToken },
+  });
+  await expect(anonResponse).toBeOK();
+  const { access_token: accessToken } = (await anonResponse.json()) as {
+    access_token: string;
+  };
+  const meResponse = await request.get('/api/users/me', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  await expect(meResponse).toBeOK();
+  const {
+    user: { id: userId, name },
+  } = (await meResponse.json()) as { user: { id: string; name: string } };
+  const anonymous = {
+    accessToken,
+    userId,
+    user: { ...createTestUser('anonymous'), name },
+  };
+
+  const anonymousPage = await openPageAs(
+    browser,
+    anonymous,
+    `/s/${server.slug}/c/${server.generalChannelId}`,
+  );
+  const managerPage = await openPageAs(
+    browser,
+    manager,
+    `/s/${server.slug}/settings/members`,
+  );
+
+  try {
+    await expect(
+      anonymousPage.getByPlaceholder('Send a message...'),
+    ).toBeVisible();
+
+    await moderateMemberFromSettings(
+      managerPage,
+      anonymous,
+      'Remove member',
+      'Remove server member?',
+      'Remove',
+      /\/members\/[^/]+\/remove$/,
+    );
+
+    await expectServerAccessNotice(anonymousPage, 'removed', server);
+    await dismissServerAccessNotice(anonymousPage, 'removed', server);
+    await expect(
+      anonymousPage.getByRole('heading', {
+        name: `You've been removed from ${server.name}`,
+      }),
+    ).toBeVisible();
+    await expect(
+      anonymousPage.getByPlaceholder('Send a message...'),
+    ).toHaveCount(0);
+  } finally {
+    await anonymousPage.context().close();
+    await managerPage.context().close();
+  }
+});
+
+test('suspended users are signed out right away while viewing a channel', async ({
+  browser,
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const moderator = await addAccountModerator(request);
+  const target = await addServerMember(request, admin, server, 'suspended');
+
+  const targetPage = await openPageAs(
+    browser,
+    target,
+    `/s/${server.slug}/c/${server.generalChannelId}`,
+  );
+  const moderatorPage = await openPageAs(browser, moderator, '/settings/users');
+
+  try {
+    await expect(
+      targetPage.getByPlaceholder('Send a message...'),
+    ).toBeVisible();
+
+    await suspendFromSettings(moderatorPage, target);
+
+    await expectSessionEnded(
+      targetPage,
+      'This account has been suspended.',
+      server,
+    );
+    await expectNoticeStaysUntilDismissed(
+      targetPage,
+      'This account has been suspended.',
+    );
+  } finally {
+    await targetPage.context().close();
+    await moderatorPage.context().close();
+  }
+});
+
+test('deleted users are told their account was deleted right away', async ({
+  browser,
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const moderator = await addAccountModerator(request);
+  const target = await addServerMember(request, admin, server, 'deleted');
+
+  const targetPage = await openPageAs(
+    browser,
+    target,
+    `/s/${server.slug}/c/${server.generalChannelId}`,
+  );
+  const moderatorPage = await openPageAs(browser, moderator, '/settings/users');
+
+  try {
+    await expect(
+      targetPage.getByPlaceholder('Send a message...'),
+    ).toBeVisible();
+
+    await deleteFromSettings(moderatorPage, target);
+
+    await expectSessionEnded(
+      targetPage,
+      'This account has been deleted.',
+      server,
+    );
+    await expect(
+      targetPage.getByText('This account has been suspended.'),
+    ).toHaveCount(0);
+    await expectNoticeStaysUntilDismissed(
+      targetPage,
+      'This account has been deleted.',
+    );
+  } finally {
+    await targetPage.context().close();
+    await moderatorPage.context().close();
+  }
+});
+
+test('suspended users are signed out right away on a page with no server subscription', async ({
+  browser,
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const manager = await addMemberManager(request, admin, server);
+  const moderator = await addAccountModerator(request);
+  const target = await addServerMember(request, admin, server, 'serverless');
+
+  const serversResponse = await request.get('/api/users/me/servers', {
+    headers: authorizationHeaders(target),
+  });
+  await expect(serversResponse).toBeOK();
+  const { servers } = (await serversResponse.json()) as {
+    servers: { id: string }[];
+  };
+  for (const { id } of servers.filter(({ id }) => id !== server.id)) {
+    const removal = await request.post(
+      `/api/servers/${id}/members/${target.userId}/remove`,
+      {
+        headers: authorizationHeaders(admin),
+        data: { reason: 'Clearing memberships' },
+      },
+    );
+    await expect(removal).toBeOK();
+  }
+
+  const targetPage = await openPageAs(
+    browser,
+    target,
+    `/s/${server.slug}/c/${server.generalChannelId}`,
+  );
+  const managerPage = await openPageAs(
+    browser,
+    manager,
+    `/s/${server.slug}/settings/members`,
+  );
+  const moderatorPage = await openPageAs(browser, moderator, '/settings/users');
+
+  try {
+    await expect(
+      targetPage.getByPlaceholder('Send a message...'),
+    ).toBeVisible();
+
+    await moderateMemberFromSettings(
+      managerPage,
+      target,
+      'Remove member',
+      'Remove server member?',
+      'Remove',
+      /\/members\/[^/]+\/remove$/,
+    );
+    await expectServerAccessNotice(targetPage, 'removed', server);
+
+    await suspendFromSettings(moderatorPage, target);
+
+    await expectSessionEnded(
+      targetPage,
+      'This account has been suspended.',
+      server,
+    );
+  } finally {
+    await targetPage.context().close();
+    await managerPage.context().close();
+    await moderatorPage.context().close();
+  }
+});
+
+test('suspended users are removed from an active call right away', async ({
+  browser,
+  request,
+}) => {
+  test.setTimeout(90_000);
+
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const moderator = await addAccountModerator(request);
+  const target = await addServerMember(request, admin, server, 'in-call');
+
+  const targetPage = await openPageAs(
+    browser,
+    target,
+    `/s/${server.slug}/c/${server.generalChannelId}`,
+  );
+  const moderatorPage = await openPageAs(browser, moderator, '/settings/users');
+
+  try {
+    const startCallResponse = targetPage.waitForResponse(
+      (response) =>
+        response.request().method() === 'POST' &&
+        /\/calls$/.test(response.url()) &&
+        response.status() === 200,
+    );
+    await startCallFromTopNav(targetPage);
+    await startCallResponse;
+    await expect(
+      targetPage.getByRole('button', { name: 'Leave call' }),
+    ).toBeVisible();
+
+    await suspendFromSettings(moderatorPage, target);
+
+    await expect(
+      targetPage.getByText('This account has been suspended.'),
+    ).toBeVisible();
+    await expect(
+      targetPage.getByRole('button', { name: 'Leave call' }),
+    ).toHaveCount(0);
+  } finally {
+    await targetPage.context().close();
+    await moderatorPage.context().close();
+  }
+});
+
+test('account revoked notice clears when another account signs in', async ({
+  browser,
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const moderator = await addAccountModerator(request);
+  const target = await addServerMember(request, admin, server, 'suspended');
+  const nextUser = await addServerMember(request, admin, server, 'next');
+
+  const targetPage = await openPageAs(
+    browser,
+    target,
+    `/s/${server.slug}/c/${server.generalChannelId}`,
+  );
+  const moderatorPage = await openPageAs(browser, moderator, '/settings/users');
+
+  try {
+    await expect(
+      targetPage.getByPlaceholder('Send a message...'),
+    ).toBeVisible();
+
+    await suspendFromSettings(moderatorPage, target);
+    await expectSessionEnded(
+      targetPage,
+      'This account has been suspended.',
+      server,
+    );
+
+    await targetPage.getByRole('link', { name: 'Log in' }).click();
+    await new AuthPage(targetPage).logIn(nextUser.user);
+
+    await expect(targetPage.getByRole('link', { name: 'Log in' })).toHaveCount(
+      0,
+    );
+    await expect(
+      targetPage.getByText('This account has been suspended.'),
+    ).toHaveCount(0);
+  } finally {
+    await targetPage.context().close();
+    await moderatorPage.context().close();
   }
 });

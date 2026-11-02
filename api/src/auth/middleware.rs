@@ -1,4 +1,4 @@
-//! Rejects requests from suspended accounts on every API route. A router layer
+//! Rejects requests from suspended or deleted accounts on every API route. A router layer
 //! runs the check once per request, so no handler can skip it
 
 // TODO: Examine whether other modules warrant their own `middleware.rs`
@@ -17,9 +17,9 @@ use std::sync::Arc;
 
 use super::{
     extractors::{authenticate_token, bearer_token},
-    service::account_suspended,
+    service::{account_deleted, account_suspended},
 };
-use crate::users;
+use crate::users::{self, AccountStatus};
 
 #[derive(Clone, Debug)]
 pub(crate) struct ActiveAccountState {
@@ -48,9 +48,14 @@ pub(crate) async fn require_active_account(
         .and_then(|token| authenticate_token(token, &state.jwt_secret).ok());
 
     if let Some(user_id) = user_id {
-        match users::is_active_user(&state.database, user_id).await {
-            Ok(true) => {}
-            Ok(false) => return account_suspended().into_response(),
+        match users::get_account_status(&state.database, user_id).await {
+            Ok(AccountStatus::Active) => {}
+            Ok(AccountStatus::Suspended) => {
+                return account_suspended().into_response()
+            }
+            Ok(AccountStatus::Deleted) => {
+                return account_deleted().into_response()
+            }
             Err(error) => return error.into_response(),
         }
     }

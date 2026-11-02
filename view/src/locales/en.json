@@ -237,6 +237,7 @@
       "confirmLogOut": "Use this dialog to log out of your account."
     },
     "errors": {
+      "accountDeleted": "This account has been deleted.",
       "accountSuspended": "This account has been suspended.",
       "invalidEmail": "Email is invalid.",
       "longEmail": "Email cannot exceed 254 characters",
@@ -1192,6 +1193,7 @@
       "noServersAvailable": "No other servers available."
     },
     "access": {
+      "acknowledge": "OK",
       "bannedTitle": "You've been banned from {{serverName}}",
       "bannedDescription": "A moderator banned you from this server. You won't be able to rejoin unless the ban is lifted.",
       "removedTitle": "You've been removed from {{serverName}}",
@@ -1199,8 +1201,6 @@
       "noAccessTitle": "You're not a member of this server",
       "noAccessDescription": "You'll need an invite link to join this server.",
       "reasonLabel": "Reason given",
-      "redirectedBanned": "You were banned from {{serverName}}.",
-      "redirectedRemoved": "You were removed from {{serverName}}.",
       "redirectedNoAccess": "You're not a member of that server."
     },
     "errors": {

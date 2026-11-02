@@ -142,10 +142,17 @@ pub(crate) async fn is_anonymous_user(
     Ok(user.anonymous)
 }
 
-pub(crate) async fn is_active_user<C>(
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(crate) enum AccountStatus {
+    Active,
+    Suspended,
+    Deleted,
+}
+
+pub(crate) async fn get_account_status<C>(
     database: &C,
     user_id: Uuid,
-) -> AppResult<bool>
+) -> AppResult<AccountStatus>
 where
     C: ConnectionTrait,
 {
@@ -154,7 +161,21 @@ where
         .await
         .map_err(internal_error)?;
 
-    Ok(user.is_some_and(|user| !user.locked))
+    Ok(match user {
+        Some(user) if user.deleted_at.is_some() => AccountStatus::Deleted,
+        Some(user) if !user.locked => AccountStatus::Active,
+        _ => AccountStatus::Suspended,
+    })
+}
+
+pub(crate) async fn is_active_user<C>(
+    database: &C,
+    user_id: Uuid,
+) -> AppResult<bool>
+where
+    C: ConnectionTrait,
+{
+    Ok(get_account_status(database, user_id).await? == AccountStatus::Active)
 }
 
 pub(crate) async fn authenticate(

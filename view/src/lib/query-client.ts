@@ -6,9 +6,8 @@ import {
 } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import {
-  isAccountSuspendedError,
   isUnauthorizedError,
-  notifyAccountSuspended,
+  notifyIfAccountRevoked,
 } from './auth-error.utils';
 
 const MAX_QUERY_RETRIES = 3;
@@ -25,9 +24,7 @@ const endRevokedSession = (error: Error, queryKey?: QueryKey) => {
   if (!isUnauthorizedError(error)) {
     return;
   }
-  if (isAccountSuspendedError(error)) {
-    notifyAccountSuspended();
-  }
+  notifyIfAccountRevoked(error);
   if (queryKey?.[0] !== 'me') {
     void queryClient.invalidateQueries(
       { queryKey: ['me'], exact: true },
