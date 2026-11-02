@@ -46,6 +46,32 @@ export const SERVER_PERMISSION_KEYS = [
   'viewAuditLog',
 ] as const;
 
+export const SERVER_PERMISSION_SECTIONS = [
+  {
+    name: 'serverManagement',
+    permissions: [
+      'manageServerSettings',
+      'manageChannels',
+      'manageServerRoles',
+      'createInvites',
+      'manageInvites',
+    ],
+  },
+  {
+    name: 'proposalsAndVoting',
+    permissions: ['blockProposals'],
+  },
+  {
+    name: 'moderation',
+    permissions: [
+      'manageServerMembers',
+      'moderateContent',
+      'manageCalls',
+      'viewAuditLog',
+    ],
+  },
+] as const;
+
 export const INSTANCE_PERMISSION_KEYS = [
   'manageInstanceSettings',
   'manageInstanceRoles',

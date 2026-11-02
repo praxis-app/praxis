@@ -259,3 +259,88 @@ function createChannelViaApi(
     },
   });
 }
+
+test('server role permissions are grouped into labeled sections and save correctly', async ({
+  context,
+  page,
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await getDefaultServer(request, admin);
+  const createRoleResponse = await request.post(
+    `/api/servers/${server.id}/roles`,
+    {
+      headers: authorizationHeaders(admin),
+      data: {
+        name: `e2e-sections-${randomUUID().slice(0, 8)}`,
+        color: '#2196f3',
+      },
+    },
+  );
+  await expect(createRoleResponse).toBeOK();
+  const { serverRole } = (await createRoleResponse.json()) as {
+    serverRole: { id: string };
+  };
+
+  await seedAuthenticatedSession(context, admin.accessToken);
+  await page.goto(`/s/${server.slug}/settings/roles/${serverRole.id}/edit`);
+  await page.getByRole('tab', { name: 'Permissions' }).click();
+
+  const sections = {
+    'Server management': [
+      'Manage settings',
+      'Manage channels',
+      'Manage roles',
+      'Create invites',
+      'Manage invites',
+    ],
+    'Proposals and voting': ['Block proposals'],
+    Moderation: [
+      'Manage members',
+      'Moderate content',
+      'Manage calls',
+      'View Audit Log',
+    ],
+  };
+
+  for (const [label, permissionNames] of Object.entries(sections)) {
+    const section = page.getByRole('group', { name: label });
+    await expect(section.getByRole('switch')).toHaveCount(
+      permissionNames.length,
+    );
+    for (const permissionName of permissionNames) {
+      await expect(
+        section.getByRole('switch', { name: permissionName }),
+      ).toBeVisible();
+    }
+  }
+
+  await page.getByRole('switch', { name: 'Manage roles' }).click();
+  await page.getByRole('switch', { name: 'Block proposals' }).click();
+  await page.getByRole('switch', { name: 'Moderate content' }).click();
+
+  const savePermissionsResponse = page.waitForResponse(
+    (response) =>
+      response.request().method() === 'PUT' &&
+      response.url().endsWith('/permissions'),
+  );
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  const saveRequest = (await savePermissionsResponse).request();
+  expect(saveRequest.postDataJSON().permissions).toEqual(
+    expect.arrayContaining([
+      { subject: 'ServerRole', action: ['manage'] },
+      { subject: 'ProposalBlock', action: ['create'] },
+      { subject: 'Message', action: ['delete'] },
+    ]),
+  );
+  expect(saveRequest.postDataJSON().permissions).toHaveLength(3);
+
+  await page.reload();
+  await page.getByRole('tab', { name: 'Permissions' }).click();
+  await expect(
+    page.getByRole('switch', { name: 'Moderate content' }),
+  ).toBeChecked();
+  await expect(
+    page.getByRole('switch', { name: 'Manage channels' }),
+  ).not.toBeChecked();
+});

@@ -996,6 +996,11 @@
   },
 
   "permissions": {
+    "sections": {
+      "moderation": "Moderation",
+      "proposalsAndVoting": "Proposals and voting",
+      "serverManagement": "Server management"
+    },
     "names": {
       "blockProposals": "Block proposals",
       "createEvents": "Create events",

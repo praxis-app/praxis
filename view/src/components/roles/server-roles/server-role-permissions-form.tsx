@@ -1,5 +1,5 @@
 import { api } from '@/client/api-client';
-import { SERVER_PERMISSION_KEYS } from '@/constants/role.constants';
+import { SERVER_PERMISSION_SECTIONS } from '@/constants/role.constants';
 import { useServerData } from '@/hooks/use-server-data';
 import { getServerPermissionValues } from '@/lib/role.utils';
 import {
@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { RolePermissionSection } from '../role-permission-section';
 import { RolePermissionToggle } from '../role-permission-toggle';
 
 // TODO: Add form schema with zod
@@ -123,20 +124,35 @@ export const ServerRolePermissionsForm = ({ serverRole }: Props) => {
         name="permissions"
         control={control}
         render={({ field: { onChange, value } }) => (
-          <>
-            {SERVER_PERMISSION_KEYS.map((permissionName, index) => (
-              <RolePermissionToggle
-                key={permissionName}
-                permissionName={permissionName}
-                checked={value[index].value}
-                onChange={(checked) => {
-                  const newPermissions = [...value];
-                  newPermissions[index].value = checked;
-                  onChange(newPermissions);
-                }}
-              />
+          <div className="space-y-6">
+            {SERVER_PERMISSION_SECTIONS.map(({ name, permissions }) => (
+              <RolePermissionSection
+                key={name}
+                label={t(`permissions.sections.${name}`)}
+              >
+                {permissions.map((permissionName) => (
+                  <RolePermissionToggle
+                    key={permissionName}
+                    className="mb-0 items-center px-5 py-4"
+                    permissionName={permissionName}
+                    checked={value.some(
+                      (permission) =>
+                        permission.name === permissionName && permission.value,
+                    )}
+                    onChange={(checked) =>
+                      onChange(
+                        value.map((permission) =>
+                          permission.name === permissionName
+                            ? { ...permission, value: checked }
+                            : permission,
+                        ),
+                      )
+                    }
+                  />
+                ))}
+              </RolePermissionSection>
             ))}
-          </>
+          </div>
         )}
       />
 
