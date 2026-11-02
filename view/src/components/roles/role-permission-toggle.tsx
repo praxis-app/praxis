@@ -30,7 +30,9 @@ export const RolePermissionToggle = ({
     >
       <div>
         <p className="text-sm font-medium">{displayName}</p>
-        <p className="text-muted-foreground mt-1 text-xs">{description}</p>
+        <p className="text-muted-foreground mt-1 text-xs text-pretty">
+          {description}
+        </p>
       </div>
 
       <Switch

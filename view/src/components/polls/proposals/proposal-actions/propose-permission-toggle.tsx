@@ -38,7 +38,9 @@ export const ProposePermissionToggle = ({
         >
           {displayName}
         </Label>
-        <p className="text-muted-foreground text-xs">{description}</p>
+        <p className="text-muted-foreground text-xs text-pretty">
+          {description}
+        </p>
       </div>
 
       <Switch
