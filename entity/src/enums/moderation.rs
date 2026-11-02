@@ -90,9 +90,11 @@ pub enum ModerationAction {
     #[sea_orm(string_value = "update_server_config")]
     UpdateServerConfig,
 
+    /// Creates an invite link for a server
     #[sea_orm(string_value = "create_invite")]
     CreateInvite,
 
+    /// Deletes a server's invite link
     #[sea_orm(string_value = "delete_invite")]
     DeleteInvite,
 }
