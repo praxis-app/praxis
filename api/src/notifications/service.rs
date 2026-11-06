@@ -31,6 +31,11 @@ const DEFAULT_LIMIT: u64 = 25;
 const MAX_LIMIT: u64 = 50;
 const MERGE_ATTEMPTS: u8 = 3;
 
+const SERVER_EXIT_KINDS: [NotificationKind; 2] = [
+    NotificationKind::MemberRemoved,
+    NotificationKind::MemberBanned,
+];
+
 /// The single creation seam: callers pass their own transaction and publish
 /// only after it commits
 pub(crate) async fn create_notifications<C>(
@@ -85,6 +90,9 @@ where
         .collect();
 
     let readers: HashSet<Uuid> = match input.channel_id {
+        _ if SERVER_EXIT_KINDS.contains(&input.kind) => {
+            candidates.iter().copied().collect()
+        }
         Some(channel_id) => {
             let channel_exists = channels::Entity::find_by_id(channel_id)
                 .filter(channels::Column::ServerId.eq(input.server_id))
@@ -253,6 +261,9 @@ fn notification_rows(
             poll_id: Set(target_poll_id(input.target)),
             server_role_id: Set(target_server_role_id(input.target)),
             event_id: Set(target_event_id(input.target)),
+            moderation_action_id: Set(target_moderation_action_id(
+                input.target,
+            )),
             vote_type: Set(input.vote_type),
             unread_count: Set(unread_count),
             ..Default::default()
@@ -328,17 +339,48 @@ pub(crate) async fn publish_notifications(
         return;
     };
     for (notification, shaped) in created.iter().zip(shaped) {
-        let topic = PubSubTopic::notification(
-            notification.server_id,
-            notification.recipient_user_id,
-        )
-        .to_string();
         let body = serde_json::json!({
             "type": "notification",
             "notification": shaped,
         });
-        if let Err(error) = pub_sub_service.publish(&topic, body).await {
-            tracing::warn!("failed to publish notification: {error}");
+        for topic in notification_topics(database, notification).await {
+            if let Err(error) =
+                pub_sub_service.publish(&topic, body.clone()).await
+            {
+                tracing::warn!("failed to publish notification: {error}");
+            }
+        }
+    }
+}
+
+async fn notification_topics(
+    database: &DatabaseConnection,
+    notification: &notifications::Model,
+) -> Vec<String> {
+    let recipient_id = notification.recipient_user_id;
+    if !SERVER_EXIT_KINDS.contains(&notification.kind) {
+        return vec![PubSubTopic::notification(
+            notification.server_id,
+            recipient_id,
+        )
+        .to_string()];
+    }
+
+    match server_members::Entity::find()
+        .filter(server_members::Column::UserId.eq(recipient_id))
+        .all(database)
+        .await
+    {
+        Ok(memberships) => memberships
+            .into_iter()
+            .map(|membership| {
+                PubSubTopic::notification(membership.server_id, recipient_id)
+                    .to_string()
+            })
+            .collect(),
+        Err(error) => {
+            tracing::warn!("failed to load notification topics: {error}");
+            Vec::new()
         }
     }
 }
@@ -563,8 +605,7 @@ pub(super) async fn mark_all_read(
             notifications::Column::ReadAt,
             sea_orm::sea_query::Expr::value(Some(Utc::now().fixed_offset())),
         )
-        .filter(notifications::Column::RecipientUserId.eq(user_id))
-        .filter(notifications::Column::ServerId.eq(server_id))
+        .filter(scope_condition(server_id, user_id))
         .filter(notifications::Column::ReadAt.is_null())
         .exec(database)
         .await
@@ -583,8 +624,7 @@ pub(super) async fn delete_notification(
 
     let result = notifications::Entity::delete_many()
         .filter(notifications::Column::Id.eq(notification_id))
-        .filter(notifications::Column::RecipientUserId.eq(user_id))
-        .filter(notifications::Column::ServerId.eq(server_id))
+        .filter(scope_condition(server_id, user_id))
         .exec(database)
         .await
         .map_err(internal_error)?;
@@ -602,8 +642,7 @@ pub(super) async fn clear_notifications(
     ensure_member(database, server_id, user_id).await?;
 
     notifications::Entity::delete_many()
-        .filter(notifications::Column::RecipientUserId.eq(user_id))
-        .filter(notifications::Column::ServerId.eq(server_id))
+        .filter(scope_condition(server_id, user_id))
         .exec(database)
         .await
         .map_err(internal_error)?;
@@ -634,9 +673,17 @@ fn get_scoped_notifications(
     server_id: Uuid,
     user_id: Uuid,
 ) -> sea_orm::Select<notifications::Entity> {
-    notifications::Entity::find()
-        .filter(notifications::Column::RecipientUserId.eq(user_id))
-        .filter(notifications::Column::ServerId.eq(server_id))
+    notifications::Entity::find().filter(scope_condition(server_id, user_id))
+}
+
+fn scope_condition(server_id: Uuid, user_id: Uuid) -> Condition {
+    Condition::all()
+        .add(notifications::Column::RecipientUserId.eq(user_id))
+        .add(
+            Condition::any()
+                .add(notifications::Column::ServerId.eq(server_id))
+                .add(notifications::Column::Kind.is_in(SERVER_EXIT_KINDS)),
+        )
 }
 
 fn before_condition(cursor: PaginationCursor) -> Condition {
@@ -677,6 +724,13 @@ fn target_server_role_id(target: NotificationTarget) -> Option<Uuid> {
 fn target_event_id(target: NotificationTarget) -> Option<Uuid> {
     match target {
         NotificationTarget::Event(id) => Some(id),
+        _ => None,
+    }
+}
+
+fn target_moderation_action_id(target: NotificationTarget) -> Option<Uuid> {
+    match target {
+        NotificationTarget::ModerationAction(id) => Some(id),
         _ => None,
     }
 }

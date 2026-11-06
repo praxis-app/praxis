@@ -97,6 +97,11 @@ fn allows_notification_kind(
         NotificationKind::ServerRoleGranted => {
             config.role_notifications_enabled
         }
+        NotificationKind::MessageRemoved
+        | NotificationKind::ForumPostRemoved
+        | NotificationKind::MemberRemoved
+        | NotificationKind::MemberBanned
+        | NotificationKind::CallParticipantRemoved => true,
     }
 }
 

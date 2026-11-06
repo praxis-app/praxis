@@ -10,6 +10,7 @@ import { LocalStorageKeys } from '@/constants/shared.constants';
 import { useAuthData } from '@/hooks/use-auth-data';
 import { useFocusHighlight } from '@/hooks/use-focus-highlight';
 import { useInfiniteScroll } from '@/hooks/use-infinite-scroll';
+import { useMessageRemoval } from '@/hooks/use-message-removal';
 import { useServerData } from '@/hooks/use-server-data';
 import { cn, t } from '@/lib/shared.utils';
 import { useAppStore } from '@/store/app.store';
@@ -25,6 +26,7 @@ type FeedScrollMode = 'bottom-anchored' | 'natural';
 
 interface Props {
   channel?: ChannelRes;
+  callId?: string;
   feed: FeedItemRes[];
   feedQueryKey: QueryKey;
   feedBoxRef: RefObject<HTMLDivElement | null>;
@@ -53,6 +55,7 @@ const copyLinkToThread = (thread: ThreadIdentity) => {
 
 export const Feed = ({
   channel,
+  callId,
   feed,
   feedQueryKey,
   feedBoxRef,
@@ -81,6 +84,10 @@ export const Feed = ({
   const { isAppLoading } = useAppStore();
   const { me, isAnon, isLoggedIn } = useAuthData();
   const { serverId } = useServerData();
+  const getRemoveHandler = useMessageRemoval({
+    channelId: channel?.id,
+    callId,
+  });
 
   const isBottomAnchored = scrollMode === 'bottom-anchored';
 
@@ -267,6 +274,7 @@ export const Feed = ({
             serverId={serverId}
             message={item}
             me={me}
+            onRemove={getRemoveHandler(item)}
             onOpenThread={
               onOpenThread &&
               ((rootId: string) =>

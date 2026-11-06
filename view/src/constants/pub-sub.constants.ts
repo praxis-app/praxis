@@ -4,4 +4,10 @@ export enum PubSubMessageType {
   POLL = 'poll',
   CALL = 'call',
   PROPOSAL_MOVED = 'proposalMoved',
+  SERVER_ACCESS_REVOKED = 'server-access-revoked',
+  CALL_MODERATED = 'call-moderated',
+}
+
+export enum PubSubMessageAction {
+  REMOVED = 'removed',
 }

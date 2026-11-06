@@ -92,6 +92,7 @@ pub(super) async fn create_server_role(
     let server_role = service::create_server_role(
         &state.database,
         context.server_id,
+        context.user_id,
         payload,
     )
     .await?;
@@ -107,6 +108,7 @@ pub(super) async fn update_server_role(
         &state.database,
         context.server_id,
         context.server_role_id,
+        context.user_id,
         payload,
     )
     .await?;
@@ -122,6 +124,7 @@ pub(super) async fn update_server_role_permissions(
         &state.database,
         context.server_id,
         context.server_role_id,
+        context.user_id,
         payload.permissions,
     )
     .await?;
@@ -162,6 +165,7 @@ pub(super) async fn remove_server_role_member(
         context.server_id,
         context.server_role_id,
         context.member_user_id,
+        context.user_id,
     )
     .await?;
     Ok(Json(EmptyResponse {}))
@@ -175,6 +179,7 @@ pub(super) async fn delete_server_role(
         &state.database,
         context.server_id,
         context.server_role_id,
+        context.user_id,
     )
     .await?;
     Ok(Json(EmptyResponse {}))

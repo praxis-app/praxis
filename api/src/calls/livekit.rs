@@ -5,6 +5,7 @@ use livekit_api::{
     services::{room::RoomClient, ServiceError, TwirpError, TwirpErrorCode},
     webhooks::WebhookReceiver,
 };
+use sea_orm::prelude::Uuid;
 use std::env;
 use tokio::time;
 
@@ -92,6 +93,67 @@ pub(super) async fn livekit_room_participant_count(
         Ok(participants) => Ok(participants.len()),
         Err(error) if is_livekit_not_found(&error) => Ok(0),
         Err(error) => Err(internal_error(error)),
+    }
+}
+
+pub(super) async fn livekit_room_participant_ids(
+    livekit: &LiveKitConfig,
+    room_name: &str,
+) -> AppResult<Vec<Uuid>> {
+    let participants = RoomClient::with_api_key(
+        &livekit.api_url,
+        &livekit.api_key,
+        &livekit.api_secret,
+    )
+    .list_participants(room_name)
+    .await;
+
+    match participants {
+        Ok(participants) => Ok(participants
+            .iter()
+            .filter_map(|participant| participant.identity.parse().ok())
+            .collect()),
+        Err(error) if is_livekit_not_found(&error) => Ok(Vec::new()),
+        Err(error) => Err(internal_error(error)),
+    }
+}
+
+pub(super) async fn remove_livekit_participant(
+    livekit: &LiveKitConfig,
+    room_name: &str,
+    identity: &str,
+) -> AppResult<bool> {
+    let removed = RoomClient::with_api_key(
+        &livekit.api_url,
+        &livekit.api_key,
+        &livekit.api_secret,
+    )
+    .remove_participant(room_name, identity)
+    .await;
+
+    match removed {
+        Ok(()) => Ok(true),
+        Err(error) if is_livekit_not_found(&error) => Ok(false),
+        Err(error) => Err(livekit_unavailable(error)),
+    }
+}
+
+pub(super) async fn delete_livekit_room(
+    livekit: &LiveKitConfig,
+    room_name: &str,
+) -> AppResult<()> {
+    let deleted = RoomClient::with_api_key(
+        &livekit.api_url,
+        &livekit.api_key,
+        &livekit.api_secret,
+    )
+    .delete_room(room_name)
+    .await;
+
+    match deleted {
+        Ok(()) => Ok(()),
+        Err(error) if is_livekit_not_found(&error) => Ok(()),
+        Err(error) => Err(livekit_unavailable(error)),
     }
 }
 

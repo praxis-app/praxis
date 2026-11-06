@@ -282,9 +282,12 @@ async fn votes_from_removed_members_stop_counting_toward_the_outcome() {
     );
 
     let removal = app
-        .delete_json_with_bearer(
-            &format!("/api/servers/{server_id}/members"),
-            &json!({ "userIds": [departed.user_id] }),
+        .post_json_with_bearer(
+            &format!(
+                "/api/servers/{server_id}/members/{}/remove",
+                departed.user_id
+            ),
+            &json!({ "reason": "Departed" }),
             &proposer.token,
         )
         .await;
@@ -434,10 +437,14 @@ async fn electorate_changes_wait_for_an_in_flight_proposal_finalization() {
     let change_electorate_during_finalization = async {
         wait_for_lock_waiter(&app, "poll_actions").await;
         let members_uri = format!("/api/servers/{server_id}/members");
-        let removal_body = json!({ "userIds": [departed.user_id] });
+        let removal_uri = format!(
+            "/api/servers/{server_id}/members/{}/remove",
+            departed.user_id
+        );
+        let removal_body = json!({ "reason": "Departed" });
         let addition_body = json!({ "userIds": [joiner.user_id] });
-        let removal = app.delete_json_with_bearer(
-            &members_uri,
+        let removal = app.post_json_with_bearer(
+            &removal_uri,
             &removal_body,
             &proposer.token,
         );

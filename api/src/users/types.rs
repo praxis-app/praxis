@@ -134,3 +134,36 @@ pub(crate) struct UserConfigResponse {
 pub(super) struct UserConfigPayload {
     pub(super) user_config: UserConfigResponse,
 }
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct UserPath {
+    pub(super) user_id: Uuid,
+}
+
+#[derive(Debug, Default, Deserialize)]
+pub(super) struct InstanceUsersQuery {
+    pub(super) before: Option<String>,
+    pub(super) limit: Option<u64>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct InstanceUserResponse {
+    pub(super) id: String,
+    pub(super) name: String,
+    pub(super) display_name: Option<String>,
+    pub(super) anonymous: bool,
+    pub(super) locked: bool,
+    pub(super) deleted_at: Option<String>,
+    pub(super) profile_picture: Option<UserImageRef>,
+    pub(super) created_at: String,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct InstanceUsersResponse {
+    pub(super) users: Vec<InstanceUserResponse>,
+    pub(super) next_cursor: Option<String>,
+    pub(super) has_more: bool,
+}

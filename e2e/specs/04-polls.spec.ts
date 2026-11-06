@@ -1700,11 +1700,11 @@ test('votes from removed members stop counting toward a proposal outcome', async
     poll.id,
     'disagree',
   );
-  const removeMemberResponse = await request.delete(
-    `/api/servers/${server.id}/members`,
+  const removeMemberResponse = await request.post(
+    `/api/servers/${server.id}/members/${departed.userId}/remove`,
     {
       headers: authorizationHeaders(serverAdmin),
-      data: { userIds: [departed.userId] },
+      data: { reason: 'Left the server' },
     },
   );
   await expect(removeMemberResponse).toBeOK();

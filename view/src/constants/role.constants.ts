@@ -13,6 +13,9 @@ export const SERVER_ROLE_ABILITY_SUBJECTS = [
   'Message',
   'ServerRole',
   'ProposalBlock',
+  'ServerMember',
+  'Call',
+  'AuditLog',
   'all',
 ] as const;
 
@@ -20,6 +23,10 @@ export const INSTANCE_ROLE_ABILITY_SUBJECTS = [
   'InstanceConfig',
   'InstanceRole',
   'Server',
+  'Message',
+  'Call',
+  'User',
+  'AuditLog',
   'all',
 ] as const;
 
@@ -32,13 +39,48 @@ export const SERVER_PERMISSION_KEYS = [
   'createInvites',
   'manageInvites',
   'manageServerRoles',
+  'manageServerMembers',
+  'moderateContent',
+  'manageCalls',
   'blockProposals',
+  'viewAuditLog',
+] as const;
+
+export const SERVER_PERMISSION_SECTIONS = [
+  {
+    name: 'serverManagement',
+    permissions: [
+      'manageServerSettings',
+      'manageChannels',
+      'manageServerRoles',
+      'createInvites',
+      'manageInvites',
+    ],
+  },
+  {
+    name: 'proposalsAndVoting',
+    permissions: ['blockProposals'],
+  },
+  {
+    name: 'moderation',
+    permissions: [
+      'manageServerMembers',
+      'moderateContent',
+      'manageCalls',
+      'viewAuditLog',
+    ],
+  },
 ] as const;
 
 export const INSTANCE_PERMISSION_KEYS = [
   'manageInstanceSettings',
   'manageInstanceRoles',
   'manageServers',
+  'moderateContent',
+  'manageCalls',
+  'suspendUsers',
+  'deleteUsers',
+  'viewAuditLog',
 ] as const;
 
 export const ROLE_COLOR_OPTIONS = [
