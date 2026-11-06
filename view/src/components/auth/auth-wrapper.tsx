@@ -1,4 +1,4 @@
-import { ServerAccessNoticeDialog } from '@/components/servers/server-access-notice-dialog';
+import { NoticeDialog } from '@/components/shared/notice-dialog';
 import { useAccountAccess } from '@/hooks/use-account-access';
 import { useMeQuery } from '@/hooks/use-me-query';
 import { useRecordServerVisit } from '@/hooks/use-record-server-visit';
@@ -17,7 +17,7 @@ export const AuthWrapper = ({ children }: Props) => {
   return (
     <>
       {children}
-      <ServerAccessNoticeDialog />
+      <NoticeDialog />
     </>
   );
 };

@@ -5,6 +5,7 @@ use livekit_api::{
     services::{room::RoomClient, ServiceError, TwirpError, TwirpErrorCode},
     webhooks::WebhookReceiver,
 };
+use sea_orm::prelude::Uuid;
 use std::env;
 use tokio::time;
 
@@ -91,6 +92,28 @@ pub(super) async fn livekit_room_participant_count(
     match participants {
         Ok(participants) => Ok(participants.len()),
         Err(error) if is_livekit_not_found(&error) => Ok(0),
+        Err(error) => Err(internal_error(error)),
+    }
+}
+
+pub(super) async fn livekit_room_participant_ids(
+    livekit: &LiveKitConfig,
+    room_name: &str,
+) -> AppResult<Vec<Uuid>> {
+    let participants = RoomClient::with_api_key(
+        &livekit.api_url,
+        &livekit.api_key,
+        &livekit.api_secret,
+    )
+    .list_participants(room_name)
+    .await;
+
+    match participants {
+        Ok(participants) => Ok(participants
+            .iter()
+            .filter_map(|participant| participant.identity.parse().ok())
+            .collect()),
+        Err(error) if is_livekit_not_found(&error) => Ok(Vec::new()),
         Err(error) => Err(internal_error(error)),
     }
 }

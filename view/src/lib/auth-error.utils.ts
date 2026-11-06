@@ -1,40 +1,41 @@
+import { type Notice } from '@/store/notices.store';
 import { isAxiosError } from 'axios';
-import { toast } from 'sonner';
 import { t } from './shared.utils';
 
 const ACCOUNT_SUSPENDED = 'This account is suspended.';
 const ACCOUNT_DELETED = 'This account has been deleted.';
-const ACCOUNT_REVOKED_TOAST_ID = 'account-revoked';
+
+interface AuthErrorRes {
+  error?: string;
+  reason?: string | null;
+  moderatedAt?: string | null;
+}
 
 export const isUnauthorizedError = (error: Error) =>
   isAxiosError(error) && error.response?.status === 401;
 
-const getAuthErrorMessage = (error: Error) =>
+const getAuthErrorData = (error: Error): AuthErrorRes | undefined =>
   isUnauthorizedError(error) && isAxiosError(error)
-    ? error.response?.data?.error
+    ? error.response?.data
     : undefined;
 
 export const isAccountRevokedError = (error: Error) =>
-  [ACCOUNT_SUSPENDED, ACCOUNT_DELETED].includes(getAuthErrorMessage(error));
+  [ACCOUNT_SUSPENDED, ACCOUNT_DELETED].includes(
+    getAuthErrorData(error)?.error ?? '',
+  );
 
-export const dismissAccountRevokedNotice = () => {
-  toast.dismiss(ACCOUNT_REVOKED_TOAST_ID);
-};
-
-const showAccountRevokedNotice = (message: string) => {
-  toast(message, {
-    id: ACCOUNT_REVOKED_TOAST_ID,
-    duration: Infinity,
-    closeButton: true,
-  });
-};
-
-export const notifyIfAccountRevoked = (error: Error) => {
-  const message = getAuthErrorMessage(error);
-  if (message === ACCOUNT_SUSPENDED) {
-    showAccountRevokedNotice(t('auth.errors.accountSuspended'));
-  }
-  if (message === ACCOUNT_DELETED) {
-    showAccountRevokedNotice(t('auth.errors.accountDeleted'));
-  }
+export const getAccountRevokedNotice = (error: Error): Notice => {
+  const data = getAuthErrorData(error);
+  const isDeleted = data?.error === ACCOUNT_DELETED;
+  return {
+    id: 'account',
+    title: isDeleted
+      ? t('moderation.notices.accountDeletedTitle')
+      : t('moderation.notices.accountSuspendedTitle'),
+    description: isDeleted
+      ? t('moderation.notices.accountDeletedDescription')
+      : t('moderation.notices.accountSuspendedDescription'),
+    reason: data?.reason ?? null,
+    moderatedAt: data?.moderatedAt ?? null,
+  };
 };

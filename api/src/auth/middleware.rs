@@ -9,17 +9,18 @@
 
 use axum::{
     extract::{Request, State},
+    http::StatusCode,
     middleware::Next,
     response::{IntoResponse, Response},
+    Json,
 };
 use sea_orm::DatabaseConnection;
 use std::sync::Arc;
 
 use super::{
     extractors::{authenticate_token, bearer_token},
-    service::{account_deleted, account_suspended},
+    service::get_account_revocation,
 };
-use crate::users::{self, AccountStatus};
 
 #[derive(Clone, Debug)]
 pub(crate) struct ActiveAccountState {
@@ -48,13 +49,11 @@ pub(crate) async fn require_active_account(
         .and_then(|token| authenticate_token(token, &state.jwt_secret).ok());
 
     if let Some(user_id) = user_id {
-        match users::get_account_status(&state.database, user_id).await {
-            Ok(AccountStatus::Active) => {}
-            Ok(AccountStatus::Suspended) => {
-                return account_suspended().into_response()
-            }
-            Ok(AccountStatus::Deleted) => {
-                return account_deleted().into_response()
+        match get_account_revocation(&state.database, user_id).await {
+            Ok(None) => {}
+            Ok(Some(revocation)) => {
+                return (StatusCode::UNAUTHORIZED, Json(revocation))
+                    .into_response()
             }
             Err(error) => return error.into_response(),
         }

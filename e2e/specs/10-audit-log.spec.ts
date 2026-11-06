@@ -401,13 +401,14 @@ test('every audit log entry type renders readable details', async ({
     '/settings/audit-log',
   );
   const loadMore = page.getByRole('button', { name: 'Load more' });
-  await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
+  const entries = page.locator('[data-slot="card"]');
+  await expect(entries.first()).toBeVisible();
   while (await loadMore.isVisible()) {
+    const loadedCount = await entries.count();
     await loadMore.click();
-    await expect(page.getByText('Loading...')).toHaveCount(0);
+    await expect.poll(() => entries.count()).toBeGreaterThan(loadedCount);
   }
 
-  const entries = page.locator('[data-slot="card"]');
   const expectedActions = [
     'Created server',
     'Updated server',

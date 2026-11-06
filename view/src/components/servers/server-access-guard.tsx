@@ -1,9 +1,12 @@
 import { api } from '@/client/api-client';
 import { useMeQuery } from '@/hooks/use-me-query';
 import { t } from '@/lib/shared.utils';
-import { isModeratedServerAccess } from '@/lib/server-access.utils';
+import {
+  getServerAccessNotice,
+  isModeratedServerAccess,
+} from '@/lib/server-access.utils';
 import { useAuthStore } from '@/store/auth.store';
-import { useServerAccessStore } from '@/store/server-access.store';
+import { useNoticesStore } from '@/store/notices.store';
 import { type InstanceAbility } from '@/types/role.types';
 import { createMongoAbility } from '@casl/ability';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -14,7 +17,7 @@ import { ServerAccessDenied } from './server-access-denied';
 
 export const ServerAccessGuard = () => {
   const { isLoggedIn, inviteToken } = useAuthStore();
-  const addNotice = useServerAccessStore((state) => state.addNotice);
+  const addNotice = useNoticesStore((state) => state.addNotice);
 
   const { serverSlug } = useParams();
   const queryClient = useQueryClient();
@@ -56,7 +59,7 @@ export const ServerAccessGuard = () => {
       return;
     }
     if (serverSlug && isModeratedServerAccess(access)) {
-      addNotice({ serverSlug, access });
+      addNotice(getServerAccessNotice(serverSlug, access));
     } else {
       toast(t('servers.access.redirectedNoAccess'));
     }

@@ -377,6 +377,30 @@ pub(super) async fn broadcast_moderated_call(
     .await
 }
 
+pub(super) async fn notify_call_moderated(
+    pub_sub_service: Option<&PubSubService>,
+    action: &str,
+    call: &CallArtifactResponse,
+    reason: Option<&str>,
+    user_ids: &[uuid::Uuid],
+) -> AppResult<()> {
+    let Some(pub_sub_service) = pub_sub_service else {
+        return Ok(());
+    };
+    let body = serde_json::json!({
+        "type": "call-moderated",
+        "action": action,
+        "callId": call.id,
+        "reason": reason,
+    });
+    for user_id in user_ids {
+        pub_sub_service
+            .publish(&PubSubTopic::account(*user_id).to_string(), body.clone())
+            .await?;
+    }
+    Ok(())
+}
+
 pub(super) async fn notify_removed_participant(
     pub_sub_service: Option<&PubSubService>,
     server_id: uuid::Uuid,

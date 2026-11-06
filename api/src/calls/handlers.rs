@@ -8,7 +8,7 @@ use std::sync::Arc;
 
 use super::{
     livekit::LiveKitConfig,
-    moderation::{self, CallModeration},
+    moderation::{self, CallModeration, ModeratedCall},
     service,
     types::{
         CallArtifactPayload, CallParticipantPath, CallPath, CallPayload,
@@ -181,7 +181,7 @@ pub(crate) async fn end_call(
     AuthenticatedUser(user_id): AuthenticatedUser,
     payload: Option<Json<ModerationReasonRequest>>,
 ) -> AppResult<Json<CallArtifactPayload>> {
-    let call = moderation::end_call_as_moderator(
+    let ended = moderation::end_call_as_moderator(
         &state.database,
         state.livekit.as_ref(),
         &CallModeration {
@@ -197,14 +197,15 @@ pub(crate) async fn end_call(
         &state.database,
         state.pub_sub_service.as_ref(),
         user_id,
-        &call,
+        &ended.call,
     )
     .await
     {
         tracing::warn!("failed to broadcast moderated call: {error}");
     }
+    notify_call_moderated(&state, "ended", &ended).await;
 
-    Ok(Json(CallArtifactPayload { call }))
+    Ok(Json(CallArtifactPayload { call: ended.call }))
 }
 
 pub(crate) async fn remove_participant(
@@ -231,12 +232,13 @@ pub(crate) async fn remove_participant(
         path.server_id,
         path.channel_id,
         path.user_id,
-        &removed.value,
+        &removed.call,
     )
     .await
     {
         tracing::warn!("failed to notify removed call participant: {error}");
     }
+    notify_call_moderated(&state, "removed", &removed).await;
     if let Some(pub_sub_service) = state.pub_sub_service.as_ref() {
         crate::notifications::publish_notifications(
             &state.database,
@@ -246,9 +248,25 @@ pub(crate) async fn remove_participant(
         .await;
     }
 
-    Ok(Json(CallArtifactPayload {
-        call: removed.value,
-    }))
+    Ok(Json(CallArtifactPayload { call: removed.call }))
+}
+
+async fn notify_call_moderated(
+    state: &CallsState,
+    action: &str,
+    moderated: &ModeratedCall,
+) {
+    if let Err(error) = service::notify_call_moderated(
+        state.pub_sub_service.as_ref(),
+        action,
+        &moderated.call,
+        moderated.reason.as_deref(),
+        &moderated.disconnected_user_ids,
+    )
+    .await
+    {
+        tracing::warn!("failed to notify moderated call participants: {error}");
+    }
 }
 
 // TODO: Rename to handle_livekit_webhook

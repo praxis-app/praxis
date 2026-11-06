@@ -7,6 +7,7 @@ mod types;
 pub(crate) mod user_configs;
 
 pub(crate) use models::UserRecord;
+pub(crate) use moderation::get_account_moderation;
 pub(crate) use routes::router;
 pub(crate) use service::{
     authenticate, create_anon_user, create_user, get_account_status,

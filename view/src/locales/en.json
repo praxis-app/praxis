@@ -237,8 +237,6 @@
       "confirmLogOut": "Use this dialog to log out of your account."
     },
     "errors": {
-      "accountDeleted": "This account has been deleted.",
-      "accountSuspended": "This account has been suspended.",
       "invalidEmail": "Email is invalid.",
       "longEmail": "Email cannot exceed 254 characters",
       "longName": "Username cannot exceed 15 characters",
@@ -990,9 +988,15 @@
       "restoreUser": "Restore this account?",
       "suspendUser": "Suspend this account?"
     },
-    "toasts": {
-      "callEnded": "A moderator ended the call.",
-      "removedFromCall": "A moderator removed you from the call."
+    "notices": {
+      "accountDeletedTitle": "Your account has been deleted",
+      "accountDeletedDescription": "A moderator deleted your account and signed you out. Your profile, messages, and forum posts have been erased.",
+      "accountSuspendedTitle": "Your account has been suspended",
+      "accountSuspendedDescription": "A moderator suspended your account and signed you out. You won't be able to sign in again unless it's restored.",
+      "callEndedTitle": "The call has ended",
+      "callEndedDescription": "A moderator ended this call for everyone.",
+      "removedFromCallTitle": "You've been removed from the call",
+      "removedFromCallDescription": "A moderator disconnected you from this call. You're still a member of the server."
     }
   },
 

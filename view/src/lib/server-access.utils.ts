@@ -1,3 +1,4 @@
+import { type Notice } from '@/store/notices.store';
 import { type ServerAccessRes } from '@/types/server.types';
 import { t } from './shared.utils';
 
@@ -25,3 +26,13 @@ export const getServerAccessCopy = ({
     description: t('servers.access.noAccessDescription'),
   };
 };
+
+export const getServerAccessNotice = (
+  serverSlug: string,
+  access: ServerAccessRes,
+): Notice => ({
+  id: `server:${serverSlug}`,
+  ...getServerAccessCopy(access),
+  reason: access.reason,
+  moderatedAt: access.moderatedAt,
+});

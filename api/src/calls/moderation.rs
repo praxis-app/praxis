@@ -2,7 +2,7 @@ use axum::http::StatusCode;
 use entity::{
     calls,
     enums::{ModerationAction, ModerationTargetKind, NotificationKind},
-    users,
+    notifications, users,
 };
 use sea_orm::{
     prelude::Uuid, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter,
@@ -10,7 +10,10 @@ use sea_orm::{
 };
 
 use super::{
-    livekit::{delete_livekit_room, remove_livekit_participant, LiveKitConfig},
+    livekit::{
+        delete_livekit_room, livekit_room_participant_ids,
+        remove_livekit_participant, LiveKitConfig,
+    },
     service::{
         end_call, get_call, internal_error, is_active_status,
         MODERATOR_ENDED_REASON,
@@ -20,7 +23,6 @@ use super::{
 use crate::{
     common::{ApiError, AppResult},
     moderation::{self, ModerationRecord},
-    notifications::WithNotifications,
 };
 
 pub(super) struct CallModeration {
@@ -31,11 +33,18 @@ pub(super) struct CallModeration {
     pub(super) reason: Option<String>,
 }
 
+pub(super) struct ModeratedCall {
+    pub(super) call: CallArtifactResponse,
+    pub(super) reason: Option<String>,
+    pub(super) disconnected_user_ids: Vec<Uuid>,
+    pub(super) notifications: Vec<notifications::Model>,
+}
+
 pub(super) async fn end_call_as_moderator(
     database: &DatabaseConnection,
     livekit: Option<&LiveKitConfig>,
     request: &CallModeration,
-) -> AppResult<CallArtifactResponse> {
+) -> AppResult<ModeratedCall> {
     let reason = authorize(database, request).await?;
     let call = get_call(
         database,
@@ -45,8 +54,12 @@ pub(super) async fn end_call_as_moderator(
     )
     .await?;
 
+    let mut disconnected_user_ids = Vec::new();
     if is_active_status(&call.status) {
         if let Some(livekit) = livekit {
+            disconnected_user_ids =
+                list_other_participants(livekit, &call.livekit_room, request)
+                    .await;
             delete_livekit_room(livekit, &call.livekit_room).await?;
         }
     }
@@ -76,7 +89,7 @@ pub(super) async fn end_call_as_moderator(
                 ModerationTargetKind::Call,
                 call.id,
                 Some(request.server_id),
-                reason,
+                reason.clone(),
             )
             .with_channel(request.channel_id)
             .with_target_label("Call"),
@@ -88,7 +101,12 @@ pub(super) async fn end_call_as_moderator(
     };
     transaction.commit().await.map_err(internal_error)?;
 
-    super::service::shape_call_artifact(database, call).await
+    Ok(ModeratedCall {
+        call: super::service::shape_call_artifact(database, call).await?,
+        reason,
+        disconnected_user_ids,
+        notifications: Vec::new(),
+    })
 }
 
 pub(super) async fn remove_call_participant(
@@ -96,7 +114,7 @@ pub(super) async fn remove_call_participant(
     livekit: Option<&LiveKitConfig>,
     request: &CallModeration,
     participant_id: Uuid,
-) -> AppResult<WithNotifications<CallArtifactResponse>> {
+) -> AppResult<ModeratedCall> {
     let reason = authorize(database, request).await?;
     let livekit = livekit.ok_or_else(|| {
         ApiError::new(
@@ -136,7 +154,7 @@ pub(super) async fn remove_call_participant(
                 ModerationTargetKind::User,
                 participant_id,
                 Some(request.server_id),
-                reason,
+                reason.clone(),
             )
             .with_channel(request.channel_id),
             NotificationKind::CallParticipantRemoved,
@@ -149,8 +167,33 @@ pub(super) async fn remove_call_participant(
         vec![]
     };
 
-    let call = super::service::shape_call_artifact(database, call).await?;
-    Ok(WithNotifications::new(call, notifications))
+    Ok(ModeratedCall {
+        call: super::service::shape_call_artifact(database, call).await?,
+        reason,
+        disconnected_user_ids: if removed {
+            vec![participant_id]
+        } else {
+            Vec::new()
+        },
+        notifications,
+    })
+}
+
+async fn list_other_participants(
+    livekit: &LiveKitConfig,
+    room_name: &str,
+    request: &CallModeration,
+) -> Vec<Uuid> {
+    match livekit_room_participant_ids(livekit, room_name).await {
+        Ok(user_ids) => user_ids
+            .into_iter()
+            .filter(|user_id| *user_id != request.actor_user_id)
+            .collect(),
+        Err(error) => {
+            tracing::warn!("failed to list call participants: {error}");
+            Vec::new()
+        }
+    }
 }
 
 async fn authorize(

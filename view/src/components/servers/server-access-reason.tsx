@@ -3,7 +3,7 @@ import { type ServerAccessRes } from '@/types/server.types';
 import { useTranslation } from 'react-i18next';
 
 interface Props {
-  access: ServerAccessRes;
+  access: Pick<ServerAccessRes, 'reason' | 'moderatedAt'>;
 }
 
 export const ServerAccessReason = ({

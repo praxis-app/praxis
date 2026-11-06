@@ -6,8 +6,8 @@ use entity::{
         InstanceAbilitySubject, InstanceRoleAbilityAction, ModerationAction,
         ModerationTargetKind,
     },
-    instance_role_members, instance_role_permissions, server_members,
-    user_images, users,
+    instance_role_members, instance_role_permissions, moderation_actions,
+    server_members, user_images, users,
 };
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
@@ -17,7 +17,7 @@ use sea_orm::{
 use std::path::Path;
 
 use super::{
-    service::{get_user_profile_pictures_map, internal_error},
+    service::{get_user_profile_pictures_map, internal_error, AccountStatus},
     types::{InstanceUserResponse, InstanceUsersResponse},
 };
 use crate::{
@@ -232,6 +232,30 @@ pub(super) async fn delete_user(
 
     remove_stored_files(upload_root, &storage_keys).await;
     Ok(())
+}
+
+pub(crate) async fn get_account_moderation(
+    database: &DatabaseConnection,
+    user_id: Uuid,
+    status: AccountStatus,
+) -> AppResult<Option<moderation_actions::Model>> {
+    let action = match status {
+        AccountStatus::Active => return Ok(None),
+        AccountStatus::Suspended => ModerationAction::SuspendUser,
+        AccountStatus::Deleted => ModerationAction::DeleteUser,
+    };
+    moderation_actions::Entity::find()
+        .filter(moderation_actions::Column::ServerId.is_null())
+        .filter(
+            moderation_actions::Column::TargetKind
+                .eq(ModerationTargetKind::User),
+        )
+        .filter(moderation_actions::Column::TargetId.eq(user_id))
+        .filter(moderation_actions::Column::Action.eq(action))
+        .order_by_desc(moderation_actions::Column::CreatedAt)
+        .one(database)
+        .await
+        .map_err(internal_error)
 }
 
 pub(super) async fn evict_account(

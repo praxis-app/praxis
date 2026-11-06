@@ -5,7 +5,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use super::{
     handlers::AuthState,
-    types::{Claims, LoginRequest, SignupRequest},
+    types::{AccountRevokedResponse, Claims, LoginRequest, SignupRequest},
 };
 use crate::{
     channels,
@@ -16,6 +16,8 @@ use crate::{
 
 const ACCESS_TOKEN_TTL: Duration = Duration::from_secs(60 * 60 * 24 * 90);
 const MIN_PASSWORD_LENGTH: usize = 8;
+const ACCOUNT_SUSPENDED: &str = "This account is suspended.";
+const ACCOUNT_DELETED: &str = "This account has been deleted.";
 
 pub(super) fn issue_access_token(
     auth_state: &AuthState,
@@ -183,12 +185,28 @@ pub(super) fn ensure_account_active(user: &UserRecord) -> AppResult<()> {
     Ok(())
 }
 
-pub(crate) fn account_suspended() -> ApiError {
-    ApiError::new(StatusCode::UNAUTHORIZED, "This account is suspended.")
+fn account_suspended() -> ApiError {
+    ApiError::new(StatusCode::UNAUTHORIZED, ACCOUNT_SUSPENDED)
 }
 
-pub(crate) fn account_deleted() -> ApiError {
-    ApiError::new(StatusCode::UNAUTHORIZED, "This account has been deleted.")
+pub(super) async fn get_account_revocation(
+    database: &DatabaseConnection,
+    user_id: Uuid,
+) -> AppResult<Option<AccountRevokedResponse>> {
+    let status = users::get_account_status(database, user_id).await?;
+    let error = match status {
+        users::AccountStatus::Active => return Ok(None),
+        users::AccountStatus::Suspended => ACCOUNT_SUSPENDED,
+        users::AccountStatus::Deleted => ACCOUNT_DELETED,
+    };
+    let action =
+        users::get_account_moderation(database, user_id, status).await?;
+
+    Ok(Some(AccountRevokedResponse {
+        error,
+        reason: action.as_ref().and_then(|action| action.reason.clone()),
+        moderated_at: action.map(|action| action.created_at.to_rfc3339()),
+    }))
 }
 
 pub(super) fn validate_signup(

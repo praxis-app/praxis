@@ -228,55 +228,87 @@ const deleteFromSettings = async (page: Page, target: AuthenticatedUser) => {
   );
 };
 
-const expectSessionEnded = async (
-  page: Page,
-  message: string,
-  server: ModerationServer,
-) => {
-  await expect(page.getByText(message)).toBeVisible();
-  await new NavigationPage(page).expectAccessTokenCleared();
-  await expect(page).not.toHaveURL(new RegExp(`/s/${server.slug}(/|$)`));
-  await expect(page.getByRole('link', { name: 'Log in' })).toBeVisible();
+const ACCOUNT_NOTICE_TITLES = {
+  suspended: 'Your account has been suspended',
+  deleted: 'Your account has been deleted',
+};
+const CALL_NOTICE_TITLES = {
+  removed: "You've been removed from the call",
+  ended: 'The call has ended',
 };
 
-const expectNoticeStaysUntilDismissed = async (page: Page, message: string) => {
+const moderationNotice = (page: Page, title: string) =>
+  page.getByRole('dialog', { name: title });
+
+const expectModerationNotice = async (
+  page: Page,
+  title: string,
+  reason?: string,
+) => {
   await page.bringToFront();
-  await page.waitForTimeout(TOAST_LIFETIME_MS);
-  const notice = page.getByText(message);
+  const notice = moderationNotice(page, title);
   await expect(notice).toBeVisible();
-  await page.getByRole('button', { name: 'Close toast' }).click();
+  await expect(notice.getByRole('button', { name: 'OK' })).toBeVisible();
+  if (reason) {
+    await expect(notice).toContainText(reason);
+  }
+  await expect(page.locator('[data-sonner-toast]')).toHaveCount(0);
+};
+
+const dismissModerationNotice = async (page: Page, title: string) => {
+  const notice = moderationNotice(page, title);
+  await notice.getByRole('button', { name: 'OK', exact: true }).click();
   await expect(notice).toHaveCount(0);
 };
 
-const serverAccessNotice = (
+const expectNoticeStaysUntilDismissed = async (page: Page, title: string) => {
+  await page.waitForTimeout(TOAST_LIFETIME_MS);
+  await expect(moderationNotice(page, title)).toBeVisible();
+  await page.mouse.click(5, 5);
+  await expect(moderationNotice(page, title)).toBeVisible();
+  await dismissModerationNotice(page, title);
+};
+
+const expectSessionEnded = async (
+  page: Page,
+  status: keyof typeof ACCOUNT_NOTICE_TITLES,
+  server: ModerationServer,
+) => {
+  await expectModerationNotice(
+    page,
+    ACCOUNT_NOTICE_TITLES[status],
+    'Repeated harassment',
+  );
+  await new NavigationPage(page).expectAccessTokenCleared();
+  await expect(page).not.toHaveURL(new RegExp(`/s/${server.slug}(/|$)`));
+};
+
+const expectSignedOut = async (page: Page) => {
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Log in' })).toBeVisible();
+};
+
+const serverAccessTitle = (
+  action: 'removed' | 'banned',
+  server: ModerationServer,
+) => `You've been ${action} from ${server.name}`;
+
+const expectServerAccessNotice = (
   page: Page,
   action: 'removed' | 'banned',
   server: ModerationServer,
 ) =>
-  page.getByRole('dialog', {
-    name: `You've been ${action} from ${server.name}`,
-  });
+  expectModerationNotice(
+    page,
+    serverAccessTitle(action, server),
+    'Repeated spam',
+  );
 
-const expectServerAccessNotice = async (
+const dismissServerAccessNotice = (
   page: Page,
   action: 'removed' | 'banned',
   server: ModerationServer,
-) => {
-  await page.bringToFront();
-  const notice = serverAccessNotice(page, action, server);
-  await expect(notice).toBeVisible();
-  await expect(notice).toContainText('Repeated spam');
-};
-
-const dismissServerAccessNotice = async (
-  page: Page,
-  action: 'removed' | 'banned',
-  server: ModerationServer,
-) => {
-  const notice = serverAccessNotice(page, action, server);
-  await notice.getByRole('button', { name: 'OK', exact: true }).click();
-  await expect(notice).toHaveCount(0);
-};
+) => dismissModerationNotice(page, serverAccessTitle(action, server));
 
 const expectServerAccessLost = async (
   page: Page,
@@ -284,12 +316,10 @@ const expectServerAccessLost = async (
   server: ModerationServer,
 ) => {
   await expectServerAccessNotice(page, action, server);
-  await page.waitForTimeout(TOAST_LIFETIME_MS);
-  await expect(serverAccessNotice(page, action, server)).toBeVisible();
-  await expect(page.getByText(`You were ${action} from`)).toHaveCount(0);
-  await page.mouse.click(5, 5);
-  await expect(serverAccessNotice(page, action, server)).toBeVisible();
-  await dismissServerAccessNotice(page, action, server);
+  await expectNoticeStaysUntilDismissed(
+    page,
+    serverAccessTitle(action, server),
+  );
   await expect(page).not.toHaveURL(new RegExp(`/s/${server.slug}(/|$)`));
 };
 
@@ -512,10 +542,7 @@ test('moderator can suspend a signed in user', async ({ browser, request }) => {
       'Repeated harassment',
     );
 
-    await expect(
-      targetPage.getByText('This account has been suspended.'),
-    ).toBeVisible();
-    await new NavigationPage(targetPage).expectAccessTokenCleared();
+    await expectSessionEnded(targetPage, 'suspended', server);
     await expect(
       moderatorPage
         .getByText(target.user.name, { exact: true })
@@ -533,7 +560,7 @@ test('moderator can suspend a signed in user', async ({ browser, request }) => {
   }
 });
 
-test('moderator can end an active call for all participants', async ({
+test('moderator can remove a call participant and end the call for everyone', async ({
   browser,
   request,
 }) => {
@@ -573,6 +600,46 @@ test('moderator can end an active call for all participants', async ({
 
     await managerPage.getByRole('button', { name: 'Moderate call' }).click();
     await managerPage
+      .getByRole('menuitem', {
+        name: `Remove ${participant.user.name} from call`,
+      })
+      .click();
+    await confirmModeration(
+      managerPage,
+      'Remove from call?',
+      'Remove',
+      /\/participants\/[^/]+\/remove$/,
+      'Disruptive participant',
+    );
+
+    await expectModerationNotice(
+      participantPage,
+      CALL_NOTICE_TITLES.removed,
+      'Disruptive participant',
+    );
+    await expectNoticeStaysUntilDismissed(
+      participantPage,
+      CALL_NOTICE_TITLES.removed,
+    );
+    await expect(
+      participantPage.getByRole('button', { name: 'Leave call' }),
+    ).toHaveCount(0);
+    await expect(managerPage.getByTestId('call-participant-tile')).toHaveCount(
+      1,
+    );
+
+    await joinCallFromArtifact(
+      participantPage,
+      participantPage
+        .locator('article')
+        .filter({ hasText: `Started by ${participant.user.name}` }),
+    );
+    await expect(managerPage.getByTestId('call-participant-tile')).toHaveCount(
+      2,
+    );
+
+    await managerPage.getByRole('button', { name: 'Moderate call' }).click();
+    await managerPage
       .getByRole('menuitem', { name: 'End call for everyone' })
       .click();
     await confirmModeration(
@@ -583,9 +650,16 @@ test('moderator can end an active call for all participants', async ({
       'Disruptive call',
     );
 
+    await expectModerationNotice(
+      participantPage,
+      CALL_NOTICE_TITLES.ended,
+      'Disruptive call',
+    );
+    await dismissModerationNotice(participantPage, CALL_NOTICE_TITLES.ended);
     await expect(
-      participantPage.getByText('A moderator ended the call.'),
-    ).toBeVisible();
+      managerPage.getByRole('button', { name: 'Leave call' }),
+    ).toHaveCount(0);
+    await expect(managerPage.getByRole('dialog')).toHaveCount(0);
     await expect(
       participantPage.getByRole('button', { name: 'Leave call' }),
     ).toHaveCount(0);
@@ -815,15 +889,12 @@ test('suspended users are signed out right away while viewing a channel', async 
 
     await suspendFromSettings(moderatorPage, target);
 
-    await expectSessionEnded(
-      targetPage,
-      'This account has been suspended.',
-      server,
-    );
+    await expectSessionEnded(targetPage, 'suspended', server);
     await expectNoticeStaysUntilDismissed(
       targetPage,
-      'This account has been suspended.',
+      ACCOUNT_NOTICE_TITLES.suspended,
     );
+    await expectSignedOut(targetPage);
   } finally {
     await targetPage.context().close();
     await moderatorPage.context().close();
@@ -853,18 +924,15 @@ test('deleted users are told their account was deleted right away', async ({
 
     await deleteFromSettings(moderatorPage, target);
 
-    await expectSessionEnded(
-      targetPage,
-      'This account has been deleted.',
-      server,
-    );
+    await expectSessionEnded(targetPage, 'deleted', server);
     await expect(
-      targetPage.getByText('This account has been suspended.'),
+      moderationNotice(targetPage, ACCOUNT_NOTICE_TITLES.suspended),
     ).toHaveCount(0);
     await expectNoticeStaysUntilDismissed(
       targetPage,
-      'This account has been deleted.',
+      ACCOUNT_NOTICE_TITLES.deleted,
     );
+    await expectSignedOut(targetPage);
   } finally {
     await targetPage.context().close();
     await moderatorPage.context().close();
@@ -928,11 +996,12 @@ test('suspended users are signed out right away on a page with no server subscri
 
     await suspendFromSettings(moderatorPage, target);
 
-    await expectSessionEnded(
-      targetPage,
-      'This account has been suspended.',
-      server,
-    );
+    await expectSessionEnded(targetPage, 'suspended', server);
+    await expect(
+      moderationNotice(targetPage, serverAccessTitle('removed', server)),
+    ).toHaveCount(0);
+    await dismissModerationNotice(targetPage, ACCOUNT_NOTICE_TITLES.suspended);
+    await expectSignedOut(targetPage);
   } finally {
     await targetPage.context().close();
     await managerPage.context().close();
@@ -973,9 +1042,12 @@ test('suspended users are removed from an active call right away', async ({
 
     await suspendFromSettings(moderatorPage, target);
 
+    await expectSessionEnded(targetPage, 'suspended', server);
     await expect(
-      targetPage.getByText('This account has been suspended.'),
-    ).toBeVisible();
+      moderationNotice(targetPage, CALL_NOTICE_TITLES.removed),
+    ).toHaveCount(0);
+    await dismissModerationNotice(targetPage, ACCOUNT_NOTICE_TITLES.suspended);
+    await expectSignedOut(targetPage);
     await expect(
       targetPage.getByRole('button', { name: 'Leave call' }),
     ).toHaveCount(0);
@@ -985,7 +1057,7 @@ test('suspended users are removed from an active call right away', async ({
   }
 });
 
-test('account revoked notice clears when another account signs in', async ({
+test('account revoked notice does not return when another account signs in', async ({
   browser,
   request,
 }) => {
@@ -1008,11 +1080,8 @@ test('account revoked notice clears when another account signs in', async ({
     ).toBeVisible();
 
     await suspendFromSettings(moderatorPage, target);
-    await expectSessionEnded(
-      targetPage,
-      'This account has been suspended.',
-      server,
-    );
+    await expectSessionEnded(targetPage, 'suspended', server);
+    await dismissModerationNotice(targetPage, ACCOUNT_NOTICE_TITLES.suspended);
 
     await targetPage.getByRole('link', { name: 'Log in' }).click();
     await new AuthPage(targetPage).logIn(nextUser.user);
@@ -1021,7 +1090,7 @@ test('account revoked notice clears when another account signs in', async ({
       0,
     );
     await expect(
-      targetPage.getByText('This account has been suspended.'),
+      moderationNotice(targetPage, ACCOUNT_NOTICE_TITLES.suspended),
     ).toHaveCount(0);
   } finally {
     await targetPage.context().close();

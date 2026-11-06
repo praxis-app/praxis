@@ -1,3 +1,4 @@
+import { ServerAccessReason } from '@/components/servers/server-access-reason';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -7,13 +8,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { getServerAccessCopy } from '@/lib/server-access.utils';
-import { useServerAccessStore } from '@/store/server-access.store';
+import { useNoticesStore } from '@/store/notices.store';
 import { useTranslation } from 'react-i18next';
-import { ServerAccessReason } from './server-access-reason';
 
-export const ServerAccessNoticeDialog = () => {
-  const { notices, dismissNotice } = useServerAccessStore();
+export const NoticeDialog = () => {
+  const { notices, dismissNotice } = useNoticesStore();
 
   const { t } = useTranslation();
 
@@ -23,12 +22,11 @@ export const ServerAccessNoticeDialog = () => {
     return null;
   }
 
-  const { title, description } = getServerAccessCopy(notice.access);
-  const handleDismiss = () => dismissNotice(notice.serverSlug);
+  const handleDismiss = () => dismissNotice(notice.id);
 
   return (
     <Dialog
-      key={notice.serverSlug}
+      key={notice.id}
       open
       onOpenChange={(isOpen) => !isOpen && handleDismiss()}
     >
@@ -37,13 +35,13 @@ export const ServerAccessNoticeDialog = () => {
         onInteractOutside={(event) => event.preventDefault()}
       >
         <DialogHeader className="pt-3">
-          <DialogTitle className="text-left">{title}</DialogTitle>
+          <DialogTitle className="text-left">{notice.title}</DialogTitle>
           <DialogDescription className="text-left">
-            {description}
+            {notice.description}
           </DialogDescription>
         </DialogHeader>
 
-        <ServerAccessReason access={notice.access} />
+        <ServerAccessReason access={notice} />
 
         <DialogFooter className="flex flex-row justify-end">
           <Button onClick={handleDismiss}>
