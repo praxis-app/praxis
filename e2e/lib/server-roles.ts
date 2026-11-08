@@ -27,10 +27,10 @@ export async function grantServerPermissions(
   label: string,
 ) {
   if (granter.userId === user.userId) {
-    return;
+    return undefined;
   }
 
-  await grantViaNewRole(
+  return grantViaNewRole(
     request,
     granter,
     `/api/servers/${serverId}/roles`,

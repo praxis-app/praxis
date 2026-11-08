@@ -3,9 +3,10 @@ use chrono::Utc;
 use entity::{
     channels as channel_entities,
     enums::{
-        ModerationAction, ModerationTargetKind, NotificationKind, PollType,
+        ModerationAction, ModerationTargetKind, NotificationKind, PollStage,
+        PollType,
     },
-    notifications, polls,
+    notifications, poll_configs, polls,
 };
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
@@ -15,9 +16,11 @@ use sea_orm::{
 use std::collections::{HashMap, HashSet};
 
 use crate::{
-    authz, channels,
+    authz::{self, PermissionScope},
+    channels,
     common::{ApiError, AppResult},
     moderation::{self, ModerationRecord},
+    poll_actions,
 };
 
 pub(super) struct PollModeration {
@@ -40,6 +43,7 @@ pub(super) async fn hide_poll(
         transaction.commit().await.map_err(internal_error)?;
         return Ok((poll, vec![]));
     }
+    ensure_not_hiding_own_role_change(&transaction, request, &poll).await?;
 
     let author_id = poll.user_id;
     let record =
@@ -72,6 +76,7 @@ pub(super) async fn restore_poll(
         return Ok(poll);
     }
 
+    extend_deadline_by_hidden_time(&transaction, &poll).await?;
     let record =
         poll_record(request, &poll, ModerationAction::RestorePoll, reason);
     let mut active = poll.into_active_model();
@@ -181,6 +186,81 @@ async fn authorize(
     channels::get_channel(database, request.server_id, request.channel_id)
         .await?;
     Ok(reason)
+}
+
+async fn ensure_not_hiding_own_role_change<C>(
+    database: &C,
+    request: &PollModeration,
+    poll: &polls::Model,
+) -> AppResult<()>
+where
+    C: ConnectionTrait,
+{
+    if poll.stage != PollStage::Voting
+        || !poll_actions::service::changes_role_held_by(
+            database,
+            poll.id,
+            request.actor_user_id,
+        )
+        .await?
+    {
+        return Ok(());
+    }
+
+    let is_instance_admin = authz::is_granted(
+        authz::can(
+            database,
+            request.actor_user_id,
+            "manage",
+            "all",
+            PermissionScope::Instance,
+        )
+        .await,
+    )?;
+    if is_instance_admin {
+        Ok(())
+    } else {
+        Err(ApiError::new(
+            StatusCode::FORBIDDEN,
+            "You cannot hide a proposal that changes your own role.",
+        ))
+    }
+}
+
+async fn extend_deadline_by_hidden_time<C>(
+    database: &C,
+    poll: &polls::Model,
+) -> AppResult<()>
+where
+    C: ConnectionTrait,
+{
+    let Some(hidden_at) = poll.hidden_at else {
+        return Ok(());
+    };
+    if poll.stage != PollStage::Voting {
+        return Ok(());
+    }
+
+    let config = poll_configs::Entity::find()
+        .filter(poll_configs::Column::PollId.eq(poll.id))
+        .lock_exclusive()
+        .one(database)
+        .await
+        .map_err(internal_error)?;
+    let Some(config) = config else {
+        return Ok(());
+    };
+    let Some(closing_at) = config.closing_at else {
+        return Ok(());
+    };
+
+    let now = Utc::now().fixed_offset();
+    let hidden_duration = (now - hidden_at).max(chrono::TimeDelta::zero());
+    let mut active = config.into_active_model();
+    active.closing_at = Set(Some(closing_at + hidden_duration));
+    active.updated_at = Set(now);
+    active.update(database).await.map_err(internal_error)?;
+    Ok(())
 }
 
 async fn lock_poll<C>(

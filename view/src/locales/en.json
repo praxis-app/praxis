@@ -973,7 +973,7 @@
       "hidePoll": "Members see a notice in its place and voting is paused. Votes, results, and replies are kept, and it can be restored at any time.",
       "hideCompletedPoll": "Members see a notice in its place. Votes, results, and replies are kept.",
       "restoreCompletedPoll": "Members can see it again. Its results stay the same.",
-      "restorePoll": "Members can see it again and voting resumes. Its deadline and any results stay as they are.",
+      "restorePoll": "Members can see it again and voting resumes. Its deadline moves back by the time it was hidden, and its votes stay as they are.",
       "removeContent": "The content and any attached images are permanently erased. A notice that a moderator removed it stays in its place, and any replies are kept.",
       "removeParticipant": "They're disconnected from this call but remain a member of the server.",
       "restoreUser": "They'll be able to sign in again. Anything removed while they were suspended stays removed.",

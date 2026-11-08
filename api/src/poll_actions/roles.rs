@@ -11,13 +11,13 @@ use entity::{
         ServerAbilitySubject, ServerRoleAbilityAction,
     },
     notifications, poll_action_permissions, poll_action_role_members,
-    poll_action_roles, polls, server_members, server_role_members,
-    server_role_permissions, server_roles, users,
+    poll_action_roles, poll_actions, polls, server_members,
+    server_role_members, server_role_permissions, server_roles, users,
 };
 use sea_orm::{
     prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
     DatabaseConnection, DatabaseTransaction, EntityTrait, IntoActiveModel,
-    QueryFilter, Set,
+    PaginatorTrait, QueryFilter, QuerySelect, Set,
 };
 use std::collections::{BTreeMap, HashMap, HashSet};
 use uuid::Uuid as NativeUuid;
@@ -36,6 +36,37 @@ use crate::{
     },
     users as users_service,
 };
+
+pub(crate) async fn changes_role_held_by<C: ConnectionTrait>(
+    database: &C,
+    poll_id: Uuid,
+    user_id: Uuid,
+) -> AppResult<bool> {
+    let role_ids = poll_action_roles::Entity::find()
+        .select_only()
+        .column(poll_action_roles::Column::ServerRoleId)
+        .inner_join(poll_actions::Entity)
+        .filter(poll_actions::Column::PollId.eq(poll_id))
+        .filter(poll_action_roles::Column::ServerRoleId.is_not_null())
+        .into_tuple::<Option<Uuid>>()
+        .all(database)
+        .await
+        .map_err(internal_error)?
+        .into_iter()
+        .flatten()
+        .collect::<Vec<_>>();
+    if role_ids.is_empty() {
+        return Ok(false);
+    }
+
+    let held_roles = server_role_members::Entity::find()
+        .filter(server_role_members::Column::ServerRoleId.is_in(role_ids))
+        .filter(server_role_members::Column::UserId.eq(user_id))
+        .count(database)
+        .await
+        .map_err(internal_error)?;
+    Ok(held_roles > 0)
+}
 
 pub(super) fn validate_role_change_payload(
     role: &CreatePollActionServerRoleRequest,
