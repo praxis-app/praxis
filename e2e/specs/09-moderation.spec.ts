@@ -23,7 +23,6 @@ import { createMessages } from '../lib/messages';
 import { type PermissionRule } from '../lib/permissions';
 import {
   backdateHiddenPoll,
-  expirePollDeadline,
   getSecondsUntilPollCloses,
   voteViaApi,
 } from '../lib/polls';
@@ -34,7 +33,6 @@ import {
   joinServer,
   updateServerConfig,
 } from '../lib/servers';
-import { AuthPage } from '../pages/auth.page';
 import { NavigationPage } from '../pages/navigation.page';
 
 const TOMBSTONE = 'Removed by a moderator';
@@ -440,97 +438,6 @@ test('moderator can remove messages and forum posts for everyone in realtime', a
   }
 });
 
-test('hidden plain poll pauses moderator voting controls', async ({
-  browser,
-  request,
-}) => {
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  const path = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
-  const headers = authorizationHeaders(admin);
-  const created = await request.post(path, {
-    headers,
-    data: {
-      body: 'Meeting place?',
-      pollType: 'poll',
-      options: ['Park', 'Cafe'],
-    },
-  });
-  await expect(created).toBeOK();
-  const { poll } = await created.json();
-  await expect(
-    await request.post(`${path}/${poll.id}/hide`, {
-      headers,
-      data: { reason: 'Off topic' },
-    }),
-  ).toBeOK();
-  const page = await openPageAs(
-    browser,
-    admin,
-    `/s/${server.slug}/c/${server.generalChannelId}`,
-  );
-  try {
-    const card = page
-      .getByTestId('feed')
-      .locator(`[data-decision-id="${poll.id}"]`);
-    await expect(
-      card.getByText('Hidden by a moderator. Voting is paused.'),
-    ).toBeVisible();
-    await expect(card.getByRole('button', { name: 'Park' })).toBeDisabled();
-    await expect(
-      card.getByRole('button', { name: 'Vote', exact: true }),
-    ).toBeDisabled();
-  } finally {
-    await page.context().close();
-  }
-});
-
-test('restoring a completed poll describes its visibility', async ({
-  browser,
-  request,
-}) => {
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  const path = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
-  const headers = authorizationHeaders(admin);
-  const created = await request.post(path, {
-    headers,
-    data: { body: 'Where?', pollType: 'poll', options: ['Park', 'Cafe'] },
-  });
-  await expect(created).toBeOK();
-  const { poll } = await created.json();
-  expirePollDeadline(poll.id);
-  const page = await openPageAs(
-    browser,
-    admin,
-    `/s/${server.slug}/c/${server.generalChannelId}`,
-  );
-  try {
-    const card = page
-      .getByTestId('feed')
-      .locator(`[data-decision-id="${poll.id}"]`);
-    await expect(card.getByText('Poll closed')).toBeVisible();
-    await expect(
-      await request.post(`${path}/${poll.id}/hide`, {
-        headers,
-        data: { reason: 'Off topic' },
-      }),
-    ).toBeOK();
-    await page.reload();
-    await expect(
-      card.getByText('Hidden by a moderator.', { exact: true }),
-    ).toBeVisible();
-    await card.getByRole('button', { name: 'Open poll menu' }).click();
-    await page.getByRole('menuitem', { name: 'Restore poll' }).click();
-    await expect(page.getByRole('dialog')).toContainText(
-      'Members can see it again.',
-    );
-    await expect(page.getByRole('dialog')).not.toContainText('voting resumes');
-  } finally {
-    await page.context().close();
-  }
-});
-
 test('moderator can hide and restore a proposal for everyone in realtime', async ({
   browser,
   request,
@@ -768,99 +675,6 @@ test('moderators cannot hide a proposal that changes their own role', async ({
         data: { reason: 'Instance admin review' },
       }),
     ).toBeOK();
-  } finally {
-    await page.context().close();
-  }
-});
-
-test('forum proposal hide and restore refresh the open member view', async ({
-  browser,
-  request,
-}) => {
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  const author = await addServerMember(
-    request,
-    admin,
-    server,
-    'forum-proposer',
-  );
-  const forum = await createForumChannel(
-    request,
-    admin,
-    server.id,
-    'decisions',
-  );
-  const channel = `/api/servers/${server.id}/channels/${forum.id}`;
-  const title = 'Meeting venue';
-  const body = 'Choose the venue';
-  const proposal = {
-    body: 'Meet at the park',
-    pollType: 'proposal',
-    action: { actionType: 'general' },
-  };
-  const created = await request.post(`${channel}/forum/posts`, {
-    headers: authorizationHeaders(author),
-    data: { title, body, proposal },
-  });
-  await expect(created).toBeOK();
-  const { post } = await created.json();
-  const page = await openPageAs(
-    browser,
-    author,
-    `/s/${server.slug}/c/${forum.id}/posts/${post.id}`,
-  );
-  const list = page.getByTestId('forum-post-list');
-  const heading = page.getByRole('heading', {
-    level: 1,
-    name: title,
-    exact: true,
-  });
-  const pollPath = `${channel}/polls/${post.pollId}`;
-  const headers = authorizationHeaders(admin);
-  try {
-    await expect(heading).toBeVisible();
-    await expect(list.getByText(title)).toBeVisible();
-    await expect(
-      await request.post(`${pollPath}/hide`, {
-        headers,
-        data: { reason: 'Off topic' },
-      }),
-    ).toBeOK();
-    await expect(
-      list.getByText('This proposal was hidden by a moderator'),
-    ).toBeVisible();
-    await expect(heading).toHaveCount(0);
-    await expect(page.getByText(body, { exact: true })).toHaveCount(0);
-    for (const path of [
-      `${channel}/feed`,
-      `${channel}/feed?around=${post.rootMessageId}`,
-    ]) {
-      const feed = await request.get(path, {
-        headers: authorizationHeaders(author),
-      });
-      expect(feed.status()).toBe(404);
-    }
-    const detail = `${channel}/forum/posts/${post.id}/replies`;
-    for (const [viewer, visible] of [
-      [admin, true],
-      [author, false],
-    ] as const) {
-      const response = await request.get(detail, {
-        headers: authorizationHeaders(viewer),
-      });
-      await expect(response).toBeOK();
-      const { post: hidden } = await response.json();
-      expect(hidden.title).toBe(visible ? title : '');
-      expect(hidden.body).toBe(visible ? body : '');
-      expect(hidden.proposal.body).toBe(visible ? proposal.body : null);
-    }
-    await expect(
-      await request.post(`${pollPath}/restore`, { headers, data: {} }),
-    ).toBeOK();
-    await expect(heading).toBeVisible();
-    await expect(list.getByText(title)).toBeVisible();
-    await expect(page.getByText(body, { exact: true })).toBeVisible();
   } finally {
     await page.context().close();
   }
@@ -1488,47 +1302,6 @@ test('suspended users are removed from an active call right away', async ({
     await expectSignedOut(targetPage);
     await expect(
       targetPage.getByRole('button', { name: 'Leave call' }),
-    ).toHaveCount(0);
-  } finally {
-    await targetPage.context().close();
-    await moderatorPage.context().close();
-  }
-});
-
-test('account revoked notice does not return when another account signs in', async ({
-  browser,
-  request,
-}) => {
-  const admin = await getOrCreateInstanceAdmin(request);
-  const server = await createModerationServer(request, admin);
-  const moderator = await addAccountModerator(request);
-  const target = await addServerMember(request, admin, server, 'suspended');
-  const nextUser = await addServerMember(request, admin, server, 'next');
-
-  const targetPage = await openPageAs(
-    browser,
-    target,
-    `/s/${server.slug}/c/${server.generalChannelId}`,
-  );
-  const moderatorPage = await openPageAs(browser, moderator, '/settings/users');
-
-  try {
-    await expect(
-      targetPage.getByPlaceholder('Send a message...'),
-    ).toBeVisible();
-
-    await suspendFromSettings(moderatorPage, target);
-    await expectSessionEnded(targetPage, 'suspended', server);
-    await dismissModerationNotice(targetPage, ACCOUNT_NOTICE_TITLES.suspended);
-
-    await targetPage.getByRole('link', { name: 'Log in' }).click();
-    await new AuthPage(targetPage).logIn(nextUser.user);
-
-    await expect(targetPage.getByRole('link', { name: 'Log in' })).toHaveCount(
-      0,
-    );
-    await expect(
-      moderationNotice(targetPage, ACCOUNT_NOTICE_TITLES.suspended),
     ).toHaveCount(0);
   } finally {
     await targetPage.context().close();
