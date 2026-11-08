@@ -21,8 +21,8 @@
     "test:rust": "cargo test --workspace",
     "test:api:integration": "cargo test -p api --test http_routes --",
     "test:e2e": "npm run types && tsx ./e2e/run-e2e.ts",
-    "test:e2e:slow": "npm run types && PLAYWRIGHT_SLOW_MO=1000 tsx ./e2e/run-e2e.ts",
     "test:e2e:headed": "npm run types && PLAYWRIGHT_SLOW_MO=1000 tsx ./e2e/run-e2e.ts --headed",
+    "test:e2e:slow": "npm run types && PLAYWRIGHT_SLOW_MO=3000 tsx ./e2e/run-e2e.ts",
     "test:e2e:install": "npx playwright install chromium",
     "test-all": "npm run test && npm run test:rust && npm run test:e2e"
   },
