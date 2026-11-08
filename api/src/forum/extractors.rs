@@ -15,6 +15,7 @@ use crate::{
 
 pub(super) struct ForumReadContext {
     pub(super) channel_id: Uuid,
+    pub(super) user_id: Option<Uuid>,
 }
 
 pub(super) struct ForumPostReadContext {
@@ -55,6 +56,7 @@ where
 
         Ok(Self {
             channel_id: path.channel_id,
+            user_id,
         })
     }
 }
@@ -200,14 +202,15 @@ where
     S: HasDatabase + Send + Sync,
 {
     ensure_forum_channel(state, server_id, channel_id).await?;
-    channels::can_read_channel(
+    channels::get_readable_channel(
         state.database(),
         server_id,
         channel_id,
         user_id,
         invite_token,
     )
-    .await
+    .await?;
+    Ok(())
 }
 
 impl<S> FromRequestParts<S> for ForumReplyAccessContext

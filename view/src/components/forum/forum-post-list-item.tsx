@@ -1,4 +1,5 @@
 import { UserAvatar } from '@/components/users/user-avatar';
+import { useModerationAccess } from '@/hooks/use-moderation-access';
 import { cn } from '@/lib/shared.utils';
 import { timeAgo } from '@/lib/time.utils';
 import { type ForumPostSummaryRes } from '@/types/forum.types';
@@ -14,7 +15,20 @@ interface Props {
 
 export const ForumPostListItem = ({ post, postPath, isSelected }: Props) => {
   const { t } = useTranslation();
+  const { canModerateContent } = useModerationAccess();
+
   const author = post.user.displayName || post.user.name;
+  const isConcealed = !!post.hiddenAt && !canModerateContent;
+
+  const getTitle = () => {
+    if (post.moderatedAt) {
+      return t('moderation.labels.removedByModerator');
+    }
+    if (isConcealed) {
+      return t('moderation.labels.proposalHidden');
+    }
+    return post.title;
+  };
 
   return (
     <Link
@@ -36,12 +50,10 @@ export const ForumPostListItem = ({ post, postPath, isSelected }: Props) => {
           <h2
             className={cn(
               'truncate font-medium',
-              post.moderatedAt && 'text-muted-foreground',
+              (post.moderatedAt || isConcealed) && 'text-muted-foreground',
             )}
           >
-            {post.moderatedAt
-              ? t('moderation.labels.removedByModerator')
-              : post.title}
+            {getTitle()}
           </h2>
           {post.status === 'closed' && (
             <span className="text-muted-foreground flex shrink-0 items-center gap-1 text-xs">

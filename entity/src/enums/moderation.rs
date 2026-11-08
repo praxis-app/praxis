@@ -18,6 +18,14 @@ pub enum ModerationAction {
     #[sea_orm(string_value = "remove_forum_post")]
     RemoveForumPost,
 
+    /// Hides a poll or proposal from members and pauses its voting
+    #[sea_orm(string_value = "hide_poll")]
+    HidePoll,
+
+    /// Shows a hidden poll or proposal again and resumes its voting
+    #[sea_orm(string_value = "restore_poll")]
+    RestorePoll,
+
     /// Removes a member from a server without preventing them from rejoining
     #[sea_orm(string_value = "remove_member")]
     RemoveMember,
@@ -102,6 +110,8 @@ pub enum ModerationAction {
 impl_enum_string_conversions!(ModerationAction {
     RemoveMessage => "remove_message",
     RemoveForumPost => "remove_forum_post",
+    HidePoll => "hide_poll",
+    RestorePoll => "restore_poll",
     RemoveMember => "remove_member",
     BanMember => "ban_member",
     UnbanMember => "unban_member",
@@ -156,6 +166,8 @@ pub enum ModerationTargetKind {
     Message,
     #[sea_orm(string_value = "forum_post")]
     ForumPost,
+    #[sea_orm(string_value = "poll")]
+    Poll,
     #[sea_orm(string_value = "user")]
     User,
     #[sea_orm(string_value = "call")]
@@ -175,6 +187,7 @@ pub enum ModerationTargetKind {
 impl_enum_string_conversions!(ModerationTargetKind {
     Message => "message",
     ForumPost => "forum_post",
+    Poll => "poll",
     User => "user",
     Call => "call",
     Server => "server",

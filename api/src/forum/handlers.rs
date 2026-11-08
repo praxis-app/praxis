@@ -83,6 +83,7 @@ pub(super) async fn list_forum_posts(
         query.status.as_deref(),
         query.before.as_deref(),
         limit,
+        context.user_id,
     )
     .await?;
     Ok(Json(posts))

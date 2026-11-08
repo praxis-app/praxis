@@ -5,11 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { MdRemoveCircleOutline } from 'react-icons/md';
 
 interface Props {
+  label?: string;
   menu?: ReactNode;
   className?: string;
 }
 
-export const RemovedContentNotice = ({ menu, className }: Props) => {
+export const RemovedContentNotice = ({ label, menu, className }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -24,7 +25,7 @@ export const RemovedContentNotice = ({ menu, className }: Props) => {
         <MdRemoveCircleOutline className="size-4.5" />
       </div>
       <p className="text-muted-foreground text-sm">
-        {t('moderation.labels.removedByModerator')}
+        {label ?? t('moderation.labels.removedByModerator')}
       </p>
       {menu}
     </Card>

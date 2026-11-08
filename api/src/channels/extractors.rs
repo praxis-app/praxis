@@ -184,7 +184,7 @@ where
         let InviteAccessToken(invite_token) =
             InviteAccessToken::from_request_parts(parts, state).await?;
 
-        super::can_read_channel(
+        super::get_readable_channel(
             state.database(),
             path.server_id,
             path.channel_id,

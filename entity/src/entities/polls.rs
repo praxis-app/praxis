@@ -17,6 +17,7 @@ pub struct Model {
     pub user_id: Uuid,
     pub channel_id: Uuid,
     pub call_id: Option<Uuid>,
+    pub hidden_at: Option<DateTimeWithTimeZone>,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }

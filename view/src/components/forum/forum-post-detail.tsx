@@ -200,11 +200,13 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
   });
 
   const isRemoved = !!post.moderatedAt;
+  const isConcealed = !!post.hiddenAt && !canModerateContent;
   const postTitle = isRemoved
     ? t('moderation.labels.removedByModerator')
     : post.title;
   const showForumPostMenu =
     !isRemoved &&
+    !isConcealed &&
     (post.proposal ||
       (canModerateContent && !post.pollId) ||
       (isAuthor && (post.status === 'open' || !post.proposal)));
@@ -243,7 +245,7 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                {!isRemoved && (
+                {!isRemoved && !isConcealed && (
                   <h1 className="text-xl font-semibold">{postTitle}</h1>
                 )}
                 <p className="text-muted-foreground text-sm">
@@ -271,12 +273,17 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
             </div>
           </div>
         </div>
-        {isRemoved ? (
-          <RemovedContentNotice className="mt-4 sm:ml-13" />
+        {isRemoved || isConcealed ? (
+          <RemovedContentNotice
+            label={
+              isConcealed ? t('moderation.labels.proposalHidden') : undefined
+            }
+            className="mt-4 sm:ml-13"
+          />
         ) : (
           <FormattedText text={post.body} className="mt-4 sm:ml-13" />
         )}
-        {post.proposal && (
+        {post.proposal && !isConcealed && (
           <div className="sm:ml-13">
             <ForumProposalPresentation
               me={me}

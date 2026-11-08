@@ -25,6 +25,8 @@ export type AuditLogScope = 'instance' | 'server';
 export type AuditLogAction =
   | 'remove_message'
   | 'remove_forum_post'
+  | 'hide_poll'
+  | 'restore_poll'
   | 'remove_member'
   | 'ban_member'
   | 'unban_member'
@@ -48,6 +50,7 @@ export type AuditLogAction =
 export type AuditLogTargetKind =
   | 'message'
   | 'forum_post'
+  | 'poll'
   | 'user'
   | 'call'
   | 'server'

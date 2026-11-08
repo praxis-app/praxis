@@ -99,6 +99,7 @@ fn allows_notification_kind(
         }
         NotificationKind::MessageRemoved
         | NotificationKind::ForumPostRemoved
+        | NotificationKind::PollHidden
         | NotificationKind::MemberRemoved
         | NotificationKind::MemberBanned
         | NotificationKind::CallParticipantRemoved => true,

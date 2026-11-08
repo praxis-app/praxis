@@ -522,6 +522,26 @@ class ApiClient {
     });
   };
 
+  hidePoll = async (
+    serverId: string,
+    channelId: string,
+    pollId: string,
+    data: ModerationReasonReq,
+  ) => {
+    const path = `/servers/${serverId}/channels/${channelId}/polls/${pollId}/hide`;
+    return this.executeRequest<{ poll: PollRes }>('post', path, { data });
+  };
+
+  restorePoll = async (
+    serverId: string,
+    channelId: string,
+    pollId: string,
+    data: ModerationReasonReq,
+  ) => {
+    const path = `/servers/${serverId}/channels/${channelId}/polls/${pollId}/restore`;
+    return this.executeRequest<{ poll: PollRes }>('post', path, { data });
+  };
+
   removeMessage = async (
     serverId: string,
     channelId: string,

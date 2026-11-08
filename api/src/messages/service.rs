@@ -608,7 +608,7 @@ pub(super) async fn get_message_image(
         return Err(ApiError::new(StatusCode::NOT_FOUND, "Message not found."));
     }
 
-    channels::can_read_channel(
+    channels::get_readable_channel(
         database,
         server_id,
         channel_id,
@@ -664,7 +664,7 @@ pub(super) async fn get_call_message_image(
     } = path;
     get_call_message(database, server_id, channel_id, call_id, message_id)
         .await?;
-    channels::can_read_channel(
+    channels::get_readable_channel(
         database,
         server_id,
         channel_id,

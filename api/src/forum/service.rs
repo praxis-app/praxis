@@ -43,6 +43,7 @@ pub(super) async fn list_forum_posts(
     status: Option<&str>,
     before: Option<&str>,
     limit: u64,
+    user_id: Option<Uuid>,
 ) -> AppResult<ForumPostsResponse> {
     let status = parse_status_filter(status)?;
     let sort = parse_sort(sort)?;
@@ -83,7 +84,7 @@ pub(super) async fn list_forum_posts(
         }
         .encode()
     });
-    let posts = shape_post_summaries(database, posts).await?;
+    let posts = shape_post_summaries(database, posts, user_id).await?;
 
     Ok(ForumPostsResponse {
         posts,
@@ -589,7 +590,7 @@ pub(super) async fn create_forum_reply(
         .next()
         .ok_or_else(|| internal_consistency_error("Reply not found."))?;
     let post = get_post(database, channel_id, post_id).await?;
-    let summary = shape_post_summaries(database, vec![post])
+    let summary = shape_post_summaries(database, vec![post], None)
         .await?
         .into_iter()
         .next()
@@ -673,7 +674,7 @@ pub(super) async fn delete_forum_reply(
     transaction.commit().await.map_err(internal_error)?;
 
     let post = get_post(database, channel_id, post_id).await?;
-    shape_post_summaries(database, vec![post])
+    shape_post_summaries(database, vec![post], None)
         .await?
         .into_iter()
         .next()

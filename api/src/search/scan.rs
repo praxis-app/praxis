@@ -82,6 +82,14 @@ fn forum_root_message_ids() -> SelectStatement {
         .take()
 }
 
+fn hidden_poll_ids() -> SelectStatement {
+    Query::select()
+        .column(polls::Column::Id)
+        .from(polls::Entity)
+        .and_where(polls::Column::HiddenAt.is_not_null())
+        .take()
+}
+
 fn message_kind_condition(kind: SearchKind) -> Option<Condition> {
     match kind {
         SearchKind::ForumReply => Some(
@@ -260,6 +268,7 @@ async fn scan_polls(
         )
         .filter(window.condition(polls::Column::CreatedAt))
         .filter(polls::Column::PollType.is_in(poll_types))
+        .filter(polls::Column::HiddenAt.is_null())
         .filter(
             Condition::all()
                 .add(polls::Column::Ciphertext.is_not_null())
@@ -356,6 +365,14 @@ async fn scan_forum_posts(
         )
         .filter(window.condition(forum_posts::Column::CreatedAt))
         .filter(forum_posts::Column::ModeratedAt.is_null())
+        .filter(
+            Condition::any()
+                .add(forum_posts::Column::PollId.is_null())
+                .add(
+                    forum_posts::Column::PollId
+                        .not_in_subquery(hidden_poll_ids()),
+                ),
+        )
         .order_by_desc(forum_posts::Column::CreatedAt)
         .order_by_desc(forum_posts::Column::Id);
     let rows = query

@@ -115,6 +115,7 @@ const getIcon = (notification: NotificationRes, className: string) => {
       return <LuCalendar className={className} />;
     case 'message_removed':
     case 'forum_post_removed':
+    case 'poll_hidden':
       return <LuShieldAlert className={className} />;
     case 'member_removed':
     case 'member_banned':

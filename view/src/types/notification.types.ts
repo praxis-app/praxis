@@ -12,6 +12,7 @@ export type NotificationKind =
   | 'event_created'
   | 'message_removed'
   | 'forum_post_removed'
+  | 'poll_hidden'
   | 'member_removed'
   | 'member_banned'
   | 'call_participant_removed';

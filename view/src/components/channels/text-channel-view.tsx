@@ -43,6 +43,7 @@ import {
   preserveFeedImages,
   preserveFeedItemImages,
   replaceProposalWithForumReference,
+  updateFeedPoll,
 } from '@/lib/feed.utils';
 import { patchRemovedMessage } from '@/lib/moderation.utils';
 import { channelPubSubTopic } from '@/lib/pub-sub.utils';
@@ -500,40 +501,14 @@ export const TextChannelView = ({
           return;
         }
         if (body.type === PubSubMessageType.POLL) {
-          const newFeedItem: FeedItemRes = {
-            ...(body.poll as FeedItemRes & { type: 'poll' }),
-            type: 'poll',
-          };
-          queryClient.setQueryData<FeedQuery>(feedQueryKey, (oldData) => {
-            if (!oldData) {
-              return {
-                pages: [{ feed: [newFeedItem] }],
-                pageParams: [null],
-              };
-            }
-            const pages = oldData.pages.map((page, index): FeedQueryPage => {
-              if (index === 0) {
-                const existingIndex = page.feed.findIndex(
-                  (fi) => fi.type === 'poll' && fi.id === newFeedItem.id,
-                );
-                if (existingIndex !== -1) {
-                  const updatedFeed = [...page.feed];
-                  updatedFeed[existingIndex] = newFeedItem;
-                  return { ...page, feed: updatedFeed };
-                }
-                const updatedFeed = [newFeedItem, ...page.feed];
-                // Sort by createdAt descending (newest first)
-                updatedFeed.sort(
-                  (a, b) =>
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime(),
-                );
-                return { ...page, feed: updatedFeed };
-              }
-              return page;
-            });
-            return { pages, pageParams: oldData.pageParams };
-          });
+          const poll = { ...body.poll, type: 'poll' } as const;
+          queryClient.setQueriesData<FeedQuery>(
+            { queryKey: [...feedQueryKey, 'around'] },
+            (data) => updateFeedPoll(data, poll),
+          );
+          queryClient.setQueryData<FeedQuery>(feedQueryKey, (data) =>
+            updateFeedPoll(data, poll, true),
+          );
         }
         if (body.type === PubSubMessageType.PROPOSAL_MOVED) {
           queryClient.setQueryData<FeedQuery>(feedQueryKey, (oldData) =>

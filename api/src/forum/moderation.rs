@@ -179,7 +179,7 @@ pub(super) async fn remove_forum_reply(
         .next()
         .ok_or_else(|| internal_error("removed reply was not shaped"))?;
     let post = get_post(database, request.channel_id, request.post_id).await?;
-    let summary = shape_post_summaries(database, vec![post])
+    let summary = shape_post_summaries(database, vec![post], None)
         .await?
         .into_iter()
         .next()

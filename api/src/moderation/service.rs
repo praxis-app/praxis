@@ -359,11 +359,17 @@ async fn shape_audit_log_entries(
         .filter(|record| record.target_kind == ModerationTargetKind::ForumPost)
         .map(|record| record.target_id)
         .collect::<HashSet<_>>();
+    let poll_ids = records
+        .iter()
+        .filter(|record| record.target_kind == ModerationTargetKind::Poll)
+        .map(|record| record.target_id)
+        .chain(proposal_ids.iter().copied())
+        .collect::<HashSet<_>>();
 
     let actors = load_actors(database, &actor_ids).await?;
     let servers = load_servers(database, &server_ids).await?;
     let forum_posts =
-        load_forum_posts(database, &proposal_ids, &forum_post_ids).await?;
+        load_forum_posts(database, &poll_ids, &forum_post_ids).await?;
     let proposals = load_proposals(database, &proposal_ids).await?;
     let member_server_ids = server_members::Entity::find()
         .filter(server_members::Column::UserId.eq(user_id))
@@ -564,18 +570,17 @@ async fn load_servers(
 
 async fn load_forum_posts(
     database: &DatabaseConnection,
-    proposal_ids: &HashSet<Uuid>,
+    poll_ids: &HashSet<Uuid>,
     forum_post_ids: &HashSet<Uuid>,
 ) -> AppResult<Vec<forum_posts::Model>> {
-    if proposal_ids.is_empty() && forum_post_ids.is_empty() {
+    if poll_ids.is_empty() && forum_post_ids.is_empty() {
         return Ok(Vec::new());
     }
     forum_posts::Entity::find()
         .filter(
             Condition::any()
                 .add(
-                    forum_posts::Column::PollId
-                        .is_in(proposal_ids.iter().copied()),
+                    forum_posts::Column::PollId.is_in(poll_ids.iter().copied()),
                 )
                 .add(
                     forum_posts::Column::Id
@@ -654,6 +659,18 @@ fn application_path(
         ModerationTargetKind::Message => record
             .channel_id
             .map(|channel_id| format!("/s/{}/c/{channel_id}", server.slug)),
+        ModerationTargetKind::Poll => forum_posts
+            .iter()
+            .find(|post| post.poll_id == Some(record.target_id))
+            .map(|post| forum_post_path(server, post))
+            .or_else(|| {
+                record.channel_id.map(|channel_id| {
+                    format!(
+                        "/s/{}/c/{channel_id}?poll={}",
+                        server.slug, record.target_id
+                    )
+                })
+            }),
         ModerationTargetKind::Server => Some(format!("/s/{}", server.slug)),
         _ => None,
     }

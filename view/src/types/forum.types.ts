@@ -15,6 +15,7 @@ export interface ForumPostSummaryRes {
   replyCount: number;
   latestActivityAt: string;
   moderatedAt?: string;
+  hiddenAt?: string;
   createdAt: string;
   updatedAt: string;
 }

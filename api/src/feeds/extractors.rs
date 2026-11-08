@@ -47,7 +47,7 @@ where
         let InviteAccessToken(invite_token) =
             InviteAccessToken::from_request_parts(parts, state).await?;
 
-        channels::can_read_channel(
+        let channel = channels::get_readable_channel(
             state.database(),
             path.server_id,
             path.channel_id,
@@ -55,6 +55,13 @@ where
             invite_token.as_deref(),
         )
         .await?;
+
+        if channel.channel_type != entity::enums::ChannelType::Text {
+            return Err(ApiError::new(
+                StatusCode::NOT_FOUND,
+                "Channel feed not found.",
+            ));
+        }
 
         Ok(Self {
             server_id: path.server_id,
@@ -84,7 +91,7 @@ where
         let InviteAccessToken(invite_token) =
             InviteAccessToken::from_request_parts(parts, state).await?;
 
-        channels::can_read_channel(
+        channels::get_readable_channel(
             state.database(),
             path.server_id,
             path.channel_id,

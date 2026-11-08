@@ -186,7 +186,8 @@ async fn get_notification_context(
         poll_ids
             .iter()
             .copied()
-            .chain(messages.values().filter_map(|m| m.thread_poll_id)),
+            .chain(messages.values().filter_map(|m| m.thread_poll_id))
+            .chain(moderated_target_ids(ModerationTargetKind::Poll)),
     );
     let polls = get_all_by_ids(
         polls::Entity::find(),
@@ -383,6 +384,9 @@ fn shape_moderation_target(
                 ),
                 None => unavailable(),
             }
+        }
+        NotificationKind::PollHidden => {
+            shape_poll_target(row, action.target_id, viewer_id, context)
         }
         NotificationKind::CallParticipantRemoved => {
             shape_channel_target(row, viewer_id, context)

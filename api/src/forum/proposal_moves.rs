@@ -187,6 +187,12 @@ pub(crate) async fn move_proposal_to_forum(
             "The proposal changed while it was being moved.",
         ));
     }
+    if proposal.hidden_at.is_some() {
+        return Err(ApiError::new(
+            StatusCode::CONFLICT,
+            "Hidden proposals cannot be moved to a forum.",
+        ));
+    }
     if forum_posts::Entity::find()
         .filter(forum_posts::Column::PollId.eq(poll_id))
         .one(&transaction)

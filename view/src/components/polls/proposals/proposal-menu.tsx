@@ -1,3 +1,5 @@
+import { PollModerationDialog } from '@/components/moderation/poll-moderation-dialog';
+import { PollModerationMenuItem } from '@/components/moderation/poll-moderation-menu-item';
 import { MoveProposalToForumDialog } from '@/components/polls/proposals/move-proposal-to-forum-dialog';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,6 +12,7 @@ import { type ChannelRes } from '@/types/channel.types';
 import { type PollRes } from '@/types/poll.types';
 import { type CurrentUser } from '@/types/user.types';
 import { useDeferredMenuAction } from '@/hooks/use-deferred-menu-action';
+import { useModerationAccess } from '@/hooks/use-moderation-access';
 import { type QueryKey } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -46,7 +49,9 @@ export const ProposalMenu = ({
   onViewSettings,
 }: Props) => {
   const [isMoveDialogOpen, setIsMoveDialogOpen] = useState(false);
+  const [isModerationOpen, setIsModerationOpen] = useState(false);
   const { deferUntilClosed, runPendingAction } = useDeferredMenuAction();
+  const { canModerateContent } = useModerationAccess();
 
   const { t } = useTranslation();
 
@@ -55,7 +60,8 @@ export const ProposalMenu = ({
     !!feedQueryKey &&
     channel.channelType === 'text' &&
     poll.user.id === me?.id &&
-    poll.votes.length === 0;
+    poll.votes.length === 0 &&
+    !poll.hiddenAt;
 
   return (
     <>
@@ -100,6 +106,12 @@ export const ProposalMenu = ({
               {t('proposals.actions.moveToForum')}
             </DropdownMenuItem>
           )}
+          {canModerateContent && (
+            <PollModerationMenuItem
+              poll={poll}
+              onSelect={deferUntilClosed(() => setIsModerationOpen(true))}
+            />
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -110,6 +122,15 @@ export const ProposalMenu = ({
           poll={poll}
           sourceChannel={channel}
           feedQueryKey={feedQueryKey}
+        />
+      )}
+
+      {canModerateContent && (
+        <PollModerationDialog
+          open={isModerationOpen}
+          onOpenChange={setIsModerationOpen}
+          poll={poll}
+          channelId={channel.id}
         />
       )}
     </>

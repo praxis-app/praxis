@@ -3,6 +3,7 @@ mod routes;
 mod creation;
 mod extractors;
 pub(crate) mod handlers;
+pub(crate) mod moderation;
 mod outcome;
 mod replies;
 pub(crate) mod service;

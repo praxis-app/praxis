@@ -39,6 +39,7 @@ export interface PollRes {
   replyCount: number;
   replyUsers?: UserRes[];
   latestReplyAt: string | null;
+  hiddenAt?: string;
   createdAt: string;
 }
 

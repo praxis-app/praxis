@@ -5,9 +5,11 @@ const ACTION_ENUM: &str = "moderation_actions_action_enum";
 const ORIGIN_ENUM: &str = "moderation_actions_origin_enum";
 const TARGET_KIND_ENUM: &str = "moderation_actions_target_kind_enum";
 
-const ACTIONS: [&str; 22] = [
+const ACTIONS: [&str; 24] = [
     "remove_message",
     "remove_forum_post",
+    "hide_poll",
+    "restore_poll",
     "remove_member",
     "ban_member",
     "unban_member",
@@ -32,9 +34,10 @@ const ACTIONS: [&str; 22] = [
 
 const ORIGINS: [&str; 3] = ["direct", "proposal", "system"];
 
-const TARGET_KINDS: [&str; 9] = [
+const TARGET_KINDS: [&str; 10] = [
     "message",
     "forum_post",
+    "poll",
     "user",
     "call",
     "server",
@@ -44,9 +47,10 @@ const TARGET_KINDS: [&str; 9] = [
     "invite",
 ];
 
-const NOTIFICATION_KINDS: [&str; 5] = [
+const NOTIFICATION_KINDS: [&str; 6] = [
     "message_removed",
     "forum_post_removed",
+    "poll_hidden",
     "member_removed",
     "member_banned",
     "call_participant_removed",
@@ -541,6 +545,19 @@ async fn add_moderation_columns(
     manager
         .alter_table(
             Table::alter()
+                .table(Polls::Table)
+                .add_column(
+                    ColumnDef::new(Polls::HiddenAt)
+                        .timestamp_with_time_zone()
+                        .null(),
+                )
+                .to_owned(),
+        )
+        .await?;
+
+    manager
+        .alter_table(
+            Table::alter()
                 .table(Users::Table)
                 .add_column(
                     ColumnDef::new(Users::DeletedAt)
@@ -560,6 +577,15 @@ async fn drop_moderation_columns(
             Table::alter()
                 .table(Users::Table)
                 .drop_column(Users::DeletedAt)
+                .to_owned(),
+        )
+        .await?;
+
+    manager
+        .alter_table(
+            Table::alter()
+                .table(Polls::Table)
+                .drop_column(Polls::HiddenAt)
                 .to_owned(),
         )
         .await?;
@@ -780,6 +806,7 @@ enum Servers {
 enum Polls {
     Table,
     Id,
+    HiddenAt,
 }
 
 #[derive(DeriveIden)]

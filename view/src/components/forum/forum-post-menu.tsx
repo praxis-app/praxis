@@ -14,6 +14,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { PollModerationDialog } from '@/components/moderation/poll-moderation-dialog';
+import { PollModerationMenuItem } from '@/components/moderation/poll-moderation-menu-item';
 import { RemoveContentDialog } from '@/components/moderation/remove-content-dialog';
 import { Separator } from '@/components/ui/separator';
 import { useModerationAccess } from '@/hooks/use-moderation-access';
@@ -50,6 +52,7 @@ export const ForumPostMenu = ({
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isRemoveOpen, setIsRemoveOpen] = useState(false);
+  const [isModerationOpen, setIsModerationOpen] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const { serverId } = useServerData();
@@ -170,6 +173,12 @@ export const ForumPostMenu = ({
               {t('moderation.actions.removePost')}
             </DropdownMenuItem>
           )}
+          {canModerateContent && post.proposal && (
+            <PollModerationMenuItem
+              poll={post.proposal}
+              onSelect={() => setIsModerationOpen(true)}
+            />
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -179,6 +188,15 @@ export const ForumPostMenu = ({
         title={t('moderation.prompts.removePost')}
         onRemove={removePost}
       />
+
+      {canModerateContent && post.proposal && (
+        <PollModerationDialog
+          open={isModerationOpen}
+          onOpenChange={setIsModerationOpen}
+          poll={post.proposal}
+          channelId={channel.id}
+        />
+      )}
 
       <Dialog
         open={post.status === 'open' && isCreateOpen}

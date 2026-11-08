@@ -92,7 +92,24 @@ pub(crate) struct PollResponse {
     #[serde(skip_serializing_if = "Vec::is_empty")]
     pub(crate) reply_users: Vec<MessageUser>,
     pub(crate) latest_reply_at: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) hidden_at: Option<String>,
+    #[serde(skip)]
+    pub(crate) content_concealed: bool,
     pub(crate) created_at: String,
+}
+
+impl PollResponse {
+    pub(crate) fn conceal_hidden_content(&mut self) {
+        if self.hidden_at.is_none() {
+            return;
+        }
+        self.content_concealed = true;
+        self.body = None;
+        self.action = None;
+        self.options.clear();
+        self.images.clear();
+    }
 }
 
 #[derive(Debug, Serialize)]

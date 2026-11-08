@@ -19,7 +19,9 @@ import { createTestUser } from '../lib/data';
 import { createForumChannel } from '../lib/forums';
 import { grantInstancePermissions } from '../lib/instance-roles';
 import { createInvite } from '../lib/invites';
+import { createMessages } from '../lib/messages';
 import { type PermissionRule } from '../lib/permissions';
+import { expirePollDeadline } from '../lib/polls';
 import { grantServerPermissions } from '../lib/server-roles';
 import { createServer, enableAnonymousUsers, joinServer } from '../lib/servers';
 import { AuthPage } from '../pages/auth.page';
@@ -425,6 +427,285 @@ test('moderator can remove messages and forum posts for everyone in realtime', a
   } finally {
     await observerPage.context().close();
     await moderatorPage.context().close();
+  }
+});
+
+test('hidden plain poll pauses moderator voting controls', async ({
+  browser,
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const path = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
+  const headers = authorizationHeaders(admin);
+  const created = await request.post(path, {
+    headers,
+    data: {
+      body: 'Meeting place?',
+      pollType: 'poll',
+      options: ['Park', 'Cafe'],
+    },
+  });
+  await expect(created).toBeOK();
+  const { poll } = await created.json();
+  await expect(
+    await request.post(`${path}/${poll.id}/hide`, {
+      headers,
+      data: { reason: 'Off topic' },
+    }),
+  ).toBeOK();
+  const page = await openPageAs(
+    browser,
+    admin,
+    `/s/${server.slug}/c/${server.generalChannelId}`,
+  );
+  try {
+    const card = page
+      .getByTestId('feed')
+      .locator(`[data-decision-id="${poll.id}"]`);
+    await expect(
+      card.getByText('Hidden by a moderator. Voting is paused.'),
+    ).toBeVisible();
+    await expect(card.getByRole('button', { name: 'Park' })).toBeDisabled();
+    await expect(
+      card.getByRole('button', { name: 'Vote', exact: true }),
+    ).toBeDisabled();
+  } finally {
+    await page.context().close();
+  }
+});
+
+test('restoring a completed poll describes its visibility', async ({
+  browser,
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const path = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
+  const headers = authorizationHeaders(admin);
+  const created = await request.post(path, {
+    headers,
+    data: { body: 'Where?', pollType: 'poll', options: ['Park', 'Cafe'] },
+  });
+  await expect(created).toBeOK();
+  const { poll } = await created.json();
+  expirePollDeadline(poll.id);
+  const page = await openPageAs(
+    browser,
+    admin,
+    `/s/${server.slug}/c/${server.generalChannelId}`,
+  );
+  try {
+    const card = page
+      .getByTestId('feed')
+      .locator(`[data-decision-id="${poll.id}"]`);
+    await expect(card.getByText('Poll closed')).toBeVisible();
+    await expect(
+      await request.post(`${path}/${poll.id}/hide`, {
+        headers,
+        data: { reason: 'Off topic' },
+      }),
+    ).toBeOK();
+    await page.reload();
+    await expect(
+      card.getByText('Hidden by a moderator.', { exact: true }),
+    ).toBeVisible();
+    await card.getByRole('button', { name: 'Open poll menu' }).click();
+    await page.getByRole('menuitem', { name: 'Restore poll' }).click();
+    await expect(page.getByRole('dialog')).toContainText(
+      'Members can see it again.',
+    );
+    await expect(page.getByRole('dialog')).not.toContainText('voting resumes');
+  } finally {
+    await page.context().close();
+  }
+});
+
+test('moderator can hide and restore a proposal for everyone in realtime', async ({
+  browser,
+  request,
+}) => {
+  test.setTimeout(60_000);
+
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const author = await addServerMember(request, admin, server, 'proposer');
+  const moderator = await addServerMember(request, admin, server, 'hider', [
+    { subject: 'Message', action: ['delete'] },
+  ]);
+  const body = `E2E off topic proposal ${randomUUID().slice(0, 8)}`;
+  const pollResponse = await request.post(
+    `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`,
+    {
+      headers: authorizationHeaders(author),
+      data: { body, pollType: 'proposal', action: { actionType: 'general' } },
+    },
+  );
+  await expect(pollResponse).toBeOK();
+
+  const channelPath = `/s/${server.slug}/c/${server.generalChannelId}`;
+  const { poll } = await pollResponse.json();
+  await createMessages({
+    request,
+    user: author,
+    serverId: server.id,
+    channelId: server.generalChannelId,
+    bodies: Array.from({ length: 30 }, (_, i) => `Later message ${i}`),
+  });
+  const focusedPath = `${channelPath}?poll=${poll.id}`;
+  const authorPage = await openPageAs(browser, author, focusedPath);
+  const historyPage = await openPageAs(browser, author, channelPath);
+  const historyFeed = historyPage.getByTestId('feed');
+  const moderatorPage = await openPageAs(browser, moderator, focusedPath);
+  const authorFeed = authorPage.getByTestId('feed');
+  const hiddenNotice = 'This proposal was hidden by a moderator';
+  const pausedLabel = 'Hidden by a moderator. Voting is paused.';
+
+  try {
+    await expect(authorFeed.getByText(body)).toBeVisible();
+    await expect(historyFeed.getByText('Later message 29')).toBeVisible();
+    await historyFeed.hover();
+    await historyPage.mouse.wheel(0, -10_000);
+    await expect(historyFeed.getByText(body)).toBeVisible();
+    const proposal = moderatorPage
+      .getByTestId('feed')
+      .locator('[data-decision-id]')
+      .filter({ hasText: body });
+    await proposal.getByRole('button', { name: 'Open proposal menu' }).click();
+    await moderatorPage
+      .getByRole('menuitem', { name: 'Hide proposal' })
+      .click();
+    await confirmModeration(
+      moderatorPage,
+      'Hide this proposal?',
+      'Hide',
+      /\/polls\/[^/]+\/hide$/,
+      'Off topic',
+    );
+
+    await expect(authorFeed.getByText(hiddenNotice)).toBeVisible();
+    await expect(historyFeed.getByText(hiddenNotice)).toHaveCount(1);
+    await expect(historyFeed.getByText(body)).toHaveCount(0);
+    await expect(authorFeed.getByText(body)).toHaveCount(0);
+    await expect(authorFeed.getByRole('button', { name: 'Agree' })).toHaveCount(
+      0,
+    );
+    await expect(proposal.getByText(pausedLabel)).toBeVisible();
+    await expect(proposal.getByText(body)).toBeVisible();
+
+    await proposal.getByRole('button', { name: 'Open proposal menu' }).click();
+    await moderatorPage
+      .getByRole('menuitem', { name: 'Restore proposal' })
+      .click();
+    await confirmModeration(
+      moderatorPage,
+      'Restore this proposal?',
+      'Restore',
+      /\/polls\/[^/]+\/restore$/,
+    );
+
+    await expect(authorFeed.getByText(body)).toBeVisible();
+    await expect(authorFeed.getByText(hiddenNotice)).toHaveCount(0);
+    await expect(proposal.getByText(pausedLabel)).toHaveCount(0);
+    await expect(historyFeed.getByText(body)).toHaveCount(1);
+    await expect(historyFeed.getByText(hiddenNotice)).toHaveCount(0);
+  } finally {
+    await authorPage.context().close();
+    await historyPage.context().close();
+    await moderatorPage.context().close();
+  }
+});
+
+test('forum proposal hide and restore refresh the open member view', async ({
+  browser,
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const author = await addServerMember(
+    request,
+    admin,
+    server,
+    'forum-proposer',
+  );
+  const forum = await createForumChannel(
+    request,
+    admin,
+    server.id,
+    'decisions',
+  );
+  const channel = `/api/servers/${server.id}/channels/${forum.id}`;
+  const title = 'Meeting venue';
+  const body = 'Choose the venue';
+  const proposal = {
+    body: 'Meet at the park',
+    pollType: 'proposal',
+    action: { actionType: 'general' },
+  };
+  const created = await request.post(`${channel}/forum/posts`, {
+    headers: authorizationHeaders(author),
+    data: { title, body, proposal },
+  });
+  await expect(created).toBeOK();
+  const { post } = await created.json();
+  const page = await openPageAs(
+    browser,
+    author,
+    `/s/${server.slug}/c/${forum.id}/posts/${post.id}`,
+  );
+  const list = page.getByTestId('forum-post-list');
+  const heading = page.getByRole('heading', {
+    level: 1,
+    name: title,
+    exact: true,
+  });
+  const pollPath = `${channel}/polls/${post.pollId}`;
+  const headers = authorizationHeaders(admin);
+  try {
+    await expect(heading).toBeVisible();
+    await expect(list.getByText(title)).toBeVisible();
+    await expect(
+      await request.post(`${pollPath}/hide`, {
+        headers,
+        data: { reason: 'Off topic' },
+      }),
+    ).toBeOK();
+    await expect(
+      list.getByText('This proposal was hidden by a moderator'),
+    ).toBeVisible();
+    await expect(heading).toHaveCount(0);
+    await expect(page.getByText(body, { exact: true })).toHaveCount(0);
+    for (const path of [
+      `${channel}/feed`,
+      `${channel}/feed?around=${post.rootMessageId}`,
+    ]) {
+      const feed = await request.get(path, {
+        headers: authorizationHeaders(author),
+      });
+      expect(feed.status()).toBe(404);
+    }
+    const detail = `${channel}/forum/posts/${post.id}/replies`;
+    for (const [viewer, visible] of [
+      [admin, true],
+      [author, false],
+    ] as const) {
+      const response = await request.get(detail, {
+        headers: authorizationHeaders(viewer),
+      });
+      await expect(response).toBeOK();
+      const { post: hidden } = await response.json();
+      expect(hidden.title).toBe(visible ? title : '');
+      expect(hidden.body).toBe(visible ? body : '');
+      expect(hidden.proposal.body).toBe(visible ? proposal.body : null);
+    }
+    await expect(
+      await request.post(`${pollPath}/restore`, { headers, data: {} }),
+    ).toBeOK();
+    await expect(heading).toBeVisible();
+    await expect(list.getByText(title)).toBeVisible();
+    await expect(page.getByText(body, { exact: true })).toBeVisible();
+  } finally {
+    await page.context().close();
   }
 });
 

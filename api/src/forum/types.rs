@@ -108,8 +108,18 @@ pub(super) struct ForumPostSummaryResponse {
     pub(super) latest_activity_at: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(super) moderated_at: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(super) hidden_at: Option<String>,
     pub(super) created_at: String,
     pub(super) updated_at: String,
+}
+
+impl ForumPostSummaryResponse {
+    pub(super) fn conceal_hidden_content(&mut self) {
+        if self.hidden_at.is_some() {
+            self.title.clear();
+        }
+    }
 }
 
 #[derive(Debug, Serialize)]
@@ -128,6 +138,19 @@ pub(crate) struct ForumPostResponse {
     pub(super) body: String,
     pub(super) replies: Vec<MessageResponse>,
     pub(super) proposal: Option<PollResponse>,
+}
+
+impl ForumPostResponse {
+    pub(super) fn conceal_hidden_content(&mut self) {
+        if self.post.hidden_at.is_none() {
+            return;
+        }
+        self.post.conceal_hidden_content();
+        self.body.clear();
+        if let Some(proposal) = self.proposal.as_mut() {
+            proposal.conceal_hidden_content();
+        }
+    }
 }
 
 #[derive(Debug, Serialize)]

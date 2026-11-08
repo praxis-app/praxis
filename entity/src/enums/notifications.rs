@@ -54,6 +54,10 @@ pub enum NotificationKind {
     #[sea_orm(string_value = "forum_post_removed")]
     ForumPostRemoved,
 
+    /// A moderator hid your poll or proposal
+    #[sea_orm(string_value = "poll_hidden")]
+    PollHidden,
+
     /// A moderator removed you from a server
     #[sea_orm(string_value = "member_removed")]
     MemberRemoved,
@@ -79,6 +83,7 @@ impl_enum_string_conversions!(NotificationKind {
     EventCreated => "event_created",
     MessageRemoved => "message_removed",
     ForumPostRemoved => "forum_post_removed",
+    PollHidden => "poll_hidden",
     MemberRemoved => "member_removed",
     MemberBanned => "member_banned",
     CallParticipantRemoved => "call_participant_removed",
