@@ -100,18 +100,6 @@ export async function createServer(
   return (await response.json()).server;
 }
 
-export async function getDefaultServer(
-  request: APIRequestContext,
-  user: AuthenticatedUser,
-) {
-  const response = await request.get('/api/servers/default', {
-    headers: authorizationHeaders(user),
-  });
-
-  await expect(response).toBeOK();
-  return (await response.json()).server;
-}
-
 export async function getServerBySlug(
   request: APIRequestContext,
   user: AuthenticatedUser,
