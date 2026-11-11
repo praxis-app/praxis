@@ -23,6 +23,7 @@ import { createMessages } from '../lib/messages';
 import { type PermissionRule } from '../lib/permissions';
 import {
   backdateHiddenPoll,
+  expirePollDeadline,
   getSecondsUntilPollCloses,
   voteViaApi,
 } from '../lib/polls';
@@ -748,6 +749,120 @@ test('moderator can remove and ban server members', async ({
     await bannedPage.context().close();
     await managerPage.context().close();
   }
+});
+
+test('adjusted electorate includes suspended voters only in proposals where their votes count', async ({
+  request,
+}) => {
+  test.setTimeout(testTimeout(60_000));
+
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const proposer = await addServerMember(
+    request,
+    admin,
+    server,
+    'quorum-proposer',
+  );
+  const voter = await addServerMember(request, admin, server, 'quorum-voter');
+  const nonvoter = await addServerMember(
+    request,
+    admin,
+    server,
+    'quorum-nonvoter',
+  );
+  await updateServerConfig(request, admin, server.id, {
+    decisionMakingModel: 'consensus',
+    agreementThreshold: 100,
+    quorumEnabled: true,
+    quorumThreshold: 100,
+    votingTimeLimit: 30,
+    disagreementsLimit: 0,
+    abstainsLimit: 0,
+  });
+  const pollsPath = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
+  const created = await request.post(pollsPath, {
+    headers: authorizationHeaders(proposer),
+    data: {
+      body: `Suspension quorum ${randomUUID()}`,
+      pollType: 'proposal',
+      action: { actionType: 'general' },
+    },
+  });
+  await expect(created).toBeOK();
+  const { poll } = await created.json();
+  const otherCreated = await request.post(pollsPath, {
+    headers: authorizationHeaders(proposer),
+    data: {
+      body: `Active voter quorum ${randomUUID()}`,
+      pollType: 'proposal',
+      action: { actionType: 'general' },
+    },
+  });
+  await expect(otherCreated).toBeOK();
+  const { poll: otherPoll } = await otherCreated.json();
+  for (const user of [proposer, admin]) {
+    await voteViaApi(
+      request,
+      user,
+      server.id,
+      server.generalChannelId,
+      otherPoll.id,
+      'agree',
+    );
+  }
+  const voteIds: string[] = [];
+  for (const user of [proposer, voter]) {
+    voteIds.push(
+      await voteViaApi(
+        request,
+        user,
+        server.id,
+        server.generalChannelId,
+        poll.id,
+        'agree',
+      ),
+    );
+  }
+  const readPoll = async (pollId = poll.id) => {
+    const response = await request.get(`${pollsPath}/${pollId}/replies`, {
+      headers: authorizationHeaders(proposer),
+    });
+    await expect(response).toBeOK();
+    return (await response.json()).root;
+  };
+  const before = await readPoll();
+  expect(before.memberCount).toBe(4);
+  expect(before.votes).toHaveLength(2);
+  expect(before.stage).toBe('voting');
+
+  for (const target of [voter, nonvoter]) {
+    const suspended = await request.post(
+      `/api/users/${target.userId}/suspend`,
+      {
+        headers: authorizationHeaders(admin),
+        data: { reason: 'Repeated harassment' },
+      },
+    );
+    await expect(suspended).toBeOK();
+  }
+  const after = await readPoll();
+  expect.soft(after.memberCount).toBe(3);
+  expect(after.votes).toHaveLength(2);
+  expect(after.votes.map((vote: { id: string }) => vote.id)).toEqual(
+    expect.arrayContaining(voteIds),
+  );
+
+  const otherAfter = await readPoll(otherPoll.id);
+  expect(otherAfter.memberCount).toBe(2);
+  expect(otherAfter.votes).toHaveLength(2);
+
+  expirePollDeadline(poll.id);
+  expirePollDeadline(otherPoll.id);
+  await expect.poll(async () => (await readPoll()).stage).toBe('closed');
+  await expect
+    .poll(async () => (await readPoll(otherPoll.id)).stage)
+    .toBe('ratified');
 });
 
 test('moderator can suspend a signed in user', async ({ browser, request }) => {
