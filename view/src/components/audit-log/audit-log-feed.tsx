@@ -9,9 +9,11 @@ import {
   type AuditLogFilters,
   type AuditLogScope,
 } from '@/types/moderation.types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuCircleAlert, LuScrollText } from 'react-icons/lu';
+
+const TARGET_ID_DEBOUNCE_MS = 300;
 
 export const AuditLogFeed = ({
   scope,
@@ -23,8 +25,24 @@ export const AuditLogFeed = ({
   enabled: boolean;
 }) => {
   const [filters, setFilters] = useState<AuditLogFilters>({});
+  const [debouncedTargetId, setDebouncedTargetId] = useState<string>();
+
   const { t } = useTranslation();
-  const query = useAuditLogQuery({ scope, serverId, filters, enabled });
+
+  useEffect(() => {
+    const timer = window.setTimeout(
+      () => setDebouncedTargetId(filters.targetId?.trim() || undefined),
+      TARGET_ID_DEBOUNCE_MS,
+    );
+    return () => window.clearTimeout(timer);
+  }, [filters.targetId]);
+
+  const query = useAuditLogQuery({
+    scope,
+    serverId,
+    filters: { ...filters, targetId: debouncedTargetId },
+    enabled,
+  });
 
   const entries = query.data?.pages.flatMap((page) => page.entries) || [];
   const filterValues = query.data?.pages[0]?.filterValues;
