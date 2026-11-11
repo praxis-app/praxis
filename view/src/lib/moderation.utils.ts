@@ -42,7 +42,6 @@ export const getModerationAccess = (
 export const isRemovableMessage = (message: MessageRes) =>
   !message.moderatedAt &&
   !message.botId &&
-  !message.threadPollId &&
   !!message.user;
 
 const toTombstone = <T extends Identifiable>(

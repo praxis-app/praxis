@@ -2,7 +2,7 @@ use axum::http::StatusCode;
 use chrono::Utc;
 use entity::{
     enums::{ModerationAction, ModerationTargetKind, NotificationKind},
-    forum_posts, message_images, messages, notifications,
+    forum_posts, message_images, messages, notifications, polls,
 };
 use sea_orm::{
     prelude::Uuid,
@@ -13,7 +13,7 @@ use sea_orm::{
 use std::path::Path;
 
 use super::{
-    replies::get_reply_summaries,
+    replies::{get_poll_reply_summaries, get_reply_summaries},
     service::{
         broadcast_to_call_members, broadcast_to_channel_members,
         internal_consistency_error, internal_error, shape_messages,
@@ -34,9 +34,26 @@ pub(super) struct RemovedMessage {
 }
 
 struct ThreadSummary {
+    root_kind: &'static str,
     root_id: Uuid,
     reply_count: usize,
     latest_reply_at: Option<String>,
+}
+
+impl ThreadSummary {
+    fn new(
+        root_kind: &'static str,
+        root_id: Uuid,
+        summary: Option<(usize, chrono::DateTime<chrono::FixedOffset>)>,
+    ) -> Self {
+        Self {
+            root_kind,
+            root_id,
+            reply_count: summary.map(|(count, _)| count).unwrap_or(0),
+            latest_reply_at: summary
+                .map(|(_, latest)| serialize_timestamp(latest)),
+        }
+    }
 }
 
 pub(crate) async fn erase_messages<C>(
@@ -172,22 +189,20 @@ pub(super) async fn remove_message(
     transaction.commit().await.map_err(internal_error)?;
     remove_stored_files(upload_root, &storage_keys).await;
 
-    let thread_root_id = message.thread_root_id;
-    let message = reload_message(database, message.id).await?;
-    let thread = match thread_root_id {
-        Some(root_id) => {
-            let summary = get_reply_summaries(database, vec![root_id])
-                .await?
-                .remove(&root_id);
-            Some(ThreadSummary {
-                root_id,
-                reply_count: summary.map(|(count, _)| count).unwrap_or(0),
-                latest_reply_at: summary
-                    .map(|(_, latest)| serialize_timestamp(latest)),
-            })
-        }
-        None => None,
+    let thread = if let Some(root_id) = message.thread_poll_id {
+        let summary = get_poll_reply_summaries(database, vec![root_id])
+            .await?
+            .remove(&root_id);
+        Some(ThreadSummary::new("poll", root_id, summary))
+    } else if let Some(root_id) = message.thread_root_id {
+        let summary = get_reply_summaries(database, vec![root_id])
+            .await?
+            .remove(&root_id);
+        Some(ThreadSummary::new("message", root_id, summary))
+    } else {
+        None
     };
+    let message = reload_message(database, message.id).await?;
 
     Ok(RemovedMessage {
         message,
@@ -202,7 +217,8 @@ pub(super) async fn broadcast_removed_message(
     request: &RemoveMessageRequest,
     removed: &RemovedMessage,
 ) -> AppResult<()> {
-    if let Some(call_id) = request.call_id {
+    if let Some(call_id) = request.call_id.filter(|_| removed.thread.is_none())
+    {
         return broadcast_to_call_members(
             database,
             pub_sub_service,
@@ -238,9 +254,9 @@ pub(super) async fn broadcast_removed_message(
     let body = serde_json::json!({
         "type": "threadReply",
         "action": "removed",
-        "rootKind": "message",
+        "rootKind": thread.root_kind,
         "rootId": thread.root_id,
-        "rootMessageId": thread.root_id,
+        "rootMessageId": (thread.root_kind == "message").then_some(thread.root_id),
         "reply": removed.message,
         "replyCount": thread.reply_count,
         "latestReplyAt": thread.latest_reply_at,
@@ -249,11 +265,19 @@ pub(super) async fn broadcast_removed_message(
         channels::get_channel_member_user_ids(database, request.channel_id)
             .await?;
     for member_id in members {
-        let topic = PubSubTopic::new_message(
-            request.server_id,
-            request.channel_id,
-            member_id,
-        )
+        let topic = match request.call_id {
+            Some(call_id) => PubSubTopic::call_message(
+                request.server_id,
+                request.channel_id,
+                call_id,
+                member_id,
+            ),
+            None => PubSubTopic::new_message(
+                request.server_id,
+                request.channel_id,
+                member_id,
+            ),
+        }
         .to_string();
         pub_sub_service.publish(&topic, body.clone()).await?;
     }
@@ -269,7 +293,6 @@ where
     C: ConnectionTrait,
 {
     let in_scope = message.bot_id.is_none()
-        && message.thread_poll_id.is_none()
         && match call_id {
             Some(call_id) => {
                 message.call_id == Some(call_id)
@@ -279,6 +302,27 @@ where
         };
     if !in_scope {
         return Err(message_not_found());
+    }
+
+    if let Some(poll_id) = message.thread_poll_id {
+        let poll = polls::Entity::find_by_id(poll_id)
+            .filter(polls::Column::ChannelId.eq(message.channel_id))
+            .one(database)
+            .await
+            .map_err(internal_error)?
+            .ok_or_else(message_not_found)?;
+        if poll.call_id != call_id || message.thread_root_id.is_some() {
+            return Err(message_not_found());
+        }
+        let is_forum_proposal = forum_posts::Entity::find()
+            .filter(forum_posts::Column::PollId.eq(poll_id))
+            .one(database)
+            .await
+            .map_err(internal_error)?
+            .is_some();
+        if is_forum_proposal {
+            return Err(message_not_found());
+        }
     }
 
     let forum_root_id = message.thread_root_id.unwrap_or(message.id);
