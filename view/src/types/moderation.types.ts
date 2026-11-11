@@ -15,6 +15,23 @@ export interface InstanceUserRes {
   createdAt: string;
 }
 
+export interface AccountModerationStateRes {
+  locked: boolean;
+  deletedAt: string | null;
+  canBeModerated: boolean;
+}
+
+export interface MemberModerationStateRes {
+  isMember: boolean;
+  isBanned: boolean;
+  canBeModerated: boolean;
+}
+
+export interface UserModerationRes {
+  account?: AccountModerationStateRes;
+  server?: MemberModerationStateRes;
+}
+
 export interface InstanceUsersRes {
   users: InstanceUserRes[];
   nextCursor: string | null;

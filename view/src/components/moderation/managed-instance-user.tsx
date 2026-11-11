@@ -1,18 +1,16 @@
-import { api } from '@/client/api-client';
 import { Badge } from '@/components/ui/badge';
 import { UserAvatar } from '@/components/users/user-avatar';
 import { handleError } from '@/lib/error.utils';
-import { invalidateAccountModerationQueries } from '@/lib/moderation.utils';
+import {
+  getAccountModerationActions,
+  invalidateAccountModerationQueries,
+  moderateAccount,
+  type AccountModerationAction,
+} from '@/lib/moderation.utils';
 import { type InstanceUserRes } from '@/types/moderation.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { MdBlock, MdDeleteForever, MdRestore } from 'react-icons/md';
-import {
-  ModerationActionMenu,
-  type ModerationMenuAction,
-} from './moderation-action-menu';
-
-type AccountAction = 'suspend' | 'restore' | 'delete';
+import { ModerationActionMenu } from './moderation-action-menu';
 
 interface Props {
   user: InstanceUserRes;
@@ -24,22 +22,14 @@ export const ManagedInstanceUser = ({ user, canSuspend, canDelete }: Props) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const { mutate: moderateAccount, isPending } = useMutation({
+  const { mutate: moderateUser, isPending } = useMutation({
     mutationFn: ({
       action,
       reason,
     }: {
-      action: AccountAction;
+      action: AccountModerationAction;
       reason?: string;
-    }) => {
-      if (action === 'suspend') {
-        return api.suspendUser(user.id, { reason });
-      }
-      if (action === 'restore') {
-        return api.restoreUser(user.id, { reason });
-      }
-      return api.deleteUser(user.id, { reason });
-    },
+    }) => moderateAccount(user.id, action, reason),
     onSuccess: (_data, { action }) =>
       invalidateAccountModerationQueries(queryClient, action === 'delete'),
     onError: handleError,
@@ -48,42 +38,12 @@ export const ManagedInstanceUser = ({ user, canSuspend, canDelete }: Props) => {
   const name = user.displayName || user.name;
   const isDeleted = !!user.deletedAt;
 
-  const actions: ModerationMenuAction<AccountAction>[] = [];
-  if (!isDeleted && canSuspend && !user.locked) {
-    actions.push({
-      key: 'suspend',
-      Icon: MdBlock,
-      menuLabel: t('moderation.actions.suspendUser'),
-      dialogTitle: t('moderation.prompts.suspendUser'),
-      confirmLabel: t('moderation.actions.suspend'),
-      explanation: [t('moderation.explanations.suspendUser')],
-      isReasonRequired: true,
-    });
-  }
-  if (!isDeleted && canSuspend && user.locked) {
-    actions.push({
-      key: 'restore',
-      Icon: MdRestore,
-      menuLabel: t('moderation.actions.restoreUser'),
-      dialogTitle: t('moderation.prompts.restoreUser'),
-      confirmLabel: t('moderation.actions.restore'),
-      explanation: [t('moderation.explanations.restoreUser')],
-      isReasonRequired: false,
-      isDialogDestructive: false,
-    });
-  }
-  if (!isDeleted && canDelete) {
-    actions.push({
-      key: 'delete',
-      Icon: MdDeleteForever,
-      menuLabel: t('moderation.actions.deleteUser'),
-      dialogTitle: t('moderation.prompts.deleteUser'),
-      confirmLabel: t('moderation.actions.delete'),
-      explanation: [t('moderation.explanations.deleteUser')],
-      isReasonRequired: true,
-      isMenuItemDestructive: true,
-    });
-  }
+  const actions = getAccountModerationActions(t, {
+    canSuspend,
+    canDelete,
+    isLocked: user.locked,
+    isDeleted,
+  });
 
   return (
     <div className="flex items-center justify-between gap-2">
@@ -107,13 +67,13 @@ export const ManagedInstanceUser = ({ user, canSuspend, canDelete }: Props) => {
         )}
       </div>
 
-      <ModerationActionMenu<AccountAction>
+      <ModerationActionMenu<AccountModerationAction>
         targetName={name}
         triggerLabel={t('moderation.actions.userActions', { name })}
         actions={actions}
         isPending={isPending}
         onConfirm={(action, reason, onSuccess) =>
-          moderateAccount({ action, reason }, { onSuccess })
+          moderateUser({ action, reason }, { onSuccess })
         }
       />
     </div>

@@ -79,6 +79,7 @@ import {
   type AuditLogRes,
   type InstanceUsersRes,
   type ModerationReasonReq,
+  type UserModerationRes,
 } from '@/types/moderation.types';
 import {
   type ServerAccessRes,
@@ -205,6 +206,13 @@ class ApiClient {
   getUserProfile = async (userId: string) => {
     const path = `/users/${userId}/profile`;
     return this.executeRequest<{ user: UserProfileRes }>('get', path);
+  };
+
+  getUserModeration = async (userId: string, serverId?: string) => {
+    const path = `/users/${userId}/moderation`;
+    return this.executeRequest<{ moderation: UserModerationRes }>('get', path, {
+      params: { serverId },
+    });
   };
 
   isFirstUser = async () => {

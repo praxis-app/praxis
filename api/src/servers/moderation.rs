@@ -17,8 +17,8 @@ use super::{
         remove_server_members_in_transaction, shape_user,
     },
     types::{
-        serialize_timestamp, ServerAccessResponse, ServerAccessStatus,
-        ServerBanResponse,
+        serialize_timestamp, MemberModerationState, ServerAccessResponse,
+        ServerAccessStatus, ServerBanResponse,
     },
 };
 use crate::{
@@ -103,6 +103,30 @@ pub(super) async fn can_manage_server_members(
         PermissionScope::ServerOrInstance(server_id),
     )
     .await
+}
+
+pub(crate) async fn get_member_moderation_state(
+    database: &DatabaseConnection,
+    actor_user_id: Uuid,
+    target_user_id: Uuid,
+    server_id: Uuid,
+) -> AppResult<Option<MemberModerationState>> {
+    if !authz::is_granted(
+        can_manage_server_members(database, actor_user_id, server_id).await,
+    )? {
+        return Ok(None);
+    }
+
+    let is_protected =
+        is_protected_member(database, actor_user_id, target_user_id, server_id)
+            .await?;
+    Ok(Some(MemberModerationState {
+        is_member: is_server_member(database, server_id, target_user_id)
+            .await?,
+        is_banned: is_banned_from_server(database, server_id, target_user_id)
+            .await?,
+        can_be_moderated: actor_user_id != target_user_id && !is_protected,
+    }))
 }
 
 pub(super) async fn remove_member(
@@ -335,36 +359,47 @@ async fn ensure_member_can_be_moderated(
         ));
     }
 
+    if is_protected_member(
+        database,
+        request.actor_user_id,
+        request.target_user_id,
+        request.server_id,
+    )
+    .await?
+    {
+        Err(ApiError::new(
+            StatusCode::FORBIDDEN,
+            "This member cannot be moderated.",
+        ))
+    } else {
+        Ok(())
+    }
+}
+
+async fn is_protected_member(
+    database: &DatabaseConnection,
+    actor_user_id: Uuid,
+    target_user_id: Uuid,
+    server_id: Uuid,
+) -> AppResult<bool> {
     let target_is_moderator = authz::is_granted(
-        can_manage_server_members(
-            database,
-            request.target_user_id,
-            request.server_id,
-        )
-        .await,
+        can_manage_server_members(database, target_user_id, server_id).await,
     )?;
     if !target_is_moderator {
-        return Ok(());
+        return Ok(false);
     }
 
     let actor_is_instance_admin = authz::is_granted(
         authz::can(
             database,
-            request.actor_user_id,
+            actor_user_id,
             "manage",
             "all",
             PermissionScope::Instance,
         )
         .await,
     )?;
-    if actor_is_instance_admin {
-        Ok(())
-    } else {
-        Err(ApiError::new(
-            StatusCode::FORBIDDEN,
-            "This member cannot be moderated.",
-        ))
-    }
+    Ok(!actor_is_instance_admin)
 }
 
 async fn get_target_user<C>(database: &C, user_id: Uuid) -> AppResult<()>

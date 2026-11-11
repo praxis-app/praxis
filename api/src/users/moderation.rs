@@ -18,7 +18,10 @@ use std::path::Path;
 
 use super::{
     service::{get_user_profile_pictures_map, internal_error, AccountStatus},
-    types::{InstanceUserResponse, InstanceUsersResponse},
+    types::{
+        AccountModerationState, InstanceUserResponse, InstanceUsersResponse,
+        UserModerationResponse,
+    },
 };
 use crate::{
     authz::{self, PermissionScope},
@@ -71,6 +74,59 @@ pub(super) async fn can_moderate_accounts(
     } else {
         Err(ApiError::new(StatusCode::FORBIDDEN, "Forbidden."))
     }
+}
+
+pub(super) async fn get_user_moderation(
+    database: &DatabaseConnection,
+    actor_user_id: Uuid,
+    target_user_id: Uuid,
+    server_id: Option<Uuid>,
+) -> AppResult<UserModerationResponse> {
+    let target = users::Entity::find_by_id(target_user_id)
+        .one(database)
+        .await
+        .map_err(internal_error)?
+        .ok_or_else(|| {
+            ApiError::new(StatusCode::NOT_FOUND, "User not found.")
+        })?;
+    let account =
+        get_account_moderation_state(database, actor_user_id, &target).await?;
+    let server = match server_id {
+        Some(server_id) => {
+            servers::get_member_moderation_state(
+                database,
+                actor_user_id,
+                target.id,
+                server_id,
+            )
+            .await?
+        }
+        None => None,
+    };
+
+    if account.is_none() && server.is_none() {
+        return Err(ApiError::new(StatusCode::FORBIDDEN, "Forbidden."));
+    }
+    Ok(UserModerationResponse { account, server })
+}
+
+async fn get_account_moderation_state(
+    database: &DatabaseConnection,
+    actor_user_id: Uuid,
+    target: &users::Model,
+) -> AppResult<Option<AccountModerationState>> {
+    if !authz::is_granted(can_moderate_accounts(database, actor_user_id).await)?
+    {
+        return Ok(None);
+    }
+
+    let is_protected =
+        is_protected_account(database, actor_user_id, target.id).await?;
+    Ok(Some(AccountModerationState {
+        locked: target.locked,
+        deleted_at: target.deleted_at.map(|value| value.to_rfc3339()),
+        can_be_moderated: actor_user_id != target.id && !is_protected,
+    }))
 }
 
 pub(super) async fn list_instance_users(
@@ -295,26 +351,39 @@ async fn ensure_account_can_be_moderated(
         ));
     }
 
-    let target_is_moderator = authz::is_granted(
-        can_moderate_accounts(database, request.target_user_id).await,
-    )?;
-    let target_is_admin = authz::is_granted(
-        is_instance_admin(database, request.target_user_id).await,
-    )?;
-    if !target_is_moderator && !target_is_admin {
-        return Ok(());
-    }
-
-    if authz::is_granted(
-        is_instance_admin(database, request.actor_user_id).await,
-    )? {
-        Ok(())
-    } else {
+    if is_protected_account(
+        database,
+        request.actor_user_id,
+        request.target_user_id,
+    )
+    .await?
+    {
         Err(ApiError::new(
             StatusCode::FORBIDDEN,
             "This account cannot be moderated.",
         ))
+    } else {
+        Ok(())
     }
+}
+
+async fn is_protected_account(
+    database: &DatabaseConnection,
+    actor_user_id: Uuid,
+    target_user_id: Uuid,
+) -> AppResult<bool> {
+    let target_is_moderator = authz::is_granted(
+        can_moderate_accounts(database, target_user_id).await,
+    )?;
+    let target_is_admin =
+        authz::is_granted(is_instance_admin(database, target_user_id).await)?;
+    if !target_is_moderator && !target_is_admin {
+        return Ok(false);
+    }
+
+    let actor_is_instance_admin =
+        authz::is_granted(is_instance_admin(database, actor_user_id).await)?;
+    Ok(!actor_is_instance_admin)
 }
 
 async fn can_perform(

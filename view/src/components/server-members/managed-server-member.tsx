@@ -1,14 +1,15 @@
-import { api } from '@/client/api-client';
 import { ModerationActionMenu } from '@/components/moderation/moderation-action-menu';
 import { UserAvatar } from '@/components/users/user-avatar';
 import { handleError } from '@/lib/error.utils';
+import {
+  getMemberModerationActions,
+  moderateServerMember,
+  type MemberModerationAction,
+} from '@/lib/moderation.utils';
 import { invalidateServerMemberQueries } from '@/lib/server-member.utils';
 import { type UserRes } from '@/types/user.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { MdBlock, MdPersonRemove } from 'react-icons/md';
-
-type ModerationAction = 'remove' | 'ban';
 
 interface Props {
   serverId: string;
@@ -25,24 +26,22 @@ export const ManagedServerMember = ({
   const queryClient = useQueryClient();
 
   const { mutate: moderateMember, isPending } = useMutation({
-    mutationFn: async ({
+    mutationFn: ({
       action,
       reason,
     }: {
-      action: ModerationAction;
+      action: MemberModerationAction;
       reason?: string;
-    }) => {
-      if (action === 'ban') {
-        await api.banServerMember(serverId, member.id, { reason });
-      } else {
-        await api.removeServerMember(serverId, member.id, { reason });
-      }
-    },
+    }) => moderateServerMember(serverId, member.id, action, reason),
     onSuccess: () => invalidateServerMemberQueries(queryClient, serverId),
     onError: handleError,
   });
 
   const name = member.displayName || member.name;
+  const actions = getMemberModerationActions(t, {
+    canRemove: canModerate,
+    canBan: canModerate,
+  });
 
   return (
     <div className="flex items-center justify-between gap-2">
@@ -55,44 +54,14 @@ export const ManagedServerMember = ({
         <span className="truncate">{name}</span>
       </div>
 
-      <ModerationActionMenu<ModerationAction>
+      <ModerationActionMenu<MemberModerationAction>
         targetName={name}
         triggerLabel={t('servers.actions.memberActions', { name })}
         isPending={isPending}
         onConfirm={(action, reason, onSuccess) =>
           moderateMember({ action, reason }, { onSuccess })
         }
-        actions={
-          canModerate
-            ? [
-                {
-                  key: 'remove',
-                  Icon: MdPersonRemove,
-                  menuLabel: t('servers.actions.removeMember'),
-                  dialogTitle: t('servers.prompts.removeMember'),
-                  confirmLabel: t('actions.remove'),
-                  explanation: [
-                    t('servers.moderationExplanations.removeEffects'),
-                    t('servers.moderationExplanations.removeRejoin'),
-                  ],
-                  isReasonRequired: true,
-                },
-                {
-                  key: 'ban',
-                  Icon: MdBlock,
-                  menuLabel: t('servers.actions.banMember'),
-                  dialogTitle: t('servers.prompts.banMember'),
-                  confirmLabel: t('servers.actions.ban'),
-                  explanation: [
-                    t('servers.moderationExplanations.banEffects'),
-                    t('servers.moderationExplanations.banRejoin'),
-                  ],
-                  isReasonRequired: true,
-                  isMenuItemDestructive: true,
-                },
-              ]
-            : []
-        }
+        actions={actions}
       />
     </div>
   );

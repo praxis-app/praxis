@@ -12,7 +12,8 @@ use super::{
     types::{
         CurrentUserPayload, FirstUserResponse, InstanceUsersQuery,
         InstanceUsersResponse, UpdateUserProfileRequest, UserConfigPayload,
-        UserConfigRequest, UserImagePath, UserImagePayload, UserPath,
+        UserConfigRequest, UserImagePath, UserImagePayload,
+        UserModerationPayload, UserModerationQuery, UserPath,
         UserProfilePayload,
     },
     user_configs,
@@ -210,6 +211,27 @@ pub(super) async fn get_instance_users(
     )
     .await?;
     Ok(Json(users))
+}
+
+pub(super) async fn get_user_moderation(
+    State(state): State<UsersState>,
+    Path(path): Path<UserPath>,
+    Query(query): Query<UserModerationQuery>,
+    AuthenticatedUser(user_id): AuthenticatedUser,
+) -> AppResult<Json<UserModerationPayload>> {
+    let server_id = query
+        .server_id
+        .as_deref()
+        .map(|server_id| parse_uuid(server_id, "serverId"))
+        .transpose()?;
+    let moderation = moderation::get_user_moderation(
+        &state.database,
+        user_id,
+        path.user_id,
+        server_id,
+    )
+    .await?;
+    Ok(Json(UserModerationPayload { moderation }))
 }
 
 pub(super) async fn suspend_user(

@@ -3,7 +3,10 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 use super::models::UserRecord;
-use crate::{authz::PermissionRule, servers::types::ServerResponse};
+use crate::{
+    authz::PermissionRule,
+    servers::types::{MemberModerationState, ServerResponse},
+};
 
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -89,6 +92,34 @@ pub(super) struct UserProfileResponse {
     pub(super) bio: Option<String>,
     pub(super) profile_picture: Option<UserImageRef>,
     pub(super) cover_photo: Option<UserImageRef>,
+}
+
+#[derive(Debug, Serialize)]
+pub(super) struct UserModerationPayload {
+    pub(super) moderation: UserModerationResponse,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct UserModerationResponse {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(super) account: Option<AccountModerationState>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(super) server: Option<MemberModerationState>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct AccountModerationState {
+    pub(super) locked: bool,
+    pub(super) deleted_at: Option<String>,
+    pub(super) can_be_moderated: bool,
+}
+
+#[derive(Debug, Default, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(super) struct UserModerationQuery {
+    pub(super) server_id: Option<String>,
 }
 
 #[derive(Debug, Serialize)]

@@ -1,6 +1,16 @@
+import { api } from '@/client/api-client';
+import { type ModerationMenuAction } from '@/components/moderation/moderation-action-menu';
 import { type MessageRes } from '@/types/message.types';
 import { type InstanceAbility, type ServerAbility } from '@/types/role.types';
 import { type QueryClient } from '@tanstack/react-query';
+import { type Namespace, type TFunction } from 'react-i18next';
+import {
+  MdDelete,
+  MdGavel,
+  MdLock,
+  MdLockOpen,
+  MdPersonRemove,
+} from 'react-icons/md';
 
 type QueryPage = Record<string, unknown>;
 
@@ -22,6 +32,9 @@ export const getModerationAccess = (
   canManageCalls:
     serverAbility.can('manage', 'Call') ||
     instanceAbility.can('manage', 'Call'),
+  canManageServerMembers:
+    serverAbility.can('manage', 'ServerMember') ||
+    instanceAbility.can('manage', 'all'),
   canSuspendUsers: instanceAbility.can('update', 'User'),
   canDeleteUsers: instanceAbility.can('delete', 'User'),
 });
@@ -102,4 +115,135 @@ export const invalidateAccountModerationQueries = (
   }
   queryClient.invalidateQueries({ queryKey: ['instance-roles'] });
   queryClient.invalidateQueries({ queryKey: ['servers'] });
+};
+
+type Translate = TFunction<Namespace<'translation'>, undefined>;
+
+export type MemberModerationAction = 'remove' | 'ban';
+export type AccountModerationAction = 'suspend' | 'restore' | 'delete';
+
+interface MemberActionOptions {
+  canRemove: boolean;
+  canBan: boolean;
+}
+
+interface AccountActionOptions {
+  canSuspend: boolean;
+  canDelete: boolean;
+  isLocked: boolean;
+  isDeleted: boolean;
+}
+
+export const isMemberModerationAction = (
+  action: MemberModerationAction | AccountModerationAction,
+): action is MemberModerationAction => action === 'remove' || action === 'ban';
+
+export const getMemberModerationActions = (
+  t: Translate,
+  { canRemove, canBan }: MemberActionOptions,
+) => {
+  const actions: ModerationMenuAction<MemberModerationAction>[] = [];
+  if (canRemove) {
+    actions.push({
+      key: 'remove',
+      Icon: MdPersonRemove,
+      menuLabel: t('servers.actions.removeMember'),
+      dialogTitle: t('servers.prompts.removeMember'),
+      confirmLabel: t('actions.remove'),
+      explanation: [
+        t('servers.moderationExplanations.removeEffects'),
+        t('servers.moderationExplanations.removeRejoin'),
+      ],
+      isReasonRequired: true,
+    });
+  }
+  if (canBan) {
+    actions.push({
+      key: 'ban',
+      Icon: MdGavel,
+      menuLabel: t('servers.actions.banMember'),
+      dialogTitle: t('servers.prompts.banMember'),
+      confirmLabel: t('servers.actions.ban'),
+      explanation: [
+        t('servers.moderationExplanations.banEffects'),
+        t('servers.moderationExplanations.banRejoin'),
+      ],
+      isReasonRequired: true,
+      isMenuItemDestructive: true,
+    });
+  }
+  return actions;
+};
+
+export const getAccountModerationActions = (
+  t: Translate,
+  { canSuspend, canDelete, isLocked, isDeleted }: AccountActionOptions,
+) => {
+  const actions: ModerationMenuAction<AccountModerationAction>[] = [];
+  if (isDeleted) {
+    return actions;
+  }
+  if (canSuspend && !isLocked) {
+    actions.push({
+      key: 'suspend',
+      Icon: MdLock,
+      menuLabel: t('moderation.actions.suspendUser'),
+      dialogTitle: t('moderation.prompts.suspendUser'),
+      confirmLabel: t('moderation.actions.suspend'),
+      explanation: [t('moderation.explanations.suspendUser')],
+      isReasonRequired: true,
+    });
+  }
+  if (canSuspend && isLocked) {
+    actions.push({
+      key: 'restore',
+      Icon: MdLockOpen,
+      menuLabel: t('moderation.actions.restoreUser'),
+      dialogTitle: t('moderation.prompts.restoreUser'),
+      confirmLabel: t('moderation.actions.restore'),
+      explanation: [t('moderation.explanations.restoreUser')],
+      isReasonRequired: false,
+      isDialogDestructive: false,
+    });
+  }
+  if (canDelete) {
+    actions.push({
+      key: 'delete',
+      Icon: MdDelete,
+      menuLabel: t('moderation.actions.deleteUser'),
+      dialogTitle: t('moderation.prompts.deleteUser'),
+      confirmLabel: t('moderation.actions.delete'),
+      explanation: [t('moderation.explanations.deleteUser')],
+      isReasonRequired: true,
+      isMenuItemDestructive: true,
+    });
+  }
+  return actions;
+};
+
+export const moderateServerMember = async (
+  serverId: string,
+  userId: string,
+  action: MemberModerationAction,
+  reason?: string,
+) => {
+  if (action === 'ban') {
+    await api.banServerMember(serverId, userId, { reason });
+  } else {
+    await api.removeServerMember(serverId, userId, { reason });
+  }
+};
+
+export const moderateAccount = async (
+  userId: string,
+  action: AccountModerationAction,
+  reason?: string,
+) => {
+  if (action === 'suspend') {
+    await api.suspendUser(userId, { reason });
+  } else if (action === 'restore') {
+    await api.restoreUser(userId, { reason });
+  } else {
+    await api.deleteUser(userId, { reason });
+  }
 };

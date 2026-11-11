@@ -7,6 +7,7 @@ pub(crate) mod server_roles;
 pub(crate) mod service;
 pub(crate) mod types;
 
+pub(crate) use moderation::get_member_moderation_state;
 pub(crate) use routes::router;
 pub(crate) use service::{
     add_member_to_server, default_server_id, ensure_server, get_server,

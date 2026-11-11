@@ -104,6 +104,14 @@ pub(super) struct ServerBanResponse {
     pub(super) created_at: String,
 }
 
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct MemberModerationState {
+    pub(crate) is_member: bool,
+    pub(crate) is_banned: bool,
+    pub(crate) can_be_moderated: bool,
+}
+
 #[derive(Debug, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub(super) enum ServerAccessStatus {
