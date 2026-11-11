@@ -19,7 +19,7 @@ import { grantServerPermissions } from '../lib/server-roles';
 import {
   createServer,
   createServerAdmin,
-  getDefaultServer,
+  createTestServer,
   getServerBySlug,
   joinServer,
 } from '../lib/servers';
@@ -29,9 +29,13 @@ test('removed server members lose the permissions their roles granted', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
-  const member = await signUpViaApi(request, createTestUser('removed-member'));
-  const server = await getDefaultServer(request, instanceAdmin);
+  const member = await signUpViaApi(
+    request,
+    createTestUser('removed-member'),
+    server.inviteToken,
+  );
   await grantServerPermissions(
     request,
     instanceAdmin,
@@ -82,9 +86,13 @@ test('granting and revoking a server role changes what a member can do', async (
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
-  const member = await signUpViaApi(request, createTestUser('role-member'));
-  const server = await getDefaultServer(request, instanceAdmin);
+  const member = await signUpViaApi(
+    request,
+    createTestUser('role-member'),
+    server.inviteToken,
+  );
   const roleName = `e2e-channels-${randomUUID().slice(0, 8)}`;
 
   await seedAuthenticatedSession(context, instanceAdmin.accessToken);

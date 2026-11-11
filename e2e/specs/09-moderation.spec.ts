@@ -34,6 +34,7 @@ import {
   updateServerConfig,
 } from '../lib/servers';
 import { NavigationPage } from '../pages/navigation.page';
+import { testTimeout } from '../lib/timeouts';
 
 const TOMBSTONE = 'Removed by a moderator';
 const TOAST_LIFETIME_MS = 5_000;
@@ -341,7 +342,7 @@ test('moderator can remove messages and forum posts for everyone in realtime', a
   browser,
   request,
 }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(testTimeout(60_000));
 
   const admin = await getOrCreateInstanceAdmin(request);
   const server = await createModerationServer(request, admin);
@@ -442,7 +443,7 @@ test('moderator can hide and restore a proposal for everyone in realtime', async
   browser,
   request,
 }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(testTimeout(60_000));
 
   const admin = await getOrCreateInstanceAdmin(request);
   const server = await createModerationServer(request, admin);
@@ -684,7 +685,7 @@ test('moderator can remove and ban server members', async ({
   browser,
   request,
 }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(testTimeout(60_000));
 
   const admin = await getOrCreateInstanceAdmin(request);
   const server = await createModerationServer(request, admin);
@@ -816,7 +817,7 @@ test('moderator can remove a call participant and end the call for everyone', as
   browser,
   request,
 }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(testTimeout(90_000));
 
   const admin = await getOrCreateInstanceAdmin(request);
   const server = await createModerationServer(request, admin);
@@ -932,7 +933,7 @@ test('members are told right away when moderated in a server they are not viewin
   browser,
   request,
 }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(testTimeout(60_000));
 
   const admin = await getOrCreateInstanceAdmin(request);
   const viewedServer = await createModerationServer(request, admin);
@@ -1265,7 +1266,7 @@ test('suspended users are removed from an active call right away', async ({
   browser,
   request,
 }) => {
-  test.setTimeout(90_000);
+  test.setTimeout(testTimeout(90_000));
 
   const admin = await getOrCreateInstanceAdmin(request);
   const server = await createModerationServer(request, admin);

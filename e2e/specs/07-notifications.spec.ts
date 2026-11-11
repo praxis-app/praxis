@@ -24,7 +24,7 @@ import {
   updateVoteViaApi,
   voteViaApi,
 } from '../lib/polls';
-import { getDefaultServer, updateServerConfig } from '../lib/servers';
+import { createTestServer, updateServerConfig } from '../lib/servers';
 
 type PollResponse = { poll: { id: string } };
 
@@ -37,13 +37,18 @@ test('proposal vote and ratification notifications open the proposal', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const proposer = await createAuthenticatedUser(
     request,
     context,
     createTestUser('proposal-recipient'),
+    server.inviteToken,
   );
-  const voter = await signUpViaApi(request, createTestUser('proposal-voter'));
-  const server = await getDefaultServer(request, proposer);
+  const voter = await signUpViaApi(
+    request,
+    createTestUser('proposal-voter'),
+    server.inviteToken,
+  );
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   await makeProposalsRatifyWithOneAgreeVote(request, instanceAdmin, server.id);
 
@@ -88,17 +93,19 @@ test('ratified role proposals notify the member they add', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const recipient = await createAuthenticatedUser(
     request,
     context,
     createTestUser('role-proposal-recipient'),
+    server.inviteToken,
   );
   const voter = await signUpViaApi(
     request,
     createTestUser('role-proposal-voter'),
+    server.inviteToken,
   );
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
-  const server = await getDefaultServer(request, recipient);
   await makeProposalsRatifyWithOneAgreeVote(request, instanceAdmin, server.id);
 
   const roleName = `e2e-proposed-${recipient.user.suffix}`;
@@ -151,12 +158,13 @@ test('proposals that close without passing notify their author', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const proposer = await createAuthenticatedUser(
     request,
     context,
     createTestUser('closed-proposal'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, proposer);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   await makeProposalsRatifyWithOneAgreeVote(request, instanceAdmin, server.id);
 
@@ -197,13 +205,18 @@ test('event proposals that expire early notify their author', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const proposer = await createAuthenticatedUser(
     request,
     context,
     createTestUser('stale-event-proposal'),
+    server.inviteToken,
   );
-  const host = await signUpViaApi(request, createTestUser('stale-event-host'));
-  const server = await getDefaultServer(request, proposer);
+  const host = await signUpViaApi(
+    request,
+    createTestUser('stale-event-host'),
+    server.inviteToken,
+  );
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   await makeProposalsRatifyWithOneAgreeVote(request, instanceAdmin, server.id);
 
@@ -246,16 +259,18 @@ test('changing a vote re-notifies the proposal author with the new vote', async 
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const author = await createAuthenticatedUser(
     request,
     context,
     createTestUser('vote-change-author'),
+    server.inviteToken,
   );
   const voter = await signUpViaApi(
     request,
     createTestUser('vote-change-voter'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, author);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
 
   // A future deadline keeps the proposal in voting, so the vote can change
@@ -338,16 +353,18 @@ test('new proposals notify the other members of a text channel', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const member = await createAuthenticatedUser(
     request,
     context,
     createTestUser('new-proposal-member'),
+    server.inviteToken,
   );
   const proposer = await signUpViaApi(
     request,
     createTestUser('new-proposal-author'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, member);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   await makeProposalsRatifyWithOneAgreeVote(request, instanceAdmin, server.id);
 
@@ -385,16 +402,18 @@ test('forum proposals notify the other members of the forum channel', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const member = await createAuthenticatedUser(
     request,
     context,
     createTestUser('forum-proposal-member'),
+    server.inviteToken,
   );
   const proposer = await signUpViaApi(
     request,
     createTestUser('forum-proposal-author'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, member);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   await makeProposalsRatifyWithOneAgreeVote(request, instanceAdmin, server.id);
 
@@ -436,16 +455,18 @@ test('moving a proposal to a forum notifies the destination channel', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const member = await createAuthenticatedUser(
     request,
     context,
     createTestUser('moved-proposal-member'),
+    server.inviteToken,
   );
   const proposer = await signUpViaApi(
     request,
     createTestUser('moved-proposal-author'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, member);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   await makeProposalsRatifyWithOneAgreeVote(request, instanceAdmin, server.id);
 
@@ -504,16 +525,18 @@ test('ratified event proposals notify the hosts they name', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const host = await createAuthenticatedUser(
     request,
     context,
     createTestUser('event-notification-host'),
+    server.inviteToken,
   );
   const proposer = await signUpViaApi(
     request,
     createTestUser('event-notification-author'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, host);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   await makeProposalsRatifyWithOneAgreeVote(request, instanceAdmin, server.id);
 

@@ -21,9 +21,10 @@ import {
 import {
   createServer,
   createServerAdmin,
-  getDefaultServer,
+  createTestServer,
 } from '../lib/servers';
 import { ChatPage } from '../pages/chat.page';
+import { testTimeout } from '../lib/timeouts';
 
 type UserSummary = {
   id: string;
@@ -133,15 +134,20 @@ test('user can propose and ratify an online event with all details preserved', a
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  const server = await createTestServer(request);
+  test.setTimeout(testTimeout(60_000));
 
   const proposer = await createAuthenticatedUser(
     request,
     context,
     createTestUser('event-proposer'),
+    server.inviteToken,
   );
-  const host = await signUpViaApi(request, createTestUser('event-host'));
-  const server = await getDefaultServer(request, proposer);
+  const host = await signUpViaApi(
+    request,
+    createTestUser('event-host'),
+    server.inviteToken,
+  );
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   await makeProposalsRatifyWithOneAgreeVote(request, instanceAdmin, server.id);
 
@@ -427,12 +433,13 @@ test('event proposal accepts four attachments plus a cover photo', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const proposer = await createAuthenticatedUser(
     request,
     context,
     createTestUser('event-image-limit'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, proposer);
   const proposalBody = `Event image limit ${proposer.user.suffix}`;
   const eventName = `Five image event ${proposer.user.suffix}`;
   const imageBuffer = await readFile('e2e/fixtures/valid-image.png');
@@ -666,12 +673,13 @@ test('past event proposals are rejected and stale proposals expire automatically
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const proposer = await createAuthenticatedUser(
     request,
     context,
     createTestUser('stale-event-proposer'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, proposer);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   await makeProposalsRatifyWithOneAgreeVote(request, instanceAdmin, server.id);
 
@@ -766,16 +774,18 @@ test('event proposal expires when a proposed host leaves the server', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const proposer = await createAuthenticatedUser(
     request,
     context,
     createTestUser('departed-host-proposer'),
+    server.inviteToken,
   );
   const host = await signUpViaApi(
     request,
     createTestUser('departed-event-host'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, proposer);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   await makeProposalsRatifyWithOneAgreeVote(request, instanceAdmin, server.id);
   const proposalBody = `Event with departing host ${proposer.user.suffix}`;

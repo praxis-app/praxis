@@ -1,11 +1,14 @@
 import { expect, type APIRequestContext } from '@playwright/test';
+import { randomUUID } from 'node:crypto';
 import {
   authorizationHeaders,
+  getOrCreateInstanceAdmin,
   signUpViaApi,
   type AuthenticatedUser,
 } from './auth';
 import { createTestUser } from './data';
 import { grantInstancePermissions } from './instance-roles';
+import { createInvite } from './invites';
 import { INSTANCE_PERMISSIONS } from './permissions';
 
 type CreateServerOptions = {
@@ -15,6 +18,44 @@ type CreateServerOptions = {
   isDefaultServer?: boolean;
   image?: { name: string; mimeType: string; buffer: Buffer };
 };
+
+export type TestServer = {
+  id: string;
+  name: string;
+  slug: string;
+  generalChannelId: string;
+  inviteToken: string;
+};
+
+export async function createTestServer(
+  request: APIRequestContext,
+  label = 'server',
+): Promise<TestServer> {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const suffix = randomUUID().slice(0, 8);
+  const slugLabel = label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const server = (await createServer(request, admin, {
+    name: `E2E ${label} ${suffix}`,
+    slug: `e2e-${slugLabel}-${suffix}`,
+  })) as { id: string; name: string; slug: string };
+  const channelsResponse = await request.get(
+    `/api/servers/${server.id}/channels`,
+    { headers: authorizationHeaders(admin) },
+  );
+  await expect(channelsResponse).toBeOK();
+  const { channels } = (await channelsResponse.json()) as {
+    channels: { id: string }[];
+  };
+  const inviteToken = await createInvite(request, admin, server.id);
+
+  return {
+    id: server.id,
+    name: server.name,
+    slug: server.slug,
+    generalChannelId: channels[0].id,
+    inviteToken,
+  };
+}
 
 export async function createServerAdmin(
   request: APIRequestContext,

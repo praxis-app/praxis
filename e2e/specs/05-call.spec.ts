@@ -12,9 +12,10 @@ import {
 } from '../lib/calls';
 import { createTestMessage, createTestUser } from '../lib/data';
 import { createInvite } from '../lib/invites';
-import { getDefaultServer } from '../lib/servers';
+import { createTestServer } from '../lib/servers';
 import { ChatPage } from '../pages/chat.page';
 import { NavigationPage } from '../pages/navigation.page';
+import { testTimeout } from '../lib/timeouts';
 
 type JoinCallResponse = {
   call: {
@@ -71,12 +72,14 @@ test('authenticated user can start a call and see a video tile', async ({
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(testTimeout(60_000));
 
+  const server = await createTestServer(request);
   const authenticatedUser = await createAuthenticatedUser(
     request,
     context,
     createTestUser('call-video-tile'),
+    server.inviteToken,
   );
   const chat = new ChatPage(page);
   const navigation = new NavigationPage(page);
@@ -130,14 +133,15 @@ test('starting a call immediately appears in other users channel feeds', async (
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  const server = await createTestServer(request);
+  test.setTimeout(testTimeout(60_000));
 
   const starter = await createAuthenticatedUser(
     request,
     context,
     createTestUser('call-feed-starter'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, starter);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   const inviteToken = await createInvite(request, instanceAdmin, server.id);
   const observer = await signUpViaApi(
@@ -204,14 +208,15 @@ test('stale call cleanup updates other users channel feeds in realtime', async (
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  const server = await createTestServer(request);
+  test.setTimeout(testTimeout(60_000));
 
   const starter = await createAuthenticatedUser(
     request,
     context,
     createTestUser('call-stale-starter'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, starter);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   const inviteToken = await createInvite(request, instanceAdmin, server.id);
   const observer = await signUpViaApi(
@@ -274,14 +279,15 @@ test('multi-user call stays active until the last participant leaves', async ({
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  const server = await createTestServer(request);
+  test.setTimeout(testTimeout(60_000));
 
   const starter = await createAuthenticatedUser(
     request,
     context,
     createTestUser('call-last-leaver-starter'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, starter);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   const inviteToken = await createInvite(request, instanceAdmin, server.id);
   const joiner = await signUpViaApi(
@@ -380,15 +386,16 @@ test('in-call chat messages are delivered realtime between participants', async 
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  const server = await createTestServer(request);
+  test.setTimeout(testTimeout(60_000));
 
   const starter = await createAuthenticatedUser(
     request,
     context,
     createTestUser('call-chat-realtime-starter'),
+    server.inviteToken,
   );
   const message = createTestMessage('call-chat-realtime', starter.user.suffix);
-  const server = await getDefaultServer(request, starter);
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
   const inviteToken = await createInvite(request, instanceAdmin, server.id);
   const joiner = await signUpViaApi(

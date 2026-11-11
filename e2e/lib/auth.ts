@@ -12,7 +12,11 @@ import {
 import { createInvite } from './invites';
 import { SERVER_PERMISSIONS } from './permissions';
 import { grantServerPermissions } from './server-roles';
-import { enableAnonymousUsers, getDefaultServer } from './servers';
+import {
+  createTestServer,
+  enableAnonymousUsers,
+  type TestServer,
+} from './servers';
 
 export type AuthenticatedUser = {
   accessToken: string;
@@ -22,10 +26,7 @@ export type AuthenticatedUser = {
 
 export type AnonymousAuthSetup = {
   admin: AuthenticatedUser;
-  server: {
-    id: string;
-    generalChannelId: string;
-  };
+  server: TestServer;
   inviteToken: string;
 };
 
@@ -157,12 +158,13 @@ export async function setupAnonymousInvite(
   adminLabel: string,
 ): Promise<AnonymousAuthSetup> {
   const instanceAdmin = await getOrCreateInstanceAdmin(request);
+  const server = await createTestServer(request, adminLabel);
   const admin = await createAuthenticatedUser(
     request,
     context,
     createTestUser(adminLabel),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, admin);
   await grantServerPermissions(
     request,
     instanceAdmin,

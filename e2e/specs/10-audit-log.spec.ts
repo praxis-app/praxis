@@ -20,6 +20,7 @@ import { INSTANCE_PERMISSIONS, SERVER_PERMISSIONS } from '../lib/permissions';
 import { makeProposalsRatifyWithOneAgreeVote, voteViaApi } from '../lib/polls';
 import { grantServerPermissions } from '../lib/server-roles';
 import { createServer, joinServer } from '../lib/servers';
+import { testTimeout } from '../lib/timeouts';
 
 const openPageAs = async (
   browser: Browser,
@@ -193,7 +194,7 @@ test('every audit log entry type renders readable details', async ({
   browser,
   request,
 }) => {
-  test.setTimeout(120_000);
+  test.setTimeout(testTimeout(120_000));
 
   const admin = await getOrCreateInstanceAdmin(request);
   const headers = authorizationHeaders(admin);

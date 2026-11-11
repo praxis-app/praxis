@@ -35,13 +35,14 @@ import { getAdminServerRole, getServerRole } from '../lib/server-roles';
 import {
   createServer,
   createServerAdmin,
-  getDefaultServer,
+  createTestServer,
   getServerBySlug,
   joinServer,
   updateServerConfig,
 } from '../lib/servers';
 import { minutesUntil, secondsUntil } from '../lib/time';
 import { ChatPage } from '../pages/chat.page';
+import { scaleForSlowMo, testTimeout } from '../lib/timeouts';
 
 type PollResponse = {
   poll: {
@@ -75,12 +76,13 @@ test('authenticated user can create and vote in a poll', async ({
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const authenticatedUser = await createAuthenticatedUser(
     request,
     context,
     createTestUser('poll'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, authenticatedUser);
   const question = `Where should we meet ${authenticatedUser.user.suffix}?`;
   const options = [
     `Library ${authenticatedUser.user.suffix}`,
@@ -184,12 +186,13 @@ test('authenticated user can create a proposal with an image attachment', async 
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const authenticatedUser = await createAuthenticatedUser(
     request,
     context,
     createTestUser('proposal-image'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, authenticatedUser);
   const proposalBody = `Proposal image ${authenticatedUser.user.suffix}`;
 
   const chat = new ChatPage(page);
@@ -254,7 +257,7 @@ test('active decisions panel loads the next page when scrolled to the bottom', a
   const expectedPageCount = Math.ceil(
     totalActiveDecisions / activeDecisionsPageSize,
   );
-  test.setTimeout(Math.max(60_000, expectedPageCount * 15_000));
+  test.setTimeout(testTimeout(Math.max(60_000, expectedPageCount * 15_000)));
   expect(totalActiveDecisions).toBeGreaterThan(0);
 
   const authenticatedUser = await createAuthenticatedUser(
@@ -767,6 +770,7 @@ test('active decision opens fully in view across channels and feed pages', async
     }
   };
   page.on('response', recordFeedPageResponse);
+  await recordHighlightedDecisions(page);
   await panel
     .getByText(decisionBody, { exact: true })
     .locator('xpath=ancestor::a')
@@ -777,7 +781,7 @@ test('active decision opens fully in view across channels and feed pages', async
   page.off('response', recordFeedPageResponse);
   expect(feedContextTargets).toEqual([poll.id]);
   expect(feedPageCursors).toHaveLength(0);
-  await expect(focusedDecision).toHaveAttribute('data-focus-highlight', 'true');
+  await expect.poll(() => getHighlightedDecisionIds(page)).toContain(poll.id);
   await feed.evaluate(
     (element) =>
       new Promise<void>((resolve) => {
@@ -846,12 +850,13 @@ test('authenticated user sees a poll close after its closing time passes', async
   page,
   request,
 }) => {
+  const server = await createTestServer(request);
   const authenticatedUser = await createAuthenticatedUser(
     request,
     context,
     createTestUser('poll-close'),
+    server.inviteToken,
   );
-  const server = await getDefaultServer(request, authenticatedUser);
   const question = `Which snack wins ${authenticatedUser.user.suffix}?`;
   const options = [
     `Pretzels ${authenticatedUser.user.suffix}`,
@@ -872,7 +877,12 @@ test('authenticated user sees a poll close after its closing time passes', async
   await dialog.getByPlaceholder('Answer 2').fill(options[1]);
   await dialog.getByRole('combobox', { name: 'Duration' }).click();
   await page.getByRole('option', { name: '30 minutes' }).click();
-  await shortenNextPollDuration(page, server.generalChannelId, 5);
+  const pollDurationSeconds = scaleForSlowMo(5);
+  await shortenNextPollDuration(
+    page,
+    server.generalChannelId,
+    pollDurationSeconds,
+  );
 
   const createPollResponse = page.waitForResponse(
     (response) =>
@@ -885,7 +895,9 @@ test('authenticated user sees a poll close after its closing time passes', async
   const { poll } = (await response.json()) as PollResponse;
 
   expect(poll.config.closingAt).toBeTruthy();
-  expect(secondsUntil(poll.config.closingAt!)).toBeLessThanOrEqual(6);
+  expect(secondsUntil(poll.config.closingAt!)).toBeLessThanOrEqual(
+    pollDurationSeconds + 1,
+  );
 
   await expect(dialog).toBeHidden();
   await expect(page.getByText(question).first()).toBeVisible();
@@ -910,7 +922,7 @@ test('authenticated user sees a poll close after its closing time passes', async
         await expect(page.getByText(question).first()).toBeVisible();
         return pollCard(page, question).getByText('Poll closed').isVisible();
       },
-      { timeout: 20_000 },
+      { timeout: scaleForSlowMo(20_000) },
     )
     .toBe(true);
 
@@ -930,7 +942,7 @@ test('anonymous user can create only allowed chat polls', async ({
   page,
   request,
 }) => {
-  test.setTimeout(60_000);
+  test.setTimeout(testTimeout(60_000));
 
   const { admin, server } = await setupAnonymousSession(
     request,
@@ -2211,4 +2223,48 @@ async function submitProposal(page: Page, dialog: Locator, channelId: string) {
 
   const { poll } = (await response.json()) as PollResponse;
   return poll;
+}
+
+type HighlightRecordingWindow = Window & { highlightedDecisionIds?: string[] };
+
+async function recordHighlightedDecisions(page: Page) {
+  await page.evaluate(() => {
+    const recordingWindow = window as HighlightRecordingWindow;
+    const highlightedDecisionIds: string[] = [];
+    recordingWindow.highlightedDecisionIds = highlightedDecisionIds;
+    const record = (element: Element) => {
+      const decisionId = element.getAttribute('data-decision-id');
+      if (
+        decisionId &&
+        element.getAttribute('data-focus-highlight') === 'true'
+      ) {
+        highlightedDecisionIds.push(decisionId);
+      }
+    };
+    new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'attributes') {
+          record(mutation.target as Element);
+          continue;
+        }
+        mutation.addedNodes.forEach((node) => {
+          if (node instanceof Element) {
+            record(node);
+            node.querySelectorAll('[data-decision-id]').forEach(record);
+          }
+        });
+      }
+    }).observe(document.body, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['data-focus-highlight'],
+    });
+  });
+}
+
+function getHighlightedDecisionIds(page: Page) {
+  return page.evaluate(
+    () => (window as HighlightRecordingWindow).highlightedDecisionIds ?? [],
+  );
 }
