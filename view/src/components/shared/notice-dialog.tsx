@@ -31,7 +31,7 @@ export const NoticeDialog = () => {
       onOpenChange={(isOpen) => !isOpen && handleDismiss()}
     >
       <DialogContent
-        className="md:min-w-sm"
+        className="md:max-w-md md:min-w-sm"
         onInteractOutside={(event) => event.preventDefault()}
       >
         <DialogHeader className="pt-3">

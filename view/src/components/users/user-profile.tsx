@@ -10,6 +10,7 @@ import { getUserSettingsPath } from '../../lib/user-settings.utils';
 import { LazyLoadImage } from '../images/lazy-load-image';
 import { Button } from '../ui/button';
 import { UserAvatar } from './user-avatar';
+import { UserModerationStatus } from './user-moderation-status';
 import { UserProfileModerationMenu } from './user-profile-moderation-menu';
 
 interface Props {
@@ -90,7 +91,11 @@ export const UserProfile = ({ userId, me, className }: Props) => {
           />
 
           {!isMe && !me.anonymous && (
-            <div className="mt-10 pr-2">
+            <div className="mt-10 flex items-center gap-2 pr-2">
+              <UserModerationStatus
+                userId={profileData.user.id}
+                className="justify-end"
+              />
               <UserProfileModerationMenu
                 userId={profileData.user.id}
                 name={resolvedName}

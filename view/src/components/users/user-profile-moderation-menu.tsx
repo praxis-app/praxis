@@ -1,7 +1,6 @@
 import { ModerationActionMenu } from '@/components/moderation/moderation-action-menu';
-import { api } from '@/client/api-client';
 import { useModerationAccess } from '@/hooks/use-moderation-access';
-import { useServerData } from '@/hooks/use-server-data';
+import { useUserModeration } from '@/hooks/use-user-moderation';
 import { handleError } from '@/lib/error.utils';
 import {
   getAccountModerationActions,
@@ -14,7 +13,7 @@ import {
   type MemberModerationAction,
 } from '@/lib/moderation.utils';
 import { invalidateServerMemberQueries } from '@/lib/server-member.utils';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 type ProfileModerationAction = MemberModerationAction | AccountModerationAction;
@@ -27,18 +26,8 @@ interface Props {
 export const UserProfileModerationMenu = ({ userId, name }: Props) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const { serverId } = useServerData();
-  const { canManageServerMembers, canSuspendUsers, canDeleteUsers } =
-    useModerationAccess();
-
-  const { data: moderationData } = useQuery({
-    queryKey: ['users', userId, 'moderation', serverId],
-    queryFn: () => api.getUserModeration(userId, serverId),
-    enabled:
-      (!!serverId && canManageServerMembers) ||
-      canSuspendUsers ||
-      canDeleteUsers,
-  });
+  const { serverId, account, server } = useUserModeration(userId);
+  const { canSuspendUsers, canDeleteUsers } = useModerationAccess();
 
   const { mutate: moderateUser, isPending } = useMutation({
     mutationFn: ({
@@ -71,8 +60,6 @@ export const UserProfileModerationMenu = ({ userId, name }: Props) => {
     onError: handleError,
   });
 
-  const account = moderationData?.moderation.account;
-  const server = moderationData?.moderation.server;
   const canModerateMember = !!serverId && !!server?.canBeModerated;
 
   const actions = [

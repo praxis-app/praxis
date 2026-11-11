@@ -981,9 +981,11 @@
     },
     "labels": {
       "anonymous": "Anonymous",
+      "bannedFromServer": "Banned from this server",
       "deleted": "Deleted",
       "hiddenByModerator": "Hidden by a moderator.",
       "hiddenVotingPaused": "Hidden by a moderator. Voting is paused.",
+      "notServerMember": "Not a member of this server",
       "pollHidden": "This poll was hidden by a moderator",
       "proposalHidden": "This proposal was hidden by a moderator",
       "reason": "Reason",
