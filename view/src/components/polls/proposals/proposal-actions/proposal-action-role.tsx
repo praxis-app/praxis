@@ -72,6 +72,12 @@ export const ProposalActionRole = ({ action }: { action: PollActionRes }) => {
               permission.subject === 'ServerMember' &&
               permission.action.includes('manage'),
           );
+        case 'moderateProposals':
+          return permissions.filter(
+            (permission) =>
+              permission.subject === 'Proposal' &&
+              permission.action.includes('manage'),
+          );
         case 'moderateContent':
           return permissions.filter(
             (permission) =>

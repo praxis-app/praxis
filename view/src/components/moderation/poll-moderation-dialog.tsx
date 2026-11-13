@@ -63,10 +63,14 @@ export const PollModerationDialog = ({
 
   const isVoting = poll.stage === 'voting';
   const hideExplanation = isVoting
-    ? 'moderation.explanations.hidePoll'
+    ? isProposal
+      ? 'moderation.explanations.hideProposal'
+      : 'moderation.explanations.hidePoll'
     : 'moderation.explanations.hideCompletedPoll';
   const restoreExplanation = isVoting
-    ? 'moderation.explanations.restorePoll'
+    ? isProposal
+      ? 'moderation.explanations.restoreProposal'
+      : 'moderation.explanations.restorePoll'
     : 'moderation.explanations.restoreCompletedPoll';
 
   return (

@@ -24,6 +24,85 @@ import {
   joinServer,
 } from '../lib/servers';
 
+test('proposal management can be granted and revoked in the role editor', async ({
+  context,
+  page,
+  request,
+}) => {
+  const server = await createTestServer(request);
+  const admin = await getOrCreateInstanceAdmin(request);
+  const member = await signUpViaApi(
+    request,
+    createTestUser('proposal-permissions'),
+    server.inviteToken,
+  );
+  const roleId = await grantServerPermissions(
+    request,
+    admin,
+    member,
+    server.id,
+    [],
+    'proposal-permissions',
+  );
+  await seedAuthenticatedSession(context, admin.accessToken);
+  await page.goto(`/s/${server.slug}/settings/roles/${roleId}/edit`);
+  await page.getByRole('tab', { name: 'Permissions' }).click();
+  for (const label of ['Moderate proposals']) {
+    await page.getByRole('switch', { name: label, exact: true }).click();
+  }
+  const save = async () => {
+    const saved = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'PUT' &&
+        response.url().endsWith(`/roles/${roleId}/permissions`),
+    );
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    expect((await saved).ok()).toBe(true);
+  };
+  await save();
+  await page.reload();
+  await page.getByRole('tab', { name: 'Permissions' }).click();
+  for (const label of ['Moderate proposals']) {
+    await expect(
+      page.getByRole('switch', { name: label, exact: true }),
+    ).toBeChecked();
+  }
+  const pollsPath = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
+  const created = await request.post(pollsPath, {
+    headers: authorizationHeaders(admin),
+    data: {
+      body: `Permission-controlled governance ${randomUUID()}`,
+      pollType: 'proposal',
+      action: {
+        actionType: 'change-settings',
+        serverConfig: { votingTimeLimit: 60 },
+      },
+    },
+  });
+  await expect(created).toBeOK();
+  const { poll } = await created.json();
+  await expect(
+    await request.post(`${pollsPath}/${poll.id}/hide`, {
+      headers: authorizationHeaders(member),
+      data: { reason: 'Governance review' },
+    }),
+  ).toBeOK();
+  await expect(
+    await request.post(`${pollsPath}/${poll.id}/restore`, {
+      headers: authorizationHeaders(member),
+    }),
+  ).toBeOK();
+  await page
+    .getByRole('switch', { name: 'Moderate proposals', exact: true })
+    .click();
+  await save();
+  const denied = await request.post(`${pollsPath}/${poll.id}/hide`, {
+    headers: authorizationHeaders(member),
+    data: { reason: 'Governance review' },
+  });
+  expect(denied.status()).toBe(403);
+});
+
 test('removed server members lose the permissions their roles granted', async ({
   context,
   page,

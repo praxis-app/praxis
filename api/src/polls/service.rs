@@ -865,14 +865,31 @@ async fn shape_polls(
     .await?;
     let ignored_block_vote_ids =
         get_ignored_block_vote_ids(database, &polls, &configs, &votes).await?;
-    let revealed_channel_ids =
+    let revealed_proposal_channels =
         moderation::get_channels_with_visible_hidden_polls(
             database,
             current_user_id,
             polls
                 .iter()
-                .filter(|poll| poll.hidden_at.is_some())
+                .filter(|poll| {
+                    poll.hidden_at.is_some()
+                        && poll.poll_type == PollType::Proposal
+                })
                 .map(|poll| poll.channel_id),
+            PollType::Proposal,
+        )
+        .await?;
+    let revealed_poll_channels =
+        moderation::get_channels_with_visible_hidden_polls(
+            database,
+            current_user_id,
+            polls
+                .iter()
+                .filter(|poll| {
+                    poll.hidden_at.is_some() && poll.poll_type == PollType::Poll
+                })
+                .map(|poll| poll.channel_id),
+            PollType::Poll,
         )
         .await?;
 
@@ -1007,6 +1024,9 @@ async fn shape_polls(
         let reply_summary = reply_summaries.get(&poll.id);
 
         let mut response = PollResponse {
+            moderation_pause_exhausted: moderation::pause_budget_exhausted(
+                &poll,
+            ),
             id: poll.id.to_string(),
             body: decrypt_poll_body(&poll, &key_map),
             poll_type: poll.poll_type,
@@ -1035,7 +1055,11 @@ async fn shape_polls(
             content_concealed: false,
             created_at: serialize_timestamp(poll.created_at),
         };
-        if !revealed_channel_ids.contains(&poll.channel_id) {
+        let revealed_channels = match poll.poll_type {
+            PollType::Proposal => &revealed_proposal_channels,
+            PollType::Poll => &revealed_poll_channels,
+        };
+        if !revealed_channels.contains(&poll.channel_id) {
             response.conceal_hidden_content();
         }
         responses.push(response);

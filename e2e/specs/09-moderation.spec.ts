@@ -16,6 +16,7 @@ import {
 } from '../lib/auth';
 import { joinCallFromArtifact, startCallFromTopNav } from '../lib/calls';
 import { createTestUser } from '../lib/data';
+import { assertUuid, runDatabaseCommand } from '../lib/db';
 import { createForumChannel } from '../lib/forums';
 import { grantInstancePermissions } from '../lib/instance-roles';
 import { createInvite } from '../lib/invites';
@@ -24,7 +25,6 @@ import { type PermissionRule } from '../lib/permissions';
 import {
   backdateHiddenPoll,
   expirePollDeadline,
-  getSecondsUntilPollCloses,
   voteViaApi,
 } from '../lib/polls';
 import { grantServerPermissions } from '../lib/server-roles';
@@ -440,6 +440,323 @@ test('moderator can remove messages and forum posts for everyone in realtime', a
   }
 });
 
+for (const priorHours of [0, 13]) {
+  test(`proposal pause budget auto-restores and prevents re-hiding after ${priorHours} hours of previous pauses`, async ({
+    browser,
+    request,
+  }) => {
+    const admin = await getOrCreateInstanceAdmin(request);
+    const server = await createModerationServer(request, admin);
+    await updateServerConfig(request, admin, server.id, {
+      decisionMakingModel: 'consensus',
+      votingTimeLimit: 60,
+      quorumEnabled: false,
+    });
+    const moderator = await addServerMember(
+      request,
+      admin,
+      server,
+      'pause-manager',
+      [{ subject: 'Proposal', action: ['manage'] }],
+    );
+    const path = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
+    const body = `Bounded review ${randomUUID()}`;
+    const created = await request.post(path, {
+      headers: authorizationHeaders(admin),
+      data: { body, pollType: 'proposal', action: { actionType: 'general' } },
+    });
+    await expect(created).toBeOK();
+    const { poll } = await created.json();
+    assertUuid(poll.id, 'Poll ID');
+    const voteId = await voteViaApi(
+      request,
+      admin,
+      server.id,
+      server.generalChannelId,
+      poll.id,
+      'agree',
+    );
+    const hide = (actor = moderator) =>
+      request.post(`${path}/${poll.id}/hide`, {
+        headers: authorizationHeaders(actor),
+        data: { reason: 'Review needed' },
+      });
+    const backdate = (hours: number) => {
+      expect(
+        runDatabaseCommand(
+          `UPDATE polls SET hidden_at = now() - interval '${hours} hours' WHERE id = '${poll.id}';`,
+        ),
+      ).toContain('UPDATE 1');
+    };
+    await expect(await hide()).toBeOK();
+    if (priorHours) {
+      backdate(priorHours);
+      await expect(
+        await request.post(`${path}/${poll.id}/restore`, {
+          headers: authorizationHeaders(moderator),
+        }),
+      ).toBeOK();
+      await expect(await hide()).toBeOK();
+    }
+    const page = await openPageAs(
+      browser,
+      admin,
+      `/s/${server.slug}/c/${server.generalChannelId}?poll=${poll.id}`,
+    );
+    try {
+      const proposal = page.locator(`[data-decision-id="${poll.id}"]`).first();
+      await expect(
+        proposal.getByText('Hidden by a moderator. Voting is paused.'),
+      ).toBeVisible();
+      backdate(25 - priorHours);
+      const readPoll = async () => {
+        const response = await request.get(`${path}/${poll.id}/replies`, {
+          headers: authorizationHeaders(admin),
+        });
+        await expect(response).toBeOK();
+        return (await response.json()).root;
+      };
+      await expect.poll(async () => !!(await readPoll()).hiddenAt).toBe(false);
+      const restored = await readPoll();
+      expect(restored.stage).toBe('voting');
+      expect(restored.votes.map((vote: { id: string }) => vote.id)).toContain(
+        voteId,
+      );
+      const extension =
+        (Date.parse(restored.config.closingAt) -
+          Date.parse(poll.config.closingAt)) /
+        1000;
+      expect(extension).toBeGreaterThanOrEqual(86400);
+      expect(extension).toBeLessThan(86405);
+      await expect(
+        proposal.getByText('Hidden by a moderator. Voting is paused.'),
+      ).toHaveCount(0);
+      await proposal
+        .getByRole('button', { name: 'Open proposal menu' })
+        .click();
+      await expect(
+        page.getByRole('menuitem', { name: 'Pause limit reached (24 hours)' }),
+      ).toBeDisabled();
+      await page.keyboard.press('Escape');
+      for (const actor of [moderator, admin]) {
+        expect((await hide(actor)).status()).toBe(409);
+      }
+      const audit = await request.get(
+        `/api/servers/${server.id}/audit-log?targetId=${poll.id}`,
+        { headers: authorizationHeaders(admin) },
+      );
+      await expect(audit).toBeOK();
+      expect((await audit.json()).entries).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ action: 'restore_poll', origin: 'system' }),
+        ]),
+      );
+    } finally {
+      await page.context().close();
+    }
+  });
+}
+
+test('message moderation alone cannot hide or restore proposals', async ({
+  request,
+}) => {
+  const admin = await getOrCreateInstanceAdmin(request);
+  const server = await createModerationServer(request, admin);
+  const moderator = await addServerMember(
+    request,
+    admin,
+    server,
+    'message-only',
+    [{ subject: 'Message', action: ['delete'] }],
+  );
+  const outsider = await signUpViaApi(
+    request,
+    createTestUser('instance-message'),
+  );
+  await grantInstancePermissions(
+    request,
+    outsider,
+    [{ subject: 'Message', action: ['delete'] }],
+    'instance-message',
+  );
+  const path = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
+  const created = await request.post(path, {
+    headers: authorizationHeaders(admin),
+    data: {
+      body: `Permission boundary ${randomUUID()}`,
+      pollType: 'proposal',
+      action: { actionType: 'general' },
+    },
+  });
+  await expect(created).toBeOK();
+  const { poll } = await created.json();
+  for (const actor of [moderator, outsider]) {
+    const deniedHide = await request.post(`${path}/${poll.id}/hide`, {
+      headers: authorizationHeaders(actor),
+      data: { reason: 'Off topic' },
+    });
+    expect.soft(deniedHide.status()).toBe(403);
+    await expect(
+      await request.post(`${path}/${poll.id}/hide`, {
+        headers: authorizationHeaders(admin),
+        data: { reason: 'Review needed' },
+      }),
+    ).toBeOK();
+    const deniedRestore = await request.post(`${path}/${poll.id}/restore`, {
+      headers: authorizationHeaders(actor),
+    });
+    expect.soft(deniedRestore.status()).toBe(403);
+    await expect(
+      await request.post(`${path}/${poll.id}/restore`, {
+        headers: authorizationHeaders(admin),
+      }),
+    ).toBeOK();
+  }
+  const proposalModerator = await addServerMember(
+    request,
+    admin,
+    server,
+    'proposal-only',
+    [{ subject: 'Proposal', action: ['manage'] }],
+  );
+  await expect(
+    await request.post(`${path}/${poll.id}/hide`, {
+      headers: authorizationHeaders(proposalModerator),
+      data: { reason: 'Proposal review' },
+    }),
+  ).toBeOK();
+  const concealed = await request.get(`${path}/${poll.id}/replies`, {
+    headers: authorizationHeaders(moderator),
+  });
+  await expect(concealed).toBeOK();
+  expect((await concealed.json()).root.body).toBeNull();
+  const visible = await request.get(`${path}/${poll.id}/replies`, {
+    headers: authorizationHeaders(proposalModerator),
+  });
+  await expect(visible).toBeOK();
+  expect((await visible.json()).root.body).toBe(poll.body);
+
+  const ordinaryPollResponse = await request.post(path, {
+    headers: authorizationHeaders(admin),
+    data: {
+      body: `Ordinary poll ${randomUUID()}`,
+      pollType: 'poll',
+      options: ['Yes', 'No'],
+    },
+  });
+  await expect(ordinaryPollResponse).toBeOK();
+  const { poll: ordinaryPoll } = await ordinaryPollResponse.json();
+  await expect(
+    await request.post(`${path}/${ordinaryPoll.id}/hide`, {
+      headers: authorizationHeaders(moderator),
+      data: { reason: 'Poll review' },
+    }),
+  ).toBeOK();
+  const hiddenPoll = await request.get(`${path}/${ordinaryPoll.id}/replies`, {
+    headers: authorizationHeaders(proposalModerator),
+  });
+  await expect(hiddenPoll).toBeOK();
+  expect((await hiddenPoll.json()).root.body).toBeNull();
+
+  const otherServer = await createModerationServer(request, admin);
+  const otherPath = `/api/servers/${otherServer.id}/channels/${otherServer.generalChannelId}/polls`;
+  const otherCreated = await request.post(otherPath, {
+    headers: authorizationHeaders(admin),
+    data: {
+      body: `Other server ${randomUUID()}`,
+      pollType: 'proposal',
+      action: { actionType: 'general' },
+    },
+  });
+  await expect(otherCreated).toBeOK();
+  const { poll: otherPoll } = await otherCreated.json();
+  for (const action of ['hide', 'restore']) {
+    const outsideScope = await request.post(
+      `${otherPath}/${otherPoll.id}/${action}`,
+      {
+        headers: authorizationHeaders(proposalModerator),
+        data: { reason: 'Wrong server' },
+      },
+    );
+    expect(outsideScope.status()).toBe(403);
+  }
+  const wrongChannel = await request.post(`${path}/${otherPoll.id}/hide`, {
+    headers: authorizationHeaders(proposalModerator),
+    data: { reason: 'Wrong channel' },
+  });
+  expect(wrongChannel.status()).toBe(404);
+});
+
+test('proposal managers can hide and restore all open governance proposals', async ({
+  request,
+}) => {
+  const serverAdmin = await signUpViaApi(
+    request,
+    createTestUser('governance-admin'),
+  );
+  await grantInstancePermissions(
+    request,
+    serverAdmin,
+    [{ subject: 'Server', action: ['manage'] }],
+    'server-creator',
+  );
+  const server = await createModerationServer(request, serverAdmin);
+  const target = await addServerMember(
+    request,
+    serverAdmin,
+    server,
+    'role-target',
+  );
+  const roleId = await grantServerPermissions(
+    request,
+    serverAdmin,
+    target,
+    server.id,
+    [{ subject: 'Channel', action: ['manage'] }],
+    'target-role',
+  );
+  const path = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
+  const actions = [
+    { actionType: 'change-settings', serverConfig: { votingTimeLimit: 60 } },
+    {
+      actionType: 'change-role',
+      serverRole: { serverRoleToUpdateId: roleId, name: 'Renamed role' },
+    },
+    {
+      actionType: 'create-role',
+      serverRole: { name: 'New governance role', color: '#2196f3' },
+    },
+  ];
+  for (const action of actions) {
+    const created = await request.post(path, {
+      headers: authorizationHeaders(serverAdmin),
+      data: {
+        body: `Protected decision ${randomUUID()}`,
+        pollType: 'proposal',
+        action,
+      },
+    });
+    await expect(created).toBeOK();
+    const { poll } = await created.json();
+    const denied = await request.post(`${path}/${poll.id}/hide`, {
+      headers: authorizationHeaders(target),
+      data: { reason: 'No proposal permission' },
+    });
+    expect(denied.status()).toBe(403);
+    await expect(
+      await request.post(`${path}/${poll.id}/hide`, {
+        headers: authorizationHeaders(serverAdmin),
+        data: { reason: 'Governance review' },
+      }),
+    ).toBeOK();
+    await expect(
+      await request.post(`${path}/${poll.id}/restore`, {
+        headers: authorizationHeaders(serverAdmin),
+      }),
+    ).toBeOK();
+  }
+});
+
 test('moderator can hide and restore a proposal for everyone in realtime', async ({
   browser,
   request,
@@ -450,7 +767,7 @@ test('moderator can hide and restore a proposal for everyone in realtime', async
   const server = await createModerationServer(request, admin);
   const author = await addServerMember(request, admin, server, 'proposer');
   const moderator = await addServerMember(request, admin, server, 'hider', [
-    { subject: 'Message', action: ['delete'] },
+    { subject: 'Proposal', action: ['manage'] },
   ]);
   const body = `E2E off topic proposal ${randomUUID().slice(0, 8)}`;
   const pollResponse = await request.post(
@@ -535,7 +852,7 @@ test('moderator can hide and restore a proposal for everyone in realtime', async
   }
 });
 
-test('restoring a proposal hidden past its deadline gives back the hidden time', async ({
+test('restoring a hidden proposal compensates its deadline and preserves recorded votes', async ({
   browser,
   request,
 }) => {
@@ -551,7 +868,7 @@ test('restoring a proposal hidden past its deadline gives back the hidden time',
   });
   const author = await addServerMember(request, admin, server, 'proposer');
   const moderator = await addServerMember(request, admin, server, 'hider', [
-    { subject: 'Message', action: ['delete'] },
+    { subject: 'Proposal', action: ['manage'] },
   ]);
   const pollsPath = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
   const created = await request.post(pollsPath, {
@@ -564,6 +881,14 @@ test('restoring a proposal hidden past its deadline gives back the hidden time',
   });
   await expect(created).toBeOK();
   const { poll } = await created.json();
+  const voteId = await voteViaApi(
+    request,
+    author,
+    server.id,
+    server.generalChannelId,
+    poll.id,
+    'agree',
+  );
   await expect(
     await request.post(`${pollsPath}/${poll.id}/hide`, {
       headers: authorizationHeaders(moderator),
@@ -571,6 +896,13 @@ test('restoring a proposal hidden past its deadline gives back the hidden time',
     }),
   ).toBeOK();
   backdateHiddenPoll(poll.id, 2, 1);
+  const threadResponse = await request.get(`${pollsPath}/${poll.id}/replies`, {
+    headers: authorizationHeaders(moderator),
+  });
+  await expect(threadResponse).toBeOK();
+  const { root: hidden } = await threadResponse.json();
+  expect(hidden.stage).toBe('voting');
+  expect(hidden.hiddenAt).toBeTruthy();
 
   const page = await openPageAs(
     browser,
@@ -583,9 +915,14 @@ test('restoring a proposal hidden past its deadline gives back the hidden time',
       .locator(`[data-decision-id="${poll.id}"]`);
     await proposal.getByRole('button', { name: 'Open proposal menu' }).click();
     await page.getByRole('menuitem', { name: 'Restore proposal' }).click();
-    await expect(
-      page.getByRole('dialog', { name: 'Restore this proposal?' }),
-    ).toContainText('Its deadline moves back by the time it was hidden');
+    await expect
+      .soft(page.getByRole('dialog', { name: 'Restore this proposal?' }))
+      .toContainText('Its deadline moves back by the time it was hidden');
+    const restoredResponse = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'POST' &&
+        response.url().endsWith(`/polls/${poll.id}/restore`),
+    );
     await confirmModeration(
       page,
       'Restore this proposal?',
@@ -593,23 +930,24 @@ test('restoring a proposal hidden past its deadline gives back the hidden time',
       /\/polls\/[^/]+\/restore$/,
     );
 
-    const secondsLeft = getSecondsUntilPollCloses(poll.id);
-    expect(secondsLeft).toBeGreaterThan(55 * 60);
-    expect(secondsLeft).toBeLessThan(65 * 60);
-    await voteViaApi(
-      request,
-      author,
-      server.id,
-      server.generalChannelId,
-      poll.id,
-      'agree',
+    const { poll: restored } = await (await restoredResponse).json();
+    const compensatedSeconds =
+      (Date.parse(restored.config.closingAt) -
+        Date.parse(hidden.config.closingAt)) /
+      1000;
+    expect(compensatedSeconds).toBeGreaterThanOrEqual(2 * 60 * 60);
+    expect(compensatedSeconds).toBeLessThan(2 * 60 * 60 + 60);
+    expect(restored.votes).toEqual(hidden.votes);
+    expect(restored.votes.map((vote: { id: string }) => vote.id)).toContain(
+      voteId,
     );
+    expect(restored.hiddenAt).toBeUndefined();
   } finally {
     await page.context().close();
   }
 });
 
-test('moderators cannot hide a proposal that changes their own role', async ({
+test('proposal managers can moderate proposals affecting their own roles', async ({
   browser,
   request,
 }) => {
@@ -621,7 +959,7 @@ test('moderators cannot hide a proposal that changes their own role', async ({
     admin,
     moderator,
     server.id,
-    [{ subject: 'Message', action: ['delete'] }],
+    [{ subject: 'Proposal', action: ['manage'] }],
     'self-mod',
   );
   const pollsPath = `/api/servers/${server.id}/channels/${server.generalChannelId}/polls`;
@@ -653,30 +991,27 @@ test('moderators cannot hide a proposal that changes their own role', async ({
       .locator(`[data-decision-id="${poll.id}"]`);
     await proposal.getByRole('button', { name: 'Open proposal menu' }).click();
     await page.getByRole('menuitem', { name: 'Hide proposal' }).click();
-    const dialog = page.getByRole('dialog', { name: 'Hide this proposal?' });
-    await dialog.getByRole('textbox').fill('Not appropriate');
-    const hideResponse = page.waitForResponse(
-      (response) =>
-        response.request().method() === 'POST' &&
-        /\/polls\/[^/]+\/hide$/.test(response.url()),
+    await confirmModeration(
+      page,
+      'Hide this proposal?',
+      'Hide',
+      /\/polls\/[^/]+\/hide$/,
+      'Role proposal review',
     );
-    await dialog.getByRole('button', { name: 'Hide', exact: true }).click();
-    expect((await hideResponse).status()).toBe(403);
     await expect(
-      page.getByText('You cannot hide a proposal that changes your own role.'),
+      proposal.getByText('Hidden by a moderator. Voting is paused.'),
     ).toBeVisible();
-    await page.keyboard.press('Escape');
-    await expect(dialog).toHaveCount(0);
+    await proposal.getByRole('button', { name: 'Open proposal menu' }).click();
+    await page.getByRole('menuitem', { name: 'Restore proposal' }).click();
+    await confirmModeration(
+      page,
+      'Restore this proposal?',
+      'Restore',
+      /\/polls\/[^/]+\/restore$/,
+    );
     await expect(
       proposal.getByText('Hidden by a moderator. Voting is paused.'),
     ).toHaveCount(0);
-
-    await expect(
-      await request.post(`${pollsPath}/${poll.id}/hide`, {
-        headers: authorizationHeaders(admin),
-        data: { reason: 'Instance admin review' },
-      }),
-    ).toBeOK();
   } finally {
     await page.context().close();
   }

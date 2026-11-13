@@ -10,6 +10,7 @@ pub(crate) type CapabilityActions =
     &'static [(&'static str, &'static [&'static str])];
 
 pub(crate) const SERVER_CAPABILITY_ACTIONS: CapabilityActions = &[
+    ("Proposal", &["manage"]),
     ("ServerMember", &["manage"]),
     ("Call", &["manage"]),
     ("AuditLog", &["read"]),

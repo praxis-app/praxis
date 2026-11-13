@@ -3,15 +3,15 @@ use chrono::Utc;
 use entity::{
     channels as channel_entities,
     enums::{
-        ModerationAction, ModerationTargetKind, NotificationKind, PollStage,
-        PollType,
+        AuditLogOrigin, ModerationAction, ModerationTargetKind,
+        NotificationKind, PollStage, PollType,
     },
     notifications, poll_configs, polls,
 };
 use sea_orm::{
-    prelude::Uuid, ActiveModelTrait, ColumnTrait, ConnectionTrait,
-    DatabaseConnection, EntityTrait, IntoActiveModel, QueryFilter, QuerySelect,
-    Set, TransactionTrait,
+    prelude::Uuid, sea_query::Expr, ActiveModelTrait, ColumnTrait,
+    ConnectionTrait, DatabaseConnection, EntityTrait, IntoActiveModel,
+    QueryFilter, QueryOrder, QuerySelect, Set, TransactionTrait,
 };
 use std::collections::{HashMap, HashSet};
 
@@ -20,8 +20,16 @@ use crate::{
     channels,
     common::{ApiError, AppResult},
     moderation::{self, ModerationRecord},
-    poll_actions,
+    pub_sub::PubSubService,
 };
+
+const PROPOSAL_PAUSE_BUDGET_MS: i64 = 24 * 60 * 60 * 1000;
+
+pub(super) fn pause_budget_exhausted(poll: &polls::Model) -> bool {
+    poll.poll_type == PollType::Proposal
+        && poll.stage == PollStage::Voting
+        && poll.moderation_pause_ms >= PROPOSAL_PAUSE_BUDGET_MS
+}
 
 pub(super) struct PollModeration {
     pub(super) server_id: Uuid,
@@ -39,11 +47,24 @@ pub(super) async fn hide_poll(
 
     let transaction = database.begin().await.map_err(internal_error)?;
     let poll = lock_poll(&transaction, request).await?;
+    can_moderate_poll(
+        database,
+        request.actor_user_id,
+        request.server_id,
+        poll.poll_type,
+    )
+    .await?;
     if poll.hidden_at.is_some() {
         transaction.commit().await.map_err(internal_error)?;
         return Ok((poll, vec![]));
     }
-    ensure_not_hiding_own_role_change(&transaction, request, &poll).await?;
+
+    if pause_budget_exhausted(&poll) {
+        return Err(ApiError::new(
+            StatusCode::CONFLICT,
+            "This proposal has used its moderation pause limit.",
+        ));
+    }
 
     let author_id = poll.user_id;
     let record =
@@ -71,16 +92,24 @@ pub(super) async fn restore_poll(
 
     let transaction = database.begin().await.map_err(internal_error)?;
     let poll = lock_poll(&transaction, request).await?;
+    can_moderate_poll(
+        database,
+        request.actor_user_id,
+        request.server_id,
+        poll.poll_type,
+    )
+    .await?;
     if poll.hidden_at.is_none() {
         transaction.commit().await.map_err(internal_error)?;
         return Ok(poll);
     }
 
-    extend_deadline_by_hidden_time(&transaction, &poll).await?;
+    let pause_ms = extend_deadline_by_hidden_time(&transaction, &poll).await?;
     let record =
         poll_record(request, &poll, ModerationAction::RestorePoll, reason);
     let mut active = poll.into_active_model();
     active.hidden_at = Set(None);
+    active.moderation_pause_ms = Set(pause_ms);
     let poll = active.update(&transaction).await.map_err(internal_error)?;
     moderation::record_action(&transaction, record).await?;
     transaction.commit().await.map_err(internal_error)?;
@@ -92,6 +121,7 @@ pub(crate) async fn get_channels_with_visible_hidden_polls<C>(
     database: &C,
     user_id: Option<Uuid>,
     channel_ids: impl IntoIterator<Item = Uuid>,
+    poll_type: PollType,
 ) -> AppResult<HashSet<Uuid>>
 where
     C: ConnectionTrait,
@@ -124,8 +154,7 @@ where
         .collect::<HashSet<_>>()
     {
         if authz::is_granted(
-            moderation::can_moderate_content(database, user_id, server_id)
-                .await,
+            can_moderate_poll(database, user_id, server_id, poll_type).await,
         )? {
             moderated_server_ids.insert(server_id);
         }
@@ -159,6 +188,7 @@ pub(super) async fn ensure_can_read_hidden_images(
             database,
             user_id,
             [poll.channel_id],
+            poll.poll_type,
         )
         .await?
         .contains(&poll.channel_id)
@@ -173,12 +203,22 @@ async fn authorize(
     request: &PollModeration,
     is_reason_required: bool,
 ) -> AppResult<Option<String>> {
-    moderation::can_moderate_content(
-        database,
-        request.actor_user_id,
-        request.server_id,
-    )
-    .await?;
+    if !authz::is_granted(
+        can_moderate_poll(
+            database,
+            request.actor_user_id,
+            request.server_id,
+            PollType::Proposal,
+        )
+        .await,
+    )? {
+        moderation::can_moderate_content(
+            database,
+            request.actor_user_id,
+            request.server_id,
+        )
+        .await?;
+    }
     let reason = moderation::normalize_reason(
         request.reason.as_deref(),
         is_reason_required,
@@ -188,79 +228,178 @@ async fn authorize(
     Ok(reason)
 }
 
-async fn ensure_not_hiding_own_role_change<C>(
+async fn can_moderate_poll<C: ConnectionTrait>(
     database: &C,
-    request: &PollModeration,
-    poll: &polls::Model,
-) -> AppResult<()>
-where
-    C: ConnectionTrait,
-{
-    if poll.stage != PollStage::Voting
-        || !poll_actions::service::changes_role_held_by(
-            database,
-            poll.id,
-            request.actor_user_id,
-        )
-        .await?
-    {
-        return Ok(());
-    }
-
-    let is_instance_admin = authz::is_granted(
-        authz::can(
-            database,
-            request.actor_user_id,
-            "manage",
-            "all",
-            PermissionScope::Instance,
-        )
-        .await,
-    )?;
-    if is_instance_admin {
-        Ok(())
-    } else {
-        Err(ApiError::new(
-            StatusCode::FORBIDDEN,
-            "You cannot hide a proposal that changes your own role.",
-        ))
+    user_id: Uuid,
+    server_id: Uuid,
+    poll_type: PollType,
+) -> AppResult<()> {
+    match poll_type {
+        PollType::Proposal => {
+            authz::can(
+                database,
+                user_id,
+                "manage",
+                "Proposal",
+                PermissionScope::ServerOrInstance(server_id),
+            )
+            .await
+        }
+        PollType::Poll => {
+            moderation::can_moderate_content(database, user_id, server_id).await
+        }
     }
 }
 
-async fn extend_deadline_by_hidden_time<C>(
+fn accounted_pause_ms(
+    poll: &polls::Model,
+    now: chrono::DateTime<chrono::FixedOffset>,
+) -> i64 {
+    let elapsed = poll
+        .hidden_at
+        .map(|at| (now - at).num_milliseconds().max(0))
+        .unwrap_or(0);
+    if poll.poll_type == PollType::Proposal && poll.stage == PollStage::Voting {
+        elapsed
+            .min((PROPOSAL_PAUSE_BUDGET_MS - poll.moderation_pause_ms).max(0))
+    } else {
+        elapsed
+    }
+}
+
+async fn extend_deadline_by_hidden_time<C: ConnectionTrait>(
     database: &C,
     poll: &polls::Model,
-) -> AppResult<()>
-where
-    C: ConnectionTrait,
-{
-    let Some(hidden_at) = poll.hidden_at else {
-        return Ok(());
-    };
-    if poll.stage != PollStage::Voting {
-        return Ok(());
+) -> AppResult<i64> {
+    if poll.hidden_at.is_none() || poll.stage != PollStage::Voting {
+        return Ok(poll.moderation_pause_ms);
     }
-
+    let now = Utc::now().fixed_offset();
+    let elapsed = accounted_pause_ms(poll, now);
     let config = poll_configs::Entity::find()
         .filter(poll_configs::Column::PollId.eq(poll.id))
         .lock_exclusive()
         .one(database)
         .await
         .map_err(internal_error)?;
-    let Some(config) = config else {
-        return Ok(());
-    };
-    let Some(closing_at) = config.closing_at else {
-        return Ok(());
-    };
+    if let Some(config) = config {
+        if let Some(closing_at) = config.closing_at {
+            let mut active = config.into_active_model();
+            active.closing_at = Set(Some(
+                closing_at + chrono::TimeDelta::milliseconds(elapsed),
+            ));
+            active.updated_at = Set(now);
+            active.update(database).await.map_err(internal_error)?;
+        }
+    }
+    Ok(if poll.poll_type == PollType::Proposal {
+        poll.moderation_pause_ms + elapsed
+    } else {
+        poll.moderation_pause_ms
+    })
+}
 
-    let now = Utc::now().fixed_offset();
-    let hidden_duration = (now - hidden_at).max(chrono::TimeDelta::zero());
-    let mut active = config.into_active_model();
-    active.closing_at = Set(Some(closing_at + hidden_duration));
-    active.updated_at = Set(now);
-    active.update(database).await.map_err(internal_error)?;
+pub(super) async fn restore_expired_proposal_pauses(
+    database: &DatabaseConnection,
+    pub_sub: &PubSubService,
+) -> AppResult<()> {
+    let mut cursor = None;
+    loop {
+        let mut query = polls::Entity::find()
+            .filter(polls::Column::PollType.eq(PollType::Proposal))
+            .filter(polls::Column::Stage.eq(PollStage::Voting))
+            .filter(polls::Column::HiddenAt.is_not_null())
+            .filter(Expr::cust(format!("hidden_at + (({PROPOSAL_PAUSE_BUDGET_MS} - moderation_pause_ms) * interval '1 millisecond') <= CURRENT_TIMESTAMP")));
+        if let Some(id) = cursor {
+            query = query.filter(polls::Column::Id.gt(id));
+        }
+        let batch = query
+            .order_by_asc(polls::Column::Id)
+            .limit(20)
+            .all(database)
+            .await
+            .map_err(internal_error)?;
+        let Some(last) = batch.last() else {
+            break;
+        };
+        cursor = Some(last.id);
+        for poll in batch {
+            match restore_expired_proposal_pause(database, poll.id).await {
+                Ok(Some(restored)) => {
+                    if let Err(error) =
+                        super::service::broadcast_stored_poll_update(
+                            database, pub_sub, &restored, None,
+                        )
+                        .await
+                    {
+                        tracing::warn!("failed to broadcast automatic proposal restore: {error}");
+                    }
+                }
+                Ok(None) => {}
+                Err(error) => tracing::warn!(
+                    "failed to restore expired proposal pause: {error}"
+                ),
+            }
+        }
+    }
     Ok(())
+}
+
+async fn restore_expired_proposal_pause(
+    database: &DatabaseConnection,
+    poll_id: Uuid,
+) -> AppResult<Option<polls::Model>> {
+    let transaction = database.begin().await.map_err(internal_error)?;
+    let Some(poll) = polls::Entity::find_by_id(poll_id)
+        .lock_exclusive()
+        .one(&transaction)
+        .await
+        .map_err(internal_error)?
+    else {
+        return Ok(None);
+    };
+    if poll.poll_type != PollType::Proposal
+        || poll.stage != PollStage::Voting
+        || poll.hidden_at.is_none()
+        || poll.moderation_pause_ms
+            + accounted_pause_ms(&poll, Utc::now().fixed_offset())
+            < PROPOSAL_PAUSE_BUDGET_MS
+    {
+        return Ok(None);
+    }
+    let channel = channel_entities::Entity::find_by_id(poll.channel_id)
+        .one(&transaction)
+        .await
+        .map_err(internal_error)?
+        .ok_or_else(|| {
+            ApiError::new(StatusCode::NOT_FOUND, "Channel not found.")
+        })?;
+    let pause_ms = extend_deadline_by_hidden_time(&transaction, &poll).await?;
+    let record = ModerationRecord {
+        actor_user_id: None,
+        origin: AuditLogOrigin::System,
+        action: ModerationAction::RestorePoll,
+        target_kind: ModerationTargetKind::Poll,
+        target_id: poll.id,
+        server_id: Some(channel.server_id),
+        proposal_id: None,
+        channel_id: Some(channel.id),
+        target_label: Some("Proposal".to_owned()),
+        server_label: None,
+        before_value: None,
+        after_value: None,
+        reason: Some(
+            "Automatically restored after the 24-hour moderation pause limit."
+                .to_owned(),
+        ),
+    };
+    let mut active = poll.into_active_model();
+    active.hidden_at = Set(None);
+    active.moderation_pause_ms = Set(pause_ms);
+    let restored = active.update(&transaction).await.map_err(internal_error)?;
+    moderation::record_action(&transaction, record).await?;
+    transaction.commit().await.map_err(internal_error)?;
+    Ok(Some(restored))
 }
 
 async fn lock_poll<C>(

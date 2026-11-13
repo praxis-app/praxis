@@ -43,7 +43,7 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
     channelId: channel.id,
     forumPostId: postId,
   });
-  const { canModerateContent } = useModerationAccess();
+  const { canModerateContent, canModerateProposals } = useModerationAccess();
 
   const { t } = useTranslation();
 
@@ -200,7 +200,7 @@ export const ForumPostDetail = ({ channel, postId, isPane = false }: Props) => {
   });
 
   const isRemoved = !!post.moderatedAt;
-  const isConcealed = !!post.hiddenAt && !canModerateContent;
+  const isConcealed = !!post.hiddenAt && !canModerateProposals;
   const postTitle = isRemoved
     ? t('moderation.labels.removedByModerator')
     : post.title;

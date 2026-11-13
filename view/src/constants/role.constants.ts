@@ -13,6 +13,7 @@ export const SERVER_ROLE_ABILITY_SUBJECTS = [
   'Message',
   'ServerRole',
   'ProposalBlock',
+  'Proposal',
   'ServerMember',
   'Call',
   'AuditLog',
@@ -43,6 +44,7 @@ export const SERVER_PERMISSION_KEYS = [
   'moderateContent',
   'manageCalls',
   'blockProposals',
+  'moderateProposals',
   'viewAuditLog',
 ] as const;
 
@@ -59,7 +61,7 @@ export const SERVER_PERMISSION_SECTIONS = [
   },
   {
     name: 'proposalsAndVoting',
-    permissions: ['blockProposals'],
+    permissions: ['blockProposals', 'moderateProposals'],
   },
   {
     name: 'moderation',

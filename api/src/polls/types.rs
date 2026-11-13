@@ -97,6 +97,7 @@ pub(crate) struct PollResponse {
     #[serde(skip)]
     pub(crate) content_concealed: bool,
     pub(crate) created_at: String,
+    pub(super) moderation_pause_exhausted: bool,
 }
 
 impl PollResponse {

@@ -132,6 +132,7 @@ pub(super) async fn shape_post_summaries(
                     })
                 })
                 .map(|post| post.channel_id),
+            entity::enums::PollType::Proposal,
         )
         .await?;
 

@@ -51,7 +51,7 @@ export const ProposalMenu = ({
   const [isMoveDialogOpen, setIsMoveDialogOpen] = useState(false);
   const [isModerationOpen, setIsModerationOpen] = useState(false);
   const { deferUntilClosed, runPendingAction } = useDeferredMenuAction();
-  const { canModerateContent } = useModerationAccess();
+  const { canModerateProposals } = useModerationAccess();
 
   const { t } = useTranslation();
 
@@ -106,7 +106,7 @@ export const ProposalMenu = ({
               {t('proposals.actions.moveToForum')}
             </DropdownMenuItem>
           )}
-          {canModerateContent && (
+          {canModerateProposals && (
             <PollModerationMenuItem
               poll={poll}
               onSelect={deferUntilClosed(() => setIsModerationOpen(true))}
@@ -125,7 +125,7 @@ export const ProposalMenu = ({
         />
       )}
 
-      {canModerateContent && (
+      {canModerateProposals && (
         <PollModerationDialog
           open={isModerationOpen}
           onOpenChange={setIsModerationOpen}

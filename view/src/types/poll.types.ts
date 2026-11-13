@@ -40,6 +40,7 @@ export interface PollRes {
   replyUsers?: UserRes[];
   latestReplyAt: string | null;
   hiddenAt?: string;
+  moderationPauseExhausted?: boolean;
   createdAt: string;
 }
 

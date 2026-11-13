@@ -13,6 +13,14 @@ export const PollModerationMenuItem = ({ poll, onSelect }: Props) => {
 
   const isProposal = poll.pollType === 'proposal';
 
+  if (!poll.hiddenAt && poll.moderationPauseExhausted) {
+    return (
+      <DropdownMenuItem disabled>
+        {t('moderation.labels.pauseLimitReached')}
+      </DropdownMenuItem>
+    );
+  }
+
   if (poll.hiddenAt) {
     return (
       <DropdownMenuItem onSelect={onSelect}>

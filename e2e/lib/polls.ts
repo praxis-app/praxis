@@ -74,17 +74,6 @@ export function backdateHiddenPoll(
   expect(output.match(/UPDATE 1/g)).toHaveLength(2);
 }
 
-export function getSecondsUntilPollCloses(pollId: string) {
-  assertUuid(pollId, 'Poll ID');
-
-  const output = runDatabaseCommand(
-    `SELECT extract(epoch FROM closing_at - now())::int FROM poll_configs WHERE poll_id = '${pollId}';`,
-    { tuplesOnly: true },
-  );
-
-  return Number(output.trim());
-}
-
 export async function voteViaApi(
   request: APIRequestContext,
   user: AuthenticatedUser,

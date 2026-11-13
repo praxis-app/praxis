@@ -23,7 +23,6 @@ pub(crate) use super::{
         attach_event_cover_photo, event_cover_photo_storage_key,
         get_proposed_event_cover_photo, plan_event_closed_reason,
     },
-    roles::changes_role_held_by,
     settings::validate_server_config_change,
 };
 use crate::common::{ApiError, AppResult};

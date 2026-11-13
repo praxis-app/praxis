@@ -64,6 +64,9 @@ export const ServerRolePermissionsForm = ({ serverRole }: Props) => {
           if (permission.name === 'manageServerMembers') {
             result.push({ subject: 'ServerMember', action: ['manage'] });
           }
+          if (permission.name === 'moderateProposals') {
+            result.push({ subject: 'Proposal', action: ['manage'] });
+          }
           if (permission.name === 'moderateContent') {
             result.push({ subject: 'Message', action: ['delete'] });
           }

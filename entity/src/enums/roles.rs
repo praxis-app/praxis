@@ -75,6 +75,8 @@ pub enum ServerAbilitySubject {
     ServerRole,
     #[sea_orm(string_value = "ProposalBlock")]
     ProposalBlock,
+    #[sea_orm(string_value = "Proposal")]
+    Proposal,
     #[sea_orm(string_value = "ServerMember")]
     ServerMember,
     #[sea_orm(string_value = "Call")]
@@ -92,6 +94,7 @@ impl_enum_string_conversions!(ServerAbilitySubject {
     Message => "Message",
     ServerRole => "ServerRole",
     ProposalBlock => "ProposalBlock",
+    Proposal => "Proposal",
     ServerMember => "ServerMember",
     Call => "Call",
     AuditLog => "AuditLog",

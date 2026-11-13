@@ -29,6 +29,9 @@ export const getModerationAccess = (
   canModerateContent:
     serverAbility.can('delete', 'Message') ||
     instanceAbility.can('delete', 'Message'),
+  canModerateProposals:
+    serverAbility.can('manage', 'Proposal') ||
+    instanceAbility.can('manage', 'all'),
   canManageCalls:
     serverAbility.can('manage', 'Call') ||
     instanceAbility.can('manage', 'Call'),
@@ -40,9 +43,7 @@ export const getModerationAccess = (
 });
 
 export const isRemovableMessage = (message: MessageRes) =>
-  !message.moderatedAt &&
-  !message.botId &&
-  !!message.user;
+  !message.moderatedAt && !message.botId && !!message.user;
 
 const toTombstone = <T extends Identifiable>(
   item: T,

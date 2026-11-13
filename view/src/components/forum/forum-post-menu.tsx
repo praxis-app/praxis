@@ -56,7 +56,7 @@ export const ForumPostMenu = ({
   const dialogRef = useRef<HTMLDivElement>(null);
 
   const { serverId } = useServerData();
-  const { canModerateContent } = useModerationAccess();
+  const { canModerateContent, canModerateProposals } = useModerationAccess();
 
   const { t } = useTranslation();
   const queryClient = useQueryClient();
@@ -173,7 +173,7 @@ export const ForumPostMenu = ({
               {t('moderation.actions.removePost')}
             </DropdownMenuItem>
           )}
-          {canModerateContent && post.proposal && (
+          {canModerateProposals && post.proposal && (
             <PollModerationMenuItem
               poll={post.proposal}
               onSelect={() => setIsModerationOpen(true)}
@@ -189,7 +189,7 @@ export const ForumPostMenu = ({
         onRemove={removePost}
       />
 
-      {canModerateContent && post.proposal && (
+      {canModerateProposals && post.proposal && (
         <PollModerationDialog
           open={isModerationOpen}
           onOpenChange={setIsModerationOpen}

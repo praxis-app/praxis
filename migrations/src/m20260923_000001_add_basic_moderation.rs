@@ -70,7 +70,8 @@ const SERVER_SUBJECTS: [&str; 7] = [
     "ProposalBlock",
     "all",
 ];
-const NEW_SERVER_SUBJECTS: [&str; 3] = ["ServerMember", "Call", "AuditLog"];
+const NEW_SERVER_SUBJECTS: [&str; 4] =
+    ["ServerMember", "Call", "AuditLog", "Proposal"];
 
 const INSTANCE_SUBJECTS: [&str; 4] =
     ["InstanceConfig", "InstanceRole", "Server", "all"];
@@ -551,6 +552,12 @@ async fn add_moderation_columns(
                         .timestamp_with_time_zone()
                         .null(),
                 )
+                .add_column(
+                    ColumnDef::new(Polls::ModerationPauseMs)
+                        .big_integer()
+                        .not_null()
+                        .default(0),
+                )
                 .to_owned(),
         )
         .await?;
@@ -585,6 +592,7 @@ async fn drop_moderation_columns(
         .alter_table(
             Table::alter()
                 .table(Polls::Table)
+                .drop_column(Polls::ModerationPauseMs)
                 .drop_column(Polls::HiddenAt)
                 .to_owned(),
         )
@@ -807,6 +815,7 @@ enum Polls {
     Table,
     Id,
     HiddenAt,
+    ModerationPauseMs,
 }
 
 #[derive(DeriveIden)]

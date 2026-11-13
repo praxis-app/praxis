@@ -46,7 +46,7 @@ export const InlineProposal = ({
   onImageLoad,
 }: Props) => {
   const { t } = useTranslation();
-  const { canModerateContent } = useModerationAccess();
+  const { canModerateProposals } = useModerationAccess();
   const { body, config } = poll;
 
   const modelLabel = {
@@ -61,7 +61,7 @@ export const InlineProposal = ({
       poll={poll}
       me={me}
       onOpenThread={onOpenThread}
-      canModerate={canModerateContent}
+      canModerate={canModerateProposals}
       label={label}
     >
       <Card className="before:border-l-border @container relative max-w-full min-w-0 gap-3.5 rounded-md px-3 py-3.5 before:absolute before:top-0 before:bottom-0 before:left-0 before:mt-[-0.025rem] before:mb-[-0.025rem] before:w-3 before:rounded-l-md before:border-l-3">

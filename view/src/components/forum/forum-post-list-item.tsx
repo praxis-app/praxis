@@ -15,10 +15,10 @@ interface Props {
 
 export const ForumPostListItem = ({ post, postPath, isSelected }: Props) => {
   const { t } = useTranslation();
-  const { canModerateContent } = useModerationAccess();
+  const { canModerateProposals } = useModerationAccess();
 
   const author = post.user.displayName || post.user.name;
-  const isConcealed = !!post.hiddenAt && !canModerateContent;
+  const isConcealed = !!post.hiddenAt && !canModerateProposals;
 
   const getTitle = () => {
     if (post.moderatedAt) {

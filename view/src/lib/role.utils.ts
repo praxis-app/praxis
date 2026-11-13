@@ -97,6 +97,14 @@ export const getServerPermissionValues = (permissions: ServerPermission[]) =>
         name,
       };
     }
+    if (name === 'moderateProposals') {
+      return {
+        value: permissions.some(
+          (p) => p.subject === 'Proposal' && p.action.includes('manage'),
+        ),
+        name,
+      };
+    }
     if (name === 'moderateContent') {
       return {
         value: permissions.some(

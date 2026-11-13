@@ -225,6 +225,17 @@ export const CreateProposalForm = ({
               ],
             });
             break;
+          case 'moderateProposals':
+            result.push({
+              subject: 'Proposal',
+              actions: [
+                {
+                  action: 'manage',
+                  changeType: permissionValue ? 'add' : 'remove',
+                },
+              ],
+            });
+            break;
           case 'moderateContent':
             result.push({
               subject: 'Message',

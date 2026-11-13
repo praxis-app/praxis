@@ -75,6 +75,15 @@ pub(crate) fn spawn_proposal_synchronizer(
         loop {
             interval.tick().await;
 
+            if let Err(error) =
+                super::moderation::restore_expired_proposal_pauses(
+                    &database,
+                    &pub_sub_service,
+                )
+                .await
+            {
+                tracing::warn!("failed to restore proposal pauses: {error}");
+            }
             match synchronize_proposals(&database, &pub_sub_service).await {
                 Ok(summary) if summary.ratified > 0 || summary.closed > 0 => {
                     tracing::info!(

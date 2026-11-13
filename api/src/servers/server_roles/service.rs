@@ -41,6 +41,7 @@ const SERVER_SUBJECTS: &[&str] = &[
     "Message",
     "ServerRole",
     "ProposalBlock",
+    "Proposal",
     "ServerMember",
     "Call",
     "AuditLog",
@@ -311,6 +312,10 @@ where
             PermissionRule {
                 subject: "Message".to_owned(),
                 action: vec!["delete".to_owned()],
+            },
+            PermissionRule {
+                subject: "Proposal".to_owned(),
+                action: vec!["manage".to_owned()],
             },
             PermissionRule {
                 subject: "Call".to_owned(),
