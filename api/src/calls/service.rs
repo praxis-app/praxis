@@ -224,6 +224,10 @@ pub(crate) async fn disconnect_user_from_calls(
     }
     let active_calls = query.all(database).await.map_err(internal_error)?;
 
+    // TODO: Removing a participant does not invalidate their LiveKit token, so
+    // a banned, removed or suspended user can rejoin the room until it expires.
+    // Re-check account and channel membership on the participant_joined webhook
+    // and consider shortening TOKEN_TTL_MINUTES
     for call in active_calls {
         remove_livekit_participant(
             livekit,

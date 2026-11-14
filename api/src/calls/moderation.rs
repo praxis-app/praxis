@@ -54,6 +54,11 @@ pub(super) async fn end_call_as_moderator(
     )
     .await?;
 
+    // TODO: Deleting the room before the call is marked ended lets the
+    // room_finished webhook win the race, which skips the end_call audit entry
+    // or overwrites the moderator ended reason. End the call and record the
+    // action first, then delete the room, and make the webhook update a no-op
+    // for calls that are no longer active
     let mut disconnected_user_ids = Vec::new();
     if is_active_status(&call.status) {
         if let Some(livekit) = livekit {
@@ -115,6 +120,9 @@ pub(super) async fn remove_call_participant(
     request: &CallModeration,
     participant_id: Uuid,
 ) -> AppResult<ModeratedCall> {
+    // TODO: Only Call:manage is checked here, so a call moderator can remove
+    // themselves or a server or instance admin. Apply the same self-target and
+    // hierarchy guards as member moderation
     let reason = authorize(database, request).await?;
     let livekit = livekit.ok_or_else(|| {
         ApiError::new(
