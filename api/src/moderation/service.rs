@@ -9,7 +9,9 @@ use entity::{
     servers, users,
 };
 use sea_orm::{
-    prelude::Uuid, ActiveModelTrait, ColumnTrait, Condition, ConnectionTrait,
+    prelude::Uuid,
+    sea_query::{extension::postgres::PgExpr, Expr, SimpleExpr},
+    ActiveModelTrait, ColumnTrait, Condition, ConnectionTrait,
     DatabaseConnection, EntityTrait, QueryFilter, QueryOrder, QuerySelect, Set,
 };
 use std::collections::{HashMap, HashSet};
@@ -36,6 +38,7 @@ use super::types::{
 
 const MIN_REASON_LENGTH: usize = 4;
 const MAX_REASON_LENGTH: usize = 500;
+const MAX_AUDIT_LOG_SEARCH_LENGTH: usize = 100;
 const DEFAULT_AUDIT_LOG_PAGE_SIZE: u64 = 50;
 const MAX_AUDIT_LOG_PAGE_SIZE: u64 = 100;
 
@@ -236,8 +239,8 @@ pub(super) async fn get_audit_log(
         .as_deref()
         .map(parse_target_kind)
         .transpose()?;
-    let target_id =
-        parse_optional_uuid(query.target_id.as_deref(), "targetId")?;
+    let search_pattern = query.search.as_deref().and_then(build_search_pattern);
+    let search_actions = parse_search_actions(query.search_actions.as_deref())?;
     let requested_server_id =
         parse_optional_uuid(query.server_id.as_deref(), "serverId")?;
     let from = parse_optional_date(query.from.as_deref(), "from")?;
@@ -264,9 +267,19 @@ pub(super) async fn get_audit_log(
         records_query = records_query
             .filter(moderation_actions::Column::TargetKind.eq(target_kind));
     }
-    if let Some(target_id) = target_id {
-        records_query = records_query
-            .filter(moderation_actions::Column::TargetId.eq(target_id));
+    if let Some(search_pattern) = search_pattern {
+        records_query = records_query.filter(
+            Condition::any()
+                .add(matches_search(
+                    moderation_actions::Column::TargetLabel,
+                    &search_pattern,
+                ))
+                .add(matches_search(
+                    moderation_actions::Column::Reason,
+                    &search_pattern,
+                ))
+                .add(moderation_actions::Column::Action.is_in(search_actions)),
+        );
     }
     if let Some(from) = from {
         records_query = records_query
@@ -305,6 +318,29 @@ pub(super) async fn get_audit_log(
         has_more,
         filter_values,
     })
+}
+
+fn build_search_pattern(search: &str) -> Option<String> {
+    let term = search
+        .trim()
+        .chars()
+        .take(MAX_AUDIT_LOG_SEARCH_LENGTH)
+        .collect::<String>();
+    if term.is_empty() {
+        return None;
+    }
+    let escaped_term = term
+        .replace('\\', "\\\\")
+        .replace('%', "\\%")
+        .replace('_', "\\_");
+    Some(format!("%{escaped_term}%"))
+}
+
+fn matches_search(
+    column: moderation_actions::Column,
+    search_pattern: &str,
+) -> SimpleExpr {
+    Expr::col((moderation_actions::Entity, column)).ilike(search_pattern)
 }
 
 async fn authorize_audit_log(
@@ -680,6 +716,17 @@ fn parse_action(value: &str) -> AppResult<ModerationAction> {
     value.parse().map_err(|_| {
         ApiError::new(StatusCode::BAD_REQUEST, "Action filter is invalid.")
     })
+}
+
+fn parse_search_actions(
+    value: Option<&str>,
+) -> AppResult<Vec<ModerationAction>> {
+    value
+        .unwrap_or_default()
+        .split(',')
+        .filter(|action| !action.is_empty())
+        .map(parse_action)
+        .collect()
 }
 
 fn parse_target_kind(value: &str) -> AppResult<ModerationTargetKind> {

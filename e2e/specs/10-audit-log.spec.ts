@@ -171,6 +171,12 @@ test('server and instance viewers see only their authorized audit scope and can 
     ]),
   );
 
+  await serverSession.page
+    .getByRole('searchbox', { name: 'Search actions, targets and reasons' })
+    .fill('AUDIT TEST abuse');
+  await expect(serverEntries).toHaveCount(1);
+  await expect(serverEntries.getByText('Banned member')).toBeVisible();
+
   const instanceSession = await openPageAs(
     browser,
     instanceViewer,

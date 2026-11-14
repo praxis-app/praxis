@@ -1,3 +1,4 @@
+import { type AUDIT_LOG_ACTIONS } from '@/constants/moderation.constants';
 import { type ImageRes } from './image.types';
 
 export interface ModerationReasonReq {
@@ -39,31 +40,7 @@ export interface InstanceUsersRes {
 }
 
 export type AuditLogScope = 'instance' | 'server';
-export type AuditLogAction =
-  | 'remove_message'
-  | 'remove_forum_post'
-  | 'hide_poll'
-  | 'restore_poll'
-  | 'remove_member'
-  | 'ban_member'
-  | 'unban_member'
-  | 'suspend_user'
-  | 'restore_user'
-  | 'delete_user'
-  | 'remove_call_participant'
-  | 'end_call'
-  | 'create_role'
-  | 'update_role'
-  | 'update_role_permissions'
-  | 'delete_role'
-  | 'add_role_members'
-  | 'remove_role_member'
-  | 'create_server'
-  | 'update_server'
-  | 'delete_server'
-  | 'update_server_config'
-  | 'create_invite'
-  | 'delete_invite';
+export type AuditLogAction = (typeof AUDIT_LOG_ACTIONS)[number];
 export type AuditLogTargetKind =
   | 'message'
   | 'forum_post'
@@ -77,10 +54,10 @@ export type AuditLogTargetKind =
   | 'invite';
 
 export interface AuditLogFilters {
-  action?: AuditLogAction;
   actorId?: string;
   targetKind?: AuditLogTargetKind;
-  targetId?: string;
+  search?: string;
+  searchActions?: string;
   serverId?: string;
   from?: string;
   to?: string;

@@ -82,10 +82,11 @@
       "heading": "Filters",
       "activeCount": "({{count}} active)",
       "all": "All",
-      "action": "Action",
       "actor": "Actor",
       "targetKind": "Target type",
-      "targetId": "Target ID",
+      "search": "Search actions, targets and reasons",
+      "searchPlaceholder": "Search",
+      "clearSearch": "Clear search",
       "server": "Server",
       "startDate": "Start date",
       "endDate": "End date"

@@ -542,7 +542,7 @@ for (const priorHours of [0, 13]) {
         expect((await hide(actor)).status()).toBe(409);
       }
       const audit = await request.get(
-        `/api/servers/${server.id}/audit-log?targetId=${poll.id}`,
+        `/api/servers/${server.id}/audit-log?action=restore_poll`,
         { headers: authorizationHeaders(admin) },
       );
       await expect(audit).toBeOK();

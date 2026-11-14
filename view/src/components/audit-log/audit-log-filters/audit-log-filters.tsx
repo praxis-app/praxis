@@ -9,7 +9,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { LuX } from 'react-icons/lu';
 import { AuditLogFilterSelect } from './audit-log-filter-select';
-import { AuditLogTargetIdInput } from './audit-log-target-id-input';
+import { AuditLogSearchInput } from './audit-log-search-input';
 
 const FIELD_CLASS_NAME = 'min-w-48 flex-1';
 const DATE_TRIGGER_CLASS_NAME =
@@ -47,11 +47,6 @@ export const AuditLogFilters = ({
   const fromValue = toDateInputValue(filters.from);
   const toValue = toDateInputValue(filters.to);
 
-  const actionOptions =
-    filterValues?.actions.map((action) => ({
-      value: action,
-      label: t(`auditLog.actions.${action}`),
-    })) ?? [];
   const actorOptions =
     filterValues?.actors.map((actor) => ({
       value: actor.id,
@@ -103,13 +98,9 @@ export const AuditLogFilters = ({
 
       <div className="flex flex-wrap gap-2">
         <div className={FIELD_CLASS_NAME}>
-          <AuditLogFilterSelect
-            label={t('auditLog.filters.action')}
-            value={filters.action}
-            options={actionOptions}
-            onChange={(value) =>
-              setFilter('action', value as AuditLogFilterState['action'])
-            }
+          <AuditLogSearchInput
+            value={filters.search}
+            onChange={(value) => setFilter('search', value)}
           />
         </div>
         <div className={FIELD_CLASS_NAME}>
@@ -163,12 +154,6 @@ export const AuditLogFilters = ({
             minDate={parseDateValue(fromValue) ?? undefined}
             className={DATE_TRIGGER_CLASS_NAME}
             onChange={(value) => setFilter('to', toFilterDate(value, true))}
-          />
-        </div>
-        <div className={FIELD_CLASS_NAME}>
-          <AuditLogTargetIdInput
-            value={filters.targetId}
-            onChange={(value) => setFilter('targetId', value)}
           />
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { AUDIT_LOG_ACTIONS } from '@/constants/moderation.constants';
 import {
   getInstancePermissionValues,
   getPermissionText,
@@ -190,4 +191,14 @@ export const getAuditFieldLabel = (key: string) => {
     );
   }
   return key;
+};
+
+export const getAuditLogActionsMatchingSearch = (search?: string) => {
+  const term = search?.trim().toLowerCase();
+  if (!term) {
+    return [];
+  }
+  return AUDIT_LOG_ACTIONS.filter((action) =>
+    t(`auditLog.actions.${action}`).toLowerCase().includes(term),
+  );
 };

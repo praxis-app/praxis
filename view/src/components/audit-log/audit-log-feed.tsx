@@ -4,6 +4,7 @@ import { AuditLogFeedSkeleton } from '@/components/audit-log/audit-log-feed-skel
 import { AuditLogFilters as FilterControls } from '@/components/audit-log/audit-log-filters/audit-log-filters';
 import { Button } from '@/components/ui/button';
 import { useAuditLogQuery } from '@/hooks/use-audit-log-query';
+import { getAuditLogActionsMatchingSearch } from '@/lib/audit-log.utils';
 import { cn } from '@/lib/shared.utils';
 import {
   type AuditLogFilters,
@@ -13,7 +14,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LuCircleAlert, LuScrollText } from 'react-icons/lu';
 
-const TARGET_ID_DEBOUNCE_MS = 300;
+const SEARCH_DEBOUNCE_MS = 300;
 
 export const AuditLogFeed = ({
   scope,
@@ -25,22 +26,25 @@ export const AuditLogFeed = ({
   enabled: boolean;
 }) => {
   const [filters, setFilters] = useState<AuditLogFilters>({});
-  const [debouncedTargetId, setDebouncedTargetId] = useState<string>();
+  const [debouncedSearch, setDebouncedSearch] = useState<string>();
 
   const { t } = useTranslation();
 
   useEffect(() => {
     const timer = window.setTimeout(
-      () => setDebouncedTargetId(filters.targetId?.trim() || undefined),
-      TARGET_ID_DEBOUNCE_MS,
+      () => setDebouncedSearch(filters.search?.trim() || undefined),
+      SEARCH_DEBOUNCE_MS,
     );
     return () => window.clearTimeout(timer);
-  }, [filters.targetId]);
+  }, [filters.search]);
+
+  const searchActions =
+    getAuditLogActionsMatchingSearch(debouncedSearch).join(',') || undefined;
 
   const query = useAuditLogQuery({
     scope,
     serverId,
-    filters: { ...filters, targetId: debouncedTargetId },
+    filters: { ...filters, search: debouncedSearch, searchActions },
     enabled,
   });
 
